@@ -43,9 +43,9 @@ int                     BzfJoystick::getNumHats()
   return 0;
 }
 
-int                     BzfJoystick::getJoyHat(int UNUSED(hat))
+void                    BzfJoystick::getJoyHat(int UNUSED(hat), float &hatX, float &hatY)
 {
-  return 0;
+  hatX = hatY = 0;
 }
 
 unsigned long		BzfJoystick::getJoyButtons()

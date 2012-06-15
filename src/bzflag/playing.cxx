@@ -6438,62 +6438,78 @@ static void		playingLoop()
 	}
       old_buttons = new_buttons;
 
-      static const BzfKeyEvent::Button hat_map[] = {////////////////////
-        BzfKeyEvent::BZ_Hatswitch_1_upright,        // 9 1 3 -> 3 4 0 //
-        BzfKeyEvent::BZ_Hatswitch_1_downright,      // 8 0 2 -> 7 - 5 //
-        BzfKeyEvent::BZ_Hatswitch_1_downleft,       //12 4 6 -> 2 6 1 //
-        BzfKeyEvent::BZ_Hatswitch_1_upleft,         ////////////////////};
+      static const BzfKeyEvent::Button hat_map[] = {
+        BzfKeyEvent::BZ_Hatswitch_1_upleft,
         BzfKeyEvent::BZ_Hatswitch_1_up,
-        BzfKeyEvent::BZ_Hatswitch_1_right,          //the left numbers are
-        BzfKeyEvent::BZ_Hatswitch_1_down,           //those returned by
-        BzfKeyEvent::BZ_Hatswitch_1_left,           //getJoyHat(), the right
-        BzfKeyEvent::BZ_Hatswitch_2_upright,        //numbers are in the
-        BzfKeyEvent::BZ_Hatswitch_2_downright,      //button order shown here
-        BzfKeyEvent::BZ_Hatswitch_2_downleft,
+        BzfKeyEvent::BZ_Hatswitch_1_upright,
+        BzfKeyEvent::BZ_Hatswitch_1_right,
+        BzfKeyEvent::BZ_Hatswitch_1_downright,
+        BzfKeyEvent::BZ_Hatswitch_1_down,
+        BzfKeyEvent::BZ_Hatswitch_1_downleft,
+        BzfKeyEvent::BZ_Hatswitch_1_left,
         BzfKeyEvent::BZ_Hatswitch_2_upleft,
         BzfKeyEvent::BZ_Hatswitch_2_up,
+        BzfKeyEvent::BZ_Hatswitch_2_upright,
         BzfKeyEvent::BZ_Hatswitch_2_right,
+        BzfKeyEvent::BZ_Hatswitch_2_downright,
         BzfKeyEvent::BZ_Hatswitch_2_down,
+        BzfKeyEvent::BZ_Hatswitch_2_downleft,
         BzfKeyEvent::BZ_Hatswitch_2_left,
-        BzfKeyEvent::BZ_Hatswitch_3_upright,
-        BzfKeyEvent::BZ_Hatswitch_3_downright,
-        BzfKeyEvent::BZ_Hatswitch_3_downleft,
         BzfKeyEvent::BZ_Hatswitch_3_upleft,
         BzfKeyEvent::BZ_Hatswitch_3_up,
+        BzfKeyEvent::BZ_Hatswitch_3_upright,
         BzfKeyEvent::BZ_Hatswitch_3_right,
+        BzfKeyEvent::BZ_Hatswitch_3_downright,
         BzfKeyEvent::BZ_Hatswitch_3_down,
+        BzfKeyEvent::BZ_Hatswitch_3_downleft,
         BzfKeyEvent::BZ_Hatswitch_3_left,
-        BzfKeyEvent::BZ_Hatswitch_4_upright,
-        BzfKeyEvent::BZ_Hatswitch_4_downright,
-        BzfKeyEvent::BZ_Hatswitch_4_downleft,
         BzfKeyEvent::BZ_Hatswitch_4_upleft,
         BzfKeyEvent::BZ_Hatswitch_4_up,
+        BzfKeyEvent::BZ_Hatswitch_4_upright,
         BzfKeyEvent::BZ_Hatswitch_4_right,
+        BzfKeyEvent::BZ_Hatswitch_4_downright,
         BzfKeyEvent::BZ_Hatswitch_4_down,
+        BzfKeyEvent::BZ_Hatswitch_4_downleft,
         BzfKeyEvent::BZ_Hatswitch_4_left,
       };
 
-      const int hat_count = countof(hat_map) / 8;
-      int hat, hat_age, num_hats = mainWindow->getNumHats();
-      num_hats = (hat_count < num_hats) ?  hat_count : num_hats;
-      static int * hats = new int[num_hats];
-      for (int num = 0; num < num_hats; num++) {
-        if ((hat_age = (hat = mainWindow->getJoyHat(num)) - hats[num]) != 0) {
-          BzfKeyEvent ev;
-          ev.button = -1;
-          ev.ascii = 0;
-          ev.shift = 0;
-          if (hats[num] ==  3|| 3 == hat) ev.button = hat_map[0 + 8 * num];
-          if (hats[num] ==  6|| 6 == hat) ev.button = hat_map[1 + 8 * num];
-          if (hats[num] == 12||12 == hat) ev.button = hat_map[2 + 8 * num];
-          if (hats[num] ==  9|| 9 == hat) ev.button = hat_map[3 + 8 * num];
-          if (ev.button != -1) doKey(ev, hat_age > 0); // report diagonals before orthonormal directions
-          if (abs(hat_age) == 1) ev.button = hat_map[4 + 8 * num];
-          if (abs(hat_age) == 2) ev.button = hat_map[5 + 8 * num];
-          if (abs(hat_age) == 4) ev.button = hat_map[6 + 8 * num];
-          if (abs(hat_age) == 8) ev.button = hat_map[7 + 8 * num];
-          doKey(ev, hat_age > 0);
-          hats[num] = hat;
+      //  Evdev //   SDL  //      DX     //     atan2    // buttons //
+      //--------//--------//-------------//--------------//---------//
+      //   -1   //  9 1 3 // 315   0  45 // -135 -90 -45 // 0  1  2 //
+      // -1 0 1 //  8 0 2 // 270   ?  90 //  180   0   0 // 7 -1  3 //
+      //    1   // 12 4 6 // 225 180 135 //  135  90  45 // 6  5  4 //
+
+      const int max_hats = 4, num_buttons = countof(hat_map) / max_hats; // 8
+      int num_hats = mainWindow->getNumHats(); if (num_hats > max_hats) num_hats = max_hats; // num_hats min= max_hats;
+      static std::vector<int> hats(max_hats, -1);
+      const float variance = 360 / num_buttons / 2; // 45/2 or 22.5
+      BzfKeyEvent ev; // must be out here because of false doKey
+      ev.ascii = 0;
+      ev.shift = 0;
+      for (int hat = 0; hat < num_hats; hat++) {
+        float hatX, hatY; mainWindow->getJoyHat(hat, hatX, hatY);
+        if (hatX == 0 && hatY == 0) {
+	  if (hats[hat] != -1) {
+	    doKey(ev, false); // unset when centered
+	    hats[hat] = -1;
+	  }
+        } else {
+          int button = -1; // buttons are counted clockwise to left
+          float angle = atan2(hatY, hatX) * 180 / (float)M_PI;
+          for (int b = -1; b < num_buttons; b++) {
+	    float testangle = -180 + 2 * variance * (b + 1); // -180 to 180 by 45
+	    if (testangle - variance <= angle && angle < testangle + variance) {
+	      button = b; // 0 to 7
+	      if (b == -1) button = num_buttons - 1; // 7
+	      if (button != hats[hat]) {
+		if (hats[hat] != -1)
+		  doKey(ev, false); // unset when spinning
+		ev.button = hat_map[button + hat * num_buttons];
+		doKey(ev, true);
+		hats[hat] = button;
+	      }
+	    }
+          }
         }
       }
     }

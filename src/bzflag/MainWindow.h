@@ -85,7 +85,7 @@ class MainWindow {
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& mx, int& my) const;
     int                 getNumHats() const;
-    int                 getJoyHat(int hat) const;
+    void                getJoyHat(int hat, float &hatX, float &hatY) const;
     unsigned long	getJoyButtonSet() const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;

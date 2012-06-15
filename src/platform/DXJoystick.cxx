@@ -222,7 +222,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   if (success == DI_OK)
 	  numberOfHats = 4;
 
-  // TODO Tell the Joystick we have one or more HATs
+  hataxes.assign(numberOfHats * 2, 0); // two axes each
 
   /*
    * Acquire the device so that we can get input from it.
@@ -271,10 +271,8 @@ void	      DXJoystick::getJoy(int& x, int& y)
 	  {
 		  float angle = (float)hatPos/100.0f;
 
-		  hatX = cosf(angle * ((float)M_PI/180.0f));
-		  hatY = sinf(angle * ((float)M_PI/180.0f));
-
-		  // TODO SET hat axes in the joystick HERE
+		  hataxes[i * 2]     = hatX = cosf(angle * ((float)M_PI/180.0f));
+		  hataxes[i * 2 + 1] = hatY = sinf(angle * ((float)M_PI/180.0f));
 	  }
   }
   
@@ -300,6 +298,20 @@ unsigned long DXJoystick::getJoyButtons()
   }
 
   return buttons;
+}
+
+int           DXJoystick::getNumHats()
+{
+  return numberOfHats;
+}
+
+void          DXJoystick::getJoyHat(int hat, float hatX, float hatY)
+{
+  hatX = hatY = 0;
+  if (!device) return;
+  if (hat >= numberOfHats) return;
+  hatX = hataxes[hat * 2];
+  hatY = hataxes[hat * 2 + 1];
 }
 
 DIJOYSTATE    DXJoystick::pollDevice()

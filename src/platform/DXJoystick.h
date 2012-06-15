@@ -63,6 +63,8 @@ class DXJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
+    int 	getNumHats();
+    void	getJoyHat(int hat, float &hatX, float &hatY);
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
     void	setXAxis(const std::string &axis);
@@ -97,7 +99,8 @@ class DXJoystick : public BzfJoystick {
     std::map<std::string,bool> axes;
     std::string xAxis;
     std::string yAxis;
-	int		numberOfHats;
+    int		numberOfHats;
+    std::vector<float> hataxes;
 
     static std::vector<DIDEVICEINSTANCE> devices;
     static EffectMap effectDatabase;

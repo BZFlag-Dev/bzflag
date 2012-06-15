@@ -230,6 +230,8 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
   useaxis[0] = ABS_X;
   useaxis[1] = ABS_Y;
   buttons = 0;
+  //for some reason, I can't put this in getJoyHats
+  hataxes.assign(4 * 2, 0);
 }
 
 bool			EvdevJoystick::joystick() const
@@ -248,7 +250,7 @@ void		    EvdevJoystick::poll()
     case EV_ABS:
       if (ev.code > ABS_WHEEL) {
         if (ABS_HAT0X <= ev.code && ev.code <= ABS_HAT3Y)
-          hats[ev.code - ABS_HAT0X] = ev.value;
+          hataxes[ev.code - ABS_HAT0X] = ev.value;
         break;
       }
       currentJoystick->axis_info[ev.code - ABS_X].value = ev.value;
@@ -341,28 +343,29 @@ void			EvdevJoystick::getJoy(int& x, int& y)
 
 int                     EvdevJoystick::getNumHats()
 {
-  int joystickHats = 0;
-  if (currentJoystick)
-    for (int i = 0; i < 4; ++i)
-      if (test_bit(ABS_HAT0X + i * 2, currentJoystick->absbit))
-        ++joystickHats;
-  return joystickHats;
+  numHats = 0;
+  if (currentJoystick) {
+    for (int i = 0; i < 4; ++i) {
+      if (test_bit(ABS_HAT0X + i * 2, currentJoystick->absbit)) {
+        numHats++;
+      }
+    }
+  }
+  //for some reason, I can't move this from initJoystick
+  //hataxes.assign(numHats * 2, 0);
+  return numHats;
 }
 
-int                     EvdevJoystick::getJoyHat(int hat)
+void                    EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
+  hatX = hatY = 0;
   if (currentJoystick) {
     if (hat < 4) {
       poll();
-      int
-      value  = (hats[hat * 2 + 1] < 0) ? 1 : 0;
-      value += (hats[hat * 2]     > 0) ? 2 : 0;
-      value += (hats[hat * 2 + 1] > 0) ? 4 : 0;
-      value += (hats[hat * 2]     < 0) ? 8 : 0;
-      return value;
+      hatX = hataxes[hat * 2];
+      hatY = hataxes[hat * 2 + 1];
     }
   }
-  return 0;
 }
 
 unsigned long		EvdevJoystick::getJoyButtons()

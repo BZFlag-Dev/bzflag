@@ -30,7 +30,7 @@ class SDLJoystick : public BzfJoystick {
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
     int         getNumHats();
-    int         getJoyHat(int hat);
+    void        getJoyHat(int hat, float &hatX, float &hatY);
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
     void	setXAxis(const std::string &axis);
@@ -39,7 +39,7 @@ class SDLJoystick : public BzfJoystick {
   private:
     SDL_Joystick		*joystickID;
     int			 joystickButtons;
-    int                  joystickHats;
+    int                  numHats;
     int			 xAxis;
     int			 yAxis;
 };

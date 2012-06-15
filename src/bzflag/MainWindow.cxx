@@ -279,9 +279,9 @@ int                     MainWindow::getNumHats() const
   return joystick->getNumHats();
 }
 
-int                     MainWindow::getJoyHat(int hat) const
+void                    MainWindow::getJoyHat(int hat, float &hatX, float &hatY) const
 {
-  return joystick->getJoyHat(hat);
+  joystick->getJoyHat(hat, hatX, hatY);
 }
 
 unsigned long		  MainWindow::getJoyButtonSet() const
