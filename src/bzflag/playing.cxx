@@ -3612,6 +3612,13 @@ static void		checkEnvironment()
     if (hitter->getId() == target->getId())
       return;
 
+    // Don't report collisions when teammates can't be killed.
+    // This is required because checkHit() tests as if we were observer.
+    TeamColor team = hitter->getTeam();
+    if (!World::getWorld()->allowTeamKills() && team == target->getTeam() &&
+	team != RogueTeam && team != ObserverTeam)
+      return;
+
     smsg << "local collision with "
 	 << hit->getShotId()
 	 << " from "
