@@ -67,6 +67,18 @@ DXJoystick::~DXJoystick()
   }
 }
 
+BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* pContext )
+{
+	DXJoystick *stick = ( DXJoystick * )pContext;
+
+	 if( pdidoi->guidType == GUID_POV )
+	 {
+		stick->numberOfHats++;
+	 }
+
+	 return DIENUM_CONTINUE;
+}
+
 void	      DXJoystick::initJoystick(const char* joystickName)
 {
   // turn it off
@@ -105,6 +117,17 @@ void	      DXJoystick::initJoystick(const char* joystickName)
     DXError("Could not set exclusive mode", success);
     device = NULL;
     return;
+  }
+
+
+  // enumerate the axes and stuff
+  success = device->EnumObjects(EnumObjectsCallback,(VOID*)this, DIDFT_POV);
+
+  if (success != DI_OK) {
+	  // couldn't grab device, what to do now?
+	  DXError("Could not enumerate options", success);
+	  device = NULL;
+	  return;
   }
 
   /*
@@ -202,26 +225,6 @@ void	      DXJoystick::initJoystick(const char* joystickName)
   if (success == DI_OK)
     axes["Slider 2"] = true;
 
-  range.diph.dwObj = DIJOFS_POV(0);
-  success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
-	  numberOfHats = 1;
-
-  range.diph.dwObj = DIJOFS_POV(1);
-  success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
-	  numberOfHats = 2;
-
-  range.diph.dwObj = DIJOFS_POV(2);
-  success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
-	  numberOfHats = 3;
-
-  range.diph.dwObj = DIJOFS_POV(3);
-  success = device->SetProperty(DIPROP_RANGE, &range.diph);
-  if (success == DI_OK)
-	  numberOfHats = 4;
-
   hataxes.assign(numberOfHats * 2, 0); // two axes each
 
   /*
@@ -260,23 +263,6 @@ void	      DXJoystick::getJoy(int& x, int& y)
   else if (yAxis == "Slider 1") y = state.rglSlider[0];
   else if (yAxis == "Slider 2") y = state.rglSlider[1];
 
-  for (int i = 0; i < numberOfHats; i++)
-  {
-	  DWORD hatPos = state.rgdwPOV[i];
-
-	  float hatX = 0;
-	  float hatY = 0;
-	  BOOL hatCentered = (LOWORD(hatPos) == 0xFFFF);
-	  if (!hatCentered)
-	  {
-		  float angle = (float)hatPos/100.0f;
-
-		  hataxes[i * 2]     = hatX = cosf(angle * ((float)M_PI/180.0f));
-		  hataxes[i * 2 + 1] = hatY = sinf(angle * ((float)M_PI/180.0f));
-	  }
-  }
-  
-
   // ballistics
   x = (x * abs(x)) / 1000;
   y = (y * abs(y)) / 1000;
@@ -305,8 +291,26 @@ int           DXJoystick::getNumHats()
   return numberOfHats;
 }
 
-void          DXJoystick::getJoyHat(int hat, float hatX, float hatY)
+void          DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
+	DIJOYSTATE state = pollDevice();
+
+	for (int i = 0; i < numberOfHats; i++)
+	{
+		DWORD hatPos = state.rgdwPOV[i];
+
+		float hatX = 0;
+		float hatY = 0;
+		BOOL hatCentered = (LOWORD(hatPos) == 0xFFFF);
+		if (!hatCentered)
+		{
+			float angle = (float)hatPos/100.0f;
+
+			hataxes[i * 2]     = hatX = cosf(angle * ((float)M_PI/180.0f));
+			hataxes[i * 2 + 1] = hatY = sinf(angle * ((float)M_PI/180.0f));
+		}
+	}
+
   hatX = hatY = 0;
   if (!device) return;
   if (hat >= numberOfHats) return;

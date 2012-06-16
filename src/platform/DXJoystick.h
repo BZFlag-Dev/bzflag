@@ -86,6 +86,7 @@ class DXJoystick : public BzfJoystick {
     void	ffDirectionalResistance(float time, float coefficient,
 				      float saturation, ResistanceType type);
 
+	int		numberOfHats;
   private:
     DIJOYSTATE	pollDevice();
     void	reaquireDevice();
@@ -99,7 +100,7 @@ class DXJoystick : public BzfJoystick {
     std::map<std::string,bool> axes;
     std::string xAxis;
     std::string yAxis;
-    int		numberOfHats;
+   
     std::vector<float> hataxes;
 
     static std::vector<DIDEVICEINSTANCE> devices;
