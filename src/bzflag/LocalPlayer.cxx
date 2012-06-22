@@ -1447,8 +1447,8 @@ void			LocalPlayer::explodeTank()
   newVelocity[1] = oldVelocity[1];
   if (gravity < 0) {
     // comparing 2 speed:
-    //   to have a simmetric path (ending at same height as starting)
-    //   to reach the acme of parabola, under the max height established
+    //   to have a symmetric path (ending at same height as starting)
+    //   to reach the apex of parabola, under the max height established
     // take the less
     newVelocity[2] = - 0.5f * gravity * explodeTim;
     float maxSpeed = sqrtf(- 2.0f * zMax * gravity);
