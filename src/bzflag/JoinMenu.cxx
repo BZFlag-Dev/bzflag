@@ -233,7 +233,13 @@ void JoinMenu::execute()
     }
 
     // let user know we're trying
-    setStatus("Trying...");
+    if (startupInfo.autoConnect) {
+      setStatus("Trying Automatic Connection...");
+      startupInfo.autoConnect = false;
+    }
+    else {
+      setStatus("Trying...");
+    }
 
     // schedule attempt to join game
     joinGame();

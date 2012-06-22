@@ -7326,7 +7326,13 @@ void			startPlaying(BzfDisplay* _display,
   if (startupInfo.autoConnect &&
       startupInfo.callsign[0] && startupInfo.serverName[0]) {
     joinRequested    = true;
-    controlPanel->addMessage("Trying...");
+    // show join menu to see connection errors
+    mainMenu->createControls();
+    HUDDialogStack::get()->push(mainMenu);
+    mainMenu->execute();
+    HUDui::setFocus(HUDui::getFocus()->getNext()); // select "Connect"
+    HUDDialogStack::get()->top()->execute(); // show "Trying Automatic Connection..."
+
   } else {
     mainMenu->createControls();
     HUDDialogStack::get()->push(mainMenu);
