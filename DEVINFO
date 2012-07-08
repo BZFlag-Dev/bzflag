@@ -474,7 +474,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - All code is committed to the repository.
 
-- NEWS includes a comment for all items added since the previous
+- ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
 - Man files, bzfs_conf.html, and bzfs.conf files are updated with
