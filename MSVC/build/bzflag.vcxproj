@@ -969,8 +969,10 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClInclude Include="..\..\src\bzflag\World.h" />
     <ClInclude Include="..\..\src\bzflag\WorldBuilder.h" />
     <ClInclude Include="..\..\src\bzflag\WorldPlayer.h" />
+    <ClInclude Include="..\resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\bzflag.ico" />
     <None Include="bzflag.ico" />
   </ItemGroup>
   <ItemGroup>

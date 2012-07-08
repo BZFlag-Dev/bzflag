@@ -1,31 +1,97 @@
-/* bzflag
- * Copyright (c) 1993-2011 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
 
-#include "../include/resource.h"
-#include <windows.h>
-
-// English (U.S.) resources
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
+/////////////////////////////////////////////////////////////////////////////
 //
 // Icon
 //
 
-IDI_BZICON              ICON    DISCARDABLE     "bzflag.ico"
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_BZICON              ICON                    "bzflag.ico"
 
-#endif    // English (U.S.) resources
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 2,4,1,0
+ PRODUCTVERSION 2,4,1,0
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x40004L
+ FILETYPE 0x0L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "Tim Riker"
+            VALUE "FileDescription", "The BZFlag Client"
+            VALUE "FileVersion", "2.4.1.0"
+            VALUE "InternalName", "bzflag.rc"
+            VALUE "LegalCopyright", "Copyright Tim Riker (C) 2012"
+            VALUE "OriginalFilename", "bzflag.rc"
+            VALUE "ProductName", "BZFlag"
+            VALUE "ProductVersion", "2.4.1.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
 
