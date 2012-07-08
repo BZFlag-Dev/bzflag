@@ -15,6 +15,7 @@ BZFlag 2.4.1
 * Allow plugins to specify a color when firing world weapons - Chris Wible
 * Add autoFlagReset plugin - Chris Wible
 * Allow joystick hats as input on Evdev and SDL platforms - Kyle Mills
+* Added Fastmap Plugin - Jeffery Myers
 
 
 BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
