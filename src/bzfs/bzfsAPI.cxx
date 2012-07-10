@@ -2933,7 +2933,7 @@ private:
   double HTTPTimeout;
 public:
 
-  URLFetchHandler()
+  URLFetchHandler() : bz_EventHandler()
   {
     curlHandle = NULL;
     currentJob = NULL;
