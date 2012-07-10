@@ -2946,7 +2946,7 @@ public:
     removeAllJobs();
     if (curlHandle) {
       curl_multi_cleanup(curlHandle);
-      worldEventManager.removeEvent(bz_eTickEvent,this);
+	  worldEventManager.removeEvent(bz_eTickEvent,this);
     }
   }
 
@@ -3107,9 +3107,17 @@ private:
   }
 };
 
-static URLFetchHandler urlFetchHandler;
+static URLFetchHandler *urlFetchHandler = NULL;
 
 //-------------------------------------------------------------------------
+URLFetchHandler* GetURLHandler()
+{
+	// will be deleted by the event manager
+	if (urlFetchHandler == NULL)
+		urlFetchHandler = new (URLFetchHandler);
+
+	return urlFetchHandler;
+}
 
 BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const char *postData)
 {
@@ -3117,7 +3125,7 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     return false;
   }
 
-  return (urlFetchHandler.addJob(URL, handler, postData,NULL) != 0);
+  return (GetURLHandler()->addJob(URL, handler, postData,NULL) != 0);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
@@ -3125,7 +3133,7 @@ BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* toke
 	if (!URL)
 		return false;
 
-	return (urlFetchHandler.addJob(URL, handler, postData,token) != 0);
+	return (GetURLHandler()->addJob(URL, handler, postData,token) != 0);
 }
 
 //-------------------------------------------------------------------------
@@ -3138,7 +3146,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     return false;
   }
 
-  return urlFetchHandler.addJob(URL, handler, postData,NULL);
+  return GetURLHandler()->addJob(URL, handler, postData,NULL);
 }
 
 //-------------------------------------------------------------------------
@@ -3148,7 +3156,7 @@ BZF_API bool bz_removeURLJob(const char *URL)
   if (!URL) {
     return false;
   }
-  return urlFetchHandler.removeJob(URL);
+  return GetURLHandler()->removeJob(URL);
 }
 
 //-------------------------------------------------------------------------
@@ -3158,14 +3166,14 @@ BZF_API bool bz_removeURLJobByID(size_t id)
   if (id == 0) {
     return false;
   }
-  return urlFetchHandler.removeJob(id);
+  return GetURLHandler()->removeJob(id);
 }
 
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_stopAllURLJobs(void)
 {
-  urlFetchHandler.removeAllJobs();
+  GetURLHandler()->removeAllJobs();
   return true;
 }
 
