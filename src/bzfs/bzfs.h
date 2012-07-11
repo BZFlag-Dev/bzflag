@@ -177,6 +177,8 @@ void checkGameOn();
 void checkTeamScore(int playerIndex, int teamIndex);
 void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
 
+void ApiTick( void );
+
 // peer list
 struct NetConnectedPeer {
 	int socket;

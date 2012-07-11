@@ -2919,7 +2919,7 @@ size_t urlWriteFunction(void *data, size_t size, size_t count, void *param)
   return size*count;
 }
 
-class URLFetchHandler : public bz_EventHandler
+class URLFetchHandler
 {
 private:
   CURLM* curlHandle;
@@ -2933,7 +2933,7 @@ private:
   double HTTPTimeout;
 public:
 
-  URLFetchHandler() : bz_EventHandler()
+  URLFetchHandler()
   {
     curlHandle = NULL;
     currentJob = NULL;
@@ -2946,67 +2946,66 @@ public:
     removeAllJobs();
     if (curlHandle) {
       curl_multi_cleanup(curlHandle);
-	  worldEventManager.removeEvent(bz_eTickEvent,this);
     }
   }
 
-  virtual void process (bz_EventData *)
+  void Tick ( void )
   {
-    if (Tasks.empty())
-      return;
+	  if (Tasks.empty())
+		  return;
 
-    URLFetchTask &task = Tasks[0];
+	  URLFetchTask &task = Tasks[0];
 
-      // check for jobs being done
-    if (currentJob)
-    {
-      int running;
-      curl_multi_perform(curlHandle, &running);
-
-      if (running == 0)
-      {
-	int      msgs_in_queue;
-	CURLMsg *pendingMsg = curl_multi_info_read(curlHandle, &msgs_in_queue);
-	if (currentJob == pendingMsg->easy_handle)
-	{
-	  if (Tasks[0].handler->version >= 2)
+	  // check for jobs being done
+	  if (currentJob)
 	  {
-		  ((bz_URLHandler_V2*)Tasks[0].handler)->token = Tasks[0].token;
+		  int running;
+		  curl_multi_perform(curlHandle, &running);
+
+		  if (running == 0)
+		  {
+			  int      msgs_in_queue;
+			  CURLMsg *pendingMsg = curl_multi_info_read(curlHandle, &msgs_in_queue);
+			  if (currentJob == pendingMsg->easy_handle)
+			  {
+				  if (Tasks[0].handler->version >= 2)
+				  {
+					  ((bz_URLHandler_V2*)Tasks[0].handler)->token = Tasks[0].token;
+				  }
+				  if (bufferedJobData.size())
+					  Tasks[0].handler->URLDone(Tasks[0].url.c_str(),(void*)bufferedJobData.c_str(),bufferedJobData.size(),true);
+				  else
+					  Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
+
+				  bufferedJobData = "";
+				  KillCurrentJob(false);
+			  }
+		  }
+
+		  if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > Tasks[0].lastTime +HTTPTimeout))
+		  {
+			  Tasks[0].handler->URLTimeout(Tasks[0].url.c_str(),1);
+			  KillCurrentJob(false);
+		  }
 	  }
-	  if (bufferedJobData.size())
-	    Tasks[0].handler->URLDone(Tasks[0].url.c_str(),(void*)bufferedJobData.c_str(),bufferedJobData.size(),true);
-	  else
-	    Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
 
-    bufferedJobData = "";
-    KillCurrentJob(false);
-	}
-      }
+	  if (!currentJob && Tasks.size())
+	  {
+		  currentJob = curl_easy_init();
+		  curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
 
-      if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > Tasks[0].lastTime +HTTPTimeout))
-      {
-	Tasks[0].handler->URLTimeout(Tasks[0].url.c_str(),1);
-	KillCurrentJob(false);
-      }
-    }
+		  if (task.postData.size())
+			  curl_easy_setopt(currentJob, CURLOPT_POSTFIELDS, task.postData.c_str());
 
-    if (!currentJob && Tasks.size())
-    {
-      currentJob = curl_easy_init();
-      curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
+		  curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
+		  curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
 
-      if (task.postData.size())
-        curl_easy_setopt(currentJob, CURLOPT_POSTFIELDS, task.postData.c_str());
+		  curl_multi_add_handle(curlHandle, currentJob);
+		  Tasks[0].lastTime = TimeKeeper::getCurrent().getSeconds();
 
-      curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
-      curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
-
-      curl_multi_add_handle(curlHandle, currentJob);
-      Tasks[0].lastTime = TimeKeeper::getCurrent().getSeconds();
-
-      int running;
-      curl_multi_perform(curlHandle, &running);
-    }
+		  int running;
+		  curl_multi_perform(curlHandle, &running);
+	  }
   }
 
   size_t addJob(const char *URL, bz_BaseURLHandler *handler,
@@ -3014,7 +3013,6 @@ public:
   {
     if (!curlHandle)
     {
-      worldEventManager.addEvent(bz_eTickEvent,this);
       curlHandle = curl_multi_init();
     }
 
@@ -3028,7 +3026,7 @@ public:
     Tasks.push_back(newTask);
 
     if (Tasks.size() == 1)
-      process(NULL);
+      Tick();
     return LastJob;
   }
 
@@ -3107,17 +3105,13 @@ private:
   }
 };
 
-static URLFetchHandler *urlFetchHandler = NULL;
+static URLFetchHandler urlFetchHandler;
 
-//-------------------------------------------------------------------------
-URLFetchHandler* GetURLHandler()
+void ApiTick ( void )
 {
-	// will be deleted by the event manager
-	if (urlFetchHandler == NULL)
-		urlFetchHandler = new (URLFetchHandler);
-
-	return urlFetchHandler;
+	urlFetchHandler.Tick();
 }
+
 
 BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const char *postData)
 {
@@ -3125,7 +3119,7 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     return false;
   }
 
-  return (GetURLHandler()->addJob(URL, handler, postData,NULL) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData,NULL) != 0);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
@@ -3133,7 +3127,7 @@ BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* toke
 	if (!URL)
 		return false;
 
-	return (GetURLHandler()->addJob(URL, handler, postData,token) != 0);
+	return (urlFetchHandler.addJob(URL, handler, postData,token) != 0);
 }
 
 //-------------------------------------------------------------------------
@@ -3146,7 +3140,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     return false;
   }
 
-  return GetURLHandler()->addJob(URL, handler, postData,NULL);
+  return urlFetchHandler.addJob(URL, handler, postData,NULL);
 }
 
 //-------------------------------------------------------------------------
@@ -3156,7 +3150,7 @@ BZF_API bool bz_removeURLJob(const char *URL)
   if (!URL) {
     return false;
   }
-  return GetURLHandler()->removeJob(URL);
+  return urlFetchHandler.removeJob(URL);
 }
 
 //-------------------------------------------------------------------------
@@ -3166,14 +3160,14 @@ BZF_API bool bz_removeURLJobByID(size_t id)
   if (id == 0) {
     return false;
   }
-  return GetURLHandler()->removeJob(id);
+  return urlFetchHandler.removeJob(id);
 }
 
 //-------------------------------------------------------------------------
 
 BZF_API bool bz_stopAllURLJobs(void)
 {
-  GetURLHandler()->removeAllJobs();
+  urlFetchHandler.removeAllJobs();
   return true;
 }
 

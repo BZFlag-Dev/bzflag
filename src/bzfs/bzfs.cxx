@@ -6808,6 +6808,8 @@ int main(int argc, char **argv)
     bz_TickEventData_V1	tickData;
     worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
+	ApiTick();
+
     // Spawn waiting players
     doSpawns();
 
