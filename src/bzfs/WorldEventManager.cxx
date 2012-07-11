@@ -28,6 +28,8 @@ WorldEventManager::~WorldEventManager()
   tvEventList::iterator eventItr = eventList.begin();
   while (eventItr != eventList.end())
 	delete (*eventItr++);
+
+  eventList.clear();
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
