@@ -23,6 +23,7 @@
 
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include "bzfsAPI.h"
 
@@ -37,11 +38,30 @@ public:
     if (plugin)
       plugin->Event(eventData);
   }
- // virtual bool autoDelete ( void ) { return false; }	// only set this to true if you are internal to the bzfs module ( on windows )
+
+  std::vector<bz_eEventType> HandledEvents;
+
+  bool HasEvent( bz_eEventType evt)
+  {
+	  return std::find(HandledEvents.begin(),HandledEvents.end(),evt) != HandledEvents.end();
+  }
+
+  void AddEvent( bz_eEventType evt )
+  {
+	  if (std::find(HandledEvents.begin(),HandledEvents.end(),evt) == HandledEvents.end())
+		  HandledEvents.push_back(evt);
+  }
+
+  void RemoveEvent( bz_eEventType evt )
+  {
+	  std::vector<bz_eEventType>::iterator itr = std::find(HandledEvents.begin(),HandledEvents.end(),evt);
+
+	  if ( itr!= HandledEvents.end())
+		  HandledEvents.erase(itr);
+  }
 };
 
 typedef std::vector<bz_EventHandler*> tvEventList;
-typedef std::map<bz_eEventType, tvEventList> tmEventTypeList;
 
 class WorldEventManager
 {
@@ -53,14 +73,11 @@ public:
   void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
   bool removeHandler ( bz_EventHandler* theEvent );
 
-  tvEventList getEventList ( bz_eEventType eventType);
   void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
   void callEvents ( bz_EventData	*eventData );
   void callEvents ( const bz_EventData	&eventData ){callEvents((bz_EventData*)&eventData);}
 
-  int getEventCount ( bz_eEventType eventType );
-
-  tmEventTypeList eventList;
+  tvEventList eventList;
 };
 
 extern WorldEventManager	worldEventManager;

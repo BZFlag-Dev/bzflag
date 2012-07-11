@@ -200,8 +200,6 @@ public:
       eventData.eventType = bz_eNetDataSendEvent;
     else
       eventData.eventType = bz_eNetDataReceiveEvent;
-    if (!worldEventManager.getEventCount(eventData.eventType))
-      return;
     eventData.send = send;
     eventData.udp = udp;
     eventData.iSize = size;

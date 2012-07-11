@@ -25,17 +25,9 @@ WorldEventManager::WorldEventManager()
 
 WorldEventManager::~WorldEventManager()
 {
-  tmEventTypeList::iterator eventItr = eventList.begin();
-  while (eventItr != eventList.end()) {
-    tvEventList::iterator itr = eventItr->second.begin();
-    while (itr != eventItr->second.end()) {
-      delete (*itr);
-      *itr = NULL;
-
-      ++itr;
-    }
-    ++eventItr;
-  }
+  tvEventList::iterator eventItr = eventList.begin();
+  while (eventItr != eventList.end())
+	delete (*eventItr++);
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
@@ -43,13 +35,9 @@ void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* the
   if (!theEvent)
     return;
 
-  if (eventList.find(eventType) == eventList.end())
-  {
-    tvEventList newList;
-    eventList[eventType] = newList;
-  }
-
-  eventList.find(eventType)->second.push_back(theEvent);
+  theEvent->AddEvent(eventType);
+  if (std::find(eventList.begin(),eventList.end(),theEvent) == eventList.end())
+	  eventList.push_back(theEvent);
 }
 
 void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
@@ -57,154 +45,86 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
   if (!theEvent)
     return;
 
-  tmEventTypeList::iterator eventTypeItr = eventList.find(eventType);
-  if (eventTypeItr == eventList.end())
-    return;
-
-  tvEventList::iterator itr = eventTypeItr->second.begin();
-  while (itr != eventTypeItr->second.end()) {
-    if (*itr == theEvent)
-      itr = eventTypeItr->second.erase(itr);
-    else
-      ++itr;
-  }
+  theEvent->RemoveEvent(eventType);
 }
 
 bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
 {
-  bool foundOne = false;
+  tvEventList::iterator itr = std::find(eventList.begin(),eventList.end(),theEvent);
+  if (itr != eventList.end())
+	  eventList.erase(itr);
 
-  tmEventTypeList::iterator typeIt;
-  for (typeIt = eventList.begin(); typeIt != eventList.end(); ++typeIt) {
-    tvEventList& evList = typeIt->second;
-    tvEventList::iterator listIt = evList.begin();
-    while (listIt != evList.end()) {
-      if (*listIt == theEvent) {
-	listIt = evList.erase(listIt);
-	foundOne = true;
-      } else {
-	++listIt;
-      }
-    }
-  }
-
-  return foundOne;
-}
-
-tvEventList WorldEventManager::getEventList ( bz_eEventType eventType)
-{
-  tvEventList	eList;
-
-  tmEventTypeList::iterator itr = eventList.find(eventType);
-  if ( itr == eventList.end() )
-    return eList;
-
-  eList = itr->second;
-  return eList;
+  return itr != eventList.end();
 }
 
 void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eventData )
 {
-  if (!eventData || getEventCount(eventType)==0 )
+  if (!eventData)
     return;
 
   eventData->eventType = eventType;
 
-  tvEventList	eList = getEventList(eventType);
-
-  for ( unsigned int i = 0; i < eList.size(); i++)
-    eList[i]->process(eventData);
+  tvEventList::iterator itr = eventList.begin();
+  while (itr != eventList.end())
+  {
+	  if ((*itr)->HasEvent(eventType))
+		  (*itr)->process(eventData);
+	  itr++;
+  }
 }
 
 void WorldEventManager::callEvents (  bz_EventData  *eventData )
 {
-  if (!eventData || getEventCount(eventData->eventType)==0 )
-    return;
-
-  tvEventList	eList = getEventList(eventData->eventType);
-
-  for ( unsigned int i = 0; i < eList.size(); i++)
-    eList[i]->process(eventData);
+  callEvents(eventData->eventType,eventData);
 }
 
-int WorldEventManager::getEventCount ( bz_eEventType eventType )
-{
-  return (int)getEventList(eventType).size();
-}
+std::map<bz_Plugin*,bz_EventHandler*> HandlerMap;
+
 
 bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 {
   if (!plugin)
     return false;
 
-  bz_EventHandler *handler = new bz_EventHandler();
-  handler->plugin = plugin;
-
-  if (worldEventManager.getEventCount(eventType) == 0) {
-    worldEventManager.addEvent(eventType,handler);
-  } else {
-    tvEventList& list = worldEventManager.eventList[eventType];
-    tvEventList::iterator itr = list.begin();
-    while (itr != list.end()) {
-      if ((*itr)->plugin == plugin)
-	return false;
-      ++itr;
-    }
-    list.push_back(handler);
+  bz_EventHandler *handler = NULL;
+  
+  if (HandlerMap.find(plugin) == HandlerMap.end())
+  {
+	  handler = new bz_EventHandler();
+      handler->plugin = plugin;
+	  HandlerMap[plugin] = handler;
   }
+  else
+	  handler = HandlerMap[plugin];
+
+  worldEventManager.addEvent(eventType,handler);
   return true;
 }
 
 bool RemoveEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 {
-  if (!plugin || worldEventManager.getEventCount(eventType) == 0)
+  if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
     return false;
 
-  tvEventList& list = worldEventManager.eventList[eventType];
+	bz_EventHandler *handler = HandlerMap[plugin];
+	worldEventManager.removeEvent(eventType,handler);
 
-  tvEventList::iterator itr = list.begin();
-  while (itr != list.end()) {
-    bz_EventHandler* handler = *itr;
+	if (handler->HandledEvents.empty())
+		worldEventManager.removeHandler(handler);
 
-    if (handler->plugin == plugin) {
-      itr = list.erase(itr);
-      delete(handler);
-      return true;
-    }
-    ++itr;
-  }
-
-  return false;
+  return true;
 }
 
 bool FlushEvents(bz_Plugin* plugin)
 {
-  if (!plugin)
-    return false;
+	if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
+		return false;
 
-  bool foundOne = false;
-
-  tmEventTypeList::iterator typeIt;
-  for (typeIt = worldEventManager.eventList.begin(); typeIt != worldEventManager.eventList.end(); ++typeIt) {
-    tvEventList& evList = typeIt->second;
-    tvEventList::iterator listIt = evList.begin();
-    while (listIt != evList.end()) {
-      bz_EventHandler* handler = *listIt;
-
-      if (handler->plugin == plugin) {
-	listIt = evList.erase(listIt);
-	delete(handler);
-	foundOne = true;
-      } else {
-	++listIt;
-      }
-    }
-  }
-
-  return foundOne;
+	bz_EventHandler *handler = HandlerMap[plugin];
+	worldEventManager.removeHandler(handler);
+ 
+	return true;
 }
-
-
 
 // Local Variables: ***
 // mode:C++ ***
