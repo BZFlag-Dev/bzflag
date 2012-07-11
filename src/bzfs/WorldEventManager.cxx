@@ -18,6 +18,9 @@
 
 #include "WorldEventManager.h"
 
+std::map<bz_Plugin*,bz_EventHandler*> HandlerMap;
+
+
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
@@ -30,6 +33,7 @@ WorldEventManager::~WorldEventManager()
 	delete (*eventItr++);
 
   eventList.clear();
+  HandlerMap.clear();
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
@@ -79,9 +83,6 @@ void WorldEventManager::callEvents (  bz_EventData  *eventData )
 {
   callEvents(eventData->eventType,eventData);
 }
-
-std::map<bz_Plugin*,bz_EventHandler*> HandlerMap;
-
 
 bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 {
