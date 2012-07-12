@@ -1739,8 +1739,8 @@ void KillHTTP()
   HTTPPeers.clear();
   if (con || tick)
   {
-    worldEventManager.removeEvent(bz_eTickEvent,tick);
-    worldEventManager.removeEvent(bz_eNewNonPlayerConnection,con);
+    worldEventManager.removeHandler(tick);
+    worldEventManager.removeHandler(con);
     delete(con);
     con = NULL;
     delete(tick);
