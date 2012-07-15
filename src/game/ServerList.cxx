@@ -295,7 +295,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     msg	    += "&password=";
     msg	    += TextUtils::url_encode(info->password);
     setPostMode(msg);
-    setURL(url + TextUtils::format("?nocache=%u", time(0)));
+    setURLwithNonce(url);
     addHandle();
 
     // do phase 1 only if we found a valid list server url

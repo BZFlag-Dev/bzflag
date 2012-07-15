@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -45,7 +45,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
   std::string bzfsUserAgent = "bzfs ";
   bzfsUserAgent	    += getAppVersion();
 
-  setURL(listServerURL);
+  setURLwithNonce(listServerURL);
   setUserAgent(bzfsUserAgent);
   setDNSCachingTime((long)ceilf(dnsCache));
   setTimeout(10);

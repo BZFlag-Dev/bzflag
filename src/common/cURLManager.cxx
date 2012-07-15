@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,8 @@
 
 // common implementation headers
 #include "bzfio.h"
+#include "Protocol.h"
+#include "TextUtils.h"
 
 bool		    cURLManager::inited      = false;
 bool		    cURLManager::justCalled;
@@ -197,6 +199,13 @@ void cURLManager::setURL(const std::string &url)
   if (result != CURLE_OK) {
     logDebugMessage(1,"CURLOPT_URL error %d : %s\n", result, errorBuffer);
   }
+}
+
+void cURLManager::setURLwithNonce(const std::string &url)
+{
+  // only the default list server is known to support the nonce parameter
+  const std::string nonce = (strcasecmp(url.c_str(), DefaultListServerURL) == 0) ? TextUtils::format("?nocache=%lu", time(0)) : "";
+  setURL(url + nonce);
 }
 
 void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
