@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2011 Tim Riker
+ * Copyright (c) 1993-2012 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -295,7 +295,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     msg	    += "&password=";
     msg	    += TextUtils::url_encode(info->password);
     setPostMode(msg);
-    setURL(url);
+    setURL(url + TextUtils::format("?nocache=%u", time(0)));
     addHandle();
 
     // do phase 1 only if we found a valid list server url
