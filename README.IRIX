@@ -1,5 +1,10 @@
-README for Unix platforms
--------------------------
+BZFlag README for IRIX
+----------------------
+
+NOTE: BZFlag likely no longer builds successfully on IRIX. However,
+we will keep this README file for now as a possible reference in case
+someone wants to try.
+
 
 Building on IRIX will work with either the SGI MIPS compiler or the
 GNU gcc3 compiler.  The GNU compiler is available for download from

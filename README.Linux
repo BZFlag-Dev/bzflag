@@ -1,4 +1,5 @@
-Welcome to the Linux version of BZFlag!
+BZFlag README for Linux
+=======================
 
 BZFlag is a network multiplayer 3D tank battle game.  You can play
 against several other people anywhere on a TCP/IP based network,
@@ -10,42 +11,31 @@ Both hardware and software rendering is supported. Hardware
 rendering is highly recommended, as software rendering is very
 slow. Hardware rendering is provided by the OpenGL drivers for
 your video card. ATI and NVIDIA are the primary chipsets for video
-cards in use today. Many Linux distributions to not ship with
+cards in use today. Many Linux distributions do not ship with
 video drivers that properly support hardware acceleration on
 modern cards. Both ATI and NVIDIA provide Linux drivers for many
 architectures on there websites. In general they provide greater
 performance then the default drivers in many distributions.
 
 More information about BZFlag is available in the man pages for
-bzflag, bzfs, and bzadmin.  Also check:
+bzflag, bzfs, bzadmin, and bzw.  Also check:
 
   http://BZFlag.org/
 
 Different Linux distributions use different naming conventions for the
 packages that provide the dependencies needed to compile and run
-BZFlag.  Known requirements include:
+BZFlag.  Known build requirements include:
 
   Debian & Ubuntu:
 
-    g++
-    libtool
-    automake
-    autoconf
-    libgl1-mesa-dev
-    libglu1-mesa-dev
-    libsdl1.2-dev
-    libsdl-sound1.2-dev
-    libcurl3-dev
-    libc-ares-dev
-    libglew1.5-dev
-    zlib1g-dev
+    apt-get install g++ libtool automake autoconf libgl1-mesa-dev \
+    libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev \
+    libc-ares-dev libglew1.5-dev zlib1g-dev
 
   Fedora:
 
-    A "yum install SDL-devel c-ares-devel libcurl-devel gcc-c++
-    glew-devel libidn-devel libtool ncurses-devel zlib-devel" command
-    will follow dependencies to automatically install all of the
-    packages required to compile BZFlag.
+    yum install SDL-devel c-ares-devel libcurl-devel gcc-c++ \
+    glew-devel libidn-devel libtool ncurses-devel zlib-devel
 
 After any development packages are installed do a "make distclean"
 command once in the top-level BZFlag source directory.  Then, when
@@ -59,11 +49,6 @@ Known bugs in the Linux version:
     workaround is to press ctrl+alt+'+' or ctrl+alt+'-' after exit
     to change the video format.  restart the X server if that
     doesn't work.  this appears to be a problem in glx.
-
-  * window sizing weirdness.  if you have a 3Dfx card and want
-    to use a resolution other than 640x480 then use the -3dfx
-    and -geometry options.  if you don't have a 3Dfx card then
-    try the -no3dfx option.
 
 Known issues:
 

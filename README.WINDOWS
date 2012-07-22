@@ -16,8 +16,8 @@ Cygwin, both of which use a unix-style autotools build system;
 for details, see README.MINGW32 (for MinGW) or the main
 README (for Cygwin).
 
-The most common way to build on windows is to use VisualC++.
-The Freely available VC10 EE edition is well suited to users
+The most common way to build on windows is to use Visual C++.
+The freely available VC10 EE edition is well suited to users
 who wish to compile the client for personal use. It can be found at
 http://www.microsoft.com/express/download/. Please note that the
 free versions of Visual C++ do not allow for the re-distribution
@@ -60,9 +60,3 @@ inside VC to use this executable and path.
 If you wish to build the full release package using the fullbuild solution,
 you will need to have NSIS installed. The built installer will be placed in 
 the _bin folder for the target in the root of the source tree.
-
-**BZRobots**
-Please note that due to the way BZRobots is written it can not be built or run on windows
-using the visual C++ system. The problem comes down to how windows exports functions
-to DLLs, as compared to how unix like systems use shared objects.It is not built as part
-of the VisualC++ projects.
