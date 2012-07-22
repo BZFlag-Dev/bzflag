@@ -210,10 +210,6 @@ Section "BZAdmin" BZAdmin
   ; Put file there
   File ..\..\..\bin_${PLATFORM}\bzadmin.exe
 
-  ; Add some DLL files
-  ;SetOutPath $INSTDIR
-  File ..\..\..\bin_${PLATFORM}\pdcurses.dll
-
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
   File ..\..\..\bin_${PLATFORM}\docs\bzadmin.html
