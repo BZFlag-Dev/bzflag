@@ -198,7 +198,7 @@ appropriate to your system for more information:
   IRIX				README.IRIX
   Solaris			README.SOLARIS
   Mac OS X			README.MacOSX
-  Windows 95/98/NT		README.WINDOWS, README.MINGW32, README.DEVC++
+  Windows XP and up		README.WINDOWS, README.MINGW32
 
 
 You can also build an installable package using:
@@ -357,7 +357,9 @@ following files in the new 'bzflag' directory:
   include/	- include headers for libraries
   man/		- man pages
   misc/		- miscellaneous goo
+  MSVC/	- stuff for building on the Windows platform
   package/	- stuff to build installable packages
+  plugins/	- bzfs plugins
   src/		- bzflag, bzfs, etc. source code
     3D/		  - 3D code including texture manager
     bzadmin/      - bzadmin app source code (text admin/chat client)
@@ -371,12 +373,11 @@ following files in the new 'bzflag' directory:
     net/	  - networking classes and functions
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
+    other/	  - Third-party libraries
     platform/	  - platform dependent code
       MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
-    world/	  - game world objects library
   tools/	- various helper utilities
-  win32/	- stuff for building on the Windows platform
 
 Note that include/ does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
@@ -489,8 +490,7 @@ Any of the core developers listed in the AUTHORS file are generally
 receptive to being contacted for most matters relating to the game.
 Internet Relay Chat (IRC) or e-mail is generally the expected method
 of interaction with IRC being generally preferred.  The project
-maintainer is available for most legal matters, public relations, and
-project development matters as well:
+maintainer is available for most legal matters and public relations:
 
 Tim Riker <Tim@Rikers.org>
 http://rikers.org/
