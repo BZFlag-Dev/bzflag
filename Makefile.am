@@ -63,21 +63,10 @@ MAINTAINERCLEANFILES = \
 	m4/lt~obsolete.m4
 # delete files from m4 subdirectory here to prevent dependency problems
 
-.PHONY: package debian-svn debian-release
+.PHONY: package
 
 package:
 	cd package && $(MAKE) targets
-
-debian-svn: dist
-	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
-	(cd $(distdir) && debian/buildsnap svn)
-
-debian-release: debian/changelog dist
-	-rm -rf $(distdir)
-	GZIP=$(GZIP_ENV) $(AMTAR)$(TAR) zxf $(distdir).tar.gz
-	cp debian/changelog $(distdir)/debian/
-	(cd $(distdir) && debian/buildsnap release)
 
 # Remove unwanted files from the distribution.
 # Ensure that all files in the repository are also in the distribution.
