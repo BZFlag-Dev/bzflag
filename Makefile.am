@@ -87,7 +87,7 @@ dist-hook:
 	rm -f $(distdir)/src/other/ares/ares_build.h \
 	      $(distdir)/src/other/curl/include/curl/curlbuild.h
 	entries=`find . -name entries -print | grep -v src/other/` ; \
-	files=`perl -wnle 'BEGIN {$$/ = "\f"} $$ARGV =~ m=^\./(.*/)\.svn/entries$$= and $$d = $$1 and /^\n([^\n]+)\nfile\n/ and print $$d,$$1' $$entries` ; \
+	files=`perl -wnle 'BEGIN {$$/ = "\f"} $$ARGV =~ m=^\./(.*/)\.svn/entries$$= and $$d = $$1 and /^\n([^\n]+)\nfile\n/ and print $$d,$$1' $$entries < /dev/null` ; \
 	missing=0 ; \
 	for file in $$files ; do \
 		if test ! -e $(distdir)/$$file ; then \
