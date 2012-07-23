@@ -133,7 +133,7 @@ This option can be used multiple times to define a multiline message.
 .B \-advertise \fIgroupname,groupname,...\fR
 Allows control of who can see this server on the server list.
 Use: \fB\-advertise NONE\fR to make a private server (no one will see the
-server, but global logins can be used). The default, if -advertise is not
+server, but global logins can be used). The default, if \-advertise is not
 specified, is to allow everyone to see the server.
 Otherwise, your server will only be listed to members of
 the groups which you specify, eg: \fB\-advertise JOE,BOB\fR.
@@ -516,13 +516,13 @@ Has the server track players with good runs of kills and anounces them.
 Also anounces those players that stop the runs of good players.
 .TP
 \fB\-ts \fR[\fImicros\fR]
-Include timestamp information in DEBUG output - useful for logging.
+Include timestamp information in DEBUG output \(em useful for logging.
 If \fImicros\fR is specified, microseconds will be added to the timestamp.
 .TP
 \fB\-UPnP\fR
 If enabled during build, bzfs try to communicate with the Gateway to set Port
-Forwarding and to supply informations not specified with -i (local interface)
-and -publicaddr
+Forwarding and to supply informations not specified with \-i (local interface)
+and \-publicaddr
 .TP
 \fB\-userdb \fIfile\fR
 Load group associations from file
@@ -1119,7 +1119,7 @@ way you can spread a group's definition over several lines:
 
 GROUP_NAME: +perm1 +perm2
 .br
-GROUP_NAME: +perm3 +perm4 -perm5
+GROUP_NAME: +perm3 +perm4 \-perm5
 
 Group names cannot have spaces, quotes, or other special characters in
 them.  This would be a sample line defining a "cop" group:
@@ -1134,7 +1134,7 @@ USERADMIN: *COPS +BAN +UNBAN
 Probably you want to define customized permissions for the default
 group "VERIFIED" instead of those automatically asigned by the server:
 
-VERIFIED: -ALL +perm1 +perm2 ...
+VERIFIED: \-ALL +perm1 +perm2 ...
 
 Or you want to disable the /poll command entirely?
 
