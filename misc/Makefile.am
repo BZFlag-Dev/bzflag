@@ -18,6 +18,15 @@ EXTRA_DIST =				\
 	copyplugindocs			\
 	doxyfile			\
 	filter.txt			\
+	fonts/DejaVuSansCondensedBold.ttf	\
+	fonts/DejaVuSansMonoBold.ttf	\
+	fonts/DejaVuSerifBold.ttf	\
+	fonts/README	\
+	fonts/TogaSansBold.ttf	\
+	fonts/TogaSerifBold.ttf	\
+	fonts/ume-pgc5.ttf	\
+	fonts/ume-tgo5.ttf	\
+	fonts/VeraMonoBold.ttf	\
 	groups.conf			\
 	libtool.m4			\
 	man2html.c			\
