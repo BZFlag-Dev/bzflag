@@ -52,7 +52,8 @@ bzfs \- BZFlag game server
 [\fB\-lagwarn \fR\fImilliseconds\fR]
 [\fB\-masterBanURL \fIURL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
-[\fB\-mp \fR{\fIcount\fR|[\fIrogue-count\fR]\fB,\fR[\fIred-count\fR]\fB,\fR[\fIgreen-count\fR]\fB,\fR[\fIblue-count\fR]\fB,\fR[\fIpurple-count\fR]\fB,\fR[\fIobserver-count\fR]}]
+[\fB\-mp
+\fR{\fIcount\fR\~|\~[\fIrogue-count\fR]\fB,\~\fR[\fIred-count\fR]\fB,\~\fR[\fIgreen-count\fR]\fB,\~\fR[\fIblue-count\fR]\fB,\~\fR[\fIpurple-count\fR]\fB,\~\fR[\fIobserver-count\fR]}]
 [\fB\-mps \fR\fImax\-score\fR]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
