@@ -1,20 +1,8 @@
-Please contact one of the BZFlag developers if there are any questions
-or concerns regarding existing fonts, the addition of new fonts, or
-modifications.
+Please contact the BZFlag developers if there are any questions or
+concerns regarding existing fonts, the addition of new fonts, or
+modifications.  All fonts included in BZFlag must be freely modifiable
+and freely redistributable.
 
-Any fonts being added must be freely modifiable and freely
-redistributable to be considered for inclusion.
-
-Information and about the various fonts can be found at:
-
-Deja Vu fonts
-http://dejavu.sourceforge.net/
-
-Toga Sans and Toga Serif
-http://www.binara.com/toga/
-
-Bitstream Vera Mono
-http://ftp.gnome.org/pub/GNOME/sources/ttf-bitstream-vera/
-
-Ume fonts
-http://sourceforge.jp/projects/ume-font/wiki/FrontPage
+http://sourceforge.net/projects/dejavu/files/dejavu/2.25/dejavu-fonts-ttf-2.25.tar.bz2
+is the source for the Deja Vu font files here, which were extracted
+from that upstream file.
