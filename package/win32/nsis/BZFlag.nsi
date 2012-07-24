@@ -3,6 +3,15 @@
 ;Redesigned for BZFlag by blast007
 
 ;--------------------------------
+;Includes
+
+  ; Modern UI
+  !include "MUI.nsh"
+
+  ; Windows Version Detection
+  !include "WinVer.nsh"
+
+;--------------------------------
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.4
@@ -30,23 +39,17 @@
   SetCompressor /SOLID lzma
 
 ;--------------------------------
-;Include Modern UI
-
-  !include "MUI.nsh"
-
-;--------------------------------
 ;Configuration
 
-  ;General
+  ; Installer output file and default installation folder
   Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
   !ifdef BUILD_64
     OutFile "..\..\..\bin_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+	InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !else
     OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+	InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !endif
-
-  ;Default installation folder
-  InstallDir "$PROGRAMFILES\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
 
   ; Make it look pretty in XP
   XPStyle on
@@ -194,7 +197,16 @@ Section "!BZFlag (Required)" BZFlag
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR} (Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Config Folder.lnk" "$LOCALAPPDATA\BZFlag\" "" "$LOCALAPPDATA\BZFlag\" 0
+
+	; Local User Data
+    Var /GLOBAL UserData
+    ${If} ${AtMostWinXP}
+      StrCpy $UserData "%USERPROFILE%\Local Settings\Application Data\BZFlag"
+    ${Else}
+      StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
+    ${EndIf}
+
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\User Data.lnk" "$UserData"
 
     SetOutPath $INSTDIR\doc
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
