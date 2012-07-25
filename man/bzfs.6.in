@@ -522,7 +522,7 @@ If \fImicros\fR is specified, microseconds will be added to the timestamp.
 .TP
 \fB\-UPnP\fR
 If enabled during build, bzfs try to communicate with the Gateway to set Port
-Forwarding and to supply informations not specified with \-i (local interface)
+Forwarding and to supply information not specified with \-i (local interface)
 and \-publicaddr
 .TP
 \fB\-userdb \fIfile\fR
