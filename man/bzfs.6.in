@@ -1099,7 +1099,7 @@ global groups you care to have on your server in addition to default groups
 and exactly which permissions are granted by each.  These files are laid out
 with one line per group, using the following format:
 
-GROUP_NAME: [*Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
+GROUP_NAME: [*Group] [+|\-|!]perm1 [+|\-|!]perm2 ... permN
 
 
 *Group: inhert permissions from existing group "Group"
@@ -1108,7 +1108,7 @@ GROUP_NAME: [*Group] [+|-|!]perm1 [+|-|!]perm2 ... permN
 +perm: add perm to this group
 .br
 
--perm: remove perm from this group
+\-perm: remove perm from this group
 .br
 
 !perm: forbid perm for this group. makes perm inaccessable whether it's granted
