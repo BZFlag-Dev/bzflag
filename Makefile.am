@@ -31,7 +31,6 @@ EXTRA_DIST = \
 	autogen.sh \
 	authors.xml \
 	BUGS \
-	bzflag.info \
 	bzflag.lsm \
 	bzflag.spec \
 	DEVINFO \
@@ -43,7 +42,6 @@ EXTRA_DIST = \
 	README.MacOSX \
 	README.SDL \
 	README.SOLARIS \
-	README.UNIX \
 	README.WINDOWS \
 	README.XMINGW
 
@@ -52,7 +50,6 @@ DISTCLEANFILES = config.cache.*
 MAINTAINERCLEANFILES = \
 	aclocal.m4 \
 	configure \
-	bzflag.info \
 	bzflag.spec \
 	INSTALL \
 	Makefile.in \

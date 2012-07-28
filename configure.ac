@@ -1120,7 +1120,6 @@ AC_CONFIG_FILES([
 	MSVC/Makefile
 	MSVC/build/Makefile
 	Makefile
-	bzflag.info
 	bzflag.lsm
 	bzflag.spec
 	data/Makefile
