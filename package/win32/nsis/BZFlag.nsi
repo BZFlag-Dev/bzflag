@@ -298,15 +298,6 @@ SectionGroup "BZFlag Server" BZFlagServer
   SectionEnd
 SectionGroupEnd
 
-Section "Quick Launch Shortcuts" QuickLaunch
-  ; Install for all users
-  SetShellVarContext all
-  
-  ;shortcut in the "quick launch bar"
-  SetOutPath $INSTDIR
-  CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
-SectionEnd
-
 Section "Desktop Icon" Desktop
   ; Install for all users
   SetShellVarContext all
@@ -326,7 +317,6 @@ SectionEnd
   LangString DESC_BZFlagServer_Application ${LANG_ENGLISH} "This can be used to run private and public servers, but is not required to play the game."
   LangString DESC_BZFlagServer_Plugins ${LANG_ENGLISH} "Plugins can be used to modify the way a bzflag server runs, and add functionality."
   LangString DESC_BZFlagServer_PluginAPI ${LANG_ENGLISH} "The plugin API is used to compile plugins, and is only need for plugin developers."
-  LangString DESC_QuickLaunch ${LANG_ENGLISH} "Adds a shortcut in the Quick Launch toolbar."
   LangString DESC_Desktop ${LANG_ENGLISH} "Adds a shortcut on the desktop."
 
   ;Assign language strings to sections
@@ -337,7 +327,6 @@ SectionEnd
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_Application} $(DESC_BZFlagServer_Application)
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_Plugins} $(DESC_BZFlagServer_Plugins)
     !insertmacro MUI_DESCRIPTION_TEXT ${BZFlagServer_PluginAPI} $(DESC_BZFlagServer_PluginAPI)
-    !insertmacro MUI_DESCRIPTION_TEXT ${QuickLaunch} $(DESC_QuickLaunch)
     !insertmacro MUI_DESCRIPTION_TEXT ${Desktop} $(DESC_Desktop)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -391,9 +380,8 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
   
-  ; Remove desktop/quicklauch shortcuts for all users
+  ; Remove desktop shortcut for all users
   SetShellVarContext all
-  Delete "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
   Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
   
   ;remove registry keys
