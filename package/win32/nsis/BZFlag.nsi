@@ -15,7 +15,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.4
-  !define VER_MINOR .1
+  !define VER_MINOR .2
   
   !ifdef BUILD_64
     !define PLATFORM x64

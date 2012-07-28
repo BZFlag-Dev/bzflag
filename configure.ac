@@ -44,7 +44,7 @@ dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
 AC_PREREQ(2.58)
 
-AC_INIT(BZFlag, 2.4.1, [http://BZFlag.org/], bzflag)
+AC_INIT(BZFlag, 2.4.2, [http://BZFlag.org/], bzflag)
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])

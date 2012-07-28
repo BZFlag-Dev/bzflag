@@ -269,7 +269,7 @@ void updateConfigFile(void)
 		  && (KEYMGR.get(key, true) == ""))
 		  KEYMGR.bind(key, true, "addhunt");
 
-  case 3: // Upgrade from 2.0.x to 2.4.x
+  case 3: // Upgrade from 2.0.x to 2.4.0
 
     // Convert from email to motto
     
@@ -300,7 +300,7 @@ void updateConfigFile(void)
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
   
-  case 4: // Upgrade 2.4.0 to 2.4.1
+  case 4: // Upgrade 2.4.0 to 2.4.2
     BZDB.unset("displayZoom");		// removed in r22109
     BZDB.unset("radarShotLineType");	// existed only in r22117
     break;

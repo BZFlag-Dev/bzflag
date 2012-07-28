@@ -27,7 +27,7 @@ bounces but then nothing happens), you can try several things:
      at higher resolutions.
 
   3) Run the binary directly by using Terminal:
-     /Applications/BZFlag-2.4.0.app/Contents/MacOS/BZFlag
+     /Applications/BZFlag-2.4.2.app/Contents/MacOS/BZFlag
 
 If you still have issues running the game, please submit a bug report
 to the project site bug tracker:

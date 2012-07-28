@@ -66,12 +66,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Tim Riker"
             VALUE "FileDescription", "The BZFlag Client"
-            VALUE "FileVersion", "2.4.1.0"
+            VALUE "FileVersion", "2.4.2.0"
             VALUE "InternalName", "bzflag.rc"
             VALUE "LegalCopyright", "Copyright Tim Riker (C) 2012"
             VALUE "OriginalFilename", "bzflag.rc"
             VALUE "ProductName", "BZFlag"
-            VALUE "ProductVersion", "2.4.1.0"
+            VALUE "ProductVersion", "2.4.2.0"
         END
     END
     BLOCK "VarFileInfo"
