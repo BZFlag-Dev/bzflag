@@ -486,8 +486,8 @@ cannot proceed.  A checklist of items to be completed follows:
   other platform-specific README.* files should also be verified.
 
 - When BZ_PROTO_VERSION has already changed since the last release,
-  increment it one more time in buildDate.cxx and bzfquery.* to
-  distinguish the new release from development versions.
+  increment it one more time in buildDate.cxx, bzfquery.*, and
+  bzls.lua to distinguish the new release from development versions.
 
 - BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
 
