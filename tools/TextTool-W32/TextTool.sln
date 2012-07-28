@@ -1,11 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextTool", "TextTool.vcproj", "{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CC93828F-7156-4021-9C77-9951FC187E83} = {CC93828F-7156-4021-9C77-9951FC187E83}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TextTool", "TextTool.vcxproj", "{171007A4-16EF-4D80-ABD5-9CF99F3B0EA0}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\MSVC\build\zlib.vcproj", "{CC93828F-7156-4021-9C77-9951FC187E83}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "..\..\MSVC\build\zlib.vcxproj", "{CC93828F-7156-4021-9C77-9951FC187E83}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
