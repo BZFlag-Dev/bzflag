@@ -3,6 +3,7 @@
 
 BZFlag 2.4.1
 ------------
+
 * Added UPnP option to configure server networking - Alfredo Tupone
 * Added an option to have both leading and lagging radar shot lines
     - David Anderson
@@ -10,9 +11,12 @@ BZFlag 2.4.1
     - Scott Wichser, Jeff Makey
 * Add thiefControl plugin which prevents stealing flags from teammates
     - Bernt Hansen, Scott Wichser
+* Preserve shot-limited flag behavior on final shot - David Anderson
 * Remove the -zoom command line option from bzflag - Jeff Makey
+* Provide observer team chat in OpenFFA mode - David Anderson
 * Add fairCTF plugin - Chris Wible
 * Allow plugins to specify a color when firing world weapons - Chris Wible
+* Add option for chat on the left and radar on the right - Kyle Mills
 * Add autoFlagReset plugin - Chris Wible
 * Allow joystick hats as input on Evdev and SDL platforms - Kyle Mills
 * Added Fastmap Plugin - Jeffery Myers
