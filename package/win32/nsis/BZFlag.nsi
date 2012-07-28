@@ -6,7 +6,7 @@
 ;Includes
 
   ; Modern UI
-  !include "MUI.nsh"
+  !include "MUI2.nsh"
 
   ; Windows Version Detection
   !include "WinVer.nsh"
@@ -19,12 +19,12 @@
   
   !ifdef BUILD_64
     !define PLATFORM x64
-	!define RUNTIME_PLATFORM x64
-	!define BITNESS 64Bit
+    !define RUNTIME_PLATFORM x64
+    !define BITNESS 64Bit
   !else
     !define PLATFORM Win32
-	!define RUNTIME_PLATFORM x86
-	!define BITNESS 32Bit
+    !define RUNTIME_PLATFORM x86
+    !define BITNESS 32Bit
   !endif
   
 ;--------------------------------
@@ -45,14 +45,17 @@
   Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
   !ifdef BUILD_64
     OutFile "..\..\..\bin_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-	InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !else
     OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-	InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !endif
 
   ; Make it look pretty in XP
   XPStyle on
+  
+  ; The installer needs administrative rights
+  RequestExecutionLevel admin
 
 ;--------------------------------
 ;Variables
@@ -84,7 +87,7 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR} ${__DATE__} ${BITNESS}.\r\n\r\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.\r\n\r\nClick Next to continue."
+  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR} ${__DATE__} ${BITNESS}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -206,7 +209,7 @@ Section "!BZFlag (Required)" BZFlag
       StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
     ${EndIf}
 
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\User Data.lnk" "$UserData"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Browse User Data.lnk" "$UserData"
 
     SetOutPath $INSTDIR\doc
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -267,8 +270,8 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw -publictitle "Lazy Users HIX FFA Server"' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw -publictitle "Lazy Users HIX CTF Server"' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\misc\bzfs_conf.html" "" "" 0
 
       SetOutPath $INSTDIR\doc
@@ -296,12 +299,18 @@ SectionGroup "BZFlag Server" BZFlagServer
 SectionGroupEnd
 
 Section "Quick Launch Shortcuts" QuickLaunch
+  ; Install for all users
+  SetShellVarContext all
+  
   ;shortcut in the "quick launch bar"
   SetOutPath $INSTDIR
   CreateShortCut "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
 SectionEnd
 
 Section "Desktop Icon" Desktop
+  ; Install for all users
+  SetShellVarContext all
+  
   ;shortcut on the "desktop"
   SetOutPath $INSTDIR
   CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
@@ -336,11 +345,6 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
-  ;remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
-  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
-  DeleteRegKey HKCU "Software\BZFlag"
-
   ; remove files
   Delete $INSTDIR\*.*
   Delete $INSTDIR\doc\*.*
@@ -374,9 +378,6 @@ Section "Uninstall"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Server"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Doc"
   RMDir "$SMPROGRAMS\$MUI_TEMP"
-
-  Delete "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
-  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
   
   ;Delete empty start menu parent diretories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
@@ -389,5 +390,15 @@ Section "Uninstall"
   
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
+  
+  ; Remove desktop/quicklauch shortcuts for all users
+  SetShellVarContext all
+  Delete "$QUICKLAUNCH\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
+  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
+  
+  ;remove registry keys
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
+  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
+  DeleteRegKey HKCU "Software\BZFlag"
 
 SectionEnd
