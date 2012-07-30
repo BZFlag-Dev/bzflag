@@ -231,8 +231,17 @@ typedef unsigned char	uint8_t;
 
 /* missing constants */
 
+#ifndef BZ_MAXFLOAT
+// OSX is odd, it can't use MAXFLOAT because it thinks it's c99, so just use our own #define that we can set for each OS
+#ifndef __APPLE__
 #ifndef MAXFLOAT
-#  define	MAXFLOAT	3.402823466e+38f
+#  define	BZ_MAXFLOAT	3.402823466e+38f
+#else
+#define BZ_MAXFLOAT MAXFLOAT
+#endif
+#else
+#define BZ_MAXFLOAT HUGE_VALF
+#endif
 #endif
 
 #ifndef M_PI

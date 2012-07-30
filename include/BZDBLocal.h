@@ -124,7 +124,7 @@ class BZDBint : public BZDBLocal {
 class BZDBfloat : public BZDBLocal {
   public:
     BZDBfloat(const std::string& name, float defVal,
-	      float min = -MAXFLOAT, float max = +MAXFLOAT,
+	      float min = -BZ_MAXFLOAT, float max = +BZ_MAXFLOAT,
 	      bool neverZero = false, bool saveOnExit = true);
     ~BZDBfloat();
 

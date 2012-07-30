@@ -25,6 +25,9 @@
 // missing constants
 #ifndef MAXFLOAT
 #define	MAXFLOAT	FLT_MAX
+#ifndef BZ_MAXFLOAT
+#define BZ_MAXFLOAT FLT_MAX
+#endif
 #endif
 
 #if (_MSC_VER > 1200) // VC7 or higher

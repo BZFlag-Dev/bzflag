@@ -281,7 +281,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
   visualExtents = tmpExts;
 
   // find the longest axis
-  float width = -MAXFLOAT;
+  float width = -BZ_MAXFLOAT;
   for (i = 0; i < 3; i++) {
     float axisWidth = tmpExts.getWidth(i);
     if (axisWidth > width) {

@@ -198,7 +198,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
   // for away lights count the most
   // (shouldn't happen for dynamic lights?)
   if (pos[3] == 0.0f) {
-    importance = MAXFLOAT;
+    importance = BZ_MAXFLOAT;
     return;
   }
 
@@ -247,7 +247,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
   // compute the 'importance' factor
   if (dist == 0.0f) {
-    importance = 0.5f * MAXFLOAT;
+    importance = 0.5f * BZ_MAXFLOAT;
   } else {
     importance = 1.0f / dist;
   }

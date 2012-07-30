@@ -697,8 +697,8 @@ static inline void projectPolygon(const float* dir,
 				  int count, const float (*points)[3],
 				  float* minDist, float* maxDist)
 {
-  float mind = MAXFLOAT;
-  float maxd = -MAXFLOAT;
+  float mind = BZ_MAXFLOAT;
+  float maxd = -BZ_MAXFLOAT;
 
   for (int i = 0; i < count; i++) {
     const float* p = points[i];
@@ -982,7 +982,7 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
   float hitTime[3];
   for (a = 0; a < 3; a++) {
     if (v[a] == 0.0f) {
-      hitTime[a] = MAXFLOAT;
+      hitTime[a] = BZ_MAXFLOAT;
     }
     else if (v[a] < 0.0f) {
       hitTime[a] = (extents.mins[a] - o[a]) / v[a];

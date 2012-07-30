@@ -362,7 +362,7 @@ void sendFlagUpdate(FlagInfo &flag)
 
 static float nextGameTime()
 {
-  float nextTime = +MAXFLOAT;
+  float nextTime = +BZ_MAXFLOAT;
   const TimeKeeper nowTime = TimeKeeper::getCurrent();
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
@@ -2198,7 +2198,7 @@ void resetFlag(FlagInfo &flag)
     if (waterLevel > minZ) {
       minZ = waterLevel;
     }
-    float maxZ = MAXFLOAT;
+    float maxZ = BZ_MAXFLOAT;
     if (!clOptions->flagsOnBuildings) {
       maxZ = 0.0f;
     }
@@ -3151,7 +3151,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   if (waterLevel > minZ) {
     minZ = waterLevel;
   }
-  const float maxZ = MAXFLOAT;
+  const float maxZ = BZ_MAXFLOAT;
 
   float landing[3] = {pos[0], pos[1], pos[2]};
   bool safelyDropped =
@@ -3763,7 +3763,7 @@ static void adjustTolerances()
 
   if (disableSpeedChecks) {
     doSpeedChecks = false;
-    speedTolerance = MAXFLOAT;
+    speedTolerance = BZ_MAXFLOAT;
     logDebugMessage(1,"Warning: disabling speed checking due to physics drivers\n");
   }
   if (disableHeightChecks) {

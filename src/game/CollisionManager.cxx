@@ -536,7 +536,7 @@ void CollisionManager::setExtents (ObsList *list)
   }
 
   // find the longest axis
-  float width = -MAXFLOAT;
+  float width = -BZ_MAXFLOAT;
   for (i = 0; i < 3; i++) {
     const float axisWidth = worldExtents.getWidth(i);
     if (axisWidth > width) {

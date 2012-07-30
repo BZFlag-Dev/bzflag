@@ -278,7 +278,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
   const float lpp = renderer.getLengthPerPixel();
   float ppl;
   if (lpp <= 0.0f) {
-    ppl = +MAXFLOAT;
+    ppl = +BZ_MAXFLOAT;
   } else {
     ppl = 1.0f / lpp;
   }

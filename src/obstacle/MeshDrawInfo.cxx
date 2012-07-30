@@ -175,7 +175,7 @@ void MeshDrawInfo::init()
   drawMgr = NULL;
 
   extents.reset();
-  sphere[0] = sphere[1] = sphere[2] = sphere[3] = +MAXFLOAT;
+  sphere[0] = sphere[1] = sphere[2] = sphere[3] = +BZ_MAXFLOAT;
 
   cornerCount = 0;
   corners = NULL;
@@ -307,10 +307,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
   }
 
   Extents tmpExts;
-  const bool calcCenter = (sphere[0] == +MAXFLOAT) &&
-			  (sphere[1] == +MAXFLOAT) &&
-			  (sphere[2] == +MAXFLOAT);
-  const bool calcRadius = (sphere[3] == +MAXFLOAT);
+  const bool calcCenter = (sphere[0] == +BZ_MAXFLOAT) &&
+			  (sphere[1] == +BZ_MAXFLOAT) &&
+			  (sphere[2] == +BZ_MAXFLOAT);
+  const bool calcRadius = (sphere[3] == +BZ_MAXFLOAT);
   const bool calcExtents = (extents.mins[0] == tmpExts.mins[0]) &&
 			   (extents.mins[1] == tmpExts.mins[1]) &&
 			   (extents.mins[2] == tmpExts.mins[2]) &&
@@ -327,9 +327,9 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
       }
     } else {
       // factor in the rotation animation
-      float minZ = +MAXFLOAT;
-      float maxZ = -MAXFLOAT;
-      float maxDistSqr = -MAXFLOAT;
+      float minZ = +BZ_MAXFLOAT;
+      float maxZ = -BZ_MAXFLOAT;
+      float maxDistSqr = -BZ_MAXFLOAT;
       for (int v = 0; v < vCount; v++) {
 	const afvec3& p = verts[v];
 	if (p[2] < minZ) {
@@ -375,10 +375,10 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
     DrawLod& drawLod = lods[lod];
     for (int set = 0; set < drawLod.count; set++) {
       DrawSet& drawSet = drawLod.sets[set];
-      const bool calcSetCenter = (drawSet.sphere[0] == +MAXFLOAT) &&
-				 (drawSet.sphere[1] == +MAXFLOAT) &&
-				 (drawSet.sphere[2] == +MAXFLOAT);
-      const bool calcSetRadius = (drawSet.sphere[3] == +MAXFLOAT);
+      const bool calcSetCenter = (drawSet.sphere[0] == +BZ_MAXFLOAT) &&
+				 (drawSet.sphere[1] == +BZ_MAXFLOAT) &&
+				 (drawSet.sphere[2] == +BZ_MAXFLOAT);
+      const bool calcSetRadius = (drawSet.sphere[3] == +BZ_MAXFLOAT);
       if (calcSetCenter || calcSetRadius) {
 	Extents exts;
 	for (int cmd = 0; cmd < drawSet.count; cmd++) {
@@ -1578,7 +1578,7 @@ DrawSet::DrawSet()
   cmds = NULL;
   material = NULL;
   wantList = false;
-  sphere[0] = sphere[1] = sphere[2] = sphere[3] = +MAXFLOAT;
+  sphere[0] = sphere[1] = sphere[2] = sphere[3] = +BZ_MAXFLOAT;
   return;
 }
 

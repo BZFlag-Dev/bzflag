@@ -106,7 +106,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
       extents.expandToPoint(c[v]);
     }
     // lengthPerPixel adjustment
-    lengthAdj = +MAXFLOAT;
+    lengthAdj = +BZ_MAXFLOAT;
     for (int a = 0; a < 3; a++) {
       const float oldWidth = diExts.maxs[a] - diExts.mins[a];
       const afvec3& s = c[0]; // all mins

@@ -238,7 +238,7 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
   Ray ray(org, dir);
 
   // list of  possible landings
-  const ObsList* olist = COLLISIONMGR.rayTest(&ray, MAXFLOAT);
+  const ObsList* olist = COLLISIONMGR.rayTest(&ray, BZ_MAXFLOAT);
   rayList.copy(olist); // copy the list, so that COLLISIONMGR can be re-used
 
   const float startZ = pos[2];

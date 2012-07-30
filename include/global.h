@@ -71,7 +71,7 @@ enum TeamColor {
 
 // epsilon and very far for ray intersections
 const float		Epsilon =	ZERO_TOLERANCE;	// arbitrary
-const float		Infinity =	MAXFLOAT;	// arbitrary
+const float		Infinity =	BZ_MAXFLOAT;	// arbitrary
 
 #define DEFAULT_WORLD	800
 

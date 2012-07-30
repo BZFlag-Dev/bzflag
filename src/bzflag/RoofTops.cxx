@@ -54,9 +54,9 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
   Ray ray(org, dir);
 
   // get the obstacle list
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
+  const ObsList* olist = COLLISIONMGR.rayTest (&ray, BZ_MAXFLOAT);
 
-  float minTime = MAXFLOAT;
+  float minTime = BZ_MAXFLOAT;
 
   for (int i = 0; i < olist->count; i++) {
     const Obstacle* obs = olist->list[i];

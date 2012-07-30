@@ -358,7 +358,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
       vec3cross(cross, ea, eb);
       areas[i] = sqrtf(vec3dot(cross, cross));
     }
-    float smallestArea = MAXFLOAT;
+    float smallestArea = BZ_MAXFLOAT;
     float* twinAreas = new float[vertexCount];
     for (i = 0; i < vertexCount; i++) {
       int next = (i + 1) % vertexCount;
@@ -472,8 +472,8 @@ bool MeshFace::inBox(const float* p, float _angle,
 
   // X axis test
   float min, max;
-  min = +MAXFLOAT;
-  max = -MAXFLOAT;
+  min = +BZ_MAXFLOAT;
+  max = -BZ_MAXFLOAT;
   for (i = 0; i < vertexCount; i++) {
     if (v[i][0] < min) {
       min = v[i][0];
@@ -488,8 +488,8 @@ bool MeshFace::inBox(const float* p, float _angle,
   }
 
   // Y axis test
-  min = +MAXFLOAT;
-  max = -MAXFLOAT;
+  min = +BZ_MAXFLOAT;
+  max = -BZ_MAXFLOAT;
   for (i = 0; i < vertexCount; i++) {
     if (v[i][1] < min) {
       min = v[i][1];

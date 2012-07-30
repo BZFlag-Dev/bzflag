@@ -5235,7 +5235,7 @@ static bool trackPlayerShot(Player* target,
     const int maxShots = target->getMaxShots();
     const ShotPath* sp = NULL;
     // look for the oldest active shot
-    float remaining = +MAXFLOAT;
+    float remaining = +BZ_MAXFLOAT;
     for (int s = 0; s < maxShots; s++) {
       const ShotPath* spTmp = target->getShot(s);
       if (spTmp != NULL) {

@@ -118,7 +118,7 @@ bool TargetingUtils::isLocationObscured( const float *src, const float *target )
 
 float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
 {
-  float t = MAXFLOAT; //Some constant?
+  float t = BZ_MAXFLOAT; //Some constant?
 
   float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
   *((float *) &src[2]) += 0.1f; //Don't hit building because your sitting on one
@@ -130,7 +130,7 @@ float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
 
 bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *target, float *collisionPt )
 {
-  float t = MAXFLOAT;
+  float t = BZ_MAXFLOAT;
   float dir[3];
   get3DUnitVector(src, target, dir);
 
