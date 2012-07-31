@@ -1,0 +1,849 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF7AEB4615C7ABEE007E5981 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB4515C7ABEE007E5981 /* Cocoa.framework */; };
+		DF7AEB5015C7ABEF007E5981 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF7AEB4E15C7ABEF007E5981 /* InfoPlist.strings */; };
+		DF7AEB5215C7ABEF007E5981 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB5115C7ABEF007E5981 /* main.m */; };
+		DF7AEB5615C7ABEF007E5981 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = DF7AEB5415C7ABEF007E5981 /* Credits.rtf */; };
+		DF7AEB6315C7AC29007E5981 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB6215C7AC29007E5981 /* SDL.framework */; };
+		DF7AEB6515C7AC35007E5981 /* libCommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB6415C7AC35007E5981 /* libCommon.a */; };
+		DF7AEB6715C7AC39007E5981 /* libGame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB6615C7AC39007E5981 /* libGame.a */; };
+		DF7AEB6915C7AC40007E5981 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB6815C7AC40007E5981 /* libcurl.dylib */; };
+		DF7AEB6B15C7AC48007E5981 /* libcrypto.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DF7AEB6A15C7AC48007E5981 /* libcrypto.dylib */; };
+		DF7AEC1915C7AC7A007E5981 /* ActionBinding.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC215C7AC7A007E5981 /* ActionBinding.cxx */; };
+		DF7AEC1A15C7AC7A007E5981 /* AudioMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC315C7AC7A007E5981 /* AudioMenu.cxx */; };
+		DF7AEC1B15C7AC7A007E5981 /* AutoPilot.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC415C7AC7A007E5981 /* AutoPilot.cxx */; };
+		DF7AEC1C15C7AC7A007E5981 /* BackgroundRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC515C7AC7A007E5981 /* BackgroundRenderer.cxx */; };
+		DF7AEC1D15C7AC7A007E5981 /* BaseLocalPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC615C7AC7A007E5981 /* BaseLocalPlayer.cxx */; };
+		DF7AEC1E15C7AC7A007E5981 /* bzflag.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC715C7AC7A007E5981 /* bzflag.cxx */; };
+		DF7AEC1F15C7AC7A007E5981 /* CacheMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC815C7AC7A007E5981 /* CacheMenu.cxx */; };
+		DF7AEC2015C7AC7A007E5981 /* callbacks.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBC915C7AC7A007E5981 /* callbacks.cxx */; };
+		DF7AEC2115C7AC7A007E5981 /* clientCommands.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCA15C7AC7A007E5981 /* clientCommands.cxx */; };
+		DF7AEC2215C7AC7A007E5981 /* clientConfig.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCB15C7AC7A007E5981 /* clientConfig.cxx */; };
+		DF7AEC2315C7AC7A007E5981 /* CommandsImplementation.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCC15C7AC7A007E5981 /* CommandsImplementation.cxx */; };
+		DF7AEC2415C7AC7A007E5981 /* ComposeDefaultKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCD15C7AC7A007E5981 /* ComposeDefaultKey.cxx */; };
+		DF7AEC2515C7AC7A007E5981 /* ControlPanel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCE15C7AC7A007E5981 /* ControlPanel.cxx */; };
+		DF7AEC2615C7AC7A007E5981 /* daylight.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBCF15C7AC7A007E5981 /* daylight.cxx */; };
+		DF7AEC2715C7AC7A007E5981 /* defaultBZDB.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD015C7AC7A007E5981 /* defaultBZDB.cxx */; };
+		DF7AEC2815C7AC7A007E5981 /* DisplayMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD115C7AC7A007E5981 /* DisplayMenu.cxx */; };
+		DF7AEC2915C7AC7A007E5981 /* Downloads.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD215C7AC7A007E5981 /* Downloads.cxx */; };
+		DF7AEC2A15C7AC7A007E5981 /* EffectsMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD315C7AC7A007E5981 /* EffectsMenu.cxx */; };
+		DF7AEC2B15C7AC7A007E5981 /* effectsRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD415C7AC7A007E5981 /* effectsRenderer.cxx */; };
+		DF7AEC2C15C7AC7A007E5981 /* EntryZone.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD515C7AC7A007E5981 /* EntryZone.cxx */; };
+		DF7AEC2D15C7AC7A007E5981 /* FlashClock.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD615C7AC7A007E5981 /* FlashClock.cxx */; };
+		DF7AEC2E15C7AC7A007E5981 /* ForceFeedback.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD715C7AC7A007E5981 /* ForceFeedback.cxx */; };
+		DF7AEC2F15C7AC7A007E5981 /* FormatMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD815C7AC7A007E5981 /* FormatMenu.cxx */; };
+		DF7AEC3015C7AC7A007E5981 /* GuidedMissleStrategy.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBD915C7AC7A007E5981 /* GuidedMissleStrategy.cxx */; };
+		DF7AEC3115C7AC7A007E5981 /* GUIOptionsMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDA15C7AC7A007E5981 /* GUIOptionsMenu.cxx */; };
+		DF7AEC3215C7AC7A007E5981 /* HelpMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDB15C7AC7A007E5981 /* HelpMenu.cxx */; };
+		DF7AEC3315C7AC7A007E5981 /* HUDDialog.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDC15C7AC7A007E5981 /* HUDDialog.cxx */; };
+		DF7AEC3415C7AC7A007E5981 /* HUDDialogStack.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDD15C7AC7A007E5981 /* HUDDialogStack.cxx */; };
+		DF7AEC3515C7AC7A007E5981 /* HUDRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDE15C7AC7A007E5981 /* HUDRenderer.cxx */; };
+		DF7AEC3615C7AC7A007E5981 /* HUDui.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBDF15C7AC7A007E5981 /* HUDui.cxx */; };
+		DF7AEC3715C7AC7A007E5981 /* HUDuiControl.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE015C7AC7A007E5981 /* HUDuiControl.cxx */; };
+		DF7AEC3815C7AC7A007E5981 /* HUDuiDefaultKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE115C7AC7A007E5981 /* HUDuiDefaultKey.cxx */; };
+		DF7AEC3915C7AC7A007E5981 /* HUDuiLabel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE215C7AC7A007E5981 /* HUDuiLabel.cxx */; };
+		DF7AEC3A15C7AC7A007E5981 /* HUDuiList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE315C7AC7A007E5981 /* HUDuiList.cxx */; };
+		DF7AEC3B15C7AC7A007E5981 /* HUDuiTextureLabel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE415C7AC7A007E5981 /* HUDuiTextureLabel.cxx */; };
+		DF7AEC3C15C7AC7A007E5981 /* HUDuiTypeIn.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE515C7AC7A007E5981 /* HUDuiTypeIn.cxx */; };
+		DF7AEC3D15C7AC7A007E5981 /* InputMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE615C7AC7A007E5981 /* InputMenu.cxx */; };
+		DF7AEC3E15C7AC7A007E5981 /* JoinMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE715C7AC7A007E5981 /* JoinMenu.cxx */; };
+		DF7AEC3F15C7AC7A007E5981 /* KeyboardMapMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE815C7AC7A007E5981 /* KeyboardMapMenu.cxx */; };
+		DF7AEC4015C7AC7A007E5981 /* LocalCommand.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBE915C7AC7A007E5981 /* LocalCommand.cxx */; };
+		DF7AEC4115C7AC7A007E5981 /* LocalPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBEA15C7AC7A007E5981 /* LocalPlayer.cxx */; };
+		DF7AEC4215C7AC7A007E5981 /* MainMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBEB15C7AC7A007E5981 /* MainMenu.cxx */; };
+		DF7AEC4315C7AC7A007E5981 /* MainWindow.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBEC15C7AC7A007E5981 /* MainWindow.cxx */; };
+		DF7AEC4415C7AC7A007E5981 /* MenuDefaultKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBED15C7AC7A007E5981 /* MenuDefaultKey.cxx */; };
+		DF7AEC4515C7AC7A007E5981 /* motd.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBEE15C7AC7A007E5981 /* motd.cxx */; };
+		DF7AEC4615C7AC7A007E5981 /* NewVersionMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBEF15C7AC7A007E5981 /* NewVersionMenu.cxx */; };
+		DF7AEC4715C7AC7A007E5981 /* OptionsMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF015C7AC7A007E5981 /* OptionsMenu.cxx */; };
+		DF7AEC4815C7AC7A007E5981 /* Plan.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF115C7AC7A007E5981 /* Plan.cxx */; };
+		DF7AEC4915C7AC7A007E5981 /* Player.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF215C7AC7A007E5981 /* Player.cxx */; };
+		DF7AEC4A15C7AC7A007E5981 /* playing.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF315C7AC7A007E5981 /* playing.cxx */; };
+		DF7AEC4B15C7AC7A007E5981 /* QuickKeysMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF415C7AC7A007E5981 /* QuickKeysMenu.cxx */; };
+		DF7AEC4C15C7AC7A007E5981 /* QuitMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF515C7AC7A007E5981 /* QuitMenu.cxx */; };
+		DF7AEC4D15C7AC7A007E5981 /* RadarRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF615C7AC7A007E5981 /* RadarRenderer.cxx */; };
+		DF7AEC4E15C7AC7A007E5981 /* Region.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF715C7AC7A007E5981 /* Region.cxx */; };
+		DF7AEC4F15C7AC7A007E5981 /* RegionPriorityQueue.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF815C7AC7A007E5981 /* RegionPriorityQueue.cxx */; };
+		DF7AEC5015C7AC7A007E5981 /* RemotePlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBF915C7AC7A007E5981 /* RemotePlayer.cxx */; };
+		DF7AEC5115C7AC7A007E5981 /* Roaming.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFA15C7AC7A007E5981 /* Roaming.cxx */; };
+		DF7AEC5215C7AC7A007E5981 /* RobotPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFB15C7AC7A007E5981 /* RobotPlayer.cxx */; };
+		DF7AEC5315C7AC7A007E5981 /* RoofTops.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFC15C7AC7A007E5981 /* RoofTops.cxx */; };
+		DF7AEC5415C7AC7A007E5981 /* Roster.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFD15C7AC7A007E5981 /* Roster.cxx */; };
+		DF7AEC5515C7AC7A007E5981 /* SaveWorldMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFE15C7AC7A007E5981 /* SaveWorldMenu.cxx */; };
+		DF7AEC5615C7AC7A007E5981 /* SceneBuilder.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEBFF15C7AC7A007E5981 /* SceneBuilder.cxx */; };
+		DF7AEC5715C7AC7A007E5981 /* SceneRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0015C7AC7A007E5981 /* SceneRenderer.cxx */; };
+		DF7AEC5815C7AC7A007E5981 /* ScoreboardRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0115C7AC7A007E5981 /* ScoreboardRenderer.cxx */; };
+		DF7AEC5915C7AC7A007E5981 /* SegmentedShotStrategy.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0215C7AC7A007E5981 /* SegmentedShotStrategy.cxx */; };
+		DF7AEC5A15C7AC7A007E5981 /* ServerCommandKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0315C7AC7A007E5981 /* ServerCommandKey.cxx */; };
+		DF7AEC5B15C7AC7A007E5981 /* ServerLink.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0415C7AC7A007E5981 /* ServerLink.cxx */; };
+		DF7AEC5C15C7AC7A007E5981 /* ServerListFilter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0515C7AC7A007E5981 /* ServerListFilter.cxx */; };
+		DF7AEC5D15C7AC7A007E5981 /* ServerMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0615C7AC7A007E5981 /* ServerMenu.cxx */; };
+		DF7AEC5E15C7AC7A007E5981 /* ServerStartMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0715C7AC7A007E5981 /* ServerStartMenu.cxx */; };
+		DF7AEC5F15C7AC7A007E5981 /* ShockWaveStrategy.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0815C7AC7A007E5981 /* ShockWaveStrategy.cxx */; };
+		DF7AEC6015C7AC7A007E5981 /* ShotPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0915C7AC7A007E5981 /* ShotPath.cxx */; };
+		DF7AEC6115C7AC7A007E5981 /* ShotPathSegment.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0A15C7AC7A007E5981 /* ShotPathSegment.cxx */; };
+		DF7AEC6215C7AC7A007E5981 /* ShotStatistics.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0B15C7AC7A007E5981 /* ShotStatistics.cxx */; };
+		DF7AEC6315C7AC7A007E5981 /* ShotStats.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0C15C7AC7A007E5981 /* ShotStats.cxx */; };
+		DF7AEC6415C7AC7A007E5981 /* ShotStatsDefaultKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0D15C7AC7A007E5981 /* ShotStatsDefaultKey.cxx */; };
+		DF7AEC6515C7AC7A007E5981 /* ShotStrategy.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0E15C7AC7A007E5981 /* ShotStrategy.cxx */; };
+		DF7AEC6615C7AC7A007E5981 /* SilenceDefaultKey.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC0F15C7AC7A007E5981 /* SilenceDefaultKey.cxx */; };
+		DF7AEC6715C7AC7A007E5981 /* sound.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1015C7AC7A007E5981 /* sound.cxx */; };
+		DF7AEC6815C7AC7A007E5981 /* stars.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1115C7AC7A007E5981 /* stars.cxx */; };
+		DF7AEC6915C7AC7A007E5981 /* TargetingUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1215C7AC7A007E5981 /* TargetingUtils.cxx */; };
+		DF7AEC6A15C7AC7A007E5981 /* TrackMarks.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1315C7AC7A007E5981 /* TrackMarks.cxx */; };
+		DF7AEC6B15C7AC7A007E5981 /* Weapon.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1415C7AC7A007E5981 /* Weapon.cxx */; };
+		DF7AEC6C15C7AC7A007E5981 /* WeatherRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1515C7AC7A007E5981 /* WeatherRenderer.cxx */; };
+		DF7AEC6D15C7AC7A007E5981 /* World.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1615C7AC7A007E5981 /* World.cxx */; };
+		DF7AEC6E15C7AC7A007E5981 /* WorldBuilder.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1715C7AC7A007E5981 /* WorldBuilder.cxx */; };
+		DF7AEC6F15C7AC7A007E5981 /* WorldPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC1815C7AC7A007E5981 /* WorldPlayer.cxx */; };
+		DF7AEC8115C7ACC6007E5981 /* MacBZFlag.icns in Resources */ = {isa = PBXBuildFile; fileRef = DF7AEC7015C7ACC6007E5981 /* MacBZFlag.icns */; };
+		DF7AEC8815C7ACC6007E5981 /* mkplist.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC7E15C7ACC6007E5981 /* mkplist.cxx */; };
+		DF7AEC8915C7ACC6007E5981 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEC7F15C7ACC6007E5981 /* SDLMain.m */; };
+		DF7AEC8A15C7ACC6007E5981 /* BZFlag-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = DF7AEC8015C7ACC6007E5981 /* BZFlag-Info.plist */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		DF7AEB4115C7ABEE007E5981 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF7AEB4515C7ABEE007E5981 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		DF7AEB4815C7ABEE007E5981 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		DF7AEB4915C7ABEE007E5981 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		DF7AEB4A15C7ABEE007E5981 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		DF7AEB4F15C7ABEF007E5981 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		DF7AEB5115C7ABEF007E5981 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		DF7AEB5515C7ABEF007E5981 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = en; path = en.lproj/Credits.rtf; sourceTree = "<group>"; };
+		DF7AEB6215C7AC29007E5981 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		DF7AEB6415C7AC35007E5981 /* libCommon.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libCommon.a; path = ../Common/build/Release/libCommon.a; sourceTree = "<group>"; };
+		DF7AEB6615C7AC39007E5981 /* libGame.a */ = {isa = PBXFileReference; lastKnownFileType = file; name = libGame.a; path = ../Game/build/Release/libGame.a; sourceTree = "<group>"; };
+		DF7AEB6815C7AC40007E5981 /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
+		DF7AEB6A15C7AC48007E5981 /* libcrypto.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcrypto.dylib; path = usr/lib/libcrypto.dylib; sourceTree = SDKROOT; };
+		DF7AEB6D15C7AC7A007E5981 /* ActionBinding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ActionBinding.h; path = ../../../src/bzflag/ActionBinding.h; sourceTree = "<group>"; };
+		DF7AEB6E15C7AC7A007E5981 /* AudioMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AudioMenu.h; path = ../../../src/bzflag/AudioMenu.h; sourceTree = "<group>"; };
+		DF7AEB6F15C7AC7A007E5981 /* AutoPilot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoPilot.h; path = ../../../src/bzflag/AutoPilot.h; sourceTree = "<group>"; };
+		DF7AEB7015C7AC7A007E5981 /* BackgroundRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BackgroundRenderer.h; path = ../../../src/bzflag/BackgroundRenderer.h; sourceTree = "<group>"; };
+		DF7AEB7115C7AC7A007E5981 /* BaseLocalPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseLocalPlayer.h; path = ../../../src/bzflag/BaseLocalPlayer.h; sourceTree = "<group>"; };
+		DF7AEB7215C7AC7A007E5981 /* bzflag.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = bzflag.h; path = ../../../src/bzflag/bzflag.h; sourceTree = "<group>"; };
+		DF7AEB7315C7AC7A007E5981 /* CacheMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CacheMenu.h; path = ../../../src/bzflag/CacheMenu.h; sourceTree = "<group>"; };
+		DF7AEB7415C7AC7A007E5981 /* callbacks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = callbacks.h; path = ../../../src/bzflag/callbacks.h; sourceTree = "<group>"; };
+		DF7AEB7515C7AC7A007E5981 /* clientConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = clientConfig.h; path = ../../../src/bzflag/clientConfig.h; sourceTree = "<group>"; };
+		DF7AEB7615C7AC7A007E5981 /* commands.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = commands.h; path = ../../../src/bzflag/commands.h; sourceTree = "<group>"; };
+		DF7AEB7715C7AC7A007E5981 /* ComposeDefaultKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ComposeDefaultKey.h; path = ../../../src/bzflag/ComposeDefaultKey.h; sourceTree = "<group>"; };
+		DF7AEB7815C7AC7A007E5981 /* ControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ControlPanel.h; path = ../../../src/bzflag/ControlPanel.h; sourceTree = "<group>"; };
+		DF7AEB7915C7AC7A007E5981 /* daylight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = daylight.h; path = ../../../src/bzflag/daylight.h; sourceTree = "<group>"; };
+		DF7AEB7A15C7AC7A007E5981 /* defaultBZDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defaultBZDB.h; path = ../../../src/bzflag/defaultBZDB.h; sourceTree = "<group>"; };
+		DF7AEB7B15C7AC7A007E5981 /* DisplayMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DisplayMenu.h; path = ../../../src/bzflag/DisplayMenu.h; sourceTree = "<group>"; };
+		DF7AEB7C15C7AC7A007E5981 /* Downloads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Downloads.h; path = ../../../src/bzflag/Downloads.h; sourceTree = "<group>"; };
+		DF7AEB7D15C7AC7A007E5981 /* EffectsMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EffectsMenu.h; path = ../../../src/bzflag/EffectsMenu.h; sourceTree = "<group>"; };
+		DF7AEB7E15C7AC7A007E5981 /* effectsRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = effectsRenderer.h; path = ../../../src/bzflag/effectsRenderer.h; sourceTree = "<group>"; };
+		DF7AEB7F15C7AC7A007E5981 /* EntryZone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntryZone.h; path = ../../../src/bzflag/EntryZone.h; sourceTree = "<group>"; };
+		DF7AEB8015C7AC7A007E5981 /* FlashClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FlashClock.h; path = ../../../src/bzflag/FlashClock.h; sourceTree = "<group>"; };
+		DF7AEB8115C7AC7A007E5981 /* ForceFeedback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForceFeedback.h; path = ../../../src/bzflag/ForceFeedback.h; sourceTree = "<group>"; };
+		DF7AEB8215C7AC7A007E5981 /* FormatMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormatMenu.h; path = ../../../src/bzflag/FormatMenu.h; sourceTree = "<group>"; };
+		DF7AEB8315C7AC7A007E5981 /* GuidedMissleStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GuidedMissleStrategy.h; path = ../../../src/bzflag/GuidedMissleStrategy.h; sourceTree = "<group>"; };
+		DF7AEB8415C7AC7A007E5981 /* GUIOptionsMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GUIOptionsMenu.h; path = ../../../src/bzflag/GUIOptionsMenu.h; sourceTree = "<group>"; };
+		DF7AEB8515C7AC7A007E5981 /* HelpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HelpMenu.h; path = ../../../src/bzflag/HelpMenu.h; sourceTree = "<group>"; };
+		DF7AEB8615C7AC7A007E5981 /* HUDDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDDialog.h; path = ../../../src/bzflag/HUDDialog.h; sourceTree = "<group>"; };
+		DF7AEB8715C7AC7A007E5981 /* HUDDialogStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDDialogStack.h; path = ../../../src/bzflag/HUDDialogStack.h; sourceTree = "<group>"; };
+		DF7AEB8815C7AC7A007E5981 /* HUDRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDRenderer.h; path = ../../../src/bzflag/HUDRenderer.h; sourceTree = "<group>"; };
+		DF7AEB8915C7AC7A007E5981 /* HUDui.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDui.h; path = ../../../src/bzflag/HUDui.h; sourceTree = "<group>"; };
+		DF7AEB8A15C7AC7A007E5981 /* HUDuiControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiControl.h; path = ../../../src/bzflag/HUDuiControl.h; sourceTree = "<group>"; };
+		DF7AEB8B15C7AC7A007E5981 /* HUDuiDefaultKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiDefaultKey.h; path = ../../../src/bzflag/HUDuiDefaultKey.h; sourceTree = "<group>"; };
+		DF7AEB8C15C7AC7A007E5981 /* HUDuiLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiLabel.h; path = ../../../src/bzflag/HUDuiLabel.h; sourceTree = "<group>"; };
+		DF7AEB8D15C7AC7A007E5981 /* HUDuiList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiList.h; path = ../../../src/bzflag/HUDuiList.h; sourceTree = "<group>"; };
+		DF7AEB8E15C7AC7A007E5981 /* HUDuiTextureLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiTextureLabel.h; path = ../../../src/bzflag/HUDuiTextureLabel.h; sourceTree = "<group>"; };
+		DF7AEB8F15C7AC7A007E5981 /* HUDuiTypeIn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HUDuiTypeIn.h; path = ../../../src/bzflag/HUDuiTypeIn.h; sourceTree = "<group>"; };
+		DF7AEB9015C7AC7A007E5981 /* InputMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InputMenu.h; path = ../../../src/bzflag/InputMenu.h; sourceTree = "<group>"; };
+		DF7AEB9115C7AC7A007E5981 /* JoinMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JoinMenu.h; path = ../../../src/bzflag/JoinMenu.h; sourceTree = "<group>"; };
+		DF7AEB9215C7AC7A007E5981 /* KeyboardMapMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyboardMapMenu.h; path = ../../../src/bzflag/KeyboardMapMenu.h; sourceTree = "<group>"; };
+		DF7AEB9315C7AC7A007E5981 /* LocalCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalCommand.h; path = ../../../src/bzflag/LocalCommand.h; sourceTree = "<group>"; };
+		DF7AEB9415C7AC7A007E5981 /* LocalPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalPlayer.h; path = ../../../src/bzflag/LocalPlayer.h; sourceTree = "<group>"; };
+		DF7AEB9515C7AC7A007E5981 /* MainMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainMenu.h; path = ../../../src/bzflag/MainMenu.h; sourceTree = "<group>"; };
+		DF7AEB9615C7AC7A007E5981 /* MainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainWindow.h; path = ../../../src/bzflag/MainWindow.h; sourceTree = "<group>"; };
+		DF7AEB9715C7AC7A007E5981 /* MenuDefaultKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MenuDefaultKey.h; path = ../../../src/bzflag/MenuDefaultKey.h; sourceTree = "<group>"; };
+		DF7AEB9815C7AC7A007E5981 /* motd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = motd.h; path = ../../../src/bzflag/motd.h; sourceTree = "<group>"; };
+		DF7AEB9915C7AC7A007E5981 /* NewVersionMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NewVersionMenu.h; path = ../../../src/bzflag/NewVersionMenu.h; sourceTree = "<group>"; };
+		DF7AEB9A15C7AC7A007E5981 /* OptionsMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OptionsMenu.h; path = ../../../src/bzflag/OptionsMenu.h; sourceTree = "<group>"; };
+		DF7AEB9B15C7AC7A007E5981 /* Plan.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Plan.h; path = ../../../src/bzflag/Plan.h; sourceTree = "<group>"; };
+		DF7AEB9C15C7AC7A007E5981 /* Player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Player.h; path = ../../../src/bzflag/Player.h; sourceTree = "<group>"; };
+		DF7AEB9D15C7AC7A007E5981 /* playing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playing.h; path = ../../../src/bzflag/playing.h; sourceTree = "<group>"; };
+		DF7AEB9E15C7AC7A007E5981 /* QuickKeysMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuickKeysMenu.h; path = ../../../src/bzflag/QuickKeysMenu.h; sourceTree = "<group>"; };
+		DF7AEB9F15C7AC7A007E5981 /* QuitMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuitMenu.h; path = ../../../src/bzflag/QuitMenu.h; sourceTree = "<group>"; };
+		DF7AEBA015C7AC7A007E5981 /* RadarRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RadarRenderer.h; path = ../../../src/bzflag/RadarRenderer.h; sourceTree = "<group>"; };
+		DF7AEBA115C7AC7A007E5981 /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Region.h; path = ../../../src/bzflag/Region.h; sourceTree = "<group>"; };
+		DF7AEBA215C7AC7A007E5981 /* RegionPriorityQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegionPriorityQueue.h; path = ../../../src/bzflag/RegionPriorityQueue.h; sourceTree = "<group>"; };
+		DF7AEBA315C7AC7A007E5981 /* RemotePlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemotePlayer.h; path = ../../../src/bzflag/RemotePlayer.h; sourceTree = "<group>"; };
+		DF7AEBA415C7AC7A007E5981 /* Roaming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Roaming.h; path = ../../../src/bzflag/Roaming.h; sourceTree = "<group>"; };
+		DF7AEBA515C7AC7A007E5981 /* RobotPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RobotPlayer.h; path = ../../../src/bzflag/RobotPlayer.h; sourceTree = "<group>"; };
+		DF7AEBA615C7AC7A007E5981 /* RoofTops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RoofTops.h; path = ../../../src/bzflag/RoofTops.h; sourceTree = "<group>"; };
+		DF7AEBA715C7AC7A007E5981 /* Roster.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Roster.h; path = ../../../src/bzflag/Roster.h; sourceTree = "<group>"; };
+		DF7AEBA815C7AC7A007E5981 /* SaveWorldMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SaveWorldMenu.h; path = ../../../src/bzflag/SaveWorldMenu.h; sourceTree = "<group>"; };
+		DF7AEBA915C7AC7A007E5981 /* SceneBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneBuilder.h; path = ../../../src/bzflag/SceneBuilder.h; sourceTree = "<group>"; };
+		DF7AEBAA15C7AC7A007E5981 /* ScoreboardRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScoreboardRenderer.h; path = ../../../src/bzflag/ScoreboardRenderer.h; sourceTree = "<group>"; };
+		DF7AEBAB15C7AC7A007E5981 /* SegmentedShotStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SegmentedShotStrategy.h; path = ../../../src/bzflag/SegmentedShotStrategy.h; sourceTree = "<group>"; };
+		DF7AEBAC15C7AC7A007E5981 /* ServerCommandKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerCommandKey.h; path = ../../../src/bzflag/ServerCommandKey.h; sourceTree = "<group>"; };
+		DF7AEBAD15C7AC7A007E5981 /* ServerLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerLink.h; path = ../../../src/bzflag/ServerLink.h; sourceTree = "<group>"; };
+		DF7AEBAE15C7AC7A007E5981 /* ServerListFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerListFilter.h; path = ../../../src/bzflag/ServerListFilter.h; sourceTree = "<group>"; };
+		DF7AEBAF15C7AC7A007E5981 /* ServerMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerMenu.h; path = ../../../src/bzflag/ServerMenu.h; sourceTree = "<group>"; };
+		DF7AEBB015C7AC7A007E5981 /* ServerStartMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ServerStartMenu.h; path = ../../../src/bzflag/ServerStartMenu.h; sourceTree = "<group>"; };
+		DF7AEBB115C7AC7A007E5981 /* ShockWaveStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShockWaveStrategy.h; path = ../../../src/bzflag/ShockWaveStrategy.h; sourceTree = "<group>"; };
+		DF7AEBB215C7AC7A007E5981 /* ShotPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotPath.h; path = ../../../src/bzflag/ShotPath.h; sourceTree = "<group>"; };
+		DF7AEBB315C7AC7A007E5981 /* ShotPathSegment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotPathSegment.h; path = ../../../src/bzflag/ShotPathSegment.h; sourceTree = "<group>"; };
+		DF7AEBB415C7AC7A007E5981 /* ShotStatistics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotStatistics.h; path = ../../../src/bzflag/ShotStatistics.h; sourceTree = "<group>"; };
+		DF7AEBB515C7AC7A007E5981 /* ShotStats.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotStats.h; path = ../../../src/bzflag/ShotStats.h; sourceTree = "<group>"; };
+		DF7AEBB615C7AC7A007E5981 /* ShotStatsDefaultKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotStatsDefaultKey.h; path = ../../../src/bzflag/ShotStatsDefaultKey.h; sourceTree = "<group>"; };
+		DF7AEBB715C7AC7A007E5981 /* ShotStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotStrategy.h; path = ../../../src/bzflag/ShotStrategy.h; sourceTree = "<group>"; };
+		DF7AEBB815C7AC7A007E5981 /* SilenceDefaultKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SilenceDefaultKey.h; path = ../../../src/bzflag/SilenceDefaultKey.h; sourceTree = "<group>"; };
+		DF7AEBB915C7AC7A007E5981 /* sound.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sound.h; path = ../../../src/bzflag/sound.h; sourceTree = "<group>"; };
+		DF7AEBBA15C7AC7A007E5981 /* stars.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stars.h; path = ../../../src/bzflag/stars.h; sourceTree = "<group>"; };
+		DF7AEBBB15C7AC7A007E5981 /* TargetingUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetingUtils.h; path = ../../../src/bzflag/TargetingUtils.h; sourceTree = "<group>"; };
+		DF7AEBBC15C7AC7A007E5981 /* TrackMarks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TrackMarks.h; path = ../../../src/bzflag/TrackMarks.h; sourceTree = "<group>"; };
+		DF7AEBBD15C7AC7A007E5981 /* Weapon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Weapon.h; path = ../../../src/bzflag/Weapon.h; sourceTree = "<group>"; };
+		DF7AEBBE15C7AC7A007E5981 /* WeatherRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WeatherRenderer.h; path = ../../../src/bzflag/WeatherRenderer.h; sourceTree = "<group>"; };
+		DF7AEBBF15C7AC7A007E5981 /* World.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = World.h; path = ../../../src/bzflag/World.h; sourceTree = "<group>"; };
+		DF7AEBC015C7AC7A007E5981 /* WorldBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorldBuilder.h; path = ../../../src/bzflag/WorldBuilder.h; sourceTree = "<group>"; };
+		DF7AEBC115C7AC7A007E5981 /* WorldPlayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorldPlayer.h; path = ../../../src/bzflag/WorldPlayer.h; sourceTree = "<group>"; };
+		DF7AEBC215C7AC7A007E5981 /* ActionBinding.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ActionBinding.cxx; path = ../../../src/bzflag/ActionBinding.cxx; sourceTree = "<group>"; };
+		DF7AEBC315C7AC7A007E5981 /* AudioMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AudioMenu.cxx; path = ../../../src/bzflag/AudioMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBC415C7AC7A007E5981 /* AutoPilot.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AutoPilot.cxx; path = ../../../src/bzflag/AutoPilot.cxx; sourceTree = "<group>"; };
+		DF7AEBC515C7AC7A007E5981 /* BackgroundRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BackgroundRenderer.cxx; path = ../../../src/bzflag/BackgroundRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEBC615C7AC7A007E5981 /* BaseLocalPlayer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BaseLocalPlayer.cxx; path = ../../../src/bzflag/BaseLocalPlayer.cxx; sourceTree = "<group>"; };
+		DF7AEBC715C7AC7A007E5981 /* bzflag.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzflag.cxx; path = ../../../src/bzflag/bzflag.cxx; sourceTree = "<group>"; };
+		DF7AEBC815C7AC7A007E5981 /* CacheMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheMenu.cxx; path = ../../../src/bzflag/CacheMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBC915C7AC7A007E5981 /* callbacks.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = callbacks.cxx; path = ../../../src/bzflag/callbacks.cxx; sourceTree = "<group>"; };
+		DF7AEBCA15C7AC7A007E5981 /* clientCommands.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clientCommands.cxx; path = ../../../src/bzflag/clientCommands.cxx; sourceTree = "<group>"; };
+		DF7AEBCB15C7AC7A007E5981 /* clientConfig.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clientConfig.cxx; path = ../../../src/bzflag/clientConfig.cxx; sourceTree = "<group>"; };
+		DF7AEBCC15C7AC7A007E5981 /* CommandsImplementation.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandsImplementation.cxx; path = ../../../src/bzflag/CommandsImplementation.cxx; sourceTree = "<group>"; };
+		DF7AEBCD15C7AC7A007E5981 /* ComposeDefaultKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ComposeDefaultKey.cxx; path = ../../../src/bzflag/ComposeDefaultKey.cxx; sourceTree = "<group>"; };
+		DF7AEBCE15C7AC7A007E5981 /* ControlPanel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ControlPanel.cxx; path = ../../../src/bzflag/ControlPanel.cxx; sourceTree = "<group>"; };
+		DF7AEBCF15C7AC7A007E5981 /* daylight.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = daylight.cxx; path = ../../../src/bzflag/daylight.cxx; sourceTree = "<group>"; };
+		DF7AEBD015C7AC7A007E5981 /* defaultBZDB.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = defaultBZDB.cxx; path = ../../../src/bzflag/defaultBZDB.cxx; sourceTree = "<group>"; };
+		DF7AEBD115C7AC7A007E5981 /* DisplayMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DisplayMenu.cxx; path = ../../../src/bzflag/DisplayMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBD215C7AC7A007E5981 /* Downloads.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Downloads.cxx; path = ../../../src/bzflag/Downloads.cxx; sourceTree = "<group>"; };
+		DF7AEBD315C7AC7A007E5981 /* EffectsMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EffectsMenu.cxx; path = ../../../src/bzflag/EffectsMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBD415C7AC7A007E5981 /* effectsRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = effectsRenderer.cxx; path = ../../../src/bzflag/effectsRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEBD515C7AC7A007E5981 /* EntryZone.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntryZone.cxx; path = ../../../src/bzflag/EntryZone.cxx; sourceTree = "<group>"; };
+		DF7AEBD615C7AC7A007E5981 /* FlashClock.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FlashClock.cxx; path = ../../../src/bzflag/FlashClock.cxx; sourceTree = "<group>"; };
+		DF7AEBD715C7AC7A007E5981 /* ForceFeedback.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ForceFeedback.cxx; path = ../../../src/bzflag/ForceFeedback.cxx; sourceTree = "<group>"; };
+		DF7AEBD815C7AC7A007E5981 /* FormatMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FormatMenu.cxx; path = ../../../src/bzflag/FormatMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBD915C7AC7A007E5981 /* GuidedMissleStrategy.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GuidedMissleStrategy.cxx; path = ../../../src/bzflag/GuidedMissleStrategy.cxx; sourceTree = "<group>"; };
+		DF7AEBDA15C7AC7A007E5981 /* GUIOptionsMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GUIOptionsMenu.cxx; path = ../../../src/bzflag/GUIOptionsMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBDB15C7AC7A007E5981 /* HelpMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HelpMenu.cxx; path = ../../../src/bzflag/HelpMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBDC15C7AC7A007E5981 /* HUDDialog.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDDialog.cxx; path = ../../../src/bzflag/HUDDialog.cxx; sourceTree = "<group>"; };
+		DF7AEBDD15C7AC7A007E5981 /* HUDDialogStack.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDDialogStack.cxx; path = ../../../src/bzflag/HUDDialogStack.cxx; sourceTree = "<group>"; };
+		DF7AEBDE15C7AC7A007E5981 /* HUDRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDRenderer.cxx; path = ../../../src/bzflag/HUDRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEBDF15C7AC7A007E5981 /* HUDui.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDui.cxx; path = ../../../src/bzflag/HUDui.cxx; sourceTree = "<group>"; };
+		DF7AEBE015C7AC7A007E5981 /* HUDuiControl.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiControl.cxx; path = ../../../src/bzflag/HUDuiControl.cxx; sourceTree = "<group>"; };
+		DF7AEBE115C7AC7A007E5981 /* HUDuiDefaultKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiDefaultKey.cxx; path = ../../../src/bzflag/HUDuiDefaultKey.cxx; sourceTree = "<group>"; };
+		DF7AEBE215C7AC7A007E5981 /* HUDuiLabel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiLabel.cxx; path = ../../../src/bzflag/HUDuiLabel.cxx; sourceTree = "<group>"; };
+		DF7AEBE315C7AC7A007E5981 /* HUDuiList.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiList.cxx; path = ../../../src/bzflag/HUDuiList.cxx; sourceTree = "<group>"; };
+		DF7AEBE415C7AC7A007E5981 /* HUDuiTextureLabel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiTextureLabel.cxx; path = ../../../src/bzflag/HUDuiTextureLabel.cxx; sourceTree = "<group>"; };
+		DF7AEBE515C7AC7A007E5981 /* HUDuiTypeIn.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HUDuiTypeIn.cxx; path = ../../../src/bzflag/HUDuiTypeIn.cxx; sourceTree = "<group>"; };
+		DF7AEBE615C7AC7A007E5981 /* InputMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InputMenu.cxx; path = ../../../src/bzflag/InputMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBE715C7AC7A007E5981 /* JoinMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JoinMenu.cxx; path = ../../../src/bzflag/JoinMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBE815C7AC7A007E5981 /* KeyboardMapMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyboardMapMenu.cxx; path = ../../../src/bzflag/KeyboardMapMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBE915C7AC7A007E5981 /* LocalCommand.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LocalCommand.cxx; path = ../../../src/bzflag/LocalCommand.cxx; sourceTree = "<group>"; };
+		DF7AEBEA15C7AC7A007E5981 /* LocalPlayer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LocalPlayer.cxx; path = ../../../src/bzflag/LocalPlayer.cxx; sourceTree = "<group>"; };
+		DF7AEBEB15C7AC7A007E5981 /* MainMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainMenu.cxx; path = ../../../src/bzflag/MainMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBEC15C7AC7A007E5981 /* MainWindow.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainWindow.cxx; path = ../../../src/bzflag/MainWindow.cxx; sourceTree = "<group>"; };
+		DF7AEBED15C7AC7A007E5981 /* MenuDefaultKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MenuDefaultKey.cxx; path = ../../../src/bzflag/MenuDefaultKey.cxx; sourceTree = "<group>"; };
+		DF7AEBEE15C7AC7A007E5981 /* motd.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = motd.cxx; path = ../../../src/bzflag/motd.cxx; sourceTree = "<group>"; };
+		DF7AEBEF15C7AC7A007E5981 /* NewVersionMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NewVersionMenu.cxx; path = ../../../src/bzflag/NewVersionMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBF015C7AC7A007E5981 /* OptionsMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OptionsMenu.cxx; path = ../../../src/bzflag/OptionsMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBF115C7AC7A007E5981 /* Plan.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Plan.cxx; path = ../../../src/bzflag/Plan.cxx; sourceTree = "<group>"; };
+		DF7AEBF215C7AC7A007E5981 /* Player.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Player.cxx; path = ../../../src/bzflag/Player.cxx; sourceTree = "<group>"; };
+		DF7AEBF315C7AC7A007E5981 /* playing.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playing.cxx; path = ../../../src/bzflag/playing.cxx; sourceTree = "<group>"; };
+		DF7AEBF415C7AC7A007E5981 /* QuickKeysMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuickKeysMenu.cxx; path = ../../../src/bzflag/QuickKeysMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBF515C7AC7A007E5981 /* QuitMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuitMenu.cxx; path = ../../../src/bzflag/QuitMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBF615C7AC7A007E5981 /* RadarRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RadarRenderer.cxx; path = ../../../src/bzflag/RadarRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEBF715C7AC7A007E5981 /* Region.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Region.cxx; path = ../../../src/bzflag/Region.cxx; sourceTree = "<group>"; };
+		DF7AEBF815C7AC7A007E5981 /* RegionPriorityQueue.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegionPriorityQueue.cxx; path = ../../../src/bzflag/RegionPriorityQueue.cxx; sourceTree = "<group>"; };
+		DF7AEBF915C7AC7A007E5981 /* RemotePlayer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RemotePlayer.cxx; path = ../../../src/bzflag/RemotePlayer.cxx; sourceTree = "<group>"; };
+		DF7AEBFA15C7AC7A007E5981 /* Roaming.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Roaming.cxx; path = ../../../src/bzflag/Roaming.cxx; sourceTree = "<group>"; };
+		DF7AEBFB15C7AC7A007E5981 /* RobotPlayer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RobotPlayer.cxx; path = ../../../src/bzflag/RobotPlayer.cxx; sourceTree = "<group>"; };
+		DF7AEBFC15C7AC7A007E5981 /* RoofTops.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RoofTops.cxx; path = ../../../src/bzflag/RoofTops.cxx; sourceTree = "<group>"; };
+		DF7AEBFD15C7AC7A007E5981 /* Roster.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Roster.cxx; path = ../../../src/bzflag/Roster.cxx; sourceTree = "<group>"; };
+		DF7AEBFE15C7AC7A007E5981 /* SaveWorldMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SaveWorldMenu.cxx; path = ../../../src/bzflag/SaveWorldMenu.cxx; sourceTree = "<group>"; };
+		DF7AEBFF15C7AC7A007E5981 /* SceneBuilder.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneBuilder.cxx; path = ../../../src/bzflag/SceneBuilder.cxx; sourceTree = "<group>"; };
+		DF7AEC0015C7AC7A007E5981 /* SceneRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneRenderer.cxx; path = ../../../src/bzflag/SceneRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEC0115C7AC7A007E5981 /* ScoreboardRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScoreboardRenderer.cxx; path = ../../../src/bzflag/ScoreboardRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEC0215C7AC7A007E5981 /* SegmentedShotStrategy.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SegmentedShotStrategy.cxx; path = ../../../src/bzflag/SegmentedShotStrategy.cxx; sourceTree = "<group>"; };
+		DF7AEC0315C7AC7A007E5981 /* ServerCommandKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerCommandKey.cxx; path = ../../../src/bzflag/ServerCommandKey.cxx; sourceTree = "<group>"; };
+		DF7AEC0415C7AC7A007E5981 /* ServerLink.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerLink.cxx; path = ../../../src/bzflag/ServerLink.cxx; sourceTree = "<group>"; };
+		DF7AEC0515C7AC7A007E5981 /* ServerListFilter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerListFilter.cxx; path = ../../../src/bzflag/ServerListFilter.cxx; sourceTree = "<group>"; };
+		DF7AEC0615C7AC7A007E5981 /* ServerMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerMenu.cxx; path = ../../../src/bzflag/ServerMenu.cxx; sourceTree = "<group>"; };
+		DF7AEC0715C7AC7A007E5981 /* ServerStartMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerStartMenu.cxx; path = ../../../src/bzflag/ServerStartMenu.cxx; sourceTree = "<group>"; };
+		DF7AEC0815C7AC7A007E5981 /* ShockWaveStrategy.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShockWaveStrategy.cxx; path = ../../../src/bzflag/ShockWaveStrategy.cxx; sourceTree = "<group>"; };
+		DF7AEC0915C7AC7A007E5981 /* ShotPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotPath.cxx; path = ../../../src/bzflag/ShotPath.cxx; sourceTree = "<group>"; };
+		DF7AEC0A15C7AC7A007E5981 /* ShotPathSegment.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotPathSegment.cxx; path = ../../../src/bzflag/ShotPathSegment.cxx; sourceTree = "<group>"; };
+		DF7AEC0B15C7AC7A007E5981 /* ShotStatistics.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotStatistics.cxx; path = ../../../src/bzflag/ShotStatistics.cxx; sourceTree = "<group>"; };
+		DF7AEC0C15C7AC7A007E5981 /* ShotStats.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotStats.cxx; path = ../../../src/bzflag/ShotStats.cxx; sourceTree = "<group>"; };
+		DF7AEC0D15C7AC7A007E5981 /* ShotStatsDefaultKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotStatsDefaultKey.cxx; path = ../../../src/bzflag/ShotStatsDefaultKey.cxx; sourceTree = "<group>"; };
+		DF7AEC0E15C7AC7A007E5981 /* ShotStrategy.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotStrategy.cxx; path = ../../../src/bzflag/ShotStrategy.cxx; sourceTree = "<group>"; };
+		DF7AEC0F15C7AC7A007E5981 /* SilenceDefaultKey.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SilenceDefaultKey.cxx; path = ../../../src/bzflag/SilenceDefaultKey.cxx; sourceTree = "<group>"; };
+		DF7AEC1015C7AC7A007E5981 /* sound.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = sound.cxx; path = ../../../src/bzflag/sound.cxx; sourceTree = "<group>"; };
+		DF7AEC1115C7AC7A007E5981 /* stars.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = stars.cxx; path = ../../../src/bzflag/stars.cxx; sourceTree = "<group>"; };
+		DF7AEC1215C7AC7A007E5981 /* TargetingUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TargetingUtils.cxx; path = ../../../src/bzflag/TargetingUtils.cxx; sourceTree = "<group>"; };
+		DF7AEC1315C7AC7A007E5981 /* TrackMarks.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrackMarks.cxx; path = ../../../src/bzflag/TrackMarks.cxx; sourceTree = "<group>"; };
+		DF7AEC1415C7AC7A007E5981 /* Weapon.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Weapon.cxx; path = ../../../src/bzflag/Weapon.cxx; sourceTree = "<group>"; };
+		DF7AEC1515C7AC7A007E5981 /* WeatherRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WeatherRenderer.cxx; path = ../../../src/bzflag/WeatherRenderer.cxx; sourceTree = "<group>"; };
+		DF7AEC1615C7AC7A007E5981 /* World.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = World.cxx; path = ../../../src/bzflag/World.cxx; sourceTree = "<group>"; };
+		DF7AEC1715C7AC7A007E5981 /* WorldBuilder.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorldBuilder.cxx; path = ../../../src/bzflag/WorldBuilder.cxx; sourceTree = "<group>"; };
+		DF7AEC1815C7AC7A007E5981 /* WorldPlayer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WorldPlayer.cxx; path = ../../../src/bzflag/WorldPlayer.cxx; sourceTree = "<group>"; };
+		DF7AEC7015C7ACC6007E5981 /* MacBZFlag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MacBZFlag.icns; path = ../../../src/platform/MacOSX/MacBZFlag.icns; sourceTree = "<group>"; };
+		DF7AEC7115C7ACC6007E5981 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = config.h; path = ../../../src/platform/MacOSX/config.h; sourceTree = "<group>"; };
+		DF7AEC7715C7ACC6007E5981 /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SDLMain.h; path = ../../../src/platform/MacOSX/SDLMain.h; sourceTree = "<group>"; };
+		DF7AEC7E15C7ACC6007E5981 /* mkplist.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = mkplist.cxx; path = ../../../src/platform/MacOSX/mkplist.cxx; sourceTree = "<group>"; };
+		DF7AEC7F15C7ACC6007E5981 /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SDLMain.m; path = ../../../src/platform/MacOSX/SDLMain.m; sourceTree = "<group>"; };
+		DF7AEC8015C7ACC6007E5981 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "BZFlag-Info.plist"; path = "../../../src/platform/MacOSX/BZFlag-Info.plist"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DF7AEB3E15C7ABEE007E5981 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF7AEB6B15C7AC48007E5981 /* libcrypto.dylib in Frameworks */,
+				DF7AEB6915C7AC40007E5981 /* libcurl.dylib in Frameworks */,
+				DF7AEB6715C7AC39007E5981 /* libGame.a in Frameworks */,
+				DF7AEB6515C7AC35007E5981 /* libCommon.a in Frameworks */,
+				DF7AEB6315C7AC29007E5981 /* SDL.framework in Frameworks */,
+				DF7AEB4615C7ABEE007E5981 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF7AEB3615C7ABEE007E5981 = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB6A15C7AC48007E5981 /* libcrypto.dylib */,
+				DF7AEB6815C7AC40007E5981 /* libcurl.dylib */,
+				DF7AEB6615C7AC39007E5981 /* libGame.a */,
+				DF7AEB6415C7AC35007E5981 /* libCommon.a */,
+				DF7AEB6215C7AC29007E5981 /* SDL.framework */,
+				DF7AEB4B15C7ABEF007E5981 /* BZFlag */,
+				DF7AEB4415C7ABEE007E5981 /* Frameworks */,
+				DF7AEB4215C7ABEE007E5981 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DF7AEB4215C7ABEE007E5981 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB4115C7ABEE007E5981 /* BZFlag.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF7AEB4415C7ABEE007E5981 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB4515C7ABEE007E5981 /* Cocoa.framework */,
+				DF7AEB4715C7ABEE007E5981 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF7AEB4715C7ABEE007E5981 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB4815C7ABEE007E5981 /* AppKit.framework */,
+				DF7AEB4915C7ABEE007E5981 /* CoreData.framework */,
+				DF7AEB4A15C7ABEE007E5981 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		DF7AEB4B15C7ABEF007E5981 /* BZFlag */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB6C15C7AC56007E5981 /* Source */,
+				DF7AEB4C15C7ABEF007E5981 /* Supporting Files */,
+			);
+			path = BZFlag;
+			sourceTree = "<group>";
+		};
+		DF7AEB4C15C7ABEF007E5981 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEC7015C7ACC6007E5981 /* MacBZFlag.icns */,
+				DF7AEC7115C7ACC6007E5981 /* config.h */,
+				DF7AEC7715C7ACC6007E5981 /* SDLMain.h */,
+				DF7AEC7E15C7ACC6007E5981 /* mkplist.cxx */,
+				DF7AEC7F15C7ACC6007E5981 /* SDLMain.m */,
+				DF7AEC8015C7ACC6007E5981 /* BZFlag-Info.plist */,
+				DF7AEB4E15C7ABEF007E5981 /* InfoPlist.strings */,
+				DF7AEB5115C7ABEF007E5981 /* main.m */,
+				DF7AEB5415C7ABEF007E5981 /* Credits.rtf */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		DF7AEB6C15C7AC56007E5981 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB6D15C7AC7A007E5981 /* ActionBinding.h */,
+				DF7AEB6E15C7AC7A007E5981 /* AudioMenu.h */,
+				DF7AEB6F15C7AC7A007E5981 /* AutoPilot.h */,
+				DF7AEB7015C7AC7A007E5981 /* BackgroundRenderer.h */,
+				DF7AEB7115C7AC7A007E5981 /* BaseLocalPlayer.h */,
+				DF7AEB7215C7AC7A007E5981 /* bzflag.h */,
+				DF7AEB7315C7AC7A007E5981 /* CacheMenu.h */,
+				DF7AEB7415C7AC7A007E5981 /* callbacks.h */,
+				DF7AEB7515C7AC7A007E5981 /* clientConfig.h */,
+				DF7AEB7615C7AC7A007E5981 /* commands.h */,
+				DF7AEB7715C7AC7A007E5981 /* ComposeDefaultKey.h */,
+				DF7AEB7815C7AC7A007E5981 /* ControlPanel.h */,
+				DF7AEB7915C7AC7A007E5981 /* daylight.h */,
+				DF7AEB7A15C7AC7A007E5981 /* defaultBZDB.h */,
+				DF7AEB7B15C7AC7A007E5981 /* DisplayMenu.h */,
+				DF7AEB7C15C7AC7A007E5981 /* Downloads.h */,
+				DF7AEB7D15C7AC7A007E5981 /* EffectsMenu.h */,
+				DF7AEB7E15C7AC7A007E5981 /* effectsRenderer.h */,
+				DF7AEB7F15C7AC7A007E5981 /* EntryZone.h */,
+				DF7AEB8015C7AC7A007E5981 /* FlashClock.h */,
+				DF7AEB8115C7AC7A007E5981 /* ForceFeedback.h */,
+				DF7AEB8215C7AC7A007E5981 /* FormatMenu.h */,
+				DF7AEB8315C7AC7A007E5981 /* GuidedMissleStrategy.h */,
+				DF7AEB8415C7AC7A007E5981 /* GUIOptionsMenu.h */,
+				DF7AEB8515C7AC7A007E5981 /* HelpMenu.h */,
+				DF7AEB8615C7AC7A007E5981 /* HUDDialog.h */,
+				DF7AEB8715C7AC7A007E5981 /* HUDDialogStack.h */,
+				DF7AEB8815C7AC7A007E5981 /* HUDRenderer.h */,
+				DF7AEB8915C7AC7A007E5981 /* HUDui.h */,
+				DF7AEB8A15C7AC7A007E5981 /* HUDuiControl.h */,
+				DF7AEB8B15C7AC7A007E5981 /* HUDuiDefaultKey.h */,
+				DF7AEB8C15C7AC7A007E5981 /* HUDuiLabel.h */,
+				DF7AEB8D15C7AC7A007E5981 /* HUDuiList.h */,
+				DF7AEB8E15C7AC7A007E5981 /* HUDuiTextureLabel.h */,
+				DF7AEB8F15C7AC7A007E5981 /* HUDuiTypeIn.h */,
+				DF7AEB9015C7AC7A007E5981 /* InputMenu.h */,
+				DF7AEB9115C7AC7A007E5981 /* JoinMenu.h */,
+				DF7AEB9215C7AC7A007E5981 /* KeyboardMapMenu.h */,
+				DF7AEB9315C7AC7A007E5981 /* LocalCommand.h */,
+				DF7AEB9415C7AC7A007E5981 /* LocalPlayer.h */,
+				DF7AEB9515C7AC7A007E5981 /* MainMenu.h */,
+				DF7AEB9615C7AC7A007E5981 /* MainWindow.h */,
+				DF7AEB9715C7AC7A007E5981 /* MenuDefaultKey.h */,
+				DF7AEB9815C7AC7A007E5981 /* motd.h */,
+				DF7AEB9915C7AC7A007E5981 /* NewVersionMenu.h */,
+				DF7AEB9A15C7AC7A007E5981 /* OptionsMenu.h */,
+				DF7AEB9B15C7AC7A007E5981 /* Plan.h */,
+				DF7AEB9C15C7AC7A007E5981 /* Player.h */,
+				DF7AEB9D15C7AC7A007E5981 /* playing.h */,
+				DF7AEB9E15C7AC7A007E5981 /* QuickKeysMenu.h */,
+				DF7AEB9F15C7AC7A007E5981 /* QuitMenu.h */,
+				DF7AEBA015C7AC7A007E5981 /* RadarRenderer.h */,
+				DF7AEBA115C7AC7A007E5981 /* Region.h */,
+				DF7AEBA215C7AC7A007E5981 /* RegionPriorityQueue.h */,
+				DF7AEBA315C7AC7A007E5981 /* RemotePlayer.h */,
+				DF7AEBA415C7AC7A007E5981 /* Roaming.h */,
+				DF7AEBA515C7AC7A007E5981 /* RobotPlayer.h */,
+				DF7AEBA615C7AC7A007E5981 /* RoofTops.h */,
+				DF7AEBA715C7AC7A007E5981 /* Roster.h */,
+				DF7AEBA815C7AC7A007E5981 /* SaveWorldMenu.h */,
+				DF7AEBA915C7AC7A007E5981 /* SceneBuilder.h */,
+				DF7AEBAA15C7AC7A007E5981 /* ScoreboardRenderer.h */,
+				DF7AEBAB15C7AC7A007E5981 /* SegmentedShotStrategy.h */,
+				DF7AEBAC15C7AC7A007E5981 /* ServerCommandKey.h */,
+				DF7AEBAD15C7AC7A007E5981 /* ServerLink.h */,
+				DF7AEBAE15C7AC7A007E5981 /* ServerListFilter.h */,
+				DF7AEBAF15C7AC7A007E5981 /* ServerMenu.h */,
+				DF7AEBB015C7AC7A007E5981 /* ServerStartMenu.h */,
+				DF7AEBB115C7AC7A007E5981 /* ShockWaveStrategy.h */,
+				DF7AEBB215C7AC7A007E5981 /* ShotPath.h */,
+				DF7AEBB315C7AC7A007E5981 /* ShotPathSegment.h */,
+				DF7AEBB415C7AC7A007E5981 /* ShotStatistics.h */,
+				DF7AEBB515C7AC7A007E5981 /* ShotStats.h */,
+				DF7AEBB615C7AC7A007E5981 /* ShotStatsDefaultKey.h */,
+				DF7AEBB715C7AC7A007E5981 /* ShotStrategy.h */,
+				DF7AEBB815C7AC7A007E5981 /* SilenceDefaultKey.h */,
+				DF7AEBB915C7AC7A007E5981 /* sound.h */,
+				DF7AEBBA15C7AC7A007E5981 /* stars.h */,
+				DF7AEBBB15C7AC7A007E5981 /* TargetingUtils.h */,
+				DF7AEBBC15C7AC7A007E5981 /* TrackMarks.h */,
+				DF7AEBBD15C7AC7A007E5981 /* Weapon.h */,
+				DF7AEBBE15C7AC7A007E5981 /* WeatherRenderer.h */,
+				DF7AEBBF15C7AC7A007E5981 /* World.h */,
+				DF7AEBC015C7AC7A007E5981 /* WorldBuilder.h */,
+				DF7AEBC115C7AC7A007E5981 /* WorldPlayer.h */,
+				DF7AEBC215C7AC7A007E5981 /* ActionBinding.cxx */,
+				DF7AEBC315C7AC7A007E5981 /* AudioMenu.cxx */,
+				DF7AEBC415C7AC7A007E5981 /* AutoPilot.cxx */,
+				DF7AEBC515C7AC7A007E5981 /* BackgroundRenderer.cxx */,
+				DF7AEBC615C7AC7A007E5981 /* BaseLocalPlayer.cxx */,
+				DF7AEBC715C7AC7A007E5981 /* bzflag.cxx */,
+				DF7AEBC815C7AC7A007E5981 /* CacheMenu.cxx */,
+				DF7AEBC915C7AC7A007E5981 /* callbacks.cxx */,
+				DF7AEBCA15C7AC7A007E5981 /* clientCommands.cxx */,
+				DF7AEBCB15C7AC7A007E5981 /* clientConfig.cxx */,
+				DF7AEBCC15C7AC7A007E5981 /* CommandsImplementation.cxx */,
+				DF7AEBCD15C7AC7A007E5981 /* ComposeDefaultKey.cxx */,
+				DF7AEBCE15C7AC7A007E5981 /* ControlPanel.cxx */,
+				DF7AEBCF15C7AC7A007E5981 /* daylight.cxx */,
+				DF7AEBD015C7AC7A007E5981 /* defaultBZDB.cxx */,
+				DF7AEBD115C7AC7A007E5981 /* DisplayMenu.cxx */,
+				DF7AEBD215C7AC7A007E5981 /* Downloads.cxx */,
+				DF7AEBD315C7AC7A007E5981 /* EffectsMenu.cxx */,
+				DF7AEBD415C7AC7A007E5981 /* effectsRenderer.cxx */,
+				DF7AEBD515C7AC7A007E5981 /* EntryZone.cxx */,
+				DF7AEBD615C7AC7A007E5981 /* FlashClock.cxx */,
+				DF7AEBD715C7AC7A007E5981 /* ForceFeedback.cxx */,
+				DF7AEBD815C7AC7A007E5981 /* FormatMenu.cxx */,
+				DF7AEBD915C7AC7A007E5981 /* GuidedMissleStrategy.cxx */,
+				DF7AEBDA15C7AC7A007E5981 /* GUIOptionsMenu.cxx */,
+				DF7AEBDB15C7AC7A007E5981 /* HelpMenu.cxx */,
+				DF7AEBDC15C7AC7A007E5981 /* HUDDialog.cxx */,
+				DF7AEBDD15C7AC7A007E5981 /* HUDDialogStack.cxx */,
+				DF7AEBDE15C7AC7A007E5981 /* HUDRenderer.cxx */,
+				DF7AEBDF15C7AC7A007E5981 /* HUDui.cxx */,
+				DF7AEBE015C7AC7A007E5981 /* HUDuiControl.cxx */,
+				DF7AEBE115C7AC7A007E5981 /* HUDuiDefaultKey.cxx */,
+				DF7AEBE215C7AC7A007E5981 /* HUDuiLabel.cxx */,
+				DF7AEBE315C7AC7A007E5981 /* HUDuiList.cxx */,
+				DF7AEBE415C7AC7A007E5981 /* HUDuiTextureLabel.cxx */,
+				DF7AEBE515C7AC7A007E5981 /* HUDuiTypeIn.cxx */,
+				DF7AEBE615C7AC7A007E5981 /* InputMenu.cxx */,
+				DF7AEBE715C7AC7A007E5981 /* JoinMenu.cxx */,
+				DF7AEBE815C7AC7A007E5981 /* KeyboardMapMenu.cxx */,
+				DF7AEBE915C7AC7A007E5981 /* LocalCommand.cxx */,
+				DF7AEBEA15C7AC7A007E5981 /* LocalPlayer.cxx */,
+				DF7AEBEB15C7AC7A007E5981 /* MainMenu.cxx */,
+				DF7AEBEC15C7AC7A007E5981 /* MainWindow.cxx */,
+				DF7AEBED15C7AC7A007E5981 /* MenuDefaultKey.cxx */,
+				DF7AEBEE15C7AC7A007E5981 /* motd.cxx */,
+				DF7AEBEF15C7AC7A007E5981 /* NewVersionMenu.cxx */,
+				DF7AEBF015C7AC7A007E5981 /* OptionsMenu.cxx */,
+				DF7AEBF115C7AC7A007E5981 /* Plan.cxx */,
+				DF7AEBF215C7AC7A007E5981 /* Player.cxx */,
+				DF7AEBF315C7AC7A007E5981 /* playing.cxx */,
+				DF7AEBF415C7AC7A007E5981 /* QuickKeysMenu.cxx */,
+				DF7AEBF515C7AC7A007E5981 /* QuitMenu.cxx */,
+				DF7AEBF615C7AC7A007E5981 /* RadarRenderer.cxx */,
+				DF7AEBF715C7AC7A007E5981 /* Region.cxx */,
+				DF7AEBF815C7AC7A007E5981 /* RegionPriorityQueue.cxx */,
+				DF7AEBF915C7AC7A007E5981 /* RemotePlayer.cxx */,
+				DF7AEBFA15C7AC7A007E5981 /* Roaming.cxx */,
+				DF7AEBFB15C7AC7A007E5981 /* RobotPlayer.cxx */,
+				DF7AEBFC15C7AC7A007E5981 /* RoofTops.cxx */,
+				DF7AEBFD15C7AC7A007E5981 /* Roster.cxx */,
+				DF7AEBFE15C7AC7A007E5981 /* SaveWorldMenu.cxx */,
+				DF7AEBFF15C7AC7A007E5981 /* SceneBuilder.cxx */,
+				DF7AEC0015C7AC7A007E5981 /* SceneRenderer.cxx */,
+				DF7AEC0115C7AC7A007E5981 /* ScoreboardRenderer.cxx */,
+				DF7AEC0215C7AC7A007E5981 /* SegmentedShotStrategy.cxx */,
+				DF7AEC0315C7AC7A007E5981 /* ServerCommandKey.cxx */,
+				DF7AEC0415C7AC7A007E5981 /* ServerLink.cxx */,
+				DF7AEC0515C7AC7A007E5981 /* ServerListFilter.cxx */,
+				DF7AEC0615C7AC7A007E5981 /* ServerMenu.cxx */,
+				DF7AEC0715C7AC7A007E5981 /* ServerStartMenu.cxx */,
+				DF7AEC0815C7AC7A007E5981 /* ShockWaveStrategy.cxx */,
+				DF7AEC0915C7AC7A007E5981 /* ShotPath.cxx */,
+				DF7AEC0A15C7AC7A007E5981 /* ShotPathSegment.cxx */,
+				DF7AEC0B15C7AC7A007E5981 /* ShotStatistics.cxx */,
+				DF7AEC0C15C7AC7A007E5981 /* ShotStats.cxx */,
+				DF7AEC0D15C7AC7A007E5981 /* ShotStatsDefaultKey.cxx */,
+				DF7AEC0E15C7AC7A007E5981 /* ShotStrategy.cxx */,
+				DF7AEC0F15C7AC7A007E5981 /* SilenceDefaultKey.cxx */,
+				DF7AEC1015C7AC7A007E5981 /* sound.cxx */,
+				DF7AEC1115C7AC7A007E5981 /* stars.cxx */,
+				DF7AEC1215C7AC7A007E5981 /* TargetingUtils.cxx */,
+				DF7AEC1315C7AC7A007E5981 /* TrackMarks.cxx */,
+				DF7AEC1415C7AC7A007E5981 /* Weapon.cxx */,
+				DF7AEC1515C7AC7A007E5981 /* WeatherRenderer.cxx */,
+				DF7AEC1615C7AC7A007E5981 /* World.cxx */,
+				DF7AEC1715C7AC7A007E5981 /* WorldBuilder.cxx */,
+				DF7AEC1815C7AC7A007E5981 /* WorldPlayer.cxx */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DF7AEB4015C7ABEE007E5981 /* BZFlag */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF7AEB5F15C7ABEF007E5981 /* Build configuration list for PBXNativeTarget "BZFlag" */;
+			buildPhases = (
+				DF7AEB3D15C7ABEE007E5981 /* Sources */,
+				DF7AEB3E15C7ABEE007E5981 /* Frameworks */,
+				DF7AEB3F15C7ABEE007E5981 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BZFlag;
+			productName = BZFlag;
+			productReference = DF7AEB4115C7ABEE007E5981 /* BZFlag.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF7AEB3815C7ABEE007E5981 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = BZ_;
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = BZFlag.org;
+			};
+			buildConfigurationList = DF7AEB3B15C7ABEE007E5981 /* Build configuration list for PBXProject "BZFlag" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = DF7AEB3615C7ABEE007E5981;
+			productRefGroup = DF7AEB4215C7ABEE007E5981 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF7AEB4015C7ABEE007E5981 /* BZFlag */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		DF7AEB3F15C7ABEE007E5981 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF7AEB5015C7ABEF007E5981 /* InfoPlist.strings in Resources */,
+				DF7AEB5615C7ABEF007E5981 /* Credits.rtf in Resources */,
+				DF7AEC8115C7ACC6007E5981 /* MacBZFlag.icns in Resources */,
+				DF7AEC8A15C7ACC6007E5981 /* BZFlag-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DF7AEB3D15C7ABEE007E5981 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF7AEB5215C7ABEF007E5981 /* main.m in Sources */,
+				DF7AEC1915C7AC7A007E5981 /* ActionBinding.cxx in Sources */,
+				DF7AEC1A15C7AC7A007E5981 /* AudioMenu.cxx in Sources */,
+				DF7AEC1B15C7AC7A007E5981 /* AutoPilot.cxx in Sources */,
+				DF7AEC1C15C7AC7A007E5981 /* BackgroundRenderer.cxx in Sources */,
+				DF7AEC1D15C7AC7A007E5981 /* BaseLocalPlayer.cxx in Sources */,
+				DF7AEC1E15C7AC7A007E5981 /* bzflag.cxx in Sources */,
+				DF7AEC1F15C7AC7A007E5981 /* CacheMenu.cxx in Sources */,
+				DF7AEC2015C7AC7A007E5981 /* callbacks.cxx in Sources */,
+				DF7AEC2115C7AC7A007E5981 /* clientCommands.cxx in Sources */,
+				DF7AEC2215C7AC7A007E5981 /* clientConfig.cxx in Sources */,
+				DF7AEC2315C7AC7A007E5981 /* CommandsImplementation.cxx in Sources */,
+				DF7AEC2415C7AC7A007E5981 /* ComposeDefaultKey.cxx in Sources */,
+				DF7AEC2515C7AC7A007E5981 /* ControlPanel.cxx in Sources */,
+				DF7AEC2615C7AC7A007E5981 /* daylight.cxx in Sources */,
+				DF7AEC2715C7AC7A007E5981 /* defaultBZDB.cxx in Sources */,
+				DF7AEC2815C7AC7A007E5981 /* DisplayMenu.cxx in Sources */,
+				DF7AEC2915C7AC7A007E5981 /* Downloads.cxx in Sources */,
+				DF7AEC2A15C7AC7A007E5981 /* EffectsMenu.cxx in Sources */,
+				DF7AEC2B15C7AC7A007E5981 /* effectsRenderer.cxx in Sources */,
+				DF7AEC2C15C7AC7A007E5981 /* EntryZone.cxx in Sources */,
+				DF7AEC2D15C7AC7A007E5981 /* FlashClock.cxx in Sources */,
+				DF7AEC2E15C7AC7A007E5981 /* ForceFeedback.cxx in Sources */,
+				DF7AEC2F15C7AC7A007E5981 /* FormatMenu.cxx in Sources */,
+				DF7AEC3015C7AC7A007E5981 /* GuidedMissleStrategy.cxx in Sources */,
+				DF7AEC3115C7AC7A007E5981 /* GUIOptionsMenu.cxx in Sources */,
+				DF7AEC3215C7AC7A007E5981 /* HelpMenu.cxx in Sources */,
+				DF7AEC3315C7AC7A007E5981 /* HUDDialog.cxx in Sources */,
+				DF7AEC3415C7AC7A007E5981 /* HUDDialogStack.cxx in Sources */,
+				DF7AEC3515C7AC7A007E5981 /* HUDRenderer.cxx in Sources */,
+				DF7AEC3615C7AC7A007E5981 /* HUDui.cxx in Sources */,
+				DF7AEC3715C7AC7A007E5981 /* HUDuiControl.cxx in Sources */,
+				DF7AEC3815C7AC7A007E5981 /* HUDuiDefaultKey.cxx in Sources */,
+				DF7AEC3915C7AC7A007E5981 /* HUDuiLabel.cxx in Sources */,
+				DF7AEC3A15C7AC7A007E5981 /* HUDuiList.cxx in Sources */,
+				DF7AEC3B15C7AC7A007E5981 /* HUDuiTextureLabel.cxx in Sources */,
+				DF7AEC3C15C7AC7A007E5981 /* HUDuiTypeIn.cxx in Sources */,
+				DF7AEC3D15C7AC7A007E5981 /* InputMenu.cxx in Sources */,
+				DF7AEC3E15C7AC7A007E5981 /* JoinMenu.cxx in Sources */,
+				DF7AEC3F15C7AC7A007E5981 /* KeyboardMapMenu.cxx in Sources */,
+				DF7AEC4015C7AC7A007E5981 /* LocalCommand.cxx in Sources */,
+				DF7AEC4115C7AC7A007E5981 /* LocalPlayer.cxx in Sources */,
+				DF7AEC4215C7AC7A007E5981 /* MainMenu.cxx in Sources */,
+				DF7AEC4315C7AC7A007E5981 /* MainWindow.cxx in Sources */,
+				DF7AEC4415C7AC7A007E5981 /* MenuDefaultKey.cxx in Sources */,
+				DF7AEC4515C7AC7A007E5981 /* motd.cxx in Sources */,
+				DF7AEC4615C7AC7A007E5981 /* NewVersionMenu.cxx in Sources */,
+				DF7AEC4715C7AC7A007E5981 /* OptionsMenu.cxx in Sources */,
+				DF7AEC4815C7AC7A007E5981 /* Plan.cxx in Sources */,
+				DF7AEC4915C7AC7A007E5981 /* Player.cxx in Sources */,
+				DF7AEC4A15C7AC7A007E5981 /* playing.cxx in Sources */,
+				DF7AEC4B15C7AC7A007E5981 /* QuickKeysMenu.cxx in Sources */,
+				DF7AEC4C15C7AC7A007E5981 /* QuitMenu.cxx in Sources */,
+				DF7AEC4D15C7AC7A007E5981 /* RadarRenderer.cxx in Sources */,
+				DF7AEC4E15C7AC7A007E5981 /* Region.cxx in Sources */,
+				DF7AEC4F15C7AC7A007E5981 /* RegionPriorityQueue.cxx in Sources */,
+				DF7AEC5015C7AC7A007E5981 /* RemotePlayer.cxx in Sources */,
+				DF7AEC5115C7AC7A007E5981 /* Roaming.cxx in Sources */,
+				DF7AEC5215C7AC7A007E5981 /* RobotPlayer.cxx in Sources */,
+				DF7AEC5315C7AC7A007E5981 /* RoofTops.cxx in Sources */,
+				DF7AEC5415C7AC7A007E5981 /* Roster.cxx in Sources */,
+				DF7AEC5515C7AC7A007E5981 /* SaveWorldMenu.cxx in Sources */,
+				DF7AEC5615C7AC7A007E5981 /* SceneBuilder.cxx in Sources */,
+				DF7AEC5715C7AC7A007E5981 /* SceneRenderer.cxx in Sources */,
+				DF7AEC5815C7AC7A007E5981 /* ScoreboardRenderer.cxx in Sources */,
+				DF7AEC5915C7AC7A007E5981 /* SegmentedShotStrategy.cxx in Sources */,
+				DF7AEC5A15C7AC7A007E5981 /* ServerCommandKey.cxx in Sources */,
+				DF7AEC5B15C7AC7A007E5981 /* ServerLink.cxx in Sources */,
+				DF7AEC5C15C7AC7A007E5981 /* ServerListFilter.cxx in Sources */,
+				DF7AEC5D15C7AC7A007E5981 /* ServerMenu.cxx in Sources */,
+				DF7AEC5E15C7AC7A007E5981 /* ServerStartMenu.cxx in Sources */,
+				DF7AEC5F15C7AC7A007E5981 /* ShockWaveStrategy.cxx in Sources */,
+				DF7AEC6015C7AC7A007E5981 /* ShotPath.cxx in Sources */,
+				DF7AEC6115C7AC7A007E5981 /* ShotPathSegment.cxx in Sources */,
+				DF7AEC6215C7AC7A007E5981 /* ShotStatistics.cxx in Sources */,
+				DF7AEC6315C7AC7A007E5981 /* ShotStats.cxx in Sources */,
+				DF7AEC6415C7AC7A007E5981 /* ShotStatsDefaultKey.cxx in Sources */,
+				DF7AEC6515C7AC7A007E5981 /* ShotStrategy.cxx in Sources */,
+				DF7AEC6615C7AC7A007E5981 /* SilenceDefaultKey.cxx in Sources */,
+				DF7AEC6715C7AC7A007E5981 /* sound.cxx in Sources */,
+				DF7AEC6815C7AC7A007E5981 /* stars.cxx in Sources */,
+				DF7AEC6915C7AC7A007E5981 /* TargetingUtils.cxx in Sources */,
+				DF7AEC6A15C7AC7A007E5981 /* TrackMarks.cxx in Sources */,
+				DF7AEC6B15C7AC7A007E5981 /* Weapon.cxx in Sources */,
+				DF7AEC6C15C7AC7A007E5981 /* WeatherRenderer.cxx in Sources */,
+				DF7AEC6D15C7AC7A007E5981 /* World.cxx in Sources */,
+				DF7AEC6E15C7AC7A007E5981 /* WorldBuilder.cxx in Sources */,
+				DF7AEC6F15C7AC7A007E5981 /* WorldPlayer.cxx in Sources */,
+				DF7AEC8815C7ACC6007E5981 /* mkplist.cxx in Sources */,
+				DF7AEC8915C7ACC6007E5981 /* SDLMain.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		DF7AEB4E15C7ABEF007E5981 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF7AEB4F15C7ABEF007E5981 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		DF7AEB5415C7ABEF007E5981 /* Credits.rtf */ = {
+			isa = PBXVariantGroup;
+			children = (
+				DF7AEB5515C7ABEF007E5981 /* en */,
+			);
+			name = Credits.rtf;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		DF7AEB5D15C7ABEF007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DF7AEB5E15C7ABEF007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DF7AEB6015C7ABEF007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BZFlag/BZFlag-Prefix.pch";
+				INFOPLIST_FILE = "BZFlag/BZFlag-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		DF7AEB6115C7ABEF007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "c++0x";
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "BZFlag/BZFlag-Prefix.pch";
+				INFOPLIST_FILE = "BZFlag/BZFlag-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx10.7;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DF7AEB3B15C7ABEE007E5981 /* Build configuration list for PBXProject "BZFlag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEB5D15C7ABEF007E5981 /* Debug */,
+				DF7AEB5E15C7ABEF007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF7AEB5F15C7ABEF007E5981 /* Build configuration list for PBXNativeTarget "BZFlag" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEB6015C7ABEF007E5981 /* Debug */,
+				DF7AEB6115C7ABEF007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DF7AEB3815C7ABEE007E5981 /* Project object */;
+}

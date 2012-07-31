@@ -1,0 +1,351 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF7AEAD115C7AB3B007E5981 /* bzsignal.c in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAAC15C7AB3B007E5981 /* bzsignal.c */; };
+		DF7AEAD215C7AB3B007E5981 /* AccessList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAAD15C7AB3B007E5981 /* AccessList.cxx */; };
+		DF7AEAD315C7AB3B007E5981 /* AutoCompleter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAAE15C7AB3B007E5981 /* AutoCompleter.cxx */; };
+		DF7AEAD415C7AB3B007E5981 /* Bundle.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAAF15C7AB3B007E5981 /* Bundle.cxx */; };
+		DF7AEAD515C7AB3B007E5981 /* BundleMgr.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB015C7AB3B007E5981 /* BundleMgr.cxx */; };
+		DF7AEAD615C7AB3B007E5981 /* bz_Locale.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB115C7AB3B007E5981 /* bz_Locale.cxx */; };
+		DF7AEAD715C7AB3B007E5981 /* BZDBCache.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB215C7AB3B007E5981 /* BZDBCache.cxx */; };
+		DF7AEAD815C7AB3B007E5981 /* BZDBLocal.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB315C7AB3B007E5981 /* BZDBLocal.cxx */; };
+		DF7AEAD915C7AB3B007E5981 /* bzfio.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB415C7AB3B007E5981 /* bzfio.cxx */; };
+		DF7AEADA15C7AB3B007E5981 /* bzglob.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB515C7AB3B007E5981 /* bzglob.cxx */; };
+		DF7AEADB15C7AB3B007E5981 /* BzPNG.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB615C7AB3B007E5981 /* BzPNG.cxx */; };
+		DF7AEADC15C7AB3B007E5981 /* CommandManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB715C7AB3B007E5981 /* CommandManager.cxx */; };
+		DF7AEADD15C7AB3B007E5981 /* ConfigFileManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB815C7AB3B007E5981 /* ConfigFileManager.cxx */; };
+		DF7AEADE15C7AB3B007E5981 /* Country.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAB915C7AB3B007E5981 /* Country.cxx */; };
+		DF7AEADF15C7AB3B007E5981 /* cURLManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABA15C7AB3B007E5981 /* cURLManager.cxx */; };
+		DF7AEAE015C7AB3B007E5981 /* ErrorHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABB15C7AB3B007E5981 /* ErrorHandler.cxx */; };
+		DF7AEAE115C7AB3B007E5981 /* FileManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABC15C7AB3B007E5981 /* FileManager.cxx */; };
+		DF7AEAE215C7AB3B007E5981 /* Flag.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABD15C7AB3B007E5981 /* Flag.cxx */; };
+		DF7AEAE315C7AB3B007E5981 /* GameTime.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABE15C7AB3B007E5981 /* GameTime.cxx */; };
+		DF7AEAE415C7AB3B007E5981 /* global.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEABF15C7AB3B007E5981 /* global.cxx */; };
+		DF7AEAE515C7AB3B007E5981 /* KeyManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC015C7AB3B007E5981 /* KeyManager.cxx */; };
+		DF7AEAE615C7AB3B007E5981 /* Language.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC115C7AB3B007E5981 /* Language.cxx */; };
+		DF7AEAE715C7AB3B007E5981 /* md5.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC215C7AB3B007E5981 /* md5.cxx */; };
+		DF7AEAE815C7AB3B007E5981 /* messages.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC315C7AB3B007E5981 /* messages.cxx */; };
+		DF7AEAE915C7AB3B007E5981 /* OSFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC415C7AB3B007E5981 /* OSFile.cxx */; };
+		DF7AEAEA15C7AB3B007E5981 /* ParseColor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC515C7AB3B007E5981 /* ParseColor.cxx */; };
+		DF7AEAEB15C7AB3B007E5981 /* PlayerState.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC615C7AB3B007E5981 /* PlayerState.cxx */; };
+		DF7AEAEC15C7AB3B007E5981 /* PositionTracker.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC715C7AB3B007E5981 /* PositionTracker.cxx */; };
+		DF7AEAED15C7AB3B007E5981 /* ShotUpdate.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC815C7AB3B007E5981 /* ShotUpdate.cxx */; };
+		DF7AEAEE15C7AB3B007E5981 /* StateDatabase.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAC915C7AB3B007E5981 /* StateDatabase.cxx */; };
+		DF7AEAEF15C7AB3B007E5981 /* Team.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACA15C7AB3B007E5981 /* Team.cxx */; };
+		DF7AEAF015C7AB3B007E5981 /* TextChunkManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACB15C7AB3B007E5981 /* TextChunkManager.cxx */; };
+		DF7AEAF115C7AB3B007E5981 /* TextUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACC15C7AB3B007E5981 /* TextUtils.cxx */; };
+		DF7AEAF215C7AB3B007E5981 /* TimeBomb.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACD15C7AB3B007E5981 /* TimeBomb.cxx */; };
+		DF7AEAF315C7AB3B007E5981 /* TimeKeeper.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACE15C7AB3B007E5981 /* TimeKeeper.cxx */; };
+		DF7AEAF415C7AB3B007E5981 /* VotingBooth.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEACF15C7AB3B007E5981 /* VotingBooth.cxx */; };
+		DF7AEAF515C7AB3B007E5981 /* WordFilter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEAD015C7AB3B007E5981 /* WordFilter.cxx */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		DF7AEAA515C7AB0F007E5981 /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF7AEAAC15C7AB3B007E5981 /* bzsignal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = bzsignal.c; path = ../../src/common/bzsignal.c; sourceTree = "<group>"; };
+		DF7AEAAD15C7AB3B007E5981 /* AccessList.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccessList.cxx; path = ../../src/common/AccessList.cxx; sourceTree = "<group>"; };
+		DF7AEAAE15C7AB3B007E5981 /* AutoCompleter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AutoCompleter.cxx; path = ../../src/common/AutoCompleter.cxx; sourceTree = "<group>"; };
+		DF7AEAAF15C7AB3B007E5981 /* Bundle.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Bundle.cxx; path = ../../src/common/Bundle.cxx; sourceTree = "<group>"; };
+		DF7AEAB015C7AB3B007E5981 /* BundleMgr.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BundleMgr.cxx; path = ../../src/common/BundleMgr.cxx; sourceTree = "<group>"; };
+		DF7AEAB115C7AB3B007E5981 /* bz_Locale.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bz_Locale.cxx; path = ../../src/common/bz_Locale.cxx; sourceTree = "<group>"; };
+		DF7AEAB215C7AB3B007E5981 /* BZDBCache.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BZDBCache.cxx; path = ../../src/common/BZDBCache.cxx; sourceTree = "<group>"; };
+		DF7AEAB315C7AB3B007E5981 /* BZDBLocal.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BZDBLocal.cxx; path = ../../src/common/BZDBLocal.cxx; sourceTree = "<group>"; };
+		DF7AEAB415C7AB3B007E5981 /* bzfio.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzfio.cxx; path = ../../src/common/bzfio.cxx; sourceTree = "<group>"; };
+		DF7AEAB515C7AB3B007E5981 /* bzglob.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzglob.cxx; path = ../../src/common/bzglob.cxx; sourceTree = "<group>"; };
+		DF7AEAB615C7AB3B007E5981 /* BzPNG.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BzPNG.cxx; path = ../../src/common/BzPNG.cxx; sourceTree = "<group>"; };
+		DF7AEAB715C7AB3B007E5981 /* CommandManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandManager.cxx; path = ../../src/common/CommandManager.cxx; sourceTree = "<group>"; };
+		DF7AEAB815C7AB3B007E5981 /* ConfigFileManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ConfigFileManager.cxx; path = ../../src/common/ConfigFileManager.cxx; sourceTree = "<group>"; };
+		DF7AEAB915C7AB3B007E5981 /* Country.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Country.cxx; path = ../../src/common/Country.cxx; sourceTree = "<group>"; };
+		DF7AEABA15C7AB3B007E5981 /* cURLManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = cURLManager.cxx; path = ../../src/common/cURLManager.cxx; sourceTree = "<group>"; };
+		DF7AEABB15C7AB3B007E5981 /* ErrorHandler.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ErrorHandler.cxx; path = ../../src/common/ErrorHandler.cxx; sourceTree = "<group>"; };
+		DF7AEABC15C7AB3B007E5981 /* FileManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FileManager.cxx; path = ../../src/common/FileManager.cxx; sourceTree = "<group>"; };
+		DF7AEABD15C7AB3B007E5981 /* Flag.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Flag.cxx; path = ../../src/common/Flag.cxx; sourceTree = "<group>"; };
+		DF7AEABE15C7AB3B007E5981 /* GameTime.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GameTime.cxx; path = ../../src/common/GameTime.cxx; sourceTree = "<group>"; };
+		DF7AEABF15C7AB3B007E5981 /* global.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = global.cxx; path = ../../src/common/global.cxx; sourceTree = "<group>"; };
+		DF7AEAC015C7AB3B007E5981 /* KeyManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = KeyManager.cxx; path = ../../src/common/KeyManager.cxx; sourceTree = "<group>"; };
+		DF7AEAC115C7AB3B007E5981 /* Language.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Language.cxx; path = ../../src/common/Language.cxx; sourceTree = "<group>"; };
+		DF7AEAC215C7AB3B007E5981 /* md5.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = md5.cxx; path = ../../src/common/md5.cxx; sourceTree = "<group>"; };
+		DF7AEAC315C7AB3B007E5981 /* messages.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = messages.cxx; path = ../../src/common/messages.cxx; sourceTree = "<group>"; };
+		DF7AEAC415C7AB3B007E5981 /* OSFile.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OSFile.cxx; path = ../../src/common/OSFile.cxx; sourceTree = "<group>"; };
+		DF7AEAC515C7AB3B007E5981 /* ParseColor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParseColor.cxx; path = ../../src/common/ParseColor.cxx; sourceTree = "<group>"; };
+		DF7AEAC615C7AB3B007E5981 /* PlayerState.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayerState.cxx; path = ../../src/common/PlayerState.cxx; sourceTree = "<group>"; };
+		DF7AEAC715C7AB3B007E5981 /* PositionTracker.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PositionTracker.cxx; path = ../../src/common/PositionTracker.cxx; sourceTree = "<group>"; };
+		DF7AEAC815C7AB3B007E5981 /* ShotUpdate.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotUpdate.cxx; path = ../../src/common/ShotUpdate.cxx; sourceTree = "<group>"; };
+		DF7AEAC915C7AB3B007E5981 /* StateDatabase.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StateDatabase.cxx; path = ../../src/common/StateDatabase.cxx; sourceTree = "<group>"; };
+		DF7AEACA15C7AB3B007E5981 /* Team.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Team.cxx; path = ../../src/common/Team.cxx; sourceTree = "<group>"; };
+		DF7AEACB15C7AB3B007E5981 /* TextChunkManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextChunkManager.cxx; path = ../../src/common/TextChunkManager.cxx; sourceTree = "<group>"; };
+		DF7AEACC15C7AB3B007E5981 /* TextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextUtils.cxx; path = ../../src/common/TextUtils.cxx; sourceTree = "<group>"; };
+		DF7AEACD15C7AB3B007E5981 /* TimeBomb.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimeBomb.cxx; path = ../../src/common/TimeBomb.cxx; sourceTree = "<group>"; };
+		DF7AEACE15C7AB3B007E5981 /* TimeKeeper.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TimeKeeper.cxx; path = ../../src/common/TimeKeeper.cxx; sourceTree = "<group>"; };
+		DF7AEACF15C7AB3B007E5981 /* VotingBooth.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VotingBooth.cxx; path = ../../src/common/VotingBooth.cxx; sourceTree = "<group>"; };
+		DF7AEAD015C7AB3B007E5981 /* WordFilter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WordFilter.cxx; path = ../../src/common/WordFilter.cxx; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DF7AEAA215C7AB0F007E5981 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF7AEA9A15C7AB0F007E5981 = {
+			isa = PBXGroup;
+			children = (
+				DF7AEAF615C7AB42007E5981 /* Source */,
+				DF7AEAA615C7AB0F007E5981 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DF7AEAA615C7AB0F007E5981 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEAA515C7AB0F007E5981 /* libCommon.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF7AEAF615C7AB42007E5981 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEAAC15C7AB3B007E5981 /* bzsignal.c */,
+				DF7AEAAD15C7AB3B007E5981 /* AccessList.cxx */,
+				DF7AEAAE15C7AB3B007E5981 /* AutoCompleter.cxx */,
+				DF7AEAAF15C7AB3B007E5981 /* Bundle.cxx */,
+				DF7AEAB015C7AB3B007E5981 /* BundleMgr.cxx */,
+				DF7AEAB115C7AB3B007E5981 /* bz_Locale.cxx */,
+				DF7AEAB215C7AB3B007E5981 /* BZDBCache.cxx */,
+				DF7AEAB315C7AB3B007E5981 /* BZDBLocal.cxx */,
+				DF7AEAB415C7AB3B007E5981 /* bzfio.cxx */,
+				DF7AEAB515C7AB3B007E5981 /* bzglob.cxx */,
+				DF7AEAB615C7AB3B007E5981 /* BzPNG.cxx */,
+				DF7AEAB715C7AB3B007E5981 /* CommandManager.cxx */,
+				DF7AEAB815C7AB3B007E5981 /* ConfigFileManager.cxx */,
+				DF7AEAB915C7AB3B007E5981 /* Country.cxx */,
+				DF7AEABA15C7AB3B007E5981 /* cURLManager.cxx */,
+				DF7AEABB15C7AB3B007E5981 /* ErrorHandler.cxx */,
+				DF7AEABC15C7AB3B007E5981 /* FileManager.cxx */,
+				DF7AEABD15C7AB3B007E5981 /* Flag.cxx */,
+				DF7AEABE15C7AB3B007E5981 /* GameTime.cxx */,
+				DF7AEABF15C7AB3B007E5981 /* global.cxx */,
+				DF7AEAC015C7AB3B007E5981 /* KeyManager.cxx */,
+				DF7AEAC115C7AB3B007E5981 /* Language.cxx */,
+				DF7AEAC215C7AB3B007E5981 /* md5.cxx */,
+				DF7AEAC315C7AB3B007E5981 /* messages.cxx */,
+				DF7AEAC415C7AB3B007E5981 /* OSFile.cxx */,
+				DF7AEAC515C7AB3B007E5981 /* ParseColor.cxx */,
+				DF7AEAC615C7AB3B007E5981 /* PlayerState.cxx */,
+				DF7AEAC715C7AB3B007E5981 /* PositionTracker.cxx */,
+				DF7AEAC815C7AB3B007E5981 /* ShotUpdate.cxx */,
+				DF7AEAC915C7AB3B007E5981 /* StateDatabase.cxx */,
+				DF7AEACA15C7AB3B007E5981 /* Team.cxx */,
+				DF7AEACB15C7AB3B007E5981 /* TextChunkManager.cxx */,
+				DF7AEACC15C7AB3B007E5981 /* TextUtils.cxx */,
+				DF7AEACD15C7AB3B007E5981 /* TimeBomb.cxx */,
+				DF7AEACE15C7AB3B007E5981 /* TimeKeeper.cxx */,
+				DF7AEACF15C7AB3B007E5981 /* VotingBooth.cxx */,
+				DF7AEAD015C7AB3B007E5981 /* WordFilter.cxx */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		DF7AEAA315C7AB0F007E5981 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		DF7AEAA415C7AB0F007E5981 /* Common */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF7AEAA915C7AB0F007E5981 /* Build configuration list for PBXNativeTarget "Common" */;
+			buildPhases = (
+				DF7AEAA115C7AB0F007E5981 /* Sources */,
+				DF7AEAA215C7AB0F007E5981 /* Frameworks */,
+				DF7AEAA315C7AB0F007E5981 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Common;
+			productName = Common;
+			productReference = DF7AEAA515C7AB0F007E5981 /* libCommon.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF7AEA9C15C7AB0F007E5981 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = BZFlag.org;
+			};
+			buildConfigurationList = DF7AEA9F15C7AB0F007E5981 /* Build configuration list for PBXProject "Common" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = DF7AEA9A15C7AB0F007E5981;
+			productRefGroup = DF7AEAA615C7AB0F007E5981 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF7AEAA415C7AB0F007E5981 /* Common */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DF7AEAA115C7AB0F007E5981 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF7AEAD115C7AB3B007E5981 /* bzsignal.c in Sources */,
+				DF7AEAD215C7AB3B007E5981 /* AccessList.cxx in Sources */,
+				DF7AEAD315C7AB3B007E5981 /* AutoCompleter.cxx in Sources */,
+				DF7AEAD415C7AB3B007E5981 /* Bundle.cxx in Sources */,
+				DF7AEAD515C7AB3B007E5981 /* BundleMgr.cxx in Sources */,
+				DF7AEAD615C7AB3B007E5981 /* bz_Locale.cxx in Sources */,
+				DF7AEAD715C7AB3B007E5981 /* BZDBCache.cxx in Sources */,
+				DF7AEAD815C7AB3B007E5981 /* BZDBLocal.cxx in Sources */,
+				DF7AEAD915C7AB3B007E5981 /* bzfio.cxx in Sources */,
+				DF7AEADA15C7AB3B007E5981 /* bzglob.cxx in Sources */,
+				DF7AEADB15C7AB3B007E5981 /* BzPNG.cxx in Sources */,
+				DF7AEADC15C7AB3B007E5981 /* CommandManager.cxx in Sources */,
+				DF7AEADD15C7AB3B007E5981 /* ConfigFileManager.cxx in Sources */,
+				DF7AEADE15C7AB3B007E5981 /* Country.cxx in Sources */,
+				DF7AEADF15C7AB3B007E5981 /* cURLManager.cxx in Sources */,
+				DF7AEAE015C7AB3B007E5981 /* ErrorHandler.cxx in Sources */,
+				DF7AEAE115C7AB3B007E5981 /* FileManager.cxx in Sources */,
+				DF7AEAE215C7AB3B007E5981 /* Flag.cxx in Sources */,
+				DF7AEAE315C7AB3B007E5981 /* GameTime.cxx in Sources */,
+				DF7AEAE415C7AB3B007E5981 /* global.cxx in Sources */,
+				DF7AEAE515C7AB3B007E5981 /* KeyManager.cxx in Sources */,
+				DF7AEAE615C7AB3B007E5981 /* Language.cxx in Sources */,
+				DF7AEAE715C7AB3B007E5981 /* md5.cxx in Sources */,
+				DF7AEAE815C7AB3B007E5981 /* messages.cxx in Sources */,
+				DF7AEAE915C7AB3B007E5981 /* OSFile.cxx in Sources */,
+				DF7AEAEA15C7AB3B007E5981 /* ParseColor.cxx in Sources */,
+				DF7AEAEB15C7AB3B007E5981 /* PlayerState.cxx in Sources */,
+				DF7AEAEC15C7AB3B007E5981 /* PositionTracker.cxx in Sources */,
+				DF7AEAED15C7AB3B007E5981 /* ShotUpdate.cxx in Sources */,
+				DF7AEAEE15C7AB3B007E5981 /* StateDatabase.cxx in Sources */,
+				DF7AEAEF15C7AB3B007E5981 /* Team.cxx in Sources */,
+				DF7AEAF015C7AB3B007E5981 /* TextChunkManager.cxx in Sources */,
+				DF7AEAF115C7AB3B007E5981 /* TextUtils.cxx in Sources */,
+				DF7AEAF215C7AB3B007E5981 /* TimeBomb.cxx in Sources */,
+				DF7AEAF315C7AB3B007E5981 /* TimeKeeper.cxx in Sources */,
+				DF7AEAF415C7AB3B007E5981 /* VotingBooth.cxx in Sources */,
+				DF7AEAF515C7AB3B007E5981 /* WordFilter.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		DF7AEAA715C7AB0F007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DF7AEAA815C7AB0F007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DF7AEAAA15C7AB0F007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DF7AEAAB15C7AB0F007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DF7AEA9F15C7AB0F007E5981 /* Build configuration list for PBXProject "Common" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEAA715C7AB0F007E5981 /* Debug */,
+				DF7AEAA815C7AB0F007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF7AEAA915C7AB0F007E5981 /* Build configuration list for PBXNativeTarget "Common" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEAAA15C7AB0F007E5981 /* Debug */,
+				DF7AEAAB15C7AB0F007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DF7AEA9C15C7AB0F007E5981 /* Project object */;
+}

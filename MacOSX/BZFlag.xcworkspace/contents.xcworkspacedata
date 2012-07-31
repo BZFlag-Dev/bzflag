@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:BZFlag/BZFlag.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Game/Game.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Common/Common.xcodeproj">
+   </FileRef>
+</Workspace>

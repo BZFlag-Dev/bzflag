@@ -1,0 +1,291 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		DF7AEB2015C7ABB7007E5981 /* BzMaterial.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0A15C7ABB7007E5981 /* BzMaterial.cxx */; };
+		DF7AEB2115C7ABB7007E5981 /* CacheManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0B15C7ABB7007E5981 /* CacheManager.cxx */; };
+		DF7AEB2215C7ABB7007E5981 /* CollisionManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0C15C7ABB7007E5981 /* CollisionManager.cxx */; };
+		DF7AEB2315C7ABB7007E5981 /* CommandsStandard.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0D15C7ABB7007E5981 /* CommandsStandard.cxx */; };
+		DF7AEB2415C7ABB7007E5981 /* DirectoryNames.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0E15C7ABB7007E5981 /* DirectoryNames.cxx */; };
+		DF7AEB2515C7ABB7007E5981 /* DynamicColor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB0F15C7ABB7007E5981 /* DynamicColor.cxx */; };
+		DF7AEB2615C7ABB7007E5981 /* Frustum.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1015C7ABB7007E5981 /* Frustum.cxx */; };
+		DF7AEB2715C7ABB7007E5981 /* Intersect.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1115C7ABB7007E5981 /* Intersect.cxx */; };
+		DF7AEB2815C7ABB7007E5981 /* LagInfo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1215C7ABB7007E5981 /* LagInfo.cxx */; };
+		DF7AEB2915C7ABB7007E5981 /* LinkManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1315C7ABB7007E5981 /* LinkManager.cxx */; };
+		DF7AEB2A15C7ABB7007E5981 /* MeshTransform.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1415C7ABB7007E5981 /* MeshTransform.cxx */; };
+		DF7AEB2B15C7ABB7007E5981 /* MsgStrings.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1515C7ABB7007E5981 /* MsgStrings.cxx */; };
+		DF7AEB2C15C7ABB7007E5981 /* NetHandler.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1615C7ABB7007E5981 /* NetHandler.cxx */; };
+		DF7AEB2D15C7ABB7007E5981 /* PhysicsDriver.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1715C7ABB7007E5981 /* PhysicsDriver.cxx */; };
+		DF7AEB2E15C7ABB7007E5981 /* PlayerInfo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1815C7ABB7007E5981 /* PlayerInfo.cxx */; };
+		DF7AEB2F15C7ABB7007E5981 /* Ray.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1915C7ABB7007E5981 /* Ray.cxx */; };
+		DF7AEB3015C7ABB7007E5981 /* ServerItem.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1A15C7ABB7007E5981 /* ServerItem.cxx */; };
+		DF7AEB3115C7ABB7007E5981 /* ServerList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1B15C7ABB7007E5981 /* ServerList.cxx */; };
+		DF7AEB3215C7ABB7007E5981 /* ServerListCache.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1C15C7ABB7007E5981 /* ServerListCache.cxx */; };
+		DF7AEB3315C7ABB7007E5981 /* StartupInfo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1D15C7ABB7007E5981 /* StartupInfo.cxx */; };
+		DF7AEB3415C7ABB7007E5981 /* TextureMatrix.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1E15C7ABB7007E5981 /* TextureMatrix.cxx */; };
+		DF7AEB3515C7ABB7007E5981 /* VotingArbiter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF7AEB1F15C7ABB7007E5981 /* VotingArbiter.cxx */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		DF7AEB0215C7AB93007E5981 /* libGame.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGame.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF7AEB0A15C7ABB7007E5981 /* BzMaterial.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BzMaterial.cxx; path = ../../src/game/BzMaterial.cxx; sourceTree = "<group>"; };
+		DF7AEB0B15C7ABB7007E5981 /* CacheManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CacheManager.cxx; path = ../../src/game/CacheManager.cxx; sourceTree = "<group>"; };
+		DF7AEB0C15C7ABB7007E5981 /* CollisionManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CollisionManager.cxx; path = ../../src/game/CollisionManager.cxx; sourceTree = "<group>"; };
+		DF7AEB0D15C7ABB7007E5981 /* CommandsStandard.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CommandsStandard.cxx; path = ../../src/game/CommandsStandard.cxx; sourceTree = "<group>"; };
+		DF7AEB0E15C7ABB7007E5981 /* DirectoryNames.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DirectoryNames.cxx; path = ../../src/game/DirectoryNames.cxx; sourceTree = "<group>"; };
+		DF7AEB0F15C7ABB7007E5981 /* DynamicColor.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DynamicColor.cxx; path = ../../src/game/DynamicColor.cxx; sourceTree = "<group>"; };
+		DF7AEB1015C7ABB7007E5981 /* Frustum.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Frustum.cxx; path = ../../src/game/Frustum.cxx; sourceTree = "<group>"; };
+		DF7AEB1115C7ABB7007E5981 /* Intersect.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Intersect.cxx; path = ../../src/game/Intersect.cxx; sourceTree = "<group>"; };
+		DF7AEB1215C7ABB7007E5981 /* LagInfo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LagInfo.cxx; path = ../../src/game/LagInfo.cxx; sourceTree = "<group>"; };
+		DF7AEB1315C7ABB7007E5981 /* LinkManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LinkManager.cxx; path = ../../src/game/LinkManager.cxx; sourceTree = "<group>"; };
+		DF7AEB1415C7ABB7007E5981 /* MeshTransform.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MeshTransform.cxx; path = ../../src/game/MeshTransform.cxx; sourceTree = "<group>"; };
+		DF7AEB1515C7ABB7007E5981 /* MsgStrings.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MsgStrings.cxx; path = ../../src/game/MsgStrings.cxx; sourceTree = "<group>"; };
+		DF7AEB1615C7ABB7007E5981 /* NetHandler.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetHandler.cxx; path = ../../src/game/NetHandler.cxx; sourceTree = "<group>"; };
+		DF7AEB1715C7ABB7007E5981 /* PhysicsDriver.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PhysicsDriver.cxx; path = ../../src/game/PhysicsDriver.cxx; sourceTree = "<group>"; };
+		DF7AEB1815C7ABB7007E5981 /* PlayerInfo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlayerInfo.cxx; path = ../../src/game/PlayerInfo.cxx; sourceTree = "<group>"; };
+		DF7AEB1915C7ABB7007E5981 /* Ray.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Ray.cxx; path = ../../src/game/Ray.cxx; sourceTree = "<group>"; };
+		DF7AEB1A15C7ABB7007E5981 /* ServerItem.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerItem.cxx; path = ../../src/game/ServerItem.cxx; sourceTree = "<group>"; };
+		DF7AEB1B15C7ABB7007E5981 /* ServerList.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerList.cxx; path = ../../src/game/ServerList.cxx; sourceTree = "<group>"; };
+		DF7AEB1C15C7ABB7007E5981 /* ServerListCache.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ServerListCache.cxx; path = ../../src/game/ServerListCache.cxx; sourceTree = "<group>"; };
+		DF7AEB1D15C7ABB7007E5981 /* StartupInfo.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StartupInfo.cxx; path = ../../src/game/StartupInfo.cxx; sourceTree = "<group>"; };
+		DF7AEB1E15C7ABB7007E5981 /* TextureMatrix.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureMatrix.cxx; path = ../../src/game/TextureMatrix.cxx; sourceTree = "<group>"; };
+		DF7AEB1F15C7ABB7007E5981 /* VotingArbiter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VotingArbiter.cxx; path = ../../src/game/VotingArbiter.cxx; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		DF7AEAFF15C7AB93007E5981 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		DF7AEAF715C7AB93007E5981 = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB0915C7AB99007E5981 /* Source */,
+				DF7AEB0315C7AB93007E5981 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		DF7AEB0315C7AB93007E5981 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB0215C7AB93007E5981 /* libGame.a */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		DF7AEB0915C7AB99007E5981 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				DF7AEB0A15C7ABB7007E5981 /* BzMaterial.cxx */,
+				DF7AEB0B15C7ABB7007E5981 /* CacheManager.cxx */,
+				DF7AEB0C15C7ABB7007E5981 /* CollisionManager.cxx */,
+				DF7AEB0D15C7ABB7007E5981 /* CommandsStandard.cxx */,
+				DF7AEB0E15C7ABB7007E5981 /* DirectoryNames.cxx */,
+				DF7AEB0F15C7ABB7007E5981 /* DynamicColor.cxx */,
+				DF7AEB1015C7ABB7007E5981 /* Frustum.cxx */,
+				DF7AEB1115C7ABB7007E5981 /* Intersect.cxx */,
+				DF7AEB1215C7ABB7007E5981 /* LagInfo.cxx */,
+				DF7AEB1315C7ABB7007E5981 /* LinkManager.cxx */,
+				DF7AEB1415C7ABB7007E5981 /* MeshTransform.cxx */,
+				DF7AEB1515C7ABB7007E5981 /* MsgStrings.cxx */,
+				DF7AEB1615C7ABB7007E5981 /* NetHandler.cxx */,
+				DF7AEB1715C7ABB7007E5981 /* PhysicsDriver.cxx */,
+				DF7AEB1815C7ABB7007E5981 /* PlayerInfo.cxx */,
+				DF7AEB1915C7ABB7007E5981 /* Ray.cxx */,
+				DF7AEB1A15C7ABB7007E5981 /* ServerItem.cxx */,
+				DF7AEB1B15C7ABB7007E5981 /* ServerList.cxx */,
+				DF7AEB1C15C7ABB7007E5981 /* ServerListCache.cxx */,
+				DF7AEB1D15C7ABB7007E5981 /* StartupInfo.cxx */,
+				DF7AEB1E15C7ABB7007E5981 /* TextureMatrix.cxx */,
+				DF7AEB1F15C7ABB7007E5981 /* VotingArbiter.cxx */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		DF7AEB0015C7AB93007E5981 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		DF7AEB0115C7AB93007E5981 /* Game */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF7AEB0615C7AB93007E5981 /* Build configuration list for PBXNativeTarget "Game" */;
+			buildPhases = (
+				DF7AEAFE15C7AB93007E5981 /* Sources */,
+				DF7AEAFF15C7AB93007E5981 /* Frameworks */,
+				DF7AEB0015C7AB93007E5981 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Game;
+			productName = Game;
+			productReference = DF7AEB0215C7AB93007E5981 /* libGame.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DF7AEAF915C7AB93007E5981 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0440;
+				ORGANIZATIONNAME = BZFlag.org;
+			};
+			buildConfigurationList = DF7AEAFC15C7AB93007E5981 /* Build configuration list for PBXProject "Game" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = DF7AEAF715C7AB93007E5981;
+			productRefGroup = DF7AEB0315C7AB93007E5981 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DF7AEB0115C7AB93007E5981 /* Game */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		DF7AEAFE15C7AB93007E5981 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF7AEB2015C7ABB7007E5981 /* BzMaterial.cxx in Sources */,
+				DF7AEB2115C7ABB7007E5981 /* CacheManager.cxx in Sources */,
+				DF7AEB2215C7ABB7007E5981 /* CollisionManager.cxx in Sources */,
+				DF7AEB2315C7ABB7007E5981 /* CommandsStandard.cxx in Sources */,
+				DF7AEB2415C7ABB7007E5981 /* DirectoryNames.cxx in Sources */,
+				DF7AEB2515C7ABB7007E5981 /* DynamicColor.cxx in Sources */,
+				DF7AEB2615C7ABB7007E5981 /* Frustum.cxx in Sources */,
+				DF7AEB2715C7ABB7007E5981 /* Intersect.cxx in Sources */,
+				DF7AEB2815C7ABB7007E5981 /* LagInfo.cxx in Sources */,
+				DF7AEB2915C7ABB7007E5981 /* LinkManager.cxx in Sources */,
+				DF7AEB2A15C7ABB7007E5981 /* MeshTransform.cxx in Sources */,
+				DF7AEB2B15C7ABB7007E5981 /* MsgStrings.cxx in Sources */,
+				DF7AEB2C15C7ABB7007E5981 /* NetHandler.cxx in Sources */,
+				DF7AEB2D15C7ABB7007E5981 /* PhysicsDriver.cxx in Sources */,
+				DF7AEB2E15C7ABB7007E5981 /* PlayerInfo.cxx in Sources */,
+				DF7AEB2F15C7ABB7007E5981 /* Ray.cxx in Sources */,
+				DF7AEB3015C7ABB7007E5981 /* ServerItem.cxx in Sources */,
+				DF7AEB3115C7ABB7007E5981 /* ServerList.cxx in Sources */,
+				DF7AEB3215C7ABB7007E5981 /* ServerListCache.cxx in Sources */,
+				DF7AEB3315C7ABB7007E5981 /* StartupInfo.cxx in Sources */,
+				DF7AEB3415C7ABB7007E5981 /* TextureMatrix.cxx in Sources */,
+				DF7AEB3515C7ABB7007E5981 /* VotingArbiter.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		DF7AEB0415C7AB93007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		DF7AEB0515C7AB93007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		DF7AEB0715C7AB93007E5981 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		DF7AEB0815C7AB93007E5981 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		DF7AEAFC15C7AB93007E5981 /* Build configuration list for PBXProject "Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEB0415C7AB93007E5981 /* Debug */,
+				DF7AEB0515C7AB93007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF7AEB0615C7AB93007E5981 /* Build configuration list for PBXNativeTarget "Game" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF7AEB0715C7AB93007E5981 /* Debug */,
+				DF7AEB0815C7AB93007E5981 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DF7AEAF915C7AB93007E5981 /* Project object */;
+}
