@@ -729,8 +729,8 @@
 						<tr>
 							<td>Debug Level</td>
 							<td>
-								<select name="debug_level" value="0" title="Set debugging level">
-									<option value="0">None</option>
+								<select name="debug_level" title="Set debugging level">
+									<option value="0" selected>None</option>
 									<option value="1">1</option>
 									<option value="2">2</option>
 									<option value="3">3</option>
@@ -790,8 +790,8 @@
 						<tr>
 							<td>Game Style</td>
 							<td>
-								<select name="game_style" value="ffa" onClick="return ableControls()" title="Free for all or Capture the flag game style">
-									<option value="ffa">Free for All</option>
+								<select name="game_style" onClick="return ableControls()" title="Free for all or Capture the flag game style">
+									<option value="ffa" selected>Free for All</option>
 									<option value="ctf">Capture the Flag</option>
 									<option value="bc">Uniform world Capture the Flag</option>
 									<option value="rc">Rabbit Chase</option>
@@ -806,14 +806,13 @@
 						<tr>
 							<td>Building Density</td>
 							<td>
-								<select name="density" value="5" title="Building Density" onClick="return ableControls()">
-									<option value="5">5 (default)</option>
+								<select name="density" title="Building Density" onClick="return ableControls()">
 									<option value="0">0</option>
 									<option value="1">1</option>
 									<option value="2">2</option>
 									<option value="3">3</option>
 									<option value="4">4</option>
-									<option value="5">5</option>
+									<option value="5" selected>5 (default)</option>
 									<option value="6">6</option>
 									<option value="7">7</option>
 									<option value="8">8</option>
@@ -822,8 +821,8 @@
 							</td>
 							<td>Rabbit Selection</td>
 							<td>
-								<select name="rabbit_selection" value="score" title="Rabbit Selection Algorithm" disabled>
-									<option value="score">Top Score</option>
+								<select name="rabbit_selection" title="Rabbit Selection Algorithm" disabled>
+									<option value="score" selected>Top Score</option>
 									<option value="killer">Killer</option>
 									<option value="random">Random</option>
 								</select>
