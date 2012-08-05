@@ -516,7 +516,11 @@ cannot proceed.  A checklist of items to be completed follows:
 - Build platform-specific binaries from the source tarball.
 
 - Post the source tarball, zip and platform-specific binaries to
-  SourceForge.
+  SourceForge.  Update the per-operating system default download
+  settings.
+
+- Add a new page to the BZFlag wiki for the new version and update
+  other pages (including Download, Releases, Versions) appropriately.
 
 - Increment and commit the version number in configure.ac and other
   files (see above) to the source repository so that later builds are
