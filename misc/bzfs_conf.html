@@ -19,7 +19,7 @@
 			a:hover.build { display: block; color:#000000; background-color: #BED0EA; }
 			legend { font-size: 110%; line-height: 1.5; }
 		</style>
-		<script language="JavaScript">
+		<script type="text/javascript">
 			var flags = new Array(	"V", "QT", "OO", "F", "MG", "GM", "L", "R", "SB",
 						"IB", "ST", "T", "N", "SH", "SR", "SW", "PZ", "G",
 						"JP", "ID", "CL", "US", "MQ", "SE", "TH", "BU", "WG",
@@ -60,8 +60,8 @@
 
 					d.writeln("<html><body><p>");
 					d.writeln("#This is a bzfs configuration file.<br>");
-					d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf</i>.<br>");
-					d.writeln("#Use it like <code>bzfs -conf <i>sample.conf</i></code><br><br>");
+					d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf<\/i>.<br>");
+					d.writeln("#Use it like <code>bzfs -conf <i>sample.conf<\/i><\/code><br><br>");
 
 					if (mainform.port.value != 5154) {
 						d.writeln("#Initial port clients connect on<br>");
@@ -568,7 +568,7 @@
 					}
 					d.writeln("<br><br>");
 
-					d.writeln("</p></body></html>");
+					d.writeln("<\/p><\/body><\/html>");
 
 					d.close();
 				}
@@ -677,15 +677,15 @@
 							<td>Packet Loss Warn Drop Count</td>
 							<td><input type="text" name="packet_loss_drop" value="0" size="30" title="Drop player after this many packet loss warnings"></td>
 						</tr>
-						<tr span="2">
+						<tr>
 							<td>Ban List</td>
 							<td colspan="3"><input type="text" name="ban_list" size="100" title="Ban players based on ip addresses"></td>
 						</tr>
-						<tr span="2">
+						<tr>
 							<td>Ban File</td>
 							<td colspan="3"><input type="file" name="ban_file" size="100" title="Ban file"></td>
 						</tr>
-						<tr span="2">
+						<tr>
 							<td>Idle Kick Time</td>
 							<td><input type="text" name="idle_kick_time" value="0" size="30" title="Idle Kick Threshold [s]"></td>
 						</tr>
@@ -705,7 +705,7 @@
 							<td> Excess Speed Kick Percent</td>
 							<td><input type="text" name="speed_kick" value="112.5" size="30" title="Percent over normal speed to auto kick"></td>
 						</tr>
-						<tr span="2">
+						<tr>
 							<td>Advertisement Message</td>
 							<td colspan="3"><input type="text" name="advertisement_message" size="100" title="Message that is broadcast every 15 minutes"></td>
 						</tr>
@@ -1062,7 +1062,6 @@
 								<td align="right">(A)</td><td><input type="checkbox" name="a_forbid_flag" title="Agility"></td>
 							</tr>
 							<tr>
-							<tr>
 								<td align="right">(CB)</td><td><input type="checkbox" name="cb_forbid_flag" title="Colorblind"></td>
 								<td align="right">(&lt;-)</td><td><input type="checkbox" name="lt_forbid_flag" title="Left turn only"></td>
 								<td align="right">(-&gt;)</td><td><input type="checkbox" name="rt_forbid_flag" title="Right turn only"></td>
@@ -1124,7 +1123,6 @@
 								<td align="right">(WG)</td><td><input type="text" size="5" name="wg_limit_flag" title="Wings"></td>
 								<td align="right">(A)</td><td><input type="text" size="5" name="a_limit_flag" title="Agility"></td>
 							</tr>
-							<tr>
 							<tr>
 								<td align="right">(CB)</td><td><input type="text" size="5" name="cb_limit_flag" title="Colorblind"></td>
 								<td align="right">(&lt;-)</td><td><input type="text" size="5" name="lt_limit_flag" title="Left turn only"></td>
