@@ -30,7 +30,7 @@
 			{
 				var mainform = document.forms["main"];
 				var ctf = (mainform.game_style.value == "ctf") || (mainform.game_style.value == 'bc');
-				var freeForAll = (mainform.game_style.value == "ffa");
+				var freeForAll = (mainform.game_style.value == "ffa") || (mainform.game_style.value == 'offa');
 
 				var rabbit = (mainform.game_style.value == "rc");
 				mainform.world_type.disabled = mainform.game_style.value == "bc";
@@ -44,6 +44,9 @@
 				mainform.rabbit_selection.disabled = !rabbit;
 				var el = document.getElementById( "team_flags" );
 				el.style.display = ctf ? "block" : "none";
+				mainform.team_killers_die.disabled = mainform.disable_teamkills.checked;
+				mainform.team_kills_announce.disabled = mainform.disable_teamkills.checked;
+				mainform.team_killer_kick_ratio.disabled = mainform.disable_teamkills.checked;
 				return true;
 			}
 
@@ -82,6 +85,11 @@
 					if (mainform.public_description.value.length > 0) {
 						d.writeln("#Public description for the server<br>");
 						d.writeln("-publictitle \"" + mainform.public_description.value + "\"<br><br>");
+					}
+					
+					if (mainform.public_key.value.length > 0) {
+						d.writeln("#Public key for the list server<br>");
+						d.writeln("-publickey " + mainform.public_key.value + "<br><br>");
 					}
 
 					if (mainform.public_address.value.length > 0) {
@@ -134,17 +142,22 @@
 						d.writeln("-maxidle " + mainform.idle_kick_time.value + "<br><br>");
 					}
 
-					if (!mainform.team_killers_die.checked) {
+					if (mainform.disable_teamkills.checked) {
+						d.writeln("#Team killing is disabled<br>");
+						d.writeln("-noTeamKills<br><br>");
+					}
+
+					if ((!mainform.team_killers_die.disabled) && !mainform.team_killers_die.checked) {
 						d.writeln("#Player does not die when killing a teammate<br>");
 						d.writeln("-tk<br><br>");
 					}
 
-					if (mainform.team_kills_announce.checked) {
+					if ((!mainform.team_kills_announce.disabled) && mainform.team_kills_announce.checked) {
 						d.writeln("#Announce team kills to the admin channel <br>");
 						d.writeln("-tkannounce <br><br>");
 					}
 
-					if (mainform.team_killer_kick_ratio.value != 0) {
+					if ((!mainform.team_killer_kick_ratio.disabled) && mainform.team_killer_kick_ratio.value != 0) {
 						d.writeln("#Team killer to wins percentage (1-100) above which player is kicked<br>");
 						d.writeln("-tkkr " + mainform.team_killer_kick_ratio.value + "<br><br>");
 					}
@@ -212,10 +225,10 @@
 						d.writeln("#Administrator's password<br>");
 						d.writeln("-password \"" + mainform.password.value + "\"<br><br>");
 					}
-
-					if (mainform.passdb.value.length > 0) {
-						d.writeln("#File that stores user passwords<br>");
-						d.writeln("-passdb \"" + mainform.passdb.value + "\"<br><br>");
+					
+					if (mainform.utc.checked) {
+						d.writeln("#Log timestamps using Coordinated Universal Time<br>");
+						d.writeln("-utc<br><br>");
 					}
 
 					if (mainform.groupdb.value.length > 0) {
@@ -268,6 +281,10 @@
 						d.writeln("-poll voteRepeatTime=" + mainform.voterepeattime.value + "<br><br>");
 					}
 
+					if (mainform.game_style.value == "offa") {
+						d.writeln("#Open Free for All game style<br>");
+						d.writeln("-offa<br><br>");
+					}
 					if (mainform.game_style.value == "ctf") {
 						d.writeln("#Capture the flag game style<br>");
 						d.writeln("-c<br><br>");
@@ -629,6 +646,8 @@
 						<tr>
 							<td>Listen On Interface</td>
 							<td><input type="text" name="listen_interface" size="30" title="Listen on this network interface"></td>
+							<td>Public Key</td>
+							<td><input type="text" name="public_key" size="30" title="Public key for the list server"></td>
 						</tr>
 						<tr>
 							<td>Public Description</td>
@@ -693,7 +712,13 @@
 						</tr>
 						<tr>
 							<td>Idle Kick Time</td>
-							<td><input type="text" name="idle_kick_time" value="0" size="30" title="Idle Kick Threshold [s]"></td>
+							<td>
+								<input type="text" name="idle_kick_time" value="0" size="30" title="Idle Kick Threshold [s]">
+							</td>
+							<td>Disable Team Kills</td>
+							<td>
+								<input type="checkbox" name="disable_teamkills" title="Players on the same team are immune to each other's shots" onClick="return ableControls()">
+							</td>
 						</tr>
 						<tr>
 							<td>Team Killers Die</td>
@@ -749,8 +774,8 @@
 						<tr>
 							<td>Bad Word File</td>
 							<td><input type="file" name="bad_words" title="Bad Words filter file specification"></td>
-							<td>Password Database</td>
-							<td><input type="file" name="passdb" title="File that stores user passwords"></td>
+							<td>UTC Time</td>
+							<td><input type="checkbox" name="utc" title="Log timestamps using Coordinated Universal Time"></td>
 						</tr>
 						<tr>
 							<td>Filter Callsigns</td>
@@ -798,6 +823,7 @@
 							<td>
 								<select name="game_style" onClick="return ableControls()" title="Free for all or Capture the flag game style">
 									<option value="ffa" selected>Free for All</option>
+									<option value="offa">Open Free for All</option>
 									<option value="ctf">Capture the Flag</option>
 									<option value="bc">Uniform world Capture the Flag</option>
 									<option value="rc">Rabbit Chase</option>
