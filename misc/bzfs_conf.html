@@ -53,12 +53,18 @@
 				var commentWritten;
 				try
 				{
-					var console = window.open("","_blank","width=600,height=300,resizable");
+					var console = window.open("","_blank","width=600,height=300,resizable,scrollbars");
 					console.document.open("text/html");
 					d = console.document;
 					var mainform = document.forms["main"];
 
-					d.writeln("<html><body><p>");
+					d.writeln("<!DOCTYPE HTML PUBLIC"
+					+ " \"-\/\/W3C\/\/DTD HTML 4.01 Transitional\/\/EN\"" 
+					+ " \"http://www.w3.org/TR/html4/loose.dtd\">");
+					d.writeln("<html><head>");
+					d.writeln("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=US-ASCII\">");
+					d.writeln("<title>BZFS Configuration File<\/title>");
+					d.writeln("<\/head><body><p>");
 					d.writeln("#This is a bzfs configuration file.<br>");
 					d.writeln("#Copy and paste into a simple text file and name it like <i>sample.conf<\/i>.<br>");
 					d.writeln("#Use it like <code>bzfs -conf <i>sample.conf<\/i><\/code><br><br>");
