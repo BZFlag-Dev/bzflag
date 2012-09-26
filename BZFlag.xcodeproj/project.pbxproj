@@ -64,8 +64,8 @@
 		1492F51E079633E10008E0BD /* MacBZFlag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = MacBZFlag.icns; path = src/platform/MacOSX/MacBZFlag.icns; sourceTree = "<group>"; };
 		14CF6D6B0798A1510071D7DA /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; name = "BZFlag-Info.plist"; path = "src/platform/MacOSX/BZFlag-Info.plist"; sourceTree = "<group>"; };
 		14CF6EAF0798FF7A0071D7DA /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
-		14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcrypto.0.9.7.dylib; path = /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libcrypto.0.9.7.dylib; sourceTree = "<absolute>"; };
-		14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcurl.3.dylib; path = /Developer/SDKs/MacOSX10.4u.sdk/usr/lib/libcurl.3.dylib; sourceTree = "<absolute>"; };
+		14CF6EFB0799EA370071D7DA /* libcrypto.0.9.7.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcrypto.0.9.7.dylib; path = /usr/lib/libcrypto.0.9.7.dylib; sourceTree = "<absolute>"; };
+		14CF6EFC0799EA370071D7DA /* libcurl.3.dylib */ = {isa = PBXFileReference; explicitFileType = compiled; name = libcurl.3.dylib; path = /usr/lib/libcurl.3.dylib; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -219,7 +219,7 @@
 				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -248,7 +248,7 @@
 				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
@@ -276,7 +276,7 @@
 				INFOPLIST_FILE = "src/platform/MacOSX/BZFlag-Info.plist";
 				INSTALL_PATH = "$(USER_APPS_DIR)";
 				LIBRARY_STYLE = STATIC;
-				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				MACOSX_DEPLOYMENT_TARGET = "";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-framework",
