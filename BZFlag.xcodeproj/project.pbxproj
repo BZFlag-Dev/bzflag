@@ -186,7 +186,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "./autogen.sh 2>&1\n./configure --enable-universal --enable-shared --enable-debug 2>&1\nncpu=`sysctl hw.ncpu | awk '{print $2}'`\nif test \"x$ncpu\" = \"x\" ; then\n\tncpu=1\nfi\nmake -j$ncpu\nexit $?\n";
+			shellScript = "export LDFLAGS=\"-Xlinker -rpath -Xlinker @executable_path/../Frameworks\"\n./autogen.sh 2>&1\n./configure --enable-debug 2>&1\nncpu=`sysctl hw.ncpu | awk '{print $2}'`\nif test \"x$ncpu\" = \"x\" ; then\n\tncpu=1\nfi\nmake -j$ncpu\nexit $?\n";
 		};
 		1492F546079634740008E0BD /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
