@@ -28,25 +28,22 @@ if [ ! -d "$PATH_TO_HERE/$SAMPLE_PLUGIN" ] ; then
     exit 1
 fi
 
-# copy the template
-echo "cp -pR $PATH_TO_HERE/$SAMPLE_PLUGIN $PATH_TO_HERE/$1"
-cp -pR "$PATH_TO_HERE/$SAMPLE_PLUGIN" "$PATH_TO_HERE/$ARG1"
+# Create the target directory
+mkdir "$PATH_TO_HERE/$ARG1"
 if [ $? != 0 ] ; then
-    echo "ERROR: copy of $SAMPLE_PLUGIN failed"
+    echo "ERROR: mkdir failed"
     exit 1
 fi
 
-# Don't copy CVS dir
-if [ -d "$PATH_TO_HERE/$ARG1/CVS" ] ; then
-    echo "rm -rf $PATH_TO_HERE/$ARG1/CVS"
-    rm -rf $PATH_TO_HERE/$ARG1/CVS
-fi
-
-# Don't copy .svn dir
-if [ -d "$PATH_TO_HERE/$ARG1/.svn" ] ; then
-    echo "rm -rf $PATH_TO_HERE/$ARG1/.svn"
-    rm -rf $PATH_TO_HERE/$ARG1/.svn
-fi
+# copy the template files (Add new files as necessary)
+for file in Makefile.am README.txt SAMPLE_PLUGIN.cpp SAMPLE_PLUGIN.def SAMPLE_PLUGIN.sln SAMPLE_PLUGIN.vcxproj ;do
+    echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1"
+    cp "$PATH_TO_HERE/$SAMPLE_PLUGIN/$file" "$PATH_TO_HERE/$ARG1"
+    if [ $? != 0 ] ; then
+        echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1 failed"
+        exit 1
+    fi
+done
 
 # replace $SAMPLE_PLUGIN within files
 echo "find $ARG1 -type f -exec perl -pi -e \"s/$SAMPLE_PLUGIN/$ARG1/g\" '{}' \;"
