@@ -1163,6 +1163,8 @@ BZF_API const char* bz_getPlayerFlag( int playerID );
 
 BZF_API bool bz_isPlayerPaused( int playerID );
 
+BZF_API int bz_getIdleTime( int playerID );
+
 BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
 BZF_API const char* bz_getPlayerMotto(int playerID);

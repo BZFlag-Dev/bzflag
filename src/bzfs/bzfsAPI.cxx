@@ -1124,7 +1124,25 @@ BZF_API bool bz_isPlayerPaused( int playerID )
   return player->player.isPaused();
 }
 
+BZF_API int bz_getIdleTime( int playerID )
+{
+  GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(playerID);
 
+  if (!otherData)
+    return -1;
+
+  std::string statsString = otherData->player.getIdleStat();
+
+  if (statsString.empty())
+    return -1;
+
+  statsString = statsString.substr(statsString.rfind(" "), statsString.length() - 1);
+
+  if (statsString.empty())
+    return -1;
+
+  return atoi(statsString.c_str());
+}
 
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
 {
