@@ -41,6 +41,9 @@ void			RemotePlayer::addShot(const FiringInfo& info)
   const float *f = getForward();
   RemoteShotPath* newShot = new RemoteShotPath(info);
   int shotNum = int(newShot->getShotId() & 255);
+
+  if (shotNum >= numShots)
+	  return;
   if (shots[shotNum]) delete shots[shotNum];
   shots[shotNum] = newShot;
   // Update tanks position and set dead reckoning for better lag handling
