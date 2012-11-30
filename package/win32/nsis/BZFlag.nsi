@@ -254,7 +254,6 @@ SectionGroup "BZFlag Server" BZFlagServer
     SetOutPath $INSTDIR\misc
     File ..\..\..\misc\maps\hix.bzw
     File ..\..\..\misc\bzfs.conf
-    File ..\..\..\misc\bzfs_conf.html
     File ..\..\..\misc\groups.conf
     File ..\..\..\misc\vars.txt
 

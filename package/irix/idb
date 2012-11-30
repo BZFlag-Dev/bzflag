@@ -16,7 +16,6 @@ f 444 demos demos usr/freeware/share/bzflag/blue_tank.png ./data/blue_tank.png T
 f 444 demos demos usr/freeware/share/bzflag/boom.wav ./data/boom.wav SOUNDS
 f 444 demos demos usr/freeware/share/bzflag/boxwall.png ./data/boxwall.png TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/burrow.wav ./data/burrow.wav SOUNDS
-f 444 demos demos usr/freeware/share/bzflag/bzfs_conf.html ./misc/bzfs_conf.html REQDATA
 f 444 demos demos usr/freeware/share/bzflag/caution.png ./data/caution.png TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/clouds.png ./data/clouds.png TEXTURES
 f 444 demos demos usr/freeware/share/bzflag/explode1.png ./data/explode1.png TEXTURES

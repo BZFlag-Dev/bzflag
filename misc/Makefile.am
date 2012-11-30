@@ -9,7 +9,6 @@ EXTRA_DIST =				\
 	bzfquery_example.php		\
 	bzfs				\
 	bzfs.conf			\
-	bzfs_conf.html			\
 	bzfsd				\
 	bzirc.pl			\
 	bzls.lua			\

@@ -477,7 +477,7 @@ cannot proceed.  A checklist of items to be completed follows:
 - ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
-- Man files, bzfs_conf.html, and bzfs.conf files are updated with
+- Man files and bzfs.conf files are updated with
   latest changes.
 
 - Version numbers are updated to the next expected release number.
