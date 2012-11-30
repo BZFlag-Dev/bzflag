@@ -45,13 +45,17 @@ $bzout;
 
 
 # do some POE magic
-POE::Component::IRC->new("irc_client");
-POE::Session->new(_start     => \&irc_start,
+POE::Component::IRC->spawn(alias => "irc_client");
+POE::Session->create(
+	inline_states => {
+		  _start     => \&irc_start,
 		  irc_join   => \&irc_join,
 		  irc_quit   => \&irc_quit,
 		  irc_376    => \&irc_connect,
 		  irc_public => \&irc_pub_msg,
-		  bzreadable => \&readfrombz);
+		  bzreadable => \&readfrombz
+	}
+);
 
 
 # a handler that is called once when this session is started
