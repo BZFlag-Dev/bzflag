@@ -4795,7 +4795,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
     break;
   }
   // Make sure is a bot
-  GameKeeper::Player *playerData;
+  GameKeeper::Player *playerData = NULL;
   if (t != i) {
     playerData = GameKeeper::Player::getPlayerByIndex(t);
     if (!playerData || !playerData->player.isBot()) {
