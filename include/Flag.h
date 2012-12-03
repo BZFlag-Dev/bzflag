@@ -98,7 +98,7 @@ enum ShotType {
   SpecialShot = 1
 };
 
-const int		FlagPLen = 6 + PlayerIdPLen + 48;
+const int		FlagPLen = 55;
 
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;

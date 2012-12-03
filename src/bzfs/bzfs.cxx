@@ -428,34 +428,33 @@ static void sendFlagUpdate(int playerIndex)
   buf = nboPackUShort(bufStart,0); //placeholder
   int cnt = 0;
   int length = sizeof(uint16_t);
-  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
+  for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
+  {
     FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.exist()) {
-      if ((length + sizeof(uint16_t) + FlagPLen)
-	  > MaxPacketLen - 2*sizeof(uint16_t)) {
-	nboPackUShort(bufStart, cnt);
-	result = directMessage(*playerData, MsgFlagUpdate,
-			       (char*)buf - (char*)bufStart, bufStart);
-	if (result == -1)
-	  return;
-	cnt    = 0;
-	length = sizeof(uint16_t);
-	buf    = nboPackUShort(bufStart,0); //placeholder
+    if (flag.exist())
+	{
+      if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t))
+	  {
+		nboPackUShort(bufStart, cnt);
+		result = directMessage(*playerData, MsgFlagUpdate,  (char*)buf - (char*)bufStart, bufStart);
+		if (result == -1)
+		  return;
+		cnt = 0;
+		length = sizeof(uint16_t);
+		buf = nboPackUShort(bufStart,0); //placeholder
       }
 
-      bool hide
-	= (flag.flag.type->flagTeam == ::NoTeam)
-	&& (flag.player == -1);
+      bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
       buf = flag.pack(buf, hide);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
     }
   }
 
-  if (cnt > 0) {
+  if (cnt > 0)
+  {
     nboPackUShort(bufStart, cnt);
-    result = directMessage(*playerData, MsgFlagUpdate,
-			   (char*)buf - (char*)bufStart, bufStart);
+    result = directMessage(*playerData, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
   }
 }
 

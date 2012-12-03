@@ -2044,11 +2044,19 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgFlagUpdate: {
       uint16_t count;
       uint16_t flagIndex;
+	  uint32_t offset = 0;
       msg = nboUnpackUShort(msg, count);
-      for (int i = 0; i < count; i++) {
-	msg = nboUnpackUShort(msg, flagIndex);
-	msg = world->getFlag(int(flagIndex)).unpack(msg);
-	world->initFlag(int(flagIndex));
+	  offset += 2;
+      for (int i = 0; i < count; i++)
+	  {
+		  if (offset >= len)
+			  break;
+
+		  msg = nboUnpackUShort(msg, flagIndex);
+		  msg = world->getFlag(int(flagIndex)).unpack(msg);
+		  offset += FlagPLen;
+
+		  world->initFlag(int(flagIndex));
       }
       break;
     }
@@ -3331,7 +3339,7 @@ static void		handleMyTankKilled(int reason)
 static void *handleMsgSetVars(void *msg)
 {
   uint16_t numVars;
-  uint8_t nameLen, valueLen;
+  uint8_t nameLen = 0, valueLen = 0;
 
   char name[MaxPacketLen];
   char value[MaxPacketLen];
