@@ -833,7 +833,7 @@ const GLfloat  // FIXME: setup so these come from TANKGEOMMGR
 
 TankSceneNode::TankRenderNode::TankRenderNode(const TankSceneNode* _sceneNode) :
 				sceneNode(_sceneNode), isShadow(false),
-				above(false), towards(false)
+				left(false), above(false), towards(false)
 {
   narrowWithDepth = false;
   drawLOD = LowTankLOD;
