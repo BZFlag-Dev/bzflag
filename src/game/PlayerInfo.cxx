@@ -53,6 +53,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   completelyAdded = false;
   nextSpawnTime = TimeKeeper::getSunGenesisTime();
   wantsToSpawn = false;
+  type = TankPlayer;
 }
 
 void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
