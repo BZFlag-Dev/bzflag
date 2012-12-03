@@ -51,8 +51,8 @@ void PluginConfig::parse(void)
   std::string key;
   std::string value;
   std::ifstream iniFile;
-  size_t start, end;
-  size_t equalPos;
+  size_t start = 0, end = 0;
+  size_t equalPos = 0;
 
   /*
    * Parse key,value pairs for sections out of the INI type
