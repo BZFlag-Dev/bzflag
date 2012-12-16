@@ -1,93 +1,113 @@
 BZFlag README for Mac OS X
 ==========================
 
-BZFlag generally runs rather nicely on Mac OS X and is equivalent to
-the other fully-supported platforms.  Included below are instructions
-on installing BZFlag both from a binary and from a released source
-distribution.
+BZFlag is fully supported on Mac OS X. Included below are instructions on
+installing BZFlag both from a binary and from a released source distribution.
 
 Binary Distribution
 -------------------
 
-See the project site downloads of BZFlag for Mac OS X
-http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=53923
-to obtain the latest binary distribution.
+See the project site downloads of BZFlag for Mac OS X at
+http://sourceforge.net/projects/bzflag/files/bzflag%20Mac%20OS%20X to obtain
+the latest binary distribution.
 
-Once you've obtained a binary distribution of BZFlag, installation
-should be a simple matter of copying the icon provided in the disk
-mounting image (the .dmg) to your Applications folder.  If you cannot
-run the client at all (e.g. it starts to a black screen or the icon
-bounces but then nothing happens), you can try several things:
+Once you've obtained a binary distribution of BZFlag, installation should be a
+simple matter of copying the icon provided in the disk mounting image (the
+.dmg) to your Applications folder. If you cannot run the client at all
+(e.e. it starts to a black screen, or the icon bounces but then nothing
+happens), you can try several things:
 
-  1) Remove any existing BZFlag directory in your personal application
-     support folder:  rm -rf "~/Library/Application Support/BZFlag"
+  1) Move or delete the BZFlag directory in your personal application support
+     folder at ~/Library/Application Support/BZFlag. As of Mac OS X 10.7, the
+     ~/Library directory is hidden by default. You can open it by navigating
+     to your home directory, entering the Command-Shift-G key sequence, then
+     typing "Library" and clicking "Go." Note that this directory contains
+     your saved configuration, screenshots, and map files, so you may want to
+     move or delete only your configuration directory (stored in the directory
+     with the BZFlag version number).
 
-  2) Switch to a lower resolution before running the game.  Some older
-     cards don't have enough memory to run BZFlag (8+ MB is preferred)
-     at higher resolutions.
+  2) Check your console for error messages. Open your console application at
+     /Utilities/Console.app, and expand the "User Diagnostic Reports" list in
+     the sidebar under "Diagnostic and Usage Information." Any crash reports
+     should be listed there and will start with "BZFlag."
 
   3) Run the binary directly by using Terminal:
-     /Applications/BZFlag-2.4.2.app/Contents/MacOS/BZFlag
-
-If you still have issues running the game, please submit a bug report
-to the project site bug tracker:
-
-  http://sourceforge.net/tracker/?group_id=3248&atid=103248
-
-If the game starts but unexpectedly crashes or locks up your system,
-please file a bug report with the details of what is occuring.  You
-can try turning off the Lighting option in the game to see if that
-helps with the crashes.
+       /Applications/BZFlag-#.#.#.app/Contents/MacOS/BZFlag-#.#.#
+       (replace "#.#.#" with your actual BZFlag version number)
 
 Source Distribution
 -------------------
 
-It is recommended to build BZFlag using the XCode project in the top-level
-directory, which will provide you with a double-clickable BZFlag.app build.
-You may also compile from the command line using the usual autogen.sh (if
-building from SVN), configure, and make. Do NOT run 'make install' as this
-does not work properly on OSX.  Instead, just run BZFlag out of the source
-directory by running 'src/bzflag/bzflag' in the terminal.
+You can build BZFlag from source using Xcode version 4.2 and later. As of
+BZFlag versions later than 2.4.2, BZFlag has a fully native Xcode project
+file. The earlier method of using the Xcode project file as a wrapper for
+autotools is no longer supported. If you have a version of Xcode which
+includes autotools, or have installed autotools yourself, you may additionally
+be able to build using the traditional autotools method. See the README file
+for further information. You will still need to install the SDL framework as
+detailed below.
 
-It is highly recommended that sources be obtained from the
-Sourceforge project site:
+To build BZFlag using Xcode, download the latest version of SDL 1.2 from
+http://www.libsdl.org/download-1.2.php (you want the "Mac OS X" link for your
+operating system version under "Runtime Libraries"). For Mac OS X 10.6, the
+recommended SDL version is 1.2.13. Mount the disk image and place the file
+"SDL.framework" in your /Library/Frameworks directory (an administrator's
+account may be required). Obtain the latest BZFlag source archive from
+SourceForge at
+http://sourceforge.net/projects/bzflag/files/bzflag%20source/ (you want the
+.tar.gz or .tar.bz2 archive, NOT the .zip archive) or from the subversion
+repository using the instructions at http://wiki.bzflag.org/SVN. Once you have
+obtained the source code, open the BZFlag.xcodeproj file located in the Xcode/
+directory.
 
-http://sourceforge.net/project/showfiles.php?group_id=3248&package_id=3165
+The default behavior is to build a debug client. If you want a standard
+client, click the "BZFlag" scheme button at the top left corner of the screen,
+scroll down, and click "Edit Scheme..." at the bottom of the pop-up menu. In
+the left sidebar, click the Run phase, and in the left area select the
+Info tab. Under Build Configuration, select the desired scheme of Debug or
+Release. Also, under the Options tab, make sure "Allow debugging when using
+document Versions Browser" is deselected if you plan on running the client
+straight from Xcode.
 
-You'll want the .tar.gz source tarball, NOT the .zip source file.
+To build the client, select Build from the Product menu or enter the Command-B
+key sequence. Note that the first time you build from a source directory, or
+anytime the BZFlag version changes in the source code or you use a different
+version of Xcode, the first build process WILL FAIL as a script automatically
+updates the product name and the BZFlag version string and then aborts the 
+process. This is by design as it appears to be the only way of automatically
+including the game version in the product name. If this happens, simply start
+the build process again.
 
-For either build approach, you'll need to first install the SDL
-framework into your /Library/Frameworks folder.
-
-Mac OS X 10.6 (Snow Leopard) PRESENTLY REQUIRES SDL VERSION 1.2 and
-will likely not work with newer 1.3 or 2.0+ versions.
-
-The SDL framework can be obtained from http://libsdl.org/download.php
-where you will need the "Runtime Libraries" download for Mac OS X.
-Once SDL is installed, you may then proceed with compilation.
-
-To compile using the command-line approach, open up Terminal (which is
-located in your /Applications/Utilities folder) and run the following:
-
-./autogen.sh && ./configure && make
-
-(Note: If running OS 10.5, you will need to provide the
---enable-freetype-build argument to configure)
-
-Again, do NOT run 'make install' after you run 'make'.
-
-Alternatively, you may compile using the provided XCode project, which
-should result in a BZFlag application in the generated "build" folder
-if there were no compilation errors.
+If the build was successful, you can run the application from Xcode selecting
+the Product menu and clicking Run or by entering the Command-R key sequence.
+You will also want to locate the application you just built. Make sure the
+Navigator pane is visible and select the Project Navigator, then expand the
+"BZFlag" project container and the "Targets" group within it. Click the
+"BZFlag-#.#.#.app" target. Make sure the Utilities pane is visible, and under
+the Identity and Type panel it will show the full path to the application.
+Click the small grey right arrow at the bottom right corner of the path to
+reveal the application in the Finder.
 
 NOTICE: If you're compiling from source, it is expected that you have
-sufficient/proficient understanding of how to compile applications on
-the command line or using XCode and how to perform compilation
-troubleshooting without assistance.  This holds particularly true for
-all alpha/beta testing releases as well as for any sources pulled
-directly from the Subversion source repository checkout. If you have
-problems building from a checkout, you should try building from an
-official release that we have posted to SourceForge to see if you can
-duplicate the issue, and then ask us for assistance.
+sufficient/proficient understanding of how to compile applications on the
+command line or using XCode and how to perform compilation troubleshooting
+without assistance.  This holds particularly true for all alpha/beta testing
+releases as well as for any sources pulled directly from the Subversion source
+repository checkout. If you have problems building from a checkout, you should
+try building from an official release that we have posted to SourceForge to
+see if you can duplicate the issue, and then ask us for assistance.
 
-See the instructions in README and INSTALL for more details.
+Usage
+-----
+
+To install BZFlag, copy the application you obtained as a binary distribution
+or built from source into your /Applications directory, or use it from another
+location of your choice. Different client versions may exist simultaneously on
+any system without issue.
+
+To access the bzadmin text client or the bzflag server bzfs, right click the
+application, click "Show Package Contents," and navigate to Contents/MacOS.
+Server plugins are located at Contents/PlugIns. Note that while the plugin
+names are different from Windows and Linux (something like "libname.dylib"
+instead of "name.dll or "name.so"), bzfs will still load them when you specify
+the full plugin path.

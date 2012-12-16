@@ -25,7 +25,7 @@ DIST_SUBDIRS = \
 	plugins \
 	tools \
 	MSVC \
-	BZFlag.xcodeproj
+	Xcode
 
 EXTRA_DIST = \
 	autogen.sh \

@@ -1116,9 +1116,10 @@ fi
 AC_CONFIG_SUBDIRS(src/other/curl)
 
 AC_CONFIG_FILES([
-	BZFlag.xcodeproj/Makefile
 	MSVC/Makefile
 	MSVC/build/Makefile
+	Xcode/Makefile
+	Xcode/BZFlag.xcodeproj/Makefile
 	Makefile
 	bzflag.lsm
 	bzflag.spec
@@ -1181,7 +1182,6 @@ AC_CONFIG_FILES([
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/platform/MacOSX/BZFlag-Info.plist
 	src/other/Makefile
 	src/other/regex/Makefile
 	src/other/zlib/Makefile

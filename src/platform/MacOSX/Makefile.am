@@ -42,7 +42,5 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =				\
-	BZFlag-Info.plist		\
-	MacBZFlag.icns			\
 	SDLMain.m			\
 	mkplist.cxx
