@@ -41,7 +41,7 @@ Obtaining BZFlag
 ================
 
 Main BZFlag Website:  http://BZFlag.org
-BZFlag Project Site:  http://sf.net/projects/bzflag
+BZFlag Project Site:  http://sourceforge.net/projects/bzflag
 
 The main BZFlag website provides access to most all of the resources
 available for the game.  The binary and source distributions of BZFlag
@@ -241,10 +241,10 @@ Most of the BZFlag development activity and discussions occur over
 IRC.  Join the #bzflag IRC channel on the Freenode network
 (irc.freenode.net, port 6667) to get involved.
 
-See http://irc.bzflag.org for a web based interface for first-time
-users.  Individuals that intend to stay in the channel are expected to
-get a non-web-based IRC client.  See http://irchelp.org or search the
-web for IRC clients for your operating system.
+See http://webchat.freenode.net for a web based interface for
+first-time users.  Individuals that intend to stay in the channel are
+expected to get a non-web-based IRC client.  See http://irchelp.org or
+search the web for IRC clients for your operating system.
 
 Mailing Lists
 -------------
@@ -264,26 +264,17 @@ Bulletin Boards
 There are extensive and active bulletin boards used by players, server
 operators, administrators, and others available here:
 
-http://my.bzflag.org/bb/
+http://forums.bzflag.org
 
 Registering an account on the bulletin board presently also registers
 your callsign for use inside of BZFlag.  Some servers require
 registration in order to play.  See the board FAQ and Getting Started
 pages for new users.
 
-In addition to the main bulletin boards, there are forums on the
-SourceForge project site available here:
-
-http://sourceforge.net/forum/?group_id=3248
-
-The main bulletin boards are considerably higher volume for day-to-day
-player discussions.  The forums are often used for informally
-resolving issues with new users.
-
 Wiki
 ----
 The main BZFlag website contains a wiki that may be edited by the
-community available at: http://BZFlag.org/wiki
+community available at: http://wiki.bzflag.org
 
 The wiki does require a simple registration in order to make
 modifications as a means to minimize abuse, but serves as a
@@ -343,7 +334,6 @@ following files in the new 'bzflag' directory:
   README.*	- platform specific details
   AUTHORS	- project contributors
   BUGS		- a list of known bugs
-  BZFlag.xcode/	- Mac OS X XCode project
   COPYING	- the license for BZFlag
   ChangeLog	- source code changes since previous release
   DEVINFO       - information for developers
@@ -378,6 +368,7 @@ following files in the new 'bzflag' directory:
       MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
   tools/	- various helper utilities
+  Xcode	        - Mac OS X Xcode project and associated files
 
 Note that include/ does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
