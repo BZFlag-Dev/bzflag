@@ -2210,7 +2210,7 @@
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E7C51670A466005A26C4 /* libcares.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcares.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E8231670A894005A26C4 /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "BZFlag-2.4.3.app"; path = "BZFlag-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
 		03D88EA81670CB1300725DBE /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = "<group>"; };
 		03D88EA91670CB1300725DBE /* DEVINFO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DEVINFO; path = ../DEVINFO; sourceTree = "<group>"; };
@@ -7585,7 +7585,7 @@
 			baseConfigurationReference = 03C5E79B16707C28005A26C4 /* version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -7627,7 +7627,7 @@
 			baseConfigurationReference = 03C5E79B16707C28005A26C4 /* version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_WARN_EMPTY_BODY = YES;
