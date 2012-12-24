@@ -34,8 +34,8 @@ BZFlag.  Known build requirements include:
 
   Fedora:
 
-    yum install SDL-devel c-ares-devel libcurl-devel gcc-c++ \
-    glew-devel libidn-devel libtool ncurses-devel zlib-devel
+    yum install SDL-devel c-ares-devel libSM-devel libcurl-devel \
+    gcc-c++ glew-devel libidn-devel libtool ncurses-devel zlib-devel
 
 After any development packages are installed do a "make distclean"
 command once in the top-level BZFlag source directory.  Then, when
