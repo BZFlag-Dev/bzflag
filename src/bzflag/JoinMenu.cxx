@@ -246,14 +246,19 @@ void JoinMenu::execute()
   }
 }
 
+void JoinMenu::centerLabelHorizontally(HUDuiLabel *label)
+{
+  FontManager &fm = FontManager::instance();
+  const float _width = fm.getStrLength(MainMenu::getFontFace(),
+    label->getFontSize(), label->getString());
+  
+  label->setPosition(center - 0.5f * _width, label->getY());
+}
+
 void JoinMenu::setFailedMessage(const char* msg)
 {
   failedMessage->setString(msg);
-
-  FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(MainMenu::getFontFace(),
-	failedMessage->getFontSize(), failedMessage->getString());
-  failedMessage->setPosition(center - 0.5f * _width, failedMessage->getY());
+  centerLabelHorizontally(failedMessage);
 }
 
 TeamColor JoinMenu::getTeam() const
@@ -269,10 +274,7 @@ void JoinMenu::setTeam(TeamColor teamcol)
 void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
   status->setString(msg);
-  FontManager &fm = FontManager::instance();
-  const float _width = fm.getStrLength(status->getFontFace(),
-		status->getFontSize(), status->getString());
-  status->setPosition(center - 0.5f * _width, status->getY());
+  centerLabelHorizontally(status);
 }
 
 void JoinMenu::teamCallback(HUDuiControl*, void* source)
@@ -340,7 +342,11 @@ void JoinMenu::resize(int _width, int _height)
       y -= 1.0f * h;
     if (i <= 2 || i == 9) y -= 0.5f * h;
   }
-
+  
+  // these should be centered
+  centerLabelHorizontally(status);
+  centerLabelHorizontally(failedMessage);
+  
   updateTeamTexture();
 }
 

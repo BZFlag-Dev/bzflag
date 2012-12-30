@@ -53,6 +53,7 @@ class JoinMenu : public HUDDialog {
     void		setTeam(TeamColor);
     void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
     void		setFailedMessage(const char* msg);
+    void		centerLabelHorizontally(HUDuiLabel* label);
     void		loadInfo();
 
   private:
