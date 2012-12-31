@@ -2432,6 +2432,11 @@ BZF_API const bz_ApiString bz_getName( int flag )
   return bz_ApiString(pFlag->flag.type->flagAbbv);
 }
 
+BZF_API const bz_ApiString bz_getFlagName( int flag )
+{
+	return bz_getName(flag);
+}
+
 BZF_API bool bz_resetFlag ( int flag )
 {
   FlagInfo *pFlag = FlagInfo::get(flag);
