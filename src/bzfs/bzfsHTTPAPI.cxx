@@ -2438,7 +2438,8 @@ BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_Te
 
   TemplateInfo info;
   info.Callback = callback;
-  info.PathSet = pathSet;
+  if (pathSet)
+	info.PathSet = pathSet;
 
   startTime = TimeKeeper::getCurrent().getSeconds();
 
