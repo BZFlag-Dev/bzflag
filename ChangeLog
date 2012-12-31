@@ -3,6 +3,7 @@
 
 BZFlag 2.4.3
 ------------
+* Countdown now resets player scores as well as team scores - Lee Marshall
 * Fully integrated Xcode project file - Joshua Bodine
 
 
