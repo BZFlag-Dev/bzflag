@@ -81,7 +81,6 @@ bool WebReport::AllowResourceDownloads ( void )
   return resourceDir.size() > 0;
 }
 
-
 void WebReport::Cleanup()
 {
   bzhttp_RemoveAllVdirs(this);
@@ -133,12 +132,17 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
 
   if (!request.UserHasPerm(bz_perm_viewReports))
     return GenerateNoAuthPage(request,responce) ? ePageDone : eNoPage;
+  else
+	  valid = true;
 
   responce.ReturnCode = e200OK;
   responce.DocumentType = eHTML;
  // unsigned int sessionID = request.Session->SessionID;
 
-  std::string action = request.GetParamater("action");
+  std::string action;
+  const char* a = request.GetParamater("action");
+  if (a)
+	  action = a;
 
   reports = bz_getReports();
   report = -1;
