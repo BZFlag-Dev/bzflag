@@ -1151,6 +1151,9 @@ BZF_API bz_APIIntList* bz_getPlayerIndexList(void);
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
+
+BZF_API int bz_getPlayerCount ();
+
 BZF_API bool bz_hasPerm ( int playerID, const char* perm );
 BZF_API bool bz_grantPerm ( int playerID, const char* perm );
 BZF_API bool bz_revokePerm ( int playerID, const char* perm );

@@ -1032,6 +1032,17 @@ BZF_API bz_APIIntList *bz_getPlayerIndexList(void)
   return playerList;
 }
 
+BZF_API int bz_getPlayerCount(void)
+{
+	int count = 0;
+	for (int i = 0; i < curMaxPlayers; i++)
+	{
+		if (GameKeeper::Player::getPlayerByIndex(i))
+			count++;
+	}
+	return count;
+}
+
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
 {
   playerList->clear();
