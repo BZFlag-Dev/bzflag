@@ -55,25 +55,37 @@ bool Score::isTK() const {
     && ((wins == 0) || (tks * 100 / wins > tkKickRatio));
 }
 
+// Change a score element, then call an event
+void Score::changeScoreElement(bz_eScoreElement element, int *toChange, int newValue) {
+  int oldValue = *toChange;
+  *toChange = newValue;
+  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID, element, oldValue, newValue));
+}
+
+
 void Score::tK() {
   if (KeepPlayerScores) {
-    ++tks;
-    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eTKs, tks-1, tks));
+    changeScoreElement(bz_eTKs, &tks, tks + 1);
   }
 }
 
 void Score::killedBy() {
   if (KeepPlayerScores) {
-    ++losses;
-    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eLosses, losses-1, losses));
+    changeScoreElement(bz_eLosses, &losses, losses + 1);
   }
 }
 
 void Score::kill() {
   if (KeepPlayerScores) {
-    ++wins;
-    worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID,bz_eWins, wins-1, wins));
+    changeScoreElement(bz_eWins, &wins, wins + 1);
   }
+}
+
+
+void Score::reset() {
+  changeScoreElement(bz_eWins, &wins, 0);
+  changeScoreElement(bz_eLosses, &losses, 0);
+  changeScoreElement(bz_eTKs, &tks, 0);
 }
 
 void *Score::pack(void *buf) {

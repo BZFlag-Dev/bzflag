@@ -560,6 +560,22 @@ void sendPlayerInfo() {
   broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
 }
 
+// Send score updates to players
+void sendPlayerScores(GameKeeper::Player ** players, int nPlayers) {
+  void *buf, *bufStart;
+  bufStart = getDirectMessageBuffer();
+ 
+  buf = nboPackUByte(bufStart, nPlayers);
+  
+  for(int i = 0; i < nPlayers; i++) {
+    GameKeeper::Player *player = players[i];
+    
+    buf = nboPackUByte(buf, player->getIndex());
+    buf = player->score.pack(buf);
+  }
+  broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+}
+
 void sendIPUpdate(int targetPlayer, int playerIndex) {
   // targetPlayer = -1: send to all players with the PLAYERLIST permission
   // playerIndex = -1: send info about all players
@@ -658,6 +674,29 @@ void resetTeamScores ( void )
    team[i].team.setWins(0);
   }
   sendTeamUpdate();
+}
+
+void resetPlayerScores ( void )
+{
+  // Players to notify of new scores
+  GameKeeper::Player **playersToUpdate = new GameKeeper::Player*[curMaxPlayers];
+  int nPlayersToUpdate = 0;
+  
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *player;
+    
+    player = GameKeeper::Player::getPlayerByIndex(i);
+    
+    if(player) {
+      player->score.reset();
+      playersToUpdate[nPlayersToUpdate++] = player;
+    }
+  }
+  
+  // Tell the players the new scores
+  sendPlayerScores(playersToUpdate, nPlayersToUpdate);
+  
+  delete[] playersToUpdate;
 }
 
 void startCountdown ( int delay, float limit, const char *buyWho )
@@ -2897,17 +2936,15 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	  killerData->score.kill();
 	}
       }
-      buf = nboPackUByte(bufStart, 2);
-      buf = nboPackUByte(buf, killerIndex);
-      buf = killerData->score.pack(buf);
+      
+      // send killer & victim
+      GameKeeper::Player *kAndV[] = {killerData, victimData};
+      sendPlayerScores(kAndV, 2);
     } else {
-      buf = nboPackUByte(bufStart, 1);
+      // send victim
+      sendPlayerScores(&victimData, 1);
     }
-
-    buf = nboPackUByte(buf, victimIndex);
-    buf = victimData->score.pack(buf);
-    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
-
+    
     if (clOptions->gameOptions & HandicapGameStyle) {
       bufStart = getDirectMessageBuffer();
       if (killer) {
@@ -6226,6 +6263,9 @@ int main(int argc, char **argv)
 
 	  // quietly reset team scores in case of a capture during the countdown
 	  resetTeamScores();
+	  
+	  // reset player scores
+	  resetPlayerScores();
 
 	  // fire off a game start event
 	  bz_GameStartEndEventData_V1	gameData;

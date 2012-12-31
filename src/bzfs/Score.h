@@ -16,6 +16,8 @@
 // bzflag global header
 #include "global.h"
 
+#include "bzfsAPI.h"
+
 class Score {
  public:
   Score();
@@ -30,6 +32,7 @@ class Score {
   void  tK();
   void  killedBy();
   void  kill();
+  void  reset();
   void *pack(void *buf);
   bool  reached() const;
   int	getWins() const {return wins;}
@@ -55,6 +58,8 @@ class Score {
   static float tkKickRatio;
   static int   score;
   static bool  randomRanking;
+  
+  void changeScoreElement(bz_eScoreElement element, int *toChange, int newValue);
 };
 
 #endif
