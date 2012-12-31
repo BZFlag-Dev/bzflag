@@ -28,6 +28,7 @@
 #include "TimeKeeper.h"
 #include "base64.h"
 #include "Permissions.h"
+#include "bzfsPlugins.h"
 
 std::string ServerVersion;
 std::string ServerHostname;
@@ -703,10 +704,14 @@ public:
   std::string bzAuthReturnData;
 
   bool bzIDAuthFailed;
+  bool bzIDAuthComplete;
+  bool firedOffBZIDTokenCheck;
 
   HTTPConnectedPeer() : bz_NonPlayerConnectionHandler() ,bz_BaseURLHandler()
   {
+    firedOffBZIDTokenCheck = false;
     bzIDAuthFailed = false;
+	bzIDAuthComplete = false;
     Authenticated = false;
     RequestComplete = false;
     Killme = false;
@@ -751,392 +756,398 @@ public:
 
   virtual void URLDone (const char*, void *data, unsigned int size, bool complete)
   {
-    if (data && size)
-      bzAuthReturnData += std::string((const char*)data,size);
+	  if (data && size)
+		  bzAuthReturnData += std::string((const char*)data,size);
 
-    if (complete)
-    {
-      bzIDAuthURL.clear();
-
-      bzAuthReturnData = TextUtils::replace_all(bzAuthReturnData,"\r","");
-
-      std::vector<std::string> lines = TextUtils::tokenize(bzAuthReturnData,"\n");
-
-      if (lines.size() < 2)
-	bzIDAuthFailed = true;
-      else
-      {
-	std::vector<std::string> toks = TextUtils::tokenize(lines[1],":",2);
-	if (toks.size() > 1 && toks[0] == "TOKGOOD")
-	{
-	  Authenticated = true;
-	  SetAuthSessionData("bzidauthstatus","complete");
-
-	  std::string groupList;
-	  std::vector<std::string> groupToks = TextUtils::tokenize(lines[0]," ");
-	  if ( groupToks.size() > 5)
+	  if (complete)
 	  {
-	    for (size_t i = 5; i < groupToks.size(); i++)
-	    {
-	      std::vector<std::string> groups = TextUtils::tokenize(groupToks[i],"=");
-	      bzGroups.push_back(groups[1]);
-	      groupList += groups[1] + " ";
+		  bzIDAuthComplete = true;
+		  bzIDAuthURL.clear();
 
-	    }
-	    SetAuthSessionData("bzidauthgroups",groupList.c_str());
+		  bzAuthReturnData = TextUtils::replace_all(bzAuthReturnData,"\r","");
 
+		  std::vector<std::string> lines = TextUtils::tokenize(bzAuthReturnData,"\n");
+
+		  if (lines.size() < 2)
+			  bzIDAuthFailed = true;
+		  else
+		  {
+			  std::vector<std::string> toks = TextUtils::tokenize(lines[1],":",2);
+			  if (toks.size() > 1 && toks[0] == "TOKGOOD")
+			  {
+				  Authenticated = true;
+				  SetAuthSessionData("bzidauthstatus","complete");
+
+				  std::string groupList;
+				  std::vector<std::string> groupToks = TextUtils::tokenize(lines[0]," ");
+				  if ( groupToks.size() > 5)
+				  {
+					  for (size_t i = 5; i < groupToks.size(); i++)
+					  {
+						  std::vector<std::string> groups = TextUtils::tokenize(groupToks[i],"=");
+						  bzGroups.push_back(groups[1]);
+						  groupList += groups[1] + " ";
+
+					  }
+					  SetAuthSessionData("bzidauthgroups",groupList.c_str());
+
+				  }
+				  bzID = "";
+				  // get the BZID
+				  std::vector<std::string> chunks = TextUtils::tokenize(lines[2]," ");
+				  if (chunks.size() > 1 && chunks[0] == "BZID:")
+					  bzID = chunks[1];
+				  else
+					  bzIDAuthFailed = true;
+
+				  SetAuthSessionData("bzid",bzID.c_str());
+				  SetAuthSessionData("bzidcallsign",callsign.c_str());
+			  }
+			  else
+				  bzIDAuthFailed = true;
+		  }
 	  }
-	  bzID = "";
-	  // get the BZID
-	  std::vector<std::string> chunks = TextUtils::tokenize(lines[2]," ");
-	  if (chunks.size() > 1 && chunks[0] == "BZID:")
-	    bzID = chunks[1];
-	  else
-	    bzIDAuthFailed = true;
-
-	  SetAuthSessionData("bzid",bzID.c_str());
-	  SetAuthSessionData("bzidcallsign",callsign.c_str());
-	}
-	else
-	  bzIDAuthFailed = true;
-      }
-    }
   }
 
   virtual void URLTimeout ( const char* UNUSED(URL), int UNUSED(errorCode) )
   {
+    bzIDAuthComplete = true;
     bzIDAuthFailed = true;
   }
 
   virtual void URLError ( const char* UNUSED(URL), int UNUSED(errorCode), const char * UNUSED(errorString) )
   {
+	bzIDAuthComplete = true;
     bzIDAuthFailed = true;
   }
 
   virtual void pending(int connectionID, void *data, unsigned int size)
   {
-    char *d = (char*)malloc(size+1);
-    memcpy(d,data,size);
-    d[size] = 0;
-    RequestData += d;
-    free(d);
+	  char *d = (char*)malloc(size+1);
+	  memcpy(d,data,size);
+	  d[size] = 0;
+	  RequestData += d;
+	  free(d);
 
-    // know our limits
-    size_t maxContentSize = 1024*1536;
-    size_t maxBufferSize = 1024*2048;
+	  // know our limits
+	  size_t maxContentSize = 1024*1536;
+	  size_t maxBufferSize = 1024*2048;
 
-    if (bz_BZDBItemHasValue("_MaxHTTPContentSize"))
-      maxBufferSize = bz_getBZDBInt("_MaxHTTPContentSize");
+	  if (bz_BZDBItemHasValue("_MaxHTTPContentSize"))
+		  maxBufferSize = bz_getBZDBInt("_MaxHTTPContentSize");
 
-    if (vDir && vDir->MaxRequestBody > (int)maxContentSize)
-      maxContentSize = vDir->MaxRequestBody;
+	  if (vDir && vDir->MaxRequestBody > (int)maxContentSize)
+		  maxContentSize = vDir->MaxRequestBody;
 
-    if (bz_BZDBItemHasValue("_MaxHTTPRequestSize"))
-      maxBufferSize = bz_getBZDBInt("_MaxHTTPRequestSize");
+	  if (bz_BZDBItemHasValue("_MaxHTTPRequestSize"))
+		  maxBufferSize = bz_getBZDBInt("_MaxHTTPRequestSize");
 
-    if (maxBufferSize < maxContentSize)
-      maxBufferSize = maxContentSize;
+	  if (maxBufferSize < maxContentSize)
+		  maxBufferSize = maxContentSize;
 
-    if (vDir && vDir->MaxRequestSize > (int)maxBufferSize)
-      maxBufferSize = vDir->MaxRequestSize;
+	  if (vDir && vDir->MaxRequestSize > (int)maxBufferSize)
+		  maxBufferSize = vDir->MaxRequestSize;
 
-    // check to see if we have too much data
-    if (RequestData.size() > maxBufferSize)
-    {
-      send501Error(connectionID);
-      return;
-    }
+	  // check to see if we have too much data
+	  if (RequestData.size() > maxBufferSize)
+	  {
+		  send501Error(connectionID);
+		  return;
+	  }
 
-    if (Request.RequestType == eHTTPUnknown)
-    {
-      std::stringstream stream(RequestData);
+	  if (Request.RequestType == eHTTPUnknown)
+	  {
+		  std::stringstream stream(RequestData);
 
-      std::string request, httpVersion;
-      stream >> request >> Resource >> httpVersion;
+		  std::string request, httpVersion;
+		  stream >> request >> Resource >> httpVersion;
 
-      Request.RequestType = LineIsHTTPRequest(request);
-    }
+		  Request.RequestType = LineIsHTTPRequest(request);
+	  }
 
-    // easy outs
-    if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut && (vDir && !vDir->SupportPut())))
-    {
-      send501Error(connectionID);
-      return;
-    }
+	  // easy outs
+	  if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut && (vDir && !vDir->SupportPut())))
+	  {
+		  send501Error(connectionID);
+		  return;
+	  }
 
-    if (Request.RequestType == eHTTPOptions)
-    {
-      sendOptions(connectionID,vDir ? vDir->SupportPut() : false);
-      return;
-    }
+	  if (Request.RequestType == eHTTPOptions)
+	  {
+		  sendOptions(connectionID,vDir ? vDir->SupportPut() : false);
+		  return;
+	  }
 
-    // see if we want to get it
+	  // see if we want to get it
 
-    if (HeaderSize == 0)
-    {
-      size_t headerEnd = TextUtils::find_first_substr(RequestData,"\r\n\r\n");
-      if (headerEnd != std::string::npos)
-	HeaderSize = headerEnd + 4;
-    }
+	  if (HeaderSize == 0)
+	  {
+		  size_t headerEnd = TextUtils::find_first_substr(RequestData,"\r\n\r\n");
+		  if (headerEnd != std::string::npos)
+			  HeaderSize = headerEnd + 4;
+	  }
 
-    unsigned int sessionID = 0;
-    if (HeaderSize && !Request.GetHeaderCount())
-    {
-      std::string headerSubStir = RequestData.substr(0,HeaderSize);
-      std::vector<std::string> headers = TextUtils::tokenize(headerSubStir,"\r\n");
-
-      for ( size_t i = 1; i < headers.size(); i++ )
-      {
-	std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],":",2);
-	if (headerParts.size() > 1)
+	unsigned int sessionID = 0;
+	if (HeaderSize && !Request.GetHeaderCount())
 	{
-	  Request.AddHeader(headerParts[0].c_str(),headerParts[1].c_str());
-	  std::string name = TextUtils::toupper(headerParts[0]);
-	  if (name == "CONTENT-LENGTH") {
-	    int size1 = strtol(headerParts[1].c_str(), NULL, 0);
-	    ContentSize = (unsigned int)size1;
-	    if (ContentSize > maxContentSize) {
-	      send501Error(connectionID);
-	      return;
-	    }
-	  }
-	  if (name == "COOKIE")
-	  {
-	    std::vector<std::string> cookieParts = TextUtils::tokenize(headerParts[1],"=",2);
-	    if (cookieParts.size() > 1)
-	    {
-	      Request.AddCookie(cookieParts[0].c_str(),cookieParts[1].c_str());
-	      if (cookieParts[0] == SESSION_COOKIE)
-		sessionID = atoi(cookieParts[1].c_str());
-	    }
-	  }
-	}
-      }
-    }
+		std::string headerSubStir = RequestData.substr(0,HeaderSize);
+		std::vector<std::string> headers = TextUtils::tokenize(headerSubStir,"\r\n");
 
-    if (HeaderSize && (Request.RequestType == eHTTPGet || Request.RequestType == eHTTPHead))
-      RequestComplete = true;
-    else
-    {
-      if (ContentSize)
-      {
-	if (RequestData.size() >= (ContentSize+HeaderSize))
-	  RequestComplete = true;
-      }
-    }
-
-    if (RequestComplete)
-    {
-      // parse up the paramaters;
-
-      size_t question = Resource.find_first_of('?');
-
-      std::string resource = Resource;
-
-      if (question != std::string::npos)
-      {
-	parseParams(Resource.substr(question+1,Resource.length()-(question+1)));
-	resource = Resource.substr(0,question);
-      }
-      std::string IP = bz_getNonPlayerConnectionIP(connectionID);
-
-      Request.URL = Resource;
-      Request.Resource = resource;
-
-      Request.RequesterIP = IP.c_str();
-      if (bz_getNonPlayerConnectionHost(connectionID))
-	Request.RequesterHost = bz_getNonPlayerConnectionHost(connectionID);
-
-      if (Request.RequestType == eHTTPPost)
-      {
-	std::string body = RequestData.substr(HeaderSize,ContentSize);
-	Request.Body = body;
-
-	// parse the body for params
-	parseParams(body);
-      }
-      else if (Request.RequestType == eHTTPPut)
-	Request.Body = RequestData.substr(HeaderSize,ContentSize);
-
-
-      if (sessionID == 0 && Request.GetParamater("SSID") != NULL)
-	Request.Session = &GetSessionByID(Request.GetParamater("SSID"),IP.c_str());
-      else
-	Request.Session = &GetSession(sessionID,IP.c_str());
-
-      // check and see if we have authentication to do
-
-      bzhttp_eAuthenticationStatus authStatus = eAuthFail;
-
-      if (vDir && vDir->RequiredAuthentiction != eNoAuth)
-      {
-	Authenticated = false;
-
-	// check and see if we are cached
-	if (vDir->CacheAuthentication)
-	{
-	  if (vDir->RequiredAuthentiction == eBZID)
-	  {
-	    std::string id = GetAuthSessionData("bzid");
-	    if (id.size())
-	    {
-	      Authenticated = true;
-	      bzID = id;
-	      callsign = GetAuthSessionData("bzidcallsign");
-
-	      std::vector<std::string> groups = TextUtils::tokenize(GetAuthSessionData("bzidauthgroups")," ");
-	      for (size_t i = 0; i < groups.size(); i++)
-	      {
-		if (groups[i] != callsign)
-		  bzGroups.push_back(groups[i]);
-	      }
-	    }
-	  }
-	  else
-	  {
-	    std::string status = GetAuthSessionData("authstatus");
-	    if (status == "complete")
-	      Authenticated = true;
-	  }
+		for ( size_t i = 1; i < headers.size(); i++ )
+		{
+			std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],":",2);
+			if (headerParts.size() > 1)
+			{
+				Request.AddHeader(headerParts[0].c_str(),headerParts[1].c_str());
+				std::string name = TextUtils::toupper(headerParts[0]);
+				if (name == "CONTENT-LENGTH") {
+					int size1 = strtol(headerParts[1].c_str(), NULL, 0);
+					ContentSize = (unsigned int)size1;
+					if (ContentSize > maxContentSize) {
+						send501Error(connectionID);
+						return;
+					}
+				}
+				if (name == "COOKIE")
+				{
+					std::vector<std::string> cookieParts = TextUtils::tokenize(headerParts[1],"=",2);
+					if (cookieParts.size() > 1)
+					{
+						Request.AddCookie(cookieParts[0].c_str(),cookieParts[1].c_str());
+						if (cookieParts[0] == SESSION_COOKIE)
+							sessionID = atoi(cookieParts[1].c_str());
+					}
+				}
+			}
+		}
 	}
 
-	if (!Authenticated)
+	if (HeaderSize && (Request.RequestType == eHTTPGet || Request.RequestType == eHTTPHead))
+		RequestComplete = true;
+	else
 	{
-	  if (vDir->RequiredAuthentiction == eBZID)
-	  {
-	    std::string status = GetAuthSessionData("bzidauthstatus");
-	    if (status == "redired")
-	    {
-	      // see if they've got the stuff
-	      const char *t = Request.GetParamater("bzauthtoken");
-	      const char *c = Request.GetParamater("bzauthcallsign");
-
-	      if (t && c)
-	      {
-		SetAuthSessionData("bzidauthstatus","requested");
-		token = t;
-		callsign = c;
-
-		bzIDAuthURL = "http://my.bzflag.org/db/";
-		if (bz_BZDBItemHasValue("_WebAuthCheckURL"))
-		  bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
-
-		bzIDAuthURL += "?action=CHECKTOKENS&checktokens=";
-		bzIDAuthURL += TextUtils::url_encode(callsign);
-		bzIDAuthURL += "%3D";
-		bzIDAuthURL += TextUtils::url_encode(token);
-
-		std::string groups;
-		// get the groups list
-		PlayerAccessMap::iterator itr = groupAccess.begin();
-		while (itr != groupAccess.end())
+		if (ContentSize)
 		{
-		  groups += TextUtils::url_encode(itr->first) + "%0D%0A";
-		  ++itr;
+			if (RequestData.size() >= (ContentSize+HeaderSize))
+				RequestComplete = true;
 		}
+	}
 
-		for (size_t i = 0; i < vDir->BZIDAuthenicationGroups.size(); i++)
-		  groups += TextUtils::url_encode(vDir->BZIDAuthenicationGroups.get(i).c_str()) + "%0D%0A";
+	if (RequestComplete)
+	{
+		// parse up the paramaters;
 
-		if (groups.size())
+		size_t question = Resource.find_first_of('?');
+
+		std::string resource = Resource;
+
+		if (question != std::string::npos)
 		{
-		  groups.erase(groups.size()-6,6);
-		  bzIDAuthURL += "&groups=" + groups;
+			parseParams(Resource.substr(question+1,Resource.length()-(question+1)));
+			resource = Resource.substr(0,question);
 		}
+		std::string IP = bz_getNonPlayerConnectionIP(connectionID);
 
-		bz_setNonPlayerDisconnectOnSend(connectionID,false);
-		bz_setNonPlayerInactivityTimeout(connectionID,120);
-		bzAuthReturnData = "";
-		bz_addURLJob(bzIDAuthURL.c_str(),this);
+		Request.URL = Resource;
+		Request.Resource = resource;
 
-		//bz_startu
-		authStatus = eNotAuthedYet;
-	      }
-	    }
-	    else
-	    {
-	     std::string authURL = "http://my.bzflag.org/weblogin.php";
-	     if (bz_BZDBItemHasValue("_WebAuthURL"))
-	       authURL = bz_getBZDBString("_WebAuthURL").c_str();
+		Request.RequesterIP = IP.c_str();
+		if (bz_getNonPlayerConnectionHost(connectionID))
+			Request.RequesterHost = bz_getNonPlayerConnectionHost(connectionID);
 
-	     authURL += "?action=weblogin&url=";
-	     std::string redirURL = vDir->BaseURL.c_str();
-
-	     std::string vname = "/";
-	     vname += vDir->VDirName();
-	     vname += "/";
-
-	     if (Resource.size() > vname.size())
-	      redirURL += Resource.c_str()+vname.size();
-
-	     if (redirURL.find_last_of('?') == std::string::npos)
-	       redirURL += "?";
-
-	     redirURL += TextUtils::format("bzauthtoken=%%TOKEN%%&bzauthcallsign=%%USERNAME%%&SSID=%d",Request.Session->SessionID);
-
-	     authURL += TextUtils::url_encode(redirURL);
-
-	     Responce.ReturnCode = e302Found;
-	     Responce.RedirectLocation = authURL.c_str();
-	     SetAuthSessionData("bzidauthstatus","redired");
-	    }
-
-	    if (Authenticated && vDir->CacheAuthentication)
-	       SetAuthSessionData("bzid", Request.BZID.c_str());
-	  }
-	  else
-	  {
-	    const char* authHeader = Request.GetHeader("Authorization");
-	    if (authHeader || vDir->RequiredAuthentiction == eHTTPOther)
-	    {
-	      if (authHeader)
-	      {
-		std::vector<std::string> parts = TextUtils::tokenize(base64_decode(trimLeadingWhitespace(authHeader)),":",2);
-		if (parts.size() > 1)
+		if (Request.RequestType == eHTTPPost)
 		{
-		  authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request);
-		  if (authStatus == eAuthOK)
-		    Authenticated = true;
+			std::string body = RequestData.substr(HeaderSize,ContentSize);
+			Request.Body = body;
+
+			// parse the body for params
+			parseParams(body);
+		}
+		else if (Request.RequestType == eHTTPPut)
+			Request.Body = RequestData.substr(HeaderSize,ContentSize);
+
+
+		if (sessionID == 0 && Request.GetParamater("SSID") != NULL)
+			Request.Session = &GetSessionByID(Request.GetParamater("SSID"),IP.c_str());
+		else
+			Request.Session = &GetSession(sessionID,IP.c_str());
+
+		// check and see if we have authentication to do
+
+		bzhttp_eAuthenticationStatus authStatus = eAuthFail;
+
+		if (vDir && vDir->RequiredAuthentiction != eNoAuth)
+		{
+			Authenticated = false;
+
+			// check and see if we are cached
+			if (vDir->CacheAuthentication)
+			{
+				if (vDir->RequiredAuthentiction == eBZID)
+				{
+					std::string id = GetAuthSessionData("bzid");
+					if (id.size())
+					{
+						Authenticated = true;
+						bzID = id;
+						callsign = GetAuthSessionData("bzidcallsign");
+
+						std::vector<std::string> groups = TextUtils::tokenize(GetAuthSessionData("bzidauthgroups")," ");
+						for (size_t i = 0; i < groups.size(); i++)
+						{
+							if (groups[i] != callsign)
+								bzGroups.push_back(groups[i]);
+						}
+					}
+				}
+				else
+				{
+					std::string status = GetAuthSessionData("authstatus");
+					if (status == "complete")
+						Authenticated = true;
+				}
+			}
+
+			if (!Authenticated)
+			{
+				if (vDir->RequiredAuthentiction == eBZID)
+				{
+					std::string status = GetAuthSessionData("bzidauthstatus");
+					if (status == "redired")
+					{
+						// see if they've got the stuff
+						const char *t = Request.GetParamater("bzauthtoken");
+						const char *c = Request.GetParamater("bzauthcallsign");
+
+						if (t && c)
+						{
+							SetAuthSessionData("bzidauthstatus","requested");
+							token = t;
+							callsign = c;
+
+							bzIDAuthURL = "http://my.bzflag.org/db/";
+							if (bz_BZDBItemHasValue("_WebAuthCheckURL"))
+								bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
+
+							bzIDAuthURL += "?action=CHECKTOKENS&checktokens=";
+							bzIDAuthURL += TextUtils::url_encode(callsign);
+							bzIDAuthURL += "%3D";
+							bzIDAuthURL += TextUtils::url_encode(token);
+
+							std::string groups;
+							// get the groups list
+							PlayerAccessMap::iterator itr = groupAccess.begin();
+							while (itr != groupAccess.end())
+							{
+								groups += TextUtils::url_encode(itr->first) + "%0D%0A";
+								++itr;
+							}
+
+							for (size_t i = 0; i < vDir->BZIDAuthenicationGroups.size(); i++)
+								groups += TextUtils::url_encode(vDir->BZIDAuthenicationGroups.get(i).c_str()) + "%0D%0A";
+
+							if (groups.size())
+							{
+								groups.erase(groups.size()-6,6);
+								bzIDAuthURL += "&groups=" + groups;
+							}
+							firedOffBZIDTokenCheck = true;
+							bzIDAuthComplete = false;
+							PushPendingHTTPWait();
+							bz_setNonPlayerDisconnectOnSend(connectionID,false);
+							bz_setNonPlayerInactivityTimeout(connectionID,120);
+							bzAuthReturnData = "";
+							bz_addURLJob(bzIDAuthURL.c_str(),this);
+
+							//bz_startu
+							authStatus = eNotAuthedYet;
+						}
+					}
+					else
+					{
+						std::string authURL = "http://my.bzflag.org/weblogin.php";
+						if (bz_BZDBItemHasValue("_WebAuthURL"))
+							authURL = bz_getBZDBString("_WebAuthURL").c_str();
+
+						authURL += "?action=weblogin&url=";
+						std::string redirURL = vDir->BaseURL.c_str();
+
+						std::string vname = "/";
+						vname += vDir->VDirName();
+						vname += "/";
+
+						if (Resource.size() > vname.size())
+							redirURL += Resource.c_str()+vname.size();
+
+						if (redirURL.find_last_of('?') == std::string::npos)
+							redirURL += "?";
+
+						redirURL += TextUtils::format("bzauthtoken=%%TOKEN%%&bzauthcallsign=%%USERNAME%%&SSID=%d",Request.Session->SessionID);
+
+						authURL += TextUtils::url_encode(redirURL);
+
+						// authStatus = eNotAuthedYet;
+						Responce.ReturnCode = e302Found;
+						Responce.RedirectLocation = authURL.c_str();
+						SetAuthSessionData("bzidauthstatus","redired");
+					}
+
+					if (Authenticated && vDir->CacheAuthentication)
+						SetAuthSessionData("bzid", Request.BZID.c_str());
+				}
+				else
+				{
+					const char* authHeader = Request.GetHeader("Authorization");
+					if (authHeader || vDir->RequiredAuthentiction == eHTTPOther)
+					{
+						if (authHeader)
+						{
+							std::vector<std::string> parts = TextUtils::tokenize(base64_decode(trimLeadingWhitespace(authHeader)),":",2);
+							if (parts.size() > 1)
+							{
+								authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request);
+								if (authStatus == eAuthOK)
+									Authenticated = true;
+							}
+							else
+							{
+								authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+								if (authStatus == eAuthOK)
+									Authenticated = true;
+							}
+						}
+
+						if (!Authenticated)
+						{
+							if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
+								Responce.ReturnCode = e403Forbiden;
+						}
+
+						if (Authenticated && vDir->CacheAuthentication)
+							SetAuthSessionData("authstatus", "complete");
+					}
+					else
+						Responce.ReturnCode = e401Unauthorized;
+				}
+			}
+
+			if (!Authenticated && authStatus == eAuthFail)
+			{
+				GenerateResponce(connectionID);
+				Killme = true;
+				return;
+			}
 		}
 		else
-		{
-		  authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
-		  if (authStatus == eAuthOK)
-		    Authenticated = true;
-		}
-	      }
+			Authenticated = true;
 
-	      if (!Authenticated)
-	      {
-		if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
-		  Responce.ReturnCode = e403Forbiden;
-	      }
-
-	      if (Authenticated && vDir->CacheAuthentication)
-		SetAuthSessionData("authstatus", "complete");
-	    }
-	    else
-	      Responce.ReturnCode = e401Unauthorized;
-	  }
+		Think(connectionID);
 	}
-
-	if (!Authenticated && authStatus == eAuthFail)
+	else
 	{
-	  GenerateResponce(connectionID);
-	  Killme = true;
-	  return;
+		if (Request.RequestType == eHTTPPost || Request.RequestType == eHTTPPut)
+			send100Continue(connectionID);
 	}
-      }
-      else
-	Authenticated = true;
-
-      Think(connectionID);
-    }
-    else
-    {
-      if (Request.RequestType == eHTTPPost || Request.RequestType == eHTTPPut)
-	send100Continue(connectionID);
-    }
   }
 
   virtual bzhttp_ePageGenStatus GetPage ()
@@ -1163,54 +1174,60 @@ public:
 
   void Think ( int connectionID )
   {
-    HTTPConnectedPeer::Current = this;
-    if (RequestComplete && !Killme)
-    {
-      if (vDir && !Authenticated)
-      {
-	if (vDir->RequiredAuthentiction == eHTTPOther)
-	{
-	  bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
-	  if (authStatus == eAuthOK)
+	  HTTPConnectedPeer::Current = this;
+	  if (RequestComplete && !Killme)
 	  {
-	    Authenticated = true;
-	    if (vDir->CacheAuthentication)
-	      SetAuthSessionData("authstatus", "complete");
-	  }
-	  else
-	  {
-	    if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
-	    {
-	      Responce.ReturnCode = e403Forbiden;
-	      GenerateResponce(connectionID);
-	      Killme = true;
-	    }
-	  }
-	}
-	else if (vDir->RequiredAuthentiction == eBZID)
-	{
-	  // check and see if that url job is done or not
-	  if (bzIDAuthFailed)
-	  {
-	    if (!vDir->GenerateNoAuthPage(Request,Responce))
-	      Responce.ReturnCode = e403Forbiden;
-	    GenerateResponce(connectionID);
-	    Killme = true;
-	  }
-	}
-      }
+		  if (vDir && !Authenticated)
+		  {
+			  if (vDir->RequiredAuthentiction == eHTTPOther)
+			  {
+				  bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+				  if (authStatus == eAuthOK)
+				  {
+					  Authenticated = true;
+					  if (vDir->CacheAuthentication)
+						  SetAuthSessionData("authstatus", "complete");
+				  }
+				  else
+				  {
+					  if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
+					  {
+						  Responce.ReturnCode = e403Forbiden;
+						  GenerateResponce(connectionID);
+						  Killme = true;
+					  }
+				  }
+			  }
+			  else if (vDir->RequiredAuthentiction == eBZID && bzIDAuthComplete) // check to see if we have authed yet or not
+			  {
+				  // if we failed then we suck
+				  if (bzIDAuthFailed)
+				  {
+					  if (!vDir->GenerateNoAuthPage(Request,Responce))
+						  Responce.ReturnCode = e403Forbiden;
+					  GenerateResponce(connectionID);
+					  Killme = true;
+				  }
+			  }
+		  }
 
-      if (!vDir || Authenticated)
-      {
-	bzhttp_ePageGenStatus status = GetPage();
+		  if (firedOffBZIDTokenCheck && bzIDAuthComplete)
+		  {
+			   PopPendingHTTPWait();
+			   firedOffBZIDTokenCheck = false;
+		  }
 
-	if (status == eNoPage)
-	  send404Error(connectionID);
-	else if (status == ePageDone)
-	  GenerateResponce(connectionID);
-      }
-    }
-    HTTPConnectedPeer::Current = NULL;
+		  if (!vDir || Authenticated)
+		  {
+			  bzhttp_ePageGenStatus status = GetPage();
+
+			  if (status == eNoPage)
+				  send404Error(connectionID);
+			  else if (status == ePageDone)
+				  GenerateResponce(connectionID);
+		  }
+	  }
+	  HTTPConnectedPeer::Current = NULL;
 
   }
 
@@ -1859,7 +1876,7 @@ void NewHTTPConnection ( bz_EventData *eventData )
 
 void CheckForZombies ( void )
 {
-  std::map<int,HTTPConnectedPeer*>::iterator itr = HTTPPeers.end();
+  std::map<int,HTTPConnectedPeer*>::iterator itr = HTTPPeers.begin();
   std::vector<int> toKill;
 
   while (itr != HTTPPeers.end())
@@ -1875,6 +1892,8 @@ void CheckForZombies ( void )
     }
     else
       itr->second->Think(itr->first);
+
+	itr++;
   }
 
   for (size_t i = 0; i < toKill.size(); i++)
