@@ -24,6 +24,7 @@
 #include "commands.h"
 #include "bzfsAPI.h"
 #include "DirectoryNames.h"
+#include "bzfsPlugins.h"
 
 #include "WorldEventManager.h"
 
@@ -415,6 +416,20 @@ std::vector<std::string> getPluginList ( void )
   return plugins;
 }
 
+int pendingHTTPAuths = 0;
+
+void PushPendingHTTPWait ()
+{
+	pendingHTTPAuths++;
+}
+
+void PopPendingHTTPWait ()
+{
+	pendingHTTPAuths--;
+	if (pendingHTTPAuths < 0)
+		pendingHTTPAuths = 0;
+}
+
 float getPluginMinWaitTime ( void )
 {
   float maxTime = 1000.0;
@@ -425,6 +440,8 @@ float getPluginMinWaitTime ( void )
     if (vPluginList[i].plugin &&  (vPluginList[i].plugin->MaxWaitTime > 0) && (vPluginList[i].plugin->MaxWaitTime < maxTime))
       maxTime = vPluginList[i].plugin->MaxWaitTime;
   }
+  if (pendingHTTPAuths > 0)
+	  return 0;
 
   return maxTime;
 }

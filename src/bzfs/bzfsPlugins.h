@@ -29,6 +29,9 @@ std::vector<std::string> getPluginList ( void );
 
 float getPluginMinWaitTime ( void );
 
+void PushPendingHTTPWait ();
+void PopPendingHTTPWait ();
+
 bz_Plugin* getPlugin( const char* name );
 
 extern std::string lastPluginDir;
