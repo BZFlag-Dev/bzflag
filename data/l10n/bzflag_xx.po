@@ -1632,7 +1632,7 @@ msgstr ""
 msgid "BZFlag Home Page:"
 msgstr ""
 
-msgid "Copyright (c) 1993-2012"
+msgid "Copyright (c) 1993-2013"
 msgstr ""
 
 

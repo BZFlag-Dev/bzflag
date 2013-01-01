@@ -1,6 +1,6 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993-2012 Tim Riker
+# Copyright (c) 1993-2013 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -11,8 +11,8 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # NOTE: update just the next two lines and then run this script
-OLDCOPYRIGHTTEXT='Copyright (c) 1993-2011'
-NEWCOPYRIGHTTEXT='Copyright (c) 1993-2012'
+OLDCOPYRIGHTTEXT='Copyright (c) 1993-2012'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993-2013'
 #
 # update copyright in all files
 #
