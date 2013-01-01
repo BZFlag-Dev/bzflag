@@ -748,10 +748,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       extraUsage(argv[0]);
     }
     else if (strcmp(argv[i], "-helpmsg") == 0) {
-      checkArgc(2, i, argc, argv[i]);
-      if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
-	std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
-	usage(argv[0]);
+    checkArgc(2, i, argc, argv[i]);
+    std::ifstream helpfile(argv[i]);
+    if (!helpfile)
+        std::cerr << "warning: helpmsg file \"" << argv[i] << "\" does not exist or can't be read" << std::endl;
+    else if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
+	    std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
+	    usage(argv[0]);
       }
       i++;
     }
