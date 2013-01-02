@@ -2738,7 +2738,7 @@ void playerAlive(int playerIndex)
   if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::spawn)) {
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
     sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
-    sendMessage(ServerPlayer, playerIndex, "register on http://my.BZFlag.org/bb/ and use that callsign/password.");
+    sendMessage(ServerPlayer, playerIndex, "register on http://forums.bzflag.org/ and use that callsign/password.");
 	spawnAllowData.allow = false;
 	}
 
@@ -5781,7 +5781,7 @@ int main(int argc, char **argv)
       "  option. A web page describing list-server policies and procedures can\n"
       "  be found at the following location:\n"
       "\n"
-      "    http://my.bzflag.org/w/ServerAuthentication\n"
+      "    http://wiki.bzflag.org/ServerAuthentication\n"
       "\n");
   }
 

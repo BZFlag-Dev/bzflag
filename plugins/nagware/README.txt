@@ -3,7 +3,7 @@
 ========================================================================
 
 The nagware plugin is designed to encourage players to register their
-callsigns at my.bzflag.org/bb.
+callsigns at forums.bzflag.org.
 
 Nagware can send text messages to unverified players at defined
 intervals, as well as automatically kick unverified players.
