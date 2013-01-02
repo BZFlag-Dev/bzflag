@@ -68,7 +68,7 @@ BEGIN
             VALUE "FileDescription", "The BZFlag Client"
             VALUE "FileVersion", "2.4.3.0"
             VALUE "InternalName", "bzflag.rc"
-            VALUE "LegalCopyright", "Copyright Tim Riker (C) 2012"
+            VALUE "LegalCopyright", "Copyright (c) 1993-2013 Tim Riker"
             VALUE "OriginalFilename", "bzflag.rc"
             VALUE "ProductName", "BZFlag"
             VALUE "ProductVersion", "2.4.3.0"

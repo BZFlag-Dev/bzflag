@@ -27,6 +27,6 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 1993-2012 Tim Riker</string>
+	<string>Copyright (c) 1993-2013 Tim Riker</string>
 </dict>
 </plist>
