@@ -6279,7 +6279,7 @@ int main(int argc, char **argv)
 	      directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
 
 	      // kick 'em while they're down
-	      playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1);
+	      playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1, true);
 
 	      // be sure to reset the player!
 	      player->player.setDead();
