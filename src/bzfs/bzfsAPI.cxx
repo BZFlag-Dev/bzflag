@@ -2369,15 +2369,8 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
       else
 	resetFlag(currentFlag);// reset non-team flags
     }
-    // setup bzfs' state
-    fi->grab(gkPlayer->getIndex());
-    gkPlayer->player.setFlag(fi->getIndex());
 
-    // send MsgGrabFlag
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, gkPlayer->getIndex());
-    buf = fi->pack(buf);
-    broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+    grabFlag(gkPlayer->getIndex(), *fi, false);
 
     //flag successfully given to player
     return true;
@@ -2408,12 +2401,7 @@ BZF_API void bz_resetFlags ( bool onlyUnused )
     // see if someone had grabbed flag,
     const int playerIndex = flag.player;
     if (!onlyUnused || (playerIndex == -1))
-    {
-      if (playerIndex != -1)
-	sendDrop(flag);
-
       resetFlag(flag);
-    }
   }
 }
 
@@ -2443,10 +2431,6 @@ BZF_API bool bz_resetFlag ( int flag )
   if(!pFlag)
     return false;
 
-  // if somone has it, drop it
-  if (pFlag->player != -1)
-    sendDrop(*pFlag);
-
   resetFlag(*pFlag);
 
   return true;
@@ -2457,10 +2441,6 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] )
   FlagInfo *pFlag = FlagInfo::get(flag);
   if(!pFlag)
     return false;
-
-  // if somone has it, drop it
-  if (pFlag->player != -1)
-    sendDrop(*pFlag);
 
   TeamColor teamIndex = pFlag->teamIndex();
   bool teamIsEmpty = true;

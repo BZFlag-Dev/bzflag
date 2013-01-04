@@ -1285,7 +1285,20 @@ bool FlagCommand::operator() (const char	 *message,
     for (int i = 0; i < numFlags; i++) {
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
-	sendDrop(flag);
+	  if (flag.flag.status == FlagOnTank) {
+            int player = flag.player;
+
+            sendDrop(flag);
+
+            // trigger the API event
+            bz_FlagDroppedEventData_V1 data;
+            data.playerID = player;
+            data.flagID = flag.getIndex();
+            data.flagType = flag.flag.type->flagAbbv.c_str();
+            memcpy(data.pos, flag.flag.position, sizeof(float)*3);
+
+            worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
+          }
 	flag.flag.status = FlagGoing;
 	if (!flag.required) {
 	  flag.flag.type = Flags::Null;
@@ -1393,7 +1406,6 @@ bool FlagCommand::operator() (const char	 *message,
 
     FlagInfo* fi = FlagInfo::get(gkPlayer->player.getFlag());
     if (fi != NULL) {
-      sendDrop(*fi);
       resetFlag(*fi);
       char buffer[MessageLen];
       snprintf(buffer, MessageLen, "%s took flag %s/%i from %s",
@@ -1518,16 +1530,8 @@ bool FlagCommand::operator() (const char	 *message,
 	  fPlayer->player.setFlag(-1);
 	}
       }
-
-      // setup bzfs' state
-      fi->grab(gkPlayer->getIndex());
-      gkPlayer->player.setFlag(fi->getIndex());
-
-      // send MsgGrabFlag
-      void *buf, *bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, gkPlayer->getIndex());
-      buf = fi->pack(buf);
-      broadcastMessage(MsgGrabFlag, (char*)buf - (char*)bufStart, bufStart);
+      
+      grabFlag(gkPlayer->getIndex(), *fi, false);
 
       // send the annoucement
       char buffer[MessageLen];

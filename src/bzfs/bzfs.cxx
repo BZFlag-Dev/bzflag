@@ -359,7 +359,6 @@ void sendFlagUpdate(FlagInfo &flag)
   broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-
 static float nextGameTime()
 {
   float nextTime = +MAXFLOAT;
@@ -2211,6 +2210,22 @@ void resetFlag(FlagInfo &flag)
 {
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
+  
+  // first drop the flag if someone has it
+  if (flag.flag.status == FlagOnTank) {
+    int player = flag.player;
+
+    sendDrop(flag);
+
+    // trigger the API event
+    bz_FlagDroppedEventData_V1 data;
+    data.playerID = player;
+    data.flagID = flag.getIndex();
+    data.flagType = flag.flag.type->flagAbbv.c_str();
+    memcpy(data.pos, flag.flag.position, sizeof(float)*3);
+
+    worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
+  }
 
   float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
 
@@ -2298,7 +2313,18 @@ void zapFlag(FlagInfo &flag)
   // called when a flag must just disappear -- doesn't fly
   // into air, just *poof* vanishes.
 
+  int player = flag.player;
+
   sendDrop(flag);
+  
+  // trigger the API event
+  bz_FlagDroppedEventData_V1 data;
+  data.playerID = player;
+  data.flagID = flag.getIndex();
+  data.flagType = flag.flag.type->flagAbbv.c_str();
+  memcpy(data.pos, flag.flag.position, sizeof(float)*3);
+
+  worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 
   // if flag was flying then it flies no more
   flag.landing(TimeKeeper::getSunExplodeTime());
@@ -3096,7 +3122,7 @@ static void searchFlag(GameKeeper::Player &playerData)
 }
 
 
-static void grabFlag(int playerIndex, FlagInfo &flag)
+void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3106,23 +3132,25 @@ static void grabFlag(int playerIndex, FlagInfo &flag)
       playerData->player.isObserver() ||
       !playerData->player.isAlive() ||
       playerData->player.haveFlag() ||
-      flag.flag.status != FlagOnGround)
+      (checkPos && flag.flag.status != FlagOnGround))
     return;
-
-  //last Pos might be lagged by TankSpeed so include in calculation
-  const float tankRadius = BZDBCache::tankRadius;
-  const float tankSpeed = BZDBCache::tankSpeed;
-  const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
-  const float* tpos = playerData->lastState.pos;
+    
   const float* fpos = flag.flag.position;
-  const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
-		      (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
-
-  if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
-       logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
-    playerData->player.getCallSign(), playerIndex,
-    tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
-    return;
+  if (checkPos) {
+    //last Pos might be lagged by TankSpeed so include in calculation
+    const float tankRadius = BZDBCache::tankRadius;
+    const float tankSpeed = BZDBCache::tankSpeed;
+    const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
+    const float* tpos = playerData->lastState.pos;
+    const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
+		        (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
+			
+    if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
+         logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
+      playerData->player.getCallSign(), playerIndex,
+      tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
+      return;
+    }
   }
 
   bz_AllowFlagGrabData_V1 allow;
@@ -3256,6 +3284,8 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     }
   }
 
+  int player = drpFlag.player;
+
   drpFlag.dropFlag(pos, landing, vanish);
 
   // player no longer has flag -- send MsgDropFlag
@@ -3263,6 +3293,15 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 
   // notify of new flag state
   sendFlagUpdate(drpFlag);
+  
+  // trigger the api event
+  bz_FlagDroppedEventData_V1 data;
+  data.playerID = player;
+  data.flagID = flagIndex;
+  data.flagType = drpFlag.flag.type->flagAbbv.c_str();
+  memcpy(data.pos, pos, sizeof(float)*3);
+  
+  worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 
 }
 
@@ -3281,14 +3320,6 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   }
 
   dropFlag(flag, dropPos);
-
-  bz_FlagDroppedEventData_V1 data;
-  data.playerID = playerData.getIndex();
-  data.flagID = flagIndex;
-  data.flagType = FlagInfo::get(flagIndex)->flag.type->flagAbbv.c_str();
-  memcpy(data.pos, dropPos, sizeof(float)*3);
-
-  worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 
   return;
 }
@@ -4223,7 +4254,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackUShort(buf, flag);
       // Sanity check
       if (flag < numFlags)
-	grabFlag(t, *FlagInfo::get(flag));
+	grabFlag(t, *FlagInfo::get(flag), true);
       break;
     }
 
