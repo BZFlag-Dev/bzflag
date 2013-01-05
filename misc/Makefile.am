@@ -13,6 +13,7 @@ EXTRA_DIST =				\
 	bzirc.pl			\
 	bzls.lua			\
 	bzwcvt.pl			\
+	checkToken.php			\
 	checkam				\
 	copyplugindocs			\
 	doxyfile			\
