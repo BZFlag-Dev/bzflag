@@ -578,7 +578,7 @@ void			playLocalSound(int soundCode)
 {
   // Check for conditions which preclude sounds
   if (soundLevel <= 0				  // no volume
-      || soundCode > (int)soundSamples.size()	  // unknown sound
+      || soundCode >= (int)soundSamples.size()	  // unknown sound
       || soundSamples[soundCode].length() == 0) { // empty sound
     return;
   }
