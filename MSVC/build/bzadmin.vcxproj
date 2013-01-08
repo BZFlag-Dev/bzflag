@@ -436,6 +436,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Project>{b2b95537-a4ce-4510-96a6-00f7b7303922}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="libcurl.vcxproj">
+      <Project>{cc93828f-7156-4021-9c77-9951fdadee83}</Project>
+    </ProjectReference>
     <ProjectReference Include="net.vcxproj">
       <Project>{7b2595ed-ccb8-4d19-87f2-9a52c7f26ef8}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -443,6 +446,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ProjectReference Include="pdcurses.vcxproj">
       <Project>{948a0a16-9121-4cc5-828c-dc3417510068}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="regex.vcxproj">
+      <Project>{6dd493f8-31e1-4958-a240-d157affcb07e}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

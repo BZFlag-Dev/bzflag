@@ -1024,6 +1024,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Project>{12408598-00b6-487f-8f99-61b1300a15af}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="regex.vcxproj">
+      <Project>{6dd493f8-31e1-4958-a240-d157affcb07e}</Project>
+    </ProjectReference>
     <ProjectReference Include="scene.vcxproj">
       <Project>{1baed535-4aef-4041-9cb5-a7dc9c14e105}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
