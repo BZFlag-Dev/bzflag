@@ -19,13 +19,7 @@ README (for Cygwin).
 The most common way to build on windows is to use Visual C++.
 The freely available VC10 EE edition is well suited to users
 who wish to compile the client for personal use. It can be found at
-http://www.microsoft.com/express/download/. Please note that the
-free versions of Visual C++ do not allow for the re-distribution
-of compiled applications, and link to runtime libraries that only
-exist on systems that have the same VC EE version. If you wish to
-distribute pre-made binary images of bzflag, then you will have to
-ether use the full (retail, or student) versions of the compiler
-or use one of the other free solutions (minGW). For more info
+http://www.microsoft.com/express/download/. For more info
 on compiling with minGW please see the README.MINGW32 that was
 included in this source package. The rest of this document will
 refer to the build process using Visual C++ 10.0 (2010).
