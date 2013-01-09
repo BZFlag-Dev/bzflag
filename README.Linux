@@ -37,10 +37,20 @@ BZFlag.  Known build requirements include:
     yum install SDL-devel c-ares-devel libSM-devel libcurl-devel \
     gcc-c++ glew-devel libidn-devel libtool ncurses-devel zlib-devel
 
-After any development packages are installed do a "make distclean"
-command once in the top-level BZFlag source directory.  Then, when
-./configure is run as usual it will recognize and use the newly
-installed packages.
+After any development packages are installed execute the following
+commands from the top-level BZFlag source directory;
+./autogen.sh
+./configure
+make
+
+The autogen.sh step can be skipped if the source code was received
+from the tarball package, but must be included if the source
+came from SVN.
+
+This will build bzflag. If you wish to install the executables to
+the usr directory after the build then execute;
+make install
+as root
 
 Known bugs in the Linux version:
 
