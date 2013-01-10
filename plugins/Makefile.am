@@ -25,6 +25,7 @@ SUBDIRS = \
 	SAMPLE_PLUGIN \
 	serverControl \
 	shockwaveDeath \
+	superUser \
 	teamflagreset \
 	thiefControl \
 	timedctf \
