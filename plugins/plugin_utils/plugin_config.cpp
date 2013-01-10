@@ -26,6 +26,10 @@
  * Default section if none is specified is [global]
  */
 
+PluginConfig::PluginConfig()
+{
+}
+
 PluginConfig::PluginConfig(const std::string &filename)
 {
   configFilename = filename;
@@ -33,6 +37,26 @@ PluginConfig::PluginConfig(const std::string &filename)
   errors = 0;
 
   parse();
+}
+
+void PluginConfig::read(const char* filename)
+{
+  read(std::string(filename));
+}
+
+void PluginConfig::read(const std::string &filename)
+{
+  sections.clear();
+  errors = 0;
+  configFilename = filename;
+
+  parse();
+}
+
+
+std::string PluginConfig::item(const char *section, const  char *key)
+{
+  return item(std::string(section),std::string(key));
 }
 
 std::string PluginConfig::item(const std::string &section, const std::string &key)

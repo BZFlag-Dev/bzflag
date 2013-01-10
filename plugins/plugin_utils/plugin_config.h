@@ -46,8 +46,14 @@
 class PluginConfig
 {
 public:
+  PluginConfig();
   PluginConfig(const std::string &filename);
   ~PluginConfig() {};
+
+  void read(const char* filename);
+  void read(const std::string &filename);
+
+  std::string item(const char *section, const  char *key);
   std::string item(const std::string &section, const std::string &key);
   unsigned int errors;
 private:
