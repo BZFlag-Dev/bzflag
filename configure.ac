@@ -1163,6 +1163,7 @@ AC_CONFIG_FILES([
 	plugins/regFlag/Makefile
 	plugins/serverControl/Makefile
 	plugins/shockwaveDeath/Makefile
+	plugins/superUser/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/thiefControl/Makefile
 	plugins/timedctf/Makefile
