@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0318265E16A0BE61005050BD /* libsuperUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* libsuperUser.dylib */; };
+		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		0347EDC7167AC6CF0023D9AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357AA311670C5AF0056C938 /* Cocoa.framework */; };
 		0347EE0E167AC72B0023D9AD /* automatic_icon.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0360C23D166CBB63005D3444 /* automatic_icon.png */; };
 		0347EE0F167AC72B0023D9AD /* blend_flash.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0360C23E166CBB63005D3444 /* blend_flash.png */; };
@@ -668,9 +670,17 @@
 		03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E3166C692B00DDDBEB /* libz.dylib */; };
 		03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
+		03CDB24A16A0BA81001DA037 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 03CDB24416A0BA81001DA037 /* README.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0318265C16A0BE45005050BD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0318265716A0BE2F005050BD;
+			remoteInfo = superUser;
+		};
 		03512C8C167B04FD00EA025C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
@@ -1149,6 +1159,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				0318265E16A0BE61005050BD /* libsuperUser.dylib in CopyFiles */,
 				0394E948167B2D00007F4035 /* libairspawn.dylib in CopyFiles */,
 				0394E949167B2D00007F4035 /* libautoFlagReset.dylib in CopyFiles */,
 				0394E94A167B2D00007F4035 /* libchathistory.dylib in CopyFiles */,
@@ -1356,6 +1367,7 @@
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
 		0305D6F2166CA1DC00557FC4 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		0318265816A0BE2F005050BD /* libsuperUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsuperUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
 		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
@@ -2210,7 +2222,9 @@
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E7C51670A466005A26C4 /* libcares.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcares.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E8231670A894005A26C4 /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "BZFlag-2.4.3.app"; path = "BZFlag-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03CDB24416A0BA81001DA037 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
+		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
 		03D88EA81670CB1300725DBE /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = "<group>"; };
 		03D88EA91670CB1300725DBE /* DEVINFO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DEVINFO; path = ../DEVINFO; sourceTree = "<group>"; };
@@ -2224,6 +2238,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0318265516A0BE2F005050BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0357A7B91670AF8E0056C938 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -3738,6 +3759,7 @@
 				0394E785167B1025007F4035 /* SAMPLE_PLUGIN */,
 				0394E78C167B1025007F4035 /* serverControl */,
 				0394E794167B1025007F4035 /* shockwaveDeath */,
+				03CDB24216A0BA81001DA037 /* superUser */,
 				0394E79B167B1025007F4035 /* teamflagreset */,
 				0394E7A3167B1025007F4035 /* thiefControl */,
 				0394E7AA167B1025007F4035 /* timedctf */,
@@ -4106,6 +4128,7 @@
 				0394E8E5167B27A2007F4035 /* libSAMPLE_PLUGIN.dylib */,
 				0394E8F0167B27F7007F4035 /* libserverControl.dylib */,
 				0394E8FB167B284B007F4035 /* libshockwaveDeath.dylib */,
+				0318265816A0BE2F005050BD /* libsuperUser.dylib */,
 				0394E906167B28A4007F4035 /* libteamflagreset.dylib */,
 				0394E911167B28ED007F4035 /* libthiefControl.dylib */,
 				0394E91C167B293E007F4035 /* libtimedctf.dylib */,
@@ -4132,6 +4155,15 @@
 			sourceTree = "<group>";
 			tabWidth = 8;
 			usesTabs = 1;
+		};
+		03CDB24216A0BA81001DA037 /* superUser */ = {
+			isa = PBXGroup;
+			children = (
+				03CDB24416A0BA81001DA037 /* README.txt */,
+				03CDB24516A0BA81001DA037 /* superUser.cpp */,
+			);
+			path = superUser;
+			sourceTree = "<group>";
 		};
 		03D88EAD1670CB1E00725DBE /* Documentation */ = {
 			isa = PBXGroup;
@@ -4162,6 +4194,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0318265616A0BE2F005050BD /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0357A7BA1670AF8E0056C938 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4487,6 +4526,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0318265716A0BE2F005050BD /* superUser */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0318265916A0BE2F005050BD /* Build configuration list for PBXNativeTarget "superUser" */;
+			buildPhases = (
+				0318265416A0BE2F005050BD /* Sources */,
+				0318265516A0BE2F005050BD /* Frameworks */,
+				0318265616A0BE2F005050BD /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = superUser;
+			productName = superUser;
+			productReference = 0318265816A0BE2F005050BD /* libsuperUser.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		0357A7BB1670AF8E0056C938 /* common */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0357A7BD1670AF8F0056C938 /* Build configuration list for PBXNativeTarget "common" */;
@@ -5349,6 +5405,7 @@
 				0394E8EA167B27BF007F4035 /* PBXTargetDependency */,
 				0394E8F5167B2800007F4035 /* PBXTargetDependency */,
 				0394E900167B285F007F4035 /* PBXTargetDependency */,
+				0318265D16A0BE45005050BD /* PBXTargetDependency */,
 				0394E90B167B28B8007F4035 /* PBXTargetDependency */,
 				0394E916167B28F5007F4035 /* PBXTargetDependency */,
 				0394E921167B2958007F4035 /* PBXTargetDependency */,
@@ -5426,6 +5483,7 @@
 				0394E8E4167B27A2007F4035 /* SAMPLE_PLUGIN */,
 				0394E8EF167B27F7007F4035 /* serverControl */,
 				0394E8FA167B284B007F4035 /* shockwaveDeath */,
+				0318265716A0BE2F005050BD /* superUser */,
 				0394E905167B28A4007F4035 /* teamflagreset */,
 				0394E910167B28ED007F4035 /* thiefControl */,
 				0394E91B167B293E007F4035 /* timedctf */,
@@ -5442,6 +5500,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03C8EE41167ABE7D00BB07A5 /* BZFlag.icns in Resources */,
+				03CDB24A16A0BA81001DA037 /* README.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5464,6 +5523,14 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0318265416A0BE2F005050BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0318265F16A0BEA1005050BD /* superUser.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0357A7B81670AF8E0056C938 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -6215,6 +6282,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0318265D16A0BE45005050BD /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0318265716A0BE2F005050BD /* superUser */;
+			targetProxy = 0318265C16A0BE45005050BD /* PBXContainerItemProxy */;
+		};
 		03512C8D167B04FD00EA025C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 03C5E7AD1670A073005A26C4 /* Detect Version */;
@@ -6393,6 +6465,34 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0318265A16A0BE2F005050BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0318265B16A0BE2F005050BD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EXECUTABLE_PREFIX = lib;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		0357A7BE1670AF8F0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7787,6 +7887,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0318265916A0BE2F005050BD /* Build configuration list for PBXNativeTarget "superUser" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0318265A16A0BE2F005050BD /* Debug */,
+				0318265B16A0BE2F005050BD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		0357A7BD1670AF8F0056C938 /* Build configuration list for PBXNativeTarget "common" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
