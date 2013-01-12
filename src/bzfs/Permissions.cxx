@@ -379,6 +379,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::antipollkill : return "antipollkill";
     case PlayerAccessInfo::ban: return "ban";
     case PlayerAccessInfo::banlist: return "banlist";
+    case PlayerAccessInfo::clientQuery: return "clientQuery";
     case PlayerAccessInfo::countdown: return "countdown";
     case PlayerAccessInfo::date: return "date";
     case PlayerAccessInfo::endGame: return "endGame";
@@ -445,6 +446,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "ANTIPOLLKILL") return PlayerAccessInfo::antipollkill;
   if (name == "BAN") return PlayerAccessInfo::ban;
   if (name == "BANLIST") return PlayerAccessInfo::banlist;
+  if (name == "CLIENTQUERY") return PlayerAccessInfo::clientQuery;
   if (name == "COUNTDOWN") return PlayerAccessInfo::countdown;
   if (name == "DATE") return PlayerAccessInfo::date;
   if (name == "ENDGAME") return PlayerAccessInfo::endGame;

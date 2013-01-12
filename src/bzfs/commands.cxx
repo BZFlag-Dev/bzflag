@@ -3067,6 +3067,10 @@ bool ClientQueryCommand::operator() (const char	 *message,
 				     GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::clientQuery)) {
+    sendMessage(ServerPlayer, t, "You do not have permission to run the /clientquery command");
+    return true;
+  }
   logDebugMessage(2,"Clientquery requested by %s [%d]\n",
 	 playerData->player.getCallSign(), t);
   if (message[12] != '\0') {

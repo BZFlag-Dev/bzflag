@@ -5137,6 +5137,7 @@ void initGroups()
   PlayerAccessInfo info;
   info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
   info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
+  info.explicitAllows[PlayerAccessInfo::clientQuery] = true;
   info.explicitAllows[PlayerAccessInfo::date] = true;
   info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
   info.explicitAllows[PlayerAccessInfo::idleStats] = true;

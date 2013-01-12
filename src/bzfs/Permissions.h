@@ -55,6 +55,7 @@ public:
       antipollkill,
       ban,
       banlist,
+      clientQuery,
       countdown,
       date,
       endGame,
