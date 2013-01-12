@@ -72,12 +72,21 @@ if [ $? != 0 ] ; then
     exit 1
 fi
 
+# update ../configure.ac
+expression="s/(.*SAMPLE_PLUGIN.*)/\1\n\tplugins\\/$ARG1\\/Makefile/"
+echo "perl -pi -e '$expression' $PATH_TO_HERE/../configure.ac"
+perl -pi -e "$expression" "$PATH_TO_HERE/../configure.ac"
+if [ $? != 0 ] ; then
+    echo "ERROR: Update of configure.ac failed"
+    exit 1
+fi
+
+
 echo "---"
 echo "New plug-in \"$ARG1\" is ready.  A directory for your plug-in was created."
 echo ""
-echo "To add $1 to the build system, you need to edit two files:"
-echo "  Edit plugins/Makefile.am and add a line for your plugin to the SUBDIRS list"
-echo "  Edit configure.ac and add a line for the plugins/$1/Makefile near the end"
+echo "$1 has already been added to the build system, but not to the mac"
+echo "Xcode project or windows FullBuild.sln file, where you have to add it manually."
 echo ""
 echo "You then need to rerun autogen.sh and configure just once to enable your"
 echo "new plugin with the build system."
