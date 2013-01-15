@@ -301,6 +301,7 @@ typedef enum
 #define bz_perm_antipollkill   "antipollkill"
 #define bz_perm_ban  "ban"
 #define bz_perm_banlist  "banlist"
+#define bz_perm_clientQuery  "clientQuery"
 #define bz_perm_countdown  "countdown"
 #define bz_perm_date  "date"
 #define bz_perm_endGame  "endGame"
