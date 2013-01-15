@@ -76,6 +76,7 @@ public:
       mute,
       packetlosswarn,
       playerList,
+      plugins,
       poll,
       pollBan,
       pollKick,

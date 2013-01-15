@@ -400,6 +400,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::mute: return "mute";
     case PlayerAccessInfo::packetlosswarn: return "packetlosswarn";
     case PlayerAccessInfo::playerList: return "playerList";
+    case PlayerAccessInfo::plugins: return "plugins";
     case PlayerAccessInfo::poll: return "poll";
     case PlayerAccessInfo::pollBan: return "pollBan";
     case PlayerAccessInfo::pollKick: return "pollKick";
@@ -467,6 +468,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "MUTE") return PlayerAccessInfo::mute;
   if (name == "PACKETLOSSWARN") return PlayerAccessInfo::packetlosswarn;
   if (name == "PLAYERLIST") return PlayerAccessInfo::playerList;
+  if (name == "PLUGINS") return PlayerAccessInfo::plugins;
   if (name == "POLL") return PlayerAccessInfo::poll;
   if (name == "POLLBAN") return PlayerAccessInfo::pollBan;
   if (name == "POLLKICK") return PlayerAccessInfo::pollKick;

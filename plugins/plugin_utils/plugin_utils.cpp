@@ -489,6 +489,7 @@ const std::vector<std::string> bzu_standardPerms (void)
     perms.push_back("mute");
     perms.push_back("packetlosswarn");
     perms.push_back("playerList");
+    perms.push_back("plugins");
     perms.push_back("poll");
     perms.push_back("pollBan");
     perms.push_back("pollKick");

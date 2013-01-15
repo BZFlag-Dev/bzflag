@@ -317,6 +317,7 @@ typedef enum
 #define bz_perm_masterBan  "masterban"
 #define bz_perm_mute  "mute"
 #define bz_perm_playerList  "playerList"
+#define bz_perm_plugins  "plugins"
 #define bz_perm_poll  "poll"
 #define bz_perm_pollBan  "pollBan"
 #define bz_perm_pollKick  "pollKick"
