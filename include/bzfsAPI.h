@@ -384,6 +384,9 @@ typedef enum
   eRabbitGame
 }bz_eGameType;
 
+// defined later but used in some event objects
+class bz_BasePlayerRecord;
+
 typedef enum {
   eDead,		// not alive, not paused, etc.
   eAlive,		// player is alive
@@ -404,7 +407,7 @@ typedef struct bz_PlayerUpdateState {
   int			phydrv;			// physics driver
 } bz_PlayerUpdateState;
 
-class bz_BasePlayerRecord;
+
 BZF_API bool bz_freePlayerRecord ( bz_BasePlayerRecord *playerRecord );
 
 // event data types
@@ -1055,6 +1058,23 @@ public:
   bz_ApiString motto;
 };
 
+class BZF_API bz_GetPlayerMottoData_V2 : public bz_GetPlayerMottoData_V1
+{
+public:
+	bz_GetPlayerMottoData_V2(const char* m)
+		: bz_GetPlayerMottoData_V1(m)
+	{
+	}
+
+	~bz_GetPlayerMottoData_V2()
+	{
+		bz_freePlayerRecord(record);
+	}
+
+	bz_BasePlayerRecord* record;
+	bz_ApiString motto;
+};
+
 class BZF_API bz_AllowConnectionData_V1 : public bz_EventData
 {
 public:
@@ -1143,9 +1163,6 @@ BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connection
 BZF_API const char* bz_getNonPlayerConnectionIP(int connectionID);
 BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
 
-// player info
-
-class bz_BasePlayerRecord;
 
 // player listing
 BZF_API bz_APIIntList* bz_getPlayerIndexList(void);

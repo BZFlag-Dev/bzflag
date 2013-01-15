@@ -2069,7 +2069,8 @@ static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
     return;
 
   // see if the API wants to set the motto
-  bz_GetPlayerMottoData_V1 mottoEvent(playerData->player.getMotto());
+  bz_GetPlayerMottoData_V2 mottoEvent(playerData->player.getMotto());
+  mottoEvent.record = bz_getPlayerByIndex(playerIndex);
   worldEventManager.callEvents(mottoEvent);
   playerData->player.setMotto(mottoEvent.motto.c_str());
 
