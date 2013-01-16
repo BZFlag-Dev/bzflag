@@ -97,8 +97,8 @@ ListServerLink::~ListServerLink()
 
 void ListServerLink::finalization(char *data, unsigned int length, bool good)
 {
-	publiclyDisconnected = !good;
-
+  publiclyDisconnected = !good;
+  GameKeeper::Player *playerData = NULL;
   queuedRequest = false;
   if (good && (length < 2048)) {
     char buf[2048];
@@ -223,7 +223,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	    while (*group && (*group == ':')) *group++ = 0;
 	  }
 	}
-	GameKeeper::Player *playerData = NULL;
+	playerData = NULL;
 	int playerIndex;
 	for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++) {
 	  playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -291,6 +291,14 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       base = scan;
     }
   }
+
+  if (playerData != NULL){
+	  // tell the API that auth is complete
+	  bz_AuthenticationCompleteData_V1 eventData;
+	  eventData.player = bz_getPlayerByIndex(playerData->getIndex());
+	  worldEventManager.callEvents(eventData);
+  }
+
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)

@@ -285,6 +285,7 @@ typedef enum
   bz_eGetPlayerMotto,
   bz_eAllowConnection,
   bz_eAllowFlagGrab,
+  bz_eAuthenticatonComplete,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1107,6 +1108,20 @@ public:
   const char* flagType;
 
   bool allow;
+};
+
+class BZF_API bz_AuthenticationCompleteData_V1 : public bz_EventData
+{
+public:
+	bz_AuthenticationCompleteData_V1()
+		: bz_EventData(bz_eAuthenticatonComplete)
+	{
+	}
+	~bz_AuthenticationCompleteData_V1()
+	{
+		bz_freePlayerRecord(player);
+	}
+	bz_BasePlayerRecord *player;
 };
 
 // logging
