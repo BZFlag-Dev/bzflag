@@ -285,6 +285,9 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Include the plugins
     SetOutPath $INSTDIR
     File ..\..\..\bin_${PLATFORM}\plugins\*.dll
+	
+	SetOutPath $INSTDIR\templates
+	File /r ..\..\..\bin_${PLATFORM}\plugins\templates\*
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
@@ -355,6 +358,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"
+  RMDir /r "$INSTDIR\templates"
   RMDir "$INSTDIR"
   
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
