@@ -106,6 +106,9 @@
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -143,6 +146,9 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -176,6 +182,9 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -212,6 +221,9 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
