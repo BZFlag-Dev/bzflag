@@ -1064,7 +1064,7 @@ public:
 class BZF_API bz_GetPlayerMottoData_V2 : public bz_GetPlayerMottoData_V1
 {
 public:
-	bz_GetPlayerMottoData_V2(const char* m)
+	bz_GetPlayerMottoData_V2(const char* m) 
 		: bz_GetPlayerMottoData_V1(m)
 	{
 	}
@@ -1075,7 +1075,6 @@ public:
 	}
 
 	bz_BasePlayerRecord* record;
-	bz_ApiString motto;
 };
 
 class BZF_API bz_AllowConnectionData_V1 : public bz_EventData
