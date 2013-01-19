@@ -39,6 +39,7 @@ EXTRA_DIST = \
 	api_notes \
 	pushstats \
 	webReport \
+	webStats \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
