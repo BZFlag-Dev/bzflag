@@ -28,6 +28,7 @@
 #include "TextUtils.h"
 #include "BZDBCache.h"
 #include "BzMaterial.h"
+#include "ObstacleMgr.h"
 
 /* FIXME implementation specific header for global that should eventually go away */
 #include <vector>
@@ -1486,7 +1487,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
   if (options.gameOptions & RicochetGameStyle) {
     forbidden.insert(Flags::Ricochet);
   }
-  if (!options.useTeleporters && (options.worldFile == "")) {
+  if (OBSTACLEMGR.getTeles().size() == 0) {
     forbidden.insert(Flags::PhantomZone);
   }
   if (!hasTeam) {
