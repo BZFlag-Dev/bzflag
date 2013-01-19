@@ -1135,7 +1135,6 @@ bool defineWorld ( void )
   for (i = 0; i < numFlags; i++) {
     resetFlag(*FlagInfo::get(i));
   }
-
   bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
   worldEventManager.callEvents(eventData);
   return true;
@@ -1815,8 +1814,9 @@ static std::string evaluateString(const std::string &raw)
 static bool spawnSoon = false;
 
 
-static void addPlayer(int playerIndex, GameKeeper::Player *playerData)
+void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 {
+  playerData->addWasDelayed = false;
   uint16_t rejectCode;
   char rejectMsg[MessageLen];
   // check for a name clash
@@ -4993,10 +4993,27 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     if ((playerData._LSAState == GameKeeper::Player::verified)	||
 	(playerData._LSAState == GameKeeper::Player::timedOut)	||
 	(playerData._LSAState == GameKeeper::Player::failed)	||
-	(playerData._LSAState == GameKeeper::Player::notRequired)) {
-      addPlayer(p, &playerData);
-      playerData._LSAState = GameKeeper::Player::done;
+	(playerData._LSAState == GameKeeper::Player::notRequired))
+	{
+		bz_ServerAddPlayerData_V1 eventData;
+		eventData.player = bz_getPlayerByIndex(playerData.getIndex());
+		worldEventManager.callEvents(eventData);
+		if (eventData.allow)
+			AddPlayer(p, &playerData);
+		else
+		{
+			playerData.addWasDelayed = true;
+			playerData.addDelayStartTime = TimeKeeper::getCurrent().getSeconds();
+		}
+		playerData._LSAState = GameKeeper::Player::done;
     }
+  }
+
+  if (playerData.addWasDelayed) // check to see that the API doesn't leave them hanging
+  {
+	  double delta = TimeKeeper::getCurrent().getSeconds() - playerData.addDelayStartTime;
+	  if (delta > BZDB.eval("_maxPlayerAddDelay"))
+		  AddPlayer(p, &playerData);
   }
 
   // Check host bans

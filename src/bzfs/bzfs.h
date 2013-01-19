@@ -212,6 +212,7 @@ extern void sendBufferedNetDataForPeer(NetConnectedPeer &peer);
 void playerStateToAPIState(bz_PlayerUpdateState &apiState, const PlayerState &playerState);
 void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState &apiState);
 
+void AddPlayer(int playerIndex, GameKeeper::Player *playerData);
 
 #endif
 

@@ -286,6 +286,7 @@ typedef enum
   bz_eAllowConnection,
   bz_eAllowFlagGrab,
   bz_eAuthenticatonComplete,
+  bz_eServerAddPlayer,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 }bz_eEventType;
 
@@ -1124,6 +1125,23 @@ public:
 	bz_BasePlayerRecord *player;
 };
 
+class BZF_API bz_ServerAddPlayerData_V1 : public bz_EventData
+{
+public:
+	bz_ServerAddPlayerData_V1()
+		: bz_EventData(bz_eServerAddPlayer)
+	{
+		allow = true;
+	}
+	~bz_ServerAddPlayerData_V1()
+	{
+		bz_freePlayerRecord(player);
+	}
+	bz_BasePlayerRecord *player;
+
+	bool allow;
+};
+
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
@@ -1287,6 +1305,9 @@ public:
 BZF_API bool bz_getPlayerHumanity( int playerId );
 
 BZF_API bool bz_setPlayerOperator ( int playerId );
+
+// player access control
+BZF_API bool bz_addPlayerToGame (int playerID );
 
 // team info
 BZF_API unsigned int bz_getTeamPlayerLimit ( bz_eTeamType team );

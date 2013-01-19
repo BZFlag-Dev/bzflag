@@ -50,6 +50,9 @@ GameKeeper::Player::Player(int _playerIndex,
   isParting = false;
   playerHandler = NULL;
   score.playerID = _playerIndex;
+
+  addWasDelayed = false;
+  addDelayStartTime = 0.0;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -73,6 +76,10 @@ GameKeeper::Player::Player(int _playerIndex,
   netHandler->setPlayer(&player,_playerIndex);
   playerHandler = NULL;
   score.playerID = _playerIndex;
+
+  addWasDelayed = false;
+  addDelayStartTime = 0.0;
+
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
@@ -93,6 +100,9 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
   isParting = false;
   playerHandler = handler;
   score.playerID = _playerIndex;
+
+  addWasDelayed = false;
+  addDelayStartTime = 0.0;
 }
 
 GameKeeper::Player::~Player()

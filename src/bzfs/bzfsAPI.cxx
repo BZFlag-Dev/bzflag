@@ -1273,6 +1273,18 @@ BZF_API bool bz_setPlayerOperator (int playerId)
   return true;
 }
 
+BZF_API bool bz_addPlayerToGame( int playerID )
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+	if (!player || !player->addWasDelayed)
+		return false;
+
+	AddPlayer(playerID, player);
+
+	return true;
+}
+
 BZF_API bool bz_getPlayerHumanity( int playerId )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
@@ -3689,6 +3701,7 @@ BZF_API void bz_ClearFilter(void)
 {
   clOptions->filter.clear();
 }
+
 
 // Local Variables: ***
 // mode:C++ ***

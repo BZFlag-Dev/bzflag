@@ -163,6 +163,9 @@ public:
     // logic class for server side players
     bz_ServerSidePlayerHandler*	playerHandler;
 
+	bool addWasDelayed;
+	double addDelayStartTime;
+
   private:
     static Player    *playerList[PlayerSlot];
     int		      playerIndex;
