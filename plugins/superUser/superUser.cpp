@@ -30,7 +30,7 @@ void SuperUser::Init ( const char* commandLine)
   else
     Users.read(commandLine);
 
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
+  bz_debugMessage(4,"SuperUser plugin loaded");
   Register(bz_ePlayerJoinEvent);
 
   // init events here with Register();
