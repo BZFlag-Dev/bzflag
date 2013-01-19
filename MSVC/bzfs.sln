@@ -1,24 +1,24 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfs", "bzfs.vcxproj", "{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfs", "build\bzfs.vcxproj", "{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "common.vcxproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "build\common.vcxproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "date", "date.vcxproj", "{93772A78-3C80-4635-AC84-983B8E0FECF3}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "date", "build\date.vcxproj", "{93772A78-3C80-4635-AC84-983B8E0FECF3}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "net", "net.vcxproj", "{7B2595ED-CCB8-4D19-87F2-9A52C7F26EF8}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "net", "build\net.vcxproj", "{7B2595ED-CCB8-4D19-87F2-9A52C7F26EF8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "obstacle", "obstacle.vcxproj", "{91C01688-CEB5-4CF3-B13D-6EF86D630523}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "obstacle", "build\obstacle.vcxproj", "{91C01688-CEB5-4CF3-B13D-6EF86D630523}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "zlib.vcxproj", "{CC93828F-7156-4021-9C77-9951FC187E83}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "zlib", "build\zlib.vcxproj", "{CC93828F-7156-4021-9C77-9951FC187E83}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "game.vcxproj", "{B2B95537-A4CE-4510-96A6-00F7B7303922}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "build\game.vcxproj", "{B2B95537-A4CE-4510-96A6-00F7B7303922}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ares", "ares.vcxproj", "{417CB8F4-5AE3-45AC-B903-83DB1556303C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ares", "build\ares.vcxproj", "{417CB8F4-5AE3-45AC-B903-83DB1556303C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "libcurl.vcxproj", "{CC93828F-7156-4021-9C77-9951FDADEE83}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libcurl", "build\libcurl.vcxproj", "{CC93828F-7156-4021-9C77-9951FDADEE83}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "regex.vcxproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "build\regex.vcxproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

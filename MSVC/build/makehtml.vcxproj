@@ -77,7 +77,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
+      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
 call "$(ProjectDir)makeHTML.bat"</Command>
     </PreBuildEvent>
     <Midl>
@@ -87,16 +87,16 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\..\bin_$(Platform)
-mkdir $(SolutionDir)..\..\bin_$(Platform)\docs
-copy $(SolutionDir)..\..\man\*.html $(SolutionDir)..\..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
+      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
 call "$(ProjectDir)makeHTML.bat"</Command>
     </PreBuildEvent>
     <Midl>
@@ -107,16 +107,16 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\..\bin_$(Platform)
-mkdir $(SolutionDir)..\..\bin_$(Platform)\docs
-copy $(SolutionDir)..\..\man\*.html $(SolutionDir)..\..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
+      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe  ..\..\man\
 call "$(ProjectDir)makeHTML.bat"</Command>
     </PreBuildEvent>
     <Midl>
@@ -126,16 +126,16 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\..\bin_$(Platform)
-mkdir $(SolutionDir)..\..\bin_$(Platform)\docs
-copy $(SolutionDir)..\..\man\*.html $(SolutionDir)..\..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
+      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
 call "$(ProjectDir)makeHTML.bat"</Command>
     </PreBuildEvent>
     <Midl>
@@ -146,9 +146,9 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\..\bin_$(Platform)
-mkdir $(SolutionDir)..\..\bin_$(Platform)\docs
-copy $(SolutionDir)..\..\man\*.html $(SolutionDir)..\..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
