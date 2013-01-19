@@ -300,7 +300,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
   }
 
   for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
+    playerData = GameKeeper::Player::getPlayerByIndex(i);
     if (!playerData)
       continue;
     if (playerData->_LSAState != GameKeeper::Player::checking)
