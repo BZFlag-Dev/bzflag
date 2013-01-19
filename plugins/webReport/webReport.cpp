@@ -42,8 +42,8 @@ public:
   virtual const char* VDirName(){return "WebReport";}
   virtual const char* VDirDescription(){return "View Reports On-line";}
 
-  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce );
-  virtual bool GenerateNoAuthPage ( const bzhttp_Request& request, bzhttp_Responce &responce);
+  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response );
+  virtual bool GenerateNoAuthPage ( const bzhttp_Request& request, bzhttp_Response &response);
 
   virtual bool AllowResourceDownloads ( void );
 
@@ -125,18 +125,18 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
   return false;
 }
 
- bzhttp_ePageGenStatus WebReport::GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
+ bzhttp_ePageGenStatus WebReport::GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response )
 {
   evenLine = false;
   reports = NULL;
 
   if (!request.UserHasPerm(bz_perm_viewReports))
-    return GenerateNoAuthPage(request,responce) ? ePageDone : eNoPage;
+    return GenerateNoAuthPage(request,response) ? ePageDone : eNoPage;
   else
 	  valid = true;
 
-  responce.ReturnCode = e200OK;
-  responce.DocumentType = eHTML;
+  response.ReturnCode = e200OK;
+  response.DocumentType = eHTML;
  // unsigned int sessionID = request.Session->SessionID;
 
   std::string action;
@@ -150,9 +150,9 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
   // find the report file
   const char* file = bzhttp_FindFile("ReportTemplates","reports.tmpl");
   if (file)
-    responce.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
+    response.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
   else
-    responce.AddBodyData(bzhttp_RenderTemplateFromText(reportDefaultTemplate.c_str(),this).c_str());
+    response.AddBodyData(bzhttp_RenderTemplateFromText(reportDefaultTemplate.c_str(),this).c_str());
 
   if (reports)
     bz_deleteStringList(reports);
@@ -160,18 +160,18 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
   return ePageDone;
 }
 
-bool WebReport::GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &responce)
+bool WebReport::GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Response &response)
 {
   const char* file = bzhttp_FindFile("ReportTemplates","report_noAuth.tmpl");
   if (file)
-    responce.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
+    response.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
   else
   {
     file = bzhttp_FindFile("ReportTemplates","unauthorized.tmpl");
     if (file)
-      responce.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
+      response.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
     else
-      responce.AddBodyData(bzhttp_RenderTemplateFromText(noAuthDefaultTeplate.c_str(),this).c_str());
+      response.AddBodyData(bzhttp_RenderTemplateFromText(noAuthDefaultTeplate.c_str(),this).c_str());
   }
 
   return true;

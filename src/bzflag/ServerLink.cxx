@@ -259,7 +259,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
 
-  // if we got back less then the expected connect responce (BZFSXXXX)
+  // if we got back less than the expected connect response (BZFSXXXX)
   // then something went bad, and we are done.
   if (i < 8) {
     close(query);

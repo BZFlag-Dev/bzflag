@@ -40,8 +40,8 @@ public:
 	virtual const char* VDirName(){return "WebStats";}
 	virtual const char* VDirDescription(){return "View game and server stats on-line";}
 
-	virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce );
-	//virtual bool GenerateNoAuthPage ( const bzhttp_Request& request, bzhttp_Responce &responce);
+	virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response );
+	//virtual bool GenerateNoAuthPage ( const bzhttp_Request& request, bzhttp_Response &response);
 
 	virtual bool AllowResourceDownloads ( void );
 
@@ -580,10 +580,10 @@ std::string GetParamater(const bzhttp_Request& request, const char* name)
 	return p;
 }
 
- bzhttp_ePageGenStatus WebStats::GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce )
+ bzhttp_ePageGenStatus WebStats::GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response )
 {
-  responce.ReturnCode = e200OK;
-  responce.DocumentType = eHTML;
+  response.ReturnCode = e200OK;
+  response.DocumentType = eHTML;
  
   groupLoop = 0;
   flagHistoryLoop = 0;
@@ -604,7 +604,7 @@ std::string GetParamater(const bzhttp_Request& request, const char* name)
   else
 	  doStatReport(page, action);
 
-  responce.AddBodyData(page.c_str());
+  response.AddBodyData(page.c_str());
   return ePageDone;
 }
 

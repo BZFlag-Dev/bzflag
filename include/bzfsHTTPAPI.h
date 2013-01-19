@@ -117,11 +117,11 @@ typedef enum {
   eOther
 } bzhttp_eDocumentType;
 
-class BZF_API bzhttp_Responce
+class BZF_API bzhttp_Response
 {
 public:
-  bzhttp_Responce();
-  virtual ~bzhttp_Responce();
+  bzhttp_Response();
+  virtual ~bzhttp_Response();
 
   bzhttp_eReturnCode ReturnCode;
   bzhttp_eDocumentType DocumentType;
@@ -177,7 +177,7 @@ public:
   virtual const char* VDirName() = 0;
   virtual const char* VDirDescription(){return NULL;}
 
-  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Responce &responce ) = 0;
+  virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response ) = 0;
   virtual bool SupportPut ( void ){ return false;}
   virtual bool AllowResourceDownloads ( void ){ return false; }
 
@@ -193,7 +193,7 @@ public:
   bool CacheAuthentication;
 
   virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return eAuthFail; }
-  virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Responce &/*responce*/ ) {return false;}
+  virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Response &/*response*/ ) {return false;}
 
   // data sizes
   int MaxRequestSize;

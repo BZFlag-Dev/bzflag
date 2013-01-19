@@ -432,8 +432,8 @@ public:
 ConnectionEvent *con = NULL;
 TickEvent *tick = NULL;
 
-//---- Responce----
-class bzhttp_Responce_Data
+//---- Response----
+class bzhttp_Response_Data
 {
 public:
   std::map<std::string,std::string> Headers;
@@ -441,51 +441,51 @@ public:
   std::string Body;
 };
 
-#define RESPONCE_DATA_PTR ((bzhttp_Responce_Data*)pimple)
-#define RESPONCE_DATA(n) bzhttp_Responce_Data *n = ((bzhttp_Responce_Data*)pimple)
-#define RESPONCE_DATA_CLASS(c,n) bzhttp_Responce_Data *n = ((bzhttp_Responce_Data*)(c))
+#define RESPONSE_DATA_PTR ((bzhttp_Response_Data*)pimple)
+#define RESPONSE_DATA(n) bzhttp_Response_Data *n = ((bzhttp_Response_Data*)pimple)
+#define RESPONSE_DATA_CLASS(c,n) bzhttp_Response_Data *n = ((bzhttp_Response_Data*)(c))
 
-bzhttp_Responce::bzhttp_Responce()
+bzhttp_Response::bzhttp_Response()
 {
   Version = 1;
-  pimple = new bzhttp_Responce_Data;
+  pimple = new bzhttp_Response_Data;
   ReturnCode = e404NotFound;
   DocumentType = eHTML;
   ForceNoCache = false;
 }
 
-bzhttp_Responce::~bzhttp_Responce()
+bzhttp_Response::~bzhttp_Response()
 {
-  delete(RESPONCE_DATA_PTR);
+  delete(RESPONSE_DATA_PTR);
 }
 
-void bzhttp_Responce::AddHeader ( const char* n, const char* v)
+void bzhttp_Response::AddHeader ( const char* n, const char* v)
 {
-  RESPONCE_DATA(data);
+  RESPONSE_DATA(data);
 
   std::string name = n;
   data->Headers[name] = std::string(v);
 }
 
-void bzhttp_Responce::AddCookies ( const char* n, const char* v)
+void bzhttp_Response::AddCookies ( const char* n, const char* v)
 {
-  RESPONCE_DATA(data);
+  RESPONSE_DATA(data);
 
   std::string name = n;
    data->Cookies[name] = std::string(v);
 }
 
-void bzhttp_Responce::AddBodyData ( const char* v)
+void bzhttp_Response::AddBodyData ( const char* v)
 {
-  RESPONCE_DATA(data);
+  RESPONSE_DATA(data);
 
   if (v)
     data->Body += v;
 }
 
-void bzhttp_Responce::AddBodyData ( const void* v, size_t size)
+void bzhttp_Response::AddBodyData ( const void* v, size_t size)
 {
-  RESPONCE_DATA(data);
+  RESPONSE_DATA(data);
 
   if (v && size)
     data->Body += std::string((char*)v,size);
@@ -691,7 +691,7 @@ public:
   bool RequestComplete;
 
   bzhttp_Request  Request;
-  bzhttp_Responce Responce;
+  bzhttp_Response Response;
 
   bool Authenticated;
 
@@ -1087,8 +1087,8 @@ public:
 						authURL += TextUtils::url_encode(redirURL);
 
 						// authStatus = eNotAuthedYet;
-						Responce.ReturnCode = e302Found;
-						Responce.RedirectLocation = authURL.c_str();
+						Response.ReturnCode = e302Found;
+						Response.RedirectLocation = authURL.c_str();
 						SetAuthSessionData("bzidauthstatus","redired");
 					}
 
@@ -1119,21 +1119,21 @@ public:
 
 						if (!Authenticated)
 						{
-							if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
-								Responce.ReturnCode = e403Forbiden;
+							if (!vDir->GenerateNoAuthPage(Request,Response) && authStatus == eAuthFail)
+								Response.ReturnCode = e403Forbiden;
 						}
 
 						if (Authenticated && vDir->CacheAuthentication)
 							SetAuthSessionData("authstatus", "complete");
 					}
 					else
-						Responce.ReturnCode = e401Unauthorized;
+						Response.ReturnCode = e401Unauthorized;
 				}
 			}
 
 			if (!Authenticated && authStatus == eAuthFail)
 			{
-				GenerateResponce(connectionID);
+				GenerateResponse(connectionID);
 				Killme = true;
 				return;
 			}
@@ -1165,7 +1165,7 @@ public:
     for (size_t i =0; i < bzGroups.size(); i++)
       Request.BZIDGroups.push_back(bzGroups[i]);
 
-    bzhttp_ePageGenStatus status = vDir->GeneratePage(Request,Responce);
+    bzhttp_ePageGenStatus status = vDir->GeneratePage(Request,Response);
 
     session->CurrentVdir = "";
 
@@ -1190,10 +1190,10 @@ public:
 				  }
 				  else
 				  {
-					  if (!vDir->GenerateNoAuthPage(Request,Responce) && authStatus == eAuthFail)
+					  if (!vDir->GenerateNoAuthPage(Request,Response) && authStatus == eAuthFail)
 					  {
-						  Responce.ReturnCode = e403Forbiden;
-						  GenerateResponce(connectionID);
+						  Response.ReturnCode = e403Forbiden;
+						  GenerateResponse(connectionID);
 						  Killme = true;
 					  }
 				  }
@@ -1203,9 +1203,9 @@ public:
 				  // if we failed then we suck
 				  if (bzIDAuthFailed)
 				  {
-					  if (!vDir->GenerateNoAuthPage(Request,Responce))
-						  Responce.ReturnCode = e403Forbiden;
-					  GenerateResponce(connectionID);
+					  if (!vDir->GenerateNoAuthPage(Request,Response))
+						  Response.ReturnCode = e403Forbiden;
+					  GenerateResponse(connectionID);
 					  Killme = true;
 				  }
 			  }
@@ -1224,7 +1224,7 @@ public:
 			  if (status == eNoPage)
 				  send404Error(connectionID);
 			  else if (status == ePageDone)
-				  GenerateResponce(connectionID);
+				  GenerateResponse(connectionID);
 		  }
 	  }
 	  HTTPConnectedPeer::Current = NULL;
@@ -1340,28 +1340,28 @@ public:
     return time;
   }
 
-  void GenerateResponce (int connectionID)
+  void GenerateResponse (int connectionID)
   {
-    RESPONCE_DATA_CLASS(Responce.pimple,data);
+    RESPONSE_DATA_CLASS(Response.pimple,data);
 
     // set the session cookie
-    Responce.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
+    Response.AddCookies(SESSION_COOKIE,TextUtils::format("%d",Request.Session->SessionID).c_str());
 
     std::string pageBuffer = "HTTP/1.1";
 
     bool redirected = false;
 
-    switch (Responce.ReturnCode)
+    switch (Response.ReturnCode)
     {
       case e200OK:
 	pageBuffer += " 200 OK\n";
 	break;
       case e301Redirect:
-	if (Responce.RedirectLocation.size())
+	if (Response.RedirectLocation.size())
 	{
 	  redirected = true;
 	  pageBuffer += " 301 Moved Permanently\n";
-	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
+	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
 	else
 	  pageBuffer += " 500 Server Error\n";
@@ -1369,11 +1369,11 @@ public:
 	break;
 
       case e302Found:
-	if (Responce.RedirectLocation.size())
+	if (Response.RedirectLocation.size())
 	{
 	  redirected = true;
 	  pageBuffer += " 302 Found\n";
-	  pageBuffer += "Location: " + std::string(Responce.RedirectLocation.c_str()) + "\n";
+	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
 	else
 	  pageBuffer += " 500 Server Error\n";
@@ -1427,12 +1427,12 @@ public:
       pageBuffer += TextUtils::format("Content-Length: %d\n", data->Body.size());
 
       pageBuffer += "Content-Type: ";
-      if (Responce.ReturnCode == e200OK)
+      if (Response.ReturnCode == e200OK)
       {
-	if (Responce.DocumentType == eOther && Responce.MimeType.size())
-	  pageBuffer += Responce.MimeType.c_str();
+	if (Response.DocumentType == eOther && Response.MimeType.size())
+	  pageBuffer += Response.MimeType.c_str();
 	else
-	  pageBuffer += getMimeType(Responce.DocumentType);
+	  pageBuffer += getMimeType(Response.DocumentType);
       }
       else
 	pageBuffer += getMimeType(eHTML);
@@ -1440,11 +1440,11 @@ public:
       pageBuffer += "\n";
     }
 
-    if (Responce.ForceNoCache)
+    if (Response.ForceNoCache)
       pageBuffer += "Cache-Control: no-cache\n";
 
-    if (Responce.MD5Hash.size())
-      pageBuffer += "Content-MD5: " + std::string(Responce.MD5Hash.c_str()) + "\n";
+    if (Response.MD5Hash.size())
+      pageBuffer += "Content-MD5: " + std::string(Response.MD5Hash.c_str()) + "\n";
 
     pageBuffer += "Server: " + ServerVersion + "\n";
 
@@ -1471,13 +1471,13 @@ public:
     std::string cookieDomain;
     std::string cookiePath;
 
-    if (Responce.CookieDomain.size())
-      cookieDomain = Responce.CookieDomain.c_str();
+    if (Response.CookieDomain.size())
+      cookieDomain = Response.CookieDomain.c_str();
     else
       cookieDomain = ServerHostname;
 
-    if (Responce.CookiePath.size())
-      cookiePath = Responce.CookiePath.c_str();
+    if (Response.CookiePath.size())
+      cookiePath = Response.CookiePath.c_str();
     else
     {
       if (vDir)
@@ -1487,7 +1487,7 @@ public:
     }
 
 
-  //  if (Responce.ReturnCode == e200OK)
+  //  if (Response.ReturnCode == e200OK)
     {
       itr = data->Cookies.begin();
       while (itr != data->Cookies.end())
@@ -1631,18 +1631,18 @@ public:
     size_t item_read = fread(p,size,1,fp);
     fclose(fp);
 
-    Responce.MD5Hash = bz_MD5(p,size);
+    Response.MD5Hash = bz_MD5(p,size);
 
     if (Request.RequestType != eHTTPHead)
-      Responce.AddBodyData(p,size);
+      Response.AddBodyData(p,size);
     free(p);
 
     if (item_read != 1)
       return eNoPage;
 
-    Responce.ReturnCode = e200OK;
-    Responce.DocumentType = eOther;
-    Responce.MimeType = Mime.c_str();
+    Response.ReturnCode = e200OK;
+    Response.DocumentType = eOther;
+    Response.MimeType = Mime.c_str();
 
     return ePageDone;
   }
@@ -1675,28 +1675,28 @@ public:
 
   virtual const char* VDirName(){return "INDEX";}
 
-  virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &, bzhttp_Responce &responce)
+  virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &, bzhttp_Response &response)
   {
-    responce.ReturnCode = e200OK;
-    responce.DocumentType = eHTML;
-    responce.AddBodyData("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head>");
-    responce.AddBodyData("<title>Index page for ");
-    responce.AddBodyData(ServerHostname.c_str());
-    responce.AddBodyData("</title></head><body>");
+    response.ReturnCode = e200OK;
+    response.DocumentType = eHTML;
+    response.AddBodyData("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head>");
+    response.AddBodyData("<title>Index page for ");
+    response.AddBodyData(ServerHostname.c_str());
+    response.AddBodyData("</title></head><body>");
 
     if (VDirs.empty()) {
-     responce.AddBodyData("No HTTP Services are running on this server");
+     response.AddBodyData("No HTTP Services are running on this server");
     } else {
       std::map<std::string,VDir>::iterator itr = VDirs.begin();
       {
 	std::string vdirName = itr->second.vdir->VDirName();
 	std::string vDirDescription = itr->second.vdir->VDirDescription();
 	std::string line =  "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br/>";
-	responce.AddBodyData(line.c_str());
+	response.AddBodyData(line.c_str());
       }
     }
 
-    responce.AddBodyData("</body></html>");
+    response.AddBodyData("</body></html>");
 
     return ePageDone;
   }

@@ -49,17 +49,17 @@ public:
   }
 
   virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &,
-		  			      bzhttp_Responce &responce)
+		  			      bzhttp_Response &response)
   {
-    responce.ReturnCode = e200OK;
-    responce.DocumentType = eOctetStream;
+    response.ReturnCode = e200OK;
+    response.DocumentType = eOctetStream;
 
     if (mapData && mapDataSize) {
-      responce.MD5Hash = md5;
-      responce.AddBodyData(mapData,mapDataSize);
+      response.MD5Hash = md5;
+      response.AddBodyData(mapData,mapDataSize);
     } else {
-      responce.AddBodyData("404 Fastmap not Valid");
-      responce.ReturnCode = e404NotFound;
+      response.AddBodyData("404 Fastmap not Valid");
+      response.ReturnCode = e404NotFound;
     }
 
     return ePageDone;
