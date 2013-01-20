@@ -106,6 +106,12 @@
 
   ;Finished page configuration
   !define MUI_FINISHPAGE_NOAUTOCLOSE
+  
+  !define MUI_FINISHPAGE_RUN
+  !define MUI_FINISHPAGE_RUN_NOTCHECKED
+  !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
+  !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
+	
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\ReadMe.win32.html"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -393,3 +399,7 @@ Section "Uninstall"
   DeleteRegKey HKCU "Software\BZFlag"
 
 SectionEnd
+
+Function LaunchLink
+  ExecShell "" "$INSTDIR\bzflag.exe"
+FunctionEnd
