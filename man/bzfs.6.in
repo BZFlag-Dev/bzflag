@@ -1164,6 +1164,8 @@ BAN	/ban /hostban
 .br
 BANLIST	/banlist /hostbanlist
 .br
+CLIENTQUERY	/clientquery
+.br
 COUNTDOWN	/countdown
 .br
 ENDGAME	/endgame
@@ -1187,6 +1189,8 @@ LISTPERMS	not implemented
 MUTE	/mute
 .br
 PLAYERLIST	/playerlist
+.br
+PLUGINS	/loadplugin /unloadplugin
 .br
 POLL	/poll
 .br
