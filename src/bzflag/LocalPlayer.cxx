@@ -1603,7 +1603,12 @@ void			LocalPlayer::setFlag(FlagType* flag)
     if (World::getWorld()->allowAntidote()) {
       float tankRadius = BZDBCache::tankRadius;
       float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+      int tryCount = 0;
       do {
+	tryCount++;
+	if (tryCount > 100) // if it takes this long, just screw it.
+	  break;
+	
 	if (World::getWorld()->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
