@@ -10,6 +10,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
+	plugins.cfg \
 	README.txt \
 	superUser.def \
 	superUser.sln \
