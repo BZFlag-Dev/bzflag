@@ -47,6 +47,7 @@ void PluginConfig::read(const char* filename)
 void PluginConfig::read(const std::string &filename)
 {
   sections.clear();
+  whitespace = " \t\r";
   errors = 0;
   configFilename = filename;
 

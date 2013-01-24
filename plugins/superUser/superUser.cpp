@@ -43,7 +43,7 @@ std::vector<std::string> SuperUser::GetUserInfo(const char* bzID )
   std::string info = Users.item("Users",bzID);
 
   if (info.size() > 0)
-    perms = tokenize(info,std::string(","),-1,true);
+    perms = tokenize(info,std::string(","),0,true);
 
   return perms;
 }
