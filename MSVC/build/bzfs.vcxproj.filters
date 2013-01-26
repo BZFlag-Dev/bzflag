@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\src\bzfs\CustomArc.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomZone.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomBase.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomBox.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomCone.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomDynamicColor.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomGate.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomGroup.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomLink.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomMaterial.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomMesh.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomMeshFace.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomMeshTransform.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomPhysicsDriver.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomPyramid.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomSphere.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomTetra.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomTextureMatrix.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomWaterLevel.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomWeapon.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CustomWorld.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldWeapons.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\SpawnPolicy.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\SpawnPosition.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\TeamBases.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldEventManager.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldFileLocation.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldFileObject.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldFileObstacle.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldGenerators.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\WorldInfo.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\AccessControlList.cxx">
+      <Filter>Access Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\Authentication.cxx">
+      <Filter>Access Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\BanCommands.cxx">
+      <Filter>Access Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\bzfs.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\BZWError.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\bzfsPlugins.cxx">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\bzfsAPI.cxx">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\bzfsHTTPAPI.cxx">
+      <Filter>API</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\BZWReader.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\DropGeometry.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\EntryZones.cxx">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\FlagHistory.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\FlagInfo.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\GameKeeper.cxx">
+      <Filter>Player Info</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\commands.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\CmdLineOptions.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\MasterBanList.cxx">
+      <Filter>Access Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\Score.cxx">
+      <Filter>Player Info</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ParseMaterial.cxx">
+      <Filter>Map Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ServerCommand.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ServerSidePlayer.cxx">
+      <Filter>Player Info</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\Permissions.cxx">
+      <Filter>Access Control</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\RejoinList.cxx">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\base64.cxx">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\Filter.cxx">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ListServerConnection.cxx">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\RecordReplay.cxx">
+      <Filter>Utils</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\bzfs\CustomArc.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomZone.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomBase.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomBox.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomCone.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomGate.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomGroup.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomLink.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomMaterial.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomMesh.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomMeshFace.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomPhysicsDriver.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomPyramid.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomSphere.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomTetra.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomTextureMatrix.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomWaterLevel.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomWeapon.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomWorld.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\GameKeeper.h">
+      <Filter>Headers\Player Info</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\PlayerInfo.h">
+      <Filter>Headers\Player Info</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldGenerators.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldWeapons.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldInfo.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldFileObstacle.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldFileObject.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\WorldFileLocation.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\WorldEventManager.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\BZWError.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\BZWReader.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\EntryZones.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\bzfs.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\bzfsAPI.h">
+      <Filter>Headers\API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\bzfsHTTPAPI.h">
+      <Filter>Headers\API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\bzfsPlugins.h">
+      <Filter>Headers\API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\AccessControlList.h">
+      <Filter>Headers\Access Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\Authentication.h">
+      <Filter>Headers\Access Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\DropGeometry.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\MasterBanList.h">
+      <Filter>Headers\Access Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ServerCommand.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CmdLineOptions.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\commands.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ParseMaterial.h">
+      <Filter>Headers\Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\Permissions.h">
+      <Filter>Headers\Access Control</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\SpawnPosition.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\FlagInfo.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\TeamBases.h">
+      <Filter>Headers\World</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\FlagHistory.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\TextChunkManager.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\base64.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\Filter.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ListServerConnection.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\PackVars.h">
+      <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\RecordReplay.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\RejoinList.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\CustomDynamicColor.h">
+      <Filter>Map Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\Score.h">
+      <Filter>Headers\Player Info</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{3f6880f6-059c-412f-929b-7b07f9747306}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Map Objects">
+      <UniqueIdentifier>{1b5e8133-b99e-41da-aadc-7222a30050cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Player Info">
+      <UniqueIdentifier>{cd794458-5224-475a-83a6-ed539fbdade6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\World">
+      <UniqueIdentifier>{63da3fc4-1d51-4f04-8f08-7501ce35d9ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Server">
+      <UniqueIdentifier>{208b3fd6-12d2-40c2-8048-369720c9cd62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\API">
+      <UniqueIdentifier>{c99618e9-6383-4b1f-9e27-3a9aa281ad46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Access Control">
+      <UniqueIdentifier>{a9abc7d0-edd3-4829-a704-a239da63c1fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers\Utils">
+      <UniqueIdentifier>{87c39a44-af85-479b-9ce5-c126f131e24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map Objects">
+      <UniqueIdentifier>{1031b66a-e627-44c1-8df5-245b30c44298}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{1bd9e69c-10fa-4a0e-880c-cd4a0646d1dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Access Control">
+      <UniqueIdentifier>{85afc332-e418-4b42-a6ca-bc5a25f490ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Server">
+      <UniqueIdentifier>{db70c49f-b4c7-40d5-9da5-05c7277fb70e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="API">
+      <UniqueIdentifier>{758997d7-03c0-4ff5-9f7f-f2bd4aa0f99d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Player Info">
+      <UniqueIdentifier>{7338b61e-86fa-4af1-8cba-780bb088f936}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{9abed35b-cac9-4302-a816-9102bd60c69c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

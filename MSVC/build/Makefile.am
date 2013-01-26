@@ -5,6 +5,7 @@ EXTRA_DIST =		\
 	bzflag.vcxproj	\
 	bzadmin.vcxproj	\
 	bzfs.vcxproj	\
+	bzfs.vcxproj.filters	\
 	common.vcxproj	\
 	config.h	\
 	curl/curlbuild.h	\
