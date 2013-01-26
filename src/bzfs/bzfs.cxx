@@ -2455,12 +2455,25 @@ void zapFlagByPlayer(int playerIndex)
   }
 }
 
+void flushKilledByCounts( int removeID )
+{
+	for (int i = 0; i < curMaxPlayers; i++) 
+	{
+		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
+		if (player)
+			player->player.flushKiller(removeID);
+	}
+}
+
 void removePlayer(int playerIndex, const char *reason, bool notify)
 {
   // player is signing off or sent a bad packet.  since the
   // bad packet can come before MsgEnter, we must be careful
   // not to undo operations that haven't been done.
   // first shutdown connection
+
+  // remove the player from any kill counts
+  flushKilledByCounts(playerIndex);
 
   GameKeeper::Player *playerData
 		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2865,6 +2878,10 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
   if (killerIndex != InvalidPlayer && killerIndex != ServerPlayer)
     killerData = GameKeeper::Player::getPlayerByIndex(killerIndex);
+
+  // log the kill with the player
+  if (killerData || killerIndex == ServerPlayer)
+	  victimData->player.killedBy(killerIndex);
 
   // aliases for convenience
   // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer

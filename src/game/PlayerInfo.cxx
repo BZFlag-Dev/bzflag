@@ -510,6 +510,27 @@ void PlayerInfo::setCurrentTime(TimeKeeper tm)
   now = tm;
 }
 
+void PlayerInfo::killedBy(PlayerId killer)
+{
+	if (deathCountMap.find(killer) == deathCountMap.end())
+		deathCountMap[killer] = 0;
+	deathCountMap[killer]++;
+}
+
+void PlayerInfo::flushKiller(PlayerId killer)
+{
+	if (deathCountMap.find(killer) != deathCountMap.end())
+		deathCountMap.erase(killer);
+}
+
+int PlayerInfo::howManyTimesKilledBy(PlayerId killer)
+{
+	if (deathCountMap.find(killer) == deathCountMap.end())
+		return 0;
+	return deathCountMap[killer];
+}
+
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***

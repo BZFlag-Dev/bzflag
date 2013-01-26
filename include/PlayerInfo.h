@@ -137,7 +137,13 @@ public:
   PlayerType getType( void ) {return type;}
   void setType( PlayerType t ) {type = t;}
 
+  void killedBy(PlayerId killer);
+  void flushKiller(PlayerId killer);
+
+  int howManyTimesKilledBy(PlayerId killer);
+
 private:
+  std::map<int,int> deathCountMap;
 
   void	cleanMotto();
   bool	isCallSignReadable();

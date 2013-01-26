@@ -1370,6 +1370,16 @@ BZF_API int bz_getPlayerTKs (int playerId)
   return player->score.getTKs();
 }
 
+BZF_API int bz_howManyTimesPlayerKilledBy(int playerId, int killerId)
+{
+	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+	if (!player)
+		return 0;
+
+	return player->player.howManyTimesKilledBy(killerId);
+}
+
 BZF_API bool bz_resetPlayerScore(int playerId)
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
