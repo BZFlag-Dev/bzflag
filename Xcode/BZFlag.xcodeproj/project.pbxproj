@@ -671,6 +671,7 @@
 		03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
 		03CDB24A16A0BA81001DA037 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 03CDB24416A0BA81001DA037 /* README.txt */; };
+		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -2235,6 +2236,8 @@
 		03D926E1166C68E700DDDBEB /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		03D926E3166C692B00DDDBEB /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		03D926E5166C6AB500DDDBEB /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
+		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
+		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3060,6 +3063,8 @@
 		035543CB166C846F008806E9 /* bzfs */ = {
 			isa = PBXGroup;
 			children = (
+				DF28982916B4F5AE006C78AC /* ShotManager.cxx */,
+				DF28982A16B4F5AE006C78AC /* ShotManager.h */,
 				035543CC166C846F008806E9 /* AccessControlList.cxx */,
 				035543CD166C846F008806E9 /* AccessControlList.h */,
 				035543CE166C846F008806E9 /* Authentication.cxx */,
@@ -5854,6 +5859,7 @@
 				0394E6C0167B0BE0007F4035 /* WorldGenerators.cxx in Sources */,
 				0394E6C1167B0BE0007F4035 /* WorldInfo.cxx in Sources */,
 				0394E6C2167B0BE0007F4035 /* WorldWeapons.cxx in Sources */,
+				DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7894,6 +7900,7 @@
 				0318265B16A0BE2F005050BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0357A7BD1670AF8F0056C938 /* Build configuration list for PBXNativeTarget "common" */ = {
 			isa = XCConfigurationList;
