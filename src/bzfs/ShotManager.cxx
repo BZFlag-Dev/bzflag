@@ -63,7 +63,7 @@ namespace Shots
 		Logics[code] = logic;
 	}
 
-	uint32_t Manager::AddShot( const FiringInfo &info, PlayerId shooter )
+	uint32_t Manager::AddShot( const FiringInfo &info, PlayerId UNUSED(shooter) )
 	{
 		FlightLogic* logic = NULL;
 		if(Logics.find(info.flagType->flagAbbv) != Logics.end())
@@ -190,7 +190,7 @@ namespace Shots
 
 	//----------------Shot
 
-	Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), Info(info), LastUpdateTime(-1.0)
+	Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), LastUpdateTime(-1.0), Info(info)
 	{
 		StartTime = TimeKeeper::getCurrent().getSeconds();
 		LifeTime = info.lifetime;
