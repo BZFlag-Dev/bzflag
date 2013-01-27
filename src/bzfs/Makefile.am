@@ -109,6 +109,8 @@ bzfs_SOURCES =				\
 	ServerCommand.cxx		\
 	ServerCommand.h			\
 	ServerSidePlayer.cxx		\
+	ShotManager.h			\
+	ShotManager.cxx			\
 	SpawnPolicy.cxx			\
 	SpawnPolicy.h			\
 	SpawnPosition.cxx		\

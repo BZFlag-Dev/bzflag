@@ -44,6 +44,7 @@
 #include "FlagInfo.h"
 #include "WorldInfo.h"
 #include "VotingArbiter.h"
+#include "ShotManager.h"
 
 #include <list>
 class PendingChatMessages
@@ -159,6 +160,8 @@ extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
 
 extern bool		  publiclyDisconnected;
+
+extern Shots::Manager ShotManager;
 
 extern VotingArbiter *votingarbiter;
 

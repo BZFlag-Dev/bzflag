@@ -175,6 +175,9 @@
     <ClCompile Include="..\..\src\bzfs\RecordReplay.cxx">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ShotManager.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzfs\CustomArc.h">
@@ -347,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\Score.h">
       <Filter>Headers\Player Info</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ShotManager.h">
+      <Filter>Headers\Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

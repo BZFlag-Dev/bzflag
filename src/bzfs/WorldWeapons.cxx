@@ -63,6 +63,9 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
   }
+
+
+  ShotManager.AddShot(firingInfo,player);
   return shotID;
 }
 
@@ -96,6 +99,9 @@ static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
     broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
 		     bufStart);
   }
+
+  uint32_t shotGUID = ShotManager.AddShot(firingInfo,player);
+  ShotManager.SetShotTarget(shotGUID,targetPlayerID);
 
     // Target the gm.
     // construct and send packet

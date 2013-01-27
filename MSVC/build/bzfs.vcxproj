@@ -91,7 +91,8 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>$(OutDir)bzfs.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
@@ -138,7 +139,8 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeaderOutputFile>$(OutDir)bzfs.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
@@ -183,7 +185,8 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>$(OutDir)bzfs.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
@@ -192,6 +195,8 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
+      <PrecompiledHeaderFile>
+      </PrecompiledHeaderFile>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -231,7 +236,8 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeaderOutputFile>$(OutDir)bzfs.pch</PrecompiledHeaderOutputFile>
+      <PrecompiledHeaderOutputFile>
+      </PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
@@ -391,6 +397,7 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
     <ClCompile Include="..\..\src\bzfs\RejoinList.cxx" />
     <ClCompile Include="..\..\src\bzfs\Score.cxx" />
     <ClCompile Include="..\..\src\bzfs\ServerCommand.cxx" />
+    <ClCompile Include="..\..\src\bzfs\ShotManager.cxx" />
     <ClCompile Include="..\..\src\bzfs\SpawnPolicy.cxx" />
     <ClCompile Include="..\..\src\bzfs\SpawnPosition.cxx" />
     <ClCompile Include="..\..\src\bzfs\TeamBases.cxx" />
@@ -669,6 +676,7 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
     <ClInclude Include="..\..\src\bzfs\RejoinList.h" />
     <ClInclude Include="..\..\src\bzfs\Score.h" />
     <ClInclude Include="..\..\src\bzfs\ServerCommand.h" />
+    <ClInclude Include="..\..\src\bzfs\ShotManager.h" />
     <ClInclude Include="..\..\src\bzfs\SpawnPosition.h" />
     <ClInclude Include="..\..\src\bzfs\TeamBases.h" />
     <ClInclude Include="..\..\src\bzfs\TextChunkManager.h" />

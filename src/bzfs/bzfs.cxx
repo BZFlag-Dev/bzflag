@@ -52,6 +52,7 @@
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
 
+
 // common implementation headers
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
@@ -66,6 +67,8 @@
 #ifdef BZ_PLUGINS
 #include "bzfsPlugins.h"
 #endif
+
+Shots::Manager ShotManager;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int, NetConnectedPeer> netConnectedPeers;
@@ -2475,6 +2478,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // remove the player from any kill counts
   flushKilledByCounts(playerIndex);
 
+  // clear any shots they had flying around
+  ShotManager.RemovePlayer(playerIndex);
+
   GameKeeper::Player *playerData
 		      = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
@@ -3486,7 +3492,8 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     return;
 
   ShotUpdate shot;
-  shot.unpack(buf);
+  PlayerId targetId;
+  nboUnpackUByte(shot.unpack(buf), targetId);
 
   // verify playerId
   if (shot.player != playerIndex) {
@@ -3498,8 +3505,11 @@ static void shotUpdate(int playerIndex, void *buf, int len)
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
 
-  broadcastMessage(MsgGMUpdate, len, buf);
+  uint32_t shotGUID = ShotManager.FindShot(playerIndex,shot.id & 0xff);
+  ShotManager.SetShotTarget(shotGUID,targetId);
 
+  // TODO, Remove this and let the GM update logic send the updates,
+  broadcastMessage(MsgGMUpdate, len, buf);
 }
 
 static void shotFired(int playerIndex, void *buf, int len)
@@ -3568,7 +3578,6 @@ static void shotFired(int playerIndex, void *buf, int len)
 
  if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
     return;
-
 
   const float maxTankSpeed  = BZDBCache::tankSpeed;
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -3708,6 +3717,8 @@ static void shotFired(int playerIndex, void *buf, int len)
   if (firingInfo.flagType == Flags::GuidedMissile)
     playerData->player.endShotCredit--;
 
+  ShotManager.AddShot(firingInfo,playerData->getIndex());
+
   broadcastMessage(MsgShotBegin, len, buf);
 
 }
@@ -3720,6 +3731,8 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
     return;
 
   playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+
+  ShotManager.RemoveShot(ShotManager.FindShot(id,shotIndex & 0xff));
 
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -4345,6 +4358,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
       shotEnded(sourcePlayer, shot, reason);
+	 
       break;
     }
 
@@ -5798,6 +5812,8 @@ int main(int argc, char **argv)
 
   Flags::init();
 
+  ShotManager.Init();
+
   clOptions = new CmdLineOptions();
 
   // set default DB entries
@@ -6898,6 +6914,9 @@ int main(int argc, char **argv)
 
     // Fire world weapons
     world->getWorldWeapons().fire();
+
+	// update all the shots we have tracked
+	ShotManager.Update();
 
     // send out any pending chat messages
     std::list<PendingChatMessages>::iterator itr = pendingChatMessages.begin();
