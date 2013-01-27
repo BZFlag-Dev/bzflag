@@ -276,14 +276,6 @@ public:
 			  GameKeeper::Player *playerData);
 };
 
-class GhostCommand : ServerCommand {
-public:
-  GhostCommand();
-
-  virtual bool operator() (const char	 *commandLine,
-			   GameKeeper::Player *playerData);
-};
-
 class GroupListCommand : ServerCommand {
 public:
   GroupListCommand();
@@ -493,7 +485,6 @@ static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
 static HelpCommand	  helpCommand;
 static SendHelpCommand    sendHelpCommand;
-static GhostCommand       ghostCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
 static ShowPermsCommand   showPermsCommand;
@@ -576,8 +567,6 @@ HelpCommand::HelpCommand()		 : ServerCommand("/help",
   "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
   "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
-GhostCommand::GhostCommand()	     : ServerCommand("/ghost",
-  "<callsign> <password> - kick off an impersonating player or ghost") {}
 GroupListCommand::GroupListCommand()     : ServerCommand("/grouplist",
   "- list the available user groups") {}
 ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
@@ -2060,57 +2049,6 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
     if ( !  sendHelpTopic (t, message + 6) ){
       snprintf(reply, MessageLen, "Help command %s not found", message + 6);
       sendMessage(ServerPlayer, t, reply);
-    }
-  }
-  return true;
-}
-
-
-bool GhostCommand::operator() (const char	 *message,
-			       GameKeeper::Player *playerData)
-{
-  int t = playerData->getIndex();
-
-  char *p1 = (char*)strchr(message + 1, '\"');
-  char *p2 = 0;
-
-  if (p1)
-    p2 = strchr(p1 + 1, '\"');
-
-  if (!p2)
-  {
-    sendMessage(ServerPlayer, t, "not enough parameters, usage"
-		" /ghost \"CALLSIGN\" PASSWORD");
-  }
-  else
-  {
-    std::string ghostie(p1 + 1, p2 - p1 - 1);
-    std::string ghostPass = p2 + 2;
-
-    makeupper(ghostie);
-
-    int user = GameKeeper::Player::getPlayerIDByName(ghostie);
-    if (user == -1)
-      sendMessage(ServerPlayer, t, "There is no user logged in by that name");
-    else
-    {
-      if (!userExists(ghostie))
-	sendMessage(ServerPlayer, t, "That callsign is not registered");
-      else
-      {
-	if (!verifyUserPassword(ghostie, ghostPass))
-	  sendMessage(ServerPlayer, t, "Invalid Password");
-	else
-	{
-	  sendMessage(ServerPlayer, t, "Ghosting User");
-	  char temp[MessageLen];
-	  snprintf(temp, MessageLen, "Your Callsign is registered to another user,"
-		  " You have been ghosted by %s",
-		  playerData->player.getCallSign());
-	  sendMessage(ServerPlayer, user, temp);
-	  removePlayer(user, "Ghost");
-	}
-      }
     }
   }
   return true;

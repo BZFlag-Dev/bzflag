@@ -176,7 +176,6 @@ void DefaultCompleter::setDefaults()
   registerWord("show");
   registerWord("/flaghistory");
   registerWord("/gameover");
-  registerWord("/ghost ");
   registerWord("/grouplist");
   registerWord("/groupperms");
   registerWord("/help");

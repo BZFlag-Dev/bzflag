@@ -67,7 +67,7 @@ void			ServerCommandKey::updatePrompt()
     return;
   }
   const Player * recipient = myTank->getRecipient();
-  if (mode >= Kick && mode <= Ghost) { // more complicated modes here
+  if (mode >= Kick && mode <= Removegroup) { // more complicated modes here
     if (recipient) {
 
       switch (mode) {
@@ -100,10 +100,6 @@ void			ServerCommandKey::updatePrompt()
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
 	hud->setComposing(composePrompt, true);
 	break;
-      case Ghost: composePrompt = "Ghost player [enter your pass] ";
-	composePrompt = composePrompt +  " -> " + recipient->getCallSign() + " :";
-	hud->setComposing(composePrompt, true);
-	break;
       case Showgroup: composePrompt = "Show player's groups ";
 	composePrompt = composePrompt +  " -> " + recipient->getCallSign();
 	hud->setComposing(composePrompt, false);
@@ -127,9 +123,6 @@ void			ServerCommandKey::updatePrompt()
 	hud->setComposing(composePrompt, true);
 	break;
       case Removegroup: composePrompt = "Remove player from group :";
-	hud->setComposing(composePrompt, true);
-	break;
-      case Ghost: composePrompt = "Ghost :";
 	hud->setComposing(composePrompt, true);
 	break;
       case Showgroup: composePrompt = "Show players group :";
@@ -238,7 +231,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     std::string sendMsg, displayMsg, name;
 
     const Player * troll = myTank->getRecipient();
-    if (mode >= Kick && mode <=Ghost){ // handle more complicated modes
+    if (mode >= Kick && mode <= Removegroup){ // handle more complicated modes
       if (troll) { // cases where we select recipient with keys
 
 	name = troll->getCallSign();
@@ -282,10 +275,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	  sendMsg = "/removegroup";
 	  sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
 	  break;
-	case Ghost:
-	  sendMsg = "/ghost";
-	  sendMsg = sendMsg + " \"" + name + "\"" +" " + message;
-	  break;
 	case Showgroup:
 	  sendMsg = "/showgroup";
 	  sendMsg = sendMsg + " \"" + name + "\"";
@@ -303,7 +292,6 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	case BanIp: sendMsg = "/ban"; break;
 	case Setgroup: sendMsg = "/setgroup"; break;
 	case Removegroup: sendMsg = "/removegroup"; break;
-	case Ghost: sendMsg = "/ghost"; break;
 	case Showgroup: sendMsg = "/showgroup"; break;
 	default: /* shouldn't happen */ break;
 	}
