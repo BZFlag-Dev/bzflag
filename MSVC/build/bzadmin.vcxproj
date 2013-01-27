@@ -405,7 +405,6 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClInclude Include="..\..\src\bzadmin\CursesMenu.h" />
     <ClInclude Include="..\..\src\bzadmin\CursesUI.h" />
     <ClInclude Include="..\..\src\bzadmin\OptionParser.h" />
-    <ClInclude Include="..\..\src\bzadmin\pdcurses_adapter.h" />
     <ClInclude Include="..\..\src\bzadmin\StdBothUI.h" />
     <ClInclude Include="..\..\src\bzadmin\StdInUI.h" />
     <ClInclude Include="..\..\src\bzadmin\StdOutUI.h" />

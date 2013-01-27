@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{5C46119A-FC94-4DFB-9F75-154DC96FFAB1}</ProjectGuid>
+    <ProjectGuid>{089D7DC3-8269-444F-A00B-77D47ED1F15A}</ProjectGuid>
     <RootNamespace>webStats</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
