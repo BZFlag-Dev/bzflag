@@ -72,7 +72,7 @@ public:
 
 	virtual bool Update ( Shot& /*shot*/ ){return false;}
 	virtual void End ( Shot& /*shot*/ ){}
-	virtual void Retarget ( Shot& shot, PlayerId newTarget ){};
+	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
 
 protected:
 	virtual fvec3 ProjectShotLocation(  Shot& shot, double deltaT );
