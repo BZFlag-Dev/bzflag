@@ -30,7 +30,7 @@ namespace Shots
 	Manager::~Manager()
 	{
 		for (FlightLogicMap::iterator itr = Logics.begin(); itr != Logics.end(); itr++)
-			delete((itr++)->second);
+			delete(itr->second);
 
 		Logics.clear();
 
