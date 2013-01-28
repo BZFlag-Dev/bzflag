@@ -211,6 +211,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class HandicapCommand : ServerCommand {
+public:
+  HandicapCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 class FlagHistoryCommand : ServerCommand {
 public:
   FlagHistoryCommand();
@@ -479,6 +487,7 @@ static PacketLossDropCommand  packetLossDropCommand;
 static LagStatCommand     lagStatCommand;
 static IdleStatCommand    idleStatCommand;
 static IdleTimeCommand    idleTimeCommand;
+static HandicapCommand    handicapCommand;
 static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
@@ -555,6 +564,8 @@ IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
   "- display the idle time in seconds for each player") {}
 IdleTimeCommand::IdleTimeCommand()       : ServerCommand("/idletime",
   "[seconds] - display or set the idle time") {}
+HandicapCommand::HandicapCommand()	 : ServerCommand("/handicap",
+  "- list handicap values by player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
   "- list what flags players have grabbed in the past") {}
 IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
@@ -1821,6 +1832,28 @@ bool IdleTimeCommand::operator() (const char* message,
     snprintf(buf, 256, "idletime is currently set to: %.1f seconds\n",
 	     clOptions->idlekickthresh);
     sendMessage(ServerPlayer, t, buf);
+  }
+  return true;
+}
+
+
+bool HandicapCommand::operator() (const char	 *,
+				 GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+
+  if (clOptions->gameOptions & HandicapGameStyle) {
+      const int maxhandicap =  BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+      for (int i = 0; i < curMaxPlayers; i++) {
+	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+	if (p != NULL) {
+	  char reply[MessageLen];
+	  snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(),int(100.0*p->score.getHandicap()/maxhandicap+0.5));
+	  sendMessage(ServerPlayer, t, reply);
+	}
+      }
+  } else {
+    sendMessage(ServerPlayer, t, "Server does not use handicap mode.");    
   }
   return true;
 }

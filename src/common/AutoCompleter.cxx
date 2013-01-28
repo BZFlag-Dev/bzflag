@@ -179,6 +179,7 @@ void DefaultCompleter::setDefaults()
   registerWord("/grouplist");
   registerWord("/groupperms");
   registerWord("/help");
+  registerWord("/handicap");
   registerWord("/highlight ");
   registerWord("/hostban ");
   registerWord("/hostunban ");
