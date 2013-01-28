@@ -127,7 +127,7 @@ bool autoFlagReset::ResetUnusedSuperflag(unsigned int flagID)
   }
   
   // Make sure it's not a teamflag.
-  bz_ApiString flagType = bz_getName(flagID);
+  bz_ApiString flagType = bz_getFlagName(flagID);
   if (flagType == "R*" || flagType == "G*" || flagType == "B*" || flagType == "P*" ||  flagType == "")
   {
     return false;
@@ -138,7 +138,7 @@ bool autoFlagReset::ResetUnusedSuperflag(unsigned int flagID)
 }
 
 //BZF_API unsigned int bz_getNumFlags( void );
-//BZF_API const bz_ApiString bz_getName( int flag );
+//BZF_API const bz_ApiString bz_getFlagName( int flag );
 //BZF_API bool bz_resetFlag ( int flag );
 //BZF_API bool bz_moveFlag ( int flag, float pos[3] );
 //BZF_API int bz_flagPlayer ( int flag );

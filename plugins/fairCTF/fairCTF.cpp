@@ -147,7 +147,7 @@ void fairCTF::Event(bz_EventData *eventData)
     if (!allowCTF)
     {
       // Don't allow a team flag grab
-      std::string flagtype = bz_getName(grabData->flagID).c_str();
+      std::string flagtype = bz_getFlagName(grabData->flagID).c_str();
       if (flagtype == "R*" || flagtype == "G*" || flagtype == "B*" || flagtype == "P*")
       {
 	grabData->allow = false;
