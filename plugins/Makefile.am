@@ -3,6 +3,7 @@ SUBDIRS = \
 	plugin_utils \
 	airspawn \
 	autoFlagReset \
+	bzfscron \
 	chathistory \
 	customflagsample \
 	fairCTF \

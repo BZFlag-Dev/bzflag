@@ -1,26 +1,23 @@
 lib_LTLIBRARIES = bzfscron.la
 
-AM_CPPFLAGS = @CONF_CPPFLAGS@ -I$(top_srcdir)/../src/include
-AM_CXXFLAGS = @CONF_CXXFLAGS@
-
 bzfscron_la_SOURCES = \
 	bzfscron.cpp \
-	bzfscron.h \
-	croncommand.cpp \
-	croncommand.h \
 	CronJob.cpp \
-	CronJob.h 
-
+	CronJob.h
+bzfscron_la_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
 bzfscron_la_LDFLAGS = -module -avoid-version
-bzfscron_la_CXXFLAGS= -I$(top_srcdir)/plugin_utils
-bzfscron_la_LIBADD  = $(top_builddir)/plugin_utils/libplugin_utils.la
+bzfscron_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
+
+AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.txt \
 	crontab \
 	bzfscron.def \
 	bzfscron.sln \
-	bzfscron.vcproj
+	bzfscron.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

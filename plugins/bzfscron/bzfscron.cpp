@@ -64,7 +64,7 @@ class CronManager : public bz_Plugin, public bz_CustomSlashCommandHandler {
     CronPlayer* player;
 };
 
-BZ_PLUGIN(CronManager);
+BZ_PLUGIN(CronManager)
 
 void CronManager::Init(const char* commandLine) {
   lastTick = 0.0f;
