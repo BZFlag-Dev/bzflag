@@ -1828,6 +1828,7 @@ public:
   void respawn(void);
   void getCurrentState(bz_PlayerUpdateState *state);
 
+  void sendServerCommand(const char* text);
   void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS, bz_eMessageType type = eChatMessage);
   void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam, bz_eMessageType type = eChatMessage);
 

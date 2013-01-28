@@ -260,7 +260,9 @@ void CronPlayer::playerRejected(bz_eRejectCodes /* code */, const char* reason) 
 }
 
 void CronPlayer::sendCommand(std::string message) {
-  sendChatMessage(message.c_str());
+  std::string temp = format("bzfscron: Executing '%s'", message.c_str());
+  bz_debugMessage(2, temp.c_str());
+  sendServerCommand(message.c_str());
 }
 
 // Local Variables: ***

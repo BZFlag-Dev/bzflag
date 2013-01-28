@@ -191,6 +191,15 @@ void bz_ServerSidePlayerHandler::dropFlag(void)
 
 //-------------------------------------------------------------------------
 
+void bz_ServerSidePlayerHandler::sendServerCommand(const char *text)
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+	if (!player || !text)
+		return ;
+
+  ::sendPlayerMessage(player, BZ_ALLUSERS, text);
+}
+
 void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPlayer, bz_eMessageType type)
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
