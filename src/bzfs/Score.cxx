@@ -14,6 +14,8 @@
 #include "Score.h"
 #include "bzfsAPI.h"
 #include "WorldEventManager.h"
+#include "GameKeeper.h"
+#include "bzfs.h"
 
 // bzflag library headers
 #include "Pack.h"
@@ -27,7 +29,7 @@ bool  Score::randomRanking = false;
 bool Score::KeepPlayerScores = true;
 bool Score::KeepTeamScores = true;
 
-Score::Score(): wins(0), losses(0), tks(0) {
+Score::Score(): wins(0), losses(0), tks(0), handicap(0) {
   playerID = -1;
 }
 
@@ -109,10 +111,6 @@ void Score::setWinLimit(int _score) {
 
 void Score::setRandomRanking() {
   randomRanking = true;
-}
-
-int Score::getHandicap() const {
-  return losses - wins;
 }
 
 // Local Variables: ***

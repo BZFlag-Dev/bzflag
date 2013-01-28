@@ -1814,6 +1814,68 @@ static std::string evaluateString(const std::string &raw)
   return eval;
 }
 
+// calculate handicap value for playerIndex and store in score object
+static void recalcHandicap(int playerIndex)
+{
+  if (!clOptions->gameOptions & HandicapGameStyle)
+    return;
+
+  int relscore = 0;
+
+  GameKeeper::Player *me  = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (i == playerIndex)
+      continue;
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p != NULL && realPlayer(i) && !p->player.isObserver()) {
+      relscore += me->player.howManyTimesKilledBy(i) - p->player.howManyTimesKilledBy(playerIndex);
+    }
+  }
+
+  me->score.setHandicap(std::max(0,relscore));
+}
+
+// calculate handicap values for all players
+static void recalcAllHandicaps()
+{
+  if (!clOptions->gameOptions & HandicapGameStyle)
+    return;
+
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p && realPlayer(i) && !p->player.isObserver())
+      recalcHandicap(i);
+  }
+}
+
+// send handicap values for all players to all players
+static void broadcastHandicaps(int toPlayer=-1)
+{
+  if (!clOptions->gameOptions & HandicapGameStyle)
+    return;
+
+  int numHandicaps = 0;
+
+  void *bufStart = getDirectMessageBuffer();
+  void *buf = nboPackUByte(bufStart, numHandicaps);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    if (i == toPlayer)
+      continue;
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p && realPlayer(i) && !p->player.isObserver()) {
+      numHandicaps++;
+      buf = nboPackUByte(buf, i);
+      buf = nboPackShort(buf, p->score.getHandicap());
+    }
+  }
+  nboPackUByte(bufStart, numHandicaps);
+  if (toPlayer >= 0)
+    directMessage(toPlayer, MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+  else
+    broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+}
+
+
 static bool spawnSoon = false;
 
 
@@ -2046,25 +2108,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 	  sendPlayerUpdate(otherData, playerIndex);
       }
 
-    if (clOptions->gameOptions & HandicapGameStyle) {
-      int numHandicaps = 0;
-
-      // Send handicap for all players
-      bufStart = getDirectMessageBuffer();
-      buf = nboPackUByte(bufStart, numHandicaps);
-      for (int i = 0; i < curMaxPlayers
-	     && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
-	if (i != playerIndex) {
-	  otherData = GameKeeper::Player::getPlayerByIndex(i);
-	  if (otherData) {
-	    numHandicaps++;
-	    buf = nboPackUByte(buf, i);
-	    buf = nboPackShort(buf, otherData->score.getHandicap());
-	  }
-	}
-      nboPackUByte(bufStart, numHandicaps);
-      broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
-    }
+    broadcastHandicaps(playerIndex);
   }
 
   // if new player connection was closed (because of an error) then stop here
@@ -2612,6 +2656,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 	// is over (i.e. all players have quit).
 	publicize();
       }
+    } else {
+      recalcAllHandicaps();
+      broadcastHandicaps();
     }
   }
 }
@@ -2998,12 +3045,14 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     if (clOptions->gameOptions & HandicapGameStyle) {
       bufStart = getDirectMessageBuffer();
       if (killer) {
+	recalcHandicap(killerIndex);
 	buf = nboPackUByte(bufStart, 2);
 	buf = nboPackUByte(buf, killerIndex);
 	buf = nboPackShort(buf, killerData->score.getHandicap());
       } else {
 	buf = nboPackUByte(bufStart, 1);
       }
+      recalcHandicap(victimIndex);
       buf = nboPackUByte(buf, victimIndex);
       buf = nboPackShort(buf, victimData->score.getHandicap());
       broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);

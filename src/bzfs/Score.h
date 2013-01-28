@@ -38,10 +38,12 @@ class Score {
   int	getWins() const {return wins;}
   int	getLosses() const {return losses;}
   int	getTKs() const {return tks;}
+  int	getHandicap() const {return handicap;};
 
   void	setWins(int v){wins = v;}
   void	setLosses(int v){losses = v;}
   void	setTKs(int v){tks = v;}
+  void	setHandicap(int v){handicap = v;}
 
   static bool KeepPlayerScores;
   static bool KeepTeamScores;
@@ -50,10 +52,10 @@ class Score {
   static void setWinLimit(int _score);
   static void setRandomRanking();
 
-  int   getHandicap() const;
  private:
   // player's score
   int wins, losses, tks;
+  int handicap;
   // Tk index
   static float tkKickRatio;
   static int   score;
