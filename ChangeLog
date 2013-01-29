@@ -24,7 +24,8 @@ BZFlag 2.4.2  "Doomsday Edition" (2012-07-28)
 * Allow plugins to specify a color when firing world weapons - Chris Wible
 * Add option for chat on the left and radar on the right - Kyle Mills
 * Add autoFlagReset plugin - Chris Wible
-* Allow joystick hats as input on Evdev, SDL, and Windows platforms - Kyle Mills and Jeffery Myers
+* Allow joystick hats as input on Evdev, SDL, and Windows platforms
+    - Kyle Mills and Jeffery Myers
 * Added Fastmap Plugin - Jeffery Myers
 
 
