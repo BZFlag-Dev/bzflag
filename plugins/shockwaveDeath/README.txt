@@ -1,5 +1,5 @@
 ========================================================================
-    DYNAMIC LINK LIBRARY : schokwaveDeath Project Overview
+    DYNAMIC LINK LIBRARY : shockwaveDeath Project Overview
 ========================================================================
 
 This plugin makes a shockwave fire whenever someone dies.

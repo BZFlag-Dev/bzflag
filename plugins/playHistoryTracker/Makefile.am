@@ -9,6 +9,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
+	README.txt \
 	playHistoryTracker.def \
 	playHistoryTracker.sln \
 	playHistoryTracker.vcxproj
