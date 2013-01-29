@@ -174,6 +174,10 @@ void			HUDRenderer::resize(bool firstTime)
   const float sby = window.getViewHeight() - majorFontHeight - alertFontHeight * 2.0f;
   scoreboard->setWindowSize (0.01f * window.getWidth(), sby,
 	0.98f * window.getWidth(), sby);
+
+  // resize cracks
+  if (showCracks)
+    initCracks();
 }
 
 int			HUDRenderer::getNoMotionSize() const
