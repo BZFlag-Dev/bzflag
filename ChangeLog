@@ -3,7 +3,14 @@
 
 BZFlag 2.4.3
 ------------
+* Added /handicap command - Frank Thilo
+* Change the behavior of handicap - Frank Thilo
+* Added clientQuery permission - Konstantinos Kanavouras
+* Added superUser plug-in - Jeff Myers
+* Make players respawn on bases after countdown ends - Lee Marshall
+* Added bz_getPlayerCount API function - Jeff Myers
 * Countdown now resets player scores as well as team scores - Lee Marshall
+* Added bz_getIdleTime API function - allejo
 * Fully integrated Xcode project file - Joshua Bodine
 
 
