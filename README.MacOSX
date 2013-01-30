@@ -65,9 +65,7 @@ client, click the "BZFlag" scheme button at the top left corner of the screen,
 scroll down, and click "Edit Scheme..." at the bottom of the pop-up menu. In
 the left sidebar, click the Run phase, and in the left area select the
 Info tab. Under Build Configuration, select the desired scheme of Debug or
-Release. Also, under the Options tab, make sure "Allow debugging when using
-document Versions Browser" is deselected if you plan on running the client
-straight from Xcode.
+Release.
 
 To build the client, select Build from the Product menu or enter the Command-B
 key sequence. Note that the first time you build from a source directory, or
@@ -77,6 +75,13 @@ updates the product name and the BZFlag version string and then aborts the
 process. This is by design as it appears to be the only way of automatically
 including the game version in the product name. If this happens, simply start
 the build process again.
+
+NOTE: Due to an issue with Xcode that prevents us from changing this setting
+permanently, you may need click the "BZFlag" scheme button, click
+"Edit Scheme..." and under the "Options" tab, deselect "Allow debugging when
+using document Versions Browser" before running the client straight from
+Xcode. Do this if you encounter the error "Unknown option
+-NSDocumentRevisionsDebugMode".
 
 If the build was successful, you can run the application from Xcode selecting
 the Product menu and clicking Run or by entering the Command-R key sequence.
