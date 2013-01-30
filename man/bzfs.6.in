@@ -827,6 +827,10 @@ Removes all flags from the game
 Ends the current game
 
 .TP
+.B /handicap
+Shows the handicap boost percentage for every player
+
+.TP
 .B /hostban \fIhostpattern\fR \fIduration\fR \fIreason\fR
 Ban players using the specified hostnames for a certain length of time from using this server.
 Example:
