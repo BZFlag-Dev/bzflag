@@ -152,7 +152,11 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
       std::cout << "WARNING: multiple drawInfo, using first" << std::endl;
     } else {
       drawInfo = new MeshDrawInfo();
-      if (!drawInfo->parse(input)) {
+
+      bool parseSuccess = drawInfo->parse(input);
+      lines += drawInfo->getLineCount();
+
+      if (!parseSuccess) {
 	std::cout << "WARNING: invalid drawInfo" << std::endl;
 	delete drawInfo;
 	drawInfo = NULL;

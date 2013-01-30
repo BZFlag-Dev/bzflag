@@ -35,10 +35,12 @@ class WorldFileObject {
     virtual void writeToManager() const;
     virtual void writeToGroupDef(GroupDefinition*) const;
 
+    virtual int getLineCount() const;
+
   protected:
     std::string name;
+    int lines;
 };
-
 
 void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist);
 

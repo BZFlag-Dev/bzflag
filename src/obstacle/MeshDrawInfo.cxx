@@ -165,6 +165,7 @@ void MeshDrawInfo::clear()
 void MeshDrawInfo::init()
 {
   name = "";
+  lines = 0;
 
   valid = true;
   serverSide = true;
@@ -685,7 +686,7 @@ static bool parseDrawCmd(std::istream& input, const std::string& mode,
 }
 
 
-static bool parseDrawSet(std::istream& input, DrawSet& set)
+static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
 {
   bool success = true;
 
@@ -693,6 +694,8 @@ static bool parseDrawSet(std::istream& input, DrawSet& set)
   std::string line, label;
 
   while (std::getline(input, line)) {
+    ++lines;
+
     std::istringstream parms(line);
     if (!(parms >> label)) {
       continue;
@@ -743,7 +746,7 @@ static bool parseDrawSet(std::istream& input, DrawSet& set)
 }
 
 
-static bool parseDrawLod(std::istream& input, DrawLod& lod)
+static bool parseDrawLod(std::istream& input, DrawLod& lod, int& lines)
 {
   bool success = true;
 
@@ -751,6 +754,8 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
   std::string line, cmd;
 
   while (std::getline(input, line)) {
+    ++lines;
+
     std::istringstream parms(line);
     if (!(parms >> cmd)) {
       continue;
@@ -777,7 +782,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod)
       if (parms >> matName) {
 	DrawSet set;
 	set.material = MATERIALMGR.findMaterial(matName);
-	if (parseDrawSet(input, set)) {
+	if (parseDrawSet(input, set, lines)) {
 	  pSets.push_back(set);
 	} else {
 	  success = false;
@@ -824,6 +829,8 @@ bool MeshDrawInfo::parse(std::istream& input)
   std::string line, cmd;
 
   while (std::getline(input, line)) {
+    ++lines;
+
     std::istringstream parms(line);
     if (!(parms >> cmd)) {
       continue;
@@ -918,7 +925,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       }
     }
     else if (strcasecmp(cmd.c_str(), "lod") == 0) {
-      if (parseDrawLod(input, lod)) {
+      if (parseDrawLod(input, lod, lines)) {
 	pLods.push_back(lod);
       } else {
 	success = false;
@@ -926,7 +933,7 @@ bool MeshDrawInfo::parse(std::istream& input)
       }
     }
     else if (strcasecmp(cmd.c_str(), "radarlod") == 0) {
-      if (parseDrawLod(input, lod)) {
+      if (parseDrawLod(input, lod, lines)) {
 	pRadarLods.push_back(lod);
       } else {
 	success = false;

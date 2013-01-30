@@ -28,6 +28,7 @@
 WorldFileObject::WorldFileObject()
 {
   name = "";
+  lines = 0;
 }
 
 
@@ -59,6 +60,11 @@ void WorldFileObject::writeToGroupDef(GroupDefinition*) const
 {
   std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
   return;
+}
+
+int WorldFileObject::getLineCount() const
+{
+  return lines;
 }
 
 

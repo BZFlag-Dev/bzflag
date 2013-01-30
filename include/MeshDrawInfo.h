@@ -86,6 +86,8 @@ class MeshDrawInfo {
     int getRadarCount() const;
     const DrawLod* getRadarLods() const;
 
+    int getLineCount() const;
+
     const MeshTransform::Tool* getTransformTool() const;
     const MaterialMap* getMaterialMap() const;
 
@@ -105,6 +107,7 @@ class MeshDrawInfo {
 
   private:
     const MeshDrawInfo* source; // copy source, or NULL
+    int lines;
 
     bool valid;
     bool serverSide;
@@ -204,6 +207,10 @@ inline int MeshDrawInfo::getRadarCount() const
 inline const DrawLod* MeshDrawInfo::getRadarLods() const
 {
   return radarLods;
+}
+inline int MeshDrawInfo::getLineCount() const
+{
+  return lines;
 }
 inline const MeshTransform::Tool*  MeshDrawInfo::getTransformTool() const
 {

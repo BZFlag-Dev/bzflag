@@ -233,6 +233,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	if (object != fakeObject) {
+          line += object->getLineCount();
+
 	  if (object->usesManager()) {
 	    object->writeToManager();
 	    delete object;
