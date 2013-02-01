@@ -128,7 +128,6 @@ protected:
   void		doMomentum(float dt, float& speed, float& angVel);
   void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
   void		doForces(float dt, float* velocity, float& angVel);
-  float		updateHandicap();
   LocalShotPath**	shots;
   bool	  gettingSound;
   ServerLink*	server;
