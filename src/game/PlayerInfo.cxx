@@ -127,7 +127,7 @@ bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
-  return processEnter(rejectCode, rejectMsg);;
+  return processEnter(rejectCode, rejectMsg);
 }
 
 bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )

@@ -1748,7 +1748,7 @@ case BZ_BZDBPERM_SERVER:
   break;
 default:
   BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
-  break;;
+  break;
     }
   }
   BZDB.setPersistent(std::string(variable),persistent);

@@ -241,7 +241,7 @@ void ServerMenu::setFindLabel(const std::string& label)
 
 void ServerMenu::setFind(bool mode, bool clear)
 {
-  const std::string oldFilterSource = listFilter.getSource();;
+  const std::string oldFilterSource = listFilter.getSource();
 
   if (clear) {
     search->setString("");

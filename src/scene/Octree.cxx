@@ -443,7 +443,7 @@ void OctreeNode::makeChildren ()
 	else {
 	  childCount++;
 	}
-	children[kid] = squeezed[kid];;
+	children[kid] = squeezed[kid];
       }
     }
   }

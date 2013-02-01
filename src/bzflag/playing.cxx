@@ -747,7 +747,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
 	strncpy(messageBuffer,
 		BZDB.get(name).c_str(),
 		MessageLen - 1);
-	messageBuffer[MessageLen - 1] = '\0';;
+	messageBuffer[MessageLen - 1] = '\0';
 	nboPackString(buf, messageBuffer, MessageLen);
 	serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
       }

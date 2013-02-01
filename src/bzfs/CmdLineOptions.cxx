@@ -998,7 +998,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       // rabbit chase style
       if (options.gameType == ClassicCTF) {
 	std::cerr << "Rabbit Chase incompatible with Capture the flag" << std::endl;
-	std::cerr << "Rabbit Chase assumed" << std::endl;;
+	std::cerr << "Rabbit Chase assumed" << std::endl;
       }
       options.gameType = RabbitChase;
       // default selection style
