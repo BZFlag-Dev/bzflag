@@ -2640,10 +2640,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       for (uint8_t s = 0; s < numHandicaps; s++) {
 	msg = nboUnpackUByte(msg, id);
 	msg = nboUnpackShort(msg, handicap);
-	Player *sPlayer = NULL;
-	if (id == myTank->getId()) {
-	  sPlayer = myTank;
-	} else {
+
+	Player *sPlayer = getLocalPlayer(id);
+	if (!sPlayer) {
 	  int i = lookupPlayerIndex(id);
 	  if (i >= 0)
 	    sPlayer = remotePlayers[i];
@@ -2651,7 +2650,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    logDebugMessage(1, "Received handicap update for unknown player!\n");
 	}
 	if (sPlayer) {
-	  // a relative score of -50 points will provide maximum handicap
+	  // a relative score of -_handicapScoreDiff points will provide maximum handicap
 	  float normalizedHandicap = float(handicap)
 	    / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
 
