@@ -1848,7 +1848,7 @@ bool HandicapCommand::operator() (const char	 *,
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	if (p != NULL) {
 	  char reply[MessageLen];
-	  snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(),int(100.0*p->score.getHandicap()/maxhandicap+0.5));
+	  snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(), int(100.0 * std::min(p->score.getHandicap(),maxhandicap) / maxhandicap + 0.5));
 	  sendMessage(ServerPlayer, t, reply);
 	}
       }
