@@ -46,7 +46,7 @@ class MeshObstacle : public Obstacle {
 		  const std::vector<int>& texcoords,
 		  const BzMaterial* bzMaterial, int physics,
 		  bool noclusters, bool bounce, bool drive, bool shoot,
-		  bool triangulate, bool ricochet);
+		  bool ricochet, bool triangulate);
 
     ~MeshObstacle();
 
