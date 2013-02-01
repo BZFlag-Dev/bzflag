@@ -28,7 +28,11 @@
 #include "TimeKeeper.h"
 #include "base64.h"
 #include "Permissions.h"
+
+// only include this if we're going to need plugins
+#ifdef BZ_PLUGINS
 #include "bzfsPlugins.h"
+#endif
 
 std::string ServerVersion;
 std::string ServerHostname;
@@ -1053,7 +1057,9 @@ public:
 							}
 							firedOffBZIDTokenCheck = true;
 							bzIDAuthComplete = false;
+#ifdef BZ_PLUGINS
 							PushPendingHTTPWait();
+#endif
 							bz_setNonPlayerDisconnectOnSend(connectionID,false);
 							bz_setNonPlayerInactivityTimeout(connectionID,120);
 							bzAuthReturnData = "";
@@ -1213,7 +1219,9 @@ public:
 
 		  if (firedOffBZIDTokenCheck && bzIDAuthComplete)
 		  {
+#ifdef BZ_PLUGINS
 			   PopPendingHTTPWait();
+#endif
 			   firedOffBZIDTokenCheck = false;
 		  }
 
