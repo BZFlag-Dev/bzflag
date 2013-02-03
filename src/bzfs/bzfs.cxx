@@ -1814,10 +1814,15 @@ static std::string evaluateString(const std::string &raw)
   return eval;
 }
 
+static bool handicapAllowed( void )
+{
+  return (clOptions->gameOptions & short(HandicapGameStyle)) != 0;
+}
+
 // calculate handicap value for playerIndex and store in score object
 static void recalcHandicap(int playerIndex)
 {
-  if (!clOptions->gameOptions & HandicapGameStyle)
+  if (!handicapAllowed())
     return;
 
   int relscore = 0;
@@ -1838,7 +1843,7 @@ static void recalcHandicap(int playerIndex)
 // calculate handicap values for all players
 static void recalcAllHandicaps()
 {
-  if (!clOptions->gameOptions & HandicapGameStyle)
+  if (!handicapAllowed())
     return;
 
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -1851,7 +1856,7 @@ static void recalcAllHandicaps()
 // send handicap values for all players to all players
 static void broadcastHandicaps(int toPlayer=-1)
 {
-  if (!clOptions->gameOptions & HandicapGameStyle)
+  if (!handicapAllowed())
     return;
 
   int numHandicaps = 0;
@@ -3042,7 +3047,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       sendPlayerScores(&victimData, 1);
     }
     
-    if (clOptions->gameOptions & HandicapGameStyle) {
+    if (handicapAllowed()) {
       bufStart = getDirectMessageBuffer();
       if (killer) {
 	recalcHandicap(killerIndex);
@@ -3632,7 +3637,7 @@ static void shotFired(int playerIndex, void *buf, int len)
   const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
   float tankSpeed	   = maxTankSpeed;
   float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
-  if (clOptions->gameOptions & HandicapGameStyle) {
+  if (handicapAllowed()) {
     tankSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
     shotSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD);
   }
@@ -3881,7 +3886,7 @@ void packetLossKick(int playerIndex)
 static void adjustTolerances()
 {
   // check for handicap adjustment
-  if ((clOptions->gameOptions & HandicapGameStyle) != 0) {
+  if (handicapAllowed()) {
     const float speedAdj = BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
     speedTolerance *= speedAdj * speedAdj;
   }
