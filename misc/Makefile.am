@@ -45,6 +45,7 @@ EXTRA_DIST =				\
 	stats/MANIFEST			\
 	stats/README			\
 	stats/t/1.t			\
+	tank.obj			\
 	Template.cxx			\
 	Template.h			\
 	touchcopyright			\
