@@ -1009,6 +1009,21 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	glTranslatef(pos[0],pos[1],pos[2]);
 	glRotatef(270+rotation[2]/deg2Rad,0,0,1);
 
+	//barrel roll to camera
+	const float *playerpos = LocalPlayer::getMyTank()->getPosition();
+	float camerapos[3] = {
+	    playerpos[0] - pos[0],
+	    playerpos[1] - pos[1],
+	    playerpos[2] - pos[2]
+	};
+	//camerapos[0] = camerapos[0] * cos(-rotation[2])
+	//             - camerapos[1] * sin(-rotation[2]);
+	camerapos[1] = camerapos[1] * cos(-rotation[2])
+	             + camerapos[0] * sin(-rotation[2]);
+	glRotatef(270 - atan(camerapos[1] / camerapos[2]) / deg2Rad +
+	    (camerapos[2] >= 0 ? 180 : 0), //for a single-sided face
+	    0,1,0);
+
 	ringState.setState();
 
 	color[0] = color[1] = color[2] = 1;
@@ -1023,7 +1038,6 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	// draw me here
 	glBegin(GL_QUADS);
 
-		// tank's left side
 		glTexCoord2f(0,1);
 		glVertex3f(0,0,radius);
 
@@ -1035,19 +1049,6 @@ void FlashShotEffect::draw(const SceneRenderer &)
 
 		glTexCoord2f(1,1);
 		glVertex3f(0,0,-radius);
-
-		// tank's right side
-		glTexCoord2f(0,1);
-		glVertex3f(0,0,-radius);
-
-		glTexCoord2f(0,0);
-		glVertex3f(0,length,-radius);
-
-		glTexCoord2f(1,0);
-		glVertex3f(0,length,radius);
-
-		glTexCoord2f(1,1);
-		glVertex3f(0,0,radius);
 
 	glEnd();
 
