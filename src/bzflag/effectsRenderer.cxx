@@ -940,6 +940,11 @@ void StdShotEffect::draw(const SceneRenderer &)
 	glTranslatef(pos[0],pos[1],pos[2]);
 	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
 
+	//TODO: _muzzleFront and _muzzleHeight (4.42 and 1.57) should be
+	// the same as the tank model's muzzle (4.94 and 1.53).
+	// FlashShot is also affected by this todo.
+	glTranslatef(-0.52, 0, -0.02);
+
 	ringState.setState();
 
 	color[0] = color[1] = color[2] = 1;
@@ -1008,6 +1013,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 
 	glTranslatef(pos[0],pos[1],pos[2]);
 	glRotatef(270+rotation[2]/deg2Rad,0,0,1);
+	glTranslatef(0, 0.52, -0.02);
 
 	//barrel roll to camera
 	const float *playerpos = LocalPlayer::getMyTank()->getPosition();
