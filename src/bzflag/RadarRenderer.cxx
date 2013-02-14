@@ -111,8 +111,56 @@ void RadarRenderer::drawShot(const ShotPath* shot)
   glEnd();
 }
 
+void RadarRenderer::setTankColor(const Player* player)
+{
+  //The height box also uses the tank color
 
-void RadarRenderer::drawTank(const float pos[3], const Player* player)
+  const LocalPlayer *myTank = LocalPlayer::getMyTank();
+
+  //my tank
+  if (player->getId() == myTank->getId() ) {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    return;
+  }
+
+  //remote player
+  if (player->isPaused() || player->isNotResponding()) {
+    const float dimfactor = 0.4f;
+
+    const float *color;
+    if (myTank->getFlag() == Flags::Colorblindness) {
+      color = Team::getRadarColor(RogueTeam);
+    } else {
+      color = Team::getRadarColor(player->getTeam());
+    }
+
+    float dimmedcolor[3];
+    dimmedcolor[0] = color[0] * dimfactor;
+    dimmedcolor[1] = color[1] * dimfactor;
+    dimmedcolor[2] = color[2] * dimfactor;
+    glColor3fv(dimmedcolor);
+    } else {
+    glColor3fv(Team::getRadarColor(myTank->getFlag() ==
+			 Flags::Colorblindness ? RogueTeam : player->getTeam()));
+    }
+    // If this tank is hunted flash it on the radar
+    if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {
+    if (flashTank.isOn()) {
+      if (!toggleTank) {
+	float flashcolor[3];
+	flashcolor[0] = 0.0f;
+	flashcolor[1] = 0.8f;
+	flashcolor[2] = 0.9f;
+	glColor3fv(flashcolor);
+      }
+    } else {
+      toggleTank = !toggleTank;
+      flashTank.setClock(0.2f);
+    }
+  }
+}
+
+void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useSquares)
 {
   glPushMatrix();
 
@@ -136,7 +184,8 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
   glTranslatef(pos[0], pos[1], 0.0f);
 
   // draw the tank
-  if ((player == NULL) || !useTankDimensions) {
+  if (useSquares || !useTankDimensions) {
+    setTankColor(player);
     // align to the screen axes
     glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     glRectf(-size, -size, +size, +size);
@@ -147,7 +196,9 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player)
     glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
     if (0/*useTankModels*/) { // TODO fix the fancy drawing
       drawFancyTank(player);
+      setTankColor(player);
     } else {
+      setTankColor(player);
       const float* dims = player->getDimensions();
       glRectf(-dims[0], -dims[1], +dims[0], +dims[1]);
     }
@@ -194,7 +245,6 @@ void RadarRenderer::drawFancyTank(const Player* player)
   player->renderRadar(); // draws at (0,0,0)
 
   RENDERER.enableSun(false);
-  glColor4f(1.0f, 1.0f, 1.0f, 1.0f); // FIXME - height box color
   OpenGLGState::resetState();
 
   if (BZDBCache::zbuffer) {
@@ -605,44 +655,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 	drawFlagOnTank(position);
       }
 
-      if (player->isPaused() || player->isNotResponding()) {
-	const float dimfactor = 0.4f;
-
-	const float *color;
-	if (myTank->getFlag() == Flags::Colorblindness) {
-	  color = Team::getRadarColor(RogueTeam);
-	} else {
-	  color = Team::getRadarColor(player->getTeam());
-	}
-
-	float dimmedcolor[3];
-	dimmedcolor[0] = color[0] * dimfactor;
-	dimmedcolor[1] = color[1] * dimfactor;
-	dimmedcolor[2] = color[2] * dimfactor;
-	glColor3fv(dimmedcolor);
-      } else {
-	glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-			     Flags::Colorblindness ? RogueTeam : player->getTeam()));
-      }
-      // If this tank is hunted flash it on the radar
-      if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness) {
-	if (flashTank.isOn()) {
-	  if (!toggleTank) {
-	    float flashcolor[3];
-	    flashcolor[0] = 0.0f;
-	    flashcolor[1] = 0.8f;
-	    flashcolor[2] = 0.9f;
-	    glColor3fv(flashcolor);
-	  }
-	} else {
-	  toggleTank = !toggleTank;
-	  flashTank.setClock(0.2f);
-	}
-      }
       if (!observer) {
-	drawTank(position, NULL);
+	drawTank(position, player, true);
       } else {
-	drawTank(position, player);
+	drawTank(position, player, false);
       }
     }
 
@@ -743,8 +759,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
 
       // my tank
-      glColor3f(1.0f, 1.0f, 1.0f);
-      drawTank(myPos, myTank);
+      drawTank(myPos, myTank, false);
     }
 
     if (dimming > 0.0f) {

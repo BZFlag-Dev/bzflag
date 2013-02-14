@@ -62,8 +62,10 @@ class RadarRenderer {
     RadarRenderer&	operator=(const RadarRenderer&);
 
     void		drawShot(const ShotPath*);
+    void		setTankColor(const class Player* player);
     void		drawTank(const float pos[3],
-				 const class Player* player);
+				 const class Player* player,
+				 bool useSquares);
     void		drawFancyTank(const class Player* player);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);
