@@ -203,6 +203,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
 
   if (smooth) {
     glEnable(GL_BLEND);
+    glEnable(GL_POINT_SMOOTH);
   }
 
   return;
