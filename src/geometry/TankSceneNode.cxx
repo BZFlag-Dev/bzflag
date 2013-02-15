@@ -219,13 +219,6 @@ void TankSceneNode::notifyStyleChange()
 
 void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
-  // don't draw onlyShadows tanks.  this is mainly to avoid drawing player's
-  // tank when player is using view from tank.  can't simply not include
-  // player, though, cos then we wouldn't get the tank's shadow.
-  if (onlyShadows) {
-    return;
-  }
-
   // pick level of detail
   const GLfloat* mySphere = getSphere();
   const ViewFrustum& view = renderer.getViewFrustum();
@@ -280,6 +273,17 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
   }
 
   treadsRenderNode.setTreads(true);
+
+  // don't draw onlyShadows tanks.  this is mainly to avoid drawing player's
+  // tank when player is using view from tank.  can't simply not include
+  // player, though, cos then we wouldn't get the tank's shadow.
+  //
+  // Also don't return without doing anything,
+  // fancy radar tanks need TankLOD set.
+  if (onlyShadows) {
+    return;
+  }
+
   renderer.addRenderNode(&tankRenderNode, &gstate);
   renderer.addRenderNode(&treadsRenderNode, &treadState);
 
