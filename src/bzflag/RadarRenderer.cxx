@@ -194,7 +194,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     const float tankAngle = player->getAngle();
     glPushMatrix();
     glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-    if (0/*useTankModels*/) { // TODO fix the fancy drawing
+    if (useTankModels) {
       drawFancyTank(player);
       setTankColor(player);
     } else {

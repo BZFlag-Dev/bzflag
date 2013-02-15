@@ -516,13 +516,13 @@ void TankSceneNode::renderRadar()
 	  color[3] = 0.15f;
   }
 
-//   if (BZDBCache::animatedTreads) {
-// //	  treadState.setState();
-// 	  treadsRenderNode.setRadar(true);
-// 	  treadsRenderNode.sortOrder(true /* above */, false, false);
-// 	  treadsRenderNode.render();
-// 	  treadsRenderNode.setRadar(false);
-//   }
+  if (BZDBCache::animatedTreads) {
+    treadState.setState();
+    treadsRenderNode.setRadar(true);
+    treadsRenderNode.sortOrder(true /* above */, false, false);
+    treadsRenderNode.render();
+    treadsRenderNode.setRadar(false);
+  }
   gstate.setState();
 
   tankRenderNode.setRadar(true);
