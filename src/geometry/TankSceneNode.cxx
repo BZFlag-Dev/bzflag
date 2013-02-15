@@ -512,7 +512,6 @@ void TankSceneNode::renderRadar()
 	  color[3] = 0.15f;
   }
 
-  gstate.setState();
 //   if (BZDBCache::animatedTreads) {
 // //	  treadState.setState();
 // 	  treadsRenderNode.setRadar(true);
@@ -520,6 +519,7 @@ void TankSceneNode::renderRadar()
 // 	  treadsRenderNode.render();
 // 	  treadsRenderNode.setRadar(false);
 //   }
+  gstate.setState();
 
   tankRenderNode.setRadar(true);
   tankRenderNode.sortOrder(true /* above */, false, false);
