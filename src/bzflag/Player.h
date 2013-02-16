@@ -181,6 +181,7 @@ public:
   void		setTeleport(const TimeKeeper&, short from, short to);
   void		endShot(int index, bool isHit = false,
 			bool showExplosion = false);
+  void		addHitToStats(FlagType* flag);
 
   void*		pack(void*, uint16_t& code);
   void*		unpack(void*, uint16_t code);
@@ -615,6 +616,11 @@ inline bool		Player::hasPlayerList() const
 inline void		Player::setPlayerList(bool _playerList)
 {
   playerList = _playerList;
+}
+
+inline void		Player::addHitToStats(FlagType* flag)
+{
+  shotStatistics.recordHit(flag);
 }
 
 inline void*		Player::pack(void* buf, uint16_t& code)

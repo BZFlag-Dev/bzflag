@@ -2249,7 +2249,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    }
 	  }
 	}
-      }
+      }  else if (killerPlayer) {
+	    const ShotPath* shot = killerPlayer->getShot(int(shotId));
+	    if(shot && !shot->isStoppedByHit()) {
+		  killerPlayer->addHitToStats(shot->getFlag());
+		}
+	  } 
 
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
