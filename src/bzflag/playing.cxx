@@ -5571,7 +5571,7 @@ void drawFrame(const float dt)
 			 showMyTreads, showMyTreads /*showIDL*/);
 
       // add my shells
-      myTank->addShots(scene, false);
+      myTank->addShots(scene, colorblind);
 
       // add server shells
       if (world) {
