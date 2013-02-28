@@ -446,8 +446,6 @@ float getPluginMinWaitTime ( void )
   return maxTime;
 }
 
-void parseServerCommand(const char *message, int dstPlayerId);
-
 class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
   public:

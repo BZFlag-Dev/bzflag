@@ -1398,7 +1398,6 @@ BZF_API bool bz_kickUser ( int playerIndex, const char* reason, bool notify );
 BZF_API bool bz_IPBanUser ( int playerIndex, const char* ip, int time, const char* reason );
 BZF_API bool bz_IPUnbanUser ( const char* ip );
 BZF_API bool bz_HostBanUser(const char* hostmask, const char* source, int duration, const char* reason);
-BZF_API bool bz_IPUnbanUser(const char* ip);
 BZF_API bool bz_IDUnbanUser(const char* bzID);
 BZF_API bool bz_HostUnbanUser(const char* hostmask);
 
