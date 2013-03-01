@@ -27,6 +27,7 @@
 #include "LocalPlayer.h"
 #include "World.h"
 #include "effectsRenderer.h"
+#include "Roster.h"
 #include "playing.h"
 
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :

@@ -21,6 +21,7 @@
 /* local implementation headers */
 #include "LocalPlayer.h"
 #include "World.h"
+#include "Roster.h"
 #include "playing.h"
 
 static float limitAngle(float a)

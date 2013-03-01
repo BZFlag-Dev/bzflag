@@ -18,7 +18,7 @@
 
 /* local implementation headers */
 #include "LocalPlayer.h"
-#include "playing.h"
+#include "Roster.h"
 #include "World.h"
 
 
