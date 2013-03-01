@@ -20,12 +20,6 @@
 #include "Pack.h"
 #include "StateDatabase.h"
 
-/* FIXME - external dependancies that need to be cleaned up and separated out
- * into an interface.
- */
-extern void directMessage(int playerIndex, uint16_t code, int len, const void *msg);
-
-
 /** class to send a bunch of BZDB variables via MsgSetVar.
  * dtor does the actual send
  */

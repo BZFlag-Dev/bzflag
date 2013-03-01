@@ -52,10 +52,10 @@
 
 // local implementation headers
 #include "FlagHistory.h"
-#include "PackVars.h"
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
+#include "PackVars.h"	// uses directMessage() from bzfs.h
 
 
 #if defined(_WIN32)
