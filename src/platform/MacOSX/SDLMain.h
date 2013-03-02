@@ -5,10 +5,12 @@
     Feel free to customize this file to suit your needs
 */
 
-#include "common.h"
+#ifndef _SDLMain_h_
+#define _SDLMain_h_
 
-#include <SDL/SDL.h>
-#include <Cocoa/Cocoa.h>
+#import <Cocoa/Cocoa.h>
 
 @interface SDLMain : NSObject
 @end
+
+#endif /* _SDLMain_h_ */
