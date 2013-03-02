@@ -99,7 +99,7 @@ print "style: ";
 @styles=("TeamFFA", "ClassicCTF", "OpenFFA", "RabbitChase");
 print $styles[$style];
 print "\n";
-print "options:";
+print "options:";	# values must mirror enum GameOptions in global.h
 print " flags" if $options & 0x0002;
 print " jumping" if $options & 0x0008;
 print " inertia" if $options & 0x0010;
@@ -107,7 +107,7 @@ print " ricochet" if $options & 0x0020;
 print " shaking" if $options & 0x0040;
 print " antidote" if $options & 0x0080;
 print " handicap" if $options & 0x0100;
-print " no-team-kills" if $options & 0x0200;
+print " no-team-kills" if $options & 0x0400;
 print "\n";
 print "maxPlayers: $maxPlayers\nmaxShots: $maxShots\n";
 print "team sizes: $rogueSize $redSize $greenSize $blueSize $purpleSize $obsSize" .

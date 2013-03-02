@@ -167,7 +167,7 @@ function bzfdump ($server) {
 
   echo $server['host'] . ":" . $server['port'] . " (" . $server['ip'] . ")\n";
   echo "gameStyle: ".$styles[$server['gameStyle']]."\n";
-  echo "gameOptions:";
+  echo "gameOptions:";	# must mirror enum GameOptions in global.h
   if ($server['gameOptions'] & 0x0002) echo " flags";
   if ($server['gameOptions'] & 0x0008) echo " jumping";
   if ($server['gameOptions'] & 0x0010) echo " inertia";
@@ -175,7 +175,7 @@ function bzfdump ($server) {
   if ($server['gameOptions'] & 0x0040) echo " shaking";
   if ($server['gameOptions'] & 0x0080) echo " antidote";
   if ($server['gameOptions'] & 0x0100) echo " handicap";
-  if ($server['gameOptions'] & 0x0200) echo " no-team-kills";
+  if ($server['gameOptions'] & 0x0400) echo " no-team-kills";
   echo "\n";
   echo "maxPlayers: " . $server['maxPlayers'] . "\n";
   echo "maxShots: " . $server['maxShots'] . "\n";

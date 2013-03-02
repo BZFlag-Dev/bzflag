@@ -72,6 +72,7 @@ def s2n( s ) :
 
 gameStyles = ['TeamFFA', 'ClassicCTF', 'OpenFFA', 'RabbitChase']
 
+# must mirror enum GameOptions in global.h
 gameOptions = [
 	( 'flags'        , 0x0002 ) ,
 	( 'jumping'      , 0x0008 ) ,
@@ -80,7 +81,7 @@ gameOptions = [
 	( 'shaking'      , 0x0040 ) ,
 	( 'antidote'     , 0x0080 ) ,
 	( 'handicap'     , 0x0100 ) ,
-	( 'no-team-kills', 0x0200 )
+	( 'no-team-kills', 0x0400 )
 ]
 
 teamsName = [
