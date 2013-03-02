@@ -523,6 +523,8 @@ bool SDLDisplay::createWindow() {
   oldWidth      = width;
   oldHeight     = height;
   oldFullScreen = fullScreen;
+  // always disable vsync when building with SDL
+  SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
   // Set the video mode and hope for no errors
   if (!SDL_SetVideoMode(width, height, 0, flags)) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
