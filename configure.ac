@@ -1141,6 +1141,7 @@ AC_CONFIG_FILES([
 	plugins/Phoenix/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
+	plugins/serverSidePlayerSample/Makefile
 	plugins/TimeLimit/Makefile
 	plugins/airspawn/Makefile
 	plugins/autoFlagReset/Makefile
