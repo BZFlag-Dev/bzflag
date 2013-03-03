@@ -77,7 +77,19 @@ public:
   void callEvents ( bz_EventData	*eventData );
   void callEvents ( const bz_EventData	&eventData ){callEvents((bz_EventData*)&eventData);}
 
-  tvEventList eventList;
+  
+
+private:
+ tvEventList eventList;
+
+protected:
+
+  void processPending();
+
+  bool callignEvents;
+
+  tvEventList pendingAdds;
+  tvEventList pendingRemovals;
 };
 
 extern WorldEventManager	worldEventManager;
