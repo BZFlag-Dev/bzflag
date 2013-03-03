@@ -1843,7 +1843,7 @@ bool HandicapCommand::operator() (const char	 *,
   int t = playerData->getIndex();
 
   if (clOptions->gameOptions & HandicapGameStyle) {
-      const int maxhandicap =  BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+      const int maxhandicap =  (int)BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
       for (int i = 0; i < curMaxPlayers; i++) {
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	if (p != NULL) {
