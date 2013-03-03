@@ -203,9 +203,21 @@ void GameKeeper::Player::updateNextGameTime()
 
 void *GameKeeper::Player::packAdminInfo(void *buf)
 {
-  buf = nboPackUByte(buf, netHandler->sizeOfIP());
-  buf = nboPackUByte(buf, playerIndex);
-  buf = netHandler->packAdminInfo(buf);
+	if (netHandler == NULL)
+	{
+		buf = nboPackUByte(buf, 5);
+		buf = nboPackUByte(buf, playerIndex);
+		buf = nboPackUByte(buf, 127);
+		buf = nboPackUByte(buf, 0);
+		buf = nboPackUByte(buf, 0);
+		buf = nboPackUByte(buf, 1);
+	}
+	else
+	{
+		buf = nboPackUByte(buf, netHandler->sizeOfIP());
+		buf = nboPackUByte(buf, playerIndex);
+		buf = netHandler->packAdminInfo(buf);
+	}
   return buf;
 }
 
