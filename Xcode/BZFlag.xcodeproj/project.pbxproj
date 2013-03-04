@@ -672,6 +672,11 @@
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
 		03CDB24A16A0BA81001DA037 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 03CDB24416A0BA81001DA037 /* README.txt */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
+		DF8950D716E42B8000BA9DD5 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
+		DF8950E016E42CF800BA9DD5 /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
+		DF8950E116E42CF800BA9DD5 /* playerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DF8950DE16E42CF800BA9DD5 /* playerHandler.h */; };
+		DF8950E216E42CF800BA9DD5 /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
+		DFCB125E16E43CE5002C679F /* libserverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1160,6 +1165,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				DFCB125E16E43CE5002C679F /* libserverSidePlayerSample.dylib in CopyFiles */,
 				0318265E16A0BE61005050BD /* libsuperUser.dylib in CopyFiles */,
 				0394E948167B2D00007F4035 /* libairspawn.dylib in CopyFiles */,
 				0394E949167B2D00007F4035 /* libautoFlagReset.dylib in CopyFiles */,
@@ -2238,6 +2244,10 @@
 		03D926E5166C6AB500DDDBEB /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
 		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
+		DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libserverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
+		DF8950DE16E42CF800BA9DD5 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playerHandler.h; path = ../plugins/serverSidePlayerSample/playerHandler.h; sourceTree = "<group>"; };
+		DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serverSidePlayerSample.cpp; path = ../plugins/serverSidePlayerSample/serverSidePlayerSample.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -2627,6 +2637,14 @@
 				03C8EF0E167AC50600BB07A5 /* SDL.framework in Frameworks */,
 				03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */,
 				03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF8950D616E42B8000BA9DD5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF8950D716E42B8000BA9DD5 /* libplugin_utils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3763,6 +3781,7 @@
 				0394E77E167B1025007F4035 /* RogueGenocide */,
 				0394E785167B1025007F4035 /* SAMPLE_PLUGIN */,
 				0394E78C167B1025007F4035 /* serverControl */,
+				DF8950E316E42D0300BA9DD5 /* serverSidePlayerSample */,
 				0394E794167B1025007F4035 /* shockwaveDeath */,
 				03CDB24216A0BA81001DA037 /* superUser */,
 				0394E79B167B1025007F4035 /* teamflagreset */,
@@ -4125,6 +4144,7 @@
 				0394E87F167B2447007F4035 /* libPhoenix.dylib */,
 				0394E88A167B2494007F4035 /* libplayHistoryTracker.dylib */,
 				0394E8A3167B259F007F4035 /* libpushstats.dylib */,
+				DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */,
 				0394E8AE167B25E9007F4035 /* librabbitTimer.dylib */,
 				0394E8B9167B2647007F4035 /* librabidRabbit.dylib */,
 				0394E8C4167B26B2007F4035 /* librecordmatch.dylib */,
@@ -4194,6 +4214,17 @@
 				03D926E1166C68E700DDDBEB /* libcurl.dylib */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DF8950E316E42D0300BA9DD5 /* serverSidePlayerSample */ = {
+			isa = PBXGroup;
+			children = (
+				DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */,
+				DF8950DE16E42CF800BA9DD5 /* playerHandler.h */,
+				DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */,
+			);
+			name = serverSidePlayerSample;
+			path = ../Xcode;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -4525,6 +4556,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		DF8950D816E42B8000BA9DD5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF8950E116E42CF800BA9DD5 /* playerHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5423,13 +5462,30 @@
 			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */;
 			productType = "com.apple.product-type.application";
 		};
+		DF8950D316E42B8000BA9DD5 /* serverSidePlayerSample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DF8950D916E42B8000BA9DD5 /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */;
+			buildPhases = (
+				DF8950D416E42B8000BA9DD5 /* Sources */,
+				DF8950D616E42B8000BA9DD5 /* Frameworks */,
+				DF8950D816E42B8000BA9DD5 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = serverSidePlayerSample;
+			productName = SAMPLE_PLUGIN;
+			productReference = DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		03BFC301166C637600836142 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0450;
+				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = BZFlag;
 			};
 			buildConfigurationList = 03BFC304166C637600836142 /* Build configuration list for PBXProject "BZFlag" */;
@@ -5487,6 +5543,7 @@
 				0394E8D9167B272C007F4035 /* RogueGenocide */,
 				0394E8E4167B27A2007F4035 /* SAMPLE_PLUGIN */,
 				0394E8EF167B27F7007F4035 /* serverControl */,
+				DF8950D316E42B8000BA9DD5 /* serverSidePlayerSample */,
 				0394E8FA167B284B007F4035 /* shockwaveDeath */,
 				0318265716A0BE2F005050BD /* superUser */,
 				0394E905167B28A4007F4035 /* teamflagreset */,
@@ -6285,6 +6342,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		DF8950D416E42B8000BA9DD5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF8950E016E42CF800BA9DD5 /* playerHandler.cpp in Sources */,
+				DF8950E216E42CF800BA9DD5 /* serverSidePlayerSample.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -6474,6 +6540,7 @@
 		0318265A16A0BE2F005050BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6490,6 +6557,7 @@
 		0318265B16A0BE2F005050BD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6502,6 +6570,7 @@
 		0357A7BE1670AF8F0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6515,6 +6584,7 @@
 		0357A7BF1670AF8F0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6525,6 +6595,7 @@
 		0357A7ED1670B11B0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6538,6 +6609,7 @@
 		0357A7EE1670B11B0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6548,6 +6620,7 @@
 		0357A7FD1670B1D80056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6560,6 +6633,7 @@
 		0357A7FE1670B1D80056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -6569,6 +6643,7 @@
 		0357A81D1670B2990056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6582,6 +6657,7 @@
 		0357A81E1670B2990056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6592,6 +6668,7 @@
 		0357A8361670B39D0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6605,6 +6682,7 @@
 		0357A8371670B39D0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6615,6 +6693,7 @@
 		0357A85D1670B4B70056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6628,6 +6707,7 @@
 		0357A85E1670B4B70056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6638,6 +6718,7 @@
 		0357A8801670B5540056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6651,6 +6732,7 @@
 		0357A8811670B5540056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6661,6 +6743,7 @@
 		0357A8901670B5F50056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6674,6 +6757,7 @@
 		0357A8911670B5F50056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6684,6 +6768,7 @@
 		0357A8AF1670B79E0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6697,6 +6782,7 @@
 		0357A8B01670B79E0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6707,6 +6793,7 @@
 		0357A8C61670B8DE0056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6720,6 +6807,7 @@
 		0357A8C71670B8DE0056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6730,6 +6818,7 @@
 		0357A8D71670B9930056C938 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -6743,6 +6832,7 @@
 		0357A8D81670B9930056C938 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -6801,6 +6891,7 @@
 		0394E6D5167B0F74007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6817,6 +6908,7 @@
 		0394E6D6167B0F74007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6829,6 +6921,7 @@
 		0394E7EA167B196F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6845,6 +6938,7 @@
 		0394E7EB167B196F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6857,6 +6951,7 @@
 		0394E7F5167B1A17007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6873,6 +6968,7 @@
 		0394E7F6167B1A17007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6885,6 +6981,7 @@
 		0394E800167B1E66007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6901,6 +6998,7 @@
 		0394E801167B1E66007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6913,6 +7011,7 @@
 		0394E80B167B1ECE007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6929,6 +7028,7 @@
 		0394E80C167B1ECE007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6941,6 +7041,7 @@
 		0394E816167B1F76007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6957,6 +7058,7 @@
 		0394E817167B1F76007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6969,6 +7071,7 @@
 		0394E821167B1FFD007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -6985,6 +7088,7 @@
 		0394E822167B1FFD007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -6997,6 +7101,7 @@
 		0394E82C167B207E007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7013,6 +7118,7 @@
 		0394E82D167B207E007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7025,6 +7131,7 @@
 		0394E837167B2133007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7041,6 +7148,7 @@
 		0394E838167B2133007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7053,6 +7161,7 @@
 		0394E842167B2225007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7069,6 +7178,7 @@
 		0394E843167B2225007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7081,6 +7191,7 @@
 		0394E84D167B228D007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7097,6 +7208,7 @@
 		0394E84E167B228D007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7109,6 +7221,7 @@
 		0394E858167B22E0007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7125,6 +7238,7 @@
 		0394E859167B22E0007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7137,6 +7251,7 @@
 		0394E86B167B2360007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7153,6 +7268,7 @@
 		0394E86C167B2360007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7165,6 +7281,7 @@
 		0394E876167B23B5007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7181,6 +7298,7 @@
 		0394E877167B23B5007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7193,6 +7311,7 @@
 		0394E881167B2447007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7209,6 +7328,7 @@
 		0394E882167B2447007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7221,6 +7341,7 @@
 		0394E88C167B2494007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7237,6 +7358,7 @@
 		0394E88D167B2494007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7249,6 +7371,7 @@
 		0394E897167B2513007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7261,6 +7384,7 @@
 		0394E898167B2513007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -7269,6 +7393,7 @@
 		0394E8A5167B25A0007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7285,6 +7410,7 @@
 		0394E8A6167B25A0007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7297,6 +7423,7 @@
 		0394E8B0167B25EA007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7313,6 +7440,7 @@
 		0394E8B1167B25EA007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7325,6 +7453,7 @@
 		0394E8BB167B2647007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7341,6 +7470,7 @@
 		0394E8BC167B2647007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7353,6 +7483,7 @@
 		0394E8C6167B26B2007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7369,6 +7500,7 @@
 		0394E8C7167B26B2007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7381,6 +7513,7 @@
 		0394E8D1167B26E3007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7397,6 +7530,7 @@
 		0394E8D2167B26E3007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7409,6 +7543,7 @@
 		0394E8DC167B272D007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7425,6 +7560,7 @@
 		0394E8DD167B272D007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7437,6 +7573,7 @@
 		0394E8E7167B27A2007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7453,6 +7590,7 @@
 		0394E8E8167B27A2007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7465,6 +7603,7 @@
 		0394E8F2167B27F9007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7481,6 +7620,7 @@
 		0394E8F3167B27F9007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7493,6 +7633,7 @@
 		0394E8FD167B284C007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7509,6 +7650,7 @@
 		0394E8FE167B284C007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7521,6 +7663,7 @@
 		0394E908167B28A5007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7537,6 +7680,7 @@
 		0394E909167B28A5007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7549,6 +7693,7 @@
 		0394E913167B28EE007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7565,6 +7710,7 @@
 		0394E914167B28EE007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7577,6 +7723,7 @@
 		0394E91E167B293F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7593,6 +7740,7 @@
 		0394E91F167B293F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7605,6 +7753,7 @@
 		0394E929167B29CD007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7621,6 +7770,7 @@
 		0394E92A167B29CD007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7633,6 +7783,7 @@
 		0394E934167B2A4B007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7649,6 +7800,7 @@
 		0394E935167B2A4B007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7661,6 +7813,7 @@
 		0394E93F167B2A9F007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -7677,6 +7830,7 @@
 		0394E940167B2A9F007F4035 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				OTHER_LDFLAGS = (
 					"-undefined",
@@ -7770,6 +7924,7 @@
 		03C5E7AF1670A073005A26C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7780,6 +7935,7 @@
 		03C5E7B01670A073005A26C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -7790,6 +7946,7 @@
 		03C5E7BE1670A3DA005A26C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -7803,6 +7960,7 @@
 		03C5E7BF1670A3DA005A26C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -7813,6 +7971,7 @@
 		03C5E7C71670A466005A26C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
@@ -7826,6 +7985,7 @@
 		03C5E7C81670A466005A26C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = (
@@ -7839,6 +7999,7 @@
 		03C5E8251670A894005A26C4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -7852,6 +8013,7 @@
 		03C5E8261670A894005A26C4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
 				EXECUTABLE_PREFIX = lib;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
@@ -7887,6 +8049,36 @@
 				INFOPLIST_FILE = "$(SRCROOT)/BZFlag-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)-$(BZFLAG_VERSION)";
 				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		DF8950DA16E42B8000BA9DD5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = serverSidePlayerSample;
+			};
+			name = Debug;
+		};
+		DF8950DB16E42B8000BA9DD5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				EXECUTABLE_PREFIX = lib;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = serverSidePlayerSample;
 			};
 			name = Release;
 		};
@@ -8357,6 +8549,15 @@
 			buildConfigurations = (
 				03C8EE3F167ABE2300BB07A5 /* Debug */,
 				03C8EE40167ABE2300BB07A5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		DF8950D916E42B8000BA9DD5 /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DF8950DA16E42B8000BA9DD5 /* Debug */,
+				DF8950DB16E42B8000BA9DD5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
