@@ -1843,12 +1843,12 @@ bool HandicapCommand::operator() (const char	 *,
   int t = playerData->getIndex();
 
   if (clOptions->gameOptions & HandicapGameStyle) {
-      const int maxhandicap =  (int)BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+      const float maxhandicap = std::max(1.0f, BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));	// prevent division by zero below
       for (int i = 0; i < curMaxPlayers; i++) {
 	GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
 	if (p != NULL) {
 	  char reply[MessageLen];
-	  snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(), int(100.0 * std::min(p->score.getHandicap(),maxhandicap) / maxhandicap + 0.5));
+	  snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(), int(100.0 * std::min((float)p->score.getHandicap(), maxhandicap) / maxhandicap + 0.5));
 	  sendMessage(ServerPlayer, t, reply);
 	}
       }
