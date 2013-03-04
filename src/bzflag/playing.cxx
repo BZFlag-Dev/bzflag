@@ -2657,7 +2657,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	if (sPlayer) {
 	  // a relative score of -_handicapScoreDiff points will provide maximum handicap
 	  float normalizedHandicap = float(handicap)
-	    / BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF);
+	    / std::max(1.0f, BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));
 
 	  /* limit how much of a handicap is afforded, and only provide
 	   * handicap advantages instead of disadvantages.
