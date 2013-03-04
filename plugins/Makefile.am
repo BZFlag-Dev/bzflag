@@ -25,6 +25,7 @@ SUBDIRS = \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
 	serverControl \
+	serverSidePlayerSample \
 	shockwaveDeath \
 	superUser \
 	teamflagreset \

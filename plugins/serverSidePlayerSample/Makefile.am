@@ -1,9 +1,9 @@
 lib_LTLIBRARIES = serverSidePlayerSample.la
 
-serverSidePlayerSample_la_SOURCES = serverSidePlayerSamplecpp
-serverSidePlayerSampleN_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
-SAMPLE_PLUGIN_la_LDFLAGS = -module -avoid-version -shared
-SAMPLE_PLUGIN_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
+serverSidePlayerSample_la_SOURCES = serverSidePlayerSample.cpp
+serverSidePlayerSample_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
+serverSidePlayerSample_la_LDFLAGS = -module -avoid-version -shared
+serverSidePlayerSample_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
 AM_CFLAGS = $(CONF_CFLAGS)
@@ -11,9 +11,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.txt \
-	serverSidePlayerSampledef \
-	serverSidePlayerSamplesln \
-	serverSidePlayerSamplevcxproj
+	serverSidePlayerSample.def \
+	serverSidePlayerSample.sln \
+	serverSidePlayerSample.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
