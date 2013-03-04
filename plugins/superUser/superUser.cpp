@@ -1,4 +1,4 @@
-// SAMPLE_PLUGIN.cpp : Defines the entry point for the DLL application.
+// superUser.cpp : Defines the entry point for the DLL application.
 //
 
 #include "bzfsAPI.h"
@@ -57,6 +57,7 @@ void SuperUser::Event ( bz_EventData * eventData  )
   for (size_t i = 0; i < perms.size(); i++)
     bz_grantPerm(joinData->playerID,perms[i].c_str());
 }
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -64,4 +65,3 @@ void SuperUser::Event ( bz_EventData * eventData  )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
