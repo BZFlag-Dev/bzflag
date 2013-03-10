@@ -593,7 +593,7 @@ RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
   "[all|groups|users|bans|helpfiles] - reload the user, group, password, and help files") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
-  "<ban|kick|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
+  "<ban|kick|kill|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
   "<yes|no> - place a vote in favor or in opposition to the poll") {}
 VetoCommand::VetoCommand()		 : ServerCommand("/veto",
@@ -2852,6 +2852,10 @@ bool PollCommand::operator() (const char	 *message,
 	snprintf(reply, MessageLen, "The server has no information on %s.", cmd.c_str());
 	sendMessage(ServerPlayer, t, reply);
 	return true;
+      }
+      if (cmd == "kill" && targetData->player.isObserver()) {
+        sendMessage(ServerPlayer, t, "You can't kill an observer!");
+        return true;
       }
       targetIP = targetData->netHandler->getTargetIP();
 
