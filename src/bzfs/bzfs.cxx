@@ -6680,7 +6680,27 @@ int main(int argc, char **argv)
 		  snprintf(message,  MessageLen, "/poll %s", action.c_str());
 		  removePlayer(v, message);
 		}
-	      }
+	      } else if (action == "kill") {
+	        // lookup the player id
+		bool foundPlayer = false;
+		int v;
+		for (v = 0; v < curMaxPlayers; v++) {
+		  GameKeeper::Player *otherData
+		    = GameKeeper::Player::getPlayerByIndex(v);
+		  if (otherData && (strncmp(otherData->player.getCallSign(),
+			      target.c_str(), 256) == 0)) {
+		    foundPlayer = true;
+		    break;
+		  }
+		}
+
+		if (foundPlayer) {
+		  // notify the player
+		  sendMessage(ServerPlayer, v, "You have been killed due to sufficient votes");
+		  playerKilled(v, curMaxPlayers, 0, -1, Flags::Null, -1);
+		}
+	      }		  
+
 		  else if (action == "set")
 		  {
 			std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
