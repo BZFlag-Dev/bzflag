@@ -175,6 +175,20 @@ void			HUDRenderer::resize(bool firstTime)
   scoreboard->setWindowSize (0.01f * window.getWidth(), sby,
 	0.98f * window.getWidth(), sby);
 
+  // resize the input prompt
+  if (showCompose) {
+    int cFontFace = composeTypeIn->getFontFace();
+    float cFontSize = composeTypeIn->getFontSize();
+    if (cFontFace >= 0) {
+      FontManager &fm = FontManager::instance();
+      const float x = fm.getStrLength(cFontFace, cFontSize, composeTypeIn->getLabel()) +
+		    fm.getStrLength(cFontFace, cFontSize, "99");
+      const float y = 1.0f;
+      composeTypeIn->setLabelWidth(x);
+      composeTypeIn->setPosition(x, y);
+    }
+  }
+
   // resize cracks
   if (showCracks)
     initCracks();
