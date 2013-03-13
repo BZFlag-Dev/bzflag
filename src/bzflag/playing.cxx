@@ -627,7 +627,7 @@ static bool doKeyCommon(const BzfKeyEvent& key, bool pressed)
     if (keyboardMovement == None) {
       std::string result = CMDMGR.run(cmd);
       if (!result.empty())
-	std::cerr << result << std::endl;
+	controlPanel->addMessage(result);
     }
     return true;
   }
