@@ -197,7 +197,7 @@ void bz_ServerSidePlayerHandler::sendServerCommand(const char *text)
 	if (!player || !text)
 		return ;
 
-  ::sendPlayerMessage(player, BZ_ALLUSERS, text);
+  ::sendPlayerMessage(player, AllPlayers, text);
 }
 
 void bz_ServerSidePlayerHandler::sendChatMessage(const char *text, int targetPlayer, bz_eMessageType type)
