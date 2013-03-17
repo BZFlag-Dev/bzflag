@@ -58,7 +58,7 @@ class MeshTransform {
 
     int packSize() const;
     void* pack(void*) const;
-    void* unpack(void*);
+    const void* unpack(const void*);
 
     void print(std::ostream& out, const std::string& indent) const;
     void printTransforms(std::ostream& out, const std::string& indent) const;
@@ -123,7 +123,7 @@ class MeshTransformManager {
 
     int packSize() const;
     void* pack(void*) const;
-    void* unpack(void*);
+    const void* unpack(const void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 

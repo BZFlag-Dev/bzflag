@@ -42,7 +42,7 @@ class PingPacket {
 				int millisecondsToBlock = 0);
 
     void*		pack(void*, const char* version) const;
-    void*		unpack(void*, char* version);
+    const void*		unpack(const void*, char* version);
 
     void		packHex(char*) const;
     void		unpackHex(char*);

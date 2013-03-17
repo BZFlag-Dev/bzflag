@@ -23,7 +23,7 @@ Weapon::Weapon()
 }
 
 
-void* Weapon::unpack(void* buf)
+const void* Weapon::unpack(const void* buf)
 {
   uint16_t delayCount;
 

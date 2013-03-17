@@ -469,7 +469,7 @@ static MsgStringList handleMsgAlive (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player;
   float pos[3], azimuth;
   d = nboUnpackUByte (d, player);
@@ -488,7 +488,7 @@ static MsgStringList handleMsgAdminInfo (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 count, ipsize, player;
   Address address;
   u16 i;
@@ -512,7 +512,7 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 index;
   u16 type, team, wins, losses, tks;
   char callsign[CallSignLen];
@@ -546,7 +546,7 @@ static MsgStringList handleMsgCaptureFlag (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u16 team;
   d = nboUnpackUShort (d, team);
   listPush (list, 1, "team: %s", strTeam (team).c_str());
@@ -559,7 +559,7 @@ static MsgStringList handleMsgDropFlag (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   Flag flag;
   u8 player;
   u16 flagid;
@@ -593,7 +593,7 @@ static MsgStringList handleMsgFlagUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u16 count, index;
   int i;
   d = nboUnpackUShort (d, count);
@@ -619,7 +619,7 @@ static MsgStringList handleMsgGrabFlag (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   Flag flag;
   u8 player;
   u16 flagid;
@@ -637,7 +637,7 @@ static MsgStringList handleMsgGMUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 target;
   ShotUpdate shot;
   d = shot.unpack (d);
@@ -673,7 +673,7 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 victim, killer;
   int16_t reason, shot;
   FlagType* flagType;
@@ -708,13 +708,13 @@ static MsgStringList handleMsgMessage (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 src, dst;
   d = nboUnpackUByte (d, src);
   d = nboUnpackUByte (d, dst);
   listPush (list, 1, "src: %s", strPlayer(src).c_str());
   listPush (list, 1, "dst: %s", strPlayer(dst).c_str());
-  listPush (list, 1, "message: \"%s\"", (char*) d);
+  listPush (list, 1, "message: \"%s\"", (const char*) d);
 
   return list;
 }
@@ -732,7 +732,7 @@ static MsgStringList handleMsgNewRabbit (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player, paused;
   d = nboUnpackUByte (d, player);
   d = nboUnpackUByte (d, paused);
@@ -753,7 +753,7 @@ static MsgStringList handleMsgPause (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player, paused;
   d = nboUnpackUByte (d, player);
   d = nboUnpackUByte (d, paused);
@@ -768,7 +768,7 @@ static MsgStringList handleMsgPlayerInfo (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 count, player, properties;
   Address address;
   u16 i;
@@ -801,7 +801,7 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   float timestamp;
   u8 index;
   PlayerState state;
@@ -865,7 +865,7 @@ static MsgStringList handleMsgRemovePlayer (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 index;
   d = nboUnpackUByte (d, index);
   listPush (list, 1, "player: %s", strPlayer(index).c_str());
@@ -881,7 +881,7 @@ static MsgStringList handleMsgShotBegin (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   FiringInfo finfo;
   d = finfo.unpack (d);
   const ShotUpdate& shot = finfo.shot;
@@ -901,7 +901,7 @@ static MsgStringList handleMsgScore (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 count, player;
   u16 wins, losses, tks, i;
   d = nboUnpackUByte (d, count);
@@ -923,7 +923,7 @@ static MsgStringList handleMsgScoreOver (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player;
   u16 team;
   d = nboUnpackUByte(d, player);
@@ -939,7 +939,7 @@ static MsgStringList handleMsgShotEnd (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player;
   u16 shotid;
   int16_t reason;
@@ -967,7 +967,7 @@ static MsgStringList handleMsgSetVar (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u16 i;
   u16 count;
   u8 nameLen, valueLen;
@@ -998,7 +998,7 @@ static MsgStringList handleMsgSetVar (PacketInfo *pi)
 static MsgStringList handleMsgTimeUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   int32_t timeLeft;
   d = nboUnpackInt(d, timeLeft);
   listPush (list, 1, "timeLeft: %i", timeLeft);
@@ -1011,7 +1011,7 @@ static MsgStringList handleMsgTeleport (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 player;
   u16 to, from;
   d = nboUnpackUByte(d, player);
@@ -1029,7 +1029,7 @@ static MsgStringList handleMsgTransferFlag (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 to, from;
   u16 flagid;
   Flag flag;
@@ -1049,7 +1049,7 @@ static MsgStringList handleMsgTeamUpdate (PacketInfo *pi)
 {
   MsgStringList list = listMsgBasics (pi);
 
-  void *d = (void*)pi->data;
+  const void *d = pi->data;
   u8 count;
   u16 i, team, size, won, lost;
   d = nboUnpackUByte(d, count);

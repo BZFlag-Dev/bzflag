@@ -599,7 +599,7 @@ void *MeshFace::pack(void *buf) const
 }
 
 
-void *MeshFace::unpack(void *buf)
+const void *MeshFace::unpack(const void *buf)
 {
   int32_t inTmp;
   driveThrough = shootThrough = smoothBounce = false;

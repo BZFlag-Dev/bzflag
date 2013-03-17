@@ -25,7 +25,7 @@ EntryZone::EntryZone()
 }
 
 
-void* EntryZone::unpack(void* buf)
+const void* EntryZone::unpack(const void* buf)
 {
   uint16_t flagCount, teamCount, safetyCount;
 

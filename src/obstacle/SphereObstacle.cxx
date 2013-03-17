@@ -515,7 +515,7 @@ void *SphereObstacle::pack(void *buf) const
 }
 
 
-void *SphereObstacle::unpack(void *buf)
+const void *SphereObstacle::unpack(const void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);

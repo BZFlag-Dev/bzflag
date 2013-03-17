@@ -212,7 +212,7 @@ void			RemoteShotPath::update(float dt)
 }
 
 void			RemoteShotPath::update(const ShotUpdate& shot,
-				uint16_t code, void* msg)
+				uint16_t code, const void* msg)
 {
   // update shot info
   getFiringInfo().shot = shot;

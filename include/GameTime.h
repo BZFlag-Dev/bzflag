@@ -31,7 +31,7 @@ namespace GameTime {
 
   int packSize();
   void* pack(void *, float lag);
-  void* unpack(void *);
+  const void* unpack(const void *);
 
   const float startRate = 1.0f;
   const float finalRate = 10.0f;

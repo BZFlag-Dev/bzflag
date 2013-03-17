@@ -1291,7 +1291,7 @@ void* MeshDrawInfo::pack(void* buf) const
 }
 
 
-void* MeshDrawInfo::unpack(void* buf)
+const void* MeshDrawInfo::unpack(const void* buf)
 {
   int i;
   int32_t s32;
@@ -1423,7 +1423,7 @@ void* Corner::pack(void* buf) const
 }
 
 
-void* Corner::unpack(void* buf)
+const void* Corner::unpack(const void* buf)
 {
   uint8_t u8;
   buf = nboUnpackUByte(buf, u8);
@@ -1548,7 +1548,7 @@ void* DrawCmd::pack(void* buf) const
 }
 
 
-void* DrawCmd::unpack(void* buf)
+const void* DrawCmd::unpack(const void* buf)
 {
   uint16_t u16;
   int32_t s32;
@@ -1639,7 +1639,7 @@ void* DrawSet::pack(void* buf) const
 }
 
 
-void* DrawSet::unpack(void* buf)
+const void* DrawSet::unpack(const void* buf)
 {
   int32_t s32;
   buf = nboUnpackInt(buf, s32);
@@ -1710,7 +1710,7 @@ void* DrawLod::pack(void* buf) const
 }
 
 
-void* DrawLod::unpack(void* buf)
+const void* DrawLod::unpack(const void* buf)
 {
   int32_t s32;
   buf = nboUnpackInt(buf, s32);
@@ -1753,7 +1753,7 @@ void* AnimationInfo::pack(void* buf) const
 }
 
 
-void* AnimationInfo::unpack(void* buf)
+const void* AnimationInfo::unpack(const void* buf)
 {
   buf = nboUnpackFloat(buf, angvel);
   buf= nboUnpackStdString(buf, dummy);

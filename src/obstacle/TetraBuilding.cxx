@@ -363,7 +363,7 @@ void *TetraBuilding::pack(void* buf) const
 }
 
 
-void *TetraBuilding::unpack(void* buf)
+const void *TetraBuilding::unpack(const void* buf)
 {
   int v;
 

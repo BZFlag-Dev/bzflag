@@ -44,7 +44,7 @@ class PlayerState
 
     PlayerState();
     void*	pack(void*, uint16_t& code);
-    void*	unpack(void*, uint16_t code);
+    const void*	unpack(const void*, uint16_t code);
 
     long	order;		// packet ordering
     short	status;		// see PStatus enum

@@ -156,8 +156,8 @@ public:
   void* packCustom(void* buf) const;
 
   /** network deserialization */
-  static void* unpack(void* buf, FlagType* &desc);
-  static void* unpackCustom(void* buf, FlagType* &desc);
+  static const void* unpack(const void* buf, FlagType* &desc);
+  static const void* unpackCustom(const void* buf, FlagType* &desc);
 
   /** Static wrapper function that makes sure that the flag map is
    * initialized before it's used.
@@ -192,7 +192,7 @@ public:
   void* fakePack(void*) const;
   /** This function uses the given serialization to set the member variables
       of this object. This really hide the type of flag */
-  void* unpack(void*);
+  const void* unpack(const void*);
 
   /** This function returns a set of all good flagtypes that are available in
       the game.

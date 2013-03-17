@@ -72,7 +72,7 @@ class GroupInstance {
     const MeshTransform& getTransform() const;
 
     void *pack(void*);
-    void *unpack(void*);
+    const void *unpack(const void*);
     int packSize();
 
     void print(std::ostream& out, const std::string& indent) const;
@@ -146,7 +146,7 @@ class GroupDefinition {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
     void printGrouped(std::ostream& out, const std::string& indent) const;
     void printFlatFile(std::ostream& out, const std::string& indent) const;
@@ -226,7 +226,7 @@ class GroupDefinitionMgr {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 

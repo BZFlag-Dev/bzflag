@@ -191,7 +191,7 @@ static bool saveVariablesState();
 static bool saveGameTimeState();
 static bool resetStates();
 
-static bool setVariables(void *data);
+static bool setVariables(const void *data);
 static bool preloadVariables();
 
 static void rewind();
@@ -237,7 +237,7 @@ static void initPacket(u16 mode, u16 code, int len, const void *data,
 
 static RRtime getRRtime();
 static void *nboPackRRtime(void *buf, RRtime value);
-static void *nboUnpackRRtime(void *buf, RRtime& value);
+static const void *nboUnpackRRtime(const void *buf, RRtime& value);
 
 static bool checkReplayMode(int playerIndex);
 
@@ -1392,7 +1392,7 @@ static void rewind()
 }
 
 
-static bool setVariables(void *data)
+static bool setVariables(const void *data)
 {
   // copied this function from [playing.cxx]
 
@@ -1866,7 +1866,7 @@ static RRpacket *loadPacket(FILE *f)
 {
   RRpacket *p;
   char bufStart[RRpacketHdrSize];
-  void *buf;
+  const void *buf;
 
   if (f == NULL) {
     return NULL;
@@ -2084,7 +2084,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
 static bool loadHeader(ReplayHeader *h, FILE *f)
 {
   char buffer[ReplayHeaderSize];
-  void *buf;
+  const void *buf;
 
   if (fread(buffer, ReplayHeaderSize, 1, f) != 1) {
     return false;
@@ -2233,7 +2233,7 @@ static bool loadFileTime(RRtime *filetime, FILE *f)
 static bool replaceFlagTypes(ReplayHeader *h)
 {
   bool replace = false;
-  void *buf = h->flags;
+  const void *buf = h->flags;
   FlagOptionMap headerFlag;
   FlagTypeMap::iterator it;
 
@@ -2552,7 +2552,7 @@ static void *nboPackRRtime(void *buf, RRtime value)
 }
 
 
-static void *nboUnpackRRtime(void *buf, RRtime& value)
+static const void *nboUnpackRRtime(const void *buf, RRtime& value)
 {
   u32 msb, lsb;
   buf = nboUnpackUInt(buf, msb);

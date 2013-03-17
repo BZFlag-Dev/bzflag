@@ -109,7 +109,7 @@ class ServerLink {
     std::string	 rejectionMessage;
 
     int		 udpLength;
-    char	       *udpBufferPtr;
+    const char	       *udpBufferPtr;
     char		ubuf[MaxPacketLen];
 };
 

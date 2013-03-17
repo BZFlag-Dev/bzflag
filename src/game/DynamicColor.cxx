@@ -123,7 +123,7 @@ void * DynamicColorManager::pack(void *buf) const
 }
 
 
-void * DynamicColorManager::unpack(void *buf)
+const void * DynamicColorManager::unpack(const void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -505,7 +505,7 @@ void * DynamicColor::pack(void *buf) const
 }
 
 
-void * DynamicColor::unpack(void *buf)
+const void * DynamicColor::unpack(const void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 

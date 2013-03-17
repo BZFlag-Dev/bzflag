@@ -50,7 +50,7 @@ void*			Team::pack(void* buf) const
   return buf;
 }
 
-void*			Team::unpack(void* buf)
+const void*		Team::unpack(const void* buf)
 {
   uint16_t inSize, inWon, inLost;
   buf = nboUnpackUShort(buf, inSize);

@@ -108,7 +108,7 @@ void * MeshTransformManager::pack(void *buf) const
 }
 
 
-void * MeshTransformManager::unpack(void *buf)
+const void * MeshTransformManager::unpack(const void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -610,7 +610,7 @@ void * MeshTransform::pack(void *buf) const
 }
 
 
-void * MeshTransform::unpack(void *buf)
+const void * MeshTransform::unpack(const void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 

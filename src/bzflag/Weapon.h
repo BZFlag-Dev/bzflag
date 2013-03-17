@@ -22,7 +22,7 @@
 class Weapon {
   public:
     Weapon();
-    void* unpack(void*);
+    const void* unpack(const void*);
 
   public:
     FlagType *type;

@@ -707,7 +707,7 @@ void *MeshObstacle::pack(void *buf) const
 }
 
 
-void *MeshObstacle::unpack(void *buf)
+const void *MeshObstacle::unpack(const void *buf)
 {
   int i;
   int32_t inTmp;
@@ -744,7 +744,7 @@ void *MeshObstacle::unpack(void *buf)
     buf = nboUnpackFloat(buf, texcoords[i][0]);
     buf = nboUnpackFloat(buf, texcoords[i][1]);
   }
-  void* texcoordEnd = buf; // for locating hidden drawInfo data
+  const char* texcoordEnd = (const char*)buf;	// for locating hidden drawInfo data
 
   buf = nboUnpackInt(buf, inTmp);
   faceSize = int(inTmp);
@@ -780,7 +780,7 @@ void *MeshObstacle::unpack(void *buf)
   if (drawInfoOwner &&  (texcoordCount >= 2)) {
     nboUseErrorChecking(false);
     {
-      void* drawInfoSize = (char*)texcoordEnd - sizeof(afvec2);
+      const void* drawInfoSize = texcoordEnd - sizeof(afvec2);
       int32_t rewindLen;
       nboUnpackInt(drawInfoSize, rewindLen);
 
@@ -789,7 +789,7 @@ void *MeshObstacle::unpack(void *buf)
       if (rewindLen <= (int)(texcoordCount * sizeof(afvec2))) {
 	// unpack the drawInfo
 	if (useDrawInfo) {
-	  void* drawInfoData = (char*)texcoordEnd - rewindLen;
+	  const void* drawInfoData = texcoordEnd - rewindLen;
 	  drawInfo = new MeshDrawInfo();
 	  drawInfo->unpack(drawInfoData);
 	  name = drawInfo->getName(); // get the proxied name

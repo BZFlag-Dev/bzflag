@@ -26,8 +26,8 @@ class WorldBuilder {
 			WorldBuilder();
 			~WorldBuilder();
 
-    void*		unpack(void*);
-    void	       *unpackGameSettings(void*);
+    const void*		unpack(const void*);
+    const void*		unpackGameSettings(const void*);
 
     World*		getWorld();
     World*		peekWorld();	// doesn't give up ownership

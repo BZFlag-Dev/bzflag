@@ -128,7 +128,7 @@ class BzMaterial {
 
     int packSize() const;
     void *pack(void *) const;
-    void *unpack(void *);
+    const void *unpack(const void *);
 
     void print(std::ostream& out, const std::string& indent) const;
     void printMTL(std::ostream& out, const std::string& indent) const;
@@ -222,7 +222,7 @@ class BzMaterialManager {
     void setTextureLocal(const std::string& url, const std::string& local);
 
     void* pack(void*);
-    void* unpack(void*);
+    const void* unpack(const void*);
     int packSize();
 
     void print(std::ostream& out, const std::string& indent) const;

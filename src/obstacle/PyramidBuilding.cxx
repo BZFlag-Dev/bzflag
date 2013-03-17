@@ -433,7 +433,7 @@ void* PyramidBuilding::pack(void* buf) const
 }
 
 
-void* PyramidBuilding::unpack(void* buf)
+const void* PyramidBuilding::unpack(const void* buf)
 {
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);

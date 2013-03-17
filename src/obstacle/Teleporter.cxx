@@ -541,7 +541,7 @@ void* Teleporter::pack(void* buf) const
 }
 
 
-void* Teleporter::unpack(void* buf)
+const void* Teleporter::unpack(const void* buf)
 {
   buf = nboUnpackStdString(buf, name);
 

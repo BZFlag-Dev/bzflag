@@ -40,7 +40,7 @@ WorldBuilder::~WorldBuilder()
 }
 
 
-void* WorldBuilder::unpack(void* buf)
+const void* WorldBuilder::unpack(const void* buf)
 {
   TimeKeeper start = TimeKeeper::getCurrent();
 
@@ -65,15 +65,15 @@ void* WorldBuilder::unpack(void* buf)
   buf = nboUnpackUInt (buf, compressedSize);
   uLongf destLen = uncompressedSize;
   char *uncompressedWorld = new char[destLen];
-  char *compressedWorld = (char*) buf;
+  const Bytef *compressedWorld = (const Bytef*) buf;
 
   if (uncompress ((Bytef*)uncompressedWorld, &destLen,
-		  (Bytef*)compressedWorld, compressedSize) != Z_OK) {
+		  compressedWorld, compressedSize) != Z_OK) {
     delete[] uncompressedWorld;
     logDebugMessage(1,"WorldBuilder::unpack() could not decompress\n");
     return NULL;
   }
-  char* uncompressedEnd = uncompressedWorld + uncompressedSize;
+  const char* uncompressedEnd = uncompressedWorld + uncompressedSize;
 
   buf = uncompressedWorld;
 
@@ -143,10 +143,10 @@ void* WorldBuilder::unpack(void* buf)
     logDebugMessage(1,"WorldBuilder::unpack() overrun\n");
     return NULL;
   }
-  if ((char*)buf != uncompressedEnd) {
+  if ((const char*)buf != uncompressedEnd) {
     delete[] uncompressedWorld;
     logDebugMessage(1,"WorldBuilder::unpack() ending mismatch (%i)\n",
-	    (char*)buf - uncompressedEnd);
+	    (const char*)buf - uncompressedEnd);
     return NULL;
   }
 
@@ -200,7 +200,7 @@ void* WorldBuilder::unpack(void* buf)
 }
 
 
-void* WorldBuilder::unpackGameSettings(void* buf)
+const void* WorldBuilder::unpackGameSettings(const void* buf)
 {
   // read style
   uint16_t gameType, gameOptions, maxPlayers, maxShots, maxFlags;

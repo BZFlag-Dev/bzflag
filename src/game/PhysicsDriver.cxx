@@ -111,7 +111,7 @@ void * PhysicsDriverManager::pack(void *buf) const
 }
 
 
-void * PhysicsDriverManager::unpack(void *buf)
+const void * PhysicsDriverManager::unpack(const void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -292,7 +292,7 @@ void * PhysicsDriver::pack(void *buf) const
 }
 
 
-void * PhysicsDriver::unpack(void *buf)
+const void * PhysicsDriver::unpack(const void *buf)
 {
   buf = nboUnpackStdString(buf, name);
 

@@ -90,7 +90,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
 }
 
 // update absolute latency based on LagPing messages
-void LagInfo::updatePingLag(void *buf, bool &warn, bool &kick, bool &jittwarn,
+void LagInfo::updatePingLag(const void *buf, bool &warn, bool &kick, bool &jittwarn,
 			    bool &jittkick, bool &plosswarn, bool &plosskick,
 			    bool &alagannouncewarn, bool &lagannouncewarn) {
   uint16_t _pingseqno;

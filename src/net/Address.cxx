@@ -203,9 +203,9 @@ void*			Address::pack(void* _buf) const
   return (void*)buf;
 }
 
-void*			Address::unpack(void* _buf)
+const void*		Address::unpack(const void* _buf)
 {
-  unsigned char* buf = (unsigned char*)_buf;
+  const unsigned char* buf = (const unsigned char*)_buf;
   InAddr tempAddr;
   // FIXME - should actually parse the first byte to see if it's IPv4 or
   // IPv6
@@ -216,7 +216,7 @@ void*			Address::unpack(void* _buf)
   tempAddr.s_addr = u_long(hostaddr);
   addr.clear();
   addr.push_back(tempAddr);
-  return (void*)buf;
+  return buf;
 }
 
 //
@@ -234,16 +234,16 @@ void*			ServerId::pack(void* _buf) const
   return (void*)buf;
 }
 
-void*			ServerId::unpack(void* _buf)
+const void*		ServerId::unpack(const void* _buf)
 {
   // everything in ServerId should be stored in network byte order
-  unsigned char* buf = (unsigned char*)_buf;
+  const unsigned char* buf = (const unsigned char*)_buf;
   int32_t hostaddr;
   ::memcpy(&hostaddr, buf, sizeof(int32_t));	buf += sizeof(int32_t);
   ::memcpy(&port, buf, sizeof(int16_t));	buf += sizeof(int16_t);
   ::memcpy(&number, buf, sizeof(int16_t));	buf += sizeof(int16_t);
   serverHost.s_addr = u_long(hostaddr);
-  return (void*)buf;
+  return buf;
 }
 
 bool			ServerId::operator==(const ServerId& id) const

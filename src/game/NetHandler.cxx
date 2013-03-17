@@ -141,7 +141,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     return -1;
 
   // read head
-  void *buf = buffer;
+  const void *buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
@@ -470,7 +470,7 @@ int NetHandler::pwrite(const void *b, int l) {
   if (closed)
     return 0;
 
-  void *buf = (void *)b;
+  const void *buf = b;
   uint16_t len, code;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
@@ -525,7 +525,7 @@ RxStatus NetHandler::tcpReceive() {
 
   // read body if we don't have it yet
   uint16_t len, code;
-  void *buf = tcpmsg;
+  const void *buf = tcpmsg;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);

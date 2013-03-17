@@ -92,7 +92,7 @@ class Obstacle {
   virtual void *pack(void* buf) const = 0;
 
   /** This function unpacks the obstacle from buf */
-  virtual void *unpack(void* buf) = 0;
+  virtual const void *unpack(const void* buf) = 0;
 
   /** This function prints the obstacle to the stream */
   virtual void print(std::ostream& out, const std::string& indent) const = 0;

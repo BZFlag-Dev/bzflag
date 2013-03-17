@@ -286,7 +286,7 @@ void* LinkManager::pack(void* buf) const
 }
 
 
-void* LinkManager::unpack(void* buf)
+const void* LinkManager::unpack(const void* buf)
 {
   clear(); // just in case
   unsigned int i;

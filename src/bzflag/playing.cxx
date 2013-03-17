@@ -152,10 +152,10 @@ double			lastObserverUpdateTime = -1;
 
 static void		setHuntTarget();
 static void		setTankFlags();
-static void*		handleMsgSetVars(void *msg);
-static void		handlePlayerMessage(uint16_t, uint16_t, void*);
+static const void*	handleMsgSetVars(const void *msg);
+static void		handlePlayerMessage(uint16_t, uint16_t, const void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
-static void		enteringServer(void *buf);
+static void		enteringServer(const void *buf);
 static void		joinInternetGame2();
 static void		cleanWorldCache();
 static void		markOld(std::string &fileName);
@@ -1295,7 +1295,7 @@ void			notifyBzfKeyMapChanged()
 //
 // server message handling
 //
-static Player*		addPlayer(PlayerId id, void* msg, int showMessage)
+static Player*		addPlayer(PlayerId id, const void* msg, int showMessage)
 {
   uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
@@ -1700,7 +1700,7 @@ void WorldDownLoader::askToBZFS()
 
 static WorldDownLoader *worldDownLoader;
 
-static void dumpMissingFlag(char *buf, uint16_t len)
+static void dumpMissingFlag(const char *buf, uint16_t len)
 {
   int i;
   int nFlags = len/2;
@@ -1725,12 +1725,12 @@ static void dumpMissingFlag(char *buf, uint16_t len)
 		       &args).c_str());
 }
 
-static bool processWorldChunk(void *buf, uint16_t len, int bytesLeft)
+static bool processWorldChunk(const void *buf, uint16_t len, int bytesLeft)
 {
   int totalSize = worldPtr + len + bytesLeft;
   int doneSize  = worldPtr + len;
   if (cacheOut)
-    cacheOut->write((char *)buf, len);
+    cacheOut->write((const char *)buf, len);
   HUDDialogStack::get()->setFailedMessage
     (TextUtils::format
      ("Downloading World (%2d%% complete/%d kb remaining)...",
@@ -1752,7 +1752,7 @@ static void sendMeaCulpa(PlayerId victim) {
   serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
 }
 
-static void handleNearFlag (void *msg, uint16_t)
+static void handleNearFlag (const void *msg, uint16_t)
 {
        float pos[3];
        std::string flagName;
@@ -1769,7 +1769,7 @@ static void handleNearFlag (void *msg, uint16_t)
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
-					    uint16_t len, void* msg)
+					    uint16_t len, const void* msg)
 {
   std::vector<std::string> args;
   bool checkScores = false;
@@ -1790,7 +1790,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       else {
 	uint16_t numItems;
-	void *buf;
+	const void *buf;
 
 	buf = nboUnpackUShort (msg, numItems);    // the type
 
@@ -1834,7 +1834,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
       else {
-	void *buf;
+	const void *buf;
 	char buffer[MessageLen];
 	uint16_t soundType;
 	uint16_t stringLen;
@@ -1871,7 +1871,7 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
 
     case MsgReject: {
-      void *buf;
+      const void *buf;
       char buffer[MessageLen];
       uint16_t rejcode;
       std::string reason;
@@ -1886,7 +1886,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 
     case MsgNegotiateFlags: {
       if (len > 0) {
-	dumpMissingFlag((char *)msg, len);
+	dumpMissingFlag((const char *)msg, len);
 	break;
       }
       serverLink->send(MsgWantSettings, 0, NULL);
@@ -1925,7 +1925,7 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgGetWorld: {
       // create world
       uint32_t bytesLeft;
-      void *buf = nboUnpackUInt(msg, bytesLeft);
+      const void *buf = nboUnpackUInt(msg, bytesLeft);
       bool last = processWorldChunk(buf, len - 4, bytesLeft);
       if (!last) {
 	char message[MaxPacketLen];
@@ -2796,12 +2796,19 @@ static void		handleServerMessage(bool human, uint16_t code,
 	break;
       }
 
+      std::string origText;
       // if filtering is turned on, filter away the goo
       if (wordfilter != NULL) {
-	wordfilter->filter((char *)msg);
+	char filtered[MessageLen];
+	strncpy(filtered, (const char *)msg, MessageLen - 1);
+	filtered[MessageLen - 1] = '\0';
+	if (wordfilter->filter(filtered))
+	  msg = filtered;
+	origText = stripAnsiCodes(std::string((const char*)msg));	// use filtered[] while it is in scope
+      } else {
+	origText = stripAnsiCodes(std::string((const char*)msg));
       }
 
-      std::string origText = stripAnsiCodes(std::string((char*)msg));
       std::string text = BundleMgr::getCurrentBundle()->getLocalString(origText);
 
       if (toAll || toAdmin || srcPlayer == myTank  || dstPlayer == myTank ||
@@ -2969,7 +2976,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	uint8_t ipsize;
 	uint8_t index;
 	Address ip;
-	void* tmpMsg = msg; // leave 'msg' pointing at the first entry
+	const void* tmpMsg = msg; // leave 'msg' pointing at the first entry
 
 	tmpMsg = nboUnpackUByte(tmpMsg, ipsize);
 	tmpMsg = nboUnpackUByte(tmpMsg, index);
@@ -3068,7 +3075,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 //
 
 static void		handlePlayerMessage(uint16_t code, uint16_t,
-					    void* msg)
+					    const void* msg)
 {
   switch (code) {
     case MsgPlayerUpdate:
@@ -3076,7 +3083,7 @@ static void		handlePlayerMessage(uint16_t code, uint16_t,
       float timestamp; // could be used to enhance deadreckoning, but isn't for now
       PlayerId id;
       int32_t order;
-      void *buf = msg;
+      const void *buf = msg;
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
       Player* tank = lookupPlayer(id);
@@ -3340,7 +3347,7 @@ static void		handleMyTankKilled(int reason)
 }
 #endif
 
-static void *handleMsgSetVars(void *msg)
+static const void *handleMsgSetVars(const void *msg)
 {
   uint16_t numVars;
   uint8_t nameLen = 0, valueLen = 0;
@@ -4500,10 +4507,10 @@ static void setTankFlags()
 }
 
 
-static void enteringServer(void *buf)
+static void enteringServer(const void *buf)
 {
   // the server sends back the team the player was joined to
-  void *tmpbuf = buf;
+  const void *tmpbuf = buf;
   uint16_t team, type, wins, losses, tks;
   char callsign[CallSignLen];
   char motto[MottoLen];

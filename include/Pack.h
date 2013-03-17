@@ -36,16 +36,16 @@ extern void* nboPackVector(void*, const float*);
 extern void* nboPackString(void*, const void*, int len);
 extern void* nboPackStdString(void*, const std::string& str);
 
-extern void* nboUnpackUByte(void*, uint8_t&);
-extern void* nboUnpackShort(void*, int16_t&);
-extern void* nboUnpackInt(void*, int32_t&);
-extern void* nboUnpackUShort(void*, uint16_t&);
-extern void* nboUnpackUInt(void*, uint32_t&);
-extern void* nboUnpackFloat(void*, float&);
-extern void* nboUnpackVector(void*, float*);
-extern void* nboUnpackString(void*, void*, int len);
-extern void* nboUnpackStdString(void*, std::string& str);
-extern void* nboUnpackStdStringRaw(void*, std::string& str);
+extern const void* nboUnpackUByte(const void*, uint8_t&);
+extern const void* nboUnpackShort(const void*, int16_t&);
+extern const void* nboUnpackInt(const void*, int32_t&);
+extern const void* nboUnpackUShort(const void*, uint16_t&);
+extern const void* nboUnpackUInt(const void*, uint32_t&);
+extern const void* nboUnpackFloat(const void*, float&);
+extern const void* nboUnpackVector(const void*, float*);
+extern const void* nboUnpackString(const void*, void*, int len);
+extern const void* nboUnpackStdString(const void*, std::string& str);
+extern const void* nboUnpackStdStringRaw(const void*, std::string& str);
 
 extern unsigned int nboStdStringPackSize(const std::string& str);
 

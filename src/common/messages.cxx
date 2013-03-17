@@ -34,7 +34,7 @@ PlayerAddMessage::PlayerAddMessage()
 	tks = 0;
 }
 
-bool PlayerAddMessage::unpack ( void* buf )
+bool PlayerAddMessage::unpack ( const void* buf )
 {
 	unsigned char id;
 	uint16_t _team, _type, _wins, _losses, _tks;

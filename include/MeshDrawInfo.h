@@ -96,7 +96,7 @@ class MeshDrawInfo {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 
@@ -232,7 +232,7 @@ class Corner {
     ~Corner();
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
   public:
     int vertex;
     int normal;
@@ -250,7 +250,7 @@ class DrawCmd {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
   public:
     enum DrawModes {		  // OpenGL
@@ -290,7 +290,7 @@ class DrawSet {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
   public:
     int count;
@@ -310,7 +310,7 @@ class DrawLod {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
   public:
     int count;
@@ -325,7 +325,7 @@ class AnimationInfo {
     AnimationInfo();
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
   public:
     float angvel;
     std::string dummy;

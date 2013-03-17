@@ -133,7 +133,7 @@ void* BzMaterialManager::pack(void* buf)
 }
 
 
-void* BzMaterialManager::unpack(void* buf)
+const void* BzMaterialManager::unpack(const void* buf)
 {
   unsigned int i;
   uint32_t count;
@@ -401,7 +401,7 @@ static void* pack4Float(void *buf, const float values[4])
 }
 
 
-static void* unpack4Float(void *buf, float values[4])
+static const void* unpack4Float(const void *buf, float values[4])
 {
   int i;
   for (i = 0; i < 4; i++) {
@@ -464,7 +464,7 @@ void* BzMaterial::pack(void* buf) const
 }
 
 
-void* BzMaterial::unpack(void* buf)
+const void* BzMaterial::unpack(const void* buf)
 {
   int i;
   int32_t inTmp;

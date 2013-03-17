@@ -74,7 +74,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
     return false;
 
   // decode header
-  void* buf = buffer;
+  const void* buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 
@@ -145,7 +145,7 @@ bool			PingPacket::isRequest(int fd,
 {
   if (fd < 0) return false;
   char buffer[6];
-  void *msg = buffer;
+  const void *msg = buffer;
   uint16_t len, code;
   int size = recvBroadcast(fd, buffer, sizeof(buffer), addr);
   if (size < 2) return false;
@@ -166,7 +166,7 @@ bool			PingPacket::sendRequest(int fd,
   return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-void*			PingPacket::unpack(void* buf, char* version)
+const void*		PingPacket::unpack(const void* buf, char* version)
 {
   buf = nboUnpackString(buf, version, 8);
   buf = serverId.unpack(buf);
@@ -386,7 +386,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
   }
 
   // decode header
-  void* buf = buffer;
+  const void* buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 

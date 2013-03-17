@@ -236,7 +236,7 @@ void* BoxBuilding::pack(void* buf) const
 }
 
 
-void* BoxBuilding::unpack(void* buf)
+const void* BoxBuilding::unpack(const void* buf)
 {
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);

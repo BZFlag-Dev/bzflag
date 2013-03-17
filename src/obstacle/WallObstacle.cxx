@@ -144,7 +144,7 @@ void* WallObstacle::pack(void* buf) const
 }
 
 
-void* WallObstacle::unpack(void* buf)
+const void* WallObstacle::unpack(const void* buf)
 {
   buf = nboUnpackVector(buf, pos);
   buf = nboUnpackFloat(buf, angle);

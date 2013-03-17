@@ -103,7 +103,7 @@ class RemoteShotPath : public ShotPath {
 
     void		update(float dt);
     void		update(const ShotUpdate& shot,
-				uint16_t code, void* msg);
+				uint16_t code, const void* msg);
 };
 
 //

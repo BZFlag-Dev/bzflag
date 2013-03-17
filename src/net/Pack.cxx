@@ -16,6 +16,7 @@
 #include "network.h"
 
 #define	ADV(_b, _t)	((void*)(((char*)(_b)) + sizeof(_t)))
+#define	cADV(_b, _t)	((const void*)(((const char*)(_b)) + sizeof(_t)))
 
 //
 // Unions
@@ -145,7 +146,7 @@ void*			nboPackStdString(void* b, const std::string& str)
 // UnPackers
 //
 
-void*			nboUnpackUByte(void* b, uint8_t& v)
+const void*		nboUnpackUByte(const void* b, uint8_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint8_t)) {
@@ -157,10 +158,10 @@ void*			nboUnpackUByte(void* b, uint8_t& v)
     }
   }
   ::memcpy(&v, b, sizeof(uint8_t));
-  return ADV(b, uint8_t);
+  return cADV(b, uint8_t);
 }
 
-void*			nboUnpackShort(void* b, int16_t& v)
+const void*		nboUnpackShort(const void* b, int16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int16_t)) {
@@ -174,10 +175,10 @@ void*			nboUnpackShort(void* b, int16_t& v)
   int16_t x;
   ::memcpy(&x, b, sizeof(int16_t));
   v = (int16_t)ntohs(x);
-  return ADV(b, int16_t);
+  return cADV(b, int16_t);
 }
 
-void*			nboUnpackInt(void* b, int32_t& v)
+const void*		nboUnpackInt(const void* b, int32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(int32_t)) {
@@ -191,10 +192,10 @@ void*			nboUnpackInt(void* b, int32_t& v)
   int32_t x;
   ::memcpy(&x, b, sizeof(int32_t));
   v = (int32_t)ntohl(x);
-  return ADV(b, uint32_t);
+  return cADV(b, uint32_t);
 }
 
-void*			nboUnpackUShort(void* b, uint16_t& v)
+const void*		nboUnpackUShort(const void* b, uint16_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint16_t)) {
@@ -208,10 +209,10 @@ void*			nboUnpackUShort(void* b, uint16_t& v)
   uint16_t x;
   ::memcpy(&x, b, sizeof(uint16_t));
   v = (uint16_t)ntohs(x);
-  return ADV(b, uint16_t);
+  return cADV(b, uint16_t);
 }
 
-void*			nboUnpackUInt(void* b, uint32_t& v)
+const void*		nboUnpackUInt(const void* b, uint32_t& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(uint32_t)) {
@@ -225,10 +226,10 @@ void*			nboUnpackUInt(void* b, uint32_t& v)
   uint32_t x;
   ::memcpy(&x, b, sizeof(uint32_t));
   v = (uint32_t)ntohl(x);
-  return ADV(b, uint32_t);
+  return cADV(b, uint32_t);
 }
 
-void*			nboUnpackFloat(void* b, float& v)
+const void*		nboUnpackFloat(const void* b, float& v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float)) {
@@ -245,10 +246,10 @@ void*			nboUnpackFloat(void* b, float& v)
   floatintuni u;
   u.intval = (uint32_t)ntohl(x);
   v = u.floatval;
-  return ADV(b, uint32_t);
+  return cADV(b, uint32_t);
 }
 
-void*			nboUnpackVector(void* b, float *v)
+const void*		nboUnpackVector(const void* b, float *v)
 {
   if (ErrorChecking) {
     if (Length < sizeof(float[3])) {
@@ -269,10 +270,10 @@ void*			nboUnpackVector(void* b, float *v)
     v[i] = u.floatval;
   }
 
-  return (void *) (((char*)b) + 3*sizeof(float));
+  return (const char*)b + 3*sizeof(float);
 }
 
-void*			nboUnpackString(void* b, void* m, int len)
+const void*		nboUnpackString(const void* b, void* m, int len)
 {
   if (!m || len == 0) return b;
   if (ErrorChecking) {
@@ -285,10 +286,10 @@ void*			nboUnpackString(void* b, void* m, int len)
     }
   }
   ::memcpy(m, b, len);
-  return (void*)((char*)b + len);
+  return (const char*)b + len;
 }
 
-void*			nboUnpackStdString(void* b, std::string& str)
+const void*		nboUnpackStdString(const void* b, std::string& str)
 {
   uint32_t strSize;
   b = nboUnpackUInt(b, strSize);
@@ -304,7 +305,7 @@ void*			nboUnpackStdString(void* b, std::string& str)
   return b;
 }
 
-void*			nboUnpackStdStringRaw(void* b, std::string& str)
+const void*		nboUnpackStdStringRaw(const void* b, std::string& str)
 {
   uint32_t strSize;
   b = nboUnpackUInt(b, strSize);

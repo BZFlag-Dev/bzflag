@@ -266,7 +266,7 @@ void* FlagType::fakePack(void* buf) const
   return buf;
 }
 
-void* FlagType::unpack(void* buf, FlagType* &type)
+const void* FlagType::unpack(const void* buf, FlagType* &type)
 {
   unsigned char abbv[3] = {0, 0, 0};
   buf = nboUnpackUByte(buf, abbv[0]);
@@ -285,7 +285,7 @@ void* FlagType::packCustom(void* buf) const
   return buf;
 }
 
-void* FlagType::unpackCustom(void* buf, FlagType* &type)
+const void* FlagType::unpackCustom(const void* buf, FlagType* &type)
 {
   uint8_t *abbv = new uint8_t[3];
   abbv[0]=abbv[1]=abbv[2]=0;
@@ -348,7 +348,7 @@ void* Flag::fakePack(void* buf) const
   return buf;
 }
 
-void* Flag::unpack(void* buf)
+const void* Flag::unpack(const void* buf)
 {
   uint16_t data;
 

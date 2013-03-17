@@ -184,7 +184,7 @@ public:
   void		addHitToStats(FlagType* flag);
 
   void*		pack(void*, uint16_t& code);
-  void*		unpack(void*, uint16_t code);
+  const void*	unpack(const void*, uint16_t code);
 
   void		setDeadReckoning();
   void		setDeadReckoning(float timestamp);

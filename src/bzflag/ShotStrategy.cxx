@@ -41,7 +41,7 @@ void ShotStrategy::sendUpdate(const FiringInfo&) const
   // do nothing by default -- normal shots don't need updates
 }
 
-void ShotStrategy::readUpdate(uint16_t, void*)
+void ShotStrategy::readUpdate(uint16_t, const void*)
 {
   // do nothing by default -- normal shots don't need updates
 }

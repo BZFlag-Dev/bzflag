@@ -26,7 +26,7 @@
 class EntryZone {
   public:
     EntryZone();
-    void* unpack(void*);
+    const void* unpack(const void*);
 
   public:
     float pos[3];

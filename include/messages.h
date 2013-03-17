@@ -35,7 +35,7 @@ class PlayerAddMessage
 public:
 	PlayerAddMessage();
 
-	bool unpack ( void* buf );
+	bool unpack ( const void* buf );
 	void* pack ( void* buf );
 
 	int playerID;

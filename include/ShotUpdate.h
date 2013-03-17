@@ -39,7 +39,7 @@ class BaseLocalPlayer;
 struct ShotUpdate {
   public:
     void*		pack(void*) const;
-    void*		unpack(void*);
+    const void*		unpack(const void*);
 
   public:
     PlayerId		player;			// who's shot
@@ -56,7 +56,7 @@ struct FiringInfo {
 			FiringInfo(const BaseLocalPlayer&, int id);
 
     void*		pack(void*) const;
-    void*		unpack(void*);
+    const void*		unpack(const void*);
 
   public:
     float	       timeSent;

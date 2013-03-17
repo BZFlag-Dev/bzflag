@@ -431,7 +431,7 @@ void *ConeObstacle::pack(void *buf) const
 }
 
 
-void *ConeObstacle::unpack(void *buf)
+const void *ConeObstacle::unpack(const void *buf)
 {
   int32_t inTmp;
   buf = transform.unpack(buf);

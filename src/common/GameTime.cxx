@@ -237,7 +237,7 @@ void* GameTime::pack(void *buf, float lag)
 }
 
 
-void* GameTime::unpack(void *buf)
+const void* GameTime::unpack(const void *buf)
 {
   u32 msb, lsb;
   buf = nboUnpackUInt(buf, msb);

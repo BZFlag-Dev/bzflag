@@ -247,14 +247,14 @@ void* GroupInstance::pack(void* buf)
 }
 
 
-void* GroupInstance::unpack(void* buf)
+const void* GroupInstance::unpack(const void* buf)
 {
   buf = nboUnpackStdString(buf, groupdef);
 
   buf = nboUnpackStdStringRaw(buf, name);
   if (strlen(name.c_str()) != name.size()) {
     // hack to extract material map data
-    void* p = (void*)(name.c_str() + strlen(name.c_str()) + 1);
+    const void* p = name.c_str() + strlen(name.c_str()) + 1;
     nboUseErrorChecking(false);
     {
       int32_t count;
@@ -816,7 +816,7 @@ void* GroupDefinition::pack(void* buf) const
 }
 
 
-void* GroupDefinition::unpack(void* buf)
+const void* GroupDefinition::unpack(const void* buf)
 {
   buf = nboUnpackStdString(buf, name);
 
@@ -1102,7 +1102,7 @@ void* GroupDefinitionMgr::pack(void* buf) const
 }
 
 
-void* GroupDefinitionMgr::unpack(void* buf)
+const void* GroupDefinitionMgr::unpack(const void* buf)
 {
   buf = world.unpack(buf);
   uint32_t i, count;

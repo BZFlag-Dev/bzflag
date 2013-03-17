@@ -44,7 +44,7 @@ public:
   void	getLagStats(char* msg, bool isAdmin) const;
   /** functions to be called whenever a playerUpdate or ping message arrives
    */
-  void	updatePingLag(void *buf, bool &warn, bool &kick,
+  void	updatePingLag(const void *buf, bool &warn, bool &kick,
 		      bool &jittwarn, bool &jittkick,
 		      bool &plosswarn, bool &plosskick,
 		      bool &alagannouncewarn, bool &lagannouncewarn);

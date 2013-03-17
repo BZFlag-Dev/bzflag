@@ -116,7 +116,7 @@ void * TextureMatrixManager::pack(void *buf) const
 }
 
 
-void * TextureMatrixManager::unpack(void *buf)
+const void * TextureMatrixManager::unpack(const void *buf)
 {
   unsigned int i;
   uint32_t count;
@@ -475,7 +475,7 @@ void * TextureMatrix::pack(void *buf) const
 }
 
 
-void * TextureMatrix::unpack(void *buf)
+const void * TextureMatrix::unpack(const void *buf)
 {
   buf = nboUnpackStdString (buf, name);
 

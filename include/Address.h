@@ -53,7 +53,7 @@ class Address {
     uint8_t		getIPVersion() const;
 
     void*		pack(void*) const;
-    void*		unpack(void*);
+    const void*		unpack(const void*);
 
     static Address	getHostAddress(const std::string &hostname = std::string(""));
     static std::string	getHostByAddress(InAddr);
@@ -78,7 +78,7 @@ const PlayerId		LastRealPlayer = FirstTeam - NumTeams;
 class ServerId {
   public:
     void*		pack(void*) const;
-    void*		unpack(void*);
+    const void*		unpack(const void*);
 
     bool		operator==(const ServerId&) const;
     bool		operator!=(const ServerId&) const;

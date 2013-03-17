@@ -72,7 +72,7 @@ class SphereObstacle : public Obstacle {
 
     int packSize() const;
     void *pack(void*) const;
-    void *unpack(void*);
+    const void *unpack(const void*);
 
     void print(std::ostream& out, const std::string& indent) const;
 

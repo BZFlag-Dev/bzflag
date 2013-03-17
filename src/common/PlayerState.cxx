@@ -144,7 +144,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
 }
 
 
-void*	PlayerState::unpack(void* buf, uint16_t code)
+const void*	PlayerState::unpack(const void* buf, uint16_t code)
 {
   int32_t inOrder;
   int16_t inStatus;

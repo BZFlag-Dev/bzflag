@@ -495,8 +495,8 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 	udpLength = 0;
 	return -1;
       }
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, len);
-      udpBufferPtr = (char *)nboUnpackUShort(udpBufferPtr, code);
+      udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, len);
+      udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
 //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
 //	logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
       UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
@@ -561,7 +561,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
 #endif
 
   // unpack header and get message
-  void* buf = headerBuffer;
+  const void* buf = headerBuffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 
@@ -655,7 +655,7 @@ bool ServerLink::readEnter (std::string& reason,
       return false;
     }
     else if (code == MsgReject) {
-      void *buf;
+      const void *buf;
       char buffer[MessageLen];
       buf = nboUnpackUShort (msg, rejcode); // filler for now
       buf = nboUnpackString (buf, buffer, MessageLen);

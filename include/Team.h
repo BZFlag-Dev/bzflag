@@ -29,7 +29,7 @@ struct Team {
     Team();
 
     void*		pack(void*) const;
-    void*		unpack(void*);
+    const void*		unpack(const void*);
 
     static const std::string  getImagePrefix(TeamColor); // const
     static const char*	getName(TeamColor); // const

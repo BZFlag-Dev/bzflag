@@ -246,7 +246,7 @@ void* BaseBuilding::pack(void* buf) const
 }
 
 
-void* BaseBuilding::unpack(void* buf)
+const void* BaseBuilding::unpack(const void* buf)
 {
   uint16_t shortTeam;
   buf = nboUnpackUShort(buf, shortTeam);

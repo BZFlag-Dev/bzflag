@@ -3534,7 +3534,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   }
 }
 
-static void shotUpdate(int playerIndex, void *buf, int len)
+static void shotUpdate(int playerIndex, const void *buf, int len)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3566,7 +3566,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
   broadcastMessage(MsgGMUpdate, len, buf);
 }
 
-static void shotFired(int playerIndex, void *buf, int len)
+static void shotFired(int playerIndex, const void *buf, int len)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3728,8 +3728,11 @@ static void shotFired(int playerIndex, void *buf, int len)
 	}
 
   // repack if changed
-  if (repack)
-    firingInfo.pack(buf);
+  if (repack) {
+    void *bufStart = getDirectMessageBuffer();
+    firingInfo.pack(bufStart);
+    buf = bufStart;
+  }
 
 
   // if shooter has a flag
@@ -4076,7 +4079,7 @@ static bool isCheatingMovement(GameKeeper::Player &playerData, PlayerState &stat
   return kickem;
 }
 
-static void handleCommand(int t, const void *rawbuf, bool udp)
+static void handleCommand(int t, void *rawbuf, bool udp)
 {
   if (!rawbuf) {
     std::cerr << "WARNING: handleCommand got a null rawbuf?!" << std::endl;
@@ -4089,7 +4092,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
   NetHandler *handler = playerData->netHandler;
 
   uint16_t len, code;
-  void *buf = (char *)rawbuf;
+  const void *buf = rawbuf;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
   char buffer[MessageLen];
@@ -4147,7 +4150,7 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
   debugEventData.code[0] = ((char*)&code)[0];
   debugEventData.code[1] = ((char*)&code)[1];
   debugEventData.len = (size_t)len;
-  debugEventData.msg = (unsigned char*)buf;
+  debugEventData.msg = (unsigned char*)rawbuf + 2 * sizeof(uint16_t);
   debugEventData.playerID = playerData->getIndex();
 
   worldEventManager.callEvents(&debugEventData);
@@ -4191,7 +4194,6 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       break;
 
     case MsgNegotiateFlags: {
-      void *bufStart;
       FlagTypeMap::iterator it;
       FlagSet::iterator m_it;
       FlagOptionMap hasFlag;
@@ -4218,7 +4220,8 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
       }
 
       /* Pack a message with the list of missing flags */
-      buf = bufStart = getDirectMessageBuffer();
+      char *bufStart = getDirectMessageBuffer();
+      void *tmpbuf = bufStart;
       for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it) {
 	if ((*m_it) != Flags::Null) {
 	  if ((*m_it)->custom) {
@@ -4230,11 +4233,11 @@ static void handleCommand(int t, const void *rawbuf, bool udp)
 	    directMessage(t, MsgFlagType, cfbuf-cfbufStart, cfbufStart);
 	  } else {
 	    // they should already know about this one, dump it back to them
-	    buf = (*m_it)->pack(buf);
+	    tmpbuf = (*m_it)->pack(tmpbuf);
 	  }
 	}
       }
-      directMessage(t, MsgNegotiateFlags, (char*)buf-(char*)bufStart, bufStart);
+      directMessage(t, MsgNegotiateFlags, (char*)tmpbuf-bufStart, bufStart);
       break;
     }
 
@@ -4925,7 +4928,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
   }
 
   uint16_t len, code;
-  void *buf = netPlayer.getTcpBuffer();
+  const void *buf = netPlayer.getTcpBuffer();
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
 

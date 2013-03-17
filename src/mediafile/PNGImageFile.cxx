@@ -64,16 +64,16 @@ PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL
     return;
   }
 
-  unsigned char* data = c->getData();
+  const void* data = c->getData();
   int32_t myWidth, myHeight;
-  data = (unsigned char *)nboUnpackInt(data, myWidth);
-  data = (unsigned char *)nboUnpackInt(data, myHeight);
+  data = nboUnpackInt(data, myWidth);
+  data = nboUnpackInt(data, myHeight);
 
-  data = (unsigned char *)nboUnpackUByte(data, bitDepth);
-  data = (unsigned char *)nboUnpackUByte(data, colorDepth);
-  data = (unsigned char *)nboUnpackUByte(data, compressionMethod);
-  data = (unsigned char *)nboUnpackUByte(data, filterMethod);
-  data = (unsigned char *)nboUnpackUByte(data, interlaceMethod);
+  data = nboUnpackUByte(data, bitDepth);
+  data = nboUnpackUByte(data, colorDepth);
+  data = nboUnpackUByte(data, compressionMethod);
+  data = nboUnpackUByte(data, filterMethod);
+  data = nboUnpackUByte(data, interlaceMethod);
 
   delete c;
 
@@ -246,11 +246,11 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
   PNGPalette *p = new PNGPalette(numColors);
   PNGRGB rgb;
 
-  unsigned char *pData = c->getData();
+  const void *pData = c->getData();
   for (int i = 0; i < numColors; i++) {
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.red);
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.green);
-    pData = (unsigned char *)nboUnpackUByte(pData, rgb.blue);
+    pData = nboUnpackUByte(pData, rgb.red);
+    pData = nboUnpackUByte(pData, rgb.green);
+    pData = nboUnpackUByte(pData, rgb.blue);
     p->add(rgb);
   }
   return p;

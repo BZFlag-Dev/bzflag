@@ -142,7 +142,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
   if (sLink.read(code, len, inbuf, 100) == 1) {
     lastMessage.first = "";
     lastMessage.second = Default;
-    void* vbuf = inbuf;
+    const void* vbuf = inbuf;
     PlayerId p;
     PlayerIdMap::const_iterator it;
     std::string victimName, killerName;
@@ -409,7 +409,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       TeamColor dstTeam = (LastRealPlayer < dst && dst <= FirstTeam ?
 			   TeamColor(FirstTeam - dst) : NoTeam);
       if (messageMask[MsgMessage]) {
-	lastMessage.first = formatMessage((char*)vbuf, MessageType(mtype),
+	lastMessage.first = formatMessage((const char*)vbuf, MessageType(mtype),
 					  src, dst, dstTeam, me);
 	PlayerIdMap::const_iterator iterator = players.find(src);
 	lastMessage.second = (iterator == players.end() ?

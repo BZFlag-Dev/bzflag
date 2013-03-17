@@ -113,7 +113,7 @@ void *PlayerInfo::packId(void *buf) {
   return buf;
 }
 
-bool PlayerInfo::unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg)
+bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
   // data: type, team, name, motto
   uint16_t _type;

@@ -80,7 +80,7 @@ public:
   bool	isHuman() const;
   void  *packUpdate(void *buf);
   void  *packId(void *buf);
-  bool	unpackEnter(void *buf, uint16_t &rejectCode, char *rejectMsg);
+  bool	unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg);
   bool  processEnter ( uint16_t &rejectCode, char *rejectMsg );
   const char *getCallSign() const;
   void setCallSign(const char * c);

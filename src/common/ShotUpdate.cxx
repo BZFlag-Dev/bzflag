@@ -33,7 +33,7 @@ void*			ShotUpdate::pack(void* buf) const
   return buf;
 }
 
-void*			ShotUpdate::unpack(void* buf)
+const void*		ShotUpdate::unpack(const void* buf)
 {
   buf = nboUnpackUByte(buf, player);
   buf = nboUnpackUShort(buf, id);
@@ -64,7 +64,7 @@ void*			FiringInfo::pack(void* buf) const
   return buf;
 }
 
-void*			FiringInfo::unpack(void* buf)
+const void*		FiringInfo::unpack(const void* buf)
 {
   buf = nboUnpackFloat(buf, timeSent);
   buf = shot.unpack(buf);

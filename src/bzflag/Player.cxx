@@ -1034,7 +1034,7 @@ void Player::addShots(SceneDatabase* scene, bool colorblind) const
 }
 
 
-void* Player::unpack(void* buf, uint16_t code)
+const void* Player::unpack(const void* buf, uint16_t code)
 {
   float timestamp;
   PlayerId ident;
