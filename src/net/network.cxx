@@ -26,9 +26,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#if defined(_old_linux_)
-#define hstrerror(x) sys_errlist[x]
-#elif defined(sun)
+#if defined(sun)
 #define hstrerror(x) "<network error>"
 #endif
 

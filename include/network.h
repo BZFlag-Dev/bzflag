@@ -60,11 +60,7 @@
 #  include <bstring.h>
 #endif
 
-#if defined(__linux__) && !defined(_old_linux_)
-#  define AddrLen		unsigned int
-/* setsockopt incorrectly prototypes the 4th arg without const. */
-#  define SSOType		void*
-#elif defined(BSD) || defined(sun) || defined(__GLIBC__)
+#if defined(BSD) || defined(sun) || defined(__GLIBC__)
 #  define AddrLen		socklen_t
 #elif defined (__APPLE__)
 #  include <AvailabilityMacros.h>
