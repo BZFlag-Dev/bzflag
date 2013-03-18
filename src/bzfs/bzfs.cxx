@@ -670,8 +670,10 @@ void resetTeamScores ( void )
   // reset team scores
   for (int i = RedTeam; i <= PurpleTeam; i++)
   {
-    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,team[i].team.getWins(),0));
-    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,team[i].team.getLosses(),0));
+    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
+    worldEventManager.callEvents(&eventData);
+    eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
+    worldEventManager.callEvents(&eventData);
     team[i].team.setLosses(0);
    team[i].team.setWins(0);
   }
@@ -1139,7 +1141,7 @@ bool defineWorld ( void )
     resetFlag(*FlagInfo::get(i));
   }
   bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
-  worldEventManager.callEvents(eventData);
+  worldEventManager.callEvents(&eventData);
   return true;
 }
 
@@ -2123,7 +2125,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   // see if the API wants to set the motto
   bz_GetPlayerMottoData_V2 mottoEvent(playerData->player.getMotto());
   mottoEvent.record = bz_getPlayerByIndex(playerIndex);
-  worldEventManager.callEvents(mottoEvent);
+  worldEventManager.callEvents(&mottoEvent);
   playerData->player.setMotto(mottoEvent.motto.c_str());
 
   // broadcast motto only if player has TALK permission
@@ -3101,7 +3103,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
 	  int old = team[int(victim->getTeam())].team.getLosses();
 	  team[int(victim->getTeam())].team.setLosses(old+delta);
-	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()),bz_eLosses,old,old+delta));
+	  bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+delta);
+	  worldEventManager.callEvents(&eventData);
 	}
       } else {
 	if (killer && !killer->isTeam(RogueTeam)) {
@@ -3109,13 +3112,15 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
 	  int old = team[winningTeam].team.getWins();
 	  team[winningTeam].team.setWins(old+1);
-	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()),bz_eWins,old,old+1));
+	  bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old, old+1);
+	  worldEventManager.callEvents(&eventData);
 	}
 	if (!victim->isTeam(RogueTeam))
 	{
 	  int old = team[int(victim->getTeam())].team.getLosses();
 	  team[int(victim->getTeam())].team.setLosses(old+1);
-	  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()),bz_eLosses,old,old+1));
+	  bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+1);
+	  worldEventManager.callEvents(&eventData);
 	}
 	if (killer)
 	  killerTeam = killer->getTeam();
@@ -3519,11 +3524,13 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
 
       int old = team[winningTeam].team.getWins();
       team[winningTeam].team.setWins(old+1);
-      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam),bz_eWins,old,old+1));
+      bz_TeamScoreChangeEventData_V1 eventData2 = bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam), bz_eWins, old, old+1);
+      worldEventManager.callEvents(&eventData2);
     }
     int old = team[teamIndex].team.getLosses();
     team[teamIndex].team.setLosses(old+1);
-    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex),bz_eLosses,old,old+1));
+    bz_TeamScoreChangeEventData_V1 eventData3 = bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex), bz_eLosses, old, old+1);
+    worldEventManager.callEvents(&eventData3);
 
     sendTeamUpdate(-1, winningTeam, teamIndex);
   #ifdef PRINTSCORE
@@ -5085,7 +5092,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 	{
 		bz_ServerAddPlayerData_V1 eventData;
 		eventData.player = bz_getPlayerByIndex(playerData.getIndex());
-		worldEventManager.callEvents(eventData);
+		worldEventManager.callEvents(&eventData);
 		if (eventData.allow)
 			AddPlayer(p, &playerData);
 		else
@@ -5388,7 +5395,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	  if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
 	  {
 	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
-	    worldEventManager.callEvents(data);
+	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
 	      peer.deleteMe = true;
@@ -5426,7 +5433,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    netHandler->flushData();
 
 	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
-	    worldEventManager.callEvents(data);
+	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
 	      peer.deleteMe = true;
@@ -5528,7 +5535,7 @@ static void bzdbGlobalCallback(const std::string& name, void* UNUSED(data))
 {
   const std::string value = BZDB.get(name);
   bz_BZDBChangeData_V1 eventData(name, value);
-  worldEventManager.callEvents(eventData);
+  worldEventManager.callEvents(&eventData);
 }
 
 class UPnP {

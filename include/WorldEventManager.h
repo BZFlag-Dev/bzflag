@@ -75,9 +75,6 @@ public:
 
   void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
   void callEvents ( bz_EventData	*eventData );
-  void callEvents ( const bz_EventData	&eventData ){callEvents((bz_EventData*)&eventData);}
-
-  
 
 private:
  tvEventList eventList;

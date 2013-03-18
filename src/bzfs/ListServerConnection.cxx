@@ -296,7 +296,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	  // tell the API that auth is complete
 	  bz_AuthenticationCompleteData_V1 eventData;
 	  eventData.player = bz_getPlayerByIndex(playerData->getIndex());
-	  worldEventManager.callEvents(eventData);
+	  worldEventManager.callEvents(&eventData);
   }
 
   for (int i = 0; i < curMaxPlayers; i++) {

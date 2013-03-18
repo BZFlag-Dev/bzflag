@@ -1257,7 +1257,8 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins)
 
   int oldWins = player->score.getWins();
   player->score.setWins(wins);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eWins, oldWins, wins));
+  bz_PlayerScoreChangeEventData_V1 eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eWins, oldWins, wins);
+  worldEventManager.callEvents(&eventData);
   broadcastPlayerScoreUpdate(playerId);
   return true;
 }
@@ -1304,7 +1305,8 @@ BZF_API bool bz_setPlayerLosses (int playerId, int losses)
 
   int old = player->score.getLosses();
   player->score.setLosses(losses);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eLosses, old, losses));
+  bz_PlayerScoreChangeEventData_V1 eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eLosses, old, losses);
+  worldEventManager.callEvents(&eventData);
 
   broadcastPlayerScoreUpdate(playerId);
   return true;
@@ -1319,7 +1321,8 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
 
   int old = player->score.getTKs();
   player->score.setTKs(tks);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eTKs, old, tks));
+  bz_PlayerScoreChangeEventData_V1 eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eTKs, old, tks);
+  worldEventManager.callEvents(&eventData);
 
   broadcastPlayerScoreUpdate(playerId);
   return true;
@@ -1389,15 +1392,18 @@ BZF_API bool bz_resetPlayerScore(int playerId)
 
   int old = player->score.getWins();
   player->score.setWins(0);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eWins, old, 0));
+  bz_PlayerScoreChangeEventData_V1 eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eWins, old, 0);
+  worldEventManager.callEvents(&eventData);
 
   old = player->score.getLosses();
   player->score.setLosses(0);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eLosses, old, 0));
+  eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eLosses, old, 0);
+  worldEventManager.callEvents(&eventData);
 
   old = player->score.getTKs();
   player->score.setTKs(0);
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerId,bz_eTKs, old, 0));
+  eventData = bz_PlayerScoreChangeEventData_V1(playerId, bz_eTKs, old, 0);
+  worldEventManager.callEvents(&eventData);
 
   broadcastPlayerScoreUpdate(playerId);
   return true;
@@ -2866,7 +2872,8 @@ BZF_API void bz_setTeamWins (bz_eTeamType _team, int wins )
 
   int old = team[teamIndex].team.getWins();
   team[teamIndex].team.setWins(wins);
-  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,wins));
+  bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(_team, bz_eWins, old, wins);
+  worldEventManager.callEvents(&eventData);
 
   checkTeamScore(-1, teamIndex);
   sendTeamUpdate(-1,teamIndex);
@@ -2881,7 +2888,8 @@ BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
 
   int old = team[teamIndex].team.getLosses();
   team[teamIndex].team.setLosses(losses);
-  worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,losses));
+  bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(_team, bz_eWins, old, losses);
+  worldEventManager.callEvents(&eventData);
   sendTeamUpdate(-1,teamIndex);
 }
 
@@ -2896,11 +2904,14 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
   {
     int old = team[teamIndex].team.getWins();
     team[teamIndex].team.setWins(0);
-    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,0));
+    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(_team, bz_eWins, old, 0);
+    worldEventManager.callEvents(&eventData);
 
     team[teamIndex].team.getLosses();
     team[teamIndex].team.setLosses(0);
-    worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(_team,bz_eWins,old,0));
+    // Reinitialize eventData because we don't know that it wasn't changed above.
+    eventData = bz_TeamScoreChangeEventData_V1(_team, bz_eWins, old, 0);
+    worldEventManager.callEvents(&eventData);
 
     sendTeamUpdate(-1,teamIndex);
   }
@@ -2910,11 +2921,12 @@ BZF_API void bz_resetTeamScore (bz_eTeamType _team )
     {
       int old = team[i].team.getWins();
       team[i].team.setWins(0);
-      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,old,0));
+      bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, old, 0);
+      worldEventManager.callEvents(&eventData);
 
       team[i].team.getLosses();
       team[i].team.setLosses(0);
-      worldEventManager.callEvents(bz_TeamScoreChangeEventData_V1(convertTeam(i),bz_eWins,old,0));
+      worldEventManager.callEvents(&eventData);
 
       sendTeamUpdate(-1,i);
     }

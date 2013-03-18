@@ -61,7 +61,8 @@ bool Score::isTK() const {
 void Score::changeScoreElement(bz_eScoreElement element, int *toChange, int newValue) {
   int oldValue = *toChange;
   *toChange = newValue;
-  worldEventManager.callEvents(bz_PlayerScoreChangeEventData_V1(playerID, element, oldValue, newValue));
+  bz_PlayerScoreChangeEventData_V1 eventData = bz_PlayerScoreChangeEventData_V1(playerID, element, oldValue, newValue);
+  worldEventManager.callEvents(&eventData);
 }
 
 
