@@ -2300,6 +2300,7 @@ bool SetGroupCommand::operator() (const char* msg,
 	       group.c_str(), playerData->player.getCallSign());
       sendMessage(ServerPlayer, getID, temp);
       GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.addGroup(group);
+      sendPlayerInfo();
     }
     PlayerAccessInfo::updateDatabases();
   } else {
@@ -2351,6 +2352,7 @@ bool RemoveGroupCommand::operator() (const char* msg,
 	       group.c_str(), playerData->player.getCallSign());
       sendMessage(ServerPlayer, getID, temp);
       GameKeeper::Player::getPlayerByIndex(getID)->accessInfo.removeGroup(group);
+      sendPlayerInfo();
     }
     PlayerAccessInfo::updateDatabases();
   } else {
