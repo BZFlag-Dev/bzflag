@@ -10,7 +10,6 @@ and express versions will build just fine.
 Visual Studio 6.0, 7.1, 8.0 and 9.0 support has been discontinued,
 and no projects are provided for these versions.
 
-
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;
 for details, see README.MINGW32 (for MinGW) or the main
