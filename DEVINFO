@@ -293,7 +293,7 @@ If you do not have source code commit access and would like to propose
 a change for inclusion, you should create a patch.  Patches should be
 submitted to the SourceForge project site patches tracker at:
 
-https://sourceforge.net/tracker/?func=add&group_id=3248&atid=303248
+https://sourceforge.net/p/bzflag/patches/new/
 
 You can create a patch for submission to SourceForge from a source
 checkout using the following command:
@@ -501,10 +501,10 @@ cannot proceed.  A checklist of items to be completed follows:
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. svn copy bzflag \
-	     https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/v2_4_0/
+ 	     svn+ssh://svn.code.sf.net/p/bzflag/code/tags/v2_4_0/
 
 - Perform a
-  "svn export https://bzflag.svn.sourceforge.net/svnroot/bzflag/tags/vMAJOR_MINOR_RELEASE"
+  "svn export http://svn.code.sf.net/p/bzflag/code/tags/vMAJOR_MINOR_RELEASE"
   from somewhere else in the filesystem to obtain the tagged version
   of the sources.
 

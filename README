@@ -59,7 +59,7 @@ IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
 to where the current development activity resides.  If you're familiar
 enough, anonymous SVN access is provided:
 
-     svn co https://bzflag.svn.sourceforge.net/svnroot/bzflag/trunk/bzflag bzflag
+     svn co svn://svn.code.sf.net/p/bzflag/code/trunk/bzflag bzflag
 
 
 Compiling and Installation
@@ -256,7 +256,7 @@ lists dedicated to SVN activity, league discussions, and server
 administration.
 
 To join a mailing list, go to the SourceForge mailing list page on the
-project site: http://sourceforge.net/mail/?group_id=3248 and follow
+project site: http://sourceforge.net/p/bzflag/mailman/ and follow
 the links for joining the respective mailing lists that interest you.
 
 Bulletin Boards
@@ -288,7 +288,7 @@ Bug Reports and Support
 For reporting bugs and unexpected behavior, please go to BZFlag bug
 tracking system at:
 
-http://sourceforge.net/tracker/?group_id=3248&atid=103248
+http://sourceforge.net/p/bzflag/bugs/
 
 Alternatively, you can email bug reports to the development mailing
 list or to Tim@Rikers.org but the web based method is preferred.  See
@@ -297,7 +297,7 @@ the BUGS file in the source distribution for other known issues.
 If you require assistance with some issue, please visit BZFlag support
 tracking system at:
 
-http://sourceforge.net/tracker/?group_id=3248&atid=203248
+http://sourceforge.net/p/bzflag/support-requests/
 
 Alternatively, the IRC channel, discussion forums, and mailing lists
 are also viable avenues for resolving issues.
@@ -308,7 +308,7 @@ Providing Contributions
 
 Patches should be entered into the BZFlag patch tracking system at:
 
-http://sourceforge.net/tracker/?group_id=3248&atid=303248
+http://sourceforge.net/p/bzflag/patches/
 
 Patches are preferred in the unified diff format.  From a SVN
 checkout, a unified diff patch file may be created as follows:
