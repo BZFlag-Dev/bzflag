@@ -391,7 +391,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
   ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }
 
-void GuidedMissileStrategy::readUpdate(uint16_t code, void* msg)
+void GuidedMissileStrategy::readUpdate(uint16_t code, const void* msg)
 {
   // ignore non-guided missile messages (we shouldn't get them)
   if (code != MsgGMUpdate) return;
