@@ -274,6 +274,10 @@ const char * MsgStrings::strMsgCode (uint16_t code)
 }
 
 
+// a simple example of how to use this:
+// MsgStringList details = MsgStrings::msgFromServer(len, code, msg);
+// for (MsgStringList::iterator i = details.begin(); i != details.end(); i++)
+//   std::cerr << i->text << std::endl;
 MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
 {
   int i;
