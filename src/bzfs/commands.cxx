@@ -1239,7 +1239,7 @@ static void flagCommandHelp(int t)
 {
   sendMessage(ServerPlayer, t, "/flag up");
   sendMessage(ServerPlayer, t, "/flag show");
-  sendMessage(ServerPlayer, t, "/flag reset <all|unused|team|#flagId|FlagAbbv>");
+  sendMessage(ServerPlayer, t, "/flag reset <all|unused|team|#flagId|FlagAbbv> [noteam]");
   sendMessage(ServerPlayer, t, "/flag take <#slot|PlayerName|\"PlayerName\">");
   sendMessage(ServerPlayer, t,
 	      "/flag give <#slot|PlayerName|\"PlayerName\"> <#flagId|FlagAbbr> [force]");
@@ -1316,22 +1316,27 @@ bool FlagCommand::operator() (const char	 *message,
   }
   else if (strncasecmp(msg, "reset", 5) == 0) {
     msg += 5;
-    while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
 
-    if (*msg == '\0') {
+    std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+    if (argv.size() < 1) {
       flagCommandHelp(t);
       return true;
     }
 
-    FlagType* ft = Flag::getDescFromAbbreviation(msg);
+    const char* command = argv[0].c_str();
 
-    if (strncasecmp(msg, "all", 3) == 0) {
-      bz_resetFlags(false);
+    const bool keepTeamFlags = ((argv.size() > 1) &&
+                               strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
+
+    FlagType* ft = Flag::getDescFromAbbreviation(command);
+
+    if (strncasecmp(command, "all", 3) == 0) {
+      bz_resetFlags(false, keepTeamFlags);
     }
-    else if (strncasecmp(msg, "unused", 6) == 0) {
-      bz_resetFlags(true);
+    else if (strncasecmp(command, "unused", 6) == 0) {
+      bz_resetFlags(true, keepTeamFlags);
     }
-    else if (strncasecmp(msg, "team", 4) == 0) {
+    else if (strncasecmp(command, "team", 4) == 0) {
       // team flags
       for (int i = 0; i < numFlags; i++) {
 	FlagInfo* fi = FlagInfo::get(i);
@@ -1344,11 +1349,11 @@ bool FlagCommand::operator() (const char	 *message,
 	}
       }
     }
-    else if (msg[0] == '#') {
+    else if (command[0] == '#') {
       if (!checkFlagMaster(playerData)) {
 	return true;
       }
-      int fIndex = atoi(msg + 1);
+      int fIndex = atoi(command + 1);
       FlagInfo* fi = FlagInfo::get(fIndex);
       if (fi != NULL) {
 	const int playerIndex = fi->player;
