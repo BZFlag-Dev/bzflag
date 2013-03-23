@@ -804,8 +804,18 @@ sequence length can optionally be specified in seconds.  Examples:
 .ft R
 
 .TP
-.B /flag reset \fR[\fIunused\fR]
-Repositions flags. If \fIunused\fR is specified, flags carried by tanks are not affected.
+.B /flag reset \fR{\fIall\fR|\fIunused\fR|\fIteam\fR|\fIFlagId\fR} 
+Repositions flags. If \fIunused\fR is specified, flags carried 
+by tanks are not affected. Using the \fIteam\fR option only 
+resets team flags, whereas specifying a flag id (such as GM) only
+repositions flags of this type. If \fInoteam\fR is specified,
+team flags will not be reset. Examples:
+.ft CW
+.nf
+.ne 2
+/flag reset unused noteam
+/flag reset G
+.ft R
 
 .TP
 .B /flag show
