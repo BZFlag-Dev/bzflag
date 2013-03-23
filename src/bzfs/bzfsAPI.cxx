@@ -2421,14 +2421,16 @@ BZF_API bool bz_removePlayerFlag ( int playerID )
   return true;
 }
 
-BZF_API void bz_resetFlags ( bool onlyUnused )
+BZF_API void bz_resetFlags ( bool onlyUnused, bool keepTeamFlags )
 {
   for (int i = 0; i < numFlags; i++)
   {
     FlagInfo &flag = *FlagInfo::get(i);
     // see if someone had grabbed flag,
+    // and if it belongs to a certain team
     const int playerIndex = flag.player;
-    if (!onlyUnused || (playerIndex == -1))
+    const TeamColor flagTeam = flag.teamIndex();
+    if ((!onlyUnused || (playerIndex == -1)) && (!keepTeamFlags || flagTeam == NoTeam))
       resetFlag(flag);
   }
 }

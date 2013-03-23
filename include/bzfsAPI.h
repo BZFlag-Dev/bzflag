@@ -1460,7 +1460,7 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, 
 // flags
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force );
 BZF_API bool bz_removePlayerFlag ( int playerID );
-BZF_API void bz_resetFlags ( bool onlyUnused );
+BZF_API void bz_resetFlags ( bool onlyUnused, bool keepTeamFlags = false );
 
 BZF_API unsigned int bz_getNumFlags( void );
 BZF_API const bz_ApiString bz_getName( int flag );
