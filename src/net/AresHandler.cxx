@@ -26,9 +26,9 @@ AresHandler::AresHandler(int _index)
   memset(&hostAddress, 0, sizeof(hostAddress));
 
   /* ask for local "hosts" lookups too */
-  static const char* lookups = "fb";
+  static char lookups[] = "fb";
   struct ares_options opts;
-  opts.lookups = (char*)lookups; // we cheat, libares uses strdup
+  opts.lookups = lookups;
 
   /* start up our resolver */
   if (!globallyInited) {
