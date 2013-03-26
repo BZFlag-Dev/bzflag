@@ -5452,11 +5452,12 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    // call an event to let people know we got a new connect
 	    bz_NewNonPlayerConnectionEventData_V1 eventData;
 
-	    eventData.data = (void*)peer.bufferedInput.c_str();
-	    eventData.size =  peer.bufferedInput.size();
+	    eventData.data = strdup(peer.bufferedInput.c_str());
+	    eventData.size = peer.bufferedInput.size();
 	    eventData.connectionID = sockFD;
 
 	    worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
+	    free(eventData.data);
 
 	    // if someone wanted him they'd have set his handler and he'll never get here again
 	  }
