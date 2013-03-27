@@ -15,6 +15,7 @@
 #include "TimeKeeper.h"
 #include "vectors.h"
 
+
 namespace Shots
 {
 	//----------------Manager
@@ -34,13 +35,15 @@ namespace Shots
 
 		Logics.clear();
 
-		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
-			delete(*itr);
+		// uncomment delete to not use shared_ptr
+// 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
+// 			delete(*itr);
 
 		LiveShots.clear();
 
-		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
-			delete(*itr);
+		// uncomment delete to not use shared_ptr
+// 		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
+// 			delete(*itr);
 
 		RecentlyDeadShots.clear();
 	}
@@ -72,7 +75,7 @@ namespace Shots
 		if (!logic)
 			logic = Logics[""];
 
-		Shot *shot = new Shot(NewGUID(),info,*logic);
+		ShotRef shot(new Shot(NewGUID(),info,*logic));
 		LiveShots.push_back(shot);
 		return shot->GetGUID();
 	}
@@ -111,7 +114,7 @@ namespace Shots
 
 	void Manager::SetShotTarget( uint32_t shotID, PlayerId target )
 	{
-		Shot* shot = FindByID(shotID);
+		ShotRef shot = FindByID(shotID);
 		if (shot)
 			shot->Retarget(target);
 	}
@@ -136,7 +139,7 @@ namespace Shots
 		return LastGUID;
 	}
 
-	Shot* Manager::FindByID (uint32_t shotID)
+	ShotRef Manager::FindByID (uint32_t shotID)
 	{
 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
 		{
@@ -153,7 +156,7 @@ namespace Shots
 		{
 			if ((*itr)->Update())
 			{
-				Shot* shot = *itr;
+				ShotRef shot = *itr;
 				itr = LiveShots.erase(itr);
 				shot->End();
 				RecentlyDeadShots.push_back(shot);
@@ -169,7 +172,11 @@ namespace Shots
 		while ( itr != RecentlyDeadShots.end())
 		{
 			if (now - (*itr)->GetLastUpdateTime() >= Manager::DeadShotCacheTime)
+			{
+				// uncomment delete to not use shared_ptr
+				//delete(*itr);
 				itr = RecentlyDeadShots.erase(itr);
+			}
 			else
 				itr++;
 		}
@@ -218,7 +225,7 @@ namespace Shots
 		Target = target;
 	}
 
-	fvec3 FlightLogic::ProjectShotLocation( Shot &shot, double deltaT )
+	fvec3 FlightLogic::ProjectShotLocation( Shot& shot, double deltaT )
 	{
 		fvec3 vec;
 		vec.x = shot.LastUpdatePosition.x + (shot.Info.shot.vel[0] * (float)deltaT);

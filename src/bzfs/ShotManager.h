@@ -23,6 +23,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <memory>
 
 /** a ShotManager is used track shots fired by players and the server
  */
@@ -63,7 +64,11 @@ public:
 	double GetStartTime(){return StartTime;}
 };
 
-typedef std::vector<Shot*> ShotList;
+// uncomment this and comment the next line to not use shared_ptr
+//typedef Shot*	ShotRef;
+typedef std::shared_ptr<Shot>	ShotRef;
+
+typedef std::vector<std::shared_ptr<Shot>> ShotList;
 
 class FlightLogic
 {
@@ -75,7 +80,7 @@ public:
 	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
 
 protected:
-	virtual fvec3 ProjectShotLocation(  Shot& shot, double deltaT );
+	virtual fvec3 ProjectShotLocation( Shot& shot, double deltaT );
 };
 
 typedef std::map<std::string, FlightLogic*> FlightLogicMap;
@@ -110,7 +115,7 @@ public:
 
 private:
 	uint32_t NewGUID();
-	Shot*	FindByID(uint32_t shotID);
+	ShotRef	FindByID(uint32_t shotID);
 
 	ShotList	LiveShots;
 	ShotList	RecentlyDeadShots;
