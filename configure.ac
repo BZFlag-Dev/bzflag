@@ -675,7 +675,7 @@ case $host_os in
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
 	FLAGS="-Wall -W -Wundef -Wshadow"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -ansi -pedantic"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -std=c++0x -pedantic"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
