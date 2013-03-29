@@ -146,7 +146,7 @@ namespace Shots
 			if ((*itr)->GetGUID() == shotID)
 				return *itr;
 		}
-		return NULL;
+		return ShotRef();
 	}
 
 	void Manager::Update()
