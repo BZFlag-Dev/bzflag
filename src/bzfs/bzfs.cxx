@@ -2500,6 +2500,7 @@ void zapFlagByPlayer(int playerIndex)
     return;
 
   FlagInfo &flag = *FlagInfo::get(flagid);
+  flag.player = playerIndex;
   // do not simply zap team flag
   Flag &carriedflag = flag.flag;
   if (carriedflag.type->flagTeam != ::NoTeam) {
