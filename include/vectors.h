@@ -23,7 +23,6 @@
 
 #include "vectors_old.h" // FIXME -- the crappy old-style vectors
 
-
 //============================================================================//
 
 template <typename T> T typed_cos(T rads);
@@ -264,6 +263,8 @@ class vec3 {
       return true;
     }
     vec3 normalize() const { vec3 v(*this); normalize(v); return v; }
+
+	static T toRadians( T value) {return T * (T)(M_PI/180.0);}
 
     vec3 rotateX(T radians) const {
       const T cv = typed_cos(radians);
