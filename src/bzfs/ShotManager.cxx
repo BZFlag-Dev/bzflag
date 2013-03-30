@@ -229,13 +229,13 @@ namespace Shots
 	}
 	//----------------GuidedMissileLogic
 
-	bool GuidedMissileLogic::Update ( Shot& /*shot*/ )
+	bool GuidedMissileLogic::Update ( Shot& shot )
 	{
 		// compute the distance to target and knock that sucker down
 		return false;
 	}
 
-	void GuidedMissileLogic::End (  Shot& /*shot*/ )
+	void GuidedMissileLogic::End (  Shot& shot )
 	{
 
 	}

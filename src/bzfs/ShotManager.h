@@ -39,7 +39,6 @@ protected:
 	uint32_t GUID;
 	FlightLogic &Logic;
 
-	
 	double	StartTime;
 	double	LifeTime;
 	double	LastUpdateTime;
@@ -74,8 +73,8 @@ class FlightLogic
 public:
 	virtual ~FlightLogic(){}
 
-	virtual bool Update ( Shot& /*shot*/ ){return false;}
-	virtual void End ( Shot& /*shot*/ ){}
+	virtual bool Update ( Shot& UNUSED(shot) ){return false;}
+	virtual void End ( Shot& UNUSED(shot) ){}
 	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
 
 protected:
@@ -133,14 +132,14 @@ class GuidedMissileLogic: public FlightLogic
 public:
 	virtual ~GuidedMissileLogic(){}
 
-	virtual bool Update ( Shot& /*shot*/ );
-	virtual void End ( Shot& /*shot*/ );
+	virtual bool Update ( Shot& UNUSED(shot) );
+	virtual void End ( Shot& UNUSED(shot) );
 };
 
 class SuperBulletLogic: public FlightLogic
 {
 public:
-	virtual bool Update ( Shot& /*shot*/ );
+	virtual bool Update ( Shot& UNUSED(shot) );
 };
 
 }
