@@ -77,6 +77,9 @@ namespace Shots
 
 		ShotRef shot(new Shot(NewGUID(),info,*logic));
 		LiveShots.push_back(shot);
+
+		if (ShotCreated)
+			(*ShotCreated)(shot);
 		return shot->GetGUID();
 	}
 
@@ -90,6 +93,8 @@ namespace Shots
 				(*itr)->End();
 				RecentlyDeadShots.push_back((*itr));
 				itr = LiveShots.erase(itr);
+				if (ShotEnded)
+					(*ShotEnded)(*itr);
 				return;
 			}
 			else
@@ -141,11 +146,11 @@ namespace Shots
 
 	ShotRef Manager::FindByID (uint32_t shotID)
 	{
-		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
-		{
-			if ((*itr)->GetGUID() == shotID)
-				return *itr;
-		}
+ 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
+ 		{
+ 			if ((*itr)->GetGUID() == shotID)
+ 				return *itr;
+ 		}
 		return ShotRef();
 	}
 

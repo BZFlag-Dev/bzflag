@@ -24,6 +24,7 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <functional>
 
 /** a ShotManager is used track shots fired by players and the server
  */
@@ -67,8 +68,8 @@ public:
 // uncomment this and comment the next line to not use shared_ptr
 //typedef Shot*	ShotRef;
 typedef std::shared_ptr<Shot>	ShotRef;
-
 typedef std::vector<std::shared_ptr<Shot>> ShotList;
+typedef std::shared_ptr<std::function <void (ShotRef)> > ShotEvent;
 
 class FlightLogic
 {
@@ -113,6 +114,9 @@ public:
   ShotList	LiveShotsForPlayer(PlayerId player);
   ShotList	DeadShotsForPlayer(PlayerId player);
 
+  ShotEvent ShotCreated;
+  ShotEvent ShotEnded;
+
 private:
 	uint32_t NewGUID();
 	ShotRef	FindByID(uint32_t shotID);
@@ -139,7 +143,6 @@ class SuperBulletLogic: public FlightLogic
 {
 public:
 	virtual bool Update ( Shot& /*shot*/ );
-
 };
 
 }
