@@ -65,8 +65,6 @@ public:
 	double GetStartTime(){return StartTime;}
 };
 
-// uncomment this and comment the next line to not use shared_ptr
-//typedef Shot*	ShotRef;
 typedef std::shared_ptr<Shot>	ShotRef;
 typedef std::vector<std::shared_ptr<Shot>> ShotList;
 typedef std::shared_ptr<std::function <void (ShotRef)> > ShotEvent;

@@ -35,15 +35,7 @@ namespace Shots
 
 		Logics.clear();
 
-		// uncomment delete to not use shared_ptr
-// 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
-// 			delete(*itr);
-
 		LiveShots.clear();
-
-		// uncomment delete to not use shared_ptr
-// 		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
-// 			delete(*itr);
 
 		RecentlyDeadShots.clear();
 	}
@@ -177,11 +169,7 @@ namespace Shots
 		while ( itr != RecentlyDeadShots.end())
 		{
 			if (now - (*itr)->GetLastUpdateTime() >= Manager::DeadShotCacheTime)
-			{
-				// uncomment delete to not use shared_ptr
-				//delete(*itr);
 				itr = RecentlyDeadShots.erase(itr);
-			}
 			else
 				itr++;
 		}
