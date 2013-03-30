@@ -44,6 +44,7 @@ namespace Shots
 	{
 		Logics[Flags::GuidedMissile->flagAbbv] = new GuidedMissileLogic();
 		Logics[Flags::SuperBullet->flagAbbv] = new SuperBulletLogic();
+		Logics[Flags::ShockWave->flagAbbv] = new ShockwaveLogic();
 	}
 
 	void Manager::SetFlightLogic(const char* flagCode, FlightLogic* logic)
@@ -68,10 +69,16 @@ namespace Shots
 			logic = Logics[""];
 
 		ShotRef shot(new Shot(NewGUID(),info,*logic));
+
+		shot->LastUpdateTime = shot->StartTime = Now();
+		logic->Setup(*shot);
+		shot->Update(); // to get the initial position
+		shot->StartPosition = shot->LastUpdatePosition;
+
 		LiveShots.push_back(shot);
 
 		if (ShotCreated)
-			(*ShotCreated)(shot);
+			(*ShotCreated)(*shot);
 		return shot->GetGUID();
 	}
 
@@ -86,7 +93,7 @@ namespace Shots
 				RecentlyDeadShots.push_back((*itr));
 				itr = LiveShots.erase(itr);
 				if (ShotEnded)
-					(*ShotEnded)(*itr);
+					(*ShotEnded)(*(*itr));
 				return;
 			}
 			else
@@ -146,11 +153,19 @@ namespace Shots
 		return ShotRef();
 	}
 
+	double Manager::Now()
+	{
+		return TimeKeeper::getCurrent().getSeconds();
+	}
+
 	void Manager::Update()
 	{
+		double now = Now();
+
 		ShotList::iterator itr = LiveShots.begin();
 		while ( itr != LiveShots.end())
 		{
+			(*itr)->LastUpdateTime = now;
 			if ((*itr)->Update())
 			{
 				ShotRef shot = *itr;
@@ -161,8 +176,6 @@ namespace Shots
 			else
 				itr++;
 		}
-
-		double now = TimeKeeper::getCurrent().getSeconds();
 
 		itr = RecentlyDeadShots.begin();
 
@@ -190,19 +203,23 @@ namespace Shots
 
 	//----------------Shot
 
-	Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), LastUpdateTime(-1.0), Info(info)
+	Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), LastUpdateTime(-1.0), Info(info), Pimple(NULL)
 	{
-		StartTime = TimeKeeper::getCurrent().getSeconds();
+		StartTime = -1;
 		LifeTime = info.lifetime;
 		Target = NoPlayer;
 	}
 
+	Shot::~Shot()
+	{
+		if (Pimple)
+			delete(Pimple);
+	}
+
 	bool Shot::Update()
 	{
-		if (TimeKeeper::getCurrent().getSeconds() - StartTime >= LifeTime || Logic.Update(*this))
+		if (Logic.Update(*this))
 			return true;
-
-		LastUpdateTime = TimeKeeper::getCurrent().getSeconds();
 		return false;
 	}
 
@@ -217,36 +234,117 @@ namespace Shots
 		Logic.Retarget(*this,target);
 		Target = target;
 	}
+	
+
+//----------------ProjectileShotLogic
+	bool FlightLogic::Update ( Shot& shot)
+	{
+		return shot.GetLastUpdateTime() - shot.GetStartTime() >= shot.GetLifeTime();
+	}
 
 	fvec3 FlightLogic::ProjectShotLocation( Shot& shot, double deltaT )
 	{
-		fvec3 vec;
+		fvec3 vec; 
 		vec.x = shot.LastUpdatePosition.x + (shot.Info.shot.vel[0] * (float)deltaT);
 		vec.y = shot.LastUpdatePosition.y + (shot.Info.shot.vel[1] * (float)deltaT);
 		vec.z = shot.LastUpdatePosition.z + (shot.Info.shot.vel[2] * (float)deltaT);
 
 		return vec;
 	}
-	//----------------GuidedMissileLogic
 
-	bool GuidedMissileLogic::Update ( Shot& shot )
+//----------------ProjectileShotLogic
+	bool ProjectileShotLogic::Update ( Shot& shot )
 	{
-		// compute the distance to target and knock that sucker down
-		return false;
+		shot.LastUpdatePosition = ProjectShotLocation(shot,shot.GetLastUpdateTime() - shot.GetStartTime());
+		return FlightLogic::Update(shot );
 	}
 
+//----------------GuidedMissileLogic
 	void GuidedMissileLogic::End (  Shot& shot )
 	{
 
 	}
 
-//----------------SuperBulletLogic
-	bool SuperBulletLogic::Update ( Shot& shot )
+//----------------ShockwaveLogic
+	void ShockwaveLogic::Setup( Shot& shot )
 	{
-		shot.LastUpdatePosition = ProjectShotLocation(shot,shot.GetLastUpdateTime() - shot.GetStartTime());
+		shot.LastUpdatePosition.x = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+		shot.LastUpdatePosition.y = 0;
+		shot.LastUpdatePosition.z = 0;
+	}
+
+	bool ShockwaveLogic::Update ( Shot& shot )
+	{
+		float delta = BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
+		shot.LastUpdatePosition.x =  BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS) + (float)(delta * shot.GetLifeParam());
+		shot.LastUpdatePosition.y = 0;
+		shot.LastUpdatePosition.z = 0;
+		return FlightLogic::Update(shot);
+	}
+
+	bool ShockwaveLogic::CollideBox ( Shot& shot, fvec3& center, fvec3& size, float rotation )
+	{
+		// check the top locations
+		fvec3 xyPlus = size;
+		fvec3 xyNeg(-size.x,-size.y,size.z);
+		fvec3 xPlusYNeg(size.x,-size.y,size.z);
+		fvec3 xNegYPlus(-size.x,size.y,size.z);
+
+		float rotRads = fvec3::toRadians(rotation);
+
+		// rotate them all into orientation
+		xyPlus.rotateZ(rotRads);
+		xyNeg.rotateZ(rotRads);
+		xPlusYNeg.rotateZ(rotRads);
+		xNegYPlus.rotateZ(rotRads);
+
+		// attach them to the center
+		xyPlus += center;
+		xyNeg += center;
+		xPlusYNeg += center;
+		xNegYPlus += center;
+
+		// check the top
+		if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot) || PointInSphere(xNegYPlus,shot))
+			return true;
+
+		// check the bottom
+		xyPlus.z = center.z;
+		xyNeg.z = center.z;
+		xPlusYNeg.z = center.z;
+		xNegYPlus.z = center.z;
+
+		if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot) || PointInSphere(xNegYPlus,shot))
+			return true;
+
 		return false;
 	}
 
+	bool ShockwaveLogic::CollideSphere ( Shot& shot, fvec3& center, float radius )
+	{
+		fvec3 vecToPoint = center - shot.StartPosition;
+		return vecToPoint.length() <= shot.LastUpdatePosition.x - radius;
+	}
+
+	bool ShockwaveLogic::CollideCylinder ( Shot& shot, fvec3&center, float height, float radius )
+	{
+		if (center.z > shot.StartPosition.z + shot.LastUpdatePosition.x)
+			return false; // too high
+		
+		if (center.z + height < shot.StartPosition.z - shot.LastUpdatePosition.x)
+			return false; // too low
+
+		fvec3 vecToPoint = center - shot.StartPosition;
+		vecToPoint.z = 0;
+
+		return vecToPoint.length() <= shot.LastUpdatePosition.x - radius;
+	}
+
+	bool ShockwaveLogic::PointInSphere ( fvec3& point, Shot& shot )
+	{
+		fvec3 vecToPoint = point - shot.StartPosition;
+		return vecToPoint.length() <= shot.LastUpdatePosition.x;
+	}
 }
 
 // Local Variables: ***

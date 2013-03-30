@@ -31,7 +31,27 @@
 
 namespace Shots
 {
-class FlightLogic;
+class Shot;
+
+class FlightLogic
+{
+public:
+	virtual ~FlightLogic(){}
+
+	virtual void Setup(Shot& UNUSED(shot) ){}
+	virtual bool Update ( Shot& UNUSED(shot) ); // call the base class for lifetime expire
+	virtual void End ( Shot& UNUSED(shot) ){}
+	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
+
+	virtual bool CollideBox ( Shot& UNUSED(shot), fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation) ){return false;}
+	virtual bool CollideSphere ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(radius) ){return false;}
+	virtual bool CollideCylinder ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius) ){return false;}
+
+protected:
+	virtual fvec3 ProjectShotLocation( Shot& shot, double deltaT );
+};
+
+typedef std::map<std::string, FlightLogic*> FlightLogicMap;
 
 class Shot
 {
@@ -39,17 +59,21 @@ protected:
 	uint32_t GUID;
 	FlightLogic &Logic;
 
-	double	StartTime;
 	double	LifeTime;
-	double	LastUpdateTime;
-
 public:
+	fvec3		StartPosition;
 	fvec3		LastUpdatePosition;
+	double		LastUpdateTime;
+	double		StartTime;
+
 	FiringInfo	Info;
 
 	PlayerId	Target;
 
+	void		*Pimple;
+
 	Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic);
+	virtual ~Shot();
 
 	bool Update();
 	void End();
@@ -62,26 +86,18 @@ public:
 
 	double GetLastUpdateTime(){return LastUpdateTime;}
 	double GetStartTime(){return StartTime;}
+	double GetLifeTime(){return LifeTime;}
+
+	double GetLifeParam(){return (LastUpdateTime-StartTime)/LifeTime;}
+
+	bool CollideBox ( fvec3 &center, fvec3 size, float rotation ){return Logic.CollideBox(*this,center,size,rotation);}
+	bool CollideSphere ( fvec3 &center, float radius ){return Logic.CollideSphere(*this,center,radius);}
+	bool CollideCylinder ( fvec3 &center, float height, float radius){return Logic.CollideCylinder(*this,center,height,radius);}
 };
 
 typedef std::shared_ptr<Shot>	ShotRef;
 typedef std::vector<std::shared_ptr<Shot>> ShotList;
-typedef std::shared_ptr<std::function <void (ShotRef)> > ShotEvent;
-
-class FlightLogic
-{
-public:
-	virtual ~FlightLogic(){}
-
-	virtual bool Update ( Shot& UNUSED(shot) ){return false;}
-	virtual void End ( Shot& UNUSED(shot) ){}
-	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
-
-protected:
-	virtual fvec3 ProjectShotLocation( Shot& shot, double deltaT );
-};
-
-typedef std::map<std::string, FlightLogic*> FlightLogicMap;
+typedef std::shared_ptr<std::function <void (Shot&)> > ShotEvent;
 
 #define INVALID_SHOT_GUID 0
 
@@ -118,30 +134,51 @@ private:
 	uint32_t NewGUID();
 	ShotRef	FindByID(uint32_t shotID);
 
+	double Now();
+
 	ShotList	LiveShots;
 	ShotList	RecentlyDeadShots;
 
 	FlightLogicMap Logics;
 
 	uint32_t	LastGUID;
+
 };
 
+class ProjectileShotLogic: public FlightLogic
+{
+public:
+	virtual ~ProjectileShotLogic(){}
 
-class GuidedMissileLogic: public FlightLogic
+	virtual bool Update ( Shot& shot );
+};
+
+class GuidedMissileLogic: public ProjectileShotLogic
 {
 public:
 	virtual ~GuidedMissileLogic(){}
 
-	virtual bool Update ( Shot& UNUSED(shot) );
 	virtual void End ( Shot& UNUSED(shot) );
 };
 
-class SuperBulletLogic: public FlightLogic
+class SuperBulletLogic: public ProjectileShotLogic
 {
 public:
-	virtual bool Update ( Shot& UNUSED(shot) );
 };
 
+class ShockwaveLogic: public FlightLogic
+{
+public:
+	virtual void Setup(Shot& shot );
+	virtual bool Update ( Shot& shot );
+
+	virtual bool CollideBox ( Shot& shot, fvec3& ecnter, fvec3& size, float rotation );
+	virtual bool CollideSphere ( Shot& shot, fvec3& center, float radius );
+	virtual bool CollideCylinder ( Shot& shot, fvec3& center, float height, float radius );
+
+protected:
+	bool PointInSphere ( fvec3& point, Shot& shot );
+};
 }
 #endif  /*__SPAWNPOLICY_H__ */
 
