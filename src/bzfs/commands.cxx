@@ -585,7 +585,7 @@ ShowGroupCommand::ShowGroupCommand()     : ServerCommand("/showgroup",
 ShowPermsCommand::ShowPermsCommand()     : ServerCommand("/showperms",
   "[callsign] - list the permissions that a user has been granted") {}
 GroupPermsCommand::GroupPermsCommand()   : ServerCommand("/groupperms",
-  "- list the permissions for each group") {}
+  "[group] - list the permissions for each group") {}
 SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
   "<callsign> <group> - add the user to the specified group") {}
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
@@ -2225,13 +2225,31 @@ bool ShowPermsCommand::operator() (const char* msg,
 }
 
 
-bool GroupPermsCommand::operator() (const char*,
+bool GroupPermsCommand::operator() (const char* msg,
 				    GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  sendMessage(ServerPlayer, t, "Group List:");
+  msg += commandName.size();
+
+  std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
+  std::string group;
+
+  if (!argv.empty()) {
+    group = argv[0];
+    if (groupAccess.find(group) == groupAccess.end()) {
+      std::string warning = "Group " + group + " does not exist.";
+      sendMessage(ServerPlayer, t, warning.c_str());
+      return true;
+    }
+  }
+
+  if(group.empty())
+    sendMessage(ServerPlayer, t, "Group List:");
+
   PlayerAccessMap::iterator itr;
   for (itr = groupAccess.begin(); itr != groupAccess.end(); ++itr) {
+    if (!group.empty() && group != itr->first) continue;
+
     std::string line;
     line = itr->first + ":   ";
     sendMessage(ServerPlayer, t, line.c_str());
