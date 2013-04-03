@@ -260,7 +260,7 @@ namespace Shots
 	}
 
 //----------------GuidedMissileLogic
-	void GuidedMissileLogic::End (  Shot& shot )
+	void GuidedMissileLogic::End (  Shot& UNUSED(shot) )
 	{
 
 	}
