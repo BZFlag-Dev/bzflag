@@ -1242,7 +1242,7 @@ public:
     , rank(0.0), wins(0), losses(0), teamKills(0)
   {}
 
-  ~bz_BasePlayerRecord() {}
+  virtual ~bz_BasePlayerRecord() {}
 
   void update(void) { bz_updatePlayerData(this); } // call to update with current data
 
