@@ -39,6 +39,9 @@
 #if (defined(HAVE_CURSES_H) && !defined(WIN32))
 #define NOMACROS
 #include <curses.h>
+#ifdef HAVE_STRING_H
+#  include <string.h>
+#endif
 
 #ifndef KEY_RESIZE
 #define KEY_RESIZE (KEY_MAX + 1)

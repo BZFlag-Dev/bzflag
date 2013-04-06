@@ -22,6 +22,9 @@
 #else
 #  include <sys/types.h>
 #  include <sys/select.h>
+#  ifdef HAVE_STRING_H
+#    include <string.h>	// on Solaris FD_ZERO() is a macro that uses memset()
+#  endif
 #endif
 
 /* implementation headers */
