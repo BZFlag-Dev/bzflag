@@ -195,6 +195,9 @@ extern int debugLevel;
 #  ifdef HAVE_VALUES_H
 #    include <values.h>
 #  endif
+#  ifdef HAVE_LIMITS_H
+#    include <limits.h>
+#  endif
 #else
 #  include <limits.h>
 /* BeOS: FIXME */
