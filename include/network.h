@@ -60,7 +60,7 @@
 #  include <bstring.h>
 #endif
 
-#if defined(BSD) || defined(sun) || defined(__GLIBC__)
+#if defined(BSD) || defined(__sun__) || defined(__GLIBC__)
 #  define AddrLen		socklen_t
 #elif defined (__APPLE__)
 #  include <AvailabilityMacros.h>
