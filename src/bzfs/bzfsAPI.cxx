@@ -2757,19 +2757,20 @@ BZF_API const char* bz_pluginBinPath(void)
 
 BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
 {
-  if (playerID == BZ_SERVER || !soundName)
-    return false;
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUShort(bufStart, LocalCustomSound);
-  buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
-  buf = nboPackString(buf, soundName,strlen(soundName));
-  if (playerID == BZ_ALLUSERS)
-    broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
-  else
-    directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
-
-  return true;
+  return false;
+//   if (playerID == BZ_SERVER || !soundName)
+//     return false;
+// 
+//   void *buf, *bufStart = getDirectMessageBuffer();
+//   buf = nboPackUShort(bufStart, LocalCustomSound);
+//   buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
+//   buf = nboPackString(buf, soundName,strlen(soundName));
+//   if (playerID == BZ_ALLUSERS)
+//     broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+//   else
+//     directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
+// 
+//   return true;
 }
 
 // custom pluginHandler
