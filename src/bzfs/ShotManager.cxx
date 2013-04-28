@@ -212,8 +212,6 @@ namespace Shots
 
 	Shot::~Shot()
 	{
-		if (Pimple)
-			delete(Pimple);
 	}
 
 	bool Shot::Update()
