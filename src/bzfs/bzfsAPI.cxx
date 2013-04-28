@@ -2755,7 +2755,7 @@ BZF_API const char* bz_pluginBinPath(void)
 }
 
 
-BZF_API bool bz_sendPlayCustomLocalSound ( int playerID, const char* soundName )
+BZF_API bool bz_sendPlayCustomLocalSound ( int UNUSED(playerID), const char* UNUSED(soundName) )
 {
   return false;
 //   if (playerID == BZ_SERVER || !soundName)
