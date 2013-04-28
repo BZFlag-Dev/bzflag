@@ -42,9 +42,9 @@ dnl
 
 dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
-AC_PREREQ(2.58)
+AC_PREREQ([2.58])
 
-AC_INIT(BZFlag, 2.4.3, [http://BZFlag.org/], bzflag)
+AC_INIT([BZFlag],[2.4.3],[http://BZFlag.org/],[bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
 AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])
@@ -89,7 +89,7 @@ dnl automatically when doing a make dist for convenience.
 AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
 
 dnl all configured definitions get written here
-AM_CONFIG_HEADER([include/config.h])
+AC_CONFIG_HEADERS([include/config.h])
 
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
@@ -120,7 +120,7 @@ if test x$with_SDL != xno; then
 fi
 
 # check whether plugins are desired
-AC_ARG_ENABLE(plugins, AC_HELP_STRING([--disable-plugins],[do not compile plugins]))
+AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
 if test "x$enable_plugins" != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
@@ -168,7 +168,7 @@ AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
 
 # compile our own glew
 AC_ARG_WITH(included-glew,
-        AC_HELP_STRING([--with-included-glew],[build with included GLEW library]),
+        AS_HELP_STRING([--with-included-glew],[build with included GLEW library]),
         [enable_glew_build="$withval"], )
 
 # compile our own regex
@@ -350,7 +350,6 @@ AC_CHECK_HEADERS( \
 	dsound.h \
 	fcntl.h \
 	inttypes.h \
-	limits.h \
 	linux/input.h \
 	process.h \
 	sched.h \
@@ -409,16 +408,16 @@ if test $ac_cv_type_socklen_t != yes; then
 	ac_cv_socklen_t_equiv=
 	for arg2 in "struct sockaddr" void; do
 	  for t in int size_t unsigned long "unsigned long"; do
-	    AC_TRY_COMPILE([
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 		#include <sys/types.h>
 		#include <sys/socket.h>
 		int getpeername (int, $arg2 *, $t *);
-	    ],[
+	    ]], [[
 		$t len;	getpeername(0,0,&len);
-	    ],[
+	    ]])],[
 		ac_cv_socklen_t_equiv="$t"
 		break
-	    ])
+	    ],[])
 	  done
 	done
 	if test "x$ac_cv_socklen_t_equiv" = x; then
@@ -452,8 +451,7 @@ AC_MSG_CHECKING([for OpenGL framework (Darwin-specific)])
 FRAMEWORK_OPENGL=""
 PRELIBS="$LIBS"
 LIBS="$LIBS -framework OpenGL"
-AC_TRY_LINK([#include <OpenGL/gl.h>], [glBegin(GL_POINTS)],
-    [FRAMEWORK_OPENGL="-framework OpenGL" ; ac_cv_search_glBegin="-framework OpenGL" ; AC_MSG_RESULT(yes)], [AC_MSG_RESULT(no)])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]], [[glBegin(GL_POINTS)]])],[FRAMEWORK_OPENGL="-framework OpenGL" ; ac_cv_search_glBegin="-framework OpenGL" ; AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
 LIBS="$PRELIBS"
 AC_SUBST(FRAMEWORK_OPENGL)
 
@@ -676,7 +674,7 @@ case $host_os in
 	# time to use -Wextra instead of -W ? (gcc 3.4+)
 	FLAGS="-Wall -W -Wundef -Wshadow"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -ansi -pedantic"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
@@ -747,7 +745,7 @@ fi
 
 if test x$enable_debug = xyes ; then
     CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
-    CONF_CXXFLAGS="-std=c++0x $CONF_CXXFLAGS -Werror -g -O0"
+    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
     # revert automatic setting of CFLAGS and CXXFLAGS to prevent
     # override of "-g -O0" put into CONF_CFLAGS and CONF_CXXFLAGS above
     CFLAGS="$user_CFLAGS"
@@ -757,7 +755,7 @@ else
     if test "$GCC" = yes ; then
 	OPTIMIZE="-fexpensive-optimizations"
 	CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
-	CONF_CXXFLAGS="-std=c++0x $CONF_CXXFLAGS $OPTIMIZE"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
     fi
     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi
@@ -926,18 +924,18 @@ if test "x$enable_ares_build" != "xyes" ; then
     AC_MSG_CHECKING(for ares DNS lookup functionality)
     PRELIBS="$LIBS"
     LIBS="$LIBS $LIBCARES"
-    AC_TRY_LINK([
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
 #include <ares.h>
 void callback(void * /*arg*/, int /*callbackStatus*/,
               int /*timeouts*/, struct hostent * /*hostent*/) {}
-], [
+]], [[
   ares_channel aresChannel;
   in_addr requestedAddress;
 
   ares_gethostbyaddr(aresChannel, &requestedAddress,
 		     sizeof(in_addr), AF_INET, callback, NULL);
-    ], [ares_works=yes], [ares_works=no])
+    ]])],[ares_works=yes],[ares_works=no])
     LIBS="$PRELIBS"
     AC_MSG_RESULT($ares_works)
 fi # enable_ares_build
