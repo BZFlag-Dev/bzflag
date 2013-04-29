@@ -1050,7 +1050,7 @@ BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
   for (int i = 0; i < curMaxPlayers; i++)
   {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-    if ((p == NULL))
+    if (p == NULL)
       continue;
 
     playerList->push_back(i);
@@ -2816,7 +2816,7 @@ BZF_API int bz_getTeamCount ( bz_eTeamType _team )
   for (int i = 0; i < curMaxPlayers; i++)
   {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-    if ((p == NULL))
+    if (p == NULL)
       continue;
 
     if (p->player.getTeam() == teamIndex)

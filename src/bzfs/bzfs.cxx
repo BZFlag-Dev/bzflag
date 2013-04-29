@@ -759,7 +759,7 @@ PingPacket getTeamCounts()
     for (int i = 0; i < curMaxPlayers; i++)
     {
       GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-      if ((p == NULL))
+      if (p == NULL)
 	continue;
 
       if (p->player.isHuman())
