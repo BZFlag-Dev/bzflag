@@ -1210,13 +1210,13 @@ IDLESTATS	/idlestats
 .br
 INFO	not implemented
 .br
-JITTERWARN	/jitterwarn
+JITTERWARN	/jitterwarn /jitterdrop
 .br
 KICK	/kick
 .br
 LAGSTATS	/lagstats
 .br
-LAGWARN	/lagwarn
+LAGWARN	/lagwarn /lagdrop
 .br
 LISTPERMS	not implemented
 .br
@@ -1226,7 +1226,7 @@ MODCOUNT	/modcount
 .br
 MUTE	/mute
 .br
-PACKETLOSSWARN	/packetlosswarn
+PACKETLOSSWARN	/packetlosswarn /packetlossdrop
 .br
 PLAYERLIST	/playerlist
 .br

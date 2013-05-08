@@ -687,13 +687,42 @@ The default is \fIdrive with winner\fR mode.
 .SH "User Commands"
 The following commands can be executed by sending a message to all and using these strings as the message
 .TP 15
-SILENCE \fIplayerName\fR
-Does not display any message coming from player with \fIplayerName\fR name
+/bind \fIkey\fR \fIpress\fR \fIaction\fR
+Bind a \fIkey\fR press to an \fIaction\fR. \fIpress\fR can be \fBup\fR, \fBdown\fR or \fBboth\fR
 .TP 15
-UNSILENCE \fIplayerName\fR
+/debug [\fIlevel\fR]
+Show or set the debug level to \fIlevel\fR
+.TP 15
+/diff
+List all BZDB server variables that are not set to the default value
+.TP 15
+/forceradar
+Force the radar to be displayed (only works for observers)
+.TP 15
+/highlight \fIpattern\fR
+Highlight all messages containing \fIpattern\fR on the console
+.TP 15
+/localset \fIvariable\fR [\fIvalue\fR]
+Read a local variable or set it to \fIvalue\fR
+.TP 15
+/roampos {reset|send|\fIangle\fR|\fIx\fR \fIy\fR \fIz\fR [\fItheta\fR [\fIphi\fR [\fIzoom\fR]]]}
+Manipulate the observer camera (only useful in Roaming and Tracking modes). Without arguments, it shows
+a usage message and the current camera location. \fBreset\fR resets the camera's location to the center
+of the map and \fBsend\fR sends information about the camera to the server. \fIangle\fR moves the camera
+outside the map at a certain angle, looking towards its center. \fIx\fR, \fIy\fR and \fIz\fR
+are used to set the camera's location, \fItheta\fR defines the camera's horizontal angle, \fIphi\fR defines
+its vertical angle and \fIzoom\fR sets the camera's zoom level. All angles are defined in degrees.
+.TP 15
+/savemsgs [-s]
+Save all messages to a file in your config directory. If \fB-s\fR is provided, coloring data are stripped.
+.TP 15
+/silence \fIplayerName\fR
+Do not display any message coming from player with \fIplayerName\fR name
+.TP 15
+/unsilence \fIplayerName\fR
 Reshow messages coming from player with \fIplayerName\fR name
 .TP 15
-SAVEWORLD \fIfilename\fR
+/saveworld \fIfilename\fR
 Save the current world to \fIfilename\fR.
 .SH "FILES"
 .TP 15
