@@ -190,6 +190,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/idlist");
   registerWord("/idlestats");
   registerWord("/idletime");
+  registerWord("/jitterdrop");
+  registerWord("/jitterwarn");
   registerWord("/kick ");
   registerWord("/kill ");
   registerWord("/lagdrop");
@@ -199,6 +201,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/modcount ");
   registerWord("/mute ");
   registerWord("/owner");
+  registerWord("/packetlossdrop");
+  registerWord("/packetlosswarn");
   registerWord("/password ");
   registerWord("/playerlist");
   registerWord("/poll ");
