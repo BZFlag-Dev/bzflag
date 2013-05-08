@@ -1174,6 +1174,20 @@ ADMINMESSAGESEND	player may send messages on the admin channel
 .br
 ALL	\fBall\fR permissions available
 .br
+ANTIBAN	player is immune to /ban
+.br
+ANTIKICK	player is immune to /kick
+.br
+ANTIKILL	player is immune to /kill
+.br
+ANTIPOLL	player is immune to /poll
+.br
+ANTIPOLLBAN	player is immune to /poll ban
+.br
+ANTIPOLLKICK	player is immune to /poll kick
+.br
+ANTIPOLLKILL	player is immune to /poll kill
+.br
 BAN	/ban /hostban
 .br
 BANLIST	/banlist /hostbanlist
@@ -1182,15 +1196,21 @@ CLIENTQUERY	/clientquery
 .br
 COUNTDOWN	/countdown
 .br
-ENDGAME	/endgame
+ENDGAME	/gameover
 .br
 FLAGHISTORY	/flaghistory
 .br
-FLAGMOD	/flag
+FLAGMASTER	/flag
+.br
+FLAGMOD	/flag reset /flag show /flag history 
+.br
+HIDEADMIN	player doesn't show the @ sign
 .br
 IDLESTATS	/idlestats
 .br
 INFO	not implemented
+.br
+JITTERWARN	/jitterwarn
 .br
 KICK	/kick
 .br
@@ -1200,7 +1220,13 @@ LAGWARN	/lagwarn
 .br
 LISTPERMS	not implemented
 .br
+MASTERBAN	/masterban
+.br
+MODCOUNT	/modcount
+.br
 MUTE	/mute
+.br
+PACKETLOSSWARN	/packetlosswarn
 .br
 PLAYERLIST	/playerlist
 .br
@@ -1218,13 +1244,19 @@ POLLSET	/poll set
 .br
 PRIVATEMESSAGE	/msg
 .br
+RECORD	/record
+.br
 REJOIN	allows instant rejoin, regardless of _rejoinTime
 .br
 REMOVEPERMS	/removegroup
 .br
+REPLAY	/replay
+.br
 REQUIREIDENTIFY	user must use global registration 
 .br
 SAY	/say
+.br
+SENDHELP	/sendhelp
 .br
 SETALL	use of all set/remove commands
 .br
@@ -1234,7 +1266,9 @@ SETPASSWORD	not implemented
 .br
 SETVAR	/set /reset
 .br
-SHOWOTHERS	not implemented
+SHORTBAN	/ban (with a limited duration)
+.br
+SHOWOTHERS	/showgroup /showperms (on others)
 .br
 SHUTDOWNSERVER	/shutdownserver
 .br
