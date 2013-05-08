@@ -178,8 +178,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/gameover");
   registerWord("/grouplist");
   registerWord("/groupperms");
-  registerWord("/help");
   registerWord("/handicap");
+  registerWord("/help");
   registerWord("/highlight ");
   registerWord("/hostban ");
   registerWord("/hostunban ");
@@ -189,13 +189,16 @@ void DefaultCompleter::setDefaults()
   registerWord("/idbanlist");
   registerWord("/idlist");
   registerWord("/idlestats");
+  registerWord("/idletime");
   registerWord("/kick ");
   registerWord("/kill ");
   registerWord("/lagdrop");
   registerWord("/lagstats");
   registerWord("/lagwarn ");
   registerWord("/localset ");
+  registerWord("/modcount ");
   registerWord("/mute ");
+  registerWord("/owner");
   registerWord("/password ");
   registerWord("/playerlist");
   registerWord("/poll ");
@@ -226,6 +229,8 @@ void DefaultCompleter::setDefaults()
   registerWord("/retexture");
   registerWord("/roampos ");
   registerWord("/saveworld ");
+  registerWord("/say ");
+  registerWord("/sendhelp ");
   registerWord("/serverdebug");
   registerWord("/serverquery");
   registerWord("/set");
