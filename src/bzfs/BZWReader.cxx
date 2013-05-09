@@ -195,7 +195,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
   WorldFileObject* object = NULL;
   WorldFileObject* newObject = NULL;
   WorldFileObject* const fakeObject = (WorldFileObject*)((char*)NULL + 1);
-  GroupDefinition* const worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
+  GroupDefinition* const worldDef = const_cast<GroupDefinition*>(OBSTACLEMGR.getWorld());
   GroupDefinition* const startDef = groupDef;
 
   std::string customObject;
@@ -423,7 +423,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
   // read file
   std::vector<WorldFileObject*> list;
-  GroupDefinition* worldDef = (GroupDefinition*)OBSTACLEMGR.getWorld();
+  GroupDefinition* worldDef = const_cast<GroupDefinition*>(OBSTACLEMGR.getWorld());
   if (!readWorldStream(list, worldDef)) {
     emptyWorldFileObjectList(list);
     errorHandler->fatalError(std::string("world file failed to load."), 0);
