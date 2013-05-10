@@ -115,7 +115,7 @@ HUDuiCallback		HUDuiControl::getCallback() const
   return cb;
 }
 
-void*			HUDuiControl::getUserData() const
+const void*		HUDuiControl::getUserData() const
 {
   return userData;
 }
@@ -171,7 +171,7 @@ void			HUDuiControl::setNext(HUDuiControl* _next)
   else next = _next;
 }
 
-void			HUDuiControl::setCallback(HUDuiCallback _cb, void* _ud)
+void			HUDuiControl::setCallback(HUDuiCallback _cb, const void* _ud)
 {
   cb = _cb;
   userData = _ud;

@@ -38,7 +38,7 @@ class CacheMenu : public HUDDialog {
     void execute();
     void resize(int width, int height);
     void setFailedMessage(const char* msg);
-    static void callback(HUDuiControl* w, void* data);
+    static void callback(HUDuiControl* w, const void* data);
 
   private:
     float center;

@@ -45,10 +45,10 @@ class JoinMenu : public HUDDialog {
     void		execute();
     void		dismiss();
     void		resize(int width, int height);
-    void		updateTeamTexture();
+    void		updateTeamTexture() const;
 
   private:
-    static void		teamCallback(HUDuiControl*, void*);
+    static void		teamCallback(HUDuiControl*, const void*);
     TeamColor		getTeam() const;
     void		setTeam(TeamColor);
     void		setStatus(const char*, const std::vector<std::string> *parms = NULL);

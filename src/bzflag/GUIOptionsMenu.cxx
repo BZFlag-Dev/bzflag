@@ -44,7 +44,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   HUDuiList* option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Style:");
-  option->setCallback(callback, (void*)"e");
+  option->setCallback(callback, "e");
   std::vector<std::string>* options = &option->getList();
   options->push_back(std::string("Normal"));
   options->push_back(std::string("Fast"));
@@ -56,7 +56,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Scoreboard Sort:");
-  option->setCallback(callback, (void*)"p");
+  option->setCallback(callback, "p");
   options = &option->getList();
   const char **sortLabels = ScoreboardRenderer::getSortLabels();
   while ( *sortLabels != NULL)
@@ -67,7 +67,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Always Show Team Scores:");
-  option->setCallback(callback, (void*)"q");
+  option->setCallback(callback, "q");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -77,7 +77,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Scoreboard Font Size:");
-  option->setCallback(callback, (void*)"S");
+  option->setCallback(callback, "S");
   options = &option->getList();
   options->push_back(std::string("Auto"));
   option->createSlider(4);
@@ -87,7 +87,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("ControlPanel Font Size:");
-  option->setCallback(callback, (void*)"C");
+  option->setCallback(callback, "C");
   options = &option->getList();
   options->push_back(std::string("Auto"));
   option->createSlider(4);
@@ -98,7 +98,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Extended Observer Info:");
-  option->setCallback(callback, (void*)"O");
+  option->setCallback(callback, "O");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -111,7 +111,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Panel Opacity:");
-  option->setCallback(callback, (void*)"y");
+  option->setCallback(callback, "y");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -120,7 +120,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Opacity:");
-  option->setCallback(callback, (void*)"Y");
+  option->setCallback(callback, "Y");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -129,7 +129,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Colored shots on radar:");
-  option->setCallback(callback, (void*)"z");
+  option->setCallback(callback, "z");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -140,7 +140,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Shot Length:");
-  option->setCallback(callback, (void*)"l");
+  option->setCallback(callback, "l");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -149,7 +149,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Shot Size:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -158,7 +158,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Shot Line:");
-  option->setCallback(callback, (void*)"F");
+  option->setCallback(callback, "F");
   options = &option->getList();
   options->push_back(std::string("Lagging"));
   options->push_back(std::string("Leading"));
@@ -170,7 +170,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar Position:");
-  option->setCallback(callback, (void*)"P");
+  option->setCallback(callback, "P");
   options = &option->getList();
   options->push_back(std::string("Left"));
   options->push_back(std::string("Right"));
@@ -181,7 +181,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Radar & Panel Size:");
-  option->setCallback(callback, (void*)"R");
+  option->setCallback(callback, "R");
   option->createSlider(maxRadarSize+1);
   option->update();
   listHUD.push_back(option);
@@ -190,7 +190,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Mouse Box Size:");
-  option->setCallback(callback, (void*)"M");
+  option->setCallback(callback, "M");
   option->createSlider(22);
   option->update();
   listHUD.push_back(option);
@@ -199,7 +199,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Locale:");
-  option->setCallback(callback, (void*)"L");
+  option->setCallback(callback, "L");
   options = &option->getList();
   std::vector<std::string> locales;
   if (BundleMgr::getLocaleList(&locales) == true) {
@@ -228,7 +228,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Control panel tabs:");
-  option->setCallback(callback, (void*)"t");
+  option->setCallback(callback, "t");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Left"));
@@ -239,7 +239,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Control panel coloring:");
-  option->setCallback(callback, (void*)"c");
+  option->setCallback(callback, "c");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -249,7 +249,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Underline color:");
-  option->setCallback(callback, (void*)"u");
+  option->setCallback(callback, "u");
   options = &option->getList();
   options->push_back(std::string("Cyan"));
   options->push_back(std::string("Grey"));
@@ -260,7 +260,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Killer Highlight:");
-  option->setCallback(callback, (void*)"k");
+  option->setCallback(callback, "k");
   options = &option->getList();
   options->push_back(std::string("None"));
   options->push_back(std::string("Pulsating"));
@@ -271,7 +271,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Pulsation Rate:");
-  option->setCallback(callback, (void*)"r");
+  option->setCallback(callback, "r");
   option->createSlider(9);
   option->update();
   listHUD.push_back(option);
@@ -279,7 +279,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Pulsation Depth:");
-  option->setCallback(callback, (void*)"d");
+  option->setCallback(callback, "d");
   option->createSlider(9);
   option->update();
   listHUD.push_back(option);
@@ -287,7 +287,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Time / Date Display:");
-  option->setCallback(callback, (void*)"h");
+  option->setCallback(callback, "h");
   options = &option->getList();
   options->push_back(std::string("time"));
   options->push_back(std::string("date"));
@@ -298,7 +298,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Reload timer on HUD:");
-  option->setCallback(callback, (void*)"T");
+  option->setCallback(callback, "T");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -309,7 +309,7 @@ GUIOptionsMenu::GUIOptionsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Motto Display Length:");
-  option->setCallback(callback, (void*)"E");
+  option->setCallback(callback, "E");
   option->createSlider(32+1);
   option->update();
   listHUD.push_back(option);
@@ -410,7 +410,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
   }
 }
 
-void			GUIOptionsMenu::callback(HUDuiControl* w, void* data)
+void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
 

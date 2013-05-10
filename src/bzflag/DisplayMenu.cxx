@@ -45,7 +45,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Dithering:");
-  option->setCallback(callback, (void*)"1");
+  option->setCallback(callback, "1");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -55,7 +55,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Blending:");
-  option->setCallback(callback, (void*)"2");
+  option->setCallback(callback, "2");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -65,7 +65,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Smoothing:");
-  option->setCallback(callback, (void*)"3");
+  option->setCallback(callback, "3");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -75,7 +75,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Lighting:");
-  option->setCallback(callback, (void*)"4");
+  option->setCallback(callback, "4");
   options = &option->getList();
   options->push_back(std::string("None"));
   options->push_back(std::string("Fast"));
@@ -86,7 +86,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Texturing:");
-  option->setCallback(callback, (void*)"5");
+  option->setCallback(callback, "5");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Nearest"));
@@ -101,7 +101,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("AntiFlicker:");
-  option->setCallback(callback, (void*)"R");
+  option->setCallback(callback, "R");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -111,7 +111,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Anisotropic:");
-  option->setCallback(callback, (void*)"A");
+  option->setCallback(callback, "A");
   options = &option->getList();
 #ifdef HAVE_GLEW
   if (GLEW_EXT_texture_filter_anisotropic) {
@@ -139,7 +139,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Quality:");
-  option->setCallback(callback, (void*)"6");
+  option->setCallback(callback, "6");
   options = &option->getList();
   options->push_back(std::string("Low"));
   options->push_back(std::string("Medium"));
@@ -151,7 +151,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Shadows:");
-  option->setCallback(callback, (void*)"7");
+  option->setCallback(callback, "7");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Stipple"));
@@ -165,7 +165,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Hidden Line:");
-    option->setCallback(callback, (void*)"a");
+    option->setCallback(callback, "a");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -175,7 +175,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Wireframe:");
-    option->setCallback(callback, (void*)"b");
+    option->setCallback(callback, "b");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -185,7 +185,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Depth Complexity:");
-    option->setCallback(callback, (void*)"c");
+    option->setCallback(callback, "c");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -195,7 +195,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Culling Tree:");
-    option->setCallback(callback, (void*)"d");
+    option->setCallback(callback, "d");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -205,7 +205,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Collision Tree:");
-    option->setCallback(callback, (void*)"e");
+    option->setCallback(callback, "e");
     options = &option->getList();
     options->push_back(std::string("Off"));
     options->push_back(std::string("On"));
@@ -219,7 +219,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Brightness:");
-  option->setCallback(callback, (void*)"g");
+  option->setCallback(callback, "g");
   if (window->hasGammaControl()) {
     option->createSlider(15);
   } else {
@@ -232,7 +232,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Energy Saver:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -367,7 +367,7 @@ float DisplayMenu::indexToGamma(int index)
   return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
 
-void			DisplayMenu::callback(HUDuiControl* w, void* data) {
+void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
   HUDuiList* list = (HUDuiList*)w;
   SceneRenderer* sceneRenderer = getSceneRenderer();
   switch (((const char*)data)[0]) {

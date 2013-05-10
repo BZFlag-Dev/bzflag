@@ -51,7 +51,7 @@ AudioMenu::AudioMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Sound Volume:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   options = &option->getList();
   if (isSoundOpen()) {
     options->push_back(std::string("Off"));
@@ -95,7 +95,7 @@ AudioMenu::AudioMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Remote Sounds:");
-  option->setCallback(callback, (void*)"r");
+  option->setCallback(callback, "r");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -161,7 +161,7 @@ void			AudioMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
-void			AudioMenu::callback(HUDuiControl* w, void* data) {
+void			AudioMenu::callback(HUDuiControl* w, const void* data) {
   HUDuiList* list = (HUDuiList*)w;
   switch (((const char*)data)[0]) {
     case 's':

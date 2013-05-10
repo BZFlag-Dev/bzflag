@@ -73,7 +73,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Save Settings:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("No"));
   options->push_back(std::string("On Exit"));
@@ -83,7 +83,7 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Save identity:");
-  option->setCallback(callback, (void*)"i");
+  option->setCallback(callback, "i");
   options = &option->getList();
   options->push_back(std::string("No"));
   options->push_back(std::string("Username only"));
@@ -180,7 +180,7 @@ void OptionsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveIdentity"));
 }
 
-void OptionsMenu::callback(HUDuiControl* w, void* data)
+void OptionsMenu::callback(HUDuiControl* w, const void* data)
 {
   HUDuiList* listHUD = (HUDuiList*)w;
 

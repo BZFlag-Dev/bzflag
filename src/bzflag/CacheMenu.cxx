@@ -48,7 +48,7 @@ CacheMenu::CacheMenu(): center()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Server List Cache:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("Off / Backup Mode"));
   options->push_back(std::string("5 Minutes"));
@@ -89,7 +89,7 @@ CacheMenu::CacheMenu(): center()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Automatic Downloads:");
-  option->setCallback(callback, (void*)"d");
+  option->setCallback(callback, "d");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -100,7 +100,7 @@ CacheMenu::CacheMenu(): center()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Connection Updates:");
-  option->setCallback(callback, (void*)"u");
+  option->setCallback(callback, "u");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -248,7 +248,7 @@ void CacheMenu::resize(int _width, int _height)
 }
 
 
-void CacheMenu::callback(HUDuiControl* w, void* data)
+void CacheMenu::callback(HUDuiControl* w, const void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
 

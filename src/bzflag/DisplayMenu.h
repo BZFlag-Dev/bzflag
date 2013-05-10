@@ -35,7 +35,7 @@ public:
   }
   void execute();
   void resize(int width, int height);
-  static void callback(HUDuiControl* w, void* data);
+  static void callback(HUDuiControl* w, const void* data);
 private:
   FormatMenu*	formatMenu;
   HUDuiControl*	videoFormat;

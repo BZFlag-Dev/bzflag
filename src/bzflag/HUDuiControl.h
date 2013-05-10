@@ -31,7 +31,7 @@
 
 class HUDuiControl;
 
-typedef void		(*HUDuiCallback)(HUDuiControl*, void*);
+typedef void		(*HUDuiCallback)(HUDuiControl*, const void*);
 
 class HUDuiControl {
   friend class HUDui;
@@ -50,7 +50,7 @@ class HUDuiControl {
     HUDuiControl*	getPrev() const;
     HUDuiControl*	getNext() const;
     HUDuiCallback	getCallback() const;
-    void*		getUserData() const;
+    const void*		getUserData() const;
 
     void		setPosition(float x, float y);
     void		setSize(float width, float height);
@@ -60,7 +60,7 @@ class HUDuiControl {
     void		setFontSize(float size);
     void		setPrev(HUDuiControl*);
     void		setNext(HUDuiControl*);
-    void		setCallback(HUDuiCallback, void*);
+    void		setCallback(HUDuiCallback, const void*);
 
     bool		hasFocus() const;
     void		setFocus();
@@ -96,7 +96,7 @@ class HUDuiControl {
     std::string		label;
     HUDuiControl*	prev, *next;
     HUDuiCallback	cb;
-    void*		userData;
+    const void*		userData;
     static OpenGLGState* gstate;
     static int	  arrow;
     static int		arrowFrame;

@@ -277,12 +277,12 @@ void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
   centerLabelHorizontally(status);
 }
 
-void JoinMenu::teamCallback(HUDuiControl*, void* source)
+void JoinMenu::teamCallback(HUDuiControl*, const void* source)
 {
-  ((JoinMenu*)source)->updateTeamTexture();
+  ((const JoinMenu*)source)->updateTeamTexture();
 }
 
-void JoinMenu::updateTeamTexture()
+void JoinMenu::updateTeamTexture() const
 {
   TextureManager &tm = TextureManager::instance();
   FontManager &fm = FontManager::instance();

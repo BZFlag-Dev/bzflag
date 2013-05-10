@@ -48,7 +48,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Rain:");
-  option->setCallback(callback, (void*)"r");
+  option->setCallback(callback, "r");
   options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
@@ -59,7 +59,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Mirror:");
-  option->setCallback(callback, (void*)"m");
+  option->setCallback(callback, "m");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -70,7 +70,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Fog:");
-  option->setCallback(callback, (void*)"F");
+  option->setCallback(callback, "F");
   options = &option->getList();
   options->push_back(std::string("Fast"));
   options->push_back(std::string("Nice"));
@@ -81,7 +81,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Shot Length:");
-  option->setCallback(callback, (void*)"x");
+  option->setCallback(callback, "x");
   options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
@@ -92,7 +92,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Display Treads:");
-  option->setCallback(callback, (void*)"T");
+  option->setCallback(callback, "T");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -103,7 +103,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(fontFace);
   option->setLabel("Animated Treads:");
-  option->setCallback(callback, (void*)"a");
+  option->setCallback(callback, "a");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Covered"));
@@ -115,7 +115,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Track Marks:");
-  option->setCallback(callback, (void*)"t");
+  option->setCallback(callback, "t");
   options = &option->getList();
   options->push_back(std::string("Off"));
   option->createSlider(10);
@@ -126,7 +126,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Track Mark Culling:");
-  option->setCallback(callback, (void*)"c");
+  option->setCallback(callback, "c");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Fast"));
@@ -138,7 +138,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Fancy Effects:");
-  option->setCallback(callback, (void*)"f");
+  option->setCallback(callback, "f");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -151,7 +151,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Spawn Effect:");
-  option->setCallback(callback, (void*)"s");
+  option->setCallback(callback, "s");
   options = &option->getList();
   optbuf = EFFECTS.getSpawnEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -162,7 +162,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Local Spawn Effect:");
-  option->setCallback(callback, (void*)"L");
+  option->setCallback(callback, "L");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Same as spawns"));
@@ -173,7 +173,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Death Effect:");
-  option->setCallback(callback, (void*)"d");
+  option->setCallback(callback, "d");
   options = &option->getList();
   optbuf = EFFECTS.getDeathEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -184,7 +184,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Shot Fired Effect:");
-  option->setCallback(callback, (void*)"S");
+  option->setCallback(callback, "S");
   options = &option->getList();
   optbuf = EFFECTS.getShotEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -195,7 +195,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Local Shot Effect:");
-  option->setCallback(callback, (void*)"l");
+  option->setCallback(callback, "l");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("Same as shots"));
@@ -206,7 +206,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Use Velocity on Shot Effects:");
-  option->setCallback(callback, (void*)"V");
+  option->setCallback(callback, "V");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("On"));
@@ -217,7 +217,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("Landing Effect:");
-  option->setCallback(callback, (void*)"b");
+  option->setCallback(callback, "b");
   options = &option->getList();
   optbuf = EFFECTS.getLandEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -228,7 +228,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("GM Smoke Effect:");
-  option->setCallback(callback, (void*)"G");
+  option->setCallback(callback, "G");
   options = &option->getList();
   optbuf = EFFECTS.getGMPuffEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -239,7 +239,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("GM Effect Timing:");
-  option->setCallback(callback, (void*)"g");
+  option->setCallback(callback, "g");
   option->createSlider(11);
   option->update();
   listHUD.push_back(option);
@@ -248,7 +248,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("  Ricocet Effect:");
-  option->setCallback(callback, (void*)"R");
+  option->setCallback(callback, "R");
   options = &option->getList();
   optbuf = EFFECTS.getRicoEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -259,7 +259,7 @@ EffectsMenu::EffectsMenu()
   option = new HUDuiList;
   option->setFontFace(MainMenu::getFontFace());
   option->setLabel("  Teleport Shot Effect:");
-  option->setCallback(callback, (void*)"7");
+  option->setCallback(callback, "7");
   options = &option->getList();
   optbuf = EFFECTS.getShotTeleportEffectTypes();
   options->assign(optbuf.begin(), optbuf.end());
@@ -358,7 +358,7 @@ void EffectsMenu::resize(int _width, int _height)
 }
 
 
-void EffectsMenu::callback(HUDuiControl* w, void* data)
+void EffectsMenu::callback(HUDuiControl* w, const void* data)
 {
   HUDuiList* list = (HUDuiList*)w;
 

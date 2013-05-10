@@ -49,7 +49,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   // set joystick Device
   option->setFontFace(fontFace);
   option->setLabel("Joystick device:");
-  option->setCallback(callback, (void*)"J");
+  option->setCallback(callback, "J");
   options = &option->getList();
   options->push_back(std::string("Off"));
   std::vector<std::string> joystickDevices;
@@ -71,7 +71,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   activeInput = new HUDuiList;
   activeInput->setFontFace(fontFace);
   activeInput->setLabel("Active input device:");
-  activeInput->setCallback(callback, (void*)"A");
+  activeInput->setCallback(callback, "A");
   options = &activeInput->getList();
   options->push_back("Auto");
   options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
@@ -84,7 +84,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   // force feedback
   option->setFontFace(fontFace);
   option->setLabel("Force feedback:");
-  option->setCallback(callback, (void*)"F");
+  option->setCallback(callback, "F");
   options = &option->getList();
   options->push_back(std::string("None"));
   options->push_back(std::string("Rumble"));
@@ -102,13 +102,13 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   jsx = option;
   option->setFontFace(fontFace);
   option->setLabel("Joystick X Axis:");
-  option->setCallback(callback, (void*)"X");
+  option->setCallback(callback, "X");
   listHUD.push_back(option);
   option = new HUDuiList;
   jsy = option;
   option->setFontFace(fontFace);
   option->setLabel("Joystick Y Axis:");
-  option->setCallback(callback, (void*)"Y");
+  option->setCallback(callback, "Y");
   listHUD.push_back(option);
   fillJSOptions();
 
@@ -116,7 +116,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   // confine mouse
   option->setFontFace(fontFace);
   option->setLabel("Confine mouse:");
-  option->setCallback(callback, (void*)"G");
+  option->setCallback(callback, "G");
   options = &option->getList();
   options->push_back(std::string("No"));
   options->push_back(std::string("Window"));
@@ -135,7 +135,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   // jump while typing on/off
   option->setFontFace(fontFace);
   option->setLabel("Jump while typing:");
-  option->setCallback(callback, (void*)"H");
+  option->setCallback(callback, "H");
   options = &option->getList();
   options->push_back(std::string("No"));
   options->push_back(std::string("Yes"));
@@ -201,7 +201,7 @@ void			InputMenu::execute()
   }
 }
 
-void			InputMenu::callback(HUDuiControl* w, void* data) {
+void			InputMenu::callback(HUDuiControl* w, const void* data) {
   HUDuiList* listHUD = (HUDuiList*)w;
   std::vector<std::string> *options = &listHUD->getList();
   std::string selectedOption = (*options)[listHUD->getIndex()];
