@@ -762,6 +762,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       drawTank(myPos, myTank, false);
     }
 
+    glPopMatrix();
+
     if (dimming > 0.0f) {
       if (!smooth) {
 	glEnable(GL_BLEND);
