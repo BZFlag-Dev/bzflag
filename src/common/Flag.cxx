@@ -183,6 +183,7 @@ namespace Flags {
   {
     clearCustomFlags();
 
+    delete RedTeam;
     delete GreenTeam;
     delete BlueTeam;
     delete PurpleTeam;
