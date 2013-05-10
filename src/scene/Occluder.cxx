@@ -232,8 +232,8 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
 
 static int compareOccluders (const void* a, const void* b)
 {
-  Occluder** ptrA = (Occluder**)a;
-  Occluder** ptrB = (Occluder**)b;
+  const Occluder* const * ptrA = (const Occluder* const *)a;
+  const Occluder* const * ptrB = (const Occluder* const *)b;
   int scoreA = (*ptrA)->getScore();
   int scoreB = (*ptrB)->getScore();
 
@@ -471,7 +471,7 @@ void Occluder::draw() const
 void Occluder::print(const char* string) const
 {
   // FIXME - debugging
-  printf ("%s: %p, V = %i, P = %i\n", string, (void *)sceneNode, vertexCount, planeCount);
+  printf ("%s: %p, V = %i, P = %i\n", string, (const void *)sceneNode, vertexCount, planeCount);
   for (int v = 0; v < vertexCount; v++) {
     printf ("  v%i: %f, %f, %f\n", v, vertices[v][0], vertices[v][1],vertices[v][2]);
   }

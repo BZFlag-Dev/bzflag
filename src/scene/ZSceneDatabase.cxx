@@ -37,8 +37,8 @@
 // utility function
 static int compareZExtents(const void* a, const void* b)
 {
-  const SceneNode* nodeA = *((const SceneNode**)a);
-  const SceneNode* nodeB = *((const SceneNode**)b);
+  const SceneNode* nodeA = *((const SceneNode* const *)a);
+  const SceneNode* nodeB = *((const SceneNode* const *)b);
   const Extents& eA = nodeA->getExtents();
   const Extents& eB = nodeB->getExtents();
   if (eA.maxs[2] > eB.maxs[2]) {
