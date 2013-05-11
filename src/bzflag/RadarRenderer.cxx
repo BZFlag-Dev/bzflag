@@ -760,9 +760,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
       // my tank
       drawTank(myPos, myTank, false);
-    }
 
-    glPopMatrix();
+      // re-setup the blending function
+      // (was changed by drawing jump jets)
+      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      glPopMatrix();
+    }
 
     if (dimming > 0.0f) {
       if (!smooth) {
