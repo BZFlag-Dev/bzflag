@@ -237,6 +237,15 @@ bool MuteCommand::operator() (const char	 *message,
   // mute the player
   GameKeeper::Player *muteData = GameKeeper::Player::getPlayerByIndex(i);
   if (muteData) {
+
+    // don't mute players who are already muted
+    if (!muteData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+      snprintf(msg, MessageLen, "player %s is already muted!",
+	     muteData->player.getCallSign());
+      sendMessage(ServerPlayer, t, msg);
+      return true;
+    }
+
     muteData->accessInfo.revokePerm(PlayerAccessInfo::talk);
     snprintf(msg, MessageLen, "You have been muted by %s.",
 	     playerData->player.getCallSign());
@@ -286,6 +295,15 @@ bool UnmuteCommand::operator() (const char	 *message,
   // unmute the player
   GameKeeper::Player *unmuteData = GameKeeper::Player::getPlayerByIndex(i);
   if (unmuteData) {
+
+    // don't unmute players who can talk
+    if (unmuteData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+      snprintf(msg, MessageLen, "player %s is not muted!",
+	     unmuteData->player.getCallSign());
+      sendMessage(ServerPlayer, t, msg);
+      return true;
+    }
+
     unmuteData->accessInfo.grantPerm(PlayerAccessInfo::talk);
     snprintf(msg, MessageLen, "You have been unmuted by %s.",
 	     playerData->player.getCallSign());
