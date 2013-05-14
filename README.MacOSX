@@ -68,27 +68,22 @@ Info tab. Under Build Configuration, select the desired scheme of Debug or
 Release.
 
 To build the client, select Build from the Product menu or enter the Command-B
-key sequence. Note that the first time you build from a source directory, or
-anytime the BZFlag version changes in the source code or you use a different
-version of Xcode, the first build process WILL FAIL as a script automatically
-updates the product name and the BZFlag version string and then aborts the 
-process. This is by design as it appears to be the only way of automatically
-including the game version in the product name. If this happens, simply start
-the build process again.
+key sequence. Note that the BZFlag version is no longer automatically
+appended to the build product.
 
-NOTE: Due to an issue with Xcode that prevents us from changing this setting
-permanently, you may need click the "BZFlag" scheme button, click
-"Edit Scheme..." and under the "Options" tab, deselect "Allow debugging when
-using document Versions Browser" before running the client straight from
-Xcode. Do this if you encounter the error "Unknown option
--NSDocumentRevisionsDebugMode".
+NOTE: You may encounter the error "Unknown option
+-NSDocumentRevisionsDebugMode" due to a deficiency in Xcode that prevents us
+from permanently disabling a certain setting. If you do encounter this error,
+click the "BZFlag" scheme button, click "Edit Scheme..." and under the "Options"
+tab, deselect "Allow debugging when using document Versions Browser" before
+running the client straight from Xcode.
 
 If the build was successful, you can run the application from Xcode selecting
 the Product menu and clicking Run or by entering the Command-R key sequence.
 You will also want to locate the application you just built. Make sure the
 Navigator pane is visible and select the Project Navigator, then expand the
 "BZFlag" project container and the "Targets" group within it. Click the
-"BZFlag-#.#.#.app" target. Make sure the Utilities pane is visible, and under
+"BZFlag.app" target. Make sure the Utilities pane is visible, and under
 the Identity and Type panel it will show the full path to the application.
 Click the small grey right arrow at the bottom right corner of the path to
 reveal the application in the Finder.

@@ -6,6 +6,20 @@
 	objectVersion = 46;
 	objects = {
 
+/* Begin PBXAggregateTarget section */
+		0355E7B8174264D7006E2991 /* Pre-Build Script */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 0355E7B9174264D7006E2991 /* Build configuration list for PBXAggregateTarget "Pre-Build Script" */;
+			buildPhases = (
+				0355E7BC174264DB006E2991 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			name = "Pre-Build Script";
+			productName = "Pre-Build Script";
+		};
+/* End PBXAggregateTarget section */
+
 /* Begin PBXBuildFile section */
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
@@ -894,6 +908,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0394E93C167B2A9E007F4035;
 			remoteInfo = wwwzones;
+		};
+		03C64E4B1742659C005329A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0355E7B8174264D7006E2991;
+			remoteInfo = "Pre-Build Script";
+		};
+		03C64E4D174265A1005329A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0355E7B8174264D7006E2991;
+			remoteInfo = "Pre-Build Script";
 		};
 		03C8EE5F167AC1D100BB07A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -4590,6 +4618,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				03C64E4C1742659C005329A0 /* PBXTargetDependency */,
 			);
 			name = net;
 			productName = net;
@@ -4743,6 +4772,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				03C64E4E174265A1005329A0 /* PBXTargetDependency */,
 			);
 			name = date;
 			productName = date;
@@ -5382,7 +5412,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag" */;
 			buildPhases = (
-				03FA742917425E1100573D2D /* ShellScript */,
 				03C8EE21167ABE2300BB07A5 /* Sources */,
 				03C8EE22167ABE2300BB07A5 /* Frameworks */,
 				03C8EE23167ABE2300BB07A5 /* Resources */,
@@ -5476,6 +5505,7 @@
 			projectRoot = "";
 			targets = (
 				03C8EE24167ABE2300BB07A5 /* BZFlag */,
+				0355E7B8174264D7006E2991 /* Pre-Build Script */,
 				03C5E7C41670A466005A26C4 /* cares */,
 				03C5E7BB1670A3DA005A26C4 /* 3D */,
 				0357A7BB1670AF8E0056C938 /* common */,
@@ -5543,7 +5573,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		03FA742917425E1100573D2D /* ShellScript */ = {
+		0355E7BC174264DB006E2991 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -6493,6 +6523,16 @@
 			target = 0394E93C167B2A9E007F4035 /* wwwzones */;
 			targetProxy = 0394E941167B2AA9007F4035 /* PBXContainerItemProxy */;
 		};
+		03C64E4C1742659C005329A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0355E7B8174264D7006E2991 /* Pre-Build Script */;
+			targetProxy = 03C64E4B1742659C005329A0 /* PBXContainerItemProxy */;
+		};
+		03C64E4E174265A1005329A0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0355E7B8174264D7006E2991 /* Pre-Build Script */;
+			targetProxy = 03C64E4D174265A1005329A0 /* PBXContainerItemProxy */;
+		};
 		03C8EE60167AC1D100BB07A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0357A9F61670BF3A0056C938 /* bzadmin */;
@@ -6532,6 +6572,20 @@
 					"-undefined",
 					dynamic_lookup,
 				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0355E7BA174264D7006E2991 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0355E7BB174264D7006E2991 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -8049,6 +8103,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		0355E7B9174264D7006E2991 /* Build configuration list for PBXAggregateTarget "Pre-Build Script" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0355E7BA174264D7006E2991 /* Debug */,
+				0355E7BB174264D7006E2991 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		0357A7BD1670AF8F0056C938 /* Build configuration list for PBXNativeTarget "common" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8506,6 +8569,7 @@
 				03FA74311742601B00573D2D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
