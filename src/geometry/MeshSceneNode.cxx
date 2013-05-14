@@ -427,8 +427,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
   OpenGLGStateBuilder builder;
   TextureManager &tm = TextureManager::instance();
 
-  // cheat a little
-  ((BzMaterial*)bzmat)->setReference();
+  bzmat->setReference();
 
   // ways of requiring blending
   bool colorAlpha = false;

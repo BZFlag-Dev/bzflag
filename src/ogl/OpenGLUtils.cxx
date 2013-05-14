@@ -39,8 +39,7 @@
 void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
 		  fvec4& color, const fvec4*& colorPtr)
 {
-  // cheat a little
-  ((BzMaterial*)bzmat)->setReference();
+  bzmat->setReference();
 
   OpenGLGStateBuilder builder;
 
