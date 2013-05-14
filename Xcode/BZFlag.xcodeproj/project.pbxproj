@@ -1374,6 +1374,7 @@
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
 		0305D6F2166CA1DC00557FC4 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
+		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* libsuperUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsuperUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
 		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
@@ -2225,11 +2226,10 @@
 		03C5E79516707857005A26C4 /* ares_build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_build.h; sourceTree = "<group>"; };
 		03C5E79616707857005A26C4 /* ares_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_config.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		03C5E79B16707C28005A26C4 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E7C51670A466005A26C4 /* libcares.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcares.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E8231670A894005A26C4 /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.3.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag-.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03CDB24416A0BA81001DA037 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
@@ -2825,8 +2825,8 @@
 				03C5E79616707857005A26C4 /* ares_config.h */,
 				037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */,
 				03D926DF166C67EF00DDDBEB /* BZFlag.icns */,
+				030DF52417424A4D00B3815C /* buildinfo.h */,
 				03C5E79716707857005A26C4 /* config.h */,
-				03C5E79B16707C28005A26C4 /* version.xcconfig */,
 			);
 			name = Xcode;
 			sourceTree = "<group>";
@@ -4109,7 +4109,7 @@
 		0394E967167B2D7B007F4035 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
-				03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */,
+				03C8EE25167ABE2300BB07A5 /* BZFlag-.app */,
 				03C5E7C51670A466005A26C4 /* libcares.a */,
 				03C5E7BC1670A3DA005A26C4 /* lib3D.a */,
 				0357A7BC1670AF8E0056C938 /* libcommon.a */,
@@ -5459,7 +5459,7 @@
 			);
 			name = BZFlag;
 			productName = BZFlag;
-			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.3.app */;
+			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-.app */;
 			productType = "com.apple.product-type.application";
 		};
 		DF8950D316E42B8000BA9DD5 /* serverSidePlayerSample */ = {
@@ -5580,7 +5580,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "EXITWITHERROR=0\n\n# set the xcode version in the configuration file\nBZFLAG_XCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [ \"`grep -e ^BZFLAG_XCODE_VERSION=.*$ version.xcconfig | sed s/BZFLAG_XCODE_VERSION=//`\" != $BZFLAG_XCODE_VERSION ] ; then\n    sed s/BZFLAG_XCODE_VERSION=.*$/BZFLAG_XCODE_VERSION=${BZFLAG_XCODE_VERSION}/ version.xcconfig > version.new.xcconfig\n    mv version.new.xcconfig version.xcconfig\n\n    echo \"error: The Xcode IDE version was just updated from the source code. Please try your build again.\" 1>&2\n\n    EXITWITHERROR=1\nfi\n\n# set the bzflag version in the configuration file\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\nif [ \"`grep -e ^BZFLAG_VERSION=.*$ version.xcconfig | sed s/BZFLAG_VERSION=//`\" != $BZFLAG_VERSION ] ; then\n    sed s/BZFLAG_VERSION=.*$/BZFLAG_VERSION=${BZFLAG_VERSION}/ version.xcconfig > version.new.xcconfig\n    mv version.new.xcconfig version.xcconfig\n\n    echo \"error: The build version was just updated from the source code. Please try your build again.\" 1>&2\n\n    EXITWITHERROR=1\nfi\n\n# if either was changed, we need to start the build over\nif [ $EXITWITHERROR -eq 1 ] ; then\n    exit 1\nfi";
+			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\n\techo \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n\t<key>CFBundleDevelopmentRegion</key>\n\t<string>en</string>\n\t<key>CFBundleExecutable</key>\n\t<string>\\${EXECUTABLE_NAME}</string>\n\t<key>CFBundleIconFile</key>\n\t<string>BZFlag</string>\n\t<key>CFBundleIdentifier</key>\n\t<string>org.BZFlag</string>\n\t<key>CFBundleInfoDictionaryVersion</key>\n\t<string>6.0</string>\n\t<key>CFBundleName</key>\n\t<string>BZFlag</string>\n\t<key>CFBundlePackageType</key>\n\t<string>APPL</string>\n\t<key>CFBundleShortVersionString</key>\n\t<string>$BZFLAG_VERSION</string>\n\t<key>CFBundleSignature</key>\n\t<string>????</string>\n\t<key>CFBundleVersion</key>\n\t<string>$BZFLAG_VERSION</string>\n\t<key>LSApplicationCategoryType</key>\n\t<string>public.app-category.arcade-games</string>\n\t<key>LSMinimumSystemVersion</key>\n\t<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n\t<key>NSHumanReadableCopyright</key>\n\t<string>Copyright (c) 1993-2013 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -7842,7 +7842,6 @@
 		};
 		03BFC326166C637A00836142 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03C5E79B16707C28005A26C4 /* version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
@@ -7884,7 +7883,6 @@
 		};
 		03BFC327166C637A00836142 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 03C5E79B16707C28005A26C4 /* version.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(NATIVE_ARCH_ACTUAL)";
