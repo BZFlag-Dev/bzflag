@@ -208,7 +208,7 @@ void cURLManager::setURLwithNonce(const std::string &url)
   setURL(url + nonce);
 }
 
-void cURLManager::setProgressFunction(curl_progress_callback func, void* data)
+void cURLManager::setProgressFunction(curl_progress_callback func, const void* data)
 {
   CURLcode result;
   if (func != NULL) {

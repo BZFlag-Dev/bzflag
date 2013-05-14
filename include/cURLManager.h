@@ -46,7 +46,7 @@ public:
   void setRequestFileTime(bool request);
   void setURL(const std::string &url);
   void setURLwithNonce(const std::string &url);
-  void setProgressFunction(curl_progress_callback func, void* data);
+  void setProgressFunction(curl_progress_callback func, const void* data);
   void setTimeCondition(timeCondition condition, time_t &t);
   void setInterface(const std::string &interfaceIP);
   void setUserAgent(const std::string &userAgent);

@@ -421,7 +421,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     float t = timeLeft + minTime;
     int face;
     bool hitGround = getGround(r, Epsilon, t);
-    Obstacle* building = (Obstacle*)((e == Through) ? NULL : getFirstBuilding(r, Epsilon, t));
+    const Obstacle* building = ((e == Through) ? NULL : getFirstBuilding(r, Epsilon, t));
     const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
     t -= minTime;
     minTime = 0.0f;

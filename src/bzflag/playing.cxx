@@ -1647,7 +1647,7 @@ void WorldDownLoader::start(char * hexDigest)
   } else if (worldUrl.size()) {
     HUDDialogStack::get()->setFailedMessage
       (("Loading world from " + worldUrl).c_str());
-    setProgressFunction(curlProgressFunc, (char*)worldUrl.c_str());
+    setProgressFunction(curlProgressFunc, worldUrl.c_str());
     setURL(worldUrl);
     addHandle();
     worldUrl = ""; // clear the state

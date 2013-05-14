@@ -649,8 +649,8 @@ void SceneRenderer::setTimeOfDay(double julianDay)
 static int sortLights (const void* a, const void* b)
 {
   // the higher getImportance(), the closer it is to the beginning
-  const OpenGLLight* lightA = *((const OpenGLLight**) a);
-  const OpenGLLight* lightB = *((const OpenGLLight**) b);
+  const OpenGLLight* lightA = *((const OpenGLLight* const *) a);
+  const OpenGLLight* lightB = *((const OpenGLLight* const *) b);
   const float valA = lightA->getImportance();
   const float valB = lightB->getImportance();
 

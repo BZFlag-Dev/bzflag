@@ -250,8 +250,8 @@ void ScoreboardRenderer::render(bool forceDisplay)
 
 int ScoreboardRenderer::teamScoreCompare(const void* _c, const void* _d)
 {
-  Team* c = World::getWorld()->getTeams()+*(int*)_c;
-  Team* d = World::getWorld()->getTeams()+*(int*)_d;
+  Team* c = World::getWorld()->getTeams()+*(const int*)_c;
+  Team* d = World::getWorld()->getTeams()+*(const int*)_d;
   return (d->getWins()-d->getLosses()) - (c->getWins()-c->getLosses());
 }
 
@@ -840,16 +840,16 @@ typedef struct st_playersort sortEntry;
 
 int       ScoreboardRenderer::sortCompareCp(const void* _a, const void* _b)
 {
-  sortEntry *a = (sortEntry *)_a;
-  sortEntry *b = (sortEntry *)_b;
+  const sortEntry *a = (const sortEntry *)_a;
+  const sortEntry *b = (const sortEntry *)_b;
   return strcasecmp (a->cp, b->cp);
 }
 
 
 int       ScoreboardRenderer::sortCompareI2(const void* _a, const void* _b)
 {
-  const sortEntry *a = (sortEntry *)_a;
-  const sortEntry *b = (sortEntry *)_b;
+  const sortEntry *a = (const sortEntry *)_a;
+  const sortEntry *b = (const sortEntry *)_b;
   if (a->i1 != b->i1 ) {
     return b->i1 - a->i1;
   }

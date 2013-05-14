@@ -44,7 +44,7 @@ class BzMaterial {
 
     void reset();
 
-    void setReference();
+    void setReference() const;	// const exploits mutable "referenced" variable below
     bool getReference() const;
 
     //
@@ -140,7 +140,7 @@ class BzMaterial {
     std::string name;
     std::vector<std::string> aliases;
 
-    bool referenced;
+    mutable bool referenced;
 
     int dynamicColor;
     float ambient[4];
@@ -194,7 +194,7 @@ inline const BzMaterial* BzMaterial::getDefault()
   return &defaultMaterial;
 }
 
-inline void BzMaterial::setReference()
+inline void BzMaterial::setReference() const
 {
   referenced = true;
   return;

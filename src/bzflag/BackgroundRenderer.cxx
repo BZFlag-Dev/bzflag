@@ -279,7 +279,7 @@ void BackgroundRenderer::setupGroundMaterials()
   }
   else {
     // map specified material
-    ((BzMaterial*)bzmat)->setReference();
+    bzmat->setReference();
     for (int i = 0; i < 4; i++) {
       memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
     }
@@ -770,7 +770,7 @@ void BackgroundRenderer::setupSkybox()
 
   // reference map specified materials
   for (i = 0; i < 6; i++) {
-    ((BzMaterial*)bzmats[i])->setReference();
+    bzmats[i]->setReference();
   }
 
   // setup the wrap mode

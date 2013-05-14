@@ -274,8 +274,8 @@ static int compareObstacles(const void* a, const void* b)
   // - normal object come first (from lowest to highest)
   // - then come the mesh face (highest to lowest)
   // - and finally, the mesh objects (checkpoints really)
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
+  const Obstacle* obsA = *((const Obstacle* const *)a);
+  const Obstacle* obsB = *((const Obstacle* const *)b);
   const char* typeA = obsA->getType();
   const char* typeB = obsB->getType();
 
@@ -322,8 +322,8 @@ static int compareObstacles(const void* a, const void* b)
 
 static int compareHitNormal (const void* a, const void* b)
 {
-  const MeshFace* faceA = *((const MeshFace**) a);
-  const MeshFace* faceB = *((const MeshFace**) b);
+  const MeshFace* faceA = *((const MeshFace* const *) a);
+  const MeshFace* faceB = *((const MeshFace* const *) b);
 
   // Up Planes come first
   if (faceA->isUpPlane() && !faceB->isUpPlane()) {
