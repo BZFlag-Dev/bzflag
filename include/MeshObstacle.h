@@ -101,7 +101,7 @@ class MeshObstacle : public Obstacle {
     int getNormalCount() const;
     int getTexcoordCount() const;
     int getFaceCount() const;
-    const MeshFace* getFace(int face) const;
+    MeshFace* getFace(int face) const;
     const float* getPosition() const;
     const float* getSize() const;
     bool useSmoothBounce() const;
@@ -198,7 +198,7 @@ inline int MeshObstacle::getFaceCount() const
   return faceCount;
 }
 
-inline const MeshFace* MeshObstacle::getFace(int face) const
+inline MeshFace* MeshObstacle::getFace(int face) const
 {
   return faces[face];
 }

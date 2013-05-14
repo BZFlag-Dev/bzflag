@@ -419,7 +419,7 @@ void CollisionManager::load ()
     MeshObstacle* mesh = (MeshObstacle*) meshes[i];
     if (!mesh->isPassable()) {
       for (int f = 0; f < mesh->getFaceCount(); f++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(f);
+	const MeshFace* face = mesh->getFace(f);
 	if (!face->isPassable()) fullCount++;
       }
       fullCount++; // one for the mesh itself
@@ -458,7 +458,7 @@ void CollisionManager::load ()
     if (!mesh->isPassable()) {
       const int meshFaceCount = mesh->getFaceCount();
       for (int f = 0; f < meshFaceCount; f++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(f);
+	MeshFace* face = mesh->getFace(f);
 	if (!face->isPassable()) addToFullList((Obstacle*) face);
       }
     }

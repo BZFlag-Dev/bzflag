@@ -184,7 +184,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = mesh->getFace(i);
 	if (modifyMaterial) {
 	  face->bzMaterial = material;
 	} else if (matMap.size() > 0) {
@@ -203,7 +203,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = mesh->getFace(i);
 	// only modify faces that already have a physics driver
 	if (face->phydrv >= 0) {
 	  face->phydrv = phydrv;
@@ -216,7 +216,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = mesh->getFace(i);
 	face->driveThrough = true;
       }
     }
@@ -226,7 +226,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = mesh->getFace(i);
 	face->shootThrough = true;
       }
     }
@@ -236,7 +236,7 @@ void ObstacleModifier::execute(Obstacle* obstacle) const
     if (obstacle->getType() == MeshObstacle::getClassName()) {
       const MeshObstacle* mesh = (MeshObstacle*) obstacle;
       for (int i = 0; i < mesh->getFaceCount(); i++) {
-	MeshFace* face = (MeshFace*) mesh->getFace(i);
+	MeshFace* face = mesh->getFace(i);
 	face->ricochet = true;
       }
     }
