@@ -6,22 +6,8 @@
 	objectVersion = 46;
 	objects = {
 
-/* Begin PBXAggregateTarget section */
-		03C5E7AD1670A073005A26C4 /* Detect Version */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 03C5E7AE1670A073005A26C4 /* Build configuration list for PBXAggregateTarget "Detect Version" */;
-			buildPhases = (
-				03C5E7B11670A082005A26C4 /* ShellScript */,
-			);
-			dependencies = (
-			);
-			name = "Detect Version";
-			productName = "Detect Version";
-		};
-/* End PBXAggregateTarget section */
-
 /* Begin PBXBuildFile section */
-		0318265E16A0BE61005050BD /* libsuperUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* libsuperUser.dylib */; };
+		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		0347EDC7167AC6CF0023D9AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357AA311670C5AF0056C938 /* Cocoa.framework */; };
 		0347EE0E167AC72B0023D9AD /* automatic_icon.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0360C23D166CBB63005D3444 /* automatic_icon.png */; };
@@ -484,37 +470,37 @@
 		0394E944167B2BE6007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		0394E945167B2C19007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		0394E946167B2C34007F4035 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
-		0394E948167B2D00007F4035 /* libairspawn.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E6D3167B0F74007F4035 /* libairspawn.dylib */; };
-		0394E949167B2D00007F4035 /* libautoFlagReset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7E8167B196F007F4035 /* libautoFlagReset.dylib */; };
-		0394E94A167B2D00007F4035 /* libchathistory.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7F3167B1A17007F4035 /* libchathistory.dylib */; };
-		0394E94B167B2D00007F4035 /* libcustomflagsample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7FE167B1E66007F4035 /* libcustomflagsample.dylib */; };
-		0394E94C167B2D00007F4035 /* libfairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* libfairCTF.dylib */; };
-		0394E94D167B2D00007F4035 /* libfastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* libfastmap.dylib */; };
-		0394E94E167B2D00007F4035 /* libflagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* libflagstay.dylib */; };
-		0394E94F167B2D00007F4035 /* libhiddenadmin.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E82A167B207E007F4035 /* libhiddenadmin.dylib */; };
-		0394E950167B2D00007F4035 /* libHoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* libHoldTheFlag.dylib */; };
-		0394E951167B2D00007F4035 /* libkeepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* libkeepaway.dylib */; };
-		0394E952167B2D00007F4035 /* libkillall.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E84B167B228D007F4035 /* libkillall.dylib */; };
-		0394E953167B2D00007F4035 /* libkoth.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E856167B22E0007F4035 /* libkoth.dylib */; };
-		0394E954167B2D00007F4035 /* liblogDetail.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E869167B2360007F4035 /* liblogDetail.dylib */; };
-		0394E955167B2D00007F4035 /* libnagware.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E874167B23B4007F4035 /* libnagware.dylib */; };
-		0394E956167B2D00007F4035 /* libPhoenix.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E87F167B2447007F4035 /* libPhoenix.dylib */; };
-		0394E957167B2D00007F4035 /* libplayHistoryTracker.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E88A167B2494007F4035 /* libplayHistoryTracker.dylib */; };
-		0394E958167B2D00007F4035 /* libpushstats.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8A3167B259F007F4035 /* libpushstats.dylib */; };
-		0394E959167B2D00007F4035 /* librabbitTimer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8AE167B25E9007F4035 /* librabbitTimer.dylib */; };
-		0394E95A167B2D00007F4035 /* librabidRabbit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8B9167B2647007F4035 /* librabidRabbit.dylib */; };
-		0394E95B167B2D00007F4035 /* librecordmatch.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8C4167B26B2007F4035 /* librecordmatch.dylib */; };
-		0394E95C167B2D00007F4035 /* libregFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8CF167B26E2007F4035 /* libregFlag.dylib */; };
-		0394E95D167B2D00007F4035 /* libRogueGenocide.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8DA167B272C007F4035 /* libRogueGenocide.dylib */; };
-		0394E95E167B2D00007F4035 /* libSAMPLE_PLUGIN.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8E5167B27A2007F4035 /* libSAMPLE_PLUGIN.dylib */; };
-		0394E95F167B2D00007F4035 /* libserverControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8F0167B27F7007F4035 /* libserverControl.dylib */; };
-		0394E960167B2D00007F4035 /* libshockwaveDeath.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8FB167B284B007F4035 /* libshockwaveDeath.dylib */; };
-		0394E961167B2D00007F4035 /* libteamflagreset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E906167B28A4007F4035 /* libteamflagreset.dylib */; };
-		0394E962167B2D00007F4035 /* libthiefControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E911167B28ED007F4035 /* libthiefControl.dylib */; };
-		0394E963167B2D00007F4035 /* libtimedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* libtimedctf.dylib */; };
-		0394E964167B2D00007F4035 /* libTimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* libTimeLimit.dylib */; };
-		0394E965167B2D00007F4035 /* libwebReport.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E932167B2A47007F4035 /* libwebReport.dylib */; };
-		0394E966167B2D00007F4035 /* libwwwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* libwwwzones.dylib */; };
+		0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E6D3167B0F74007F4035 /* airspawn.dylib */; };
+		0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7E8167B196F007F4035 /* autoFlagReset.dylib */; };
+		0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7F3167B1A17007F4035 /* chathistory.dylib */; };
+		0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7FE167B1E66007F4035 /* customflagsample.dylib */; };
+		0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* fairCTF.dylib */; };
+		0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* fastmap.dylib */; };
+		0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* flagstay.dylib */; };
+		0394E94F167B2D00007F4035 /* hiddenadmin.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E82A167B207E007F4035 /* hiddenadmin.dylib */; };
+		0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */; };
+		0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* keepaway.dylib */; };
+		0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E84B167B228D007F4035 /* killall.dylib */; };
+		0394E953167B2D00007F4035 /* koth.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E856167B22E0007F4035 /* koth.dylib */; };
+		0394E954167B2D00007F4035 /* logDetail.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E869167B2360007F4035 /* logDetail.dylib */; };
+		0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E874167B23B4007F4035 /* nagware.dylib */; };
+		0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E87F167B2447007F4035 /* Phoenix.dylib */; };
+		0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E88A167B2494007F4035 /* playHistoryTracker.dylib */; };
+		0394E958167B2D00007F4035 /* pushstats.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8A3167B259F007F4035 /* pushstats.dylib */; };
+		0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */; };
+		0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8B9167B2647007F4035 /* rabidRabbit.dylib */; };
+		0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8C4167B26B2007F4035 /* recordmatch.dylib */; };
+		0394E95C167B2D00007F4035 /* regFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8CF167B26E2007F4035 /* regFlag.dylib */; };
+		0394E95D167B2D00007F4035 /* RogueGenocide.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8DA167B272C007F4035 /* RogueGenocide.dylib */; };
+		0394E95E167B2D00007F4035 /* SAMPLE_PLUGIN.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */; };
+		0394E95F167B2D00007F4035 /* serverControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8F0167B27F7007F4035 /* serverControl.dylib */; };
+		0394E960167B2D00007F4035 /* shockwaveDeath.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */; };
+		0394E961167B2D00007F4035 /* teamflagreset.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E906167B28A4007F4035 /* teamflagreset.dylib */; };
+		0394E962167B2D00007F4035 /* thiefControl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E911167B28ED007F4035 /* thiefControl.dylib */; };
+		0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* timedctf.dylib */; };
+		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; };
+		0394E965167B2D00007F4035 /* webReport.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E932167B2A47007F4035 /* webReport.dylib */; };
+		0394E966167B2D00007F4035 /* wwwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwwzones.dylib */; };
 		0394E96D167B36EF007F4035 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0305D6F2166CA1DC00557FC4 /* SDL.framework */; };
 		03C5E7C91670A489005A26C4 /* ares__close_sockets.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3C166C851C008806E9 /* ares__close_sockets.c */; };
 		03C5E7CA1670A489005A26C4 /* ares__get_hostent.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3D166C851C008806E9 /* ares__get_hostent.c */; };
@@ -671,12 +657,10 @@
 		03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
 		03CDB24A16A0BA81001DA037 /* README.txt in Resources */ = {isa = PBXBuildFile; fileRef = 03CDB24416A0BA81001DA037 /* README.txt */; };
+		03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */; };
+		03FA7435174260CB00573D2D /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
+		03FA7436174260D700573D2D /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
-		DF8950D716E42B8000BA9DD5 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
-		DF8950E016E42CF800BA9DD5 /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
-		DF8950E116E42CF800BA9DD5 /* playerHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = DF8950DE16E42CF800BA9DD5 /* playerHandler.h */; };
-		DF8950E216E42CF800BA9DD5 /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
-		DFCB125E16E43CE5002C679F /* libserverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -686,13 +670,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0318265716A0BE2F005050BD;
 			remoteInfo = superUser;
-		};
-		03512C8C167B04FD00EA025C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03BFC301166C637600836142 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 03C5E7AD1670A073005A26C4;
-			remoteInfo = "Detect Version";
 		};
 		0394E6C3167B0C04007F4035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -918,19 +895,19 @@
 			remoteGlobalIDString = 0394E93C167B2A9E007F4035;
 			remoteInfo = wwwzones;
 		};
-		03C8EE5D167AC1C100BB07A5 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03BFC301166C637600836142 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 03C5E7AD1670A073005A26C4;
-			remoteInfo = "Detect Version";
-		};
 		03C8EE5F167AC1D100BB07A5 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0357A9F61670BF3A0056C938;
 			remoteInfo = bzadmin;
+		};
+		03FA74321742603F00573D2D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 03FA742D1742601B00573D2D;
+			remoteInfo = serverSidePlayerSample;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1165,39 +1142,39 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				DFCB125E16E43CE5002C679F /* libserverSidePlayerSample.dylib in CopyFiles */,
-				0318265E16A0BE61005050BD /* libsuperUser.dylib in CopyFiles */,
-				0394E948167B2D00007F4035 /* libairspawn.dylib in CopyFiles */,
-				0394E949167B2D00007F4035 /* libautoFlagReset.dylib in CopyFiles */,
-				0394E94A167B2D00007F4035 /* libchathistory.dylib in CopyFiles */,
-				0394E94B167B2D00007F4035 /* libcustomflagsample.dylib in CopyFiles */,
-				0394E94C167B2D00007F4035 /* libfairCTF.dylib in CopyFiles */,
-				0394E94D167B2D00007F4035 /* libfastmap.dylib in CopyFiles */,
-				0394E94E167B2D00007F4035 /* libflagstay.dylib in CopyFiles */,
-				0394E94F167B2D00007F4035 /* libhiddenadmin.dylib in CopyFiles */,
-				0394E950167B2D00007F4035 /* libHoldTheFlag.dylib in CopyFiles */,
-				0394E951167B2D00007F4035 /* libkeepaway.dylib in CopyFiles */,
-				0394E952167B2D00007F4035 /* libkillall.dylib in CopyFiles */,
-				0394E953167B2D00007F4035 /* libkoth.dylib in CopyFiles */,
-				0394E954167B2D00007F4035 /* liblogDetail.dylib in CopyFiles */,
-				0394E955167B2D00007F4035 /* libnagware.dylib in CopyFiles */,
-				0394E956167B2D00007F4035 /* libPhoenix.dylib in CopyFiles */,
-				0394E957167B2D00007F4035 /* libplayHistoryTracker.dylib in CopyFiles */,
-				0394E958167B2D00007F4035 /* libpushstats.dylib in CopyFiles */,
-				0394E959167B2D00007F4035 /* librabbitTimer.dylib in CopyFiles */,
-				0394E95A167B2D00007F4035 /* librabidRabbit.dylib in CopyFiles */,
-				0394E95B167B2D00007F4035 /* librecordmatch.dylib in CopyFiles */,
-				0394E95C167B2D00007F4035 /* libregFlag.dylib in CopyFiles */,
-				0394E95D167B2D00007F4035 /* libRogueGenocide.dylib in CopyFiles */,
-				0394E95E167B2D00007F4035 /* libSAMPLE_PLUGIN.dylib in CopyFiles */,
-				0394E95F167B2D00007F4035 /* libserverControl.dylib in CopyFiles */,
-				0394E960167B2D00007F4035 /* libshockwaveDeath.dylib in CopyFiles */,
-				0394E961167B2D00007F4035 /* libteamflagreset.dylib in CopyFiles */,
-				0394E962167B2D00007F4035 /* libthiefControl.dylib in CopyFiles */,
-				0394E963167B2D00007F4035 /* libtimedctf.dylib in CopyFiles */,
-				0394E964167B2D00007F4035 /* libTimeLimit.dylib in CopyFiles */,
-				0394E965167B2D00007F4035 /* libwebReport.dylib in CopyFiles */,
-				0394E966167B2D00007F4035 /* libwwwzones.dylib in CopyFiles */,
+				03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */,
+				0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */,
+				0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */,
+				0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */,
+				0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */,
+				0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */,
+				0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */,
+				0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */,
+				0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */,
+				0394E94F167B2D00007F4035 /* hiddenadmin.dylib in CopyFiles */,
+				0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */,
+				0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */,
+				0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */,
+				0394E953167B2D00007F4035 /* koth.dylib in CopyFiles */,
+				0394E954167B2D00007F4035 /* logDetail.dylib in CopyFiles */,
+				0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */,
+				0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */,
+				0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */,
+				0394E958167B2D00007F4035 /* pushstats.dylib in CopyFiles */,
+				0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */,
+				0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */,
+				0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */,
+				0394E95C167B2D00007F4035 /* regFlag.dylib in CopyFiles */,
+				0394E95D167B2D00007F4035 /* RogueGenocide.dylib in CopyFiles */,
+				0394E95E167B2D00007F4035 /* SAMPLE_PLUGIN.dylib in CopyFiles */,
+				0394E95F167B2D00007F4035 /* serverControl.dylib in CopyFiles */,
+				0394E960167B2D00007F4035 /* shockwaveDeath.dylib in CopyFiles */,
+				0394E961167B2D00007F4035 /* teamflagreset.dylib in CopyFiles */,
+				0394E962167B2D00007F4035 /* thiefControl.dylib in CopyFiles */,
+				0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */,
+				0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */,
+				0394E965167B2D00007F4035 /* webReport.dylib in CopyFiles */,
+				0394E966167B2D00007F4035 /* wwwzones.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1375,7 +1352,7 @@
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
 		0305D6F2166CA1DC00557FC4 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
-		0318265816A0BE2F005050BD /* libsuperUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libsuperUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
 		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
@@ -2111,7 +2088,7 @@
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		0394E67D167B0AA3007F4035 /* bzfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzfs; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E6D3167B0F74007F4035 /* libairspawn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libairspawn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E6D3167B0F74007F4035 /* airspawn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = airspawn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E6D9167B1024007F4035 /* airspawn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = airspawn.cpp; sourceTree = "<group>"; };
 		0394E6DE167B1024007F4035 /* api_notes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = api_notes; sourceTree = "<group>"; };
 		0394E6E0167B1024007F4035 /* autoFlagReset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = autoFlagReset.cpp; sourceTree = "<group>"; };
@@ -2192,44 +2169,44 @@
 		0394E7BF167B1025007F4035 /* webReport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = webReport.cpp; sourceTree = "<group>"; };
 		0394E7C5167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E7C6167B1025007F4035 /* wwzones.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wwzones.cpp; sourceTree = "<group>"; };
-		0394E7E8167B196F007F4035 /* libautoFlagReset.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libautoFlagReset.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E7F3167B1A17007F4035 /* libchathistory.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libchathistory.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E7FE167B1E66007F4035 /* libcustomflagsample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libcustomflagsample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E809167B1ECE007F4035 /* libfairCTF.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libfairCTF.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E814167B1F76007F4035 /* libfastmap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libfastmap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E81F167B1FFD007F4035 /* libflagstay.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libflagstay.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E82A167B207E007F4035 /* libhiddenadmin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhiddenadmin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E835167B2132007F4035 /* libHoldTheFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libHoldTheFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E840167B2225007F4035 /* libkeepaway.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libkeepaway.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E84B167B228D007F4035 /* libkillall.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libkillall.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E856167B22E0007F4035 /* libkoth.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libkoth.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E869167B2360007F4035 /* liblogDetail.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = liblogDetail.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E874167B23B4007F4035 /* libnagware.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libnagware.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E87F167B2447007F4035 /* libPhoenix.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libPhoenix.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E88A167B2494007F4035 /* libplayHistoryTracker.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libplayHistoryTracker.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E7E8167B196F007F4035 /* autoFlagReset.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = autoFlagReset.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E7F3167B1A17007F4035 /* chathistory.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = chathistory.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E7FE167B1E66007F4035 /* customflagsample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = customflagsample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E809167B1ECE007F4035 /* fairCTF.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fairCTF.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E814167B1F76007F4035 /* fastmap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fastmap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E81F167B1FFD007F4035 /* flagstay.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flagstay.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E82A167B207E007F4035 /* hiddenadmin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hiddenadmin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E835167B2132007F4035 /* HoldTheFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = HoldTheFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E840167B2225007F4035 /* keepaway.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = keepaway.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E84B167B228D007F4035 /* killall.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = killall.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E856167B22E0007F4035 /* koth.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = koth.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E869167B2360007F4035 /* logDetail.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = logDetail.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E874167B23B4007F4035 /* nagware.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = nagware.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E87F167B2447007F4035 /* Phoenix.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = Phoenix.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E88A167B2494007F4035 /* playHistoryTracker.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = playHistoryTracker.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E895167B2513007F4035 /* libplugin_utils.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_utils.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8A3167B259F007F4035 /* libpushstats.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpushstats.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8AE167B25E9007F4035 /* librabbitTimer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librabbitTimer.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8B9167B2647007F4035 /* librabidRabbit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librabidRabbit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8C4167B26B2007F4035 /* librecordmatch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = librecordmatch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8CF167B26E2007F4035 /* libregFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libregFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8DA167B272C007F4035 /* libRogueGenocide.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libRogueGenocide.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8E5167B27A2007F4035 /* libSAMPLE_PLUGIN.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libSAMPLE_PLUGIN.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8F0167B27F7007F4035 /* libserverControl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libserverControl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8FB167B284B007F4035 /* libshockwaveDeath.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libshockwaveDeath.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E906167B28A4007F4035 /* libteamflagreset.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libteamflagreset.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E911167B28ED007F4035 /* libthiefControl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libthiefControl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E91C167B293E007F4035 /* libtimedctf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libtimedctf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E927167B29CC007F4035 /* libTimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libTimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E932167B2A47007F4035 /* libwebReport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwebReport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E93D167B2A9E007F4035 /* libwwwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libwwwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8A3167B259F007F4035 /* pushstats.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pushstats.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rabbitTimer.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8B9167B2647007F4035 /* rabidRabbit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rabidRabbit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8C4167B26B2007F4035 /* recordmatch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = recordmatch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8CF167B26E2007F4035 /* regFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = regFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8DA167B272C007F4035 /* RogueGenocide.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = RogueGenocide.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = SAMPLE_PLUGIN.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8F0167B27F7007F4035 /* serverControl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverControl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = shockwaveDeath.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E906167B28A4007F4035 /* teamflagreset.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = teamflagreset.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E911167B28ED007F4035 /* thiefControl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = thiefControl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E91C167B293E007F4035 /* timedctf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = timedctf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E932167B2A47007F4035 /* webReport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = webReport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E93D167B2A9E007F4035 /* wwwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E79516707857005A26C4 /* ares_build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_build.h; sourceTree = "<group>"; };
 		03C5E79616707857005A26C4 /* ares_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_config.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E7C51670A466005A26C4 /* libcares.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libcares.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E8231670A894005A26C4 /* libglew.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libglew.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag-.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03CDB24416A0BA81001DA037 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
@@ -2242,9 +2219,9 @@
 		03D926E1166C68E700DDDBEB /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
 		03D926E3166C692B00DDDBEB /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		03D926E5166C6AB500DDDBEB /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
+		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
 		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
-		DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libserverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
 		DF8950DE16E42CF800BA9DD5 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playerHandler.h; path = ../plugins/serverSidePlayerSample/playerHandler.h; sourceTree = "<group>"; };
 		DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serverSidePlayerSample.cpp; path = ../plugins/serverSidePlayerSample/serverSidePlayerSample.cpp; sourceTree = "<group>"; };
@@ -2640,11 +2617,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DF8950D616E42B8000BA9DD5 /* Frameworks */ = {
+		03FA742B1742601B00573D2D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF8950D716E42B8000BA9DD5 /* libplugin_utils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4109,7 +4085,7 @@
 		0394E967167B2D7B007F4035 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
-				03C8EE25167ABE2300BB07A5 /* BZFlag-.app */,
+				03C8EE25167ABE2300BB07A5 /* BZFlag.app */,
 				03C5E7C51670A466005A26C4 /* libcares.a */,
 				03C5E7BC1670A3DA005A26C4 /* lib3D.a */,
 				0357A7BC1670AF8E0056C938 /* libcommon.a */,
@@ -4127,39 +4103,39 @@
 				0394E895167B2513007F4035 /* libplugin_utils.a */,
 				0357A9F71670BF3A0056C938 /* bzadmin */,
 				0394E67D167B0AA3007F4035 /* bzfs */,
-				0394E6D3167B0F74007F4035 /* libairspawn.dylib */,
-				0394E7E8167B196F007F4035 /* libautoFlagReset.dylib */,
-				0394E7F3167B1A17007F4035 /* libchathistory.dylib */,
-				0394E7FE167B1E66007F4035 /* libcustomflagsample.dylib */,
-				0394E809167B1ECE007F4035 /* libfairCTF.dylib */,
-				0394E814167B1F76007F4035 /* libfastmap.dylib */,
-				0394E81F167B1FFD007F4035 /* libflagstay.dylib */,
-				0394E82A167B207E007F4035 /* libhiddenadmin.dylib */,
-				0394E835167B2132007F4035 /* libHoldTheFlag.dylib */,
-				0394E840167B2225007F4035 /* libkeepaway.dylib */,
-				0394E84B167B228D007F4035 /* libkillall.dylib */,
-				0394E856167B22E0007F4035 /* libkoth.dylib */,
-				0394E869167B2360007F4035 /* liblogDetail.dylib */,
-				0394E874167B23B4007F4035 /* libnagware.dylib */,
-				0394E87F167B2447007F4035 /* libPhoenix.dylib */,
-				0394E88A167B2494007F4035 /* libplayHistoryTracker.dylib */,
-				0394E8A3167B259F007F4035 /* libpushstats.dylib */,
-				DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */,
-				0394E8AE167B25E9007F4035 /* librabbitTimer.dylib */,
-				0394E8B9167B2647007F4035 /* librabidRabbit.dylib */,
-				0394E8C4167B26B2007F4035 /* librecordmatch.dylib */,
-				0394E8CF167B26E2007F4035 /* libregFlag.dylib */,
-				0394E8DA167B272C007F4035 /* libRogueGenocide.dylib */,
-				0394E8E5167B27A2007F4035 /* libSAMPLE_PLUGIN.dylib */,
-				0394E8F0167B27F7007F4035 /* libserverControl.dylib */,
-				0394E8FB167B284B007F4035 /* libshockwaveDeath.dylib */,
-				0318265816A0BE2F005050BD /* libsuperUser.dylib */,
-				0394E906167B28A4007F4035 /* libteamflagreset.dylib */,
-				0394E911167B28ED007F4035 /* libthiefControl.dylib */,
-				0394E91C167B293E007F4035 /* libtimedctf.dylib */,
-				0394E927167B29CC007F4035 /* libTimeLimit.dylib */,
-				0394E932167B2A47007F4035 /* libwebReport.dylib */,
-				0394E93D167B2A9E007F4035 /* libwwwzones.dylib */,
+				0394E6D3167B0F74007F4035 /* airspawn.dylib */,
+				0394E7E8167B196F007F4035 /* autoFlagReset.dylib */,
+				0394E7F3167B1A17007F4035 /* chathistory.dylib */,
+				0394E7FE167B1E66007F4035 /* customflagsample.dylib */,
+				0394E809167B1ECE007F4035 /* fairCTF.dylib */,
+				0394E814167B1F76007F4035 /* fastmap.dylib */,
+				0394E81F167B1FFD007F4035 /* flagstay.dylib */,
+				0394E82A167B207E007F4035 /* hiddenadmin.dylib */,
+				0394E835167B2132007F4035 /* HoldTheFlag.dylib */,
+				0394E840167B2225007F4035 /* keepaway.dylib */,
+				0394E84B167B228D007F4035 /* killall.dylib */,
+				0394E856167B22E0007F4035 /* koth.dylib */,
+				0394E869167B2360007F4035 /* logDetail.dylib */,
+				0394E874167B23B4007F4035 /* nagware.dylib */,
+				0394E87F167B2447007F4035 /* Phoenix.dylib */,
+				0394E88A167B2494007F4035 /* playHistoryTracker.dylib */,
+				0394E8A3167B259F007F4035 /* pushstats.dylib */,
+				0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */,
+				0394E8B9167B2647007F4035 /* rabidRabbit.dylib */,
+				0394E8C4167B26B2007F4035 /* recordmatch.dylib */,
+				0394E8CF167B26E2007F4035 /* regFlag.dylib */,
+				0394E8DA167B272C007F4035 /* RogueGenocide.dylib */,
+				0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */,
+				0394E8F0167B27F7007F4035 /* serverControl.dylib */,
+				03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */,
+				0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */,
+				0318265816A0BE2F005050BD /* superUser.dylib */,
+				0394E906167B28A4007F4035 /* teamflagreset.dylib */,
+				0394E911167B28ED007F4035 /* thiefControl.dylib */,
+				0394E91C167B293E007F4035 /* timedctf.dylib */,
+				0394E927167B29CC007F4035 /* TimeLimit.dylib */,
+				0394E932167B2A47007F4035 /* webReport.dylib */,
+				0394E93D167B2A9E007F4035 /* wwwzones.dylib */,
 			);
 			name = Targets;
 			sourceTree = "<group>";
@@ -4559,11 +4535,10 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DF8950D816E42B8000BA9DD5 /* Headers */ = {
+		03FA742C1742601B00573D2D /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF8950E116E42CF800BA9DD5 /* playerHandler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4584,7 +4559,7 @@
 			);
 			name = superUser;
 			productName = superUser;
-			productReference = 0318265816A0BE2F005050BD /* libsuperUser.dylib */;
+			productReference = 0318265816A0BE2F005050BD /* superUser.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0357A7BB1670AF8E0056C938 /* common */ = {
@@ -4768,7 +4743,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				03512C8D167B04FD00EA025C /* PBXTargetDependency */,
 			);
 			name = date;
 			productName = date;
@@ -4823,7 +4797,7 @@
 			);
 			name = airspawn;
 			productName = airspawn;
-			productReference = 0394E6D3167B0F74007F4035 /* libairspawn.dylib */;
+			productReference = 0394E6D3167B0F74007F4035 /* airspawn.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E7E7167B196F007F4035 /* autoFlagReset */ = {
@@ -4840,7 +4814,7 @@
 			);
 			name = autoFlagReset;
 			productName = autoFlagReset;
-			productReference = 0394E7E8167B196F007F4035 /* libautoFlagReset.dylib */;
+			productReference = 0394E7E8167B196F007F4035 /* autoFlagReset.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E7F2167B1A17007F4035 /* chathistory */ = {
@@ -4857,7 +4831,7 @@
 			);
 			name = chathistory;
 			productName = chathistory;
-			productReference = 0394E7F3167B1A17007F4035 /* libchathistory.dylib */;
+			productReference = 0394E7F3167B1A17007F4035 /* chathistory.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E7FD167B1E66007F4035 /* customflagsample */ = {
@@ -4874,7 +4848,7 @@
 			);
 			name = customflagsample;
 			productName = customflagsample;
-			productReference = 0394E7FE167B1E66007F4035 /* libcustomflagsample.dylib */;
+			productReference = 0394E7FE167B1E66007F4035 /* customflagsample.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E808167B1ECE007F4035 /* fairCTF */ = {
@@ -4891,7 +4865,7 @@
 			);
 			name = fairCTF;
 			productName = fairCTF;
-			productReference = 0394E809167B1ECE007F4035 /* libfairCTF.dylib */;
+			productReference = 0394E809167B1ECE007F4035 /* fairCTF.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E813167B1F76007F4035 /* fastmap */ = {
@@ -4908,7 +4882,7 @@
 			);
 			name = fastmap;
 			productName = fastmap;
-			productReference = 0394E814167B1F76007F4035 /* libfastmap.dylib */;
+			productReference = 0394E814167B1F76007F4035 /* fastmap.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E81E167B1FFD007F4035 /* flagstay */ = {
@@ -4925,7 +4899,7 @@
 			);
 			name = flagstay;
 			productName = flagstay;
-			productReference = 0394E81F167B1FFD007F4035 /* libflagstay.dylib */;
+			productReference = 0394E81F167B1FFD007F4035 /* flagstay.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E829167B207E007F4035 /* hiddenadmin */ = {
@@ -4942,7 +4916,7 @@
 			);
 			name = hiddenadmin;
 			productName = hiddenadmin;
-			productReference = 0394E82A167B207E007F4035 /* libhiddenadmin.dylib */;
+			productReference = 0394E82A167B207E007F4035 /* hiddenadmin.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E834167B2132007F4035 /* HoldTheFlag */ = {
@@ -4959,7 +4933,7 @@
 			);
 			name = HoldTheFlag;
 			productName = HoldTheFlag;
-			productReference = 0394E835167B2132007F4035 /* libHoldTheFlag.dylib */;
+			productReference = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E83F167B2225007F4035 /* keepaway */ = {
@@ -4976,7 +4950,7 @@
 			);
 			name = keepaway;
 			productName = keepaway;
-			productReference = 0394E840167B2225007F4035 /* libkeepaway.dylib */;
+			productReference = 0394E840167B2225007F4035 /* keepaway.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E84A167B228D007F4035 /* killall */ = {
@@ -4993,7 +4967,7 @@
 			);
 			name = killall;
 			productName = killall;
-			productReference = 0394E84B167B228D007F4035 /* libkillall.dylib */;
+			productReference = 0394E84B167B228D007F4035 /* killall.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E855167B22E0007F4035 /* koth */ = {
@@ -5010,7 +4984,7 @@
 			);
 			name = koth;
 			productName = koth;
-			productReference = 0394E856167B22E0007F4035 /* libkoth.dylib */;
+			productReference = 0394E856167B22E0007F4035 /* koth.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E868167B2360007F4035 /* logDetail */ = {
@@ -5027,7 +5001,7 @@
 			);
 			name = logDetail;
 			productName = logDetail;
-			productReference = 0394E869167B2360007F4035 /* liblogDetail.dylib */;
+			productReference = 0394E869167B2360007F4035 /* logDetail.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E873167B23B4007F4035 /* nagware */ = {
@@ -5044,7 +5018,7 @@
 			);
 			name = nagware;
 			productName = nagware;
-			productReference = 0394E874167B23B4007F4035 /* libnagware.dylib */;
+			productReference = 0394E874167B23B4007F4035 /* nagware.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E87E167B2447007F4035 /* Phoenix */ = {
@@ -5061,7 +5035,7 @@
 			);
 			name = Phoenix;
 			productName = Phoenix;
-			productReference = 0394E87F167B2447007F4035 /* libPhoenix.dylib */;
+			productReference = 0394E87F167B2447007F4035 /* Phoenix.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E889167B2494007F4035 /* playHistoryTracker */ = {
@@ -5078,7 +5052,7 @@
 			);
 			name = playHistoryTracker;
 			productName = playHistoryTracker;
-			productReference = 0394E88A167B2494007F4035 /* libplayHistoryTracker.dylib */;
+			productReference = 0394E88A167B2494007F4035 /* playHistoryTracker.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E894167B2513007F4035 /* plugin_utils */ = {
@@ -5112,7 +5086,7 @@
 			);
 			name = pushstats;
 			productName = pushstats;
-			productReference = 0394E8A3167B259F007F4035 /* libpushstats.dylib */;
+			productReference = 0394E8A3167B259F007F4035 /* pushstats.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8AD167B25E9007F4035 /* rabbitTimer */ = {
@@ -5129,7 +5103,7 @@
 			);
 			name = rabbitTimer;
 			productName = rabbitTimer;
-			productReference = 0394E8AE167B25E9007F4035 /* librabbitTimer.dylib */;
+			productReference = 0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8B8167B2647007F4035 /* rabidRabbit */ = {
@@ -5146,7 +5120,7 @@
 			);
 			name = rabidRabbit;
 			productName = rabidRabbit;
-			productReference = 0394E8B9167B2647007F4035 /* librabidRabbit.dylib */;
+			productReference = 0394E8B9167B2647007F4035 /* rabidRabbit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8C3167B26B2007F4035 /* recordmatch */ = {
@@ -5163,7 +5137,7 @@
 			);
 			name = recordmatch;
 			productName = recordmatch;
-			productReference = 0394E8C4167B26B2007F4035 /* librecordmatch.dylib */;
+			productReference = 0394E8C4167B26B2007F4035 /* recordmatch.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8CE167B26E2007F4035 /* regFlag */ = {
@@ -5180,7 +5154,7 @@
 			);
 			name = regFlag;
 			productName = regFlag;
-			productReference = 0394E8CF167B26E2007F4035 /* libregFlag.dylib */;
+			productReference = 0394E8CF167B26E2007F4035 /* regFlag.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8D9167B272C007F4035 /* RogueGenocide */ = {
@@ -5197,7 +5171,7 @@
 			);
 			name = RogueGenocide;
 			productName = RogueGenocide;
-			productReference = 0394E8DA167B272C007F4035 /* libRogueGenocide.dylib */;
+			productReference = 0394E8DA167B272C007F4035 /* RogueGenocide.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8E4167B27A2007F4035 /* SAMPLE_PLUGIN */ = {
@@ -5214,7 +5188,7 @@
 			);
 			name = SAMPLE_PLUGIN;
 			productName = SAMPLE_PLUGIN;
-			productReference = 0394E8E5167B27A2007F4035 /* libSAMPLE_PLUGIN.dylib */;
+			productReference = 0394E8E5167B27A2007F4035 /* SAMPLE_PLUGIN.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8EF167B27F7007F4035 /* serverControl */ = {
@@ -5231,7 +5205,7 @@
 			);
 			name = serverControl;
 			productName = serverControl;
-			productReference = 0394E8F0167B27F7007F4035 /* libserverControl.dylib */;
+			productReference = 0394E8F0167B27F7007F4035 /* serverControl.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E8FA167B284B007F4035 /* shockwaveDeath */ = {
@@ -5248,7 +5222,7 @@
 			);
 			name = shockwaveDeath;
 			productName = shockwaveDeath;
-			productReference = 0394E8FB167B284B007F4035 /* libshockwaveDeath.dylib */;
+			productReference = 0394E8FB167B284B007F4035 /* shockwaveDeath.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E905167B28A4007F4035 /* teamflagreset */ = {
@@ -5265,7 +5239,7 @@
 			);
 			name = teamflagreset;
 			productName = teamflagreset;
-			productReference = 0394E906167B28A4007F4035 /* libteamflagreset.dylib */;
+			productReference = 0394E906167B28A4007F4035 /* teamflagreset.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E910167B28ED007F4035 /* thiefControl */ = {
@@ -5282,7 +5256,7 @@
 			);
 			name = thiefControl;
 			productName = thiefControl;
-			productReference = 0394E911167B28ED007F4035 /* libthiefControl.dylib */;
+			productReference = 0394E911167B28ED007F4035 /* thiefControl.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E91B167B293E007F4035 /* timedctf */ = {
@@ -5299,7 +5273,7 @@
 			);
 			name = timedctf;
 			productName = timedctf;
-			productReference = 0394E91C167B293E007F4035 /* libtimedctf.dylib */;
+			productReference = 0394E91C167B293E007F4035 /* timedctf.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E926167B29CC007F4035 /* TimeLimit */ = {
@@ -5316,7 +5290,7 @@
 			);
 			name = TimeLimit;
 			productName = TimeLimit;
-			productReference = 0394E927167B29CC007F4035 /* libTimeLimit.dylib */;
+			productReference = 0394E927167B29CC007F4035 /* TimeLimit.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E931167B2A47007F4035 /* webReport */ = {
@@ -5333,7 +5307,7 @@
 			);
 			name = webReport;
 			productName = webReport;
-			productReference = 0394E932167B2A47007F4035 /* libwebReport.dylib */;
+			productReference = 0394E932167B2A47007F4035 /* webReport.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E93C167B2A9E007F4035 /* wwwzones */ = {
@@ -5350,7 +5324,7 @@
 			);
 			name = wwwzones;
 			productName = wwwzones;
-			productReference = 0394E93D167B2A9E007F4035 /* libwwwzones.dylib */;
+			productReference = 0394E93D167B2A9E007F4035 /* wwwzones.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		03C5E7BB1670A3DA005A26C4 /* 3D */ = {
@@ -5408,6 +5382,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag" */;
 			buildPhases = (
+				03FA742917425E1100573D2D /* ShellScript */,
 				03C8EE21167ABE2300BB07A5 /* Sources */,
 				03C8EE22167ABE2300BB07A5 /* Frameworks */,
 				03C8EE23167ABE2300BB07A5 /* Resources */,
@@ -5421,7 +5396,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				03C8EE5E167AC1C100BB07A5 /* PBXTargetDependency */,
 				03C8EE60167AC1D100BB07A5 /* PBXTargetDependency */,
 				0394E6C4167B0C04007F4035 /* PBXTargetDependency */,
 				0394E7E2167B14BE007F4035 /* PBXTargetDependency */,
@@ -5448,6 +5422,7 @@
 				0394E8DF167B273F007F4035 /* PBXTargetDependency */,
 				0394E8EA167B27BF007F4035 /* PBXTargetDependency */,
 				0394E8F5167B2800007F4035 /* PBXTargetDependency */,
+				03FA74331742603F00573D2D /* PBXTargetDependency */,
 				0394E900167B285F007F4035 /* PBXTargetDependency */,
 				0318265D16A0BE45005050BD /* PBXTargetDependency */,
 				0394E90B167B28B8007F4035 /* PBXTargetDependency */,
@@ -5459,24 +5434,24 @@
 			);
 			name = BZFlag;
 			productName = BZFlag;
-			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-.app */;
+			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag.app */;
 			productType = "com.apple.product-type.application";
 		};
-		DF8950D316E42B8000BA9DD5 /* serverSidePlayerSample */ = {
+		03FA742D1742601B00573D2D /* serverSidePlayerSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DF8950D916E42B8000BA9DD5 /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */;
+			buildConfigurationList = 03FA742F1742601B00573D2D /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */;
 			buildPhases = (
-				DF8950D416E42B8000BA9DD5 /* Sources */,
-				DF8950D616E42B8000BA9DD5 /* Frameworks */,
-				DF8950D816E42B8000BA9DD5 /* Headers */,
+				03FA742A1742601B00573D2D /* Sources */,
+				03FA742B1742601B00573D2D /* Frameworks */,
+				03FA742C1742601B00573D2D /* Headers */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = serverSidePlayerSample;
-			productName = SAMPLE_PLUGIN;
-			productReference = DF8950DC16E42B8000BA9DD5 /* libserverSidePlayerSample.dylib */;
+			productName = serverSidePlayerSample;
+			productReference = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 /* End PBXNativeTarget section */
@@ -5501,7 +5476,6 @@
 			projectRoot = "";
 			targets = (
 				03C8EE24167ABE2300BB07A5 /* BZFlag */,
-				03C5E7AD1670A073005A26C4 /* Detect Version */,
 				03C5E7C41670A466005A26C4 /* cares */,
 				03C5E7BB1670A3DA005A26C4 /* 3D */,
 				0357A7BB1670AF8E0056C938 /* common */,
@@ -5543,7 +5517,7 @@
 				0394E8D9167B272C007F4035 /* RogueGenocide */,
 				0394E8E4167B27A2007F4035 /* SAMPLE_PLUGIN */,
 				0394E8EF167B27F7007F4035 /* serverControl */,
-				DF8950D316E42B8000BA9DD5 /* serverSidePlayerSample */,
+				03FA742D1742601B00573D2D /* serverSidePlayerSample */,
 				0394E8FA167B284B007F4035 /* shockwaveDeath */,
 				0318265716A0BE2F005050BD /* superUser */,
 				0394E905167B28A4007F4035 /* teamflagreset */,
@@ -5569,7 +5543,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		03C5E7B11670A082005A26C4 /* ShellScript */ = {
+		03FA742917425E1100573D2D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5580,7 +5554,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\n\techo \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n\t<key>CFBundleDevelopmentRegion</key>\n\t<string>en</string>\n\t<key>CFBundleExecutable</key>\n\t<string>\\${EXECUTABLE_NAME}</string>\n\t<key>CFBundleIconFile</key>\n\t<string>BZFlag</string>\n\t<key>CFBundleIdentifier</key>\n\t<string>org.BZFlag</string>\n\t<key>CFBundleInfoDictionaryVersion</key>\n\t<string>6.0</string>\n\t<key>CFBundleName</key>\n\t<string>BZFlag</string>\n\t<key>CFBundlePackageType</key>\n\t<string>APPL</string>\n\t<key>CFBundleShortVersionString</key>\n\t<string>$BZFLAG_VERSION</string>\n\t<key>CFBundleSignature</key>\n\t<string>????</string>\n\t<key>CFBundleVersion</key>\n\t<string>$BZFLAG_VERSION</string>\n\t<key>LSApplicationCategoryType</key>\n\t<string>public.app-category.arcade-games</string>\n\t<key>LSMinimumSystemVersion</key>\n\t<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n\t<key>NSHumanReadableCopyright</key>\n\t<string>Copyright (c) 1993-2013 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist";
+			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\necho \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n<key>CFBundleDevelopmentRegion</key>\n<string>en</string>\n<key>CFBundleExecutable</key>\n<string>\\${EXECUTABLE_NAME}</string>\n<key>CFBundleIconFile</key>\n<string>BZFlag</string>\n<key>CFBundleIdentifier</key>\n<string>org.BZFlag</string>\n<key>CFBundleInfoDictionaryVersion</key>\n<string>6.0</string>\n<key>CFBundleName</key>\n<string>BZFlag</string>\n<key>CFBundlePackageType</key>\n<string>APPL</string>\n<key>CFBundleShortVersionString</key>\n<string>$BZFLAG_VERSION</string>\n<key>CFBundleSignature</key>\n<string>????</string>\n<key>CFBundleVersion</key>\n<string>$BZFLAG_VERSION</string>\n<key>LSApplicationCategoryType</key>\n<string>public.app-category.arcade-games</string>\n<key>LSMinimumSystemVersion</key>\n<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n<key>NSHumanReadableCopyright</key>\n<string>Copyright (c) 1993-2013 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -6342,12 +6316,12 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DF8950D416E42B8000BA9DD5 /* Sources */ = {
+		03FA742A1742601B00573D2D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DF8950E016E42CF800BA9DD5 /* playerHandler.cpp in Sources */,
-				DF8950E216E42CF800BA9DD5 /* serverSidePlayerSample.cpp in Sources */,
+				03FA7435174260CB00573D2D /* playerHandler.cpp in Sources */,
+				03FA7436174260D700573D2D /* serverSidePlayerSample.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6358,11 +6332,6 @@
 			isa = PBXTargetDependency;
 			target = 0318265716A0BE2F005050BD /* superUser */;
 			targetProxy = 0318265C16A0BE45005050BD /* PBXContainerItemProxy */;
-		};
-		03512C8D167B04FD00EA025C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 03C5E7AD1670A073005A26C4 /* Detect Version */;
-			targetProxy = 03512C8C167B04FD00EA025C /* PBXContainerItemProxy */;
 		};
 		0394E6C4167B0C04007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6524,15 +6493,15 @@
 			target = 0394E93C167B2A9E007F4035 /* wwwzones */;
 			targetProxy = 0394E941167B2AA9007F4035 /* PBXContainerItemProxy */;
 		};
-		03C8EE5E167AC1C100BB07A5 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 03C5E7AD1670A073005A26C4 /* Detect Version */;
-			targetProxy = 03C8EE5D167AC1C100BB07A5 /* PBXContainerItemProxy */;
-		};
 		03C8EE60167AC1D100BB07A5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0357A9F61670BF3A0056C938 /* bzadmin */;
 			targetProxy = 03C8EE5F167AC1D100BB07A5 /* PBXContainerItemProxy */;
+		};
+		03FA74331742603F00573D2D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 03FA742D1742601B00573D2D /* serverSidePlayerSample */;
+			targetProxy = 03FA74321742603F00573D2D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -6541,7 +6510,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -6558,7 +6527,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6892,7 +6861,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -6909,7 +6878,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6922,7 +6891,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -6939,7 +6908,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6952,7 +6921,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -6969,7 +6938,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -6982,7 +6951,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -6999,7 +6968,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7012,7 +6981,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7029,7 +6998,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7042,7 +7011,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7059,7 +7028,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7072,7 +7041,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7089,7 +7058,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7102,7 +7071,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7119,7 +7088,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7132,7 +7101,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7149,7 +7118,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7162,7 +7131,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7179,7 +7148,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7192,7 +7161,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7209,7 +7178,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7222,7 +7191,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7239,7 +7208,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7252,7 +7221,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7269,7 +7238,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7282,7 +7251,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7299,7 +7268,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7312,7 +7281,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7329,7 +7298,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7342,7 +7311,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7359,7 +7328,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7394,7 +7363,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7411,7 +7380,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7424,7 +7393,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7441,7 +7410,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7454,7 +7423,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7471,7 +7440,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7484,7 +7453,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7501,7 +7470,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7514,7 +7483,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7531,7 +7500,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7544,7 +7513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7561,7 +7530,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7574,7 +7543,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7591,7 +7560,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7604,7 +7573,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7621,7 +7590,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7634,7 +7603,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7651,7 +7620,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7664,7 +7633,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7681,7 +7650,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7694,7 +7663,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7711,7 +7680,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7724,7 +7693,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7741,7 +7710,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7754,7 +7723,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7771,7 +7740,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7784,7 +7753,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7801,7 +7770,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7814,7 +7783,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -7831,7 +7800,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				EXECUTABLE_PREFIX = "";
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
@@ -7916,28 +7885,6 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		03C5E7AF1670A073005A26C4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "";
-			};
-			name = Debug;
-		};
-		03C5E7B01670A073005A26C4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
-				HEADER_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
@@ -8031,7 +7978,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/BZFlag-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(BZFLAG_VERSION)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -8045,38 +7992,48 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "$(SRCROOT)/BZFlag-Info.plist";
-				PRODUCT_NAME = "$(TARGET_NAME)-$(BZFLAG_VERSION)";
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
 		};
-		DF8950DA16E42B8000BA9DD5 /* Debug */ = {
+		03FA74301742601B00573D2D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				EXECUTABLE_PREFIX = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
 				);
-				PRODUCT_NAME = serverSidePlayerSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		DF8950DB16E42B8000BA9DD5 /* Release */ = {
+		03FA74311742601B00573D2D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = lib;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				OTHER_LDFLAGS = (
 					"-undefined",
 					dynamic_lookup,
 				);
-				PRODUCT_NAME = serverSidePlayerSample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -8506,15 +8463,6 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03C5E7AE1670A073005A26C4 /* Build configuration list for PBXAggregateTarget "Detect Version" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				03C5E7AF1670A073005A26C4 /* Debug */,
-				03C5E7B01670A073005A26C4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		03C5E7BD1670A3DA005A26C4 /* Build configuration list for PBXNativeTarget "3D" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -8551,14 +8499,13 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DF8950D916E42B8000BA9DD5 /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */ = {
+		03FA742F1742601B00573D2D /* Build configuration list for PBXNativeTarget "serverSidePlayerSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				DF8950DA16E42B8000BA9DD5 /* Debug */,
-				DF8950DB16E42B8000BA9DD5 /* Release */,
+				03FA74301742601B00573D2D /* Debug */,
+				03FA74311742601B00573D2D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
