@@ -136,8 +136,8 @@ static int compareObstacles (const void* a, const void* b)
   // - normal object come first (from lowest to highest)
   // - then come the mesh face (highest to lowest)
   // - and finally, the mesh objects (checkpoints really)
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
+  const Obstacle* obsA = *((const Obstacle* const *)a);
+  const Obstacle* obsB = *((const Obstacle* const *)b);
 
   bool isMeshA = (obsA->getType() == MeshObstacle::getClassName());
   bool isMeshB = (obsB->getType() == MeshObstacle::getClassName());
@@ -350,8 +350,8 @@ const ObsList* CollisionManager::rayTest (const Ray* ray, float timeLeft) const
 
 static int compareRayNodes (const void *a, const void *b)
 {
-  const ColDetNode* nodeA = *((ColDetNode**)a);
-  const ColDetNode* nodeB = *((ColDetNode**)b);
+  const ColDetNode* nodeA = *((ColDetNode* const *)a);
+  const ColDetNode* nodeB = *((ColDetNode* const *)b);
   return (nodeA->getInTime() > nodeB->getInTime());
 }
 

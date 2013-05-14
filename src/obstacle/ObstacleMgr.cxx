@@ -1010,8 +1010,8 @@ void GroupDefinitionMgr::tighten()
 
 static int compareHeights(const void* a, const void* b)
 {
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
+  const Obstacle* obsA = *((const Obstacle* const *)a);
+  const Obstacle* obsB = *((const Obstacle* const *)b);
   const Extents& eA = obsA->getExtents();
   const Extents& eB = obsB->getExtents();
 

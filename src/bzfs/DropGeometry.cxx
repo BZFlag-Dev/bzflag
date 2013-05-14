@@ -179,8 +179,8 @@ static bool isValidClearance(const float pos[3], float radius,
 
 static int compareAscending(const void* a, const void* b)
 {
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
+  const Obstacle* obsA = *((const Obstacle* const *)a);
+  const Obstacle* obsB = *((const Obstacle* const *)b);
   const float topA = obsA->getExtents().maxs[2];
   const float topB = obsB->getExtents().maxs[2];
   if (topA < topB) {
@@ -195,8 +195,8 @@ static int compareAscending(const void* a, const void* b)
 
 static int compareDescending(const void* a, const void* b)
 {
-  const Obstacle* obsA = *((const Obstacle**)a);
-  const Obstacle* obsB = *((const Obstacle**)b);
+  const Obstacle* obsA = *((const Obstacle* const *)a);
+  const Obstacle* obsB = *((const Obstacle* const *)b);
   const float topA = obsA->getExtents().maxs[2];
   const float topB = obsB->getExtents().maxs[2];
   if (topA < topB) {

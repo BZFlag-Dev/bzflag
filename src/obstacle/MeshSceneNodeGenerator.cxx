@@ -135,8 +135,8 @@ static bool groundClippedFace(const MeshFace* face)
 
 static int sortByMaterial(const void* a, const void *b)
 {
-  const MeshFace* faceA = *((const MeshFace**)a);
-  const MeshFace* faceB = *((const MeshFace**)b);
+  const MeshFace* faceA = *((const MeshFace* const *)a);
+  const MeshFace* faceB = *((const MeshFace* const *)b);
   const bool noClusterA = faceA->noClusters();
   const bool noClusterB = faceB->noClusters();
 
