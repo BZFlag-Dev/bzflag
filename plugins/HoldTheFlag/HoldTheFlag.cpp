@@ -115,8 +115,8 @@ bool listDel (int playerID){
 
 
 int sort_compare (const void *_p1, const void *_p2){
-  int p1 = *(int *)_p1;
-  int p2 = *(int *)_p2;
+  const int p1 = *(const int *)_p1;
+  const int p2 = *(const int *)_p2;
 
   if (Players[p1].score != Players[p2].score)
     return Players[p2].score - Players[p1].score;

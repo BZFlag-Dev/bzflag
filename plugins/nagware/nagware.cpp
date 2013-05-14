@@ -471,11 +471,11 @@ char *strtrim (char *s){
   return s;
 }
 
-MsgEnt * parseCfgMessage(const char *m){
+MsgEnt * parseCfgMessage(char *m){
   char *p;
   int time, repeat=0;
 
-  if ((p = (char *)strchr (m, ' ')) == NULL)
+  if ((p = strchr (m, ' ')) == NULL)
     return NULL;
   *p = '\0';
   if (strchr (m, ',') != NULL){
@@ -495,7 +495,7 @@ MsgEnt * parseCfgMessage(const char *m){
 
 
 int compareMsgEnt (const void *a, const void *b){
-  return (*(MsgEnt**)a)->time - (*(MsgEnt**)b)->time;
+  return (*(const MsgEnt* const *)a)->time - (*(const MsgEnt* const *)b)->time;
 }
 
 
