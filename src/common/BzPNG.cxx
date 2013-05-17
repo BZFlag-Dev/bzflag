@@ -58,7 +58,7 @@ static void writeChunk(std::stringstream& ss, const char type[4],
 
 
 std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
-			  size_t sx, size_t sy, size_t cc, const void* pixels)
+			  size_t sx, size_t sy, size_t cc, const unsigned char* pixels)
 {
   uint8_t colorType;
   switch (cc) {
@@ -108,7 +108,7 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
   for (uint32_t y = 0; y < sy; y++) {
     d = nboPackUByte(d, 0); // prepend the scanline filter type, 0 = none
     const uint32_t iy = (sy - y - 1); // flip the vertical
-    d = nboPackString(d, (char*)pixels + (iy * xbytes), xbytes);
+    d = nboPackString(d, pixels + (iy * xbytes), xbytes);
   }
   uLongf zLen = compressBound(datLen);
   Bytef* zDat = new Bytef[zLen];
@@ -126,7 +126,7 @@ std::string BzPNG::create(const std::vector<Chunk>& extraChunks,
 
 bool BzPNG::save(const std::string& filename,
 		 const std::vector<Chunk>& extraChunks,
-		 size_t sx, size_t sy, size_t cc, const void* pixels)
+		 size_t sx, size_t sy, size_t cc, const unsigned char* pixels)
 {
   const std::string pngData = create(extraChunks, sx, sy, cc, pixels);
 

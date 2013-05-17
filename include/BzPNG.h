@@ -37,12 +37,12 @@ namespace BzPNG {
 
   /** Create a PNG image, string starts with "ERROR" if there's an error */
   std::string create(const std::vector<Chunk>& extraChunks,
-		     size_t sx, size_t sy, size_t channels, const void* pixels);
+		     size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
 
   /** Save a PNG image */
   bool save(const std::string& filename,
 	    const std::vector<Chunk>& extraChunks,
-	    size_t sx, size_t sy, size_t channels, const void* pixels);
+	    size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
 }
 
 #endif
