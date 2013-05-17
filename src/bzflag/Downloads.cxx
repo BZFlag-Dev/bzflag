@@ -72,7 +72,7 @@ class CachedTexture : cURLManager {
 public:
   CachedTexture(const std::string &texUrl);
 
-  virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(unsigned char *data, unsigned int length, bool good);
 
   static void  setParams(bool check, long timeout);
   static int   activeTransfer();
@@ -130,7 +130,7 @@ void CachedTexture::setParams(bool check, long timeout)
   byteTransferred = 0;
 }
 
-void CachedTexture::finalization(char *data, unsigned int length, bool good)
+void CachedTexture::finalization(unsigned char *data, unsigned int length, bool good)
 {
   time_t filetime;
 
