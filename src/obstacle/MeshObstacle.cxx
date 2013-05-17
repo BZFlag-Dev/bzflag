@@ -362,15 +362,15 @@ void MeshObstacle::copyFace(int f, MeshObstacle* mesh) const
   const int vcount = face->getVertexCount();
   for (int i = 0; i < vcount; i++) {
     int index;
-    index = ((afvec3*) face->getVertex(i)) - vertices;
+    index = ((const afvec3*) face->getVertex(i)) - vertices;
     vlist.push_back(index);
 
     if (face->useNormals()) {
-      index = ((afvec3*) face->getNormal(i)) - normals;
+      index = ((const afvec3*) face->getNormal(i)) - normals;
       nlist.push_back(index);
     }
     if (face->useTexcoords()) {
-      index = ((afvec2*) face->getTexcoord(i)) - texcoords;
+      index = ((const afvec2*) face->getTexcoord(i)) - texcoords;
       tlist.push_back(index);
     }
   }
@@ -995,11 +995,11 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
     const bool useTexcoords = face->useTexcoords();
     out << "f";
     for (i = 0; i < vCount; i++) {
-      int vIndex = (afvec3*)face->getVertex(i) - vertices;
+      int vIndex = (const afvec3*)face->getVertex(i) - vertices;
       vIndex = vIndex - vertexCount;
       out << " " << vIndex;
       if (useTexcoords) {
-	int tIndex = (afvec2*)face->getTexcoord(i) - texcoords;
+	int tIndex = (const afvec2*)face->getTexcoord(i) - texcoords;
 	tIndex = tIndex - texcoordCount;
 	out << "/" << tIndex;
       }
@@ -1007,7 +1007,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 	if (!useTexcoords) {
 	  out << "/";
 	}
-	int nIndex = (afvec3*)face->getNormal(i) - normals;
+	int nIndex = (const afvec3*)face->getNormal(i) - normals;
 	nIndex = nIndex - normalCount;
 	out << "/" << nIndex;
       }

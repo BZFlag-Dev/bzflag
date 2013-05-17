@@ -622,7 +622,7 @@ const void *MeshFace::unpack(const void *buf)
   for (int i = 0; i < vertexCount; i++) {
     int32_t index;
     buf = nboUnpackInt(buf, index);
-    vertices[i] = (float*)mesh->getVertices()[index];
+    vertices[i] = mesh->getVertices()[index];
   }
 
   // normals
@@ -631,7 +631,7 @@ const void *MeshFace::unpack(const void *buf)
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
       buf = nboUnpackInt(buf, index);
-      normals[i] = (float*)mesh->getNormals()[index];
+      normals[i] = mesh->getNormals()[index];
     }
   }
 
@@ -641,7 +641,7 @@ const void *MeshFace::unpack(const void *buf)
     for (int i = 0; i < vertexCount; i++) {
       int32_t index;
       buf = nboUnpackInt(buf, index);
-      texcoords[i] = (float*)mesh->getTexcoords()[index];
+      texcoords[i] = mesh->getTexcoords()[index];
     }
   }
 

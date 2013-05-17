@@ -93,9 +93,9 @@ class MeshObstacle : public Obstacle {
 
     const char *getCheckTypes() const;
     const afvec3 *getCheckPoints() const;
-    const afvec3 *getVertices() const;
-    const afvec3 *getNormals() const;
-    const afvec2 *getTexcoords() const;
+    afvec3 *getVertices() const;
+    afvec3 *getNormals() const;
+    afvec2 *getTexcoords() const;
     int getCheckCount() const;
     int getVertexCount() const;
     int getNormalCount() const;
@@ -158,17 +158,17 @@ inline const afvec3 *MeshObstacle::getCheckPoints() const
   return checkPoints;
 }
 
-inline const afvec3 *MeshObstacle::getVertices() const
+inline afvec3 *MeshObstacle::getVertices() const
 {
   return vertices;
 }
 
-inline const afvec3 *MeshObstacle::getNormals() const
+inline afvec3 *MeshObstacle::getNormals() const
 {
   return normals;
 }
 
-inline const afvec2 *MeshObstacle::getTexcoords() const
+inline afvec2 *MeshObstacle::getTexcoords() const
 {
   return texcoords;
 }
