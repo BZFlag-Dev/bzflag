@@ -492,7 +492,7 @@ void bzhttp_Response::AddBodyData ( const void* v, size_t size)
   RESPONSE_DATA(data);
 
   if (v && size)
-    data->Body += std::string((char*)v,size);
+    data->Body += std::string((const char*)v,size);
 }
 
 //---- Request----

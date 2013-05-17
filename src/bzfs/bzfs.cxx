@@ -949,7 +949,7 @@ static void serverStop()
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
   if (Record::enabled()) {
-    Record::addPacket(code, len, (char*)rawbuf + 4);
+    Record::addPacket(code, len, (const char*)rawbuf + 4);
   }
 
   // relay packet to all players except origin

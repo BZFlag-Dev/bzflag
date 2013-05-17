@@ -62,7 +62,7 @@ static std::string strFlag (u16 id);
 static std::string strFlagStatus (FlagStatus status);
 static std::string strTeam (u16 id);
 static std::string strPlayer (u16 id);
-static std::string strVector (float *vector);
+static std::string strVector (const float *vector);
 static std::string strKillReason (int16_t reason);
 static std::string strAddress (Address& address);
 
@@ -417,7 +417,7 @@ static std::string strPlayer (u16 id)
 }
 
 
-static std::string strVector (float *vector)
+static std::string strVector (const float *vector)
 {
   std::string str = TextUtils::format ("(%8.3f, %8.3f, %8.3f)",
     vector[0], vector[1], vector[2]);
@@ -893,8 +893,8 @@ static MsgStringList handleMsgShotBegin (PacketInfo *pi)
   listPush (list, 1, "type:     %.2s", finfo.flagType->flagAbbv.c_str()); // FIXME ?
   listPush (list, 2, "id:       %i", shot.id);
   listPush (list, 2, "team:     %s", strTeam(shot.team).c_str());
-  listPush (list, 2, "pos:      %s", strVector((float*)shot.pos).c_str());
-  listPush (list, 2, "vel:      %s", strVector((float*)shot.vel).c_str());
+  listPush (list, 2, "pos:      %s", strVector(shot.pos).c_str());
+  listPush (list, 2, "vel:      %s", strVector(shot.vel).c_str());
   listPush (list, 2, "lifetime: %-8.3f", finfo.lifetime);
 
   return list;

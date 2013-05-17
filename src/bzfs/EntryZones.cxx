@@ -201,7 +201,7 @@ bool EntryZones::getSafetyPoint( const std::string &qualifier,
     return false;
   }
 
-  CustomZone *zone = ((CustomZone *) &zones[closest]);
+  const CustomZone *zone = &zones[closest];
   zone->getRandomPoint(pt);
 
   return true;
