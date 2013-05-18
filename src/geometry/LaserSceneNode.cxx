@@ -163,26 +163,28 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
 	GLUquadric *q = gluNewQuadric();
 
-	const fvec4& centerColor = sceneNode->centerColor;
-	const fvec4& color       = sceneNode->color;
+	fvec4 centerColor = sceneNode->centerColor;
+	centerColor.a     = 0.85f;
+	fvec4 color       = sceneNode->color;
+	color.a           = 0.125f;
 
-	myColor4fv(fvec4(centerColor.rgb(), 0.85f));
+	myColor4fv(centerColor);
 	gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
 	addTriangleCount(20);
 
-	myColor4fv(fvec4(color.rgb(), 0.125f));
+	myColor4fv(color);
 	gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
 	addTriangleCount(32);
 
-	myColor4fv(fvec4(color.rgb(), 0.125f));
+	myColor4fv(color);
 	gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
 	addTriangleCount(48);
 
-	myColor4fv(fvec4(color.rgb(), 0.125f));
+	myColor4fv(color);
 	gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
 	addTriangleCount(64);
 
-	myColor4fv(fvec4(color.rgb(), 0.125f));
+	myColor4fv(color);
 	if (sceneNode->first) {
 		gluSphere(q, 0.5f, 32, 32);
 		addTriangleCount(32 * 32 * 2);

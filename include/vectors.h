@@ -377,8 +377,6 @@ class vec4 {
     inline const vec3<T>& xyz() const { return *(new((void*)&x) vec3<T>(false)); }
     inline       vec3<T>& yzw()       { return *(new((void*)&y) vec3<T>(false)); }
     inline const vec3<T>& yzw() const { return *(new((void*)&y) vec3<T>(false)); }
-    inline       vec3<T>& rgb()       { return xyz(); }
-    inline const vec3<T>& rgb() const { return xyz(); }
 
     vec4& operator+=(const vec4& v) { x += v.x; y += v.y; z += v.z; w += v.w; return *this; }
     vec4& operator-=(const vec4& v) { x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this; }
