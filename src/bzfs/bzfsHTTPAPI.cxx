@@ -758,7 +758,7 @@ public:
       list[n] = std::string(d);
   }
 
-  virtual void URLDone (const char*, void *data, unsigned int size, bool complete)
+  virtual void URLDone (const char*, const void *data, unsigned int size, bool complete)
   {
 	  if (data && size)
 		  bzAuthReturnData += std::string((const char*)data,size);

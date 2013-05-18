@@ -1621,7 +1621,7 @@ class bz_BaseURLHandler
 public:
   bz_BaseURLHandler() { version = 1; }
   virtual ~bz_BaseURLHandler(){};
-  virtual void URLDone ( const char* URL, void * data, unsigned int size, bool complete ) = 0;
+  virtual void URLDone ( const char* URL, const void * data, unsigned int size, bool complete ) = 0;
   virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ ){};
   virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
   

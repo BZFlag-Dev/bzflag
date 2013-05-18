@@ -69,7 +69,7 @@ public:
     doNext();
   }
 
-  virtual void URLDone ( const char*, void * data, unsigned int size, bool complete )
+  virtual void URLDone ( const char*, const void * data, unsigned int size, bool complete )
   {
     if (!busy)
       return;
@@ -821,7 +821,7 @@ BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int siz
 
     chunkSize = (left < maxNonPlayerDataChunk) ? left : maxNonPlayerDataChunk;
 
-    peer->sendChunks.push_back(std::string((char*)data + pos, chunkSize));
+    peer->sendChunks.push_back(std::string((const char*)data + pos, chunkSize));
   }
 
   // send off at least one now if it was empty
@@ -3024,7 +3024,7 @@ public:
 					  ((bz_URLHandler_V2*)Tasks[0].handler)->token = Tasks[0].token;
 				  }
 				  if (bufferedJobData.size())
-					  Tasks[0].handler->URLDone(Tasks[0].url.c_str(),(void*)bufferedJobData.c_str(),bufferedJobData.size(),true);
+					  Tasks[0].handler->URLDone(Tasks[0].url.c_str(),bufferedJobData.c_str(),bufferedJobData.size(),true);
 				  else
 					  Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
 
