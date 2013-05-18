@@ -49,7 +49,7 @@ typedef union {
 
 typedef struct {
   int count;
-  class ColDetNode** list;
+  const class ColDetNode** list;
 } ColDetNodeList;
 
 

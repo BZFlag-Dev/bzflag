@@ -74,7 +74,7 @@ inline static void addToFullPadList (Obstacle* obs)
   return;
 }
 
-inline static void addToRayList (ColDetNode* node)
+inline static void addToRayList (const ColDetNode* node)
 {
   RayList.list[RayList.count] = node;
   RayList.count++;
@@ -481,7 +481,7 @@ void CollisionManager::load ()
   root->tallyStats();
 
   // setup the ray list
-  RayList.list = new ColDetNode*[leafNodes];
+  RayList.list = new const ColDetNode*[leafNodes];
   RayList.count = 0;
 
   // print some statistics
@@ -868,7 +868,7 @@ void ColDetNode::rayTestNodes (const Ray* ray, float timeLeft) const
   }
 
   if (childCount == 0) {
-    addToRayList((ColDetNode*)this);
+    addToRayList(this);
   }
   else {
     for (int i = 0; i < childCount; i++) {
@@ -960,6 +960,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 }
 
 
+// Local Variables: ***
 // mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
