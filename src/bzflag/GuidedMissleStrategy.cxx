@@ -377,11 +377,11 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
   return minTime;
 }
 
-void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo)
+void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
 {
   // only send an update when needed
   if (!needUpdate) return;
-  this->needUpdate = false;
+  needUpdate = false;
 
   // construct and send packet
   char packet[ShotUpdatePLen + PlayerIdPLen];

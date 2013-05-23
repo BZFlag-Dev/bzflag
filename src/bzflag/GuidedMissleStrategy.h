@@ -36,7 +36,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
     void		update(float dt);
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		sendUpdate(const FiringInfo&);
+    void		sendUpdate(const FiringInfo&) const;
     void		readUpdate(uint16_t, const void*);
     void		addShot(SceneDatabase*, bool colorblind);
     void		expire();
@@ -57,7 +57,7 @@ class GuidedMissileStrategy : public ShotStrategy {
 
 		float	puffTime,rootPuff;
 		TimeKeeper lastPuff;
-    bool		needUpdate;
+    mutable bool	needUpdate;
     PlayerId		lastTarget;
 };
 
