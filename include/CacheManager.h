@@ -38,7 +38,7 @@ class CacheManager {
     bool saveIndex();
 
     bool findURL(const std::string& url, CacheRecord& record);
-    bool addFile(CacheRecord& rec, const unsigned char* data);
+    bool addFile(CacheRecord& rec, const void* data);
 
     std::vector<CacheRecord> getCacheList() const;
 

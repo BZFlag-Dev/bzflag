@@ -108,7 +108,7 @@ bool CacheManager::findURL(const std::string& url, CacheRecord& record)
 }
 
 
-bool CacheManager::addFile(CacheRecord& record, const unsigned char* data)
+bool CacheManager::addFile(CacheRecord& record, const void* data)
 {
   if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0)) {
     return false;
@@ -135,7 +135,7 @@ bool CacheManager::addFile(CacheRecord& record, const unsigned char* data)
   rec->usedDate = time(NULL); // update the timestamp
 
   MD5 md5;
-  md5.update(data, rec->size);
+  md5.update((const unsigned char *)data, rec->size);
   md5.finalize();
   rec->key = md5.hexdigest();
 
