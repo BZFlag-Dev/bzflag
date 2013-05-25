@@ -278,7 +278,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
-  ares->queryHostname((struct sockaddr *) &clientAddr);
+  ares->queryHostname((const struct sockaddr *) &clientAddr);
 }
 
 NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
@@ -402,7 +402,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length) {
       return -1;
     }
     if (n > 0) {
-      buffer  = (void*)(((const char*)buffer) + n);
+      buffer  = (const void*)(((const char*)buffer) + n);
       length -= n;
     }
   }
