@@ -548,7 +548,7 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
 }
 
 
-static MeshObstacle* makeContainedMesh(int type, const Obstacle* obs)
+static MeshObstacle* makeContainedMesh(int type, Obstacle* obs)
 {
   MeshObstacle* mesh = NULL;
   switch (type) {
@@ -887,7 +887,7 @@ void GroupDefinition::printGrouped(std::ostream& out,
   for (int type = 0; type < ObstacleTypeCount; type++) {
     const ObstacleList& list = getList(type);
     for (unsigned int i = 0; i < list.size(); i++) {
-      const Obstacle* obs = list[i];
+      Obstacle* obs = list[i];
 
       if (!obs->isFromGroupDef() && !obs->isFromContainer()) {
 	if (!saveAsMeshes) {
