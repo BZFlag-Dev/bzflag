@@ -3564,6 +3564,12 @@ BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
     countdownPauseStart = TimeKeeper::getNullTime();
     clOptions->countdownPaused = false;
   }
+
+  // fire off a game end event
+  bz_GameStartEndEventData_V1	gameData;
+  gameData.eventType = bz_eGameEndEvent;
+  gameData.duration = clOptions->timeLimit;
+  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 }
 
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
