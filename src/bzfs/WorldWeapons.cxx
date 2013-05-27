@@ -158,8 +158,9 @@ void WorldWeapons::fire()
        it != weapons.end(); ++it) {
     Weapon *w = *it;
     if (w->nextTime <= nowTime) {
+      FlagType type = *(w->type);	// non-const copy
 
-      fireWorldWepReal((FlagType*)w->type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
+      fireWorldWepReal(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
 		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction,
 		       getNewWorldShotID(), 0);
 
