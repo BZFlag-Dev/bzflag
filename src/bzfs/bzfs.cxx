@@ -258,7 +258,7 @@ char *getDirectMessageBuffer()
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
 static int directMessage(GameKeeper::Player &playerData,
-			 uint16_t code, int len, const void *msg)
+			 uint16_t code, int len, void *msg)
 {
   if (playerData.isParting)
     return -1;
@@ -271,7 +271,7 @@ static int directMessage(GameKeeper::Player &playerData,
   return pwrite(playerData, bufStart, len + 4);
 }
 
-void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
+void directMessage(int playerIndex, uint16_t code, int len, void *msg)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -281,7 +281,7 @@ void directMessage(int playerIndex, uint16_t code, int len, const void *msg)
   directMessage(*playerData, code, len, msg);
 }
 
-void broadcastMessage(uint16_t code, int len, const void *msg)
+void broadcastMessage(uint16_t code, int len, void *msg)
 {
   // send message to everyone
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3542,7 +3542,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   }
 }
 
-static void shotUpdate(int playerIndex, const void *buf, int len)
+static void shotUpdate(int playerIndex, void *buf, int len)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3574,7 +3574,7 @@ static void shotUpdate(int playerIndex, const void *buf, int len)
   broadcastMessage(MsgGMUpdate, len, buf);
 }
 
-static void shotFired(int playerIndex, const void *buf, int len)
+static void shotFired(int playerIndex, void *buf, int len)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -4383,7 +4383,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
       // Sanity check
       if (len == FiringInfoPLen)
-	shotFired(t, buf, int(len));
+	shotFired(t, const_cast<void *>(buf), int(len));
       break;
 
     // shot ended prematurely
@@ -4903,7 +4903,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
 
     case MsgGMUpdate:
-      shotUpdate(t, buf, int(len));
+      shotUpdate(t, const_cast<void *>(buf), int(len));
       break;
 
     // FIXME handled inside uread, but not discarded

@@ -103,7 +103,7 @@ extern void sendPlayerMessage(GameKeeper::Player *playerData,
 			      PlayerId dstPlayer,
 			      const char *message);
 extern char *getDirectMessageBuffer();
-extern void  broadcastMessage(uint16_t code, int len, const void *msg);
+extern void  broadcastMessage(uint16_t code, int len, void *msg);
 extern void  sendTeamUpdate(int playerIndex = -1,
 			    int teamIndex1 = -1,
 			    int teamIndex2 = -1);
@@ -112,7 +112,7 @@ extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code,
-			   int len, const void *msg);
+			   int len, void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
