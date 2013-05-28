@@ -86,7 +86,7 @@ typedef struct RRpacket {
   u32 nextFilePos;
   u32 prevFilePos;
   RRtime timestamp;
-  char *data;
+  const char *data;
 } RRpacket;
 //static const unsigned int RRpacketHdrSize =
 //  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
@@ -1896,12 +1896,13 @@ static RRpacket *loadPacket(FILE *f)
     p->data = NULL;
   }
   else {
-    p->data = new char [p->len];
-    if (fread(p->data, p->len, 1, f) != 1) {
-      delete[] p->data;
+    char *d = new char [p->len];
+    if (fread(d, p->len, 1, f) != 1) {
+      delete[] d;
       delete p;
       return NULL;
     }
+    p->data = d;
   }
 
   logDebugMessage(4,"loadRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
@@ -2378,7 +2379,7 @@ static void initPacket(u16 mode, u16 code, int len, const void *data, RRpacket *
   p->mode = mode;
   p->code = code;
   p->len = len;
-  p->data = (char*) data; // dirty little trick
+  p->data = (const char *)data;
 }
 
 
@@ -2389,10 +2390,11 @@ static RRpacket *newPacket(u16 mode, u16 code, int len, const void *data)
   p->next = NULL;
   p->prev = NULL;
 
-  p->data = new char [len];
-  if (data != NULL) {
-    memcpy(p->data, data, len);
+  char *d = new char [len];
+  if (d != NULL) {
+    memcpy(d, data, len);
   }
+  p->data = d;
   initPacket(mode, code, len, p->data, p);
 
   return p;
