@@ -1565,7 +1565,7 @@ static void loadCachedWorld()
   // get the world size
   cachedWorld->seekg(0, std::ios::end);
   std::streampos size = cachedWorld->tellg();
-  unsigned long charSize = std::streamoff(size);
+  unsigned long charSize = (unsigned long)std::streamoff(size);
 
   // load the cached world
   cachedWorld->seekg(0);
