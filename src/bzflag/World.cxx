@@ -401,7 +401,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 
   // check mesh faces
   for (/* do nothing */; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
+    Obstacle* obs = olist->list[i];
     const char* type = obs->getType();
     if (type == MeshObstacle::getClassName()) {
       break;
@@ -419,7 +419,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
       }
       else {
 	// add the face to the hitlist
-	olist->list[hitCount] = (Obstacle*) obs;
+	olist->list[hitCount] = obs;
 	hitCount++;
 	// compute its dot product and stick it in the scratchPad
 	const float* p = face->getPlane();
@@ -542,7 +542,7 @@ void			World::makeMeshDrawMgrs()
   drawInfoArray = new MeshDrawInfo*[count];
   drawInfoCount = 0;
   for (unsigned int i = 0; i < count; i++) {
-    MeshDrawInfo* di = (MeshDrawInfo*) sourceMeshes[i]->getDrawInfo();
+    MeshDrawInfo* di = sourceMeshes[i]->getDrawInfo();
     if ((di != NULL) && !di->isCopy()) {
       MeshDrawMgr* dm = new MeshDrawMgr(di);
       di->setDrawMgr(dm);

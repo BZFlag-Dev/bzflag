@@ -107,7 +107,7 @@ class MeshObstacle : public Obstacle {
     bool useSmoothBounce() const;
     bool noClusters() const;
 
-    const MeshDrawInfo* getDrawInfo() const;
+    MeshDrawInfo* getDrawInfo() const;
     void setDrawInfo(MeshDrawInfo*);
 
     int packSize() const;
@@ -223,7 +223,7 @@ inline bool MeshObstacle::noClusters() const
   return noclusters;
 }
 
-inline const MeshDrawInfo* MeshObstacle::getDrawInfo() const
+inline MeshDrawInfo* MeshObstacle::getDrawInfo() const
 {
   return drawInfo;
 }
