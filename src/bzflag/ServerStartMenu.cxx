@@ -489,7 +489,7 @@ void ServerStartMenu::execute()
 #if defined(_WIN32)
 
     // Windows
-    int result = _spawnvp(_P_DETACH, serverCmd, (char* const*) args);
+    int result = _spawnvp(_P_DETACH, serverCmd, const_cast<char* const*>(args));
     if (result < 0) {
       if (errno == ENOENT)
 	setStatus("Failed... can't find server program.");
@@ -541,10 +541,10 @@ void ServerStartMenu::execute()
       close(2);
 
       // exec server
-      execvp(serverCmd, (char* const*)args);
+      execvp(serverCmd, const_cast<char* const*>(args));
       // If execvp returns, bzfs wasnt at the anticipated location.
       // Let execvp try to find it in $PATH by feeding it the "bzfs" name by it self
-      execvp(serverApp, (char* const*)args);
+      execvp(serverApp, const_cast<char* const*>(args));
       // If that returns too, something bad has happened. Exit.
       exit(2);
     }

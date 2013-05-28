@@ -77,7 +77,7 @@ Obstacle* SphereObstacle::copyWithTransform(const MeshTransform& xform) const
 
   SphereObstacle* copy =
     new SphereObstacle(tmpXform, pos, size, angle, texsize, useNormals,
-		       hemisphere, divisions, (const BzMaterial**)materials,
+		       hemisphere, divisions, const_cast<const BzMaterial**>(materials),
 		       phydrv, smoothBounce, driveThrough, shootThrough, ricochet);
   return copy;
 }

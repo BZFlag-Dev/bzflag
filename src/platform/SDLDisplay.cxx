@@ -610,7 +610,7 @@ void SDLWindow::setTitle(const char * title) {
 }
 
 void SDLWindow::setFullscreen(bool on) {
-  ((SDLDisplay *)getDisplay())->setFullscreen(on);
+  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->setFullscreen(on);
 }
 
 void SDLWindow::iconify(void) {
@@ -627,11 +627,11 @@ void SDLWindow::getMouse(int& _x, int& _y) const {
 }
 
 void SDLWindow::setSize(int width, int height) {
-  ((SDLDisplay *)getDisplay())->setWindowSize(width, height);
+  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->setWindowSize(width, height);
 }
 
 void SDLWindow::getSize(int& width, int& height) const {
-  ((SDLDisplay *)getDisplay())->getWindowSize(width, height);
+  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getWindowSize(width, height);
 }
 
 void SDLWindow::setGamma(float gamma) {
@@ -691,14 +691,14 @@ void SDLWindow::swapBuffers() {
 }
 
 bool SDLWindow::create(void) {
-  if (!((SDLDisplay *)getDisplay())->createWindow()) {
+  if (!const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->createWindow()) {
     return false;
   }
   return true;
 }
 
 void SDLWindow::enableGrabMouse(bool on) {
-  ((SDLDisplay *)getDisplay())->enableGrabMouse(on);
+  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->enableGrabMouse(on);
 }
 
 #endif

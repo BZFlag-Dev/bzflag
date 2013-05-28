@@ -78,7 +78,7 @@ Obstacle* ConeObstacle::copyWithTransform(const MeshTransform& xform) const
   ConeObstacle* copy =
     new ConeObstacle(tmpXform, pos, size, angle, sweepAngle,
 		    texsize, useNormals, divisions,
-		    (const BzMaterial**)materials, phydrv,
+		    const_cast<const BzMaterial**>(materials), phydrv,
 		    smoothBounce, driveThrough, shootThrough, ricochet);
   return copy;
 }

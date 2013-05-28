@@ -207,7 +207,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     } else {
       vert[0] = vert[1] = vert[2] = 0.0f;
     }
-    ((std::vector<cfvec3>*)&vertices)->push_back(vert);
+    const_cast<std::vector<cfvec3>*>(&vertices)->push_back(vert);
   }
 
   MeshObstacle* mesh =

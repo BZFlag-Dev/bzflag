@@ -79,7 +79,7 @@ Obstacle* TetraBuilding::copyWithTransform(const MeshTransform& xform) const
 
   TetraBuilding* copy =
     new TetraBuilding(tmpXform, vertices, normals, texcoords,
-		      useNormals, useTexcoords, (const BzMaterial**)materials,
+		      useNormals, useTexcoords, const_cast<const BzMaterial**>(materials),
 		      driveThrough, shootThrough, ricochet);
   return copy;
 }
