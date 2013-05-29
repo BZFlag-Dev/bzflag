@@ -1147,7 +1147,7 @@ could look like this:
 USERADMIN: *COPS +BAN +UNBAN
 
 Probably you want to define customized permissions for the default
-group "VERIFIED" instead of those automatically asigned by the server:
+group "VERIFIED" instead of those automatically assigned by the server:
 
 VERIFIED: \-ALL +perm1 +perm2 ...
 

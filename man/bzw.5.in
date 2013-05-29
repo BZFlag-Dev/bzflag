@@ -1244,7 +1244,7 @@ teleporter_spec :=
 .br
 	  <integer>
 .br
-	| <teleporter_name_with_wilcards> (":f" | ":b")?
+	| <teleporter_name_with_wildcards> (":f" | ":b")?
 .br
 .TP
 link :=
