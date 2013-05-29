@@ -670,9 +670,7 @@ AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	#FLAGS="$FLAGS -Wall -W -Wfloat-equal -Wundef -Wshadow -Wpointer-arith -Wcast-qual -Wwrite-strings -Wconversion -Wredundant-decls"
-	# time to use -Wextra instead of -W ? (gcc 3.4+)
-	FLAGS="-Wall -W -Wundef -Wshadow"
+	FLAGS="-Wall -Wextra -Wcast-qual -Wshadow -Wundef"	# -Wconversion -Wfloat-equal -Wpointer-arith -Wredundant-decls -Wwrite-strings
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
 	case $host_vendor in
