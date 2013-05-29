@@ -31,8 +31,8 @@ bzfs \- BZFlag game server
 [\fB\-d\fR]
 [\fB\-density \fR\fInum\fR]
 [\fB\-disableBots\fR]
-[\fB\+f \fR{\fIgood\fR|\fIbad\fR|\fIteam|\fR|\fIflag\-id\fR}[\fI{count}\fR]]
-[\fB\-f \fR{\fIgood\fR|\fIbad\fR|\fIflag\-id\fR}]
+[\fB+f \fR{\fIgood\fR | \fIbad\fR | \fIteam | \fR | \fIflag\-id\fR}[\fI{count}\fR]]
+[\fB\-f \fR{\fIgood\fR | \fIbad\fR | \fIflag\-id\fR}]
 [\fB\-fb\fR]
 [\fB\-filterCallsigns\fR]
 [\fB\-filterChat\fR]
@@ -53,7 +53,7 @@ bzfs \- BZFlag game server
 [\fB\-masterBanURL \fIURL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp
-\fR{\fIcount\fR\~|\~[\fIrogue-count\fR]\fB,\~\fR[\fIred-count\fR]\fB,\~\fR[\fIgreen-count\fR]\fB,\~\fR[\fIblue-count\fR]\fB,\~\fR[\fIpurple-count\fR]\fB,\~\fR[\fIobserver-count\fR]}]
+\fR{\fIcount\fR\~ | \~[\fIrogue-count\fR]\fB,\~\fR[\fIred-count\fR]\fB,\~\fR[\fIgreen-count\fR]\fB,\~\fR[\fIblue-count\fR]\fB,\~\fR[\fIpurple-count\fR]\fB,\~\fR[\fIobserver-count\fR]}]
 [\fB\-mps \fR\fImax\-score\fR]
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
@@ -73,15 +73,15 @@ bzfs \- BZFlag game server
 [\fB\-publiclist \fIurl\fR]
 [\fB\-publickey \fIkey\fR]
 [\fB\-q\fR]
-[\fB\+r\fR]
-[\fB\-rabbit \fR[\fBscore\fR|\fBkiller\fR|\fBrandom\fR]]
+[\fB+r\fR]
+[\fB\-rabbit \fR[\fBscore\fR | \fBkiller\fR | \fBrandom\fR]]
 [\fB\-recbuf \fIsize\fR]
 [\fB\-recbufonly\fR]
 [\fB\-recdir \fIdirectory\fR]
 [\fB\-replay\fR]
 [\fB\-reportfile \fIfilename\fR]
 [\fB\-reportpipe \fIcommand\fR]
-[\fB\+s \fIflag\-count\fR]
+[\fB+s \fIflag\-count\fR]
 [\fB\-s \fIflag\-count\fR]
 [\fB\-sa\fR]
 [\fB\-sb\fR]
@@ -96,7 +96,7 @@ bzfs \- BZFlag game server
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
-[\fB\-time \fR{\fItime\-limit\fR|\fIending-time\fR}]
+[\fB\-time \fR{\fItime\-limit\fR | \fIending-time\fR}]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
 [\fB\-tkkr \fIpercent\fR]
@@ -188,13 +188,13 @@ By default, the free\-for\-all style is used.
 Increase debugging level. If more \-d is given, more debugging info is obtained.
 .TP
 \fB\-density \fR\fInum\fR
-Specify density for buildings, i.e. the higher the integer number, the more
+Specify density for buildings, i.e.\& the higher the integer number, the more
 buildings you will get. This applies to automatically generated maps only.
 .TP
 .B \-disableBots
 Disallow clients from using the ROGER autopilot or from using robots.
 .TP
-\fB+f\fR {\fIgood\fR|\fIbad\fR|\fIteam\fR\fIflag\-id\fR}[\fI{count}\fR]
+\fB+f\fR {\fIgood\fR | \fIbad\fR | \fIteam\fR\fIflag\-id\fR}[\fI{count}\fR]
 Forces the existence of the given flag.  If specified multiple times
 for the same \fIflag\-id\fR, then that many flags will appear.  The
 \fIgood\fR argument is equivalent to specifying \fB+f\fR once for
@@ -204,7 +204,7 @@ assuming that the game style is capture the flag. The optional
 \fI{count}\fR parameter allows the specification of multiple flags of the
 same type. Note that the curly braces are required.
 .TP
-\fB\-f\fR {\fIgood\fR|\fIbad\fR|\fIflag\-id\fR}
+\fB\-f\fR {\fIgood\fR | \fIbad\fR | \fIflag\-id\fR}
 Disallows random flags of the given type.  Required flags given by the
 \fB+f\fR option are still provided.  The \fIbad\fR argument is equivalent
 to specifying \fB\-f\fR once for each kind of bad flag.  Same goes for
@@ -285,7 +285,7 @@ Kick players that did not play longer than \fIseconds\fR. Pausing players are
 not kicked. If a player uttered a word recently, he will be kicked after
 thrice the given time.
 .TP
-\fB\-mp\fR {\fIcount\fR|[\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]\fB,\fR[\fIobserver\fR]}
+\fB\-mp\fR {\fIcount\fR | [\fIrogue\fR]\fB,\fR[\fIred\fR]\fB,\fR[\fIgreen\fR]\fB,\fR[\fIblue\fR]\fB,\fR[\fIpurple\fR]\fB,\fR[\fIobserver\fR]}
 Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
@@ -330,7 +330,7 @@ Load passwords from file
 .TP
 \fB\-passwd \fIpassword\fR
 Specify a server administrator password for use in remote administration
-such as /kick, /ban, /mute, etc  messages.
+such as /kick, /ban, /mute, etc.\&  messages.
 .TP
 \fB\-pidfile \fIfilename\fR
 Specify a file where the server will write its process ID so it may be used for
@@ -386,7 +386,7 @@ A built\-in url is used by default.  The \fBBZFlag\fR clients use the
 same built\-in url so, by default, clients will see public servers
 automatically.  This argument may be provided multiple times to
 publicize a server to multiple list servers.
-.TP 
+.TP
 \fB\-publickey \fIkey\fR
 Advertise this server on the list server(s) using the specified key.
 Only has an effect when used with \fB\-publictitle\fR and/or \fB\-publicaddr\fR.
@@ -401,7 +401,7 @@ especially if the \fB\-p\fR option is also used.
 Makes most shots ricochet.
 Super bullets, shock waves, and guided missiles do not.
 .TP
-\fB\-rabbit\fR [\fIscore\fR|\fIkiller\fR|\fIrandom\fR]
+\fB\-rabbit\fR [\fIscore\fR | \fIkiller\fR | \fIrandom\fR]
 Enables the rabbit\-hunt style game.  By default, the free\-for\-all
 style is used.  You must specify the algorithm used to pick a new
 rabbit when the old one dies.  The \fIscore\fR algorithm uses a modified
@@ -491,7 +491,7 @@ drops it and it is left alone for some time. This option specifies the number
 of seconds that the flag should be left alone before it is reset. The
 default value is 30.
 .TP
-\fB\-time \fR{\fItime\-limit\fR|\fIending-time\fR}
+\fB\-time \fR{\fItime\-limit\fR | \fIending-time\fR}
 Sets a time limit on the game to \fItime\-limit\fR or \fIending-time\fR. The game will be
 stopped \fItime\-limit\fR seconds after the first player connects, or at \fIending-time\fR,
 whichever is given. The \fIending-time\fR should be given in hh:mm:ss format, but does not
@@ -513,8 +513,8 @@ Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1\-100]. A start up grace period is given to players.
 .TP
 .B \-trackplayhistory
-Has the server track players with good runs of kills and anounces them.
-Also anounces those players that stop the runs of good players.
+Has the server track players with good runs of kills and announces them.
+Also announces those players that stop the runs of good players.
 .TP
 \fB\-ts \fR[\fImicros\fR]
 Include timestamp information in DEBUG output \(em useful for logging.
@@ -575,7 +575,7 @@ have additional disadvantage in WAN games where lag/jitter can cause unfair
 advantage.  Single shot, non-Jump games will teach valuable lessons in dodging,
 however, and are excellent starting points for the beginner.
 .SS Networking
-Communication between the server and clients (i.e. between \fBbzfs\fR and
+Communication between the server and clients (i.e.\& between \fBbzfs\fR and
 \fBbzflag\fR) during a game is via TCP and UDP.  Use the \fB\-help\fR option
 to get
 the server's default port.  If there's a firewall between the server and
@@ -695,7 +695,7 @@ You are now an administrator!
 .ft R
 
 .TP
-.B /poll \fR{{\fIban\fR|\fIkick\fR} \fIcallsign\fR|vote {\fIyes\fR|\fIno\fR}|veto}
+.B /poll \fR{{\fIban\fR | \fIkick\fR} \fIcallsign\fR | vote {\fIyes\fR | \fIno\fR} | veto}
 Interact and make requests of the bzflag voting system via the /poll command.
 The ban and kick subcommands request a vote to respectively ban or kick some
 player.  The playername is expected as the next argument.  The vote and veto
@@ -726,7 +726,7 @@ Write a message to the server administrator. Example:
 Prints server's current running time in days, hours, mins and secs.
 
 .TP
-.B /vote \fR{\fIyes\fR|\fIno\fR}
+.B /vote \fR{\fIyes\fR | \fIno\fR}
 If there is a poll active, this command will place a vote in favor or in
 opposition to the poll.  Multiple languages are supported as a vote argument
 in addition to "yes" and "no".  By default, you must be registered to vote on
@@ -736,7 +736,7 @@ a poll.
 .SH "SERVER ADMINISTRATIVE COMMANDS"
 .BR
 .TP
-.B /ban \fR{\fIip\fR|\fIipList\fR|\fI#slot\fR|\fI"Player Name"\fR|\fIplayerName\fR} \fIduration\fR \fIreason\fR
+.B /ban \fR{\fIip\fR | \fIipList\fR | \fI#slot\fR | \fI"Player Name"\fR | \fIplayerName\fR} \fIduration\fR \fIreason\fR
 
 Ban players using the specified IPs for certain length of time
 from using this server.
@@ -874,7 +874,7 @@ Change the number of jitter warnings given before a player is kicked. Example:
 .ft R
 
 .TP
-.B /kick \fR{\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} \fIreason\fR
+.B /kick \fR{\fI"Player Name"\fR | \fIplayerName\fR | \fI#slot\fR} \fIreason\fR
 Kick a player off the server. Example:
 .ft CW
 .nf
@@ -890,7 +890,7 @@ A reason is required
 .ft R
 
 .TP
-.B /kill \fR{\fI"Player Name"\fR|\fIplayerName\fR|\fI#slot\fR} [\fIreason\fR]
+.B /kill \fR{\fI"Player Name"\fR | \fIplayerName\fR | \fI#slot\fR} [\fIreason\fR]
 Kill a player just like when shooting. Example:
 .ft CW
 .nf
@@ -930,7 +930,7 @@ Change the time on the clock by the specified number of seconds. Example:
 .ft R
 
 .TP
-.B /mute \fR{\fI#slot\fR|\fIcallsign\fR}
+.B /mute \fR{\fI#slot\fR | \fIcallsign\fR}
 Allows a server admin to remove the ability for a player to communicate with
 other players. Once muted the player may only talk to admins on the server.
 This command removes the TALK permission that is enabled by default for all
@@ -1006,7 +1006,7 @@ Stop recording into the memory buffer
 List all files in the recordings directory
 
 .TP
-.B /replay load \fR{\fIfilename\fR|\fI#index\fR}
+.B /replay load \fR{\fIfilename\fR | \fI#index\fR}
 Load the specified recording file by name, or by index
 (same indices as produced by the 'replay list' command)
 
@@ -1021,7 +1021,7 @@ Start playing the recording. This will oftentimes require that all players conne
 to the server rejoin  (to reload the map, etc...)
 
 .TP
-.B /replay skip \fR[{\fI+\fR|\fI\-\fR} \fIseconds\fR]
+.B /replay skip \fR[{\fI+\fR | \fI\-\fR} \fIseconds\fR]
 If seconds is specified, then skip that amount of time in the recording.
 Otherwise, skip forwards until there is activity.
 
@@ -1040,7 +1040,7 @@ Generate a public message sent by the server. Example:
 .ft R
 
 .TP
-.B /sendhelp \fR{\fI"Player name"\fR|\fIplayerName\fR|\fI#slot\fR}  \fIhelp page\fR
+.B /sendhelp \fR{\fI"Player name"\fR | \fIplayerName\fR | \fI#slot\fR}  \fIhelp page\fR
 Send the specified help page to a user
 .ft CW
 .nf
@@ -1058,7 +1058,7 @@ Stop serving BZFlag on this server
 Kick all players off the server
 
 .TP
-.B /unmute \fR{\fI#slot\fR|\fIcallsign\fR}
+.B /unmute \fR{\fI#slot\fR | \fIcallsign\fR}
 Allows a server admin to restore the TALK permission to a previously muted
 player.
 
@@ -1080,7 +1080,7 @@ server commands.  Users in turn belong to groups.  Groups are
 generally customized to perhaps allow administrative control to
 trusted users.
 
-There are both local and global groups, i.e. groups that are available
+There are both local and global groups, i.e.\& groups that are available
 across the entire BZFlag network.  In setting up a server, you may
 want to specify global groups that will allow already well known and
 trusted users to police your server and help maintain control against
@@ -1113,10 +1113,10 @@ global groups you care to have on your server in addition to default groups
 and exactly which permissions are granted by each.  These files are laid out
 with one line per group, using the following format:
 
-GROUP_NAME: [*Group] [+|\-|!]perm1 [+|\-|!]perm2 ... permN
+GROUP_NAME: [*Group] [ +| \-| !]perm1 [ +| \-| !]perm2 ... permN
 
 
-*Group: inhert permissions from existing group "Group"
+*Group: inherit permissions from existing group "Group"
 .br
 
 +perm: add perm to this group
@@ -1125,7 +1125,7 @@ GROUP_NAME: [*Group] [+|\-|!]perm1 [+|\-|!]perm2 ... permN
 \-perm: remove perm from this group
 .br
 
-!perm: forbid perm for this group. makes perm inaccessable whether it's granted
+!perm: forbid perm for this group. makes perm inaccessible whether it's granted
 from another group or not
 
 If no operator is given with a permission it is handled like +perm. A group
@@ -1295,10 +1295,10 @@ Lists the available user groups
 Lists the permissions for each group
 
 .TP
-.B /masterban \fR{\fIflush\fR|\fIreload\fR}
+.B /masterban \fR{\fIflush\fR | \fIreload\fR}
 Forces the server to flush any bans from the master server. If reload is specified
 instead of flush, also reloads bans from the the internet. Local bans are unaffected.
-This command requires the UNBAN permision.
+This command requires the UNBAN permission.
 
 .TP
 .B /reload
