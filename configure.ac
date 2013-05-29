@@ -350,6 +350,7 @@ AC_CHECK_HEADERS( \
 	dsound.h \
 	fcntl.h \
 	inttypes.h \
+	limits.h \
 	linux/input.h \
 	process.h \
 	sched.h \
