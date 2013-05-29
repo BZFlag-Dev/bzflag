@@ -208,6 +208,19 @@ fi
 AC_PROG_MAKE_SET
 AM_PROG_MKDIR_P
 AC_PROG_CXX
+if test -z "$CXX"; then
+    AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
+fi
+AX_CXX_COMPILE_STDCXX_0X
+if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
+    if test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
+	CXXFLAGS="$CXXFLAGS -std=c++0x"
+    elif test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
+	CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+    else
+	AC_MSG_ERROR([A c++ compiler with C++0x support is required to build BZFlag])
+    fi
+fi
 AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
@@ -744,7 +757,7 @@ fi
 
 if test x$enable_debug = xyes ; then
     CONF_CFLAGS="$CONF_CFLAGS -Werror -g -O0"
-    CONF_CXXFLAGS="-std=c++0x $CONF_CXXFLAGS -Werror -g -O0"
+    CONF_CXXFLAGS="$CONF_CXXFLAGS -Werror -g -O0"
     # revert automatic setting of CFLAGS and CXXFLAGS to prevent
     # override of "-g -O0" put into CONF_CFLAGS and CONF_CXXFLAGS above
     CFLAGS="$user_CFLAGS"
@@ -754,7 +767,7 @@ else
     if test "$GCC" = yes ; then
 	OPTIMIZE="-fexpensive-optimizations"
 	CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
-	CONF_CXXFLAGS="-std=c++0x $CONF_CXXFLAGS $OPTIMIZE"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
     fi
     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi
