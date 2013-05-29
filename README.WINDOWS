@@ -35,7 +35,7 @@ a 64 bit BZFlag client, the game does not use that much ram.
 **Required Libraries**
 
 You will need the windows DirectX SDK
-  (download at hhttp://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812)
+  (download at http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812)
 
 You may also need to install curses and NSIS to do a full
 distribution build.  Public Domain Curses is at
