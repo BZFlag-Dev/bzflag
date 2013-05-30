@@ -33,11 +33,9 @@ short tmp_buf[512];
 // SolarisMedia
 //
 
-SolarisMedia::SolarisMedia() : BzfMedia(), audio_fd(-1),
-				queueIn(-1), queueOut(-1),
-				childProcID(0),
-				written(0), eof_written(0),
-				eof_counter(0),audio_ready(0)
+SolarisMedia::SolarisMedia() : BzfMedia(), audio_fd(-1), audio_ready(0),
+			       queueIn(-1), queueOut(-1), written(0),
+			       eof_written(0), eof_counter(0), childProcID(0)
 
 {
   // do nothing
