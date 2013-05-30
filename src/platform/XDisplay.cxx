@@ -234,7 +234,8 @@ bool			XDisplay::getKey(const XEvent& xevent,
 {
   char buf[3];
   KeySym keysym;
-  if (XLookupString((XKeyEvent*)&xevent.xkey, buf, 1, &keysym, NULL) == 1) {
+  XKeyEvent xkey = xevent.xkey;		// non-const copy
+  if (XLookupString(&xkey, buf, 1, &keysym, NULL) == 1) {
     key.ascii = buf[0];
     key.button = BzfKeyEvent::NoButton;
 
