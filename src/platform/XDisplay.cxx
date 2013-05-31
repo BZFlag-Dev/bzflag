@@ -213,7 +213,7 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
       break;
 
     case ClientMessage: {
-      XClientMessageEvent* cme = (XClientMessageEvent*)&xevent;
+      const XClientMessageEvent* cme = (const XClientMessageEvent*)&xevent;
       if (cme->format == 32) {
 	if ((Atom)cme->data.l[0] == XInternAtom(rep->getDisplay(),
 					"WM_DELETE_WINDOW", true)) {
