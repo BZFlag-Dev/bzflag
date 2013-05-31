@@ -24,7 +24,7 @@
 
 AU_ALIAS([AC_CXX_COMPILE_STDCXX_0X], [AX_CXX_COMPILE_STDCXX_0X])
 AC_DEFUN([AX_CXX_COMPILE_STDCXX_0X], [
-  AC_CACHE_CHECK(if g++ supports C++0x features without additional flags,
+  AC_CACHE_CHECK(if $CXX supports C++0x features without additional flags,
   ax_cv_cxx_compile_cxx0x_native,
   [AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -47,7 +47,7 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX_0X], [
   AC_LANG_RESTORE
   ])
 
-  AC_CACHE_CHECK(if g++ supports C++0x features with -std=c++0x,
+  AC_CACHE_CHECK(if $CXX supports C++0x features with -std=c++0x,
   ax_cv_cxx_compile_cxx0x_cxx,
   [AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -73,7 +73,7 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX_0X], [
   AC_LANG_RESTORE
   ])
 
-  AC_CACHE_CHECK(if g++ supports C++0x features with -std=gnu++0x,
+  AC_CACHE_CHECK(if $CXX supports C++0x features with -std=gnu++0x,
   ax_cv_cxx_compile_cxx0x_gxx,
   [AC_LANG_SAVE
   AC_LANG_CPLUSPLUS
@@ -102,6 +102,6 @@ AC_DEFUN([AX_CXX_COMPILE_STDCXX_0X], [
   if test "$ax_cv_cxx_compile_cxx0x_native" = yes ||
      test "$ax_cv_cxx_compile_cxx0x_cxx" = yes ||
      test "$ax_cv_cxx_compile_cxx0x_gxx" = yes; then
-    AC_DEFINE(HAVE_STDCXX_0X,,[Define if g++ supports C++0x features. ])
+    AC_DEFINE(HAVE_STDCXX_0X,,[Define if the c++ compiler supports C++0x features. ])
   fi
 ])
