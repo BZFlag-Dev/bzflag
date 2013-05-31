@@ -126,20 +126,20 @@ static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)
 {
   GLuint list;
 
-  GLUquadric* quad = gluNewQuadric();
-  gluQuadricDrawStyle(quad, GLU_FILL);
-  gluQuadricTexture(quad, GL_TRUE);
-  gluQuadricNormals(quad, GL_SMOOTH);
-  gluQuadricOrientation(quad, GLU_OUTSIDE);
+  GLUquadric* quadric = gluNewQuadric();
+  gluQuadricDrawStyle(quadric, GLU_FILL);
+  gluQuadricTexture(quadric, GL_TRUE);
+  gluQuadricNormals(quadric, GL_SMOOTH);
+  gluQuadricOrientation(quadric, GLU_OUTSIDE);
 
   list = glGenLists(1);
   glNewList(list, GL_COMPILE);
   {
-    gluSphere(quad, radius, slices, stacks);
+    gluSphere(quadric, radius, slices, stacks);
   }
   glEndList();
 
-  gluDeleteQuadric(quad);
+  gluDeleteQuadric(quadric);
 
   return list;
 }
