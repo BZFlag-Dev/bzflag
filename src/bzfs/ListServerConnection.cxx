@@ -18,7 +18,6 @@
 /* system implementation headers */
 #include <string.h>
 #include <string>
-#include <math.h>
 #include <errno.h>
 #include <set>
 
@@ -39,7 +38,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle,
 			       std::string _advertiseGroups,
-			       float dnsCache)
+			       long dnsCache)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -47,7 +46,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   setURLwithNonce(listServerURL);
   setUserAgent(bzfsUserAgent);
-  setDNSCachingTime((long)ceilf(dnsCache));
+  setDNSCachingTime(dnsCache);
   setTimeout(10);
 
   publiclyDisconnected = false;

@@ -62,9 +62,6 @@
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
 
-/* libm includes ceilf */
-#define HAVE_CEILF 1
-
 /* Define to 1 if you have the `CGLGetCurrentContext' function. */
 #define HAVE_CGLGETCURRENTCONTEXT 1
 

@@ -78,10 +78,10 @@ VotingArbiter *votingarbiter = NULL;
 // pass through the SELECT loop
 static bool dontWait = true;
 
-// every ListServerReAddTime server add ourself to the list
+// every ListServerReAddTime seconds add ourself to the list
 // server again.  this is in case the list server has reset
 // or dropped us for some reason.
-static const float ListServerReAddTime = 15.0f * 60.0f;
+static const double ListServerReAddTime = 15 * 60;
 
 static const float FlagHalfLife = 10.0f;
 
@@ -836,7 +836,8 @@ void publicize()
     // list server initialization
     for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); ++i) {
       listServerLink = new ListServerLink(i->c_str(),
-	    clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups, ListServerReAddTime*2.0f); /* recheck dns every other re-add */
+	clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups,
+	(long)ceil(ListServerReAddTime * 2));	/* recheck dns every other re-add */
       listServerLinksCount++;
     }
   } else {
