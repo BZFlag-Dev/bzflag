@@ -129,27 +129,34 @@ uint8_t			Address::getIPVersion() const {
   return 4;
 }
 
+static const struct hostent* bz_gethostbyname(const std::string &name)
+{
+  const struct hostent* hent = NULL;
+
+  if (name.length() > 0)
+    hent = gethostbyname(name.c_str());
+  else {
+    char hostname[MAXHOSTNAMELEN+1];
+    if (gethostname(hostname, sizeof(hostname)) >= 0)
+      // use our own host name if none is specified
+      hent = gethostbyname(hostname);
+  }
+  return hent;
+}
+
 Address	Address::getHostAddress(const std::string &hname)
 {
   Address a;
   InAddr tempAddr;
   int j;
 
-  struct hostent* hent;
-  if (hname == "") {				// local address
-    char hostname[MAXHOSTNAMELEN+1];
-    if (gethostname(hostname, sizeof(hostname)) >= 0)
-      hent = gethostbyname(hostname);
-    else
-      return a;
-  } else if (inet_aton(hname.c_str(), &tempAddr) != 0) {
+  if (hname.length() > 0 && inet_aton(hname.c_str(), &tempAddr) != 0) {
     a.addr.clear();
     a.addr.push_back(tempAddr);
     return a;
-  } else {				// non-local address
-    hent = gethostbyname(hname.c_str());
   }
 
+  const struct hostent* hent = bz_gethostbyname(hname);
   if (!hent) {
     herror("Looking up host name");
     return a;
@@ -177,16 +184,7 @@ std::string		Address::getHostByAddress(InAddr addr)
 
 const std::string Address::getHostName(const std::string &hostname) // const
 {
-  char myname[MAXHOSTNAMELEN+1];
-  std::string name = hostname;
-  if (name.length() <= 0) {
-    if (gethostname(myname, sizeof(myname)) >= 0)
-      name = std::string(myname);
-  }
-  if (name.length() <= 0) {
-    return std::string();
-  }
-  struct hostent* hent = gethostbyname(name.c_str());
+  const struct hostent* hent = bz_gethostbyname(hostname);
   if (!hent) {
     return std::string();
   }
