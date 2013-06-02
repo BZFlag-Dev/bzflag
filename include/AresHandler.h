@@ -43,7 +43,7 @@ class AresHandler {
 
   void		setIndex ( int i ) {index = i;}
   void		queryHostname(const struct sockaddr *clientAddr);
-  void		queryHost(char *hostName);
+  void		queryHost(const char *hostName);
   const char   *getHostname();
   ResolutionStatus getHostAddress(struct in_addr *clientAddr);
   void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);

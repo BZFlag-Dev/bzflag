@@ -91,32 +91,25 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
   logDebugMessage(2,"Player [%d] submitted reverse resolve query\n", index);
 }
 
-void AresHandler::queryHost(char *hostName)
+void AresHandler::queryHost(const char *hostName)
 {
   if (aresFailed)
     return;
   ares_cancel(aresChannel);
+
+  if (!hostName) {
+    status = Failed;
+    return;
+  }
 
   if (inet_aton(hostName, &hostAddress) != 0) {
     status = HbNSucceeded;
     return;
   }
 
-  char *queryHostName = hostName;
-
-  char myHost[MAXHOSTNAMELEN+1];
-  if (hostName == NULL || *hostName == '\0') {
-    // local address
-    if (gethostname(hostname, sizeof(hostname)) < 0) {
-      status = Failed;
-      return;
-    }
-    queryHostName = myHost;
-  }
-
   // launch the asynchronous query to look up this hostname
   status = HbNPending;
-  ares_gethostbyname(aresChannel, queryHostName, AF_INET, staticCallback,
+  ares_gethostbyname(aresChannel, hostName, AF_INET, staticCallback,
 		     (void *)this);
 }
 
