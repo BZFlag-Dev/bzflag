@@ -93,8 +93,6 @@ extern "C" {
 
 #else /* !defined(_WIN32) */
 
-#define	MAXHOSTNAMELEN	64
-
 #ifndef EINPROGRESS
 #define EINPROGRESS	WSAEWOULDBLOCK
 #endif

@@ -37,6 +37,17 @@
   extern "C" int inet_aton(const char *, struct in_addr *);
 #endif
 
+// RFC 1035 limits the length of a fully qualified domain name to 255
+// octets, so calling sysconf(_SC_HOST_NAME_MAX) to find some other
+// limit and/or dynamically expanding the gethostname() buffer on
+// demand are complex solutions to a problem that does not exist in
+// the environments for which BZFlag is designed.  The value chosen
+// here provides a substantial margin in case the RFC 1035 limit is
+// raised in the future.
+#ifndef MAXHOSTNAMELEN
+#define	MAXHOSTNAMELEN	511
+#endif
+
 //
 // Address
 //
@@ -136,10 +147,14 @@ static const struct hostent* bz_gethostbyname(const std::string &name)
   if (name.length() > 0)
     hent = gethostbyname(name.c_str());
   else {
+    // use our own host name if none is specified
     char hostname[MAXHOSTNAMELEN+1];
-    if (gethostname(hostname, sizeof(hostname)) >= 0)
-      // use our own host name if none is specified
+    if (gethostname(hostname, MAXHOSTNAMELEN) >= 0) {
+      // ensure null termination regardless of
+      // gethostname() implementation details
+      hostname[MAXHOSTNAMELEN] = '\0';
       hent = gethostbyname(hostname);
+    }
   }
   return hent;
 }
@@ -263,4 +278,3 @@ bool			ServerId::operator!=(const ServerId& id) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
