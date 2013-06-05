@@ -362,18 +362,15 @@ void ServerStartMenu::execute()
     // other options as they were set
 
     // get path to server from path to client
-    // add 256 for flags room
-    char serverCmd[PATH_MAX + 256];
-    strcpy(serverCmd, argv0);
-    char* base = strrchr(serverCmd, '/');
+    const char* base = strrchr(argv0, '/');
 #if defined(_WIN32)
-    char* base2 = strrchr(serverCmd, '\\');
-    if (base2 && (!base || base2 - serverCmd > base - serverCmd))
+    const char* base2 = strrchr(argv0, '\\');
+    if (base2 && (!base || base2 - argv0 > base - argv0))
       base = base2;
 #endif
-    if (!base) base = serverCmd;
+    if (!base) base = argv0;
     else base++;
-    strcpy(base, serverApp);
+    std::string serverCmd = TextUtils::format("%.*s%s", base-argv0, argv0, serverApp);
 
     // prepare arguments for starting server
     const char* args[30];
@@ -489,7 +486,7 @@ void ServerStartMenu::execute()
 #if defined(_WIN32)
 
     // Windows
-    int result = _spawnvp(_P_DETACH, serverCmd, const_cast<char* const*>(args));
+    int result = _spawnvp(_P_DETACH, serverCmd.c_str(), const_cast<char* const*>(args));
     if (result < 0) {
       if (errno == ENOENT)
 	setStatus("Failed... can't find server program.");
@@ -498,8 +495,8 @@ void ServerStartMenu::execute()
       else if (errno == ENOEXEC)
 	setStatus("Failed... server program is not executable.");
       else
-	setStatus(TextUtils::format("Failed... unknown error (%d).", errno, serverCmd).c_str());
-      logDebugMessage(1,"Failed to start server (%s) - error %d.\n", serverCmd, errno);
+	setStatus(TextUtils::format("Failed... unknown error (%d).", errno).c_str());
+      logDebugMessage(1,"Failed to start server (%s) - error %d.\n", serverCmd.c_str(), errno);
     }
     else {
       setStatus("Server started.");
@@ -541,7 +538,7 @@ void ServerStartMenu::execute()
       close(2);
 
       // exec server
-      execvp(serverCmd, const_cast<char* const*>(args));
+      execvp(serverCmd.c_str(), const_cast<char* const*>(args));
       // If execvp returns, bzfs wasnt at the anticipated location.
       // Let execvp try to find it in $PATH by feeding it the "bzfs" name by it self
       execvp(serverApp, const_cast<char* const*>(args));
