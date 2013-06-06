@@ -1314,10 +1314,6 @@ Remove a user from a group
 Add a user to a group
 
 .TP
-.B /setpass \fIpassword\fR
-Changes your password
-
-.TP
 .B /showgroup \fIcallsign\fR
 Lists the groups that a registered user is a member of
 
