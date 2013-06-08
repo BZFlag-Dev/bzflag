@@ -38,6 +38,7 @@ bzfs \- BZFlag game server
 [\fB\-filterChat\fR]
 [\fB\-filterSimple\fR]
 [\fB\-g\fR]
+[\fB\-gndtex \fR\fItexture\-name\fR]
 [\fB\-groupdb \fIfile\fR]
 [\fB\-h\fR]
 [\fB\-handicap\fR]
@@ -50,6 +51,7 @@ bzfs \- BZFlag game server
 [\fB\-lagannounce \fR\fImilliseconds\fR]
 [\fB\-lagdrop \fIwarn\-count\fR]
 [\fB\-lagwarn \fR\fImilliseconds\fR]
+[\fB\-loadplugin \fR\fIname\fR[\fI,options\fR]]
 [\fB\-masterBanURL \fIURL\fR]
 [\fB\-maxidle \fR\fIseconds\fR]
 [\fB\-mp
@@ -58,12 +60,12 @@ bzfs \- BZFlag game server
 [\fB\-ms \fIshots\fR]
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
-[\fB\-offa\fR]
+[\fB\-noradar\fR]
 [\fB\-noTeamKills\fR]
+[\fB\-offa\fR]
 [\fB\-p \fIport\fR]
 [\fB\-packetlossdrop \fIwarn\-count\fR]
 [\fB\-packetlosswarn \fR\fIpercent\fR]
-[\fB\-passdb \fIfile\fR]
 [\fB\-passwd \fIpassword\fR]
 [\fB\-pidfile \fIfilename\fR]
 [\fB\-poll \fIvariable=value\fR]
@@ -86,6 +88,7 @@ bzfs \- BZFlag game server
 [\fB\-sa\fR]
 [\fB\-sb\fR]
 [\fB\-set \fIname value\fR]
+[\fB\-setforced \fIname value\fR]
 [\fB\-sl \fIid num\fR]
 [\fB\-spamtime \fItime\fR]
 [\fB\-spamwarn \fIwarnLimit\fR]
@@ -93,14 +96,15 @@ bzfs \- BZFlag game server
 [\fB\-srvmsg \fImessage\fR]
 [\fB\-st \fItime\fR]
 [\fB\-sw \fIcount\fR]
+[\fB\-synclocation\fR]
 [\fB\-synctime\fR]
 [\fB\-t\fR]
 [\fB\-tftimeout \fItime\-limit\fR]
 [\fB\-time \fR{\fItime\-limit\fR | \fIending-time\fR}]
 [\fB\-timemanual\fR]
 [\fB\-tk\fR]
+[\fB\-tkannounce]
 [\fB\-tkkr \fIpercent\fR]
-[\fB\-trackplayhistory\fR]
 [\fB\-ts \fR[\fImicros\fR]]
 [\fB\-UPnP\fR]
 [\fB\-userdb \fIfile\fR]
@@ -234,6 +238,9 @@ comparisons exact match only.
 .B \-g
 Quit after serving one game.
 .TP
+\fB\-gndtex \fItexture\-name\fR
+Specify the name of the ground texture.
+.TP
 \fB\-groupdb \fIfile\fR
 Load groups from file
 .TP
@@ -276,6 +283,11 @@ Kicks players after \fIwarn\-count\fR lag warnings.
 \fB\-lagwarn \fImilliseconds\fR
 Send warnings to players that lag more than \fImilliseconds\fR.
 .TP
+\fB\-loadplugin \fR\fIname\fR[\fI,options\fR]
+Load the specified plugin. \fIname\fR can either be the name of
+the plugin, or a path to its library file. Optionally, you can
+provide any options the plugin requires.
+.TP
 \fB\-masterBanURL \fIURL\fR
 Specify alternate URLs for the master ban file to be pulled from.
 This argument may be provided multiple times.
@@ -308,12 +320,15 @@ declared the winner and the game is over.
 .B \-noMasterBanlist
 Server will not attempt to load the master ban list from the internet.
 .TP
-.B \-offa
-Enables the Open\-Free\-for\-All style game. This is a teamless mode, similar to
-the classic deathmatch in other games.
+.B \-noradar
+Disable the use of the radar.
 .TP
 .B \-noTeamKills
 Players on the same team are immune to each other's shots. Rogue is excepted.
+.TP
+.B \-offa
+Enables the Open\-Free\-for\-All style game. This is a teamless mode, similar to
+the classic deathmatch in other games.
 .TP
 \fB\-p \fIport\fR
 Listen for game connections on \fIport\fR instead of the default port.
@@ -327,10 +342,6 @@ Send warnings to players that have more more than \fIpercent\fR loss.
 .TP
 \fB\-passdb \fIfile\fR
 Load passwords from file
-.TP
-\fB\-passwd \fIpassword\fR
-Specify a server administrator password for use in remote administration
-such as /kick, /ban, /mute, etc.\&  messages.
 .TP
 \fB\-pidfile \fIfilename\fR
 Specify a file where the server will write its process ID so it may be used for
@@ -451,7 +462,10 @@ Antidote flags are provided for players with bad flags.
 Allow spawns on box buildings.
 .TP
 .B \-set \fIname value\fR
-Set BZDB variable \fIname\fR to \fIvalue\fR
+Set BZDB variable \fIname\fR to \fIvalue\fR.
+.TP
+.B \-setforced \fIname value\fR
+Set BZDB variable \fIname\fR to \fIvalue\fR, even if the variable does not exist.
 .TP
 \fB\-sl \fIid num\fR
 Restrict flag \fIid\fR to \fInum\fR shots.
@@ -475,6 +489,9 @@ Bad flags are automatically dropped after \fItime\fR seconds.
 \fB\-sw \fIcount\fR
 Bad flags are automatically dropped after \fIcount\fR wins.  Capturing
 a team flag does not count as a win.
+.TP
+.B \-synclocation
+Forces all clients to use the same location (longitude and latitude).
 .TP
 .B \-synctime
 Forces all clients to use the same time of day.  The current time is
@@ -508,13 +525,12 @@ Changes the default behavior where a player dies when he kills a teammate.
 When using this option, he will just get a \-1 score penalty for the kill but
 not be killed in game.
 .TP
+.B \-tkannounce
+Announce teamkills to the admin channel.
+.TP
 \fB\-tkkr \fIpercent\fR
 Kicks players whose team killing to normal kill ratio is greater than
 \fIpercent\fR [1\-100]. A start up grace period is given to players.
-.TP
-.B \-trackplayhistory
-Has the server track players with good runs of kills and announces them.
-Also announces those players that stop the runs of good players.
 .TP
 \fB\-ts \fR[\fImicros\fR]
 Include timestamp information in DEBUG output \(em useful for logging.
