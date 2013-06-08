@@ -453,7 +453,13 @@ case $host_os in
 esac
 
 AC_LANG(C++)
-AC_CHECK_TYPES([std::wstring],,,[#include <iostream>])
+AC_CHECK_TYPES([std::shared_ptr<int>],
+	[# BZFlag expects std::shared_ptr support by default],
+	[AC_CHECK_TYPES([[std::tr1::shared_ptr<int>]],
+		AC_DEFINE([[USE_TR1]], [[1]], [Define to 1 to use C++0X TR1]),
+		AC_MSG_ERROR([[The C++11 std::shared_ptr type is required to build BZFlag]]),
+		[[#include <tr1/memory>]])],
+	[#include <memory>])
 
 ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
@@ -680,10 +686,13 @@ AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
+#
+# the GCC version is known to be at least 4.3 because it has C++0x support
+# possible future warnings: -Wconversion -Wfloat-equal -Wpointer-arith -Wredundant-decls -Wwrite-strings
+FLAGS="-Wall -Wextra -Wcast-qual -Wshadow -Wundef"
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
-	FLAGS="-Wall -Wextra -Wcast-qual -Wshadow -Wundef"	# -Wconversion -Wfloat-equal -Wpointer-arith -Wredundant-decls -Wwrite-strings
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
 	case $host_vendor in
@@ -728,7 +737,6 @@ case $host_os in
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
 	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex]);;
      macos|darwin*)
-	FLAGS="-pipe -Wno-long-long -W -Wall -Wundef -Wno-import"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic";;
      irix)
@@ -764,9 +772,16 @@ if test x$enable_debug = xyes ; then
     AC_DEFINE(DEBUG, 1, [Debugging enabled])
 else
     if test "$GCC" = yes ; then
-	OPTIMIZE="-fexpensive-optimizations"
-	CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
+	case "`$CC --version 2>&1`" in
+	    *LLVM*)
+		# Apple LLVM falsely claims to be GCC
+		;;
+	    *)
+		OPTIMIZE="-fexpensive-optimizations"
+		CONF_CFLAGS="$CONF_CFLAGS $OPTIMIZE"
+		CONF_CXXFLAGS="$CONF_CXXFLAGS $OPTIMIZE"
+		;;
+	esac
     fi
     AC_DEFINE(NDEBUG, 1, [Debugging disabled])
 fi

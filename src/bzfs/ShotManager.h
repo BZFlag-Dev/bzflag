@@ -23,8 +23,15 @@
 #include <string>
 #include <vector>
 #include <map>
+#ifdef USE_TR1
+#include <tr1/memory>
+#include <tr1/functional>
+#define	shared_ptr	tr1::shared_ptr
+#define	function	tr1::function
+#else
 #include <memory>
 #include <functional>
+#endif
 
 /** a ShotManager is used track shots fired by players and the server
  */
@@ -98,6 +105,12 @@ public:
 typedef std::shared_ptr<Shot>	ShotRef;
 typedef std::vector<std::shared_ptr<Shot>> ShotList;
 typedef std::shared_ptr<std::function <void (Shot&)> > ShotEvent;
+
+#ifdef USE_TR1
+// limit the scope of possible side effects of these macro definitions
+#undef	shared_ptr
+#undef	function
+#endif
 
 #define INVALID_SHOT_GUID 0
 

@@ -183,9 +183,6 @@
 /* Define to 1 if you have a conforming std::min */
 #define HAVE_STD__MIN 1
 
-/* Define to 1 if the system has the type `std::wstring'. */
-#define HAVE_STD__WSTRING 1
-
 /* Define to 1 if you have the <strings.h> header file. */
 #define HAVE_STRINGS_H 1
 
