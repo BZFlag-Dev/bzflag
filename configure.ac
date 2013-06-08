@@ -735,7 +735,13 @@ case $host_os in
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
      solaris*)
 	AC_DEFINE(ETC_INET, [], [hosts is in /etc/inet/])
-	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex]);;
+	AC_DEFINE(SUN_OGL_NO_VERTEX_MACROS, [], [Sun OpenGL No Macro Vertex])
+	if test "$GCC" = yes ; then
+	    FLAGS="$FLAGS -Wno-unknown-pragmas"	# *silently* ignore "#pragma ident"
+	    CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
+	fi
+	;;
      macos|darwin*)
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic";;
@@ -1130,10 +1136,8 @@ if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
     ac_configure_args="$ac_configure_args --enable-ares --disable-manual"
     case $host_os in
 	solaris*)
-	    if test "$GCC" != yes; then
-	        # Solaris 10 SSL libraries are compatible only with gcc
-	        ac_configure_args="$ac_configure_args --without-ssl"
-	    fi
+	    # Solaris 10 SSL libraries are incompatible at link time
+	    ac_configure_args="$ac_configure_args --without-ssl"
 	    ;;
     esac
 fi
