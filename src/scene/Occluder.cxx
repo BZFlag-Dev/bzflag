@@ -316,14 +316,6 @@ IntersectLevel Occluder::doCullAxisBox(const Extents& exts)
 }
 
 
-bool Occluder::doCullSceneNode(SceneNode* node)
-{
-  // FIXME - not yet implemented
-  node = node;
-  return false;
-}
-
-
 static bool makePlane (const float* p1, const float* p2, const float* pc,
 		       float* r)
 {
@@ -481,3 +473,11 @@ void Occluder::print(const char* string) const
 
   return;
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

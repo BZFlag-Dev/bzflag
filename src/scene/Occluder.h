@@ -21,7 +21,6 @@ class Occluder {
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
     IntersectLevel doCullAxisBox(const Extents& exts);
-    bool doCullSceneNode(SceneNode* node);
     void addScore(unsigned int score);
     void divScore();
     int getScore() const;
@@ -112,4 +111,3 @@ inline int OccluderManager::getOccluderCount () const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
