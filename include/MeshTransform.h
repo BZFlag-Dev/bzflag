@@ -83,7 +83,7 @@ class MeshTransform {
 	const float* getMatrix() const;
 
       private:
-	void processTransforms(const std::vector<TransformData>& transforms);
+	void processTransforms(const std::vector<TransformData>& tforms);
 
 	bool empty;
 	bool inverted;
@@ -153,4 +153,3 @@ extern MeshTransformManager TRANSFORMMGR;
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

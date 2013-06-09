@@ -407,15 +407,15 @@ void			FlagSceneNode::FlagRenderNode::render()
 {
   float base = BZDBCache::flagPoleSize;
   float poleWidth = BZDBCache::flagPoleWidth;
-  const bool texturing = sceneNode->texturing;
-  const bool billboard = sceneNode->billboard;
-  const bool transparent = sceneNode->transparent;
+  const bool doing_texturing = sceneNode->texturing;
+  const bool is_billboard = sceneNode->billboard;
+  const bool is_transparent = sceneNode->transparent;
 
   const GLfloat* sphere = sceneNode->getSphere();
 
   myColor4fv(sceneNode->color);
 
-  if (!BZDBCache::blend && (transparent || texturing)) {
+  if (!BZDBCache::blend && (is_transparent || doing_texturing)) {
     myStipple(sceneNode->color[3]);
   }
 
@@ -423,17 +423,17 @@ void			FlagSceneNode::FlagRenderNode::render()
   {
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 
-    if (billboard && realFlag) {
+    if (is_billboard && realFlag) {
       // the pole
       glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
-      const float tilt = sceneNode->tilt;
-      const float hscl = sceneNode->hscl;
-      static GLfloat shear[16] = {hscl, 0.0f, tilt, 0.0f,
+      const float Tilt = sceneNode->tilt;
+      const float Hscl = sceneNode->hscl;
+      static GLfloat shear[16] = {Hscl, 0.0f, Tilt, 0.0f,
 				  0.0f, 1.0f, 0.0f, 0.0f,
 				  0.0f, 0.0f, 1.0f, 0.0f,
 				  0.0f, 0.0f, 0.0f, 1.0f};
-      shear[0] = hscl; // maintains the flag length
-      shear[2] = tilt; // pulls the flag up or down
+      shear[0] = Hscl; // maintains the flag length
+      shear[2] = Tilt; // pulls the flag up or down
       glPushMatrix();
       glMultMatrixf(shear);
       allWaves[waveReference].execute();
@@ -442,7 +442,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 
       myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
-      if (texturing) {
+      if (doing_texturing) {
 	glDisable(GL_TEXTURE_2D);
       }
 
@@ -465,7 +465,7 @@ void			FlagSceneNode::FlagRenderNode::render()
       addTriangleCount(8);
     }
     else {
-      if (billboard) {
+      if (is_billboard) {
 	RENDERER.getViewFrustum().executeBillboard();
 	allWaves[waveReference].execute();
 	addTriangleCount(triCount);
@@ -487,7 +487,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 
       myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
-      if (texturing) {
+      if (doing_texturing) {
 	glDisable(GL_TEXTURE_2D);
       }
 
@@ -514,10 +514,10 @@ void			FlagSceneNode::FlagRenderNode::render()
   }
   glPopMatrix();
 
-  if (texturing) {
+  if (doing_texturing) {
     glEnable(GL_TEXTURE_2D);
   }
-  if (!BZDBCache::blend && transparent) {
+  if (!BZDBCache::blend && is_transparent) {
     myStipple(0.5f);
   }
 }
@@ -530,4 +530,3 @@ void			FlagSceneNode::FlagRenderNode::render()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

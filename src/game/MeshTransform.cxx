@@ -303,10 +303,10 @@ MeshTransform::Tool::~Tool()
 
 
 void MeshTransform::Tool::processTransforms(
-			    const std::vector<TransformData>& transforms)
+			    const std::vector<TransformData>& tforms)
 {
-  for (unsigned int i = 0; i < transforms.size(); i++) {
-    const TransformData& transform = transforms[i];
+  for (unsigned int i = 0; i < tforms.size(); i++) {
+    const TransformData& transform = tforms[i];
     switch (transform.type) {
       case ShiftTransform: {
 	shift(vertexMatrix, transform.data);
@@ -741,4 +741,3 @@ void MeshTransform::printTransforms(std::ostream& out,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -62,7 +62,7 @@ class BoltSceneNode : public ShotSceneNode {
 
 			void		renderGeoBolt();
 			void		renderGeoGMBolt();
-			void		renderGeoPill( float radius, float length, int segments, float endRad = -1);
+			void		renderGeoPill( float radius, float len, int segments, float endRad = -1);
 
 		private:
 			const BoltSceneNode* sceneNode;

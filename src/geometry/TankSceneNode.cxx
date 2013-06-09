@@ -735,19 +735,19 @@ void TankIDLSceneNode::IDLRenderNode::render()
   const GLfloat azimuth = sceneNode->tank->azimuth;
   const GLfloat ca = cosf(-azimuth * (float)M_PI / 180.0f);
   const GLfloat sa = sinf(-azimuth * (float)M_PI / 180.0f);
-  GLfloat plane[4];
-  plane[0] = ca * _plane[0] - sa * _plane[1];
-  plane[1] = sa * _plane[0] + ca * _plane[1];
-  plane[2] = _plane[2];
-  plane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
-	      sphere[2] * _plane[2] + _plane[3]);
+  GLfloat tankPlane[4];
+  tankPlane[0] = ca * _plane[0] - sa * _plane[1];
+  tankPlane[1] = sa * _plane[0] + ca * _plane[1];
+  tankPlane[2] = _plane[2];
+  tankPlane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
+		  sphere[2] * _plane[2] + _plane[3]);
 
-  // compute projection point -- one TankLength in from plane
-  const GLfloat pd = -1.0f * BZDBCache::tankLength - plane[3];
+  // compute projection point -- one TankLength in from tankPlane
+  const GLfloat pd = -1.0f * BZDBCache::tankLength - tankPlane[3];
   GLfloat origin[3];
-  origin[0] = pd * plane[0];
-  origin[1] = pd * plane[1];
-  origin[2] = pd * plane[2];
+  origin[0] = pd * tankPlane[0];
+  origin[1] = pd * tankPlane[1];
+  origin[2] = pd * tankPlane[2];
 
   glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -756,16 +756,16 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glBegin(GL_QUADS);
     const int numFaces = countof(idlFaces);
     for (int i = 0; i < numFaces; i++) {
-      // get distances from plane
+      // get distances from tankPlane
       const int* face = idlFaces[i] + 1;
       const int numVertices = idlFaces[i][0];
       GLfloat d[4];
       int j;
       for (j = 0; j < numVertices; j++)
-	d[j] = idlVertex[face[j]][0] * plane[0] +
-	       idlVertex[face[j]][1] * plane[1] +
-	       idlVertex[face[j]][2] * plane[2] +
-	       plane[3];
+	d[j] = idlVertex[face[j]][0] * tankPlane[0] +
+	       idlVertex[face[j]][1] * tankPlane[1] +
+	       idlVertex[face[j]][2] * tankPlane[2] +
+	       tankPlane[3];
 
       // get crossing points
       GLfloat cross[2][3];
@@ -1202,12 +1202,12 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 		sceneNode->deathOverride->SetDeathRenderParams(params);
 	if (!overide)
 	{
-		const float* vel = sceneNode->vel[part];
-		const float* spin = sceneNode->spin[part];
-		glTranslatef(cog[0] + (explodeFraction * vel[0]),
-			 cog[1] + (explodeFraction * vel[1]),
-			 cog[2] + (explodeFraction * vel[2]));
-		glRotatef(spin[3] * explodeFraction, spin[0], spin[1], spin[2]);
+		const float* velocity = sceneNode->vel[part];
+		const float* rotation = sceneNode->spin[part];
+		glTranslatef(cog[0] + (explodeFraction * velocity[0]),
+			 cog[1] + (explodeFraction * velocity[1]),
+			 cog[2] + (explodeFraction * velocity[2]));
+		glRotatef(rotation[3] * explodeFraction, rotation[0], rotation[1], rotation[2]);
 		glTranslatef(-cog[0], -cog[1], -cog[2]);
 	}
 	else
@@ -1448,8 +1448,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
   // use a clip plane, because the ground has no depth
-  const GLdouble clipPlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
-  glClipPlane(GL_CLIP_PLANE1, clipPlane);
+  const GLdouble clip_plane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  glClipPlane(GL_CLIP_PLANE1, clip_plane);
   glEnable(GL_CLIP_PLANE1);
 
   sceneNode->jumpJetsGState.setState();
@@ -1492,4 +1492,3 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

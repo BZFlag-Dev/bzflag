@@ -151,7 +151,7 @@ void LaserSceneNode::LaserRenderNode::render()
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
-	const float length = sceneNode->length;
+	const float len = sceneNode->length;
 	const GLfloat* sphere = sceneNode->getSphere();
 	glPushMatrix();
 	glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -163,28 +163,28 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
 	GLUquadric *q = gluNewQuadric();
 
-	fvec4 centerColor = sceneNode->centerColor;
-	centerColor.a     = 0.85f;
-	fvec4 color       = sceneNode->color;
-	color.a           = 0.125f;
+	fvec4 coreColor = sceneNode->centerColor;
+	coreColor.a     = 0.85f;
+	fvec4 mainColor = sceneNode->color;
+	mainColor.a     = 0.125f;
 
-	myColor4fv(centerColor);
-	gluCylinder(q, 0.0625f, 0.0625f, length, 10, 1);
+	myColor4fv(coreColor);
+	gluCylinder(q, 0.0625f, 0.0625f, len, 10, 1);
 	addTriangleCount(20);
 
-	myColor4fv(color);
-	gluCylinder(q, 0.1f, 0.1f, length, 16, 1);
+	myColor4fv(mainColor);
+	gluCylinder(q, 0.1f, 0.1f, len, 16, 1);
 	addTriangleCount(32);
 
-	myColor4fv(color);
-	gluCylinder(q, 0.2f, 0.2f, length, 24, 1);
+	myColor4fv(mainColor);
+	gluCylinder(q, 0.2f, 0.2f, len, 24, 1);
 	addTriangleCount(48);
 
-	myColor4fv(color);
-	gluCylinder(q, 0.4f, 0.4f, length, 32, 1);
+	myColor4fv(mainColor);
+	gluCylinder(q, 0.4f, 0.4f, len, 32, 1);
 	addTriangleCount(64);
 
-	myColor4fv(color);
+	myColor4fv(mainColor);
 	if (sceneNode->first) {
 		gluSphere(q, 0.5f, 32, 32);
 		addTriangleCount(32 * 32 * 2);
@@ -202,7 +202,7 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
 void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
-	const float length = sceneNode->length;
+	const float len = sceneNode->length;
 	const GLfloat *sphere = sceneNode->getSphere();
 	glPushMatrix();
 	glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -226,18 +226,18 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 		glTexCoord2f(0.0f,  0.0f);
 		glVertex3f(  0.0f,  0.0f,  1.0f);
 		glTexCoord2f(0.0f,  1.0f);
-		glVertex3f(length,  0.0f,  1.0f);
+		glVertex3f(   len,  0.0f,  1.0f);
 		glTexCoord2f(1.0f,  1.0f);
-		glVertex3f(length,  0.0f, -1.0f);
+		glVertex3f(   len,  0.0f, -1.0f);
 		glTexCoord2f(1.0f,  0.0f);
 		glVertex3f(  0.0f,  0.0f, -1.0f);
 
 		glTexCoord2f(0.0f,  0.0f);
 		glVertex3f(  0.0f,  1.0f,  0.0f);
 		glTexCoord2f(0.0f,  1.0f);
-		glVertex3f(length,  1.0f,  0.0f);
+		glVertex3f(   len,  1.0f,  0.0f);
 		glTexCoord2f(1.0f,  1.0f);
-		glVertex3f(length, -1.0f,  0.0f);
+		glVertex3f(   len, -1.0f,  0.0f);
 		glTexCoord2f(1.0f,  0.0f);
 		glVertex3f(  0.0f, -1.0f,  0.0f);
 		glEnd(); // 8 verts -> 4 tris
@@ -251,19 +251,19 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 		glBegin(GL_QUAD_STRIP);
 		{
 			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-			glVertex3f(length, geom[0][0], geom[0][1]);
+			glVertex3f(   len, geom[0][0], geom[0][1]);
 			glVertex3f(  0.0f, geom[1][0], geom[1][1]);
-			glVertex3f(length, geom[1][0], geom[1][1]);
+			glVertex3f(   len, geom[1][0], geom[1][1]);
 			glVertex3f(  0.0f, geom[2][0], geom[2][1]);
-			glVertex3f(length, geom[2][0], geom[2][1]);
+			glVertex3f(   len, geom[2][0], geom[2][1]);
 			glVertex3f(  0.0f, geom[3][0], geom[3][1]);
-			glVertex3f(length, geom[3][0], geom[3][1]);
+			glVertex3f(   len, geom[3][0], geom[3][1]);
 			glVertex3f(  0.0f, geom[4][0], geom[4][1]);
-			glVertex3f(length, geom[4][0], geom[4][1]);
+			glVertex3f(   len, geom[4][0], geom[4][1]);
 			glVertex3f(  0.0f, geom[5][0], geom[5][1]);
-			glVertex3f(length, geom[5][0], geom[5][1]);
+			glVertex3f(   len, geom[5][0], geom[5][1]);
 			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-			glVertex3f(length, geom[0][0], geom[0][1]);
+			glVertex3f(   len, geom[0][0], geom[0][1]);
 		}
 		glEnd(); // 14 verts -> 12 tris
 
@@ -273,7 +273,7 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 		glBegin(GL_LINES);
 		{
 			glVertex3f(  0.0f, 0.0f, 0.0f);
-			glVertex3f(length, 0.0f, 0.0f);
+			glVertex3f(   len, 0.0f, 0.0f);
 		}
 		glEnd(); // count 1 line as 1 tri
 
@@ -290,4 +290,3 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

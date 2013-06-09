@@ -33,12 +33,12 @@
 // MeshPolySceneNode::Geometry
 //
 
-MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* node,
+MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
   const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
   const GLfloat2Array& _texcoords, const GLfloat* _normal) :
     vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
-  sceneNode = node;
+  sceneNode = _node;
   normal = _normal;
   style = 0;
   return;
@@ -760,4 +760,3 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -494,7 +494,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 }
 
 
-void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float length,
+void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float len,
 												  int segments, float endRad)
 {
 	glPushMatrix();
@@ -503,7 +503,7 @@ void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float length,
 	if (endRad >= 0)
 		assRadius = endRad;
 
-	float lenMinusRads = length - (radius+assRadius);
+	float lenMinusRads = len - (radius+assRadius);
 
 	GLUquadric *q = gluNewQuadric();
 	if (assRadius > 0)
@@ -667,9 +667,9 @@ void			BoltSceneNode::BoltRenderNode::render()
 
 				const float invLenPlusOne = 1.0f / (float)(shotLength + 1);
 				const float shiftScale = 90.0f / (150.0f + (float)shotLength);
-				float size = sceneNode->size * startSize;
+				float Size = sceneNode->size * startSize;
 				float alpha = startAlpha;
-				const float sizeStep  = size  * invLenPlusOne;
+				const float sizeStep  = Size  * invLenPlusOne;
 				const float alphaStep = alpha * invLenPlusOne;
 
 				fvec3 pos;
@@ -680,8 +680,8 @@ void			BoltSceneNode::BoltRenderNode::render()
 				int uvCell = rand() % 16;
 
 				for (int i = 0; i < shotLength; i++) {
-					size  -= sizeStep;
-					const float s = size * (0.65f + (1.0f * (float)bzfrand()));
+					Size  -= sizeStep;
+					const float s = Size * (0.65f + (1.0f * (float)bzfrand()));
 					const float shift = s * shiftScale;
 
 					pos += (shift * dir);
@@ -830,4 +830,3 @@ void			BoltSceneNode::BoltRenderNode::render()
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
