@@ -66,7 +66,6 @@ class SegmentedShotStrategy : public ShotStrategy {
     std::vector<ShotPathSegment>	segments;
     BoltSceneNode*	boltSceneNode;
     float		bbox[2][3];
-    int			firstSegment;
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy {

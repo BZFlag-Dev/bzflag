@@ -484,7 +484,7 @@ Plan *HuntPlayerPlan::createSubPlan()
  * HuntTeamFlagPlan
  */
 
-HuntTeamFlagPlan::HuntTeamFlagPlan() : Plan(300.0f), flagID()
+HuntTeamFlagPlan::HuntTeamFlagPlan() : Plan(300.0f)
 {
 }
 
@@ -527,3 +527,10 @@ Plan *CaptureFlagPlan::createSubPlan()
 	return NULL;
 }
 
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

@@ -31,7 +31,7 @@
 #include "playing.h"
 
 SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTexture, bool faint) :
-				ShotStrategy(_path), bbox(), firstSegment()
+				ShotStrategy(_path), bbox()
 {
   // initialize times
   prevTime = getPath().getStartTime();

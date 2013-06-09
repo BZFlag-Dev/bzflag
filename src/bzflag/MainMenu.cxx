@@ -32,7 +32,7 @@
 #include "HUDui.h"
 
 MainMenu::MainMenu() : HUDDialog(),
-		       join(), login(), options(), help(), leave(), save(), quit(),
+		       join(), options(), help(), leave(), save(), quit(),
 		       joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
 }
@@ -207,4 +207,3 @@ void			MainMenu::resize(int _width, int _height)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -63,7 +63,6 @@ ScoreboardRenderer::ScoreboardRenderer() :
 				winWidth (0.0),
 				winHeight(),
 				dim(false),
-				huntIndicator(false),
 				huntPosition(0),
 				huntSelectEvent(false),
 				huntPositionEvent(0),

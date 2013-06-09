@@ -601,7 +601,7 @@ void SDLVisual::setStereo(bool on) {
 }
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), x(-1), y(-1), hasGamma(true)
+  : BzfWindow(_display), hasGamma(true)
 {
 }
 

@@ -61,7 +61,6 @@ private:
 private:
   FormatMenuDefaultKey	defaultKey;
   int			numFormats;
-  float			center;
 
   HUDuiLabel*		currentLabel;
   HUDuiLabel*		pageLabel;

@@ -58,7 +58,6 @@ private:
 
 	float maxZ;
 	float ringRange;
-	float numRings;
 };
 
 class StdShotEffect : public BasicEffect
@@ -819,7 +818,7 @@ void ConeSpawnEffect::draw(const SceneRenderer &)
 
 
 //******************RingSpawnEffect****************
-RingSpawnEffect::RingSpawnEffect(): ringRange(), numRings()
+RingSpawnEffect::RingSpawnEffect(): ringRange()
 {
 	radius = 4.0f;
 	maxZ = 10.0f;
@@ -1879,4 +1878,3 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

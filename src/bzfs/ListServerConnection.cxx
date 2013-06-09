@@ -65,7 +65,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
   queueMessage(ListServerLink::ADD);
 }
 
-ListServerLink::ListServerLink(): nextMessageType(), port(0), queuedRequest(0)
+ListServerLink::ListServerLink(): nextMessageType(), queuedRequest(0)
 {
   // does not create a usable link, so checks should be placed
   // in  all public member functions to ensure that nothing tries

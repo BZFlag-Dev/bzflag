@@ -49,7 +49,6 @@ private:
 
     // list server information
     Address address;
-    int port;
     std::string hostname;
     std::string pathname;
 

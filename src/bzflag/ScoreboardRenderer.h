@@ -103,7 +103,6 @@ private:
   float winHeight;
 
   bool dim;
-  bool huntIndicator;
   int huntPosition;
   bool huntSelectEvent;
   int huntPositionEvent;

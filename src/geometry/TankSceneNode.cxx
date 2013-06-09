@@ -47,10 +47,9 @@ int			TankSceneNode::maxLevel = numLOD;
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
 				leftWheelOffset(0.0f), rightWheelOffset(0.0f),
-				useDimensions(false), useOverride(false),
-				onlyShadows(false), clip(false),
-				inTheCockpit(false), tankRenderNode(this), treadsRenderNode(this),
-				shadowRenderNode(this),
+				useDimensions(false), onlyShadows(false),
+				clip(false), inTheCockpit(false), tankRenderNode(this),
+				treadsRenderNode(this), shadowRenderNode(this),
 				tankSize(TankGeometryEnums::Normal)
 {
   // setup style factors (BZDB isn't set up at global init time

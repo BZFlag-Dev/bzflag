@@ -69,12 +69,9 @@ private:
   };
 
   Mode mode;
-  int startIndex;
   const int numModes;
   const int numNonAdminModes;
   static const Mode nonAdminModes[6];
-
-
 };
 
 #endif
@@ -86,4 +83,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -156,8 +156,6 @@ public:
   virtual bool isValid();
   virtual bool usesSubPlan();
   virtual Plan *createSubPlan();
-private:
-  int flagID;
 };
 
 class CaptureFlagPlan : public Plan
@@ -179,4 +177,3 @@ public:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

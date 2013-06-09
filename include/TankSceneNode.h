@@ -200,14 +200,11 @@ class TankSceneNode : public SceneNode {
     float		leftWheelOffset;
     float		rightWheelOffset;
     bool		useDimensions;
-    bool		useOverride;
     bool		onlyShadows;
     bool		transparent, sort;
-    float		spawnFraction;
     float		explodeFraction;
     bool		clip;
     bool		inTheCockpit;
-    GLfloat		colorOverride[4];
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     OpenGLGState	gstate;
@@ -242,4 +239,3 @@ class TankSceneNode : public SceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -102,8 +102,6 @@ class SDLWindow : public BzfWindow {
   void  freeContext() {;};
   bool  create(void);
  private:
-  int	  x;
-  int	  y;
   bool	 hasGamma;
 };
 

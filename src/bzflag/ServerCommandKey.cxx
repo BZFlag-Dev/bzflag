@@ -26,7 +26,7 @@ const ServerCommandKey::Mode ServerCommandKey::nonAdminModes [6] = {LagStats, Id
 /* FIXME - note the important numModes and numNonAdminModes values inited here
  * when new commands are added, the indices need to be adjusted here.
  */
-ServerCommandKey::ServerCommandKey(): mode(LagStats), startIndex(-1), numModes(35), numNonAdminModes(6)
+ServerCommandKey::ServerCommandKey(): mode(LagStats), numModes(35), numNonAdminModes(6)
 {
   return;
 }
@@ -422,3 +422,11 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
   }
   return keyPress(key);
 }
+
+// Local Variables: ***
+// mode:C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8
