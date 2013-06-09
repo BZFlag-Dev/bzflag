@@ -340,8 +340,9 @@ Kicks players after \fIwarn\-count\fR packetloss warnings.
 \fB\-packetlosswarn \fIpercent\fR
 Send warnings to players that have more more than \fIpercent\fR loss.
 .TP
-\fB\-passdb \fIfile\fR
-Load passwords from file
+\fB\-passwd \fIpassword\fR
+Specify a server administrator password for use in remote administration
+such as /kick, /ban, /mute, etc.\&  messages.
 .TP
 \fB\-pidfile \fIfilename\fR
 Specify a file where the server will write its process ID so it may be used for
