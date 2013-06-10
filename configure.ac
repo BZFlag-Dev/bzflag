@@ -214,9 +214,9 @@ fi
 AX_CXX_COMPILE_STDCXX_0X
 if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
     if test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=c++0x"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS -std=c++0x"
     elif test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=gnu++0x"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS -std=gnu++0x"
     else
 	AC_MSG_ERROR([A c++ compiler with C++0x support is required to build BZFlag])
     fi
