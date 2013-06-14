@@ -236,7 +236,7 @@
     <ClCompile Include="..\..\src\common\bzfio.cxx" />
     <ClCompile Include="..\..\src\common\bzglob.cxx" />
     <ClCompile Include="..\..\src\common\BzPNG.cxx" />
-    <ClCompile Include="..\..\src\common\bzsignal.c">
+    <ClCompile Include="..\..\src\common\bzsignal.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>

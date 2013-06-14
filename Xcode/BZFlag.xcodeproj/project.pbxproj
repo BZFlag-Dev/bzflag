@@ -203,7 +203,7 @@
 		0357A7C71670AFE30056C938 /* bzfio.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554447166C846F008806E9 /* bzfio.cxx */; };
 		0357A7C81670AFE30056C938 /* bzglob.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554448166C846F008806E9 /* bzglob.cxx */; };
 		0357A7C91670AFE30056C938 /* BzPNG.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554449166C846F008806E9 /* BzPNG.cxx */; };
-		0357A7CA1670AFE30056C938 /* bzsignal.c in Sources */ = {isa = PBXBuildFile; fileRef = 0355444A166C846F008806E9 /* bzsignal.c */; };
+		0357A7CA1670AFE30056C938 /* bzsignal.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355444A166C846F008806E9 /* bzsignal.cxx */; };
 		0357A7CB1670AFE30056C938 /* CommandManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355444B166C846F008806E9 /* CommandManager.cxx */; };
 		0357A7CC1670AFE30056C938 /* ConfigFileManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355444C166C846F008806E9 /* ConfigFileManager.cxx */; };
 		0357A7CD1670AFE30056C938 /* Country.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355444D166C846F008806E9 /* Country.cxx */; };
@@ -1708,7 +1708,7 @@
 		03554447166C846F008806E9 /* bzfio.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfio.cxx; sourceTree = "<group>"; };
 		03554448166C846F008806E9 /* bzglob.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzglob.cxx; sourceTree = "<group>"; };
 		03554449166C846F008806E9 /* BzPNG.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BzPNG.cxx; sourceTree = "<group>"; };
-		0355444A166C846F008806E9 /* bzsignal.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = bzsignal.c; sourceTree = "<group>"; };
+		0355444A166C846F008806E9 /* bzsignal.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzsignal.cxx; sourceTree = "<group>"; };
 		0355444B166C846F008806E9 /* CommandManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CommandManager.cxx; sourceTree = "<group>"; };
 		0355444C166C846F008806E9 /* ConfigFileManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigFileManager.cxx; sourceTree = "<group>"; };
 		0355444D166C846F008806E9 /* Country.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Country.cxx; sourceTree = "<group>"; };
@@ -3218,7 +3218,7 @@
 				03554447166C846F008806E9 /* bzfio.cxx */,
 				03554448166C846F008806E9 /* bzglob.cxx */,
 				03554449166C846F008806E9 /* BzPNG.cxx */,
-				0355444A166C846F008806E9 /* bzsignal.c */,
+				0355444A166C846F008806E9 /* bzsignal.cxx */,
 				0355444B166C846F008806E9 /* CommandManager.cxx */,
 				0355444C166C846F008806E9 /* ConfigFileManager.cxx */,
 				0355444D166C846F008806E9 /* Country.cxx */,
@@ -5611,7 +5611,7 @@
 				0357A7C71670AFE30056C938 /* bzfio.cxx in Sources */,
 				0357A7C81670AFE30056C938 /* bzglob.cxx in Sources */,
 				0357A7C91670AFE30056C938 /* BzPNG.cxx in Sources */,
-				0357A7CA1670AFE30056C938 /* bzsignal.c in Sources */,
+				0357A7CA1670AFE30056C938 /* bzsignal.cxx in Sources */,
 				0357A7CB1670AFE30056C938 /* CommandManager.cxx in Sources */,
 				0357A7CC1670AFE30056C938 /* ConfigFileManager.cxx in Sources */,
 				0357A7CD1670AFE30056C938 /* Country.cxx in Sources */,
