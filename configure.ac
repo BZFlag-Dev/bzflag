@@ -690,13 +690,13 @@ AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 # than the FLAGS they set.
 #
 # the GCC version is known to be at least 4.3 because it has C++0x support
-# possible future warnings: -Wconversion -Wfloat-equal -Wpointer-arith -Wredundant-decls -Wwrite-strings
-FLAGS="-Wall -Wextra -Wcast-qual -Wshadow -Wundef"
+# possible future warnings: -Wconversion (1894) -Wfloat-equal (317)
+FLAGS="-Wall -Wextra -Wcast-qual -Wredundant-decls -Wshadow -Wundef -pedantic"
 case $host_os in
      linux*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
 	     pc)
 	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
@@ -741,12 +741,13 @@ case $host_os in
 	if test "$GCC" = yes ; then
 	    FLAGS="$FLAGS -Wno-unknown-pragmas"	# *silently* ignore "#pragma ident"
 	    CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
-	    CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic"
+	    CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	fi
 	;;
      macos|darwin*)
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS -pedantic";;
+	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
+	;;
      irix)
 	FLAGS="-Wall";
 	if test x$host_cpu = xmips64; then
