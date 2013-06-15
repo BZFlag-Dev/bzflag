@@ -11,6 +11,7 @@
  */
 
 #include "common.h"
+#include "version.h"
 
 /* system headers */
 #include <sstream>
@@ -55,34 +56,12 @@
 
 const char *bzfcopyright = "Copyright (c) 1993-2013 Tim Riker";
 
-
-//
-//  Although the ./configure process will generate
-//  -DBZ_BUILD_DATE for the build, here it's voided.
-//
-//  Could someone explain the reason for the
-//  inconvenience caused by the ./configure method? This
-//  way is simple, touch the *.cxx to get a new time
-//  stamp (no big recompiles). If this file is updated,
-//  you are also forced to get a new timestamp.
-//
-//  Using __DATE__ for all OSes is more consistent.
-//
-#undef BZ_BUILD_DATE
-
-
-#ifndef BZ_BUILD_DATE
-/* to get the version in the right format YYYYMMDD */
-/* yes this is horrible but it needs to be done to get it right */
-/* windows should pull from a resource */
-/* *nix gets this from the passed from my the Makefile */
-char buildDate[] = {__DATE__};
-
-int getBuildDate()
+static int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
   char monthStr[512];
-  sscanf(buildDate, "%s %d %d", monthStr, &day, &year);
+  // the __DATE__ macro looks like "Jun 15 2013" (*with* the quotes)
+  sscanf(__DATE__, "%s %d %d", monthStr, &day, &year);
 
   // we want it not as a name but a number
   if (strcmp(monthStr, "Jan") == 0)
@@ -112,9 +91,6 @@ int getBuildDate()
 
   return (year*10000) + (month*100)+ day;
 }
-#endif
-// down here so above gets created
-#include "version.h"
 
 const char*		getProtocolVersion()
 {
@@ -156,7 +132,7 @@ const char*		getAppVersion()
   if (!appVersion.size()){
     std::ostringstream	appVersionStream;
     // TODO add current platform, release, cpu, etc
-    appVersionStream << getMajorMinorRevVersion() << "." << BZ_BUILD_DATE
+    appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";

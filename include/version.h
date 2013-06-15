@@ -15,11 +15,6 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#ifndef BZ_BUILD_DATE
-extern int getBuildDate();
-#define BZ_BUILD_DATE		getBuildDate()
-#endif
-
 #ifndef BZ_CONFIG_DIR_VERSION
 #define BZ_CONFIG_DIR_VERSION	"2.4"
 #endif
