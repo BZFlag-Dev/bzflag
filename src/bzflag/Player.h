@@ -103,6 +103,7 @@ public:
   }
 #endif
   short		getRabbitScore() const;
+  short		getSelfKills() const;
   short		getLocalWins() const;
   short		getLocalLosses() const;
   short		getLocalTeamKills() const;
@@ -174,6 +175,7 @@ public:
   void		changeTeam(TeamColor);
   virtual void	setFlag(FlagType*);
   virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+  void		changeSelfKills(short delta);
   void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
   void		setHandicap(float handicap);
   void		setStatus(short);
@@ -295,6 +297,7 @@ private:
   short			wins;			// number of kills
   short			losses;			// number of deaths
   short			tks;			// number of teamkills
+  short			selfKills;			// number of self-destructions
 
   // score of local player against this player
   short			localWins;		// local player won this many
@@ -451,6 +454,11 @@ inline short		Player::getLosses() const
 inline short		Player::getTeamKills() const
 {
   return tks;
+}
+
+inline short		Player::getSelfKills() const
+{
+  return selfKills;
 }
 
 inline short		Player::getLocalWins() const

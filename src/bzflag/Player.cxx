@@ -65,6 +65,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   wins(0),
   losses(0),
   tks(0),
+  selfKills(0),
   localWins(0),
   localLosses(0),
   localTks(0),
@@ -668,6 +669,10 @@ void Player::changeScore(short deltaWins, short deltaLosses, short deltaTeamKill
   tks += deltaTeamKills;
 }
 
+void Player::changeSelfKills(short delta)
+{
+  selfKills += delta;
+}
 
 void Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 {

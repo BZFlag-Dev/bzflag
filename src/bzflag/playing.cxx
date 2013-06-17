@@ -2270,6 +2270,11 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }
 
+	  // handle self-destructions
+	  if (killerPlayer == victimPlayer && killerPlayer) {
+		  killerPlayer->changeSelfKills(1);
+	  }
+
       // add message
       if (human && victimPlayer) {
 	std::string message(ColorStrings[WhiteColor]);

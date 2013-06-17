@@ -630,7 +630,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
   if (LocalPlayer::getMyTank() != player) {
     sprintf(kills, "%3d~%-3d", player->getLocalWins(), player->getLocalLosses());
   } else {
-    kills[0] = '\0';
+    sprintf(kills, "%4d", player->getSelfKills());
   }
 
 
