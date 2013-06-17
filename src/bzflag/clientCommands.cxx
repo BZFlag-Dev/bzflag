@@ -951,6 +951,8 @@ static std::string cmdScrollPanel(const std::string&,
     controlPanel->setMessagesOffset(123456789, 0 /* set */, false);
   } else if (args[0] == "bottom") {
     controlPanel->setMessagesOffset(0, 0 /* set */, false);
+  } else if (args[0] == "pause") {
+    controlPanel->togglePaused();
   }
   return std::string();
 }

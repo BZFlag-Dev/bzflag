@@ -170,7 +170,8 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 				dimming(1.0f),
 				du(0),
 				dv(0),
-				messageMode(MessageAll)
+				messageMode(MessageAll),
+				paused(false)
 {
   setControlColor();
 
@@ -842,7 +843,13 @@ void			ControlPanel::addMessage(const std::string& line,
 
       // visible changes, force a console refresh
       if (messageMode == tab) {
-	invalidate();
+        // Don't scroll the messages unless we're at the bottom
+	if ((BZDB.isTrue("pauseConsole") && messagesOffset > 0 && messageMode >= 0) ||
+	    paused) {
+	  setMessagesOffset(1, 1 /* current */, false);
+	}
+
+        invalidate();
       }
 
       // mark the tab as unread (if viewing tabs)

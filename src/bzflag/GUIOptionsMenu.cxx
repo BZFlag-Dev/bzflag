@@ -235,6 +235,16 @@ GUIOptionsMenu::GUIOptionsMenu()
   options->push_back(std::string("Right"));
   option->update();
   listHUD.push_back(option);
+  // Automatic pausing of the console
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Automatically pause the control panel:");
+  option->setCallback(callback, "o");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
   // GUI coloring
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -385,6 +395,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     i++; // locale
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("showtabs")));
+	((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("pauseConsole") ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
     // underline color - find index of mode string in options
@@ -495,6 +506,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
     case 'M':
       {
 	sceneRenderer->setMaxMotionFactor(list->getIndex() - 11);
+	break;
+      }
+
+    case 'o':
+      {
+	BZDB.set("pauseConsole", list->getIndex() ? "1" : "0");
 	break;
       }
 

@@ -64,6 +64,8 @@ class ControlPanel {
     void		setRadarRenderer(RadarRenderer*);
 
     void		setDimming(float dimming);
+    
+    void		togglePaused();
 
     void		saveMessages(const std::string& filename,
 				     bool stripAnsi) const;
@@ -116,6 +118,7 @@ class ControlPanel {
     float		margin;
     float		lineHeight;
     bool		unRead[MessageModeCount];
+    bool		paused;
 
 };
 
@@ -123,6 +126,11 @@ inline void ControlPanel::setDimming(float newDimming)
 {
   const float newDim = 1.0f - newDimming;
   dimming = (newDim > 1.0f) ? 1.0f : (newDim < 0.0f) ? 0.0f : newDim;
+}
+
+inline void ControlPanel::togglePaused()
+{
+  paused = !paused;
 }
 
 
