@@ -1,6 +1,9 @@
+EXTRA_PROGRAMS = rrlog
+
 EXTRA_DIST =				\
 	3ds2bzw.c			\
-	art				\
+	art/bzicon-red.svg		\
+	art/title.psd			\
 	bzbz.pl				\
 	bzflag.desktop.in		\
 	bzfquery.php			\
@@ -33,7 +36,6 @@ EXTRA_DIST =				\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
 	rebuild-bzflag			\
-	rrlog.cxx			\
 	ServerListFilter.txt		\
 	serverstats.sh			\
 	shtool				\
@@ -58,6 +60,8 @@ bzflag.desktop: bzflag.desktop.in
 desktopdir = $(datadir)/applications
 desktop_DATA = bzflag.desktop
 
+CLEANFILES = $(EXTRA_PROGRAMS) bzflag.desktop
+
 MAINTAINERCLEANFILES = \
 	Makefile.in \
 	aclocal.m4 \
@@ -73,14 +77,14 @@ MAINTAINERCLEANFILES = \
 	missing \
 	mkinstalldirs
 
-Rrlog:  rrlog.cxx
-	$(CXX) $(CXXFLAGS)		\
-	  -o rrlog rrlog.cxx		\
-	  -I../include -I../src/bzfs	\
-	  ../src/date/libDate.a		\
-	  ../src/game/libGame.a		\
-	  ../src/net/libNet.a		\
-	  ../src/common/libCommon.a
+rrlog_SOURCES = rrlog.cxx
+rrlog_CPPFLAGS = -I$(top_srcdir)/src/bzfs
+rrlog_LDADD =				\
+	../src/date/libDate.la		\
+	../src/game/libGame.la		\
+	../src/net/libNet.la		\
+	../src/common/libCommon.la	\
+	$(X_EXTRA_LIBS)
 
 3ds2bzw:	3ds2bzw.c
 	$(CC) $(CFLAGS) -o 3ds2bzw 3ds2bzw.c -l3ds -lm
