@@ -205,6 +205,7 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
   HUDuiList* listHUD = (HUDuiList*)w;
   std::vector<std::string> *options = &listHUD->getList();
   std::string selectedOption = (*options)[listHUD->getIndex()];
+  InputMenu *menu = (InputMenu *) HUDDialogStack::get()->top();
   switch (((const char*)data)[0]) {
 
     /* Joystick name */
@@ -212,7 +213,8 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
       BZDB.set("joystickname", selectedOption);
       getMainWindow()->initJoystick(selectedOption);
       // re-fill all of the joystick-specific options lists
-      // fillJSOptions();
+      if (menu)
+        menu->fillJSOptions();
       break;
 
     /* Joystick x-axis */
