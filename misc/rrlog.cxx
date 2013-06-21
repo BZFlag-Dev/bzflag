@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <string.h>
 #include <time.h>
 #ifndef _WIN32
 #  include <sys/time.h>
@@ -49,6 +50,9 @@ typedef __int64 s64;
 // Type Definitions
 // ----------------
 
+static const int PACKET_SIZE_STUFFING = 8;
+static const int HEADER_SIZE_STUFFING = 0;
+
 typedef uint16_t u16;
 typedef uint32_t u32;
 typedef s64 RRtime;
@@ -65,8 +69,10 @@ typedef struct RRpacket {
   char *data;
 } RRpacket;
 
-static const int RRpacketHdrSize = sizeof(RRpacket) -
-				   (2 * sizeof(RRpacket*) - sizeof(char*));
+static const unsigned int RRpacketHdrSize =
+  PACKET_SIZE_STUFFING +
+  (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
+
 typedef struct {
   u32 magic;			// record file type identifier
   u32 version;			// record file version
@@ -85,7 +91,10 @@ typedef struct {
   char *world;			// the world
 } ReplayHeader;
 
-static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
+static const unsigned int ReplayHeaderSize =
+  HEADER_SIZE_STUFFING +
+  (sizeof(u32) * 6) + sizeof(RRtime) +
+  CallSignLen + MottoLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 
 // Function Prototypes
@@ -94,7 +103,7 @@ static const int ReplayHeaderSize = sizeof(ReplayHeader) - (2 * sizeof(char*));
 static void printHelp(const char* execName);
 static bool loadHeader(ReplayHeader *h, FILE *f);
 static RRpacket *loadPacket(FILE *f);
-static void *nboUnpackRRtime(void *buf, RRtime& value);
+static const void *nboUnpackRRtime(const void *buf, RRtime& value);
 static std::string strRRtime(RRtime timestamp);
 
 
@@ -212,6 +221,11 @@ int main(int argc, char** argv)
   printf("worldHash: %s\n", header.realHash);
   printf("\n");
 
+  if (!p) {
+    printf("Error in first packet\n");
+    fclose(file);
+    exit(1);
+  }
 
   MsgStrings::init();
   MsgStrings::colorize(useColor);
@@ -285,7 +299,7 @@ static void printHelp(const char* execName)
 static bool loadHeader(ReplayHeader *h, FILE *f)
 {
   char buffer[ReplayHeaderSize];
-  void *buf;
+  const void *buf;
 
   if (fread(buffer, ReplayHeaderSize, 1, f) <= 0) {
     return false;
@@ -330,10 +344,10 @@ static RRpacket* loadPacket(FILE *f)
 {
   RRpacket *p;
   char bufStart[RRpacketHdrSize];
-  void *buf;
+  const void *buf;
 
   if (f == NULL) {
-    return false;
+    return NULL;
   }
 
   p = new RRpacket;
@@ -372,7 +386,7 @@ static RRpacket* loadPacket(FILE *f)
 
 /****************************************************************************/
 
-static void* nboUnpackRRtime(void *buf, RRtime& value)
+static const void* nboUnpackRRtime(const void *buf, RRtime& value)
 {
   u32 msb, lsb;
   buf = nboUnpackUInt(buf, msb);
