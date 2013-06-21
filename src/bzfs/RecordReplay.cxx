@@ -2042,7 +2042,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
   strncpy(hdr.motto, motto, sizeof(hdr.motto));
   strncpy(hdr.ServerVersion, getServerVersion(), sizeof(hdr.ServerVersion));
   strncpy(hdr.appVersion, getAppVersion(), sizeof(hdr.appVersion));
-  strncpy(hdr.realHash, hexDigest, sizeof(hdr.realHash));
+  strncpy(hdr.realHash, hexDigest.c_str(), sizeof(hdr.realHash));
   packFlagTypes(flagsBuf, &hdr.flagsSize);
   hdr.flags = flagsBuf;
 
@@ -2323,9 +2323,8 @@ static bool replaceWorldDatabase(ReplayHeader *h)
     MD5 md5;
     md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
     md5.finalize();
-    std::string hash = md5.hexdigest();
-    hexDigest[0] = h->realHash[0];
-    strncpy(hexDigest + 1, hash.c_str(), sizeof(hexDigest) - 1);
+    hexDigest = h->realHash[0];
+    hexDigest += md5.hexdigest();
 
     delete[] oldWorld;
     return true;   // the world was replaced

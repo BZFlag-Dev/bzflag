@@ -121,7 +121,7 @@ int debugLevel = 0;
 static float maxWorldHeight = 0.0f;
 static bool disableHeightChecks = false;
 
-char hexDigest[50];
+std::string hexDigest;
 
 TimeKeeper gameStartTime;
 TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
@@ -1111,16 +1111,11 @@ bool defineWorld ( void )
   MD5 md5;
   md5.update((unsigned char *)worldDatabase, worldDatabaseSize);
   md5.finalize();
-  if (clOptions->worldFile == "") {
-    strcpy(hexDigest, "t");
-  } else {
-    strcpy(hexDigest, "p");
-  }
-  std::string digest = md5.hexdigest();
-  strcat(hexDigest, digest.c_str());
+  hexDigest = (clOptions->worldFile == "") ? 't' : 'p';
+  hexDigest += md5.hexdigest();
   TimeKeeper endTime = TimeKeeper::getCurrent();
   logDebugMessage(3,"MD5 generation: %.3f seconds\n", endTime - startTime);
-  logDebugMessage(3,"MD5 = %s\n", digest.c_str());
+  logDebugMessage(3,"MD5 = %s\n", hexDigest.c_str()+1);
 
   // water levels probably require flags on buildings
   const float waterLevel = world->getWaterLevel();
@@ -4273,7 +4268,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 			    clOptions->cacheURL.size() + 1);
 	directMessage(t, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
       }
-      obuf = nboPackString(obufStart, hexDigest, strlen(hexDigest)+1);
+      obuf = nboPackString(obufStart, hexDigest.c_str(), hexDigest.size() + 1);
       directMessage(t, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
       break;
     }

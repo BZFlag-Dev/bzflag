@@ -145,7 +145,7 @@ extern bool	    countdownActive;
 extern int	     countdownDelay;
 extern TimeKeeper      countdownPauseStart;
 extern int	     countdownResumeDelay;
-extern char	    hexDigest[50];
+extern std::string	hexDigest;
 extern WorldInfo      *world;
 extern char	   *worldDatabase;
 extern uint32_t	worldDatabaseSize;
