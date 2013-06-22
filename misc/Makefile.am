@@ -1,7 +1,6 @@
-EXTRA_PROGRAMS = rrlog
+EXTRA_PROGRAMS = 3ds2bzw rrlog
 
 EXTRA_DIST =				\
-	3ds2bzw.c			\
 	art/bzicon-red.svg		\
 	art/title.psd			\
 	bzbz.pl				\
@@ -77,6 +76,10 @@ MAINTAINERCLEANFILES = \
 	missing \
 	mkinstalldirs
 
+AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
+
 rrlog_SOURCES = rrlog.cxx
 rrlog_CPPFLAGS = -I$(top_srcdir)/src/bzfs
 rrlog_LDADD =				\
@@ -86,5 +89,5 @@ rrlog_LDADD =				\
 	../src/common/libCommon.la	\
 	$(X_EXTRA_LIBS)
 
-3ds2bzw:	3ds2bzw.c
-	$(CC) $(CFLAGS) -o 3ds2bzw 3ds2bzw.c -l3ds -lm
+3ds2bzw_SOURCES = 3ds2bzw.cxx
+3ds2bzw_LDADD = -l3ds
