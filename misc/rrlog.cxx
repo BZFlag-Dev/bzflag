@@ -27,15 +27,10 @@
 #ifndef _WIN32
 #  include <sys/time.h>
 #  include <unistd.h>
-typedef int64_t s64;
-#else
-typedef __int64 s64;
 #endif
 
 // common headers
 #include "common.h"
-#include "global.h"
-#include "Protocol.h"
 #include "Pack.h"
 #include "TextUtils.h"
 #include "version.h"
@@ -45,56 +40,6 @@ typedef __int64 s64;
 
 // local headers
 #include "MsgStrings.h"
-
-
-// Type Definitions
-// ----------------
-
-static const int PACKET_SIZE_STUFFING = 8;
-static const int HEADER_SIZE_STUFFING = 0;
-
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef s64 RRtime;
-
-typedef struct RRpacket {
-  struct RRpacket *next;
-  struct RRpacket *prev;
-  u16 mode;
-  u16 code;
-  u32 len;
-  u32 nextFilePos;
-  u32 prevFilePos;
-  RRtime timestamp;
-  char *data;
-} RRpacket;
-
-static const unsigned int RRpacketHdrSize =
-  PACKET_SIZE_STUFFING +
-  (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
-
-typedef struct {
-  u32 magic;			// record file type identifier
-  u32 version;			// record file version
-  u32 offset;			// length of the full header
-  RRtime filetime;		// amount of time in the file
-  u32 player;			// player that saved this record file
-  u32 flagsSize;		// size of the flags data
-  u32 worldSize;		// size of world database
-  char callSign[CallSignLen];	// player's callsign
-  char motto[MottoLen];		// player's motto
-  char serverVersion[8];	// BZFS protocol version
-  char appVersion[MessageLen];	// BZFS application version
-  char realHash[64];		// hash of worldDatabase
-  char worldSettings[4 + WorldSettingsSize]; // the game settings
-  char *flags;			// a list of the flags types
-  char *world;			// the world
-} ReplayHeader;
-
-static const unsigned int ReplayHeaderSize =
-  HEADER_SIZE_STUFFING +
-  (sizeof(u32) * 6) + sizeof(RRtime) +
-  CallSignLen + MottoLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 
 // Function Prototypes
@@ -215,7 +160,7 @@ int main(int argc, char** argv)
   printf("end:       %s", ctime(&endTime));
   printf("author:    %s  (%s)\n", header.callSign, header.motto);
   printf("bzfs:      bzfs-%s\n", header.appVersion);
-  printf("protocol:  %.8s\n", header.serverVersion);
+  printf("protocol:  %.8s\n", header.ServerVersion);
   printf("flagSize:  %i\n", header.flagsSize);
   printf("worldSize: %i\n", header.worldSize);
   printf("worldHash: %s\n", header.realHash);
@@ -314,7 +259,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
   buf = nboUnpackUInt(buf, h->worldSize);
   buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
   buf = nboUnpackString(buf, h->motto, sizeof(h->motto));
-  buf = nboUnpackString(buf, h->serverVersion, sizeof(h->serverVersion));
+  buf = nboUnpackString(buf, h->ServerVersion, sizeof(h->ServerVersion));
   buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
   buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));
 
@@ -373,12 +318,13 @@ static RRpacket* loadPacket(FILE *f)
     p->data = NULL;
   }
   else {
-    p->data = new char [p->len];
-    if (fread(p->data, p->len, 1, f) <= 0) {
-      delete[] p->data;
+    char *d = new char [p->len];
+    if (fread(d, p->len, 1, f) <= 0) {
+      delete[] d;
       delete p;
       return NULL;
     }
+    p->data = d;
   }
 
   return p;

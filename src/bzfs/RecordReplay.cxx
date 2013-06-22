@@ -17,12 +17,6 @@
 //   for name matching (so that messages aren't sent to ghosts)
 // - improve skipping
 
-
-// OOPS, get rid of these during the next protocol change
-static const int PACKET_SIZE_STUFFING = 8;
-static const int HEADER_SIZE_STUFFING = 0;
-
-
 // interface header
 #include "RecordReplay.h"
 
@@ -37,10 +31,8 @@ static const int HEADER_SIZE_STUFFING = 0;
 #ifndef _WIN32
 #  include <sys/time.h>
 #  include <unistd.h>
-typedef int64_t s64;
 #else
 #  include <direct.h>
-typedef __int64 s64;
 #  ifndef S_ISDIR
 #    define S_ISDIR(m) ((m) & _S_IFDIR)
 #  endif
@@ -50,7 +42,6 @@ typedef __int64 s64;
 #endif
 
 // common headers
-#include "global.h"
 #include "bzglob.h"
 #include "Pack.h"
 #include "GameTime.h"
@@ -68,32 +59,6 @@ typedef __int64 s64;
 // Type Definitions
 // ----------------
 
-typedef uint16_t u16;
-typedef uint32_t u32;
-typedef s64 RRtime; // should last a while
-
-enum RecordType {
-  StraightToFile  = 0,
-  BufferedRecord = 1
-};
-
-typedef struct RRpacket {
-  struct RRpacket *next;
-  struct RRpacket *prev;
-  u16 mode;
-  u16 code;
-  u32 len;
-  u32 nextFilePos;
-  u32 prevFilePos;
-  RRtime timestamp;
-  const char *data;
-} RRpacket;
-//static const unsigned int RRpacketHdrSize =
-//  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
-static const unsigned int RRpacketHdrSize =
-  PACKET_SIZE_STUFFING +
-  (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
-
 typedef struct {
   u32 byteCount;
   u32 packetCount;
@@ -101,30 +66,6 @@ typedef struct {
   RRpacket *head; // last packet in
   RRpacket *tail; // first packet in
 } RRbuffer;
-
-typedef struct {
-  u32 magic;		    // record file type identifier
-  u32 version;		  // record file version
-  u32 offset;		   // length of the full header
-  RRtime filetime;	      // amount of time in the file
-  u32 player;		   // player that saved this record file
-  u32 flagsSize;		// size of the flags data
-  u32 worldSize;		// size of world database
-  char callSign[CallSignLen];   // player's callsign
-  char motto[MottoLen];	 // player's motto
-  char ServerVersion[8];	// BZFS protocol version
-  char appVersion[MessageLen];  // BZFS application version
-  char realHash[64];	    // hash of worldDatabase
-  char worldSettings[4 + WorldSettingsSize]; // the game settings
-  char *flags;		  // a list of the flags types
-  char *world;		  // the world
-} ReplayHeader;
-//static const unsigned int ReplayHeaderSize =
-//  sizeof(ReplayHeader) - (2 * sizeof(char*));
-static const unsigned int ReplayHeaderSize =
-  HEADER_SIZE_STUFFING +
-  (sizeof(u32) * 6) + sizeof(RRtime) +
-  CallSignLen + MottoLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 typedef struct {
   std::string file;
