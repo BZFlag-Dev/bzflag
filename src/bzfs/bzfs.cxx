@@ -3727,6 +3727,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 	if (shotEvent.changed)
 	{
+		if (shotEvent.type == "DELETE")
+			return;
 		firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
 		repack = true;
 	}
