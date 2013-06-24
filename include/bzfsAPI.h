@@ -1064,7 +1064,7 @@ public:
 class BZF_API bz_GetPlayerMottoData_V2 : public bz_GetPlayerMottoData_V1
 {
 public:
-	bz_GetPlayerMottoData_V2(const char* m) 
+	bz_GetPlayerMottoData_V2(const char* m)
 		: bz_GetPlayerMottoData_V1(m)
 	{
 	}
@@ -1624,7 +1624,7 @@ public:
   virtual void URLDone ( const char* URL, const void * data, unsigned int size, bool complete ) = 0;
   virtual void URLTimeout ( const char* /*URL*/, int /*errorCode*/ ){};
   virtual void URLError ( const char* /*URL*/, int /*errorCode*/, const char * /*errorString*/ ){};
-  
+
   int version;
 };
 
@@ -1684,6 +1684,8 @@ BZF_API void bz_resumeCountdown ( const char *resumedBy );
 BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 
 // server control
+BZF_API bool bz_getShotMismatch();
+BZF_API void bz_setShotMismatch(bool value);
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);

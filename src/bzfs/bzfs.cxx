@@ -140,6 +140,7 @@ uint32_t worldDatabaseSize = 0;
 char worldSettings[4 + WorldSettingsSize];
 float pluginWorldSize = -1;
 float pluginWorldHeight = -1;
+bool checkShotMismatch = true;
 Filter   filter;
 
 BasesList bases;
@@ -566,12 +567,12 @@ void sendPlayerInfo() {
 void sendPlayerScores(GameKeeper::Player ** players, int nPlayers) {
   void *buf, *bufStart;
   bufStart = getDirectMessageBuffer();
- 
+
   buf = nboPackUByte(bufStart, nPlayers);
-  
+
   for(int i = 0; i < nPlayers; i++) {
     GameKeeper::Player *player = players[i];
-    
+
     buf = nboPackUByte(buf, player->getIndex());
     buf = player->score.pack(buf);
   }
@@ -685,21 +686,21 @@ void resetPlayerScores ( void )
   // Players to notify of new scores
   GameKeeper::Player **playersToUpdate = new GameKeeper::Player*[curMaxPlayers];
   int nPlayersToUpdate = 0;
-  
+
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *player;
-    
+
     player = GameKeeper::Player::getPlayerByIndex(i);
-    
+
     if(player) {
       player->score.reset();
       playersToUpdate[nPlayersToUpdate++] = player;
     }
   }
-  
+
   // Tell the players the new scores
   sendPlayerScores(playersToUpdate, nPlayersToUpdate);
-  
+
   delete[] playersToUpdate;
 }
 
@@ -1477,9 +1478,9 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 	}
 
 	msg = filtered;
-	
+
   }
-  
+
   // if the message is empty, stop.
   if (strlen(msg) == 0)
   {
@@ -2261,7 +2262,7 @@ void resetFlag(FlagInfo &flag)
 {
   // NOTE -- must not be called until world is defined
   assert(world != NULL);
-  
+
   // first drop the flag if someone has it
   if (flag.flag.status == FlagOnTank) {
     int player = flag.player;
@@ -2367,7 +2368,7 @@ void zapFlag(FlagInfo &flag)
   int player = flag.player;
 
   sendDrop(flag);
-  
+
   // trigger the API event
   bz_FlagDroppedEventData_V1 data;
   data.playerID = player;
@@ -2508,7 +2509,7 @@ void zapFlagByPlayer(int playerIndex)
 
 void flushKilledByCounts( int removeID )
 {
-	for (int i = 0; i < curMaxPlayers; i++) 
+	for (int i = 0; i < curMaxPlayers; i++)
 	{
 		GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(i);
 		if (player)
@@ -3037,7 +3038,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 	  killerData->score.kill();
 	}
       }
-      
+
       // send killer & victim
       GameKeeper::Player *kAndV[] = {killerData, victimData};
       sendPlayerScores(kAndV, 2);
@@ -3045,7 +3046,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       // send victim
       sendPlayerScores(&victimData, 1);
     }
-    
+
     if (handicapAllowed()) {
       bufStart = getDirectMessageBuffer();
       if (killer) {
@@ -3214,7 +3215,7 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
       playerData->player.haveFlag() ||
       (checkPos && flag.flag.status != FlagOnGround))
     return;
-    
+
   const float* fpos = flag.flag.position;
   if (checkPos) {
     //last Pos might be lagged by TankSpeed so include in calculation
@@ -3224,7 +3225,7 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
     const float* tpos = playerData->lastState.pos;
     const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
 		        (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
-			
+
     if ((fabs(tpos[2] - fpos[2]) < 0.1f) && (delta > radius2)) {
          logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
       playerData->player.getCallSign(), playerIndex,
@@ -3373,14 +3374,14 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
 
   // notify of new flag state
   sendFlagUpdate(drpFlag);
-  
+
   // trigger the api event
   bz_FlagDroppedEventData_V1 data;
   data.playerID = player;
   data.flagID = flagIndex;
   data.flagType = drpFlag.flag.type->flagAbbv.c_str();
   memcpy(data.pos, pos, sizeof(float)*3);
-  
+
   worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
 
 }
@@ -3617,7 +3618,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
     // probably a cheater using wrong shots.. exception for thief since they steal someone elses
-    if (firingInfo.flagType != Flags::Thief) {
+    if (firingInfo.flagType != Flags::Thief && checkShotMismatch) {
       // bye bye supposed cheater
       logDebugMessage(1,"Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
       sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots do not to match the expected shot type.");
@@ -3714,11 +3715,11 @@ static void shotFired(int playerIndex, void *buf, int len)
 	shotEvent.pos[0] = shot.pos[0];
 	shotEvent.pos[1] = shot.pos[1];
 	shotEvent.pos[2] = shot.pos[2];
-	
+
 	shotEvent.vel[0] = shot.vel[0];
 	shotEvent.vel[1] = shot.vel[1];
 	shotEvent.vel[2] = shot.vel[2];
-	
+
 	shotEvent.playerID = shooter.getPlayerIndex();
 
 	shotEvent.type = firingInfo.flagType->flagAbbv;
@@ -4421,7 +4422,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       buf = nboUnpackShort(buf, shot);
       buf = nboUnpackUShort(buf, reason);
       shotEnded(sourcePlayer, shot, reason);
-	 
+
       break;
     }
 
@@ -5295,8 +5296,8 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
   {
     peer.netHandler->bufferedSend(NULL, 0);
     return;
-  } 
-  
+  }
+
   if (peer.sendChunks.empty())
   {
     if (peer.deleteWhenDoneSending && peer.sent && !peer.netHandler->hasTcpOutbound())
@@ -6410,7 +6411,7 @@ int main(int argc, char **argv)
 
 	  // quietly reset team scores in case of a capture during the countdown
 	  resetTeamScores();
-	  
+
 	  // reset player scores
 	  resetPlayerScores();
 
@@ -6709,7 +6710,7 @@ int main(int argc, char **argv)
 		  sendMessage(ServerPlayer, v, "You have been killed due to sufficient votes");
 		  playerKilled(v, curMaxPlayers, 0, -1, Flags::Null, -1);
 		}
-	      }		  
+	      }
 
 		  else if (action == "set")
 		  {

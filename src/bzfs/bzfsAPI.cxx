@@ -2760,7 +2760,7 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int UNUSED(playerID), const char* UNU
   return false;
 //   if (playerID == BZ_SERVER || !soundName)
 //     return false;
-// 
+//
 //   void *buf, *bufStart = getDirectMessageBuffer();
 //   buf = nboPackUShort(bufStart, LocalCustomSound);
 //   buf = nboPackUShort(buf, (unsigned short)strlen(soundName));
@@ -2769,7 +2769,7 @@ BZF_API bool bz_sendPlayCustomLocalSound ( int UNUSED(playerID), const char* UNU
 //     broadcastMessage(MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
 //   else
 //     directMessage(playerID,MsgCustomSound, (char*)buf - (char*)bufStart, bufStart);
-// 
+//
 //   return true;
 }
 
@@ -3456,6 +3456,16 @@ BZF_API const char *bz_urlEncode(const char* val )
 
 
 // server control
+BZF_API bool bz_getShotMismatch( void )
+{
+  return checkShotMismatch;
+}
+
+BZF_API void bz_setShotMismatch ( bool value )
+{
+  checkShotMismatch = value;
+}
+
 BZF_API void bz_shutdown ( void )
 {
   shutdownCommand(NULL,NULL);

@@ -157,7 +157,7 @@ extern uint16_t	maxPlayers;
 extern uint16_t	maxRealPlayers;
 extern float	   pluginWorldSize;
 extern float	   pluginWorldHeight;
-
+extern bool 	checkShotMismatch;
 extern bool		  publiclyDisconnected;
 
 extern Shots::Manager ShotManager;
