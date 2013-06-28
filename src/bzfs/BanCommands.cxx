@@ -254,7 +254,7 @@ bool MuteCommand::operator() (const char	 *message,
     snprintf(msg, MessageLen, "player id #%d \"%s\" has been muted by %s.", i,
 	     muteData->player.getCallSign(), playerData->player.getCallSign());
     sendMessage(ServerPlayer, AdminPlayers, msg);
-    if (!playerData->accessInfo.isAdmin()) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive)) {
       snprintf(msg, MessageLen, "player id #%d \"%s\" is now muted.", i,
 	       muteData->player.getCallSign());
       sendMessage(ServerPlayer, t, msg);
@@ -312,7 +312,7 @@ bool UnmuteCommand::operator() (const char	 *message,
     snprintf(msg, MessageLen, "player id #%d \"%s\" has been unmuted by %s.", i,
 	    unmuteData->player.getCallSign(), playerData->player.getCallSign());
     sendMessage(ServerPlayer, AdminPlayers, msg);
-    if (!playerData->accessInfo.isAdmin()) {
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive)) {
       snprintf(msg, MessageLen, "player id #%d \"%s\" is now unmuted.", i,
 	       unmuteData->player.getCallSign());
       sendMessage(ServerPlayer, t, msg);
