@@ -1002,6 +1002,11 @@ bool FlashShotEffect::update ( float time )
 
 void FlashShotEffect::draw(const SceneRenderer &)
 {
+	if (!LocalPlayer::getMyTank()) {
+	  //just left the game
+	  return;
+	}
+
 	glPushMatrix();
 
 	float pos[3];
