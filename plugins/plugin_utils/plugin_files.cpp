@@ -192,13 +192,12 @@ bool LinuxAddFileStack(const char *szPathName, const char* fileMask,
   DIR *directory;
   dirent *fileInfo;
   struct stat statbuf;
-  char searchstr[1024];
   std::string FilePath;
 
-  strcpy(searchstr, szPathName);
-  if (searchstr[strlen(searchstr) - 1] != '/')
-    strcat(searchstr, "/");
-  directory = opendir(searchstr);
+  std::string searchstr = szPathName;
+  if (searchstr.empty() || *(searchstr.end()-1) != _DirDelim)
+    searchstr += _DirDelim;
+  directory = opendir(searchstr.c_str());
   if (!directory)
     return false;
 
