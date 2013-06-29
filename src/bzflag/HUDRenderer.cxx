@@ -92,11 +92,9 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
   // initialize heading and altitude labels
   if (headingLabel[0].length() == 0) {
-    char buf[10];
     int i;
     for (i = 0; i < 36; i++) {
-      sprintf(buf, "%d", i * 10);
-      headingLabel[i] = std::string(buf);
+      headingLabel[i] = TextUtils::format("%d", i * 10);
     }
   }
 
@@ -531,9 +529,7 @@ void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
 
 void			HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
-  char buffer[250];
-  sprintf(buffer, BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
-  restartLabel = buffer;
+  restartLabel = TextUtils::format(BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
   FontManager &fm = FontManager::instance();
   restartLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, restartLabel);
 }
@@ -823,7 +819,6 @@ void			HUDRenderer::renderStatus(void)
 
   FontManager &fm = FontManager::instance();
 
-  char buffer[80];
   const float h = fm.getStrHeight(majorFontFace, majorFontSize, " ");
   float x = 0.25f * h;
   float y = (float)window.getViewHeight() - h;
@@ -832,20 +827,20 @@ void			HUDRenderer::renderStatus(void)
 
   // print player name and score in upper left corner in team (radar) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    sprintf(buffer, "%s: %d", myTank->getCallSign(), myTank->getScore());
     hudColor3fv(Team::getRadarColor(teamIndex));
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize,
+      TextUtils::format("%s: %d", myTank->getCallSign(), myTank->getScore()));
   }
 
   // print flag if player has one in upper right
   if (flag != Flags::Null) {
-    sprintf(buffer, "%s", BundleMgr::getCurrentBundle()->getLocalString(flag->flagName).c_str());
-    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
+    const std::string flagname = bdl->getLocalString(flag->flagName);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, flagname);
     if (flag->endurance == FlagSticky)
       hudColor3fv(warningColor);
     else
       hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, flagname);
   } else {
     time_t timeNow;
     struct tm userTime;
@@ -863,25 +858,24 @@ void			HUDRenderer::renderStatus(void)
     }
 
     // print time or date
-    if (dater)
-      sprintf(buffer, "%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday);
-    else
-      sprintf(buffer, "%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
-    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
+    const std::string datetime = (dater) ?
+      TextUtils::format("%4d.%02d.%02d", 1900 + userTime.tm_year, userTime.tm_mon + 1, userTime.tm_mday) :
+      TextUtils::format("%2d:%2.2d", userTime.tm_hour, userTime.tm_min);
+    x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, datetime);
     hudColor3fv(messageColor);
-    fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+    fm.drawString(x, y, 0, majorFontFace, majorFontSize, datetime);
   }
 
   // print current position of tank
   if (BZDB.isTrue("showCoordinates")) {
-	Player *target = ROAM.getTargetTank();
-	if(!target){
-      sprintf(buffer, "[%d %d %d]", (int)myTank->getPosition()[0],
-	      (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, buffer);
-      fm.drawString(x, (y - h), 0, majorFontFace, majorFontSize, buffer);
-	}
-   }
+    Player *target = ROAM.getTargetTank();
+    if (!target) {
+      const std::string pos = TextUtils::format("[%d %d %d]", (int)myTank->getPosition()[0],
+	(int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, pos);
+      fm.drawString(x, (y - h), 0, majorFontFace, majorFontSize, pos);
+    }
+  }
 
   if (roaming && BZDB.isTrue("showVelocities"))
   {
@@ -911,55 +905,57 @@ void			HUDRenderer::renderStatus(void)
 	maxApparentLinTime = TimeKeeper::getTick();
       }
 
-      float smallZHeight = fm.getStrHeight(minorFontFace,minorFontSize,std::string("X"))*1.125f;
+      std::string msg = "X";
+      float smallZHeight = fm.getStrHeight(minorFontFace, minorFontSize, msg) * 1.125f;
       float drawY = y - smallZHeight;
       // draw header
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, "Target Info");
-      fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, "Target Info");
+      msg = "Target Info";
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, msg);
 
       // draw the postion
-      sprintf(buffer, "Position [%d %d %d]", (int)myTank->getPosition()[0], (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, buffer);
+      msg = TextUtils::format("Position [%d %d %d]", (int)myTank->getPosition()[0], (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, msg);
 
-      std::string label = "Linear Speed:";
+      msg = "Linear Speed:";
       if ( linSpeed > target->getMaxSpeed() )
-	label += "!";
+	msg += "!";
 
-      sprintf(buffer,"%s%5.2f",label.c_str(),linSpeed);
+      msg += TextUtils::format("%5.2f", linSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
-	sprintf(buffer,"%s%5.2f(%5.2f)",label.c_str(),linSpeed,apparentLinSpeed);
+	msg += TextUtils::format("(%5.2f)", apparentLinSpeed);
 
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x,drawY-smallZHeight*2.0f, 0, minorFontFace, minorFontSize, msg);
 
-      sprintf(buffer,"Vertical Speed:%5.2f",vertSpeed);
+      msg = TextUtils::format("Vertical Speed:%5.2f", vertSpeed);
       if (BZDB.evalInt("showVelocities") > 1)
-	sprintf(buffer,"Vertical Speed:%5.2f(%5.2f)",vertSpeed,apparentVel[2]);
+	msg += TextUtils::format("(%5.2f)", apparentVel[2]);
 
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x, drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, buffer);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x, drawY-smallZHeight*3.0f, 0, minorFontFace, minorFontSize, msg);
 
-      label = "Angular Speed:";
+      msg = "Angular Speed:";
       if (rotSpeed > BZDB.eval(StateDatabase::BZDB_TANKANGVEL))
-	label += "!";
-      sprintf(buffer,"%s%5.2f",label.c_str(),rotSpeed);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, buffer);
+	msg += "!";
+      msg += TextUtils::format("%5.2f", rotSpeed);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x,drawY-smallZHeight*4.0f, 0, minorFontFace, minorFontSize, msg);
 
       float shotTime = (float)target->getShotStatistics()->getLastShotTimeDelta();
       float shotDeviation = (float)target->getShotStatistics()->getLastShotDeviation();
 
-      sprintf(buffer,"Last Shot Info  Time:%6.4f  Deviation:%6.3f", shotTime, shotDeviation);
-      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-      fm.drawString(x,drawY-smallZHeight*5.0f, 0, minorFontFace, minorFontSize, buffer);
+      msg = TextUtils::format("Last Shot Info  Time:%6.4f  Deviation:%6.3f", shotTime, shotDeviation);
+      x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+      fm.drawString(x,drawY-smallZHeight*5.0f, 0, minorFontFace, minorFontSize, msg);
 
       float offset = 6.0f;
       if (BZDB.evalInt("showVelocities") > 2) {
 	offset += 1.0f;
-	sprintf(buffer,"ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits,(float)target->reportedHits/(float)target->computedHits);
-	x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize,buffer);
-	fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, buffer);
+	msg = TextUtils::format("ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits, (float)target->reportedHits/(float)target->computedHits);
+	x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
+	fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, msg);
       }
 
       offset += 1.5f;
@@ -977,24 +973,25 @@ void			HUDRenderer::renderStatus(void)
   static const GLfloat yellowColor[3] = { 1.0f, 1.0f, 0.0f };
   static const GLfloat greenColor[3] = { 0.0f, 1.0f, 0.0f };
   const GLfloat* statusColor = warningColor;
+  std::string msg;
   // TODO: the upper 4 values of timeLeft (~0u-3 to ~0u)
   // are reserved for future use as timer flags (e.g. paused)
   if ((timeLeft == 0) || (timeLeft >= (~0u - 3))) {
-    strcpy(buffer, "");
+    msg = "";
   } else {
     int t = timeLeft - (int)(TimeKeeper::getTick() - timeSet);
     if (t < 0) t = 0;
     if (t >= 3600)
-      sprintf(buffer, "%d:%02d:%02d   ", t / 3600, (t / 60) % 60, t % 60);
+      msg = TextUtils::format("%d:%02d:%02d   ", t / 3600, (t / 60) % 60, t % 60);
     else if (t >= 60)
-      sprintf(buffer, "%d:%02d   ", t / 60, t % 60);
+      msg = TextUtils::format("%d:%02d   ", t / 60, t % 60);
     else
-      sprintf(buffer, "0:%02d   ", t);
+      msg = TextUtils::format("0:%02d   ", t);
   }
   if (!roaming) {
     switch (myTank->getFiringStatus()) {
       case LocalPlayer::Deceased:
-	strcat(buffer, bdl->getLocalString("Dead").c_str());
+	msg += bdl->getLocalString("Dead");
 	break;
 
       case LocalPlayer::Ready:
@@ -1002,10 +999,10 @@ void			HUDRenderer::renderStatus(void)
 	    World::getWorld()->allowShakeTimeout()) {
 	  /* have a bad flag -- show time left 'til we shake it */
 	  statusColor = yellowColor;
-	  sprintf(buffer, bdl->getLocalString("%.1f").c_str(), myTank->getFlagShakingTime());
+	  msg = TextUtils::format(bdl->getLocalString("%.1f").c_str(), myTank->getFlagShakingTime());
 	} else {
 	  statusColor = greenColor;
-	  strcat(buffer, bdl->getLocalString("Ready").c_str());
+	  msg += bdl->getLocalString("Ready");
 	}
 	break;
 
@@ -1013,29 +1010,29 @@ void			HUDRenderer::renderStatus(void)
 
     if (World::getWorld()->getMaxShots() != 0) {
 	  statusColor = redColor;
-	  sprintf(buffer, bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
+	  msg = TextUtils::format(bdl->getLocalString("Reloaded in %.1f").c_str(), myTank->getReloadTime());
 	}
 	break;
 
       case LocalPlayer::Sealed:
-	strcat(buffer, bdl->getLocalString("Sealed").c_str());
+	msg += bdl->getLocalString("Sealed");
 	break;
 
       case LocalPlayer::Zoned:
-	strcat(buffer, bdl->getLocalString("Zoned").c_str());
+	msg += bdl->getLocalString("Zoned");
 	break;
     }
   }
 
   if (roaming) {
     statusColor = messageColor;
-    if (dim) strcat(buffer, ColorStrings[DimColor].c_str());
-    strcat(buffer, ROAM.getRoamingLabel().c_str());
+    if (dim) msg += ColorStrings[DimColor];
+    msg += ROAM.getRoamingLabel();
   }
 
-  x = 0.5f * ((float)window.getWidth() - fm.getStrLength(majorFontFace, majorFontSize, buffer));
+  x = 0.5f * ((float)window.getWidth() - fm.getStrLength(majorFontFace, majorFontSize, msg));
   hudColor3fv(statusColor);
-  fm.drawString(x, y, 0, majorFontFace, majorFontSize, buffer);
+  fm.drawString(x, y, 0, majorFontFace, majorFontSize, msg);
 }
 
 void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
@@ -1059,7 +1056,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
   for (int i = 0; i < curMaxPlayers; i++) {
     RemotePlayer *pl = World::getWorld()->getPlayer(i);
     if (pl && pl->isAlive()) {
-      const char *name = pl->getCallSign();
+      const std::string name = pl->getCallSign();
       double x, y, z;
       hudSColor3fv(Team::getRadarColor(pl->getTeam()));
       gluProject(pl->getPosition()[0], pl->getPosition()[1],
@@ -1074,11 +1071,10 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 	  std::string flagStr = "(";
 	  flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
 	  flagStr += ")";
-	  const char *fname = flagStr.c_str();
-	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, fname) / 2.0f,
+	  fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, flagStr) / 2.0f,
 			float(y) + offset -
-			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, fname)),
-			0, labelsFontFace, labelsFontSize, fname);
+			(2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, flagStr)),
+			0, labelsFontFace, labelsFontSize, flagStr);
 	}
 
 		if (roaming && BZDB.isTrue("showVelocities"))
@@ -1141,34 +1137,27 @@ void			HUDRenderer::renderTimes(void)
 
   // draw frames per second
   if (fps > 0.0f) {
-    char buf[20];
-    sprintf(buf, "FPS: %d", int(fps));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
+		headingFontFace, headingFontSize, TextUtils::format("FPS: %d", int(fps)));
   }
   float triCountYOffset = 4.5f;
   if (radarTriangleCount > 0) {
-    char buf[20];
-    sprintf(buf, "rtris: %i", radarTriangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
+		headingFontFace, headingFontSize, TextUtils::format("rtris: %d", radarTriangleCount));
     triCountYOffset += 1.5f;
   }
   if (triangleCount > 0) {
-    char buf[20];
-    sprintf(buf, "tris: %i", triangleCount);
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
 		triCountYOffset * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-		headingFontFace, headingFontSize, buf);
+		headingFontFace, headingFontSize, TextUtils::format("tris: %d", triangleCount));
   }
   if (drawTime > 0.0f) {
-    char buf[20];
-    sprintf(buf, "time: %dms", (int)(drawTime * 1000.0f));
+    const std::string buf = TextUtils::format("time: %dms", int(drawTime * 1000.0f));
     hudColor3f(1.0f, 1.0f, 1.0f);
     fm.drawString((float)(centerx + maxMotionSize) - fm.getStrLength(headingFontFace, headingFontSize, buf),
 		  (float)centery + (float)maxMotionSize +
@@ -1612,10 +1601,8 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       y -= 0.5f;
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], basey - floorf(basey));
     }
-    char buf[10];
     for (i = minMark; i <= maxMark; i++) {
-      sprintf(buf, "%d", i * 5);
-      fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
+      fm.drawString(x, y, 0, headingFontFace, headingFontSize, TextUtils::format("%d", i * 5));
       y += altitudeMarkSpacing;
     }
     if (smoothLabel) {
@@ -1624,8 +1611,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
       basey -= floorf(basey);
       hudColor4f(hudColor[0], hudColor[1], hudColor[2], 1.0f - basey);
       for (i = minMark; i <= maxMark; i++) {
-	sprintf(buf, "%d", i * 5);
-	fm.drawString(x, y, 0, headingFontFace, headingFontSize, std::string(buf));
+	fm.drawString(x, y, 0, headingFontFace, headingFontSize, TextUtils::format("%d", i * 5));
 	y += altitudeMarkSpacing;
       }
     }
