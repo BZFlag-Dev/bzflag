@@ -101,12 +101,12 @@ std::string		getConfigDirName( const char* versionName )
     char buff[1024];
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
     if(err == ::noErr) {
-      std::strcat(buff, "/BZFlag/");
+      name = buff;
+      name += "/BZFlag/";
       if (versionName) {
-	std::strcat(buff, versionName);
-	std::strcat(buff, "/");
+	name += versionName;
+	name += "/";
       }
-     name = buff;
     }
   }
   customConfigDir = name;
