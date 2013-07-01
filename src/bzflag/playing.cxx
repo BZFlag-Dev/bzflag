@@ -1152,18 +1152,6 @@ void		addMessage(const Player *_player, const std::string& msg,
   controlPanel->addMessage(fullMessage, mode);
 }
 
-static void		updateNumPlayers()
-{
-  int i, numPlayers[NumTeams];
-  for (i = 0; i < NumTeams; i++)
-    numPlayers[i] = 0;
-  for (i = 0; i < curMaxPlayers; i++)
-    if (remotePlayers[i])
-      numPlayers[remotePlayers[i]->getTeam()]++;
-  if (myTank)
-    numPlayers[myTank->getTeam()]++;
-}
-
 static void		updateHighScores()
 {
   /* check scores to see if my team and/or have the high score.  change
@@ -1469,8 +1457,6 @@ static bool removePlayer (PlayerId id)
       curMaxPlayers--;
     }
   World::getWorld()->setCurMaxPlayers(curMaxPlayers);
-
-  updateNumPlayers();
 
   return true;
 }
@@ -2021,7 +2007,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	enteringServer(msg);
       } else {
 	addPlayer(id, msg, entered);
-	updateNumPlayers();
 	checkScores = true;
 
 	// update the tank flags when in replay mode.
@@ -2070,7 +2055,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	msg = nboUnpackUShort(msg, team);
 	msg = teams[int(team)].unpack(msg);
       }
-      updateNumPlayers();
       checkScores = true;
       break;
     }
@@ -4612,7 +4596,6 @@ static void enteringServer(const void *buf)
   }
 
   // initialize some other stuff
-  updateNumPlayers();
   updateFlag(Flags::Null);
   updateHighScores();
   hud->setHeading(myTank->getAngle());
@@ -7193,7 +7176,6 @@ void			startPlaying(BzfDisplay* _display,
   scoreboard = hud->getScoreboard();
 
   // initialize control panel and hud
-  updateNumPlayers();
   updateFlag(Flags::Null);
   updateHighScores();
   notifyBzfKeyMapChanged();
