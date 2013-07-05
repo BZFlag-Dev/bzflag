@@ -45,7 +45,7 @@ class ServerCommand {
 
   typedef std::map<std::string, ServerCommand *> MapOfCommands;
 
-  static MapOfCommands *getMapRef();
+  static MapOfCommands *mapOfCommands;
 };
 
 #endif

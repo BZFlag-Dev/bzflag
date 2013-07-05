@@ -631,11 +631,15 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
   const int maxLineLen = 64;
   const int playerId = playerData->getIndex();
 
+  if (!mapOfCommands) {
+    sendMessage(ServerPlayer, playerId,
+		"No server commands are defined");	// should not happen
+    return false;
+  }
+
   // build a std::vector<> from the std::map<> of command names
   std::vector<const std::string*> commands;
-  MapOfCommands::iterator it;
-  MapOfCommands& commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); ++it) {
+  for (MapOfCommands::iterator it = mapOfCommands->begin(); it != mapOfCommands->end(); ++it) {
     const std::string& cmd = it->first;
     if (cmd[0] != '/') {
       continue; // ignore any fake entries (ex: CmdHelp)
@@ -684,6 +688,12 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 bool CmdHelp::operator() (const char	 *message,
 			  GameKeeper::Player *playerData)
 {
+  const int t = playerData->getIndex();
+  if (!mapOfCommands) {
+    sendMessage(ServerPlayer, t,
+		"No server commands are defined");	// should not happen
+    return false;
+  }
 
   int i;
   for (i = 0; message[i] && !isspace(message[i]); i++)
@@ -703,10 +713,7 @@ bool CmdHelp::operator() (const char	 *message,
 
   bool none = true;
   unsigned int matching = 0;
-  int t = playerData->getIndex();
-  MapOfCommands::iterator it;
-  MapOfCommands &commandMap = *getMapRef();
-  for (it = commandMap.begin(); it != commandMap.end(); ++it) {
+  for (MapOfCommands::iterator it = mapOfCommands->begin(); it != mapOfCommands->end(); ++it) {
     std::string master = it->first;
     master.resize(i);
     if (master == commandToken) {
@@ -718,7 +725,7 @@ bool CmdHelp::operator() (const char	 *message,
     sendMessage(ServerPlayer, t,
 		("No command starting with " + commandToken).c_str());
   else
-    for (it = commandMap.begin(); it != commandMap.end(); ++it) {
+    for (MapOfCommands::iterator it = mapOfCommands->begin(); it != mapOfCommands->end(); ++it) {
       std::string master = it->first;
       master.resize(i);
       if (master == commandToken) {
