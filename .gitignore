@@ -79,7 +79,6 @@ work
 .libs
 
 # Binaries
-
 /misc/3ds2bzw
 /misc/rrlog
 /src/bzadmin/bzadmin
@@ -88,7 +87,6 @@ work
 /tools/modeltool/modeltool
 
 # Misc
-
 *.diff
 *.patch
 /man/*.5
