@@ -1,4 +1,5 @@
 
+
 Information for the BZFlag Developer
 ====================================
 
@@ -498,6 +499,7 @@ cannot proceed.  A checklist of items to be completed follows:
   This will verify that a proper source distribution can be made.
   Also verify that all non-autotools builds build properly.
 
+  TODO.. UPDATE FOR GIT
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
 	e.g. svn copy bzflag \
