@@ -10,8 +10,6 @@ must tell the configure script:
 
 For information on enabling SDL on windows builds, see README.WINDOWS
 
-See the BUGS and TODO files for known issues.
-
 ---
 
 The Simple DirectMedia Layer (SDL for short) is a cross-platform
