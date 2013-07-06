@@ -40,9 +40,7 @@
 *.res
 *.manifest
 
-
 # GNU Autotools
-
 Makefile.in
 Makefile
 
