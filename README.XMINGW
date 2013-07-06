@@ -1,8 +1,12 @@
-This README describe a way to build from a linux PC executable for M$
+This README describe a way to build from a linux PC executable for 
+Microsoft Windows. Please note that this is not the recommended way 
+to build for the Windows platform, BZFlag fully supports native 
+Windows development, see the README.WINDOWS file for information
+on how to build on Windows using no-cost tools.
 
-My favourite distribution is gentoo, so I'm going to go step by step on this.
+This tutorial is for the gentoo distribution:
 
-We need to emerge the 4 packet that build the cross platform factory:
+4 packet are required to build the cross platform factory:
  - xmingw-binutils
  - xmingw-gcc
  - xmingw-w32api
@@ -14,7 +18,7 @@ This operation should be made by superuser.
 
 # emerge xmingw-runtime
 
-It seems the g++ is enabled only if you re-emerge xmingw-gcc. So, as bzflag is
+g++ is enabled only if you re-emerge xmingw-gcc. So, as bzflag is
 written in c++:
 
 # emerge xmingw-gcc
@@ -94,9 +98,7 @@ make
 make install
 
 ------ bzflag
-Now, time to get a copy of bzflag, from SVN or from source tarball.
-
-When you have your source tree exploded, go to the root of this tree and:
+Retreive a copy of the bzflag source code and go to the root of this tree and:
 
 $ sh autogen.sh
 

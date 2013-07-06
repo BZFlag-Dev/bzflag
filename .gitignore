@@ -1,0 +1,100 @@
+# TODO: Ignore some ares and curl files
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled executables
+*.exe
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Windows debug files
+*.tlog
+*.idb
+*.pdb
+*.suo
+*.lib
+*.user
+*.log
+*.cache
+*.sdf
+*.sbr
+*.lastbuildstate
+*.opensdf
+*.bsc
+*.unsuccessfulbuild
+*.ilk
+*.exp
+*.rc
+*.res
+*.manifest
+
+# GNU Autotools
+Makefile.in
+Makefile
+
+aclocal.m4
+autom4te.cache
+bzflag.info
+bzflag.lsm
+bzflag.spec
+compile
+/config.*
+configure
+depcomp
+/include/config.h
+/include/config.h.in
+/INSTALL
+install-sh
+libtool
+ltmain.sh
+ltmain.sh.backup
+/m4/libtool.m4
+/m4/ltoptions.m4
+/m4/ltsugar.m4
+/m4/ltversion.m4
+/m4/lt~obsolete.m4
+/misc/config.*
+missing
+mkinstalldirs
+stamp-h
+stamp-h.in
+stamp-h1
+stamp-h2
+stamp-h3
+work
+
+.deps
+.libs
+
+# Binaries
+/misc/3ds2bzw
+/misc/rrlog
+/src/bzadmin/bzadmin
+/src/bzflag/bzflag
+/src/bzfs/bzfs
+/tools/modeltool/modeltool
+/bin_Win32/*
+/bin_x64/*
+
+# Misc
+*.diff
+*.patch
+/man/*.5
+/man/*.6
+/man/*.gz
+/misc/bzflag.desktop
+/src/platform/MacOSX/BZFlag-Info.plist
+

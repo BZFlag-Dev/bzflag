@@ -1,4 +1,5 @@
 
+
 Information for the BZFlag Developer
 ====================================
 
@@ -286,27 +287,19 @@ be broken up into smaller coherent chunks.  This way if a bug or other
 issue with a particular commit is later encountered, the change can be
 more easily isolated and undone or fixed.
 
-Making Patches
+Submiting changes
 --------------
 
 If you do not have source code commit access and would like to propose
-a change for inclusion, you should create a patch.  Patches should be
-submitted to the SourceForge project site patches tracker at:
+a change for inclusion, you should create a pull requests. Requests
+should be submited on GitHub at:
 
-https://sourceforge.net/p/bzflag/patches/new/
+https://github.com/BZFlag-Dev/bzflag/pulls
 
-You can create a patch for submission to SourceForge from a source
-checkout using the following command:
-
-svn diff > my_patch_name.diff
-
-If your patch requires the addition of new files, simply include these
-new files individually or in a tarball as part of the patch submission.
-
-In general, patches should be relatively small succinct changes that
-can be readily reviewed, tested, and applied.  Patches that are
+In general, these should be relatively small succinct changes that
+can be readily reviewed, tested, and applied.  Changes that are
 difficult to review, test, or apply will likely not be accepted.  That
-said, creating useful patches that have been discussed with the
+said, creating useful changes that have been discussed with the
 existing developers is one of the more immediate means to become a
 developer for BZFlag yourself.
 
@@ -500,11 +493,11 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Tag the release.  Tag format should be consistent with the other
   tags using the format of vMAJOR_MINOR_RELEASE
-	e.g. svn copy bzflag \
- 	     svn+ssh://svn.code.sf.net/p/bzflag/code/tags/v2_4_0/
+	e.g. git tag -a v2.6_0 -m 'Version 2.6.0 release'
+  then commit and push the tag ??? TODO, verify this
 
 - Perform a
-  "svn export http://svn.code.sf.net/p/bzflag/code/tags/vMAJOR_MINOR_RELEASE"
+  "git archive master " TODO.. DOES THIS NEED THE URL?
   from somewhere else in the filesystem to obtain the tagged version
   of the sources.
 
@@ -533,6 +526,8 @@ bzflag-users@lists.SourceForge.net
 news on http://BZFlag.org/
 news on http://sourceforge.net/projects/bzflag/
 http://freshmeat.net/projects/bzflag/ (rank BZFlag here!)
+
+GitHub repository, https://github.com/BZFlag-Dev/bzflag
 
 - Optionally notify the following:
 

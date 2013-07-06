@@ -41,7 +41,7 @@ Obtaining BZFlag
 ================
 
 Main BZFlag Website:  http://BZFlag.org
-BZFlag Project Site:  http://sourceforge.net/projects/bzflag
+BZFlag Github Site:  https://github.com/BZFlag-Dev/bzflag
 
 The main BZFlag website provides access to most all of the resources
 available for the game.  The binary and source distributions of BZFlag
@@ -51,15 +51,12 @@ more, with details varying depending on the platform.  Source code
 distributions are provided and archived in various formats as well.
 See the project site for the download links.
 
-BZFlag is also available directly from SVN.  To obtain BZFlag from
-SVN, a bit more familiarity with software development is expected.
-Sometimes active BZFlag development is on SVN HEAD, sometimes it is on
-a branch, sometimes it's in multiple places.  Inquire on the #bzflag
-IRC channel on irc.freenode.net or to the bzflag-dev mailing list as
-to where the current development activity resides.  If you're familiar
-enough, anonymous SVN access is provided:
+BZFlag is also available directly from GitHub.  To obtain BZFlag from
+git, a bit more familiarity with software development is expected.
+If you're familiar enough, anonymous GIT access is provided from the
+repository:
 
-     svn co svn://svn.code.sf.net/p/bzflag/code/trunk/bzflag bzflag
+     https://github.com/BZFlag-Dev/bzflag.git
 
 
 Compiling and Installation
@@ -288,37 +285,24 @@ Bug Reports and Support
 For reporting bugs and unexpected behavior, please go to BZFlag bug
 tracking system at:
 
-http://sourceforge.net/p/bzflag/bugs/
+https://github.com/BZFlag-Dev/bzflag/issues
 
-Alternatively, you can email bug reports to the development mailing
-list or to Tim@Rikers.org but the web based method is preferred.  See
-the BUGS file in the source distribution for other known issues.
+If you require assistance with some issue, please visit the bzflag
+IRC channel at:
+#bzflag at IRC.freenode.net
 
-If you require assistance with some issue, please visit BZFlag support
-tracking system at:
-
-http://sourceforge.net/p/bzflag/support-requests/
-
-Alternatively, the IRC channel, discussion forums, and mailing lists
+Alternatively, discussion forums, and mailing lists
 are also viable avenues for resolving issues.
 
 
 Providing Contributions
 =======================
 
-Patches should be entered into the BZFlag patch tracking system at:
+Pull Requests should be entered submitted via the GitHub pull system:
 
-http://sourceforge.net/p/bzflag/patches/
+https://github.com/BZFlag-Dev/bzflag/pulls
 
-Patches are preferred in the unified diff format.  From a SVN
-checkout, a unified diff patch file may be created as follows:
-
-  % svn diff > patch.diff
-
-If you like, you may also send mail to either the BZFlag development
-mailing list or to Tim@Rikers.org (the development mailing list is
-preferred) to discuss contributions to the official BZFlag source
-code.  Contributions are gladly accepted for modifications that do not
+Contributions are gladly accepted for modifications that do not
 affect the core gameplay.  Interacting with the other developers in
 the IRC channel is recommended for any changes which will affect
 gameplay.
@@ -333,13 +317,11 @@ following files in the new 'bzflag' directory:
   README	- this file
   README.*	- platform specific details
   AUTHORS	- project contributors
-  BUGS		- a list of known bugs
   COPYING	- the license for BZFlag
   ChangeLog	- source code changes since previous release
   DEVINFO       - information for developers
   NEWS		- history of visible changes for each release
   PORTING	- a guide for porting BZFlag
-  TODO		- incomplete list of things to do
   autogen.sh	- build system preparation script
   configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
@@ -407,7 +389,7 @@ Public Internet Servers and the "list server"
 
 The bzflag project offers a public server listing service that allows
 players to find servers to play on. This service is run for the
-benefit of the project. As of Version 3.0, BZFLS servers that wish to
+benefit of the project. As of Version 2.4, BZFLS servers that wish to
 be listed on the public list server must provide an authentication key
 that ties the server to a specific global user. This is done to
 provide contact information for players and project
@@ -469,7 +451,7 @@ development, Chris turned over copyright and maintainership of the
 game to Tim Riker.
 
 BZFlag continues today to be maintained and developed by the Open
-Source community under Tim's maintainership with contributions coming
+Source community by a project administration team with contributions coming
 in from all over the world.  See the AUTHORS file for more details on
 contributions to the project.
 
@@ -481,10 +463,11 @@ Any of the core developers listed in the AUTHORS file are generally
 receptive to being contacted for most matters relating to the game.
 Internet Relay Chat (IRC) or e-mail is generally the expected method
 of interaction with IRC being generally preferred.  The project
-maintainer is available for most legal matters and public relations:
+maintainer Tim Riker <Tim@Rikers.org> is available for most legal matters,
+but day to day development is handled by the Project Administrators:
 
-Tim Riker <Tim@Rikers.org>
-http://rikers.org/
+Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net>
+Scott Wichser (blast007) <blast007@users.sourceforge.net>
 
 Happy Shooting!
 The BZFlag Development Team

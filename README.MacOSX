@@ -39,7 +39,7 @@ Source Distribution
 -------------------
 
 You can build BZFlag from source using Xcode version 4.2 and later. As of
-BZFlag versions later than 2.4.2, BZFlag has a fully native Xcode project
+BZFlag version 2.4.3 BZFlag has a fully native Xcode project
 file. The earlier method of using the Xcode project file as a wrapper for
 autotools is no longer supported. If you have a version of Xcode which
 includes autotools, or have installed autotools yourself, you may additionally
@@ -53,8 +53,8 @@ operating system version under "Runtime Libraries"). For Mac OS X 10.6, the
 recommended SDL version is 1.2.13. Mount the disk image and place the file
 "SDL.framework" in your /Library/Frameworks directory (an administrator's
 account may be required). Obtain the latest BZFlag source archive from
-SourceForge at
-http://sourceforge.net/projects/bzflag/files/bzflag%20source/ (you want the
+GitHub at
+https://github.com/BZFlag-Dev/bzflag (you want the
 .tar.gz or .tar.bz2 archive, NOT the .zip archive) or from the subversion
 repository using the instructions at http://wiki.bzflag.org/SVN. Once you have
 obtained the source code, open the BZFlag.xcodeproj file located in the Xcode/
