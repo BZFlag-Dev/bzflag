@@ -24,6 +24,7 @@
 *.tlog
 *.idb
 *.pdb
+*.suo
 *.lib
 *.user
 *.log
@@ -85,6 +86,8 @@ work
 /src/bzflag/bzflag
 /src/bzfs/bzfs
 /tools/modeltool/modeltool
+/bin_Win32/*
+/bin_x64/*
 
 # Misc
 *.diff
