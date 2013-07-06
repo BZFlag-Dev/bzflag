@@ -30,7 +30,6 @@ DIST_SUBDIRS = \
 EXTRA_DIST = \
 	autogen.sh \
 	authors.xml \
-	BUGS \
 	bzflag.lsm \
 	bzflag.spec \
 	DEVINFO \
