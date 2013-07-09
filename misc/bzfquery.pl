@@ -70,7 +70,7 @@ die $! unless sysread(S, $buffer, 9) == 9;
 
 # quit if version isn't valid
 die "not a bzflag server" if ($magic ne "BZFS");
-die "incompatible version" if ($protocol ne "0221");
+die "incompatible version" if ($protocol ne "0222");
 
 # quit if rejected
 die "rejected by server" if ($id == 255);

@@ -28,7 +28,7 @@ print(os.date())
 
 local urlBase = 'http://my.bzflag.org/db/?action=LIST&listformat=lua'
 
-local protocol = 'BZFS0221'
+local protocol = 'BZFS0222'
 
 local svnProtoURL =
   'http://svn.code.sf.net/p/bzflag/code/trunk/bzflag/src/date/buildDate.cxx'
