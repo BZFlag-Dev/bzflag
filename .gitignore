@@ -91,11 +91,16 @@ work
 /src/other/ares/acountry
 /src/other/ares/adig
 /src/other/ares/ahost
+/src/other/ares/ares_*.pdf
 /src/other/ares/ares_build.h
 /src/other/ares/ares_config.h
 /src/other/ares/ares_config.h.in
 /src/other/ares/libcares.pc
 /src/other/curl/curl-config
+/src/other/curl/docs/*.html
+/src/other/curl/docs/*.pdf
+/src/other/curl/docs/libcurl/*.html
+/src/other/curl/docs/libcurl/*.pdf
 /src/other/curl/include/curl/curlbuild.h
 /src/other/curl/lib/curl_config.h
 /src/other/curl/lib/curl_config.h.in
