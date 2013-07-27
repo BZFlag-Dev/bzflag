@@ -120,3 +120,4 @@ work
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
 
+/MSVC/ipch
