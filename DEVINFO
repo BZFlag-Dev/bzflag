@@ -309,18 +309,13 @@ Licensing and Developer Agreement
 By committing to a source code repository or submitting a patch/pull request, you
 the developer are assigning copyright of the submission to the project maintainer (Tim Riker),
 and his successors, as defined in the BZFlag Developer Agreement located at.
-https://docs.google.com/document/d/1XQ0CMURf5D991LbQOrUMvgAyZaDw7ugu_rAijPYF-5Q/edit?usp=sharing
+https://github.com/BZFlag-Dev/bzflag/wiki/Developer-Agreement
 
 Grant of Copyright Assignment
 Each Contributor hereby assign to the project maintainer all right, title,
 and interest worldwide in all Copyright covering the Contribution.
 
 All submissions are subject to these terms.
-
-Developers that wish to formally agree to the terms can do so using the following form.
-https://docs.google.com/forms/d/1hhDx6Q6x0UmZR5hVH_rEty5uCUpTMDfqnbGa4cjmNGw/viewform
-
-Developers who are granted push access to the GIT repository, and minors are asked to sign the form.
 
 Notes.
 You may not place any restrictions on how the project
