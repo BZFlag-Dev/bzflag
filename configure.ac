@@ -46,7 +46,6 @@ AC_PREREQ([2.58])
 
 AC_INIT([BZFlag],[2.4.3],[http://BZFlag.org/],[bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
-AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])
 
 # When --libdir has not been used put plugins in bzflag's own directory.
