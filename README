@@ -157,7 +157,7 @@ with or without installing:
 
 BZFlag looks for data files in a path defined during compile, in
 ./data/ , or in the previously specified data path only.  As part of
-the tarball/cvs checkout, the base data library is located in
+the tarball/git clone, the base data library is located in
 <installed-locale>/bzflag/data.  This means that to test in a working
 directory you need to tell bzflag where to find these files if there
 is not a 'data' directory in your current directory.  This can be done

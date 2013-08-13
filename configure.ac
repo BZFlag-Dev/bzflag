@@ -46,7 +46,6 @@ AC_PREREQ([2.58])
 
 AC_INIT([BZFlag],[2.5.1],[http://BZFlag.org/],[bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
-AC_REVISION($Revision$)
 AC_CONFIG_MACRO_DIR([m4])
 
 # When --libdir has not been used put plugins in bzflag's own directory.
@@ -458,7 +457,7 @@ AC_LANG(C++)
 AC_CHECK_TYPES([std::shared_ptr<int>],
 	[# BZFlag expects std::shared_ptr support by default],
 	[AC_CHECK_TYPES([[std::tr1::shared_ptr<int>]],
-		AC_DEFINE([[USE_TR1]], [[1]], [Define to 1 to use C++0X TR1]),
+		AC_DEFINE([USE_TR1], [1], [Define to 1 to use C++0X TR1]),
 		AC_MSG_ERROR([[The C++11 std::shared_ptr type is required to build BZFlag]]),
 		[[#include <tr1/memory>]])],
 	[#include <memory>])

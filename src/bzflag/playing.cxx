@@ -1941,16 +1941,20 @@ static void		handleServerMessage(bool human, uint16_t code,
       msg = nboUnpackInt(msg, timeLeft);
       hud->setTimeLeft(timeLeft);
       if (timeLeft == 0) {
-	gameOver = true;
+	if (myTank->getTeam() != ObserverTeam)
+	  gameOver = true;
 	myTank->explodeTank();
 	controlPanel->addMessage("Time Expired");
 	hud->setAlert(0, "Time Expired", 10.0f, true);
+	controlPanel->addMessage("GAME OVER");
+	hud->setAlert(1, "GAME OVER", 10.0f, true);
 #ifdef ROBOT
 	for (int i = 0; i < numRobots; i++)
 	  if (robots[i])
 	    robots[i]->explodeTank();
 #endif
       } else if (timeLeft < 0) {
+	controlPanel->addMessage("Game Paused");
 	hud->setAlert(0, "Game Paused", 10.0f, true);
       }
       break;
@@ -1983,7 +1987,8 @@ static void		handleServerMessage(bool human, uint16_t code,
       }
       msg2 += " won the game";
 
-      gameOver = true;
+      if (myTank->getTeam() != ObserverTeam)
+	gameOver = true;
       hud->setTimeLeft((uint32_t)~0);
       myTank->explodeTank();
       controlPanel->addMessage(msg2);

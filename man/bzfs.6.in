@@ -619,8 +619,8 @@ human designed ones. By default, bzfs uses randomly generated world
 unless you specify the \-world command line or configuration file
 option. The world file specified by the \-world option is a text based
 file that contains a list of world objects. This file can be created
-using programs found on sourceforge.net through cvs, or can be hand
-edited.  See the bzw(5) manual page for more details.
+using programs found on github, or can be hand edited.  See the bzw(5)
+manual page for more details.
 
 
 .SH "GENERAL SERVER COMMANDS"

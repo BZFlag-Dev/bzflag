@@ -1,5 +1,3 @@
-# TODO: Ignore some ares and curl files
-
 # Compiled Object files
 *.slo
 *.lo
@@ -59,13 +57,13 @@ depcomp
 /INSTALL
 install-sh
 libtool
+libtool.m4
 ltmain.sh
 ltmain.sh.backup
-/m4/libtool.m4
-/m4/ltoptions.m4
-/m4/ltsugar.m4
-/m4/ltversion.m4
-/m4/lt~obsolete.m4
+ltoptions.m4
+ltsugar.m4
+ltversion.m4
+lt~obsolete.m4
 /misc/config.*
 missing
 mkinstalldirs
@@ -89,6 +87,30 @@ work
 /bin_Win32/*
 /bin_x64/*
 
+# Curl and ares
+/src/other/ares/acountry
+/src/other/ares/adig
+/src/other/ares/ahost
+/src/other/ares/ares_*.pdf
+/src/other/ares/ares_build.h
+/src/other/ares/ares_config.h
+/src/other/ares/ares_config.h.in
+/src/other/ares/libcares.pc
+/src/other/curl/curl-config
+/src/other/curl/docs/*.html
+/src/other/curl/docs/*.pdf
+/src/other/curl/docs/libcurl/*.html
+/src/other/curl/docs/libcurl/*.pdf
+/src/other/curl/include/curl/curlbuild.h
+/src/other/curl/lib/curl_config.h
+/src/other/curl/lib/curl_config.h.in
+/src/other/curl/libcurl.pc
+/src/other/curl/src/curl_config.h
+/src/other/curl/src/hugehelp.c
+/src/other/*/config.guess
+/src/other/*/config.status
+/src/other/*/config.sub
+
 # Misc
 *.diff
 *.patch
@@ -98,3 +120,4 @@ work
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
 
+/MSVC/ipch

@@ -914,7 +914,7 @@ void			HUDRenderer::renderStatus(void)
       fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, msg);
 
       // draw the postion
-      msg = TextUtils::format("Position [%d %d %d]", (int)myTank->getPosition()[0], (int)myTank->getPosition()[1], (int)myTank->getPosition()[2]);
+      msg = TextUtils::format("Position [%d %d %d]", (int)target->getPosition()[0], (int)target->getPosition()[1], (int)target->getPosition()[2]);
       x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
       fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, msg);
 
@@ -953,7 +953,7 @@ void			HUDRenderer::renderStatus(void)
       float offset = 6.0f;
       if (BZDB.evalInt("showVelocities") > 2) {
 	offset += 1.0f;
-	msg = TextUtils::format("ReportedHits %d ComputedHits %d ratio %f", target->reportedHits, target->computedHits, (float)target->reportedHits/(float)target->computedHits);
+	msg = TextUtils::format("ReportedHits %d ComputedHits %d ratio %.2f", target->reportedHits, target->computedHits, target->computedHits == 0 ? 0.0f : (float)target->reportedHits/(float)target->computedHits);
 	x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
 	fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, msg);
       }

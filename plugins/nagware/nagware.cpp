@@ -1,6 +1,5 @@
 // nagware.cpp : 'Nagware' plugin to encourage player registration
 //
-// $Id$
 
 #include "bzfsAPI.h"
 #include <stdio.h>

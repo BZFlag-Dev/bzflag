@@ -1,6 +1,5 @@
 // HoldTheFlag.cpp : bzfs plugin for Hold-The-flag game mode
 //
-// $Id$
 
 #include "bzfsAPI.h"
 #include <map>

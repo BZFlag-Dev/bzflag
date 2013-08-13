@@ -5,7 +5,7 @@ bzfscron_la_SOURCES = \
 	CronJob.cpp \
 	CronJob.h
 bzfscron_la_CPPFLAGS = -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
-bzfscron_la_LDFLAGS = -module -avoid-version
+bzfscron_la_LDFLAGS = -module -avoid-version -shared
 bzfscron_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
