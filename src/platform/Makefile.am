@@ -183,8 +183,6 @@ libPlatform_la_SOURCES =			\
 	DXJoystick.h				\
 	WinJoystick.cxx				\
 	WinJoystick.h				\
-	WinURLManager.cxx			\
-	WinURLManager.h				\
 	WinVisual.cxx				\
 	WinVisual.h				\
 	WinWindow.cxx				\
@@ -239,8 +237,6 @@ EXTRA_libPlatform_la_SOURCES =		\
 	WinDisplay.h			\
 	WinJoystick.cxx			\
 	WinJoystick.h			\
-	WinURLManager.cxx		\
-	WinURLManager.h			\
 	WinVisual.cxx			\
 	WinVisual.h			\
 	WinWindow.cxx			\

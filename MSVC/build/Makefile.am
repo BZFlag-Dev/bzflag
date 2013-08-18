@@ -1,6 +1,4 @@
 EXTRA_DIST =		\
-	PlatformCommonWin32/PlatformCommonWin32.vcxproj		\
-	PlatformCommonWin32/PlatformCommonWin32.vcxproj.filters	\
 	ares.vcxproj	\
 	ares_build.h	\
 	3D.vcxproj	\

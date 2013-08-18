@@ -91,7 +91,6 @@ noinst_HEADERS =			\
 	ParseColor.h			\
 	PhysicsDriver.h			\
 	Ping.h				\
-	PlatformCommon.h		\
 	PlatformFactory.h		\
 	PlayerInfo.h			\
 	PlayerState.h			\
