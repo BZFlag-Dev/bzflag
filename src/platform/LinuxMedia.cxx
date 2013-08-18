@@ -326,7 +326,8 @@ int			LinuxMedia::getAudioBufferChunkSize() const
 bool			LinuxMedia::isAudioTooEmpty() const
 {
   if (getospaceBroken) {
-    if (chunksPending > 0) {
+    LinuxMedia* self = const_cast<LinuxMedia*>(this);
+    if (self->chunksPending > 0) {
       // get time elapsed since chunkTime
       const double dt = getTime() - chunkTime;
 
@@ -334,14 +335,13 @@ bool			LinuxMedia::isAudioTooEmpty() const
       const int numChunks = (int)(dt * chunksPerSecond);
 
       // remove pending chunks
-      LinuxMedia* self = (LinuxMedia*)this;
       self->chunksPending -= numChunks;
-      if (chunksPending < 0)
+      if (self->chunksPending < 0)
 	self->chunksPending = 0;
       else
 	self->chunkTime += (double)numChunks / chunksPerSecond;
     }
-    return chunksPending < audioLowWaterMark;
+    return self->chunksPending < audioLowWaterMark;
   }
   else {
     audio_buf_info info;

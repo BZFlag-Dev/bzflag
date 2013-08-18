@@ -3,14 +3,26 @@
 
 BZFlag 2.4.3
 ------------
+
+* Do not flash GAME OVER for observers - Jeff Makey
+* Added bz_getIdleTime API function - Vladimir Jimenez
+* Track number of self-kills on the scoreboard - Konstantinos Kanavouras
+* Added menu option to pause chat window scrolling - Konstantinos Kanavouras
+* Added "noteam" option for "/flag reset" command - Konstantinos Kanavouras
+* Implemented "/poll kill" command - Konstantinos Kanavouras
+* Added serverSidePlayerSample plugin - Jeff Myers
+* Apply colorblindness to your own tank and shots - Kyle Mills
+* Fix fancy radar tank when zoomed - Kyle Mills
 * Added /handicap command - Frank Thilo
-* Change the behavior of handicap - Frank Thilo
+* Reverted to traditional handicap calculation - Frank Thilo
+* Added bzfscron plugin - Scott Wichser
+* Added server side shot tracking - Jeff Myers
 * Added clientQuery permission - Konstantinos Kanavouras
-* Added superUser plug-in - Jeff Myers
-* Make players respawn on bases after countdown ends - Lee Marshall
+* Added superUser plugin - Jeff Myers
+* Added webStats plugin - Jeff Myers
 * Added bz_getPlayerCount API function - Jeff Myers
+* Make players respawn on bases after countdown ends - Lee Marshall
 * Countdown now resets player scores as well as team scores - Lee Marshall
-* Added bz_getIdleTime API function - allejo
 * Fully integrated Xcode project file - Joshua Bodine
 
 

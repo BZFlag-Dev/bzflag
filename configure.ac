@@ -114,9 +114,6 @@ MP_WITH_CURSES
 
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
-if test x$with_SDL != xno; then
-    with_SDL=yes
-fi
 
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
@@ -618,7 +615,7 @@ AC_DEFINE_UNQUOTED(BZFLAG_DATA, "$BZFLAG_DATA", [Data file directory])
 savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
 AC_LANG(C)
-if test "x$enable_client" != xno -a "x$with_SDL" = xyes; then
+if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
     AC_MSG_CHECKING([for SDL framework])
     savedLDFLAGS="$LDFLAGS"
     LDFLAGS="$LDFLAGS -framework SDL"
@@ -629,6 +626,8 @@ if test "x$enable_client" != xno -a "x$with_SDL" = xyes; then
     if test x$framework_SDL_flag_works = xno ; then
 	LDFLAGS="$savedLDFLAGS"
 	with_SDL=no
+    else
+	with_SDL=yes
     fi
 
     if test x$with_SDL = xno ; then
