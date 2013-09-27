@@ -3074,6 +3074,7 @@ public:
     if (postData)
       newTask.postData = postData;
     newTask.id = ++LastJob;
+    newTask.lastTime = TimeKeeper::getCurrent().getSeconds();
     Tasks.push_back(newTask);
 
     if (Tasks.size() == 1)
