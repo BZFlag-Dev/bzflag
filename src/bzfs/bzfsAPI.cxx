@@ -2236,6 +2236,11 @@ BZF_API bool bz_isCountDownInProgress( void )
   return countdownDelay > 0;
 }
 
+BZF_API bool bz_isCountDownPaused( void )
+{
+  return clOptions->countdownPaused;
+}
+
 BZF_API bool bz_pollVeto( void )
 {
   /* make sure that there is a poll arbiter */
