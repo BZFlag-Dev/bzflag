@@ -474,8 +474,33 @@ static void		parse(int argc, char** argv)
           strcpy(startupInfo.password, password.c_str());
           strcpy(startupInfo.serverName, serverName.c_str());
           startupInfo.serverPort = port;
-          startupInfo.autoConnect = true; // automatically connect on start up
         }
+	else { // there is no callsign/password so only a destination
+          if (portSplit != std::string::npos) { // we have a port
+            serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
+            port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
+
+            if (port < 1 || port > 65535) { // invalid port
+              printFatalError("Bad port, using default %d.", ServerPort);
+              port = ServerPort;
+            }
+          }
+          else { //we don't have a port
+            serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
+            port = ServerPort;
+          }
+
+	  // sanity check for length
+          if (serverName.length() > sizeof(startupInfo.serverName)) {
+            serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
+            printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
+          }
+
+          strcpy(startupInfo.serverName, serverName.c_str());
+          startupInfo.serverPort = port;
+	}
+
+	startupInfo.autoConnect = true; // automatically connect on start up
       }
       else {
 	printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);
