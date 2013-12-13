@@ -426,10 +426,10 @@ static void		parse(int argc, char** argv)
         int port;
 
         // start splitting stuff
-        std::string argument = std::string(argv[i]);
-        int atSplit = argument.find("@");
-        int portSplit = argument.rfind(":");
-        int passSplit = argument.find(":");
+	const std::string argument = std::string(argv[i]);
+	const size_t atSplit = argument.find("@");
+	const size_t portSplit = argument.rfind(":");
+	const size_t passSplit = argument.find(":");
 
         if (atSplit != std::string::npos) { // we found an "@"
           if (portSplit != std::string::npos) { // we have a port
