@@ -2443,6 +2443,18 @@ static void pausePlayer(int playerIndex, bool paused = true)
   if (!playerData)
     return;
 
+  if (!playerData->player.isAlive()) {
+    logDebugMessage(2,"Player %s [%d] %spause while not alive\n",
+      playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+    return;
+  }
+  if (playerData->player.isPaused() == paused) {
+    logDebugMessage(2,"Player %s [%d] duplicate %spause\n",
+      playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+    return;
+  }
+  // TODO: enforce 5-second delay from one pause to the next
+
   playerData->player.setPaused(paused);
   if (clOptions->gameType == RabbitChase) {
     if (paused && (rabbitIndex == playerIndex)) {
