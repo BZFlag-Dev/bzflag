@@ -5564,19 +5564,16 @@ void drawFrame(const float dt)
       const bool seerView = (myTank->getFlag() == Flags::Seer);
       const bool showTreads = BZDB.isTrue("showTreads");
 
-      const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
-      TeamColor effectiveTeam = colorblind ? RogueTeam : myTank->getTeam();
-
       // add my tank if required
       const bool inCockpit = (!devDriving || (ROAM.getMode() == Roaming::roamViewFP));
       const bool showMyTreads = showTreads ||
 	(devDriving && (ROAM.getMode() != Roaming::roamViewFP));
-      myTank->addToScene(scene, effectiveTeam,
+      myTank->addToScene(scene, myTank->getTeam(),
 			 inCockpit, seerView,
 			 showMyTreads, showMyTreads /*showIDL*/);
 
       // add my shells
-      myTank->addShots(scene, colorblind);
+      myTank->addShots(scene, false);
 
       // add server shells
       if (world) {
@@ -5593,9 +5590,10 @@ void drawFrame(const float dt)
       // add other tanks and shells
       for (i = 0; i < curMaxPlayers; i++) {
 	if (remotePlayers[i]) {
+	  const bool colorblind = (myTank->getFlag() == Flags::Colorblindness);
 	  remotePlayers[i]->addShots(scene, colorblind);
 
-	  effectiveTeam = RogueTeam;
+	  TeamColor effectiveTeam = RogueTeam;
 	  if (!colorblind){
 	    if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
 		&& (myTank->getFlag() != Flags::Seer)
