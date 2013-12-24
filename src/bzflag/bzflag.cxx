@@ -420,57 +420,87 @@ static void		parse(int argc, char** argv)
     }
     else if (argv[i][0] != '-') {
       if (i == (argc - 1)) {
-	// find the beginning of the server name, parse the callsign
-	char *serverName = strchr(argv[i], '@');
-	if (serverName == NULL) {
-	  serverName = argv[i];
-	} else {
-	  *serverName++ = '\0';
+        // argv[i] = username:password@server:port
+        // variables to store
+        std::string serverName, callsign, password;
+        int port;
 
-	  char *password = strchr(startupInfo.callsign, ':');
-	  if (password != NULL) {
-	    *password++ = '\0';
-	    if (strlen(password) >= sizeof(startupInfo.password)) {
-	      printFatalError("Password truncated.");
-	    }
-	    // Flawfinder: ignore
-	    strncpy(startupInfo.password, password,
-		    sizeof(startupInfo.password) - 1);
-	    startupInfo.password[sizeof(startupInfo.password) - 1] = '\0';
-	  }
+        // start splitting stuff
+	const std::string argument = std::string(argv[i]);
+	const size_t atSplit = argument.find("@");
+	const size_t portSplit = argument.rfind(":");
+	const size_t passSplit = argument.find(":");
 
-	  // Flawfinder: ignore
-	  if (strlen(argv[i]) >= sizeof(startupInfo.callsign)) {
-	    printFatalError("Callsign truncated.");
-	  }
-	  // Flawfinder: ignore
-	  strncpy(startupInfo.callsign, argv[i],
-		  sizeof(startupInfo.callsign) - 1);
-	  startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
+        if (atSplit != std::string::npos) { // we found an "@"
+          if (portSplit != std::string::npos) { // we have a port
+            serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
+            port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
+
+            if (port < 1 || port > 65535) { // invalid port
+              printFatalError("Bad port, using default %d.", ServerPort);
+              port = ServerPort;
+            }
+          }
+          else { //we don't have a port
+            serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
+            port = ServerPort;
+          }
+
+          if (portSplit != passSplit) { // there's a password to parse
+            callsign = argument.substr(0, passSplit);
+            password = argument.substr(passSplit + 1, atSplit - passSplit - 1);
+          }
+          else { // just a username
+            callsign = argument.substr(0, atSplit);
+            password = "";
+          }
+
+          // length checks and always truncate everything after the max length
+          if (callsign.length() > sizeof(startupInfo.callsign)) {
+            callsign.erase(sizeof(startupInfo.callsign) - 1, std::string::npos);
+            printFatalError("Callsign truncated after %d characters.", sizeof(startupInfo.callsign));
+          }
+          if (password.length() > sizeof(startupInfo.password)) {
+            password.erase(sizeof(startupInfo.password) - 1, std::string::npos);
+            printFatalError("Password truncated after %d characters.", sizeof(startupInfo.password));
+          }
+          if (serverName.length() > sizeof(startupInfo.serverName)) {
+            serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
+            printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
+          }
+
+          // assign variables with strcpy because char[] can't be assigned
+          strcpy(startupInfo.callsign, callsign.c_str());
+          strcpy(startupInfo.password, password.c_str());
+          strcpy(startupInfo.serverName, serverName.c_str());
+          startupInfo.serverPort = port;
+        }
+	else { // there is no callsign/password so only a destination
+          if (portSplit != std::string::npos) { // we have a port
+            serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
+            port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
+
+            if (port < 1 || port > 65535) { // invalid port
+              printFatalError("Bad port, using default %d.", ServerPort);
+              port = ServerPort;
+            }
+          }
+          else { //we don't have a port
+            serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
+            port = ServerPort;
+          }
+
+	  // sanity check for length
+          if (serverName.length() > sizeof(startupInfo.serverName)) {
+            serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
+            printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
+          }
+
+          strcpy(startupInfo.serverName, serverName.c_str());
+          startupInfo.serverPort = port;
 	}
 
-	// find the beginning of the port number, parse it
-	char *portNumber = strchr(serverName, ':');
-	if (portNumber == NULL) {
-	  startupInfo.serverPort = ServerPort;  // use the default
-	} else {
-	  *portNumber++ = '\0';
-	  startupInfo.serverPort = atoi(portNumber);
-	  if (startupInfo.serverPort < 1 || startupInfo.serverPort > 65535) {
-	    startupInfo.serverPort = ServerPort;
-	    printFatalError("Bad port, using default %d.",
-			    startupInfo.serverPort);
-	  }
-	}
-	if (strlen(serverName) >= sizeof(startupInfo.serverName)) {
-	  printFatalError("Server name too long.  Ignoring.");
-	} else {
-	  // Flawfinder: ignore
-	  strncpy(startupInfo.serverName, serverName,
-		  sizeof(startupInfo.serverName) - 1);
-	  startupInfo.serverName[sizeof(startupInfo.serverName) - 1] = '\0';
-	  startupInfo.autoConnect = true;
-	}
+	startupInfo.autoConnect = true; // automatically connect on start up
       }
       else {
 	printFatalError("Unexpected: %s. Server must go after all options.", argv[i]);

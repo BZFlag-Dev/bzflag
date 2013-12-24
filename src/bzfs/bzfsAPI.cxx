@@ -2236,6 +2236,11 @@ BZF_API bool bz_isCountDownInProgress( void )
   return countdownDelay > 0;
 }
 
+BZF_API bool bz_isCountDownPaused( void )
+{
+  return clOptions->countdownPaused;
+}
+
 BZF_API bool bz_pollVeto( void )
 {
   /* make sure that there is a poll arbiter */
@@ -3074,6 +3079,7 @@ public:
     if (postData)
       newTask.postData = postData;
     newTask.id = ++LastJob;
+    newTask.lastTime = TimeKeeper::getCurrent().getSeconds();
     Tasks.push_back(newTask);
 
     if (Tasks.size() == 1)

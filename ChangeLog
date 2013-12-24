@@ -1,6 +1,12 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.5.x
+------------
+
+* Apply colorblindness to your own tank and shots - Kyle Mills
+
+
 BZFlag 2.4.3
 ------------
 
@@ -11,7 +17,6 @@ BZFlag 2.4.3
 * Added "noteam" option for "/flag reset" command - Konstantinos Kanavouras
 * Implemented "/poll kill" command - Konstantinos Kanavouras
 * Added serverSidePlayerSample plugin - Jeff Myers
-* Apply colorblindness to your own tank and shots - Kyle Mills
 * Fix fancy radar tank when zoomed - Kyle Mills
 * Added /handicap command - Frank Thilo
 * Reverted to traditional handicap calculation - Frank Thilo
