@@ -10,20 +10,17 @@ public:
   virtual const char* Name (){return "Record Match";}
   virtual void Init ( const char* config);
   virtual void Event ( bz_EventData *eventData );
+
+  bool started = false;
+  std::string filename;
 };
 
 BZ_PLUGIN(GameStartEndHandler)
-
-std::string path;
-bool started = false;
-std::string filename;
-
 
 void GameStartEndHandler::Init( const char* commandLine )
 {
   Register(bz_eGameStartEvent);
   Register(bz_eGameEndEvent);
-  filename = commandLine;
 }
 
 void GameStartEndHandler::Event( bz_EventData *eventData )
@@ -51,7 +48,7 @@ void GameStartEndHandler::Event( bz_EventData *eventData )
 		{
 			if (!started)
 				break;
-			std::string recFile = path + filename;
+			std::string recFile = filename;
 
 			bz_saveRecBuf(recFile.c_str(),0);
 			bz_stopRecBuf();
