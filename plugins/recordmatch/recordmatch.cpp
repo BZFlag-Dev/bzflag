@@ -17,7 +17,7 @@ public:
 
 BZ_PLUGIN(GameStartEndHandler)
 
-void GameStartEndHandler::Init( const char* commandLine )
+void GameStartEndHandler::Init( const char* /*commandLine*/ )
 {
 	Register(bz_eGameStartEvent);
 	Register(bz_eGameEndEvent);
