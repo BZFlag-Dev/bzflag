@@ -48,9 +48,8 @@ void GameStartEndHandler::Event( bz_EventData *eventData )
 		{
 			if (!started)
 				break;
-			std::string recFile = filename;
 
-			bz_saveRecBuf(recFile.c_str(),0);
+			bz_saveRecBuf(filename.c_str(),0);
 			bz_stopRecBuf();
 
 			started = false;
