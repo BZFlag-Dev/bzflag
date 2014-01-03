@@ -53,17 +53,15 @@ operating system version under "Runtime Libraries"). For Mac OS X 10.6, the
 recommended SDL version is 1.2.13. Mount the disk image and place the file
 "SDL.framework" in your /Library/Frameworks directory (an administrator's
 account may be required). Obtain the latest BZFlag source archive from
-GitHub at
-https://github.com/BZFlag-Dev/bzflag (you want the
-.tar.gz or .tar.bz2 archive, NOT the .zip archive) or from the subversion
-repository using the instructions at http://wiki.bzflag.org/SVN. Once you have
-obtained the source code, open the BZFlag.xcodeproj file located in the Xcode/
-directory.
+GitHub at https://github.com/BZFlag-Dev/bzflag (you want the .tar.gz or .tar.bz2
+archive, NOT the .zip archive) or from the subversion repository using the
+instructions at http://wiki.bzflag.org/SVN. Once you have obtained the source
+code, open the BZFlag.xcodeproj file located in the Xcode/ directory.
 
 The default behavior is to build a debug client. If you want a standard
 client, click the "BZFlag" scheme button at the top left corner of the screen,
 scroll down, and click "Edit Scheme..." at the bottom of the pop-up menu. In
-the left sidebar, click the Run phase, and in the left area select the
+the left sidebar, click the Run phase, and in the right area select the
 Info tab. Under Build Configuration, select the desired scheme of Debug or
 Release.
 
