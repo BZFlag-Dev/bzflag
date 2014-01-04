@@ -11,7 +11,7 @@ public:
 	virtual void Init ( const char* config);
 	virtual void Event ( bz_EventData *eventData );
 
-	bool started = false;
+	bool started;
 	std::string filename;
 };
 
@@ -21,6 +21,8 @@ void GameStartEndHandler::Init( const char* /*commandLine*/ )
 {
 	Register(bz_eGameStartEvent);
 	Register(bz_eGameEndEvent);
+
+	started = false;
 }
 
 void GameStartEndHandler::Event( bz_EventData *eventData )
