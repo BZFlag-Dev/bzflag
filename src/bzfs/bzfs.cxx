@@ -4760,17 +4760,20 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	  static const float positionFudge = 10.0f; /* linear distance */
 	  float worldSize = BZDBCache::worldSize;
 	  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
-	    std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+	    logDebugMessage(2,"Player %s [%d] y position %.2f is out of bounds (%.2f + %.2f)\n",
+	      playerData->player.getCallSign(), t, state.pos[1], worldSize * 0.5f, positionFudge);
 	    InBounds = false;
 	  } else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
-	    std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+	    logDebugMessage(2,"Player %s [%d] x position %.2f is out of bounds (%.2f + %.2f)\n",
+	      playerData->player.getCallSign(), t, state.pos[0], worldSize * 0.5f, positionFudge);
 	    InBounds = false;
 	  }
 	}
 
 	static const float burrowFudge = 1.0f; /* linear distance */
 	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
-	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
+	  logDebugMessage(2,"Player %s [%d] z depth %.2f is less than burrow depth (%.2f + %.2f)\n",
+	    playerData->player.getCallSign(), t, state.pos[2], BZDB.eval(StateDatabase::BZDB_BURROWDEPTH), burrowFudge);
 	  InBounds = false;
 	}
 
