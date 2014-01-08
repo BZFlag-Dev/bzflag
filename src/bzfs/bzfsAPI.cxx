@@ -2488,6 +2488,19 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] )
   return true;
 }
 
+BZF_API int bz_getPlayerFlagID ( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return -1;
+
+  if (!player->player.haveFlag())
+    return -1;
+
+  return player->player.getFlag();
+}
+
 BZF_API int bz_flagPlayer ( int flag )
 {
   FlagInfo *pFlag = FlagInfo::get(flag);
