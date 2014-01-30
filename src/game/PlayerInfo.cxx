@@ -426,8 +426,11 @@ int PlayerInfo::getIdleTime()
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     return int(now - lastupdate);
   }
+  else if (team == ObserverTeam) {
+    return -1;
+  }
 
-  return -1;
+  return 0;
 }
 
 std::string PlayerInfo::getIdleStat() {
