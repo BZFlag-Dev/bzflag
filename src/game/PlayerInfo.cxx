@@ -412,6 +412,15 @@ void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
   return;
 }
 
+int PlayerInfo::getIdleTime()
+{
+  if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
+    return int(now - lastupdate);
+  }
+
+  return -1;
+}
+
 std::string PlayerInfo::getIdleStat() {
   std::string reply;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {

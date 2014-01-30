@@ -1142,17 +1142,7 @@ BZF_API int bz_getIdleTime( int playerID )
   if (!otherData)
     return -1;
 
-  std::string statsString = otherData->player.getIdleStat();
-
-  if (statsString.empty())
-    return -1;
-
-  statsString = statsString.substr(statsString.rfind(" "), statsString.length() - 1);
-
-  if (statsString.empty())
-    return -1;
-
-  return atoi(statsString.c_str());
+  return otherData->player.getIdleTime();
 }
 
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
