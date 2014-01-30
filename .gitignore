@@ -121,3 +121,13 @@ work
 /src/platform/MacOSX/BZFlag-Info.plist
 
 /MSVC/ipch
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
