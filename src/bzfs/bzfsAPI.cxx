@@ -1135,6 +1135,16 @@ BZF_API bool bz_isPlayerPaused( int playerID )
   return player->player.isPaused();
 }
 
+BZF_API int bz_getPausedTime( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return -1;
+
+  return player->player.getPausedTime();
+}
+
 BZF_API int bz_getIdleTime( int playerID )
 {
   GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(playerID);
