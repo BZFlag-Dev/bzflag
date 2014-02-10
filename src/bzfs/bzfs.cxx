@@ -631,39 +631,53 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
 
 void pauseCountdown ( const char *pausedBy )
 {
-	if (clOptions->countdownPaused)
-		return;
+  if (clOptions->countdownPaused)
+    return;
 
-	clOptions->countdownPaused = true;
-	countdownResumeDelay = -1; // reset back to "unset"
-	if (pausedBy)
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
-	else
-		sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+  clOptions->countdownPaused = true;
+  countdownResumeDelay = -1; // reset back to "unset"
+
+  if (pausedBy)
+    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
+  else
+    sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+
+  // fire off a game pause event
+  bz_GamePauseResumeEventData_V1 pauseEventData;
+  pauseEventData.eventType = bz_eGamePauseEvent;
+  pauseEventData.actionBy = pausedBy;
+  worldEventManager.callEvents(bz_eGamePauseEvent, &pauseEventData);
 }
 
 void resumeCountdown ( const char *resumedBy )
 {
-	if (!clOptions->countdownPaused)
-		return;
+  if (!clOptions->countdownPaused)
+    return;
 
-	clOptions->countdownPaused = false;
-	countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
+  clOptions->countdownPaused = false;
+  countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
 
-	if (countdownResumeDelay <= 0) {
-	    // resume instantly
-	    countdownResumeDelay = -1; // reset back to "unset"
-	    if (resumedBy)
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
-	    else
-		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
-	    } else {
-		// resume after number of seconds in countdownResumeDelay
-		if (resumedBy)
-		    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
-		else
-		    sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
-	    }
+  if (countdownResumeDelay <= 0) {
+    // resume instantly
+    countdownResumeDelay = -1; // reset back to "unset"
+
+    if (resumedBy)
+	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+    else
+	sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+
+    // fire off a game resume event
+    bz_GamePauseResumeEventData_V1 resumeEventData;
+    resumeEventData.eventType = bz_eGameResumeEvent;
+    resumeEventData.actionBy = resumedBy;
+    worldEventManager.callEvents(bz_eGameResumeEvent, &resumeEventData);
+  } else {
+      // resume after number of seconds in countdownResumeDelay
+      if (resumedBy)
+	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
+      else
+	  sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+  }
 }
 
 void resetTeamScores ( void )
@@ -6462,6 +6476,11 @@ int main(int argc, char **argv)
 		countdownResumeDelay = -1; // reset back to "unset"
 		clOptions->countdownPaused = false;
 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+
+		// fire off a game resume event
+		bz_GamePauseResumeEventData_V1 resumeEventData;
+		resumeEventData.eventType = bz_eGameResumeEvent;
+		worldEventManager.callEvents(bz_eGameResumeEvent, &resumeEventData);
 	    }
 	    else
 	    {

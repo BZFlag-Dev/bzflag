@@ -258,6 +258,8 @@ typedef enum
   bz_eKillEvent,
   bz_ePlayerPausedEvent,
   bz_eMessageFilteredEvent,
+  bz_eGamePauseEvent,
+  bz_eGameResumeEvent,
   bz_eGameStartEvent,
   bz_eGameEndEvent,
   bz_eSlashCommandEvent,
@@ -739,6 +741,17 @@ public:
 
   bz_ApiString rawMessage;
   bz_ApiString filteredMessage;
+};
+
+class BZF_API bz_GamePauseResumeEventData_V1 : public bz_EventData
+{
+public:
+  bz_GamePauseResumeEventData_V1() : bz_EventData(bz_eGameResumeEvent)
+  , actionBy("SERVER")
+  {
+  }
+
+  bz_ApiString actionBy;
 };
 
 class BZF_API bz_GameStartEndEventData_V1 : public bz_EventData
