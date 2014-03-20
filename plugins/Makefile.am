@@ -38,6 +38,7 @@ DIST_SUBDIRS = \
 	$(SUBDIRS)
 
 EXTRA_DIST = \
+	addToBuild.sh \
 	api_notes \
 	pushstats \
 	webReport \
