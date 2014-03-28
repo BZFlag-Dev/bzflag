@@ -4341,7 +4341,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     // player declaring self destroyed
     case MsgKilled: {
-      if (playerData->player.isObserver())
+      if (invalidPlayerAction(playerData->player, t, "die"))
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
@@ -4419,7 +4419,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     // shot ended prematurely
     case MsgShotEnd: {
-      if (playerData->player.isObserver())
+      if (invalidPlayerAction(playerData->player, t, "end a shot"))
 	break;
 
       // endShot anti-cheat
