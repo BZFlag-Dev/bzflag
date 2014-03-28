@@ -113,7 +113,7 @@ void *PlayerInfo::packId(void *buf) {
   return buf;
 }
 
-bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg, bool rabbitChase)
+bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg)
 {
   // data: type, team, name, motto
   uint16_t _type;
@@ -127,10 +127,10 @@ bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *reject
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
 
-  return processEnter(rejectCode, rejectMsg, rabbitChase);
+  return processEnter(rejectCode, rejectMsg);
 }
 
-bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg, bool rabbitChase )
+bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 {
   // terminate the strings
   callSign[CallSignLen - 1] = '\0';
@@ -153,15 +153,6 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg, bool rabb
   // spoof filter holds "SERVER" for robust name comparisons
   if (serverSpoofingFilter.wordCount() == 0) {
     serverSpoofingFilter.addToFilter("SERVER", "");
-  }
-
-  // When in rabbit chase game type, only allow the hunter and observer teams.
-  // In other game types, do not allow hunter. Never allow the rabbit team.
-  if ( (rabbitChase && (team != HunterTeam && team != ObserverTeam) ) || (!rabbitChase && team > ObserverTeam) ) {
-    logDebugMessage(2,"rejecting invalid team: %i",team);
-    rejectCode	= RejectTeamFull;
-    strcpy(rejectMsg, "This team is full.  Try another team.");
-    return false;
   }
 
   if (isBot() && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {

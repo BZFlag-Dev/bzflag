@@ -4200,7 +4200,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       }
       uint16_t rejectCode;
       char     rejectMsg[MessageLen];
-      if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg, clOptions->gameType == RabbitChase)) {
+      if (!playerData->player.unpackEnter(buf, rejectCode, rejectMsg)) {
 	rejectPlayer(t, rejectCode, rejectMsg);
 	break;
       }
