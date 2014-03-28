@@ -117,6 +117,7 @@ work
 /man/*.5
 /man/*.6
 /man/*.gz
+/man/*.html
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
 
