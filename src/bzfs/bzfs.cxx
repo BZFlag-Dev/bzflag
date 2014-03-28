@@ -5153,8 +5153,14 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 		  AddPlayer(p, &playerData);
   }
 
-  // Check host bans
+  
   if (playerData.netHandler) {
+    // Check for hung player connections that never entered the game completely
+    if (!playerData.player.isCompletelyAdded() && TimeKeeper::getCurrent() - playerData.netHandler->getTimeAccepted() > 300.0f) {
+      rejectPlayer(p, RejectBadRequest, "Failed to connect within reasonable timeframe");
+    }
+
+    // Check host bans
     const char *hostname = playerData.netHandler->getHostname();
     if (hostname && playerData.needsHostbanChecked()) {
       if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
