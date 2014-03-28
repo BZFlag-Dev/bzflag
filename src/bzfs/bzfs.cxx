@@ -2029,7 +2029,8 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-  playerData->player.setTeam((TeamColor)convertTeam((bz_eTeamType)autoTeamData.team));
+  t = (TeamColor)convertTeam((bz_eTeamType)autoTeamData.team);	// team may be modified
+  playerData->player.setTeam(t);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
   playerData->player.endShotShieldCredit = 0;	// endShotCredit for holding the shield flag (0 or 1)
 
@@ -2044,8 +2045,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   // to regular player immediately, but only if last time time you
   // were a regular player isn't in the rejoin list. As well, this all
   // only applies if the game isn't currently empty.
-  if ((playerData->player.getTeam() != ObserverTeam) &&
-      (GameKeeper::Player::count() >= 0)) {
+  if ((t != ObserverTeam) && (GameKeeper::Player::count() >= 0)) {
     float waitTime = rejoinList.waitTime (playerIndex);
     if (waitTime > 0.0f) {
       char buffer[MessageLen];
