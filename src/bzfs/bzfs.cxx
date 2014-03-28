@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1616,8 +1616,8 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
   // Fixing security hole, because a client can ignore the reject message
   // then he can avoid a ban, hostban...
-  removePlayer(playerIndex, "/rejected");
-  return;
+  const std::string msg = "/rejected: " + stripAnsiCodes(reason);
+  removePlayer(playerIndex, msg.c_str());
 }
 
 // FIXME this is a workaround for a bug, still needed?
@@ -5153,12 +5153,11 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 		  AddPlayer(p, &playerData);
   }
 
-  
   if (playerData.netHandler) {
     // Check for hung player connections that never entered the game completely
     if (!playerData.player.isCompletelyAdded() && TimeKeeper::getCurrent() - playerData.netHandler->getTimeAccepted() > 300.0f) {
       rejectPlayer(p, RejectBadRequest, "Failed to connect within reasonable timeframe");
-    }
+  }
 
     // Check host bans
     const char *hostname = playerData.netHandler->getHostname();
