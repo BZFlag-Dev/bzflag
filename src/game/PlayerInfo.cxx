@@ -155,14 +155,6 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     serverSpoofingFilter.addToFilter("SERVER", "");
   }
 
-  // Disallow rabbit/hunter team from being used when joining a server
-  if (team > ObserverTeam) {
-    logDebugMessage(2,"rejecting invalid team: %i",team);
-    rejectCode	= RejectTeamFull;
-    strcpy(rejectMsg, "This team is full.  Try another team.");
-    return false;
-  }
-
   if (isBot() && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS)) {
     logDebugMessage(2,"rejecting robot tank: %s\n", callSign);
     rejectCode   = RejectBadType;
