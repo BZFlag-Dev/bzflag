@@ -4622,8 +4622,15 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       break;
 
     case MsgNewRabbit: {
-      if (t == rabbitIndex)
-	anointNewRabbit();
+      if (clOptions->gameType == RabbitChase) {
+	if (t == rabbitIndex)
+	  anointNewRabbit();
+      } else {
+	logDebugMessage(1,"Kicking Player %s [%d] Illegal rabbit\n",
+	  playerData->player.getCallSign(), t);
+	sendMessage(ServerPlayer, t, "Autokick: not a rabbit chase game.");
+	removePlayer(t, "Illegal rabbit");
+      }
       break;
     }
 
