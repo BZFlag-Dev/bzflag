@@ -5434,6 +5434,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
+	      logDebugMessage(2,"Game peer %s not allowed\n", netHandler->getTargetIP());
 	      peer.deleteMe = true;
 	      return;
 	    }
@@ -5472,6 +5473,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
+	      logDebugMessage(2,"Peer %s not allowed\n", netHandler->getTargetIP());
 	      peer.deleteMe = true;
 	      return;
 	    }
@@ -5480,6 +5482,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    BanInfo info(IP);
 	    if (!clOptions->acl.validate(IP, &info))
 	    {
+	      logDebugMessage(2,"Peer %s banned\n", netHandler->getTargetIP());
 	      std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
 	      peer.sendChunks.push_back(banMsg);
 	      peer.deleteMe = true;
@@ -5520,6 +5523,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
     BanInfo info(IP);
     if (!clOptions->acl.validate(IP, &info))
     {
+      logDebugMessage(2,"API peer %s banned\n", netHandler->getTargetIP());
       std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
       peer.sendChunks.push_back(banMsg);
       peer.deleteMe = true;
