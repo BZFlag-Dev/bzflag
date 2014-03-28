@@ -1395,11 +1395,6 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 		  << Team::getName((TeamColor) j) << std::endl;
       options.maxTeam[j] = 0;
     }
-    options.maxTeam[RabbitTeam] = 1;
-    options.maxTeam[HunterTeam] = options.maxTeam[RogueTeam];
-  } else {
-    options.maxTeam[RabbitTeam] = 0;
-    options.maxTeam[HunterTeam] = 0;
   }
 
   // disallowed flags

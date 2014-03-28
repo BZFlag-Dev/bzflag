@@ -140,7 +140,7 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
 
 	uint16_t code = 0;
 	char reason[512] = {0};
-	if (!player->player.processEnter(code, reason))
+	if (!player->player.processEnter(code, reason, clOptions->gameType == RabbitChase))
 		rejected((bz_eRejectCodes)code, reason);
 
 	alive = player->player.isAlive();
