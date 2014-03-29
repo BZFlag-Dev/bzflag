@@ -3848,25 +3848,25 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 }
 
 
-/* Observers and paused/dead players should not be sending updates.
- * Don't bother to kick observers who try and fail to cheat.
+/* Players who are paused or have never spawned and observers should not be
+ * sending updates. Don't bother to kick observers who try and fail to cheat.
  */
 static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   const char *state = NULL;
   if (p.isObserver()) {
-    state = "observing";
+    state = "as an observer";
   } else if (p.isPaused()) {
-    state = "paused";
-  } else if (!p.isAlive()) {
-    state = "dead";
+    state = "while paused";
+  } else if (p.hasNeverSpawned()) {
+    state = "before spawning";
   }
   if (state) {
-    logDebugMessage(1,"Player %s [%d] tried to %s while %s\n", p.getCallSign(), t, action, state);
+    logDebugMessage(1,"Player %s [%d] tried to %s %s\n", p.getCallSign(), t, action, state);
     if (!p.isObserver()) {	// just log when observers attempt to cheat
       char buffer[MessageLen];
-      snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while %s.", action, state);
+      snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s %s.", action, state);
       sendMessage(ServerPlayer, t, buffer);
-      snprintf(buffer, MessageLen, "Invalid attempt to %s while %s", action, state);
+      snprintf(buffer, MessageLen, "Invalid attempt to %s %s", action, state);
       removePlayer(t, buffer);
     }
     return true;
