@@ -4465,9 +4465,17 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       if (invalidPlayerAction(playerData->player, t, "teleport"))
 	break;
 
-      buf = nboUnpackUShort(buf, from);
-      buf = nboUnpackUShort(buf, to);
-      sendTeleport(t, from, to);
+      // Validate the teleport source and destination
+      const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
+      unsigned int maxTele = teleporterList.size();
+
+      if (from < maxTele * 2 && to < maxTele * 2) {
+        sendTeleport(t, from, to);
+      }
+      else {
+        logDebugMessage(2,"Player %s [%d] tried to send invalid teleport (from %u to %u)\n",
+          playerData->player.getCallSign(), t, from, to);
+      }
       break;
     }
 
