@@ -4465,6 +4465,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       if (invalidPlayerAction(playerData->player, t, "teleport"))
 	break;
 
+      buf = nboUnpackUShort(buf, from);
+      buf = nboUnpackUShort(buf, to);
+
       // Validate the teleport source and destination
       const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
       unsigned int maxTele = teleporterList.size();
