@@ -169,9 +169,11 @@ int World::getTeleporter(const Teleporter* teleporter, int face) const
 const Teleporter* World::getTeleporter(int source, int& face) const
 {
   const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-  assert(source >= 0 && source < (int)(2 * teleporters.size()));
-  face = (source & 1);
-  return ((const Teleporter*) teleporters[source / 2]);
+  if (source >= 0 && source < (int)(2 * teleporters.size())) {
+    face = (source & 1);
+    return ((const Teleporter*) teleporters[source / 2]);
+  }
+  return NULL;
 }
 
 
