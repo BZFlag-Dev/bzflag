@@ -3862,13 +3862,11 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   }
   if (state) {
     logDebugMessage(1,"Player %s [%d] tried to %s %s\n", p.getCallSign(), t, action, state);
-    if (!p.isObserver()) {	// just log when observers attempt to cheat
-      char buffer[MessageLen];
-      snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s %s.", action, state);
-      sendMessage(ServerPlayer, t, buffer);
-      snprintf(buffer, MessageLen, "Invalid attempt to %s %s", action, state);
-      removePlayer(t, buffer);
-    }
+    char buffer[MessageLen];
+    snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s %s.", action, state);
+    sendMessage(ServerPlayer, t, buffer);
+    snprintf(buffer, MessageLen, "Invalid attempt to %s %s", action, state);
+    removePlayer(t, buffer);
     return true;
   }
   return false;
