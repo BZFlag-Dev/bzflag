@@ -3966,13 +3966,49 @@ static void adjustTolerances()
 }
 
 
-bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
+bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
 {
+  // Shortcut to the player info
   PlayerInfo &player = playerData->player;
+
+  // Grab the length of the raw message
+  const int totalChars = strlen(message);
+
+  // Count visible and bad characters
+  int badChars = 0;
+  int visibleChars = 0;
+  for (int i=0; i < totalChars; i++) {
+    // Is it a visible character?
+    if (TextUtils::isVisible(message[i])) {
+      visibleChars++;
+    }
+    // Not visible? Then is it something other than a space?
+    else if (message[i] != 32) {
+      badChars++;
+    }
+  }
+  
+  // Kick the player if any bad characters are found
+  if (badChars > 0) {
+    sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
+    logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",
+	    player.getCallSign(), t, badChars);
+    removePlayer(t, "garbage");
+
+    // Ignore garbage message
+    return true;
+  }
+
+  // Ignore message if there are no visible characters
+  if (visibleChars == 0) {
+    return true;
+  }
+  
+  // Get last message and last message time
   const std::string &oldMsg = player.getLastMsg();
   float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
 
-  // don't consider whitespace
+  // Ignore whitespace
   std::string newMsg = TextUtils::no_whitespace(message);
 
   // if it's first message, or enough time since last message - can't
@@ -3999,55 +4035,6 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 
   // record this message for next time
   player.setLastMsg(newMsg);
-  return false;
-}
-
-
-/** check the message being sent for invalid characters.  long
- *  unreadable messages are indicative of denial-of-service and crash
- *  attempts.  remove the player immediately, only modified clients
- *  should be sending such garbage messages.
- *
- *  that said, more than one badChar should be allowed since there
- *  might be two "magic byte" characters being used for backwards
- *  compatibility client-side message processing (as was used for the
- *  /me command at one point).
- */
-bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
-  static const int tooLong = MaxPacketLen / 2;
-  const int totalChars = strlen(message);
-
-  /* if the message is very long and looks like junk, give the user
-   * the boot.
-   */
-  if (totalChars > tooLong) {
-    int badChars = 0;
-    int i;
-
-    /* tally up the junk */
-    for (i=0; i < totalChars; i++) {
-      if (!TextUtils::isPrintable(message[i])) {
-	badChars++;
-      }
-    }
-
-    /* even once is once too many since they may be attempting to
-     * cause a crash, but allow a few anyways.
-     */
-    if (badChars > 5) {
-      sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
-	     player.getCallSign(), t, badChars, totalChars);
-      removePlayer(t, "garbage");
-
-      // they're only happy when it rains
-      return true;
-    }
-  }
-
-  // the world is not enough
   return false;
 }
 
@@ -4508,12 +4495,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	       playerData->player.getCallSign(), t, dstPlayer, message);
 	}
       }
-      // check for spamming
-      if (checkSpam(message, playerData, t))
-	break;
-
-      // check for garbage
-      if (checkGarbage(message, playerData, t))
+      // check for spamming or garbage
+      if (isSpamOrGarbage(message, playerData, t))
 	break;
 
       bz_ChatEventData_V1 chatData;
