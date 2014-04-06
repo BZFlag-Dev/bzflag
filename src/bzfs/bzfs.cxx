@@ -4947,6 +4947,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     default:
       logDebugMessage(1,"Player [%d] sent unknown packet type (%x), possible attack from %s\n",
 	     t, code, handler->getTargetIP());
+      removePlayer(t, "Autokick: Sent unknown packet type");
   }
 }
 
