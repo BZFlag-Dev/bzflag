@@ -73,6 +73,8 @@ public:
 	double		LastUpdateTime;
 	double		StartTime;
 
+	std::map<std::string,uint32_t> MetaData;
+
 	FiringInfo	Info;
 
 	PlayerId	Target;
@@ -131,7 +133,8 @@ public:
 
   void SetShotTarget( uint32_t shot, PlayerId target );
 
-  uint32_t FindShot (PlayerId shooter, uint16_t localShotID);
+  uint32_t FindShotGUID (PlayerId shooter, uint16_t localShotID);
+  ShotRef FindShot(uint32_t shotID) { return FindByID(shotID);}
 
   void Update();
 

@@ -123,7 +123,7 @@ namespace Shots
 			shot->Retarget(target);
 	}
 
-	uint32_t Manager::FindShot (PlayerId shooter, uint16_t localShotID)
+	uint32_t Manager::FindShotGUID (PlayerId shooter, uint16_t localShotID)
 	{
 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
 		{
@@ -193,6 +193,19 @@ namespace Shots
 		ShotList list;
 
 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
+		{
+			if ((*itr)->GetPlayerID() == player)
+				list.push_back(*itr);
+		}
+
+		return list;
+	}
+
+	ShotList Manager::DeadShotsForPlayer( PlayerId player )
+	{
+		ShotList list;
+
+		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
 		{
 			if ((*itr)->GetPlayerID() == player)
 				list.push_back(*itr);

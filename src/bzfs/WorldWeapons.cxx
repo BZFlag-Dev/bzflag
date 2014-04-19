@@ -254,26 +254,28 @@ int WorldWeapons::getNewWorldShotID(void)
   return worldShotId++;
 }
 
+bool shotUsedInList(int shotID, Shots::ShotList& list)
+{
+	for(size_t s = 0; s < list.size(); s++)
+	{
+		if (list[s]->GetLocalShotID() == shotID)
+			return true;
+	}
+	return false;
+}
+
 int WorldWeapons::getNewWorldShotID(PlayerId player)
 {
-	int maxID = _MAX_WORLD_SHOTS;
+	int maxID = 255;
 	if (player != ServerPlayer)
 		maxID = clOptions->maxShots;
 
 	Shots::ShotList liveShots = ShotManager.LiveShotsForPlayer(player);
+	Shots::ShotList deadShots = ShotManager.DeadShotsForPlayer(player);
 
 	for (int i = 0; i < maxID; i++)
 	{
-		bool used = false;
-		for(size_t s = 0; s < liveShots.size(); s++)
-		{
-			if (liveShots[s]->GetLocalShotID() == i)
-			{
-				used = true;
-				break;
-			}
-		}
-		if (!used)
+		if (!shotUsedInList(i,liveShots) && !shotUsedInList(i,deadShots))
 			return i;
 	}
 	return -1;

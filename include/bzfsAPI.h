@@ -1188,6 +1188,8 @@ protected:
 BZF_API bool bz_pluginExists(const char* name);
 BZF_API bz_Plugin* bz_getPlugin(const char* name);
 
+BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data );
+
 // non player data handlers
 class bz_NonPlayerConnectionHandler
 {
@@ -1364,9 +1366,13 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
-BZF_API bool bz_fireWorldWepEX ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
 
+BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
+BZF_API void bz_setShotMetaData (int fromPlayer, int shotID , const char* name, uint32_t value);
+BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID , const char* name);
 
+BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID);
 
 typedef struct {
   int year;

@@ -719,6 +719,15 @@ BZF_API bz_Plugin* bz_getPlugin(const char* name)
 #endif
 }
 
+BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data )
+{
+	bz_Plugin *p = bz_getPlugin(plugin);
+	if (p == nullptr)
+		return 0;
+
+	return p->GeneralCallback(name,data);
+}
+
 //-------------------------------------------------------------------------
 //
 // utility
@@ -1666,6 +1675,56 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
     shotID, dt, (TeamColor)convertTeam(shotTeam));
 
   return shotID;
+}
+
+BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID , const char* name)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return 0;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	if (shot->MetaData.find(n) == shot->MetaData.end())
+		return 0;
+
+	return shot->MetaData[n];
+}
+
+BZF_API void bz_setShotMetaData (int fromPlayer, int shotID , const char* name, uint32_t value)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	shot->MetaData[n] = value;
+}
+
+BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID , const char* name)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return false;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	if (shot->MetaData.find(n) == shot->MetaData.end())
+		return false;
+
+	return true;
+}
+
+BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID)
+{
+	return ShotManager.FindShotGUID(fromPlayer,shotID);
 }
 
 // time API

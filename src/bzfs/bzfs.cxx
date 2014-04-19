@@ -3590,7 +3590,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
 
-  uint32_t shotGUID = ShotManager.FindShot(playerIndex,shot.id & 0xff);
+  uint32_t shotGUID = ShotManager.FindShotGUID(playerIndex,shot.id & 0xff);
   ShotManager.SetShotTarget(shotGUID,targetId);
 
   // TODO, Remove this and let the GM update logic send the updates,
@@ -3822,7 +3822,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 
   playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
 
-  ShotManager.RemoveShot(ShotManager.FindShot(id,shotIndex & 0xff));
+  ShotManager.RemoveShot(ShotManager.FindShotGUID(id,shotIndex & 0xff));
 
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
