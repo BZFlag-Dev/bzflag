@@ -266,7 +266,7 @@ bool shotUsedInList(int shotID, Shots::ShotList& list)
 
 int WorldWeapons::getNewWorldShotID(PlayerId player)
 {
-	int maxID = 255;
+	int maxID = _MAX_WORLD_SHOTS;
 	if (player != ServerPlayer)
 		maxID = clOptions->maxShots;
 

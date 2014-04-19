@@ -30,7 +30,7 @@
 #include "WorldEventManager.h"
 #include "PlayerInfo.h"
 
-#define _MAX_WORLD_SHOTS 30
+#define _MAX_WORLD_SHOTS 255
 
 /** WorldWeapons is a container class that holds weapons
  */
