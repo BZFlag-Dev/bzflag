@@ -31,6 +31,7 @@
 
 // bzfs specific headers
 #include "bzfs.h"
+#include "ShotManager.h"
 
 static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    TeamColor teamColor, float *pos, float tilt, float dir,
@@ -253,7 +254,30 @@ int WorldWeapons::getNewWorldShotID(void)
   return worldShotId++;
 }
 
+int WorldWeapons::getNewWorldShotID(PlayerId player)
+{
+	int maxID = _MAX_WORLD_SHOTS;
+	if (player != ServerPlayer)
+		maxID = clOptions->maxShots;
 
+	Shots::ShotList liveShots = ShotManager.LiveShotsForPlayer(player);
+
+	for (int i = 0; i < maxID; i++)
+	{
+		bool used = false;
+		for(size_t s = 0; s < liveShots.size(); s++)
+		{
+			if (liveShots[s]->GetLocalShotID() == i)
+			{
+				used = true;
+				break;
+			}
+		}
+		if (!used)
+			return i;
+	}
+	return -1;
+}
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 

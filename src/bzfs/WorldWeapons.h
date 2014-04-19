@@ -28,6 +28,7 @@
 #include "TimeKeeper.h"
 
 #include "WorldEventManager.h"
+#include "PlayerInfo.h"
 
 #define _MAX_WORLD_SHOTS 30
 
@@ -50,6 +51,7 @@ public:
   void *pack(void *buf) const;
 
   int getNewWorldShotID ( void );
+  int getNewWorldShotID(PlayerId player);
 
 private:
   struct Weapon

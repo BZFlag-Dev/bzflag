@@ -1620,6 +1620,31 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
   return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam )
+{
+	if (!pos || !flagType)
+		return false;
+
+	FlagTypeMap &flagMap = FlagType::getFlagMap();
+	if (flagMap.find(std::string(flagType)) == flagMap.end())
+		return false;
+
+	FlagType *flag = flagMap.find(std::string(flagType))->second;
+
+	PlayerId player;
+	if ( fromPlayer == BZ_SERVER )
+		player = ServerPlayer;
+	else
+		player = fromPlayer;
+
+	int realShotID = world->getWorldWeapons().getNewWorldShotID(player);
+
+	if (shotID != NULL)
+		*shotID = realShotID;
+
+	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+}
+
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
 {
   const char* flagType = "GM";
