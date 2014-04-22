@@ -1629,7 +1629,7 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
   return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam )
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam )
 {
 	if (!pos || !flagType)
 		return false;
@@ -1651,7 +1651,7 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 	if (shotID != NULL)
 		*shotID = realShotID;
 
-	return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+	return fireWorldWep(flag,lifetime,player,pos,tilt,direction, speed,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
@@ -1675,6 +1675,11 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
     shotID, dt, (TeamColor)convertTeam(shotTeam));
 
   return shotID;
+}
+
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam )
+{
+	return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID , dt, shotTeam );
 }
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID , const char* name)
