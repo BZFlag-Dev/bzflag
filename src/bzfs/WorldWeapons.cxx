@@ -327,7 +327,7 @@ int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 			int shotID, float dt, TeamColor shotTeam)
 {
   return fireWorldWepReal(type, lifetime, player, shotTeam,
-			  pos, tilt, direction,player, shotID, dt);
+			  pos, tilt, direction, speed, shotID, dt);
 }
 
 
