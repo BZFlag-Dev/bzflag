@@ -20,6 +20,7 @@
 #include <cstring>
 #include <vector>
 #include <cstdlib>
+#include <stdint.h>
 
 
 /* DO NOT INCLUDE ANY OTHER HEADERS IN THIS FILE */
