@@ -155,6 +155,9 @@ public:
   int getFD ( void ) { return fd;}
   struct sockaddr_in getUADDR ( void ) { return uaddr;}
 
+  // Returns the time that the connection was accepted
+  TimeKeeper getTimeAccepted( void ) const { return time;}
+
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.

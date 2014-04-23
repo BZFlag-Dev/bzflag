@@ -2503,7 +2503,7 @@ BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename 
   std::vector<std::string> &list = PathSets[name];
   for ( size_t i = 0; i < list.size(); i++)
   {
-    std::string path = concatPaths(list[i].c_str(),filename);
+    static const std::string path = concatPaths(list[i].c_str(),filename);
     if (fileExits(path.c_str()))
       return path.c_str();
   }

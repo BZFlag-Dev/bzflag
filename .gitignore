@@ -117,7 +117,18 @@ work
 /man/*.5
 /man/*.6
 /man/*.gz
+/man/*.html
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
 
 /MSVC/ipch
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db

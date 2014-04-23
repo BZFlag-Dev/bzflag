@@ -28,8 +28,9 @@
 #include "TimeKeeper.h"
 
 #include "WorldEventManager.h"
+#include "PlayerInfo.h"
 
-#define _MAX_WORLD_SHOTS 30
+#define _MAX_WORLD_SHOTS 255
 
 /** WorldWeapons is a container class that holds weapons
  */
@@ -50,6 +51,7 @@ public:
   void *pack(void *buf) const;
 
   int getNewWorldShotID ( void );
+  int getNewWorldShotID(PlayerId player);
 
 private:
   struct Weapon
@@ -88,7 +90,7 @@ protected:
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt, TeamColor shotTeam = RogueTeam );
+int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float speed, int shotID, float dt, TeamColor shotTeam = RogueTeam );
 
 int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt, TeamColor shotTeam = RogueTeam);
 #endif

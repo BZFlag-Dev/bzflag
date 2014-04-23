@@ -20,6 +20,7 @@
 #include <cstring>
 #include <vector>
 #include <cstdlib>
+#include <stdint.h>
 
 
 /* DO NOT INCLUDE ANY OTHER HEADERS IN THIS FILE */
@@ -258,6 +259,8 @@ typedef enum
   bz_eKillEvent,
   bz_ePlayerPausedEvent,
   bz_eMessageFilteredEvent,
+  bz_eGamePauseEvent,
+  bz_eGameResumeEvent,
   bz_eGameStartEvent,
   bz_eGameEndEvent,
   bz_eSlashCommandEvent,
@@ -741,6 +744,17 @@ public:
   bz_ApiString filteredMessage;
 };
 
+class BZF_API bz_GamePauseResumeEventData_V1 : public bz_EventData
+{
+public:
+  bz_GamePauseResumeEventData_V1() : bz_EventData(bz_eGameResumeEvent)
+  , actionBy("SERVER")
+  {
+  }
+
+  bz_ApiString actionBy;
+};
+
 class BZF_API bz_GameStartEndEventData_V1 : public bz_EventData
 {
 public:
@@ -1175,6 +1189,8 @@ protected:
 BZF_API bool bz_pluginExists(const char* name);
 BZF_API bz_Plugin* bz_getPlugin(const char* name);
 
+BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data );
+
 // non player data handlers
 class bz_NonPlayerConnectionHandler
 {
@@ -1351,6 +1367,14 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
+
+BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
+BZF_API void bz_setShotMetaData (int fromPlayer, int shotID , const char* name, uint32_t value);
+BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID , const char* name);
+
+BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID);
 
 typedef struct {
   int year;
@@ -1468,6 +1492,7 @@ BZF_API const bz_ApiString bz_getName( int flag );
 BZF_API const bz_ApiString bz_getFlagName( int flag );
 BZF_API bool bz_resetFlag ( int flag );
 BZF_API bool bz_moveFlag ( int flag, float pos[3] );
+BZF_API int bz_getPlayerFlagID ( int playerID );
 BZF_API int bz_flagPlayer ( int flag );
 BZF_API bool bz_getFlagPosition ( int flag, float* pos );
 

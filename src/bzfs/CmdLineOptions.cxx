@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1387,7 +1387,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     usage(argv[0]);
   }
 
-   if (options.gameType == RabbitChase) {
+  if (options.gameType == RabbitChase) {
     for (int j = RedTeam; j <= PurpleTeam; j++) {
       if (options.maxTeam[j] > 0
 	  && options.maxTeam[RogueTeam] != maxRealPlayers)
@@ -1395,6 +1395,11 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 		  << Team::getName((TeamColor) j) << std::endl;
       options.maxTeam[j] = 0;
     }
+    options.maxTeam[RabbitTeam] = 1;
+    options.maxTeam[HunterTeam] = options.maxTeam[RogueTeam];
+  } else {
+    options.maxTeam[RabbitTeam] = 0;
+    options.maxTeam[HunterTeam] = 0;
   }
 
   // disallowed flags

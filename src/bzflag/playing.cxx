@@ -2714,9 +2714,11 @@ static void		handleServerMessage(bool human, uint16_t code,
       if (tank && tank != myTank) {
 	int face;
 	const Teleporter* teleporter = world->getTeleporter(int(to), face);
-	const float* pos = teleporter->getPosition();
-	tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-	playWorldSound(SFX_TELEPORT, pos);
+	if (teleporter) {
+	  const float* pos = teleporter->getPosition();
+	  tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
+	  playWorldSound(SFX_TELEPORT, pos);
+	}
       }
       break;
     }

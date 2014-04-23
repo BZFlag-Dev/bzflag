@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -105,6 +105,8 @@ public:
   const char *getClientVersion();
   void setClientVersion(const char * c);
   void getClientVersionNumbers(int& major, int& minor, int& revision);
+  int   getPausedTime();
+  int   getIdleTime();
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);
@@ -119,6 +121,7 @@ public:
   void	setSpawnDelay(double delay);
   bool	waitingToSpawn() const;
   void	queueSpawn();
+  bool	hasNeverSpawned() const;
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
@@ -188,7 +191,7 @@ private:
 
   // Requested a spawn?
   bool wantsToSpawn;
-
+  bool neverSpawned;
 
   // spam prevention
   std::string lastMsgSent;
@@ -298,6 +301,10 @@ inline bool PlayerInfo::waitingToSpawn() const {
 
 inline void PlayerInfo::queueSpawn() {
   wantsToSpawn = true;
+}
+
+inline bool PlayerInfo::hasNeverSpawned() const {
+  return neverSpawned;
 }
 
 

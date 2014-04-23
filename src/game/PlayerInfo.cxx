@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -53,6 +53,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   completelyAdded = false;
   nextSpawnTime = TimeKeeper::getSunGenesisTime();
   wantsToSpawn = false;
+  neverSpawned = true;
   type = TankPlayer;
 }
 
@@ -94,6 +95,7 @@ void PlayerInfo::setAlive() {
   state = PlayerAlive;
   paused = false;
   wantsToSpawn = false;
+  neverSpawned = false;
   flag = -1;
 }
 
@@ -410,6 +412,27 @@ void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
   minor = clientVersionMinor;
   rev = clientVersionRevision;
   return;
+}
+
+int PlayerInfo::getPausedTime()
+{
+  if ((state > PlayerInLimbo) && (team != ObserverTeam) && (paused)) {
+    return int(now - pausedSince);
+  }
+
+  return 0;
+}
+
+int PlayerInfo::getIdleTime()
+{
+  if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
+    return int(now - lastupdate);
+  }
+  else if (team == ObserverTeam) {
+    return -1;
+  }
+
+  return 0;
 }
 
 std::string PlayerInfo::getIdleStat() {

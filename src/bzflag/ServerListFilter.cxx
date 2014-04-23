@@ -211,11 +211,11 @@ bool ServerListFilter::check(const ServerItem& item) const
   if (!rabbit   .check(type == RabbitChase)) { return false; }
 
   const uint16_t options = p.gameOptions;
-  if (!jump     .check(options & JumpingGameStyle))     { return false; }
-  if (!rico     .check(options & RicochetGameStyle))    { return false; }
-  if (!handi    .check(options & HandicapGameStyle))    { return false; }
-  if (!inertia  .check(options & InertiaGameStyle))     { return false; }
-  if (!antidote .check(options & AntidoteGameStyle))    { return false; }
+  if (!jump     .check((options & JumpingGameStyle)!=0))     { return false; }
+  if (!rico     .check((options & RicochetGameStyle)!=0))    { return false; }
+  if (!handi    .check((options & HandicapGameStyle)!=0))    { return false; }
+  if (!inertia  .check((options & InertiaGameStyle)!=0))     { return false; }
+  if (!antidote .check((options & AntidoteGameStyle)!=0))    { return false; }
 
   if (!replay   .check(isReplay(item))) { return false; }
   if (!favorite .check(item.favorite))  { return false; }

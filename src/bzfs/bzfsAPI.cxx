@@ -719,6 +719,15 @@ BZF_API bz_Plugin* bz_getPlugin(const char* name)
 #endif
 }
 
+BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data )
+{
+	bz_Plugin *p = bz_getPlugin(plugin);
+	if (p == nullptr)
+		return 0;
+
+	return p->GeneralCallback(name,data);
+}
+
 //-------------------------------------------------------------------------
 //
 // utility
@@ -1135,6 +1144,16 @@ BZF_API bool bz_isPlayerPaused( int playerID )
   return player->player.isPaused();
 }
 
+BZF_API int bz_getPausedTime( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return -1;
+
+  return player->player.getPausedTime();
+}
+
 BZF_API int bz_getIdleTime( int playerID )
 {
   GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(playerID);
@@ -1142,17 +1161,7 @@ BZF_API int bz_getIdleTime( int playerID )
   if (!otherData)
     return -1;
 
-  std::string statsString = otherData->player.getIdleStat();
-
-  if (statsString.empty())
-    return -1;
-
-  statsString = statsString.substr(statsString.rfind(" "), statsString.length() - 1);
-
-  if (statsString.empty())
-    return -1;
-
-  return atoi(statsString.c_str());
+  return otherData->player.getIdleTime();
 }
 
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
@@ -1620,6 +1629,31 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
   return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
+BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam )
+{
+	if (!pos || !flagType)
+		return false;
+
+	FlagTypeMap &flagMap = FlagType::getFlagMap();
+	if (flagMap.find(std::string(flagType)) == flagMap.end())
+		return false;
+
+	FlagType *flag = flagMap.find(std::string(flagType))->second;
+
+	PlayerId player;
+	if ( fromPlayer == BZ_SERVER )
+		player = ServerPlayer;
+	else
+		player = fromPlayer;
+
+	int realShotID = world->getWorldWeapons().getNewWorldShotID(player);
+
+	if (shotID != NULL)
+		*shotID = realShotID;
+
+	return fireWorldWep(flag,lifetime,player,pos,tilt,direction, speed,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+}
+
 BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
 {
   const char* flagType = "GM";
@@ -1641,6 +1675,61 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
     shotID, dt, (TeamColor)convertTeam(shotTeam));
 
   return shotID;
+}
+
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam )
+{
+	return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID , dt, shotTeam );
+}
+
+BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID , const char* name)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return 0;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	if (shot->MetaData.find(n) == shot->MetaData.end())
+		return 0;
+
+	return shot->MetaData[n];
+}
+
+BZF_API void bz_setShotMetaData (int fromPlayer, int shotID , const char* name, uint32_t value)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	shot->MetaData[n] = value;
+}
+
+BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID , const char* name)
+{
+	uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+
+	if (shotGUId == 0 || name == NULL)
+		return false;
+
+	Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+
+	std::string n = name;
+	if (shot->MetaData.find(n) == shot->MetaData.end())
+		return false;
+
+	return true;
+}
+
+BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID)
+{
+	return ShotManager.FindShotGUID(fromPlayer,shotID);
 }
 
 // time API
@@ -2486,6 +2575,19 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] )
   sendFlagUpdate(*pFlag);
 
   return true;
+}
+
+BZF_API int bz_getPlayerFlagID ( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return -1;
+
+  if (!player->player.haveFlag())
+    return -1;
+
+  return player->player.getFlag();
 }
 
 BZF_API int bz_flagPlayer ( int flag )

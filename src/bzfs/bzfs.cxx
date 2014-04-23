@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -631,39 +631,53 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
 
 void pauseCountdown ( const char *pausedBy )
 {
-	if (clOptions->countdownPaused)
-		return;
+  if (clOptions->countdownPaused)
+    return;
 
-	clOptions->countdownPaused = true;
-	countdownResumeDelay = -1; // reset back to "unset"
-	if (pausedBy)
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
-	else
-		sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+  clOptions->countdownPaused = true;
+  countdownResumeDelay = -1; // reset back to "unset"
+
+  if (pausedBy)
+    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
+  else
+    sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
+
+  // fire off a game pause event
+  bz_GamePauseResumeEventData_V1 pauseEventData;
+  pauseEventData.eventType = bz_eGamePauseEvent;
+  pauseEventData.actionBy = pausedBy;
+  worldEventManager.callEvents(bz_eGamePauseEvent, &pauseEventData);
 }
 
 void resumeCountdown ( const char *resumedBy )
 {
-	if (!clOptions->countdownPaused)
-		return;
+  if (!clOptions->countdownPaused)
+    return;
 
-	clOptions->countdownPaused = false;
-	countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
+  clOptions->countdownPaused = false;
+  countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
 
-	if (countdownResumeDelay <= 0) {
-	    // resume instantly
-	    countdownResumeDelay = -1; // reset back to "unset"
-	    if (resumedBy)
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
-	    else
-		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
-	    } else {
-		// resume after number of seconds in countdownResumeDelay
-		if (resumedBy)
-		    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
-		else
-		    sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
-	    }
+  if (countdownResumeDelay <= 0) {
+    // resume instantly
+    countdownResumeDelay = -1; // reset back to "unset"
+
+    if (resumedBy)
+	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+    else
+	sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+
+    // fire off a game resume event
+    bz_GamePauseResumeEventData_V1 resumeEventData;
+    resumeEventData.eventType = bz_eGameResumeEvent;
+    resumeEventData.actionBy = resumedBy;
+    worldEventManager.callEvents(bz_eGameResumeEvent, &resumeEventData);
+  } else {
+      // resume after number of seconds in countdownResumeDelay
+      if (resumedBy)
+	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
+      else
+	  sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+  }
 }
 
 void resetTeamScores ( void )
@@ -1602,8 +1616,8 @@ static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
   directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
   // Fixing security hole, because a client can ignore the reject message
   // then he can avoid a ban, hostban...
-  removePlayer(playerIndex, "/rejected");
-  return;
+  const std::string msg = "/rejected: " + stripAnsiCodes(reason);
+  removePlayer(playerIndex, msg.c_str());
 }
 
 // FIXME this is a workaround for a bug, still needed?
@@ -2015,7 +2029,8 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
   worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-  playerData->player.setTeam((TeamColor)convertTeam((bz_eTeamType)autoTeamData.team));
+  t = (TeamColor)convertTeam((bz_eTeamType)autoTeamData.team);	// team may be modified
+  playerData->player.setTeam(t);
   playerData->player.endShotCredit = 0;	// reset shotEndCredit
   playerData->player.endShotShieldCredit = 0;	// endShotCredit for holding the shield flag (0 or 1)
 
@@ -2030,8 +2045,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   // to regular player immediately, but only if last time time you
   // were a regular player isn't in the rejoin list. As well, this all
   // only applies if the game isn't currently empty.
-  if ((playerData->player.getTeam() != ObserverTeam) &&
-      (GameKeeper::Player::count() >= 0)) {
+  if ((t != ObserverTeam) && (GameKeeper::Player::count() >= 0)) {
     float waitTime = rejoinList.waitTime (playerIndex);
     if (waitTime > 0.0f) {
       char buffer[MessageLen];
@@ -3576,7 +3590,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
 
-  uint32_t shotGUID = ShotManager.FindShot(playerIndex,shot.id & 0xff);
+  uint32_t shotGUID = ShotManager.FindShotGUID(playerIndex,shot.id & 0xff);
   ShotManager.SetShotTarget(shotGUID,targetId);
 
   // TODO, Remove this and let the GM update logic send the updates,
@@ -3808,7 +3822,7 @@ static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 
   playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
 
-  ShotManager.RemoveShot(ShotManager.FindShot(id,shotIndex & 0xff));
+  ShotManager.RemoveShot(ShotManager.FindShotGUID(id,shotIndex & 0xff));
 
   // shot has ended prematurely -- send MsgShotEnd
   void *buf, *bufStart = getDirectMessageBuffer();
@@ -3834,21 +3848,25 @@ static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 }
 
 
-/** observers and paused players should not be sending updates.. punish the
- * ones that are paused since they are probably cheating.
+/* Players who are paused or have never spawned and observers should not be
+ * sending updates. Don't bother to kick observers who try and fail to cheat.
  */
 static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
-  if (p.isObserver() || p.isPaused()) {
-    if (p.isPaused()) {
-      char buffer[MessageLen];
-      logDebugMessage(1,"Player \"%s\" tried to %s while paused\n", p.getCallSign(), action);
-      snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s while paused.", action);
-      sendMessage(ServerPlayer, t, buffer);
-      snprintf(buffer, MessageLen, "Invalid attempt to %s while paused", action);
-      removePlayer(t, buffer);
-    } else {
-      logDebugMessage(1,"Player %s tried to %s as an observer\n", p.getCallSign(), action);
-    }
+  const char *state = NULL;
+  if (p.isObserver()) {
+    state = "as an observer";
+  } else if (p.isPaused()) {
+    state = "while paused";
+  } else if (p.hasNeverSpawned()) {
+    state = "before spawning";
+  }
+  if (state) {
+    logDebugMessage(1,"Player %s [%d] tried to %s %s\n", p.getCallSign(), t, action, state);
+    char buffer[MessageLen];
+    snprintf(buffer, MessageLen, "Autokick: Looks like you tried to %s %s.", action, state);
+    sendMessage(ServerPlayer, t, buffer);
+    snprintf(buffer, MessageLen, "Invalid attempt to %s %s", action, state);
+    removePlayer(t, buffer);
     return true;
   }
   return false;
@@ -3948,13 +3966,49 @@ static void adjustTolerances()
 }
 
 
-bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
+bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
 {
+  // Shortcut to the player info
   PlayerInfo &player = playerData->player;
+
+  // Grab the length of the raw message
+  const int totalChars = strlen(message);
+
+  // Count visible and bad characters
+  int badChars = 0;
+  int visibleChars = 0;
+  for (int i=0; i < totalChars; i++) {
+    // Is it a visible character?
+    if (TextUtils::isVisible(message[i])) {
+      visibleChars++;
+    }
+    // Not visible? Then is it something other than a space?
+    else if (message[i] != 32) {
+      badChars++;
+    }
+  }
+  
+  // Kick the player if any bad characters are found
+  if (badChars > 0) {
+    sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
+    logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",
+	    player.getCallSign(), t, badChars);
+    removePlayer(t, "garbage");
+
+    // Ignore garbage message
+    return true;
+  }
+
+  // Ignore message if there are no visible characters
+  if (visibleChars == 0) {
+    return true;
+  }
+  
+  // Get last message and last message time
   const std::string &oldMsg = player.getLastMsg();
   float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
 
-  // don't consider whitespace
+  // Ignore whitespace
   std::string newMsg = TextUtils::no_whitespace(message);
 
   // if it's first message, or enough time since last message - can't
@@ -3981,55 +4035,6 @@ bool checkSpam(char* message, GameKeeper::Player* playerData, int t)
 
   // record this message for next time
   player.setLastMsg(newMsg);
-  return false;
-}
-
-
-/** check the message being sent for invalid characters.  long
- *  unreadable messages are indicative of denial-of-service and crash
- *  attempts.  remove the player immediately, only modified clients
- *  should be sending such garbage messages.
- *
- *  that said, more than one badChar should be allowed since there
- *  might be two "magic byte" characters being used for backwards
- *  compatibility client-side message processing (as was used for the
- *  /me command at one point).
- */
-bool checkGarbage(char* message, GameKeeper::Player* playerData, int t)
-{
-  PlayerInfo &player = playerData->player;
-  static const int tooLong = MaxPacketLen / 2;
-  const int totalChars = strlen(message);
-
-  /* if the message is very long and looks like junk, give the user
-   * the boot.
-   */
-  if (totalChars > tooLong) {
-    int badChars = 0;
-    int i;
-
-    /* tally up the junk */
-    for (i=0; i < totalChars; i++) {
-      if (!TextUtils::isPrintable(message[i])) {
-	badChars++;
-      }
-    }
-
-    /* even once is once too many since they may be attempting to
-     * cause a crash, but allow a few anyways.
-     */
-    if (badChars > 5) {
-      sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-      logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d of %d non-printable chars\n",
-	     player.getCallSign(), t, badChars, totalChars);
-      removePlayer(t, "garbage");
-
-      // they're only happy when it rains
-      return true;
-    }
-  }
-
-  // the world is not enough
   return false;
 }
 
@@ -4321,7 +4326,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     // player declaring self destroyed
     case MsgKilled: {
-      if (playerData->player.isObserver())
+      if (invalidPlayerAction(playerData->player, t, "die"))
 	break;
       // data: id of killer, shot id of killer
       PlayerId killer;
@@ -4399,7 +4404,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     // shot ended prematurely
     case MsgShotEnd: {
-      if (playerData->player.isObserver())
+      if (invalidPlayerAction(playerData->player, t, "end a shot"))
 	break;
 
       // endShot anti-cheat
@@ -4447,7 +4452,18 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
       buf = nboUnpackUShort(buf, from);
       buf = nboUnpackUShort(buf, to);
-      sendTeleport(t, from, to);
+
+      // Validate the teleport source and destination
+      const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
+      unsigned int maxTele = teleporterList.size();
+
+      if (from < maxTele * 2 && to < maxTele * 2) {
+        sendTeleport(t, from, to);
+      }
+      else {
+        logDebugMessage(2,"Player %s [%d] tried to send invalid teleport (from %u to %u)\n",
+          playerData->player.getCallSign(), t, from, to);
+      }
       break;
     }
 
@@ -4479,12 +4495,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	       playerData->player.getCallSign(), t, dstPlayer, message);
 	}
       }
-      // check for spamming
-      if (checkSpam(message, playerData, t))
-	break;
-
-      // check for garbage
-      if (checkGarbage(message, playerData, t))
+      // check for spamming or garbage
+      if (isSpamOrGarbage(message, playerData, t))
 	break;
 
       bz_ChatEventData_V1 chatData;
@@ -4608,8 +4620,15 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       break;
 
     case MsgNewRabbit: {
-      if (t == rabbitIndex)
-	anointNewRabbit();
+      if (clOptions->gameType == RabbitChase) {
+	if (t == rabbitIndex)
+	  anointNewRabbit();
+      } else {
+	logDebugMessage(1,"Kicking Player %s [%d] Illegal rabbit\n",
+	  playerData->player.getCallSign(), t);
+	sendMessage(ServerPlayer, t, "Autokick: not a rabbit chase game.");
+	removePlayer(t, "Illegal rabbit");
+      }
       break;
     }
 
@@ -4760,17 +4779,20 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	  static const float positionFudge = 10.0f; /* linear distance */
 	  float worldSize = BZDBCache::worldSize;
 	  if ( (state.pos[1] >= worldSize*0.5f + positionFudge) || (state.pos[1] <= -worldSize*0.5f - positionFudge)) {
-	    std::cout << "y position (" << state.pos[1] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+	    logDebugMessage(2,"Player %s [%d] y position %.2f is out of bounds (%.2f + %.2f)\n",
+	      playerData->player.getCallSign(), t, state.pos[1], worldSize * 0.5f, positionFudge);
 	    InBounds = false;
 	  } else if ( (state.pos[0] >= worldSize*0.5f + positionFudge) || (state.pos[0] <= -worldSize*0.5f - positionFudge)) {
-	    std::cout << "x position (" << state.pos[0] << ") is out of bounds (" << worldSize * 0.5f << " + " << positionFudge << ")" << std::endl;
+	    logDebugMessage(2,"Player %s [%d] x position %.2f is out of bounds (%.2f + %.2f)\n",
+	      playerData->player.getCallSign(), t, state.pos[0], worldSize * 0.5f, positionFudge);
 	    InBounds = false;
 	  }
 	}
 
 	static const float burrowFudge = 1.0f; /* linear distance */
 	if (state.pos[2]<BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - burrowFudge) {
-	  std::cout << "z depth (" << state.pos[2] << ") is less than burrow depth (" << BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) << " - " << burrowFudge << ")" << std::endl;
+	  logDebugMessage(2,"Player %s [%d] z depth %.2f is less than burrow depth (%.2f + %.2f)\n",
+	    playerData->player.getCallSign(), t, state.pos[2], BZDB.eval(StateDatabase::BZDB_BURROWDEPTH), burrowFudge);
 	  InBounds = false;
 	}
 
@@ -4925,6 +4947,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     default:
       logDebugMessage(1,"Player [%d] sent unknown packet type (%x), possible attack from %s\n",
 	     t, code, handler->getTargetIP());
+      removePlayer(t, "Autokick: Sent unknown packet type");
   }
 }
 
@@ -5123,8 +5146,13 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 		  AddPlayer(p, &playerData);
   }
 
-  // Check host bans
   if (playerData.netHandler) {
+    // Check for hung player connections that never entered the game completely
+    if (!playerData.player.isCompletelyAdded() && TimeKeeper::getCurrent() - playerData.netHandler->getTimeAccepted() > 300.0f) {
+      rejectPlayer(p, RejectBadRequest, "Failed to connect within reasonable timeframe");
+  }
+
+    // Check host bans
     const char *hostname = playerData.netHandler->getHostname();
     if (hostname && playerData.needsHostbanChecked()) {
       if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
@@ -5410,6 +5438,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
+	      logDebugMessage(2,"Game peer %s not allowed\n", netHandler->getTargetIP());
 	      peer.deleteMe = true;
 	      return;
 	    }
@@ -5448,6 +5477,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
 	    {
+	      logDebugMessage(2,"Peer %s not allowed\n", netHandler->getTargetIP());
 	      peer.deleteMe = true;
 	      return;
 	    }
@@ -5456,6 +5486,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    BanInfo info(IP);
 	    if (!clOptions->acl.validate(IP, &info))
 	    {
+	      logDebugMessage(2,"Peer %s banned\n", netHandler->getTargetIP());
 	      std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
 	      peer.sendChunks.push_back(banMsg);
 	      peer.deleteMe = true;
@@ -5496,6 +5527,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
     BanInfo info(IP);
     if (!clOptions->acl.validate(IP, &info))
     {
+      logDebugMessage(2,"API peer %s banned\n", netHandler->getTargetIP());
       std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
       peer.sendChunks.push_back(banMsg);
       peer.deleteMe = true;
@@ -6459,6 +6491,11 @@ int main(int argc, char **argv)
 		countdownResumeDelay = -1; // reset back to "unset"
 		clOptions->countdownPaused = false;
 		sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+
+		// fire off a game resume event
+		bz_GamePauseResumeEventData_V1 resumeEventData;
+		resumeEventData.eventType = bz_eGameResumeEvent;
+		worldEventManager.callEvents(bz_eGameResumeEvent, &resumeEventData);
 	    }
 	    else
 	    {
