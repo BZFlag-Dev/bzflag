@@ -178,6 +178,9 @@
     <ClCompile Include="..\..\src\bzfs\ShotManager.cxx">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\ServerDialogManager.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzfs\CustomArc.h">
@@ -352,6 +355,9 @@
       <Filter>Headers\Player Info</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\ShotManager.h">
+      <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ServerDialogManager.h">
       <Filter>Headers\Server</Filter>
     </ClInclude>
   </ItemGroup>

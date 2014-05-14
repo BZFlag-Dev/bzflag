@@ -286,6 +286,7 @@
     </ClCompile>
     <ClCompile Include="..\..\src\common\Country.cxx" />
     <ClCompile Include="..\..\src\common\cURLManager.cxx" />
+    <ClCompile Include="..\..\src\common\DialogData.cxx" />
     <ClCompile Include="..\..\src\common\ErrorHandler.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -535,6 +536,7 @@
     <ClInclude Include="..\..\include\CallbackList.h" />
     <ClInclude Include="..\..\include\CommandManager.h" />
     <ClInclude Include="..\..\include\common.h" />
+    <ClInclude Include="..\..\include\DialogData.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="..\..\include\ConfigFileManager.h" />
     <ClInclude Include="..\..\include\Country.h" />
