@@ -35,7 +35,7 @@ bool DialogData::packDialog(void *buf)
   for (uint16_t i = 0; i < dialogItems.size(); i++) {
     // Pack the dialog item type
     buf = nboPackUByte(buf, uint8_t(dialogItems[i]->type));
-    
+
     // Pack the dialog item label
     buf = nboPackStdString(buf, dialogItems[i]->label);
 
@@ -87,17 +87,17 @@ bool DialogData::unpackDialog(const void *buf)
 
   // Loop through all the dialog items
   for (int i = 0; i < _dialogItemCount; i++) {
-    uint8_t type;
+    uint8_t item_type;
 
     // Unpack the item type
-    buf = nboUnpackUByte(buf, type);
+    buf = nboUnpackUByte(buf, item_type);
 
     // Unpack the label for the dialog item
     std::string label;
     buf = nboUnpackStdString(buf, label);
 
     // Unpack dialog item type specific data
-    switch (type) {
+    switch (item_type) {
       case StaticTextItem: {
 	DialogDataStaticTextItem* item = new DialogDataStaticTextItem();
 	// Unpack the static text to display
@@ -211,7 +211,7 @@ bool DialogData::packItemTrigger(void *buf, unsigned int itemIndex)
       buf = nboPackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[itemIndex])->responseChoice);
       break;
   }
-  
+
   return true;
 }
 
