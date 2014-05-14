@@ -19,6 +19,7 @@ libCommon_la_SOURCES  =			\
 	CommandManager.cxx		\
 	ConfigFileManager.cxx		\
 	Country.cxx			\
+	DialogData.cxx			\
 	ErrorHandler.cxx		\
 	FileManager.cxx			\
 	Flag.cxx			\

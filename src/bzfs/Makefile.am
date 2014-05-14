@@ -108,6 +108,8 @@ bzfs_SOURCES =				\
 	Score.cxx			\
 	ServerCommand.cxx		\
 	ServerCommand.h			\
+	ServerDialogManager.cxx		\
+	ServerDialogManager.h		\
 	ServerSidePlayer.cxx		\
 	ShotManager.h			\
 	ShotManager.cxx			\
