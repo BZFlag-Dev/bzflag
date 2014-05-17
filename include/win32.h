@@ -70,11 +70,12 @@ typedef unsigned int	uint32_t;
 // missing functions
 #  define snprintf	_snprintf
 
+/*
   namespace std {
     template<typename _Tp>
     int isnan(_Tp __f) { return _isnan((double)__f); }
   }
-
+*/
 #endif // _MSC_VER
 #endif // __WIN32_H__
 

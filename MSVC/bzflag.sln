@@ -1,5 +1,5 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzflag", "build\bzflag.vcxproj", "{5000550B-DA03-4872-9975-1AA7EE3A40AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "build\common.vcxproj", "{57138F88-A81F-4FFB-8BDD-58DB1A1473F5}"
