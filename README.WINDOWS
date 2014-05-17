@@ -2,26 +2,25 @@ README for Windows (32- and 64-bit) platforms
 ---------------------------------------------
 
 **Compilers**
-BZFlag uses Microsoft Visual C++ for its prebuilt binary
-releases and project files are provided for it. The current
-compiler used is Visual C++ 2013. Both the full
-and express versions will build just fine.
+BZFlag uses Microsoft Visual C++ for its pre-built binary
+releases and project files are provided for anyone to use.
+The current compiler used is Visual C++ 2013. Both the full
+and express versions are supported. Support for versions of 
+Visual Studio prior to 2013 has been discontinued, and no 
+projects are provided for these versions.
 
-Support for versions of Visual Studio prior to 2013 have been
-discontinued, and no projects are provided for these versions.
+Users that do not have the full commercial version of Visual Studio
+may use the freely available VC2013 EE edition for personal use.
+It can be found at http://www.microsoft.com/express/download/. 
 
 It is also possible to build on Windows using MinGW/MSYS or
 Cygwin, both of which use a unix-style autotools build system;
 for details, see README.MINGW32 (for MinGW) or the main
-README (for Cygwin).
+README (for Cygwin). These build method are not maintained as
+well as the systems used for our official builds, so results
+may vary.
 
-The most common way to build on windows is to use Visual C++.
-The freely available VC2013 EE edition is well suited to users
-who wish to compile the client for personal use. It can be found at
-http://www.microsoft.com/express/download/. For more info
-on compiling with minGW please see the README.MINGW32 that was
-included in this source package. The rest of this document will
-refer to the build process using Visual C++ 2013.
+This document focuses on the build process using Visual C++ 2013.
 
 **Targets**
 There are a total of 4 build targets in the VC projects.
