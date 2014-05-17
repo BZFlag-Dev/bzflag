@@ -83,17 +83,17 @@ public:
 class DialogDataMultipleChoiceItem : public DialogDataItem
 {
 public:
-  DialogDataMultipleChoiceItem() : selectedChoice(0), DialogDataItem(MultipleChoiceItem)
+  DialogDataMultipleChoiceItem() : DialogDataItem(MultipleChoiceItem), selectedChoice(0)
   {
   }
 
   std::vector<DialogDataMultipleChoiceOption*> choices;
   uint16_t selectedChoice;
 
-  bool addOption(std::string label, std::string icon = std::string(""))
+  bool addOption(std::string _label, std::string icon = std::string(""))
   {
     DialogDataMultipleChoiceOption *option = new DialogDataMultipleChoiceOption();
-    option->label = label;
+    option->label = _label;
     option->icon = icon;
     choices.push_back(option);
     return true;
@@ -103,7 +103,7 @@ public:
 class DialogDataCheckboxItem : public DialogDataItem
 {
 public:
-  DialogDataCheckboxItem() : checked(false), DialogDataItem(CheckboxItem)
+  DialogDataCheckboxItem() : DialogDataItem(CheckboxItem), checked(false)
   {
   }
 
