@@ -195,7 +195,7 @@ appropriate to your system for more information:
   IRIX				README.IRIX
   Solaris			README.SOLARIS
   Mac OS X			README.MacOSX
-  Windows XP and up		README.WINDOWS, README.MINGW32
+  Windows 			README.WINDOWS, README.MINGW32
 
 
 You can also build an installable package using:
