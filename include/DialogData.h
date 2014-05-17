@@ -83,18 +83,27 @@ public:
 class DialogDataMultipleChoiceItem : public DialogDataItem
 {
 public:
-  DialogDataMultipleChoiceItem() : DialogDataItem(MultipleChoiceItem)
+  DialogDataMultipleChoiceItem() : selectedChoice(0), DialogDataItem(MultipleChoiceItem)
   {
   }
 
   std::vector<DialogDataMultipleChoiceOption*> choices;
-  uint16_t responseChoice;
+  uint16_t selectedChoice;
+
+  bool addOption(std::string label, std::string icon = std::string(""))
+  {
+    DialogDataMultipleChoiceOption *option = new DialogDataMultipleChoiceOption();
+    option->label = label;
+    option->icon = icon;
+    choices.push_back(option);
+    return true;
+  }
 };
 
 class DialogDataCheckboxItem : public DialogDataItem
 {
 public:
-  DialogDataCheckboxItem() : DialogDataItem(CheckboxItem)
+  DialogDataCheckboxItem() : checked(false), DialogDataItem(CheckboxItem)
   {
   }
 
@@ -124,7 +133,14 @@ class DialogData
     std::vector<std::string> buttons;
 
     DialogData(uint32_t dialogID, DialogType type, int playerID, std::string title);
+
+    // Dialog item methods
+    DialogDataStaticTextItem* addStaticText(std::string text);
+    DialogDataFreeformTextItem* addFreeformText(std::string label, uint16_t maximumLength);
+    DialogDataMultipleChoiceItem* addMultipleChoice(std::string label);
+    DialogDataCheckboxItem* addCheckbox(std::string label);
   
+    // Network data methods
     bool packDialog(void *buf);
     bool unpackDialog(const void *buf);
     bool packFullResponse(void *buf, unsigned int buttonIndex);

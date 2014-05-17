@@ -18,6 +18,51 @@ DialogData::DialogData(uint32_t _dialogID, DialogType _type, int _dialogOwner, s
 {
 }
 
+DialogDataStaticTextItem* DialogData::addStaticText(std::string text)
+{
+  DialogDataStaticTextItem *item = new DialogDataStaticTextItem();
+
+  item->text = text;
+
+  dialogItems.push_back(item);
+
+  return item;
+}
+
+DialogDataFreeformTextItem* DialogData::addFreeformText(std::string label, uint16_t maximumLength)
+{
+  DialogDataFreeformTextItem *item = new DialogDataFreeformTextItem();
+
+  item->label = label;
+  item->maximumLength = maximumLength;
+
+  dialogItems.push_back(item);
+
+  return item;
+}
+
+DialogDataMultipleChoiceItem* DialogData::addMultipleChoice(std::string label)
+{
+  DialogDataMultipleChoiceItem *item = new DialogDataMultipleChoiceItem();
+
+  item->label = label;
+
+  dialogItems.push_back(item);
+
+  return item;
+}
+
+DialogDataCheckboxItem* DialogData::addCheckbox(std::string label)
+{
+  DialogDataCheckboxItem *item = new DialogDataCheckboxItem();
+
+  item->label = label;
+
+  dialogItems.push_back(item);
+
+  return item;
+}
+
 /* Pack/Unpack Dialog -- server to client */
 
 bool DialogData::packDialog(void *buf)
@@ -185,7 +230,7 @@ bool DialogData::packFullResponse(void *buf, unsigned int buttonIndex)
 	buf = nboPackStdString(buf, ((DialogDataFreeformTextItem*)dialogItems[i])->text);
 	break;
       case MultipleChoiceItem:
-	buf = nboPackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[i])->responseChoice);
+	buf = nboPackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[i])->selectedChoice);
 	break;
     }
   }
@@ -208,7 +253,7 @@ bool DialogData::packItemTrigger(void *buf, unsigned int itemIndex)
       buf = nboPackStdString(buf, ((DialogDataFreeformTextItem*)dialogItems[itemIndex])->text);
       break;
     case MultipleChoiceItem:
-      buf = nboPackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[itemIndex])->responseChoice);
+      buf = nboPackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[itemIndex])->selectedChoice);
       break;
   }
 
@@ -242,7 +287,7 @@ bool DialogData::unpackResponse(const void *buf)
 	  buf = nboUnpackStdString(buf, ((DialogDataFreeformTextItem*)dialogItems[itemIndex])->text);
 	  break;
 	case MultipleChoiceItem:
-	  buf = nboUnpackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[itemIndex])->responseChoice);
+	  buf = nboUnpackUShort(buf, ((DialogDataMultipleChoiceItem*)dialogItems[itemIndex])->selectedChoice);
 	  break;
       }
       break;
