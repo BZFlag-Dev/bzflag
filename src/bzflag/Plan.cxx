@@ -17,6 +17,7 @@
 #include "Roster.h"
 #include "TargetingUtils.h"
 #include "World.h"
+#include <algorithm>
 
 /**
  * Plan

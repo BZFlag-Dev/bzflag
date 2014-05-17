@@ -24,6 +24,7 @@
 #include "WorldPlayer.h"
 #include "playing.h"
 #include "Plan.h"
+#include <algorithm>
 
 typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 
