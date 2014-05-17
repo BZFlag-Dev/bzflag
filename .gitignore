@@ -132,3 +132,5 @@ work
 Icon?
 ehthumbs.db
 Thumbs.db
+*.ib_pdb_index
+*.ib_pdb_index
