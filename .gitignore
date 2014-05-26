@@ -38,6 +38,9 @@
 *.rc
 *.res
 *.manifest
+*.nativecodeanalysis.all.xml
+*.nativecodeanalysis.xml
+*.lastcodeanalysissucceeded
 
 # GNU Autotools
 Makefile.in
