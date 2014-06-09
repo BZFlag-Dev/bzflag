@@ -53,6 +53,7 @@ GameKeeper::Player::Player(int _playerIndex,
 
   addWasDelayed = false;
   addDelayStartTime = 0.0;
+  hasEntered = false;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -79,7 +80,7 @@ GameKeeper::Player::Player(int _playerIndex,
 
   addWasDelayed = false;
   addDelayStartTime = 0.0;
-
+  hasEntered = false;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler)
@@ -103,6 +104,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler *handler
 
   addWasDelayed = false;
   addDelayStartTime = 0.0;
+  hasEntered = false;
 }
 
 GameKeeper::Player::~Player()

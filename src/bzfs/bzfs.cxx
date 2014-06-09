@@ -4183,7 +4183,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     // player joining
     case MsgEnter: {
       // a previous MsgEnter will have set the name a few lines down from here
-      if (!playerData->accessInfo.getName().empty()) {
+      if (!playerData->accessInfo.getName().empty() && playerData->hasEntered) {
 	logDebugMessage(1,"Player %s [%d] sent another MsgEnter\n",
 	       playerData->player.getCallSign(), t);
 	rejectPlayer(t, RejectBadRequest, "invalid request");
@@ -4195,6 +4195,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	rejectPlayer(t, rejectCode, rejectMsg);
 	break;
       }
+	  playerData->hasEntered = true;
       playerData->accessInfo.setName(playerData->player.getCallSign());
       std::string timeStamp = TimeKeeper::timestamp();
       logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",

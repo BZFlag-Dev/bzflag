@@ -160,6 +160,8 @@ public:
     // flag to let us know the player is on it's way out
     bool  isParting;
 
+	bool hasEntered;
+
     // logic class for server side players
     bz_ServerSidePlayerHandler*	playerHandler;
 
