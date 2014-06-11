@@ -159,7 +159,7 @@ unsigned int		maxChatLines;
 void ChatEvents::Init ( const char* commandLine )
 {
   maxChatLines = 1000;
-  if (commandLine)
+  if (commandLine && strlen(commandLine) > 0)
   {
     int realLines = atoi(commandLine);
     maxChatLines  = realLines;
@@ -293,4 +293,3 @@ void ChatEvents::Event ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
