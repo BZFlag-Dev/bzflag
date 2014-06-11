@@ -227,7 +227,7 @@ bool LastChatCommand::SlashCommand ( int playerID, bz_ApiString _command, bz_Api
 
     bz_sendTextMessage(BZ_SERVER,playerID,format("Last %d message for %s",numLines,params[1].c_str()).c_str());
 
-    for ( unsigned int i = 0; i < numLines-1; i++ )
+    for ( unsigned int i = 1; i <= numLines; i++ )
     {
       std::string chatItem = history[history.size()-i];
       bz_sendTextMessage(BZ_SERVER,playerID,format("%d<%s> %s",i,params[1].c_str(),chatItem.c_str()).c_str());
