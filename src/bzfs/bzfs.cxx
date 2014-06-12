@@ -1507,22 +1507,35 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (!senderData && sendingPlayer != ServerPlayer) {
     return;
   }
-  if (senderData && !senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
 
-    // if the player were sending to is an admin
-    GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
+  if (senderData) {
+    if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+      // If the user does not have the TALK permission, he can't send any messages
+      // he's only allowed to talk with admins, if he has the adminMessageSend permission
+      if (senderData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
+	if (recipientPlayer == AdminPlayers) {
+	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
+	  return;
+	}
 
-    // don't care if they're real, just care if they're an admin
-    if (recipientData && recipientData->accessInfo.isOperator()) {
-      sendMessage(sendingPlayer, recipientPlayer, msg, type);
-      return;
-    } else if (recipientPlayer == AdminPlayers) {
-      sendMessage(sendingPlayer, recipientPlayer, msg, type);
+	// Let the user send a private message to admins
+	// we define admins as those who have the adminMessageReceive permission
+	GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
+	if (recipientData && recipientData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive)) {
+	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
+	  return;
+	}
+      }
+
+      sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
+      return; // bail out
+    }
+
+    if (recipientPlayer < LastRealPlayer && !senderData->accessInfo.hasPerm(PlayerAccessInfo::privateMessage)) {
+      sendMessage(ServerPlayer, sendingPlayer, "You are not allowed to send private messages to other players!");
       return;
     }
 
-    sendMessage(ServerPlayer, sendingPlayer, "We're sorry, you are not allowed to talk!");
-    return; //bail out
   }
 
   sendMessage(sendingPlayer, recipientPlayer, msg, type);
