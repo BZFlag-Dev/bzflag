@@ -305,6 +305,7 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
+    <ClCompile Include="..\..\src\bzflag\ClientDialogManager.cxx" />
     <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -886,6 +887,7 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\bzflag\ClientDialogManager.h" />
     <ClInclude Include="..\..\src\bzflag\defaultBZDB.h" />
     <ClInclude Include="..\..\src\bzflag\clientConfig.h" />
     <ClInclude Include="..\..\src\bzflag\AudioMenu.h" />

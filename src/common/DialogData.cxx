@@ -14,6 +14,11 @@
 
 #include "Address.h"
 
+DialogData::DialogData(const void *buf) : dialogID(0), type(ModalDialog), dialogOwner(0), title("")
+{
+  unpackDialog(buf);
+}
+
 DialogData::DialogData(uint32_t _dialogID, DialogType _type, int _dialogOwner, std::string _title) : dialogID(_dialogID), type(_type), dialogOwner(_dialogOwner), title(_title)
 {
 }
