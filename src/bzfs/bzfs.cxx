@@ -2271,6 +2271,21 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     playerAlive(playerIndex);
 
   playerData->player.setCompletelyAdded();
+
+  // Example dialog
+  // TODO: Remove team selection from the Join Game menu and actually use a
+  // dialog to pick teams. This should have a better UI than just a multiple
+  // choice selector with current player counts on each team. For now, this
+  // will be enough to serve as a test of the dialog system.
+  DialogData* teamSelectionDialog = dialogManager.addDialog(ModalDialog, playerIndex, "Team Selection");
+  DialogDataMultipleChoiceItem* teamChoices = teamSelectionDialog->addMultipleChoice("Team");
+  teamChoices->addOption("Automatic", "automatic_icon");
+  for (int t = RogueTeam; t < RabbitTeam; t++) {
+    teamChoices->addOption(Team::getName((TeamColor)t), Team::getImagePrefix((TeamColor)t) + "_icon");
+  }
+  teamSelectionDialog->buttons.push_back("Join Team");
+  teamSelectionDialog->buttons.push_back("Leave Server");
+  dialogManager.send(teamSelectionDialog->dialogID);
 }
 
 
