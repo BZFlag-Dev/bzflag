@@ -31,6 +31,9 @@ public:
   uint32_t getNextDialogID();
 
   DialogData* addDialog(DialogType type, int playerID, std::string title);
+
+  bool send(uint32_t dialogID);
+  bool close(uint32_t dialogID);
 };
 
 

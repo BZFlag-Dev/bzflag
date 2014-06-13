@@ -141,10 +141,10 @@ class DialogData
     DialogDataCheckboxItem* addCheckbox(std::string label);
   
     // Network data methods
-    bool packDialog(void *buf);
+    void *packDialog(void *buf);
     bool unpackDialog(const void *buf);
-    bool packFullResponse(void *buf, unsigned int buttonIndex);
-    bool packItemTrigger(void *buf, unsigned int itemIndex);
+    void *packFullResponse(void *buf, unsigned int buttonIndex);
+    void *packItemTrigger(void *buf, unsigned int itemIndex);
     bool unpackResponse(const void *buf);
 };
 

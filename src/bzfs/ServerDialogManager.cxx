@@ -11,6 +11,7 @@
  */
 
 #include "ServerDialogManager.h"
+#include "bzfs.h"
 
 ServerDialogManager::ServerDialogManager() : lastDialogID(0)
 {
@@ -37,6 +38,22 @@ DialogData* ServerDialogManager::addDialog(DialogType type, int playerID, std::s
 
   // Send back the dialog so that it can be populated with items and buttons
   return dialog;
+}
+
+bool ServerDialogManager::send(uint32_t dialogID) {
+  if (dialogData[dialogID] == NULL)
+    return false;
+
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = dialogData[dialogID]->packDialog(bufStart);
+  int len = (char*)buf - (char*)bufStart;
+  broadcastMessage(MsgDialogCreate, len, bufStart);
+
+  return true;
+}
+
+bool ServerDialogManager::close(uint32_t dialogID) {
+  return true;
 }
 
 

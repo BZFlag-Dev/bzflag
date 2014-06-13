@@ -65,7 +65,7 @@ DialogDataCheckboxItem* DialogData::addCheckbox(std::string label)
 
 /* Pack/Unpack Dialog -- server to client */
 
-bool DialogData::packDialog(void *buf)
+void *DialogData::packDialog(void *buf)
 {
   // Pack the dialog ID
   buf = nboPackUInt(buf, dialogID);
@@ -115,7 +115,7 @@ bool DialogData::packDialog(void *buf)
     buf = nboPackStdString(buf, buttons[k]);
   }
 
-  return true;
+  return buf;
 }
 
 bool DialogData::unpackDialog(const void *buf)
@@ -201,7 +201,7 @@ bool DialogData::unpackDialog(const void *buf)
 
 // Send a full response to the server, which includes all the form data. This
 // is triggered when the Enter key or mouse click is triggered on a button.
-bool DialogData::packFullResponse(void *buf, unsigned int buttonIndex)
+void *DialogData::packFullResponse(void *buf, unsigned int buttonIndex)
 {
   // Pack the dialog ID
   buf = nboPackUInt(buf, dialogID);
@@ -235,12 +235,12 @@ bool DialogData::packFullResponse(void *buf, unsigned int buttonIndex)
     }
   }
 
-  return true;
+  return buf;
 }
 
 // Send the value of a single dialog item to the server. This is triggered by
 // pressing the Enter key or a mouse click (though mouse click .
-bool DialogData::packItemTrigger(void *buf, unsigned int itemIndex)
+void *DialogData::packItemTrigger(void *buf, unsigned int itemIndex)
 {
   buf = nboPackUInt(buf, dialogID);
   buf = nboPackUByte(buf, ItemTrigger);
@@ -257,7 +257,7 @@ bool DialogData::packItemTrigger(void *buf, unsigned int itemIndex)
       break;
   }
 
-  return true;
+  return buf;
 }
 
 bool DialogData::unpackResponse(const void *buf)

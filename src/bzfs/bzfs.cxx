@@ -51,7 +51,7 @@
 #include "Filter.h"
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
-
+#include "ServerDialogManager.h"
 
 // common implementation headers
 #include "Obstacle.h"
@@ -69,6 +69,8 @@
 #endif
 
 Shots::Manager ShotManager;
+
+ServerDialogManager dialogManager;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int, NetConnectedPeer> netConnectedPeers;
