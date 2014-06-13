@@ -110,6 +110,10 @@ const uint16_t		MsgWantSettings = 0x7773;		// 'ws'
 const uint16_t		MsgPortalAdd = 0x5061;			// 'Pa'
 const uint16_t		MsgPortalRemove = 0x5072;		// 'Pr'
 const uint16_t		MsgPortalUpdate = 0x5075;		// 'Pu'
+const uint16_t		MsgDialogCreate = 0x6463;		// 'dc'
+const uint16_t		MsgDialogUpdate = 0x6475;		// 'du'
+const uint16_t		MsgDialogDestroy = 0x6464;		// 'dd'
+const uint16_t		MsgDialogRespond = 0x6472;		// 'dr'
 
 // world database codes
 const uint16_t		WorldCodeHeader = 0x6865;		// 'he'
