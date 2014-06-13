@@ -87,6 +87,7 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
+#include "ClientDialogManager.h"
 
 #include "CollisionManager.h"
 
@@ -164,6 +165,8 @@ static void		setRobotTarget(RobotPlayer* robot);
 #endif
 
 static ResourceGetter	*resourceDownloader = NULL;
+
+static ClientDialogManager *dialogManager = new ClientDialogManager();
 
 // Far and Near Frustum clipping planes
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
@@ -3061,6 +3064,21 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
+
+    // Dialog messages
+
+    case MsgDialogCreate: {
+      dialogManager->unpackDialogCreate(msg);
+      break;
+    }
+
+    case MsgDialogUpdate: {
+      break;
+    }
+
+    case MsgDialogDestroy: {
+      break;
+    }
   }
 
   if (checkScores) updateHighScores();
