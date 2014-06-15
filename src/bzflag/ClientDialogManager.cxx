@@ -17,9 +17,17 @@ ClientDialogManager::ClientDialogManager()
 }
 
 bool ClientDialogManager::unpackDialogCreate(const void * msg) {
-  DialogData* dialog = new DialogData(msg);
+  DialogData* dialog = new DialogData();
 
-  return true;
+  // Try to unpack the dialog message
+  if (dialog->unpackDialog(msg)) {
+    // Success!  Store the dialog.
+    dialogData[dialog->dialogID] = dialog;
+
+    return true;
+  }
+
+  return false;
 }
 
 // Local Variables: ***

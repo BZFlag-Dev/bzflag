@@ -132,7 +132,7 @@ class DialogData
 
     std::vector<std::string> buttons;
 
-    DialogData(const void *buf);
+    DialogData();
     DialogData(uint32_t dialogID, DialogType type, int playerID, std::string title);
 
     // Dialog item methods
