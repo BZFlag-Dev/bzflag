@@ -47,7 +47,7 @@ bool ServerDialogManager::send(uint32_t dialogID) {
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = dialogData[dialogID]->packDialog(bufStart);
   int len = (char*)buf - (char*)bufStart;
-  broadcastMessage(MsgDialogCreate, len, bufStart);
+  directMessage(dialogData[dialogID]->dialogOwner, MsgDialogCreate, len, bufStart);
 
   return true;
 }
