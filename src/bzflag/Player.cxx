@@ -1346,8 +1346,6 @@ void Player::doDeadReckoning()
 
 
 // How long does the filter takes to be considered "initialized"
-const int   DRStateStable      = 100;
-const float maxToleratedJitter = 1.0f;
 
 void Player::setDeadReckoning(float timestamp)
 {

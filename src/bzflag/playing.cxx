@@ -6038,8 +6038,6 @@ struct MouseCtrlPair {
   MouseCtrlType y;
 };
 
-static const uint8_t mouseCtrlMask = 0x7;
-
 static const MouseCtrlPair mouseCtrlMap[8] = {
 //  X       Y
   { NoCtrl, NoCtrl }, // . . .
