@@ -2281,7 +2281,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   DialogDataMultipleChoiceItem* teamChoices = teamSelectionDialog->addMultipleChoice("Team");
   teamChoices->addOption("Automatic", "automatic_icon");
   for (int t = RogueTeam; t < RabbitTeam; t++) {
-    teamChoices->addOption(Team::getName((TeamColor)t), Team::getImagePrefix((TeamColor)t) + "_icon");
+    teamChoices->addOption(Team::getName((TeamColor)t), "");
   }
   teamSelectionDialog->buttons.push_back("Join Team");
   teamSelectionDialog->buttons.push_back("Leave Server");
