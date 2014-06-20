@@ -152,6 +152,9 @@ bool DialogData::unpackDialog(const void *buf)
 	// Unpack the static text to display
 	buf = nboUnpackStdString(buf, item->text);
 
+	// Set the label
+	item->label = label;
+
 	// Push this dialog item into the stack
 	dialogItems.push_back(item);
 	break;
@@ -160,6 +163,9 @@ bool DialogData::unpackDialog(const void *buf)
 	DialogDataFreeformTextItem* item = new DialogDataFreeformTextItem();
 	// Unpack the maximum text input length
 	buf = nboUnpackUShort(buf, item->maximumLength);
+
+	// Set the label
+	item->label = label;
 
 	// Push this dialog item into the stack
 	dialogItems.push_back(item);
@@ -180,24 +186,28 @@ bool DialogData::unpackDialog(const void *buf)
 	  item->choices.push_back(choice);
 	}
 
+	// Set the label
+	item->label = label;
+
 	// Push this dialog item into the stack
 	dialogItems.push_back(item);
 	break;
       }
     }
-
-    // Unpack the number of buttons
-    uint8_t _buttonCount;
-    buf = nboUnpackUByte(buf, _buttonCount);
-
-    // Unpack the button text for each button and add them to the stack
-    for (uint8_t k = 0; k < _buttonCount; k++) {
-      std::string buttonText;
-      buf = nboUnpackStdString(buf, buttonText);
-
-      buttons.push_back(buttonText);
-    }
   }
+
+  // Unpack the number of buttons
+  uint8_t _buttonCount;
+  buf = nboUnpackUByte(buf, _buttonCount);
+
+  // Unpack the button text for each button and add them to the stack
+  for (uint8_t k = 0; k < _buttonCount; k++) {
+    std::string buttonText;
+    buf = nboUnpackStdString(buf, buttonText);
+
+    buttons.push_back(buttonText);
+  }
+
   return true;
 }
 
