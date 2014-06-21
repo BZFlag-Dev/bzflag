@@ -26,7 +26,8 @@ public:
 
   ClientDialogManager();
 
-  bool unpackDialogCreate(const void * msg);
+  uint32_t unpackDialogCreate(const void * msg);
+  uint32_t unpackDialogDestroy(const void * msg);
 };
 
 

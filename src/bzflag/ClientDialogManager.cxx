@@ -12,11 +12,13 @@
 
 #include "ClientDialogManager.h"
 
+#include "Address.h"
+
 ClientDialogManager::ClientDialogManager()
 {
 }
 
-bool ClientDialogManager::unpackDialogCreate(const void * msg) {
+uint32_t ClientDialogManager::unpackDialogCreate(const void * msg) {
   DialogData* dialog = new DialogData();
 
   // Try to unpack the dialog message
@@ -24,10 +26,24 @@ bool ClientDialogManager::unpackDialogCreate(const void * msg) {
     // Success!  Store the dialog.
     dialogData[dialog->dialogID] = dialog;
 
-    return true;
+    return dialog->dialogID;
   }
 
-  return false;
+  return 0;
+}
+
+uint32_t ClientDialogManager::unpackDialogDestroy(const void * msg) {
+  uint32_t dialogID;
+
+  msg = nboUnpackUInt(msg, dialogID);
+
+  if (dialogData[dialogID] != NULL) {
+    delete dialogData[dialogID];
+    dialogData.erase(dialogID);
+    return dialogID;
+  }
+
+  return 0;
 }
 
 // Local Variables: ***
