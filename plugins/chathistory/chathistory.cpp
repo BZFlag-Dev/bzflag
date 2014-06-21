@@ -159,7 +159,7 @@ unsigned int		maxChatLines;
 void ChatEvents::Init ( const char* commandLine )
 {
   maxChatLines = 1000;
-  if (commandLine)
+  if (commandLine && strlen(commandLine) > 0)
   {
     int realLines = atoi(commandLine);
     maxChatLines  = realLines;
@@ -227,7 +227,7 @@ bool LastChatCommand::SlashCommand ( int playerID, bz_ApiString _command, bz_Api
 
     bz_sendTextMessage(BZ_SERVER,playerID,format("Last %d message for %s",numLines,params[1].c_str()).c_str());
 
-    for ( unsigned int i = 0; i < numLines-1; i++ )
+    for ( unsigned int i = 1; i <= numLines; i++ )
     {
       std::string chatItem = history[history.size()-i];
       bz_sendTextMessage(BZ_SERVER,playerID,format("%d<%s> %s",i,params[1].c_str(),chatItem.c_str()).c_str());
@@ -293,4 +293,3 @@ void ChatEvents::Event ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

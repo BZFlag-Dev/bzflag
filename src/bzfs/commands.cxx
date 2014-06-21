@@ -861,13 +861,6 @@ bool MsgCommand::operator() (const char	 *message,
   std::string message2;
   size_t callsignStart=0, callsignEnd=0, messageStart=0;
 
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::privateMessage)) {
-    char reply[MessageLen] = {0};
-    snprintf(reply, MessageLen, "%s, you are not presently authorized to /msg people privately", playerData->player.getCallSign());
-    sendMessage(ServerPlayer, from, reply);
-    return true;
-  }
-
   // start from after "/msg"
   std::string arguments = &message[4];
   std::string recipient = std::string("");

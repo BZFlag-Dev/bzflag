@@ -12,7 +12,7 @@
 
 // a base class for plugins that want to do HTTP
 #ifndef _BZFS_HTTP_H_
-#define _PLUGIN_HTTP_H_
+#define _BZFS_HTTP_H_
 
 #include "bzfsAPI.h"
 

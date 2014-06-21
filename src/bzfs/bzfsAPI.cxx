@@ -1626,7 +1626,7 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
   if ( realShotID == 0)
     realShotID = world->getWorldWeapons().getNewWorldShotID();
 
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,-1,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
 }
 
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam )

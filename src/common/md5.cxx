@@ -184,7 +184,7 @@ MD5::MD5(const std::string &text)
  */
 void MD5::transform(void)
 {
-  register uint32_t a, b, c, d;
+  uint32_t a, b, c, d;
 
   a = buf[0];
   b = buf[1];
