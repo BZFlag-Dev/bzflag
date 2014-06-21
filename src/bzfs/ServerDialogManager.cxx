@@ -22,15 +22,14 @@ uint32_t ServerDialogManager::getNextDialogID()
 {
   uint32_t dialogID = lastDialogID;
   do {
-    // Explicitly handle looping around. Is this necessary/correct?
-    if (dialogID == 4294967295) {
-      dialogID = 0;
-    }
-
-
+    // Increment our dialog ID
     dialogID++;
 
-    // If we have looped all the way around, bail out
+    // If we looped around, increment again
+    if (dialogID == 0)
+      dialogID++;
+
+    // If we have looped all the way around from where we started to no avail, bail out
     if (dialogID == lastDialogID && dialogData[dialogID] != NULL) {
       return 0;
     }
