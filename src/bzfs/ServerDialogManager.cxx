@@ -17,10 +17,26 @@ ServerDialogManager::ServerDialogManager() : lastDialogID(0)
 {
 }
 
-// TODO: Handle ID reuse in the event that we loop around.
+// Should return an unused dialogID between 1 and 4294967295, or 0 on failure
 uint32_t ServerDialogManager::getNextDialogID()
 {
-  lastDialogID++;
+  uint32_t dialogID = lastDialogID;
+  do {
+    // Explicitly handle looping around. Is this necessary/correct?
+    if (dialogID == 4294967295) {
+      dialogID = 0;
+    }
+
+
+    dialogID++;
+
+    // If we have looped all the way around, bail out
+    if (dialogID == lastDialogID && dialogData[dialogID] != NULL) {
+      return 0;
+    }
+  } while (dialogData[dialogID] != NULL);
+
+  lastDialogID = dialogID;
 
   return lastDialogID;
 }
@@ -29,6 +45,10 @@ DialogData* ServerDialogManager::addDialog(DialogType type, int playerID, std::s
 {
   // Get a new dialog ID
   uint32_t dialogID = getNextDialogID();
+
+  // If we get 0, getNextDialogID was unable to create a new dialog ID
+  if (dialogID == 0)
+    return NULL;
 
   // Create a new modal dialog
   DialogData *dialog = new DialogData(dialogID, type, playerID, title);
