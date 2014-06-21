@@ -464,6 +464,14 @@ public:
 			   GameKeeper::Player *playerData);
 };
 
+class DialogCommand : ServerCommand {
+public:
+  DialogCommand();
+
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
+};
+
 
 static MsgCommand	  msgCommand;
 static ServerQueryCommand serverQueryCommand;
@@ -516,6 +524,7 @@ static CmdHelp		  cmdHelp;
 static ModCountCommand    modCountCommand;
 static DebugCommand       debugCommand;
 static OwnerCommand       ownerCommand;
+static DialogCommand	  dialogCommand;
 
 CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
 CmdList::CmdList()			 : ServerCommand("/?",
@@ -616,6 +625,8 @@ DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
   "[value] - set debug level or display the current setting") {}
 OwnerCommand::OwnerCommand()		 : ServerCommand("/owner",
   "display the server owner's BZBB name") {}
+DialogCommand::DialogCommand()		 : ServerCommand("/dialog",
+  "[create|destroy <dialogID>] - test the dialog system") {}
 
 
 class NoDigit {
@@ -3523,6 +3534,56 @@ bool OwnerCommand::operator() (const char* UNUSED(message),
   }
   return true;
 }
+
+
+bool DialogCommand::operator() (const char* message,
+  GameKeeper::Player *playerData)
+{
+  int t = playerData->getIndex();
+
+  std::vector<std::string> parts = TextUtils::tokenize(message, " \t", 3);
+
+  if (parts.size() == 1) {
+    /* No arguments */
+    sendMessage(ServerPlayer, t, "Usage: /dialog [create|destroy <dialogID>]");
+  } else if (parts[1] == "create") {
+    DialogData* dialog = dialogManager.addDialog(ModalDialog, t, "Test Dialog");
+    if (dialog != NULL) {
+      DialogDataStaticTextItem* staticText = dialog->addStaticText("This is a test of the emergency broadcast system.");
+      DialogDataFreeformTextItem* freeformText = dialog->addFreeformText("Favorite Food", 64);
+      DialogDataMultipleChoiceItem* multipleChoice = dialog->addMultipleChoice("Favorite Color");
+      multipleChoice->addOption("Red");
+      multipleChoice->addOption("Green");
+      multipleChoice->addOption("Blue");
+      multipleChoice->addOption("Purple");
+      multipleChoice->addOption("Orange");
+      multipleChoice->addOption("White");
+      multipleChoice->addOption("Black");
+      multipleChoice->addOption("Red");
+      multipleChoice->addOption("Macaroni and Cheese");
+
+      dialogManager.send(dialog->dialogID);
+    }
+
+  } else if (parts[1] == "destroy") {
+    if (parts.size() == 3) {
+      int dialogID = atoi(parts[2].c_str());
+
+      if (dialogID > 0) {
+	if (dialogManager.close(dialogID)) {
+	  sendMessage(ServerPlayer, t, TextUtils::format("Sucessfully destroyed dialog %d", dialogID).c_str());
+	} else {
+	  sendMessage(ServerPlayer, t, TextUtils::format("Failed to destroy dialog %d. Maybe it doesn't exist?", dialogID).c_str());
+	}
+      }
+    }
+  } else {
+    sendMessage(ServerPlayer, t, "Usage: /dialog [create|destroy <dialogID>]");
+  }
+
+  return true;
+}
+
 
 
 // Local Variables: ***

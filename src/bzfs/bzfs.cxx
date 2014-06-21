@@ -51,7 +51,6 @@
 #include "Filter.h"
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
-#include "ServerDialogManager.h"
 
 // common implementation headers
 #include "Obstacle.h"

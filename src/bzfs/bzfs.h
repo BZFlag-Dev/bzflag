@@ -45,6 +45,7 @@
 #include "WorldInfo.h"
 #include "VotingArbiter.h"
 #include "ShotManager.h"
+#include "ServerDialogManager.h"
 
 #include <list>
 class PendingChatMessages
@@ -80,6 +81,8 @@ public:
 		type = m.type;
 	}
 };
+
+extern ServerDialogManager dialogManager;
 
 extern std::list<PendingChatMessages> pendingChatMessages;
 
