@@ -73,6 +73,19 @@ bool ServerDialogManager::send(uint32_t dialogID) {
 }
 
 bool ServerDialogManager::close(uint32_t dialogID) {
+  if (dialogData[dialogID] == NULL)
+    return false;
+
+  void *buf, *bufStart = getDirectMessageBuffer();
+  // Pack the dialog ID
+  buf = nboPackUInt(bufStart, dialogID);
+  int len = (char*)buf - (char*)bufStart;
+  directMessage(dialogData[dialogID]->dialogOwner, MsgDialogDestroy, len, bufStart);
+
+  delete dialogData[dialogID];
+
+  dialogData.erase(dialogID);
+
   return true;
 }
 
