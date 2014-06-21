@@ -3068,7 +3068,58 @@ static void		handleServerMessage(bool human, uint16_t code,
     // Dialog messages
 
     case MsgDialogCreate: {
-      dialogManager->unpackDialogCreate(msg);
+      uint32_t dialogID = dialogManager->unpackDialogCreate(msg);
+
+      if (dialogID > 0) {
+	DialogData* dialog = dialogManager->dialogData[dialogID];
+	controlPanel->addMessage("=== Dialog Start ===");
+	controlPanel->addMessage(TextUtils::format("Dialog ID: %d", dialog->dialogID));
+	controlPanel->addMessage(TextUtils::format("Title: %s", dialog->title.c_str()));
+	for (unsigned int i = 0; i < dialog->dialogItems.size(); i++) {
+	  //controlPanel->addMessage(TextUtils::format("Button %d: %s", i, dialog->buttons[i].c_str()));
+
+	  switch (dialog->dialogItems[i]->type) {
+	    case StaticTextItem: {
+	      DialogDataStaticTextItem* item = (DialogDataStaticTextItem*)dialog->dialogItems[i];
+	      controlPanel->addMessage(TextUtils::format("%s (static): %s", item->label.c_str(), item->text.c_str()));
+	      break;
+	    }
+
+	    case FreeformTextItem: {
+	      DialogDataFreeformTextItem* item = (DialogDataFreeformTextItem*)dialog->dialogItems[i];
+	      controlPanel->addMessage(TextUtils::format("%s (up to %d chars): %s", item->label.c_str(), item->maximumLength, item->text.c_str()));
+	      break;
+	    }
+
+	    case MultipleChoiceItem: {
+	      DialogDataMultipleChoiceItem* item = (DialogDataMultipleChoiceItem*)dialog->dialogItems[i];
+	      controlPanel->addMessage(TextUtils::format("%s (choice):", item->label.c_str()));
+	      for (unsigned int k = 0; k < item->choices.size(); k++) {
+
+		DialogDataMultipleChoiceOption* option = item->choices[k];
+
+		controlPanel->addMessage(TextUtils::format("    %s%s",
+		  (item->selectedChoice == k) ? "*" : " ",
+		  option->label.c_str()
+		));
+	      }
+	      break;
+	    }
+
+	    case CheckboxItem: {
+	      break;
+	    }
+	    default:
+	      controlPanel->addMessage("Unknown item type");
+	      break;
+	  }
+	}
+
+	for (unsigned int i = 0; i < dialog->buttons.size(); i++) {
+	  controlPanel->addMessage(TextUtils::format("Button %d: %s", i, dialog->buttons[i].c_str()));
+	}
+	controlPanel->addMessage("===  Dialog End  ===");
+      }
       break;
     }
 
@@ -3077,6 +3128,8 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgDialogDestroy: {
+      uint32_t dialogID = dialogManager->unpackDialogDestroy(msg);
+      controlPanel->addMessage(TextUtils::format("ClientDialogManager removing dialog %d", dialogID));
       break;
     }
   }
