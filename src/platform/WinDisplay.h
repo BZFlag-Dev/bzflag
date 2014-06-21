@@ -73,7 +73,6 @@ class WinDisplay : public BzfDisplay {
 
     bool		doSetResolution(int);
     ResInfo**		getVideoFormats(int& num, int& current);
-    static bool		canChangeDepth();
 
 	bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
 

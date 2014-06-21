@@ -454,7 +454,6 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
   HDC hDC = GetDC(GetDesktopWindow());
 
   // get the current display depth
-  const bool changeDepth = canChangeDepth();
   int currentDepth = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
 
   // count the resolutions
@@ -482,10 +481,6 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
     // convert frequency of 1 to 0 (meaning the default)
     if ((pdm->dmFields & DM_DISPLAYFREQUENCY) && pdm->dmDisplayFrequency == 1)
       pdm->dmDisplayFrequency = 0;
-
-    // ignore formats of different depth if we can't change depth
-    if (!changeDepth && (int)pdm->dmBitsPerPel != currentDepth)
-      continue;
 
     // ignore formats we know won't work
     if (pdm->dmPelsWidth < 640 || pdm->dmPelsHeight < 400 || pdm->dmBitsPerPel < 8)
@@ -552,28 +547,6 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
   numModes = numResolutions;
   currentMode = current;
   return resInfo;
-}
-
-#define OSR2_BUILD_NUMBER 1111
-bool			WinDisplay::canChangeDepth()
-{
-  // not all versions of windows change dynamically change bit depth.
-  // NT 4.0 and 95 OSR2 can and we assume anything later then them
-  // will too.
-  OSVERSIONINFO vinfo;
-  vinfo.dwOSVersionInfoSize = sizeof(vinfo);
-  if (!GetVersionEx(&vinfo))
-    return false;
-  if (vinfo.dwMajorVersion > 4)
-    return true;
-  if (vinfo.dwMajorVersion == 4) {
-    if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_NT)
-      return true;
-    if (vinfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS &&
-	LOWORD(vinfo.dwBuildNumber) >= OSR2_BUILD_NUMBER)
-      return true;
-  }
-  return false;
 }
 
 const int		WinDisplay::asciiMap[] = {
