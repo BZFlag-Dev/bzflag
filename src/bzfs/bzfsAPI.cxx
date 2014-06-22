@@ -2330,6 +2330,19 @@ BZF_API bool bz_isCountDownPaused( void )
   return clOptions->countdownPaused;
 }
 
+BZF_API bool bz_pollActive( void )
+{
+  /* make sure that there is a poll arbiter */
+  if (BZDB.isEmpty("poll"))
+    return false;
+
+  // only need to do this once
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+
+  /* make sure there is an unexpired poll */
+  return ((arbiter != NULL) && !arbiter->knowsPoll());
+}
+
 BZF_API bool bz_pollVeto( void )
 {
   /* make sure that there is a poll arbiter */
