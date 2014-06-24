@@ -722,7 +722,7 @@ BZF_API bz_Plugin* bz_getPlugin(const char* name)
 BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data )
 {
 	bz_Plugin *p = bz_getPlugin(plugin);
-	if (p == nullptr)
+	if (p == NULL)
 		return 0;
 
 	return p->GeneralCallback(name,data);
@@ -2328,6 +2328,19 @@ BZF_API bool bz_isCountDownInProgress( void )
 BZF_API bool bz_isCountDownPaused( void )
 {
   return clOptions->countdownPaused;
+}
+
+BZF_API bool bz_pollActive( void )
+{
+  /* make sure that there is a poll arbiter */
+  if (BZDB.isEmpty("poll"))
+    return false;
+
+  // only need to do this once
+  static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
+
+  /* make sure there is an unexpired poll */
+  return ((arbiter != NULL) && !arbiter->knowsPoll());
 }
 
 BZF_API bool bz_pollVeto( void )

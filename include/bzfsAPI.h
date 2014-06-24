@@ -1458,6 +1458,7 @@ BZF_API bool bz_isCountDownInProgress( void );
 BZF_API bool bz_isCountDownPaused( void );
 
 // polls
+BZF_API bool bz_pollActive( void );
 BZF_API bool bz_pollVeto( void );
 
 // help
