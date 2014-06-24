@@ -722,7 +722,7 @@ BZF_API bz_Plugin* bz_getPlugin(const char* name)
 BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data )
 {
 	bz_Plugin *p = bz_getPlugin(plugin);
-	if (p == nullptr)
+	if (p == NULL)
 		return 0;
 
 	return p->GeneralCallback(name,data);
