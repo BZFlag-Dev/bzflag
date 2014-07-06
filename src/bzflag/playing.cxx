@@ -166,7 +166,7 @@ static void		setRobotTarget(RobotPlayer* robot);
 
 static ResourceGetter	*resourceDownloader = NULL;
 
-static ClientDialogManager *dialogManager = new ClientDialogManager();
+static ClientDialogManager *dialogManager = NULL;
 
 // Far and Near Frustum clipping planes
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
@@ -5301,6 +5301,9 @@ static void drawUI()
   // update the HUD (menus)
   renderDialog();
 
+  // draw any client dialogs
+  dialogManager->render();
+
   // render the drag-line
   renderRoamMouse();
 
@@ -7250,6 +7253,8 @@ void			startPlaying(BzfDisplay* _display,
   HUDRenderer _hud(display, renderer);
   hud = &_hud;
   scoreboard = hud->getScoreboard();
+
+  dialogManager = new ClientDialogManager(display, renderer);
 
   // initialize control panel and hud
   updateFlag(Flags::Null);
