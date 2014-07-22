@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -180,9 +180,6 @@ const uint16_t		PhysicsDriverDeath = 0x7064;		// 'pd'
 // request for additional UDP link
 const uint16_t		MsgUDPLinkRequest = 0x6f66;		// 'of'
 const uint16_t		MsgUDPLinkEstablished = 0x6f67;		// 'og'
-
-// server control message
-const uint16_t		MsgServerControl = 0x6f69;		// 'oi'
 
 // lag ping sent by server to client and reply from client
 const uint16_t		MsgLagPing = 0x7069;			// 'pi'

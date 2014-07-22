@@ -4660,10 +4660,6 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       break;
     }
 
-    // player is sending a Server Control Message not implemented yet
-    case MsgServerControl:
-      break;
-
     case MsgLagPing: {
       bool warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn;
       playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn);
