@@ -4720,6 +4720,16 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf, code);
 
+      // Verify that player update is actually for this player
+      // TODO: Remove the player ID from this message so we don't have to check for this.
+      if (id != t) {
+	logDebugMessage(1, "Kicking Player %s [%d] sent player update as player index %d\n", 
+	      playerData->player.getCallSign(), t, id);
+	sendMessage(ServerPlayer, t, "Autokick: Player sent spoofed player update.");
+	removePlayer(t, "spoofed update");
+	break;
+      }
+
       bz_PlayerUpdateEventData_V1 puEventData;
       playerStateToAPIState(puEventData.lastState,state);
 
