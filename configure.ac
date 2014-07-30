@@ -114,6 +114,9 @@ MP_WITH_CURSES
 
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
+if test "x$with_SDL" != xno; then
+    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2])
+fi
 
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
@@ -355,6 +358,7 @@ AC_CHECK_HEADERS( \
 AC_LANG(C)
 AC_CHECK_HEADERS( \
 	SDL/SDL.h \
+	SDL2/SDL.h \
 	bstring.h \
 	dlfcn.h \
 	dsound.h \
@@ -631,7 +635,11 @@ if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
     fi
 
     if test x$with_SDL = xno ; then
+      if test x$with_SDL2 = xyes ; then
+	AM_PATH_SDL2(2.0.3, with_SDL=yes, with_SDL=no)
+      else
 	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
+      fi
 	if test x$with_SDL = xno; then
 	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
 	fi
@@ -641,6 +649,9 @@ AC_LANG(C++)
 LIBS=$savedLIBS
 if test x$with_SDL = xyes; then
     AC_DEFINE(HAVE_SDL, 1, [Using SDL])
+    if test x$with_SDL2 = xyes ; then
+       AC_DEFINE(HAVE_SDL2, 1, [Using SDL])
+    fi
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
 
