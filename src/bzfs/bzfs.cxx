@@ -2618,9 +2618,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // don't count as a player.
 
   if (wasPlaying) {
-    // make them wait from the time they left, but only if they are
-    // not already waiting, and they are not currently an observer.
-    if ((playerData->player.getTeam() != ObserverTeam) &&
+    // make them wait from the time they left, but only if they
+    // have spawned at least once and are not already waiting
+    if (!playerData->player.hasNeverSpawned() &&
 	(rejoinList.waitTime (playerIndex) <= 0.0f) &&
 	!playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin)) {
       rejoinList.add (playerIndex);
