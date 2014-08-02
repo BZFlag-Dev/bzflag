@@ -1946,7 +1946,7 @@ bool ReportCommand::operator() (const char	 *message,
 				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::report)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
     return true;
   }

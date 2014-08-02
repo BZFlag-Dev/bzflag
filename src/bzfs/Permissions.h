@@ -86,6 +86,7 @@ public:
       privateMessage,
       record,
       rejoin,
+      report,
       removePerms,
       replay,
       say,
