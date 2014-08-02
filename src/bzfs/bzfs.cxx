@@ -5326,6 +5326,7 @@ void initGroups()
   info.explicitAllows.reset();
   info.groupState.reset();
   info.explicitAllows[PlayerAccessInfo::poll] = true;
+  info.explicitAllows[PlayerAccessInfo::report] = true;
   info.explicitAllows[PlayerAccessInfo::vote] = true;
   info.explicitAllows[PlayerAccessInfo::pollBan] = true;
   info.explicitAllows[PlayerAccessInfo::pollKick] = true;
