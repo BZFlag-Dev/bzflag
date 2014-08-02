@@ -1106,9 +1106,9 @@ cheaters and abuse.
 The server will automatically create three groups: EVERYONE, VERIFIED,
 and LOCAL.ADMIN.  EVERYONE  has  ACTIONMESSAGE, ADMINMESSAGESEND, DATE,
 FLAGHISTORY, IDLESTATS, LAGSTATS, PRIVATEMESSAGE and SPAWN by default.
-VERIFIED has POLL, POLLKICK, POLLBAN, POLLSET, POLLFLAGRESET, and VOTE. The
-LOCAL.ADMIN group has almost every permission possible (similar to granting
-admin powers via /password).
+VERIFIED has POLL, POLLKICK, POLLBAN, POLLSET, POLLFLAGRESET, REPORT
+and VOTE. The LOCAL.ADMIN group has almost every permission possible
+(similar to granting admin powers via /password).
 
 Once the server is running, users can register their callsigns and
 admins can set their group memberships. Users can use any command that
@@ -1268,6 +1268,8 @@ REJOIN	allows instant rejoin, regardless of _rejoinTime
 REMOVEPERMS	/removegroup
 .br
 REPLAY	/replay
+.br
+REPORT	/report
 .br
 REQUIREIDENTIFY	user must use global registration 
 .br
