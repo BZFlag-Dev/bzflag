@@ -481,6 +481,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "REJOIN") return PlayerAccessInfo::rejoin;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
   if (name == "REPLAY") return PlayerAccessInfo::replay;
+  if (name == "REPORT") return PlayerAccessInfo::report;
   if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SENDHELP") return PlayerAccessInfo::sendHelp;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
