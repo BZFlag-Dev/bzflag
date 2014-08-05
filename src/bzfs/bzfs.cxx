@@ -3869,7 +3869,8 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver()) {
     state = "as an observer";
   } else if (p.isPaused()) {
-    state = "while paused";
+    if (strcmp(action, "die") != 0)	// allow self destruct while paused
+      state = "while paused";
   } else if (p.hasNeverSpawned()) {
     state = "before spawning";
   }
