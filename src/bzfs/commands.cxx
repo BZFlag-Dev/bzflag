@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -972,7 +972,7 @@ bool PasswordCommand::operator() (const char	 *message,
 	   playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
-    if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
+    if (clOptions->password.length() != 0 && strlen(message) > 10 && strcmp(message + 10, clOptions->password.c_str()) == 0) {	// skip past "/password "
       playerData->accessInfo.setOperator();
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
