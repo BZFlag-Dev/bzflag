@@ -650,10 +650,11 @@ LIBS=$savedLIBS
 if test x$with_SDL = xyes; then
     AC_DEFINE(HAVE_SDL, 1, [Using SDL])
     if test x$with_SDL2 = xyes ; then
-       AC_DEFINE(HAVE_SDL2, 1, [Using SDL])
+       AC_DEFINE(HAVE_SDL2, 1, [Using SDL2])
     fi
 fi
 AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
+AM_CONDITIONAL(HAVE_SDL2, test x$with_SDL2 = xyes)
 
 
 # dumb temp hacks to add missing linkage stuff
