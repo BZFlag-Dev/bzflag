@@ -15,7 +15,11 @@
 
 /** this file contains headers necessary for SDL */
 
-#ifdef HAVE_SDL
+#ifdef HAVE_SDL2
+#    include "SDL.h"
+#    include "SDL_thread.h"
+#    include "SDL_stdinc.h"
+#elif HAVE_SDL
 #  ifdef HAVE_SDL_SDL_H
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
