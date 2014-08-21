@@ -136,8 +136,8 @@ public:
   }
 };
 
-#define VDIR_SESSION_PTR ((bzhttp_SessionData_Data*)pimple)
-#define VDIR_SESSION(n) bzhttp_SessionData_Data *n = ((bzhttp_SessionData_Data*)pimple)
+#define VDIR_SESSION_PTR (static_cast<bzhttp_SessionData_Data*>(pimple))
+#define VDIR_SESSION(n) bzhttp_SessionData_Data *n = VDIR_SESSION_PTR
 #define VDIR_SESSION_CLASS(c,n) bzhttp_SessionData_Data *n = ((bzhttp_SessionData_Data*)(c))
 
 bzhttp_SessionData::bzhttp_SessionData()
@@ -150,7 +150,7 @@ bzhttp_SessionData::bzhttp_SessionData()
 
 bzhttp_SessionData::~bzhttp_SessionData()
 {
-  delete(VDIR_SESSION_PTR);
+  delete VDIR_SESSION_PTR;
 }
 std::map<std::string,std::string> emptyMap;
 
@@ -827,15 +827,11 @@ public:
 
   virtual void pending(int connectionID, void *data, unsigned int size)
   {
-	  char *d = (char*)malloc(size+1);
-	  memcpy(d,data,size);
-	  d[size] = 0;
-	  RequestData += d;
-	  free(d);
+	  RequestData.append(static_cast<char const*>(data), size);
 
 	  // know our limits
-	  size_t maxContentSize = 1024*1536;
-	  size_t maxBufferSize = 1024*2048;
+	  size_t maxContentSize( 1024*1536 );
+	  size_t maxBufferSize( 1024*2048 );
 
 	  if (bz_BZDBItemHasValue("_MaxHTTPContentSize"))
 		  maxBufferSize = bz_getBZDBInt("_MaxHTTPContentSize");
