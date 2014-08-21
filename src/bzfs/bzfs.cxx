@@ -1511,7 +1511,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (senderData) {
     if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
       // If the user does not have the TALK permission, he can't send any messages
-      // he's only allowed to talk with admins, if he has the adminMessageSend permission
+      // He's only allowed to talk with admins, if he has the adminMessageSend permission
       if (senderData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
 	if (recipientPlayer == AdminPlayers) {
 	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
@@ -1519,9 +1519,8 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 	}
 
 	// Let the user send a private message to admins
-	// we define admins as those who have the adminMessageReceive permission
 	GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
-	if (recipientData && recipientData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive)) {
+	if (recipientData && recipientData->accessInfo.isOperator()) {
 	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
 	  return;
 	}
