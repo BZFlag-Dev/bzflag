@@ -1520,7 +1520,8 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 
 	// Let the user send a private message to admins
 	GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
-	if (recipientData && recipientData->accessInfo.isOperator()) {
+	if (recipientData && recipientData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive) &&
+	    !recipientData->accessInfo.hasPerm(PlayerAccessInfo::hideAdmin)) {
 	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
 	  return;
 	}
