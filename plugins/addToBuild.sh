@@ -1,7 +1,7 @@
 #!/bin/sh
 
 NARG="$#"
-ARG1="$1"
+ARG1="${1%/}"
 PATH_TO_HERE="`dirname $0`"
 
 # make sure user gives a plugin name
@@ -38,7 +38,7 @@ if [ $? != 0 ] ; then
 fi
 
 echo "---"
-echo "$1 has been added to the build system, but not to the Mac Xcode project"
+echo "$ARG1 has been added to the build system, but not to the Mac Xcode project"
 echo "or Windows FullBuild.sln file, where you have to add it manually."
 echo ""
 echo "You then need to rerun autogen.sh and configure just once to enable your"
