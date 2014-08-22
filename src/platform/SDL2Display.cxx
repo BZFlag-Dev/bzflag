@@ -19,32 +19,37 @@
 static int mx = 0;
 static int my = 0;
 
-SDLDisplay::SDLDisplay()
-: fullScreen(false), min_width(),
-  min_height(),  x(), y()
+SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
 {
-  if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
+  if (SDL_VideoInit(NULL) != 0) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
     exit (-1);
   };
 
   int defaultResolutionIndex = 0;
-  int defaultWidth = 640;
-  int defaultHeight = 480;
   ResInfo** _resolutions;
   int _numResolutions = SDL_GetNumDisplayModes(0);
+  SDL_DisplayMode mode;
+  std::vector<int> h;
+  std::vector<int> w;
+  int j = 0;
 
   if (!_numResolutions)
     // No modes available or All resolutions available
     printf("Could not Get available video modes: %s.\n", SDL_GetError());
 
-  std::vector<int> h;
-  std::vector<int> w;
+  int result = SDL_GetCurrentDisplayMode(0, &mode);
+  if (result) {
+    printf("Could not get current display mode: %s.\n", SDL_GetError());
+  } else {
+    h.push_back(mode.h);
+    w.push_back(mode.w);
+    j++;
+  }
+
   int i;
-  int j = 0;
   for (i = 0; i < _numResolutions; i++) {
-    SDL_DisplayMode mode;
-    int result = SDL_GetDisplayMode(0, i, &mode);
+    result = SDL_GetDisplayMode(0, i, &mode);
     if (result)
       printf("Could not Get video mode: %s.\n", SDL_GetError());
     int k;
@@ -59,17 +64,6 @@ SDLDisplay::SDLDisplay()
     }
   }
 
-#ifdef WIN32
-  HDC hDC = GetDC(GetDesktopWindow());
-  defaultWidth = GetDeviceCaps(hDC, HORZRES);
-  defaultHeight = GetDeviceCaps(hDC, VERTRES);
-  ReleaseDC(GetDesktopWindow(), hDC);
-#endif
-  if (!j) {
-    h.push_back(defaultHeight);
-    w.push_back(defaultWidth);
-    j++;
-  }
   _numResolutions = j;
   _resolutions = new ResInfo*[_numResolutions];
 
@@ -77,8 +71,6 @@ SDLDisplay::SDLDisplay()
     char name[80];
     sprintf(name, "%dx%d    ", w[i], h[i]);
     _resolutions[i] = new ResInfo(name, w[i], h[i], 0);
-    if ((w[i] == defaultWidth) && (h[i] == defaultHeight))
-      defaultResolutionIndex = i;
   }
 
   // register modes
@@ -131,22 +123,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
   case SDL_MOUSEMOTION:
     _event.type	= BzfEvent::MouseMove;
     mx		 = event.motion.x;
-#ifdef __APPLE__
-    static const SDL_version *sdlver = SDL_Linked_Version();
-    /* deal with a SDL bug when in windowed mode related to
-     * Cocoa coordinate system of (0,0) in bottom-left corner.
-     */
-    if ( (fullScreen) ||
-	 (sdlver->major > 1) ||
-	 (sdlver->minor > 2) ||
-	 (sdlver->patch > 6) ) {
-      my = event.motion.y;
-    } else {
-      my = base_height - 1 - event.motion.y;
-    }
-#else
     my		 = event.motion.y;
-#endif
     _event.mouseMove.x = mx;
     _event.mouseMove.y = my;
     break;
@@ -482,10 +459,6 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   if (mod & KMOD_ALT)
     key.shift |= BzfKeyEvent::AltKey;
   return true;
-}
-
-void SDLDisplay::setFullscreen(bool on) {
-  fullScreen = on;
 }
 
 void SDLDisplay::getWindowSize(int& width, int& height) {

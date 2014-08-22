@@ -138,6 +138,9 @@ const char*		getAppVersion()
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";
+#ifdef HAVE_SDL2
+    appVersionStream << "2";
+#endif
 #endif
     appVersion = appVersionStream.str();
   }

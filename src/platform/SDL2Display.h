@@ -34,7 +34,6 @@ class SDLDisplay : public BzfDisplay {
   bool getEvent(BzfEvent&) const;
   bool peekEvent(BzfEvent&) const;
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
-  void setFullscreen(bool);
   void getWindowSize(int& width, int& height);
   void doSetVideoMode();
   bool hasGetKeyMode() {return true;};
@@ -42,7 +41,6 @@ class SDLDisplay : public BzfDisplay {
   void getMouse(int& x, int& y) const;
  private:
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
-  bool fullScreen;
   bool doSetResolution(int) {return true;};
   int  min_width;
   int  min_height;

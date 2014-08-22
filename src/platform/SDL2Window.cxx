@@ -30,7 +30,6 @@ void SDLWindow::setTitle(const char *_title) {
 }
 
 void SDLWindow::setFullscreen(bool on) {
-  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->setFullscreen(on);
   fullScreen = on;
 }
 
