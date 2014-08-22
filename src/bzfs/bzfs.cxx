@@ -5481,18 +5481,13 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    // build up a buffer of all the data that is pending
 	    while (e == ReadAll)
 	    {
-	       netHandler->flushData();
-	       e = netHandler->receive(256);
-
-	       readSize = netHandler->getTcpReadSize();
-	       buf = netHandler->getTcpBuffer();
-
-	       tmp = (char*)malloc(readSize+1);
-	       strncpy(tmp,(char*)buf,readSize);
-	       tmp[readSize] = '\0';
-
-	       peer.bufferedInput += tmp;
-	       free(tmp);
+	      netHandler->flushData();
+	      e = netHandler->receive(256);
+	      
+	      readSize = netHandler->getTcpReadSize();
+	      buf = netHandler->getTcpBuffer();
+	      
+	      peer.bufferedInput.append(static_cast<char const*>(buf), readSize);
 	    }
 	    netHandler->flushData();
 
