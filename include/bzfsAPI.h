@@ -1714,6 +1714,7 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 // server control
 BZF_API bool bz_getShotMismatch();
 BZF_API void bz_setShotMismatch(bool value);
+BZF_API bool bz_isAutoTeamEnabled();
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);

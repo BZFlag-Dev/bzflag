@@ -3587,6 +3587,11 @@ BZF_API void bz_setShotMismatch ( bool value )
   checkShotMismatch = value;
 }
 
+BZF_API bool bz_isAutoTeamEnabled ( void )
+{
+    return clOptions->autoTeam;
+}
+
 BZF_API void bz_shutdown ( void )
 {
   shutdownCommand(NULL,NULL);
