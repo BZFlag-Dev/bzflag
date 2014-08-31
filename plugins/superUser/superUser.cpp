@@ -16,8 +16,6 @@ public:
 
   virtual void Event ( bz_EventData * /* eventData */ );
 
-  virtual bool autoDelete ( void ) { return false;}
-
 protected:
   std::vector<std::string> GetUserInfo(const char* bzID );
 
