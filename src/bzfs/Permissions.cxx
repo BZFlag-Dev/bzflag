@@ -110,6 +110,8 @@ bool PlayerAccessInfo::isAdmin() const {
 bool PlayerAccessInfo::showAsAdmin() const {
   if (hasPerm(hideAdmin))
     return false;
+  else if (hasPerm(showAdmin))
+    return true;
   else
     return isAdmin();
 }
@@ -419,6 +421,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
+    case PlayerAccessInfo::showAdmin: return "showAdmin";
     case PlayerAccessInfo::showOthers: return "showOthers";
     case PlayerAccessInfo::shortBan: return "shortBan";
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
@@ -489,6 +492,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
+  if (name == "SHOWADMIN") return PlayerAccessInfo::showAdmin;
   if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
   if (name == "SPAWN") return PlayerAccessInfo::spawn;

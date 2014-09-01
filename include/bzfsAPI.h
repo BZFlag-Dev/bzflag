@@ -342,6 +342,7 @@ typedef enum
 #define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
 #define bz_perm_setVar  "setVar"
+#define bz_perm_showAdmin  "showAdmin"
 #define bz_perm_showOthers  "showOthers"
 #define bz_perm_shortBan  "shortBan"
 #define bz_perm_shutdownServer  "shutdownServer"

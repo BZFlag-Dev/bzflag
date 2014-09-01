@@ -96,6 +96,7 @@ public:
       setPerms,
       setVar,
       shortBan,
+      showAdmin,
       showOthers,
       shutdownServer,
       spawn,

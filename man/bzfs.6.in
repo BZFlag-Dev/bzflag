@@ -821,9 +821,9 @@ sequence length can optionally be specified in seconds.  Examples:
 .ft R
 
 .TP
-.B /flag reset \fR{\fIall\fR|\fIunused\fR|\fIteam\fR|\fIFlagId\fR} 
-Repositions flags. If \fIunused\fR is specified, flags carried 
-by tanks are not affected. Using the \fIteam\fR option only 
+.B /flag reset \fR{\fIall\fR|\fIunused\fR|\fIteam\fR|\fIFlagId\fR}
+Repositions flags. If \fIunused\fR is specified, flags carried
+by tanks are not affected. Using the \fIteam\fR option only
 resets team flags, whereas specifying a flag id (such as GM) only
 repositions flags of this type. If \fInoteam\fR is specified,
 team flags will not be reset. Examples:
@@ -1219,7 +1219,7 @@ FLAGHISTORY	/flaghistory
 .br
 FLAGMASTER	/flag
 .br
-FLAGMOD	/flag reset /flag show /flag history 
+FLAGMOD	/flag reset /flag show /flag history
 .br
 HIDEADMIN	player doesn't show the @ sign
 .br
@@ -1271,7 +1271,7 @@ REPLAY	/replay
 .br
 REPORT	/report
 .br
-REQUIREIDENTIFY	user must use global registration 
+REQUIREIDENTIFY	user must use global registration
 .br
 SAY	/say
 .br
@@ -1286,6 +1286,8 @@ SETPASSWORD	not implemented
 SETVAR	/set /reset
 .br
 SHORTBAN	/ban (with a limited duration)
+.br
+SHOWADMIN	player shows an @ regardless of having 'shortban' perm
 .br
 SHOWOTHERS	/showgroup /showperms (on others)
 .br
