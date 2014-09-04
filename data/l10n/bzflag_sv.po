@@ -1,7 +1,7 @@
 # This is generic Swedish
 
 msgid "Locale:"
-msgstr "Språk:"
+msgstr "Spr√•k:"
 
 msgid "sv"
 msgstr "Svenska"
@@ -34,13 +34,13 @@ msgid "Start Server"
 msgstr "Starta Egen Server"
 
 msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
-msgstr "Flytta med pil upp/ned, välj med Retur eller avbryt med Escape"
+msgstr "Flytta med pil upp/ned, v√§lj med Retur eller avbryt med Escape"
 
 msgid "Options"
-msgstr "Inställningar"
+msgstr "Inst√§llningar"
 
 msgid "Help"
-msgstr "Hjälp"
+msgstr "Hj√§lp"
 
 #msgid "on"
 #msgstr ""
@@ -58,13 +58,13 @@ msgid "Off"
 msgstr "Av"
 
 msgid "On"
-msgstr "På"
+msgstr "P√•"
 
 msgid "Blending:"
 msgstr "Blandning:"
 
 msgid "Smoothing:"
-msgstr "Utjämning:"
+msgstr "Utj√§mning:"
 
 msgid "Lighting:"
 msgstr "Belysning:"
@@ -94,13 +94,13 @@ msgid "Quality:"
 msgstr "Kvalitet:"
 
 msgid "Low"
-msgstr "Låg"
+msgstr "L√•g"
 
 msgid "Medium"
 msgstr "Medel"
 
 msgid "High"
-msgstr "Hög"
+msgstr "H√∂g"
 
 msgid "Shadows:"
 msgstr "Skuggor:"
@@ -109,10 +109,10 @@ msgid "Depth Buffer:"
 msgstr "Djupbuffer:"
 
 msgid "Not available"
-msgstr "Inte Tillgänglig"
+msgstr "Inte Tillg√§nglig"
 
 msgid "Change Video Format"
-msgstr "Ändra Skärmupplösning"
+msgstr "√Ñndra Sk√§rmuppl√∂sning"
 
 #msgid "Server List Cache:"
 #msgstr ""
@@ -157,31 +157,31 @@ msgid "Sound Volume:"
 msgstr "Ljudstyrka:"
 
 msgid "UDP network connection:"
-msgstr "Använd UDP:"
+msgstr "Anv√§nd UDP:"
 
 msgid "Change Key Mapping"
-msgstr "Ändra Tangentbordsuppsättning"
+msgstr "√Ñndra Tangentbordsupps√§ttning"
 
 msgid "GUI Options"
-msgstr "GUI Inställningar"
+msgstr "GUI Inst√§llningar"
 
 msgid "Enhanced radar:"
-msgstr "Förbättrad Radar:"
+msgstr "F√∂rb√§ttrad Radar:"
 
 msgid "Controlpanel & Score FontSize:"
-msgstr "Textstorlek För Kontrollpanel & Poäng:"
+msgstr "Textstorlek F√∂r Kontrollpanel & Po√§ng:"
 
 msgid "normal"
 msgstr "normal"
 
 msgid "bigger"
-msgstr "större"
+msgstr "st√∂rre"
 
 msgid "Radar & Panel Opacity:"
 msgstr "Radar & Panel genomskinlighet:"
 
 msgid "Colored shots on radar:"
-msgstr "Färgade skott på radarn:"
+msgstr "F√§rgade skott p√• radarn:"
 
 #msgid "Control panel coloring:"
 #msgstr ""
@@ -193,7 +193,7 @@ msgstr "Färgade skott på radarn:"
 #msgstr ""
 
 msgid "Radar Shot Length:"
-msgstr "Skottlängd på radar:"
+msgstr "Skottl√§ngd p√• radar:"
 
 #msgid "Radar & Panel Size:"
 #msgstr "Radar & Panelstorlek:"
@@ -202,52 +202,52 @@ msgstr "Skottlängd på radar:"
 #msgstr "Styrrutans storlek:"
 
 msgid "Page Down for next page"
-msgstr "'Page Down' till nästa sida"
+msgstr "'Page Down' till n√§sta sida"
 
 msgid "Page Up for previous page"
-msgstr "'Page Up' till föregående sida"
+msgstr "'Page Up' till f√∂reg√•ende sida"
 
 msgid "Rogue"
-msgstr "Laglös"
+msgstr "Lagl√∂s"
 
 msgid "Red Team"
-msgstr "Rött lag"
+msgstr "R√∂tt lag"
 
 msgid "Green Team"
-msgstr "Grönt lag"
+msgstr "Gr√∂nt lag"
 
 msgid "Blue Team"
-msgstr "Blått lag"
+msgstr "Bl√•tt lag"
 
 msgid "Purple Team"
 msgstr "Lila lag"
 
 msgid "Enter to quit, Esc to resume"
-msgstr "Retur för att avsluta, Escape för att fortsätta"
+msgstr "Retur f√∂r att avsluta, Escape f√∂r att forts√§tta"
 
 msgid "Really quit?"
-msgstr "Är du säker?"
+msgstr "√Ñr du s√§ker?"
 
 msgid "Video Format"
-msgstr "Skärmupplösning"
+msgstr "Sk√§rmuppl√∂sning"
 
 msgid "Current Format:"
-msgstr "Nuvarande upplösning:"
+msgstr "Nuvarande uppl√∂sning:"
 
 msgid "Key Mapping"
-msgstr "Tangentuppsättning"
+msgstr "Tangentupps√§ttning"
 
 msgid "Reset Defaults"
-msgstr "?terställ"
+msgstr "√Öterst√§ll"
 
 msgid "Fire shot:"
 msgstr "Skjut:"
 
 msgid "Drop flag:"
-msgstr "Släpp flagga:"
+msgstr "Sl√§pp flagga:"
 
 msgid "Identify/Lock On:"
-msgstr "Identifiera / Lås:"
+msgstr "Identifiera / L√•s:"
 
 msgid "Radar Short:"
 msgstr "Kort radar:"
@@ -256,19 +256,19 @@ msgid "Radar Medium:"
 msgstr "Medel radar:"
 
 msgid "Radar Long:"
-msgstr "Lång radar:"
+msgstr "L√•ng radar:"
 
 msgid "Send to All:"
-msgstr "Sänd till alla:"
+msgstr "S√§nd till alla:"
 
 msgid "Send to Teammates:"
-msgstr "Sänd till laget:"
+msgstr "S√§nd till laget:"
 
 msgid "Send to Nemesis:"
-msgstr "Sänd till baneman:"
+msgstr "S√§nd till baneman:"
 
 msgid "Send to Recipient:"
-msgstr "Sänd till mottagare:"
+msgstr "S√§nd till mottagare:"
 
 msgid "Jump:"
 msgstr "Hoppa:"
@@ -277,16 +277,16 @@ msgid "Binoculars:"
 msgstr "Kikare:"
 
 msgid "Toggle Score:"
-msgstr "Visa/Dölj poäng:"
+msgstr "Visa/D√∂lj po√§ng:"
 
 msgid "Tank Labels:"
 msgstr "Namnetiketter:"
 
 msgid "Flag Help:"
-msgstr "Flagghjälp:"
+msgstr "Flagghj√§lp:"
 
 msgid "Time Forward:"
-msgstr "Öka tid:"
+msgstr "√ñka tid:"
 
 #msgid "SelfDestruct/Cancel:"
 #msgstr ""
@@ -295,28 +295,28 @@ msgid "Time Backward:"
 msgstr "Backa tid:"
 
 #msgid "Pause/Resume:"
-#msgstr "Paus/Fortsätt"
+#msgstr "Paus/Forts√§tt"
 
 msgid "Self Destruct/Cancel:"
-msgstr "Självdestruera/Avbryt:"
+msgstr "Sj√§lvdestruera/Avbryt:"
 
 msgid "Fast Quit:"
 msgstr "Snabbavslut:"
 
 msgid "Scroll Backward:"
-msgstr "Skrolla bakåt:"
+msgstr "Skrolla bak√•t:"
 
 msgid "Scroll Forward:"
-msgstr "Skrolla framåt"
+msgstr "Skrolla fram√•t"
 
 msgid "Slow Keyboard Motion:"
-msgstr "Långsam tangentbordsrörelse:"
+msgstr "L√•ngsam tangentbordsr√∂relse:"
 
 msgid "loading {1}"
 msgstr "laddar in {1}"
 
 msgid "controls tank motion"
-msgstr "styr stridsvagnens rörelser"
+msgstr "styr stridsvagnens r√∂relser"
 
 msgid "Mouse Position:"
 msgstr "Musens position:"
@@ -325,13 +325,13 @@ msgid "fires shot"
 msgstr "skjuter"
 
 msgid "drops flag (if not bad)"
-msgstr "släpper flagga (om tillåtet)"
+msgstr "sl√§pper flagga (om till√•tet)"
 
 msgid "identifies player (locks on GM)"
-msgstr "identifierar spelare (låser med GM)"
+msgstr "identifierar spelare (l√•ser med GM)"
 
 msgid "jump (if allowed)"
-msgstr "hoppar (om tillåtet)"
+msgstr "hoppar (om till√•tet)"
 
 msgid "short radar range"
 msgstr "kortdistansradar"
@@ -340,13 +340,13 @@ msgid "medium radar range"
 msgstr "medeldistansradar"
 
 msgid "long radar range"
-msgstr "långdistansradar"
+msgstr "l√•ngdistansradar"
 
 msgid "toggle binoculars"
-msgstr "kikare (på/av)"
+msgstr "kikare (p√•/av)"
 
 msgid "toggle heads-up flag help"
-msgstr "visa flagghjälp (på/av)"
+msgstr "visa flagghj√§lp (p√•/av)"
 
 msgid "send message to teammates"
 msgstr "skicka meddelande till lagkamrater"
@@ -361,22 +361,22 @@ msgid "send message to recipient"
 msgstr "skicka meddelande till mottagare"
 
 msgid "toggle score sheet"
-msgstr "poängtavla (på/av)"
+msgstr "po√§ngtavla (p√•/av)"
 
 msgid "toggle tank labels"
-msgstr "namnetiketter (på/av)"
+msgstr "namnetiketter (p√•/av)"
 
 msgid "set time of day backward"
-msgstr "ändra tiden bakåt"
+msgstr "√§ndra tiden bak√•t"
 
 msgid "set time of day forward"
-msgstr "ändra tiden framåt"
+msgstr "√§ndra tiden fram√•t"
 
 msgid "pause/resume"
-msgstr "paus/fortsätt"
+msgstr "paus/forts√§tt"
 
 msgid "self Destruct/Cancel"
-msgstr "självdestruera/avbryt"
+msgstr "sj√§lvdestruera/avbryt"
 
 #msgid "Slow Keyboard Motion"
 #msgstr ""
@@ -400,7 +400,7 @@ msgid "quit"
 msgstr "avsluta"
 
 msgid "scroll message log backward"
-msgstr "skrolla meddelandelogg bakåt"
+msgstr "skrolla meddelandelogg bak√•t"
 
 #msgid "autopilot enabled"
 #msgstr ""
@@ -409,10 +409,10 @@ msgstr "skrolla meddelandelogg bakåt"
 #msgstr ""
 
 msgid "scroll message log forward"
-msgstr "skrolla meddelandelogg framåt"
+msgstr "skrolla meddelandelogg fram√•t"
 
 msgid "show/dismiss menu"
-msgstr "visa/dölj meny"
+msgstr "visa/d√∂lj meny"
 
 #msgid "Esc:"
 #msgstr "Esc:"
@@ -424,7 +424,7 @@ msgid "Original Author:"
 msgstr "Ursprunglig utvecklare:"
 
 msgid "Code Contributors:"
-msgstr "Medhjälpare:"
+msgstr "Medhj√§lpare:"
 
 msgid "Tank Models:"
 msgstr "Stridsvagnsmodeller:"
@@ -442,13 +442,13 @@ msgid "Players"
 msgstr "Spelare"
 
 msgid "Red"
-msgstr "Röda"
+msgstr "R√∂da"
 
 msgid "Green"
-msgstr "Gröna"
+msgstr "Gr√∂na"
 
 msgid "Blue"
-msgstr "Blå"
+msgstr "Bl√•"
 
 msgid "Purple"
 msgstr "Lila"
@@ -457,7 +457,7 @@ msgid "Controls"
 msgstr "Styrning"
 
 msgid "General"
-msgstr "Allmänt"
+msgstr "Allm√§nt"
 
 msgid "Environment"
 msgstr "Omgivning"
@@ -481,16 +481,16 @@ msgstr "Speltyper II/II"
 #msgstr "Credits"
 
 msgid "Press Enter to select and T to test a format. Esc to exit."
-msgstr "Tryck Enter för att välja och T för att testa ett format. Escape avslutar."
+msgstr "Tryck Enter f√∂r att v√§lja och T f√∂r att testa ett format. Escape avslutar."
 
 msgid "Free-style"
-msgstr "Fri För Alla"
+msgstr "Fri F√∂r Alla"
 
 #msgid "Rabbit Chase"
 #msgstr ""
 
 msgid "Capture-the-Flag"
-msgstr "Erövra flaggan"
+msgstr "Er√∂vra flaggan"
 
 msgid "Super Flags"
 msgstr "Superflaggor"
@@ -502,13 +502,13 @@ msgstr "Motgiftsflaggor"
 #msgstr ""
 
 msgid "Trying..."
-msgstr "Försöker..."
+msgstr "F√∂rs√∂ker..."
 
 msgid "Press %s to start"
 msgstr "Tryck %s for att starta"
 
 msgid "Dead"
-msgstr "Död"
+msgstr "D√∂d"
 
 msgid "Ready"
 msgstr "Redo"
@@ -619,7 +619,7 @@ msgstr "Laddar om (%.1f)"
 #msgstr ""
 
 msgid "Sealed"
-msgstr "Försluten"
+msgstr "F√∂rsluten"
 
 msgid "Zoned"
 msgstr "Fantom"
@@ -639,22 +639,22 @@ msgstr "Fantom"
 # Super Flags
 
 msgid "High Speed"
-msgstr "Hög hastighet"
+msgstr "H√∂g hastighet"
 
 msgid "Quick Turn"
-msgstr "Snabb sväng"
+msgstr "Snabb sv√§ng"
 
 msgid "Oscillation Overthruster"
 msgstr "Oscillation Overthruster"
 
 msgid "Rapid Fire"
-msgstr "Hög eldhastighet"
+msgstr "H√∂g eldhastighet"
 
 msgid "Machine Gun"
-msgstr "Maskingevär"
+msgstr "Maskingev√§r"
 
 msgid "Guided Missile"
-msgstr "Målsökande robot"
+msgstr "M√•ls√∂kande robot"
 
 msgid "Laser"
 msgstr "Laser"
@@ -669,7 +669,7 @@ msgid "Invisible Bullet"
 msgstr "Osynliga skott"
 
 msgid "Stealth"
-msgstr "Osynlig för radar"
+msgstr "Osynlig f√∂r radar"
 
 msgid "Tiny"
 msgstr "Liten"
@@ -678,13 +678,13 @@ msgid "Narrow"
 msgstr "Smal"
 
 msgid "Shield"
-msgstr "Sköld"
+msgstr "Sk√∂ld"
 
 msgid "Steamroller"
-msgstr "?ngvält"
+msgstr "√Öngv√§lt"
 
 msgid "Shock Wave"
-msgstr "Shockvåg"
+msgstr "Shockv√•g"
 
 msgid "Phantom Zone"
 msgstr "Fantomzon"
@@ -702,16 +702,16 @@ msgid "Cloaking"
 msgstr "Osynlighet"
 
 msgid "Colorblindness"
-msgstr "Färgblindhet"
+msgstr "F√§rgblindhet"
 
 msgid "Obesity"
-msgstr "Förstoring"
+msgstr "F√∂rstoring"
 
 msgid "Left Turn Only"
-msgstr "Endast vänstersväng"
+msgstr "Endast v√§nstersv√§ng"
 
 msgid "Right Turn Only"
-msgstr "Endast högersväng"
+msgstr "Endast h√∂gersv√§ng"
 
 msgid "Momentum"
 msgstr "Dubbel vikt"
@@ -720,7 +720,7 @@ msgid "Blindness"
 msgstr "Blindhet"
 
 msgid "Jamming"
-msgstr "Radarstörning"
+msgstr "Radarst√∂rning"
 
 msgid "Wide Angle"
 msgstr "Vidvinkel"
@@ -731,13 +731,13 @@ msgid "You have no flag."
 msgstr "Du har ingen flagga"
 
 msgid "Your team's flag:  prevent other teams from capturing it!"
-msgstr "Ditt lags flagga: förhindra andra lag från att ta den!"
+msgstr "Ditt lags flagga: f√∂rhindra andra lag fr√•n att ta den!"
 
 msgid "Opponent's team flag:  take it to your base to capture it!"
-msgstr "Motståndarlags flagga: ta den till din bas för att erövra den!"
+msgstr "Motst√•ndarlags flagga: ta den till din bas f√∂r att er√∂vra den!"
 
 msgid "Velocity (V):  Tank moves faster.  Outrun bad guys."
-msgstr "Hastighet (V): Din stridsvagn kan köra fortare. Kör ikapp/ifrån motståndare!"
+msgstr "Hastighet (V): Din stridsvagn kan k√∂ra fortare. K√∂r ikapp/ifr√•n motst√•ndare!"
 
 #msgid "Useless"
 #msgstr ""
@@ -755,96 +755,96 @@ msgstr "Hastighet (V): Din stridsvagn kan köra fortare. Kör ikapp/ifrån motstånd
 #msgstr ""
 
 msgid "Angular velocity (A): Tank turns faster.  Dodge quicker."
-msgstr "Vinkelhastighet (A): Din stridsvagn svänger snabbare. Lättare att undgå skott!"
+msgstr "Vinkelhastighet (A): Din stridsvagn sv√§nger snabbare. L√§ttare att undg√• skott!"
 
 #msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
 msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-msgstr "Oscillation Overthruster (OO):  Kan köra igenom byggnader. Man kan inte skjuta inne i en byggnad!"
+msgstr "Oscillation Overthruster (OO):  Kan k√∂ra igenom byggnader. Man kan inte skjuta inne i en byggnad!"
 
 msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
-msgstr "Hög eldhastighet (F):  Skjut oftare. Skotten flyger snabbare, men inte lika långt."
+msgstr "H√∂g eldhastighet (F):  Skjut oftare. Skotten flyger snabbare, men inte lika l√•ngt."
 
 msgid "Machine Gun (MG):  Very fast reload and very short range."
-msgstr "Maskingevär (MG):  Mycket snabb omladdning, men mycket kort räckvidd."
+msgstr "Maskingev√§r (MG):  Mycket snabb omladdning, men mycket kort r√§ckvidd."
 
 msgid "Guided Missile (GM):  Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
-msgstr "Målsökande robot (GM): Lås på en fiende så följer roboten målet. Det går även att skjuta innan man låst på ett mål."
+msgstr "M√•ls√∂kande robot (GM): L√•s p√• en fiende s√• f√∂ljer roboten m√•let. Det g√•r √§ven att skjuta innan man l√•st p√• ett m√•l."
 
 msgid "Laser (L):  Shoots a laser.  Infinite speed and range but long reload time."
-msgstr "Laser (L): Skjut med laser. Oändlig hastighet och räckvidd, men lång omladdningstid."
+msgstr "Laser (L): Skjut med laser. O√§ndlig hastighet och r√§ckvidd, men l√•ng omladdningstid."
 
 msgid "Ricochet (R):  Shots bounce off walls.  Don't shoot yourself!"
-msgstr "Ricochet (R): Skott studsar på väggar och föremål. Akta du skjuter dig själv!"
+msgstr "Ricochet (R): Skott studsar p√• v√§ggar och f√∂rem√•l. Akta du skjuter dig sj√§lv!"
 
 msgid "SuperBullet (SB):  Shoots through buildings.  Can kill Phantom Zone."
-msgstr "Superskott (SB):  Skjuter igenom byggnader. Kan även slå ut stridsvagar inne i byggnader."
+msgstr "Superskott (SB):  Skjuter igenom byggnader. Kan √§ven sl√• ut stridsvagar inne i byggnader."
 
 msgid "Invisible Bullet (IB):  Your shots don't appear on other radars.  Can still see them out window."
-msgstr "Osynliga skott (IB): Dina skott är inte synliga på andras radar, men kan ses med ögat."
+msgstr "Osynliga skott (IB): Dina skott √§r inte synliga p√• andras radar, men kan ses med √∂gat."
 
 msgid "STealth (ST):  Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
-msgstr "STealth (ST): Din stridsvagn kan inte ses på radar, men det kan dina skott!"
+msgstr "STealth (ST): Din stridsvagn kan inte ses p√• radar, men det kan dina skott!"
 
 msgid "Tiny (T):  Tank is small and can get through small openings.  Very hard to hit."
-msgstr "Liten (T): Stridsvagnen är liten och kan komma igenom trånga passager. Svår att träffa."
+msgstr "Liten (T): Stridsvagnen √§r liten och kan komma igenom tr√•nga passager. Sv√•r att tr√§ffa."
 
 msgid "Narrow (N):  Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
-msgstr "Smal (N):  Din stridsvagn är mycket smal och väldigt svår att träffa framifrån."
+msgstr "Smal (N):  Din stridsvagn √§r mycket smal och v√§ldigt sv√•r att tr√§ffa framifr√•n."
 
 msgid "SHield (SH):  Getting hit only drops flag.  Flag flys an extra-long time."
-msgstr "Sköld (SH):  Om du blir träffad tappar du bara flaggan. Ungefär som ett extra liv!"
+msgstr "Sk√∂ld (SH):  Om du blir tr√§ffad tappar du bara flaggan. Ungef√§r som ett extra liv!"
 
 msgid "SteamRoller (SR):  Destroys tanks you touch but you have to get really close."
-msgstr "?ngvält (SR):  Slår ut andra stridsvagnar som du kör på. Men du måste komma mycket nära!"
+msgstr "√Öngv√§lt (SR):  Sl√•r ut andra stridsvagnar som du k√∂r p√•. Men du m√•ste komma mycket n√§ra!"
 
 msgid "Shock Wave (SW):  Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
-msgstr "Shockvåg (SW):  En shockvåg slår ut alla stridsvagnar i närheten. Se upp var du har dina lagkamrater!"
+msgstr "Shockv√•g (SW):  En shockv√•g sl√•r ut alla stridsvagnar i n√§rheten. Se upp var du har dina lagkamrater!"
 
 msgid "Phantom Zone (PZ):  Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank can't shoot or be shot (except by superbullet and shock wave)."
-msgstr "Fantomzon (PZ):  När du är fantom kan du köra igenom byggnader. Du kan inte skjuta, men bara bli dödad av superskott eller en shockvåg."
+msgstr "Fantomzon (PZ):  N√§r du √§r fantom kan du k√∂ra igenom byggnader. Du kan inte skjuta, men bara bli d√∂dad av superskott eller en shockv√•g."
 
 msgid "Genocide (G):  Killing one tank kills that tank's whole team."
-msgstr "Massmord (G):  Om du slår ut en annan stridsvagn så dödar du alla i motsvarande lag."
+msgstr "Massmord (G):  Om du sl√•r ut en annan stridsvagn s√• d√∂dar du alla i motsvarande lag."
 
 msgid "JumPing (JP):  Tank can jump.  Use Tab key.  Can't steer in the air."
 msgstr "Hoppa (JP):  Din stridsvagn kan hoppa. Man kan inte styra i luften!"
 
 msgid "IDentify (ID):  Identifies type of nearest flag."
-msgstr "Identifiera (ID):  Identifierar den närmaste flaggan."
+msgstr "Identifiera (ID):  Identifierar den n√§rmaste flaggan."
 
 msgid "CLoaking (CL):  Makes your tank invisible out-the-window.  Still visible on radar."
-msgstr "Osynlighet (CL):  Din stridsvagn blir osynlig för ögat, men kan fortfarande ses på radar."
+msgstr "Osynlighet (CL):  Din stridsvagn blir osynlig f√∂r √∂gat, men kan fortfarande ses p√• radar."
 
 msgid "ColorBlindness (-CB):  Can't tell team colors.  Don't shoot teammates!"
-msgstr "Färgblindhet (-CB):  Du kan inte se stridsvagnarnas färger. Akta så du inte skjuter dina kamrater!"
+msgstr "F√§rgblindhet (-CB):  Du kan inte se stridsvagnarnas f√§rger. Akta s√• du inte skjuter dina kamrater!"
 
 msgid "Obesity (-O):  Tank becomes very large.  Can't fit through teleporters."
-msgstr "Förstoring (-O):  Din stridsvagn blir mycket stor och lätträffad. Den kan inte komma igenom teleportrar."
+msgstr "F√∂rstoring (-O):  Din stridsvagn blir mycket stor och l√§ttr√§ffad. Den kan inte komma igenom teleportrar."
 
 msgid "left turn only (- <-):  Can't turn right."
-msgstr "Endast Vänstersväng (- <-): Du kan inte svänga till höger."
+msgstr "Endast V√§nstersv√§ng (- <-): Du kan inte sv√§nga till h√∂ger."
 
 msgid "right turn only (- ->):  Can't turn left."
-msgstr "Endast Högersväng (- ->): Du kan inte svänga till vänster."
+msgstr "Endast H√∂gersv√§ng (- ->): Du kan inte sv√§nga till v√§nster."
 
 msgid "Momentum (-M):  Tank has inertia.  Acceleration is limited."
-msgstr "Dubbel vikt (-M):  Din stridsvagn blir stor och långsam."
+msgstr "Dubbel vikt (-M):  Din stridsvagn blir stor och l√•ngsam."
 
 msgid "Blindness (-B):  Can't see out window.  Radar still works."
-msgstr "Blindhet (-B):  Du kan inte se något. Radarn fortsätter dock att fungera."
+msgstr "Blindhet (-B):  Du kan inte se n√•got. Radarn forts√§tter dock att fungera."
 
 msgid "JaMming (-JM):  Radar doesn't work.  Can still see."
-msgstr "Radarstörning (-JM):  Din radar störs ut, men du kan fortfarande se med ögonen."
+msgstr "Radarst√∂rning (-JM):  Din radar st√∂rs ut, men du kan fortfarande se med √∂gonen."
 
 msgid "Wide Angle (-WA):  Fish-eye lens distorts view."
-msgstr "Vid vinkel (-WA):  Fiskögeperspektiv."
+msgstr "Vid vinkel (-WA):  Fisk√∂geperspektiv."
 
 #Help 2 Strings
 
 msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
-msgstr "BZFlag är ett nätverksspel där olika lag av stridsvagnar slåss. Lagen är:"
+msgstr "BZFlag √§r ett n√§tverksspel d√§r olika lag av stridsvagnar sl√•ss. Lagen √§r:"
 
 #msgid "Velocity (+V):  Tank moves faster.  Outrun bad guys."
 #msgstr ""
@@ -916,152 +916,152 @@ msgstr "BZFlag är ett nätverksspel där olika lag av stridsvagnar slåss. Lagen är
 #msgstr ""
 
 msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
-msgstr "röd, grön, blå, lila och laglösa (som är svarta). När man skjuter en "
+msgstr "r√∂d, gr√∂n, bl√•, lila och lagl√∂sa (som √§r svarta). N√§r man skjuter en "
 
 msgid "player on another team scores a win, while being destroyed or destroying a"
-msgstr "spelare ur ett annat lag får man poäng, om man däremot dör eller skjuter en"
+msgstr "spelare ur ett annat lag f√•r man po√§ng, om man d√§remot d√∂r eller skjuter en"
 
 msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
-msgstr "lagkamrat får man minus. Poängen räknas såväl individuellt som för hela laget."
+msgstr "lagkamrat f√•r man minus. Po√§ngen r√§knas s√•v√§l individuellt som f√∂r hela laget."
 
 msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
-msgstr "Laglösa har inga lagkamrater (inte ens andra laglösa), så de kan"
+msgstr "Lagl√∂sa har inga lagkamrater (inte ens andra lagl√∂sa), s√• de kan"
 
 msgid "teammates and they don't have a team score."
-msgstr "inte skjuta sina lagkamrater och har heller inga lagpoäng."
+msgstr "inte skjuta sina lagkamrater och har heller inga lagpo√§ng."
 
 msgid "There are two styles of play, determined by the server configuration:  capture-"
-msgstr "BZFlag kan spelas på två olika sätt, där speltypen bestäms vid uppstart: flagg-"
+msgstr "BZFlag kan spelas p√• tv√• olika s√§tt, d√§r speltypen best√§ms vid uppstart: flagg-"
 
 msgid "the-flag and free-for-all.  In free-for-all the object is simply to get the"
-msgstr "erövring eller fri för alla. I den senare gäller det att få det högsta "
+msgstr "er√∂vring eller fri f√∂r alla. I den senare g√§ller det att f√• det h√∂gsta "
 
 msgid "highest score by shooting opponents.  The object in capture-the-flag is to"
-msgstr "antalet poäng från att skjuta andra fiender.  I flaggerövring skall man"
+msgstr "antalet po√§ng fr√•n att skjuta andra fiender.  I flagger√∂vring skall man"
 
 msgid "capture enemy flags while preventing opponents from capturing yours.  In this"
-msgstr "erövra fiendens flagga och skydda sin egen från erövring. Här har "
+msgstr "er√∂vra fiendens flagga och skydda sin egen fr√•n er√∂vring. H√§r har "
 
 msgid "style, each team (but not rogues) has a team base and each team with at least"
-msgstr "varje lag (förutom laglösa) en egen bas och varje lag med minst en deltagare"
+msgstr "varje lag (f√∂rutom lagl√∂sa) en egen bas och varje lag med minst en deltagare"
 
 msgid "one player has a team flag which has the color of the team.  To capture a flag,"
-msgstr "har en lagflagga med lagets egen färg. För att erövra flaggan, skall du "
+msgstr "har en lagflagga med lagets egen f√§rg. F√∂r att er√∂vra flaggan, skall du "
 
 msgid "you must grab it and bring it back to your team base (you must be on the ground"
-msgstr "ta den från fiendens bas och ta med den till din egen (du måste vara på marken"
+msgstr "ta den fr√•n fiendens bas och ta med den till din egen (du m√•ste vara p√• marken"
 
 msgid "in your base to register the capture).  Capturing a flag destroys all the players"
-msgstr "i din bas för att det skall registreras). När en flagga erövras dör alla spelare "
+msgstr "i din bas f√∂r att det skall registreras). N√§r en flagga er√∂vras d√∂r alla spelare "
 
 msgid "on that team and gives your team score a bonus;  the players will restart on"
-msgstr "i det lag från vilket flaggan togs. Detta ger ditt lag en poängbonus. Spelarna startar"
+msgstr "i det lag fr√•n vilket flaggan togs. Detta ger ditt lag en po√§ngbonus. Spelarna startar"
 
 msgid "their team base.  Taking your flag onto an enemy base counts as a capture against"
-msgstr "i sin egen bas. Om du tar med din egen flagga in i fiendens bas, räknas det som en"
+msgstr "i sin egen bas. Om du tar med din egen flagga in i fiendens bas, r√§knas det som en"
 
 msgid "your team but not for the enemy team."
-msgstr "erövring från fiendens sida och de får poäng."
+msgstr "er√∂vring fr√•n fiendens sida och de f√•r po√§ng."
 
 #Help 3 Strings
 
 msgid "The world environment contains an outer wall and several buildings."
-msgstr "Spelplanen består av en yttre vägg och ett flertal objekt och byggnader."
+msgstr "Spelplanen best√•r av en yttre v√§gg och ett flertal objekt och byggnader."
 
 msgid "You cannot go outside the outer wall (you can't even jump over it)."
-msgstr "Det går inte att komma utanför väggarna (inte ens genom att hoppa)."
+msgstr "Det g√•r inte att komma utanf√∂r v√§ggarna (inte ens genom att hoppa)."
 
 msgid "You cannot normally drive or shoot through buildings."
-msgstr "Normalt går det inte att köra eller skjuta igenom byggnader."
+msgstr "Normalt g√•r det inte att k√∂ra eller skjuta igenom byggnader."
 
 msgid "The server may be configured to include teleporters:  large transparent"
 msgstr "Servern kan vara konfigurerad att inkludera teleportrar. Objekt"
 
 msgid "black slabs.  Objects entering one side of a teleporter are instantly"
-msgstr "som åker in på ena sidan av en sådan flyttas direkt till andra sidan"
+msgstr "som √•ker in p√• ena sidan av en s√•dan flyttas direkt till andra sidan"
 
 msgid "moved to one side of another (or possibly the same) teleporter.  The"
-msgstr "av en annan (eller samma) teleporter. Man kan på samma sätt köra"
+msgstr "av en annan (eller samma) teleporter. Man kan p√• samma s√§tt k√∂ra"
 
 msgid "teleport is reversible;  reentering the same side of the destination"
-msgstr "tillbaka in i den teleporter man kom ifrån om man vill komma tillbaka"
+msgstr "tillbaka in i den teleporter man kom ifr√•n om man vill komma tillbaka"
 
 msgid "teleporter brings you back to where you started.  Teleport connections"
-msgstr "dit man startade. Teleportrarnas förbindelse är statiska från spelets"
+msgstr "dit man startade. Teleportrarnas f√∂rbindelse √§r statiska fr√•n spelets"
 
 msgid "are fixed at the start of the game and don't change during the game."
-msgstr "start och ändras inte under spelets gång."
+msgstr "start och √§ndras inte under spelets g√•ng."
 
 msgid "The connections are always the same in the capture-the-flag style."
-msgstr "Förbindelserna är alltid de samma under speltypen flaggerövring."
+msgstr "F√∂rbindelserna √§r alltid de samma under speltypen flagger√∂vring."
 
 msgid "Each side of a teleporter teleports independently of the other side."
 msgstr "Den ena sidan av en teleporter teleporterar oberoende av den andra."
 
 msgid "It's possible for a teleporter to teleport to the opposite side of"
-msgstr "Det är möjligt att en teleporter teleporterar till andra sidan av sig"
+msgstr "Det √§r m√∂jligt att en teleporter teleporterar till andra sidan av sig"
 
 msgid "itself.  Such a thru-teleporter acts almost as if it wasn't there."
-msgstr "själv. Denna typ av genom-teleportrar uppför sig nästan som om de"
+msgstr "sj√§lv. Denna typ av genom-teleportrar uppf√∂r sig n√§stan som om de"
 
 msgid "A teleporter can also teleport to the same side of itself.  This is a"
-msgstr "inte var där. Man kan också bli teleporterad till samma sida som man"
+msgstr "inte var d√§r. Man kan ocks√• bli teleporterad till samma sida som man"
 
 msgid "reverse teleporter.  Shooting at a reverse teleporter is likely to be"
-msgstr "kom från. En 'spegel'. Skjuter man på en sådan teleporter blir följden"
+msgstr "kom fr√•n. En 'spegel'. Skjuter man p√• en s√•dan teleporter blir f√∂ljden"
 
 msgid "self destructive;  shooting a laser at one is invariably fatal."
-msgstr "med stor sannolikhet att man skjuter sig själv."
+msgstr "med stor sannolikhet att man skjuter sig sj√§lv."
 
 # Help 4 Strings
 
 msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
-msgstr "Det finns två varianter av flaggor: lagflaggor och superflaggor. Lagflaggor"
+msgstr "Det finns tv√• varianter av flaggor: lagflaggor och superflaggor. Lagflaggor"
 
 msgid "are used only in the capture-the-flag style.  The server may also be"
-msgstr "används endast vid flaggerövring. Servern kan också vara konfigurerad"
+msgstr "anv√§nds endast vid flagger√∂vring. Servern kan ocks√• vara konfigurerad"
 
 msgid "configured to supply super flags, which give your tank some advantage"
-msgstr "att plantera ut superflaggor, som ger din stridsvagn för och nackdelar."
+msgstr "att plantera ut superflaggor, som ger din stridsvagn f√∂r och nackdelar."
 
 msgid "or disadvantage.  You normally can't tell which until you pick one up,"
-msgstr "Normalt kan du inte se vad dessa är förrän du tagit upp en flagga,"
+msgstr "Normalt kan du inte se vad dessa √§r f√∂rr√§n du tagit upp en flagga,"
 
 msgid "but good flags generally outnumber bad flags two to one."
-msgstr "men generellt finns det fler bra än dåliga flaggor."
+msgstr "men generellt finns det fler bra √§n d√•liga flaggor."
 
 msgid "Team flags are not allowed to be in Bad Places.  Bad Places are:  on"
-msgstr "Lagflaggor får inte placeras på 'dåliga' ställen som en byggnad eller"
+msgstr "Lagflaggor f√•r inte placeras p√• 'd√•liga' st√§llen som en byggnad eller"
 
 msgid "a building or on an enemy base.  Team flags dropped in a Bad Place are"
-msgstr "på en fiendebas. Lagflaggor som släpps på ett sådant ställe, flyttas"
+msgstr "p√• en fiendebas. Lagflaggor som sl√§pps p√• ett s√•dant st√§lle, flyttas"
 
 msgid "moved to a safety position.  Captured flags are placed back on their"
-msgstr "till ett säkert område. Erövrade flaggor placeras i deras hembas."
+msgstr "till ett s√§kert omr√•de. Er√∂vrade flaggor placeras i deras hembas."
 
 msgid "team base.  Super flags dropped above a building always disappear."
-msgstr "Superflaggor som släpps på byggnader försvinner alltid."
+msgstr "Superflaggor som sl√§pps p√• byggnader f√∂rsvinner alltid."
 
 msgid "A random good super flag will remain for up to 4 possessions.  After"
-msgstr "En tillfällig bra superflagga finns kvar upp tills den fjärde ägaren. Efter"
+msgstr "En tillf√§llig bra superflagga finns kvar upp tills den fj√§rde √§garen. Efter"
 
 msgid "that it'll disappear and will eventually be replaced by a new random"
-msgstr "det försvinner den och en ny tillfällig flagga placeras eventuellt ut "
+msgstr "det f√∂rsvinner den och en ny tillf√§llig flagga placeras eventuellt ut "
 
 msgid "flag.  Bad random super flags disappear after the first possession."
-msgstr "Dåliga tillfälliga flaggor försvinner efter att den första ägaren "
+msgstr "D√•liga tillf√§lliga flaggor f√∂rsvinner efter att den f√∂rsta √§garen "
 
 msgid "Bad super flags can't normally be dropped.  The server can be set to"
-msgstr "blivit av med den. De kan normalt inte släppas frivilligt. Serveren kan"
+msgstr "blivit av med den. De kan normalt inte sl√§ppas frivilligt. Serveren kan"
 
 msgid "automatically drop the flag for you after some time, after you destroy"
-msgstr "vara konfigurerad att ta den från dig efter en viss tid, eller efter"
+msgstr "vara konfigurerad att ta den fr√•n dig efter en viss tid, eller efter"
 
 msgid "a certain number of enemies, and/or when you grab an antidote flag."
 msgstr "att du skjutit ett visst antal fjender, och/eller om du hittar en"
 
 msgid "Antidote flags are yellow and only appear when you have a bad flag."
-msgstr "motgiftsflagga. De är gula och endast synliga när du har en dålig flagga."
+msgstr "motgiftsflagga. De √§r gula och endast synliga n√§r du har en d√•lig flagga."
 
 # Help 5 Strings
 
@@ -1069,19 +1069,19 @@ msgid "Good Flags:"
 msgstr "Bra flaggor:"
 
 msgid "boosts top speed"
-msgstr "ger ökad toppfart"
+msgstr "ger √∂kad toppfart"
 
 msgid "High Speed (V)"
-msgstr "Hög hastighet (V)"
+msgstr "H√∂g hastighet (V)"
 
 msgid "boosts turn rate"
-msgstr "ger ökad svänghastighet"
+msgstr "ger √∂kad sv√§nghastighet"
 
 msgid "Quick Turn (A)"
-msgstr "Snabb sväng (A)"
+msgstr "Snabb sv√§ng (A)"
 
 msgid "can drive through buildings"
-msgstr "kan köra genom byggnader"
+msgstr "kan k√∂ra genom byggnader"
 
 msgid "Oscillation Overthruster (OO)"
 msgstr "Oscillation Overthruster (OO)"
@@ -1090,22 +1090,22 @@ msgid "faster shots more often"
 msgstr "snabbare skott"
 
 msgid "Rapid Fire (F)"
-msgstr "Hög eldhastighet (F)"
+msgstr "H√∂g eldhastighet (F)"
 
 msgid "very fast reload, very short range"
-msgstr "snabb omladdning, kort räckvidd"
+msgstr "snabb omladdning, kort r√§ckvidd"
 
 msgid "Machine Gun (MG)"
-msgstr "Maskingevär (MG)"
+msgstr "Maskingev√§r (MG)"
 
 msgid "shots guide themselves (right mouse locks on)"
-msgstr "målsökande skott"
+msgstr "m√•ls√∂kande skott"
 
 msgid "Guided Missile (GM)"
-msgstr "Målsökande robot (GM)"
+msgstr "M√•ls√∂kande robot (GM)"
 
 msgid "infinite shot speed and range, long reload time"
-msgstr "oändlig skotthastighet och räckvidd, lång omladdningstid"
+msgstr "o√§ndlig skotthastighet och r√§ckvidd, l√•ng omladdningstid"
 
 #msgid "Laser (L)"
 #msgstr ""
@@ -1123,19 +1123,19 @@ msgid "Super Bullet (SB)"
 msgstr "Superskott (SB)"
 
 msgid "tank invisible on enemy radar"
-msgstr "osynlig på fiendens radar"
+msgstr "osynlig p√• fiendens radar"
 
 msgid "Stealth (ST)"
-msgstr "Osynlig för radar"
+msgstr "Osynlig f√∂r radar"
 
 msgid "tank invisible out the window"
-msgstr "stridsvagnen är osynlig (men inte på radar)"
+msgstr "stridsvagnen √§r osynlig (men inte p√• radar)"
 
 msgid "Cloaking (CL)"
 msgstr "Osynlighet (CL)"
 
 msgid "shots invisible on radar"
-msgstr "skott kan inte ses på radarn"
+msgstr "skott kan inte ses p√• radarn"
 
 msgid "Invisible Bullet (IB)"
 msgstr "Osynliga skott (IB)"
@@ -1153,96 +1153,96 @@ msgid "Narrow (N)"
 msgstr "Smal (N)"
 
 msgid "getting hit just drops the flag"
-msgstr "när du träffas tappar du flaggan"
+msgstr "n√§r du tr√§ffas tappar du flaggan"
 
 msgid "Shield (SH)"
-msgstr "Sköld (SH)"
+msgstr "Sk√∂ld (SH)"
 
 msgid "destroy tanks by touching them"
-msgstr "slår ut stridsvagnar vid beröring"
+msgstr "sl√•r ut stridsvagnar vid ber√∂ring"
 
 msgid "Steamroller (SR)"
-msgstr "?ngvält (SR)"
+msgstr "√Öngv√§lt (SR)"
 
 msgid "expanding spherical shell of destruction"
-msgstr "avger en direkt dödande sfär"
+msgstr "avger en direkt d√∂dande sf√§r"
 
 msgid "Shock Wave (SW)"
-msgstr "Shockvåg (SW)"
+msgstr "Shockv√•g (SW)"
 
 # Help 6 Strings
 
 msgid "teleport to enter/leave zone"
-msgstr "teleportera för att gå in i/ur fantomzonen"
+msgstr "teleportera f√∂r att g√• in i/ur fantomzonen"
 
 msgid "Phantom Zone (PZ)"
 msgstr "Fantomzon (PZ)"
 
 msgid "destroys player and all player's teammates"
-msgstr "dödar spelare och alla lagkamrater"
+msgstr "d√∂dar spelare och alla lagkamrater"
 
 msgid "Genocide (G)"
 msgstr "Massmord (G)"
 
 msgid "allows tank to jump"
-msgstr "tillåter stridsvagnen att hoppa"
+msgstr "till√•ter stridsvagnen att hoppa"
 
 msgid "Jumping (JP)"
 msgstr "Hoppa (JP)"
 
 msgid "shows type of nearest superflag"
-msgstr "identifierar närmaste flagga"
+msgstr "identifierar n√§rmaste flagga"
 
 msgid "Identify (ID)"
 msgstr "Identifiera (ID)"
 
 msgid "Bad Flags:"
-msgstr "Dåliga flaggor:"
+msgstr "D√•liga flaggor:"
 
 msgid "can't identify tanks"
 msgstr "kan inte identifiera stridsvagnar"
 
 msgid "Colorblindness (CB)"
-msgstr "Färgblindhet (CB)"
+msgstr "F√§rgblindhet (CB)"
 
 msgid "makes tank very large"
-msgstr "gör stridsvagnen mycket stor"
+msgstr "g√∂r stridsvagnen mycket stor"
 
 msgid "Obesity (O)"
-msgstr "Förstoring (O)"
+msgstr "F√∂rstoring (O)"
 
 msgid "tank can't turn right"
-msgstr "kan inte svänga till höger"
+msgstr "kan inte sv√§nga till h√∂ger"
 
 msgid "Left Turn Only (<-)"
-msgstr "Endast vänstersväng (<-)"
+msgstr "Endast v√§nstersv√§ng (<-)"
 
 msgid "tank can't turn left"
-msgstr "kan inte svänga till vänster"
+msgstr "kan inte sv√§nga till v√§nster"
 
 msgid "Right Turn Only (->)"
-msgstr "Endast högersväng (->)"
+msgstr "Endast h√∂gersv√§ng (->)"
 
 msgid "tank has lots of momentum"
-msgstr "din stridsvagn är mycket långsam"
+msgstr "din stridsvagn √§r mycket l√•ngsam"
 
 msgid "Momentum (M)"
 msgstr "Dubbel vikt (M)"
 
 msgid "can't see out the window"
-msgstr "du kan inte se något"
+msgstr "du kan inte se n√•got"
 
 msgid "Blindness (B)"
 msgstr "Blindhet (B)"
 
 msgid "can't see anything on radar"
-msgstr "du kan inte se något på din radar"
+msgstr "du kan inte se n√•got p√• din radar"
 
 msgid "Jamming (JM)"
-msgstr "Radarstörning (JM)"
+msgstr "Radarst√∂rning (JM)"
 
 msgid "fish eye view out the window"
-msgstr "fiskögesyn"
+msgstr "fisk√∂gesyn"
 
 msgid "Wide Angle (WA)"
 msgstr "Vid vinkel (WA)"
@@ -1250,22 +1250,22 @@ msgstr "Vid vinkel (WA)"
 # Help 7 Strings
 
 msgid "The radar is on the left side of the control panel.  It shows an overhead"
-msgstr "Radarn återfinns till vänster om kontrollpanelen. Den visar en översikt"
+msgstr "Radarn √•terfinns till v√§nster om kontrollpanelen. Den visar en √∂versikt"
 
 msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
-msgstr "över spelet. Byggnader och yttre väggar visas med ljusblått. "
+msgstr "√∂ver spelet. Byggnader och yttre v√§ggar visas med ljusbl√•tt. "
 
 msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
-msgstr "Baser visas i ägarnas färg. Teleportrar visas som korta gula linjer."
+msgstr "Baser visas i √§garnas f√§rg. Teleportrar visas som korta gula linjer."
 
 msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
-msgstr "Stridsvagnar visas som prickar i lagfärgen, med undantag av laglösa som"
+msgstr "Stridsvagnar visas som prickar i lagf√§rgen, med undantag av lagl√∂sa som"
 
 msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
-msgstr "är gula. Storleken på stridsvagnens prick är en indikation på hur "
+msgstr "√§r gula. Storleken p√• stridsvagnens prick √§r en indikation p√• hur "
 
 msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
-msgstr "högt uppe den är: Ju större prick, desto högre upp. Flaggor är små kryss."
+msgstr "h√∂gt uppe den √§r: Ju st√∂rre prick, desto h√∂gre upp. Flaggor √§r sm√• kryss."
 
 #msgid "Toggle Radar Flags:"
 #msgstr ""
@@ -1435,10 +1435,10 @@ msgstr "högt uppe den är: Ju större prick, desto högre upp. Flaggor är små kryss
 #msgstr ""
 
 msgid "flags are in the team color, superflags are white, and the antidote flag"
-msgstr "Lagflaggor visas i lagets egen färg, superflaggor är vita och motgift gula."
+msgstr "Lagflaggor visas i lagets egen f√§rg, superflaggor √§r vita och motgift gula."
 
 msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
-msgstr "Skott är små prickar, laser är linjer och shockvågor är cirklar. "
+msgstr "Skott √§r sm√• prickar, laser √§r linjer och shockv√•gor √§r cirklar. "
 
 #msgid "cyan"
 #msgstr ""
@@ -1450,7 +1450,7 @@ msgstr "Skott är små prickar, laser är linjer och shockvågor är cirklar. "
 #msgstr ""
 
 msgid "shock waves, respectively).  Your tank is always dead center and forward"
-msgstr "Du befinner dig alltid i centrum och framåt är alltid uppåt"
+msgstr "Du befinner dig alltid i centrum och fram√•t √§r alltid upp√•t"
 
 #msgid "None"
 #msgstr ""
@@ -1665,91 +1665,91 @@ msgstr "Du befinner dig alltid i centrum och framåt är alltid uppåt"
 #msgstr ""
 
 msgid "is always up on the radar.  The yellow V is your field of view.  North"
-msgstr "på radarn. Den gulmarkerade 'V'-symbolen är ditt synfält. "
+msgstr "p√• radarn. Den gulmarkerade 'V'-symbolen √§r ditt synf√§lt. "
 
 msgid "is indicated by the letter N."
 msgstr "Norr anges med bokstaven N."
 
 msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
-msgstr "Ditt synfält (HUD) visar en del viktig information. De två rutorna i centrum"
+msgstr "Ditt synf√§lt (HUD) visar en del viktig information. De tv√• rutorna i centrum"
 
 msgid "center of the view are the motion control boxes;  within the small box"
-msgstr "används för att kontrollera hur du kör. Innanför den innersta (minsta)"
+msgstr "anv√§nds f√∂r att kontrollera hur du k√∂r. Innanf√∂r den innersta (minsta)"
 
 msgid "your tank won't move, outside the large box you don't move any faster than"
-msgstr "rör du dig inte och utanför den största så kan din stridsvagn inte röra "
+msgstr "r√∂r du dig inte och utanf√∂r den st√∂rsta s√• kan din stridsvagn inte r√∂ra "
 
 msgid "at the edge of the large box.  Moving the mouse above or below the small"
-msgstr "sig fortare än den redan gör. Genom att flytta"
+msgstr "sig fortare √§n den redan g√∂r. Genom att flytta"
 
 msgid "box moves forward or backward, respectively.  Similarly for left and right."
-msgstr "musen över/under den lilla rutan kör du framåt/bakåt. Det samma gäller "
+msgstr "musen √∂ver/under den lilla rutan k√∂r du fram√•t/bak√•t. Det samma g√§ller "
 
 msgid "The distance away from the small box determines the speed."
-msgstr "höger och vänster. "
+msgstr "h√∂ger och v√§nster. "
 
 # Help 8 Strings
 
 
 msgid "Above the larger box is a tape showing your current heading.  North is"
-msgstr "Ovanför den stora rutan finns en kompass som visar din riktning. Norr är"
+msgstr "Ovanf√∂r den stora rutan finns en kompass som visar din riktning. Norr √§r"
 
 msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
-msgstr "0, öst är 90, osv.  Om du kan hoppa visas en skala, för"
+msgstr "0, √∂st √§r 90, osv.  Om du kan hoppa visas en skala, f√∂r"
 
 msgid "an altitude tape appears to the right of the larger box."
-msgstr "vilken höjd du befinner dig på, till höger om den större rutan"
+msgstr "vilken h√∂jd du befinner dig p√•, till h√∂ger om den st√∂rre rutan"
 
 msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
-msgstr "Små färgade pilar eller diamanter kan visa sig i kompassen. En pil som "
+msgstr "Sm√• f√§rgade pilar eller diamanter kan visa sig i kompassen. En pil som "
 
 msgid "arrow pointing left means that a particular flag is to your left, an"
-msgstr "pekar till vänster betyder att flaggan är till vänster om dig och motsvarande"
+msgstr "pekar till v√§nster betyder att flaggan √§r till v√§nster om dig och motsvarande"
 
 msgid "arrow pointing right means that the flag is to your right, and a diamond"
-msgstr "gäller om den pekar åt höger. En diamant visar riktingen till flaggan"
+msgstr "g√§ller om den pekar √•t h√∂ger. En diamant visar riktingen till flaggan"
 
 msgid "indicates the heading to the flag by its position on the heading tape."
-msgstr "i förhållande till din nuvarande position."
+msgstr "i f√∂rh√•llande till din nuvarande position."
 
 msgid "In capture-the-flag mode a marker always shows where your team flag is."
-msgstr "I flaggerövring visar den alltid riktningen till din egen flagga."
+msgstr "I flagger√∂vring visar den alltid riktningen till din egen flagga."
 
 msgid "A yellow marker shows the way to the antidote flag."
-msgstr "En gul pil/diamant visar vägen till en motgiftsflagga."
+msgstr "En gul pil/diamant visar v√§gen till en motgiftsflagga."
 
 msgid "At the top of the display are, from left to right, your callsign and"
-msgstr "Överst från vänster visas ditt namn, dina poäng,"
+msgstr "√ñverst fr√•n v√§nster visas ditt namn, dina po√§ng,"
 
 msgid "score, your status, and the flag you have.  Your callsign is in the"
-msgstr "din status och vilken flagga du har.  Namnet är i din lagfärg"
+msgstr "din status och vilken flagga du har.  Namnet √§r i din lagf√§rg"
 
 msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
-msgstr "och din status är antingen: klar, död, innesluten, fantom"
+msgstr "och din status √§r antingen: klar, d√∂d, innesluten, fantom"
 
 msgid "or reloading (showing the time until reloaded).  It can also show the"
-msgstr "eller laddar om (samt hur lång tid detta tar). Det kan också visa "
+msgstr "eller laddar om (samt hur l√•ng tid detta tar). Det kan ocks√• visa "
 
 msgid "time until a bad flag is dropped (if there's a time limit)."
-msgstr "tiden tills en dålig flagga släpps (om den är tidsbegränsad)."
+msgstr "tiden tills en d√•lig flagga sl√§pps (om den √§r tidsbegr√§nsad)."
 
 msgid "Other informational messages may occasionally flash on the HUD."
-msgstr "Av och till kan annan information visas på din HUD."
+msgstr "Av och till kan annan information visas p√• din HUD."
 
 
 # BZFS Messages
 
 msgid "You are now an administrator!"
-msgstr "Du har nu administratörsstatus!"
+msgstr "Du har nu administrat√∂rsstatus!"
 
 msgid "Wrong Password!"
-msgstr "Felaktigt lösenord."
+msgstr "Felaktigt l√∂senord."
 
 msgid "unknown command"
-msgstr "okänt kommando"
+msgstr "ok√§nt kommando"
 
 msgid "Countdown started."
-msgstr "Nedräkning påbörjad"
+msgstr "Nedr√§kning p√•b√∂rjad"
 
 msgid "IP pattern added to banlist"
 msgstr "Adressfilter lagt till banlista"
