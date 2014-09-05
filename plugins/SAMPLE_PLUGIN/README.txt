@@ -11,3 +11,8 @@ usage instructions or other details in this file. If you did not use the
 newplug.sh script to create this directory, add the appropriate entries
 to configure.ac and plugins/Makefile.am. The plugin will have to be
 manually added to the mac Xcode project.
+
+
+The sample plugin is licensed differently then the rest of the project.
+It is released under the BSD 2 clause license so that plug-in developer can
+use whatever license they want instead of being forced to use LGPL.
