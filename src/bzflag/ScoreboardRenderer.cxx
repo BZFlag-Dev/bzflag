@@ -44,6 +44,7 @@ std::string ScoreboardRenderer::playerLabel("Player");
 const char* ScoreboardRenderer::sortLabels[] = {
   "[Score]",
   "[Normalized Score]",
+  "[Reverse Score]",
   "[Callsign]",
   "[Team Kills]",
   "[TK ratio]",
@@ -924,6 +925,8 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
 	  else
 	    sorter[i].i1 = p->getScore();
 	  sorter[i].i2 = 0;
+	  if (sortType == SORT_REVERSE)
+	    sorter[i].i1 *= -1;
       }
     }
     if (sortType == SORT_CALLSIGN)

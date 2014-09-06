@@ -60,11 +60,12 @@ public:
   static const char **getSortLabels();
   static const int SORT_SCORE = 0;
   static const int SORT_NORMALIZED = 1;
-  static const int SORT_CALLSIGN = 2;
-  static const int SORT_TKS = 3;
-  static const int SORT_TKRATIO = 4;
-  static const int SORT_TEAM = 5;
-  static const int SORT_MYRATIO = 6;
+  static const int SORT_REVERSE = 2;
+  static const int SORT_CALLSIGN = 3;
+  static const int SORT_TKS = 4;
+  static const int SORT_TKRATIO = 5;
+  static const int SORT_TEAM = 6;
+  static const int SORT_MYRATIO = 7;
   static const int SORT_MAXNUM = SORT_MYRATIO;
 
   void setTeamScoreY ( float val ){teamScoreYVal = val;}
