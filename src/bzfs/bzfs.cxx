@@ -4185,6 +4185,21 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 	  }
   }
 
+  if (!playerData->hadEnter)
+  {
+	  switch (code)
+	  {
+	  case MsgExit:
+	  case MsgAlive:
+	  case MsgAutoPilot:
+	  case MsgMessage:
+	  case MsgPlayerUpdateSmall:
+		  logDebugMessage(1, "Host %s tried to send invalid message before Enter; 0x%4hx\n", handler->getTargetIP(), code);
+		  rejectPlayer(t, RejectBadRequest, "invalid request");
+		  return;
+	  }
+  }
+
   bz_MsgDebugEventData_V1 debugEventData;
   debugEventData.code[0] = ((char*)&code)[0];
   debugEventData.code[1] = ((char*)&code)[1];
@@ -4223,6 +4238,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       } else if (strlen(playerData->player.getCallSign())) {
 	playerData->_LSAState = GameKeeper::Player::required;
       }
+	  playerData->hadEnter = true;
       dontWait = true;
       break;
     }
