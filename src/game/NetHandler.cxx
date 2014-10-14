@@ -559,8 +559,7 @@ RxStatus NetHandler::receive(size_t length, bool *retry) {
   RxStatus returnValue;
   if (retry)
     *retry = false;
-  if ((int)length <= tcplen)
-    return ReadAll;
+  if ((int)length <= tcplen) return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
     tcplen += size;
@@ -578,7 +577,7 @@ RxStatus NetHandler::receive(size_t length, bool *retry) {
       if (retry)
 	*retry = true;
       returnValue = ReadPart;
-    }else if (err == ECONNRESET || err == EPIPE) {
+    } else if (err == ECONNRESET || err == EPIPE) {
       // if socket is closed then give up
       returnValue = ReadReset;
     } else {
