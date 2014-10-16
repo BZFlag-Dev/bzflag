@@ -244,20 +244,18 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : info(_info), playerIndex(_playerIndex), fd(_fd),
+  : ares(new AresHandler(_playerIndex)), info(_info), playerIndex(_playerIndex), fd(_fd),
     tcplen(0), closed(false),
-    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
-    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false) {
-
-  ares = new AresHandler(_playerIndex);
-
+    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(nullptr),
+    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
+    time(_info->now)
+{
   // store address information for player
-  AddrLen addr_len = sizeof(clientAddr);
+  AddrLen addr_len( sizeof(clientAddr) );
   memcpy(&uaddr, &clientAddr, addr_len);
-  peer = Address(uaddr);
+  peer = uaddr;
 
   // update player state
-  time = info->now;
 #ifdef NETWORK_STATS
 
   // initialize the inbound/outbound counters to zero
@@ -282,21 +280,17 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 }
 
 NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
-:fd(_fd),
-tcplen(0), closed(false),
-outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(NULL),
-udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false)
+  : ares(nullptr), info(nullptr), playerIndex(-1), fd(_fd),
+    tcplen(0), closed(false),
+    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(nullptr),
+    udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
+    time()
 {
-  ares = NULL;
-  info = NULL;
-  playerIndex = -1;
   // store address information for player
   AddrLen addr_len = sizeof(_clientAddr);
   memcpy(&uaddr, &_clientAddr, addr_len);
   peer = Address(uaddr);
 
-  // update player state
-  time = info->now;
 #ifdef NETWORK_STATS
 
   // initialize the inbound/outbound counters to zero
@@ -319,7 +313,7 @@ udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false)
 
 void NetHandler::setPlayer ( PlayerInfo* p, int index )
 {
-  ares = new AresHandler(index);
+  ares.reset(new AresHandler(index));
 
   playerIndex = index;
   info = p;
@@ -334,8 +328,6 @@ NetHandler::~NetHandler() {
   if (info && info->isPlaying())
     dumpMessageStats();
 #endif
-  if (ares)
-    delete(ares);
   // shutdown TCP socket
   shutdown(fd, 2);
   close(fd);
