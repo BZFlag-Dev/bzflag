@@ -71,7 +71,7 @@ ConfigFileManager::~ConfigFileManager()
 bool				ConfigFileManager::parse(std::istream& stream)
 {
   char buffer[MaximumLineLength];
-  while (!stream.eof()) {
+  while (stream.good()) {
     stream.getline(buffer, MaximumLineLength);
     CMDMGR.run(buffer);
   }

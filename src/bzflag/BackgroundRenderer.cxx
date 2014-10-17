@@ -482,7 +482,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   sun2[2] = sunDirection[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
-  int moonSegements = (int)BZDB.eval("moonSegments");
+  int moonSegements = (unsigned int)BZDB.eval("moonSegments");
   moonList = glGenLists(1);
   glNewList(moonList, GL_COMPILE);
   {
