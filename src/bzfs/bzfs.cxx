@@ -6607,8 +6607,8 @@ int main(int argc, char **argv)
     }
 
     requestAuthentication = false;
-    for (int p = 0; p < curMaxPlayers; p++) {
-      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
+    for (int p = 0; p < curMaxPlayers; ++p) {
+      GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(p);
       if (!playerData)
 	continue;
       doStuffOnPlayer(*playerData);

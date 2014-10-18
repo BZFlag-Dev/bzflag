@@ -69,9 +69,9 @@ public:
     Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
     ~Player();
 
-    int	    getIndex();
+    int		   getIndex();
     static int     getFreeIndex(int min, int max);
-    static Player *getPlayerByIndex(int _playerIndex);
+    static Player* getPlayerByIndex(int _playerIndex);
     static int     count();
     static void    updateLatency(float &waitTime);
     static void    dumpScore();
@@ -81,13 +81,13 @@ public:
     static int     getPlayerIDByName(const std::string &name);
     static void    reloadAccessDatabase();
 
-    bool	   loadEnterData(uint16_t &rejectCode,
-				 char *rejectMsg);
-    void	  *packAdminInfo(void *buf);
-    void	  *packPlayerInfo(void *buf);
-    void	  *packPlayerUpdate(void *buf);
+    bool	   loadEnterData(uint16_t& rejectCode,
+				 char* rejectMsg);
+    void*	   packAdminInfo(void* buf);
+    void*	   packPlayerInfo(void* buf);
+    void*	   packPlayerUpdate(void* buf);
 
-		void		setPlayerAddMessage ( PlayerAddMessage &msg );
+    void	   setPlayerAddMessage ( PlayerAddMessage &msg );
 
     void	   signingOn(bool ctf);
     void	   close();
@@ -138,7 +138,7 @@ public:
     // players
     PlayerInfo	      player;
     // Net Handler
-    NetHandler       *netHandler;
+    std::shared_ptr<NetHandler> netHandler;
     // player lag info
     LagInfo	      lagInfo;
     // player access
@@ -146,7 +146,7 @@ public:
     // Last known position, vel, etc
     PlayerState       lastState;
     float	      stateTimeStamp;
-	float		  serverTimeStamp;
+    float	      serverTimeStamp;
     // GameTime update
     float	      gameTimeRate;
     TimeKeeper	      gameTimeNext;
@@ -160,17 +160,17 @@ public:
     // flag to let us know the player is on it's way out
     bool  isParting;
 
-	bool hasEntered;
+    bool hasEntered;
 
     // logic class for server side players
     bz_ServerSidePlayerHandler*	playerHandler;
 
-	bool addWasDelayed;
-	bool hadEnter;
-	double addDelayStartTime;
+    bool addWasDelayed;
+    bool hadEnter;
+    double addDelayStartTime;
 
   private:
-    static Player    *playerList[PlayerSlot];
+    static Player*    playerList[PlayerSlot];
     int		      playerIndex;
     bool	      closed;
     tcpCallback       clientCallback;
@@ -195,19 +195,19 @@ inline int GameKeeper::Player::getIndex()
   return playerIndex;
 }
 
-inline GameKeeper::Player *GameKeeper::Player::getPlayerByIndex(int
+inline GameKeeper::Player* GameKeeper::Player::getPlayerByIndex(int
 								_playerIndex)
 {
   if (_playerIndex < 0 || _playerIndex >= PlayerSlot)
-    return NULL;
+    return nullptr;
   if (!playerList[_playerIndex])
-    return NULL;
+    return nullptr;
   if (playerList[_playerIndex]->closed)
-    return NULL;
+    return nullptr;
   return playerList[_playerIndex];
 }
 
-void *PackPlayerInfo(void *buf, int playerIndex, uint8_t properties );
+void* PackPlayerInfo(void* buf, int playerIndex, uint8_t properties );
 
 // For hostban checking, to avoid check and check again
 inline void GameKeeper::Player::setAllNeedHostbanChecked(bool set)
