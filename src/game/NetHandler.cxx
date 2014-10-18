@@ -12,7 +12,7 @@
 
 /* interface header */
 #include "NetHandler.h"
-#include "MsgStrings.h"
+// #include "MsgStrings.h"
 
 // system headers
 #include <errno.h>
@@ -56,7 +56,6 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
       nerror("couldn't make udp connect socket");
       return false;
   }
-  std::cout << "Created UDP socket " << udpSocket << "\n";
 
   // increase send/rcv buffer size
   n = setsockopt(udpSocket, SOL_SOCKET, SO_SNDBUF, (SSOType) &udpBufSize,
@@ -250,7 +249,6 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time(_info->now)
 {
-  std::cout << "New NetHandler with player for " << Address(clientAddr).getDotNotation() << ": " << this << "\n";
   // store address information for player
   AddrLen addr_len( sizeof(clientAddr) );
   memcpy(&uaddr, &clientAddr, addr_len);
@@ -287,7 +285,6 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time()
 {
-  std::cout << "New Nethandler for " << Address(_clientAddr).getDotNotation() << ": " << this << "=\n";
   // store address information for player
   AddrLen addr_len = sizeof(_clientAddr);
   memcpy(&uaddr, &_clientAddr, addr_len);
@@ -511,8 +508,6 @@ int NetHandler::pflush(fd_set *set) {
 }
 
 RxStatus NetHandler::tcpReceive() {
-  TimeKeeper t( TimeKeeper::getCurrent() );
-  std::cout << "Entering NetHandler::tcpReceive for fd " << fd << " : " << double(t.getSeconds()) << "\n";
   // read header if we don't have it yet
   RxStatus e = receive(4);
   if (e != ReadAll) {
@@ -525,7 +520,7 @@ RxStatus NetHandler::tcpReceive() {
   const void *buf = tcpmsg;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
-  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (len > MaxPacketLen) {
     logDebugMessage(1,"Player [%d] sent huge packet length (len=%d), possible attack\n",
 	   playerIndex, len);
@@ -547,9 +542,6 @@ RxStatus NetHandler::tcpReceive() {
   callNetworkDataLog (false, false, (const unsigned char*)buf,len,this);
 
   if (code == MsgUDPLinkEstablished) {
-    if (udpout) {
-      std::cout << "MsgUDPLinkEstablished flood \n";
-    }
     udpout = true;
     logDebugMessage(2,"Player %s [%d] outbound UDP up\n", info->getCallSign(),
 	   playerIndex);
@@ -563,7 +555,7 @@ RxStatus NetHandler::receive(size_t length, bool *retry) {
   if (retry)
     *retry = false;
 
-  // Degenerate case, becase a close socket should not be sending data, but be paranoid and test for it anyway
+  // Degenerate case, becase a closed socket should not be sending data, but be paranoid and test for it anyway
   if (closed) return returnValue;
   
   if ((int)length <= tcplen) return ReadAll;
