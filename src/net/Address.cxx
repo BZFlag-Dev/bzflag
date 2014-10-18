@@ -109,6 +109,10 @@ bool			Address::operator!=(const Address& address) const
   return addr[0].s_addr != address.addr[0].s_addr;
 }
 
+bool			Address::operator<(Address const& address) const
+{
+  return addr[0].s_addr < address.addr[0].s_addr;
+}
 bool			Address::isAny() const
 {
   return addr[0].s_addr == htonl(INADDR_ANY);

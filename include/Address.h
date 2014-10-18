@@ -47,6 +47,7 @@ class Address {
 			operator InAddr() const;
     bool		operator==(const Address&) const;
     bool		operator!=(const Address&) const;
+    bool		operator<(Address const&) const;
     bool		isAny() const;
     bool		isPrivate() const;
     std::string		getDotNotation() const;
