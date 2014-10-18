@@ -1218,6 +1218,14 @@ static void dumpScore()
 
 static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
+namespace {
+  // IP address by time of last connection
+  std::map<std::string, double> connections;
+  
+  // count of malicious actions by IP address
+  std::map<std::string, int> bad_actors;
+}
+
 static void acceptClient()
 {
   // client (not a player yet) is requesting service.
@@ -1229,6 +1237,32 @@ static void acceptClient()
     nerror("accepting on wks");
     return;
   }
+  
+  // Check how long since the last connection on this address ... squelch spam
+  Address newAddr(clientAddr);
+  std::string dotNotation( newAddr.getDotNotation() );
+  double lastSecs = connections[dotNotation];
+  double curSecs( TimeKeeper::getCurrent().getSeconds() );
+  double elapsed( curSecs - lastSecs );
+  
+  // Penalize hacker addresses
+  if (bad_actors[dotNotation] > 5) {
+    // Only allow one connection per hour
+    if (elapsed < 3600) {
+      std::cout << dotNotation << " not allowed to connect until after an hour\n";
+      close(fd);
+      return;
+    }
+  }
+  
+  connections[dotNotation] = curSecs;
+  if (elapsed < 1.5) {
+    std::cout << "Rejecting connection flood from " << dotNotation << " " << elapsed << " seconds since last connect" << "\n";
+    bad_actors[dotNotation] += 1;
+    close(fd);
+    return;
+  }
+  
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
@@ -4154,7 +4188,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
   }
 
-  if(!playerData->player.isCompletelyAdded())
+  if (not playerData->player.isCompletelyAdded())
   {
 	  switch (code)
 	  {

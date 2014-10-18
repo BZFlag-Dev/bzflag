@@ -12,7 +12,7 @@
 
 /* interface header */
 #include "NetHandler.h"
-// #include "MsgStrings.h"
+#include "MsgStrings.h"
 
 // system headers
 #include <errno.h>
@@ -56,6 +56,7 @@ bool NetHandler::initHandlers(struct sockaddr_in addr) {
       nerror("couldn't make udp connect socket");
       return false;
   }
+  std::cout << "Created UDP socket " << udpSocket << "\n";
 
   // increase send/rcv buffer size
   n = setsockopt(udpSocket, SOL_SOCKET, SO_SNDBUF, (SSOType) &udpBufSize,
@@ -127,7 +128,6 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			   bool &udpLinkRequest) {
   AddrLen recvlen = sizeof(*uaddr);
   int n;
-  int id;
   uint16_t len;
   uint16_t code;
   while (true) {
@@ -150,7 +150,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     // Ping code request
     return -2;
 
-  id = -1;
+  int id(-1);	  // player index of the matched player
   int pi;
   udpLinkRequest = false;
   for (pi = 0; pi < maxHandlers; pi++)
@@ -250,6 +250,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time(_info->now)
 {
+  std::cout << "New NetHandler with player for " << Address(clientAddr).getDotNotation() << ": " << this << "\n";
   // store address information for player
   AddrLen addr_len( sizeof(clientAddr) );
   memcpy(&uaddr, &clientAddr, addr_len);
@@ -286,6 +287,7 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time()
 {
+  std::cout << "New Nethandler for " << Address(_clientAddr).getDotNotation() << ": " << this << "=\n";
   // store address information for player
   AddrLen addr_len = sizeof(_clientAddr);
   memcpy(&uaddr, &_clientAddr, addr_len);
@@ -329,7 +331,7 @@ NetHandler::~NetHandler() {
     dumpMessageStats();
 #endif
   // shutdown TCP socket
-  shutdown(fd, 2);
+  shutdown(fd, SHUT_RDWR);
   close(fd);
 
   delete[] outmsg;
@@ -509,27 +511,32 @@ int NetHandler::pflush(fd_set *set) {
 }
 
 RxStatus NetHandler::tcpReceive() {
+  TimeKeeper t( TimeKeeper::getCurrent() );
+  std::cout << "Entering NetHandler::tcpReceive for fd " << fd << " : " << double(t.getSeconds()) << "\n";
   // read header if we don't have it yet
   RxStatus e = receive(4);
-  if (e != ReadAll)
+  if (e != ReadAll) {
     // if header not ready yet then skip the read of the body
     return e;
-
+  }
+  
   // read body if we don't have it yet
   uint16_t len, code;
   const void *buf = tcpmsg;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
-//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (len > MaxPacketLen) {
     logDebugMessage(1,"Player [%d] sent huge packet length (len=%d), possible attack\n",
 	   playerIndex, len);
     return ReadHuge;
   }
+  // We haven't accounted for the header yet, so only ask receive() to get len (the payload) more bytes.
   e = receive(4 + (int) len);
-  if (e != ReadAll)
+  if (e != ReadAll) {
     // if body not ready yet then skip the command handling
     return e;
+  }
 
   // clear out message
   tcplen = 0;
@@ -540,6 +547,9 @@ RxStatus NetHandler::tcpReceive() {
   callNetworkDataLog (false, false, (const unsigned char*)buf,len,this);
 
   if (code == MsgUDPLinkEstablished) {
+    if (udpout) {
+      std::cout << "MsgUDPLinkEstablished flood \n";
+    }
     udpout = true;
     logDebugMessage(2,"Player %s [%d] outbound UDP up\n", info->getCallSign(),
 	   playerIndex);
@@ -548,9 +558,14 @@ RxStatus NetHandler::tcpReceive() {
 }
 
 RxStatus NetHandler::receive(size_t length, bool *retry) {
-  RxStatus returnValue;
+  RxStatus returnValue(ReadError);
+  
   if (retry)
     *retry = false;
+
+  // Degenerate case, becase a close socket should not be sending data, but be paranoid and test for it anyway
+  if (closed) return returnValue;
+  
   if ((int)length <= tcplen) return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
