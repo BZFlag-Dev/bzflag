@@ -199,11 +199,11 @@ inline GameKeeper::Player* GameKeeper::Player::getPlayerByIndex(int
 								_playerIndex)
 {
   if (_playerIndex < 0 || _playerIndex >= PlayerSlot)
-    return nullptr;
+    return 0;
   if (!playerList[_playerIndex])
-    return nullptr;
+    return 0;
   if (playerList[_playerIndex]->closed)
-    return nullptr;
+    return 0;
   return playerList[_playerIndex];
 }
 

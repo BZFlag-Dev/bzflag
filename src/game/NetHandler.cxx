@@ -245,7 +245,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
   : ares(new AresHandler(_playerIndex)), info(_info), playerIndex(_playerIndex), fd(_fd),
     tcplen(0), closed(false),
-    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(nullptr),
+    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time(_info->now)
 {
@@ -279,9 +279,9 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 }
 
 NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
-  : ares(nullptr), info(nullptr), playerIndex(-1), fd(_fd),
+  : ares(0), info(0), playerIndex(-1), fd(_fd),
     tcplen(0), closed(false),
-    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(nullptr),
+    outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time()
 {

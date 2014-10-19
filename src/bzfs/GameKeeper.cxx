@@ -20,7 +20,7 @@
 /* common headers */
 #include "GameTime.h"
 
-GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = {nullptr};
+GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = {0}; // this is suspect...
 bool GameKeeper::Player::allNeedHostbanChecked = false;
 
 void* PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
@@ -39,7 +39,7 @@ GameKeeper::Player::Player(int _playerIndex,
     stateTimeStamp(0.0f), serverTimeStamp(0.0),
     gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
     isParting(false), hasEntered(false),
-    playerHandler(nullptr),
+    playerHandler(0),
     addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
     playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
     needThisHostbanChecked(false), idFlag(-1)
@@ -59,7 +59,7 @@ GameKeeper::Player::Player(int _playerIndex,
     stateTimeStamp(0.0f), serverTimeStamp(0.0),
     gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
     isParting(false), hasEntered(false),
-    playerHandler(nullptr),
+    playerHandler(0),
     addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
     playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
     needThisHostbanChecked(false), idFlag(-1)
@@ -74,14 +74,14 @@ GameKeeper::Player::Player(int _playerIndex,
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
   : _LSAState(start),
-    player(_playerIndex), netHandler(nullptr),
+    player(_playerIndex), netHandler(0),
     lagInfo(&player),
     stateTimeStamp(0.0f), serverTimeStamp(0.0),
     gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
     isParting(false), hasEntered(false),
     playerHandler(handler),
     addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-    playerIndex(_playerIndex), closed(false), clientCallback(nullptr),
+    playerIndex(_playerIndex), closed(false), clientCallback(0),
     needThisHostbanChecked(false), idFlag(0)
 {
   playerList[playerIndex] = this;
@@ -93,12 +93,12 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
-  playerList[playerIndex] = nullptr;
+  playerList[playerIndex] = 0;
 }
 
 int GameKeeper::Player::count()
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
   int     count = 0;
 
   for (int i = 0; i < PlayerSlot; i++)
@@ -110,7 +110,7 @@ int GameKeeper::Player::count()
 
 void GameKeeper::Player::updateLatency(float &waitTime)
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
 
   for (int p = 0; p < PlayerSlot; ++p) {
     if ((playerData = playerList[p]) && !playerData->closed) {
@@ -122,7 +122,7 @@ void GameKeeper::Player::updateLatency(float &waitTime)
 
 void GameKeeper::Player::dumpScore()
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
 
   std::cout << "\n#players\n";
   for (int p = 0; p < PlayerSlot; ++p) {
@@ -139,7 +139,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
   float topRatio(   -100000.0f);
   int   rabbitIndex( NoPlayer);
 
-  Player* playerData(nullptr);
+  Player* playerData(0);
   bool    goodRabbitSelected(false);
 
   for (int i = 0; i < PlayerSlot; ++i) {
@@ -185,7 +185,7 @@ void GameKeeper::Player::updateNextGameTime()
 
 void* GameKeeper::Player::packAdminInfo(void* buf)
 {
-  if (netHandler == nullptr) {
+  if (netHandler == 0) {
     buf = nboPackUByte(buf, 5);
     buf = nboPackUByte(buf, playerIndex);
     buf = nboPackUByte(buf, 127);
@@ -232,7 +232,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 					     int targetPlayer)
 {
   std::vector<int> receivers;
-  Player* playerData(nullptr);
+  Player* playerData(0);
 
   if (targetPlayer != -1) {
     if ((playerData = playerList[targetPlayer]) && !playerData->closed
@@ -279,7 +279,7 @@ void GameKeeper::Player::signingOn(bool ctf)
 // Attempt to retrive a slot number for a player specified as EITHER "callsign" or "#<slot>"
 int GameKeeper::Player::getPlayerIDByName(const std::string &name)
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
   int slot(-1); // invalid
 
   if (sscanf (name.c_str(), "#%d", &slot) == 1) {
@@ -298,7 +298,7 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
 
 void GameKeeper::Player::reloadAccessDatabase()
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
   for (int i = 0; i < PlayerSlot; ++i)
     if ((playerData = playerList[i]) && !playerData->closed)
       playerData->accessInfo.reloadInfo();
@@ -311,14 +311,14 @@ void GameKeeper::Player::close()
 
 bool GameKeeper::Player::clean()
 {
-  Player* playerData(nullptr);
+  Player* playerData(0);
   // Trying to detect if this action cleaned the array of player
   bool empty(true);
   bool ICleaned(false);
   for (int i = 0; i < PlayerSlot; ++i) {
     if ((playerData = playerList[i])) {
       if (playerData->closed) {
-	playerList[i] = nullptr;
+	playerList[i] = 0;
 	delete playerData;
 	ICleaned = true;
       } else {
