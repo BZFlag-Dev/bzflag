@@ -384,7 +384,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
       continue;
     callSigns.insert(playerData->player.getCallSign());
     playerData->_LSAState = GameKeeper::Player::checking;
-    NetHandler *handler = playerData->netHandler;
+    NetHandler* handler = playerData->netHandler.get();
     msg += TextUtils::url_encode(playerData->player.getCallSign());
     Address addr = handler->getIPAddress();
     if (!addr.isPrivate()) {

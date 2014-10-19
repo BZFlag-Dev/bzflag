@@ -4129,7 +4129,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
   if (!playerData)
     return;
-  NetHandler *handler = playerData->netHandler;
+  NetHandler* handler = playerData->netHandler.get();
 
   uint16_t len, code;
   const void *buf = rawbuf;
@@ -6988,12 +6988,12 @@ int main(int argc, char **argv)
 
       // now check messages from connected players and send queued messages
       GameKeeper::Player *playerData;
-      NetHandler *netPlayer;
+      NetHandler* netPlayer(0);
       for (int j = 0; j < curMaxPlayers; j++) {
 	playerData = GameKeeper::Player::getPlayerByIndex(j);
 	if (!playerData || !playerData->netHandler)
 	  continue;
-	netPlayer = playerData->netHandler;
+	netPlayer = playerData->netHandler.get();
 	// send whatever we have ... if any
 	if (netPlayer->pflush(&write_set) == -1) {
 	  removePlayer(j, "ECONNRESET/EPIPE", false);
