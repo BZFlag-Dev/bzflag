@@ -243,17 +243,13 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 		       int _playerIndex, int _fd)
-  : ares(new AresHandler(_playerIndex)), info(_info), playerIndex(_playerIndex), fd(_fd),
+  : ares(new AresHandler(_playerIndex)), info(_info), uaddr(clientAddr),
+    playerIndex(_playerIndex), fd(_fd), peer(clientAddr),
     tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
     time(_info->now)
 {
-  // store address information for player
-  AddrLen addr_len( sizeof(clientAddr) );
-  memcpy(&uaddr, &clientAddr, addr_len);
-  peer = uaddr;
-
   // update player state
 #ifdef NETWORK_STATS
 
@@ -283,7 +279,7 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
     tcplen(0), closed(false),
     outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
     udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
-    time()
+    time(TimeKeeper::getCurrent())
 {
   // store address information for player
   AddrLen addr_len = sizeof(_clientAddr);
