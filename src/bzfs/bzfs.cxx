@@ -3270,7 +3270,8 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
          logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
       playerData->player.getCallSign(), playerIndex,
       tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
-      removePlayer(playerIndex, "attempted illegal flag grab");
+      // @TODO make a better test for this to reduce false positives
+      //removePlayer(playerIndex, "attempted illegal flag grab");
       return;
     }
   }
