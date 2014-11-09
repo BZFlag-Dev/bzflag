@@ -480,10 +480,16 @@ void ScoreboardRenderer::renderScoreboard(void)
 	else
 	  ++huntPosition;
       }
-      if (huntPosition>=numPlayers)
-	huntPosition = 0;
-      if (huntPosition<0)
-	huntPosition = numPlayers-1;
+      if (huntPosition>=numPlayers) {
+          huntPosition = 0;
+        if (players[0] == myTank)
+          huntPosition = 1;
+      }
+      if (huntPosition<0) {
+        huntPosition = numPlayers-1;
+        if (players[huntPosition] == myTank)
+          --huntPosition;
+      }
       if (huntSelectEvent){	     // if 'fire' was pressed ...
 	if (!huntAddMode)
 	  clearHuntedTanks ();
