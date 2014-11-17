@@ -103,18 +103,18 @@ void ShotStats::addStats(Player *_player, std::vector<HUDuiControl*> &_list)
   createLabel(TextUtils::format("%2d%%", stats->getTotalPerc()), _list);
   createLabel(TextUtils::format("%d/%d", stats->getTotalHit(),
 				stats->getTotalFired()),  _list);
-  createLabel(TextUtils::format("%d/%d", stats->getNormalHit(),
-				stats->getNormalFired()), _list);
-  createLabel(TextUtils::format("%d/%d", stats->getGMHit(),
-				stats->getGMFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getLHit(),
-				stats->getLFired()),      _list);
-  createLabel(TextUtils::format("%d/%d", stats->getSBHit(),
-				stats->getSBFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getSWHit(),
-				stats->getSWFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getTHHit(),
-				stats->getTHFired()),     _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Null),
+				stats->getFired(Flags::Null)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::GuidedMissile),
+				stats->getFired(Flags::GuidedMissile)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Laser),
+				stats->getFired(Flags::Laser)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::SuperBullet),
+				stats->getFired(Flags::SuperBullet)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::ShockWave),
+				stats->getFired(Flags::ShockWave)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Thief),
+				stats->getFired(Flags::Thief)), _list);
 
   std::string flagName = stats->getFavoriteFlag()->flagAbbv;
   if (flagName.empty())

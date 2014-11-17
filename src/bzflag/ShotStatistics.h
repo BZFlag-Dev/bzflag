@@ -20,6 +20,10 @@
 /** ShotStatistics stores and calculates a set of statistics on player's shots
  *  and accuracy
  */
+
+// FIXME - this looks bad, make the FlagType an enum
+typedef std::map<FlagType*, int> FlagMap;
+
 class ShotStatistics {
 public:
 
@@ -27,18 +31,8 @@ public:
   ~ShotStatistics();
 
   // raw stats returns
-  int	 getNormalFired() const;
-  int	 getNormalHit() const;
-  int	 getGMFired() const;
-  int	 getGMHit() const;
-  int	 getLFired() const;
-  int	 getLHit() const;
-  int	 getSBFired() const;
-  int	 getSBHit() const;
-  int	 getSWFired() const;
-  int	 getSWHit() const;
-  int	 getTHFired() const;
-  int	 getTHHit() const;
+  int	 getFired(FlagType* flag) const;
+  int	 getHit(FlagType* flag) const;
 
   // stats processing
   int	 getTotalFired() const;
@@ -55,18 +49,11 @@ public:
   double getLastShotDeviation ( void ) const {return lastShotDeviation;}
 
 private:
-  int	      normalFired;
-  int	      normalHit;
-  int	      guidedMissileFired;
-  int	      guidedMissileHit;
-  int	      laserFired;
-  int	      laserHit;
-  int	      superBulletFired;
-  int	      superBulletHit;
-  int	      shockWaveFired;
-  int	      shockWaveHit;
-  int	      thiefFired;
-  int	      thiefHit;
+  FlagMap     fired;
+  FlagMap     hit;
+
+  int	      totalFired;
+  int	      totalHit;
 
   double	  lastShotTimeDelta;
   double	  lastShotTime;
@@ -75,62 +62,24 @@ private:
 };
 
 
-inline int ShotStatistics::getNormalFired() const {
-  return normalFired;
+inline int ShotStatistics::getFired(FlagType* flag) const {
+  if (fired.find(flag) != fired.end())
+	return fired.at(flag);
+  return 0;
 }
 
-inline int ShotStatistics::getNormalHit() const {
-  return normalHit;
-}
-
-inline int ShotStatistics::getGMFired() const {
-  return guidedMissileFired;
-}
-
-inline int ShotStatistics::getGMHit() const {
-  return guidedMissileHit;
-}
-
-inline int ShotStatistics::getLFired() const {
-  return laserFired;
-}
-
-inline int ShotStatistics::getLHit() const {
-  return laserHit;
-}
-
-inline int ShotStatistics::getSBFired() const {
-  return superBulletFired;
-}
-
-inline int ShotStatistics::getSBHit() const {
-  return superBulletHit;
-}
-
-inline int ShotStatistics::getSWFired() const {
-  return shockWaveFired;
-}
-
-inline int ShotStatistics::getSWHit() const {
-  return shockWaveHit;
-}
-
-inline int ShotStatistics::getTHFired() const {
-  return thiefFired;
-}
-
-inline int ShotStatistics::getTHHit() const {
-  return thiefHit;
+inline int ShotStatistics::getHit(FlagType* flag) const {
+  if (hit.find(flag) != hit.end())
+	return hit.at(flag);
+  return 0;
 }
 
 inline int ShotStatistics::getTotalFired() const {
-  return normalFired + guidedMissileFired + laserFired + superBulletFired +
-	 shockWaveFired + thiefFired;
+  return totalFired;
 }
 
 inline int ShotStatistics::getTotalHit() const {
-  return normalHit + guidedMissileHit + laserHit + superBulletHit +
-	 shockWaveHit + thiefHit;
+  return totalHit;
 }
 
 #endif // __SHOTSTATISTICS_H__
