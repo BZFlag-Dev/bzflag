@@ -302,9 +302,14 @@ void          DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 		float hatX = 0;
 		float hatY = 0;
 		BOOL hatCentered = (LOWORD(hatPos) == 0xFFFF);
-		if (!hatCentered)
+		if (hatCentered)
 		{
-			float angle = (float)hatPos/100.0f;
+		    hataxes[i * 2]     = hatX = 0;
+		    hataxes[i * 2 + 1] = hatY = 0;
+		} else {
+		    // hatPos is indicated clockwise from north, we transform it so it
+		    // can be fed into sinf() and cosf() which start counting from east
+			float angle = (float)hatPos/100.0f - 90;
 
 			hataxes[i * 2]     = hatX = cosf(angle * ((float)M_PI/180.0f));
 			hataxes[i * 2 + 1] = hatY = sinf(angle * ((float)M_PI/180.0f));
