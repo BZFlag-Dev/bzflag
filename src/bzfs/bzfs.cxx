@@ -4156,7 +4156,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
   }
 
-  if (not playerData->player.isCompletelyAdded())
+  if (!playerData->player.isCompletelyAdded())
   {
 	  switch (code)
 	  {

@@ -19,6 +19,10 @@
 
 #include "bzfsAPI.h"
 
+#ifndef SHUT_RDWR
+  #define SHUT_RDWR -2
+#endif
+
 const int udpBufSize = 128000;
 
 std::vector<NetworkDataLogCallback*> logCallbacks;
