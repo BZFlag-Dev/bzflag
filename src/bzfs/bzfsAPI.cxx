@@ -1337,6 +1337,21 @@ BZF_API bool bz_setPlayerTKs(int playerId, int tks)
   return true;
 }
 
+BZF_API bool bz_incrementPlayerWins (int playerId, int increment)
+{
+	return bz_setPlayerWins(playerId, bz_getPlayerWins(playerId) + increment);
+}
+
+BZF_API bool bz_incrementPlayerLosses (int playerId, int increment)
+{
+	return bz_setPlayerLosses(playerId, bz_getPlayerLosses(playerId) + increment);
+}
+
+BZF_API bool bz_incrementPlayerTKs (int playerId, int increment)
+{
+	return bz_setPlayerTKs(playerId, bz_getPlayerTKs(playerId) + increment);
+}
+
 
 //-------------------------------------------------------------------------
 BZF_API float bz_getPlayerRank (int playerId)
