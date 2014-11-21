@@ -30,7 +30,7 @@ ShotStatistics::~ShotStatistics()
 int ShotStatistics::getTotalPerc() const
 {
   if (getTotalFired() == 0)
-    return 100;
+    return 0;
   return (int)(100 * ((float)getTotalHit() / (float)getTotalFired()));
 }
 
