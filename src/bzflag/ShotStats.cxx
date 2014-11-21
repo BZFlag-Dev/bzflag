@@ -65,6 +65,30 @@ ShotStats::ShotStats() : HUDDialog()
   createLabel("Flag", listHUD);
   ++rows;
 
+  staticLabelCount = listHUD.size();
+
+  initNavigation(listHUD, 1, 1);
+}
+
+ShotStats::~ShotStats()
+{
+}
+
+void ShotStats::refresh()
+{
+  if (!visible) {
+    return;
+  }
+
+  std::vector<HUDuiControl*>& listHUD = getControls();
+
+  // Delete all the controls apart from the headings
+  const int count = listHUD.size();
+  for (int i = staticLabelCount; i < count; i++) {
+    delete listHUD[i];
+  }
+  listHUD.erase(listHUD.begin() + staticLabelCount, listHUD.end());
+
   // my statistics first
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank->getTeam() != ObserverTeam) {
@@ -79,11 +103,6 @@ ShotStats::ShotStats() : HUDDialog()
   }
 
   resize(HUDDialog::getWidth(), HUDDialog::getHeight());
-  initNavigation(listHUD, 1, 1);
-}
-
-ShotStats::~ShotStats()
-{
 }
 
 void ShotStats::createLabel(const std::string &str,
@@ -143,6 +162,18 @@ HUDuiDefaultKey*	ShotStats::getDefaultKey()
 void			ShotStats::execute()
 {
   HUDDialogStack::get()->pop();
+}
+
+void			ShotStats::dismiss()
+{
+  visible = false;
+}
+
+void			ShotStats::show()
+{
+  visible = true;
+
+  refresh();
 }
 
 void			ShotStats::resize(int _width, int _height)

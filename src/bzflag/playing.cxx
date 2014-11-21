@@ -107,6 +107,7 @@ ControlPanel*		controlPanel = NULL;
 static RadarRenderer*	radar = NULL;
 HUDRenderer*		hud = NULL;
 static ScoreboardRenderer*		scoreboard = NULL;
+static ShotStats*	shotStats = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
 static Team*		teams = NULL;
 int			numFlags = 0;
@@ -386,6 +387,11 @@ BzfDisplay*		getDisplay()
 MainWindow*		getMainWindow()
 {
   return mainWindow;
+}
+
+ShotStats*		getShotStats()
+{
+  return shotStats;
 }
 
 SceneRenderer*		getSceneRenderer()
@@ -700,7 +706,11 @@ static bool doKeyCommon(const BzfKeyEvent& key, bool pressed)
     } // end switch on key
     // Shot/Accuracy Statistics display
     if (key.button == BzfKeyEvent::Home && pressed) {
-      HUDDialogStack::get()->push(new ShotStats);
+      if (!shotStats) {
+        shotStats = new ShotStats;
+      }
+
+      HUDDialogStack::get()->push(shotStats);
       return true;
     }
   } // end key handle
@@ -1371,6 +1381,9 @@ static Player*		addPlayer(PlayerId id, const void* msg, int showMessage)
   }
   completer.registerWord(callsign, true /* quote spaces */);
 
+  if (shotStats)
+    shotStats->refresh();
+
   return remotePlayers[i];
 }
 
@@ -1457,6 +1470,9 @@ static bool removePlayer (PlayerId id)
       curMaxPlayers--;
     }
   World::getWorld()->setCurMaxPlayers(curMaxPlayers);
+
+  if (shotStats)
+    shotStats->refresh();
 
   return true;
 }

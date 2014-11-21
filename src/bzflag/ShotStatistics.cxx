@@ -13,6 +13,7 @@
 // Interface header
 #include "ShotStatistics.h"
 #include "TimeKeeper.h"
+#include "playing.h"
 
 ShotStatistics::ShotStatistics() :
       totalFired(0), totalHit(0)
@@ -39,9 +40,8 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
   totalFired++;
 
   double currentTime = TimeKeeper::getCurrent().getSeconds();
-  if (lastShotTime > 0)
-  {
-	lastShotTimeDelta = currentTime-lastShotTime;
+  if (lastShotTime > 0) {
+	 lastShotTimeDelta = currentTime-lastShotTime;
   }
   lastShotTime = currentTime;
 
@@ -61,12 +61,18 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
   double radToDeg = 180.0/3.1415;
 
   lastShotDeviation = (float)(cos*radToDeg);
+
+  if (getShotStats())
+    getShotStats()->refresh();
 }
 
 void ShotStatistics::recordHit(FlagType* flag)
 {
   hit[flag]++;
   totalHit++;
+
+  if (getShotStats())
+    getShotStats()->refresh();
 }
 
 typedef std::pair<FlagType*, float> FlagStat;
