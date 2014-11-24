@@ -5475,6 +5475,12 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 
 	  if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
 	  {
+	    if (peer.bufferedInput.size() > headerLen+2)
+	    {
+	      peer.deleteMe = true;
+	      return;
+	    }
+
 	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
