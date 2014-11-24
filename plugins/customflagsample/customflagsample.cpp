@@ -56,8 +56,7 @@ void CustomFlagSample::Event(bz_EventData *eventData)
     {
 	bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "Shot fired by %s with Custom Flag!", playerRecord->callsign.c_str());
 	// this user must be cool, add 10 to their score
-	bz_BasePlayerRecord* player = bz_getPlayerByIndex(p);
-	bz_setPlayerWins(p, player->wins+10);
+	bz_incrementPlayerWins(p, 10);
     }
     break;
   }
