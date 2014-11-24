@@ -65,7 +65,6 @@ class AresHandler {
   ares_channel	aresChannel;
   ResolutionStatus status;
   bool		aresFailed;
-  std::string		lookupAddy;
 
   static bool	globallyInited;
 

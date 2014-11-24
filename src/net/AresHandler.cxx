@@ -76,23 +76,10 @@ void AresHandler::globalShutdown()
 #endif
 }
 
-std::map<std::string,std::string> DNSCache;
-
 void AresHandler::queryHostname(const struct sockaddr *clientAddr)
 {
   if (aresFailed)
     return;
-
-  Address temp(((const sockaddr_in *)clientAddr)->sin_addr);
-
-  lookupAddy = temp.getDotNotation();
-
-  if (DNSCache.find(lookupAddy) != DNSCache.end())
-  {
-	  status = HbASucceeded;
-	  hostName = DNSCache[lookupAddy].c_str();
-	  return;
-  }
 
   status = HbAPending;
   // launch the asynchronous query to look up this hostname
@@ -145,8 +132,6 @@ void AresHandler::callback(int callbackStatus, struct hostent *hostent)
   } else if (status == HbAPending) {
     hostName = strdup(hostent->h_name);
     status = HbASucceeded;
-
-	DNSCache[lookupAddy] = hostName;
     logDebugMessage(2,"Player [%d] resolved to %s\n", index, hostName.c_str());
   } else if (status == HbNPending) {
     memcpy(&hostAddress, hostent->h_addr_list[0], sizeof(hostAddress));
