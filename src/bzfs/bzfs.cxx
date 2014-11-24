@@ -1244,6 +1244,7 @@ static void acceptClient()
   // they aren't a player yet till they send us the connection string
   NetConnectedPeer peer;
   peer.netHandler = new NetHandler(clientAddr, fd);
+  peer.netHandler->SetAllowUDP(false);
   peer.apiHandler = NULL;
   peer.player = -1;
   peer.socket = fd;
@@ -2283,7 +2284,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     playerAlive(playerIndex);
 
   playerData->player.setCompletelyAdded();
+  playerData->netHandler->SetAllowUDP(true);
 }
+
 
 
 void resetFlag(FlagInfo &flag)

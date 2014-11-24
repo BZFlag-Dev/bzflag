@@ -169,6 +169,7 @@ public:
   void flushData ( void ){tcplen = 0;}
   int  bufferedSend(const void *buffer, size_t length);
 
+  void SetAllowUDP(bool set);
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
@@ -222,6 +223,7 @@ private:
   bool toBeKicked;
   std::string toBeKickedReason;
 
+  bool	acceptUDP;
   // time accepted
   TimeKeeper time;
 #ifdef NETWORK_STATS

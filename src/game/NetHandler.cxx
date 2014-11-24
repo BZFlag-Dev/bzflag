@@ -272,6 +272,8 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
   perSecondCurrentBytes[1] = 0;
   perSecondMaxBytes[1] = 0;
 
+  acceptUDP = true;
+
 #endif
   if (!netPlayer[playerIndex])
     netPlayer[playerIndex] = this;
@@ -306,6 +308,8 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
   perSecondMaxMsg[1] = 0;
   perSecondCurrentBytes[1] = 0;
   perSecondMaxBytes[1] = 0;
+
+  acceptUDP = true;
 
 #endif
 }
@@ -452,6 +456,11 @@ void NetHandler::closing()
   closed = true;
 }
 
+void NetHandler::SetAllowUDP(bool set)
+{
+	acceptUDP = set;
+}
+
 int NetHandler::pwrite(const void *b, int l) {
 
   if (l == 0) {
@@ -541,10 +550,18 @@ RxStatus NetHandler::tcpReceive() {
 
   callNetworkDataLog (false, false, (const unsigned char*)buf,len,this);
 
-  if (code == MsgUDPLinkEstablished) {
-    udpout = true;
-    logDebugMessage(2,"Player %s [%d] outbound UDP up\n", info->getCallSign(),
-	   playerIndex);
+  if (code == MsgUDPLinkEstablished)
+  {
+	  if (!acceptUDP)
+	  {
+		  closing();
+		  return ReadError;
+	  }
+	  else
+	  {
+		  udpout = true;
+		  logDebugMessage(2,"Player %s [%d] outbound UDP up\n", info->getCallSign(), playerIndex);
+	  }
   }
   return ReadAll;
 }
