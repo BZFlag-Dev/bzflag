@@ -256,7 +256,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
   return isAllowed || hasALLPerm;
 }
 
-// grant and revoke perms used with /mute and /unmute
+// grant and revoke perms
 void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right)
 {
   explicitAllows.set(right);
@@ -271,7 +271,7 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 
 
 // custom perms are ONLY on groups
-bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
+bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 {
 	if (serverop || hasALLPerm)
 		return true;
@@ -311,9 +311,7 @@ bool userExists(const std::string &nick)
   std::string str = nick;
   makeupper(str);
   PlayerAccessMap::iterator itr = userDatabase.find(str);
-  if (itr == userDatabase.end())
-    return false;
-  return true;
+  return itr != userDatabase.end();
 }
 
 //FIXME - check for non-existing user (throw?)
@@ -336,9 +334,8 @@ bool checkPasswordExistence(const std::string &nick)
   PasswordMap::iterator itr = passwordDatabase.find(str1);
   if (itr == passwordDatabase.end())
     return false;
-  if (itr->second == "*" || itr->second == "")
-    return false;
-  return true;
+
+  return !(itr->second == "*" || itr->second == "");
 }
 
 bool verifyUserPassword(const std::string &nick, const std::string &pass)
