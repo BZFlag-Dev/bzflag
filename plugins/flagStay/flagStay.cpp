@@ -43,26 +43,49 @@ public:
 	FlagStayZone()
 	{
 		box = false;
-		xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
+		xMax = xMin = yMax = yMin = zMax = zMin = rad = rot = 0;
 	}
 
 	bool box;
 	float xMax,xMin,yMax,yMin,zMax,zMin;
-	float rad;
+	float rad, rot;
 
 	std::string message;
 	bool pointIn ( float pos[3] )
 	{
 		if ( box )
 		{
-			if ( pos[0] > xMax || pos[0] < xMin )
-				return false;
+            if (rot == 0 || rot == 180)
+            {
+                if ( pos[0] > xMax || pos[0] < xMin ) return false;
+                if ( pos[1] > yMax || pos[1] < yMin ) return false;
+            }
+            else if (rot == 90 || rot == 270)
+            {
+                if ( pos[0] > xMin || pos[0] < xMax ) return false;
+                if ( pos[1] > yMin || pos[1] < yMax ) return false;
+            }
+            else // the box is rotated, maths is needed
+            {
+                float pi = atan(1) * 4;
 
-			if ( pos[1] > yMax || pos[1] < yMin )
-				return false;
+                float height  = (yMax - yMin) / 2;
+                float width   = (xMax - xMin) / 2;
+                float dx = pos[0] - (xMax - width);
+                float dy = pos[1] - (yMax - height);
 
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
+                float h1 = sqrt(pow(dx, 2.0f) + pow(dy, 2.0f));
+                float currentAngle = atan2(dy, dx);
+
+                float newAngle = currentAngle - (pi * rot) / 180;
+
+                float x2 = cos(newAngle) * h1;
+                float y2 = sin(newAngle) * h1;
+
+                if (x2 < - 0.5 * width && x2 > 0.5 * width && y2 < - 0.5 * height && y2 > 0.5 * height) return false;
+            }
+
+            if ( pos[2] > zMax || pos[2] < zMin ) return false;
 		}
 		else
 		{
@@ -104,6 +127,9 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 
 	FlagStayZone newZone;
 
+    // Temporary placeholders for information with default values just in case
+    float pos[3], size[3], radius = 5, height = 5, rot = 0;
+
 	// parse all the chunks
 	for ( unsigned int i = 0; i < data->data.size(); i++ )
 	{
@@ -116,6 +142,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
 
+            // @TODO Possibly deprecate 'BBOX' and 'Cylinder' in favor of having the code do the calculations and in favor of staying consistent with other map objects
 			if ( key == "BBOX" && nubs->size() > 6)
 			{
 				newZone.box = true;
@@ -135,6 +162,32 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 				newZone.zMin =(float)atof(nubs->get(3).c_str());
 				newZone.zMax =(float)atof(nubs->get(4).c_str());
 			}
+            else if ((key == "POSITION" || key == "POS") && nubs->size() > 3)
+            {
+                pos[0] = {(float)atof(nubs->get(1).c_str())};
+                pos[1] = {(float)atof(nubs->get(2).c_str())};
+                pos[2] = {(float)atof(nubs->get(3).c_str())};
+            }
+            else if (key == "SIZE" && nubs->size() > 3)
+            {
+                newZone.box = true;
+                size[0] = {(float)atof(nubs->get(1).c_str())};
+                size[1] = {(float)atof(nubs->get(2).c_str())};
+                size[2] = {(float)atof(nubs->get(3).c_str())};
+            }
+            else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 3)
+            {
+                rot = (float)atof(nubs->get(1).c_str());
+            }
+            else if (key == "RADIUS" && nubs->size() > 1)
+            {
+                newZone.box = false;
+                radius = (float)atof(nubs->get(1).c_str());
+            }
+            else if (key == "HEIGHT" && nubs->size() > 1)
+            {
+                height = (float)atof(nubs->get(1).c_str());
+            }
 			else if ( key == "FLAG" && nubs->size() > 1)
 			{
 				std::string flag = nubs->get(1).c_str();
@@ -147,6 +200,26 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 		}
 		bz_deleteStringList(nubs);
 	}
+
+    if (newZone.box)
+    {
+        newZone.xMin = pos[0] - size[0];
+        newZone.xMax = pos[0] + size[0];
+        newZone.yMin = pos[1] - size[1];
+        newZone.yMax = pos[1] + size[1];
+        newZone.zMin = pos[2];
+        newZone.zMax = pos[2] + size[2];
+        newZone.rot  = (rot > 0 && rot < 360) ? rot : 0;
+    }
+    else
+    {
+        newZone.rad = radius;
+        newZone.xMax = pos[0];
+        newZone.yMax = pos[1];
+        newZone.zMin = pos[2];
+        newZone.zMax = pos[2] + height;
+    }
+
 	zoneList.push_back(newZone);
 	return true;
 }
