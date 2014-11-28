@@ -53,8 +53,37 @@ flagstayzone
 end
 
 flagstayzone
-    pos 50 50 -0.1
+    pos 50 50 0
     size 20 10 1
     rot 45
     flag US
+end
+
+arc
+    divisions 16
+    angle 360
+    ratio 0
+    pos -50 -50 -0.1
+    size 20 20 0.1
+end
+
+arc
+    divisions 16
+    angle 360
+    ratio 1
+    position -50 50 -1
+    size 20 20 0.1
+end
+
+zone
+    pos -50 50 -0.1
+    size 10 10 0.1
+    zoneflag GM
+end
+
+flagstayzone
+    pos -50 50 0
+    height 10
+    radius 20
+    flag GM
 end

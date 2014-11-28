@@ -72,7 +72,7 @@ public:
                 float height  = (yMax - yMin);
                 float width   = (xMax - xMin);
 
-                // Center of the rectangle, we can treat this as the origin
+                // Center of the rectangle, we can treat this as the "fake" origin
                 float cX = (xMax + xMin) / 2;
                 float cY = (yMax + yMin) / 2;
 
@@ -91,14 +91,17 @@ public:
                 rX[2] = (float)(oX[2] * cos(rotRad) - oY[2] * sin(rotRad)); rY[2] = (float)(oX[2] * sin(rotRad) + oY[2] * cos(rotRad));
                 rX[3] = (float)(oX[3] * cos(rotRad) - oY[3] * sin(rotRad)); rY[3] = (float)(oX[3] * sin(rotRad) + oY[3] * cos(rotRad));
 
+                // Coordinates of player relative to the "fake" origin
                 float pX = pos[0] - cX;
                 float pY = pos[1] - cY;
 
+                // Get the areas of all triangles that use the rectangle coordinates and player coordinate
                 float apd = triangleSum(rX[0], pX, rX[3], rY[0], pY, rY[3]);
                 float apb = triangleSum(rX[0], pX, rX[1], rY[0], pY, rY[1]);
                 float dpc = triangleSum(rX[3], pX, rX[2], rY[3], pY, rY[2]);
                 float bpc = triangleSum(rX[2], pX, rX[1], rY[2], pY, rY[1]);
 
+                // If the area of all the triangles summed together is greater than the area of the rectangle, the point is outside
                 if (apd + dpc + bpc + apb > (width * height)) return false;
             }
 		}
@@ -198,7 +201,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
             {
                 rot = (float)atof(nubs->get(1).c_str());
             }
-            else if (key == "RADIUS" && nubs->size() > 1)
+            else if ((key == "RADIUS" || key == "RAD") && nubs->size() > 1)
             {
                 newZone.box = false;
                 radius = (float)atof(nubs->get(1).c_str());
