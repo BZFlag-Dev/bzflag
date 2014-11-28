@@ -62,30 +62,45 @@ public:
             }
             else if (rot == 90 || rot == 270)
             {
-                if ( pos[0] > xMin || pos[0] < xMax ) return false;
-                if ( pos[1] > yMin || pos[1] < yMax ) return false;
+                if ( pos[1] > xMax || pos[1] < xMin ) return false;
+                if ( pos[0] > yMax || pos[0] < yMin ) return false;
             }
             else // the box is rotated, maths is needed
             {
-                float pi = atan(1) * 4;
+                float pi = (float)(atan(1) * 4);
+                float rotRad = (rot * pi) / 180;
+                float height  = (yMax - yMin);
+                float width   = (xMax - xMin);
 
-                float height  = (yMax - yMin) / 2;
-                float width   = (xMax - xMin) / 2;
-                float dx = pos[0] - (xMax - width);
-                float dy = pos[1] - (yMax - height);
+                // Center of the rectangle, we can treat this as the origin
+                float cX = (xMax + xMin) / 2;
+                float cY = (yMax + yMin) / 2;
 
-                float h1 = sqrt(pow(dx, 2.0f) + pow(dy, 2.0f));
-                float currentAngle = atan2(dy, dx);
+                // Coordinates of original and rotated shape
+                float oX[4], oY[4], rX[4], rY[4];
 
-                float newAngle = currentAngle - (pi * rot) / 180;
+                // Coordinates for the original rectangle
+                oX[0] = xMin - cX; oY[0] = yMax - cY;
+                oX[1] = xMax - cX; oY[1] = yMax - cY;
+                oX[2] = xMax - cX; oY[2] = yMin - cY;
+                oX[3] = xMin - cX; oY[3] = yMin - cY;
 
-                float x2 = cos(newAngle) * h1;
-                float y2 = sin(newAngle) * h1;
+                // Coordinates for the rotated rectangle
+                rX[0] = (float)(oX[0] * cos(rotRad) - oY[0] * sin(rotRad)); rY[0] = (float)(oX[0] * sin(rotRad) + oY[0] * cos(rotRad));
+                rX[1] = (float)(oX[1] * cos(rotRad) - oY[1] * sin(rotRad)); rY[1] = (float)(oX[1] * sin(rotRad) + oY[1] * cos(rotRad));
+                rX[2] = (float)(oX[2] * cos(rotRad) - oY[2] * sin(rotRad)); rY[2] = (float)(oX[2] * sin(rotRad) + oY[2] * cos(rotRad));
+                rX[3] = (float)(oX[3] * cos(rotRad) - oY[3] * sin(rotRad)); rY[3] = (float)(oX[3] * sin(rotRad) + oY[3] * cos(rotRad));
 
-                if (x2 < - 0.5 * width && x2 > 0.5 * width && y2 < - 0.5 * height && y2 > 0.5 * height) return false;
+                float pX = pos[0] - cX;
+                float pY = pos[1] - cY;
+
+                float apd = triangleSum(rX[0], pX, rX[3], rY[0], pY, rY[3]);
+                float apb = triangleSum(rX[0], pX, rX[1], rY[0], pY, rY[1]);
+                float dpc = triangleSum(rX[3], pX, rX[2], rY[3], pY, rY[2]);
+                float bpc = triangleSum(rX[2], pX, rX[1], rY[2], pY, rY[1]);
+
+                if (apd + dpc + bpc + apb > (width * height)) return false;
             }
-
-            if ( pos[2] > zMax || pos[2] < zMin ) return false;
 		}
 		else
 		{
@@ -95,15 +110,13 @@ public:
 			vec[2] = pos[2]-zMax;
 
 			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-			if ( dist > rad)
-				return false;
 
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-
+			if ( dist > rad) return false;
 		}
-		return true;
-	}
+
+        return !(pos[2] > zMax || pos[2] < zMin);
+
+    }
 
 	bool checkFlag ( const char* flag )
 	{
@@ -116,6 +129,12 @@ public:
 	}
 
 	std::vector<std::string> flagList;
+
+private:
+    float triangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
+    {
+        return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
+    }
 };
 
 std::vector <FlagStayZone> zoneList;
@@ -175,7 +194,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
                 size[1] = {(float)atof(nubs->get(2).c_str())};
                 size[2] = {(float)atof(nubs->get(3).c_str())};
             }
-            else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 3)
+            else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 1)
             {
                 rot = (float)atof(nubs->get(1).c_str());
             }
@@ -190,7 +209,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
             }
 			else if ( key == "FLAG" && nubs->size() > 1)
 			{
-				std::string flag = nubs->get(1).c_str();
+				std::string flag = bz_toupper(nubs->get(1).c_str());
 				newZone.flagList.push_back(flag);
 			}
 			else if ( key == "MESSAGE" && nubs->size() > 1 )

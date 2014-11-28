@@ -1,0 +1,60 @@
+options
+    -set _worldSize 200
+end
+
+box
+    pos 0 40 -1
+    size 20 10 0.1
+end
+
+box
+    pos 0 0 -1
+    size 20 10 0.1
+    rot 90
+end
+
+box
+    pos 50 50 -0.1
+    size 20 10 0.1
+    rot 45
+end
+
+zone
+    pos 0 40 0
+    size 20 10 0.1
+    zoneflag SW
+end
+
+zone
+    pos 0 0 0
+    size 20 10 0.1
+    rot 90
+    zoneflag GM
+end
+
+zone
+    pos 50 50 -0.1
+    size 20 10 0.1
+    rot 45
+    zoneflag US
+end
+
+flagstayzone
+    pos 0 40 0
+    size 20 10 0.1
+    flag SW
+end
+
+flagstayzone
+    pos 0 0 0
+    size 20 10 0.1
+    rot 90
+    flag GM
+end
+
+flagstayzone
+    pos 50 50 -0.1
+    size 20 10 1
+    rot 45
+    flag US
+end
