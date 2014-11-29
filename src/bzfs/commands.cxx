@@ -1141,9 +1141,6 @@ bool CountdownCommand::operator() (const char	 * message,
   } else if (!clOptions->timeManualStart) {
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
     return true;
-  } else if (countdownDelay > 0) {
-    sendMessage(ServerPlayer, t, "There is a countdown already in progress");
-    return true;
   }
 
   // if the timelimit is not set .. don't countdown
@@ -1182,21 +1179,41 @@ bool CountdownCommand::operator() (const char	 * message,
 		resumeCountdown(playerData->player.getCallSign());
 		return true;
       }
+	  else if (parts[1] == "cancel")
+	  {
+		if (countdownDelay <= 0) {
+			sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
+		} else {
+			cancelCountdown();
+		}
+
+		return true;
+	  }
 	  else
 	  {
+		if (countdownDelay > 0) {
+			sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+			return true;
+		}
+
 		// so it's the countdown delay? else tell the player how to use /countdown
 		std::istringstream timespec(message+10);
 		timespec >> countdownDelay;
 		if (timespec.fail())
 		{
 			countdownDelay = -1;
-			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
+			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume|cancel]");
 			return true;
 		}
       }
     }
 	else
 	{
+      if (countdownDelay > 0) {
+        sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+        return true;
+      }
+
       countdownDelay = 10;
     }
 

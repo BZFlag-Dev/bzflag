@@ -168,6 +168,7 @@ void pauseCountdown ( const char *pausedBy );
 void resumeCountdown ( const char *resumedBy );
 void resetTeamScores ( void );
 void startCountdown ( int delay, float limit, const char *buyWho );
+void cancelCountdown ( const char *byWho = NULL );
 
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void playerAlive(int playerIndex);
@@ -225,4 +226,3 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
