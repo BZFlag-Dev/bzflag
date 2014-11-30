@@ -10,6 +10,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.txt \
+	flagStay.bzw \
 	flagStay.def \
 	flagStay.sln \
 	flagStay.vcxproj

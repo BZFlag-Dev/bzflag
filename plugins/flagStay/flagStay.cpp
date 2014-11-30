@@ -150,7 +150,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 	FlagStayZone newZone;
 
     // Temporary placeholders for information with default values just in case
-    float pos[3], size[3], radius = 5, height = 5, rot = 0;
+    float pos[3] = {0,0,0}, size[3] = {5,5,5}, radius = 5, height = 5, rot = 0;
 
 	// parse all the chunks
 	for ( unsigned int i = 0; i < data->data.size(); i++ )
@@ -319,4 +319,3 @@ void EventHandler::Event ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
