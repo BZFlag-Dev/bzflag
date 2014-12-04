@@ -140,7 +140,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
       break;
   }
   // Error receiving data (or no data)
-  if (n < 0 || ((struct sockaddr_in *)uaddr)->sin_port <= 1024)
+  if (n < 0 || uaddr->sin_port <= 1024)
     return -1;
 
   // read head
