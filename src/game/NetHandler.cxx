@@ -129,6 +129,9 @@ int NetHandler::getUdpSocket() {
 
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 			   bool &udpLinkRequest) {
+
+  if (((struct sockaddr_in *)uaddr)->sin_port == 19)
+    return -1; // amplification attack
   AddrLen recvlen = sizeof(*uaddr);
   int n;
   uint16_t len;
@@ -192,17 +195,17 @@ than %s:%d\n",
   }
 
   if (id == -1) {
+	  if (debugLevel < 4)
+		  return -1;
     // no match, discard packet
-    logDebugMessage(2,"uread() discard packet! %s:%d choices p(l) h:p",
+    logDebugMessage(3,"uread() discard packet! %s:%d choices p(l) h:p",
 	   inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
-    for (pi = 0; pi < maxHandlers; pi++) {
-      if (netPlayer[pi] && !netPlayer[pi]->closed)
-	logDebugMessage(3," %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,
-	       netPlayer[pi]->udpout,
-	       inet_ntoa(netPlayer[pi]->uaddr.sin_addr),
-	       ntohs(netPlayer[pi]->uaddr.sin_port));
+    for (pi = 0; pi < maxHandlers; pi++)
+	{
+		if (netPlayer[pi] && !netPlayer[pi]->closed)
+			logDebugMessage(4," %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,  inet_ntoa(netPlayer[pi]->uaddr.sin_addr), ntohs(netPlayer[pi]->uaddr.sin_port));
     }
-    logDebugMessage(2,"\n");
+    logDebugMessage(3,"\n");
   } else {
     logDebugMessage(4,"Player slot %d uread() %s:%d len %d from %s:%d on %i\n",
 	   id,
