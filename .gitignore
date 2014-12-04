@@ -132,3 +132,7 @@ work
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# Xcode cruft
+/Xcode/BZFlag.xcodeproj/xcuserdata
+/Xcode/BZFlag.xcodeproj/project.xcworkspace
