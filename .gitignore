@@ -136,3 +136,5 @@ Thumbs.db
 # Xcode cruft
 /Xcode/BZFlag.xcodeproj/xcuserdata
 /Xcode/BZFlag.xcodeproj/project.xcworkspace
+/Xcode/buildinfo.h
+/Xcode/BZFlag-Info.plist
