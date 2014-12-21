@@ -3728,6 +3728,11 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
   return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+BZF_API void bz_cancelCountdown ( const char *canceledBy )
+{
+  cancelCountdown(canceledBy);
+}
+
 BZF_API void bz_pauseCountdown ( const char *pausedBy )
 {
   pauseCountdown(pausedBy);

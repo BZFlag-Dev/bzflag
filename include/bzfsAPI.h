@@ -1712,6 +1712,7 @@ BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
+BZF_API void bz_cancelCountdown ( const char *canceledBy );
 BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );
 BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
