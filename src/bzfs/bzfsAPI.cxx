@@ -2355,7 +2355,7 @@ BZF_API bool bz_pollActive( void )
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
   /* make sure there is an unexpired poll */
-  return ((arbiter != NULL) && !arbiter->knowsPoll());
+  return ((arbiter != NULL) && arbiter->knowsPoll());
 }
 
 BZF_API bool bz_pollVeto( void )
@@ -2368,7 +2368,7 @@ BZF_API bool bz_pollVeto( void )
   static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
   /* make sure there is an unexpired poll */
-  if ((arbiter != NULL) && !arbiter->knowsPoll())
+  if ((arbiter == NULL) || !arbiter->knowsPoll())
     return false;
   /* poof */
   arbiter->forgetPoll();
