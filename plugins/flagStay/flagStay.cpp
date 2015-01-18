@@ -67,7 +67,7 @@ public:
 			}
 			else // the box is rotated, maths is needed
 			{
-				float pi = (float)(atan(1) * 4);
+				float pi = (float)(atan(1.0f) * 4);
 				float rotRad = (rot * pi) / 180;
 				float height  = (yMax - yMin);
 				float width   = (xMax - xMin);
