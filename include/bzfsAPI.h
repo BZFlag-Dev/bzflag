@@ -320,6 +320,7 @@ typedef enum
 #define bz_perm_lagStats  "lagStats"
 #define bz_perm_lagwarn  "lagwarn"
 #define bz_perm_listPerms  "listPerms"
+#define bz_perm_listPlugins  "listPlugins"
 #define bz_perm_masterBan  "masterban"
 #define bz_perm_mute  "mute"
 #define bz_perm_playerList  "playerList"

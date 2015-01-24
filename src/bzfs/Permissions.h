@@ -71,6 +71,7 @@ public:
       lagwarn,
       jitterwarn,
       listPerms,
+      listPlugins,
       masterBan,
       modCount,
       mute,

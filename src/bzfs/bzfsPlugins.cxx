@@ -465,8 +465,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 
       bz_freePlayerRecord(p);
 
-      // list dosn't need admin
-      if ( TextUtils::tolower(command) == "listplugins" ) {
+      if ( record.hasPerm("LISTPLUGINS") && TextUtils::tolower(command) == "listplugins" ) {
 	std::vector<std::string>	plugins = getPluginList();
 
 	if (plugins.empty()) {
@@ -480,6 +479,10 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 	    bz_sendTextMessage(BZ_SERVER,playerID,tmp);
 	  }
 	}
+	return true;
+      }
+      else {
+	bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to view loaded plug-ins.");
 	return true;
       }
 
