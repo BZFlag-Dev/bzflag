@@ -47,6 +47,8 @@ public:
   uint32_t unpackDialogCreate(const void * msg);
   uint32_t unpackDialogDestroy(const void * msg);
 
+  bool isActive() { return activeModalData != NULL; }
+
   void render();
   void resize();
   int width, height;

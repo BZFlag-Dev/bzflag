@@ -5210,7 +5210,7 @@ static void		renderDialog()
 static void checkDirtyControlPanel(ControlPanel *cp)
 {
   if (cp) {
-    if (HUDDialogStack::get()->isActive()) {
+    if (HUDDialogStack::get()->isActive() || dialogManager->isActive()) {
       cp->invalidate();
     }
   }
@@ -5302,7 +5302,22 @@ static void drawUI()
   renderDialog();
 
   // draw any client dialogs
-  dialogManager->render();
+  if (dialogManager->isActive()) {
+    const int width = mainWindow->getWidth();
+    const int height = mainWindow->getHeight();
+    const int ox = mainWindow->getOriginX();
+    const int oy = mainWindow->getOriginY();
+    glScissor(ox, oy, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    OpenGLGState::resetState();
+    dialogManager->render();
+    glPopMatrix();
+  }
 
   // render the drag-line
   renderRoamMouse();
@@ -5733,12 +5748,12 @@ void drawFrame(const float dt)
 	insideDim = true;
       }
     }
-    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
+    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || dialogManager->isActive() || insideDim ||
 			  ((myTank && !ROAM.isRoaming() && !devDriving) &&
 			  !myTank->isAlive() && !myTank->isExploding()));
 
     // turn on panel dimming when showing the menu (both radar and chat)
-    if (HUDDialogStack::get()->isActive()) {
+    if (HUDDialogStack::get()->isActive() || dialogManager->isActive()) {
       if (controlPanel) {
 	controlPanel->setDimming(0.8f);
       }
@@ -5755,7 +5770,7 @@ void drawFrame(const float dt)
     }
 
     // set hud state
-    hud->setDim(HUDDialogStack::get()->isActive());
+    hud->setDim(HUDDialogStack::get()->isActive() || dialogManager->isActive());
     hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
     hud->setRoaming(ROAM.isRoaming());
     hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
