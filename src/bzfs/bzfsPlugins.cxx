@@ -465,7 +465,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 
       bz_freePlayerRecord(p);
 
-      if ( record.hasPerm("LISTPLUGINS") && TextUtils::tolower(command) == "listplugins" ) {
+      if ( (record.hasPerm("LISTPLUGINS") || record.hasPerm("PLUGINS")) && TextUtils::tolower(command) == "listplugins" ) {
 	std::vector<std::string>	plugins = getPluginList();
 
 	if (plugins.empty()) {
