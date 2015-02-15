@@ -465,24 +465,26 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 
       bz_freePlayerRecord(p);
 
-      if ( (record.hasPerm("LISTPLUGINS") || record.hasPerm("PLUGINS")) && TextUtils::tolower(command) == "listplugins" ) {
-	std::vector<std::string>	plugins = getPluginList();
+      if (TextUtils::tolower(command) == "listplugins" ) {
+	if (record.hasPerm("LISTPLUGINS") || record.hasPerm("PLUGINS")) {
+	  std::vector<std::string> plugins = getPluginList();
 
-	if (plugins.empty()) {
-	  bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
-	} else {
-	  bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
+	  if (plugins.empty()) {
+	    bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
+	  } else {
+	    bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
 
-	  for ( unsigned int i = 0; i < plugins.size(); i++) {
-	    char tmp[256];
-	    sprintf(tmp,"%d %s", i+1, plugins[i].c_str());
-	    bz_sendTextMessage(BZ_SERVER,playerID,tmp);
+	    for ( unsigned int i = 0; i < plugins.size(); i++) {
+	      char tmp[256];
+	      sprintf(tmp,"%d %s", i+1, plugins[i].c_str());
+	      bz_sendTextMessage(BZ_SERVER,playerID,tmp);
+	    }
 	  }
 	}
-	return true;
-      }
-      else {
-	bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to view loaded plug-ins.");
+	else {
+	  bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to view loaded plug-ins.");
+	}
+
 	return true;
       }
 
