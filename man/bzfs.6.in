@@ -1104,11 +1104,12 @@ trusted users to police your server and help maintain control against
 cheaters and abuse.
 
 The server will automatically create three groups: EVERYONE, VERIFIED,
-and LOCAL.ADMIN.  EVERYONE  has  ACTIONMESSAGE, ADMINMESSAGESEND, DATE,
-FLAGHISTORY, IDLESTATS, LAGSTATS, PRIVATEMESSAGE and SPAWN by default.
-VERIFIED has POLL, POLLKICK, POLLBAN, POLLSET, POLLFLAGRESET, REPORT
-and VOTE. The LOCAL.ADMIN group has almost every permission possible
-(similar to granting admin powers via /password).
+and LOCAL.ADMIN.  EVERYONE  has  ACTIONMESSAGE, ADMINMESSAGESEND,
+CLIENTQUERY, DATE, FLAGHISTORY, IDLESTATS, LAGSTATS, PRIVATEMESSAGE,
+SPAWN and TALK by default. VERIFIED has LISTPLUGINS, POLL, POLLKICK,
+POLLBAN, POLLKICK, POLLSET, POLLFLAGRESET, REPORT and VOTE. The
+LOCAL.ADMIN group has almost every permission possible (similar to
+granting admin powers via /password).
 
 Once the server is running, users can register their callsigns and
 admins can set their group memberships. Users can use any command that
@@ -1237,6 +1238,8 @@ LAGWARN	/lagwarn /lagdrop
 .br
 LISTPERMS	not implemented
 .br
+LISTPLUGINS	/listplugins
+.br
 MASTERBAN	/masterban
 .br
 MODCOUNT	/modcount
@@ -1247,7 +1250,7 @@ PACKETLOSSWARN	/packetlosswarn /packetlossdrop
 .br
 PLAYERLIST	/playerlist
 .br
-PLUGINS	/loadplugin /unloadplugin
+PLUGINS	/listplugins /loadplugin /unloadplugin
 .br
 POLL	/poll
 .br
