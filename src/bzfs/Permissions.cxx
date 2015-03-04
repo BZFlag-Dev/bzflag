@@ -270,7 +270,6 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 }
 
 
-// custom perms are ONLY on groups
 bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 {
 	if (serverop || hasALLPerm)
@@ -278,6 +277,7 @@ bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 
 	std::string perm = TextUtils::toupper(std::string(right));
 
+	// check for custom permissions in groups
 	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr)
 	{
 		PlayerAccessMap::iterator group = groupAccess.find(*itr);
@@ -303,7 +303,28 @@ bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 			}
 		}
 	}
+
+	// check for custom permissions on a per player basis (stored in the customPerms vector)
+	for (unsigned int i = 0; i < customPerms.size(); i++)
+	{
+		if (perm == TextUtils::toupper(customPerms[i]))
+			return true;
+	}
+
 	return false;
+}
+
+void PlayerAccessInfo::grantCustomPerm(const char *right)
+{
+  customPerms.push_back(right);
+}
+
+void PlayerAccessInfo::revokeCustomPerm(const char *right)
+{
+  std::vector<std::string>::iterator position = std::find(customPerms.begin(), customPerms.end(), right);
+
+  if (position != customPerms.end())
+    customPerms.erase(position);
 }
 
 bool userExists(const std::string &nick)

@@ -1001,9 +1001,10 @@ BZF_API bool bz_grantPerm ( int playerID, const char* perm  )
   PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
 
   if (realPerm == PlayerAccessInfo::lastPerm)
-    return false;
+    player->accessInfo.grantCustomPerm(permName.c_str());
+  else
+    player->accessInfo.grantPerm(realPerm);
 
-  player->accessInfo.grantPerm(realPerm);
   return true;
 }
 
@@ -1024,9 +1025,10 @@ BZF_API bool bz_revokePerm ( int playerID, const char* perm  )
   PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
 
   if (realPerm == PlayerAccessInfo::lastPerm)
-    return false;
+    player->accessInfo.revokeCustomPerm(permName.c_str());
+  else
+    player->accessInfo.revokePerm(realPerm);
 
-  player->accessInfo.revokePerm(realPerm);
   return true;
 }
 

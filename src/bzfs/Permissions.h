@@ -155,6 +155,8 @@ public:
   void	revokePerm(AccessPerm right);
 
   bool	hasCustomPerm(const char* right) const;
+  void  grantCustomPerm(const char* right);
+  void  revokeCustomPerm(const char* right);
 
   bool	isRegistered() const;
   bool	isAllowedToEnter();
