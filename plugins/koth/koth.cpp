@@ -117,48 +117,9 @@ public:
 
 KOTH koth;
 
-class KOTHZone
-{
+class KOTHZone : public bz_CustomZoneObject {
 public:
-	KOTHZone()
-	{
-		box = false;
-		xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
-	}
-
-	bool box;
-	float xMax,xMin,yMax,yMin,zMax,zMin;
-	float rad;
-
-	bool pointIn ( float pos[3] )
-	{
-		if ( box )
-		{
-			if ( pos[0] > xMax || pos[0] < xMin )
-				return false;
-
-			if ( pos[1] > yMax || pos[1] < yMin )
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-		}
-		else
-		{
-			float vec[3];
-			vec[0] = pos[0]-xMax;
-			vec[1] = pos[1]-yMax;
-			vec[2] = pos[2]-zMax;
-
-			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-			if ( dist > rad)
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-		}
-		return true;
-	}
+	KOTHZone() : bz_CustomZoneObject() {}
 };
 
 KOTHZone kothzone;
@@ -167,6 +128,8 @@ bool KOTHMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *da
 {
 	if (object != "KOTH" || !data)
 		return false;
+
+	kothzone.handleDefaultOptions(data);
 
 	// parse all the chunks
 	for ( unsigned int i = 0; i < data->data.size(); i++ )
@@ -180,26 +143,7 @@ bool KOTHMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *da
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
 
-			if ( key == "BBOX" && nubs->size() > 6)
-			{
-				kothzone.box = true;
-				kothzone.xMin = (float)atof(nubs->get(1).c_str());
-				kothzone.xMax = (float)atof(nubs->get(2).c_str());
-				kothzone.yMin = (float)atof(nubs->get(3).c_str());
-				kothzone.yMax = (float)atof(nubs->get(4).c_str());
-				kothzone.zMin = (float)atof(nubs->get(5).c_str());
-				kothzone.zMax = (float)atof(nubs->get(6).c_str());
-			}
-			else if ( key == "CYLINDER" && nubs->size() > 5)
-			{
-				kothzone.box = false;
-				kothzone.rad = (float)atof(nubs->get(5).c_str());
-				kothzone.xMax =(float)atof(nubs->get(1).c_str());
-				kothzone.yMax =(float)atof(nubs->get(2).c_str());
-				kothzone.zMin =(float)atof(nubs->get(3).c_str());
-				kothzone.zMax =(float)atof(nubs->get(4).c_str());
-			}
-			else if ( key == "TEAMPLAY")
+			if ( key == "TEAMPLAY")
 			{
 				koth.teamPlay = true;
 			}
@@ -228,6 +172,7 @@ bool KOTHMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *da
 					koth.TTH = temp;
 			}
 		}
+
 		bz_deleteStringList(nubs);
 	}
 	return true;
@@ -497,7 +442,7 @@ bool teamClear(bz_eTeamType teamToCheck)
 
 			if (player)
 			{
-				if (player->team == teamToCheck && kothzone.pointIn(player->lastKnownState.pos) && player->spawned)
+				if (player->team == teamToCheck && kothzone.pointInZone(player->lastKnownState.pos) && player->spawned)
 					isOut = false;
 			}
 
@@ -519,7 +464,7 @@ void KOTHPlayerPaused ( bz_EventData *eventData )
 
 	if (player)
 	{
-		if(kothzone.pointIn(player->lastKnownState.pos))
+		if(kothzone.pointInZone(player->lastKnownState.pos))
 		{
 			bz_killPlayer (PauseData->playerID, true, BZ_SERVER);
 			bz_sendTextMessage (BZ_SERVER, PauseData->playerID, "Cannot pause while on the Hill.");
@@ -612,7 +557,7 @@ inline void KOTHEventHandler( bz_EventData *eventData )
 		koth.toldHillOpen = true;
 	}
 
-	if (kothzone.pointIn(pos)) // player is on Hill
+	if (kothzone.pointInZone(pos)) // player is on Hill
 	{
 		bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
 
