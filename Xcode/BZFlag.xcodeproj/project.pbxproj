@@ -514,7 +514,7 @@
 		0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* timedctf.dylib */; };
 		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; };
 		0394E965167B2D00007F4035 /* webReport.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E932167B2A47007F4035 /* webReport.dylib */; };
-		0394E966167B2D00007F4035 /* wwwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwwzones.dylib */; };
+		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; };
 		0394E96D167B36EF007F4035 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0305D6F2166CA1DC00557FC4 /* SDL.framework */; };
 		03C5E7C91670A489005A26C4 /* ares__close_sockets.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3C166C851C008806E9 /* ares__close_sockets.c */; };
 		03C5E7CA1670A489005A26C4 /* ares__get_hostent.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3D166C851C008806E9 /* ares__get_hostent.c */; };
@@ -928,7 +928,7 @@
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0394E93C167B2A9E007F4035;
-			remoteInfo = wwwzones;
+			remoteInfo = wwzones;
 		};
 		03C64E4B1742659C005329A0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1223,7 +1223,7 @@
 				0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */,
 				0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */,
 				0394E965167B2D00007F4035 /* webReport.dylib in CopyFiles */,
-				0394E966167B2D00007F4035 /* wwwzones.dylib in CopyFiles */,
+				0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2248,7 +2248,7 @@
 		0394E91C167B293E007F4035 /* timedctf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = timedctf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E932167B2A47007F4035 /* webReport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = webReport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E93D167B2A9E007F4035 /* wwwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C5E79516707857005A26C4 /* ares_build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_build.h; sourceTree = "<group>"; };
 		03C5E79616707857005A26C4 /* ares_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_config.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -4184,7 +4184,7 @@
 				0394E91C167B293E007F4035 /* timedctf.dylib */,
 				0394E927167B29CC007F4035 /* TimeLimit.dylib */,
 				0394E932167B2A47007F4035 /* webReport.dylib */,
-				0394E93D167B2A9E007F4035 /* wwwzones.dylib */,
+				0394E93D167B2A9E007F4035 /* wwzones.dylib */,
 			);
 			name = Targets;
 			sourceTree = "<group>";
@@ -5364,9 +5364,9 @@
 			productReference = 0394E932167B2A47007F4035 /* webReport.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		0394E93C167B2A9E007F4035 /* wwwzones */ = {
+		0394E93C167B2A9E007F4035 /* wwzones */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0394E93E167B2A9F007F4035 /* Build configuration list for PBXNativeTarget "wwwzones" */;
+			buildConfigurationList = 0394E93E167B2A9F007F4035 /* Build configuration list for PBXNativeTarget "wwzones" */;
 			buildPhases = (
 				0394E939167B2A9E007F4035 /* Sources */,
 				0394E93A167B2A9E007F4035 /* Frameworks */,
@@ -5376,9 +5376,9 @@
 			);
 			dependencies = (
 			);
-			name = wwwzones;
-			productName = wwwzones;
-			productReference = 0394E93D167B2A9E007F4035 /* wwwzones.dylib */;
+			name = wwzones;
+			productName = wwzones;
+			productReference = 0394E93D167B2A9E007F4035 /* wwzones.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		03C5E7BB1670A3DA005A26C4 /* 3D */ = {
@@ -5579,7 +5579,7 @@
 				0394E91B167B293E007F4035 /* timedctf */,
 				0394E926167B29CC007F4035 /* TimeLimit */,
 				0394E931167B2A47007F4035 /* webReport */,
-				0394E93C167B2A9E007F4035 /* wwwzones */,
+				0394E93C167B2A9E007F4035 /* wwzones */,
 			);
 		};
 /* End PBXProject section */
@@ -6559,7 +6559,7 @@
 		};
 		0394E942167B2AA9007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0394E93C167B2A9E007F4035 /* wwwzones */;
+			target = 0394E93C167B2A9E007F4035 /* wwzones */;
 			targetProxy = 0394E941167B2AA9007F4035 /* PBXContainerItemProxy */;
 		};
 		03C64E4C1742659C005329A0 /* PBXTargetDependency */ = {
@@ -7885,6 +7885,7 @@
 					"-undefined",
 					dynamic_lookup,
 				);
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -7898,6 +7899,7 @@
 					"-undefined",
 					dynamic_lookup,
 				);
+				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -8547,7 +8549,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0394E93E167B2A9F007F4035 /* Build configuration list for PBXNativeTarget "wwwzones" */ = {
+		0394E93E167B2A9F007F4035 /* Build configuration list for PBXNativeTarget "wwzones" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0394E93F167B2A9F007F4035 /* Debug */,
