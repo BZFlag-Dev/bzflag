@@ -2788,6 +2788,193 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
   return true;
 }
 
+BZF_API bz_CustomZoneObject::bz_CustomZoneObject()
+{
+  box = false;
+  xMax = xMin = yMax = yMin = zMax = zMin = radius = rotation = 0;
+}
+
+BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
+{
+  if (box)
+  {
+    if (rotation == 0 || rotation == 180)
+    {
+      if (pos[0] > xMax || pos[0] < xMin) return false;
+      if (pos[1] > yMax || pos[1] < yMin) return false;
+    }
+    else if (rotation == 90 || rotation == 270)
+    {
+      if (pos[1] > xMax || pos[1] < xMin) return false;
+      if (pos[0] > yMax || pos[0] < yMin) return false;
+    }
+    else // the box is rotated, maths is needed
+    {
+      float pi = (float)(atan(1.0f) * 4);
+      float rotRad = (rotation * pi) / 180;
+      float height  = (yMax - yMin);
+      float width   = (xMax - xMin);
+      
+      // Center of the rectangle, we can treat this as the "fake" origin
+      float cX = (xMax + xMin) / 2;
+      float cY = (yMax + yMin) / 2;
+      
+      // Coordinates of original and rotated shape
+      float oX[4], oY[4], rX[4], rY[4];
+      
+      // Coordinates for the original rectangle
+      oX[0] = xMin - cX; oY[0] = yMax - cY;
+      oX[1] = xMax - cX; oY[1] = yMax - cY;
+      oX[2] = xMax - cX; oY[2] = yMin - cY;
+      oX[3] = xMin - cX; oY[3] = yMin - cY;
+      
+      // Coordinates for the rotated rectangle
+      rX[0] = (float)(oX[0] * cos(rotRad) - oY[0] * sin(rotRad)); rY[0] = (float)(oX[0] * sin(rotRad) + oY[0] * cos(rotRad));
+      rX[1] = (float)(oX[1] * cos(rotRad) - oY[1] * sin(rotRad)); rY[1] = (float)(oX[1] * sin(rotRad) + oY[1] * cos(rotRad));
+      rX[2] = (float)(oX[2] * cos(rotRad) - oY[2] * sin(rotRad)); rY[2] = (float)(oX[2] * sin(rotRad) + oY[2] * cos(rotRad));
+      rX[3] = (float)(oX[3] * cos(rotRad) - oY[3] * sin(rotRad)); rY[3] = (float)(oX[3] * sin(rotRad) + oY[3] * cos(rotRad));
+      
+      // Coordinates of player relative to the "fake" origin
+      float pX = pos[0] - cX;
+      float pY = pos[1] - cY;
+      
+      // Get the areas of all triangles that use the rectangle coordinates and player coordinate
+      float apd = calculateTriangleSum(rX[0], pX, rX[3], rY[0], pY, rY[3]);
+      float apb = calculateTriangleSum(rX[0], pX, rX[1], rY[0], pY, rY[1]);
+      float dpc = calculateTriangleSum(rX[3], pX, rX[2], rY[3], pY, rY[2]);
+      float bpc = calculateTriangleSum(rX[2], pX, rX[1], rY[2], pY, rY[1]);
+      
+      // If the area of all the triangles summed together is greater than the area of the rectangle, the point is outside
+      if (apd + dpc + bpc + apb > (width * height)) return false;
+    }
+  }
+  else
+  {
+    float vec[3];
+    vec[0] = pos[0]-xMax;
+    vec[1] = pos[1]-yMax;
+    vec[2] = pos[2]-zMax;
+    
+    float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
+    
+    if ( dist > radius) return false;
+  }
+  
+  return !(pos[2] > zMax || pos[2] < zMin);
+}
+
+BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *data)
+{
+  // Set to true when using BBOX and Cylinder so we don't need to do the math
+  bool usingDeprecatedSyntax = false;
+
+  // Temporary placeholders for information with default values just in case
+  float _pos[3] = {0,0,0}, _size[3] = {5,5,5}, _radius = 5, _height = 5, _rotation = 0;
+  
+  // parse all the chunks
+  for (unsigned int i = 0; i < data->data.size(); i++)
+  {
+    std::string line = data->data.get(i).c_str();
+    
+    bz_APIStringList *nubs = bz_newStringList();
+    nubs->tokenize(line.c_str()," ",0,true);
+    
+    if ( nubs->size() > 0)
+    {
+      std::string key = bz_toupper(nubs->get(0).c_str());
+      
+      if ( key == "BBOX" && nubs->size() > 6)
+      {
+	box = true;
+	usingDeprecatedSyntax = true;
+
+	xMin = (float)atof(nubs->get(1).c_str());
+	xMax = (float)atof(nubs->get(2).c_str());
+	yMin = (float)atof(nubs->get(3).c_str());
+	yMax = (float)atof(nubs->get(4).c_str());
+	zMin = (float)atof(nubs->get(5).c_str());
+	zMax = (float)atof(nubs->get(6).c_str());
+
+	bz_debugMessagef(0, "WARNING: The \"BBOX\" attribute has been deprecated. Please use the `position` and `size` attributes instead:");
+	bz_debugMessagef(0, "  position %.0f %.0f %.0f", (xMax + xMin), (yMax + yMin), zMin);
+	bz_debugMessagef(0, "  size %.0f %.0f %.0f", ((xMax - xMin) / 2), ((yMax - yMin) / 2), (zMax - zMin));
+      }
+      else if ( key == "CYLINDER" && nubs->size() > 5)
+      {
+	box = false;
+	usingDeprecatedSyntax = true;
+
+	xMax = (float)atof(nubs->get(1).c_str());
+	yMax = (float)atof(nubs->get(2).c_str());
+	zMin = (float)atof(nubs->get(3).c_str());
+	zMax = (float)atof(nubs->get(4).c_str());
+	_radius = (float)atof(nubs->get(5).c_str());
+
+	bz_debugMessagef(0, "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
+	bz_debugMessagef(0, "  position %.0f %.0f %.0f", xMax, yMax, zMin);
+	bz_debugMessagef(0, "  radius %.0f", _radius);
+	bz_debugMessagef(0, "  height %.0f", (zMax - zMin));
+      }
+      else if ((key == "POSITION" || key == "POS") && nubs->size() > 3)
+      {
+	_pos[0] = (float)atof(nubs->get(1).c_str());
+	_pos[1] = (float)atof(nubs->get(2).c_str());
+	_pos[2] = (float)atof(nubs->get(3).c_str());
+      }
+      else if (key == "SIZE" && nubs->size() > 3)
+      {
+	box = true;
+	_size[0] = (float)atof(nubs->get(1).c_str());
+	_size[1] = (float)atof(nubs->get(2).c_str());
+	_size[2] = (float)atof(nubs->get(3).c_str());
+      }
+      else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 1)
+      {
+	_rotation = (float)atof(nubs->get(1).c_str());
+      }
+      else if ((key == "RADIUS" || key == "RAD") && nubs->size() > 1)
+      {
+	box = false;
+	_radius = (float)atof(nubs->get(1).c_str());
+      }
+      else if (key == "HEIGHT" && nubs->size() > 1)
+      {
+	_height = (float)atof(nubs->get(1).c_str());
+      }
+    }
+    
+    bz_deleteStringList(nubs);
+  }
+
+  // Only do the math if we're not using BBOX and Cylinder
+  if (!usingDeprecatedSyntax)
+  {
+    if (box)
+    {
+      xMin = _pos[0] - _size[0];
+      xMax = _pos[0] + _size[0];
+      yMin = _pos[1] - _size[1];
+      yMax = _pos[1] + _size[1];
+      zMin = _pos[2];
+      zMax = _pos[2] + _size[2];
+      rotation  = (_rotation > 0 && _rotation < 360) ? _rotation : 0;
+    }
+    else
+    {
+      radius = _radius;
+      xMax = _pos[0];
+      yMax = _pos[1];
+      zMin = _pos[2];
+      zMax = _pos[2] + _height;
+    }
+  }
+}
+
+BZF_API float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
+{
+    return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
+}
+
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
   if (!object || !handler)

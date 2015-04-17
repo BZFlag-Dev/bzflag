@@ -1590,12 +1590,26 @@ typedef struct bz_CustomMapObjectInfo
   bz_APIStringList data;
 }bz_CustomMapObjectInfo;
 
+class bz_CustomZoneObject
+{
+public:
+  bz_CustomZoneObject();
+  
+  bool box;
+  float xMax,xMin,yMax,yMin,zMax,zMin,radius,rotation;
+  
+  bool pointInZone(float pos[3]);
+  void handleDefaultOptions(bz_CustomMapObjectInfo *data);
+  
+private:
+  float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
+};
+
 class bz_CustomMapObjectHandler
 {
 public:
   virtual ~bz_CustomMapObjectHandler(){};
   virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data ) = 0;
-
 };
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
