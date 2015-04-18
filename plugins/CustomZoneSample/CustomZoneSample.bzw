@@ -1,0 +1,62 @@
+options
+    +f GM{5}
+    +f SW{5}
+    +f US{5}
+    -set _worldSize 200
+end
+
+box
+    pos 0 40 -1
+    size 20 10 0.1
+end
+
+box
+    pos 0 0 -1
+    size 20 10 0.1
+    rot 90
+end
+
+box
+    pos 50 50 -0.1
+    size 20 10 0.1
+    rot 45
+end
+
+msgzone
+    pos 0 40 0
+    size 20 10 0.1
+    message "You entered a rectangular zone with the SW flag! I'll take it from you!"
+    flag SW
+end
+
+msgzone
+    pos 0 0 0
+    size 20 10 0.1
+    rot 90
+    message "You entered a 90 degree rotated rectangular zone with the GM flag! I'll take it from you!"
+    flag GM
+end
+
+msgzone
+    pos 50 50 0
+    size 20 10 100
+    rot 45
+    message "You entered a 45 degree rotated rectangular zone with the US flag! I'll take it from you!"
+    flag US
+end
+
+arc
+    divisions 16
+    angle 360
+    ratio 1
+    pos -50 -50 -1
+    size 20 20 0.1
+end
+
+msgzone
+    pos -50 -50 0
+    height 10
+    radius 20
+    flag GM
+    message "You entered a circular zone with the GM flag! I'll take it from you!"
+end

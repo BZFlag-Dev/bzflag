@@ -62,14 +62,6 @@ end
 arc
     divisions 16
     angle 360
-    ratio 0
-    pos -50 -50 -0.1
-    size 20 20 0.1
-end
-
-arc
-    divisions 16
-    angle 360
     ratio 1
     position -50 50 -1
     size 20 20 0.1

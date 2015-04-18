@@ -24,6 +24,7 @@ SUBDIRS = \
 	regFlag \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
+	CustomZoneSample \
 	serverControl \
 	serverSidePlayerSample \
 	shockwaveDeath \
