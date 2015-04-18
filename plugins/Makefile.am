@@ -6,6 +6,7 @@ SUBDIRS = \
 	bzfscron \
 	chathistory \
 	customflagsample \
+	CustomZoneSample \
 	fairCTF \
 	fastmap \
 	flagStay \
@@ -24,7 +25,6 @@ SUBDIRS = \
 	regFlag \
 	RogueGenocide \
 	SAMPLE_PLUGIN \
-	CustomZoneSample \
 	serverControl \
 	serverSidePlayerSample \
 	shockwaveDeath \

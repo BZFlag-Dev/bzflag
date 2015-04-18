@@ -1171,14 +1171,12 @@ AC_CONFIG_FILES([
 	plugins/Phoenix/Makefile
 	plugins/RogueGenocide/Makefile
 	plugins/SAMPLE_PLUGIN/Makefile
-	plugins/CustomZoneSample/Makefile
-	plugins/serverSidePlayerSample/Makefile
-	plugins/TimeLimit/Makefile
 	plugins/airspawn/Makefile
 	plugins/autoFlagReset/Makefile
 	plugins/bzfscron/Makefile
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
+	plugins/CustomZoneSample/Makefile
 	plugins/fairCTF/Makefile
 	plugins/fastmap/Makefile
 	plugins/flagStay/Makefile
@@ -1195,11 +1193,13 @@ AC_CONFIG_FILES([
 	plugins/recordmatch/Makefile
 	plugins/regFlag/Makefile
 	plugins/serverControl/Makefile
+	plugins/serverSidePlayerSample/Makefile
 	plugins/shockwaveDeath/Makefile
 	plugins/superUser/Makefile
 	plugins/teamflagreset/Makefile
 	plugins/thiefControl/Makefile
 	plugins/timedctf/Makefile
+	plugins/TimeLimit/Makefile
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile
