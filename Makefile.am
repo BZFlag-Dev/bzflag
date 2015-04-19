@@ -28,6 +28,7 @@ DIST_SUBDIRS = \
 	Xcode
 
 EXTRA_DIST = \
+	.editorconfig \
 	autogen.sh \
 	authors.xml \
 	bzflag.lsm \
