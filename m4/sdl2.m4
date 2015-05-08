@@ -24,10 +24,12 @@ AC_ARG_ENABLE(sdltest, [  --disable-sdltest       Do not try to compile and run 
   min_sdl_version=ifelse([$1], ,2.0.0,$1)
 
   if test "x$sdl_prefix$sdl_exec_prefix" = x ; then
-    PKG_CHECK_MODULES([SDL], [sdl2 >= $min_sdl_version],
+    ifdef([PKG_CHECK_MODULES],
+      [PKG_CHECK_MODULES([SDL], [sdl2 >= $min_sdl_version],
            [sdl_pc=yes],
-           [sdl_pc=no])
-  else
+           [sdl_pc=no])],
+      [sdl_pc=no])
+else
     sdl_pc=no
     if test x$sdl_exec_prefix != x ; then
       sdl_config_args="$sdl_config_args --exec-prefix=$sdl_exec_prefix"
