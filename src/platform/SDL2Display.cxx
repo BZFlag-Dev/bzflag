@@ -111,6 +111,12 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
 }
 
 
+bool SDLDisplay::symNeedsConversion(SDL_Keycode key) const
+{
+  return key >= SDLK_EXCLAIM && key <= SDLK_z ? true : false;
+}
+
+
 bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 {
   SDL_Keymod mode = SDL_GetModState();
@@ -228,14 +234,27 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_KEYDOWN:
-    _event.type = BzfEvent::KeyDown;
-    if (!getKey(event, _event.keyDown))
-      return false;
+    if(symNeedsConversion(event.key.keysym.sym)) {
+      lastKeyDownEvent = event;
+    } else {
+      _event.type = BzfEvent::KeyDown;
+      if (!getKey(event, _event.keyDown))
+        return false;
+    }
     break;
 
   case SDL_KEYUP:
     _event.type = BzfEvent::KeyUp;
     if (!getKey(event, _event.keyUp))
+      return false;
+    break;
+
+  case SDL_TEXTINPUT:
+    if(event.text.text[0] < '!' || event.text.text[0] > '~')
+      break;
+    charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
+    _event.type = BzfEvent::KeyDown;
+    if (!getKey(lastKeyDownEvent, _event.keyDown))
       return false;
     break;
 
@@ -441,8 +460,12 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   }
 
   if (key.button == BzfKeyEvent::NoButton) {
-    if ((sym >= 0) && (sym <= 0x7F))
-      key.ascii = sym;
+    if ((sym >= 0) && (sym <= 0x7F)) {
+      if(symNeedsConversion(sym))
+        key.ascii = charsForKeyCodes[sym];
+      else
+        key.ascii = sym;
+    }
     else if ((sym >= SDLK_KP_0) && (sym <= SDLK_KP_9))
       key.ascii = sym - 208; // translate to normal number
     else if (sym == SDLK_KP_ENTER)

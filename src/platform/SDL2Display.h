@@ -24,6 +24,9 @@
 #include "bzfSDL.h"
 #include "BzfEvent.h"
 
+// system interface headers
+#include <map>
+
 class SDLDisplay : public BzfDisplay {
  public:
   SDLDisplay();
@@ -40,6 +43,9 @@ class SDLDisplay : public BzfDisplay {
   void getModState(bool &shift, bool &control, bool &alt);
   void getMouse(int& x, int& y) const;
  private:
+  mutable SDL_Event lastKeyDownEvent;
+  mutable std::map<SDL_Keycode,char> charsForKeyCodes; // updated each key press
+  bool symNeedsConversion(SDL_Keycode) const;
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};
   int  min_width;
