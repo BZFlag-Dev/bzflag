@@ -103,8 +103,7 @@ bool SDLWindow::create(void) {
   oldWidth      = width;
   oldHeight     = height;
   oldFullScreen = fullScreen;
-  // always disable vsync when building with SDL
-  SDL_GL_SetSwapInterval(0);
+
   // Set the video mode and hope for no errors
   windowId = SDL_CreateWindow(title.c_str(),
       SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
@@ -114,6 +113,10 @@ bool SDLWindow::create(void) {
   }
   makeContext();
   makeCurrent();
+
+  // always disable vsync when building with SDL
+  SDL_GL_SetSwapInterval(0);
+
   // init opengl context
   OpenGLGState::initContext();
   return true;
