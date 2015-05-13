@@ -264,7 +264,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
   case SDL_WINDOWEVENT:
     switch (event.window.event) {
-    case SDL_WINDOWEVENT_SIZE_CHANGED:
+    case SDL_WINDOWEVENT_RESIZED:
       _event.type = BzfEvent::Resize;
       _event.resize.width  = event.window.data1;
       _event.resize.height = event.window.data2;
