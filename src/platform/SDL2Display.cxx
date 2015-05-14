@@ -21,7 +21,7 @@ static int my = 0;
 
 SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
 {
-  if (SDL_VideoInit(NULL) != 0) {
+  if (SDL_VideoInit(NULL) < 0) {
     printf("Could not initialize SDL Video subsystem: %s.\n", SDL_GetError());
     exit (-1);
   };
@@ -272,10 +272,10 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     case SDL_WINDOWEVENT_EXPOSED:
       _event.type = BzfEvent::Redraw;
       break;
-    case SDL_WINDOWEVENT_MINIMIZED:
+    case SDL_WINDOWEVENT_HIDDEN:
       _event.type = BzfEvent::Unmap;
       break;
-    case SDL_WINDOWEVENT_RESTORED:
+    case SDL_WINDOWEVENT_SHOWN:
       _event.type = BzfEvent::Map;
       break;
     default:
