@@ -62,10 +62,6 @@ class SDLWindow : public BzfWindow {
   std::string title;
   bool canGrabMouse;
   bool fullScreen;
-  // to avoid flashing we memorize the old values used to build the window
-  bool oldFullScreen;
-  int  oldWidth;
-  int  oldHeight;
   int  base_width;
   int  base_height;
 };

@@ -18,8 +18,7 @@
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), hasGamma(true), windowId(NULL), glContext(NULL),
-  canGrabMouse(true), fullScreen(false), oldFullScreen(false), oldWidth(0), oldHeight(0),
-  base_width(640), base_height(480)
+  canGrabMouse(true), fullScreen(false), base_width(640), base_height(480)
 {
 }
 
@@ -83,34 +82,46 @@ void SDLWindow::swapBuffers() {
 }
 
 bool SDLWindow::create(void) {
-  int    width;
-  int    height;
-  Uint32 flags = SDL_WINDOW_OPENGL;
-  // getting width, height & flags for SetVideoMode
-  getSize(width, height);
-  if (fullScreen) {
-    flags |= SDL_WINDOW_FULLSCREEN;
-  } else {
-    flags |= SDL_WINDOW_RESIZABLE;
+  int targetWidth, targetHeight;
+  getSize(targetWidth, targetHeight);
+
+  // if we have an existing identical window, go no further
+  if(windowId != NULL) {
+    int currentWidth, currentHeight;
+    SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
+
+    Uint32 priorWindowFlags = SDL_GetWindowFlags(windowId);
+    if(fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
+    	targetWidth == currentWidth && targetHeight == currentHeight)
+      return true;
   }
 
-  // if they are the same, don't bother building a new window
-  if ((width == oldWidth) && (height == oldHeight)
-      && (fullScreen == oldFullScreen))
-    return true;
+  // destroy the pre-existing window if it exists
+  if(windowId != NULL) {
+    if(glContext)
+      SDL_GL_DeleteContext(glContext);
+    glContext = NULL;
 
-  // save the values for the next
-  oldWidth      = width;
-  oldHeight     = height;
-  oldFullScreen = fullScreen;
+    SDL_DestroyWindow(windowId);
+  }
 
-  // Set the video mode and hope for no errors
-  windowId = SDL_CreateWindow(title.c_str(),
-      SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
+  // (re)create the window
+  const Uint32 flags = SDL_WINDOW_OPENGL |
+      (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE);
+
+  windowId = SDL_CreateWindow(
+      title.c_str(),
+      SDL_WINDOWPOS_UNDEFINED,
+      SDL_WINDOWPOS_UNDEFINED,
+      targetWidth,
+      targetHeight,
+      flags);
+
   if (!windowId) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
     return false;
   }
+
   makeContext();
   makeCurrent();
 
@@ -119,6 +130,7 @@ bool SDLWindow::create(void) {
 
   // init opengl context
   OpenGLGState::initContext();
+
   return true;
 }
 
