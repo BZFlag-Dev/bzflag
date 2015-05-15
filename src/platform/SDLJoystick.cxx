@@ -159,7 +159,11 @@ void		    SDLJoystick::getJoyDevices(std::vector<std::string>
   int i;
   for (i = 0; i < numJoystick; i++) {
     char joystickName[50]; //only room for so much on the menu
+#ifdef HAVE_SDL2
+    snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickNameForIndex(i));
+#else
     snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickName(i));
+#endif
     list.push_back(joystickName);
   }
 }

@@ -344,13 +344,11 @@
 		0357A8B61670B7E40056C938 /* BzfVisual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A89C1670B7670056C938 /* BzfVisual.cxx */; };
 		0357A8B71670B7E40056C938 /* BzfWindow.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A89D1670B7670056C938 /* BzfWindow.cxx */; };
 		0357A8B81670B7E40056C938 /* PlatformFactory.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A89E1670B7670056C938 /* PlatformFactory.cxx */; };
-		0357A8B91670B7E40056C938 /* SDLDisplay.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A89F1670B7670056C938 /* SDLDisplay.cxx */; };
 		0357A8BA1670B7E40056C938 /* SDLJoystick.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A11670B7670056C938 /* SDLJoystick.cxx */; };
 		0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A31670B7670056C938 /* SDLMedia.cxx */; };
 		0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */; };
 		0357A8BD1670B7E40056C938 /* wave.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A71670B7670056C938 /* wave.cxx */; };
 		0357A8BE1670B8750056C938 /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554AF4166C8470008806E9 /* MacDataPath.cxx */; };
-		0357A8BF1670B8750056C938 /* SDLMain.m in Sources */ = {isa = PBXBuildFile; fileRef = 03554B02166C8470008806E9 /* SDLMain.m */; };
 		0357A8C81670B9050056C938 /* AudioFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BA166C846F008806E9 /* AudioFile.cxx */; };
 		0357A8C91670B9050056C938 /* ImageFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BC166C846F008806E9 /* ImageFile.cxx */; };
 		0357A8CA1670B9050056C938 /* MediaFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BF166C846F008806E9 /* MediaFile.cxx */; };
@@ -515,7 +513,10 @@
 		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; };
 		0394E965167B2D00007F4035 /* webReport.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E932167B2A47007F4035 /* webReport.dylib */; };
 		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; };
-		0394E96D167B36EF007F4035 /* SDL.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0305D6F2166CA1DC00557FC4 /* SDL.framework */; };
+		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
+		03C338CD1AFB5AFC00E8F655 /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
+		03C338CE1AFB5AFC00E8F655 /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
+		03C338CF1AFB5AFC00E8F655 /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
 		03C5E7C91670A489005A26C4 /* ares__close_sockets.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3C166C851C008806E9 /* ares__close_sockets.c */; };
 		03C5E7CA1670A489005A26C4 /* ares__get_hostent.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3D166C851C008806E9 /* ares__get_hostent.c */; };
 		03C5E7CB1670A489005A26C4 /* ares__read_line.c in Sources */ = {isa = PBXBuildFile; fileRef = 03554B3E166C851C008806E9 /* ares__read_line.c */; };
@@ -654,7 +655,6 @@
 		03C8EF09167AC26A00BB07A5 /* WorldBuilder.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543C7166C846F008806E9 /* WorldBuilder.cxx */; };
 		03C8EF0B167AC26A00BB07A5 /* WorldPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543C9166C846F008806E9 /* WorldPlayer.cxx */; };
 		03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03835D06166CB12D008CE9C3 /* OpenGL.framework */; };
-		03C8EF0E167AC50600BB07A5 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0305D6F2166CA1DC00557FC4 /* SDL.framework */; };
 		03C8EF0F167AC52000BB07A5 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C5E7C51670A466005A26C4 /* libcares.a */; };
 		03C8EF10167AC52500BB07A5 /* lib3D.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C5E7BC1670A3DA005A26C4 /* lib3D.a */; };
 		03C8EF11167AC52800BB07A5 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
@@ -1243,7 +1243,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				0394E96D167B36EF007F4035 /* SDL.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1409,7 +1408,6 @@
 		0305D5FF166C9DAE00557FC4 /* WordFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordFilter.h; sourceTree = "<group>"; };
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
-		0305D6F2166CA1DC00557FC4 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = /Library/Frameworks/SDL.framework; sourceTree = "<absolute>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
@@ -1895,8 +1893,6 @@
 		0355458B166C846F008806E9 /* windows_port.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = windows_port.c; sourceTree = "<group>"; };
 		035549F7166C8470008806E9 /* glew.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = glew.c; sourceTree = "<group>"; };
 		03554AF4166C8470008806E9 /* MacDataPath.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
-		03554B01166C8470008806E9 /* SDLMain.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
-		03554B02166C8470008806E9 /* SDLMain.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		03554B07166C8470008806E9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		03554B33166C8470008806E9 /* BSPSceneDatabase.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BSPSceneDatabase.cxx; sourceTree = "<group>"; };
 		03554B35166C8470008806E9 /* Occluder.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Occluder.cxx; sourceTree = "<group>"; };
@@ -1961,8 +1957,6 @@
 		0357A89C1670B7670056C938 /* BzfVisual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BzfVisual.cxx; sourceTree = "<group>"; };
 		0357A89D1670B7670056C938 /* BzfWindow.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BzfWindow.cxx; sourceTree = "<group>"; };
 		0357A89E1670B7670056C938 /* PlatformFactory.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformFactory.cxx; sourceTree = "<group>"; };
-		0357A89F1670B7670056C938 /* SDLDisplay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLDisplay.cxx; sourceTree = "<group>"; };
-		0357A8A01670B7670056C938 /* SDLDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLDisplay.h; sourceTree = "<group>"; };
 		0357A8A11670B7670056C938 /* SDLJoystick.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLJoystick.cxx; sourceTree = "<group>"; };
 		0357A8A21670B7670056C938 /* SDLJoystick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLJoystick.h; sourceTree = "<group>"; };
 		0357A8A31670B7670056C938 /* SDLMedia.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLMedia.cxx; sourceTree = "<group>"; };
@@ -2259,6 +2253,13 @@
 		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E932167B2A47007F4035 /* webReport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = webReport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Display.cxx; sourceTree = "<group>"; };
+		03C338C81AFB5AFC00E8F655 /* SDL2Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Display.h; sourceTree = "<group>"; };
+		03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Visual.cxx; sourceTree = "<group>"; };
+		03C338CA1AFB5AFC00E8F655 /* SDL2Visual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Visual.h; sourceTree = "<group>"; };
+		03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Window.cxx; sourceTree = "<group>"; };
+		03C338CC1AFB5AFC00E8F655 /* SDL2Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Window.h; sourceTree = "<group>"; };
 		03C5E79516707857005A26C4 /* ares_build.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_build.h; sourceTree = "<group>"; };
 		03C5E79616707857005A26C4 /* ares_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ares_config.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
@@ -2666,6 +2667,7 @@
 				03C8EF13167AC53000BB07A5 /* libgame.a in Frameworks */,
 				03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */,
 				03C8EF14167AC53400BB07A5 /* libgeometry.a in Frameworks */,
+				03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */,
 				03C8EF15167AC53700BB07A5 /* libobstacle.a in Frameworks */,
 				03C8EF16167AC53B00BB07A5 /* libogl.a in Frameworks */,
 				03C8EF17167AC54700BB07A5 /* libscene.a in Frameworks */,
@@ -2675,7 +2677,6 @@
 				03C8EF1B167AC55B00BB07A5 /* libglew.a in Frameworks */,
 				03C8EE27167ABE2300BB07A5 /* Cocoa.framework in Frameworks */,
 				03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */,
-				03C8EF0E167AC50600BB07A5 /* SDL.framework in Frameworks */,
 				03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */,
 				03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */,
 			);
@@ -3567,14 +3568,18 @@
 				0357A89D1670B7670056C938 /* BzfWindow.cxx */,
 				03554AF3166C8470008806E9 /* MacOSX */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
-				0357A89F1670B7670056C938 /* SDLDisplay.cxx */,
-				0357A8A01670B7670056C938 /* SDLDisplay.h */,
 				0357A8A11670B7670056C938 /* SDLJoystick.cxx */,
 				0357A8A21670B7670056C938 /* SDLJoystick.h */,
 				0357A8A31670B7670056C938 /* SDLMedia.cxx */,
 				0357A8A41670B7670056C938 /* SDLMedia.h */,
 				0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */,
 				0357A8A61670B7670056C938 /* SDLPlatformFactory.h */,
+				03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */,
+				03C338C81AFB5AFC00E8F655 /* SDL2Display.h */,
+				03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */,
+				03C338CA1AFB5AFC00E8F655 /* SDL2Visual.h */,
+				03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */,
+				03C338CC1AFB5AFC00E8F655 /* SDL2Window.h */,
 				0357A8A71670B7670056C938 /* wave.cxx */,
 				0357A8A81670B7670056C938 /* wave.h */,
 				03554B07166C8470008806E9 /* README */,
@@ -3586,8 +3591,6 @@
 			isa = PBXGroup;
 			children = (
 				03554AF4166C8470008806E9 /* MacDataPath.cxx */,
-				03554B01166C8470008806E9 /* SDLMain.h */,
-				03554B02166C8470008806E9 /* SDLMain.m */,
 			);
 			path = MacOSX;
 			sourceTree = "<group>";
@@ -4256,9 +4259,9 @@
 		03D935B1166C6C0600DDDBEB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				03C338C51AFB59FF00E8F655 /* SDL2.framework */,
 				0357AA311670C5AF0056C938 /* Cocoa.framework */,
 				03835D06166CB12D008CE9C3 /* OpenGL.framework */,
-				0305D6F2166CA1DC00557FC4 /* SDL.framework */,
 				03D926E5166C6AB500DDDBEB /* libncurses.dylib */,
 				03D926E3166C692B00DDDBEB /* libz.dylib */,
 				03D926E1166C68E700DDDBEB /* libcurl.dylib */,
@@ -5898,13 +5901,11 @@
 				0357A8B61670B7E40056C938 /* BzfVisual.cxx in Sources */,
 				0357A8B71670B7E40056C938 /* BzfWindow.cxx in Sources */,
 				0357A8B81670B7E40056C938 /* PlatformFactory.cxx in Sources */,
-				0357A8B91670B7E40056C938 /* SDLDisplay.cxx in Sources */,
 				0357A8BA1670B7E40056C938 /* SDLJoystick.cxx in Sources */,
 				0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */,
 				0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */,
 				0357A8BD1670B7E40056C938 /* wave.cxx in Sources */,
 				0357A8BE1670B8750056C938 /* MacDataPath.cxx in Sources */,
-				0357A8BF1670B8750056C938 /* SDLMain.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6358,6 +6359,7 @@
 				03C8EE72167AC26A00BB07A5 /* clientConfig.cxx in Sources */,
 				03C8EE75167AC26A00BB07A5 /* CommandsImplementation.cxx in Sources */,
 				03C8EE76167AC26A00BB07A5 /* ComposeDefaultKey.cxx in Sources */,
+				03C338CF1AFB5AFC00E8F655 /* SDL2Window.cxx in Sources */,
 				03C8EE78167AC26A00BB07A5 /* ControlPanel.cxx in Sources */,
 				03C8EE7A167AC26A00BB07A5 /* daylight.cxx in Sources */,
 				03C8EE7C167AC26A00BB07A5 /* defaultBZDB.cxx in Sources */,
@@ -6373,6 +6375,7 @@
 				03C8EE90167AC26A00BB07A5 /* GUIOptionsMenu.cxx in Sources */,
 				03C8EE92167AC26A00BB07A5 /* HelpMenu.cxx in Sources */,
 				03C8EE94167AC26A00BB07A5 /* HUDDialog.cxx in Sources */,
+				03C338CD1AFB5AFC00E8F655 /* SDL2Display.cxx in Sources */,
 				03C8EE96167AC26A00BB07A5 /* HUDDialogStack.cxx in Sources */,
 				03C8EE98167AC26A00BB07A5 /* HUDRenderer.cxx in Sources */,
 				03C8EE9A167AC26A00BB07A5 /* HUDui.cxx in Sources */,
@@ -6397,6 +6400,7 @@
 				03C8EEC0167AC26A00BB07A5 /* Player.cxx in Sources */,
 				03C8EEC2167AC26A00BB07A5 /* playing.cxx in Sources */,
 				03C8EEC4167AC26A00BB07A5 /* QuickKeysMenu.cxx in Sources */,
+				03C338CE1AFB5AFC00E8F655 /* SDL2Visual.cxx in Sources */,
 				03C8EEC6167AC26A00BB07A5 /* QuitMenu.cxx in Sources */,
 				03C8EEC8167AC26A00BB07A5 /* RadarRenderer.cxx in Sources */,
 				03C8EECA167AC26A00BB07A5 /* Region.cxx in Sources */,
@@ -8142,6 +8146,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -8160,6 +8168,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LOCAL_LIBRARY_DIR)/Frameworks",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = NO;
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
@@ -8769,6 +8781,7 @@
 				C353B1D91AE239CC00C5AED5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

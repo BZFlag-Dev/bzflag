@@ -4,6 +4,7 @@
 BZFlag 2.4.3
 ------------
 
+* SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
 * Added bz_getIdleTime API function - Vladimir Jimenez
 * Track number of self-kills on the scoreboard - Konstantinos Kanavouras

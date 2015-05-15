@@ -340,8 +340,13 @@ float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 
 void SDLMedia::audioDriver(std::string& driverName)
 {
+#ifdef HAVE_SDL2
+  const char *driver = SDL_GetCurrentAudioDriver();
+  if (driver)
+#else
   char driver[128];
   if (SDL_AudioDriverName(driver, sizeof(driver)))
+#endif
     driverName = driver;
   else
     driverName = "audio not available";
