@@ -31,14 +31,12 @@ class SDLDisplay : public BzfDisplay {
  public:
   SDLDisplay();
   ~SDLDisplay();
-  bool createWindow();
   virtual bool isValid() const {return true;};
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
   bool peekEvent(BzfEvent&) const;
   bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
   void getWindowSize(int& width, int& height);
-  void doSetVideoMode();
   bool hasGetKeyMode() {return true;};
   void getModState(bool &shift, bool &control, bool &alt);
   void getMouse(int& x, int& y) const;

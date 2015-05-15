@@ -101,6 +101,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 
 bool SDLDisplay::peekEvent(BzfEvent& _event) const
 {
+  SDL_PumpEvents();
   SDL_Event event;
   if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT)
       <= 0) {
@@ -108,194 +109,6 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
   }
 
   return setupEvent(_event, event);
-}
-
-
-bool SDLDisplay::symNeedsConversion(SDL_Keycode key) const
-{
-  return key >= SDLK_EXCLAIM && key <= SDLK_z ? true : false;
-}
-
-
-bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
-{
-  SDL_Keymod mode = SDL_GetModState();
-  bool shift  = ((mode & KMOD_SHIFT) != 0);
-  bool ctrl   = ((mode & KMOD_CTRL) != 0);
-  bool alt    = ((mode & KMOD_ALT) != 0);
-
-  switch (event.type) {
-
-  case SDL_MOUSEMOTION:
-    _event.type	= BzfEvent::MouseMove;
-    mx		 = event.motion.x;
-    my		 = event.motion.y;
-    _event.mouseMove.x = mx;
-    _event.mouseMove.y = my;
-    break;
-
-  case SDL_MOUSEWHEEL:
-    _event.type	  = BzfEvent::KeyDown;
-    _event.keyDown.ascii = 0;
-    _event.keyDown.shift = 0;
-    if (shift)
-      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
-    if (ctrl)
-      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
-    if (alt)
-      _event.keyDown.shift |= BzfKeyEvent::AltKey;
-
-    if (event.wheel.y < 0)
-      _event.keyDown.button = BzfKeyEvent::WheelUp;
-    else
-      _event.keyDown.button = BzfKeyEvent::WheelDown;
-    break;
-
-  case SDL_MOUSEBUTTONDOWN:
-    _event.type	  = BzfEvent::KeyDown;
-    _event.keyDown.ascii = 0;
-    _event.keyDown.shift = 0;
-    if (shift)
-      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
-    if (ctrl)
-      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
-    if (alt)
-      _event.keyDown.shift |= BzfKeyEvent::AltKey;
-
-    switch (event.button.button) {
-    case SDL_BUTTON_LEFT:
-      _event.keyDown.button = BzfKeyEvent::LeftMouse;
-      break;
-    case SDL_BUTTON_MIDDLE:
-      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
-      break;
-    case SDL_BUTTON_RIGHT:
-      _event.keyDown.button = BzfKeyEvent::RightMouse;
-      break;
-    case 6:
-      _event.keyDown.button = BzfKeyEvent::MouseButton6;
-      break;
-    case 7:
-      _event.keyDown.button = BzfKeyEvent::MouseButton7;
-      break;
-    case 8:
-      _event.keyDown.button = BzfKeyEvent::MouseButton8;
-      break;
-    case 9:
-      _event.keyDown.button = BzfKeyEvent::MouseButton9;
-      break;
-    case 10:
-      _event.keyDown.button = BzfKeyEvent::MouseButton10;
-      break;
-    default:
-      return false;
-    }
-    break;
-
-  case SDL_MOUSEBUTTONUP:
-    _event.type = BzfEvent::KeyUp;
-    _event.keyUp.ascii = 0;
-    _event.keyUp.shift = 0;
-    if (shift)
-      _event.keyUp.shift |= BzfKeyEvent::ShiftKey;
-    if (ctrl)
-      _event.keyUp.shift |= BzfKeyEvent::ControlKey;
-    if (alt)
-      _event.keyUp.shift |= BzfKeyEvent::AltKey;
-
-    switch (event.button.button) {
-    case SDL_BUTTON_LEFT:
-      _event.keyDown.button = BzfKeyEvent::LeftMouse;
-      break;
-    case SDL_BUTTON_MIDDLE:
-      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
-      break;
-    case SDL_BUTTON_RIGHT:
-      _event.keyDown.button = BzfKeyEvent::RightMouse;
-      break;
-    case 6:
-      _event.keyDown.button = BzfKeyEvent::MouseButton6;
-      break;
-    case 7:
-      _event.keyDown.button = BzfKeyEvent::MouseButton7;
-      break;
-    case 8:
-      _event.keyDown.button = BzfKeyEvent::MouseButton8;
-      break;
-    case 9:
-      _event.keyDown.button = BzfKeyEvent::MouseButton9;
-      break;
-    case 10:
-      _event.keyDown.button = BzfKeyEvent::MouseButton10;
-      break;
-    default:
-      return false;
-    }
-    break;
-
-  case SDL_KEYDOWN:
-    if(symNeedsConversion(event.key.keysym.sym)) {
-      lastKeyDownEvent = event;
-    } else {
-      _event.type = BzfEvent::KeyDown;
-      if (!getKey(event, _event.keyDown))
-        return false;
-    }
-    break;
-
-  case SDL_KEYUP:
-    _event.type = BzfEvent::KeyUp;
-    if (!getKey(event, _event.keyUp))
-      return false;
-    break;
-
-  case SDL_TEXTINPUT:
-    if(event.text.text[0] < '!' || event.text.text[0] > '~')
-      break;
-    charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
-    _event.type = BzfEvent::KeyDown;
-    if (!getKey(lastKeyDownEvent, _event.keyDown))
-      return false;
-    break;
-
-  case SDL_QUIT:
-    _event.type = BzfEvent::Quit;
-    break;
-
-  case SDL_WINDOWEVENT:
-    switch (event.window.event) {
-    case SDL_WINDOWEVENT_RESIZED:
-      _event.type = BzfEvent::Resize;
-      _event.resize.width  = event.window.data1;
-      _event.resize.height = event.window.data2;
-      break;
-    case SDL_WINDOWEVENT_EXPOSED:
-      _event.type = BzfEvent::Redraw;
-      break;
-    case SDL_WINDOWEVENT_HIDDEN:
-      _event.type = BzfEvent::Unmap;
-      break;
-    case SDL_WINDOWEVENT_SHOWN:
-      _event.type = BzfEvent::Map;
-      break;
-    default:
-      break;
-    }
-    break;
-
-  default:
-    return false;
-  }
-  return true;
-}
-
-
-void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
-{
-  SDL_Keymod mode = SDL_GetModState();
-  shift       = ((mode & KMOD_SHIFT) != 0);
-  ctrl	= ((mode & KMOD_CTRL) != 0);
-  alt	 = ((mode & KMOD_ALT) != 0);
 }
 
 
@@ -484,6 +297,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
   return true;
 }
 
+
 void SDLDisplay::getWindowSize(int& width, int& height) {
   if (modeIndex < 0)
     modeIndex = 0;
@@ -498,10 +312,211 @@ void SDLDisplay::getWindowSize(int& width, int& height) {
   }
 }
 
+
+void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
+{
+  SDL_Keymod mode = SDL_GetModState();
+  shift       = ((mode & KMOD_SHIFT) != 0);
+  ctrl	= ((mode & KMOD_CTRL) != 0);
+  alt	 = ((mode & KMOD_ALT) != 0);
+}
+
+
 void SDLDisplay::getMouse(int &_x, int &_y) const {
   _x = mx;
   _y = my;
 }
+
+
+bool SDLDisplay::symNeedsConversion(SDL_Keycode key) const
+{
+  return key >= SDLK_EXCLAIM && key <= SDLK_z ? true : false;
+}
+
+
+bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
+{
+  SDL_Keymod mode = SDL_GetModState();
+  bool shift  = ((mode & KMOD_SHIFT) != 0);
+  bool ctrl   = ((mode & KMOD_CTRL) != 0);
+  bool alt    = ((mode & KMOD_ALT) != 0);
+
+  switch (event.type) {
+
+  case SDL_MOUSEMOTION:
+    _event.type	= BzfEvent::MouseMove;
+    mx		 = event.motion.x;
+    my		 = event.motion.y;
+    _event.mouseMove.x = mx;
+    _event.mouseMove.y = my;
+    break;
+
+  case SDL_MOUSEWHEEL:
+    _event.type	  = BzfEvent::KeyDown;
+    _event.keyDown.ascii = 0;
+    _event.keyDown.shift = 0;
+    if (shift)
+      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+    if (ctrl)
+      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
+    if (alt)
+      _event.keyDown.shift |= BzfKeyEvent::AltKey;
+
+    if (event.wheel.y < 0)
+      _event.keyDown.button = BzfKeyEvent::WheelUp;
+    else
+      _event.keyDown.button = BzfKeyEvent::WheelDown;
+    break;
+
+  case SDL_MOUSEBUTTONDOWN:
+    _event.type	  = BzfEvent::KeyDown;
+    _event.keyDown.ascii = 0;
+    _event.keyDown.shift = 0;
+    if (shift)
+      _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+    if (ctrl)
+      _event.keyDown.shift |= BzfKeyEvent::ControlKey;
+    if (alt)
+      _event.keyDown.shift |= BzfKeyEvent::AltKey;
+
+    switch (event.button.button) {
+    case SDL_BUTTON_LEFT:
+      _event.keyDown.button = BzfKeyEvent::LeftMouse;
+      break;
+    case SDL_BUTTON_MIDDLE:
+      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
+      break;
+    case SDL_BUTTON_RIGHT:
+      _event.keyDown.button = BzfKeyEvent::RightMouse;
+      break;
+    case 6:
+      _event.keyDown.button = BzfKeyEvent::MouseButton6;
+      break;
+    case 7:
+      _event.keyDown.button = BzfKeyEvent::MouseButton7;
+      break;
+    case 8:
+      _event.keyDown.button = BzfKeyEvent::MouseButton8;
+      break;
+    case 9:
+      _event.keyDown.button = BzfKeyEvent::MouseButton9;
+      break;
+    case 10:
+      _event.keyDown.button = BzfKeyEvent::MouseButton10;
+      break;
+    default:
+      return false;
+    }
+    break;
+
+  case SDL_MOUSEBUTTONUP:
+    _event.type = BzfEvent::KeyUp;
+    _event.keyUp.ascii = 0;
+    _event.keyUp.shift = 0;
+    if (shift)
+      _event.keyUp.shift |= BzfKeyEvent::ShiftKey;
+    if (ctrl)
+      _event.keyUp.shift |= BzfKeyEvent::ControlKey;
+    if (alt)
+      _event.keyUp.shift |= BzfKeyEvent::AltKey;
+
+    switch (event.button.button) {
+    case SDL_BUTTON_LEFT:
+      _event.keyDown.button = BzfKeyEvent::LeftMouse;
+      break;
+    case SDL_BUTTON_MIDDLE:
+      _event.keyDown.button = BzfKeyEvent::MiddleMouse;
+      break;
+    case SDL_BUTTON_RIGHT:
+      _event.keyDown.button = BzfKeyEvent::RightMouse;
+      break;
+    case 6:
+      _event.keyDown.button = BzfKeyEvent::MouseButton6;
+      break;
+    case 7:
+      _event.keyDown.button = BzfKeyEvent::MouseButton7;
+      break;
+    case 8:
+      _event.keyDown.button = BzfKeyEvent::MouseButton8;
+      break;
+    case 9:
+      _event.keyDown.button = BzfKeyEvent::MouseButton9;
+      break;
+    case 10:
+      _event.keyDown.button = BzfKeyEvent::MouseButton10;
+      break;
+    default:
+      return false;
+    }
+    break;
+
+  case SDL_KEYDOWN:
+    if(symNeedsConversion(event.key.keysym.sym)) {
+      lastKeyDownEvent = event;
+    } else {
+      _event.type = BzfEvent::KeyDown;
+      if (!getKey(event, _event.keyDown))
+        return false;
+    }
+    break;
+
+  case SDL_KEYUP:
+    _event.type = BzfEvent::KeyUp;
+    if (!getKey(event, _event.keyUp))
+      return false;
+    break;
+
+  case SDL_TEXTINPUT:
+    if(event.text.text[0] < '!' || event.text.text[0] > '~')
+      break;
+    charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
+    _event.type = BzfEvent::KeyDown;
+    if (!getKey(lastKeyDownEvent, _event.keyDown))
+      return false;
+    break;
+
+  case SDL_QUIT:
+    _event.type = BzfEvent::Quit;
+    break;
+
+  case SDL_WINDOWEVENT:
+    switch (event.window.event) {
+    case SDL_WINDOWEVENT_RESIZED:
+      _event.type = BzfEvent::Resize;
+      _event.resize.width  = event.window.data1;
+      _event.resize.height = event.window.data2;
+      break;
+    case SDL_WINDOWEVENT_EXPOSED:
+      _event.type = BzfEvent::Redraw;
+      break;
+    case SDL_WINDOWEVENT_HIDDEN:
+      _event.type = BzfEvent::Unmap;
+      break;
+    case SDL_WINDOWEVENT_SHOWN:
+      _event.type = BzfEvent::Map;
+      break;
+    case SDL_WINDOWEVENT_FOCUS_GAINED:
+    {
+      // make sure the mouse is captured in case the cursor is (or moves) outside the window
+      SDL_Window* windowId = SDL_GL_GetCurrentWindow();
+      if(windowId) {
+        Uint32 currentWindowFlags = SDL_GetWindowFlags(windowId);
+        if(! (currentWindowFlags & SDL_WINDOW_MOUSE_CAPTURE))
+          SDL_CaptureMouse(SDL_TRUE);
+      }
+      break;
+    }
+    default:
+      break;
+    }
+    break;
+
+  default:
+    return false;
+  }
+  return true;
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
