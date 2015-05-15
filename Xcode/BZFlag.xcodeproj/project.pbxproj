@@ -2253,7 +2253,7 @@
 		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E932167B2A47007F4035 /* webReport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = webReport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = ../../../../../Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
+		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Display.cxx; sourceTree = "<group>"; };
 		03C338C81AFB5AFC00E8F655 /* SDL2Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Display.h; sourceTree = "<group>"; };
 		03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Visual.cxx; sourceTree = "<group>"; };
