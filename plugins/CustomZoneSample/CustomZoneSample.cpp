@@ -120,7 +120,7 @@ void CustomZoneSample::Event (bz_EventData *eventData)
       bz_PlayerUpdateEventData_V1* updateData = (bz_PlayerUpdateEventData_V1*)eventData;
 
       // Loop through all of our custom zones
-      for (int i = 0; i < msgZones.size(); i++)
+      for (unsigned int i = 0; i < msgZones.size(); i++)
       {
 	// Use the pointInZone(float pos[3]) function provided by the bz_CustomZoneObject to check if the position
 	// of the player is inside of the zone. This function will automatically handle the logic if the zone is a
