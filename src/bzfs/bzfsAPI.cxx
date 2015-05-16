@@ -2970,7 +2970,7 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
   }
 }
 
-BZF_API float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
+float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
 {
     return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
 }

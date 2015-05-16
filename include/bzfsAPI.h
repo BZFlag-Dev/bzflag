@@ -1593,13 +1593,13 @@ typedef struct bz_CustomMapObjectInfo
 class bz_CustomZoneObject
 {
 public:
-  bz_CustomZoneObject();
+  BZF_API bz_CustomZoneObject();
   
   bool box;
   float xMax,xMin,yMax,yMin,zMax,zMin,radius,rotation;
   
-  bool pointInZone(float pos[3]);
-  void handleDefaultOptions(bz_CustomMapObjectInfo *data);
+  BZF_API bool pointInZone(float pos[3]);
+  BZF_API void handleDefaultOptions(bz_CustomMapObjectInfo *data);
   
 private:
   float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
