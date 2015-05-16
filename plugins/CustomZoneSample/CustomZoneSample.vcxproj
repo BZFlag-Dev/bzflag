@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1F43075E-8AF6-486F-AEDF-6B350A6CE141}</ProjectGuid>
+    <ProjectGuid>{3FB1B268-2084-4C96-8D90-EB72A612A986}</ProjectGuid>
     <RootNamespace>CustomZoneSample</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
