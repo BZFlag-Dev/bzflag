@@ -636,7 +636,7 @@ if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
 
     if test x$with_SDL = xno ; then
       if test x$with_SDL2 = xyes ; then
-	AM_PATH_SDL2(2.0.3, with_SDL=yes, with_SDL=no)
+	AM_PATH_SDL2(2.0.4, with_SDL=yes, with_SDL=no)
       else
 	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
       fi
