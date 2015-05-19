@@ -99,6 +99,9 @@ void SDLWindow::swapBuffers() {
 bool SDLWindow::create(void) {
   int targetWidth, targetHeight;
   getSize(targetWidth, targetHeight);
+  SDL_bool windowWasGrabbed = SDL_FALSE;
+  if(windowId != NULL)
+    windowWasGrabbed = SDL_GetWindowGrab(windowId);
 
   // if we have an existing identical window, go no further
   if(windowId != NULL) {
@@ -122,7 +125,8 @@ bool SDLWindow::create(void) {
 
   // (re)create the window
   const Uint32 flags = SDL_WINDOW_OPENGL |
-      (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE);
+      (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
+      (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
 
   windowId = SDL_CreateWindow(
       title.c_str(),
