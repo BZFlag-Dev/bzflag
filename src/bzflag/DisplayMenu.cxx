@@ -235,7 +235,9 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
+  options->push_back(std::string("FPS Limit"));
+  if(getMainWindow()->getWindow()->hasVerticalSync())
+    options->push_back(std::string("Vertical Sync"));
   option->update();
   listHUD.push_back(option);
 
@@ -449,7 +451,8 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
     break;
   case 's':
-    BZDB.setBool("saveEnergy", list->getIndex() != 0);
+    BZDB.set("saveEnergy", list->getIndex() == 2 ? "2" : list->getIndex() == 1 ? "1" : "0");
+    getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

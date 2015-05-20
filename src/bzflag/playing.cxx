@@ -6772,7 +6772,7 @@ static void		playingLoop()
     }
 
     // limit the fps to save battery life by minimizing cpu usage
-    if (BZDB.isTrue("saveEnergy")) {
+    if (BZDB.evalInt("saveEnergy") == 1) {
       static TimeKeeper lastTime = TimeKeeper::getCurrent();
       float fpsLimit = BZDB.eval("fpsLimit");
       if (fpsLimit < 15 || isnan(fpsLimit))

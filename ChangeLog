@@ -4,6 +4,7 @@
 BZFlag 2.4.3
 ------------
 
+* Vertical sync support under SDL 2 - Joshua Bodine
 * SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
 * Added bz_getIdleTime API function - Vladimir Jimenez

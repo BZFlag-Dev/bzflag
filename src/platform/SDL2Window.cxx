@@ -102,6 +102,10 @@ bool SDLWindow::create(void) {
   SDL_bool windowWasGrabbed = SDL_FALSE;
   if(windowId != NULL)
     windowWasGrabbed = SDL_GetWindowGrab(windowId);
+  int swapInterval = 0;
+  if(windowId != NULL)
+    if(glContext != NULL)
+      swapInterval = SDL_GL_GetSwapInterval() == 1;
 
   // if we have an existing identical window, go no further
   if(windowId != NULL) {
@@ -144,8 +148,7 @@ bool SDLWindow::create(void) {
   makeContext();
   makeCurrent();
 
-  // always disable vsync when building with SDL
-  SDL_GL_SetSwapInterval(0);
+  SDL_GL_SetSwapInterval(swapInterval);
 
   // init opengl context
   OpenGLGState::initContext();
@@ -165,6 +168,10 @@ void SDLWindow::makeContext() {
   glContext = SDL_GL_CreateContext(windowId);
   if (!glContext)
     printf("Could not Create GL Context: %s.\n", SDL_GetError());
+}
+
+void SDLWindow::setVerticalSync(bool setting) {
+  SDL_GL_SetSwapInterval(setting ? 1 : 0);
 }
 
 void SDLWindow::makeCurrent() {
