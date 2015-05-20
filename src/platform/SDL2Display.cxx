@@ -363,9 +363,9 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
       _event.keyDown.shift |= BzfKeyEvent::AltKey;
 
     if (event.wheel.y < 0)
-      _event.keyDown.button = BzfKeyEvent::WheelUp;
-    else
       _event.keyDown.button = BzfKeyEvent::WheelDown;
+    else
+      _event.keyDown.button = BzfKeyEvent::WheelUp;
     break;
 
   case SDL_MOUSEBUTTONDOWN:
