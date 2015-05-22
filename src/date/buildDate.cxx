@@ -34,7 +34,6 @@
 //  ChangeLog
 //  MSVC/bzflag.rc
 //  README
-//  Xcode/config.h
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
