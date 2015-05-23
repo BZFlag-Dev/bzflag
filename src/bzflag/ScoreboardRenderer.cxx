@@ -44,6 +44,7 @@ std::string ScoreboardRenderer::playerLabel("Player");
 const char* ScoreboardRenderer::sortLabels[] = {
   "[Score]",
   "[Normalized Score]",
+  "[Reverse Score]",
   "[Callsign]",
   "[Team Kills]",
   "[TK ratio]",
@@ -479,10 +480,16 @@ void ScoreboardRenderer::renderScoreboard(void)
 	else
 	  ++huntPosition;
       }
-      if (huntPosition>=numPlayers)
-	huntPosition = 0;
-      if (huntPosition<0)
-	huntPosition = numPlayers-1;
+      if (huntPosition>=numPlayers) {
+          huntPosition = 0;
+        if (players[0] == myTank)
+          huntPosition = 1;
+      }
+      if (huntPosition<0) {
+        huntPosition = numPlayers-1;
+        if (players[huntPosition] == myTank)
+          --huntPosition;
+      }
       if (huntSelectEvent){	     // if 'fire' was pressed ...
 	if (!huntAddMode)
 	  clearHuntedTanks ();
@@ -924,6 +931,8 @@ Player **  ScoreboardRenderer::newSortedList (int sortType, bool obsLast, int *_
 	  else
 	    sorter[i].i1 = p->getScore();
 	  sorter[i].i2 = 0;
+	  if (sortType == SORT_REVERSE)
+	    sorter[i].i1 *= -1;
       }
     }
     if (sortType == SORT_CALLSIGN)

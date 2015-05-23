@@ -1182,6 +1182,9 @@ int			main(int argc, char** argv)
   // to see stuff in control panel)
   pmainWindow->setMinSize(256, 192);
 
+  // enable vsync if needed
+  pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
+
   // initialize graphics state
   pmainWindow->getWindow()->makeCurrent();
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

@@ -137,3 +137,9 @@ ehthumbs.db
 Thumbs.db
 *.ib_pdb_index
 *.ib_pdb_index
+
+# Xcode cruft
+/Xcode/BZFlag.xcodeproj/xcuserdata
+/Xcode/BZFlag.xcodeproj/project.xcworkspace
+/Xcode/buildinfo.h
+/Xcode/BZFlag-Info.plist

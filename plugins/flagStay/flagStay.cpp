@@ -37,50 +37,12 @@ void EventHandler::Cleanup ( void )
   bz_removeCustomMapObject("FLAGSTAYZONE");
 }
 
-class FlagStayZone
+class FlagStayZone : public bz_CustomZoneObject
 {
 public:
-	FlagStayZone()
-	{
-		box = false;
-		xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
-	}
-
-	bool box;
-	float xMax,xMin,yMax,yMin,zMax,zMin;
-	float rad;
+  FlagStayZone() : bz_CustomZoneObject() {}
 
 	std::string message;
-	bool pointIn ( float pos[3] )
-	{
-		if ( box )
-		{
-			if ( pos[0] > xMax || pos[0] < xMin )
-				return false;
-
-			if ( pos[1] > yMax || pos[1] < yMin )
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-		}
-		else
-		{
-			float vec[3];
-			vec[0] = pos[0]-xMax;
-			vec[1] = pos[1]-yMax;
-			vec[2] = pos[2]-zMax;
-
-			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-			if ( dist > rad)
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-
-		}
-		return true;
-	}
 
 	bool checkFlag ( const char* flag )
 	{
@@ -103,6 +65,7 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 		return false;
 
 	FlagStayZone newZone;
+	newZone.handleDefaultOptions(data);
 
 	// parse all the chunks
 	for ( unsigned int i = 0; i < data->data.size(); i++ )
@@ -116,28 +79,9 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
 
-			if ( key == "BBOX" && nubs->size() > 6)
+			if ( key == "FLAG" && nubs->size() > 1)
 			{
-				newZone.box = true;
-				newZone.xMin = (float)atof(nubs->get(1).c_str());
-				newZone.xMax = (float)atof(nubs->get(2).c_str());
-				newZone.yMin = (float)atof(nubs->get(3).c_str());
-				newZone.yMax = (float)atof(nubs->get(4).c_str());
-				newZone.zMin = (float)atof(nubs->get(5).c_str());
-				newZone.zMax = (float)atof(nubs->get(6).c_str());
-			}
-			else if ( key == "CYLINDER" && nubs->size() > 5)
-			{
-				newZone.box = false;
-				newZone.rad = (float)atof(nubs->get(5).c_str());
-				newZone.xMax =(float)atof(nubs->get(1).c_str());
-				newZone.yMax =(float)atof(nubs->get(2).c_str());
-				newZone.zMin =(float)atof(nubs->get(3).c_str());
-				newZone.zMax =(float)atof(nubs->get(4).c_str());
-			}
-			else if ( key == "FLAG" && nubs->size() > 1)
-			{
-				std::string flag = nubs->get(1).c_str();
+				std::string flag = bz_toupper(nubs->get(1).c_str());
 				newZone.flagList.push_back(flag);
 			}
 			else if ( key == "MESSAGE" && nubs->size() > 1 )
@@ -145,8 +89,10 @@ bool FlagStayZoneHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInf
 				newZone.message = nubs->get(1).c_str();
 			}
 		}
+	  
 		bz_deleteStringList(nubs);
 	}
+
 	zoneList.push_back(newZone);
 	return true;
 }
@@ -196,7 +142,7 @@ void EventHandler::Event ( bz_EventData *eventData )
 	bool insideOne = false;
 	for ( unsigned int i = 0; i < validZones.size(); i++ )
 	{
-		if ( validZones[i]->pointIn(pos) )
+		if ( validZones[i]->pointInZone(pos) )
 		{
 			insideOne = true;
 			playerIDToZoneMap[playerID] = i;
@@ -224,4 +170,3 @@ void EventHandler::Event ( bz_EventData *eventData )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

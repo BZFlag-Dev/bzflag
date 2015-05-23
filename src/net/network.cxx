@@ -30,10 +30,6 @@
 #define hstrerror(x) "<network error>"
 #endif
 
-#ifndef O_NDELAY
-#define O_NDELAY O_NONBLOCK
-#endif
-
 extern "C" {
 
 void			nerror(const char* msg)
@@ -73,7 +69,7 @@ int			BzfNetwork::setNonBlocking(int fd)
 {
 /* XXX: FIXME: net_server -> use setsockopt() */
   int mode = fcntl(fd, F_GETFL, 0);
-  if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NDELAY) < 0)
+  if (mode == -1 || fcntl(fd, F_SETFL, mode | O_NONBLOCK) < 0)
     return -1;
   return 0;
 }
@@ -81,7 +77,7 @@ int			BzfNetwork::setNonBlocking(int fd)
 int			BzfNetwork::setBlocking(int fd)
 {
   int mode = fcntl(fd, F_GETFL, 0);
-  if (mode == -1 || fcntl(fd, F_SETFL, mode & ~O_NDELAY) < 0)
+  if (mode == -1 || fcntl(fd, F_SETFL, mode & ~O_NONBLOCK) < 0)
     return -1;
   return 0;
 }
@@ -272,7 +268,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
     }
   }
-  if(mungedurl.length() != 0)
+  if (mungedurl.length() != 0)
     pathname = mungedurl;
   else
     pathname = "";

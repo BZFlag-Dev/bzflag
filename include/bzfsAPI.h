@@ -320,6 +320,7 @@ typedef enum
 #define bz_perm_lagStats  "lagStats"
 #define bz_perm_lagwarn  "lagwarn"
 #define bz_perm_listPerms  "listPerms"
+#define bz_perm_listPlugins  "listPlugins"
 #define bz_perm_masterBan  "masterban"
 #define bz_perm_mute  "mute"
 #define bz_perm_playerList  "playerList"
@@ -335,12 +336,14 @@ typedef enum
 #define bz_perm_rejoin  "rejoin"
 #define bz_perm_removePerms  "removePerms"
 #define bz_perm_replay  "replay"
+#define bz_perm_report  "report"
 #define bz_perm_say  "say"
 #define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
 #define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
 #define bz_perm_setVar  "setVar"
+#define bz_perm_showAdmin  "showAdmin"
 #define bz_perm_showOthers  "showOthers"
 #define bz_perm_shortBan  "shortBan"
 #define bz_perm_shutdownServer  "shutdownServer"
@@ -1335,6 +1338,10 @@ BZF_API bool bz_setPlayerWins (int playerId, int wins);
 BZF_API bool bz_setPlayerLosses (int playerId, int losses);
 BZF_API bool bz_setPlayerTKs (int playerId, int tks);
 
+BZF_API bool bz_incrementPlayerWins (int playerId, int increment);
+BZF_API bool bz_incrementPlayerLosses (int playerId, int increment);
+BZF_API bool bz_incrementPlayerTKs (int playerId, int increment);
+
 BZF_API float bz_getPlayerRank(int playerId);
 BZF_API int bz_getPlayerWins(int playerId);
 BZF_API int bz_getPlayerLosses(int playerId);
@@ -1366,9 +1373,9 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
 BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
 BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
+BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID , float dt, bz_eTeamType shotTeam = eRogueTeam );
+BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
 BZF_API void bz_setShotMetaData (int fromPlayer, int shotID , const char* name, uint32_t value);
@@ -1583,12 +1590,26 @@ typedef struct bz_CustomMapObjectInfo
   bz_APIStringList data;
 }bz_CustomMapObjectInfo;
 
+class bz_CustomZoneObject
+{
+public:
+  BZF_API bz_CustomZoneObject();
+  
+  bool box;
+  float xMax,xMin,yMax,yMin,zMax,zMin,radius,rotation;
+  
+  BZF_API bool pointInZone(float pos[3]);
+  BZF_API void handleDefaultOptions(bz_CustomMapObjectInfo *data);
+  
+private:
+  float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
+};
+
 class bz_CustomMapObjectHandler
 {
 public:
   virtual ~bz_CustomMapObjectHandler(){};
   virtual bool MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *data ) = 0;
-
 };
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
@@ -1706,6 +1727,7 @@ BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
+BZF_API void bz_cancelCountdown ( const char *canceledBy );
 BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );
 BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
@@ -1713,6 +1735,7 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho );
 // server control
 BZF_API bool bz_getShotMismatch();
 BZF_API void bz_setShotMismatch(bool value);
+BZF_API bool bz_isAutoTeamEnabled();
 BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);

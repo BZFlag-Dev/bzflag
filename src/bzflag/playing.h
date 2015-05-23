@@ -29,6 +29,7 @@
 
 /* local headers */
 #include "MainWindow.h"
+#include "ShotStats.h"
 #include "ControlPanel.h"
 #include "HUDRenderer.h"
 
@@ -53,6 +54,7 @@ class ServerLink;
 
 BzfDisplay*		getDisplay();
 MainWindow*		getMainWindow();
+ShotStats*		getShotStats();
 SceneRenderer*		getSceneRenderer();
 void			setSceneDatabase();
 StartupInfo*		getStartupInfo();

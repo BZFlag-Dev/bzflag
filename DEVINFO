@@ -48,7 +48,7 @@ src/platform	- general platform dependent code
 
 "other stuff"
 -------------
-BZFlag.xcodeproj/ - project definition for Apple XCode
+Xcode/		- project definitions for Apple XCode
 MSVC/		- project definitions for Microsoft Visual C
 data/		- images, sounds, fonts, translations
 include/	- public headers

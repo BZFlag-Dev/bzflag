@@ -63,33 +63,8 @@ for file in $PATH_TO_HERE/$ARG1/*$SAMPLE_PLUGIN* ;do
     fi
 done
 
-# update the Makefile.am
-expression="s/(.*SAMPLE_PLUGIN.*)/\1\n\t$ARG1 \\\\/"
-echo "perl -pi -e '$expression' $PATH_TO_HERE/Makefile.am"
-perl -pi -e "$expression" "$PATH_TO_HERE/Makefile.am"
-if [ $? != 0 ] ; then
-    echo "ERROR: Update of Makefile.am failed"
-    exit 1
-fi
-
-# update ../configure.ac
-expression="s/(.*SAMPLE_PLUGIN.*)/\1\n\tplugins\\/$ARG1\\/Makefile/"
-echo "perl -pi -e '$expression' $PATH_TO_HERE/../configure.ac"
-perl -pi -e "$expression" "$PATH_TO_HERE/../configure.ac"
-if [ $? != 0 ] ; then
-    echo "ERROR: Update of configure.ac failed"
-    exit 1
-fi
-
-
 echo "---"
 echo "New plug-in \"$ARG1\" is ready.  A directory for your plug-in was created."
 echo ""
-echo "$1 has already been added to the build system, but not to the mac"
-echo "Xcode project or windows FullBuild.sln file, where you have to add it manually."
-echo ""
-echo "You then need to rerun autogen.sh and configure just once to enable your"
-echo "new plugin with the build system."
-echo ""
-echo "Get started coding here: $PATH_TO_HERE/$ARG1"
-echo ""
+
+bash addToBuild.sh $ARG1

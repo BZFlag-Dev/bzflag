@@ -17,6 +17,7 @@
 #include "common.h"
 
 /* system headers */
+#include <memory>
 #include <string>
 #include <map>
 
@@ -72,6 +73,7 @@ public:
 	     int _playerIndex, int _fd);
 
   NetHandler(const struct sockaddr_in &_clientAddr, int _fd);
+
   /** The default destructor
       free all internal resources, and close the tcp connection
   */
@@ -167,6 +169,7 @@ public:
   void flushData ( void ){tcplen = 0;}
   int  bufferedSend(const void *buffer, size_t length);
 
+  void SetAllowUDP(bool set);
 private:
   int  send(const void *buffer, size_t length);
   void udpSend(const void *b, size_t l);
@@ -175,17 +178,18 @@ private:
   void	countMessage(uint16_t code, int len, int direction);
   void	dumpMessageStats();
 #endif
-  AresHandler	   *ares;
-
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok
   static int		udpSocket;
   static NetHandler*	netPlayer[maxHandlers];
+  static bool           pendingUDP;
+
+  std::shared_ptr<AresHandler>	ares;
+
   PlayerInfo*		info;
   struct sockaddr_in	uaddr;
   int			playerIndex;
-  /// socket file descriptor
-  int			fd;
+  int			fd; // socket file descriptor
 
   /// peer's network address
   Address peer;
@@ -211,7 +215,6 @@ private:
 
   char udpOutputBuffer[MaxPacketLen];
   int udpOutputLen;
-  static bool pendingUDP;
 
   /// UDP connection
   bool udpin; // udp inbound up, player is sending us udp
@@ -220,6 +223,7 @@ private:
   bool toBeKicked;
   std::string toBeKickedReason;
 
+  bool	acceptUDP;
   // time accepted
   TimeKeeper time;
 #ifdef NETWORK_STATS

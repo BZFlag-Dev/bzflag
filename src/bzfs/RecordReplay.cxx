@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -2555,7 +2555,6 @@ static const char *msgString(u16 code)
 
       STRING_CASE (MsgUDPLinkRequest);
       STRING_CASE (MsgUDPLinkEstablished);
-      STRING_CASE (MsgServerControl);
       STRING_CASE (MsgLagPing);
 
     default:

@@ -62,13 +62,11 @@ public:
 
 WWZPlyrInfo wwzNewPlyr;
 
-class WWZone
+class WWZone : public bz_CustomZoneObject
 {
 public:
-	WWZone()
+	WWZone() : bz_CustomZoneObject()
 	{
-		box = false;
-		xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
 		zoneWeapon = "";
 		zoneWeaponLifetime = 0;
 		zoneWeaponPosition[0] = 0;
@@ -89,9 +87,6 @@ public:
 	}
 
 	std::vector <WWZPlyrInfo> wwzPlyrList;
-	bool box;
-	float xMax,xMin,yMax,yMin,zMax,zMin;
-	float rad;
 
 	bz_ApiString zoneWeapon;
 	float zoneWeaponLifetime, zoneWeaponPosition[3], zoneWeaponTilt, zoneWeaponDirection, zoneWeaponDT;
@@ -101,36 +96,6 @@ public:
 
 	std::string playermessage;
 	std::string servermessage;
-
-	bool pointIn ( float pos[3] )
-	{
-		if ( box )
-		{
-			if ( pos[0] > xMax || pos[0] < xMin )
-				return false;
-
-			if ( pos[1] > yMax || pos[1] < yMin )
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-		}
-		else
-		{
-			float vec[3];
-			vec[0] = pos[0]-xMax;
-			vec[1] = pos[1]-yMax;
-			vec[2] = pos[2]-zMax;
-
-			float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-			if ( dist > rad)
-				return false;
-
-			if ( pos[2] > zMax || pos[2] < zMin )
-				return false;
-		}
-		return true;
-	}
 };
 
 std::vector <WWZone> zoneList;
@@ -141,6 +106,7 @@ bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *d
 		return false;
 
 	WWZone newZone;
+	newZone.handleDefaultOptions(data);
 
 	// parse all the chunks
 	for ( unsigned int i = 0; i < data->data.size(); i++ )
@@ -154,26 +120,7 @@ bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *d
 		{
 			std::string key = bz_toupper(nubs->get(0).c_str());
 
-			if ( key == "BBOX" && nubs->size() > 6)
-			{
-				newZone.box = true;
-				newZone.xMin = (float)atof(nubs->get(1).c_str());
-				newZone.xMax = (float)atof(nubs->get(2).c_str());
-				newZone.yMin = (float)atof(nubs->get(3).c_str());
-				newZone.yMax = (float)atof(nubs->get(4).c_str());
-				newZone.zMin = (float)atof(nubs->get(5).c_str());
-				newZone.zMax = (float)atof(nubs->get(6).c_str());
-			}
-			else if ( key == "CYLINDER" && nubs->size() > 5)
-			{
-				newZone.box = false;
-				newZone.rad = (float)atof(nubs->get(5).c_str());
-				newZone.xMax =(float)atof(nubs->get(1).c_str());
-				newZone.yMax =(float)atof(nubs->get(2).c_str());
-				newZone.zMin =(float)atof(nubs->get(3).c_str());
-				newZone.zMax =(float)atof(nubs->get(4).c_str());
-			}
-			else if ( key == "ZONEWEAPON" && nubs->size() > 9)
+			if ( key == "ZONEWEAPON" && nubs->size() > 9)
 			{
 				newZone.zoneWeapon = nubs->get(1);
 				newZone.zoneWeaponLifetime = (float)atof(nubs->get(2).c_str());
@@ -292,7 +239,7 @@ void WWZEventHandler::Event ( bz_EventData *eventData )
 
 				for ( unsigned int i = 0; i < zoneList.size(); i++ )
 				{
-					if (zoneList[i].pointIn(player->lastKnownState.pos) && player->spawned)
+					if (zoneList[i].pointInZone(player->lastKnownState.pos) && player->spawned)
 					{
 						if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired)
 						{

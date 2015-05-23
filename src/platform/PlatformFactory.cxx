@@ -23,10 +23,7 @@ PlatformFactory::PlatformFactory()
 {
 #ifdef HAVE_SDL
   Uint32 flags = 0;
-#ifdef DEBUG
-  flags |= SDL_INIT_NOPARACHUTE;
-#endif
-  if (SDL_Init(flags) == -1) {
+  if (SDL_Init(flags) < 0) {
     printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
     exit(-1);
   };

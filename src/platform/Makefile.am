@@ -4,7 +4,6 @@ endif
 
 libPlatform_la_LDFLAGS = -static
 
-if HAVE_SDL
 if LINUX
 libPlatform_la_SOURCES =			\
 	PlatformFactory.cxx			\
@@ -13,26 +12,31 @@ libPlatform_la_SOURCES =			\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
+	EvdevJoystick.cxx			\
+	EvdevJoystick.h
+if HAVE_SDL
+libPlatform_la_SOURCES +=			\
 	SDLJoystick.cxx				\
 	SDLJoystick.h				\
-	EvdevJoystick.cxx			\
-	EvdevJoystick.h				\
 	SDLPlatformFactory.cxx			\
 	SDLPlatformFactory.h			\
 	SDLMedia.cxx				\
-	SDLMedia.h				\
-	SDLDisplay.h				\
-	SDLDisplay.cxx
+	SDLMedia.h
+if HAVE_SDL2
+libPlatform_la_SOURCES +=			\
+	SDL2Display.cxx				\
+	SDL2Display.h				\
+	SDL2Visual.cxx				\
+	SDL2Visual.h				\
+	SDL2Window.cxx				\
+	SDL2Window.h
+else
+libPlatform_la_SOURCES +=			\
+	SDLDisplay.cxx				\
+	SDLDisplay.h
 endif
 else
-if LINUX
-libPlatform_la_SOURCES =			\
-	PlatformFactory.cxx			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	BzfMedia.cxx				\
+libPlatform_la_SOURCES +=			\
 	wave.cxx				\
 	wave.h					\
 	LinuxPlatformFactory.cxx		\
@@ -41,8 +45,6 @@ libPlatform_la_SOURCES =			\
 	LinuxDisplay.h				\
 	LinuxMedia.cxx				\
 	LinuxMedia.h				\
-	EvdevJoystick.cxx			\
-	EvdevJoystick.h				\
 	USBJoystick.cxx				\
 	USBJoystick.h				\
 	XIJoystick.cxx				\

@@ -110,6 +110,8 @@ bool PlayerAccessInfo::isAdmin() const {
 bool PlayerAccessInfo::showAsAdmin() const {
   if (hasPerm(hideAdmin))
     return false;
+  else if (hasPerm(showAdmin))
+    return true;
   else
     return isAdmin();
 }
@@ -254,7 +256,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
   return isAllowed || hasALLPerm;
 }
 
-// grant and revoke perms used with /mute and /unmute
+// grant and revoke perms
 void PlayerAccessInfo::grantPerm(PlayerAccessInfo::AccessPerm right)
 {
   explicitAllows.set(right);
@@ -268,14 +270,14 @@ void PlayerAccessInfo::revokePerm(PlayerAccessInfo::AccessPerm right)
 }
 
 
-// custom perms are ONLY on groups
-bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
+bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 {
 	if (serverop || hasALLPerm)
 		return true;
 
 	std::string perm = TextUtils::toupper(std::string(right));
 
+	// check for custom permissions in groups
 	for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr)
 	{
 		PlayerAccessMap::iterator group = groupAccess.find(*itr);
@@ -301,7 +303,28 @@ bool	PlayerAccessInfo::hasCustomPerm(const char* right) const
 			}
 		}
 	}
+
+	// check for custom permissions on a per player basis (stored in the customPerms vector)
+	for (unsigned int i = 0; i < customPerms.size(); i++)
+	{
+		if (perm == TextUtils::toupper(customPerms[i]))
+			return true;
+	}
+
 	return false;
+}
+
+void PlayerAccessInfo::grantCustomPerm(const char *right)
+{
+  customPerms.push_back(right);
+}
+
+void PlayerAccessInfo::revokeCustomPerm(const char *right)
+{
+  std::vector<std::string>::iterator position = std::find(customPerms.begin(), customPerms.end(), right);
+
+  if (position != customPerms.end())
+    customPerms.erase(position);
 }
 
 bool userExists(const std::string &nick)
@@ -309,9 +332,7 @@ bool userExists(const std::string &nick)
   std::string str = nick;
   makeupper(str);
   PlayerAccessMap::iterator itr = userDatabase.find(str);
-  if (itr == userDatabase.end())
-    return false;
-  return true;
+  return itr != userDatabase.end();
 }
 
 //FIXME - check for non-existing user (throw?)
@@ -334,9 +355,8 @@ bool checkPasswordExistence(const std::string &nick)
   PasswordMap::iterator itr = passwordDatabase.find(str1);
   if (itr == passwordDatabase.end())
     return false;
-  if (itr->second == "*" || itr->second == "")
-    return false;
-  return true;
+
+  return !(itr->second == "*" || itr->second == "");
 }
 
 bool verifyUserPassword(const std::string &nick, const std::string &pass)
@@ -395,6 +415,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::lagwarn: return "lagwarn";
     case PlayerAccessInfo::jitterwarn: return "jitterwarn";
     case PlayerAccessInfo::listPerms: return "listPerms";
+    case PlayerAccessInfo::listPlugins: return "listPlugins";
     case PlayerAccessInfo::masterBan: return "masterban";
     case PlayerAccessInfo::modCount: return "modCount";
     case PlayerAccessInfo::mute: return "mute";
@@ -412,12 +433,14 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::rejoin: return "rejoin";
     case PlayerAccessInfo::removePerms: return "removePerms";
     case PlayerAccessInfo::replay: return "replay";
+    case PlayerAccessInfo::report: return "report";
     case PlayerAccessInfo::say: return "say";
     case PlayerAccessInfo::sendHelp : return "sendHelp";
     case PlayerAccessInfo::setAll: return "setAll";
     case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
+    case PlayerAccessInfo::showAdmin: return "showAdmin";
     case PlayerAccessInfo::showOthers: return "showOthers";
     case PlayerAccessInfo::shortBan: return "shortBan";
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
@@ -463,6 +486,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
   if (name == "JITTERWARN") return PlayerAccessInfo::jitterwarn;
   if (name == "LISTPERMS") return PlayerAccessInfo::listPerms;
+  if (name == "LISTPLUGINS") return PlayerAccessInfo::listPlugins;
   if (name == "MASTERBAN") return PlayerAccessInfo::masterBan;
   if (name == "MODCOUNT") return PlayerAccessInfo::modCount;
   if (name == "MUTE") return PlayerAccessInfo::mute;
@@ -480,6 +504,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "REJOIN") return PlayerAccessInfo::rejoin;
   if (name == "REMOVEPERMS") return PlayerAccessInfo::removePerms;
   if (name == "REPLAY") return PlayerAccessInfo::replay;
+  if (name == "REPORT") return PlayerAccessInfo::report;
   if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SENDHELP") return PlayerAccessInfo::sendHelp;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
@@ -487,6 +512,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
+  if (name == "SHOWADMIN") return PlayerAccessInfo::showAdmin;
   if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
   if (name == "SPAWN") return PlayerAccessInfo::spawn;

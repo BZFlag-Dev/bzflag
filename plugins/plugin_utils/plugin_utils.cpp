@@ -501,11 +501,13 @@ const std::vector<std::string> bzu_standardPerms (void)
     perms.push_back("rejoin");
     perms.push_back("removePerms");
     perms.push_back("replay");
+    perms.push_back("report");
     perms.push_back("say");
     perms.push_back("sendHelp");
     perms.push_back("setAll");
     perms.push_back("setPerms");
     perms.push_back("setVar");
+    perms.push_back("showAdmin");
     perms.push_back("showOthers");
     perms.push_back("shortBan");
     perms.push_back("shutdownServer");

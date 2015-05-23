@@ -146,6 +146,9 @@
 /* Using SDL */
 #define HAVE_SDL 1
 
+/* Using SDL 2 */
+#define HAVE_SDL2 1
+
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1
 

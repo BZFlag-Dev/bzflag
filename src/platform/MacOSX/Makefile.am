@@ -9,13 +9,7 @@ libMac_la_LDFLAGS = -static
 if HAVE_SDL
 
 libMac_la_SOURCES =			\
-	MacDataPath.cxx			\
-	SDLMain.h
-libMac_la_LIBADD = SDLMain.lo
-all: SDLMain.lo
-
-SDLMain.lo: SDLMain.m
-	$(LTCOMPILE) -c -o $@ `test -f 'SDLMain.m' || echo '$(srcdir)/'`SDLMain.m
+	MacDataPath.cxx
 
 else
 
@@ -30,8 +24,7 @@ libMac_la_SOURCES =			\
 	MacVisual.cxx			\
 	MacVisual.h			\
 	MacWindow.cxx			\
-	MacWindow.h			\
-	SDLMain.h
+	MacWindow.h
 
 endif
 
@@ -42,5 +35,4 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 MAINTAINERCLEANFILES = Makefile.in
 
 EXTRA_DIST =				\
-	SDLMain.m			\
 	mkplist.cxx

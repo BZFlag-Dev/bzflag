@@ -30,17 +30,23 @@ public:
 
   HUDuiDefaultKey* getDefaultKey();
   void resize(int width, int height);
-  void execute(void);
-  void addStats(Player* player, std::vector<HUDuiControl*>& list);
+  void execute();
+  void dismiss();
+  void show();
+
+  void refresh();
 
   static int getFontFace();
 
 private:
 
+  void addStats(Player* player, std::vector<HUDuiControl*>& list);
   void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
 
+  int staticLabelCount;
   int rows;
   int columns;
+  bool visible;
 
 };
 

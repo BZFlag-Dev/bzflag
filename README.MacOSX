@@ -7,9 +7,9 @@ installing BZFlag both from a binary and from a released source distribution.
 Binary Distribution
 -------------------
 
-See the project site downloads of BZFlag for Mac OS X at
-http://sourceforge.net/projects/bzflag/files/bzflag%20Mac%20OS%20X to obtain
-the latest binary distribution.
+See the project site downloads of BZFlag at
+https://github.com/BZFlag-Dev/bzflag/releases to obtain the latest binary
+distribution.
 
 Once you've obtained a binary distribution of BZFlag, installation should be a
 simple matter of copying the icon provided in the disk mounting image (the
@@ -39,7 +39,7 @@ Source Distribution
 -------------------
 
 You can build BZFlag from source using Xcode version 4.2 and later. As of
-BZFlag version 2.4.3 BZFlag has a fully native Xcode project
+BZFlag version 2.4.4, BZFlag has a fully native Xcode project
 file. The earlier method of using the Xcode project file as a wrapper for
 autotools is no longer supported. If you have a version of Xcode which
 includes autotools, or have installed autotools yourself, you may additionally
@@ -47,16 +47,14 @@ be able to build using the traditional autotools method. See the README file
 for further information. You will still need to install the SDL framework as
 detailed below.
 
-To build BZFlag using Xcode, download the latest version of SDL 1.2 from
-http://www.libsdl.org/download-1.2.php (you want the "Mac OS X" link for your
-operating system version under "Runtime Libraries"). For Mac OS X 10.6, the
-recommended SDL version is 1.2.13. Mount the disk image and place the file
-"SDL.framework" in your /Library/Frameworks directory (an administrator's
-account may be required). Obtain the latest BZFlag source archive from
-GitHub at https://github.com/BZFlag-Dev/bzflag (you want the .tar.gz or .tar.bz2
-archive, NOT the .zip archive) or from the subversion repository using the
-instructions at http://wiki.bzflag.org/SVN. Once you have obtained the source
-code, open the BZFlag.xcodeproj file located in the Xcode/ directory.
+To build BZFlag using Xcode, download the latest version of SDL 2 from
+https://www.libsdl.org/download-2.0.php. Version 2.0.4 or later is required.
+Mount the disk image and place the file "SDL2.framework" in your
+/Library/Frameworks directory (an administrator's account may be required).
+Obtain the latest BZFlag source archive from GitHub at
+https://github.com/BZFlag-Dev/bzflag (you want the .tar.gz archive, NOT the
+.zip archive). Once you have obtained the source code, open the
+BZFlag.xcodeproj file located in the Xcode/ directory.
 
 The default behavior is to build a debug client. If you want a standard
 client, click the "BZFlag" scheme button at the top left corner of the screen,
@@ -92,7 +90,7 @@ command line or using XCode and how to perform compilation troubleshooting
 without assistance.  This holds particularly true for all alpha/beta testing
 releases as well as for any sources pulled directly from the Subversion source
 repository checkout. If you have problems building from a checkout, you should
-try building from an official release that we have posted to SourceForge to
+try building from an official release that we have posted to GitHub to
 see if you can duplicate the issue, and then ask us for assistance.
 
 Usage
@@ -106,6 +104,6 @@ any system without issue.
 To access the bzadmin text client or the bzflag server bzfs, right click the
 application, click "Show Package Contents," and navigate to Contents/MacOS.
 Server plugins are located at Contents/PlugIns. Note that while the plugin
-names are different from Windows and Linux (something like "libname.dylib"
+names are different from Windows and Linux (something like "name.dylib"
 instead of "name.dll or "name.so"), bzfs will still load them when you specify
 the full plugin path.

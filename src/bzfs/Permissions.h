@@ -71,6 +71,7 @@ public:
       lagwarn,
       jitterwarn,
       listPerms,
+      listPlugins,
       masterBan,
       modCount,
       mute,
@@ -88,6 +89,7 @@ public:
       rejoin,
       removePerms,
       replay,
+      report,
       say,
       sendHelp,
       setAll,
@@ -95,6 +97,7 @@ public:
       setPerms,
       setVar,
       shortBan,
+      showAdmin,
       showOthers,
       shutdownServer,
       spawn,
@@ -106,7 +109,7 @@ public:
       viewReports,
       vote,
       // just so we know how many rights there
-      // are this dosn't do anything really, just
+      // are this doesn't do anything really, just
       // make sure it's the last real right
       lastPerm
     };
@@ -151,7 +154,9 @@ public:
   void	grantPerm(AccessPerm right);
   void	revokePerm(AccessPerm right);
 
-	bool	hasCustomPerm(const char* right) const;
+  bool	hasCustomPerm(const char* right) const;
+  void  grantCustomPerm(const char* right);
+  void  revokeCustomPerm(const char* right);
 
   bool	isRegistered() const;
   bool	isAllowedToEnter();
@@ -189,9 +194,9 @@ private:
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
 typedef std::map<std::string, std::string> PasswordMap;
 
-extern PlayerAccessMap	groupAccess;
-extern PlayerAccessMap	userDatabase;
-extern PasswordMap	passwordDatabase;
+extern PlayerAccessMap  groupAccess;
+extern PlayerAccessMap  userDatabase;
+extern PasswordMap      passwordDatabase;
 
 extern std::string		groupsFile;
 extern std::string		userDatabaseFile;

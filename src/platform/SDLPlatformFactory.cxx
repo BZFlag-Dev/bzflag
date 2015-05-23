@@ -12,7 +12,13 @@
 
 #include "SDLPlatformFactory.h"
 #include "SDLMedia.h"
+#ifdef HAVE_SDL2
+#include "SDL2Display.h"
+#include "SDL2Visual.h"
+#include "SDL2Window.h"
+#else
 #include "SDLDisplay.h"
+#endif
 #include "SDLJoystick.h"
 #include "EvdevJoystick.h"
 

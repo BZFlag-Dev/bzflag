@@ -65,6 +65,30 @@ ShotStats::ShotStats() : HUDDialog()
   createLabel("Flag", listHUD);
   ++rows;
 
+  staticLabelCount = listHUD.size();
+
+  initNavigation(listHUD, 1, 1);
+}
+
+ShotStats::~ShotStats()
+{
+}
+
+void ShotStats::refresh()
+{
+  if (!visible) {
+    return;
+  }
+
+  std::vector<HUDuiControl*>& listHUD = getControls();
+
+  // Delete all the controls apart from the headings
+  const int count = listHUD.size();
+  for (int i = staticLabelCount; i < count; i++) {
+    delete listHUD[i];
+  }
+  listHUD.erase(listHUD.begin() + staticLabelCount, listHUD.end());
+
   // my statistics first
   LocalPlayer* myTank = LocalPlayer::getMyTank();
   if (myTank->getTeam() != ObserverTeam) {
@@ -79,11 +103,6 @@ ShotStats::ShotStats() : HUDDialog()
   }
 
   resize(HUDDialog::getWidth(), HUDDialog::getHeight());
-  initNavigation(listHUD, 1, 1);
-}
-
-ShotStats::~ShotStats()
-{
 }
 
 void ShotStats::createLabel(const std::string &str,
@@ -103,18 +122,18 @@ void ShotStats::addStats(Player *_player, std::vector<HUDuiControl*> &_list)
   createLabel(TextUtils::format("%2d%%", stats->getTotalPerc()), _list);
   createLabel(TextUtils::format("%d/%d", stats->getTotalHit(),
 				stats->getTotalFired()),  _list);
-  createLabel(TextUtils::format("%d/%d", stats->getNormalHit(),
-				stats->getNormalFired()), _list);
-  createLabel(TextUtils::format("%d/%d", stats->getGMHit(),
-				stats->getGMFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getLHit(),
-				stats->getLFired()),      _list);
-  createLabel(TextUtils::format("%d/%d", stats->getSBHit(),
-				stats->getSBFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getSWHit(),
-				stats->getSWFired()),     _list);
-  createLabel(TextUtils::format("%d/%d", stats->getTHHit(),
-				stats->getTHFired()),     _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Null),
+				stats->getFired(Flags::Null)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::GuidedMissile),
+				stats->getFired(Flags::GuidedMissile)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Laser),
+				stats->getFired(Flags::Laser)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::SuperBullet),
+				stats->getFired(Flags::SuperBullet)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::ShockWave),
+				stats->getFired(Flags::ShockWave)), _list);
+  createLabel(TextUtils::format("%d/%d", stats->getHit(Flags::Thief),
+				stats->getFired(Flags::Thief)), _list);
 
   std::string flagName = stats->getFavoriteFlag()->flagAbbv;
   if (flagName.empty())
@@ -143,6 +162,18 @@ HUDuiDefaultKey*	ShotStats::getDefaultKey()
 void			ShotStats::execute()
 {
   HUDDialogStack::get()->pop();
+}
+
+void			ShotStats::dismiss()
+{
+  visible = false;
+}
+
+void			ShotStats::show()
+{
+  visible = true;
+
+  refresh();
 }
 
 void			ShotStats::resize(int _width, int _height)

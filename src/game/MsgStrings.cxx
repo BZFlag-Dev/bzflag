@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -109,7 +109,6 @@ static MsgStringList handleMsgWantWHash(PacketInfo *pi);
 static MsgStringList handleMsgWantSettings(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
-static MsgStringList handleMsgServerControl(PacketInfo *pi);
 static MsgStringList handleMsgLagPing(PacketInfo *pi);
 static MsgStringList handleMsgPingCodeReply(PacketInfo *pi);
 static MsgStringList handleMsgPingCodeRequest(PacketInfo *pi);
@@ -167,7 +166,6 @@ static PacketListEntry PacketList[] = {
   PACKET_LIST_ENTRY (MsgWantSettings),
   PACKET_LIST_ENTRY (MsgUDPLinkRequest),
   PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
-  PACKET_LIST_ENTRY (MsgServerControl),
   PACKET_LIST_ENTRY (MsgLagPing),
   PACKET_LIST_ENTRY (MsgPingCodeReply),
   PACKET_LIST_ENTRY (MsgPingCodeRequest)
@@ -1098,14 +1096,6 @@ static MsgStringList handleMsgUDPLinkRequest (PacketInfo *pi)
 static MsgStringList handleMsgUDPLinkEstablished (PacketInfo *pi)
 {
   // not recorded
-  MsgStringList list = listMsgBasics (pi);
-  return list;
-}
-
-
-static MsgStringList handleMsgServerControl (PacketInfo *pi)
-{
-  // packet type hasn't not been implemented
   MsgStringList list = listMsgBasics (pi);
   return list;
 }

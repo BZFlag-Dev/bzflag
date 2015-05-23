@@ -225,7 +225,11 @@ void			WinWindow::iconify()
 
 void			WinWindow::warpMouse(int x, int y)
 {
-  SetCursorPos(x, y);
+  POINT point;
+  point.x = x;
+  point.y = y;
+  ClientToScreen(hwnd, &point);
+  SetCursorPos((int)point.x, (int)point.y);
 }
 
 void			WinWindow::getMouse(int& x, int& y) const

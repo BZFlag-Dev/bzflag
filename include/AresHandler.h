@@ -59,14 +59,15 @@ class AresHandler {
 #endif
   void		callback(int status, struct hostent *hostent);
   int		index;
-  // peer's network hostname (malloc/free'd)
-  char	       *hostname;
+
+  std::string	hostName;
   in_addr	hostAddress;
   ares_channel	aresChannel;
   ResolutionStatus status;
   bool		aresFailed;
 
   static bool	globallyInited;
+
 };
 
 #endif

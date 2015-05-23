@@ -454,7 +454,7 @@ bool ServerListFilter::parsePatternFilter(const std::string& label, char op,
     default:  { return false; }
   }
 
-  bool noCase = islower(label[0]);
+  bool noCase = islower(label[0]) != 0;
 
   PatternFilter* pf = (PatternFilter*)((char*)this + it->second);
 

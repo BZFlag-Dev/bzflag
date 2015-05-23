@@ -129,6 +129,7 @@ TimeKeeper countdownPauseStart = TimeKeeper::getNullTime();
 bool countdownActive = false;
 int countdownDelay = -1;
 int countdownResumeDelay = -1;
+int readySetGo = -1; // match countdown timer
 
 static ListServerLink *listServerLink = NULL;
 static int listServerLinksCount = 0;
@@ -751,6 +752,18 @@ void startCountdown ( int delay, float limit, const char *buyWho )
 	countdownPauseStart = TimeKeeper::getNullTime();
 }
 
+void cancelCountdown ( const char *byWho )
+{
+	if (byWho) {
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown cancelled by %s.", byWho).c_str());
+	} else {
+		sendMessage(ServerPlayer, AllPlayers, "Countdown cancelled");
+	}
+
+	countdownDelay = -1;
+	readySetGo = -1;
+}
+
 PingPacket getTeamCounts()
 {
   pingReply.rogueCount = 0;
@@ -1230,6 +1243,7 @@ static void acceptClient()
     nerror("accepting on wks");
     return;
   }
+    
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
@@ -1512,7 +1526,7 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
   if (senderData) {
     if (!senderData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
       // If the user does not have the TALK permission, he can't send any messages
-      // he's only allowed to talk with admins, if he has the adminMessageSend permission
+      // He's only allowed to talk with admins, if he has the adminMessageSend permission
       if (senderData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend)) {
 	if (recipientPlayer == AdminPlayers) {
 	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
@@ -1520,9 +1534,9 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 	}
 
 	// Let the user send a private message to admins
-	// we define admins as those who have the adminMessageReceive permission
 	GameKeeper::Player *recipientData = GameKeeper::Player::getPlayerByIndex(recipientPlayer);
-	if (recipientData && recipientData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive)) {
+	if (recipientData && recipientData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageReceive) &&
+	    !recipientData->accessInfo.hasPerm(PlayerAccessInfo::hideAdmin)) {
 	  sendMessage(sendingPlayer, recipientPlayer, msg, type);
 	  return;
 	}
@@ -2638,9 +2652,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
   // don't count as a player.
 
   if (wasPlaying) {
-    // make them wait from the time they left, but only if they are
-    // not already waiting, and they are not currently an observer.
-    if ((playerData->player.getTeam() != ObserverTeam) &&
+    // make them wait from the time they left, but only if they
+    // have spawned at least once and are not already waiting
+    if (!playerData->player.hasNeverSpawned() &&
 	(rejoinList.waitTime (playerIndex) <= 0.0f) &&
 	!playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin)) {
       rejoinList.add (playerIndex);
@@ -3289,6 +3303,8 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
          logDebugMessage(2,"Player %s [%d] %f %f %f tried to grab distant flag %f %f %f: distance=%f\n",
       playerData->player.getCallSign(), playerIndex,
       tpos[0], tpos[1], tpos[2], fpos[0], fpos[1], fpos[2], sqrt(delta));
+      // @TODO make a better test for this to reduce false positives
+      //removePlayer(playerIndex, "attempted illegal flag grab");
       return;
     }
   }
@@ -3620,6 +3636,26 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     return;
   }
 
+  // Verify float values
+  if (isnan(shot.pos[0]) || isnan(shot.pos[1]) || isnan(shot.pos[2])) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update position\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot update invalid");
+    return;
+  }
+  if (isnan(shot.vel[0]) || isnan(shot.vel[1]) || isnan(shot.vel[2])) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update velocity\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot update invalid");
+    return;
+  }
+  if (isnan(shot.dt)) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update times\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot update invalid");
+    return;
+  }
+
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
 
@@ -3651,6 +3687,27 @@ static void shotFired(int playerIndex, void *buf, int len)
 	   playerIndex);
     return;
   }
+
+  // Verify float values
+  if (isnan(firingInfo.shot.pos[0]) || isnan(firingInfo.shot.pos[1]) || isnan(firingInfo.shot.pos[2])) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot position\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot invalid");
+    return;
+  }
+  if (isnan(firingInfo.shot.vel[0]) || isnan(firingInfo.shot.vel[1]) || isnan(firingInfo.shot.vel[2])) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot velocity\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot invalid");
+    return;
+  }
+  if (isnan(firingInfo.timeSent) || isnan(firingInfo.lifetime) || isnan(firingInfo.shot.dt)) {
+    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot times\n", shooter.getCallSign(), playerIndex);
+    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
+    removePlayer(playerIndex, "Player shot invalid");
+    return;
+  }
+
 
   // make sure the shooter flag is a valid index to prevent segfaulting later
   if (!shooter.haveFlag()) {
@@ -3889,7 +3946,8 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action) {
   if (p.isObserver()) {
     state = "as an observer";
   } else if (p.isPaused()) {
-    state = "while paused";
+    if (strcmp(action, "die") != 0)	// allow self destruct while paused
+      state = "while paused";
   } else if (p.hasNeverSpawned()) {
     state = "before spawning";
   }
@@ -4146,7 +4204,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
   GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(t);
   if (!playerData)
     return;
-  NetHandler *handler = playerData->netHandler;
+  NetHandler* handler = playerData->netHandler.get();
 
   uint16_t len, code;
   const void *buf = rawbuf;
@@ -4172,7 +4230,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
   }
 
-  if(!playerData->player.isCompletelyAdded())
+  if (!playerData->player.isCompletelyAdded())
   {
 	  switch (code)
 	  {
@@ -4198,6 +4256,21 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
 	  default:
 		  logDebugMessage(1,"Host %s tried to send invalid message before Enter; 0x%4hx\n",handler->getTargetIP(),code);
+		  rejectPlayer(t, RejectBadRequest, "invalid request");
+		  return;
+	  }
+  }
+
+  if (!playerData->hadEnter)
+  {
+	  switch (code)
+	  {
+	  case MsgExit:
+	  case MsgAlive:
+	  case MsgAutoPilot:
+	  case MsgMessage:
+	  case MsgPlayerUpdateSmall:
+		  logDebugMessage(1, "Host %s tried to send invalid message before Enter; 0x%4hx\n", handler->getTargetIP(), code);
 		  rejectPlayer(t, RejectBadRequest, "invalid request");
 		  return;
 	  }
@@ -4241,6 +4314,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       } else if (strlen(playerData->player.getCallSign())) {
 	playerData->_LSAState = GameKeeper::Player::required;
       }
+	  playerData->hadEnter = true;
       dontWait = true;
       break;
     }
@@ -4680,10 +4754,6 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       break;
     }
 
-    // player is sending a Server Control Message not implemented yet
-    case MsgServerControl:
-      break;
-
     case MsgLagPing: {
       bool warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn;
       playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn);
@@ -4739,6 +4809,16 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       buf = nboUnpackFloat(buf, timestamp);
       buf = nboUnpackUByte(buf, id);
       buf = state.unpack(buf, code);
+
+      // Verify that player update is actually for this player
+      // TODO: Remove the player ID from this message so we don't have to check for this.
+      if (id != t) {
+	logDebugMessage(1, "Kicking Player %s [%d] sent player update as player index %d\n", 
+	      playerData->player.getCallSign(), t, id);
+	sendMessage(ServerPlayer, t, "Autokick: Player sent spoofed player update.");
+	removePlayer(t, "spoofed update");
+	break;
+      }
 
       bz_PlayerUpdateEventData_V1 puEventData;
       playerStateToAPIState(puEventData.lastState,state);
@@ -5339,7 +5419,9 @@ void initGroups()
   // VERIFIED
   info.explicitAllows.reset();
   info.groupState.reset();
+  info.explicitAllows[PlayerAccessInfo::listPlugins] = true;
   info.explicitAllows[PlayerAccessInfo::poll] = true;
+  info.explicitAllows[PlayerAccessInfo::report] = true;
   info.explicitAllows[PlayerAccessInfo::vote] = true;
   info.explicitAllows[PlayerAccessInfo::pollBan] = true;
   info.explicitAllows[PlayerAccessInfo::pollKick] = true;
@@ -5468,6 +5550,12 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 
 	  if (peer.bufferedInput.size() >= headerLen && strncmp(peer.bufferedInput.c_str(),header, headerLen) == 0)
 	  {
+	    if (peer.bufferedInput.size() > headerLen+2)
+	    {
+	      peer.deleteMe = true;
+	      return;
+	    }
+
 	    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
 	    worldEventManager.callEvents(&data);
 	    if (!data.allow)
@@ -5492,18 +5580,13 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    // build up a buffer of all the data that is pending
 	    while (e == ReadAll)
 	    {
-	       netHandler->flushData();
-	       e = netHandler->receive(256);
-
-	       readSize = netHandler->getTcpReadSize();
-	       buf = netHandler->getTcpBuffer();
-
-	       tmp = (char*)malloc(readSize+1);
-	       strncpy(tmp,(char*)buf,readSize);
-	       tmp[readSize] = '\0';
-
-	       peer.bufferedInput += tmp;
-	       free(tmp);
+	      netHandler->flushData();
+	      e = netHandler->receive(256);
+	      
+	      readSize = netHandler->getTcpReadSize();
+	      buf = netHandler->getTcpBuffer();
+	      
+	      peer.bufferedInput.append(static_cast<char const*>(buf), readSize);
 	    }
 	    netHandler->flushData();
 
@@ -6276,7 +6359,6 @@ int main(int argc, char **argv)
    **/
 
   int i;
-  int readySetGo = -1; // match countdown timer
   while (!done) {
 
     // see if the octree needs to be reloaded
@@ -6606,8 +6688,8 @@ int main(int argc, char **argv)
     }
 
     requestAuthentication = false;
-    for (int p = 0; p < curMaxPlayers; p++) {
-      GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(p);
+    for (int p = 0; p < curMaxPlayers; ++p) {
+      GameKeeper::Player* playerData = GameKeeper::Player::getPlayerByIndex(p);
       if (!playerData)
 	continue;
       doStuffOnPlayer(*playerData);
@@ -6987,12 +7069,12 @@ int main(int argc, char **argv)
 
       // now check messages from connected players and send queued messages
       GameKeeper::Player *playerData;
-      NetHandler *netPlayer;
+      NetHandler* netPlayer(0);
       for (int j = 0; j < curMaxPlayers; j++) {
 	playerData = GameKeeper::Player::getPlayerByIndex(j);
 	if (!playerData || !playerData->netHandler)
 	  continue;
-	netPlayer = playerData->netHandler;
+	netPlayer = playerData->netHandler.get();
 	// send whatever we have ... if any
 	if (netPlayer->pflush(&write_set) == -1) {
 	  removePlayer(j, "ECONNRESET/EPIPE", false);

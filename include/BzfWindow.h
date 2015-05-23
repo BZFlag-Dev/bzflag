@@ -63,6 +63,9 @@ class BzfWindow {
     virtual float	getGamma() const = 0;
     virtual bool	hasGammaControl() const = 0;
 
+    virtual bool	hasVerticalSync() const { return false; }
+    virtual void	setVerticalSync(bool) {;}
+
     virtual void	makeCurrent() = 0;
     virtual void	yieldCurrent();
     virtual void	releaseCurrent();

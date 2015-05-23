@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2014 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -983,7 +983,7 @@ bool PasswordCommand::operator() (const char	 *message,
 	   playerData->netHandler->getTargetIP());
     sendMessage(ServerPlayer, t, "Too many attempts");
   } else {
-    if ((clOptions->password != "") && strncmp(message + 10, clOptions->password.c_str(), clOptions->password.size()) == 0 && clOptions->password.length() == strlen(message + 10)) {
+    if (clOptions->password.length() != 0 && strlen(message) > 10 && strcmp(message + 10, clOptions->password.c_str()) == 0) {	// skip past "/password "
       playerData->accessInfo.setOperator();
       sendPlayerInfo();
       sendMessage(ServerPlayer, t, "You are now an administrator!");
@@ -1152,9 +1152,6 @@ bool CountdownCommand::operator() (const char	 * message,
   } else if (!clOptions->timeManualStart) {
     sendMessage(ServerPlayer, t, "This server was not configured for manual clock countdowns");
     return true;
-  } else if (countdownDelay > 0) {
-    sendMessage(ServerPlayer, t, "There is a countdown already in progress");
-    return true;
   }
 
   // if the timelimit is not set .. don't countdown
@@ -1193,21 +1190,41 @@ bool CountdownCommand::operator() (const char	 * message,
 		resumeCountdown(playerData->player.getCallSign());
 		return true;
       }
+	  else if (parts[1] == "cancel")
+	  {
+		if (countdownDelay <= 0) {
+			sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
+		} else {
+			cancelCountdown();
+		}
+
+		return true;
+	  }
 	  else
 	  {
+		if (countdownDelay > 0) {
+			sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+			return true;
+		}
+
 		// so it's the countdown delay? else tell the player how to use /countdown
 		std::istringstream timespec(message+10);
 		timespec >> countdownDelay;
 		if (timespec.fail())
 		{
 			countdownDelay = -1;
-			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume]");
+			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume|cancel]");
 			return true;
 		}
       }
     }
 	else
 	{
+      if (countdownDelay > 0) {
+        sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+        return true;
+      }
+
       countdownDelay = 10;
     }
 
@@ -1957,7 +1974,7 @@ bool ReportCommand::operator() (const char	 *message,
 				GameKeeper::Player *playerData)
 {
   int t = playerData->getIndex();
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)) {
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::report)) {
     sendMessage(ServerPlayer, t, "You do not have permission to run the report command");
     return true;
   }
@@ -3422,53 +3439,53 @@ void parseServerCommand(const char *message, int t)
 
   worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
 
-  if (ServerCommand::execute(message, playerData))
-    return;
-
   if (cmdHelp(message, playerData))
     return;
 
-  {
-    // lets see if it is a custom command
-    std::vector<std::string> params =
-      TextUtils::tokenize(std::string(message+1),std::string(" "));
+  // lets see if it is a custom command. custom commands take precedence over
+  // built-in commands
+  std::vector<std::string> params =
+    TextUtils::tokenize(std::string(message+1),std::string(" "));
 
-    if (params.empty())
+  if (params.empty())
+    return;
+
+  tmCustomSlashCommandMap::iterator itr =
+    customCommands.find(TextUtils::tolower(params[0]));
+
+  bz_ApiString	command = params[0];
+  bz_ApiString APIMessage;
+      bz_APIStringList	APIParams;
+
+  for ( unsigned int i = 1; i < params.size(); i++)
+    APIParams.push_back(params[i]);
+
+  if ( strlen(message+1) > params[0].size())
+    APIMessage = (message+params[0].size()+2);
+
+  // see if we have a registerd custom command and call it
+  if (itr != customCommands.end()) {
+    // if it handles it, then we are good
+    if (itr->second->SlashCommand(t, command, APIMessage, &APIParams))
       return;
-
-    tmCustomSlashCommandMap::iterator itr =
-      customCommands.find(TextUtils::tolower(params[0]));
-
-    bz_ApiString	command = params[0];
-    bz_ApiString APIMessage;
-	bz_APIStringList	APIParams;
-
-    for ( unsigned int i = 1; i < params.size(); i++)
-      APIParams.push_back(params[i]);
-
-    if ( strlen(message+1) > params[0].size())
-      APIMessage = (message+params[0].size()+2);
-
-    // see if we have a registerd custom command and call it
-    if (itr != customCommands.end()) {
-      // if it handles it, then we are good
-      if (itr->second->SlashCommand(t, command, APIMessage, &APIParams))
-	return;
-    }
-
-    // lets see if anyone wants to handle the unhandled event
-    bz_UnknownSlashCommandEventData_V1 commandData1;
-    commandData1.from = t;
-    commandData1.message = message;
-
-    worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
-    if (commandData1.handled) // did anyone do it?
-      return;
-
-    char reply[MessageLen];
-    snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
-    sendMessage(ServerPlayer, t, reply);
   }
+
+  // if it wasn't a custom command, so fallback to built-in commands
+  if (ServerCommand::execute(message, playerData))
+    return;
+
+  // lets see if anyone wants to handle the unhandled event
+  bz_UnknownSlashCommandEventData_V1 commandData1;
+  commandData1.from = t;
+  commandData1.message = message;
+
+  worldEventManager.callEvents(bz_eUnknownSlashCommand, &commandData1);
+  if (commandData1.handled) // did anyone do it?
+    return;
+
+  char reply[MessageLen];
+  snprintf(reply, MessageLen, "Unknown command [%s]", message + 1);
+  sendMessage(ServerPlayer, t, reply);
 }
 
 void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)
