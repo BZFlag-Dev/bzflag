@@ -83,7 +83,7 @@ void fairCTF::Init ( const char* config )
   
   if(params[0].length() > 0)
   {
-    float tempratio = atof(params[0].c_str());
+    float tempratio = (float)atof(params[0].c_str());
     if (tempratio > 0.0)
     {
       max_ratio = tempratio;
