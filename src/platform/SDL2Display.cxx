@@ -369,6 +369,11 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_MOUSEBUTTONDOWN:
+    // workaround for SDL 2 bug where clicks on the title bar are registered
+    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2842
+    if(event.button.x < 0 || event.button.y < 0)
+      break;
+
     _event.type	  = BzfEvent::KeyDown;
     _event.keyDown.ascii = 0;
     _event.keyDown.shift = 0;
