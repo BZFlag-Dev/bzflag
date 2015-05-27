@@ -41,6 +41,7 @@ void SDLWindow::warpMouse(int _x, int _y) {
 
   // workaround since SDL 2 doesn't (currently) generate a SDL_MOUSEMOTION
   // event if it was warped from outside the window
+  // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2984
   SDL_PumpEvents();
   SDL_Event lastEvent;
   if(SDL_PeepEvents(&lastEvent, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) > 0)
