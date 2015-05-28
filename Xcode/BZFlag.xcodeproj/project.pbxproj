@@ -21,6 +21,10 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0304BA991B17155B00392D7F /* ClientDialogManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0304BA971B17155B00392D7F /* ClientDialogManager.cxx */; };
+		0304BA9D1B1715A600392D7F /* ServerDialogManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0304BA9A1B17158D00392D7F /* ServerDialogManager.cxx */; };
+		0304BA9E1B1715D300392D7F /* DialogData.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0304BA931B17148400392D7F /* DialogData.cxx */; };
+		0304BA9F1B17160700392D7F /* DialogData.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0304BA931B17148400392D7F /* DialogData.cxx */; };
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		0347EDC7167AC6CF0023D9AD /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357AA311670C5AF0056C938 /* Cocoa.framework */; };
@@ -1273,6 +1277,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0304BA931B17148400392D7F /* DialogData.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DialogData.cxx; sourceTree = "<group>"; };
+		0304BA951B1714A600392D7F /* DialogData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DialogData.h; sourceTree = "<group>"; };
+		0304BA971B17155B00392D7F /* ClientDialogManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClientDialogManager.cxx; sourceTree = "<group>"; };
+		0304BA981B17155B00392D7F /* ClientDialogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClientDialogManager.h; sourceTree = "<group>"; };
+		0304BA9A1B17158D00392D7F /* ServerDialogManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerDialogManager.cxx; sourceTree = "<group>"; };
+		0304BA9B1B17158D00392D7F /* ServerDialogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerDialogManager.h; sourceTree = "<group>"; };
 		0305D562166C9DAE00557FC4 /* AccessList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessList.h; sourceTree = "<group>"; };
 		0305D563166C9DAE00557FC4 /* Address.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Address.h; sourceTree = "<group>"; };
 		0305D564166C9DAE00557FC4 /* AnsiCodes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnsiCodes.h; sourceTree = "<group>"; };
@@ -2786,6 +2796,7 @@
 				0305D58C166C9DAE00557FC4 /* ConfigFileManager.h */,
 				0305D58D166C9DAE00557FC4 /* Country.h */,
 				0305D58E166C9DAE00557FC4 /* cURLManager.h */,
+				0304BA951B1714A600392D7F /* DialogData.h */,
 				0305D58F166C9DAE00557FC4 /* DirectoryNames.h */,
 				0305D590166C9DAE00557FC4 /* DynamicColor.h */,
 				0305D591166C9DAE00557FC4 /* EighthDBaseSceneNode.h */,
@@ -3008,6 +3019,8 @@
 				0355432E166C846F008806E9 /* clientCommands.cxx */,
 				0355432F166C846F008806E9 /* clientConfig.cxx */,
 				03554330166C846F008806E9 /* clientConfig.h */,
+				0304BA971B17155B00392D7F /* ClientDialogManager.cxx */,
+				0304BA981B17155B00392D7F /* ClientDialogManager.h */,
 				03554331166C846F008806E9 /* commands.h */,
 				03554332166C846F008806E9 /* CommandsImplementation.cxx */,
 				03554333166C846F008806E9 /* ComposeDefaultKey.cxx */,
@@ -3264,6 +3277,8 @@
 				03554428166C846F008806E9 /* Score.h */,
 				03554429166C846F008806E9 /* ServerCommand.cxx */,
 				0355442A166C846F008806E9 /* ServerCommand.h */,
+				0304BA9A1B17158D00392D7F /* ServerDialogManager.cxx */,
+				0304BA9B1B17158D00392D7F /* ServerDialogManager.h */,
 				0355442B166C846F008806E9 /* ServerSidePlayer.cxx */,
 				0355442C166C846F008806E9 /* SpawnPolicy.cxx */,
 				0355442D166C846F008806E9 /* SpawnPolicy.h */,
@@ -3306,6 +3321,7 @@
 				0355444C166C846F008806E9 /* ConfigFileManager.cxx */,
 				0355444D166C846F008806E9 /* Country.cxx */,
 				0355444E166C846F008806E9 /* cURLManager.cxx */,
+				0304BA931B17148400392D7F /* DialogData.cxx */,
 				0355444F166C846F008806E9 /* ErrorHandler.cxx */,
 				03554450166C846F008806E9 /* FileManager.cxx */,
 				03554451166C846F008806E9 /* Flag.cxx */,
@@ -6070,6 +6086,7 @@
 				0394E69D167B0B71007F4035 /* CustomMeshTransform.cxx in Sources */,
 				0394E69E167B0B71007F4035 /* CustomPhysicsDriver.cxx in Sources */,
 				0394E69F167B0B71007F4035 /* CustomPyramid.cxx in Sources */,
+				0304BA9D1B1715A600392D7F /* ServerDialogManager.cxx in Sources */,
 				0394E6A0167B0B71007F4035 /* CustomSphere.cxx in Sources */,
 				0394E6A1167B0B71007F4035 /* CustomTetra.cxx in Sources */,
 				0394E6A2167B0B71007F4035 /* CustomTextureMatrix.cxx in Sources */,
@@ -6088,6 +6105,7 @@
 				0394E6AF167B0BE0007F4035 /* commands.cxx in Sources */,
 				0394E6B0167B0BE0007F4035 /* MasterBanList.cxx in Sources */,
 				0394E6B1167B0BE0007F4035 /* ParseMaterial.cxx in Sources */,
+				0304BA9E1B1715D300392D7F /* DialogData.cxx in Sources */,
 				0394E6B2167B0BE0007F4035 /* Permissions.cxx in Sources */,
 				0394E6B3167B0BE0007F4035 /* RandomSpawnPolicy.cxx in Sources */,
 				0394E6B4167B0BE0007F4035 /* RecordReplay.cxx in Sources */,
@@ -6490,7 +6508,9 @@
 				03C8EEB8167AC26A00BB07A5 /* motd.cxx in Sources */,
 				03C8EEBA167AC26A00BB07A5 /* NewVersionMenu.cxx in Sources */,
 				03C8EEBC167AC26A00BB07A5 /* OptionsMenu.cxx in Sources */,
+				0304BA9F1B17160700392D7F /* DialogData.cxx in Sources */,
 				03C8EEBE167AC26A00BB07A5 /* Plan.cxx in Sources */,
+				0304BA991B17155B00392D7F /* ClientDialogManager.cxx in Sources */,
 				03C8EEC0167AC26A00BB07A5 /* Player.cxx in Sources */,
 				03C8EEC2167AC26A00BB07A5 /* playing.cxx in Sources */,
 				03C8EEC4167AC26A00BB07A5 /* QuickKeysMenu.cxx in Sources */,
