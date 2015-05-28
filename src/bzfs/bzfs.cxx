@@ -1692,7 +1692,7 @@ struct teamHasntSize
 };
 
 
-static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
+static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
 {
   if (teams.empty())
     return RogueTeam;
@@ -1701,6 +1701,22 @@ static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
   for (int i = 0; i < (int) teams.size(); i++)
     if (teams[i].color == t)
       return t;
+
+  // if scores are unequal, choose from the team(s) with the low score
+  int minScore = team[teams[0].color].team.getWins() - team[teams[0].color].team.getLosses();
+  for(int i = 1; i < (int) teams.size(); ++i) {
+    int teamScore = team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses();
+    if(teamScore < minScore)
+      minScore = teamScore;
+  }
+  int i = 0;
+  while(i < (int) teams.size()) {
+    if(team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses() != minScore
+        && team[teams[i].color].team.size > 0)
+      teams.erase(teams.begin() + i);
+    else
+      ++i;
+  }
 
   return teams[rand() % teams.size()].color;
 }
