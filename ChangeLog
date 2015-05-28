@@ -7,11 +7,27 @@ BZFlag 2.4.3
 * Vertical sync support under SDL 2 - Joshua Bodine
 * SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
+* Validate the teleporter indexes in MsgTeleport - Scott Wichser
+* Correctly validate an offered admin password - Jeff Makey
+* Added "showAdmin" permission - Vladimir Jimenez
 * Added bz_getIdleTime API function - Vladimir Jimenez
+* Added bz_getPlayerFlagID API function - Vladimir Jimenez
+* Added bz_isAutoTeamEnabled API function - Vladimir Jimenez
+* Added bz_cancelCountdown API function - Vladimir Jimenez
+* Added bz_pollActive() API function - Vladimir Jimenez
+* Added bz_CustomZoneObject API class - Vladimir Jimenez
+* Added CustomZoneSample plugin - Vladimir Jimenez
+* Added permission for /listplugins - Vladimir Jimenez
+* Allow API to overload built-in slash commands - Vladimir Jimenez
+* Added "report" permission - Vladimir Jimenez
+* Added bz_eGameResumeEvent and bz_eGamePauseEvent to the API - Vladimir Jimenez
+* Don't allow muted players with ADMINMESSAGESEND to send PMs to hidden admins - Konstantinos Kanavouras
+* Add [Reverse Score] scoreboard sort option - Konstantinos Kanavouras
 * Track number of self-kills on the scoreboard - Konstantinos Kanavouras
 * Added menu option to pause chat window scrolling - Konstantinos Kanavouras
 * Added "noteam" option for "/flag reset" command - Konstantinos Kanavouras
 * Implemented "/poll kill" command - Konstantinos Kanavouras
+* Added "/countdown cancel" command - Konstantinos Kanavouras
 * Added serverSidePlayerSample plugin - Jeff Myers
 * Fix fancy radar tank when zoomed - Kyle Mills
 * Added /handicap command - Frank Thilo
@@ -22,6 +38,9 @@ BZFlag 2.4.3
 * Added superUser plugin - Jeff Myers
 * Added webStats plugin - Jeff Myers
 * Added bz_getPlayerCount API function - Jeff Myers
+* Added bz_incrementPlayerWins API function - Jeff Myers
+* Added bz_incrementPlayerLosses API function - Jeff Myers
+* Added bz_incrementPlayerTKs API function - Jeff Myers
 * Make players respawn on bases after countdown ends - Lee Marshall
 * Countdown now resets player scores as well as team scores - Lee Marshall
 * Fully integrated Xcode project file - Joshua Bodine
@@ -729,7 +748,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Pass reason in MsgKilled, add support for SR noise - Dave Brosius
 * Remove unnecessary MsgScore from player to server - Dave Brosius
 * Remove old lag pings - Dave Brosius
-* BeOS port - François Revol
+* BeOS port - FranÃ§ois Revol
 * Collision detection fixes - David Trowbridge, Jeff Myers
 * PlayerId -> ubyte - David Trowbridge, Frank Thilo
 * Get rid of reconnect port - David Trowbridge
@@ -867,7 +886,7 @@ BZFlag 1.7e6  "Armoured Smashing Fist" (2002-06-19 was 1.7e5)
 BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 -----------------------------------
 
-* ::memset() instead of bzero() - Björn Augustsson
+* ::memset() instead of bzero() - BjÃ¶rn Augustsson
 * win32 audio thread fix for win2k - crs
 * send to nemesis - Dave Brosius, Frank Thilo
 * USB joystick support - Nick Sayer
@@ -954,7 +973,7 @@ BZFlag 1.7e release 000 (2001-01-26)
 * FreeBSD patch - Eric Anholt
 * world creation reordering to support world from file
 * compilation with VC++6 - Jeremiah Moss
-* world from a file - Daniel Léonard
+* world from a file - Daniel LÃ©onard
 * travel underneath floating buildings - Jeremiah Moss
 * radar update to not hide teleporters under buildings - Jeremiah Moss
 * teleporter player positioning - Jeremiah Moss
@@ -970,7 +989,7 @@ BZFlag 1.7d release 9 (2000-02-01)
 
 * fixed bug in parsing arguments in bzfls
 * fixed reference counting bug in bzfls
-* improved win32 config file location - Daniel Léonard
+* improved win32 config file location - Daniel LÃ©onard
 
 
 BZFlag 1.7d release 8
@@ -1130,7 +1149,7 @@ BZFlag 1.7c release 2
 
 first official open source release.
 
-* misc. changes for solaris - Björn Augustsson
+* misc. changes for solaris - BjÃ¶rn Augustsson
 * changed u_int* to uint*
 * replaced [ds]rand48() with [s]rand()
 * changed variable name `sun' with 'theSun'
@@ -1139,7 +1158,7 @@ first official open source release.
 * glColor*() are macros;  changed code that took address of function
 * no hstrerror
 * solaris defines SIG_PF
-* added unofficial solaris config - Björn Augustsson
+* added unofficial solaris config - BjÃ¶rn Augustsson
 * porting is not complete
 * not included in platform list
 * made generic linux config - Phillip Ezolt
