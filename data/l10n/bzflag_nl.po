@@ -184,7 +184,10 @@ msgstr "Gekleurde Schoten op Radar:"
 msgid "Radar Shot Length:"
 msgstr "Lengte van Schoten op Radar:"
 
-#msgid "Radar & Panel Size:"
+#msgid "Radar Size:"
+#msgstr ""
+
+#msgid "Panel Height:"
 #msgstr ""
 
 #msgid "Mouse Box Size:"

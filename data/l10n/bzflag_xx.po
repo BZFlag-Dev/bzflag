@@ -1136,7 +1136,10 @@ msgstr ""
 msgid "Right"
 msgstr ""
 
-msgid "Radar & Panel Size:"
+msgid "Radar Size:"
+msgstr ""
+
+msgid "Panel Height:"
 msgstr ""
 
 msgid "Mouse Box Size:"

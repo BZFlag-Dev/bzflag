@@ -518,8 +518,11 @@ msgstr "Delka strely na radaru:"
 msgid "Radar Shot Size:"
 msgstr "Velikost strely na radaru:"
 
-msgid "Radar & Panel Size:"
-msgstr "Velikost radaru a panelu:"
+msgid "Radar Size:"
+msgstr "Velikost radaru:"
+
+msgid "Panel Height:"
+msgstr "Velikost panelu:"
 
 msgid "Mouse Box Size:"
 msgstr "Velikost ovladaciho prostoru mysi:"

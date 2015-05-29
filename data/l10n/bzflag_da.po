@@ -183,8 +183,11 @@ msgstr "Farvet skud på radaren:"
 msgid "Radar Shot Length:"
 msgstr "Radar skud længde:"
 
-msgid "Radar & Panel Size:"
-msgstr "Radar- & panelstørrelse:"
+msgid "Radar Size:"
+msgstr "Radar størrelse:"
+
+msgid "Panel Height:"
+msgstr "Panelstørrelse:"
 
 msgid "Mouse Box Size:"
 msgstr "Muskasse størrelse:"

@@ -179,12 +179,15 @@ msgstr "didesnis"
 #msgid "Radar Shot Length:"
 #msgstr ""
 
-#msgid "Radar & Panel Size:"
+#msgid "Radar Size:"
+#msgstr ""
+
+#msgid "Panel Height:"
 #msgstr ""
 
 #, fuzzy
 msgid "Mouse Box Size:"
-msgstr "Pelės lango dydis"
+msgstr "Pelės lango dydis:"
 
 # sgid "Control panel coloring:"
 # sgstr ""

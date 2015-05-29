@@ -865,8 +865,11 @@ msgstr "Con lag"
 msgid "Leading"
 msgstr "Sin lag"
 
-msgid "Radar & Panel Size:"
-msgstr "Tamaño de radar y panel:"
+msgid "Radar Size:"
+msgstr "Tamaño de radar:"
+
+msgid "Panel Height:"
+msgstr "Tamaño de panel:"
 
 msgid "Mouse Box Size:"
 msgstr "Tamaño de la caja del ratón:"

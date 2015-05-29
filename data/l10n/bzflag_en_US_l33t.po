@@ -186,8 +186,11 @@ msgstr "c0LORed sHO+S On R@d4R:"
 msgid "Radar Shot Length:"
 msgstr "r@d4r Sh0T L3nGTh:"
 
-msgid "Radar & Panel Size:"
-msgstr "r@d4r & p@n31 51z3:"
+msgid "Radar Size:"
+msgstr "r@d4r 51z3:"
+
+msgid "Panel Height:"
+msgstr "p@n31 h31gh7:"
 
 msgid "Control panel coloring:"
 msgstr "c0n+r0L p4N3l COLOriNG:"

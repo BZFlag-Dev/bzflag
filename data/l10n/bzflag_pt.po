@@ -555,8 +555,11 @@ msgstr "A liderar"
 msgid "Lagging"
 msgstr "A atrasar"
 
-msgid "Radar & Panel Size:"
-msgstr "Tamanho do Radar & Painel:"
+msgid "Radar Size:"
+msgstr "Tamanho do Radar:"
+
+msgid "Panel Height:"
+msgstr "Tamanho do Painel:"
 
 msgid "Mouse Box Size:"
 msgstr "Tamanho da Caixa do Rato:"
