@@ -4,6 +4,8 @@
 BZFlag 2.4.3
 ------------
 
+* Added bz_incrementTeamLosses and bz_incrementTeamWins API functions
+		- Vladimir Jimenez
 * Vertical sync support under SDL 2 - Joshua Bodine
 * SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
@@ -20,8 +22,10 @@ BZFlag 2.4.3
 * Added permission for /listplugins - Vladimir Jimenez
 * Allow API to overload built-in slash commands - Vladimir Jimenez
 * Added "report" permission - Vladimir Jimenez
-* Added bz_eGameResumeEvent and bz_eGamePauseEvent to the API - Vladimir Jimenez
-* Don't allow muted players with ADMINMESSAGESEND to send PMs to hidden admins - Konstantinos Kanavouras
+* Added bz_eGameResumeEvent and bz_eGamePauseEvent to the API
+		- Vladimir Jimenez
+* Don't allow muted players with ADMINMESSAGESEND to send PMs to hidden admins
+		- Konstantinos Kanavouras
 * Add [Reverse Score] scoreboard sort option - Konstantinos Kanavouras
 * Track number of self-kills on the scoreboard - Konstantinos Kanavouras
 * Added menu option to pause chat window scrolling - Konstantinos Kanavouras

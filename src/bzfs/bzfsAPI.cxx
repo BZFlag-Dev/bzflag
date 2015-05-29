@@ -3220,6 +3220,16 @@ BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
   sendTeamUpdate(-1,teamIndex);
 }
 
+BZF_API void bz_incrementTeamWins (bz_eTeamType team, int increment)
+{
+  bz_setTeamWins(team, bz_getTeamWins(team) + increment);
+}
+
+BZF_API void bz_incrementTeamLosses (bz_eTeamType team, int increment)
+{
+  bz_setTeamLosses(team, bz_getTeamLosses(team) + increment);
+}
+
 BZF_API void bz_resetTeamScore (bz_eTeamType _team )
 {
   int teamIndex = (int)convertTeam(_team);

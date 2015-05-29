@@ -1656,6 +1656,8 @@ BZF_API int bz_getTeamLosses (bz_eTeamType team );
 
 BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );
 BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );
+BZF_API void bz_incrementTeamWins (bz_eTeamType team, int increment);
+BZF_API void bz_incrementTeamLosses (bz_eTeamType team, int increment);
 
 BZF_API void bz_resetTeamScore (bz_eTeamType team );
 BZF_API void bz_resetTeamScores ( void );
