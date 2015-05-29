@@ -4,6 +4,7 @@
 BZFlag 2.4.3
 ------------
 
+* Radar size and panel size are now set individually  - Joshua Bodine
 * Added bz_incrementTeamLosses and bz_incrementTeamWins API functions
 		- Vladimir Jimenez
 * Vertical sync support under SDL 2 - Joshua Bodine
