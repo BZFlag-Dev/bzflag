@@ -82,6 +82,7 @@ public:
   float         getRadarOpacity() const;
   bool          isPanelOpaque() const;
   int		getRadarSize() const;
+  int		getPanelHeight() const;
   int		getMaxMotionFactor() const;
   bool		isLastFrame() const;
   bool		isSameFrame() const;
@@ -97,6 +98,7 @@ public:
   void		setPanelOpacity(float opacity);
   void          setRadarOpacity(float opacity);
   void		setRadarSize(int size);
+  void		setPanelHeight(int size);
   void		setMaxMotionFactor(int size);
   void		setDim(bool on);
   void		setViewType(ViewType);
@@ -230,6 +232,7 @@ private:
   float		panelOpacity;
   float         radarOpacity;
   int		radarSize;
+  int		panelHeight;
   int		maxMotionFactor;
   bool		useStencilOn;
   ViewType	viewType;

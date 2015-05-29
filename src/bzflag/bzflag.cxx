@@ -603,6 +603,8 @@ void dumpResources()
 
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
 
+  BZDB.set("panelheight", TextUtils::format("%d", RENDERER.getPanelHeight()));
+
   BZDB.set("mouseboxsize", TextUtils::format("%d", RENDERER.getMaxMotionFactor()));
 
   // don't save these configurations
@@ -1327,6 +1329,9 @@ int			main(int argc, char** argv)
 
     if (BZDB.isSet("radarsize"))
       RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));
+
+    if (BZDB.isSet("panelheight"))
+      RENDERER.setPanelHeight(BZDB.getIntClamped("panelheight", 0, GUIOptionsMenu::maxRadarSize));
 
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));

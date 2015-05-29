@@ -180,8 +180,17 @@ GUIOptionsMenu::GUIOptionsMenu()
   // set radar size
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Radar & Panel Size:");
+  option->setLabel("Radar Size:");
   option->setCallback(callback, "R");
+  option->createSlider(maxRadarSize+1);
+  option->update();
+  listHUD.push_back(option);
+
+  // set panel size
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Panel Height:");
+  option->setCallback(callback, "a");
   option->createSlider(maxRadarSize+1);
   option->update();
   listHUD.push_back(option);
@@ -391,6 +400,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("leadingShotLine")));
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("radarPosition")));
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getPanelHeight());
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
     i++; // locale
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
@@ -500,6 +510,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
     case 'R':
       {
 	sceneRenderer->setRadarSize(list->getIndex());
+	break;
+      }
+
+    case 'a':
+      {
+	sceneRenderer->setPanelHeight(list->getIndex());
 	break;
       }
 
