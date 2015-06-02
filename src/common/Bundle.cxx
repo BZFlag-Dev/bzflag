@@ -172,8 +172,7 @@ const char utf8bytes[256] = {
       case '':
 	msg[i] = 'o';
       break;
-      case '
-':
+      case '':
 	msg[i] = 'O';
       break;
       case '':
