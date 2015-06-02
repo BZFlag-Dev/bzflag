@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -172,7 +172,8 @@ const char utf8bytes[256] = {
       case '':
 	msg[i] = 'o';
       break;
-      case '':
+      case '
+':
 	msg[i] = 'O';
       break;
       case '':

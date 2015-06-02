@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  * Writen By Jeffrey Myers
  *
  * This package is free software;  you can redistribute it and/or
