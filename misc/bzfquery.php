@@ -119,6 +119,7 @@ function bzfquery ($hostport) {
   $have['AllAddPlayer'] = false;
 
   while (in_array(false, $have) && $loop < 64) {
+    $loop++;
     $packet = readpacket($fp);
 
     if ($GLOBALS['debug']) {
