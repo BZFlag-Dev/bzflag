@@ -57,6 +57,7 @@ MAINTAINERCLEANFILES = \
 	curl/Makefile.in \
 	curl/aclocal.m4 \
 	curl/autom4te.cache \
+	curl/compile \
 	curl/config.guess \
 	curl/config.sub \
 	curl/configure \
