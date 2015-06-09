@@ -1234,6 +1234,7 @@ AC_CONFIG_FILES([
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
+	tests/Makefile
 	tools/Makefile
 	tools/TextTool-W32/Makefile
 	tools/TextTool-W32/res/Makefile
