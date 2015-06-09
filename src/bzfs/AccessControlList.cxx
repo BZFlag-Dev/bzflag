@@ -39,9 +39,10 @@
 
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
-			    const char *reason, bool fromMaster)
+			    unsigned char cidr, const char *reason,
+			    bool fromMaster)
 {
-  BanInfo toban(ipAddr, bannedBy, period,fromMaster);
+  BanInfo toban(ipAddr, bannedBy, period, cidr, fromMaster);
   if (reason) toban.reason = reason;
   banList_t::iterator oldit = std::find(banList.begin(), banList.end(), toban);
   if (oldit != banList.end()) // IP already in list? -> replace
@@ -70,14 +71,14 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
   while ((pSep = strchr(pStart, ',')) != NULL) {
     *pSep = 0;
     if (convert(pStart, mask)) {
-      ban(mask, bannedBy, period, NULL, fromMaster);
+      ban(mask, bannedBy, period, 32, NULL, fromMaster);
       added = true;
     }
     *pSep = ',';
     pStart = pSep + 1;
   }
   if (convert(pStart, mask)) {
-    ban(mask, bannedBy, period, reason, fromMaster);
+    ban(mask, bannedBy, period, 32, reason, fromMaster);
     added = true;
   }
   free(buf);
