@@ -41,6 +41,7 @@ public:
   bool		operator<(const ServerItem &right);
 private:
   unsigned int	getSortFactor() const;
+  int		randomSortWeight;
 public:
   std::string	name;
   std::string	description;
