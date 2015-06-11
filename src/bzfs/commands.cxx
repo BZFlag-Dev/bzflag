@@ -2230,10 +2230,28 @@ bool ShowPermsCommand::operator() (const char* msg,
   header += query->player.getCallSign();
   sendMessage(ServerPlayer, t, header.c_str());
 
+  unsigned int permIndex = 0;
+  std::vector<std::string> customPerms = query->accessInfo.customPerms;
+  std::sort(customPerms.begin(), customPerms.end());
+
   for (int p = 0; p < PlayerAccessInfo::lastPerm; p++) {
     PlayerAccessInfo::AccessPerm perm = (PlayerAccessInfo::AccessPerm)p;
+    const std::string& permName = nameFromPerm(perm);
+
+    while (permIndex < customPerms.size()) {
+      const std::string& nextCustomPerm = bz_tolower(customPerms.at(permIndex).c_str());
+
+      if (nextCustomPerm < permName) {
+        sendMessage(ServerPlayer, t, nextCustomPerm.c_str());
+        permIndex++;
+
+        continue;
+      }
+
+      break;
+    }
+
     if (query->accessInfo.hasPerm(perm)) {
-      const std::string& permName = nameFromPerm(perm);
       sendMessage(ServerPlayer, t, permName.c_str());
     }
   }
