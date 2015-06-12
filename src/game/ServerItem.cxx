@@ -27,7 +27,7 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false), randomSortWeight((int)(bzfrand()*500))
+ServerItem::ServerItem() :  randomSortWeight((int)(bzfrand()*500)), updateTime(0), cached(false), favorite(false)
 {
 }
 
