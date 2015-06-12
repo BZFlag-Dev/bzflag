@@ -1,3 +1,4 @@
+if BUILD_CPPUTESTS
 bin_PROGRAMS = unittests
 
 unittests_SOURCES = \
@@ -5,6 +6,7 @@ unittests_SOURCES = \
 	bans.cxx
 
 unittests_CXXFLAGS = -lCppUTest
+endif
 
 EXTRA_DIST = 
 

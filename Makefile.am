@@ -30,6 +30,7 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	.editorconfig \
+	.travis.yml \
 	autogen.sh \
 	authors.xml \
 	bzflag.lsm \
