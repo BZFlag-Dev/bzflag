@@ -4,6 +4,12 @@
 BZFlag 2.4.3
 ------------
 
+* Add bz_getPlayerBySlotOrCallsign API function - Vladimir Jimenez
+* Have custom permissions show in /showperms and /groupperms
+		- Vladimir Jimenez
+* Change server list ordering - Scott Wichser
+* Start adding unit tests with CppUTest - Scott Wichser
+* Start of CIDR ban support - Scott Wichser
 * Radar size and panel size are now set individually  - Joshua Bodine
 * Added bz_incrementTeamLosses and bz_incrementTeamWins API functions
 		- Vladimir Jimenez
