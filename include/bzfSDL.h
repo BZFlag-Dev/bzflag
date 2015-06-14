@@ -25,7 +25,7 @@
 #    include "SDL_thread.h"
 #    include "SDL_stdinc.h"
 #  endif //HAVE_SDL_SDL_H
-#elif HAVE_SDL
+#elifdef HAVE_SDL
 #  ifdef HAVE_SDL_SDL_H
 #    include <SDL/SDL.h>
 #    include <SDL/SDL_thread.h>
