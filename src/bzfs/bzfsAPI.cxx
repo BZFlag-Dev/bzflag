@@ -1095,6 +1095,13 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
   return playerRecord;
 }
 
+BZF_API bz_BasePlayerRecord *bz_getPlayerBySlotOrCallsign ( const char* name )
+{
+  int playerID = GameKeeper::Player::getPlayerIDByName(name);
+
+  return bz_getPlayerByIndex(playerID);
+}
+
 BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
 {
   if (playerRecord)

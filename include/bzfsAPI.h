@@ -1220,6 +1220,7 @@ BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
 BZF_API bz_APIIntList* bz_getPlayerIndexList(void);
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
+BZF_API bz_BasePlayerRecord *bz_getPlayerBySlotOrCallsign ( const char* name );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 
 BZF_API int bz_getPlayerCount ();
