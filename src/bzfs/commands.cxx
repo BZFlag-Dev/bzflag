@@ -2292,7 +2292,29 @@ bool GroupPermsCommand::operator() (const char* msg,
     // allows first
     if (itr->second.explicitAllows.any()) {
       sendMessage(ServerPlayer, t, "  Allows");
+
+      unsigned int permIndex = 0;
+      std::vector<std::string> customPerms = itr->second.customPerms;
+      std::sort(customPerms.begin(), customPerms.end());
+
       for (int i = 0; i < PlayerAccessInfo::lastPerm; i++) {
+	const std::string& permName = nameFromPerm((PlayerAccessInfo::AccessPerm)i);
+
+	while (permIndex < customPerms.size()) {
+	  const std::string& nextCustomPerm = bz_tolower(customPerms.at(permIndex).c_str());
+
+	  if (nextCustomPerm < permName) {
+	    line = "     ";
+	    line += nextCustomPerm;
+	    sendMessage(ServerPlayer, t, line.c_str());
+	    permIndex++;
+
+	    continue;
+	  }
+
+	  break;
+	}
+
 	if (itr->second.explicitAllows.test(i) && !itr->second.explicitDenys.test(i) ) {
 	  line = "     ";
 	  line += nameFromPerm((PlayerAccessInfo::AccessPerm)i);
