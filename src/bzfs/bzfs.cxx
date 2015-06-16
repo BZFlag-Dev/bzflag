@@ -1691,7 +1691,7 @@ struct teamHasntSize
 };
 
 
-static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
+static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
 {
   if (teams.empty())
     return RogueTeam;
@@ -1700,6 +1700,58 @@ static TeamColor teamSelect(TeamColor t, const std::vector<TeamSize> &teams)
   for (int i = 0; i < (int) teams.size(); i++)
     if (teams[i].color == t)
       return t;
+
+  // for CTF games, eliminate all but the lowest-scoring teams
+  if(clOptions->gameType == ClassicCTF) {
+    int minScore = team[teams[0].color].team.getWins() - team[teams[0].color].team.getLosses();
+    for(int i = 1; i < (int) teams.size(); ++i) {
+      int teamScore = team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses();
+      if(teamScore < minScore)
+        minScore = teamScore;
+    }
+    int i = 0;
+    while(i < (int) teams.size())
+      if(team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses() > minScore
+          && team[teams[i].color].team.size > 0) // don't exclude teams with no members
+        teams.erase(teams.begin() + i);
+      else
+        ++i;
+  }
+
+  // if multiple teams remain, eliminate all but those with the lowest total player scores
+  if(teams.size() > 1) {
+    int *totalPlayerScores = new int[teams.size()];
+    for(int i = 0; i < (int) teams.size(); ++i)
+      totalPlayerScores[i] = 0;
+
+    for(int i = 0; i < GameKeeper::Player::count(); ++i) {
+      GameKeeper::Player *thisPlayer = GameKeeper::Player::getPlayerByIndex(i);
+      if(thisPlayer == 0)
+        continue;
+
+      int thisTeamIndex = 0;
+      while(thisTeamIndex < teams.size()) {
+        if(teams[thisTeamIndex].color == thisPlayer->player.getTeam())
+          break;
+
+        ++thisTeamIndex;
+      }
+      if(thisTeamIndex < teams.size())
+        totalPlayerScores[thisTeamIndex] += thisPlayer->score.getWins() -
+            thisPlayer->score.getLosses();
+    }
+
+    int minScore = totalPlayerScores[0];
+    for(int i = 1; i < (int) teams.size(); ++i)
+      if(totalPlayerScores[i] < minScore)
+        minScore = totalPlayerScores[i];
+    int i = 0;
+    while(i < (int) teams.size())
+      if(totalPlayerScores[i] > minScore)
+        teams.erase(teams.begin() + i);
+      else
+        ++i;
+  }
 
   return teams[rand() % teams.size()].color;
 }
