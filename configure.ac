@@ -1239,6 +1239,8 @@ AC_CONFIG_FILES([
 	src/scene/Makefile
 	tests/Makefile
 	tools/Makefile
+	tools/TextTool2/Makefile
+	tools/TextTool2/TextTool2.xcodeproj/Makefile
 	tools/TextTool-W32/Makefile
 	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile

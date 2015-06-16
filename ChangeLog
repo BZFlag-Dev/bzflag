@@ -4,6 +4,7 @@
 BZFlag 2.4.3
 ------------
 
+* New font rendering tool and new font textures up to 64pt - Joshua Bodine
 * Add bz_getPlayerBySlotOrCallsign API function - Vladimir Jimenez
 * Have custom permissions show in /showperms and /groupperms
 		- Vladimir Jimenez
