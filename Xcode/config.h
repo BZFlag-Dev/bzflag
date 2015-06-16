@@ -35,9 +35,6 @@
 #define DEBUG_RENDERING 1
 #endif
 
-/* Build the included ares lookup library */
-#define BUILD_ARES 1
-
 /* Data file directory */
 #define BZFLAG_DATA "/usr/local/share/bzflag"
 
