@@ -31,9 +31,9 @@
 
 ClientDialogManager::ClientDialogManager(const BzfDisplay* _display,
 				const SceneRenderer& renderer) :
+				activeModalData(NULL),
 				display(_display),
-				window(renderer.getWindow()),
-				activeModalData(NULL)
+				window(renderer.getWindow())
 {
   // make sure we're notified when MainWindow resizes
   window.getWindow()->addResizeCallback(resizeCallback, this);
