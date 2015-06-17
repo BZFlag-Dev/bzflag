@@ -93,6 +93,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler
 GameKeeper::Player::~Player()
 {
   flagHistory.clear();
+  delete netHandler;
   playerList[playerIndex] = 0;
 }
 

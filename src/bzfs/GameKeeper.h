@@ -138,7 +138,7 @@ public:
     // players
     PlayerInfo	      player;
     // Net Handler
-    std::shared_ptr<NetHandler> netHandler;
+    NetHandler	      *netHandler;
     // player lag info
     LagInfo	      lagInfo;
     // player access

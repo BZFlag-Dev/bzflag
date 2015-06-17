@@ -184,7 +184,7 @@ private:
   static NetHandler*	netPlayer[maxHandlers];
   static bool           pendingUDP;
 
-  std::shared_ptr<AresHandler>	ares;
+  AresHandler		*ares;
 
   PlayerInfo*		info;
   struct sockaddr_in	uaddr;

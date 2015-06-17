@@ -316,7 +316,7 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
 
 void NetHandler::setPlayer ( PlayerInfo* p, int index )
 {
-  ares.reset(new AresHandler(index));
+  ares = new AresHandler(index);
 
   playerIndex = index;
   info = p;
@@ -331,6 +331,8 @@ NetHandler::~NetHandler() {
   if (info && info->isPlaying())
     dumpMessageStats();
 #endif
+  if (ares)
+    delete(ares);
   // shutdown TCP socket
   shutdown(fd, SHUT_RDWR);
   close(fd);
