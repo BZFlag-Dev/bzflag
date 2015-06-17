@@ -44,7 +44,7 @@ file. The earlier method of using the Xcode project file as a wrapper for
 autotools is no longer supported. If you have a version of Xcode which
 includes autotools, or have installed autotools yourself, you may additionally
 be able to build using the traditional autotools method. See the README file
-for further information. You will still need to install the SDL framework as
+for further information. You will still need to install the SDL 2 framework as
 detailed below.
 
 BZFlag has three external dependencies: SDL 2, GLEW, and c-ares.
@@ -62,8 +62,8 @@ Download the latest version of GLEW from
 https://github.com/nigels-com/glew/releases. Extract the package, and then
 build it with the following commands:
 
-$ GLEW_DEST=/usr/local make glew.lib
-$ sudo GLEW_DEST=/usr/local make install
+$ MACOSX_DEPLOYMENT_TARGET=10.7 GLEW_DEST=/usr/local make glew.lib
+$ sudo MACOSX_DEPLOYMENT_TARGET=10.7 GLEW_DEST=/usr/local make install
 
 Download the latest version of c-ares from http://http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:
