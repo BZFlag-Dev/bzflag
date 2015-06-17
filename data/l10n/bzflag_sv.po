@@ -195,8 +195,11 @@ msgstr "Färgade skott på radarn:"
 msgid "Radar Shot Length:"
 msgstr "Skottlängd på radar:"
 
-#msgid "Radar & Panel Size:"
-#msgstr "Radar & Panelstorlek:"
+#msgid "Radar Size:"
+#msgstr "Radar storlek"
+
+#msgid "Panel Height:"
+#msgstr "Panelstorlek"
 
 #msgid "Mouse Box Size:"
 #msgstr "Styrrutans storlek:"

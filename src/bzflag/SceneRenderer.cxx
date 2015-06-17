@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -103,6 +103,7 @@ SceneRenderer::SceneRenderer() :
 				panelOpacity(0.3f),
 				radarOpacity(0.3f),
 				radarSize(4),
+				panelHeight(4),
 				maxMotionFactor(5),
 				viewType(Normal),
 				inOrder(false),
@@ -433,9 +434,25 @@ void SceneRenderer::setRadarSize(int size)
 }
 
 
+void SceneRenderer::setPanelHeight(int size)
+{
+  panelHeight = size;
+  notifyStyleChange();
+  if (window) {
+    window->getWindow()->callResizeCallbacks();
+  }
+}
+
+
 int SceneRenderer::getRadarSize() const
 {
   return radarSize;
+}
+
+
+int SceneRenderer::getPanelHeight() const
+{
+  return panelHeight;
 }
 
 

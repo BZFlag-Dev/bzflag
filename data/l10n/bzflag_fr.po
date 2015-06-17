@@ -178,12 +178,15 @@ msgid "Radar & Panel Opacity:"
 msgstr "Opacité du radar et du panneau"
 
 msgid "Colored shots on radar:"
-msgstr "Tirs colorés sur le radar"
+msgstr "Tirs colorés sur le radar:"
 
 msgid "Radar Shot Length:"
-msgstr "Longueur des tirs sur le radar"
+msgstr "Longueur des tirs sur le radar:"
 
-#msgid "Radar & Panel Size:"
+#msgid "Radar Size:"
+#msgstr ""
+
+#msgid "Panel Height:"
 #msgstr ""
 
 #msgid "Mouse Box Size:"

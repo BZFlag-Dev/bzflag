@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,8 +30,9 @@ struct BanInfo
       the ban performer @c bannedBy, and the expiration time @c period
       minutes from now. */
   BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, int period = 0,
-	  bool isFromMaster = false ) {
+	  unsigned char _cidr = 32, bool isFromMaster = false ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
+    cidr = _cidr;
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
@@ -42,16 +43,26 @@ struct BanInfo
     }
     fromMaster = isFromMaster;
   }
-  /** BanInfos with same IP are identical. */
+  /** BanInfos with same IP and CIDR are identical. */
   bool operator==(const BanInfo &rhs) const {
-    return addr.s_addr == rhs.addr.s_addr;
+    return addr.s_addr == rhs.addr.s_addr && cidr == rhs.cidr;
   }
-  /** Only BanInfos with the same IP are identical. */
+  /** Only BanInfos with the same IP and CIDR are identical. */
   bool operator!=(const BanInfo &rhs) const {
-    return addr.s_addr != rhs.addr.s_addr;
+    return addr.s_addr != rhs.addr.s_addr || cidr != rhs.cidr;
+  }
+
+  bool contains(in_addr &checkAddr) {
+    // CIDR of 0 matches everything
+    if (cidr < 1) return true;
+    // CIDR of 32 means it has to be an exact match
+    if (cidr >= 32 && addr.s_addr == checkAddr.s_addr) return true;
+    // Compare network bits
+    return !((addr.s_addr ^ checkAddr.s_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
   }
 
   in_addr	addr;
+  unsigned char	cidr;
   TimeKeeper	banEnd;
   std::string	bannedBy;	// Who did perform the ban
   std::string	reason;		// reason for banning
@@ -154,7 +165,8 @@ public:
       parameters. If that address already is banned the old ban will be
       replaced. */
   void ban(in_addr &ipAddr, const char *bannedBy, int period = 0,
-	   const char *reason=NULL, bool fromMaster = false);
+	   unsigned char cidr = 32, const char *reason=NULL,
+	   bool fromMaster = false);
 
   /** This function takes a list of addresses as a string and tries to ban them
       using the given parameters. The string should be comma separated,

@@ -183,7 +183,10 @@ msgstr "Colo'ed shots on radar:"
 msgid "Radar Shot Length:"
 msgstr "Radar Shot Len'th:"
 
-#msgid "Radar & Panel Size:"
+#msgid "Radar Size:"
+#msgstr ""
+
+#msgid "Panel Height:"
 #msgstr ""
 
 #msgid "Mouse Box Size:"

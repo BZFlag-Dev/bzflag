@@ -184,17 +184,20 @@ msgstr "Colora colpi sul radar:"
 msgid "Radar Shot Length:"
 msgstr "Lunghezza colpi sul radar:"
 
-msgid "Radar & Panel Size:"
-msgstr "Grandezza Radar e Pannello"
+msgid "Radar Size:"
+msgstr "Grandezza Radar:"
+
+msgid "Panel Height:"
+msgstr "Grandezza Pannello:"
 
 msgid "Mouse Box Size:"
-msgstr "Grandezza Mirino del Mouse"
+msgstr "Grandezza Mirino del Mouse:"
 
 msgid "Control panel coloring:"
-msgstr "Colori nel pannello"
+msgstr "Colori nel pannello:"
 
 msgid "Underline color:"
-msgstr "Sottolineature"
+msgstr "Sottolineature:"
 
 msgid "Killer Highlight:"
 msgstr "Killer in Risalto:"

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -627,8 +627,13 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 	info.explicitAllows[PlayerAccessInfo::lastPerm] = false;
 	info.hasALLPerm = true;
       } else {
-	//logDebugMessage(1,"groupdb: Cannot set unknown permission %s\n", word.c_str());
-				info.customPerms.push_back(word);
+	// Easy access
+	std::vector<std::string>& c = info.customPerms;
+
+	// Only store the custom permission if it doesn't exist, in order to prevent duplicates
+	if (std::find(c.begin(), c.end(), word) == c.end()) {
+	  c.push_back(word);
+	}
       }
     }
   }

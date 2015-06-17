@@ -23,6 +23,8 @@ EXTRA_DIST =		\
 	regex.vcxproj	\
 	scene.vcxproj	\
 	libcurl.vcxproj	\
+	tests.vcxproj	\
+	tests.vcxproj.filters	\
 	zlib.vcxproj	\
 	zlib.vcproj	\
 	pdcurses.vcxproj	\

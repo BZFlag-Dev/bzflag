@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -602,6 +602,8 @@ void dumpResources()
   BZDB.set("radaropacity", TextUtils::format("%f", RENDERER.getRadarOpacity()));
 
   BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
+
+  BZDB.set("panelheight", TextUtils::format("%d", RENDERER.getPanelHeight()));
 
   BZDB.set("mouseboxsize", TextUtils::format("%d", RENDERER.getMaxMotionFactor()));
 
@@ -1327,6 +1329,9 @@ int			main(int argc, char** argv)
 
     if (BZDB.isSet("radarsize"))
       RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));
+
+    if (BZDB.isSet("panelheight"))
+      RENDERER.setPanelHeight(BZDB.getIntClamped("panelheight", 0, GUIOptionsMenu::maxRadarSize));
 
     if (BZDB.isSet("mouseboxsize"))
       RENDERER.setMaxMotionFactor(atoi(BZDB.get("mouseboxsize").c_str()));

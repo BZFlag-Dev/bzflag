@@ -7,7 +7,7 @@
 // php native code by Tim Riker <Tim@Rikers.org>
 // updated by blast007 <blast007@users.sourceforge.net>
 //
-// Copyright (c) 1993-2013 Tim Riker
+// Copyright (c) 1993-2015 Tim Riker
 //
 // This package is free software;  you can redistribute it and/or
 // modify it under the terms of the license found in the file
@@ -119,6 +119,7 @@ function bzfquery ($hostport) {
   $have['AllAddPlayer'] = false;
 
   while (in_array(false, $have) && $loop < 64) {
+    $loop++;
     $packet = readpacket($fp);
 
     if ($GLOBALS['debug']) {

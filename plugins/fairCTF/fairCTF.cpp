@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -83,7 +83,7 @@ void fairCTF::Init ( const char* config )
   
   if(params[0].length() > 0)
   {
-    float tempratio = atof(params[0].c_str());
+    float tempratio = (float)atof(params[0].c_str());
     if (tempratio > 0.0)
     {
       max_ratio = tempratio;

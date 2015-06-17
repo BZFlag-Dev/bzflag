@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1093,6 +1093,13 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
   playerRecord->update();
 
   return playerRecord;
+}
+
+BZF_API bz_BasePlayerRecord *bz_getPlayerBySlotOrCallsign ( const char* name )
+{
+  int playerID = GameKeeper::Player::getPlayerIDByName(name);
+
+  return bz_getPlayerByIndex(playerID);
 }
 
 BZF_API  bool bz_freePlayerRecord( bz_BasePlayerRecord *playerRecord )
@@ -3218,6 +3225,16 @@ BZF_API void bz_setTeamLosses (bz_eTeamType _team, int losses )
   bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(_team, bz_eWins, old, losses);
   worldEventManager.callEvents(&eventData);
   sendTeamUpdate(-1,teamIndex);
+}
+
+BZF_API void bz_incrementTeamWins (bz_eTeamType _team, int increment)
+{
+  bz_setTeamWins(_team, bz_getTeamWins(_team) + increment);
+}
+
+BZF_API void bz_incrementTeamLosses (bz_eTeamType _team, int increment)
+{
+  bz_setTeamLosses(_team, bz_getTeamLosses(_team) + increment);
 }
 
 BZF_API void bz_resetTeamScore (bz_eTeamType _team )

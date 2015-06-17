@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,21 +38,6 @@ void SDLWindow::iconify(void) {
 
 void SDLWindow::warpMouse(int _x, int _y) {
   SDL_WarpMouseInWindow(windowId, _x, _y);
-
-  // workaround since SDL 2 doesn't (currently) generate a SDL_MOUSEMOTION
-  // event if it was warped from outside the window
-  SDL_PumpEvents();
-  SDL_Event lastEvent;
-  if(SDL_PeepEvents(&lastEvent, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) > 0)
-    if(lastEvent.type == SDL_MOUSEMOTION)
-      return;
-
-  SDL_Event motionEvent;
-  memset(&motionEvent, 0, sizeof motionEvent);
-  motionEvent.type = SDL_MOUSEMOTION;
-  motionEvent.motion.x = _x;
-  motionEvent.motion.y = _y;
-  SDL_PushEvent(&motionEvent);
 }
 
 void SDLWindow::getMouse(int& _x, int& _y) const {

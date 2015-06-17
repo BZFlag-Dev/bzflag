@@ -183,7 +183,10 @@ msgstr "tIn"
 #msgid "Radar Shot Length:"
 #msgstr ""
 
-#msgid "Radar & Panel Size:"
+#msgid "Radar Size:"
+#msgstr ""
+
+#msgid "Panel Height:"
 #msgstr ""
 
 #msgid "Mouse Box Size:"

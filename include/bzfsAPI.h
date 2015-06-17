@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1220,6 +1220,7 @@ BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
 BZF_API bz_APIIntList* bz_getPlayerIndexList(void);
 BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList );
 BZF_API bz_BasePlayerRecord *bz_getPlayerByIndex ( int index );
+BZF_API bz_BasePlayerRecord *bz_getPlayerBySlotOrCallsign ( const char* name );
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord );
 
 BZF_API int bz_getPlayerCount ();
@@ -1656,6 +1657,8 @@ BZF_API int bz_getTeamLosses (bz_eTeamType team );
 
 BZF_API void bz_setTeamWins (bz_eTeamType team, int wins );
 BZF_API void bz_setTeamLosses (bz_eTeamType team, int losses );
+BZF_API void bz_incrementTeamWins (bz_eTeamType team, int increment);
+BZF_API void bz_incrementTeamLosses (bz_eTeamType team, int increment);
 
 BZF_API void bz_resetTeamScore (bz_eTeamType team );
 BZF_API void bz_resetTeamScores ( void );

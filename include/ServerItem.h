@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,6 +41,7 @@ public:
   bool		operator<(const ServerItem &right);
 private:
   unsigned int	getSortFactor() const;
+  int		randomSortWeight;
 public:
   std::string	name;
   std::string	description;

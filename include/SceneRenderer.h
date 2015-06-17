@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -82,6 +82,7 @@ public:
   float         getRadarOpacity() const;
   bool          isPanelOpaque() const;
   int		getRadarSize() const;
+  int		getPanelHeight() const;
   int		getMaxMotionFactor() const;
   bool		isLastFrame() const;
   bool		isSameFrame() const;
@@ -97,6 +98,7 @@ public:
   void		setPanelOpacity(float opacity);
   void          setRadarOpacity(float opacity);
   void		setRadarSize(int size);
+  void		setPanelHeight(int size);
   void		setMaxMotionFactor(int size);
   void		setDim(bool on);
   void		setViewType(ViewType);
@@ -230,6 +232,7 @@ private:
   float		panelOpacity;
   float         radarOpacity;
   int		radarSize;
+  int		panelHeight;
   int		maxMotionFactor;
   bool		useStencilOn;
   ViewType	viewType;

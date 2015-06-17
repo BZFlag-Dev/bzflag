@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -101,7 +101,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "roamSmoothTime",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "roamView",			"fps",			true,	StateDatabase::ReadWrite,	NULL },
   { "listIcons",		"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "maxTextureSize",		"512",			true,	StateDatabase::ReadWrite,	NULL },
+  { "maxTextureSize",		"1024",			true,	StateDatabase::ReadWrite,	NULL },
   { "lodScale",			"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarLodScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },

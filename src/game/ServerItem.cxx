@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2013 Tim Riker
+ * Copyright (c) 1993-2015 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,7 +27,7 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  updateTime(0), cached(false), favorite(false)
+ServerItem::ServerItem() :  randomSortWeight((int)(bzfrand()*500)), updateTime(0), cached(false), favorite(false)
 {
 }
 
@@ -200,13 +200,11 @@ int ServerItem::getPlayerCount() const
 {
   // if null ping we return a 0 player count
   int curPlayer = 0;
-  if (&ping != 0) {
-    int maxPlayer = ping.maxPlayers;
-    curPlayer = ping.rogueCount + ping.redCount + ping.greenCount +
-      ping.blueCount + ping.purpleCount + ping.observerCount;
-    if (curPlayer > maxPlayer)
-      curPlayer = maxPlayer;
-  }
+  int maxPlayer = ping.maxPlayers;
+  curPlayer = ping.rogueCount + ping.redCount + ping.greenCount +
+    ping.blueCount + ping.purpleCount + ping.observerCount;
+  if (curPlayer > maxPlayer)
+    curPlayer = maxPlayer;
   return curPlayer;
 }
 
@@ -219,14 +217,18 @@ unsigned int ServerItem::getSortFactor() const
 {
   // if null ping we return a 0 player count
   unsigned int value = 0;
-  if (&ping != 0) {
-    // real players are worth a 1000
-    value = ping.rogueCount + ping.redCount + ping.greenCount +
-	    ping.blueCount + ping.purpleCount;
-    value *= 1000;
-    // include the lowly observers, 1 point each
-    value += ping.observerCount;
-  }
+  // real players are worth a 1000
+  value = ping.rogueCount + ping.redCount + ping.greenCount +
+	  ping.blueCount + ping.purpleCount;
+  value *= 1000;
+
+  // The constructor sets this to a random value from roughly 0 to 500 (up
+  // to half the value of a player). This will be used to randomize the
+  // order of servers with the same number of players. No longer will
+  // servers starting with an 'a' or a number show higher on the list just
+  // because of their hostname.
+  value += randomSortWeight;
+  
   return value;
 }
 

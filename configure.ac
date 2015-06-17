@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2013 Tim Riker
+dnl Copyright (c) 1993-2015 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -354,6 +354,7 @@ AC_CHECK_HEADERS( \
 	cstdlib \
 	cstdio \
 	cstring \
+	CppUTest/TestHarness.h \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
@@ -388,6 +389,8 @@ if test "x$enable_UPnP" = "xyes"; then
 	[AC_MSG_WARN([You need to install miniupnpc for UPnP to work])])
 fi
 AC_SUBST(LIBMINIUPNPC)
+
+AM_CONDITIONAL(BUILD_CPPUTESTS, test "x$ac_cv_header_CppUTest_TestHarness_h" = "xyes")
 
 dnl **********************************
 dnl *** Check for types/structures ***
@@ -1234,7 +1237,10 @@ AC_CONFIG_FILES([
 	src/platform/MacOSX/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
+	tests/Makefile
 	tools/Makefile
+	tools/TextTool2/Makefile
+	tools/TextTool2/TextTool2.xcodeproj/Makefile
 	tools/TextTool-W32/Makefile
 	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile

@@ -1,10 +1,11 @@
 SUBDIRS = \
 	TextTool-W32 \
 	bzwtransform \
-	modeltool
+	modeltool \
+	TextTool2
 
 
-.PHONY : TextTool_W32 bzwtransform modeltool
+.PHONY : TextTool_W32 bzwtransform modeltool TextTool2
 
 TextTool_W32:
 	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
@@ -15,6 +16,8 @@ bzwtransform:
 modeltool:
 	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
 
+TextTool2:
+	@cd $@ && $(MAKE) $(AM_MAKEFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
