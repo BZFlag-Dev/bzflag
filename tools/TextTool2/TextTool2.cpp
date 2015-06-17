@@ -309,7 +309,7 @@ int main(int argc, char* argv[])
       // open format file and write header
       std::cerr << "generating format file... ";
 
-      std::ofstream fmtFile(outputDirectory + "/" + fontName + ".fmt");
+      std::ofstream fmtFile((outputDirectory + "/" + fontName + ".fmt").c_str());
 
       if(! fmtFile.is_open()) {
 	std::cerr << "failed; unable to write font format file " <<
