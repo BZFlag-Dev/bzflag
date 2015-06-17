@@ -354,10 +354,10 @@ AC_CHECK_HEADERS( \
 	cstdlib \
 	cstdio \
 	cstring \
+	CppUTest/TestHarness.h \
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
-	CppUTest/TestHarness.h \
 	SDL/SDL.h \
 	SDL2/SDL.h \
 	bstring.h \
