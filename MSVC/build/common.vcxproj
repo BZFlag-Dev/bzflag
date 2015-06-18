@@ -403,7 +403,6 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\src\common\PositionTracker.cxx" />
     <ClCompile Include="..\..\src\common\ShotUpdate.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -551,7 +550,6 @@
     <ClInclude Include="..\..\include\Pack.h" />
     <ClInclude Include="..\..\include\ParseColor.h" />
     <ClInclude Include="..\..\include\PlayerState.h" />
-    <ClInclude Include="..\..\include\PositionTracker.h" />
     <ClInclude Include="..\..\include\SceneDatabase.h" />
     <ClInclude Include="..\..\include\ShotUpdate.h" />
     <ClInclude Include="..\..\include\StateDatabase.h" />

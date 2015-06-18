@@ -54,7 +54,6 @@
 		0357A7D81670AFE30056C938 /* OSFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554459166C846F008806E9 /* OSFile.cxx */; };
 		0357A7D91670AFE30056C938 /* ParseColor.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355445A166C846F008806E9 /* ParseColor.cxx */; };
 		0357A7DA1670AFE30056C938 /* PlayerState.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355445B166C846F008806E9 /* PlayerState.cxx */; };
-		0357A7DB1670AFE30056C938 /* PositionTracker.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355445C166C846F008806E9 /* PositionTracker.cxx */; };
 		0357A7DC1670AFE30056C938 /* ShotUpdate.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355445E166C846F008806E9 /* ShotUpdate.cxx */; };
 		0357A7DD1670AFE30056C938 /* StateDatabase.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355445F166C846F008806E9 /* StateDatabase.cxx */; };
 		0357A7DE1670AFE30056C938 /* Team.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554460166C846F008806E9 /* Team.cxx */; };
@@ -956,7 +955,6 @@
 		0305D5A6166C9DAE00557FC4 /* LaserSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LaserSceneNode.h; sourceTree = "<group>"; };
 		0305D5A7166C9DAE00557FC4 /* LinkManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LinkManager.h; sourceTree = "<group>"; };
 		0305D5A8166C9DAE00557FC4 /* ListServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListServer.h; sourceTree = "<group>"; };
-		0305D5AA166C9DAE00557FC4 /* MathUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathUtils.h; sourceTree = "<group>"; };
 		0305D5AB166C9DAE00557FC4 /* md5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = md5.h; sourceTree = "<group>"; };
 		0305D5AC166C9DAE00557FC4 /* MediaFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaFile.h; sourceTree = "<group>"; };
 		0305D5AD166C9DAE00557FC4 /* MeshDrawInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeshDrawInfo.h; sourceTree = "<group>"; };
@@ -993,7 +991,6 @@
 		0305D5CC166C9DAE00557FC4 /* PlayerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerInfo.h; sourceTree = "<group>"; };
 		0305D5CD166C9DAE00557FC4 /* PlayerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerState.h; sourceTree = "<group>"; };
 		0305D5CE166C9DAE00557FC4 /* PolyWallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolyWallSceneNode.h; sourceTree = "<group>"; };
-		0305D5CF166C9DAE00557FC4 /* PositionTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PositionTracker.h; sourceTree = "<group>"; };
 		0305D5D0166C9DAE00557FC4 /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocol.h; sourceTree = "<group>"; };
 		0305D5D1166C9DAE00557FC4 /* PTSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTSceneNode.h; sourceTree = "<group>"; };
 		0305D5D2166C9DAE00557FC4 /* PyramidBuilding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PyramidBuilding.h; sourceTree = "<group>"; };
@@ -1390,7 +1387,6 @@
 		03554459166C846F008806E9 /* OSFile.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OSFile.cxx; sourceTree = "<group>"; };
 		0355445A166C846F008806E9 /* ParseColor.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ParseColor.cxx; sourceTree = "<group>"; };
 		0355445B166C846F008806E9 /* PlayerState.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerState.cxx; sourceTree = "<group>"; };
-		0355445C166C846F008806E9 /* PositionTracker.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PositionTracker.cxx; sourceTree = "<group>"; };
 		0355445D166C846F008806E9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		0355445E166C846F008806E9 /* ShotUpdate.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShotUpdate.cxx; sourceTree = "<group>"; };
 		0355445F166C846F008806E9 /* StateDatabase.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StateDatabase.cxx; sourceTree = "<group>"; };
@@ -2199,7 +2195,6 @@
 				0305D5A6166C9DAE00557FC4 /* LaserSceneNode.h */,
 				0305D5A7166C9DAE00557FC4 /* LinkManager.h */,
 				0305D5A8166C9DAE00557FC4 /* ListServer.h */,
-				0305D5AA166C9DAE00557FC4 /* MathUtils.h */,
 				0305D5AB166C9DAE00557FC4 /* md5.h */,
 				0305D5AC166C9DAE00557FC4 /* MediaFile.h */,
 				0305D5AD166C9DAE00557FC4 /* MeshDrawInfo.h */,
@@ -2236,7 +2231,6 @@
 				0305D5CC166C9DAE00557FC4 /* PlayerInfo.h */,
 				0305D5CD166C9DAE00557FC4 /* PlayerState.h */,
 				0305D5CE166C9DAE00557FC4 /* PolyWallSceneNode.h */,
-				0305D5CF166C9DAE00557FC4 /* PositionTracker.h */,
 				0305D5D0166C9DAE00557FC4 /* Protocol.h */,
 				0305D5D1166C9DAE00557FC4 /* PTSceneNode.h */,
 				0305D5D2166C9DAE00557FC4 /* PyramidBuilding.h */,
@@ -2702,7 +2696,6 @@
 				03554459166C846F008806E9 /* OSFile.cxx */,
 				0355445A166C846F008806E9 /* ParseColor.cxx */,
 				0355445B166C846F008806E9 /* PlayerState.cxx */,
-				0355445C166C846F008806E9 /* PositionTracker.cxx */,
 				0355445D166C846F008806E9 /* README */,
 				0355445E166C846F008806E9 /* ShotUpdate.cxx */,
 				0355445F166C846F008806E9 /* StateDatabase.cxx */,
@@ -4885,7 +4878,6 @@
 				0357A7D81670AFE30056C938 /* OSFile.cxx in Sources */,
 				0357A7D91670AFE30056C938 /* ParseColor.cxx in Sources */,
 				0357A7DA1670AFE30056C938 /* PlayerState.cxx in Sources */,
-				0357A7DB1670AFE30056C938 /* PositionTracker.cxx in Sources */,
 				0357A7DC1670AFE30056C938 /* ShotUpdate.cxx in Sources */,
 				0357A7DD1670AFE30056C938 /* StateDatabase.cxx in Sources */,
 				0357A7DE1670AFE30056C938 /* Team.cxx in Sources */,

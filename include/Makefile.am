@@ -61,7 +61,6 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
 	ListServer.h			\
-	MathUtils.h			\
 	MediaFile.h			\
 	MeshFace.h			\
 	MeshFragSceneNode.h		\
@@ -95,7 +94,6 @@ noinst_HEADERS =			\
 	PlayerInfo.h			\
 	PlayerState.h			\
 	PolyWallSceneNode.h		\
-	PositionTracker.h		\
 	Protocol.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\
