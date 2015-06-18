@@ -579,8 +579,18 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
   const float x1 = floorf(_x1) + 0.5f;
   const float y1 = y0 + 1.0f;
 
-  const float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  const float black[4] = {
+      0.0f * (dim ? dimFactor : 1.0f),
+      0.0f * (dim ? dimFactor : 1.0f),
+      0.0f * (dim ? dimFactor : 1.0f),
+      1.0f
+    };
+  const float white[4] = {
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f
+    };
   const float* c0 = black;
   const float* c1 = white;
 
