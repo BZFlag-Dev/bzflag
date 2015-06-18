@@ -1729,7 +1729,7 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
       if(thisPlayer == 0)
         continue;
 
-      int thisTeamIndex = 0;
+      unsigned int thisTeamIndex = 0;
       while(thisTeamIndex < teams.size()) {
         if(teams[thisTeamIndex].color == thisPlayer->player.getTeam())
           break;
