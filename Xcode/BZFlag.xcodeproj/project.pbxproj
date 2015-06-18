@@ -465,9 +465,6 @@
 		03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
-		03E42D141B322643006EE763 /* libncurses.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D926E5166C6AB500DDDBEB /* libncurses.dylib */; };
-		03E42D151B322643006EE763 /* libz.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D926E3166C692B00DDDBEB /* libz.dylib */; };
-		03E42D161B322643006EE763 /* libcurl.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03E42D1B1B322E2C006EE763 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EA71670CB1300725DBE /* AUTHORS */; };
 		03E42D1C1B322E2C006EE763 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EA81670CB1300725DBE /* ChangeLog */; };
 		03E42D1D1B322E2C006EE763 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03E42D191B322DFC006EE763 /* COPYING */; };
@@ -867,9 +864,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				03E42D141B322643006EE763 /* libncurses.dylib in CopyFiles */,
-				03E42D151B322643006EE763 /* libz.dylib in CopyFiles */,
-				03E42D161B322643006EE763 /* libcurl.dylib in CopyFiles */,
 				034E307B1B0C945000E7DDE2 /* SDL2.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
