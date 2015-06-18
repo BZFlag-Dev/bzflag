@@ -241,6 +241,8 @@ void ServerMenu::setFindLabel(const std::string& label)
 
 void ServerMenu::setFind(bool mode, bool clear)
 {
+  findMode = mode;
+
   const std::string oldFilterSource = listFilter.getSource();
 
   if (clear) {
@@ -260,14 +262,12 @@ void ServerMenu::setFind(bool mode, bool clear)
       setFindLabel(ANSI_STR_FG_RED "Using filter:");
     }
     // select the first item in the list
-    setSelected(0);
+    setSelected(0, true);
   }
 
   if (debugLevel > 0) {
     listFilter.print();
   }
-
-  findMode = mode;
 
   newfilter = (listFilter.getSource() != oldFilterSource);
 }
@@ -352,7 +352,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
       if (base + i < (int)serverList.size()) {
 	const ServerItem &server = serverList.getServers()[base + i];
 	const short gameType = server.ping.gameType;
-  const short gameOptions = server.ping.gameOptions;
+	const short gameOptions = server.ping.gameOptions;
 	std::string fullLabel;
 	if (BZDB.isTrue("listIcons")) {
 	  // game mode
@@ -449,8 +449,8 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
     }
   }
 
-  // set focus to selected item
-  if (serverList.size() > 0) {
+  // set focus to selected item unless we are typing into the search field
+  if (serverList.size() > 0 && ! findMode) {
     const int indexOnPage = selectedIndex % NumItems;
     getControls()[NumReadouts + indexOnPage]->setFocus();
   }
@@ -708,7 +708,7 @@ void ServerMenu::execute()
   const bool endFind = (HUDui::getFocus() == search);
   if (endFind) {
     setFind(false);
-    status->setFocus();
+    setSelected(0);
     return;
   }
 
