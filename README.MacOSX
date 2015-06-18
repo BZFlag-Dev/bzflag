@@ -62,7 +62,7 @@ Download the latest version of GLEW from
 https://github.com/nigels-com/glew/releases. Extract the package, and then
 build it with the following commands (WARNING: this will remove all shared
 libraries for GLEW under /usr/local, even older versions you may have
-installed; this is necessary because it appears there is currently no wan to
+installed; this is necessary because it appears there is currently no way to
 configure GLEW to build without shared libraries):
 
 $ export MACOSX_DEPLOYMENT_TARGET=10.7
