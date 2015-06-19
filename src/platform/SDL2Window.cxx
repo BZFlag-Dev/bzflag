@@ -15,6 +15,7 @@
 
 // Common includes
 #include "OpenGLGState.h"
+#include "TimeKeeper.h"
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), hasGamma(true), windowId(NULL), glContext(NULL),
@@ -79,6 +80,29 @@ bool SDLWindow::hasGammaControl() const {
 
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapWindow(windowId);
+
+  // workaround for SDL 2 bug on mac where an application window obstructed
+  // by another window will not honor a vsync restriction
+  // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2998
+#ifdef __APPLE__
+  if(! SDL_GL_GetSwapInterval())
+    return;
+
+  const int maxRunawayFPS = 65;
+
+  static TimeKeeper lastFrame = TimeKeeper::getSunGenesisTime();
+  const TimeKeeper now = TimeKeeper::getCurrent();
+
+  const double remaining = 1.0 / (double) maxRunawayFPS - (now - lastFrame);
+
+  // this doesn't create our exact desired FPS, since our handling is
+  // frame-to-frame and some frames will be late already and will not be
+  // delayed, but it's close enough for the purposes of this workaround
+  if(remaining > 0.0)
+    TimeKeeper::sleep(remaining);
+
+  lastFrame = now;
+#endif //__APPLE__
 }
 
 bool SDLWindow::create(void) {

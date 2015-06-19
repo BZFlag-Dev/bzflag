@@ -22,6 +22,7 @@
 
 // System includes
 #include <string>
+#include <cstdint>
 
 // Local includes
 #include "SDL2Display.h"
