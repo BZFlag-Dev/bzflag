@@ -84,6 +84,7 @@ void SDLWindow::swapBuffers() {
   // workaround for SDL 2 bug on mac where an application window obstructed
   // by another window will not honor a vsync restriction
   // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2998
+  // TODO: Remove this workaround when/if SDL2 includes their own workaround.
 #ifdef __APPLE__
   if(! SDL_GL_GetSwapInterval())
     return;
