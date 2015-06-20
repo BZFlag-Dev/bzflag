@@ -40,7 +40,7 @@ public:
 
 BZ_PLUGIN(CustomZoneSample)
 
-void CustomZoneSample::Init (const char* commandLine)
+void CustomZoneSample::Init (const char* /*commandLine*/)
 {
   Register(bz_ePlayerUpdateEvent);
 
