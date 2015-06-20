@@ -83,6 +83,7 @@ work
 /src/bzadmin/bzadmin
 /src/bzflag/bzflag
 /src/bzfs/bzfs
+/tools/TextTool2/TextTool2
 /tools/modeltool/modeltool
 /bin_Win32/*
 /bin_x64/*
