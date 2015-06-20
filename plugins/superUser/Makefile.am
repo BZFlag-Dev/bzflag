@@ -1,7 +1,7 @@
 lib_LTLIBRARIES = superUser.la
 
 superUser_la_SOURCES = superUser.cpp
-superUser_la_CXXFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
+superUser_la_CPPFLAGS= -I$(top_srcdir)/include -I$(top_srcdir)/plugins/plugin_utils
 superUser_la_LDFLAGS = -module -avoid-version -shared
 superUser_la_LIBADD = $(top_builddir)/plugins/plugin_utils/libplugin_utils.la
 
