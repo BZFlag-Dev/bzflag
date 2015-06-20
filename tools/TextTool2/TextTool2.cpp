@@ -301,8 +301,8 @@ int main(int argc, char* argv[])
 
       for(int row = 0; row < textureHeight; ++row) {
 	for(int column = 0; column < textureWidth; ++column) {
-	  ((char*) texture)[row * textureWidth * 2 + column * 2 + 0] = 0xFF; // grayscale value
-	  ((char*) texture)[row * textureWidth * 2 + column * 2 + 1] = 0x0; // alpha value
+	  ((unsigned char*) texture)[row * textureWidth * 2 + column * 2 + 0] = 0xFF; // grayscale value
+	  ((unsigned char*) texture)[row * textureWidth * 2 + column * 2 + 1] = 0x0; // alpha value
 	}
       }
 
