@@ -952,7 +952,7 @@ static void		doMotion()
 static void mouseClamp()
 {
   // only clamp when it might be useful
-  if ((myTank == NULL) || !myTank->isAlive() ||
+  if (HUDDialogStack::get()->isActive() || (myTank == NULL) || !myTank->isAlive() ||
       myTank->isPaused() || (myTank->getTeam() == ObserverTeam)) {
     mainWindow->disableConfineToMotionbox();
     return;
