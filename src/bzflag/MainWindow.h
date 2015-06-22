@@ -69,6 +69,8 @@ class MainWindow {
     void		warpMouse(int mx, int my);
     void		warpMouseCenterX();
     void		warpMouseCenterY();
+    void		disableConfineToMotionbox();
+    void		confineToMousebox(int x1, int y1, int x2, int y2);
     void		grabMouse();
     void		enableGrabMouse(bool on);
     bool		isGrabEnabled(void) const;

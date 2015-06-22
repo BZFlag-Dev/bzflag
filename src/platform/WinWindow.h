@@ -43,6 +43,8 @@ class WinWindow : public BzfWindow {
 
     void		warpMouse(int x, int y);
     void		getMouse(int& x, int& y) const;
+	void		disableConfineToMotionbox();
+	void		confineToMotionbox(int x1, int y1, int x2, int y2);
     void		grabMouse();
     void		ungrabMouse();
     void		enableGrabMouse(bool on);

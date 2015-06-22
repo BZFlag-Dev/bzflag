@@ -949,11 +949,12 @@ static void		doMotion()
 }
 
 
-static void mouseClamp(const BzfMotionEvent& event)
+static void mouseClamp()
 {
   // only clamp when it might be useful
   if ((myTank == NULL) || !myTank->isAlive() ||
       myTank->isPaused() || (myTank->getTeam() == ObserverTeam)) {
+    mainWindow->disableConfineToMotionbox();
     return;
   }
 
@@ -961,6 +962,7 @@ static void mouseClamp(const BzfMotionEvent& event)
   bool alt, ctrl, shift;
   display->getModState(alt, ctrl, shift);
   if (ctrl) {
+    mainWindow->disableConfineToMotionbox();
     return;
   }
 
@@ -984,10 +986,7 @@ static void mouseClamp(const BzfMotionEvent& event)
   const int yp = yc + pixels;
 
   // clamp, as required
-  if (event.x < xn) { mainWindow->getWindow()->warpMouse(xn, event.y); }
-  if (event.x > xp) { mainWindow->getWindow()->warpMouse(xp, event.y); }
-  if (event.y < yn) { mainWindow->getWindow()->warpMouse(event.x, yn); }
-  if (event.y > yp) { mainWindow->getWindow()->warpMouse(event.x, yp); }
+  mainWindow->confineToMousebox(xn, yn, xp, yp);
 }
 
 
@@ -1095,7 +1094,7 @@ static void		doEvent(BzfDisplay *disply)
       if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange")))
 	myTank->setInputMethod(LocalPlayer::Mouse);
       if (BZDB.isTrue("mouseClamp")) {
-	mouseClamp(event.mouseMove);
+	mouseClamp();
       }
       break;
 

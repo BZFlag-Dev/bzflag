@@ -112,6 +112,16 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
   my -= (viewHeight >> 1) + getYOffset();
 }
 
+void			MainWindow::disableConfineToMotionbox()
+{
+  window->disableConfineToMotionbox();
+}
+
+void			MainWindow::confineToMousebox(int x1, int y1, int x2, int y2)
+{
+  window->confineToMotionbox(x1, y1, x2, y2);
+}
+
 void			MainWindow::grabMouse()
 {
   if (allowMouseGrab) window->grabMouse();

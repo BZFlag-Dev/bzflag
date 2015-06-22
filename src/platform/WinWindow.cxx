@@ -241,6 +241,35 @@ void			WinWindow::getMouse(int& x, int& y) const
   y = (int)point.y;
 }
 
+void			WinWindow::disableConfineToMotionbox()
+{
+  ungrabMouse();
+}
+
+void			WinWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+{
+  // Store the boundary positions as two points (top left and bottom right)
+  POINT p1, p2;
+  p1.x = x1;
+  p1.y = y1;
+  p2.x = x2;
+  p2.y = y2;
+
+  // Transform them from client space to screen space
+  ClientToScreen(hwnd, &p1);
+  ClientToScreen(hwnd, &p2);
+
+  // Store them in a rectangle
+  RECT rect;
+  rect.top = p1.y;
+  rect.left = p1.x;
+  rect.bottom = p2.y;
+  rect.right = p2.x;
+
+  // Restrict cursor to that rectangle
+  ClipCursor(&rect);
+}
+
 void			WinWindow::grabMouse()
 {
   RECT wrect;
