@@ -986,7 +986,7 @@ static void mouseClamp()
   const int yp = yc + pixels;
 
   // clamp, as required
-  mainWindow->confineToMousebox(xn, yn, xp, yp);
+  mainWindow->confineToMotionbox(xn, yn, xp, yp);
 }
 
 

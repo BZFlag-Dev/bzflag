@@ -117,7 +117,7 @@ void			MainWindow::disableConfineToMotionbox()
   window->disableConfineToMotionbox();
 }
 
-void			MainWindow::confineToMousebox(int x1, int y1, int x2, int y2)
+void			MainWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 {
   window->confineToMotionbox(x1, y1, x2, y2);
 }
