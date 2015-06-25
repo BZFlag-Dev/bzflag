@@ -2915,11 +2915,11 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
 	yMax = (float)atof(nubs->get(2).c_str());
 	zMin = (float)atof(nubs->get(3).c_str());
 	zMax = (float)atof(nubs->get(4).c_str());
-	_radius = (float)atof(nubs->get(5).c_str());
+	radius = (float)atof(nubs->get(5).c_str());
 
 	bz_debugMessagef(0, "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
 	bz_debugMessagef(0, "  position %.0f %.0f %.0f", xMax, yMax, zMin);
-	bz_debugMessagef(0, "  radius %.0f", _radius);
+	bz_debugMessagef(0, "  radius %.0f", radius);
 	bz_debugMessagef(0, "  height %.0f", (zMax - zMin));
       }
       else if ((key == "POSITION" || key == "POS") && nubs->size() > 3)
