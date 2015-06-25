@@ -32,7 +32,7 @@ dist_font_DATA = \
 	DejaVuSansMonoBold_48.fmt \
 	DejaVuSansMonoBold_48.png \
 	DejaVuSansMonoBold_64.fmt \
-	DejaVuSansMonoBold_64.png
+	DejaVuSansMonoBold_64.png \
 	readme
 
 MAINTAINERCLEANFILES = \
