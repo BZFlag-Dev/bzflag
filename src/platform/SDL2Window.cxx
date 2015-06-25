@@ -37,6 +37,20 @@ void SDLWindow::iconify(void) {
   SDL_MinimizeWindow(windowId);
 }
 
+
+void SDLWindow::disableConfineToMotionbox() {
+  SDL_SetWindowGrab(windowId, SDL_FALSE);
+}
+
+
+void SDLWindow::confineToMotionbox(int x1, int y1, int x2, int y2) {
+  if(! SDL_GetWindowGrab(windowId))
+    SDL_SetWindowGrab(windowId, SDL_TRUE);
+
+  BzfWindow::confineToMotionbox(x1, y1, x2, y2);
+}
+
+
 void SDLWindow::warpMouse(int _x, int _y) {
   SDL_WarpMouseInWindow(windowId, _x, _y);
 }
