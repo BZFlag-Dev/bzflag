@@ -233,7 +233,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 {
   const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
-  majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
+  majorFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   majorFontSize = floorf(s);
   majorFontHeight = fm.getStrHeight(majorFontFace, majorFontSize, " ");
 }

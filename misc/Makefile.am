@@ -22,7 +22,6 @@ EXTRA_DIST =				\
 	filter.txt			\
 	fonts/DejaVuSansCondensed-Bold.ttf	\
 	fonts/DejaVuSansMono-Bold.ttf	\
-	fonts/DejaVuSerif-Bold.ttf	\
 	fonts/LICENSE.DejaVu		\
 	fonts/README			\
 	groups.conf			\

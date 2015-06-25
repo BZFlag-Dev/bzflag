@@ -300,9 +300,10 @@ void updateConfigFile(void)
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
   
-  case 4: // Upgrade 2.4.0 to 2.4.2
+  case 4: // Upgrade 2.4.0 (or 2.4.2, since the config file version was not incremented) to 2.4.4
     BZDB.unset("displayZoom");		// removed in r22109
     BZDB.unset("radarShotLineType");	// existed only in r22117
+    BZDB.unset("serifFont");		// serif font was removed
     break;
 
   default: // hm, we don't know about this one...
