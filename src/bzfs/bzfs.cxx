@@ -1720,9 +1720,9 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
 
   // if multiple teams remain, eliminate all but those with the lowest total player scores
   if (teams.size() > 1) {
-    int *totalPlayerScores = new int[teams.size()];
+    std::vector<int> totalPlayerScores;
     for (int i = 0; i < (int) teams.size(); ++i)
-      totalPlayerScores[i] = 0;
+      totalPlayerScores.push_back(0);
 
     for (int i = 0; i < GameKeeper::Player::count(); ++i) {
       GameKeeper::Player *thisPlayer = GameKeeper::Player::getPlayerByIndex(i);
@@ -1745,18 +1745,15 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
     for (int i = 1; i < (int) teams.size(); ++i)
       if (totalPlayerScores[i] < minScore)
         minScore = totalPlayerScores[i];
-    int teamIndex = 0;         // not incremented if a vector element is erased
-    int scoresArrayIndex = 0;  // always incremented
-    while (teamIndex < (int) teams.size()) {
-      if (totalPlayerScores[scoresArrayIndex] > minScore)
-        teams.erase(teams.begin() + teamIndex);
-      else
-        ++teamIndex;
-
-      ++scoresArrayIndex;
+    int i = 0;
+    while (i < (int) teams.size()) {
+      if (totalPlayerScores[i] > minScore) {
+        teams.erase(teams.begin() + i);
+        totalPlayerScores.erase(totalPlayerScores.begin() + i);
+      } else {
+        ++i;
+     }
     }
-
-    delete[] totalPlayerScores;
   }
 
   return teams[rand() % teams.size()].color;
