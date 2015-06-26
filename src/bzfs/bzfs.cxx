@@ -1751,6 +1751,8 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
         teams.erase(teams.begin() + i);
       else
         ++i;
+
+    delete[] totalPlayerScores;
   }
 
   return teams[rand() % teams.size()].color;
