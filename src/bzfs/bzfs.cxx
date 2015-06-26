@@ -1745,12 +1745,16 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
     for (int i = 1; i < (int) teams.size(); ++i)
       if (totalPlayerScores[i] < minScore)
         minScore = totalPlayerScores[i];
-    int i = 0;
-    while (i < (int) teams.size())
-      if (totalPlayerScores[i] > minScore)
-        teams.erase(teams.begin() + i);
+    int teamIndex = 0;         // not incremented if a vector element is erased
+    int scoresArrayIndex = 0;  // always incremented
+    while (teamIndex < (int) teams.size()) {
+      if (totalPlayerScores[scoresArrayIndex] > minScore)
+        teams.erase(teams.begin() + teamIndex);
       else
-        ++i;
+        ++teamIndex;
+
+      ++scoresArrayIndex;
+    }
 
     delete[] totalPlayerScores;
   }
