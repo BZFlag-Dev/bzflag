@@ -1697,20 +1697,20 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
     return RogueTeam;
 
   // see if the player's choice was a weak team
-  for (int i = 0; i < (int) teams.size(); i++)
+  for (unsigned int i = 0; i < teams.size(); i++)
     if (teams[i].color == t)
       return t;
 
   // for CTF games, eliminate all but the lowest-scoring teams
   if (clOptions->gameType == ClassicCTF) {
     int minScore = team[teams[0].color].team.getWins() - team[teams[0].color].team.getLosses();
-    for (int i = 1; i < (int) teams.size(); ++i) {
+    for (unsigned int i = 1; i < teams.size(); ++i) {
       int teamScore = team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses();
       if (teamScore < minScore)
         minScore = teamScore;
     }
-    int i = 0;
-    while (i < (int) teams.size())
+    unsigned int i = 0;
+    while (i < teams.size())
       if (team[teams[i].color].team.getWins() - team[teams[i].color].team.getLosses() > minScore
           && team[teams[i].color].team.size > 0) // don't exclude teams with no members
         teams.erase(teams.begin() + i);
@@ -1721,7 +1721,7 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
   // if multiple teams remain, eliminate all but those with the lowest total player scores
   if (teams.size() > 1) {
     std::vector<int> totalPlayerScores;
-    for (int i = 0; i < (int) teams.size(); ++i)
+    for (unsigned int i = 0; i < teams.size(); ++i)
       totalPlayerScores.push_back(0);
 
     for (int i = 0; i < GameKeeper::Player::count(); ++i) {
@@ -1742,11 +1742,11 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
     }
 
     int minScore = totalPlayerScores[0];
-    for (int i = 1; i < (int) teams.size(); ++i)
+    for (unsigned int i = 1; i < teams.size(); ++i)
       if (totalPlayerScores[i] < minScore)
         minScore = totalPlayerScores[i];
-    int i = 0;
-    while (i < (int) teams.size()) {
+    unsigned int i = 0;
+    while (i < teams.size()) {
       if (totalPlayerScores[i] > minScore) {
         teams.erase(teams.begin() + i);
         totalPlayerScores.erase(totalPlayerScores.begin() + i);
