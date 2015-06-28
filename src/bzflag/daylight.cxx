@@ -17,7 +17,7 @@
 #include "StateDatabase.h"
 #include "ParseColor.h"
 
-static const double	radPerDeg = M_PI / 180.0;
+static const double	radPerDeg = DEG2RAD;
 static const double	radPerHour = M_PI / 12.0;
 static const double	siderealHoursPerHour = 1.002737908;
 static const double	epoch = 2415020.0;
@@ -49,7 +49,7 @@ static void		gettruePosition(double julianDay,
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
-						longitude * M_PI / 180.0);
+						longitude * DEG2RAD);
 
   // rotate around polar axis (y-axis) by local sidereal time
   float tx = float(sx * cosf(localSidereal) - sz * sinf(localSidereal));
@@ -58,8 +58,8 @@ static void		gettruePosition(double julianDay,
 
   // rotate by latitude to local position
   pos[0] = tx;
-  pos[1] = ty * cosf((float)(latitude*M_PI/180.0)) - tz * sinf((float)(latitude*M_PI/180.0));
-  pos[2] = tz * cosf((float)(latitude*M_PI/180.0)) + ty * sinf((float)(latitude*M_PI/180.0));
+  pos[1] = ty * cosf(latitude * DEG2RADf) - tz * sinf(latitude * DEG2RADf);
+  pos[2] = tz * cosf(latitude * DEG2RADf) + ty * sinf(latitude * DEG2RADf);
 }
 
 void			getCelestialTransform(double julianDay,
@@ -68,7 +68,7 @@ void			getCelestialTransform(double julianDay,
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
-						longitude * M_PI / 180.0);
+						longitude * DEG2RAD);
 
   // localSidereal is the amount the celestial sphere should be
   // rotated from the vernal equinox about the celestial axis.
@@ -79,8 +79,8 @@ void			getCelestialTransform(double julianDay,
   // north.
   const float cls = cosf(localSidereal);
   const float sls = sinf(localSidereal);
-  const float cla = cosf((float)(latitude * M_PI / 180.0));
-  const float sla = sinf((float)(latitude * M_PI / 180.0));
+  const float cla = cosf(latitude * DEG2RADf);
+  const float sla = sinf(latitude * DEG2RADf);
 
   // constant stuff
   xform[0][3] = xform[1][3] = xform[2][3] = 0.0f;

@@ -253,8 +253,8 @@ void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
     hscl = 1.0f;
   } else {
     // the angle points from the end of the flag to the pole
-    const float cos_val = cosf(angle * (float)(M_PI / 180.0f));
-    const float sin_val = sinf(angle * (float)(M_PI / 180.0f));
+    const float cos_val = cosf(angle * DEG2RADf);
+    const float sin_val = sinf(angle * DEG2RADf);
     const float force = (wind[0] * sin_val) - (wind[1] * cos_val);
     const float angleScale = 25.0f;
     angle = fmodf(angle + (force * dt * angleScale), 360.0f);

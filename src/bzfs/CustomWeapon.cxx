@@ -87,7 +87,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input) {
       std::cout << "weapon tilt requires a value" << std::endl;
     }
     // convert to radians
-    tilt = (float)(tilt * (M_PI / 180.0));
+    tilt *= DEG2RADf;
   }
   else if (strcmp(cmd, "trigger") == 0) {
     std::string triggerName;

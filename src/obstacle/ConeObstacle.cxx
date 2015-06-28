@@ -152,7 +152,7 @@ MeshObstacle* ConeObstacle::makeMesh()
   if (a < -360.0f) {
     a = -360.0f;
   }
-  a = a * (float)(M_PI / 180.0); // convert to radians
+  a *= DEG2RADf; // convert to radians
   if (a < 0.0f) {
     r = r + a;
     a = -a;

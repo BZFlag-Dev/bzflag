@@ -4988,7 +4988,7 @@ void		leaveGame()
   targetPoint[0] = eyePoint[0] - 1.0f;
   targetPoint[1] = eyePoint[1] + 0.0f;
   targetPoint[2] = eyePoint[2] + 0.0f;
-  sceneRenderer->getViewFrustum().setProjection((float)(60.0 * M_PI / 180.0),
+  sceneRenderer->getViewFrustum().setProjection(60.0f * DEG2RADf,
 						NearPlaneNormal,
 						FarPlaneDefault,
 						FarDeepPlaneDefault,
@@ -5532,7 +5532,7 @@ void drawFrame(const float dt)
 	fov *= 0.75f;
       }
     }
-    fov *= (float)(M_PI / 180.0);
+    fov *= DEG2RADf;
 
     // set projection and view
     eyePoint[0] = myTankPos[0];
@@ -5625,9 +5625,9 @@ void drawFrame(const float dt)
       // free Roaming
       else {
 	float dir[3];
-	dir[0] = cosf((float)(roam->phi * M_PI / 180.0)) * cosf((float)(roam->theta * M_PI / 180.0));
-	dir[1] = cosf((float)(roam->phi * M_PI / 180.0)) * sinf((float)(roam->theta * M_PI / 180.0));
-	dir[2] = sinf((float)(roam->phi * M_PI / 180.0));
+	dir[0] = cosf(roam->phi * DEG2RADf) * cosf(roam->theta * DEG2RADf);
+	dir[1] = cosf(roam->phi * DEG2RADf) * sinf(roam->theta * DEG2RADf);
+	dir[2] = sinf(roam->phi * DEG2RADf);
 	eyePoint[0] = roam->pos[0];
 	eyePoint[1] = roam->pos[1];
 	eyePoint[2] = roam->pos[2];
@@ -5639,10 +5639,10 @@ void drawFrame(const float dt)
       if (!devDriving) {
 	float virtPos[] = {eyePoint[0], eyePoint[1], 0};
 	if (myTank) {
-	  myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
+	  myTank->move(virtPos, roamViewAngle * DEG2RADf);
 	}
       }
-      fov = (float)(roam->zoom * M_PI / 180.0);
+      fov = roam->zoom * DEG2RADf;
       moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
     }
 
@@ -6111,8 +6111,8 @@ static void roamSmoothFollow(Roaming::RoamingCamera& deltaCamera)
   };
 
   const float theta = ROAM.getCamera()->theta;
-  const float c = cosf(theta * (float)(M_PI / 180.0f));
-  const float s = sinf(theta * (float)(M_PI / 180.0f));
+  const float c = cosf(theta * DEG2RADf);
+  const float s = sinf(theta * DEG2RADf);
   const float f[2] = { +c, +s };
   const float r[2] = { +s, -c };
 
@@ -7042,7 +7042,7 @@ static void		findFastConfiguration()
   float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
   static const GLfloat eyePoint[3] = { 0.0f, 0.0f, muzzleHeight };
   static const GLfloat targetPoint[3] = { 0.0f, 10.0f, muzzleHeight };
-  sceneRenderer->getViewFrustum().setProjection((float)(45.0 * M_PI / 180.0),
+  sceneRenderer->getViewFrustum().setProjection(45.0f * DEG2RADf,
 						NearPlaneNormal,
 						FarPlaneDefault,
 						FarDeepPlaneDefault,

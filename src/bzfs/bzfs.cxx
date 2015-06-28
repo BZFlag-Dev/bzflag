@@ -1010,9 +1010,7 @@ void makeWalls ( void )
   double startAngle = -angleDelta*0.5;
   double radius = sqrt(halfSize*halfSize + halfSize*halfSize);
 
-  float degToRad = (float)(M_PI/180.0);
-
-  double segmentLen = (sin(angleDelta*0.5*(degToRad)) * radius)*2;
+  double segmentLen = (sin(angleDelta*0.5*DEG2RAD) * radius)*2;
 
   if(0)
   {
@@ -1021,10 +1019,10 @@ void makeWalls ( void )
       float midpointRad = sqrtf((float)radius*(float)radius-((float)segmentLen*0.5f)*((float)segmentLen*0.5f));
       float midpointAngle = (float)startAngle + ((float)angleDelta*0.5f) + ((float)angleDelta*w);
 
-      float x = sinf(midpointAngle*degToRad)*midpointRad;
-      float y = cosf(midpointAngle*degToRad)*midpointRad;
+      float x = sinf(midpointAngle*DEG2RADf)*midpointRad;
+      float y = cosf(midpointAngle*DEG2RADf)*midpointRad;
 
-      world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*degToRad, (float)segmentLen, wallHeight);
+      world->addWall(x, y, 0.0f, (270.0f-midpointAngle)*DEG2RADf, (float)segmentLen, wallHeight);
 
     }
   }

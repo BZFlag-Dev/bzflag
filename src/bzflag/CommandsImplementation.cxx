@@ -620,7 +620,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
     } else {
       const float degrees = parseFloatExpr(tokens[0], true);
       const float ws = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
-      const float radians = degrees * ((float)M_PI/180.0f);
+      const float radians = degrees * DEG2RADf;
       cam.pos[0] = cosf(radians)* 0.5f * ws * (float)M_SQRT2;
       cam.pos[1] = sinf(radians)* 0.5f * ws * (float)M_SQRT2;
       cam.pos[2] = +0.25f * ws;

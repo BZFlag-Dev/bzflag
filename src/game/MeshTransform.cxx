@@ -566,7 +566,7 @@ void MeshTransform::addShear(const float shear[3])
 
 void MeshTransform::addSpin(const float degrees, const float normal[3])
 {
-  const float radians = (float)(degrees * (M_PI / 180.0));
+  const float radians = degrees * DEG2RADf;
   TransformData transform;
   memcpy(transform.data, normal, sizeof(float[3]));
   transform.data[3] = radians;

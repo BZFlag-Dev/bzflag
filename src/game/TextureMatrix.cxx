@@ -282,7 +282,7 @@ void TextureMatrix::finalize()
 
   if (useStatic) {
     // setup the staticMatrix
-    const float radians = rotation * (float)(M_PI / 180.0);
+    const float radians = rotation * DEG2RADf;
 
     shift(staticMatrix, -(uFixedShift + uFixedCenter),
 			-(vFixedShift + vFixedCenter));

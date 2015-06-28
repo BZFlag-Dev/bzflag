@@ -547,7 +547,7 @@ void MeshDrawInfo::updateAnimation(double time)
 {
   if (animInfo != NULL) {
     const float angle = (float)fmod((double)animInfo->angvel * time, 360.0);
-    const float radians = angle * (float)(M_PI / 180.0);
+    const float radians = angle * DEG2RADf;
     animInfo->angle = angle;
     animInfo->cos_val = cosf(radians);
     animInfo->sin_val = sinf(radians);

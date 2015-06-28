@@ -464,7 +464,7 @@ static void updateList(TrackList& list, float dt)
 	// cull the track marks if they aren't supported
 	float markPos[3];
 	markPos[2] = te.pos[2] - TextureHeightOffset;
-	const float radians = (float)(te.angle * (M_PI / 180.0));
+	const float radians = te.angle * DEG2RADf;
 	const float dx = -sinf(radians) * TreadMiddle;
 	const float dy = +cosf(radians) * TreadMiddle;
 	// left tread

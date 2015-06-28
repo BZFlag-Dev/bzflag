@@ -469,7 +469,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
   float worldSize = BZDBCache::worldSize;
   const float moonRadius = 2.0f * worldSize *
-				atanf((float)((60.0 * M_PI / 180.0) / 60.0));
+				atanf((float)((60.0 * DEG2RAD) / 60.0));
   // limbAngle is dependent on moon position but sun is so much farther
   // away that the moon's position is negligible.  rotate sun and moon
   // so that moon is on the horizon in the +x direction, then compute
@@ -1600,7 +1600,7 @@ void BackgroundRenderer::doInitDisplayLists()
   // sun first.  sun is a disk that should be about a half a degree wide
   // with a normal (60 degree) perspective.
   const float worldSize = BZDBCache::worldSize;
-  const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*M_PI/180.0)) / 60.0);
+  const float sunRadius = (float)(2.0 * worldSize * atanf((float)(60.0*DEG2RAD)) / 60.0);
   sunList = glGenLists(1);
   glNewList(sunList, GL_COMPILE);
   {
