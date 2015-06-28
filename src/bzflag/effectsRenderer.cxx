@@ -253,9 +253,6 @@ static void drawRingXY(float rad, float z, float topsideOffset = 0,
 		       int segments = 32);
 static void RadialToCartesian(float angle, float rad, float *pos);
 
-#define deg2Rad 0.017453292519943295769236907684886f
-
-
 EffectsRenderer::EffectsRenderer()
 {
 }
@@ -937,7 +934,7 @@ void StdShotEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0],pos[1],pos[2]);
-	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
+	glRotatef(180+rotation[2]/DEG2RADf,0,0,1);
 
 	//TODO: _muzzleFront and _muzzleHeight (4.42 and 1.57) should be
 	// the same as the tank model's muzzle (4.94 and 1.53).
@@ -1016,7 +1013,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0],pos[1],pos[2]);
-	glRotatef(270+rotation[2]/deg2Rad,0,0,1);
+	glRotatef(270+rotation[2]/DEG2RADf,0,0,1);
 	glTranslatef(0.0f, 0.52f, -0.04f);
 
 	//barrel roll to camera
@@ -1030,7 +1027,7 @@ void FlashShotEffect::draw(const SceneRenderer &)
 	//             - camerapos[1] * sin(-rotation[2]);
 	camerapos[1] = camerapos[1] * cos(-rotation[2])
 	             + camerapos[0] * sin(-rotation[2]);
-	glRotatef(270 - atan(camerapos[1] / camerapos[2]) / deg2Rad +
+	glRotatef(270 - atan(camerapos[1] / camerapos[2]) / DEG2RADf +
 	    (camerapos[2] >= 0 ? 180 : 0), //for a single-sided face
 	    0,1,0);
 
@@ -1190,7 +1187,7 @@ void RingsDeathEffect::draw(const SceneRenderer &)
 	glPushMatrix();
 
 	glTranslatef(position[0],position[1],position[2]);
-	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
+	glRotatef(180+rotation[2]/DEG2RADf,0,0,1);
 
 	ringState.setState();
 
@@ -1291,7 +1288,7 @@ void SpikesDeathEffect::draw(const SceneRenderer &)
 	glPushMatrix();
 
 	glTranslatef(position[0],position[1],position[2]);
-	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
+	glRotatef(180+rotation[2]/DEG2RADf,0,0,1);
 
 	color[0] = 108.0f/256.0f;
 	color[1] = 16.0f/256.0f;
@@ -1444,8 +1441,8 @@ void StdGMPuffEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0],pos[1],pos[2]);
-	glRotatef(180+rotation[2]/deg2Rad,0,0,1);
-	glRotatef(rotation[1]/deg2Rad,0,1,0);
+	glRotatef(180+rotation[2]/DEG2RADf,0,0,1);
+	glRotatef(rotation[1]/DEG2RADf,0,1,0);
 
 	ringState.setState();
 
@@ -1629,8 +1626,8 @@ void StdRicoEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0],pos[1],pos[2]);
-	glRotatef((rotation[2]/deg2Rad)+180,0,0,1);
-	glRotatef(rotation[1]/deg2Rad,0,1,0);
+	glRotatef((rotation[2]/DEG2RADf)+180,0,0,1);
+	glRotatef(rotation[1]/DEG2RADf,0,1,0);
 
 	ringState.setState();
 
@@ -1700,8 +1697,8 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 	pos[2] = position[2] + velocity[2] * age;
 
 	glTranslatef(pos[0],pos[1],pos[2]);
-	glRotatef((rotation[2]/deg2Rad),0,0,1);
-	glRotatef(rotation[1]/deg2Rad,0,1,0);
+	glRotatef((rotation[2]/DEG2RADf),0,0,1);
+	glRotatef(rotation[1]/DEG2RADf,0,1,0);
 	glRotatef(age*90,1,0,0);
 
 	ringState.setState();
@@ -1727,8 +1724,8 @@ void StdShotTeleportEffect::draw(const SceneRenderer &)
 
 static void RadialToCartesian(float angle, float rad, float *pos)
 {
-	pos[0] = sinf(angle*deg2Rad)*rad;
-	pos[1] = cosf(angle*deg2Rad)*rad;
+	pos[0] = sinf(angle*DEG2RADf)*rad;
+	pos[1] = cosf(angle*DEG2RADf)*rad;
 }
 
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
