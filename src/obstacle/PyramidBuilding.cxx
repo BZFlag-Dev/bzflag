@@ -471,7 +471,7 @@ void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
 				 << _pos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
 			     << " " << getHeight() << std::endl;
-  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+  out << indent << "  rotation " << (getRotation() * RAD2DEGf)
 				 << std::endl;
   if (getZFlip()) {
     out << indent << "  flipz" << std::endl;
@@ -527,7 +527,7 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(inde
     {k*s[1], 0.0f}, {0.5f*k*s[1], k*sqrtf(s[1]*s[1]+s[2]*s[2])}
   };
   MeshTransform xform;
-  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float degrees = getRotation() * RAD2DEGf;
   const float zAxis[3] = {0.0f, 0.0f, +1.0f};
   if (getZFlip()) {
     const float xAxis[3] = {1.0f, 0.0f, 0.0f};

@@ -288,7 +288,7 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
 				 << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
 			     << " " << getHeight() << std::endl;
-  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+  out << indent << "  rotation " << (getRotation() * RAD2DEGf)
 				 << std::endl;
   out << indent << "  color " << getTeam() << std::endl;
   if (isPassable()) {
@@ -339,7 +339,7 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
     {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
   };
   MeshTransform xform;
-  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float degrees = getRotation() * RAD2DEGf;
   const float zAxis[3] = {0.0f, 0.0f, +1.0f};
   xform.addScale(getSize());
   xform.addSpin(degrees, zAxis);

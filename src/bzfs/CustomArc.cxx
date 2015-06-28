@@ -153,7 +153,7 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     const float zAxis[3] = {0.0f, 0.0f, 1.0f};
     const float origin[3] = {0.0f, 0.0f, 0.0f};
     MeshTransform xform;
-    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
+    xform.addSpin(rotation * RAD2DEGf, zAxis);
     xform.addShift(pos);
     xform.append(transform);
     float newSize[3];

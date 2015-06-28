@@ -707,7 +707,7 @@ void MeshTransform::printTransforms(std::ostream& out,
 	break;
       }
       case SpinTransform: {
-	const float degrees = (float)(d[3] * (180.0 / M_PI));
+	const float degrees = d[3] * RAD2DEGf;
 	out << indent << "  spin " << degrees << " "
 		      << d[0] << " " << d[1] << " " << d[2] << std::endl;
 	break;

@@ -142,9 +142,8 @@ void TankSceneNode::setJumpJetsTexture(const int texture)
 
 void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 {
-  const float rad2deg = (float)(180.0 / M_PI);
-  azimuth = rad2deg * atan2f(forward[1], forward[0]);
-  elevation = -rad2deg * atan2f(forward[2], hypotf(forward[0], forward[1]));
+  azimuth = RAD2DEGf * atan2f(forward[1], forward[0]);
+  elevation = -RAD2DEGf * atan2f(forward[2], hypotf(forward[0], forward[1]));
   setCenter(pos);
 
   // setup the extents

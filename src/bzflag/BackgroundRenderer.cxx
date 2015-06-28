@@ -453,9 +453,9 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   glNewList(sunXFormList, GL_COMPILE);
   {
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * 180.0 / M_PI),
+    glRotatef((GLfloat)(atan2f(sunDirection[1], (sunDirection[0])) * RAD2DEGf),
 							0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(sunDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
+    glRotatef((GLfloat)(asinf(sunDirection[2]) * RAD2DEGf), 0.0f, -1.0f, 0.0f);
     glCallList(sunList);
     glPopMatrix();
   }
@@ -487,10 +487,10 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   glNewList(moonList, GL_COMPILE);
   {
     glPushMatrix();
-    glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * 180.0 / M_PI),
+    glRotatef((GLfloat)(atan2f(moonDirection[1], moonDirection[0]) * RAD2DEGf),
 							0.0f, 0.0f, 1.0f);
-    glRotatef((GLfloat)(asinf(moonDirection[2]) * 180.0 / M_PI), 0.0f, -1.0f, 0.0f);
-    glRotatef((float)(limbAngle * 180.0 / M_PI), 1.0f, 0.0f, 0.0f);
+    glRotatef((GLfloat)(asinf(moonDirection[2]) * RAD2DEGf), 0.0f, -1.0f, 0.0f);
+    glRotatef((float)(limbAngle * RAD2DEGf), 1.0f, 0.0f, 0.0f);
     glBegin(GL_TRIANGLE_STRIP);
     // glTexCoord2f(0,-1);
     glVertex3f(2.0f * worldSize, 0.0f, -moonRadius);

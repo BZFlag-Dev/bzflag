@@ -289,7 +289,7 @@ void CustomBox::writeToGroupDef(GroupDefinition *groupdef) const
   MeshTransform xform;
   const float zAxis[3] = {0.0f, 0.0f, 1.0f};
   xform.addScale(size);
-  xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
+  xform.addSpin(rotation * RAD2DEGf, zAxis);
   xform.addShift(pos);
   xform.append(transform);
 

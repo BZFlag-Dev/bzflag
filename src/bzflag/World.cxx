@@ -1152,7 +1152,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
       }
       out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
 			   << weapon.pos[2] << std::endl;
-      out << indent << "  rotation " << ((weapon.dir * 180.0) / M_PI) << std::endl;
+      out << indent << "  rotation " << (weapon.dir * RAD2DEGf) << std::endl;
       out << indent << "  initdelay " << weapon.initDelay << std::endl;
       if (!weapon.delay.empty()) {
 	out << indent << "  delay";
@@ -1176,7 +1176,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 			   << zone.pos[2] << std::endl;
       out << indent << "  size " << zone.size[0] << " " << zone.size[1] << " "
 		       << zone.size[2] << std::endl;
-      out << indent << "  rotation " << ((zone.rot * 180.0) / M_PI) << std::endl;
+      out << indent << "  rotation " << (zone.rot * RAD2DEGf) << std::endl;
       if (!zone.flags.empty()) {
 	out << indent << "  flag";
 	std::vector<FlagType*>::iterator fit;

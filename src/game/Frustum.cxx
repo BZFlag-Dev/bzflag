@@ -161,8 +161,8 @@ void Frustum::setView(const float* _eye, const float* _target)
 
   // setup tilt and angle
   const float* dir = plane[0];
-  tilt = (float)((180.0 / M_PI) * atan2((double)dir[2], 1.0));
-  rotation = (float)((180.0 / M_PI) * atan2((double)dir[1], (double)dir[2]));
+  tilt = RAD2DEGf * atan2f(dir[2], 1.0f);
+  rotation = RAD2DEGf * atan2f(dir[1], dir[2]);
 }
 
 

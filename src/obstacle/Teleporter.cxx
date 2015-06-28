@@ -592,7 +592,7 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
 				 << _pos[2] << std::endl;
   out << indent << "  size " << origSize[0] << " " << origSize[1] << " "
 			     << origSize[2] << std::endl;
-  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+  out << indent << "  rotation " << (getRotation() * RAD2DEGf)
 				 << std::endl;
   out << indent << "  border " << getBorder() << std::endl;
   if (horizontal) {
@@ -636,7 +636,7 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) 
     {0.0f, 0.0f}, {1.0f, 0.0f}, {1.0f, 1.0f}, {0.0f, 1.0f}
   };
   MeshTransform xform;
-  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float degrees = getRotation() * RAD2DEGf;
   const float zAxis[3] = {0.0f, 0.0f, +1.0f};
   xform.addScale(getSize());
   xform.addSpin(degrees, zAxis);

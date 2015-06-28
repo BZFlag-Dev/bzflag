@@ -5620,7 +5620,7 @@ void drawFrame(const float dt)
 	  }
 	}
 	roamViewAngle = (float) (atan2(targetPoint[1]-eyePoint[1],
-				       targetPoint[0]-eyePoint[0]) * 180.0f / M_PI);
+				       targetPoint[0]-eyePoint[0]) * RAD2DEG);
       }
       // free Roaming
       else {
@@ -6621,7 +6621,7 @@ static void		playingLoop()
 	  }
         } else {
           int button = -1; // buttons are counted clockwise to left
-          float angle = atan2(hatY, hatX) * 180 / (float)M_PI;
+          float angle = atan2f(hatY, hatX) * RAD2DEGf;
           for (int b = -1; b < num_buttons; b++) {
 	    float testangle = -180 + 2 * variance * (b + 1); // -180 to 180 by 45
 	    if (testangle - variance <= angle && angle < testangle + variance) {

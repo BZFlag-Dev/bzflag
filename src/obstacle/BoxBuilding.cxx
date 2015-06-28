@@ -273,7 +273,7 @@ void BoxBuilding::print(std::ostream& out, const std::string& indent) const
 				 << myPos[2] << std::endl;
   out << indent << "  size " << getWidth() << " " << getBreadth()
 			     << " " << getHeight() << std::endl;
-  out << indent << "  rotation " << ((getRotation() * 180.0) / M_PI)
+  out << indent << "  rotation " << (getRotation() * RAD2DEGf)
 				 << std::endl;
   if (isPassable()) {
     out << indent << "  passable" << std::endl;
@@ -326,7 +326,7 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent))
     {k*s[1], 0.0f}, {k*s[1], k*s[2]}, {k*s[0], k*s[1]}, {0.0f, k*s[1]}
   };
   MeshTransform xform;
-  const float degrees = getRotation() * (float)(180.0 / M_PI);
+  const float degrees = getRotation() * RAD2DEGf;
   const float zAxis[3] = {0.0f, 0.0f, +1.0f};
   xform.addScale(s);
   xform.addSpin(degrees, zAxis);

@@ -332,7 +332,7 @@ void			HUDRenderer::setTeamHasHighScore(bool hasHigh)
 
 void			HUDRenderer::setHeading(float angle)
 {
-  heading = (float)(90.0 - 180.0 * angle / M_PI);
+  heading = 90.0f - RAD2DEGf * angle;
   while (heading < 0.0f) heading += 360.0f;
   while (heading >= 360.0f) heading -= 360.0f;
 }
@@ -486,7 +486,7 @@ void			HUDRenderer::addMarker(float _heading, const float *_color )
   markers.resize(markers.size() + 1);
   HUDMarker &m = markers[markers.size() - 1];
 
-  _heading = (float)(90.0 - 180.0 * _heading / M_PI);
+  _heading = 90.0f - RAD2DEGf * _heading;
   while (_heading < 0.0f) _heading += 360.0f;
   while (_heading >= 360.0f) _heading -= 360.0f;
   m.heading = _heading;

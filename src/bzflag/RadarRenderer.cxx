@@ -187,13 +187,13 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
   if (useSquares || !useTankDimensions) {
     setTankColor(player);
     // align to the screen axes
-    glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef(myAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
     glRectf(-size, -size, +size, +size);
   }
   else {
     const float tankAngle = player->getAngle();
     glPushMatrix();
-    glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef(tankAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
     if (useTankModels) {
       drawFancyTank(player);
       setTankColor(player);
@@ -205,7 +205,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     glPopMatrix();
 
     // align to the screen axes
-    glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef(myAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
   }
 
   // adjust with height box size
@@ -282,7 +282,7 @@ void RadarRenderer::drawFlagOnTank(const float pos[3])
   // align it to the screen axes
   const float angle = LocalPlayer::getMyTank()->getAngle();
   glTranslatef(pos[0], pos[1], 0.0f);
-  glRotatef(float(angle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+  glRotatef(angle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
 
   float tankRadius = BZDBCache::tankRadius;
   GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
@@ -580,7 +580,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // transform to the observer's viewpoint
     glPushMatrix();
-    glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+    glRotatef(90.0f - myAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
     glPushMatrix();
     glTranslatef(-myPos[0], -myPos[1], 0.0f);
 
@@ -749,7 +749,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     if (!observer) {
       // revert to the centered transformation
-      glRotatef((float)(90.0 - myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
+      glRotatef(90.0f - myAngle * RAD2DEGf, 0.0f, 0.0f, 1.0f);
       glTranslatef(-myPos[0], -myPos[1], 0.0f);
 
       // my flag

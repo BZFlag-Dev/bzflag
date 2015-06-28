@@ -334,7 +334,7 @@ bool TrackMarks::addMark(const float pos[3], float scale, float angle,
     te.pos[2] = pos[2] + TextureHeightOffset;
   }
   te.scale = scale;
-  te.angle = (float)(angle * (180.0 / M_PI)); // in degress, for glRotatef()
+  te.angle = angle * RAD2DEGf; // in degress, for glRotatef()
 
   // only use the physics driver if it matters
   const PhysicsDriver* driver = PHYDRVMGR.getDriver(phydrv);
@@ -453,7 +453,7 @@ static void updateList(TrackList& list, float dt)
 	const float dy = te.pos[1] - ap[1];
 	te.pos[0] = ap[0] + ((cos_val * dx) - (sin_val * dy));
 	te.pos[1] = ap[1] + ((cos_val * dy) + (sin_val * dx));
-	te.angle += (float)(da * (180.0 / M_PI));
+	te.angle += da * RAD2DEGf;
       }
 
       if ((AirCull & PhyDrvAirCull) != 0) {

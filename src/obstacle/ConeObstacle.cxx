@@ -495,7 +495,7 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 				 << pos[2] << std::endl;
   out << indent << "  size " << size[0] << " " << size[1] << " "
 			     << size[2] << std::endl;
-  out << indent << "  rotation " << ((angle * 180.0) / M_PI) << std::endl;
+  out << indent << "  rotation " << (angle * RAD2DEGf) << std::endl;
   out << indent << "  angle " << sweepAngle << std::endl;
   out << indent << "  divisions " << divisions << std::endl;
 

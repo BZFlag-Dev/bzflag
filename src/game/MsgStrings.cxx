@@ -480,7 +480,7 @@ static MsgStringList handleMsgAlive (PacketInfo *pi)
   listPush (list, 1, "player: %s", strPlayer(player).c_str());
   listPush (list, 2, "pos:    %s", strVector(pos).c_str());
   listPush (list, 2, "angle:  %-8.3f = %8.3f deg",
-	   azimuth, azimuth * (180.0f / M_PI));
+	   azimuth, azimuth * RAD2DEGf);
 
   return list;
 }
@@ -816,9 +816,9 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
   listPush (list, 3, "pos:    %s", strVector (state.pos).c_str());
   listPush (list, 3, "vel:    %s", strVector (state.velocity).c_str());
   listPush (list, 3, "angle:  %-8.3f = %8.3f deg",
-	   state.azimuth, state.azimuth * (180.0f / M_PI));
+	   state.azimuth, state.azimuth * RAD2DEGf);
   listPush (list, 3, "angvel: %-8.3f = %8.3f deg/sec",
-	   state.angVel, state.angVel * (180.0f / M_PI));
+	   state.angVel, state.angVel * RAD2DEGf);
 
   return list;
 }

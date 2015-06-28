@@ -159,7 +159,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
       xform.addScale(flipScale);
       xform.addShift(flipShift);
     }
-    xform.addSpin((float)(rotation * (180.0 / M_PI)), zAxis);
+    xform.addSpin(rotation * RAD2DEGf, zAxis);
     xform.addShift(pos);
     xform.append(transform);
     float newSize[3];

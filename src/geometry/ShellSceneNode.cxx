@@ -76,8 +76,8 @@ void			ShellSceneNode::move(const GLfloat pos[3],
 						const GLfloat forward[3])
 {
   setCenter(pos);
-  azimuth = (float)(180.0 / M_PI*atan2f(forward[1], forward[0]));
-  elevation = (float)(-180.0 / M_PI*atan2f(forward[2], hypotf(forward[0],forward[1])));
+  azimuth = RAD2DEGf * atan2f(forward[1], forward[0]);
+  elevation = -RAD2DEGf * atan2f(forward[2], hypotf(forward[0],forward[1]));
 }
 
 void			ShellSceneNode::notifyStyleChange()

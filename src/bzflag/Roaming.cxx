@@ -385,9 +385,9 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt) {
     camera.pos[1] = trackPos[1] + ((c * dy) + (s * dx));
     // setup so that free roam stays in the last state
     camera.theta = atan2f(trackPos[1] - camera.pos[1], trackPos[0] - camera.pos[0]);
-    camera.theta *= (float)(180.0f / M_PI);
+    camera.theta *= RAD2DEGf;
     camera.phi = atan2f(trackPos[2] - camera.pos[2], newDist);
-    camera.phi *= (float)(180.0f / M_PI);
+    camera.phi *= RAD2DEGf;
   }
 
   // clamp phi
