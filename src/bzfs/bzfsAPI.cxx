@@ -2817,8 +2817,7 @@ BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
     }
     else // the box is rotated, maths is needed
     {
-      float pi = (float)(atan(1.0f) * 4);
-      float rotRad = (rotation * pi) / 180;
+      float rotRad = rotation * DEG2RADf;
       float height  = (yMax - yMin);
       float width   = (xMax - xMin);
       
