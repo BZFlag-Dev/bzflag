@@ -41,7 +41,7 @@ const char *fontSizes[] = {
 const char *requiredCharacters =
     " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
-const int minAntiAliasingSize = 12;
+const int minAntiAliasingSize = 0;
 
 const int paddingPixels = 2;
 
