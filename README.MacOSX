@@ -71,7 +71,7 @@ $ make glew.lib
 $ sudo make install
 $ sudo rm /usr/local/lib/libGLEW*.dylib
 
-Download the latest version of c-ares from http://http://c-ares.haxx.se.
+Download the latest version of c-ares from http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:
 
 $ export MACOSX_DEPLOYMENT_TARGET=10.7
