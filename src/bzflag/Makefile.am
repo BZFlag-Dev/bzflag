@@ -186,10 +186,6 @@ bzflag_SOURCES =			\
 	stars.h
 
 
-if BUILD_GLEW
-bzflag_SOURCES += $(top_srcdir)/src/other/glew/src/glew.c
-endif
-
 if WIN32
 RESOURCE = bzflag.res
 else
@@ -220,7 +216,6 @@ LDADD =	\
 	$(SDL_LIBS)			\
 	$(SDL_IMAGE_LIBS)		\
 	$(GLIBS)			\
-	$(GLEW_LIBS)			\
 	$(LIBCURL)			\
 	../date/libDate.la
 # This is required to hook in ogg/vorbis libraries

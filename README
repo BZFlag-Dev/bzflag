@@ -133,7 +133,6 @@ other dependencies that BZFlag automatically provides if you do not
 have them pre-installed:
 
   c-ares
-  GLEW
   libCURL
   libregex (usually provided as part of libc)
   zlib

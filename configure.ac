@@ -165,11 +165,6 @@ AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
 # compile our own curl
 AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
 
-# compile our own glew
-AC_ARG_WITH(included-glew,
-        AS_HELP_STRING([--with-included-glew],[build with included GLEW library]),
-        [enable_glew_build="$withval"], )
-
 # compile our own regex
 AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
 
@@ -183,7 +178,6 @@ AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all de
 if test "x$enable_all_builds" = "xyes" ; then
     enable_ares_build=yes
     enable_curl_build=yes
-    enable_glew_build=yes
     enable_regex_build=yes
     enable_zlib_build=yes
 fi
@@ -1081,45 +1075,6 @@ if test "x$BUILD_CURL" = "xyes" ; then
 fi
 
 
-# GLEW
-if test "x$enable_client" != "xno" ; then
-# Check for the GLEW library (GL Extension Wrangler)
-if test "x$enable_glew_build" != "xyes" ; then
-    AC_MSG_CHECKING([for GLEW library])
-    tmpLIBS=$LIBS
-    GLEW_LIBS="-lGLEW"
-    LIBS=$GLEW_LIBS
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
-		   [glew_check="yes"],
-		   [glew_check="no  (missing, or older than version 1.5.1)"])
-    if test "x$glew_check" != "xyes"; then
-	GLEW_LIBS=""
-    fi
-    AC_MSG_RESULT([$glew_check])
-    AC_SUBST(GLEW_LIBS)
-    LIBS=$tmpLIBS
-fi
-AC_MSG_CHECKING(whether to build the included GLEW library)
-BUILD_GLEW="no (using system)"
-if test "x$GLEW_LIBS" = "x" ; then
-    if test "x$enable_glew_build" = xno ; then
-	BUILD_GLEW=no
-    else
-	BUILD_GLEW="yes"
-	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
-    fi
-fi
-AC_MSG_RESULT($BUILD_GLEW)
-else # enable_client
-BUILD_GLEW="no (clients disabled)"
-AC_MSG_NOTICE([GLEW is disabled because no clients are being built])
-fi # enable_client
-AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
-if test "x$BUILD_GLEW" = xyes -o "x$glew_check" = xyes; then
-    AC_DEFINE(HAVE_GLEW, 1, [Using GLEW])
-fi
-
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then
     ECHO=echo
@@ -1370,7 +1325,6 @@ AC_MSG_RESULT([LIBS          = ${LIBS}])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
 AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
-AC_MSG_RESULT([Build glew ........: $BUILD_GLEW])
 AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
 AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
 AC_MSG_RESULT([])

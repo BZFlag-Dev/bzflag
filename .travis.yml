@@ -2,7 +2,7 @@ language: cpp
 
 before_install:
   - sudo apt-get update -qq
-  - sudo apt-get install -y g++ libtool automake autoconf libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev libc-ares-dev libglew1.5-dev zlib1g-dev libncurses-dev make
+  - sudo apt-get install -y g++ libtool automake autoconf libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev libc-ares-dev zlib1g-dev libncurses-dev make
   - git clone git://github.com/cpputest/cpputest.git
   - cd cpputest/cpputest_build
   - autoreconf .. -i
