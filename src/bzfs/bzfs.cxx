@@ -1578,7 +1578,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
   buf = nboPackUByte(buf, type);
   buf = nboPackString(buf, msg, msglen);
 
-  ((char*)bufStart)[MessageLen - 1 + 2] = '\0'; // always terminate
+  ((char*)bufStart)[MessageLen - 1 + 3] = '\0'; // always terminate
 
   int len = 3 + msglen;
   bool broadcast = false;
