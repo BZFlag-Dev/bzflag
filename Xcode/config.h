@@ -95,9 +95,6 @@
 /* libm includes fmodf */
 #define HAVE_FMODF 1
 
-/* Using GLEW */
-#define HAVE_GLEW 1
-
 /* Define to 1 if you have the `hstrerror' function. */
 #define HAVE_HSTRERROR 1
 
