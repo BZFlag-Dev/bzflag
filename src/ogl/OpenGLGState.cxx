@@ -1168,13 +1168,6 @@ void OpenGLGState::init()
     return;
   }
 
-  // setup the GLEW library
-#ifdef HAVE_GLEW
-  if (glewInit() != GLEW_OK) {
-    logDebugMessage(0,"GLEW initialization failed");
-  }
-#endif
-
   // initialize GL state to what we expect
   initGLState();
 
@@ -1219,13 +1212,6 @@ void OpenGLGState::initContext()
     logDebugMessage(3,"OpenGLGState::initContext(), no context\n");
     return;
   }
-
-  // setup the GLEW library
-#ifdef HAVE_GLEW
-  if (glewInit() != GLEW_OK) {
-    logDebugMessage(0,"GLEW initialization failed");
-  }
-#endif
 
   // call all of the freeing functions first
   logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");

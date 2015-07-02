@@ -19,6 +19,7 @@
 #include "FontManager.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "OpenGLUtils.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -113,8 +114,8 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setLabel("Anisotropic:");
   option->setCallback(callback, "A");
   options = &option->getList();
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_texture_filter_anisotropic) {
+
+  if(isGLExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
@@ -130,9 +131,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   } else {
     options->push_back(std::string("Unavailable"));
   }
-#else
-  options->push_back(std::string("Unavailable"));
-#endif
   option->update();
   listHUD.push_back(option);
 

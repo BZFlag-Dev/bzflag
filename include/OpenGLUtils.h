@@ -122,6 +122,9 @@ class DisplayListSystem
 };
 
 
+bool isGLExtensionSupported(const char* extensionName);
+
+
 #endif // __OPENGLUTILS_H__
 
 

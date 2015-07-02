@@ -22,6 +22,7 @@
 #include "bzfgl.h"
 #include "OpenGLTexture.h"
 #include "OpenGLGState.h"
+#include "OpenGLUtils.h"
 
 #ifndef _WIN32
 typedef int64_t s64;
@@ -275,12 +276,10 @@ void OpenGLTexture::setFilter(Filter _filter)
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_texture_filter_anisotropic) {
+  if(isGLExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
     GLint aniso = BZDB.evalInt("aniso");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
   }
-#endif
   glBindTexture(GL_TEXTURE_2D, binding);
 }
 

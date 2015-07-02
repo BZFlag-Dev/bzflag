@@ -47,29 +47,16 @@ be able to build using the traditional autotools method. See the README file
 for further information. You will still need to install the SDL 2 framework as
 detailed below.
 
-BZFlag has three external dependencies: SDL 2, GLEW, and c-ares.
+BZFlag has two external dependencies: SDL 2 and c-ares.
 
 Download the latest version of the SDL 2 framework from
 https://www.libsdl.org/download-2.0.php. Version 2.0.4 or later is required.
 Mount the disk image and place the file "SDL2.framework" in your
 /Library/Frameworks directory (an administrator's account may be required).
 
-This project expects the GLEW and c-ares libraries and headers to be located in
-/usr/local. If you install them elsewhere, you must update the library and
+This project expects the c-ares library and header files to be located in
+/usr/local. If you install it elsewhere, you must update the library and
 header search paths in this project file appropriately.
-
-Download the latest version of GLEW from
-https://github.com/nigels-com/glew/releases. Extract the package, and then
-build it with the following commands (WARNING: this will remove all shared
-libraries for GLEW under /usr/local, even older versions you may have
-installed; this is necessary because it appears there is currently no way to
-configure GLEW to build without shared libraries):
-
-$ export MACOSX_DEPLOYMENT_TARGET=10.7
-$ export GLEW_DEST=/usr/local
-$ make glew.lib
-$ sudo make install
-$ sudo rm /usr/local/lib/libGLEW*.dylib
 
 Download the latest version of c-ares from http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:

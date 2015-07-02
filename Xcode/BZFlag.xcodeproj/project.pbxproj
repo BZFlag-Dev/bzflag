@@ -457,7 +457,6 @@
 		03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E3166C692B00DDDBEB /* libz.dylib */; };
 		03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
-		03DBE9AF1B30D31E00711E71 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AE1B30D31E00711E71 /* libGLEW.a */; };
 		03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9BB1B30E12300711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
@@ -1703,7 +1702,6 @@
 		03D926E3166C692B00DDDBEB /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		03D926E5166C6AB500DDDBEB /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
 		03DBE9AC1B30D2ED00711E71 /* libcares.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcares.a; path = /usr/local/lib/libcares.a; sourceTree = "<absolute>"; };
-		03DBE9AE1B30D31E00711E71 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/lib/libGLEW.a; sourceTree = "<absolute>"; };
 		03DBE9BA1B30E12300711E71 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
@@ -2099,7 +2097,6 @@
 				03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */,
 				03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */,
 				03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */,
-				03DBE9AF1B30D31E00711E71 /* libGLEW.a in Frameworks */,
 				03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3437,7 +3434,6 @@
 				03D926E5166C6AB500DDDBEB /* libncurses.dylib */,
 				03D926E3166C692B00DDDBEB /* libz.dylib */,
 				03D926E1166C68E700DDDBEB /* libcurl.dylib */,
-				03DBE9AE1B30D31E00711E71 /* libGLEW.a */,
 				03DBE9AC1B30D2ED00711E71 /* libcares.a */,
 			);
 			name = Frameworks;

@@ -15,6 +15,7 @@
 
 // system headers
 #include <math.h>
+#include <sstream>
 
 // common headers
 #include "bzfgl.h"
@@ -544,6 +545,23 @@ void DisplayListSystem::callListsV (std::vector<GLDisplayList> &displayLists)
 DisplayListSystem::DisplayListSystem()
 {
   lastList = 0;
+}
+
+
+// utility to check if an OpenGL extension is supported on this system
+bool isGLExtensionSupported(const char* extensionName) {
+  std::stringstream extensionsStream;
+  extensionsStream.str((const char*) glGetString(GL_EXTENSIONS));
+
+  while(! extensionsStream.eof()) {
+    std::string thisExtension;
+    extensionsStream >> thisExtension;
+
+    if(thisExtension == extensionName)
+      return true;
+  }
+
+  return false;
 }
 
 // Local Variables: ***
