@@ -4,7 +4,8 @@
 BZFlag 2.4.3
 ------------
 
-* Made text at top of HUD uses sans-serif font and removed serif font
+* Removed GLEW as a dependency - Joshua Bodine
+* Made text at top of HUD use sans-serif font and removed serif font
 		- Joshua Bodine
 * Team/player scores are now factors in auto team assignment - Joshua Bodine
 * New font rendering tool and new font textures up to 64pt - Joshua Bodine
