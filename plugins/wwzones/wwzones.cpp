@@ -9,10 +9,8 @@ class WWINFO
 public:
 	WWINFO()
 	{
-		pi = 3.14159265358979323846;
 		tickTime = 0.5;
 	}
-	double pi;
 	double tickTime;
 };
 
@@ -128,9 +126,9 @@ bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *d
 				newZone.zoneWeaponPosition[1] = (float)atof(nubs->get(4).c_str());
 				newZone.zoneWeaponPosition[2] = (float)atof(nubs->get(5).c_str());
 				newZone.zoneWeaponTilt = (float)atof(nubs->get(6).c_str());
-				newZone.zoneWeaponTilt = (newZone.zoneWeaponTilt / 360) * (2 * (float)wwinfo.pi);
+				newZone.zoneWeaponTilt = (newZone.zoneWeaponTilt / 360) * (2 * (float)M_PI);
 				newZone.zoneWeaponDirection = (float)atof(nubs->get(7).c_str());
-				newZone.zoneWeaponDirection = (newZone.zoneWeaponDirection / 360) * (2 * (float)wwinfo.pi);
+				newZone.zoneWeaponDirection = (newZone.zoneWeaponDirection / 360) * (2 * (float)M_PI);
 				newZone.zoneWeaponShotID = (int)atoi(nubs->get(8).c_str());
 				newZone.zoneWeaponDT = (float)atof(nubs->get(9).c_str());
 			}

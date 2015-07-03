@@ -82,14 +82,13 @@ public:
     WWRepeat = 0.5;
     WWFired = false;
     WWLastFired = 0;
-    pi = M_PI;
   }
 
   bool zonekillhunter;
 
   bz_ApiString WW;
   float WWLifetime, WWPosition[3], WWTilt, WWDirection, WWDT;
-  double pi, WWLastFired, WWRepeat;
+  double WWLastFired, WWRepeat;
   bool WWFired;
   int WWShotID;
 
@@ -130,9 +129,9 @@ bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *
 	newZone.WWPosition[1] = (float)atof(nubs->get(4).c_str());
 	newZone.WWPosition[2] = (float)atof(nubs->get(5).c_str());
 	newZone.WWTilt = (float)atof(nubs->get(6).c_str());
-	newZone.WWTilt = (newZone.WWTilt / 360) * (2 * (float)newZone.pi);
+	newZone.WWTilt = (newZone.WWTilt / 360) * (2 * (float)M_PI);
 	newZone.WWDirection = (float)atof(nubs->get(7).c_str());
-	newZone.WWDirection = (newZone.WWDirection / 360) * (2 * (float)newZone.pi);
+	newZone.WWDirection = (newZone.WWDirection / 360) * (2 * (float)M_PI);
 	newZone.WWShotID = (int)atoi(nubs->get(8).c_str());
 	newZone.WWDT = (float)atof(nubs->get(9).c_str());
 	newZone.WWRepeat = (float)atof(nubs->get(10).c_str());
