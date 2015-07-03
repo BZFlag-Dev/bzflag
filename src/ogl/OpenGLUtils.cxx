@@ -549,15 +549,16 @@ DisplayListSystem::DisplayListSystem()
 
 
 // utility to check if an OpenGL extension is supported on this system
-bool isGLExtensionSupported(const char* extensionName) {
+bool isGLExtensionSupported(const char* extensionName)
+{
   std::stringstream extensionsStream;
   extensionsStream.str((const char*) glGetString(GL_EXTENSIONS));
 
-  while(! extensionsStream.eof()) {
+  while (!extensionsStream.eof()) {
     std::string thisExtension;
     extensionsStream >> thisExtension;
 
-    if(thisExtension == extensionName)
+    if (thisExtension == extensionName)
       return true;
   }
 

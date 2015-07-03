@@ -115,7 +115,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setCallback(callback, "A");
   options = &option->getList();
 
-  if(isGLExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
+  if (isGLExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
@@ -234,7 +234,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("FPS Limit"));
-  if(getMainWindow()->getWindow()->hasVerticalSync())
+  if (getMainWindow()->getWindow()->hasVerticalSync())
     options->push_back(std::string("Vertical Sync"));
   option->update();
   listHUD.push_back(option);
