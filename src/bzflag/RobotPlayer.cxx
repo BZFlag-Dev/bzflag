@@ -52,7 +52,7 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
   double omega=fabs(targ->getAngularVelocity());
   double sx,sy;
 
-  if ((targ->getStatus() & PlayerState::Falling) || fabs(omega) < 2*M_PI / 360 * 0.5)
+  if ((targ->getStatus() & PlayerState::Falling) || omega < DEG2RAD * 0.5)
   {
     sx=t*hisvx;
     sy=t*hisvy;
@@ -61,7 +61,7 @@ void RobotPlayer::projectPosition(const Player *targ,const float t,float &x,floa
   {
     double hisspeed = hypotf(hisvx, hisvy);
     double alfa = omega * t;
-    double r = hisspeed / fabs(omega);
+    double r = hisspeed / omega;
     double dx = r * sin(alfa);
     double dy2 = r * (1 - cos(alfa));
     double beta = atan2(dy2, dx) * (targ->getAngularVelocity() > 0 ? 1 : -1);
