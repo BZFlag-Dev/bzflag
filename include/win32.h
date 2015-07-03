@@ -27,20 +27,8 @@
 #define	MAXFLOAT	FLT_MAX
 #endif
 
-#if (_MSC_VER > 1200) // VC7 or higher
-	#define _USE_MATH_DEFINES
-#else	// vc6 and lower needs em
-	#ifndef M_PI
-	#define	M_PI		3.14159265358979323846f
-	#endif
-	#ifndef M_SQRT1_2
-	#define	M_SQRT1_2	0.70710678118654752440f
-	#endif
-	#ifndef  M_SQRT2
-	#define	 M_SQRT2	 1.41421356237309504880f
-	#endif
-#endif
-
+// Define this so that the math.h defines M_PI, M_SQRT2, and similar
+#define _USE_MATH_DEFINES
 
 // missing types
 
