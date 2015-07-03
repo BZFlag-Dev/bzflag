@@ -31,7 +31,6 @@ game independent, platform independent, external libraries
 ----------------------------------------------------------
 src/other/ares		- c-ares asynchronous resolver
 src/other/curl		- cURL library for transferring data with a URL
-src/other/glew		- OpenGL Extension Wrangler Library
 src/other/regex		- BSD regular expression library
 src/other/zlib		- Zlib compression library
 

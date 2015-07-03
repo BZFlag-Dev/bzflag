@@ -30,8 +30,7 @@ SUBDIRS = \
 
 # include the files for subconfigured packages as needed left out of the dist
 EXTRA_DIST = \
-	PDCurses \
-	glew
+	PDCurses
 
 MAINTAINERCLEANFILES = \
 	Makefile.in \

@@ -30,6 +30,15 @@
 # error OpenGL version 1.1 functionality is required
 #endif
 
+// Windows, at least, needs to have GL_TEXTURE_MAX_ANISOTROPY_EXT defined.
+// Copied this from GLEW.
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
+#endif
+
 /* These will track glBegin/End pairs to make sure that they match */
 #ifdef DEBUG
 #include <assert.h>
