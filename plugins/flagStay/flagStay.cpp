@@ -2,6 +2,7 @@
 //
 
 #include "bzfsAPI.h"
+#include <algorithm>
 #include <map>
 #include <cmath>
 
