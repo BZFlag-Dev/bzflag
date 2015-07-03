@@ -64,14 +64,12 @@ public:
 
 RRZoneInfo rrzoneinfo;
 
-class RabidRabbitZone
+class RabidRabbitZone : public bz_CustomZoneObject
 {
 public:
   RabidRabbitZone()
   {
     zonekillhunter = false;
-    box = false;
-    xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
     WW = "";
     WWLifetime = 0;
     WWPosition[0] = 0;
@@ -84,13 +82,10 @@ public:
     WWRepeat = 0.5;
     WWFired = false;
     WWLastFired = 0;
-    pi = 3.14159265358979323846;
+    pi = M_PI;
   }
 
   bool zonekillhunter;
-  bool box;
-  float xMax,xMin,yMax,yMin,zMax,zMin;
-  float rad;
 
   bz_ApiString WW;
   float WWLifetime, WWPosition[3], WWTilt, WWDirection, WWDT;
@@ -100,33 +95,6 @@ public:
 
   std::string playermessage;
   std::string servermessage;
-
-  bool pointIn(float pos[3])
-  {
-    if (box) {
-      if (pos[0] > xMax || pos[0] < xMin)
-	return false;
-
-      if (pos[1] > yMax || pos[1] < yMin)
-	return false;
-
-      if (pos[2] > zMax || pos[2] < zMin)
-	return false;
-    } else {
-      float vec[3];
-      vec[0] = pos[0]-xMax;
-      vec[1] = pos[1]-yMax;
-      vec[2] = pos[2]-zMax;
-
-      float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-      if (dist > rad)
-	return false;
-
-      if (pos[2] > zMax || pos[2] < zMin)
-	return false;
-    }
-    return true;
-  }
 };
 
 std::vector <RabidRabbitZone> zoneList;
@@ -143,6 +111,7 @@ bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *
     return false;
 
   RabidRabbitZone newZone;
+  newZone.handleDefaultOptions(data);
 
   // parse all the chunks
   for (unsigned int i = 0; i < data->data.size(); i++) {
@@ -154,22 +123,7 @@ bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *
     if (nubs->size() > 0) {
       std::string key = bz_toupper(nubs->get(0).c_str());
 
-      if (key == "BBOX" && nubs->size() > 6) {
-	newZone.box = true;
-	newZone.xMin = (float)atof(nubs->get(1).c_str());
-	newZone.xMax = (float)atof(nubs->get(2).c_str());
-	newZone.yMin = (float)atof(nubs->get(3).c_str());
-	newZone.yMax = (float)atof(nubs->get(4).c_str());
-	newZone.zMin = (float)atof(nubs->get(5).c_str());
-	newZone.zMax = (float)atof(nubs->get(6).c_str());
-      } else if (key == "CYLINDER" && nubs->size() > 5) {
-	newZone.box = false;
-	newZone.rad = (float)atof(nubs->get(5).c_str());
-	newZone.xMax =(float)atof(nubs->get(1).c_str());
-	newZone.yMax =(float)atof(nubs->get(2).c_str());
-	newZone.zMin =(float)atof(nubs->get(3).c_str());
-	newZone.zMax =(float)atof(nubs->get(4).c_str());
-      } else if (key == "RRZONEWW" && nubs->size() > 10) {
+      if (key == "RRZONEWW" && nubs->size() > 10) {
 	newZone.WW = nubs->get(1);
 	newZone.WWLifetime = (float)atof(nubs->get(2).c_str());
 	newZone.WWPosition[0] = (float)atof(nubs->get(3).c_str());
@@ -275,7 +229,7 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
     if (player) {
 
       for (unsigned int i = 0; i < zoneList.size(); i++) {
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
 	    rrzoneinfo.currentKillZone != i && !rrzoneinfo.rabbitNotifiedWrongZone) {
 	  bz_sendTextMessage(BZ_SERVER,player->playerID,
@@ -284,13 +238,13 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (!zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (!zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
 	    rrzoneinfo.rabbitNotifiedWrongZone &&
 	    rrzoneinfo.rabbitNotifiedWrongZoneNum == i)
 	  rrzoneinfo.rabbitNotifiedWrongZone = false;
 
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team == eRabbitTeam &&
 	    rrzoneinfo.currentKillZone == i &&
@@ -309,7 +263,7 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team != eRabbitTeam &&
 	    zoneList[i].zonekillhunter) {
