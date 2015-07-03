@@ -128,10 +128,8 @@ bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *
 	newZone.WWPosition[0] = (float)atof(nubs->get(3).c_str());
 	newZone.WWPosition[1] = (float)atof(nubs->get(4).c_str());
 	newZone.WWPosition[2] = (float)atof(nubs->get(5).c_str());
-	newZone.WWTilt = (float)atof(nubs->get(6).c_str());
-	newZone.WWTilt = (newZone.WWTilt / 360) * (2 * (float)M_PI);
-	newZone.WWDirection = (float)atof(nubs->get(7).c_str());
-	newZone.WWDirection = (newZone.WWDirection / 360) * (2 * (float)M_PI);
+	newZone.WWTilt = (float)(atof(nubs->get(6).c_str()) * M_PI/180.0);	// convert degrees to radians
+	newZone.WWDirection = (float)(atof(nubs->get(7).c_str()) * M_PI/180.0);	// convert degrees to radians
 	newZone.WWShotID = (int)atoi(nubs->get(8).c_str());
 	newZone.WWDT = (float)atof(nubs->get(9).c_str());
 	newZone.WWRepeat = (float)atof(nubs->get(10).c_str());

@@ -125,10 +125,8 @@ bool WWZEventHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo *d
 				newZone.zoneWeaponPosition[0] = (float)atof(nubs->get(3).c_str());
 				newZone.zoneWeaponPosition[1] = (float)atof(nubs->get(4).c_str());
 				newZone.zoneWeaponPosition[2] = (float)atof(nubs->get(5).c_str());
-				newZone.zoneWeaponTilt = (float)atof(nubs->get(6).c_str());
-				newZone.zoneWeaponTilt = (newZone.zoneWeaponTilt / 360) * (2 * (float)M_PI);
-				newZone.zoneWeaponDirection = (float)atof(nubs->get(7).c_str());
-				newZone.zoneWeaponDirection = (newZone.zoneWeaponDirection / 360) * (2 * (float)M_PI);
+				newZone.zoneWeaponTilt = (float)(atof(nubs->get(6).c_str()) * M_PI/180.0);	// convert degrees to radians
+				newZone.zoneWeaponDirection = (float)(atof(nubs->get(7).c_str()) * M_PI/180.0);	// convert degrees to radians
 				newZone.zoneWeaponShotID = (int)atoi(nubs->get(8).c_str());
 				newZone.zoneWeaponDT = (float)atof(nubs->get(9).c_str());
 			}
