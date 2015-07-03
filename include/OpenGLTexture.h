@@ -106,6 +106,7 @@ class OpenGLTexture {
     void  operator delete(void *p) {::operator delete(p);}
 
     bool	alpha;
+    bool	anisotropicFiltering;
     const int	width;
     const int	height;
     GLint	scaledWidth;
@@ -158,4 +159,3 @@ inline int		OpenGLTexture::getHeight() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

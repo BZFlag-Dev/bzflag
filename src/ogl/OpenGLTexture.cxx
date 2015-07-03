@@ -77,6 +77,7 @@ OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
 			   width(_width), height(_height)
 {
   alpha = false;
+  anisotropicFiltering = isGLExtensionSupported("GL_EXT_texture_filter_anisotropic");
   repeat = _repeat;
   internalFormat = _internalFormat;
   filter = _filter;
@@ -276,7 +277,7 @@ void OpenGLTexture::setFilter(Filter _filter)
   glBindTexture(GL_TEXTURE_2D, list);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minifyFilter[filterIndex]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magnifyFilter[filterIndex]);
-  if(isGLExtensionSupported("GL_EXT_texture_filter_anisotropic")) {
+  if (anisotropicFiltering) {
     GLint aniso = BZDB.evalInt("aniso");
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, aniso);
   }
