@@ -1257,12 +1257,15 @@ if test "x$enable_client" = "xno"; then
     fi
 else
     if test x$with_SDL != xno; then
-	build_bzflag="yes (with SDL)"
+	if test x$with_SDL2 != xno; then
+	    build_bzflag="yes (with SDL2)"
+	else
+	    build_bzflag="yes (with SDL)"
+	fi
     else
 	build_bzflag="yes"
     fi
 fi
-
 if test "x$enable_plugins" != xno ; then
     build_bzfs="yes (with plugins)"
 else
