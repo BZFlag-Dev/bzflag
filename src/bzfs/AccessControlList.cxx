@@ -252,29 +252,33 @@ static std::string makeGlobPattern(const char* str)
 
 std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr)
 {
+  // Check for out of range CIDR
+  if (cidr == 0 || cidr > 32)
+    return "";
+
   std::ostringstream os;
-  if (cidr == 8) {
-    os << (ntohl(mask.s_addr) >> 24);
-    os << ".*.*.*";
-  }
-  else if (cidr == 16) {
+
+  // Generate /8, /16, and /24 in the wildcard format, and show /32 without
+  // a CIDR
+  if (cidr == 8 || cidr == 16 || cidr == 24 || cidr == 32) {
     os << (ntohl(mask.s_addr) >> 24) << '.';
-    os << ((ntohl(mask.s_addr) >> 16) & 0xff);
-    os << ".*.*";
-  }
-  else if (cidr == 24) {
-    os << (ntohl(mask.s_addr) >> 24) << '.';
-    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
-    os << ((ntohl(mask.s_addr) >> 8) & 0xff);
-    os << ".*";
-  }
-  else if (cidr == 32) {
-    os << (ntohl(mask.s_addr) >> 24) << '.';
-    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
-    os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
-    os << (ntohl(mask.s_addr) & 0xff);
-  }
-  else if (cidr > 0 && cidr <= 32) {
+    if (cidr == 8) {
+      os << "*.*.*";
+    } else {
+      os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+      if (cidr == 16) {
+	os << "*.*";
+      } else {
+	os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
+	if (cidr == 24) {
+	  os << "*";
+	} else {
+	  os << (ntohl(mask.s_addr) & 0xff);
+	}
+      }
+    }
+  } else {
+    // Handle other CIDR values
     // TODO: Is there a better way of zeroing out the host bits?
     mask.s_addr = htonl(ntohl(mask.s_addr) & ~((1 << (32 - cidr)) - 1));
 
