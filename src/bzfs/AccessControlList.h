@@ -33,6 +33,13 @@ struct BanInfo
 	  unsigned char _cidr = 32, bool isFromMaster = false ) {
     memcpy( &addr, &banAddr, sizeof( in_addr ));
     cidr = _cidr;
+
+	// Zero out the host bits
+	// TODO: Is there a better way of zeroing out the host bits?
+	if (cidr > 0 || cidr < 32) {
+		addr.s_addr = htonl(ntohl(addr.s_addr) & ~((1 << (32 - cidr)) - 1));
+	}
+
     if (_bannedBy)
       bannedBy = _bannedBy;
     if (period == 0) {
@@ -52,7 +59,7 @@ struct BanInfo
     return addr.s_addr != rhs.addr.s_addr || cidr != rhs.cidr;
   }
 
-  bool contains(in_addr &checkAddr) {
+  bool contains(const in_addr &checkAddr) {
     // CIDR of 0 matches everything
     if (cidr < 1) return true;
     // CIDR of 32 means it has to be an exact match
@@ -170,13 +177,13 @@ public:
 
   /** This function takes a list of addresses as a string and tries to ban them
       using the given parameters. The string should be comma separated,
-      like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
+      like this: "1.2.3.4,5.6.7.8,9.10.11.12/28". */
   bool ban(std::string &ipList, const char *bannedBy=NULL, int period = 0,
 	   const char *reason=NULL, bool fromMaster = false);
 
   /** This function takes a list of addresses as a <code>const char*</code>
       and tries to ban them using the given parameters. The string should be
-      comma separated, like this: "1.2.3.4,5.6.7.8,9.10.11.12". */
+      comma separated, like this: "1.2.3.4,5.6.7.8,9.10.11.12/28". */
   bool ban(const char *ipList, const char *bannedBy=NULL, int period = 0,
 	   const char *reason=NULL, bool fromMaster = false);
 
@@ -195,7 +202,7 @@ public:
   /** This function removes any ban for the address @c ipAddr.
       @returns @c true if there was a ban for that address, @c false if there
       wasn't. */
-  bool unban(in_addr &ipAddr);
+  bool unban(in_addr &ipAddr, unsigned char cidr);
 
   /** This function unbans any addresses given in @c ipList, which should be
       a comma separated string in the same format as in the ban() functions.
@@ -267,7 +274,7 @@ public:
       presumably so it can be remerged */
   void purgeMasters(void);
 
-  std::string getBanMaskString(in_addr mask);
+  std::string getBanMaskString(in_addr mask, unsigned char cidr);
 
   std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
 
@@ -285,7 +292,7 @@ public:
 private:
   /** This function converts a <code>char*</code> containing an IP mask to an
       @c in_addr. */
-  bool convert(char *ip, in_addr &mask);
+  bool convert(std::string ip, in_addr &mask, unsigned char &cidr);
 
   /** This function checks all bans to see if any of them have expired,
       and removes those who have. */
@@ -314,4 +321,3 @@ inline void AccessControlList::setBanFile(const std::string& filename) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

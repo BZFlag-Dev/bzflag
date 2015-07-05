@@ -34,8 +34,10 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 
+#if !defined(CPPUTEST)
 // bzfs specific headers
 #include "bzfs.h"
+#endif // CPPUTEST
 
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
@@ -68,17 +70,18 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
   bool added = false;
 
   in_addr mask;
+  unsigned char cidr;
   while ((pSep = strchr(pStart, ',')) != NULL) {
     *pSep = 0;
-    if (convert(pStart, mask)) {
-      ban(mask, bannedBy, period, 32, NULL, fromMaster);
+    if (convert(pStart, mask, cidr)) {
+      ban(mask, bannedBy, period, cidr, NULL, fromMaster);
       added = true;
     }
     *pSep = ',';
     pStart = pSep + 1;
   }
-  if (convert(pStart, mask)) {
-    ban(mask, bannedBy, period, 32, reason, fromMaster);
+  if (convert(pStart, mask, cidr)) {
+    ban(mask, bannedBy, period, cidr, reason, fromMaster);
     added = true;
   }
   free(buf);
@@ -114,9 +117,9 @@ void AccessControlList::idBan(std::string idpat, const char *bannedBy, int perio
 }
 
 
-bool AccessControlList::unban(in_addr &ipAddr)
+bool AccessControlList::unban(in_addr &ipAddr, unsigned char cidr)
 {
-  banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr));
+  banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr, "", 0, cidr));
   if (it != banList.end()) {
     banList.erase(it, banList.end());
     return true;
@@ -139,15 +142,16 @@ bool AccessControlList::unban(const char *ipList)
   bool success = false;
 
   in_addr mask;
+  unsigned char cidr;
   while ((pSep = strchr(pStart, ',')) != NULL) {
     *pSep = 0;
-    if (convert(pStart, mask))
-      success|=unban(mask);
+    if (convert(pStart, mask, cidr))
+      success|=unban(mask, cidr);
     *pSep = ',';
     pStart = pSep + 1;
   }
-  if (convert(pStart, mask))
-    success|=unban(mask);
+  if (convert(pStart, mask, cidr))
+    success|=unban(mask, cidr);
   free(buf);
   return success;
 }
@@ -181,17 +185,7 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
 
   const in_addr_t player_ip = ntohl(ipAddr.s_addr);
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
-    in_addr_t banned = ntohl(it->addr.s_addr);
-
-    if ((banned & 0x00ffffff) == 0x00ffffff)		// class A
-      banned = (banned & 0xff000000) | (player_ip & 0x00ffffff);
-    else if ((banned & 0x0000ffff) == 0x0000ffff)	// class B
-      banned = (banned & 0xffff0000) | (player_ip & 0x0000ffff);
-    else if ((banned & 0x000000ff) == 0x000000ff)	// class C
-      banned = (banned & 0xffffff00) | (player_ip & 0x000000ff);
-    // else the IP address represents a single host
-
-    if (player_ip == banned) {
+    if (it->contains(ipAddr)) {
       if (info)
 	*info = *it;
       return false;
@@ -256,33 +250,50 @@ static std::string makeGlobPattern(const char* str)
   return pattern;
 }
 
-
-std::string AccessControlList::getBanMaskString(in_addr mask)
+std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr)
 {
   std::ostringstream os;
-  os << (ntohl(mask.s_addr) >> 24) << '.';
-  if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-    os << "*.*.*";
-  } else {
-    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
-    if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-      os << "*.*";
-    } else {
-      os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
-      if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	os << "*";
-      else
-	os << (ntohl(mask.s_addr) & 0xff);
-    }
+  if (cidr == 8) {
+    os << (ntohl(mask.s_addr) >> 24);
+    os << ".*.*.*";
   }
+  else if (cidr == 16) {
+    os << (ntohl(mask.s_addr) >> 24) << '.';
+    os << ((ntohl(mask.s_addr) >> 16) & 0xff);
+    os << ".*.*";
+  }
+  else if (cidr == 24) {
+    os << (ntohl(mask.s_addr) >> 24) << '.';
+    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+    os << ((ntohl(mask.s_addr) >> 8) & 0xff);
+    os << ".*";
+  }
+  else if (cidr == 32) {
+    os << (ntohl(mask.s_addr) >> 24) << '.';
+    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+    os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
+    os << (ntohl(mask.s_addr) & 0xff);
+  }
+  else if (cidr > 0 && cidr <= 32) {
+    // TODO: Is there a better way of zeroing out the host bits?
+    mask.s_addr = htonl(ntohl(mask.s_addr) & ~((1 << (32 - cidr)) - 1));
+
+    os << (ntohl(mask.s_addr) >> 24) << '.';
+    os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+    os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
+    os << (ntohl(mask.s_addr) & 0xff);
+    os << '/' << (unsigned int)cidr;
+  }
+
   return os.str();
 }
 
 
+#if !defined(CPPUTEST)
 void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 {
   std::ostringstream os;
-  os << getBanMaskString(baninfo.addr);
+  os << getBanMaskString(baninfo.addr, baninfo.cidr);
 
   // print duration when < 1 year
   double duration = baninfo.banEnd - TimeKeeper::getCurrent();
@@ -316,7 +327,7 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (bi.fromMaster &&
-	(glob_match(glob, getBanMaskString(bi.addr)) ||
+	(glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
 	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
 	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
@@ -327,7 +338,7 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     const BanInfo& bi = *it;
     if (!bi.fromMaster &&
-	(glob_match(glob, getBanMaskString(bi.addr)) ||
+	(glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
 	 glob_match(glob, TextUtils::toupper(bi.reason)) ||
 	 glob_match(glob, TextUtils::toupper(bi.bannedBy)))) {
       sendBan(id, *it);
@@ -502,12 +513,14 @@ bool AccessControlList::load() {
       idBan(bzId, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
 	    (reason.size() > 0 ? reason.c_str() : NULL));
     } else {
-      std::string::size_type n;
-      while ((n = ipAddress.find('*')) != std::string::npos) {
-	ipAddress.replace(n, 1, "255");
+      // Handle CIDR ban formats
+      in_addr ip;
+      unsigned char cidr;
+      if (convert(ipAddress, ip, cidr)) {
+	ban(ip, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
+	    cidr, (reason.size() > 0 ? reason.c_str() : NULL));
       }
-      if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
-	       (reason.size() > 0 ? reason.c_str() : NULL))) {
+      else {
 	logDebugMessage(3,"Banfile: bad ban\n");
 	return false;
       }
@@ -600,23 +613,7 @@ void AccessControlList::save() {
   for (banList_t::const_iterator it = banList.begin(); it != banList.end(); ++it) {
     if (!it->fromMaster) {	// don't save stuff from the master list
       // print address
-      in_addr mask = it->addr;
-      os << ((ntohl(mask.s_addr) >> 24) % 256) << '.';
-      if ((ntohl(mask.s_addr) & 0x00ffffff) == 0x00ffffff) {
-	os << "*.*.*";
-      } else {
-	os << ((ntohl(mask.s_addr) >> 16) % 256) << '.';
-	if ((ntohl(mask.s_addr) & 0x0000ffff) == 0x0000ffff) {
-	  os << "*.*";
-	} else {
-	  os << ((ntohl(mask.s_addr) >> 8) % 256) << '.';
-	  if ((ntohl(mask.s_addr) & 0x000000ff) == 0x000000ff)
-	    os << "*";
-	  else
-	    os << (ntohl(mask.s_addr) % 256);
-	}
-      }
-      os << '\n';
+      os << getBanMaskString(it->addr, it->cidr) << '\n';
 
       // print ban end, banner, and reason
       if (it->banEnd.getSeconds() ==
@@ -744,31 +741,72 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
 
   return bans;
 }
+#endif
 
-
-bool AccessControlList::convert(char *ip, in_addr &mask) {
+bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_cidr) {
+  std::vector<std::string> ipParts;
   unsigned char b[4];
-  char *pPeriod;
+  unsigned char cidr = 32;
 
-  for (int i = 0; i < 3; i++) {
-    pPeriod = strchr(ip, '.');
-    if (pPeriod) {
-      *pPeriod = 0;
-      if (strcmp("*", ip) == 0)
-	b[i] = 255;
-      else
-	b[i] = atoi(ip);
-      *pPeriod = '.';
-      ip = pPeriod + 1;
-    } else {
+  // Check if we have a CIDR and pull it off if so
+  if (ip.find("/") != std::string::npos) {
+    // CIDR bans can't also contain wildcards
+    if (ip.find("*") != std::string::npos)
       return false;
+
+    // Split it into the IP and CIDR parts
+    std::vector<std::string> ipcidrParts = TextUtils::tokenize(ip, "/");
+
+    // If we do not have exactly two parts, bail
+    if (ipcidrParts.size() != 2)
+      return false;
+
+    // Split the IP octets
+    ipParts = TextUtils::tokenize(ipcidrParts[0], ".");
+
+    // If we do not have exactly four parts, bail
+    if (ipParts.size() != 4)
+      return false;
+
+    // Convert the CIDR string to a numeric value
+    cidr = atoi(ipcidrParts[1].c_str());
+
+    // Validate CIDR value
+    if (cidr <= 0 || cidr > 32)
+      return false;
+  }
+  else {
+    // Split the IP octets
+    ipParts = TextUtils::tokenize(ip, ".");
+
+    // If we do not have exactly four parts, bail
+    if (ipParts.size() != 4)
+      return false;
+
+    // Check for wildcards
+    if (ipParts[3] == "*") {
+      cidr = 24;
+      ipParts[3] = "0";
+      if (ipParts[2] == "*") {
+	cidr = 16;
+	ipParts[2] = "0";
+	if (ipParts[1] == "*") {
+	  cidr = 8;
+	  ipParts[1] = "0";
+	  // Don't allow *.*.*.*
+	  if (ipParts[0] == "*")
+	    return false;
+	}
+      }
     }
   }
-  if (strcmp("*", ip) == 0)
-    b[3] = 255;
-  else
-    b[3] = atoi(ip);
 
+  for (int i = 0; i <= 3; i++) {
+    b[i] = atoi(ipParts[i].c_str());
+    // TODO: Check for out of range values?
+  }
+
+  _cidr = cidr;
   mask.s_addr= htonl(((unsigned int)b[0] << 24) |
 		     ((unsigned int)b[1] << 16) |
 		     ((unsigned int)b[2] << 8)  |

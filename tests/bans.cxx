@@ -82,6 +82,28 @@ TEST(Bans, IPBanContains)
   CHECK_TEXT(!classC1.contains(ip5), "Class A negative match test failure.");
 }
 
+TEST(Bans, BanMaskString)
+{
+  in_addr ip1;
+  ip1.s_addr = inet_addr("127.5.35.135");
+
+  AccessControlList acl;
+
+  std::string exact = acl.getBanMaskString(ip1, 32);
+  std::string cidr24 = acl.getBanMaskString(ip1, 24);
+  std::string cidr16 = acl.getBanMaskString(ip1, 16);
+  std::string cidr8 = acl.getBanMaskString(ip1, 8);
+  std::string cidr25 = acl.getBanMaskString(ip1, 25);
+  std::string cidr19 = acl.getBanMaskString(ip1, 19);
+  
+  CHECK_TEXT(exact == "127.5.35.135", std::string("Exact IP mask generation failed: " + exact + " != 127.5.7.135").c_str());
+  CHECK_TEXT(cidr24 == "127.5.35.*", std::string("CIDR /24 mask generation failed: " + cidr24 + " != 127.5.7.*").c_str());
+  CHECK_TEXT(cidr16 == "127.5.*.*", std::string("CIDR /16 mask generation failed: " + cidr16 + " != 127.5.*.*").c_str());
+  CHECK_TEXT(cidr8 == "127.*.*.*", std::string("CIDR /8 mask generation failed: " + cidr8 + " != 127.*.*.*").c_str());
+  CHECK_TEXT(cidr25 == "127.5.35.128/25", std::string("CIDR /25 mask generation failed: " + cidr25 + " != 127.5.7.128/25").c_str());
+  CHECK_TEXT(cidr19 == "127.5.32.0/19", std::string("CIDR /19 mask generation failed: " + cidr19 + " != 127.5.32.0/19").c_str());
+}
+
 
 // Local Variables: ***
 // mode:C++ ***
