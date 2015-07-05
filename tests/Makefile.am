@@ -1,12 +1,11 @@
-if BUILD_CPPUTESTS
-bin_PROGRAMS = unittests
+check_PROGRAMS = unittests
 
 unittests_SOURCES = \
         tests.cxx \
-	bans.cxx
+	bans.cxx \
+	../src/bzfs/AccessControlList.cxx
 
 unittests_CXXFLAGS = -lCppUTest
-endif
 
 EXTRA_DIST = 
 
@@ -16,7 +15,8 @@ MAINTAINERCLEANFILES = \
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/src/bzfs \
 	$(CONF_CPPFLAGS) \
-	-I$(top_srcdir)/include
+	-I$(top_srcdir)/include \
+	-DCPPUTEST
 AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
