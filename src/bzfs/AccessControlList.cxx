@@ -183,7 +183,6 @@ bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
 {
   expire();
 
-  const in_addr_t player_ip = ntohl(ipAddr.s_addr);
   for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it) {
     if (it->contains(ipAddr)) {
       if (info)
