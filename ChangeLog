@@ -10,15 +10,14 @@ BZFlag 2.4.3
 * Team/player scores are now factors in auto team assignment - Joshua Bodine
 * New font rendering tool and new font textures up to 64pt - Joshua Bodine
 * Add bz_getPlayerBySlotOrCallsign API function - Vladimir Jimenez
-* Have custom permissions show in /showperms and /groupperms
-		- Vladimir Jimenez
+* Have custom permissions show in /showperms and /groupperms - Vladimir Jimenez
 * Change server list ordering - Scott Wichser
 * Start adding unit tests with CppUTest - Scott Wichser
 * CIDR ban support - Scott Wichser
 * Radar size and panel size are now set individually  - Joshua Bodine
 * Added bz_incrementTeamLosses and bz_incrementTeamWins API functions
 		- Vladimir Jimenez
-* Vertical sync support under SDL 2 - Joshua Bodine
+* Vertical sync support under SDL - Joshua Bodine
 * SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
 * Validate the teleporter indexes in MsgTeleport - Scott Wichser
