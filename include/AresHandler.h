@@ -18,11 +18,7 @@
 
 /* common implementation headers */
 #include "network.h"
-#if defined(BUILD_ARES)
-#include "../src/other/ares/ares.h"
-#else
 #include <ares.h>
-#endif
 
 class AresHandler {
  public:

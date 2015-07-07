@@ -225,10 +225,6 @@
       <Project>{ea0ef759-c4ca-45f3-b744-7d26ff1eb287}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="ares.vcxproj">
-      <Project>{417cb8f4-5ae3-45ac-b903-83db1556303c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="bzadmin.vcxproj">
       <Project>{ca597e05-fd07-4ae3-b963-81c858f26d56}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -257,10 +253,6 @@
       <Project>{7009c42e-d693-4635-95cf-23ecba63653c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="libcurl.vcxproj">
-      <Project>{cc93828f-7156-4021-9c77-9951fdadee83}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="makehtml.vcxproj">
       <Project>{91198429-3669-4c40-a294-b8593d7c4987}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -285,24 +277,12 @@
       <Project>{e5030dd4-164d-4db0-a593-fa1c76f1f2d7}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="pdcurses.vcxproj">
-      <Project>{948a0a16-9121-4cc5-828c-dc3417510068}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="platform.vcxproj">
       <Project>{12408598-00b6-487f-8f99-61b1300a15af}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="regex.vcxproj">
-      <Project>{6dd493f8-31e1-4958-a240-d157affcb07e}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="scene.vcxproj">
       <Project>{1baed535-4aef-4041-9cb5-a7dc9c14e105}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="zlib.vcxproj">
-      <Project>{cc93828f-7156-4021-9c77-9951fc187e83}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

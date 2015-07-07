@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 /* Building regex */
-#define BUILD_REGEX 1
+#define HAVE_REGEX_H 1
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
@@ -115,11 +115,6 @@
 #define HAVE_STD__MAX 1
 
 #define HAVE_ARES_LIBRARY_INIT 1
-#define BUILD_ARES 1
-
-#ifdef BUILD_ARES
-#define CARES_STATICLIB
-#endif
 
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
