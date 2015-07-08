@@ -4,7 +4,7 @@
 BZFlag 2.4.3
 ------------
 
-* Removed GLEW as a dependency - Joshua Bodine
+* Removed GLEW as a dependency - Joshua Bodine, Scott Wichser
 * Made text at top of HUD use sans-serif font and removed serif font
 		- Joshua Bodine
 * Team/player scores are now factors in auto team assignment - Joshua Bodine
