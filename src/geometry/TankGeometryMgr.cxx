@@ -42,7 +42,7 @@ using namespace TankGeometryUtils;
 static GLuint displayLists[LastTankShadow][LastTankLOD]
 			  [LastTankSize][LastTankPart];
 
-// triangle counds
+// triangle counts
 static int partTriangles[LastTankShadow][LastTankLOD]
 			[LastTankSize][LastTankPart];
 
