@@ -88,9 +88,8 @@
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Platform)"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -114,9 +113,8 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Platform)"
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -134,9 +132,8 @@ copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -157,9 +154,8 @@ copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
     </Lib>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
