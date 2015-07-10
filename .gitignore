@@ -85,8 +85,10 @@ work
 /src/bzfs/bzfs
 /tools/TextTool2/TextTool2
 /tools/modeltool/modeltool
-/bin_Win32/*
-/bin_x64/*
+/bin_Release_Win32/*
+/bin_Release_x64/*
+/bin_Debug_Win32/*
+/bin_Debug_x64/*
 
 # Misc
 *.diff
