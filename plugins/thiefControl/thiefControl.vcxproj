@@ -58,7 +58,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)thiefControl.dll</OutputFile>
-      <AdditionalLibraryDirectories>../../src/bzfs/debug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>thiefControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)thiefControl.pdb</ProgramDatabaseFile>
@@ -83,7 +83,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)thiefControl.dll</OutputFile>
-      <AdditionalLibraryDirectories>../../src/bzfs/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>thiefControl.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>

@@ -65,7 +65,8 @@
       <AdditionalLibraryDirectories>$(CPPUTEST_HOME)\lib;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>regex.lib;ws2_32.lib;CppUTestd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <IgnoreSpecificDefaultLibraries>msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>"$(TargetPath)"</Command>
@@ -90,7 +91,8 @@
       <AdditionalLibraryDirectories>$(CPPUTEST_HOME)\lib;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>regex.lib;ws2_32.lib;CppUTest.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
-      <IgnoreSpecificDefaultLibraries>msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
       <Command>"$(TargetPath)"</Command>

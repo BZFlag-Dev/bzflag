@@ -91,7 +91,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;plugin_utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)webStats.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>webStats.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)webStats.pdb</ProgramDatabaseFile>
@@ -103,12 +103,12 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
-copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -131,7 +131,7 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
     <Link>
       <AdditionalDependencies>bzfs.lib;plugin_utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)webStats.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>webStats.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)webStats.pdb</ProgramDatabaseFile>
@@ -143,12 +143,12 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
-copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -165,7 +165,7 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
     <Link>
       <AdditionalDependencies>bzfs.lib;plugin_utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)webStats.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>webStats.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
@@ -179,12 +179,12 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
-copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -204,7 +204,7 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
     <Link>
       <AdditionalDependencies>bzfs.lib;plugin_utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)webStats.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>webStats.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
@@ -218,12 +218,12 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\te
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
-copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Platform)\plugins\templates\$(ProjectName)"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
+copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins\templates\$(ProjectName)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

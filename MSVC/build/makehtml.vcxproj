@@ -87,9 +87,9 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -107,9 +107,9 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -126,9 +126,9 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -146,9 +146,9 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Platform)\docs\
+      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
+mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
+copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

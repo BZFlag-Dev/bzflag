@@ -91,7 +91,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)hiddenAdmin.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)hiddenAdmin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -102,9 +102,9 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -127,7 +127,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)hiddenAdmin.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)hiddenAdmin.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -138,9 +138,9 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -157,7 +157,7 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)hiddenAdmin.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -170,9 +170,9 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -192,7 +192,7 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)hiddenAdmin.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -205,9 +205,9 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Platform)\plugins\
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

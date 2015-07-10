@@ -116,7 +116,7 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Platform)"
     <PostBuildEvent>
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Platform)\
+copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -136,7 +136,7 @@ copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Platform)\
     <PostBuildEvent>
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Platform)\
+copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -159,7 +159,7 @@ copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Platform)\
     <PostBuildEvent>
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Platform)\
+copy $(OutDir)*.lib $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
