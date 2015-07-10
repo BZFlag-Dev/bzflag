@@ -86,7 +86,7 @@
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;NDEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -105,11 +105,11 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;ares.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(BZ_DEPS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>msvcrt;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>.$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
@@ -118,9 +118,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -134,7 +135,7 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;NDEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -153,10 +154,10 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;ares.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(BZ_DEPS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>msvcrt;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>.$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -166,9 +167,10 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -181,7 +183,7 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -203,10 +205,10 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(BZ_DEPS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -214,12 +216,14 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -233,7 +237,7 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;WIN32;_DEBUG;INSIDE_BZ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -253,10 +257,10 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;ares.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;winmm.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfs.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>$(BZ_DEPS)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfs.pdb</ProgramDatabaseFile>
       <SubSystem>Console</SubSystem>
@@ -264,12 +268,14 @@ copy $(OutDir)*.lib ..\..\bin_$(Platform)\
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
-      <IgnoreSpecificDefaultLibraries>msvcrt;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

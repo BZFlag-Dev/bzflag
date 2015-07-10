@@ -41,8 +41,9 @@ Various third-party libraries are needed, which are packaged in our
 bzflag-dependencies repository. Either grab a pre-built binary package from
 the releases section, or build the dependencies from source as described at
 the repository. The BZFlag build expects that an environment variable called
-BZ_DEPS exist and point to the directory that contains the bin, lib, and
-include directories for the built dependencies.
+BZ_DEPS exist and point to dependencies repository directory (the one that
+would contain the one or more output directories and src directory containing
+the third-party libraries)
   https://github.com/BZFlag-Dev/bzflag-dependencies
 
 NSIS 2.46 is needed to build an installer, which is built as part of a release
