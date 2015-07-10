@@ -90,9 +90,6 @@
 /* Define to 1 if you have the `Sleep' function. */
 #define HAVE_SLEEP 1
 
-/* Define to 1 if you have the `wglGetCurrentContext' function. */
-#define HAVE_WGLGETCURRENTCONTEXT 1
-
 /* Define to 1 if you have the `_stricmp' function */
 #define HAVE__STRICMP 1
 
@@ -101,9 +98,6 @@
 
 /* Define to 1 if you have the `_vsnprintf' function */
 #define HAVE__VSNPRINTF 1
-
-/* Define to 1 if you have the <SDL/SDL.h> header file. */
-#define HAVE_SDL_SDL_H 1
 
 /* Define if you wish to build exporting the bzflag API for plugins */
 #define BZ_PLUGINS 1
