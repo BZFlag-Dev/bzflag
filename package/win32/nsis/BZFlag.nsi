@@ -15,7 +15,7 @@
 ;BZFlag Version Variables
 
   !define VER_MAJOR 2.4
-  !define VER_MINOR .3
+  !define VER_MINOR .3.20150710
   
   !ifdef BUILD_64
     !define PLATFORM x64
@@ -44,10 +44,10 @@
   ; Installer output file and default installation folder
   Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
   !ifdef BUILD_64
-    OutFile "..\..\..\bin_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+    OutFile "..\..\..\bin_Release_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
     InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !else
-    OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
+    OutFile "..\..\..\bin_Release_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
     InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
   !endif
 
@@ -143,7 +143,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_${PLATFORM}\bzflag.exe
+  File ..\..\..\bin_Release_${PLATFORM}\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
@@ -172,15 +172,18 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html
   File ..\..\..\COPYING
-  File ..\..\..\bin_${PLATFORM}\docs\bzflag.html
+  File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
 
   ; Add some DLL files
   SetOutPath $INSTDIR
-  File ..\..\..\bin_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
+  File ..\..\..\bin_Release_${PLATFORM}\cares.dll
 
   ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script
-  ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
+  ; 32-bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
+  ; 64-bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${BITNESS} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
@@ -229,11 +232,14 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_${PLATFORM}\bzadmin.exe
+  File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
+  
+  ; Add the PDCurses DLL file
+  File ..\..\..\bin_Release_${PLATFORM}\pdcurses.dll
 
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\..\..\bin_${PLATFORM}\docs\bzadmin.html
+  File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
@@ -254,7 +260,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\bin_${PLATFORM}\bzfs.exe
+    File ..\..\..\bin_Release_${PLATFORM}\bzfs.exe
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
@@ -265,8 +271,8 @@ SectionGroup "BZFlag Server" BZFlagServer
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
-    File ..\..\..\bin_${PLATFORM}\docs\bzfs.html
-    File ..\..\..\bin_${PLATFORM}\docs\bzw.html
+    File ..\..\..\bin_Release_${PLATFORM}\docs\bzfs.html
+    File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
@@ -290,17 +296,17 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugins" BZFlagServer_Plugins
     ; Include the plugins
     SetOutPath $INSTDIR
-    File ..\..\..\bin_${PLATFORM}\plugins\*.dll
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.dll
 	
 	SetOutPath $INSTDIR\templates
-	File /r ..\..\..\bin_${PLATFORM}\plugins\templates\*
+	File /r ..\..\..\bin_Release_${PLATFORM}\plugins\templates\*
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\bin_${PLATFORM}\bzfs.lib
-    File ..\..\..\bin_${PLATFORM}\plugin_utils.lib
+    File ..\..\..\bin_Release_${PLATFORM}\bzfs.lib
+    File ..\..\..\bin_Release_${PLATFORM}\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
     File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
