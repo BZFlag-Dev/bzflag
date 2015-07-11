@@ -662,7 +662,7 @@ if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
 	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
       fi
 	if test x$with_SDL = xno; then
-	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
+	    AC_MSG_WARN([could not find an appropriate SDL version. BZFlag will build without SDL])
 	fi
     fi
 fi
