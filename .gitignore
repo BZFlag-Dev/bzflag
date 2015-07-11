@@ -73,6 +73,7 @@ stamp-h1
 stamp-h2
 stamp-h3
 work
+.dirstamp
 
 .deps
 .libs
