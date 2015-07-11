@@ -75,7 +75,7 @@
 
 # set to minimum acceptible version of autoconf
 if [ "x$AUTOCONF_VERSION" = "x" ] ; then
-    AUTOCONF_VERSION=2.52
+    AUTOCONF_VERSION=2.58
 fi
 # set to minimum acceptible version of automake
 if [ "x$AUTOMAKE_VERSION" = "x" ] ; then
