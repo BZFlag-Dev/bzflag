@@ -161,11 +161,11 @@ bool			Resolution::setFormat(Display* dpy, int screen) const
 
 static int		resolutionCompare(const void* _a, const void* _b)
 {
-  const Resolution* a = *((const Resolution**)_a);
+  const Resolution* a = *((const Resolution* const *)_a);
   const int aNumChannels = a->getNumChannels();
   const Resolution::Config* aConfig = a->getConfigs();
 
-  const Resolution* b = *((const Resolution**)_b);
+  const Resolution* b = *((const Resolution* const *)_b);
   const int bNumChannels = b->getNumChannels();
   const Resolution::Config* bConfig = b->getConfigs();
 

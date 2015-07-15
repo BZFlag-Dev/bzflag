@@ -22,8 +22,8 @@
 
 static int		resolutionCompare(const void* _a, const void* _b)
 {
-  const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo**)_a);
-  const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo**)_b);
+  const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo* const *)_a);
+  const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo* const *)_b);
 
   // test the stuff we actually care about
   if (a->hdisplay < b->hdisplay) return -1;
