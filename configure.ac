@@ -85,7 +85,7 @@ AC_CANONICAL_TARGET
 dnl Minimum version of automake required.  Should coincide with the
 dnl setting in the autogen.sh script.  Create the other archives
 dnl automatically when doing a make dist for convenience.
-AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2 subdir-objects])
+AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
 
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
@@ -175,8 +175,6 @@ if test "x$LD" != "x" ; then
 fi
 
 #Checks for programs.
-AC_PROG_MAKE_SET
-AC_PROG_MKDIR_P
 AC_PROG_CXX
 if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
