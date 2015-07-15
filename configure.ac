@@ -1140,7 +1140,7 @@ if test "x$enable_client" = "xno"; then
     fi
 else
     if test x$with_SDL != xno; then
-	if test x$with_SDL2 != xno; then
+	if test x$with_SDL2 = xyes; then
 	    build_bzflag="yes (with SDL2)"
 	else
 	    build_bzflag="yes (with SDL)"
