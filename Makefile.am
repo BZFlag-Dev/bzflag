@@ -71,10 +71,8 @@ package:
 dist-hook:
 	find $(distdir) -type f \( -name config.log -o -name config.status \) -exec rm -f {} \;
 	find $(distdir) -type d \( -name .deps -o -name autom4te.cache \) -prune -exec rm -rf {} \;
-	rm -f $(distdir)/src/other/ares/ares_build.h \
-	      $(distdir)/src/other/curl/include/curl/curlbuild.h
 	missing=0 ; \
-	for file in `git ls-files | egrep -v '^src/other/|^\.gitignore'` ; do \
+	for file in `git ls-files | grep -v '^\.gitignore'` ; do \
 		if test ! -e $(distdir)/$$file ; then \
 			missing=1 ; \
 			echo "MISSING FROM DIST: $$file" ; \

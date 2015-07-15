@@ -344,7 +344,6 @@ following files in the new 'bzflag' directory:
     net/	  - networking classes and functions
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
-    other/	  - Third-party libraries
     platform/	  - platform dependent code
       MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
