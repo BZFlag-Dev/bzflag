@@ -2465,7 +2465,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (capturer == myTank) {
 	    hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
 	    playLocalSound( SFX_KILL_TEAM );
-	    sendMeaCulpa(myTank->getTeam());
+	    sendMeaCulpa(TeamToPlayerId(myTank->getTeam()));
 	  }
 	} else {
 	  std::string message("captured ");
