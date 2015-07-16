@@ -218,9 +218,7 @@ choose decides which game you enter.
 The callsign and the port are optional. If you don't specify a port the
 standard server port will be used, and if you don't specify a callsign the
 callsign used for the previous game is used.  If that cannot be found
-then the callsign is the value of the \fBBZFLAGID\fR environment variable.
-If \fBBZFLAGID\fR is empty or undefined then \fBbzflag\fR will prompt for a
-callsign when joining a game.
+then \fBbzflag\fR will prompt for a callsign when joining a game.
 .SS Controls
 Tanks are controlled by moving the mouse within the large yellow box
 in the main view.  When the mouse is inside the small yellow box,
@@ -334,8 +332,7 @@ seconds and then the previous resolution restored.  Press the
 key to permanently select a new resolution. When you quit the game,
 the resolution is restored to what it was before the game started.
 .PP
-Options are recorded between game sessions in the .bzf/<version>/config.cfg
-file (or config.cfg.${HOST} if the \fIHOST\fR environment variable is defined)
+Options are recorded between game sessions in the .bzf/<version>/config.cfg file
 in the user's home directory.  This file has a simple name/value pair format.
 This file is completely rewritten by the game after each session.
 .PP
@@ -727,9 +724,6 @@ Save the current world to \fIfilename\fR.
 .SH "FILES"
 .TP 15
 ~/.bzf/<version>/config.cfg
-Stores options between game sessions.  Used when HOST is not defined.
-.TP 15
-~/.bzf/<version>/config.cfg.${HOST}
-Stores options between game sessions.  Used when HOST is defined.
+Stores options between game sessions.
 .SH "SEE ALSO"
 bzadmin(6), bzfs(6), bzw(5)
