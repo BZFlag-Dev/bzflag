@@ -773,18 +773,6 @@ int			main(int argc, char** argv)
 
   Flags::init();
 
-  if (getenv("BZFLAGID")) {
-    BZDB.set("callsign", getenv("BZFLAGID"));
-    strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  } else if (getenv("BZID")) {
-    BZDB.set("callsign", getenv("BZID"));
-    // Flawfinder: ignore
-    strncpy(startupInfo.callsign, getenv("BZID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  }
   time_t timeNow;
   time(&timeNow);
   userTime = *localtime(&timeNow);
