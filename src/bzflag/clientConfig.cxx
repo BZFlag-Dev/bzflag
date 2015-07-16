@@ -59,12 +59,6 @@ std::string	getOldConfigFileName(void)
 	std::string name = getConfigDirName("2.0");
 	name += "config.cfg";
 
-	// add in hostname on UNIX
-	if (getenv("HOST")) {
-		name += ".";
-		name += getenv("HOST");
-	}
-
 	return name;
 
 #elif defined(_WIN32) /* !defined(_WIN32) */
@@ -103,19 +97,7 @@ static std::string	getReallyOldConfigFileName()
 
 std::string getCurrentConfigFileName(void)
 {
-	std::string configFile = BZ_CONFIG_FILE_NAME;
-
-	std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
-	name += configFile;
-
-#if !defined(_WIN32)
-	// add in hostname on UNIX
-	if (getenv("HOST")) {
-		name += ".";
-		name += getenv("HOST");
-	}
-#endif
-	return name;
+  return getConfigDirName(BZ_CONFIG_DIR_VERSION) + BZ_CONFIG_FILE_NAME;
 }
 
 #if !defined(_WIN32)

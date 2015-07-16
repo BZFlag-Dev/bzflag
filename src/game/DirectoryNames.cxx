@@ -138,17 +138,7 @@ static std::string		setupString(std::string dir)
 
 std::string getCacheDirName()
 {
-  std::string name = getConfigDirName();
-  name += "cache";
-#if !defined (_WIN32) && !defined (__APPLE__)
-  // add in hostname on UNIX
-  // FIXME should be able to share the cache
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
-#endif
-  name += DirectorySeparator;
+  std::string name = getConfigDirName() + "cache" + DirectorySeparator;
   return name;
 }
 
