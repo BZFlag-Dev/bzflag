@@ -1082,8 +1082,6 @@ AC_CONFIG_FILES([
 	tools/Makefile
 	tools/TextTool2/Makefile
 	tools/TextTool2/TextTool2.xcodeproj/Makefile
-	tools/TextTool-W32/Makefile
-	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/MSVC/Makefile

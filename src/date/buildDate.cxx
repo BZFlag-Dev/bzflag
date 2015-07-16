@@ -37,7 +37,6 @@
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
-//  tools/TextTool-W32/TextTool.rc
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION	2
 #endif
