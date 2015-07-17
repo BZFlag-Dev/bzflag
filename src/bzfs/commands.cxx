@@ -2535,9 +2535,8 @@ bool ReloadCommand::operator() (const char	 *message,
   }
 
   if (reload_users) {
-    logDebugMessage(3,"Reloading users and passwords\n");
+    logDebugMessage(3,"Reloading users\n");
     userDatabase.clear();
-    passwordDatabase.clear();
 
     if (userDatabaseFile.size())
       PlayerAccessInfo::readPermsFile(userDatabaseFile);

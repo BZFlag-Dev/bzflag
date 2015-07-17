@@ -3883,9 +3883,8 @@ BZF_API void bz_reloadGroups()
 
 BZF_API void bz_reloadUsers()
 {
-  logDebugMessage(3,"Reloading users and passwords\n");
+  logDebugMessage(3,"Reloading users\n");
   userDatabase.clear();
-  passwordDatabase.clear();
 
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
