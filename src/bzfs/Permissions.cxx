@@ -643,7 +643,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 
 bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 {
-  std::ifstream in(filename.c_str());
+  std::ifstream in(filename);
   if (!in)
     return false;
 
@@ -703,7 +703,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
 bool PlayerAccessInfo::readPermsFile(const std::string &filename)
 {
-  std::ifstream in(filename.c_str());
+  std::ifstream in(filename);
   if (!in)
     return false;
 
@@ -745,7 +745,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
 bool PlayerAccessInfo::writePermsFile(const std::string &filename)
 {
   int i;
-  std::ofstream out(filename.c_str());
+  std::ofstream out(filename);
   if (!out)
     return false;
   PlayerAccessMap::iterator itr = userDatabase.begin();
