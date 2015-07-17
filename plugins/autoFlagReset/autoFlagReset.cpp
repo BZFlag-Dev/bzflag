@@ -70,7 +70,7 @@ void autoFlagReset::Event(bz_EventData* eventData)
 {
   unsigned int nflags = bz_getNumFlags();
   
-  if (bz_getCurrentTime() < nextRunTime || nflags <= 0 || eventData->eventType != bz_eTickEvent)
+  if (bz_getCurrentTime() < nextRunTime || nflags == 0 || eventData->eventType != bz_eTickEvent)
   {
     // Nothing to see here.
     return;

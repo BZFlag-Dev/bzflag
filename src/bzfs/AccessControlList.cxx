@@ -775,7 +775,7 @@ bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_c
     cidr = atoi(ipcidrParts[1].c_str());
 
     // Validate CIDR value
-    if (cidr <= 0 || cidr > 32)
+    if (cidr == 0 || cidr > 32)
       return false;
   }
   else {
