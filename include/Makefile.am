@@ -85,7 +85,6 @@ noinst_HEADERS =			\
 	OpenGLTexture.h			\
 	OpenGLUtils.h			\
 	OSFile.h			\
-	PTSceneNode.h			\
 	Pack.h				\
 	ParseColor.h			\
 	PhysicsDriver.h			\
