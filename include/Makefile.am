@@ -105,7 +105,6 @@ noinst_HEADERS =			\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\
-	ShellSceneNode.h		\
 	ShotSceneNode.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
@@ -125,7 +124,6 @@ noinst_HEADERS =			\
 	TextureMatrix.h			\
 	TimeBomb.h			\
 	TimeKeeper.h			\
-	TracerSceneNode.h		\
 	TriWallSceneNode.h		\
 	ViewFrustum.h			\
 	VotingArbiter.h			\
