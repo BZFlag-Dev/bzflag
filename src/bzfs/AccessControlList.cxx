@@ -772,10 +772,10 @@ bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_c
       return false;
 
     // Convert the CIDR string to a numeric value
-    cidr = atoi(ipcidrParts[1].c_str());
-
-    // Validate CIDR value
-    if (cidr == 0 || cidr > 32)
+    const int val = atoi(ipcidrParts[1].c_str());
+    if (0 < val && val <= 32)
+      cidr = (unsigned char)val;
+    else
       return false;
   }
   else {
@@ -805,8 +805,11 @@ bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_c
   }
 
   for (int i = 0; i <= 3; i++) {
-    b[i] = atoi(ipParts[i].c_str());
-    // TODO: Check for out of range values?
+    const int val = atoi(ipParts[i].c_str());
+    if (0 <= val && val < 256)
+      b[i] = (unsigned char)val;
+    else
+      return false;
   }
 
   _cidr = cidr;
