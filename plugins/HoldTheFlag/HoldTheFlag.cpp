@@ -16,7 +16,6 @@ typedef struct {
   bool isValid;
   int  score;
   char callsign[22];
-  double  joinTime;
   int capNum;
 } HtfPlayer;
 

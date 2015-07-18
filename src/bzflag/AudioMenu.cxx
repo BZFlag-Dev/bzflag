@@ -34,8 +34,6 @@ AudioMenu::AudioMenu()
 {
   // add controls
   std::vector<HUDuiControl*>& listHUD = getControls();
-  std::string currentDriver = BZDB.get("audioDriver");
-  std::string currentDevice = BZDB.get("audioDevice");
 
   HUDuiLabel* label = new HUDuiLabel;
   label->setFontFace(MainMenu::getFontFace());
@@ -67,20 +65,18 @@ AudioMenu::AudioMenu()
    and can screw things up if you switch from non-SDL to SDL build.
    If more platforms get setDriver functions, they can be added. */
 
-  // Driver
 #ifdef HAVE_SDL
+  // Driver
+  std::string currentDriver = BZDB.get("audioDriver");
   driver = new HUDuiTypeIn;
   driver->setFontFace(MainMenu::getFontFace());
   driver->setLabel("Driver:");
   driver->setMaxLength(10);
   driver->setString(currentDriver);
   listHUD.push_back(driver);
-#else
-  driver = NULL;
-#endif // HAVE_SDL
 
   // Device
-#ifdef HAVE_SDL
+  std::string currentDevice = BZDB.get("audioDevice");
   device = new HUDuiTypeIn;
   device->setFontFace(MainMenu::getFontFace());
   device->setLabel("Device:");
@@ -88,6 +84,7 @@ AudioMenu::AudioMenu()
   device->setString(currentDevice);
   listHUD.push_back(device);
 #else
+  driver = NULL;
   device = NULL;
 #endif // HAVE_SDL
 
