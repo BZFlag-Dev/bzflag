@@ -191,12 +191,11 @@ void ServerControl::Event( bz_EventData *eventData )
 {
   ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
-  double now;
 
   if (eventData) {
     switch (eventData->eventType) {
       case bz_eTickEvent:
-	now = bz_getCurrentTime();
+	double now = bz_getCurrentTime();
 	if ((now - lastTime) < 3.0f) return;
 	lastTime = now;
 	checkShutdown();
