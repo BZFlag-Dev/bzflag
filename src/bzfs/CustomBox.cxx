@@ -99,7 +99,7 @@ bool CustomBox::read(const char *cmd, std::istream& input)
     }
   }
   // extra tests
-  if (faceList.size() <= 0) {
+  if (faceList.empty()) {
     if (strcasecmp(cmd, "top") == 0) {
       faceList.push_back(ZP);
     }

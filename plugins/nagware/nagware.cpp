@@ -92,7 +92,7 @@ void updatePlayerNextEvent (int playerID, double now){
     return;
 
   Players[playerID].nextEventTime = -1;
-  if (Config.nagMsgs.size() == 0)
+  if (Config.nagMsgs.empty())
     return;
 
   for (idx=0; idx<Config.nagMsgs.size(); idx++){
@@ -253,7 +253,7 @@ bool listAdd (int playerID, const char *callsign, bz_eTeamType team, bool verifi
   Players[playerID].isVerified = verified;
   strncpy (Players[playerID].callsign, callsign, 20);
   Players[playerID].joinTime = time;
-  if (Config.nagMsgs.size() == 0)
+  if (Config.nagMsgs.empty())
     Players[playerID].nextEventTime = -1;
   else {
     Players[playerID].nextEventTime = time + (Config.nagMsgs[0]->time);

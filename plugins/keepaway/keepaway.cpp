@@ -301,7 +301,7 @@ bool KeepAwayMapHandler::MapObject ( bz_ApiString object, bz_CustomMapObjectInfo
 		bz_deleteStringList(nubs);
 	}
 
-	if (keepaway.flagsList.size() > 0)
+	if (!keepaway.flagsList.empty())
 		keepaway.flagToKeepIndex = -1; // this will increment 1 when we get to getFlag() function;
 	else
 	{
@@ -575,7 +575,7 @@ std::string getFlag()
 			return flagCandidate;
 	}
 
-	if (keepaway.flagsList.size() > 0)  // we should never get here, but if we do keep going
+	if (!keepaway.flagsList.empty())  // we should never get here, but if we do keep going
 		return keepaway.flagsList[0];
 	else
 		return "";

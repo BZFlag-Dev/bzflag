@@ -3380,7 +3380,7 @@ public:
 		  }
 	  }
 
-	  if (!currentJob && Tasks.size())
+	  if (!currentJob && !Tasks.empty())
 	  {
 		  currentJob = curl_easy_init();
 		  curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
@@ -3483,7 +3483,7 @@ private:
 
   void KillCurrentJob ( bool notify )
   {
-    if (notify && Tasks.size())
+    if (notify && !Tasks.empty())
       Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Canceled");
 
     if (currentJob) {

@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
     inputFonts.push_back(fileItem);
   }
 
-  if(inputFonts.size() == 0) {
+  if(inputFonts.empty()) {
     std::cerr << "Directory " << inputDirectory << "contains no TTF font files." << std::endl;
 
     closedir(inputDirectoryStream);

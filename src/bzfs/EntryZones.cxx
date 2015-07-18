@@ -49,7 +49,7 @@ void EntryZones::addZoneFlag(int zone, int flagId)
   }
   const std::string& qualifier = CustomZone::getFlagIdQualifier(flagId);
   QPairList &qPairList = qmap[qualifier];
-  if (qPairList.size() > 0) {
+  if (!qPairList.empty()) {
     printf ("Internal error: EntryZones::addZoneFlag() duplicate\n");
     exit(1);
   }

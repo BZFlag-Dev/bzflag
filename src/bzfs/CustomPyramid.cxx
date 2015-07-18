@@ -97,7 +97,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     }
   }
   // extra tests
-  if (faceList.size() <= 0) {
+  if (faceList.empty()) {
     if (strcasecmp(cmd, "bottom") == 0) {
       faceList.push_back(ZN);
     }

@@ -92,7 +92,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   // Now tokenize on ","
   std::vector<std::string> stage1 = tokenize(list, ",", 0, false);
   // No tokens?  That's cool too.
-  if (stage1.size() == 0) { stage1.push_back(list); }
+  if (stage1.empty()) { stage1.push_back(list); }
 
   // And for each token, blow up any "-" ranges and "*" ranges.
   for (std::vector<std::string>::iterator itr = stage1.begin(); itr != stage1.end(); ++itr) {

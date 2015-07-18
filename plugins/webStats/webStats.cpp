@@ -442,7 +442,7 @@ bool WebStats::GetTemplateLoop(const char* _key, const char* /*_param*/)
 
 	if (key == "players")
 	{
-		if (playeRecord || !teamSort.size()) 
+		if (playeRecord || teamSort.empty()) 
 			return false;
 
 		if (teamSortItr == teamSort.end())
@@ -522,7 +522,7 @@ bool WebStats::GetTemplateIF(const char* _key, const char* /*_param*/)
 	if (key == "newteam")
 		return teamSortItr != teamSort.end() && playerInTeam == 0;
 	else if (key == "players") 
-		return playeRecord != NULL ? playeRecord != NULL : teamSort.size() > 0;
+		return playeRecord != NULL ? playeRecord != NULL : !teamSort.empty();
 	else if (key == "redteam") 
 		return bz_getTeamCount(eRedTeam) > 0;
 	else if (key == "greenteam") 

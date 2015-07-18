@@ -185,7 +185,7 @@ void GameTime::setStepTime()
 {
   static s64 lastStep = 0;
   const s64 thisStep = getRawTime();
-  if (timeRecs.size() <= 0) {
+  if (timeRecs.empty()) {
     stepTime = thisStep;
   } else {
     // long term prediction
