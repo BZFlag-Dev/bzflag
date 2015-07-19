@@ -30,17 +30,13 @@ int Leader;
 class HTFscore : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
-	virtual const char* Name() {return "Hold the Flag";}
-	virtual void Init ( const char* config );
-	virtual void Cleanup ( void );
+  virtual const char* Name() {return "Hold the Flag";}
+  virtual void Init ( const char* config );
+  virtual void Cleanup ( void );
   virtual void Event ( bz_EventData *eventData );
   virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
   bz_eTeamType colorNameToDef (const char *color);
   const char *colorDefToName (bz_eTeamType team);
-
-protected:
-
-private:
 };
 
 BZ_PLUGIN(HTFscore)
@@ -118,7 +114,6 @@ int sort_compare (const void *_p1, const void *_p2){
   if (Players[p1].score != Players[p2].score)
     return Players[p2].score - Players[p1].score;
   return Players[p2].capNum - Players[p1].capNum;
-  return 0;
 }
 
 void dispScores (int who)
