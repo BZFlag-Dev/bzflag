@@ -142,6 +142,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "build\tests.vcxpro
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thiefControl", "..\plugins\thiefControl\thiefControl.vcxproj", "{C7E4CB54-110E-4DA1-86E5-612DE727419A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
