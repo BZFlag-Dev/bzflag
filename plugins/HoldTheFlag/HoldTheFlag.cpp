@@ -8,7 +8,6 @@
 
 #define HOLDTHEFLAG_VER "1.00.02"
 #define DO_FLAG_RESET 1
-#define DEFAULT_TEAM eGreenTeam
 
 #define MAX_PLAYERID 255
 

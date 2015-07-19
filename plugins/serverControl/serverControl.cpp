@@ -189,7 +189,6 @@ void ServerControl::checkShutdown( void ) {
 
 void ServerControl::Event( bz_EventData *eventData )
 {
-  ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
 
   if (eventData) {
@@ -227,8 +226,6 @@ void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *dat
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_BasePlayerRecord *player;
-  ostringstream msg;
-  string str;
   int numLines = 0;
   int numObs = 0;
 
