@@ -408,9 +408,8 @@ bool parseCommandLine (const char *cmdLine)
 
 void Nagware::Init(const char* cmdLine)
 {
-	MaxWaitTime = 1.0f;
+  MaxWaitTime = 1.0f;
 
-  bz_BasePlayerRecord *playerRecord;
   double now = bz_getCurrentTime();
 
   if (parseCommandLine (cmdLine))
@@ -418,11 +417,12 @@ void Nagware::Init(const char* cmdLine)
 
   // get current list of player indices ...
   bz_APIIntList *playerList = bz_newIntList();
-  bz_getPlayerIndexList (playerList);
-  for (unsigned int i = 0; i < playerList->size(); i++){
-    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
-      listAdd (playerList->get(i), playerRecord->callsign.c_str(), playerRecord->team, playerRecord->verified, now);
-      bz_freePlayerRecord (playerRecord);
+  bz_getPlayerIndexList(playerList);
+  for (unsigned int i = 0; i < playerList->size(); i++) {
+    bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(playerList->get(i));
+    if (playerRecord != NULL) {
+      listAdd(playerList->get(i), playerRecord->callsign.c_str(), playerRecord->team, playerRecord->verified, now);
+      bz_freePlayerRecord(playerRecord);
     }
   }
   bz_deleteIntList (playerList);
@@ -577,4 +577,3 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -242,10 +242,10 @@ void HTFscore::Event ( bz_EventData *eventData )
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
-    char msg[255];
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
     if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
+      char msg[255];
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore->colorDefToName(htfTeam));
       bz_kickUser (joinData->playerID, msg, true);
       return;
@@ -350,8 +350,7 @@ bool parseCommandLine (const char *cmdLine)
 
 void HTFscore::Init(const char* cmdLine)
 {
-	htfScore = this;
-  bz_BasePlayerRecord *playerRecord;
+  htfScore = this;
 
   if (parseCommandLine (cmdLine))
     return;
@@ -360,10 +359,11 @@ void HTFscore::Init(const char* cmdLine)
   bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
-    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
+    bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex (playerList->get(i));
+    if (playerRecord != NULL){
       listAdd (playerList->get(i), playerRecord->callsign.c_str());
-      bz_freePlayerRecord (playerRecord);
     }
+    bz_freePlayerRecord (playerRecord);
   }
   bz_deleteIntList (playerList);
 
@@ -390,4 +390,3 @@ void HTFscore::Cleanup(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

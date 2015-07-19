@@ -225,14 +225,13 @@ void ServerControl::Event( bz_EventData *eventData )
 void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
 {
   bz_APIIntList *playerList = bz_newIntList();
-  bz_BasePlayerRecord *player;
   int numLines = 0;
   int numObs = 0;
 
   bz_getPlayerIndexList( playerList );
 
   for ( unsigned int i = 0; i < playerList->size(); i++ ) {
-    player = bz_getPlayerByIndex( playerList->get(i));
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerList->get(i));
     if (player) {
       if (act == join || (data && (player->playerID != data->playerID) &&
 			  (player->callsign != ""))) {
