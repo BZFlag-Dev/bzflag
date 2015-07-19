@@ -15,7 +15,6 @@
 
 struct st_MsgEnt{
   st_MsgEnt(int t, int r, std::string m): time(t), repeat(r), msg(m) {}
-  st_MsgEnt() {}
   int time;
   int repeat;
   std::string msg;

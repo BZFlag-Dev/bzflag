@@ -38,6 +38,7 @@ class CronPlayer : public bz_ServerSidePlayerHandler {
 
 class CronManager : public bz_Plugin, public bz_CustomSlashCommandHandler {
   public:
+    CronManager();
     virtual const char* Name (){return "BZFS Cron";}
 
     virtual void Init (const char* config);
@@ -66,11 +67,11 @@ class CronManager : public bz_Plugin, public bz_CustomSlashCommandHandler {
 
 BZ_PLUGIN(CronManager)
 
-void CronManager::Init(const char* commandLine) {
-  lastTick = 0.0f;
-  lastMinute = -1;
-  player = NULL;
+CronManager::CronManager() : bz_Plugin(), lastTick(0.0), lastMinute(-1), player(NULL)
+{
+}
 
+void CronManager::Init(const char* commandLine) {
   // should have a filename on the command line.  try to open it.
   if (!commandLine) {
     bz_debugMessage(1, "bzfscron: no crontab specified");

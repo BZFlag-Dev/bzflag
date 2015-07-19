@@ -12,10 +12,8 @@ class MsgZone : public bz_CustomZoneObject
 public:
   // Our custom constructor will call the parent constructor so we can setup default positions
   // for the zone
-  MsgZone() : bz_CustomZoneObject()
+  MsgZone() : bz_CustomZoneObject(), flag("US")
   {
-    message = "";
-    flag = "US";
   }
 
   // Custom fields that are unique to our zone so we can build on top of the class we're extending
