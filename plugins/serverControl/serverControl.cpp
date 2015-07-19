@@ -77,7 +77,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   serverActive = false;
   countPlayers( join , NULL );
 
-  lastTime = 0.0f;
+  lastTime = 0.0;
 
   /*
    * Set up options from the configuration file
@@ -194,9 +194,9 @@ void ServerControl::Event( bz_EventData *eventData )
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eTickEvent:
+      case bz_eTickEvent: {
 	double now = bz_getCurrentTime();
-	if ((now - lastTime) < 3.0f) return;
+	if ((now - lastTime) < 3.0) return;
 	lastTime = now;
 	checkShutdown();
 	if (banFilename != "" )
@@ -204,6 +204,7 @@ void ServerControl::Event( bz_EventData *eventData )
 	if (masterBanFilename != "")
 	  checkMasterBanChanges();
 	break;
+      }
       case bz_ePlayerJoinEvent:
 	if (data->record->team >= eRogueTeam &&
 	    data->record->team <= eHunterTeam &&
