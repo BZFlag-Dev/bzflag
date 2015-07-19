@@ -101,7 +101,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 			}
 		}
 	}
-	else if (eventData->eventType == bz_ePlayerDieEvent)
+	else if (eventData->eventType == bz_ePlayerPartEvent)
 	{
 		bz_PlayerJoinPartEventData_V1* partdata = (bz_PlayerJoinPartEventData_V1*)eventData;
 
