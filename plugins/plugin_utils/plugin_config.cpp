@@ -30,7 +30,7 @@ PluginConfig::PluginConfig()
 {
 }
 
-PluginConfig::PluginConfig(const std::string &filename) : configFilename(filename), whitespace(" \t\r"), errors(0)
+PluginConfig::PluginConfig(const std::string &filename) : errors(0), whitespace(" \t\r"), configFilename(filename)
 {
   parse();
 }

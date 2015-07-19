@@ -32,7 +32,7 @@ class autoFlagReset : public bz_Plugin
 
 BZ_PLUGIN(autoFlagReset)
 
-autoFlagReset::autoFlagReset() : bz_Plugin(), incremental(false), freq(900), nextFlag(0), nextRunTime(bz_getCurrentTime())
+autoFlagReset::autoFlagReset() : bz_Plugin(), incremental(false), freq(900), nextRunTime(bz_getCurrentTime()), nextFlag(0)
 {
 }
 
