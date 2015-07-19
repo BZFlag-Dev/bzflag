@@ -381,14 +381,9 @@ bool Nagware::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_AP
 
 bool commandLineHelp (void)
 {
-  const char *help[] = {
-    "Command line args:  PLUGINNAME,configname",
-    "nagware plugin NOT loaded!",
-    NULL
-  };
-  bz_debugMessage (0, "+++ nagware plugin command-line error.");
-  for (int x=0; help[x]!=NULL; x++)
-    bz_debugMessage (0, help[x]);
+  bz_debugMessage(0, "+++ nagware plugin command-line error.");
+  bz_debugMessage(0, "Command line args:  PLUGINNAME,configname");
+  bz_debugMessage(0, "nagware plugin NOT loaded!");
   return true;
 }
 
