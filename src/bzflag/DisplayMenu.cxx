@@ -234,8 +234,12 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("FPS Limit"));
-  if (getMainWindow()->getWindow()->hasVerticalSync())
+  if (getMainWindow()->getWindow()->hasVerticalSync()) {
     options->push_back(std::string("Vertical Sync"));
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// SDL 2 can make live changes
+    option->setLabel("(restart required) Energy Saver:");
+#endif
+  }
   option->update();
   listHUD.push_back(option);
 

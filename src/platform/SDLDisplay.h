@@ -69,6 +69,7 @@ class SDLVisual : public BzfVisual {
   void setStencil(int minDepth);
   void setAccum(int, int, int, int) {;};
   void setStereo(bool);
+  void setVerticalSync(bool);
   void setMultisample(int) {;};
   bool build() {return true;};
 };
@@ -97,7 +98,6 @@ class SDLWindow : public BzfWindow {
   float getGamma() const;
   bool  hasGammaControl() const;
   virtual bool hasVerticalSync() const {return true;};
-  void  setVerticalSync(bool);
   void  makeCurrent() {;};
   void  swapBuffers();
   void  makeContext() {;};

@@ -35,6 +35,7 @@ class BzfVisual {
     virtual void	setAccum(int minRed, int minGreen,
 				int minBlue, int minAlpha) = 0;
     virtual void	setStereo(bool) = 0;
+    virtual void	setVerticalSync(bool) {;}
     virtual void	setMultisample(int minSamples) = 0;
 
     virtual bool	build() = 0;

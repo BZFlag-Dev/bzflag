@@ -598,6 +598,10 @@ void SDLVisual::setStereo(bool on) {
   SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
 }
 
+void SDLVisual::setVerticalSync(bool on) {
+  SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, on ? 1 : 0);
+}
+
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), hasGamma(true)
 {
@@ -682,10 +686,6 @@ float SDLWindow::getGamma() const {
 
 bool SDLWindow::hasGammaControl() const {
   return hasGamma;
-}
-
-void SDLWindow::setVerticalSync(bool setting) {
-  SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, setting ? 1 : 0);
 }
 
 void SDLWindow::swapBuffers() {

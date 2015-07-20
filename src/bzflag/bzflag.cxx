@@ -166,6 +166,7 @@ static void		setVisual(BzfVisual* visual)
   if (BZDB.isSet("view") && BZDB.get("view") == configViewValues[1])
     visual->setStereo(true);
 #endif
+  visual->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
 }
 
 static void		usage()
