@@ -213,7 +213,7 @@ void TrackMarks::init()
   clear();
   setup();
   setUserFade(BZDB.eval("userTrackFade"));
-  setAirCulling((AirCullStyle)BZDB.evalInt("trackMarkCulling"));
+  setAirCulling((AirCullStyle)BZDB.eval("trackMarkCulling"));
   return;
 }
 
@@ -272,7 +272,7 @@ void TrackMarks::setAirCulling(AirCullStyle style)
 
 AirCullStyle TrackMarks::getAirCulling()
 {
-  return (AirCullStyle)BZDB.evalInt("trackMarkCulling");
+  return (AirCullStyle)BZDB.eval("trackMarkCulling");
 }
 
 

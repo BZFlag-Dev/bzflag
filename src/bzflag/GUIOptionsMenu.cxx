@@ -427,7 +427,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     if (BZDB.isTrue("hideMottos"))
       ((HUDuiList*)listHUD[i++])->setIndex(0);
     else
-      ((HUDuiList*)listHUD[i++])->setIndex((int)BZDB.eval("mottoDispLen") / 4);
+      ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("mottoDispLen") / 4);
   }
 }
 

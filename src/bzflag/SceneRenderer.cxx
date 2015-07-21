@@ -254,8 +254,8 @@ void SceneRenderer::setQuality(int value)
 
   if (value < 0) {
     value = 0;
-  } else if (value > BZDB.eval("maxQuality")) {
-    value = (int)BZDB.eval("maxQuality");
+  } else if (value > BZDB.evalInt("maxQuality")) {
+    value = BZDB.evalInt("maxQuality");
   }
   if (useQualityValue != value) {
     rebuildTanks = true;

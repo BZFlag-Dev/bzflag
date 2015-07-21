@@ -199,7 +199,7 @@ void BZDBCache::clientCallback(const std::string& name, void *)
   else if (name == "shotLength")
     shotLength = BZDB.eval("shotLength");
   else if (name == "leadingShotLine")
-    leadingShotLine = (int)BZDB.eval("leadingShotLine");
+    leadingShotLine = BZDB.evalInt("leadingShotLine");
   else if (name == "radarPosition")
     radarPosition = BZDB.evalInt("radarPosition");
   else if (name == "flagChunks")

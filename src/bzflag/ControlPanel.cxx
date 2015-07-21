@@ -283,7 +283,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
-  const int tabStyle = (int)BZDB.eval("showtabs");
+  const int tabStyle = BZDB.evalInt("showtabs");
   const bool showTabs = (tabStyle > 0);
   tabsOnRight = (tabStyle == 2);
 
