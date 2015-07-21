@@ -259,7 +259,7 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
 
   // Generate /8, /16, and /24 in the wildcard format, and show /32 without
   // a CIDR
-  if (cidr == 8 || cidr == 16 || cidr == 24 || cidr == 32) {
+  if (cidr % 8 == 0) {
     os << (ntohl(mask.s_addr) >> 24) << '.';
     if (cidr == 8) {
       os << "*.*.*";
@@ -278,8 +278,7 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
     }
   } else {
     // Handle other CIDR values
-    // TODO: Is there a better way of zeroing out the host bits?
-    mask.s_addr = htonl(ntohl(mask.s_addr) & ~((1 << (32 - cidr)) - 1));
+    mask.s_addr &= htonl(0xffffffff << (32 - cidr)); // zero out the host bits
 
     os << (ntohl(mask.s_addr) >> 24) << '.';
     os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
