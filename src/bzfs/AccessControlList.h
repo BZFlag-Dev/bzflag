@@ -35,9 +35,8 @@ struct BanInfo
     cidr = _cidr;
 
 	// Zero out the host bits
-	// TODO: Is there a better way of zeroing out the host bits?
 	if (cidr > 0 || cidr < 32) {
-		addr.s_addr = htonl(ntohl(addr.s_addr) & ~((1 << (32 - cidr)) - 1));
+	  addr.s_addr &= htonl(0xFFFFFFFFu << (32 - cidr));
 	}
 
     if (_bannedBy)
