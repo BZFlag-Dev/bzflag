@@ -1447,7 +1447,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
   myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
   // use a clip plane, because the ground has no depth
-  const GLdouble clip_plane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+  const GLdouble clip_plane[4] = {0.0, 0.0, 1.0, 0.0};
   glClipPlane(GL_CLIP_PLANE1, clip_plane);
   glEnable(GL_CLIP_PLANE1);
 
