@@ -1564,6 +1564,9 @@ void bzMatrixMode(GLenum mode)
 #  elif defined(__BEOS__)
 // no way to do that, and you shouldn't have to anyway!
 #    define GET_CURRENT_CONTEXT() 1
+#  elif defined(HAVE_SDL2)
+#    include "bzfSDL.h"
+#    define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
 #  else
 #    include <GL/glx.h>
 #    define GET_CURRENT_CONTEXT glXGetCurrentContext
