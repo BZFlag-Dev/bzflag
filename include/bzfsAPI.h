@@ -120,6 +120,10 @@ public:
   bool operator != ( const std::string& r );
   bool operator != ( const char* r );
 
+  bz_ApiString& operator += ( const bz_ApiString& r );
+  bz_ApiString& operator += ( const std::string& r );
+  bz_ApiString& operator += ( const char* r );
+
   unsigned int size ( void ) const;
 
   const char* c_str(void) const;
@@ -133,9 +137,16 @@ public:
   void urlEncode ( void );
 
 protected:
-  class dataBlob;
+  class dataBlob {
+    public:
+      std::string str;
+  };
 
   dataBlob	*data;
+
+public:
+  // Conversion/cast operator
+  operator std::string() const { return this->data->str; }
 };
 
 class BZF_API bz_APIIntList

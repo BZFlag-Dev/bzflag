@@ -29,7 +29,7 @@ public:
 
   void loadDefaultTemplates(void);
 
-  virtual const char* GetTemplateKey(const char* /* key */);
+  virtual bz_ApiString GetTemplateKey(const char* /* key */);
   virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/);
   virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/);
 
@@ -87,14 +87,15 @@ void WebReport::Cleanup()
   Flush();
 }
 
-const char* WebReport::GetTemplateKey(const char* _key)
+bz_ApiString WebReport::GetTemplateKey(const char* _key)
 {
   std::string key = _key;
-  if (key == "evenodd")
+  if (key == "evenodd") {
     return evenLine ? "even" : "odd";
-  else if (key =="report") {
-    if (reports && report > 0 && report < (int)reports->size())
-      return reports->get(report).c_str();
+  }
+  else if (key == "report") {
+    if (reports && report >= 0 && report < (int)reports->size())
+      return reports->get(report);
   }
   return "";
 }
@@ -102,7 +103,7 @@ const char* WebReport::GetTemplateKey(const char* _key)
 bool WebReport::GetTemplateLoop(const char* _key, const char* /*_param*/)
 {
   std::string key = _key;
-  if (key != "report")
+  if (key != "reports")
     return false;
 
   if (!reports || !reports->size())

@@ -33,7 +33,7 @@ public:
 
 	void loadDefaultTemplates(void);
 
-	virtual const char* GetTemplateKey(const char* /* key */);
+	virtual bz_ApiString GetTemplateKey(const char* /* key */);
 	virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/);
 	virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/);
 
@@ -182,7 +182,7 @@ void WebStats::Cleanup()
   Flush();
 }
 
-void getStatus(bz_BasePlayerRecord* rec, std::string& data)
+void getStatus(bz_BasePlayerRecord* rec, bz_ApiString& data)
 {
 	if (rec->team != eObservers) 
 	{
@@ -210,7 +210,7 @@ void getStatus(bz_BasePlayerRecord* rec, std::string& data)
 }
 
 
-const char* WebStats::GetTemplateKey(const char* _key)
+bz_ApiString WebStats::GetTemplateKey(const char* _key)
 {
 	if (!_key)
 		return "";
@@ -225,8 +225,7 @@ const char* WebStats::GetTemplateKey(const char* _key)
 	if (rec) 
 		flagID = rec->currentFlagID;
 
-	static std::string data;
-	data = "";
+	bz_ApiString data = "";
 	std::string key = _key;
 
 	double uptime = bz_getCurrentTime() - serverStartTime;
@@ -424,7 +423,7 @@ const char* WebStats::GetTemplateKey(const char* _key)
 		else if (key == "teamlosses") 
 			data = bz_format("%d", bz_getTeamLosses(rec->team));
 	}
-  return data.c_str();
+  return data;
 }
 
 bool WebStats::GetTemplateLoop(const char* _key, const char* /*_param*/)

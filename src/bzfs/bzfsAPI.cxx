@@ -213,12 +213,6 @@ BZF_API int bz_APIVersion ( void )
 }
 
 //******************************bzApiString********************************************
-class bz_ApiString::dataBlob
-{
-public:
-  std::string str;
-};
-
 bz_ApiString::bz_ApiString()
 {
   data = new dataBlob;
@@ -293,6 +287,24 @@ bool bz_ApiString::operator != ( const std::string& r )
 bool bz_ApiString::operator != ( const char* r )
 {
   return data->str != r;
+}
+
+bz_ApiString& bz_ApiString::operator += ( const bz_ApiString& r )
+{
+  data->str += r.data->str;
+  return *this;
+}
+
+bz_ApiString& bz_ApiString::operator += ( const std::string& r )
+{
+  data->str += r;
+  return *this;
+}
+
+bz_ApiString& bz_ApiString::operator += ( const char* r )
+{
+  data->str += r;
+  return *this;
 }
 
 unsigned int bz_ApiString::size ( void ) const

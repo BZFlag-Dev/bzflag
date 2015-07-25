@@ -2139,7 +2139,7 @@ std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, 
 
 double startTime;
 
-const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
+std::string CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
 {
   if (key == "date") {
     bz_Time time;
@@ -2160,8 +2160,9 @@ const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
   } else if (key == "pluginname") {
     return VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin ? VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin->Name() : "";
   }
-  else if (callback)
+  else if (callback) {
     return callback->GetTemplateKey(key.c_str());
+  }
 
   return "";
 }

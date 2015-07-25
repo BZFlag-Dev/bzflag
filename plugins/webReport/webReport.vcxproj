@@ -230,7 +230,6 @@ copy "$(ProjectDir)templates\*.*" "$(ProjectDir)..\..\bin_$(Configuration)_$(Pla
   <ItemGroup>
     <None Include="Makefile.am" />
     <None Include="webReport.def" />
-    <None Include="templates\login.tmpl" />
     <None Include="templates\report.tmpl" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

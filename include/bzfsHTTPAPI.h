@@ -230,7 +230,7 @@ class BZF_API bzhttp_TemplateCallback
 {
 public:
   virtual ~bzhttp_TemplateCallback() {};
-  virtual const char* GetTemplateKey(const char* /* key */) {return "";}
+  virtual bz_ApiString GetTemplateKey(const char* /* key */) {return bz_ApiString("");}
   virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/) { return false; }
   virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/) { return false; }
 

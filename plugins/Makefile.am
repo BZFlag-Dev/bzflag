@@ -33,6 +33,7 @@ SUBDIRS = \
 	thiefControl \
 	timedctf \
 	TimeLimit \
+	webReport \
 	wwzones
 
 DIST_SUBDIRS = \
@@ -43,7 +44,6 @@ EXTRA_DIST = \
 	api_notes \
 	pushstats \
 	removeFromBuild.sh \
-	webReport \
 	webStats \
 	newplug.sh
 
