@@ -13,10 +13,6 @@
 #ifndef	BZF_CONTROL_PANEL_H
 #define	BZF_CONTROL_PANEL_H
 
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
-#endif
-
 // common - 1st
 #include "common.h"
 

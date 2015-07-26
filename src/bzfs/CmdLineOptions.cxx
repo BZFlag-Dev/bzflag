@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
-
 /* this should be the only header necessary except for headers specific
  * to the class implementation (such as version.h)
  */

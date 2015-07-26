@@ -17,10 +17,6 @@
 #ifndef BZF_JOYSTICK_H
 #define	BZF_JOYSTICK_H
 
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
-#endif
-
 #include "common.h"
 #include <string>
 #include <vector>

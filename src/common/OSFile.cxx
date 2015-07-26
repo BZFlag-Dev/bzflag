@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-  #pragma warning( disable : 4786 )  // Disable warning message
-#endif
-
 // interface header
 #include "OSFile.h"
 

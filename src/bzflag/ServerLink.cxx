@@ -9,9 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
-#endif
 
 // interface header
 #include "ServerLink.h"

@@ -19,9 +19,6 @@
 
 /* system headers */
 #ifdef _WIN32
-  #ifdef _MSC_VER
-    #pragma warning(disable : 4786)  // Disable warning message
-  #endif
   #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
   #include <windows.h>
   #include <io.h>

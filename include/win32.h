@@ -50,8 +50,6 @@ typedef unsigned int	uint32_t;
 
 /* stuff specific to visual studio */
 #if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-#  pragma warning(disable: 4786)
 #  pragma warning(disable: 4503)
 #  pragma warning(disable: 4355)
 

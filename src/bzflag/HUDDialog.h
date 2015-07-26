@@ -16,10 +16,6 @@
 /* common */
 #include "common.h"
 
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
-
 /* system headers */
 #include <vector>
 

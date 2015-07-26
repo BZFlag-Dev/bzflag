@@ -13,10 +13,6 @@
 #ifndef __BZFS_H__
 #define __BZFS_H__
 
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
-
 // to dump score info to stdout
 #define PRINTSCORE to include code to dump score info to stdout
 
