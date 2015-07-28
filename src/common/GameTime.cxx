@@ -151,7 +151,6 @@ static void resetToRecord(const TimeRecord& record)
 
 void GameTime::update()
 {
-  std::list<TimeRecord>::iterator it;
   unsigned int count = timeRecs.size();
   if (count == 0) {
     const TimeRecord tr = {0,0};

@@ -402,7 +402,7 @@ void					BeOSMedia::writeAudioFrames(
 								    const float* samples, int numFrames)
 {
   status_t err = B_OK;
-  int len, ret;
+  int len;
   int numSamples = 2 * numFrames;
   int size = numSamples * sizeof(SAMPTYPE);
   uint8 *buf = (uint8 *)samples;
