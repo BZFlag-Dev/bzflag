@@ -34,16 +34,15 @@ SUBDIRS = \
 	timedctf \
 	TimeLimit \
 	webReport \
-	wwzones
+	wwzones \
+	@CUSTOM_PLUGIN_LIST@
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)
 
 EXTRA_DIST = \
-	addToBuild.sh \
 	api_notes \
 	pushstats \
-	removeFromBuild.sh \
 	webStats \
 	newplug.sh
 

@@ -125,6 +125,18 @@ if test "x$enable_plugins" != xno ; then
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
+# accept a list of custom plugins to be built
+AC_ARG_ENABLE(custom-plugins, AS_HELP_STRING([--enable-custom-plugins=plugin1[[[,plugin2,...]]]],[comma separated list of custom plugins to be built]))
+CUSTOM_PLUGIN_LIST=`echo $enable_custom_plugins | sed 's/,/ /g'`
+for plugin in $CUSTOM_PLUGIN_LIST ; do
+    m=plugins/$plugin/Makefile
+    AC_CONFIG_FILES([$m])
+    if test -f $m.am -a ! -f $m.in ; then
+	automake $m
+    fi
+done
+AC_SUBST(CUSTOM_PLUGIN_LIST)
+
 # check whether threads are desired
 AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
 
