@@ -4,6 +4,9 @@
 BZFlag 2.4.3
 ------------
 
+* Introduce bz_AllowSpawnData_V2 - Vladimir Jimenez
+* Added bz_setPlayerSpawnable and bz_isPlayerSpawnable API functions
+		- Vladimir Jimenez
 * Removed GLEW as a dependency - Joshua Bodine, Scott Wichser
 * Made text at top of HUD use sans-serif font and removed serif font
 		- Joshua Bodine
