@@ -122,6 +122,10 @@ public:
   bool	waitingToSpawn() const;
   void	queueSpawn();
   bool	hasNeverSpawned() const;
+  bool	isAllowedToSpawn() const;
+  bool	notifiedOfSpawnable() const;
+  void	setAllowedToSpawn(bool canSpawn);
+  void	setNotifiedOfSpawnable(bool notified);
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
@@ -190,6 +194,8 @@ private:
   TimeKeeper nextSpawnTime;
 
   // Requested a spawn?
+  bool allowedToSpawn;
+  bool notifiedSpawn;
   bool wantsToSpawn;
   bool neverSpawned;
 
@@ -307,6 +313,14 @@ inline bool PlayerInfo::hasNeverSpawned() const {
   return neverSpawned;
 }
 
+inline bool PlayerInfo::isAllowedToSpawn() const {
+  return allowedToSpawn;
+}
+
+// Whether or not the player has been told if they cannot spawn
+inline bool PlayerInfo::notifiedOfSpawnable() const {
+  return notifiedSpawn;
+}
 
 #endif
 

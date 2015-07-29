@@ -661,6 +661,22 @@ public:
   bool allow;
 };
 
+
+
+class BZF_API bz_AllowSpawnData_V2 : public bz_AllowSpawnData_V1
+{
+public:
+  bz_AllowSpawnData_V2() : bz_AllowSpawnData_V1()
+    , kickPlayer(true), kickReason("Not allowed to spawn")
+    , message("You are not allowed to spawn. Please contact an administrator.")
+  {
+  }
+  
+  bool kickPlayer;
+  bz_ApiString kickReason;
+  bz_ApiString message;
+};
+
 class BZF_API bz_ListServerUpdateEvent_V1 : public bz_EventData
 {
 public:
@@ -1334,6 +1350,8 @@ public:
 BZF_API bool bz_getPlayerHumanity( int playerId );
 
 BZF_API bool bz_setPlayerOperator ( int playerId );
+BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn );
+BZF_API bool bz_isPlayerSpawnable ( int playerId );
 
 // player access control
 BZF_API bool bz_addPlayerToGame (int playerID );

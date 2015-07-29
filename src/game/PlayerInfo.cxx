@@ -40,7 +40,9 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   paused(false),
   pausedSince(TimeKeeper::getNullTime()),
   autopilot(false),
-  tracker(0)
+  tracker(0),
+  allowedToSpawn(true),
+  notifiedSpawn(false)
 {
   notResponding = false;
   memset(motto, 0, MottoLen);
@@ -553,6 +555,15 @@ int PlayerInfo::howManyTimesKilledBy(PlayerId killer)
 	return deathCountMap[killer];
 }
 
+void PlayerInfo::setAllowedToSpawn(bool canSpawn)
+{
+  allowedToSpawn = canSpawn;
+}
+
+void PlayerInfo::setNotifiedOfSpawnable(bool notified)
+{
+  notifiedSpawn = notified;
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -1304,6 +1304,32 @@ BZF_API bool bz_setPlayerOperator (int playerId)
   return true;
 }
 
+BZF_API bool bz_isPlayerSpawnable (int playerId )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+  
+  if (!player)
+    return false;
+  
+  return player->player.isAllowedToSpawn();
+}
+
+BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+  
+  if (!player)
+    return false;
+  
+  player->player.setAllowedToSpawn(spawn);
+
+  // Their spawnability has changed, so let's allow for one notification
+  if (!spawn)
+    player->player.setNotifiedOfSpawnable(false);
+  
+  return true;
+}
+
 BZF_API bool bz_addPlayerToGame( int playerID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);

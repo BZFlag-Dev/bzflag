@@ -2937,7 +2937,7 @@ void playerAlive(int playerIndex)
     return;
   }
 
-  bz_AllowSpawnData_V1	spawnAllowData;
+  bz_AllowSpawnData_V2	spawnAllowData;
   spawnAllowData.playerID = playerIndex;
   spawnAllowData.team = convertTeam(playerData->player.getTeam());
 
@@ -2945,17 +2945,33 @@ void playerAlive(int playerIndex)
     sendMessage(ServerPlayer, playerIndex, "You do not have permission to spawn on this server.");
     sendMessage(ServerPlayer, playerIndex, "This server may require identification before you can join.");
     sendMessage(ServerPlayer, playerIndex, "register on http://forums.bzflag.org/ and use that callsign/password.");
-	spawnAllowData.allow = false;
-	}
+    spawnAllowData.allow = false;
+  }
+
+  // a plug-in has set the spawnability of a player, let's not kick them for that
+  if (!playerData->player.isAllowedToSpawn()) {
+    spawnAllowData.allow = false;
+    spawnAllowData.kickPlayer = false;
+  }
 
   // check for any spawn allow events
-  worldEventManager.callEvents(bz_eAllowSpawn,&spawnAllowData);
-
+  worldEventManager.callEvents(bz_eAllowSpawn, &spawnAllowData);
+  
   if(!spawnAllowData.allow)
   {
+    // check if the player has been notified that they may not spawn
+    if (!playerData->player.notifiedOfSpawnable())
+    {
+      sendMessage(ServerPlayer, playerIndex, spawnAllowData.message.c_str());
+      playerData->player.setNotifiedOfSpawnable(true);
+    }
+    
     // client won't send another enter so kick em =(
-	removePlayer(playerIndex, "Not allowed to spawn");
-	return;
+    if (spawnAllowData.kickPlayer) {
+      removePlayer(playerIndex, spawnAllowData.kickReason.c_str());
+    }
+    
+    return;
   }
 
   // player is coming alive.
