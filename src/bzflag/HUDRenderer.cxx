@@ -680,8 +680,8 @@ void HUDRenderer::drawGeometry()
   hudColor4f( 1,1,1, 0.85f );
   glLineWidth(4.0f);
   glBegin(GL_LINES);
-  glVertex3f(-rad,rad+rad * 0.5f,0.03f);
-  glVertex3f(rad,-rad+rad * 0.5f,0.02f);
+  glVertex3f(-rad,rad,0.03f);
+  glVertex3f(rad,-rad,0.02f);
   // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
   // glVertex3f(lockonSize*xFactor,0,0.02f);
   glEnd();
@@ -691,8 +691,8 @@ void HUDRenderer::drawGeometry()
     const float s = (t - segmentation);
     const float tRads = t * DEG2RADf;
     const float sRads = s * DEG2RADf;
-    glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad * 0.5f, 0.02f);
-    glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad * 0.5f, 0.02f);
+    glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
+    glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
   }
   glEnd();
 
@@ -700,8 +700,8 @@ void HUDRenderer::drawGeometry()
   hudColor4f( 1,0,0, 0.85f );
   glLineWidth(2.0f);
   glBegin(GL_LINES);
-  glVertex3f(-rad,rad+rad * 0.5f,0.03f);
-  glVertex3f(rad,-rad+rad * 0.5f,0.02f);
+  glVertex3f(-rad,rad,0.03f);
+  glVertex3f(rad,-rad,0.02f);
   // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
   //  glVertex3f(lockonSize*xFactor,0,0.02f);
   glEnd();
@@ -711,8 +711,8 @@ void HUDRenderer::drawGeometry()
     const float s = (t - segmentation);
     const float tRads = t * DEG2RADf;
     const float sRads = s * DEG2RADf;
-    glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad * 0.5f, 0.02f);
-    glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad * 0.5f, 0.02f);
+    glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
+    glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
   }
   glEnd();
 
