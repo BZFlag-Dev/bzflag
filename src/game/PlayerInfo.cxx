@@ -35,14 +35,14 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   hasDoneEntering(false),
   team(NoTeam),
   flag(-1),
+  allowedToSpawn(true),
+  notifiedSpawn(false),
   spamWarns(0),
   lastMsgTime(now),
   paused(false),
   pausedSince(TimeKeeper::getNullTime()),
   autopilot(false),
-  tracker(0),
-  allowedToSpawn(true),
-  notifiedSpawn(false)
+  tracker(0)
 {
   notResponding = false;
   memset(motto, 0, MottoLen);
