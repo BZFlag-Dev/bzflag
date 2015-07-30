@@ -864,7 +864,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
     else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
-      options.gameOptions |= int(NoTeamKillsGameStyle);
+      if(options.gameType == OpenFFA)
+	std::cerr << "noteamkills check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
+      else
+	options.gameOptions |= int(NoTeamKillsGameStyle);
     }
     else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
@@ -1171,6 +1174,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
 	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
 	std::cerr << "Open Free-for-all assumed" << std::endl;
+      }
+      if ((options.gameOptions & int(NoTeamKillsGameStyle)) != 0) {
+	std::cerr << "offa check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
+	options.gameOptions ^= int(NoTeamKillsGameStyle);
       }
       options.gameType = OpenFFA;
     }

@@ -210,7 +210,7 @@ inline bool		World::allowTeamFlags() const
 
 inline bool		World::allowTeamKills() const
 {
-  return (gameOptions & short(NoTeamKillsGameStyle)) == 0 && allowTeams();
+  return (gameOptions & short(NoTeamKillsGameStyle)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const
