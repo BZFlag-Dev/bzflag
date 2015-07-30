@@ -64,7 +64,6 @@ for file in $PATH_TO_HERE/$ARG1/*$SAMPLE_PLUGIN* ;do
 done
 
 echo "---"
-echo "New plug-in \"$ARG1\" is ready.  A directory for your plug-in was created."
-echo ""
-
-bash addToBuild.sh $ARG1
+echo "New plugin \"$ARG1\" is ready in a directory with that name."
+echo "Use \"configure --enable-custom-plugins=$ARG1\" to have it built"
+echo "automatically along with the standard plugins."
