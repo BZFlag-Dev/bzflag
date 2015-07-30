@@ -916,7 +916,6 @@
 		0305D580166C9DAE00557FC4 /* bzglob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzglob.h; sourceTree = "<group>"; };
 		0305D581166C9DAE00557FC4 /* BzMaterial.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BzMaterial.h; sourceTree = "<group>"; };
 		0305D582166C9DAE00557FC4 /* BzPNG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BzPNG.h; sourceTree = "<group>"; };
-		0305D583166C9DAE00557FC4 /* bzregex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzregex.h; sourceTree = "<group>"; };
 		0305D584166C9DAE00557FC4 /* bzsignal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzsignal.h; sourceTree = "<group>"; };
 		0305D585166C9DAE00557FC4 /* CacheManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CacheManager.h; sourceTree = "<group>"; };
 		0305D586166C9DAE00557FC4 /* CallbackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackList.h; sourceTree = "<group>"; };
@@ -2154,7 +2153,6 @@
 				0305D580166C9DAE00557FC4 /* bzglob.h */,
 				0305D581166C9DAE00557FC4 /* BzMaterial.h */,
 				0305D582166C9DAE00557FC4 /* BzPNG.h */,
-				0305D583166C9DAE00557FC4 /* bzregex.h */,
 				0305D584166C9DAE00557FC4 /* bzsignal.h */,
 				0305D585166C9DAE00557FC4 /* CacheManager.h */,
 				0305D586166C9DAE00557FC4 /* CallbackList.h */,
