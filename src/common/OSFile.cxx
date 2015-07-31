@@ -201,13 +201,13 @@ bool OSFile::open(const char *mode)
     fileName = osBaseDir;
   fileName += info->osName;
 
-  info->fp = fopen(fileName.c_str(),mode);
+  info->fp = fopen(fileName.c_str(),modeToUse);
 
   // we may need to make the file path to the file, if we are writing then lets get on with it.
-  if (!info->fp && strchr(mode,'w'))
+  if (!info->fp && strchr(modeToUse,'w'))
   {
     osMakePath(fileName);
-    info->fp = fopen(fileName.c_str(),mode);
+    info->fp = fopen(fileName.c_str(),modeToUse);
   }
 
   return isOpen();
