@@ -29,11 +29,12 @@ char *GetMacOSXDataPath(void)
   if(!::CFURLGetFileSystemRepresentation(resourceURL,
 					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
     string = NULL;
+    printf(stderr, "data path was not found\n");
   } else {
     string = basePath;
+    fprintf(stderr, "data path is \"%s\"\n", string);
   }
   ::CFRelease(resourceURL);
-  fprintf(stderr, "data path is \"%s\"\n", string);
   return string;
 }
 
