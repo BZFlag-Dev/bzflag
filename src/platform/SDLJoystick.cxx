@@ -145,7 +145,7 @@ void                SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
   if (value - 2 >= 0) { value -= 2;
     hatX = 1;
   }
-  if (value - 1 >= 0) { value -= 1;
+  if (value - 1 >= 0) {
     hatY = -1;
   }
 }

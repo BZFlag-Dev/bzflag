@@ -89,7 +89,6 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "\\";
   }
-  customConfigDir = name;
   return name;
 
 #elif defined(__APPLE__)
@@ -109,7 +108,6 @@ std::string		getConfigDirName( const char* versionName )
       }
     }
   }
-  customConfigDir = name;
   return name;
 #else
   std::string name;
@@ -123,7 +121,6 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "/";
   }
-  customConfigDir = name;
   return name;
 #endif
 }

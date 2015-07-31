@@ -488,7 +488,6 @@ void BZAdminClient::outputServerList() const {
 
 void BZAdminClient::runLoop() {
   std::string cmd;
-  std::map<std::string, uint16_t>::iterator iter;
   ServerCode what(NoMessage);
   while (true) {
     what = checkMessage();
@@ -498,7 +497,7 @@ void BZAdminClient::runLoop() {
       if (cmd == "/quit")
 	break;
       else if (cmd.substr(0, 6) == "/show ") {
-	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
+	if (msgTypeMap.find(cmd.substr(6)) == msgTypeMap.end()) {
 	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}
@@ -509,7 +508,7 @@ void BZAdminClient::runLoop() {
 	}
       }
       else if (cmd.substr(0, 6) == "/hide ") {
-	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
+	if (msgTypeMap.find(cmd.substr(6)) == msgTypeMap.end()) {
 	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}

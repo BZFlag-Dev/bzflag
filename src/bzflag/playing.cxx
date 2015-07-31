@@ -3172,7 +3172,7 @@ static void		doMessages()
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
-    while (robotServer[i] && (e = robotServer[i]->read(code, len, msg, 0)) == 1)
+    while (robotServer[i] && robotServer[i]->read(code, len, msg, 0) == 1)
       ;
     if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
       handleServerMessage(false, code, len, msg);
@@ -4272,7 +4272,6 @@ static void		setRobotTarget(RobotPlayer* robot)
     const float priority = robot->getTargetPriority(myTank);
     if (priority > bestPriority) {
       bestTarget = myTank;
-      bestPriority = priority;
     }
   }
   robot->setTarget(bestTarget);

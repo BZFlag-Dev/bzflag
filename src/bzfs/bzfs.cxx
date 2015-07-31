@@ -458,7 +458,7 @@ static void sendFlagUpdate(int playerIndex)
   if (cnt > 0)
   {
     nboPackUShort(bufStart, cnt);
-    result = directMessage(*playerData, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+    directMessage(*playerData, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
   }
 }
 
@@ -4236,12 +4236,10 @@ static bool isCheatingMovement(GameKeeper::Player &playerData, PlayerState &stat
   if (realDist2 <= (maxMovement*maxMovement))
     return false;
 
-  bool kickem = false;
-
-  kickem =  !isTeleporterMotion(playerData,state,maxMovement*maxMovement,realDist2);
+  bool kickem = !isTeleporterMotion(playerData, state, maxMovement * maxMovement, realDist2);
 
   if (kickem)
-   logDebugMessage(1,"Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n", playerData.player.getCallSign(),t,sqrt(realDist2),maxMovement);
+    logDebugMessage(1,"Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n", playerData.player.getCallSign(),t,sqrt(realDist2),maxMovement);
   return kickem;
 }
 
