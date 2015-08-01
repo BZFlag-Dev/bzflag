@@ -116,4 +116,3 @@ extern const char*		defaultBindings[];
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

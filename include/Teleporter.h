@@ -148,4 +148,3 @@ inline void Teleporter::setName(const std::string& _name)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

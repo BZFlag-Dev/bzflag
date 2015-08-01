@@ -124,4 +124,3 @@ inline int		RadarRenderer::getHeight() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

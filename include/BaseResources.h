@@ -69,4 +69,3 @@ inline const std::vector<std::string>&	BaseResources::getNames() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

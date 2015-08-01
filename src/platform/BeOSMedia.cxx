@@ -554,4 +554,3 @@ double					BeOSMedia::stopwatch(bool start)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

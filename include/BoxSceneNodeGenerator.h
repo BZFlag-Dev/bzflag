@@ -39,4 +39,3 @@ class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

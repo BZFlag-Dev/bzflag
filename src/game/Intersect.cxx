@@ -1013,4 +1013,3 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

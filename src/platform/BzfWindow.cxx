@@ -117,4 +117,3 @@ void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

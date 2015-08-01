@@ -127,4 +127,3 @@ inline std::string stripAnsiCodes(const std::string &text)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

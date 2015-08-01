@@ -387,4 +387,3 @@ void BoxBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent))
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

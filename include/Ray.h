@@ -65,4 +65,3 @@ inline const float*	Ray::getDirection() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

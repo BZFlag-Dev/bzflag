@@ -434,4 +434,3 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

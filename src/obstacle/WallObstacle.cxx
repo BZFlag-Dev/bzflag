@@ -187,4 +187,3 @@ void WallObstacle::print(std::ostream& UNUSED(out),
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

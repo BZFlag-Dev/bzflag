@@ -91,6 +91,3 @@ void ObstacleList::sort(int (*compare)(const void* a, const void* b))
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-
-

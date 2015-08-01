@@ -45,4 +45,3 @@ class ViewFrustum : public Frustum {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -104,4 +104,3 @@ class ConeObstacle : public Obstacle {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

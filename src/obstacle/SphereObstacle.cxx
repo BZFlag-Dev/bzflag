@@ -636,4 +636,3 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

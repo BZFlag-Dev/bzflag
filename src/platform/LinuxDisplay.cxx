@@ -219,4 +219,3 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

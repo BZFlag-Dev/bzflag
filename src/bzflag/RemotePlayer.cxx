@@ -138,4 +138,3 @@ void			RemotePlayer::updateShots(float dt)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

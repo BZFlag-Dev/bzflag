@@ -160,4 +160,3 @@ inline const OpenGLGState* WallSceneNode::getWallGState() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

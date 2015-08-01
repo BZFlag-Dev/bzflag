@@ -283,4 +283,3 @@ void ObstacleModifier::getMaterialMap(const MaterialSet& matSet,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -72,4 +72,3 @@ class PolyWallSceneNode : public WallSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

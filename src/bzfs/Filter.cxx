@@ -94,4 +94,3 @@ Filter::Action Filter::check(GameKeeper::Player &player, int &index)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -58,4 +58,3 @@ void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

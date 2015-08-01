@@ -1129,4 +1129,3 @@ bool KeepAwayCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_Ap
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

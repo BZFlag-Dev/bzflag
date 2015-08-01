@@ -409,5 +409,3 @@ bool			 PingPacket::readFromFile(std::istream& in)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
-

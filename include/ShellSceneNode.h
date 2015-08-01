@@ -66,4 +66,3 @@ class ShellSceneNode : public ShotSceneNode {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

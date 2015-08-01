@@ -50,4 +50,3 @@ inline int WorldPlayer::getMaxShots() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

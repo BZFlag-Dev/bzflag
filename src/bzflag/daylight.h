@@ -67,4 +67,3 @@ bool			getSunsetTop(const float sunDir[3], float& topAltitude);
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-
