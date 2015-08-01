@@ -376,6 +376,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   count = listSize;
 
   // resize the list to save space
+  // FIXME: Correctly handle the situation of the realloc failing (which would return a NULL pointer)
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
 
   // return if this is a leaf node
