@@ -34,7 +34,6 @@ public:
   virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/);
 
   std::string noAuthDefaultTeplate,reportDefaultTemplate;
-  bool evenLine;
   bool valid;
   bz_APIStringList *reports;
   int report;
@@ -55,7 +54,7 @@ BZ_PLUGIN(WebReport)
 
 WebReport::WebReport() :bz_Plugin(), bzhttp_VDir(),bzhttp_TemplateCallback()
 {
-  evenLine = false;
+  reports = bz_newStringList();
   valid = false;
 }
 
@@ -84,16 +83,14 @@ bool WebReport::AllowResourceDownloads ( void )
 void WebReport::Cleanup()
 {
   bzhttp_RemoveAllVdirs(this);
+  bz_deleteStringList(reports);
   Flush();
 }
 
 bz_ApiString WebReport::GetTemplateKey(const char* _key)
 {
   std::string key = _key;
-  if (key == "evenodd") {
-    return evenLine ? "even" : "odd";
-  }
-  else if (key == "report") {
+  if (key == "report") {
     if (reports && report >= 0 && report < (int)reports->size())
       return reports->get(report);
   }
@@ -103,17 +100,12 @@ bz_ApiString WebReport::GetTemplateKey(const char* _key)
 bool WebReport::GetTemplateLoop(const char* _key, const char* /*_param*/)
 {
   std::string key = _key;
-  if (key != "reports")
-    return false;
-
-  if (!reports || !reports->size())
+  if (key != "reports" || !reports || reports->size() == 0)
     return false;
 
   report++;
   if (report >= (int)reports->size())
     return false;
-
-  evenLine = !evenLine;
 
   return true;
 }
@@ -128,9 +120,6 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
 
  bzhttp_ePageGenStatus WebReport::GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response )
 {
-  evenLine = false;
-  reports = NULL;
-
   if (!request.UserHasPerm(bz_perm_viewReports))
     return GenerateNoAuthPage(request,response) ? ePageDone : eNoPage;
   else
@@ -145,7 +134,15 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
   if (a)
 	  action = a;
 
-  reports = bz_getReports();
+  bz_APIStringList* rawReports = bz_getReports();
+  reports->clear();
+  for (unsigned int i = 0; i < rawReports->size(); i++) {
+    std::string rawReportLine = rawReports->get(i);
+    if (!rawReportLine.empty())
+      reports->push_back(rawReportLine);
+  }
+  bz_deleteStringList(rawReports);
+  
   report = -1;
 
   // find the report file
@@ -155,32 +152,19 @@ bool WebReport::GetTemplateIF(const char* _key, const char* /*_param*/)
   else
     response.AddBodyData(bzhttp_RenderTemplateFromText(reportDefaultTemplate.c_str(),this).c_str());
 
-  if (reports)
-    bz_deleteStringList(reports);
-
   return ePageDone;
 }
 
 bool WebReport::GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Response &response)
 {
-  const char* file = bzhttp_FindFile("ReportTemplates","report_noAuth.tmpl");
-  if (file)
-    response.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
-  else
-  {
-    file = bzhttp_FindFile("ReportTemplates","unauthorized.tmpl");
-    if (file)
-      response.AddBodyData(bzhttp_RenderTemplate(file,this).c_str());
-    else
-      response.AddBodyData(bzhttp_RenderTemplateFromText(noAuthDefaultTeplate.c_str(),this).c_str());
-  }
+  response.AddBodyData(bzhttp_RenderTemplateFromText(noAuthDefaultTeplate.c_str(),this).c_str());
 
   return true;
 }
 
 void WebReport::loadDefaultTemplates(void)
 {
-  reportDefaultTemplate = "<html><body>[?IF Valid][*START Reports][$Report]<br>[*END Reports]There are no reports, sorry[*EMPTY Reports][?ELSE Valid]Invalid Login, sorry[?END Valid]</body></html>";
+  reportDefaultTemplate = "<html><body>(Template files not found. Using basic embedded templates.)<br>[?IF Valid][*START Reports][$Report]<br>[*END Reports]There are no reports, sorry[*EMPTY Reports][?ELSE Valid]Invalid Login, sorry[?END Valid]</body></html>";
   noAuthDefaultTeplate = "<html><body>Unauthorized User</body></html>";
 }
 
