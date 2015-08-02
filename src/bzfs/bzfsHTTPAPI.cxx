@@ -2150,9 +2150,10 @@ std::string CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
     bz_getLocaltime(&time);
     TextUtils::format("%d:%d:%d",time.hour,time.minute,time.second);
   } else if (key == "hostname") {
-    std::string data = bz_getPublicAddr().c_str();
+    std::string data = bz_getPublicAddr();
     if (!data.size())
-     return TextUtils::format("localhost:%d",bz_getPublicPort()).c_str();
+      data = TextUtils::format("localhost:%d",bz_getPublicPort());
+    return data;
   } else if (key == "pagetime") {
     return TextUtils::format("%.3f",bz_getCurrentTime()-startTime).c_str();
   } else if (key == "baseurl") {
