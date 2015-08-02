@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "CppUTest/TestHarness.h"
-
 #include "AccessControlList.h"
+
+#include "CppUTest/TestHarness.h"
 
 TEST_GROUP(Bans)
 {

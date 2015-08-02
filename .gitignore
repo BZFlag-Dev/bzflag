@@ -91,6 +91,7 @@ work
 /bin_Release_x64/*
 /bin_Debug_Win32/*
 /bin_Debug_x64/*
+/tests/unittests
 
 # Misc
 *.diff
