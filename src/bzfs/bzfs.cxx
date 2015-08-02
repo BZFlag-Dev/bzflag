@@ -6299,11 +6299,18 @@ int main(int argc, char **argv)
   // firewalls).  use my official hostname if it appears to be
   // canonicalized, otherwise use my IP in dot notation.
   // set publicized address if not set by arguments
-  if (clOptions->publicizedAddress.length() == 0) {
-    clOptions->publicizedAddress = Address::getHostName();
-    if (clOptions->publicizedAddress.find('.') == std::string::npos)
-      clOptions->publicizedAddress = serverAddress.getDotNotation();
-    clOptions->publicizedAddress += TextUtils::format(":%d", clOptions->wksPort);
+  // Only set the public address through this automated generation if the
+  // hostname is a FQDN or the IP address is not 0.0.0.0 or a private IP.
+  if (clOptions->publicizedAddress.empty()) {
+    std::string generatedPublicAddress = Address::getHostName();
+    if (generatedPublicAddress.find('.') == std::string::npos) {
+      if (!serverAddress.isAny() && !serverAddress.isPrivate())
+	generatedPublicAddress = serverAddress.getDotNotation();
+      else
+	generatedPublicAddress = "";
+    }
+    if (!generatedPublicAddress.empty())
+      clOptions->publicizedAddress += generatedPublicAddress + TextUtils::format(":%d", clOptions->wksPort);
   }
 
   /* print debug information about how the server is running */
