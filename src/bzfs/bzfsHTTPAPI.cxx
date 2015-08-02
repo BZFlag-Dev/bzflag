@@ -1692,11 +1692,13 @@ public:
      response.AddBodyData("No HTTP Services are running on this server");
     } else {
       std::map<std::string,VDir>::iterator itr = VDirs.begin();
+      while (itr != VDirs.end())
       {
 	std::string vdirName = itr->second.vdir->VDirName();
 	std::string vDirDescription = itr->second.vdir->VDirDescription();
 	std::string line =  "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br/>";
 	response.AddBodyData(line.c_str());
+	itr++;
       }
     }
 
