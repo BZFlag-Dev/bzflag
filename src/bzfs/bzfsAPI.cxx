@@ -1330,6 +1330,26 @@ BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn )
   return true;
 }
 
+BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return;
+
+  player->player.setRestartOnBase(base);
+}
+
+BZF_API bool bz_getPlayerSpawnAtBase ( int playerId )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return false;
+
+  return player->player.shouldRestartAtBase();
+}
+
 BZF_API bool bz_addPlayerToGame( int playerID )
 {
 	GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);

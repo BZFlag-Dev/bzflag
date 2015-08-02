@@ -4,6 +4,8 @@
 BZFlag 2.4.3
 ------------
 
+* Added bz_setPlayerSpawnAtBase and bz_getPlayerSpawnAtBase API functions
+		- Vladimir Jimenez
 * Added configure --enable-custom-plugins option - Jeff Makey
 * Introduce bz_AllowSpawnData_V2 - Vladimir Jimenez
 * Added bz_setPlayerSpawnable and bz_isPlayerSpawnable API functions

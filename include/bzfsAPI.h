@@ -1352,6 +1352,8 @@ BZF_API bool bz_getPlayerHumanity( int playerId );
 BZF_API bool bz_setPlayerOperator ( int playerId );
 BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn );
 BZF_API bool bz_isPlayerSpawnable ( int playerId );
+BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base );
+BZF_API bool bz_getPlayerSpawnAtBase ( int playerId );
 
 // player access control
 BZF_API bool bz_addPlayerToGame (int playerID );
