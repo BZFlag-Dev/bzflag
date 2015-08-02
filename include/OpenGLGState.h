@@ -95,6 +95,7 @@ class OpenGLGState {
 
   private:
     static void		initGLState();
+    static bool		initGLExtensions();
     static void		freeStipple(void*);
     static void		initStipple(void*);
 
@@ -130,6 +131,7 @@ class OpenGLGState {
   public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
+    static bool hasAnisotropicFiltering;
 };
 
 inline bool OpenGLGState::getExecutingFreeFuncs()

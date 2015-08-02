@@ -18,6 +18,7 @@
 /* system headers */
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 #include <assert.h>
 
 /* common implementation headers */
@@ -933,6 +934,7 @@ OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::tail = NULL;
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
+bool OpenGLGState::hasAnisotropicFiltering = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -1244,6 +1246,7 @@ void OpenGLGState::initContext()
   glEnable(GL_SCISSOR_TEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+  initGLExtensions();
 }
 
 
@@ -1268,6 +1271,29 @@ void OpenGLGState::initGLState()
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+// utility to check if an OpenGL extension is supported on this system
+bool OpenGLGState::initGLExtensions()
+{
+  hasAnisotropicFiltering = false;
+
+  const char * extensions = (const char*) glGetString(GL_EXTENSIONS);
+  if (!extensions)
+    return false;
+
+  std::stringstream extensionsStream;
+  extensionsStream.str(extensions);
+
+  while (!extensionsStream.eof()) {
+    std::string thisExtension;
+    extensionsStream >> thisExtension;
+
+    if (thisExtension == "GL_EXT_texture_filter_anisotropic")
+      hasAnisotropicFiltering = true;
+  }
+
+  return false;
 }
 
 

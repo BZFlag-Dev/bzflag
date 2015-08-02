@@ -121,10 +121,6 @@ class DisplayListSystem
   GLDisplayList				lastList;
 };
 
-
-bool isGLExtensionSupported(const char* extensionName);
-
-
 #endif // __OPENGLUTILS_H__
 
 

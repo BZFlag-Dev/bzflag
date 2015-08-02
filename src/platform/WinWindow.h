@@ -86,6 +86,7 @@ class WinWindow : public BzfWindow {
     const WinDisplay*	display;
     WinVisual		visual;
     bool		inDestroy;
+    bool		isNewContext;
     static HWND		hwnd;
     HWND		hwndChild;
     HGLRC		hRC;

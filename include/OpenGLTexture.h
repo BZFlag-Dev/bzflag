@@ -106,7 +106,6 @@ class OpenGLTexture {
     void  operator delete(void *p) {::operator delete(p);}
 
     bool	alpha;
-    bool	anisotropicFiltering;
     const int	width;
     const int	height;
     GLint	scaledWidth;
