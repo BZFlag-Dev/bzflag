@@ -125,6 +125,7 @@ public:
   bz_ApiString& operator += ( const char* r );
 
   unsigned int size ( void ) const;
+  bool empty ( void ) const;
 
   const char* c_str(void) const;
 

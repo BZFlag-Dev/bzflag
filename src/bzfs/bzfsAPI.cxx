@@ -312,6 +312,11 @@ unsigned int bz_ApiString::size ( void ) const
   return data->str.size();
 }
 
+bool bz_ApiString::empty ( void ) const
+{
+  return data->str.empty();
+}
+
 const char* bz_ApiString::c_str(void) const
 {
   return data->str.c_str();
