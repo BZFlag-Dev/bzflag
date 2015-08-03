@@ -36,6 +36,8 @@
 
 std::string ServerVersion;
 std::string ServerHostname;
+std::string ServerPort;
+std::string ServerHostPort;
 std::string BaseURL;
 
 #ifdef _WIN32
@@ -895,7 +897,7 @@ public:
 
 		for ( size_t i = 1; i < headers.size(); i++ )
 		{
-			std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],":",2);
+			std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],": ",2);
 			if (headerParts.size() > 1)
 			{
 				Request.AddHeader(headerParts[0].c_str(),headerParts[1].c_str());
@@ -1367,9 +1369,11 @@ public:
 	  pageBuffer += " 301 Moved Permanently\n";
 	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
-	else
+	else {
 	  pageBuffer += " 500 Server Error\n";
-	pageBuffer += "Host: " + ServerHostname + "\n";
+	}
+
+	pageBuffer += "Host: " + ServerHostPort + "\n";
 	break;
 
       case e302Found:
@@ -1379,15 +1383,17 @@ public:
 	  pageBuffer += " 302 Found\n";
 	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
-	else
+	else {
 	  pageBuffer += " 500 Server Error\n";
+	}
 
-	pageBuffer += "Host: " + ServerHostname + "\n";
+	pageBuffer += "Host: " + ServerHostPort + "\n";
 	break;
 
       case e401Unauthorized:
-	if (!vDir || vDir->RequiredAuthentiction == eBZID)
+	if (!vDir || vDir->RequiredAuthentiction == eBZID) {
 	  pageBuffer += " 403 Forbidden\n";
+	}
 	else
 	{
 	  pageBuffer += " 401 Unauthorized\n";
@@ -1402,7 +1408,7 @@ public:
 	  if (vDir->HTTPAuthenicationRelalm.size())
 	    pageBuffer += vDir->HTTPAuthenicationRelalm.c_str();
 	  else
-	    pageBuffer += ServerHostname;
+	    pageBuffer += ServerHostPort;
 	  pageBuffer += "\"\n";
 	}
 	break;
@@ -1685,7 +1691,7 @@ public:
     response.DocumentType = eHTML;
     response.AddBodyData("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head>");
     response.AddBodyData("<title>Index page for ");
-    response.AddBodyData(ServerHostname.c_str());
+    response.AddBodyData(ServerHostPort.c_str());
     response.AddBodyData("</title></head><body>");
 
     if (VDirs.empty()) {
@@ -1738,13 +1744,17 @@ void InitHTTP()
     ServerHostname = bz_getPublicAddr().c_str();
 
   // make sure it has the port
-  if (strrchr(ServerHostname.c_str(),':') == NULL)
-    ServerHostname += TextUtils::format(":%d",bz_getPublicPort());
+  size_t pos;
+  if ((pos = ServerHostname.find(':')) != std::string::npos)
+    ServerHostname = ServerHostname.substr(0, pos);
+  ServerPort = TextUtils::format("%d",bz_getPublicPort());
+
+  ServerHostPort = ServerHostname + ":" + ServerPort;
 
   ServerVersion = bz_getServerVersion();
 
   BaseURL = "http://";
-  BaseURL += ServerHostname +"/";
+  BaseURL += ServerHostPort + "/";
 
   indexHandler->BaseURL = BaseURL.c_str();
 }
