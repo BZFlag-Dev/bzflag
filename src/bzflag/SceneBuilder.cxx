@@ -537,7 +537,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     useColorTexture[1] = baseTopTexture >= 0;
 
   // this assumes bases have 6 parts - if they don't, it still works
-  int part = 0;
+  unsigned int part = 0;
   // repeat the textue once for the top and bottom, else use the old messed up way
   // There are 3 cases for the texture ordering:
   // 1. getNextNode() only returns the top texture
@@ -548,10 +548,11 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 							   o.getHeight(),
 							   boxLOD)))) {
     if ((part % 5) != 0) {
-      node->setColor(boxColors[part - 2]);
-      node->setModulateColor(boxModulateColors[part - 2]);
-      node->setLightedColor(boxLightedColors[part - 2]);
-      node->setLightedModulateColor(boxLightedModulateColors[part - 2]);
+      const unsigned int colorIndex = (part % 5) - 1;
+      node->setColor(boxColors[colorIndex]);
+      node->setModulateColor(boxModulateColors[colorIndex]);
+      node->setLightedColor(boxLightedColors[colorIndex]);
+      node->setLightedModulateColor(boxLightedModulateColors[colorIndex]);
       node->setMaterial(boxMaterial);
       node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
