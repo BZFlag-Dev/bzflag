@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <Carbon/Carbon.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 // if -directory is not used, this function is used to get the default path
 // to the data directory which is located in the same directory as the
@@ -29,7 +29,7 @@ char *GetMacOSXDataPath(void)
   if(!::CFURLGetFileSystemRepresentation(resourceURL,
 					 true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath))) {
     string = NULL;
-    printf(stderr, "data path was not found\n");
+    fprintf(stderr, "data path was not found\n");
   } else {
     string = basePath;
     fprintf(stderr, "data path is \"%s\"\n", string);
