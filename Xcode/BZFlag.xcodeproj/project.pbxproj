@@ -23,6 +23,7 @@
 /* Begin PBXBuildFile section */
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
+		0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
 		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; };
 		034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		034E307A1B0C943300E7DDE2 /* modeltool in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0370A4861B0C921A00FEC9F7 /* modeltool */; };
@@ -181,7 +182,6 @@
 		0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A31670B7670056C938 /* SDLMedia.cxx */; };
 		0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */; };
 		0357A8BD1670B7E40056C938 /* wave.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A71670B7670056C938 /* wave.cxx */; };
-		0357A8BE1670B8750056C938 /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554AF4166C8470008806E9 /* MacDataPath.cxx */; };
 		0357A8C81670B9050056C938 /* AudioFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BA166C846F008806E9 /* AudioFile.cxx */; };
 		0357A8C91670B9050056C938 /* ImageFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BC166C846F008806E9 /* ImageFile.cxx */; };
 		0357A8CA1670B9050056C938 /* MediaFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BF166C846F008806E9 /* MediaFile.cxx */; };
@@ -1041,6 +1041,7 @@
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
 		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
@@ -1520,7 +1521,6 @@
 		035544F7166C846F008806E9 /* OpenGLUtils.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGLUtils.cxx; sourceTree = "<group>"; };
 		035544F8166C846F008806E9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		035544F9166C846F008806E9 /* RenderNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RenderNode.cxx; sourceTree = "<group>"; };
-		03554AF4166C8470008806E9 /* MacDataPath.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		03554B07166C8470008806E9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		03554B33166C8470008806E9 /* BSPSceneDatabase.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BSPSceneDatabase.cxx; sourceTree = "<group>"; };
 		03554B35166C8470008806E9 /* Occluder.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Occluder.cxx; sourceTree = "<group>"; };
@@ -2903,7 +2903,7 @@
 				0357A89B1670B7670056C938 /* BzfMedia.cxx */,
 				0357A89C1670B7670056C938 /* BzfVisual.cxx */,
 				0357A89D1670B7670056C938 /* BzfWindow.cxx */,
-				03554AF3166C8470008806E9 /* MacOSX */,
+				0336ED7A1B7042E40090899C /* MacDataPath.cxx */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
 				0357A8A11670B7670056C938 /* SDLJoystick.cxx */,
 				0357A8A21670B7670056C938 /* SDLJoystick.h */,
@@ -2922,14 +2922,6 @@
 				03554B07166C8470008806E9 /* README */,
 			);
 			path = platform;
-			sourceTree = "<group>";
-		};
-		03554AF3166C8470008806E9 /* MacOSX */ = {
-			isa = PBXGroup;
-			children = (
-				03554AF4166C8470008806E9 /* MacDataPath.cxx */,
-			);
-			path = MacOSX;
 			sourceTree = "<group>";
 		};
 		03554B32166C8470008806E9 /* scene */ = {
@@ -5055,7 +5047,6 @@
 				0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */,
 				0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */,
 				0357A8BD1670B7E40056C938 /* wave.cxx in Sources */,
-				0357A8BE1670B8750056C938 /* MacDataPath.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5463,6 +5454,7 @@
 				03C8EE75167AC26A00BB07A5 /* CommandsImplementation.cxx in Sources */,
 				03C8EE76167AC26A00BB07A5 /* ComposeDefaultKey.cxx in Sources */,
 				03C338CF1AFB5AFC00E8F655 /* SDL2Window.cxx in Sources */,
+				0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */,
 				03C8EE78167AC26A00BB07A5 /* ControlPanel.cxx in Sources */,
 				03C8EE7A167AC26A00BB07A5 /* daylight.cxx in Sources */,
 				03C8EE7C167AC26A00BB07A5 /* defaultBZDB.cxx in Sources */,

@@ -1071,7 +1071,7 @@ AC_CONFIG_FILES([
 	plugins/thiefControl/Makefile
 	plugins/timedctf/Makefile
 	plugins/TimeLimit/Makefile
-    plugins/webReport/Makefile
+	plugins/webReport/Makefile
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile
@@ -1088,7 +1088,6 @@ AC_CONFIG_FILES([
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/platform/MacOSX/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
 	tests/Makefile

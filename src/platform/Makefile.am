@@ -104,40 +104,6 @@ libPlatform_la_SOURCES =			\
 	XWindow.h
 endif
 
-if MACOS
-SUBDIRS = MacOSX
-
-if HAVE_SDL
-libPlatform_la_SOURCES =			\
-	PlatformFactory.cxx			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	BzfMedia.cxx				\
-	SDLPlatformFactory.cxx			\
-	SDLPlatformFactory.h			\
-	SDLJoystick.cxx				\
-	SDLJoystick.h				\
-	SDLMedia.cxx				\
-	SDLMedia.h				\
-	SDLDisplay.h				\
-	SDLDisplay.cxx				\
-	wave.cxx				\
-	wave.h
-else
-libPlatform_la_SOURCES =			\
-	PlatformFactory.cxx			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	BzfMedia.cxx				\
-	wave.cxx				\
-	wave.h
-endif
-endif
-DIST_SUBDIRS = MacOSX
 
 if BEOS
 libPlatform_la_SOURCES =			\
@@ -211,6 +177,7 @@ EXTRA_libPlatform_la_SOURCES =		\
 	LinuxDisplay.h			\
 	LinuxMedia.cxx			\
 	LinuxMedia.h			\
+	MacDataPath.cxx			\
 	SDLJoystick.cxx			\
 	SDLJoystick.h			\
 	EvdevJoystick.cxx		\
