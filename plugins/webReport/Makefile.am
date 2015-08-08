@@ -2,7 +2,7 @@ lib_LTLIBRARIES = webReport.la
 
 webReport_la_SOURCES = \
 	webReport.cpp
-
+webReport_la_CPPFLAGS = -I$(top_srcdir)/include
 webReport_la_LDFLAGS = -module -avoid-version -shared
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
