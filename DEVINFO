@@ -441,8 +441,8 @@ cannot proceed.  A checklist of items to be completed follows:
   latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, ChangeLog, configure.ac,
-  buildDate.cxx, and the title.png image.  Version numbers in all
+  This minimally includes updating README, ChangeLog, configure.ac, 
+  buildDate.cxx, bzflag.rc, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
 - When BZ_PROTO_VERSION has already changed since the last release,
