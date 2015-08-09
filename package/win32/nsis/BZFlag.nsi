@@ -3,6 +3,13 @@
 ;Redesigned for BZFlag by blast007
 
 ;--------------------------------
+;BZFlag Version Variables
+
+	!define VER_MAJOR 2
+	!define VER_MINOR 4
+	!define VER_REVISION 3
+
+;--------------------------------
 ;Includes
 
   ; Modern UI
@@ -12,10 +19,18 @@
   !include "WinVer.nsh"
 
 ;--------------------------------
-;BZFlag Version Variables
+;Automatically generated version variables
 
-  !define VER_MAJOR 2.4
-  !define VER_MINOR .3.20150710
+	; Check if we have an odd minor or revision version number
+	!define /math VER_MINOR_ODD ${VER_MINOR} % 2
+	!define /math VER_REVISION_ODD ${VER_REVISION} % 2
+	
+	; Include the date for alpha/beta/RC builds
+	!if ${VER_MINOR_ODD} || ${VER_REVISION_ODD}
+		!define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d"
+	!else
+		!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+	!endif
   
   !ifdef BUILD_64
     !define PLATFORM x64
@@ -42,13 +57,14 @@
 ;Configuration
 
   ; Installer output file and default installation folder
-  Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
   !ifdef BUILD_64
-    OutFile "..\..\..\bin_Release_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-    InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    Name "BZFlag ${VERSION} ${BITNESS}"
+    OutFile "..\..\..\bin_Release_x64\bzflag-${VERSION}_${BITNESS}.exe"
+    InstallDir "$PROGRAMFILES64\BZFlag ${VERSION} ${BITNESS}"
   !else
-    OutFile "..\..\..\bin_Release_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-    InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    Name "BZFlag ${VERSION}"
+    OutFile "..\..\..\bin_Release_Win32\bzflag-${VERSION}.exe"
+    InstallDir "$PROGRAMFILES32\BZFlag ${VERSION}"
   !endif
 
   ; Make it look pretty in XP
@@ -87,7 +103,11 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR} ${__DATE__} ${BITNESS}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !ifdef BUILD_64
+    !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VERSION} ${BITNESS}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !else
+    !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VERSION}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !endif
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
@@ -95,8 +115,12 @@
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}" 
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
+  !ifdef BUILD_64
+    !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag ${VERSION} ${BITNESS}"
+  !else
+    !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag ${VERSION}"
+  !endif
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -185,18 +209,23 @@ Section "!BZFlag (Required)" BZFlag
   ; 32-bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
   ; 64-bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
   SetOutPath $TEMP
-  DetailPrint "Installing Visual C++ ${BITNESS} runtime"         
+  DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
   ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /q"         
   DetailPrint "Cleaning up"         
   Delete $TEMP\vcredist_${RUNTIME_PLATFORM}.exe
 
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM "SOFTWARE\BZFlag ${VERSION}" "Install_Dir" "$INSTDIR"
 
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "DisplayName" "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS} (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !ifdef BUILD_64
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "DisplayName" "BZFlag ${VERSION} ${BITNESS} (remove only)"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !else
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "DisplayName" "BZFlag ${VERSION} (remove only)"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !endif
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -207,8 +236,8 @@ Section "!BZFlag (Required)" BZFlag
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR} (Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION} (800x600 Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
 
 	; Local User Data
     Var /GLOBAL UserData
@@ -243,7 +272,7 @@ Section "BZAdmin" BZAdmin
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZAdmin ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzadmin.exe" "" "$INSTDIR\bzadmin.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZAdmin ${VERSION}.lnk" "$INSTDIR\bzadmin.exe" "" "$INSTDIR\bzadmin.exe" 0
 
     SetOutPath $INSTDIR\doc
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -315,7 +344,11 @@ Section "Desktop Icon" Desktop
   
   ;shortcut on the "desktop"
   SetOutPath $INSTDIR
-  CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !ifdef BUILD_64
+    CreateShortCut "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !else
+    CreateShortCut "$DESKTOP\BZFlag ${VERSION}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !endif
 SectionEnd
 
 ;--------------------------------
@@ -394,11 +427,21 @@ Section "Uninstall"
   
   ; Remove desktop shortcut for all users
   SetShellVarContext all
-  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
+  !ifdef BUILD_64
+    Delete "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk"
+  !else
+    Delete "$DESKTOP\BZFlag ${VERSION}.lnk"
+  !endif
   
   ;remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
-  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
+  !ifdef BUILD_64
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}"
+    DeleteRegKey HKLM "SOFTWARE\BZFlag ${VERSION} ${BITNESS}"
+  !else
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}"
+    DeleteRegKey HKLM "SOFTWARE\BZFlag ${VERSION}"
+  !endif
+  ; This deletes a key that stored the current running path of BZFlag, which was/is used by Xfire
   DeleteRegKey HKCU "Software\BZFlag"
 
 SectionEnd
