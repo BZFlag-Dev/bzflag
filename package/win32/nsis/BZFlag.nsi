@@ -234,9 +234,6 @@ Section "BZAdmin" BZAdmin
   ; Put file there
   File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
   
-  ; Add the PDCurses DLL file
-  File ..\..\..\bin_Release_${PLATFORM}\pdcurses.dll
-
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
