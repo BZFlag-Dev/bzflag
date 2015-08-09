@@ -102,8 +102,8 @@ work
 /man/*.html
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
-
 /MSVC/ipch
+/MSVC/bzflag.aps
 
 # OS generated files
 .DS_Store
