@@ -8,6 +8,11 @@
 	!define VER_MAJOR 2
 	!define VER_MINOR 4
 	!define VER_REVISION 3
+	
+	;Allow manually specifying a date for the installer. This only works if the
+	;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
+	;to use. Don't commit changes to this into Git.
+	;!define DATE_OVERRIDE 20150101
 
 ;--------------------------------
 ;Includes
@@ -27,7 +32,11 @@
 	
 	; Include the date for alpha/beta/RC builds
 	!if ${VER_MINOR_ODD} || ${VER_REVISION_ODD}
-		!define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d"
+		!ifndef DATE_OVERRIDE
+			!define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d"
+		!else
+			!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}"
+		!endif
 	!else
 		!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
 	!endif
