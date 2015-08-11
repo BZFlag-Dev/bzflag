@@ -1022,7 +1022,6 @@ AC_CONFIG_FILES([
 	Xcode/Makefile
 	Xcode/BZFlag.xcodeproj/Makefile
 	Makefile
-	bzflag.lsm
 	bzflag.spec
 	data/Makefile
 	data/fonts/Makefile

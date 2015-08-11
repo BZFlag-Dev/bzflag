@@ -32,7 +32,6 @@ EXTRA_DIST = \
 	.editorconfig \
 	.travis.yml \
 	autogen.sh \
-	bzflag.lsm \
 	bzflag.spec \
 	DEVINFO \
 	PORTING \

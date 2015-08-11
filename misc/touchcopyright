@@ -18,7 +18,7 @@ NEWCOPYRIGHTTEXT='Copyright (c) 1993-2013'
 #
 # bzflag top-level dir
 for root in . .. ; do
-  if [ -r $root/bzflag.lsm.in ] ; then
+  if [ -r $root/bzflag.spec.in ] ; then
     break
   fi
 done
