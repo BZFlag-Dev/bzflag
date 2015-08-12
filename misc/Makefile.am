@@ -49,7 +49,6 @@ EXTRA_DIST =				\
 	Template.cxx			\
 	Template.h			\
 	touchcopyright			\
-	touchversion			\
 	vars.txt			\
 	ws.sh
 
