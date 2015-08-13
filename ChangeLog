@@ -13,7 +13,7 @@ BZFlag 2.4.3
 * Removed GLEW as a dependency - Joshua Bodine, Scott Wichser
 * Made text at top of HUD use sans-serif font and removed serif font
 		- Joshua Bodine
-* Team/player scores are now factors in auto team assignment - Joshua Bodine
+* Player scores are now factors in auto team assignment - Joshua Bodine
 * New font rendering tool and new font textures up to 64pt - Joshua Bodine
 * Add bz_getPlayerBySlotOrCallsign API function - Vladimir Jimenez
 * Have custom permissions show in /showperms and /groupperms - Vladimir Jimenez
