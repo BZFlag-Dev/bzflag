@@ -1027,7 +1027,7 @@ public:
 							token = t;
 							callsign = c;
 
-							bzIDAuthURL = "http://my.bzflag.org/db/";
+							bzIDAuthURL = "https://my.bzflag.org/db/";
 							if (bz_BZDBItemHasValue("_WebAuthCheckURL"))
 								bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
 
@@ -1069,7 +1069,7 @@ public:
 					}
 					else
 					{
-						std::string authURL = "http://my.bzflag.org/weblogin.php";
+						std::string authURL = "https://my.bzflag.org/weblogin.php";
 						if (bz_BZDBItemHasValue("_WebAuthURL"))
 							authURL = bz_getBZDBString("_WebAuthURL").c_str();
 

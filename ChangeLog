@@ -4,6 +4,7 @@
 BZFlag 2.4.3
 ------------
 
+* List server communication now uses HTTPS - Scott Wichser
 * Added bz_setPlayerSpawnAtBase and bz_getPlayerSpawnAtBase API functions
 		- Vladimir Jimenez
 * Added configure --enable-custom-plugins option - Jeff Makey
