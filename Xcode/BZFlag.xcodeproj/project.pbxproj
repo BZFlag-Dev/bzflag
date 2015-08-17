@@ -21,6 +21,12 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		0315BEB51B821C5D00FC7CE0 /* bzfscron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */; };
+		0315BEB61B821C5D00FC7CE0 /* CronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */; };
+		0315BEB71B821C5D00FC7CE0 /* CronJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 0315BEB21B821C5D00FC7CE0 /* CronJob.h */; };
+		0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */; };
+		0315BECA1B821FC700FC7CE0 /* webStats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEC81B821F9000FC7CE0 /* webStats.cpp */; };
+		0315BECD1B82204800FC7CE0 /* webStats.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEC01B821F6C00FC7CE0 /* webStats.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
@@ -477,6 +483,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		0315BEB81B821D6E00FC7CE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0315BEAA1B821BFF00FC7CE0;
+			remoteInfo = bzfscron;
+		};
+		0315BECB1B82201100FC7CE0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0315BEBF1B821F6C00FC7CE0;
+			remoteInfo = webStats;
+		};
 		0318265C16A0BE45005050BD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
@@ -819,11 +839,13 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				0315BECD1B82204800FC7CE0 /* webStats.dylib in CopyFiles */,
 				C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */,
 				03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */,
 				0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */,
 				0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */,
 				0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */,
+				0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */,
 				0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */,
 				0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */,
 				0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */,
@@ -1040,6 +1062,17 @@
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
+		0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = bzfscron.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzfscron.cpp; path = bzfscron/bzfscron.cpp; sourceTree = "<group>"; };
+		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CronJob.cpp; path = bzfscron/CronJob.cpp; sourceTree = "<group>"; };
+		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CronJob.h; path = bzfscron/CronJob.h; sourceTree = "<group>"; };
+		0315BEB31B821C5D00FC7CE0 /* crontab */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = crontab; path = bzfscron/crontab; sourceTree = "<group>"; };
+		0315BEB41B821C5D00FC7CE0 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = bzfscron/README.txt; sourceTree = "<group>"; };
+		0315BEC01B821F6C00FC7CE0 /* webStats.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = webStats.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0315BEC41B821F9000FC7CE0 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = webStats/README.txt; sourceTree = "<group>"; };
+		0315BEC61B821F9000FC7CE0 /* player.tmpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = player.tmpl; sourceTree = "<group>"; };
+		0315BEC71B821F9000FC7CE0 /* stats.tmpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = stats.tmpl; sourceTree = "<group>"; };
+		0315BEC81B821F9000FC7CE0 /* webStats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = webStats.cpp; path = webStats/webStats.cpp; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
@@ -1718,6 +1751,20 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0315BEA81B821BFF00FC7CE0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0315BEBD1B821F6C00FC7CE0 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0318265516A0BE2F005050BD /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2279,6 +2326,38 @@
 			);
 			name = include;
 			path = ../include;
+			sourceTree = "<group>";
+		};
+		0315BEAF1B821C0700FC7CE0 /* bzfscron */ = {
+			isa = PBXGroup;
+			children = (
+				0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */,
+				0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */,
+				0315BEB21B821C5D00FC7CE0 /* CronJob.h */,
+				0315BEB31B821C5D00FC7CE0 /* crontab */,
+				0315BEB41B821C5D00FC7CE0 /* README.txt */,
+			);
+			name = bzfscron;
+			sourceTree = "<group>";
+		};
+		0315BEBB1B821F4C00FC7CE0 /* webStats */ = {
+			isa = PBXGroup;
+			children = (
+				0315BEC41B821F9000FC7CE0 /* README.txt */,
+				0315BEC51B821F9000FC7CE0 /* templates */,
+				0315BEC81B821F9000FC7CE0 /* webStats.cpp */,
+			);
+			name = webStats;
+			sourceTree = "<group>";
+		};
+		0315BEC51B821F9000FC7CE0 /* templates */ = {
+			isa = PBXGroup;
+			children = (
+				0315BEC61B821F9000FC7CE0 /* player.tmpl */,
+				0315BEC71B821F9000FC7CE0 /* stats.tmpl */,
+			);
+			name = templates;
+			path = webStats/templates;
 			sourceTree = "<group>";
 		};
 		032F515F166C88650030544C /* Xcode */ = {
@@ -2966,6 +3045,7 @@
 				0394E6D8167B1024007F4035 /* airspawn */,
 				0394E6DE167B1024007F4035 /* api_notes */,
 				0394E6DF167B1024007F4035 /* autoFlagReset */,
+				0315BEAF1B821C0700FC7CE0 /* bzfscron */,
 				0394E6E6167B1024007F4035 /* chathistory */,
 				0394E6EC167B1024007F4035 /* customflagsample */,
 				C353B1DF1AE23C8100C5AED5 /* CustomZoneSample */,
@@ -2998,6 +3078,7 @@
 				0394E7AA167B1025007F4035 /* timedctf */,
 				0394E7B3167B1025007F4035 /* TimeLimit */,
 				0394E7BA167B1025007F4035 /* webReport */,
+				0315BEBB1B821F4C00FC7CE0 /* webStats */,
 				0394E7C3167B1025007F4035 /* wwzones */,
 			);
 			name = plugins;
@@ -3338,6 +3419,7 @@
 				0370A4861B0C921A00FEC9F7 /* modeltool */,
 				0394E6D3167B0F74007F4035 /* airspawn.dylib */,
 				0394E7E8167B196F007F4035 /* autoFlagReset.dylib */,
+				0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */,
 				0394E7F3167B1A17007F4035 /* chathistory.dylib */,
 				0394E7FE167B1E66007F4035 /* customflagsample.dylib */,
 				C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */,
@@ -3369,6 +3451,7 @@
 				0394E91C167B293E007F4035 /* timedctf.dylib */,
 				0394E927167B29CC007F4035 /* TimeLimit.dylib */,
 				0394E932167B2A47007F4035 /* webReport.dylib */,
+				0315BEC01B821F6C00FC7CE0 /* webStats.dylib */,
 				0394E93D167B2A9E007F4035 /* wwzones.dylib */,
 			);
 			name = Targets;
@@ -3453,6 +3536,21 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
+		0315BEA91B821BFF00FC7CE0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0315BEB71B821C5D00FC7CE0 /* CronJob.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0315BEBE1B821F6C00FC7CE0 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0318265616A0BE2F005050BD /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -3785,6 +3883,40 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		0315BEAA1B821BFF00FC7CE0 /* bzfscron */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0315BEAE1B821BFF00FC7CE0 /* Build configuration list for PBXNativeTarget "bzfscron" */;
+			buildPhases = (
+				0315BEA71B821BFF00FC7CE0 /* Sources */,
+				0315BEA81B821BFF00FC7CE0 /* Frameworks */,
+				0315BEA91B821BFF00FC7CE0 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = bzfscron;
+			productName = bzfscron;
+			productReference = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		0315BEBF1B821F6C00FC7CE0 /* webStats */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0315BEC11B821F6C00FC7CE0 /* Build configuration list for PBXNativeTarget "webStats" */;
+			buildPhases = (
+				0315BEBC1B821F6C00FC7CE0 /* Sources */,
+				0315BEBD1B821F6C00FC7CE0 /* Frameworks */,
+				0315BEBE1B821F6C00FC7CE0 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = webStats;
+			productName = webStats;
+			productReference = 0315BEC01B821F6C00FC7CE0 /* webStats.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 		0318265716A0BE2F005050BD /* superUser */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0318265916A0BE2F005050BD /* Build configuration list for PBXNativeTarget "superUser" */;
@@ -4627,6 +4759,7 @@
 				034E30791B0C941F00E7DDE2 /* PBXTargetDependency */,
 				0394E7E2167B14BE007F4035 /* PBXTargetDependency */,
 				0394E7EE167B198F007F4035 /* PBXTargetDependency */,
+				0315BEB91B821D6E00FC7CE0 /* PBXTargetDependency */,
 				0394E7F8167B1A22007F4035 /* PBXTargetDependency */,
 				0394E803167B1E79007F4035 /* PBXTargetDependency */,
 				C353B1DE1AE23C2900C5AED5 /* PBXTargetDependency */,
@@ -4658,6 +4791,7 @@
 				0394E921167B2958007F4035 /* PBXTargetDependency */,
 				0394E92C167B29D8007F4035 /* PBXTargetDependency */,
 				0394E937167B2A6D007F4035 /* PBXTargetDependency */,
+				0315BECC1B82201100FC7CE0 /* PBXTargetDependency */,
 				0394E942167B2AA9007F4035 /* PBXTargetDependency */,
 			);
 			name = BZFlag;
@@ -4708,6 +4842,12 @@
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = BZFlag;
 				TargetAttributes = {
+					0315BEAA1B821BFF00FC7CE0 = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					0315BEBF1B821F6C00FC7CE0 = {
+						CreatedOnToolsVersion = 6.4;
+					};
 					0370A4851B0C921A00FEC9F7 = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
@@ -4748,8 +4888,10 @@
 				0370A4851B0C921A00FEC9F7 /* modeltool */,
 				0394E6D2167B0F74007F4035 /* airspawn */,
 				0394E7E7167B196F007F4035 /* autoFlagReset */,
+				0315BEAA1B821BFF00FC7CE0 /* bzfscron */,
 				0394E7F2167B1A17007F4035 /* chathistory */,
 				0394E7FD167B1E66007F4035 /* customflagsample */,
+				C353B1D61AE239CC00C5AED5 /* CustomZoneSample */,
 				0394E808167B1ECE007F4035 /* fairCTF */,
 				0394E813167B1F76007F4035 /* fastmap */,
 				0394E81E167B1FFD007F4035 /* flagstay */,
@@ -4778,8 +4920,8 @@
 				0394E91B167B293E007F4035 /* timedctf */,
 				0394E926167B29CC007F4035 /* TimeLimit */,
 				0394E931167B2A47007F4035 /* webReport */,
+				0315BEBF1B821F6C00FC7CE0 /* webStats */,
 				0394E93C167B2A9E007F4035 /* wwzones */,
-				C353B1D61AE239CC00C5AED5 /* CustomZoneSample */,
 			);
 		};
 /* End PBXProject section */
@@ -4825,6 +4967,23 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0315BEA71B821BFF00FC7CE0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0315BEB51B821C5D00FC7CE0 /* bzfscron.cpp in Sources */,
+				0315BEB61B821C5D00FC7CE0 /* CronJob.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		0315BEBC1B821F6C00FC7CE0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0315BECA1B821FC700FC7CE0 /* webStats.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0318265416A0BE2F005050BD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5555,6 +5714,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		0315BEB91B821D6E00FC7CE0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0315BEAA1B821BFF00FC7CE0 /* bzfscron */;
+			targetProxy = 0315BEB81B821D6E00FC7CE0 /* PBXContainerItemProxy */;
+		};
+		0315BECC1B82201100FC7CE0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0315BEBF1B821F6C00FC7CE0 /* webStats */;
+			targetProxy = 0315BECB1B82201100FC7CE0 /* PBXContainerItemProxy */;
+		};
 		0318265D16A0BE45005050BD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 0318265716A0BE2F005050BD /* superUser */;
@@ -5768,6 +5937,148 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		0315BEAC1B821BFF00FC7CE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0315BEAD1B821BFF00FC7CE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		0315BEC21B821F6C00FC7CE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0315BEC31B821F6C00FC7CE0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		0318265A16A0BE2F005050BD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7407,6 +7718,22 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0315BEAE1B821BFF00FC7CE0 /* Build configuration list for PBXNativeTarget "bzfscron" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0315BEAC1B821BFF00FC7CE0 /* Debug */,
+				0315BEAD1B821BFF00FC7CE0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		0315BEC11B821F6C00FC7CE0 /* Build configuration list for PBXNativeTarget "webStats" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0315BEC21B821F6C00FC7CE0 /* Debug */,
+				0315BEC31B821F6C00FC7CE0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		0318265916A0BE2F005050BD /* Build configuration list for PBXNativeTarget "superUser" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
