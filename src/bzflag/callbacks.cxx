@@ -26,7 +26,6 @@ static void		setTeamColor(TeamColor team, const std::string& str)
   parseColorString(str, color);
   // don't worry about alpha, Team::setColors() doesn't use it
   Team::setColors(team, color, Team::getRadarColor(team));
-  const float* colors = (Team::getTankColor(team));
 }
 
 static void		setRadarColor(TeamColor team, const std::string& str)
