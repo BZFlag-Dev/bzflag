@@ -20,6 +20,7 @@
 #include <math.h>
 #include <string>
 #include <string.h>
+#include <sstream>
 
 // Global implementation headers
 #include "bzfgl.h"
@@ -390,7 +391,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       }
       // didn't find a matching color
       if (!tookCareOfANSICode) {
-	// settings other than color
+	// settings other than a hardcoded color
 	if (tmpText == ANSI_STR_RESET) {
 	  bright = true;
 	  pulsating = false;
@@ -417,6 +418,17 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  underline = false;
 	} else if (tmpText == ANSI_STR_NO_PULSATE) {
 	  pulsating = false;
+	} else if (tmpText.substr(0, strlen(ANSI_STR_FG_RGB)) == ANSI_STR_FG_RGB) {
+	  // 24-bit foreground RGB (ISO-8613-3)
+	  // format: \033[38;2;<r>;<g>;<b>m
+	  std::istringstream rgb(tmpText.substr(strlen(ANSI_STR_FG_RGB) + 1, tmpText.size() - strlen(ANSI_STR_FG_RGB) - 2));
+	  for (int i = 0; i <= 2; i++) {
+	    short value = 0;
+	    rgb >> value;
+	    color[i] = value/255.0;
+	    // jump over the ; delimiter
+	    rgb.ignore();
+	  }
 	} else {
 	  logDebugMessage(2,"ANSI Code %s not supported\n", tmpText.c_str());
 	}

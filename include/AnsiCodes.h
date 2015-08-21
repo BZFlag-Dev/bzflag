@@ -40,6 +40,8 @@
 #define ANSI_STR_FG_CYAN	"\033[36m"
 #define ANSI_STR_FG_WHITE	"\033[37m"
 
+#define ANSI_STR_FG_RGB		"\033[38;2"	// 24-bit rgb (ISO-8613-3)
+
 #define ANSI_STR_FG_ORANGE	"\033[130m"	// orange (custom; not defined in ISO 6429)
 
 // Color definitions
