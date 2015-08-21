@@ -17,6 +17,7 @@
 #include <string>
 
 void setFlagHelp(const std::string& name, void*);
+void setColor(const std::string& name, void*);
 void setDepthBuffer(const std::string& name, void*);
 
 

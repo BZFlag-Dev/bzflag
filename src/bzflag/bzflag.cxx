@@ -55,7 +55,6 @@
 #include "KeyManager.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
-#include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "ServerListCache.h"
@@ -118,22 +117,6 @@ int bail ( int returnCode )
 	WSACleanup();
 #endif
 	return returnCode;
-}
-
-static void		setTeamColor(TeamColor team, const std::string& str)
-{
-  float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, color, Team::getRadarColor(team));
-}
-
-static void		setRadarColor(TeamColor team, const std::string& str)
-{
-  float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, Team::getTankColor(team), color);
 }
 
 static void		setVisual(BzfVisual* visual)
@@ -839,31 +822,6 @@ int			main(int argc, char** argv)
     if (BZDB.isSet("port")) {
       startupInfo.serverPort = atoi(BZDB.get("port").c_str());
     }
-
-    // check for reassigned team colors
-    if (BZDB.isSet("roguecolor"))
-      setTeamColor(RogueTeam, BZDB.get("roguecolor"));
-    if (BZDB.isSet("redcolor"))
-      setTeamColor(RedTeam, BZDB.get("redcolor"));
-    if (BZDB.isSet("greencolor"))
-      setTeamColor(GreenTeam, BZDB.get("greencolor"));
-    if (BZDB.isSet("bluecolor"))
-      setTeamColor(BlueTeam, BZDB.get("bluecolor"));
-    if (BZDB.isSet("purplecolor"))
-      setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
-
-    // check for reassigned radar colors
-    if (BZDB.isSet("rogueradar"))
-      setRadarColor(RogueTeam, BZDB.get("rogueradar"));
-    if (BZDB.isSet("redradar"))
-      setRadarColor(RedTeam, BZDB.get("redradar"));
-    if (BZDB.isSet("greenradar"))
-      setRadarColor(GreenTeam, BZDB.get("greenradar"));
-    if (BZDB.isSet("blueradar"))
-      setRadarColor(BlueTeam, BZDB.get("blueradar"));
-    if (BZDB.isSet("purpleradar"))
-      setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
-
 
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");

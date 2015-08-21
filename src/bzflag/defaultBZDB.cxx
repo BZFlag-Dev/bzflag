@@ -145,6 +145,18 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseTopTexture",		"basetop",		true,	StateDatabase::ReadWrite,	NULL },
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
+  // team colors
+  { "roguecolor",		"white",		true,	StateDatabase::ReadWrite,	setColor },
+  { "redcolor",			"red",			true,	StateDatabase::ReadWrite,	setColor },
+  { "bluecolor",		"blue",			true,	StateDatabase::ReadWrite,	setColor },
+  { "greencolor",		"green",		true,	StateDatabase::ReadWrite,	setColor },
+  { "purplecolor",		"magenta",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rogueradar",		"1 1 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "redradar",			"1 0.15 0.15",		true,	StateDatabase::ReadWrite,	setColor },
+  { "blueradar",		"0.2 0.9 0.2",		true,	StateDatabase::ReadWrite,	setColor },
+  { "greenradar",		"0.08 0.25 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "purpleradar",		"1 0.4 1",		true,	StateDatabase::ReadWrite,	setColor },
+
   // team prefixes
   { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
   { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },

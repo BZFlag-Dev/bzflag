@@ -16,7 +16,26 @@
 /* local headers */
 #include "LocalPlayer.h"
 #include "HUDRenderer.h"
+#include "ParseColor.h"
+#include "Team.h"
 #include "playing.h"
+
+static void		setTeamColor(TeamColor team, const std::string& str)
+{
+  float color[4];
+  parseColorString(str, color);
+  // don't worry about alpha, Team::setColors() doesn't use it
+  Team::setColors(team, color, Team::getRadarColor(team));
+  const float* colors = (Team::getTankColor(team));
+}
+
+static void		setRadarColor(TeamColor team, const std::string& str)
+{
+  float color[4];
+  parseColorString(str, color);
+  // don't worry about alpha, Team::setColors() doesn't use it
+  Team::setColors(team, Team::getTankColor(team), color);
+}
 
 void setFlagHelp(const std::string& name, void*)
 {
@@ -27,6 +46,31 @@ void setFlagHelp(const std::string& name, void*)
     hud->setFlagHelp(LocalPlayer::getMyTank()->getFlag(), FlagHelpDuration);
   else
     hud->setFlagHelp(Flags::Null, 0.0);
+}
+
+void setColor(const std::string& name, void*)
+{
+  if (name == "roguecolor") {
+    setTeamColor(RogueTeam, BZDB.get(name));
+  } else if (name == "redcolor") {
+    setTeamColor(RedTeam, BZDB.get(name));
+  } else if (name == "greencolor") {
+    setTeamColor(GreenTeam, BZDB.get(name));
+  } else if (name == "bluecolor") {
+    setTeamColor(BlueTeam, BZDB.get(name));
+  } else if (name == "purplecolor") {
+    setTeamColor(PurpleTeam, BZDB.get(name));
+  } else if (name == "rogueradar") {
+    setRadarColor(RogueTeam, BZDB.get(name));
+  } else if (name == "redradar") {
+    setRadarColor(RedTeam, BZDB.get(name));
+  } else if (name == "greenradar") {
+    setRadarColor(GreenTeam, BZDB.get(name));
+  } else if (name == "blueradar") {
+    setRadarColor(BlueTeam, BZDB.get(name));
+  } else if (name == "purpleradar") {
+    setRadarColor(PurpleTeam, BZDB.get(name));
+  }
 }
 
 void setDepthBuffer(const std::string& name, void*)
