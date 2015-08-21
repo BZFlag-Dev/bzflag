@@ -145,22 +145,30 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseTopTexture",		"basetop",		true,	StateDatabase::ReadWrite,	NULL },
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
-  // team colors
-  { "roguecolor",		"white",		true,	StateDatabase::ReadWrite,	setColor },
-  { "redcolor",			"red",			true,	StateDatabase::ReadWrite,	setColor },
-  { "bluecolor",		"blue",			true,	StateDatabase::ReadWrite,	setColor },
-  { "greencolor",		"green",		true,	StateDatabase::ReadWrite,	setColor },
-  { "purplecolor",		"magenta",		true,	StateDatabase::ReadWrite,	setColor },
+  // team tank colors
+  { "roguecolor",		"0 0 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "redcolor",			"1 0 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "greencolor",		"0 1 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "bluecolor",		"0.2 0.2 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "purplecolor",		"1 0 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observercolor",		"0 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rabbitcolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "huntercolor",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
+
+  // team radar colors
   { "rogueradar",		"1 1 0",		true,	StateDatabase::ReadWrite,	setColor },
   { "redradar",			"1 0.15 0.15",		true,	StateDatabase::ReadWrite,	setColor },
-  { "blueradar",		"0.2 0.9 0.2",		true,	StateDatabase::ReadWrite,	setColor },
-  { "greenradar",		"0.08 0.25 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "greenradar",		"0.2 0.9 0.2",		true,	StateDatabase::ReadWrite,	setColor },
+  { "blueradar",		"0.08 0.25 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "purpleradar",		"1 0.4 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observerradar",		"0 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rabbitradar",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "hunterradar",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
 
   // team prefixes
   { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
-  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
   { "greenTeamPrefix",		"green_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
   { "purpleTeamPrefix",		"purple_",		true,	StateDatabase::ReadWrite,	NULL },
   { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
   { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },

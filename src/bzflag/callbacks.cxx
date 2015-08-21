@@ -60,6 +60,12 @@ void setColor(const std::string& name, void*)
     setTeamColor(BlueTeam, BZDB.get(name));
   } else if (name == "purplecolor") {
     setTeamColor(PurpleTeam, BZDB.get(name));
+  } else if (name == "observercolor") {
+    setTeamColor(ObserverTeam, BZDB.get(name));
+  } else if (name == "rabbitcolor") {
+    setTeamColor(RabbitTeam, BZDB.get(name));
+  } else if (name == "huntercolor") {
+    setTeamColor(HunterTeam, BZDB.get(name));
   } else if (name == "rogueradar") {
     setRadarColor(RogueTeam, BZDB.get(name));
   } else if (name == "redradar") {
@@ -70,6 +76,12 @@ void setColor(const std::string& name, void*)
     setRadarColor(BlueTeam, BZDB.get(name));
   } else if (name == "purpleradar") {
     setRadarColor(PurpleTeam, BZDB.get(name));
+  } else if (name == "observerradar") {
+    setRadarColor(ObserverTeam, BZDB.get(name));
+  } else if (name == "rabbitradar") {
+    setRadarColor(RabbitTeam, BZDB.get(name));
+  } else if (name == "hunterradar") {
+    setRadarColor(HunterTeam, BZDB.get(name));
   }
 }
 
