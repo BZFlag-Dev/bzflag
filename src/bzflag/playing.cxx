@@ -54,6 +54,7 @@
 #include "ServerList.h"
 #include "SphereSceneNode.h"
 #include "TankGeometryMgr.h"
+#include "Team.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
@@ -1119,12 +1120,8 @@ void		addMessage(const Player *_player, const std::string& msg,
       }
       const PlayerId pid = _player->getId();
       if (pid < 200) {
-	int color = _player->getTeam();
-	if (color < 0 || (color > 4 && color != HunterTeam)) {
-	  // non-teamed, rabbit are white (same as observer)
-	  color = WhiteColor;
-	}
-	fullMessage += ColorStrings[color];
+	TeamColor color = _player->getTeam();
+	fullMessage += Team::getAnsiCode(color);
       } else if (pid == ServerPlayer) {
 	fullMessage += ColorStrings[YellowColor];
       } else {
@@ -1395,12 +1392,8 @@ static void printIpInfo (const Player *_player, const Address& addr,
   }
   std::string colorStr;
   if (_player->getId() < 200) {
-    int color = _player->getTeam();
-    if (color == RabbitTeam || color < 0 || color > LastColor) {
-      // non-teamed, rabbit are white (same as observer)
-      color = WhiteColor;
-    }
-    colorStr = ColorStrings[color];
+    TeamColor color = _player->getTeam();
+    colorStr = Team::getAnsiCode(color);
   } else {
     colorStr = ColorStrings[CyanColor]; // replay observers
   }
@@ -2257,7 +2250,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if(shot && !shot->isStoppedByHit()) {
 		  killerPlayer->addHitToStats(shot->getFlag());
 		}
-	  } 
+	  }
 
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
@@ -2317,8 +2310,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    else if (BZDB.get("killerhighlight") == "2")
 	      playerStr += ColorStrings[UnderlineColor];
 	  }
-	  int color = killerPlayer->getTeam();
-	  playerStr += ColorStrings[color];
+	  TeamColor color = killerPlayer->getTeam();
+	  playerStr += Team::getAnsiCode(color);
 	  playerStr += killerPlayer->getCallSign();
 
 	  if (victimPlayer == myTank)
@@ -2831,7 +2824,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  const PlayerId pid = srcPlayer->getId();
 	  if (pid < 200) {
 	    if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	      colorStr += ColorStrings[srcPlayer->getTeam()];
+	      colorStr += Team::getAnsiCode(srcPlayer->getTeam());
 	    else
 	      colorStr += ColorStrings[RogueTeam];
 	  } else if (pid == ServerPlayer) {
@@ -2939,7 +2932,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	else if (srcPlayer->getTeam() == ObserverTeam)
 	  oldcolor = ColorStrings[CyanColor];
 	else
-	  oldcolor = ColorStrings[srcPlayer->getTeam()];
+	  oldcolor = Team::getAnsiCode(srcPlayer->getTeam());
 	if (fromServer)
 	  addMessage(NULL, fullMsg, 2, false, oldcolor.c_str());
 	else
@@ -3160,7 +3153,7 @@ static void		doMessages()
   int e = 0;
   // handle server messages
   if (serverLink) {
-   
+
     while (!serverError && (e = serverLink->read(code, len, msg, 0)) == 1)
       handleServerMessage(true, code, len, msg);
     if (e == -2) {
@@ -4003,7 +3996,7 @@ void setTarget()
     addMessage(NULL, msg);
   }
   else if (forbidIdentify) {
-    if (sentForbidIdentify == 10 || sentForbidIdentify == 0) { 
+    if (sentForbidIdentify == 10 || sentForbidIdentify == 0) {
       addMessage(NULL, "'identify' disabled on this server");
     }
     if(sentForbidIdentify == 10) {

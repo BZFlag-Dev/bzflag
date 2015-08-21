@@ -425,7 +425,13 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	  for (int i = 0; i <= 2; i++) {
 	    short value = 0;
 	    rgb >> value;
-	    color[i] = value/255.0;
+
+	    if (bright) {
+	      color[i] = value * darkness / 255.0;
+	    } else {
+	      color[i] = value * darkDim / 255.0;
+	    }
+
 	    // jump over the ; delimiter
 	    rgb.ignore();
 	  }

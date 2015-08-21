@@ -13,6 +13,7 @@
 #include "common.h"
 #include "Team.h"
 #include "Pack.h"
+#include "AnsiCodes.h"
 
 float			Team::tankColor[NumTeams][3] = {
 				{ 0.0f, 0.0f, 0.0f },   // rogue
@@ -30,7 +31,7 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 0.2f, 0.9f, 0.2f },	// green
 				{ 0.08f, 0.25, 1.0f},	// blue
 				{ 1.0f, 0.4f, 1.0f },	// purple
-				{ 0.0f, 1.0f, 1.0f },	// observer
+				{ 1.0f, 1.0f, 1.0f },	// observer
 				{ 1.0f, 1.0f, 1.0f },   // rabbit
 				{ 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
@@ -120,6 +121,11 @@ const float*		Team::getRadarColor(TeamColor team) // const
     return radarColor[0];
   }
   return radarColor[int(team)];
+}
+
+const std::string	Team::getAnsiCode(TeamColor team) // const
+{
+  return rgbToAnsi(getRadarColor(team));
 }
 
 bool		Team::isColorTeam(TeamColor team) // const

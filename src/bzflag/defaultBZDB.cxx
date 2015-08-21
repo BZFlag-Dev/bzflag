@@ -161,7 +161,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "greenradar",		"0.2 0.9 0.2",		true,	StateDatabase::ReadWrite,	setColor },
   { "blueradar",		"0.08 0.25 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "purpleradar",		"1 0.4 1",		true,	StateDatabase::ReadWrite,	setColor },
-  { "observerradar",		"0 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observerradar",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "rabbitradar",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "hunterradar",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
 

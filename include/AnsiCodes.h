@@ -14,6 +14,7 @@
 #define _ANSI_CODES_H_
 
 #include <string>
+#include "TextUtils.h"
 
 // Escape character to begin ANSI codes
 #define ESC_CHAR	((char) 0x1B)
@@ -95,6 +96,16 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_NO_PULSATE,  // 15 No Pulsating
   ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
+
+inline std::string rgbToAnsi(const float* color)
+{
+  return TextUtils::format("%s;%u;%u;%um",
+    ANSI_STR_FG_RGB,
+    int(color[0] * 255),
+    int(color[1] * 255),
+    int(color[2] * 255)
+  );
+}
 
 // strip ANSI codes from a string
 inline std::string stripAnsiCodes(const std::string &text)

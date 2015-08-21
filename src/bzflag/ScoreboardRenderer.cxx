@@ -394,10 +394,10 @@ void ScoreboardRenderer::renderCtfFlags (){
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
-	std::string playerInfo = ColorStrings[flagd->flagTeam];
+	std::string playerInfo = Team::getAnsiCode(flagd->flagTeam);
 	snprintf(flagColor, 200, "%-12s", flagd->flagName.c_str());
 	playerInfo += flagColor;
-	playerInfo += ColorStrings[teamIndex];
+	playerInfo += Team::getAnsiCode(teamIndex);
 	playerInfo += player->getCallSign();
 
 	fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
@@ -653,12 +653,9 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // team color
   TeamColor teamIndex = player->getTeam();
-  if (teamIndex < RogueTeam) {
-    teamIndex = RogueTeam;
-  }
   std::string teamColor;
   if (player->getId() < 200) {
-    teamColor = ColorStrings[teamIndex];
+    teamColor = Team::getAnsiCode(teamIndex);
   } else {
     teamColor = ColorStrings[CyanColor]; // replay observers
   }
@@ -734,7 +731,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 	      playerInfo += ColorStrings[WhiteColor];
       } else if (flagd->flagTeam != NoTeam) {
 	// use team color for team flags
-	playerInfo += ColorStrings[flagd->flagTeam];
+	playerInfo += Team::getAnsiCode(flagd->flagTeam);
       }
       coloredFlag = true;
     }

@@ -36,6 +36,7 @@ struct Team {
     static TeamColor	getTeam(const std::string &name); // const
     static const float*	getTankColor(TeamColor); // const
     static const float*	getRadarColor(TeamColor team); // const
+    static const std::string	getAnsiCode(TeamColor team); // const
     static bool	isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
