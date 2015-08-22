@@ -53,7 +53,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   // initialize scene nodes
   boltSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity(),useSuperTexture);
 
-  const float* c = Team::getRadarColor(team);
+  const float* c = Team::getTankColor(team);
   if (faint) {
     boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
     boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
@@ -295,7 +295,7 @@ void			SegmentedShotStrategy::addShot(
     boltSceneNode->setColorblind(colorblind);
     TeamColor currentTeam = colorblind ? RogueTeam : team;
 
-    const float* c = Team::getRadarColor(currentTeam);
+    const float* c = Team::getTankColor(currentTeam);
     boltSceneNode->setColor(c[0], c[1], c[2]);
 
     TextureManager &tm = TextureManager::instance();
@@ -825,7 +825,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
     if (texture >= 0)
       laserNodes[i]->setTexture(texture);
 
-    const float* color = Team::getRadarColor(tmpTeam);
+    const float* color = Team::getTankColor(tmpTeam);
     laserNodes[i]->setColor(color[0], color[1], color[2]);
 
     if (i == 0) {

@@ -402,7 +402,7 @@ const float* FlagType::getColor() const
   if (flagTeam == NoTeam)
     return superColor;
   else
-    return Team::getTankColor(flagTeam);
+    return Team::getRadarColor(flagTeam);
 }
 
 
