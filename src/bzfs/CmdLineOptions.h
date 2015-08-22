@@ -137,6 +137,7 @@ struct CmdLineOptions
   int			maxlagwarn;
   int			maxjitterwarn;
   int			maxpacketlosswarn;
+	int			countdownStarter;
 
   float			adminlagannounce;
   float			lagannounce;

@@ -1072,8 +1072,10 @@ bool SuperkillCommand::operator() (const char	 *,
 				   GameKeeper::Player *playerData)
 {
 	// If no playerData - dont perfom permission check, since it is probably the API
+	int t = ServerPlayer;
+
 	if (playerData){
-		int t = playerData->getIndex();
+		t = playerData->getIndex();
 		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
 			sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
 			return true;
@@ -1085,9 +1087,11 @@ bool SuperkillCommand::operator() (const char	 *,
   {
 	  gameOver = true;
 	  // fire off a game end event
-	  bz_GameStartEndEventData_V1	gameData;
+	  bz_GameStartEndEventData_V2	gameData;
 	  gameData.eventType = bz_eGameEndEvent;
 	  gameData.duration = clOptions->timeLimit;
+		gameData.playerID = t;
+		gameData.gameOver = true;
 	  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
   }
   if (clOptions->timeManualStart)
@@ -1117,9 +1121,11 @@ bool GameOverCommand::operator() (const char	 *,
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData_V1	gameData;
+  bz_GameStartEndEventData_V2	gameData;
   gameData.eventType = bz_eGameEndEvent;
   gameData.duration = clOptions->timeLimit;
+	gameData.playerID = t;
+	gameData.gameOver = true;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 
   return true;
@@ -1161,7 +1167,7 @@ bool CountdownCommand::operator() (const char	 * message,
 			return true;
 		}
 
-		pauseCountdown(playerData->player.getCallSign());
+		pauseCountdown(t);
 		return true;
       }
 	  else if (parts[1] == "resume")
@@ -1172,7 +1178,7 @@ bool CountdownCommand::operator() (const char	 * message,
 			sendMessage(ServerPlayer, t, "The game is not paused");
 			return true;
 		}
-		resumeCountdown(playerData->player.getCallSign());
+		resumeCountdown(t);
 		return true;
       }
 	  else if (parts[1] == "cancel")
@@ -1180,7 +1186,7 @@ bool CountdownCommand::operator() (const char	 * message,
 		if (countdownDelay <= 0) {
 			sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
 		} else {
-			cancelCountdown();
+			cancelCountdown(t);
 		}
 
 		return true;
@@ -1234,7 +1240,7 @@ bool CountdownCommand::operator() (const char	 * message,
       countdownDelay = 0;
     }
 
-	startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
+	startCountdown(countdownDelay, clOptions->timeLimit, t);
   }
   else
   {

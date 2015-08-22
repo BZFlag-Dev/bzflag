@@ -785,6 +785,17 @@ public:
   bz_ApiString actionBy;
 };
 
+class BZF_API bz_GamePauseResumeEventData_V2 : public bz_GamePauseResumeEventData_V1
+{
+public:
+	bz_GamePauseResumeEventData_V2() : bz_GamePauseResumeEventData_V1()
+		, playerID(253)
+	{
+	}
+
+	int playerID;
+};
+
 class BZF_API bz_GameStartEndEventData_V1 : public bz_EventData
 {
 public:
@@ -794,6 +805,18 @@ public:
   }
 
   double duration;
+};
+
+class BZF_API bz_GameStartEndEventData_V2 : public bz_GameStartEndEventData_V1
+{
+public:
+	bz_GameStartEndEventData_V2() : bz_GameStartEndEventData_V1()
+		, playerID(253), gameOver(false)
+	{
+	}
+
+	int playerID;
+	bool gameOver;
 };
 
 class BZF_API bz_SlashCommandEventData_V1 : public bz_EventData
@@ -1761,6 +1784,12 @@ BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
+BZF_API void bz_cancelCountdown ( int playerID );
+BZF_API void bz_pauseCountdown ( int playerID );
+BZF_API void bz_resumeCountdown ( int playerID );
+BZF_API void bz_startCountdown ( int delay, float limit, int playerID );
+
+// @TODO deprecated game countdown commands (to be removed in 2.6.x)
 BZF_API void bz_cancelCountdown ( const char *canceledBy );
 BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );

@@ -3984,9 +3984,11 @@ BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData_V1	gameData;
+  bz_GameStartEndEventData_V2	gameData;
   gameData.eventType = bz_eGameEndEvent;
   gameData.duration = clOptions->timeLimit;
+	gameData.playerID = playerID;
+	gameData.gameOver = true;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 }
 
@@ -3995,29 +3997,57 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
   return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+BZF_API void bz_cancelCountdown ( int playerID )
+{
+	cancelCountdown(playerID);
+}
+
+BZF_API void bz_pauseCountdown ( int playerID )
+{
+	pauseCountdown(playerID);
+}
+
+BZF_API void bz_resumeCountdown ( int playerID )
+{
+	resumeCountdown(playerID);
+}
+
+BZF_API void bz_startCountdown ( int delay, float limit, int playerID )
+{
+	startCountdown(delay, limit, playerID);
+}
+
 BZF_API void bz_cancelCountdown ( const char *canceledBy )
 {
-  cancelCountdown(canceledBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(canceledBy);
+
+	bz_cancelCountdown(playerID);
 }
 
 BZF_API void bz_pauseCountdown ( const char *pausedBy )
 {
-  pauseCountdown(pausedBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(pausedBy);
+
+	bz_pauseCountdown(playerID);
 }
 
 BZF_API void bz_resumeCountdown ( const char *resumedBy )
 {
-  resumeCountdown(resumedBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(resumedBy);
+
+	bz_resumeCountdown(playerID);
+}
+
+BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
+{
+	int playerID = GameKeeper::Player::getPlayerIDByName(byWho);
+
+	bz_startCountdown(delay, limit, playerID);
 }
 
 BZF_API void bz_resetTeamScores ( void )
 {
   resetTeamScores();
-}
-
-BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
-{
-  startCountdown(delay,limit,byWho);
 }
 
 BZF_API	bz_eGameType bz_getGameType ( void  )

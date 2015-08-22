@@ -160,11 +160,11 @@ extern Shots::Manager ShotManager;
 
 extern VotingArbiter *votingarbiter;
 
-void pauseCountdown ( const char *pausedBy );
-void resumeCountdown ( const char *resumedBy );
 void resetTeamScores ( void );
-void startCountdown ( int delay, float limit, const char *buyWho );
-void cancelCountdown ( const char *byWho = NULL );
+void pauseCountdown ( int pausedBy = ServerPlayer );
+void resumeCountdown ( int resumedBy = ServerPlayer );
+void startCountdown ( int delay, float limit, int playerID = ServerPlayer );
+void cancelCountdown ( int playerID = ServerPlayer );
 
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void playerAlive(int playerIndex);

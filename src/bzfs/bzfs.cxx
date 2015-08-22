@@ -630,30 +630,73 @@ void sendIPUpdate(int targetPlayer, int playerIndex) {
   }
 }
 
-void pauseCountdown ( const char *pausedBy )
+void resetTeamScores ( void )
+{
+	// reset team scores
+	for (int i = RedTeam; i <= PurpleTeam; i++)
+	{
+		bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
+		worldEventManager.callEvents(&eventData);
+		eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
+		worldEventManager.callEvents(&eventData);
+		team[i].team.setLosses(0);
+		team[i].team.setWins(0);
+	}
+	sendTeamUpdate();
+}
+
+void resetPlayerScores ( void )
+{
+	// Players to notify of new scores
+	GameKeeper::Player **playersToUpdate = new GameKeeper::Player*[curMaxPlayers];
+	int nPlayersToUpdate = 0;
+
+	for (int i = 0; i < curMaxPlayers; i++) {
+		GameKeeper::Player *player;
+
+		player = GameKeeper::Player::getPlayerByIndex(i);
+
+		if(player) {
+			player->score.reset();
+			playersToUpdate[nPlayersToUpdate++] = player;
+		}
+	}
+
+	// Tell the players the new scores
+	sendPlayerScores(playersToUpdate, nPlayersToUpdate);
+
+	delete[] playersToUpdate;
+}
+
+void pauseCountdown ( int pausedBy )
 {
   if (clOptions->countdownPaused)
     return;
 
+	const char* callsign = bz_getPlayerCallsign(pausedBy);
+
   clOptions->countdownPaused = true;
   countdownResumeDelay = -1; // reset back to "unset"
 
-  if (pausedBy)
-    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s",pausedBy).c_str());
+  if (callsign != NULL)
+    sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s", callsign).c_str());
   else
     sendMessage(ServerPlayer, AllPlayers, "Countdown paused");
 
   // fire off a game pause event
-  bz_GamePauseResumeEventData_V1 pauseEventData;
+  bz_GamePauseResumeEventData_V2 pauseEventData;
   pauseEventData.eventType = bz_eGamePauseEvent;
-  pauseEventData.actionBy = pausedBy;
+	pauseEventData.playerID = pausedBy;
+  pauseEventData.actionBy = callsign;
   worldEventManager.callEvents(bz_eGamePauseEvent, &pauseEventData);
 }
 
-void resumeCountdown ( const char *resumedBy )
+void resumeCountdown ( int resumedBy )
 {
   if (!clOptions->countdownPaused)
     return;
+
+	const char* callsign = bz_getPlayerCallsign(resumedBy);
 
   clOptions->countdownPaused = false;
   countdownResumeDelay = (int) BZDB.eval(StateDatabase::BZDB_COUNTDOWNRESDELAY);
@@ -662,66 +705,34 @@ void resumeCountdown ( const char *resumedBy )
     // resume instantly
     countdownResumeDelay = -1; // reset back to "unset"
 
-    if (resumedBy)
-	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s",resumedBy).c_str());
+    if (callsign != NULL)
+			sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown resumed by %s", callsign).c_str());
     else
-	sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
+			sendMessage(ServerPlayer, AllPlayers, "Countdown resumed");
 
     // fire off a game resume event
-    bz_GamePauseResumeEventData_V1 resumeEventData;
+    bz_GamePauseResumeEventData_V2 resumeEventData;
     resumeEventData.eventType = bz_eGameResumeEvent;
-    resumeEventData.actionBy = resumedBy;
+		resumeEventData.playerID = resumedBy;
+    resumeEventData.actionBy = callsign;
     worldEventManager.callEvents(bz_eGameResumeEvent, &resumeEventData);
   } else {
-      // resume after number of seconds in countdownResumeDelay
-      if (resumedBy)
-	  sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s",resumedBy).c_str());
-      else
-	  sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
+		// resume after number of seconds in countdownResumeDelay
+		if (callsign != NULL)
+			sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown is being resumed by %s", callsign).c_str());
+		else
+			sendMessage(ServerPlayer, AllPlayers, "Countdown is being resumed");
   }
 }
 
-void resetTeamScores ( void )
+void startCountdown ( int delay, float limit, int playerID )
 {
-  // reset team scores
-  for (int i = RedTeam; i <= PurpleTeam; i++)
-  {
-    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
-    worldEventManager.callEvents(&eventData);
-    eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
-    worldEventManager.callEvents(&eventData);
-    team[i].team.setLosses(0);
-   team[i].team.setWins(0);
-  }
-  sendTeamUpdate();
-}
+	const char* callsign = bz_getPlayerCallsign(playerID);
 
-void resetPlayerScores ( void )
-{
-  // Players to notify of new scores
-  GameKeeper::Player **playersToUpdate = new GameKeeper::Player*[curMaxPlayers];
-  int nPlayersToUpdate = 0;
-
-  for (int i = 0; i < curMaxPlayers; i++) {
-    GameKeeper::Player *player;
-
-    player = GameKeeper::Player::getPlayerByIndex(i);
-
-    if(player) {
-      player->score.reset();
-      playersToUpdate[nPlayersToUpdate++] = player;
-    }
-  }
-
-  // Tell the players the new scores
-  sendPlayerScores(playersToUpdate, nPlayersToUpdate);
-
-  delete[] playersToUpdate;
-}
-
-void startCountdown ( int delay, float limit, const char *buyWho )
-{
-	sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",buyWho).c_str());
+	if (callsign != NULL)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.", callsign).c_str());
+	else
+		sendMessage(ServerPlayer, AllPlayers, "Team scores reset, countdown started.");
 
 	clOptions->timeLimit = limit;
 	countdownDelay = delay;
@@ -748,16 +759,18 @@ void startCountdown ( int delay, float limit, const char *buyWho )
 
 	// make sure the game always start unpaused
 	clOptions->countdownPaused = false;
+	clOptions->countdownStarter = playerID;
 	countdownPauseStart = TimeKeeper::getNullTime();
 }
 
-void cancelCountdown ( const char *byWho )
+void cancelCountdown ( int playerID )
 {
-	if (byWho) {
-		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown cancelled by %s.", byWho).c_str());
-	} else {
+	const char* callsign = bz_getPlayerCallsign(playerID);
+
+	if (callsign != NULL)
+		sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown cancelled by %s.", callsign).c_str());
+	else
 		sendMessage(ServerPlayer, AllPlayers, "Countdown cancelled");
-	}
 
 	countdownDelay = -1;
 	readySetGo = -1;
@@ -6615,9 +6628,10 @@ int main(int argc, char **argv)
 	  resetPlayerScores();
 
 	  // fire off a game start event
-	  bz_GameStartEndEventData_V1	gameData;
+	  bz_GameStartEndEventData_V2	gameData;
 	  gameData.eventType = bz_eGameStartEvent;
 	  gameData.duration = clOptions->timeLimit;
+		gameData.playerID = clOptions->countdownStarter;
 	  worldEventManager.callEvents(bz_eGameStartEvent,&gameData);
 
 	}
@@ -6674,7 +6688,7 @@ int main(int argc, char **argv)
 	clOptions->countdownPaused = false;
 
 	// fire off a game end event
-	bz_GameStartEndEventData_V1	gameData;
+	bz_GameStartEndEventData_V2	gameData;
 	gameData.eventType = bz_eGameEndEvent;
 	gameData.duration = clOptions->timeLimit;
 	worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
