@@ -427,9 +427,9 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	    rgb >> value;
 
 	    if (bright) {
-	      color[i] = value * darkness / 255.0;
+	      color[i] = value * darkness / 255.0f;
 	    } else {
-	      color[i] = value * darkDim / 255.0;
+	      color[i] = value * darkDim / 255.0f;
 	    }
 
 	    // jump over the ; delimiter
