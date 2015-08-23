@@ -25,8 +25,7 @@ Table of Contents
 	Long Version
     Communication
 	Internet Relay Chat
-	Mailing Lists
-	Bulletin Boards
+	Forums
 	Wiki
     Bug Reports and Support
     Providing Contributions
@@ -229,7 +228,7 @@ Communication
 
 The BZFlag project has several resources set up for communicating both
 with other developers and with the community.  There is an IRC
-channel, several mailing lists, bulletin boards, and a wiki.
+channel, forums, and a wiki.
 
 Internet Relay Chat
 -------------------
@@ -242,30 +241,16 @@ first-time users.  Individuals that intend to stay in the channel are
 expected to get a non-web-based IRC client.  See http://irchelp.org or
 search the web for IRC clients for your operating system.
 
-Mailing Lists
--------------
-There are several BZFlag mailing lists, but the two of particular
-interest to most are the user's list and the main developer's list.
-The former is for general BZFlag discussion and announcements.  The
-latter is for coding and development discussion only.  There are also
-lists dedicated to SVN activity, league discussions, and server
-administration.
-
-To join a mailing list, go to the SourceForge mailing list page on the
-project site: http://sourceforge.net/p/bzflag/mailman/ and follow
-the links for joining the respective mailing lists that interest you.
-
-Bulletin Boards
+Forums
 ---------------
-There are extensive and active bulletin boards used by players, server
+There are extensive and active forums used by players, server
 operators, administrators, and others available here:
 
 https://forums.bzflag.org
 
-Registering an account on the bulletin board presently also registers
-your callsign for use inside of BZFlag.  Some servers require
-registration in order to play.  See the board FAQ and Getting Started
-pages for new users.
+Registering an account on the forums presently also registers your callsign
+for use inside of BZFlag.  Some servers require registration in order to
+play.  See the board FAQ and wiki getting Started pages for new users.
 
 Wiki
 ----
@@ -286,12 +271,11 @@ tracking system at:
 
 https://github.com/BZFlag-Dev/bzflag/issues
 
-If you require assistance with some issue, please visit the bzflag
+If you require assistance with some issue, please visit the BZFlag
 IRC channel at:
 #bzflag at IRC.freenode.net
 
-Alternatively, discussion forums, and mailing lists
-are also viable avenues for resolving issues.
+Alternatively discussion forums are also available for resolving issues.
 
 
 Providing Contributions
@@ -387,7 +371,7 @@ Public Internet Servers and the "list server"
 
 The bzflag project offers a public server listing service that allows
 players to find servers to play on. This service is run for the
-benefit of the project. As of Version 2.4, BZFLS servers that wish to
+benefit of the project. As of Version 2.4, BZFlag servers that wish to
 be listed on the public list server must provide an authentication key
 that ties the server to a specific global user. This is done to
 provide contact information for players and project
@@ -431,8 +415,8 @@ request.  Similarly, the BZFlag project administrators also reserve
 the right to limit access or otherwise block any players from public
 service access at any time.  These actions may include the suspension
 or removal of global accounts and limiting access to the web site
-services including web site services, list server access, bulletin
-board forum access, and any league resources.
+services including web site services, list server access, forum access,
+and any league resources.
 
 In general, the entire network is provided by the community for the
 community as an entirely volunteer and contributed effort.  We ask
@@ -464,8 +448,8 @@ of interaction with IRC being generally preferred.  The project
 maintainer Tim Riker <Tim@Rikers.org> is available for most legal matters,
 but day to day development is handled by the Project Administrators:
 
-Jeff Myers (JeffM2501) <JeffM2501@users.sourceforge.net>
 Scott Wichser (blast007) <blast007@users.sourceforge.net>
+Jeff Makey (BulletCatcher) <bullet_catcher@users.sourceforge.net>
 
 Happy Shooting!
 The BZFlag Development Team
