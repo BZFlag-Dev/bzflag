@@ -343,29 +343,6 @@ While this complicates locating a header file (it can be in one of two
 places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
-
-Frequently Asked Questions
-==========================
-
-- When I connect to a newer server with this client others report they
-  can see me but I get 'black caps' after a few seconds for all other
-  players?
-
-BZFlag requires both TCP and UDP unicast relay networking for most
-servers.  Make sure that your router and any configured firewall is
-forwarding UDP traffic over the port you are connecting to on the
-server.
-
-- Every now and then the client seems to randomly crash.  Is there
-  anything that can be done about it?
-
-There are LOTS of reasons why the client might crash and unfortunately
-no means to readily diagnose the cause without developer tools.  You
-can try to disable the 'Lighting' option in the menu, which is a known
-cause of issues on some platforms (e.g. Mac OS X).  Otherwise, please
-report the issue and, if possible, provide a stack trace of the crash
-(these are auto-generated for Windows and Mac OS X platforms).
-
 Public Internet Servers and the "list server"
 =============================================
 
