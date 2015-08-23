@@ -130,10 +130,8 @@ AC_ARG_ENABLE(custom-plugins, AS_HELP_STRING([--enable-custom-plugins=plugin1[[[
 CUSTOM_PLUGIN_LIST=`echo $enable_custom_plugins | sed 's/,/ /g'`
 for plugin in $CUSTOM_PLUGIN_LIST ; do
     m=plugins/$plugin/Makefile
-    AC_CONFIG_FILES([$m])
-    if test -f $m.am -a ! -f $m.in ; then
-	automake $m
-    fi
+    AC_CONFIG_FILES(["$srcdir/$m"])
+    (cd $srcdir && automake --no-force $m)
 done
 AC_SUBST(CUSTOM_PLUGIN_LIST)
 
