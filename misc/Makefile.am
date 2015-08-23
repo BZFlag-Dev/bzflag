@@ -33,12 +33,10 @@ EXTRA_DIST =				\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
-	rebuild-bzflag			\
 	ServerListFilter.txt		\
 	serverstats.sh			\
 	shtool				\
 	simpleSwearList.txt		\
-	snap.sh				\
 	stats/Changes			\
 	stats/Info.pm			\
 	stats/Makefile.PL		\
