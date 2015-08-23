@@ -2249,10 +2249,17 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   // send time update to new player if we're counting down
   if (countdownActive && clOptions->timeLimit > 0.0f
       && !playerData->player.isBot()) {
-    float timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
-    if (timeLeft < 0.0f) {
-      // oops
-      timeLeft = 0.0f;
+    float timeLeft;
+
+    if (countdownPauseStart) {
+      // the game is paused
+      timeLeft = -1.0f;
+    } else {
+      timeLeft = clOptions->timeLimit - (float)(TimeKeeper::getCurrent() - gameStartTime);
+      if (timeLeft < 0.0f) {
+	// oops
+	timeLeft = 0.0f;
+      }
     }
 
     bufStart = getDirectMessageBuffer();
