@@ -687,11 +687,17 @@ The following commands can be executed by sending a message to all and using the
 /bind \fIkey\fR \fIpress\fR \fIaction\fR
 Bind a \fIkey\fR press to an \fIaction\fR. \fIpress\fR can be \fBup\fR, \fBdown\fR or \fBboth\fR
 .TP 15
+/cmds
+Show a list of all client and server commands
+.TP 15
 /debug [\fIlevel\fR]
 Show or set the debug level to \fIlevel\fR
 .TP 15
 /diff
 List all BZDB server variables that are not set to the default value
+.TP 15
+/dumpvars
+Dump a list of all local variables and their values to the standard output
 .TP 15
 /forceradar
 Force the radar to be displayed (only works for observers)
@@ -701,6 +707,12 @@ Highlight all messages containing \fIpattern\fR on the console
 .TP 15
 /localset \fIvariable\fR [\fIvalue\fR]
 Read a local variable or set it to \fIvalue\fR
+.TP 15
+/quit
+Exit the game
+.TP 15
+/retexture
+Reload the textures of the game
 .TP 15
 /roampos {reset|send|\fIangle\fR|\fIx\fR \fIy\fR \fIz\fR [\fItheta\fR [\fIphi\fR [\fIzoom\fR]]]}
 Manipulate the observer camera (only useful in Roaming and Tracking modes). Without arguments, it shows
@@ -713,14 +725,15 @@ its vertical angle and \fIzoom\fR sets the camera's zoom level. All angles are d
 /savemsgs [-s]
 Save all messages to a file in your config directory. If \fB-s\fR is provided, coloring data are stripped.
 .TP 15
+/saveworld [-g] [-m] [-o] \fIfilename\fR
+Save the current world to \fIfilename\fR. Specify \fB-g\fR to prevent the creation of groups, \fB-m\fR to
+save some primitives as meshes and \fB-o\fR to create a WaveFront OBJ file instead of a BZW one.
+.TP 15
 /silence \fIplayerName\fR
 Do not display any message coming from player with \fIplayerName\fR name
 .TP 15
 /unsilence \fIplayerName\fR
 Reshow messages coming from player with \fIplayerName\fR name
-.TP 15
-/saveworld \fIfilename\fR
-Save the current world to \fIfilename\fR.
 .SH "FILES"
 .TP 15
 ~/.bzf/<version>/config.cfg
