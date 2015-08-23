@@ -1255,7 +1255,7 @@ static void acceptClient()
     nerror("accepting on wks");
     return;
   }
-    
+
   // don't buffer info, send it immediately
   setNoDelay(fd);
   BzfNetwork::setNonBlocking(fd);
@@ -2959,7 +2959,7 @@ void playerAlive(int playerIndex)
 
   // check for any spawn allow events
   worldEventManager.callEvents(bz_eAllowSpawn, &spawnAllowData);
-  
+
   if(!spawnAllowData.allow)
   {
     // check if the player has been notified that they may not spawn
@@ -2968,12 +2968,12 @@ void playerAlive(int playerIndex)
       sendMessage(ServerPlayer, playerIndex, spawnAllowData.message.c_str());
       playerData->player.setNotifiedOfSpawnable(true);
     }
-    
+
     // client won't send another enter so kick em =(
     if (spawnAllowData.kickPlayer) {
       removePlayer(playerIndex, spawnAllowData.kickReason.c_str());
     }
-    
+
     return;
   }
 
@@ -4132,7 +4132,7 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
       badChars++;
     }
   }
-  
+
   // Kick the player if any bad characters are found
   if (badChars > 0) {
     sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
@@ -4148,7 +4148,7 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
   if (visibleChars == 0) {
     return true;
   }
-  
+
   // Get last message and last message time
   const std::string &oldMsg = player.getLastMsg();
   float dt = (float)(TimeKeeper::getCurrent() - player.getLastMsgTime());
@@ -4865,7 +4865,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       // Verify that player update is actually for this player
       // TODO: Remove the player ID from this message so we don't have to check for this.
       if (id != t) {
-	logDebugMessage(1, "Kicking Player %s [%d] sent player update as player index %d\n", 
+	logDebugMessage(1, "Kicking Player %s [%d] sent player update as player index %d\n",
 	      playerData->player.getCallSign(), t, id);
 	sendMessage(ServerPlayer, t, "Autokick: Player sent spoofed player update.");
 	removePlayer(t, "spoofed update");
@@ -5634,10 +5634,10 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
 	    {
 	      netHandler->flushData();
 	      e = netHandler->receive(256);
-	      
+
 	      readSize = netHandler->getTcpReadSize();
 	      buf = netHandler->getTcpBuffer();
-	      
+
 	      peer.bufferedInput.append(static_cast<char const*>(buf), readSize);
 	    }
 	    netHandler->flushData();

@@ -146,12 +146,12 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
   // team tank colors
-  { "roguecolor",		"0 0 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "roguecolor",		"1 1 0",		true,	StateDatabase::ReadWrite,	setColor },
   { "redcolor",			"1 0 0",		true,	StateDatabase::ReadWrite,	setColor },
   { "greencolor",		"0 1 0",		true,	StateDatabase::ReadWrite,	setColor },
-  { "bluecolor",		"0.2 0.2 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "bluecolor",		"0.1 0.2 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "purplecolor",		"1 0 1",		true,	StateDatabase::ReadWrite,	setColor },
-  { "observercolor",		"0 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observercolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "rabbitcolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "huntercolor",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
 

@@ -16,12 +16,12 @@
 #include "AnsiCodes.h"
 
 float			Team::tankColor[NumTeams][3] = {
-				{ 0.0f, 0.0f, 0.0f },   // rogue
+				{ 1.0f, 1.0f, 0.0f },   // rogue
 				{ 1.0f, 0.0f, 0.0f },   // red
 				{ 0.0f, 1.0f, 0.0f },   // green
-				{ 0.2f, 0.2f, 1.0f },   // blue
+				{ 0.1f, 0.2f, 1.0f },   // blue
 				{ 1.0f, 0.0f, 1.0f },   // purple
-				{ 0.0f, 1.0f, 1.0f },   // observer
+				{ 1.0f, 1.0f, 1.0f },   // observer
 				{ 1.0f, 1.0f, 1.0f },   // rabbit
 				{ 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
@@ -125,7 +125,7 @@ const float*		Team::getRadarColor(TeamColor team) // const
 
 const std::string	Team::getAnsiCode(TeamColor team) // const
 {
-  return rgbToAnsi(getRadarColor(team));
+  return rgbToAnsi(getTankColor(team));
 }
 
 bool		Team::isColorTeam(TeamColor team) // const

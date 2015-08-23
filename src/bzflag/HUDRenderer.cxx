@@ -816,9 +816,9 @@ void			HUDRenderer::renderStatus(void)
   TeamColor teamIndex = myTank->getTeam();
   FlagType* flag = myTank->getFlag();
 
-  // print player name and score in upper left corner in team (radar) color
+  // print player name and score in upper left corner in team (tank) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getTankColor(teamIndex));
     fm.drawString(x, y, 0, majorFontFace, majorFontSize,
       TextUtils::format("%s: %d", myTank->getCallSign(), myTank->getScore()));
   }

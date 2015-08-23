@@ -3905,7 +3905,7 @@ void setLookAtMarker(void)
     markercolor = RogueTeam;
 
   hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
-			      Float3ToVec4(Team::getRadarColor(markercolor)),
+			      Float3ToVec4(Team::getTankColor(markercolor)),
 			      label, isFriendly(bestTarget), 2.0f);
 }
 
