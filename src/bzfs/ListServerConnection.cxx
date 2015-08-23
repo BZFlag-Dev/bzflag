@@ -269,7 +269,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
 	      sendMessage(ServerPlayer, playerIndex,
 			  "This callsign is not registered.");
 	      sendMessage(ServerPlayer, playerIndex,
-			  "You can register it at http://forums.bzflag.org/");
+			  "You can register it at https://forums.bzflag.org/");
 	    }
 	  }
 	  playerData->player.clearToken();

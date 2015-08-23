@@ -26,12 +26,12 @@ print(os.date())
 
 --------------------------------------------------------------------------------
 
-local urlBase = 'http://my.bzflag.org/db/?action=LIST&listformat=lua'
+local urlBase = 'https://my.bzflag.org/db/?action=LIST&listformat=lua'
 
 local protocol = 'BZFS0221'
 
 local svnProtoURL =
-  'http://svn.code.sf.net/p/bzflag/code/trunk/bzflag/src/date/buildDate.cxx'
+  'https://raw.githubusercontent.com/BZFlag-Dev/bzflag/master/src/date/buildDate.cxx'
 
 --------------------------------------------------------------------------------
 
