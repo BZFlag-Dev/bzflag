@@ -131,14 +131,11 @@
 		0357A8471670B3D80056C938 /* MeshSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554496166C846F008806E9 /* MeshSceneNode.cxx */; };
 		0357A8481670B3D80056C938 /* OccluderSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544AA166C846F008806E9 /* OccluderSceneNode.cxx */; };
 		0357A8491670B3D80056C938 /* PolyWallSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544AB166C846F008806E9 /* PolyWallSceneNode.cxx */; };
-		0357A84A1670B3D80056C938 /* PTSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544AC166C846F008806E9 /* PTSceneNode.cxx */; };
 		0357A84B1670B3D80056C938 /* QuadWallSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544AD166C846F008806E9 /* QuadWallSceneNode.cxx */; };
 		0357A84C1670B3D80056C938 /* SceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544AF166C846F008806E9 /* SceneNode.cxx */; };
-		0357A84D1670B3D80056C938 /* ShellSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B0166C846F008806E9 /* ShellSceneNode.cxx */; };
 		0357A84E1670B3D80056C938 /* SphereSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B1166C846F008806E9 /* SphereSceneNode.cxx */; };
 		0357A84F1670B3D80056C938 /* TankGeometryMgr.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B2166C846F008806E9 /* TankGeometryMgr.cxx */; };
 		0357A8501670B3D80056C938 /* TankSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B3166C846F008806E9 /* TankSceneNode.cxx */; };
-		0357A8511670B3D80056C938 /* TracerSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B4166C846F008806E9 /* TracerSceneNode.cxx */; };
 		0357A8521670B3D80056C938 /* TriWallSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B5166C846F008806E9 /* TriWallSceneNode.cxx */; };
 		0357A8531670B3D80056C938 /* ViewFrustum.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B6166C846F008806E9 /* ViewFrustum.cxx */; };
 		0357A8541670B3D80056C938 /* WallSceneNode.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544B7166C846F008806E9 /* WallSceneNode.cxx */; };
@@ -1012,7 +1009,6 @@
 		0305D5CD166C9DAE00557FC4 /* PlayerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerState.h; sourceTree = "<group>"; };
 		0305D5CE166C9DAE00557FC4 /* PolyWallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PolyWallSceneNode.h; sourceTree = "<group>"; };
 		0305D5D0166C9DAE00557FC4 /* Protocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Protocol.h; sourceTree = "<group>"; };
-		0305D5D1166C9DAE00557FC4 /* PTSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PTSceneNode.h; sourceTree = "<group>"; };
 		0305D5D2166C9DAE00557FC4 /* PyramidBuilding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PyramidBuilding.h; sourceTree = "<group>"; };
 		0305D5D3166C9DAE00557FC4 /* PyramidSceneNodeGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PyramidSceneNodeGenerator.h; sourceTree = "<group>"; };
 		0305D5D4166C9DAE00557FC4 /* QuadWallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QuadWallSceneNode.h; sourceTree = "<group>"; };
@@ -1026,7 +1022,6 @@
 		0305D5DC166C9DAE00557FC4 /* ServerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerItem.h; sourceTree = "<group>"; };
 		0305D5DD166C9DAE00557FC4 /* ServerList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerList.h; sourceTree = "<group>"; };
 		0305D5DE166C9DAE00557FC4 /* ServerListCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListCache.h; sourceTree = "<group>"; };
-		0305D5DF166C9DAE00557FC4 /* ShellSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShellSceneNode.h; sourceTree = "<group>"; };
 		0305D5E0166C9DAE00557FC4 /* ShotSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotSceneNode.h; sourceTree = "<group>"; };
 		0305D5E1166C9DAE00557FC4 /* ShotUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotUpdate.h; sourceTree = "<group>"; };
 		0305D5E2166C9DAE00557FC4 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
@@ -1046,7 +1041,6 @@
 		0305D5F0166C9DAE00557FC4 /* TextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtils.h; sourceTree = "<group>"; };
 		0305D5F1166C9DAE00557FC4 /* TimeBomb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeBomb.h; sourceTree = "<group>"; };
 		0305D5F2166C9DAE00557FC4 /* TimeKeeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeKeeper.h; sourceTree = "<group>"; };
-		0305D5F3166C9DAE00557FC4 /* TracerSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TracerSceneNode.h; sourceTree = "<group>"; };
 		0305D5F4166C9DAE00557FC4 /* TriWallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriWallSceneNode.h; sourceTree = "<group>"; };
 		0305D5F5166C9DAE00557FC4 /* vectors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vectors.h; sourceTree = "<group>"; };
 		0305D5F6166C9DAE00557FC4 /* vectors_old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vectors_old.h; sourceTree = "<group>"; };
@@ -1488,15 +1482,12 @@
 		035544A9166C846F008806E9 /* medium_turret.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = medium_turret.cxx; sourceTree = "<group>"; };
 		035544AA166C846F008806E9 /* OccluderSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = OccluderSceneNode.cxx; sourceTree = "<group>"; };
 		035544AB166C846F008806E9 /* PolyWallSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PolyWallSceneNode.cxx; sourceTree = "<group>"; };
-		035544AC166C846F008806E9 /* PTSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PTSceneNode.cxx; sourceTree = "<group>"; };
 		035544AD166C846F008806E9 /* QuadWallSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = QuadWallSceneNode.cxx; sourceTree = "<group>"; };
 		035544AE166C846F008806E9 /* README */ = {isa = PBXFileReference; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		035544AF166C846F008806E9 /* SceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SceneNode.cxx; sourceTree = "<group>"; };
-		035544B0166C846F008806E9 /* ShellSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ShellSceneNode.cxx; sourceTree = "<group>"; };
 		035544B1166C846F008806E9 /* SphereSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SphereSceneNode.cxx; sourceTree = "<group>"; };
 		035544B2166C846F008806E9 /* TankGeometryMgr.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TankGeometryMgr.cxx; sourceTree = "<group>"; };
 		035544B3166C846F008806E9 /* TankSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TankSceneNode.cxx; sourceTree = "<group>"; };
-		035544B4166C846F008806E9 /* TracerSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TracerSceneNode.cxx; sourceTree = "<group>"; };
 		035544B5166C846F008806E9 /* TriWallSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TriWallSceneNode.cxx; sourceTree = "<group>"; };
 		035544B6166C846F008806E9 /* ViewFrustum.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ViewFrustum.cxx; sourceTree = "<group>"; };
 		035544B7166C846F008806E9 /* WallSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WallSceneNode.cxx; sourceTree = "<group>"; };
@@ -2274,7 +2265,6 @@
 				0305D5CD166C9DAE00557FC4 /* PlayerState.h */,
 				0305D5CE166C9DAE00557FC4 /* PolyWallSceneNode.h */,
 				0305D5D0166C9DAE00557FC4 /* Protocol.h */,
-				0305D5D1166C9DAE00557FC4 /* PTSceneNode.h */,
 				0305D5D2166C9DAE00557FC4 /* PyramidBuilding.h */,
 				0305D5D3166C9DAE00557FC4 /* PyramidSceneNodeGenerator.h */,
 				0305D5D4166C9DAE00557FC4 /* QuadWallSceneNode.h */,
@@ -2288,7 +2278,6 @@
 				0305D5DC166C9DAE00557FC4 /* ServerItem.h */,
 				0305D5DD166C9DAE00557FC4 /* ServerList.h */,
 				0305D5DE166C9DAE00557FC4 /* ServerListCache.h */,
-				0305D5DF166C9DAE00557FC4 /* ShellSceneNode.h */,
 				0305D5E0166C9DAE00557FC4 /* ShotSceneNode.h */,
 				0305D5E1166C9DAE00557FC4 /* ShotUpdate.h */,
 				0305D5E2166C9DAE00557FC4 /* Singleton.h */,
@@ -2308,7 +2297,6 @@
 				0305D5F0166C9DAE00557FC4 /* TextUtils.h */,
 				0305D5F1166C9DAE00557FC4 /* TimeBomb.h */,
 				0305D5F2166C9DAE00557FC4 /* TimeKeeper.h */,
-				0305D5F3166C9DAE00557FC4 /* TracerSceneNode.h */,
 				0305D5F4166C9DAE00557FC4 /* TriWallSceneNode.h */,
 				0305D5F5166C9DAE00557FC4 /* vectors.h */,
 				0305D5F6166C9DAE00557FC4 /* vectors_old.h */,
@@ -2846,15 +2834,12 @@
 				03554497166C846F008806E9 /* models */,
 				035544AA166C846F008806E9 /* OccluderSceneNode.cxx */,
 				035544AB166C846F008806E9 /* PolyWallSceneNode.cxx */,
-				035544AC166C846F008806E9 /* PTSceneNode.cxx */,
 				035544AD166C846F008806E9 /* QuadWallSceneNode.cxx */,
 				035544AE166C846F008806E9 /* README */,
 				035544AF166C846F008806E9 /* SceneNode.cxx */,
-				035544B0166C846F008806E9 /* ShellSceneNode.cxx */,
 				035544B1166C846F008806E9 /* SphereSceneNode.cxx */,
 				035544B2166C846F008806E9 /* TankGeometryMgr.cxx */,
 				035544B3166C846F008806E9 /* TankSceneNode.cxx */,
-				035544B4166C846F008806E9 /* TracerSceneNode.cxx */,
 				035544B5166C846F008806E9 /* TriWallSceneNode.cxx */,
 				035544B6166C846F008806E9 /* ViewFrustum.cxx */,
 				035544B7166C846F008806E9 /* WallSceneNode.cxx */,
@@ -5121,14 +5106,11 @@
 				0357A8471670B3D80056C938 /* MeshSceneNode.cxx in Sources */,
 				0357A8481670B3D80056C938 /* OccluderSceneNode.cxx in Sources */,
 				0357A8491670B3D80056C938 /* PolyWallSceneNode.cxx in Sources */,
-				0357A84A1670B3D80056C938 /* PTSceneNode.cxx in Sources */,
 				0357A84B1670B3D80056C938 /* QuadWallSceneNode.cxx in Sources */,
 				0357A84C1670B3D80056C938 /* SceneNode.cxx in Sources */,
-				0357A84D1670B3D80056C938 /* ShellSceneNode.cxx in Sources */,
 				0357A84E1670B3D80056C938 /* SphereSceneNode.cxx in Sources */,
 				0357A84F1670B3D80056C938 /* TankGeometryMgr.cxx in Sources */,
 				0357A8501670B3D80056C938 /* TankSceneNode.cxx in Sources */,
-				0357A8511670B3D80056C938 /* TracerSceneNode.cxx in Sources */,
 				0357A8521670B3D80056C938 /* TriWallSceneNode.cxx in Sources */,
 				0357A8531670B3D80056C938 /* ViewFrustum.cxx in Sources */,
 				0357A8541670B3D80056C938 /* WallSceneNode.cxx in Sources */,
@@ -7725,6 +7707,7 @@
 				0315BEAD1B821BFF00FC7CE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0315BEC11B821F6C00FC7CE0 /* Build configuration list for PBXNativeTarget "webStats" */ = {
 			isa = XCConfigurationList;
@@ -7733,6 +7716,7 @@
 				0315BEC31B821F6C00FC7CE0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0318265916A0BE2F005050BD /* Build configuration list for PBXNativeTarget "superUser" */ = {
 			isa = XCConfigurationList;
