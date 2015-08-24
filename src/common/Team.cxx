@@ -12,8 +12,9 @@
 
 #include "common.h"
 #include "Team.h"
-#include "Pack.h"
 #include "AnsiCodes.h"
+#include "BZDBCache.h"
+#include "Pack.h"
 
 float			Team::tankColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 0.0f },   // rogue
@@ -22,7 +23,7 @@ float			Team::tankColor[NumTeams][3] = {
 				{ 0.1f, 0.2f, 1.0f },   // blue
 				{ 1.0f, 0.0f, 1.0f },   // purple
 				{ 1.0f, 1.0f, 1.0f },   // observer
-				{ 1.0f, 1.0f, 1.0f },   // rabbit
+				{ 0.8f, 0.8f, 0.8f },   // rabbit
 				{ 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
 float			Team::radarColor[NumTeams][3] = {
@@ -35,6 +36,8 @@ float			Team::radarColor[NumTeams][3] = {
 				{ 1.0f, 1.0f, 1.0f },   // rabbit
 				{ 1.0f, 0.5f, 0.0f }	// hunter orange
 			};
+float			Team::shotColor[NumTeams][3];
+
 
 Team::Team()
 {
@@ -123,6 +126,14 @@ const float*		Team::getRadarColor(TeamColor team) // const
   return radarColor[int(team)];
 }
 
+const float*		Team::getShotColor(TeamColor team) // const
+{
+  if (int(team) < 0) {
+    return shotColor[0];
+  }
+  return shotColor[int(team)];
+}
+
 const std::string	Team::getAnsiCode(TeamColor team) // const
 {
   return rgbToAnsi(getTankColor(team));
@@ -142,12 +153,44 @@ void			Team::setColors(TeamColor team,
   if (teamIndex < 0)
     return;
 
-  tankColor[teamIndex][0] = tank[0];
-  tankColor[teamIndex][1] = tank[1];
-  tankColor[teamIndex][2] = tank[2];
-  radarColor[teamIndex][0] = radar[0];
-  radarColor[teamIndex][1] = radar[1];
-  radarColor[teamIndex][2] = radar[2];
+  for (int i = 0; i <= 2; i++) {
+    tankColor[teamIndex][i] = tank[i];
+    radarColor[teamIndex][i] = radar[i];
+    shotColor[teamIndex][i] = addBrightness(tank[i]);
+  }
+}
+
+void			Team::updateShotColors()
+{
+  for (int teamIndex = 0; teamIndex <= NumTeams; teamIndex++) {
+    for (int i = 0; i <= 2; i++) {
+      shotColor[teamIndex][i] = addBrightness(tankColor[teamIndex][i]);
+    }
+  }
+}
+
+float Team::addBrightness(const float color)
+{
+  if (BZDBCache::shotBrightness == 0.0f) {
+    return color;
+  }
+
+  float brightness = BZDBCache::shotBrightness;
+
+  if (brightness > 0.0f) {
+    brightness *= pow(1.0f - color, 4.0f);
+  } else {
+    brightness *= color;
+  }
+
+  // Make sure that the resulting color doesn't get below 0 or above 1
+  if (brightness + color > 1.0f) {
+    return 1.0f;
+  } else if (brightness + color < 0.0f) {
+    return 0.0f;
+  }
+
+  return brightness + color;
 }
 
 // Local Variables: ***

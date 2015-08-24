@@ -81,6 +81,8 @@ void setColor(const std::string& name, void*)
     setRadarColor(RabbitTeam, BZDB.get(name));
   } else if (name == "hunterradar") {
     setRadarColor(HunterTeam, BZDB.get(name));
+  } else {
+    Team::updateShotColors();
   }
 }
 

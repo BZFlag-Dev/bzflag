@@ -90,6 +90,7 @@ class BZDBCache
     static Float gmSize;
 
     static Float hudGUIBorderOpacityFactor;
+    static Float shotBrightness;
 
   public:
     /** public method to update cached variable

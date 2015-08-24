@@ -36,12 +36,14 @@ struct Team {
     static TeamColor	getTeam(const std::string &name); // const
     static const float*	getTankColor(TeamColor); // const
     static const float*	getRadarColor(TeamColor team); // const
+    static const float*	getShotColor(TeamColor team); // const
     static const std::string	getAnsiCode(TeamColor team); // const
     static bool	isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
 				const float* tank,
 				const float* radar);
+    static void		updateShotColors();
 
   public:
     unsigned short	size;			// num players on team
@@ -53,10 +55,13 @@ struct Team {
 
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
+    static float	shotColor[NumTeams][3];
 
  private:
     unsigned short	won;			// wins by team members
     unsigned short	lost;			// losses by team members
+
+    static float	addBrightness(const float color); // const
 
 };
 

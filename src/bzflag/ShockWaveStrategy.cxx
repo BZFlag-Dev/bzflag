@@ -50,7 +50,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
     team = p ? p->getTeam() : RogueTeam;
   }
 
-  const float* c = Team::getTankColor(team);
+  const float* c = Team::getShotColor(team);
   if (RENDERER.useQuality() >= 2) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
@@ -83,7 +83,7 @@ void ShockWaveStrategy::update(float dt)
     currentTeam = team;
   }
 
-  const float* c = Team::getTankColor(currentTeam);
+  const float* c = Team::getShotColor(currentTeam);
 
   // fade old-style shockwaves
   if (RENDERER.useQuality() >= 2) {

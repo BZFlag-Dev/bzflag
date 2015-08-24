@@ -108,6 +108,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pauseConsole",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "shotBrightness",		"0.2",			true,	StateDatabase::ReadWrite,	setColor },
 
   // roam smooth follow settings
   { "followDist",		"32.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -152,7 +153,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "bluecolor",		"0.1 0.2 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "purplecolor",		"1 0 1",		true,	StateDatabase::ReadWrite,	setColor },
   { "observercolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
-  { "rabbitcolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rabbitcolor",		"0.8 0.8 0.8",		true,	StateDatabase::ReadWrite,	setColor },
   { "huntercolor",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
 
   // team radar colors
@@ -197,15 +198,11 @@ DefaultDBItem	defaultDBItems[] = {
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },
 
   // hud drawing
-  { "hudGUIBorderOpacityFactor",	"0.75",		true,  StateDatabase::ReadWrite, NULL },
-  { "hudWayPMarkerSize",		"15",		true,  StateDatabase::ReadWrite, NULL },
-
-
-  // hud drawing
   { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hudWayPMarkerSize",	"15",			true,	StateDatabase::ReadWrite,	NULL },
   { "hideMottos",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "mottoDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
-  { "scoreboardSort",	"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "scoreboardSort",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxScoreboardLines",	"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // listFilters

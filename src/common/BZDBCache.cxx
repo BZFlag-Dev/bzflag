@@ -64,6 +64,7 @@ BZDBCache::Float BZDBCache::maxLOD;
 BZDBCache::Float BZDBCache::gmSize;
 
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
+BZDBCache::Float BZDBCache::shotBrightness;
 
 
 static float getGoodPosValue(float oldVal, const std::string &var)
@@ -116,6 +117,7 @@ void BZDBCache::init()
   BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
   BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
+  BZDB.addCallback("shotBrightness", clientCallback, NULL);
 
   // Server-side variables
   BZDB.addCallback(StateDatabase::BZDB_DRAWCELESTIAL, serverCallback, NULL);
@@ -211,6 +213,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     showCullingGrid = BZDB.isTrue("showCullingGrid");
   else if (name == "hudGUIBorderOpacityFactor")
     hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
+  else if (name == "shotBrightness")
+    shotBrightness = BZDB.eval("shotBrightness");
 }
 
 

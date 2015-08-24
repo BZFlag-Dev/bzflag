@@ -929,6 +929,9 @@ int			main(int argc, char** argv)
   //Flawfinder: ignore
   strcpy(startupInfo.motto, motto.c_str());
 
+  // load the default values for shot colors
+  Team::updateShotColors();
+
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();
 
