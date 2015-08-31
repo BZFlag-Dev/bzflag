@@ -445,6 +445,10 @@ cannot proceed.  A checklist of items to be completed follows:
   buildDate.cxx, bzflag.rc, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
+- Edit updateConfigFile in clientConfig.cxx to update any necessary
+  configuration settings, and remove the 'break;' from the latest switch
+  case so that it will update the config version.
+
 - When BZ_PROTO_VERSION has already changed since the last release,
   increment it one more time in buildDate.cxx, bzfquery.*, and
   bzls.lua to distinguish the new release from development versions.

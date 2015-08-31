@@ -286,6 +286,9 @@ void updateConfigFile(void)
     BZDB.unset("displayZoom");		// removed in r22109
     BZDB.unset("radarShotLineType");	// existed only in r22117
     BZDB.unset("serifFont");		// serif font was removed
+    // Reset the list server URL so that people who have switched to another
+    // URL gets reset back to the new HTTPS URL
+    BZDB.set("list", BZDB.getDefault("list"));
     break;
 
   default: // hm, we don't know about this one...
