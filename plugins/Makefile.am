@@ -34,6 +34,7 @@ SUBDIRS = \
 	timedctf \
 	TimeLimit \
 	webReport \
+	webStats \
 	wwzones \
 	@CUSTOM_PLUGIN_LIST@
 
@@ -43,7 +44,6 @@ DIST_SUBDIRS = \
 EXTRA_DIST = \
 	api_notes \
 	pushstats \
-	webStats \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\

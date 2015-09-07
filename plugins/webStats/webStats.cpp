@@ -54,7 +54,7 @@ protected:
 	std::map<bz_eTeamType, std::vector<bz_BasePlayerRecord*> >::iterator teamSortItr;
 	size_t playerInTeam;
 
-	bz_BasePlayerRecord* playeRecord;
+	bz_BasePlayerRecord* playerRecord;
 	int flagReportID;
 
 	// default template
@@ -67,7 +67,7 @@ protected:
 
 	double serverStartTime;
 
-	std::map<int, int> registeredPlayerMap;
+	std::map<std::string, int> registeredPlayerMap;
 	std::map<std::string, int> nonRegedPlayerMap;
 
 	int joins;
@@ -80,7 +80,7 @@ protected:
 
 	void doFlagReport(std::string& page, int flagID);
 	void doPlayerReport(std::string& page, int playerID);
-	void doStatReport(std::string& page, std::string& action);
+	void doStatReport(std::string& page);
 
 	void initReport(void);
 	void finishReport(void);
@@ -129,11 +129,10 @@ void WebStats::Event ( bz_EventData *eventData )
 			bz_PlayerJoinPartEventData_V1* evtData = (bz_PlayerJoinPartEventData_V1*)eventData;
 			if (evtData->record->verified) 
 			{
-				int bzID = atoi(evtData->record->bzID.c_str());
-				if (registeredPlayerMap.find(bzID) == registeredPlayerMap.end())
-					registeredPlayerMap[bzID] = 1;
+				if (registeredPlayerMap.find(evtData->record->bzID) == registeredPlayerMap.end())
+					registeredPlayerMap[evtData->record->bzID] = 1;
 				else 
-					registeredPlayerMap[bzID]++;
+					registeredPlayerMap[evtData->record->bzID]++;
 			}
 			else 
 			{
@@ -216,8 +215,8 @@ bz_ApiString WebStats::GetTemplateKey(const char* _key)
 		return "";
 
 	bz_BasePlayerRecord* rec = NULL;
-	if (playeRecord) 
-		rec = playeRecord;
+	if (playerRecord) 
+		rec = playerRecord;
 	else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size())
 		rec = teamSortItr->second[playerInTeam];
 
@@ -270,7 +269,7 @@ bz_ApiString WebStats::GetTemplateKey(const char* _key)
 		int seconds = (int)(uptime);
 		data = bz_format("%d days %d hours %d minutes %d seconds", days, hours, min, seconds);
 	}
-	else if (key == "totalplayers") 
+	else if (key == "uniqueplayers") 
 	{
 		size_t count = registeredPlayerMap.size() + nonRegedPlayerMap.size();
 		data = bz_format("%d", (int)count);
@@ -386,6 +385,8 @@ bz_ApiString WebStats::GetTemplateKey(const char* _key)
 			data = rec->callsign.c_str();
 		else if (key == "rank") 
 			data = bz_format("%f%%", rec->rank);
+		else if (key == "score")
+			data = bz_format("%d", rec->wins - rec->losses);
 		else if (key == "wins")
 			data = bz_format("%d", rec->wins);
 		else if (key == "losses")
@@ -432,8 +433,8 @@ bool WebStats::GetTemplateLoop(const char* _key, const char* /*_param*/)
 		return false;
 
 	bz_BasePlayerRecord* rec = NULL;
-	if (playeRecord) 
-		rec = playeRecord;
+	if (playerRecord) 
+		rec = playerRecord;
 	else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size())
 		rec = teamSortItr->second[playerInTeam];
 
@@ -441,7 +442,7 @@ bool WebStats::GetTemplateLoop(const char* _key, const char* /*_param*/)
 
 	if (key == "players")
 	{
-		if (playeRecord || teamSort.empty()) 
+		if (playerRecord || teamSort.empty()) 
 			return false;
 
 		if (teamSortItr == teamSort.end())
@@ -488,7 +489,7 @@ bool WebStats::GetTemplateLoop(const char* _key, const char* /*_param*/)
 		}
 		return true;
 	}
-	else if (key == "flaghistory" && rec)
+	else if (key == "flagreport" && rec)
 	{
 		if (flagReportID != -1)
 			flagReportID++;
@@ -511,8 +512,8 @@ bool WebStats::GetTemplateIF(const char* _key, const char* /*_param*/)
 		return false;
 
 	bz_BasePlayerRecord* rec = NULL;
-	if (playeRecord)
-		rec = playeRecord;
+	if (playerRecord)
+		rec = playerRecord;
 	else if (teamSortItr != teamSort.end() && playerInTeam < teamSortItr->second.size()) 
 		rec = teamSortItr->second[playerInTeam];
 
@@ -521,7 +522,7 @@ bool WebStats::GetTemplateIF(const char* _key, const char* /*_param*/)
 	if (key == "newteam")
 		return teamSortItr != teamSort.end() && playerInTeam == 0;
 	else if (key == "players") 
-		return playeRecord != NULL ? playeRecord != NULL : !teamSort.empty();
+		return playerRecord != NULL ? playerRecord != NULL : !teamSort.empty();
 	else if (key == "redteam") 
 		return bz_getTeamCount(eRedTeam) > 0;
 	else if (key == "greenteam") 
@@ -586,7 +587,7 @@ std::string GetParamater(const bzhttp_Request& request, const char* name)
  
   groupLoop = 0;
   flagHistoryLoop = 0;
-  playeRecord = NULL;
+  playerRecord = NULL;
   flagReportID = -1;
 
   std::string page;
@@ -601,57 +602,51 @@ std::string GetParamater(const bzhttp_Request& request, const char* name)
   else if (action == "flag" && flagID.size()) 
 	  doFlagReport(page, atoi(flagID.c_str()));
   else
-	  doStatReport(page, action);
+	  doStatReport(page);
 
   response.AddBodyData(page.c_str());
   return ePageDone;
 }
 
- void WebStats::doFlagReport(std::string& page, int flagID)
- {
-	 flagReportID = flagID;
-	 if (flagReportID < 0 || flagReportID > (int)bz_getNumFlags())
-		 page += "Invalid Flag";
-	 else
-	 {
-		 const char* file = bzhttp_FindFile("StatsTemplates","flag.tmpl");
-		 if (file)
-			 page += bzhttp_RenderTemplate(file,this).c_str();
-		 else
-			 page += bzhttp_RenderTemplateFromText(defaultFlagTemplate.c_str(),this).c_str();
-	 }
-	 flagReportID = -1;
- }
+void WebStats::doFlagReport(std::string& page, int flagID)
+{
+  flagReportID = flagID;   
+  if (flagReportID < 0 || flagReportID > (int)bz_getNumFlags()) {
+    page += "Invalid Flag";
+  } else {
+    const char* file = bzhttp_FindFile("StatsTemplates","flag.tmpl");
+    if (file)
+      page += bzhttp_RenderTemplate(file,this).c_str();
+    else
+      page += bzhttp_RenderTemplateFromText(defaultFlagTemplate.c_str(),this).c_str();
+    }
+  flagReportID = -1;
+}
 
- void WebStats::doPlayerReport(std::string& page, int playerID) 
- {
-	 playeRecord = bz_getPlayerByIndex(playerID);
-	 if (!playeRecord) 
-	 {
-		 page += "Invalid Player";
-	 }
-	 else
-	 {
-		 const char* file = bzhttp_FindFile("StatsTemplates","player.tmpl");
-		 if (file)
-			 page += bzhttp_RenderTemplate(file,this).c_str();
-		 else
-			 page += bzhttp_RenderTemplateFromText(defaultPlayerTemplate.c_str(),this).c_str();
-	 }
-	 playeRecord = NULL;
- }
+void WebStats::doPlayerReport(std::string& page, int playerID) 
+{
+  playerRecord = bz_getPlayerByIndex(playerID);
+  if (!playerRecord) {
+    page += "Invalid Player";
+  } else {
+    const char* file = bzhttp_FindFile("StatsTemplates","player.tmpl");
+    if (file)
+      page += bzhttp_RenderTemplate(file,this).c_str();
+    else
+      page += bzhttp_RenderTemplateFromText(defaultPlayerTemplate.c_str(),this).c_str();
+    }
+    bz_freePlayerRecord(playerRecord);
+    playerRecord = NULL;
+}
 
- void WebStats::doStatReport(std::string& page, std::string& action) 
+ void WebStats::doStatReport(std::string& page)
  {
-	 playeRecord = NULL;
+	 playerRecord = NULL;
 	 initReport();
 
-	 if (action.size())
-		 action += ".tmpl";
+	 const char* file = bzhttp_FindFile("StatsTemplates","stats.tmpl");
 
-	 const char* file = bzhttp_FindFile("StatsTemplates",action.c_str());
-
-	 if (!action.size() || !file)
+	 if (!file)
 		 page += bzhttp_RenderTemplateFromText(defaultMainTemplate.c_str(),this).c_str();
 	 else
 		 page += bzhttp_RenderTemplate(file,this).c_str();
@@ -696,11 +691,11 @@ std::string GetParamater(const bzhttp_Request& request, const char* name)
 
 void WebStats::loadDefaultTemplates(void)
 {
-	defaultMainTemplate = "<html><head></head><body><h2>Players</h2>";
+	defaultMainTemplate = "<html><head></head><body>(Template files not found. Using basic embedded templates.)<br><h2>Players</h2>";
 	defaultMainTemplate += "[*START Players][$Callsign]<br>[*END Players]None[*EMPTY Players]<hr></body></html>";
 
-	defaultPlayerTemplate = "<html><head></head><body><h2>[$Callsign]</h2><b>[$TeamName]</b> [$Wins]/[$Losses]([$TeamKills]) [$Status]</body></html>";
-	defaultFlagTemplate = "<html><head></head><body><h2>[$FlagType]</h2><b>Player [$FlagPlayer]</b> [$FlagX],[$FlagY],[$FlagZ]</body></html>";
+	defaultPlayerTemplate = "<html><head></head><body>(Template files not found. Using basic embedded templates.)<br><h2>[$Callsign]</h2><b>[$TeamName]</b> [$Wins]/[$Losses]([$TeamKills]) [$Status]</body></html>";
+	defaultFlagTemplate = "<html><head></head><body>(Template files not found. Using basic embedded templates.)<br><h2>[$FlagType]</h2><b>Player [$FlagPlayer]</b> [$FlagX],[$FlagY],[$FlagZ]</body></html>";
 }
 
 // Local Variables: ***
