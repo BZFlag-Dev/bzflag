@@ -1068,8 +1068,6 @@ AC_CONFIG_FILES([
 	plugins/thiefControl/Makefile
 	plugins/timedctf/Makefile
 	plugins/TimeLimit/Makefile
-	plugins/webReport/Makefile
-	plugins/webStats/Makefile
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile

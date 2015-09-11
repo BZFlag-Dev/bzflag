@@ -58,7 +58,6 @@ BZFlag 2.4.3
 * Added server side shot tracking - Jeff Myers
 * Added clientQuery permission - Konstantinos Kanavouras
 * Added superUser plugin - Jeff Myers
-* Added webStats plugin - Jeff Myers
 * Added bz_getPlayerCount API function - Jeff Myers
 * Added bz_incrementPlayerWins API function - Jeff Myers
 * Added bz_incrementPlayerLosses API function - Jeff Myers

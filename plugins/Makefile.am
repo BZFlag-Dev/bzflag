@@ -33,8 +33,6 @@ SUBDIRS = \
 	thiefControl \
 	timedctf \
 	TimeLimit \
-	webReport \
-	webStats \
 	wwzones \
 	@CUSTOM_PLUGIN_LIST@
 
