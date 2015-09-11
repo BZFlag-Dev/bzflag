@@ -43,8 +43,6 @@ EXTRA_DIST = \
 	api_notes \
 	pushstats \
 	removeFromBuild.sh \
-	webReport \
-	webStats \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\
