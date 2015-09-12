@@ -98,7 +98,7 @@ ident ( ) {
     fi
 
     # extract version from CVS Id string
-    __id="$Id$"
+    __id="$Id: autogen.sh,v 14.97 2007/06/18 22:25:02 brlcad Exp $"
     __version="`echo $__id | sed 's/.*\([0-9][0-9][0-9][0-9]\)[-\/]\([0-9][0-9]\)[-\/]\([0-9][0-9]\).*/\1\2\3/'`"
     if [ "x$__version" = "x" ] ; then
 	__version=""
@@ -1448,6 +1448,7 @@ if [ "x$reconfigure_manually" = "xyes" ] ; then
 
     recursive_manual_autogen
 fi
+
 
 #########################
 # restore and summarize #
