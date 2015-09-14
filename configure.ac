@@ -294,6 +294,15 @@ LIBCURL_CHECK_CONFIG
 AC_MSG_CHECKING(checking for curl library)
 if test "x$LIBCURL" = "x" ; then
     AC_MSG_ERROR([working curl library was not found])
+else
+    AC_MSG_RESULT([yes])
+fi
+
+AC_MSG_CHECKING(checking for SSL support in curl)
+if test "x$libcurl_feature_SSL" = "xyes" ; then
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_ERROR([curl library missing SSL support])
 fi
 
 
