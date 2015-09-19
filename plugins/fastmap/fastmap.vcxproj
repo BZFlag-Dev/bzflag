@@ -105,7 +105,7 @@
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -138,7 +138,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plug
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -175,7 +175,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plug
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -211,7 +211,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plug
       <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
 mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
 copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -226,7 +226,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plug
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="ReadMe.txt" />
+    <None Include="README.fastmap.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\bzfsAPI.h" />

@@ -224,7 +224,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plug
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <None Include="pushstats.def" />
-    <None Include="ReadMe.txt" />
+    <None Include="README.pushstats.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pushstats.cpp" />

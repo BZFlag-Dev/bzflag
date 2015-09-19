@@ -175,10 +175,6 @@
       <Project>{645768be-97c8-4de4-9100-111bd2808b35}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\plugins\pushstats\pushstats.vcxproj">
-      <Project>{ea71e096-b07b-4e02-855b-97870da72edd}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\..\plugins\rabbitTimer\rabbitTimer.vcxproj">
       <Project>{a4f41740-c547-4696-b2b4-9fdf66fd9112}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

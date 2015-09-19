@@ -220,7 +220,7 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <None Include="serverSidePlayerSample.def" />
-    <None Include="ReadMe.txt" />
+    <None Include="README.serverSidePlayerSample.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="playerHandler.cpp" />

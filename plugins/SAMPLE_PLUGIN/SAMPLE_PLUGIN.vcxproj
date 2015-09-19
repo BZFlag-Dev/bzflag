@@ -224,7 +224,7 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <None Include="SAMPLE_PLUGIN.def" />
-    <None Include="ReadMe.txt" />
+    <None Include="README.SAMPLE_PLUGIN.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="SAMPLE_PLUGIN.cpp" />
