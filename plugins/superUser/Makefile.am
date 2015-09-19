@@ -10,8 +10,8 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	plugins.cfg \
-	README.txt \
+	README.superUser.txt \
+	superUser.cfg \
 	superUser.def \
 	superUser.sln \
 	superUser.vcxproj

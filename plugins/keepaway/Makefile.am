@@ -9,7 +9,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.keepaway.txt \
 	keepaway.def \
 	keepaway.sln \
 	keepaway.vcxproj		\

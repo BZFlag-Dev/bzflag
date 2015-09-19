@@ -10,8 +10,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	CHANGELOG.txt	\
-	NAGSAMPLE.cfg	\
-	README.txt \
+	README.nagware.txt \
+	nagware.cfg	\
 	nagware.def \
 	nagware.sln \
 	nagware.vcxproj

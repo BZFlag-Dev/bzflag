@@ -9,7 +9,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.logDetail.txt \
 	logDetail.def \
 	logDetail.sln \
 	logDetail.vcxproj

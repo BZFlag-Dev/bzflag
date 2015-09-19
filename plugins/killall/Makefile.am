@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	killall.def \
 	killall.sln \
 	killall.vcxproj \
-	README.txt
+	README.killall.txt
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

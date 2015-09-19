@@ -10,8 +10,8 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	plugins.cfg \
-	README.txt \
+	README.serverControl.txt \
+	serverControl.cfg \
 	serverControl.def \
 	serverControl.sln \
 	serverControl.vcxproj

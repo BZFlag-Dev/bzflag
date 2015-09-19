@@ -10,7 +10,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.CustomZoneSample.txt \
 	CustomZoneSample.bzw \
 	CustomZoneSample.def \
 	CustomZoneSample.sln \

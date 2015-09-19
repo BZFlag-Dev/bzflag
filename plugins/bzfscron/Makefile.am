@@ -13,7 +13,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.bzfscron.txt \
 	crontab \
 	bzfscron.def \
 	bzfscron.sln \

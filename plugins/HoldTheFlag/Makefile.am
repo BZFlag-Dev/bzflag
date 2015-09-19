@@ -10,7 +10,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	CHANGELOG.txt	\
-	README.txt \
+	README.HoldTheFlag.txt \
 	HoldTheFlag.def \
 	HoldTheFlag.sln \
 	HoldTheFlag.vcxproj
