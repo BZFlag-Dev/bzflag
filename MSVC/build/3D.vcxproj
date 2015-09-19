@@ -161,9 +161,6 @@
     <ClInclude Include="..\..\src\3d\TextureFont.h" />
     <ClInclude Include="..\..\include\TextureManager.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
