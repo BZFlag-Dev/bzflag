@@ -17,7 +17,6 @@ EXTRA_DIST =				\
 	bzwcvt.pl			\
 	checkToken.php			\
 	checkam				\
-	copyplugindocs			\
 	doxyfile			\
 	filter.txt			\
 	fonts/DejaVuSansCondensed-Bold.ttf	\
