@@ -106,6 +106,8 @@
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
 copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -143,6 +145,8 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
 copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -176,6 +180,8 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
 copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -212,6 +218,8 @@ copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins
       <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
 mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
 copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
