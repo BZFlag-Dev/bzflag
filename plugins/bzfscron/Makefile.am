@@ -14,7 +14,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.bzfscron.txt \
-	crontab \
+	bzfscron.cfg \
 	bzfscron.def \
 	bzfscron.sln \
 	bzfscron.vcxproj
