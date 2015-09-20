@@ -318,7 +318,6 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\misc\bzfs_conf.html" "" "" 0
 
       SetOutPath $INSTDIR\doc
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -332,9 +331,8 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Include the plugins
     SetOutPath $INSTDIR
     File ..\..\..\bin_Release_${PLATFORM}\plugins\*.dll
-	
-	SetOutPath $INSTDIR\templates
-	File /r ..\..\..\bin_Release_${PLATFORM}\plugins\templates\*
+		File ..\..\..\bin_Release_${PLATFORM}\plugins\*.txt
+		File ..\..\..\bin_Release_${PLATFORM}\plugins\*.cfg
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
