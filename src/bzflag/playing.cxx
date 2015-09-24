@@ -6187,7 +6187,7 @@ static void		prepareTheHUD()
     hud->setHeading(myTank->getAngle());
     hud->setAltitude(myPos[2]);
     if (world->allowTeamFlags()) {
-      const float* myTeamColor = Team::getRadarColor(myTank->getTeam());
+      const float* myTeamColor = Team::getTankColor(myTank->getTeam());
       // markers for my team flag
       for (int i = 0; i < numFlags; i++) {
 	Flag& flag = world->getFlag(i);

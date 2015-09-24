@@ -150,6 +150,9 @@ public:
   /** returns the color of the flag */
   const float* getColor() const;
 
+  /** returns the color of the flag as it should be shown on the radar */
+  const float* getRadarColor() const;
+
   /** network serialization */
   void* pack(void* buf) const;
   void* fakePack(void* buf) const;

@@ -651,7 +651,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       const float* position = player->getPosition();
 
       if (player->getFlag() != Flags::Null) {
-	glColor3fv(player->getFlag()->getColor());
+	glColor3fv(player->getFlag()->getRadarColor());
 	drawFlagOnTank(position);
       }
 
@@ -713,7 +713,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
       }
       // Flags change color by height
       const float cs = colorScale(flag.position[2], muzzleHeight);
-      const float *flagcolor = flag.type->getColor();
+      const float *flagcolor = flag.type->getRadarColor();
       glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
       drawFlag(flag.position);
     }
@@ -754,7 +754,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
       // my flag
       if (myTank->getFlag() != Flags::Null) {
-	glColor3fv(myTank->getFlag()->getColor());
+	glColor3fv(myTank->getFlag()->getRadarColor());
 	drawFlagOnTank(myPos);
       }
 
