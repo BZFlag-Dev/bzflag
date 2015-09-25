@@ -4045,18 +4045,23 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 	bz_startCountdown(delay, limit, playerID);
 }
 
-BZF_API int bz_getCountdownProgress ( void )
+BZF_API float bz_getCountdownRemaining ( void )
 {
   if (!bz_isCountDownActive()) {
     return -1;
   }
   
   TimeKeeper tm = TimeKeeper::getCurrent();
+  TimeKeeper gameTime = gameStartTime;
   PlayerInfo::setCurrentTime(tm);
   
-  float newTimeElapsed = (float)(tm - gameStartTime);
+  if (bz_isCountDownPaused() || bz_isCountDownInProgress()) {
+    gameTime += (float)(tm - countdownPauseStart);
+  }
   
-  return clOptions->timeLimit - newTimeElapsed;
+  float newTimeElapsed = (float)(tm - gameTime);
+  
+  return (clOptions->timeLimit - newTimeElapsed);
 }
 
 BZF_API void bz_resetTeamScores ( void )

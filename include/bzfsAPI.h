@@ -1788,7 +1788,7 @@ BZF_API void bz_cancelCountdown ( int playerID );
 BZF_API void bz_pauseCountdown ( int playerID );
 BZF_API void bz_resumeCountdown ( int playerID );
 BZF_API void bz_startCountdown ( int delay, float limit, int playerID );
-BZF_API int  bz_getCountdownProgress ( void );
+BZF_API float bz_getCountdownRemaining ( void );
 
 // @TODO deprecated game countdown commands (to be removed in 2.6.x)
 BZF_API void bz_cancelCountdown ( const char *canceledBy );
