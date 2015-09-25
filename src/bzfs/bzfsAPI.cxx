@@ -2409,7 +2409,7 @@ BZF_API bool bz_isCountDownActive( void )
 
 BZF_API bool bz_isCountDownInProgress( void )
 {
-  return countdownDelay > 0;
+  return (countdownDelay > 0 || countdownResumeDelay > 0);
 }
 
 BZF_API bool bz_isCountDownPaused( void )
