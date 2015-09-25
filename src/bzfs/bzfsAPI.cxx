@@ -4045,6 +4045,20 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 	bz_startCountdown(delay, limit, playerID);
 }
 
+BZF_API int bz_getCountdownProgress ( void )
+{
+  if (!bz_isCountDownActive()) {
+    return -1;
+  }
+  
+  TimeKeeper tm = TimeKeeper::getCurrent();
+  PlayerInfo::setCurrentTime(tm);
+  
+  float newTimeElapsed = (float)(tm - gameStartTime);
+  
+  return clOptions->timeLimit - newTimeElapsed;
+}
+
 BZF_API void bz_resetTeamScores ( void )
 {
   resetTeamScores();
