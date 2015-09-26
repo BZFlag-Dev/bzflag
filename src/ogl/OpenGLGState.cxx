@@ -1585,9 +1585,7 @@ void bzMatrixMode(GLenum mode)
 #ifdef _WIN32
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
 #else
-#  ifdef HAVE_CGLGETCURRENTCONTEXT
-#    define GET_CURRENT_CONTEXT CGLGetCurrentContext
-#  elif defined(__BEOS__)
+#  ifdef __BEOS__
 // no way to do that, and you shouldn't have to anyway!
 #    define GET_CURRENT_CONTEXT() 1
 #  elif defined(HAVE_SDL2)
