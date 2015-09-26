@@ -202,14 +202,94 @@
 		0357AA0A1670BFC80056C938 /* UIMap.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355431B166C846F008806E9 /* UIMap.cxx */; };
 		0357AA0B1670BFD20056C938 /* ServerLink.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543A1166C846F008806E9 /* ServerLink.cxx */; };
 		0357AA161670C0EF0056C938 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
-		0357AA171670C0F30056C938 /* libncurses.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E5166C6AB500DDDBEB /* libncurses.dylib */; };
 		0357AA181670C0FD0056C938 /* libgame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7FB1670B1D80056C938 /* libgame.a */; };
 		0357AA191670C1000056C938 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
 		0357AA1A1670C1050056C938 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
-		0357AA1B1670C1130056C938 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
+		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
+		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
+		038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DE1BB646030009F369 /* libncurses.tbd */; };
+		038DA4E01BB6465E0009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
+		038DA4E11BB646710009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
+		038DA4E21BB646750009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
+		038DA4E41BB649130009F369 /* README.airspawn.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4E31BB649130009F369 /* README.airspawn.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4E61BB6493D0009F369 /* README.autoFlagReset.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4E91BB649640009F369 /* bzfscron.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4E71BB649640009F369 /* bzfscron.cfg */; settings = {ASSET_TAGS = (); }; };
+		038DA4EA1BB649640009F369 /* README.bzfscron.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4E81BB649640009F369 /* README.bzfscron.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4EC1BB6498D0009F369 /* README.chathistory.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4EB1BB6498D0009F369 /* README.chathistory.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4EE1BB649A90009F369 /* README.customflagsample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4ED1BB649A90009F369 /* README.customflagsample.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4F01BB649B90009F369 /* README.CustomZoneSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4F61BB64A5A0009F369 /* README.flagStay.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4F81BB64A6F0009F369 /* README.hiddenAdmin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4FA1BB64A9E0009F369 /* README.HoldTheFlag.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA4FF1BB64BC30009F369 /* help_keepaway_rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5001BB64BC30009F369 /* README.keepaway.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FD1BB64BC30009F369 /* README.keepaway.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5021BB64BF00009F369 /* README.killall.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5011BB64BF00009F369 /* README.killall.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5061BB64C9A0009F369 /* help_koth_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5031BB64C9A0009F369 /* help_koth_admin.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5071BB64C9A0009F369 /* help_koth_rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5041BB64C9A0009F369 /* help_koth_rules.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5081BB64C9A0009F369 /* README.koth.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5051BB64C9A0009F369 /* README.koth.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA50A1BB64CCB0009F369 /* README.logDetail.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5091BB64CCB0009F369 /* README.logDetail.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA50D1BB64CE80009F369 /* nagware.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 038DA50B1BB64CE80009F369 /* nagware.cfg */; settings = {ASSET_TAGS = (); }; };
+		038DA50E1BB64CE80009F369 /* README.nagware.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA50C1BB64CE80009F369 /* README.nagware.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5101BB64D280009F369 /* README.Phoenix.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA50F1BB64D280009F369 /* README.Phoenix.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5121BB64D3F0009F369 /* README.playHistoryTracker.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5141BB64DB10009F369 /* README.pushstats.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5131BB64DB10009F369 /* README.pushstats.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5161BB64DCA0009F369 /* README.rabbitTimer.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5191BB64DF00009F369 /* help_rabidRabbit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA51A1BB64DF00009F369 /* README.rabidRabbit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA51C1BB64E0B0009F369 /* README.recordmatch.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA51E1BB64E180009F369 /* README.regFlag.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA51D1BB64E180009F369 /* README.regFlag.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5201BB64E240009F369 /* README.RogueGenocide.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA51F1BB64E240009F369 /* README.RogueGenocide.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5221BB64E310009F369 /* README.SAMPLE_PLUGIN.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5211BB64E310009F369 /* README.SAMPLE_PLUGIN.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5251BB64E470009F369 /* README.serverControl.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5231BB64E470009F369 /* README.serverControl.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5261BB64E470009F369 /* serverControl.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5241BB64E470009F369 /* serverControl.cfg */; settings = {ASSET_TAGS = (); }; };
+		038DA5281BB64E5D0009F369 /* README.serverSidePlayerSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA52A1BB64F090009F369 /* README.shockwaveDeath.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5291BB64F090009F369 /* README.shockwaveDeath.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA52D1BB64F1D0009F369 /* README.superUser.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA52B1BB64F1D0009F369 /* README.superUser.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA52E1BB64F1D0009F369 /* superUser.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 038DA52C1BB64F1D0009F369 /* superUser.cfg */; settings = {ASSET_TAGS = (); }; };
+		038DA5311BB64F340009F369 /* help_teamflagreset_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA52F1BB64F340009F369 /* help_teamflagreset_admin.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5321BB64F340009F369 /* README.teamflagreset.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5301BB64F340009F369 /* README.teamflagreset.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5341BB64F490009F369 /* README.thiefControl.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5331BB64F490009F369 /* README.thiefControl.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5381BB64F5C0009F369 /* help_timedctf_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5351BB64F5C0009F369 /* help_timedctf_admin.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA5391BB64F5C0009F369 /* help_timedctf_rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5361BB64F5C0009F369 /* help_timedctf_rules.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA53A1BB64F5C0009F369 /* README.timedctf.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5371BB64F5C0009F369 /* README.timedctf.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA53C1BB64FB90009F369 /* README.TimeLimit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA53B1BB64FB90009F369 /* README.TimeLimit.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA53E1BB64FCB0009F369 /* README.wwzones.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA53D1BB64FCB0009F369 /* README.wwzones.txt */; settings = {ASSET_TAGS = (); }; };
+		038DA53F1BB650C30009F369 /* README.airspawn.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E31BB649130009F369 /* README.airspawn.txt */; };
+		038DA5401BB650E70009F369 /* README.autoFlagReset.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */; };
+		038DA5411BB650ED0009F369 /* bzfscron.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E71BB649640009F369 /* bzfscron.cfg */; };
+		038DA5421BB650F20009F369 /* README.bzfscron.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E81BB649640009F369 /* README.bzfscron.txt */; };
+		038DA5431BB651100009F369 /* README.chathistory.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4EB1BB6498D0009F369 /* README.chathistory.txt */; };
+		038DA5441BB651150009F369 /* README.customflagsample.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4ED1BB649A90009F369 /* README.customflagsample.txt */; };
+		038DA5451BB6511B0009F369 /* README.fairCTF.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */; };
+		038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; };
+		038DA5471BB6514B0009F369 /* flagStay.bzw in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
+		038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; };
+		038DA5491BB651530009F369 /* README.hiddenAdmin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */; };
+		038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; };
+		038DA54B1BB651640009F369 /* help_keepaway_admin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; };
+		038DA54C1BB651670009F369 /* help_keepaway_rules.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */; };
+		038DA54D1BB6516E0009F369 /* README.keepaway.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FD1BB64BC30009F369 /* README.keepaway.txt */; };
+		038DA54E1BB651790009F369 /* README.killall.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5011BB64BF00009F369 /* README.killall.txt */; };
+		038DA54F1BB6517E0009F369 /* help_koth_admin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5031BB64C9A0009F369 /* help_koth_admin.txt */; };
+		038DA5501BB651800009F369 /* help_koth_rules.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5041BB64C9A0009F369 /* help_koth_rules.txt */; };
+		038DA5511BB651870009F369 /* README.koth.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5051BB64C9A0009F369 /* README.koth.txt */; };
+		038DA5521BB6518E0009F369 /* README.logDetail.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5091BB64CCB0009F369 /* README.logDetail.txt */; };
+		038DA5531BB651970009F369 /* nagware.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50B1BB64CE80009F369 /* nagware.cfg */; };
+		038DA5541BB6519D0009F369 /* README.nagware.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50C1BB64CE80009F369 /* README.nagware.txt */; };
+		038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50F1BB64D280009F369 /* README.Phoenix.txt */; };
+		038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */; };
+		038DA5571BB651B20009F369 /* README.pushstats.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5131BB64DB10009F369 /* README.pushstats.txt */; };
+		038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */; };
+		038DA5591BB651BE0009F369 /* help_rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */; };
+		038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; };
+		038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */; };
+		038DA55D1BB651F50009F369 /* README.regFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51D1BB64E180009F369 /* README.regFlag.txt */; };
 		0394E688167B0B71007F4035 /* AccessControlList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CC166C846F008806E9 /* AccessControlList.cxx */; };
 		0394E689167B0B71007F4035 /* Authentication.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CE166C846F008806E9 /* Authentication.cxx */; };
 		0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D0166C846F008806E9 /* BanCommands.cxx */; };
@@ -274,8 +354,6 @@
 		0394E6C7167B0CFD007F4035 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
 		0394E6C8167B0D04007F4035 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		0394E6CA167B0D0B007F4035 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
-		0394E6CC167B0D4B007F4035 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
-		0394E6CD167B0D71007F4035 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E3166C692B00DDDBEB /* libz.dylib */; };
 		0394E6CE167B0DDA007F4035 /* bzfs in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E67D167B0AA3007F4035 /* bzfs */; };
 		0394E7CA167B10A2007F4035 /* airspawn.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6D9167B1024007F4035 /* airspawn.cpp */; };
 		0394E7E3167B18CF007F4035 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
@@ -453,8 +531,6 @@
 		03C8EF18167AC54C00BB07A5 /* libplatform.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8AD1670B79E0056C938 /* libplatform.a */; };
 		03C8EF19167AC55100BB07A5 /* libmediafile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8C41670B8DE0056C938 /* libmediafile.a */; };
 		03C8EF1A167AC55800BB07A5 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
-		03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E3166C692B00DDDBEB /* libz.dylib */; };
-		03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 03D926E1166C68E700DDDBEB /* libcurl.dylib */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
 		03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
@@ -872,10 +948,40 @@
 			dstSubfolderSpec = 7;
 			files = (
 				03E42D1B1B322E2C006EE763 /* AUTHORS in CopyFiles */,
+				038DA5411BB650ED0009F369 /* bzfscron.cfg in CopyFiles */,
 				03E42D1C1B322E2C006EE763 /* ChangeLog in CopyFiles */,
 				03E42D1D1B322E2C006EE763 /* COPYING in CopyFiles */,
+				038DA5471BB6514B0009F369 /* flagStay.bzw in CopyFiles */,
+				038DA54B1BB651640009F369 /* help_keepaway_admin.txt in CopyFiles */,
+				038DA54C1BB651670009F369 /* help_keepaway_rules.txt in CopyFiles */,
+				038DA54F1BB6517E0009F369 /* help_koth_admin.txt in CopyFiles */,
+				038DA5501BB651800009F369 /* help_koth_rules.txt in CopyFiles */,
+				038DA5591BB651BE0009F369 /* help_rabidRabbit.txt in CopyFiles */,
+				038DA5531BB651970009F369 /* nagware.cfg in CopyFiles */,
 				03E42D1E1B322E2C006EE763 /* README in CopyFiles */,
+				038DA53F1BB650C30009F369 /* README.airspawn.txt in CopyFiles */,
+				038DA5401BB650E70009F369 /* README.autoFlagReset.txt in CopyFiles */,
+				038DA5421BB650F20009F369 /* README.bzfscron.txt in CopyFiles */,
+				038DA5431BB651100009F369 /* README.chathistory.txt in CopyFiles */,
+				038DA5441BB651150009F369 /* README.customflagsample.txt in CopyFiles */,
+				038DA5451BB6511B0009F369 /* README.fairCTF.txt in CopyFiles */,
+				038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */,
+				038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */,
+				038DA5491BB651530009F369 /* README.hiddenAdmin.txt in CopyFiles */,
+				038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */,
+				038DA54D1BB6516E0009F369 /* README.keepaway.txt in CopyFiles */,
+				038DA54E1BB651790009F369 /* README.killall.txt in CopyFiles */,
+				038DA5511BB651870009F369 /* README.koth.txt in CopyFiles */,
+				038DA5521BB6518E0009F369 /* README.logDetail.txt in CopyFiles */,
+				038DA5541BB6519D0009F369 /* README.nagware.txt in CopyFiles */,
 				03E42D1F1B322E2C006EE763 /* README.MacOSX in CopyFiles */,
+				038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */,
+				038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */,
+				038DA5571BB651B20009F369 /* README.pushstats.txt in CopyFiles */,
+				038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */,
+				038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */,
+				038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */,
+				038DA55D1BB651F50009F369 /* README.regFlag.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1040,8 +1146,6 @@
 		0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzfscron.cpp; path = bzfscron/bzfscron.cpp; sourceTree = "<group>"; };
 		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CronJob.cpp; path = bzfscron/CronJob.cpp; sourceTree = "<group>"; };
 		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CronJob.h; path = bzfscron/CronJob.h; sourceTree = "<group>"; };
-		0315BEB31B821C5D00FC7CE0 /* crontab */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = crontab; path = bzfscron/crontab; sourceTree = "<group>"; };
-		0315BEB41B821C5D00FC7CE0 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.txt; path = bzfscron/README.txt; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
@@ -1564,43 +1668,75 @@
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		038DA4DC1BB645D80009F369 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
+		038DA4DE1BB646030009F369 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
+		038DA4E31BB649130009F369 /* README.airspawn.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.airspawn.txt; sourceTree = "<group>"; };
+		038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.autoFlagReset.txt; sourceTree = "<group>"; };
+		038DA4E71BB649640009F369 /* bzfscron.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = bzfscron.cfg; path = bzfscron/bzfscron.cfg; sourceTree = "<group>"; };
+		038DA4E81BB649640009F369 /* README.bzfscron.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.bzfscron.txt; path = bzfscron/README.bzfscron.txt; sourceTree = "<group>"; };
+		038DA4EB1BB6498D0009F369 /* README.chathistory.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.chathistory.txt; sourceTree = "<group>"; };
+		038DA4ED1BB649A90009F369 /* README.customflagsample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customflagsample.txt; sourceTree = "<group>"; };
+		038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.CustomZoneSample.txt; sourceTree = "<group>"; };
+		038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fairCTF.txt; sourceTree = "<group>"; };
+		038DA4F31BB64A380009F369 /* README.fastmap.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fastmap.txt; sourceTree = "<group>"; };
+		038DA4F51BB64A5A0009F369 /* README.flagStay.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.flagStay.txt; sourceTree = "<group>"; };
+		038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.hiddenAdmin.txt; sourceTree = "<group>"; };
+		038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.HoldTheFlag.txt; sourceTree = "<group>"; };
+		038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_keepaway_admin.txt; sourceTree = "<group>"; };
+		038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_keepaway_rules.txt; sourceTree = "<group>"; };
+		038DA4FD1BB64BC30009F369 /* README.keepaway.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.keepaway.txt; sourceTree = "<group>"; };
+		038DA5011BB64BF00009F369 /* README.killall.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.killall.txt; sourceTree = "<group>"; };
+		038DA5031BB64C9A0009F369 /* help_koth_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_koth_admin.txt; sourceTree = "<group>"; };
+		038DA5041BB64C9A0009F369 /* help_koth_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_koth_rules.txt; sourceTree = "<group>"; };
+		038DA5051BB64C9A0009F369 /* README.koth.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.koth.txt; sourceTree = "<group>"; };
+		038DA5091BB64CCB0009F369 /* README.logDetail.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.logDetail.txt; sourceTree = "<group>"; };
+		038DA50B1BB64CE80009F369 /* nagware.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nagware.cfg; sourceTree = "<group>"; };
+		038DA50C1BB64CE80009F369 /* README.nagware.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.nagware.txt; sourceTree = "<group>"; };
+		038DA50F1BB64D280009F369 /* README.Phoenix.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.Phoenix.txt; sourceTree = "<group>"; };
+		038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.playHistoryTracker.txt; sourceTree = "<group>"; };
+		038DA5131BB64DB10009F369 /* README.pushstats.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.pushstats.txt; sourceTree = "<group>"; };
+		038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.rabbitTimer.txt; sourceTree = "<group>"; };
+		038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_rabidRabbit.txt; sourceTree = "<group>"; };
+		038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.rabidRabbit.txt; sourceTree = "<group>"; };
+		038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.recordmatch.txt; sourceTree = "<group>"; };
+		038DA51D1BB64E180009F369 /* README.regFlag.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.regFlag.txt; sourceTree = "<group>"; };
+		038DA51F1BB64E240009F369 /* README.RogueGenocide.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.RogueGenocide.txt; sourceTree = "<group>"; };
+		038DA5211BB64E310009F369 /* README.SAMPLE_PLUGIN.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.SAMPLE_PLUGIN.txt; sourceTree = "<group>"; };
+		038DA5231BB64E470009F369 /* README.serverControl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.serverControl.txt; sourceTree = "<group>"; };
+		038DA5241BB64E470009F369 /* serverControl.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = serverControl.cfg; sourceTree = "<group>"; };
+		038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.serverSidePlayerSample.txt; path = ../plugins/serverSidePlayerSample/README.serverSidePlayerSample.txt; sourceTree = "<group>"; };
+		038DA5291BB64F090009F369 /* README.shockwaveDeath.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.shockwaveDeath.txt; sourceTree = "<group>"; };
+		038DA52B1BB64F1D0009F369 /* README.superUser.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.superUser.txt; sourceTree = "<group>"; };
+		038DA52C1BB64F1D0009F369 /* superUser.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = superUser.cfg; sourceTree = "<group>"; };
+		038DA52F1BB64F340009F369 /* help_teamflagreset_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_teamflagreset_admin.txt; sourceTree = "<group>"; };
+		038DA5301BB64F340009F369 /* README.teamflagreset.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.teamflagreset.txt; sourceTree = "<group>"; };
+		038DA5331BB64F490009F369 /* README.thiefControl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.thiefControl.txt; sourceTree = "<group>"; };
+		038DA5351BB64F5C0009F369 /* help_timedctf_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_timedctf_admin.txt; sourceTree = "<group>"; };
+		038DA5361BB64F5C0009F369 /* help_timedctf_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_timedctf_rules.txt; sourceTree = "<group>"; };
+		038DA5371BB64F5C0009F369 /* README.timedctf.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.timedctf.txt; sourceTree = "<group>"; };
+		038DA53B1BB64FB90009F369 /* README.TimeLimit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TimeLimit.txt; sourceTree = "<group>"; };
+		038DA53D1BB64FCB0009F369 /* README.wwzones.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.wwzones.txt; sourceTree = "<group>"; };
 		0394E67D167B0AA3007F4035 /* bzfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E6D3167B0F74007F4035 /* airspawn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = airspawn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E6D9167B1024007F4035 /* airspawn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = airspawn.cpp; sourceTree = "<group>"; };
 		0394E6DE167B1024007F4035 /* api_notes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = api_notes; sourceTree = "<group>"; };
 		0394E6E0167B1024007F4035 /* autoFlagReset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = autoFlagReset.cpp; sourceTree = "<group>"; };
-		0394E6E5167B1024007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E6E7167B1024007F4035 /* chathistory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chathistory.cpp; sourceTree = "<group>"; };
 		0394E6ED167B1024007F4035 /* customflagsample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customflagsample.cpp; sourceTree = "<group>"; };
-		0394E6F2167B1024007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E6F4167B1024007F4035 /* fairCTF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fairCTF.cpp; sourceTree = "<group>"; };
-		0394E6F9167B1024007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E6FB167B1024007F4035 /* fastmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fastmap.cpp; sourceTree = "<group>"; };
-		0394E700167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E702167B1025007F4035 /* flagStay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flagStay.cpp; sourceTree = "<group>"; };
-		0394E707167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E709167B1025007F4035 /* hiddenAdmin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hiddenAdmin.cpp; sourceTree = "<group>"; };
 		0394E70F167B1025007F4035 /* CHANGELOG.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.txt; sourceTree = "<group>"; };
 		0394E710167B1025007F4035 /* HoldTheFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoldTheFlag.cpp; sourceTree = "<group>"; };
-		0394E715167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E717167B1025007F4035 /* keepaway.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keepaway.cpp; sourceTree = "<group>"; };
-		0394E71B167B1025007F4035 /* keepaway_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keepaway_admin.txt; sourceTree = "<group>"; };
-		0394E71C167B1025007F4035 /* keepaway_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = keepaway_rules.txt; sourceTree = "<group>"; };
-		0394E71E167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E720167B1025007F4035 /* killall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = killall.cpp; sourceTree = "<group>"; };
-		0394E725167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E727167B1025007F4035 /* koth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = koth.cpp; sourceTree = "<group>"; };
-		0394E72B167B1025007F4035 /* koth_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = koth_admin.txt; sourceTree = "<group>"; };
-		0394E72C167B1025007F4035 /* koth_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = koth_rules.txt; sourceTree = "<group>"; };
-		0394E72E167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E730167B1025007F4035 /* logDetail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logDetail.cpp; sourceTree = "<group>"; };
-		0394E735167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E738167B1025007F4035 /* CHANGELOG.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.txt; sourceTree = "<group>"; };
-		0394E73A167B1025007F4035 /* NAGSAMPLE.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NAGSAMPLE.cfg; sourceTree = "<group>"; };
 		0394E73B167B1025007F4035 /* nagware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nagware.cpp; sourceTree = "<group>"; };
-		0394E73F167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E743167B1025007F4035 /* Phoenix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Phoenix.cpp; sourceTree = "<group>"; };
-		0394E747167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E74A167B1025007F4035 /* playHistoryTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = playHistoryTracker.cpp; sourceTree = "<group>"; };
 		0394E750167B1025007F4035 /* plugin_config.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin_config.cpp; sourceTree = "<group>"; };
 		0394E751167B1025007F4035 /* plugin_config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_config.h; sourceTree = "<group>"; };
@@ -1611,37 +1747,18 @@
 		0394E756167B1025007F4035 /* plugin_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin_utils.cpp; sourceTree = "<group>"; };
 		0394E757167B1025007F4035 /* plugin_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_utils.h; sourceTree = "<group>"; };
 		0394E75C167B1025007F4035 /* pushstats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pushstats.cpp; sourceTree = "<group>"; };
-		0394E760167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E763167B1025007F4035 /* rabbitTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rabbitTimer.cpp; sourceTree = "<group>"; };
-		0394E767167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E76A167B1025007F4035 /* rabidRabbit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rabidRabbit.cpp; sourceTree = "<group>"; };
-		0394E76D167B1025007F4035 /* rabidRabbit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = rabidRabbit.txt; sourceTree = "<group>"; };
-		0394E76F167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
-		0394E772167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E773167B1025007F4035 /* recordmatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recordmatch.cpp; sourceTree = "<group>"; };
-		0394E779167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E77A167B1025007F4035 /* regFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = regFlag.cpp; sourceTree = "<group>"; };
-		0394E780167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E781167B1025007F4035 /* RogueGenocide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RogueGenocide.cpp; sourceTree = "<group>"; };
-		0394E787167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E788167B1025007F4035 /* SAMPLE_PLUGIN.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SAMPLE_PLUGIN.cpp; sourceTree = "<group>"; };
-		0394E78E167B1025007F4035 /* plugins.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = plugins.cfg; sourceTree = "<group>"; };
-		0394E78F167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E790167B1025007F4035 /* serverControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = serverControl.cpp; sourceTree = "<group>"; };
-		0394E796167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E797167B1025007F4035 /* shockwaveDeath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = shockwaveDeath.cpp; sourceTree = "<group>"; };
-		0394E79D167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E79E167B1025007F4035 /* teamflagreset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = teamflagreset.cpp; sourceTree = "<group>"; };
-		0394E7A2167B1025007F4035 /* tfr_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = tfr_admin.txt; sourceTree = "<group>"; };
-		0394E7A5167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E7A6167B1025007F4035 /* thiefControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thiefControl.cpp; sourceTree = "<group>"; };
-		0394E7AC167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E7AD167B1025007F4035 /* timedctf.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timedctf.cpp; sourceTree = "<group>"; };
-		0394E7B1167B1025007F4035 /* timedctf_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = timedctf_admin.txt; sourceTree = "<group>"; };
-		0394E7B2167B1025007F4035 /* timedctf_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = timedctf_rules.txt; sourceTree = "<group>"; };
-		0394E7B5167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E7B6167B1025007F4035 /* TimeLimit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimeLimit.cpp; sourceTree = "<group>"; };
-		0394E7C5167B1025007F4035 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		0394E7C6167B1025007F4035 /* wwzones.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wwzones.cpp; sourceTree = "<group>"; };
 		0394E7E8167B196F007F4035 /* autoFlagReset.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = autoFlagReset.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E7F3167B1A17007F4035 /* chathistory.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = chathistory.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1683,7 +1800,6 @@
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C8EE25167ABE2300BB07A5 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		03CDB24416A0BA81001DA037 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
 		03D88EA81670CB1300725DBE /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = "<group>"; };
@@ -1692,9 +1808,6 @@
 		03D88EAB1670CB1300725DBE /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README; path = ../README; sourceTree = "<group>"; };
 		03D88EAC1670CB1300725DBE /* README.MacOSX */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = README.MacOSX; path = ../README.MacOSX; sourceTree = "<group>"; };
 		03D926DF166C67EF00DDDBEB /* BZFlag.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = BZFlag.icns; sourceTree = "<group>"; };
-		03D926E1166C68E700DDDBEB /* libcurl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libcurl.dylib; path = usr/lib/libcurl.dylib; sourceTree = SDKROOT; };
-		03D926E3166C692B00DDDBEB /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		03D926E5166C6AB500DDDBEB /* libncurses.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libncurses.dylib; path = usr/lib/libncurses.dylib; sourceTree = SDKROOT; };
 		03DBE9AC1B30D2ED00711E71 /* libcares.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcares.a; path = /usr/local/lib/libcares.a; sourceTree = "<absolute>"; };
 		03DBE9BA1B30E12300711E71 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
@@ -1702,7 +1815,6 @@
 		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = CustomZoneSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
-		C353B1E51AE23C8100C5AED5 /* README.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.txt; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
 		C353B1E91AE2490D00C5AED5 /* flagStay.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flagStay.bzw; sourceTree = "<group>"; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
@@ -1813,8 +1925,8 @@
 				0357AA181670C0FD0056C938 /* libgame.a in Frameworks */,
 				0357AA161670C0EF0056C938 /* libdate.a in Frameworks */,
 				03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */,
-				0357AA171670C0F30056C938 /* libncurses.dylib in Frameworks */,
-				0357AA1B1670C1130056C938 /* libcurl.dylib in Frameworks */,
+				038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */,
+				038DA4E01BB6465E0009F369 /* libcurl.tbd in Frameworks */,
 				03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1837,8 +1949,8 @@
 				0394E6C5167B0CF8007F4035 /* libobstacle.a in Frameworks */,
 				0394E6CA167B0D0B007F4035 /* libdate.a in Frameworks */,
 				03DBE9BB1B30E12300711E71 /* Cocoa.framework in Frameworks */,
-				0394E6CD167B0D71007F4035 /* libz.dylib in Frameworks */,
-				0394E6CC167B0D4B007F4035 /* libcurl.dylib in Frameworks */,
+				038DA4E11BB646710009F369 /* libcurl.tbd in Frameworks */,
+				038DA4E21BB646750009F369 /* libz.tbd in Frameworks */,
 				03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2089,8 +2201,8 @@
 				03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */,
 				03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */,
 				03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */,
-				03C8EF1C167AC57100BB07A5 /* libz.dylib in Frameworks */,
-				03C8EF1D167AC57500BB07A5 /* libcurl.dylib in Frameworks */,
+				038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */,
+				038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */,
 				03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2276,11 +2388,11 @@
 		0315BEAF1B821C0700FC7CE0 /* bzfscron */ = {
 			isa = PBXGroup;
 			children = (
+				038DA4E71BB649640009F369 /* bzfscron.cfg */,
 				0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */,
 				0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */,
 				0315BEB21B821C5D00FC7CE0 /* CronJob.h */,
-				0315BEB31B821C5D00FC7CE0 /* crontab */,
-				0315BEB41B821C5D00FC7CE0 /* README.txt */,
+				038DA4E81BB649640009F369 /* README.bzfscron.txt */,
 			);
 			name = bzfscron;
 			sourceTree = "<group>";
@@ -3009,6 +3121,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6D9167B1024007F4035 /* airspawn.cpp */,
+				038DA4E31BB649130009F369 /* README.airspawn.txt */,
 			);
 			path = airspawn;
 			sourceTree = "<group>";
@@ -3017,7 +3130,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6E0167B1024007F4035 /* autoFlagReset.cpp */,
-				0394E6E5167B1024007F4035 /* README.txt */,
+				038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */,
 			);
 			path = autoFlagReset;
 			sourceTree = "<group>";
@@ -3026,6 +3139,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6E7167B1024007F4035 /* chathistory.cpp */,
+				038DA4EB1BB6498D0009F369 /* README.chathistory.txt */,
 			);
 			path = chathistory;
 			sourceTree = "<group>";
@@ -3034,7 +3148,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6ED167B1024007F4035 /* customflagsample.cpp */,
-				0394E6F2167B1024007F4035 /* README.txt */,
+				038DA4ED1BB649A90009F369 /* README.customflagsample.txt */,
 			);
 			path = customflagsample;
 			sourceTree = "<group>";
@@ -3043,7 +3157,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6F4167B1024007F4035 /* fairCTF.cpp */,
-				0394E6F9167B1024007F4035 /* README.txt */,
+				038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */,
 			);
 			path = fairCTF;
 			sourceTree = "<group>";
@@ -3052,7 +3166,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E6FB167B1024007F4035 /* fastmap.cpp */,
-				0394E700167B1025007F4035 /* README.txt */,
+				038DA4F31BB64A380009F369 /* README.fastmap.txt */,
 			);
 			path = fastmap;
 			sourceTree = "<group>";
@@ -3062,7 +3176,7 @@
 			children = (
 				C353B1E91AE2490D00C5AED5 /* flagStay.bzw */,
 				0394E702167B1025007F4035 /* flagStay.cpp */,
-				0394E707167B1025007F4035 /* README.txt */,
+				038DA4F51BB64A5A0009F369 /* README.flagStay.txt */,
 			);
 			path = flagStay;
 			sourceTree = "<group>";
@@ -3071,6 +3185,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E709167B1025007F4035 /* hiddenAdmin.cpp */,
+				038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */,
 			);
 			path = hiddenAdmin;
 			sourceTree = "<group>";
@@ -3080,7 +3195,7 @@
 			children = (
 				0394E70F167B1025007F4035 /* CHANGELOG.txt */,
 				0394E710167B1025007F4035 /* HoldTheFlag.cpp */,
-				0394E715167B1025007F4035 /* README.txt */,
+				038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */,
 			);
 			path = HoldTheFlag;
 			sourceTree = "<group>";
@@ -3088,10 +3203,10 @@
 		0394E716167B1025007F4035 /* keepaway */ = {
 			isa = PBXGroup;
 			children = (
+				038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */,
+				038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */,
 				0394E717167B1025007F4035 /* keepaway.cpp */,
-				0394E71B167B1025007F4035 /* keepaway_admin.txt */,
-				0394E71C167B1025007F4035 /* keepaway_rules.txt */,
-				0394E71E167B1025007F4035 /* README.txt */,
+				038DA4FD1BB64BC30009F369 /* README.keepaway.txt */,
 			);
 			path = keepaway;
 			sourceTree = "<group>";
@@ -3100,7 +3215,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E720167B1025007F4035 /* killall.cpp */,
-				0394E725167B1025007F4035 /* README.txt */,
+				038DA5011BB64BF00009F369 /* README.killall.txt */,
 			);
 			path = killall;
 			sourceTree = "<group>";
@@ -3108,10 +3223,10 @@
 		0394E726167B1025007F4035 /* koth */ = {
 			isa = PBXGroup;
 			children = (
+				038DA5031BB64C9A0009F369 /* help_koth_admin.txt */,
+				038DA5041BB64C9A0009F369 /* help_koth_rules.txt */,
 				0394E727167B1025007F4035 /* koth.cpp */,
-				0394E72B167B1025007F4035 /* koth_admin.txt */,
-				0394E72C167B1025007F4035 /* koth_rules.txt */,
-				0394E72E167B1025007F4035 /* README.txt */,
+				038DA5051BB64C9A0009F369 /* README.koth.txt */,
 			);
 			path = koth;
 			sourceTree = "<group>";
@@ -3120,7 +3235,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E730167B1025007F4035 /* logDetail.cpp */,
-				0394E735167B1025007F4035 /* README.txt */,
+				038DA5091BB64CCB0009F369 /* README.logDetail.txt */,
 			);
 			path = logDetail;
 			sourceTree = "<group>";
@@ -3129,9 +3244,9 @@
 			isa = PBXGroup;
 			children = (
 				0394E738167B1025007F4035 /* CHANGELOG.txt */,
-				0394E73A167B1025007F4035 /* NAGSAMPLE.cfg */,
+				038DA50B1BB64CE80009F369 /* nagware.cfg */,
 				0394E73B167B1025007F4035 /* nagware.cpp */,
-				0394E73F167B1025007F4035 /* README.txt */,
+				038DA50C1BB64CE80009F369 /* README.nagware.txt */,
 			);
 			path = nagware;
 			sourceTree = "<group>";
@@ -3140,7 +3255,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E743167B1025007F4035 /* Phoenix.cpp */,
-				0394E747167B1025007F4035 /* README.txt */,
+				038DA50F1BB64D280009F369 /* README.Phoenix.txt */,
 			);
 			path = Phoenix;
 			sourceTree = "<group>";
@@ -3149,6 +3264,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E74A167B1025007F4035 /* playHistoryTracker.cpp */,
+				038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */,
 			);
 			path = playHistoryTracker;
 			sourceTree = "<group>";
@@ -3172,7 +3288,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E75C167B1025007F4035 /* pushstats.cpp */,
-				0394E760167B1025007F4035 /* README.txt */,
+				038DA5131BB64DB10009F369 /* README.pushstats.txt */,
 			);
 			path = pushstats;
 			sourceTree = "<group>";
@@ -3181,7 +3297,7 @@
 			isa = PBXGroup;
 			children = (
 				0394E763167B1025007F4035 /* rabbitTimer.cpp */,
-				0394E767167B1025007F4035 /* README.txt */,
+				038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */,
 			);
 			path = rabbitTimer;
 			sourceTree = "<group>";
@@ -3189,9 +3305,9 @@
 		0394E768167B1025007F4035 /* rabidRabbit */ = {
 			isa = PBXGroup;
 			children = (
+				038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */,
 				0394E76A167B1025007F4035 /* rabidRabbit.cpp */,
-				0394E76D167B1025007F4035 /* rabidRabbit.txt */,
-				0394E76F167B1025007F4035 /* README.txt */,
+				038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */,
 			);
 			path = rabidRabbit;
 			sourceTree = "<group>";
@@ -3199,7 +3315,7 @@
 		0394E770167B1025007F4035 /* recordmatch */ = {
 			isa = PBXGroup;
 			children = (
-				0394E772167B1025007F4035 /* README.txt */,
+				038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */,
 				0394E773167B1025007F4035 /* recordmatch.cpp */,
 			);
 			path = recordmatch;
@@ -3208,7 +3324,7 @@
 		0394E777167B1025007F4035 /* regFlag */ = {
 			isa = PBXGroup;
 			children = (
-				0394E779167B1025007F4035 /* README.txt */,
+				038DA51D1BB64E180009F369 /* README.regFlag.txt */,
 				0394E77A167B1025007F4035 /* regFlag.cpp */,
 			);
 			path = regFlag;
@@ -3217,7 +3333,7 @@
 		0394E77E167B1025007F4035 /* RogueGenocide */ = {
 			isa = PBXGroup;
 			children = (
-				0394E780167B1025007F4035 /* README.txt */,
+				038DA51F1BB64E240009F369 /* README.RogueGenocide.txt */,
 				0394E781167B1025007F4035 /* RogueGenocide.cpp */,
 			);
 			path = RogueGenocide;
@@ -3226,7 +3342,7 @@
 		0394E785167B1025007F4035 /* SAMPLE_PLUGIN */ = {
 			isa = PBXGroup;
 			children = (
-				0394E787167B1025007F4035 /* README.txt */,
+				038DA5211BB64E310009F369 /* README.SAMPLE_PLUGIN.txt */,
 				0394E788167B1025007F4035 /* SAMPLE_PLUGIN.cpp */,
 			);
 			path = SAMPLE_PLUGIN;
@@ -3235,8 +3351,8 @@
 		0394E78C167B1025007F4035 /* serverControl */ = {
 			isa = PBXGroup;
 			children = (
-				0394E78E167B1025007F4035 /* plugins.cfg */,
-				0394E78F167B1025007F4035 /* README.txt */,
+				038DA5231BB64E470009F369 /* README.serverControl.txt */,
+				038DA5241BB64E470009F369 /* serverControl.cfg */,
 				0394E790167B1025007F4035 /* serverControl.cpp */,
 			);
 			path = serverControl;
@@ -3245,7 +3361,7 @@
 		0394E794167B1025007F4035 /* shockwaveDeath */ = {
 			isa = PBXGroup;
 			children = (
-				0394E796167B1025007F4035 /* README.txt */,
+				038DA5291BB64F090009F369 /* README.shockwaveDeath.txt */,
 				0394E797167B1025007F4035 /* shockwaveDeath.cpp */,
 			);
 			path = shockwaveDeath;
@@ -3254,9 +3370,9 @@
 		0394E79B167B1025007F4035 /* teamflagreset */ = {
 			isa = PBXGroup;
 			children = (
-				0394E79D167B1025007F4035 /* README.txt */,
+				038DA52F1BB64F340009F369 /* help_teamflagreset_admin.txt */,
+				038DA5301BB64F340009F369 /* README.teamflagreset.txt */,
 				0394E79E167B1025007F4035 /* teamflagreset.cpp */,
-				0394E7A2167B1025007F4035 /* tfr_admin.txt */,
 			);
 			path = teamflagreset;
 			sourceTree = "<group>";
@@ -3264,7 +3380,7 @@
 		0394E7A3167B1025007F4035 /* thiefControl */ = {
 			isa = PBXGroup;
 			children = (
-				0394E7A5167B1025007F4035 /* README.txt */,
+				038DA5331BB64F490009F369 /* README.thiefControl.txt */,
 				0394E7A6167B1025007F4035 /* thiefControl.cpp */,
 			);
 			path = thiefControl;
@@ -3273,10 +3389,10 @@
 		0394E7AA167B1025007F4035 /* timedctf */ = {
 			isa = PBXGroup;
 			children = (
-				0394E7AC167B1025007F4035 /* README.txt */,
+				038DA5351BB64F5C0009F369 /* help_timedctf_admin.txt */,
+				038DA5361BB64F5C0009F369 /* help_timedctf_rules.txt */,
+				038DA5371BB64F5C0009F369 /* README.timedctf.txt */,
 				0394E7AD167B1025007F4035 /* timedctf.cpp */,
-				0394E7B1167B1025007F4035 /* timedctf_admin.txt */,
-				0394E7B2167B1025007F4035 /* timedctf_rules.txt */,
 			);
 			path = timedctf;
 			sourceTree = "<group>";
@@ -3284,7 +3400,7 @@
 		0394E7B3167B1025007F4035 /* TimeLimit */ = {
 			isa = PBXGroup;
 			children = (
-				0394E7B5167B1025007F4035 /* README.txt */,
+				038DA53B1BB64FB90009F369 /* README.TimeLimit.txt */,
 				0394E7B6167B1025007F4035 /* TimeLimit.cpp */,
 			);
 			path = TimeLimit;
@@ -3293,7 +3409,7 @@
 		0394E7C3167B1025007F4035 /* wwzones */ = {
 			isa = PBXGroup;
 			children = (
-				0394E7C5167B1025007F4035 /* README.txt */,
+				038DA53D1BB64FCB0009F369 /* README.wwzones.txt */,
 				0394E7C6167B1025007F4035 /* wwzones.cpp */,
 			);
 			path = wwzones;
@@ -3378,7 +3494,8 @@
 		03CDB24216A0BA81001DA037 /* superUser */ = {
 			isa = PBXGroup;
 			children = (
-				03CDB24416A0BA81001DA037 /* README.txt */,
+				038DA52B1BB64F1D0009F369 /* README.superUser.txt */,
+				038DA52C1BB64F1D0009F369 /* superUser.cfg */,
 				03CDB24516A0BA81001DA037 /* superUser.cpp */,
 			);
 			path = superUser;
@@ -3404,9 +3521,9 @@
 				03C338C51AFB59FF00E8F655 /* SDL2.framework */,
 				03DBE9BA1B30E12300711E71 /* Cocoa.framework */,
 				03835D06166CB12D008CE9C3 /* OpenGL.framework */,
-				03D926E5166C6AB500DDDBEB /* libncurses.dylib */,
-				03D926E3166C692B00DDDBEB /* libz.dylib */,
-				03D926E1166C68E700DDDBEB /* libcurl.dylib */,
+				038DA4DE1BB646030009F369 /* libncurses.tbd */,
+				038DA4DC1BB645D80009F369 /* libcurl.tbd */,
+				038DA4DA1BB645CA0009F369 /* libz.tbd */,
 				03DBE9AC1B30D2ED00711E71 /* libcares.a */,
 			);
 			name = Frameworks;
@@ -3417,7 +3534,7 @@
 			children = (
 				C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */,
 				C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */,
-				C353B1E51AE23C8100C5AED5 /* README.txt */,
+				038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */,
 			);
 			path = CustomZoneSample;
 			sourceTree = "<group>";
@@ -3427,6 +3544,7 @@
 			children = (
 				DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */,
 				DF8950DE16E42CF800BA9DD5 /* playerHandler.h */,
+				038DA5271BB64E5D0009F369 /* README.serverSidePlayerSample.txt */,
 				DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */,
 			);
 			name = serverSidePlayerSample;
@@ -4776,7 +4894,53 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				038DA4FA1BB64A9E0009F369 /* README.HoldTheFlag.txt in Resources */,
+				038DA5161BB64DCA0009F369 /* README.rabbitTimer.txt in Resources */,
+				038DA52A1BB64F090009F369 /* README.shockwaveDeath.txt in Resources */,
+				038DA5201BB64E240009F369 /* README.RogueGenocide.txt in Resources */,
+				038DA50E1BB64CE80009F369 /* README.nagware.txt in Resources */,
+				038DA4E41BB649130009F369 /* README.airspawn.txt in Resources */,
+				038DA4F81BB64A6F0009F369 /* README.hiddenAdmin.txt in Resources */,
+				038DA51A1BB64DF00009F369 /* README.rabidRabbit.txt in Resources */,
+				038DA4EA1BB649640009F369 /* README.bzfscron.txt in Resources */,
+				038DA50D1BB64CE80009F369 /* nagware.cfg in Resources */,
+				038DA5001BB64BC30009F369 /* README.keepaway.txt in Resources */,
+				038DA5101BB64D280009F369 /* README.Phoenix.txt in Resources */,
+				038DA4E91BB649640009F369 /* bzfscron.cfg in Resources */,
+				038DA4E61BB6493D0009F369 /* README.autoFlagReset.txt in Resources */,
+				038DA5221BB64E310009F369 /* README.SAMPLE_PLUGIN.txt in Resources */,
+				038DA5261BB64E470009F369 /* serverControl.cfg in Resources */,
+				038DA4EE1BB649A90009F369 /* README.customflagsample.txt in Resources */,
+				038DA5191BB64DF00009F369 /* help_rabidRabbit.txt in Resources */,
+				038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */,
+				038DA4FF1BB64BC30009F369 /* help_keepaway_rules.txt in Resources */,
+				038DA52E1BB64F1D0009F369 /* superUser.cfg in Resources */,
+				038DA52D1BB64F1D0009F369 /* README.superUser.txt in Resources */,
+				038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */,
+				038DA4EC1BB6498D0009F369 /* README.chathistory.txt in Resources */,
+				038DA4F01BB649B90009F369 /* README.CustomZoneSample.txt in Resources */,
+				038DA5061BB64C9A0009F369 /* help_koth_admin.txt in Resources */,
+				038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */,
+				038DA5081BB64C9A0009F369 /* README.koth.txt in Resources */,
+				038DA5141BB64DB10009F369 /* README.pushstats.txt in Resources */,
+				038DA51E1BB64E180009F369 /* README.regFlag.txt in Resources */,
+				038DA50A1BB64CCB0009F369 /* README.logDetail.txt in Resources */,
+				038DA5021BB64BF00009F369 /* README.killall.txt in Resources */,
+				038DA5121BB64D3F0009F369 /* README.playHistoryTracker.txt in Resources */,
+				038DA5281BB64E5D0009F369 /* README.serverSidePlayerSample.txt in Resources */,
 				03C8EE41167ABE7D00BB07A5 /* BZFlag.icns in Resources */,
+				038DA5251BB64E470009F369 /* README.serverControl.txt in Resources */,
+				038DA4F61BB64A5A0009F369 /* README.flagStay.txt in Resources */,
+				038DA51C1BB64E0B0009F369 /* README.recordmatch.txt in Resources */,
+				038DA5311BB64F340009F369 /* help_teamflagreset_admin.txt in Resources */,
+				038DA5321BB64F340009F369 /* README.teamflagreset.txt in Resources */,
+				038DA5071BB64C9A0009F369 /* help_koth_rules.txt in Resources */,
+				038DA5341BB64F490009F369 /* README.thiefControl.txt in Resources */,
+				038DA5381BB64F5C0009F369 /* help_timedctf_admin.txt in Resources */,
+				038DA5391BB64F5C0009F369 /* help_timedctf_rules.txt in Resources */,
+				038DA53A1BB64F5C0009F369 /* README.timedctf.txt in Resources */,
+				038DA53C1BB64FB90009F369 /* README.TimeLimit.txt in Resources */,
+				038DA53E1BB64FCB0009F369 /* README.wwzones.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
