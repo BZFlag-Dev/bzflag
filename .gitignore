@@ -38,6 +38,7 @@
 *.rc
 *.res
 *.manifest
+*.ipch
 
 # GNU Autotools
 Makefile.in
