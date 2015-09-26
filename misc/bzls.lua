@@ -18,8 +18,7 @@ end
 
 --------------------------------------------------------------------------------
 
-require('socket')
-require('socket.http')
+local https = require('ssl.https')
 
 print(os.date())
 
@@ -30,7 +29,7 @@ local urlBase = 'https://my.bzflag.org/db/?action=LIST&listformat=lua'
 
 local protocol = 'BZFS0221'
 
-local svnProtoURL =
+local gitProtoURL =
   'https://raw.githubusercontent.com/BZFlag-Dev/bzflag/master/src/date/buildDate.cxx'
 
 --------------------------------------------------------------------------------
@@ -60,7 +59,7 @@ end
 --------------------------------------------------------------------------------
 
 local protoAll = true
-local svnProto = false
+local gitProto = false
 
 local passfile = tostring(os.getenv('HOME')) .. '/.bzf/passfile'
 local callsign = nil
@@ -84,13 +83,13 @@ local function PrintHelp()
   print('usage: checkbz [options]')
   print(' -h:      print this help')
   print(' -c:      check current protocol')
-  print(' -s:      check svn trunk protocol')
+  print(' -g:      check git master protocol')
   print(' -i:      list using identity / password')
   print(' -l <#>:  maximum number of servers')
   print(' -p <#>:  minimum number of players')
   print(' -t:      team counts')
   print(' -o:      show owners')
---FIXME  print(' -g:      game info')
+--FIXME  print(' -f:      game info')
   print(' -d:      enable debugging')
 end
 
@@ -117,10 +116,12 @@ do
       table.remove(arg, 1)
     elseif (a == '-c') then
       protoAll = false
-      svnProto = false
-    elseif (a == '-s') then
+      gitProto = false
+    elseif (a == '-g' or a == '-s') then
+      -- "-s" is recognized to keep backwards compatibility with bzls.lua
+      -- scripts that received the protocol version from SVN
       protoAll = false
-      svnProto = true
+      gitProto = true
     elseif (a == '-o') then
       showOwners = true
     elseif (a == '-t') then
@@ -176,12 +177,12 @@ local function ParseProtocol(protoCode)
       return 'BZFS' .. proto
     end
   end
-  error('could not find the protocol using:\n  ' .. svnProtoURL)
+  error('could not find the protocol using:\n  ' .. gitProtoURL)
 end
 
 
-if (svnProto) then
-  local protoCode = assert(socket.http.request(svnProtoURL))
+if (gitProto) then
+  local protoCode = https.request(gitProtoURL)
   protocol = ParseProtocol(protoCode)
 end
 
@@ -198,7 +199,7 @@ do
   if (debugging) then
     print('queryURL = ' .. queryURL)
   end
-  serverStr, err = socket.http.request(queryURL)
+  serverStr, err = https.request(queryURL)
   if (not serverStr) then
     print('query failed: ' .. tostring(err))
     print('(' .. queryURL .. ')')
