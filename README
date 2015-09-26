@@ -83,11 +83,11 @@ for common problems specific to those platforms as well.
 
 The Longer Version:
 
-To build sources checked out directly from SVN you need to create a
-configure script. You can skip this step if you grab an distribution
-of BZFlag that already has a ./configure script in it, such as from a
+To build sources directly from a git clone you need to create a
+configure script. You can skip this step if you grab a distribution of
+BZFlag that already has a ./configure script in it, such as from a
 source distribution tarball.  To generate the configure script, you
-run the provided autogen.sh script:
+need to run the provided autogen.sh script:
 
   % sh autogen.sh
 
@@ -215,7 +215,7 @@ man pages. This should get things back to a tarball state.
 `make maintainer-clean' removes everything distclean does and also
 packages, directories created during the build, and the platform
 configuration; this should get the source tree back to its state in
-SVN.
+the Git repository.
 
 To build BZFlag for an unsupported platform, see PORTING.
 

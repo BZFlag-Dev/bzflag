@@ -27,11 +27,6 @@ src/obstacle	- collision detection
 src/ogl		- wrapper classes for OpenGL
 src/scene	- scene graph
 
-Developers should make only the most essential modifications in the
-BZFlag source tree to these third party packages.  This means that we
-allow them to install extraneous files such as documentation and
-headers into the BZFlag binary tree.
-
 game independent, platform dependent libraries
 ----------------------------------------------
 src/date	- build dates and versioning
@@ -104,8 +99,8 @@ interface header if there is one, or common.h otherwise, system
 headers, common implementation headers, and then local implementation
 headers.
 
-Adhering to this order will avoid nasty
-ordering dependencies and makes it easy to change things down the road.
+Adhering to this order will avoid nasty ordering dependencies and
+makes it easy to change things down the road.
 
 Ideally, there should be one class per file.  There are, of course,
 exceptions to this such as simple utility classes that are local to
@@ -149,11 +144,11 @@ If an extension can not be avoided then it must be able to be disabled
 or replaced using a #define in config.h.  BZFlag is a cross-platform
 application so it is important to remember that not all builds will
 use your specific compiler. This also includes not using features
-in C99 and C1x as the windows compiler only supports C++11 and 
+in C99 and C1x as the windows compiler only supports C++11 and
 there are some features in the later C versions that were not adopted
 by the C++ standard, namely the 'not' and 'or' keywords instead of ! and ||.
 Also MSVC seems to be a bit picky about what bits of older standards it
-supports. When the windows compiler supports this, we should stick with 
+supports. When the windows compiler supports this, we should stick with
 a consistent method and not mix AND with &&. Use the same type of operators
 that are in the existing code.
 
@@ -407,23 +402,25 @@ of the application should be incremented.
 The displayed application version includes additional information in
 the format:
 
-  Major.Minor.Revision-BuildOS-BuildType-BuildDate
-
-BuildOS is the operating system that the building system is running;
-on systems that use the automake build system this is automatically
-generated.
-
-BuildType is a string that represents the intended use of the build.
-For development releases, the build type is normally "SVN".  For
-testing releases, the build type can be "testing", "beta",
-"releasecandidate", etc.  For final release versions the build type
-should be "release".  The build type provides a human readable keyword
-for the version and intended or expected stability of the build.
+  Major.Minor.Revision-BuildDate-BuildType-BuildOS
 
 BuildDate represents the date of the build in the format YYYYMMDD.
 This string is generated during runtime by the compiler's preprocessor
 __DATE__ macro.
 
+BuildType is a string that represents the intended use of the build.
+For development releases, the build type is normally "DEVEL".  For
+testing releases, the build type can be "ALPHA", "BETA", "RC1" etc.
+For final release versions the build type should be "STABLE" or
+"MAINT".  The build type provides a human readable keyword for the
+version and intended or expected stability of the build.
+
+BuildOS is the operating system that the building system is running;
+on systems that use the automake build system this is automatically
+generated.
+
+If a build includes SDL or SLD2, the build string ends in "-SDL" or
+"-SDL2", respectively.
 
 Making a Release
 ================
@@ -440,7 +437,7 @@ cannot proceed.  A checklist of items to be completed follows:
   latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, ChangeLog, configure.ac, 
+  This minimally includes updating README, ChangeLog, configure.ac,
   buildDate.cxx, bzflag.rc, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
