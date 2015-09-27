@@ -115,7 +115,7 @@ MP_WITH_CURSES
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
 if test "x$with_SDL" != xno; then
-    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2])
+    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2 (experimental)])
 fi
 
 # check whether plugins are desired
@@ -1164,7 +1164,7 @@ if test "x$enable_client" = "xno"; then
 else
     if test x$with_SDL != xno; then
 	if test x$with_SDL2 = xyes; then
-	    build_bzflag="yes (with SDL2)"
+	    build_bzflag="yes (with SDL2) (Note: Still experimental!)"
 	else
 	    build_bzflag="yes (with SDL)"
 	fi
