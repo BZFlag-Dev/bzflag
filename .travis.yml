@@ -14,6 +14,7 @@ install:
   - ./autogen.sh -v
   - ./configure --enable-debug
   - make
+  - make check
 
 script:
   - ./tests/unittests
