@@ -238,7 +238,6 @@
 		038DA50E1BB64CE80009F369 /* README.nagware.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA50C1BB64CE80009F369 /* README.nagware.txt */; settings = {ASSET_TAGS = (); }; };
 		038DA5101BB64D280009F369 /* README.Phoenix.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA50F1BB64D280009F369 /* README.Phoenix.txt */; settings = {ASSET_TAGS = (); }; };
 		038DA5121BB64D3F0009F369 /* README.playHistoryTracker.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */; settings = {ASSET_TAGS = (); }; };
-		038DA5141BB64DB10009F369 /* README.pushstats.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5131BB64DB10009F369 /* README.pushstats.txt */; settings = {ASSET_TAGS = (); }; };
 		038DA5161BB64DCA0009F369 /* README.rabbitTimer.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */; settings = {ASSET_TAGS = (); }; };
 		038DA5191BB64DF00009F369 /* help_rabidRabbit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */; settings = {ASSET_TAGS = (); }; };
 		038DA51A1BB64DF00009F369 /* README.rabidRabbit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; settings = {ASSET_TAGS = (); }; };
@@ -284,7 +283,6 @@
 		038DA5541BB6519D0009F369 /* README.nagware.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50C1BB64CE80009F369 /* README.nagware.txt */; };
 		038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50F1BB64D280009F369 /* README.Phoenix.txt */; };
 		038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */; };
-		038DA5571BB651B20009F369 /* README.pushstats.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5131BB64DB10009F369 /* README.pushstats.txt */; };
 		038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */; };
 		038DA5591BB651BE0009F369 /* help_rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */; };
 		038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; };
@@ -376,7 +374,6 @@
 		0394E89A167B252D007F4035 /* plugin_files.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E752167B1025007F4035 /* plugin_files.cpp */; };
 		0394E89B167B252D007F4035 /* plugin_groups.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E754167B1025007F4035 /* plugin_groups.cpp */; };
 		0394E89C167B252D007F4035 /* plugin_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E756167B1025007F4035 /* plugin_utils.cpp */; };
-		0394E8A9167B25C8007F4035 /* pushstats.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E75C167B1025007F4035 /* pushstats.cpp */; };
 		0394E8B4167B2619007F4035 /* rabbitTimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E763167B1025007F4035 /* rabbitTimer.cpp */; };
 		0394E8BF167B265D007F4035 /* rabidRabbit.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E76A167B1025007F4035 /* rabidRabbit.cpp */; };
 		0394E8CA167B26D3007F4035 /* recordmatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E773167B1025007F4035 /* recordmatch.cpp */; };
@@ -409,7 +406,6 @@
 		0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E874167B23B4007F4035 /* nagware.dylib */; };
 		0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E87F167B2447007F4035 /* Phoenix.dylib */; };
 		0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E88A167B2494007F4035 /* playHistoryTracker.dylib */; };
-		0394E958167B2D00007F4035 /* pushstats.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8A3167B259F007F4035 /* pushstats.dylib */; };
 		0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */; };
 		0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8B9167B2647007F4035 /* rabidRabbit.dylib */; };
 		0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E8C4167B26B2007F4035 /* recordmatch.dylib */; };
@@ -713,13 +709,6 @@
 			remoteGlobalIDString = 0394E889167B2494007F4035;
 			remoteInfo = playHistoryTracker;
 		};
-		0394E8A7167B25A8007F4035 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03BFC301166C637600836142 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0394E8A2167B259F007F4035;
-			remoteInfo = pushstats;
-		};
 		0394E8B2167B25FC007F4035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
@@ -914,7 +903,6 @@
 				0394E955167B2D00007F4035 /* nagware.dylib in CopyFiles */,
 				0394E956167B2D00007F4035 /* Phoenix.dylib in CopyFiles */,
 				0394E957167B2D00007F4035 /* playHistoryTracker.dylib in CopyFiles */,
-				0394E958167B2D00007F4035 /* pushstats.dylib in CopyFiles */,
 				0394E959167B2D00007F4035 /* rabbitTimer.dylib in CopyFiles */,
 				0394E95A167B2D00007F4035 /* rabidRabbit.dylib in CopyFiles */,
 				0394E95B167B2D00007F4035 /* recordmatch.dylib in CopyFiles */,
@@ -977,7 +965,6 @@
 				03E42D1F1B322E2C006EE763 /* README.MacOSX in CopyFiles */,
 				038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */,
 				038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */,
-				038DA5571BB651B20009F369 /* README.pushstats.txt in CopyFiles */,
 				038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */,
 				038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */,
 				038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */,
@@ -1695,7 +1682,6 @@
 		038DA50C1BB64CE80009F369 /* README.nagware.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.nagware.txt; sourceTree = "<group>"; };
 		038DA50F1BB64D280009F369 /* README.Phoenix.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.Phoenix.txt; sourceTree = "<group>"; };
 		038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.playHistoryTracker.txt; sourceTree = "<group>"; };
-		038DA5131BB64DB10009F369 /* README.pushstats.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.pushstats.txt; sourceTree = "<group>"; };
 		038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.rabbitTimer.txt; sourceTree = "<group>"; };
 		038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_rabidRabbit.txt; sourceTree = "<group>"; };
 		038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.rabidRabbit.txt; sourceTree = "<group>"; };
@@ -1746,7 +1732,6 @@
 		0394E755167B1025007F4035 /* plugin_groups.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_groups.h; sourceTree = "<group>"; };
 		0394E756167B1025007F4035 /* plugin_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = plugin_utils.cpp; sourceTree = "<group>"; };
 		0394E757167B1025007F4035 /* plugin_utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = plugin_utils.h; sourceTree = "<group>"; };
-		0394E75C167B1025007F4035 /* pushstats.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pushstats.cpp; sourceTree = "<group>"; };
 		0394E763167B1025007F4035 /* rabbitTimer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rabbitTimer.cpp; sourceTree = "<group>"; };
 		0394E76A167B1025007F4035 /* rabidRabbit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rabidRabbit.cpp; sourceTree = "<group>"; };
 		0394E773167B1025007F4035 /* recordmatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = recordmatch.cpp; sourceTree = "<group>"; };
@@ -1776,7 +1761,6 @@
 		0394E87F167B2447007F4035 /* Phoenix.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = Phoenix.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E88A167B2494007F4035 /* playHistoryTracker.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = playHistoryTracker.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E895167B2513007F4035 /* libplugin_utils.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplugin_utils.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E8A3167B259F007F4035 /* pushstats.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = pushstats.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rabbitTimer.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E8B9167B2647007F4035 /* rabidRabbit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = rabidRabbit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E8C4167B26B2007F4035 /* recordmatch.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = recordmatch.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2069,13 +2053,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0394E892167B2513007F4035 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0394E8A0167B259F007F4035 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3096,7 +3073,6 @@
 				0394E741167B1025007F4035 /* Phoenix */,
 				0394E748167B1025007F4035 /* playHistoryTracker */,
 				0394E74E167B1025007F4035 /* plugin_utils */,
-				0394E75A167B1025007F4035 /* pushstats */,
 				0394E761167B1025007F4035 /* rabbitTimer */,
 				0394E768167B1025007F4035 /* rabidRabbit */,
 				0394E770167B1025007F4035 /* recordmatch */,
@@ -3284,15 +3260,6 @@
 			path = plugin_utils;
 			sourceTree = "<group>";
 		};
-		0394E75A167B1025007F4035 /* pushstats */ = {
-			isa = PBXGroup;
-			children = (
-				0394E75C167B1025007F4035 /* pushstats.cpp */,
-				038DA5131BB64DB10009F369 /* README.pushstats.txt */,
-			);
-			path = pushstats;
-			sourceTree = "<group>";
-		};
 		0394E761167B1025007F4035 /* rabbitTimer */ = {
 			isa = PBXGroup;
 			children = (
@@ -3453,7 +3420,6 @@
 				0394E874167B23B4007F4035 /* nagware.dylib */,
 				0394E87F167B2447007F4035 /* Phoenix.dylib */,
 				0394E88A167B2494007F4035 /* playHistoryTracker.dylib */,
-				0394E8A3167B259F007F4035 /* pushstats.dylib */,
 				0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */,
 				0394E8B9167B2647007F4035 /* rabidRabbit.dylib */,
 				0394E8C4167B26B2007F4035 /* recordmatch.dylib */,
@@ -3759,13 +3725,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0394E893167B2513007F4035 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0394E8A1167B259F007F4035 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4453,23 +4412,6 @@
 			productReference = 0394E895167B2513007F4035 /* libplugin_utils.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		0394E8A2167B259F007F4035 /* pushstats */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0394E8A4167B25A0007F4035 /* Build configuration list for PBXNativeTarget "pushstats" */;
-			buildPhases = (
-				0394E89F167B259F007F4035 /* Sources */,
-				0394E8A0167B259F007F4035 /* Frameworks */,
-				0394E8A1167B259F007F4035 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = pushstats;
-			productName = pushstats;
-			productReference = 0394E8A3167B259F007F4035 /* pushstats.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		0394E8AD167B25E9007F4035 /* rabbitTimer */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0394E8AF167B25EA007F4035 /* Build configuration list for PBXNativeTarget "rabbitTimer" */;
@@ -4745,7 +4687,6 @@
 				0394E879167B23BF007F4035 /* PBXTargetDependency */,
 				0394E884167B244F007F4035 /* PBXTargetDependency */,
 				0394E88F167B24A1007F4035 /* PBXTargetDependency */,
-				0394E8A8167B25A8007F4035 /* PBXTargetDependency */,
 				0394E8B3167B25FC007F4035 /* PBXTargetDependency */,
 				0394E8BE167B2651007F4035 /* PBXTargetDependency */,
 				0394E8C9167B26BA007F4035 /* PBXTargetDependency */,
@@ -4869,7 +4810,6 @@
 				0394E873167B23B4007F4035 /* nagware */,
 				0394E87E167B2447007F4035 /* Phoenix */,
 				0394E889167B2494007F4035 /* playHistoryTracker */,
-				0394E8A2167B259F007F4035 /* pushstats */,
 				0394E8AD167B25E9007F4035 /* rabbitTimer */,
 				0394E8B8167B2647007F4035 /* rabidRabbit */,
 				0394E8C3167B26B2007F4035 /* recordmatch */,
@@ -4922,7 +4862,6 @@
 				038DA5061BB64C9A0009F369 /* help_koth_admin.txt in Resources */,
 				038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */,
 				038DA5081BB64C9A0009F369 /* README.koth.txt in Resources */,
-				038DA5141BB64DB10009F369 /* README.pushstats.txt in Resources */,
 				038DA51E1BB64E180009F369 /* README.regFlag.txt in Resources */,
 				038DA50A1BB64CCB0009F369 /* README.logDetail.txt in Resources */,
 				038DA5021BB64BF00009F369 /* README.killall.txt in Resources */,
@@ -5462,14 +5401,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0394E89F167B259F007F4035 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0394E8A9167B25C8007F4035 /* pushstats.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0394E8AA167B25E9007F4035 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5818,11 +5749,6 @@
 			isa = PBXTargetDependency;
 			target = 0394E889167B2494007F4035 /* playHistoryTracker */;
 			targetProxy = 0394E88E167B24A1007F4035 /* PBXContainerItemProxy */;
-		};
-		0394E8A8167B25A8007F4035 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0394E8A2167B259F007F4035 /* pushstats */;
-			targetProxy = 0394E8A7167B25A8007F4035 /* PBXContainerItemProxy */;
 		};
 		0394E8B3167B25FC007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6912,36 +6838,6 @@
 			};
 			name = Release;
 		};
-		0394E8A5167B25A0007F4035 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		0394E8A6167B25A0007F4035 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				OTHER_LDFLAGS = (
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		0394E8B0167B25EA007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7899,15 +7795,6 @@
 			buildConfigurations = (
 				0394E897167B2513007F4035 /* Debug */,
 				0394E898167B2513007F4035 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0394E8A4167B25A0007F4035 /* Build configuration list for PBXNativeTarget "pushstats" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0394E8A5167B25A0007F4035 /* Debug */,
-				0394E8A6167B25A0007F4035 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
