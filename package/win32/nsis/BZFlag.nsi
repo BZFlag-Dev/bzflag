@@ -5,14 +5,19 @@
 ;--------------------------------
 ;BZFlag Version Variables
 
-	!define VER_MAJOR 2
-	!define VER_MINOR 4
-	!define VER_REVISION 3
-	
-	;Allow manually specifying a date for the installer. This only works if the
-	;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
-	;to use. Don't commit changes to this into Git.
-	;!define DATE_OVERRIDE 20150101
+  !define VER_MAJOR 2
+  !define VER_MINOR 4
+  !define VER_REVISION 4
+  ;!define TYPE "release"
+  ;!define TYPE "alpha"
+  ;!define TYPE "beta"
+  !define TYPE "RC"
+  !define TYPE_REVISION 1 ; 0 for release
+  
+  ;Allow manually specifying a date for the installer. This only works if the
+  ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
+  ;to use. Don't commit changes to this into Git.
+  ;!define DATE_OVERRIDE 20150101
 
 ;--------------------------------
 ;Includes
@@ -25,21 +30,17 @@
 
 ;--------------------------------
 ;Automatically generated version variables
-
-	; Check if we have an odd minor or revision version number
-	!define /math VER_MINOR_ODD ${VER_MINOR} % 2
-	!define /math VER_REVISION_ODD ${VER_REVISION} % 2
-	
-	; Include the date for alpha/beta/RC builds
-	!if ${VER_MINOR_ODD} || ${VER_REVISION_ODD}
-		!ifndef DATE_OVERRIDE
-			!define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d"
-		!else
-			!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}"
-		!endif
-	!else
-		!define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
-	!endif
+  
+  ; Include the date for alpha/beta/RC builds
+  !if ${TYPE} != "release"
+    !ifndef DATE_OVERRIDE
+      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d-${TYPE}${TYPE_REVISION}"
+    !else
+      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}-${TYPE}${TYPE_REVISION}"
+    !endif
+  !else
+    !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+  !endif
   
   !ifdef BUILD_64
     !define PLATFORM x64
@@ -144,7 +145,7 @@
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
-	
+
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\ReadMe.win32.html"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -248,7 +249,7 @@ Section "!BZFlag (Required)" BZFlag
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION} (800x600 Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
 
-	; Local User Data
+    ; Local User Data
     Var /GLOBAL UserData
     ${If} ${AtMostWinXP}
       StrCpy $UserData "%USERPROFILE%\Local Settings\Application Data\BZFlag"
@@ -331,8 +332,8 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Include the plugins
     SetOutPath $INSTDIR
     File ..\..\..\bin_Release_${PLATFORM}\plugins\*.dll
-		File ..\..\..\bin_Release_${PLATFORM}\plugins\*.txt
-		File ..\..\..\bin_Release_${PLATFORM}\plugins\*.cfg
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.txt
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.cfg
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
