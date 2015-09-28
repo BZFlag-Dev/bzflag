@@ -256,24 +256,6 @@
 /* Debugging disabled */
 #define NDEBUG 1
 
-/* Name of package */
-#define PACKAGE "bzflag"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "http://BZFlag.org/"
-
-/* Define to the full name of this package. */
-#define PACKAGE_NAME "BZFlag"
-
-/* Define to the full name and version of this package. */
-#define PACKAGE_STRING "BZFlag 2.4.4-RC1"
-
-/* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "bzflag"
-
-/* Define to the version of this package. */
-#define PACKAGE_VERSION "2.4.4-RC1"
-
 /* Enabling Robots */
 #define ROBOT 1
 
