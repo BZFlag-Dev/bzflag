@@ -433,8 +433,7 @@ cannot proceed.  A checklist of items to be completed follows:
 - ChangeLog includes a comment for all items added since the previous
   release, preferably denoting who made what changes.
 
-- Man files and bzfs.conf files are updated with
-  latest changes.
+- Man files and bzfs.conf files are updated with latest changes.
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, ChangeLog, configure.ac,
@@ -459,17 +458,11 @@ cannot proceed.  A checklist of items to be completed follows:
   Also verify that all non-autotools builds build properly.
 
 - Tag the release.  Tag format should be consistent with the other
-  tags using the format of vMAJOR_MINOR_RELEASE
-	e.g. git tag -a v2.6_0 -m 'Version 2.6.0 release'
-  then commit and push the tag ??? TODO, verify this
+  tags using the format of vMAJOR.MINOR.RELEASE.
+	e.g. git tag -a v2.6.0 -m 'Version 2.6.0 release'
+	     git push origin v2.6.0
 
-- Perform a
-  "git archive master " TODO.. DOES THIS NEED THE URL?
-  from somewhere else in the filesystem to obtain the tagged version
-  of the sources.
-
-- Perform a "make dist" of that export to generate a source release
-  tarball.
+- Perform a "make dist" generate a source release tarball.
 
 - Verify that the source tarball can be expanded, builds, and runs.
 
