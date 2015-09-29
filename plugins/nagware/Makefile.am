@@ -9,7 +9,6 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	CHANGELOG.txt	\
 	README.nagware.txt \
 	nagware.cfg	\
 	nagware.def \
