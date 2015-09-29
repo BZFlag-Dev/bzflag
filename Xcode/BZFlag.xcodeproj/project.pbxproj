@@ -6321,6 +6321,7 @@
 					"INSIDE_BZ=1",
 					"DEBUG=1",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -6332,6 +6333,7 @@
 					"$(inherited)",
 					"INSIDE_BZ=1",
 				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
