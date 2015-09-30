@@ -1714,13 +1714,11 @@
 		0394E6FB167B1024007F4035 /* fastmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fastmap.cpp; sourceTree = "<group>"; };
 		0394E702167B1025007F4035 /* flagStay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flagStay.cpp; sourceTree = "<group>"; };
 		0394E709167B1025007F4035 /* hiddenAdmin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hiddenAdmin.cpp; sourceTree = "<group>"; };
-		0394E70F167B1025007F4035 /* CHANGELOG.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.txt; sourceTree = "<group>"; };
 		0394E710167B1025007F4035 /* HoldTheFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoldTheFlag.cpp; sourceTree = "<group>"; };
 		0394E717167B1025007F4035 /* keepaway.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keepaway.cpp; sourceTree = "<group>"; };
 		0394E720167B1025007F4035 /* killall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = killall.cpp; sourceTree = "<group>"; };
 		0394E727167B1025007F4035 /* koth.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = koth.cpp; sourceTree = "<group>"; };
 		0394E730167B1025007F4035 /* logDetail.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = logDetail.cpp; sourceTree = "<group>"; };
-		0394E738167B1025007F4035 /* CHANGELOG.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGELOG.txt; sourceTree = "<group>"; };
 		0394E73B167B1025007F4035 /* nagware.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nagware.cpp; sourceTree = "<group>"; };
 		0394E743167B1025007F4035 /* Phoenix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Phoenix.cpp; sourceTree = "<group>"; };
 		0394E74A167B1025007F4035 /* playHistoryTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = playHistoryTracker.cpp; sourceTree = "<group>"; };
@@ -3169,7 +3167,6 @@
 		0394E70E167B1025007F4035 /* HoldTheFlag */ = {
 			isa = PBXGroup;
 			children = (
-				0394E70F167B1025007F4035 /* CHANGELOG.txt */,
 				0394E710167B1025007F4035 /* HoldTheFlag.cpp */,
 				038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */,
 			);
@@ -3219,7 +3216,6 @@
 		0394E737167B1025007F4035 /* nagware */ = {
 			isa = PBXGroup;
 			children = (
-				0394E738167B1025007F4035 /* CHANGELOG.txt */,
 				038DA50B1BB64CE80009F369 /* nagware.cfg */,
 				0394E73B167B1025007F4035 /* nagware.cpp */,
 				038DA50C1BB64CE80009F369 /* README.nagware.txt */,
