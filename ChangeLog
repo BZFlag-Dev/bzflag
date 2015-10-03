@@ -1,6 +1,12 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.4.4-RC2
+------------
+
+* On Windows, reload textures after initializing the OpenGL context
+
+
 BZFlag 2.4.4-RC1
 ------------
 

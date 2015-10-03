@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "StateDatabase.h"
+#include "TextureManager.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -359,6 +360,7 @@ void			WinWindow::makeCurrent()
     wglMakeCurrent(hDCChild, hRC);
     if (isNewContext) {
       OpenGLGState::initContext();
+      TextureManager::instance().reloadTextures();
       isNewContext = false;
     }
   }
