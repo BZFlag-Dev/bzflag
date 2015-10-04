@@ -419,6 +419,8 @@
 		0394E963167B2D00007F4035 /* timedctf.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E91C167B293E007F4035 /* timedctf.dylib */; };
 		0394E964167B2D00007F4035 /* TimeLimit.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E927167B29CC007F4035 /* TimeLimit.dylib */; };
 		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; };
+		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
+		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
 		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
 		03C338CD1AFB5AFC00E8F655 /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
 		03C338CE1AFB5AFC00E8F655 /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
@@ -4830,6 +4832,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */,
+				0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */,
 				038DA4FA1BB64A9E0009F369 /* README.HoldTheFlag.txt in Resources */,
 				038DA5161BB64DCA0009F369 /* README.rabbitTimer.txt in Resources */,
 				038DA52A1BB64F090009F369 /* README.shockwaveDeath.txt in Resources */,
