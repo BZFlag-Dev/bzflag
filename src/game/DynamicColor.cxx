@@ -306,7 +306,7 @@ void DynamicColor::setSequence(int channel,float period, float offset,
     seq.period = period;
     seq.offset = offset;
     seq.count = (unsigned int)list.size();
-    seq.list = new char[seq.count];
+    seq.list = new signed char[seq.count];
     for (unsigned int i = 0; i < seq.count; i++) {
       seq.list[i] = list[i];
     }
@@ -548,7 +548,7 @@ const void * DynamicColor::unpack(const void *buf)
     if (size > 0) {
       buf = nboUnpackFloat (buf, seq.period);
       buf = nboUnpackFloat (buf, seq.offset);
-      seq.list = new char[size];
+      seq.list = new signed char[size];
       for (i = 0; i < size; i++) {
 	uint8_t value;
 	buf = nboUnpackUByte (buf, value);

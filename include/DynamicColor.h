@@ -24,7 +24,7 @@
 typedef struct sequenceList {
   float period;
   float offset;
-  char* list;
+  signed char* list;
   unsigned int count;
 } sequenceParams;
 
