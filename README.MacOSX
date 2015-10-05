@@ -53,7 +53,9 @@ framework as detailed below.
 BZFlag has two external dependencies: SDL 2 and c-ares.
 
 Download the latest version of the SDL 2 framework from
-https://www.libsdl.org/download-2.0.php. Version 2.0.4 or later is required.
+https://www.libsdl.org/download-2.0.php. Version 2.0.3 or later is required,
+but version 2.0.4 or later is highly recommended because it includes a new
+function for capturing mouse input to help address a mouse warping problem.
 As of the BZFlag 2.4.4 release, SDL 2.0.4 has not yet been released, but you
 can build the latest development version of SDL 2 from Mercurial. If you
 obtained a binary release of SDL 2, mount the disk image and place the file

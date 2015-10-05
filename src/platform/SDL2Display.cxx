@@ -495,6 +495,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     case SDL_WINDOWEVENT_SHOWN:
       _event.type = BzfEvent::Map;
       break;
+#if SDL_MAJOR_VERSION >= 2 && SDL_MINOR_VERSION >= 0 && SDL_PATCHLEVEL >= 4
     case SDL_WINDOWEVENT_FOCUS_GAINED:
     {
       // make sure the mouse is captured in case the cursor is (or moves) outside the window
@@ -506,6 +507,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
       }
       break;
     }
+#endif
     default:
       break;
     }
