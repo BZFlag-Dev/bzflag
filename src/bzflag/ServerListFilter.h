@@ -115,7 +115,7 @@ class ServerListFilter {
     static bool isPatternLabel(const std::string& label);
     static char parseFilterType(const std::string& f, char& op,
 				std::string& label, std::string& param);
-    static std::string ServerListFilter::colorizeSearch(const std::string& in);
+    static std::string colorizeSearch(const std::string& in);
 
   private:
     void reset();
