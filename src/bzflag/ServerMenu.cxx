@@ -24,16 +24,13 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "ServerListFilterMenu.h"
 #include "playing.h"
 #include "HUDui.h"
 #include "ServerListFilter.h"
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
-
-
-static std::string colorizeSearch(const std::string& s);
-
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -114,6 +111,13 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   else if ((key.ascii >= '0') && (key.ascii <= '9')) {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFindIndex(key.ascii - '0');
+      return true;
+    }
+  }
+  else if (key.ascii == 'e') {
+    if(HUDui::getFocus() && !menu->getFind()) {
+      if (!serverListFilterMenu) serverListFilterMenu = new ServerListFilterMenu;
+      HUDDialogStack::get()->push(serverListFilterMenu);
       return true;
     }
   }
@@ -205,14 +209,14 @@ ServerMenu::ServerMenu()
   search->setFontFace(MainMenu::getFontFace());
   search->setMaxLength(42);
   search->setString(listFilter.getSource());
-  search->setColorFunc(colorizeSearch);
+  search->setColorFunc(ServerListFilter::colorizeSearch);
   getControls().push_back(search);
   setFind(false);
 
   // short key help
   help = new HUDuiLabel;
   help->setFontFace(MainMenu::getFontFace());
-  help->setString("Press  +/- add/remove favorites   f - toggle view");
+  help->setString("Press  +/- add/remove favorites   f - toggle view   e - edit quick filters");
   getControls().push_back(help);
 
   // set initial focus
@@ -904,70 +908,6 @@ void ServerMenu::playingCB(void* _self)
 
   ((ServerMenu*)_self)->updateStatus();
 }
-
-
-static std::string colorizeSearch(const std::string& in)
-{
-  std::string out;
-  std::vector<std::string> filters;
-  std::vector<char> separators;
-  const char *c, *s, *s0 = in.c_str();
-  for (c = s = s0; true; c++) {
-    if (*c == 0) {
-      filters.push_back(std::string(s, c - s));
-      s = c + 1;
-      break;
-    }
-    else if ((*c == '/') || (*c == ',')) {
-      filters.push_back(std::string(s, c - s));
-      separators.push_back(*c);
-      s = c + 1;
-    }
-  }
-
-  static const std::string controlColor = ANSI_STR_FG_CYAN;
-  static const std::string badColor     = ANSI_STR_FG_ORANGE;
-  static const std::string unknownColor = ANSI_STR_FG_RED;
-  static const std::string commentColor = ANSI_STR_FG_BLACK;
-  static const std::string boolColor    = ANSI_STR_FG_YELLOW;
-  static const std::string rangeColor   = ANSI_STR_FG_GREEN;
-  static const std::string globColor    = ANSI_STR_FG_BLUE;
-  static const std::string regexColor   = ANSI_STR_FG_MAGENTA;
-
-  out += filters[0];
-  for (size_t i = 1; i < filters.size(); i++) {
-    out += controlColor;
-    out += separators[i - 1];
-    char op;
-    std::string lbl, param;
-    const char type =
-      ServerListFilter::parseFilterType(filters[i], op, lbl, param);
-    switch (type) {
-      case 'p': {
-	if (ServerListFilter::isPatternLabel(lbl)) {
-	  out += (op == ')') ? globColor : regexColor;
-	} else {
-	  out += unknownColor;
-	}
-	break;
-      }
-      case 'b': {
-	out += ServerListFilter::isBoolLabel(lbl) ? boolColor : unknownColor;
-	break;
-      }
-      case 'r': {
-	out += ServerListFilter::isRangeLabel(lbl) ? rangeColor : unknownColor;
-	break;
-      }
-      case '#': { out += commentColor; break; }
-      default:  { out += badColor;     break; }
-    }
-    out += filters[i];
-  }
-
-  return out;
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

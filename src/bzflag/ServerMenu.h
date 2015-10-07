@@ -34,13 +34,14 @@
 #include "ServerListFilter.h"
 
 
+class ServerListFilterMenu;
 class ServerMenu;
 
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu) { }
+    menu(_menu), serverListFilterMenu(NULL) { }
   ~ServerMenuDefaultKey() { }
 
   bool keyPress(const BzfKeyEvent&);
@@ -48,6 +49,7 @@ public:
 
 private:
   ServerMenu* menu;
+  ServerListFilterMenu*	serverListFilterMenu;
 };
 
 class ServerMenu : public HUDDialog {
