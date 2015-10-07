@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <strstream>
+#include <sstream>
 #include <stack>
 #include <vector>
 #include <math.h>
@@ -259,7 +259,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
 			if (start == std::string::npos) continue;
 			if (line.at(start) == '#') continue;
 
-			std::istrstream lineStream( line.c_str() );
+			std::istringstream lineStream( line.c_str() );
 
 			while (!lineStream.eof())
 			{
