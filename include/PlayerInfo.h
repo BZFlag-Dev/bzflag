@@ -105,8 +105,8 @@ public:
   const char *getClientVersion();
   void setClientVersion(const char * c);
   void getClientVersionNumbers(int& major, int& minor, int& revision);
-  int   getPausedTime();
-  int   getIdleTime();
+  double   getPausedTime();
+  double   getIdleTime();
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);

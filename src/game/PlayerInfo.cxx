@@ -416,19 +416,19 @@ void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
   return;
 }
 
-int PlayerInfo::getPausedTime()
+double PlayerInfo::getPausedTime()
 {
   if ((state > PlayerInLimbo) && (team != ObserverTeam) && (paused)) {
-    return int(now - pausedSince);
+    return (now - pausedSince);
   }
 
   return 0;
 }
 
-int PlayerInfo::getIdleTime()
+double PlayerInfo::getIdleTime()
 {
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    return int(now - lastupdate);
+    return (now - lastupdate);
   }
   else if (team == ObserverTeam) {
     return -1;
