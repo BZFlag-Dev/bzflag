@@ -530,6 +530,7 @@
 		03C8EF19167AC55100BB07A5 /* libmediafile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8C41670B8DE0056C938 /* libmediafile.a */; };
 		03C8EF1A167AC55800BB07A5 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
+		03D479281BC73EED00C906A8 /* ServerListFilterMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */; settings = {ASSET_TAGS = (); }; };
 		03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9BB1B30E12300711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
@@ -1785,6 +1786,8 @@
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C8EE25167ABE2300BB07A5 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
+		03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListFilterMenu.cxx; sourceTree = "<group>"; };
+		03D479271BC73EED00C906A8 /* ServerListFilterMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListFilterMenu.h; sourceTree = "<group>"; };
 		03D88EA71670CB1300725DBE /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = AUTHORS; path = ../AUTHORS; sourceTree = "<group>"; };
 		03D88EA81670CB1300725DBE /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = ChangeLog; path = ../ChangeLog; sourceTree = "<group>"; };
 		03D88EA91670CB1300725DBE /* DEVINFO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DEVINFO; path = ../DEVINFO; sourceTree = "<group>"; };
@@ -2589,6 +2592,8 @@
 				035543A2166C846F008806E9 /* ServerLink.h */,
 				035543A3166C846F008806E9 /* ServerListFilter.cxx */,
 				035543A4166C846F008806E9 /* ServerListFilter.h */,
+				03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */,
+				03D479271BC73EED00C906A8 /* ServerListFilterMenu.h */,
 				035543A5166C846F008806E9 /* ServerMenu.cxx */,
 				035543A6166C846F008806E9 /* ServerMenu.h */,
 				035543A7166C846F008806E9 /* ServerStartMenu.cxx */,
@@ -5580,6 +5585,7 @@
 				03C8EEC8167AC26A00BB07A5 /* RadarRenderer.cxx in Sources */,
 				03C8EECA167AC26A00BB07A5 /* Region.cxx in Sources */,
 				03C8EECC167AC26A00BB07A5 /* RegionPriorityQueue.cxx in Sources */,
+				03D479281BC73EED00C906A8 /* ServerListFilterMenu.cxx in Sources */,
 				03C8EECE167AC26A00BB07A5 /* RemotePlayer.cxx in Sources */,
 				03C8EED0167AC26A00BB07A5 /* Roaming.cxx in Sources */,
 				03C8EED2167AC26A00BB07A5 /* RobotPlayer.cxx in Sources */,
