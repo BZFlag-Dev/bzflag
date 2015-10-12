@@ -256,7 +256,7 @@ const char *extraUsageString =
 "\t-ts [micros]: timestamp all console output, [micros] to include\n"
 "\t\tmicroseconds\n"
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
-"\t-UPnP: enable UPnP "
+"\t-UPnP: enable UPnP\n"
 #endif
 "\t-userdb: file to read for user access permissions\n"
 "\t-utc: timestamp console output in UTC instead of local time, implies -ts\n"
