@@ -4,7 +4,9 @@
 BZFlag 2.4.4-RC2
 ------------
 
-* On Windows, reload textures after initializing the OpenGL context
+* On Windows, reload textures after initializing the context - Scott Wichser
+* Add a menu to edit server list quick filters - Scott Wichser
+* Tell Windows that we are DPI aware - Scott Wichser
 
 
 BZFlag 2.4.4-RC1
