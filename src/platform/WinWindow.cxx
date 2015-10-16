@@ -156,6 +156,9 @@ void			WinWindow::setMinSize(int, int)
 
 void			WinWindow::setFullscreen(bool on)
 {
+  // Stop grabbing the mouse so the cursor can't get stuck outside of the window
+  ungrabMouse();
+
   if (on) {
     // no window decorations
     DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -213,10 +216,8 @@ void			WinWindow::setFullscreen(bool on)
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 
   // reset mouse grab
-  if (mouseGrab) {
-    ungrabMouse();
+  if (mouseGrab)
     grabMouse();
-  }
 }
 
 void			WinWindow::iconify()
