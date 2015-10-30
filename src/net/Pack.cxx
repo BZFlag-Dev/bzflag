@@ -245,7 +245,14 @@ const void*		nboUnpackFloat(const void* b, float& v)
   ::memcpy(&x, b, sizeof(uint32_t));
   floatintuni u;
   u.intval = (uint32_t)ntohl(x);
-  v = u.floatval;
+  if (isnan(u.floatval)) {
+    fprintf(stderr, "nboUnpackFloat(): replacing NaN with zero\n");
+    Error = true;
+    v = 0.0f;
+    return b;
+  } else {
+    v = u.floatval;
+  }
   return cADV(b, uint32_t);
 }
 
