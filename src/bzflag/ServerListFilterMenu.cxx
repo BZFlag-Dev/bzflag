@@ -34,7 +34,7 @@ ServerListFilterMenu::ServerListFilterMenu()
   firstKeyControl = controls.size();
 
   for (int i = 1; i <= 9; i++) {
-    std::string keyLabel = TextUtils::format("Quick Filter %d", i);
+    std::string keyLabel = TextUtils::format("Quick Filter %d:", i);
     controls.push_back(createInput(keyLabel));
   }
 
