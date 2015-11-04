@@ -130,14 +130,14 @@ AC_ARG_ENABLE(custom-plugins, AS_HELP_STRING([--enable-custom-plugins=plugin1[[[
   CUSTOM_PLUGIN_LIST=`echo $enableval | sed 's/,/ /g'`
   for plugin in $CUSTOM_PLUGIN_LIST ; do
     m1=plugins/$plugin/Makefile
-    AC_CONFIG_FILES([$srcdir/$m1])
+    AC_CONFIG_FILES([$m1])
     (cd $srcdir && automake --no-force $m1)
   done])
 # accept a file containing the custom plugins to be built
 AC_ARG_ENABLE(custom-plugins-file, AS_HELP_STRING([--enable-custom-plugins-file=filename],[file of custom plugins to be built, one name per line]),[
   for plugin in `sed '/^#/d' $enableval` ; do
     m2=plugins/$plugin/Makefile
-    AC_CONFIG_FILES([$srcdir/$m2])
+    AC_CONFIG_FILES([$m2])
     (cd $srcdir && automake --no-force $m2)
     CUSTOM_PLUGIN_LIST="$CUSTOM_PLUGIN_LIST $plugin"
   done])
