@@ -1466,7 +1466,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 
 void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, MessageType type)
 {
-  bz_ChatEventData_V1 chatData;
+  bz_ChatEventData_V2 chatData;
   chatData.from = BZ_SERVER;
   if (srcPlayer != ServerPlayer)
     chatData.from = srcPlayer;
@@ -1481,6 +1481,11 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
     chatData.team = convertTeam((TeamColor)(FirstTeam - dstPlayer));
   else
     chatData.to = dstPlayer;
+
+  if (type == ActionMessage)
+    chatData.messageType = eActionMessage;
+  else
+    chatData.messageType = eChatMessage;
 
   chatData.message = message;
 
@@ -4663,7 +4668,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
       if (isSpamOrGarbage(message, playerData, t))
 	break;
 
-      bz_ChatEventData_V1 chatData;
+      bz_ChatEventData_V2 chatData;
       chatData.from = t;
       chatData.to = BZ_NULLUSER;
 
@@ -4677,6 +4682,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 		chatData.to = dstPlayer;
 
 
+      chatData.messageType = eChatMessage;
       chatData.message = message;
 
       // send the actual Message after all the callbacks have done their magic to it.

@@ -944,10 +944,11 @@ bool MsgCommand::operator() (const char	 *message,
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
 
   // event handler goodness
-  bz_ChatEventData_V1 chatData;
+  bz_ChatEventData_V2 chatData;
   chatData.from = playerData->getIndex();
   chatData.to = to;
 
+  chatData.messageType = eChatMessage;
   chatData.message = arguments.c_str() + messageStart + 1;
 
   // send any events that want to watch the chat

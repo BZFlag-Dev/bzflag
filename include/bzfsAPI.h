@@ -511,6 +511,17 @@ public:
   bz_ApiString message;
 };
 
+class BZF_API bz_ChatEventData_V2 : public bz_ChatEventData_V1
+{
+public:
+  bz_ChatEventData_V2() : bz_ChatEventData_V1()
+    , messageType(eChatMessage)
+  {
+  }
+
+  bz_eMessageType messageType;
+};
+
 class BZF_API bz_PlayerJoinPartEventData_V1 : public bz_EventData
 {
 public:
