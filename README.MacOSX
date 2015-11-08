@@ -13,10 +13,10 @@ https://github.com/BZFlag-Dev/bzflag/releases to obtain the latest binary
 distribution.
 
 Once you've obtained a binary distribution of BZFlag, installation should be a
-simple matter of copying the icon provided in the disk mounting image (the
-.dmg) to your Applications folder. If you cannot run the client at all
-(i.e. it starts to a black screen, or the icon bounces but then nothing
-happens), you can try several things:
+simple matter of decompressing the downloaded file and then copying the
+program to your Applications folder. If you cannot run the client at all (i.e.
+it starts to a black screen, or the icon bounces but then nothing happeys),
+you can try several things:
 
   1) Move or delete the BZFlag directory in your personal application support
      folder at ~/Library/Application Support/BZFlag. As of Mac OS X 10.7, the
@@ -24,8 +24,8 @@ happens), you can try several things:
      to your home directory, entering the Command-Shift-G key sequence, then
      typing "Library" and clicking "Go." Note that this directory contains
      your saved configuration, screenshots, and map files, so you may want to
-     move or delete only your configuration directory (stored in the directory
-     with the BZFlag version number).
+     move or delete only your configuration file (stored in the directory with
+     the BZFlag version number).
 
   2) Check your console for error messages. Open your console application at
      /Utilities/Console.app, and expand the "User Diagnostic Reports" list in
