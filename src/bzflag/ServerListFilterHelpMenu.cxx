@@ -98,7 +98,7 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
 
   // use a big font for title, smaller font for the rest
   const float titleFontSize = (float)_height / 23.0f;
-  const float navFontSize = (float)_height / 100.0f;
+  const float navFontSize = (float)_height / 60.0f;
   FontManager &fm = FontManager::instance();
 
   // reposition title
@@ -389,8 +389,9 @@ ServerListFilterHelp7Menu::ServerListFilterHelp7Menu() : ServerListFilterHelpMen
 {
   // add controls
   std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel("Range filters limit some value to a numeric boundary. It could be an exact value, or have"));
-  listHUD.push_back(createLabel("a minimum and/or maximum. The format of a range filter is <filter><operator><number>."));
+  listHUD.push_back(createLabel("Range filters limit some value to a numeric boundary. It could be an exact value,"));
+  listHUD.push_back(createLabel("or have a minimum and/or maximum. The format of a range filter is:"));
+  listHUD.push_back(createLabel("  <filter><operator><number>."));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("Possible operators:"));
   listHUD.push_back(createLabel("  < less than"));
@@ -402,7 +403,7 @@ ServerListFilterHelp7Menu::ServerListFilterHelp7Menu() : ServerListFilterHelpMen
   listHUD.push_back(createLabel("Miscellaneous filters:"));
   listHUD.push_back(createLabel("  Shots (s or shots) - Maximum number of active shots per tank"));
   listHUD.push_back(createLabel("  Players (p or players) - Current number of players (excluding observers)"));
-  listHUD.push_back(createLabel("  Free slots (f or freeSlots) - Number of available player slots (excluding observers)"));
+  listHUD.push_back(createLabel("  Free slots (f or freeSlots) - Available player slots (excluding observers)"));
   listHUD.push_back(createLabel("  Valid teams (vt or validTeams) - Number of teams enabled (excluding observers)"));
   listHUD.push_back(createLabel("  Max time (mt or maxTime) - Time limit on the game"));
   listHUD.push_back(createLabel("  Max players (mp or maxPlayers) - Maximum player count"));
