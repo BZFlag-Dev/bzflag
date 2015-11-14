@@ -7,6 +7,16 @@ BZFlag 2.4.4-RC2
 * On Windows, reload textures after initializing the context - Scott Wichser
 * Add a menu to edit server list quick filters - Scott Wichser
 * Tell Windows that we are DPI aware - Scott Wichser
+* Time functions in the bzfs API use doubles instead of int - Vladimir Jimenez
+* Fix issue on Windows that allowed mouse to get stuck off-screen when switching
+		to windowed mode - Scott Wichser
+* Replace NaN with zero in nboUnpackFloat() - Jeff Makey
+* Add a bz_ChatEventData_V2 that contains message type - Konstantinos Kanavouras
+* Show recipient/sender for private action messages in BZAadmin
+		- Konstantinos Kanavouras
+* Server list filter: remove "cached" boolean filter, rename "flags" to "ffa",
+		"teams" to "ctf", and add "offa" - Scott Wichser
+* Add server list filter help pages - Scott Wichser
 
 
 BZFlag 2.4.4-RC1
@@ -25,7 +35,6 @@ BZFlag 2.4.4-RC1
 * Do not count observers when sorting the server list - Scott Wichser
 * Randomize the order of servers with identical player counts - Scott Wichser
 * Mouse grab/confine fixes - Joshua Bodine, Scott Wichser
-* Ensure shot messages provide valid floating point values - Scott Wichser
 * Improvements to flagStay and rabidRabbit plugin - Vladimir Jimenez
 * Joystick hat fixes - Konstantinos Kanavouras
 * Update shot stats live - Konstantinos Kanavouras
