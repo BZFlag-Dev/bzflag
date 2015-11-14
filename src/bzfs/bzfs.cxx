@@ -3699,26 +3699,6 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     return;
   }
 
-  // Verify float values
-  if (isnan(shot.pos[0]) || isnan(shot.pos[1]) || isnan(shot.pos[2])) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update position\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot update invalid");
-    return;
-  }
-  if (isnan(shot.vel[0]) || isnan(shot.vel[1]) || isnan(shot.vel[2])) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update velocity\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot update invalid");
-    return;
-  }
-  if (isnan(shot.dt)) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot update times\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot update invalid");
-    return;
-  }
-
   if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
     return;
 
@@ -3750,27 +3730,6 @@ static void shotFired(int playerIndex, void *buf, int len)
 	   playerIndex);
     return;
   }
-
-  // Verify float values
-  if (isnan(firingInfo.shot.pos[0]) || isnan(firingInfo.shot.pos[1]) || isnan(firingInfo.shot.pos[2])) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot position\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot invalid");
-    return;
-  }
-  if (isnan(firingInfo.shot.vel[0]) || isnan(firingInfo.shot.vel[1]) || isnan(firingInfo.shot.vel[2])) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot velocity\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot invalid");
-    return;
-  }
-  if (isnan(firingInfo.timeSent) || isnan(firingInfo.lifetime) || isnan(firingInfo.shot.dt)) {
-    logDebugMessage(1,"Kicking Player %s [%d] Player sending invalid shot times\n", shooter.getCallSign(), playerIndex);
-    sendMessage(ServerPlayer, playerIndex, "Autokick: Your shots have invalid data.");
-    removePlayer(playerIndex, "Player shot invalid");
-    return;
-  }
-
 
   // make sure the shooter flag is a valid index to prevent segfaulting later
   if (!shooter.haveFlag()) {
