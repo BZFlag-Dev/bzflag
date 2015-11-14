@@ -20,9 +20,11 @@
 
 /* local implementation headers */
 #include "MenuDefaultKey.h"
+#include "HUDDialogStack.h"
 #include "MainMenu.h"
 #include "ServerListFilter.h"
 #include "HUDui.h"
+#include "ServerListFilterHelpMenu.h"
 
 ServerListFilterMenu::ServerListFilterMenu()
 {
@@ -43,11 +45,17 @@ ServerListFilterMenu::ServerListFilterMenu()
   resetPresets = createLabel("Restore default quick filters");
   controls.push_back(resetPresets);
 
+  controls.push_back(createLabel(""));
+
+  help = createLabel("Quick filter help");
+  controls.push_back(help);
+
   initNavigation(controls, firstKeyControl, controls.size()-1);
 }
 
 ServerListFilterMenu::~ServerListFilterMenu()
 {
+  ServerListFilterHelpMenu::done();
 }
 
 HUDuiDefaultKey* ServerListFilterMenu::getDefaultKey()
@@ -80,6 +88,9 @@ void ServerListFilterMenu::execute()
       std::string keyValue = BZDB.get(keyName);
       entry->setString(keyValue);
     }
+  }
+  else if (_focus == help) {
+    HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
   }
 }
 

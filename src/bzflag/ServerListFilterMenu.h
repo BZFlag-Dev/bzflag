@@ -41,6 +41,7 @@ private:
   HUDuiLabel* createLabel(const std::string &);
   HUDuiTypeIn* createInput(const std::string &);
   HUDuiLabel* resetPresets;
+  HUDuiLabel* help;
 private:
   int firstKeyControl;
   int lastKeyControl;

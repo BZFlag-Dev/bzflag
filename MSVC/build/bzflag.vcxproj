@@ -309,6 +309,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
+    <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
     <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
@@ -951,6 +952,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClInclude Include="..\..\src\bzflag\ServerCommandKey.h" />
     <ClInclude Include="..\..\src\bzflag\ServerLink.h" />
     <ClInclude Include="..\..\src\bzflag\ServerListFilter.h" />
+    <ClInclude Include="..\..\src\bzflag\ServerListFilterHelpMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerListFilterMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerStartMenu.h" />
