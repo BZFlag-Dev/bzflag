@@ -799,13 +799,13 @@ std::string ServerListFilter::colorizeSearch(const std::string& in)
     }
   }
 
-  static const std::string controlColor = ANSI_STR_FG_CYAN;
+  static const std::string controlColor = ANSI_STR_FG_WHITE;
   static const std::string badColor     = ANSI_STR_FG_ORANGE;
   static const std::string unknownColor = ANSI_STR_FG_RED;
   static const std::string commentColor = ANSI_STR_FG_BLACK;
   static const std::string boolColor    = ANSI_STR_FG_YELLOW;
   static const std::string rangeColor   = ANSI_STR_FG_GREEN;
-  static const std::string globColor    = ANSI_STR_FG_BLUE;
+  static const std::string globColor    = ANSI_STR_FG_CYAN;
   static const std::string regexColor   = ANSI_STR_FG_MAGENTA;
 
   out += filters[0];
