@@ -45,8 +45,6 @@ ServerListFilterMenu::ServerListFilterMenu()
   resetPresets = createLabel("Restore default quick filters");
   controls.push_back(resetPresets);
 
-  controls.push_back(createLabel(""));
-
   help = createLabel("Quick filter help");
   controls.push_back(help);
 
@@ -139,8 +137,8 @@ void ServerListFilterMenu::resize(int _width, int _height)
   const int count = controls.size();
   for (i = 1; i < count; i++) {
     controls[i]->setFontSize(fontSize);
-    // Add extra padding after the last quick filter
-    if (i == lastKeyControl + 1)
+    // Add extra padding after the last quick filter, and between restore defaults and help
+    if (i == lastKeyControl + 1 || i == count - 1)
       y -= 1.0f * h;
     controls[i]->setPosition(x, y);
     y -= 1.0f * h;
