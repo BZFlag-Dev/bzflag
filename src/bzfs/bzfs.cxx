@@ -5756,7 +5756,11 @@ void UPnP::setIGD()
 {
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
   // Discover uPnP devices waiting for 200ms
+#if (MINIUPNPC_API_VERSION >= 14)
+  struct UPNPDev *devlist = upnpDiscover(200, NULL, NULL, 0, 0, 2, NULL);
+#else
   struct UPNPDev *devlist = upnpDiscover(200, NULL, NULL, 0, 0, NULL);
+#endif
   if (!devlist) {
     std::cerr << "No UPnP device found"
 	      << std::endl;
