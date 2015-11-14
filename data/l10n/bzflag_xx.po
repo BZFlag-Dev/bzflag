@@ -2417,9 +2417,6 @@ msgstr ""
 msgid "Players"
 msgstr ""
 
-msgid "Rogue"
-msgstr ""
-
 msgid "Red"
 msgstr ""
 
