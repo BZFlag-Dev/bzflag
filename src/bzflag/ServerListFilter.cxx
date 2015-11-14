@@ -79,17 +79,18 @@ void ServerListFilter::reset()
   addrDescPat .reset();
 
   // boolean filters
+  ffa      .reset();
+  offa     .reset();
+  ctf      .reset();
+  rabbit   .reset();
+
   jump     .reset();
   rico     .reset();
-  flags    .reset();
-  teams    .reset();
   handi    .reset();
-  rabbit   .reset();
   replay   .reset();
   inertia  .reset();
   antidote .reset();
   favorite .reset();
-  cached   .reset();
 
   // range filters
   shots      .reset();
@@ -206,8 +207,9 @@ bool ServerListFilter::check(const ServerItem& item) const
 
   // boolean filters
   const uint16_t type = p.gameType;
-  if (!flags    .check(type == TeamFFA))   { return false; }
-  if (!teams    .check(type == ClassicCTF))  { return false; }
+  if (!ffa    .check(type == TeamFFA))   { return false; }
+  if (!offa   .check(type == OpenFFA))   { return false; }
+  if (!ctf    .check(type == ClassicCTF))  { return false; }
   if (!rabbit   .check(type == RabbitChase)) { return false; }
 
   const uint16_t options = p.gameOptions;
@@ -219,7 +221,6 @@ bool ServerListFilter::check(const ServerItem& item) const
 
   if (!replay   .check(isReplay(item))) { return false; }
   if (!favorite .check(item.favorite))  { return false; }
-  if (!cached   .check(item.cached))    { return false; }
 
   // range filters
   if (!shots	  .check(p.maxShots))	    { return false; }
@@ -478,17 +479,18 @@ void ServerListFilter::setupBoolMap()
 
   std::map<std::string, size_t>& m = boolMap;
 
+  m["F"] = m["ffa"]      = OFFSETOF(ffa);
+  m["O"] = m["offa"]     = OFFSETOF(offa);
+  m["C"] = m["ctf"]      = OFFSETOF(ctf);
+  m["R"] = m["rabbit"]   = OFFSETOF(rabbit);
+  
   m["j"] = m["jump"]     = OFFSETOF(jump);
   m["r"] = m["rico"]     = OFFSETOF(rico);
-  m["f"] = m["flags"]    = OFFSETOF(flags);
-  m["t"] = m["teams"]    = OFFSETOF(teams);
   m["h"] = m["handicap"] = OFFSETOF(handi);
-  m["R"] = m["rabbit"]   = OFFSETOF(rabbit);
   m["P"] = m["replay"]   = OFFSETOF(replay);
   m["i"] = m["inertia"]  = OFFSETOF(inertia);
   m["a"] = m["antidote"] = OFFSETOF(antidote);
   m["F"] = m["favorite"] = OFFSETOF(favorite);
-  m["C"] = m["cached"]   = OFFSETOF(cached);
 }
 
 
@@ -578,17 +580,18 @@ void ServerListFilter::print(const std::string& origIndent) const
   addrDescPat .print("addrDescPat", indent);
 
   // boolean filters
+  ffa      .print("ffa",      indent);
+  offa     .print("offa",     indent);
+  ctf      .print("ctf",      indent);
+  rabbit   .print("rabbit",   indent);
+
   jump     .print("jump",     indent);
   rico     .print("rico",     indent);
-  flags    .print("flags",    indent);
-  teams    .print("teams",    indent);
   handi    .print("handi",    indent);
-  rabbit   .print("rabbit",   indent);
   replay   .print("replay",   indent);
   inertia  .print("inertia",  indent);
   antidote .print("antidote", indent);
   favorite .print("favorite", indent);
-  cached   .print("cached",   indent);
 
   // range filters
   shots      .print("shots",      indent);

@@ -138,17 +138,18 @@ class ServerListFilter {
     PatternFilter addrDescPat;
 
     // boolean filters
+    BoolFilter ffa;
+    BoolFilter offa;
+    BoolFilter ctf;
+    BoolFilter rabbit;
+
     BoolFilter jump;
     BoolFilter rico;
-    BoolFilter flags;
-    BoolFilter teams;
     BoolFilter handi;
-    BoolFilter rabbit;
     BoolFilter replay;
     BoolFilter inertia;
     BoolFilter antidote;
     BoolFilter favorite;
-    BoolFilter cached;
 
     // range filters
     RangeFilter shots;
