@@ -35,6 +35,7 @@
 
 
 class ServerListFilterMenu;
+class ServerListFilterHelpMenu;
 class ServerMenu;
 
 
@@ -42,7 +43,7 @@ class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
     menu(_menu), serverListFilterMenu(NULL) { }
-  ~ServerMenuDefaultKey() { }
+  ~ServerMenuDefaultKey();
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);
@@ -50,6 +51,7 @@ public:
 private:
   ServerMenu* menu;
   ServerListFilterMenu*	serverListFilterMenu;
+  ServerListFilterHelpMenu*	serverListFilterHelpMenu;
 };
 
 class ServerMenu : public HUDDialog {

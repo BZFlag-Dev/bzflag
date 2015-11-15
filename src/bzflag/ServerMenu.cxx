@@ -25,12 +25,19 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "ServerListFilterMenu.h"
+#include "ServerListFilterHelpMenu.h"
 #include "playing.h"
 #include "HUDui.h"
 #include "ServerListFilter.h"
 
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
+
+ServerMenuDefaultKey::~ServerMenuDefaultKey()
+{
+  delete serverListFilterMenu;
+  ServerListFilterHelpMenu::done();
+}
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -118,6 +125,12 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     if(HUDui::getFocus() && !menu->getFind()) {
       if (!serverListFilterMenu) serverListFilterMenu = new ServerListFilterMenu;
       HUDDialogStack::get()->push(serverListFilterMenu);
+      return true;
+    }
+  }
+  else if (key.ascii == '?') {
+    if(HUDui::getFocus() && !menu->getFind()) {
+      HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
       return true;
     }
   }
@@ -216,12 +229,12 @@ ServerMenu::ServerMenu()
   // short key help
   help1 = new HUDuiLabel;
   help1->setFontFace(MainMenu::getFontFace());
-  help1->setString("Press +/- to add/remove favorites, f to toggle favorites-only list");
+  help1->setString("Press +/- to add/remove favorites, f to toggle favorites-only list,");
   getControls().push_back(help1);
 
   help2 = new HUDuiLabel;
   help2->setFontFace(MainMenu::getFontFace());
-  help2->setString("Press 1 through 9 for quick filters, 0 to clear filter, e to edit quick filters");
+  help2->setString("1 to 9 for quick filters, 0 to clear, e to edit quick filters, ? for filter help");
   getControls().push_back(help2);
 
   // set initial focus
