@@ -394,11 +394,11 @@ ServerListFilterHelp7Menu::ServerListFilterHelp7Menu() : ServerListFilterHelpMen
   listHUD.push_back(createLabel("  <filter><operator><number>."));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("Possible operators:"));
-  listHUD.push_back(createLabel("  < less than"));
-  listHUD.push_back(createLabel("  { less than or equal to"));
-  listHUD.push_back(createLabel("  > greater than"));
-  listHUD.push_back(createLabel("  } greater than or equal to"));
-  listHUD.push_back(createLabel("  = equal to"));
+  listHUD.push_back(createLabel("  <  less than"));
+  listHUD.push_back(createLabel("  <= less than or equal to"));
+  listHUD.push_back(createLabel("  >  greater than"));
+  listHUD.push_back(createLabel("  >= greater than or equal to"));
+  listHUD.push_back(createLabel("  =  equal to"));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("Miscellaneous filters:"));
   listHUD.push_back(createLabel("  Shots (s or shots) - Maximum number of active shots per tank"));
@@ -474,10 +474,10 @@ ServerListFilterHelp9Menu::ServerListFilterHelp9Menu() : ServerListFilterHelpMen
   listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /op>0").c_str()));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("Find servers with between 1 and 5 players:"));
-  listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /p}1,p{5").c_str()));
+  listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /p>=1,p<=5").c_str()));
   listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("More than 3 shots, at least 5 players, and no rogue allowed:"));
-  listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /s>3,p}5,Rm=0").c_str()));
+  listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /s>3,p>=5,Rm=0").c_str()));
 }
 
 
