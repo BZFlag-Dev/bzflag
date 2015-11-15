@@ -90,7 +90,8 @@ private:
   ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
   HUDuiLabel* status;
-  HUDuiLabel* help;
+  HUDuiLabel* help1;
+  HUDuiLabel* help2;
 
   HUDuiLabel* pageLabel;
   int selectedIndex;

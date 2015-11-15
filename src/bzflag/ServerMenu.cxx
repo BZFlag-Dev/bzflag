@@ -214,10 +214,15 @@ ServerMenu::ServerMenu()
   setFind(false);
 
   // short key help
-  help = new HUDuiLabel;
-  help->setFontFace(MainMenu::getFontFace());
-  help->setString("Press  +/- add/remove favorites   f - toggle view   e - edit quick filters");
-  getControls().push_back(help);
+  help1 = new HUDuiLabel;
+  help1->setFontFace(MainMenu::getFontFace());
+  help1->setString("Press +/- to add/remove favorites, f to toggle favorites-only list");
+  getControls().push_back(help1);
+
+  help2 = new HUDuiLabel;
+  help2->setFontFace(MainMenu::getFontFace());
+  help2->setString("Press 1 through 9 for quick filters, 0 to clear filter, e to edit quick filters");
+  getControls().push_back(help2);
 
   // set initial focus
   setFocus(status);
@@ -813,11 +818,13 @@ void ServerMenu::resize(int _width, int _height)
   // reposition key help
   {
     fontSize = (float)_height / 54.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    help->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(help->getFontFace(), fontSize, help->getString());
-    x = 0.5f * ((float)_width - searchWidth);
-    help->setPosition(x, fontHt / 2 /* near bottom of screen */);
+    float fontHt = fm.getStrHeight(help1->getFontFace(), fontSize, " ");
+    help1->setFontSize(fontSize);
+    help2->setFontSize(fontSize);
+    const float help1Width = fm.getStrLength(help1->getFontFace(), fontSize, help1->getString());
+    const float help2Width = fm.getStrLength(help2->getFontFace(), fontSize, help2->getString());
+    help1->setPosition(0.5f * ((float)_width - help1Width), fontHt * 1.5f /* near bottom of screen */);
+    help2->setPosition(0.5f * ((float)_width - help2Width), fontHt * 0.5f /* near bottom of screen */);
   }
 
   // position page readout and server item list
