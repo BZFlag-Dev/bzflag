@@ -359,7 +359,6 @@ ServerListFilterHelp6Menu::ServerListFilterHelp6Menu() : ServerListFilterHelpMen
   std::vector<HUDuiControl*>& listHUD = getControls();
   listHUD.push_back(createLabel("Here are some examples of boolean filters."));
   listHUD.push_back(createLabel(""));
-  listHUD.push_back(createLabel(""));
   listHUD.push_back(createLabel("Find FFA servers in your favorites list:"));
   listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /+ffa,+favorite").c_str()));
   listHUD.push_back(createLabel(""));
