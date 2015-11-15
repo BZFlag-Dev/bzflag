@@ -213,7 +213,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "listFilter4", "/p>0,+rabbit,# Rabbit chase with players",		true, StateDatabase::ReadWrite, NULL },
   { "listFilter5", "/-j,+r,s=2,+ctf,vt=2, # ducati-style servers",	true, StateDatabase::ReadWrite, NULL },
   { "listFilter6", "/d]louman|ahs3|spazzy|jefenry, # fancy maps",	true, StateDatabase::ReadWrite, NULL },
-  { "listFilter7", "",      true, StateDatabase::ReadWrite, NULL },
+  { "listFilter7", "/vt=2,mp=2,# 1vs1 servers",				true, StateDatabase::ReadWrite, NULL },
   { "listFilter8", "/d)*official*league*match*,# League match servers",	true, StateDatabase::ReadWrite, NULL },
   { "listFilter9", "/+replay,# Replay servers",				true, StateDatabase::ReadWrite, NULL },
 
