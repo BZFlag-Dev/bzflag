@@ -281,7 +281,14 @@ void ServerMenu::setFind(bool mode, bool clear)
     if (listFilter.getSource().empty()) {
       setFindLabel("Press '/' to search");
     } else {
-      setFindLabel(ANSI_STR_FG_RED "Using filter:");
+      std::string filter_number;
+      for (int i = 1; i <= 9; i++) {
+	if (listFilter.getSource() == BZDB.get(TextUtils::format("listFilter%d", i))) {
+	  filter_number = TextUtils::format(" %d", i);
+	  break;
+	}
+      }
+      setFindLabel(ANSI_STR_FG_RED "Using filter" + filter_number + ":");
     }
     // select the first item in the list
     setSelected(0, true);
