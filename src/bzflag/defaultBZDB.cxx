@@ -207,7 +207,6 @@ DefaultDBItem	defaultDBItems[] = {
 
   // listFilters
   { "listFilter",  "",					true, StateDatabase::ReadWrite, NULL },
-  { "listFilter0", "",					true, StateDatabase::ReadWrite, NULL },
   { "listFilter1", "/p>1, # busy",			    true, StateDatabase::ReadWrite, NULL },
   { "listFilter2", "/p>1,s>1,s<4, # busy - 2 or 3 shots",     true, StateDatabase::ReadWrite, NULL },
   { "listFilter3", "/p>1,+rabbit, # busy rabbit",	     true, StateDatabase::ReadWrite, NULL },

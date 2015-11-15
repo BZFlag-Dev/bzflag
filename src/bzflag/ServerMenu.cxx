@@ -279,12 +279,15 @@ void ServerMenu::setFind(bool mode, bool clear)
 
 void ServerMenu::setFindIndex(int index)
 {
-  if ((index >= 0) && (index <= 9)) {
+  if ((index >= 1) && (index <= 9)) {
     std::string name = "listFilter";
     name += (index + '0');
     search->setString(BZDB.get(name));
-    setFind(false);
+  } else {
+    search->setString("");
   }
+
+  setFind(false);
 }
 
 
