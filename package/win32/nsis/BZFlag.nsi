@@ -12,7 +12,7 @@
   ;!define TYPE "alpha"
   ;!define TYPE "beta"
   !define TYPE "RC"
-  !define TYPE_REVISION 1 ; 0 for release
+  !define TYPE_REVISION 2 ; 0 for release
   
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
