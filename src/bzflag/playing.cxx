@@ -3393,9 +3393,6 @@ void handleFlagDropped(Player* tank)
     //drop lock if i had GM
     if(myTank->getFlag() == Flags::GuidedMissile)
       myTank->setTarget(NULL);
-    // if they were zoned, reset their status
-    if (myTank->getFlag() == Flags::PhantomZone)
-      myTank->setStatus(short(PlayerState::Alive));
 
     // update display and play sound effects
     playLocalSound(SFX_DROP_FLAG);
