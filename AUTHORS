@@ -41,9 +41,9 @@ Tim Riker <Tim@Rikers.org>
 Frank Thilo (chestal) <thilo@unix-ag.org>
 	Active: 2001-2013
 David Trowbridge (purple_cow) <trowbrds@gmail.com>
-	Active: 2001-2007
-Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
 	Active: 2001-2006
+Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
+	Active: 2001-2005
 Sean Morrison (brlcad, learner) <learner@brlcad.org>
 	Active: 2003-2011
 Alfredo Tupone (c3po) <alfredo@tupone.it>
@@ -89,11 +89,12 @@ Julio Jimenez (Manu, jujibo)
 -- 2005 --
 Mark Thomas (menotume)
 Bernt Hansen (Thumper, bthansen)
--- 2006 --
 -- 2007 --
--- 2008 --
-Jeff Makey (BulletCatcher) <bullet_catcher@users.sourceforge.net>
--- 2009 --
+Joshua Bodine (Constitution)
+-- 2012 --
+Konstantinos Kanavouras (alezakos, kongr45gpen)
+-- 2013 --
+Vladimir Jimenez (allejo)
 
 
 CODE CONTRIBUTORS
@@ -189,7 +190,6 @@ Jim Melton (jwmelto/Flash)
 (randomparticle/snick)
 Lou Nigro (LouMan)
 Darek Dawidowski ([darek])
-Joshua Bodine (Constitution)
 Phillip (the_vaxorcist)
 Christophe Henry (sbgodin)
 Chris Wible (L4m3r)
@@ -223,10 +223,8 @@ Américo Monteiro
 Kyle Mills (khonkhortisan)
 Ian Farr (Quol)
 Ryan Kavanagh (ryanakca)
-Konstantinos Kanavouras (alezakos, kongr45gpen)
 Lee Marshall (bizarrefish)
--- 2013 --
-Vladimir Jimenez (allejo)
+
 
 GOOGLE SUMMER OF CODE
 ---------------------
@@ -283,6 +281,9 @@ Ian Farr (Quol)
 Joe Van Overberghe (joevano)
   mediawiki site (wiki.bzflag.org)
 
+GitHub
+  Project resources
+
 
 CORPORATE AND ORGANIZATION SUPPORT
 ----------------------------------
@@ -335,18 +336,7 @@ Don Greenberg
 Adam Rosen
 Nafees Bin Zafar
 Kyle Van Essen
-
-Mac OS X Disk Mounting Image Backgrounds:
--- 1.7g0r6, 1.7g0r7 --
 Reid Ellis
--- 1.10.* --
-Tupone Alfredo (c3po)
--- 2.0.4 --
-Mark Thomas (menotume)
--- 2.0.6 --
-Harry Keller (Saturos)
--- 2.0.10 --
-Harry Keller (Saturos)
 
 
 NOTES
@@ -376,6 +366,4 @@ trowbridge began work on bzedit circa 1999
 
 ---
 If any corrections or additions need to be made, please contact one of
-the active core developers.  Additionally, you may send inquiries,
-suggestions, and comments to the developer mailing list:
-bzflag-devel@lists.sourceforge.net
+the active core developers.
