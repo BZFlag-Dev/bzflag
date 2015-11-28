@@ -233,6 +233,11 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
     <ClInclude Include="..\..\include\bzfsAPI.h" />
     <ClInclude Include="..\plugin_utils\plugin_utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\MSVC\build\bzfs.vcxproj">
+      <Project>{7fa170ac-5a33-41fc-9b3d-02f9e5173b0e}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

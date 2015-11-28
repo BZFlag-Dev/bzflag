@@ -16,9 +16,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "geometry", "build\geometry.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "installer", "build\installer.vcxproj", "{0169213B-F29C-4244-8280-602EB17F55FB}"
 	ProjectSection(ProjectDependencies) = postProject
-		{AD285E14-AAA4-4D71-962D-4E7EDE796B58} = {AD285E14-AAA4-4D71-962D-4E7EDE796B58}
-		{A109E817-5A7C-4274-87A3-7281A8C20AE4} = {A109E817-5A7C-4274-87A3-7281A8C20AE4}
-		{F081A46D-3992-492A-BF68-05C18957A326} = {F081A46D-3992-492A-BF68-05C18957A326}
 		{A01188F0-A2A9-4CAE-9979-B47426104B38} = {A01188F0-A2A9-4CAE-9979-B47426104B38}
 	EndProjectSection
 EndProject
@@ -43,9 +40,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "game", "build\game.vcxproj", "{B2B95537-A4CE-4510-96A6-00F7B7303922}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "airspawn", "..\plugins\airspawn\airspawn.vcxproj", "{1F43075E-8AF6-486F-AEDF-6B350A6CE141}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chathistory", "..\plugins\chathistory\chathistory.vcxproj", "{B629554E-D0E9-4400-909B-7130F116E15D}"
 EndProject
@@ -60,9 +54,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "killall", "..\plugins\killall\killall.vcxproj", "{A9898AEC-086B-4B9E-8978-C1BFE3EA56A6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "koth", "..\plugins\koth\koth.vcxproj", "{3086EB1F-209A-43CF-91B7-0AECBA87B4D9}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "logDetail", "..\plugins\logDetail\logDetail.vcxproj", "{6B10F1DA-CD6A-4994-8C29-95DAE215D331}"
 EndProject
@@ -101,20 +92,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fastmap", "..\plugins\fastmap\fastmap.vcxproj", "{F081A46D-3992-492A-BF68-05C18957A326}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fairCTF", "..\plugins\fairCTF\fairCTF.vcxproj", "{A109E817-5A7C-4274-87A3-7281A8C20AE4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoFlagReset", "..\plugins\autoFlagReset\autoFlagReset.vcxproj", "{AD285E14-AAA4-4D71-962D-4E7EDE796B58}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzfscron", "..\plugins\bzfscron\bzfscron.vcxproj", "{8582DF8D-F3C3-45BB-84BE-00B5B4E63712}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-		{645768BE-97C8-4DE4-9100-111BD2808B35} = {645768BE-97C8-4DE4-9100-111BD2808B35}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomZoneSample", "..\plugins\CustomZoneSample\CustomZoneSample.vcxproj", "{3FB1B268-2084-4C96-8D90-EB72A612A986}"
 EndProject
@@ -128,9 +109,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "build\tests.vcxpro
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thiefControl", "..\plugins\thiefControl\thiefControl.vcxproj", "{C7E4CB54-110E-4DA1-86E5-612DE727419A}"
-	ProjectSection(ProjectDependencies) = postProject
-		{7FA170AC-5A33-41FC-9B3D-02F9E5173B0E} = {7FA170AC-5A33-41FC-9B3D-02F9E5173B0E}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "superUser", "..\plugins\superUser\superUser.vcxproj", "{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6}"
 EndProject

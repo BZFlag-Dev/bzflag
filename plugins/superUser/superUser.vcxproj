@@ -242,6 +242,9 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
     <ClInclude Include="..\plugin_utils\plugin_utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\MSVC\build\bzfs.vcxproj">
+      <Project>{7fa170ac-5a33-41fc-9b3d-02f9e5173b0e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\plugin_utils\plugin_utils.vcxproj">
       <Project>{645768be-97c8-4de4-9100-111bd2808b35}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
