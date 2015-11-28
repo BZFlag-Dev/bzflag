@@ -6,8 +6,8 @@ BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
 capture the Flag game.  At its heart, the game is a 3D first person
 tank simulation where opposing teams battle for dominance.  The game
 was originally written for SGI computers running Irix, but now runs
-and is actively maintained on Windows, Linux, Mac OS X, BSD, Solaris,
-and other platforms.  The game is distributed under the LGPL license.
+and is actively maintained on Windows, Linux, Mac OS X, and other
+platforms.  The game is distributed under the LGPL license.
 
 This is the BZFlag README file.  This file includes introductory build
 instructions, user community interaction references, information for
@@ -30,7 +30,7 @@ Table of Contents
     Bug Reports and Support
     Providing Contributions
     Source Tree Organization
-    Frequently Asked Questions
+    Public Internet Servers and the "list server"
     Notes on "CHEAT" servers and network abuse
     Project History and Contributions
     Contact
@@ -44,18 +44,18 @@ BZFlag Github Site:  https://github.com/BZFlag-Dev/bzflag
 
 The main BZFlag website provides access to most all of the resources
 available for the game.  The binary and source distributions of BZFlag
-are, however, provided on the SourceForge project site.  Compiled
-versions are distributed as installable packages, disk images, and
-more, with details varying depending on the platform.  Source code
-distributions are provided and archived in various formats as well.
-See the project site for the download links.
+are, however, provided on the GitHub project site.  Compiled versions
+are distributed as installable packages, disk images, and more, with
+details varying depending on the platform.  Source code distributions
+are provided and archived in various formats as well. See the project
+site for the download links.
 
 BZFlag is also available directly from GitHub.  To obtain BZFlag from
 git, a bit more familiarity with software development is expected.
 If you're familiar enough, anonymous GIT access is provided from the
 repository:
 
-     https://github.com/BZFlag-Dev/bzflag.git
+  https://github.com/BZFlag-Dev/bzflag.git
 
 
 Compiling and Installation
@@ -65,10 +65,10 @@ To compile a playable BZFlag, the following steps should get you up
 and running quickly if everything external to BZFlag is properly
 installed:
 
-    ./autogen.sh
-    ./configure
-    make
-    ./src/bzflag/bzflag
+  ./autogen.sh
+  ./configure
+  make
+  ./src/bzflag/bzflag
 
 If configure detected everything it needed to build the BZFlag client,
 after make the client will be sitting in src/bzflag as 'bzflag'.  The
@@ -89,7 +89,7 @@ BZFlag that already has a ./configure script in it, such as from a
 source distribution tarball.  To generate the configure script, you
 need to run the provided autogen.sh script:
 
-  % sh autogen.sh
+  ./autogen.sh
 
 The script will report whether sufficient versions of the GNU Build
 System tools (i.e. autoconf, automake, and libtool) that were detected
@@ -103,13 +103,13 @@ your tools are recent.
 If the previous step was successful you now have a script for
 configuring BZFlag.  This command:
 
-  % ./configure --help
+  ./configure --help
 
 will list the variety of configuration options.  The script adapts
 well to various system configurations, so it may be enough to simply
 run it as:
 
-  % ./configure
+  ./configure
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -144,14 +144,14 @@ the client will be built or not.  Once configure has been run, you may
 compile by simply running 'make'.  If you have GNU Make and are on a
 multiprocessor system, you can build in parallel with the -j option:
 
-  % make -j4
+  make -j4
 
 If compilation was successful, the client will be in src/bzflag and
 the server will be in src/bzfs as 'bzflag' and 'bzfs' respectively.
 You can run the client or the server directly from those locations
 with or without installing:
 
-  % src/bzflag/bzflag
+  src/bzflag/bzflag
 
 BZFlag looks for data files in a path defined during compile, in
 ./data/ , or in the previously specified data path only.  As part of
@@ -161,14 +161,14 @@ directory you need to tell bzflag where to find these files if there
 is not a 'data' directory in your current directory.  This can be done
 with a symbolic link:
 
-  % ln -s ./path/to/bzflag/data
+  ln -s ./path/to/bzflag/data
 
 After testing you can install BZFlag by running 'make install' with
 sufficient system installation privileges.  Use 'sudo', 'su', or
 similar methods to elevate your privileges when installing BZFlag
 system-wide:
 
-  % sudo make install
+  sudo make install
 
 You should now have BZFlag in the system directory ready to run.
 
@@ -176,7 +176,7 @@ If you do not have admin privileges on your platform, you can install
 files in a directory that you own; for this to work, you have to
 append to the configure command the prefix option:
 
-  % ./configure --prefix=YourHomeDirectoryHere
+  ./configure --prefix=YourHomeDirectoryHere
 
 You will then be able to perform a "make install" without needing to
 elevate your privileges, and all bzflag executable files will be
@@ -185,20 +185,11 @@ installed in the subdir bin of the specified path.
 For additional information on installing, see INSTALL file.
 
 Again, some platforms may be different.  See the README file
-appropriate to your system for more information:
-
-  Platform			README file
-  --------			-----------
-  UNIX, Linux			README
-  IRIX				README.IRIX
-  Solaris			README.SOLARIS
-  Mac OS X			README.MacOSX
-  Windows XP and up		README.WINDOWS, README.MINGW32
-
+appropriate to your system for more information.
 
 You can also build an installable package using:
 
-  % make package
+  make package
 
 The package will be placed in ./dist; the exact form of the package
 depends on the platform.
@@ -272,10 +263,9 @@ tracking system at:
 https://github.com/BZFlag-Dev/bzflag/issues
 
 If you require assistance with some issue, please visit the BZFlag
-IRC channel at:
-#bzflag at IRC.freenode.net
+IRC channel at #bzflag at irc.freenode.net
 
-Alternatively discussion forums are also available for resolving issues.
+Alternatively, discussion forums are also available for resolving issues.
 
 
 Providing Contributions
@@ -308,11 +298,10 @@ following files in the new 'bzflag' directory:
   autogen.sh	- build system preparation script
   configure.ac	- build system configuration script template
   data/		- data files (sounds, images, etc.)
-  doc/		- partial documentation in Doxygen format
   include/	- include headers for libraries
   man/		- man pages
   misc/		- miscellaneous goo
-  MSVC/	- stuff for building on the Windows platform
+  MSVC/		- stuff for building on the Windows platform
   package/	- stuff to build installable packages
   plugins/	- bzfs plugins
   src/		- bzflag, bzfs, etc. source code
@@ -329,7 +318,6 @@ following files in the new 'bzflag' directory:
     obstacle/	  - collision detection stuff
     ogl/	  - OpenGL utility classes
     platform/	  - platform dependent code
-      MacOSX/       - Mac OS X specific files
     scene/	  - high level rendering algorithms
   tools/	- various helper utilities
   Xcode	        - Mac OS X Xcode project and associated files
@@ -343,6 +331,7 @@ While this complicates locating a header file (it can be in one of two
 places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
+
 Public Internet Servers and the "list server"
 =============================================
 
@@ -354,6 +343,7 @@ that ties the server to a specific global user. This is done to
 provide contact information for players and project
 staff. Authentication keys are automatically generated at
 https://my.bzflag.org/listkeys/
+
 
 Notes on "CHEAT" servers and network abuse
 ==========================================
