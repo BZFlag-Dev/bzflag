@@ -8,7 +8,10 @@ must tell the configure script:
 
 ./configure --without-SDL
 
-For information on enabling SDL on windows builds, see README.WINDOWS
+BZFlag has experimental support for SDL 2. To enable building with SDL 2,
+use the configure script in the following manner:
+
+./configure --with-SDL2
 
 ---
 
