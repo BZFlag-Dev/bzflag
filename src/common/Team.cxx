@@ -162,7 +162,7 @@ void			Team::setColors(TeamColor team,
 
 void			Team::updateShotColors()
 {
-  for (int teamIndex = 0; teamIndex <= NumTeams; teamIndex++) {
+  for (int teamIndex = 0; teamIndex < NumTeams; teamIndex++) {
     for (int i = 0; i <= 2; i++) {
       shotColor[teamIndex][i] = addBrightness(tankColor[teamIndex][i]);
     }
