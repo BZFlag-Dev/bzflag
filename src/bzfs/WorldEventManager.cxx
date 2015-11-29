@@ -69,10 +69,12 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
   }
 
   tvEventList::iterator itr = std::find(eventList.begin(),eventList.end(),theEvent);
-  if (itr != eventList.end())
-	  eventList.erase(itr);
+  if (itr != eventList.end()) {
+    eventList.erase(itr);
+    return true;
+  }
 
-  return itr != eventList.end();
+  return false;
 }
 
 void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eventData )

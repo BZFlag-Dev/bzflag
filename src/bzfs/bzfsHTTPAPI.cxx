@@ -1770,15 +1770,19 @@ void KillHTTP()
   }
 
   HTTPPeers.clear();
-  if (con || tick)
-  {
+
+  if (tick) {
     worldEventManager.removeHandler(tick);
-    worldEventManager.removeHandler(con);
-    delete(con);
-    con = NULL;
     delete(tick);
     tick = NULL;
- }
+  }
+
+  if (con) {
+    worldEventManager.removeHandler(con);
+    delete(con);
+    con = NULL;    
+  }
+
   VDirs.clear();
   delete(indexHandler);
 }
