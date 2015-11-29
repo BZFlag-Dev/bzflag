@@ -34,7 +34,6 @@ WorldEventManager::~WorldEventManager()
 	delete (*eventItr++);
 
   eventList.clear();
-  HandlerMap.clear();
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
