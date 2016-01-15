@@ -177,6 +177,27 @@ bool SDLWindow::create(void) {
   // init opengl context
   OpenGLGState::initContext();
 
+  // workaround for SDL 2 bug on mac where toggling fullscreen will
+  // generate a resize event and mess up the window size/resolution
+  // (TODO: remove this if they ever fix it)
+  // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=3146
+#ifdef __APPLE__
+  std::vector<SDL_Event> eventStack;
+  SDL_Event thisEvent;
+
+  // pop off all the events except a resize event
+  while (SDL_PollEvent(&thisEvent))
+    if (thisEvent.type != SDL_WINDOWEVENT || thisEvent.window.event != SDL_WINDOWEVENT_RESIZED)
+      eventStack.push_back(thisEvent);
+
+  // push them back on in the same order
+  while(eventStack.size() > 0) {
+    SDL_PushEvent(&eventStack[0]);
+
+    eventStack.erase(eventStack.begin());
+  }
+#endif //__APPLE__
+
   return true;
 }
 

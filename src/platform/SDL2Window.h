@@ -22,6 +22,7 @@
 
 // System includes
 #include <string>
+#include <vector>
 #include <cstdint>
 
 // Local includes
