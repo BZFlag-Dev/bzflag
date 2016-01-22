@@ -2720,6 +2720,17 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
   return true;
 }
 
+//-------------------------------------------------------------------------
+
+BZF_API float bz_getWorldMaxHeight ( void )
+{
+  if (BZDB.isTrue("_disableHeightChecks"))
+  {
+    return -1;
+  }
+
+  return getMaxWorldHeight();
+}
 
 //-------------------------------------------------------------------------
 

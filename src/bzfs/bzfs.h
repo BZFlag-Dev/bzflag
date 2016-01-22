@@ -119,6 +119,7 @@ extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
+float getMaxWorldHeight ( void );
 
 bool allowTeams ( void );
 extern const std::string& getPublicOwner();
