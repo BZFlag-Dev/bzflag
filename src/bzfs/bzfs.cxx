@@ -3033,6 +3033,22 @@ void playerAlive(int playerIndex)
   }
 }
 
+// TODO: In 2.6, we should just handle the kills fully from the server
+void cleanupGameOver() {
+  double spawnDelay = (double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
+  for (int i = 0; i < curMaxPlayers; i++) {
+    GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+    if (p != NULL && p->player.getTeam() != ObserverTeam) {
+      if (p->player.isAlive()) {
+	p->player.setDead();
+	p->player.setSpawnDelay(spawnDelay);
+      }
+      zapFlagByPlayer(i);
+      p->player.setRestartOnBase(true);
+    }
+  }
+}
+
 void checkTeamScore(int playerIndex, int teamIndex)
 {
   if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex))) return;
@@ -3041,6 +3057,9 @@ void checkTeamScore(int playerIndex, int teamIndex)
     buf = nboPackUByte(bufStart, playerIndex);
     buf = nboPackUShort(buf, uint16_t(teamIndex));
     broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+
+    cleanupGameOver();
+
     gameOver = true;
 	if (clOptions->oneGameOnly) {
 	  done = true;
@@ -3208,6 +3227,9 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
       buf = nboPackUByte(bufStart, killerIndex);
       buf = nboPackUShort(buf, uint16_t(NoTeam));
       broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+
+      cleanupGameOver();
+
       gameOver = true;
       if (clOptions->oneGameOnly) {
 	done = true;
@@ -6672,6 +6694,8 @@ int main(int argc, char **argv)
 	gameData.eventType = bz_eGameEndEvent;
 	gameData.duration = clOptions->timeLimit;
 	worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
+
+	cleanupGameOver();
       }
 
       if (countdownActive && clOptions->countdownPaused && !countdownPauseStart)

@@ -174,6 +174,7 @@ void makeWalls ( void );
 
 PlayerId getNewPlayerID();
 void checkGameOn();
+void cleanupGameOver();
 void checkTeamScore(int playerIndex, int teamIndex);
 void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
 
