@@ -19,6 +19,7 @@
 #include <math.h>
 #include "StateDatabase.h"
 #include "TextureManager.h"
+#include "CommandsStandard.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -605,6 +606,7 @@ bool			WinWindow::deactivate()
 void			WinWindow::onDestroy()
 {
   inDestroy = true;
+  CommandsStandard::quit();
 }
 
 BYTE			WinWindow::getIntensityValue(float i) const
