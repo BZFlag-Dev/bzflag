@@ -1,6 +1,18 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.4.4-RC3
+------------
+
+* Corretly exit the game when closing from the Windows 10 taskbar
+		- Scott Wichser
+* Update the player status when a gameover event occurs - Scott Wichser
+* Fix fullscreen window toggling on Mac OS X - Joshua Bodine
+* Fix crash on exit with Windows bzfs - Scott Wichser
+* Fix crash on exit with Mac OS X bzfs - Joshua Bodine
+* Fix buffer overrun that caused a crash on exit and other strange behavior on
+		Windows and Linux - Scott Wichser
+
 BZFlag 2.4.4-RC2
 ------------
 
