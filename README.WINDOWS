@@ -2,35 +2,39 @@ README for Windows (32- and 64-bit) platforms
 ---------------------------------------------
 
 **Compilers**
-BZFlag uses Microsoft Visual C++ for its prebuilt binary
-releases and project files are provided for it. The current
-compiler used is Visual C++ 2010 (VC10). Both the full
-and express versions will build just fine.
+BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
+files are provided for it. The current compiler used is Visual C++ 2010 (VC10).
+Both the full and express versions will build just fine. There may be some
+issues building the bzflag-dependencies package with newer compilers at this
+time. We will work to correct that in future versions of the game/dependencies.
 
-Visual Studio 6.0, 7.1, 8.0 and 9.0 support has been discontinued,
-and no projects are provided for these versions.
+It's a bit harder to find the express version these days since they tended to
+only keep the one or two more recent versions on their site, and they've since
+released a full-featured community version of 2015. You can currently still
+download Visual Studio 2010 Express Edition from here:
+  http://go.microsoft.com/?linkid=9709969
 
-It is also possible to build on Windows using MinGW/MSYS or
-Cygwin, both of which use a unix-style autotools build system;
-for details, see README.MINGW32 (for MinGW) or the main
-README (for Cygwin).
-
-The most common way to build on windows is to use Visual C++.
-The freely available VC10 EE edition is well suited to users
-who wish to compile the client for personal use. It can be found at
-http://www.microsoft.com/express/download/. For more info
-on compiling with minGW please see the README.MINGW32 that was
-included in this source package. The rest of this document will
-refer to the build process using Visual C++ 10.0 (2010).
+Because of an issue with the DirectX SDK installer, you may be unable to finish
+the installation. This is because it tries to install an older version of the
+Visual C++ 2010 runtime, which fails if a newer version is already installed.
+This causes the DirectX SDK install to fail and rollback all changes. So, you
+can either try uninstalling all 2010 versions of the runtime and then reinstall
+the latest version of them afterwards, or you can just start with a clean
+system and follow these install steps:
+1) Install DirectX SDK
+2) Install Visual Studio 2010
+3) If it did not include Service Pack 1, install it:
+  Full ISO: http://go.microsoft.com/fwlink/?LinkId=210710
+  Web Installer: https://www.microsoft.com/en-us/download/details.aspx?id=23691
+4) Enable updates for other Microsoft products (Microsoft Update) and install
+   any available important updates
 
 **Targets**
-There are a total of 4 build targets in the VC projects.
-Release and Debug targets are configured so that they will
-"build out of the box" for the majority of users. Both targets
-are provided for both 32 and 64 bit binaries.
-
-Please note that there is no real performance advantage in having
-a 64 bit BZFlag client, the game does not use that much ram.
+There are a total of 4 build targets in the VC projects. There are targets
+for Release and Debug, and each has a 32-bit and 64-bit version. At this time,
+only 32-bit is supported. Our dependencies don't build correctly on 64-bit with
+our current script. Also, there's no real performance advantage in having a
+64-bit BZFlag client as the game doesn't use much RAM.
 
 **Required Libraries**
 
