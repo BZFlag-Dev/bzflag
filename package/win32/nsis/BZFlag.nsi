@@ -120,6 +120,7 @@
   !endif
 
   !insertmacro MUI_PAGE_WELCOME
+  !define MUI_LICENSEPAGE_TEXT_TOP "Known Issues and License"
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
