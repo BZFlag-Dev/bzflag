@@ -289,6 +289,8 @@ void updateConfigFile(void)
     // Reset the list server URL so that people who have switched to another
     // URL gets reset back to the new HTTPS URL
     BZDB.set("list", BZDB.getDefault("list"));
+  
+  case 5:
     break;
 
   default: // hm, we don't know about this one...

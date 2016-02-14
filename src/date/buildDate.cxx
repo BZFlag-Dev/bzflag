@@ -37,7 +37,6 @@
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
-//  Xcode/config.h
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION	2
 #endif
@@ -52,7 +51,7 @@
 
 // DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"RC3"
+#  define BZ_BUILD_TYPE		"MAINT"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993-2016 Tim Riker";

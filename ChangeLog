@@ -1,7 +1,7 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.4-RC3
+BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
 ------------
 
 * Correctly exit the game when closing from the Windows 10 taskbar
@@ -12,10 +12,6 @@ BZFlag 2.4.4-RC3
 * Fix crash on exit with Mac OS X bzfs - Joshua Bodine
 * Fix buffer overrun that caused a crash on exit and other strange behavior on
 		Windows and Linux - Scott Wichser
-
-BZFlag 2.4.4-RC2
-------------
-
 * On Windows, reload textures after initializing the context - Scott Wichser
 * Add a menu to edit server list quick filters - Scott Wichser
 * Tell Windows that we are DPI aware - Scott Wichser
@@ -29,11 +25,6 @@ BZFlag 2.4.4-RC2
 * Server list filter: remove "cached" boolean filter, rename "flags" to "ffa",
 		"teams" to "ctf", and add "offa" - Scott Wichser
 * Add server list filter help pages - Scott Wichser
-
-
-BZFlag 2.4.4-RC1
-------------
-
 * Add config option to control shot brightness - Konstantinos Kanavouras
 * Don't show a running countdown to a player who joins a paused game
 		- Konstantinos Kanavouras
