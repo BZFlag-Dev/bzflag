@@ -1,37 +1,37 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
-------------
+BZFlag 2.4.4  "Be My Valentank" (2015-02-14)
+--------------------------------------------
 
 * Correctly exit the game when closing from the Windows 10 taskbar
-		- Scott Wichser
+    - Scott Wichser
 * Update the player status when a gameover event occurs - Scott Wichser
 * Fix fullscreen window toggling on Mac OS X - Joshua Bodine
 * Fix crash on exit with Windows bzfs - Scott Wichser
 * Fix crash on exit with Mac OS X bzfs - Joshua Bodine
 * Fix buffer overrun that caused a crash on exit and other strange behavior on
-		Windows and Linux - Scott Wichser
+    Windows and Linux - Scott Wichser
 * On Windows, reload textures after initializing the context - Scott Wichser
 * Add a menu to edit server list quick filters - Scott Wichser
 * Tell Windows that we are DPI aware - Scott Wichser
 * Time functions in the bzfs API use doubles instead of int - Vladimir Jimenez
 * Fix issue on Windows that allowed mouse to get stuck off-screen when switching
-		to windowed mode - Scott Wichser
+    to windowed mode - Scott Wichser
 * Replace NaN with zero in nboUnpackFloat() - Jeff Makey
 * Add a bz_ChatEventData_V2 that contains message type - Konstantinos Kanavouras
 * Show recipient/sender for private action messages in BZAadmin
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * Server list filter: remove "cached" boolean filter, rename "flags" to "ffa",
-		"teams" to "ctf", and add "offa" - Scott Wichser
+    "teams" to "ctf", and add "offa" - Scott Wichser
 * Add server list filter help pages - Scott Wichser
 * Add config option to control shot brightness - Konstantinos Kanavouras
 * Don't show a running countdown to a player who joins a paused game
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * Allow RGB values in ANSI color codes to allow custom colors
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * Vastly improved support for changing tank and radar colors
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * Fix rendering of TK warning symbol - Joshua Bodine
 * Remove third-party libraries from our source tree - Scott Wichser
 * Fix search field losing focus while loading server list - Joshua Bodine
@@ -42,11 +42,11 @@ BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
 * Joystick hat fixes - Konstantinos Kanavouras
 * Update shot stats live - Konstantinos Kanavouras
 * Track shot stats for all flag types, even custom flags
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * Filter messages before MsgEnter - Jeff Myers
 * Require a player have spawned to be added to rejoin wait list - Jeff Makey
 * Validate the player ID in MsgPlayerUpdate and MsgPlayerUpdateShort
-		- Scott Wichser
+    - Scott Wichser
 * Fix usage of privateMessage permission - Konstantinos Kanavouras
 * Properly prevent multiple MsgEnter messages - Jeff Myers
 * Refactor and extend the shot API - Jeff Myers
@@ -56,28 +56,28 @@ BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
 * Limit half-joined player connection duration - Scott Wichser
 * Add various checks for invalid player actions - Jeff Makey
 * Show coordinates of target tank instead of observer camera location
-		- Jeff Makey
+    - Jeff Makey
 * Allow shot API event to cancel broadcasting shot to other clients - Jeff Myers
 * Store a list of how many times each player was killed by other players and
-		expose it to the API - Jeff Myers
+    expose it to the API - Jeff Myers
 * Allow plugins delay adding players to allow for remote data lookups
-		- Jeff Myers
+    - Jeff Myers
 * Add API event triggered when authentication is complete - Jeff Myers
 * Added bz_GetPlayerMottoData_V2 - Jeff Myers
 * Relicense the SAMPLE_PLUGIN to BSD 2 clause license - Jeff Myers, Tim Riker
 * Update joystick axis list when changing joystick device
-		- Konstantinos Kanavouras
+    - Konstantinos Kanavouras
 * List server communication now uses HTTPS - Scott Wichser
 * Added bz_setPlayerSpawnAtBase and bz_getPlayerSpawnAtBase API functions
-		- Vladimir Jimenez
+    - Vladimir Jimenez
 * Added configure --enable-custom-plugins and --enable-custom-plugins-file
-		options - Jeff Makey
+    options - Jeff Makey
 * Introduce bz_AllowSpawnData_V2 - Vladimir Jimenez
 * Added bz_setPlayerSpawnable and bz_isPlayerSpawnable API functions
-		- Vladimir Jimenez
+    - Vladimir Jimenez
 * Removed GLEW as a dependency - Joshua Bodine, Scott Wichser
 * Made text at top of HUD use sans-serif font and removed serif font
-		- Joshua Bodine
+    - Joshua Bodine
 * Player scores are now factors in auto team assignment - Joshua Bodine
 * New font rendering tool and new font textures up to 64pt - Joshua Bodine
 * Added bz_getPlayerBySlotOrCallsign API function - Vladimir Jimenez
@@ -86,7 +86,7 @@ BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
 * CIDR ban support - Scott Wichser
 * Radar size and panel size are now set individually  - Joshua Bodine
 * Added bz_incrementTeamLosses and bz_incrementTeamWins API functions
-		- Vladimir Jimenez
+    - Vladimir Jimenez
 * Vertical sync support under SDL - Joshua Bodine, Jeff Makey
 * SDL 2 support - Alfredo Tupone, Joshua Bodine
 * Do not flash GAME OVER for observers - Jeff Makey
@@ -108,9 +108,9 @@ BZFlag 2.4.4 "Be My Valentank" (2015-02-14)
 * Allow API to overload built-in slash commands - Vladimir Jimenez
 * Added "report" permission - Vladimir Jimenez
 * Added bz_eGameResumeEvent and bz_eGamePauseEvent to the API
-		- Vladimir Jimenez
+    - Vladimir Jimenez
 * Don't allow muted players with ADMINMESSAGESEND to send PMs to hidden admins
-		- Konstantinos Kanavouras, Vladimir Jimenez
+    - Konstantinos Kanavouras, Vladimir Jimenez
 * Add [Reverse Score] scoreboard sort option - Konstantinos Kanavouras
 * Track number of self-kills on the scoreboard - Konstantinos Kanavouras
 * Added menu option to pause chat window scrolling - Konstantinos Kanavouras
@@ -813,7 +813,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Configuration files and cache is stored in ~/.bzf/ on *IX - Lars Luthman
 * Added team ID to shots for TK reasons (1.9.2) - Jeff Myers
 * Changed version numbers to be xx.xx.xx and display the build OS & Date
-	- Jeff Myers & others for auto tools
+    - Jeff Myers & others for auto tools
 * Added voting system with /poll, /vote, and /veto commands - Sean Morrison
 * Added bzadmin - Lars Luthman
 * Munitions now bounce off buildings/ground in z direction - Dave Brosius
@@ -827,7 +827,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * MsgPlayerUpdate now has order, reject ooo packets - Dave Brosius
 * Removed old UDP queueing code and headers - Micah Dowty
 * Convert closed FlagIds to flexible FlagType's
-	- Micah Dowty, Dave Brosius, Tim Riker
+    - Micah Dowty, Dave Brosius, Tim Riker
 * Add back PNG support from 1.8 - Dave Brosius, Sean Morrison
 * Add back BZDB from 1.8 - David Trowbridge, Dave Brosius
 * Seer, Masquerade Flags - Dave Brosius
@@ -885,8 +885,7 @@ BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
 * remove non-printable characters in callsign in server - Frank Thilo
 * +f sw{5} syntax to add a bunch of flags - Dave Brosius
 * tanks which jump too high get kicked - Dave Brosius
-* server drops bogus shots (anti cheating)
-	- Tim Riker, Dave Brosius, Frank Thilo
+* server drops bogus shots (anti cheating) - Tim Riker, Dave Brosius, Frank Thilo
 * i18n support in client - Dave Brosius, Isak Styf
 * Optional config file interface for bzfs settings - Dave Brosius
 * inline editing of text fields (<- ->) - Dave Brosius, Frank Thilo
