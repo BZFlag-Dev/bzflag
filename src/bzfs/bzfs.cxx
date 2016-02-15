@@ -1205,6 +1205,35 @@ bool saveWorldCache( const char* fileName )
   return true;
 }
 
+float getMaxWorldHeight( void )
+{
+  float heightFudge = 1.10f; /* 10% */
+  float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
+  float normalGravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+
+  if ((wingsGravity < 0.0f) && (normalGravity < 0.0f))
+  {
+    float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
+    wingsMaxHeight *= wingsMaxHeight;
+    wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
+    wingsMaxHeight /= (-wingsGravity * 0.5f);
+
+    float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
+    normalMaxHeight *= normalMaxHeight;
+    normalMaxHeight /= (-normalGravity * 0.5f);
+
+    float maxHeight = (wingsMaxHeight > normalMaxHeight) ? wingsMaxHeight : normalMaxHeight;
+
+    // final adjustments
+    maxHeight *= heightFudge;
+    maxHeight += maxWorldHeight;
+
+    return maxHeight;
+  }
+
+  return -1;
+}
+
 TeamColor whoseBase(float x, float y, float z)
 {
   if (clOptions->gameType!= ClassicCTF)
@@ -4889,43 +4918,14 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
       if (now - lastWorldParmChange > 10.0f) {
 
-	// see if the player is too high
-	if (!disableHeightChecks) {
+	float maxHeight = getMaxWorldHeight();
 
-	  static const float heightFudge = 1.10f; /* 10% */
-
-	  float wingsGravity = BZDB.eval(StateDatabase::BZDB_WINGSGRAVITY);
-	  float normalGravity = BZDBCache::gravity;
-	  if ((wingsGravity < 0.0f) && (normalGravity < 0.0f)) {
-
-	    float wingsMaxHeight = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-	    wingsMaxHeight *= wingsMaxHeight;
-	    wingsMaxHeight *= (1 + BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT));
-	    wingsMaxHeight /= (-wingsGravity * 0.5f);
-
-	    float normalMaxHeight = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-	    normalMaxHeight *= normalMaxHeight;
-	    normalMaxHeight /= (-normalGravity * 0.5f);
-
-	    float maxHeight;
-	    if (wingsMaxHeight > normalMaxHeight) {
-	      maxHeight = wingsMaxHeight;
-	    } else {
-	      maxHeight = normalMaxHeight;
-	    }
-
-	    // final adjustments
-	    maxHeight *= heightFudge;
-	    maxHeight += maxWorldHeight;
-
-	    if (state.pos[2] > maxHeight) {
-	      logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
-		     playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
-	      sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
-	      removePlayer(t, "too high");
-	      break;
-	    }
-	  }
+	if (!disableHeightChecks && state.pos[2] > maxHeight) {
+	  logDebugMessage(1,"Kicking Player %s [%d] jumped too high [max: %f height: %f]\n",
+		 playerData->player.getCallSign(), t, maxHeight, state.pos[2]);
+	  sendMessage(ServerPlayer, t, "Autokick: Player location was too high.");
+	  removePlayer(t, "too high");
+	  break;
 	}
 
 	bool InBounds = true;
