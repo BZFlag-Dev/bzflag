@@ -20,6 +20,7 @@
 #endif
 #include <string>
 #include <vector>
+#include <cstdlib>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -178,36 +179,47 @@ static std::string cmdMouseGrab(const std::string&,
 static std::string cmdToggleFS(const std::string&,
 			       const CommandManager::ArgList& args, bool*);
 
+/** rotate to the next radar zoom level
+ */
+static std::string cmdRotateRadar(const std::string&,
+				  const CommandManager::ArgList& args, bool*);
+
+/** rotate to the next panel tab
+ */
+static std::string cmdRotatePanel(const std::string&,
+				  const CommandManager::ArgList& args, bool*);
+
 
 const struct CommandListItem commandList[] = {
-  { "fire",	&cmdFire,	"fire:  fire a shot" },
-  { "jump",	&cmdJump,	"jump:  make player jump" },
-  { "drop",	&cmdDrop,	"drop:  drop the current flag" },
-  { "identify",	&cmdIdentify,	"identify:  identify/lock-on-to player in view" },
-  { "restart",	&cmdRestart,	"restart:  restart playing" },
-  { "destruct", &cmdDestruct,	"destruct:  self destruct" },
-  { "pause",	&cmdPause,	"pause:  pause/resume" },
-  { "send",	&cmdSend,	"send {all|team|nemesis|recipient|admin}:  start composing a message" },
-  { "screenshot", &cmdScreenshot, "screenshot:  take a screenshot" },
-  { "time",	&cmdTime,	"time {forward|backward}:  adjust the current time" },
-  { "roam",	&cmdRoam,	"roam {zoom|cycle} <args>:  roam around" },
-  { "silence",	&cmdSilence,	"silence:  silence/unsilence a player" },
+  { "fire",		&cmdFire,		"fire:  fire a shot" },
+  { "jump",		&cmdJump,		"jump:  make player jump" },
+  { "drop",		&cmdDrop,		"drop:  drop the current flag" },
+  { "identify",		&cmdIdentify,		"identify:  identify/lock-on-to player in view" },
+  { "restart",		&cmdRestart,		"restart:  restart playing" },
+  { "destruct", 	&cmdDestruct,		"destruct:  self destruct" },
+  { "pause",		&cmdPause,		"pause:  pause/resume" },
+  { "send",		&cmdSend,		"send {all|team|nemesis|recipient|admin}:  start composing a message" },
+  { "screenshot",	&cmdScreenshot, 	"screenshot:  take a screenshot" },
+  { "time",		&cmdTime,		"time {forward|backward}:  adjust the current time" },
+  { "roam",		&cmdRoam,		"roam {zoom|cycle} <args>:  roam around" },
+  { "silence",		&cmdSilence,		"silence:  silence/unsilence a player" },
   { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
-  { "hunt",	&cmdHunt,	"hunt:  hunt a specific player" },
-  { "addhunt",	&cmdAddHunt,	"addhunt:  add/modify hunted player(s)" },
-  { "iconify",  &cmdIconify,	"iconify: iconify & pause bzflag" },
-  { "mousebox", &cmdMouseBox, "mousebox <size>:  change the mousebox size"},
-  { "mousegrab", &cmdMouseGrab, "mousegrab: toggle exclusive mouse mode" },
-  { "fullscreen", &cmdToggleFS, "fullscreen: toggle fullscreen mode" },
-  { "autopilot",&cmdAutoPilot,	"autopilot:  set/unset autopilot bot code" },
-  { "radarZoom", &cmdRadarZoom, "radarZoom {in/out}: change maxRadar range"},
-  { "viewZoom",  &cmdViewZoom,  "viewZoom {in/out/toggle}: change view angle"},
-  { "messagepanel", &cmdMessagePanel,
-    "messagepanel {all|chat|server|misc}:  set message tab" },
-  { "toggleRadar", &cmdToggleRadar, "toggleRadar:  toggle radar visibility"},
-  { "toggleConsole", &cmdToggleConsole, "toggleConsole:  toggle console visibility"},
-  { "toggleFlags", &cmdToggleFlags, "toggleFlags {main|radar}:  turn off/on field radar flags"}
+  { "hunt",		&cmdHunt,		"hunt:  hunt a specific player" },
+  { "addhunt",		&cmdAddHunt,		"addhunt:  add/modify hunted player(s)" },
+  { "iconify",  	&cmdIconify,		"iconify: iconify & pause bzflag" },
+  { "mousebox",		&cmdMouseBox,		"mousebox <size>:  change the mousebox size"},
+  { "mousegrab",	&cmdMouseGrab,		"mousegrab: toggle exclusive mouse mode" },
+  { "fullscreen",	&cmdToggleFS,		"fullscreen: toggle fullscreen mode" },
+  { "autopilot",	&cmdAutoPilot,		"autopilot:  set/unset autopilot bot code" },
+  { "radarZoom", 	&cmdRadarZoom, 		"radarZoom {in/out}: change maxRadar range"},
+  { "viewZoom",		&cmdViewZoom,  		"viewZoom {in/out/toggle}: change view angle" },
+  { "messagepanel",	&cmdMessagePanel,	"messagepanel {all|chat|server|misc}:  set message tab" },
+  { "toggleRadar",	&cmdToggleRadar,	"toggleRadar:  toggle radar visibility" },
+  { "toggleConsole",	&cmdToggleConsole,	"toggleConsole:  toggle console visibility" },
+  { "toggleFlags",	&cmdToggleFlags,	"toggleFlags {main|radar}:  turn off/on field radar flags" },
+  { "rotateRadar",	&cmdRotateRadar,	"rotateRadar {level1 [level2 ...] [off]}:  rotate to the next radar zoom level" },
+  { "rotatePanel",	&cmdRotatePanel,	"rotatePanel {left[_off]|right[_off]}:  rotate to the previous or next message panel tab" }
 };
 
 
@@ -973,6 +985,100 @@ static std::string cmdAddHunt(const std::string&,
   if (args.size() != 0)
     return "usage: addhunt";
    hud->getScoreboard()->huntKeyEvent (true);
+  return std::string();
+}
+
+static std::string cmdRotateRadar(const std::string&,
+				  const CommandManager::ArgList& args, bool*)
+{
+  const std::string usageText = "usage: rotateRadar {level1 [level2 ...] [off]}:  rotate to the next radar zoom level";
+
+  if (args.size() == 0)
+    return usageText;
+
+  std::vector<float> radarLevels;
+
+  for (size_t i = 0; i < args.size(); ++i)
+    if (args[i] == "off")
+      radarLevels.push_back(0.0f);
+    else if (atof(args[i].c_str()) > 0.0f)
+      radarLevels.push_back(atof(args[i].c_str()));
+    else
+      return usageText;
+
+  if (radarLevels.size() == 0)
+    return usageText;
+
+  if(radarLevels.size() == 1) {
+    // only one specified... just set it
+    BZDB.set("displayRadar", radarLevels[0] > 0.0f ? "1" : "0");
+
+    if (radarLevels[0] > 0.0f)
+      BZDB.setFloat("displayRadarRange", radarLevels[0]);
+
+    return std::string();
+  }
+
+  static size_t radarLevelIndex = radarLevels.size() - 1;
+
+  // if it's off and the current level is some form of on, turn it back on and set it
+  if (BZDB.get("displayRadar") == "0" && radarLevels[radarLevelIndex] > 0.0f) {
+    BZDB.set("displayRadar", "1");
+    BZDB.setFloat("displayRadarRange", radarLevels[radarLevelIndex]);
+
+    return std::string();
+  }
+
+  ++radarLevelIndex;
+  if (radarLevelIndex >= radarLevels.size())
+    radarLevelIndex = 0;
+
+  if (radarLevels[radarLevelIndex] == 0.0f) {
+    BZDB.set("displayRadar", "0");
+  } else {
+    BZDB.setFloat("displayRadarRange", radarLevels[radarLevelIndex]);
+    BZDB.set("displayRadar", "1");
+  }
+
+  return std::string();
+}
+
+static std::string cmdRotatePanel(const std::string&,
+				  const CommandManager::ArgList& args, bool*)
+{
+  if (args.size() != 1)
+    return "usage: rotatePanel {left[_off]|right[_off]}\n";
+
+  bool forward = args[0] == "right" || args[0] == "right_off";
+  bool includeOff = args[0] == "left_off" || args[0] == "right_off";
+
+  if (! BZDB.isTrue("displayConsole")) {
+    if (forward && includeOff && controlPanel->getMessagesMode() == 3)
+      // reversed directions... put it back at beginning
+      controlPanel->setMessagesMode(0);
+    else if (! forward && includeOff && controlPanel->getMessagesMode() == 0)
+      // reversed directions... put it back at end
+      controlPanel->setMessagesMode(3);
+
+    BZDB.setBool("displayConsole", true);
+  } else {
+    if (controlPanel->getMessagesMode() == 0) {
+      controlPanel->setMessagesMode(forward ? 1 : 3);
+
+      if (! forward && includeOff)
+	BZDB.setBool("displayConsole", false);
+    } else if (controlPanel->getMessagesMode() == 1) {
+      controlPanel->setMessagesMode(forward ? 2 : 0);
+    } else if (controlPanel->getMessagesMode() == 2) {
+      controlPanel->setMessagesMode(forward ? 3 : 1);
+    } else {
+      controlPanel->setMessagesMode(forward ? 0 : 2);
+
+      if (forward && includeOff)
+	BZDB.setBool("displayConsole", false);
+    }
+  }
+
   return std::string();
 }
 
