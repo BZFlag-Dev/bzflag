@@ -85,8 +85,8 @@ ActionBinding::ActionBinding() {
   wayToBindActions.insert(std::make_pair(std::string("addhunt"), press));
   wayToBindActions.insert(std::make_pair(std::string("restart"), release));
   wayToBindActions.insert(std::make_pair(std::string("autopilot"), press));
-  wayToBindActions.insert(std::make_pair(std::string("rotateRadar"), press));
-  wayToBindActions.insert(std::make_pair(std::string("rotatePanel"), press));
+  wayToBindActions.insert(std::make_pair(std::string("cycleRadar"), press));
+  wayToBindActions.insert(std::make_pair(std::string("cyclePanel"), press));
 
   wayToBindActions.insert(std::make_pair(std::string("messagepanel all"), press));
   wayToBindActions.insert(std::make_pair(std::string("messagepanel chat"), press));

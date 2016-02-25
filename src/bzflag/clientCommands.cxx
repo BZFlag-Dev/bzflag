@@ -179,14 +179,14 @@ static std::string cmdMouseGrab(const std::string&,
 static std::string cmdToggleFS(const std::string&,
 			       const CommandManager::ArgList& args, bool*);
 
-/** rotate to the next radar zoom level
+/** cycle to the next radar zoom level
  */
-static std::string cmdRotateRadar(const std::string&,
+static std::string cmdCycleRadar(const std::string&,
 				  const CommandManager::ArgList& args, bool*);
 
-/** rotate to the next panel tab
+/** cycle to the next panel tab
  */
-static std::string cmdRotatePanel(const std::string&,
+static std::string cmdCyclePanel(const std::string&,
 				  const CommandManager::ArgList& args, bool*);
 
 
@@ -218,8 +218,8 @@ const struct CommandListItem commandList[] = {
   { "toggleRadar",	&cmdToggleRadar,	"toggleRadar:  toggle radar visibility" },
   { "toggleConsole",	&cmdToggleConsole,	"toggleConsole:  toggle console visibility" },
   { "toggleFlags",	&cmdToggleFlags,	"toggleFlags {main|radar}:  turn off/on field radar flags" },
-  { "rotateRadar",	&cmdRotateRadar,	"rotateRadar {level1 [level2 ...] [off]}:  rotate to the next radar zoom level" },
-  { "rotatePanel",	&cmdRotatePanel,	"rotatePanel {left[_off]|right[_off]}:  rotate to the previous or next message panel tab" }
+  { "cycleRadar",	&cmdCycleRadar,		"cycleRadar {level1 [level2 ...] [off]}:  cycle to the next radar zoom level" },
+  { "cyclePanel",	&cmdCyclePanel,		"cyclePanel {left[_off]|right[_off]}:  cycle to the previous or next message panel tab" }
 };
 
 
@@ -988,10 +988,10 @@ static std::string cmdAddHunt(const std::string&,
   return std::string();
 }
 
-static std::string cmdRotateRadar(const std::string&,
+static std::string cmdCycleRadar(const std::string&,
 				  const CommandManager::ArgList& args, bool*)
 {
-  const std::string usageText = "usage: rotateRadar {level1 [level2 ...] [off]}:  rotate to the next radar zoom level";
+  const std::string usageText = "usage: cycleRadar {level1 [level2 ...] [off]}:  cycle to the next radar zoom level";
 
   if (args.size() == 0)
     return usageText;
@@ -1043,11 +1043,11 @@ static std::string cmdRotateRadar(const std::string&,
   return std::string();
 }
 
-static std::string cmdRotatePanel(const std::string&,
+static std::string cmdCyclePanel(const std::string&,
 				  const CommandManager::ArgList& args, bool*)
 {
   if (args.size() != 1)
-    return "usage: rotatePanel {left[_off]|right[_off]}\n";
+    return "usage: cyclePanel {left[_off]|right[_off]}\n";
 
   bool forward = args[0] == "right" || args[0] == "right_off";
   bool includeOff = args[0] == "left_off" || args[0] == "right_off";
