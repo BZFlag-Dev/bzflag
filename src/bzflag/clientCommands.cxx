@@ -668,7 +668,7 @@ static std::string cmdSend(const std::string&,
   } else if (args[0] == "admin") {
     void* buf = messageMessage;
     buf = nboPackUByte(buf, AdminPlayers);
-    composePrompt = "Send to Admin : ";
+    composePrompt = "Send to Admin: ";
 
   } else {
     return "usage: send {all|team|nemesis|recipient|admin}";
