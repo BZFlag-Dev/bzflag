@@ -85,7 +85,7 @@ AC_CANONICAL_TARGET
 dnl Minimum version of automake required.  Should coincide with the
 dnl setting in the autogen.sh script.  Create the other archives
 dnl automatically when doing a make dist for convenience.
-AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
+AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2 subdir-objects])
 
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
@@ -1087,9 +1087,6 @@ AC_CONFIG_FILES([
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile
-	src/bzadmin/Makefile
-	src/bzflag/Makefile
-	src/bzfs/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/game/Makefile
@@ -1102,7 +1099,6 @@ AC_CONFIG_FILES([
 	src/ogl/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
-	tests/Makefile
 	tools/Makefile
 	tools/TextTool2/Makefile
 	tools/TextTool2/TextTool2.xcodeproj/Makefile
