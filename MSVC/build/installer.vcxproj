@@ -104,7 +104,7 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>"$(ProgramFiles)\nsis\makensis.exe" /DBUILD_64 "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi" 
+      <Command>"$(ProgramFiles)\nsis\makensis.exe" /DBUILD_64 "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi"
 
 </Command>
     </PostBuildEvent>
@@ -148,10 +148,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\flagStay\flagStay.vcxproj">
       <Project>{1ff80896-dd88-4992-8db1-7070924091bf}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\plugins\hiddenAdmin\hiddenAdmin.vcxproj">
-      <Project>{2eaf7655-ae86-4407-8262-43496581e5b2}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\HoldTheFlag\HoldTheFlag.vcxproj">

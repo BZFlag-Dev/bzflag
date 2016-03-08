@@ -1065,7 +1065,6 @@ AC_CONFIG_FILES([
 	plugins/fairCTF/Makefile
 	plugins/fastmap/Makefile
 	plugins/flagStay/Makefile
-	plugins/hiddenAdmin/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile

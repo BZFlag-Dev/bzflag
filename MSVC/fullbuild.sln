@@ -45,8 +45,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chathistory", "..\plugins\c
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "flagStay", "..\plugins\flagStay\flagStay.vcxproj", "{1FF80896-DD88-4992-8DB1-7070924091BF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "hiddenAdmin", "..\plugins\hiddenAdmin\hiddenAdmin.vcxproj", "{2EAF7655-AE86-4407-8262-43496581E5B2}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HoldTheFlag", "..\plugins\HoldTheFlag\HoldTheFlag.vcxproj", "{0D4F5307-9240-4880-A289-C30F112F99A1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "keepaway", "..\plugins\keepaway\keepaway.vcxproj", "{F493BA5D-252B-4825-8C15-36F75B4CE0AA}"

@@ -225,7 +225,6 @@
 		038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */; };
 		038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; };
 		038DA4F61BB64A5A0009F369 /* README.flagStay.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; };
-		038DA4F81BB64A6F0009F369 /* README.hiddenAdmin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */; };
 		038DA4FA1BB64A9E0009F369 /* README.HoldTheFlag.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; };
 		038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; };
 		038DA4FF1BB64BC30009F369 /* help_keepaway_rules.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */; };
@@ -270,7 +269,6 @@
 		038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; };
 		038DA5471BB6514B0009F369 /* flagStay.bzw in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
 		038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; };
-		038DA5491BB651530009F369 /* README.hiddenAdmin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */; };
 		038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; };
 		038DA54B1BB651640009F369 /* help_keepaway_admin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; };
 		038DA54C1BB651670009F369 /* help_keepaway_rules.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */; };
@@ -362,7 +360,6 @@
 		0394E80F167B1EF8007F4035 /* fairCTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6F4167B1024007F4035 /* fairCTF.cpp */; };
 		0394E81A167B1FAF007F4035 /* fastmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6FB167B1024007F4035 /* fastmap.cpp */; };
 		0394E825167B2052007F4035 /* flagStay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E702167B1025007F4035 /* flagStay.cpp */; };
-		0394E830167B20B8007F4035 /* hiddenAdmin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E709167B1025007F4035 /* hiddenAdmin.cpp */; };
 		0394E83B167B2180007F4035 /* HoldTheFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E710167B1025007F4035 /* HoldTheFlag.cpp */; };
 		0394E846167B2250007F4035 /* keepaway.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E717167B1025007F4035 /* keepaway.cpp */; };
 		0394E851167B22BA007F4035 /* killall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E720167B1025007F4035 /* killall.cpp */; };
@@ -398,7 +395,6 @@
 		0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* fairCTF.dylib */; };
 		0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* fastmap.dylib */; };
 		0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* flagstay.dylib */; };
-		0394E94F167B2D00007F4035 /* hiddenadmin.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E82A167B207E007F4035 /* hiddenadmin.dylib */; };
 		0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */; };
 		0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* keepaway.dylib */; };
 		0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E84B167B228D007F4035 /* killall.dylib */; };
@@ -650,13 +646,6 @@
 			remoteGlobalIDString = 0394E81E167B1FFD007F4035;
 			remoteInfo = flagstay;
 		};
-		0394E82E167B208A007F4035 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03BFC301166C637600836142 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0394E829167B207E007F4035;
-			remoteInfo = hiddenadmin;
-		};
 		0394E839167B213C007F4035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
@@ -898,7 +887,6 @@
 				0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */,
 				0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */,
 				0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */,
-				0394E94F167B2D00007F4035 /* hiddenadmin.dylib in CopyFiles */,
 				0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */,
 				0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */,
 				0394E952167B2D00007F4035 /* killall.dylib in CopyFiles */,
@@ -959,7 +947,6 @@
 				038DA5451BB6511B0009F369 /* README.fairCTF.txt in CopyFiles */,
 				038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */,
 				038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */,
-				038DA5491BB651530009F369 /* README.hiddenAdmin.txt in CopyFiles */,
 				038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */,
 				038DA54D1BB6516E0009F369 /* README.keepaway.txt in CopyFiles */,
 				038DA54E1BB651790009F369 /* README.killall.txt in CopyFiles */,
@@ -1674,7 +1661,6 @@
 		038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fairCTF.txt; sourceTree = "<group>"; };
 		038DA4F31BB64A380009F369 /* README.fastmap.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fastmap.txt; sourceTree = "<group>"; };
 		038DA4F51BB64A5A0009F369 /* README.flagStay.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.flagStay.txt; sourceTree = "<group>"; };
-		038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.hiddenAdmin.txt; sourceTree = "<group>"; };
 		038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.HoldTheFlag.txt; sourceTree = "<group>"; };
 		038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_keepaway_admin.txt; sourceTree = "<group>"; };
 		038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_keepaway_rules.txt; sourceTree = "<group>"; };
@@ -1719,7 +1705,6 @@
 		0394E6F4167B1024007F4035 /* fairCTF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fairCTF.cpp; sourceTree = "<group>"; };
 		0394E6FB167B1024007F4035 /* fastmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fastmap.cpp; sourceTree = "<group>"; };
 		0394E702167B1025007F4035 /* flagStay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flagStay.cpp; sourceTree = "<group>"; };
-		0394E709167B1025007F4035 /* hiddenAdmin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = hiddenAdmin.cpp; sourceTree = "<group>"; };
 		0394E710167B1025007F4035 /* HoldTheFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoldTheFlag.cpp; sourceTree = "<group>"; };
 		0394E717167B1025007F4035 /* keepaway.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keepaway.cpp; sourceTree = "<group>"; };
 		0394E720167B1025007F4035 /* killall.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = killall.cpp; sourceTree = "<group>"; };
@@ -1755,7 +1740,6 @@
 		0394E809167B1ECE007F4035 /* fairCTF.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fairCTF.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E814167B1F76007F4035 /* fastmap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fastmap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E81F167B1FFD007F4035 /* flagstay.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flagstay.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E82A167B207E007F4035 /* hiddenadmin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = hiddenadmin.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E835167B2132007F4035 /* HoldTheFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = HoldTheFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E840167B2225007F4035 /* keepaway.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = keepaway.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E84B167B228D007F4035 /* killall.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = killall.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1803,6 +1787,7 @@
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
 		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C34604AE1C8E544B009A81EA /* hiddenadmin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = hiddenadmin.dylib; path = /Volumes/Artemis/Users/allejo/Dropbox/Development/BZFlag/master/Xcode/build/Debug/hiddenadmin.dylib; sourceTree = "<absolute>"; };
 		C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = CustomZoneSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
@@ -3073,7 +3058,6 @@
 				0394E6F3167B1024007F4035 /* fairCTF */,
 				0394E6FA167B1024007F4035 /* fastmap */,
 				0394E701167B1025007F4035 /* flagStay */,
-				0394E708167B1025007F4035 /* hiddenAdmin */,
 				0394E70E167B1025007F4035 /* HoldTheFlag */,
 				0394E716167B1025007F4035 /* keepaway */,
 				0394E71F167B1025007F4035 /* killall */,
@@ -3165,15 +3149,6 @@
 				038DA4F51BB64A5A0009F369 /* README.flagStay.txt */,
 			);
 			path = flagStay;
-			sourceTree = "<group>";
-		};
-		0394E708167B1025007F4035 /* hiddenAdmin */ = {
-			isa = PBXGroup;
-			children = (
-				0394E709167B1025007F4035 /* hiddenAdmin.cpp */,
-				038DA4F71BB64A6F0009F369 /* README.hiddenAdmin.txt */,
-			);
-			path = hiddenAdmin;
 			sourceTree = "<group>";
 		};
 		0394E70E167B1025007F4035 /* HoldTheFlag */ = {
@@ -3419,7 +3394,6 @@
 				0394E809167B1ECE007F4035 /* fairCTF.dylib */,
 				0394E814167B1F76007F4035 /* fastmap.dylib */,
 				0394E81F167B1FFD007F4035 /* flagstay.dylib */,
-				0394E82A167B207E007F4035 /* hiddenadmin.dylib */,
 				0394E835167B2132007F4035 /* HoldTheFlag.dylib */,
 				0394E840167B2225007F4035 /* keepaway.dylib */,
 				0394E84B167B228D007F4035 /* killall.dylib */,
@@ -4264,7 +4238,7 @@
 			);
 			name = hiddenadmin;
 			productName = hiddenadmin;
-			productReference = 0394E82A167B207E007F4035 /* hiddenadmin.dylib */;
+			productReference = C34604AE1C8E544B009A81EA /* hiddenadmin.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E834167B2132007F4035 /* HoldTheFlag */ = {
@@ -4686,7 +4660,6 @@
 				0394E80E167B1EDC007F4035 /* PBXTargetDependency */,
 				0394E819167B1F8D007F4035 /* PBXTargetDependency */,
 				0394E824167B200B007F4035 /* PBXTargetDependency */,
-				0394E82F167B208A007F4035 /* PBXTargetDependency */,
 				0394E83A167B213C007F4035 /* PBXTargetDependency */,
 				0394E845167B222D007F4035 /* PBXTargetDependency */,
 				0394E850167B2296007F4035 /* PBXTargetDependency */,
@@ -4850,7 +4823,6 @@
 				038DA5201BB64E240009F369 /* README.RogueGenocide.txt in Resources */,
 				038DA50E1BB64CE80009F369 /* README.nagware.txt in Resources */,
 				038DA4E41BB649130009F369 /* README.airspawn.txt in Resources */,
-				038DA4F81BB64A6F0009F369 /* README.hiddenAdmin.txt in Resources */,
 				038DA51A1BB64DF00009F369 /* README.rabidRabbit.txt in Resources */,
 				038DA4EA1BB649640009F369 /* README.bzfscron.txt in Resources */,
 				038DA50D1BB64CE80009F369 /* nagware.cfg in Resources */,
@@ -5332,7 +5304,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0394E830167B20B8007F4035 /* hiddenAdmin.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5716,11 +5687,6 @@
 			isa = PBXTargetDependency;
 			target = 0394E81E167B1FFD007F4035 /* flagstay */;
 			targetProxy = 0394E823167B200B007F4035 /* PBXContainerItemProxy */;
-		};
-		0394E82F167B208A007F4035 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0394E829167B207E007F4035 /* hiddenadmin */;
-			targetProxy = 0394E82E167B208A007F4035 /* PBXContainerItemProxy */;
 		};
 		0394E83A167B213C007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

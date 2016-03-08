@@ -10,7 +10,6 @@ SUBDIRS = \
 	fairCTF \
 	fastmap \
 	flagStay \
-	hiddenAdmin \
 	HoldTheFlag \
 	keepaway \
 	killall \
