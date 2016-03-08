@@ -1787,7 +1787,6 @@
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
 		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C34604AE1C8E544B009A81EA /* hiddenadmin.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; name = hiddenadmin.dylib; path = /Volumes/Artemis/Users/allejo/Dropbox/Development/BZFlag/master/Xcode/build/Debug/hiddenadmin.dylib; sourceTree = "<absolute>"; };
 		C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = CustomZoneSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
@@ -1974,13 +1973,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0394E81C167B1FFD007F4035 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0394E827167B207E007F4035 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -3643,13 +3635,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0394E828167B207E007F4035 /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0394E833167B2132007F4035 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -4224,23 +4209,6 @@
 			productReference = 0394E81F167B1FFD007F4035 /* flagstay.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		0394E829167B207E007F4035 /* hiddenadmin */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0394E82B167B207E007F4035 /* Build configuration list for PBXNativeTarget "hiddenadmin" */;
-			buildPhases = (
-				0394E826167B207E007F4035 /* Sources */,
-				0394E827167B207E007F4035 /* Frameworks */,
-				0394E828167B207E007F4035 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = hiddenadmin;
-			productName = hiddenadmin;
-			productReference = C34604AE1C8E544B009A81EA /* hiddenadmin.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		0394E834167B2132007F4035 /* HoldTheFlag */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0394E836167B2133007F4035 /* Build configuration list for PBXNativeTarget "HoldTheFlag" */;
@@ -4782,7 +4750,6 @@
 				0394E808167B1ECE007F4035 /* fairCTF */,
 				0394E813167B1F76007F4035 /* fastmap */,
 				0394E81E167B1FFD007F4035 /* flagstay */,
-				0394E829167B207E007F4035 /* hiddenadmin */,
 				0394E834167B2132007F4035 /* HoldTheFlag */,
 				0394E83F167B2225007F4035 /* keepaway */,
 				0394E84A167B228D007F4035 /* killall */,
@@ -5297,13 +5264,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0394E825167B2052007F4035 /* flagStay.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0394E826167B207E007F4035 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6528,36 +6488,6 @@
 			};
 			name = Release;
 		};
-		0394E82C167B207E007F4035 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				OTHER_LDFLAGS = (
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		0394E82D167B207E007F4035 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COMBINE_HIDPI_IMAGES = YES;
-				EXECUTABLE_PREFIX = "";
-				OTHER_LDFLAGS = (
-					"-undefined",
-					dynamic_lookup,
-				);
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 		0394E837167B2133007F4035 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -7690,15 +7620,6 @@
 			buildConfigurations = (
 				0394E821167B1FFD007F4035 /* Debug */,
 				0394E822167B1FFD007F4035 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0394E82B167B207E007F4035 /* Build configuration list for PBXNativeTarget "hiddenadmin" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0394E82C167B207E007F4035 /* Debug */,
-				0394E82D167B207E007F4035 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
