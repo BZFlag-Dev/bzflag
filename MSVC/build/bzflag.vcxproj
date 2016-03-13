@@ -124,7 +124,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -181,7 +181,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -236,7 +236,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -287,7 +287,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

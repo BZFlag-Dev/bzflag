@@ -102,8 +102,10 @@
 /* Define if you wish to build exporting the bzflag API for plugins */
 #define BZ_PLUGINS 1
 
-// define all the direct X stuff because we want it, not the SDL stuff
-#define HAVE_DSOUND_H 1
+// Use SDL2
+#define HAVE_SDL 1
+#define HAVE_SDL2 1
+#define HAVE_SDL2_SDL_H 1
 
 #define HAVE_STD__MIN 1
 #define HAVE_STD__MAX 1

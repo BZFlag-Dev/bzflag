@@ -957,11 +957,8 @@ int			main(int argc, char** argv)
   }
   window->setTitle("bzflag");
 
-  // create & initialize the joystick
+  // create the joystick
   BzfJoystick* joystick = platformFactory->createJoystick();
-  joystick->initJoystick(BZDB.get("joystickname").c_str());
-  joystick->setXAxis(BZDB.get("jsXAxis"));
-  joystick->setYAxis(BZDB.get("jsYAxis"));
 
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
@@ -1132,6 +1129,11 @@ int			main(int argc, char** argv)
     if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
       setSoundVolume(static_cast<int>(BZDB.eval("volume")));
   }
+
+  // Initialize the joystick
+  joystick->initJoystick(BZDB.get("joystickname").c_str());
+  joystick->setXAxis(BZDB.get("jsXAxis"));
+  joystick->setYAxis(BZDB.get("jsYAxis"));
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)

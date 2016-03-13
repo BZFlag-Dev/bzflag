@@ -21,8 +21,9 @@
 
 #ifdef HAVE_SDL
 class SDLWindow;
-#endif
+#else
 class WinWindow;
+#endif
 
 class WinPlatformFactory : public PlatformFactory {
   public:
@@ -44,8 +45,9 @@ class WinPlatformFactory : public PlatformFactory {
   private:
 #ifdef HAVE_SDL
     static SDLWindow*	sdlWindow;
-#endif
+#else
     static WinWindow*	winWindow;
+#endif
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H

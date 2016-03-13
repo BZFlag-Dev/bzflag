@@ -20,33 +20,9 @@
 
 #include "BzfJoystick.h"
 
-#if !defined(BROKEN_DINPUT)
-
-  // only require a runtime that has what we actually use (e.g. force feedback support)
-  #define DIRECTINPUT_VERSION 0x0800
-  #include <dinput.h>
-
-  // Don't try compile this if we don't have an up-to-date DX
-  #if defined(DIRECTINPUT_HEADER_VERSION) && (DIRECTINPUT_HEADER_VERSION >= 0x0800)
-    // We can use DInput.  It's not broken, and it's new enough
-    #define USE_DINPUT 1
-  #else
-    // DInput is not new enough to use
-    #if defined(USE_DINPUT)
-      #undef USE_DINPUT
-    #endif
-  #endif
-
-#else
-
-  // Make sure we don't use DInput at all (even headers) if it's broken
-  #if defined(USE_DINPUT)
-  #undef USE_DINPUT
-  #endif
-
-#endif
-
-#if defined(USE_DINPUT)
+// only require a runtime that has what we actually use (e.g. force feedback support)
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 
 #include <vector>
 #include <string>
@@ -113,8 +89,6 @@ class DXJoystick : public BzfJoystick {
 
     static BOOL CALLBACK deviceEnumCallback(LPCDIDEVICEINSTANCE device, void*);
 };
-
-#endif // USE_DINPUT
 
 #endif // BZF_DXJOY_H
 

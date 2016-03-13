@@ -16,9 +16,6 @@
 /* interface header */
 #include "DXJoystick.h"
 
-// Don't try compile this if we don't have an up-to-date, working DX
-#if defined(USE_DINPUT)
-
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
@@ -29,7 +26,11 @@
 #include <stdlib.h>
 
 /* local impl. headers */
-#include "WinWindow.h"
+#ifdef HAVE_SDL
+#  include "SDL2Window.h"
+#else
+#  include "WinWindow.h"
+#endif
 #include "ErrorHandler.h"
 #include "TextUtils.h"
 
@@ -108,9 +109,13 @@ void	      DXJoystick::initJoystick(const char* joystickName)
    * Set device cooperation level - all input on this device goes to BZFlag,
    * because we're greedy.
    */
-
+#ifdef HAVE_SDL
+  success = device->SetCooperativeLevel(SDLWindow::getHandle(),
+					DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+#else
   success = device->SetCooperativeLevel(WinWindow::getHandle(),
 					DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+#endif
 
   if (success != DI_OK) {
     // couldn't grab device, what to do now?
@@ -873,8 +878,6 @@ BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* U
 
   return DIENUM_CONTINUE;
 }
-
-#endif
 
 
 // Local Variables: ***

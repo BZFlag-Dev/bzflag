@@ -12,7 +12,7 @@
 
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
-#ifndef HAVE_SDL
+#if !defined(HAVE_SDL) || defined(_WIN32)
 #include "wave.h"
 #endif
 #include "MediaFile.h"
@@ -395,7 +395,7 @@ bool			BzfMedia::doReadRLE(FILE* file,
   return true;
 }
 
-#ifdef HAVE_SDL
+#if defined(HAVE_SDL) && !defined(_WIN32)
 float*			BzfMedia::doReadSound(const std::string&, int&, int&) const
 {
   return NULL;

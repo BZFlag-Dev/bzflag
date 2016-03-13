@@ -28,6 +28,9 @@
 // Local includes
 #include "SDL2Display.h"
 #include "SDL2Visual.h"
+#ifdef _WIN32
+#  include "SDL2/SDL_syswm.h"
+#endif
 
 class SDLWindow : public BzfWindow {
  public:
@@ -61,9 +64,16 @@ class SDLWindow : public BzfWindow {
   void  makeContext();
   void  freeContext();
   bool  create(void);
+#ifdef _WIN32
+  static HWND getHandle() { return hwnd; }
+#endif
  private:
   bool	 hasGamma;
   SDL_Window *windowId;
+#ifdef _WIN32
+  SDL_SysWMinfo info;
+  static HWND hwnd;
+#endif
   SDL_GLContext glContext;
   std::string title;
   bool canGrabMouse;

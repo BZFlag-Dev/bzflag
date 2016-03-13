@@ -8,11 +8,13 @@
   !define VER_MAJOR 2
   !define VER_MINOR 4
   !define VER_REVISION 5
+
   ;!define TYPE "release"
   ;!define TYPE "alpha"
   ;!define TYPE "beta"
   !define TYPE "devel"
   ;!define TYPE "RC"
+
   !define TYPE_REVISION ""
   
   ;Allow manually specifying a date for the installer. This only works if the
@@ -215,6 +217,7 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
   File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
   File ..\..\..\bin_Release_${PLATFORM}\cares.dll
+  File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script
