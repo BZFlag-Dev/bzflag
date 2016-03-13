@@ -7,15 +7,15 @@
 
   !define VER_MAJOR 2
   !define VER_MINOR 4
-  !define VER_REVISION 5
+  !define VER_REVISION 6
 
   ;!define TYPE "release"
   ;!define TYPE "alpha"
   ;!define TYPE "beta"
-  !define TYPE "devel"
-  ;!define TYPE "RC"
+  ;!define TYPE "devel"
+  !define TYPE "RC"
 
-  !define TYPE_REVISION ""
+  !define TYPE_REVISION "1"
   
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment

@@ -1,6 +1,14 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.5.6-RC1
+--------------------------------------------
+
+* Use SDL2 on Windows for the window/display management - Scott Wichser
+* Remove hiddenAdmin plugin - Vladimir Jimenez
+* Add a cycleRadar and cyclePanel key binding command - Joshua Bodine
+
+
 BZFlag 2.4.4  "Be My Valentank" (2016-02-14)
 --------------------------------------------
 
