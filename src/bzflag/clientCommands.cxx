@@ -1002,7 +1002,7 @@ static std::string cmdCycleRadar(const std::string&,
     if (args[i] == "off")
       radarLevels.push_back(0.0f);
     else if (atof(args[i].c_str()) > 0.0f)
-      radarLevels.push_back(atof(args[i].c_str()));
+      radarLevels.push_back((float)atof(args[i].c_str()));
     else
       return usageText;
 
