@@ -17,7 +17,9 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
+#ifdef _WIN32
 HWND SDLWindow::hwnd = NULL;
+#endif
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), hasGamma(true), windowId(NULL), glContext(NULL),
