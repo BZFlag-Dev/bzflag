@@ -22,9 +22,16 @@ HWND SDLWindow::hwnd = NULL;
 #endif
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), hasGamma(true), windowId(NULL), glContext(NULL),
-  canGrabMouse(true), fullScreen(false), base_width(640), base_height(480)
+  : BzfWindow(_display), hasGamma(true), origGamma(-1.0f), lastGamma(1.0f),
+  windowId(NULL), glContext(NULL), canGrabMouse(true), fullScreen(false),
+  base_width(640), base_height(480)
 {
+}
+
+SDLWindow::~SDLWindow()
+{
+  // Restore the original gamma when we exit the client
+  setGamma(origGamma);
 }
 
 void SDLWindow::setTitle(const char *_title) {
@@ -100,6 +107,7 @@ void SDLWindow::getSize(int& width, int& height) const {
 }
 
 void SDLWindow::setGamma(float gamma) {
+  lastGamma = gamma;
   int result = SDL_SetWindowBrightness(windowId, gamma);
   if (result == -1) {
     printf("Could not set Gamma: %s.\n", SDL_GetError());
@@ -186,6 +194,13 @@ bool SDLWindow::create(void) {
       targetWidth,
       targetHeight,
       flags);
+
+  // Store the gamma immediately after creating the first window
+  if (origGamma < 0)
+    origGamma = getGamma();
+
+  // At least on Windows, recreating the window resets the gamma, so set it
+  setGamma(lastGamma);
 
 #ifdef _WIN32
   SDL_VERSION(&info.version);

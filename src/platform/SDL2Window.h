@@ -35,6 +35,7 @@
 class SDLWindow : public BzfWindow {
  public:
   SDLWindow(const SDLDisplay* _display, SDLVisual*);
+  ~SDLWindow();
   bool  isValid() const {return true;};
   void  showWindow(bool) {;};
   void  getPosition(int &, int &) {;};
@@ -69,6 +70,8 @@ class SDLWindow : public BzfWindow {
 #endif
  private:
   bool	 hasGamma;
+  float	 origGamma;
+  float	 lastGamma;
   SDL_Window *windowId;
 #ifdef _WIN32
   SDL_SysWMinfo info;
