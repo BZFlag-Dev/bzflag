@@ -310,7 +310,6 @@
     <ClInclude Include="..\..\include\BoxSceneNodeGenerator.h" />
     <ClInclude Include="..\..\include\bzfgl.h" />
     <ClInclude Include="..\..\include\bzfio.h" />
-    <ClInclude Include="..\..\include\BzfString.h" />
     <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\include\ConeObstacle.h" />
     <ClInclude Include="..\..\include\EmptySceneNodeGenerator.h" />

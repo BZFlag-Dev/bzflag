@@ -324,9 +324,6 @@
     <ClInclude Include="..\..\src\bzfs\FlagHistory.h">
       <Filter>Headers\Server</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\bzfs\TextChunkManager.h">
-      <Filter>Headers\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\bzfs\base64.h">
       <Filter>Headers\Utils</Filter>
     </ClInclude>
@@ -353,6 +350,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\ShotManager.h">
       <Filter>Headers\Server</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\TextChunkManager.h">
+      <Filter>Headers\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

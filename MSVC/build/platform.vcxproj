@@ -430,7 +430,6 @@
     <ClInclude Include="..\..\include\bzfio.h" />
     <ClInclude Include="..\..\include\BzfJoystick.h" />
     <ClInclude Include="..\..\include\BzfMedia.h" />
-    <ClInclude Include="..\..\include\BzfString.h" />
     <ClInclude Include="..\..\include\BzfVisual.h" />
     <ClInclude Include="..\..\include\BzfWindow.h" />
     <ClInclude Include="..\..\include\common.h" />

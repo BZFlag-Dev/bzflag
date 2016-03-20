@@ -238,19 +238,19 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\BSPSceneDatabase.h" />
-    <ClInclude Include="..\include\bzfgl.h" />
-    <ClInclude Include="..\include\common.h" />
+    <ClInclude Include="..\..\include\BSPSceneDatabase.h" />
+    <ClInclude Include="..\..\include\bzfgl.h" />
+    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\src\scene\Occluder.h" />
     <ClInclude Include="..\..\src\scene\Octree.h" />
-    <ClInclude Include="..\include\OpenGLGState.h" />
-    <ClInclude Include="..\include\RenderNode.h" />
-    <ClInclude Include="..\include\SceneDatabase.h" />
-    <ClInclude Include="..\include\SceneNode.h" />
-    <ClInclude Include="..\include\SphereSceneNode.h" />
-    <ClInclude Include="..\include\ViewFrustum.h" />
-    <ClInclude Include="..\include\WallSceneNode.h" />
-    <ClInclude Include="..\include\ZSceneDatabase.h" />
+    <ClInclude Include="..\..\include\OpenGLGState.h" />
+    <ClInclude Include="..\..\include\RenderNode.h" />
+    <ClInclude Include="..\..\include\SceneDatabase.h" />
+    <ClInclude Include="..\..\include\SceneNode.h" />
+    <ClInclude Include="..\..\include\SphereSceneNode.h" />
+    <ClInclude Include="..\..\include\ViewFrustum.h" />
+    <ClInclude Include="..\..\include\WallSceneNode.h" />
+    <ClInclude Include="..\..\include\ZSceneDatabase.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

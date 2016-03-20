@@ -687,7 +687,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClInclude Include="..\..\src\bzfs\ShotManager.h" />
     <ClInclude Include="..\..\src\bzfs\SpawnPosition.h" />
     <ClInclude Include="..\..\src\bzfs\TeamBases.h" />
-    <ClInclude Include="..\..\src\bzfs\TextChunkManager.h" />
+    <ClInclude Include="..\..\include\TextChunkManager.h" />
     <ClInclude Include="..\..\include\WorldEventManager.h" />
     <ClInclude Include="..\..\src\bzfs\WorldFileLocation.h" />
     <ClInclude Include="..\..\src\bzfs\WorldFileObject.h" />

@@ -260,8 +260,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\MediaFile.h" />
     <ClInclude Include="..\..\src\mediafile\ImageFile.h" />
-    <ClInclude Include="..\include\MediaFile.h" />
     <ClInclude Include="..\..\src\mediafile\PNGImageFile.h" />
     <ClInclude Include="..\..\src\mediafile\SGIImageFile.h" />
   </ItemGroup>
