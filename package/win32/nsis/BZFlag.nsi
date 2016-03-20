@@ -15,7 +15,7 @@
   ;!define TYPE "devel"
   !define TYPE "RC"
 
-  !define TYPE_REVISION "1"
+  !define TYPE_REVISION "2"
   
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment

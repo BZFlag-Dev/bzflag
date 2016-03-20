@@ -1,6 +1,11 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.4.6-RC2
+--------------------------------------------
+* For SDL2, restore the original gamma on exit and reapply desired gamma on
+    window recreation - Scott Wichser
+
 BZFlag 2.4.6-RC1
 --------------------------------------------
 
