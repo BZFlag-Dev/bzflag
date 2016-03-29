@@ -1673,6 +1673,18 @@ private:
   float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
 };
 
+class bz_CustomZoneObject_V2 : public bz_CustomZoneObject
+{
+public:
+  BZF_API bz_CustomZoneObject_V2() : bz_CustomZoneObject()
+  {}
+  
+  float pos[3] = {0,0,0}, size[3] = {0,0,0};
+  
+  BZF_API bool getRandomPoint( float *pos );
+  BZF_API void handleDefaultOptions(bz_CustomMapObjectInfo *data);
+};
+
 class bz_CustomMapObjectHandler
 {
 public:
