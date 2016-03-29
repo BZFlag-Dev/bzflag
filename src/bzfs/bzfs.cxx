@@ -3036,6 +3036,7 @@ void playerAlive(int playerIndex)
   worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
   // update last position immediately
+  playerData->player.setRestartOnBase(false);
   playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
   // send MsgAlive
