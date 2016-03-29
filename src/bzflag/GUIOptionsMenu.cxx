@@ -302,6 +302,16 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->createSlider(9);
   option->update();
   listHUD.push_back(option);
+  // Chat timestamps
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Timestamps for chat:");
+  option->setCallback(callback, "Z");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("On"));
+  option->update();
+  listHUD.push_back(option);
   // Time/date display settings
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -420,6 +430,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("pulseRate") * 5) - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
 					 (BZDB.eval("pulseDepth") * 10) - 1);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("chattimestamps") ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("timedate")));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
@@ -488,6 +499,10 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 
     case 'z':
       BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
+      break;
+
+    case 'Z':
+      BZDB.set("chattimestamps", list->getIndex() ? "1" : "0");
       break;
 
     case 'l':

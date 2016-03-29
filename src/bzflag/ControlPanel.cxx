@@ -30,6 +30,7 @@
 #include "TextUtils.h"
 #include "ErrorHandler.h"
 #include "global.h"
+#include "TimeKeeper.h"
 
 /* local implementation headers */
 #include "SceneRenderer.h"
@@ -811,7 +812,15 @@ void ControlPanel::addMutexMessage(const std::string& msg)
 void			ControlPanel::addMessage(const std::string& line,
 						 const int realmode)
 {
-  ControlPanelMessage item(line);
+  std::string prefix = "";
+  if (BZDB.isTrue("chattimestamps")) {
+    std::string ts(TimeKeeper::timestamp());
+    //                   0123456789012345678
+    // Timestamp returns YYYY:MM:DD HH:MM:SS
+    // We are only interested in the HH:MM:SS part.
+    prefix = ts.substr(11, 11+8) + " ";
+  }
+  ControlPanelMessage item(prefix + line);
   item.breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
 
   int _maxScrollPages = BZDB.evalInt("scrollPages");
