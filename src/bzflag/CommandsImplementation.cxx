@@ -152,12 +152,12 @@ static SetCommand	  setCommand;
 static DiffCommand	  diffCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand	  quitCommand;
-static RoamPosCommand     RoamPosCommand;
+static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static ForceRadarCommand  forceRadarCommand;
-static DebugLevelCommand  DebugLevelCommand;
+static DebugLevelCommand  debugLevelCommand;
 
 
 // class constructors
