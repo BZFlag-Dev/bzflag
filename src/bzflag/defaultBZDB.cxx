@@ -109,7 +109,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pauseConsole",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pauseConsole",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotBrightness",		"0.2",			true,	StateDatabase::ReadWrite,	setColor },
 
   // roam smooth follow settings
