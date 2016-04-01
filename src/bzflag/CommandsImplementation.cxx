@@ -700,7 +700,12 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     }
   }
 
-  std::string filename = getConfigDirName() + "msglog.txt";
+  int year, month, day, hour, minute, second;
+  TimeKeeper::localTime(&year, &month, &day, &hour, &minute, &second, NULL);
+
+  std::string filename = getConfigDirName() + "msglog-";
+  filename += TextUtils::format("%04d-%02d-%02d_%02d-%02d-%02d", year, month, day, hour, minute, second);
+  filename += ".txt";
 
   controlPanel->saveMessages(filename, stripAnsi, timestamp);
 
