@@ -30,6 +30,9 @@
 #include "TextUtils.h"
 #include "ErrorHandler.h"
 #include "global.h"
+#ifdef _WIN32
+#  include <DirectoryNames.h>
+#endif
 
 /* local implementation headers */
 #include "SceneRenderer.h"
@@ -889,7 +892,8 @@ void			ControlPanel::addMessage(const std::string& line,
   if (echoToConsole){
 #ifdef _WIN32
     // this is cheap but it will work on windows
-    FILE *fp = fopen ("stdout.txt","a+");
+    std::string filename = getConfigDirName() + "stdout.txt";
+    FILE *fp = fopen (filename.c_str(), "a+");
     if (fp){
       fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
       fclose(fp);
