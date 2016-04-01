@@ -38,6 +38,7 @@ BZDBCache::Float BZDBCache::shotLength;
 BZDBCache::Int   BZDBCache::flagChunks;
 BZDBCache::Float BZDBCache::pulseRate;
 BZDBCache::Float BZDBCache::pulseDepth;
+BZDBCache::Int   BZDBCache::controlPanelTimestamp;
 BZDBCache::Bool  BZDBCache::showCollisionGrid;
 BZDBCache::Bool  BZDBCache::showCullingGrid;
 
@@ -114,6 +115,7 @@ void BZDBCache::init()
   BZDB.addCallback("flagChunks", clientCallback, NULL);
   BZDB.addCallback("pulseRate", clientCallback, NULL);
   BZDB.addCallback("pulseDepth", clientCallback, NULL);
+  BZDB.addCallback("controlPanelTimestamp", clientCallback, NULL);
   BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
   BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
@@ -207,6 +209,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     pulseRate = BZDB.eval("pulseRate");
   else if (name == "pulseDepth")
     pulseDepth = BZDB.eval("pulseDepth");
+  else if (name == "controlPanelTimestamp")
+    controlPanelTimestamp = BZDB.evalInt("controlPanelTimestamp");
   else if (name == "showCollisionGrid")
     showCollisionGrid = BZDB.isTrue("showCollisionGrid");
   else if (name == "showCullingGrid")

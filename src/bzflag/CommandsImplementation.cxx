@@ -684,18 +684,25 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     return true;
   }
 
+  bool stripAnsi = false;
+  bool timestamp = false;
+
   std::vector<std::string> args;
   args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
-  bool stripAnsi = false;
-  if ((argCount > 1) && (args[1] == "-s")) {
-    stripAnsi = true;
+  for (int pos = 1; pos < argCount; pos++) {
+    if (args[pos] == "-s") {
+      stripAnsi = true;
+    }
+    else if (args[pos] == "-t") {
+      timestamp = true;
+    }
   }
 
   std::string filename = getConfigDirName() + "msglog.txt";
 
-  controlPanel->saveMessages(filename, stripAnsi);
+  controlPanel->saveMessages(filename, stripAnsi, timestamp);
 
   std::string msg = "Saved messages to: " + filename;
   addMessage(NULL, msg);

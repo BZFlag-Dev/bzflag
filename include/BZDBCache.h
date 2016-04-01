@@ -63,6 +63,7 @@ class BZDBCache
     static Float shotLength;
     static Float pulseRate;
     static Float pulseDepth;
+    static Int   controlPanelTimestamp;
     static Bool  showCollisionGrid;
     static Bool  showCullingGrid;
     static Bool  useMeshForRadar;

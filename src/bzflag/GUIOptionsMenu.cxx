@@ -308,11 +308,24 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setLabel("Time / Date Display:");
   option->setCallback(callback, "h");
   options = &option->getList();
-  options->push_back(std::string("time"));
-  options->push_back(std::string("date"));
-  options->push_back(std::string("both"));
+  options->push_back(std::string("Time"));
+  options->push_back(std::string("Date"));
+  options->push_back(std::string("Date and Time"));
   option->update();
   listHUD.push_back(option);
+
+  // Time/date display settings
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Timestamps in console:");
+  option->setCallback(callback, "Z");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  options->push_back(std::string("Time"));
+  options->push_back(std::string("Date and Time"));
+  option->update();
+  listHUD.push_back(option);
+
   // HUD Reload timer
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -422,6 +435,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
 					 (BZDB.eval("pulseDepth") * 10) - 1);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
 							  ("timedate")));
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("controlPanelTimestamp"));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
 					 : 0);
     if (BZDB.isTrue("hideMottos"))
@@ -451,6 +465,12 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
     case 'h':
       {
 	BZDB.setInt("timedate", list->getIndex());
+	break;
+      }
+
+    case 'Z':
+      {
+	BZDB.setInt("controlPanelTimestamp", list->getIndex());
 	break;
       }
 

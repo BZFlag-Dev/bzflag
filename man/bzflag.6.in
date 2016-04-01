@@ -722,8 +722,9 @@ outside the map at a certain angle, looking towards its center. \fIx\fR, \fIy\fR
 are used to set the camera's location, \fItheta\fR defines the camera's horizontal angle, \fIphi\fR defines
 its vertical angle and \fIzoom\fR sets the camera's zoom level. All angles are defined in degrees.
 .TP 15
-/savemsgs [-s]
+/savemsgs [-s] [-t]
 Save all messages to a file in your config directory. If \fB-s\fR is provided, coloring data are stripped.
+If \fB-t\fR is provided, timestamps are added to the messages.
 .TP 15
 /saveworld [-g] [-m] [-o] \fIfilename\fR
 Save the current world to \fIfilename\fR. Specify \fB-g\fR to prevent the creation of groups, \fB-m\fR to

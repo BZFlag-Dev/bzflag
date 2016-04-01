@@ -31,12 +31,21 @@ class RadarRenderer;
 class SceneRenderer;
 
 struct ControlPanelMessage {
+  public:
 			ControlPanelMessage(const std::string&);
+    std::string		getString() const;
+    std::string		getString(bool withDateTime) const;
+    std::string		formatTimestamp(int mode) const;
     void		breakLines(float maxLength, int fontFace, float fontSize);
 
-    std::string		string;
     std::vector<std::string>	lines;
     int numlines;
+
+  private:
+    std::string		string;
+
+    // Message timestamp variables
+    int year, month, day, hour, min, sec;
 };
 
 class ControlPanel {
@@ -64,7 +73,7 @@ class ControlPanel {
     void		togglePaused();
 
     void		saveMessages(const std::string& filename,
-				     bool stripAnsi) const;
+				     bool stripAnsi, bool timestamp) const;
 
   private:
     // no copying!
