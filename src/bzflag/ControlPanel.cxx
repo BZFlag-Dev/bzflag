@@ -45,7 +45,7 @@
 //
 
 ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
-  string(_string), numlines(0), year(0), month(0), day(0), hour(0), min(0), sec(0)
+  numlines(0), string(_string), year(0), month(0), day(0), hour(0), min(0), sec(0)
 {
   TimeKeeper::localTime(&year, &month, &day, &hour, &min, &sec);
 }
