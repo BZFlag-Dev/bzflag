@@ -61,7 +61,11 @@ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
 CONF_DATE=`date -u +%Y%m%d`
-BZFLAG_DATE=`date -u +%Y-%m-%d`
+if [ -n "$SOURCE_DATE_EPOCH" ]; then
+    BZFLAG_DATE=`date -u +%Y-%m-%d --date="@$SOURCE_DATE_EPOCH"`
+else
+    BZFLAG_DATE=`date -u +%Y-%m-%d`
+fi
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 CONF_TIME="`date '+%H %M %S'`"
 
