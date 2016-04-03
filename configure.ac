@@ -60,12 +60,12 @@ MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
-CONF_DATE=`date -u +%Y%m%d`
+CONF_DATE=`date -u +%Y-%m-%d`
 BZFLAG_DATE=`date -u +%Y-%m-%d`
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 
 # print out the title with a pretty box computed to wrap around
-title="Configuring BZFlag $BZFLAG_VERSION, Build $CONF_DATE"
+title="Configuring BZFlag $BZFLAG_VERSION on $CONF_DATE"
 length="`echo x${title}x | wc -c`"
 separator=""
 while test $length -gt 1 ; do
@@ -1201,7 +1201,7 @@ dnl use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
 BZ_BOLD
-AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE configured with the following:])
+AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION configured on $CONF_DATE with the following:])
 BZ_UNBOLD
 AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
