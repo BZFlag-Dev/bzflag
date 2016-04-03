@@ -61,7 +61,7 @@ MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d
 REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
 
 CONF_DATE=`date -u +%Y-%m-%d`
-BZFLAG_DATE=`date -u +%Y-%m-%d`
+MANUAL_DATE=2016-04-01
 BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 
 # print out the title with a pretty box computed to wrap around
@@ -92,7 +92,7 @@ AC_CONFIG_HEADERS([include/config.h])
 AC_SUBST(MAJOR_VERSION)
 AC_SUBST(MINOR_VERSION)
 AC_SUBST(BZFLAG_VERSION)
-AC_SUBST(BZFLAG_DATE)
+AC_SUBST(MANUAL_DATE)
 
 # Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])

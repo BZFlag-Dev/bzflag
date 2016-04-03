@@ -435,6 +435,9 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Man files and bzfs.conf files are updated with latest changes.
 
+- MANUAL_DATE in configure.ac is defined to be the YYYY-MM-DD date of
+  the last subtantial change to any of the man files.
+
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, ChangeLog, configure.ac,
   buildDate.cxx, bzflag.rc, and the title.png image.  Version numbers in all
