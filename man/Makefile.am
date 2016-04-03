@@ -10,7 +10,7 @@ bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 
 edit = sed \
 	-e 's|@MANUAL_DATE[@]|$(MANUAL_DATE)|g' \
-	-e 's|@BZFLAG_VERSION[@]|$(BZFLAG_VERSION)|g' \
+	-e 's|@PACKAGE_STRING[@]|$(PACKAGE_STRING)|g' \
 	-e 's|@INSTALL_DATA_DIR[@]|$(pkgdatadir)|g'
 
 bzflag.6 bzadmin.6 bzfs.6 bzw.5 : Makefile

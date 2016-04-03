@@ -55,17 +55,11 @@ fi
 
 AC_CONFIG_AUX_DIR(misc)
 
-# sed magic to get version numbers from src/date/buildDate.cxx
-MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-
 CONF_DATE=`date -u +%Y-%m-%d`
 MANUAL_DATE=2016-04-01
-BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
 
 # print out the title with a pretty box computed to wrap around
-title="Configuring BZFlag $BZFLAG_VERSION on $CONF_DATE"
+title="Configuring $PACKAGE_STRING on $CONF_DATE"
 length="`echo x${title}x | wc -c`"
 separator=""
 while test $length -gt 1 ; do
@@ -89,9 +83,7 @@ AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
 
-AC_SUBST(MAJOR_VERSION)
-AC_SUBST(MINOR_VERSION)
-AC_SUBST(BZFLAG_VERSION)
+AC_SUBST(PACKAGE_STRING)
 AC_SUBST(MANUAL_DATE)
 
 # Let the C++ code know about OS
@@ -1201,7 +1193,7 @@ dnl use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
 BZ_BOLD
-AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION configured on $CONF_DATE with the following:])
+AC_MSG_RESULT([$PACKAGE_STRING configured on $CONF_DATE with the following:])
 BZ_UNBOLD
 AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
