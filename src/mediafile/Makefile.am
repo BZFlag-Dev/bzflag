@@ -24,6 +24,12 @@ libMediaFile_la_SOURCES =	\
 	WaveAudioFile.h		\
 	WaveAudioFile.cxx
 
+if HAVE_JPEG
+libMediaFile_la_SOURCES +=	\
+	JPGImageFile.cxx	\
+	JPGImageFile.h
+endif
+
 EXTRA_DIST = \
 	OggAudioFile.cxx	\
 	OggAudioFile.h		\

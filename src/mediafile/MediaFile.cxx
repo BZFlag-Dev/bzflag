@@ -315,6 +315,7 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 #include "FileManager.h"
 #include "SGIImageFile.h"
 #include "PNGImageFile.h"
+#include "JPGImageFile.h"
 #include "WaveAudioFile.h"
 
 #define OPENMEDIA(_T)					\
@@ -354,6 +355,8 @@ unsigned char*		MediaFile::readImage(
     OPENMEDIA(PNGImageFile);
   if (file == NULL)
     OPENMEDIA(SGIImageFile);
+  if (file == NULL)
+    OPENMEDIA(JPGImageFile);
 
   // read the image
   unsigned char* image = NULL;

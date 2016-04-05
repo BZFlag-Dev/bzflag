@@ -266,6 +266,14 @@ dnl detect a usable system c-ares lookup library
 AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
 AC_SUBST(LIBCARES)
 
+dnl detect a usable system jpeg library
+AC_CHECK_LIB(jpeg, jpeg_destroy_decompress, have_JPEG=yes, AC_MSG_ERROR([working jpeg was not found]))
+if test x$have_JPEG = xyes; then
+  LIBJPEG="-ljpeg"
+fi
+AC_SUBST(LIBJPEG)
+AM_CONDITIONAL(HAVE_JPEG, test x$have_JPEG = xyes)
+
 # see if our c-ares callbacks match (they won't on c-ares <1.5)
 AC_MSG_CHECKING(for c-ares DNS lookup functionality)
 PRELIBS="$LIBS"
@@ -415,6 +423,7 @@ AC_CHECK_HEADERS( \
 	dsound.h \
 	fcntl.h \
 	inttypes.h \
+	jpeglib.h \
 	limits.h \
 	linux/input.h \
 	process.h \

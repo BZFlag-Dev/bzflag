@@ -454,6 +454,7 @@ bzflag_LDADD =\
 	$(SDL_IMAGE_LIBS)		\
 	$(GLIBS)			\
 	$(LIBCURL)			\
+	$(LIBJPEG)			\
 	src/date/libDate.la
 # This is required to hook in ogg/vorbis libraries
 #	$(ALIBS)
