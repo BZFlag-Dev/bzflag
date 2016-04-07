@@ -1,0 +1,6 @@
+Changes.txt
+Info.pm
+Makefile.PL
+MANIFEST.txt
+README.txt
+t/1.t
