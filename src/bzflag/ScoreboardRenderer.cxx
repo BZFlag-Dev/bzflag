@@ -348,7 +348,7 @@ void ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   hudColor3fv(messageColor);
 
   label = bdl->getLocalString("Team Score");
-  xl = xn = x - teamScoreLabelWidth;
+  xl = xn = x - teamScoreLabelWidth - teamCountLabelWidth;
   fm.drawString(xl, y, 0, minorFontFace, minorFontSize, label);
 
   for (i = RedTeam; i < NumTeams; i++) {
