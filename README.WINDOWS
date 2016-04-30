@@ -3,16 +3,8 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
-files are provided for it. The current compiler used is Visual C++ 2010 (VC10).
-Both the full and express versions will build just fine. There may be some
-issues building the bzflag-dependencies package with newer compilers at this
-time. We will work to correct that in future versions of the game/dependencies.
-
-It's a bit harder to find the express version these days since they tended to
-only keep the one or two more recent versions on their site, and they've since
-released a full-featured community version of 2015. You can currently still
-download Visual Studio 2010 Express Edition from here:
-  http://go.microsoft.com/?linkid=9709969
+files are provided for it. The current compiler used is the full-featured
+community version of Visual Studio 2015 (VC14).
 
 Because of an issue with the DirectX SDK installer, you may be unable to finish
 the installation. This is because it tries to install an older version of the

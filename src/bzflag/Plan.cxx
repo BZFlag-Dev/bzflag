@@ -18,6 +18,8 @@
 #include "TargetingUtils.h"
 #include "World.h"
 
+#include <algorithm> // std::max
+
 /**
  * Plan
  */

@@ -25,6 +25,8 @@
 #include "playing.h"
 #include "Plan.h"
 
+#include <algorithm> // std::max
+
 typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 
 static FlagSuccessMap	flagSuccess;
