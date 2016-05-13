@@ -9,7 +9,7 @@ bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > $@
 
 edit = sed \
-	-e 's|@MANUAL_DATE[@]|$(MANUAL_DATE)|g' \
+	-e 's|@BUILD_DATE[@]|$(BUILD_DATE)|g' \
 	-e 's|@PACKAGE_STRING[@]|$(PACKAGE_STRING)|g' \
 	-e 's|@INSTALL_DATA_DIR[@]|$(pkgdatadir)|g'
 

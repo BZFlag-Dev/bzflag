@@ -55,8 +55,8 @@ fi
 
 AC_CONFIG_AUX_DIR(misc)
 
+BUILD_DATE="$(date --utc --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y-%m-%d)"
 CONF_DATE=`date -u +%Y-%m-%d`
-MANUAL_DATE=2016-04-01
 
 # print out the title with a pretty box computed to wrap around
 title="Configuring $PACKAGE_STRING on $CONF_DATE"
@@ -84,7 +84,9 @@ dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
 
 AC_SUBST(PACKAGE_STRING)
-AC_SUBST(MANUAL_DATE)
+AC_SUBST(BUILD_DATE)
+AC_DEFINE_UNQUOTED(BUILD_DATE, "$BUILD_DATE", [BZFlag build date])
+
 
 # Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])

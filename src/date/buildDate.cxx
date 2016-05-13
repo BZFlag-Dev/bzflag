@@ -59,6 +59,10 @@ const char *bzfcopyright = "Copyright (c) 1993-2016 Tim Riker";
 static int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
+#ifdef BUILD_DATE
+  // the BUILD_DATE define looks like "YYYY-MM-DD"
+  sscanf(BUILD_DATE, "%d-%d-%d", &year, &month, &day);
+#else
   char monthStr[512];
   // the __DATE__ macro looks like "Jun 15 2013" (*with* the quotes)
   sscanf(__DATE__, "%s %d %d", monthStr, &day, &year);
@@ -88,8 +92,9 @@ static int getBuildDate()
     month = 11;
   else if (strcmp(monthStr, "Dec") == 0)
     month = 12;
+#endif
 
-  return (year*10000) + (month*100)+ day;
+  return (year*10000) + (month*100) + day;
 }
 
 const char*		getProtocolVersion()
