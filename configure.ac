@@ -55,8 +55,31 @@ fi
 
 AC_CONFIG_AUX_DIR(misc)
 
-BUILD_DATE="$(date --utc --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y-%m-%d)"
 CONF_DATE=`date -u +%Y-%m-%d`
+# https://reproducible-builds.org/specs/source-date-epoch/
+if test -z "$SOURCE_DATE_EPOCH"; then
+    BUILD_DATE=$CONF_DATE
+else
+    # accept any numeric value
+    if expr 0 + "$SOURCE_DATE_EPOCH" > /dev/null ; then
+	BUILD_DATE=`date -u -d "@$SOURCE_DATE_EPOCH" +%Y-%m-%d 2> /dev/null`
+	# try using perl if the date command fails
+	if test -z "$BUILD_DATE"; then
+	    BUILD_DATE=`perl -le "use POSIX; print strftime '%Y-%m-%d', gmtime '$SOURCE_DATE_EPOCH'"`
+	fi
+    else
+	AC_MSG_ERROR([Invalid SOURCE_DATE_EPOCH value])
+    fi
+fi
+case "$BUILD_DATE" in
+    # double square brackets because of m4
+    [[0-9]][[0-9]][[0-9]][[0-9]]-[[01]][[0-9]]-[[0-3]][[0-9]])
+	# looks like YYYY-MM-DD
+	;;
+    *)
+	AC_MSG_ERROR([Failed to set BUILD_DATE])
+	;;
+esac
 
 # print out the title with a pretty box computed to wrap around
 title="Configuring $PACKAGE_STRING on $CONF_DATE"
@@ -1203,6 +1226,7 @@ AC_MSG_RESULT([           Binaries: ${bindir}])
 AC_MSG_RESULT([            Plugins: ${libdir}])
 AC_MSG_RESULT([       Manual pages: ${mandir}])
 AC_MSG_RESULT([])
+AC_MSG_RESULT([BUILD_DATE    = ${BUILD_DATE}])
 AC_MSG_RESULT([CC            = ${CC}])
 AC_MSG_RESULT([CXX           = ${CXX}])
 AC_MSG_RESULT([CFLAGS        = ${CFLAGS}])
