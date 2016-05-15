@@ -279,12 +279,21 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
       else
         key.ascii = sym;
     }
-    else if ((sym >= SDLK_KP_0) && (sym <= SDLK_KP_9))
-      key.ascii = sym - 208; // translate to normal number
-    else if (sym == SDLK_KP_ENTER)
-      key.ascii = 13; // enter
-    else
-      return false;
+    else switch (sym) {
+      case SDLK_KP_0: key.ascii = '0'; break;
+      case SDLK_KP_1: key.ascii = '1'; break;
+      case SDLK_KP_2: key.ascii = '2'; break;
+      case SDLK_KP_3: key.ascii = '3'; break;
+      case SDLK_KP_4: key.ascii = '4'; break;
+      case SDLK_KP_5: key.ascii = '5'; break;
+      case SDLK_KP_6: key.ascii = '6'; break;
+      case SDLK_KP_7: key.ascii = '7'; break;
+      case SDLK_KP_8: key.ascii = '8'; break;
+      case SDLK_KP_9: key.ascii = '9'; break;
+      case SDLK_KP_ENTER: key.ascii = 13; break;
+      default:
+	return false;
+    }
   }
 
   key.shift = 0;
