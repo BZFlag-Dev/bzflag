@@ -3050,6 +3050,52 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
   }
 }
 
+BZF_API void bz_CustomZoneObject_V2::handleDefaultOptions(bz_CustomMapObjectInfo *data)
+{
+  bz_CustomZoneObject::handleDefaultOptions(data);
+
+  if (box) {
+    pos[0] = (xMax + xMin) / 2;
+    pos[1] = (yMax + yMin) / 2;
+
+    size[0] = (xMax - xMin) / 2;
+    size[1] = (yMax - yMin) / 2;
+  }
+  else {
+    pos[0] = xMax;
+    pos[1] = yMax;
+  }
+
+  pos[2] = zMin;
+  size[2] = zMax - zMin;
+}
+
+BZF_API void bz_CustomZoneObject_V2::getRandomPoint(float *_pos)
+{
+  if (box)
+  {
+    float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
+    float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
+    float cos_val = cosf(rotation);
+    float sin_val = sinf(rotation);
+
+    _pos[0] = ((x * cos_val) - (y * sin_val)) + pos[0];
+    _pos[1] = ((x * sin_val) + (y * cos_val)) + pos[1];
+    _pos[2] = pos[2];
+  }
+  else
+  {
+    float t = 2 * M_PI * bzfrand();
+    float r = sqrt(bzfrand());
+    float x = r * cosf(t);
+    float y = r * sinf(t);
+
+    _pos[0] = (radius * x) + pos[0];
+    _pos[1] = (radius * y) + pos[1];
+    _pos[2] = pos[2];
+  }
+}
+
 float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
 {
     return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
