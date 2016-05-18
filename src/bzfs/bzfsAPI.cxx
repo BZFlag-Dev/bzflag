@@ -3055,6 +3055,48 @@ float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, fl
     return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
 }
 
+BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
+{
+  float pos[3] = {0,0,0}, size[3] = {0,0,0};
+  
+  if (obj->box) {
+    pos[0] = (obj->xMax + obj->xMin) / 2;
+    pos[1] = (obj->yMax + obj->yMin) / 2;
+    size[0] = (obj->xMax - obj->xMin) / 2;
+    size[1] = (obj->yMax - obj->yMin) / 2;
+  }
+  else {
+    pos[0] = obj->xMax;
+    pos[1] = obj->yMax;
+  }
+  
+  pos[2] = obj->zMin;
+  size[2] = obj->zMax - obj->zMin;
+  
+  if (obj->box)
+  {
+    float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
+    float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
+    float cos_val = cosf(obj->rotation);
+    float sin_val = sinf(obj->rotation);
+    
+    randomPos[0] = ((x * cos_val) - (y * sin_val)) + pos[0];
+    randomPos[1] = ((x * sin_val) + (y * cos_val)) + pos[1];
+    randomPos[2] = pos[2];
+  }
+  else
+  {
+    float t = 2 * M_PI * bzfrand();
+    float r = sqrt(bzfrand());
+    float x = r * cosf(t);
+    float y = r * sinf(t);
+    
+    randomPos[0] = (obj->radius * x) + pos[0];
+    randomPos[1] = (obj->radius * y) + pos[1];
+    randomPos[2] = pos[2];
+  }
+}
+
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
   if (!object || !handler)
