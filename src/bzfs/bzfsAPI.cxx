@@ -3086,8 +3086,8 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
   }
   else
   {
-    float t = 2 * M_PI * bzfrand();
-    float r = sqrt(bzfrand());
+    float t = (float)(2 * M_PI * bzfrand());
+    float r = sqrt((float)bzfrand());
     float x = r * cosf(t);
     float y = r * sinf(t);
     
