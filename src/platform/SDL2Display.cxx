@@ -192,55 +192,117 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     key.button = BzfKeyEvent::F12;
     break;
   case SDLK_KP_0:
-    key.button = BzfKeyEvent::Kp0;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '0';
+    } else {
+      key.button = BzfKeyEvent::Insert;
+    }
     break;
   case SDLK_KP_1:
-    key.button = BzfKeyEvent::Kp1;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '1';
+    } else {
+      key.button = BzfKeyEvent::End;
+    }
     break;
   case SDLK_KP_2:
-    key.button = BzfKeyEvent::Kp2;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '2';
+    } else {
+      key.button = BzfKeyEvent::Down;
+    }
     break;
   case SDLK_KP_3:
-    key.button = BzfKeyEvent::Kp3;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '3';
+    } else {
+      key.button = BzfKeyEvent::PageDown;
+    }
     break;
   case SDLK_KP_4:
-    key.button = BzfKeyEvent::Kp4;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '4';
+    } else {
+      key.button = BzfKeyEvent::Left;
+    }
     break;
   case SDLK_KP_5:
-    key.button = BzfKeyEvent::Kp5;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '5';
+    } else {
+      // When numlock is turned off, the keypad 5 key should do nothing
+      return false;
+    }
     break;
   case SDLK_KP_6:
-    key.button = BzfKeyEvent::Kp6;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '6';
+    } else {
+      key.button = BzfKeyEvent::Right;
+    }
     break;
   case SDLK_KP_7:
-    key.button = BzfKeyEvent::Kp7;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '7';
+    } else {
+      key.button = BzfKeyEvent::Home;
+    }
     break;
   case SDLK_KP_8:
-    key.button = BzfKeyEvent::Kp8;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '8';
+    } else {
+      key.button = BzfKeyEvent::Up;
+    }
     break;
   case SDLK_KP_9:
-    key.button = BzfKeyEvent::Kp9;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '9';
+    } else {
+      key.button = BzfKeyEvent::PageUp;
+    }
     break;
   case SDLK_KP_PERIOD:
-    key.button = BzfKeyEvent::Kp_Period;
+    if (mod & KMOD_NUM) {
+      key.button = BzfKeyEvent::NoButton;
+      key.ascii = '.';
+    } else {
+      key.button = BzfKeyEvent::Delete;
+    }
     break;
   case SDLK_KP_DIVIDE:
-    key.button = BzfKeyEvent::Kp_Divide;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = '/';
     break;
   case SDLK_KP_MULTIPLY:
-    key.button = BzfKeyEvent::Kp_Multiply;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = '*';
     break;
   case SDLK_KP_MINUS:
-    key.button = BzfKeyEvent::Kp_Minus;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = '-';
     break;
   case SDLK_KP_PLUS:
-    key.button = BzfKeyEvent::Kp_Plus;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = '+';
     break;
   case SDLK_KP_ENTER:
-    key.button = BzfKeyEvent::Kp_Enter;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = 13;
     break;
   case SDLK_KP_EQUALS:
-    key.button = BzfKeyEvent::Kp_Equals;
+    key.button = BzfKeyEvent::NoButton;
+    key.ascii = '=';
     break;
   case SDLK_HELP:
     key.button = BzfKeyEvent::Help;
@@ -262,38 +324,15 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     break;
   default:
     key.button = BzfKeyEvent::NoButton;
-    break;
-  }
-
-  // When NUM LOCK treat the KP number as numbers and Enter as Enter
-  if (mod & KMOD_NUM) {
-    if (((key.button >= BzfKeyEvent::Kp0) && (key.button <= BzfKeyEvent::Kp9))
-	|| (key.button == BzfKeyEvent::Kp_Enter))
-      key.button = BzfKeyEvent::NoButton;
-  }
-
-  if (key.button == BzfKeyEvent::NoButton) {
     if ((sym >= 0) && (sym <= 0x7F)) {
-      if(symNeedsConversion(sym))
+      if (symNeedsConversion(sdlEvent.key.keysym))
         key.ascii = charsForKeyCodes[sym];
       else
         key.ascii = sym;
+    } else {
+      return false;
     }
-    else switch (sym) {
-      case SDLK_KP_0: key.ascii = '0'; break;
-      case SDLK_KP_1: key.ascii = '1'; break;
-      case SDLK_KP_2: key.ascii = '2'; break;
-      case SDLK_KP_3: key.ascii = '3'; break;
-      case SDLK_KP_4: key.ascii = '4'; break;
-      case SDLK_KP_5: key.ascii = '5'; break;
-      case SDLK_KP_6: key.ascii = '6'; break;
-      case SDLK_KP_7: key.ascii = '7'; break;
-      case SDLK_KP_8: key.ascii = '8'; break;
-      case SDLK_KP_9: key.ascii = '9'; break;
-      case SDLK_KP_ENTER: key.ascii = 13; break;
-      default:
-	return false;
-    }
+    break;
   }
 
   key.shift = 0;
@@ -337,9 +376,40 @@ void SDLDisplay::getMouse(int &_x, int &_y) const {
 }
 
 
-bool SDLDisplay::symNeedsConversion(SDL_Keycode key) const
+bool SDLDisplay::symNeedsConversion(SDL_Keysym keysym) const
 {
-  return key >= SDLK_EXCLAIM && key <= SDLK_z ? true : false;
+  if (keysym.sym >= SDLK_EXCLAIM && keysym.sym <= SDLK_z)
+    return true;
+
+  // Handle keypad keys
+  switch (keysym.sym) {
+    case SDLK_KP_0:
+    case SDLK_KP_1:
+    case SDLK_KP_2:
+    case SDLK_KP_3:
+    case SDLK_KP_4:
+    case SDLK_KP_5:
+    case SDLK_KP_6:
+    case SDLK_KP_7:
+    case SDLK_KP_8:
+    case SDLK_KP_9:
+    case SDLK_KP_PERIOD:
+      // If numlock is on, handle keypad keys that would type letters and puctuation
+      if (keysym.mod & KMOD_NUM)
+	return true;
+      break;
+    case SDLK_KP_DIVIDE:
+    case SDLK_KP_MULTIPLY:
+    case SDLK_KP_MINUS:
+    case SDLK_KP_PLUS:
+    case SDLK_KP_EQUALS:
+      // Always handle numpad keys that are unaffected by numlock
+      return true;
+      break;
+  }
+
+
+  return false;
 }
 
 
@@ -460,7 +530,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_KEYDOWN:
-    if(symNeedsConversion(event.key.keysym.sym)) {
+    if (symNeedsConversion(event.key.keysym)) {
       lastKeyDownEvent = event;
     } else {
       _event.type = BzfEvent::KeyDown;
@@ -476,7 +546,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_TEXTINPUT:
-    if(event.text.text[0] < '!' || event.text.text[0] > '~')
+    if (event.text.text[0] < '!' || event.text.text[0] > '~')
       break;
     charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
     _event.type = BzfEvent::KeyDown;

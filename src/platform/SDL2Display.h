@@ -43,7 +43,7 @@ class SDLDisplay : public BzfDisplay {
  private:
   mutable SDL_Event lastKeyDownEvent;
   mutable std::map<SDL_Keycode,char> charsForKeyCodes; // updated each key press
-  bool symNeedsConversion(SDL_Keycode) const;
+  bool symNeedsConversion(SDL_Keysym) const;
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};
   int  min_width;
