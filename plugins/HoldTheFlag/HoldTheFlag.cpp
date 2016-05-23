@@ -19,7 +19,6 @@ typedef struct {
 } HtfPlayer;
 
 HtfPlayer Players[MAX_PLAYERID+1];
-std::map<std::string, HtfPlayer> leftDuringMatch;
 bool matchActive = false;
 bool htfEnabled = true;
 bz_eTeamType htfTeam = eNoTeam;
@@ -179,7 +178,6 @@ void htfStartGame (void)
   if (!htfEnabled)
     return;
 
-// TODO: clear leftDuringMatch
   resetScores();
   matchActive = true;
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has begun, good luck!");
@@ -195,9 +193,6 @@ void htfEndGame (void)
   }
 
   matchActive = false;
-
-// TODO: clear leftDuringMatch
-
 }
 
 void sendHelp (int who)
