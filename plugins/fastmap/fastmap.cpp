@@ -13,10 +13,10 @@
 // httpTest.cpp : Defines the entry point for the DLL application.
 //
 
-#include <map>
-#include <sstream>
 #include "bzfsAPI.h"
 #include "bzfsHTTPAPI.h"
+#include <map>
+#include <sstream>
 
 class Fastmap : public bzhttp_VDir, public bz_Plugin
 {

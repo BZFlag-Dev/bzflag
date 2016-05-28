@@ -13,9 +13,8 @@
 // chathistory.cpp : Defines the entry point for the DLL application.
 //
 
-#include <string>
-#include <map>
 #include "bzfsAPI.h"
+#include <map>
 
 class LastChatCommand : public bz_CustomSlashCommandHandler
 {

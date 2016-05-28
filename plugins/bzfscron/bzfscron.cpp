@@ -15,14 +15,9 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-
-#include <string>
-#include <vector>
+#include "CronJob.h"
 #include <fstream>
 #include <math.h>
-
-#include "CronJob.h"
-
 
 #define BCVERSION "bzfscron 1.0.0"
 

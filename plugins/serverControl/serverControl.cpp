@@ -13,12 +13,12 @@
 // ServerControl.cpp : Server shutdown and ban file control
 //
 
+#include "bzfsAPI.h"
+#include "plugin_utils.h"
 #include <fstream>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
 
 using namespace std;
 

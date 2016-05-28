@@ -3,10 +3,7 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-
 #include <algorithm>
-#include <string>
-#include <vector>
 
 class SuperUser : public bz_Plugin
 {

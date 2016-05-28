@@ -1,6 +1,5 @@
 // CustomZoneSample.cpp : Defines the entry point for the DLL application.
 //
-#include <vector>
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"

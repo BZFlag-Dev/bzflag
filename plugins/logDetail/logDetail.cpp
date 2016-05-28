@@ -13,9 +13,9 @@
 // logDetail.cpp : Plugin module for logging server events to stdout
 //
 
+#include "bzfsAPI.h"
 #include <iostream>
 #include <sstream>
-#include "bzfsAPI.h"
 
 enum action { join , auth , part };
 

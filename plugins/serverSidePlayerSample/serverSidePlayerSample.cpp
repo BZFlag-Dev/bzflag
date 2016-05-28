@@ -15,9 +15,7 @@
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
-
 #include "playerHandler.h"
-#include <vector>
 
 class ServerSidePlayerSample : public bz_Plugin
 {

@@ -12,11 +12,11 @@
 
 // PluginUtils.h - Collection of useful utility functions for plugins
 
-#include <iostream>
-#include <fstream>
 #include "bzfsAPI.h"
 #include "plugin_config.h"
 #include "plugin_utils.h"
+#include <iostream>
+#include <fstream>
 
 /*
  * INI style configuration file parser class
