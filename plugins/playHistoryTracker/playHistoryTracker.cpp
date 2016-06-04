@@ -1,173 +1,126 @@
-// playHistoryTracker.cpp : Defines the entry point for the DLL application.
-//
-
+/* bzflag
+ * Copyright (c) 1993-2016 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 #include "bzfsAPI.h"
 #include <map>
 
-// event handler callback
-
 class PlayHistoryTracker : public bz_Plugin
 {
 public:
-	virtual const char* Name (){return "Play History Tracker";}
-	virtual void Init ( const char* /* config */)
-	{
-		Register(bz_ePlayerDieEvent);
-		Register(bz_ePlayerPartEvent);
-		Register(bz_ePlayerSpawnEvent);
-		Register(bz_ePlayerJoinEvent);
-	}
-
-  virtual void Event ( bz_EventData *eventData );
-protected:
-
-  typedef struct
+  virtual const char* Name (){return "Play History Tracker";}
+  virtual void Init (const char* /* config */)
   {
-    int playerID;
-    std::string callsign;
-    double	startTime;
-    double	lastUpdateTime;
-    int		spreeTotal;
-  } trPlayerHistoryRecord;
+    // Register our events
+    Register(bz_ePlayerDieEvent);
+    Register(bz_ePlayerPartEvent);
+    Register(bz_ePlayerJoinEvent);
+  }
 
-  std::map<int, trPlayerHistoryRecord > playerList;
+  virtual void Event (bz_EventData *eventData);
+
+protected:
+  std::map<int, int> spreeCount;
 };
 
 BZ_PLUGIN(PlayHistoryTracker)
 
-
-// ----------------- SpreeTracker-----------------
-
-/*typedef struct
+void PlayHistoryTracker::Event(bz_EventData *eventData)
 {
-  int playerID;
-  std::string	callsign;
-  double	startTime;
-  double	lastUpdateTime;
-  int		spreeTotal;
-} trPlayerHistoryRecord;
-
-std::map<int, trPlayerHistoryRecord > playerList; */
-
-void PlayHistoryTracker::Event( bz_EventData *eventData )
-{
-  switch (eventData->eventType)
-  {
+  switch (eventData->eventType) {
   default:
-    // really WTF!!!!
     break;
 
   case bz_ePlayerDieEvent:
     {
-      bz_PlayerDieEventData_V1	*deathRecord = ( bz_PlayerDieEventData_V1*)eventData;
+      bz_PlayerDieEventData_V1 *deathRecord = (bz_PlayerDieEventData_V1*)eventData;
 
-      std::string killerCallSign = "UNKNOWN";
+      // Create variables to store the callsigns
+      std::string victimCallsign = "UNKNOWN";
+      std::string killerCallsign = "UNKNOWN";
 
-      bz_BasePlayerRecord	*killerData;
+      // Get player records for victim and killer
+      bz_BasePlayerRecord *victimData = bz_getPlayerByIndex(deathRecord->playerID);
+      bz_BasePlayerRecord *killerData = bz_getPlayerByIndex(deathRecord->killerID);
 
-      killerData = bz_getPlayerByIndex(deathRecord->killerID);
-
+      // If we have valid data, update the callsigns
+      if (victimData)
+	victimCallsign = victimData->callsign.c_str();
       if (killerData)
-	killerCallSign = killerData->callsign.c_str();
+	killerCallsign = killerData->callsign.c_str();
 
-      std::string soundToPlay;
-
-      // clear out the dude who got shot, since he won't be having any SPREEs
-      if (playerList.find(deathRecord->playerID) != playerList.end())
-      {
-	trPlayerHistoryRecord	&record = playerList.find(deathRecord->playerID)->second;
-	std::string message;
-	if ( record.spreeTotal >= 5 && record.spreeTotal < 10 )
-	  message = record.callsign + std::string("'s rampage was stopped by ") + killerCallSign;
-	if ( record.spreeTotal >= 10 && record.spreeTotal < 20 )
-	  message = record.callsign + std::string("'s killing spree was halted by ") + killerCallSign;
-	if ( record.spreeTotal >= 20 )
-	  message = std::string("The unstoppable reign of ") + record.callsign + std::string(" was ended by ") + killerCallSign;
-
-	if (message.size())
-	{
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
-	  soundToPlay = "spree4";
-	}
-
-	record.spreeTotal = 0;
-	record.startTime = deathRecord->eventTime;
-	record.lastUpdateTime = deathRecord->eventTime;
-
-      }
-
-      // chock up another win for our killer
-      // if they weren't the same as the killer ( suicide ).
-      if ( (deathRecord->playerID != deathRecord->killerID) && playerList.find(deathRecord->killerID) != playerList.end())
-      {
-	trPlayerHistoryRecord	&record = playerList.find(deathRecord->killerID)->second;
-	record.spreeTotal++;
-	record.lastUpdateTime = deathRecord->eventTime;
-
-	std::string message;
-
-	if ( record.spreeTotal == 5 )
-	{
-	  message = record.callsign + std::string(" is on a Rampage!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree1";
-	}
-	if ( record.spreeTotal == 10 )
-	{
-	  message = record.callsign + std::string(" is on a Killing Spree!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree2";
-	}
-	if ( record.spreeTotal == 20 )
-	{
-	  message = record.callsign + std::string(" is Unstoppable!!");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree3";
-	}
-	if ( record.spreeTotal > 20 && record.spreeTotal%5 == 0 )
-	{
-	  message = record.callsign + std::string(" continues to rage on");
-	  if (!soundToPlay.size())
-	    soundToPlay = "spree4";
-	}
-
-	if (message.size())
-	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
-
-      }
-
+      // Free the player records
+      bz_freePlayerRecord(victimData);
       bz_freePlayerRecord(killerData);
 
-      //if (soundToPlay.size())
-      //	bz_sendPlayCustomLocalSound(BZ_ALLUSERS,soundToPlay.c_str());
+      // Handle the victim
+      if (spreeCount.find(deathRecord->playerID) != spreeCount.end()) {
+	// Store a quick reference to their former spree count
+	int spreeTotal = spreeCount[deathRecord->playerID];
+	
+	std::string message;
 
+	// Generate an appropriate message, if any
+	if (spreeTotal >= 5 && spreeTotal < 10)
+	  message = victimCallsign + std::string("'s rampage was stopped by ") + killerCallsign;
+	else if (spreeTotal >= 10 && spreeTotal < 20)
+	  message = victimCallsign + std::string("'s killing spree was halted by ") + killerCallsign;
+	else if (spreeTotal >= 20)
+	  message = std::string("The unstoppable reign of ") + victimCallsign + std::string(" was ended by ") + killerCallsign;
+
+	// If we have a message to send, then send it
+	if (message.size())
+	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+
+	// Since they died, release their spree counter
+	spreeCount[deathRecord->playerID] = 0;
+      }
+
+      // Handle the killer (if it wasn't also the victim)
+      if (deathRecord->playerID != deathRecord->killerID && spreeCount.find(deathRecord->killerID) != spreeCount.end()) {
+	// Store a quick reference to their newly incremented spree count
+	int spreeTotal = ++spreeCount[deathRecord->playerID];
+
+	std::string message;
+
+	// Generate an appropriate message, if any
+	if (spreeTotal == 5)
+	  message = victimCallsign + std::string(" is on a Rampage!");
+	else if (spreeTotal == 10)
+	  message = victimCallsign + std::string(" is on a Killing Spree!");
+	else if (spreeTotal == 20)
+	  message = victimCallsign + std::string(" is Unstoppable!!");
+	else if (spreeTotal > 20 && spreeTotal%5 == 0)
+	  message = victimCallsign + std::string(" continues to rage on");
+
+	// If we have a message to send, then send it
+	if (message.size())
+	  bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, message.c_str());
+      }
     }
-    break;
-
-  case  bz_ePlayerSpawnEvent:
-    // really WTF!!!!
     break;
 
   case  bz_ePlayerJoinEvent:
     {
-      trPlayerHistoryRecord playerRecord;
-
-      playerRecord.playerID = (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID;
-      playerRecord.callsign = (( bz_PlayerJoinPartEventData_V1*)eventData)->record->callsign.c_str();
-      playerRecord.spreeTotal = 0;
-      playerRecord.lastUpdateTime = (( bz_PlayerJoinPartEventData_V1*)eventData)->eventTime;
-      playerRecord.startTime = playerRecord.lastUpdateTime;
-
-      playerList[(( bz_PlayerJoinPartEventData_V1*)eventData)->playerID] = playerRecord;
+      // Initialize the spree counter for the player that just joined
+      spreeCount[((bz_PlayerJoinPartEventData_V1*)eventData)->playerID] = 0;
     }
     break;
 
   case  bz_ePlayerPartEvent:
     {
-      std::map<int, trPlayerHistoryRecord >::iterator	itr = playerList.find( (( bz_PlayerJoinPartEventData_V1*)eventData)->playerID );
-      if (itr != playerList.end())
-	playerList.erase(itr);
+      // Erase the spree counter for the player that just left
+      std::map<int, int >::iterator itr = spreeCount.find(((bz_PlayerJoinPartEventData_V1*)eventData)->playerID);
+      if (itr != spreeCount.end())
+	spreeCount.erase(itr);
     }
     break;
   }
