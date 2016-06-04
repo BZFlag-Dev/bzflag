@@ -16,6 +16,29 @@ public:
 
 BZ_PLUGIN(CustomFlagSample)
 
+void CustomFlagSample::Init ( const char* /*commandLine*/ )
+{
+  bz_debugMessage(4, "customflagsample plugin loaded");
+
+  // register our special custom flag
+  bz_RegisterCustomFlag("CF", "Custom Flag", "A simple sample custom flag from the customflagsample plugin", /*eSuperShot*/0, eGoodFlag);
+
+  // register events for pick up, drop, transfer, and fire
+  Register(bz_eFlagTransferredEvent);
+  Register(bz_eFlagGrabbedEvent);
+  Register(bz_eFlagDroppedEvent);
+  Register(bz_eShotFiredEvent);
+  Register(bz_ePlayerDieEvent);
+}
+
+void CustomFlagSample::Cleanup ( void )
+{
+  // unregister our events
+  Flush();
+
+  bz_debugMessage(4, "customflagsample plugin unloaded");
+}
+
 void CustomFlagSample::Event(bz_EventData *eventData)
 {
   switch (eventData->eventType) {
@@ -72,29 +95,6 @@ void CustomFlagSample::Event(bz_EventData *eventData)
   }
 
   }
-}
-
-void CustomFlagSample::Init ( const char* /*commandLine*/ )
-{
-  bz_debugMessage(4, "customflagsample plugin loaded");
-
-  // register our special custom flag
-  bz_RegisterCustomFlag("CF", "Custom Flag", "A simple sample custom flag from the customflagsample plugin", /*eSuperShot*/0, eGoodFlag);
-
-  // register events for pick up, drop, transfer, and fire
-  Register(bz_eFlagTransferredEvent);
-  Register(bz_eFlagGrabbedEvent);
-  Register(bz_eFlagDroppedEvent);
-  Register(bz_eShotFiredEvent);
-  Register(bz_ePlayerDieEvent);
-}
-
-void CustomFlagSample::Cleanup ( void )
-{
-  // unregister our events
-  Flush();
-
-  bz_debugMessage(4, "customflagsample plugin unloaded");
 }
 
 // Local Variables: ***
