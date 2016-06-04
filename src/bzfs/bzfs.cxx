@@ -673,14 +673,10 @@ void pauseCountdown ( int pausedBy )
   if (clOptions->countdownPaused)
     return;
 
-  const char* callsign = bz_getPlayerCallsign(pausedBy);
-
-  TimeKeeper tm = TimeKeeper::getCurrent();
-  PlayerInfo::setCurrentTime(tm);
+	const char* callsign = bz_getPlayerCallsign(pausedBy);
 
   clOptions->countdownPaused = true;
   countdownResumeDelay = -1; // reset back to "unset"
-  countdownPauseStart = tm;
 
   if (callsign != NULL)
     sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Countdown paused by %s", callsign).c_str());
@@ -690,7 +686,7 @@ void pauseCountdown ( int pausedBy )
   // fire off a game pause event
   bz_GamePauseResumeEventData_V2 pauseEventData;
   pauseEventData.eventType = bz_eGamePauseEvent;
-  pauseEventData.playerID = pausedBy;
+	pauseEventData.playerID = pausedBy;
   pauseEventData.actionBy = callsign;
   worldEventManager.callEvents(bz_eGamePauseEvent, &pauseEventData);
 }
@@ -6702,6 +6698,7 @@ int main(int argc, char **argv)
       if (countdownActive && clOptions->countdownPaused && !countdownPauseStart)
       {
 	// we have a new pause
+	countdownPauseStart = tm;
 	void *buf, *bufStart = getDirectMessageBuffer ();
 	buf = nboPackInt (bufStart, -1);
 	broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
