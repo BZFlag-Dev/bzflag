@@ -102,7 +102,6 @@ class ControlPanel {
     MainWindow&		window;
     bool		resized;
     int			numBuffers;
-    int			exposed;
     int			changedMessage;
     RadarRenderer*	radarRenderer;
     SceneRenderer*	renderer;
