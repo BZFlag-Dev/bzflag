@@ -1,21 +1,40 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : chathistory Project Overview
-========================================================================
+BZFlag Server Plugin: chathistory
+================================================================================
 
-The chathistory plugin logs all the chat text for all players for 
-administrators to review.
+The chathistory plugin logs all the chat text in memory (including team and
+private chat).  It then allows an administrator to view the last several
+messages that a player sent. It does not include who the message was set to,
+however.
 
-When chathistory is loaded it will begin logging every line for every 
-player that is in the game. It will log these lines in internal memory
-for as long as a player is on the server, or until a preset line limit
-is reached. The default line limit, which is 1000 lines, can be changed
-by passing in a new limit when the plug-in is loaded as a parameter.
 
-The plug-in installs two custom slash commands for administrators to use
-to review the stored chat logs.
+Loading the plugin
+--------------------------------------------------------------------------------
 
-/last <NUMBER OF LINES> <CALLSIGN>
-is used to list the last <NUMBER OF LINES> of chat text for the
-specified callsign.
+By default, the plugin stores the last 50 lines of text for *each* player. If
+this is enough, you can load the plugin without additional arguments.
 
-/flushchat manually flushes all stored chat. 
+  -loadplugin chathistory
+
+If you wish to store more or less than 50 lines, you can provide that as an
+argument when loading the plugin.  Note that the game server may kick you if you
+request too much information, so storing more than 50 might be useful.
+
+  -loadplugin chathistory,20
+
+Do note that this plugin doesn't automatically remove chat histories from
+players that leave the server, so a long running server can begin to use more
+and more memory.  Running the /flushchat command mentioned below should free up
+the memory that was used.
+
+
+Server Commands
+--------------------------------------------------------------------------------
+
+To run either of the two commands, you must be an administrator on the server.
+
+To show the last 8 lines of chat for a player, you can the 'last' command. If
+the player's name has spaces, you must enclose their name in double quotes.
+  /last 8 "some callsign here"
+
+To clear the chat history for all players:
+  /flushchat

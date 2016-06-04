@@ -1,24 +1,32 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : logDetail Project Overview
-========================================================================
+BZFlag Server Plugin: logDetail
+================================================================================
 
-This is the logDetail plugin. It displays information about server events
-and chat to the standard output server log.
+The logDetail plugin displays information about server events in a more
+consistent format.  This allows you to more easily write a script to parse the
+log output for use in web interfaces or database lookups.
 
 The log detail plugin displays:
- * unprocessed user commands (slash commands before they are processed - valid
-	or not)
- * player reports
- * chat messages (broadcasts, team messages, admin channel messages, and
-	private messages)
- * server messages
- * players joining (ip, auth status, team, etc)
- * player authentication changes (via /password or /identify)
- * players leaving
+* unprocessed user commands (slash commands before they are processed - valid
+  or not)
+* player reports
+* chat messages (broadcasts, team messages, admin channel messages, and
+  private messages)
+* server messages
+* players joining (ip, auth status, team, etc)
+* player authentication changes (via /password or /identify)
+* players leaving
 
-The plugin currently takes no parameters.
 
-Sample output:
+Loading the plugin
+--------------------------------------------------------------------------------
+
+This plugin takes no optional arguments, so load it with:
+
+  -loadplugin logDetail
+
+
+Sample output
+--------------------------------------------------------------------------------
 
 PLAYER-JOIN 10:SomePlayer #0 OBSERVER IP:127.0.0.1
 PLAYER-JOIN 15:SomeOtherPlayer #1 RED IP:127.0.0.1

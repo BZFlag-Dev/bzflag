@@ -1,7 +1,13 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : recordmatch Project Overview
-========================================================================
+BZFlag Server Plugin: recordmatch
+================================================================================
 
-This is the recordmatch plugin.  It automatically saves a recording of
-each timed match into its own file, from which it can be played back
-by a replay server.
+The recordmatch plugin automatically saves a recording of each timed match, from
+which it can be played back by a replay server.  It uses the filename format of:
+  match-YYYYMMDD-hh:mm:ss.rec
+
+
+Loading the plugin
+--------------------------------------------------------------------------------
+
+This plugin takes no optional arguments, so load it with:
+  -loadplugin recordmatch

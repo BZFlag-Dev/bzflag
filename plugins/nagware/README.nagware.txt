@@ -1,43 +1,78 @@
-========================================================================
-      NAGWARE, a bzfs plugin                    v 1.00.00  (menotume)
-========================================================================
+﻿BZFlag Server Plugin: nagware
+================================================================================
 
-The nagware plugin is designed to encourage players to register their
-callsigns at forums.bzflag.org.
+Original author: menotume
 
-Nagware can send text messages to unverified players at defined
-intervals, as well as automatically kick unverified players.
-
-The plugin is customized using a plain-text configuration file.
-
-              ------------------------------
-              See NAGSAMPLE.CFG for details.
-              ------------------------------
-
-Load the plugin in bzfs with the following configuration option:
--loadplugin <path to plugin>,<path to config>
-
-For example (on linux):
--loadplugin /home/bzfs/lib/nagware.so,/home/bzfs/configs/nagware.cfg
-
-If there is an error in the configuration file, the plugin will not
-load.  See the output of bzfs (or log file) for details.
+The nagware plugin is designed to encourage players to register their callsign
+at forums.bzflag.org.  It can send text messages to unregistered players at
+defined intervals, as well as automatically kick unregistered players.
 
 
-The following commands are available to privileged players (see the
-sample config file for how to set the permission name):
+Loading the plugin
+--------------------------------------------------------------------------------
 
-/nag on: Enables the plugin for sending messages and kicking players.
-         The plugin is enabled by default.
+The plugin requires that the path to the nagware configuration file is provided:
 
-/nag off: Stops the plugin from sending messages and kicking players.
-         Re-enable with '/nag on'.  NOTE that the plugin is automatically
-         disabled during a match.
+  -loadplugin nagware,/path/to/your/nagware.cfg
 
-/nag config: Display the current configuration options.
 
-/nag reload: Reload the configuration file. Any config file errors will
-         be shown.
+Configuration
+--------------------------------------------------------------------------------
 
-/nag list: Show all unverified players, and how long they have been
-         connected.
+# Sample configuration file for the nagware plugin.
+
+# permission tag to use to grant "/nag" command permissions
+# defaults to "NAG" if not specified.
+permname = say
+
+# Apply logic to observers ?  (yes/no)
+# default is no
+kickobs = yes
+
+# minplayers: There must be this many players before anybody is
+#    kicked, but the warnings will still happen.
+# default is 1
+minplayers  = 2
+
+# Include observers in minplayer count ?  (yes/no)
+# default is yes
+countobs = yes
+
+# messagesuffix: Message to be added to the end of all other defined messages.
+messagesuffix = \nRegister at https://forums.bzflag.org/ and use your login in the bzflag connect screen.
+
+# Message: Messages to be sent to players at specified times.
+#   Format is:  TIME,[REPEAT] MESSAGE
+#       *) Time and repeat are in minutes, whole numbers only (0 is allowed)
+#       *) If repeat is specified, the message will be repeated every [REPEAT] minutes until the next
+#          message is applied (if any), or the player is kicked.
+message = 1 This server requires global registration.
+message = 2 Dieser Server erfordert globale Registrierung.\nCe serveur exige l'enregistrement global\nEste camarero requiere matrícula global
+message = 3,1 You will be kicked from this server shortly, please register and come back!
+message = 6,2 You are now marked to be kicked randomly.
+
+# Same format as above, except 'repeat' is not used.
+# If not defined, no players will be kicked.
+kickmessage = 7 You have been kicked because you are not registered.
+
+
+Server Commands
+--------------------------------------------------------------------------------
+
+The following commands are available to privileged players.
+
+Enable sending messages and kicking players.  Enabled by default.
+  /nag on
+
+Disable sending messages and kicking players.  Note that it automatically
+disables these functions during a match.
+  /nag off
+
+Display the current nagware configuration.
+  /nag config
+
+Reload the configuration file.
+  /nag reload
+
+Show all unverified players and how long they have been connected
+  /nag list

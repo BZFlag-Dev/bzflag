@@ -1,34 +1,40 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : bzfscron Project Overview
-========================================================================
+BZFlag Server Plugin: bzfscron
+================================================================================
 
-This is the bzfscron plugin.
-
-It allows you to run commands on certain intervals.  It takes a single
-argument on the commandline, a file to parse.
+This plugin allows running arbitrary server commands on a predefined schedule.
+The plugin creates a server side player as an observer and grants it full
+administrator rights, so it can run commands restricted to administrators.
 
 
-FILE FORMAT:
+Loading the plugin
+--------------------------------------------------------------------------------
 
-If you are familiar with crontab on unix-like systems it uses an identical
-file format, like:
+The plugin requires that the filename to the crontab file is provided. For how
+to create a crontab file, check the configuration section that follows.
 
-Min	Hour	Day	Month	Weekday	Command
+  -loadplugin bzfscron,/path/to/your/bzfs/crontab
+
+
+Configuration
+--------------------------------------------------------------------------------
+
+The plugin requires a crontab file be created.  If you are familiar with
+crontab on unix-like systems it uses an identical file format, like:
+
+Minute	Hour Day	Month	Weekday	Command
 
 Allowed values are:
+* Minute: 0-59
+* Hour: 0-23
+* Day: 1-31
+* Month: 1-12 (numbers only)
+* Weekday: 0-7 (0 or 7 is Sun, numbers only)
 
-field         allowed values
------         --------------
-minute        0-59
-hour          0-23
-day of month  1-31
-month         1-12 (names are NOT allowed)
-day of week   0-7 (0 or 7 is Sun, NO names)
-
-A * means every valid value for that field.
+For any value, you can also use an asterisk (*). An asterisk means every valid
+value for that field.
 
 
-EXAMPLE CRONTABS:
+**Example Crontabs:**
 
 So for instance, to run "/flag reset unused" at quarter-after, 
 every hour you could do
@@ -64,7 +70,7 @@ with a five-minute wait period like this:
 5,25,45	*	*	*	*	*	/match start
 
 
-SIMULTANEOUS EVENTS:
+**Simultaneous Events:**
 
 Events which should occur "simultaneously" according to the crontab are
 executed in the order they're written, so to restart the match immediately 
@@ -81,16 +87,17 @@ which is *different* from
 which would give you a zero-time match!
 
 
-MULTIPLE RESTRICTIONS:
+**Multiple Restrictions:**
 
 Since there are two fields to restrict a command's execution, the behavior when
-both are restricted is undefined by standard.  bzfscron chooses to execute it only
-when BOTH fields are matched (e.g. if you say run on fridays only, and run on the 
-13th only, it will only run on friday the 13th).  This is contrary to the way that
-most modern system crons deal with this situation.  You have been warned.
+both are restricted is undefined by standard.  bzfscron chooses to execute it
+only when BOTH fields are matched (e.g. if you say run on fridays only, and run
+on the 13th only, it will only run on friday the 13th).  This is contrary to the
+way that most modern system crons deal with this situation.  You have been
+warned.
 
 
-FORMAT EXTENSIONS (Advanced):
+**Format Extensions (advanced):**
 
 The bzfscron plugin also supports "step values" like several modern crons, so
 
@@ -120,5 +127,18 @@ Contrarily,
 
 2,6-10/2	*	*	*	*	*	/say "Hey there"
 
-will run on the SECOND, SIXTH, EIGTH and TENTH minutes, since 2 hits the step value.
-Zero always matches the step value, no matter what the step value is.
+will run on the SECOND, SIXTH, EIGTH and TENTH minutes, since 2 hits the step
+value. Zero always matches the step value, no matter what the step value is.
+
+
+Server Commands
+--------------------------------------------------------------------------------
+
+The plugin exposes a /cron command that requires the BZFSCRON permission. It has
+both a 'list' and a 'reload' subcommand.
+
+List the current bzfscron jobs:
+  /cron list
+
+Reload the crontab file after modifications have been made:
+  /cron reload

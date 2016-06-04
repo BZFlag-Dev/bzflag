@@ -1,6 +1,14 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : Phoenix Project Overview
-========================================================================
+BZFlag Server Plugin: Phoenix
+================================================================================
 
-This is the Phoenix plugin.  It causes players to spawn exactly where
-they died, which may be troublesome if death physics was the cause.
+The Phoenix plugin store the position of a tank when they die and respawns them
+in the exact same spot.  This can be problematic if there are death physics or
+water on the map, so avoid the plugin in those cases.
+
+
+Loading the plugin
+--------------------------------------------------------------------------------
+
+This plugin takes no optional arguments, so load it with:
+
+  -loadplugin Phoenix

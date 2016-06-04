@@ -1,5 +1,4 @@
-================================================================================
-  BZFlag Server Plugin :: SAMPLE_PLUGIN
+BZFlag Server Plugin: SAMPLE_PLUGIN
 ================================================================================
 
 This sample plugin provides a starting point for new plugins.
@@ -22,9 +21,14 @@ The remainder of this README file will provide some other sections that new
 plugins could include in their README file. It *WILL NOT* reflect the actual
 functionality of the sample plugin.
 
----------------------------------------
-  Loading The Plugin
----------------------------------------
+
+Loading the plugin
+--------------------------------------------------------------------------------
+
+This plugin takes no optional arguments, so load it with:
+  -loadplugin SAMPLE_PLUGIN
+
+  (or)
 
 To load the plugin with default settings, use:
   -loadplugin SAMPLE_PLUGIN
@@ -37,11 +41,33 @@ For example:
 To load the plugin and specify a configuration file, use the format:
   -loadplugin SAMPLE_PLUGIN,<configfilename>
 For example:
-  -loadplugin SAMPLE_PLUGIN,myconfig.cfg
+  -loadplugin SAMPLE_PLUGIN,/path/to/my/sampleplugin.cfg
 
----------------------------------------
-  Slash Command Usage
----------------------------------------
+
+Configuration
+--------------------------------------------------------------------------------
+
+Document the configuration BZDB values and/or configuation file format and
+options here.
+
+You can set BZDB variables on the command line, in a bzfs config file, or
+in-game.  You must use double quotes around a value if it contains spaces.
+
+This plugin exposes the following BZDB variables:
+
+_samplePowerLevel
+  The power level is a floating point number and has a range of 0 to
+  2822147055. It controls the power level.
+
+_sampleMessage
+  The message displayed can be configured.  Make sure to wrap the value of the
+  message in double quotes!
+
+
+Server Commands
+--------------------------------------------------------------------------------
+
+Describe the server commands, if any, that this plugin exposes.
 
 /sample on
   Turns the sample on
@@ -52,9 +78,12 @@ For example:
 /sample powerlevel <powerlevel>
   Sets the power level to <powerlevel>, where <powerlevel> is a positive integer
 
----------------------------------------
-  Custom Map Objects
----------------------------------------
+
+Map Objects
+--------------------------------------------------------------------------------
+
+If the map has custom map objects, explain the format and options here.
+
 
 sample # Start of the sample object
 

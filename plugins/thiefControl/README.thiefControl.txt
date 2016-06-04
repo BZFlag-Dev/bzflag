@@ -1,11 +1,16 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : thiefControl Project Overview
-========================================================================
+BZFlag Server Plugin: thiefControl
+================================================================================
 
-This is the thiefControl plugin, which causes players to drop their
-Thief flag if they attempt to steal a flag from a teammate.
-Exceptions:
+The thiefControl plugin prevents players from stealing flags from their
+teammates.  It ignore rogues, since they don't have teammates.  On CTF, it
+allows stealing the team flags for flag passing.  When the plugin prevents a
+flag from being stolen, it also sends the would be thief a message and takes
+away their flag.
 
-* rogue players may steal flags from each other as usual
-* non-rogue players may steal team flags from teammates for quick
-  movement across the battlefield
+
+Loading the plugin
+--------------------------------------------------------------------------------
+
+This plugin takes no optional arguments, so load it with:
+
+  -loadplugin thiefControl
