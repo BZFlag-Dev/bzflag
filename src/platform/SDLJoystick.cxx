@@ -29,15 +29,14 @@
 #include "TextUtils.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons()
+SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons(0), numHats(0),
+  xAxis(0), yAxis(1)
 {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
     std::vector<std::string> args;
     args.push_back(SDL_GetError());
     printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
   };
-  xAxis = 0;
-  yAxis = 1;
 }
 
 SDLJoystick::~SDLJoystick()

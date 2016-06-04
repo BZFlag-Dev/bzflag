@@ -48,7 +48,7 @@ const float* RegionPoint::get() const
 // clockwise.
 //
 
-BzfRegion::BzfRegion() : mailbox(0), target(0), A(0.0, 0.0)
+BzfRegion::BzfRegion() : mailbox(0), target(0), distance(0.0), A(0.0, 0.0)
 {
 }
 

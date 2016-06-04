@@ -37,6 +37,8 @@ ShotStats::ShotStats() : HUDDialog()
   columns = 11;
   rows = 0;
 
+  visible = false;
+
   // section headings (upper)
   createLabel("", listHUD);
   createLabel("", listHUD);

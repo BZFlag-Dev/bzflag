@@ -42,7 +42,7 @@ class ServerMenu;
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu), serverListFilterMenu(NULL) { }
+    menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) { }
   ~ServerMenuDefaultKey();
 
   bool keyPress(const BzfKeyEvent&);
