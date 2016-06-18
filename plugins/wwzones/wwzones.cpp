@@ -12,6 +12,7 @@
 
 #include "bzfsAPI.h"
 #include <map>
+#include <cmath>
 
 class WWZEventHandler : public bz_Plugin, bz_CustomMapObjectHandler
 {
