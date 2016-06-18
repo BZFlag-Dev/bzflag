@@ -38,6 +38,7 @@
 
 
 ServerList::ServerList() :
+	addedCacheToList(false),
 	phase(-1),
 	serverCache(ServerListCache::get()),
 	pingBcastSocket(-1)
