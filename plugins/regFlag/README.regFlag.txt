@@ -1,16 +1,16 @@
-========================================================================
-    DYNAMIC LINK LIBRARY : regFlag Project Overview
-========================================================================
+BZFlag Server Plugin: regFlag
+================================================================================
 
-This is the regFlag BZFlag plugin
+When this plugin is loaded, players that are not registered and identified will
+not be able to grab flags (good or bad).  They will be allowed to grab team
+flags so that CTF is still possible, however.
 
-This plugin only allows registered users to hold flags.  A fixed
-messages is displayed to the user when their flag is dropped.
+The player will be notified that they need to be registered to grab flags.  The
+message will appear at most once every 5 minutes.
 
-TODO:
 
- - Add configuration file
- - Make the displayed message when a flag is dropped configurable
- - Add configuration to allow non-registered players to keep bad flags
- - Add configuration to allow non-registered players to keep team flags
+Loading the plugin
+--------------------------------------------------------------------------------
 
+This plugin takes no optional arguments, so load it with:
+  -loadplugin SAMPLE_PLUGIN
