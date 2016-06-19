@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TIMELIMIT_VER "1.0.4"
 #define MAX_TIMES 20
 
 class TimeLimit : public bz_Plugin, public bz_CustomSlashCommandHandler

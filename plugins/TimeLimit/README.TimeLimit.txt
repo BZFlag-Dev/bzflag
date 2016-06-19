@@ -1,78 +1,52 @@
-TimeLimit plugin version 1.0.4  (December 26, 2006)
----------------------------------------------------
+BZFlag Server Plugin: TimeLimit
+================================================================================
 
-Author: Steven Mertens <steven.mertens@catay.be>
+This plugin allows players to adjust the time limit on a server, which is mostly
+useful for match servers.  Before starting a match with the /countdown command,
+you can set the match duration with the /timelimit command.  It's not possible
+to set the match duration when a countdown is in progress or when a match is
+already started.
 
-The TimeLimit plugin makes it possible to change live the
-match duration on a match server.
-
-
-Plugin command Line:
-====================
-  -loadplugin PLUGINNAME[,<time1>,<time2>] | ,starttime-endtime
-
-  The first example allows every match duration limit.
-
-  Example:   -loadplugin TimeLimit
-
-  The second example allows only those match durations
-  passed as arguments. A maximum of 20 different durations can
-  be specified.
-
-  Example :   -loadplugin TimeLimit,5,15,30,60
-
-  The third example allows a specific range of match durations.
-
-  Example :   -loadplugin TimeLimit,5-15
+The timelimit will reset itself to the -time value at the end of a match or when
+there are no players on the server.  It is also required that bzfs is started
+with the -timemanual option.
 
 
-  When the wrong arguments get passed through, the plugin will
-  fallback to the first example.
+Loading the plugin
+--------------------------------------------------------------------------------
 
-In-game commands:
-=================
+To load the plugin with default settings (which allows all times), use:
+  -loadplugin TimeLimit
 
-The timelimit in game command requires the TIMELIMIT permission.
-It is also required the bzfs server is started with -timemanual .
+The time limits can be configured two ways.  You can either specify a comma
+separated list of at most 20 times, or specify a single range of times.
 
-  /timelimit          : displays the usage message
-  /timelimit <minutes>: sets the timelimit
-  /timelimit show     : shows the current set timelimit
-  /timelimit reset    : resets the timelimit back to default (-time setting)
+To load the plugin with a list of times, use the format:
+  -loadplugin TimeLimit,<time1>,<time2>,...,<timeX>
+For example:
+  -loadplugin TimeLimit,15,20,30
 
-  Example : /timelimit 15
+To load the plugin with a range of times, use the format:
+  -loadplugin TimeLimit,<low>-<high>
+For example:
+  -loadplugin TimeLimit,15-30
 
-Matches:
-========
 
- Before starting a match with the /countdown command you can set the
- match duration with the /timelimit command.
- It's not possible to set the match duration when a countdown is in
- progress or when a match is already started.
- The timelimit will reset itself to the -time value at the end of a
- match or when there are no players on the server.
+Server Commands
+--------------------------------------------------------------------------------
 
-Changelog:
-==========
+The plugin adds a /timelimit command, and requires the TIMELIMIT permission.
 
- * TimeLimit 1.0.4 (26 December 2006)
+/timelimit
+  Displays the usage message
 
-   - Added a makefile so the plugin doesn't relay anymore on
-     bzflag plugin build system.
+/timelimit <minutes>
+  Sets the timelimit to <minutes> minutes
+Example:
+  /timelimit 15
 
- * TimeLimit 1.0.3 (26 July 2006)
-
-   - Applied uso his changes (timelimit reset at end of game)
-   - Add feature that allows a range of match durations
-
- * TimeLimit 1.0.2 (08 June 2006)
-
-   - Add feature that only allows certain match durations
-
- * TimeLimit 1.0.1 (18 May 2006)
-
-   - bugfix : don't allow negative match durations
-
- * TimeLimit 1.0.0 (17 May 2006)
-
-   - Initial release
+/timelimit show
+  Shows the current set timelimit
+  
+/timelimit reset
+  Resets the timelimit back to default (-time setting)
