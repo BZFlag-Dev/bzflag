@@ -13,4 +13,4 @@ Loading the plugin
 --------------------------------------------------------------------------------
 
 This plugin takes no optional arguments, so load it with:
-  -loadplugin SAMPLE_PLUGIN
+  -loadplugin regFlag
