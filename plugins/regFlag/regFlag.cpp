@@ -54,11 +54,14 @@ void RegFlag::Event(bz_EventData *eventData)
       // Fetch the player record to check if they are a global user
       bz_BasePlayerRecord *player = bz_getPlayerByIndex(data->playerID);
 
+      // Put the flag name into an easy-to-test variable type.
+      bz_ApiString flagAbbrev = bz_getFlagName(data->flagID);
+
       // If the player isn't a global user, prevent them from grabbing a flag, and
       // notify them why if enough time has passed.  Always allow team flags, however.
       if (
 	player && !player->globalUser && 
-	!(data->flagType == "R*" || data->flagType == "G*" || data->flagType == "B*" || data->flagType == "P*")
+	!(flagAbbrev == "R*" || flagAbbrev == "G*" || flagAbbrev == "B*" || flagAbbrev == "P*")
       ) {
 	data->allow = false;
 	
