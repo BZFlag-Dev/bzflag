@@ -47,9 +47,9 @@ Map Objects
 
 The plugin adds a 'rabidRabbitzone' object type.  You will specify this when
 creating a custom zone.  Both zone shapes will use a 'pos' (position), various
-attributes for controlling the world weapon and messages.  The rectangular type will use a
-'size' and 'rot' (rotation) attribute, and the circular type will use a 'radius'
-and 'height' attribute.
+attributes for controlling the world weapon and messages.  The rectangular type
+will use a 'size' and 'rot' (rotation) attribute, and the circular type will use
+a 'radius' and 'height' attribute.
 
 Here are the common attributes and how to use them:
 
@@ -76,7 +76,7 @@ Define the weapon that will be triggered from this wwzone:
     This value is completely ignored, so just pass a 0 to it.
   <repeat>
     The amount of time between the world weapon shots.  Minimum is 0.1 seconds.
-  
+
 This optional attribute sends a custom message to all players a rabbit enters
 the active rabidRabbit zone and kills all the hunters:
   servermessage "your message here"
