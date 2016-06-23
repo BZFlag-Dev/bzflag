@@ -5718,11 +5718,11 @@ void drawFrame(const float dt)
     // draw frame
     if (viewType == SceneRenderer::ThreeChannel) {
       // draw center channel
+      mainWindow->setQuadrant(MainWindow::CenterChannel);
       sceneRenderer->render(false);
-      drawUI();
 
       // set up for drawing left channel
-      mainWindow->setQuadrant(MainWindow::LowerLeft);
+      mainWindow->setQuadrant(MainWindow::LeftChannel);
       // FIXME -- this assumes up is along +z
       const float cFOV = cosf(fov);
       const float sFOV = sinf(fov);
@@ -5735,7 +5735,7 @@ void drawFrame(const float dt)
       sceneRenderer->render(false, true, true);
 
       // set up for drawing right channel
-      mainWindow->setQuadrant(MainWindow::LowerRight);
+      mainWindow->setQuadrant(MainWindow::RightChannel);
       // FIXME -- this assumes up is along +z
       targetPoint[0] = eyePoint[0] + cFOV*myTankDir[0] + sFOV*myTankDir[1];
       targetPoint[1] = eyePoint[1] + cFOV*myTankDir[1] - sFOV*myTankDir[0];
@@ -5757,8 +5757,9 @@ void drawFrame(const float dt)
       // draw rear channel
       sceneRenderer->render(true, true, true);
 #endif
-      // back to center channel
-      mainWindow->setQuadrant(MainWindow::UpperRight);
+      // draw UI over everything
+      mainWindow->setQuadrant(MainWindow::FullWindow);
+      drawUI();
     } else if (viewType == SceneRenderer::Stacked) {
       float EyeDisplacement = 0.25f * BZDBCache::tankWidth;
       float FocalPlane = BZDB.eval(StateDatabase::BZDB_BOXBASE);

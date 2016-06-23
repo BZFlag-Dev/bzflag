@@ -1303,7 +1303,7 @@ int			main(int argc, char** argv)
 
   // set window quadrant
   if (RENDERER.getViewType() == SceneRenderer::ThreeChannel)
-    pmainWindow->setQuadrant(MainWindow::UpperRight);
+    pmainWindow->setQuadrant(MainWindow::FullWindow);
   else if (RENDERER.getViewType() == SceneRenderer::Stacked)
     pmainWindow->setQuadrant(MainWindow::LowerHalf);
 #ifndef USE_GL_STEREO

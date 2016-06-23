@@ -36,7 +36,10 @@ class MainWindow {
 			LowerRight,
 			ZoomRegion,
 			UpperHalf,
-			LowerHalf
+			LowerHalf,
+			LeftChannel,
+			CenterChannel,
+			RightChannel
     };
 
 			MainWindow(BzfWindow*, BzfJoystick*);

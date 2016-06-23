@@ -566,9 +566,7 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
     // draw ground -- first get the color (assume it's all green)
     GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-      glScissor(x, y, width, height >> 1);
-    else if (fullWindow && viewType == SceneRenderer::Stacked)
+    if (fullWindow && viewType == SceneRenderer::Stacked)
       glScissor(x, y, width, height >> 1);
 #ifndef USE_GL_STEREO
     else if (fullWindow && viewType == SceneRenderer::Stereo)
@@ -614,9 +612,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
 
     // draw ground -- first get the color (assume it's all green)
     GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-    if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-      glScissor(x, y, width, height >> 1);
-    else if (fullWindow && viewType == SceneRenderer::Stacked)
+    if (fullWindow && viewType == SceneRenderer::Stacked)
       glScissor(x, y, width, height >> 1);
 #ifndef USE_GL_STEREO
     else if (fullWindow && viewType == SceneRenderer::Stereo)

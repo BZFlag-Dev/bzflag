@@ -241,6 +241,27 @@ void			MainWindow::setQuadrant(Quadrant _quadrant)
       xOrigin = 0;
       yOrigin = 0;
       break;
+    case LeftChannel:
+      width = inWidth / 3;
+      height = inHeight;
+      viewHeight = height;
+      xOrigin = 0;
+      yOrigin = 0;
+      break;
+    case CenterChannel:
+      width = inWidth / 3;
+      height = inHeight;
+      viewHeight = height;
+      xOrigin = inWidth / 3;
+      yOrigin = 0;
+      break;
+    case RightChannel:
+      width = inWidth / 3;
+      height = inHeight;
+      viewHeight = height;
+      xOrigin = inWidth / 3 * 2;
+      yOrigin = 0;
+      break;
   }
 
   if (quadrant == ZoomRegion) {
