@@ -1,14 +1,21 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.6-RC2
+BZFlag 2.4.6
 --------------------------------------------
+
+* regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
+* RogueGenocide plugin defaults to ignoring rogue self-kills - Scott Wichser
+* Standardize and update the documentation for bundled plugins - Scott Wichser
+* Add bz_getRandomPoint to API - Vladimir Jimenez
+* Correctly handle the keypad keys with SDL2 - Jeff Makey, Scott Wichser
+* Implement SOURCE_DATE_EPOCH spec in our autoconf system to work towards
+  reproducible builds - Scott Wichser, Jeff Makey
+* Include a timestamp in the /savemsgs output filename - Scott Wichser
+* Added -t option to /savemsgs to add timestamps to messages - Scott Wichser
+* Added a GUI option to show timestamps on the messages - Scott Wichser
 * For SDL2, restore the original gamma on exit and reapply desired gamma on
     window recreation - Scott Wichser
-
-BZFlag 2.4.6-RC1
---------------------------------------------
-
 * Use SDL2 on Windows for the window/display management - Scott Wichser
 * Remove hiddenAdmin plugin - Vladimir Jimenez
 * Add a cycleRadar and cyclePanel key binding command - Joshua Bodine
