@@ -1,7 +1,7 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.6
+BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
 --------------------------------------------
 
 * regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
