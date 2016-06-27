@@ -49,6 +49,8 @@ bzflag_SOURCES =			\
 	ForceFeedback.h			\
 	FormatMenu.cxx			\
 	FormatMenu.h			\
+	GrassRenderer.cxx		\
+	GrassRenderer.h			\
 	GuidedMissleStrategy.cxx	\
 	GuidedMissleStrategy.h		\
 	GUIOptionsMenu.cxx		\

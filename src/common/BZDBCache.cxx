@@ -19,6 +19,7 @@
 BZDBCache::Bool  BZDBCache::displayMainFlags;
 BZDBCache::Bool  BZDBCache::blend;
 BZDBCache::Bool  BZDBCache::texture;
+BZDBCache::Int   BZDBCache::grass3D;
 BZDBCache::Bool  BZDBCache::shadows;
 BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::zbuffer;
@@ -100,6 +101,7 @@ void BZDBCache::init()
   BZDB.addCallback("radarTankPixels", clientCallback, NULL);
   BZDB.addCallback("blend", clientCallback, NULL);
   BZDB.addCallback("texture", clientCallback, NULL);
+  BZDB.addCallback("3DGrass", clientCallback, NULL);
   BZDB.addCallback("shadows", clientCallback, NULL);
   BZDB.addCallback("stencilShadows", clientCallback, NULL);
   BZDB.addCallback("zbuffer", clientCallback, NULL);
@@ -175,6 +177,8 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     displayMainFlags = BZDB.isTrue("displayMainFlags");
   else if (name == "texture")
     texture = BZDB.isTrue("texture");
+  else if (name == "3DGrass")
+    grass3D = BZDB.evalInt("3DGrass");
   else if (name == "shadows")
     shadows = BZDB.isTrue("shadows");
   else if (name == "stencilShadows")

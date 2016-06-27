@@ -82,6 +82,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "pulseRate",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "userRainScale",		"1.0",			true,	StateDatabase::ReadWrite,	NULL },
   { "userMirror",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "3DGrass",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "showTreads",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "animatedTreads",		"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotLength",		"1",			true,	StateDatabase::ReadWrite,	NULL },
