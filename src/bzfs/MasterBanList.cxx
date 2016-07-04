@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -9,10 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#ifdef _MSC_VER
-#pragma warning( 4: 4786)
-#endif
 
 // interface header
 #include "MasterBanList.h"
@@ -33,3 +29,10 @@ void MasterBanList::finalization(char *cURLdata, unsigned int length,
     data = std::string(cURLdata, length);
 }
 
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

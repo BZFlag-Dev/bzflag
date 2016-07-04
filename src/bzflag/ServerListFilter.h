@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -115,6 +115,8 @@ class ServerListFilter {
     static bool isPatternLabel(const std::string& label);
     static char parseFilterType(const std::string& f, char& op,
 				std::string& label, std::string& param);
+    static std::string colorizeSearch(const std::string& in);
+
   private:
     void reset();
     bool parseFilter(const std::string& f);
@@ -136,17 +138,18 @@ class ServerListFilter {
     PatternFilter addrDescPat;
 
     // boolean filters
+    BoolFilter ffa;
+    BoolFilter offa;
+    BoolFilter ctf;
+    BoolFilter rabbit;
+
     BoolFilter jump;
     BoolFilter rico;
-    BoolFilter flags;
-    BoolFilter teams;
     BoolFilter handi;
-    BoolFilter rabbit;
     BoolFilter replay;
     BoolFilter inertia;
     BoolFilter antidote;
     BoolFilter favorite;
-    BoolFilter cached;
 
     // range filters
     RangeFilter shots;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -97,6 +97,19 @@ void			BzfWindow::releaseCurrent(void)
 	// do nothing
 }
 
+void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+{
+  // Get current mouse position
+  int mouseX, mouseY;
+  getMouse(mouseX, mouseY);
+
+  // Warp the mouse if it's out of the boundary
+  if (mouseX < x1) { warpMouse(x1, mouseY); }
+  if (mouseX > x2) { warpMouse(x2, mouseY); }
+  if (mouseY < y1) { warpMouse(mouseX, y1); }
+  if (mouseY > y2) { warpMouse(mouseX, y2); }
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -104,4 +117,3 @@ void			BzfWindow::releaseCurrent(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -29,7 +29,6 @@ libCommon_la_SOURCES  =			\
 	OSFile.cxx			\
 	ParseColor.cxx			\
 	PlayerState.cxx			\
-	PositionTracker.cxx		\
 	ShotUpdate.cxx			\
 	StateDatabase.cxx		\
 	Team.cxx			\

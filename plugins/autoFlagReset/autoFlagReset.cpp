@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,30 +14,32 @@
 
 class autoFlagReset : public bz_Plugin
 {
-  virtual const char* Name (){return "Automatic Flag Reset";}
-  virtual void Init ( const char* config);
+  public:
+    autoFlagReset();
+    virtual const char* Name (){return "Automatic Flag Reset";}
+    virtual void Init ( const char* config);
 
-  virtual void Event ( bz_EventData* eventData );
+    virtual void Event ( bz_EventData* eventData );
   
-  virtual bool ResetUnusedSuperflag(unsigned int flagID);
+    virtual bool ResetUnusedSuperflag(unsigned int flagID);
   
-  bool incremental;
-  double freq;
-  double nextRunTime;
+    bool incremental;
+    double freq;
+    double nextRunTime;
   
-  unsigned int nextFlag;
+    unsigned int nextFlag;
 };
 
 BZ_PLUGIN(autoFlagReset)
+
+autoFlagReset::autoFlagReset() : bz_Plugin(), incremental(false), freq(900), nextRunTime(bz_getCurrentTime()), nextFlag(0)
+{
+}
 
 void autoFlagReset::Init (const char* commandLine)
 {
   std::string cl = commandLine;
   
-  incremental = false;
-  freq = 900.0; 
-  nextFlag = 0;
-  nextRunTime = bz_getCurrentTime();
   if (nextRunTime < 0.0)
   {
     nextRunTime = 0.0;
@@ -70,7 +72,7 @@ void autoFlagReset::Event(bz_EventData* eventData)
 {
   unsigned int nflags = bz_getNumFlags();
   
-  if (bz_getCurrentTime() < nextRunTime || nflags <= 0 || eventData->eventType != bz_eTickEvent)
+  if (bz_getCurrentTime() < nextRunTime || nflags == 0 || eventData->eventType != bz_eTickEvent)
   {
     // Nothing to see here.
     return;
@@ -153,4 +155,3 @@ bool autoFlagReset::ResetUnusedSuperflag(unsigned int flagID)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,6 +35,7 @@ class BzfVisual {
     virtual void	setAccum(int minRed, int minGreen,
 				int minBlue, int minAlpha) = 0;
     virtual void	setStereo(bool) = 0;
+    virtual void	setVerticalSync(bool) {;}
     virtual void	setMultisample(int minSamples) = 0;
 
     virtual bool	build() = 0;
@@ -53,4 +54,3 @@ class BzfVisual {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

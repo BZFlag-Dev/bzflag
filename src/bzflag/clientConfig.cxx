@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -59,12 +59,6 @@ std::string	getOldConfigFileName(void)
 	std::string name = getConfigDirName("2.0");
 	name += "config.cfg";
 
-	// add in hostname on UNIX
-	if (getenv("HOST")) {
-		name += ".";
-		name += getenv("HOST");
-	}
-
 	return name;
 
 #elif defined(_WIN32) /* !defined(_WIN32) */
@@ -103,19 +97,7 @@ static std::string	getReallyOldConfigFileName()
 
 std::string getCurrentConfigFileName(void)
 {
-	std::string configFile = BZ_CONFIG_FILE_NAME;
-
-	std::string name = getConfigDirName(BZ_CONFIG_DIR_VERSION);
-	name += configFile;
-
-#if !defined(_WIN32)
-	// add in hostname on UNIX
-	if (getenv("HOST")) {
-		name += ".";
-		name += getenv("HOST");
-	}
-#endif
-	return name;
+  return getConfigDirName(BZ_CONFIG_DIR_VERSION) + BZ_CONFIG_FILE_NAME;
 }
 
 #if !defined(_WIN32)
@@ -206,7 +188,7 @@ void updateConfigFile(void)
 {
 	int		configVersion = 0;
 	if (BZDB.isSet("config_version"))
-		configVersion = (int)BZDB.eval("config_version");
+		configVersion = BZDB.evalInt("config_version");
 
 	switch (configVersion) {
   case 0: // 1.10-1.12
@@ -300,9 +282,15 @@ void updateConfigFile(void)
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
   
-  case 4: // Upgrade 2.4.0 to 2.4.2
+  case 4: // Upgrade 2.4.0 (or 2.4.2, since the config file version was not incremented) to 2.4.4
     BZDB.unset("displayZoom");		// removed in r22109
     BZDB.unset("radarShotLineType");	// existed only in r22117
+    BZDB.unset("serifFont");		// serif font was removed
+    // Reset the list server URL so that people who have switched to another
+    // URL gets reset back to the new HTTPS URL
+    BZDB.set("list", BZDB.getDefault("list"));
+  
+  case 5:
     break;
 
   default: // hm, we don't know about this one...

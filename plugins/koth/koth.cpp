@@ -792,4 +792,3 @@ bool KOTHCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiStr
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -117,8 +117,8 @@ LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
       return 0;
 
     case WM_ACTIVATE: {
-		if (BZDB.isTrue("Win32NoMin"))
-			break;
+      if (BZDB.isTrue("Win32NoMin"))
+	break;
       WinWindow* window = WinWindow::lookupWindow(hwnd);
       if (window) {
 	if (LOWORD(wparam) == WA_INACTIVE) {
@@ -1333,4 +1333,3 @@ const int		WinDisplay::buttonMap[] = {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

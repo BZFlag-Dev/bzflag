@@ -83,7 +83,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include\;$(ProjectDir)\..\plugin_utils\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USE_MATH_DEFINES;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -95,7 +95,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)wwzones.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>wwzones.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)wwzones.pdb</ProgramDatabaseFile>
@@ -107,10 +107,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -120,7 +120,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include\;$(ProjectDir)\..\plugin_utils\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_USE_MATH_DEFINES;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -132,7 +132,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)wwzones.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>wwzones.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)wwzones.pdb</ProgramDatabaseFile>
@@ -144,16 +144,16 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include\;$(ProjectDir)\..\plugin_utils\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USE_MATH_DEFINES;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -163,7 +163,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)wwzones.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>wwzones.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
@@ -177,10 +177,10 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -189,7 +189,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     </Midl>
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include\;$(ProjectDir)\..\plugin_utils\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_USE_MATH_DEFINES;_WINDOWS;_USRDLL;wwzones_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -199,7 +199,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)wwzones.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>wwzones.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
@@ -213,10 +213,10 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -228,7 +228,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
     <None Include="wwzones.def" />
-    <None Include="ReadMe.txt" />
+    <None Include="README.wwzones.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wwzones.cpp" />

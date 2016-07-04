@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -72,12 +72,12 @@ bool WordFilter::simpleFilter(char *input) const
 
 bool WordFilter::aggressiveFilter(char *input) const
 {
-#if !defined(BUILD_REGEX) && !defined(HAVE_REGEX_H)
+#if  !defined(HAVE_REGEX_H)
 
   std::cerr << "Regular expressions are not available (using the simple filter)" << std::endl;
   return simpleFilter(input);
 
-#else /* BUILD_REGEX || HAVE_REGEX_H */
+#else /* HAVE_REGEX_H */
 
   bool filtered = false;
   regmatch_t match[1];
@@ -318,17 +318,17 @@ bool WordFilter::aggressiveFilter(char *input) const
 
   return filtered;
 
-#endif /* BUILD_REGEX || HAVE_REGEX_H */
+#endif /* HAVE_REGEX_H */
 } // end aggressiveFilter
 
 
 // provides a pointer to a fresh compiled expression for some given expression
-#if !defined(BUILD_REGEX) && !defined(HAVE_REGEX_H)
+#if !defined(HAVE_REGEX_H)
 regex_t *WordFilter::getCompiledExpression(const std::string &) const
 {
   return (regex_t *)NULL;
 }
-#else /* BUILD_REGEX || HAVE_REGEX_H */
+#else /* HAVE_REGEX_H */
 regex_t *WordFilter::getCompiledExpression(const std::string &word) const
 {
   regex_t *compiledReg;
@@ -350,7 +350,7 @@ regex_t *WordFilter::getCompiledExpression(const std::string &word) const
   return compiledReg;
 
 }
-#endif /* BUILD_REGEX || HAVE_REGEX_H */
+#endif /* HAVE_REGEX_H */
 
 
 std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
@@ -898,4 +898,3 @@ void WordFilter::clear(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

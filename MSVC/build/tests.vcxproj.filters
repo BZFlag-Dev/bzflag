@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\bzfs">
+      <UniqueIdentifier>{d3156d91-e041-4c2e-88b4-6f3a8a33e190}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\tests\tests.cxx">
@@ -20,6 +23,9 @@
     </ClCompile>
     <ClCompile Include="..\..\tests\bans.cxx">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\AccessControlList.cxx">
+      <Filter>Source Files\bzfs</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

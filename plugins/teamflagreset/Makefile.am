@@ -9,11 +9,11 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.teamflagreset.txt \
+	help_teamflagreset_admin.txt \
 	teamflagreset.def \
 	teamflagreset.sln \
-	teamflagreset.vcxproj	\
-	tfr_admin.txt
+	teamflagreset.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

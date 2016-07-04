@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -105,8 +105,8 @@ public:
   const char *getClientVersion();
   void setClientVersion(const char * c);
   void getClientVersionNumbers(int& major, int& minor, int& revision);
-  int   getPausedTime();
-  int   getIdleTime();
+  double   getPausedTime();
+  double   getIdleTime();
   std::string getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);
@@ -122,6 +122,10 @@ public:
   bool	waitingToSpawn() const;
   void	queueSpawn();
   bool	hasNeverSpawned() const;
+  bool	isAllowedToSpawn() const;
+  bool	notifiedOfSpawnable() const;
+  void	setAllowedToSpawn(bool canSpawn);
+  void	setNotifiedOfSpawnable(bool notified);
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
@@ -190,6 +194,8 @@ private:
   TimeKeeper nextSpawnTime;
 
   // Requested a spawn?
+  bool allowedToSpawn;
+  bool notifiedSpawn;
   bool wantsToSpawn;
   bool neverSpawned;
 
@@ -307,6 +313,14 @@ inline bool PlayerInfo::hasNeverSpawned() const {
   return neverSpawned;
 }
 
+inline bool PlayerInfo::isAllowedToSpawn() const {
+  return allowedToSpawn;
+}
+
+// Whether or not the player has been told if they cannot spawn
+inline bool PlayerInfo::notifiedOfSpawnable() const {
+  return notifiedSpawn;
+}
 
 #endif
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -150,6 +150,9 @@ public:
   /** returns the color of the flag */
   const float* getColor() const;
 
+  /** returns the color of the flag as it should be shown on the radar */
+  const float* getRadarColor() const;
+
   /** network serialization */
   void* pack(void* buf) const;
   void* fakePack(void* buf) const;
@@ -263,4 +266,3 @@ namespace Flags {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

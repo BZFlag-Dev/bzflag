@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -403,6 +403,16 @@ const float* FlagType::getColor() const
     return superColor;
   else
     return Team::getTankColor(flagTeam);
+}
+
+const float* FlagType::getRadarColor() const
+{
+  static const float superColor[3] = { 1.0, 1.0, 1.0 };
+
+  if (flagTeam == NoTeam)
+    return superColor;
+  else
+    return Team::getRadarColor(flagTeam);
 }
 
 

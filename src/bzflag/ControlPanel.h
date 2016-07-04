@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,10 +12,6 @@
 
 #ifndef	BZF_CONTROL_PANEL_H
 #define	BZF_CONTROL_PANEL_H
-
-#if defined(_MSC_VER)
-  #pragma warning(disable: 4786)
-#endif
 
 // common - 1st
 #include "common.h"
@@ -35,12 +31,21 @@ class RadarRenderer;
 class SceneRenderer;
 
 struct ControlPanelMessage {
+  public:
 			ControlPanelMessage(const std::string&);
+    std::string		getString() const;
+    std::string		getString(bool withDateTime) const;
+    std::string		formatTimestamp(int mode) const;
     void		breakLines(float maxLength, int fontFace, float fontSize);
 
-    std::string		string;
     std::vector<std::string>	lines;
     int numlines;
+
+  private:
+    std::string		string;
+
+    // Message timestamp variables
+    int year, month, day, hour, min, sec;
 };
 
 class ControlPanel {
@@ -68,7 +73,7 @@ class ControlPanel {
     void		togglePaused();
 
     void		saveMessages(const std::string& filename,
-				     bool stripAnsi) const;
+				     bool stripAnsi, bool timestamp) const;
 
   private:
     // no copying!
@@ -97,7 +102,6 @@ class ControlPanel {
     MainWindow&		window;
     bool		resized;
     int			numBuffers;
-    int			exposed;
     int			changedMessage;
     RadarRenderer*	radarRenderer;
     SceneRenderer*	renderer;

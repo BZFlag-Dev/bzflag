@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,6 +35,8 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   hasDoneEntering(false),
   team(NoTeam),
   flag(-1),
+  allowedToSpawn(true),
+  notifiedSpawn(false),
   spamWarns(0),
   lastMsgTime(now),
   paused(false),
@@ -414,19 +416,19 @@ void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
   return;
 }
 
-int PlayerInfo::getPausedTime()
+double PlayerInfo::getPausedTime()
 {
   if ((state > PlayerInLimbo) && (team != ObserverTeam) && (paused)) {
-    return int(now - pausedSince);
+    return (now - pausedSince);
   }
 
   return 0;
 }
 
-int PlayerInfo::getIdleTime()
+double PlayerInfo::getIdleTime()
 {
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    return int(now - lastupdate);
+    return (now - lastupdate);
   }
   else if (team == ObserverTeam) {
     return -1;
@@ -553,6 +555,15 @@ int PlayerInfo::howManyTimesKilledBy(PlayerId killer)
 	return deathCountMap[killer];
 }
 
+void PlayerInfo::setAllowedToSpawn(bool canSpawn)
+{
+  allowedToSpawn = canSpawn;
+}
+
+void PlayerInfo::setNotifiedOfSpawnable(bool notified)
+{
+  notifiedSpawn = notified;
+}
 
 // Local Variables: ***
 // mode:C++ ***

@@ -95,7 +95,7 @@
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)chathistory.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)chathistory.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -106,10 +106,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -131,7 +131,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)chathistory.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)chathistory.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -142,10 +142,10 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -161,7 +161,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)chathistory.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -174,10 +174,10 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -196,7 +196,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)chathistory.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -209,10 +209,10 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir "$(ProjectDir)..\..\bin_$(Platform)"
-mkdir "$(ProjectDir)..\..\bin_$(Platform)\plugins"
-copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -220,7 +220,7 @@ copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Platform)\plugins\"
   </ItemGroup>
   <ItemGroup>
     <None Include="chathistory.def" />
-    <None Include="ReadMe.txt" />
+    <None Include="README.chathistory.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\MSVC\build\bzfs.vcxproj">

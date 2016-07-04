@@ -167,10 +167,10 @@ EndY: 28
 
 Char: "2"
 InitialDist: 1
-Width: 6
-Whitespace: 0
+Width: 7
+Whitespace: -1
 StartX: 16
-EndX: 22
+EndX: 23
 StartY: 15
 EndY: 28
 
@@ -392,10 +392,10 @@ EndY: 43
 
 Char: "K"
 InitialDist: 1
-Width: 6
-Whitespace: 0
+Width: 7
+Whitespace: -1
 StartX: 136
-EndX: 142
+EndX: 143
 StartY: 30
 EndY: 43
 
@@ -536,10 +536,10 @@ EndY: 58
 
 Char: "["
 InitialDist: 2
-Width: 3
-Whitespace: 2
+Width: 4
+Whitespace: 1
 StartX: 122
-EndX: 125
+EndX: 126
 StartY: 45
 EndY: 58
 
@@ -553,10 +553,10 @@ StartY: 45
 EndY: 58
 
 Char: "]"
-InitialDist: 2
-Width: 3
+InitialDist: 1
+Width: 4
 Whitespace: 2
-StartX: 152
+StartX: 151
 EndX: 155
 StartY: 45
 EndY: 58

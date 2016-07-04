@@ -1,6 +1,6 @@
 /* 3dScreamers */
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,9 +19,6 @@
 
 /* system headers */
 #ifdef _WIN32
-  #ifdef _MSC_VER
-    #pragma warning(disable : 4786)  // Disable warning message
-  #endif
   #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
   #include <windows.h>
   #include <io.h>
@@ -147,4 +144,3 @@ protected:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

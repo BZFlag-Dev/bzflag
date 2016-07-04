@@ -2,7 +2,7 @@
 //
 // Licensed under BSD so plug-ins can re-license as needed
 /*
-Copyright (c) 1993-2015 Tim RIker
+Copyright (c) 1993-2016 Tim Riker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -58,4 +58,3 @@ void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

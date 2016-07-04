@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,13 +31,13 @@ void writeBZDB(const std::string& name, void *stream)
   std::string newkey;
   bool commentOut = (value == defaultVal);
 
-  // quotify anything with a space and empty strings
-  if ((value.find(' ') != value.npos) || (value.size() == 0)) {
+  // quotify empty strings and anything with a space or a semicolon
+  if ((value.find(' ') != value.npos) || (value.find(';') != value.npos) || (value.size() == 0)) {
     value = std::string("\"") + value + "\"";
   }
 
-  // quotify the key if there's a space
-  if (name.find(' ') != name.npos)
+  // quotify the key if there's a space or a semicolon
+  if ((name.find(' ') != name.npos) || (name.find(';') != name.npos))
     newkey = std::string("\"") + name + "\"";
   else
     newkey = name;

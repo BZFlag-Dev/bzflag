@@ -97,7 +97,7 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>"$(VSInstallDir)..\nsis\makensis.exe" "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi" </Command>
+      <Command>"$(ProgramFiles)\nsis\makensis.exe" "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi" </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -108,7 +108,9 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>"$(VSInstallDir)..\nsis\makensis.exe" /DBUILD_64 "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi" </Command>
+      <Command>"$(ProgramFiles)\nsis\makensis.exe" /DBUILD_64 "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi"
+
+</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -125,6 +127,12 @@
       <Project>{1f43075e-8af6-486f-aedf-6b350a6ce141}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\plugins\autoFlagReset\autoFlagReset.vcxproj">
+      <Project>{ad285e14-aaa4-4d71-962d-4e7ede796b58}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\plugins\bzfscron\bzfscron.vcxproj">
+      <Project>{8582df8d-f3c3-45bb-84be-00b5b4e63712}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\plugins\chathistory\chathistory.vcxproj">
       <Project>{b629554e-d0e9-4400-909b-7130f116e15d}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -133,12 +141,17 @@
       <Project>{1f43077e-8af6-486f-aedf-6b350a6ce141}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\plugins\CustomZoneSample\CustomZoneSample.vcxproj">
+      <Project>{3fb1b268-2084-4c96-8d90-eb72a612a986}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\plugins\fairCTF\fairCTF.vcxproj">
+      <Project>{a109e817-5a7c-4274-87a3-7281a8c20ae4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\plugins\fastmap\fastmap.vcxproj">
+      <Project>{f081a46d-3992-492a-bf68-05c18957a326}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\plugins\flagStay\flagStay.vcxproj">
       <Project>{1ff80896-dd88-4992-8db1-7070924091bf}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="..\..\plugins\hiddenAdmin\hiddenAdmin.vcxproj">
-      <Project>{2eaf7655-ae86-4407-8262-43496581e5b2}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\HoldTheFlag\HoldTheFlag.vcxproj">
@@ -177,10 +190,6 @@
       <Project>{645768be-97c8-4de4-9100-111bd2808b35}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\..\plugins\pushstats\pushstats.vcxproj">
-      <Project>{ea71e096-b07b-4e02-855b-97870da72edd}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="..\..\plugins\rabbitTimer\rabbitTimer.vcxproj">
       <Project>{a4f41740-c547-4696-b2b4-9fdf66fd9112}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -209,9 +218,15 @@
       <Project>{71a8e9ff-58ce-459c-9bd7-9c5706db6491}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+    <ProjectReference Include="..\..\plugins\superUser\superUser.vcxproj">
+      <Project>{fc234de3-c0a0-4b78-a552-5117af3b5ec6}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\plugins\teamflagreset\teamflagreset.vcxproj">
       <Project>{a7af7b05-55fa-4995-a50a-1c120ac61ff6}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+    <ProjectReference Include="..\..\plugins\thiefControl\thiefControl.vcxproj">
+      <Project>{c7e4cb54-110e-4da1-86e5-612de727419a}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\plugins\timedctf\timedctf.vcxproj">
       <Project>{f82fe1a4-06d6-4358-8cd5-11e88922736f}</Project>
@@ -227,10 +242,6 @@
     </ProjectReference>
     <ProjectReference Include="3D.vcxproj">
       <Project>{ea0ef759-c4ca-45f3-b744-7d26ff1eb287}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="ares.vcxproj">
-      <Project>{417cb8f4-5ae3-45ac-b903-83db1556303c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="bzadmin.vcxproj">
@@ -261,10 +272,6 @@
       <Project>{7009c42e-d693-4635-95cf-23ecba63653c}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="libcurl.vcxproj">
-      <Project>{cc93828f-7156-4021-9c77-9951fdadee83}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="makehtml.vcxproj">
       <Project>{91198429-3669-4c40-a294-b8593d7c4987}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -289,25 +296,16 @@
       <Project>{e5030dd4-164d-4db0-a593-fa1c76f1f2d7}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="pdcurses.vcxproj">
-      <Project>{948a0a16-9121-4cc5-828c-dc3417510068}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="platform.vcxproj">
       <Project>{12408598-00b6-487f-8f99-61b1300a15af}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="regex.vcxproj">
-      <Project>{6dd493f8-31e1-4958-a240-d157affcb07e}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="scene.vcxproj">
       <Project>{1baed535-4aef-4041-9cb5-a7dc9c14e105}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="zlib.vcxproj">
-      <Project>{cc93828f-7156-4021-9c77-9951fc187e83}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    <ProjectReference Include="tests.vcxproj">
+      <Project>{a01188f0-a2a9-4cae-9979-b47426104b38}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

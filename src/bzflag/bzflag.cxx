@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,6 +30,9 @@
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <direct.h>
+#  if !defined(HAVE_SDL)
+#    include <tchar.h>
+#  endif /* !defined(HAVE_SDL) */
 #else
 #  include <pwd.h>
 #  include <dirent.h>
@@ -55,7 +58,6 @@
 #include "KeyManager.h"
 #include "OSFile.h"
 #include "OpenGLGState.h"
-#include "ParseColor.h"
 #include "PlatformFactory.h"
 #include "Protocol.h"
 #include "ServerListCache.h"
@@ -120,22 +122,6 @@ int bail ( int returnCode )
 	return returnCode;
 }
 
-static void		setTeamColor(TeamColor team, const std::string& str)
-{
-  float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, color, Team::getRadarColor(team));
-}
-
-static void		setRadarColor(TeamColor team, const std::string& str)
-{
-  float color[4];
-  parseColorString(str, color);
-  // don't worry about alpha, Team::setColors() doesn't use it
-  Team::setColors(team, Team::getTankColor(team), color);
-}
-
 static void		setVisual(BzfVisual* visual)
 {
   // sine qua non
@@ -166,6 +152,7 @@ static void		setVisual(BzfVisual* visual)
   if (BZDB.isSet("view") && BZDB.get("view") == configViewValues[1])
     visual->setStereo(true);
 #endif
+  visual->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
 }
 
 static void		usage()
@@ -773,18 +760,6 @@ int			main(int argc, char** argv)
 
   Flags::init();
 
-  if (getenv("BZFLAGID")) {
-    BZDB.set("callsign", getenv("BZFLAGID"));
-    strncpy(startupInfo.callsign, getenv("BZFLAGID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  } else if (getenv("BZID")) {
-    BZDB.set("callsign", getenv("BZID"));
-    // Flawfinder: ignore
-    strncpy(startupInfo.callsign, getenv("BZID"),
-					sizeof(startupInfo.callsign) - 1);
-    startupInfo.callsign[sizeof(startupInfo.callsign) - 1] = '\0';
-  }
   time_t timeNow;
   time(&timeNow);
   userTime = *localtime(&timeNow);
@@ -851,31 +826,6 @@ int			main(int argc, char** argv)
       startupInfo.serverPort = atoi(BZDB.get("port").c_str());
     }
 
-    // check for reassigned team colors
-    if (BZDB.isSet("roguecolor"))
-      setTeamColor(RogueTeam, BZDB.get("roguecolor"));
-    if (BZDB.isSet("redcolor"))
-      setTeamColor(RedTeam, BZDB.get("redcolor"));
-    if (BZDB.isSet("greencolor"))
-      setTeamColor(GreenTeam, BZDB.get("greencolor"));
-    if (BZDB.isSet("bluecolor"))
-      setTeamColor(BlueTeam, BZDB.get("bluecolor"));
-    if (BZDB.isSet("purplecolor"))
-      setTeamColor(PurpleTeam, BZDB.get("purplecolor"));
-
-    // check for reassigned radar colors
-    if (BZDB.isSet("rogueradar"))
-      setRadarColor(RogueTeam, BZDB.get("rogueradar"));
-    if (BZDB.isSet("redradar"))
-      setRadarColor(RedTeam, BZDB.get("redradar"));
-    if (BZDB.isSet("greenradar"))
-      setRadarColor(GreenTeam, BZDB.get("greenradar"));
-    if (BZDB.isSet("blueradar"))
-      setRadarColor(BlueTeam, BZDB.get("blueradar"));
-    if (BZDB.isSet("purpleradar"))
-      setRadarColor(PurpleTeam, BZDB.get("purpleradar"));
-
-
     // ignore window name in config file (it's used internally)
     BZDB.unset("_window");
     BZDB.unset("_multisample");
@@ -896,12 +846,13 @@ int			main(int argc, char** argv)
 #ifdef _WIN32
   // this is cheap but it will work on windows
   // clear out the stdout file
-  if (echoToConsole){
-	  FILE	*fp = fopen ("stdout.txt","w");
-	  if (fp) {
-		  fprintf(fp,"stdout started\r\n" );
-		  fclose(fp);
-	  }
+  if (echoToConsole) {
+    std::string filename = getConfigDirName() + "stdout.txt";
+    FILE *fp = fopen (filename.c_str(), "w");
+    if (fp) {
+      fprintf(fp,"stdout started\r\n" );
+      fclose(fp);
+    }
   }
 #endif
 
@@ -982,6 +933,9 @@ int			main(int argc, char** argv)
   //Flawfinder: ignore
   strcpy(startupInfo.motto, motto.c_str());
 
+  // load the default values for shot colors
+  Team::updateShotColors();
+
   // make platform factory
   PlatformFactory* platformFactory = PlatformFactory::getInstance();
 
@@ -1004,11 +958,8 @@ int			main(int argc, char** argv)
   }
   window->setTitle("bzflag");
 
-  // create & initialize the joystick
+  // create the joystick
   BzfJoystick* joystick = platformFactory->createJoystick();
-  joystick->initJoystick(BZDB.get("joystickname").c_str());
-  joystick->setXAxis(BZDB.get("jsXAxis"));
-  joystick->setYAxis(BZDB.get("jsYAxis"));
 
   // Change audio driver if requested
   if (BZDB.isSet("audioDriver"))
@@ -1179,6 +1130,11 @@ int			main(int argc, char** argv)
     if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
       setSoundVolume(static_cast<int>(BZDB.eval("volume")));
   }
+
+  // Initialize the joystick
+  joystick->initJoystick(BZDB.get("joystickname").c_str());
+  joystick->setXAxis(BZDB.get("jsXAxis"));
+  joystick->setYAxis(BZDB.get("jsYAxis"));
 
   // set main window's minimum size (arbitrary but should be big enough
   // to see stuff in control panel)
@@ -1463,6 +1419,14 @@ int			main(int argc, char** argv)
 
 int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
+  // Tell Windows that we are DPI aware so that it stop trying to scale for us
+  HMODULE hUser32 = LoadLibrary(_T("user32.dll"));
+  typedef BOOL (*SetProcessDPIAwareFunc)();
+  SetProcessDPIAwareFunc setDPIAware = (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
+  if (setDPIAware)
+    setDPIAware();
+  FreeLibrary(hUser32);
+
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
   // argument now look like like normal spaces.  not much we can do

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -120,7 +120,12 @@ public:
   bool operator != ( const std::string& r );
   bool operator != ( const char* r );
 
+  bz_ApiString& operator += ( const bz_ApiString& r );
+  bz_ApiString& operator += ( const std::string& r );
+  bz_ApiString& operator += ( const char* r );
+
   unsigned int size ( void ) const;
+  bool empty ( void ) const;
 
   const char* c_str(void) const;
 
@@ -133,9 +138,16 @@ public:
   void urlEncode ( void );
 
 protected:
-  class dataBlob;
+  class dataBlob {
+    public:
+      std::string str;
+  };
 
   dataBlob	*data;
+
+public:
+  // Conversion/cast operator
+  operator std::string() const { return this->data->str; }
 };
 
 class BZF_API bz_APIIntList
@@ -340,7 +352,6 @@ typedef enum
 #define bz_perm_say  "say"
 #define bz_perm_sendHelp  "sendHelp"
 #define bz_perm_setAll  "setAll"
-#define bz_perm_setPassword  "setPassword"
 #define bz_perm_setPerms  "setPerms"
 #define bz_perm_setVar  "setVar"
 #define bz_perm_showAdmin  "showAdmin"
@@ -500,6 +511,17 @@ public:
   bz_ApiString message;
 };
 
+class BZF_API bz_ChatEventData_V2 : public bz_ChatEventData_V1
+{
+public:
+  bz_ChatEventData_V2() : bz_ChatEventData_V1()
+    , messageType(eChatMessage)
+  {
+  }
+
+  bz_eMessageType messageType;
+};
+
 class BZF_API bz_PlayerJoinPartEventData_V1 : public bz_EventData
 {
 public:
@@ -651,6 +673,22 @@ public:
   bool allow;
 };
 
+
+
+class BZF_API bz_AllowSpawnData_V2 : public bz_AllowSpawnData_V1
+{
+public:
+  bz_AllowSpawnData_V2() : bz_AllowSpawnData_V1()
+    , kickPlayer(true), kickReason("Not allowed to spawn")
+    , message("You are not allowed to spawn. Please contact an administrator.")
+  {
+  }
+  
+  bool kickPlayer;
+  bz_ApiString kickReason;
+  bz_ApiString message;
+};
+
 class BZF_API bz_ListServerUpdateEvent_V1 : public bz_EventData
 {
 public:
@@ -758,6 +796,17 @@ public:
   bz_ApiString actionBy;
 };
 
+class BZF_API bz_GamePauseResumeEventData_V2 : public bz_GamePauseResumeEventData_V1
+{
+public:
+	bz_GamePauseResumeEventData_V2() : bz_GamePauseResumeEventData_V1()
+		, playerID(253)
+	{
+	}
+
+	int playerID;
+};
+
 class BZF_API bz_GameStartEndEventData_V1 : public bz_EventData
 {
 public:
@@ -767,6 +816,18 @@ public:
   }
 
   double duration;
+};
+
+class BZF_API bz_GameStartEndEventData_V2 : public bz_GameStartEndEventData_V1
+{
+public:
+	bz_GameStartEndEventData_V2() : bz_GameStartEndEventData_V1()
+		, playerID(253), gameOver(false)
+	{
+	}
+
+	int playerID;
+	bool gameOver;
 };
 
 class BZF_API bz_SlashCommandEventData_V1 : public bz_EventData
@@ -1236,8 +1297,8 @@ BZF_API bool bz_validAdminPassword(const char* passwd);
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
 BZF_API bool bz_isPlayerPaused( int playerID );
-
-BZF_API int bz_getIdleTime( int playerID );
+BZF_API double bz_getPausedTime( int playerID );
+BZF_API double bz_getIdleTime( int playerID );
 
 BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
@@ -1324,6 +1385,10 @@ public:
 BZF_API bool bz_getPlayerHumanity( int playerId );
 
 BZF_API bool bz_setPlayerOperator ( int playerId );
+BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn );
+BZF_API bool bz_isPlayerSpawnable ( int playerId );
+BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base );
+BZF_API bool bz_getPlayerSpawnAtBase ( int playerId );
 
 // player access control
 BZF_API bool bz_addPlayerToGame (int playerID );
@@ -1573,6 +1638,8 @@ BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float 
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
 BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays );
 
+BZF_API float bz_getWorldMaxHeight ( void );
+
 BZF_API bool bz_setWorldSize( float size, float wallHeight = -1.0 );
 BZF_API void bz_setClientWorldDownloadURL( const char* URL );
 BZF_API const bz_ApiString bz_getClientWorldDownloadURL( void );
@@ -1605,6 +1672,8 @@ public:
 private:
   float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
 };
+
+BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos );
 
 class bz_CustomMapObjectHandler
 {
@@ -1730,6 +1799,13 @@ BZF_API const char *bz_tolower(const char* val );
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
+BZF_API void bz_cancelCountdown ( int playerID );
+BZF_API void bz_pauseCountdown ( int playerID );
+BZF_API void bz_resumeCountdown ( int playerID );
+BZF_API void bz_startCountdown ( int delay, float limit, int playerID );
+BZF_API float bz_getCountdownRemaining ( void );
+
+// @TODO deprecated game countdown commands (to be removed in 2.6.x)
 BZF_API void bz_cancelCountdown ( const char *canceledBy );
 BZF_API void bz_pauseCountdown ( const char *pausedBy );
 BZF_API void bz_resumeCountdown ( const char *resumedBy );

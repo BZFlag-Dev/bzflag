@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,7 @@
 #include "FontManager.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "OpenGLUtils.h"
 
 /* local implementation headers */
 #include "MainMenu.h"
@@ -113,8 +114,8 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setLabel("Anisotropic:");
   option->setCallback(callback, "A");
   options = &option->getList();
-#ifdef HAVE_GLEW
-  if (GLEW_EXT_texture_filter_anisotropic) {
+
+  if (OpenGLGState::hasAnisotropicFiltering) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
@@ -130,9 +131,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   } else {
     options->push_back(std::string("Unavailable"));
   }
-#else
-  options->push_back(std::string("Unavailable"));
-#endif
   option->update();
   listHUD.push_back(option);
 
@@ -236,8 +234,12 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("FPS Limit"));
-  if(getMainWindow()->getWindow()->hasVerticalSync())
+  if (getMainWindow()->getWindow()->hasVerticalSync()) {
     options->push_back(std::string("Vertical Sync"));
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// SDL 2 can make live changes
+    option->setLabel("(restart required) Energy Saver:");
+#endif
+  }
   option->update();
   listHUD.push_back(option);
 
@@ -355,7 +357,7 @@ void			DisplayMenu::resize(int _width, int _height)
   i++;
 
   // energy saver
-  ((HUDuiList*)listHUD[i])->setIndex((int)BZDB.eval("saveEnergy"));
+  ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
 }
 
 int DisplayMenu::gammaToIndex(float gamma)

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -140,7 +140,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
       break;
   }
   // Error receiving data (or no data)
-  if (n < 0 || uaddr->sin_port <= 1024)
+  if (n < 0 || uaddr->sin_port < 1024)
     return -1;
 
   // read head

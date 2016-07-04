@@ -3,6 +3,26 @@
 ;Redesigned for BZFlag by blast007
 
 ;--------------------------------
+;BZFlag Version Variables
+
+  !define VER_MAJOR 2
+  !define VER_MINOR 5
+  !define VER_REVISION 1
+
+  ;!define TYPE "release"
+  ;!define TYPE "alpha"
+  ;!define TYPE "beta"
+  !define TYPE "devel"
+  ;!define TYPE "RC"
+
+  !define TYPE_REVISION "0"
+  
+  ;Allow manually specifying a date for the installer. This only works if the
+  ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
+  ;to use. Don't commit changes to this into Git.
+  ;!define DATE_OVERRIDE 20150101
+
+;--------------------------------
 ;Includes
 
   ; Modern UI
@@ -12,10 +32,18 @@
   !include "WinVer.nsh"
 
 ;--------------------------------
-;BZFlag Version Variables
-
-  !define VER_MAJOR 2.5
-  !define VER_MINOR .x
+;Automatically generated version variables
+  
+  ; Include the date for alpha/beta/RC builds
+  !if ${TYPE} != "release"
+    !ifndef DATE_OVERRIDE
+      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d-${TYPE}${TYPE_REVISION}"
+    !else
+      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}-${TYPE}${TYPE_REVISION}"
+    !endif
+  !else
+    !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
+  !endif
   
   !ifdef BUILD_64
     !define PLATFORM x64
@@ -42,13 +70,14 @@
 ;Configuration
 
   ; Installer output file and default installation folder
-  Name "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS}"
   !ifdef BUILD_64
-    OutFile "..\..\..\bin_x64\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-    InstallDir "$PROGRAMFILES64\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    Name "BZFlag ${VERSION} ${BITNESS}"
+    OutFile "..\..\..\bin_Release_x64\bzflag-${VERSION}_${BITNESS}.exe"
+    InstallDir "$PROGRAMFILES64\BZFlag ${VERSION} ${BITNESS}"
   !else
-    OutFile "..\..\..\bin_Win32\bzflag-${VER_MAJOR}${VER_MINOR}_${BITNESS}.exe"
-    InstallDir "$PROGRAMFILES32\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}"
+    Name "BZFlag ${VERSION}"
+    OutFile "..\..\..\bin_Release_Win32\bzflag-${VERSION}.exe"
+    InstallDir "$PROGRAMFILES32\BZFlag ${VERSION}"
   !endif
 
   ; Make it look pretty in XP
@@ -87,16 +116,25 @@
 ;Pages
 
   ;Welcome page configuration
-  !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VER_MAJOR}${VER_MINOR} ${__DATE__} ${BITNESS}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !ifdef BUILD_64
+    !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VERSION} ${BITNESS}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !else
+    !define MUI_WELCOMEPAGE_TEXT "This wizard will guide you through the installation of BZFlag ${VERSION}.$\r$\n$\r$\nBZFlag is a free multiplayer multiplatform 3D tank battle game. The name stands for Battle Zone capture Flag. It runs on Irix, Linux, *BSD, Windows, Mac OS X and other platforms. It's one of the most popular games ever on Silicon Graphics machines.$\r$\n$\r$\nClick Next to continue."
+  !endif
 
   !insertmacro MUI_PAGE_WELCOME
+  !define MUI_LICENSEPAGE_TEXT_TOP "Known Issues and License"
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}" 
+  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKLM"
+  !ifdef BUILD_64
+    !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag ${VERSION} ${BITNESS}"
+  !else
+    !define MUI_STARTMENUPAGE_REGISTRY_KEY "Software\BZFlag ${VERSION}"
+  !endif
   !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
 
   !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
@@ -111,7 +149,7 @@
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
-	
+
   !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\ReadMe.win32.html"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
@@ -143,7 +181,7 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_${PLATFORM}\bzflag.exe
+  File ..\..\..\bin_Release_${PLATFORM}\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
@@ -172,42 +210,53 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\doc
   File ..\ReadMe.win32.html
   File ..\..\..\COPYING
-  File ..\..\..\bin_${PLATFORM}\docs\bzflag.html
+  File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
 
   ; Add some DLL files
   SetOutPath $INSTDIR
-  File ..\..\..\bin_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
+  File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
+  File ..\..\..\bin_Release_${PLATFORM}\cares.dll
+  File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script
-  ; http://www.microsoft.com/downloads/details.aspx?familyid=2051A0C1-C9B5-4B0A-A8F5-770A549FD78C
+  ; 32-bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
+  ; 64-bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
   SetOutPath $TEMP
-  DetailPrint "Installing Visual C++ ${BITNESS} runtime"         
+  DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
   ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /q"         
   DetailPrint "Cleaning up"         
   Delete $TEMP\vcredist_${RUNTIME_PLATFORM}.exe
 
   ; Write the installation path into the registry
-  WriteRegStr HKLM SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR} "Install_Dir" "$INSTDIR"
+  WriteRegStr HKLM "SOFTWARE\BZFlag ${VERSION}" "Install_Dir" "$INSTDIR"
 
   ; Write the uninstall keys for Windows
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "DisplayName" "BZFlag ${VER_MAJOR}${VER_MINOR} ${BITNESS} (remove only)"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}_${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !ifdef BUILD_64
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "DisplayName" "BZFlag ${VERSION} ${BITNESS} (remove only)"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !else
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "DisplayName" "BZFlag ${VERSION} (remove only)"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  !endif
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ;Create for all users
+    SetShellVarContext all
     
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\uninstall.exe" "" "$INSTDIR\uninstall.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VER_MAJOR}${VER_MINOR} (Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZFlag ${VERSION} (800x600 Windowed).lnk" "$INSTDIR\bzflag.exe"  "-window 800x600" "$INSTDIR\bzflag.exe" 0
 
-	; Local User Data
+    ; Local User Data
     Var /GLOBAL UserData
     ${If} ${AtMostWinXP}
       StrCpy $UserData "%USERPROFILE%\Local Settings\Application Data\BZFlag"
@@ -229,18 +278,21 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_${PLATFORM}\bzadmin.exe
-
+  File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
+  
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\..\..\bin_${PLATFORM}\docs\bzadmin.html
+  File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  
+    ;Create for all users
+    SetShellVarContext all
     
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZAdmin ${VER_MAJOR}${VER_MINOR}.lnk" "$INSTDIR\bzadmin.exe" "" "$INSTDIR\bzadmin.exe" 0
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZAdmin ${VERSION}.lnk" "$INSTDIR\bzadmin.exe" "" "$INSTDIR\bzadmin.exe" 0
 
     SetOutPath $INSTDIR\doc
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -254,7 +306,7 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\bin_${PLATFORM}\bzfs.exe
+    File ..\..\..\bin_Release_${PLATFORM}\bzfs.exe
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
@@ -265,10 +317,13 @@ SectionGroup "BZFlag Server" BZFlagServer
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
-    File ..\..\..\bin_${PLATFORM}\docs\bzfs.html
-    File ..\..\..\bin_${PLATFORM}\docs\bzw.html
+    File ..\..\..\bin_Release_${PLATFORM}\docs\bzfs.html
+    File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    
+      ;Create for all users
+      SetShellVarContext all
     
       ;Main start menu shortcuts
       SetOutPath $INSTDIR
@@ -277,7 +332,6 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\BZFS Configuration Builder.lnk" "$INSTDIR\misc\bzfs_conf.html" "" "" 0
 
       SetOutPath $INSTDIR\doc
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
@@ -290,17 +344,16 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugins" BZFlagServer_Plugins
     ; Include the plugins
     SetOutPath $INSTDIR
-    File ..\..\..\bin_${PLATFORM}\plugins\*.dll
-	
-	SetOutPath $INSTDIR\templates
-	File /r ..\..\..\bin_${PLATFORM}\plugins\templates\*
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.dll
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.txt
+    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.cfg
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\bin_${PLATFORM}\bzfs.lib
-    File ..\..\..\bin_${PLATFORM}\plugin_utils.lib
+    File ..\..\..\bin_Release_${PLATFORM}\bzfs.lib
+    File ..\..\..\bin_Release_${PLATFORM}\plugin_utils.lib
     File ..\..\..\include\bzfsAPI.h
     File ..\..\..\plugins\plugin_utils\*.h
   SectionEnd
@@ -312,7 +365,11 @@ Section "Desktop Icon" Desktop
   
   ;shortcut on the "desktop"
   SetOutPath $INSTDIR
-  CreateShortCut "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !ifdef BUILD_64
+    CreateShortCut "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !else
+    CreateShortCut "$DESKTOP\BZFlag ${VERSION}.lnk" "$INSTDIR\bzflag.exe" "" "$INSTDIR\bzflag.exe" 0
+  !endif
 SectionEnd
 
 ;--------------------------------
@@ -342,6 +399,9 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
+  ;Remove for all users
+  SetShellVarContext all
+  
   ; remove files
   Delete $INSTDIR\*.*
   Delete $INSTDIR\doc\*.*
@@ -389,13 +449,22 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
   
-  ; Remove desktop shortcut for all users
-  SetShellVarContext all
-  Delete "$DESKTOP\BZFlag${VER_MAJOR}${VER_MINOR} ${BITNESS}.lnk"
+  ; Remove desktop shortcut
+  !ifdef BUILD_64
+    Delete "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk"
+  !else
+    Delete "$DESKTOP\BZFlag ${VERSION}.lnk"
+  !endif
   
   ;remove registry keys
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
-  DeleteRegKey HKLM "SOFTWARE\BZFlag${VER_MAJOR}${VER_MINOR}${BITNESS}"
+  !ifdef BUILD_64
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}"
+    DeleteRegKey HKLM "SOFTWARE\BZFlag ${VERSION} ${BITNESS}"
+  !else
+    DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}"
+    DeleteRegKey HKLM "SOFTWARE\BZFlag ${VERSION}"
+  !endif
+  ; This deletes a key that stored the current running path of BZFlag, which was/is used by Xfire
   DeleteRegKey HKCU "Software\BZFlag"
 
 SectionEnd

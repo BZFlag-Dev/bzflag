@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,8 +22,8 @@
 
 static int		resolutionCompare(const void* _a, const void* _b)
 {
-  const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo**)_a);
-  const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo**)_b);
+  const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo* const *)_a);
+  const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo* const *)_b);
 
   // test the stuff we actually care about
   if (a->hdisplay < b->hdisplay) return -1;
@@ -219,4 +219,3 @@ bool			LinuxDisplayMode::doSet(int index, bool position)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

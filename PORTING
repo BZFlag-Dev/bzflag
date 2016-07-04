@@ -20,7 +20,7 @@ new platform is named `foo'.
 
   * try building
     * modify configure.in for your platform - particularly
-      to set the proper CFLAGS/CXXFLAGS and to insure that needed
+      to set the proper CFLAGS/CXXFLAGS and to ensure that needed
       libraries (e.g. OpenGL, curses) can be found.
     * fix errors.  errors are typically caused by missing include
       files and a missing/different BSD sockets API.  make as few

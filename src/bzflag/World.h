@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -210,7 +210,7 @@ inline bool		World::allowTeamFlags() const
 
 inline bool		World::allowTeamKills() const
 {
-  return (gameOptions & short(NoTeamKillsGameStyle)) == 0 || !allowTeams();
+  return (gameOptions & short(NoTeamKillsGameStyle)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const

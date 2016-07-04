@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -152,12 +152,12 @@ static SetCommand	  setCommand;
 static DiffCommand	  diffCommand;
 static LocalSetCommand    localSetCommand;
 static QuitCommand	  quitCommand;
-static RoamPosCommand     RoamPosCommand;
+static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
 static SaveMsgsCommand	  saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static ForceRadarCommand  forceRadarCommand;
-static DebugLevelCommand  DebugLevelCommand;
+static DebugLevelCommand  debugLevelCommand;
 
 
 // class constructors
@@ -684,18 +684,30 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     return true;
   }
 
+  bool stripAnsi = false;
+  bool timestamp = false;
+
   std::vector<std::string> args;
   args = TextUtils::tokenize(commandLine, " ");
   const int argCount = (int)args.size();
 
-  bool stripAnsi = false;
-  if ((argCount > 1) && (args[1] == "-s")) {
-    stripAnsi = true;
+  for (int pos = 1; pos < argCount; pos++) {
+    if (args[pos] == "-s") {
+      stripAnsi = true;
+    }
+    else if (args[pos] == "-t") {
+      timestamp = true;
+    }
   }
 
-  std::string filename = getConfigDirName() + "msglog.txt";
+  int year, month, day, hour, minute, second;
+  TimeKeeper::localTime(&year, &month, &day, &hour, &minute, &second, NULL);
 
-  controlPanel->saveMessages(filename, stripAnsi);
+  std::string filename = getConfigDirName() + "msglog-";
+  filename += TextUtils::format("%04d-%02d-%02d_%02d-%02d-%02d", year, month, day, hour, minute, second);
+  filename += ".txt";
+
+  controlPanel->saveMessages(filename, stripAnsi, timestamp);
 
   std::string msg = "Saved messages to: " + filename;
   addMessage(NULL, msg);

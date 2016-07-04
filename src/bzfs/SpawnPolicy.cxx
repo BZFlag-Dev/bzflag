@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -60,7 +60,6 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
     TeamBases &teamBases = bases[team];
     const TeamBase &base = teamBases.getRandomBase((int)(bzfrand() * 100));
     base.getRandomPosition(pos[0], pos[1], pos[2]);
-    playerData->player.setRestartOnBase(false);
 
   } else {
     /* *** "random" spawn position selection occurs below here. ***

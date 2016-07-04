@@ -9,12 +9,12 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.keepaway.txt \
+	help_keepaway_admin.txt \
+	help_keepaway_rules.txt \
 	keepaway.def \
 	keepaway.sln \
-	keepaway.vcxproj		\
-	keepaway_admin.txt	\
-	keepaway_rules.txt
+	keepaway.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

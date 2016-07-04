@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,10 +12,6 @@
 
 #ifndef _TEXTURE_FONT_H_
 #define _TEXTURE_FONT_H_
-
-#ifdef _MSC_VER
-  #pragma warning(disable : 4786)  // Disable warning message
-#endif
 
 #include "bzfgl.h"
 #include "ImageFont.h"
@@ -52,4 +48,3 @@ private:
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

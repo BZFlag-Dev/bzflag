@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,20 +34,24 @@
 #include "ServerListFilter.h"
 
 
+class ServerListFilterMenu;
+class ServerListFilterHelpMenu;
 class ServerMenu;
 
 
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu) { }
-  ~ServerMenuDefaultKey() { }
+    menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) { }
+  ~ServerMenuDefaultKey();
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);
 
 private:
   ServerMenu* menu;
+  ServerListFilterMenu*	serverListFilterMenu;
+  ServerListFilterHelpMenu*	serverListFilterHelpMenu;
 };
 
 class ServerMenu : public HUDDialog {
@@ -88,7 +92,8 @@ private:
   ServerList serverList;
   ServerMenuDefaultKey	defaultKey;
   HUDuiLabel* status;
-  HUDuiLabel* help;
+  HUDuiLabel* help1;
+  HUDuiLabel* help2;
 
   HUDuiLabel* pageLabel;
   int selectedIndex;

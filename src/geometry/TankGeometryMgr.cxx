@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,7 +42,7 @@ using namespace TankGeometryUtils;
 static GLuint displayLists[LastTankShadow][LastTankLOD]
 			  [LastTankSize][LastTankPart];
 
-// triangle counds
+// triangle counts
 static int partTriangles[LastTankShadow][LastTankLOD]
 			[LastTankSize][LastTankPart];
 
@@ -403,4 +403,3 @@ void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

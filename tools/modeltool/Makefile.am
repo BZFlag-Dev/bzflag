@@ -10,12 +10,12 @@ modeltool_SOURCES =	\
 	wavefrontOBJ.cxx\
 	wavefrontOBJ.h
 
-modeltool_CPPFLAGS = \
-	-I$(top_srcdir)/include
+AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CFLAGS = $(CONF_CFLAGS)
+AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
 LDADD = \
 	$(top_srcdir)/src/common/libCommon.la
-

@@ -32,14 +32,11 @@ libGeometry_la_SOURCES  =		\
 	MeshSceneNode.cxx		\
 	OccluderSceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
-	PTSceneNode.cxx			\
 	QuadWallSceneNode.cxx		\
 	SceneNode.cxx			\
-	ShellSceneNode.cxx		\
 	SphereSceneNode.cxx		\
 	TankGeometryMgr.cxx		\
 	TankSceneNode.cxx		\
-	TracerSceneNode.cxx		\
 	TriWallSceneNode.cxx		\
 	ViewFrustum.cxx			\
 	WallSceneNode.cxx

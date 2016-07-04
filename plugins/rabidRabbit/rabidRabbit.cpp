@@ -15,11 +15,16 @@ RabidRabbitHandler rabidrabbithandler;
 class RabidRabbitEventHandler : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Rabid Rabbit";}
-  virtual void Init ( const char* config);
-  virtual void Cleanup ();
+  virtual const char* Name(){return "Rabid Rabbit";}
+  virtual void Init(const char* config);
+  virtual void Cleanup();
 
   virtual void Event(bz_EventData *eventData);
+
+private:
+  unsigned int currentKillZone;
+  unsigned int rabbitNotifiedWrongZoneNum;
+  bool rabbitNotifiedWrongZone;
 };
 
 BZ_PLUGIN(RabidRabbitEventHandler)
@@ -29,49 +34,26 @@ void RabidRabbitEventHandler::Init(const char* /*commandLineParameter*/)
 {
   MaxWaitTime = 1.0f;
   bz_registerCustomMapObject("RABIDRABBITZONE",&rabidrabbithandler);
-  bz_registerCustomMapObject("RRSOUNDOFF",&rabidrabbithandler);
-  bz_registerCustomMapObject("RRCYCLEONDIE",&rabidrabbithandler);
   Register(bz_eTickEvent);
   Register(bz_ePlayerDieEvent);
+
+  currentKillZone = 0;
+  rabbitNotifiedWrongZone = false;
+  rabbitNotifiedWrongZoneNum = 0;
 }
 
 void RabidRabbitEventHandler::Cleanup(void)
 {
   Flush();
   bz_removeCustomMapObject("RABIDRABBITZONE");
-  bz_removeCustomMapObject("RRSOUNDOFF");
-  bz_removeCustomMapObject("RRCYCLEONDIE");
 }
 
-class RRZoneInfo
-{
-public:
-  RRZoneInfo()
-  {
-    currentKillZone = 0;
-    rabbitNotifiedWrongZone = false;
-    rabbitNotifiedWrongZoneNum = 0;
-    soundEnabled = true;
-    cycleOnDie = false;
-  }
-
-  unsigned int currentKillZone;
-  unsigned int rabbitNotifiedWrongZoneNum;
-  bool rabbitNotifiedWrongZone;
-  bool soundEnabled;
-  bool cycleOnDie;
-};
-
-RRZoneInfo rrzoneinfo;
-
-class RabidRabbitZone
+class RabidRabbitZone : public bz_CustomZoneObject
 {
 public:
   RabidRabbitZone()
   {
     zonekillhunter = false;
-    box = false;
-    xMax = xMin = yMax = yMin = zMax = zMin = rad = 0;
     WW = "";
     WWLifetime = 0;
     WWPosition[0] = 0;
@@ -80,69 +62,32 @@ public:
     WWTilt = 0;
     WWDirection = 0;
     WWShotID = 0;
-    WWDT = 0;
     WWRepeat = 0.5;
     WWFired = false;
     WWLastFired = 0;
-    pi = 3.14159265358979323846;
   }
 
   bool zonekillhunter;
-  bool box;
-  float xMax,xMin,yMax,yMin,zMax,zMin;
-  float rad;
 
   bz_ApiString WW;
-  float WWLifetime, WWPosition[3], WWTilt, WWDirection, WWDT;
-  double pi, WWLastFired, WWRepeat;
+  float WWLifetime, WWPosition[3], WWTilt, WWDirection;
+  double WWLastFired, WWRepeat;
   bool WWFired;
   int WWShotID;
 
   std::string playermessage;
   std::string servermessage;
-
-  bool pointIn(float pos[3])
-  {
-    if (box) {
-      if (pos[0] > xMax || pos[0] < xMin)
-	return false;
-
-      if (pos[1] > yMax || pos[1] < yMin)
-	return false;
-
-      if (pos[2] > zMax || pos[2] < zMin)
-	return false;
-    } else {
-      float vec[3];
-      vec[0] = pos[0]-xMax;
-      vec[1] = pos[1]-yMax;
-      vec[2] = pos[2]-zMax;
-
-      float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-      if (dist > rad)
-	return false;
-
-      if (pos[2] > zMax || pos[2] < zMin)
-	return false;
-    }
-    return true;
-  }
 };
 
 std::vector <RabidRabbitZone> zoneList;
 
 bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *data)
 {
-  if (object == "RRSOUNDOFF")
-    rrzoneinfo.soundEnabled = false;
-
-  if (object == "RRCYCLEONDIE")
-    rrzoneinfo.cycleOnDie = true;
-
   if (object != "RABIDRABBITZONE" || !data)
     return false;
 
   RabidRabbitZone newZone;
+  newZone.handleDefaultOptions(data);
 
   // parse all the chunks
   for (unsigned int i = 0; i < data->data.size(); i++) {
@@ -154,33 +99,15 @@ bool RabidRabbitHandler::MapObject(bz_ApiString object, bz_CustomMapObjectInfo *
     if (nubs->size() > 0) {
       std::string key = bz_toupper(nubs->get(0).c_str());
 
-      if (key == "BBOX" && nubs->size() > 6) {
-	newZone.box = true;
-	newZone.xMin = (float)atof(nubs->get(1).c_str());
-	newZone.xMax = (float)atof(nubs->get(2).c_str());
-	newZone.yMin = (float)atof(nubs->get(3).c_str());
-	newZone.yMax = (float)atof(nubs->get(4).c_str());
-	newZone.zMin = (float)atof(nubs->get(5).c_str());
-	newZone.zMax = (float)atof(nubs->get(6).c_str());
-      } else if (key == "CYLINDER" && nubs->size() > 5) {
-	newZone.box = false;
-	newZone.rad = (float)atof(nubs->get(5).c_str());
-	newZone.xMax =(float)atof(nubs->get(1).c_str());
-	newZone.yMax =(float)atof(nubs->get(2).c_str());
-	newZone.zMin =(float)atof(nubs->get(3).c_str());
-	newZone.zMax =(float)atof(nubs->get(4).c_str());
-      } else if (key == "RRZONEWW" && nubs->size() > 10) {
+      if (key == "RRZONEWW" && nubs->size() > 10) {
 	newZone.WW = nubs->get(1);
 	newZone.WWLifetime = (float)atof(nubs->get(2).c_str());
 	newZone.WWPosition[0] = (float)atof(nubs->get(3).c_str());
 	newZone.WWPosition[1] = (float)atof(nubs->get(4).c_str());
 	newZone.WWPosition[2] = (float)atof(nubs->get(5).c_str());
-	newZone.WWTilt = (float)atof(nubs->get(6).c_str());
-	newZone.WWTilt = (newZone.WWTilt / 360) * (2 * (float)newZone.pi);
-	newZone.WWDirection = (float)atof(nubs->get(7).c_str());
-	newZone.WWDirection = (newZone.WWDirection / 360) * (2 * (float)newZone.pi);
+	newZone.WWTilt = (float)(atof(nubs->get(6).c_str()) * M_PI/180.0);	// convert degrees to radians
+	newZone.WWDirection = (float)(atof(nubs->get(7).c_str()) * M_PI/180.0);	// convert degrees to radians
 	newZone.WWShotID = (int)atoi(nubs->get(8).c_str());
-	newZone.WWDT = (float)atof(nubs->get(9).c_str());
 	newZone.WWRepeat = (float)atof(nubs->get(10).c_str());
       } else if (key == "SERVERMESSAGE" && nubs->size() > 1) {
 	newZone.servermessage = nubs->get(1).c_str();
@@ -211,14 +138,7 @@ void killAllHunters(std::string messagepass)
       if (player->team != eRabbitTeam) {
 	bz_killPlayer(player->playerID, true, BZ_SERVER);
 	bz_sendTextMessage(BZ_SERVER, player->playerID, messagepass.c_str());
-	if (rrzoneinfo.soundEnabled)
-	  bz_sendPlayCustomLocalSound(player->playerID,"flag_lost");
       }
-      if (player->team == eRabbitTeam &&
-	  rrzoneinfo.soundEnabled &&
-	  bz_getTeamCount(eHunterTeam) > 0)
-	bz_sendPlayCustomLocalSound(player->playerID,"flag_won");
-
       bz_freePlayerRecord(player);
     }
   }
@@ -228,7 +148,6 @@ void killAllHunters(std::string messagepass)
   return;
 }
 
-
 void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 {
 
@@ -236,12 +155,12 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
   {
     bz_PlayerDieEventData_V1 *DieData = (bz_PlayerDieEventData_V1*)eventData;
 
-    if (rrzoneinfo.cycleOnDie && DieData->team == eRabbitTeam) {
-      unsigned int i = rrzoneinfo.currentKillZone;
+    if (bz_getBZDBBool("_rrCycleOnDeath") && DieData->team == eRabbitTeam) {
+      unsigned int i = currentKillZone;
       if (i == (zoneList.size() - 1))
-	rrzoneinfo.currentKillZone = 0;
+	currentKillZone = 0;
       else
-	rrzoneinfo.currentKillZone++;
+	currentKillZone++;
     }
     return;
   }
@@ -250,14 +169,14 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
     return;
 
   for (unsigned int i = 0; i < zoneList.size(); i++) {
-    if (!zoneList[i].WWFired && rrzoneinfo.currentKillZone == i) {
+    if (!zoneList[i].WWFired && currentKillZone == i) {
       bz_fireWorldWep(zoneList[i].WW.c_str(),
 		      zoneList[i].WWLifetime,
 		      BZ_SERVER,zoneList[i].WWPosition,
 		      zoneList[i].WWTilt,
 		      zoneList[i].WWDirection,
 		      zoneList[i].WWShotID,
-		      zoneList[i].WWDT);
+		      0);
       zoneList[i].WWFired = true;
       zoneList[i].WWLastFired = bz_getCurrentTime();
     } else {
@@ -275,41 +194,41 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
     if (player) {
 
       for (unsigned int i = 0; i < zoneList.size(); i++) {
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
-	    rrzoneinfo.currentKillZone != i && !rrzoneinfo.rabbitNotifiedWrongZone) {
+	    currentKillZone != i && !rabbitNotifiedWrongZone) {
 	  bz_sendTextMessage(BZ_SERVER,player->playerID,
 			     "You are not in the current Rabid Rabbit zone - try another.");
-	  rrzoneinfo.rabbitNotifiedWrongZone = true;
-	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
+	  rabbitNotifiedWrongZone = true;
+	  rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (!zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (!zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned && player->team == eRabbitTeam &&
-	    rrzoneinfo.rabbitNotifiedWrongZone &&
-	    rrzoneinfo.rabbitNotifiedWrongZoneNum == i)
-	  rrzoneinfo.rabbitNotifiedWrongZone = false;
+	    rabbitNotifiedWrongZone &&
+	    rabbitNotifiedWrongZoneNum == i)
+	  rabbitNotifiedWrongZone = false;
 
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team == eRabbitTeam &&
-	    rrzoneinfo.currentKillZone == i &&
+	    currentKillZone == i &&
 	    bz_getTeamCount(eHunterTeam) > 0) {
 	  killAllHunters(zoneList[i].servermessage);
 
-	  rrzoneinfo.rabbitNotifiedWrongZone = true;
-	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
+	  rabbitNotifiedWrongZone = true;
+	  rabbitNotifiedWrongZoneNum = i;
 
 	  if (i == (zoneList.size() - 1))
-	    rrzoneinfo.currentKillZone = 0;
+	    currentKillZone = 0;
 	  else
-	    rrzoneinfo.currentKillZone++;
+	    currentKillZone++;
 
-	  rrzoneinfo.rabbitNotifiedWrongZone = true;
-	  rrzoneinfo.rabbitNotifiedWrongZoneNum = i;
+	  rabbitNotifiedWrongZone = true;
+	  rabbitNotifiedWrongZoneNum = i;
 	}
 
-	if (zoneList[i].pointIn(player->lastKnownState.pos) &&
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) &&
 	    player->spawned &&
 	    player->team != eRabbitTeam &&
 	    zoneList[i].zonekillhunter) {

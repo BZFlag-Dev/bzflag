@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,15 +18,13 @@
 #define	BZF_WINMEDIA_H
 
 #include "BzfMedia.h"
-#ifdef HAVE_DSOUND_H
 #include <dsound.h>
-#endif
 
 class WinWindow;
 
 class WinMedia : public BzfMedia {
   public:
-			WinMedia(WinWindow*);
+			WinMedia();
 			~WinMedia();
 
     bool		openAudio();
@@ -47,14 +45,11 @@ class WinMedia : public BzfMedia {
     static DWORD WINAPI	audioThreadInit(void*);
 
   private:
-    HWND		window;
     bool		audioReady;
     bool		audioPlaying;
-#ifdef HAVE_DSOUND_H
     IDirectSound*	audioInterface;
     IDirectSoundBuffer*	audioPrimaryPort;
     IDirectSoundBuffer*	audioPort;
-#endif
     int			audioNumChannels;
     int			audioOutputRate;
     int			audioBufferSize;
@@ -84,4 +79,3 @@ class WinMedia : public BzfMedia {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

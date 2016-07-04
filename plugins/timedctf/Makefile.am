@@ -9,12 +9,12 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.timedctf.txt \
+	help_timedctf_admin.txt \
+	help_timedctf_rules.txt \
 	timedctf.def \
 	timedctf.sln \
-	timedctf.vcxproj		\
-	timedctf_admin.txt	\
-	timedctf_rules.txt
+	timedctf.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

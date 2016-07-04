@@ -62,7 +62,6 @@ noinst_HEADERS =			\
 	LaserSceneNode.h		\
 	LinkManager.h			\
 	ListServer.h			\
-	MathUtils.h			\
 	MediaFile.h			\
 	MeshFace.h			\
 	MeshFragSceneNode.h		\
@@ -87,7 +86,6 @@ noinst_HEADERS =			\
 	OpenGLTexture.h			\
 	OpenGLUtils.h			\
 	OSFile.h			\
-	PTSceneNode.h			\
 	Pack.h				\
 	ParseColor.h			\
 	PhysicsDriver.h			\
@@ -96,7 +94,6 @@ noinst_HEADERS =			\
 	PlayerInfo.h			\
 	PlayerState.h			\
 	PolyWallSceneNode.h		\
-	PositionTracker.h		\
 	Protocol.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\
@@ -109,7 +106,6 @@ noinst_HEADERS =			\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\
-	ShellSceneNode.h		\
 	ShotSceneNode.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
@@ -129,7 +125,6 @@ noinst_HEADERS =			\
 	TextureMatrix.h			\
 	TimeBomb.h			\
 	TimeKeeper.h			\
-	TracerSceneNode.h		\
 	TriWallSceneNode.h		\
 	ViewFrustum.h			\
 	VotingArbiter.h			\
@@ -153,7 +148,6 @@ noinst_HEADERS =			\
 	messages.h			\
 	multicast.h			\
 	network.h			\
-	bzregex.h			\
 	resource.h			\
 	vectors.h			\
 	vectors_old.h			\

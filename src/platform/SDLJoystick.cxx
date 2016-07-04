@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,15 +29,14 @@
 #include "TextUtils.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons()
+SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons(0), numHats(0),
+  xAxis(0), yAxis(1)
 {
   if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
     std::vector<std::string> args;
     args.push_back(SDL_GetError());
     printError("Could not initialize SDL Joystick subsystem: %s.\n", &args);
   };
-  xAxis = 0;
-  yAxis = 1;
 }
 
 SDLJoystick::~SDLJoystick()
@@ -145,7 +144,7 @@ void                SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
   if (value - 2 >= 0) { value -= 2;
     hatX = 1;
   }
-  if (value - 1 >= 0) { value -= 1;
+  if (value - 1 >= 0) {
     hatY = -1;
   }
 }

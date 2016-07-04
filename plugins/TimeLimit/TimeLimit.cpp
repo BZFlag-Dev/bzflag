@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,7 +18,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define TIMELIMIT_VER "1.0.4"
 #define MAX_TIMES 20
 
 class TimeLimit : public bz_Plugin, public bz_CustomSlashCommandHandler

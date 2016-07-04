@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -131,11 +131,11 @@ void LinkManager::doLinking()
     findTelesByName(link.dst, dstNumbers);
 
     bool broken = false;
-    if (srcNumbers.size() <= 0) {
+    if (srcNumbers.empty()) {
       broken = true;
       logDebugMessage(1,"broken link src: %s\n", link.src.c_str());
     }
-    if (dstNumbers.size() <= 0) {
+    if (dstNumbers.empty()) {
       broken = true;
       logDebugMessage(1,"broken link dst: %s\n", link.dst.c_str());
     }
@@ -156,7 +156,7 @@ void LinkManager::doLinking()
   // fill in the blanks (passthru linkage)
   for (i = 0; i < linkNumbers.size(); i++) {
     std::vector<int>& dstsList = linkNumbers[i].dsts;
-    if (dstsList.size() <= 0) {
+    if (dstsList.empty()) {
       const int t = (i / 2) * 2; // tele number
       const int f = 1 - (i % 2); // opposite link
       dstsList.push_back(t + f);

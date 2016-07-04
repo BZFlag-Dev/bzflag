@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,9 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifdef _MSC_VER
-#pragma warning(4: 4786)
-#endif
 #include "common.h"
 #include <cmath>
 
@@ -41,6 +38,7 @@ BZDBCache::Float BZDBCache::shotLength;
 BZDBCache::Int   BZDBCache::flagChunks;
 BZDBCache::Float BZDBCache::pulseRate;
 BZDBCache::Float BZDBCache::pulseDepth;
+BZDBCache::Int   BZDBCache::controlPanelTimestamp;
 BZDBCache::Bool  BZDBCache::showCollisionGrid;
 BZDBCache::Bool  BZDBCache::showCullingGrid;
 
@@ -67,6 +65,7 @@ BZDBCache::Float BZDBCache::maxLOD;
 BZDBCache::Float BZDBCache::gmSize;
 
 BZDBCache::Float BZDBCache::hudGUIBorderOpacityFactor;
+BZDBCache::Float BZDBCache::shotBrightness;
 
 
 static float getGoodPosValue(float oldVal, const std::string &var)
@@ -116,9 +115,11 @@ void BZDBCache::init()
   BZDB.addCallback("flagChunks", clientCallback, NULL);
   BZDB.addCallback("pulseRate", clientCallback, NULL);
   BZDB.addCallback("pulseDepth", clientCallback, NULL);
+  BZDB.addCallback("controlPanelTimestamp", clientCallback, NULL);
   BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
   BZDB.addCallback("showCullingGrid", clientCallback, NULL);
   BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
+  BZDB.addCallback("shotBrightness", clientCallback, NULL);
 
   // Server-side variables
   BZDB.addCallback(StateDatabase::BZDB_DRAWCELESTIAL, serverCallback, NULL);
@@ -199,7 +200,7 @@ void BZDBCache::clientCallback(const std::string& name, void *)
   else if (name == "shotLength")
     shotLength = BZDB.eval("shotLength");
   else if (name == "leadingShotLine")
-    leadingShotLine = (int)BZDB.eval("leadingShotLine");
+    leadingShotLine = BZDB.evalInt("leadingShotLine");
   else if (name == "radarPosition")
     radarPosition = BZDB.evalInt("radarPosition");
   else if (name == "flagChunks")
@@ -208,12 +209,16 @@ void BZDBCache::clientCallback(const std::string& name, void *)
     pulseRate = BZDB.eval("pulseRate");
   else if (name == "pulseDepth")
     pulseDepth = BZDB.eval("pulseDepth");
+  else if (name == "controlPanelTimestamp")
+    controlPanelTimestamp = BZDB.evalInt("controlPanelTimestamp");
   else if (name == "showCollisionGrid")
     showCollisionGrid = BZDB.isTrue("showCollisionGrid");
   else if (name == "showCullingGrid")
     showCullingGrid = BZDB.isTrue("showCullingGrid");
   else if (name == "hudGUIBorderOpacityFactor")
     hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
+  else if (name == "shotBrightness")
+    shotBrightness = BZDB.eval("shotBrightness");
 }
 
 

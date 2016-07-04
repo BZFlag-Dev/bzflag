@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -9,10 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#ifdef _MSC_VER
-  #pragma warning( disable : 4786 )  // Disable warning message
-#endif
 
 // interface header
 #include "OSFile.h"
@@ -205,13 +201,13 @@ bool OSFile::open(const char *mode)
     fileName = osBaseDir;
   fileName += info->osName;
 
-  info->fp = fopen(fileName.c_str(),mode);
+  info->fp = fopen(fileName.c_str(),modeToUse);
 
   // we may need to make the file path to the file, if we are writing then lets get on with it.
-  if (!info->fp && strchr(mode,'w'))
+  if (!info->fp && strchr(modeToUse,'w'))
   {
     osMakePath(fileName);
-    info->fp = fopen(fileName.c_str(),mode);
+    info->fp = fopen(fileName.c_str(),modeToUse);
   }
 
   return isOpen();
@@ -782,3 +778,11 @@ bool OSDir::linuxAddFileStack(std::string pathName, std::string fileMask, bool b
   return true;
 #endif// !Win32
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

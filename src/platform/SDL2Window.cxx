@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,11 +15,23 @@
 
 // Common includes
 #include "OpenGLGState.h"
+#include "TimeKeeper.h"
+
+#ifdef _WIN32
+HWND SDLWindow::hwnd = NULL;
+#endif
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
-  : BzfWindow(_display), hasGamma(true), windowId(NULL), glContext(NULL),
-  canGrabMouse(true), fullScreen(false), base_width(640), base_height(480)
+  : BzfWindow(_display), hasGamma(true), origGamma(-1.0f), lastGamma(1.0f),
+  windowId(NULL), glContext(NULL), canGrabMouse(true), fullScreen(false),
+  base_width(640), base_height(480)
 {
+}
+
+SDLWindow::~SDLWindow()
+{
+  // Restore the original gamma when we exit the client
+  setGamma(origGamma);
 }
 
 void SDLWindow::setTitle(const char *_title) {
@@ -35,6 +47,39 @@ void SDLWindow::setFullscreen(bool on) {
 void SDLWindow::iconify(void) {
   SDL_MinimizeWindow(windowId);
 }
+
+
+void SDLWindow::disableConfineToMotionbox() {
+#ifndef _WIN32
+  SDL_SetWindowGrab(windowId, SDL_FALSE);
+#else
+  ClipCursor(NULL);
+#endif
+}
+
+
+void SDLWindow::confineToMotionbox(int x1, int y1, int x2, int y2) {
+#ifndef _WIN32
+  if(! SDL_GetWindowGrab(windowId))
+    SDL_SetWindowGrab(windowId, SDL_TRUE);
+
+  BzfWindow::confineToMotionbox(x1, y1, x2, y2);
+#else
+  int posx, posy;
+  SDL_GetWindowPosition(windowId, &posx, &posy);
+
+  // Store the boundary positions as rectangle
+  RECT rect;
+  rect.top = y1 + posy;
+  rect.left = x1 + posx;
+  rect.bottom = y2 + posy;
+  rect.right = x2 + posx;
+
+  // Restrict cursor to that rectangle
+  ClipCursor(&rect);
+#endif
+}
+
 
 void SDLWindow::warpMouse(int _x, int _y) {
   SDL_WarpMouseInWindow(windowId, _x, _y);
@@ -62,6 +107,7 @@ void SDLWindow::getSize(int& width, int& height) const {
 }
 
 void SDLWindow::setGamma(float gamma) {
+  lastGamma = gamma;
   int result = SDL_SetWindowBrightness(windowId, gamma);
   if (result == -1) {
     printf("Could not set Gamma: %s.\n", SDL_GetError());
@@ -79,6 +125,30 @@ bool SDLWindow::hasGammaControl() const {
 
 void SDLWindow::swapBuffers() {
   SDL_GL_SwapWindow(windowId);
+
+  // workaround for SDL 2 bug on mac where an application window obstructed
+  // by another window will not honor a vsync restriction
+  // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2998
+  // TODO: Remove this workaround when/if SDL2 includes their own workaround.
+#ifdef __APPLE__
+  if(! SDL_GL_GetSwapInterval())
+    return;
+
+  const int maxRunawayFPS = 65;
+
+  static TimeKeeper lastFrame = TimeKeeper::getSunGenesisTime();
+  const TimeKeeper now = TimeKeeper::getCurrent();
+
+  const double remaining = 1.0 / (double) maxRunawayFPS - (now - lastFrame);
+
+  // this doesn't create our exact desired FPS, since our handling is
+  // frame-to-frame and some frames will be late already and will not be
+  // delayed, but it's close enough for the purposes of this workaround
+  if(remaining > 0.0)
+    TimeKeeper::sleep(remaining);
+
+  lastFrame = now;
+#endif //__APPLE__
 }
 
 bool SDLWindow::create(void) {
@@ -125,6 +195,22 @@ bool SDLWindow::create(void) {
       targetHeight,
       flags);
 
+  // Store the gamma immediately after creating the first window
+  if (origGamma < 0)
+    origGamma = getGamma();
+
+  // At least on Windows, recreating the window resets the gamma, so set it
+  setGamma(lastGamma);
+
+#ifdef _WIN32
+  SDL_VERSION(&info.version);
+  if(SDL_GetWindowWMInfo(windowId,&info)) {
+    if (info.subsystem == SDL_SYSWM_WINDOWS) {
+      hwnd = info.info.win.window;
+    }
+  }
+#endif
+
   if (!windowId) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
     return false;
@@ -137,6 +223,49 @@ bool SDLWindow::create(void) {
 
   // init opengl context
   OpenGLGState::initContext();
+
+  // workaround for SDL 2 bug on mac where toggling fullscreen will
+  // generate a resize event and mess up the window size/resolution
+  // (TODO: remove this if they ever fix it)
+  // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=3146
+#ifdef __APPLE__
+  if(fullScreen)
+    return true;
+
+  int currentDisplayIndex = SDL_GetWindowDisplayIndex(windowId);
+  if(currentDisplayIndex < 0) {
+    printf("Unable to get current display index: %s\n", SDL_GetError());
+    return true;
+  }
+
+  SDL_DisplayMode desktopDisplayMode;
+  if(SDL_GetDesktopDisplayMode(currentDisplayIndex, &desktopDisplayMode) < 0) {
+    printf("Unable to get desktop display mode: %s\n", SDL_GetError());
+    return true;
+  }
+
+  std::vector<SDL_Event> eventStack;
+  SDL_Event thisEvent;
+
+  // pop off all the events except a resize event
+  while (SDL_PollEvent(&thisEvent)) {
+    if (thisEvent.type == SDL_WINDOWEVENT && thisEvent.window.event == SDL_WINDOWEVENT_RESIZED) {
+      // switching from "native" fullscreen to SDL fullscreen and then going back to
+      // windowed mode will generate a legitimate resize event, so add it back
+      if(thisEvent.window.data1 != desktopDisplayMode.w || thisEvent.window.data2 != desktopDisplayMode.h)
+	eventStack.push_back(thisEvent);
+    } else {
+      eventStack.push_back(thisEvent);
+    }
+  }
+
+  // push them back on in the same order
+  while(eventStack.size() > 0) {
+    SDL_PushEvent(&eventStack[0]);
+
+    eventStack.erase(eventStack.begin());
+  }
+#endif //__APPLE__
 
   return true;
 }

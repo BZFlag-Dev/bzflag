@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,16 +18,18 @@
 #include "TimeKeeper.h"
 #include "Pack.h"
 #include <stdio.h>
-
-#ifdef HAVE_DSOUND_H
+#ifdef HAVE_SDL
+#  include "SDL2Window.h"
+#else
+#  include "WinWindow.h"
+#endif
 
 static const int	defaultOutputRate = 22050;
 static const int	NumChunks = 4;
 void			(*WinMedia::threadProc)(void*);
 void*			WinMedia::threadData;
 
-WinMedia::WinMedia(WinWindow* _window) :
-				window(_window->getHandle()),
+WinMedia::WinMedia() :
 				audioReady(false),
 				audioInterface(NULL),
 				audioPrimaryPort(NULL),
@@ -54,7 +56,11 @@ bool			WinMedia::openAudio()
     return false;
 
   // set cooperative level
-  if (audioInterface->SetCooperativeLevel(window, DSSCL_EXCLUSIVE) != DS_OK) {
+#ifdef HAVE_SDL
+  if (audioInterface->SetCooperativeLevel(SDLWindow::getHandle(), DSSCL_EXCLUSIVE) != DS_OK) {
+#else
+  if (audioInterface->SetCooperativeLevel(WinWindow::getHandle(), DSSCL_EXCLUSIVE) != DS_OK) {
+#endif
     closeAudio();
     return false;
   }
@@ -433,7 +439,7 @@ void			WinMedia::audioSleep(
     WaitForSingleObject(audioCommandEvent, timeout);
   }
 }
-#endif
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
@@ -441,4 +447,3 @@ void			WinMedia::audioSleep(
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -348,7 +348,7 @@ void ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   hudColor3fv(messageColor);
 
   label = bdl->getLocalString("Team Score");
-  xl = xn = x - teamScoreLabelWidth;
+  xl = xn = x - teamScoreLabelWidth - teamCountLabelWidth;
   fm.drawString(xl, y, 0, minorFontFace, minorFontSize, label);
 
   for (i = RedTeam; i < NumTeams; i++) {
@@ -364,7 +364,7 @@ void ScoreboardRenderer::renderTeamScores (float x, float y, float dy){
   for (i = 0 ; i < teamCount; i++){
     Team& team = World::getWorld()->getTeam(teams[i]);
     sprintf(score, "%3d (%3d-%-3d) %3d", team.getWins() - team.getLosses(), team.getWins(), team.getLosses(), team.size);
-    hudColor3fv(Team::getRadarColor((TeamColor)teams[i]));
+    hudColor3fv(Team::getTankColor((TeamColor)teams[i]));
     fm.drawString(xn, y, 0, minorFontFace, minorFontSize, score);
     y -= dy;
   }
@@ -394,10 +394,10 @@ void ScoreboardRenderer::renderCtfFlags (){
       FlagType* flagd = player->getFlag();
       TeamColor teamIndex = player->getTeam();
       if (flagd!=Flags::Null && flagd->flagTeam != NoTeam) {   // if player has team flag ...
-	std::string playerInfo = ColorStrings[flagd->flagTeam];
+	std::string playerInfo = Team::getAnsiCode(flagd->flagTeam);
 	snprintf(flagColor, 200, "%-12s", flagd->flagName.c_str());
 	playerInfo += flagColor;
-	playerInfo += ColorStrings[teamIndex];
+	playerInfo += Team::getAnsiCode(teamIndex);
 	playerInfo += player->getCallSign();
 
 	fm.drawString(x, y0, 0, minorFontFace, minorFontSize, playerInfo);
@@ -579,8 +579,18 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
   const float x1 = floorf(_x1) + 0.5f;
   const float y1 = y0 + 1.0f;
 
-  const float black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-  const float white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+  const float black[4] = {
+      0.0f * (dim ? dimFactor : 1.0f),
+      0.0f * (dim ? dimFactor : 1.0f),
+      0.0f * (dim ? dimFactor : 1.0f),
+      1.0f
+    };
+  const float white[4] = {
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f * (dim ? dimFactor : 1.0f),
+      1.0f
+    };
   const float* c0 = black;
   const float* c1 = white;
 
@@ -643,12 +653,9 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // team color
   TeamColor teamIndex = player->getTeam();
-  if (teamIndex < RogueTeam) {
-    teamIndex = RogueTeam;
-  }
   std::string teamColor;
   if (player->getId() < 200) {
-    teamColor = ColorStrings[teamIndex];
+    teamColor = Team::getAnsiCode(teamIndex);
   } else {
     teamColor = ColorStrings[CyanColor]; // replay observers
   }
@@ -724,7 +731,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 	      playerInfo += ColorStrings[WhiteColor];
       } else if (flagd->flagTeam != NoTeam) {
 	// use team color for team flags
-	playerInfo += ColorStrings[flagd->flagTeam];
+	playerInfo += Team::getAnsiCode(flagd->flagTeam);
       }
       coloredFlag = true;
     }
@@ -766,9 +773,9 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
 
   // draw
   if (player->getTeam() != ObserverTeam) {
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getTankColor(teamIndex));
     fm.drawString(x1, y, 0, minorFontFace, minorFontSize, score);
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getTankColor(teamIndex));
     fm.drawString(x2, y, 0, minorFontFace, minorFontSize, kills);
   }
   fm.drawString(x3, y, 0, minorFontFace, minorFontSize, playerInfo);

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -110,6 +110,16 @@ void			MainWindow::getMousePosition(int& mx, int& my) const
   window->getMouse(mx, my);
   mx -= (width >> 1) + xOrigin;
   my -= (viewHeight >> 1) + getYOffset();
+}
+
+void			MainWindow::disableConfineToMotionbox()
+{
+  window->disableConfineToMotionbox();
+}
+
+void			MainWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+{
+  window->confineToMotionbox(x1, y1, x2, y2);
 }
 
 void			MainWindow::grabMouse()
@@ -322,4 +332,3 @@ void			MainWindow::initJoystick(std::string &joystickName) {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

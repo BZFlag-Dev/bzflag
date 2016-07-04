@@ -17,12 +17,10 @@ EXTRA_DIST =				\
 	bzwcvt.pl			\
 	checkToken.php			\
 	checkam				\
-	copyplugindocs			\
 	doxyfile			\
 	filter.txt			\
 	fonts/DejaVuSansCondensed-Bold.ttf	\
 	fonts/DejaVuSansMono-Bold.ttf	\
-	fonts/DejaVuSerif-Bold.ttf	\
 	fonts/LICENSE.DejaVu		\
 	fonts/README			\
 	groups.conf			\
@@ -34,12 +32,10 @@ EXTRA_DIST =				\
 	mrtg-bzflag.pl			\
 	multilingualSwearList.txt	\
 	pingtimes.sh			\
-	rebuild-bzflag			\
 	ServerListFilter.txt		\
 	serverstats.sh			\
 	shtool				\
 	simpleSwearList.txt		\
-	snap.sh				\
 	stats/Changes			\
 	stats/Info.pm			\
 	stats/Makefile.PL		\
@@ -50,7 +46,6 @@ EXTRA_DIST =				\
 	Template.cxx			\
 	Template.h			\
 	touchcopyright			\
-	touchversion			\
 	vars.txt			\
 	ws.sh
 

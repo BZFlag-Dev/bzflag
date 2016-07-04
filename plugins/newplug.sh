@@ -36,7 +36,7 @@ if [ $? != 0 ] ; then
 fi
 
 # copy the template files (Add new files as necessary)
-for file in Makefile.am README.txt SAMPLE_PLUGIN.cpp SAMPLE_PLUGIN.def SAMPLE_PLUGIN.sln SAMPLE_PLUGIN.vcxproj ;do
+for file in Makefile.am README.SAMPLE_PLUGIN.txt SAMPLE_PLUGIN.cpp SAMPLE_PLUGIN.def SAMPLE_PLUGIN.sln SAMPLE_PLUGIN.vcxproj ;do
     echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1"
     cp "$PATH_TO_HERE/$SAMPLE_PLUGIN/$file" "$PATH_TO_HERE/$ARG1"
     if [ $? != 0 ] ; then
@@ -64,7 +64,6 @@ for file in $PATH_TO_HERE/$ARG1/*$SAMPLE_PLUGIN* ;do
 done
 
 echo "---"
-echo "New plug-in \"$ARG1\" is ready.  A directory for your plug-in was created."
-echo ""
-
-bash addToBuild.sh $ARG1
+echo "New plugin \"$ARG1\" is ready in a directory with that name."
+echo "Use \"configure --enable-custom-plugins=$ARG1\" to have it built"
+echo "automatically along with the standard plugins."

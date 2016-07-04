@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,11 +15,7 @@
 
 /** this file contains headers necessary for opengl */
 
-// glew.h needs to come before gl.h, etc...
 #include "common.h"
-#ifdef HAVE_GLEW
-#include <GL/glew.h>
-#endif
 
 #ifdef __APPLE__
 #  include <OpenGL/OpenGL.h>
@@ -32,6 +28,15 @@
 
 #ifndef GL_VERSION_1_1
 # error OpenGL version 1.1 functionality is required
+#endif
+
+// Windows, at least, needs to have GL_TEXTURE_MAX_ANISOTROPY_EXT defined.
+// Copied this from GLEW.
+#ifndef GL_EXT_texture_filter_anisotropic
+#define GL_EXT_texture_filter_anisotropic 1
+
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT 0x84FE
+#define GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT 0x84FF
 #endif
 
 /* These will track glBegin/End pairs to make sure that they match */

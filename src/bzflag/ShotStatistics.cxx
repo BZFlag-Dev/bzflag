@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -57,10 +57,7 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
 
   float dot = (shotNorm[0] * playerNorm[0]) + (shotNorm[1] * playerNorm[1]) + shotNorm[2] * playerNorm[2];
 
-  double cos = acos(dot);
-  double radToDeg = 180.0/3.1415;
-
-  lastShotDeviation = (float)(cos*radToDeg);
+  lastShotDeviation = acosf(dot) * RAD2DEGf;
 
   if (getShotStats())
     getShotStats()->refresh();

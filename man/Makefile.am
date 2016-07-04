@@ -9,8 +9,8 @@ bzfquery.6: $(top_srcdir)/misc/bzfquery.pl
 	pod2man $(top_srcdir)/misc/bzfquery.pl > $@
 
 edit = sed \
-	-e 's|@BZFLAG_DATE[@]|$(BZFLAG_DATE)|g' \
-	-e 's|@BZFLAG_VERSION[@]|$(BZFLAG_VERSION)|g' \
+	-e 's|@BUILD_DATE[@]|$(BUILD_DATE)|g' \
+	-e 's|@PACKAGE_STRING[@]|$(PACKAGE_STRING)|g' \
 	-e 's|@INSTALL_DATA_DIR[@]|$(pkgdatadir)|g'
 
 bzflag.6 bzadmin.6 bzfs.6 bzw.5 : Makefile

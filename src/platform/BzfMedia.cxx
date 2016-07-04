@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,7 +12,7 @@
 
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
-#ifndef HAVE_SDL
+#if !defined(HAVE_SDL) || defined(_WIN32)
 #include "wave.h"
 #endif
 #include "MediaFile.h"
@@ -395,7 +395,7 @@ bool			BzfMedia::doReadRLE(FILE* file,
   return true;
 }
 
-#ifdef HAVE_SDL
+#if defined(HAVE_SDL) && !defined(_WIN32)
 float*			BzfMedia::doReadSound(const std::string&, int&, int&) const
 {
   return NULL;
@@ -490,4 +490,3 @@ void BzfMedia::audioDriver(std::string& driverName)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

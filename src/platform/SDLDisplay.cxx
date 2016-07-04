@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -523,8 +523,6 @@ bool SDLDisplay::createWindow() {
   oldWidth      = width;
   oldHeight     = height;
   oldFullScreen = fullScreen;
-  // always disable vsync when building with SDL
-  SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 0);
   // Set the video mode and hope for no errors
   if (!SDL_SetVideoMode(width, height, 0, flags)) {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
@@ -598,6 +596,10 @@ void SDLVisual::setStencil(int minDepth) {
 
 void SDLVisual::setStereo(bool on) {
   SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
+}
+
+void SDLVisual::setVerticalSync(bool on) {
+  SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, on ? 1 : 0);
 }
 
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)

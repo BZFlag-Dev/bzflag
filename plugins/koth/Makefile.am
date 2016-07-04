@@ -9,12 +9,12 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	README.txt \
+	README.koth.txt \
+	help_koth_admin.txt \
+	help_koth_rules.txt \
 	koth.def \
 	koth.sln \
-	koth.vcxproj	\
-	koth_admin.txt	\
-	koth_rules.txt
+	koth.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

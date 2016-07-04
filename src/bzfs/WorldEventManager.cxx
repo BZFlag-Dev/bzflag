@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,7 +34,6 @@ WorldEventManager::~WorldEventManager()
 	delete (*eventItr++);
 
   eventList.clear();
-  HandlerMap.clear();
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
@@ -70,10 +69,12 @@ bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
   }
 
   tvEventList::iterator itr = std::find(eventList.begin(),eventList.end(),theEvent);
-  if (itr != eventList.end())
-	  eventList.erase(itr);
+  if (itr != eventList.end()) {
+    eventList.erase(itr);
+    return true;
+  }
 
-  return itr != eventList.end();
+  return false;
 }
 
 void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eventData )

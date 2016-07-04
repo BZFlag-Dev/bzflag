@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -360,7 +360,7 @@ float computeMaxLinVelocity(FlagType *flag, float z)
 			return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
 		else if (flag == Flags::Thief)
 			return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-		else if (flag == Flags::QuickTurn && z < 0.0f)
+		else if (flag == Flags::Burrow && z < 0.0f)
 			return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
 	}
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,6 +24,8 @@
 /* local implementation headers */
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
+#include "ServerListFilterMenu.h"
+#include "ServerListFilterHelpMenu.h"
 #include "playing.h"
 #include "HUDui.h"
 #include "ServerListFilter.h"
@@ -31,9 +33,11 @@
 const int ServerMenu::NumReadouts = 24;
 const int ServerMenu::NumItems = 10;
 
-
-static std::string colorizeSearch(const std::string& s);
-
+ServerMenuDefaultKey::~ServerMenuDefaultKey()
+{
+  delete serverListFilterMenu;
+  ServerListFilterHelpMenu::done();
+}
 
 bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -114,6 +118,19 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
   else if ((key.ascii >= '0') && (key.ascii <= '9')) {
     if (HUDui::getFocus() && !menu->getFind()) {
       menu->setFindIndex(key.ascii - '0');
+      return true;
+    }
+  }
+  else if (key.ascii == 'e') {
+    if(HUDui::getFocus() && !menu->getFind()) {
+      if (!serverListFilterMenu) serverListFilterMenu = new ServerListFilterMenu;
+      HUDDialogStack::get()->push(serverListFilterMenu);
+      return true;
+    }
+  }
+  else if (key.ascii == '?') {
+    if(HUDui::getFocus() && !menu->getFind()) {
+      HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
       return true;
     }
   }
@@ -205,15 +222,20 @@ ServerMenu::ServerMenu()
   search->setFontFace(MainMenu::getFontFace());
   search->setMaxLength(42);
   search->setString(listFilter.getSource());
-  search->setColorFunc(colorizeSearch);
+  search->setColorFunc(ServerListFilter::colorizeSearch);
   getControls().push_back(search);
   setFind(false);
 
   // short key help
-  help = new HUDuiLabel;
-  help->setFontFace(MainMenu::getFontFace());
-  help->setString("Press  +/- add/remove favorites   f - toggle view");
-  getControls().push_back(help);
+  help1 = new HUDuiLabel;
+  help1->setFontFace(MainMenu::getFontFace());
+  help1->setString("Press +/- to add/remove favorites, f to toggle favorites-only list,");
+  getControls().push_back(help1);
+
+  help2 = new HUDuiLabel;
+  help2->setFontFace(MainMenu::getFontFace());
+  help2->setString("1 to 9 for quick filters, 0 to clear, e to edit quick filters, ? for filter help");
+  getControls().push_back(help2);
 
   // set initial focus
   setFocus(status);
@@ -241,6 +263,8 @@ void ServerMenu::setFindLabel(const std::string& label)
 
 void ServerMenu::setFind(bool mode, bool clear)
 {
+  findMode = mode;
+
   const std::string oldFilterSource = listFilter.getSource();
 
   if (clear) {
@@ -257,17 +281,22 @@ void ServerMenu::setFind(bool mode, bool clear)
     if (listFilter.getSource().empty()) {
       setFindLabel("Press '/' to search");
     } else {
-      setFindLabel(ANSI_STR_FG_RED "Using filter:");
+      std::string filter_number;
+      for (int i = 1; i <= 9; i++) {
+	if (listFilter.getSource() == BZDB.get(TextUtils::format("listFilter%d", i))) {
+	  filter_number = TextUtils::format(" %d", i);
+	  break;
+	}
+      }
+      setFindLabel(ANSI_STR_FG_RED "Using filter" + filter_number + ":");
     }
     // select the first item in the list
-    setSelected(0);
+    setSelected(0, true);
   }
 
   if (debugLevel > 0) {
     listFilter.print();
   }
-
-  findMode = mode;
 
   newfilter = (listFilter.getSource() != oldFilterSource);
 }
@@ -275,12 +304,15 @@ void ServerMenu::setFind(bool mode, bool clear)
 
 void ServerMenu::setFindIndex(int index)
 {
-  if ((index >= 0) && (index <= 9)) {
+  if ((index >= 1) && (index <= 9)) {
     std::string name = "listFilter";
     name += (index + '0');
     search->setString(BZDB.get(name));
-    setFind(false);
+  } else {
+    search->setString("");
   }
+
+  setFind(false);
 }
 
 
@@ -352,7 +384,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
       if (base + i < (int)serverList.size()) {
 	const ServerItem &server = serverList.getServers()[base + i];
 	const short gameType = server.ping.gameType;
-  const short gameOptions = server.ping.gameOptions;
+	const short gameOptions = server.ping.gameOptions;
 	std::string fullLabel;
 	if (BZDB.isTrue("listIcons")) {
 	  // game mode
@@ -449,8 +481,8 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
     }
   }
 
-  // set focus to selected item
-  if (serverList.size() > 0) {
+  // set focus to selected item unless we are typing into the search field
+  if (serverList.size() > 0 && ! findMode) {
     const int indexOnPage = selectedIndex % NumItems;
     getControls()[NumReadouts + indexOnPage]->setFocus();
   }
@@ -708,7 +740,7 @@ void ServerMenu::execute()
   const bool endFind = (HUDui::getFocus() == search);
   if (endFind) {
     setFind(false);
-    status->setFocus();
+    setSelected(0);
     return;
   }
 
@@ -806,11 +838,13 @@ void ServerMenu::resize(int _width, int _height)
   // reposition key help
   {
     fontSize = (float)_height / 54.0f;
-    float fontHt = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-    help->setFontSize(fontSize);
-    const float searchWidth = fm.getStrLength(help->getFontFace(), fontSize, help->getString());
-    x = 0.5f * ((float)_width - searchWidth);
-    help->setPosition(x, fontHt / 2 /* near bottom of screen */);
+    float fontHt = fm.getStrHeight(help1->getFontFace(), fontSize, " ");
+    help1->setFontSize(fontSize);
+    help2->setFontSize(fontSize);
+    const float help1Width = fm.getStrLength(help1->getFontFace(), fontSize, help1->getString());
+    const float help2Width = fm.getStrLength(help2->getFontFace(), fontSize, help2->getString());
+    help1->setPosition(0.5f * ((float)_width - help1Width), fontHt * 1.5f /* near bottom of screen */);
+    help2->setPosition(0.5f * ((float)_width - help2Width), fontHt * 0.5f /* near bottom of screen */);
   }
 
   // position page readout and server item list
@@ -904,70 +938,6 @@ void ServerMenu::playingCB(void* _self)
 
   ((ServerMenu*)_self)->updateStatus();
 }
-
-
-static std::string colorizeSearch(const std::string& in)
-{
-  std::string out;
-  std::vector<std::string> filters;
-  std::vector<char> separators;
-  const char *c, *s, *s0 = in.c_str();
-  for (c = s = s0; true; c++) {
-    if (*c == 0) {
-      filters.push_back(std::string(s, c - s));
-      s = c + 1;
-      break;
-    }
-    else if ((*c == '/') || (*c == ',')) {
-      filters.push_back(std::string(s, c - s));
-      separators.push_back(*c);
-      s = c + 1;
-    }
-  }
-
-  static const std::string controlColor = ANSI_STR_FG_CYAN;
-  static const std::string badColor     = ANSI_STR_FG_ORANGE;
-  static const std::string unknownColor = ANSI_STR_FG_RED;
-  static const std::string commentColor = ANSI_STR_FG_BLACK;
-  static const std::string boolColor    = ANSI_STR_FG_YELLOW;
-  static const std::string rangeColor   = ANSI_STR_FG_GREEN;
-  static const std::string globColor    = ANSI_STR_FG_BLUE;
-  static const std::string regexColor   = ANSI_STR_FG_MAGENTA;
-
-  out += filters[0];
-  for (size_t i = 1; i < filters.size(); i++) {
-    out += controlColor;
-    out += separators[i - 1];
-    char op;
-    std::string lbl, param;
-    const char type =
-      ServerListFilter::parseFilterType(filters[i], op, lbl, param);
-    switch (type) {
-      case 'p': {
-	if (ServerListFilter::isPatternLabel(lbl)) {
-	  out += (op == ')') ? globColor : regexColor;
-	} else {
-	  out += unknownColor;
-	}
-	break;
-      }
-      case 'b': {
-	out += ServerListFilter::isBoolLabel(lbl) ? boolColor : unknownColor;
-	break;
-      }
-      case 'r': {
-	out += ServerListFilter::isRangeLabel(lbl) ? rangeColor : unknownColor;
-	break;
-      }
-      case '#': { out += commentColor; break; }
-      default:  { out += badColor;     break; }
-    }
-    out += filters[i];
-  }
-
-  return out;
-}
-
 
 // Local Variables: ***
 // mode: C++ ***

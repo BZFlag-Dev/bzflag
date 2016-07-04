@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -482,7 +482,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
   sun2[2] = sunDirection[2] * cosf(moonAltitude) - sun2[0] * sinf(moonAltitude);
   const float limbAngle = atan2f(sun2[2], sun2[1]);
 
-  int moonSegements = (unsigned int)BZDB.eval("moonSegments");
+  const int moonSegements = BZDB.evalInt("moonSegments");
   moonList = glGenLists(1);
   glNewList(moonList, GL_COMPILE);
   {
@@ -1906,4 +1906,3 @@ const GLfloat*	BackgroundRenderer::getSunDirection() const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

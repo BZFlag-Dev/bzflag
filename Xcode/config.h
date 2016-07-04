@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,9 +35,6 @@
 #define DEBUG_RENDERING 1
 #endif
 
-/* Build the included ares lookup library */
-#define BUILD_ARES 1
-
 /* Data file directory */
 #define BZFLAG_DATA "/usr/local/share/bzflag"
 
@@ -61,9 +58,6 @@
 
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
-
-/* Define to 1 if you have the `CGLGetCurrentContext' function. */
-#define HAVE_CGLGETCURRENTCONTEXT 1
 
 /* Define to 1 if you have the <cmath> header file. */
 #define HAVE_CMATH 1
@@ -97,9 +91,6 @@
 
 /* libm includes fmodf */
 #define HAVE_FMODF 1
-
-/* Using GLEW */
-#define HAVE_GLEW 1
 
 /* Define to 1 if you have the `hstrerror' function. */
 #define HAVE_HSTRERROR 1
@@ -151,6 +142,9 @@
 
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #define HAVE_SDL_SDL_H 1
+
+/* Define to 1 if you have the <SDL2/SDL.h> header file. */
+#define HAVE_SDL2_SDL_H
 
 /* Define to 1 if you have the `select' function. */
 #define HAVE_SELECT 1
@@ -261,24 +255,6 @@
 
 /* Debugging disabled */
 #define NDEBUG 1
-
-/* Name of package */
-#define PACKAGE "bzflag"
-
-/* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "http://BZFlag.org/"
-
-/* Define to the full name of this package. */
-#define PACKAGE_NAME "BZFlag"
-
-/* Define to the full name and version of this package. */
-#define PACKAGE_STRING "BZFlag 2.5.1"
-
-/* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "bzflag"
-
-/* Define to the version of this package. */
-#define PACKAGE_VERSION "2.5.1"
 
 /* Enabling Robots */
 #define ROBOT 1

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -69,6 +69,7 @@ class SDLVisual : public BzfVisual {
   void setStencil(int minDepth);
   void setAccum(int, int, int, int) {;};
   void setStereo(bool);
+  void setVerticalSync(bool);
   void setMultisample(int) {;};
   bool build() {return true;};
 };
@@ -96,6 +97,7 @@ class SDLWindow : public BzfWindow {
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
+  virtual bool hasVerticalSync() const {return true;};
   void  makeCurrent() {;};
   void  swapBuffers();
   void  makeContext() {;};

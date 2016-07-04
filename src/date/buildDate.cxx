@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,7 +37,6 @@
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
-//  tools/TextTool-W32/TextTool.rc
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION	2
 #endif
@@ -52,14 +51,18 @@
 
 // DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"DEVEL"
+#  define BZ_BUILD_TYPE		"MAINT"
 #endif
 
-const char *bzfcopyright = "Copyright (c) 1993-2015 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993-2016 Tim Riker";
 
 static int getBuildDate()
 {
   int year = 1900, month = 0, day = 0;
+#ifdef BUILD_DATE
+  // the BUILD_DATE define looks like "YYYY-MM-DD"
+  sscanf(BUILD_DATE, "%d-%d-%d", &year, &month, &day);
+#else
   char monthStr[512];
   // the __DATE__ macro looks like "Jun 15 2013" (*with* the quotes)
   sscanf(__DATE__, "%s %d %d", monthStr, &day, &year);
@@ -89,8 +92,9 @@ static int getBuildDate()
     month = 11;
   else if (strcmp(monthStr, "Dec") == 0)
     month = 12;
+#endif
 
-  return (year*10000) + (month*100)+ day;
+  return (year*10000) + (month*100) + day;
 }
 
 const char*		getProtocolVersion()

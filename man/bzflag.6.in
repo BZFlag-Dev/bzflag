@@ -1,5 +1,5 @@
 .\" bzflag
-.\" Copyright (c) 1993-2015 Tim Riker
+.\" Copyright (c) 1993-2016 Tim Riker
 .\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
@@ -9,7 +9,7 @@
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 .\"
-.TH "bzflag" "6" "@BZFLAG_DATE@" "bzflag-@BZFLAG_VERSION@" "BZFlag"
+.TH "BZFLAG" "6" "@BUILD_DATE@" "@PACKAGE_STRING@" "BZFlag"
 .SH "NAME"
 BZFlag \- a tank battle game
 .SH "SYNOPSIS"
@@ -79,7 +79,7 @@ register a callsign that defines them uniquely on the BZFlag network.
 Some servers require registration for all users, some require it to
 obtain administrative abilities.  If you attempt to use a callsign
 that is already registered, you may be denied access to a server.  See
-http://my.B ZFlag.org/bb/ for details regarding callsign registration
+https://forums.bzflag.org/ for details regarding callsign registration
 and to check on available names.  Once registered, you will be able to
 provide your password in the "Join Game" menu and have it used for
 authentication.  You are encouraged to register your callsign.
@@ -218,9 +218,7 @@ choose decides which game you enter.
 The callsign and the port are optional. If you don't specify a port the
 standard server port will be used, and if you don't specify a callsign the
 callsign used for the previous game is used.  If that cannot be found
-then the callsign is the value of the \fBBZFLAGID\fR environment variable.
-If \fBBZFLAGID\fR is empty or undefined then \fBbzflag\fR will prompt for a
-callsign when joining a game.
+then \fBbzflag\fR will prompt for a callsign when joining a game.
 .SS Controls
 Tanks are controlled by moving the mouse within the large yellow box
 in the main view.  When the mouse is inside the small yellow box,
@@ -334,8 +332,7 @@ seconds and then the previous resolution restored.  Press the
 key to permanently select a new resolution. When you quit the game,
 the resolution is restored to what it was before the game started.
 .PP
-Options are recorded between game sessions in the .bzf/<version>/config.cfg
-file (or config.cfg.${HOST} if the \fIHOST\fR environment variable is defined)
+Options are recorded between game sessions in the .bzf/<version>/config.cfg file
 in the user's home directory.  This file has a simple name/value pair format.
 This file is completely rewritten by the game after each session.
 .PP
@@ -690,11 +687,17 @@ The following commands can be executed by sending a message to all and using the
 /bind \fIkey\fR \fIpress\fR \fIaction\fR
 Bind a \fIkey\fR press to an \fIaction\fR. \fIpress\fR can be \fBup\fR, \fBdown\fR or \fBboth\fR
 .TP 15
+/cmds
+Show a list of all client and server commands
+.TP 15
 /debug [\fIlevel\fR]
 Show or set the debug level to \fIlevel\fR
 .TP 15
 /diff
 List all BZDB server variables that are not set to the default value
+.TP 15
+/dumpvars
+Dump a list of all local variables and their values to the standard output
 .TP 15
 /forceradar
 Force the radar to be displayed (only works for observers)
@@ -705,6 +708,12 @@ Highlight all messages containing \fIpattern\fR on the console
 /localset \fIvariable\fR [\fIvalue\fR]
 Read a local variable or set it to \fIvalue\fR
 .TP 15
+/quit
+Exit the game
+.TP 15
+/retexture
+Reload the textures of the game
+.TP 15
 /roampos {reset|send|\fIangle\fR|\fIx\fR \fIy\fR \fIz\fR [\fItheta\fR [\fIphi\fR [\fIzoom\fR]]]}
 Manipulate the observer camera (only useful in Roaming and Tracking modes). Without arguments, it shows
 a usage message and the current camera location. \fBreset\fR resets the camera's location to the center
@@ -713,23 +722,22 @@ outside the map at a certain angle, looking towards its center. \fIx\fR, \fIy\fR
 are used to set the camera's location, \fItheta\fR defines the camera's horizontal angle, \fIphi\fR defines
 its vertical angle and \fIzoom\fR sets the camera's zoom level. All angles are defined in degrees.
 .TP 15
-/savemsgs [-s]
+/savemsgs [-s] [-t]
 Save all messages to a file in your config directory. If \fB-s\fR is provided, coloring data are stripped.
+If \fB-t\fR is provided, timestamps are added to the messages.
+.TP 15
+/saveworld [-g] [-m] [-o] \fIfilename\fR
+Save the current world to \fIfilename\fR. Specify \fB-g\fR to prevent the creation of groups, \fB-m\fR to
+save some primitives as meshes and \fB-o\fR to create a WaveFront OBJ file instead of a BZW one.
 .TP 15
 /silence \fIplayerName\fR
 Do not display any message coming from player with \fIplayerName\fR name
 .TP 15
 /unsilence \fIplayerName\fR
 Reshow messages coming from player with \fIplayerName\fR name
-.TP 15
-/saveworld \fIfilename\fR
-Save the current world to \fIfilename\fR.
 .SH "FILES"
 .TP 15
 ~/.bzf/<version>/config.cfg
-Stores options between game sessions.  Used when HOST is not defined.
-.TP 15
-~/.bzf/<version>/config.cfg.${HOST}
-Stores options between game sessions.  Used when HOST is defined.
+Stores options between game sessions.
 .SH "SEE ALSO"
 bzadmin(6), bzfs(6), bzw(5)

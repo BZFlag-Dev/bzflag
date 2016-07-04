@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,9 +13,9 @@
 // logDetail.cpp : Plugin module for logging server events to stdout
 //
 
+#include "bzfsAPI.h"
 #include <iostream>
 #include <sstream>
-#include "bzfsAPI.h"
 
 enum action { join , auth , part };
 
@@ -67,16 +67,16 @@ void LogDetail::Event( bz_EventData *eventData )
   bz_PlayerJoinPartEventData_V1 *joinPartData = (bz_PlayerJoinPartEventData_V1 *) eventData;
   bz_PlayerAuthEventData_V1 *authData = (bz_PlayerAuthEventData_V1 *) eventData;
   bz_MessageFilteredEventData_V1 *filteredData = (bz_MessageFilteredEventData_V1 *) eventData;
-  char temp[9] = {0};
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eSlashCommandEvent:
+      case bz_eSlashCommandEvent: {
 	// Slash commands are case insensitive
 	// Tokenize the stream and check the first word
 	// /report -> MSG-REPORT
 	// anything -> MSG-COMMAND
 
+	char temp[9] = {0};
 	strncpy(temp, cmdData->message.c_str(), 8);
 
 	if (strcasecmp( temp, "/REPORT ") == 0) {
@@ -89,6 +89,7 @@ void LogDetail::Event( bz_EventData *eventData )
 			   cmdData->message.c_str()+1);
 	}
 	break;
+      }
       case bz_eRawChatMessageEvent:
 	if ((chatData->to == BZ_ALLUSERS) && (chatData->team == eNoTeam)) {
 	  bz_debugMessagef(0, "MSG-BROADCAST %s %s",
@@ -317,4 +318,3 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

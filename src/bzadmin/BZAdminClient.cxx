@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -488,7 +488,6 @@ void BZAdminClient::outputServerList() const {
 
 void BZAdminClient::runLoop() {
   std::string cmd;
-  std::map<std::string, uint16_t>::iterator iter;
   ServerCode what(NoMessage);
   while (true) {
     what = checkMessage();
@@ -498,7 +497,7 @@ void BZAdminClient::runLoop() {
       if (cmd == "/quit")
 	break;
       else if (cmd.substr(0, 6) == "/show ") {
-	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
+	if (msgTypeMap.find(cmd.substr(6)) == msgTypeMap.end()) {
 	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}
@@ -509,7 +508,7 @@ void BZAdminClient::runLoop() {
 	}
       }
       else if (cmd.substr(0, 6) == "/hide ") {
-	if ((iter = msgTypeMap.find(cmd.substr(6))) == msgTypeMap.end()) {
+	if (msgTypeMap.find(cmd.substr(6)) == msgTypeMap.end()) {
 	  ui->outputMessage(std::string("--- ERROR: ") + cmd.substr(6) +
 			    " is an unknown message type", Red);
 	}
@@ -586,13 +585,13 @@ std::string BZAdminClient::formatMessage(const std::string& msg,
     if (!(src == me && dst == me)) {
       if (src == me) {
 	if (type == ActionMessage) {
-	  formatted += "[->" + msg + "]";
+	  formatted += "[->" + dstName + "][" + srcName + " " + msg + "]";
 	} else {
 	  formatted += "[->" + dstName + "] " + msg;
 	}
       } else {
 	if (type == ActionMessage) {
-	  formatted += "[" + msg + "->]";
+	  formatted += "[" + srcName + " " + msg + "]";
 	} else {
 	  formatted += "[" + srcName + "->] " + msg;
 	}

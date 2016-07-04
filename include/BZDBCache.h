@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,6 +63,7 @@ class BZDBCache
     static Float shotLength;
     static Float pulseRate;
     static Float pulseDepth;
+    static Int   controlPanelTimestamp;
     static Bool  showCollisionGrid;
     static Bool  showCullingGrid;
     static Bool  useMeshForRadar;
@@ -90,6 +91,7 @@ class BZDBCache
     static Float gmSize;
 
     static Float hudGUIBorderOpacityFactor;
+    static Float shotBrightness;
 
   public:
     /** public method to update cached variable

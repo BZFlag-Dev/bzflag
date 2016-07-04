@@ -12,8 +12,10 @@ dist_l10n_DATA = \
 	bzflag_lt.po	\
 	bzflag_nl.po	\
 	bzflag_pt.po	\
-	bzflag_sv.po	\
-	bzflag_xx.po	\
+	bzflag_sv.po
+
+EXTRA_DIST = \
+	bzflag_xx.po \
 	ISO-639-2_values_8bits.txt
 
 MAINTAINERCLEANFILES = \

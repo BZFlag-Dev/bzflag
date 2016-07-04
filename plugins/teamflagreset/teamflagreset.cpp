@@ -316,4 +316,3 @@ bool TeamFlagResetIOHandler::SlashCommand ( int playerID, bz_ApiString _command,
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

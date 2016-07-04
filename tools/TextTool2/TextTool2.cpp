@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,7 +41,7 @@ const char *fontSizes[] = {
 const char *requiredCharacters =
     " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
 
-const int minAntiAliasingSize = 12;
+const int minAntiAliasingSize = 0;
 
 const int paddingPixels = 2;
 
@@ -129,7 +129,7 @@ int main(int argc, char* argv[])
     inputFonts.push_back(fileItem);
   }
 
-  if(inputFonts.size() == 0) {
+  if(inputFonts.empty()) {
     std::cerr << "Directory " << inputDirectory << "contains no TTF font files." << std::endl;
 
     closedir(inputDirectoryStream);
@@ -143,8 +143,8 @@ int main(int argc, char* argv[])
   // verify no files would be overwritten in output directory
   std::vector<std::string> outputFileList;
 
-  for(int i = 0; i < inputFonts.size(); ++i) {
-    for(int p = 0; p < (sizeof fontSizes / sizeof(const char *)); ++p) {
+  for(size_t i = 0; i < inputFonts.size(); ++i) {
+    for(size_t p = 0; p < (sizeof fontSizes / sizeof(const char *)); ++p) {
       outputFileList.push_back(stripHyphen(inputFonts[i]) + "_" + fontSizes[p] + ".png");
       outputFileList.push_back(stripHyphen(inputFonts[i]) + "_" + fontSizes[p] + ".fmt");
     }
@@ -155,7 +155,7 @@ int main(int argc, char* argv[])
   while((directoryEntry = readdir(outputDirectoryStream))) {
     std::string fileItem = directoryEntry->d_name;
 
-    for(int i = 0; i < outputFileList.size(); ++i) {
+    for(size_t i = 0; i < outputFileList.size(); ++i) {
       if(outputFileList[i] == fileItem) {
 	std::cerr <<
 	    "Directory " <<
@@ -187,7 +187,7 @@ int main(int argc, char* argv[])
 
   std::vector<FT_Face> ftFaces;
 
-  for(int i = 0; i < inputFonts.size(); ++i) {
+  for(size_t i = 0; i < inputFonts.size(); ++i) {
     std::string fontFilePath = inputDirectory + "/" + inputFonts[i] + ".ttf";
 
     std::cerr << "Loading font file " << fontFilePath << "... ";
@@ -208,8 +208,8 @@ int main(int argc, char* argv[])
   std::cerr << std::endl;
 
   // render textures and write files
-  for(int i = 0; i < inputFonts.size(); ++i) {
-    for(int p = 0; p < (sizeof fontSizes / sizeof(const char *)); ++p) {
+  for(size_t i = 0; i < inputFonts.size(); ++i) {
+    for(size_t p = 0; p < (sizeof fontSizes / sizeof(const char *)); ++p) {
       std::string fontName = stripHyphen(inputFonts[i]) + "_" + fontSizes[p];
       int fontSize = atoi(fontSizes[p]);
 
@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
 
       std::vector<struct CharInfo> charInfoList;
 
-      for(int j = 0; j < strlen(requiredCharacters); ++j) {
+      for(size_t j = 0; j < strlen(requiredCharacters); ++j) {
 	if((ftError = FT_Load_Glyph(ftFaces[i], FT_Get_Char_Index(ftFaces[i], requiredCharacters[j]), FT_LOAD_DEFAULT))) {
 	  std::cerr <<
 	      "failed; unable to load glyph for character '" <<
@@ -285,7 +285,7 @@ int main(int argc, char* argv[])
       // create and initialize the texture
       int maxPixels = (int) ftFaces[i]->size->metrics.height / 64; // line height
 
-      for(int j = 0; j < charInfoList.size(); ++j)
+      for(size_t j = 0; j < charInfoList.size(); ++j)
 	if(charInfoList[j].width > maxPixels)
 	  maxPixels = charInfoList[j].width;
 
@@ -301,21 +301,21 @@ int main(int argc, char* argv[])
 
       for(int row = 0; row < textureHeight; ++row) {
 	for(int column = 0; column < textureWidth; ++column) {
-	  ((char*) texture)[row * textureWidth * 2 + column * 2 + 0] = 0xFF; // grayscale value
-	  ((char*) texture)[row * textureWidth * 2 + column * 2 + 1] = 0x0; // alpha value
+	  ((unsigned char*) texture)[row * textureWidth * 2 + column * 2 + 0] = 0xFF; // grayscale value
+	  ((unsigned char*) texture)[row * textureWidth * 2 + column * 2 + 1] = 0x0; // alpha value
 	}
       }
 
       // open format file and write header
       std::cerr << "generating format file... ";
 
-      std::ofstream fmtFile(outputDirectory + "/" + fontName + ".fmt");
+      std::ofstream fmtFile((outputDirectory + "/" + fontName + ".fmt").c_str());
 
       if(! fmtFile.is_open()) {
 	std::cerr << "failed; unable to write font format file " <<
 	    outputDirectory << "/" << fontName << ".fmt." << std::endl;
 
-	for(int j = 0; j < charInfoList.size(); ++j)
+	for(size_t j = 0; j < charInfoList.size(); ++j)
 	  free(charInfoList[j].bitmap);
 
 	return EXIT_FAILURE;
@@ -329,7 +329,7 @@ int main(int argc, char* argv[])
 	  "\n";
 
       // copy all of the character bitmap values into the texture's alpha channel and write format data
-      for(int j = 0; j < charInfoList.size(); ++j) {
+      for(size_t j = 0; j < charInfoList.size(); ++j) {
 	int basePositionX = j % (textureWidth / maxPixels) * maxPixels + charInfoList[j].adjustX;
 	int basePositionY = j / (textureWidth / maxPixels) * maxPixels +
 	    (int) ftFaces[i]->size->metrics.ascender / 64 -
@@ -380,7 +380,7 @@ int main(int argc, char* argv[])
 
 	free(texture);
 
-	for(int j = 0; j < charInfoList.size(); ++j)
+	for(size_t j = 0; j < charInfoList.size(); ++j)
 	  free(charInfoList[j].bitmap);
 
 	return EXIT_FAILURE;
@@ -391,7 +391,7 @@ int main(int argc, char* argv[])
       free(texture);
 
       // release character bitmap memory
-      for(int j = 0; j < charInfoList.size(); ++j)
+      for(size_t j = 0; j < charInfoList.size(); ++j)
 	free(charInfoList[j].bitmap);
 
       std::cerr << "done." << std::endl;

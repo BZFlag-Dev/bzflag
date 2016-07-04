@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,6 +14,7 @@
 #define _ANSI_CODES_H_
 
 #include <string>
+#include "TextUtils.h"
 
 // Escape character to begin ANSI codes
 #define ESC_CHAR	((char) 0x1B)
@@ -39,6 +40,8 @@
 #define ANSI_STR_FG_MAGENTA	"\033[35m"	// purple
 #define ANSI_STR_FG_CYAN	"\033[36m"
 #define ANSI_STR_FG_WHITE	"\033[37m"
+
+#define ANSI_STR_FG_RGB		"\033[38;2"	// 24-bit rgb (ISO-8613-3)
 
 #define ANSI_STR_FG_ORANGE	"\033[130m"	// orange (custom; not defined in ISO 6429)
 
@@ -94,6 +97,16 @@ static const std::string ColorStrings[17] = {
   ANSI_STR_NO_UNDERLINE // 16 No Underlining
 };
 
+inline std::string rgbToAnsi(const float* color)
+{
+  return TextUtils::format("%s;%u;%u;%um",
+    ANSI_STR_FG_RGB,
+    int(color[0] * 255),
+    int(color[1] * 255),
+    int(color[2] * 255)
+  );
+}
+
 // strip ANSI codes from a string
 inline std::string stripAnsiCodes(const std::string &text)
 {
@@ -127,4 +140,3 @@ inline std::string stripAnsiCodes(const std::string &text)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

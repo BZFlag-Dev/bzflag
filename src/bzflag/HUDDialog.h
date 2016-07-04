@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,10 +15,6 @@
 
 /* common */
 #include "common.h"
-
-#if defined(_MSC_VER)
-	#pragma warning(disable: 4786)
-#endif
 
 /* system headers */
 #include <vector>
@@ -77,4 +73,3 @@ class HUDDialog {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

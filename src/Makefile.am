@@ -16,9 +16,7 @@ else
 BZADMIN_DIR =
 endif
 
-# "other" must be near the top, if not first, for maintainer-clean to work
 SUBDIRS = \
-	other \
 	3D \
 	common \
 	net \

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -9,10 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
 
 /* interface header */
 #include "Permissions.h"
@@ -34,7 +30,6 @@
 
 PlayerAccessMap	groupAccess;
 PlayerAccessMap	userDatabase;
-PasswordMap	passwordDatabase;
 
 uint8_t GetPlayerProperties(bool registered, bool verified, bool admin) {
   uint8_t result = 0;
@@ -47,8 +42,6 @@ uint8_t GetPlayerProperties(bool registered, bool verified, bool admin) {
   return result;
 }
 
-void setUserPassword(const std::string &nick, const std::string &pass);
-
 PlayerAccessInfo::PlayerAccessInfo()
   : verified(false), loginTime(TimeKeeper::getCurrent()), loginAttempts (0),
     serverop(false), passwordAttempts(0)
@@ -60,17 +53,6 @@ PlayerAccessInfo::PlayerAccessInfo()
 void PlayerAccessInfo::setName(const char* callSign) {
   regName = callSign;
   makeupper(regName);
-}
-
-bool PlayerAccessInfo::gotAccessFailure() {
-  bool accessFailure = loginAttempts >= 5;
-  if (accessFailure)
-    logDebugMessage(1,"Too Many Identifys %s\n", getName().c_str());
-  return accessFailure;
-}
-
-void PlayerAccessInfo::setLoginFail() {
-  loginAttempts++;
 }
 
 void PlayerAccessInfo::setPermissionRights() {
@@ -129,14 +111,6 @@ std::string PlayerAccessInfo::getName() {
   return regName;
 }
 
-bool PlayerAccessInfo::hasRealPassword() {
-  return checkPasswordExistence(regName.c_str());
-}
-
-bool PlayerAccessInfo::isPasswordMatching(const char* pwd) {
-  return verifyUserPassword(regName.c_str(), pwd);
-}
-
 bool PlayerAccessInfo::isRegistered() const {
   return userExists(regName);
 }
@@ -149,27 +123,10 @@ bool PlayerAccessInfo::isVerified() const{
   return verified;
 }
 
-void PlayerAccessInfo::storeInfo(const char* pwd) {
+void PlayerAccessInfo::storeInfo() {
   PlayerAccessInfo _info;
   _info.addGroup("VERIFIED");
-
-  if (pwd == NULL) {
-    // automatically give global users permission to use local accounts
-    // since they either already have it, or there's no existing local account.
-    _info.addGroup("LOCAL.GLOBAL");
-    setUserPassword(regName.c_str(), "");
-    logDebugMessage(1,"Global Temp Register %s\n", regName.c_str());
-  } else {
-    std::string pass = pwd;
-    setUserPassword(regName.c_str(), pass.c_str());
-    logDebugMessage(1,"Register %s %s\n", regName.c_str(), pwd);
-  }
   userDatabase[regName] = _info;
-  updateDatabases();
-}
-
-void PlayerAccessInfo::setPasswd(const std::string&  pwd) {
-  setUserPassword(regName.c_str(), pwd.c_str());
   updateDatabases();
 }
 
@@ -348,42 +305,6 @@ PlayerAccessInfo &PlayerAccessInfo::getUserInfo(const std::string &nick)
   return itr->second;
 }
 
-bool checkPasswordExistence(const std::string &nick)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  PasswordMap::iterator itr = passwordDatabase.find(str1);
-  if (itr == passwordDatabase.end())
-    return false;
-
-  return !(itr->second == "*" || itr->second == "");
-}
-
-bool verifyUserPassword(const std::string &nick, const std::string &pass)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  PasswordMap::iterator itr = passwordDatabase.find(str1);
-  if (itr == passwordDatabase.end())
-    return false;
-  return itr->second == MD5(pass).hexdigest();
-}
-
-void setUserPassword(const std::string &nick, const std::string &pass)
-{
-  std::string str1 = nick;
-  makeupper(str1);
-  if (pass.size() == 0) {
-    passwordDatabase[str1] = "*";
-  } else if (pass == "*") {
-    // never encode *, this would change the person's password from NULL to *.
-    passwordDatabase[str1] = "*";
-  } else {
-    // assume it's already a hash when length is 32 (FIXME?)
-    passwordDatabase[str1] = pass.size()==32 ? pass : MD5(pass).hexdigest();
-  }
-}
-
 std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
 {
   switch (perm) {
@@ -437,7 +358,6 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::say: return "say";
     case PlayerAccessInfo::sendHelp : return "sendHelp";
     case PlayerAccessInfo::setAll: return "setAll";
-    case PlayerAccessInfo::setPassword: return "setPassword";
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
     case PlayerAccessInfo::showAdmin: return "showAdmin";
@@ -508,7 +428,6 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SAY") return PlayerAccessInfo::say;
   if (name == "SENDHELP") return PlayerAccessInfo::sendHelp;
   if (name == "SETALL") return PlayerAccessInfo::setAll;
-  if (name == "SETPASSWORD") return PlayerAccessInfo::setPassword;
   if (name == "SETPERMS") return PlayerAccessInfo::setPerms;
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
@@ -643,7 +562,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 
 bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 {
-  std::ifstream in(filename.c_str());
+  std::ifstream in(filename);
   if (!in)
     return false;
 
@@ -703,7 +622,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
 bool PlayerAccessInfo::readPermsFile(const std::string &filename)
 {
-  std::ifstream in(filename.c_str());
+  std::ifstream in(filename);
   if (!in)
     return false;
 
@@ -745,7 +664,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
 bool PlayerAccessInfo::writePermsFile(const std::string &filename)
 {
   int i;
-  std::ofstream out(filename.c_str());
+  std::ofstream out(filename);
   if (!out)
     return false;
   PlayerAccessMap::iterator itr = userDatabase.begin();

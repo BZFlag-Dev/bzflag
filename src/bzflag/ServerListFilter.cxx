@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -79,17 +79,18 @@ void ServerListFilter::reset()
   addrDescPat .reset();
 
   // boolean filters
+  ffa      .reset();
+  offa     .reset();
+  ctf      .reset();
+  rabbit   .reset();
+
   jump     .reset();
   rico     .reset();
-  flags    .reset();
-  teams    .reset();
   handi    .reset();
-  rabbit   .reset();
   replay   .reset();
   inertia  .reset();
   antidote .reset();
   favorite .reset();
-  cached   .reset();
 
   // range filters
   shots      .reset();
@@ -206,8 +207,9 @@ bool ServerListFilter::check(const ServerItem& item) const
 
   // boolean filters
   const uint16_t type = p.gameType;
-  if (!flags    .check(type == TeamFFA))   { return false; }
-  if (!teams    .check(type == ClassicCTF))  { return false; }
+  if (!ffa    .check(type == TeamFFA))   { return false; }
+  if (!offa   .check(type == OpenFFA))   { return false; }
+  if (!ctf    .check(type == ClassicCTF))  { return false; }
   if (!rabbit   .check(type == RabbitChase)) { return false; }
 
   const uint16_t options = p.gameOptions;
@@ -219,7 +221,6 @@ bool ServerListFilter::check(const ServerItem& item) const
 
   if (!replay   .check(isReplay(item))) { return false; }
   if (!favorite .check(item.favorite))  { return false; }
-  if (!cached   .check(item.cached))    { return false; }
 
   // range filters
   if (!shots	  .check(p.maxShots))	    { return false; }
@@ -478,17 +479,18 @@ void ServerListFilter::setupBoolMap()
 
   std::map<std::string, size_t>& m = boolMap;
 
+  m["F"] = m["ffa"]      = OFFSETOF(ffa);
+  m["O"] = m["offa"]     = OFFSETOF(offa);
+  m["C"] = m["ctf"]      = OFFSETOF(ctf);
+  m["R"] = m["rabbit"]   = OFFSETOF(rabbit);
+  
   m["j"] = m["jump"]     = OFFSETOF(jump);
   m["r"] = m["rico"]     = OFFSETOF(rico);
-  m["f"] = m["flags"]    = OFFSETOF(flags);
-  m["t"] = m["teams"]    = OFFSETOF(teams);
   m["h"] = m["handicap"] = OFFSETOF(handi);
-  m["R"] = m["rabbit"]   = OFFSETOF(rabbit);
   m["P"] = m["replay"]   = OFFSETOF(replay);
   m["i"] = m["inertia"]  = OFFSETOF(inertia);
   m["a"] = m["antidote"] = OFFSETOF(antidote);
   m["F"] = m["favorite"] = OFFSETOF(favorite);
-  m["C"] = m["cached"]   = OFFSETOF(cached);
 }
 
 
@@ -578,17 +580,18 @@ void ServerListFilter::print(const std::string& origIndent) const
   addrDescPat .print("addrDescPat", indent);
 
   // boolean filters
+  ffa      .print("ffa",      indent);
+  offa     .print("offa",     indent);
+  ctf      .print("ctf",      indent);
+  rabbit   .print("rabbit",   indent);
+
   jump     .print("jump",     indent);
   rico     .print("rico",     indent);
-  flags    .print("flags",    indent);
-  teams    .print("teams",    indent);
   handi    .print("handi",    indent);
-  rabbit   .print("rabbit",   indent);
   replay   .print("replay",   indent);
   inertia  .print("inertia",  indent);
   antidote .print("antidote", indent);
   favorite .print("favorite", indent);
-  cached   .print("cached",   indent);
 
   // range filters
   shots      .print("shots",      indent);
@@ -777,5 +780,74 @@ void ServerListFilter::PatternFilter::print(const std::string& name,
 	 name.c_str(), pattern.c_str(), typeStr, caseStr);
 }
 
+std::string ServerListFilter::colorizeSearch(const std::string& in)
+{
+  std::string out;
+  std::vector<std::string> filters;
+  std::vector<char> separators;
+  const char *c, *s, *s0 = in.c_str();
+  for (c = s = s0; true; c++) {
+    if (*c == 0) {
+      filters.push_back(std::string(s, c - s));
+      s = c + 1;
+      break;
+    }
+    else if ((*c == '/') || (*c == ',')) {
+      filters.push_back(std::string(s, c - s));
+      separators.push_back(*c);
+      s = c + 1;
+    }
+  }
+
+  static const std::string controlColor = ANSI_STR_FG_WHITE;
+  static const std::string badColor     = ANSI_STR_FG_ORANGE;
+  static const std::string unknownColor = ANSI_STR_FG_RED;
+  static const std::string commentColor = ANSI_STR_FG_BLACK;
+  static const std::string boolColor    = ANSI_STR_FG_YELLOW;
+  static const std::string rangeColor   = ANSI_STR_FG_GREEN;
+  static const std::string globColor    = ANSI_STR_FG_CYAN;
+  static const std::string regexColor   = ANSI_STR_FG_MAGENTA;
+
+  out += filters[0];
+  for (size_t i = 1; i < filters.size(); i++) {
+    out += controlColor;
+    out += separators[i - 1];
+    char op;
+    std::string lbl, param;
+    const char type =
+      ServerListFilter::parseFilterType(filters[i], op, lbl, param);
+    switch (type) {
+      case 'p': {
+	if (ServerListFilter::isPatternLabel(lbl)) {
+	  out += (op == ')') ? globColor : regexColor;
+	} else {
+	  out += unknownColor;
+	}
+	break;
+      }
+      case 'b': {
+	out += ServerListFilter::isBoolLabel(lbl) ? boolColor : unknownColor;
+	break;
+      }
+      case 'r': {
+	out += ServerListFilter::isRangeLabel(lbl) ? rangeColor : unknownColor;
+	break;
+      }
+      case '#': { out += commentColor; break; }
+      default:  { out += badColor;     break; }
+    }
+    out += filters[i];
+  }
+
+  return out;
+}
 
 //============================================================================//
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

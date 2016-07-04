@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -101,7 +101,7 @@ void rabbitTimer::Event(bz_EventData *eventData)
 			}
 		}
 	}
-	else if (eventData->eventType == bz_ePlayerDieEvent)
+	else if (eventData->eventType == bz_ePlayerPartEvent)
 	{
 		bz_PlayerJoinPartEventData_V1* partdata = (bz_PlayerJoinPartEventData_V1*)eventData;
 
@@ -147,4 +147,3 @@ void rabbitTimer::Init(const char* commandLine)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

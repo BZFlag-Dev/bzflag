@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -245,7 +245,14 @@ const void*		nboUnpackFloat(const void* b, float& v)
   ::memcpy(&x, b, sizeof(uint32_t));
   floatintuni u;
   u.intval = (uint32_t)ntohl(x);
-  v = u.floatval;
+  if (isnan(u.floatval)) {
+    fprintf(stderr, "nboUnpackFloat(): replacing NaN with zero\n");
+    Error = true;
+    v = 0.0f;
+    return b;
+  } else {
+    v = u.floatval;
+  }
   return cADV(b, uint32_t);
 }
 
@@ -342,4 +349,3 @@ unsigned int nboStdStringPackSize(const std::string& str)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

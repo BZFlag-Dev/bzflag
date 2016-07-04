@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -69,6 +69,8 @@ class MainWindow {
     void		warpMouse(int mx, int my);
     void		warpMouseCenterX();
     void		warpMouseCenterY();
+    void		disableConfineToMotionbox();
+    void		confineToMotionbox(int x1, int y1, int x2, int y2);
     void		grabMouse();
     void		enableGrabMouse(bool on);
     bool		isGrabEnabled(void) const;

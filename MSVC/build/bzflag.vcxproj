@@ -108,8 +108,8 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -128,10 +128,10 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -141,10 +141,13 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -162,8 +165,8 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -182,10 +185,10 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -195,10 +198,13 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX64</TargetMachine>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -215,8 +221,8 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -234,10 +240,10 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -247,8 +253,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -265,8 +272,8 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;../../src/other/curl/include;./curl;../../src/other/zlib/;../../src/other/glew/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;GLEW_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -284,10 +291,10 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ProgramDatabaseFile>$(OutDir)bzflag.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -297,8 +304,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Platform)\
+      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
+copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
+copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -306,6 +314,8 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
     <ClCompile Include="..\..\src\bzflag\ClientDialogManager.cxx" />
+    <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
+    <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
     <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -345,7 +355,6 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClCompile Include="..\..\src\bzflag\EntryZone.cxx" />
     <ClCompile Include="..\..\src\bzflag\FlashClock.cxx" />
     <ClCompile Include="..\..\src\bzflag\ForceFeedback.cxx" />
-    <ClCompile Include="..\..\src\other\glew\src\glew.c" />
     <ClCompile Include="..\..\src\bzflag\LocalCommand.cxx" />
     <ClCompile Include="..\..\src\bzflag\MainWindow.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -877,13 +886,9 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
   <ItemGroup>
     <ResourceCompile Include="..\bzflag.rc">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">\Documents and Settings\JeffM\Desktop\bzflag\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">\Documents and Settings\JeffM\Desktop\bzflag\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">\Documents and Settings\JeffM\Desktop\bzflag\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">\Documents and Settings\JeffM\Desktop\bzflag\win32;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
@@ -953,6 +958,8 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ClInclude Include="..\..\src\bzflag\ServerCommandKey.h" />
     <ClInclude Include="..\..\src\bzflag\ServerLink.h" />
     <ClInclude Include="..\..\src\bzflag\ServerListFilter.h" />
+    <ClInclude Include="..\..\src\bzflag\ServerListFilterHelpMenu.h" />
+    <ClInclude Include="..\..\src\bzflag\ServerListFilterMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerStartMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ShockWaveStrategy.h" />
@@ -986,10 +993,6 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
       <Project>{ea0ef759-c4ca-45f3-b744-7d26ff1eb287}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="ares.vcxproj">
-      <Project>{417cb8f4-5ae3-45ac-b903-83db1556303c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
     <ProjectReference Include="common.vcxproj">
       <Project>{57138f88-a81f-4ffb-8bdd-58db1a1473f5}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
@@ -1004,10 +1007,6 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     </ProjectReference>
     <ProjectReference Include="geometry.vcxproj">
       <Project>{7009c42e-d693-4635-95cf-23ecba63653c}</Project>
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="libcurl.vcxproj">
-      <Project>{cc93828f-7156-4021-9c77-9951fdadee83}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
     <ProjectReference Include="mediafile.vcxproj">
@@ -1029,9 +1028,6 @@ copy $(OutDir)*.exe ..\..\bin_$(Platform)\
     <ProjectReference Include="platform.vcxproj">
       <Project>{12408598-00b6-487f-8f99-61b1300a15af}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-    <ProjectReference Include="regex.vcxproj">
-      <Project>{6dd493f8-31e1-4958-a240-d157affcb07e}</Project>
     </ProjectReference>
     <ProjectReference Include="scene.vcxproj">
       <Project>{1baed535-4aef-4041-9cb5-a7dc9c14e105}</Project>

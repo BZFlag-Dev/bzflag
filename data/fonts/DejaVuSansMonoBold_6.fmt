@@ -167,10 +167,10 @@ EndY: 20
 
 Char: "2"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 78
-EndX: 82
+EndX: 83
 StartY: 11
 EndY: 20
 
@@ -392,10 +392,10 @@ EndY: 42
 
 Char: "K"
 InitialDist: 1
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 111
-EndX: 115
+EndX: 116
 StartY: 33
 EndY: 42
 

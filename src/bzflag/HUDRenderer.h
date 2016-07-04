@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -73,12 +73,12 @@ typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
  * HUDRenderer:
  *	Encapsulates information about rendering the heads-up display.
  */
-class HUDRenderer : public GLDisplayListCreator {
+class HUDRenderer {
 public:
   HUDRenderer(const BzfDisplay*, const SceneRenderer&);
   ~HUDRenderer();
 
-  virtual void buildGeometry(GLDisplayList displayList);
+  void drawGeometry();
 
   int			getNoMotionSize() const;
   int			getMaxMotionSize() const;
@@ -164,8 +164,6 @@ private:
   void		resize(bool firstTime);
   static void	resizeCallback(void*);
 
-  GLDisplayList	friendlyMarkerList;
-private:
   const BzfDisplay*	display;
   ScoreboardRenderer* scoreboard;
   MainWindow&		window;

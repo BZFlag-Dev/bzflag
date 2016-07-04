@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,6 +18,7 @@
 /* system headers */
 #include <stdio.h>
 #include <string.h>
+#include <sstream>
 #include <assert.h>
 
 /* common implementation headers */
@@ -933,6 +934,7 @@ OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::tail = NULL;
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
+bool OpenGLGState::hasAnisotropicFiltering = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -1168,13 +1170,6 @@ void OpenGLGState::init()
     return;
   }
 
-  // setup the GLEW library
-#ifdef HAVE_GLEW
-  if (glewInit() != GLEW_OK) {
-    logDebugMessage(0,"GLEW initialization failed");
-  }
-#endif
-
   // initialize GL state to what we expect
   initGLState();
 
@@ -1220,13 +1215,6 @@ void OpenGLGState::initContext()
     return;
   }
 
-  // setup the GLEW library
-#ifdef HAVE_GLEW
-  if (glewInit() != GLEW_OK) {
-    logDebugMessage(0,"GLEW initialization failed");
-  }
-#endif
-
   // call all of the freeing functions first
   logDebugMessage(3,"ContextInitializer::executeFreeFuncs() start\n");
   ContextInitializer::executeFreeFuncs();
@@ -1258,6 +1246,7 @@ void OpenGLGState::initContext()
   glEnable(GL_SCISSOR_TEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 
+  initGLExtensions();
 }
 
 
@@ -1282,6 +1271,29 @@ void OpenGLGState::initGLState()
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_NORMAL_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+// utility to check if an OpenGL extension is supported on this system
+bool OpenGLGState::initGLExtensions()
+{
+  hasAnisotropicFiltering = false;
+
+  const char * extensions = (const char*) glGetString(GL_EXTENSIONS);
+  if (!extensions)
+    return false;
+
+  std::stringstream extensionsStream;
+  extensionsStream.str(extensions);
+
+  while (!extensionsStream.eof()) {
+    std::string thisExtension;
+    extensionsStream >> thisExtension;
+
+    if (thisExtension == "GL_EXT_texture_filter_anisotropic")
+      hasAnisotropicFiltering = true;
+  }
+
+  return false;
 }
 
 
@@ -1573,11 +1585,12 @@ void bzMatrixMode(GLenum mode)
 #ifdef _WIN32
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
 #else
-#  ifdef HAVE_CGLGETCURRENTCONTEXT
-#    define GET_CURRENT_CONTEXT CGLGetCurrentContext
-#  elif defined(__BEOS__)
+#  ifdef __BEOS__
 // no way to do that, and you shouldn't have to anyway!
 #    define GET_CURRENT_CONTEXT() 1
+#  elif defined(HAVE_SDL2)
+#    include "bzfSDL.h"
+#    define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
 #  else
 #    include <GL/glx.h>
 #    define GET_CURRENT_CONTEXT glXGetCurrentContext

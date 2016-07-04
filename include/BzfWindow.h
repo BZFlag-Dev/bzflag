@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -56,6 +56,10 @@ class BzfWindow {
     virtual void	grabMouse() = 0;
     virtual void	ungrabMouse() = 0;
     virtual void	enableGrabMouse(bool) {;};
+    // TODO: Refactor our handling of confining the mouse to the window or
+    // the motionbox to be a bit cleaner.
+    virtual void	disableConfineToMotionbox() {;}
+    virtual void	confineToMotionbox(int x1, int y1, int x2, int y2);
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
 

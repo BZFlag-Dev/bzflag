@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,9 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "CppUTest/TestHarness.h"
-
 #include "AccessControlList.h"
+
+#include "CppUTest/TestHarness.h"
 
 TEST_GROUP(Bans)
 {
@@ -22,16 +22,10 @@ TEST_GROUP(Bans)
 TEST(Bans, IPBanComparisons)
 {
   in_addr ip1, ip2, ip3;
-
-#ifdef WIN32  
-  ip1.S_un.S_addr = inet_addr("127.0.0.1");
-  ip2.S_un.S_addr = inet_addr("127.0.0.1");
-  ip3.S_un.S_addr = inet_addr("127.0.0.2");
-#else
   ip1.s_addr = inet_addr("127.0.0.1");
   ip2.s_addr = inet_addr("127.0.0.1");
   ip3.s_addr = inet_addr("127.0.0.2");
-#endif
+
   BanInfo a1(ip1, "nobody", 0, 32);
   BanInfo a2(ip2, "nobody", 0, 32);
   BanInfo a3(ip3, "nobody", 0, 32);
@@ -53,19 +47,11 @@ TEST(Bans, IPBanComparisons)
 TEST(Bans, IPBanContains)
 {
   in_addr ip1, ip2, ip3, ip4, ip5;
-#ifdef WIN32
-  ip1.S_un.S_addr = inet_addr("127.0.0.1");
-  ip2.S_un.S_addr = inet_addr("127.0.0.5");
-  ip3.S_un.S_addr = inet_addr("127.0.5.5");
-  ip4.S_un.S_addr = inet_addr("127.5.5.5");
-  ip5.S_un.S_addr = inet_addr("128.1.2.3");
-#else
   ip1.s_addr = inet_addr("127.0.0.1");
   ip2.s_addr = inet_addr("127.0.0.5");
   ip3.s_addr = inet_addr("127.0.5.5");
   ip4.s_addr = inet_addr("127.5.5.5");
   ip5.s_addr = inet_addr("128.1.2.3");
-#endif
 
   BanInfo exact1(ip1, "nobody", 0, 32);
   BanInfo exact2(ip2, "nobody", 0, 32);
@@ -94,6 +80,28 @@ TEST(Bans, IPBanContains)
   CHECK_TEXT(!classC1.contains(ip3), "Class C negative match test failure.");
   CHECK_TEXT(!classC1.contains(ip4), "Class B negative match test failure.");
   CHECK_TEXT(!classC1.contains(ip5), "Class A negative match test failure.");
+}
+
+TEST(Bans, BanMaskString)
+{
+  in_addr ip1;
+  ip1.s_addr = inet_addr("127.5.35.135");
+
+  AccessControlList acl;
+
+  std::string exact = acl.getBanMaskString(ip1, 32);
+  std::string cidr24 = acl.getBanMaskString(ip1, 24);
+  std::string cidr16 = acl.getBanMaskString(ip1, 16);
+  std::string cidr8 = acl.getBanMaskString(ip1, 8);
+  std::string cidr25 = acl.getBanMaskString(ip1, 25);
+  std::string cidr19 = acl.getBanMaskString(ip1, 19);
+  
+  CHECK_TEXT(exact == "127.5.35.135", std::string("Exact IP mask generation failed: " + exact + " != 127.5.7.135").c_str());
+  CHECK_TEXT(cidr24 == "127.5.35.*", std::string("CIDR /24 mask generation failed: " + cidr24 + " != 127.5.7.*").c_str());
+  CHECK_TEXT(cidr16 == "127.5.*.*", std::string("CIDR /16 mask generation failed: " + cidr16 + " != 127.5.*.*").c_str());
+  CHECK_TEXT(cidr8 == "127.*.*.*", std::string("CIDR /8 mask generation failed: " + cidr8 + " != 127.*.*.*").c_str());
+  CHECK_TEXT(cidr25 == "127.5.35.128/25", std::string("CIDR /25 mask generation failed: " + cidr25 + " != 127.5.7.128/25").c_str());
+  CHECK_TEXT(cidr19 == "127.5.32.0/19", std::string("CIDR /19 mask generation failed: " + cidr19 + " != 127.5.32.0/19").c_str());
 }
 
 

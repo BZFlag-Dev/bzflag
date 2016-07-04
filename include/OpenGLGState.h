@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -95,6 +95,7 @@ class OpenGLGState {
 
   private:
     static void		initGLState();
+    static bool		initGLExtensions();
     static void		freeStipple(void*);
     static void		initStipple(void*);
 
@@ -130,6 +131,7 @@ class OpenGLGState {
   public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
+    static bool hasAnisotropicFiltering;
 };
 
 inline bool OpenGLGState::getExecutingFreeFuncs()
@@ -189,4 +191,3 @@ class OpenGLGStateBuilder {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

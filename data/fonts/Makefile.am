@@ -33,22 +33,6 @@ dist_font_DATA = \
 	DejaVuSansMonoBold_48.png \
 	DejaVuSansMonoBold_64.fmt \
 	DejaVuSansMonoBold_64.png \
-	DejaVuSerifBold_6.fmt \
-	DejaVuSerifBold_6.png \
-	DejaVuSerifBold_8.fmt \
-	DejaVuSerifBold_8.png \
-	DejaVuSerifBold_12.fmt \
-	DejaVuSerifBold_12.png \
-	DejaVuSerifBold_16.fmt \
-	DejaVuSerifBold_16.png \
-	DejaVuSerifBold_24.fmt \
-	DejaVuSerifBold_24.png \
-	DejaVuSerifBold_32.fmt \
-	DejaVuSerifBold_32.png \
-	DejaVuSerifBold_48.fmt \
-	DejaVuSerifBold_48.png \
-	DejaVuSerifBold_64.fmt \
-	DejaVuSerifBold_64.png \
 	readme
 
 MAINTAINERCLEANFILES = \

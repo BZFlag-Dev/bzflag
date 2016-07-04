@@ -1,6 +1,4 @@
 EXTRA_DIST =		\
-	ares.vcxproj	\
-	ares_build.h	\
 	3D.vcxproj	\
 	bzflag.vcxproj	\
 	bzadmin.vcxproj	\
@@ -8,7 +6,6 @@ EXTRA_DIST =		\
 	bzfs.vcxproj.filters	\
 	common.vcxproj	\
 	config.h	\
-	curl/curlbuild.h	\
 	date.vcxproj	\
 	game.vcxproj	\
 	geometry.vcxproj	\
@@ -20,14 +17,9 @@ EXTRA_DIST =		\
 	obstacle.vcxproj	\
 	ogl.vcxproj	\
 	platform.vcxproj	\
-	regex.vcxproj	\
 	scene.vcxproj	\
-	libcurl.vcxproj	\
 	tests.vcxproj	\
 	tests.vcxproj.filters	\
-	zlib.vcxproj	\
-	zlib.vcproj	\
-	pdcurses.vcxproj	\
 	makeHTML.bat
 
 MAINTAINERCLEANFILES = \

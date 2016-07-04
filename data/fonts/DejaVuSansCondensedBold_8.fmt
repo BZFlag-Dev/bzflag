@@ -14,37 +14,37 @@ EndY: 13
 
 Char: "!"
 InitialDist: 1
-Width: 2
-Whitespace: 2
+Width: 3
+Whitespace: 1
 StartX: 16
-EndX: 18
+EndX: 19
 StartY: 0
 EndY: 13
 
 Char: """
-InitialDist: 1
-Width: 3
-Whitespace: 1
-StartX: 31
-EndX: 34
+InitialDist: 0
+Width: 5
+Whitespace: 0
+StartX: 30
+EndX: 35
 StartY: 0
 EndY: 13
 
 Char: "#"
-InitialDist: 1
-Width: 7
+InitialDist: 0
+Width: 8
 Whitespace: 0
-StartX: 46
+StartX: 45
 EndX: 53
 StartY: 0
 EndY: 13
 
 Char: "$"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 61
-EndX: 66
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 60
+EndX: 67
 StartY: 0
 EndY: 13
 
@@ -58,37 +58,37 @@ StartY: 0
 EndY: 13
 
 Char: "&"
-InitialDist: 1
-Width: 7
-Whitespace: 1
-StartX: 91
-EndX: 98
+InitialDist: 0
+Width: 9
+Whitespace: 0
+StartX: 90
+EndX: 99
 StartY: 0
 EndY: 13
 
 Char: "'"
-InitialDist: 1
-Width: 1
-Whitespace: 1
-StartX: 106
-EndX: 107
+InitialDist: 0
+Width: 3
+Whitespace: 0
+StartX: 105
+EndX: 108
 StartY: 0
 EndY: 13
 
 Char: "("
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 1
-StartX: 121
+StartX: 120
 EndX: 124
 StartY: 0
 EndY: 13
 
 Char: ")"
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 1
-StartX: 136
+StartX: 135
 EndX: 139
 StartY: 0
 EndY: 13
@@ -104,27 +104,27 @@ EndY: 13
 
 Char: "+"
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 166
-EndX: 172
+EndX: 173
 StartY: 0
 EndY: 13
 
 Char: ","
-InitialDist: 1
-Width: 2
+InitialDist: 0
+Width: 3
 Whitespace: 1
-StartX: 181
+StartX: 180
 EndX: 183
 StartY: 0
 EndY: 13
 
 Char: "-"
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 0
-StartX: 196
+StartX: 195
 EndX: 199
 StartY: 0
 EndY: 13
@@ -149,91 +149,91 @@ EndY: 13
 
 Char: "0"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 240
-EndX: 246
+EndX: 247
 StartY: 0
 EndY: 13
 
 Char: "1"
 InitialDist: 1
-Width: 5
-Whitespace: 1
+Width: 6
+Whitespace: 0
 StartX: 1
-EndX: 6
+EndX: 7
 StartY: 15
 EndY: 28
 
 Char: "2"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 16
-EndX: 21
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 15
+EndX: 22
 StartY: 15
 EndY: 28
 
 Char: "3"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 31
-EndX: 36
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 30
+EndX: 37
 StartY: 15
 EndY: 28
 
 Char: "4"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 45
-EndX: 51
+EndX: 52
 StartY: 15
 EndY: 28
 
 Char: "5"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 61
-EndX: 66
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 60
+EndX: 67
 StartY: 15
 EndY: 28
 
 Char: "6"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 76
-EndX: 81
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 75
+EndX: 82
 StartY: 15
 EndY: 28
 
 Char: "7"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 91
-EndX: 96
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 90
+EndX: 97
 StartY: 15
 EndY: 28
 
 Char: "8"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 106
-EndX: 111
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 105
+EndX: 112
 StartY: 15
 EndY: 28
 
 Char: "9"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 121
-EndX: 126
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 120
+EndX: 127
 StartY: 15
 EndY: 28
 
@@ -247,56 +247,56 @@ StartY: 15
 EndY: 28
 
 Char: ";"
-InitialDist: 1
-Width: 2
+InitialDist: 0
+Width: 3
 Whitespace: 1
-StartX: 151
+StartX: 150
 EndX: 153
 StartY: 15
 EndY: 28
 
 Char: "<"
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 166
-EndX: 172
+EndX: 173
 StartY: 15
 EndY: 28
 
 Char: "="
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 181
-EndX: 187
+EndX: 188
 StartY: 15
 EndY: 28
 
 Char: ">"
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 196
-EndX: 202
+EndX: 203
 StartY: 15
 EndY: 28
 
 Char: "?"
-InitialDist: 1
-Width: 4
-Whitespace: 1
-StartX: 211
-EndX: 215
+InitialDist: 0
+Width: 6
+Whitespace: 0
+StartX: 210
+EndX: 216
 StartY: 15
 EndY: 28
 
 Char: "@"
-InitialDist: 1
-Width: 8
-Whitespace: 1
-StartX: 226
-EndX: 234
+InitialDist: 0
+Width: 10
+Whitespace: 0
+StartX: 225
+EndX: 235
 StartY: 15
 EndY: 28
 
@@ -310,73 +310,73 @@ StartY: 15
 EndY: 28
 
 Char: "B"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 1
-StartX: 1
+StartX: 0
 EndX: 7
 StartY: 30
 EndY: 43
 
 Char: "C"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 0
-StartX: 16
+StartX: 15
 EndX: 22
 StartY: 30
 EndY: 43
 
 Char: "D"
-InitialDist: 1
-Width: 7
+InitialDist: 0
+Width: 8
 Whitespace: 0
-StartX: 31
+StartX: 30
 EndX: 38
 StartY: 30
 EndY: 43
 
 Char: "E"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 46
-EndX: 51
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 45
+EndX: 52
 StartY: 30
 EndY: 43
 
 Char: "F"
-InitialDist: 1
-Width: 5
+InitialDist: 0
+Width: 6
 Whitespace: 1
-StartX: 61
+StartX: 60
 EndX: 66
 StartY: 30
 EndY: 43
 
 Char: "G"
-InitialDist: 1
-Width: 6
-Whitespace: 1
-StartX: 76
-EndX: 82
+InitialDist: 0
+Width: 8
+Whitespace: 0
+StartX: 75
+EndX: 83
 StartY: 30
 EndY: 43
 
 Char: "H"
-InitialDist: 1
-Width: 6
-Whitespace: 1
-StartX: 91
-EndX: 97
+InitialDist: 0
+Width: 8
+Whitespace: 0
+StartX: 90
+EndX: 98
 StartY: 30
 EndY: 43
 
 Char: "I"
-InitialDist: 1
-Width: 2
+InitialDist: 0
+Width: 3
 Whitespace: 1
-StartX: 106
+StartX: 105
 EndX: 108
 StartY: 30
 EndY: 43
@@ -391,83 +391,83 @@ StartY: 30
 EndY: 43
 
 Char: "K"
-InitialDist: 1
-Width: 7
+InitialDist: 0
+Width: 8
 Whitespace: 0
-StartX: 136
+StartX: 135
 EndX: 143
 StartY: 30
 EndY: 43
 
 Char: "L"
-InitialDist: 1
-Width: 5
-Whitespace: 0
-StartX: 151
-EndX: 156
+InitialDist: 0
+Width: 7
+Whitespace: -1
+StartX: 150
+EndX: 157
 StartY: 30
 EndY: 43
 
 Char: "M"
-InitialDist: 1
-Width: 8
+InitialDist: 0
+Width: 9
 Whitespace: 1
-StartX: 166
+StartX: 165
 EndX: 174
 StartY: 30
 EndY: 43
 
 Char: "N"
-InitialDist: 1
-Width: 6
-Whitespace: 1
-StartX: 181
-EndX: 187
+InitialDist: 0
+Width: 8
+Whitespace: 0
+StartX: 180
+EndX: 188
 StartY: 30
 EndY: 43
 
 Char: "O"
-InitialDist: 1
-Width: 7
+InitialDist: 0
+Width: 8
 Whitespace: 0
-StartX: 196
+StartX: 195
 EndX: 203
 StartY: 30
 EndY: 43
 
 Char: "P"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 0
-StartX: 211
+StartX: 210
 EndX: 217
 StartY: 30
 EndY: 43
 
 Char: "Q"
-InitialDist: 1
-Width: 7
+InitialDist: 0
+Width: 8
 Whitespace: 0
-StartX: 226
+StartX: 225
 EndX: 233
 StartY: 30
 EndY: 43
 
 Char: "R"
-InitialDist: 1
-Width: 6
-Whitespace: 1
-StartX: 241
-EndX: 247
+InitialDist: 0
+Width: 8
+Whitespace: 0
+StartX: 240
+EndX: 248
 StartY: 30
 EndY: 43
 
 Char: "S"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 1
-EndX: 6
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 0
+EndX: 7
 StartY: 45
 EndY: 58
 
@@ -481,11 +481,11 @@ StartY: 45
 EndY: 58
 
 Char: "U"
-InitialDist: 1
-Width: 6
-Whitespace: 1
-StartX: 31
-EndX: 37
+InitialDist: 0
+Width: 8
+Whitespace: 0
+StartX: 30
+EndX: 38
 StartY: 45
 EndY: 58
 
@@ -509,19 +509,19 @@ EndY: 58
 
 Char: "X"
 InitialDist: 0
-Width: 7
-Whitespace: 1
+Width: 8
+Whitespace: 0
 StartX: 75
-EndX: 82
+EndX: 83
 StartY: 45
 EndY: 58
 
 Char: "Y"
-InitialDist: 0
-Width: 7
-Whitespace: 0
-StartX: 90
-EndX: 97
+InitialDist: -1
+Width: 9
+Whitespace: -1
+StartX: 89
+EndX: 98
 StartY: 45
 EndY: 58
 
@@ -535,10 +535,10 @@ StartY: 45
 EndY: 58
 
 Char: "["
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 1
-StartX: 121
+StartX: 120
 EndX: 124
 StartY: 45
 EndY: 58
@@ -553,20 +553,20 @@ StartY: 45
 EndY: 58
 
 Char: "]"
-InitialDist: 1
-Width: 3
+InitialDist: 0
+Width: 4
 Whitespace: 1
-StartX: 151
+StartX: 150
 EndX: 154
 StartY: 45
 EndY: 58
 
 Char: "^"
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 166
-EndX: 172
+EndX: 173
 StartY: 45
 EndY: 58
 
@@ -581,10 +581,10 @@ EndY: 58
 
 Char: "`"
 InitialDist: 0
-Width: 3
-Whitespace: 2
+Width: 4
+Whitespace: 1
 StartX: 195
-EndX: 198
+EndX: 199
 StartY: 45
 EndY: 58
 
@@ -598,164 +598,164 @@ StartY: 45
 EndY: 58
 
 Char: "b"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 0
-StartX: 226
+StartX: 225
 EndX: 232
 StartY: 45
 EndY: 58
 
 Char: "c"
 InitialDist: 0
-Width: 5
-Whitespace: 1
+Width: 6
+Whitespace: 0
 StartX: 240
-EndX: 245
+EndX: 246
 StartY: 45
 EndY: 58
 
 Char: "d"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 0
-EndX: 6
+EndX: 7
 StartY: 60
 EndY: 73
 
 Char: "e"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 15
-EndX: 21
+EndX: 22
 StartY: 60
 EndY: 73
 
 Char: "f"
 InitialDist: 0
-Width: 4
-Whitespace: 0
+Width: 5
+Whitespace: -1
 StartX: 30
-EndX: 34
+EndX: 35
 StartY: 60
 EndY: 73
 
 Char: "g"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 45
-EndX: 51
+EndX: 52
 StartY: 60
 EndY: 73
 
 Char: "h"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 61
-EndX: 66
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 60
+EndX: 67
 StartY: 60
 EndY: 73
 
 Char: "i"
-InitialDist: 1
-Width: 2
+InitialDist: 0
+Width: 3
 Whitespace: 0
-StartX: 76
+StartX: 75
 EndX: 78
 StartY: 60
 EndY: 73
 
 Char: "j"
-InitialDist: 0
-Width: 3
+InitialDist: -1
+Width: 4
 Whitespace: 0
-StartX: 90
+StartX: 89
 EndX: 93
 StartY: 60
 EndY: 73
 
 Char: "k"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 0
-StartX: 106
+StartX: 105
 EndX: 112
 StartY: 60
 EndY: 73
 
 Char: "l"
-InitialDist: 1
-Width: 2
+InitialDist: 0
+Width: 3
 Whitespace: 0
-StartX: 121
+StartX: 120
 EndX: 123
 StartY: 60
 EndY: 73
 
 Char: "m"
-InitialDist: 1
-Width: 9
+InitialDist: 0
+Width: 10
 Whitespace: 0
-StartX: 136
+StartX: 135
 EndX: 145
 StartY: 60
 EndY: 73
 
 Char: "n"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 151
-EndX: 156
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 150
+EndX: 157
 StartY: 60
 EndY: 73
 
 Char: "o"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 165
-EndX: 171
+EndX: 172
 StartY: 60
 EndY: 73
 
 Char: "p"
-InitialDist: 1
-Width: 6
+InitialDist: 0
+Width: 7
 Whitespace: 0
-StartX: 181
+StartX: 180
 EndX: 187
 StartY: 60
 EndY: 73
 
 Char: "q"
 InitialDist: 0
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 195
-EndX: 201
+EndX: 202
 StartY: 60
 EndY: 73
 
 Char: "r"
-InitialDist: 1
-Width: 4
+InitialDist: 0
+Width: 5
 Whitespace: 0
-StartX: 211
+StartX: 210
 EndX: 215
 StartY: 60
 EndY: 73
 
 Char: "s"
-InitialDist: 1
-Width: 4
-Whitespace: 1
-StartX: 226
-EndX: 230
+InitialDist: 0
+Width: 6
+Whitespace: 0
+StartX: 225
+EndX: 231
 StartY: 60
 EndY: 73
 
@@ -769,20 +769,20 @@ StartY: 60
 EndY: 73
 
 Char: "u"
-InitialDist: 1
-Width: 5
-Whitespace: 1
-StartX: 1
-EndX: 6
+InitialDist: 0
+Width: 7
+Whitespace: 0
+StartX: 0
+EndX: 7
 StartY: 75
 EndY: 88
 
 Char: "v"
 InitialDist: 0
-Width: 6
-Whitespace: 0
+Width: 7
+Whitespace: -1
 StartX: 15
-EndX: 21
+EndX: 22
 StartY: 75
 EndY: 88
 
@@ -797,28 +797,28 @@ EndY: 88
 
 Char: "x"
 InitialDist: 0
-Width: 6
-Whitespace: 0
+Width: 7
+Whitespace: -1
 StartX: 45
-EndX: 51
+EndX: 52
 StartY: 75
 EndY: 88
 
 Char: "y"
 InitialDist: 0
-Width: 6
-Whitespace: 0
+Width: 7
+Whitespace: -1
 StartX: 60
-EndX: 66
+EndX: 67
 StartY: 75
 EndY: 88
 
 Char: "z"
 InitialDist: 0
-Width: 5
-Whitespace: 1
+Width: 6
+Whitespace: 0
 StartX: 75
-EndX: 80
+EndX: 81
 StartY: 75
 EndY: 88
 
@@ -833,10 +833,10 @@ EndY: 88
 
 Char: "|"
 InitialDist: 1
-Width: 1
-Whitespace: 2
+Width: 2
+Whitespace: 1
 StartX: 106
-EndX: 107
+EndX: 108
 StartY: 75
 EndY: 88
 
@@ -851,10 +851,10 @@ EndY: 88
 
 Char: "~"
 InitialDist: 1
-Width: 6
-Whitespace: 1
+Width: 7
+Whitespace: 0
 StartX: 136
-EndX: 142
+EndX: 143
 StartY: 75
 EndY: 88
 

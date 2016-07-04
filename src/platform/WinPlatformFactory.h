@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,8 +21,9 @@
 
 #ifdef HAVE_SDL
 class SDLWindow;
-#endif
+#else
 class WinWindow;
+#endif
 
 class WinPlatformFactory : public PlatformFactory {
   public:
@@ -44,8 +45,9 @@ class WinPlatformFactory : public PlatformFactory {
   private:
 #ifdef HAVE_SDL
     static SDLWindow*	sdlWindow;
-#endif
+#else
     static WinWindow*	winWindow;
+#endif
 };
 
 #endif // BZF_WINPLATFORM_FACTORY_H
@@ -57,4 +59,3 @@ class WinPlatformFactory : public PlatformFactory {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

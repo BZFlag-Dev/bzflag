@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -434,7 +434,6 @@ float getPluginMinWaitTime ( void )
 {
   float maxTime = 1000.0;
 
-  std::vector<std::string> plugins;
   for (unsigned int i = 0; i < vPluginList.size();i++)
   {
     if (vPluginList[i].plugin &&  (vPluginList[i].plugin->MaxWaitTime > 0) && (vPluginList[i].plugin->MaxWaitTime < maxTime))

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 #include "HUDRenderer.h"
 #include "HUDui.h"
 #include "Roster.h"
-#include "playing.h" // THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
+#include "playing.h" // FIXME: THIS IS TEMPORARY..TO BE REMOVED..BABY STEPS
 
 //
 // Choose person to silence
@@ -184,3 +184,11 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
   }
   return keyPress(key);
 }
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

@@ -10,7 +10,6 @@ SUBDIRS = \
 	fairCTF \
 	fastmap \
 	flagStay \
-	hiddenAdmin \
 	HoldTheFlag \
 	keepaway \
 	killall \
@@ -33,16 +32,15 @@ SUBDIRS = \
 	thiefControl \
 	timedctf \
 	TimeLimit \
-	wwzones
+	wwzones \
+	@CUSTOM_PLUGIN_LIST@
 
 DIST_SUBDIRS = \
 	$(SUBDIRS)
 
 EXTRA_DIST = \
-	addToBuild.sh \
 	api_notes \
 	pushstats \
-	removeFromBuild.sh \
 	newplug.sh
 
 MAINTAINERCLEANFILES =	\

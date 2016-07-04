@@ -1,8 +1,9 @@
 BZFlag README for Mac OS X
 ==========================
 
-BZFlag is fully supported on Mac OS X. Included below are instructions on
-installing BZFlag both from a binary and from a released source distribution.
+BZFlag is supported on Mac OS X 10.7 and later. Included below are
+instructions on installing BZFlag both from a binary and from a released
+source distribution.
 
 Binary Distribution
 -------------------
@@ -12,10 +13,10 @@ https://github.com/BZFlag-Dev/bzflag/releases to obtain the latest binary
 distribution.
 
 Once you've obtained a binary distribution of BZFlag, installation should be a
-simple matter of copying the icon provided in the disk mounting image (the
-.dmg) to your Applications folder. If you cannot run the client at all
-(e.e. it starts to a black screen, or the icon bounces but then nothing
-happens), you can try several things:
+simple matter of decompressing the downloaded file and then copying the
+program to your Applications folder. If you cannot run the client at all (i.e.
+it starts to a black screen, or the icon bounces but then nothing happeys),
+you can try several things:
 
   1) Move or delete the BZFlag directory in your personal application support
      folder at ~/Library/Application Support/BZFlag. As of Mac OS X 10.7, the
@@ -23,8 +24,8 @@ happens), you can try several things:
      to your home directory, entering the Command-Shift-G key sequence, then
      typing "Library" and clicking "Go." Note that this directory contains
      your saved configuration, screenshots, and map files, so you may want to
-     move or delete only your configuration directory (stored in the directory
-     with the BZFlag version number).
+     move or delete only your configuration file (stored in the directory with
+     the BZFlag version number).
 
   2) Check your console for error messages. Open your console application at
      /Utilities/Console.app, and expand the "User Diagnostic Reports" list in
@@ -32,29 +33,51 @@ happens), you can try several things:
      should be listed there and will start with "BZFlag."
 
   3) Run the binary directly by using Terminal:
-       /Applications/BZFlag-#.#.#.app/Contents/MacOS/BZFlag-#.#.#
+       /Applications/BZFlag-#.#.#.app/Contents/MacOS/BZFlag
        (replace "#.#.#" with your actual BZFlag version number)
 
 Source Distribution
 -------------------
 
-You can build BZFlag from source using Xcode version 4.2 and later. As of
-BZFlag version 2.4.4, BZFlag has a fully native Xcode project
-file. The earlier method of using the Xcode project file as a wrapper for
-autotools is no longer supported. If you have a version of Xcode which
-includes autotools, or have installed autotools yourself, you may additionally
-be able to build using the traditional autotools method. See the README file
-for further information. You will still need to install the SDL framework as
-detailed below.
+You can build BZFlag from source using Xcode version 7 and later (You may also
+be able to build with Xcode versions as early as 4.2, but you will need to
+update the locations of libncurses, libcurl, and libz since those changed in
+the Mac OS X 10.11 SDK). As of BZFlag version 2.4.4, BZFlag has a fully native
+Xcode project file. The earlier method of using the Xcode project file as a
+wrapper for autotools is no longer supported. If you have a version of Xcode
+which includes autotools, or have installed autotools yourself, you may
+additionally be able to build using the traditional autotools method. See the
+README file for further information. You will still need to install the SDL 2
+framework as detailed below.
 
-To build BZFlag using Xcode, download the latest version of SDL 2 from
-https://www.libsdl.org/download-2.0.php. Version 2.0.4 or later is required.
-Mount the disk image and place the file "SDL2.framework" in your
-/Library/Frameworks directory (an administrator's account may be required).
+BZFlag has two external dependencies: SDL 2 and c-ares.
+
+Download the latest version of the SDL 2 framework from
+https://www.libsdl.org/download-2.0.php. Version 2.0.3 or later is required,
+but version 2.0.4 or later is highly recommended because it includes a new
+function for capturing mouse input to help address a mouse warping problem.
+As of the BZFlag 2.4.4 release, SDL 2.0.4 has not yet been released, but you
+can build the latest development version of SDL 2 from Mercurial. If you
+obtained a binary release of SDL 2, mount the disk image and place the file
+"SDL2.framework" in your /Library/Frameworks directory (an administrator's
+account may be required). If you built SDL 2 from source, locate the file
+"SDL2.framework" and copy it into that same location.
+
+This project expects the c-ares library and header files to be located in
+/usr/local. If you install it elsewhere, you must update the library and
+header search paths in this project file appropriately.
+
+Download the latest version of c-ares from http://c-ares.haxx.se.
+Extract the package, and then build it with the following commands:
+
+$ export MACOSX_DEPLOYMENT_TARGET=10.7
+$ ./configure --disable-shared
+$ make
+$ sudo make install
+
 Obtain the latest BZFlag source archive from GitHub at
-https://github.com/BZFlag-Dev/bzflag (you want the .tar.gz archive, NOT the
-.zip archive). Once you have obtained the source code, open the
-BZFlag.xcodeproj file located in the Xcode/ directory.
+https://github.com/BZFlag-Dev/bzflag. Once you have obtained the source code,
+open the BZFlag.xcodeproj file located in the Xcode/ directory.
 
 The default behavior is to build a debug client. If you want a standard
 client, click the "BZFlag" scheme button at the top left corner of the screen,
@@ -104,6 +127,6 @@ any system without issue.
 To access the bzadmin text client or the bzflag server bzfs, right click the
 application, click "Show Package Contents," and navigate to Contents/MacOS.
 Server plugins are located at Contents/PlugIns. Note that while the plugin
-names are different from Windows and Linux (something like "name.dylib"
-instead of "name.dll or "name.so"), bzfs will still load them when you specify
-the full plugin path.
+names are different from Windows and Linux (something like "<name>.dylib"
+instead of "<name>.dll or "<name>.so"), bzfs will still load them when you
+specify the full plugin path.

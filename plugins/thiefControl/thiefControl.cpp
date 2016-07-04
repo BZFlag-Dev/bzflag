@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -65,18 +65,13 @@ void ThiefControl::Event (bz_EventData * eventData)
 
   case eCTFGame:
     {
-      // Allow teammates to steal team flags
-      // This will allow someone to steal a team flag in order
-      // to possibly capture it faster.
-      bool allowTransfer = false;
-
       if (playerTo->team == playerFrom->team && playerTo->team != eRogueTeam) {
 	bz_ApiString flagT = bz_ApiString(data->flagType);
 
-	// Allow theft of team flags only
-	allowTransfer = (flagT == "R*" || flagT == "G*" || flagT == "B*" || flagT == "P*");
-
-	if (!allowTransfer) {
+	// Allow teammates to steal team flags
+	// This will allow someone to steal a team flag in order
+	// to possibly capture it faster.
+	if (flagT != "R*" && flagT != "G*" && flagT != "B*" && flagT != "P*") {
 	  data->action = data->DropThief;
 	  bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
 	}
@@ -108,4 +103,3 @@ void ThiefControl::Event (bz_EventData * eventData)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

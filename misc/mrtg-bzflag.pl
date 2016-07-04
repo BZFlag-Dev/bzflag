@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # BZFlag
-# Copyright (c) 1993-2015 Tim Riker
+# Copyright (c) 1993-2016 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -57,7 +57,7 @@ if (-d $cacheFile && time() - stat($cacheFile)->mtime < 60) {
 } else {
   my $ua = new LWP::UserAgent;
   $ua->timeout(5);
-  my $req = HTTP::Request->new('GET', 'http://my.BZFlag.org/db/?action=LIST');
+  my $req = HTTP::Request->new('GET', 'https://my.BZFlag.org/db/?action=LIST');
   my $res = $ua->request($req);
   @lines = split("\n",$res->content);
   open(CACHEFILE, ">$cacheFile") or die;

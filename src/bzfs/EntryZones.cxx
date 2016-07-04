@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -49,7 +49,7 @@ void EntryZones::addZoneFlag(int zone, int flagId)
   }
   const std::string& qualifier = CustomZone::getFlagIdQualifier(flagId);
   QPairList &qPairList = qmap[qualifier];
-  if (qPairList.size() > 0) {
+  if (!qPairList.empty()) {
     printf ("Internal error: EntryZones::addZoneFlag() duplicate\n");
     exit(1);
   }

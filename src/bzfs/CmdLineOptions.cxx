@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -9,10 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#ifdef _MSC_VER
-#pragma warning(4:4786)
-#endif
 
 /* this should be the only header necessary except for headers specific
  * to the class implementation (such as version.h)
@@ -260,7 +256,7 @@ const char *extraUsageString =
 "\t-ts [micros]: timestamp all console output, [micros] to include\n"
 "\t\tmicroseconds\n"
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
-"\t-UPnP: enable UPnP "
+"\t-UPnP: enable UPnP\n"
 #endif
 "\t-userdb: file to read for user access permissions\n"
 "\t-utc: timestamp console output in UTC instead of local time, implies -ts\n"
@@ -868,7 +864,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
     else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
-      options.gameOptions |= int(NoTeamKillsGameStyle);
+      if(options.gameType == OpenFFA)
+	std::cerr << "noteamkills check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
+      else
+	options.gameOptions |= int(NoTeamKillsGameStyle);
     }
     else if (strcmp(argv[i], "-p") == 0) {
       // use a different port
@@ -1175,6 +1174,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       if (options.gameType == RabbitChase || options.gameType == ClassicCTF) {
 	std::cerr << "Open (Teamless) Free-for-all incompatible with other modes" << std::endl;
 	std::cerr << "Open Free-for-all assumed" << std::endl;
+      }
+      if ((options.gameOptions & int(NoTeamKillsGameStyle)) != 0) {
+	std::cerr << "offa check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
+	options.gameOptions ^= int(NoTeamKillsGameStyle);
       }
       options.gameType = OpenFFA;
     }

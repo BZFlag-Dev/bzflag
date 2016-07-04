@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,6 +43,8 @@ class WinWindow : public BzfWindow {
 
     void		warpMouse(int x, int y);
     void		getMouse(int& x, int& y) const;
+	void		disableConfineToMotionbox();
+	void		confineToMotionbox(int x1, int y1, int x2, int y2);
     void		grabMouse();
     void		ungrabMouse();
     void		enableGrabMouse(bool on);
@@ -84,6 +86,7 @@ class WinWindow : public BzfWindow {
     const WinDisplay*	display;
     WinVisual		visual;
     bool		inDestroy;
+    bool		isNewContext;
     static HWND		hwnd;
     HWND		hwndChild;
     HGLRC		hRC;
@@ -112,4 +115,3 @@ class WinWindow : public BzfWindow {
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

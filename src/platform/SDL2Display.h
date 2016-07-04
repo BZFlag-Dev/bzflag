@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,7 +43,7 @@ class SDLDisplay : public BzfDisplay {
  private:
   mutable SDL_Event lastKeyDownEvent;
   mutable std::map<SDL_Keycode,char> charsForKeyCodes; // updated each key press
-  bool symNeedsConversion(SDL_Keycode) const;
+  bool symNeedsConversion(SDL_Keysym) const;
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};
   int  min_width;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,7 +28,7 @@ typedef struct CommandListItem {
 
 /* FIXME -- gcc is not liking array type with sizeof() without size
  * for some reason */
-extern const CmdListItem commandList[27];
+extern const CmdListItem commandList[29];
 
 #endif /* __COMMANDS_H__ */
 

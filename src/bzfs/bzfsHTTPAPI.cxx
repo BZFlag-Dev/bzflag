@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,6 +36,8 @@
 
 std::string ServerVersion;
 std::string ServerHostname;
+std::string ServerPort;
+std::string ServerHostPort;
 std::string BaseURL;
 
 #ifdef _WIN32
@@ -895,7 +897,7 @@ public:
 
 		for ( size_t i = 1; i < headers.size(); i++ )
 		{
-			std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],":",2);
+			std::vector<std::string> headerParts = TextUtils::tokenize(headers[i],": ",2);
 			if (headerParts.size() > 1)
 			{
 				Request.AddHeader(headerParts[0].c_str(),headerParts[1].c_str());
@@ -1025,7 +1027,7 @@ public:
 							token = t;
 							callsign = c;
 
-							bzIDAuthURL = "http://my.bzflag.org/db/";
+							bzIDAuthURL = "https://my.bzflag.org/db/";
 							if (bz_BZDBItemHasValue("_WebAuthCheckURL"))
 								bzIDAuthURL = bz_getBZDBString("_WebAuthCheckURL").c_str();
 
@@ -1067,7 +1069,7 @@ public:
 					}
 					else
 					{
-						std::string authURL = "http://my.bzflag.org/weblogin.php";
+						std::string authURL = "https://my.bzflag.org/weblogin.php";
 						if (bz_BZDBItemHasValue("_WebAuthURL"))
 							authURL = bz_getBZDBString("_WebAuthURL").c_str();
 
@@ -1367,9 +1369,11 @@ public:
 	  pageBuffer += " 301 Moved Permanently\n";
 	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
-	else
+	else {
 	  pageBuffer += " 500 Server Error\n";
-	pageBuffer += "Host: " + ServerHostname + "\n";
+	}
+
+	pageBuffer += "Host: " + ServerHostPort + "\n";
 	break;
 
       case e302Found:
@@ -1379,15 +1383,17 @@ public:
 	  pageBuffer += " 302 Found\n";
 	  pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
 	}
-	else
+	else {
 	  pageBuffer += " 500 Server Error\n";
+	}
 
-	pageBuffer += "Host: " + ServerHostname + "\n";
+	pageBuffer += "Host: " + ServerHostPort + "\n";
 	break;
 
       case e401Unauthorized:
-	if (!vDir || vDir->RequiredAuthentiction == eBZID)
+	if (!vDir || vDir->RequiredAuthentiction == eBZID) {
 	  pageBuffer += " 403 Forbidden\n";
+	}
 	else
 	{
 	  pageBuffer += " 401 Unauthorized\n";
@@ -1402,7 +1408,7 @@ public:
 	  if (vDir->HTTPAuthenicationRelalm.size())
 	    pageBuffer += vDir->HTTPAuthenicationRelalm.c_str();
 	  else
-	    pageBuffer += ServerHostname;
+	    pageBuffer += ServerHostPort;
 	  pageBuffer += "\"\n";
 	}
 	break;
@@ -1685,18 +1691,20 @@ public:
     response.DocumentType = eHTML;
     response.AddBodyData("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\"><html><head>");
     response.AddBodyData("<title>Index page for ");
-    response.AddBodyData(ServerHostname.c_str());
+    response.AddBodyData(ServerHostPort.c_str());
     response.AddBodyData("</title></head><body>");
 
     if (VDirs.empty()) {
      response.AddBodyData("No HTTP Services are running on this server");
     } else {
       std::map<std::string,VDir>::iterator itr = VDirs.begin();
+      while (itr != VDirs.end())
       {
 	std::string vdirName = itr->second.vdir->VDirName();
 	std::string vDirDescription = itr->second.vdir->VDirDescription();
 	std::string line =  "<a href=\"/" + vdirName + "/\">" + vdirName +"</a>&nbsp;" +vDirDescription +"<br/>";
 	response.AddBodyData(line.c_str());
+	itr++;
       }
     }
 
@@ -1736,13 +1744,17 @@ void InitHTTP()
     ServerHostname = bz_getPublicAddr().c_str();
 
   // make sure it has the port
-  if (strrchr(ServerHostname.c_str(),':') == NULL)
-    ServerHostname += TextUtils::format(":%d",bz_getPublicPort());
+  size_t pos;
+  if ((pos = ServerHostname.find(':')) != std::string::npos)
+    ServerHostname = ServerHostname.substr(0, pos);
+  ServerPort = TextUtils::format("%d",bz_getPublicPort());
+
+  ServerHostPort = ServerHostname + ":" + ServerPort;
 
   ServerVersion = bz_getServerVersion();
 
   BaseURL = "http://";
-  BaseURL += ServerHostname +"/";
+  BaseURL += ServerHostPort + "/";
 
   indexHandler->BaseURL = BaseURL.c_str();
 }
@@ -1758,15 +1770,19 @@ void KillHTTP()
   }
 
   HTTPPeers.clear();
-  if (con || tick)
-  {
+
+  if (tick) {
     worldEventManager.removeHandler(tick);
-    worldEventManager.removeHandler(con);
-    delete(con);
-    con = NULL;
     delete(tick);
     tick = NULL;
- }
+  }
+
+  if (con) {
+    worldEventManager.removeHandler(con);
+    delete(con);
+    con = NULL;    
+  }
+
   VDirs.clear();
   delete(indexHandler);
 }
@@ -2139,7 +2155,7 @@ std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, 
 
 double startTime;
 
-const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
+std::string CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
 {
   if (key == "date") {
     bz_Time time;
@@ -2150,9 +2166,10 @@ const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
     bz_getLocaltime(&time);
     TextUtils::format("%d:%d:%d",time.hour,time.minute,time.second);
   } else if (key == "hostname") {
-    std::string data = bz_getPublicAddr().c_str();
+    std::string data = bz_getPublicAddr();
     if (!data.size())
-     return TextUtils::format("localhost:%d",bz_getPublicPort()).c_str();
+      data = TextUtils::format("localhost:%d",bz_getPublicPort());
+    return data;
   } else if (key == "pagetime") {
     return TextUtils::format("%.3f",bz_getCurrentTime()-startTime).c_str();
   } else if (key == "baseurl") {
@@ -2160,8 +2177,9 @@ const char* CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
   } else if (key == "pluginname") {
     return VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin ? VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin->Name() : "";
   }
-  else if (callback)
+  else if (callback) {
     return callback->GetTemplateKey(key.c_str());
+  }
 
   return "";
 }

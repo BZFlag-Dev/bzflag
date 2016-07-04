@@ -8,7 +8,6 @@
 
 #define HOLDTHEFLAG_VER "1.00.02"
 #define DO_FLAG_RESET 1
-#define DEFAULT_TEAM eGreenTeam
 
 #define MAX_PLAYERID 255
 
@@ -16,12 +15,10 @@ typedef struct {
   bool isValid;
   int  score;
   char callsign[22];
-  double  joinTime;
   int capNum;
 } HtfPlayer;
 
 HtfPlayer Players[MAX_PLAYERID+1];
-std::map<std::string, HtfPlayer> leftDuringMatch;
 bool matchActive = false;
 bool htfEnabled = true;
 bz_eTeamType htfTeam = eNoTeam;
@@ -32,17 +29,13 @@ int Leader;
 class HTFscore : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
-	virtual const char* Name() {return "Hold the Flag";}
-	virtual void Init ( const char* config );
-	virtual void Cleanup ( void );
+  virtual const char* Name() {return "Hold the Flag";}
+  virtual void Init ( const char* config );
+  virtual void Cleanup ( void );
   virtual void Event ( bz_EventData *eventData );
   virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
   bz_eTeamType colorNameToDef (const char *color);
   const char *colorDefToName (bz_eTeamType team);
-
-protected:
-
-private:
 };
 
 BZ_PLUGIN(HTFscore)
@@ -120,7 +113,6 @@ int sort_compare (const void *_p1, const void *_p2){
   if (Players[p1].score != Players[p2].score)
     return Players[p2].score - Players[p1].score;
   return Players[p2].capNum - Players[p1].capNum;
-  return 0;
 }
 
 void dispScores (int who)
@@ -186,7 +178,6 @@ void htfStartGame (void)
   if (!htfEnabled)
     return;
 
-// TODO: clear leftDuringMatch
   resetScores();
   matchActive = true;
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has begun, good luck!");
@@ -202,9 +193,6 @@ void htfEndGame (void)
   }
 
   matchActive = false;
-
-// TODO: clear leftDuringMatch
-
 }
 
 void sendHelp (int who)
@@ -244,10 +232,10 @@ void HTFscore::Event ( bz_EventData *eventData )
 {
   // player JOIN
   if (eventData->eventType == bz_ePlayerJoinEvent) {
-    char msg[255];
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
     if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
+      char msg[255];
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore->colorDefToName(htfTeam));
       bz_kickUser (joinData->playerID, msg, true);
       return;
@@ -352,8 +340,7 @@ bool parseCommandLine (const char *cmdLine)
 
 void HTFscore::Init(const char* cmdLine)
 {
-	htfScore = this;
-  bz_BasePlayerRecord *playerRecord;
+  htfScore = this;
 
   if (parseCommandLine (cmdLine))
     return;
@@ -362,10 +349,11 @@ void HTFscore::Init(const char* cmdLine)
   bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
   for (unsigned int i = 0; i < playerList->size(); i++){
-    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
+    bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex (playerList->get(i));
+    if (playerRecord != NULL){
       listAdd (playerList->get(i), playerRecord->callsign.c_str());
-      bz_freePlayerRecord (playerRecord);
     }
+    bz_freePlayerRecord (playerRecord);
   }
   bz_deleteIntList (playerList);
 
@@ -392,4 +380,3 @@ void HTFscore::Cleanup(void)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

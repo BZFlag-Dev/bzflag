@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,9 +39,9 @@ const int		ServerPort = 5154;
 const int		BroadcastPort = 5154;
 
 // URL for default list server
-const char* const	DefaultListServerURL = "http://my.BZFlag.org/db/";
-const char* const	DefaultMasterBanURL = "http://bzflag.org/master-bans.txt";
-const char* const	DefaultMOTDServer = "http://bzflag.org/motd.php";
+const char* const	DefaultListServerURL = "https://my.bzflag.org/db/";
+const char* const	DefaultMasterBanURL = "https://bzflag.org/master-bans.txt";
+const char* const	DefaultMOTDServer = "https://bzflag.org/motd.php";
 
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -110,8 +110,6 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
   // create scoreboard renderer
   scoreboard = new ScoreboardRenderer();
-
-  friendlyMarkerList = DisplayListSystem::Instance().newList(this);
 
   // initialize fonts
   resize(true);
@@ -233,7 +231,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
 {
   const float s = (float)height / 36.0f;
   FontManager &fm = FontManager::instance();
-  majorFontFace = fm.getFaceID(BZDB.get("serifFont"));
+  majorFontFace = fm.getFaceID(BZDB.get("sansSerifFont"));
   majorFontSize = floorf(s);
   majorFontHeight = fm.getStrHeight(majorFontFace, majorFontSize, " ");
 }
@@ -671,61 +669,54 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 }
 
 
-void HUDRenderer::buildGeometry ( GLDisplayList displayList )
+void HUDRenderer::drawGeometry()
 {
-  if (displayList == friendlyMarkerList) {
-    float lockonSize = 40;
+  float lockonSize = 40;
 
-    float segmentation = 32.0f/360.0f;
-    float rad = lockonSize * 0.125f;
+  float segmentation = 360.0f/32.0f;
+  float rad = lockonSize * 0.25f;
 
-    // white outline
-    hudColor4f( 1,1,1, 0.85f );
-    glLineWidth(4.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-rad,rad+rad,0.03f);
-    glVertex3f(rad,-rad+rad,0.02f);
-    // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
-    // glVertex3f(lockonSize*xFactor,0,0.02f);
-    glEnd();
+  // white outline
+  hudColor4f( 1,1,1, 0.85f );
+  glLineWidth(4.0f);
+  glBegin(GL_LINES);
+  glVertex3f(-rad,rad,0.03f);
+  glVertex3f(rad,-rad,0.02f);
+  // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
+  // glVertex3f(lockonSize*xFactor,0,0.02f);
+  glEnd();
 
-    glBegin(GL_LINE_LOOP);
-    for (float t = 0; t < 360; t += segmentation) {
-      if (t != 0) {
-	const float s = (t - segmentation);
-	const float tRads = t * DEG2RADf;
-	const float sRads = s * DEG2RADf;
-	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
-	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
-      }
-    }
-    glEnd();
-
-    // red X
-    hudColor4f( 1,0,0, 0.85f );
-    glLineWidth(2.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-rad,rad+rad,0.03f);
-    glVertex3f(rad,-rad+rad,0.02f);
-    // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
-    //  glVertex3f(lockonSize*xFactor,0,0.02f);
-    glEnd();
-
-    glBegin(GL_LINE_LOOP);
-    for (float t = 0; t < 360; t += segmentation) {
-      if (t != 0) {
-	const float s = (t - segmentation);
-	const float tRads = t * DEG2RADf;
-	const float sRads = s * DEG2RADf;
-	glVertex3f(sinf(sRads) * rad, (cosf(sRads) * rad) + rad, 0.02f);
-	glVertex3f(sinf(tRads) * rad, (cosf(tRads) * rad) + rad, 0.02f);
-      }
-    }
-    glEnd();
-
-    glLineWidth(2.0f);
+  glBegin(GL_LINES);
+  for (float t = 0; t < 360; t += segmentation) {
+    const float s = (t - segmentation);
+    const float tRads = t * DEG2RADf;
+    const float sRads = s * DEG2RADf;
+    glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
+    glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
   }
+  glEnd();
 
+  // red X
+  hudColor4f( 1,0,0, 0.85f );
+  glLineWidth(2.0f);
+  glBegin(GL_LINES);
+  glVertex3f(-rad,rad,0.03f);
+  glVertex3f(rad,-rad,0.02f);
+  // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
+  //  glVertex3f(lockonSize*xFactor,0,0.02f);
+  glEnd();
+
+  glBegin(GL_LINES);
+  for (float t = 0; t < 360; t += segmentation) {
+    const float s = (t - segmentation);
+    const float tRads = t * DEG2RADf;
+    const float sRads = s * DEG2RADf;
+    glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
+    glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
+  }
+  glEnd();
+
+  glLineWidth(2.0f);
 }
 
 void			HUDRenderer::render(SceneRenderer& renderer)
@@ -825,9 +816,9 @@ void			HUDRenderer::renderStatus(void)
   TeamColor teamIndex = myTank->getTeam();
   FlagType* flag = myTank->getFlag();
 
-  // print player name and score in upper left corner in team (radar) color
+  // print player name and score in upper left corner in team (tank) color
   if (!roaming && (!playerHasHighScore || scoreClock.isOn())) {
-    hudColor3fv(Team::getRadarColor(teamIndex));
+    hudColor3fv(Team::getTankColor(teamIndex));
     fm.drawString(x, y, 0, majorFontFace, majorFontSize,
       TextUtils::format("%s: %d", myTank->getCallSign(), myTank->getScore()));
   }
@@ -1267,7 +1258,7 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
   glEnd();
 
   if (friendly)
-    DisplayListSystem::Instance().callList(friendlyMarkerList);
+    drawGeometry();
 
   glPopMatrix();
 
@@ -1364,7 +1355,7 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
   glEnd();
 
   if (friendly)
-    DisplayListSystem::Instance().callList(friendlyMarkerList);
+    drawGeometry();
 
   glLineWidth(1.0f);
 

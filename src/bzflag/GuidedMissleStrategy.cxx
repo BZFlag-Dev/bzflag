@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,7 +44,7 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
     ptSceneNode->setTexture(texture);
     ptSceneNode->setTextureAnimation(4, 4);
     ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
-    ptSceneNode->setTeamColor(Team::getRadarColor(_path->getTeam()));
+    ptSceneNode->setTeamColor(Team::getShotColor(_path->getTeam()));
     ptSceneNode->setFlares(true);
   }
 

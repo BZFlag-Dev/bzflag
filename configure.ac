@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2015 Tim Riker
+dnl Copyright (c) 1993-2016 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -55,18 +55,34 @@ fi
 
 AC_CONFIG_AUX_DIR(misc)
 
-# sed magic to get version numbers from src/date/buildDate.cxx
-MAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-MINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-REV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\(.*\)/\1/' -e t -e d < \$srcdir/src/date/buildDate.cxx`
-
-CONF_DATE=`date -u +%Y%m%d`
-BZFLAG_DATE=`date -u +%Y-%m-%d`
-BZFLAG_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$REV"
-CONF_TIME="`date '+%H %M %S'`"
+CONF_DATE=`date -u +%Y-%m-%d`
+# https://reproducible-builds.org/specs/source-date-epoch/
+if test -z "$SOURCE_DATE_EPOCH"; then
+    BUILD_DATE=$CONF_DATE
+else
+    # accept any numeric value
+    if expr 0 + "$SOURCE_DATE_EPOCH" > /dev/null ; then
+	BUILD_DATE=`date -u -d "@$SOURCE_DATE_EPOCH" +%Y-%m-%d 2> /dev/null`
+	# try using perl if the date command fails
+	if test -z "$BUILD_DATE"; then
+	    BUILD_DATE=`perl -le "use POSIX; print strftime '%Y-%m-%d', gmtime '$SOURCE_DATE_EPOCH'"`
+	fi
+    else
+	AC_MSG_ERROR([Invalid SOURCE_DATE_EPOCH value])
+    fi
+fi
+case "$BUILD_DATE" in
+    # double square brackets because of m4
+    [[0-9]][[0-9]][[0-9]][[0-9]]-[[01]][[0-9]]-[[0-3]][[0-9]])
+	# looks like YYYY-MM-DD
+	;;
+    *)
+	AC_MSG_ERROR([Failed to set BUILD_DATE])
+	;;
+esac
 
 # print out the title with a pretty box computed to wrap around
-title="Configuring BZFlag $BZFLAG_VERSION, Build $CONF_DATE"
+title="Configuring $PACKAGE_STRING on $CONF_DATE"
 length="`echo x${title}x | wc -c`"
 separator=""
 while test $length -gt 1 ; do
@@ -90,11 +106,10 @@ AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
 
-AC_SUBST(MAJOR_VERSION)
-AC_SUBST(MINOR_VERSION)
-AC_SUBST(BZFLAG_VERSION)
-AC_SUBST(BZFLAG_DATE)
-AC_SUBST(CONF_TIME)
+AC_SUBST(PACKAGE_STRING)
+AC_SUBST(BUILD_DATE)
+AC_DEFINE_UNQUOTED(BUILD_DATE, "$BUILD_DATE", [BZFlag build date])
+
 
 # Let the C++ code know about OS
 AC_DEFINE_UNQUOTED(BZ_BUILD_OS, "$host_os", [BZFlag System Environment])
@@ -115,7 +130,7 @@ MP_WITH_CURSES
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
 if test "x$with_SDL" != xno; then
-    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2])
+    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2 (experimental)])
 fi
 
 # check whether plugins are desired
@@ -124,6 +139,24 @@ if test "x$enable_plugins" != xno ; then
     AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
+
+# accept a list of custom plugins to be built
+AC_ARG_ENABLE(custom-plugins, AS_HELP_STRING([--enable-custom-plugins=plugin1[[[,plugin2,...]]]],[comma separated list of custom plugins to be built]),[
+  CUSTOM_PLUGIN_LIST=`echo $enableval | sed 's/,/ /g'`
+  for plugin in $CUSTOM_PLUGIN_LIST ; do
+    m1=plugins/$plugin/Makefile
+    AC_CONFIG_FILES([$m1])
+    (cd $srcdir && automake --no-force $m1)
+  done])
+# accept a file containing the custom plugins to be built
+AC_ARG_ENABLE(custom-plugins-file, AS_HELP_STRING([--enable-custom-plugins-file=filename],[file of custom plugins to be built, one name per line]),[
+  for plugin in `sed '/^#/d' $enableval` ; do
+    m2=plugins/$plugin/Makefile
+    AC_CONFIG_FILES([$m2])
+    (cd $srcdir && automake --no-force $m2)
+    CUSTOM_PLUGIN_LIST="$CUSTOM_PLUGIN_LIST $plugin"
+  done])
+AC_SUBST(CUSTOM_PLUGIN_LIST)
 
 # check whether threads are desired
 AC_ARG_ENABLE(threads, [  --disable-threads        build without threading])
@@ -159,35 +192,6 @@ fi
 # do we want the bzflag  client?
 AC_ARG_ENABLE(client, [  --disable-client        server-only build])
 
-# compile our own ares
-AC_ARG_ENABLE(ares_build, [  --enable-ares-build     Force compilation of ares])
-
-# compile our own curl
-AC_ARG_ENABLE(curl_build, [  --enable-curl-build     Force compilation of curl])
-
-# compile our own glew
-AC_ARG_WITH(included-glew,
-        AS_HELP_STRING([--with-included-glew],[build with included GLEW library]),
-        [enable_glew_build="$withval"], )
-
-# compile our own regex
-AC_ARG_ENABLE(regex_build, [  --enable-regex-build    Force compilation of regex])
-
-# compile our own zlib
-AC_ARG_ENABLE(zlib_build, [  --enable-zlib-build     Force compilation of zlib])
-
-# compile everything bz provides
-AC_ARG_ENABLE(all_builds, [  --enable-all-builds     Force compilation of all dependencies])
-
-# enable compilation of all bundled external dependencies
-if test "x$enable_all_builds" = "xyes" ; then
-    enable_ares_build=yes
-    enable_curl_build=yes
-    enable_glew_build=yes
-    enable_regex_build=yes
-    enable_zlib_build=yes
-fi
-
 # enable UPnP for server
 AC_ARG_ENABLE(UPnP,       [  --enable-UPnP           Use UPnP for server],
 	      , [enable_UPnP=no])
@@ -204,8 +208,6 @@ if test "x$LD" != "x" ; then
 fi
 
 #Checks for programs.
-AC_PROG_MAKE_SET
-AM_PROG_MKDIR_P
 AC_PROG_CXX
 if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
@@ -264,30 +266,93 @@ dnl ***************************
 
 BZ_CONFIGURE_STAGE([libraries], [3 of 9])
 
-# FIXME: move other library checks here
+AC_LANG(C++)
 
 dnl explicitly link with the dl library when available
 AC_CHECK_LIB(dl, dlopen, LIBDL="-ldl", LIBDL="")
 AC_SUBST(LIBDL)
 
 dnl detect a usable system zlib compression library
-if test "x$enable_zlib_build" != "xyes" ; then
-    AC_CHECK_LIB(z, compressBound, LIBZ="-lz", LIBZ="")
-fi
+AC_CHECK_LIB(z, compressBound, LIBZ="-lz", AC_MSG_ERROR([working zlib was not found]))
+AC_SUBST(LIBZ)
+
 
 dnl detect a usable system c-ares lookup library
-if test "x$enable_ares_build" != "xyes" ; then
-    AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", LIBCARES="")
+AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
+AC_SUBST(LIBCARES)
+
+# see if our c-ares callbacks match (they won't on c-ares <1.5)
+AC_MSG_CHECKING(for c-ares DNS lookup functionality)
+PRELIBS="$LIBS"
+LIBS="$LIBS $LIBCARES"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <stdio.h>
+#include <ares.h>
+  void callback(void * /*arg*/, int /*callbackStatus*/,
+              int /*timeouts*/, struct hostent * /*hostent*/) {}
+]], [[
+  ares_channel aresChannel;
+  in_addr requestedAddress;
+
+  ares_gethostbyaddr(aresChannel, &requestedAddress,
+		     sizeof(in_addr), AF_INET, callback, NULL);
+]])],[AC_MSG_RESULT([yes])],[AC_MSG_FAILURE([working c-ares library was not found])])
+LIBS="$PRELIBS"
+
+AC_CHECK_LIB(cares, ares_library_init, AC_DEFINE([HAVE_ARES_LIBRARY_INIT],[1],[Define if libcares includes ares_library_init.]))
+
+
+
+dnl detect a usable system curl library
+LIBCURL=""
+LIBCURL_CHECK_CONFIG
+AC_MSG_CHECKING(checking for curl library)
+if test "x$LIBCURL" = "x" ; then
+    AC_MSG_ERROR([working curl library was not found])
+else
+    AC_MSG_RESULT([yes])
 fi
 
-dnl detect a usable system regular expression library
-if test "x$enable_regex_build" != "xyes" ; then
-    AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
-	[AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
-	    [AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", LIBREGEX="")]
-	)]
-    )
+AC_MSG_CHECKING(checking for SSL support in curl)
+if test "x$libcurl_feature_SSL" = "xyes" ; then
+    AC_MSG_RESULT([yes])
+else
+    AC_MSG_ERROR([curl library missing SSL support])
 fi
+
+
+dnl detect a usable system regular expression library
+AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
+[AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
+    [AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", AC_MSG_ERROR([working regex library was not found]))]
+)]
+)
+AC_SUBST(LIBREGEX)
+
+AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]), AC_MSG_ERROR([working regex.h was not found]))
+
+# see if we have regex functionality
+AC_MSG_CHECKING(for regular expression functionality)
+PRELDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS $LIBREGEX"
+AC_RUN_IFELSE([
+AC_LANG_PROGRAM([
+#ifdef HAVE_SYS_TYPES_H
+#  include <sys/types.h>
+#endif
+#include <regex.h>
+],[
+    regex_t re;
+    regcomp(&re, "abc", REG_EXTENDED);
+    regexec(&re, "", 0, 0, 0);
+    return 0;
+])
+], [AC_MSG_RESULT([yes])],
+[AC_MSG_ERROR([regex test program failed to build or run])],
+[AC_MSG_WARN([regex test program run skipped due to cross-compiling])] )
+LDFLAGS="$PRELDFLAGS"
+
+
 
 dnl detect a usable system -lrt library for shm_open()
 AC_CHECK_LIB(rt, shm_open, LIBRT="-lrt", LIBRT="")
@@ -305,6 +370,7 @@ AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r",
     [AC_CHECK_LIB([pthread], [pthread_create], LIBPTHREAD="-lpthread",
      LIBPTHREAD="")]
 )
+AC_SUBST(LIBPTHREAD)
 
 # check for various IEEE and c99 standard math functions in libm
 AC_CHECK_LIB([m], [acosf], [AC_DEFINE([HAVE_ACOSF],[1],[libm includes acosf])])
@@ -353,8 +419,7 @@ AC_CHECK_HEADERS( \
 	cmath \
 	cstdlib \
 	cstdio \
-	cstring \
-	CppUTest/TestHarness.h \
+	cstring
 )
 AC_LANG(C)
 AC_CHECK_HEADERS( \
@@ -376,21 +441,14 @@ AC_CHECK_HEADERS( \
 	unistd.h \
 	values.h \
 )
-# nameser_compat.h used by src/other/ares
-
-if test "x$enable_regex_build" != "xyes" ; then
-    AC_CHECK_HEADER(regex.h, AC_DEFINE(HAVE_REGEX_H,1,[Define to 1 if you have the '<regex.h>' header file]) )
-fi
 
 if test "x$enable_UPnP" = "xyes"; then
     AC_CHECK_HEADERS(
 	[miniupnpc/miniupnpc.h],
 	[LIBMINIUPNPC=-lminiupnpc],
-	[AC_MSG_WARN([You need to install miniupnpc for UPnP to work])])
+	[AC_MSG_ERROR([You need to install miniupnpc for UPnP to work])])
 fi
 AC_SUBST(LIBMINIUPNPC)
-
-AM_CONDITIONAL(BUILD_CPPUTESTS, test "x$ac_cv_header_CppUTest_TestHarness_h" = "xyes")
 
 dnl **********************************
 dnl *** Check for types/structures ***
@@ -639,12 +697,12 @@ if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
 
     if test x$with_SDL = xno ; then
       if test x$with_SDL2 = xyes ; then
-	AM_PATH_SDL2(2.0.4, with_SDL=yes, with_SDL=no)
+	AM_PATH_SDL2(2.0.3, with_SDL=yes, with_SDL=no)
       else
 	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
       fi
 	if test x$with_SDL = xno; then
-	    AC_MSG_WARN([could not find an appropriate SDL version. BZflag will build without SDL])
+	    AC_MSG_WARN([could not find an appropriate SDL version. BZFlag will build without SDL])
 	fi
     fi
 fi
@@ -887,7 +945,7 @@ case $host_os in
     irix*)
 	irix=true
 	;;
-    linux*|kfreebsd*|freebsd*|netbsd*|openbsd*|dragonfly*)
+    linux*|kfreebsd*|freebsd*|netbsd*|openbsd*|dragonfly*|gnu*)
 	linux=true
 	;;
     macos|darwin*)
@@ -966,160 +1024,6 @@ AM_CONDITIONAL(HAVE_CURSES, test "x$CURSES_LIB" != x)
 AC_SUBST(CURSES_LIB)
 
 
-# see if our ares callbacks match (they won't on ares <1.5)
-ares_works=no
-if test "x$enable_ares_build" != "xyes" ; then
-    AC_MSG_CHECKING(for ares DNS lookup functionality)
-    PRELIBS="$LIBS"
-    LIBS="$LIBS $LIBCARES"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <stdio.h>
-#include <ares.h>
-void callback(void * /*arg*/, int /*callbackStatus*/,
-              int /*timeouts*/, struct hostent * /*hostent*/) {}
-]], [[
-  ares_channel aresChannel;
-  in_addr requestedAddress;
-
-  ares_gethostbyaddr(aresChannel, &requestedAddress,
-		     sizeof(in_addr), AF_INET, callback, NULL);
-    ]])],[ares_works=yes],[ares_works=no])
-    LIBS="$PRELIBS"
-    AC_MSG_RESULT($ares_works)
-fi # enable_ares_build
-dnl figure out whether we need to build the included ares library
-AC_MSG_CHECKING(whether to build the included ares lookup library)
-BUILD_ARES="no (using system)"
-if test "x$ares_works" = "xno" ; then
-    AC_DEFINE(BUILD_ARES, 1, [Build the included ares lookup library])
-    BUILD_ARES="yes"
-    LIBCARES='${top_builddir}/src/other/ares/libcares.la'
-fi
-AC_SUBST(LIBCARES)
-AC_MSG_RESULT($BUILD_ARES)
-AM_CONDITIONAL(BUILD_ARES, test "x$BUILD_ARES" = "xyes")
-if test "x$BUILD_ARES" = xyes ; then
-    AC_DEFINE([HAVE_ARES_LIBRARY_INIT],[1],[Define if libcares includes ares_library_init.])
-else
-    AC_CHECK_LIB(cares, ares_library_init, AC_DEFINE([HAVE_ARES_LIBRARY_INIT]))
-fi
-
-
-# see if we have regex functionality
-regex_works=no
-if test "x$enable_regex_build" != "xyes" ; then
-    AC_MSG_CHECKING(for regular expression functionality)
-    PRELDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $LIBREGEX"
-    AC_RUN_IFELSE([
-	AC_LANG_PROGRAM([
-#ifdef HAVE_SYS_TYPES_H
-#  include <sys/types.h>
-#endif
-#include <regex.h>
-],[
-    regex_t re;
-    regcomp(&re, "abc", REG_EXTENDED);
-    regexec(&re, "", 0, 0, 0);
-    return 0;
-])
-    ], [regex_works=yes],
-    [regex_works=no],
-    [regex_works=no] )
-    LDFLAGS="$PRELDFLAGS"
-    AC_MSG_RESULT($regex_works)
-fi  # enable_regex_build
-dnl
-dnl figure out whether we need to build the included regex library
-dnl
-AC_MSG_CHECKING(whether to build the included regular expression library)
-BUILD_REGEX="no (using system)"
-if test "x$regex_works" = "xno" ; then
-    AC_DEFINE(BUILD_REGEX, 1, [Build the included regular expression library])
-    BUILD_REGEX="yes"
-    LIBREGEX='${top_builddir}/src/other/regex/libregex.la'
-fi
-AC_SUBST(LIBREGEX)
-AC_MSG_RESULT($BUILD_REGEX)
-AM_CONDITIONAL(BUILD_REGEX, test "x$BUILD_REGEX" = "xyes")
-
-
-# assume zlib works if we found it.
-dnl figure out whether we need to build the included zlib
-AC_MSG_CHECKING(whether to build the included zlib compression library)
-BUILD_ZLIB="no (using system)"
-if test "x$LIBZ" = "x" ; then
-    AC_DEFINE(BUILD_ZLIB, 1, [Build the included zlib compression library])
-    BUILD_ZLIB="yes"
-    LIBZ='${top_builddir}/src/other/zlib/libz.la'
-fi
-AC_SUBST(LIBZ)
-AC_MSG_RESULT($BUILD_ZLIB)
-AM_CONDITIONAL(BUILD_ZLIB, test "x$BUILD_ZLIB" = "xyes")
-if test "x$BUILD_ZLIB" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/zlib"
-fi
-
-
-dnl figure out whether we need to build the included curl library
-BUILD_CURL="no (using system)"
-LIBCURL=""
-if test "x$enable_curl_build" != "xyes" ; then
-    LIBCURL_CHECK_CONFIG
-fi
-AC_MSG_CHECKING(whether to build the included curl library)
-if test "x$LIBCURL" = "x" ; then
-    AC_DEFINE(BUILD_CURL, 1, [Build the included curl library])
-    BUILD_CURL="yes"
-    LIBCURL='${top_builddir}/src/other/curl/lib/libcurl.la'
-fi
-dnl LIBCURL_CHECK_CONFIG already specified AC_SUBSTs
-AC_MSG_RESULT($BUILD_CURL)
-AM_CONDITIONAL(BUILD_CURL, test "x$BUILD_CURL" = "xyes")
-if test "x$BUILD_CURL" = "xyes" ; then
-    CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/curl/include"
-fi
-
-
-# GLEW
-if test "x$enable_client" != "xno" ; then
-# Check for the GLEW library (GL Extension Wrangler)
-if test "x$enable_glew_build" != "xyes" ; then
-    AC_MSG_CHECKING([for GLEW library])
-    tmpLIBS=$LIBS
-    GLEW_LIBS="-lGLEW"
-    LIBS=$GLEW_LIBS
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glew.h>]],
-				    [[if (GLEW_VERSION_3_0) { glewInit(); }]])],
-		   [glew_check="yes"],
-		   [glew_check="no  (missing, or older than version 1.5.1)"])
-    if test "x$glew_check" != "xyes"; then
-	GLEW_LIBS=""
-    fi
-    AC_MSG_RESULT([$glew_check])
-    AC_SUBST(GLEW_LIBS)
-    LIBS=$tmpLIBS
-fi
-AC_MSG_CHECKING(whether to build the included GLEW library)
-BUILD_GLEW="no (using system)"
-if test "x$GLEW_LIBS" = "x" ; then
-    if test "x$enable_glew_build" = xno ; then
-	BUILD_GLEW=no
-    else
-	BUILD_GLEW="yes"
-	CONF_CPPFLAGS="$CONF_CPPFLAGS -I\$(top_srcdir)/src/other/glew/include"
-    fi
-fi
-AC_MSG_RESULT($BUILD_GLEW)
-else # enable_client
-BUILD_GLEW="no (clients disabled)"
-AC_MSG_NOTICE([GLEW is disabled because no clients are being built])
-fi # enable_client
-AM_CONDITIONAL(BUILD_GLEW, test "x$BUILD_GLEW" = "xyes")
-if test "x$BUILD_GLEW" = xyes -o "x$glew_check" = xyes; then
-    AC_DEFINE(HAVE_GLEW, 1, [Using GLEW])
-fi
-
 # make sure ECHO and ECHO_N got defined and substituted
 if test "x$ECHO" = "x" ; then
     ECHO=echo
@@ -1142,31 +1046,12 @@ AC_SUBST(CONF_CXXFLAGS)
 LIBDIR="\$(top_srcdir)/lib"
 AC_SUBST(LIBDIR)
 
-# stash the current configuration args before adding additional ones
-# for subconfigure
-bz_configure_args="$ac_configure_args"
-
-AC_CONFIG_SUBDIRS(src/other/ares)
-if test "x$BUILD_ARES$BUILD_CURL" = "xyesyes" ; then
-    # instruct curl to use the included ares
-    ac_configure_args="$ac_configure_args --enable-ares --disable-manual"
-    case $host_os in
-	solaris*)
-	    # Solaris 10 SSL libraries are incompatible at link time
-	    ac_configure_args="$ac_configure_args --without-ssl"
-	    ;;
-    esac
-fi
-
-AC_CONFIG_SUBDIRS(src/other/curl)
-
 AC_CONFIG_FILES([
 	MSVC/Makefile
 	MSVC/build/Makefile
 	Xcode/Makefile
 	Xcode/BZFlag.xcodeproj/Makefile
 	Makefile
-	bzflag.lsm
 	bzflag.spec
 	data/Makefile
 	data/fonts/Makefile
@@ -1195,7 +1080,6 @@ AC_CONFIG_FILES([
 	plugins/fairCTF/Makefile
 	plugins/fastmap/Makefile
 	plugins/flagStay/Makefile
-	plugins/hiddenAdmin/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile
@@ -1231,26 +1115,17 @@ AC_CONFIG_FILES([
 	src/net/Makefile
 	src/obstacle/Makefile
 	src/ogl/Makefile
-	src/other/Makefile
-	src/other/regex/Makefile
-	src/other/zlib/Makefile
-	src/platform/MacOSX/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
 	tests/Makefile
 	tools/Makefile
 	tools/TextTool2/Makefile
 	tools/TextTool2/TextTool2.xcodeproj/Makefile
-	tools/TextTool-W32/Makefile
-	tools/TextTool-W32/res/Makefile
 	tools/bzwtransform/Makefile
 	tools/modeltool/Makefile
 	tools/modeltool/MSVC/Makefile
 ])
 AC_OUTPUT
-
-# restore back after AC_OUTPUT for recheck
-ac_configure_args="$bz_configure_args"
 
 dnl # AC_OUTPUT won't update the config.h.in template timestamp if the
 dnl # file is unchanged.  forcibly update the timestamp so autoheader
@@ -1302,12 +1177,15 @@ if test "x$enable_client" = "xno"; then
     fi
 else
     if test x$with_SDL != xno; then
-	build_bzflag="yes (with SDL)"
+	if test x$with_SDL2 = xyes; then
+	    build_bzflag="yes (with SDL2) (Note: Still experimental!)"
+	else
+	    build_bzflag="yes (with SDL)"
+	fi
     else
 	build_bzflag="yes"
     fi
 fi
-
 if test "x$enable_plugins" != xno ; then
     build_bzfs="yes (with plugins)"
 else
@@ -1336,20 +1214,11 @@ libdir=`eval "echo $libdir"`
 mandir=`eval "echo $mandir"`
 mandir=`eval "echo $mandir"`
 
-dnl
-dnl Compute configuration time elapsed
-dnl
-if test -x "${srcdir}/misc/elapsed.sh" ; then
-	time_elapsed="`${srcdir}/misc/elapsed.sh $CONF_TIME`"
-else
-	time_elapsed="unknown"
-fi
-
 dnl use AC_MSG_RESULT instead of AC_MSG_NOTIFY to support old autoconf
 AC_MSG_RESULT([Done.])
 AC_MSG_RESULT([])
 BZ_BOLD
-AC_MSG_RESULT([BZFlag-$BZFLAG_VERSION.$CONF_DATE configured with the following:])
+AC_MSG_RESULT([$PACKAGE_STRING configured on $CONF_DATE with the following:])
 BZ_UNBOLD
 AC_MSG_RESULT([])
 AC_MSG_RESULT([             Prefix: ${prefix}])
@@ -1357,6 +1226,7 @@ AC_MSG_RESULT([           Binaries: ${bindir}])
 AC_MSG_RESULT([            Plugins: ${libdir}])
 AC_MSG_RESULT([       Manual pages: ${mandir}])
 AC_MSG_RESULT([])
+AC_MSG_RESULT([BUILD_DATE    = ${BUILD_DATE}])
 AC_MSG_RESULT([CC            = ${CC}])
 AC_MSG_RESULT([CXX           = ${CXX}])
 AC_MSG_RESULT([CFLAGS        = ${CFLAGS}])
@@ -1368,19 +1238,10 @@ AC_MSG_RESULT([CONF_CPPFLAGS = ${CONF_CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS       = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS          = ${LIBS}])
 AC_MSG_RESULT([])
-AC_MSG_RESULT([Build ares ........: $BUILD_ARES])
-AC_MSG_RESULT([Build curl ........: $BUILD_CURL])
-AC_MSG_RESULT([Build glew ........: $BUILD_GLEW])
-AC_MSG_RESULT([Build regex .......: $BUILD_REGEX])
-AC_MSG_RESULT([Build zlib ........: $BUILD_ZLIB])
-AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
 AC_MSG_RESULT([BZAdmin client ....: $build_bzadmin])
 AC_MSG_RESULT([])
-if test "x$time_elapsed" != "xunknown" ; then
-AC_MSG_RESULT([Elapsed configuration time: $time_elapsed])
-fi
 AC_MSG_RESULT([---])
 AC_MSG_RESULT([$0 complete, type 'make' to begin building])
 AC_MSG_RESULT([])

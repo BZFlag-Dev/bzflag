@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -254,8 +254,8 @@ void SceneRenderer::setQuality(int value)
 
   if (value < 0) {
     value = 0;
-  } else if (value > BZDB.eval("maxQuality")) {
-    value = (int)BZDB.eval("maxQuality");
+  } else if (value > BZDB.evalInt("maxQuality")) {
+    value = BZDB.evalInt("maxQuality");
   }
   if (useQualityValue != value) {
     rebuildTanks = true;

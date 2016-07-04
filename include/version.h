@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,7 +24,7 @@
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	4
+#define BZ_CONFIG_FILE_VERSION	5
 #endif
 
 #define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"

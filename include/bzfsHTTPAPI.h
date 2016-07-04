@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -230,7 +230,7 @@ class BZF_API bzhttp_TemplateCallback
 {
 public:
   virtual ~bzhttp_TemplateCallback() {};
-  virtual const char* GetTemplateKey(const char* /* key */) {return "";}
+  virtual bz_ApiString GetTemplateKey(const char* /* key */) {return bz_ApiString("");}
   virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/) { return false; }
   virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/) { return false; }
 

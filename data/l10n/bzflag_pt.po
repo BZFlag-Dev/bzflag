@@ -164,9 +164,6 @@ msgstr "Servidores"
 msgid "Players"
 msgstr "Jogadores"
 
-msgid "Rogue"
-msgstr "Errante"
-
 msgid "Red"
 msgstr "Vermelho"
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -740,10 +740,9 @@ const void *MeshObstacle::unpack(const void *buf)
   buf = nboUnpackInt(buf, inTmp);
   texcoordCount = int(inTmp);
   texcoords = new afvec2[texcoordCount];
-  for (i = 0; i < texcoordCount; i++) {
-    buf = nboUnpackFloat(buf, texcoords[i][0]);
-    buf = nboUnpackFloat(buf, texcoords[i][1]);
-  }
+  // note where the texture coordinates begin; skip past them
+  const void* texCoordPtr = buf;
+  buf = (const char*)buf + sizeof(float) * 2 * texcoordCount;
   const char* texcoordEnd = (const char*)buf;	// for locating hidden drawInfo data
 
   buf = nboUnpackInt(buf, inTmp);
@@ -796,13 +795,18 @@ const void *MeshObstacle::unpack(const void *buf)
 	}
 
 	// free the bogus texcoords
+	// FIXME - don't allocate storage we won't use
 	const int fakeTxcds = rewindLen / sizeof(afvec2);
 	texcoordCount = texcoordCount - fakeTxcds;
 	afvec2* tmpTxcds = new afvec2[texcoordCount];
-	memcpy(tmpTxcds, texcoords, texcoordCount * sizeof(afvec2));
 	delete[] texcoords;
 	int ptrDiff = (char*)tmpTxcds - (char*)texcoords;
 	texcoords = tmpTxcds;
+	// unpack actual texcoords
+	for (i = 0; i < texcoordCount; i++) {
+	  texCoordPtr = nboUnpackFloat(texCoordPtr, texcoords[i][0]);
+	  texCoordPtr = nboUnpackFloat(texCoordPtr, texcoords[i][1]);
+	}
 
 	// setup the drawInfo arrays
 	if (useDrawInfo) {
@@ -829,6 +833,12 @@ const void *MeshObstacle::unpack(const void *buf)
       }
     }
     nboUseErrorChecking(true);
+  } else {
+    // no "hidden" drawInfo data; just unpack the texcoords
+    for (i = 0; i < texcoordCount; i++) {
+      texCoordPtr = nboUnpackFloat(texCoordPtr, texcoords[i][0]);
+      texCoordPtr = nboUnpackFloat(texCoordPtr, texcoords[i][1]);
+    }
   }
 
   finalize();
@@ -1030,4 +1040,3 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

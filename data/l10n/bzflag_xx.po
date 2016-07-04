@@ -1635,7 +1635,7 @@ msgstr ""
 msgid "BZFlag Home Page:"
 msgstr ""
 
-msgid "Copyright (c) 1993-2015"
+msgid "Copyright (c) 1993-2016"
 msgstr ""
 
 
@@ -2415,9 +2415,6 @@ msgstr ""
 #######################
 
 msgid "Players"
-msgstr ""
-
-msgid "Rogue"
 msgstr ""
 
 msgid "Red"

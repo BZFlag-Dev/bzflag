@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -89,7 +89,6 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "\\";
   }
-  customConfigDir = name;
   return name;
 
 #elif defined(__APPLE__)
@@ -109,7 +108,6 @@ std::string		getConfigDirName( const char* versionName )
       }
     }
   }
-  customConfigDir = name;
   return name;
 #else
   std::string name;
@@ -123,7 +121,6 @@ std::string		getConfigDirName( const char* versionName )
     name += versionName;
     name += "/";
   }
-  customConfigDir = name;
   return name;
 #endif
 }
@@ -138,17 +135,7 @@ static std::string		setupString(std::string dir)
 
 std::string getCacheDirName()
 {
-  std::string name = getConfigDirName();
-  name += "cache";
-#if !defined (_WIN32) && !defined (__APPLE__)
-  // add in hostname on UNIX
-  // FIXME should be able to share the cache
-  if (getenv("HOST")) {
-    name += ".";
-    name += getenv("HOST");
-  }
-#endif
-  name += DirectorySeparator;
+  std::string name = getConfigDirName() + "cache" + DirectorySeparator;
   return name;
 }
 

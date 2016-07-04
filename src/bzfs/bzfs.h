@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,10 +12,6 @@
 
 #ifndef __BZFS_H__
 #define __BZFS_H__
-
-#ifdef _MSC_VER
-#pragma warning( 4 : 4786 )
-#endif
 
 // to dump score info to stdout
 #define PRINTSCORE to include code to dump score info to stdout
@@ -126,6 +122,7 @@ extern void       publicize();
 extern TeamColor  whoseBase(float x, float y, float z);
 bool defineWorld ( void );
 bool saveWorldCache( const char* file = NULL );
+float getMaxWorldHeight ( void );
 
 bool allowTeams ( void );
 extern const std::string& getPublicOwner();
@@ -167,11 +164,11 @@ extern Shots::Manager ShotManager;
 
 extern VotingArbiter *votingarbiter;
 
-void pauseCountdown ( const char *pausedBy );
-void resumeCountdown ( const char *resumedBy );
 void resetTeamScores ( void );
-void startCountdown ( int delay, float limit, const char *buyWho );
-void cancelCountdown ( const char *byWho = NULL );
+void pauseCountdown ( int pausedBy = ServerPlayer );
+void resumeCountdown ( int resumedBy = ServerPlayer );
+void startCountdown ( int delay, float limit, int playerID = ServerPlayer );
+void cancelCountdown ( int playerID = ServerPlayer );
 
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void playerAlive(int playerIndex);
@@ -181,6 +178,7 @@ void makeWalls ( void );
 
 PlayerId getNewPlayerID();
 void checkGameOn();
+void cleanupGameOver();
 void checkTeamScore(int playerIndex, int teamIndex);
 void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] );
 

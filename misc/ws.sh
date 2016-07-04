@@ -52,7 +52,7 @@
 # grep them first to not touch the file date/time
 
 #temp=$$.tmp
-files=`find * -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am | egrep -v '(\.svn|MSVC/build/|src/other/)' | sort`
+files=`find * -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am | grep -v 'MSVC/build/' | sort`
 # convert 8 spaces to tab
 for file in $files ; do
  # don't actually include 8 spaces or they might get replaced. ;-)
@@ -65,7 +65,7 @@ for file in $files ; do
  fi
 done
 
-files=`find * -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am -o -name README\* -o -name \*.dsp -o -name \*.fmt | egrep -v '(\.svn|MSVC/build/|src/other/)' | sort`
+files=`find * -name \*.cxx -o -name \*.h -o -name \*.cpp -o -name \*.c -o -name Makefile.am -o -name README\* -o -name \*.dsp -o -name \*.fmt | grep -v 'MSVC/build/' | sort`
 # remove trailing whitespace and convert spacetab to tab
 for file in $files ; do
  # that's a tab in the []
@@ -81,4 +81,4 @@ done
 
 # show any that remain for potential hand edits
 echo files with trailing whitespace:
-grep -Irsl '[[:space:]][[:space:]]*$' * | grep -v '\.svn' | grep -v Makefile$ | sort
+grep -Irsl '[[:space:]][[:space:]]*$' * | grep -v 'Makefile$' | sort

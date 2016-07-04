@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -9,10 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-
-#ifdef _MSC_VER
-#pragma warning( 4:4786)
-#endif
 
 #include "common.h"
 
@@ -959,10 +955,11 @@ bool MsgCommand::operator() (const char	 *message,
   sendPlayerMessage(playerData, to, arguments.c_str() + messageStart + 1);
 
   // event handler goodness
-  bz_ChatEventData_V1 chatData;
+  bz_ChatEventData_V2 chatData;
   chatData.from = playerData->getIndex();
   chatData.to = to;
 
+  chatData.messageType = eChatMessage;
   chatData.message = arguments.c_str() + messageStart + 1;
 
   // send any events that want to watch the chat
@@ -1087,8 +1084,10 @@ bool SuperkillCommand::operator() (const char	 *,
 				   GameKeeper::Player *playerData)
 {
 	// If no playerData - dont perfom permission check, since it is probably the API
+	int t = ServerPlayer;
+
 	if (playerData){
-		int t = playerData->getIndex();
+		t = playerData->getIndex();
 		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
 			sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
 			return true;
@@ -1100,9 +1099,11 @@ bool SuperkillCommand::operator() (const char	 *,
   {
 	  gameOver = true;
 	  // fire off a game end event
-	  bz_GameStartEndEventData_V1	gameData;
+	  bz_GameStartEndEventData_V2	gameData;
 	  gameData.eventType = bz_eGameEndEvent;
 	  gameData.duration = clOptions->timeLimit;
+		gameData.playerID = t;
+		gameData.gameOver = true;
 	  worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
   }
   if (clOptions->timeManualStart)
@@ -1132,9 +1133,11 @@ bool GameOverCommand::operator() (const char	 *,
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData_V1	gameData;
+  bz_GameStartEndEventData_V2	gameData;
   gameData.eventType = bz_eGameEndEvent;
   gameData.duration = clOptions->timeLimit;
+	gameData.playerID = t;
+	gameData.gameOver = true;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 
   return true;
@@ -1176,7 +1179,7 @@ bool CountdownCommand::operator() (const char	 * message,
 			return true;
 		}
 
-		pauseCountdown(playerData->player.getCallSign());
+		pauseCountdown(t);
 		return true;
       }
 	  else if (parts[1] == "resume")
@@ -1187,7 +1190,7 @@ bool CountdownCommand::operator() (const char	 * message,
 			sendMessage(ServerPlayer, t, "The game is not paused");
 			return true;
 		}
-		resumeCountdown(playerData->player.getCallSign());
+		resumeCountdown(t);
 		return true;
       }
 	  else if (parts[1] == "cancel")
@@ -1195,7 +1198,7 @@ bool CountdownCommand::operator() (const char	 * message,
 		if (countdownDelay <= 0) {
 			sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
 		} else {
-			cancelCountdown();
+			cancelCountdown(t);
 		}
 
 		return true;
@@ -1249,7 +1252,7 @@ bool CountdownCommand::operator() (const char	 * message,
       countdownDelay = 0;
     }
 
-	startCountdown ( countdownDelay, clOptions->timeLimit, playerData->player.getCallSign() );
+	startCountdown(countdownDelay, clOptions->timeLimit, t);
   }
   else
   {
@@ -2546,9 +2549,8 @@ bool ReloadCommand::operator() (const char	 *message,
   }
 
   if (reload_users) {
-    logDebugMessage(3,"Reloading users and passwords\n");
+    logDebugMessage(3,"Reloading users\n");
     userDatabase.clear();
-    passwordDatabase.clear();
 
     if (userDatabaseFile.size())
       PlayerAccessInfo::readPermsFile(userDatabaseFile);

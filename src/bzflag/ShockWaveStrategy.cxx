@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -50,7 +50,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
     team = p ? p->getTeam() : RogueTeam;
   }
 
-  const float* c = Team::getRadarColor(team);
+  const float* c = Team::getShotColor(team);
   if (RENDERER.useQuality() >= 2) {
     shockNode->setColor(c[0], c[1], c[2], 0.5f);
   } else {
@@ -83,7 +83,7 @@ void ShockWaveStrategy::update(float dt)
     currentTeam = team;
   }
 
-  const float* c = Team::getRadarColor(currentTeam);
+  const float* c = Team::getShotColor(currentTeam);
 
   // fade old-style shockwaves
   if (RENDERER.useQuality() >= 2) {

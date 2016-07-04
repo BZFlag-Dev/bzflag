@@ -41,6 +41,7 @@
 *.nativecodeanalysis.all.xml
 *.nativecodeanalysis.xml
 *.lastcodeanalysissucceeded
+*.ipch
 
 # GNU Autotools
 Makefile.in
@@ -49,7 +50,6 @@ Makefile
 aclocal.m4
 autom4te.cache
 bzflag.info
-bzflag.lsm
 bzflag.spec
 compile
 /config.*
@@ -57,6 +57,7 @@ configure
 depcomp
 /include/config.h
 /include/config.h.in
+/include/config.h.in~
 /INSTALL
 install-sh
 libtool
@@ -76,6 +77,7 @@ stamp-h1
 stamp-h2
 stamp-h3
 work
+.dirstamp
 
 .deps
 .libs
@@ -86,33 +88,14 @@ work
 /src/bzadmin/bzadmin
 /src/bzflag/bzflag
 /src/bzfs/bzfs
+/tools/TextTool2/TextTool2
+/tools/bzwtransform/bzwtransform
 /tools/modeltool/modeltool
-/bin_Win32/*
-/bin_x64/*
-
-# Curl and ares
-/src/other/ares/acountry
-/src/other/ares/adig
-/src/other/ares/ahost
-/src/other/ares/ares_*.pdf
-/src/other/ares/ares_build.h
-/src/other/ares/ares_config.h
-/src/other/ares/ares_config.h.in
-/src/other/ares/libcares.pc
-/src/other/curl/curl-config
-/src/other/curl/docs/*.html
-/src/other/curl/docs/*.pdf
-/src/other/curl/docs/libcurl/*.html
-/src/other/curl/docs/libcurl/*.pdf
-/src/other/curl/include/curl/curlbuild.h
-/src/other/curl/lib/curl_config.h
-/src/other/curl/lib/curl_config.h.in
-/src/other/curl/libcurl.pc
-/src/other/curl/src/curl_config.h
-/src/other/curl/src/hugehelp.c
-/src/other/*/config.guess
-/src/other/*/config.status
-/src/other/*/config.sub
+/bin_Release_Win32/*
+/bin_Release_x64/*
+/bin_Debug_Win32/*
+/bin_Debug_x64/*
+/tests/unittests
 
 # Misc
 *.diff
@@ -123,8 +106,8 @@ work
 /man/*.html
 /misc/bzflag.desktop
 /src/platform/MacOSX/BZFlag-Info.plist
-
 /MSVC/ipch
+/MSVC/bzflag.aps
 
 # OS generated files
 .DS_Store

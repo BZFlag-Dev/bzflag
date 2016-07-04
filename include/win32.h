@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,20 +27,8 @@
 #define	MAXFLOAT	FLT_MAX
 #endif
 
-#if (_MSC_VER > 1200) // VC7 or higher
-	#define _USE_MATH_DEFINES
-#else	// vc6 and lower needs em
-	#ifndef M_PI
-	#define	M_PI		3.14159265358979323846f
-	#endif
-	#ifndef M_SQRT1_2
-	#define	M_SQRT1_2	0.70710678118654752440f
-	#endif
-	#ifndef  M_SQRT2
-	#define	 M_SQRT2	 1.41421356237309504880f
-	#endif
-#endif
-
+// Define this so that the math.h defines M_PI, M_SQRT2, and similar
+#define _USE_MATH_DEFINES
 
 // missing types
 
@@ -62,8 +50,6 @@ typedef unsigned int	uint32_t;
 
 /* stuff specific to visual studio */
 #if (_MSC_VER)
-// turn off bogus `this used in base member initialization list'
-#  pragma warning(disable: 4786)
 #  pragma warning(disable: 4503)
 #  pragma warning(disable: 4355)
 

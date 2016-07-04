@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,6 +16,7 @@
 /* common headers */
 #include "BZDBCache.h"
 #include "AnsiCodes.h"
+#include "Team.h"
 
 /* local headers */
 #include "ScoreboardRenderer.h"
@@ -252,12 +253,8 @@ void Roaming::buildRoamingLabel(void) {
 
   if (world && tracked) {
     if (BZDBCache::colorful) {
-      int color = tracked->getTeam();
-      if (color == RabbitTeam || color < 0 || color > LastColor) {
-	// non-teamed, rabbit are white (same as observer)
-	color = WhiteColor;
-      }
-      playerString += ColorStrings[color];
+      TeamColor color = tracked->getTeam();
+      playerString += Team::getAnsiCode(color);
     }
     playerString += tracked->getCallSign();
 
@@ -266,7 +263,7 @@ void Roaming::buildRoamingLabel(void) {
       if (BZDBCache::colorful) {
 	playerString += ColorStrings[CyanColor] + " / ";
 	if (flag->flagTeam != NoTeam) {
-	  playerString += ColorStrings[flag->flagTeam];
+	  playerString += Team::getAnsiCode(flag->flagTeam);
 	} else {
 	  playerString += ColorStrings[WhiteColor];
 	}

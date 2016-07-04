@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -97,7 +97,7 @@ void cURLManager::setup()
   CURLcode result;
 
   logDebugMessage(1,"LIBCURL version:  %s\n", curl_version());
-  if ((result = curl_global_init(CURL_GLOBAL_NOTHING)))
+  if ((result = curl_global_init(CURL_GLOBAL_DEFAULT)))
     logDebugMessage(1,"cURL Global init Error: %d\n", result);
   /* might need to call removeHandle() still if added */
   if (!multiHandle)

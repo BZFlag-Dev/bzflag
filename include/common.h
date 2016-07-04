@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -332,13 +332,11 @@ typedef unsigned char	uint8_t;
 #  endif /* __cplusplus */
 #endif /* HAVE_STD_MIN */
 
-#ifdef BUILD_REGEX
-#  include "bzregex.h"
-#elif defined(HAVE_REGEX_H)
+#if defined(HAVE_REGEX_H)
 #  include <regex.h>
 #else
 #  define regex_t void
-#endif  /* BUILD_REGEX */
+#endif  /* HAVE_REGEX_H */
 
 #endif /* BZF_COMMON_H */
 

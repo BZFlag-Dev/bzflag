@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -12,11 +12,11 @@
 
 // PluginUtils.h - Collection of useful utility functions for plugins
 
-#include <iostream>
-#include <fstream>
 #include "bzfsAPI.h"
 #include "plugin_config.h"
 #include "plugin_utils.h"
+#include <iostream>
+#include <fstream>
 
 /*
  * INI style configuration file parser class
@@ -30,12 +30,8 @@ PluginConfig::PluginConfig()
 {
 }
 
-PluginConfig::PluginConfig(const std::string &filename)
+PluginConfig::PluginConfig(const std::string &filename) : errors(0), whitespace(" \t\r"), configFilename(filename)
 {
-  configFilename = filename;
-  whitespace = " \t\r";
-  errors = 0;
-
   parse();
 }
 

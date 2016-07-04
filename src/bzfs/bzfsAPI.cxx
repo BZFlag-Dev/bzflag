@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -213,12 +213,6 @@ BZF_API int bz_APIVersion ( void )
 }
 
 //******************************bzApiString********************************************
-class bz_ApiString::dataBlob
-{
-public:
-  std::string str;
-};
-
 bz_ApiString::bz_ApiString()
 {
   data = new dataBlob;
@@ -295,9 +289,32 @@ bool bz_ApiString::operator != ( const char* r )
   return data->str != r;
 }
 
+bz_ApiString& bz_ApiString::operator += ( const bz_ApiString& r )
+{
+  data->str += r.data->str;
+  return *this;
+}
+
+bz_ApiString& bz_ApiString::operator += ( const std::string& r )
+{
+  data->str += r;
+  return *this;
+}
+
+bz_ApiString& bz_ApiString::operator += ( const char* r )
+{
+  data->str += r;
+  return *this;
+}
+
 unsigned int bz_ApiString::size ( void ) const
 {
   return data->str.size();
+}
+
+bool bz_ApiString::empty ( void ) const
+{
+  return data->str.empty();
 }
 
 const char* bz_ApiString::c_str(void) const
@@ -1153,7 +1170,7 @@ BZF_API bool bz_isPlayerPaused( int playerID )
   return player->player.isPaused();
 }
 
-BZF_API int bz_getPausedTime( int playerID )
+BZF_API double bz_getPausedTime( int playerID )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -1163,7 +1180,7 @@ BZF_API int bz_getPausedTime( int playerID )
   return player->player.getPausedTime();
 }
 
-BZF_API int bz_getIdleTime( int playerID )
+BZF_API double bz_getIdleTime( int playerID )
 {
   GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -1290,6 +1307,52 @@ BZF_API bool bz_setPlayerOperator (int playerId)
 
   player->accessInfo.setOperator();
   return true;
+}
+
+BZF_API bool bz_isPlayerSpawnable (int playerId )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+  
+  if (!player)
+    return false;
+  
+  return player->player.isAllowedToSpawn();
+}
+
+BZF_API bool bz_setPlayerSpawnable ( int playerId, bool spawn )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+  
+  if (!player)
+    return false;
+  
+  player->player.setAllowedToSpawn(spawn);
+
+  // Their spawnability has changed, so let's allow for one notification
+  if (!spawn)
+    player->player.setNotifiedOfSpawnable(false);
+  
+  return true;
+}
+
+BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return;
+
+  player->player.setRestartOnBase(base);
+}
+
+BZF_API bool bz_getPlayerSpawnAtBase ( int playerId )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+
+  if (!player)
+    return false;
+
+  return player->player.shouldRestartAtBase();
 }
 
 BZF_API bool bz_addPlayerToGame( int playerID )
@@ -2180,7 +2243,7 @@ BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item 
   switch(listType) {
     default:
     case eIPList:
-      API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr).c_str();
+      API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr, clOptions->acl.banList[item].cidr).c_str();
       break;
 
     case eHostList:
@@ -2346,7 +2409,7 @@ BZF_API bool bz_isCountDownActive( void )
 
 BZF_API bool bz_isCountDownInProgress( void )
 {
-  return countdownDelay > 0;
+  return (countdownDelay >= 0 || countdownResumeDelay >= 0);
 }
 
 BZF_API bool bz_isCountDownPaused( void )
@@ -2657,6 +2720,17 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
   return true;
 }
 
+//-------------------------------------------------------------------------
+
+BZF_API float bz_getWorldMaxHeight ( void )
+{
+  if (BZDB.isTrue("_disableHeightChecks"))
+  {
+    return -1;
+  }
+
+  return getMaxWorldHeight();
+}
 
 //-------------------------------------------------------------------------
 
@@ -2817,8 +2891,7 @@ BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
     }
     else // the box is rotated, maths is needed
     {
-      float pi = (float)(atan(1.0f) * 4);
-      float rotRad = (rotation * pi) / 180;
+      float rotRad = rotation * DEG2RADf;
       float height  = (yMax - yMin);
       float width   = (xMax - xMin);
       
@@ -2915,11 +2988,11 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
 	yMax = (float)atof(nubs->get(2).c_str());
 	zMin = (float)atof(nubs->get(3).c_str());
 	zMax = (float)atof(nubs->get(4).c_str());
-	_radius = (float)atof(nubs->get(5).c_str());
+	radius = (float)atof(nubs->get(5).c_str());
 
 	bz_debugMessagef(0, "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
 	bz_debugMessagef(0, "  position %.0f %.0f %.0f", xMax, yMax, zMin);
-	bz_debugMessagef(0, "  radius %.0f", _radius);
+	bz_debugMessagef(0, "  radius %.0f", radius);
 	bz_debugMessagef(0, "  height %.0f", (zMax - zMin));
       }
       else if ((key == "POSITION" || key == "POS") && nubs->size() > 3)
@@ -2980,6 +3053,48 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
 float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
 {
     return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
+}
+
+BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
+{
+  float pos[3] = {0,0,0}, size[3] = {0,0,0};
+  
+  if (obj->box) {
+    pos[0] = (obj->xMax + obj->xMin) / 2;
+    pos[1] = (obj->yMax + obj->yMin) / 2;
+    size[0] = (obj->xMax - obj->xMin) / 2;
+    size[1] = (obj->yMax - obj->yMin) / 2;
+  }
+  else {
+    pos[0] = obj->xMax;
+    pos[1] = obj->yMax;
+  }
+  
+  pos[2] = obj->zMin;
+  size[2] = obj->zMax - obj->zMin;
+  
+  if (obj->box)
+  {
+    float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
+    float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
+    float cos_val = cosf(obj->rotation);
+    float sin_val = sinf(obj->rotation);
+    
+    randomPos[0] = ((x * cos_val) - (y * sin_val)) + pos[0];
+    randomPos[1] = ((x * sin_val) + (y * cos_val)) + pos[1];
+    randomPos[2] = pos[2];
+  }
+  else
+  {
+    float t = (float)(2 * M_PI * bzfrand());
+    float r = sqrt((float)bzfrand());
+    float x = r * cosf(t);
+    float y = r * sinf(t);
+    
+    randomPos[0] = (obj->radius * x) + pos[0];
+    randomPos[1] = (obj->radius * y) + pos[1];
+    randomPos[2] = pos[2];
+  }
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
@@ -3381,7 +3496,7 @@ public:
 		  }
 	  }
 
-	  if (!currentJob && Tasks.size())
+	  if (!currentJob && !Tasks.empty())
 	  {
 		  currentJob = curl_easy_init();
 		  curl_easy_setopt(currentJob, CURLOPT_URL, task.url.c_str());
@@ -3484,7 +3599,7 @@ private:
 
   void KillCurrentJob ( bool notify )
   {
-    if (notify && Tasks.size())
+    if (notify && !Tasks.empty())
       Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Canceled");
 
     if (currentJob) {
@@ -3884,9 +3999,8 @@ BZF_API void bz_reloadGroups()
 
 BZF_API void bz_reloadUsers()
 {
-  logDebugMessage(3,"Reloading users and passwords\n");
+  logDebugMessage(3,"Reloading users\n");
   userDatabase.clear();
-  passwordDatabase.clear();
 
   if (userDatabaseFile.size())
     PlayerAccessInfo::readPermsFile(userDatabaseFile);
@@ -3923,9 +4037,11 @@ BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
   }
 
   // fire off a game end event
-  bz_GameStartEndEventData_V1	gameData;
+  bz_GameStartEndEventData_V2	gameData;
   gameData.eventType = bz_eGameEndEvent;
   gameData.duration = clOptions->timeLimit;
+	gameData.playerID = playerID;
+	gameData.gameOver = true;
   worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
 }
 
@@ -3934,29 +4050,76 @@ BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] )
   return convertTeam(whoseBase(pos[0],pos[1],pos[2]));
 }
 
+BZF_API void bz_cancelCountdown ( int playerID )
+{
+	cancelCountdown(playerID);
+}
+
+BZF_API void bz_pauseCountdown ( int playerID )
+{
+	pauseCountdown(playerID);
+}
+
+BZF_API void bz_resumeCountdown ( int playerID )
+{
+	resumeCountdown(playerID);
+}
+
+BZF_API void bz_startCountdown ( int delay, float limit, int playerID )
+{
+	startCountdown(delay, limit, playerID);
+}
+
 BZF_API void bz_cancelCountdown ( const char *canceledBy )
 {
-  cancelCountdown(canceledBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(canceledBy);
+
+	bz_cancelCountdown(playerID);
 }
 
 BZF_API void bz_pauseCountdown ( const char *pausedBy )
 {
-  pauseCountdown(pausedBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(pausedBy);
+
+	bz_pauseCountdown(playerID);
 }
 
 BZF_API void bz_resumeCountdown ( const char *resumedBy )
 {
-  resumeCountdown(resumedBy);
+	int playerID = GameKeeper::Player::getPlayerIDByName(resumedBy);
+
+	bz_resumeCountdown(playerID);
+}
+
+BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
+{
+	int playerID = GameKeeper::Player::getPlayerIDByName(byWho);
+
+	bz_startCountdown(delay, limit, playerID);
+}
+
+BZF_API float bz_getCountdownRemaining ( void )
+{
+  if (!bz_isCountDownActive()) {
+    return -1;
+  }
+  
+  TimeKeeper tm = TimeKeeper::getCurrent();
+  TimeKeeper gameTime = gameStartTime;
+  PlayerInfo::setCurrentTime(tm);
+  
+  if (bz_isCountDownPaused() || bz_isCountDownInProgress()) {
+    gameTime += (float)(tm - countdownPauseStart);
+  }
+  
+  float newTimeElapsed = (float)(tm - gameTime);
+  
+  return (clOptions->timeLimit - newTimeElapsed);
 }
 
 BZF_API void bz_resetTeamScores ( void )
 {
   resetTeamScores();
-}
-
-BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
-{
-  startCountdown(delay,limit,byWho);
 }
 
 BZF_API	bz_eGameType bz_getGameType ( void  )

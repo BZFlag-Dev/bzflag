@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -402,7 +402,7 @@ void					BeOSMedia::writeAudioFrames(
 								    const float* samples, int numFrames)
 {
   status_t err = B_OK;
-  int len, ret;
+  int len;
   int numSamples = 2 * numFrames;
   int size = numSamples * sizeof(SAMPTYPE);
   uint8 *buf = (uint8 *)samples;
@@ -554,4 +554,3 @@ double					BeOSMedia::stopwatch(bool start)
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

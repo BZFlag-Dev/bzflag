@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,12 +13,12 @@
 // ServerControl.cpp : Server shutdown and ban file control
 //
 
+#include "bzfsAPI.h"
+#include "plugin_utils.h"
 #include <fstream>
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include "bzfsAPI.h"
-#include "plugin_utils.h"
 
 using namespace std;
 
@@ -77,7 +77,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   serverActive = false;
   countPlayers( join , NULL );
 
-  lastTime = 0.0f;
+  lastTime = 0.0;
 
   /*
    * Set up options from the configuration file
@@ -189,15 +189,13 @@ void ServerControl::checkShutdown( void ) {
 
 void ServerControl::Event( bz_EventData *eventData )
 {
-  ostringstream msg;
   bz_PlayerJoinPartEventData_V1 *data = (bz_PlayerJoinPartEventData_V1 *) eventData;
-  double now;
 
   if (eventData) {
     switch (eventData->eventType) {
-      case bz_eTickEvent:
-	now = bz_getCurrentTime();
-	if ((now - lastTime) < 3.0f) return;
+      case bz_eTickEvent: {
+	double now = bz_getCurrentTime();
+	if ((now - lastTime) < 3.0) return;
 	lastTime = now;
 	checkShutdown();
 	if (banFilename != "" )
@@ -205,6 +203,7 @@ void ServerControl::Event( bz_EventData *eventData )
 	if (masterBanFilename != "")
 	  checkMasterBanChanges();
 	break;
+      }
       case bz_ePlayerJoinEvent:
 	if (data->record->team >= eRogueTeam &&
 	    data->record->team <= eHunterTeam &&
@@ -226,16 +225,13 @@ void ServerControl::Event( bz_EventData *eventData )
 void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
 {
   bz_APIIntList *playerList = bz_newIntList();
-  bz_BasePlayerRecord *player;
-  ostringstream msg;
-  string str;
   int numLines = 0;
   int numObs = 0;
 
   bz_getPlayerIndexList( playerList );
 
   for ( unsigned int i = 0; i < playerList->size(); i++ ) {
-    player = bz_getPlayerByIndex( playerList->get(i));
+    bz_BasePlayerRecord *player = bz_getPlayerByIndex( playerList->get(i));
     if (player) {
       if (act == join || (data && (player->playerID != data->playerID) &&
 			  (player->callsign != ""))) {

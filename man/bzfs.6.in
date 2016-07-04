@@ -1,5 +1,5 @@
 .\" bzflag
-.\" Copyright (c) 1993-2015 Tim Riker
+.\" Copyright (c) 1993-2016 Tim Riker
 .\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
@@ -9,7 +9,7 @@
 .\" IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 .\" WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 .\"
-.TH "bzfs" "6" "@BZFLAG_DATE@" "bzfs-@BZFLAG_VERSION@" "BZFlag"
+.TH "BZFS" "6" "@BUILD_DATE@" "@PACKAGE_STRING@" "BZFlag"
 .SH "NAME"
 bzfs \- BZFlag game server
 .SH "SYNOPSIS"
@@ -257,8 +257,8 @@ relation to other players.
 Shows a help page and lists all the valid flag id's.
 .TP
 \fB\-helpmsg \fIfile\fR \fIname\fR
-Create a help message accessible by /help \fIname\fR, which prints the
-contents of \fIfile\fR. Restricted to 10 lines per help message.
+Provide a message accessible by /help \fIname\fR, which sends no more
+than the first 50 lines of \fIfile\fR to the player.
 .TP
 \fB\-i \fIinterface\fR
 Server will listen for and respond to ``pings'' (sent via broadcast)
@@ -1119,7 +1119,7 @@ VERIFIED group.
 
 In addition, there are global groups available that persist
 network\-wide.  Users that register their callsigns on the BZFlag
-website at http://forums.bzflag.org/ have the ability to globally
+website at https://forums.bzflag.org/ have the ability to globally
 authenticate by providing a password from within the client.  When
 they authenticate, bzfs will ask the list server if they belong to any
 of the groups listed in your group database file that are not prefixed

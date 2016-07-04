@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  * Writen By Jeffrey Myers
  *
  * This package is free software;  you can redistribute it and/or
@@ -53,73 +53,6 @@ typedef enum {
   eCenterTop,
   eCenterBottom
 } eAlignment;
-
-extern void glQuad(float x, float y, eAlignment align, float scale = 1.0f);
-extern void glLineRing(float radius, float width = 1.0f);
-
-// draw an outline box with the outside at the bounds, and inset by the thickness
-extern void glOutlineBoxCP(float thickness, float centerX, float centerY,
-		    float width, float height, float depth = 0.0f);
-inline void glOutlineBoxCP(float t, int x, int y, int w, int h, int d = 0) {
-  glOutlineBoxCP(t, (float)x, (float)y, (float)w, (float)h, (float)d);
-}
-
-extern void glOutlineBoxHV(float thickness, float minX, float minY,
-			   float maxX, float maxY, float depth = 0.0f);
-inline void glOutlineBoxHV(float t, int minX, int minY, int maxX, int maxY, int d = 0) {
-  glOutlineBoxHV(t, (float)minX, (float)minY, (float)maxX, (float)maxY, (float)d);
-}
-
-// draw an outline tabbed box
-extern void glOutlineTabbedBox(float thickness, float minX, float minY,
-			       float maxX, float maxY,
-			       float tabInset, float tabWidth, float tabHeight,
-			       float depth = 0);
-
-// display list system
-typedef unsigned int GLDisplayList;
-
-#define _INVALID_LIST INVALID_GL_ID
-
-
-class GLDisplayListCreator
-{
- public:
-  virtual ~GLDisplayListCreator() {}
-
-  virtual void buildGeometry(GLDisplayList displayList) = 0;
-};
-
-
-class DisplayListSystem
-{
- public:
-  static DisplayListSystem& Instance() {
-    static DisplayListSystem dls;
-    return dls;
-  }
-
-  ~DisplayListSystem();
-
-  GLDisplayList newList(GLDisplayListCreator *creator);
-  void freeList(GLDisplayList displayList);
-
-  void flushLists();
-
-  void callList(GLDisplayList displayList);
-  void callListsV(std::vector<GLDisplayList> &displayLists);
-
- protected:
-  DisplayListSystem();
-
-  typedef struct _DisplayList {
-    GLDisplayListCreator	*creator;
-    unsigned int		list;
-  } DisplayList;
-
-  std::map<GLDisplayList,DisplayList>	lists;
-  GLDisplayList				lastList;
-};
 
 
 #endif // __OPENGLUTILS_H__

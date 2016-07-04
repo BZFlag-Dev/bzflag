@@ -35,8 +35,8 @@ echo " okay"
 
 
 echo -n "... getting list of servers ..."
-servers=`curl http://my.BZFlag.org/db/?action=LIST 2>/dev/null`
-[ $? != 0 ] && echo " NOT okay" && echo "ERROR: unable to curl http://my.BZFlag.org/db/?action=LIST" && exit 1
+servers=`curl https://my.bzflag.org/db/?action=LIST 2>/dev/null`
+[ $? != 0 ] && echo " NOT okay" && echo "ERROR: unable to curl https://my.bzflag.org/db/?action=LIST" && exit 1
 echo " okay"
 
 

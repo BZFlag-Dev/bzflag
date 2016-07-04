@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -54,6 +54,7 @@
 #include "ServerList.h"
 #include "SphereSceneNode.h"
 #include "TankGeometryMgr.h"
+#include "Team.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
 #include "TimeBomb.h"
@@ -952,11 +953,12 @@ static void		doMotion()
 }
 
 
-static void mouseClamp(const BzfMotionEvent& event)
+static void mouseClamp()
 {
   // only clamp when it might be useful
-  if ((myTank == NULL) || !myTank->isAlive() ||
+  if (HUDDialogStack::get()->isActive() || (myTank == NULL) || !myTank->isAlive() ||
       myTank->isPaused() || (myTank->getTeam() == ObserverTeam)) {
+    mainWindow->disableConfineToMotionbox();
     return;
   }
 
@@ -964,6 +966,7 @@ static void mouseClamp(const BzfMotionEvent& event)
   bool alt, ctrl, shift;
   display->getModState(alt, ctrl, shift);
   if (ctrl) {
+    mainWindow->disableConfineToMotionbox();
     return;
   }
 
@@ -987,10 +990,7 @@ static void mouseClamp(const BzfMotionEvent& event)
   const int yp = yc + pixels;
 
   // clamp, as required
-  if (event.x < xn) { mainWindow->getWindow()->warpMouse(xn, event.y); }
-  if (event.x > xp) { mainWindow->getWindow()->warpMouse(xp, event.y); }
-  if (event.y < yn) { mainWindow->getWindow()->warpMouse(event.x, yn); }
-  if (event.y > yp) { mainWindow->getWindow()->warpMouse(event.x, yp); }
+  mainWindow->confineToMotionbox(xn, yn, xp, yp);
 }
 
 
@@ -1098,7 +1098,7 @@ static void		doEvent(BzfDisplay *disply)
       if (myTank && myTank->isAlive() && (myTank->getInputMethod() != LocalPlayer::Mouse) && (BZDB.isTrue("allowInputChange")))
 	myTank->setInputMethod(LocalPlayer::Mouse);
       if (BZDB.isTrue("mouseClamp")) {
-	mouseClamp(event.mouseMove);
+	mouseClamp();
       }
       break;
 
@@ -1123,12 +1123,8 @@ void		addMessage(const Player *_player, const std::string& msg,
       }
       const PlayerId pid = _player->getId();
       if (pid < 200) {
-	int color = _player->getTeam();
-	if (color < 0 || (color > 4 && color != HunterTeam)) {
-	  // non-teamed, rabbit are white (same as observer)
-	  color = WhiteColor;
-	}
-	fullMessage += ColorStrings[color];
+	TeamColor color = _player->getTeam();
+	fullMessage += Team::getAnsiCode(color);
       } else if (pid == ServerPlayer) {
 	fullMessage += ColorStrings[YellowColor];
       } else {
@@ -1399,12 +1395,8 @@ static void printIpInfo (const Player *_player, const Address& addr,
   }
   std::string colorStr;
   if (_player->getId() < 200) {
-    int color = _player->getTeam();
-    if (color == RabbitTeam || color < 0 || color > LastColor) {
-      // non-teamed, rabbit are white (same as observer)
-      color = WhiteColor;
-    }
-    colorStr = ColorStrings[color];
+    TeamColor color = _player->getTeam();
+    colorStr = Team::getAnsiCode(color);
   } else {
     colorStr = ColorStrings[CyanColor]; // replay observers
   }
@@ -1776,7 +1768,6 @@ static void handleNearFlag (const void *msg, uint16_t)
 static void		handleServerMessage(bool human, uint16_t code,
 					    uint16_t len, const void* msg)
 {
-  std::vector<std::string> args;
   bool checkScores = false;
   static WordFilter *wordfilter = (WordFilter *)BZDB.getPointer("filter");
 
@@ -2262,7 +2253,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    if(shot && !shot->isStoppedByHit()) {
 		  killerPlayer->addHitToStats(shot->getFlag());
 		}
-	  } 
+	  }
 
       // handle my personal score against other players
       if ((killerPlayer == myTank || victimPlayer == myTank) &&
@@ -2322,8 +2313,8 @@ static void		handleServerMessage(bool human, uint16_t code,
 	    else if (BZDB.get("killerhighlight") == "2")
 	      playerStr += ColorStrings[UnderlineColor];
 	  }
-	  int color = killerPlayer->getTeam();
-	  playerStr += ColorStrings[color];
+	  TeamColor color = killerPlayer->getTeam();
+	  playerStr += Team::getAnsiCode(color);
 	  playerStr += killerPlayer->getCallSign();
 
 	  if (victimPlayer == myTank)
@@ -2469,7 +2460,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  if (capturer == myTank) {
 	    hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
 	    playLocalSound( SFX_KILL_TEAM );
-	    sendMeaCulpa(myTank->getTeam());
+	    sendMeaCulpa(TeamToPlayerId(myTank->getTeam()));
 	  }
 	} else {
 	  std::string message("captured ");
@@ -2836,7 +2827,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  const PlayerId pid = srcPlayer->getId();
 	  if (pid < 200) {
 	    if (srcPlayer && srcPlayer->getTeam() != NoTeam)
-	      colorStr += ColorStrings[srcPlayer->getTeam()];
+	      colorStr += Team::getAnsiCode(srcPlayer->getTeam());
 	    else
 	      colorStr += ColorStrings[RogueTeam];
 	  } else if (pid == ServerPlayer) {
@@ -2944,7 +2935,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	else if (srcPlayer->getTeam() == ObserverTeam)
 	  oldcolor = ColorStrings[CyanColor];
 	else
-	  oldcolor = ColorStrings[srcPlayer->getTeam()];
+	  oldcolor = Team::getAnsiCode(srcPlayer->getTeam());
 	if (fromServer)
 	  addMessage(NULL, fullMsg, 2, false, oldcolor.c_str());
 	else
@@ -3002,7 +2993,6 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  break;
 	}
 
-	std::string name(tank->getCallSign());
 	std::string message("joining as ");
 	if (tank->getTeam() == ObserverTeam) {
 	  message += "an observer";
@@ -3234,7 +3224,7 @@ static void		doMessages()
   int e = 0;
   // handle server messages
   if (serverLink) {
-   
+
     while (!serverError && (e = serverLink->read(code, len, msg, 0)) == 1)
       handleServerMessage(true, code, len, msg);
     if (e == -2) {
@@ -3246,7 +3236,7 @@ static void		doMessages()
 
 #ifdef ROBOT
   for (int i = 0; i < numRobots; i++) {
-    while (robotServer[i] && (e = robotServer[i]->read(code, len, msg, 0)) == 1)
+    while (robotServer[i] && robotServer[i]->read(code, len, msg, 0) == 1)
       ;
     if (code == MsgKilled || code == MsgShotBegin || code == MsgShotEnd)
       handleServerMessage(false, code, len, msg);
@@ -3880,8 +3870,9 @@ static bool isKillable(const Player *target)
     return true;
   if (myTank->getFlag() == Flags::Colorblindness)
     return true;
-  if (World::getWorld()->allowTeamKills() ||
-    target->getTeam() != myTank->getTeam())
+  if (! World::getWorld()->allowTeamKills() || ! World::getWorld()->allowTeams())
+    return true;
+  if (target->getTeam() != myTank->getTeam())
     return true;
 
   return false;
@@ -3988,7 +3979,7 @@ void setLookAtMarker(void)
     markercolor = RogueTeam;
 
   hud->AddEnhancedNamedMarker(Float3ToVec3(bestTarget->getPosition()),
-			      Float3ToVec4(Team::getRadarColor(markercolor)),
+			      Float3ToVec4(Team::getTankColor(markercolor)),
 			      label, isFriendly(bestTarget), 2.0f);
 }
 
@@ -4079,7 +4070,7 @@ void setTarget()
     addMessage(NULL, msg);
   }
   else if (forbidIdentify) {
-    if (sentForbidIdentify == 10 || sentForbidIdentify == 0) { 
+    if (sentForbidIdentify == 10 || sentForbidIdentify == 0) {
       addMessage(NULL, "'identify' disabled on this server");
     }
     if(sentForbidIdentify == 10) {
@@ -4348,7 +4339,6 @@ static void		setRobotTarget(RobotPlayer* robot)
     const float priority = robot->getTargetPriority(myTank);
     if (priority > bestPriority) {
       bestTarget = myTank;
-      bestPriority = priority;
     }
   }
   robot->setTarget(bestTarget);

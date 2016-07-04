@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,6 +18,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "StateDatabase.h"
+#include "TextureManager.h"
+#include "CommandsStandard.h"
 
 WinWindow*		WinWindow::first = NULL;
 HPALETTE		WinWindow::colormap = NULL;
@@ -155,6 +157,9 @@ void			WinWindow::setMinSize(int, int)
 
 void			WinWindow::setFullscreen(bool on)
 {
+  // Stop grabbing the mouse so the cursor can't get stuck outside of the window
+  ungrabMouse();
+
   if (on) {
     // no window decorations
     DWORD style = GetWindowLong(hwnd, GWL_STYLE);
@@ -212,10 +217,8 @@ void			WinWindow::setFullscreen(bool on)
   MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 
   // reset mouse grab
-  if (mouseGrab) {
-    ungrabMouse();
+  if (mouseGrab)
     grabMouse();
-  }
 }
 
 void			WinWindow::iconify()
@@ -239,6 +242,35 @@ void			WinWindow::getMouse(int& x, int& y) const
   ScreenToClient(hwnd, &point);
   x = (int)point.x;
   y = (int)point.y;
+}
+
+void			WinWindow::disableConfineToMotionbox()
+{
+  ungrabMouse();
+}
+
+void			WinWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+{
+  // Store the boundary positions as two points (top left and bottom right)
+  POINT p1, p2;
+  p1.x = x1;
+  p1.y = y1;
+  p2.x = x2;
+  p2.y = y2;
+
+  // Transform them from client space to screen space
+  ClientToScreen(hwnd, &p1);
+  ClientToScreen(hwnd, &p2);
+
+  // Store them in a rectangle
+  RECT rect;
+  rect.top = p1.y;
+  rect.left = p1.x;
+  rect.bottom = p2.y;
+  rect.right = p2.x;
+
+  // Restrict cursor to that rectangle
+  ClipCursor(&rect);
 }
 
 void			WinWindow::grabMouse()
@@ -326,8 +358,14 @@ bool			WinWindow::hasGammaControl() const
 
 void			WinWindow::makeCurrent()
 {
-  if (hDCChild != NULL)
+  if (hDCChild != NULL) {
     wglMakeCurrent(hDCChild, hRC);
+    if (isNewContext) {
+      OpenGLGState::initContext();
+      TextureManager::instance().reloadTextures();
+      isNewContext = false;
+    }
+  }
 }
 
 void			WinWindow::swapBuffers()
@@ -410,6 +448,8 @@ void			WinWindow::createChild()
     return;
   }
 
+  isNewContext = true;
+
   if (colormap)
     ::RealizePalette(hDCChild);
 
@@ -476,18 +516,11 @@ void			WinWindow::deactivateAll()
 
 void			WinWindow::reactivateAll()
 {
-  bool anyNewChildren = false;
   for (WinWindow* scan = first; scan; scan = scan->next) {
     const bool hadChild = (scan->hDCChild != NULL);
     scan->inactiveDueToDeactivateAll = false;
     scan->makeContext();
-    if (!hadChild && scan->hDCChild != NULL)
-      anyNewChildren = true;
   }
-
-  // reload context data
-  if (anyNewChildren)
-    OpenGLGState::initContext();
 }
 
 HWND			WinWindow::getHandle()
@@ -544,9 +577,6 @@ bool			WinWindow::activate()
     grabMouse();
 
   if (!hadChild && hDCChild != NULL) {
-    // reload context data
-    OpenGLGState::initContext();
-
     // force a redraw
     callExposeCallbacks();
 
@@ -576,6 +606,7 @@ bool			WinWindow::deactivate()
 void			WinWindow::onDestroy()
 {
   inDestroy = true;
+  CommandsStandard::quit();
 }
 
 BYTE			WinWindow::getIntensityValue(float i) const
@@ -712,4 +743,3 @@ void			WinWindow::makeColormap(
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

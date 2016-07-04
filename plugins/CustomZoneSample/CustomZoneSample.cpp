@@ -1,6 +1,5 @@
 // CustomZoneSample.cpp : Defines the entry point for the DLL application.
 //
-#include <vector>
 
 #include "bzfsAPI.h"
 #include "plugin_utils.h"
@@ -12,10 +11,8 @@ class MsgZone : public bz_CustomZoneObject
 public:
   // Our custom constructor will call the parent constructor so we can setup default positions
   // for the zone
-  MsgZone() : bz_CustomZoneObject()
+  MsgZone() : bz_CustomZoneObject(), flag("US")
   {
-    message = "";
-    flag = "US";
   }
 
   // Custom fields that are unique to our zone so we can build on top of the class we're extending
@@ -40,7 +37,7 @@ public:
 
 BZ_PLUGIN(CustomZoneSample)
 
-void CustomZoneSample::Init (const char* commandLine)
+void CustomZoneSample::Init (const char* /*commandLine*/)
 {
   Register(bz_ePlayerUpdateEvent);
 

@@ -155,8 +155,8 @@ void USBJoystick::poll()
       int page = HID_PAGE(h->usage);
       int usage = HID_USAGE(h->usage);
 
-      int which_axis;
       if (page == HUP_GENERIC_DESKTOP) {
+	int which_axis;
 	switch (usage) {
 	  case HUG_X:
 	  case HUG_RX: which_axis = 0; break;
@@ -217,4 +217,3 @@ void USBJoystick::getJoyDevices(std::vector<std::string> &list) const
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

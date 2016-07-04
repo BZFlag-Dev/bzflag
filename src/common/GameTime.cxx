@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -151,7 +151,6 @@ static void resetToRecord(const TimeRecord& record)
 
 void GameTime::update()
 {
-  std::list<TimeRecord>::iterator it;
   unsigned int count = timeRecs.size();
   if (count == 0) {
     const TimeRecord tr = {0,0};
@@ -185,7 +184,7 @@ void GameTime::setStepTime()
 {
   static s64 lastStep = 0;
   const s64 thisStep = getRawTime();
-  if (timeRecs.size() <= 0) {
+  if (timeRecs.empty()) {
     stepTime = thisStep;
   } else {
     // long term prediction

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,10 +16,6 @@
 
 #ifndef	BZF_SCENE_RENDERER_H
 #define	BZF_SCENE_RENDERER_H
-
-#if defined(_MSC_VER)
-#pragma warning(disable: 4786)
-#endif
 
 /* the common header */
 #include "common.h"

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,10 +40,12 @@ DefaultDBItem	defaultDBItems[] = {
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
   { "radaropacity",             "0.3",                  true,   StateDatabase::ReadWrite,       NULL },
+  { "panelheight",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseClamp",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "cpanelfontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "controlPanelTimestamp",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "tkwarnratio",		"0.0",			true,   StateDatabase::ReadWrite,	NULL },
@@ -107,7 +109,8 @@ DefaultDBItem	defaultDBItems[] = {
   { "stencilShadows",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shadowAlpha",		"0.5",			true,	StateDatabase::ReadWrite,	NULL },
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "pauseConsole",		"1",			true,	StateDatabase::ReadWrite,	NULL },
+  { "pauseConsole",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "shotBrightness",		"0.2",			true,	StateDatabase::ReadWrite,	setColor },
 
   // roam smooth follow settings
   { "followDist",		"32.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -137,7 +140,6 @@ DefaultDBItem	defaultDBItems[] = {
   // default fonts
   { "consoleFont",		"DejaVuSansMonoBold",	true,	StateDatabase::ReadWrite,	NULL },
   { "sansSerifFont",		"DejaVuSansCondensedBold",	true,	StateDatabase::ReadWrite,	NULL },
-  { "serifFont",		"DejaVuSerifBold",	true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
   { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },
@@ -146,10 +148,30 @@ DefaultDBItem	defaultDBItems[] = {
   { "baseTopTexture",		"basetop",		true,	StateDatabase::ReadWrite,	NULL },
   { "baseWallTexture",		"basewall",		true,	StateDatabase::ReadWrite,	NULL },
 
+  // team tank colors
+  { "roguecolor",		"1 1 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "redcolor",			"1 0 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "greencolor",		"0 1 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "bluecolor",		"0.1 0.2 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "purplecolor",		"1 0 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observercolor",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rabbitcolor",		"0.8 0.8 0.8",		true,	StateDatabase::ReadWrite,	setColor },
+  { "huntercolor",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
+
+  // team radar colors
+  { "rogueradar",		"1 1 0",		true,	StateDatabase::ReadWrite,	setColor },
+  { "redradar",			"1 0.15 0.15",		true,	StateDatabase::ReadWrite,	setColor },
+  { "greenradar",		"0.2 0.9 0.2",		true,	StateDatabase::ReadWrite,	setColor },
+  { "blueradar",		"0.08 0.25 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "purpleradar",		"1 0.4 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "observerradar",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "rabbitradar",		"1 1 1",		true,	StateDatabase::ReadWrite,	setColor },
+  { "hunterradar",		"1 0.5 0",		true,	StateDatabase::ReadWrite,	setColor },
+
   // team prefixes
   { "redTeamPrefix",		"red_",			true,	StateDatabase::ReadWrite,	NULL },
-  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
   { "greenTeamPrefix",		"green_",		true,	StateDatabase::ReadWrite,	NULL },
+  { "blueTeamPrefix",		"blue_",		true,	StateDatabase::ReadWrite,	NULL },
   { "purpleTeamPrefix",		"purple_",		true,	StateDatabase::ReadWrite,	NULL },
   { "rabbitTeamPrefix",		"rabbit_",		true,	StateDatabase::ReadWrite,	NULL },
   { "hunterTeamPrefix",		"hunter_",		true,	StateDatabase::ReadWrite,	NULL },
@@ -178,29 +200,24 @@ DefaultDBItem	defaultDBItems[] = {
   { "httpTimeout",		"15",			true,	StateDatabase::ReadWrite,	NULL },
 
   // hud drawing
-  { "hudGUIBorderOpacityFactor",	"0.75",		true,  StateDatabase::ReadWrite, NULL },
-  { "hudWayPMarkerSize",		"15",		true,  StateDatabase::ReadWrite, NULL },
-
-
-  // hud drawing
   { "hudGUIBorderOpacityFactor","0.75",			true,	StateDatabase::ReadWrite,	NULL },
+  { "hudWayPMarkerSize",	"15",			true,	StateDatabase::ReadWrite,	NULL },
   { "hideMottos",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "mottoDispLen",		"32",			true,	StateDatabase::ReadWrite,	NULL },
-  { "scoreboardSort",	"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "scoreboardSort",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "maxScoreboardLines",	"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // listFilters
   { "listFilter",  "",					true, StateDatabase::ReadWrite, NULL },
-  { "listFilter0", "",					true, StateDatabase::ReadWrite, NULL },
-  { "listFilter1", "/p>1, # busy",			    true, StateDatabase::ReadWrite, NULL },
-  { "listFilter2", "/p>1,s>1,s<4, # busy - 2 or 3 shots",     true, StateDatabase::ReadWrite, NULL },
-  { "listFilter3", "/p>1,+rabbit, # busy rabbit",	     true, StateDatabase::ReadWrite, NULL },
-  { "listFilter4", "/-j,+r,-f,s=2,+t,vt=2, # ducati",	 true, StateDatabase::ReadWrite, NULL },
-  { "listFilter5", "/vt=3,+t,Rm<1, # three-way",	      true, StateDatabase::ReadWrite, NULL },
-  { "listFilter6", "/d)replay, # replay servers",	     true, StateDatabase::ReadWrite, NULL },
-  { "listFilter7", "/a]\\.bz(:[0-9]+)?$, # .bz servers",      true, StateDatabase::ReadWrite, NULL },
-  { "listFilter8", "/d)louman/d)ahs3/d)spazzy, # fancy maps", true, StateDatabase::ReadWrite, NULL },
-  { "listFilter9", "/d]louman|ahs3|spazzy, # fancy maps2",    true, StateDatabase::ReadWrite, NULL },
+  { "listFilter1", "/p>0,# Servers with players",			true, StateDatabase::ReadWrite, NULL },
+  { "listFilter2", "/p>0/op>0,# Servers with players or observers",	true, StateDatabase::ReadWrite, NULL },
+  { "listFilter3", "/p>0,s>=2,s<=3,# 2 or 3 shots with players",	true, StateDatabase::ReadWrite, NULL },
+  { "listFilter4", "/p>0,+rabbit,# Rabbit chase with players",		true, StateDatabase::ReadWrite, NULL },
+  { "listFilter5", "/-j,+r,s=2,+ctf,vt=2, # ducati-style servers",	true, StateDatabase::ReadWrite, NULL },
+  { "listFilter6", "/d]louman|ahs3|spazzy|jefenry, # fancy maps",	true, StateDatabase::ReadWrite, NULL },
+  { "listFilter7", "/vt=2,mp=2,# 1vs1 servers",				true, StateDatabase::ReadWrite, NULL },
+  { "listFilter8", "/d)*official*league*match*,# League match servers",	true, StateDatabase::ReadWrite, NULL },
+  { "listFilter9", "/+replay,# Replay servers",				true, StateDatabase::ReadWrite, NULL },
 
   // We don't want to keep the geometry settings
   { "geometry",		"",			false,	StateDatabase::ReadWrite, NULL }
@@ -230,4 +247,3 @@ void loadBZDBDefaults ( void )
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

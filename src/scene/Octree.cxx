@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -376,6 +376,7 @@ OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
   count = listSize;
 
   // resize the list to save space
+  // FIXME: Correctly handle the situation of the realloc failing (which would return a NULL pointer)
   list = (SceneNode**) realloc (list, count * sizeof (SceneNode*));
 
   // return if this is a leaf node

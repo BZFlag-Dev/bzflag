@@ -15,7 +15,6 @@
 
 struct st_MsgEnt{
   st_MsgEnt(int t, int r, std::string m): time(t), repeat(r), msg(m) {}
-  st_MsgEnt() {}
   int time;
   int repeat;
   std::string msg;
@@ -92,7 +91,7 @@ void updatePlayerNextEvent (int playerID, double now){
     return;
 
   Players[playerID].nextEventTime = -1;
-  if (Config.nagMsgs.size() == 0)
+  if (Config.nagMsgs.empty())
     return;
 
   for (idx=0; idx<Config.nagMsgs.size(); idx++){
@@ -253,7 +252,7 @@ bool listAdd (int playerID, const char *callsign, bz_eTeamType team, bool verifi
   Players[playerID].isVerified = verified;
   strncpy (Players[playerID].callsign, callsign, 20);
   Players[playerID].joinTime = time;
-  if (Config.nagMsgs.size() == 0)
+  if (Config.nagMsgs.empty())
     Players[playerID].nextEventTime = -1;
   else {
     Players[playerID].nextEventTime = time + (Config.nagMsgs[0]->time);
@@ -381,14 +380,9 @@ bool Nagware::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_AP
 
 bool commandLineHelp (void)
 {
-  const char *help[] = {
-    "Command line args:  PLUGINNAME,configname",
-    "nagware plugin NOT loaded!",
-    NULL
-  };
-  bz_debugMessage (0, "+++ nagware plugin command-line error.");
-  for (int x=0; help[x]!=NULL; x++)
-    bz_debugMessage (0, help[x]);
+  bz_debugMessage(0, "+++ nagware plugin command-line error.");
+  bz_debugMessage(0, "Command line args:  PLUGINNAME,configname");
+  bz_debugMessage(0, "nagware plugin NOT loaded!");
   return true;
 }
 
@@ -408,9 +402,8 @@ bool parseCommandLine (const char *cmdLine)
 
 void Nagware::Init(const char* cmdLine)
 {
-	MaxWaitTime = 1.0f;
+  MaxWaitTime = 1.0f;
 
-  bz_BasePlayerRecord *playerRecord;
   double now = bz_getCurrentTime();
 
   if (parseCommandLine (cmdLine))
@@ -418,11 +411,12 @@ void Nagware::Init(const char* cmdLine)
 
   // get current list of player indices ...
   bz_APIIntList *playerList = bz_newIntList();
-  bz_getPlayerIndexList (playerList);
-  for (unsigned int i = 0; i < playerList->size(); i++){
-    if ((playerRecord = bz_getPlayerByIndex (playerList->get(i))) != NULL){
-      listAdd (playerList->get(i), playerRecord->callsign.c_str(), playerRecord->team, playerRecord->verified, now);
-      bz_freePlayerRecord (playerRecord);
+  bz_getPlayerIndexList(playerList);
+  for (unsigned int i = 0; i < playerList->size(); i++) {
+    bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(playerList->get(i));
+    if (playerRecord != NULL) {
+      listAdd(playerList->get(i), playerRecord->callsign.c_str(), playerRecord->team, playerRecord->verified, now);
+      bz_freePlayerRecord(playerRecord);
     }
   }
   bz_deleteIntList (playerList);
@@ -577,4 +571,3 @@ bool readConfig (char *filename, NagConfig *cfg, int playerID){
 // indent-tabs-mode: t ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8
-

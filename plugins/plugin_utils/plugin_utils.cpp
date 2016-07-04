@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -320,7 +320,6 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe)
 {
-  std::string result;
   std::string::size_type beginPos = 0;
   std::string::size_type endPos = 0;
   std::ostringstream tempStream;

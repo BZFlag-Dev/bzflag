@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,10 +30,14 @@
 #include "TextUtils.h"
 #include "ErrorHandler.h"
 #include "global.h"
+#ifdef _WIN32
+#  include <DirectoryNames.h>
+#endif
 
 /* local implementation headers */
 #include "SceneRenderer.h"
 #include "RadarRenderer.h"
+#include "TimeKeeper.h"
 #include "bzflag.h"
 
 //
@@ -41,20 +45,42 @@
 //
 
 ControlPanelMessage::ControlPanelMessage(const std::string& _string) :
-  string(_string), numlines(0)
+  numlines(0), string(_string), year(0), month(0), day(0), hour(0), min(0), sec(0)
 {
+  TimeKeeper::localTime(&year, &month, &day, &hour, &min, &sec);
+}
+
+std::string ControlPanelMessage::getString() const {
+  return formatTimestamp(BZDBCache::controlPanelTimestamp) + string;
+}
+
+std::string ControlPanelMessage::getString(bool withTimeDate) const {
+  return formatTimestamp(withTimeDate?2:0) + string;
+}
+
+std::string ControlPanelMessage::formatTimestamp(int mode) const {
+  // Just the date
+  if (mode == 1)
+    return TextUtils::format("[%02d:%02d:%02d] ", hour, min, sec);
+
+  if (mode == 2)
+    return TextUtils::format("[%04d-%02d-%02d %02d:%02d:%02d] ", year, month, day, hour, min, sec);
+
+  return "";
 }
 
 void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSize)
 {
   FontManager &fm = FontManager::instance();
 
+  std::string _string = getString();
+
   // get message and its length
-  const char* msg = string.c_str();
-  int lineLen     = (int)string.length();
+  const char* msg = _string.c_str();
+  int lineLen     = (int)_string.length();
 
   // if there are tabs in the message, find the last one
-  int lastTab = (int)string.rfind('\t');
+  int lastTab = (int)_string.rfind('\t');
 
   lines.clear();
   numlines=0;
@@ -180,6 +206,7 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
   window.getWindow()->addExposeCallback(exposeCallback, this);
   BZDB.addCallback("displayRadar", bzdbCallback, this);
   BZDB.addCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+  BZDB.addCallback("controlPanelTimestamp", bzdbCallback, this);
 
   // other initialization
   radarAreaPixels[0] = 0;
@@ -225,6 +252,7 @@ ControlPanel::~ControlPanel()
   window.getWindow()->removeExposeCallback(exposeCallback, this);
   BZDB.removeCallback("displayRadar", bzdbCallback, this);
   BZDB.removeCallback(StateDatabase::BZDB_RADARLIMIT, bzdbCallback, this);
+  BZDB.removeCallback("controlPanelTimestamp", bzdbCallback, this);
 
   // destroy critical section for threadsafe messages
 #if defined(HAVE_PTHREADS)
@@ -283,7 +311,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
   const int x = window.getOriginX();
   const int y = window.getOriginY();
   const int w = window.getWidth();
-  const int tabStyle = (int)BZDB.eval("showtabs");
+  const int tabStyle = BZDB.evalInt("showtabs");
   const bool showTabs = (tabStyle > 0);
   tabsOnRight = (tabStyle == 2);
 
@@ -864,7 +892,8 @@ void			ControlPanel::addMessage(const std::string& line,
   if (echoToConsole){
 #ifdef _WIN32
     // this is cheap but it will work on windows
-    FILE *fp = fopen ("stdout.txt","a+");
+    std::string filename = getConfigDirName() + "stdout.txt";
+    FILE *fp = fopen (filename.c_str(), "a+");
     if (fp){
       fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
       fclose(fp);
@@ -882,7 +911,7 @@ void			ControlPanel::addMessage(const std::string& line,
 
 
 void ControlPanel::saveMessages(const std::string& filename,
-				bool stripAnsi) const
+				bool stripAnsi, bool timestamp) const
 {
   FILE* file = fopen(filename.c_str(), "a+");
   if (!file) {
@@ -894,10 +923,10 @@ void ControlPanel::saveMessages(const std::string& filename,
   fprintf(file, "Messages saved: %s", ctime(&nowTime));
   fprintf(file, "----------------------------------------\n\n");
 
-  // add to the appropriate tabs
+  // Iterate through the 'All' tab messages
   std::deque<ControlPanelMessage>::const_iterator msg = messages[MessageAll].begin()++;
   for (; msg != messages[MessageAll].end(); ++msg) {
-    const std::string& line = msg->string;
+    const std::string line = msg->getString(timestamp);
     if (stripAnsi) {
       fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
     } else {

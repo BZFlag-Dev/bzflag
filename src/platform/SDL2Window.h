@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,14 +22,20 @@
 
 // System includes
 #include <string>
+#include <vector>
+#include <cstdint>
 
 // Local includes
 #include "SDL2Display.h"
 #include "SDL2Visual.h"
+#ifdef _WIN32
+#  include "SDL2/SDL_syswm.h"
+#endif
 
 class SDLWindow : public BzfWindow {
  public:
   SDLWindow(const SDLDisplay* _display, SDLVisual*);
+  ~SDLWindow();
   bool  isValid() const {return true;};
   void  showWindow(bool) {;};
   void  getPosition(int &, int &) {;};
@@ -40,6 +46,8 @@ class SDLWindow : public BzfWindow {
   void  setMinSize(int, int) {;};
   void  setFullscreen(bool);
   void  iconify(void);
+  void	disableConfineToMotionbox();
+  void	confineToMotionbox(int x1, int y1, int x2, int y2);
   void  warpMouse(int x, int y);
   void  getMouse(int& x, int& y) const;
   void  grabMouse() {;};
@@ -50,16 +58,25 @@ class SDLWindow : public BzfWindow {
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
-  bool	hasVerticalSync() const { return true; }
+  virtual bool hasVerticalSync() const { return true; }
   void	setVerticalSync(bool);
   void  makeCurrent();
   void  swapBuffers();
   void  makeContext();
   void  freeContext();
   bool  create(void);
+#ifdef _WIN32
+  static HWND getHandle() { return hwnd; }
+#endif
  private:
   bool	 hasGamma;
+  float	 origGamma;
+  float	 lastGamma;
   SDL_Window *windowId;
+#ifdef _WIN32
+  SDL_SysWMinfo info;
+  static HWND hwnd;
+#endif
   SDL_GLContext glContext;
   std::string title;
   bool canGrabMouse;

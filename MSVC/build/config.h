@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,7 +25,7 @@
 #include <stdio.h>
 
 /* Building regex */
-#define BUILD_REGEX 1
+#define HAVE_REGEX_H 1
 
 /* Time Bomb expiration */
 /* #undef TIME_BOMB */
@@ -91,9 +91,6 @@
 /* Define to 1 if you have the `Sleep' function. */
 #define HAVE_SLEEP 1
 
-/* Define to 1 if you have the `wglGetCurrentContext' function. */
-#define HAVE_WGLGETCURRENTCONTEXT 1
-
 /* Define to 1 if you have the `_stricmp' function */
 #define HAVE__STRICMP 1
 
@@ -103,27 +100,18 @@
 /* Define to 1 if you have the `_vsnprintf' function */
 #define HAVE__VSNPRINTF 1
 
-/* Define to 1 if you have the <SDL/SDL.h> header file. */
-#define HAVE_SDL_SDL_H 1
-
-/* Define to 1 if you have GL/glew headers. */
-#define HAVE_GLEW 1
-
 /* Define if you wish to build exporting the bzflag API for plugins */
 #define BZ_PLUGINS 1
 
-// define all the direct X stuff because we want it, not the SDL stuff
-#define HAVE_DSOUND_H 1
+// Use SDL2
+#define HAVE_SDL 1
+#define HAVE_SDL2 1
+#define HAVE_SDL2_SDL_H 1
 
 #define HAVE_STD__MIN 1
 #define HAVE_STD__MAX 1
 
 #define HAVE_ARES_LIBRARY_INIT 1
-#define BUILD_ARES 1
-
-#ifdef BUILD_ARES
-#define CARES_STATICLIB
-#endif
 
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE

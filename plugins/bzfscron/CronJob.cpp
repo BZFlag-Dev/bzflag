@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,13 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <vector>
-#include <string>
-#include <iostream>
-
-#include "CronJob.h"
-#include "plugin_utils.h"
 #include "bzfsAPI.h"
+#include "plugin_utils.h"
+#include "CronJob.h"
+#include <iostream>
 
 
 // debug util func
@@ -92,7 +89,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
   // Now tokenize on ","
   std::vector<std::string> stage1 = tokenize(list, ",", 0, false);
   // No tokens?  That's cool too.
-  if (stage1.size() == 0) { stage1.push_back(list); }
+  if (stage1.empty()) { stage1.push_back(list); }
 
   // And for each token, blow up any "-" ranges and "*" ranges.
   for (std::vector<std::string>::iterator itr = stage1.begin(); itr != stage1.end(); ++itr) {

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2015 Tim Riker
+ * Copyright (c) 1993-2016 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -97,7 +97,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     }
   }
   // extra tests
-  if (faceList.size() <= 0) {
+  if (faceList.empty()) {
     if (strcasecmp(cmd, "bottom") == 0) {
       faceList.push_back(ZN);
     }
