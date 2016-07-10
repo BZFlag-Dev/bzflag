@@ -209,6 +209,7 @@
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
+		037AEE591D3222D9000D5E4F /* GrassRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 037AEE571D3222D9000D5E4F /* GrassRenderer.cxx */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
 		038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DE1BB646030009F369 /* libncurses.tbd */; };
@@ -1646,6 +1647,8 @@
 		0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wavefrontOBJ.cxx; path = ../tools/modeltool/wavefrontOBJ.cxx; sourceTree = "<group>"; };
 		0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavefrontOBJ.h; path = ../tools/modeltool/wavefrontOBJ.h; sourceTree = "<group>"; };
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
+		037AEE571D3222D9000D5E4F /* GrassRenderer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GrassRenderer.cxx; sourceTree = "<group>"; };
+		037AEE581D3222D9000D5E4F /* GrassRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GrassRenderer.h; sourceTree = "<group>"; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -2483,6 +2486,8 @@
 				03554348166C846F008806E9 /* ForceFeedback.h */,
 				03554349166C846F008806E9 /* FormatMenu.cxx */,
 				0355434A166C846F008806E9 /* FormatMenu.h */,
+				037AEE571D3222D9000D5E4F /* GrassRenderer.cxx */,
+				037AEE581D3222D9000D5E4F /* GrassRenderer.h */,
 				0355434B166C846F008806E9 /* GuidedMissleStrategy.cxx */,
 				0355434C166C846F008806E9 /* GuidedMissleStrategy.h */,
 				0355434D166C846F008806E9 /* GUIOptionsMenu.cxx */,
@@ -5507,6 +5512,7 @@
 				03C8EEAC167AC26A00BB07A5 /* KeyboardMapMenu.cxx in Sources */,
 				03C8EEAE167AC26A00BB07A5 /* LocalCommand.cxx in Sources */,
 				03C8EEB0167AC26A00BB07A5 /* LocalPlayer.cxx in Sources */,
+				037AEE591D3222D9000D5E4F /* GrassRenderer.cxx in Sources */,
 				03C8EEB2167AC26A00BB07A5 /* MainMenu.cxx in Sources */,
 				03C8EEB4167AC26A00BB07A5 /* MainWindow.cxx in Sources */,
 				03C8EEB6167AC26A00BB07A5 /* MenuDefaultKey.cxx in Sources */,
