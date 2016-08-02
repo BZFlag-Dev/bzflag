@@ -5227,17 +5227,20 @@ static void resetAllCallback(const std::string &name, void*)
   }
 }
 
-static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool*)
+static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool* cmdError)
 {
+  if (cmdError) *cmdError = true;
   if (args.size() == 1) {
     if (args[0] == "*") {
       BZDB.iterate(resetAllCallback,NULL);
+      if (cmdError) *cmdError = false;
       return "all variables reset";
     } else if (BZDB.isSet(args[0])) {
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
 	lastWorldParmChange = TimeKeeper::getCurrent();
+	if (cmdError) *cmdError = false;
 	return args[0] + " reset";
       }
       return "variable " + args[0] + " is not writeable";

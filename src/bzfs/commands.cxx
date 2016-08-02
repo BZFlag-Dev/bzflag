@@ -1045,10 +1045,19 @@ bool ResetCommand::operator() (const char	 *message,
     return true;
   }
   std::string command = (message + 1);
+  bool cmdError = false;
   // we aren't case sensitive but CMDMGR is
   for (int i = 0; i < 5 /*"reset"*/; ++i)
     command[i] = tolower(command[i]);
-  sendMessage(ServerPlayer, t, CMDMGR.run(command).c_str());
+  sendMessage(ServerPlayer, t, CMDMGR.run(command, &cmdError).c_str());
+
+  if (!cmdError) {
+    char message2[MessageLen];
+    snprintf(message2, MessageLen, "Variable Reset Notice by %s of %s",
+             playerData->player.getCallSign(), command.c_str());
+    sendMessage(ServerPlayer, AdminPlayers, message2);
+  }
+
   return true;
 }
 
