@@ -1,6 +1,7 @@
 SUBDIRS = l10n fonts
 
 dist_pkgdata_DATA =		\
+	3dgrass.png		\
 	automatic_icon.png	\
 	blue_basetop.png	\
 	blue_basewall.png	\

@@ -50,7 +50,7 @@ void GrassRenderer::init(void)
 {
   OpenGLGStateBuilder gstate;
   TextureManager &tm = TextureManager::instance();
-  
+
   // create grass material
   gstate.reset();
   gstate.setShading();
@@ -58,9 +58,9 @@ void GrassRenderer::init(void)
   gstate.setAlphaFunc();
   gstate.enableTexture(1);
   gstate.setTexture(tm.getTextureID("3dgrass"));
-  
+
   grassGState = gstate.getState();
-  
+
   buildGrassList();
 }
 
@@ -83,7 +83,6 @@ void GrassRenderer::draw(const SceneRenderer& sr)
 
   std::vector<GLfloat*> grasses;
 
-  int n = 0;
   for (i = -grassRadius; i <= grassRadius; i += grassDensity) {
     for (j = -grassRadius; j <= grassRadius; j += grassDensity) {
       x = i + fmod(((i + offX) + ((j + offY) * 0.4519f)) * 0.6316f, grassDensity);
@@ -97,7 +96,7 @@ void GrassRenderer::draw(const SceneRenderer& sr)
   }
 
   std::sort(grasses.begin(), grasses.end(), sortDistance);
-  
+
   glEnable(GL_CULL_FACE);
   glMatrixMode(GL_MODELVIEW);
 
@@ -112,7 +111,7 @@ void GrassRenderer::draw(const SceneRenderer& sr)
     y = offY + (*it)[1];
 
     bbyaw = -atan2(x - pos[0], y - pos[1]) * (180.0f / M_PI);
-      
+
     alpha = (1.0f - std::max(fabs(x - pos[0]),
 			     fabs(y - pos[1])) * grassRadScale);
 
@@ -126,7 +125,7 @@ void GrassRenderer::draw(const SceneRenderer& sr)
 
     glCallList(grassList);
 
-    glPopMatrix();    
+    glPopMatrix();
   }
 
   glEnable(GL_CULL_FACE);
