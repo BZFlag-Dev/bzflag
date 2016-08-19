@@ -2279,10 +2279,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  addMessage(victimPlayer, message);
 	}
 	else if (killer >= LastRealPlayer) {
-	  addMessage(victimPlayer, "destroyed by the server");
+	  message += "destroyed by the server";
+	  addMessage(victimPlayer, message);
 	}
 	else if (!killerPlayer) {
-	  addMessage(victimPlayer, "destroyed by a (GHOST)");
+	  message += "destroyed by a (GHOST)";
+	  addMessage(victimPlayer, message);
 	}
 	else if (reason == WaterDeath) {
 	  message += "fell in the water";
