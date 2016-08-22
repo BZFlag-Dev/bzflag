@@ -6616,6 +6616,7 @@ int main(int argc, char **argv)
 	      player->player.setDead();
 	      zapFlagByPlayer(j);
 	      player->player.setPlayedEarly(false);
+	      player->player.setRestartOnBase(true);
 	    }
 	  }
 
