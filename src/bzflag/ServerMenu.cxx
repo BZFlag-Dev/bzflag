@@ -610,7 +610,7 @@ void ServerMenu::pick()
 					    &dropArgs);
   }
   else {
-    ((HUDuiLabel*)listHUD[13])->setString("");
+    ((HUDuiLabel*)listHUD[12])->setString("");
   }
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
@@ -626,6 +626,12 @@ void ServerMenu::pick()
 					    &dropArgs);
   }
   else {
+    ((HUDuiLabel*)listHUD[12])->setString("");
+  }
+
+  if (ping.gameOptions & NoTeamKillsGameStyle) {
+    ((HUDuiLabel*)listHUD[13])->setString("No Teamkills");
+  } else {
     ((HUDuiLabel*)listHUD[13])->setString("");
   }
 
