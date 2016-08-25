@@ -3450,7 +3450,7 @@ public:
 
   ~URLFetchHandler()
   {
-    removeAllJobs();
+    KillCurrentJob(false); // don't notify, since the handler might have been destructed
     if (curlHandle) {
       curl_multi_cleanup(curlHandle);
     }
