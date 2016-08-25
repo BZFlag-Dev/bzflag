@@ -82,9 +82,9 @@ work
 # Binaries
 /misc/3ds2bzw
 /misc/rrlog
-/src/bzadmin/bzadmin
-/src/bzflag/bzflag
-/src/bzfs/bzfs
+/bzadmin
+/bzflag
+/bzfs
 /tools/TextTool2/TextTool2
 /tools/bzwtransform/bzwtransform
 /tools/modeltool/modeltool
@@ -92,7 +92,7 @@ work
 /bin_Release_x64/*
 /bin_Debug_Win32/*
 /bin_Debug_x64/*
-/tests/unittests
+/unittests
 
 # Misc
 *.diff
@@ -105,6 +105,7 @@ work
 /src/platform/MacOSX/BZFlag-Info.plist
 /MSVC/ipch
 /MSVC/bzflag.aps
+*~
 
 # OS generated files
 .DS_Store

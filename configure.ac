@@ -101,7 +101,7 @@ AC_CANONICAL_TARGET
 dnl Minimum version of automake required.  Should coincide with the
 dnl setting in the autogen.sh script.  Create the other archives
 dnl automatically when doing a make dist for convenience.
-AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
+AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2 subdir-objects])
 
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])
@@ -281,6 +281,14 @@ dnl detect a usable system c-ares lookup library
 AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
 AC_SUBST(LIBCARES)
 
+dnl detect a usable system jpeg library
+AC_CHECK_LIB(jpeg, jpeg_destroy_decompress, have_JPEG=yes, AC_MSG_ERROR([working jpeg was not found]))
+if test x$have_JPEG = xyes; then
+  LIBJPEG="-ljpeg"
+fi
+AC_SUBST(LIBJPEG)
+AM_CONDITIONAL(HAVE_JPEG, test x$have_JPEG = xyes)
+
 # see if our c-ares callbacks match (they won't on c-ares <1.5)
 AC_MSG_CHECKING(for c-ares DNS lookup functionality)
 PRELIBS="$LIBS"
@@ -430,6 +438,7 @@ AC_CHECK_HEADERS( \
 	dsound.h \
 	fcntl.h \
 	inttypes.h \
+	jpeglib.h \
 	limits.h \
 	linux/input.h \
 	process.h \
@@ -1102,9 +1111,6 @@ AC_CONFIG_FILES([
 	plugins/wwzones/Makefile
 	src/3D/Makefile
 	src/Makefile
-	src/bzadmin/Makefile
-	src/bzflag/Makefile
-	src/bzfs/Makefile
 	src/common/Makefile
 	src/date/Makefile
 	src/game/Makefile
@@ -1117,7 +1123,6 @@ AC_CONFIG_FILES([
 	src/ogl/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
-	tests/Makefile
 	tools/Makefile
 	tools/TextTool2/Makefile
 	tools/TextTool2/TextTool2.xcodeproj/Makefile
