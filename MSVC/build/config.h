@@ -71,15 +71,15 @@
     #define DEBUG
 	#define DEBUG_RENDERING
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC10Dbg"
+    #define BZ_BUILD_OS			"Win64VC14Dbg"
 #else
-	#define BZ_BUILD_OS			"Win32VC10Dbf"
+	#define BZ_BUILD_OS			"Win32VC14Dbf"
 #endif
   #else
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC10"
+    #define BZ_BUILD_OS			"Win64VC14"
 #else
-	#define BZ_BUILD_OS			"Win32VC10"
+	#define BZ_BUILD_OS			"Win32VC14"
 #endif
   #endif //_DEBUG
 #endif //BZ_BUILD_OS
@@ -107,6 +107,7 @@
 #define HAVE_SDL2 1
 #define HAVE_SDL2_SDL_H 1
 
+#define HAVE_ISNAN 1
 #define HAVE_STD__MIN 1
 #define HAVE_STD__MAX 1
 
