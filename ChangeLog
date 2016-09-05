@@ -4,6 +4,10 @@
 BZFlag 2.4.7
 ------------
 
+* Spawn all players on base when a timed game starts - Konstantinos Kanavouras
+* Add indicator for -noTeamKill servers on server list - Konstantinos Kanavouras
+* Send a notification to admins when a BZDB variable is reset - Konstantinos Kanavouras
+* Increase the range of the volume slider - Konstantinos Kanavouras 
 
 BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
 --------------------------------------------
