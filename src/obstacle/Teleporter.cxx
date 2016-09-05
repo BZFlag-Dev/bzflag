@@ -478,7 +478,8 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   // fixed x offset, and scale y & z coordinates
   p.x = -size2.x;
-  p.yz() *= dimsScale; // note the .yz()
+  p.y *= dimsScale.x;
+  p.z *= dimsScale.y;
 
   // apply rotation, translate to new position
   p = p.rotateZ(+radians2);
