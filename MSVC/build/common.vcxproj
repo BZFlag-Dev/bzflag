@@ -216,6 +216,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\common\bz_Locale.cxx" />
     <ClCompile Include="..\..\src\common\BZDBCache.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -525,6 +526,7 @@
     <ClInclude Include="..\..\include\AutoCompleter.h" />
     <ClInclude Include="..\..\include\Bundle.h" />
     <ClInclude Include="..\..\include\BundleMgr.h" />
+    <ClInclude Include="..\..\include\BZDBLocal.h" />
     <ClInclude Include="..\..\include\bz_Locale.h" />
     <ClInclude Include="..\..\include\BZDBCache.h" />
     <ClInclude Include="..\..\include\bzfio.h" />

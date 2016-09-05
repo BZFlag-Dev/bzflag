@@ -311,7 +311,6 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
-    <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -892,7 +891,6 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClInclude Include="..\..\src\bzflag\AudioMenu.h" />
     <ClInclude Include="..\..\src\bzflag\BackgroundRenderer.h" />
     <ClInclude Include="..\..\src\bzflag\BaseLocalPlayer.h" />
-    <ClInclude Include="..\..\include\BZDBLocal.h" />
     <ClInclude Include="..\..\src\bzflag\CacheMenu.h" />
     <ClInclude Include="..\..\src\bzflag\callbacks.h" />
     <ClInclude Include="..\..\src\bzflag\commands.h" />
