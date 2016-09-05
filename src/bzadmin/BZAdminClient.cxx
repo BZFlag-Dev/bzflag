@@ -19,6 +19,8 @@
 #else
 #  include <math.h>
 #endif
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <sstream>
 
@@ -31,6 +33,7 @@
 #include "ServerList.h"
 #include "ErrorHandler.h"
 #include "cURLManager.h"
+#include "TimeKeeper.h"
 
 StartupInfo startupInfo;
 

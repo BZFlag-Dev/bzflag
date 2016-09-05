@@ -24,7 +24,6 @@
 #include "global.h"
 #include "Address.h"
 #include "Protocol.h"
-#include "ShotPath.h"
 #include "Flag.h"
 
 class ServerLink {
@@ -66,24 +65,6 @@ class ServerLink {
 				  const char* name, const char* motto, const char* token);
     bool		readEnter(std::string& reason,
 				  uint16_t& code, uint16_t& rejcode);
-
-    void		sendCaptureFlag(TeamColor);
-    void		sendGrabFlag(int flagIndex);
-    void		sendDropFlag(const float* position);
-    void		sendKilled(const PlayerId&, int reason,
-				   int shotId, const FlagType* flag, int phydrv);
-  // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
-  //	  It should be changed to something cleaner.
-    void		sendPlayerUpdate(Player*);
-    void		sendBeginShot(const FiringInfo&);
-    void		sendEndShot(const PlayerId&, int shotId, int reason);
-    void		sendAlive();
-    void		sendTeleport(int from, int to);
-    void		sendTransferFlag(const PlayerId&, const PlayerId&);
-    void		sendNewRabbit();
-    void		sendPaused(bool paused);
-    void		sendAutoPilot(bool autopilot);
-    void		sendUDPlinkRequest();
 
     static ServerLink*	getServer(); // const
     static void		setServer(ServerLink*);
