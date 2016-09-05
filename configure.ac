@@ -101,7 +101,7 @@ AC_CANONICAL_TARGET
 dnl Minimum version of automake required.  Should coincide with the
 dnl setting in the autogen.sh script.  Create the other archives
 dnl automatically when doing a make dist for convenience.
-AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2])
+AM_INIT_AUTOMAKE([1.6 dist-zip dist-bzip2 subdir-objects])
 
 dnl all configured definitions get written here
 AC_CONFIG_HEADERS([include/config.h])

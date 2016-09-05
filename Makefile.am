@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
+AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2 subdir-objects
 ACLOCAL_AMFLAGS = -I m4
 
 traversal_dirs = \
