@@ -306,7 +306,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
     os << " (m)";
   if (baninfo.bannedBy.length())
     os << " banned by: " << baninfo.bannedBy;
-    bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
+  bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
 
   // add reason, if any
   if (baninfo.reason.size()) {
