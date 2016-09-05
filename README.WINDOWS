@@ -54,16 +54,6 @@ NSIS 2.46 is needed to build an installer, which is built as part of a release
 build.
   http://nsis.sourceforge.net/
 
-There is a 'tests' project that is part of the fullbuild solution. This will
-run some unit tests, and requires CppUTest. You will need to checkout the git
-repository for CppUTest as described on https://cpputest.github.io/ and then
-open the CppUTest_VS201x.sln file. Build the solution and then create an
-environment variable named CPPUTEST_HOME and point it to the root of the
-CppUTest source checkout, without the trailing slash (for instance,
-C:\cpputest ).  You mean need to relaunch your Visual Studio, log off, or
-reboot for the environment variable to take effect, but then the fullbuild
-solution should be able to build and run the unit tests.
-
 **Running and Debugging**
 By default the compiler will copy the compiled executables to the root level
 of the source drive ( the same place that the data dir is at). From there

@@ -1117,7 +1117,6 @@ AC_CONFIG_FILES([
 	src/ogl/Makefile
 	src/platform/Makefile
 	src/scene/Makefile
-	tests/Makefile
 	tools/Makefile
 	tools/TextTool2/Makefile
 	tools/TextTool2/TextTool2.xcodeproj/Makefile

@@ -18,8 +18,6 @@ EXTRA_DIST =		\
 	ogl.vcxproj	\
 	platform.vcxproj	\
 	scene.vcxproj	\
-	tests.vcxproj	\
-	tests.vcxproj.filters	\
 	makeHTML.bat
 
 MAINTAINERCLEANFILES = \

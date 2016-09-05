@@ -6,8 +6,7 @@ traversal_dirs = \
 	include \
 	man \
 	package \
-	src \
-	tests
+	src
 
 if BUILD_PLUGINS
 PLUGINS=plugins
@@ -30,7 +29,6 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	.editorconfig \
-	.travis.yml \
 	autogen.sh \
 	bzflag.spec \
 	DEVINFO \
