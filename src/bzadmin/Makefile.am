@@ -34,6 +34,7 @@ bzadmin_SOURCES = \
 	OptionParser.h \
 	OptionParser.cxx \
 	PlayerInfo.h \
+	ServerLink.h \
 	ServerLink.cxx \
 	StdBothUI.h \
 	StdBothUI.cxx \
