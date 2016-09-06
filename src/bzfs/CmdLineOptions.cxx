@@ -612,14 +612,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.randomBoxes = true;
     }
     else if (strcmp(argv[i], "-badwords") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.filterFilename = argv[i];
     }
     else if (strcmp(argv[i], "-ban") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.acl.ban(argv[i]);
     }
     else if (strcmp(argv[i], "-banfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.acl.setBanFile(argv[i]);
       if (!options.acl.load()) {
@@ -636,10 +639,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameType = ClassicCTF;
     }
     else if (strcmp(argv[i], "-cache") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
     }
     else if (strcmp(argv[i], "-cacheout") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.cacheOut = argv[i];
     }
@@ -680,6 +685,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       BZDB.set(StateDatabase::BZDB_DISABLEBOTS, "true");
     }
     else if (strncmp(argv[i], "-d", 2) == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // increase debug level - this must be the last
       // option beginning with -d so that -dd, -ddd, etc. work
       const char num = argv[i][2];
@@ -715,12 +721,15 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.flagsOnBuildings = true;
     }
     else if (strcmp(argv[i], "-filterCallsigns") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterCallsigns = true;
     }
     else if (strcmp(argv[i], "-filterChat") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterChat = true;
     }
     else if (strcmp(argv[i], "-filterSimple") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterSimple = true;
     }
     else if (strcmp(argv[i], "-g") == 0) {
@@ -734,6 +743,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       MATERIALMGR.addMaterial(&material);
     }
     else if (strcmp(argv[i], "-groupdb") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
       logDebugMessage(1,"using group file \"%s\"\n", argv[i]);
@@ -756,6 +766,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       i++;
     }
     else if (strcmp(argv[i], "-i") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // use a different interface
       checkArgc(1, i, argc, argv[i]);
       options.pingInterface = argv[i];
@@ -846,6 +857,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     }
     else if (strcmp(argv[i],"-noMasterBanlist") == 0){
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.suppressMasterBanList = true;
     }
     else if (strcmp(argv[i],"-noradar") == 0){
@@ -855,6 +867,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls.
        */
+      checkFromWorldFile(argv[i], fromWorldFile);
       if (!options.masterBanListOverridden) {
 	options.masterBanListURL.clear();
 	options.masterBanListOverridden = true;
@@ -895,6 +908,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       memset(argv[i], 'X', options.password.size());
     }
     else if (strcmp(argv[i], "-pidfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       unsigned int pid = 0;
 	  checkArgc(1, i, argc, argv[i]);
       FILE *fp = fopen(argv[i], "wt");
@@ -959,11 +973,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       /* if this is the first -publiclist, override the default list
        * server.  otherwise just keep adding urls.
        */
+      checkFromWorldFile(argv[i], fromWorldFile);
       if (!options.listServerOverridden) {
 	options.listServerURL.clear();
 	options.listServerOverridden = true;
       }
-      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.listServerURL.push_back(argv[i]);
     }
@@ -1014,25 +1028,31 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     }
     else if (strcmp(argv[i], "-recbuf") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       Record::setSize (ServerPlayer, atoi(argv[i]));
       options.startRecording = true;
     }
     else if (strcmp(argv[i], "-recbufonly") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       Record::setAllowFileRecs (false);
     }
     else if (strcmp(argv[i], "-recdir") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       Record::setDirectory (argv[i]);
     }
     else if (strcmp(argv[i], "-replay") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.replayServer = true;
     }
     else if (strcmp(argv[i], "-reportfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.reportFile = argv[i];
     }
     else if (strcmp(argv[i], "-reportpipe") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.reportPipe = argv[i];
     }
@@ -1246,6 +1266,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     }
     else if (strcmp(argv[i], "-ts") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
@@ -1258,16 +1279,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
     else if (strcmp(argv[i], "-UPnP") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.UPnP = true;
     }
 #endif
     else if (strcmp(argv[i], "-utc") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.timestampLog = true;
       options.timestampUTC = true;
     }
     else if (strcmp(argv[i], "-userdb") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];
       logDebugMessage(1,"using userDB file \"%s\"\n", argv[i]);
