@@ -200,7 +200,6 @@
 		0357AA081670BFC80056C938 /* StdInUI.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554317166C846F008806E9 /* StdInUI.cxx */; };
 		0357AA091670BFC80056C938 /* StdOutUI.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554319166C846F008806E9 /* StdOutUI.cxx */; };
 		0357AA0A1670BFC80056C938 /* UIMap.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355431B166C846F008806E9 /* UIMap.cxx */; };
-		0357AA0B1670BFD20056C938 /* ServerLink.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543A1166C846F008806E9 /* ServerLink.cxx */; };
 		0357AA161670C0EF0056C938 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
 		0357AA181670C0FD0056C938 /* libgame.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7FB1670B1D80056C938 /* libgame.a */; };
 		0357AA191670C1000056C938 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
@@ -287,6 +286,7 @@
 		038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; };
 		038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */; };
 		038DA55D1BB651F50009F369 /* README.regFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51D1BB64E180009F369 /* README.regFlag.txt */; };
+		038EC5F41D7E84EF007E3061 /* ServerLink.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 038EC5F11D7E84DA007E3061 /* ServerLink.cxx */; };
 		0394E688167B0B71007F4035 /* AccessControlList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CC166C846F008806E9 /* AccessControlList.cxx */; };
 		0394E689167B0B71007F4035 /* Authentication.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CE166C846F008806E9 /* Authentication.cxx */; };
 		0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D0166C846F008806E9 /* BanCommands.cxx */; };
@@ -1695,6 +1695,8 @@
 		038DA5371BB64F5C0009F369 /* README.timedctf.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.timedctf.txt; sourceTree = "<group>"; };
 		038DA53B1BB64FB90009F369 /* README.TimeLimit.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.TimeLimit.txt; sourceTree = "<group>"; };
 		038DA53D1BB64FCB0009F369 /* README.wwzones.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.wwzones.txt; sourceTree = "<group>"; };
+		038EC5F11D7E84DA007E3061 /* ServerLink.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerLink.cxx; sourceTree = "<group>"; };
+		038EC5F21D7E84DA007E3061 /* ServerLink.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerLink.h; sourceTree = "<group>"; };
 		0394E67D167B0AA3007F4035 /* bzfs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzfs; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E6D3167B0F74007F4035 /* airspawn.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = airspawn.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E6D9167B1024007F4035 /* airspawn.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = airspawn.cpp; sourceTree = "<group>"; };
@@ -2423,6 +2425,8 @@
 				03554312166C846F008806E9 /* OptionParser.cxx */,
 				03554313166C846F008806E9 /* OptionParser.h */,
 				03554314166C846F008806E9 /* PlayerInfo.h */,
+				038EC5F11D7E84DA007E3061 /* ServerLink.cxx */,
+				038EC5F21D7E84DA007E3061 /* ServerLink.h */,
 				03554315166C846F008806E9 /* StdBothUI.cxx */,
 				03554316166C846F008806E9 /* StdBothUI.h */,
 				03554317166C846F008806E9 /* StdInUI.cxx */,
@@ -5129,8 +5133,8 @@
 				0357AA071670BFC80056C938 /* StdBothUI.cxx in Sources */,
 				0357AA081670BFC80056C938 /* StdInUI.cxx in Sources */,
 				0357AA091670BFC80056C938 /* StdOutUI.cxx in Sources */,
+				038EC5F41D7E84EF007E3061 /* ServerLink.cxx in Sources */,
 				0357AA0A1670BFC80056C938 /* UIMap.cxx in Sources */,
-				0357AA0B1670BFD20056C938 /* ServerLink.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
