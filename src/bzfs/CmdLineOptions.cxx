@@ -908,11 +908,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	fclose(fp);
       }
     }
-    else if (strcmp(argv[i], "-pf") == 0) {
-      // try wksPort first and if we can't open that port then
-      // let system assign a port for us.
-      options.useFallbackPort = true;
-    }
     else if (strcmp(argv[i], "-poll") == 0) {
       // parse the variety of poll system variables
       checkArgc(1, i, argc, argv[i]);

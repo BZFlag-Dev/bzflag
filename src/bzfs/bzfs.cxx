@@ -927,27 +927,9 @@ static bool serverStart()
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    if (!clOptions->useFallbackPort) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
-
-    // if we get here then try binding to any old port the system gives us
-    addr.sin_port = htons(0);
-    if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
-
-    // fixup ping reply
-    AddrLen addrLen = sizeof(addr);
-    if (getsockname(wksSocket, (struct sockaddr*)&addr, &addrLen) >= 0)
-      pingReply.serverId.port = addr.sin_port;
-
-    // fixup publicized name will want it here later
-    clOptions->wksPort = ntohs(addr.sin_port);
+    nerror("couldn't bind connect socket");
+    close(wksSocket);
+    return false;
   }
 
   if (listen(wksSocket, 5) == -1) {
