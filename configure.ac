@@ -128,10 +128,7 @@ BZ_CONFIGURE_STAGE([arguments], [1 of 9])
 MP_WITH_CURSES
 
 # check for SDL option (enabled by default now)
-AC_ARG_WITH(SDL, [  --without-SDL		  do not use Simple DirectMedia Layer])
-if test "x$with_SDL" != xno; then
-    AC_ARG_WITH(SDL2, [  --with-SDL2		  use Simple DirectMedia Layer version 2 (experimental)])
-fi
+AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
 
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
@@ -528,22 +525,6 @@ ac_cv_search_glBegin=no
 ac_cv_search_gluScaleImage=no
 ac_func_search_save_LIBS=$LIBS
 
-dnl check whether the OpenGL framework is available
-AC_MSG_CHECKING([for OpenGL framework (Darwin-specific)])
-FRAMEWORK_OPENGL=""
-PRELIBS="$LIBS"
-LIBS="$LIBS -framework OpenGL"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]], [[glBegin(GL_POINTS)]])],[FRAMEWORK_OPENGL="-framework OpenGL" ; ac_cv_search_glBegin="-framework OpenGL" ; AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
-LIBS="$PRELIBS"
-AC_SUBST(FRAMEWORK_OPENGL)
-
-# don't use X11 flags if we have an OpenGL framework
-if test "x$FRAMEWORK_OPENGL" = "x" ; then
-    AC_PATH_XTRA
-    CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
-    LDFLAGS="$LDFLAGS $X_LIBS"
-fi
-
 case $host_os in
     solaris*)
 	if test -d /usr/demo/SOUND/lib ; then
@@ -561,8 +542,6 @@ case $host_os in
 	GLIBS=" -lmedia -lgame $GLIBS"
 	LIBS="-lbe"
 	;;
-    macos|darwin*)
-	;;
     *)
 	;;
 esac
@@ -570,8 +549,6 @@ esac
 
 # avoid using X11 in BeOS and Mac OS X
 case $host_os in
-    macos|darwin*)
-	;;
     beos*)
 	;;
     *)
@@ -681,52 +658,36 @@ savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
 AC_LANG(C)
 if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
-    AC_MSG_CHECKING([for SDL framework])
-    savedLDFLAGS="$LDFLAGS"
-    LDFLAGS="$LDFLAGS -framework SDL"
-    framework_SDL_flag_works=yes
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <SDL/SDL_version.h>]], [[]])],
-	[],[framework_SDL_flag_works=no ])
-    AC_MSG_RESULT([$framework_SDL_flag_works])
-    if test x$framework_SDL_flag_works = xno ; then
-	LDFLAGS="$savedLDFLAGS"
-	with_SDL=no
-    else
-	with_SDL=yes
+    if test "x$sdl_version" != "x1" -a "x$sdl_version" != "x2"; then
+        sdl_version="detect"
     fi
 
-    if test x$with_SDL = xno ; then
-      if test x$with_SDL2 = xyes ; then
-	AM_PATH_SDL2(2.0.3, with_SDL=yes, with_SDL=no)
-      else
-	AM_PATH_SDL(1.2.10, with_SDL=yes, with_SDL=no)
-      fi
-	if test x$with_SDL = xno; then
-	    AC_MSG_WARN([could not find an appropriate SDL version. BZFlag will build without SDL])
-	fi
+    if test "x$sdl_version" = "x2" -o "x$sdl_version" = "xdetect"; then
+        # Test for SDL 2
+        AM_PATH_SDL2(2.0.3, with_SDL=2, with_SDL=no)
+    fi
+
+    if test "x$with_SDL" != "x2" -a \( "x$sdl_version" = "x1" -o "x$sdl_version" = "xdetect" \); then
+        # Test for SDL 1.2
+        AM_PATH_SDL(1.2.10, with_SDL=1, with_SDL=no)
     fi
 fi
 AC_LANG(C++)
 LIBS=$savedLIBS
-if test x$with_SDL = xyes; then
+
+if test "x$with_SDL" != "xno"; then
     AC_DEFINE(HAVE_SDL, 1, [Using SDL])
-    if test x$with_SDL2 = xyes ; then
-       AC_DEFINE(HAVE_SDL2, 1, [Using SDL2])
-    fi
 fi
-AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = xyes)
-AM_CONDITIONAL(HAVE_SDL2, test x$with_SDL2 = xyes)
+if test "x$with_SDL" = "x2"; then
+    AC_DEFINE(HAVE_SDL2, 1, [Using SDL2])
+fi
+
+AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = x1 -o x$with_SDL = x2)
+AM_CONDITIONAL(HAVE_SDL2, test x$with_SDL = x2)
 
 
 # dumb temp hacks to add missing linkage stuff
 case $host_os in
-     macos|darwin*)
-	if test x$with_SDL = xyes; then
-	    LIBS="$LIBS -framework Carbon -framework Cocoa -framework OpenGL"
-	else
-	    LIBS="$LIBS -framework Carbon -framework AGL -framework OpenGL"
-	fi
-	;;
      irix)
 	if test x$host_cpu = xmips64; then
 	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib32"
@@ -814,10 +775,6 @@ case $host_os in
 	    CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	fi
-	;;
-     macos|darwin*)
-	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	;;
      irix)
 	FLAGS="-Wall";
@@ -948,9 +905,6 @@ case $host_os in
     linux*|kfreebsd*|freebsd*|netbsd*|openbsd*|dragonfly*|gnu*)
 	linux=true
 	;;
-    macos|darwin*)
-	macos=true
-	;;
     solaris*)
 	solaris=true
 	;;
@@ -962,7 +916,6 @@ AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
 AM_CONDITIONAL(IRIX, test x$irix = xtrue)
 AM_CONDITIONAL(LINUX, test x$linux = xtrue)
-AM_CONDITIONAL(MACOS, test x$macos = xtrue)
 AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)
 AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
 
@@ -1134,35 +1087,6 @@ dnl     touch include/config.h.in
 dnl fi
 
 
-#################
-# patch libtool #
-#################
-case $host_os in
-    darwin*)
-	for script in $ac_top_builddir $ac_abs_builddir $ac_builddir . ; do
-	    if test "x$script" = "x" ; then
-		libtoolscript="libtool"
-	    else
-		libtoolscript="${script}/libtool"
-	    fi
-	    if test -f ${libtoolscript} ; then
-		if test -w ${libtoolscript} ; then
-		    # remove any -all_load option.
-		    # provokes libtool linker bug with noinst C++ libraries.
-		    sed 's/-all_load.*convenience//g' < $libtoolscript > ${libtoolscript}.sed
-		    if test ! "x`cat ${libtoolscript}`" = "x`cat ${libtoolscript}.sed`" ; then
-			AC_MSG_RESULT([Found -all_load in libtool script, removing])
-			cp ${libtoolscript}.sed ${libtoolscript}
-		    fi
-		    rm -f ${libtoolscript}.sed
-		else
-		    AC_MSG_WARN([libtool script exists but is not writable so not attempting to edit])
-		fi
-	    fi
-	done
-	;;
-esac
-
 
 dnl **********************
 dnl *** Report Summary ***
@@ -1176,8 +1100,8 @@ if test "x$enable_client" = "xno"; then
     fi
 else
     if test x$with_SDL != xno; then
-	if test x$with_SDL2 = xyes; then
-	    build_bzflag="yes (with SDL2) (Note: Still experimental!)"
+        if test x$with_SDL = x2; then
+            build_bzflag="yes (with SDL2)"
 	else
 	    build_bzflag="yes (with SDL)"
 	fi
