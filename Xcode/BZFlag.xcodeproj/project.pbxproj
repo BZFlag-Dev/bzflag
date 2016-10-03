@@ -205,6 +205,11 @@
 		0357AA191670C1000056C938 /* libnet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7EB1670B11A0056C938 /* libnet.a */; };
 		0357AA1A1670C1050056C938 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		0358E67D1BF849EB001FF056 /* ServerListFilterHelpMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0358E67B1BF849EB001FF056 /* ServerListFilterHelpMenu.cxx */; };
+		036F58231DA2F8C300BF906C /* AUTHORS in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EA71670CB1300725DBE /* AUTHORS */; };
+		036F58241DA2F8C800BF906C /* ChangeLog in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EA81670CB1300725DBE /* ChangeLog */; };
+		036F58251DA2F8CC00BF906C /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 03E42D191B322DFC006EE763 /* COPYING */; };
+		036F58261DA2F8D400BF906C /* README in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAB1670CB1300725DBE /* README */; };
+		036F58271DA2F90900BF906C /* README.MacOSX in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAC1670CB1300725DBE /* README.MacOSX */; };
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
@@ -258,34 +263,6 @@
 		038DA53A1BB64F5C0009F369 /* README.timedctf.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA5371BB64F5C0009F369 /* README.timedctf.txt */; };
 		038DA53C1BB64FB90009F369 /* README.TimeLimit.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA53B1BB64FB90009F369 /* README.TimeLimit.txt */; };
 		038DA53E1BB64FCB0009F369 /* README.wwzones.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA53D1BB64FCB0009F369 /* README.wwzones.txt */; };
-		038DA53F1BB650C30009F369 /* README.airspawn.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E31BB649130009F369 /* README.airspawn.txt */; };
-		038DA5401BB650E70009F369 /* README.autoFlagReset.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E51BB6493D0009F369 /* README.autoFlagReset.txt */; };
-		038DA5411BB650ED0009F369 /* bzfscron.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E71BB649640009F369 /* bzfscron.cfg */; };
-		038DA5421BB650F20009F369 /* README.bzfscron.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4E81BB649640009F369 /* README.bzfscron.txt */; };
-		038DA5431BB651100009F369 /* README.chathistory.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4EB1BB6498D0009F369 /* README.chathistory.txt */; };
-		038DA5441BB651150009F369 /* README.customflagsample.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4ED1BB649A90009F369 /* README.customflagsample.txt */; };
-		038DA5451BB6511B0009F369 /* README.fairCTF.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */; };
-		038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; };
-		038DA5471BB6514B0009F369 /* flagStay.bzw in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
-		038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; };
-		038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; };
-		038DA54B1BB651640009F369 /* help_keepaway_admin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; };
-		038DA54C1BB651670009F369 /* help_keepaway_rules.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FC1BB64BC30009F369 /* help_keepaway_rules.txt */; };
-		038DA54D1BB6516E0009F369 /* README.keepaway.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA4FD1BB64BC30009F369 /* README.keepaway.txt */; };
-		038DA54E1BB651790009F369 /* README.killall.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5011BB64BF00009F369 /* README.killall.txt */; };
-		038DA54F1BB6517E0009F369 /* help_koth_admin.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5031BB64C9A0009F369 /* help_koth_admin.txt */; };
-		038DA5501BB651800009F369 /* help_koth_rules.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5041BB64C9A0009F369 /* help_koth_rules.txt */; };
-		038DA5511BB651870009F369 /* README.koth.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5051BB64C9A0009F369 /* README.koth.txt */; };
-		038DA5521BB6518E0009F369 /* README.logDetail.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5091BB64CCB0009F369 /* README.logDetail.txt */; };
-		038DA5531BB651970009F369 /* nagware.cfg in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50B1BB64CE80009F369 /* nagware.cfg */; };
-		038DA5541BB6519D0009F369 /* README.nagware.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50C1BB64CE80009F369 /* README.nagware.txt */; };
-		038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA50F1BB64D280009F369 /* README.Phoenix.txt */; };
-		038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5111BB64D3F0009F369 /* README.playHistoryTracker.txt */; };
-		038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5151BB64DCA0009F369 /* README.rabbitTimer.txt */; };
-		038DA5591BB651BE0009F369 /* help_rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5171BB64DF00009F369 /* help_rabidRabbit.txt */; };
-		038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA5181BB64DF00009F369 /* README.rabidRabbit.txt */; };
-		038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51B1BB64E0B0009F369 /* README.recordmatch.txt */; };
-		038DA55D1BB651F50009F369 /* README.regFlag.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 038DA51D1BB64E180009F369 /* README.regFlag.txt */; };
 		038EC5F41D7E84EF007E3061 /* ServerLink.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 038EC5F11D7E84DA007E3061 /* ServerLink.cxx */; };
 		0394E688167B0B71007F4035 /* AccessControlList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CC166C846F008806E9 /* AccessControlList.cxx */; };
 		0394E689167B0B71007F4035 /* Authentication.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CE166C846F008806E9 /* Authentication.cxx */; };
@@ -534,11 +511,6 @@
 		03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9BA1B30E12300711E71 /* Cocoa.framework */; };
 		03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
-		03E42D1B1B322E2C006EE763 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EA71670CB1300725DBE /* AUTHORS */; };
-		03E42D1C1B322E2C006EE763 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EA81670CB1300725DBE /* ChangeLog */; };
-		03E42D1D1B322E2C006EE763 /* COPYING in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03E42D191B322DFC006EE763 /* COPYING */; };
-		03E42D1E1B322E2C006EE763 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EAB1670CB1300725DBE /* README */; };
-		03E42D1F1B322E2C006EE763 /* README.MacOSX in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03D88EAC1670CB1300725DBE /* README.MacOSX */; };
 		03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */; };
 		03FA7435174260CB00573D2D /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
 		03FA7436174260D700573D2D /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
@@ -918,48 +890,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				034E307B1B0C945000E7DDE2 /* SDL2.framework in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		03E42D181B322DDD006EE763 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = doc;
-			dstSubfolderSpec = 7;
-			files = (
-				03E42D1B1B322E2C006EE763 /* AUTHORS in CopyFiles */,
-				038DA5411BB650ED0009F369 /* bzfscron.cfg in CopyFiles */,
-				03E42D1C1B322E2C006EE763 /* ChangeLog in CopyFiles */,
-				03E42D1D1B322E2C006EE763 /* COPYING in CopyFiles */,
-				038DA5471BB6514B0009F369 /* flagStay.bzw in CopyFiles */,
-				038DA54B1BB651640009F369 /* help_keepaway_admin.txt in CopyFiles */,
-				038DA54C1BB651670009F369 /* help_keepaway_rules.txt in CopyFiles */,
-				038DA54F1BB6517E0009F369 /* help_koth_admin.txt in CopyFiles */,
-				038DA5501BB651800009F369 /* help_koth_rules.txt in CopyFiles */,
-				038DA5591BB651BE0009F369 /* help_rabidRabbit.txt in CopyFiles */,
-				038DA5531BB651970009F369 /* nagware.cfg in CopyFiles */,
-				03E42D1E1B322E2C006EE763 /* README in CopyFiles */,
-				038DA53F1BB650C30009F369 /* README.airspawn.txt in CopyFiles */,
-				038DA5401BB650E70009F369 /* README.autoFlagReset.txt in CopyFiles */,
-				038DA5421BB650F20009F369 /* README.bzfscron.txt in CopyFiles */,
-				038DA5431BB651100009F369 /* README.chathistory.txt in CopyFiles */,
-				038DA5441BB651150009F369 /* README.customflagsample.txt in CopyFiles */,
-				038DA5451BB6511B0009F369 /* README.fairCTF.txt in CopyFiles */,
-				038DA5461BB6511F0009F369 /* README.fastmap.txt in CopyFiles */,
-				038DA5481BB651500009F369 /* README.flagStay.txt in CopyFiles */,
-				038DA54A1BB6515A0009F369 /* README.HoldTheFlag.txt in CopyFiles */,
-				038DA54D1BB6516E0009F369 /* README.keepaway.txt in CopyFiles */,
-				038DA54E1BB651790009F369 /* README.killall.txt in CopyFiles */,
-				038DA5511BB651870009F369 /* README.koth.txt in CopyFiles */,
-				038DA5521BB6518E0009F369 /* README.logDetail.txt in CopyFiles */,
-				038DA5541BB6519D0009F369 /* README.nagware.txt in CopyFiles */,
-				03E42D1F1B322E2C006EE763 /* README.MacOSX in CopyFiles */,
-				038DA5551BB651A30009F369 /* README.Phoenix.txt in CopyFiles */,
-				038DA5561BB651AB0009F369 /* README.playHistoryTracker.txt in CopyFiles */,
-				038DA5581BB651B60009F369 /* README.rabbitTimer.txt in CopyFiles */,
-				038DA55B1BB651EA0009F369 /* README.rabidRabbit.txt in CopyFiles */,
-				038DA55C1BB651F00009F369 /* README.recordmatch.txt in CopyFiles */,
-				038DA55D1BB651F50009F369 /* README.regFlag.txt in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4615,7 +4545,6 @@
 				0394E96C167B36DC007F4035 /* CopyFiles */,
 				03C8EE23167ABE2300BB07A5 /* Resources */,
 				03E42D171B32274A006EE763 /* ShellScript */,
-				03E42D181B322DDD006EE763 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -4833,6 +4762,11 @@
 				038DA53A1BB64F5C0009F369 /* README.timedctf.txt in Resources */,
 				038DA53C1BB64FB90009F369 /* README.TimeLimit.txt in Resources */,
 				038DA53E1BB64FCB0009F369 /* README.wwzones.txt in Resources */,
+				036F58231DA2F8C300BF906C /* AUTHORS in Resources */,
+				036F58241DA2F8C800BF906C /* ChangeLog in Resources */,
+				036F58251DA2F8CC00BF906C /* COPYING in Resources */,
+				036F58261DA2F8D400BF906C /* README in Resources */,
+				036F58271DA2F90900BF906C /* README.MacOSX in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
