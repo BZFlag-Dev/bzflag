@@ -214,6 +214,7 @@
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
+		038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 038D05E41DB5A59300A00C9E /* COPYING.LGPL */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
 		038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DE1BB646030009F369 /* libncurses.tbd */; };
@@ -1580,6 +1581,7 @@
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		038DA4DC1BB645D80009F369 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		038DA4DE1BB646030009F369 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
@@ -3383,6 +3385,7 @@
 				03D88EA71670CB1300725DBE /* AUTHORS */,
 				03D88EA81670CB1300725DBE /* ChangeLog */,
 				03E42D191B322DFC006EE763 /* COPYING */,
+				038D05E41DB5A59300A00C9E /* COPYING.LGPL */,
 				031FBE421DB5A42500DD84DC /* COPYING.MPL */,
 				03D88EA91670CB1300725DBE /* DEVINFO */,
 				03D88EAA1670CB1300725DBE /* PORTING */,
@@ -4740,6 +4743,7 @@
 				038DA5191BB64DF00009F369 /* help_rabidRabbit.txt in Resources */,
 				038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */,
 				038DA4FF1BB64BC30009F369 /* help_keepaway_rules.txt in Resources */,
+				038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */,
 				038DA52E1BB64F1D0009F369 /* superUser.cfg in Resources */,
 				038DA52D1BB64F1D0009F369 /* README.superUser.txt in Resources */,
 				038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */,
