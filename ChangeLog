@@ -4,6 +4,7 @@
 BZFlag 2.4.9
 ------------
 
+* Source code now dual licensed under the LGPL 2.1 and MPL 2.0 - Tim Riker
 * Added an option to invert one or both joystick axes - Joshua Bodine
 * Multisampling support under SDL 2 - Joshua Bodine
 
