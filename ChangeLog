@@ -4,9 +4,18 @@
 BZFlag 2.4.7
 ------------
 
+* Fix a regression in 2.4.6 where the client would not reduce CPU usage when
+    minimized on Windows - Scott Wichser
+* On autotools platforms, try to use SDL2, then SDL1, and then fall back to
+    native platform code. Allow specifying an SDL version as well.
+    - Scott Wichser
+* Prevent some more bzfs options from being specified in a world file
+    - Scott Wichser
+* Cleaned up some GCC6 warnings - Scott Wichser
 * Spawn all players on base when a timed game starts - Konstantinos Kanavouras
 * Add indicator for -noTeamKill servers on server list - Konstantinos Kanavouras
-* Send a notification to admins when a BZDB variable is reset - Konstantinos Kanavouras
+* Send a notification to admins when a BZDB variable is reset
+    - Konstantinos Kanavouras
 * Increase the range of the volume slider - Konstantinos Kanavouras 
 
 BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
