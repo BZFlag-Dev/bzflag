@@ -4,6 +4,7 @@
 BZFlag 2.4.7
 ------------
 
+* Add Russian transliteration - Ruslan Hihin, Aleksandr Lahin
 * Fix a regression in 2.4.6 where the client would not reduce CPU usage when
     minimized on Windows - Scott Wichser
 * On autotools platforms, try to use SDL2, then SDL1, and then fall back to

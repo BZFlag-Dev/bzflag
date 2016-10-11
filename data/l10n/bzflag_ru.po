@@ -1,0 +1,3250 @@
+# -*- coding: utf-8 -*-
+# This is generic Russian (transliteration)
+# Author: Ruslan Hihin <ruslandh@altlinux.ru>, Aleksandr Lahin
+
+msgid "ru"
+msgstr "Russian"
+
+msgid "translator"
+msgstr "Ruslan Hihin and Aleksandr Lahin"
+
+#############
+## GENERAL ##
+#############
+
+msgid "Off"
+msgstr "Vykl"
+
+msgid "On"
+msgstr "Vkl"
+
+msgid "Unavailable"
+msgstr "Otsutstvuet"
+
+msgid "None"
+msgstr "Net"
+
+msgid "Fast"
+msgstr "Bystree"
+
+msgid "Best"
+msgstr "Luchshe"
+
+msgid "NOTE: "
+msgstr "Vnimanie: "
+
+msgid "Page {1} of {2}"
+msgstr "List {1} iz {2}"
+
+msgid "Auto"
+msgstr "Avto"
+
+msgid "Pause/Resume:"
+msgstr "Pauza/Dalee"
+
+msgid "Slow Keyboard Motion:"
+msgstr "Zamedlenie klaviatury"
+
+msgid "<not mapped>"
+msgstr "<ne naznacheno>"
+
+msgid "No"
+msgstr "Net"
+
+msgid "Yes"
+msgstr "Da"
+
+msgid "N/A"
+msgstr "N/D"
+
+msgid "Failed... unknown error (%d)."
+msgstr "Ne udacha,... neizvestnaya oshibka (%d)."
+
+msgid "Silenced All Msgs"
+msgstr "Otklyuchit' soob$eniya"
+
+msgid " or "
+msgstr " ili "
+
+##################
+## INPUT EVENTS ##
+##################
+
+msgid "Pause"
+msgstr "Pauza"
+
+msgid "Home"
+msgstr "Nachalo"
+
+msgid "End"
+msgstr "Konec"
+
+msgid "Left Arrow"
+msgstr "Str.Lev."
+
+msgid "Right Arrow"
+msgstr "Str.Prav."
+
+msgid "Up Arrow"
+msgstr "Str.Vverh"
+
+msgid "Down Arrow"
+msgstr "Strl.Vniz"
+
+#msgid "Page Up"
+#msgstr ""
+
+#msgid "Page Down"
+#msgstr ""
+
+#msgid "Insert"
+#msgstr ""
+
+#msgid "Backspace"
+#msgstr ""
+
+#msgid "Delete"
+#msgstr ""
+
+#msgid "Kp0"
+#msgstr "Ck.0"
+
+#msgid "Kp1"
+#msgstr "Ck1"
+
+#msgid "Kp2"
+#msgstr "Ck2"
+
+#msgid "Kp3"
+#msgstr "Ck3"
+
+#msgid "Kp4"
+#msgstr "Ck4"
+
+#msgid "Kp5"
+#msgstr "Ck5"
+
+#msgid "Kp6"
+#msgstr "Ck6"
+
+#msgid "Kp7"
+#msgstr "Ck7"
+
+#msgid "Kp8"
+#msgstr "Ck8"
+
+#msgid "Kp9"
+#msgstr "Ck9"
+
+#msgid "Kp_Period"
+#msgstr "Ck_Tochka"
+
+#msgid "Kp_Divide"
+#msgstr "Ck_/"
+
+#msgid "Kp_Multiply"
+#msgstr "Ck_*"
+
+#msgid "Kp_Minus"
+#msgstr "Ck_-"
+
+#msgid "Kp_Plus"
+#msgstr "Ck_+"
+
+#msgid "Kp_Enter"
+#msgstr "Ck_Enter"
+
+#msgid "Kp_Equals"
+#msgstr "Ck_="
+
+#msgid "F1"
+#msgstr ""
+
+#msgid "F2"
+#msgstr ""
+
+#msgid "F3"
+#msgstr ""
+
+#msgid "F4"
+#msgstr ""
+
+#msgid "F5"
+#msgstr ""
+
+#msgid "F6"
+#msgstr ""
+
+#msgid "F7"
+#msgstr ""
+
+#msgid "F8"
+#msgstr ""
+
+#msgid "F9"
+#msgstr ""
+
+#msgid "F10"
+#msgstr ""
+
+#msgid "F11"
+#msgstr ""
+
+#msgid "F12"
+#msgstr ""
+
+msgid "Help"
+msgstr "Spravka"
+
+msgid "Print"
+msgstr "Pechat'"
+
+#msgid "Sysreq"
+#msgstr ""
+
+msgid "Break"
+msgstr "Prervat'"
+
+msgid "Menu"
+msgstr "Menyu"
+
+msgid "Power"
+msgstr "Zaryad"
+
+msgid "Euro"
+msgstr "Evro"
+
+msgid "Undo"
+msgstr "Otmena"
+
+msgid "Left Mouse"
+msgstr "Levaya knopka myshi"
+
+msgid "Middle Mouse"
+msgstr "Srednyaya knopka myshi"
+
+msgid "Right Mouse"
+msgstr "Pravaya knopka myshi"
+
+msgid "Wheel Up"
+msgstr "Koleso myshi vverh"
+
+msgid "Wheel Down"
+msgstr "Koleso myshi vniz"
+
+msgid "Mouse Button 6"
+msgstr "Kn.myshi 6"
+
+msgid "Mouse Button 7"
+msgstr "Kn.myshi 7"
+
+msgid "Mouse Button 8"
+msgstr "Kn.myshi 8"
+
+msgid "Mouse Button 9"
+msgstr "Kn.myshi 9"
+
+msgid "Mouse Button 10"
+msgstr "Kn.myshi 10"
+
+msgid "Joystick Button 1"
+msgstr "Kn.joystik 1"
+
+msgid "Joystick Button 2"
+msgstr "Kn.joystik 2"
+
+msgid "Joystick Button 3"
+msgstr "Kn.joystik 3"
+
+msgid "Joystick Button 4"
+msgstr "Kn.joystik 4"
+
+msgid "Joystick Button 5"
+msgstr "Kn.joystik 5"
+
+msgid "Joystick Button 6"
+msgstr "Kn.joystik 6"
+
+msgid "Joystick Button 7"
+msgstr "Kn.joystik 7"
+
+msgid "Joystick Button 8"
+msgstr "Kn.joystik 8"
+
+msgid "Joystick Button 9"
+msgstr "Kn.joystik 9"
+
+msgid "Joystick Button 10"
+msgstr "Kn.joystik 10"
+
+msgid "Joystick Button 11"
+msgstr "Kn.joystik 11"
+
+msgid "Joystick Button 12"
+msgstr "Kn.joystik 12"
+
+msgid "LastButton"
+msgstr "Posl.Kn."
+
+#msgid "Tab"
+#msgstr ""
+
+#msgid "Enter"
+#msgstr ""
+
+msgid "Space"
+msgstr "Probel"
+
+
+#################
+## SUPER FLAGS ##
+#################
+
+msgid "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
+msgstr "Esli on vash - za$i$aj ego ot drugih komand, esli chuzhoj, nesi ego na svoyu bazu !"
+
+msgid "High Speed"
+msgstr "Vysokaya skorost'"
+
+msgid "High speed (+V)"
+msgstr "Vysshaya skorost' (+V)"
+
+msgid "Tank moves faster.  Outrun bad guys."
+msgstr "Tank dvizhetsya bystree. Obgonite plohih parnej."
+
+msgid "Quick Turn"
+msgstr "Bystrij povorot"
+
+msgid "Quick Turn (+QT)"
+msgstr "Bystrejshij povorot (+QT)"
+
+msgid "Tank turns faster.  Good for dodging."
+msgstr "Takn povorachivaet bystree. Horosho dlya ukloneniya."
+
+msgid "Oscillation Overthruster"
+msgstr "Skvoznaya ostillyaciya"
+
+msgid "Oscillation Overthruster (+OO)"
+msgstr "Skvoznaya ostillyaciya (+OO)"
+
+msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgstr "Mozhete proezzhat' skvoz' zdaniya. Nel'zya strelyat' i sohranyat'sya vnutri"
+
+msgid "Rapid Fire"
+msgstr "Bystrij ogon'"
+
+msgid "Rapid Fire (+F)"
+msgstr "Bystrij ogon' (+F)"
+
+msgid "Shoots more often.  Shells go faster but not as far."
+msgstr "Chastaya strel'ba. Snaryady letyat bystree, no ne tak daleko"
+
+msgid "Machine Gun"
+msgstr "Skorostnaya pushka"
+
+msgid "Machine Gun (+MG)"
+msgstr "Skorostnaya pushka (+MG)"
+
+msgid "Very fast reload and very short range."
+msgstr "Ochen' chastaya strel'ba, i ochen' malen'koe porazhenie"
+
+msgid "Guided Missile"
+msgstr "Raketa (PTURS)"
+
+msgid "Guided Missile (+GM)"
+msgstr "Raketa (PTURS) (+GM)"
+
+msgid "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing."
+msgstr "Otslezhivanie celi. Privyazyvaetsya pravoj knopkoj ili klavishej I. Mozhno privyazat' cel', ili izmenit' eyo posle strel'by."
+
+msgid "Laser"
+msgstr "Lazer"
+
+msgid "Laser (+L)"
+msgstr "Lazer  (+L)"
+
+msgid "Shoots a laser.  Infinite speed and range but long reload time."
+msgstr "Strelyaet lazerom. Beskonechnaya skorost' i diapazon, no dolgoe vremya perezaryadki."
+
+msgid "Ricochet"
+msgstr "Rikoshet"
+
+msgid "Ricochet (+R)"
+msgstr "Rikoshet (+R)"
+
+msgid "Shots bounce off walls.  Don't shoot yourself!"
+msgstr "Snaryady otrazhayutsya ot sten. Ne popadite v sebya !"
+
+msgid "Super Bullet"
+msgstr "Super snaryad"
+
+msgid "Super Bullet (+SB)"
+msgstr "Super snaryad (+SB)"
+
+msgid "Shoots through buildings.  Can kill Phantom Zone."
+msgstr "Strel'ba skvoz' zdaniya. Mozhet ubit' tank v fantomnoj zone"
+
+msgid "Invisible Bullet"
+msgstr "Nevidimij snaryad"
+
+msgid "Invisible Bullet (+IB)"
+msgstr "Nevidimij snaryad (+IB)"
+
+msgid "Your shots don't appear on other radars.  Can still see them out window."
+msgstr "Vashi vystrely ne vidny iz radara. No ih mozhno videt' glazami"
+
+msgid "Stealth"
+msgstr "Stells"
+
+msgid "STealth (+ST)"
+msgstr "Stells (+ST)"
+
+msgid "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"
+msgstr "Tank ne viden na radare. Snaryady po-prezhnemu vidny. Podkradyvajtes' k vragu szadi!"
+
+msgid "Tiny"
+msgstr "Kroshka"
+
+msgid "Tiny (+T)"
+msgstr "Kroshka (+T)"
+
+msgid "Tank is small and can get through small openings.  Very hard to hit."
+msgstr "Tank ochen' malen'kij i mozhet projti cherez ochen' malen'kin otverstiya. Ochen' trudno popast' v nego."
+
+msgid "Narrow"
+msgstr "Uzkij"
+
+msgid "Narrow (+N)"
+msgstr "Uzkij (+N)"
+
+msgid "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."
+msgstr "Tank super tonkij. Ochen' trudno popast' speredi, no imeet normal'nij razmer s boku. Mozhet projti cherez uzkie otverstiya."
+
+msgid "Shield"
+msgstr "$it"
+
+msgid "SHield (+SH)"
+msgstr "$it (+SH)"
+
+msgid "Getting hit only drops flag.  Flag flies an extra-long time."
+msgstr "Pri popadanii, tane tol'ko sbrasyvaet flag. Flag padaet ochen' dolgo."
+
+msgid "Steamroller"
+msgstr "Taran"
+
+msgid "SteamRoller (+SR)"
+msgstr "Taran  (+SR)"
+
+msgid "Destroys tanks you touch but you have to get really close."
+msgstr "Unichtozhaet chuzhoj tank odnim kasaniem. No vy dolzhny podojti k nemu ochen' blizko."
+
+msgid "Shock Wave"
+msgstr "Volna uzhasa"
+
+msgid "Shock Wave (+SW)"
+msgstr "Volna uzhasa (+SW)"
+
+msgid "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."
+msgstr "Unichtozhaet vse tanki poblizosti. Ne ubejte tovari$ej! Mozhet ubit' tanki na zdaniyah."
+
+msgid "Phantom Zone"
+msgstr "Fantomnaya zona"
+
+msgid "Phantom Zone (+PZ)"
+msgstr "Fantomnaya zona  (+PZ)"
+
+msgid "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."
+msgstr "Teleportaciya tanka v Fantomnuyu zonu. Tank mozhet ehat' skvoz' zdaniya. Tank mozhet strelyat' Fantomnymi snaryadami i ne mozhet byt' podbit (za isklyucheniem Supersnaryada, Volny Uzhasa i vystrela drugogo tanka v fantomnoj zone). "
+
+msgid "Genocide"
+msgstr "Genocid"
+
+msgid "Genocide (+G)"
+msgstr "Genocid (+G)"
+
+msgid "Killing one tank kills that tank's whole team."
+msgstr "Unichtozhaet vsyu komandu podbitogo tanka"
+
+msgid "Jumping"
+msgstr "Pryzhok"
+
+msgid "JumPing (+JP)"
+msgstr "Pryzhok (+JP)"
+
+msgid "Tank can jump.  Use Tab key.  Can't steer in the air."
+msgstr "Tank mozhet prygat' (ispol'zuya klavishu Tab). Ne mozhet letaet v vozduhe"
+
+msgid "Identify"
+msgstr "Identifikaciya"
+
+msgid "IDentify (+ID)"
+msgstr "Identifikaciya (+ID)"
+
+msgid "Identifies type of nearest flag."
+msgstr "Opredelyaet tip blizhajshego flaga."
+
+msgid "Cloaking"
+msgstr "Nevidimka"
+
+msgid "CLoaking (+CL)"
+msgstr "Nevidimka (+CL)"
+
+msgid "Makes your tank invisible out-the-window.  Still visible on radar."
+msgstr "Delaet vas nevilimym v pricele. Vy ostayotes' vidimym na radare"
+
+msgid "Useless"
+msgstr "Bespoleznij"
+
+msgid "USeless (+US)"
+msgstr "Bespoleznij (+US)"
+
+msgid "You have found the useless flag. Use it wisely."
+msgstr "Vy nashli bespoleznij flag. Ispol'zujte ego s umom"
+
+msgid "Masquerade"
+msgstr "Maskirovka"
+
+msgid "MasQuerade (+MQ)"
+msgstr "Maskirovka (+MQ)"
+
+msgid "In opponent's hud, you appear as a teammate."
+msgstr "Vyshi protivniki schitayut vas svoim"
+
+msgid "Seer"
+msgstr "Providec"
+
+msgid "SEer (+SE)"
+msgstr "Providec (+SE)"
+
+msgid "See stealthed, cloaked and masquerading tanks as normal."
+msgstr "Vy vidite skrytye, nevidimye i zamaskirovannye tanki, kak obychnye."
+
+msgid "Thief"
+msgstr "Vorishka"
+
+msgid "THief (+TH)"
+msgstr "Vorishka"
+
+msgid "Steal flags.  Small and fast but can't kill."
+msgstr "Umeet krast' flagi. Malen'kij i bystrij, no ne mozhet ubivat'"
+
+msgid "Burrow"
+msgstr "Podzemnij"
+
+msgid "BUrrow (+BU)"
+msgstr "Podzemnij (+BU)"
+
+msgid "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"
+msgstr "Tank zaryvaetsya pod zemlyu, nedostupen dlya obychnogo vystrela, no mozhet byt' razdavlen lyubym!"
+
+msgid "Wings"
+msgstr "Kryl'ya"
+
+msgid "WinGs (+WG)"
+msgstr "Kryl'ya  (+WG)"
+
+msgid "Tank can drive in air."
+msgstr "Tank mozhet letat'."
+
+msgid "Agility"
+msgstr "Lovkost'"
+
+msgid "Agility (+A)"
+msgstr "Lovkost'  (+A)"
+
+msgid "Tank is quick and nimble making it easier to dodge."
+msgstr "Tank stanovitsya bystrym i provornym, chto pozvolyaet bystro uklonyat'sya"
+
+msgid "ReverseControls"
+msgstr "Obratnoe upravlenie"
+
+msgid "ReverseControls (-RC)"
+msgstr "Obratnoe upravlenie (-RC)"
+
+msgid "Tank driving controls are reversed."
+msgstr "Upravlyaemye klavishi pomenyalis' mestami"
+
+msgid "Colorblindness"
+msgstr "Dal'tonizm"
+
+msgid "ColorBlindness (-CB)"
+msgstr "Dal'tonizm (-CB)"
+
+msgid "Can't tell team colors.  Don't shoot teammates!"
+msgstr "Nel'zya opredelit' cvet igroka. Ne strelyayte v svoih!"
+
+msgid "Obesity"
+msgstr "Tuchnost'"
+
+msgid "Obesity (-O)"
+msgstr "Tuchnost' (-O)"
+
+msgid "Tank becomes very large.  Can't fit through teleporters."
+msgstr "Tank stanovitsya ochen' bol'shim. Ne mozhet proehat' cherez teleport."
+
+msgid "Left Turn Only"
+msgstr "Tol'ko vlevo"
+
+msgid "Left Turn only (-LT)"
+msgstr "Tol'ko vlevo  (-LT)"
+
+msgid "Can't turn right."
+msgstr "Ne mozhete povernut' napravo."
+
+msgid "Right Turn Only"
+msgstr "Tol'ko vpravo"
+
+msgid "Right Turn only (-RT)"
+msgstr "Tol'ko vpravo"
+
+msgid "Can't turn left."
+msgstr "Ne mozhete povernut' nalevo."
+
+msgid "Forward Only"
+msgstr "Tol'ko vpered"
+
+msgid "Forward Only (-FO)"
+msgstr "Tol'ko vpered (-FO)"
+
+msgid "Can't drive in reverse."
+msgstr "Ne mozhete ehat' nazad"
+
+msgid "ReverseOnly"
+msgstr "Tol'ko nazad"
+
+msgid "ReverseOnly (-RO)"
+msgstr "Tol'ko nazad (-RO)"
+
+msgid "Can't drive forward."
+msgstr "Ne mozhete ehat' vperyod"
+
+msgid "Momentum"
+msgstr "Inerciya"
+
+msgid "Momentum (-M)"
+msgstr "Inerciya (-M)"
+
+msgid "Tank has inertia.  Acceleration is limited."
+msgstr "Tank imeet inerciyu. Uskorenie ogranichenno."
+
+msgid "Blindness"
+msgstr "Slepota"
+
+msgid "Blindness (-B)"
+msgstr "Slepota (-B)"
+
+msgid "Can't see out window.  Radar still works."
+msgstr "Vy nichego ne vidite v pricel. Radar ostayotsya rabotosposobnym"
+
+msgid "Jamming"
+msgstr "Pomehi"
+
+msgid "JaMming (-JM)"
+msgstr "Pomehi (-JM)"
+
+msgid "Radar doesn't work.  Can still see."
+msgstr "Radar ne rabotaet, no vy vsyo vidite"
+
+msgid "Wide Angle"
+msgstr "Shirokij obzor"
+
+msgid "Wide Angle (-WA)"
+msgstr "Shirokij obzor (-WA)"
+
+msgid "Fish-eye lens distorts view."
+msgstr "Linzy 'rybij glaz' iskazhayut obzor"
+
+msgid "No Jumping"
+msgstr "Zapret pryzhkov"
+
+msgid "No Jumping (-NJ)"
+msgstr "Zapret pryzhkov (-NJ)"
+
+msgid "Tank can't jump."
+msgstr "Tank ne mozhet prygat'"
+
+msgid "Trigger Happy"
+msgstr "Vesyolaya gashetka"
+
+msgid "Trigger Happy (-TR)"
+msgstr "Vesyolaya gashetka (-TR)"
+
+msgid "Tank can't stop firing."
+msgstr "Tank ne mozhet prekratit' strelyat'"
+
+msgid "Bouncy"
+msgstr "Pruzhinka"
+
+msgid "BouncY (-BY)"
+msgstr "Pruzhinka (-BY)"
+
+msgid "Tank can't stop bouncing."
+msgstr "Tank ne mozhet prekratit' podprygivat'"
+
+msgid " flag"
+msgstr " flag"
+
+####################
+## AUDIO SETTINGS ##
+####################
+
+msgid "Audio Settings"
+msgstr "Nastrojki zvuka"
+
+msgid "Sound Volume:"
+msgstr "Nastrojka gromkosti"
+
+msgid "Unavailable"
+msgstr "Nedostupen"
+
+msgid "Driver:"
+msgstr "Drajver"
+
+msgid "Device:"
+msgstr "Ustrojstvo"
+
+msgid "Remote Sounds:"
+msgstr "Udalyonnye zvuki:"
+
+####################
+## CACHE SETTINGS ##
+####################
+
+msgid "Cache Settings"
+msgstr "Nastrojka keshirovaniya"
+
+msgid "Server List Cache:"
+msgstr "Keshirovanie spiska serverov:"
+
+msgid "Off / Backup Mode"
+msgstr "Vykl / Rezhim sohraneniya"
+
+msgid "5 Minutes"
+msgstr "5 minut"
+
+msgid "15 Minutes"
+msgstr "15 minut"
+
+msgid "30 Minutes"
+msgstr "30 minut"
+
+msgid "1 Hour"
+msgstr "1 chas"
+
+msgid "5 Hours"
+msgstr "5 chasov"
+
+msgid "15 Hours"
+msgstr "15 chasov"
+
+msgid "1 day"
+msgstr "1 den'"
+
+msgid "15 days"
+msgstr "15 dnej"
+
+msgid "30 days"
+msgstr "30 dnej"
+
+msgid "Clear Server List Cache"
+msgstr "Ochistit' kesh spiska serverov"
+
+msgid "Cache Size (MB):"
+msgstr "Razmer kesha (MB):"
+
+msgid "Clear Download Cache"
+msgstr "Ochistit' kesh zagruzki"
+
+msgid "Automatic Downloads:"
+msgstr "Avtomaticheskie zagruzki:"
+
+msgid "Connection Updates:"
+msgstr "Obnovlenie soedinenij"
+
+msgid "Update Downloads"
+msgstr "Obnovlenie zagruzki"
+
+msgid "Updating Downloads"
+msgstr "Obnovlennnye zagruzki"
+
+msgid "Download Cache Cleared"
+msgstr "Ochi$en kesh zagruzki"
+
+msgid "Server List Cache Cleared"
+msgstr "Kesh spiska serverov ochi$en"
+
+######################
+## DISPLAY SETTINGS ##
+######################
+
+msgid "Display Settings"
+msgstr "Nastrojki displeya"
+
+msgid "Dithering:"
+msgstr "Razmytie:"
+
+msgid "Blending:"
+msgstr "Smeshivanie:"
+
+msgid "Smoothing:"
+msgstr "Sglazhivanie:"
+
+msgid "Lighting:"
+msgstr "Osve$enie:"
+
+msgid "None"
+msgstr "Net"
+
+msgid "Fast"
+msgstr "Luchshe"
+
+msgid "Best"
+msgstr "Bystree"
+
+msgid "Texturing:"
+msgstr "Tekstury:"
+
+msgid "Nearest"
+msgstr "Bez fil'tracii"
+
+msgid "Linear"
+msgstr "Linejnaya fil'traciya"
+
+msgid "Nearest Mipmap Nearest"
+msgstr "Prostoj mipmapping"
+
+msgid "Linear Mipmap Nearest"
+msgstr "Linejnij mipmapping"
+
+msgid "Nearest Mipmap Linear"
+msgstr "Prostoj imtmapping s interpolyaciej"
+
+msgid "Linear Mipmap Linear"
+msgstr "Linejnij imtmapping s interpolyaciej"
+
+msgid "AntiFlicker:"
+msgstr "Antifliker:"
+
+msgid "Anisotropic:"
+msgstr "Anizotropnaya fil'traciya:"
+
+msgid "Quality:"
+msgstr "Kachestvo:"
+
+msgid "Low"
+msgstr "Nizkoe"
+
+msgid "Medium"
+msgstr "Srednee"
+
+msgid "High"
+msgstr "Vysokoe"
+
+msgid "Experimental"
+msgstr "Eksperemental'nye"
+
+msgid "Shadows:"
+msgstr "Teni:"
+
+msgid "Stipple"
+msgstr "Mozaika"
+
+msgid "Stencil"
+msgstr "Trafaret"
+
+msgid "Hidden Line:"
+msgstr "Skrytye linii:"
+
+msgid "Wireframe:"
+msgstr "Karkas:"
+
+msgid "Depth Complexity:"
+msgstr "Glubina obrabotki:"
+
+msgid "Culling Tree:"
+msgstr "Derevo ochistki:"
+
+msgid "Collision Tree:"
+msgstr "Derevo kollizij:"
+
+msgid "Brightness:"
+msgstr "Yarkost':"
+
+msgid "Energy Saver:"
+msgstr "Energosberezhenie:"
+
+msgid "Change Video Format"
+msgstr "Izmenit' videoformat"
+
+msgid "Video Format"
+msgstr "Videoformat"
+
+msgid "Current Format:"
+msgstr "Teku$ij format"
+
+msgid "<switching not available>"
+msgstr "<Pereklyuchenie ne dostupno>"
+
+msgid "Press Enter to select and T to test a format. Esc to exit."
+msgstr "Nazhmite Enter dlya vybora, T dlya proverki i Esc dlya vyhoda."
+
+msgid "<unloadable>"
+msgstr "<nezagruzhaemo>"
+
+###############
+## DOWNLOADS ##
+###############
+
+msgid "downloading: "
+msgstr "zagruzka:"
+
+msgid "Downloading texture (%d of %d): %d KB"
+msgstr "Zagruzka tekstur (%d iz %d): %d KB"
+
+msgid "not downloading: "
+msgstr "ne zagruzheno:"
+
+msgid "NOTE: "
+msgstr "Vnimanie:"
+
+msgid "download access is controlled by "
+msgstr "zagruzka upravlyaetsya "
+
+msgid "local denial: "
+msgstr "mestnij zapret:"
+
+######################
+## EFFECTS SETTINGS ##
+######################
+
+msgid "Effects Settings"
+msgstr "Nastrojki effektov"
+
+msgid "Rain:"
+msgstr "Dozhd':"
+
+msgid "Mirror:"
+msgstr "Otrazhenie:"
+
+msgid "Fog:"
+msgstr "Tuman:"
+
+msgid "Nice"
+msgstr "Krasivo"
+
+msgid "Shot Length:"
+msgstr "Dlina vystrela:"
+
+msgid "Display Treads:"
+msgstr "Otobrazhenie gusenic:"
+
+msgid "Animated Treads:"
+msgstr "Animaciya gusenic:"
+
+msgid "Covered"
+msgstr "Zakrytye"
+
+msgid "Exposed"
+msgstr "Otkrytye"
+
+msgid "Track Marks:"
+msgstr "Sledy gusenic:"
+
+msgid "Track Mark Culling:"
+msgstr "Ochistka sledov:"
+
+msgid "Fancy Effects:"
+msgstr "Dekorativnye effekty:"
+
+msgid "Spawn Effect:"
+msgstr "Effekt poyavleniya:"
+
+msgid "Local Spawn Effect:"
+msgstr "Effekt lokal'nogo poyavleniya"
+
+msgid "Same as spawns"
+msgstr "Podobnij poyavleniyu"
+
+msgid "Death Effect:"
+msgstr "Effekt smerti:"
+
+msgid "Shot Fired Effect:"
+msgstr "Effekt vystrela:"
+
+msgid "Local Shot Effect:"
+msgstr "Effekt lokal'nogo vystrela:"
+
+msgid "Same as shots"
+msgstr "Podobnij vystrelu"
+
+msgid "Use Velocity on Shot Effects:"
+msgstr "Uchyot skorosti pri effekte vystrela:"
+
+msgid "Landing Effect:"
+msgstr "Effekt prizemleniya:"
+
+msgid "GM Smoke Effect:"
+msgstr "Effekt dyma PTURS:"
+
+msgid "GM Effect Timing:"
+msgstr "Dlitel'nost' effekta PTURS:"
+
+msgid "  Ricocet Effect:"
+msgstr "  Effekt rikosheta"
+
+msgid "  Teleport Shot Effect:"
+msgstr "  Effekt teleportacii"
+
+msgid "Blossom"
+msgstr "Cvetok"
+
+msgid "Cone"
+msgstr "Konus"
+
+msgid "Rings"
+msgstr "Kol'ca"
+
+msgid "Smoke Rings"
+msgstr "Kol'ca dyma"
+
+msgid "Muzzle Flash"
+msgstr "Vspyshka v stvole"
+
+msgid "Smoke and Flash"
+msgstr "Dym i vspyshka:"
+
+msgid "Classic Puff"
+msgstr "Klassicheskie kluby dyma"
+
+msgid "Shock Cone"
+msgstr "Konus udarnoj volny"
+
+msgid "Smoke"
+msgstr "Dym"
+
+msgid "Fancy Deaths"
+msgstr "Neobychnye smerti"
+
+msgid "Dirt Flash"
+msgstr "Gryaznaya vspyshka"
+
+msgid "Ring"
+msgstr "Kol'co"
+
+#msgid "IDL"
+#msgstr ""
+
+##################
+## GUI SETTINGS ##
+##################
+
+msgid "GUI Settings"
+msgstr "Parametry graficheskogo interfejsa"
+
+msgid "Radar Style:"
+msgstr "Stil' radara:"
+
+msgid "Normal"
+msgstr "Obychnij"
+
+msgid "Fast Sorted"
+msgstr "Bystraya sortirovka"
+
+msgid "Enhanced"
+msgstr "Uluchsheniya:"
+
+msgid "Scoreboard Sort:"
+msgstr "Sortirovka tablo:"
+
+msgid "Always Show Team Scores:"
+msgstr "Vsegda pokazyvat' schyot komandy:"
+
+msgid "Scoreboard Font Size:"
+msgstr "Razmer shrifta tablo"
+
+msgid "Auto"
+msgstr "Avto"
+
+msgid "ControlPanel Font Size:"
+msgstr "Razmer shrifta paneli upravleniya:"
+
+msgid "Extended Observer Info:"
+msgstr "Rasshirennaya informaciya nablyudatelya:"
+
+msgid "On With Apparent Speeds"
+msgstr "Vklyuchenie pokaza skorostej"
+
+msgid "Full"
+msgstr "Polnlst'yu"
+
+msgid "Panel Opacity:"
+msgstr "Neprozrachnost' paneli"
+
+msgid "Radar Opacity:"
+msgstr "Neprozrachnost' radara"
+
+msgid "Colored shots on radar:"
+msgstr "Rascvetka vystrelov na radare"
+
+msgid "Radar Shot Length:"
+msgstr "Dlina vystrela na radare:"
+
+msgid "Radar Shot Size:"
+msgstr "Razmer vystrela na radare:"
+
+msgid "Radar Shot Line:"
+msgstr "Liniya vystrela na radare:"
+
+msgid "Lagging"
+msgstr "Otstayu$ie"
+
+msgid "Leading"
+msgstr "Vedu$ie"
+
+msgid "Leading & Lagging"
+msgstr "Vedu$ie i otstayu$ie"
+
+msgid "Radar Position:"
+msgstr "Razme$enie radara:"
+
+msgid "Left"
+msgstr "Vlevo"
+
+msgid "Right"
+msgstr "Vpravo"
+
+msgid "Radar Size:"
+msgstr "Razmer radara:"
+
+msgid "Panel Height:"
+msgstr "Vysota paneli"
+
+msgid "Mouse Box Size:"
+msgstr "Razmer ramok myshi:"
+
+msgid "Locale:"
+msgstr "Lokal'"
+
+msgid "Default"
+msgstr "Po-umolchaniyu"
+
+msgid "Control panel tabs:"
+msgstr "Zakladki paneli upravleniya:"
+
+msgid "Control panel coloring:"
+msgstr "Rascvetka paneli upravleniya"
+
+msgid "Underline color:"
+msgstr "Cvet podcherkivaniya"
+
+msgid "Cyan"
+msgstr "Cian"
+
+msgid "Grey"
+msgstr "Serij"
+
+msgid "Text"
+msgstr "Tekst"
+
+msgid "Killer Highlight:"
+msgstr "Podsvetka ubijcy"
+
+msgid "Pulsating"
+msgstr "Miganie"
+
+msgid "Underline"
+msgstr "Podchyorkivanie"
+
+msgid "Pulsation Rate:"
+msgstr "Skorost' pulb'sacii"
+
+msgid "Pulsation Depth:"
+msgstr "Glubina pul'sacii"
+
+msgid "Time / Date Display:"
+msgstr "Otobrazhenie daty/vremeni:"
+
+msgid "time"
+msgstr "vremya"
+
+msgid "date"
+msgstr "data"
+
+msgid "both"
+msgstr "data i vremya"
+
+msgid "Reload timer on HUD:"
+msgstr "Tajmer perezaryadki na verhnem tablo"
+
+msgid "Motto Display Length:"
+msgstr "Dlina tablo deviza"
+
+###############
+## HELP MENU ##
+###############
+
+msgid "Page Down for next page"
+msgstr "Page Down na sleduyu$uyu stranicu"
+
+msgid "Page Up for previous page"
+msgstr "Page Up na predydu$uyu stranicu"
+
+msgid "Controls"
+msgstr "Organy upravleniya"
+
+msgid "Mouse Position"
+msgstr "Poziciya myshi"
+
+msgid "Controls Tank Position:"
+msgstr "Upravlenie polozheniem tanka"
+
+msgid "Fires Shot:"
+msgstr "Ogon' vystrela:"
+
+msgid "Drops Flag (if not bad):"
+msgstr "Vybrasyvaniya flaga (ne dlya 'razbojnikov')"
+
+msgid "Identifies Player (locks on GM):"
+msgstr "Identifikaciya igroka (c fiksaciej celi PTURS)"
+
+msgid "Short Radar Range:"
+msgstr "Radar blizhnego dejstviya:"
+
+msgid "Medium Radar Range:"
+msgstr "Radar srednego dejstviya:"
+
+msgid "Long Radar Range:"
+msgstr "Radar dal'nego dejstviya:"
+
+msgid "Zoom Radar In:"
+msgstr "Uvelichenie masshtaba radara"
+
+msgid "Zoom Radar Out:"
+msgstr "Umen'shenie masshtaba radara"
+
+msgid "Send Message to Everybody:"
+msgstr "Otpravit' soob$enie vsem"
+
+msgid "Send Message to Teammates:"
+msgstr "Poslat' soob$enie tovari$am"
+
+msgid "Send Message to Nemesis:"
+msgstr "Poslat' soob$enie vozmezdiya:"
+
+msgid "Send Message to Recipient:"
+msgstr "Poslat' soob$enie adresatu"
+
+msgid "Jump (if allowed):"
+msgstr "Pryzhok (esli razre$yon)"
+
+msgid "Toggle Binoculars:"
+msgstr "Pereklyuchit' binokl'"
+
+msgid "Toggle Score Sheet:"
+msgstr "Pereklyuchit' schyot igry:"
+
+msgid "Toggle Tank Labels:"
+msgstr "Pereklyuchit' metki tankov:"
+
+msgid "Toggle Heads-up Flag Help:"
+msgstr "Pereklyuchit' pomo$' po podnyatomu flagu"
+
+msgid "Set Time of Day Backward:"
+msgstr "Ustanovit' ostavshiesya vremya"
+
+msgid "Set Time of Day Forward:"
+msgstr "Ustanovit' proshedshee vremya"
+
+msgid "Pause/Resume:"
+msgstr "Pauza/Dalee:"
+
+msgid "Self destruct/Cancel:"
+msgstr "Samounichtozhenie/Otmena"
+
+msgid "Quit:"
+msgstr "Vyhod bez sohraneniya:"
+
+msgid "Scroll Message Log Backward:"
+msgstr "Prokrutka soob$enij nazad:"
+
+msgid "Scroll Message Log Forward:"
+msgstr "Prokrutka soob$enij vperyod:"
+
+msgid "Slow Keyboard Motion:"
+msgstr "Umen'shenie pereme$eniya klaviatury"
+
+msgid "Toggle Radar Flags:"
+msgstr "Otobrazhenie flagov na radare"
+
+msgid "Toggle Main Flags:"
+msgstr "Otobrazhenie osnovnyh flagov:"
+
+msgid "Silence/UnSilence:"
+msgstr "Vykl/vkl zvuk:"
+
+msgid "Server Admin:"
+msgstr "Administrator servera:"
+
+msgid "Hunt:"
+msgstr "Ohota:"
+
+msgid "Auto Pilot:"
+msgstr "Avtpilot"
+
+msgid "Main Message Tab:"
+msgstr "Vkladka osnovnyh soob$enij:"
+
+msgid "Chat Message Tab:"
+msgstr "Vkladka chata soob$enij"
+
+msgid "Server Message Tab:"
+msgstr "Vkladka soob$enij servera"
+
+msgid "Misc Message Tab:"
+msgstr "Vkladka prochih soob$enij"
+
+#msgid "Esc"
+#msgstr ""
+
+msgid "Show/Dismiss menu:"
+msgstr "Pokazat'/skryt' menyu"
+
+msgid "<not mapped>"
+msgstr "<ne naznacheno>"
+
+msgid " or "
+msgstr " ili "
+
+msgid "General"
+msgstr "Ob$ee"
+
+msgid "BZFlag is a multi-player networked tank battle game.  There are five teams:"
+msgstr "BZFlag yavlyaetsya mnogopol'zovatel'skoj setevoj igroj bitvy tankov. Est' pyat' komand:"
+
+msgid "red, green, blue, purple, and rogues (rogue tanks are black).  Destroying a"
+msgstr "krasnaya, zelyonaya, golubaya, purpurnaya i 'razbojniki' (u 'razbojnikov' chyornye tanki). Unichtozhenie"
+
+msgid "player on another team scores a win, while being destroyed or destroying a"
+msgstr "igroka iz drugoj komandy zaschityvaetsya kak pobeda, a gibel' ili unichtozhenie"
+
+msgid "teammate scores a loss.  Individual and aggregate team scores are tallied."
+msgstr "svoego zaschityvaetya kak proigrysh. V igre podschityvayutsya ochki igrokov i komand."
+
+msgid "Rogues have no teammates (not even other rogues),so they cannot shoot"
+msgstr "U 'razbojnikov' net svoih (dazhe v svoej komande), poetomu oni mogut strelyat' po vsem"
+
+msgid "teammates and they don't have a team score."
+msgstr "i u nih net komandnogo schyota."
+
+msgid "There are four styles of play, determined by the server configuration:  capture-"
+msgstr "Su$estvuet chetyre stilya igry, opredelyaemyh konfiguraciej servera: zahvat flaga,"
+
+msgid "the-flag, rabbit-chase, free-for-all and open-free-for-all.  In free-for-all the"
+msgstr "pogonya-za-krolikom, proizvol'nij stil' i otkrytij proizvol'nij stil'."
+
+msgid "object is simply to get the highest score by shooting opponents.  In open-free-"
+msgstr "V proizvol'nom stile cel' - prosto nabrat' maksimum ochkov, ubivaya protivnikov."
+
+msgid "for-all highest score is still the goal but there are no teams.  In rabbit chase,"
+msgstr "V otkrytom proizvol'nom stile cel' ta zhe, no net komand. V pogone za krolikom"
+
+msgid "the white tank tries to stay alive while all other tanks try to hunt and kill it."
+msgstr "belij tank pytaetsya vyzhit', togda kak drugie starayutsya pojmat' i ubit' ego."
+
+msgid "The object in capture-the-flag is to capture enemy flags while preventing opponents"
+msgstr "Cel' igry zahvat-flaga - zahvatit' flagi protivnikov i pri etom ne dat' opponentam"
+
+msgid " from capturing yours.  In this style, each team (but not rogues) has a team base"
+msgstr " zahvatit' vashi. V takoj igre u kazhdoj komandy (no ne u 'razbojnikov') est' svoya baza i u kazhdoj"
+
+msgid "and each team with at least one player has a team flag which has the color of the team."
+msgstr "komandy s kak minimum odnim igrokom est' flag komandy, okrashennij v cvet komandy."
+
+msgid "To capture a flag, you must grab it and bring it back to your team base (you must be"
+msgstr "Chtoby zahvatit' flag, vy dolzhny vzyat' i privezti ego na svoyu bazu (chtoby zahvat byl"
+
+msgid "on the ground in your base to register the capture).  Capturing a flag destroys"
+msgstr "zaschitan, vy dolzhny opustit' ego na svoej baze). Pri zahvate flaga unichtozhayutsya"
+
+msgid "all the players on that team and gives your team score a bonus;  the players will"
+msgstr "vse igroki komandy, chej eto flag, a vasha komanda poluchaet ochki; unichtozhennye igroki voznikayut"
+
+msgid "restart on their team base.  Taking your flag onto an enemy base counts as a capture"
+msgstr "na svoej baze svoej komandy. Dostavka vashega flaga na bazu protivnika zaschityvaetsya kak zahvat"
+
+msgid "against your team but not for the enemy team."
+msgstr "v pol'zu komandy protivnika, a ne vashej."
+
+msgid "Environment"
+msgstr "Okruzhayu$ij mir"
+
+msgid "The world environment contains an outer wall and several buildings."
+msgstr "Igrovoj mir sostoit iz vneshnej steny i neskol'kih sooruzhenij."
+
+msgid "You cannot go outside the outer wall (you can't even jump over it)."
+msgstr "Vyehat' za vneshnyuyu stenu nel'zya (eyo nel'zya dazhe pereprygnut')."
+
+msgid "You cannot normally drive or shoot through buildings."
+msgstr "Obychno takzhe nel'zya proezzhat' ili strelyat' skvoz' zdaniya."
+
+msgid "The server may be configured to include teleporters:  large transparent"
+msgstr "Na igrovom servere mogut byt' predusmotreny teleporty: bol'shie prozrachnye "
+
+msgid "black slabs.  Objects entering one side of a teleporter are instantly"
+msgstr "chyornye plity. Ob\"ekty, prohodya$ie s odnoj storony teleporta, mgnovenno"
+
+msgid "moved to one side of another (or possibly the same) teleporter.  The"
+msgstr "pereme$ayutsya v drugoj (a vozmozhno i v tot-zhe) teleport. Teleport obladaet"
+
+msgid "teleport is reversible;  reentering the same side of the destination"
+msgstr "obratnym dejstviem; pri prohozhdenii s obratnoj storony celevogo teleporta"
+
+msgid "teleporter brings you back to where you started.  Teleport connections"
+msgstr "y vozvra$aetes' k nachal'nomu polozheniyu. Soedineniya teleportov"
+
+msgid "are fixed at the start of the game and don't change during the game."
+msgstr "opredelyayutsya na starte igry i ne izmneyutsya v processe igry"
+
+msgid "The connections are always the same in the capture-the-flag style."
+msgstr "V stile zahvat flaga soedineniya vsegda odinakovy"
+
+msgid "Each side of a teleporter teleports independently of the other side."
+msgstr "Raznye storony odnogo teleporta funkcioniruyut nezavisimo drug ot druga."
+
+msgid "It's possible for a teleporter to teleport to the opposite side of"
+msgstr "Inogda teleport mozhet prosto soedinyat' dve ego storony"
+
+msgid "itself.  Such a thru-teleporter acts almost as if it wasn't there."
+msgstr "Fakticheski takoj skvoznoj teleport funkcioniruet tak, kak esli by ego ne bylo."
+
+msgid "A teleporter can also teleport to the same side of itself.  This is a"
+msgstr "Takzhe teleport mozhet teleportitrovat' sam v sebya. Takoj teleport"
+
+msgid "reverse teleporter.  Shooting at a reverse teleporter is likely to be"
+msgstr "nazyvaetsya reversivnym. Popytka strelyat' v takoj teleport skoree vsego"
+
+msgid "self destructive;  shooting a laser at one is invariably fatal."
+msgstr "privedyot k samounichtozheniyu; pri vystrele iz lazera vy obrecheny"
+
+msgid "Flags"
+msgstr "Flagi"
+
+msgid "Flags come in two varieties:  team flags and super flags.  Team flags"
+msgstr "Flagi byvayut dvuh raznovidnostej: flagi komandy i super-flagi. Flagi komandy"
+
+msgid "are used only in the capture-the-flag style.  The server may also be"
+msgstr "ispol'zuyutsya tol'ko v igre zahvat-flaga. Server takzhe mozhet osu$estvlyat'"
+
+msgid "configured to supply super flags, which give your tank some advantage"
+msgstr "sluchajnoe rasmkidyvanie superflagov, dayu$ih tanku nekotoroe preimu$estvo ili naoborot"
+
+msgid "or disadvantage.  You normally can't tell which until you pick one up,"
+msgstr "uhudshenie polozheniya. Bez osobyh sredstv nel'zya opredelit' znachenie flaga,"
+
+msgid "but good flags generally outnumber bad flags two to one."
+msgstr "poka ego ne voz'myosh', no obychno horoshih flagov vdvoe bol'she."
+
+msgid "Team flags are not allowed to be in Bad Places.  Bad Places are:  on"
+msgstr "Flagi komandy ne mogut nahodit'sya v 'plohih' mestah, v chastnosti"
+
+msgid "a building or on an enemy base.  Team flags dropped in a Bad Place are"
+msgstr "na kryshe zdaniya ili na baze vraga. Flagi komandy, broshennye v 'plohom'"
+
+msgid "moved to a safety position.  Captured flags are placed back on their"
+msgstr "meste pereme$ayutsya v novoe mesto. Zahvachennye flagi vozvra$ayutsya"
+
+msgid "team base.  Super flags dropped above a building always disappear."
+msgstr "na bazu svoej komandy. Super-flagi, vybroshennye nad zdaniem vsegda ischezayut."
+
+msgid "A random good super flag will remain for up to 4 possessions.  After"
+msgstr "Sluchajnij horoshij super-flag mozhet byt' vzyat do 4 raz. Posle etogo"
+
+msgid "that it'll disappear and will eventually be replaced by a new random"
+msgstr "takoj flag ischezaet i zamenyaetsya novym sluchajno vybrannym flagom."
+
+msgid "flag.  Bad random super flags disappear after the first possession."
+msgstr "Plohie sluchajnye super-flagi ischezayut posle pervogo vzyatiya."
+
+msgid "Bad super flags can't normally be dropped.  The server can be set to"
+msgstr "Obychno vybrosit' plohoj super-flag nel'zya. Server mozhet byt' nastroen,"
+
+msgid "automatically drop the flag for you after some time, after you destroy"
+msgstr "chto plohoj flag vybrasyvalsya cherez nekotoroe vremya, ili posle unichtozheniya"
+
+msgid "a certain number of enemies, and/or when you grab an antidote flag."
+msgstr "opredelyonnogo chisla vragov i/ili pri vzyatii flaga protivoyadiya. Flagi"
+
+msgid "Antidote flags are yellow and only appear when you have a bad flag."
+msgstr "protivoyadiya okrasheny v zhyoltij cvet i poyavlyayutsya, tol'ko kogda vzyat plohoj flag."
+
+msgid "Good Flags"
+msgstr "Horoshie flagi"
+
+msgid "Good Flags:"
+msgstr "Horoshie flagi:"
+
+msgid "Bad Flags"
+msgstr "Plohie flagi"
+
+msgid "Bad Flags:"
+msgstr "Plohie flagi:"
+
+msgid "Readouts I"
+msgstr "Tablo obzora I"
+
+msgid "The radar is on the left side of the control panel.  It shows an overhead"
+msgstr "V levoj chasti paneli upravleniya nahoditsya radar. On pokazyvaet vid polya"
+
+msgid "x-ray view of the game.  Buildings and the outer wall are shown in light"
+msgstr "sverhu v H-luchah. Zdaniya i vneshnie steny otobrazhayutsya golubym cvetom."
+
+msgid "blue.  Team bases are outlined in the team color.  Teleporters are short"
+msgstr "Bazy komandy ocherchivayutsya cvetom komandy. Teleporty pokazany kak korotkie"
+
+msgid "yellow lines.  Tanks are dots in the tank's team color, except rogues are"
+msgstr "zhyoltye linii. Tanki pokazyvayutsya kak tochki cveta komandy, za isklyucheniem 'razbojnikov',"
+
+msgid "yellow.  The size of the tank's dot is a rough indication of the tank's"
+msgstr "kotorye vydeleny zhyoltym. Po razmeru tochki tanka mozhno primerno opredelit'"
+
+msgid "altitude:  higher tanks have larger dots.  Flags are small crosses.  Team"
+msgstr "vysotu tanka: chem vyshe tank, tem bol'she tochka. Flagi otmecheny krestikami."
+
+msgid "flags are in the team color, superflags are white, and the antidote flag"
+msgstr "flagi komandy okrasheny v cvet komandy, super-flagi belye, a flag protivoyadiya"
+
+msgid "is yellow.  Shots are small dots (or lines or circles, for lasers and"
+msgstr "zhyoltij. Vystrely oboznachayutsya malen'kimi tochkami (ili liniyami ili kruzhkami,"
+
+msgid "shock waves, respectively).  Your tank is always dead center and forward"
+msgstr "dlya lazera ili volny uzhasa, sootvetstvennno). Vash tank vsegda nepodvizhen v"
+
+msgid "is always up on the radar.  The yellow V is your field of view.  North"
+msgstr "centre radara i napravleniyu vperyod vsegda sootvetstvuet vverh na radare."
+
+msgid "is indicated by the letter N."
+msgstr "Zhyoltij ugol V oboznachaet vashe pole zreniya. Sever oboznachen bukvoj N."
+
+msgid "The heads-up-display (HUD) has several displays.  The two boxes in the"
+msgstr "Verhnij displej soderzhit neskol'ko elementov. Dva tablo v centre okna obzora"
+
+msgid "center of the view are the motion control boxes;  within the small box"
+msgstr "predstavlyayut soboj tablo upravleniem dvizheniem, vo vnutrennem malen'kom tablo tank"
+
+msgid "your tank won't move, outside the large box you don't move any faster than"
+msgstr "ne dvigaetsya, za predelami vneshnego bol'shogo tablo on ne budet dvigat'sya bystree, chem"
+
+msgid "at the edge of the large box.  Moving the mouse above or below the small"
+msgstr "u eyo kraya. Pereme$enie ukazatelya myshi vverh ili vniz ot vnutrennego malen'kogo"
+
+msgid "box moves forward or backward, respectively.  Similarly for left and right."
+msgstr "tablo privodit k pereme$eniyu tanka vperyod ili nazad, sootvetstvenno. To zhe samoe"
+
+msgid "The distance away from the small box determines the speed."
+msgstr "s dvizheniem vlevo/vpravo. Skorost' pryamo proporcional'na rasstoyaniyu do centra."
+
+msgid "Readouts II"
+msgstr " Tablo obzora II"
+
+msgid "Above the larger box is a tape showing your current heading.  North is"
+msgstr "Nad bol'shim tablo nahoditsya lenta, pokazyvayu$aya teku$ee napravlenie."
+
+msgid "0, east is 90, etc.  If jumping is allowed or you have the jumping flag,"
+msgstr "Sever - 0, vostok - 90, i t.d. Esli razresheny pryzhki ili vy vzyali flag 'pryzhok',"
+
+msgid "an altitude tape appears to the right of the larger box."
+msgstr "cprava ot vneshnej ramki poyavlyaetsya lenta vysoty."
+
+msgid "Small colored diamonds or arrows may appear on the heading tape.  An"
+msgstr "Na lente napravleniya mogut poyavlyat'sya malen'kie cvetnye romby ili strelki."
+
+msgid "arrow pointing left means that a particular flag is to your left, an"
+msgstr "Strelka, ukazyvayu$aya vlevo, oznachaet, chto trebuemij flag sleva ot vas,"
+
+msgid "arrow pointing right means that the flag is to your right, and a diamond"
+msgstr "a strelka, ukazyvayu$aya vpravo, oznachaet, chto etot flag sprava, a romb"
+
+msgid "indicates the heading to the flag by its position on the heading tape."
+msgstr "pokazyvaet napravlenie na flag, otmechaya ego polozhenie na lente."
+
+msgid "In capture-the-flag mode a marker always shows where your team flag is."
+msgstr "V igre zahvat-flaga marker vsegda pokazyvaet, gde nahoditsya flag vashej komandy."
+
+msgid "A yellow marker shows the way to the antidote flag."
+msgstr "Zhyoltij marker pokazyvaet put' k flagu protivoyadiya."
+
+msgid "At the top of the display are, from left to right, your callsign and"
+msgstr "V verhnej chasti, sprava nalevo, pokazany vash pozyvnoj, schyot,"
+
+msgid "score, your status, and the flag you have.  Your callsign is in the"
+msgstr "status, i kakoj flag u vas est'. Vash pozyvnoj okrashen v cvet"
+
+msgid "color of your team.  Your status is one of:  ready, dead, sealed, zoned"
+msgstr "vashejyyyyy komandy. Vash status mozhet byt' sleduyu$im: gotov, ubit, v pomehah, "
+
+msgid "or reloading (showing the time until reloaded).  It can also show the"
+msgstr "v fantonmnoj zone ili perezaryadka (i vremya do gotovnosti). Takzhe tut mozhet otobrazhat'sya"
+
+msgid "time until a bad flag is dropped (if there's a time limit)."
+msgstr "vremya do vybrasyvaniya plohogo flaga (esli vremya vladeniya takimi flagami ogranicheno)."
+
+msgid "Other informational messages may occasionally flash on the HUD."
+msgstr "Na etom tablo takzhe mogut poyavlyat'sya drugie informacionnye soob$eniya."
+
+msgid "Credits"
+msgstr "Blagodarnosti"
+
+msgid "Maintainer:"
+msgstr "Mantejner"
+
+msgid "Original Author:"
+msgstr "Avtor"
+
+msgid "Code Contributors:"
+msgstr "Uchastniki razrabotki:"
+
+msgid "Tank Models:"
+msgstr "Modeli tankov:"
+
+msgid "Special Thanks:"
+msgstr "Osobaya blagodarnost':"
+
+msgid "BZFlag Home Page:"
+msgstr "Domashnij sajt BZFlag"
+
+#msgid "Copyright (c) 1993-2016"
+#msgstr ""
+
+
+####################
+## HUD RENDERERER ##
+####################
+
+# Translated input events are not working here
+msgid "Press %s to start"
+msgstr "Nazhmite %s dlya starta"
+
+msgid "Press Pause to resume"
+msgstr "Nazhmite Pause dlya prodolzheniya"
+
+msgid "AutoPilot on"
+msgstr "Avtopilot vklyuchen"
+
+msgid "Press Destruct to cancel"
+msgstr "Nazhmite Destruct dlya otmeny"
+
+msgid "GAME OVER"
+msgstr "IGRA OKONChENA"
+
+msgid "Send:"
+msgstr "Poslat':"
+
+msgid "Target Info"
+msgstr "Informaciya o celi"
+
+msgid "Position [%d %d %d]"
+msgstr "Koordinaty [%d %d %d]"
+
+msgid "Linear Speed:"
+msgstr "Linejnaya skorost':"
+
+msgid "Vertical Speed:%5.2f"
+msgstr "Vertikal'naya skorost':%5.2f"
+
+msgid "Vertical Speed:%5.2f(%5.2f)"
+msgstr "Vertikal'naya skorost'::%5.2f(%5.2f)"
+
+msgid "Angular Speed:"
+msgstr "Uglovaya skorost'"
+
+msgid "Last Shot Info  Time:%6.4f  Deviation:%6.3f"
+msgstr "Poslednij vystrel Vremya:%6.4f Otklonenie:%6.3f"
+
+msgid "ReportedHits %d ComputedHits %d ratio %f"
+msgstr "Reported popadaniya %d Computed popadaniya %d sootnoshenie %f"
+
+msgid "Dead"
+msgstr "Ubit"
+
+msgid "Ready"
+msgstr "Gotov"
+
+msgid "Reloaded in %.1f"
+msgstr "Perezaryadka v %.1f"
+
+msgid "Sealed"
+msgstr "Pomehi"
+
+msgid "Zoned"
+msgstr "Fantom"
+
+msgid "FPS: %d"
+msgstr "FPS: %d"
+
+msgid "rtris: %i"
+msgstr "rtris: %i"
+
+msgid "tris: %i"
+msgstr "tris: %i"
+
+msgid "time: %dms"
+msgstr "vremya"
+
+###############
+## JOIN MENU ##
+###############
+
+msgid "Join Game"
+msgstr "Prisoedinit'sya k igre"
+
+msgid "Find Server"
+msgstr "Najti server"
+
+msgid "Connect"
+msgstr "Soedinenie"
+
+msgid "Callsign:"
+msgstr "Pozyvnoj:"
+
+msgid "Password:"
+msgstr "Parol':"
+
+msgid "Team:"
+msgstr "Komanda:"
+
+msgid "Server:"
+msgstr "Server:"
+
+msgid "Port:"
+msgstr "Port:"
+
+msgid "Motto:"
+msgstr "Deviz:"
+
+msgid "Start Server"
+msgstr "Zapusk servera"
+
+msgid "You must enter a callsign."
+msgstr "Vy dolzhny vvesti pozyvnoj."
+
+msgid "You must enter a server."
+msgstr "Vy dolzhny vvesti imya servera."
+
+msgid "Port is invalid.  Try %d."
+msgstr "Nepravil'nij port. Popytka %d."
+
+msgid "Trying..."
+msgstr "Vypolnenie..."
+
+##########
+## TEAM ##
+##########
+
+msgid "Automatic"
+msgstr "Avtomaticheski"
+
+msgid "Rogue"
+msgstr "Razbojniki"
+
+msgid "Red Team"
+msgstr "Krasnaya komanda"
+
+msgid "Green Team"
+msgstr "Zelyonaya komanda"
+
+msgid "Blue Team"
+msgstr "Sinyaya komanda"
+
+msgid "Purple Team"
+msgstr "Purpurnaya komanda"
+
+msgid "Observer"
+msgstr "Nablyudatel'"
+
+msgid "Rabbit"
+msgstr "Krolik"
+
+msgid "Hunter"
+msgstr "Ohotnik"
+
+msgid "No Team??"
+msgstr "Net kommandy ???"
+
+msgid "Invalid team"
+msgstr "Nepravil'nij vvod komandy"
+
+####################
+## INPUT SETTINGS ##
+####################
+
+msgid "Input Settings"
+msgstr "Nastrojki vvoda"
+
+msgid "Change Key Mapping"
+msgstr "Izmenit' nastrojku klavish"
+
+msgid "Joystick device:"
+msgstr "Joystik:"
+
+msgid "Active input device:"
+msgstr "Aktivnye ustrojstva vvoda:"
+
+msgid "Force feedback:"
+msgstr "Otdacha joyjstika:"
+
+msgid "Rumble"
+msgstr "Shumy"
+
+msgid "Directional"
+msgstr "Napravlennij"
+
+msgid "Joystick X Axis:"
+msgstr "Os' X joyjstika:"
+
+msgid "Joystick Y Axis:"
+msgstr "Os' Y joyjstika:"
+
+msgid "Confine mouse:"
+msgstr "ogranichenie myshi:"
+
+msgid "Window"
+msgstr "Pricel"
+
+msgid "MotionBox"
+msgstr "Okno Deviza"
+
+msgid "Jump while typing:"
+msgstr "Pryzhok pri nabore:"
+
+#######################
+## KEYBOARD MAP MENU ##
+#######################
+
+msgid "Key Mapping"
+msgstr "Privyazka klavish"
+
+msgid "Use up/down arrows to navigate, enter key to enter edit mode"
+msgstr "Strelki vverh/vniz - vybor, Enter - izmenenie"
+
+msgid "Reset Defaults"
+msgstr "Sbros na umolchaniya"
+
+msgid "Fire shot:"
+msgstr "Vystrel:"
+
+msgid "Drop flag:"
+msgstr "Brosit' flag:"
+
+msgid "Identify/Lock On:"
+msgstr "Identificirovat'/Zakreplyat':"
+
+msgid "Radar Short:"
+msgstr "Malen'kij radar"
+
+msgid "Radar Medium:"
+msgstr "Srednij radar"
+
+msgid "Radar Long:"
+msgstr "Bol'shoj radar"
+
+msgid "Radar Zoom In:"
+msgstr "Uvelichit' masshtaba radara"
+
+msgid "Radar Zoom Out:"
+msgstr "Umen'shit' masshtaba radara"
+
+msgid "Send to All:"
+msgstr "Poslat' vsem"
+
+msgid "Send to Teammates:"
+msgstr "Poslat' svoim"
+
+msgid "Send to Nemesis:"
+msgstr "Poslat' obidchiku"
+
+msgid "Send to Recipient:"
+msgstr "Poslat' adresatu"
+
+msgid "Send to Admin:"
+msgstr "Poslat' adminu"
+
+msgid "Jump:"
+msgstr "Pryzhok"
+
+msgid "Binoculars:"
+msgstr "Binokl'"
+
+msgid "Toggle Score:"
+msgstr "Tumbler ocenki:"
+
+msgid "Toggle Radar:"
+msgstr "Tumbler radara:"
+
+msgid "Toggle Console:"
+msgstr "Tumbler konsoli:"
+
+msgid "Tank Labels:"
+msgstr "Metki tankov:"
+
+msgid "Flag Help:"
+msgstr "Pomo$' po flagu:"
+
+msgid "Time Forward:"
+msgstr "Vremya vperyod:"
+
+msgid "Time Backward:"
+msgstr "Vremya nazad:"
+
+msgid "Self Destruct/Cancel:"
+msgstr "Samopodryv/Prervat':"
+
+msgid "Fast Quit:"
+msgstr "Bystrij Vyhod:"
+
+msgid "Scroll Backward:"
+msgstr "Prokrutka nazad:"
+
+msgid "Scroll Forward:"
+msgstr "Prokrutka vpered:"
+
+msgid "Scroll Bottom:"
+msgstr "Prokrutka vniz:"
+
+msgid "Toggle Flags On Radar:"
+msgstr "tumbler flanov na radare:"
+
+msgid "Toggle Flags On Field:"
+msgstr "tumbler flagov v pricele:"
+
+msgid "Silence/UnSilence Key:"
+msgstr "Klyuch tishiny/zvuka"
+
+msgid "Server Command Key:"
+msgstr "Klyuch komand serveru:"
+
+msgid "Hunt Key:"
+msgstr "Klyuch ohoty:"
+
+msgid "Add/Modify Hunt Key:"
+msgstr "Dobavit'/izmenit' klyuch ohoty:"
+
+msgid "AutoPilot Key: "
+msgstr "Klyuch avtopilota"
+
+msgid "Main Message Tab: "
+msgstr "Okno osnovnyh soob$enij:"
+
+msgid "Chat Message Tab: "
+msgstr "Vkladka chata:"
+
+msgid "Server Message Tab: "
+msgstr "Vkladka soob$enij servera:"
+
+msgid "Misc Message Tab: "
+msgstr "Vkladka prochih soob$enij"
+
+msgid "Forward Key: "
+msgstr "Knopka vperyod:"
+
+msgid "Reverse Key: "
+msgstr "Knopka nazad:"
+
+msgid "Left Key: "
+msgstr "Knopka vlevo:"
+
+msgid "Right Key: "
+msgstr "Knopka vpravo:"
+
+msgid "Restart:"
+msgstr "Perezapusk:"
+
+msgid "Iconify:"
+msgstr "Svernut'"
+
+msgid "Fullscreen:"
+msgstr "Polnij ekran"
+
+msgid "Screenshot:"
+msgstr "Skrinshot"
+
+msgid "Define Quick Keys"
+msgstr "Opredelit' bystye knopki"
+
+msgid "Notice: depending on platform not all keys might work"
+msgstr "Primechanie: v zavisimosti ot platformy ne vse klavishi mogut rabotat'"
+
+msgid "Send to All"
+msgstr "Poslat' vsem"
+
+msgid "Send to Team"
+msgstr "Poslat' svoim"
+
+###############
+## MAIN MENU ##
+###############
+
+msgid "Up/Down arrows to move, Enter to select, Esc to dismiss"
+msgstr "Strelki - pereme$enie, Enter - vybor, Esc - otmena"
+
+msgid "Options"
+msgstr "Nastrojki"
+
+msgid "Save Settings"
+msgstr "Sohranit' parametry"
+
+msgid "Leave Game"
+msgstr "Pokinut' igru"
+
+msgid "Quit"
+msgstr "Vyhod bez sohraneniya"
+
+###############
+## QUIT MENU ##
+###############
+
+msgid "Enter to quit, Esc to resume"
+msgstr "Nazhmite Enter dlya vyoda, ili Esc dlya otmeny"
+
+msgid "Really quit?"
+msgstr "Hotite vijti?"
+
+#############
+## OPTIONS ##
+#############
+
+msgid "Save Settings:"
+msgstr "Sohranit' nastrojki"
+
+msgid "On Exit"
+msgstr "Vyhod vklyuchen"
+
+msgid "Save identity:"
+msgstr "Sohranit' identifikaciyu"
+
+msgid "Username only"
+msgstr "Tol'ko imya"
+
+msgid "Username and password"
+msgstr "Imya i parol'"
+
+################
+## SAVE WORLD ##
+################
+
+msgid "Save World"
+msgstr "Sohranit' kartu"
+
+msgid "File Name:"
+msgstr "imya fajla"
+
+msgid "No world loaded to save"
+msgstr "Net zagruzhennoj karty dlya sohraneniya"
+
+msgid "World Saved: "
+msgstr "Sohranyonnye karty:"
+
+msgid "Error Saving: "
+msgstr "Oshibka sohraneniya"
+
+######################################
+## MESSAGE OF THE DAY & NEW VERSION ##
+######################################
+
+msgid "MOTD contains unexpected data"
+msgstr "Deviz soderzhit nepodderzhivaaemye simvoly"
+
+msgid "<not available>"
+msgstr "<net v nalichii>"
+
+msgid "UPGRADE: "
+msgstr "Obnovlenie:"
+
+msgid "Message of the day: "
+msgstr "Soob$enie dnya:"
+
+msgid "A new version of BZFlag has been released!"
+msgstr "Pora obnovlyat'sya, poyavilas' novaya versiya BZFlag!"
+
+msgid "Would you like to upgrade now?"
+msgstr "Hotite obnovit' igru?"
+
+msgid "(Download and install: "
+msgstr "(Zagruzka i ustanovka: "
+
+msgid "Yes!"
+msgstr "Da!"
+
+msgid "Not yet"
+msgstr "E$yo net"
+
+msgid "Please upgrade as soon as possible."
+msgstr "Pozhalusta, obnovite kak mozhno bystree"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "Downloading update: %d/%d KB"
+msgstr "Zagruzkak obnovleniya: %d/%d KB"
+
+msgid "Failed... can't find upgrade installer."
+msgstr "Neudacha... ne najdena programma obnovleniya"
+
+msgid "Failed... not enough memory."
+msgstr "Neudacha... ne hvatilo pamyati."
+
+msgid "Failed... installer is not executable."
+msgstr "Neudacha... programma obnovleniya ne ispolnyaemaya"
+
+msgid "Failed... unknown error (%d)."
+msgstr "Neudacha... oshibka (%d)."
+
+msgid "Failed to start upgrade installer (%s) - error %d.\n"
+msgstr "Neudachnij start programmy ustanovki (%s) - oshibka %d.\n "
+
+msgid "Installer started."
+msgstr "Installyator zapu$en"
+
+msgid "Download Failed!"
+msgstr "Neudachnaya zagruzka"
+
+msgid "Downloading update: 8888/8888 KB"
+msgstr "Zagruzka obnovleniya: 8888/8888 KB "
+
+#############
+## ROAMING ##
+#############
+
+msgid "Roaming::changeTarget() no world, switching to free roaming\n"
+msgstr "Rouming::changeTarget() net karty, pereklyuchenie na svobodnij poisk\n"
+
+msgid "Rabbit "
+msgstr "Krolik "
+
+msgid "Tracking "
+msgstr "Slezhenie "
+
+msgid "Following "
+msgstr "Poputchik "
+
+msgid "Driving with "
+msgstr "Vozhdenie s"
+
+msgid " Flag"
+msgstr " Flag "
+
+msgid "Roaming"
+msgstr "Stranstvie"
+
+#################
+## SCORE BOARD ##
+#################
+
+msgid "Score"
+msgstr "Schyot"
+
+msgid "888~888 Hunt->"
+msgstr "888~888 popadanij->"
+
+msgid " Kills"
+msgstr " Ubito"
+
+msgid "Player"
+msgstr "Igrok"
+
+msgid "[Score]"
+msgstr "[Schyot]"
+
+msgid "[Normalized Score]"
+msgstr "[Normalizovannij schyot]"
+
+msgid "[Reverse Score]"
+msgstr "[Obratnij schyot]"
+
+msgid "[Callsign]"
+msgstr "[Pozyvnoj]"
+
+msgid "[Team Kills]"
+msgstr "[Ubito komandoj]"
+
+msgid "[TK ratio]"
+msgstr "[UK otnoshenie]"
+
+msgid "[Team]"
+msgstr "[Komanda]"
+
+msgid "[1on1]"
+msgstr "[1 na 1]"
+
+msgid "Hunt->"
+msgstr "Popadaniya->"
+
+msgid "Team Score"
+msgstr "Schyot komandy"
+
+msgid "Team Flags"
+msgstr "Flagi komandy"
+
+msgid "TK Leader "
+msgstr "Lider komandy"
+
+msgid "TK Ratio Leader "
+msgstr "Lider komandy po UK otnosheniyu"
+
+msgid "Leader "
+msgstr "Lider"
+
+#####################
+## SERVER COMMANDS ##
+#####################
+
+msgid "Kick -> "
+msgstr "Udar -> "
+
+msgid "Kill -> "
+msgstr "Ubit -> "
+
+msgid "Set players group "
+msgstr "Zadat' gruppu igrokov "
+
+msgid "Remove player from group "
+msgstr "Isklyuchit' igroka iz gruppy"
+
+msgid "Ghost player [enter your pass] "
+msgstr "Prizrachnij igrok [vvedite vash parol']"
+
+msgid "Show player's groups "
+msgstr "Pokazat' igrokov gruppy"
+
+msgid "Kick :"
+msgstr "Udarov :"
+
+msgid "Kill :"
+msgstr "Ubito :"
+
+msgid "Ban :"
+msgstr "Ban :"
+
+msgid "Set player's group :"
+msgstr "Zadat' gruppu igrokov :"
+
+msgid "Remove player from group :"
+msgstr "Isklyuchit' igroka iz gruppy"
+
+msgid "Ghost :"
+msgstr "Prizrak :"
+
+msgid "Show players group :"
+msgstr "Pokazat' igrokov gruppy :"
+
+msgid "Unban :"
+msgstr "Razbanit' :"
+
+msgid "Show ban list"
+msgstr "Pokazat' spisok banov :"
+
+msgid "Show player list"
+msgstr "Pokazat' spisok igrokov"
+
+msgid "Reset Flags"
+msgstr "Sbrosit' flagi"
+
+msgid "Reset Unused Flags"
+msgstr "Sbrosit' neispol'zovannye flagi"
+
+msgid "Remove Flags"
+msgstr "Udalit' flagi"
+
+msgid "End Game"
+msgstr "Konec Igry"
+
+msgid "Restart Countdown:"
+msgstr "Perezapusk obratnogo otschyota:"
+
+msgid "Show Flag Info"
+msgstr "Pokazat' informaciyu o flagah"
+
+msgid "Shut Down Server"
+msgstr "Vyklyuchit' server"
+
+msgid "Disconnect all Players"
+msgstr "Otklyuchit' vseh igrokov"
+
+msgid "Lag Warning threshold:"
+msgstr "Porog preduprezhdeniya o lage"
+
+msgid "Maximum lag warnings:"
+msgstr "Preduprezhdenie o maksimal'nom lage"
+
+msgid "Idle Stats"
+msgstr "Prostaya statistika"
+
+msgid "Client Version Query"
+msgstr "Zapros versii klienta"
+
+msgid "Lag / Ping Stats"
+msgstr "Sostoyanie laga / pinga"
+
+msgid "Flag History"
+msgstr "Istoriya flagov"
+
+msgid "Admin Password:"
+msgstr "Parol' administratora"
+
+msgid "Send Report to Server:"
+msgstr "Poslat' soob$enie na server"
+
+msgid "List Groups"
+msgstr "Spisok grupp"
+
+msgid "List Permissions"
+msgstr "Spisok razreshenij"
+
+msgid "Vote:"
+msgstr "Golos:"
+
+msgid "Call a Poll:"
+msgstr "Zapros golosovaniya"
+
+msgid "Cancel a Poll"
+msgstr "Prervat' golosovanie"
+
+#################
+## SERVER LINK ##
+#################
+
+msgid "Remote %s\n"
+msgstr "Udalyonnye servera %s\n"
+
+msgid "Connected Event"
+msgstr "Sobytiya soedineniya"
+
+msgid "CONNECT:send in connect returned %d\n"
+msgstr "SOEDINENIE: vernulos' zaprosov na soedinenie %d\n"
+
+msgid "CONNECT:select in connect failed, nfound = %d\n"
+msgstr "SOEDINENIE:vybrannoe soedinenie neudachno, najdeno = %d\n"
+
+msgid "CONNECT:got net data in connect, bytes read = %d\n"
+msgstr "SOEDINENIE:poluchenie dannyh po seti, polucheno  %d bajt\n"
+
+msgid "CONNECT:Time To Connect = %f\n"
+msgstr "SOEDINENIE:Vremya soedineniya "
+
+msgid "CONNECT:connect time out failed\n"
+msgstr "SOEDINENIE:tamaut soedineniya\n"
+
+msgid "CONNECT:connect loop count = %d\n"
+msgstr "CONNECT:chislo soedinenij po petle  = %d\n"
+
+msgid "Error writing on packetStream"
+msgstr "Oshibka zapisi potoka paketov"
+
+msgid "Server network statistics:\n"
+msgstr "Setevaya statistika servera"
+
+msgid "  elapsed time    : %f\n"
+msgstr "  proshlo  vremyani    : %f\n"
+
+msgid "  bytes sent      : %d (%f/sec)\n"
+msgstr "  bajtov otoslano      : %d (%f/sek)\n"
+
+msgid "  packets sent    : %d (%f/sec)\n"
+msgstr "  paketov otoslano    : %d (%f/sek)\n"
+
+msgid "  bytes/packet    : %f\n"
+msgstr "  bajt/paket    : %f\n"
+
+msgid "  bytes recieved  : %d (%f/sec)\n"
+msgstr "  bajtov polucheno  : %d (%f/sec)\n"
+
+msgid "  packets received: %d (%f/sec)\n"
+msgstr "  paketov polucheno: %d (%f/sec)\n"
+
+msgid "<** UDP Packet Code %x Len %x\n"
+msgstr "<** UDP Kod paketa %x dlina %x\n"
+
+msgid "Fallback to normal TCP receive"
+msgstr "Vozvrat k obychnomu priyomu TCP"
+
+msgid "Communication error joining game [No immediate respose]."
+msgstr "Oshibka ustanovki svyazi s igroj [net nemedlennogo otveta]"
+
+msgid "Server forced disconnection."
+msgstr "Prinuditel'noe otklyuchenie ot servera"
+
+msgid "Error: getsockname() failed, cannot get TCP port?"
+msgstr "Oshibka: neudacha getsockname(), ne mozhet poluchit' TCP port?"
+
+msgid "Network: Created local UDP downlink port {1}"
+msgstr "Set': Sozdan lokal'nij UDP port {1}"
+
+msgid "Error: Unable to set NonBlocking for UDP receive socket"
+msgstr "Oshibka: Ne poluchaetsya poluchit' neblokiruemvy soket UDP"
+
+msgid "Server got our UDP, using UDP to server"
+msgstr "Server poluchil vashe UDP, ispol'zuem server UDP"
+
+msgid "Got server's UDP packet back, server using UDP"
+msgstr "Ot servera poluchen otvet po UDP, ispol'zuem server UDP"
+
+msgid "Servers"
+msgstr "Servera"
+
+#######################
+## SERVER START MENU ##
+#######################
+
+msgid "Players"
+msgstr "Igroki"
+
+msgid "Red"
+msgstr "Krasnye"
+
+msgid "Green"
+msgstr "Zelyonye"
+
+msgid "Blue"
+msgstr "Sinie"
+
+msgid "Purple"
+msgstr "Purpurnye"
+
+msgid "Observers"
+msgstr "Nablyudateli"
+
+msgid "Press  +/- add/remove favorites   f - toggle view"
+msgstr "Nazhimajte +/- dlya dobavleniya-udaleniya favoritov f - tumbler obzora"
+
+msgid "Edit Filter:"
+msgstr "Fil'tr redaktirovaniya:"
+
+msgid "Press '/' to search"
+msgstr "Nazhmite '/' dlya poiska"
+
+msgid "Using filter:"
+msgstr "Ispol'zuemye fil'try:"
+
+msgid "{1} Shot"
+msgstr "{1} vystrel"
+
+msgid "{1} Shots"
+msgstr "{1} vystrely"
+
+msgid "Classic Capture-the-Flag"
+msgstr "Pogonya za flagom"
+
+msgid "Rabbit Chase"
+msgstr "Ohota na krolika"
+
+msgid "Open (Teamless) Free-For-All"
+msgstr "Otkrytaya komandnaya dlya vseh"
+
+msgid "Free-style"
+msgstr "Svobodnij stil'"
+
+msgid "Super Flags"
+msgstr "Super flagi"
+
+msgid "Antidote Flags"
+msgstr "Antidot flagi"
+
+msgid "{1} sec To Drop Bad Flag"
+msgstr "{1} sek do vybrosa fdaga"
+
+msgid "{1} secs To Drop Bad Flag"
+msgstr "{1} sek-d do vybrosa fdaga"
+
+msgid "{1} Win Drops Bad Flag"
+msgstr "{1} Pobeda dlya vybrosa flaga"
+
+msgid "{1} Wins Drops Bad Flag"
+msgstr "{1} Pobed dlya vybrosa flaga"
+
+msgid "Handicap"
+msgstr "Fora"
+
+msgid "Time limit: {1}"
+msgstr "Limit vremeni: {1}"
+
+msgid "Max team score: {1}"
+msgstr "Maksimal'nij schyot komandy: {1}"
+
+msgid "Max player score: {1}"
+msgstr "Vfrcbvfkmysq cx`n buhjrf"
+
+msgid "Cached"
+msgstr "Kesh"
+
+msgid "Searching"
+msgstr "Poisk"
+
+msgid "Favorite servers: {1}/{2}  ({3} players, {4} observers)"
+msgstr "Vedu$ie servera: {1}/{2}  ({3} igrokov, {4} nablyudatelej)"
+
+msgid "Servers found: {1}/{2}  ({3} players, {4} observers)"
+msgstr "Serverov najdeno: {1}/{2}  ({3} igrokov, {4} nablyudatelej) "
+
+msgid "Style:"
+msgstr "Stil'"
+
+msgid "Capture the Flag"
+msgstr "Zahvat flaga"
+
+msgid "Free for All"
+msgstr "Svobodnaya igra"
+
+msgid "Rabbit Hunt (Random Selection)"
+msgstr "Ohota na krolika (sluchajnij vybor)"
+
+msgid "Rabbit Hunt (Score-based Selection)"
+msgstr "Ohota na krolika (vybor po schyotu)"
+
+msgid "Rabbit Hunt (Killer Selection)"
+msgstr "Ohota na krolika (vybor ubijcy)"
+
+msgid "Max Players:"
+msgstr "Maks. Igrokov"
+
+msgid "Max Shots:"
+msgstr "Maksimum igrokov:"
+
+msgid "Teleporters:"
+msgstr "Teleorty"
+
+msgid "no"
+msgstr "net"
+
+msgid "yes"
+msgstr "da"
+
+msgid "Ricochet:"
+msgstr "Rikoshet"
+
+msgid "Jumping:"
+msgstr "Pryzhok"
+
+msgid "Handicap:"
+msgstr "Fora "
+
+msgid "Superflags:"
+msgstr "Super flag"
+
+msgid "good flags only"
+msgstr "tol'ko horoshie flagi"
+
+msgid "all flags"
+msgstr "vse flagi"
+
+msgid "Max Superflags:"
+msgstr "Maks Superflagov"
+
+msgid "Bad Flag Antidote:"
+msgstr "Antidoty plohih flagov"
+
+msgid "Bad Flag Time Limit:"
+msgstr "Vremya dejstviya plohogo flaga"
+
+msgid "no limit"
+msgstr "bez ogranicheniya"
+
+msgid "15 seconds"
+msgstr "15 sekund"
+
+msgid "30 seconds"
+msgstr "30 sekund"
+
+msgid "60 seconds"
+msgstr "60 sekund"
+
+msgid "180 seconds"
+msgstr "180 sekund"
+
+msgid "Bad Flag Win Limit:"
+msgstr "Chislo pobed dlya plogoho flaga"
+
+msgid "drop after 1 win"
+msgstr "Padaet posle odnoj pobedy"
+
+msgid "drop after 2 wins"
+msgstr "Padaet posle dvuh pobed"
+
+msgid "drop after 3 wins"
+msgstr "Padaet posle 3 pobed"
+
+msgid "Game Over:"
+msgstr "Okonchanie igry"
+
+msgid "never"
+msgstr "Nikogda"
+
+msgid "after 5 minutes"
+msgstr "Posle 5 minut"
+
+msgid "after 15 minutes"
+msgstr "Posle 15 minut"
+
+msgid "after 60 minutes"
+msgstr "Posle 60 minut"
+
+msgid "after 3 hours"
+msgstr "Posle 3-h chasov"
+
+msgid "when a player gets +3"
+msgstr "Kogda igrok poluchil +3"
+
+msgid "when a player gets +10"
+msgstr "Kogda igrok poluchil +10"
+
+msgid "when a player gets +25"
+msgstr "Kogda igrok poluchil +25"
+
+msgid "when a team gets +3"
+msgstr "Kogda komanda poluchila +3"
+
+msgid "when a team gets +10"
+msgstr "Kogda komanda poluchila +10"
+
+msgid "when a team gets +25"
+msgstr "Kogda komanda poluchila +25"
+
+msgid "when a team gets +100"
+msgstr "Kogda komanda poluchila +100"
+
+msgid "Server Reset:"
+msgstr "Perezagruzka servera"
+
+msgid "no, quit after game"
+msgstr "net, vyhod posle igry"
+
+msgid "yes, reset for more games"
+msgstr "da, perezagruzka igr"
+
+msgid "World Map:"
+msgstr "Karta Mira"
+
+msgid "random map"
+msgstr "Sluchajnaya karta"
+
+msgid "Start"
+msgstr "Start"
+
+msgid "Failed... can't find server program."
+msgstr "Neudacha... ne mogu najti programmu servera"
+
+msgid "Failed... server program is not executable."
+msgstr "Neudacha... programma servera neispolnyaemaya"
+
+msgid "Failed to start server (%s) - error %d.\n"
+msgstr "Neudacha zapuska servera (%s) - oshibka %d.\n"
+
+msgid "Server started."
+msgstr "Zapusk servera"
+
+msgid "Failed... cannot fork."
+msgstr "Nudacha... ne mogu vypolnit' fork."
+
+msgid "Failed (exit = %i)."
+msgstr "Neudacha (vyhod = %i)."
+
+msgid "Failed (signal = %i)."
+msgstr "Neudacha (signal = %i)."
+
+msgid "Failed."
+msgstr "Neudacha"
+
+msgid "localhost"
+msgstr "localhost"
+
+################
+## STATISTICS ##
+################
+
+msgid "Shot Statistics"
+msgstr "Statistika strel'by"
+
+msgid "Shots Hit/Fired"
+msgstr "Popadanij/Promah"
+
+msgid "Super"
+msgstr "Super"
+
+msgid "Shock"
+msgstr "Uzhas"
+
+msgid "Fave."
+msgstr "Libimye"
+
+msgid "Hit%"
+msgstr "Popadanij%"
+
+msgid "Total"
+msgstr "Ob$ee"
+
+msgid "Norm"
+msgstr "Obychnij"
+
+msgid "GM"
+msgstr "PTURS"
+
+msgid "Bullet"
+msgstr "Snaryad"
+
+msgid "Wave"
+msgstr "Volna"
+
+msgid "Flag"
+msgstr "Flag"
+
+#################
+## SILENCE KEY ##
+#################
+
+msgid "Silenced "
+msgstr "Priglushyonnij "
+
+msgid "Unsilenced "
+msgstr "Ne priglushyonnij "
+
+msgid "Unblocked Msgs"
+msgstr "Razblokirovannyh soob$enij"
+
+msgid "Silenced All Msgs"
+msgstr "Zaglushit' vse soob$eniya"
+
+msgid " Does not exist"
+msgstr "Ne su$estvuet"
+
+msgid "Silence -->"
+msgstr "Priglushit' -->"
+
+msgid "Un"
+msgstr "Pr"
+
+######################
+## PLAYING MESSAGES ##
+######################
+
+msgid "Got shot by "
+msgstr "Podstrelen ..."
+
+msgid "Got flattened by "
+msgstr "Razdvalen ..."
+
+msgid "Team flag was captured by "
+msgstr "Flag komandy zahvachen ..."
+
+msgid "Teammate hit with Genocide by "
+msgstr "Komandu ubil genocidom ..."
+
+msgid "Tank Self Destructed"
+msgstr "Samopodryv"
+
+msgid "Tank Rusted"
+msgstr "Tank Oslablen"
+
+msgid "Flags on field hidden, to show them "
+msgstr "Flagi skryty na pole, dlya prosmotra, "
+
+msgid "hit \""
+msgstr "nazhmite \""
+
+msgid " bind a key to Toggle Flags on Field"
+msgstr "knopku svyazannuyu s tumblerom pokaza flagov na pole"
+
+msgid "Flags on radar hidden, to show them "
+msgstr "Flagi na radare skryty, dlya prosmotra"
+
+msgid " bind a key to Toggle Flags on Radar"
+msgstr " nazhmite knopku svyazannuyu s tumlerom pokaza flagov na radare"
+
+msgid "To toggle the radar "
+msgstr "Tumbler radara"
+
+msgid " bind a key to Toggle Radar"
+msgstr " svyazan s knopkoj tublera radara"
+
+msgid "To toggle the console "
+msgstr "Dlya pereklyucheniya konsoli"
+
+msgid " bind a key to Toggle Console"
+msgstr " svyazhite knopku s tumblerom konsoli"
+
+msgid "ZSceneDatabase processed in %.3f seconds.\n"
+msgstr "ZSceneDatabase vypolnyaetsya za %.3f sekund.\n"
+
+msgid "BSPSceneDatabase processed in %.3f seconds.\n"
+msgstr "BSPSceneDatabase vypolnyaetsya za %.3f sekund.\n"
+
+msgid "Download stopped by user action"
+msgstr "Zagruzka ostanovlena dejstviyami pol'zovatelya"
+
+msgid "The tank's motion is now frozen! ... Press Shift+` to unfreeze"
+msgstr "Peredvizhenie tanka zamorozheno! ... Nazhmite Shift+` dlya razmorozki"
+
+msgid "Resumed"
+msgstr "Vosstanovlenie"
+
+msgid "There does not appear to be any key bound to enter the game"
+msgstr "Sdelat' vhod v igru po lyuboj knopke"
+
+msgid "Invalid player identification (%d)"
+msgstr "Nepravil'nij identifikator igroka  (%d)"
+
+msgid "WARNING: invalid player identification when adding player with id "
+msgstr "WARNING:: nepravil'nij identifikator igroka pri dobavlenii igroka s id "
+
+msgid "Server error when adding player, player already added"
+msgstr "Oshibka servera pri dobavlenii igroka, takoj igrok uzhe dobavlen"
+
+msgid "WARNING: player already exists at location with id "
+msgstr "WARNING:: uzhe su$estvuet igrok v igre s id "
+
+msgid "joining as "
+msgstr "prisoedinyon kak"
+
+msgid "an observer"
+msgstr "nabldatel'"
+
+msgid "a tank"
+msgstr "tank"
+
+msgid "a robot tank"
+msgstr "tank-robot"
+
+msgid "an unknown type"
+msgstr "neizvestnogo tipa"
+
+msgid "IPINFO: "
+msgstr "IPINFO: "
+
+msgid "\t from: "
+msgstr "\t iz: "
+
+msgid "signing off"
+msgstr "zakanchivaetsya"
+
+msgid " from "
+msgstr " iz "
+
+msgid "(leave)"
+msgstr "(uroven')"
+
+msgid "World cache files disappeared.  Join canceled"
+msgstr "Fajly kesha karty propali. Soedinenie prervano."
+
+msgid "Loading world into memory..."
+msgstr "Zagruzka karty v pamyat' ..."
+
+msgid "Error loading cached world.  Join canceled"
+msgstr "Oshibka zagruzki kesha karty. Soedinenie prervano"
+
+msgid "Verifying world integrity..."
+msgstr "Proverka celostnosti karty..."
+
+msgid "Error on md5. Removing offending file."
+msgstr "Oshibka md5 summy. Udalenie oshibochnogo fajla."
+
+msgid "Preparing world..."
+msgstr "Nastrojka karty..."
+
+msgid "Error unpacking world database. Join canceled."
+msgstr "Oshibka raspakovki karty. Soedinenie prervano"
+
+msgid "Downloading files..."
+msgstr "Zagruzka fajlov..."
+
+msgid "Loading world from "
+msgstr "Otpravka karty na server iz "
+
+msgid "Download from URL failed"
+msgstr "Oshibka zagruzki s URL "
+
+msgid "Problem writing cache"
+msgstr "Problema zapisi kesh"
+
+msgid "Downloading World..."
+msgstr "Zagruzka karty..."
+
+msgid "Flags not supported by this client: {1}"
+msgstr "Flagi ne podderzhivayutsya etim klientom"
+
+msgid "Downloading World (%2d%% complete/%d kb remaining)..."
+msgstr "Zagruzka karty (%2d%% vyprolneno/%d kb ostalos')..."
+
+msgid "sorry, i'm just a silly machine"
+msgstr "Izvinite, ya prosto glupaya mashina"
+
+msgid "Closest Flag: "
+msgstr "Blizhajshij flag"
+
+msgid "Server forced a disconnect"
+msgstr "Server prinuditel'no razorval soedinenie"
+
+msgid "Requesting World Hash..."
+msgstr "Zapros Hesha karty..."
+
+msgid "Time Expired"
+msgstr "proshedshee vremya"
+
+msgid "Game Paused"
+msgstr "Igra priostanovlena"
+
+msgid "[unknown player]"
+msgstr "[neizvestnij igrok]"
+
+msgid " won the game"
+msgstr " vyigral igru"
+
+msgid "Roger taking controls"
+msgstr "Upravlyaet krolik Rojer"
+
+msgid "Roger releasing controls"
+msgstr "Krolik Rojer poteryal upravleie"
+
+msgid "has paused"
+msgstr "byla priostanovlena"
+
+ msgid "has unpaused"
+ msgstr "byla vozobnovlena"
+
+msgid "Don't kill teammates!!!"
+msgstr "Ne ubivajte svoih!!!"
+
+msgid "blew myself up"
+msgstr "vzorval sebya sam "
+
+msgid "destroyed by the server"
+msgstr "unichtozhen serverom"
+
+msgid "destroyed by a (GHOST)"
+msgstr "unichtozhen (GHOST)"
+
+msgid "fell in the water"
+msgstr "upal v vodu"
+
+msgid "Unknown Deadly Obstacle"
+msgstr "Neizvestnoe smertel'noe prpyadstvie"
+
+msgid "teammate "
+msgstr "igroki komandy"
+
+msgid "was fried by "
+msgstr "byl izzharen"
+
+msgid "'s laser"
+msgstr " lazerom"
+
+msgid "was destroyed by "
+msgstr "byl unichtozhen"
+
+msgid "'s guided missile"
+msgstr " raketoj (PTURS)"
+
+msgid "felt the effects of "
+msgstr "pochuchtvoval effekt"
+
+msgid "'s shockwave"
+msgstr " volny uzhasa"
+
+msgid "didn't see "
+msgstr "ne uvidel"
+
+msgid "'s bullet"
+msgstr " snaryad"
+
+msgid "was turned into swiss cheese by "
+msgstr "byl prevra$en v shvejcarskij syr po"
+
+msgid "'s machine gun"
+msgstr " skorostrel'noj pushkoj"
+
+msgid "got skewered by "
+msgstr "byl nanizan"
+
+msgid "'s super bullet"
+msgstr " na super snaryad"
+
+msgid "killed by "
+msgstr "ubit ..."
+
+msgid "Flag Alert!!!"
+msgstr "Trevoga Flag!!!"
+
+msgid "Team Grab!!!"
+msgstr "Zahvachen Komandoj!!!"
+
+msgid "grabbed "
+msgstr "zahvachen"
+
+msgid "took my flag into "
+msgstr "vzyal moj flag na "
+
+msgid " territory"
+msgstr " territorii"
+
+msgid "Don't capture your own flag!!!"
+msgstr "Ne hvatajte svoj flag!!!"
+
+msgid "captured "
+msgstr "zahvachen "
+
+msgid "'s flag"
+msgstr " flag"
+
+msgid "You are now the rabbit."
+msgstr "Teper' vy krolik."
+
+msgid "is now the rabbit"
+msgstr "teper' krolik ..."
+
+msgid "Received handicap update for unknown player!\n"
+msgstr "Poluchena fora dlya neizvestnogo igroka!\n"
+
+msgid "Received score update for unknown player!\n"
+msgstr "Poluchena obnovlyonnaya ocenka neizvestnogo igroka!\n"
+
+msgid "SERVER"
+msgstr "Server"
+
+msgid "(UNKNOWN)"
+msgstr "(Neizvesten)"
+
+msgid "Admin"
+msgstr "Admin"
+
+msgid "Ignored Msg"
+msgstr "Ignorirovanie soob$enij"
+
+msgid "[Admin] "
+msgstr "[Admin]"
+
+msgid "[to "
+msgstr "[ k"
+
+msgid "] "
+msgstr "] "
+
+msgid "[Team] "
+msgstr "[Komanda]"
+
+msgid "(join)"
+msgstr "(prmoedinenie)"
+
+msgid "Got custom flag type from server: %s\n"
+msgstr "Poluchit' osobij flag ot servera: %s\n"
+
+msgid "Paused"
+msgstr "Pauza"
+
+msgid "locked on me"
+msgstr "zahvachen na mne"
+
+msgid "Server communication error"
+msgstr "Oshibka sistemy soob$enij servera"
+
+msgid "Server BZDB change blocked: '%s' = '%s'\n"
+msgstr "Server BZDB izmenil blokirovku: '%s' = '%s'\n"
+
+msgid "dropped "
+msgstr "padenie "
+
+msgid " stole "
+msgstr " krazha"
+
+msgid "Killed by unknown obstacle"
+msgstr "Ubit neizvestnym prepyadstviem"
+
+msgid "Invalid reason"
+msgstr "Nepravil'naya prichina"
+
+msgid "Shot myself"
+msgstr "Zastrelil sebya"
+
+msgid "Killed by the server"
+msgstr "Ubityh serverom"
+
+msgid " with "
+msgstr " s "
+
+msgid "local collision with "
+msgstr " mestnyh kollizij s "
+
+msgid "Locked on "
+msgstr "Zahvachen "
+
+msgid ") with "
+msgstr ") c "
+
+msgid "'identify' disabled on this server"
+msgstr "'identifikaciya' zapre$ena na servere"
+
+msgid "Looking at a tank"
+msgstr "Glyadya na tank"
+
+msgid "Looking at "
+msgstr "Glyadya na "
+
+msgid "SPOTTED: "
+msgstr "SPOTTED:"
+
+msgid "Solo robots are prohibited on this server."
+msgstr "Roboty zapre$eny na servere"
+
+msgid "%s team was unavailable, you were joined "
+msgstr "%s komanda nedostupna v moment vashego prisoedineniya"
+
+msgid "as an Observer"
+msgstr "kak nablyudatel'"
+
+msgid "to the %s"
+msgstr "k %s"
+
+msgid "You were joined as an observer"
+msgstr "Vy prisoedinilis' kak nablyudatel'"
+
+msgid "You joined the %s"
+msgstr "Vy prisoedinilis' kak %s"
+
+msgid "You joined as a %s"
+msgstr "Vy prisoedinilis' kak %s"
+
+msgid "cleanWorldCache: removed %s\n"
+msgstr "cleanWorldCache: udaleno  %s\n"
+
+msgid "id "
+msgstr "id"
+
+msgid "id test %p %p %p %8.8x %8.8x\n"
+msgstr "id test %p %p %p %8.8x %8.8x\n"
+
+msgid "Server not found"
+msgstr "Server ne najden"
+
+msgid "Server Access Denied Locally"
+msgstr "Dostup k serveru zapre$yon lokal'no"
+
+msgid "server access is controlled by "
+msgstr "dostup k serveru kontroliruetsya"
+
+msgid "Memory error"
+msgstr "Oshibka pamyati"
+
+msgid "Incompatible server version XXXXXXXX"
+msgstr "Nesovmestimaya versiya servera XXXXXXXX"
+
+msgid "You have been banned from this server"
+msgstr "Vy byli zayuaneny na etom servere"
+
+msgid "You have been banned from this server:"
+msgstr "Vy byli zayuaneny na servere:"
+
+msgid "Game is full or over.  Try again later."
+msgstr "Igra polnost'yu zanyata ili okonchena. Prihodite popozzhe."
+
+msgid "Error connecting to server."
+msgstr "Oshibka soedineniya s serverom."
+
+msgid "Cannot connect to full version server."
+msgstr "Ne udayotsya podklyuchit'sya k polnoj verss servera."
+
+msgid "Internal error connecting to server (error code %d)."
+msgstr "Vneshnyaya oshibka soedineniya s serverom (oshibka nomer %d)."
+
+msgid "No UDP connection, see Options to enable."
+msgstr "Net UDP soedineniya, prover'te razreshyonnye parametry."
+
+msgid "Connection Established..."
+msgstr "Podklyuchenie..."
+
+msgid "Entering game..."
+msgstr "Vhod v igru..."
+
+msgid "Disabled stencilShadows for interlaced mode"
+msgstr "StencilShadows zapre$yon dlya cherezstrochnogo rezhima"
+
+msgid "Can't pause while inside a building"
+msgstr "Nel'zya delat' pauzu vnutri sooruzhenij"
+
+msgid "Can't pause when you are in the air"
+msgstr "Nel'zya delat' pauzu v vozduhe"
+
+msgid "Unable to pause right now"
+msgstr "Mozhete sdelat' pauzu prya sejchas"
+
+msgid "Can't pause when you are in the phantom zone"
+msgstr "Nel'zya delat' pauzu v fantomnoj zone"
+
+msgid "Pausing in %d"
+msgstr "Paza v  %d"
+
+msgid "Self Destructing in %d"
+msgstr "Samounichtozhenij %d"
+
+msgid "Server has unexpectedly disconnected"
+msgstr "Server byl neozhidano otklyuchen"
+
+msgid "okay"
+msgstr "horosho"
+
+msgid "  full quality"
+msgstr "  polnoe kachestvo"
+
+msgid "  Stipple Shadows"
+msgstr "  Punktirnye teni"
+
+msgid "  no Blend"
+msgstr "  bez smeshivaniya"
+
+msgid "  lowest quality"
+msgstr "  nizshee kachestvo"
+
+msgid "testing performance;  please wait..."
+msgstr "proverka bystrodejstviya, pozhalujsta podozhdite..."
+
+msgid "explode%d"
+msgstr "vzorvat'sya %d"
+
+msgid "BZFlag version:   %s\n"
+msgstr "BZFlag versiya:   %s\n"
+
+msgid "BZFlag protocol:  %s\n"
+msgstr "Protokol BZFlag:  %s\n"
+
+msgid "OpenGL vendor:    %s\n"
+msgstr "Proizvoditel' OpenGL:    %s\n"
+
+msgid "OpenGL version:   %s\n"
+msgstr "Versiya OpenGL:   %s\n"
+
+msgid "OpenGL renderer:  %s\n"
+msgstr "Rendering OpenGL:  %s\n"
+
+msgid "Depth Buffer:     %i bitplanes\n"
+msgstr "Glubina bufera:     %i bitplanes\n"
+
+msgid "Running on Windows %s%d.%d %s\n"
+msgstr "Rabotaet v oknah %s%d.%d %s\n"
+
+#msgid "This release will expire on %s"
+#msgstr ""
+
+msgid "BZFlag version: "
+msgstr "Versiya BZFlag: "
+
+msgid "Distributed under the terms of the LGPL"
+msgstr "Vypu$eno pod licezieny LGPL"
+
+# msgid "Author: Chris Schoeneman <crs23@bigfoot.com>"
+# msgstr ""
+
+# msgid "Maintainer: Tim Riker <Tim@Rikers.org>"
+# msgstr ""
+
+msgid "Audio Driver: "
+msgstr "Drajver zvuka: "
+
+msgid "OpenGL Driver: "
+msgstr "Drajver OpenGL: "
+
+msgid " Silenced"
+msgstr " Zvuk priglushen"
