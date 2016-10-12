@@ -4,6 +4,7 @@
 BZFlag 2.4.9
 ------------
 
+
 BZFlag 2.4.8 "Sixteen" (2016-10-10)
 -----------------------------------
 
@@ -21,6 +22,7 @@ BZFlag 2.4.8 "Sixteen" (2016-10-10)
 * Send a notification to admins when a BZDB variable is reset
     - Konstantinos Kanavouras
 * Increase the range of the volume slider - Konstantinos Kanavouras 
+
 
 BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
 -------------------------------------------------------------
