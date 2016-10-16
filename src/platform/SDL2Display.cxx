@@ -569,9 +569,11 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
       _event.type = BzfEvent::Redraw;
       break;
     case SDL_WINDOWEVENT_HIDDEN:
+    case SDL_WINDOWEVENT_MINIMIZED:
       _event.type = BzfEvent::Unmap;
       break;
     case SDL_WINDOWEVENT_SHOWN:
+    case SDL_WINDOWEVENT_RESTORED:
       _event.type = BzfEvent::Map;
       break;
 #ifdef SDL_WINDOW_MOUSE_CAPTURE

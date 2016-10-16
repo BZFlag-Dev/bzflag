@@ -927,27 +927,9 @@ static bool serverStart()
   }
 #endif
   if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-    if (!clOptions->useFallbackPort) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
-
-    // if we get here then try binding to any old port the system gives us
-    addr.sin_port = htons(0);
-    if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1) {
-      nerror("couldn't bind connect socket");
-      close(wksSocket);
-      return false;
-    }
-
-    // fixup ping reply
-    AddrLen addrLen = sizeof(addr);
-    if (getsockname(wksSocket, (struct sockaddr*)&addr, &addrLen) >= 0)
-      pingReply.serverId.port = addr.sin_port;
-
-    // fixup publicized name will want it here later
-    clOptions->wksPort = ntohs(addr.sin_port);
+    nerror("couldn't bind connect socket");
+    close(wksSocket);
+    return false;
   }
 
   if (listen(wksSocket, 5) == -1) {
@@ -5227,17 +5209,20 @@ static void resetAllCallback(const std::string &name, void*)
   }
 }
 
-static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool*)
+static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool* cmdError)
 {
+  if (cmdError) *cmdError = true;
   if (args.size() == 1) {
     if (args[0] == "*") {
       BZDB.iterate(resetAllCallback,NULL);
+      if (cmdError) *cmdError = false;
       return "all variables reset";
     } else if (BZDB.isSet(args[0])) {
       StateDatabase::Permission permission = BZDB.getPermission(args[0]);
       if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked)) {
 	BZDB.set(args[0], BZDB.getDefault(args[0]), StateDatabase::Server);
 	lastWorldParmChange = TimeKeeper::getCurrent();
+	if (cmdError) *cmdError = false;
 	return args[0] + " reset";
       }
       return "variable " + args[0] + " is not writeable";
@@ -6613,6 +6598,7 @@ int main(int argc, char **argv)
 	      player->player.setDead();
 	      zapFlagByPlayer(j);
 	      player->player.setPlayedEarly(false);
+	      player->player.setRestartOnBase(true);
 	    }
 	  }
 

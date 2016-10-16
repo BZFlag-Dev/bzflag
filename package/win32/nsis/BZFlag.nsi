@@ -7,15 +7,15 @@
 
   !define VER_MAJOR 2
   !define VER_MINOR 4
-  !define VER_REVISION 6
+  !define VER_REVISION 9
 
   ;!define TYPE "release"
   ;!define TYPE "alpha"
   ;!define TYPE "beta"
-  ;!define TYPE "devel"
-  !define TYPE "RC"
+  !define TYPE "devel"
+  ;!define TYPE "RC"
 
-  !define TYPE_REVISION "2"
+  !define TYPE_REVISION "0"
   
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
@@ -246,6 +246,8 @@ Section "!BZFlag (Required)" BZFlag
 
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    ;Create for all users
+    SetShellVarContext all
     
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
@@ -283,6 +285,9 @@ Section "BZAdmin" BZAdmin
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+  
+    ;Create for all users
+    SetShellVarContext all
     
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
@@ -316,6 +321,9 @@ SectionGroup "BZFlag Server" BZFlagServer
     File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
+    
+      ;Create for all users
+      SetShellVarContext all
     
       ;Main start menu shortcuts
       SetOutPath $INSTDIR
@@ -391,6 +399,9 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
+  ;Remove for all users
+  SetShellVarContext all
+  
   ; remove files
   Delete $INSTDIR\*.*
   Delete $INSTDIR\doc\*.*
@@ -438,8 +449,7 @@ Section "Uninstall"
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
   
-  ; Remove desktop shortcut for all users
-  SetShellVarContext all
+  ; Remove desktop shortcut
   !ifdef BUILD_64
     Delete "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk"
   !else

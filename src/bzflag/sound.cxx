@@ -1089,7 +1089,9 @@ static bool		audioInnerLoop()
       break;
 
     case SoundCommand::SET_VOL:
-      volumeAtten = 0.2f * cmd.code;
+      // The provided volume value is multiplied by itself to compensate for
+      // human hearing
+      volumeAtten = 0.02f * cmd.code * cmd.code;
       if (volumeAtten <= 0.0f) {
 	mutingOn = true;
 	volumeAtten = 0.0f;

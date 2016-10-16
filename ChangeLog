@@ -1,14 +1,44 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.6-RC2
---------------------------------------------
+BZFlag 2.4.9
+------------
+
+
+BZFlag 2.4.8 "Sixteen" (2016-10-10)
+-----------------------------------
+
+* Add Russian transliteration - Ruslan Hihin, Aleksandr Lahin
+* Fix a regression in 2.4.6 where the client would not reduce CPU usage when
+    minimized on Windows - Scott Wichser
+* On autotools platforms, try to use SDL2, then SDL1, and then fall back to
+    native platform code. Allow specifying an SDL version as well.
+    - Scott Wichser
+* Prevent some more bzfs options from being specified in a world file
+    - Scott Wichser
+* Cleaned up some GCC6 warnings - Scott Wichser
+* Spawn all players on base when a timed game starts - Konstantinos Kanavouras
+* Add indicator for -noTeamKill servers on server list - Konstantinos Kanavouras
+* Send a notification to admins when a BZDB variable is reset
+    - Konstantinos Kanavouras
+* Increase the range of the volume slider - Konstantinos Kanavouras 
+
+
+BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
+-------------------------------------------------------------
+
+* regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
+* RogueGenocide plugin defaults to ignoring rogue self-kills - Scott Wichser
+* Standardize and update the documentation for bundled plugins - Scott Wichser
+* Add bz_getRandomPoint to API - Vladimir Jimenez
+* Correctly handle the keypad keys with SDL2 - Jeff Makey, Scott Wichser
+* Implement SOURCE_DATE_EPOCH spec in our autoconf system to work towards
+  reproducible builds - Scott Wichser, Jeff Makey
+* Include a timestamp in the /savemsgs output filename - Scott Wichser
+* Added -t option to /savemsgs to add timestamps to messages - Scott Wichser
+* Added a GUI option to show timestamps on the messages - Scott Wichser
 * For SDL2, restore the original gamma on exit and reapply desired gamma on
     window recreation - Scott Wichser
-
-BZFlag 2.4.6-RC1
---------------------------------------------
-
 * Use SDL2 on Windows for the window/display management - Scott Wichser
 * Remove hiddenAdmin plugin - Vladimir Jimenez
 * Add a cycleRadar and cyclePanel key binding command - Joshua Bodine

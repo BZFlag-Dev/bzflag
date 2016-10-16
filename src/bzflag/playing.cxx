@@ -2279,10 +2279,12 @@ static void		handleServerMessage(bool human, uint16_t code,
 	  addMessage(victimPlayer, message);
 	}
 	else if (killer >= LastRealPlayer) {
-	  addMessage(victimPlayer, "destroyed by the server");
+	  message += "destroyed by the server";
+	  addMessage(victimPlayer, message);
 	}
 	else if (!killerPlayer) {
-	  addMessage(victimPlayer, "destroyed by a (GHOST)");
+	  message += "destroyed by a (GHOST)";
+	  addMessage(victimPlayer, message);
 	}
 	else if (reason == WaterDeath) {
 	  message += "fell in the water";
@@ -6767,35 +6769,35 @@ static void		playingLoop()
       float fpsLimit = BZDB.eval("fpsLimit");
       if (fpsLimit < 15 || isnan(fpsLimit))
 	fpsLimit = 15;
-	TimeKeeper nextTime(lastTime);
-	nextTime += 1.0f / fpsLimit;
-	float remaining;
-        while (1) {
-	  remaining = (float)(nextTime - TimeKeeper::getCurrent());
-	  if (remaining > 1.0f)
-	    break;
-	  if (remaining <= 0.0f)
-	    break;
-	  // Instead of sleeping try to handle network packets
-	  char msg[MaxPacketLen];
-	  uint16_t code, len;
+      TimeKeeper nextTime(lastTime);
+      nextTime += 1.0f / fpsLimit;
+      float remaining;
+      while (1) {
+	remaining = (float)(nextTime - TimeKeeper::getCurrent());
+	if (remaining > 1.0f)
+	  break;
+	if (remaining <= 0.0f)
+	  break;
+	// Instead of sleeping try to handle network packets
+	char msg[MaxPacketLen];
+	uint16_t code, len;
 
-	  // handle server messages
-	  if (serverLink && !serverError) {
-	    int e = 0;
-	    e = serverLink->read(code, len, msg, int(remaining * 1000.0f));
-	    if (e == 1)
-	      handleServerMessage(true, code, len, msg);
-	    if (e == -2) {
-	      printError("Server communication error");
-	      serverError = true;
-	      break;
-	    }
-	  } else {
-	    TimeKeeper::sleep(remaining);
+	// handle server messages
+	if (serverLink && !serverError) {
+	  int e = 0;
+	  e = serverLink->read(code, len, msg, int(remaining * 1000.0f));
+	  if (e == 1)
+	    handleServerMessage(true, code, len, msg);
+	  if (e == -2) {
+	    printError("Server communication error");
+	    serverError = true;
 	    break;
 	  }
+	} else {
+	  TimeKeeper::sleep(remaining);
+	  break;
 	}
+      }
       lastTime = TimeKeeper::getCurrent();
     } // end energy saver check
 

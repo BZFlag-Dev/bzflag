@@ -34,10 +34,8 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 
-#if !defined(CPPUTEST)
 // bzfs specific headers
 #include "bzfs.h"
-#endif // CPPUTEST
 
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
@@ -291,7 +289,6 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
 }
 
 
-#if !defined(CPPUTEST)
 void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 {
   std::ostringstream os;
@@ -306,7 +303,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
     os << " (m)";
   if (baninfo.bannedBy.length())
     os << " banned by: " << baninfo.bannedBy;
-    bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
+  bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
 
   // add reason, if any
   if (baninfo.reason.size()) {
@@ -743,7 +740,6 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
 
   return bans;
 }
-#endif
 
 bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_cidr) {
   std::vector<std::string> ipParts;
