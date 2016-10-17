@@ -61,6 +61,7 @@ bzfs \- BZFlag game server
 [\fB\-mts \fR\fImax\-score\fR]
 [\fB\-noMasterBanlist\fR]
 [\fB\-noradar\fR]
+[\fB\-noSelfKills\fR]
 [\fB\-noTeamKills\fR]
 [\fB\-offa\fR]
 [\fB\-p \fIport\fR]
@@ -322,6 +323,9 @@ Server will not attempt to load the master ban list from the internet.
 .TP
 .B \-noradar
 Disable the use of the radar.
+.TP
+.B \-noSelfKills
+Players are immune to their own shots.
 .TP
 .B \-noTeamKills
 Players on the same team are immune to each other's shots. Rogue is excepted.
