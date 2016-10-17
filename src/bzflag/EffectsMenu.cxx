@@ -66,6 +66,17 @@ EffectsMenu::EffectsMenu()
   option->update();
   listHUD.push_back(option);
 
+  // 3D Grass Density
+  option = new HUDuiList;
+  option->setFontFace(MainMenu::getFontFace());
+  option->setLabel("3D grass:");
+  option->setCallback(callback, "3");
+  options = &option->getList();
+  options->push_back(std::string("Off"));
+  option->createSlider(10);
+  option->update();
+  listHUD.push_back(option);
+
   // Fog Effect
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -322,6 +333,7 @@ void EffectsMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(int((BZDB.eval("userRainScale")
 					    * 10.0f) + 0.5f));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("userMirror") ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("3DGrass"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("fogEffect"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("shotLength"));
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("showTreads") ? 1 : 0);
@@ -370,6 +382,10 @@ void EffectsMenu::callback(HUDuiControl* w, const void* data)
     }
     case 'm': {
       BZDB.set("userMirror", list->getIndex() ? "1" : "0");
+      break;
+    }
+    case '3': {
+      BZDB.setInt("3DGrass", list->getIndex());
       break;
     }
     case 'F': {

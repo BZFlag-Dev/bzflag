@@ -42,6 +42,7 @@ class BillboardSceneNode : public SceneNode {
     void		setLightFadeStartTime(float t);
     void		setGroundLight(bool value);
 
+    void		setAddBlend(bool = false);
     void		setSize(float side);
     void		setSize(float width, float height);
     void		setColor(GLfloat r, GLfloat g,
@@ -79,6 +80,7 @@ class BillboardSceneNode : public SceneNode {
 
   private:
     bool		show;
+    bool		blendAdd;
     bool		hasAlpha;
     bool		hasTexture;
     bool		hasTextureAlpha;

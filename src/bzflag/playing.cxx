@@ -7222,6 +7222,7 @@ void			startPlaying(BzfDisplay* _display,
       BillboardSceneNode* explosion = new BillboardSceneNode(zero);
       explosion->setTexture(tex);
       explosion->setTextureAnimation(8, 8);
+      explosion->setAddBlend(true);
 
       // add it to list of prototype explosions
       prototypeExplosions.push_back(explosion);

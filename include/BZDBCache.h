@@ -45,6 +45,7 @@ class BZDBCache
     static Bool  displayMainFlags;
     static Bool  blend;
     static Bool  texture;
+    static Int   grass3D;
     static Bool  shadows;
     static Bool  stencilShadows;
     static Bool  zbuffer;

@@ -171,6 +171,10 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
   // rain stuff
   weather.init();
+
+  // grass stuff
+  grass.init();
+
   // effects
   EFFECTS.init();
 
@@ -705,6 +709,8 @@ void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 		weather.update();
 	}
 	weather.draw(renderer);
+
+        grass.draw(renderer);
 
 	if (update) {
 		EFFECTS.update();
@@ -1550,6 +1556,7 @@ void BackgroundRenderer::doFreeDisplayLists()
 
   // don't forget the tag-along
   weather.freeContext();
+  grass.freeContext();
   EFFECTS.freeContext();
 
   // simpleGroundList[1] && simpleGroundList[3] are copies of [0] & [2]
@@ -1591,6 +1598,7 @@ void BackgroundRenderer::doInitDisplayLists()
 
   // don't forget the tag-along
   weather.rebuildContext();
+  grass.rebuildContext();
   EFFECTS.rebuildContext();
 
   //

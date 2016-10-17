@@ -30,6 +30,7 @@
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
+#include "GrassRenderer.h"
 
 class BackgroundRenderer {
   public:
@@ -129,6 +130,10 @@ class BackgroundRenderer {
 
     // weather
     WeatherRenderer	weather;
+
+    // 3d grass
+  
+    GrassRenderer	grass;
 
     // stuff for sun shadows
     bool		doShadows;

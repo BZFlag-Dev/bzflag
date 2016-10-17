@@ -33,6 +33,7 @@
 
 BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
 				show(false),
+				blendAdd(false),
 				hasAlpha(false),
 				hasTexture(false),
 				hasTextureAlpha(false),
@@ -75,6 +76,7 @@ BillboardSceneNode*	BillboardSceneNode::copy() const
 {
   BillboardSceneNode* e = new BillboardSceneNode(getSphere());
   e->show = show;
+  e->blendAdd = blendAdd;
   e->hasAlpha = hasAlpha;
   e->hasTexture = hasTexture;
   e->hasTextureAlpha = hasTextureAlpha;
@@ -220,6 +222,11 @@ void			BillboardSceneNode::prepLight()
 		 lightColor[2] * lightScale * s);
 }
 
+void			BillboardSceneNode::setAddBlend(bool toggle)
+{
+  blendAdd = toggle;
+}
+
 void			BillboardSceneNode::setSize(float side)
 {
   setSize(side, side);
@@ -296,7 +303,10 @@ void			BillboardSceneNode::notifyStyleChange()
   if (show) {
     OpenGLGStateBuilder builder(gstate);
     if (hasAlpha) {
-      builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      if (blendAdd)
+	builder.setBlending(GL_SRC_ALPHA, GL_ONE);
+      else
+	builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
       builder.setAlphaFunc();
     } else {
       builder.resetBlending();
