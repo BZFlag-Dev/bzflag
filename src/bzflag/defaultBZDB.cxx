@@ -111,6 +111,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pauseConsole",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotBrightness",		"0.2",			true,	StateDatabase::ReadWrite,	setColor },
+  { "multisample",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // roam smooth follow settings
   { "followDist",		"32.0",			true,	StateDatabase::ReadWrite,	NULL },

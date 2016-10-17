@@ -243,6 +243,21 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("(restart required) Anti Aliasing:");
+  option->setCallback(callback, "m");
+  options = &option->getList();
+  if (getMainWindow()->getWindow()->hasVerticalSync()) {
+  options->push_back(std::string("Off"));
+    options->push_back(std::string("2x MSAA"));
+    options->push_back(std::string("4x MSAA"));
+  } else {
+    options->push_back(std::string("Unavailable"));
+  }
+  option->update();
+  listHUD.push_back(option);
+
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
   if (numFormats < 2) {
@@ -357,7 +372,10 @@ void			DisplayMenu::resize(int _width, int _height)
   i++;
 
   // energy saver
-  ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
+
+  // multisampling
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") == 4 ? 2 : BZDB.evalInt("multisample") == 2 ? 1 : 0);
 }
 
 int DisplayMenu::gammaToIndex(float gamma)
@@ -455,6 +473,9 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
   case 's':
     BZDB.set("saveEnergy", list->getIndex() == 2 ? "2" : list->getIndex() == 1 ? "1" : "0");
     getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
+    break;
+  case 'm':
+    BZDB.set("multisample", list->getIndex() == 2 ? "4" : list->getIndex() == 1 ? "2" : "0");
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();
