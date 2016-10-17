@@ -60,11 +60,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
 
   setControlColor();
 
-#if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
-  GLint bits;
-  glGetIntergerv(GL_SAMPLES_SGIS, &bits);
-  if (bits > 0) multiSampled = true;
-#endif
+  multiSampled = BZDB.isTrue("multisample");
 }
 
 void RadarRenderer::setWorld(World* _world)

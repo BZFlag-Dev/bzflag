@@ -4,6 +4,8 @@
 BZFlag 2.4.9
 ------------
 
+* Multisampling support under SDL 2 - Joshua Bodine
+
 
 BZFlag 2.4.8 "Sixteen" (2016-10-10)
 -----------------------------------

@@ -37,6 +37,11 @@ void SDLVisual::setStereo(bool on) {
   SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
 }
 
+void SDLVisual::setMultisample(int minSamples) {
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, minSamples > 0 ? 1 : 0);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, minSamples > 0 ? minSamples : 0);
+}
+
 // Local Variables: ***
 // mode:C++ ***
 // tab-width: 8 ***
