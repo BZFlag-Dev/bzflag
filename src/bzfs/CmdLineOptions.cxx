@@ -95,6 +95,7 @@ const char *usageString =
 "[-mts <score>] "
 "[-noMasterBanlist] "
 "[-noradar] "
+"[-noSelfKills] "
 "[-noTeamKills] "
 "[-offa] "
 "[-p <port>] "
@@ -203,6 +204,7 @@ const char *extraUsageString =
 "\t-mts: set team score limit on each game\n"
 "\t-noMasterBanlist: has public servers ignore the master ban list\n"
 "\t-noradar: disallow the use of radar\n"
+"\t-noSelfKills: Players are immune to their own shots. Self Destruct is excepted.\n"
 "\t-noTeamKills: Players on the same team are immune to each other's shots. Rogue is excepted.\n"
 "\t-offa: teamless free-for-all game stye\n"
 "\t-p: use alternative port (default=5154)\n"
@@ -861,6 +863,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
       checkArgc(1, i, argc, argv[i]);
       options.masterBanListURL.push_back(argv[i]);
+    }
+	else if (strcmp(argv[i], "-noSelfKills") == 0) {
+      // disable self killing
+      options.gameOptions |= int(NoSelfKillsGameStyle);
     }
     else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
