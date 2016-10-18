@@ -1547,6 +1547,10 @@ bool			LocalPlayer::checkHit(const Player* source,
     // my own shock wave cannot kill me
     if (source == this && ((shot->getFlag() == Flags::ShockWave) || (shot->getFlag() == Flags::Thief))) continue;
 
+	// I can't shoot me
+    if (!World::getWorld()->allowSelfKills() && source == this)
+      continue;
+  
     // if no team kills, shots of my team cannot kill me. Thief can still take
 	// a teammate's flag.
     if (getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
