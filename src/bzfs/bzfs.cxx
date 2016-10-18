@@ -5374,6 +5374,24 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 }
 
+void loadSwearList ()
+{
+  if (clOptions->filterFilename.length() != 0) {
+    if (clOptions->filterChat || clOptions->filterCallsigns) {
+      if (debugLevel >= 1) {
+	unsigned int count;
+	logDebugMessage(1,"Loading %s\n", clOptions->filterFilename.c_str());
+	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
+	logDebugMessage(1,"Loaded %u words\n", count);
+      } else {
+	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
+      }
+    } else {
+      logDebugMessage(1,"Bad word filter specified without -filterChat or -filterCallsigns\n");
+    }
+  }
+}
+
 void rescanForBans ( bool isOperator, const char* callsign, int playerID )
 {
 	// Validate all of the current players
@@ -6224,20 +6242,7 @@ int main(int argc, char **argv)
   }
 
   /* load the bad word filter if it was set */
-  if (clOptions->filterFilename.length() != 0) {
-    if (clOptions->filterChat || clOptions->filterCallsigns) {
-      if (debugLevel >= 1) {
-	unsigned int count;
-	logDebugMessage(1,"Loading %s\n", clOptions->filterFilename.c_str());
-	count = clOptions->filter.loadFromFile(clOptions->filterFilename, true);
-	logDebugMessage(1,"Loaded %u words\n", count);
-      } else {
-	clOptions->filter.loadFromFile(clOptions->filterFilename, false);
-      }
-    } else {
-      logDebugMessage(1,"Bad word filter specified without -filterChat or -filterCallsigns\n");
-    }
-  }
+  loadSwearList();
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {
