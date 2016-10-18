@@ -530,9 +530,8 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_KEYDOWN:
-    if (symNeedsConversion(event.key.keysym)) {
-      lastKeyDownEvent = event;
-    } else {
+    lastKeyDownEvent = event;
+    if (! symNeedsConversion(event.key.keysym)) {
       _event.type = BzfEvent::KeyDown;
       if (!getKey(event, _event.keyDown))
         return false;
@@ -548,6 +547,24 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
   case SDL_TEXTINPUT:
     if (event.text.text[0] < '!' || event.text.text[0] > '~')
       break;
+    // workaround for SDL 2 bug on mac where there is a text input event
+    // when a numpad key is pressed even without num luck enabled
+    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2886
+#ifdef __APPLE__
+    if ((lastKeyDownEvent.key.keysym.mod & KMOD_NUM) == 0 && (
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_0 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_1 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_2 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_3 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_4 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_5 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_6 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_7 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_8 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_9 ||
+	lastKeyDownEvent.key.keysym.sym == SDLK_KP_PERIOD))
+      break;
+#endif // __APPLE
     charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
     _event.type = BzfEvent::KeyDown;
     if (!getKey(lastKeyDownEvent, _event.keyDown))
