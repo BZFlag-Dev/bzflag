@@ -4,6 +4,7 @@
 BZFlag 2.4.9
 ------------
 
+* Added an option to invert one or both joystick axes - Joshua Bodine
 * Multisampling support under SDL 2 - Joshua Bodine
 
 

@@ -111,6 +111,18 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setCallback(callback, "Y");
   listHUD.push_back(option);
   fillJSOptions();
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Invert Joystick Axes:");
+  option->setCallback(callback, "I");
+  options = &option->getList();
+  options->push_back(std::string("No"));
+  options->push_back(std::string("X"));
+  options->push_back(std::string("Y"));
+  options->push_back(std::string("X and Y"));
+  option->setIndex(BZDB.evalInt("jsInvertAxes"));
+  option->update();
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   // confine mouse
@@ -228,6 +240,12 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
       BZDB.set("jsYAxis", selectedOption);
       getMainWindow()->setJoyYAxis(selectedOption);
       break;
+
+    /* Joystick axes inversion */
+    case 'I': {
+      BZDB.setInt("jsInvertAxes", listHUD->getIndex());
+      break;
+    }
 
     /* Active input device */
     case 'A':

@@ -279,9 +279,14 @@ bool			MainWindow::haveJoystick() const
 
 void			MainWindow::getJoyPosition(int& mx, int& my) const
 {
+  // joystick axes inversion values
+  // 0: no inversion
+  // 1: invert X
+  // 2: invert Y
+  // 3: invert both
   joystick->getJoy(mx, my);
-  mx = ((width >> 1) * mx) / (900);
-  my = ((height >> 1) * my) / (900);
+  mx = ((width >> 1) * mx * (BZDB.evalInt("jsInvertAxes") % 2 == 1 ? -1 : 1)) / (900);
+  my = ((height >> 1) * my * (BZDB.evalInt("jsInvertAxes") > 1 ? -1 : 1)) / (900);
 }
 
 int                     MainWindow::getNumHats() const
