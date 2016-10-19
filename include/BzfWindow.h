@@ -67,6 +67,9 @@ class BzfWindow {
     virtual float	getGamma() const = 0;
     virtual bool	hasGammaControl() const = 0;
 
+    bool		hasMultisampling() const { return getMaxSamples() > 1; }
+    virtual int		getMaxSamples() const { return 1; }
+
     virtual bool	hasVerticalSync() const { return false; }
     virtual void	setVerticalSync(bool) {;}
 

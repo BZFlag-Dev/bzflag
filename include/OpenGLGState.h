@@ -132,6 +132,7 @@ class OpenGLGState {
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
     static bool hasAnisotropicFiltering;
+    static bool hasMultisampling;
 };
 
 inline bool OpenGLGState::getExecutingFreeFuncs()

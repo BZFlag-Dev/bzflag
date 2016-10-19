@@ -210,6 +210,7 @@
 		036F58251DA2F8CC00BF906C /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 03E42D191B322DFC006EE763 /* COPYING */; };
 		036F58261DA2F8D400BF906C /* README in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAB1670CB1300725DBE /* README */; };
 		036F58271DA2F90900BF906C /* README.MacOSX in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAC1670CB1300725DBE /* README.MacOSX */; };
+		036F79F41DB70917007AE71A /* MacGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 036F79F21DB70883007AE71A /* MacGL.mm */; };
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
@@ -1569,6 +1570,8 @@
 		0357A9F71670BF3A0056C938 /* bzadmin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzadmin; sourceTree = BUILT_PRODUCTS_DIR; };
 		0358E67B1BF849EB001FF056 /* ServerListFilterHelpMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListFilterHelpMenu.cxx; sourceTree = "<group>"; };
 		0358E67C1BF849EB001FF056 /* ServerListFilterHelpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListFilterHelpMenu.h; sourceTree = "<group>"; };
+		036F79F11DB70883007AE71A /* MacGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacGL.h; sourceTree = "<group>"; };
+		036F79F21DB70883007AE71A /* MacGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacGL.mm; sourceTree = "<group>"; };
 		0370A4681B0C8FBA00FEC9F7 /* model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = model.h; path = ../tools/modeltool/model.h; sourceTree = "<group>"; };
 		0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modeltool.cxx; path = ../tools/modeltool/modeltool.cxx; sourceTree = "<group>"; };
 		0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Q3BSP.cxx; path = ../tools/modeltool/Q3BSP.cxx; sourceTree = "<group>"; };
@@ -2915,6 +2918,8 @@
 				0357A89C1670B7670056C938 /* BzfVisual.cxx */,
 				0357A89D1670B7670056C938 /* BzfWindow.cxx */,
 				0336ED7A1B7042E40090899C /* MacDataPath.cxx */,
+				036F79F11DB70883007AE71A /* MacGL.h */,
+				036F79F21DB70883007AE71A /* MacGL.mm */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
 				0357A8A11670B7670056C938 /* SDLJoystick.cxx */,
 				0357A8A21670B7670056C938 /* SDLJoystick.h */,
@@ -4995,6 +5000,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				036F79F41DB70917007AE71A /* MacGL.mm in Sources */,
 				0357A8841670B5960056C938 /* OpenGLGState.cxx in Sources */,
 				0357A8851670B5960056C938 /* OpenGLLight.cxx in Sources */,
 				0357A8861670B5960056C938 /* OpenGLMaterial.cxx in Sources */,

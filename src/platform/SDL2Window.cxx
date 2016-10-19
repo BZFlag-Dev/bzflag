@@ -17,6 +17,11 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
+#ifdef __APPLE__
+#include <CoreGraphics/CoreGraphics.h>
+#include "MacGL.h"
+#endif // __APPLE
+
 #ifdef _WIN32
 HWND SDLWindow::hwnd = NULL;
 #endif
@@ -282,6 +287,48 @@ void SDLWindow::makeContext() {
   glContext = SDL_GL_CreateContext(windowId);
   if (!glContext)
     printf("Could not Create GL Context: %s.\n", SDL_GetError());
+}
+
+int SDLWindow::getMaxSamples() const {
+  // determine the maximum multisampling level supported by the GPU
+#if defined(__APPLE__)
+  CGDirectDisplayID displayID = CGMainDisplayID();
+  CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
+
+  CGLRendererInfoObj rendererInfo;
+  GLint numRenderers;
+  CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
+
+  GLint currentRenderer;
+
+  CGLContextObj currentContext;
+  if (! getCurrentMacOpenGLContext(&currentContext)) {
+    CGLDestroyRendererInfo(rendererInfo);
+    return 1;
+  }
+
+  CGLGetParameter(currentContext, kCGLCPCurrentRendererID, &currentRenderer);
+
+  for (GLint i = 0; i < numRenderers; ++i) {
+    GLint data;
+
+    CGLDescribeRenderer(rendererInfo, i, kCGLRPRendererID, &data);
+
+    if (data == currentRenderer) {
+      CGLDescribeRenderer(rendererInfo, i, kCGLRPMaxSamples, &data);
+
+      CGLDestroyRendererInfo(rendererInfo);
+      return (int) data;
+    }
+  }
+
+  CGLDestroyRendererInfo(rendererInfo);
+
+  return 1;
+#else
+  // no platform-specific check; unknown what the GPU is capable of
+  return 1;
+#endif
 }
 
 void SDLWindow::setVerticalSync(bool setting) {

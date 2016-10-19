@@ -935,6 +935,7 @@ OpenGLGState::ContextInitializer*
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
 bool OpenGLGState::hasAnisotropicFiltering = false;
+bool OpenGLGState::hasMultisampling = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -1276,8 +1277,6 @@ void OpenGLGState::initGLState()
 // utility to check if an OpenGL extension is supported on this system
 bool OpenGLGState::initGLExtensions()
 {
-  hasAnisotropicFiltering = false;
-
   const char * extensions = (const char*) glGetString(GL_EXTENSIONS);
   if (!extensions)
     return false;
@@ -1285,12 +1284,27 @@ bool OpenGLGState::initGLExtensions()
   std::stringstream extensionsStream;
   extensionsStream.str(extensions);
 
+  hasAnisotropicFiltering = false;
+
   while (!extensionsStream.eof()) {
     std::string thisExtension;
     extensionsStream >> thisExtension;
 
     if (thisExtension == "GL_EXT_texture_filter_anisotropic")
       hasAnisotropicFiltering = true;
+  }
+
+  extensionsStream.clear();
+  extensionsStream.str(extensions);
+
+  hasMultisampling = false;
+
+  while (!extensionsStream.eof()) {
+    std::string thisExtension;
+    extensionsStream >> thisExtension;
+
+    if (thisExtension == "GL_ARB_multisample")
+      hasMultisampling = true;
   }
 
   return false;

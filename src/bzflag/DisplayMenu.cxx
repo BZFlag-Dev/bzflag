@@ -248,10 +248,14 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->setLabel("(restart required) Anti Aliasing:");
   option->setCallback(callback, "m");
   options = &option->getList();
-  if (getMainWindow()->getWindow()->hasVerticalSync()) {
-  options->push_back(std::string("Off"));
-    options->push_back(std::string("2x MSAA"));
-    options->push_back(std::string("4x MSAA"));
+  if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+    options->push_back(std::string("Off"));
+
+    for (int i = 1; pow(2, i) <= getMainWindow()->getWindow()->getMaxSamples(); ++i) {
+      char msaaText[4];
+      snprintf(msaaText, 4, "%i", (int) pow(2, i));
+      options->push_back(std::string(msaaText) + "x MSAA");
+    }
   } else {
     options->push_back(std::string("Unavailable"));
   }
@@ -375,7 +379,7 @@ void			DisplayMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
 
   // multisampling
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") == 4 ? 2 : BZDB.evalInt("multisample") == 2 ? 1 : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") > 0 ? (int) log2(BZDB.evalInt("multisample")) : 0);
 }
 
 int DisplayMenu::gammaToIndex(float gamma)
@@ -471,11 +475,11 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
     break;
   case 's':
-    BZDB.set("saveEnergy", list->getIndex() == 2 ? "2" : list->getIndex() == 1 ? "1" : "0");
+    BZDB.setInt("saveEnergy", list->getIndex());
     getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
     break;
   case 'm':
-    BZDB.set("multisample", list->getIndex() == 2 ? "4" : list->getIndex() == 1 ? "2" : "0");
+    BZDB.setInt("multisample", list->getIndex() > 0 ? (int) pow(2, list->getIndex()) : 0);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();
