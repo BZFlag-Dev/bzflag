@@ -587,7 +587,7 @@ SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
   "<callsign> <group> - remove a user from a group") {}
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
-  "[all|groups|users|bans|helpfiles|swearwords] - reload the user, group, password, and help files") {}
+  "[all|groups|users|bans|helpfiles|badwords] - reload the user, group, password, help files, and bad words") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
   "<ban|kick|kill|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
@@ -2504,14 +2504,14 @@ bool ReloadCommand::operator() (const char	 *message,
   bool reload_groups = false;
   bool reload_users = false;
   bool reload_helpfiles = false;
-  bool reload_swears = false;
+  bool reload_badwords = false;
   if ((cmd == "") || (cmd == "all")) {
     logDebugMessage(3,"Reload all\n");
     reload_bans = true;
     reload_groups = true;
     reload_users = true;
     reload_helpfiles = true;
-    reload_swears = true;
+    reload_badwords = true;
   } else if (cmd == "bans") {
     logDebugMessage(3,"Reload bans\n");
     reload_bans = true;
@@ -2524,12 +2524,12 @@ bool ReloadCommand::operator() (const char	 *message,
   } else if (cmd == "helpfiles") {
     logDebugMessage(3,"Reload helpfiles\n");
     reload_helpfiles = true;
-  } else if (cmd == "swearwords") {
-    logDebugMessage(3,"Reload swear words\n");
-    reload_swears = true;
+  } else if (cmd == "badwords") {
+    logDebugMessage(3,"Reload badwords\n");
+    reload_badwords = true;
   } else {
     sendMessage(ServerPlayer, t, "Invalid option for the reload command");
-    sendMessage(ServerPlayer, t, "Usage: /reload [all|bans|helpfiles|groups|swearwords|users]");
+    sendMessage(ServerPlayer, t, "Usage: /reload [all|bans|badwords|helpfiles|groups|users]");
     return true; // Bail out
   }
 
@@ -2560,8 +2560,8 @@ bool ReloadCommand::operator() (const char	 *message,
     GameKeeper::Player::reloadAccessDatabase();
   }
 
-  if (reload_swears) {
-    logDebugMessage(3,"Reloading swear list\n");
+  if (reload_badwords) {
+    logDebugMessage(3,"Reloading badwords list\n");
     clOptions->filter.clear();
     loadSwearList();
   }
