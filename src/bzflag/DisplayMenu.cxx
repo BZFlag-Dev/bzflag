@@ -109,30 +109,25 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Anisotropic:");
-  option->setCallback(callback, "A");
-  options = &option->getList();
-
   if (OpenGLGState::hasAnisotropicFiltering) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
+      option = new HUDuiList;
+      option->setFontFace(fontFace);
+      option->setLabel("Anisotropic:");
+      option->setCallback(callback, "A");
+      options = &option->getList();
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
 	char buffer[16];
 	snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
 	options->push_back(std::string(buffer));
       }
-    } else {
-      options->push_back(std::string("Unavailable"));
+      option->update();
+      listHUD.push_back(option);
     }
-  } else {
-    options->push_back(std::string("Unavailable"));
   }
-  option->update();
-  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -213,19 +208,15 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   }
 #endif
 
-  BzfWindow* window = getMainWindow()->getWindow();
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Brightness:");
-  option->setCallback(callback, "g");
-  if (window->hasGammaControl()) {
+  if (((BzfWindow*) getMainWindow()->getWindow())->hasGammaControl()) {
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Brightness:");
+    option->setCallback(callback, "g");
     option->createSlider(15);
-  } else {
-    options = &option->getList();
-    options->push_back(std::string("Unavailable"));
+    option->update();
+    listHUD.push_back(option);
   }
-  option->update();
-  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -243,24 +234,21 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("(restart required) Anti Aliasing:");
-  option->setCallback(callback, "m");
-  options = &option->getList();
   if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("(restart required) Anti Aliasing:");
+    option->setCallback(callback, "m");
+    options = &option->getList();
     options->push_back(std::string("Off"));
-
     for (int i = 1; pow(2, i) <= getMainWindow()->getWindow()->getMaxSamples(); ++i) {
       char msaaText[4];
       snprintf(msaaText, 4, "%i", (int) pow(2, i));
       options->push_back(std::string(msaaText) + "x MSAA");
     }
-  } else {
-    options->push_back(std::string("Unavailable"));
+    option->update();
+    listHUD.push_back(option);
   }
-  option->update();
-  listHUD.push_back(option);
 
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
