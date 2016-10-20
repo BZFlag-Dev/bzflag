@@ -1825,6 +1825,7 @@ BZF_API void bz_reloadMasterBans();
 BZF_API void bz_reloadGroups();
 BZF_API void bz_reloadUsers();
 BZF_API void bz_reloadHelp();
+BZF_API void bz_reloadBadwords();
 
 // info about the world
 BZF_API bz_eTeamType bz_checkBaseAtPoint ( float pos[3] );

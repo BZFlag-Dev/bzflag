@@ -4014,6 +4014,13 @@ BZF_API void bz_reloadHelp()
   clOptions->textChunker.reload();
 }
 
+BZF_API void bz_reloadBadwords()
+{
+  logDebugMessage(3,"Reloading bad words\n");
+  clOptions->filter.clear();
+  loadSwearList();
+}
+
 BZF_API void bz_superkill()
 {
   superkillCommand(NULL,NULL);
