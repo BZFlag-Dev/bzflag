@@ -4,6 +4,8 @@
 BZFlag 2.4.9
 ------------
 
+* Add bz_reloadBadwords() to API - Vladimir Jimenez
+* Add ability to reload badwords list with '/reload badwords' - Vladimir Jimenez
 * Source code now dual licensed under the MPL 2.0 or LGPL 2.1 - Tim Riker
 * Added an option to invert one or both joystick axes - Joshua Bodine
 * Multisampling support under SDL 2 - Joshua Bodine
@@ -25,7 +27,7 @@ BZFlag 2.4.8 "Sixteen" (2016-10-10)
 * Add indicator for -noTeamKill servers on server list - Konstantinos Kanavouras
 * Send a notification to admins when a BZDB variable is reset
     - Konstantinos Kanavouras
-* Increase the range of the volume slider - Konstantinos Kanavouras 
+* Increase the range of the volume slider - Konstantinos Kanavouras
 
 
 BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
