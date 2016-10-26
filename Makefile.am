@@ -31,6 +31,8 @@ EXTRA_DIST = \
 	.editorconfig \
 	autogen.sh \
 	bzflag.spec \
+	COPYING.LGPL \
+	COPYING.MPL \
 	DEVINFO \
 	PORTING \
 	README.BeOS \

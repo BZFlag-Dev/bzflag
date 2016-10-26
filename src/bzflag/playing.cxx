@@ -7299,7 +7299,7 @@ void			startPlaying(BzfDisplay* _display,
     controlPanel->addMessage(tmpString);
     // print license
     tmpString = ColorStrings[CyanColor];
-    tmpString += "Distributed under the terms of the LGPL";
+    tmpString += "Distributed under the terms of the LGPL or MPL";
     controlPanel->addMessage(tmpString);
     // print author
     tmpString = ColorStrings[GreenColor];

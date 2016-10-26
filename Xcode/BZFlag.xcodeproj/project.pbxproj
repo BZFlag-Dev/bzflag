@@ -27,6 +27,7 @@
 		0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */; };
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
+		031FBE431DB5A42500DD84DC /* COPYING.MPL in Resources */ = {isa = PBXBuildFile; fileRef = 031FBE421DB5A42500DD84DC /* COPYING.MPL */; };
 		0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
 		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; };
 		034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
@@ -214,6 +215,7 @@
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
+		038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 038D05E41DB5A59300A00C9E /* COPYING.LGPL */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
 		038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DE1BB646030009F369 /* libncurses.tbd */; };
@@ -1056,6 +1058,7 @@
 		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CronJob.cpp; path = bzfscron/CronJob.cpp; sourceTree = "<group>"; };
 		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CronJob.h; path = bzfscron/CronJob.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		031FBE421DB5A42500DD84DC /* COPYING.MPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.MPL; path = ../COPYING.MPL; sourceTree = "<group>"; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
 		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
@@ -1581,6 +1584,7 @@
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		038DA4DC1BB645D80009F369 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
 		038DA4DE1BB646030009F369 /* libncurses.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libncurses.tbd; path = usr/lib/libncurses.tbd; sourceTree = SDKROOT; };
@@ -3386,6 +3390,8 @@
 				03D88EA71670CB1300725DBE /* AUTHORS */,
 				03D88EA81670CB1300725DBE /* ChangeLog */,
 				03E42D191B322DFC006EE763 /* COPYING */,
+				038D05E41DB5A59300A00C9E /* COPYING.LGPL */,
+				031FBE421DB5A42500DD84DC /* COPYING.MPL */,
 				03D88EA91670CB1300725DBE /* DEVINFO */,
 				03D88EAA1670CB1300725DBE /* PORTING */,
 				03D88EAB1670CB1300725DBE /* README */,
@@ -4734,6 +4740,7 @@
 				038DA5001BB64BC30009F369 /* README.keepaway.txt in Resources */,
 				038DA5101BB64D280009F369 /* README.Phoenix.txt in Resources */,
 				038DA4E91BB649640009F369 /* bzfscron.cfg in Resources */,
+				031FBE431DB5A42500DD84DC /* COPYING.MPL in Resources */,
 				038DA4E61BB6493D0009F369 /* README.autoFlagReset.txt in Resources */,
 				038DA5221BB64E310009F369 /* README.SAMPLE_PLUGIN.txt in Resources */,
 				038DA5261BB64E470009F369 /* serverControl.cfg in Resources */,
@@ -4741,6 +4748,7 @@
 				038DA5191BB64DF00009F369 /* help_rabidRabbit.txt in Resources */,
 				038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */,
 				038DA4FF1BB64BC30009F369 /* help_keepaway_rules.txt in Resources */,
+				038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */,
 				038DA52E1BB64F1D0009F369 /* superUser.cfg in Resources */,
 				038DA52D1BB64F1D0009F369 /* README.superUser.txt in Resources */,
 				038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */,
