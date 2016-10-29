@@ -367,7 +367,7 @@ void			DisplayMenu::resize(int _width, int _height)
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
 
   // multisampling
-  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") > 0 ? (int) log2(BZDB.evalInt("multisample")) : 0);
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") > 0 ? (int) (log(BZDB.eval("multisample")) / log(2.0)) : 0);
 }
 
 int DisplayMenu::gammaToIndex(float gamma)
