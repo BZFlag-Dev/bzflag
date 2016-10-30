@@ -152,9 +152,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-#if !defined(DEBUG_RENDERING)
-  if (debugLevel > 0) {
-#endif
+#if defined(DEBUG_RENDERING)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Hidden Line:");
@@ -204,8 +202,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("On"));
     option->update();
     listHUD.push_back(option);
-#if !defined(DEBUG_RENDERING)
-  }
 #endif
 
   if (((BzfWindow*) getMainWindow()->getWindow())->hasGammaControl()) {
@@ -220,16 +216,18 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Energy Saver:");
+
+#if (defined(HAVE_SDL) && defined(HAVE_SDL2))	// SDL 2 can make live changes
+    option->setLabel("Energy Saver:");
+#else
+    option->setLabel("(restart required) Energy Saver:");
+#endif
   option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("FPS Limit"));
   if (getMainWindow()->getWindow()->hasVerticalSync()) {
     options->push_back(std::string("Vertical Sync"));
-#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// SDL 2 can make live changes
-    option->setLabel("(restart required) Energy Saver:");
-#endif
   }
   option->update();
   listHUD.push_back(option);
@@ -342,9 +340,7 @@ void			DisplayMenu::resize(int _width, int _height)
       }
     }
     ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
-#if !defined(DEBUG_RENDERING)
-    if (debugLevel > 0) {
-#endif
+#if defined(DEBUG_RENDERING)
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
@@ -352,8 +348,6 @@ void			DisplayMenu::resize(int _width, int _height)
       ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
 					   : 0);
-#if !defined(DEBUG_RENDERING)
-    }
 #endif
   }
 
