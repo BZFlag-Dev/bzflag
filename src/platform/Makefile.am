@@ -178,8 +178,6 @@ EXTRA_libPlatform_la_SOURCES =		\
 	LinuxMedia.cxx			\
 	LinuxMedia.h			\
 	MacDataPath.cxx			\
-	MacGL.h				\
-	MacGL.mm			\
 	SDLJoystick.cxx			\
 	SDLJoystick.h			\
 	EvdevJoystick.cxx		\
@@ -233,6 +231,8 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
+	MacGL.h \
+	MacGL.mm \
 	NewMedia.cxx \
 	NewMedia.h \
 	README
