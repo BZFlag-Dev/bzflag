@@ -17,6 +17,7 @@
 #include "TextUtils.h"
 
 // system headers
+#include <curl/curl.h>
 #include <string>
 #include <string.h>
 #include <algorithm>
@@ -242,57 +243,40 @@ namespace TextUtils
 
   std::string url_encode(const std::string &text)
   {
-    char hex[5];
-    std::string destination;
-    for (int i=0;  i < (int) text.size(); i++) {
-      char c = text[i];
-      if (isAlphanumeric(c)) {
-	destination+=c;
-      } else if (isWhitespace(c)) {
-	destination+='+';
-      } else {
-	destination+='%';
-	sprintf(hex, "%-2.2X", c);
-	destination.append(hex);
+    CURL *curl = curl_easy_init();
+    std::string encoded = "";
+
+    if (curl) {
+      char *output = curl_easy_escape(curl, text.c_str(), 0);
+
+      if (output) {
+	encoded = output;
+	curl_free(output);
       }
+
+      curl_easy_cleanup(curl);
     }
-    return destination;
+
+    return encoded;
   }
 
   std::string url_decode(const std::string &text)
   {
-    std::string destination;
+    CURL *curl = curl_easy_init();
+    std::string decoded = "";
 
-    std::string::const_iterator itr = text.begin();
-    while (itr != text.end()) {
-      if (*itr != '%' && *itr != '+') {
-	destination += *itr++;
-      } else if (*itr == '+') {
-	destination += " ";
-	++itr;
-      } else {
-	char hex[5] = "0x00";
+    if (curl) {
+      char *output = curl_easy_unescape(curl, text.c_str(), 0, NULL);
 
-	++itr;
-	if (itr == text.end())
-	  return destination;
-
-	hex[2] = *itr;
-
-	++itr;
-	if (itr == text.end())
-	  return destination;
-
-	hex[3] = *itr;
-
-	unsigned int val = 0;
-	sscanf(hex,"%x",&val);
-	if (val != 0)
-	  destination += (char)val;
-	++itr;
+      if (output) {
+	decoded = output;
+	curl_free(output);
       }
+
+      curl_easy_cleanup(curl);
     }
-    return destination;
+
+    return decoded;
   }
 
   std::string escape_nonprintable(const std::string &text, const char quotechar)
