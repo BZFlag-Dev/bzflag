@@ -233,7 +233,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	if (object != fakeObject) {
-          line += object->getLineCount();
+	  line += object->getLineCount();
 
 	  if (object->usesManager()) {
 	    object->writeToManager();
@@ -465,7 +465,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

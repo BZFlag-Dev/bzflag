@@ -196,10 +196,10 @@ const struct CommandListItem commandList[] = {
   { "drop",		&cmdDrop,		"drop:  drop the current flag" },
   { "identify",		&cmdIdentify,		"identify:  identify/lock-on-to player in view" },
   { "restart",		&cmdRestart,		"restart:  restart playing" },
-  { "destruct", 	&cmdDestruct,		"destruct:  self destruct" },
+  { "destruct",		&cmdDestruct,		"destruct:  self destruct" },
   { "pause",		&cmdPause,		"pause:  pause/resume" },
   { "send",		&cmdSend,		"send {all|team|nemesis|recipient|admin}:  start composing a message" },
-  { "screenshot",	&cmdScreenshot, 	"screenshot:  take a screenshot" },
+  { "screenshot",	&cmdScreenshot,		"screenshot:  take a screenshot" },
   { "time",		&cmdTime,		"time {forward|backward}:  adjust the current time" },
   { "roam",		&cmdRoam,		"roam {zoom|cycle} <args>:  roam around" },
   { "silence",		&cmdSilence,		"silence:  silence/unsilence a player" },
@@ -207,13 +207,13 @@ const struct CommandListItem commandList[] = {
   { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
   { "hunt",		&cmdHunt,		"hunt:  hunt a specific player" },
   { "addhunt",		&cmdAddHunt,		"addhunt:  add/modify hunted player(s)" },
-  { "iconify",  	&cmdIconify,		"iconify: iconify & pause bzflag" },
+  { "iconify",		&cmdIconify,		"iconify: iconify & pause bzflag" },
   { "mousebox",		&cmdMouseBox,		"mousebox <size>:  change the mousebox size"},
   { "mousegrab",	&cmdMouseGrab,		"mousegrab: toggle exclusive mouse mode" },
   { "fullscreen",	&cmdToggleFS,		"fullscreen: toggle fullscreen mode" },
   { "autopilot",	&cmdAutoPilot,		"autopilot:  set/unset autopilot bot code" },
-  { "radarZoom", 	&cmdRadarZoom, 		"radarZoom {in/out}: change maxRadar range"},
-  { "viewZoom",		&cmdViewZoom,  		"viewZoom {in/out/toggle}: change view angle" },
+  { "radarZoom",	&cmdRadarZoom,		"radarZoom {in/out}: change maxRadar range"},
+  { "viewZoom",		&cmdViewZoom,		"viewZoom {in/out/toggle}: change view angle" },
   { "messagepanel",	&cmdMessagePanel,	"messagepanel {all|chat|server|misc}:  set message tab" },
   { "toggleRadar",	&cmdToggleRadar,	"toggleRadar:  toggle radar visibility" },
   { "toggleConsole",	&cmdToggleConsole,	"toggleConsole:  toggle console visibility" },
@@ -975,7 +975,7 @@ static std::string cmdHunt(const std::string&,
 {
   if (args.size() != 0)
     return "usage: hunt";
-   hud->getScoreboard()->huntKeyEvent (false);
+  hud->getScoreboard()->huntKeyEvent (false);
   return std::string();
 }
 
@@ -984,7 +984,7 @@ static std::string cmdAddHunt(const std::string&,
 {
   if (args.size() != 0)
     return "usage: addhunt";
-   hud->getScoreboard()->huntKeyEvent (true);
+  hud->getScoreboard()->huntKeyEvent (true);
   return std::string();
 }
 
@@ -1009,7 +1009,7 @@ static std::string cmdCycleRadar(const std::string&,
   if (radarLevels.size() == 0)
     return usageText;
 
-  if(radarLevels.size() == 1) {
+  if (radarLevels.size() == 1) {
     // only one specified... just set it
     BZDB.set("displayRadar", radarLevels[0] > 0.0f ? "1" : "0");
 

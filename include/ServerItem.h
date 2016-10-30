@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef  __SERVERITEM_H__
-#define  __SERVERITEM_H__
+#ifndef __SERVERITEM_H__
+#define __SERVERITEM_H__
 
 #include "common.h"
 

@@ -1015,7 +1015,7 @@ bool SetCommand::operator() (const char	 *message,
   bool	cmdError = false;
 
   std::string cmdReturn = CMDMGR.run(command,&cmdError);
-  if(!cmdError) {
+  if (!cmdError) {
     std::string errMsg = "/set failed, reason: ";
     errMsg += cmdReturn;
 
@@ -1065,14 +1065,14 @@ bool ResetCommand::operator() (const char	 *message,
 bool ShutdownCommand::operator() (const char	 *,
 				  GameKeeper::Player *playerData)
 {
-	// If no playerData - dont perfom permission check, since it is probably the API
-	if (playerData){
-		int t = playerData->getIndex();
-		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
-			sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
-			return true;
-		}
-	}
+  // If no playerData - dont perfom permission check, since it is probably the API
+  if (playerData) {
+    int t = playerData->getIndex();
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::shutdownServer)) {
+      sendMessage(ServerPlayer, t, "You do not have permission to run the shutdown command");
+      return true;
+    }
+  }
   done = true;
   return true;
 }
@@ -1081,16 +1081,16 @@ bool ShutdownCommand::operator() (const char	 *,
 bool SuperkillCommand::operator() (const char	 *,
 				   GameKeeper::Player *playerData)
 {
-	// If no playerData - dont perfom permission check, since it is probably the API
-	int t = ServerPlayer;
+  // If no playerData - dont perfom permission check, since it is probably the API
+  int t = ServerPlayer;
 
-	if (playerData){
-		t = playerData->getIndex();
-		if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
-			sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
-			return true;
-		}
-	}
+  if (playerData) {
+    t = playerData->getIndex();
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::superKill)) {
+      sendMessage(ServerPlayer, t, "You do not have permission to run the superkill command");
+      return true;
+    }
+  }
   for (int i = 0; i < curMaxPlayers; i++)
     removePlayer(i, "/superkill");
   if (!gameOver)
@@ -1161,69 +1161,69 @@ bool CountdownCommand::operator() (const char	 * message,
     std::vector<std::string> parts = TextUtils::tokenize(message, " \t",2);
 
     if (parts.size() > 1)
-	{
+    {
       // we have an argument
       if (parts[1] == "pause")
-	  {
-		// pause the countdown
-		if (!countdownActive)
-		{
-			sendMessage(ServerPlayer, t, "There is no active game to pause");
-			return true;
-		}
-		else if (clOptions->countdownPaused)
-		{
-			sendMessage(ServerPlayer, t, "The game is already paused");
-			return true;
-		}
+      {
+	// pause the countdown
+	if (!countdownActive)
+	{
+	  sendMessage(ServerPlayer, t, "There is no active game to pause");
+	  return true;
+	}
+	else if (clOptions->countdownPaused)
+	{
+	  sendMessage(ServerPlayer, t, "The game is already paused");
+	  return true;
+	}
 
-		pauseCountdown(t);
-		return true;
+	pauseCountdown(t);
+	return true;
       }
-	  else if (parts[1] == "resume")
-	  {
-		// resume countdown if it was paused before
-		if (!clOptions->countdownPaused)
-		{
-			sendMessage(ServerPlayer, t, "The game is not paused");
-			return true;
-		}
-		resumeCountdown(t);
-		return true;
+      else if (parts[1] == "resume")
+      {
+	// resume countdown if it was paused before
+	if (!clOptions->countdownPaused)
+	{
+	  sendMessage(ServerPlayer, t, "The game is not paused");
+	  return true;
+	}
+	resumeCountdown(t);
+	return true;
       }
-	  else if (parts[1] == "cancel")
-	  {
-		if (countdownDelay <= 0) {
-			sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
-		} else {
-			cancelCountdown(t);
-		}
+      else if (parts[1] == "cancel")
+      {
+	if (countdownDelay <= 0) {
+	  sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
+	} else {
+	  cancelCountdown(t);
+	}
 
-		return true;
-	  }
-	  else
-	  {
-		if (countdownDelay > 0) {
-			sendMessage(ServerPlayer, t, "There is a countdown already in progress");
-			return true;
-		}
+	return true;
+      }
+      else
+      {
+	if (countdownDelay > 0) {
+	  sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+	  return true;
+	}
 
-		// so it's the countdown delay? else tell the player how to use /countdown
-		std::istringstream timespec(message+10);
-		timespec >> countdownDelay;
-		if (timespec.fail())
-		{
-			countdownDelay = -1;
-			sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume|cancel]");
-			return true;
-		}
+	// so it's the countdown delay? else tell the player how to use /countdown
+	std::istringstream timespec(message+10);
+	timespec >> countdownDelay;
+	if (timespec.fail())
+	{
+	  countdownDelay = -1;
+	  sendMessage(ServerPlayer, t, "Usage: /countdown [<seconds>|pause|resume|cancel]");
+	  return true;
+	}
       }
     }
-	else
-	{
+    else
+    {
       if (countdownDelay > 0) {
-        sendMessage(ServerPlayer, t, "There is a countdown already in progress");
-        return true;
+	sendMessage(ServerPlayer, t, "There is a countdown already in progress");
+	return true;
       }
 
       countdownDelay = 10;
@@ -1231,7 +1231,7 @@ bool CountdownCommand::operator() (const char	 * message,
 
     // cancel here if a game is already running
     if (countdownActive)
-	{
+    {
       sendMessage(ServerPlayer, t, "A game is already in progress");
       countdownDelay = -1;
       return true;
@@ -1240,17 +1240,17 @@ bool CountdownCommand::operator() (const char	 * message,
     // limit/sanity check
     const int max_delay = 120;
     if (countdownDelay > max_delay)
-	{
+    {
       sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to %d instead of %d", max_delay, countdownDelay).c_str());
       countdownDelay = max_delay;
     }
-	else if (countdownDelay < 0)
-	{
+    else if (countdownDelay < 0)
+    {
       sendMessage(ServerPlayer, t, TextUtils::format("Countdown set to 0 instead of %d", countdownDelay).c_str());
       countdownDelay = 0;
     }
 
-	startCountdown(countdownDelay, clOptions->timeLimit, t);
+    startCountdown(countdownDelay, clOptions->timeLimit, t);
   }
   else
   {
@@ -1315,19 +1315,19 @@ bool FlagCommand::operator() (const char	 *message,
       FlagInfo &flag = *FlagInfo::get(i);
       if (flag.flag.type->flagTeam == ::NoTeam) {
 	  if (flag.flag.status == FlagOnTank) {
-            int player = flag.player;
+	    int player = flag.player;
 
-            sendDrop(flag);
+	    sendDrop(flag);
 
-            // trigger the API event
-            bz_FlagDroppedEventData_V1 data;
-            data.playerID = player;
-            data.flagID = flag.getIndex();
-            data.flagType = flag.flag.type->flagAbbv.c_str();
-            memcpy(data.pos, flag.flag.position, sizeof(float)*3);
+	    // trigger the API event
+	    bz_FlagDroppedEventData_V1 data;
+	    data.playerID = player;
+	    data.flagID = flag.getIndex();
+	    data.flagType = flag.flag.type->flagAbbv.c_str();
+	    memcpy(data.pos, flag.flag.position, sizeof(float)*3);
 
-            worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
-          }
+	    worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
+	  }
 	flag.flag.status = FlagGoing;
 	if (!flag.required) {
 	  flag.flag.type = Flags::Null;
@@ -1355,7 +1355,7 @@ bool FlagCommand::operator() (const char	 *message,
     const char* command = argv[0].c_str();
 
     const bool keepTeamFlags = ((argv.size() > 1) &&
-                               strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
+			       strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
 
     FlagType* ft = Flag::getDescFromAbbreviation(command);
 
@@ -1564,7 +1564,7 @@ bool FlagCommand::operator() (const char	 *message,
 	  fPlayer->player.setFlag(-1);
 	}
       }
-      
+
       grabFlag(gkPlayer->getIndex(), *fi, false);
 
       // send the annoucement
@@ -1887,7 +1887,7 @@ bool HandicapCommand::operator() (const char	 *,
 	}
       }
   } else {
-    sendMessage(ServerPlayer, t, "Server does not use handicap mode.");    
+    sendMessage(ServerPlayer, t, "Server does not use handicap mode.");
   }
   return true;
 }
@@ -2044,7 +2044,7 @@ static bool sendHelpTopic (int sendSlot, const char *helpTopic)
   const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
 
   for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-    if (chunks[i] == helpTopic){
+    if (chunks[i] == helpTopic) {
       const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk(helpTopic);
       if (lines != NULL) {
 	for (int j = 0; j < (int)lines->size(); j++) {
@@ -2075,7 +2075,7 @@ bool SendHelpCommand::operator() (const char *message, GameKeeper::Player *playe
   }
 
   int sendTo = GameKeeper::Player::getPlayerIDByName(argv[1]);
-  if ( sendTo < 0){
+  if ( sendTo < 0) {
     char errormessage[MessageLen];
     snprintf(errormessage, MessageLen, "player \"%s\" not found", argv[1].c_str());
     sendMessage(ServerPlayer, sendFrom, errormessage);
@@ -2113,7 +2113,7 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
       sendMessage(ServerPlayer, t, chunks[i].c_str());
     }
   } else {
-    if ( !  sendHelpTopic (t, message + 6) ){
+    if ( !  sendHelpTopic (t, message + 6) ) {
       snprintf(reply, MessageLen, "Help command %s not found", message + 6);
       sendMessage(ServerPlayer, t, reply);
     }
@@ -2254,10 +2254,10 @@ bool ShowPermsCommand::operator() (const char* msg,
       const std::string& nextCustomPerm = bz_tolower(customPerms.at(permIndex).c_str());
 
       if (nextCustomPerm < permName) {
-        sendMessage(ServerPlayer, t, nextCustomPerm.c_str());
-        permIndex++;
+	sendMessage(ServerPlayer, t, nextCustomPerm.c_str());
+	permIndex++;
 
-        continue;
+	continue;
       }
 
       break;
@@ -2290,7 +2290,7 @@ bool GroupPermsCommand::operator() (const char* msg,
     }
   }
 
-  if(group.empty())
+  if (group.empty())
     sendMessage(ServerPlayer, t, "Group List:");
 
   PlayerAccessMap::iterator itr;
@@ -2691,7 +2691,7 @@ bool VoteCommand::operator() (const char	 *message,
     return true;
   }
 
-  if (!cast){
+  if (!cast) {
     /* There was an error while voting, probably could send a less generic message */
     snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
     sendMessage(ServerPlayer, t, reply);
@@ -2958,8 +2958,8 @@ bool PollCommand::operator() (const char	 *message,
 	return true;
       }
       if (cmd == "kill" && targetData->player.isObserver()) {
-        sendMessage(ServerPlayer, t, "You can't kill an observer!");
-        return true;
+	sendMessage(ServerPlayer, t, "You can't kill an observer!");
+	return true;
       }
       targetIP = targetData->netHandler->getTargetIP();
 

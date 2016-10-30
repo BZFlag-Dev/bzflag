@@ -44,7 +44,7 @@ Quake3Level::~Quake3Level()
 
 void Quake3Level::loadFromFile ( const char* fileName)
 {
-	if(!fileName)
+	if (!fileName)
 		return;
 
 	theFileName = fileName;
@@ -98,7 +98,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 	for ( int i = 0; i < mNumFaces; i++ )
 	{
-		switch( mFaces[i].type )
+		switch ( mFaces[i].type )
 		{
 			case 1: // polygon face
 			case 3: // mesh face
@@ -163,7 +163,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					{
 						if (mFaces[i].vert_count > 2)
 						{
-							for( int j = 2; j < mFaces[i].vert_count; j++)
+							for ( int j = 2; j < mFaces[i].vert_count; j++)
 							{
 								face.clear();
 
@@ -186,7 +186,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					else
 					{
 						face.clear();
-						for( int j = 0; j < mFaces[i].vert_count; j++)
+						for ( int j = 0; j < mFaces[i].vert_count; j++)
 						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
@@ -202,7 +202,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 						if (mFaces[i].vert_count > 2)
 						{
 							face.clear();
-							for( int j = 0; j < mFaces[i].vert_count; j+= 1)
+							for ( int j = 0; j < mFaces[i].vert_count; j+= 1)
 							{
 								face.verts.push_back(j);
 								face.normals.push_back(j);
@@ -223,7 +223,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					else
 					{
 						face.clear();
-						for( int j = 0; j < mFaces[i].vert_count; j++)
+						for ( int j = 0; j < mFaces[i].vert_count; j++)
 						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
@@ -297,7 +297,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					{
 						for ( int y = 0; y < mFaces[i].mesh_cp[1]-1; y++)
 						{
-							for( int x = 0; x < mFaces[i].mesh_cp[0]-1; x++)
+							for ( int x = 0; x < mFaces[i].mesh_cp[0]-1; x++)
 							{
 								face.clear();
 								int index = (y*mFaces[i].mesh_cp[1])+x;

@@ -93,7 +93,7 @@ if ($#ARGV == 0) {
 }
 
 # Local Variables: ***
-# mode:Perl ***
+# mode: Perl ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

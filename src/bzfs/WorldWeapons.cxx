@@ -253,7 +253,7 @@ int WorldWeapons::getNewWorldShotID(void)
 
 bool shotUsedInList(int shotID, Shots::ShotList& list)
 {
-	for(size_t s = 0; s < list.size(); s++)
+	for (size_t s = 0; s < list.size(); s++)
 	{
 		if (list[s]->GetLocalShotID() == shotID)
 			return true;

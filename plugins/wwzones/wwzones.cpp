@@ -17,7 +17,7 @@
 class WWZEventHandler : public bz_Plugin, bz_CustomMapObjectHandler
 {
 public:
-  virtual const char* Name(){return "World Weapon Zones";}
+  virtual const char* Name() {return "World Weapon Zones";}
   virtual void Init(const char* config);
   virtual void Cleanup();
   virtual void Event(bz_EventData *eventData);
@@ -119,31 +119,31 @@ bool WWZEventHandler::MapObject (bz_ApiString object, bz_CustomMapObjectInfo *da
       std::string key = bz_toupper(nubs->get(0).c_str());
 
       if (key == "ZONEWEAPON" && nubs->size() > 9) {
-        newZone.zoneWeapon = nubs->get(1);
-        newZone.zoneWeaponLifetime = (float)atof(nubs->get(2).c_str());
-        newZone.zoneWeaponPosition[0] = (float)atof(nubs->get(3).c_str());
-        newZone.zoneWeaponPosition[1] = (float)atof(nubs->get(4).c_str());
-        newZone.zoneWeaponPosition[2] = (float)atof(nubs->get(5).c_str());
-        newZone.zoneWeaponTilt = (float)(atof(nubs->get(6).c_str()) * M_PI/180.0);  // convert degrees to radians
-        newZone.zoneWeaponDirection = (float)(atof(nubs->get(7).c_str()) * M_PI/180.0);  // convert degrees to radians
+	newZone.zoneWeapon = nubs->get(1);
+	newZone.zoneWeaponLifetime = (float)atof(nubs->get(2).c_str());
+	newZone.zoneWeaponPosition[0] = (float)atof(nubs->get(3).c_str());
+	newZone.zoneWeaponPosition[1] = (float)atof(nubs->get(4).c_str());
+	newZone.zoneWeaponPosition[2] = (float)atof(nubs->get(5).c_str());
+	newZone.zoneWeaponTilt = (float)(atof(nubs->get(6).c_str()) * M_PI/180.0);	// convert degrees to radians
+	newZone.zoneWeaponDirection = (float)(atof(nubs->get(7).c_str()) * M_PI/180.0);	// convert degrees to radians
 	newZone.zoneWeaponShotID = (int)atoi(nubs->get(8).c_str());
       } else if (key == "REPEAT" && nubs->size() == 1) {
-        newZone.zoneWeaponRepeat = true;
+	newZone.zoneWeaponRepeat = true;
       } else if (key == "REPEAT" && nubs->size() > 1) {
-        newZone.zoneWeaponRepeat = true;
-        newZone.zoneWeaponMinFireTime = (double)atof(nubs->get(1).c_str());
-        if (newZone.zoneWeaponMinFireTime < MaxWaitTime && newZone.zoneWeaponMinFireTime >= 0.1)
-          MaxWaitTime = (float)newZone.zoneWeaponMinFireTime - 0.05f;  //tick faster than ww calls
+	newZone.zoneWeaponRepeat = true;
+	newZone.zoneWeaponMinFireTime = (double)atof(nubs->get(1).c_str());
+	if (newZone.zoneWeaponMinFireTime < MaxWaitTime && newZone.zoneWeaponMinFireTime >= 0.1)
+	  MaxWaitTime = (float)newZone.zoneWeaponMinFireTime - 0.05f;	// tick faster than ww calls
       } else if (key == "TIMEDELAY" && nubs->size() > 1) {
-        newZone.zoneWeaponTimeDelay = (double)atof(nubs->get(1).c_str());
-        if (newZone.zoneWeaponTimeDelay < 0)
-          newZone.zoneWeaponTimeDelay = 0;
+	newZone.zoneWeaponTimeDelay = (double)atof(nubs->get(1).c_str());
+	if (newZone.zoneWeaponTimeDelay < 0)
+	  newZone.zoneWeaponTimeDelay = 0;
       } else if (key == "PLAYERMESSAGE" && nubs->size() > 1) {
-        newZone.playermessage = nubs->get(1).c_str();
+	newZone.playermessage = nubs->get(1).c_str();
       } else if (key == "SERVERMESSAGE" && nubs->size() > 1) {
-        newZone.servermessage = nubs->get(1).c_str();
+	newZone.servermessage = nubs->get(1).c_str();
       } else if (key == "INFOMESSAGE") {
-        newZone.zoneWeaponInfoMessage = true;
+	newZone.zoneWeaponInfoMessage = true;
       }
     }
     bz_deleteStringList(nubs);
@@ -186,8 +186,8 @@ inline bool OKToFire(int zoneNum, int plyrNum)
   for (unsigned int j = 0; j < zoneList[zoneNum].wwzPlyrList.size(); j++) {
     if (zoneList[zoneNum].wwzPlyrList[j].wwzplyrID == plyrNum) {
       if ((bz_getCurrentTime() - zoneList[zoneNum].wwzPlyrList[j].wwzPlyrInTime) > zoneList[zoneNum].zoneWeaponTimeDelay && !zoneList[zoneNum].zoneWeaponFired) {
-        zoneList[zoneNum].wwzPlyrList[j].wwzPlyrInTime = bz_getCurrentTime();
-        return true;
+	zoneList[zoneNum].wwzPlyrList[j].wwzPlyrInTime = bz_getCurrentTime();
+	return true;
       }
     }
   }
@@ -208,28 +208,28 @@ void WWZEventHandler::Event (bz_EventData *eventData)
 
     if (player) {
       for (unsigned int i = 0; i < zoneList.size(); i++) {
-        if (zoneList[i].pointInZone(player->lastKnownState.pos) && player->spawned) {
-          if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired) {
-            bz_fireWorldWep(zoneList[i].zoneWeapon.c_str(), zoneList[i].zoneWeaponLifetime, BZ_SERVER, zoneList[i].zoneWeaponPosition, zoneList[i].zoneWeaponTilt, zoneList[i].zoneWeaponDirection, zoneList[i].zoneWeaponShotID, 0);
-            zoneList[i].zoneWeaponFired = true;
-            zoneList[i].zoneWeaponLastFired = bz_getCurrentTime();
-          } else {
-            if ((bz_getCurrentTime() - zoneList[i].zoneWeaponLastFired) > zoneList[i].zoneWeaponMinFireTime && zoneList[i].zoneWeaponRepeat)
+	if (zoneList[i].pointInZone(player->lastKnownState.pos) && player->spawned) {
+	  if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired) {
+	    bz_fireWorldWep(zoneList[i].zoneWeapon.c_str(), zoneList[i].zoneWeaponLifetime, BZ_SERVER, zoneList[i].zoneWeaponPosition, zoneList[i].zoneWeaponTilt, zoneList[i].zoneWeaponDirection, zoneList[i].zoneWeaponShotID, 0);
+	    zoneList[i].zoneWeaponFired = true;
+	    zoneList[i].zoneWeaponLastFired = bz_getCurrentTime();
+	  } else {
+	    if ((bz_getCurrentTime() - zoneList[i].zoneWeaponLastFired) > zoneList[i].zoneWeaponMinFireTime && zoneList[i].zoneWeaponRepeat)
 	      zoneList[i].zoneWeaponFired = false;
-          }
+	  }
 
-          if (!zoneList[i].zoneWeaponSentMessage && zoneList[i].zoneWeaponFired) {
-            if (!zoneList[i].playermessage.empty())
-              bz_sendTextMessage(BZ_SERVER, player->playerID, zoneList[i].playermessage.c_str());
-            if (!zoneList[i].servermessage.empty())
-              bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, zoneList[i].servermessage.c_str());
-            if (zoneList[i].zoneWeaponInfoMessage)
-              bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s triggered by %s.", zoneList[i].zoneWeapon.c_str(), player->callsign.c_str());
+	  if (!zoneList[i].zoneWeaponSentMessage && zoneList[i].zoneWeaponFired) {
+	    if (!zoneList[i].playermessage.empty())
+	      bz_sendTextMessage(BZ_SERVER, player->playerID, zoneList[i].playermessage.c_str());
+	    if (!zoneList[i].servermessage.empty())
+	      bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, zoneList[i].servermessage.c_str());
+	    if (zoneList[i].zoneWeaponInfoMessage)
+	      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "%s triggered by %s.", zoneList[i].zoneWeapon.c_str(), player->callsign.c_str());
 
-            zoneList[i].zoneWeaponSentMessage = true;
-          }
-        } else {
-          notHere(i, player->playerID);
+	    zoneList[i].zoneWeaponSentMessage = true;
+	  }
+	} else {
+	  notHere(i, player->playerID);
 	}
       }
       bz_freePlayerRecord(player);
@@ -241,7 +241,7 @@ void WWZEventHandler::Event (bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

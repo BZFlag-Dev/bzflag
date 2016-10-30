@@ -9,7 +9,7 @@
 # usage: ./bzwcvt.pl < hix.bzw > hixr.bzw
 $pi = 3.14159265358979;
 @bzw = <> ;
-@rotations = grep( /^rotation/ , @bzw ) ;
+@rotations = grep( /^rotation/, @bzw ) ;
 $max = 0 ;
 foreach ( @rotations ) {
   ( undef, $rotation ) = split /  */ ;
@@ -38,7 +38,7 @@ foreach ( @bzw ) {
 }
 
 # Local Variables: ***
-# mode:Perl ***
+# mode: Perl ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

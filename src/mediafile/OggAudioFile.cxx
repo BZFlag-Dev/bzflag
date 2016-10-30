@@ -29,7 +29,7 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
   bundle->input = in; bundle->length = std::streamoff(in->tellg());
   in->seekg(0, std::ios::beg);
 
-  if(ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
+  if (ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0) {
     std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
   } else {
     info = ov_info(&file, -1);
@@ -125,7 +125,7 @@ long		OAFTell(void* datasource)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

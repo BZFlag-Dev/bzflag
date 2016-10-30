@@ -391,7 +391,7 @@ bool			KeyManager::onCallback(
   return true;
 }
 
-bool			KeyManager::KeyEventLess::operator()(
+bool			KeyManager::KeyEventLess::operator() (
 				const BzfKeyEvent& a,
 				const BzfKeyEvent& b) const
 {
@@ -423,7 +423,7 @@ bool			KeyManager::KeyEventLess::operator()(
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

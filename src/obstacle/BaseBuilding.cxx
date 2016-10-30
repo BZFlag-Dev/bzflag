@@ -150,7 +150,7 @@ bool			BaseBuilding::isCrossing(const float *p, float _angle,
       testRectInRect(getPosition(), getRotation(),
 	getWidth(), getBreadth(), p, _angle, dx, dy))
     return false;
-  if(!plane) return true;
+  if (!plane) return true;
 
   // it's crossing -- choose which wall is being crossed (this
   // is a guestimate, should really do a careful test). Just
@@ -161,7 +161,7 @@ bool			BaseBuilding::isCrossing(const float *p, float _angle,
   const float x   = c * (p[0] - p2[0]) - s * (p[1] - p2[1]);
   const float y   = c * (p[1] - p2[1]) - s * (p[0] - p2[0]);
   float pw[2];
-  if(fabsf(fabsf(x) - getWidth()) < fabsf(fabsf(y) - getBreadth())) {
+  if (fabsf(fabsf(x) - getWidth()) < fabsf(fabsf(y) - getBreadth())) {
     plane[0] = ((x < 0.0) ? -cosf(a2) : cosf(a2));
     plane[1] = ((x < 0.0) ? -sinf(a2) : sinf(a2));
     pw[0] = p2[0] + getWidth() * plane[0];
@@ -196,7 +196,7 @@ void			BaseBuilding::getCorner(int index, float *_pos) const
   const float s = sinf(getRotation());
   const float w = getWidth();
   const float b = getBreadth();
-  switch(index & 3) {
+  switch (index & 3) {
     case 0:
       _pos[0] = base[0] + c * w - s * b;
       _pos[1] = base[1] + s * w + c * b;
@@ -215,7 +215,7 @@ void			BaseBuilding::getCorner(int index, float *_pos) const
       break;
   }
   _pos[2] = base[2];
-  if(index >= 4) _pos[2] += getHeight();
+  if (index >= 4) _pos[2] += getHeight();
 }
 
 int	BaseBuilding::getTeam() const {
@@ -301,7 +301,7 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
       out << indent << "  shootthrough" << std::endl;
     }
   }
-  if(canRicochet()) {
+  if (canRicochet()) {
     out << indent << "  ricochet" << std::endl;
   }
   out << indent << "end" << std::endl;
@@ -394,7 +394,7 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -646,7 +646,7 @@ void			HUDRenderer::hudColor3fv(const GLfloat* c)
 
 void HUDRenderer::hudColor3Afv(const float * c, const float a)
 {
-  if( dim )
+  if ( dim )
     glColor4f( dimFactor *c[0], dimFactor *c[1], dimFactor *c[2], a );
   else
     glColor4f( c[0],c[1],c[2],a );
@@ -669,7 +669,7 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 }
 
 
-void HUDRenderer::drawGeometry()
+void			HUDRenderer::drawGeometry()
 {
   float lockonSize = 40;
 
@@ -1159,7 +1159,7 @@ void			HUDRenderer::renderTimes(void)
 void HUDRenderer::saveMatrixes(const float *mm, const float *pm )
 {
   // ssave off the stuff before we reset it
-  for(int i = 0; i < 16; i++) {
+  for (int i = 0; i < 16; i++) {
     modelMatrix[i] = mm[i];
     projMatrix[i] = pm[i];
   }
@@ -1184,7 +1184,7 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     (GLint*)viewport, &map[0], &map[1], &map[2]);
   glPopMatrix();
 
-  float halfWidth = window.getWidth( )* 0.5f;
+  float halfWidth = window.getWidth() * 0.5f;
   float halfHeight = window.getHeight() * 0.5f;
 
   // comp us back to the view
@@ -1267,7 +1267,7 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     float textOffset = 5.0f;
     float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, name);
     glEnable(GL_TEXTURE_2D);
-    FontManager::instance().drawString(-width * 0.5f , textOffset + triangleSize,
+    FontManager::instance().drawString(-width * 0.5f, textOffset + triangleSize,
       0, headingFontFace, headingFontSize, name);
     glDisable(GL_TEXTURE_2D);
   }
@@ -1280,9 +1280,9 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
+void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
 				   const float *viewPos, std::string name,
-				   bool friendly )
+				   bool friendly)
 {
   double map[3] = {0,0,0};
   double o[3];
@@ -1297,7 +1297,7 @@ void HUDRenderer::drawLockonMarker(float* color ,float alpha, float* object,
     (GLint*)viewport, &map[0], &map[1], &map[2]);
   glPopMatrix();
 
-  float halfWidth = window.getWidth( )* 0.5f;
+  float halfWidth = window.getWidth() * 0.5f;
   float halfHeight = window.getHeight() * 0.5f;
 
   // comp us back to the view
@@ -1400,7 +1400,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glVertex2i(centerx + noMotionSize, centery + noMotionSize);
     glVertex2i(centerx - noMotionSize, centery + noMotionSize);
   } glEnd();
-  if (0){
+  if (0) {
       glBegin(GL_POINTS); {
       glVertex2i(centerx - noMotionSize, centery - noMotionSize);
       glVertex2i(centerx + noMotionSize, centery - noMotionSize);
@@ -1414,7 +1414,7 @@ void			HUDRenderer::renderBox(SceneRenderer&)
     glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
     glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
   } glEnd();
-  if (0){
+  if (0) {
       glBegin(GL_POINTS); {
       glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
       glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
@@ -1887,7 +1887,7 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
 
 
-static int compare_float (const void* a, const void* b)
+static int		compare_float(const void* a, const void* b)
 {
   const float fa = *((const float*)a);
   const float fb = *((const float*)b);
@@ -1959,7 +1959,7 @@ void			HUDRenderer::renderShots(const Player* target)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

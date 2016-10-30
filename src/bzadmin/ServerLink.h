@@ -85,10 +85,10 @@ class ServerLink {
     static ServerLink*	server;
     int			server_abilities;
 
-    std::string	 rejectionMessage;
+    std::string		rejectionMessage;
 
-    int		 udpLength;
-    const char	       *udpBufferPtr;
+    int			udpLength;
+    const char*		udpBufferPtr;
     char		ubuf[MaxPacketLen];
 };
 
@@ -122,7 +122,7 @@ inline const char*	ServerLink::getVersion() const
 #endif // BZF_SERVER_LINK_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

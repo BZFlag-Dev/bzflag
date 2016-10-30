@@ -33,9 +33,9 @@ class LaserSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-	void		setColor ( float r, float g, float b );
-	void		setCenterColor ( float r, float g, float b );
-	void		setFirst ( void ) {first = true;}
+    void		setColor ( float r, float g, float b );
+    void		setCenterColor ( float r, float g, float b );
+    void		setFirst ( void ) { first = true; }
 
   protected:
     class LaserRenderNode : public RenderNode {
@@ -66,7 +66,7 @@ class LaserSceneNode : public SceneNode {
 #endif // BZF_LASER_SCENE_NODE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

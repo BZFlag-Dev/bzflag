@@ -398,7 +398,7 @@ void ServerStartMenu::execute()
       args[arg++] = "-c";
       args[arg++] = "-b";
     }
-    else if (((HUDuiList*)listHUD[1])->getIndex() == 1){
+    else if (((HUDuiList*)listHUD[1])->getIndex() == 1) {
       args[arg++] = "-h";
     }
     else {

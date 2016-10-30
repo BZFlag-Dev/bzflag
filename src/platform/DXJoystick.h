@@ -39,7 +39,7 @@ class DXJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    int 	getNumHats();
+    int	getNumHats();
     void	getJoyHat(int hat, float &hatX, float &hatY);
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
@@ -76,7 +76,7 @@ class DXJoystick : public BzfJoystick {
     std::map<std::string,bool> axes;
     std::string xAxis;
     std::string yAxis;
-   
+
     std::vector<float> hataxes;
 
     static std::vector<DIDEVICEINSTANCE> devices;
@@ -93,7 +93,7 @@ class DXJoystick : public BzfJoystick {
 #endif // BZF_DXJOY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

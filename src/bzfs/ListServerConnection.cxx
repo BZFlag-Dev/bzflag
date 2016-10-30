@@ -141,7 +141,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
 	callsign = base + strlen(unknownPlayer);
 	authReply  = true;
-      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
+      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))) {
 	setPublicOwner(base + strlen(ownerIdentifier));
       } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
 	std::string line = base;
@@ -281,7 +281,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     }
   }
 
-  if (playerData != NULL){
+  if (playerData != NULL) {
 	  // tell the API that auth is complete
 	  bz_AuthenticationCompleteData_V1 eventData;
 	  eventData.player = bz_getPlayerByIndex(playerData->getIndex());
@@ -421,7 +421,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

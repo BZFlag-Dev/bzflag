@@ -63,5 +63,5 @@ inside VC to use this executable and path.
 
 **Installer**
 If you wish to build the full release package using the fullbuild solution,
-you will need to have NSIS installed. The built installer will be placed in 
+you will need to have NSIS installed. The built installer will be placed in
 the _bin folder for the target in the root of the source tree.

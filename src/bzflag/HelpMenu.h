@@ -27,8 +27,8 @@ class MenuDefaultKey;
 
 class HelpMenuDefaultKey : public MenuDefaultKey {
 public:
-  HelpMenuDefaultKey() { }
-  ~HelpMenuDefaultKey() { }
+  HelpMenuDefaultKey() {}
+  ~HelpMenuDefaultKey() {}
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);

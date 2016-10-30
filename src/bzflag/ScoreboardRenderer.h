@@ -68,8 +68,8 @@ public:
   static const int SORT_MYRATIO = 7;
   static const int SORT_MAXNUM = SORT_MYRATIO;
 
-  void setTeamScoreY ( float val ){teamScoreYVal = val;}
-  void setRoaming ( bool val ){roaming = val;}
+  void setTeamScoreY ( float val ) {teamScoreYVal = val;}
+  void setRoaming ( bool val ) {roaming = val;}
 
   // does not include observers
   static void getPlayerList(std::vector<Player*>& players);

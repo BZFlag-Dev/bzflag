@@ -143,7 +143,7 @@ inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
 #endif // BZF_MESH_POLY_SCENE_NODE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

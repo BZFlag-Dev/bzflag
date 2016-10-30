@@ -41,8 +41,8 @@ static const float vertExplosionRatio = 0.5f;
 
 // parts: body, turret, barrel, left tread, right tread
 
-const int		TankSceneNode::numLOD = 3;
-int			TankSceneNode::maxLevel = numLOD;
+const int TankSceneNode::numLOD = 3;
+int       TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
@@ -1485,7 +1485,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

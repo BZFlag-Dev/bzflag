@@ -31,15 +31,15 @@ class BoltSceneNode : public ShotSceneNode {
     void		setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgb);
-	void		setTeamColor(const GLfloat* rgb);
+    void		setTeamColor(const GLfloat* rgb);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
 
     bool		getColorblind() const;
     void		setColorblind(bool);
 
-	bool		getInvisible() const {return invisible;}
-	void		setInvisible(bool _invisible) {invisible = _invisible;}
+    bool		getInvisible() const { return invisible; }
+    void		setInvisible(bool _invisible) { invisible = _invisible; }
 
     void		move(const GLfloat pos[3], const GLfloat forward[3]);
     void		addLight(SceneRenderer&);
@@ -48,14 +48,14 @@ class BoltSceneNode : public ShotSceneNode {
     void		addRenderNodes(SceneRenderer&);
 
   protected:
-	bool isSuper;
+    bool		isSuper;
 
     class BoltRenderNode : public RenderNode {
       public:
 			BoltRenderNode(const BoltSceneNode*);
 			~BoltRenderNode();
 			void		setColor(const GLfloat* rgba);
-			void    setTextureColor(const GLfloat* rgba);
+			void		setTextureColor(const GLfloat* rgba);
 			void		render();
 			const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
 			void		setAnimation(int cu, int cv);
@@ -64,7 +64,7 @@ class BoltSceneNode : public ShotSceneNode {
 			void		renderGeoGMBolt();
 			void		renderGeoPill( float radius, float len, int segments, float endRad = -1);
 
-		private:
+      private:
 			const BoltSceneNode* sceneNode;
 			int		u, v, cu, cv;
 			GLfloat		du, dv;
@@ -84,7 +84,7 @@ class BoltSceneNode : public ShotSceneNode {
 			static const GLfloat CoreFraction;
 			static const GLfloat FlareSize;
 			static const GLfloat FlareSpread;
-		};
+    };
     friend class BoltRenderNode;
 
   private:
@@ -95,7 +95,7 @@ class BoltSceneNode : public ShotSceneNode {
     float		size;
     float		velocity[3];
     GLfloat		color[4];
-	fvec4		teamColor;
+    fvec4		teamColor;
     OpenGLLight		light;
     OpenGLGState	gstate;
     OpenGLGState	colorblindGState;
@@ -106,7 +106,7 @@ class BoltSceneNode : public ShotSceneNode {
 #endif // BZF_BOLT_SCENE_NODE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

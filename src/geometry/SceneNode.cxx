@@ -75,13 +75,13 @@ static void __stdcall	oglColor4fv(const GLfloat* v)
 #ifdef __MINGW32__
 bool			SceneNode::colorOverride = true;
 #else
-void __stdcall		SceneNode::noColor3f(GLfloat, GLfloat, GLfloat) { }
+void __stdcall		SceneNode::noColor3f(GLfloat, GLfloat, GLfloat) {}
 void __stdcall		SceneNode::noColor4f(
-				GLfloat, GLfloat, GLfloat, GLfloat) { }
-void __stdcall		SceneNode::noColor3fv(const GLfloat*) { }
-void __stdcall		SceneNode::noColor4fv(const GLfloat*) { }
+				GLfloat, GLfloat, GLfloat, GLfloat) {}
+void __stdcall		SceneNode::noColor3fv(const GLfloat*) {}
+void __stdcall		SceneNode::noColor4fv(const GLfloat*) {}
 #endif
-void			SceneNode::noStipple(GLfloat) { }
+void			SceneNode::noStipple(GLfloat) {}
 
 void			SceneNode::setColorOverride(bool on)
 {
@@ -279,7 +279,7 @@ void SceneNode::renderRadar()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -18,9 +18,9 @@
 class ThiefControl : public bz_Plugin
 {
 public:
-  virtual const char* Name() { return "Thief Control"; }
-  virtual void Init(const char* config);
-  virtual void Event(bz_EventData *eventData);
+  virtual const char* Name() {return "Thief Control";}
+  virtual void Init( const char* config );
+  virtual void Event( bz_EventData *eventData );
 };
 
 BZ_PLUGIN(ThiefControl)

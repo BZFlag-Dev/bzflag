@@ -339,7 +339,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glVertex2f(left, bottom);
   } glEnd();
 
-  if (0){
+  if (0) {
 	  glBegin(GL_POINTS); {
 		glVertex2f(left, top);
 		glVertex2f(right, top);
@@ -1157,8 +1157,8 @@ void RadarRenderer::renderBasesAndTeles()
   int i;
 
   // draw team bases
-  if(world->allowTeamFlags()) {
-    for(i = 1; i < NumTeams; i++) {
+  if (world->allowTeamFlags()) {
+    for (i = 1; i < NumTeams; i++) {
       for (int j = 0;;j++) {
 	const float *base = world->getBase(i, j);
 	if (base == NULL)
@@ -1245,7 +1245,7 @@ int RadarRenderer::getFrameTriangleCount() const
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -299,7 +299,7 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
   if (duration < 365.0f * 24 * 3600)
     os << std::setiosflags(std::ios::fixed) << std::setprecision(1)
        << " (" << duration/60 << " minutes)";
-  if( baninfo.fromMaster )
+  if ( baninfo.fromMaster )
     os << " (m)";
   if (baninfo.bannedBy.length())
     os << " banned by: " << baninfo.bannedBy;
@@ -666,7 +666,7 @@ void AccessControlList::purge(bool master) {
   // selectively remove bans, depending on their origin
   // (local or from master list)
   banList_t::iterator	bItr = banList.begin();
-  while (bItr != banList.end()){
+  while (bItr != banList.end()) {
     if (bItr->fromMaster == master)
       bItr = banList.erase(bItr);
     else
@@ -844,7 +844,7 @@ void AccessControlList::expire()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -61,7 +61,7 @@ std::string printTime(bz_Time *ts, const char* _timezone)
 
 void appendTime(std::string & text, bz_Time *ts, const char* _timezone)
 {
-  switch(ts->dayofweek) {
+  switch (ts->dayofweek) {
   case 1:
     text += "Mon";
     break;
@@ -87,7 +87,7 @@ void appendTime(std::string & text, bz_Time *ts, const char* _timezone)
 
   text += format(", %d ",ts->day);
 
-  switch(ts->month) {
+  switch (ts->month) {
   case 0:
     text += "Jan";
     break;
@@ -434,7 +434,7 @@ std::string getStringRange ( const std::string &find, size_t start, size_t end )
 
 void trimLeadingWhitespace(std::string &text)
 {
-  for(size_t s = 0; s < text.size(); s++) {
+  for (size_t s = 0; s < text.size(); s++) {
     if (!isWhitespace(text[s])) {
       if (s)
 	text.erase(text.begin()+s-1);
@@ -454,7 +454,7 @@ std::vector<std::string> perms;
 
 const std::vector<std::string> bzu_standardPerms (void)
 {
-  if (perms.empty()){
+  if (perms.empty()) {
     perms.push_back("actionMessage");
     perms.push_back("adminMessageReceive");
     perms.push_back("adminMessageSend");

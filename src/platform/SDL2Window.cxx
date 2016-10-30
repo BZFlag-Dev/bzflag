@@ -65,7 +65,7 @@ void SDLWindow::disableConfineToMotionbox() {
 
 void SDLWindow::confineToMotionbox(int x1, int y1, int x2, int y2) {
 #ifndef _WIN32
-  if(! SDL_GetWindowGrab(windowId))
+  if (! SDL_GetWindowGrab(windowId))
     SDL_SetWindowGrab(windowId, SDL_TRUE);
 
   BzfWindow::confineToMotionbox(x1, y1, x2, y2);
@@ -136,7 +136,7 @@ void SDLWindow::swapBuffers() {
   // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2998
   // TODO: Remove this workaround when/if SDL2 includes their own workaround.
 #ifdef __APPLE__
-  if(! SDL_GL_GetSwapInterval())
+  if (! SDL_GL_GetSwapInterval())
     return;
 
   const int maxRunawayFPS = 65;
@@ -149,7 +149,7 @@ void SDLWindow::swapBuffers() {
   // this doesn't create our exact desired FPS, since our handling is
   // frame-to-frame and some frames will be late already and will not be
   // delayed, but it's close enough for the purposes of this workaround
-  if(remaining > 0.0)
+  if (remaining > 0.0)
     TimeKeeper::sleep(remaining);
 
   lastFrame = now;
@@ -160,27 +160,27 @@ bool SDLWindow::create(void) {
   int targetWidth, targetHeight;
   getSize(targetWidth, targetHeight);
   SDL_bool windowWasGrabbed = SDL_FALSE;
-  if(windowId != NULL)
+  if (windowId != NULL)
     windowWasGrabbed = SDL_GetWindowGrab(windowId);
   int swapInterval = 0;
-  if(windowId != NULL)
-    if(glContext != NULL)
+  if (windowId != NULL)
+    if (glContext != NULL)
       swapInterval = SDL_GL_GetSwapInterval() == 1;
 
   // if we have an existing identical window, go no further
-  if(windowId != NULL) {
+  if (windowId != NULL) {
     int currentWidth, currentHeight;
     SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
 
     Uint32 priorWindowFlags = SDL_GetWindowFlags(windowId);
-    if(fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
-    	targetWidth == currentWidth && targetHeight == currentHeight)
+    if (fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
+	targetWidth == currentWidth && targetHeight == currentHeight)
       return true;
   }
 
   // destroy the pre-existing window if it exists
-  if(windowId != NULL) {
-    if(glContext)
+  if (windowId != NULL) {
+    if (glContext)
       SDL_GL_DeleteContext(glContext);
     glContext = NULL;
 
@@ -209,7 +209,7 @@ bool SDLWindow::create(void) {
 
 #ifdef _WIN32
   SDL_VERSION(&info.version);
-  if(SDL_GetWindowWMInfo(windowId,&info)) {
+  if (SDL_GetWindowWMInfo(windowId,&info)) {
     if (info.subsystem == SDL_SYSWM_WINDOWS) {
       hwnd = info.info.win.window;
     }
@@ -234,17 +234,17 @@ bool SDLWindow::create(void) {
   // (TODO: remove this if they ever fix it)
   // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=3146
 #ifdef __APPLE__
-  if(fullScreen)
+  if (fullScreen)
     return true;
 
   int currentDisplayIndex = SDL_GetWindowDisplayIndex(windowId);
-  if(currentDisplayIndex < 0) {
+  if (currentDisplayIndex < 0) {
     printf("Unable to get current display index: %s\n", SDL_GetError());
     return true;
   }
 
   SDL_DisplayMode desktopDisplayMode;
-  if(SDL_GetDesktopDisplayMode(currentDisplayIndex, &desktopDisplayMode) < 0) {
+  if (SDL_GetDesktopDisplayMode(currentDisplayIndex, &desktopDisplayMode) < 0) {
     printf("Unable to get desktop display mode: %s\n", SDL_GetError());
     return true;
   }
@@ -257,7 +257,7 @@ bool SDLWindow::create(void) {
     if (thisEvent.type == SDL_WINDOWEVENT && thisEvent.window.event == SDL_WINDOWEVENT_RESIZED) {
       // switching from "native" fullscreen to SDL fullscreen and then going back to
       // windowed mode will generate a legitimate resize event, so add it back
-      if(thisEvent.window.data1 != desktopDisplayMode.w || thisEvent.window.data2 != desktopDisplayMode.h)
+      if (thisEvent.window.data1 != desktopDisplayMode.w || thisEvent.window.data2 != desktopDisplayMode.h)
 	eventStack.push_back(thisEvent);
     } else {
       eventStack.push_back(thisEvent);
@@ -265,7 +265,7 @@ bool SDLWindow::create(void) {
   }
 
   // push them back on in the same order
-  while(eventStack.size() > 0) {
+  while (eventStack.size() > 0) {
     SDL_PushEvent(&eventStack[0]);
 
     eventStack.erase(eventStack.begin());
@@ -352,7 +352,7 @@ void SDLWindow::freeContext() {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

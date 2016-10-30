@@ -7,9 +7,9 @@
 class SWDeathHandler : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Shockwave Death";}
-  virtual void Init ( const char* config);
-  virtual void	Event ( bz_EventData *eventData );
+  virtual const char* Name () {return "Shockwave Death";}
+  virtual void Init(const char* config);
+  virtual void Event(bz_EventData *eventData);
 };
 
 BZ_PLUGIN(SWDeathHandler)
@@ -44,7 +44,7 @@ void SWDeathHandler::Event ( bz_EventData *eventData )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

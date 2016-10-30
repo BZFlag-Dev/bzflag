@@ -617,7 +617,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
   } glEnd();
 
-  if (0){
+  if (0) {
     // some engines miss the corners
     glBegin(GL_POINTS); {
       glVertex2f((float) (x + messageAreaPixels[0] - 1),
@@ -679,16 +679,16 @@ void			ControlPanel::resize()
   // leave off 1 pixel for the border
   radarAreaPixels[1] = (int)radarSpace + 1;
   radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
-  if (BZDB.get("radarPosition") == "1") {                    //radar on right
-    radarAreaPixels[0] = (int)(w - radarSize + radarSpace);  // radar X coord
-    messageAreaPixels[0] = (int)radarSpace + 1;              // message box X coord
-  } else {                                      //radar on left
-    radarAreaPixels[0] = radarAreaPixels[1];    // radar X coord
-    messageAreaPixels[0] = (int)radarSize + 1;  // message box X coord
+  if (BZDB.get("radarPosition") == "1") {	//radar on right
+    radarAreaPixels[0] = (int)(w - radarSize + radarSpace); // radar X coord
+    messageAreaPixels[0] = (int)radarSpace + 1;	// message box X coord
+  } else {					//radar on left
+    radarAreaPixels[0] = radarAreaPixels[1];	// radar X coord
+    messageAreaPixels[0] = (int)radarSize + 1;	// message box X coord
   }
-  messageAreaPixels[1] = radarAreaPixels[1];                            // Y coord
-  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;         // Width
-  messageAreaPixels[3] = (int)(panelHeight - (radarSpace * 2.0f)) - 2;  // Height
+  messageAreaPixels[1] = radarAreaPixels[1];			// Y coord
+  messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;	// Width
+  messageAreaPixels[3] = (int)(panelHeight - (radarSpace * 2.0f)) - 2; // Height
 
   if (!BZDB.isTrue("displayRadar") || (BZDBCache::radarLimit <= 0.0f)) {
     messageAreaPixels[0] = (int)radarSpace + 1;
@@ -701,23 +701,23 @@ void			ControlPanel::resize()
 			    radarAreaPixels[2], radarAreaPixels[3]);
 
   switch (static_cast<int>(BZDB.eval("cpanelfontsize"))) {
-  case 0: { // auto
-    const bool useBigFont = (messageAreaPixels[2] / 100.0f) > 10.0f;
-    fontSize = useBigFont ? 12.0f : 8.0f;
-    break;
-    }
-  case 1: // tiny
-    fontSize = 6;
-    break;
-  case 2: // small
-    fontSize = 8;
-    break;
-  case 3: // medium
-    fontSize = 12;
-    break;
-  case 4: // big
-    fontSize = 16;
-    break;
+    case 0: { // auto
+      const bool useBigFont = (messageAreaPixels[2] / 100.0f) > 10.0f;
+      fontSize = useBigFont ? 12.0f : 8.0f;
+      break;
+      }
+    case 1: // tiny
+      fontSize = 6;
+      break;
+    case 2: // small
+      fontSize = 8;
+      break;
+    case 3: // medium
+      fontSize = 12;
+      break;
+    case 4: // big
+      fontSize = 16;
+      break;
   }
 
   FontManager &fm = FontManager::instance();
@@ -876,13 +876,13 @@ void			ControlPanel::addMessage(const std::string& line,
 
       // visible changes, force a console refresh
       if (messageMode == tab) {
-        // Don't scroll the messages unless we're at the bottom
+	// Don't scroll the messages unless we're at the bottom
 	if ((BZDB.isTrue("pauseConsole") && messagesOffset > 0 && messageMode >= 0) ||
 	    paused) {
 	  setMessagesOffset(1, 1 /* current */, false);
 	}
 
-        invalidate();
+	invalidate();
       }
 
       // mark the tab as unread (if viewing tabs)
@@ -893,12 +893,12 @@ void			ControlPanel::addMessage(const std::string& line,
     }
   }
 
-  if (echoToConsole){
+  if (echoToConsole) {
 #ifdef _WIN32
     // this is cheap but it will work on windows
     std::string filename = getConfigDirName() + "stdout.txt";
     FILE *fp = fopen (filename.c_str(), "a+");
-    if (fp){
+    if (fp) {
       fprintf(fp,"%s\n", stripAnsiCodes(line).c_str());
       fclose(fp);
     }

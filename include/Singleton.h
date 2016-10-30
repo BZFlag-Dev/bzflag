@@ -63,9 +63,9 @@ private:
 protected:
 
   // protection from instantiating a non-singleton Singleton
-  Singleton() { }
+  Singleton() {}
   Singleton(T* instancePointer) { _instance = instancePointer; }
-  Singleton(const Singleton &) { } // do not use
+  Singleton(const Singleton &) {} // do not use
   Singleton& operator=(const Singleton&) { return *this; } // do not use
   ~Singleton() { _instance = 0; } // do not delete
 

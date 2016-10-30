@@ -107,7 +107,7 @@ inline void FontManager::setDarkness(float newDarkness)
 #endif //_FONT_MANAGER_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

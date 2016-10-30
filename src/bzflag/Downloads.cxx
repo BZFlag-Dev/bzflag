@@ -170,8 +170,8 @@ void CachedTexture::collectData(char* ptr, int len)
 {
   char buffer[128];
 
-  if(runs == 0)
-	  totalTex = textureCounter;
+  if (runs == 0)
+    totalTex = textureCounter;
 
   cURLManager::collectData(ptr, len);
   byteTransferred += len;

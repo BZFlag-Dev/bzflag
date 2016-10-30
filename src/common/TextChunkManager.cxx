@@ -140,7 +140,7 @@ const StringVector* TextChunkManager::getTextChunk(const std::string &chunkName)
 {
   TextChunkMap::const_iterator it;
   it = theChunks.find(chunkName);
-  if (it != theChunks.end()){
+  if (it != theChunks.end()) {
     return &it->second.getVector();
   } else {
     return NULL;
@@ -168,7 +168,7 @@ void TextChunkManager::reload()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

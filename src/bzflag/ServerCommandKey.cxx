@@ -231,7 +231,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     std::string sendMsg, displayMsg, name;
 
     const Player * troll = myTank->getRecipient();
-    if (mode >= Kick && mode <= Removegroup){ // handle more complicated modes
+    if (mode >= Kick && mode <= Removegroup) { // handle more complicated modes
       if (troll) { // cases where we select recipient with keys
 
 	name = troll->getCallSign();
@@ -261,7 +261,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 	   banPattern = makePattern(troll->id.serverHost);
 	   sendMsg="/ban " + banPattern;
 
-	   if (message != ""){ // add ban length if something is there
+	   if (message != "") { // add ban length if something is there
 	     sendMsg = sendMsg + " " + message;
 	   }
 	  */
@@ -424,7 +424,7 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

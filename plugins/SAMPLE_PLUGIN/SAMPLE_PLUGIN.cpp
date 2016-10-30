@@ -9,7 +9,7 @@ Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
 
 1. Redistributions of source code must retain the above copyright notice, this
-   list of conditions and the following disclaimer. 
+   list of conditions and the following disclaimer.
 2. Redistributions in binary form must reproduce the above copyright notice,
    this list of conditions and the following disclaimer in the documentation
    and/or other materials provided with the distribution.
@@ -26,7 +26,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 The views and conclusions contained in the software and documentation are those
-of the authors and should not be interpreted as representing official policies, 
+of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
 */
@@ -37,10 +37,10 @@ either expressed or implied, of the FreeBSD Project.
 class SAMPLE_PLUGIN : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "SAMPLE PLUGIN";}
-  virtual void Init ( const char* config);
+  virtual const char* Name () {return "SAMPLE PLUGIN";}
+  virtual void Init ( const char* config );
 
-  virtual void Event ( bz_EventData * /* eventData */ ){return;}
+  virtual void Event ( bz_EventData * /* eventData */ ) {return;}
 };
 
 BZ_PLUGIN(SAMPLE_PLUGIN)
@@ -52,7 +52,7 @@ void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
   // init events here with Register();
 }
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

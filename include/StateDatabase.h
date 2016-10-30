@@ -198,15 +198,15 @@ public:
   /** tell the state database whether it should print debug info to stdout
    * now and then.
    */
-  void			  setDebug(bool print);
+  void				setDebug(bool print);
 
   /** do we want debug output?
    */
-  bool			  getDebug() const;
+  bool				getDebug() const;
 
  // true if we are in a mode where we are seting values that are to be defaults ( config and world time )
-  void			  setSaveDefault(bool save);
-  bool			  getSaveDefault() const;
+  void				setSaveDefault(bool save);
+  bool				getSaveDefault() const;
 
   static const std::string	BZDB_AGILITYADVEL;
   static const std::string	BZDB_AGILITYTIMEWINDOW;
@@ -257,8 +257,8 @@ public:
   static const std::string	BZDB_HANDICAPVELAD;
   static const std::string	BZDB_HANDICAPANGAD;
   static const std::string	BZDB_HANDICAPSHOTAD;
-  static const std::string      BZDB_HIDEFLAGSONRADAR;
-  static const std::string      BZDB_HIDETEAMFLAGSONRADAR;
+  static const std::string	BZDB_HIDEFLAGSONRADAR;
+  static const std::string	BZDB_HIDETEAMFLAGSONRADAR;
   static const std::string	BZDB_IDENTIFYRANGE;
   static const std::string	BZDB_JUMPVELOCITY;
   static const std::string	BZDB_LASERADVEL;
@@ -405,7 +405,7 @@ public:
 
     int				getPrecedence() const;
 
-private:
+  private:
     Type tokenType;
     Contents tokenContents;
   };
@@ -417,8 +417,8 @@ private:
   float				evaluate(Expression e) const;
   typedef std::map<std::string,float> EvalMap;
   EvalMap			evalCache;
-  bool			  debug;
-  bool			  saveDefault;
+  bool				debug;
+  bool				saveDefault;
   CallbackList<Callback>	globalCallbacks;
 };
 
@@ -433,14 +433,14 @@ inline bool StateDatabase::getSaveDefault() const
 }
 
 
-std::istream& operator >> (std::istream& src, StateDatabase::Expression& dst);
-std::string& operator >> (std::string& src, StateDatabase::Expression& dst);
-std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& src);
+std::istream& operator>>(std::istream& src, StateDatabase::Expression& dst);
+std::string& operator>>(std::string& src, StateDatabase::Expression& dst);
+std::ostream& operator<<(std::ostream& dst, const StateDatabase::Expression& src);
 
 #endif // BZF_STATE_DATABASE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

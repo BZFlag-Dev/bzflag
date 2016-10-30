@@ -33,7 +33,7 @@ extern std::string		getTempDirName();
 extern std::string		getWorldDirName();
 
 extern void setCustomConfigDir ( const char *dir );
-#endif  // __DIRECTORY_NAMES_H__
+#endif // __DIRECTORY_NAMES_H__
 
 
 // Local Variables: ***

@@ -117,7 +117,7 @@
 #define HAVE_MEMORY_H 1
 
 /* Use the header file ncurses.h */
-#define HAVE_NCURSES_H 
+#define HAVE_NCURSES_H
 
 /* Define to 1 if you have the <netdb.h> header file. */
 #define HAVE_NETDB_H 1

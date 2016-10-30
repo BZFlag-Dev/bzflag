@@ -369,7 +369,7 @@ std::string WordFilter::l33tspeakSetFromCharacter(const char c) const
     return set;
   }
 
-  switch(c) {
+  switch (c) {
     case 'a':
       set = "a4@";
       break;
@@ -427,7 +427,7 @@ std::string WordFilter::alphabeticSetFromCharacter(const char c) const
   /* for most punctuation, we include the actual punctuation
    * last just in case it was really intended
    */
-  switch(c) {
+  switch (c) {
     case '!':
       set = "il";
       break;
@@ -892,7 +892,7 @@ void WordFilter::clear(void)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

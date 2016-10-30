@@ -38,7 +38,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     if (!(input >> pos[0] >> pos[1] >> pos[2])) {
       return false;
     }
-  } else if (strcasecmp(cmd, "size") == 0){
+  } else if (strcasecmp(cmd, "size") == 0) {
     if (!(input >> size[0] >> size[1] >> size[2])) {
       return false;
     }
@@ -116,7 +116,7 @@ void * WorldFileLocation::pack (void *buf) const
 }
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -20,13 +20,13 @@ class PlayerState
 {
   public:
     enum PStatus {			// bit masks
-      DeadStatus =      0,		// not alive, not paused, etc.
+      DeadStatus =	0,		// not alive, not paused, etc.
       Alive =		(1 << 0),	// player is alive
       Paused =		(1 << 1),	// player is paused
-      Exploding =       (1 << 2),	// currently blowing up
-      Teleporting =     (1 << 3),	// teleported recently
-      FlagActive =      (1 << 4),	// flag special powers active
-      CrossingWall =    (1 << 5),	// tank crossing building wall
+      Exploding =	(1 << 2),	// currently blowing up
+      Teleporting =	(1 << 3),	// teleported recently
+      FlagActive =	(1 << 4),	// flag special powers active
+      CrossingWall =	(1 << 5),	// tank crossing building wall
       Falling =		(1 << 6),	// tank accel'd by gravity
       OnDriver =	(1 << 7),	// tank is on a physics driver
       UserInputs =	(1 << 8),	// user speed and angvel are sent
@@ -67,7 +67,7 @@ class PlayerState
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

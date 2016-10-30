@@ -138,7 +138,7 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   window->getWindow()->makeCurrent();
   GLint bits;
   if (!BZDB.isSet("zbuffer")) {
-//	  glGetIntegerv(GL_DEPTH_BITS, &bits);
+//  glGetIntegerv(GL_DEPTH_BITS, &bits);
     BZDB.set("zbuffer", "1");
   }
   glGetIntegerv(GL_STENCIL_BITS, &bits);
@@ -533,11 +533,11 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
 {
   float repeat = 0.01f;
-    if (BZDB.isSet("groundTexRepeat"))
-      repeat = BZDB.eval("groundTexRepeat");
+  if (BZDB.isSet("groundTexRepeat"))
+    repeat = BZDB.eval("groundTexRepeat");
 
-    if (useQualityValue >= 3)
-      repeat = BZDB.eval("groundHighResTexRepeat");
+  if (useQualityValue >= 3)
+    repeat = BZDB.eval("groundHighResTexRepeat");
 
   uv[0] = repeat * p[0];
   uv[1] = repeat * p[1];

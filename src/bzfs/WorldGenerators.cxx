@@ -138,7 +138,7 @@ WorldInfo *defineTeamWorld()
   WorldInfo *myWorld = new WorldInfo();
   if (!myWorld)
     return NULL;
-  
+
   // Make sure we don't have bases from earlier maps
   bases.clear();
 

@@ -182,7 +182,7 @@ Address	Address::getHostAddress(const std::string &hname)
   }
 
   a.addr.clear();
-  for (j=0; hent->h_addr_list[j] != NULL; j++){
+  for (j=0; hent->h_addr_list[j] != NULL; j++) {
     ::memcpy(&tempAddr, hent->h_addr_list[j], sizeof(tempAddr));
     a.addr.push_back(tempAddr);
   }
@@ -276,7 +276,7 @@ bool			ServerId::operator!=(const ServerId& id) const
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

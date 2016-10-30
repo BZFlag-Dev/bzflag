@@ -829,7 +829,7 @@ bool DebugLevelCommand::operator() (const char* cmdLine)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

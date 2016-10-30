@@ -69,7 +69,7 @@ class ControlPanel {
     void		setRadarRenderer(RadarRenderer*);
 
     void		setDimming(float dimming);
-    
+
     void		togglePaused();
 
     void		saveMessages(const std::string& filename,

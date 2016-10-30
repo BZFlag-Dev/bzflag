@@ -124,7 +124,7 @@ bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
     return false;
 
   bz_EventHandler *handler = NULL;
-  
+
   if (HandlerMap.find(plugin) == HandlerMap.end())
   {
 	  handler = new bz_EventHandler();
@@ -159,12 +159,12 @@ bool FlushEvents(bz_Plugin* plugin)
 
 	bz_EventHandler *handler = HandlerMap[plugin];
 	worldEventManager.removeHandler(handler);
- 
+
 	return true;
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

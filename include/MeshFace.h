@@ -266,7 +266,7 @@ inline bool MeshFace::isDownPlane() const
 #endif // BZF_MESH_FACE_OBSTACLE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

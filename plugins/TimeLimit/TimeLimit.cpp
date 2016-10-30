@@ -24,8 +24,8 @@ class TimeLimit : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
 
-	virtual const char* Name (){return "Time Limit";}
-	virtual void Init ( const char* config);
+	virtual const char* Name () {return "Time Limit";}
+	virtual void Init ( const char* config );
 	virtual void Cleanup ();
 	virtual void Event ( bz_EventData *eventData );
 	virtual bool SlashCommand ( int playerID, bz_ApiString, bz_ApiString, bz_APIStringList*);
@@ -69,13 +69,13 @@ bool isValidTime ( float timelimit )
 
 void TimeLimit::Event ( bz_EventData *eventData )
 {
-  switch(eventData->eventType)
+  switch (eventData->eventType)
   {
     case bz_ePlayerJoinEvent: {
 	    bz_APIIntList *playerList = bz_newIntList();
 	    bz_getPlayerIndexList (playerList);
 
-	    // if it's the first player that joins , then reset the time to default
+	    // if it's the first player that joins, then reset the time to default
 	    if ( playerList->size() == 1 && bz_isTimeManualStart() && !bz_isCountDownActive()  && !bz_isCountDownInProgress()) {
 	      bz_setTimeLimit(saveTimeLimit);
 	    }
@@ -233,7 +233,7 @@ void TimeLimit::Cleanup ( void )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

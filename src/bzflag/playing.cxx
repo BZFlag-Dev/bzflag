@@ -96,21 +96,21 @@
 //#include "messages.h"
 
 static const float	FlagHelpDuration = 60.0f;
-StartupInfo	startupInfo;
-static MainMenu*	mainMenu;
-ServerLink*		serverLink = NULL;
-static World	   *world = NULL;
-static LocalPlayer     *myTank = NULL;
-static BzfDisplay*	display = NULL;
-MainWindow*		mainWindow = NULL;
-static SceneRenderer*	sceneRenderer = NULL;
-ControlPanel*		controlPanel = NULL;
-static RadarRenderer*	radar = NULL;
-HUDRenderer*		hud = NULL;
-static ScoreboardRenderer*		scoreboard = NULL;
-static ShotStats*	shotStats = NULL;
+StartupInfo		startupInfo;
+static MainMenu		*mainMenu;
+ServerLink		*serverLink = NULL;
+static World		*world = NULL;
+static LocalPlayer	*myTank = NULL;
+static BzfDisplay	*display = NULL;
+MainWindow		*mainWindow = NULL;
+static SceneRenderer	*sceneRenderer = NULL;
+ControlPanel		*controlPanel = NULL;
+static RadarRenderer	*radar = NULL;
+HUDRenderer		*hud = NULL;
+static ScoreboardRenderer *scoreboard = NULL;
+static ShotStats	*shotStats = NULL;
 static SceneDatabaseBuilder* sceneBuilder = NULL;
-static Team*		teams = NULL;
+static Team		*teams = NULL;
 int			numFlags = 0;
 static bool		joinRequested = false;
 static bool		waitingDNS    = false;
@@ -137,15 +137,15 @@ static std::vector<BillboardSceneNode*> explosions;
 static std::vector<BillboardSceneNode*> prototypeExplosions;
 int			savedVolume = -1;
 static bool		grabMouseAlways = false;
-static FlashClock		pulse;
+static FlashClock	pulse;
 static bool		wasRabbit = false;
 static bool		justJoined = false;
 
-int                     sentForbidIdentify = 0;
+int			sentForbidIdentify = 0;
 
 float			roamDZoom = 0.0f;
 
-static MessageOfTheDay		*motd = NULL;
+static MessageOfTheDay	*motd = NULL;
 DefaultCompleter	completer;
 
 char			messageMessage[PlayerIdPLen + MessageLen];
@@ -154,7 +154,7 @@ double			lastObserverUpdateTime = -1;
 
 static void		setHuntTarget();
 static void		setTankFlags();
-static const void*	handleMsgSetVars(const void *msg);
+static const void	*handleMsgSetVars(const void *msg);
 static void		handlePlayerMessage(uint16_t, uint16_t, const void*);
 static void		handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
 static void		enteringServer(const void *buf);
@@ -200,7 +200,7 @@ static bool		gotBlowedUp(BaseLocalPlayer* tank,
 
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason);
-static ServerLink*	robotServer[MAX_ROBOTS];
+static ServerLink	*robotServer[MAX_ROBOTS];
 #endif
 
 static double		userTimeEpochOffset;
@@ -215,7 +215,7 @@ static uint32_t		worldPtr = 0;
 static char		*worldDatabase = NULL;
 static bool		isCacheTemp;
 static std::ostream	*cacheOut = NULL;
-static bool	     downloadingInitialTexture = false;
+static bool		downloadingInitialTexture = false;
 
 static AresHandler* ares = NULL;
 void initGlobalAres() { ares = new AresHandler(0); }
@@ -296,7 +296,7 @@ bool		shouldGrabMouse()
 void warnAboutMainFlags()
 {
   // warning message for hidden flags
-  if (!BZDBCache::displayMainFlags){
+  if (!BZDBCache::displayMainFlags) {
     std::string showFlagsMsg = ColorStrings[YellowColor];
     showFlagsMsg += "Flags on field hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags main", true);
@@ -314,7 +314,7 @@ void warnAboutMainFlags()
 
 void warnAboutRadarFlags()
 {
-  if (!BZDB.isTrue("displayRadarFlags")){
+  if (!BZDB.isTrue("displayRadarFlags")) {
     std::string showFlagsMsg = ColorStrings[YellowColor];
     showFlagsMsg += "Flags on radar hidden, to show them ";
     std::vector<std::string> keys = KEYMGR.getKeysFromCommand("toggleFlags radar", true);
@@ -708,7 +708,7 @@ static bool doKeyCommon(const BzfKeyEvent& key, bool pressed)
     // Shot/Accuracy Statistics display
     if (key.button == BzfKeyEvent::Home && pressed) {
       if (!shotStats) {
-        shotStats = new ShotStats;
+	shotStats = new ShotStats;
       }
 
       HUDDialogStack::get()->push(shotStats);
@@ -1007,7 +1007,7 @@ static void		doEvent(BzfDisplay *disply)
       break;
 
     case BzfEvent::Resize:
-      if (mainWindow->getWidth() != event.resize.width || mainWindow->getHeight() != event.resize.height){
+      if (mainWindow->getWidth() != event.resize.width || mainWindow->getHeight() != event.resize.height) {
 	mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
 	mainWindow->getWindow()->callResizeCallbacks();
       }
@@ -1628,9 +1628,9 @@ static void loadCachedWorld()
 
 class WorldDownLoader : cURLManager {
 public:
-  void	 start(char * hexDigest);
+  void start(char * hexDigest);
 private:
-  void	 askToBZFS();
+  void askToBZFS();
   virtual void finalization(char *data, unsigned int length, bool good);
 };
 
@@ -1748,18 +1748,18 @@ static void sendMeaCulpa(PlayerId victim) {
 
 static void handleNearFlag (const void *msg, uint16_t)
 {
-       float pos[3];
-       std::string flagName;
-       msg = nboUnpackVector(msg, pos);
-       msg = nboUnpackStdString(msg, flagName);
+  float pos[3];
+  std::string flagName;
+  msg = nboUnpackVector(msg, pos);
+  msg = nboUnpackStdString(msg, flagName);
 
-       std::string fullMessage = "Closest Flag: " + flagName;
-       addMessage(NULL, ColorStrings[YellowColor]+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
+  std::string fullMessage = "Closest Flag: " + flagName;
+  addMessage(NULL, ColorStrings[YellowColor]+fullMessage+ColorStrings[DefaultColor], 2, false, NULL);
 
-       if (myTank)
-       {
-	       hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
-       }
+  if (myTank)
+  {
+    hud->setAlert(0, fullMessage.c_str(), 5.0f, false);
+  }
 }
 
 static void		handleServerMessage(bool human, uint16_t code,
@@ -2041,19 +2041,19 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgFlagUpdate: {
       uint16_t count;
       uint16_t flagIndex;
-	  uint32_t offset = 0;
+      uint32_t offset = 0;
       msg = nboUnpackUShort(msg, count);
-	  offset += 2;
+      offset += 2;
       for (int i = 0; i < count; i++)
-	  {
-		  if (offset >= len)
-			  break;
+      {
+	if (offset >= len)
+	  break;
 
-		  msg = nboUnpackUShort(msg, flagIndex);
-		  msg = world->getFlag(int(flagIndex)).unpack(msg);
-		  offset += FlagPLen;
+	msg = nboUnpackUShort(msg, flagIndex);
+	msg = world->getFlag(int(flagIndex)).unpack(msg);
+	offset += FlagPLen;
 
-		  world->initFlag(int(flagIndex));
+	world->initFlag(int(flagIndex));
       }
       break;
     }
@@ -2143,19 +2143,19 @@ static void		handleServerMessage(bool human, uint16_t code,
       break;
     }
 
-	case MsgPause: {
-		PlayerId id;
-		msg = nboUnpackUByte(msg, id);
-		uint8_t Pause;
-		nboUnpackUByte(msg, Pause);
-		Player* tank = lookupPlayer(id);
-		if (!tank)
-			break;
+    case MsgPause: {
+      PlayerId id;
+      msg = nboUnpackUByte(msg, id);
+      uint8_t Pause;
+      nboUnpackUByte(msg, Pause);
+      Player* tank = lookupPlayer(id);
+      if (!tank)
+	break;
 
-		tank->setPausedMessageState(Pause == 0);
-		addMessage(tank, Pause ? "has paused" : "has unpaused" );
-		break;
-	}
+      tank->setPausedMessageState(Pause == 0);
+      addMessage(tank, Pause ? "has paused" : "has unpaused" );
+      break;
+    }
 
     case MsgKilled: {
       PlayerId victim, killer;
@@ -2190,7 +2190,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 #endif
       if (victimLocal) {
 	// uh oh, local player is dead
-	if (victimLocal->isAlive()){
+	if (victimLocal->isAlive()) {
 	  gotBlowedUp(victimLocal, GotKilledMsg, killer);
 	}
       }
@@ -2247,7 +2247,7 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
       }  else if (killerPlayer) {
 	    const ShotPath* shot = killerPlayer->getShot(int(shotId));
-	    if(shot && !shot->isStoppedByHit()) {
+	    if (shot && !shot->isStoppedByHit()) {
 		  killerPlayer->addHitToStats(shot->getFlag());
 		}
 	  }
@@ -2733,21 +2733,21 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgTransferFlag:
-      {
-	PlayerId fromId, toId;
-	unsigned short flagIndex;
-	msg = nboUnpackUByte(msg, fromId);
-	msg = nboUnpackUByte(msg, toId);
-	msg = nboUnpackUShort(msg, flagIndex);
-	msg = world->getFlag(int(flagIndex)).unpack(msg);
-	Player* fromTank = lookupPlayer(fromId);
-	Player* toTank = lookupPlayer(toId);
-	handleFlagTransferred( fromTank, toTank, flagIndex);
-	break;
-      }
+    {
+      PlayerId fromId, toId;
+      unsigned short flagIndex;
+      msg = nboUnpackUByte(msg, fromId);
+      msg = nboUnpackUByte(msg, toId);
+      msg = nboUnpackUShort(msg, flagIndex);
+      msg = world->getFlag(int(flagIndex)).unpack(msg);
+      Player* fromTank = lookupPlayer(fromId);
+      Player* toTank = lookupPlayer(toId);
+      handleFlagTransferred( fromTank, toTank, flagIndex);
+      break;
+    }
 
 
-    case MsgMessage: {
+   case MsgMessage: {
       PlayerId src;
       PlayerId dst;
       uint8_t type;
@@ -2768,9 +2768,9 @@ static void		handleServerMessage(bool human, uint16_t code,
       std::string dstName;
 
       const std::string srcName = fromServer ? "SERVER" : (srcPlayer ? srcPlayer->getCallSign() : "(UNKNOWN)");
-      if (dstPlayer){
+      if (dstPlayer) {
 	dstName = dstPlayer->getCallSign();
-      } else if (toAdmin){
+      } else if (toAdmin) {
 	dstName = "Admin";
       } else {
 	dstName = "(UNKNOWN)";
@@ -3035,12 +3035,12 @@ static void		handleServerMessage(bool human, uint16_t code,
     }
 
     case MsgFlagType:
-      {
+    {
       FlagType* typ = NULL;
       FlagType::unpackCustom(msg, typ);
       logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
       break;
-      }
+    }
 
     case MsgPlayerInfo: {
       uint8_t numPlayers;
@@ -3393,7 +3393,7 @@ void handleFlagDropped(Player* tank)
       myTank->forceReload(BZDB.eval(StateDatabase::BZDB_THIEFDROPTIME));
     }
     //drop lock if i had GM
-    if(myTank->getFlag() == Flags::GuidedMissile)
+    if (myTank->getFlag() == Flags::GuidedMissile)
       myTank->setTarget(NULL);
 
     // update display and play sound effects
@@ -3751,20 +3751,20 @@ static void		checkEnvironment()
 	    ((remotePlayers[i]->getFlag() == Flags::Steamroller) ||
 	    ((myPos[2] < 0.0f) && remotePlayers[i]->isAlive() &&
 	    !remotePlayers[i]->isPhantomZoned()))) {
-        const float* pos = remotePlayers[i]->getPosition();
-        if (pos[2] < 0.0f) continue;
-        if (remotePlayers[i]->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
-        remotePlayers[i]->getTeam() == myTank->getTeam()) continue;
-        if (!myTank->isPhantomZoned()) {
-          const float radius = myRadius +
-          BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
-          const float distSquared =
-          hypotf(hypotf(myPos[0] - pos[0],
-                        myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
-          if (distSquared < radius) {
-            gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
-          }
-        }
+	const float* pos = remotePlayers[i]->getPosition();
+	if (pos[2] < 0.0f) continue;
+	if (remotePlayers[i]->getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
+	remotePlayers[i]->getTeam() == myTank->getTeam()) continue;
+	if (!myTank->isPhantomZoned()) {
+	  const float radius = myRadius +
+	  BZDB.eval(StateDatabase::BZDB_SRRADIUSMULT) * remotePlayers[i]->getRadius();
+	  const float distSquared =
+	  hypotf(hypotf(myPos[0] - pos[0],
+			myPos[1] - pos[1]), (myPos[2] - pos[2]) * 2.0f);
+	  if (distSquared < radius) {
+	    gotBlowedUp(myTank, GotRunOver, remotePlayers[i]->getId());
+	  }
+	}
       }
     }
   }
@@ -4001,10 +4001,10 @@ void setTarget()
     if (sentForbidIdentify == 10 || sentForbidIdentify == 0) {
       addMessage(NULL, "'identify' disabled on this server");
     }
-    if(sentForbidIdentify == 10) {
+    if (sentForbidIdentify == 10) {
       sentForbidIdentify = 0;
     }
-    if(sentForbidIdentify < 10) {
+    if (sentForbidIdentify < 10) {
       sentForbidIdentify++;
     }
   }
@@ -5604,7 +5604,7 @@ void drawFrame(const float dt)
 	  remotePlayers[i]->addShots(scene, colorblind);
 
 	  TeamColor effectiveTeam = RogueTeam;
-	  if (!colorblind){
+	  if (!colorblind) {
 	    if ((remotePlayers[i]->getFlag() == Flags::Masquerade)
 		&& (myTank->getFlag() != Flags::Seer)
 		&& (myTank->getTeam() != ObserverTeam)) {
@@ -6466,38 +6466,38 @@ static void		playingLoop()
       old_buttons = new_buttons;
 
       static const BzfKeyEvent::Button hat_map[] = {
-        BzfKeyEvent::BZ_Hatswitch_1_upleft,
-        BzfKeyEvent::BZ_Hatswitch_1_up,
-        BzfKeyEvent::BZ_Hatswitch_1_upright,
-        BzfKeyEvent::BZ_Hatswitch_1_right,
-        BzfKeyEvent::BZ_Hatswitch_1_downright,
-        BzfKeyEvent::BZ_Hatswitch_1_down,
-        BzfKeyEvent::BZ_Hatswitch_1_downleft,
-        BzfKeyEvent::BZ_Hatswitch_1_left,
-        BzfKeyEvent::BZ_Hatswitch_2_upleft,
-        BzfKeyEvent::BZ_Hatswitch_2_up,
-        BzfKeyEvent::BZ_Hatswitch_2_upright,
-        BzfKeyEvent::BZ_Hatswitch_2_right,
-        BzfKeyEvent::BZ_Hatswitch_2_downright,
-        BzfKeyEvent::BZ_Hatswitch_2_down,
-        BzfKeyEvent::BZ_Hatswitch_2_downleft,
-        BzfKeyEvent::BZ_Hatswitch_2_left,
-        BzfKeyEvent::BZ_Hatswitch_3_upleft,
-        BzfKeyEvent::BZ_Hatswitch_3_up,
-        BzfKeyEvent::BZ_Hatswitch_3_upright,
-        BzfKeyEvent::BZ_Hatswitch_3_right,
-        BzfKeyEvent::BZ_Hatswitch_3_downright,
-        BzfKeyEvent::BZ_Hatswitch_3_down,
-        BzfKeyEvent::BZ_Hatswitch_3_downleft,
-        BzfKeyEvent::BZ_Hatswitch_3_left,
-        BzfKeyEvent::BZ_Hatswitch_4_upleft,
-        BzfKeyEvent::BZ_Hatswitch_4_up,
-        BzfKeyEvent::BZ_Hatswitch_4_upright,
-        BzfKeyEvent::BZ_Hatswitch_4_right,
-        BzfKeyEvent::BZ_Hatswitch_4_downright,
-        BzfKeyEvent::BZ_Hatswitch_4_down,
-        BzfKeyEvent::BZ_Hatswitch_4_downleft,
-        BzfKeyEvent::BZ_Hatswitch_4_left,
+	BzfKeyEvent::BZ_Hatswitch_1_upleft,
+	BzfKeyEvent::BZ_Hatswitch_1_up,
+	BzfKeyEvent::BZ_Hatswitch_1_upright,
+	BzfKeyEvent::BZ_Hatswitch_1_right,
+	BzfKeyEvent::BZ_Hatswitch_1_downright,
+	BzfKeyEvent::BZ_Hatswitch_1_down,
+	BzfKeyEvent::BZ_Hatswitch_1_downleft,
+	BzfKeyEvent::BZ_Hatswitch_1_left,
+	BzfKeyEvent::BZ_Hatswitch_2_upleft,
+	BzfKeyEvent::BZ_Hatswitch_2_up,
+	BzfKeyEvent::BZ_Hatswitch_2_upright,
+	BzfKeyEvent::BZ_Hatswitch_2_right,
+	BzfKeyEvent::BZ_Hatswitch_2_downright,
+	BzfKeyEvent::BZ_Hatswitch_2_down,
+	BzfKeyEvent::BZ_Hatswitch_2_downleft,
+	BzfKeyEvent::BZ_Hatswitch_2_left,
+	BzfKeyEvent::BZ_Hatswitch_3_upleft,
+	BzfKeyEvent::BZ_Hatswitch_3_up,
+	BzfKeyEvent::BZ_Hatswitch_3_upright,
+	BzfKeyEvent::BZ_Hatswitch_3_right,
+	BzfKeyEvent::BZ_Hatswitch_3_downright,
+	BzfKeyEvent::BZ_Hatswitch_3_down,
+	BzfKeyEvent::BZ_Hatswitch_3_downleft,
+	BzfKeyEvent::BZ_Hatswitch_3_left,
+	BzfKeyEvent::BZ_Hatswitch_4_upleft,
+	BzfKeyEvent::BZ_Hatswitch_4_up,
+	BzfKeyEvent::BZ_Hatswitch_4_upright,
+	BzfKeyEvent::BZ_Hatswitch_4_right,
+	BzfKeyEvent::BZ_Hatswitch_4_downright,
+	BzfKeyEvent::BZ_Hatswitch_4_down,
+	BzfKeyEvent::BZ_Hatswitch_4_downleft,
+	BzfKeyEvent::BZ_Hatswitch_4_left,
       };
 
       //  Evdev //   SDL  //      DX     //     atan2    // buttons //
@@ -6514,16 +6514,16 @@ static void		playingLoop()
       ev.ascii = 0;
       ev.shift = 0;
       for (int hat = 0; hat < num_hats; hat++) {
-        float hatX, hatY; mainWindow->getJoyHat(hat, hatX, hatY);
-        if (hatX == 0 && hatY == 0) {
+	float hatX, hatY; mainWindow->getJoyHat(hat, hatX, hatY);
+	if (hatX == 0 && hatY == 0) {
 	  if (hats[hat] != -1) {
 	    doKey(ev, false); // unset when centered
 	    hats[hat] = -1;
 	  }
-        } else {
-          int button = -1; // buttons are counted clockwise to left
-          float angle = atan2(hatY, hatX) * 180 / (float)M_PI;
-          for (int b = -1; b < num_buttons; b++) {
+	} else {
+	  int button = -1; // buttons are counted clockwise to left
+	  float angle = atan2(hatY, hatX) * 180 / (float)M_PI;
+	  for (int b = -1; b < num_buttons; b++) {
 	    float testangle = -180 + 2 * variance * (b + 1); // -180 to 180 by 45
 	    if (testangle - variance <= angle && angle < testangle + variance) {
 	      button = b; // 0 to 7
@@ -6536,8 +6536,8 @@ static void		playingLoop()
 		hats[hat] = button;
 	      }
 	    }
-          }
-        }
+	  }
+	}
       }
     }
 
@@ -6723,7 +6723,7 @@ static void		playingLoop()
     bool sendUpdate = myTank && myTank->isDeadReckoningWrong();
     if (myTank && myTank->getTeam() == ObserverTeam) {
       if (BZDB.isTrue("sendObserverHeartbeat")) {
-        double heartbeatTime = BZDB.isSet("observerHeartbeat")
+	double heartbeatTime = BZDB.isSet("observerHeartbeat")
 			       ? BZDB.eval("observerHeartbeat") : 30.0f;
 	if (lastObserverUpdateTime + heartbeatTime < TimeKeeper::getTick().getSeconds()) {
 	  lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
@@ -7331,7 +7331,7 @@ void			startPlaying(BzfDisplay* _display,
   }
 
   // inform user of silencePlayers on startup
-  for (unsigned int j = 0; j < silencePlayers.size(); j ++){
+  for (unsigned int j = 0; j < silencePlayers.size(); j ++) {
     std::string aString = silencePlayers[j];
     aString += " Silenced";
     if (silencePlayers[j] == "*") {

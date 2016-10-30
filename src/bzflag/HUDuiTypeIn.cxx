@@ -27,12 +27,12 @@
 //
 
 HUDuiTypeIn::HUDuiTypeIn()
-: HUDuiControl()
-, maxLength(0)
-, cursorPos(0)
-, allowEdit(true)
-, obfuscate(false)
-, colorFunc(NULL)
+  : HUDuiControl()
+  , maxLength(0)
+  , cursorPos(0)
+  , allowEdit(true)
+  , obfuscate(false)
+  , colorFunc(NULL)
 {
 }
 
@@ -40,7 +40,7 @@ HUDuiTypeIn::~HUDuiTypeIn()
 {
 }
 
-void		HUDuiTypeIn::setObfuscation(bool on)
+void			HUDuiTypeIn::setObfuscation(bool on)
 {
   obfuscate = on;
 }
@@ -84,50 +84,50 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 
   if (!allowEdit) return false; //or return true ??
   char c = key.ascii;
-  if (c == 0){
-		switch (key.button) {
-		case BzfKeyEvent::Up:
-		  HUDui::setFocus(getPrev());
-		  return true;
+  if (c == 0) {
+    switch (key.button) {
+      case BzfKeyEvent::Up:
+	HUDui::setFocus(getPrev());
+	return true;
 
-		case BzfKeyEvent::Down:
-		  HUDui::setFocus(getNext());
-		  return true;
+      case BzfKeyEvent::Down:
+	HUDui::setFocus(getNext());
+	return true;
 
-		case BzfKeyEvent::Left:
-		  if (cursorPos > 0)
-		cursorPos--;
-		  return true;
+      case BzfKeyEvent::Left:
+	if (cursorPos > 0)
+	  cursorPos--;
+	return true;
 
-		case BzfKeyEvent::Right:
-		  if (cursorPos < (int)string.length())
-		cursorPos++;
-		  return true;
+      case BzfKeyEvent::Right:
+	if (cursorPos < (int)string.length())
+	  cursorPos++;
+	return true;
 
-		case BzfKeyEvent::Home:
-		  cursorPos = 0;
-		  return true;
+      case BzfKeyEvent::Home:
+	cursorPos = 0;
+	return true;
 
-		case BzfKeyEvent::End:
-		  cursorPos = string.length();
-		  return true;
+      case BzfKeyEvent::End:
+	cursorPos = string.length();
+	return true;
 
-		case BzfKeyEvent::Backspace:
-		  c = backspace;
-		  break;
+      case BzfKeyEvent::Backspace:
+	c = backspace;
+	break;
 
-		case BzfKeyEvent::Delete:
-		  if (cursorPos < (int)string.length()) {
-		cursorPos++;
-		c = backspace;
-		  } else {
-		return true;
-		  }
-		  break;
+      case BzfKeyEvent::Delete:
+	if (cursorPos < (int)string.length()) {
+	  cursorPos++;
+	  c = backspace;
+	} else {
+	  return true;
+	}
+	break;
 
-		default:
-		  return false;
-	  }
+      default:
+	return false;
+    }
   }
 
   if (c == '\t') {
@@ -139,16 +139,16 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 
   if (c == backspace) {
     if (cursorPos == 0)
-		return true;
+      return true;
 
     cursorPos--;
     string = string.substr(0, cursorPos) + string.substr(cursorPos + 1, string.length() - cursorPos + 1);
     onSetFont();
   } else if (c > 0) {
     if (isspace(c))
-		c = whitespace;
+      c = whitespace;
     if ((int)string.length() == maxLength)
-		return true;
+      return true;
 
     string = string.substr(0, cursorPos) + c + string.substr( cursorPos, string.length() - cursorPos);
     cursorPos++;
@@ -195,7 +195,7 @@ void			HUDuiTypeIn::doRender()
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

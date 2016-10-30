@@ -27,8 +27,8 @@
 
 class QuitMenuDefaultKey : public MenuDefaultKey {
 public:
-  QuitMenuDefaultKey() { }
-  ~QuitMenuDefaultKey() { }
+  QuitMenuDefaultKey() {}
+  ~QuitMenuDefaultKey() {}
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);

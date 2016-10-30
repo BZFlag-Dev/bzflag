@@ -17,13 +17,13 @@
 #include <iostream>
 #include <sstream>
 
-enum action { join , auth , part };
+enum action { join, auth, part };
 
 class LogDetail : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Log Detail";}
-  virtual void Init ( const char* config);
+  virtual const char* Name () {return "Log Detail";}
+  virtual void Init ( const char* config );
   virtual void Cleanup ();
   virtual void Event ( bz_EventData *eventData );
 private:
@@ -49,12 +49,12 @@ void LogDetail::Init ( const char* /*commandLine*/ )
 
   bz_debugMessage(0, "SERVER-STATUS Running");
   bz_debugMessagef(0, "SERVER-MAPNAME %s", bz_getPublicDescription().c_str());
-  listPlayers( join , NULL );
+  listPlayers( join, NULL );
 }
 
 void LogDetail::Cleanup()
 {
-  listPlayers( part , NULL );
+  listPlayers( part, NULL );
   bz_debugMessage(0, "SERVER-STATUS Stopped");
   Flush();
 }
@@ -252,7 +252,7 @@ std::string LogDetail::displayTeam( bz_eTeamType team )
   }
 }
 
-void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
+void LogDetail::listPlayers( action act, bz_PlayerJoinPartEventData_V1 *data )
 {
   bz_APIIntList *playerList = bz_newIntList();
   bz_BasePlayerRecord *player = NULL;
@@ -262,7 +262,7 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 
   bz_getPlayerIndexList( playerList );
 
-  bz_debugMessage( 4 , "Players:" );
+  bz_debugMessage( 4, "Players:" );
   //
   // Count number of players
   //
@@ -312,7 +312,7 @@ void LogDetail::listPlayers( action act , bz_PlayerJoinPartEventData_V1 *data )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

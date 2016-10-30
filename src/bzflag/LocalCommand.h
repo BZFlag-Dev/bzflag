@@ -30,7 +30,7 @@ class LocalCommand {
   LocalCommand(std::string _commandName);
   virtual ~LocalCommand();
 
-  virtual bool operator () (const char *commandToken);
+  virtual bool operator() (const char *commandToken);
 
   std::string commandName;
 

@@ -20,8 +20,8 @@
 class ServerSidePlayerSample : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Server Side Player Sample";}
-  virtual void Init ( const char* config);
+  virtual const char* Name () {return "Server Side Player Sample";}
+  virtual void Init ( const char* config );
 
   virtual void Event ( bz_EventData * /* eventData */ );
 
@@ -55,7 +55,7 @@ void ServerSidePlayerSample::Cleanup()
 	Bots.clear();
 }
 
-void ServerSidePlayerSample::Event ( bz_EventData *eventData  )
+void ServerSidePlayerSample::Event ( bz_EventData *eventData )
  {
 	 if (eventData->eventType == bz_eWorldFinalized)
 	 {
@@ -74,7 +74,7 @@ void ServerSidePlayerSample::Event ( bz_EventData *eventData  )
 	 }
  }
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

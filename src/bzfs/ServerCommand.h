@@ -31,8 +31,8 @@ class ServerCommand {
 
   std::string getHelp();
 
-  virtual bool operator () (const char	 *commandLine,
-			    GameKeeper::Player *playerData);
+  virtual bool operator() (const char	 *commandLine,
+			   GameKeeper::Player *playerData);
 
 
  protected:

@@ -36,7 +36,7 @@ class KeyboardMapMenu;
 class KeyboardMapMenuDefaultKey : public MenuDefaultKey {
   public:
 			KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
-			~KeyboardMapMenuDefaultKey() { }
+			~KeyboardMapMenuDefaultKey() {}
 
     bool		keyPress(const BzfKeyEvent&);
     bool		keyRelease(const BzfKeyEvent&);
@@ -77,8 +77,8 @@ class KeyboardMapMenu : public HUDDialog {
     KeyKeyMap				mappable;
     KeyboardMapMenuDefaultKey		defaultKey;
     HUDuiControl*			reset;
-    HUDuiControl*		       quickKeys;
-    int				editing;
+    HUDuiControl*			quickKeys;
+    int					editing;
     QuickKeysMenu*			quickKeysMenu;
 };
 

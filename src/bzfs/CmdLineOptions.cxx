@@ -758,8 +758,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     checkArgc(2, i, argc, argv[i]);
     std::ifstream helpfile(argv[i]);
     if (!helpfile)
-        std::cerr << "warning: helpmsg file \"" << argv[i] << "\" does not exist or can't be read" << std::endl;
-    else if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
+	std::cerr << "warning: helpmsg file \"" << argv[i] << "\" does not exist or can't be read" << std::endl;
+    else if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	    std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
 	    usage(argv[0]);
       }
@@ -856,14 +856,14 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.maxTeamScore = 0;
       }
     }
-    else if (strcmp(argv[i],"-noMasterBanlist") == 0){
+    else if (strcmp(argv[i],"-noMasterBanlist") == 0) {
       checkFromWorldFile(argv[i], fromWorldFile);
       options.suppressMasterBanList = true;
     }
-    else if (strcmp(argv[i],"-noradar") == 0){
+    else if (strcmp(argv[i],"-noradar") == 0) {
       BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
     }
-    else if (strcmp(argv[i],"-masterBanURL") == 0){
+    else if (strcmp(argv[i],"-masterBanURL") == 0) {
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls.
        */
@@ -877,7 +877,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
     else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
-      if(options.gameType == OpenFFA)
+      if (options.gameType == OpenFFA)
 	std::cerr << "noteamkills check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
       else
 	options.gameOptions |= int(NoTeamKillsGameStyle);
@@ -1106,9 +1106,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       i++; // move past the flag descriptor for now (we'll store it in a bit)
       int x = 1;
-      if (isdigit(argv[i][0])){
+      if (isdigit(argv[i][0])) {
 	x = atoi(argv[i]);
-	if (x < 1){
+	if (x < 1) {
 	  std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
 	  x = 1;
 	}
@@ -1747,7 +1747,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
 
 // simple syntax check of comma-seperated list of group names (returns true if error)
-bool checkCommaList (const char *list, int maxlen){
+bool checkCommaList (const char *list, int maxlen) {
   int x = strlen (list);
   unsigned char c;
   if (x > maxlen)

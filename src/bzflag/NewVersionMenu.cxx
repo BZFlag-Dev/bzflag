@@ -161,7 +161,7 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
       FILE* temp = fopen(tempfile.c_str(), "wb");
       if (temp) {
 	fwrite(data, 1, length, temp);
-        fclose(temp);
+	fclose(temp);
       }
       // start the program
       char* args [2];

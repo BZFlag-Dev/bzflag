@@ -55,13 +55,13 @@ typedef enum {
   PurpleColor		= 4,	// team
   WhiteColor		= 5,	// observer
   GreyColor		= 6,	// rabbit
-  OrangeColor		= 7,    // hunter
+  OrangeColor		= 7,	// hunter
   CyanColor		= 8,
 
   LastColor		= 8,	// last of the actual colors, the rest are modifiers
 
   ResetColor		= 9,
-  FinalResetColor       = 12,
+  FinalResetColor	= 12,
   BrightColor		= 13,
   DimColor		= 14,
   PulsatingColor	= 10,
@@ -78,23 +78,23 @@ typedef enum {
 
 // These enum values have to line up with those above
 static const std::string ColorStrings[17] = {
-  ANSI_STR_FG_YELLOW,   // 0  Rogue     (yellow)
-  ANSI_STR_FG_RED,      // 1  Red
-  ANSI_STR_FG_GREEN,    // 2  Green
-  ANSI_STR_FG_BLUE,     // 3  Blue
-  ANSI_STR_FG_MAGENTA,  // 4  Purple
-  ANSI_STR_FG_WHITE,    // 5  White
-  ANSI_STR_FG_BLACK,    // 6  Grey      (bright black is grey)
+  ANSI_STR_FG_YELLOW,	// 0  Rogue	(yellow)
+  ANSI_STR_FG_RED,	// 1  Red
+  ANSI_STR_FG_GREEN,	// 2  Green
+  ANSI_STR_FG_BLUE,	// 3  Blue
+  ANSI_STR_FG_MAGENTA,	// 4  Purple
+  ANSI_STR_FG_WHITE,	// 5  White
+  ANSI_STR_FG_BLACK,	// 6  Grey	(bright black is grey)
   ANSI_STR_FG_ORANGE,	// 7  Orange	(nonstandard)
-  ANSI_STR_FG_CYAN,     // 8  Cyan
-  ANSI_STR_RESET,       // 9  Reset
-  ANSI_STR_PULSATING,   // 10 Pulsating
-  ANSI_STR_UNDERLINE,   // 11 Underline
-  ANSI_STR_RESET_FINAL, // 12 Really reset (no brightness added)
+  ANSI_STR_FG_CYAN,	// 8  Cyan
+  ANSI_STR_RESET,	// 9  Reset
+  ANSI_STR_PULSATING,	// 10 Pulsating
+  ANSI_STR_UNDERLINE,	// 11 Underline
+  ANSI_STR_RESET_FINAL,	// 12 Really reset (no brightness added)
   ANSI_STR_BRIGHT,	// 13 Bright mode
   ANSI_STR_DIM,		// 14 Dim mode
-  ANSI_STR_NO_PULSATE,  // 15 No Pulsating
-  ANSI_STR_NO_UNDERLINE // 16 No Underlining
+  ANSI_STR_NO_PULSATE,	// 15 No Pulsating
+  ANSI_STR_NO_UNDERLINE	// 16 No Underlining
 };
 
 inline std::string rgbToAnsi(const float* color)
@@ -134,7 +134,7 @@ inline std::string stripAnsiCodes(const std::string &text)
 #endif //_ANSI_CODES_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -76,7 +76,7 @@ private:
 #endif //_IMAGE_FONT_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

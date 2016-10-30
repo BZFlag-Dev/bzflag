@@ -83,7 +83,7 @@ static int		findChunk(FILE* file, const char *tag, int32_t *size)
 
 class FileCloser {
   public:
-    FileCloser(FILE* _file) : file(_file) { }
+    FileCloser(FILE* _file) : file(_file) {}
     ~FileCloser() { if (file) fclose(file); }
     void		release() { file = NULL; }
 
@@ -204,7 +204,7 @@ int			readWavData(FILE* file, char *data,
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -191,7 +191,7 @@ public:
   void		setDeadReckoning();
   void		setDeadReckoning(float timestamp);
 
-  void		setUserTexture ( const char *tex ) { if(tex) userTexture = tex;}
+  void		setUserTexture ( const char *tex ) { if (tex) userTexture = tex;}
 
   void		renderRadar() const;
 

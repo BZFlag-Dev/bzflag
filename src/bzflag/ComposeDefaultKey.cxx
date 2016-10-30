@@ -138,7 +138,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
       return true;
     }
     else if (key.button == BzfKeyEvent::Down) {
-      if (messageHistoryIndex > 0){
+      if (messageHistoryIndex > 0) {
 	messageHistoryIndex--;
 	hud->setComposeString(messageHistory[messageHistoryIndex]);
       }

@@ -70,7 +70,7 @@ std::string		getConfigDirName( const char* versionName )
   std::string name("C:");
   char dir[MAX_PATH];
   ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_LOCAL_APPDATA , &idl))) {
+  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_LOCAL_APPDATA, &idl))) {
     if (SHGetPathFromIDList(idl, dir)) {
       struct stat statbuf;
       if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
@@ -96,10 +96,10 @@ std::string		getConfigDirName( const char* versionName )
   ::FSRef libraryFolder;
   ::OSErr err;
   err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
-  if(err == ::noErr) {
+  if (err == ::noErr) {
     char buff[1024];
     err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
-    if(err == ::noErr) {
+    if (err == ::noErr) {
       name = buff;
       name += "/BZFlag/";
       if (versionName) {

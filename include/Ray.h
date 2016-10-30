@@ -39,7 +39,7 @@ class Ray {
 // Ray
 //
 
-inline Ray::Ray(){memset(o,0,sizeof(float)*3); memset(d,0,sizeof(float)*3);}
+inline Ray::Ray() { memset(o,0,sizeof(float)*3); memset(d,0,sizeof(float)*3); }
 
 inline Ray::~Ray()
 {
@@ -59,7 +59,7 @@ inline const float*	Ray::getDirection() const
 #endif // BZF_RAY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

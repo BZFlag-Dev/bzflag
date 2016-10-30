@@ -32,7 +32,7 @@ class bz_EventHandler
 {
 public:
   bz_Plugin *plugin;
-  virtual ~bz_EventHandler(){plugin = NULL;}
+  virtual ~bz_EventHandler() { plugin = NULL; }
   virtual void process ( bz_EventData *eventData )
   {
     if (plugin)

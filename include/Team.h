@@ -31,33 +31,33 @@ struct Team {
     void*		pack(void*) const;
     const void*		unpack(const void*);
 
-    static const std::string  getImagePrefix(TeamColor); // const
-    static const char*	getName(TeamColor); // const
-    static TeamColor	getTeam(const std::string &name); // const
-    static const float*	getTankColor(TeamColor); // const
-    static const float*	getRadarColor(TeamColor team); // const
-    static const float*	getShotColor(TeamColor team); // const
+    static const std::string	getImagePrefix(TeamColor); // const
+    static const char*		getName(TeamColor); // const
+    static TeamColor		getTeam(const std::string &name); // const
+    static const float*		getTankColor(TeamColor); // const
+    static const float*		getRadarColor(TeamColor team); // const
+    static const float*		getShotColor(TeamColor team); // const
     static const std::string	getAnsiCode(TeamColor team); // const
-    static bool	isColorTeam(TeamColor); // const
+    static bool			isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
-				const float* tank,
-				const float* radar);
+				  const float* tank,
+				  const float* radar);
     static void		updateShotColors();
 
   public:
     unsigned short	size;			// num players on team
 
-    short getWins() const { return won;}
-    short getLosses() const { return lost;}
-    void setWins(short v) { won = v;}
-    void setLosses(short v) { lost = v;}
+    short		getWins() const { return won; }
+    short		getLosses() const { return lost; }
+    void		setWins(short v) { won = v; }
+    void		setLosses(short v) { lost = v; }
 
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
     static float	shotColor[NumTeams][3];
 
- private:
+  private:
     unsigned short	won;			// wins by team members
     unsigned short	lost;			// losses by team members
 
@@ -69,7 +69,7 @@ struct Team {
 #endif // BZF_TEAM_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

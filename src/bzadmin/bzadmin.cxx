@@ -137,7 +137,7 @@ int main(int argc, char** argv) {
     if (cPos != -1) {
       long int serverPort = strtol(serverName.substr(cPos + 1).c_str(), (char **)NULL, 10);
       if (serverPort > 0 && serverPort < 65536)
-        startupInfo.serverPort = (int) serverPort;
+	startupInfo.serverPort = (int) serverPort;
       serverName = serverName.substr(0, cPos);
     }
     // Flawfinder: ignore
@@ -204,7 +204,7 @@ int main(int argc, char** argv) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

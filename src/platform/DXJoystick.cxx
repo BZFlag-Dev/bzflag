@@ -72,7 +72,7 @@ BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* p
 {
 	DXJoystick *stick = ( DXJoystick * )pContext;
 
-	 if( pdidoi->guidType == GUID_POV )
+	 if ( pdidoi->guidType == GUID_POV )
 	 {
 		stick->numberOfHats++;
 	 }
@@ -291,12 +291,12 @@ unsigned long DXJoystick::getJoyButtons()
   return buttons;
 }
 
-int           DXJoystick::getNumHats()
+int	   DXJoystick::getNumHats()
 {
   return numberOfHats;
 }
 
-void          DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void	  DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
 	DIJOYSTATE state = pollDevice();
 
@@ -881,7 +881,7 @@ BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* U
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -47,7 +47,7 @@ void PlayerHandler::shotFired(int player, unsigned short shotID)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

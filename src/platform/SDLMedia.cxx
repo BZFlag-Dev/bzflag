@@ -33,7 +33,7 @@ static const int defaultAudioRate=22050;
 
 SDLMedia::SDLMedia() : BzfMedia(),
   audioOutputRate(),
-  outputBufferEmpty(), 
+  outputBufferEmpty(),
   cmdQueue(),
   userCallback()
 {
@@ -354,7 +354,7 @@ void SDLMedia::audioDriver(std::string& driverName)
 
 #endif //HAVE_SDL
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

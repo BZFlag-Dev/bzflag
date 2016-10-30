@@ -28,8 +28,8 @@ class FormatMenu;
 class FormatMenuDefaultKey : public MenuDefaultKey {
 public:
   FormatMenuDefaultKey(FormatMenu* _menu) :
-    menu(_menu) { }
-  ~FormatMenuDefaultKey() { }
+    menu(_menu) {}
+  ~FormatMenuDefaultKey() {}
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);

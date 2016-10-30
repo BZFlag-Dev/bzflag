@@ -67,7 +67,7 @@ private:
   StartupInfo *startupInfo;
 };
 
-#endif  /* __SERVERLIST_H__ */
+#endif /* __SERVERLIST_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

@@ -34,12 +34,12 @@ class CronPlayer : public bz_ServerSidePlayerHandler {
 class CronManager : public bz_Plugin, public bz_CustomSlashCommandHandler {
   public:
     CronManager();
-    virtual const char* Name (){return "BZFS Cron";}
+    virtual const char* Name () {return "BZFS Cron";}
 
-    virtual void Init (const char* config);
-    virtual void Cleanup(void );
-    virtual void Event (bz_EventData *eventData);
-  
+    virtual void Init ( const char* config );
+    virtual void Cleanup ( void );
+    virtual void Event ( bz_EventData *eventData );
+
     virtual bool SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params);
 
     bool connect();
@@ -173,7 +173,7 @@ void CronManager::Event(bz_EventData* eventData) {
 
       // ignore ticks that are less than 5 seconds apart
       if (lastTick + 4.95f > event->eventTime) {
-        return;
+	return;
       }
       lastTick = event->eventTime;
       bz_debugMessage(4, "bzfscron: tick!");
@@ -182,7 +182,7 @@ void CronManager::Event(bz_EventData* eventData) {
       bz_Time t;
       bz_getLocaltime(&t);
       if (t.minute == lastMinute) {
-        return;
+	return;
       }
       lastMinute = t.minute;
       bz_debugMessage(4, "bzfscron: minute change");
@@ -193,10 +193,10 @@ void CronManager::Event(bz_EventData* eventData) {
       // iterate through all the jobs.  if they match the current minute, run them.
       std::vector<CronJob>::iterator itr;
       for (itr = jobs.begin(); itr != jobs.end(); ++itr)
-        if (itr->matches(t.minute, t.hour, t.day, t.month, dow(t.month, t.day, t.year))) {
-          bz_debugMessage(4, format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
-          player->sendCommand(itr->getCommand());
-        }
+	if (itr->matches(t.minute, t.hour, t.day, t.month, dow(t.month, t.day, t.year))) {
+	  bz_debugMessage(4, format("bzfscron: job matched at %d-%d-%d %d:%d - \"%s\"", t.year, t.month, t.day, t.hour, t.minute, itr->getCommand().c_str()).c_str());
+	  player->sendCommand(itr->getCommand());
+	}
 
       break;
     }

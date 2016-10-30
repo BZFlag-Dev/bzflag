@@ -85,7 +85,7 @@ class BzfMedia {
     virtual void	startAudioCallback(bool (*)(void)) {};
 
     // returns true if audio is running via callback
-    virtual bool	hasAudioCallback() const {return false;};
+    virtual bool	hasAudioCallback() const { return false; };
 
     // append a command to the sound effect command queue
     virtual void	writeSoundCommand(const void*, int length) = 0;
@@ -161,7 +161,7 @@ class BzfMedia {
 #endif // __BZFMEDIA_H__
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

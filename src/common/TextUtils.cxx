@@ -95,7 +95,7 @@ namespace TextUtils
   }
 
 
-  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes){
+  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes) {
     std::vector<std::string> tokens;
     int numTokens = 0;
     bool inQuote = false;
@@ -115,7 +115,7 @@ namespace TextUtils
       bool foundSlash = false;
 
       currentChar = (pos < len) ? in[pos] : -1;
-      while ((currentChar != -1) && !tokenDone){
+      while ((currentChar != -1) && !tokenDone) {
 
 	tokenDone = false;
 
@@ -124,13 +124,13 @@ namespace TextUtils
 	  break; // breaks out of inner while loop
 	}
 
-	if (!useQuotes){
+	if (!useQuotes) {
 	  currentToken << char(currentChar);
 	} else {
 
-	  switch (currentChar){
+	  switch (currentChar) {
 	    case '\\' : // found a backslash
-	      if (foundSlash){
+	      if (foundSlash) {
 		currentToken << char(currentChar);
 		foundSlash = false;
 	      } else {
@@ -138,11 +138,11 @@ namespace TextUtils
 	      }
 	      break;
 	    case '\"' : // found a quote
-	      if (foundSlash){ // found \"
+	      if (foundSlash) { // found \"
 		currentToken << char(currentChar);
 		foundSlash = false;
 	      } else { // found unescaped "
-		if (inQuote){ // exiting a quote
+		if (inQuote) { // exiting a quote
 		  // finish off current token
 		  tokenDone = true;
 		  inQuote = false;
@@ -160,7 +160,7 @@ namespace TextUtils
 	      }
 	      break;
 	    default:
-	      if (foundSlash){ // don't care about slashes except for above cases
+	      if (foundSlash) { // don't care about slashes except for above cases
 		currentToken << '\\';
 		foundSlash = false;
 	      }
@@ -173,7 +173,7 @@ namespace TextUtils
 	currentChar = (pos < len) ? in[pos] : -1;
       } // end of getting a Token
 
-      if (currentToken.str().size() > 0){ // if the token is something add to list
+      if (currentToken.str().size() > 0) { // if the token is something add to list
 	tokens.push_back(currentToken.str());
 	currentToken.str("");
 	numTokens ++;
@@ -222,16 +222,16 @@ namespace TextUtils
     for (int i = 0; i < len; i++) {
       if (isdigit(duration[i])) {
 	t = t * 10 + (duration[i] - '0');
-      } else if(duration[i] == 'h' || duration[i] == 'H') {
+      } else if (duration[i] == 'h' || duration[i] == 'H') {
 	durationInt += (t * 60);
 	t = 0;
-      } else if(duration[i] == 'd' || duration[i] == 'D') {
+      } else if (duration[i] == 'd' || duration[i] == 'D') {
 	durationInt += (t * 1440);
 	t = 0;
-      } else if(duration[i] == 'w' || duration[i] == 'W') {
+      } else if (duration[i] == 'w' || duration[i] == 'W') {
 	durationInt += (t * 10080);
 	t = 0;
-      } else if(duration[i] == 'm' || duration[i] == 'M') {
+      } else if (duration[i] == 'm' || duration[i] == 'M') {
 	durationInt += (t);
 	t = 0;
       }
@@ -358,7 +358,7 @@ namespace TextUtils
   std::string str_trunc_continued (const std::string &text, int len)
   {
     std::string retstr = std::string (text, 0, len);
-    if ( retstr.size() == (unsigned int)len  )
+    if (retstr.size() == (unsigned int)len)
       retstr[len-1] = '~';
     return retstr;
   }

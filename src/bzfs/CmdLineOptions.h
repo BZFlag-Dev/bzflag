@@ -86,9 +86,9 @@ struct CmdLineOptions
     int i;
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
 	 it != FlagType::getFlagMap().end(); ++it) {
-	flagCount[it->second] = 0;
-	flagLimit[it->second] = -1;
-	flagDisallowed[it->second] = false;
+      flagCount[it->second] = 0;
+      flagLimit[it->second] = -1;
+      flagDisallowed[it->second] = false;
     }
 
     for (i = 0; i < NumTeams; i++) {
@@ -100,30 +100,30 @@ struct CmdLineOptions
     masterBanListURL.push_back(DefaultMasterBanURL);
   }
 
-  int			wksPort;
-  GameType			gameType;
-  int			gameOptions;
-  int			rabbitSelection;
-  int			msgTimer;
-  int			spamWarnMax;
+  int		wksPort;
+  GameType	gameType;
+  int		gameOptions;
+  int		rabbitSelection;
+  int		msgTimer;
+  int		spamWarnMax;
 
-  std::string   servermsg;
-  std::string   advertisemsg;
-  std::string   worldFile;
-  std::string   pingInterface;
-  std::string   password;
+  std::string	servermsg;
+  std::string	advertisemsg;
+  std::string	worldFile;
+  std::string	pingInterface;
+  std::string	password;
 
-  bool listServerOverridden;
-  std::vector<std::string>   listServerURL;
+  bool				listServerOverridden;
+  std::vector<std::string>	listServerURL;
 
   std::string	publicizedTitle;
   std::string	publicizedAddress;
   std::string	publicizedKey;
   std::string	advertiseGroups;
 
-  bool			suppressMasterBanList;
-  bool			masterBanListOverridden;
-  std::vector<std::string>		masterBanListURL;
+  bool				suppressMasterBanList;
+  bool				masterBanListOverridden;
+  std::vector<std::string>	masterBanListURL;
 
   uint16_t		maxShots;
   int			maxTeamScore;
@@ -137,7 +137,7 @@ struct CmdLineOptions
   int			maxlagwarn;
   int			maxjitterwarn;
   int			maxpacketlosswarn;
-	int			countdownStarter;
+  int			countdownStarter;
 
   float			adminlagannounce;
   float			lagannounce;
@@ -147,7 +147,7 @@ struct CmdLineOptions
   float			idlekickthresh;
   float			timeLimit;
   float			timeElapsed;
-  float		 addedTime;
+  float			addedTime;
   float			linearAcceleration;
   float			angularAcceleration;
 
@@ -187,12 +187,12 @@ struct CmdLineOptions
   WordFilter		filter;
 
   /* vote poll options */
-  unsigned short int banTime;
-  unsigned short int voteTime;
-  unsigned short int vetoTime;
-  unsigned short int votesRequired;
-  float votePercentage;
-  unsigned short int voteRepeatTime;
+  unsigned short int	banTime;
+  unsigned short int	voteTime;
+  unsigned short int	vetoTime;
+  unsigned short int	votesRequired;
+  float			votePercentage;
+  unsigned short int	voteRepeatTime;
 
   std::string		reportFile;
   std::string		reportPipe;
@@ -206,8 +206,8 @@ struct CmdLineOptions
   int			citySize;
   int			numTeamFlags[NumTeams];
 
-  std::string	   cacheURL;
-  std::string	   cacheOut;
+  std::string		cacheURL;
+  std::string		cacheOut;
 
   bool			tkAnnounce;
   int			wallSides;
@@ -215,9 +215,9 @@ struct CmdLineOptions
   // plugins
   typedef struct
   {
-	  std::string plugin;
-	  std::string command;
-  }pluginDef;
+    std::string plugin;
+    std::string command;
+  } pluginDef;
 
   std::vector<pluginDef>	pluginList;
 };
@@ -232,7 +232,7 @@ struct CmdLineOptions;
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

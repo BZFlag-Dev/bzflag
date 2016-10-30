@@ -100,9 +100,9 @@ class BZDBint : public BZDBLocal {
 
     inline operator int() const { return data; };
 
-    inline int getMin()       const { return min; }
-    inline int getMax()       const { return max; }
-    inline bool  getNeverZero() const { return neverZero; }
+    inline int getMin() const { return min; }
+    inline int getMax() const { return max; }
+    inline bool getNeverZero() const { return neverZero; }
 
   private:
     BZDBint(const BZDBint&);
@@ -133,9 +133,9 @@ class BZDBfloat : public BZDBLocal {
 
     inline operator float() const { return data; };
 
-    inline float getMin()       const { return min; }
-    inline float getMax()       const { return max; }
-    inline bool  getNeverZero() const { return neverZero; }
+    inline float getMin() const { return min; }
+    inline float getMax() const { return max; }
+    inline bool getNeverZero() const { return neverZero; }
 
   private:
     BZDBfloat(const BZDBfloat&);
@@ -245,7 +245,7 @@ class BZDBLocalManager {
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

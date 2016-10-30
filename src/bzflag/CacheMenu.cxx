@@ -157,7 +157,7 @@ void CacheMenu::execute()
     BZDB.set("maxCacheMB", oldSize);
     controlPanel->addMessage("Download Cache Cleared");
   } else if (_focus == clearServerListCache) {
-    if ((ServerListCache::get())->clearCache()){
+    if ((ServerListCache::get())->clearCache()) {
       controlPanel->addMessage("Server List Cache Cleared");
     } else {
       // already cleared -- do nothing
@@ -221,7 +221,7 @@ void CacheMenu::resize(int _width, int _height)
 
   // server cache age
   int index = 0;
-  switch ((ServerListCache::get())->getMaxCacheAge()){
+  switch ((ServerListCache::get())->getMaxCacheAge()) {
     case 0: index = 0; break;
     case 5: index = 1; break;
     case 15: index = 2; break;
@@ -264,7 +264,7 @@ void CacheMenu::callback(HUDuiControl* w, const void* data)
     case 's': { // server cache
       time_t minutes = 0;
       int index = list->getIndex();
-      switch (index){
+      switch (index) {
 	case 0: minutes = 0; break;
 	case 1: minutes = 5; break;
 	case 2: minutes = 15; break;

@@ -326,9 +326,9 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     key.button = BzfKeyEvent::NoButton;
     if ((sym >= 0) && (sym <= 0x7F)) {
       if (symNeedsConversion(sdlEvent.key.keysym))
-        key.ascii = charsForKeyCodes[sym];
+	key.ascii = charsForKeyCodes[sym];
       else
-        key.ascii = sym;
+	key.ascii = sym;
     } else {
       return false;
     }
@@ -534,7 +534,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     if (! symNeedsConversion(event.key.keysym)) {
       _event.type = BzfEvent::KeyDown;
       if (!getKey(event, _event.keyDown))
-        return false;
+	return false;
     }
     break;
 
@@ -598,10 +598,10 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     {
       // make sure the mouse is captured in case the cursor is (or moves) outside the window
       SDL_Window* windowId = SDL_GL_GetCurrentWindow();
-      if(windowId) {
-        Uint32 currentWindowFlags = SDL_GetWindowFlags(windowId);
-        if(! (currentWindowFlags & SDL_WINDOW_MOUSE_CAPTURE))
-          SDL_CaptureMouse(SDL_TRUE);
+      if (windowId) {
+	Uint32 currentWindowFlags = SDL_GetWindowFlags(windowId);
+	if (! (currentWindowFlags & SDL_WINDOW_MOUSE_CAPTURE))
+	  SDL_CaptureMouse(SDL_TRUE);
       }
       break;
     }
@@ -619,7 +619,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

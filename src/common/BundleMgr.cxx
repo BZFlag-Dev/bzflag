@@ -86,12 +86,12 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
       locales = CFBundleCopyResourceURLsOfType(mainBundle, CFSTR("po"), NULL);
       if (locales == NULL || CFArrayGetCount(locales) == 0) break;
       localeURL = (CFURLRef) CFArrayGetValueAtIndex(locales, 0);
-      if(localeURL != NULL && ::CFURLGetFileSystemRepresentation(
+      if (localeURL != NULL && ::CFURLGetFileSystemRepresentation(
 	  localeURL, true, reinterpret_cast<UInt8 *>(localePath), sizeof(localePath))
 	 ) {
 	path = localePath;
       }
-    } while(0);
+    } while (0);
     CFRelease(locales);
   }
 #endif
@@ -177,7 +177,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

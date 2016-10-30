@@ -42,7 +42,7 @@ class ServerMenu;
 class ServerMenuDefaultKey : public MenuDefaultKey {
 public:
   ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) { }
+    menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) {}
   ~ServerMenuDefaultKey();
 
   bool keyPress(const BzfKeyEvent&);
@@ -57,7 +57,7 @@ private:
 class ServerMenu : public HUDDialog {
 public:
   ServerMenu();
-  ~ServerMenu() { }
+  ~ServerMenu() {}
 
   HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
   int getSelected() const;

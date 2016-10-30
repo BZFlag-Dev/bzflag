@@ -297,7 +297,7 @@ int OSFile::seek(teFilePos ePos, int iOffset)
     return 0;
 
   long iMode;
-  switch(ePos)
+  switch (ePos)
   {
     case eFileStart:
       iMode = SEEK_SET;

@@ -279,26 +279,26 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
-      if(numIPs > 1){
+      if (numIPs > 1) {
 	for (i = 0; i < numIPs; ++i) {
 	  vbuf = nboUnpackUByte(vbuf, tmp);
 	  vbuf = nboUnpackUByte(vbuf, p);
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
-	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
+	  if ((ui != NULL) && messageMask[MsgAdminInfo]) {
 	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
 	      players[p].ip, Default);
 	  }
 	}
       }
       //Alternative to the MsgAddPlayer message
-      else if(numIPs == 1){
+      else if (numIPs == 1) {
 	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
 	Team temp;
-	if (messageMask[MsgAdminInfo]){
+	if (messageMask[MsgAdminInfo]) {
 	  std::string joinMsg = std::string("*** \'") + players[p].name + "\' joined the game as " +
 	    temp.getName(players[p].team) + " from " + players[p].ip + ".";
 	  lastMessage.first = joinMsg;
@@ -695,7 +695,7 @@ bool BZAdminClient::getFilterStatus(uint16_t msgType) const {
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

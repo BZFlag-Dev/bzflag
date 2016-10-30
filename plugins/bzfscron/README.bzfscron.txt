@@ -36,7 +36,7 @@ value for that field.
 
 **Example Crontabs:**
 
-So for instance, to run "/flag reset unused" at quarter-after, 
+So for instance, to run "/flag reset unused" at quarter-after,
 every hour you could do
 
 15	*	*	*	*	/flag reset unused
@@ -51,7 +51,7 @@ server only on Mondays, Wednesdays, and Fridays, you could do
 0	2	*	*	1,3,5	/shutdownserver
 
 Likewise ranges can be used... to welcome your players every 15 minutes
-in different languages depending on where they were likely from, you 
+in different languages depending on where they were likely from, you
 could do something like:
 
 0,15,30,45	0-6	*	*	*	/say "Heissen Sie Willkommen zu meinem Diener!"
@@ -73,7 +73,7 @@ with a five-minute wait period like this:
 **Simultaneous Events:**
 
 Events which should occur "simultaneously" according to the crontab are
-executed in the order they're written, so to restart the match immediately 
+executed in the order they're written, so to restart the match immediately
 every 20 minutes you could do:
 
 0,20,40	*	*	*	*	*	/match end
@@ -117,7 +117,7 @@ Note that those two extensions CAN be combined in the same field, so
 
 Will run every five minutes EXCEPT for minutes FIFTEEN, TWENTY, and TWENTY-FIVE.
 
-However, the step value is applied to the entire field, including singly 
+However, the step value is applied to the entire field, including singly
 specified numbers.  Thus
 
 1,6-10/2	*	*	*	*	*	/say "Hey there"

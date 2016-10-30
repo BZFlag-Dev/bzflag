@@ -87,8 +87,8 @@ private:
   TextureManager& operator=(const TextureManager &tm);
   ~TextureManager();
 
-  int addTexture( const char*, OpenGLTexture *texture  );
-  OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true  );
+  int addTexture( const char*, OpenGLTexture *texture );
+  OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true );
 
   typedef std::map<std::string, ImageInfo> TextureNameMap;
   typedef std::map<int, ImageInfo*> TextureIDMap;

@@ -226,7 +226,7 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
       getMainWindow()->initJoystick(selectedOption);
       // re-fill all of the joystick-specific options lists
       if (menu)
-        menu->fillJSOptions();
+	menu->fillJSOptions();
       break;
 
     /* Joystick x-axis */

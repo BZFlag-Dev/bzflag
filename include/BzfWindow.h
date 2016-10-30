@@ -49,7 +49,7 @@ class BzfWindow {
     virtual void	setMinSize(int width, int height) = 0;
     virtual void	setFullscreen(bool) = 0;
     virtual void	iconify(void) {;};
-    virtual bool	create(void) {return true;};
+    virtual bool	create(void) { return true; };
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;
@@ -95,7 +95,7 @@ class BzfWindow {
 };
 
 
-#endif  /* __BZFWINDOW_H__ */
+#endif /* __BZFWINDOW_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

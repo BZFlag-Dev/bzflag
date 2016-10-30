@@ -43,16 +43,16 @@ class Shot;
 class FlightLogic
 {
 public:
-	virtual ~FlightLogic(){}
+	virtual ~FlightLogic() {}
 
-	virtual void Setup(Shot& UNUSED(shot) ){}
+	virtual void Setup(Shot& UNUSED(shot) ) {}
 	virtual bool Update ( Shot& UNUSED(shot) ); // call the base class for lifetime expire
-	virtual void End ( Shot& UNUSED(shot) ){}
-	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ){};
+	virtual void End ( Shot& UNUSED(shot) ) {}
+	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ) {};
 
-	virtual bool CollideBox ( Shot& UNUSED(shot), fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation) ){return false;}
-	virtual bool CollideSphere ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(radius) ){return false;}
-	virtual bool CollideCylinder ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius) ){return false;}
+	virtual bool CollideBox ( Shot& UNUSED(shot), fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation) ) {return false;}
+	virtual bool CollideSphere ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(radius) ) {return false;}
+	virtual bool CollideCylinder ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius) ) {return false;}
 
 protected:
 	virtual fvec3 ProjectShotLocation( Shot& shot, double deltaT );
@@ -89,19 +89,19 @@ public:
 	void Retarget(PlayerId target);
 
 	uint32_t GetGUID() {return GUID;}
-	uint16_t GetLocalShotID(){return Info.shot.player;}
+	uint16_t GetLocalShotID() {return Info.shot.player;}
 
-	PlayerId GetPlayerID(){return Info.shot.player;}
+	PlayerId GetPlayerID() {return Info.shot.player;}
 
-	double GetLastUpdateTime(){return LastUpdateTime;}
-	double GetStartTime(){return StartTime;}
-	double GetLifeTime(){return LifeTime;}
+	double GetLastUpdateTime() {return LastUpdateTime;}
+	double GetStartTime() {return StartTime;}
+	double GetLifeTime() {return LifeTime;}
 
-	double GetLifeParam(){return (LastUpdateTime-StartTime)/LifeTime;}
+	double GetLifeParam() {return (LastUpdateTime-StartTime)/LifeTime;}
 
-	bool CollideBox ( fvec3 &center, fvec3 size, float rotation ){return Logic.CollideBox(*this,center,size,rotation);}
-	bool CollideSphere ( fvec3 &center, float radius ){return Logic.CollideSphere(*this,center,radius);}
-	bool CollideCylinder ( fvec3 &center, float height, float radius){return Logic.CollideCylinder(*this,center,height,radius);}
+	bool CollideBox ( fvec3 &center, fvec3 size, float rotation ) {return Logic.CollideBox(*this,center,size,rotation);}
+	bool CollideSphere ( fvec3 &center, float radius ) {return Logic.CollideSphere(*this,center,radius);}
+	bool CollideCylinder ( fvec3 &center, float height, float radius) {return Logic.CollideCylinder(*this,center,height,radius);}
 };
 
 typedef std::shared_ptr<Shot>	ShotRef;
@@ -164,7 +164,7 @@ private:
 class ProjectileShotLogic: public FlightLogic
 {
 public:
-	virtual ~ProjectileShotLogic(){}
+	virtual ~ProjectileShotLogic() {}
 
 	virtual bool Update ( Shot& shot );
 };
@@ -172,7 +172,7 @@ public:
 class GuidedMissileLogic: public ProjectileShotLogic
 {
 public:
-	virtual ~GuidedMissileLogic(){}
+	virtual ~GuidedMissileLogic() {}
 
 	virtual void End ( Shot& UNUSED(shot) );
 };

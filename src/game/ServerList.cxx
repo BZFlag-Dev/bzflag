@@ -218,7 +218,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   // non-cached, items that have more players are more, etc..
   for (i = 0; i < (int)servers.size(); i++) {
     ServerItem& server = servers[i];
-    if (server < info){
+    if (server < info) {
       insertPoint = i;
       break;
     }
@@ -229,7 +229,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
   if (serverCache->isFavorite(serverAddress))
     info.favorite = true;
 
-  if (insertPoint == -1){ // no spot to insert it into -- goes on back
+  if (insertPoint == -1) { // no spot to insert it into -- goes on back
     servers.push_back(info);
   } else {  // found a spot to insert it into
     servers.insert(servers.begin() + insertPoint, info);
@@ -258,7 +258,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 
     ServerListCache::SRV_STR_MAP::iterator iter;
     iter = serverCache->find(serverAddress);  // find entry to allow update
-    if (iter != serverCache->end()){ // if we find it, update it
+    if (iter != serverCache->end()) { // if we find it, update it
       iter->second = info;
     } else {
       // insert into cache -- wasn't found

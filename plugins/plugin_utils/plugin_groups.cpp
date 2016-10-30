@@ -63,7 +63,7 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
 std::vector<std::string> findGroupsWithPerm( const char* perm, bool skipLocal )
 {
   std::string name;
-  if(perm)
+  if (perm)
     name = perm;
   return findGroupsWithPerm(name,skipLocal);
 }

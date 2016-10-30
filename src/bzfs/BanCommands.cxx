@@ -690,7 +690,7 @@ bool BanCommand::operator() (const char	 *message,
     // valid slot or callsign
     victimPlayer = GameKeeper::Player::getPlayerByIndex(victim);
     if (victimPlayer) {
-      if (victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban)){
+      if (victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
 	char buffer[MessageLen];
 	snprintf(buffer, MessageLen,
 		 "%s is protected from being banned (skipped).",

@@ -138,12 +138,12 @@ void			MainWindow::enableGrabMouse(bool on)
   grabEnabled = on;
 }
 
-bool MainWindow::isGrabEnabled(void) const
+bool			MainWindow::isGrabEnabled(void) const
 {
   return grabEnabled;
 }
 
-bool MainWindow::getFullscreen() const
+bool			MainWindow::getFullscreen() const
 {
   return isFullscreen;
 }
@@ -289,39 +289,39 @@ void			MainWindow::getJoyPosition(int& mx, int& my) const
   my = ((height >> 1) * my * (BZDB.evalInt("jsInvertAxes") > 1 ? -1 : 1)) / (900);
 }
 
-int                     MainWindow::getNumHats() const
+int			MainWindow::getNumHats() const
 {
   return joystick->getNumHats();
 }
 
-void                    MainWindow::getJoyHat(int hat, float &hatX, float &hatY) const
+void			MainWindow::getJoyHat(int hat, float &hatX, float &hatY) const
 {
   joystick->getJoyHat(hat, hatX, hatY);
 }
 
-unsigned long		  MainWindow::getJoyButtonSet() const
+unsigned long		MainWindow::getJoyButtonSet() const
 {
   return joystick->getJoyButtons();
 }
 
-void		    MainWindow::getJoyDevices(std::vector<std::string>
+void			MainWindow::getJoyDevices(std::vector<std::string>
 						  &list) const
 {
   joystick->getJoyDevices(list);
 }
 
-void		    MainWindow::getJoyDeviceAxes(std::vector<std::string>
+void			MainWindow::getJoyDeviceAxes(std::vector<std::string>
 						 &list) const
 {
   joystick->getJoyDeviceAxes(list);
 }
 
-void MainWindow::setJoyXAxis(const std::string &axis)
+void			MainWindow::setJoyXAxis(const std::string &axis)
 {
   joystick->setXAxis(axis);
 }
 
-void MainWindow::setJoyYAxis(const std::string &axis)
+void			MainWindow::setJoyYAxis(const std::string &axis)
 {
   joystick->setYAxis(axis);
 }
@@ -331,7 +331,7 @@ void			MainWindow::initJoystick(std::string &joystickName) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

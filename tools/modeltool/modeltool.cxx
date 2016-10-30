@@ -176,7 +176,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			  fprintf (fp, "    matref %s\n", face.material.c_str());
 			}
 
-			if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL){
+			if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL) {
 				fprintf (fp, "    ricochetn");
 			}
 
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 			  printf ("missing -tx argument\n");
 			}
 		}
-		else if (command == "-ricomat"){
+		else if (command == "-ricomat") {
 			useRicoMat = true;
 		}
 		else if (command == "-sm") {
@@ -328,7 +328,7 @@ int main(int argc, char* argv[])
 		else if (command == "-e") {
 			useEmission = false;
 		}
-		else if (command == "-gx"){
+		else if (command == "-gx") {
 			if ((i + 1) < argc) {
 				i++;
 				globalScale = (float)atof(argv[i]);
@@ -336,7 +336,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gx argument\n");
 			}
 		}
-		else if (command == "-gsx"){
+		else if (command == "-gsx") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[0] = (float)atof(argv[i]);
@@ -344,7 +344,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsx argument\n");
 			}
 		}
-		else if (command == "-gsy"){
+		else if (command == "-gsy") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[1] = (float)atof(argv[i]);
@@ -352,7 +352,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsy argument\n");
 			}
 		}
-		else if (command == "-gsz"){
+		else if (command == "-gsz") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[2] = (float)atof(argv[i]);
@@ -360,7 +360,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsz argument\n");
 			}
 		}
-		else if (command == "-bspskip"){
+		else if (command == "-bspskip") {
 			if ((i + 1) < argc) {
 				i++;
 				bspMaterialSkips.push_back(std::string(argv[i]));

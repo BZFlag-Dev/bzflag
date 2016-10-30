@@ -40,8 +40,8 @@ for file in Makefile.am README.SAMPLE_PLUGIN.txt SAMPLE_PLUGIN.cpp SAMPLE_PLUGIN
     echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1"
     cp "$PATH_TO_HERE/$SAMPLE_PLUGIN/$file" "$PATH_TO_HERE/$ARG1"
     if [ $? != 0 ] ; then
-        echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1 failed"
-        exit 1
+	echo "cp $PATH_TO_HERE/$SAMPLE_PLUGIN/$file $PATH_TO_HERE/$ARG1 failed"
+	exit 1
     fi
 done
 

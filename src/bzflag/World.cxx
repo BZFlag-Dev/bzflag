@@ -188,11 +188,11 @@ TeamColor		World::whoseBase(const float* pos) const
       float ny = pos[1] - it->p[1];
       float rx = (float) (cosf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
       float ry = (float) (sinf(atanf(ny / nx) - it->p[3]) * sqrt((ny * ny) + (nx * nx)));
-      if(fabsf(rx) < it->p[4] &&
+      if (fabsf(rx) < it->p[4] &&
 	 fabsf(ry) < it->p[5]) {
 	float nz = it->p[2] + it->p[6];
 	float rz = pos[2] - nz;
-	if(fabsf(rz) < 0.1) { // epsilon kludge
+	if (fabsf(rz) < 0.1) { // epsilon kludge
 	  return TeamColor(i);
 	}
       }

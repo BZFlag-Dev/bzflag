@@ -33,7 +33,7 @@ protected:
 #endif /* __WORLDFILEOBSTACLE_H__ */
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

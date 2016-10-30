@@ -168,7 +168,7 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
   const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
   x = ((float)_width - longestLineWidth) / 2;
   y -= 1.5f * h;
-  
+
   for (int i = 2; i < count; i++) {
     listHUD[i]->setFontSize(fontSize);
     listHUD[i]->setPosition(x, y);
@@ -185,7 +185,7 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
 class ServerListFilterHelp1Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp1Menu();
-  ~ServerListFilterHelp1Menu() { }
+  ~ServerListFilterHelp1Menu() {}
 };
 
 ServerListFilterHelp1Menu::ServerListFilterHelp1Menu() : ServerListFilterHelpMenu("Structure of a filter (Part 1)")
@@ -217,7 +217,7 @@ ServerListFilterHelp1Menu::ServerListFilterHelp1Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp2Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp2Menu();
-  ~ServerListFilterHelp2Menu() { }
+  ~ServerListFilterHelp2Menu() {}
 };
 
 ServerListFilterHelp2Menu::ServerListFilterHelp2Menu() : ServerListFilterHelpMenu("Structure of a filter (Part 2)")
@@ -246,7 +246,7 @@ ServerListFilterHelp2Menu::ServerListFilterHelp2Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp3Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp3Menu();
-  ~ServerListFilterHelp3Menu() { }
+  ~ServerListFilterHelp3Menu() {}
 };
 
 ServerListFilterHelp3Menu::ServerListFilterHelp3Menu() : ServerListFilterHelpMenu("Pattern filters (Part 1)")
@@ -282,7 +282,7 @@ ServerListFilterHelp3Menu::ServerListFilterHelp3Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp4Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp4Menu();
-  ~ServerListFilterHelp4Menu() { }
+  ~ServerListFilterHelp4Menu() {}
 };
 
 ServerListFilterHelp4Menu::ServerListFilterHelp4Menu() : ServerListFilterHelpMenu("Pattern filters (Part 2)")
@@ -313,7 +313,7 @@ ServerListFilterHelp4Menu::ServerListFilterHelp4Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp5Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp5Menu();
-  ~ServerListFilterHelp5Menu() { }
+  ~ServerListFilterHelp5Menu() {}
 };
 
 ServerListFilterHelp5Menu::ServerListFilterHelp5Menu() : ServerListFilterHelpMenu("Boolean filters (Part 1)")
@@ -350,7 +350,7 @@ ServerListFilterHelp5Menu::ServerListFilterHelp5Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp6Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp6Menu();
-  ~ServerListFilterHelp6Menu() { }
+  ~ServerListFilterHelp6Menu() {}
 };
 
 ServerListFilterHelp6Menu::ServerListFilterHelp6Menu() : ServerListFilterHelpMenu("Boolean filters (Part 2)")
@@ -381,7 +381,7 @@ ServerListFilterHelp6Menu::ServerListFilterHelp6Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp7Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp7Menu();
-  ~ServerListFilterHelp7Menu() { }
+  ~ServerListFilterHelp7Menu() {}
 };
 
 ServerListFilterHelp7Menu::ServerListFilterHelp7Menu() : ServerListFilterHelpMenu("Range filters (part 1)")
@@ -420,7 +420,7 @@ ServerListFilterHelp7Menu::ServerListFilterHelp7Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp8Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp8Menu();
-  ~ServerListFilterHelp8Menu() { }
+  ~ServerListFilterHelp8Menu() {}
 };
 
 ServerListFilterHelp8Menu::ServerListFilterHelp8Menu() : ServerListFilterHelpMenu("Range filters (part 2)")
@@ -452,7 +452,7 @@ ServerListFilterHelp8Menu::ServerListFilterHelp8Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp9Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp9Menu();
-  ~ServerListFilterHelp9Menu() { }
+  ~ServerListFilterHelp9Menu() {}
 };
 
 ServerListFilterHelp9Menu::ServerListFilterHelp9Menu() : ServerListFilterHelpMenu("Range filters (part 3)")
@@ -487,7 +487,7 @@ ServerListFilterHelp9Menu::ServerListFilterHelp9Menu() : ServerListFilterHelpMen
 class ServerListFilterHelp10Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp10Menu();
-  ~ServerListFilterHelp10Menu() { }
+  ~ServerListFilterHelp10Menu() {}
 };
 
 ServerListFilterHelp10Menu::ServerListFilterHelp10Menu() : ServerListFilterHelpMenu("Comments")
@@ -508,7 +508,7 @@ ServerListFilterHelp10Menu::ServerListFilterHelp10Menu() : ServerListFilterHelpM
 class ServerListFilterHelp11Menu : public ServerListFilterHelpMenu {
 public:
   ServerListFilterHelp11Menu();
-  ~ServerListFilterHelp11Menu() { }
+  ~ServerListFilterHelp11Menu() {}
 };
 
 ServerListFilterHelp11Menu::ServerListFilterHelp11Menu() : ServerListFilterHelpMenu("Combined examples")

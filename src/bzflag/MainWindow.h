@@ -86,8 +86,8 @@ class MainWindow {
     // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& mx, int& my) const;
-    int                 getNumHats() const;
-    void                getJoyHat(int hat, float &hatX, float &hatY) const;
+    int			getNumHats() const;
+    void		getJoyHat(int hat, float &hatX, float &hatY) const;
     unsigned long	getJoyButtonSet() const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;

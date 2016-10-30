@@ -28,8 +28,8 @@ const std::string& toupper(const char* s, std::string& dest);
 const std::string& makelower(std::string& s);
 const std::string& makeupper(std::string& s);
 
-inline std::string makelower(const char *s){ std::string t;if(s)tolower(s,t); return t;}
-inline std::string makeupper(const char *s){ std::string t;if(s)toupper(s,t); return t;}
+inline std::string makelower(const char *s) { std::string t; if (s) tolower(s,t); return t;}
+inline std::string makeupper(const char *s) { std::string t; if (s) toupper(s,t); return t;}
 
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
 std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
@@ -153,7 +153,7 @@ const std::vector<std::string> bzu_standardPerms (void);
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

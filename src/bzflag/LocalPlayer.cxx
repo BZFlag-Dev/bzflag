@@ -1461,7 +1461,7 @@ void			LocalPlayer::explodeTank()
   if (death)
   {
 	  fvec3 v(newVelocity[0],newVelocity[1],newVelocity[2]);
-	  if(death->GetDeathVector(v))
+	  if (death->GetDeathVector(v))
 	  {
 		  newVelocity[0] = v.x;
 		  newVelocity[1] = v.y;
@@ -1608,7 +1608,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
 	tryCount++;
 	if (tryCount > 100) // if it takes this long, just screw it.
 	  break;
-	
+
 	if (World::getWorld()->allowTeamFlags()) {
 	  flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
 	  flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
@@ -1688,7 +1688,7 @@ void LocalPlayer::setKey(int button, bool pressed) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -24,8 +24,8 @@
 
 ShotStatsDefaultKey ShotStatsDefaultKey::instance;
 
-ShotStatsDefaultKey::ShotStatsDefaultKey() { }
-ShotStatsDefaultKey::~ShotStatsDefaultKey() { }
+ShotStatsDefaultKey::ShotStatsDefaultKey() {}
+ShotStatsDefaultKey::~ShotStatsDefaultKey() {}
 
 ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
 {

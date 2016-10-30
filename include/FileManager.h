@@ -59,7 +59,7 @@ public:
   */
   std::string		catPath(const std::string& a, const std::string& b) const;
 
-  void setDataPath ( const std::string &s ) {dataPath = s;}
+  void setDataPath ( const std::string &s ) { dataPath = s; }
 protected:
   friend class Singleton<FileManager>;
   FileManager();
@@ -71,7 +71,7 @@ protected:
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

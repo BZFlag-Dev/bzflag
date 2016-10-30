@@ -64,23 +64,23 @@ bool			SolarisMedia::openAudio()
 {
   int fd[2];
 
-  if(audio_ready)
+  if (audio_ready)
     return false;
 
   audio_fd = open("/dev/audio", O_WRONLY  | O_NDELAY);
 
-  if(audio_fd < 0)
+  if (audio_fd < 0)
     return false;
 
-  if(DEBUG_SOLARIS)
+  if (DEBUG_SOLARIS)
     fprintf(stderr, "Audio device '/dev/audio' opened\n");
 
   audioctl_fd = open("/dev/audioctl", O_RDWR);
 
-  if(audioctl_fd < 0)
+  if (audioctl_fd < 0)
     return false;
 
-  if(DEBUG_SOLARIS)
+  if (DEBUG_SOLARIS)
     fprintf(stderr, "Opened audio control device '/dev/audioctl'\n");
 
 // removing these avoids a kernel crash on solaris 8 - bzFrank
@@ -91,22 +91,22 @@ bool			SolarisMedia::openAudio()
   ioctl(audioctl_fd, I_FLUSH, FLUSHRW);
 #endif
 
-  if(ioctl(audio_fd, AUDIO_GETDEV, &a_dev) < 0)
+  if (ioctl(audio_fd, AUDIO_GETDEV, &a_dev) < 0)
   {
-    if(DEBUG_SOLARIS)
+    if (DEBUG_SOLARIS)
       fprintf(stderr, "Cannot get audio information.\n");
     close(audio_fd);
     close(audioctl_fd);
     return false;
   }
 
-  if(DEBUG_SOLARIS)
+  if (DEBUG_SOLARIS)
     fprintf(stderr, "Sound device is a %s %s version %s\n", a_dev.config, a_dev.name, a_dev.version);
 
   // Get audio parameters
-  if(ioctl(audioctl_fd, AUDIO_GETINFO, &a_info) < 0)
+  if (ioctl(audioctl_fd, AUDIO_GETINFO, &a_info) < 0)
   {
-    if(DEBUG_SOLARIS)
+    if (DEBUG_SOLARIS)
       fprintf(stderr, "Cannot get audio information.\n");
     close(audio_fd);
     close(audioctl_fd);
@@ -124,15 +124,15 @@ bool			SolarisMedia::openAudio()
   audioBufferSize	  = AUDIO_BUFFER_SIZE;
   audioLowWaterMark	  = 2;
 
-  if(ioctl(audio_fd, AUDIO_SETINFO, &a_info) == -1)
+  if (ioctl(audio_fd, AUDIO_SETINFO, &a_info) == -1)
   {
-    if(DEBUG_SOLARIS)
+    if (DEBUG_SOLARIS)
       fprintf(stderr, "Warning: Cannot set audio parameters.\n");
 
     return false;
   }
 
-  if(DEBUG_SOLARIS)
+  if (DEBUG_SOLARIS)
     fprintf(stderr, "Audio initialised. Setting up queues...\n");
 
   if (pipe(fd)<0) {
@@ -156,7 +156,7 @@ bool			SolarisMedia::openAudio()
   // ready to go
   audio_ready = true;
 
-  if(DEBUG_SOLARIS)
+  if (DEBUG_SOLARIS)
     fprintf(stderr, "Audio ready.\n");
 
   return true;
@@ -302,7 +302,7 @@ void			SolarisMedia::audioSleep(
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

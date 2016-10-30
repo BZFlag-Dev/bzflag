@@ -494,7 +494,7 @@ static void safeSetString(const std::string& name, const std::string&value)
 /******************************************************************************/
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

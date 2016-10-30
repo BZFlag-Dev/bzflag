@@ -27,8 +27,8 @@ class MenuDefaultKey;
 
 class ServerListFilterHelpMenuDefaultKey : public MenuDefaultKey {
 public:
-  ServerListFilterHelpMenuDefaultKey() { }
-  ~ServerListFilterHelpMenuDefaultKey() { }
+  ServerListFilterHelpMenuDefaultKey() {}
+  ~ServerListFilterHelpMenuDefaultKey() {}
 
   bool keyPress(const BzfKeyEvent&);
   bool keyRelease(const BzfKeyEvent&);

@@ -256,19 +256,19 @@ class DrawCmd {
     enum DrawModes {		  // OpenGL
       DrawPoints	= 0x0000, // 0x0000
       DrawLines		= 0x0001, // 0x0001
-      DrawLineLoop      = 0x0002, // 0x0002
-      DrawLineStrip     = 0x0003, // 0x0003
-      DrawTriangles     = 0x0004, // 0x0004
-      DrawTriangleStrip = 0x0005, // 0x0005
-      DrawTriangleFan   = 0x0006, // 0x0006
+      DrawLineLoop	= 0x0002, // 0x0002
+      DrawLineStrip	= 0x0003, // 0x0003
+      DrawTriangles	= 0x0004, // 0x0004
+      DrawTriangleStrip	= 0x0005, // 0x0005
+      DrawTriangleFan	= 0x0006, // 0x0006
       DrawQuads		= 0x0007, // 0x0007
-      DrawQuadStrip     = 0x0008, // 0x0008
-      DrawPolygon       = 0x0009, // 0x0009
+      DrawQuadStrip	= 0x0008, // 0x0008
+      DrawPolygon	= 0x0009, // 0x0009
       DrawModeCount
     };
     enum DrawIndexType {
-      DrawIndexUShort   = 0x1403, // 0x1403
-      DrawIndexUInt     = 0x1405, // 0x1405
+      DrawIndexUShort	= 0x1403, // 0x1403
+      DrawIndexUInt	= 0x1405, // 0x1405
       DrawIndexTypeCount
     };
 
@@ -338,7 +338,7 @@ class AnimationInfo {
 #endif // _MESH_DRAW_INFO_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

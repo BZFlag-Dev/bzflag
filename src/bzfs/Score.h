@@ -40,10 +40,10 @@ class Score {
   int	getTKs() const {return tks;}
   int	getHandicap() const {return handicap;};
 
-  void	setWins(int v){wins = v;}
-  void	setLosses(int v){losses = v;}
-  void	setTKs(int v){tks = v;}
-  void	setHandicap(int v){handicap = v;}
+  void	setWins(int v) {wins = v;}
+  void	setLosses(int v) {losses = v;}
+  void	setTKs(int v) {tks = v;}
+  void	setHandicap(int v) {handicap = v;}
 
   static bool KeepPlayerScores;
   static bool KeepTeamScores;
@@ -60,14 +60,14 @@ class Score {
   static float tkKickRatio;
   static int   score;
   static bool  randomRanking;
-  
+
   void changeScoreElement(bz_eScoreElement element, int *toChange, int newValue);
 };
 
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

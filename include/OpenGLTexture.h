@@ -97,25 +97,25 @@ class OpenGLTexture {
     bool		operator==(const OpenGLTexture&) const;
     bool		operator!=(const OpenGLTexture&) const;
     bool		operator<(const OpenGLTexture&) const;
-    int			getBestFormat( int width, int height,
-					const GLvoid* pixels);
+    int			getBestFormat(int width, int height,
+				      const GLvoid* pixels);
     void		bind();
     bool		setupImage(const GLubyte* pixels);
 
-    void* operator new(size_t s) { return ::operator new(s);}
-    void  operator delete(void *p) {::operator delete(p);}
+    void* operator new(size_t s) { return ::operator new(s); }
+    void  operator delete(void *p) { ::operator delete(p); }
 
-    bool	alpha;
-    const int	width;
-    const int	height;
-    GLint	scaledWidth;
-    GLint	scaledHeight;
-    GLubyte*	image;
-    GLubyte*	imageMemory;
-    bool	repeat;
-    int		internalFormat;
-    GLuint	list;
-    Filter	filter;
+    bool		alpha;
+    const int		width;
+    const int		height;
+    GLint		scaledWidth;
+    GLint		scaledHeight;
+    GLubyte*		image;
+    GLubyte*		imageMemory;
+    bool		repeat;
+    int			internalFormat;
+    GLuint		list;
+    Filter		filter;
 
     static Filter	maxFilter;
 
@@ -152,7 +152,7 @@ inline int		OpenGLTexture::getHeight() const
 #endif // BZF_OPENGL_TEXTURE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

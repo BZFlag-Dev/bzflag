@@ -54,13 +54,13 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
 void LaserSceneNode::setColor(float r, float g, float b)
 {
-	color = fvec4(r, g, b, 1.0f);
+  color = fvec4(r, g, b, 1.0f);
 }
 
 
 void LaserSceneNode::setCenterColor(float r, float g, float b)
 {
-	centerColor = fvec4(r, g, b, 1.0f);
+  centerColor = fvec4(r, g, b, 1.0f);
 }
 
 LaserSceneNode::~LaserSceneNode()
@@ -133,158 +133,158 @@ LaserSceneNode::LaserRenderNode::~LaserRenderNode()
 
 void LaserSceneNode::LaserRenderNode::render()
 {
-	const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
-	if (blackFog) {
-		glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
-	}
+  const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+  }
 
-	if (RENDERER.useQuality() >= 3) {
-		renderGeoLaser();
-	} else {
-		renderFlatLaser();
-	}
+  if (RENDERER.useQuality() >= 3) {
+    renderGeoLaser();
+  } else {
+    renderFlatLaser();
+  }
 
-	if (blackFog) {
-		glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
-	}
+  if (blackFog) {
+    glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+  }
 }
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
-	const float len = sceneNode->length;
-	const GLfloat* sphere = sceneNode->getSphere();
-	glPushMatrix();
-	glTranslatef(sphere[0], sphere[1], sphere[2]);
-	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
-	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
-	glRotatef(90, 0.0f, 1.0f, 0.0f);
+  const float len = sceneNode->length;
+  const GLfloat* sphere = sceneNode->getSphere();
+  glPushMatrix();
+  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+  glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+  glRotatef(90, 0.0f, 1.0f, 0.0f);
 
-	glDisable(GL_TEXTURE_2D);
+  glDisable(GL_TEXTURE_2D);
 
-	GLUquadric *q = gluNewQuadric();
+  GLUquadric *q = gluNewQuadric();
 
-	fvec4 coreColor = sceneNode->centerColor;
-	coreColor.a     = 0.85f;
-	fvec4 mainColor = sceneNode->color;
-	mainColor.a     = 0.125f;
+  fvec4 coreColor = sceneNode->centerColor;
+  coreColor.a     = 0.85f;
+  fvec4 mainColor = sceneNode->color;
+  mainColor.a     = 0.125f;
 
-	myColor4fv(coreColor);
-	gluCylinder(q, 0.0625f, 0.0625f, len, 10, 1);
-	addTriangleCount(20);
+  myColor4fv(coreColor);
+  gluCylinder(q, 0.0625f, 0.0625f, len, 10, 1);
+  addTriangleCount(20);
 
-	myColor4fv(mainColor);
-	gluCylinder(q, 0.1f, 0.1f, len, 16, 1);
-	addTriangleCount(32);
+  myColor4fv(mainColor);
+  gluCylinder(q, 0.1f, 0.1f, len, 16, 1);
+  addTriangleCount(32);
 
-	myColor4fv(mainColor);
-	gluCylinder(q, 0.2f, 0.2f, len, 24, 1);
-	addTriangleCount(48);
+  myColor4fv(mainColor);
+  gluCylinder(q, 0.2f, 0.2f, len, 24, 1);
+  addTriangleCount(48);
 
-	myColor4fv(mainColor);
-	gluCylinder(q, 0.4f, 0.4f, len, 32, 1);
-	addTriangleCount(64);
+  myColor4fv(mainColor);
+  gluCylinder(q, 0.4f, 0.4f, len, 32, 1);
+  addTriangleCount(64);
 
-	myColor4fv(mainColor);
-	if (sceneNode->first) {
-		gluSphere(q, 0.5f, 32, 32);
-		addTriangleCount(32 * 32 * 2);
-	} else {
-		gluSphere(q, 0.5f, 12, 12);
-		addTriangleCount(12 * 12 * 2);
-	}
+  myColor4fv(mainColor);
+  if (sceneNode->first) {
+    gluSphere(q, 0.5f, 32, 32);
+    addTriangleCount(32 * 32 * 2);
+  } else {
+    gluSphere(q, 0.5f, 12, 12);
+    addTriangleCount(12 * 12 * 2);
+  }
 
-	gluDeleteQuadric(q);
+  gluDeleteQuadric(q);
 
-	glEnable(GL_TEXTURE_2D);
-	glPopMatrix();
+  glEnable(GL_TEXTURE_2D);
+  glPopMatrix();
 }
 
 
 void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
-	const float len = sceneNode->length;
-	const GLfloat *sphere = sceneNode->getSphere();
-	glPushMatrix();
-	glTranslatef(sphere[0], sphere[1], sphere[2]);
-	glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
-	glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
+  const float len = sceneNode->length;
+  const GLfloat *sphere = sceneNode->getSphere();
+  glPushMatrix();
+  glTranslatef(sphere[0], sphere[1], sphere[2]);
+  glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
+  glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
-	if (sceneNode->texturing) {
-		myColor3f(1.0f, 1.0f, 1.0f);
-		glBegin(GL_TRIANGLE_FAN);
-		glTexCoord2f(0.5f,  0.5f);
-		glVertex3f(  0.0f,  0.0f,  0.0f);
-		glTexCoord2f(0.0f,  0.0f);
-		glVertex3f(  0.0f,  0.0f,  1.0f);
-		glVertex3f(  0.0f,  1.0f,  0.0f);
-		glVertex3f(  0.0f,  0.0f, -1.0f);
-		glVertex3f(  0.0f, -1.0f,  0.0f);
-		glVertex3f(  0.0f,  0.0f,  1.0f);
-		glEnd(); // 6 verts -> 4 tris
+  if (sceneNode->texturing) {
+    myColor3f(1.0f, 1.0f, 1.0f);
+    glBegin(GL_TRIANGLE_FAN);
+    glTexCoord2f(0.5f,  0.5f);
+    glVertex3f(  0.0f,  0.0f,  0.0f);
+    glTexCoord2f(0.0f,  0.0f);
+    glVertex3f(  0.0f,  0.0f,  1.0f);
+    glVertex3f(  0.0f,  1.0f,  0.0f);
+    glVertex3f(  0.0f,  0.0f, -1.0f);
+    glVertex3f(  0.0f, -1.0f,  0.0f);
+    glVertex3f(  0.0f,  0.0f,  1.0f);
+    glEnd(); // 6 verts -> 4 tris
 
-		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f,  0.0f);
-		glVertex3f(  0.0f,  0.0f,  1.0f);
-		glTexCoord2f(0.0f,  1.0f);
-		glVertex3f(   len,  0.0f,  1.0f);
-		glTexCoord2f(1.0f,  1.0f);
-		glVertex3f(   len,  0.0f, -1.0f);
-		glTexCoord2f(1.0f,  0.0f);
-		glVertex3f(  0.0f,  0.0f, -1.0f);
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f,  0.0f);
+    glVertex3f(  0.0f,  0.0f,  1.0f);
+    glTexCoord2f(0.0f,  1.0f);
+    glVertex3f(   len,  0.0f,  1.0f);
+    glTexCoord2f(1.0f,  1.0f);
+    glVertex3f(   len,  0.0f, -1.0f);
+    glTexCoord2f(1.0f,  0.0f);
+    glVertex3f(  0.0f,  0.0f, -1.0f);
 
-		glTexCoord2f(0.0f,  0.0f);
-		glVertex3f(  0.0f,  1.0f,  0.0f);
-		glTexCoord2f(0.0f,  1.0f);
-		glVertex3f(   len,  1.0f,  0.0f);
-		glTexCoord2f(1.0f,  1.0f);
-		glVertex3f(   len, -1.0f,  0.0f);
-		glTexCoord2f(1.0f,  0.0f);
-		glVertex3f(  0.0f, -1.0f,  0.0f);
-		glEnd(); // 8 verts -> 4 tris
+    glTexCoord2f(0.0f,  0.0f);
+    glVertex3f(  0.0f,  1.0f,  0.0f);
+    glTexCoord2f(0.0f,  1.0f);
+    glVertex3f(   len,  1.0f,  0.0f);
+    glTexCoord2f(1.0f,  1.0f);
+    glVertex3f(   len, -1.0f,  0.0f);
+    glTexCoord2f(1.0f,  0.0f);
+    glVertex3f(  0.0f, -1.0f,  0.0f);
+    glEnd(); // 8 verts -> 4 tris
 
-		addTriangleCount(8);
-	}
+    addTriangleCount(8);
+  }
 
-	else {
-		// draw beam
-		myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
-		glBegin(GL_QUAD_STRIP);
-		{
-			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-			glVertex3f(   len, geom[0][0], geom[0][1]);
-			glVertex3f(  0.0f, geom[1][0], geom[1][1]);
-			glVertex3f(   len, geom[1][0], geom[1][1]);
-			glVertex3f(  0.0f, geom[2][0], geom[2][1]);
-			glVertex3f(   len, geom[2][0], geom[2][1]);
-			glVertex3f(  0.0f, geom[3][0], geom[3][1]);
-			glVertex3f(   len, geom[3][0], geom[3][1]);
-			glVertex3f(  0.0f, geom[4][0], geom[4][1]);
-			glVertex3f(   len, geom[4][0], geom[4][1]);
-			glVertex3f(  0.0f, geom[5][0], geom[5][1]);
-			glVertex3f(   len, geom[5][0], geom[5][1]);
-			glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-			glVertex3f(   len, geom[0][0], geom[0][1]);
-		}
-		glEnd(); // 14 verts -> 12 tris
+  else {
+    // draw beam
+    myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
+    glBegin(GL_QUAD_STRIP);
+    {
+      glVertex3f(  0.0f, geom[0][0], geom[0][1]);
+      glVertex3f(   len, geom[0][0], geom[0][1]);
+      glVertex3f(  0.0f, geom[1][0], geom[1][1]);
+      glVertex3f(   len, geom[1][0], geom[1][1]);
+      glVertex3f(  0.0f, geom[2][0], geom[2][1]);
+      glVertex3f(   len, geom[2][0], geom[2][1]);
+      glVertex3f(  0.0f, geom[3][0], geom[3][1]);
+      glVertex3f(   len, geom[3][0], geom[3][1]);
+      glVertex3f(  0.0f, geom[4][0], geom[4][1]);
+      glVertex3f(   len, geom[4][0], geom[4][1]);
+      glVertex3f(  0.0f, geom[5][0], geom[5][1]);
+      glVertex3f(   len, geom[5][0], geom[5][1]);
+      glVertex3f(  0.0f, geom[0][0], geom[0][1]);
+      glVertex3f(   len, geom[0][0], geom[0][1]);
+    }
+    glEnd(); // 14 verts -> 12 tris
 
-		// also draw a line down the middle (so the beam is visible even
-		// if very far away).  this will also give the beam an extra bright
-		// center.
-		glBegin(GL_LINES);
-		{
-			glVertex3f(  0.0f, 0.0f, 0.0f);
-			glVertex3f(   len, 0.0f, 0.0f);
-		}
-		glEnd(); // count 1 line as 1 tri
+    // also draw a line down the middle (so the beam is visible even
+    // if very far away).  this will also give the beam an extra bright
+    // center.
+    glBegin(GL_LINES);
+    {
+      glVertex3f(  0.0f, 0.0f, 0.0f);
+      glVertex3f(   len, 0.0f, 0.0f);
+    }
+    glEnd(); // count 1 line as 1 tri
 
-		addTriangleCount(13);
-	}
+    addTriangleCount(13);
+  }
 
-	glPopMatrix();
+  glPopMatrix();
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

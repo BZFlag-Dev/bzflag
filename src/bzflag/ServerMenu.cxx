@@ -122,14 +122,14 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
   else if (key.ascii == 'e') {
-    if(HUDui::getFocus() && !menu->getFind()) {
+    if (HUDui::getFocus() && !menu->getFind()) {
       if (!serverListFilterMenu) serverListFilterMenu = new ServerListFilterMenu;
       HUDDialogStack::get()->push(serverListFilterMenu);
       return true;
     }
   }
   else if (key.ascii == '?') {
-    if(HUDui::getFocus() && !menu->getFind()) {
+    if (HUDui::getFocus() && !menu->getFind()) {
       HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
       return true;
     }
@@ -511,7 +511,7 @@ void ServerMenu::pick()
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {
-    for (int i = 1; i <=7; i ++){
+    for (int i = 1; i <=7; i ++) {
       sprintf(buf, "?/%d", maxes[i-1]);
       ((HUDuiLabel*)listHUD[i])->setLabel(buf);
     }

@@ -123,7 +123,7 @@ void HelpMenu::resize(int _width, int _height)
 class Help1Menu : public HelpMenu {
 public:
   Help1Menu();
-  ~Help1Menu() { }
+  ~Help1Menu() {}
 
   void		resize(int width, int height);
 
@@ -291,7 +291,7 @@ void Help1Menu::resize(int _width, int _height)
 class Help2Menu : public HelpMenu {
 public:
   Help2Menu();
-  ~Help2Menu() { }
+  ~Help2Menu() {}
 };
 
 Help2Menu::Help2Menu() : HelpMenu("General")
@@ -327,7 +327,7 @@ Help2Menu::Help2Menu() : HelpMenu("General")
 class Help3Menu : public HelpMenu {
 public:
   Help3Menu();
-  ~Help3Menu() { }
+  ~Help3Menu() {}
 };
 
 Help3Menu::Help3Menu() : HelpMenu("Environment")
@@ -360,7 +360,7 @@ Help3Menu::Help3Menu() : HelpMenu("Environment")
 class Help4Menu : public HelpMenu {
 public:
   Help4Menu();
-  ~Help4Menu() { }
+  ~Help4Menu() {}
 };
 
 Help4Menu::Help4Menu() : HelpMenu("Flags")
@@ -394,7 +394,7 @@ Help4Menu::Help4Menu() : HelpMenu("Flags")
 class Help5Menu : public HelpMenu {
 public:
   Help5Menu();
-  ~Help5Menu() { }
+  ~Help5Menu() {}
 
 protected:
   float getLeftSide(int width, int height);
@@ -430,7 +430,7 @@ float			Help5Menu::getLeftSide(int _width, int)
 class Help6Menu : public HelpMenu {
 public:
   Help6Menu();
-  ~Help6Menu() { }
+  ~Help6Menu() {}
 
 protected:
   float		getLeftSide(int width, int height);
@@ -466,7 +466,7 @@ float Help6Menu::getLeftSide(int _width, int)
 class Help7Menu : public HelpMenu {
 public:
   Help7Menu();
-  ~Help7Menu() { }
+  ~Help7Menu() {}
 };
 
 Help7Menu::Help7Menu() : HelpMenu("Readouts I")
@@ -500,7 +500,7 @@ Help7Menu::Help7Menu() : HelpMenu("Readouts I")
 class Help8Menu : public HelpMenu {
 public:
   Help8Menu();
-  ~Help8Menu() { }
+  ~Help8Menu() {}
 };
 
 Help8Menu::Help8Menu() : HelpMenu("Readouts II")
@@ -534,7 +534,7 @@ Help8Menu::Help8Menu() : HelpMenu("Readouts II")
 class Help9Menu : public HelpMenu {
 public:
   Help9Menu();
-  ~Help9Menu() { }
+  ~Help9Menu() {}
 
 protected:
   float getLeftSide(int width, int height);

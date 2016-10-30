@@ -62,7 +62,7 @@ namespace Shots
 	uint32_t Manager::AddShot( const FiringInfo &info, PlayerId UNUSED(shooter) )
 	{
 		FlightLogic* logic = NULL;
-		if(Logics.find(info.flagType->flagAbbv) != Logics.end())
+		if (Logics.find(info.flagType->flagAbbv) != Logics.end())
 			logic = Logics[info.flagType->flagAbbv];
 
 		if (!logic)
@@ -145,11 +145,11 @@ namespace Shots
 
 	ShotRef Manager::FindByID (uint32_t shotID)
 	{
- 		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
- 		{
- 			if ((*itr)->GetGUID() == shotID)
- 				return *itr;
- 		}
+		for (ShotList::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
+		{
+			if ((*itr)->GetGUID() == shotID)
+				return *itr;
+		}
 		return ShotRef();
 	}
 
@@ -245,7 +245,7 @@ namespace Shots
 		Logic.Retarget(*this,target);
 		Target = target;
 	}
-	
+
 
 //----------------ProjectileShotLogic
 	bool FlightLogic::Update ( Shot& shot)
@@ -255,7 +255,7 @@ namespace Shots
 
 	fvec3 FlightLogic::ProjectShotLocation( Shot& shot, double deltaT )
 	{
-		fvec3 vec; 
+		fvec3 vec;
 		vec.x = shot.LastUpdatePosition.x + (shot.Info.shot.vel[0] * (float)deltaT);
 		vec.y = shot.LastUpdatePosition.y + (shot.Info.shot.vel[1] * (float)deltaT);
 		vec.z = shot.LastUpdatePosition.z + (shot.Info.shot.vel[2] * (float)deltaT);
@@ -341,7 +341,7 @@ namespace Shots
 	{
 		if (center.z > shot.StartPosition.z + shot.LastUpdatePosition.x)
 			return false; // too high
-		
+
 		if (center.z + height < shot.StartPosition.z - shot.LastUpdatePosition.x)
 			return false; // too low
 
