@@ -328,9 +328,15 @@ void			DisplayMenu::resize(int _width, int _height)
     }
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
-    int aniso = BZDB.evalInt("aniso");
-    aniso = (aniso < 1) ? 1 : aniso;
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+    if (OpenGLGState::hasAnisotropicFiltering) {
+      static GLint maxAnisotropy = 1;
+      glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+      if (maxAnisotropy > 1) {
+	int aniso = BZDB.evalInt("aniso");
+	aniso = (aniso < 1) ? 1 : aniso;
+	((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+      }
+    }
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
     int shadowVal = 0;
     if (BZDBCache::shadows) {
@@ -354,8 +360,7 @@ void			DisplayMenu::resize(int _width, int _height)
   // brightness
   BzfWindow* window = getMainWindow()->getWindow();
   if (window->hasGammaControl())
-    ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
-  i++;
+    ((HUDuiList*)listHUD[i++])->setIndex(gammaToIndex(window->getGamma()));
 
   // energy saver
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
