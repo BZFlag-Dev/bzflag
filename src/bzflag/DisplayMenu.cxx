@@ -217,10 +217,10 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option = new HUDuiList;
   option->setFontFace(fontFace);
 
-#if (defined(HAVE_SDL) && defined(HAVE_SDL2))	// SDL 2 can make live changes
-    option->setLabel("Energy Saver:");
-#else
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// only SDL 2 can make live changes
     option->setLabel("(restart required) Energy Saver:");
+#else
+    option->setLabel("Energy Saver:");
 #endif
   option->setCallback(callback, "s");
   options = &option->getList();
