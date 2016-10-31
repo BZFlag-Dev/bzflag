@@ -243,18 +243,12 @@ namespace TextUtils
 
   std::string url_encode(const std::string &text)
   {
-    CURL *curl = curl_easy_init();
     std::string encoded = "";
+    char *output = curl_easy_escape(NULL, text.c_str(), 0);
 
-    if (curl) {
-      char *output = curl_easy_escape(curl, text.c_str(), 0);
-
-      if (output) {
-	encoded = output;
-	curl_free(output);
-      }
-
-      curl_easy_cleanup(curl);
+    if (output) {
+      encoded = output;
+      curl_free(output);
     }
 
     return encoded;
@@ -262,18 +256,12 @@ namespace TextUtils
 
   std::string url_decode(const std::string &text)
   {
-    CURL *curl = curl_easy_init();
     std::string decoded = "";
+    char *output = curl_easy_unescape(NULL, text.c_str(), 0, NULL);
 
-    if (curl) {
-      char *output = curl_easy_unescape(curl, text.c_str(), 0, NULL);
-
-      if (output) {
-	decoded = output;
-	curl_free(output);
-      }
-
-      curl_easy_cleanup(curl);
+    if (output) {
+      decoded = output;
+      curl_free(output);
     }
 
     return decoded;
