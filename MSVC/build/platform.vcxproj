@@ -439,7 +439,6 @@
     <ClInclude Include="..\..\include\OpenGLGState.h" />
     <ClInclude Include="..\..\include\Pack.h" />
     <ClInclude Include="..\..\include\PlatformFactory.h" />
-    <ClInclude Include="..\..\include\resource.h" />
     <ClInclude Include="..\..\src\platform\SDL2Display.h" />
     <ClInclude Include="..\..\src\platform\SDL2Visual.h" />
     <ClInclude Include="..\..\src\platform\SDL2Window.h" />
@@ -490,6 +489,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\src\platform\XIJoystick.h" />
+    <ClInclude Include="..\resource.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
