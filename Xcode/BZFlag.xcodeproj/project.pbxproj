@@ -1012,7 +1012,6 @@
 		0305D5D5166C9DAE00557FC4 /* Ray.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Ray.h; sourceTree = "<group>"; };
 		0305D5D6166C9DAE00557FC4 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		0305D5D7166C9DAE00557FC4 /* RenderNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderNode.h; sourceTree = "<group>"; };
-		0305D5D8166C9DAE00557FC4 /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; };
 		0305D5D9166C9DAE00557FC4 /* SceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneDatabase.h; sourceTree = "<group>"; };
 		0305D5DA166C9DAE00557FC4 /* SceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneNode.h; sourceTree = "<group>"; };
 		0305D5DB166C9DAE00557FC4 /* SceneRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SceneRenderer.h; sourceTree = "<group>"; };
@@ -2239,7 +2238,6 @@
 				0305D5D5166C9DAE00557FC4 /* Ray.h */,
 				0305D5D6166C9DAE00557FC4 /* README */,
 				0305D5D7166C9DAE00557FC4 /* RenderNode.h */,
-				0305D5D8166C9DAE00557FC4 /* resource.h */,
 				0305D5D9166C9DAE00557FC4 /* SceneDatabase.h */,
 				0305D5DA166C9DAE00557FC4 /* SceneNode.h */,
 				0305D5DB166C9DAE00557FC4 /* SceneRenderer.h */,
