@@ -4,6 +4,8 @@
 BZFlag 2.4.9
 ------------
 
+* TextUtils::url_encode and TextUtils::url_decode now use cURL's functions; this
+    change fixes a crash bug with bz_urlEncode() - Vladimir Jimenez
 * Add bz_reloadBadwords() to API - Vladimir Jimenez
 * Add ability to reload badwords list with '/reload badwords' - Vladimir Jimenez
 * Source code now dual licensed under the MPL 2.0 or LGPL 2.1 - Tim Riker
