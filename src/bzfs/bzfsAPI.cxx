@@ -3475,23 +3475,30 @@ public:
 	CURLMsg *pendingMsg = curl_multi_info_read(curlHandle, &msgs_in_queue);
 	if (currentJob == pendingMsg->easy_handle)
 	{
-	  if (Tasks[0].handler->version >= 2)
+	  if (task.handler)
 	  {
-	    ((bz_URLHandler_V2*)Tasks[0].handler)->token = Tasks[0].token;
+	    if (task.handler->version >= 2)
+	    {
+	      ((bz_URLHandler_V2*)task.handler)->token = task.token;
+	    }
+	    if (bufferedJobData.size())
+	      task.handler->URLDone(task.url.c_str(),bufferedJobData.c_str(),bufferedJobData.size(),true);
+	    else
+	      task.handler->URLError(task.url.c_str(),1,"Error");
 	  }
-	  if (bufferedJobData.size())
-	    Tasks[0].handler->URLDone(Tasks[0].url.c_str(),bufferedJobData.c_str(),bufferedJobData.size(),true);
-	  else
-	    Tasks[0].handler->URLError(Tasks[0].url.c_str(),1,"Error");
 
 	  bufferedJobData = "";
 	  KillCurrentJob(false);
 	}
       }
 
-      if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > Tasks[0].lastTime +HTTPTimeout))
+      if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > task.lastTime +HTTPTimeout))
       {
-	Tasks[0].handler->URLTimeout(Tasks[0].url.c_str(),1);
+	if (task.handler)
+	{
+	  task.handler->URLTimeout(Tasks[0].url.c_str(),1);
+	}
+
 	KillCurrentJob(false);
       }
     }
@@ -3524,7 +3531,7 @@ public:
     }
 
     URLFetchTask newTask;
-	newTask.token = token;
+    newTask.token = token;
     newTask.handler = handler;
     newTask.url = URL;
     if (postData)
