@@ -33,6 +33,7 @@
 		0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
 		0342A7021DD79C4800D04E4C /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
 		0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
+		0342A7041DD79CCB00D04E4C /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
 		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; };
 		034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		034E307A1B0C943300E7DDE2 /* modeltool in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0370A4861B0C921A00FEC9F7 /* modeltool */; };
@@ -1852,6 +1853,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */,
+				0342A7041DD79CCB00D04E4C /* libcurl.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
