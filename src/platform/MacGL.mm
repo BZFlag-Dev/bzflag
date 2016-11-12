@@ -23,6 +23,7 @@
 
 bool getCurrentMacOpenGLContext(CGLContextObj* cglContext)
 {
+#ifdef HAVE_SDL2
   NSOpenGLContext* highLevelContext = (NSOpenGLContext*) SDL_GL_GetCurrentContext();
 
   if (highLevelContext == NULL) {
@@ -31,6 +32,9 @@ bool getCurrentMacOpenGLContext(CGLContextObj* cglContext)
   }
 
   *cglContext = [highLevelContext CGLContextObj];
+#else
+  *cglContext = CGLGetCurrentContext();
+#endif
 
   return true;
 }

@@ -235,6 +235,8 @@ EXTRA_DIST = \
 	MacGL.mm \
 	NewMedia.cxx \
 	NewMedia.h \
+	SDLMain.h \
+	SDLMain.m \
 	README
 
 MAINTAINERCLEANFILES = \

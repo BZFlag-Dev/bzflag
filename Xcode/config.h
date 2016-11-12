@@ -38,9 +38,6 @@
 /* Data file directory */
 #define BZFLAG_DATA "/usr/local/share/bzflag"
 
-/* Enable plugins */
-#define BZ_PLUGINS 1
-
 /* libm includes acosf */
 #define HAVE_ACOSF 1
 
@@ -58,6 +55,9 @@
 
 /* Define to 1 if you have the `atexit' function. */
 #define HAVE_ATEXIT 1
+
+/* Define to 1 if you have the `CGLGetCurrentContext' function. */
+#define HAVE_CGLGETCURRENTCONTEXT 1
 
 /* Define to 1 if you have the <cmath> header file. */
 #define HAVE_CMATH 1
@@ -133,18 +133,6 @@
 
 /* Define to 1 if you have the <sched.h> header file. */
 #define HAVE_SCHED_H 1
-
-/* Using SDL */
-#define HAVE_SDL 1
-
-/* Using SDL 2 */
-#define HAVE_SDL2 1
-
-/* Define to 1 if you have the <SDL/SDL.h> header file. */
-#define HAVE_SDL_SDL_H 1
-
-/* Define to 1 if you have the <SDL2/SDL.h> header file. */
-#define HAVE_SDL2_SDL_H 1
 
 /* Define to 1 if you have the `select' function. */
 #define HAVE_SELECT 1

@@ -28,7 +28,11 @@
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
 		031FBE431DB5A42500DD84DC /* COPYING.MPL in Resources */ = {isa = PBXBuildFile; fileRef = 031FBE421DB5A42500DD84DC /* COPYING.MPL */; };
-		0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
+		0342A6FF1DD79C1B00D04E4C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
+		0342A7001DD79C2D00D04E4C /* MacGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 036F79F21DB70883007AE71A /* MacGL.mm */; };
+		0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
+		0342A7021DD79C4800D04E4C /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
+		0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
 		0347EEB9167AC79B0023D9AD /* bzadmin in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0357A9F71670BF3A0056C938 /* bzadmin */; };
 		034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A7BC1670AF8E0056C938 /* libcommon.a */; };
 		034E307A1B0C943300E7DDE2 /* modeltool in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0370A4861B0C921A00FEC9F7 /* modeltool */; };
@@ -211,7 +215,6 @@
 		036F58251DA2F8CC00BF906C /* COPYING in Resources */ = {isa = PBXBuildFile; fileRef = 03E42D191B322DFC006EE763 /* COPYING */; };
 		036F58261DA2F8D400BF906C /* README in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAB1670CB1300725DBE /* README */; };
 		036F58271DA2F90900BF906C /* README.MacOSX in Resources */ = {isa = PBXBuildFile; fileRef = 03D88EAC1670CB1300725DBE /* README.MacOSX */; };
-		036F79F41DB70917007AE71A /* MacGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 036F79F21DB70883007AE71A /* MacGL.mm */; };
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
@@ -399,9 +402,6 @@
 		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
 		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
-		03C338CD1AFB5AFC00E8F655 /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
-		03C338CE1AFB5AFC00E8F655 /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
-		03C338CF1AFB5AFC00E8F655 /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
 		03C5E82A1670A98C005A26C4 /* BitmapFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FB166C846F008806E9 /* BitmapFont.cxx */; };
 		03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FD166C846F008806E9 /* FontManager.cxx */; };
 		03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FE166C846F008806E9 /* ImageFont.cxx */; };
@@ -1700,6 +1700,10 @@
 		0394E91C167B293E007F4035 /* timedctf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = timedctf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		0397089F1DD7991D00C9215C /* SDLDisplay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLDisplay.cxx; sourceTree = "<group>"; };
+		039708A01DD7991D00C9215C /* SDLDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLDisplay.h; sourceTree = "<group>"; };
+		039708A11DD7991D00C9215C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
+		039708A21DD7991D00C9215C /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
 		03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Display.cxx; sourceTree = "<group>"; };
 		03C338C81AFB5AFC00E8F655 /* SDL2Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Display.h; sourceTree = "<group>"; };
@@ -2923,8 +2927,12 @@
 				036F79F11DB70883007AE71A /* MacGL.h */,
 				036F79F21DB70883007AE71A /* MacGL.mm */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
+				0397089F1DD7991D00C9215C /* SDLDisplay.cxx */,
+				039708A01DD7991D00C9215C /* SDLDisplay.h */,
 				0357A8A11670B7670056C938 /* SDLJoystick.cxx */,
 				0357A8A21670B7670056C938 /* SDLJoystick.h */,
+				039708A11DD7991D00C9215C /* SDLMain.h */,
+				039708A21DD7991D00C9215C /* SDLMain.m */,
 				0357A8A31670B7670056C938 /* SDLMedia.cxx */,
 				0357A8A41670B7670056C938 /* SDLMedia.h */,
 				0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */,
@@ -5006,7 +5014,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				036F79F41DB70917007AE71A /* MacGL.mm in Sources */,
 				0357A8841670B5960056C938 /* OpenGLGState.cxx in Sources */,
 				0357A8851670B5960056C938 /* OpenGLLight.cxx in Sources */,
 				0357A8861670B5960056C938 /* OpenGLMaterial.cxx in Sources */,
@@ -5036,10 +5043,15 @@
 				0357A8B41670B7E40056C938 /* BzfJoystick.cxx in Sources */,
 				0357A8B51670B7E40056C938 /* BzfMedia.cxx in Sources */,
 				0357A8B61670B7E40056C938 /* BzfVisual.cxx in Sources */,
+				0342A7021DD79C4800D04E4C /* SDL2Visual.cxx in Sources */,
+				0342A6FF1DD79C1B00D04E4C /* MacDataPath.cxx in Sources */,
 				0357A8B71670B7E40056C938 /* BzfWindow.cxx in Sources */,
 				0357A8B81670B7E40056C938 /* PlatformFactory.cxx in Sources */,
 				0357A8BA1670B7E40056C938 /* SDLJoystick.cxx in Sources */,
+				0342A7001DD79C2D00D04E4C /* MacGL.mm in Sources */,
+				0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */,
 				0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */,
+				0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */,
 				0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */,
 				0357A8BD1670B7E40056C938 /* wave.cxx in Sources */,
 			);
@@ -5425,8 +5437,6 @@
 				03C8EE72167AC26A00BB07A5 /* clientConfig.cxx in Sources */,
 				03C8EE75167AC26A00BB07A5 /* CommandsImplementation.cxx in Sources */,
 				03C8EE76167AC26A00BB07A5 /* ComposeDefaultKey.cxx in Sources */,
-				03C338CF1AFB5AFC00E8F655 /* SDL2Window.cxx in Sources */,
-				0336ED7B1B7042E50090899C /* MacDataPath.cxx in Sources */,
 				03C8EE78167AC26A00BB07A5 /* ControlPanel.cxx in Sources */,
 				03C8EE7A167AC26A00BB07A5 /* daylight.cxx in Sources */,
 				03C8EE7C167AC26A00BB07A5 /* defaultBZDB.cxx in Sources */,
@@ -5442,7 +5452,6 @@
 				03C8EE90167AC26A00BB07A5 /* GUIOptionsMenu.cxx in Sources */,
 				03C8EE92167AC26A00BB07A5 /* HelpMenu.cxx in Sources */,
 				03C8EE94167AC26A00BB07A5 /* HUDDialog.cxx in Sources */,
-				03C338CD1AFB5AFC00E8F655 /* SDL2Display.cxx in Sources */,
 				03C8EE96167AC26A00BB07A5 /* HUDDialogStack.cxx in Sources */,
 				03C8EE98167AC26A00BB07A5 /* HUDRenderer.cxx in Sources */,
 				03C8EE9A167AC26A00BB07A5 /* HUDui.cxx in Sources */,
@@ -5467,7 +5476,6 @@
 				03C8EEC0167AC26A00BB07A5 /* Player.cxx in Sources */,
 				03C8EEC2167AC26A00BB07A5 /* playing.cxx in Sources */,
 				03C8EEC4167AC26A00BB07A5 /* QuickKeysMenu.cxx in Sources */,
-				03C338CE1AFB5AFC00E8F655 /* SDL2Visual.cxx in Sources */,
 				03C8EEC6167AC26A00BB07A5 /* QuitMenu.cxx in Sources */,
 				03C8EEC8167AC26A00BB07A5 /* RadarRenderer.cxx in Sources */,
 				03C8EECA167AC26A00BB07A5 /* Region.cxx in Sources */,
@@ -7113,6 +7121,10 @@
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
 					"INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag/\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
+					BZ_PLUGINS,
+					HAVE_SDL,
+					HAVE_SDL2,
+					HAVE_SDL2_SDL_H,
 					"DEBUG=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
@@ -7129,7 +7141,6 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
-				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -7153,6 +7164,10 @@
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
 					"INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag/\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
+					BZ_PLUGINS,
+					HAVE_SDL,
+					HAVE_SDL2,
+					HAVE_SDL2_SDL_H,
 				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
@@ -7167,7 +7182,6 @@
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_LDFLAGS = "";
 				SDKROOT = macosx;
 			};
 			name = Release;
