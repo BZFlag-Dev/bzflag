@@ -9,6 +9,7 @@ modeltool_SOURCES =	\
 	Q3BSP.h		\
 	wavefrontOBJ.cxx\
 	wavefrontOBJ.h
+modeltool_LDFLAGS = -lcurl
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
 AM_CFLAGS = $(CONF_CFLAGS)
