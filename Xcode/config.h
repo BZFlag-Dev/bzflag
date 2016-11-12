@@ -14,22 +14,6 @@
 /* Josh Bodine for use with Xcode project file that no longer just */
 /* calls autotools commands. */
 
-/* Include the auto-generated IDE information header */
-#include "buildinfo.h"
-
-/* BZFlag System Environment */
-#if defined __llvm__ && defined __x86_64__
-  #define BZ_BUILD_ARCH_STR "64"
-#elif defined __llvm__ && defined __i386__
-  #define BZ_BUILD_ARCH_STR "32"
-#endif
-#ifdef DEBUG
-  #define BZ_BUILD_DEBUG_STR "dbg"
-#else
-  #define BZ_BUILD_DEBUG_STR ""
-#endif
-#define BZ_BUILD_OS "mac" BZ_BUILD_ARCH_STR "xc" XCODE_VERSION BZ_BUILD_DEBUG_STR
-
 /* If it's a debug build, use the debug rendering features */
 #ifdef DEBUG
 #define DEBUG_RENDERING 1

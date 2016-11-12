@@ -19,6 +19,10 @@
 #include <stdio.h>
 #include <string.h>
 
+// include the OS/IDE information file created by the compiler
+#ifdef __APPLE__
+#include "../../Xcode/buildinfo.h"
+#endif
 
 // opaque version number increments on protocol incompatibility
 // update the following files (and their protocol implementations) to match:
