@@ -1,0 +1,89 @@
+project "bzflag"
+  kind "WindowedApp"
+  files { "*.cxx",
+	  "*.h",
+	  "../../include/*.h", -- you access include/ from this project
+	  "../../AUTHORS",
+	  "../../COPYING",
+	  "../../COPYING.LGPL",
+	  "../../COPYING.MPL",
+	  "../../ChangeLog",
+	  "../../DEVINFO",
+	  "../../NEWS",
+	  "../../PORTING",
+	  "../../README",
+	  "../../README.BeOS",
+	  "../../README.IRIX",
+	  "../../README.Linux",
+	  "../../README.MINGW32",
+	  "../../README.MacOSX",
+	  "../../README.SDL",
+	  "../../README.SOLARIS",
+	  "../../README.WINDOWS" }
+  removefiles { "../../include/GLCollect.h" }
+  filter "system:macosx"
+    files { "../../Xcode/BZFlag-Info.plist",
+	    "../../Xcode/buildinfo.h",
+	    "../../Xcode/config.h" }
+  filter { }
+  links { "3D",
+	  "common",
+	  "date",
+	  "game",
+	  "geometry",
+	  "mediafile",
+	  "net",
+	  "obstacle",
+	  "ogl",
+	  "platform",
+	  "scene",
+	  "cares",
+	  "curl",
+	  "z" }
+  dependson "bzfs"
+  if not _OPTIONS["disable-bzadmin"] then
+    dependson "bzadmin"
+  end
+
+  -- set up a post-build phase to copy files into the application on macOS
+  filter "system:macosx"
+    postbuildcommands {
+      "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
+      "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
+      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+      "cp ../data/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../data/*.wav ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts",
+      "cp ../data/fonts/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../data/fonts/*.fmt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../data/fonts/*.License ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../data/fonts/README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n",
+      "cp ../data/l10n/*.po ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
+      "cp ../data/l10n/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
+      "cp ../AUTHORS ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../COPYING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../COPYING.LGPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../COPYING.MPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../ChangeLog ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../DEVINFO ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../Xcode/BZFlag.icns ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+    }
+  filter { "system:macosx",
+	   "options:not with-sdl=no",
+	   "options:not with-sdl=1" }
+    postbuildcommands {
+      "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL2.framework ]] ; then",
+      "cp -R /Library/Frameworks/SDL2.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
+      "fi"
+    }
+  filter { "system:macosx", "options:with-sdl=1" }
+    postbuildcommands {
+      "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL.framework ]] ; then",
+      "cp -R /Library/Frameworks/SDL.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
+      "fi"
+    }
