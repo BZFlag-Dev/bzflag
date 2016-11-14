@@ -54,7 +54,7 @@ for index,plugin_name in ipairs(plugin_names) do
 end
 
 -- set up a post-build phase to copy the plugins into the application on macOS
-if _OS == "macosx" then
+if _OS == "macosx" and not _OPTIONS["disable-client"] then
   project "bzflag"
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
     for index,plugin_name in ipairs(plugin_names) do
