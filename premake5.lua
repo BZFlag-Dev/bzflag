@@ -15,6 +15,8 @@
 
 TODO:
 
+* make one config.h for all, or just put the defs in premake?
+* make plugins work on macOS
 * wrap lines correctly (where it's too long, not after each option)
 * get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
@@ -67,9 +69,7 @@ workspace "BZFlag"
 
   -- set up overall build settings
   defines {
-    "HAVE_CONFIG_H",
-    "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
-    "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
+    "HAVE_CONFIG_H"
   }
   includedirs { "include/" }
 
@@ -80,23 +80,26 @@ workspace "BZFlag"
     defines { "HAVE_SDL", "HAVE_SDL2", "HAVE_SDL2_SDL_H" }
   filter { "options:not disable-client", "options:with-sdl=1" }
     defines { "HAVE_SDL", "HAVE_SDL_SDL_H" }
-  filter { "options:not with-sdl=no",
-	   "options:not with-sdl=1",
-	   "system:macosx" }
-    includedirs { "/Library/Frameworks/SDL2.framework/Headers" }
-  filter { "options:with-sdl=1", "system:macosx" }
-    includedirs { "/Library/Frameworks/SDL.framework/Headers" }
 
   -- set up overall platform specific build settings
   filter "system:macosx"
+    defines {
+      "INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag\\\"",
+      "INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\""
+    }
     includedirs { "/usr/local/include", -- for c-ares
 		  "Xcode" }
     libdirs { "/usr/local/lib" } -- same
+    frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7" }
 
   filter { "system:linux" }
+    defines {
+      "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
+      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
+    }
     buildoptions { "-Wall", "-Wextra", "-Wcast-qual", "-Wredundant-decls",
 		   "-Wshadow", "-Wundef", "-pedantic" }
   filter { }

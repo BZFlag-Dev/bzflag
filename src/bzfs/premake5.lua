@@ -16,6 +16,9 @@ project "bzfs"
   filter "options:disable-plugins"
     removefiles { "bzfsPlugins.cxx", "bzfsPlugins.h" }
 
+  filter "system:macosx"
+    links "Cocoa.framework"
+
   filter "system:linux"
     linkoptions "-export-dynamic"
     links "dl"

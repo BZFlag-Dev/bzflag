@@ -44,7 +44,6 @@ project "bzflag"
     files { "../../Xcode/BZFlag-Info.plist",
 	    "../../Xcode/buildinfo.h",
 	    "../../Xcode/config.h" }
-    frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
     links { "Cocoa.framework", "OpenGL.framework" }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
