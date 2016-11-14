@@ -73,7 +73,7 @@
 #ifdef _M_X64
     #define BZ_BUILD_OS			"Win64VC10Dbg"
 #else
-	#define BZ_BUILD_OS			"Win32VC10Dbf"
+	#define BZ_BUILD_OS			"Win32VC10Dbg"
 #endif
   #else
 #ifdef _M_X64
