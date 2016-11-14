@@ -46,7 +46,7 @@ for index,plugin_name in ipairs(plugin_names) do
     files { plugin_name.."/*.cpp", plugin_name.."/*.h" }
     includedirs "plugin_utils"
     filter "system:macosx"
-      linkoptions { "-undefined dynamic_lookup" }
+      linkoptions "-undefined dynamic_lookup"
     filter { }
     links { "plugin_utils" }
   project "bzfs"

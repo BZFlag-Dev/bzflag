@@ -21,22 +21,17 @@ project "bzflag"
 	  "../../README.SOLARIS",
 	  "../../README.WINDOWS" }
   removefiles { "../../include/GLCollect.h" }
-  filter "system:macosx"
-    files { "../../Xcode/BZFlag-Info.plist",
-	    "../../Xcode/buildinfo.h",
-	    "../../Xcode/config.h" }
-  filter { }
   links { "3D",
-	  "common",
 	  "date",
 	  "game",
-	  "geometry",
 	  "mediafile",
 	  "net",
 	  "obstacle",
 	  "ogl",
 	  "platform",
 	  "scene",
+	  "geometry",
+	  "common",
 	  "cares",
 	  "curl",
 	  "z" }
@@ -45,8 +40,12 @@ project "bzflag"
     dependson "bzadmin"
   end
 
-  -- set up a post-build phase to copy files into the application on macOS
   filter "system:macosx"
+    files { "../../Xcode/BZFlag-Info.plist",
+	    "../../Xcode/buildinfo.h",
+	    "../../Xcode/config.h" }
+    frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
+    links { "Cocoa.framework", "OpenGL.framework" }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
@@ -76,14 +75,27 @@ project "bzflag"
   filter { "system:macosx",
 	   "options:not with-sdl=no",
 	   "options:not with-sdl=1" }
+    links "SDL2.framework"
     postbuildcommands {
       "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL2.framework ]] ; then",
       "cp -R /Library/Frameworks/SDL2.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
       "fi"
     }
   filter { "system:macosx", "options:with-sdl=1" }
+    links "SDL.framework"
     postbuildcommands {
       "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL.framework ]] ; then",
       "cp -R /Library/Frameworks/SDL.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
       "fi"
     }
+
+  filter "system:linux"
+    links { "GL", "GLU", "pthread" }
+  filter { "system:linux",
+	   "options:not with-sdl=no",
+	   "options:not with-sdl=1" }
+    links "SDL2"
+  filter { "system:linux", "options:with-sdl=1" }
+    links "SDL"
+  filter { "system:linux", "options:with-sdl=no" }
+    links { "X11", "Xxf86vm" }

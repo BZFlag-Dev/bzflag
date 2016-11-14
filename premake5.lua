@@ -15,9 +15,10 @@
 
 TODO:
 
-* support for platforms other than macOS
+* wrap lines correctly (where it's too long, not after each option)
+* get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
-* we may need to avoid linking to the OS libraries when building plugins
+* support for windows, solaris, and bsd?
 
 ]]
 
@@ -47,98 +48,74 @@ workspace "BZFlag"
   }
 
   -- set up configurations
-  configurations { "Debug", "Release" }
+  configurations { "Release", "Debug" }
   filter "configurations:Debug"
     defines { "DEBUG", "DEBUG_RENDERING" }
     symbols "On"
   filter "configurations:Release"
-    optimize "Full"
+    optimize "On"
   filter { }
 
-  -- set up overall build settings
+  -- set up overall workspace settings
   language "C++"
   basedir "build"
-  includedirs { "include/" }
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
   else
     startproject "bzfs"
   end
 
-  -- set up preprocessor macros
+  -- set up overall build settings
   defines {
     "HAVE_CONFIG_H",
-    "INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag/\\\"",
-    "INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\""
+    "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
+    "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
   }
-  filter { "options:not disable-client", "options:not with-sdl=no" }
-    defines { "HAVE_SDL" }
+  includedirs { "include/" }
+
+  -- set up SDL
   filter { "options:not disable-client",
 	   "options:not with-sdl=no",
 	   "options:not with-sdl=1" }
-    defines { "HAVE_SDL2", "HAVE_SDL2_SDL_H" }
+    defines { "HAVE_SDL", "HAVE_SDL2", "HAVE_SDL2_SDL_H" }
   filter { "options:not disable-client", "options:with-sdl=1" }
-    defines { "HAVE_SDL_SDL_H" }
-  filter "options:not disable-plugins"
-    defines { "BZ_PLUGINS" }
+    defines { "HAVE_SDL", "HAVE_SDL_SDL_H" }
+  filter { "options:not with-sdl=no",
+	   "options:not with-sdl=1",
+	   "system:macosx" }
+    includedirs { "/Library/Frameworks/SDL2.framework/Headers" }
+  filter { "options:with-sdl=1", "system:macosx" }
+    includedirs { "/Library/Frameworks/SDL.framework/Headers" }
 
-  -- set up macOS platform specific build settings
+  -- set up overall platform specific build settings
   filter "system:macosx"
-    includedirs { "/usr/local/include", -- assuming c-ares is in /usr/local
+    includedirs { "/usr/local/include", -- for c-ares
 		  "Xcode" }
     libdirs { "/usr/local/lib" } -- same
-    frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
-    links { "Cocoa.framework" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7" }
-  filter { "system:macosx", "options:not disable-client" }
-    links { "OpenGL.framework" }
-  filter { "system:macosx",
-	   "options:not disable-client",
-	   "options:not with-sdl=no",
-	   "options:not with-sdl=1" }
-    includedirs { "/Library/Frameworks/SDL2.framework/Headers" }
-    links { "SDL2.framework" }
-  filter { "system:macosx",
-	   "options:not disable-client",
-	   "options:with-sdl=1" }
-    includedirs { "/Library/Frameworks/SDL.framework/Headers" }
-    links { "SDL.framework" }
 
-  -- set up linux platform specific build settings
-  filter { "system:linux", "options:not disable-client" }
-    links { "GL" }
-  filter { "system:linux",
-	   "options:not disable-client",
-	   "options:not sdl=no",
-	   "options:not sdl=1" }
-    links { "SDL2" }
-  filter { "system:linux", "options:not disable-client", "options:sdl=1" }
-    links { "SDL" }
+  filter { "system:linux" }
+    buildoptions { "-Wall", "-Wextra", "-Wcast-qual", "-Wredundant-decls",
+		   "-Wshadow", "-Wundef", "-pedantic" }
   filter { }
 
   -- set up the build (build order/dependencies are honored notwithstanding the
   -- listed order here; this order is how we want the projects to show up in
   -- the IDEs since the startproject option isn't fully supported)
-  if not _OPTIONS["disable-client"] then
-    include "src/bzflag"
-  end
+  if not _OPTIONS["disable-client"] then include "src/bzflag" end
   include "src/bzfs"
-  if not _OPTIONS["disable-bzadmin"] then
-    include "src/bzadmin"
-  end
-  include "src/3D"
+  if not _OPTIONS["disable-bzadmin"] then include "src/bzadmin" end
+  if not _OPTIONS["disable-client"] then include "src/3D" end
   include "src/common"
   include "src/date"
   include "src/game"
-  include "src/geometry"
-  include "src/mediafile"
+  if not _OPTIONS["disable-client"] then include "src/geometry" end
+  if not _OPTIONS["disable-client"] then include "src/mediafile" end
   include "src/net"
   include "src/obstacle"
-  include "src/ogl"
-  include "src/platform"
-  include "src/scene"
-  if not _OPTIONS["disable-plugins"] then
-    include "plugins"
-  end
+  if not _OPTIONS["disable-client"] then include "src/ogl" end
+  if not _OPTIONS["disable-client"] then include "src/platform" end
+  if not _OPTIONS["disable-client"] then include "src/scene" end
+  if not _OPTIONS["disable-plugins"] then include "plugins" end
