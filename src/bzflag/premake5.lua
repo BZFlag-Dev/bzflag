@@ -1,49 +1,51 @@
 project "bzflag"
   kind "WindowedApp"
-  files { "*.cxx",
-	  "*.h",
-	  "../../include/*.h", -- you access include/ from this project
-	  "../../AUTHORS",
-	  "../../COPYING",
-	  "../../COPYING.LGPL",
-	  "../../COPYING.MPL",
-	  "../../ChangeLog",
-	  "../../DEVINFO",
-	  "../../NEWS",
-	  "../../PORTING",
-	  "../../README",
-	  "../../README.BeOS",
-	  "../../README.IRIX",
-	  "../../README.Linux",
-	  "../../README.MINGW32",
-	  "../../README.MacOSX",
-	  "../../README.SDL",
-	  "../../README.SOLARIS",
-	  "../../README.WINDOWS" }
+  files {
+    "*.cxx",
+    "*.h",
+    "../../include/*.h", -- you access include/ from this project
+    "../../AUTHORS",
+    "../../COPYING",
+    "../../COPYING.LGPL",
+    "../../COPYING.MPL",
+    "../../ChangeLog",
+    "../../DEVINFO",
+    "../../NEWS",
+    "../../PORTING",
+    "../../README",
+    "../../README.BeOS",
+    "../../README.IRIX",
+    "../../README.Linux",
+    "../../README.MINGW32",
+    "../../README.MacOSX",
+    "../../README.SDL",
+    "../../README.SOLARIS",
+    "../../README.WINDOWS"
+  }
   removefiles { "../../include/GLCollect.h" }
-  links { "3D",
-	  "date",
-	  "game",
-	  "mediafile",
-	  "net",
-	  "obstacle",
-	  "ogl",
-	  "platform",
-	  "scene",
-	  "geometry",
-	  "common",
-	  "cares",
-	  "curl",
-	  "z" }
+  links {
+    "3D",
+    "date",
+    "game",
+    "mediafile",
+    "net",
+    "obstacle",
+    "ogl",
+    "platform",
+    "scene",
+    "geometry",
+    "common",
+    "cares",
+    "curl",
+    "z"
+  }
   dependson "bzfs"
   if not _OPTIONS["disable-bzadmin"] then
     dependson "bzadmin"
   end
 
   filter "system:macosx"
-    files { "../../Xcode/BZFlag-Info.plist",
-	    "../../Xcode/buildinfo.h",
-	    "../../Xcode/config.h" }
+    files "../../Xcode/BZFlag-Info.plist"
     links { "Cocoa.framework", "OpenGL.framework" }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",

@@ -17,7 +17,6 @@ TODO:
 
 * figure out premake bug that makes bzfs hard link to plugins on Xcode
 * figure out premake bug where architecture doesn't have an effect on Xcode
-* wrap lines consistently (where it's too long, not after each option, or at least consistent)
 * get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
 * support for windows, solaris, and bsd, perhaps just under SDL 1.2/2
@@ -149,7 +148,7 @@ workspace "BZFlag"
 			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7" }
 
-  filter { "system:linux" }
+  filter "system:linux"
     defines {
       "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
       "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\"",
@@ -171,10 +170,10 @@ workspace "BZFlag"
       "XF86VIDMODE_EXT"
     }
 
-  filter { "system:windows or macosx" }
+  filter "system:windows or macosx"
     defines "HAVE_SLEEP"
 
-  filter { "system:macosx or linux" }
+  filter "system:macosx or linux"
     defines {
       "HAVE_ACOSF",
       "HAVE_ATEXIT",
@@ -231,12 +230,12 @@ workspace "BZFlag"
       "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
     }
 
-  filter { "action:xcode" }
+  filter "action:xcode"
     defines {
-      "BZ_COMPILER=\\\"Xcode\\\"",
-      "BZ_COMPILER_VERSION=\\\"${XCODE_VERSION_ACTUAL}\\\"",
+      "BZ_COMPILER="..correctquotes("Xcode"),
+      "BZ_COMPILER_VERSION="..correctquotes("${XCODE_VERSION_ACTUAL}")
     }
-  filter { "action:gmake" }
+  filter "action:gmake"
     defines "BZ_COMPILER=\"gcc\""
   filter { }
 
