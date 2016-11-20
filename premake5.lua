@@ -15,12 +15,12 @@
 
 TODO:
 
-* make one config.h for all, or just put the defs in premake?
-* make plugins work on macOS
-* wrap lines correctly (where it's too long, not after each option)
+* figure out premake bug that makes bzfs hard link to plugins on Xcode
+* figure out premake bug where architecture doesn't have an effect on Xcode
+* wrap lines consistently (where it's too long, not after each option, or at least consistent)
 * get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
-* support for windows, solaris, and bsd?
+* support for windows, solaris, and bsd, perhaps just under SDL 1.2/2
 
 ]]
 
@@ -50,16 +50,21 @@ workspace "BZFlag"
   }
 
   -- set up configurations
-  configurations { "Release", "Debug" }
-  filter "configurations:Debug"
-    defines { "DEBUG", "DEBUG_RENDERING" }
-    symbols "On"
-  filter "configurations:Release"
+  configurations { "Release64", "Debug64", "Release32", "Debug32" }
+  filter "configurations:*64"
+    architecture "x86_64"
+  filter "configurations:*32"
+    architecture "x86"
+  filter "configurations:Release*"
     optimize "On"
+  filter "configurations:Debug*"
+    defines { "DEBUG", "_DEBUG", "DEBUG_RENDERING" }
+    symbols "On"
   filter { }
 
   -- set up overall workspace settings
   language "C++"
+  warnings "Extra"
   basedir "build"
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
@@ -67,28 +72,73 @@ workspace "BZFlag"
     startproject "bzfs"
   end
 
-  -- set up overall build settings
-  defines {
-    "HAVE_CONFIG_H"
-  }
-  includedirs { "include/" }
-
-  -- set up SDL
+  -- set up workspace build settings
   filter { "options:not disable-client",
 	   "options:not with-sdl=no",
 	   "options:not with-sdl=1" }
     defines { "HAVE_SDL", "HAVE_SDL2", "HAVE_SDL2_SDL_H" }
   filter { "options:not disable-client", "options:with-sdl=1" }
     defines { "HAVE_SDL", "HAVE_SDL_SDL_H" }
+  filter { }
 
-  -- set up overall platform specific build settings
+  defines {
+    -- // FIXME: all of this needs to be dynamic or eliminated
+    -- #define BUILD_DATE "2016-11-13"
+    -- #define BZFLAG_DATA "/usr/local/share/bzflag"
+    -- #define LT_OBJDIR ".libs/"
+    -- #define PACKAGE "bzflag"
+    -- #define PACKAGE_BUGREPORT "http://BZFlag.org/"
+    -- #define PACKAGE_NAME "BZFlag"
+    -- #define PACKAGE_STRING "BZFlag 2.4.9"
+    -- #define PACKAGE_TARNAME "bzflag"
+    -- #define PACKAGE_URL ""
+    -- #define PACKAGE_VERSION "2.4.9"
+    -- #define VERSION "2.4.9"
+    -- #define NDEBUG 1
+
+    "HAVE_REGEX_H",
+    "ROBOT",
+    "HAVE_STD__COUNT",
+    "HAVE_ASINF",
+    "HAVE_ATANF",
+    "HAVE_ATAN2F",
+    "HAVE_COSF",
+    "HAVE_EXPF",
+    "HAVE_FABSF",
+    "HAVE_FLOORF",
+    "HAVE_FMODF",
+    "HAVE_LOGF",
+    "HAVE_POWF",
+    "HAVE_SINF",
+    "HAVE_SQRTF",
+    "HAVE_TANF",
+    "HAVE_LOG10F",
+    "HAVE_STD__MIN",
+    "HAVE_STD__MAX",
+    "HAVE_ARES_LIBRARY_INIT"
+  }
+  includedirs { "include/" }
+
+  filter "system:windows"
+    defines {
+      "HAVE_WAITFORSINGLEOBJECT",
+      "_CRT_SECURE_NO_DEPRECATE",
+      "_CRT_NONSTDC_NO_DEPRECATE",
+      "HAVE_STRICMP",
+      "HAVE__STRICMP",
+      "HAVE__STRNICMP",
+      "HAVE__VSNPRINTF"
+    }
+
   filter "system:macosx"
     defines {
+      "BZ_COMPILER=\\\"Xcode\\\"",
+      "BZ_COMPILER_VERSION=\\\"${XCODE_VERSION_ACTUAL}\\\"",
       "INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag\\\"",
-      "INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\""
+      "INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
+      "HAVE_CGLGETCURRENTCONTEXT"
     }
-    includedirs { "/usr/local/include", -- for c-ares
-		  "Xcode" }
+    includedirs { "/usr/local/include" } -- for c-ares
     libdirs { "/usr/local/lib" } -- same
     frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
@@ -98,10 +148,97 @@ workspace "BZFlag"
   filter { "system:linux" }
     defines {
       "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
-      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
+      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\"",
+      "HALF_RATE_AUDIO",
+      "HAVE_FF_EFFECT_DIRECTIONAL",
+      "HAVE_FF_EFFECT_RUMBLE",
+      "HAVE_LIMITS_H",
+      "HAVE_LINUX_INPUT_H",
+      "HAVE_SCHED_SETAFFINITY",
+      "HAVE_STDCXX_0X",
+      "HAVE_VALUES_H",
+      "HAVE_X11_EXTENSIONS_XF86VMODE_H",
+      "LIBCURL_FEATURE_ASYNCHDNS",
+      "LIBCURL_FEATURE_IDN",
+      "LIBCURL_PROTOCOL_IMAP",
+      "LIBCURL_PROTOCOL_POP3",
+      "LIBCURL_PROTOCOL_RTSP",
+      "LIBCURL_PROTOCOL_SMTP",
+      "XF86VIDMODE_EXT"
     }
-    buildoptions { "-Wall", "-Wextra", "-Wcast-qual", "-Wredundant-decls",
-		   "-Wshadow", "-Wundef", "-pedantic" }
+
+  filter { "system:windows or macosx" }
+    defines "HAVE_SLEEP"
+
+  filter { "system:macosx or linux" }
+    defines {
+      "HAVE_ACOSF",
+      "HAVE_ATEXIT",
+      "HAVE_CMATH",
+      "HAVE_CSTDIO",
+      "HAVE_CSTDLIB",
+      "HAVE_CSTRING",
+      "HAVE_DLFCN_H",
+      "HAVE_FCNTL_H",
+      "HAVE_HSTRERROR",
+      "HAVE_HYPOTF",
+      "HAVE_INTTYPES_H",
+      "HAVE_LIBCURL",
+      "HAVE_LIBM",
+      "HAVE_MEMORY_H",
+      "HAVE_NCURSES_H",
+      "HAVE_NETDB_H",
+      "HAVE_PTHREADS",
+      "HAVE_SCHED_H",
+      "HAVE_SELECT",
+      "HAVE_SOCKLEN_T",
+      "HAVE_STDINT_H",
+      "HAVE_STDLIB_H",
+      "HAVE_STD__ISNAN",
+      "HAVE_STRINGS_H",
+      "HAVE_STRING_H",
+      "HAVE_SYS_PARAM_H",
+      "HAVE_SYS_SOCKET_H",
+      "HAVE_SYS_STAT_H",
+      "HAVE_SYS_TYPES_H",
+      "HAVE_UNISTD_H",
+      "HAVE_USLEEP",
+      "HAVE_VSNPRINTF",
+      "LIBCURL_FEATURE_IPV6",
+      "LIBCURL_FEATURE_LIBZ",
+      "LIBCURL_FEATURE_NTLM",
+      "LIBCURL_FEATURE_SSL",
+      "LIBCURL_PROTOCOL_DICT",
+      "LIBCURL_PROTOCOL_FILE",
+      "LIBCURL_PROTOCOL_FTP",
+      "LIBCURL_PROTOCOL_FTPS",
+      "LIBCURL_PROTOCOL_HTTP",
+      "LIBCURL_PROTOCOL_HTTPS",
+      "LIBCURL_PROTOCOL_LDAP",
+      "LIBCURL_PROTOCOL_TELNET",
+      "LIBCURL_PROTOCOL_TFTP",
+      "STDC_HEADERS",
+      "_REENTRANT"
+    }
+  filter { }
+
+  if _OS == "windows" then
+    buildosstring = "Win"
+  elseif _OS == "macosx" then
+    buildosstring = "Mac"
+  elseif _OS == "linux" then
+    buildosstring = "Linux"
+  elseif _OS == "bsd" then
+    buildosstring = "BSD"
+  elseif _OS == "solaris" then
+    buildosstring = "Solaris"
+  else
+    buildosstring = "Unknown"
+  end
+  filter "configurations:*64"
+    defines ("BZ_BUILD_OS=\\\""..buildosstring.."64\\\"")
+  filter "configurations:*32"
+    defines ("BZ_BUILD_OS=\\\""..buildosstring.."32\\\"")
   filter { }
 
   -- set up the build (build order/dependencies are honored notwithstanding the

@@ -19,7 +19,9 @@
  * Still in the public domain.
  */
 
-#include "config.h"
+#if defined(HAVE_CONFIG_H)
+  #include "config.h"
+#endif
 
 /* for memcpy() */
 #include <string.h>

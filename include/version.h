@@ -10,7 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+  #include "config.h"
+#endif
 
 #ifndef __VERSION_H__
 #define __VERSION_H__

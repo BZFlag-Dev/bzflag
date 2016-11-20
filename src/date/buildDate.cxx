@@ -19,11 +19,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// include the OS/IDE information file created by the compiler
-#ifdef __APPLE__
-#include "../../Xcode/buildinfo.h"
-#endif
-
 // opaque version number increments on protocol incompatibility
 // update the following files (and their protocol implementations) to match:
 //  misc/bzfquery.php
@@ -143,6 +138,17 @@ const char*		getAppVersion()
     // TODO add current platform, release, cpu, etc
     appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
+#ifdef BZ_COMPILER
+    appVersionStream << "-" << BZ_COMPILER;
+#if defined(BZ_COMPILER_VERSION)
+    std::string compilerVersion = BZ_COMPILER_VERSION;
+    compilerVersion.erase(0, compilerVersion.find_first_not_of('0')); // Xcode 0-pads the number
+    appVersionStream << compilerVersion;
+#endif
+#endif
+#ifdef DEBUG
+    appVersionStream << "-dbg";
+#endif
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";
 #ifdef HAVE_SDL2

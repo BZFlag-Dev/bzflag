@@ -40,7 +40,7 @@ include "plugin_utils"
 
 -- set up the individual plugin projects from the list above and add them as
 -- dependencies to bzfs
-for index,plugin_name in ipairs(plugin_names) do
+for _, plugin_name in ipairs(plugin_names) do
   project(plugin_name)
     kind "SharedLib"
     files { plugin_name.."/*.cpp", plugin_name.."/*.h" }
@@ -57,7 +57,7 @@ end
 if _OS == "macosx" and not _OPTIONS["disable-client"] then
   project "bzflag"
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
-    for index,plugin_name in ipairs(plugin_names) do
+    for _, plugin_name in ipairs(plugin_names) do
       postbuildcommands {
         "cp ${CONFIGURATION_BUILD_DIR}/lib"..plugin_name..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..plugin_name..".dylib",
         "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
