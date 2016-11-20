@@ -24,6 +24,16 @@ TODO:
 
 ]]
 
+-- utility
+function correctquotes (quotestring)
+  if string.find(_ACTION, "xcode", 0) then
+    return "\\\""..quotestring.."\\\""
+  else
+    return "\""..quotestring.."\""
+  end
+end
+
+-- set up workspace
 workspace "BZFlag"
   -- set up command line options
   newoption {
@@ -131,13 +141,7 @@ workspace "BZFlag"
     }
 
   filter "system:macosx"
-    defines {
-      "BZ_COMPILER=\\\"Xcode\\\"",
-      "BZ_COMPILER_VERSION=\\\"${XCODE_VERSION_ACTUAL}\\\"",
-      "INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag\\\"",
-      "INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
-      "HAVE_CGLGETCURRENTCONTEXT"
-    }
+    defines "HAVE_CGLGETCURRENTCONTEXT"
     includedirs { "/usr/local/include" } -- for c-ares
     libdirs { "/usr/local/lib" } -- same
     frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
@@ -220,6 +224,20 @@ workspace "BZFlag"
       "STDC_HEADERS",
       "_REENTRANT"
     }
+
+  filter "system:not windows"
+    defines {
+      "INSTALL_LIB_DIR="..correctquotes("/usr/local/lib/bzflag"),
+      "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
+    }
+
+  filter { "action:xcode" }
+    defines {
+      "BZ_COMPILER=\\\"Xcode\\\"",
+      "BZ_COMPILER_VERSION=\\\"${XCODE_VERSION_ACTUAL}\\\"",
+    }
+  filter { "action:gmake" }
+    defines "BZ_COMPILER=\"gcc\""
   filter { }
 
   if _OS == "windows" then
@@ -236,9 +254,9 @@ workspace "BZFlag"
     buildosstring = "Unknown"
   end
   filter "configurations:*64"
-    defines ("BZ_BUILD_OS=\\\""..buildosstring.."64\\\"")
+    defines { "BZ_BUILD_OS="..correctquotes(buildosstring.."64") }
   filter "configurations:*32"
-    defines ("BZ_BUILD_OS=\\\""..buildosstring.."32\\\"")
+    defines { "BZ_BUILD_OS="..correctquotes(buildosstring.."32") }
   filter { }
 
   -- set up the build (build order/dependencies are honored notwithstanding the
