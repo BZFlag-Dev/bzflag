@@ -17,6 +17,9 @@
 #include "TextUtils.h"
 
 // system headers
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
 #include <curl/curl.h>
 #include <string>
 #include <string.h>
