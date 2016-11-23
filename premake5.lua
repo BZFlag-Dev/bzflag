@@ -15,10 +15,10 @@
 
 TODO:
 
-* figure out premake bug that makes bzfs hard link to plugins on Xcode
-* get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
-* support for windows, solaris, and bsd, perhaps just under SDL 1.2/2
+* finish support for windows (mostly man page conversion and installer stuff)
+* get rid of "lib" in front of plugin names in some consistent way
+* support for solaris and bsd, perhaps just under SDL 1.2/2
 * bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 
 ]]
@@ -254,8 +254,8 @@ workspace "BZFlag"
   if _ACTION then
     filter "action:vs*"
       defines { "BZ_COMPILER_VS_VERSION="..correctquotes(string.sub(_ACTION, 3)) }
-    filter "action:xcode"
-      defines { "BZ_COMPILER_XCODE_VERSION="..correctquotes("Xcode${XCODE_VERSION_ACTUAL}") }
+    filter "action:xcode*"
+      defines { "BZ_COMPILER_XCODE_VERSION="..correctquotes("${XCODE_VERSION_ACTUAL}") }
     filter { }
   end
 

@@ -57,7 +57,7 @@ for _, pluginname in ipairs(pluginnames) do
       files { pluginname.."/"..pluginname..".def" }
       libdirs "../build/bin/$(Configuration)" -- FIXME: any better way?
       links "bzfs.lib" -- ".lib" required to distinguish from the executable
-      dependson "bzfs"
+	dependson "bzfs"
       postbuildcommands {
 	"if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
 	"if not exist ..\\bin_$(Configuration)_$(Platform)\\plugins mkdir ..\\bin_$(Configuration)_$(Platform)\\plugins",
@@ -68,9 +68,17 @@ for _, pluginname in ipairs(pluginnames) do
     filter "system:macosx"
       linkoptions "-undefined dynamic_lookup"
     filter { "system:macosx", "options:not disable-client" }
-      project "bzflag" -- the .app needs to bundle the plugins with it
-	dependson(pluginname)
-
+--      project "bzflag" -- the .app needs to bundle the plugins with it
+--	dependson(pluginname)
+      -- FIXME: workaround for a premake Xcode bug (remove when it's fixed and
+      -- uncomment above)
+      -- issue link: https://github.com/premake/premake-core/issues/631
+      project "build_plugins"
+	kind "ConsoleApp"
+	links(pluginname)
+      project "bzflag"
+	dependson "build_plugins"
+      -- end workaround
     filter { }
 end
 
