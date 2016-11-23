@@ -138,24 +138,52 @@ const char*		getAppVersion()
     // TODO add current platform, release, cpu, etc
     appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
 	<< "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
-#ifdef BZ_COMPILER
-    appVersionStream << "-" << BZ_COMPILER;
-#if defined(BZ_COMPILER_VERSION)
-    std::string compilerVersion = BZ_COMPILER_VERSION;
-    compilerVersion.erase(0, compilerVersion.find_first_not_of('0')); // Xcode 0-pads the number
-    appVersionStream << compilerVersion;
+
+#if ! defined(BZ_BUILD_64_BIT) && ! defined (BZ_BUILD_32_BIT)
+#ifdef _MSC_VER
+#ifdef _M_x64
+#define BZ_BUILD_64_BIT
+#else
+#define BZ_BUILD_32_BIT
+#endif
+#elif defined(__GNUC__) // both clang and gcc follow this convention
+#ifdef __x86_64__
+#define BZ_BUILD_64_BIT
+#else
+#define BZ_BUILD_32_BIT
 #endif
 #endif
-#ifdef DEBUG
-    appVersionStream << "-dbg";
 #endif
+#if defined(BZ_BUILD_64_BIT)
+	appVersionStream << "64";
+#elif defined(BZ_BUILD_32_BIT)
+	appVersionStream << "32";
+#endif
+
+#if defined(BZ_COMPILER_VS_VERSION)
+    appVersionStream << "-VS" << BZ_COMPILER_VS_VERSION;
+#elif defined(BZ_COMPILER_XCODE_VERSION)
+	std::string compilerVersion = BZ_COMPILER_XCODE_VERSION;
+	compilerVersion.erase(0, compilerVersion.find_first_not_of('0')); // Xcode 0-pads the number
+	appVersionStream << "-Xcode" << compilerVersion;
+#elif defined(__clang__) // clang defines __GNUC__ also, so this has to come first
+	appVersionStream << "-clang" << __clang_major__ << "." << __clang_minor__ << "." << __clang_patchlevel__;
+#elif defined(__GNUC__)
+	appVersionStream << "-gcc" << __GNUC__ << "." << __GNUC_MINOR__ << "." << __GNUC_PATCHLEVEL__;
+#endif
+
 #ifdef HAVE_SDL
     appVersionStream << "-SDL";
 #ifdef HAVE_SDL2
     appVersionStream << "2";
 #endif
 #endif
-    appVersion = appVersionStream.str();
+
+#ifdef DEBUG
+    appVersionStream << "-dbg";
+#endif
+
+	appVersion = appVersionStream.str();
   }
   return appVersion.c_str();
 }

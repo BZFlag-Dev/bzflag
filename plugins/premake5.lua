@@ -1,5 +1,5 @@
 -- enumerate the plugins to include (modify this list to add a plugin)
-plugin_names = {
+pluginnames = {
   "CustomZoneSample",
   "HoldTheFlag",
   "Phoenix",
@@ -38,28 +38,49 @@ plugin_names = {
 -- set up the plugin_utils project
 include "plugin_utils"
 
--- set up the individual plugin projects from the list above and add them as
--- dependencies to bzfs
-for _, plugin_name in ipairs(plugin_names) do
-  project(plugin_name)
+-- set up the individual plugin projects from the list above
+for _, pluginname in ipairs(pluginnames) do
+  project(pluginname)
     kind "SharedLib"
-    files { plugin_name.."/*.cpp", plugin_name.."/*.h" }
+    files { pluginname.."/*.cpp", pluginname.."/*.h" }
     includedirs "plugin_utils"
+    links "plugin_utils"
+
+    filter "system:windows"
+      defines {
+	"WIN32",
+	"_USE_MATH_DEFINES",
+	"_WINDOWS",
+	"_USRDLL",
+	pluginname.."_EXPORTS"
+      }
+      files { pluginname.."/"..pluginname..".def" }
+      libdirs "../build/bin/$(Configuration)" -- FIXME: any better way?
+      links "bzfs.lib" -- ".lib" required to distinguish from the executable
+      dependson "bzfs"
+      postbuildcommands {
+	"if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
+	"if not exist ..\\bin_$(Configuration)_$(Platform)\\plugins mkdir ..\\bin_$(Configuration)_$(Platform)\\plugins",
+	"copy $(OutDir)"..pluginname..".dll ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
+	"copy ..\\plugins\\"..pluginname.."\\*.txt ..\\bin_$(Configuration)_$(Platform)\\plugins\\"
+      }
+
     filter "system:macosx"
       linkoptions "-undefined dynamic_lookup"
+    filter { "system:macosx", "options:not disable-client" }
+      project "bzflag" -- the .app needs to bundle the plugins with it
+	dependson(pluginname)
+
     filter { }
-    links { "plugin_utils" }
-  project "bzfs"
-    dependson(plugin_name)
 end
 
 -- set up a post-build phase to copy the plugins into the application on macOS
 if _OS == "macosx" and not _OPTIONS["disable-client"] then
   project "bzflag"
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
-    for _, plugin_name in ipairs(plugin_names) do
+    for _, pluginname in ipairs(pluginnames) do
       postbuildcommands {
-        "cp ${CONFIGURATION_BUILD_DIR}/lib"..plugin_name..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..plugin_name..".dylib",
+        "cp ${CONFIGURATION_BUILD_DIR}/lib"..pluginname..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginname..".dylib",
         "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"

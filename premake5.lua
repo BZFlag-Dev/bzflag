@@ -16,19 +16,23 @@
 TODO:
 
 * figure out premake bug that makes bzfs hard link to plugins on Xcode
-* figure out premake bug where architecture doesn't have an effect on Xcode
 * get rid of "lib" in front of plugin names
 * install/uninstall actions (for gmake only, with support for --prefix)
 * support for windows, solaris, and bsd, perhaps just under SDL 1.2/2
+* bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 
 ]]
 
 -- utility
 function correctquotes (quotestring)
-  if string.find(_ACTION, "xcode", 0) then
-    return "\\\""..quotestring.."\\\""
+  if _ACTION then
+    if string.find(_ACTION, "xcode", 0) then
+      return "\\\""..quotestring.."\\\""
+    else
+      return "\""..quotestring.."\""
+    end
   else
-    return "\""..quotestring.."\""
+    return ""
   end
 end
 
@@ -59,21 +63,17 @@ workspace "BZFlag"
   }
 
   -- set up configurations
-  configurations { "Release64", "Debug64", "Release32", "Debug32" }
-  filter "configurations:*64"
-    architecture "x86_64"
-  filter "configurations:*32"
-    architecture "x86"
-  filter "configurations:Release*"
+  configurations { "Release", "Debug" }
+  filter "configurations:Release"
     optimize "On"
-  filter "configurations:Debug*"
+  filter "configurations:Debug"
     defines { "DEBUG", "_DEBUG", "DEBUG_RENDERING" }
     symbols "On"
   filter { }
 
   -- set up overall workspace settings
   language "C++"
-  warnings "Extra"
+  warnings "Default"
   basedir "build"
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
@@ -138,6 +138,12 @@ workspace "BZFlag"
       "HAVE__STRNICMP",
       "HAVE__VSNPRINTF"
     }
+    includedirs {
+      "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include",
+      "MSVC"
+    }
+    libdirs { "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/lib" }
+    characterset "MBCS"
 
   filter "system:macosx"
     defines "HAVE_CGLGETCURRENTCONTEXT"
@@ -229,34 +235,29 @@ workspace "BZFlag"
       "INSTALL_LIB_DIR="..correctquotes("/usr/local/lib/bzflag"),
       "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
     }
-
-  filter "action:xcode"
-    defines {
-      "BZ_COMPILER="..correctquotes("Xcode"),
-      "BZ_COMPILER_VERSION="..correctquotes("${XCODE_VERSION_ACTUAL}")
-    }
-  filter "action:gmake"
-    defines "BZ_COMPILER=\"gcc\""
   filter { }
 
   if _OS == "windows" then
-    buildosstring = "Win"
+    defines { "BZ_BUILD_OS="..correctquotes("Win") }
   elseif _OS == "macosx" then
-    buildosstring = "Mac"
+    defines { "BZ_BUILD_OS="..correctquotes("Mac") }
   elseif _OS == "linux" then
-    buildosstring = "Linux"
+    defines { "BZ_BUILD_OS="..correctquotes("Linux") }
   elseif _OS == "bsd" then
-    buildosstring = "BSD"
+    defines { "BZ_BUILD_OS="..correctquotes("BSD") }
   elseif _OS == "solaris" then
-    buildosstring = "Solaris"
+    defines { "BZ_BUILD_OS="..correctquotes("Solaris") }
   else
-    buildosstring = "Unknown"
+    defines { "BZ_BUILD_OS="..correctquotes("Unknown") }
   end
-  filter "configurations:*64"
-    defines { "BZ_BUILD_OS="..correctquotes(buildosstring.."64") }
-  filter "configurations:*32"
-    defines { "BZ_BUILD_OS="..correctquotes(buildosstring.."32") }
-  filter { }
+
+  if _ACTION then
+    filter "action:vs*"
+      defines { "BZ_COMPILER_VS_VERSION="..correctquotes(string.sub(_ACTION, 3)) }
+    filter "action:xcode"
+      defines { "BZ_COMPILER_XCODE_VERSION="..correctquotes("Xcode${XCODE_VERSION_ACTUAL}") }
+    filter { }
+  end
 
   -- set up the build (build order/dependencies are honored notwithstanding the
   -- listed order here; this order is how we want the projects to show up in

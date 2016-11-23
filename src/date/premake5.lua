@@ -3,7 +3,7 @@ project "date"
   files { "*.cxx", "*.h" }
 
   filter { "system:macosx", "options:not disable-client" }
-    prebuildcommands { -- FIXME this is really client-related, not date, but
+    prebuildcommands { -- FIXME: this is really client-related, not date, but
 		       -- it runs too late to generate the file; when premake
 		       -- supports the "None" project kind for Xcode, create
 		       -- one and move this to that

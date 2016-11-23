@@ -44,6 +44,27 @@ project "bzflag"
     dependson "bzadmin"
   end
 
+  filter "system:windows"
+    includedirs "$(DXSDK_DIR)/include"
+    libdirs "$(DXSDK_DIR)/lib/$(PlatformShortName)"
+    removelinks "z"
+    links { "dsound", "glu32", "opengl32", "regex", "winmm", "ws2_32", "zlib" }
+    postbuildcommands {
+      "if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
+      "copy \"$(OutDir)bzflag.exe\" ..\\bin_$(Configuration)_$(Platform)\\",
+      "copy \"$(BZ_DEPS)\\output-$(Configuration)-$(PlatformShortName)\\bin\\*.dll\" ..\\bin_$(Configuration)_$(Platform)\\"
+    }
+  filter { "system:windows", "configurations:Release" }
+    removelinks "curl"
+    links "libcurl"
+  filter { "system:windows", "configurations:Debug" }
+    removelinks { "cares", "curl" }
+    links { "caresd", "libcurl_debug" }
+  filter { "system:windows",
+	   "options:not with-sdl=no",
+	   "options:not with-sdl=1" }
+    links { "SDL2", "SDL2main" }
+
   filter "system:macosx"
     files "../../Xcode/BZFlag-Info.plist"
     links { "Cocoa.framework", "OpenGL.framework" }

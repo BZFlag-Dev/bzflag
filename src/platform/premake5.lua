@@ -5,15 +5,13 @@ project "platform"
   files {
     "BzfDisplay.cxx",
     "BzfJoystick.cxx",
-    "BzfVisual.cxx",
     "BzfMedia.cxx",
+    "BzfVisual.cxx",
     "BzfWindow.cxx",
     "PlatformFactory.cxx",
     "wave.cxx",
     "wave.h"
   }
-  filter { "system:not windows", "options:not with-sdl=no" }
-    removefiles { "wave.cxx", "wave.h" }
 
   -- SDL
   filter "options:not with-sdl=no"
@@ -24,7 +22,8 @@ project "platform"
       "SDLPlatformFactory.h",
       "SDLMedia.cxx",
       "SDLMedia.h"
-  }
+    }
+    removefiles { "wave.cxx", "wave.h" }
   filter { "options:not with-sdl=no", "options:not with-sdl=1" }
     files {
       "SDL2Display.cxx",
@@ -33,7 +32,7 @@ project "platform"
       "SDL2Visual.h",
       "SDL2Window.cxx",
       "SDL2Window.h"
-  }
+    }
   filter "options:with-sdl=1"
     files { "SDLDisplay.cxx", "SDLDisplay.h" }
 
@@ -54,6 +53,22 @@ project "platform"
       "WinWindow.h",
       "WinMedia.cxx",
       "WinMedia.h"
+    }
+  filter { "system:windows", "options:not with-sdl=no" }
+    files { "wave.cxx", "wave.h" } -- add them back
+    removefiles { -- windows uses a combination of SDL2 and native stuff
+      "SDLPlatformFactory.cxx",
+      "SDLPlatformFactory.h",
+      "SDLMedia.cxx",
+      "SDLMedia.h",
+      "WinDisplay.cxx",
+      "WinDisplay.h",
+      "WinJoystick.cxx",
+      "WinJoystick.h",
+      "WinVisual.cxx",
+      "WinVisual.h",
+      "WinWindow.cxx",
+      "WinWindow.h"
     }
 
   -- macOS
