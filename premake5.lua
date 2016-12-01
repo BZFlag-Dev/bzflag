@@ -15,10 +15,12 @@
 
 TODO:
 
+* finish support for windows (mostly man page conversion, installer, and icon)
 * install/uninstall actions (for gmake only, with support for --prefix)
-* finish support for windows (mostly man page conversion and installer stuff)
-* get rid of "lib" in front of plugin names in some consistent way
 * support for solaris and bsd, perhaps just under SDL 1.2/2
+* restrict options on platforms that don't support all of them
+* get rid of "lib" in front of plugin names in some consistent way
+* go through macros and delete unused ones
 * bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 
 ]]
@@ -126,7 +128,7 @@ workspace "BZFlag"
     "HAVE_STD__MAX",
     "HAVE_ARES_LIBRARY_INIT"
   }
-  includedirs { "include/" }
+  includedirs "include/"
 
   filter "system:windows"
     defines {
@@ -142,13 +144,13 @@ workspace "BZFlag"
       "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include",
       "MSVC"
     }
-    libdirs { "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/lib" }
+    libdirs "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/lib"
     characterset "MBCS"
 
   filter "system:macosx"
     defines "HAVE_CGLGETCURRENTCONTEXT"
-    includedirs { "/usr/local/include" } -- for c-ares
-    libdirs { "/usr/local/lib" } -- same
+    includedirs "/usr/local/include" -- for c-ares
+    libdirs "/usr/local/lib" -- same
     frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
