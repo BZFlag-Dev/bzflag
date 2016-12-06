@@ -877,8 +877,7 @@ void publicize()
     // list server initialization
     for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); ++i) {
       listServerLink = new ListServerLink(i->c_str(),
-	clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups,
-	(long)ceil(ListServerReAddTime * 2));	/* recheck dns every other re-add */
+	clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
       listServerLinksCount++;
     }
   } else {

@@ -37,8 +37,7 @@ const int ListServerLink::NotConnected = -1;
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle,
-			       std::string _advertiseGroups,
-			       long dnsCache)
+			       std::string _advertiseGroups)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -46,7 +45,6 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   setURLwithNonce(listServerURL);
   setUserAgent(bzfsUserAgent);
-  setDNSCachingTime(dnsCache);
   setTimeout(10);
 
   publiclyDisconnected = false;
