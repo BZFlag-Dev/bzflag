@@ -77,8 +77,9 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
-call "$(ProjectDir)makeHTML.bat"</Command>
+      <Command>copy "$(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe" "..\..\man\"
+call "$(ProjectDir)makeHTML.bat"
+</Command>
     </PreBuildEvent>
     <Midl>
       <TypeLibraryName>$(OutDir)makehtml.tlb</TypeLibraryName>
@@ -87,17 +88,17 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
+      <Command>if not exist "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs" mkdir "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs"
+copy "$(SolutionDir)..\man\*.html" "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
-call "$(ProjectDir)makeHTML.bat"</Command>
+      <Command>copy "$(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe" "..\..\man\"
+call "$(ProjectDir)makeHTML.bat"
+</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -107,17 +108,17 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
+      <Command>if not exist "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs" mkdir "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs"
+copy "$(SolutionDir)..\man\*.html" "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe  ..\..\man\
-call "$(ProjectDir)makeHTML.bat"</Command>
+      <Command>copy "$(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe" "..\..\man\"
+call "$(ProjectDir)makeHTML.bat"
+</Command>
     </PreBuildEvent>
     <Midl>
       <TypeLibraryName>$(OutDir)makehtml.tlb</TypeLibraryName>
@@ -126,17 +127,17 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
+      <Command>if not exist "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs" mkdir "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs"
+copy "$(SolutionDir)..\man\*.html" "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <PreBuildEvent>
       <Message>building HTML</Message>
-      <Command>copy $(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe ..\..\man\
-call "$(ProjectDir)makeHTML.bat"</Command>
+      <Command>copy "$(SolutionDir)build\man2html_$(Platform)_$(Configuration)\*.exe" "..\..\man\"
+call "$(ProjectDir)makeHTML.bat"
+</Command>
     </PreBuildEvent>
     <Midl>
       <TargetEnvironment>X64</TargetEnvironment>
@@ -146,9 +147,8 @@ call "$(ProjectDir)makeHTML.bat"</Command>
     </Midl>
     <PostBuildEvent>
       <Message>Copying HTML to Docs Dir</Message>
-      <Command>mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)
-mkdir $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs
-copy $(SolutionDir)..\man\*.html $(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\
+      <Command>if not exist "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs" mkdir "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs"
+copy "$(SolutionDir)..\man\*.html" "$(SolutionDir)..\bin_$(Configuration)_$(Platform)\docs\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

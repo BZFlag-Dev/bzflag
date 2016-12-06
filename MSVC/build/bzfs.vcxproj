@@ -118,10 +118,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -167,10 +167,10 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -220,10 +220,10 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -272,10 +272,10 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(OutDir)*.lib ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(OutDir)*.lib" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
