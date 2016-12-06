@@ -563,7 +563,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   buf = nboUnpackUShort(buf, code);
 
 //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-  if (len > MaxPacketLen)
+  if (len > MaxPacketLen - 4)
     return -1;
   if (len > 0)
     rlen = recv(fd, (char*)msg, int(len), 0);

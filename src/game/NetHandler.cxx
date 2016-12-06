@@ -134,7 +134,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   uint16_t len;
   uint16_t code;
   while (true) {
-    n = recvfrom(udpSocket, buffer, MaxPacketLen, 0, (struct sockaddr *) uaddr,
+    n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
 		 &recvlen);
     if ((n < 0) || (n >= 4))
       break;
@@ -147,6 +147,10 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   const void *buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+
+  if (len > MaxUDPPacketLen - 4)
+    return -1;
+
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
 //    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (n == 6 && len == 2 && code == MsgPingCodeRequest)

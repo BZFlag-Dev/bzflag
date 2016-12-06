@@ -45,6 +45,7 @@ const char* const	DefaultMOTDServer = "https://bzflag.org/motd.php";
 
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
+const int		MaxUDPPacketLen = 68;
 
 // the banned tag
 const char* const	BanRefusalString = "REFUSED:";
