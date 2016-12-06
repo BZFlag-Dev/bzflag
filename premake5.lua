@@ -11,19 +11,39 @@
 -- IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
 -- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 
---[[
-
-TODO:
-
-* finish support for windows (mostly man page conversion, installer, and icon)
-* install/uninstall actions (for gmake only, with support for --prefix)
-* support for solaris and bsd, perhaps just under SDL 1.2/2
-* restrict options on platforms that don't support all of them
-* get rid of "lib" in front of plugin names in some consistent way
-* go through macros and delete unused ones
-* bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
-
-]]
+-- To the greatest extent possible, please use the following order of options
+-- when adding projects to the configuration:
+--
+-- kind
+-- files
+-- defines
+-- includedirs
+-- buildoptions
+-- libdirs
+-- frameworkdirs
+-- linkoptions
+-- links
+-- dependson
+-- <various other settings>
+-- prebuildcommands
+-- postbuildcommands
+--
+-- Generic (unfiltered) options should be specified first, followed by any
+-- configuration-specific, system-specific, or otherwise filtered options.
+-- Arguments to these options should be given in alphabetical order whenever
+-- possible. For links, try to list local libraries alphabetically followed
+-- by system libraries alphabetically, but because the order of libraries
+-- matters to some linkers, we will sometimes have to deviate from this.
+--
+-- TODO:
+--
+-- finish support for windows (mostly man page conversion, installer, and icon)
+-- install/uninstall actions (for gmake only, with support for --prefix)
+-- support for solaris and bsd, perhaps just under SDL 1.2/2
+-- restrict options on platforms that don't support all of them
+-- get rid of "lib" in front of plugin names in some consistent way
+-- go through macros and delete unused ones (watch out for MSVC built-ins)
+-- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 
 -- utility
 function correctquotes (quotestring)
@@ -130,6 +150,12 @@ workspace "BZFlag"
   }
   includedirs "include/"
 
+  filter "system:not windows"
+    defines {
+      "INSTALL_LIB_DIR="..correctquotes("/usr/local/lib/bzflag"),
+      "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
+    }
+
   filter "system:windows"
     defines {
       "HAVE_WAITFORSINGLEOBJECT",
@@ -158,8 +184,6 @@ workspace "BZFlag"
 
   filter "system:linux"
     defines {
-      "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
-      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\"",
       "HALF_RATE_AUDIO",
       "HAVE_FF_EFFECT_DIRECTIONAL",
       "HAVE_FF_EFFECT_RUMBLE",
@@ -230,12 +254,6 @@ workspace "BZFlag"
       "LIBCURL_PROTOCOL_TFTP",
       "STDC_HEADERS",
       "_REENTRANT"
-    }
-
-  filter "system:not windows"
-    defines {
-      "INSTALL_LIB_DIR="..correctquotes("/usr/local/lib/bzflag"),
-      "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
     }
   filter { }
 
