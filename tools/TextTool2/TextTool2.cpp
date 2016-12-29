@@ -57,7 +57,7 @@ inline std::string stripHyphen(std::string stripString) {
   while (stripString.find("-") != std::string::npos)
     stripString.erase(stripString.find("-"), 1);
 
-    return stripString;
+  return stripString;
 }
 
 struct CharInfo {
