@@ -44,6 +44,7 @@
 -- get rid of "lib" in front of plugin names in some consistent way
 -- go through macros and delete unused ones (watch out for MSVC built-ins)
 -- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
+-- CLANG_CXX_LANGUAGE_STANDARD replaced by flags "C++11" when premake releases
 
 -- utility
 function correctquotes (quotestring)
