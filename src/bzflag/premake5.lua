@@ -45,7 +45,7 @@ project "bzflag"
   end
 
   filter "system:windows"
-    includedirs "$(DXSDK_DIR)/include"
+    sysincludedirs "$(DXSDK_DIR)/include"
     libdirs "$(DXSDK_DIR)/lib/$(PlatformShortName)"
     removelinks "z"
     links { "dsound", "glu32", "opengl32", "regex", "winmm", "ws2_32", "zlib" }

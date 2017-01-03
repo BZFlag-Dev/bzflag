@@ -18,6 +18,7 @@
 -- files
 -- defines
 -- includedirs
+-- sysincludedirs
 -- buildoptions
 -- libdirs
 -- frameworkdirs
@@ -167,7 +168,7 @@ workspace "BZFlag"
       "HAVE__STRNICMP",
       "HAVE__VSNPRINTF"
     }
-    includedirs {
+    sysincludedirs {
       "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include",
       "MSVC"
     }
@@ -176,7 +177,7 @@ workspace "BZFlag"
 
   filter "system:macosx"
     defines "HAVE_CGLGETCURRENTCONTEXT"
-    includedirs "/usr/local/include" -- for c-ares
+    sysincludedirs "/usr/local/include" -- for c-ares
     libdirs "/usr/local/lib" -- same
     frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
