@@ -179,10 +179,11 @@ workspace "BZFlag"
     defines "HAVE_CGLGETCURRENTCONTEXT"
     sysincludedirs "/usr/local/include" -- for c-ares
     libdirs "/usr/local/lib" -- same
-    frameworkdirs { "$(LOCAL_LIBRARY_DIR)/Frameworks", "/Library/Frameworks" }
+    frameworkdirs "$(LOCAL_LIBRARY_DIR)/Frameworks"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
-			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7" }
+			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
+			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks" }
 
   filter "system:linux"
     defines {
