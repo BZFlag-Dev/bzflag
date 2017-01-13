@@ -67,7 +67,8 @@ for _, pluginname in ipairs(pluginnames) do
 
     filter "system:macosx"
       linkoptions "-undefined dynamic_lookup"
-    filter { "system:macosx", "options:not disable-client" }
+    filter { }
+    if _OS == "macosx" and not _OPTIONS["disable-client"] then
 --      project "bzflag" -- the .app needs to bundle the plugins with it
 --	dependson(pluginname)
       -- FIXME: workaround for a premake Xcode bug (remove when it's fixed and
@@ -79,7 +80,7 @@ for _, pluginname in ipairs(pluginnames) do
       project "bzflag"
 	dependson "build_plugins"
       -- end workaround
-    filter { }
+    end
 end
 
 -- set up a post-build phase to copy the plugins into the application on macOS
