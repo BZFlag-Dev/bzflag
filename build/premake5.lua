@@ -53,7 +53,6 @@
 --
 -- Windows:
 -- finish support for windows (mostly man page conversion, installer, and file destinations)
--- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 
 -- utility
 function correctquotes (quotestring)

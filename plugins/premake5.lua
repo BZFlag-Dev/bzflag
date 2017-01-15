@@ -35,6 +35,8 @@ pluginnames = {
   "wwzones"
 }
 
+group "plugins"
+
 -- set up the plugin_utils project
 include "plugin_utils"
 
@@ -54,10 +56,9 @@ for _, pluginname in ipairs(pluginnames) do
 	"_USRDLL",
 	pluginname.."_EXPORTS"
       }
-      files { pluginname.."/"..pluginname..".def" }
       libdirs "../build/bin/$(Configuration)" -- FIXME: any better way?
       links "bzfs.lib" -- ".lib" required to distinguish from the executable
-	dependson "bzfs"
+      dependson "bzfs"
       postbuildcommands {
 	"if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
 	"if not exist ..\\bin_$(Configuration)_$(Platform)\\plugins mkdir ..\\bin_$(Configuration)_$(Platform)\\plugins",
@@ -96,3 +97,5 @@ if _OS == "macosx" and not _OPTIONS["disable-client"] then
       }
     end
 end
+
+group ""
