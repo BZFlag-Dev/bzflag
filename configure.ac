@@ -1002,8 +1002,6 @@ AC_SUBST(LIBDIR)
 AC_CONFIG_FILES([
 	MSVC/Makefile
 	MSVC/build/Makefile
-	Xcode/Makefile
-	Xcode/BZFlag.xcodeproj/Makefile
 	Makefile
 	bzflag.spec
 	data/Makefile

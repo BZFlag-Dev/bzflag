@@ -38,14 +38,22 @@
 --
 -- TODO:
 --
--- finish support for windows (mostly man page conversion, installer, and icon)
+-- general:
+--
+-- various/several:
+-- get rid of "lib" in front of plugin names in some consistent way
 -- install/uninstall actions (for gmake only, with support for --prefix)
 -- support for solaris and bsd, perhaps just under SDL 1.2/2
--- restrict options on platforms that don't support all of them
--- get rid of "lib" in front of plugin names in some consistent way
 -- go through macros and delete unused ones (watch out for MSVC built-ins)
--- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
+-- clean action to delete build files
+--
+-- macOS:
 -- CLANG_CXX_LANGUAGE_STANDARD replaced by flags "C++11" when premake releases
+--
+-- Windows:
+-- finish support for windows (mostly man page conversion, installer, and icon)
+-- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
+--
 
 -- utility
 function correctquotes (quotestring)
@@ -98,7 +106,6 @@ workspace "BZFlag"
   -- set up overall workspace settings
   language "C++"
   warnings "Default"
-  basedir "build"
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
   else
@@ -150,7 +157,7 @@ workspace "BZFlag"
     "HAVE_STD__MAX",
     "HAVE_ARES_LIBRARY_INIT"
   }
-  includedirs "include/"
+  includedirs "../include/"
 
   filter "system:not windows"
     defines {
@@ -170,7 +177,7 @@ workspace "BZFlag"
     }
     sysincludedirs {
       "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include",
-      "MSVC"
+      "../MSVC"
     }
     libdirs "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/lib"
     characterset "MBCS"
@@ -285,18 +292,18 @@ workspace "BZFlag"
   -- set up the build (build order/dependencies are honored notwithstanding the
   -- listed order here; this order is how we want the projects to show up in
   -- the IDEs since the startproject option isn't fully supported)
-  if not _OPTIONS["disable-client"] then include "src/bzflag" end
-  include "src/bzfs"
-  if not _OPTIONS["disable-bzadmin"] then include "src/bzadmin" end
-  if not _OPTIONS["disable-client"] then include "src/3D" end
-  include "src/common"
-  include "src/date"
-  include "src/game"
-  if not _OPTIONS["disable-client"] then include "src/geometry" end
-  if not _OPTIONS["disable-client"] then include "src/mediafile" end
-  include "src/net"
-  include "src/obstacle"
-  if not _OPTIONS["disable-client"] then include "src/ogl" end
-  if not _OPTIONS["disable-client"] then include "src/platform" end
-  if not _OPTIONS["disable-client"] then include "src/scene" end
-  if not _OPTIONS["disable-plugins"] then include "plugins" end
+  if not _OPTIONS["disable-client"] then include "../src/bzflag" end
+  include "../src/bzfs"
+  if not _OPTIONS["disable-bzadmin"] then include "../src/bzadmin" end
+  if not _OPTIONS["disable-client"] then include "../src/3D" end
+  include "../src/common"
+  include "../src/date"
+  include "../src/game"
+  if not _OPTIONS["disable-client"] then include "../src/geometry" end
+  if not _OPTIONS["disable-client"] then include "../src/mediafile" end
+  include "../src/net"
+  include "../src/obstacle"
+  if not _OPTIONS["disable-client"] then include "../src/ogl" end
+  if not _OPTIONS["disable-client"] then include "../src/platform" end
+  if not _OPTIONS["disable-client"] then include "../src/scene" end
+  if not _OPTIONS["disable-plugins"] then include "../plugins" end

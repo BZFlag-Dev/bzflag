@@ -41,5 +41,5 @@ project "date"
       "<key>NSHumanReadableCopyright</key>",
       "<string>Copyright (c) 1993-2016 Tim Riker</string>",
       "</dict>",
-      "</plist>\" > ../Xcode/BZFlag-Info.plist";
+      "</plist>\" > BZFlag-Info.plist";
     }

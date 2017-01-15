@@ -66,7 +66,7 @@ project "bzflag"
     links { "SDL2", "SDL2main" }
 
   filter "system:macosx"
-    files "../../Xcode/BZFlag-Info.plist"
+    files "../../build/BZFlag-Info.plist"
     links { "Cocoa.framework", "OpenGL.framework" }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
@@ -91,7 +91,7 @@ project "bzflag"
       "cp ../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../Xcode/BZFlag.icns ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp BZFlag.icns ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
     }
   filter { "system:macosx",
