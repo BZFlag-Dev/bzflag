@@ -45,6 +45,10 @@ project "bzflag"
   end
 
   filter "system:windows"
+    files {
+      "../../build/bzflag.ico",
+      "../../build/bzflag.rc"
+    }
     libdirs "$(DXSDK_DIR)/lib/$(PlatformShortName)"
     removelinks "z"
     links { "dsound", "glu32", "opengl32", "regex", "winmm", "ws2_32", "zlib" }
