@@ -72,11 +72,8 @@ void TimeLimit::Event ( bz_EventData *eventData )
   switch (eventData->eventType)
   {
     case bz_ePlayerJoinEvent: {
-	    bz_APIIntList *playerList = bz_newIntList();
-	    bz_getPlayerIndexList (playerList);
-
 	    // if it's the first player that joins, then reset the time to default
-	    if ( playerList->size() == 1 && bz_isTimeManualStart() && !bz_isCountDownActive()  && !bz_isCountDownInProgress()) {
+	    if ( bz_getPlayerCount() == 1 && bz_isTimeManualStart() && !bz_isCountDownActive()  && !bz_isCountDownInProgress()) {
 	      bz_setTimeLimit(saveTimeLimit);
 	    }
     }
