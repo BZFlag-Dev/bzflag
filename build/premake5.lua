@@ -46,14 +46,14 @@
 -- support for solaris and bsd, perhaps just under SDL 1.2/2
 -- go through macros and delete unused ones (watch out for MSVC built-ins)
 -- clean action to delete build files
+-- remove remnants of old build system
 --
 -- macOS:
 -- CLANG_CXX_LANGUAGE_STANDARD replaced by flags "C++11" when premake releases
 --
 -- Windows:
--- finish support for windows (mostly man page conversion, installer, and icon)
+-- finish support for windows (mostly man page conversion, installer, and file destinations)
 -- bzfsAPI.h:37 to #define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
---
 
 -- utility
 function correctquotes (quotestring)
@@ -92,6 +92,56 @@ workspace "BZFlag"
       { "1", "use SDL 1.2" },
       { "no", "do not use SDL" }
     }
+  }
+
+  -- custom actions
+  newaction {
+    ["trigger"] = "clean",
+    ["description"] = "Delete generated project and build files",
+    ["onStart"] =
+      function()
+	print "Cleaning source tree..."
+      end,
+    ["execute"] =
+      function()
+	local cleanFiles = {
+	  -- generic files
+	  ["obj"] = "directory",
+	  ["bin"] = "directory",
+
+	  -- Windows Files
+	  ["..\\bin_Debug_Win32"] = "directory",
+	  ["..\\bin_Release_Win32"] = "directory",
+	  ["..\\bin_Debug_x64"] = "directory",
+	  ["..\\bin_Release_x64"] = "directory",
+	  ["ipch"] = "directory",
+	  ["man2html.exe"] = "file",
+	  ["*.sln"] = "file",
+	  ["*.vcxproj"] = "file",
+	  ["*.vcxproj.*"] = "file",
+	  ["*.html"] = "file",
+	  ["*.sdf"] = "file",
+	  ["*.suo"] = "hiddenFile"
+	}
+
+	-- using the {DELETE} token in premake doesn't give us quiet or forced file
+	-- deletion, so we need to implement platform-specific deletion ourselves
+	for fileName, fileType in pairs(cleanFiles) do
+	  if _OS == "windows" then
+	    if fileType == "directory" then
+	      os.execute("IF EXIST \""..fileName.."\" ( RMDIR /S /Q \""..fileName.."\" )")
+	    elseif fileType == "file" then
+	      os.execute("IF EXIST \""..fileName.."\" ( DEL \""..fileName.."\" )")
+	    elseif fileType == "hiddenFile" then
+	      os.execute("IF EXIST \""..fileName.."\" ( DEL /A:H \""..fileName.."\" )")
+	    end
+	  end
+	end
+      end,
+    ["onEnd"] =
+      function()
+	print "Done."
+      end
   }
 
   -- set up configurations
