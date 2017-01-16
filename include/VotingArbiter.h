@@ -366,6 +366,15 @@ inline TimeKeeper VotingArbiter::getStartTime(void) const
   return _startTime;
 }
 
+struct PollOption {
+  std::string pollParameters;
+  bz_CustomPollOptionHandler* pollHandler;
+};
+extern std::map<std::string, PollOption> customPollOptions;
+
+void registerCustomPollOption ( const char* object, const char* parameters, bz_CustomPollOptionHandler *handler );
+void removeCustomPollOption ( const char* object );
+
 #else
 class VotingArbiter;
 #endif

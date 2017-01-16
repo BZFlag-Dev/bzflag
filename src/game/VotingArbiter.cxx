@@ -336,6 +336,28 @@ bool VotingArbiter::retractVote(const std::string &player)
   return _votingBooth->retractVote(TextUtils::tolower(player));
 }
 
+std::map<std::string, PollOption> customPollOptions;
+
+void registerCustomPollOption ( const char* object, const char* parameters, bz_CustomPollOptionHandler *handler )
+{
+    PollOption o;
+    o.pollParameters = parameters;
+    o.pollHandler = handler;
+
+    std::string objectName = object;
+
+    customPollOptions[TextUtils::tolower(objectName)] = o;
+}
+
+void removeCustomPollOption ( const char* object )
+{
+    std::string objectName = object;
+    objectName = TextUtils::tolower(objectName);
+
+    if (customPollOptions.find(objectName) != customPollOptions.end())
+        customPollOptions.erase(customPollOptions.find(objectName));
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

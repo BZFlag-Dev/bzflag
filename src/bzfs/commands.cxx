@@ -2866,7 +2866,8 @@ bool PollCommand::operator() (const char	 *message,
 
   /* handle subcommands */
 
-  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset")) {
+  bool customPollOption = customPollOptions.find(cmd) != customPollOptions.end();
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset") || customPollOption) {
     std::string target;
     std::string targetIP = "";
 
@@ -2951,8 +2952,13 @@ bool PollCommand::operator() (const char	 *message,
       return true;
     }
 
-    if ((cmd != "set") && (cmd != "flagreset")) {
-      // all polls that are not set or flagreset polls take a player name
+    if (customPollOption && !customPollOptions[cmd].pollHandler->PollOpen(t, cmd, target))
+    {
+      return true;
+    }
+
+    if ((cmd != "set") && (cmd != "flagreset") && !customPollOption) {
+      // kick, kill, and ban polls take a player name
 
       /* make sure the requested player is actually here */
       int v = GameKeeper::Player::getPlayerIDByName(target);
@@ -3022,7 +3028,9 @@ bool PollCommand::operator() (const char	 *message,
 
     /* create and announce the new poll */
     bool canDo = false;
-    if (cmd == "ban") {
+    if (customPollOption) {
+      canDo = (arbiter->poll(target, t, cmd));
+    } else if (cmd == "ban") {
       canDo = (arbiter->pollToBan(target, t, targetIP));
     } else if (cmd == "kick") {
       canDo = (arbiter->pollToKick(target, t, targetIP));
@@ -3102,6 +3110,13 @@ bool PollCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, "    or /poll set variable value");
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
+
+    if (!customPollOptions.empty()) {
+      for (auto pollOption : customPollOptions) {
+        snprintf(reply, MessageLen, "    or /poll %s %s", pollOption.first.c_str(), pollOption.second.pollParameters.c_str());
+        sendMessage(ServerPlayer, t, reply);
+      }
+    }
 
   } /* end handling of poll subcommands */
 

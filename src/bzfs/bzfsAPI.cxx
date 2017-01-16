@@ -2462,6 +2462,24 @@ BZF_API bz_APIStringList *bz_getHelpTopic(std::string name)
   return new bz_APIStringList(*clOptions->textChunker.getTextChunk(name));
 }
 
+BZF_API bool bz_registerCustomPollOption ( const char* option, const char* parameters, bz_CustomPollOptionHandler *handler )
+{
+  if (!option || !handler)
+    return false;
+
+  registerCustomPollOption(option, parameters, handler);
+  return true;
+}
+
+BZF_API bool bz_removeCustomPollOption ( const char* option )
+{
+  if (!option)
+    return false;
+
+  removeCustomPollOption(option);
+  return true;
+}
+
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
 {
   if (!command || !handler)
