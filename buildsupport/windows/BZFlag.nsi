@@ -72,11 +72,11 @@
   ; Installer output file and default installation folder
   !ifdef BUILD_64
     Name "BZFlag ${VERSION} ${BITNESS}"
-    OutFile "..\..\..\bin_Release_x64\bzflag-${VERSION}_${BITNESS}.exe"
+    OutFile "..\..\bin_Release_x64\bzflag-${VERSION}_${BITNESS}.exe"
     InstallDir "$PROGRAMFILES64\BZFlag ${VERSION} ${BITNESS}"
   !else
     Name "BZFlag ${VERSION}"
-    OutFile "..\..\..\bin_Release_Win32\bzflag-${VERSION}.exe"
+    OutFile "..\..\bin_Release_Win32\bzflag-${VERSION}.exe"
     InstallDir "$PROGRAMFILES32\BZFlag ${VERSION}"
   !endif
 
@@ -96,7 +96,7 @@
 ;Interface Settings
 
   ;Icons
-  !define MUI_ICON ..\..\..\MSVC\bzflag.ico
+  !define MUI_ICON bzflag.ico
   !define MUI_UNICON uninstall.ico
 
   ;Bitmaps
@@ -181,43 +181,43 @@ Section "!BZFlag (Required)" BZFlag
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_Release_${PLATFORM}\bzflag.exe
+  File ..\..\bin_Release_${PLATFORM}\bzflag.exe
   
   ; make the data dir
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.png
+  File ..\..\data\*.png
 
   ; make the fonts dir
   SetOutPath $INSTDIR\data\fonts
-  File ..\..\..\data\fonts\*.png
-  File ..\..\..\data\fonts\*.fmt
-  File ..\..\..\data\fonts\*.License
-  File ..\..\..\data\fonts\README
+  File ..\..\data\fonts\*.png
+  File ..\..\data\fonts\*.fmt
+  File ..\..\data\fonts\*.License
+  File ..\..\data\fonts\README
 
   ; make the l10n dir
   SetOutPath $INSTDIR\data\l10n
-  File ..\..\..\data\l10n\*.po
-  File ..\..\..\data\l10n\*.txt
+  File ..\..\data\l10n\*.po
+  File ..\..\data\l10n\*.txt
 
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.png
+  File ..\..\data\*.png
 
   ; make the sounds dir
   SetOutPath $INSTDIR\data
-  File ..\..\..\data\*.wav
+  File ..\..\data\*.wav
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\ReadMe.win32.html
-  File ..\..\..\COPYING
-  File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
+  File ReadMe.win32.html
+  File ..\..\COPYING
+  File ..\..\bin_Release_${PLATFORM}\docs\bzflag.html
 
   ; Add some DLL files
   SetOutPath $INSTDIR
-  File ..\..\..\bin_Release_${PLATFORM}\libcurl.dll
-  File ..\..\..\bin_Release_${PLATFORM}\zlib1.dll
-  File ..\..\..\bin_Release_${PLATFORM}\cares.dll
-  File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
+  File ..\..\bin_Release_${PLATFORM}\libcurl.dll
+  File ..\..\bin_Release_${PLATFORM}\zlib1.dll
+  File ..\..\bin_Release_${PLATFORM}\cares.dll
+  File ..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script. The files can be found here:
@@ -277,11 +277,11 @@ Section "BZAdmin" BZAdmin
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
   ; Put file there
-  File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
+  File ..\..\bin_Release_${PLATFORM}\bzadmin.exe
   
   ; Add to the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
+  File ..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
   
@@ -305,19 +305,19 @@ SectionGroup "BZFlag Server" BZFlagServer
     ; Set output path to the installation directory.
     SetOutPath $INSTDIR
     ; Put file there
-    File ..\..\..\bin_Release_${PLATFORM}\bzfs.exe
+    File ..\..\bin_Release_${PLATFORM}\bzfs.exe
 
     ; add to the data dir
     SetOutPath $INSTDIR\misc
-    File ..\..\..\misc\maps\hix.bzw
-    File ..\..\..\misc\bzfs.conf
-    File ..\..\..\misc\groups.conf
-    File ..\..\..\misc\vars.txt
+    File ..\..\misc\maps\hix.bzw
+    File ..\..\misc\bzfs.conf
+    File ..\..\misc\groups.conf
+    File ..\..\misc\vars.txt
 
     ; Add to the doc dir
     SetOutPath $INSTDIR\doc
-    File ..\..\..\bin_Release_${PLATFORM}\docs\bzfs.html
-    File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
+    File ..\..\bin_Release_${PLATFORM}\docs\bzfs.html
+    File ..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
@@ -343,18 +343,18 @@ SectionGroup "BZFlag Server" BZFlagServer
   Section "Plugins" BZFlagServer_Plugins
     ; Include the plugins
     SetOutPath $INSTDIR
-    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.dll
-    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.txt
-    File ..\..\..\bin_Release_${PLATFORM}\plugins\*.cfg
+    File ..\..\bin_Release_${PLATFORM}\plugins\*.dll
+    File ..\..\bin_Release_${PLATFORM}\plugins\*.txt
+    File ..\..\bin_Release_${PLATFORM}\plugins\*.cfg
   SectionEnd
 
   Section "Plugin API" BZFlagServer_PluginAPI
     ; Add the API library and header
     SetOutPath $INSTDIR\API
-    File ..\..\..\bin_Release_${PLATFORM}\bzfs.lib
-    File ..\..\..\bin_Release_${PLATFORM}\plugin_utils.lib
-    File ..\..\..\include\bzfsAPI.h
-    File ..\..\..\plugins\plugin_utils\*.h
+    File ..\..\bin_Release_${PLATFORM}\bzfs.lib
+    File ..\..\bin_Release_${PLATFORM}\plugin_utils.lib
+    File ..\..\include\bzfsAPI.h
+    File ..\..\plugins\plugin_utils\*.h
   SectionEnd
 SectionGroupEnd
 

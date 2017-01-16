@@ -15,6 +15,8 @@
 -- when adding projects to the configuration:
 --
 -- kind
+-- language
+-- include
 -- files
 -- defines
 -- includedirs
@@ -39,20 +41,17 @@
 -- TODO:
 --
 -- general:
---
--- various/several:
+-- figure out dependencies between executables (mac .app needs more than windows)
+-- refactor plugin scripts
 -- get rid of "lib" in front of plugin names in some consistent way
 -- install/uninstall actions (for gmake only, with support for --prefix)
 -- support for solaris and bsd, perhaps just under SDL 1.2/2
 -- go through macros and delete unused ones (watch out for MSVC built-ins)
--- clean action to delete build files
 -- remove remnants of old build system
+-- check FIXMEs
 --
 -- macOS:
 -- CLANG_CXX_LANGUAGE_STANDARD replaced by flags "C++11" when premake releases
---
--- Windows:
--- finish support for windows (mostly man page conversion, installer, and file destinations)
 
 -- utility
 function correctquotes (quotestring)
@@ -83,6 +82,10 @@ workspace "BZFlag"
     ["description"] = "do not build server plugins"
   }
   newoption {
+    ["trigger"] = "disable-installer",
+    ["description"] = "do not build the Windows installer"
+  }
+  newoption {
     ["trigger"] = "with-sdl",
     ["description"] = "build the client using SDL",
     ["value"] = "VERSION",
@@ -103,38 +106,12 @@ workspace "BZFlag"
       end,
     ["execute"] =
       function()
-	local cleanFiles = {
-	  -- generic files
-	  ["obj"] = "directory",
-	  ["bin"] = "directory",
-
-	  -- Windows Files
-	  ["..\\bin_Debug_Win32"] = "directory",
-	  ["..\\bin_Release_Win32"] = "directory",
-	  ["..\\bin_Debug_x64"] = "directory",
-	  ["..\\bin_Release_x64"] = "directory",
-	  ["ipch"] = "directory",
-	  ["man2html.exe"] = "file",
-	  ["*.sln"] = "file",
-	  ["*.vcxproj"] = "file",
-	  ["*.vcxproj.*"] = "file",
-	  ["*.html"] = "file",
-	  ["*.sdf"] = "file",
-	  ["*.suo"] = "hiddenFile"
-	}
-
-	-- using the {DELETE} token in premake doesn't give us quiet or forced file
-	-- deletion, so we need to implement platform-specific deletion ourselves
-	for fileName, fileType in pairs(cleanFiles) do
-	  if _OS == "windows" then
-	    if fileType == "directory" then
-	      os.execute("IF EXIST \""..fileName.."\" ( RMDIR /S /Q \""..fileName.."\" )")
-	    elseif fileType == "file" then
-	      os.execute("IF EXIST \""..fileName.."\" ( DEL \""..fileName.."\" )")
-	    elseif fileType == "hiddenFile" then
-	      os.execute("IF EXIST \""..fileName.."\" ( DEL /A:H \""..fileName.."\" )")
-	    end
-	  end
+	if _OS == "windows" then
+	  os.execute("IF EXIST build ( RMDIR /S /Q build )")
+	  os.execute("IF EXIST bin_Debug_Win32 ( RMDIR /S /Q bin_Debug_Win32 )")
+	  os.execute("IF EXIST bin_Release_Win32 ( RMDIR /S /Q bin_Release_Win32 )")
+	else
+	  os.execute("rm -rf build")
 	end
       end,
     ["onEnd"] =
@@ -155,6 +132,7 @@ workspace "BZFlag"
   -- set up overall workspace settings
   language "C++"
   warnings "Default"
+  basedir "build"
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
   else
@@ -206,7 +184,7 @@ workspace "BZFlag"
     "HAVE_STD__MAX",
     "HAVE_ARES_LIBRARY_INIT"
   }
-  includedirs "../include/"
+  includedirs "include/"
 
   filter "system:not windows"
     defines {
@@ -224,10 +202,8 @@ workspace "BZFlag"
       "HAVE__STRNICMP",
       "HAVE__VSNPRINTF"
     }
-    sysincludedirs {
-      "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include",
-      "../MSVC"
-    }
+    includedirs "buildsupport/Windows"
+    sysincludedirs "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/include"
     libdirs "$(BZ_DEPS)/output-$(Configuration)-$(PlatformShortName)/lib"
     characterset "MBCS"
 
@@ -341,18 +317,50 @@ workspace "BZFlag"
   -- set up the build (build order/dependencies are honored notwithstanding the
   -- listed order here; this order is how we want the projects to show up in
   -- the IDEs since the startproject option isn't fully supported)
-  if not _OPTIONS["disable-client"] then include "../src/bzflag" end
-  include "../src/bzfs"
-  if not _OPTIONS["disable-bzadmin"] then include "../src/bzadmin" end
-  if not _OPTIONS["disable-client"] then include "../src/3D" end
-  include "../src/common"
-  include "../src/date"
-  include "../src/game"
-  if not _OPTIONS["disable-client"] then include "../src/geometry" end
-  if not _OPTIONS["disable-client"] then include "../src/mediafile" end
-  include "../src/net"
-  include "../src/obstacle"
-  if not _OPTIONS["disable-client"] then include "../src/ogl" end
-  if not _OPTIONS["disable-client"] then include "../src/platform" end
-  if not _OPTIONS["disable-client"] then include "../src/scene" end
-  if not _OPTIONS["disable-plugins"] then include "../plugins" end
+  if not _OPTIONS["disable-client"] then include "src/bzflag" end
+  include "src/bzfs"
+  if not _OPTIONS["disable-bzadmin"] then include "src/bzadmin" end
+  if not _OPTIONS["disable-client"] then include "src/3D" end
+  include "src/common"
+  include "src/date"
+  include "src/game"
+  if not _OPTIONS["disable-client"] then include "src/geometry" end
+  if not _OPTIONS["disable-client"] then include "src/mediafile" end
+  include "src/net"
+  include "src/obstacle"
+  if not _OPTIONS["disable-client"] then include "src/ogl" end
+  if not _OPTIONS["disable-client"] then include "src/platform" end
+  if not _OPTIONS["disable-client"] then include "src/scene" end
+  if not _OPTIONS["disable-plugins"] then include "plugins" end
+
+  -- set up the installer on windows
+  if _OS == "windows" and
+     not _OPTIONS["disable-client"] and
+     not _OPTIONS["disable-bzadmin"] and
+     not _OPTIONS["disable-plugins"] and
+     not _OPTIONS["disable-installer"] then
+	project "man2html"
+	  kind "ConsoleApp"
+	  language "C"
+	  files "misc/man2html.c"
+
+	project "makehtml"
+	  kind "Utility"
+	  files "man/*.in"
+	  dependson "man2html"
+	  postbuildcommands {
+	    "if not exist \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\" mkdir \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\"",
+	    "$(OutDir)man2html.exe < ..\\man\\bzadmin.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzadmin.html\"",
+	    "$(OutDir)man2html.exe < ..\\man\\bzflag.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzflag.html\"",
+	    "$(OutDir)man2html.exe < ..\\man\\bzfs.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzfs.html\"",
+	    "$(OutDir)man2html.exe < ..\\man\\bzw.5.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzw.html\""
+	  }
+
+	project "installer"
+	  kind "Utility"
+	  files "buildsupport/windows/BZFlag.nsi"
+	  dependson { "bzflag", "makehtml" }
+	  filter "configurations:Release"
+	    postbuildcommands "\"$(ProgramFiles)\\nsis\\makensis.exe\" \"..\\buildsupport\\windows\\BZFlag.nsi\""
+	  filter { }
+  end

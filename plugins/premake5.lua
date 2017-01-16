@@ -63,7 +63,8 @@ for _, pluginname in ipairs(pluginnames) do
 	"if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
 	"if not exist ..\\bin_$(Configuration)_$(Platform)\\plugins mkdir ..\\bin_$(Configuration)_$(Platform)\\plugins",
 	"copy $(OutDir)"..pluginname..".dll ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
-	"copy ..\\plugins\\"..pluginname.."\\*.txt ..\\bin_$(Configuration)_$(Platform)\\plugins\\"
+	"copy ..\\plugins\\"..pluginname.."\\*.txt ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
+	"if exist ..\\plugins\\"..pluginname.."\\*.cfg ( copy ..\\plugins\\"..pluginname.."\\*.cfg ..\\bin_$(configuration)_$(Platform)\\plugins\\ )"
       }
 
     filter "system:macosx"
