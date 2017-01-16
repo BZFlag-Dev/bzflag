@@ -18,6 +18,7 @@
 #include <deque>
 #include <string>
 
+#include "bzfsAPI.h"
 #include "VotingBooth.h"
 #include "TimeKeeper.h"
 
@@ -66,7 +67,9 @@ private:
   std::string _pollee;
   std::string _polleeIP;
   std::string _action;
-  std::string _pollRequestor;
+
+  // The player ID of the person starting the poll
+  int _pollOrganizer;
 
   /* names of players who are allowed to vote */
   std::deque<std::string> _suffraged;
@@ -126,33 +129,33 @@ public:
    */
   inline std::string getPollTargetIP(void) const;
 
-  /** return a string representing the player who requested the poll
+  /** return the ID of the player who requested the poll
    */
-  inline std::string getPollRequestor(void) const;
+  inline int getPollOrganizer(void) const;
 
 
   /** attempt to activate/open a poll
    */
-  bool poll(const std::string &player, const std::string &playerRequesting, std::string action, std::string playerIP="");
+  bool poll(const std::string &victim, int playerRequestingID, std::string action, std::string playerIP="");
 
   /** convenience method to attempt to start a kick poll
    */
-  bool pollToKick(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
+  bool pollToKick(const std::string &victim, int playerRequestingID, const std::string &playerIP);
 
   /** convenience method to attempt to start a kill poll
    */
-  bool pollToKill(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
+  bool pollToKill(const std::string &victim, int playerRequestingID, const std::string &playerIP);
 
   /** convenience method to attempt to start a ban poll
    */
-  bool pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP);
+  bool pollToBan(const std::string &victim, int playerRequestingID, const std::string &playerIP);
   /** convenience method to attempt to start a set poll
    */
-  bool pollToSet(const std::string &setting, const std::string &playerRequesting);
+  bool pollToSet(const std::string &setting, int playerRequestingID);
 
   /** convenience method to attempt to reset flags that, at the time, are unused
    */
-  bool pollToResetFlags(const std::string &playerRequesting);
+  bool pollToResetFlags(const int playerRequestingID);
 
   /** halt/close the poll if it is open
    */
@@ -248,7 +251,7 @@ inline VotingArbiter::VotingArbiter(unsigned short int voteTime,
   _pollee = "nobody";
   _polleeIP = "";
   _action = "";
-  _pollRequestor = "nobody";
+  _pollOrganizer = BZ_SERVER;
   return;
 }
 
@@ -265,7 +268,7 @@ inline VotingArbiter::VotingArbiter(const VotingArbiter& arbiter)
     _pollee(arbiter._pollee),
     _polleeIP(arbiter._polleeIP),
     _action(arbiter._action),
-    _pollRequestor(arbiter._pollRequestor),
+    _pollOrganizer(arbiter._pollOrganizer),
     _suffraged(arbiter._suffraged)
 {
   return;
@@ -340,9 +343,9 @@ inline std::string VotingArbiter::getPollTargetIP(void) const
   return _polleeIP.size() == 0 ? "" : _polleeIP;
 }
 
-inline std::string VotingArbiter::getPollRequestor(void) const
+inline int VotingArbiter::getPollOrganizer() const
 {
-  return _pollRequestor.size() == 0 ? "nobody" : _pollRequestor;
+  return _pollOrganizer;
 }
 
 inline unsigned short int VotingArbiter::getVoteTime(void) const

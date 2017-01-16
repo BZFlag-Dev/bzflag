@@ -3000,15 +3000,15 @@ bool PollCommand::operator() (const char	 *message,
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target, callsign, targetIP));
+      canDo = (arbiter->pollToBan(target, t, targetIP));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target, callsign, targetIP));
+      canDo = (arbiter->pollToKick(target, t, targetIP));
     } else if (cmd == "kill") {
-      canDo = (arbiter->pollToKill(target, callsign, targetIP));
+      canDo = (arbiter->pollToKill(target, t, targetIP));
     } else if (cmd == "set") {
-      canDo = (arbiter->pollToSet(target, callsign));
+      canDo = (arbiter->pollToSet(target, t));
     } else if (cmd == "flagreset") {
-      canDo = (arbiter->pollToResetFlags(callsign));
+      canDo = (arbiter->pollToResetFlags(t));
     }
 
     if (!canDo) {
