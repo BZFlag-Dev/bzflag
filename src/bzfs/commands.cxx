@@ -2660,18 +2660,26 @@ bool VoteCommand::operator() (const char	 *message,
 
   // cast the vote or complain
   bool cast = false;
-  if (vote == 0) {
-    if ((cast = arbiter->voteNo(callsign)) == true) {
-      /* player voted no */
+  if (vote == 0 || vote == 1) {
+    bz_PollVoteEventData_V1 voteData;
+    voteData.playerID = t;
+    voteData.inFavor = (vote == 1);
+
+    worldEventManager.callEvents(bz_ePollVoteEvent, &voteData);
+
+    if (!voteData.allow) {
+      sendMessage(ServerPlayer, t, voteData.reason.c_str());
+      return true;
+    }
+
+    if (vote == 0 && (cast = arbiter->voteNo(callsign)) == true) {
       snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
     }
-  } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(callsign)) == true) {
-      /* player voted yes */
+    else if (vote == 1 && (cast = arbiter->voteYes(callsign)) == true) {
       snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
     }
+
+    sendMessage(ServerPlayer, t, reply);
   } else {
     if (answer.length() == 0) {
       snprintf(reply, MessageLen, "%s, you did not provide a vote answer", callsign.c_str());
@@ -2745,6 +2753,11 @@ bool VetoCommand::operator() (const char	 *,
   sendMessage(ServerPlayer, AllPlayers,
 	      TextUtils::format("The poll was cancelled by %s",
 				  playerData->player.getCallSign()).c_str());
+
+  bz_PollVetoEventData_V1 vetoData;
+  vetoData.playerID  = t;
+
+  worldEventManager.callEvents(bz_ePollVetoEvent, &vetoData);
 
   return true;
 }
@@ -2997,6 +3010,16 @@ bool PollCommand::operator() (const char	 *message,
 
     }
 
+    bz_AllowPollEventData_V1 allowPollData;
+    allowPollData.playerID = t;
+
+    worldEventManager.callEvents(bz_eAllowPollEvent, &allowPollData);
+
+    if (!allowPollData.allow) {
+      sendMessage(ServerPlayer, t, allowPollData.reason.c_str());
+      return true;
+    }
+
     /* create and announce the new poll */
     bool canDo = false;
     if (cmd == "ban") {
@@ -3016,6 +3039,14 @@ bool PollCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, reply);
       return true;
     } else {
+      bz_PollStartEventData_V1 pollStartData;
+      pollStartData.playerID  = t;
+      pollStartData.pollAction = cmd;
+      pollStartData.pollTarget = target;
+      pollStartData.pollValue  = targetIP;
+
+      worldEventManager.callEvents(bz_ePollStartEvent, &pollStartData);
+
       snprintf(reply, MessageLen, "A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, AllPlayers, reply);
     }

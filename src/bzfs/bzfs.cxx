@@ -6759,6 +6759,8 @@ int main(int argc, char **argv)
 	static bool announcedOpening = false;
 	static bool announcedClosure = false;
 	static bool announcedResults = false;
+	static bool apiEventCalled = false;
+	static bool calledCustomHandler = false;
 
 	/* once a poll begins, announce its commencement */
 	if (!announcedOpening) {
@@ -6780,6 +6782,22 @@ int main(int argc, char **argv)
 	}
 
 	if (votingarbiter->isPollClosed()) {
+	  if (!apiEventCalled) {
+	    bz_PollEndEventData_V1 pollEndData;
+	    pollEndData.successful = votingarbiter->isPollSuccessful();
+	    pollEndData.yesCount = votingarbiter->getYesCount();
+	    pollEndData.noCount  = votingarbiter->getNoCount();
+	    pollEndData.abstentionCount = votingarbiter->getAbstentionCount();
+
+	    worldEventManager.callEvents(bz_ePollEndEvent, &pollEndData);
+
+	    apiEventCalled = true;
+	  }
+
+	  if (!calledCustomHandler && customPollOptions.find(votingarbiter->getPollAction()) != customPollOptions.end()) {
+	    customPollOptions[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction(), votingarbiter->getPollTarget(), votingarbiter->isPollSuccessful());
+	    calledCustomHandler = true;
+	  }
 
 	  if (!announcedResults) {
 	    snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());

@@ -2445,6 +2445,10 @@ BZF_API bool bz_pollVeto( void )
   /* poof */
   arbiter->forgetPoll();
 
+  bz_PollVetoEventData_V1 vetoData;
+
+  worldEventManager.callEvents(bz_ePollVetoEvent, &vetoData);
+
   return true;
 }
 
