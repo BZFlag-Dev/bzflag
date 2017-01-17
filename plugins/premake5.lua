@@ -44,6 +44,7 @@ include "plugin_utils"
 for _, pluginname in ipairs(pluginnames) do
   project(pluginname)
     kind "SharedLib"
+    targetprefix ""
     files { pluginname.."/*.cpp", pluginname.."/*.h" }
     includedirs "plugin_utils"
     links "plugin_utils"
@@ -56,7 +57,7 @@ for _, pluginname in ipairs(pluginnames) do
 	"_USRDLL",
 	pluginname.."_EXPORTS"
       }
-      libdirs "../build/bin/$(Configuration)" -- FIXME: any better way?
+      libdirs "../build/bin/$(Configuration)" -- FIXME: any better way? maybe $(OutDir)?
       links "bzfs.lib" -- ".lib" required to distinguish from the executable
       dependson "bzfs"
       postbuildcommands {
@@ -91,7 +92,7 @@ if _OS == "macosx" and not _OPTIONS["disable-client"] then
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
     for _, pluginname in ipairs(pluginnames) do
       postbuildcommands {
-        "cp ${CONFIGURATION_BUILD_DIR}/lib"..pluginname..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginname..".dylib",
+        "cp ${CONFIGURATION_BUILD_DIR}/"..pluginname..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginname..".dylib",
         "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"

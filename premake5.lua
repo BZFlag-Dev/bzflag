@@ -16,6 +16,7 @@
 --
 -- kind
 -- language
+-- targetprefix
 -- include
 -- files
 -- defines
@@ -46,7 +47,6 @@
   -- on macOS, bzflag.app
 -- refactor plugin scripts
 --
--- get rid of "lib" in front of plugin names in some consistent way
 -- install/uninstall actions (for gmake only, with support for --prefix)
 -- man files need to be generated on Linux and maybe on macOS
 --
