@@ -41,11 +41,18 @@
 -- TODO:
 --
 -- figure out dependencies between executables (mac .app needs more than windows)
+  -- link dependencies
+  -- on Windows, the installer
+  -- on macOS, bzflag.app
 -- refactor plugin scripts
+--
 -- get rid of "lib" in front of plugin names in some consistent way
--- install/uninstall actions (for gmake only, including man, supporting --prefix)
--- support for solaris and bsd, perhaps just under SDL 1.2/2
--- remove remnants of old build system
+-- install/uninstall actions (for gmake only, with support for --prefix)
+-- man files need to be generated on Linux and maybe on macOS
+--
+-- finish removing remnants of old build system
+--
+-- check support for solaris and bsd, perhaps just under SDL 1.2/2
 -- check for FIXMEs (especially the preprocessor definitions)
 
 -- utility
