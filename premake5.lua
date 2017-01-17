@@ -43,11 +43,10 @@
 -- figure out dependencies between executables (mac .app needs more than windows)
 -- refactor plugin scripts
 -- get rid of "lib" in front of plugin names in some consistent way
--- install/uninstall actions (for gmake only, with support for --prefix)
+-- install/uninstall actions (for gmake only, including man, supporting --prefix)
 -- support for solaris and bsd, perhaps just under SDL 1.2/2
--- go through macros and delete unused ones (watch out for MSVC built-ins)
 -- remove remnants of old build system
--- check FIXMEs
+-- check for FIXMEs (especially the preprocessor definitions)
 
 -- utility
 function correctquotes (quotestring)
