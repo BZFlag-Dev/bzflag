@@ -40,7 +40,6 @@
 --
 -- TODO:
 --
--- general:
 -- figure out dependencies between executables (mac .app needs more than windows)
 -- refactor plugin scripts
 -- get rid of "lib" in front of plugin names in some consistent way
@@ -49,9 +48,6 @@
 -- go through macros and delete unused ones (watch out for MSVC built-ins)
 -- remove remnants of old build system
 -- check FIXMEs
---
--- macOS:
--- CLANG_CXX_LANGUAGE_STANDARD replaced by flags "C++11" when premake releases
 
 -- utility
 function correctquotes (quotestring)
@@ -131,6 +127,7 @@ workspace "BZFlag"
 
   -- set up overall workspace settings
   language "C++"
+  flags "C++11"
   warnings "Default"
   basedir "build"
   if not _OPTIONS["disable-client"] then
@@ -213,7 +210,6 @@ workspace "BZFlag"
     libdirs "/usr/local/lib" -- same
     frameworkdirs "$(LOCAL_LIBRARY_DIR)/Frameworks"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
-			 ["CLANG_CXX_LANGUAGE_STANDARD"] = "c++0x",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
 			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks" }
 
