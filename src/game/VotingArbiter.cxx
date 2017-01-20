@@ -67,7 +67,7 @@ bool VotingArbiter::forgetPoll(void)
   return true;
 }
 
-bool VotingArbiter::poll(const std::string &target, const int playerRequestingID, std::string action, std::string playerIP)
+bool VotingArbiter::poll(const std::string &target, int playerRequestingID, std::string action, std::string playerIP)
 {
   GameKeeper::Player *pr = GameKeeper::Player::getPlayerByIndex(playerRequestingID);
   std::string playerRequesting = pr->player.getCallSign();
@@ -335,6 +335,8 @@ bool VotingArbiter::retractVote(const std::string &player)
   }
   return _votingBooth->retractVote(TextUtils::tolower(player));
 }
+
+// Custom Poll Types
 
 std::map<std::string, PollOption> customPollOptions;
 

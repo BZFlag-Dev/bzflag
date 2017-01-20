@@ -872,27 +872,22 @@ public:
 class BZF_API bz_PollStartEventData_V1 : public bz_EventData
 {
 public:
-  bz_PollStartEventData_V1() : bz_EventData(bz_ePollStartEvent) {}
+  bz_PollStartEventData_V1() : bz_EventData(bz_ePollStartEvent),
+    playerID(BZ_SERVER), pollAction(""), pollTarget("")
+  {}
 
   int playerID;
 
-  // 'kick', 'kill', 'ban', 'set', 'reset', or custom value from a plug-in
+  // See bz_AllowPollEventData_V1 for notes
   bz_ApiString pollAction;
-
-  // If it's a 'kick', 'kill' or 'ban', this will be the victim's callsign
-  // If it's a 'set', this will be e.g. '_mirror black'
-  // If it's a 'reset', this will be 'flags'
   bz_ApiString pollTarget;
-
-  // This value will be set to the victim's IP if it's a 'kick' 'kill' or 'ban'
-  bz_ApiString pollValue;
 };
 
 class BZF_API bz_PollVoteEventData_V1 : public bz_EventData
 {
 public:
   bz_PollVoteEventData_V1() : bz_EventData(bz_ePollVoteEvent),
-    allow(true), reason("")
+    playerID(BZ_SERVER), inFavor(false), allow(true), reason("")
   {}
 
   int playerID;

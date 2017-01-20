@@ -2660,7 +2660,7 @@ bool VoteCommand::operator() (const char	 *message,
 
   // cast the vote or complain
   bool cast = false;
-  if (vote == 0 || vote == 1) {
+  if (vote > -1) {
     bz_PollVoteEventData_V1 voteData;
     voteData.playerID = t;
     voteData.inFavor = (vote == 1);
@@ -3053,7 +3053,6 @@ bool PollCommand::operator() (const char	 *message,
       pollStartData.playerID  = t;
       pollStartData.pollAction = cmd;
       pollStartData.pollTarget = target;
-      pollStartData.pollValue  = targetIP;
 
       worldEventManager.callEvents(bz_ePollStartEvent, &pollStartData);
 
