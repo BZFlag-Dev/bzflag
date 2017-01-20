@@ -3018,6 +3018,8 @@ bool PollCommand::operator() (const char	 *message,
 
     bz_AllowPollEventData_V1 allowPollData;
     allowPollData.playerID = t;
+    allowPollData.pollAction = cmd;
+    allowPollData.pollTarget = target;
 
     worldEventManager.callEvents(bz_eAllowPollEvent, &allowPollData);
 
