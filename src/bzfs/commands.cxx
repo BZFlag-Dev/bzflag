@@ -2952,9 +2952,17 @@ bool PollCommand::operator() (const char	 *message,
       return true;
     }
 
-    if (customPollOption && !customPollOptions[cmd].pollHandler->PollOpen(t, cmd, target))
+    if (customPollOption)
     {
-      return true;
+      bz_BasePlayerRecord *pr = bz_getPlayerByIndex(t);
+
+      bool stopPoll = !(customPollOptions[cmd].pollHandler->PollOpen(pr, cmd.c_str(), target.c_str()));
+
+      bz_freePlayerRecord(pr);
+
+      if (stopPoll) {
+        return true;
+      }
     }
 
     if ((cmd != "set") && (cmd != "flagreset") && !customPollOption) {

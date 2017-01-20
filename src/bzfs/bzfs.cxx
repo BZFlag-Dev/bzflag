@@ -6795,7 +6795,7 @@ int main(int argc, char **argv)
 	  }
 
 	  if (!calledCustomHandler && customPollOptions.find(votingarbiter->getPollAction()) != customPollOptions.end()) {
-	    customPollOptions[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction(), votingarbiter->getPollTarget(), votingarbiter->isPollSuccessful());
+	    customPollOptions[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction().c_str(), votingarbiter->getPollTarget().c_str(), votingarbiter->isPollSuccessful());
 	    calledCustomHandler = true;
 	  }
 

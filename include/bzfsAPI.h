@@ -1623,8 +1623,8 @@ public:
   virtual ~bz_CustomPollOptionHandler() {};
 
   // Should return false to prevent the poll from starting
-  virtual bool PollOpen  (int playerID, bz_ApiString action, bz_ApiString value) = 0;
-  virtual void PollClose (bz_ApiString action, bz_ApiString value, bool success) = 0;
+  virtual bool PollOpen  (bz_BasePlayerRecord *player, const char* action, const char* value) = 0;
+  virtual void PollClose (const char* action, const char* value, bool success) = 0;
 };
 
 BZF_API bool bz_registerCustomPollOption (const char* option, const char* parameters, bz_CustomPollOptionHandler *handler);

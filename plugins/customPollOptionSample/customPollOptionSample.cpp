@@ -12,8 +12,8 @@ public:
   virtual void Cleanup ( void );
   virtual void Event ( bz_EventData * /* eventData */ ) {return;}
 
-  virtual bool PollOpen  (int playerID, bz_ApiString action, bz_ApiString value);
-  virtual void PollClose (bz_ApiString action, bz_ApiString value, bool success);
+  virtual bool PollOpen  (bz_BasePlayerRecord *player, const char* action, const char* value);
+  virtual void PollClose (const char* action, const char* value, bool success);
 };
 
 BZ_PLUGIN(customPollOptionSample)
@@ -34,8 +34,11 @@ void customPollOptionSample::Cleanup ()
 
 // This function is called before a `/poll mute <callsign>` poll is started. If this function returns false, then the poll will not
 // start. This is useful for checking permissions or other conditions.
-bool customPollOptionSample::PollOpen(int playerID, bz_ApiString action, bz_ApiString value)
+bool customPollOptionSample::PollOpen(bz_BasePlayerRecord *player, const char* action, const char* value)
 {
+  int playerID = player->playerID;
+  std::string _action = action;
+
   // If a player doesn't have the 'poll' permission, they will not be able to start a poll. Be sure to send the playerID a message
   // or else it'll appear as if the /poll command did not work.
   if (!bz_hasPerm(playerID, "pollMute")) {
@@ -44,7 +47,7 @@ bool customPollOptionSample::PollOpen(int playerID, bz_ApiString action, bz_ApiS
   }
 
   // The 'action' variable will be set whichever poll option is being called
-  if (action == "mute") {
+  if (_action == "mute") {
 
     // Return true in order to let BZFS start the poll
     return true;
@@ -54,13 +57,16 @@ bool customPollOptionSample::PollOpen(int playerID, bz_ApiString action, bz_ApiS
   return false;
 }
 
-void customPollOptionSample::PollClose(bz_ApiString action, bz_ApiString value, bool success)
+void customPollOptionSample::PollClose(const char* action, const char* value, bool success)
 {
-  if (action == "mute" && success) {
-    bz_BasePlayerRecord *pr = bz_getPlayerBySlotOrCallsign(value.c_str());
+  std::string _action = action;
+  std::string _value  = value;
+
+  if (_action == "mute" && success) {
+    bz_BasePlayerRecord *pr = bz_getPlayerBySlotOrCallsign(_value.c_str());
 
     if (!pr) {
-      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "player %s not found", value.c_str());
+      bz_sendTextMessagef(BZ_SERVER, BZ_ALLUSERS, "player %s not found", _value.c_str());
       return;
     }
 
