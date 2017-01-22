@@ -55,19 +55,6 @@
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
 -- check for FIXMEs (especially the preprocessor definitions)
 
--- utility
-function correctquotes (quotestring)
-  if _ACTION then
-    if string.find(_ACTION, "xcode", 0) then
-      return "\\\""..quotestring.."\\\""
-    else
-      return "\""..quotestring.."\""
-    end
-  else
-    return ""
-  end
-end
-
 -- set up workspace
 workspace "BZFlag"
   -- set up command line options
@@ -191,8 +178,8 @@ workspace "BZFlag"
 
   filter "system:not windows"
     defines {
-      "INSTALL_LIB_DIR="..correctquotes("/usr/local/lib/bzflag"),
-      "INSTALL_DATA_DIR="..correctquotes("/usr/local/share/bzflag")
+      "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
+      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
     }
 
   filter "system:windows"
@@ -295,24 +282,24 @@ workspace "BZFlag"
   filter { }
 
   if _OS == "windows" then
-    defines { "BZ_BUILD_OS="..correctquotes("Win") }
+    defines { "BZ_BUILD_OS=\"Win\"" }
   elseif _OS == "macosx" then
-    defines { "BZ_BUILD_OS="..correctquotes("Mac") }
+    defines { "BZ_BUILD_OS=\"Mac\"" }
   elseif _OS == "linux" then
-    defines { "BZ_BUILD_OS="..correctquotes("Linux") }
+    defines { "BZ_BUILD_OS=\"Linux\"" }
   elseif _OS == "bsd" then
-    defines { "BZ_BUILD_OS="..correctquotes("BSD") }
+    defines { "BZ_BUILD_OS=\"BSD\"" }
   elseif _OS == "solaris" then
-    defines { "BZ_BUILD_OS="..correctquotes("Solaris") }
+    defines { "BZ_BUILD_OS=\"Solaris\"" }
   else
-    defines { "BZ_BUILD_OS="..correctquotes("Unknown") }
+    defines { "BZ_BUILD_OS=\"Unknown\"" }
   end
 
   if _ACTION then
     filter "action:vs*"
-      defines { "BZ_COMPILER_VS_VERSION="..correctquotes(string.sub(_ACTION, 3)) }
+      defines { "BZ_COMPILER_VS_VERSION=\""..string.sub(_ACTION, 3).."\"" }
     filter "action:xcode*"
-      defines { "BZ_COMPILER_XCODE_VERSION="..correctquotes("${XCODE_VERSION_ACTUAL}") }
+      defines { "BZ_COMPILER_XCODE_VERSION=\"${XCODE_VERSION_ACTUAL}\"" }
     filter { }
   end
 
