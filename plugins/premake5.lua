@@ -37,17 +37,8 @@ for _, pluginName in ipairs(pluginNames) do
       linkoptions "-undefined dynamic_lookup"
     filter { }
     if _OS == "macosx" and not _OPTIONS["disable-client"] then
---      project "bzflag" -- the .app needs to bundle the plugins with it
---	dependson(pluginName)
-      -- FIXME: workaround for a premake Xcode bug (remove when it's fixed and
-      -- uncomment above)
-      -- issue link: https://github.com/premake/premake-core/issues/631
-      project "build_plugins"
-	kind "ConsoleApp"
-	links(pluginName)
-      project "bzflag"
-	dependson "build_plugins"
-      -- end workaround
+      project "bzflag" -- the .app needs to bundle the plugins with it
+	dependson(pluginName)
     end
 end
 
