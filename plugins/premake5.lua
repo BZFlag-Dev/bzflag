@@ -1,51 +1,16 @@
--- enumerate the plugins to include (modify this list to add a plugin)
-pluginnames = {
-  "CustomZoneSample",
-  "HoldTheFlag",
-  "Phoenix",
-  "RogueGenocide",
-  "SAMPLE_PLUGIN",
-  "TimeLimit",
-  "airspawn",
-  "autoFlagReset",
-  "bzfscron",
-  "chathistory",
-  "customflagsample",
-  "fairCTF",
-  "fastmap",
-  "flagStay",
-  "keepaway",
-  "killall",
-  "koth",
-  "logDetail",
-  "nagware",
-  "playHistoryTracker",
-  "pushstats",
-  "rabbitTimer",
-  "rabidRabbit",
-  "recordmatch",
-  "regFlag",
-  "serverControl",
-  "serverSidePlayerSample",
-  "shockwaveDeath",
-  "superUser",
-  "teamflagreset",
-  "thiefControl",
-  "timedctf",
-  "wwzones"
-}
-
 group "plugins"
+
+pluginNames = os.matchdirs("*")
 
 -- set up the plugin_utils project
 include "plugin_utils"
 
--- set up the individual plugin projects from the list above
-for _, pluginname in ipairs(pluginnames) do
-  project(pluginname)
+-- set up the individual plugin projects
+for _, pluginName in ipairs(pluginNames) do
+  project(pluginName)
     kind "SharedLib"
     targetprefix ""
-    files { pluginname.."/*.cpp", pluginname.."/*.h" }
+    files { pluginName.."/*.cpp", pluginName.."/*.h" }
     includedirs "plugin_utils"
     links "plugin_utils"
 
@@ -55,7 +20,7 @@ for _, pluginname in ipairs(pluginnames) do
 	"_USE_MATH_DEFINES",
 	"_WINDOWS",
 	"_USRDLL",
-	pluginname.."_EXPORTS"
+	pluginName.."_EXPORTS"
       }
       libdirs "../build/bin/$(Configuration)" -- FIXME: any better way? maybe $(OutDir)?
       links "bzfs.lib" -- ".lib" required to distinguish from the executable
@@ -63,9 +28,9 @@ for _, pluginname in ipairs(pluginnames) do
       postbuildcommands {
 	"if not exist ..\\bin_$(Configuration)_$(Platform) mkdir ..\\bin_$(Configuration)_$(Platform)",
 	"if not exist ..\\bin_$(Configuration)_$(Platform)\\plugins mkdir ..\\bin_$(Configuration)_$(Platform)\\plugins",
-	"copy $(OutDir)"..pluginname..".dll ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
-	"copy ..\\plugins\\"..pluginname.."\\*.txt ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
-	"if exist ..\\plugins\\"..pluginname.."\\*.cfg ( copy ..\\plugins\\"..pluginname.."\\*.cfg ..\\bin_$(configuration)_$(Platform)\\plugins\\ )"
+	"copy $(OutDir)"..pluginName..".dll ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
+	"copy ..\\plugins\\"..pluginName.."\\*.txt ..\\bin_$(Configuration)_$(Platform)\\plugins\\",
+	"if exist ..\\plugins\\"..pluginName.."\\*.cfg ( copy ..\\plugins\\"..pluginName.."\\*.cfg ..\\bin_$(configuration)_$(Platform)\\plugins\\ )"
       }
 
     filter "system:macosx"
@@ -73,13 +38,13 @@ for _, pluginname in ipairs(pluginnames) do
     filter { }
     if _OS == "macosx" and not _OPTIONS["disable-client"] then
 --      project "bzflag" -- the .app needs to bundle the plugins with it
---	dependson(pluginname)
+--	dependson(pluginName)
       -- FIXME: workaround for a premake Xcode bug (remove when it's fixed and
       -- uncomment above)
       -- issue link: https://github.com/premake/premake-core/issues/631
       project "build_plugins"
 	kind "ConsoleApp"
-	links(pluginname)
+	links(pluginName)
       project "bzflag"
 	dependson "build_plugins"
       -- end workaround
@@ -90,9 +55,9 @@ end
 if _OS == "macosx" and not _OPTIONS["disable-client"] then
   project "bzflag"
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
-    for _, pluginname in ipairs(pluginnames) do
+    for _, pluginName in ipairs(pluginNames) do
       postbuildcommands {
-        "cp ${CONFIGURATION_BUILD_DIR}/"..pluginname..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginname..".dylib",
+        "cp ${CONFIGURATION_BUILD_DIR}/"..pluginName..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginName..".dylib",
         "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
         "cp ../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
