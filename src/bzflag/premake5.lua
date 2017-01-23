@@ -43,7 +43,7 @@ project "bzflag"
   filter "system:windows"
     files {
       "../../buildsupport/windows/bzflag.ico",
-      "../../buildsupport/windows/bzflag.rc",
+      "../../build/bzflag.rc",
       "../../buildsupport/windows/resource.h"
     }
     libdirs "$(DXSDK_DIR)/lib/$(PlatformShortName)"

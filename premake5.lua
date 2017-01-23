@@ -41,12 +41,6 @@
 --
 -- TODO:
 --
--- move windows installer stuff to buildsupport/windows/installer and update BZFlag.nsi file
--- do one version definition and .in files that have placeholders (BZFlag-Info.plist, bzflag.rc, BZFlag.nsi)
--- figure out dependencies between executables
-  -- link dependencies
-  -- on Windows, the installer (depends on plugins also)
-  -- on macOS, bzflag.app
 -- install/uninstall actions (for gmake only, with support for --prefix)
 -- man files need to be generated for gmake
 -- see if the xcode mac bzfs can look for plugins in the right place
@@ -67,8 +61,13 @@ local bzVersion = {
 
 if bzVersion.buildType == "STABLE" or bzVersion.buildType == "MAINT" then
   bzVersion.winInstallerType = "release"
+  bzVersion.winInstallerRevision = ""
+elseif string.find(bzVersion.buildType, "RC", 0) then
+  bzVersion.winInstallerType = "RC"
+  bzVersion.winInstallerRevision = string.sub(bzVersion.buildType, 3)
 else
   bzVersion.winInstallerType = string.lower(bzVersion.buildType)
+  bzVersion.winInstallerRevision = ""
 end
 
 -- set up workspace
@@ -342,6 +341,9 @@ workspace "BZFlag"
 			  bzVersion.configFileVersion)
     dataOut = string.gsub(dataOut, "BZ_WIN_INSTALLER_TYPE",
 			  bzVersion.winInstallerType)
+    dataOut = string.gsub(dataOut, "BZ_WIN_INSTALLER_REVISION",
+			  bzVersion.winInstallerRevision)
+
 
     return dataOut
   end
@@ -350,6 +352,13 @@ workspace "BZFlag"
     io.writefile("build/BZFlag-Info.plist", substituteVersion(
 		 io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
     print("Generated build/BZFlag-Info.plist...")
+  elseif string.find(_ACTION, "vs", 0) then
+    io.writefile("build/BZFlag.nsi", substituteVersion(
+		 io.readfile("buildsupport/windows/installer/BZFlag.nsi.in")))
+    print("Generated build/BZFlag.nsi...")
+    io.writefile("build/bzflag.rc", substituteVersion(
+		 io.readfile("buildsupport/windows/bzflag.rc.in")))
+    print("Generated build/bzflag.rc...")
   end
 
   -- set up the build (build order/dependencies are honored notwithstanding the
@@ -370,35 +379,10 @@ workspace "BZFlag"
   if not _OPTIONS["disable-client"] then include "src/platform" end
   if not _OPTIONS["disable-client"] then include "src/scene" end
   if not _OPTIONS["disable-plugins"] then include "plugins" end
-
-  -- set up the installer on windows
   if _OS == "windows" and
      not _OPTIONS["disable-client"] and
      not _OPTIONS["disable-bzadmin"] and
      not _OPTIONS["disable-plugins"] and
      not _OPTIONS["disable-installer"] then
-	project "man2html"
-	  kind "ConsoleApp"
-	  language "C"
-	  files "misc/man2html.c"
-
-	project "makehtml"
-	  kind "Utility"
-	  files "man/*.in"
-	  dependson "man2html"
-	  postbuildcommands {
-	    "if not exist \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\" mkdir \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\"",
-	    "$(OutDir)man2html.exe < ..\\man\\bzadmin.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzadmin.html\"",
-	    "$(OutDir)man2html.exe < ..\\man\\bzflag.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzflag.html\"",
-	    "$(OutDir)man2html.exe < ..\\man\\bzfs.6.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzfs.html\"",
-	    "$(OutDir)man2html.exe < ..\\man\\bzw.5.in > \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\\bzw.html\""
-	  }
-
-	project "installer"
-	  kind "Utility"
-	  files "buildsupport/windows/BZFlag.nsi"
-	  dependson { "bzflag", "makehtml" }
-	  filter "configurations:Release"
-	    postbuildcommands "\"$(ProgramFiles)\\nsis\\makensis.exe\" \"..\\buildsupport\\windows\\BZFlag.nsi\""
-	  filter { }
+    include "buildsupport/windows/installer"
   end

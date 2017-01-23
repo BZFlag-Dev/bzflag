@@ -19,13 +19,9 @@
 #include <stdio.h>
 #include <string.h>
 
-// version numbers - also update as needed:
+// version numbers now in premake5.lua - also update as needed:
 //  ChangeLog
-//  MSVC/bzflag.rc
 //  README
-//  configure.ac
-//  include/version.h
-//  package/win32/nsis/BZFlag.nsi
 
 const char *bzfcopyright = "Copyright (c) 1993-2016 Tim Riker";
 
