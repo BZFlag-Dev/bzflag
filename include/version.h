@@ -17,16 +17,8 @@
 #ifndef __VERSION_H__
 #define __VERSION_H__
 
-#ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION	"2.4"
-#endif
-
 #ifndef BZ_CONFIG_FILE_NAME
 #define BZ_CONFIG_FILE_NAME	"config.cfg"
-#endif
-
-#ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	5
 #endif
 
 #define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"

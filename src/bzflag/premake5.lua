@@ -39,10 +39,6 @@ project "bzflag"
     "curl",
     "z"
   }
-  dependson "bzfs"
-  if not _OPTIONS["disable-bzadmin"] then
-    dependson "bzadmin"
-  end
 
   filter "system:windows"
     files {
@@ -70,8 +66,13 @@ project "bzflag"
     links { "SDL2", "SDL2main" }
 
   filter "system:macosx"
-    files "../../build/BZFlag-Info.plist"
     links { "Cocoa.framework", "OpenGL.framework" }
+  filter "action:xcode*"
+    dependson "bzfs"
+    if not _OPTIONS["disable-bzadmin"] then
+      dependson "bzadmin"
+    end
+    files "../../build/BZFlag-Info.plist"
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
@@ -102,18 +103,38 @@ project "bzflag"
 	   "options:not with-sdl=no",
 	   "options:not with-sdl=1" }
     links "SDL2.framework"
+  filter { "system:macosx", "options:with-sdl=1" }
+    links "SDL.framework"
+  filter { "action:xcode*",
+	   "options:not with-sdl=no",
+	   "options:not with-sdl=1" }
     postbuildcommands {
       "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL2.framework ]] ; then",
       "cp -R /Library/Frameworks/SDL2.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
       "fi"
     }
-  filter { "system:macosx", "options:with-sdl=1" }
-    links "SDL.framework"
+  filter { "action:xcode*", "options:with-sdl=1" }
     postbuildcommands {
       "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL.framework ]] ; then",
       "cp -R /Library/Frameworks/SDL.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
       "fi"
     }
+  filter { "action:xcode*", "options:not disable-plugins" }
+    -- the client needs to have the dependency so the plugins will build
+    postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
+    pluginDirNames = os.matchdirs("../../plugins/*")
+    for _, pluginDirName in ipairs(pluginDirNames) do
+      local pluginName = string.sub(pluginDirName, 15, -1)
+      if pluginName ~= "plugin_utils" then
+	dependson(pluginName)
+	postbuildcommands {
+	  "cp ${CONFIGURATION_BUILD_DIR}/"..pluginName..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginName..".dylib",
+	  "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+	  "cp ../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+	  "cp ../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+	}
+      end
+    end
 
   filter "system:linux"
     links { "GL", "GLU", "pthread" }

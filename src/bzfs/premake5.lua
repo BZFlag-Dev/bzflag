@@ -37,6 +37,15 @@ project "bzfs"
 
   filter "system:macosx"
     links "Cocoa.framework"
+  filter { "action:xcode*", "options:disable-client" }
+    -- bzfs needs to have the dependency so the plugins will build
+    pluginDirNames = os.matchdirs("../../plugins/*")
+    for _, pluginDirName in ipairs(pluginDirNames) do
+      local pluginName = string.sub(pluginDirName, 15, -1)
+      if pluginName ~= "plugin_utils" then
+	dependson(pluginName)
+      end
+    end
 
   filter "system:linux"
     linkoptions "-export-dynamic"

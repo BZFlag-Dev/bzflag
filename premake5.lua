@@ -41,19 +41,35 @@
 --
 -- TODO:
 --
--- figure out dependencies between executables (mac .app needs more than windows)
+-- move windows installer stuff to buildsupport/windows/installer and update BZFlag.nsi file
+-- do one version definition and .in files that have placeholders (BZFlag-Info.plist, bzflag.rc, BZFlag.nsi)
+-- figure out dependencies between executables
   -- link dependencies
-  -- on Windows, the installer
+  -- on Windows, the installer (depends on plugins also)
   -- on macOS, bzflag.app
--- refactor plugin scripts
---
 -- install/uninstall actions (for gmake only, with support for --prefix)
--- man files need to be generated on Linux and maybe on macOS
---
+-- man files need to be generated for gmake
+-- see if the xcode mac bzfs can look for plugins in the right place
 -- finish removing remnants of old build system
---
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
 -- check for FIXMEs (especially the preprocessor definitions)
+-- when complete, do profiling on each system and create compile time report
+
+-- game version (this is the one and only place where these should be specified)
+local bzVersion = {
+  ["major"] = 2,
+  ["minor"] = 4,
+  ["revision"] = 9,
+  ["buildType"] = "DEVEL", -- DEVEL | RC# | STABLE | MAINT
+  ["protocol"] = "0221", -- increment on protocol incompatibility
+  ["configFileVersion"] = 5
+}
+
+if bzVersion.buildType == "STABLE" or bzVersion.buildType == "MAINT" then
+  bzVersion.winInstallerType = "release"
+else
+  bzVersion.winInstallerType = string.lower(bzVersion.buildType)
+end
 
 -- set up workspace
 workspace "BZFlag"
@@ -153,6 +169,13 @@ workspace "BZFlag"
     -- #define VERSION "2.4.9"
     -- #define NDEBUG 1
 
+    "BZ_MAJOR_VERSION="..bzVersion.major,
+    "BZ_MINOR_VERSION="..bzVersion.minor,
+    "BZ_REV="..bzVersion.revision,
+    "BZ_BUILD_TYPE=\""..bzVersion.buildType.."\"",
+    "BZ_PROTO_VERSION=\""..bzVersion.protocol.."\"",
+    "BZ_CONFIG_DIR_VERSION=\""..bzVersion.major.."."..bzVersion.minor.."\"",
+    "BZ_CONFIG_FILE_VERSION="..bzVersion.configFileVersion,
     "HAVE_REGEX_H",
     "ROBOT",
     "HAVE_STD__COUNT",
@@ -201,10 +224,13 @@ workspace "BZFlag"
     defines "HAVE_CGLGETCURRENTCONTEXT"
     sysincludedirs "/usr/local/include" -- for c-ares
     libdirs "/usr/local/lib" -- same
-    frameworkdirs "$(LOCAL_LIBRARY_DIR)/Frameworks"
+    frameworkdirs "/Library/Frameworks"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
 			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks" }
+  filter { "system:macosx", "action:gmake" }
+    buildoptions "-F/Library/Frameworks" -- frameworkdirs() isn't passed to gmake
+    linkoptions "-F/Library/Frameworks" -- same
 
   filter "system:linux"
     defines {
@@ -301,6 +327,29 @@ workspace "BZFlag"
     filter "action:xcode*"
       defines { "BZ_COMPILER_XCODE_VERSION=\"${XCODE_VERSION_ACTUAL}\"" }
     filter { }
+  end
+
+  -- set up files that need version substitution
+  function substituteVersion(dataIn)
+    local dataOut = dataIn
+
+    dataOut = string.gsub(dataOut, "BZ_VERSION_MAJOR", bzVersion.major)
+    dataOut = string.gsub(dataOut, "BZ_VERSION_MINOR", bzVersion.minor)
+    dataOut = string.gsub(dataOut, "BZ_VERSION_REVISION", bzVersion.revision)
+    dataOut = string.gsub(dataOut, "BZ_BUILD_TYPE", bzVersion.buildType)
+    dataOut = string.gsub(dataOut, "BZ_VERSION_PROTOCOL", bzVersion.protocol)
+    dataOut = string.gsub(dataOut, "BZ_VERSION_CONFIG_FILE_VERSION",
+			  bzVersion.configFileVersion)
+    dataOut = string.gsub(dataOut, "BZ_WIN_INSTALLER_TYPE",
+			  bzVersion.winInstallerType)
+
+    return dataOut
+  end
+
+  if string.find(_ACTION, "xcode", 0) then
+    io.writefile("build/BZFlag-Info.plist", substituteVersion(
+		 io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
+    print("Generated build/BZFlag-Info.plist...")
   end
 
   -- set up the build (build order/dependencies are honored notwithstanding the
