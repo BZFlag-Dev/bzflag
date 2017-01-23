@@ -41,12 +41,13 @@
 --
 -- TODO:
 --
--- install/uninstall actions (for gmake only, with support for --prefix)
+-- fix the rest of the missing preprocessor definitions
 -- man files need to be generated for gmake
+-- install/uninstall actions (for gmake only, with support for --prefix)
 -- see if the xcode mac bzfs can look for plugins in the right place
 -- finish removing remnants of old build system
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
--- check for FIXMEs (especially the preprocessor definitions)
+-- check for remaining FIXMEs
 -- when complete, do profiling on each system and create compile time report
 
 -- game version (this is the one and only place where these should be specified)
@@ -343,7 +344,6 @@ workspace "BZFlag"
 			  bzVersion.winInstallerType)
     dataOut = string.gsub(dataOut, "BZ_WIN_INSTALLER_REVISION",
 			  bzVersion.winInstallerRevision)
-
 
     return dataOut
   end
