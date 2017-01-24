@@ -34,9 +34,16 @@
 void InitHTTP();
 void KillHTTP();
 
-#ifdef _WIN32
+#if defined(_WIN32)
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
+#elif defined(__APPLE__)
+std::string extension = ".dylib";
+#  ifdef INSTALL_LIB_DIR
+std::string globalPluginDir = INSTALL_LIB_DIR;
+#  else
+std::string globalPluginDir = "";
+#  endif
 #else
 std::string extension = ".so";
 std::string globalPluginDir = INSTALL_LIB_DIR;
@@ -96,7 +103,20 @@ std::string findPlugin ( std::string pluginName )
     return name;
   }
 
+#ifdef __APPLE__
+  // on macOS, if we can't find the plugin file we are probably in the .app trying to
+  // load it from @executable_path/../PlugIns; fopen() won't be able to parse that,
+  // but dlopen() will so just return the plugin filename
+  if (pluginName.length() > 6)
+    if (pluginName.substr(pluginName.length() - 6) == ".dylib")
+      return pluginName;
+    else
+      return pluginName + extension;
+  else
+    return pluginName + extension;
+#else
   return std::string("");
+#endif
 }
 
 std::string getPluginPath ( const std::string & path )

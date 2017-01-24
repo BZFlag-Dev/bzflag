@@ -7121,7 +7121,6 @@
 					"$(inherited)",
 					HAVE_CONFIG_H,
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
-					"INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag/\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
 					HAVE_SDL,
@@ -7139,7 +7138,7 @@
 					../Xcode,
 					/usr/local/include,
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -7164,7 +7163,6 @@
 					"$(inherited)",
 					HAVE_CONFIG_H,
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
-					"INSTALL_LIB_DIR=\\\"/usr/local/lib/bzflag/\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
 					HAVE_SDL,
@@ -7180,7 +7178,7 @@
 					../Xcode,
 					/usr/local/include,
 				);
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
