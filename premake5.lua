@@ -334,35 +334,37 @@ workspace "BZFlag"
     return dataOut
   end
 
-  if string.find(_ACTION, "vs", 0) then
-    io.writefile("build/BZFlag.nsi", substituteVersion(
-		 io.readfile("buildsupport/windows/installer/BZFlag.nsi.in")))
-    print("Generated build/BZFlag.nsi...")
-    io.writefile("build/bzflag.rc", substituteVersion(
-		 io.readfile("buildsupport/windows/bzflag.rc.in")))
-    print("Generated build/bzflag.rc...")
-  elseif string.find(_ACTION, "xcode", 0) then
-    io.writefile("build/BZFlag-Info.plist", substituteVersion(
-		 io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
-    print("Generated build/BZFlag-Info.plist...")
-  elseif _ACTION == "gmake" then
-    if _OS == "windows" then
-      os.execute("if not exist build\\man mkdir build\\man")
-    else
-      os.execute("mkdir -p build/man")
+  if _ACTION then
+    if string.find(_ACTION, "vs", 0) then
+      io.writefile("build/BZFlag.nsi", substituteVersion(
+		   io.readfile("buildsupport/windows/installer/BZFlag.nsi.in")))
+      print("Generated build/BZFlag.nsi...")
+      io.writefile("build/bzflag.rc", substituteVersion(
+		   io.readfile("buildsupport/windows/bzflag.rc.in")))
+      print("Generated build/bzflag.rc...")
+    elseif string.find(_ACTION, "xcode", 0) then
+      io.writefile("build/BZFlag-Info.plist", substituteVersion(
+		   io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
+      print("Generated build/BZFlag-Info.plist...")
+    elseif _ACTION == "gmake" then
+      if _OS == "windows" then
+	os.execute("if not exist build\\man mkdir build\\man")
+      else
+	os.execute("mkdir -p build/man")
+      end
+      io.writefile("build/man/bzadmin.6", substituteVersion(
+		   io.readfile("man/bzadmin.6.in")))
+      print("Generated build/man/bzadmin.6...")
+      io.writefile("build/man/bzflag.6", substituteVersion(
+		   io.readfile("man/bzflag.6.in")))
+      print("Generated build/man/bzflag.6...")
+      io.writefile("build/man/bzfs.6", substituteVersion(
+		   io.readfile("man/bzfs.6.in")))
+      print("Generated build/man/bzfs.6...")
+      io.writefile("build/man/bzw.5", substituteVersion(
+		   io.readfile("man/bzw.5.in")))
+      print("Generated build/man/bzw.5...")
     end
-    io.writefile("build/man/bzadmin.6", substituteVersion(
-		 io.readfile("man/bzadmin.6.in")))
-    print("Generated build/man/bzadmin.6...")
-    io.writefile("build/man/bzflag.6", substituteVersion(
-		 io.readfile("man/bzflag.6.in")))
-    print("Generated build/man/bzflag.6...")
-    io.writefile("build/man/bzfs.6", substituteVersion(
-		 io.readfile("man/bzfs.6.in")))
-    print("Generated build/man/bzfs.6...")
-    io.writefile("build/man/bzw.5", substituteVersion(
-		 io.readfile("man/bzw.5.in")))
-    print("Generated build/man/bzw.5...")
   end
 
   -- set up the build (build order/dependencies are honored notwithstanding the
