@@ -42,12 +42,10 @@
 -- TODO:
 --
 -- install/uninstall actions (for gmake only, with support for --prefix)
--- see if the xcode mac bzfs can look for plugins in the right place
 -- finish removing remnants of old build system
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
--- when complete, do profiling on each system and create compile time report
 
--- game version (this is the one and only place where these should be specified)
+-- game version (this is the only place in the code where this should be set)
 local bzVersion = {
   ["major"] = 2,
   ["minor"] = 4,
@@ -185,7 +183,7 @@ workspace "BZFlag"
   }
   includedirs "include/"
 
-  filter "system:not windows"
+  filter "action:gmake"
     defines {
       "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
       "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
@@ -213,7 +211,8 @@ workspace "BZFlag"
     frameworkdirs "/Library/Frameworks"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
-			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks" }
+			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks @executable_path/../PlugIns" }
+    defines "INSTALL_DATA_DIR=\"\"" -- there's one place that has to have it
   filter { "system:macosx", "action:gmake" }
     buildoptions "-F/Library/Frameworks" -- frameworkdirs() isn't passed to gmake
     linkoptions "-F/Library/Frameworks" -- same
