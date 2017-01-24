@@ -41,13 +41,10 @@
 --
 -- TODO:
 --
--- fix the rest of the missing preprocessor definitions
--- man files need to be generated for gmake
 -- install/uninstall actions (for gmake only, with support for --prefix)
 -- see if the xcode mac bzfs can look for plugins in the right place
 -- finish removing remnants of old build system
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
--- check for remaining FIXMEs
 -- when complete, do profiling on each system and create compile time report
 
 -- game version (this is the one and only place where these should be specified)
@@ -59,6 +56,8 @@ local bzVersion = {
   ["protocol"] = "0221", -- increment on protocol incompatibility
   ["configFileVersion"] = 5
 }
+
+local bzBuildDate = os.date("%Y-%m-%d")
 
 if bzVersion.buildType == "STABLE" or bzVersion.buildType == "MAINT" then
   bzVersion.winInstallerType = "release"
@@ -155,20 +154,6 @@ workspace "BZFlag"
   filter { }
 
   defines {
-    -- // FIXME: all of this needs to be dynamic or eliminated
-    -- #define BUILD_DATE "2016-11-13"
-    -- #define BZFLAG_DATA "/usr/local/share/bzflag"
-    -- #define LT_OBJDIR ".libs/"
-    -- #define PACKAGE "bzflag"
-    -- #define PACKAGE_BUGREPORT "http://BZFlag.org/"
-    -- #define PACKAGE_NAME "BZFlag"
-    -- #define PACKAGE_STRING "BZFlag 2.4.9"
-    -- #define PACKAGE_TARNAME "bzflag"
-    -- #define PACKAGE_URL ""
-    -- #define PACKAGE_VERSION "2.4.9"
-    -- #define VERSION "2.4.9"
-    -- #define NDEBUG 1
-
     "BZ_MAJOR_VERSION="..bzVersion.major,
     "BZ_MINOR_VERSION="..bzVersion.minor,
     "BZ_REV="..bzVersion.revision,
@@ -176,6 +161,7 @@ workspace "BZFlag"
     "BZ_PROTO_VERSION=\""..bzVersion.protocol.."\"",
     "BZ_CONFIG_DIR_VERSION=\""..bzVersion.major.."."..bzVersion.minor.."\"",
     "BZ_CONFIG_FILE_VERSION="..bzVersion.configFileVersion,
+    "BUILD_DATE=\""..bzBuildDate.."\"",
     "HAVE_REGEX_H",
     "ROBOT",
     "HAVE_STD__COUNT",
@@ -344,21 +330,40 @@ workspace "BZFlag"
 			  bzVersion.winInstallerType)
     dataOut = string.gsub(dataOut, "BZ_WIN_INSTALLER_REVISION",
 			  bzVersion.winInstallerRevision)
+    dataOut = string.gsub(dataOut, "BZ_BUILD_DATE", bzBuildDate)
 
     return dataOut
   end
 
-  if string.find(_ACTION, "xcode", 0) then
-    io.writefile("build/BZFlag-Info.plist", substituteVersion(
-		 io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
-    print("Generated build/BZFlag-Info.plist...")
-  elseif string.find(_ACTION, "vs", 0) then
+  if string.find(_ACTION, "vs", 0) then
     io.writefile("build/BZFlag.nsi", substituteVersion(
 		 io.readfile("buildsupport/windows/installer/BZFlag.nsi.in")))
     print("Generated build/BZFlag.nsi...")
     io.writefile("build/bzflag.rc", substituteVersion(
 		 io.readfile("buildsupport/windows/bzflag.rc.in")))
     print("Generated build/bzflag.rc...")
+  elseif string.find(_ACTION, "xcode", 0) then
+    io.writefile("build/BZFlag-Info.plist", substituteVersion(
+		 io.readfile("buildsupport/macos/BZFlag-Info.plist.in")))
+    print("Generated build/BZFlag-Info.plist...")
+  elseif _ACTION == "gmake" then
+    if _OS == "windows" then
+      os.execute("if not exist build\\man mkdir build\\man")
+    else
+      os.execute("mkdir -p build/man")
+    end
+    io.writefile("build/man/bzadmin.6", substituteVersion(
+		 io.readfile("man/bzadmin.6.in")))
+    print("Generated build/man/bzadmin.6...")
+    io.writefile("build/man/bzflag.6", substituteVersion(
+		 io.readfile("man/bzflag.6.in")))
+    print("Generated build/man/bzflag.6...")
+    io.writefile("build/man/bzfs.6", substituteVersion(
+		 io.readfile("man/bzfs.6.in")))
+    print("Generated build/man/bzfs.6...")
+    io.writefile("build/man/bzw.5", substituteVersion(
+		 io.readfile("man/bzw.5.in")))
+    print("Generated build/man/bzw.5...")
   end
 
   -- set up the build (build order/dependencies are honored notwithstanding the
