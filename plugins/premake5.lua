@@ -36,6 +36,9 @@ for _, pluginName in ipairs(pluginDirNames) do
 
       filter "system:macosx"
 	linkoptions "-undefined dynamic_lookup"
+
+      filter "system:linux"
+	symbols "On"
       filter { }
   end
 end
