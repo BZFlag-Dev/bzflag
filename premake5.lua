@@ -389,6 +389,7 @@ workspace "BZFlag"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
 			 ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
 			 ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks @executable_path/../PlugIns" }
+  filter { "system:macosx", "action:xcode*" }
     defines "INSTALL_DATA_DIR=\"\"" -- there's one place that has to have it
   filter { "system:macosx", "action:gmake" }
     buildoptions "-F/Library/Frameworks" -- frameworkdirs() isn't passed to gmake
