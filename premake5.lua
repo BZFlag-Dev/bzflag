@@ -54,8 +54,6 @@ local bzVersion = {
   ["configFileVersion"] = 5
 }
 
-local bzBuildDate = os.date("%Y-%m-%d")
-
 if bzVersion.buildType == "STABLE" or bzVersion.buildType == "MAINT" then
   bzVersion.winInstallerType = "release"
   bzVersion.winInstallerRevision = ""
@@ -66,6 +64,8 @@ else
   bzVersion.winInstallerType = string.lower(bzVersion.buildType)
   bzVersion.winInstallerRevision = ""
 end
+
+local bzBuildDate = os.date("%Y-%m-%d")
 
 -- set up files for installation action
 local bzInstallFiles = {
