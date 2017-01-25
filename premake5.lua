@@ -41,7 +41,6 @@
 --
 -- TODO:
 --
--- install/uninstall actions (for gmake only, with support for --prefix)
 -- finish removing remnants of old build system
 -- check support for solaris and bsd, perhaps just under SDL 1.2/2
 
@@ -68,34 +67,135 @@ else
   bzVersion.winInstallerRevision = ""
 end
 
+-- set up files for installation action
+local bzInstallFiles = {
+  -- programs
+  { ["outDir"] = "bin", ["file"] = "bzadmin" },
+  { ["outDir"] = "bin", ["file"] = "bzflag" },
+  { ["outDir"] = "bin", ["file"] = "bzfs" },
+
+  -- plugins
+  { ["outDir"] = "lib/bzflag", ["outDirDelete"] = true,
+    ["file"] = iif(_OS == "macosx", "*.dylib", "*.so") },
+
+  -- man files
+  { ["inDir"] = "build/man", ["outDir"] = "share/man/man5",
+    ["file"] = "bzw.5" },
+  { ["inDir"] = "build/man", ["outDir"] = "share/man/man6",
+    ["file"] = "bzadmin.6" },
+  { ["inDir"] = "build/man", ["outDir"] = "share/man/man6",
+    ["file"] = "bzflag.6" },
+  { ["inDir"] = "build/man", ["outDir"] = "share/man/man6",
+    ["file"] = "bzfs.6" },
+
+  -- fonts
+  { ["inDir"] = "data/fonts", ["outDir"] = "share/bzflag/fonts",
+    ["outDirDelete"] = true, ["file"] = "*.License" },
+  { ["inDir"] = "data/fonts", ["outDir"] = "share/bzflag/fonts",
+    ["outDirDelete"] = true, ["file"] = "*.fmt" },
+  { ["inDir"] = "data/fonts", ["outDir"] = "share/bzflag/fonts",
+    ["outDirDelete"] = true, ["file"] = "*.png" },
+  { ["inDir"] = "data/fonts", ["outDir"] = "share/bzflag/fonts",
+    ["outDirDelete"] = true, ["file"] = "readme" },
+
+  -- l10n files
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_cs_CZ.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_da.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_de.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_en_US_l33t.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_en_US_redneck.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_es.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_fr.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_it.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_kg.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_lt.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_nl.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_pt.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_ru.po" },
+  { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
+    ["outDirDelete"] = true, ["file"] = "bzflag_sv.po" },
+
+ -- other data files
+  { ["inDir"] = "data", ["outDir"] = "share/bzflag",
+    ["outDirDelete"] = true, ["file"] = "*.png" },
+  { ["inDir"] = "data", ["outDir"] = "share/bzflag",
+    ["outDirDelete"] = true, ["file"] = "*.wav" },
+  { ["inDir"] = "data", ["outDir"] = "share/bzflag",
+    ["outDirDelete"] = true, ["file"] = "bzflag.desktop" },
+  { ["inDir"] = "data", ["outDir"] = "share/bzflag",
+    ["outDirDelete"] = true, ["file"] = "bzflag-32x32.xpm" }
+}
+
+-- set up the install prefix
+local bzInstallPrefix = "/usr/local"
+if _ACTION == "gmake" then
+  if _OPTIONS["prefix"] then
+    -- the gmake action sets the prefix used by install and uninstall also
+    if string.find(_OPTIONS["prefix"], "~/", 0) then
+      print "Error: please use an absolute path when specifying --prefix."
+      os.exit(1)
+    end
+    bzInstallPrefix = _OPTIONS["prefix"]
+    print "Generated build/installPrefix.txt..."
+    io.writefile("build/installPrefix.txt", bzInstallPrefix)
+  else
+    os.remove("build/installPrefix.txt")
+  end
+elseif _ACTION == "install" or _ACTION == "uninstall" then
+  -- install/uninstall can't override it, because the paths are already hard-
+  -- coded into the binaries
+  local prefixFromFile = io.readfile("build/installPrefix.txt")
+  if prefixFromFile then
+    bzInstallPrefix = prefixFromFile
+  end
+end
+
 -- set up workspace
 workspace "BZFlag"
   -- set up command line options
   newoption {
     ["trigger"] = "disable-client",
-    ["description"] = "do not build the BZFlag client"
+    ["description"] = "Do not build the BZFlag client"
   }
   newoption {
     ["trigger"] = "disable-bzadmin",
-    ["description"] = "do not build the text client"
+    ["description"] = "Do not build the text client"
   }
   newoption {
     ["trigger"] = "disable-plugins",
-    ["description"] = "do not build server plugins"
+    ["description"] = "Do not build server plugins"
   }
   newoption {
     ["trigger"] = "disable-installer",
-    ["description"] = "do not build the Windows installer"
+    ["description"] = "Do not build the Windows installer"
   }
   newoption {
     ["trigger"] = "with-sdl",
-    ["description"] = "build the client using SDL",
+    ["description"] = "Build the client using SDL",
     ["value"] = "VERSION",
     ["allowed"] = {
       { "2", "use SDL 2 (default)" },
       { "1", "use SDL 1.2" },
       { "no", "do not use SDL" }
     }
+  }
+  newoption {
+    ["trigger"] = "prefix",
+    ["value"] = "PATH",
+    ["description"] = "Set a prefix for the gmake installation path; default is '/usr/local'"
   }
 
   -- custom actions
@@ -114,6 +214,83 @@ workspace "BZFlag"
 	  os.execute("IF EXIST bin_Release_Win32 ( RMDIR /S /Q bin_Release_Win32 )")
 	else
 	  os.execute("rm -rf build")
+	end
+      end,
+    ["onEnd"] =
+      function()
+	print "Done."
+      end
+  }
+  newaction {
+    ["trigger"] = "install",
+    ["description"] = "Install program files built by gmake action",
+    ["onStart"] =
+      function()
+	print "Installing..."
+      end,
+    ["execute"] =
+      function()
+        if _OS == "windows" then
+	  print "Error: the install action is not supported on Windows."
+	  return
+	end
+	if _OPTIONS["prefix"] then
+	  print "Error: cannot override the --prefix setting for the 'install' action."
+	  return
+	end
+
+	for _, installFile in ipairs(bzInstallFiles) do
+	  if #os.matchfiles((installFile.inDir or "build/bin/Release").."/"..
+			    installFile.file) > 0 then
+            print("Installing "..bzInstallPrefix.."/"..installFile.outDir..
+		  "/"..installFile.file)
+	    os.execute("mkdir -p "..bzInstallPrefix.."/"..installFile.outDir)
+	    os.execute("cp "..(installFile.inDir or "build/bin/Release")..
+		       "/"..installFile.file.." "..bzInstallPrefix.."/"..
+		       installFile.outDir.."/")
+	  end
+	end
+      end,
+    ["onEnd"] =
+      function()
+	print "Done."
+      end
+  }
+  newaction {
+    ["trigger"] = "uninstall",
+    ["description"] = "Uninstall program files built by gmake action",
+    ["onStart"] =
+      function()
+	print "Uninstalling..."
+      end,
+    ["execute"] =
+      function()
+        if _OS == "windows" then
+	  print "Error: the uninstall action is not supported on Windows."
+	  return
+	end
+	if _OPTIONS["prefix"] then
+	  print "Error: cannot override the --prefix setting for the 'uninstall' action."
+	  return
+	end
+
+	for _, installFile in ipairs(bzInstallFiles) do
+	  if #os.matchfiles(bzInstallPrefix.."/"..installFile.outDir.."/"..
+			    installFile.file) > 0 then
+	    print("Uninstalling "..bzInstallPrefix.."/"..installFile.outDir..
+		  "/"..installFile.file)
+	    os.execute("rm "..bzInstallPrefix.."/"..installFile.outDir.."/"..
+		       installFile.file)
+
+	    if installFile.outDirDelete then
+	      if #os.matchfiles(bzInstallPrefix.."/"..installFile.outDir..
+				"/*") == 0 then
+		print("Deleting directory "..bzInstallPrefix.."/"..
+		      installFile.outDir)
+		os.execute("rmdir "..bzInstallPrefix.."/"..installFile.outDir)
+	      end
+	    end
+	  end
 	end
       end,
     ["onEnd"] =
@@ -185,8 +362,8 @@ workspace "BZFlag"
 
   filter "action:gmake"
     defines {
-      "INSTALL_LIB_DIR=\"/usr/local/lib/bzflag\"",
-      "INSTALL_DATA_DIR=\"/usr/local/share/bzflag\""
+      "INSTALL_LIB_DIR=\""..bzInstallPrefix.."/lib/bzflag/\"",
+      "INSTALL_DATA_DIR=\""..bzInstallPrefix.."/share/bzflag\""
     }
 
   filter "system:windows"
