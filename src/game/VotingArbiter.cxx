@@ -338,26 +338,26 @@ bool VotingArbiter::retractVote(const std::string &player)
 
 // Custom Poll Types
 
-std::map<std::string, PollOption> customPollOptions;
+std::map<std::string, PollType> customPollTypes;
 
-void registerCustomPollOption ( const char* object, const char* parameters, bz_CustomPollOptionHandler *handler )
+void registerCustomPollType ( const char* object, const char* parameters, bz_CustomPollTypeHandler *handler )
 {
-    PollOption o;
+    PollType o;
     o.pollParameters = parameters;
     o.pollHandler = handler;
 
     std::string objectName = object;
 
-    customPollOptions[TextUtils::tolower(objectName)] = o;
+    customPollTypes[TextUtils::tolower(objectName)] = o;
 }
 
-void removeCustomPollOption ( const char* object )
+void removeCustomPollType ( const char* object )
 {
     std::string objectName = object;
     objectName = TextUtils::tolower(objectName);
 
-    if (customPollOptions.find(objectName) != customPollOptions.end())
-        customPollOptions.erase(customPollOptions.find(objectName));
+    if (customPollTypes.find(objectName) != customPollTypes.end())
+        customPollTypes.erase(customPollTypes.find(objectName));
 }
 
 

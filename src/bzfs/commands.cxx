@@ -2866,8 +2866,8 @@ bool PollCommand::operator() (const char	 *message,
 
   /* handle subcommands */
 
-  bool customPollOption = customPollOptions.find(cmd) != customPollOptions.end();
-  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset") || customPollOption) {
+  bool customPollType = customPollTypes.find(cmd) != customPollTypes.end();
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset") || customPollType) {
     std::string target;
     std::string targetIP = "";
 
@@ -2952,11 +2952,11 @@ bool PollCommand::operator() (const char	 *message,
       return true;
     }
 
-    if (customPollOption)
+    if (customPollType)
     {
       bz_BasePlayerRecord *pr = bz_getPlayerByIndex(t);
 
-      bool stopPoll = !(customPollOptions[cmd].pollHandler->PollOpen(pr, cmd.c_str(), target.c_str()));
+      bool stopPoll = !(customPollTypes[cmd].pollHandler->PollOpen(pr, cmd.c_str(), target.c_str()));
 
       bz_freePlayerRecord(pr);
 
@@ -2965,7 +2965,7 @@ bool PollCommand::operator() (const char	 *message,
       }
     }
 
-    if ((cmd != "set") && (cmd != "flagreset") && !customPollOption) {
+    if ((cmd != "set") && (cmd != "flagreset") && !customPollType) {
       // kick, kill, and ban polls take a player name
 
       /* make sure the requested player is actually here */
@@ -3038,7 +3038,7 @@ bool PollCommand::operator() (const char	 *message,
 
     /* create and announce the new poll */
     bool canDo = false;
-    if (customPollOption) {
+    if (customPollType) {
       canDo = (arbiter->poll(target, t, cmd));
     } else if (cmd == "ban") {
       canDo = (arbiter->pollToBan(target, t, targetIP));
@@ -3120,9 +3120,9 @@ bool PollCommand::operator() (const char	 *message,
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
-    if (!customPollOptions.empty()) {
-      for (auto pollOption : customPollOptions) {
-        snprintf(reply, MessageLen, "    or /poll %s %s", pollOption.first.c_str(), pollOption.second.pollParameters.c_str());
+    if (!customPollTypes.empty()) {
+      for (auto pollType : customPollTypes) {
+        snprintf(reply, MessageLen, "    or /poll %s %s", pollType.first.c_str(), pollType.second.pollParameters.c_str());
         sendMessage(ServerPlayer, t, reply);
       }
     }

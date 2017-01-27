@@ -1617,18 +1617,18 @@ BZF_API bz_APIStringList *bz_getHelpTopic( std::string name );
 
 // custom polls
 
-class bz_CustomPollOptionHandler
+class bz_CustomPollTypeHandler
 {
 public:
-  virtual ~bz_CustomPollOptionHandler() {};
+  virtual ~bz_CustomPollTypeHandler() {};
 
   // Should return false to prevent the poll from starting
-  virtual bool PollOpen  (bz_BasePlayerRecord *player, const char* action, const char* value) = 0;
-  virtual void PollClose (const char* action, const char* value, bool success) = 0;
+  virtual bool PollOpen  (bz_BasePlayerRecord *player, const char* action, const char* parameters) = 0;
+  virtual void PollClose (const char* action, const char* parameters, bool success) = 0;
 };
 
-BZF_API bool bz_registerCustomPollOption (const char* option, const char* parameters, bz_CustomPollOptionHandler *handler);
-BZF_API bool bz_removeCustomPollOption (const char* option);
+BZF_API bool bz_registerCustomPollType (const char* option, const char* parameters, bz_CustomPollTypeHandler *handler);
+BZF_API bool bz_removeCustomPollType (const char* option);
 
 // custom commands
 

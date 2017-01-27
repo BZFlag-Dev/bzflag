@@ -518,7 +518,7 @@
 		03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */; };
 		03FA7435174260CB00573D2D /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */; };
 		03FA7436174260D700573D2D /* serverSidePlayerSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */; };
-		C333EFD41E2B9F5500B4B182 /* customPollOptionSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollOptionSample.cpp */; };
+		C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */; };
 		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; };
 		C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
@@ -1731,9 +1731,9 @@
 		03E42D121B321DF2006EE763 /* data */ = {isa = PBXFileReference; lastKnownFileType = folder; name = data; path = ../data; sourceTree = "<group>"; };
 		03E42D191B322DFC006EE763 /* COPYING */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING; path = ../COPYING; sourceTree = "<group>"; };
 		03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = serverSidePlayerSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C333EFC91E2B9F0800B4B182 /* customPollOptionSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = customPollOptionSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		C333EFCE1E2B9F5500B4B182 /* customPollOptionSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customPollOptionSample.cpp; sourceTree = "<group>"; };
-		C333EFD31E2B9F5500B4B182 /* README.customPollOptionSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customPollOptionSample.txt; sourceTree = "<group>"; };
+		C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = customPollTypeSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customPollTypeSample.cpp; sourceTree = "<group>"; };
+		C333EFD31E2B9F5500B4B182 /* README.customPollTypeSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customPollTypeSample.txt; sourceTree = "<group>"; };
 		C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = CustomZoneSample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
@@ -3008,7 +3008,7 @@
 				0315BEAF1B821C0700FC7CE0 /* bzfscron */,
 				0394E6E6167B1024007F4035 /* chathistory */,
 				0394E6EC167B1024007F4035 /* customflagsample */,
-				C333EFCD1E2B9F5500B4B182 /* customPollOptionSample */,
+				C333EFCD1E2B9F5500B4B182 /* customPollTypeSample */,
 				C353B1DF1AE23C8100C5AED5 /* CustomZoneSample */,
 				0394E6F3167B1024007F4035 /* fairCTF */,
 				0394E6FA167B1024007F4035 /* fastmap */,
@@ -3345,7 +3345,7 @@
 				0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */,
 				0394E7F3167B1A17007F4035 /* chathistory.dylib */,
 				0394E7FE167B1E66007F4035 /* customflagsample.dylib */,
-				C333EFC91E2B9F0800B4B182 /* customPollOptionSample.dylib */,
+				C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */,
 				C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */,
 				0394E809167B1ECE007F4035 /* fairCTF.dylib */,
 				0394E814167B1F76007F4035 /* fastmap.dylib */,
@@ -3435,13 +3435,13 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		C333EFCD1E2B9F5500B4B182 /* customPollOptionSample */ = {
+		C333EFCD1E2B9F5500B4B182 /* customPollTypeSample */ = {
 			isa = PBXGroup;
 			children = (
-				C333EFCE1E2B9F5500B4B182 /* customPollOptionSample.cpp */,
-				C333EFD31E2B9F5500B4B182 /* README.customPollOptionSample.txt */,
+				C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */,
+				C333EFD31E2B9F5500B4B182 /* README.customPollTypeSample.txt */,
 			);
-			path = customPollOptionSample;
+			path = customPollTypeSample;
 			sourceTree = "<group>";
 		};
 		C353B1DF1AE23C8100C5AED5 /* CustomZoneSample */ = {
@@ -4655,9 +4655,9 @@
 			productReference = 03FA742E1742601B00573D2D /* serverSidePlayerSample.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		C333EFC81E2B9F0800B4B182 /* customPollOptionSample */ = {
+		C333EFC81E2B9F0800B4B182 /* customPollTypeSample */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = C333EFCC1E2B9F0800B4B182 /* Build configuration list for PBXNativeTarget "customPollOptionSample" */;
+			buildConfigurationList = C333EFCC1E2B9F0800B4B182 /* Build configuration list for PBXNativeTarget "customPollTypeSample" */;
 			buildPhases = (
 				C333EFC51E2B9F0800B4B182 /* Sources */,
 				C333EFC61E2B9F0800B4B182 /* Frameworks */,
@@ -4667,9 +4667,9 @@
 			);
 			dependencies = (
 			);
-			name = customPollOptionSample;
-			productName = customPollOptionSample;
-			productReference = C333EFC91E2B9F0800B4B182 /* customPollOptionSample.dylib */;
+			name = customPollTypeSample;
+			productName = customPollTypeSample;
+			productReference = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		C353B1D61AE239CC00C5AED5 /* CustomZoneSample */ = {
@@ -4748,6 +4748,7 @@
 				0315BEAA1B821BFF00FC7CE0 /* bzfscron */,
 				0394E7F2167B1A17007F4035 /* chathistory */,
 				0394E7FD167B1E66007F4035 /* customflagsample */,
+				C333EFC81E2B9F0800B4B182 /* customPollTypeSample */,
 				C353B1D61AE239CC00C5AED5 /* CustomZoneSample */,
 				0394E808167B1ECE007F4035 /* fairCTF */,
 				0394E813167B1F76007F4035 /* fastmap */,
@@ -4775,7 +4776,6 @@
 				0394E91B167B293E007F4035 /* timedctf */,
 				0394E926167B29CC007F4035 /* TimeLimit */,
 				0394E93C167B2A9E007F4035 /* wwzones */,
-				C333EFC81E2B9F0800B4B182 /* customPollOptionSample */,
 			);
 		};
 /* End PBXProject section */
@@ -5582,7 +5582,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C333EFD41E2B9F5500B4B182 /* customPollOptionSample.cpp in Sources */,
+				C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7964,7 +7964,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		C333EFCC1E2B9F0800B4B182 /* Build configuration list for PBXNativeTarget "customPollOptionSample" */ = {
+		C333EFCC1E2B9F0800B4B182 /* Build configuration list for PBXNativeTarget "customPollTypeSample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				C333EFCA1E2B9F0800B4B182 /* Debug */,

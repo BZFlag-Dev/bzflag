@@ -6794,8 +6794,8 @@ int main(int argc, char **argv)
 	    apiEventCalled = true;
 	  }
 
-	  if (!calledCustomHandler && customPollOptions.find(votingarbiter->getPollAction()) != customPollOptions.end()) {
-	    customPollOptions[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction().c_str(), votingarbiter->getPollTarget().c_str(), votingarbiter->isPollSuccessful());
+	  if (!calledCustomHandler && customPollTypes.find(votingarbiter->getPollAction()) != customPollTypes.end()) {
+	    customPollTypes[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction().c_str(), votingarbiter->getPollTarget().c_str(), votingarbiter->isPollSuccessful());
 	    calledCustomHandler = true;
 	  }
 

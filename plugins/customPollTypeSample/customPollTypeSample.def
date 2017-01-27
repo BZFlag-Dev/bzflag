@@ -1,4 +1,4 @@
-LIBRARY	customPollOptionSample
+LIBRARY	customPollTypeSample
 
 EXPORTS
     ; Explicit exports can go here
