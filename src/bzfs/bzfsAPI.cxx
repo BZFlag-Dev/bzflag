@@ -2445,6 +2445,10 @@ BZF_API bool bz_pollVeto( void )
   /* poof */
   arbiter->forgetPoll();
 
+  bz_PollVetoEventData_V1 vetoData;
+
+  worldEventManager.callEvents(bz_ePollVetoEvent, &vetoData);
+
   return true;
 }
 
@@ -2456,6 +2460,24 @@ BZF_API bz_APIStringList *bz_getHelpTopics( void )
 BZF_API bz_APIStringList *bz_getHelpTopic(std::string name)
 {
   return new bz_APIStringList(*clOptions->textChunker.getTextChunk(name));
+}
+
+BZF_API bool bz_registerCustomPollType ( const char* option, const char* parameters, bz_CustomPollTypeHandler *handler )
+{
+  if (!option || !handler)
+    return false;
+
+  registerCustomPollType(option, parameters, handler);
+  return true;
+}
+
+BZF_API bool bz_removeCustomPollType ( const char* option )
+{
+  if (!option)
+    return false;
+
+  removeCustomPollType(option);
+  return true;
 }
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )

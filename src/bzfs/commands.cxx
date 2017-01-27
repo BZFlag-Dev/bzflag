@@ -2660,18 +2660,26 @@ bool VoteCommand::operator() (const char	 *message,
 
   // cast the vote or complain
   bool cast = false;
-  if (vote == 0) {
-    if ((cast = arbiter->voteNo(callsign)) == true) {
-      /* player voted no */
+  if (vote > -1) {
+    bz_PollVoteEventData_V1 voteData;
+    voteData.playerID = t;
+    voteData.inFavor = (vote == 1);
+
+    worldEventManager.callEvents(bz_ePollVoteEvent, &voteData);
+
+    if (!voteData.allow) {
+      sendMessage(ServerPlayer, t, voteData.reason.c_str());
+      return true;
+    }
+
+    if (vote == 0 && (cast = arbiter->voteNo(callsign)) == true) {
       snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
     }
-  } else if (vote == 1) {
-    if ((cast = arbiter->voteYes(callsign)) == true) {
-      /* player voted yes */
+    else if (vote == 1 && (cast = arbiter->voteYes(callsign)) == true) {
       snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-      sendMessage(ServerPlayer, t, reply);
     }
+
+    sendMessage(ServerPlayer, t, reply);
   } else {
     if (answer.length() == 0) {
       snprintf(reply, MessageLen, "%s, you did not provide a vote answer", callsign.c_str());
@@ -2745,6 +2753,11 @@ bool VetoCommand::operator() (const char	 *,
   sendMessage(ServerPlayer, AllPlayers,
 	      TextUtils::format("The poll was cancelled by %s",
 				  playerData->player.getCallSign()).c_str());
+
+  bz_PollVetoEventData_V1 vetoData;
+  vetoData.playerID  = t;
+
+  worldEventManager.callEvents(bz_ePollVetoEvent, &vetoData);
 
   return true;
 }
@@ -2853,7 +2866,8 @@ bool PollCommand::operator() (const char	 *message,
 
   /* handle subcommands */
 
-  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset")) {
+  bool customPollType = customPollTypes.find(cmd) != customPollTypes.end();
+  if ((cmd == "ban") || (cmd == "kick") || (cmd == "kill") || (cmd == "set") || (cmd == "flagreset") || customPollType) {
     std::string target;
     std::string targetIP = "";
 
@@ -2938,8 +2952,21 @@ bool PollCommand::operator() (const char	 *message,
       return true;
     }
 
-    if ((cmd != "set") && (cmd != "flagreset")) {
-      // all polls that are not set or flagreset polls take a player name
+    if (customPollType)
+    {
+      bz_BasePlayerRecord *pr = bz_getPlayerByIndex(t);
+
+      bool stopPoll = !(customPollTypes[cmd].pollHandler->PollOpen(pr, cmd.c_str(), target.c_str()));
+
+      bz_freePlayerRecord(pr);
+
+      if (stopPoll) {
+        return true;
+      }
+    }
+
+    if ((cmd != "set") && (cmd != "flagreset") && !customPollType) {
+      // kick, kill, and ban polls take a player name
 
       /* make sure the requested player is actually here */
       int v = GameKeeper::Player::getPlayerIDByName(target);
@@ -2997,18 +3024,32 @@ bool PollCommand::operator() (const char	 *message,
 
     }
 
+    bz_AllowPollEventData_V1 allowPollData;
+    allowPollData.playerID = t;
+    allowPollData.pollAction = cmd;
+    allowPollData.pollTarget = target;
+
+    worldEventManager.callEvents(bz_eAllowPollEvent, &allowPollData);
+
+    if (!allowPollData.allow) {
+      sendMessage(ServerPlayer, t, allowPollData.reason.c_str());
+      return true;
+    }
+
     /* create and announce the new poll */
     bool canDo = false;
-    if (cmd == "ban") {
-      canDo = (arbiter->pollToBan(target, callsign, targetIP));
+    if (customPollType) {
+      canDo = (arbiter->poll(target, t, cmd));
+    } else if (cmd == "ban") {
+      canDo = (arbiter->pollToBan(target, t, targetIP));
     } else if (cmd == "kick") {
-      canDo = (arbiter->pollToKick(target, callsign, targetIP));
+      canDo = (arbiter->pollToKick(target, t, targetIP));
     } else if (cmd == "kill") {
-      canDo = (arbiter->pollToKill(target, callsign, targetIP));
+      canDo = (arbiter->pollToKill(target, t, targetIP));
     } else if (cmd == "set") {
-      canDo = (arbiter->pollToSet(target, callsign));
+      canDo = (arbiter->pollToSet(target, t));
     } else if (cmd == "flagreset") {
-      canDo = (arbiter->pollToResetFlags(callsign));
+      canDo = (arbiter->pollToResetFlags(t));
     }
 
     if (!canDo) {
@@ -3016,6 +3057,13 @@ bool PollCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, reply);
       return true;
     } else {
+      bz_PollStartEventData_V1 pollStartData;
+      pollStartData.playerID  = t;
+      pollStartData.pollAction = cmd;
+      pollStartData.pollTarget = target;
+
+      worldEventManager.callEvents(bz_ePollStartEvent, &pollStartData);
+
       snprintf(reply, MessageLen, "A poll to %s %s has been requested by %s", cmd.c_str(), target.c_str(), callsign.c_str());
       sendMessage(ServerPlayer, AllPlayers, reply);
     }
@@ -3071,6 +3119,13 @@ bool PollCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, "    or /poll set variable value");
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
+
+    if (!customPollTypes.empty()) {
+      for (auto pollType : customPollTypes) {
+        snprintf(reply, MessageLen, "    or /poll %s %s", pollType.first.c_str(), pollType.second.pollParameters.c_str());
+        sendMessage(ServerPlayer, t, reply);
+      }
+    }
 
   } /* end handling of poll subcommands */
 

@@ -302,6 +302,11 @@ typedef enum
   bz_eAllowFlagGrab,
   bz_eAuthenticatonComplete,
   bz_eServerAddPlayer,
+  bz_eAllowPollEvent,
+  bz_ePollStartEvent,
+  bz_ePollVoteEvent,
+  bz_ePollVetoEvent,
+  bz_ePollEndEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -841,6 +846,78 @@ public:
   int from;
 
   bz_ApiString message;
+};
+
+class BZF_API bz_AllowPollEventData_V1 : public bz_EventData
+{
+public:
+  bz_AllowPollEventData_V1() : bz_EventData(bz_eAllowPollEvent),
+    playerID(BZ_SERVER), pollAction(""), pollTarget(""), allow(true), reason("")
+  {}
+
+  int playerID;
+
+  // 'kick', 'kill', 'ban', 'set', 'reset', or custom value from a plug-in
+  bz_ApiString pollAction;
+
+  // If it's a 'kick', 'kill' or 'ban', this will be the victim's callsign
+  // If it's a 'set', this will be e.g. '_mirror black'
+  // If it's a 'reset', this will be 'flags'
+  bz_ApiString pollTarget;
+
+  bool allow;
+  bz_ApiString reason;
+};
+
+class BZF_API bz_PollStartEventData_V1 : public bz_EventData
+{
+public:
+  bz_PollStartEventData_V1() : bz_EventData(bz_ePollStartEvent),
+    playerID(BZ_SERVER), pollAction(""), pollTarget("")
+  {}
+
+  int playerID;
+
+  // See bz_AllowPollEventData_V1 for notes
+  bz_ApiString pollAction;
+  bz_ApiString pollTarget;
+};
+
+class BZF_API bz_PollVoteEventData_V1 : public bz_EventData
+{
+public:
+  bz_PollVoteEventData_V1() : bz_EventData(bz_ePollVoteEvent),
+    playerID(BZ_SERVER), inFavor(false), allow(true), reason("")
+  {}
+
+  int playerID;
+  bool inFavor;
+
+  bool allow;
+  bz_ApiString reason;
+};
+
+class BZF_API bz_PollVetoEventData_V1 : public bz_EventData
+{
+public:
+  bz_PollVetoEventData_V1() : bz_EventData(bz_ePollVetoEvent),
+    playerID(BZ_SERVER)
+  {}
+
+  int playerID;
+};
+
+class BZF_API bz_PollEndEventData_V1 : public bz_EventData
+{
+public:
+  bz_PollEndEventData_V1() : bz_EventData(bz_ePollEndEvent),
+    successful(false), yesCount(0), noCount(0), abstentionCount(0)
+  {}
+
+  bool successful;
+  int yesCount;
+  int noCount;
+  int abstentionCount;
 };
 
 class BZF_API bz_PlayerAuthEventData_V1 : public bz_EventData
@@ -1537,6 +1614,21 @@ BZF_API bool bz_pollVeto( void );
 // help
 BZF_API bz_APIStringList *bz_getHelpTopics( void );
 BZF_API bz_APIStringList *bz_getHelpTopic( std::string name );
+
+// custom polls
+
+class bz_CustomPollTypeHandler
+{
+public:
+  virtual ~bz_CustomPollTypeHandler() {};
+
+  // Should return false to prevent the poll from starting
+  virtual bool PollOpen  (bz_BasePlayerRecord *player, const char* action, const char* parameters) = 0;
+  virtual void PollClose (const char* action, const char* parameters, bool success) = 0;
+};
+
+BZF_API bool bz_registerCustomPollType (const char* option, const char* parameters, bz_CustomPollTypeHandler *handler);
+BZF_API bool bz_removeCustomPollType (const char* option);
 
 // custom commands
 

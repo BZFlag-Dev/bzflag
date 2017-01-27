@@ -14,6 +14,7 @@
 #include "VotingArbiter.h"
 
 /* common implementation headers */
+#include "GameKeeper.h"
 #include "TextUtils.h"
 
 
@@ -58,7 +59,7 @@ bool VotingArbiter::forgetPoll(void)
   _pollee = "nobody";
   _polleeIP = "";
   _action = "";
-  _pollRequestor = "nobody";
+  _pollOrganizer = BZ_SERVER;
 
   /* poof */
   _suffraged.clear();
@@ -66,8 +67,11 @@ bool VotingArbiter::forgetPoll(void)
   return true;
 }
 
-bool VotingArbiter::poll(const std::string &player, const std::string &playerRequesting, std::string action, std::string playerIP)
+bool VotingArbiter::poll(const std::string &target, int playerRequestingID, std::string action, std::string playerIP)
 {
+  GameKeeper::Player *pr = GameKeeper::Player::getPlayerByIndex(playerRequestingID);
+  std::string playerRequesting = pr->player.getCallSign();
+
   poller_t p;
   std::string message;
   bool tooSoon;
@@ -92,16 +96,16 @@ bool VotingArbiter::poll(const std::string &player, const std::string &playerReq
   _pollers.push_back(p);
 
   // create the booth to record votes
-  message = player + " " + action;
+  message = target + " " + action;
 
   if (_votingBooth != NULL) {
     delete _votingBooth;
   }
   _votingBooth = YesNoVotingBooth(message);
-  _pollee = player;
+  _pollee = target;
   _polleeIP = playerIP;
   _action = action;
-  _pollRequestor = playerRequesting;
+  _pollOrganizer = playerRequestingID;
 
   // set timers
   _startTime = TimeKeeper::getCurrent();
@@ -109,30 +113,30 @@ bool VotingArbiter::poll(const std::string &player, const std::string &playerReq
   return true;
 }
 
-bool VotingArbiter::pollToKick(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
+bool VotingArbiter::pollToKick(const std::string &victim, int playerRequestingID, const std::string &playerIP)
 {
-  return (this->poll(player, playerRequesting, std::string("kick"), playerIP));
+  return (this->poll(victim, playerRequestingID, std::string("kick"), playerIP));
 }
 
-bool VotingArbiter::pollToKill(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
+bool VotingArbiter::pollToKill(const std::string &victim, int playerRequestingID, const std::string &playerIP)
 {
-  return (this->poll(player, playerRequesting, std::string("kill"), playerIP));
+  return (this->poll(victim, playerRequestingID, std::string("kill"), playerIP));
 }
 
-bool VotingArbiter::pollToBan(const std::string &player, const std::string &playerRequesting, const std::string &playerIP)
+bool VotingArbiter::pollToBan(const std::string &victim, int playerRequestingID, const std::string &playerIP)
 {
-  return (this->poll(player, playerRequesting, std::string("ban"), playerIP));
+  return (this->poll(victim, playerRequestingID, std::string("ban"), playerIP));
 }
 
-bool VotingArbiter::pollToSet(const std::string &setting, const std::string &playerRequesting)
+bool VotingArbiter::pollToSet(const std::string &setting, int playerRequestingID)
 {
-  return (this->poll(setting, playerRequesting, std::string("set")));
+  return (this->poll(setting, playerRequestingID, std::string("set")));
 }
 
-bool VotingArbiter::pollToResetFlags(const std::string &playerRequesting)
+bool VotingArbiter::pollToResetFlags(int playerRequestingID)
 {
   std::string flags=std::string("flags");
-  return (this->poll(flags, playerRequesting, std::string("reset")));
+  return (this->poll(flags, playerRequestingID, std::string("reset")));
 }
 
 bool VotingArbiter::closePoll(void)
@@ -330,6 +334,30 @@ bool VotingArbiter::retractVote(const std::string &player)
     return false;
   }
   return _votingBooth->retractVote(TextUtils::tolower(player));
+}
+
+// Custom Poll Types
+
+std::map<std::string, PollType> customPollTypes;
+
+void registerCustomPollType ( const char* object, const char* parameters, bz_CustomPollTypeHandler *handler )
+{
+    PollType o;
+    o.pollParameters = parameters;
+    o.pollHandler = handler;
+
+    std::string objectName = object;
+
+    customPollTypes[TextUtils::tolower(objectName)] = o;
+}
+
+void removeCustomPollType ( const char* object )
+{
+    std::string objectName = object;
+    objectName = TextUtils::tolower(objectName);
+
+    if (customPollTypes.find(objectName) != customPollTypes.end())
+        customPollTypes.erase(customPollTypes.find(objectName));
 }
 
 
