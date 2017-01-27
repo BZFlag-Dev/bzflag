@@ -37,7 +37,7 @@ void customPollTypeSample::Cleanup ()
 bool customPollTypeSample::PollOpen(bz_BasePlayerRecord *player, const char* action, const char* parameters)
 {
   int playerID = player->playerID;
-  std::string _parameters = parameters;
+  std::string _action = action;
 
   // If a player doesn't have the 'poll' permission, they will not be able to start a poll. Be sure to send the playerID a message
   // or else it'll appear as if the /poll command did not work.
@@ -47,7 +47,7 @@ bool customPollTypeSample::PollOpen(bz_BasePlayerRecord *player, const char* act
   }
 
   // The 'action' variable will be set whichever poll option is being called
-  if (_parameters == "mute") {
+  if (_action == "mute") {
 
     // Return true in order to let BZFS start the poll
     return true;
