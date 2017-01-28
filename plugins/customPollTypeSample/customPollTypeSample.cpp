@@ -34,7 +34,7 @@ void customPollTypeSample::Cleanup ()
 
 // This function is called before a `/poll mute <callsign>` poll is started. If this function returns false, then the poll will not
 // start. This is useful for checking permissions or other conditions.
-bool customPollTypeSample::PollOpen(bz_BasePlayerRecord *player, const char* action, const char* parameters)
+bool customPollTypeSample::PollOpen(bz_BasePlayerRecord *player, const char* action, const char* /*parameters*/)
 {
   int playerID = player->playerID;
   std::string _action = action;
