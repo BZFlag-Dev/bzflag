@@ -6,6 +6,7 @@ SUBDIRS = \
 	bzfscron \
 	chathistory \
 	customflagsample \
+	customPollTypeSample \
 	CustomZoneSample \
 	fairCTF \
 	fastmap \
