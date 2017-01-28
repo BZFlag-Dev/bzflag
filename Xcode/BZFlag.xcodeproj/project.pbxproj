@@ -521,6 +521,7 @@
 		C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */; };
 		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; };
 		C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */; };
+		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
 
@@ -805,6 +806,13 @@
 			remoteGlobalIDString = C353B1D61AE239CC00C5AED5;
 			remoteInfo = CustomZoneSample;
 		};
+		C39F69381E3D3EA300132C55 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C333EFC81E2B9F0800B4B182;
+			remoteInfo = customPollTypeSample;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -853,6 +861,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */,
 				C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */,
 				03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */,
 				0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */,
@@ -4605,6 +4614,7 @@
 				0315BEB91B821D6E00FC7CE0 /* PBXTargetDependency */,
 				0394E7F8167B1A22007F4035 /* PBXTargetDependency */,
 				0394E803167B1E79007F4035 /* PBXTargetDependency */,
+				C39F69391E3D3EA300132C55 /* PBXTargetDependency */,
 				C353B1DE1AE23C2900C5AED5 /* PBXTargetDependency */,
 				0394E80E167B1EDC007F4035 /* PBXTargetDependency */,
 				0394E819167B1F8D007F4035 /* PBXTargetDependency */,
@@ -5796,6 +5806,11 @@
 			isa = PBXTargetDependency;
 			target = C353B1D61AE239CC00C5AED5 /* CustomZoneSample */;
 			targetProxy = C353B1DD1AE23C2900C5AED5 /* PBXContainerItemProxy */;
+		};
+		C39F69391E3D3EA300132C55 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C333EFC81E2B9F0800B4B182 /* customPollTypeSample */;
+			targetProxy = C39F69381E3D3EA300132C55 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -7969,6 +7984,7 @@
 				C333EFCB1E2B9F0800B4B182 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C353B1DA1AE239CC00C5AED5 /* Build configuration list for PBXNativeTarget "CustomZoneSample" */ = {
 			isa = XCConfigurationList;
