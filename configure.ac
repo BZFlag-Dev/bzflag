@@ -1029,6 +1029,7 @@ AC_CONFIG_FILES([
 	plugins/bzfscron/Makefile
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
+	plugins/customPollTypeSample/Makefile
 	plugins/CustomZoneSample/Makefile
 	plugins/fairCTF/Makefile
 	plugins/fastmap/Makefile
