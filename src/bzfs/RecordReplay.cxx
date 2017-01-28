@@ -1666,9 +1666,9 @@ static void packVars(const std::string& key, void *data)
     pvd.len = sizeof(u16);
   }
 
-  pvd.buf = nboPackUByte(pvd.buf, key.length());
+  pvd.buf = nboPackUByte(pvd.buf, (uint8_t)key.length());
   pvd.buf = nboPackString(pvd.buf, key.c_str(), key.length());
-  pvd.buf = nboPackUByte(pvd.buf, value.length());
+  pvd.buf = nboPackUByte(pvd.buf, (uint8_t)value.length());
   pvd.buf = nboPackString(pvd.buf, value.c_str(), value.length());
   pvd.len += pairLen;
   pvd.count++;
