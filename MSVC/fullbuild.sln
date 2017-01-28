@@ -1,5 +1,7 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{57FFDC0F-E8B8-478D-8E12-474EDD2B381C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bzadmin", "build\bzadmin.vcxproj", "{CA597E05-FD07-4AE3-B963-81C858F26D56}"
@@ -97,6 +99,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "thiefControl", "..\plugins\thiefControl\thiefControl.vcxproj", "{C7E4CB54-110E-4DA1-86E5-612DE727419A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "superUser", "..\plugins\superUser\superUser.vcxproj", "{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "customPollTypeSample", "..\plugins\customPollTypeSample\customPollTypeSample.vcxproj", "{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -490,6 +494,14 @@ Global
 		{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6}.Release|Win32.Build.0 = Release|Win32
 		{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6}.Release|x64.ActiveCfg = Release|x64
 		{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6}.Release|x64.Build.0 = Release|x64
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Debug|Win32.Build.0 = Debug|Win32
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Debug|x64.ActiveCfg = Debug|x64
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Debug|x64.Build.0 = Debug|x64
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Release|Win32.ActiveCfg = Release|Win32
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Release|Win32.Build.0 = Release|Win32
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Release|x64.ActiveCfg = Release|x64
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -525,6 +537,7 @@ Global
 		{3FB1B268-2084-4C96-8D90-EB72A612A986} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{C7E4CB54-110E-4DA1-86E5-612DE727419A} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
+		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
