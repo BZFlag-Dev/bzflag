@@ -101,7 +101,6 @@
 		0357A8131670B2090056C938 /* ServerListCache.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554480166C846F008806E9 /* ServerListCache.cxx */; };
 		0357A8141670B2090056C938 /* StartupInfo.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554481166C846F008806E9 /* StartupInfo.cxx */; };
 		0357A8151670B2090056C938 /* TextureMatrix.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554482166C846F008806E9 /* TextureMatrix.cxx */; };
-		0357A8161670B2090056C938 /* VotingArbiter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554483166C846F008806E9 /* VotingArbiter.cxx */; };
 		0357A8211670B2B70056C938 /* high_barrel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355449A166C846F008806E9 /* high_barrel.cxx */; };
 		0357A8221670B2B70056C938 /* high_body.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355449B166C846F008806E9 /* high_body.cxx */; };
 		0357A8231670B2B70056C938 /* high_ltread.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355449C166C846F008806E9 /* high_ltread.cxx */; };
@@ -508,6 +507,7 @@
 		03C8EF19167AC55100BB07A5 /* libmediafile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8C41670B8DE0056C938 /* libmediafile.a */; };
 		03C8EF1A167AC55800BB07A5 /* libdate.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A8D51670B9930056C938 /* libdate.a */; };
 		03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0357A81B1670B2990056C938 /* libtank.a */; };
+		03CC33EF1E3D4B7E00CF55BC /* VotingArbiter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */; };
 		03D479281BC73EED00C906A8 /* ServerListFilterMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */; };
 		03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
 		03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03DBE9AC1B30D2ED00711E71 /* libcares.a */; };
@@ -1053,7 +1053,6 @@
 		0305D5F6166C9DAE00557FC4 /* vectors_old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vectors_old.h; sourceTree = "<group>"; };
 		0305D5F7166C9DAE00557FC4 /* version.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = version.h; sourceTree = "<group>"; };
 		0305D5F8166C9DAE00557FC4 /* ViewFrustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewFrustum.h; sourceTree = "<group>"; };
-		0305D5F9166C9DAE00557FC4 /* VotingArbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingArbiter.h; sourceTree = "<group>"; };
 		0305D5FA166C9DAE00557FC4 /* VotingBooth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingBooth.h; sourceTree = "<group>"; };
 		0305D5FB166C9DAE00557FC4 /* WallObstacle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallObstacle.h; sourceTree = "<group>"; };
 		0305D5FC166C9DAE00557FC4 /* WallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WallSceneNode.h; sourceTree = "<group>"; };
@@ -1448,7 +1447,6 @@
 		03554480166C846F008806E9 /* ServerListCache.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListCache.cxx; sourceTree = "<group>"; };
 		03554481166C846F008806E9 /* StartupInfo.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = StartupInfo.cxx; sourceTree = "<group>"; };
 		03554482166C846F008806E9 /* TextureMatrix.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextureMatrix.cxx; sourceTree = "<group>"; };
-		03554483166C846F008806E9 /* VotingArbiter.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VotingArbiter.cxx; sourceTree = "<group>"; };
 		03554485166C846F008806E9 /* AnimatedTreads.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AnimatedTreads.cxx; sourceTree = "<group>"; };
 		03554486166C846F008806E9 /* BillboardSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BillboardSceneNode.cxx; sourceTree = "<group>"; };
 		03554487166C846F008806E9 /* BoltSceneNode.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BoltSceneNode.cxx; sourceTree = "<group>"; };
@@ -1725,6 +1723,8 @@
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		03C8EE25167ABE2300BB07A5 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VotingArbiter.cxx; sourceTree = "<group>"; };
+		03CC33ED1E3D4A8A00CF55BC /* VotingArbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingArbiter.h; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
 		03D479261BC73EED00C906A8 /* ServerListFilterMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListFilterMenu.cxx; sourceTree = "<group>"; };
 		03D479271BC73EED00C906A8 /* ServerListFilterMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListFilterMenu.h; sourceTree = "<group>"; };
@@ -2294,7 +2294,6 @@
 				0305D5F6166C9DAE00557FC4 /* vectors_old.h */,
 				0305D5F7166C9DAE00557FC4 /* version.h */,
 				0305D5F8166C9DAE00557FC4 /* ViewFrustum.h */,
-				0305D5F9166C9DAE00557FC4 /* VotingArbiter.h */,
 				0305D5FA166C9DAE00557FC4 /* VotingBooth.h */,
 				0305D5FB166C9DAE00557FC4 /* WallObstacle.h */,
 				0305D5FC166C9DAE00557FC4 /* WallSceneNode.h */,
@@ -2689,6 +2688,8 @@
 				0355442F166C846F008806E9 /* SpawnPosition.h */,
 				03554430166C846F008806E9 /* TeamBases.cxx */,
 				03554431166C846F008806E9 /* TeamBases.h */,
+				03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */,
+				03CC33ED1E3D4A8A00CF55BC /* VotingArbiter.h */,
 				03554432166C846F008806E9 /* WorldEventManager.cxx */,
 				03554433166C846F008806E9 /* WorldFileLocation.cxx */,
 				03554434166C846F008806E9 /* WorldFileLocation.h */,
@@ -2784,7 +2785,6 @@
 				03554480166C846F008806E9 /* ServerListCache.cxx */,
 				03554481166C846F008806E9 /* StartupInfo.cxx */,
 				03554482166C846F008806E9 /* TextureMatrix.cxx */,
-				03554483166C846F008806E9 /* VotingArbiter.cxx */,
 			);
 			path = game;
 			sourceTree = "<group>";
@@ -4982,7 +4982,6 @@
 				0357A8131670B2090056C938 /* ServerListCache.cxx in Sources */,
 				0357A8141670B2090056C938 /* StartupInfo.cxx in Sources */,
 				0357A8151670B2090056C938 /* TextureMatrix.cxx in Sources */,
-				0357A8161670B2090056C938 /* VotingArbiter.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5211,6 +5210,7 @@
 				0394E6AB167B0B71007F4035 /* FlagInfo.cxx in Sources */,
 				0394E6AC167B0B71007F4035 /* GameKeeper.cxx in Sources */,
 				0394E6AD167B0B71007F4035 /* ListServerConnection.cxx in Sources */,
+				03CC33EF1E3D4B7E00CF55BC /* VotingArbiter.cxx in Sources */,
 				0394E6AE167B0BE0007F4035 /* bzfs.cxx in Sources */,
 				0394E6AF167B0BE0007F4035 /* commands.cxx in Sources */,
 				0394E6B0167B0BE0007F4035 /* MasterBanList.cxx in Sources */,
