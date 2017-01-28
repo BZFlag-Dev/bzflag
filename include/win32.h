@@ -20,6 +20,7 @@
 #define _WINSOCKAPI_
 
 #include <windows.h>
+#include <stdio.h>
 #include <float.h>
 
 // missing constants
@@ -54,12 +55,9 @@ typedef unsigned int	uint32_t;
 #  pragma warning(disable: 4355)
 
 // missing functions
+#ifndef snprintf
 #  define snprintf	_snprintf
-
-  namespace std {
-    template<typename _Tp>
-    int isnan(_Tp __f) { return _isnan((double)__f); }
-  }
+#endif
 
 #endif // _MSC_VER
 #endif // __WIN32_H__

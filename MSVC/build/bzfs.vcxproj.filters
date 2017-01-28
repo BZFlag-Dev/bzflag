@@ -178,6 +178,9 @@
     <ClCompile Include="..\..\src\bzfs\ShotManager.cxx">
       <Filter>Server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\VotingArbiter.cxx">
+      <Filter>Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzfs\CustomArc.h">
@@ -353,6 +356,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\TextChunkManager.h">
       <Filter>Headers\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\VotingArbiter.h">
+      <Filter>Headers\Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

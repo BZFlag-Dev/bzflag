@@ -126,7 +126,6 @@ noinst_HEADERS =			\
 	TimeKeeper.h			\
 	TriWallSceneNode.h		\
 	ViewFrustum.h			\
-	VotingArbiter.h			\
 	VotingBooth.h			\
 	WallObstacle.h			\
 	WallSceneNode.h			\

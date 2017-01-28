@@ -25,6 +25,9 @@
 #include "playing.h"
 #include "Plan.h"
 
+/* system implementation headers */
+#include <algorithm>
+
 typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 
 static FlagSuccessMap	flagSuccess;

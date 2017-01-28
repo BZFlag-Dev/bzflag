@@ -39,6 +39,8 @@
 *.res
 *.manifest
 *.ipch
+*.VC.db
+*.opendb
 
 # GNU Autotools
 Makefile.in

@@ -29,6 +29,9 @@
 #include "ForceFeedback.h"
 #include "effectsRenderer.h"
 
+/* system implementation headers */
+#include <algorithm>
+
 LocalPlayer*		LocalPlayer::mainPlayer = NULL;
 
 LocalPlayer::LocalPlayer(const PlayerId& _id,
