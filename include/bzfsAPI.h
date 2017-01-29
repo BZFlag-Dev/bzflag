@@ -489,6 +489,15 @@ public:
    bz_PlayerUpdateState state;
 };
 
+class BZF_API bz_PlayerDieEventData_V2 : public bz_PlayerDieEventData_V1
+{
+public:
+	bz_PlayerDieEventData_V2() : bz_PlayerDieEventData_V1()
+	{}
+
+	bz_ApiString flagHeldWhenKilled;
+};
+
 class BZF_API bz_PlayerSpawnEventData_V1 : public bz_EventData
 {
 public:
