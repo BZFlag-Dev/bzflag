@@ -11,7 +11,6 @@ modeltool_SOURCES =	\
 	SimpleTextUtils.h	\
 	wavefrontOBJ.cxx	\
 	wavefrontOBJ.h
-modeltool_LDFLAGS = 
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
 AM_CFLAGS = $(CONF_CFLAGS)
@@ -19,6 +18,3 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-LDADD = \
-	$(top_srcdir)/src/common/libCommon.la
