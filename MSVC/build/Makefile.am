@@ -1,10 +1,12 @@
 EXTRA_DIST =		\
 	3D.vcxproj	\
 	bzflag.vcxproj	\
+	bzflag.vcxproj.filters	\
 	bzadmin.vcxproj	\
 	bzfs.vcxproj	\
 	bzfs.vcxproj.filters	\
 	common.vcxproj	\
+	common.vcxproj.filters	\
 	config.h	\
 	date.vcxproj	\
 	game.vcxproj	\
