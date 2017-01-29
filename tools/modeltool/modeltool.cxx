@@ -8,8 +8,6 @@
 //   g++ -o modeltool modeltool.cxx  -I../../include ../../src/common/libCommon.a
 //
 
-#include "common.h"
-
 /* system headers */
 #include <stdio.h>
 #include <string.h>
@@ -18,7 +16,7 @@
 #include <map>
 
 /* common headers */
-#include "TextUtils.h"
+#include "SimpleTextUtils.h"
 
 #include "model.h"
 #include "wavefrontOBJ.h"
@@ -266,7 +264,7 @@ int main(int argc, char* argv[])
 
 	for ( int i = 2; i < argc; i++) {
 		std::string command = argv[i];
-		command = TextUtils::tolower(command);
+		command = SimpleTextUtils::tolower(command);
 
 		if (command == "-yz") {
 			flipYZ = true;
@@ -373,11 +371,11 @@ int main(int argc, char* argv[])
 
 	CModel	model;
 
-	if ( TextUtils::tolower(extenstion) == "obj" )
+	if ( SimpleTextUtils::tolower(extenstion) == "obj" )
 	{
 		readOBJ(model,input);
 	}
-	else if ( TextUtils::tolower(extenstion) == "bsp" )
+	else if ( SimpleTextUtils::tolower(extenstion) == "bsp" )
 	{
 		Quake3Level	level;
 		level.loadFromFile(input.c_str());
