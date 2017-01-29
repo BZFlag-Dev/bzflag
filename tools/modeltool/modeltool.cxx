@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <math.h>
 
 /* common headers */
 #include "SimpleTextUtils.h"
@@ -128,7 +129,7 @@ static void writeBZW  ( CModel &model, std::string file )
 		while ( vertItr != mesh.normals.end() )
 		{
 			// normalise all normals before writing them
-			float dist = sqrt(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
+			float dist = sqrtf(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
 			fprintf (fp,"  normal %f %f %f\n", vertItr->x/dist,vertItr->y/dist,vertItr->z/dist);
 			vertItr++;
 		}
