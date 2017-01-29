@@ -3116,7 +3116,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   victim->setDead();
 
   // call any events for a playerdeath
-  bz_PlayerDieEventData_V1	dieEvent;
+  bz_PlayerDieEventData_V2	dieEvent;
   dieEvent.playerID = victimIndex;
   dieEvent.team = convertTeam(victim->getTeam());
   dieEvent.killerID = killerIndex;
@@ -3129,6 +3129,12 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
   dieEvent.flagKilledWith = flagType->flagAbbv;
 
   playerStateToAPIState(dieEvent.state, victimData->lastState);
+
+  if (victim->haveFlag()){
+    int flagid = victim->getFlag();
+    if (flagid >= 0)
+        dieEvent.flagHeldWhenKilled = FlagInfo::get(flagid)->flag.type->flagAbbv;
+  }
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
 
