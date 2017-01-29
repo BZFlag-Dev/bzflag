@@ -60,9 +60,9 @@ public:
       len = sizeof(uint16_t);
     }
 
-    buf = nboPackUByte(buf, key.length());
+    buf = nboPackUByte(buf, (uint8_t)key.length());
     buf = nboPackString(buf, key.c_str(), key.length());
-    buf = nboPackUByte(buf, value.length());
+    buf = nboPackUByte(buf, (uint8_t)value.length());
     buf = nboPackString(buf, value.c_str(), value.length());
     len += pairLen;
     count++;

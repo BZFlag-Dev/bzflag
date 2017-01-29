@@ -212,7 +212,7 @@ void * WorldWeapons::pack(void *buf) const
     buf = nboPackVector(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
     buf = nboPackFloat(buf, w->initDelay);
-    buf = nboPackUShort(buf, w->delay.size());
+    buf = nboPackUShort(buf, (uint16_t)w->delay.size());
     for (unsigned int j = 0; j < w->delay.size(); j++) {
       buf = nboPackFloat(buf, w->delay[j]);
     }

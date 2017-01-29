@@ -7260,6 +7260,7 @@ void			startPlaying(BzfDisplay* _display,
 
   // windows version can be very helpful in debug logs
 #ifdef _WIN32
+#pragma warning(disable: 4996)
   if (debugLevel >= 1) {
     OSVERSIONINFO info;
     ZeroMemory(&info, sizeof(OSVERSIONINFO));

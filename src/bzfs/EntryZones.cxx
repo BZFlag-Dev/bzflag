@@ -259,9 +259,9 @@ void * EntryZones::pack(void *buf) const
     std::vector<TeamColor> safety;
     makeSplitLists (i, flags, teams, safety);
     buf = z.pack (buf);
-    buf = nboPackUShort(buf, flags.size());
-    buf = nboPackUShort(buf, teams.size());
-    buf = nboPackUShort(buf, safety.size());
+    buf = nboPackUShort(buf, (uint16_t)flags.size());
+    buf = nboPackUShort(buf, (uint16_t)teams.size());
+    buf = nboPackUShort(buf, (uint16_t)safety.size());
     unsigned int j;
     for (j = 0; j < flags.size(); j++) {
       buf = flags[j]->pack(buf);

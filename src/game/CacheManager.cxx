@@ -224,7 +224,7 @@ bool CacheManager::saveIndex()
 
   for (unsigned int i = 0; i < records.size(); i++) {
     const CacheRecord& rec = records[i];
-    fprintf(file, "%s\n%u %lu %lu ", rec.url.c_str(), rec.size, rec.date, rec.usedDate);
+    fprintf(file, "%s\n%u %llu %llu ", rec.url.c_str(), rec.size, rec.date, rec.usedDate);
     fprintf(file, "%s\n\n", rec.key.c_str());
   }
 

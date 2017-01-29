@@ -312,9 +312,9 @@ static void onGlobalChanged(const std::string& name, void*)
   std::string value = BZDB.get(name);
   void *bufStart = getDirectMessageBuffer();
   void *buf = nboPackUShort(bufStart, 1);
-  buf = nboPackUByte(buf, name.length());
+  buf = nboPackUByte(buf, (uint8_t)name.length());
   buf = nboPackString(buf, name.c_str(), name.length());
-  buf = nboPackUByte(buf, value.length());
+  buf = nboPackUByte(buf, (uint8_t)value.length());
   buf = nboPackString(buf, value.c_str(), value.length());
   broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
 }
