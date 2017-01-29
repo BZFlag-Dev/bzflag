@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.Phoenix.txt \
-	Phoenix.def \
 	Phoenix.sln \
 	Phoenix.vcxproj
 

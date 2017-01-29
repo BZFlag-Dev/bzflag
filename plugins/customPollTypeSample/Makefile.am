@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.customPollTypeSample.txt \
-	customPollTypeSample.def \
 	customPollTypeSample.sln \
 	customPollTypeSample.vcxproj
 

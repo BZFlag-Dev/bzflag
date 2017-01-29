@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.pushstats.txt \
-	pushstats.def \
 	pushstats.sln \
 	pushstats.vcxproj
 

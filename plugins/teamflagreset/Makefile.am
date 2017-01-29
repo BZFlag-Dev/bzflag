@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.teamflagreset.txt \
 	help_teamflagreset_admin.txt \
-	teamflagreset.def \
 	teamflagreset.sln \
 	teamflagreset.vcxproj
 

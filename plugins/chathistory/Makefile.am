@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.chathistory.txt \
-	chathistory.def \
 	chathistory.sln \
 	chathistory.vcxproj
 

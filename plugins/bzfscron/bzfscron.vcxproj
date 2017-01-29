@@ -95,7 +95,8 @@
       <AdditionalDependencies>bzfs.lib;plugin_utils.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfscron.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>bzfscron.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfscron.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -128,7 +129,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfscron.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>bzfscron.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -169,7 +171,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfscron.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>bzfscron.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)bzfscron.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -205,7 +208,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzfscron.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>bzfscron.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -231,7 +235,6 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
     <ClCompile Include="CronJob.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bzfscron.def" />
     <CustomBuildStep Include="Makefile">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

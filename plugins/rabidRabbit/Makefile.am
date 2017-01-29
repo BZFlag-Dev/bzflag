@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.rabidRabbit.txt \
 	help_rabidRabbit.txt \
-	rabidRabbit.def \
 	rabidRabbit.sln \
 	rabidRabbit.vcxproj
 

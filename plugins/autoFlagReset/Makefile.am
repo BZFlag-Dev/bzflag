@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.autoFlagReset.txt \
-	autoFlagReset.def \
 	autoFlagReset.sln \
 	autoFlagReset.vcxproj
 

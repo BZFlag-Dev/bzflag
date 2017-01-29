@@ -96,7 +96,8 @@
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)customPollTypeSample.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>customPollTypeSample.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)customPollTypeSample.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -136,7 +137,8 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)customPollTypeSample.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>customPollTypeSample.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)customPollTypeSample.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -168,7 +170,8 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)customPollTypeSample.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>customPollTypeSample.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -205,7 +208,8 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)customPollTypeSample.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>customPollTypeSample.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -233,7 +237,6 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="customPollTypeSample.def" />
     <None Include="README.customPollTypeSample.txt" />
   </ItemGroup>
   <ItemGroup>

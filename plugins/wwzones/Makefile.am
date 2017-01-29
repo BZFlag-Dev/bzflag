@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.wwzones.txt \
-	wwzones.def \
 	wwzones.sln \
 	wwzones.vcxproj
 

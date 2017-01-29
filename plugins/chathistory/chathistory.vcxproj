@@ -219,7 +219,6 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
     <ClCompile Include="chathistory.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="chathistory.def" />
     <None Include="README.chathistory.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -96,7 +96,8 @@
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nagware.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>nagware.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)nagware.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -135,7 +136,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nagware.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>nagware.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)nagware.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -168,7 +170,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nagware.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>nagware.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -206,7 +209,8 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)nagware.dll</OutputFile>
       <AdditionalLibraryDirectories>$(SolutionDir)\BZFS_$(Platform)_$(Configuration)\;$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\;$(BZAPI_LIB_DIR)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <ModuleDefinitionFile>nagware.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <ProgramDatabaseFile>Release/$(ProjectName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
@@ -235,7 +239,6 @@ copy "$(ProjectDir)*.cfg" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </CustomBuildStep>
-    <None Include="nagware.def" />
     <None Include="README.nagware.txt" />
   </ItemGroup>
   <ItemGroup>

@@ -14,7 +14,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.serverSidePlayerSample.txt \
-	serverSidePlayerSample.def \
 	serverSidePlayerSample.sln \
 	serverSidePlayerSample.vcxproj
 

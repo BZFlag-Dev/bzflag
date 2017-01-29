@@ -34,7 +34,7 @@
 #else
 #define BZF_API __declspec( dllimport )
 #endif
-#define BZF_PLUGIN_CALL
+#define BZF_PLUGIN_CALL extern "C" __declspec( dllexport )
 #ifndef strcasecmp
 #define strcasecmp stricmp
 #endif

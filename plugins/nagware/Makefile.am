@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.nagware.txt \
 	nagware.cfg	\
-	nagware.def \
 	nagware.sln \
 	nagware.vcxproj
 

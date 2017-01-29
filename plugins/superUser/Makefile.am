@@ -12,7 +12,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.superUser.txt \
 	superUser.cfg \
-	superUser.def \
 	superUser.sln \
 	superUser.vcxproj
 

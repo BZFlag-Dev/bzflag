@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.TimeLimit.txt \
-	TimeLimit.def \
 	TimeLimit.sln \
 	TimeLimit.vcxproj
 

@@ -10,7 +10,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.fairCTF.txt \
-	fairCTF.def \
 	fairCTF.sln \
 	fairCTF.vcxproj
 

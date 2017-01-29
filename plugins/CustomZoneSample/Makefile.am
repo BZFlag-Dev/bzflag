@@ -12,7 +12,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.CustomZoneSample.txt \
 	CustomZoneSample.bzw \
-	CustomZoneSample.def \
 	CustomZoneSample.sln \
 	CustomZoneSample.vcxproj
 

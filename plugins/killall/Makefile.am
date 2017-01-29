@@ -9,7 +9,6 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	killall.def \
 	killall.sln \
 	killall.vcxproj \
 	README.killall.txt

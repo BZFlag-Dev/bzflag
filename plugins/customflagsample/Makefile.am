@@ -11,7 +11,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.customflagsample.txt \
-	customflagsample.def \
 	customflagsample.sln \
 	customflagsample.vcxproj
 

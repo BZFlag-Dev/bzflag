@@ -9,7 +9,6 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.fastmap.txt \
-	fastmap.def \
 	fastmap.sln \
 	fastmap.vcxproj
 
