@@ -86,7 +86,8 @@
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
@@ -103,7 +104,7 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include\;$(ProjectDir)\..\plugin_utils\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\..\include\;$(BZAPI_INC_DIR)\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB; _CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -112,6 +113,7 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
@@ -130,7 +132,7 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
@@ -152,7 +154,7 @@ copy "$(OutDir)*.lib" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)"
       <PrecompiledHeader>
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Lib>
       <OutputFile>$(OutDir)plugin_utils.lib</OutputFile>
