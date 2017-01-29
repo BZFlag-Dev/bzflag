@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 #include "Q3BSP.h"
-#include "TextUtils.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -357,7 +356,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 	if (mEntities)
 	{
 		std::string ents = (char*)mEntities;
-		std::vector<std::string> entList = TextUtils::tokenize(ents,std::string("\n"));
+		std::vector<std::string> entList = tokenize(ents,std::string("\n"));
 
 		CCustomObject	cObject;
 		bool hasPos = false;
@@ -390,13 +389,13 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				if (inTag)
 				{
 					// parse it up
-					std::vector<std::string> nubs = TextUtils::tokenize(theLine,std::string(" "),0,true);
-					if ( TextUtils::tolower(nubs[0]) == "classname" )
+					std::vector<std::string> nubs = tokenize(theLine,std::string(" "),0,true);
+					if ( tolower(nubs[0]) == "classname" )
 					{
 						if (nubs.size()>1)
 							cObject.name = nubs[1];
 					}
-					else if ( TextUtils::tolower(nubs[0]) == "origin" )
+					else if ( tolower(nubs[0]) == "origin" )
 					{
 						hasPos = true;
 						float pos[3] ={0,0,0};
@@ -414,7 +413,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 						pos[2] *= globalScale;
 						pos[2] += globalShift[2];
 
-						std::string line = "position " + TextUtils::format("%f %f %f",pos[0],pos[1],pos[2]);
+						std::string line = "position " + format("%f %f %f",pos[0],pos[1],pos[2]);
 						cObject.params.push_back(line);
 					}
 					else
