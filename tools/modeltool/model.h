@@ -10,6 +10,12 @@
 #include <vector>
 #include <map>
 
+std::string tolower(const std::string& s);
+std::string format(const char* fmt, ...);
+std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0, const bool useQuotes = false);
+
+
 extern std::string texdir;
 extern std::string groupName;
 extern bool useMaterials;

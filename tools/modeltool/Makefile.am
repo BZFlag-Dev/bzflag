@@ -17,6 +17,4 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-LDADD = \
-	$(top_srcdir)/src/common/libCommon.la
+	
