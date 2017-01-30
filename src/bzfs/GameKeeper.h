@@ -36,6 +36,7 @@
 #include "Authentication.h"
 #include "messages.h"
 #include "bzfsAPI.h"
+#include "FlagInfo.h"
 #include "ShotUpdate.h"
 
 class ShotInfo {
@@ -168,6 +169,8 @@ public:
     bool addWasDelayed;
     bool hadEnter;
     double addDelayStartTime;
+
+	int lastHeldFlagID;
 
   private:
     static Player*    playerList[PlayerSlot];

@@ -48,6 +48,7 @@ GameKeeper::Player::Player(int _playerIndex,
 
   lastState.order  = 0;
   score.playerID = _playerIndex;
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -70,6 +71,7 @@ GameKeeper::Player::Player(int _playerIndex,
   score.playerID = _playerIndex;
 
   netHandler->setPlayer(&player, _playerIndex);
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
@@ -88,6 +90,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler
 
   lastState.order  = 0;
   score.playerID = _playerIndex;
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::~Player()

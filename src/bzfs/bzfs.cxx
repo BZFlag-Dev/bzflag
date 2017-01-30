@@ -3130,10 +3130,16 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
   playerStateToAPIState(dieEvent.state, victimData->lastState);
 
-  if (victim->haveFlag()){
+  if (victim->haveFlag()){  // this may not return true in the current protocol since tanks drop flags before death, when that's fixed the else wont' be needed
     int flagid = victim->getFlag();
     if (flagid >= 0)
-        dieEvent.flagHeldWhenKilled = FlagInfo::get(flagid)->flag.type->flagAbbv;
+        dieEvent.flagHeldWhenKilled = flagid;
+  }
+  else if (victimData->lastHeldFlagID >= 0){
+	  auto f = FlagInfo::get(victimData->lastHeldFlagID);
+
+	  if (f->flag.status != FlagOnGround) // if the last held flag was just a moment ago, they probably died with this.
+		  dieEvent.flagHeldWhenKilled = victimData->lastHeldFlagID;
   }
 
   worldEventManager.callEvents(bz_ePlayerDieEvent,&dieEvent);
@@ -3421,6 +3427,8 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
   flag.grab(playerIndex);
   playerData->player.setFlag(flag.getIndex());
 
+  playerData->lastHeldFlagID = flag.getIndex();
+
   // send MsgGrabFlag
   void *buf, *bufStart = getDirectMessageBuffer();
   buf = nboPackUByte(bufStart, playerIndex);
@@ -3539,6 +3547,9 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
   }
 
   int player = drpFlag.player;
+
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(player);
+  playerData->lastHeldFlagID = drpFlag.getIndex();
 
   drpFlag.dropFlag(pos, landing, vanish);
 

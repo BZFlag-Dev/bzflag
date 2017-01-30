@@ -396,6 +396,10 @@ bool PlayerInfo::isFlagTransitSafe() {
   return now - lastFlagDropTime >= 2.0f;
 }
 
+double PlayerInfo::timeSinceLastFlagDrop() {
+	return now - lastFlagDropTime;
+}
+
 const char *PlayerInfo::getClientVersion() {
   return clientVersion;
 }

@@ -102,6 +102,7 @@ public:
   int	getFlag() const;
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
+  double timeSinceLastFlagDrop();
   const char	*getClientVersion();
   void		setClientVersion(const char * c);
   void		getClientVersionNumbers(int& major, int& minor, int& revision);
