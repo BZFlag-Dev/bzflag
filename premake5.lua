@@ -164,7 +164,12 @@ elseif _ACTION == "install" or _ACTION == "uninstall" then
 end
 
 -- set up workspace
-workspace "BZFlag"
+if _ACTION and string.find(_ACTION, "vs", 0) then
+  workspace "fullbuild" -- Windows needs separate solutions for debugging
+else
+  workspace "BZFlag"
+end
+
   -- set up command line options
   newoption {
     ["trigger"] = "disable-client",
@@ -570,3 +575,50 @@ workspace "BZFlag"
      not _OPTIONS["disable-installer"] then
     include "buildsupport/windows/installer"
   end
+
+-- set up the rest of the Visual Studio solution files
+if _ACTION and string.find(_ACTION, "vs", 0) then
+  if not _OPTIONS["disable-client"] then
+    workspace "bzflag"
+      configurations { "Release", "Debug" }
+      basedir "build"
+
+      includeexternal "src/bzflag"
+      includeexternal "src/3D"
+      includeexternal "src/common"
+      includeexternal "src/date"
+      includeexternal "src/game"
+      includeexternal "src/geometry"
+      includeexternal "src/mediafile"
+      includeexternal "src/net"
+      includeexternal "src/obstacle"
+      includeexternal "src/ogl"
+      includeexternal "src/platform"
+      includeexternal "src/scene"
+  end
+
+  workspace "bzfs"
+    configurations { "Release", "Debug" }
+    basedir "build"
+
+    includeexternal "src/bzfs"
+    includeexternal "src/common"
+    includeexternal "src/date"
+    includeexternal "src/game"
+    includeexternal "src/net"
+    includeexternal "src/obstacle"
+
+  if not _OPTIONS["disable-bzadmin"] then
+    workspace "bzadmin"
+      configurations { "Release", "Debug" }
+      basedir "build"
+
+      includeexternal "src/bzadmin"
+      includeexternal "src/common"
+      includeexternal "src/date"
+      includeexternal "src/game"
+      includeexternal "src/net"
+      includeexternal "src/obstacle"
+      includeexternal "src/scene"
+  end
+end
