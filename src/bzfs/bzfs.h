@@ -125,7 +125,7 @@ bool allowTeams ( void );
 extern const std::string& getPublicOwner();
 extern void setPublicOwner(const std::string& owner);
 
-void loadSwearList();
+void loadBadwordsList();
 void rescanForBans(bool isOperator = false, const char* callsign = NULL, int playerID = -1);
 
 // initialize permission groups

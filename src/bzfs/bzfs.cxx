@@ -5390,7 +5390,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
   }
 }
 
-void loadSwearList ()
+void loadBadwordsList ()
 {
   if (clOptions->filterFilename.length() != 0) {
     if (clOptions->filterChat || clOptions->filterCallsigns) {
@@ -6258,7 +6258,7 @@ int main(int argc, char **argv)
   }
 
   /* load the bad word filter if it was set */
-  loadSwearList();
+  loadBadwordsList();
 
   /* initialize the poll arbiter for voting if necessary */
   if (clOptions->voteTime > 0) {

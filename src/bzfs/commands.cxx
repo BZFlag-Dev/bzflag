@@ -2563,7 +2563,7 @@ bool ReloadCommand::operator() (const char	 *message,
   if (reload_badwords) {
     logDebugMessage(3,"Reloading badwords list\n");
     clOptions->filter.clear();
-    loadSwearList();
+    loadBadwordsList();
   }
 
   sendMessage(ServerPlayer, t, "Databases reloaded");

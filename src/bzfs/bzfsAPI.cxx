@@ -4047,7 +4047,7 @@ BZF_API void bz_reloadBadwords()
 {
   logDebugMessage(3,"Reloading bad words\n");
   clOptions->filter.clear();
-  loadSwearList();
+  loadBadwordsList();
 }
 
 BZF_API void bz_superkill()
