@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\src\platform\BzfDisplay.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\BzfJoystick.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\BzfMedia.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\BzfVisual.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\BzfWindow.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\DXJoystick.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\PlatformFactory.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDL2Display.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDL2Visual.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDL2Window.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinPlatformFactory.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinMedia.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\wave.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinWindow.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinVisual.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinJoystick.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinDisplay.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDLPlatformFactory.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDLMedia.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\SDLJoystick.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\EvdevJoystick.cxx">
+      <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\BzfDisplay.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BzfEvent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BzfJoystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BzfMedia.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BzfVisual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\BzfWindow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\DXJoystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ErrorHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\EvdevJoystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OpenGLGState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Pack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\PlatformFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDL2Display.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDL2Visual.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDL2Window.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\TimeKeeper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\wave.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinMedia.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinPlatformFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\XIJoystick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDLJoystick.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDLMedia.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\SDLPlatformFactory.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinDisplay.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinJoystick.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinVisual.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\platform\WinWindow.h">
+      <Filter>Header Files\Unused Platform Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{efb91fc7-0ce2-4076-928b-334b6be445ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8e467fdb-5d5f-40d8-96fc-0301b81acab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Unused Platform Files">
+      <UniqueIdentifier>{81837eea-ad25-4848-a785-75dd692d6faf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Unused Platform Files">
+      <UniqueIdentifier>{2235379f-89b6-496e-8a3b-37883685b7d6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
