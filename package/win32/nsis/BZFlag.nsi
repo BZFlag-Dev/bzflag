@@ -220,9 +220,8 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in
-  ; the same directory as the NSIS script
-  ; 32-bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
-  ; 64-bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
+  ; the same directory as the NSIS script. The files can be found here:
+  ; C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\1033\
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  

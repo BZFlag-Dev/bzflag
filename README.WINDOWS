@@ -3,31 +3,9 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
-files are provided for it. The current compiler used is Visual C++ 2010 (VC10).
-Both the full and express versions will build just fine. There may be some
-issues building the bzflag-dependencies package with newer compilers at this
-time. We will work to correct that in future versions of the game/dependencies.
-
-It's a bit harder to find the express version these days since they tended to
-only keep the one or two more recent versions on their site, and they've since
-released a full-featured community version of 2015. You can currently still
-download Visual Studio 2010 Express Edition from here:
-  http://go.microsoft.com/?linkid=9709969
-
-Because of an issue with the DirectX SDK installer, you may be unable to finish
-the installation. This is because it tries to install an older version of the
-Visual C++ 2010 runtime, which fails if a newer version is already installed.
-This causes the DirectX SDK install to fail and rollback all changes. So, you
-can either try uninstalling all 2010 versions of the runtime and then reinstall
-the latest version of them afterwards, or you can just start with a clean
-system and follow these install steps:
-1) Install DirectX SDK
-2) Install Visual Studio 2010
-3) If it did not include Service Pack 1, install it:
-  Full ISO: http://go.microsoft.com/fwlink/?LinkId=210710
-  Web Installer: https://www.microsoft.com/en-us/download/details.aspx?id=23691
-4) Enable updates for other Microsoft products (Microsoft Update) and install
-   any available important updates
+files are provided for it. The current compiler used is Visual C++ 2015 (VC14).
+You can download Visual Studio Community 2015 for free from here:
+https://www.visualstudio.com/downloads/#visual-studio-2015
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
@@ -37,9 +15,6 @@ our current script. Also, there's no real performance advantage in having a
 64-bit BZFlag client as the game doesn't use much RAM.
 
 **Required Libraries**
-
-You will need the windows DirectX SDK
-  http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812
 
 Various third-party libraries are needed, which are packaged in our
 bzflag-dependencies repository. Either grab a pre-built binary package from
@@ -64,4 +39,4 @@ inside VC to use this executable and path.
 **Installer**
 If you wish to build the full release package using the fullbuild solution,
 you will need to have NSIS installed. The built installer will be placed in
-the _bin folder for the target in the root of the source tree.
+the bin_Release folder for the target in the root of the source tree.
