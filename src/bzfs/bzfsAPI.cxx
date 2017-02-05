@@ -1505,6 +1505,12 @@ BZF_API bool bz_resetPlayerScore(int playerId)
   return true;
 }
 
+BZF_API void bz_refreshHanidcaps()
+{
+	recalcAllHandicaps();
+	broadcastHandicaps();
+}
+
 BZF_API bz_APIStringList* bz_getGroupList ( void )
 {
   bz_APIStringList *groupList = new bz_APIStringList;
