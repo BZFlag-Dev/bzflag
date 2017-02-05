@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\man\bzadmin.6.in">
+      <Filter>Man Files</Filter>
+    </None>
+    <None Include="..\..\man\bzflag.6.in">
+      <Filter>Man Files</Filter>
+    </None>
+    <None Include="..\..\man\bzfs.6.in">
+      <Filter>Man Files</Filter>
+    </None>
+    <None Include="..\..\man\bzw.5.in">
+      <Filter>Man Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Man Files">
+      <UniqueIdentifier>{11ebd005-b37b-47ea-bf87-586c9c6d6e6a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

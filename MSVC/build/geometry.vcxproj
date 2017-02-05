@@ -493,7 +493,6 @@
     <ClInclude Include="..\..\include\BillboardSceneNode.h" />
     <ClInclude Include="..\..\include\BoltSceneNode.h" />
     <ClInclude Include="..\..\include\bzfgl.h" />
-    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\include\EighthDBaseSceneNode.h" />
     <ClInclude Include="..\..\include\EighthDBoxSceneNode.h" />
     <ClInclude Include="..\..\include\EighthDimSceneNode.h" />
@@ -501,7 +500,6 @@
     <ClInclude Include="..\..\include\EighthDPyrSceneNode.h" />
     <ClInclude Include="..\..\include\FlagSceneNode.h" />
     <ClInclude Include="..\..\include\FlagWarpSceneNode.h" />
-    <ClInclude Include="..\..\include\global.h" />
     <ClInclude Include="..\..\include\LaserSceneNode.h" />
     <ClInclude Include="..\..\include\MeshDrawMgr.h" />
     <ClInclude Include="..\..\include\MeshFragSceneNode.h" />

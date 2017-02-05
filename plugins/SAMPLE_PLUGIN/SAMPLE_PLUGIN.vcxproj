@@ -244,7 +244,6 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\bzfsAPI.h" />
-    <ClInclude Include="..\plugin_utils\plugin_utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\plugin_utils\plugin_utils.vcxproj">
