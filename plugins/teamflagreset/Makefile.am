@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.teamflagreset.txt \
 	help_teamflagreset_admin.txt \
 	teamflagreset.sln \
-	teamflagreset.vcxproj
+	teamflagreset.vcxproj	\
+	teamflagreset.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

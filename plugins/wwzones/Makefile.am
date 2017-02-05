@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.wwzones.txt \
 	wwzones.sln \
-	wwzones.vcxproj
+	wwzones.vcxproj	\
+	wwzones.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

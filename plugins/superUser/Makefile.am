@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.superUser.txt \
 	superUser.cfg \
 	superUser.sln \
-	superUser.vcxproj
+	superUser.vcxproj	\
+	superUser.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.nagware.txt \
 	nagware.cfg	\
 	nagware.sln \
-	nagware.vcxproj
+	nagware.vcxproj	\
+	nagware.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

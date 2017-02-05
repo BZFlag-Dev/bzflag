@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.serverControl.txt \
 	serverControl.cfg \
 	serverControl.sln \
-	serverControl.vcxproj
+	serverControl.vcxproj	\
+	serverControl.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.rabbitTimer.txt \
 	rabbitTimer.sln \
-	rabbitTimer.vcxproj
+	rabbitTimer.vcxproj	\
+	rabbitTimer.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

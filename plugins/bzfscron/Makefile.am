@@ -16,7 +16,8 @@ EXTRA_DIST = \
 	README.bzfscron.txt \
 	bzfscron.cfg \
 	bzfscron.sln \
-	bzfscron.vcxproj
+	bzfscron.vcxproj	\
+	bzfscron.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	help_timedctf_admin.txt \
 	help_timedctf_rules.txt \
 	timedctf.sln \
-	timedctf.vcxproj
+	timedctf.vcxproj	\
+	timedctf.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

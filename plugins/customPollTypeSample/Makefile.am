@@ -12,7 +12,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.customPollTypeSample.txt \
 	customPollTypeSample.sln \
-	customPollTypeSample.vcxproj
+	customPollTypeSample.vcxproj	\
+	customPollTypeSample.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

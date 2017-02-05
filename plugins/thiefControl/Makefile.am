@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.thiefControl.txt \
 	thiefControl.sln \
-	thiefControl.vcxproj
+	thiefControl.vcxproj	\
+	thiefControl.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

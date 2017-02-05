@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.Phoenix.txt \
 	Phoenix.sln \
-	Phoenix.vcxproj
+	Phoenix.vcxproj	\
+	Phoenix.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

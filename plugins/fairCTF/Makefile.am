@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.fairCTF.txt \
 	fairCTF.sln \
-	fairCTF.vcxproj
+	fairCTF.vcxproj	\
+	fairCTF.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

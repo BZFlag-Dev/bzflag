@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.CustomZoneSample.txt \
 	CustomZoneSample.bzw \
 	CustomZoneSample.sln \
-	CustomZoneSample.vcxproj
+	CustomZoneSample.vcxproj	\
+	CustomZoneSample.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

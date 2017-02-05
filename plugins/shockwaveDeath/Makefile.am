@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST =			\
 	README.shockwaveDeath.txt		\
 	shockwaveDeath.sln	\
-	shockwaveDeath.vcxproj
+	shockwaveDeath.vcxproj	\
+	shockwaveDeath.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

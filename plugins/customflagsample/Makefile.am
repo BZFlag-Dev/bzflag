@@ -12,7 +12,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.customflagsample.txt \
 	customflagsample.sln \
-	customflagsample.vcxproj
+	customflagsample.vcxproj	\
+	customflagsample.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

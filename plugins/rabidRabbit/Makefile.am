@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.rabidRabbit.txt \
 	help_rabidRabbit.txt \
 	rabidRabbit.sln \
-	rabidRabbit.vcxproj
+	rabidRabbit.vcxproj	\
+	rabidRabbit.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

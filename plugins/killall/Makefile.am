@@ -11,6 +11,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	killall.sln \
 	killall.vcxproj \
+	killall.vcxproj.filters	\
 	README.killall.txt
 
 MAINTAINERCLEANFILES =	\

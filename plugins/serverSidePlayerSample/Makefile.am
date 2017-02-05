@@ -15,7 +15,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.serverSidePlayerSample.txt \
 	serverSidePlayerSample.sln \
-	serverSidePlayerSample.vcxproj
+	serverSidePlayerSample.vcxproj	\
+	serverSidePlayerSample.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

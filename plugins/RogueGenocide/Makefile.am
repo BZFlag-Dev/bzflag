@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.RogueGenocide.txt \
 	RogueGenocide.sln \
-	RogueGenocide.vcxproj
+	RogueGenocide.vcxproj	\
+	RogueGenocide.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

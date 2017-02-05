@@ -11,7 +11,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.autoFlagReset.txt \
 	autoFlagReset.sln \
-	autoFlagReset.vcxproj
+	autoFlagReset.vcxproj	\
+	autoFlagReset.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
