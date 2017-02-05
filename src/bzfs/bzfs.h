@@ -216,6 +216,9 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
 
 void AddPlayer(int playerIndex, GameKeeper::Player *playerData);
 
+void recalcAllHandicaps();
+void broadcastHandicaps(int toPlayer = -1);
+
 #endif
 
 // Local Variables: ***

@@ -307,6 +307,9 @@ typedef enum
   bz_ePollVoteEvent,
   bz_ePollVetoEvent,
   bz_ePollEndEvent,
+  bz_eComputeHandicapEvent,
+  bz_eBeginHandicapRefreshEvent,
+  bz_eEndHandicapRefreshEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -990,6 +993,17 @@ public:
  double stateTime;
 };
 
+class BZF_API bz_ComputeHandiCap_V1 : public bz_EventData
+{
+public:
+	bz_ComputeHandiCap_V1() : bz_EventData(bz_eComputeHandicapEvent)
+		, playerID(-1), desiredHandicap(0)
+	{}
+
+	int playerID;
+	int desiredHandicap;
+};
+
 class BZF_API bz_NetTransferEventData_V1 : public bz_EventData
 {
 public:
@@ -1503,6 +1517,9 @@ BZF_API int bz_getPlayerTKs(int playerId);
 BZF_API int bz_howManyTimesPlayerKilledBy(int playerId, int killerId);
 
 BZF_API bool bz_resetPlayerScore(int playerId);
+
+// player handicap
+BZF_API void bz_refreshHanidcaps();
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList ( void );
