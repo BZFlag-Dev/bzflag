@@ -277,8 +277,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\Address.h" />
     <ClInclude Include="..\..\include\AresHandler.h" />
-    <ClInclude Include="..\..\include\bzfio.h" />
-    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\include\ErrorHandler.h" />
     <ClInclude Include="..\..\include\multicast.h" />
     <ClInclude Include="..\..\include\network.h" />

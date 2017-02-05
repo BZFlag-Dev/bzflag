@@ -245,8 +245,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\BSPSceneDatabase.h" />
-    <ClInclude Include="..\..\include\bzfgl.h" />
-    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\src\scene\Occluder.h" />
     <ClInclude Include="..\..\src\scene\Octree.h" />
     <ClInclude Include="..\..\include\OpenGLGState.h" />

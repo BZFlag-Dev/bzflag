@@ -432,13 +432,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\BzfDisplay.h" />
     <ClInclude Include="..\..\include\BzfEvent.h" />
-    <ClInclude Include="..\..\include\bzfgl.h" />
-    <ClInclude Include="..\..\include\bzfio.h" />
     <ClInclude Include="..\..\include\BzfJoystick.h" />
     <ClInclude Include="..\..\include\BzfMedia.h" />
     <ClInclude Include="..\..\include\BzfVisual.h" />
     <ClInclude Include="..\..\include\BzfWindow.h" />
-    <ClInclude Include="..\..\include\common.h" />
     <ClInclude Include="..\..\src\platform\DXJoystick.h" />
     <ClInclude Include="..\..\include\ErrorHandler.h" />
     <ClInclude Include="..\..\src\platform\EvdevJoystick.h" />
