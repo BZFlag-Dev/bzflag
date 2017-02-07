@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		030D159D1E496126006FDFA3 /* SimpleTextUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */; };
 		0315BEB51B821C5D00FC7CE0 /* bzfscron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */; };
 		0315BEB61B821C5D00FC7CE0 /* CronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */; };
 		0315BEB71B821C5D00FC7CE0 /* CronJob.h in Headers */ = {isa = PBXBuildFile; fileRef = 0315BEB21B821C5D00FC7CE0 /* CronJob.h */; };
@@ -1061,6 +1062,8 @@
 		0305D5FF166C9DAE00557FC4 /* WordFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordFilter.h; sourceTree = "<group>"; };
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
+		030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleTextUtils.cxx; path = ../tools/modeltool/SimpleTextUtils.cxx; sourceTree = "<group>"; };
+		030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleTextUtils.h; path = ../tools/modeltool/SimpleTextUtils.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
 		0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = bzfscron.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = bzfscron.cpp; path = bzfscron/bzfscron.cpp; sourceTree = "<group>"; };
@@ -2994,6 +2997,8 @@
 				0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */,
 				0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */,
 				0370A46B1B0C8FBA00FEC9F7 /* Q3BSP.h */,
+				030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */,
+				030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */,
 				0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */,
 				0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */,
 			);
@@ -5162,6 +5167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				030D159D1E496126006FDFA3 /* SimpleTextUtils.cxx in Sources */,
 				0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */,
 				0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */,
 				0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */,
