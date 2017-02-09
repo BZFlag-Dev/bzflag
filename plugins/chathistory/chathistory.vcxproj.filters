@@ -16,4 +16,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\include\bzfsAPI.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
