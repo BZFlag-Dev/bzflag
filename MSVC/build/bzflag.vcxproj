@@ -984,7 +984,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bzflag.ico" />
-    <None Include="bzflag.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="3D.vcxproj">
