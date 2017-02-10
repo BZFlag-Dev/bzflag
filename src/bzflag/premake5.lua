@@ -27,6 +27,8 @@ project "bzflag"
     ["Header Files"] = { "**.h", "../../buildsupport/windows/resource.h" },
     ["Resource Files"] = {
       "../../buildsupport/windows/bzflag.ico",
+      "../../buildsupport/macos/BZFlag.icns",
+      "../../build/BZFlag-Info.plist",
       "../../build/bzflag.rc"
     },
     ["Source Files"] = "**.cxx"
@@ -81,7 +83,10 @@ project "bzflag"
     if not _OPTIONS["disable-bzadmin"] then
       dependson "bzadmin"
     end
-    files "../../build/BZFlag-Info.plist"
+    files {
+      "../../buildsupport/macos/BZFlag.icns",
+      "../../build/BZFlag-Info.plist"
+    }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
@@ -105,7 +110,6 @@ project "bzflag"
       "cp ../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../buildsupport/macos/BZFlag.icns ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
     }
   filter { "system:macosx",
