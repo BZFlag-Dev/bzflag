@@ -5,22 +5,31 @@ project "bzflag"
     "*.h",
     "../../include/*.h", -- you access include/ from this project
     "../../AUTHORS",
-    "../../COPYING",
-    "../../COPYING.LGPL",
-    "../../COPYING.MPL",
+    "../../COPYING*",
     "../../ChangeLog",
     "../../DEVINFO",
     "../../NEWS",
     "../../PORTING",
-    "../../README",
-    "../../README.BeOS",
-    "../../README.IRIX",
-    "../../README.Linux",
-    "../../README.MINGW32",
-    "../../README.MacOSX",
-    "../../README.SDL",
-    "../../README.SOLARIS",
-    "../../README.WINDOWS"
+    "../../README*",
+    "../../include/*.h"
+  }
+  vpaths {
+    ["Documentation"] = {
+      "../../AUTHORS",
+      "../../COPYING*",
+      "../../ChangeLog",
+      "../../DEVINFO",
+      "../../NEWS",
+      "../../PORTING",
+      "../../README*"
+    },
+    ["Header Files/include"] = "../../include",
+    ["Header Files"] = { "**.h", "../../buildsupport/windows/resource.h" },
+    ["Resource Files"] = {
+      "../../buildsupport/windows/bzflag.ico",
+      "../../build/bzflag.rc"
+    },
+    ["Source Files"] = "**.cxx"
   }
   removefiles { "../../include/GLCollect.h" }
   links {

@@ -1,7 +1,7 @@
-group "plugins"
-
 -- set up the plugin_utils project
 include "plugin_utils"
+
+group "plugins"
 
 pluginDirNames = os.matchdirs("*")
 
@@ -11,7 +11,19 @@ for _, pluginName in ipairs(pluginDirNames) do
     project(pluginName)
       kind "SharedLib"
       targetprefix ""
-      files { pluginName.."/*.cpp", pluginName.."/*.h" }
+      files {
+	"../include/bzfsApi.h",
+	"plugin_utils/plugin_utils.h",
+	pluginName.."/*.cpp",
+	pluginName.."/*.h",
+	pluginName.."/*.txt",
+	pluginName.."/*.cfg"
+      }
+      vpaths {
+	["*"] = { pluginName.."/**.txt", pluginName.."/**.cfg" },
+	["Header Files"] = { "**.h", "../include/**.h" },
+	["Source Files"] = "**.cpp",
+      }
       includedirs "plugin_utils"
       links "plugin_utils"
 

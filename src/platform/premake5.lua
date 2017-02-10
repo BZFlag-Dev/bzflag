@@ -10,7 +10,13 @@ project "platform"
     "BzfWindow.cxx",
     "PlatformFactory.cxx",
     "wave.cxx",
-    "wave.h"
+    "wave.h",
+    "../../include/*.h"
+  }
+  vpaths {
+    ["Header Files/include"] = "../../include",
+    ["Header Files"] = "**.h",
+    ["Source Files"] = "**.cxx"
   }
 
   -- SDL

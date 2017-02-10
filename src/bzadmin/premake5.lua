@@ -1,6 +1,11 @@
 project "bzadmin"
   kind "ConsoleApp"
-  files { "*.cxx", "*.h" }
+  files { "*.cxx", "*.h", "../../include/*.h" }
+  vpaths {
+    ["Header Files/include"] = "../../include",
+    ["Header Files"] = "**.h",
+    ["Source Files"] = "**.cxx"
+  }
   defines { "BUILDING_BZADMIN" }
   links { "date", "game", "net", "common", "curl", "ncurses" }
 

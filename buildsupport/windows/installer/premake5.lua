@@ -2,10 +2,12 @@ project "man2html"
   kind "ConsoleApp"
   language "C"
   files "../../../misc/man2html.c"
+  vpaths { ["Source Files"] = "../../../misc/man2html.c" }
 
 project "makehtml"
   kind "Utility"
   files "../../../man/*.in"
+  vpaths { ["Man Files"] = "../../../man/**.in" }
   dependson "man2html"
   postbuildcommands {
     "if not exist \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\" mkdir \"$(SolutionDir)..\\bin_$(Configuration)_$(Platform)\\docs\"",
@@ -18,6 +20,7 @@ project "makehtml"
 project "installer"
   kind "Utility"
   files "../../../buildsupport/windows/BZFlag.nsi"
+  vpaths { ["Installer Files"] = "../../../buildsupport/windows/BZFlag.nsi" }
   dependson { "bzflag", "bzfs", "bzadmin", "makehtml" }
   pluginDirNames = os.matchdirs("../../../plugins/*")
   for _, pluginDirName in ipairs(pluginDirNames) do

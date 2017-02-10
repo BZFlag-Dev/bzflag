@@ -19,6 +19,7 @@
 -- targetprefix
 -- include
 -- files
+-- vpaths
 -- defines
 -- includedirs
 -- sysincludedirs

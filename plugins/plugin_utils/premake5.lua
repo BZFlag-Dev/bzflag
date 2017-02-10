@@ -1,6 +1,10 @@
 project "plugin_utils"
   kind "StaticLib"
   files { "*.cpp", "*.h" }
+  vpaths {
+    ["Header Files"] = "**.h",
+    ["Source Files"] = "**.cpp"
+  }
 
   filter "system:windows"
     postbuildcommands {
