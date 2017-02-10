@@ -359,6 +359,7 @@ end
     "HAVE_SQRTF",
     "HAVE_TANF",
     "HAVE_LOG10F",
+    "HAVE_STD__ISNAN",
     "HAVE_STD__MIN",
     "HAVE_STD__MAX",
     "HAVE_ARES_LIBRARY_INIT"
@@ -447,7 +448,6 @@ end
       "HAVE_SOCKLEN_T",
       "HAVE_STDINT_H",
       "HAVE_STDLIB_H",
-      "HAVE_STD__ISNAN",
       "HAVE_STRINGS_H",
       "HAVE_STRING_H",
       "HAVE_SYS_PARAM_H",
