@@ -2044,8 +2044,8 @@ static bool sendHelpTopic (int sendSlot, const char *helpTopic)
   const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
 
   for (int i = 0; i < (int)chunks.size() && (!foundChunk); i++) {
-    if (chunks[i] == helpTopic) {
-      const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk(helpTopic);
+    if (TextUtils::compare_nocase(chunks[i], helpTopic) == 0) {
+      const std::vector<std::string>* lines = clOptions->textChunker.getTextChunk(chunks[i]);
       if (lines != NULL) {
 	for (int j = 0; j < (int)lines->size(); j++) {
 	  sendMessage(ServerPlayer, sendSlot, (*lines)[j].c_str());
