@@ -3551,7 +3551,7 @@ void parseServerCommand(const char *message, int t)
   // lets see if it is a custom command. custom commands take precedence over
   // built-in commands
   std::vector<std::string> params =
-    TextUtils::tokenize(std::string(message+1),std::string(" "));
+    TextUtils::tokenize(std::string(message+1), " ", 0, true);
 
   if (params.empty())
     return;
@@ -3559,9 +3559,9 @@ void parseServerCommand(const char *message, int t)
   tmCustomSlashCommandMap::iterator itr =
     customCommands.find(TextUtils::tolower(params[0]));
 
-  bz_ApiString	command = params[0];
+  bz_ApiString command = params[0];
   bz_ApiString APIMessage;
-      bz_APIStringList	APIParams;
+  bz_APIStringList APIParams;
 
   for ( unsigned int i = 1; i < params.size(); i++)
     APIParams.push_back(params[i]);
