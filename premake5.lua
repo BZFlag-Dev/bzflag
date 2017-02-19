@@ -109,11 +109,15 @@ if _ACTION == "gmake" then
     os.remove("premake5/installPrefix.txt")
   end
 elseif _ACTION == "install" or _ACTION == "uninstall" then
-  -- install/uninstall can't override it, because the paths are already hard-
-  -- coded into the binaries
-  local prefixFromFile = io.readfile("premake5/installPrefix.txt")
-  if prefixFromFile then
-    bzInstallPrefix = prefixFromFile
+  -- install/uninstall can't override the prefix, because the paths are
+  -- already hard-coded into the binaries, but there can be a staging directory
+  if _OPTIONS["destdir"] then
+    bzInstallPrefix = _OPTIONS["destdir"]
+  else
+    local prefixFromFile = io.readfile("build/installPrefix.txt")
+    if prefixFromFile then
+      bzInstallPrefix = prefixFromFile
+    end
   end
 end
 
@@ -178,7 +182,12 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   newoption {
     ["trigger"] = "prefix",
     ["value"] = "PATH",
-    ["description"] = "Set a prefix for the gmake installation path; default is '/usr/local'"
+    ["description"] = "Set a prefix for the BZFlag installation path; default is '/usr/local'"
+  }
+  newoption {
+    ["trigger"] = "destdir",
+    ["value"] = "PATH",
+    ["description"] = "Set a staging location for installing/uninstalling BZFlag files"
   }
 
   -- Windows builds require SDL 2
