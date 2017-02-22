@@ -59,6 +59,21 @@ typedef unsigned int	uint32_t;
 #  define snprintf	_snprintf
 #endif
 
+  // from MSVC/build/config.h
+  #ifndef HAVE_CONFIG_H
+    #pragma warning( disable : 4351 )
+
+    #include <stdio.h>
+
+    #ifndef DEBUG_TRACE
+    #define DEBUG_TRACE
+    inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
+    #endif
+
+    #ifndef in_addr_t
+    #define in_addr_t unsigned long
+    #endif
+  #endif // HAVE_CONFIG_H
 #endif // _MSC_VER
 #endif // __WIN32_H__
 
