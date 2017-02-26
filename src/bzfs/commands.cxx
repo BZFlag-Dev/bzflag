@@ -587,7 +587,7 @@ SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
   "<callsign> <group> - remove a user from a group") {}
 ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
-  "[all|groups|users|bans|helpfiles|badwords] - reload the user, group, password, help files, and bad words") {}
+  "[all|groups|users|bans|helpfiles|badwords] - reload groups, users, help files, and/or bad words") {}
 PollCommand::PollCommand()		 : ServerCommand("/poll",
   "<ban|kick|kill|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
 VoteCommand::VoteCommand()		 : ServerCommand("/vote",
