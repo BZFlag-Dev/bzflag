@@ -30,9 +30,6 @@
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <direct.h>
-#  if !defined(HAVE_SDL)
-#    include <tchar.h>
-#  endif /* !defined(HAVE_SDL) */
 #else
 #  include <pwd.h>
 #  include <dirent.h>
@@ -1380,14 +1377,6 @@ int			main(int argc, char** argv)
 
 int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
-  // Tell Windows that we are DPI aware so that it stop trying to scale for us
-  HMODULE hUser32 = LoadLibrary(_T("user32.dll"));
-  typedef BOOL (*SetProcessDPIAwareFunc)();
-  SetProcessDPIAwareFunc setDPIAware = (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
-  if (setDPIAware)
-    setDPIAware();
-  FreeLibrary(hUser32);
-
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
   // argument now look like like normal spaces.  not much we can do

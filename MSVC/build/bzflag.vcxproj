@@ -150,6 +150,9 @@ copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -207,6 +210,9 @@ copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -259,6 +265,9 @@ copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -311,6 +320,9 @@ copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
 copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
