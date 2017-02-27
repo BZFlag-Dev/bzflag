@@ -2824,8 +2824,8 @@ bool PollCommand::operator() (const char	 *message,
     sendMessage(ServerPlayer, t, "Unable to initiate a new poll.  There are not enough registered players playing.");
     snprintf(reply, MessageLen, "There needs to be at least %d other %s and only %d %s available.",
 	    clOptions->votesRequired,
-	    clOptions->votesRequired - 1 == 1 ? "player" : "players",
-	    available - 1,
+	    clOptions->votesRequired == 1 ? "player" : "players",
+	    std::max(0, available - 1),
 	    available - 1 == 1 ? "is" : "are");
     sendMessage(ServerPlayer, t, reply);
     return true;
