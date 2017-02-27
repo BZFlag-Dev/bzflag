@@ -3120,11 +3120,9 @@ bool PollCommand::operator() (const char	 *message,
     if (playerData->accessInfo.hasPerm(PlayerAccessInfo::pollFlagReset))
       sendMessage(ServerPlayer, t, "    or /poll flagreset");
 
-    if (!customPollTypes.empty()) {
-      for (auto pollType : customPollTypes) {
-        snprintf(reply, MessageLen, "    or /poll %s %s", pollType.first.c_str(), pollType.second.pollParameters.c_str());
-        sendMessage(ServerPlayer, t, reply);
-      }
+    for (auto pollType = customPollTypes.begin(); pollType != customPollTypes.end(); ++pollType) {
+      snprintf(reply, MessageLen, "    or /poll %s %s", pollType->first.c_str(), pollType->second.pollParameters.c_str());
+      sendMessage(ServerPlayer, t, reply);
     }
 
   } /* end handling of poll subcommands */
