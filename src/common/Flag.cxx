@@ -98,7 +98,7 @@ namespace Flags {
     QuickTurn	= new FlagType( "Quick Turn", "QT", FlagUnstable, NormalShot, FlagGood, NoTeam,
 					"Tank turns faster.  Good for dodging." );
     OscillationOverthruster	= new FlagType( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
-					"Can drive through buildings.  Can't backup or shoot while inside." );
+					"Can drive through buildings.  Can't back up or shoot while inside." );
     RapidFire	= new FlagType( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood, NoTeam,
 					"Shoots more often.  Shells go faster but not as far." );
     MachineGun	= new FlagType( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood, NoTeam,

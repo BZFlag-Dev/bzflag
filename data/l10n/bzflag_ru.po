@@ -327,7 +327,7 @@ msgstr "Skvoznaya ostillyaciya"
 msgid "Oscillation Overthruster (+OO)"
 msgstr "Skvoznaya ostillyaciya (+OO)"
 
-msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Mozhete proezzhat' skvoz' zdaniya. Nel'zya strelyat' i sohranyat'sya vnutri"
 
 msgid "Rapid Fire"

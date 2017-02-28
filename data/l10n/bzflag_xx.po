@@ -350,7 +350,7 @@ msgstr ""
 msgid "Oscillation Overthruster (+OO)"
 msgstr ""
 
-msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Can drive through buildings.  Can't back up or shoot while inside."
 msgstr ""
 
 msgid "Rapid Fire"

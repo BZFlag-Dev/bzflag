@@ -949,7 +949,7 @@ msgstr "Vysoka rychlost (+V): Tank se pohybuje rychleji. Utec zlym hochum."
 msgid "Angular velocity (+A):  Tank turns faster.  Good for dodging."
 msgstr "Rychle otaceni (+A): Tak se otaci rychleji. Dobre se uhyba."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Projizdeni budovami (+OO): Lze prochazet budovami. V budovach nelze jez zpet, skakat, nebo strilet."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
@@ -988,7 +988,7 @@ msgstr "Jasnovidec"
 msgid "Burrow"
 msgstr "Zahrabani"
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
