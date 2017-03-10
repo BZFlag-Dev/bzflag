@@ -4,6 +4,12 @@
 BZFlag 2.4.9
 ------------
 
+* Fix high DPI handling on Windows (again) - Scott Wichser
+* Custom slash commands respect double quotes when tokenizing - Vladimir Jimenez
+* Make /help page names case-insensitive - Vladimir Jimenez
+* Extend bz_ePlayerDieEventData to v2 to hold flag held when killed - Jeff Myers
+* Add bzfs API hooks for polls and allow custom poll types - Vladimir Jimenez
+* Reduce DNS cache time of list server hostname - Scott Wichser
 * Fix bz_addURLJob() to correctly handle default NULL handler - Vladimir Jimenez
 * TextUtils::url_encode and TextUtils::url_decode now use cURL's functions; this
     change fixes a crash bug with bz_urlEncode() - Vladimir Jimenez
