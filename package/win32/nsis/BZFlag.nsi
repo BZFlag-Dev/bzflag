@@ -36,10 +36,15 @@
   
   ; Include the date for alpha/beta/RC builds
   !if ${TYPE} != "release"
+	!if ${TYPE} != "devel"
+		!define VERSION_TAIL "-${TYPE}${TYPE_REVISION}"
+	!else
+		!define VERSION_TAIL ""
+	!endif
     !ifndef DATE_OVERRIDE
-      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d-${TYPE}${TYPE_REVISION}"
+      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d${VERSION_TAIL}"
     !else
-      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}-${TYPE}${TYPE_REVISION}"
+      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}${VERSION_TAIL}"
     !endif
   !else
     !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
@@ -221,7 +226,7 @@ Section "!BZFlag (Required)" BZFlag
 
   ; This requires the Visual C++ runtime file to be located in
   ; the same directory as the NSIS script. The files can be found here:
-  ; C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\1033\
+  ; C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\1033
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
@@ -257,11 +262,7 @@ Section "!BZFlag (Required)" BZFlag
 
     ; Local User Data
     Var /GLOBAL UserData
-    ${If} ${AtMostWinXP}
-      StrCpy $UserData "%USERPROFILE%\Local Settings\Application Data\BZFlag"
-    ${Else}
-      StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
-    ${EndIf}
+    StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
 
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Browse User Data.lnk" "$UserData"
 
@@ -470,4 +471,11 @@ SectionEnd
 
 Function LaunchLink
   ExecShell "" "$INSTDIR\bzflag.exe"
+FunctionEnd
+
+Function .onInit
+  ${If} ${AtMostWinXP}
+    MessageBox MB_OK "BZFlag requires Windows Vista or higher."
+    Quit
+  ${EndIf}
 FunctionEnd
