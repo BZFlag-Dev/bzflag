@@ -155,12 +155,12 @@
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
 
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\ReadMe.win32.html"
-  !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
+  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/documentation/getting_started"
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "Read Getting Started"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 
   !define MUI_FINISHPAGE_LINK "BZFlag Home Page"
-  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.bzflag.org"
+  !define MUI_FINISHPAGE_LINK_LOCATION "https://www.bzflag.org"
 
   !insertmacro MUI_PAGE_FINISH
   
@@ -213,7 +213,6 @@ Section "!BZFlag (Required)" BZFlag
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\ReadMe.win32.html
   File ..\..\..\COPYING
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
 
@@ -239,12 +238,22 @@ Section "!BZFlag (Required)" BZFlag
 
   ; Write the uninstall keys for Windows
   !ifdef BUILD_64
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "DisplayName" "BZFlag ${VERSION} ${BITNESS} (remove only)"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+    !define UNINSTALL_REG_ROOT "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}"
+    WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayName" "BZFlag ${VERSION} ${BITNESS}"
   !else
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "DisplayName" "BZFlag ${VERSION} (remove only)"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+    !define UNINSTALL_REG_ROOT "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}"
+    WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayName" "BZFlag ${VERSION}"
   !endif
+  
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayIcon" "$INSTDIR\bzflag.exe"
+  ; We're roughly 30MB installed
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "EstimatedSize" 30720
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "HelpLink" "https://www.bzflag.org/"
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "Comments" "Online multiplayer tank battle game"
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoRepair" 1
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoModify" 1
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
