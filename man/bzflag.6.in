@@ -151,7 +151,7 @@ Disables sound.
 .TP
 \fB\-motd \fIURL\fR
 Specify an alternate URL for the message of the day displayed when
-\fBbzflag\fR starts.  http://bzflag.org/motd.php is the default.
+\fBbzflag\fR starts.  https://www.bzflag.org/motd.php is the default.
 See \fB\-nomotd\fR.
 .TP
 .B \-multisample

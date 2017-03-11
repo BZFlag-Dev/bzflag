@@ -40,8 +40,8 @@ const int		BroadcastPort = 5154;
 
 // URL for default list server
 const char* const	DefaultListServerURL = "https://my.bzflag.org/db/";
-const char* const	DefaultMasterBanURL = "https://bzflag.org/master-bans.txt";
-const char* const	DefaultMOTDServer = "https://bzflag.org/motd.php";
+const char* const	DefaultMasterBanURL = "https://www.bzflag.org/master-bans.txt";
+const char* const	DefaultMOTDServer = "https://www.bzflag.org/motd.php";
 
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
