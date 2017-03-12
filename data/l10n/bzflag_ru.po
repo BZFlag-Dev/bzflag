@@ -1612,10 +1612,6 @@ msgstr "Osobaya blagodarnost':"
 msgid "BZFlag Home Page:"
 msgstr "Domashnij sajt BZFlag"
 
-#msgid "Copyright (c) 1993-2016"
-#msgstr ""
-
-
 ####################
 ## HUD RENDERERER ##
 ####################
