@@ -2,7 +2,7 @@
 //
 // Licensed under BSD so plug-ins can re-license as needed
 /*
-Copyright (c) 1993-2016 Tim Riker
+Copyright (c) 1993-2017 Tim Riker
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
