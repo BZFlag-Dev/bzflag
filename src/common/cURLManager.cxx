@@ -71,6 +71,11 @@ cURLManager::cURLManager()
     logDebugMessage(1,"CURLOPT_NOSIGNAL error %d : %s\n", result, errorBuffer);
   }
 
+  result = curl_easy_setopt(easyHandle, CURLOPT_FOLLOWLOCATION, true);
+  if (result != CURLE_OK) {
+    logDebugMessage(1, "CURLOPT_FOLLOWLOCATION error %d : %s\n", result, errorBuffer);
+  }
+
   result = curl_easy_setopt(easyHandle, CURLOPT_WRITEFUNCTION,
 			    cURLManager::writeFunction);
   if (result != CURLE_OK)
