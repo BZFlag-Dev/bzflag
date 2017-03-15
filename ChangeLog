@@ -1,8 +1,12 @@
 			     BZFlag Release Notes
 			     ====================
 
+BZFlag 2.4.11
+-------------
+
+
 BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
-------------
+------------------------------------------------
 
 * Fix high DPI handling on Windows (again) - Scott Wichser
 * Custom slash commands respect double quotes when tokenizing - Vladimir Jimenez
