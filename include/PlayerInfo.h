@@ -215,8 +215,9 @@ private:
   PlayerReplayState replayState;
 
   // idle kick
-  TimeKeeper lastmsg;
-  TimeKeeper lastupdate;
+  TimeKeeper	lastmsg;
+  TimeKeeper	lastIdleUpdate;
+  TimeKeeper	lastRespondingUpdate;
 
   // player played before countdown started
   bool playedEarly;

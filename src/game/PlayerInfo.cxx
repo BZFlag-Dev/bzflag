@@ -71,8 +71,9 @@ void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
 void PlayerInfo::resetPlayer(bool ctf) {
   wasRabbit = false;
 
-  lastupdate = now;
+  lastIdleUpdate = now;
   lastmsg    = now;
+  lastRespondingUpdate = now;
 
   replayState = ReplayNone;
 
@@ -428,7 +429,7 @@ double PlayerInfo::getPausedTime()
 double PlayerInfo::getIdleTime()
 {
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    return (now - lastupdate);
+    return (now - lastIdleUpdate);
   }
   else if (team == ObserverTeam) {
     return -1;
@@ -441,7 +442,7 @@ std::string PlayerInfo::getIdleStat() {
   std::string reply;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
     reply = TextUtils::format("%s\t: %4ds", callSign,
-				int(now - lastupdate));
+				int(now - lastIdleUpdate));
     if (paused) {
       reply += TextUtils::format("  paused %4ds", int(now - pausedSince));
     }
@@ -467,7 +468,7 @@ void PlayerInfo::setAutoPilot(bool _autopilot) {
 bool PlayerInfo::isTooMuchIdling(float kickThresh) {
   bool idling = false;
   if ((state > PlayerInLimbo) && (team != ObserverTeam)) {
-    const float idletime = (float)(now - lastupdate);
+    const float idletime = (float)(now - lastIdleUpdate);
     if (idletime > kickThresh) {
       idling = true;
     }
@@ -481,7 +482,7 @@ bool PlayerInfo::hasStartedToNotRespond() {
   bool startingToNotRespond = false;
   if (state > PlayerInLimbo) {
     bool oldnr = notResponding;
-    notResponding = (now - lastupdate) > notRespondingTime;
+    notResponding = (now - lastRespondingUpdate) > notRespondingTime;
     if (!oldnr && notResponding) {
       startingToNotRespond = true;
     }
@@ -504,8 +505,11 @@ void PlayerInfo::setPlayedEarly(bool early) {
 }
 
 void PlayerInfo::updateIdleTime() {
-  if (!paused && (state != PlayerDead)) {
-    lastupdate = now;
+  if (state != PlayerDead) {
+    lastRespondingUpdate = now;
+    if (!paused) {
+      lastIdleUpdate = now;
+    }
   }
 }
 
