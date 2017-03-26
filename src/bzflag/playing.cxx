@@ -6350,11 +6350,7 @@ static void		updatePauseCountdown(float dt)
 	hud->setAlert(1, "Can't pause when you are in the phantom zone", 1.0f, false);
 
       } else {
-	// okay, now we pause.  first drop any team flag we may have.
-	const FlagType* flagd = myTank->getFlag();
-	if (flagd->flagTeam != NoTeam)
-	  serverLink->sendDropFlag(myTank->getPosition());
-
+	// okay, now we prepare to pause
 	if (World::getWorld()->allowRabbit() && (myTank->getTeam() == RabbitTeam))
 	  serverLink->sendNewRabbit();
 

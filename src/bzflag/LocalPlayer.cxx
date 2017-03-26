@@ -98,8 +98,6 @@ void			LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
   const int numShots = World::getWorld()->getMaxShots();
-  static TimeKeeper pauseTime = TimeKeeper::getNullTime();
-  static bool wasPaused = false;
 
   // if paused then boost the reload times by dt (so that, effectively,
   // reloading isn't performed)
@@ -110,21 +108,6 @@ void			LocalPlayer::doUpdate(float dt)
 	shots[i]->boostReloadTime(dt);
       }
     }
-
-    // if we've been paused for a long time, drop our flag
-    if (!wasPaused) {
-      pauseTime = TimeKeeper::getTick();
-      wasPaused = true;
-    }
-    if (TimeKeeper::getTick() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME)) {
-      server->sendDropFlag(getPosition());
-      setStatus(getStatus() & ~PlayerState::FlagActive);
-      pauseTime = TimeKeeper::getSunExplodeTime();
-    }
-
-  } else {
-    pauseTime = TimeKeeper::getNullTime();
-    wasPaused = false;
   }
 
   // reap dead (reloaded) shots
@@ -148,14 +131,13 @@ void			LocalPlayer::doUpdate(float dt)
   if (!anyShotActive && hadShotActive)
     target = NULL;
 
-  // drop bad flag if timeout has expired
+  // Update bad flag shaking time
   if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
       getFlag() != Flags::Null && getFlag()->endurance == FlagSticky &&
       flagShakingTime > 0.0f) {
     flagShakingTime -= dt;
     if (flagShakingTime <= 0.0f) {
       flagShakingTime = 0.0f;
-      server->sendDropFlag(getPosition());
     }
   }
 }
