@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,8 +37,7 @@ const int ListServerLink::NotConnected = -1;
 ListServerLink::ListServerLink(std::string listServerURL,
 			       std::string publicizedAddress,
 			       std::string publicizedTitle,
-			       std::string _advertiseGroups,
-			       long dnsCache)
+			       std::string _advertiseGroups)
 {
 
   std::string bzfsUserAgent = "bzfs ";
@@ -46,7 +45,6 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
   setURLwithNonce(listServerURL);
   setUserAgent(bzfsUserAgent);
-  setDNSCachingTime(dnsCache);
   setTimeout(10);
 
   publiclyDisconnected = false;
@@ -141,7 +139,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
       } else if (!strncmp(base, unknownPlayer, strlen(unknownPlayer))) {
 	callsign = base + strlen(unknownPlayer);
 	authReply  = true;
-      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))){
+      } else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier))) {
 	setPublicOwner(base + strlen(ownerIdentifier));
       } else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier))) {
 	std::string line = base;
@@ -281,7 +279,7 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
     }
   }
 
-  if (playerData != NULL){
+  if (playerData != NULL) {
 	  // tell the API that auth is complete
 	  bz_AuthenticationCompleteData_V1 eventData;
 	  eventData.player = bz_getPlayerByIndex(playerData->getIndex());
@@ -421,7 +419,7 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

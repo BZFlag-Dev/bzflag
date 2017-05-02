@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,11 +35,6 @@
 
 int debugLevel = 0;
 
-#ifdef _WIN32
-void Player::setDeadReckoning()
-{
-}
-#endif
 /** @file
     This is the main file for bzadmin, the bzflag text client.
 */
@@ -142,7 +137,7 @@ int main(int argc, char** argv) {
     if (cPos != -1) {
       long int serverPort = strtol(serverName.substr(cPos + 1).c_str(), (char **)NULL, 10);
       if (serverPort > 0 && serverPort < 65536)
-        startupInfo.serverPort = (int) serverPort;
+	startupInfo.serverPort = (int) serverPort;
       serverName = serverName.substr(0, cPos);
     }
     // Flawfinder: ignore
@@ -209,7 +204,7 @@ int main(int argc, char** argv) {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -763,7 +763,7 @@ msgstr "Vinkelhastighet (A): Din stridsvagn svänger snabbare. Lättare att undg
 #msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
-msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Oscillation Overthruster (OO):  Kan köra igenom byggnader. Man kan inte skjuta inne i en byggnad!"
 
 msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -858,7 +858,7 @@ msgstr "BZFlag är ett nätverksspel där olika lag av stridsvagnar slåss. Lage
 #msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 #msgstr ""
 
-#msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

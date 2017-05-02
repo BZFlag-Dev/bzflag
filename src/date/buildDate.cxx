@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -51,10 +51,10 @@
 
 // DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"MAINT"
+#  define BZ_BUILD_TYPE		"DEVEL"
 #endif
 
-const char *bzfcopyright = "Copyright (c) 1993-2016 Tim Riker";
+const char *bzfcopyright = "Copyright (c) 1993-2017 Tim Riker";
 
 static int getBuildDate()
 {
@@ -112,7 +112,7 @@ const char*		getServerVersion()
 const char*		getMajorMinorVersion()
 {
   static std::string	version = "";
-  if (!version.size()){
+  if (!version.size()) {
     std::ostringstream	versionStream;
     versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
     version = versionStream.str();
@@ -123,7 +123,7 @@ const char*		getMajorMinorVersion()
 const char*		getMajorMinorRevVersion()
 {
   static std::string	version = "";
-  if (!version.size()){
+  if (!version.size()) {
     std::ostringstream	versionStream;
     versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
     version = versionStream.str();
@@ -134,7 +134,7 @@ const char*		getMajorMinorRevVersion()
 const char*		getAppVersion()
 {
   static std::string	appVersion = "";
-  if (!appVersion.size()){
+  if (!appVersion.size()) {
     std::ostringstream	appVersionStream;
     // TODO add current platform, release, cpu, etc
     appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
@@ -151,7 +151,7 @@ const char*		getAppVersion()
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -60,10 +60,10 @@ class PlayerInfo {
 public:
   PlayerInfo(int _playerIndex);
 
-  int   getPlayerIndex( void ) const { return playerIndex; }
+  int	getPlayerIndex( void ) const { return playerIndex; }
   void	setLastMsg(std::string msg);
-  const std::string& getLastMsg() const;
-  TimeKeeper  getLastMsgTime() const;
+  const std::string&	getLastMsg() const;
+  TimeKeeper		getLastMsgTime() const;
   void	incSpamWarns();
   int	getSpamWarns() const;
   void	resetPlayer(bool ctf);
@@ -78,36 +78,37 @@ public:
   bool	isAutoPilot() const;
   bool	isBot() const;
   bool	isHuman() const;
-  void  *packUpdate(void *buf);
-  void  *packId(void *buf);
+  void	*packUpdate(void *buf);
+  void	*packId(void *buf);
   bool	unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg);
-  bool  processEnter ( uint16_t &rejectCode, char *rejectMsg );
-  const char *getCallSign() const;
-  void setCallSign(const char * c);
-  const char *getMotto() const;
-  void  setMotto(const char* _motto);
-  const char *getToken() const;
-  void setToken(const char * c);
+  bool	processEnter ( uint16_t &rejectCode, char *rejectMsg );
+  const char	*getCallSign() const;
+  void		setCallSign(const char * c);
+  const char	*getMotto() const;
+  void		setMotto(const char* _motto);
+  const char	*getToken() const;
+  void		setToken(const char * c);
   void	clearToken();
-  void       *packVirtualFlagCapture(void *buf);
+  void	*packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
-  TeamColor   getTeam() const;
-  void	setTeam(TeamColor team);
+  TeamColor	getTeam() const;
+  void		setTeam	(TeamColor team);
   void	wasARabbit();
   void	wasNotARabbit();
   bool	isARabbitKill(PlayerInfo &victim) const;
   void	resetFlag();
   bool	haveFlag() const;
-  int	 getFlag() const;
+  int	getFlag() const;
   void	setFlag(int flag);
   bool	isFlagTransitSafe();
-  const char *getClientVersion();
-  void setClientVersion(const char * c);
-  void getClientVersionNumbers(int& major, int& minor, int& revision);
-  double   getPausedTime();
-  double   getIdleTime();
-  std::string getIdleStat();
+  double timeSinceLastFlagDrop();
+  const char	*getClientVersion();
+  void		setClientVersion(const char * c);
+  void		getClientVersionNumbers(int& major, int& minor, int& revision);
+  double	getPausedTime();
+  double	getIdleTime();
+  std::string	getIdleStat();
   bool	canBeRabbit(bool relaxing = false);
   void	setPaused(bool paused);
   void	setAutoPilot(bool autopilot);
@@ -115,9 +116,9 @@ public:
   bool	hasStartedToNotRespond();
   void	hasSent();
   bool	hasPlayedEarly();
-  void  setCompletelyAdded() {completelyAdded = true;}
-  bool	isCompletelyAdded() {return completelyAdded;}
-  TimeKeeper  getNextSpawnTime() const;
+  void	setCompletelyAdded() { completelyAdded = true; }
+  bool	isCompletelyAdded() { return completelyAdded; }
+  TimeKeeper	getNextSpawnTime() const;
   void	setSpawnDelay(double delay);
   bool	waitingToSpawn() const;
   void	queueSpawn();
@@ -129,25 +130,25 @@ public:
   void	setPlayedEarly(bool early = true);
   void	setReplayState(PlayerReplayState state);
   void	updateIdleTime();
-  PlayerReplayState getReplayState();
-  static void setCurrentTime(TimeKeeper tm);
-  static void setFilterParameters(bool	callSignFiltering,
-				  WordFilter &filterData,
-				  bool	simpleFiltering);
+  PlayerReplayState	getReplayState();
+  static void	setCurrentTime(TimeKeeper tm);
+  static void	setFilterParameters(bool	callSignFiltering,
+				    WordFilter	&filterData,
+				    bool	simpleFiltering);
 
-  void setTrackerID(unsigned short int t);
-  unsigned short int trackerID();
-  static TimeKeeper now;
-  int endShotCredit;
-  int endShotShieldCredit;
+  void	setTrackerID(unsigned short int t);
+  unsigned short int	trackerID();
+  static TimeKeeper	now;
+  int	endShotCredit;
+  int	endShotShieldCredit;
 
-  PlayerType getType( void ) {return type;}
-  void setType( PlayerType t ) {type = t;}
+  PlayerType	getType( void ) { return type; }
+  void		setType( PlayerType t ) { type = t; }
 
-  void killedBy(PlayerId killer);
-  void flushKiller(PlayerId killer);
+  void	killedBy(PlayerId killer);
+  void	flushKiller(PlayerId killer);
 
-  int howManyTimesKilledBy(PlayerId killer);
+  int	howManyTimesKilledBy(PlayerId killer);
 
 private:
   std::map<int,int> deathCountMap;
@@ -156,83 +157,83 @@ private:
   bool	isCallSignReadable();
   bool	isMottoReadable();
 
-  int	 playerIndex;
+  int	playerIndex;
 
-  bool restartOnBase;
+  bool	restartOnBase;
 
   // current state of player
-  ClientState state;
+  ClientState	state;
   // Need to know if entered is already done
-  bool       hasDoneEntering;
+  bool	hasDoneEntering;
   // type of player
-  PlayerType type;
+  PlayerType	type;
   // player's pseudonym
-  char callSign[CallSignLen];
+  char	callSign[CallSignLen];
   // token from db server
-  char token[TokenLen];
+  char	token[TokenLen];
   // player's motto
-  char motto[MottoLen];
+  char	motto[MottoLen];
   // version information from client
-  char clientVersion[VersionLen];
-  int clientVersionMajor;
-  int clientVersionMinor;
-  int clientVersionRevision;
+  char	clientVersion[VersionLen];
+  int	clientVersionMajor;
+  int	clientVersionMinor;
+  int	clientVersionRevision;
 
   // player's team
-  TeamColor team;
+  TeamColor	team;
   // true for dead rabbit until respawn
-  bool wasRabbit;
+  bool	wasRabbit;
   // flag index player has
-  int flag;
+  int	flag;
 
   // addPlayer has completed for this player
-  bool completelyAdded;
+  bool	completelyAdded;
 
-  TimeKeeper lastFlagDropTime;
+  TimeKeeper	lastFlagDropTime;
 
   // time of player's next allowed spawn
-  TimeKeeper nextSpawnTime;
+  TimeKeeper	nextSpawnTime;
 
   // Requested a spawn?
-  bool allowedToSpawn;
-  bool notifiedSpawn;
-  bool wantsToSpawn;
-  bool neverSpawned;
+  bool	allowedToSpawn;
+  bool	notifiedSpawn;
+  bool	wantsToSpawn;
+  bool	neverSpawned;
 
   // spam prevention
-  std::string lastMsgSent;
-  int spamWarns;
-  TimeKeeper lastMsgTime;
+  std::string	lastMsgSent;
+  int		spamWarns;
+  TimeKeeper	lastMsgTime;
 
-  bool paused;
-  TimeKeeper pausedSince;
+  bool		paused;
+  TimeKeeper	pausedSince;
 
-  bool autopilot;
+  bool	autopilot;
 
-  bool notResponding;
+  bool	notResponding;
 
   // Has the player been sent any replay 'faked' state
-  PlayerReplayState replayState;
+  PlayerReplayState	replayState;
 
   // idle kick
-  TimeKeeper lastmsg;
-  TimeKeeper lastupdate;
+  TimeKeeper	lastmsg;
+  TimeKeeper	lastupdate;
 
   // player played before countdown started
-  bool playedEarly;
+  bool	playedEarly;
 
   // tracker id for position tracking
-  unsigned short int tracker;
+  unsigned	short int tracker;
 
   // Error string
-  std::string errorString;
+  std::string	errorString;
 
   // just need one of these for
-  static WordFilter serverSpoofingFilter;
+  static WordFilter	serverSpoofingFilter;
 
-  static bool	callSignFiltering;
-  static WordFilter *filterData;
-  static bool	simpleFiltering;
+  static bool		callSignFiltering;
+  static WordFilter	*filterData;
+  static bool		simpleFiltering;
 };
 
 inline bool PlayerInfo::isPlaying() const {

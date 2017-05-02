@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -381,7 +381,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
 
   // get packet
   in.read(buffer, sizeof(buffer));
-  if ((size_t)in.gcount() < sizeof(buffer)){
+  if ((size_t)in.gcount() < sizeof(buffer)) {
     return false;
   }
 
@@ -391,7 +391,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
   buf = nboUnpackUShort(buf, code);
 
   // make sure we got the rest of the message
-  if (len != in.gcount() - 4){
+  if (len != in.gcount() - 4) {
     return false;
   }
 

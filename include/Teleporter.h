@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -31,12 +31,12 @@ class Teleporter : public Obstacle {
 				bool drive = false, bool shoot = false, bool ricochet = false);
 			~Teleporter();
 
-    Obstacle*	copyWithTransform(const MeshTransform&) const;
+    Obstacle*		copyWithTransform(const MeshTransform&) const;
 
     void		setName(const std::string& name);
     const std::string&	getName() const;
 
-    const char*	getType() const;
+    const char*		getType() const;
     static const char*	getClassName(); // const
 
     float		getBorder() const;
@@ -57,50 +57,50 @@ class Teleporter : public Obstacle {
 				   float* plane) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+				     const float* pos1, float azimuth1,
+				     const float* pos2, float azimuth2,
+				     float halfWidth, float halfBreadth,
+				     float height,
+				     float* normal) const;
 
     float		isTeleported(const Ray&, int& face) const;
     float		getProximity(const float* p, float radius) const;
     bool		hasCrossed(const float* p1, const float* p2,
-							int& face) const;
+				   int& face) const;
     void		getPointWRT(const Teleporter& t2, int face1, int face2,
-				const float* pIn, const float* dIn, float aIn,
-				float* pOut, float* dOut, float* aOut) const;
+				    const float* pIn, const float* dIn, float aIn,
+				    float* pOut, float* dOut, float* aOut) const;
 
-    void makeLinks();
-    const MeshFace* getBackLink() const;
-    const MeshFace* getFrontLink() const;
+    void		makeLinks();
+    const MeshFace*	getBackLink() const;
+    const MeshFace*	getFrontLink() const;
 
-    int packSize() const;
-    void *pack(void*) const;
-    const void *unpack(const void*);
+    int			packSize() const;
+    void*		pack(void*) const;
+    const void*		unpack(const void*);
 
-    void print(std::ostream& out, const std::string& indent) const;
-    void printOBJ(std::ostream& out, const std::string& indent) const;
+    void		print(std::ostream& out, const std::string& indent) const;
+    void		printOBJ(std::ostream& out, const std::string& indent) const;
 
     std::string		userTextures[1];
 
   private:
-    void finalize();
+    void		finalize();
 
   private:
     static const char*	typeName;
 
-    std::string name;
+    std::string		name;
 
-    float border;
-    bool horizontal;
-    float origSize[3];
+    float		border;
+    bool		horizontal;
+    float		origSize[3];
 
-    MeshFace* backLink;
-    MeshFace* frontLink;
-    float fvertices[4][3]; // front vertices
-    float bvertices[4][3]; // back vertices
-    float texcoords[4][2]; // shared texture coordinates
+    MeshFace*		backLink;
+    MeshFace*		frontLink;
+    float		fvertices[4][3]; // front vertices
+    float		bvertices[4][3]; // back vertices
+    float		texcoords[4][2]; // shared texture coordinates
 };
 
 //
@@ -142,7 +142,7 @@ inline void Teleporter::setName(const std::string& _name)
 #endif // BZF_TELEPORTER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

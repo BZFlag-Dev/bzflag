@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,7 +16,7 @@
 class RegFlag : public bz_Plugin
 {
 public:
-  virtual const char* Name(){ return "RegFlag"; }
+  virtual const char* Name() { return "RegFlag"; }
   virtual void Init(const char* config);
 
   virtual void Event(bz_EventData *eventData );
@@ -60,11 +60,11 @@ void RegFlag::Event(bz_EventData *eventData)
       // If the player isn't a global user, prevent them from grabbing a flag, and
       // notify them why if enough time has passed.  Always allow team flags, however.
       if (
-	player && !player->globalUser && 
+	player && !player->globalUser &&
 	!(flagAbbrev == "R*" || flagAbbrev == "G*" || flagAbbrev == "B*" || flagAbbrev == "P*")
       ) {
 	data->allow = false;
-	
+
 	// Only notify once every 5 minutes
 	if (lastNotifiedTime[data->playerID] + 300.0 < data->eventTime) {
 	  bz_sendTextMessage(BZ_SERVER, data->playerID, "Sorry, flags are for registered players only.");
@@ -82,7 +82,7 @@ void RegFlag::Event(bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

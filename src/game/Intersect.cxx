@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -546,7 +546,7 @@ static bool testOrigRectRect(const float* p, float angle,
 					  { -1.0, -1.0 }, { -1.0,  1.0 } };
   const float c = cosf(angle), s = sinf(angle);
   float corner1[4][2];
-  int	i, region[4][2];
+  int i, region[4][2];
 
   // return true if the second rectangle is within the first
   // hint:  cos(+a) = cos(-a)  and  -sin(a) = sin(-a)
@@ -1007,7 +1007,7 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

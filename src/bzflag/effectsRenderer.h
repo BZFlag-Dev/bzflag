@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,15 +42,15 @@ class BasicEffect
 {
 public:
 	BasicEffect();
-	virtual ~BasicEffect(){};
+	virtual ~BasicEffect() {};
 
 	virtual void setPos ( const float *pos, const float *rot );
 	virtual void setVel ( const float *vel );
 	virtual void setColor( const float *rgb );
 	virtual void setStartTime ( float time );
 
-	virtual void freeContext(void){};
-	virtual void rebuildContext(void){};
+	virtual void freeContext(void) {};
+	virtual void rebuildContext(void) {};
 
 	virtual bool update ( float time );
 	virtual void draw(const SceneRenderer &) {};
@@ -73,13 +73,13 @@ class DeathEffect : public BasicEffect, public TankDeathOverride
 {
 public:
 	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
-	virtual ~DeathEffect(){/*if(player)player->setDeathEffect(NULL)*/;}
+	virtual ~DeathEffect() {/*if (player)player->setDeathEffect(NULL)*/;}
 
-	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ){return false;}
-	virtual bool ShowExplosion ( void ){return true;}
-	virtual bool GetDeathVector ( fvec3 &UNUSED(vel) ){return false;}
+	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ) {return false;}
+	virtual bool ShowExplosion ( void ) {return true;}
+	virtual bool GetDeathVector ( fvec3 &UNUSED(vel) ) {return false;}
 
-	void setPlayer ( Player* p){player=p;}
+	void setPlayer ( Player* p) {player=p;}
 protected:
 	Player *player;
 };
@@ -146,7 +146,7 @@ protected:
 #endif // BZF_EFFECTS_RENDERER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

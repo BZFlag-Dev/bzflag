@@ -119,6 +119,8 @@ bzfs_SOURCES =				\
 	SpawnPosition.h			\
 	TeamBases.cxx			\
 	TeamBases.h			\
+	VotingArbiter.cxx			\
+	VotingArbiter.h			\
 	WorldFileLocation.cxx		\
 	WorldFileLocation.h		\
 	WorldFileObject.cxx		\

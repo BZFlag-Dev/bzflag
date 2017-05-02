@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,7 +27,7 @@ class TankSceneNode;
 class TankDeathOverride
 {
 public:
-	virtual ~TankDeathOverride(){};
+	virtual ~TankDeathOverride() {};
 
 	class DeathParams
 	{
@@ -140,12 +140,12 @@ class TankSceneNode : public SceneNode {
 
     static void		setMaxLOD(int maxLevel);
 
-	void		setDeathOverride( TankDeathOverride* o) {deathOverride = o;}
-	TankDeathOverride		*getDeathOverride( void ) {return deathOverride;}
+    void		setDeathOverride( TankDeathOverride* o) { deathOverride = o; }
+    TankDeathOverride	*getDeathOverride( void ) { return deathOverride; }
 
-	fvec3		explodePos;
+    fvec3		explodePos;
   protected:
-	TankDeathOverride *deathOverride;
+    TankDeathOverride	*deathOverride;
 
     class TankRenderNode : public RenderNode {
       public:
@@ -208,14 +208,14 @@ class TankSceneNode : public SceneNode {
     GLfloat		color[4];
     GLdouble		clipPlane[4];
     OpenGLGState	gstate;
-	OpenGLGState	treadState;
+    OpenGLGState	treadState;
     OpenGLGState	lightsGState;
     TankRenderNode	tankRenderNode;
-	TankRenderNode	treadsRenderNode;
-	TankRenderNode	shadowRenderNode;
+    TankRenderNode	treadsRenderNode;
+    TankRenderNode	shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    GLfloat vel[TankGeometryEnums::LastTankPart][3];
-    GLfloat spin[TankGeometryEnums::LastTankPart][4];
+    GLfloat		vel[TankGeometryEnums::LastTankPart][3];
+    GLfloat		spin[TankGeometryEnums::LastTankPart][4];
     bool		jumpJetsOn;
     GLfloat		jumpJetsScale;
     GLfloat		jumpJetsLengths[4];
@@ -233,7 +233,7 @@ class TankSceneNode : public SceneNode {
 #endif // BZF_TANK_SCENE_NODE_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

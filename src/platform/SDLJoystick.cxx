@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -112,7 +112,7 @@ unsigned long		SDLJoystick::getJoyButtons()
   return buttons;
 }
 
-int                 SDLJoystick::getNumHats()
+int		 SDLJoystick::getNumHats()
 {
   if (!joystickID)
     return 0;
@@ -120,7 +120,7 @@ int                 SDLJoystick::getNumHats()
   return numHats;
 }
 
-void                SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void		SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
   hatX = hatY = 0;
 
@@ -194,7 +194,7 @@ void		    SDLJoystick::setYAxis(const std::string &axis)
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

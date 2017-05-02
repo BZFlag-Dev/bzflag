@@ -42,6 +42,8 @@
 *.nativecodeanalysis.xml
 *.lastcodeanalysissucceeded
 *.ipch
+*.VC.db
+*.opendb
 
 # GNU Autotools
 Makefile.in
@@ -128,3 +130,5 @@ Thumbs.db
 /Xcode/BZFlag-Info.plist
 /tools/TextTool2/TextTool2.xcodeproj/xcuserdata
 /tools/TextTool2/TextTool2.xcodeproj/project.xcworkspace
+/MSVC/HoldTheFlag_Win32_Debug/*.ib_pdb_index
+*.ib_pdb_index

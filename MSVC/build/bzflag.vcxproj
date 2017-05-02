@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -27,27 +27,27 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+   <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120</PlatformToolset>
+   <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v120</PlatformToolset>
+   <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v120</PlatformToolset>
+   <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -108,8 +108,8 @@
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -118,9 +118,9 @@
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
     </ClCompile>
     <ResourceCompile>
@@ -128,7 +128,7 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -145,11 +145,14 @@
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Midl>
@@ -165,8 +168,8 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <Optimization>Disabled</Optimization>
       <InlineFunctionExpansion>Default</InlineFunctionExpansion>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;_DEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -175,7 +178,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <ObjectFileName>$(OutDir)</ObjectFileName>
       <ProgramDataBaseFileName>$(OutDir)</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
-      <TreatWarningAsError>false</TreatWarningAsError>
+      <TreatWarningAsError>true</TreatWarningAsError>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
@@ -185,7 +188,7 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>caresd.lib;libcurl_debug.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -202,11 +205,14 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       </IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
@@ -221,8 +227,8 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -234,13 +240,14 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>Default</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -253,11 +260,14 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Midl>
@@ -272,8 +282,8 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\include;..\..\win32;.\;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
@@ -285,13 +295,14 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <WarningLevel>Level3</WarningLevel>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <CompileAs>Default</CompileAs>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <ResourceCompile>
       <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cares.lib;libcurl.lib;regex.lib;SDL2.lib;SDL2main.lib;zlib.lib;ws2_32.lib;dsound.lib;winmm.lib;glu32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)bzflag.exe</OutputFile>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <AdditionalLibraryDirectories>$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -304,11 +315,14 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir ..\..\bin_$(Configuration)_$(Platform)
-copy $(OutDir)*.exe ..\..\bin_$(Configuration)_$(Platform)\
-copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin_$(Configuration)_$(Platform)\
+      <Command>if not exist "..\..\bin_$(Configuration)_$(Platform)" mkdir "..\..\bin_$(Configuration)_$(Platform)"
+copy "$(OutDir)*.exe" "..\..\bin_$(Configuration)_$(Platform)\"
+copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\bin_$(Configuration)_$(Platform)\"
 </Command>
     </PostBuildEvent>
+    <Manifest>
+      <EnableDpiAwareness>PerMonitorHighDPIAware</EnableDpiAwareness>
+    </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
@@ -316,7 +330,6 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClCompile Include="..\..\src\bzflag\ClientDialogManager.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
-    <ClCompile Include="..\..\src\common\BZDBLocal.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -898,7 +911,6 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
     <ClInclude Include="..\..\src\bzflag\AudioMenu.h" />
     <ClInclude Include="..\..\src\bzflag\BackgroundRenderer.h" />
     <ClInclude Include="..\..\src\bzflag\BaseLocalPlayer.h" />
-    <ClInclude Include="..\..\include\BZDBLocal.h" />
     <ClInclude Include="..\..\src\bzflag\CacheMenu.h" />
     <ClInclude Include="..\..\src\bzflag\callbacks.h" />
     <ClInclude Include="..\..\src\bzflag\commands.h" />
@@ -986,7 +998,6 @@ copy $(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll ..\..\bin
   </ItemGroup>
   <ItemGroup>
     <None Include="..\bzflag.ico" />
-    <None Include="bzflag.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="3D.vcxproj">

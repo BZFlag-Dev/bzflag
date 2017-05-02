@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -74,9 +74,7 @@ class ServerLink {
 				   int shotId, const FlagType* flag, int phydrv);
   // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
   //	  It should be changed to something cleaner.
-#ifndef BUILDING_BZADMIN
     void		sendPlayerUpdate(Player*);
-#endif
     void		sendBeginShot(const FiringInfo&);
     void		sendEndShot(const PlayerId&, int shotId, int reason);
     void		sendAlive();
@@ -106,10 +104,10 @@ class ServerLink {
     static ServerLink*	server;
     int			server_abilities;
 
-    std::string	 rejectionMessage;
+    std::string		rejectionMessage;
 
-    int		 udpLength;
-    const char	       *udpBufferPtr;
+    int			udpLength;
+    const char*		udpBufferPtr;
     char		ubuf[MaxPacketLen];
 };
 
@@ -143,7 +141,7 @@ inline const char*	ServerLink::getVersion() const
 #endif // BZF_SERVER_LINK_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 #
 # bzflag
-# Copyright (c) 1993-2016 Tim Riker
+# Copyright (c) 1993-2017 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -152,10 +152,10 @@ print "\n";
 for (1..$numPlayers) {
  # one MsgAddPlayer per player
  $bytesRead = sysread(S, $buffer, 175);
- while ($bytesRead != 175 && $bytesRead != 0){
+ while ($bytesRead != 175 && $bytesRead != 0) {
   $bytesRead += sysread(S, $buffer, 175-$bytesRead)
  }
- if ($bytesRead == undef || $bytesRead < 175){ die $!; }
+ if ($bytesRead == undef || $bytesRead < 175) { die $!; }
 
  ($len,$code,$pID,$type,$team,$won,$lost,$tks,$sign,$motto) =
 					unpack("n2Cn5A32A128", $buffer);
@@ -173,7 +173,7 @@ close(S);
 exit 0;
 
 # Local Variables: ***
-# mode:Perl ***
+# mode: Perl ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

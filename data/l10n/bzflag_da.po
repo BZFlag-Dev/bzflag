@@ -763,7 +763,7 @@ msgstr "Hurtig manøvre (A): Kampvognen drejer hurtigere."
 msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 msgstr "Team flag:  Hvis det er dit holds flag; Forhindre de andre hold i at tage det. Hvis det er et andet holds flag; Tag det hjem til din base!"
 
-msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Oscullation Overthruster (OO):  Kan køre igennem bygninger, men du har ikke muliged for at skyde inde fra bygninger."
 
 msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -826,7 +826,7 @@ msgstr "Hurtighed (+V): Din tank bevæger sig hurtigere."
 msgid "Angular velocity (+A): Tank turns faster.  Dodge quicker."
 msgstr "Hurtig manøvre (+A): Din tank drejer hurtigere. Nemmere at undgå skud."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Oscillation Overthruster (+OO):  Kan kører igennem bygninger. Men kan ikke skyde derinde."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -935,6 +935,7 @@ OpenGLGState::ContextInitializer*
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
 bool OpenGLGState::hasAnisotropicFiltering = false;
+bool OpenGLGState::hasMultisampling = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -1276,8 +1277,6 @@ void OpenGLGState::initGLState()
 // utility to check if an OpenGL extension is supported on this system
 bool OpenGLGState::initGLExtensions()
 {
-  hasAnisotropicFiltering = false;
-
   const char * extensions = (const char*) glGetString(GL_EXTENSIONS);
   if (!extensions)
     return false;
@@ -1285,12 +1284,27 @@ bool OpenGLGState::initGLExtensions()
   std::stringstream extensionsStream;
   extensionsStream.str(extensions);
 
+  hasAnisotropicFiltering = false;
+
   while (!extensionsStream.eof()) {
     std::string thisExtension;
     extensionsStream >> thisExtension;
 
     if (thisExtension == "GL_EXT_texture_filter_anisotropic")
       hasAnisotropicFiltering = true;
+  }
+
+  extensionsStream.clear();
+  extensionsStream.str(extensions);
+
+  hasMultisampling = false;
+
+  while (!extensionsStream.eof()) {
+    std::string thisExtension;
+    extensionsStream >> thisExtension;
+
+    if (thisExtension == "GL_ARB_multisample")
+      hasMultisampling = true;
   }
 
   return false;
@@ -1582,19 +1596,19 @@ void bzMatrixMode(GLenum mode)
 #endif // DEBUG_GL_MATRIX_STACKS
 
 
-#ifdef _WIN32
+#if defined(_WIN32)
 #  define GET_CURRENT_CONTEXT wglGetCurrentContext
+#elif defined(__BEOS__)
+   // no way to do that, and you shouldn't have to anyway!
+#  define GET_CURRENT_CONTEXT() 1
+#elif defined(HAVE_SDL2)
+#  include "bzfSDL.h"
+#  define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
+#elif defined(HAVE_CGLGETCURRENTCONTEXT)
+#  define GET_CURRENT_CONTEXT CGLGetCurrentContext
 #else
-#  ifdef __BEOS__
-// no way to do that, and you shouldn't have to anyway!
-#    define GET_CURRENT_CONTEXT() 1
-#  elif defined(HAVE_SDL2)
-#    include "bzfSDL.h"
-#    define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
-#  else
-#    include <GL/glx.h>
-#    define GET_CURRENT_CONTEXT glXGetCurrentContext
-#  endif
+#  include <GL/glx.h>
+#  define GET_CURRENT_CONTEXT glXGetCurrentContext
 #endif
 
 // NOTE: if you're compiler croaks here, then you might want

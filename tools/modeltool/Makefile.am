@@ -7,7 +7,9 @@ modeltool_SOURCES =	\
 	modeltool.cxx	\
 	Q3BSP.cxx	\
 	Q3BSP.h		\
-	wavefrontOBJ.cxx\
+	SimpleTextUtils.cxx	\
+	SimpleTextUtils.h	\
+	wavefrontOBJ.cxx	\
 	wavefrontOBJ.h
 
 AM_CPPFLAGS = $(CONF_CPPFLAGS)
@@ -16,6 +18,3 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
-
-LDADD = \
-	$(top_srcdir)/src/common/libCommon.la

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,7 +48,7 @@ typedef enum
   eHTTPTrace,
   eHTTPOptions,
   eHTTPConnect
-}bzhttp_eRequestType;
+} bzhttp_eRequestType;
 
 class BZF_API bzhttp_Request
 {
@@ -86,7 +86,7 @@ public:
   virtual const char* GetParamater ( size_t index ) const;
   virtual size_t GetParamaterCount () const;
 
-  virtual bool InBZIDGroup (const char *) const {return false;}
+  virtual bool InBZIDGroup (const char *) const { return false; }
 
   bzhttp_SessionData *Session;
 
@@ -152,7 +152,7 @@ typedef enum
   eNoPage = 0,
   eWaitForIt,
   ePageDone
-}bzhttp_ePageGenStatus;
+} bzhttp_ePageGenStatus;
 
 typedef enum
 {
@@ -160,14 +160,14 @@ typedef enum
   eHTTPBasic,
   eHTTPOther,
   eBZID
-}bzhttp_eAuthenticationMethod;
+} bzhttp_eAuthenticationMethod;
 
 typedef enum
 {
   eAuthFail = 0,
   eAuthOK,
   eNotAuthedYet
-}bzhttp_eAuthenticationStatus;
+} bzhttp_eAuthenticationStatus;
 
 class BZF_API bzhttp_VDir
 {
@@ -175,11 +175,11 @@ public:
   bzhttp_VDir();
   virtual ~bzhttp_VDir();
   virtual const char* VDirName() = 0;
-  virtual const char* VDirDescription(){return NULL;}
+  virtual const char* VDirDescription() { return NULL; }
 
   virtual bzhttp_ePageGenStatus GeneratePage ( const bzhttp_Request& request, bzhttp_Response &response ) = 0;
-  virtual bool SupportPut ( void ){ return false;}
-  virtual bool AllowResourceDownloads ( void ){ return false; }
+  virtual bool SupportPut ( void ) { return false; }
+  virtual bool AllowResourceDownloads ( void ) { return false; }
 
   bz_ApiString BaseURL;
   bz_APIStringList ResourceDirs;
@@ -192,8 +192,8 @@ public:
   bz_APIStringList BZIDAuthenicationGroups;
   bool CacheAuthentication;
 
-  virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/  ){ return eAuthFail; }
-  virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Response &/*response*/ ) {return false;}
+  virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/ ) { return eAuthFail; }
+  virtual bool GenerateNoAuthPage ( const bzhttp_Request& /*request*/, bzhttp_Response &/*response*/ ) { return false; }
 
   // data sizes
   int MaxRequestSize;
@@ -230,7 +230,7 @@ class BZF_API bzhttp_TemplateCallback
 {
 public:
   virtual ~bzhttp_TemplateCallback() {};
-  virtual bz_ApiString GetTemplateKey(const char* /* key */) {return bz_ApiString("");}
+  virtual bz_ApiString GetTemplateKey(const char* /* key */) { return bz_ApiString(""); }
   virtual bool GetTemplateLoop(const char* /* key */, const char* /*param*/) { return false; }
   virtual bool GetTemplateIF(const char* /* key */, const char* /*param*/) { return false; }
 

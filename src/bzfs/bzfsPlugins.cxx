@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,9 +34,16 @@
 void InitHTTP();
 void KillHTTP();
 
-#ifdef _WIN32
+#if defined(_WIN32)
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
+#elif defined(__APPLE__)
+std::string extension = ".dylib";
+#  ifdef INSTALL_LIB_DIR
+std::string globalPluginDir = INSTALL_LIB_DIR;
+#  else
+std::string globalPluginDir = "";
+#  endif
 #else
 std::string extension = ".so";
 std::string globalPluginDir = INSTALL_LIB_DIR;
@@ -49,15 +56,15 @@ std::string lastPluginDir;
 
 typedef struct
 {
-	std::string name;
-	std::string filename;
-	bz_Plugin* plugin;
+  std::string	name;
+  std::string	filename;
+  bz_Plugin*	plugin;
 #ifdef _WIN32
-	HINSTANCE	handle;
+  HINSTANCE	handle;
 #else
-	void*		handle;
+  void*		handle;
 #endif
-}trPluginRecord;
+} trPluginRecord;
 
 std::string findPlugin ( std::string pluginName )
 {
@@ -65,8 +72,8 @@ std::string findPlugin ( std::string pluginName )
   FILE	*fp = fopen(pluginName.c_str(),"rb");
   if (fp)
   {
-	  fclose(fp);
-	  return pluginName;
+    fclose(fp);
+    return pluginName;
   }
 
   // now try it with the standard extension
@@ -74,8 +81,8 @@ std::string findPlugin ( std::string pluginName )
   fp = fopen(name.c_str(),"rb");
   if (fp)
   {
-	  fclose(fp);
-	  return name;
+    fclose(fp);
+    return name;
   }
 
   // check the local users plugins dir
@@ -83,8 +90,8 @@ std::string findPlugin ( std::string pluginName )
   fp = fopen(name.c_str(),"rb");
   if (fp)
   {
-	  fclose(fp);
-	  return name;
+    fclose(fp);
+    return name;
   }
 
   // check the global plugins dir
@@ -92,11 +99,24 @@ std::string findPlugin ( std::string pluginName )
   fp = fopen(name.c_str(),"rb");
   if (fp)
   {
-	  fclose(fp);
-	  return name;
+    fclose(fp);
+    return name;
   }
 
+#ifdef __APPLE__
+  // on macOS, if we can't find the plugin file we are probably in the .app trying to
+  // load it from @executable_path/../PlugIns; fopen() won't be able to parse that,
+  // but dlopen() will so just return the plugin filename
+  if (pluginName.length() > 6)
+    if (pluginName.substr(pluginName.length() - 6) == ".dylib")
+      return pluginName;
+    else
+      return pluginName + extension;
+  else
+    return pluginName + extension;
+#else
   return std::string("");
+#endif
 }
 
 std::string getPluginPath ( const std::string & path )
@@ -120,7 +140,7 @@ std::string getPluginPath ( const std::string & path )
   return newPath;
 }
 
-std::vector<trPluginRecord>	vPluginList;
+std::vector<trPluginRecord> vPluginList;
 
 void unload1Plugin ( int iPluginID );
 
@@ -158,202 +178,202 @@ int getPluginVersion ( HINSTANCE hLib )
   int (*lpProc)(void);
   lpProc = (int (__cdecl *)(void))GetProcAddress(hLib, "bz_GetMinVersion");
   if (lpProc)
-	  return lpProc();
+    return lpProc();
   return 0;
 }
 
 bool load1Plugin ( std::string plugin, std::string config )
 {
-	bz_Plugin* (*lpProc)(void);
+  bz_Plugin* (*lpProc)(void);
 
-	std::string realPluginName = findPlugin(plugin);
+  std::string realPluginName = findPlugin(plugin);
 
-	HINSTANCE	hLib = LoadLibrary(realPluginName.c_str());
-	if (hLib)
+  HINSTANCE hLib = LoadLibrary(realPluginName.c_str());
+  if (hLib)
+  {
+    if (getPluginVersion(hLib) > BZ_API_VERSION)
+    {
+      logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
+      FreeLibrary(hLib);
+      return false;
+    }
+    else
+    {
+      lpProc = (bz_Plugin* (__cdecl *)(void))GetProcAddress(hLib, "bz_GetPlugin");
+      if (lpProc)
+      {
+	lastPluginDir = getPluginPath(realPluginName);
+
+	bz_Plugin* p = lpProc();
+	if (!p)
+	  return false;
+
+	std::string name  = p->Name();
+	if (PluginExists(name.c_str()))
 	{
-		if (getPluginVersion(hLib) > BZ_API_VERSION)
-		{
-			logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
-			FreeLibrary(hLib);
-			return false;
-		}
-		else
-		{
-			lpProc = (bz_Plugin* (__cdecl *)(void))GetProcAddress(hLib, "bz_GetPlugin");
-			if (lpProc)
-			{
-			    lastPluginDir = getPluginPath(realPluginName);
-
-				bz_Plugin* p = lpProc();
-				if (!p)
-				  return false;
-
-				std::string name  = p->Name();
-				if (PluginExists(name.c_str()))
-				{
-				  FreeLibrary(hLib);
-				  return false;
-				}
-
-				trPluginRecord pluginRecord;
-				pluginRecord.name = name;
-				pluginRecord.handle = hLib;
-				pluginRecord.plugin = p;
-				pluginRecord.filename = plugin;
-				vPluginList.push_back(pluginRecord);
-
-				p->Init(config.c_str());
-
-				bz_PluginLoadUnloadEventData_V1 evt;
-				evt.plugin = p;
-				evt.eventType = bz_ePluginLoaded;
-				worldEventManager.callEvents(&evt);
-
-				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
-				bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
-				return true;
-			}
-			else
-			{
-				logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method\n",plugin.c_str());
-				FreeLibrary(hLib);
-				return false;
-			}
-		}
+	  FreeLibrary(hLib);
+	  return false;
 	}
-	else
-	{
-		logDebugMessage(1,"Plugin: %s not found\n",plugin.c_str());
-		return false;
-	}
+
+	trPluginRecord pluginRecord;
+	pluginRecord.name = name;
+	pluginRecord.handle = hLib;
+	pluginRecord.plugin = p;
+	pluginRecord.filename = plugin;
+	vPluginList.push_back(pluginRecord);
+
+	p->Init(config.c_str());
+
+	bz_PluginLoadUnloadEventData_V1 evt;
+	evt.plugin = p;
+	evt.eventType = bz_ePluginLoaded;
+	worldEventManager.callEvents(&evt);
+
+	logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
+	bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
+	return true;
+      }
+      else
+      {
+	logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method\n",plugin.c_str());
+	FreeLibrary(hLib);
+	return false;
+      }
+    }
+  }
+  else
+  {
+    logDebugMessage(1,"Plugin: %s not found\n",plugin.c_str());
+    return false;
+  }
 }
 
 void unload1Plugin ( int iPluginID )
 {
-	void (*lpProc)(bz_Plugin*);
+  void (*lpProc)(bz_Plugin*);
 
-	trPluginRecord &plugin = vPluginList[iPluginID];
+  trPluginRecord &plugin = vPluginList[iPluginID];
 
-	bz_PluginLoadUnloadEventData_V1 evt;
-	evt.plugin = plugin.plugin;
-	evt.eventType = bz_ePluginUnloaded;
-	worldEventManager.callEvents(&evt);
+  bz_PluginLoadUnloadEventData_V1 evt;
+  evt.plugin = plugin.plugin;
+  evt.eventType = bz_ePluginUnloaded;
+  worldEventManager.callEvents(&evt);
 
-	FlushEvents(plugin.plugin);
-	plugin.plugin->Cleanup();
-	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
+  FlushEvents(plugin.plugin);
+  plugin.plugin->Cleanup();
+  bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
-	lpProc = (void (__cdecl *)(bz_Plugin*))GetProcAddress(plugin.handle, "bz_FreePlugin");
-	if (lpProc)
-	  lpProc(plugin.plugin);
-	else
-	  logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d. Leaking memory.\n",iPluginID);
+  lpProc = (void (__cdecl *)(bz_Plugin*))GetProcAddress(plugin.handle, "bz_FreePlugin");
+  if (lpProc)
+    lpProc(plugin.plugin);
+  else
+    logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d. Leaking memory.\n",iPluginID);
 
-	FreeLibrary(plugin.handle);
-	plugin.handle = NULL;
-	plugin.plugin = NULL;
+  FreeLibrary(plugin.handle);
+  plugin.handle = NULL;
+  plugin.plugin = NULL;
 }
 #else
 
 #  include <dlfcn.h>
-std::vector<void*>	vLibHandles;
+std::vector<void*> vLibHandles;
 
 int getPluginVersion ( void* hLib )
 {
-	int (*lpProc)(void);
-	*(void**) &lpProc = dlsym(hLib,"bz_GetMinVersion");
-	if (lpProc)
-		return (*lpProc)();
-	return 0;
+  int (*lpProc)(void);
+  *(void**) &lpProc = dlsym(hLib,"bz_GetMinVersion");
+  if (lpProc)
+    return (*lpProc)();
+  return 0;
 }
 
 bool load1Plugin ( std::string plugin, std::string config )
 {
-	bz_Plugin* (*lpProc)();
+  bz_Plugin* (*lpProc)();
 
-	std::string realPluginName = findPlugin(plugin);
+  std::string realPluginName = findPlugin(plugin);
 
-	void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	if (hLib)
-	{
-		if (dlsym(hLib, "bz_GetPlugin") == NULL) {
-			logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method, error %s\n",plugin.c_str(),dlerror());
-			dlclose(hLib);
-			return false;
-		}
+  void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+  if (hLib)
+  {
+    if (dlsym(hLib, "bz_GetPlugin") == NULL) {
+      logDebugMessage(1,"Plugin: %s found but does not contain bz_GetPlugin method, error %s\n",plugin.c_str(),dlerror());
+      dlclose(hLib);
+      return false;
+      }
 
-		int version = getPluginVersion(hLib);
-		if (version > BZ_API_VERSION)
-		{
-			logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(), version);
-			dlclose(hLib);
-			return false;
-		}
-		else
-		{
-			*(void**) &lpProc = dlsym(hLib,"bz_GetPlugin");
-			if (lpProc)
-			{
-				lastPluginDir = getPluginPath(realPluginName);
-				bz_Plugin * p = (*lpProc)();
-				if (!p)
-				  return false;
+    int version = getPluginVersion(hLib);
+    if (version > BZ_API_VERSION)
+    {
+      logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(), version);
+      dlclose(hLib);
+      return false;
+    }
+    else
+    {
+      *(void**) &lpProc = dlsym(hLib,"bz_GetPlugin");
+      if (lpProc)
+      {
+	lastPluginDir = getPluginPath(realPluginName);
+	bz_Plugin * p = (*lpProc)();
+	if (!p)
+	  return false;
 
-				std::string name  = p->Name();
-				if (PluginExists(name.c_str()))
-				  return false;
+	std::string name  = p->Name();
+	if (PluginExists(name.c_str()))
+	  return false;
 
-				trPluginRecord pluginRecord;
-				pluginRecord.handle = hLib;
-				pluginRecord.name = name;
-				pluginRecord.plugin = p;
-				pluginRecord.filename = plugin;
-				vPluginList.push_back(pluginRecord);
-				logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
-				bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
+	trPluginRecord pluginRecord;
+	pluginRecord.handle = hLib;
+	pluginRecord.name = name;
+	pluginRecord.plugin = p;
+	pluginRecord.filename = plugin;
+	vPluginList.push_back(pluginRecord);
+	logDebugMessage(1,"Plugin: %s loaded from %s\n",pluginRecord.name.c_str(),plugin.c_str());
+	bz_debugMessagef(4,"%s plugin loaded",pluginRecord.name.c_str());
 
-				p->Init(config.c_str());
-				bz_PluginLoadUnloadEventData_V1 evt;
-				evt.plugin = p;
-				evt.eventType = bz_ePluginLoaded;
-				worldEventManager.callEvents(&evt);
-				return true;
-			}
-		}
-	}
-	else
-	{
-		logDebugMessage(1,"Plugin: %s not found, error %s\n",plugin.c_str(), dlerror());
-		return false;
-	}
+	p->Init(config.c_str());
+	bz_PluginLoadUnloadEventData_V1 evt;
+	evt.plugin = p;
+	evt.eventType = bz_ePluginLoaded;
+	worldEventManager.callEvents(&evt);
+	return true;
+      }
+    }
+  }
+  else
+  {
+    logDebugMessage(1,"Plugin: %s not found, error %s\n",plugin.c_str(), dlerror());
+    return false;
+  }
 
-	logDebugMessage(1,"Plugin: load1Plugin() coding error\n");
-	return false;
+  logDebugMessage(1,"Plugin: load1Plugin() coding error\n");
+  return false;
 }
 
 void unload1Plugin ( int iPluginID )
 {
-	void (*lpProc)(bz_Plugin*);
-	trPluginRecord &plugin = vPluginList[iPluginID];
+  void (*lpProc)(bz_Plugin*);
+  trPluginRecord &plugin = vPluginList[iPluginID];
 
-	bz_PluginLoadUnloadEventData_V1 evt;
-	evt.plugin = plugin.plugin;
-	evt.eventType = bz_ePluginUnloaded;
-	worldEventManager.callEvents(&evt);
+  bz_PluginLoadUnloadEventData_V1 evt;
+  evt.plugin = plugin.plugin;
+  evt.eventType = bz_ePluginUnloaded;
+  worldEventManager.callEvents(&evt);
 
-	FlushEvents(plugin.plugin);
-	plugin.plugin->Cleanup();
-	bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
+  FlushEvents(plugin.plugin);
+  plugin.plugin->Cleanup();
+  bz_debugMessagef(4,"%s plugin unloaded",plugin.plugin->Name());
 
-	*(void**) &lpProc = dlsym(plugin.handle, "bz_FreePlugin");
-	if (lpProc)
-	  (*lpProc)(plugin.plugin);
-	else
-	  logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d, error %s. Leaking memory.\n",iPluginID,dlerror());
+  *(void**) &lpProc = dlsym(plugin.handle, "bz_FreePlugin");
+  if (lpProc)
+    (*lpProc)(plugin.plugin);
+  else
+    logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d, error %s. Leaking memory.\n",iPluginID,dlerror());
 
-	dlclose(plugin.handle);
-	plugin.handle = NULL;
-	plugin.plugin = NULL;
+  dlclose(plugin.handle);
+  plugin.handle = NULL;
+  plugin.plugin = NULL;
 }
 #endif
 
@@ -370,7 +390,7 @@ bool loadPlugin ( std::string plugin, std::string config )
 
   bool ret = false;
 
-  if (itr != customPluginMap.end() && itr->second){
+  if (itr != customPluginMap.end() && itr->second) {
     bz_APIPluginHandler *handler = itr->second;
     ret =  handler->APIPlugin(plugin,config);
   }
@@ -384,8 +404,8 @@ bool loadPlugin ( std::string plugin, std::string config )
 bool unloadPlugin ( std::string plugin )
 {
   // unload the first one of the name we find
-  for (unsigned int i = 0; i < vPluginList.size();i++){
-    if ( (vPluginList[i].name == plugin || vPluginList[i].filename == plugin) && vPluginList[i].plugin->Unloadable ){
+  for (unsigned int i = 0; i < vPluginList.size();i++) {
+    if ( (vPluginList[i].name == plugin || vPluginList[i].filename == plugin) && vPluginList[i].plugin->Unloadable ) {
       unload1Plugin(i);
       vPluginList.erase(vPluginList.begin()+i);
       return true;
@@ -420,14 +440,14 @@ int pendingHTTPAuths = 0;
 
 void PushPendingHTTPWait ()
 {
-	pendingHTTPAuths++;
+  pendingHTTPAuths++;
 }
 
 void PopPendingHTTPWait ()
 {
-	pendingHTTPAuths--;
-	if (pendingHTTPAuths < 0)
-		pendingHTTPAuths = 0;
+  pendingHTTPAuths--;
+  if (pendingHTTPAuths < 0)
+    pendingHTTPAuths = 0;
 }
 
 float getPluginMinWaitTime ( void )
@@ -440,7 +460,7 @@ float getPluginMinWaitTime ( void )
       maxTime = vPluginList[i].plugin->MaxWaitTime;
   }
   if (pendingHTTPAuths > 0)
-	  return 0;
+    return 0;
 
   return maxTime;
 }
@@ -448,7 +468,7 @@ float getPluginMinWaitTime ( void )
 class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 {
   public:
-    virtual ~DynamicPluginCommands(){};
+    virtual ~DynamicPluginCommands() {};
     virtual bool SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
     {
       bz_BasePlayerRecord	record;
@@ -518,7 +538,7 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandler
 	}
 
 	std::string name;
-	for(size_t i = 0; i < params->size(); i++) {
+	for (size_t i = 0; i < params->size(); i++) {
 	  name += params->get(i).c_str();
 	  if (i != params->size()-1)
 	    name += " ";
@@ -573,7 +593,7 @@ bool removeCustomPluginHandler ( std::string ext, bz_APIPluginHandler *handler )
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

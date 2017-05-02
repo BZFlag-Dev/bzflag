@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,7 +43,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
   // wee bit o hack -- if phantom flag but not phantomized
   // the shot flag is normal -- otherwise FiringInfo will have
   // to be changed to add a real bitwise status variable
-  if (tank.getFlag() == Flags::PhantomZone && !tank.isFlagActive()){
+  if (tank.getFlag() == Flags::PhantomZone && !tank.isFlagActive()) {
     flagType = Flags::Null;
   }
   lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
@@ -222,7 +222,7 @@ void			RemoteShotPath::update(const ShotUpdate& shot,
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

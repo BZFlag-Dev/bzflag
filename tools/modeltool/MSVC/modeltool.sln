@@ -1,8 +1,8 @@
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25123.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "modeltool", "modeltool.vcxproj", "{75BC8894-499A-441C-B21B-875CA252507A}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regex", "..\..\..\MSVC\build\regex.vcxproj", "{6DD493F8-31E1-4958-A240-D157AFFCB07E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,10 +13,7 @@ Global
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Debug|Win32.Build.0 = Debug|Win32
 		{75BC8894-499A-441C-B21B-875CA252507A}.Release|Win32.ActiveCfg = Release|Win32
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Debug|Win32.Build.0 = Debug|Win32
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release|Win32.ActiveCfg = Release|Win32
-		{6DD493F8-31E1-4958-A240-D157AFFCB07E}.Release|Win32.Build.0 = Release|Win32
+		{75BC8894-499A-441C-B21B-875CA252507A}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

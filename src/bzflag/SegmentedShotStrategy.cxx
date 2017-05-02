@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -329,10 +329,10 @@ void			SegmentedShotStrategy::radarRender() const
     if (BZDB.eval("leadingShotLine") == 1) { //leading
       glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
       glEnd();
-    } else if(BZDB.eval("leadingShotLine") == 0) { //lagging
+    } else if (BZDB.eval("leadingShotLine") == 0) { //lagging
       glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
       glEnd();
-    } else if(BZDB.eval("leadingShotLine") == 2) { //both
+    } else if (BZDB.eval("leadingShotLine") == 2) { //both
       glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
       glEnd();
       glBegin(GL_LINES);
@@ -482,7 +482,7 @@ void			SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       // hit building -- can bounce off or stop, buildings ignored for Through
       switch (e) {
 	case Stop: {
-	  if(!building->canRicochet()) {
+	  if (!building->canRicochet()) {
 	    timeLeft = 0.0f;
 	    break;
 	  } else {

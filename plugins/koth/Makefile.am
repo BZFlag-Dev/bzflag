@@ -12,9 +12,9 @@ EXTRA_DIST = \
 	README.koth.txt \
 	help_koth_admin.txt \
 	help_koth_rules.txt \
-	koth.def \
 	koth.sln \
-	koth.vcxproj
+	koth.vcxproj	\
+	koth.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

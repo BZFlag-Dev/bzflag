@@ -350,7 +350,7 @@ msgstr ""
 msgid "Oscillation Overthruster (+OO)"
 msgstr ""
 
-msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Can drive through buildings.  Can't back up or shoot while inside."
 msgstr ""
 
 msgid "Rapid Fire"
@@ -1634,10 +1634,6 @@ msgstr ""
 
 msgid "BZFlag Home Page:"
 msgstr ""
-
-msgid "Copyright (c) 1993-2016"
-msgstr ""
-
 
 ####################
 ## HUD RENDERERER ##

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -74,57 +74,57 @@ void ServerListFilter::reset()
   }
 
   // pattern filters
-  addrPat     .reset();
-  descPat     .reset();
-  addrDescPat .reset();
+  addrPat	.reset();
+  descPat	.reset();
+  addrDescPat	.reset();
 
   // boolean filters
-  ffa      .reset();
-  offa     .reset();
-  ctf      .reset();
-  rabbit   .reset();
+  ffa		.reset();
+  offa		.reset();
+  ctf		.reset();
+  rabbit	.reset();
 
-  jump     .reset();
-  rico     .reset();
-  handi    .reset();
-  replay   .reset();
-  inertia  .reset();
-  antidote .reset();
-  favorite .reset();
+  jump		.reset();
+  rico		.reset();
+  handi		.reset();
+  replay	.reset();
+  inertia	.reset();
+  antidote	.reset();
+  favorite	.reset();
 
   // range filters
-  shots      .reset();
-  players    .reset();
-  freeSlots  .reset();
-  validTeams .reset();
+  shots		.reset();
+  players	.reset();
+  freeSlots	.reset();
+  validTeams	.reset();
 
   maxTime	.reset();
-  maxPlayers     .reset();
-  maxTeamScore   .reset();
-  maxPlayerScore .reset();
-  shakeWins      .reset();
-  shakeTime      .reset();
+  maxPlayers	.reset();
+  maxTeamScore	.reset();
+  maxPlayerScore.reset();
+  shakeWins	.reset();
+  shakeTime	.reset();
 
-  rogueCount    .reset();
-  redCount      .reset();
-  greenCount    .reset();
-  blueCount     .reset();
-  purpleCount   .reset();
-  observerCount .reset();
+  rogueCount	.reset();
+  redCount	.reset();
+  greenCount	.reset();
+  blueCount	.reset();
+  purpleCount	.reset();
+  observerCount	.reset();
 
-  rogueMax    .reset();
-  redMax      .reset();
-  greenMax    .reset();
-  blueMax     .reset();
-  purpleMax   .reset();
-  observerMax .reset();
+  rogueMax	.reset();
+  redMax	.reset();
+  greenMax	.reset();
+  blueMax	.reset();
+  purpleMax	.reset();
+  observerMax	.reset();
 
-  rogueFree    .reset();
-  redFree      .reset();
-  greenFree    .reset();
-  blueFree     .reset();
-  purpleFree   .reset();
-  observerFree .reset();
+  rogueFree	.reset();
+  redFree	.reset();
+  greenFree	.reset();
+  blueFree	.reset();
+  purpleFree	.reset();
+  observerFree	.reset();
 }
 
 
@@ -207,56 +207,56 @@ bool ServerListFilter::check(const ServerItem& item) const
 
   // boolean filters
   const uint16_t type = p.gameType;
-  if (!ffa    .check(type == TeamFFA))   { return false; }
-  if (!offa   .check(type == OpenFFA))   { return false; }
-  if (!ctf    .check(type == ClassicCTF))  { return false; }
-  if (!rabbit   .check(type == RabbitChase)) { return false; }
+  if (!ffa		.check(type == TeamFFA))	{ return false; }
+  if (!offa		.check(type == OpenFFA))	{ return false; }
+  if (!ctf		.check(type == ClassicCTF))	{ return false; }
+  if (!rabbit		.check(type == RabbitChase))	{ return false; }
 
   const uint16_t options = p.gameOptions;
-  if (!jump     .check((options & JumpingGameStyle)!=0))     { return false; }
-  if (!rico     .check((options & RicochetGameStyle)!=0))    { return false; }
-  if (!handi    .check((options & HandicapGameStyle)!=0))    { return false; }
-  if (!inertia  .check((options & InertiaGameStyle)!=0))     { return false; }
-  if (!antidote .check((options & AntidoteGameStyle)!=0))    { return false; }
+  if (!jump	.check((options & JumpingGameStyle)!=0))  { return false; }
+  if (!rico	.check((options & RicochetGameStyle)!=0)) { return false; }
+  if (!handi	.check((options & HandicapGameStyle)!=0)) { return false; }
+  if (!inertia	.check((options & InertiaGameStyle)!=0))  { return false; }
+  if (!antidote	.check((options & AntidoteGameStyle)!=0)) { return false; }
 
-  if (!replay   .check(isReplay(item))) { return false; }
-  if (!favorite .check(item.favorite))  { return false; }
+  if (!replay		.check(isReplay(item)))		{ return false; }
+  if (!favorite		.check(item.favorite))		{ return false; }
 
   // range filters
-  if (!shots	  .check(p.maxShots))	    { return false; }
-  if (!players	.check(countPlayers(item)))    { return false; }
-  if (!freeSlots      .check(countFreeSlots(item)))  { return false; }
-  if (!validTeams     .check(countValidTeams(item))) { return false; }
+  if (!shots		.check(p.maxShots))		{ return false; }
+  if (!players		.check(countPlayers(item)))	{ return false; }
+  if (!freeSlots	.check(countFreeSlots(item)))	{ return false; }
+  if (!validTeams	.check(countValidTeams(item)))	{ return false; }
 
-  if (!maxTime	.check(p.maxTime))	{ return false; }
-  if (!maxPlayers     .check(p.maxPlayers))     { return false; }
-  if (!maxTeamScore   .check(p.maxTeamScore))   { return false; }
-  if (!maxPlayerScore .check(p.maxPlayerScore)) { return false; }
-  if (!shakeWins      .check(p.shakeWins))      { return false; }
-  if (!shakeTime      .check(p.shakeTimeout))   { return false; }
+  if (!maxTime		.check(p.maxTime))		{ return false; }
+  if (!maxPlayers	.check(p.maxPlayers))		{ return false; }
+  if (!maxTeamScore	.check(p.maxTeamScore))		{ return false; }
+  if (!maxPlayerScore	.check(p.maxPlayerScore))	{ return false; }
+  if (!shakeWins	.check(p.shakeWins))		{ return false; }
+  if (!shakeTime	.check(p.shakeTimeout))		{ return false; }
 
-  if (!rogueCount    .check(p.rogueCount))    { return false; }
-  if (!redCount      .check(p.redCount))      { return false; }
-  if (!greenCount    .check(p.greenCount))    { return false; }
-  if (!blueCount     .check(p.blueCount))     { return false; }
-  if (!purpleCount   .check(p.purpleCount))   { return false; }
-  if (!observerCount .check(p.observerCount)) { return false; }
+  if (!rogueCount	.check(p.rogueCount))		{ return false; }
+  if (!redCount		.check(p.redCount))		{ return false; }
+  if (!greenCount	.check(p.greenCount))		{ return false; }
+  if (!blueCount	.check(p.blueCount))		{ return false; }
+  if (!purpleCount	.check(p.purpleCount))		{ return false; }
+  if (!observerCount	.check(p.observerCount))	{ return false; }
 
-  if (!rogueMax    .check(p.rogueMax))    { return false; }
-  if (!redMax      .check(p.redMax))      { return false; }
-  if (!greenMax    .check(p.greenMax))    { return false; }
-  if (!blueMax     .check(p.blueMax))     { return false; }
-  if (!purpleMax   .check(p.purpleMax))   { return false; }
-  if (!observerMax .check(p.observerMax)) { return false; }
+  if (!rogueMax		.check(p.rogueMax))		{ return false; }
+  if (!redMax		.check(p.redMax))		{ return false; }
+  if (!greenMax		.check(p.greenMax))		{ return false; }
+  if (!blueMax		.check(p.blueMax))		{ return false; }
+  if (!purpleMax	.check(p.purpleMax))		{ return false; }
+  if (!observerMax	.check(p.observerMax))		{ return false; }
 
   const int totalFree = p.maxPlayers - (countPlayers(item) + p.observerCount);
-#define FREE_SLOTS(T) std::min(totalFree, p. T ## Max - p.T ## Count)
-  if (!rogueFree    .check(FREE_SLOTS(rogue)))    { return false; }
-  if (!redFree      .check(FREE_SLOTS(red)))      { return false; }
-  if (!greenFree    .check(FREE_SLOTS(green)))    { return false; }
-  if (!blueFree     .check(FREE_SLOTS(blue)))     { return false; }
-  if (!purpleFree   .check(FREE_SLOTS(purple)))   { return false; }
-  if (!observerFree .check(FREE_SLOTS(observer))) { return false; }
+#define FREE_SLOTS(T) std::min(totalFree, p.T ## Max - p.T ## Count)
+  if (!rogueFree	.check(FREE_SLOTS(rogue)))	{ return false; }
+  if (!redFree		.check(FREE_SLOTS(red)))	{ return false; }
+  if (!greenFree	.check(FREE_SLOTS(green)))	{ return false; }
+  if (!blueFree		.check(FREE_SLOTS(blue)))	{ return false; }
+  if (!purpleFree	.check(FREE_SLOTS(purple)))	{ return false; }
+  if (!observerFree	.check(FREE_SLOTS(observer)))	{ return false; }
 #undef FREE_SLOTS
 
   return true;
@@ -326,8 +326,8 @@ bool ServerListFilter::parseFilter(const std::string& f)
   std::string label, param;
   switch (parseFilterType(f, op, label, param)) {
     case '#': { return true; }
-    case 'b': { return parseBoolFilter(label, op);	   }
-    case 'r': { return parseRangeFilter(label, op, param);   }
+    case 'b': { return parseBoolFilter(label, op); }
+    case 'r': { return parseRangeFilter(label, op, param); }
     case 'p': { return parsePatternFilter(label, op, param); }
     default: {
       errorMessage("invalid filter, '" + f + "'");
@@ -420,9 +420,9 @@ bool ServerListFilter::parseRangeFilter(const std::string& label, char op,
 
   RangeFilter* rf = (RangeFilter*)((char*)this + it->second);
   switch (op) {
-    case '<': { rf->maxActive = true; rf->maxValue = value;	break; }
+    case '<': { rf->maxActive = true; rf->maxValue = value;	   break; }
     case '{': { rf->maxActive = true; rf->maxValue = value + 1.0f; break; }
-    case '>': { rf->minActive = true; rf->minValue = value;	break; }
+    case '>': { rf->minActive = true; rf->minValue = value;	   break; }
     case '}': { rf->minActive = true; rf->minValue = value - 1.0f; break; }
     case '=': {
       rf->minActive = true;
@@ -479,18 +479,18 @@ void ServerListFilter::setupBoolMap()
 
   std::map<std::string, size_t>& m = boolMap;
 
-  m["F"] = m["ffa"]      = OFFSETOF(ffa);
-  m["O"] = m["offa"]     = OFFSETOF(offa);
-  m["C"] = m["ctf"]      = OFFSETOF(ctf);
-  m["R"] = m["rabbit"]   = OFFSETOF(rabbit);
-  
-  m["j"] = m["jump"]     = OFFSETOF(jump);
-  m["r"] = m["rico"]     = OFFSETOF(rico);
-  m["h"] = m["handicap"] = OFFSETOF(handi);
-  m["P"] = m["replay"]   = OFFSETOF(replay);
-  m["i"] = m["inertia"]  = OFFSETOF(inertia);
-  m["a"] = m["antidote"] = OFFSETOF(antidote);
-  m["F"] = m["favorite"] = OFFSETOF(favorite);
+  m["F"] = m["ffa"]		= OFFSETOF(ffa);
+  m["O"] = m["offa"]		= OFFSETOF(offa);
+  m["C"] = m["ctf"]		= OFFSETOF(ctf);
+  m["R"] = m["rabbit"]		= OFFSETOF(rabbit);
+
+  m["j"] = m["jump"]		= OFFSETOF(jump);
+  m["r"] = m["rico"]		= OFFSETOF(rico);
+  m["h"] = m["handicap"]	= OFFSETOF(handi);
+  m["P"] = m["replay"]		= OFFSETOF(replay);
+  m["i"] = m["inertia"]		= OFFSETOF(inertia);
+  m["a"] = m["antidote"]	= OFFSETOF(antidote);
+  m["F"] = m["favorite"]	= OFFSETOF(favorite);
 }
 
 
@@ -500,39 +500,39 @@ void ServerListFilter::setupRangeMap()
 
   std::map<std::string, size_t>& m = rangeMap;
 
-  m["s"]   = m["shots"]	   = OFFSETOF(shots);
-  m["p"]   = m["players"]	 = OFFSETOF(players);
-  m["f"]   = m["freeSlots"]       = OFFSETOF(freeSlots);
-  m["vt"]  = m["validTeams"]      = OFFSETOF(validTeams);
+  m["s"]   = m["shots"]		= OFFSETOF(shots);
+  m["p"]   = m["players"]	= OFFSETOF(players);
+  m["f"]   = m["freeSlots"]	= OFFSETOF(freeSlots);
+  m["vt"]  = m["validTeams"]	= OFFSETOF(validTeams);
 
-  m["mt"]  = m["maxTime"]	 = OFFSETOF(maxTime);
-  m["mp"]  = m["maxPlayers"]      = OFFSETOF(maxPlayers);
-  m["mts"] = m["maxTeamScore"]    = OFFSETOF(maxTeamScore);
-  m["mps"] = m["maxPlayerScore"]  = OFFSETOF(maxPlayerScore);
+  m["mt"]  = m["maxTime"]	= OFFSETOF(maxTime);
+  m["mp"]  = m["maxPlayers"]	= OFFSETOF(maxPlayers);
+  m["mts"] = m["maxTeamScore"]	= OFFSETOF(maxTeamScore);
+  m["mps"] = m["maxPlayerScore"] = OFFSETOF(maxPlayerScore);
 
-  m["sw"]  = m["shakeWins"]       = OFFSETOF(shakeWins);
-  m["st"]  = m["shakeTime"]       = OFFSETOF(shakeTime);
+  m["sw"]  = m["shakeWins"]	= OFFSETOF(shakeWins);
+  m["st"]  = m["shakeTime"]	= OFFSETOF(shakeTime);
 
   m["Rm"]  = m["rogueMax"]	= OFFSETOF(rogueMax);
-  m["rm"]  = m["redMax"]	  = OFFSETOF(redMax);
+  m["rm"]  = m["redMax"]	= OFFSETOF(redMax);
   m["gm"]  = m["greenMax"]	= OFFSETOF(greenMax);
-  m["bm"]  = m["blueMax"]	 = OFFSETOF(blueMax);
-  m["pm"]  = m["purpleMax"]       = OFFSETOF(purpleMax);
-  m["om"]  = m["observerMax"]     = OFFSETOF(observerMax);
+  m["bm"]  = m["blueMax"]	= OFFSETOF(blueMax);
+  m["pm"]  = m["purpleMax"]	= OFFSETOF(purpleMax);
+  m["om"]  = m["observerMax"]	= OFFSETOF(observerMax);
 
-  m["Rp"]  = m["roguePlayers"]    = OFFSETOF(rogueCount);
-  m["rp"]  = m["redPlayers"]      = OFFSETOF(redCount);
-  m["gp"]  = m["greenPlayers"]    = OFFSETOF(greenCount);
-  m["bp"]  = m["bluePlayers"]     = OFFSETOF(blueCount);
-  m["pp"]  = m["purplePlayers"]   = OFFSETOF(purpleCount);
+  m["Rp"]  = m["roguePlayers"]	= OFFSETOF(rogueCount);
+  m["rp"]  = m["redPlayers"]	= OFFSETOF(redCount);
+  m["gp"]  = m["greenPlayers"]	= OFFSETOF(greenCount);
+  m["bp"]  = m["bluePlayers"]	= OFFSETOF(blueCount);
+  m["pp"]  = m["purplePlayers"]	= OFFSETOF(purpleCount);
   m["op"]  = m["observerPlayers"] = OFFSETOF(observerCount);
 
-  m["Rf"]  = m["rogueFree"]       = OFFSETOF(rogueFree);
-  m["rf"]  = m["redFree"]	 = OFFSETOF(redFree);
-  m["gf"]  = m["greenFree"]       = OFFSETOF(greenFree);
+  m["Rf"]  = m["rogueFree"]	= OFFSETOF(rogueFree);
+  m["rf"]  = m["redFree"]	= OFFSETOF(redFree);
+  m["gf"]  = m["greenFree"]	= OFFSETOF(greenFree);
   m["bf"]  = m["blueFree"]	= OFFSETOF(blueFree);
-  m["pf"]  = m["purpleFree"]      = OFFSETOF(purpleFree);
-  m["of"]  = m["observerFree"]    = OFFSETOF(observerFree);
+  m["pf"]  = m["purpleFree"]	= OFFSETOF(purpleFree);
+  m["of"]  = m["observerFree"]	= OFFSETOF(observerFree);
 }
 
 
@@ -542,9 +542,9 @@ void ServerListFilter::setupPatternMap()
 
   std::map<std::string, size_t>& m = patternMap;
 
-  m["a"] = m["addr"] = m["address"]     = OFFSETOF(addrPat);
-  m["d"] = m["desc"] = m["description"] = OFFSETOF(descPat);
-  m["ad"] = m["addrdesc"]	       = OFFSETOF(addrDescPat);
+  m["a"] = m["addr"] = m["address"]	= OFFSETOF(addrPat);
+  m["d"] = m["desc"] = m["description"]	= OFFSETOF(descPat);
+  m["ad"] = m["addrdesc"]		= OFFSETOF(addrDescPat);
 }
 
 
@@ -575,57 +575,57 @@ void ServerListFilter::print(const std::string& origIndent) const
   const std::string indent = origIndent + "  ";
 
   // pattern filters
-  addrPat     .print("addrPat",     indent);
-  descPat     .print("descPat",     indent);
-  addrDescPat .print("addrDescPat", indent);
+  addrPat	.print("addrPat",	indent);
+  descPat	.print("descPat",	indent);
+  addrDescPat	.print("addrDescPat",	indent);
 
   // boolean filters
-  ffa      .print("ffa",      indent);
-  offa     .print("offa",     indent);
-  ctf      .print("ctf",      indent);
-  rabbit   .print("rabbit",   indent);
+  ffa		.print("ffa",		indent);
+  offa		.print("offa",		indent);
+  ctf		.print("ctf",		indent);
+  rabbit	.print("rabbit",	indent);
 
-  jump     .print("jump",     indent);
-  rico     .print("rico",     indent);
-  handi    .print("handi",    indent);
-  replay   .print("replay",   indent);
-  inertia  .print("inertia",  indent);
-  antidote .print("antidote", indent);
-  favorite .print("favorite", indent);
+  jump		.print("jump",		indent);
+  rico		.print("rico",		indent);
+  handi		.print("handi",		indent);
+  replay	.print("replay",	indent);
+  inertia	.print("inertia",	indent);
+  antidote	.print("antidote",	indent);
+  favorite	.print("favorite",	indent);
 
   // range filters
-  shots      .print("shots",      indent);
-  players    .print("players",    indent);
-  freeSlots  .print("freeSlots",  indent);
-  validTeams .print("validTeams", indent);
+  shots		.print("shots",		indent);
+  players	.print("players",	indent);
+  freeSlots	.print("freeSlots",	indent);
+  validTeams	.print("validTeams",	indent);
 
   maxTime	.print("maxTime",	indent);
-  maxPlayers     .print("maxPlayers",     indent);
-  maxTeamScore   .print("maxTeamScore",   indent);
-  maxPlayerScore .print("maxPlayerScore", indent);
-  shakeWins      .print("shakeWins",      indent);
-  shakeTime      .print("shakeTime",      indent);
+  maxPlayers	.print("maxPlayers",	indent);
+  maxTeamScore	.print("maxTeamScore",	indent);
+  maxPlayerScore.print("maxPlayerScore",indent);
+  shakeWins	.print("shakeWins",	indent);
+  shakeTime	.print("shakeTime",	indent);
 
-  rogueCount    .print("rogueCount",    indent);
-  redCount      .print("redCount",      indent);
-  greenCount    .print("greenCount",    indent);
-  blueCount     .print("blueCount",     indent);
-  purpleCount   .print("purpleCount",   indent);
-  observerCount .print("observerCount", indent);
+  rogueCount	.print("rogueCount",	indent);
+  redCount	.print("redCount",	indent);
+  greenCount	.print("greenCount",	indent);
+  blueCount	.print("blueCount",	indent);
+  purpleCount	.print("purpleCount",	indent);
+  observerCount	.print("observerCount",	indent);
 
-  rogueMax     .print("rogueMax",    indent);
-  redMax       .print("redMax",      indent);
-  greenMax     .print("greenMax",    indent);
-  blueMax      .print("blueMax",     indent);
-  purpleMax    .print("purpleMax",   indent);
-  observerMax  .print("observerMax", indent);
+  rogueMax	.print("rogueMax",	indent);
+  redMax	.print("redMax",	indent);
+  greenMax	.print("greenMax",	indent);
+  blueMax	.print("blueMax",	indent);
+  purpleMax	.print("purpleMax",	indent);
+  observerMax	.print("observerMax",	indent);
 
-  rogueFree    .print("rogueFree",    indent);
-  redFree      .print("redFree",      indent);
-  greenFree    .print("greenFree",    indent);
-  blueFree     .print("blueFree",     indent);
-  purpleFree   .print("purpleFree",   indent);
-  observerFree .print("observerFree", indent);
+  rogueFree	.print("rogueFree",	indent);
+  redFree	.print("redFree",	indent);
+  greenFree	.print("greenFree",	indent);
+  blueFree	.print("blueFree",	indent);
+  purpleFree	.print("purpleFree",	indent);
+  observerFree	.print("observerFree",	indent);
 
   // OR clauses
   if (orFilter) {

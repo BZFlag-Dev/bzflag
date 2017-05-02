@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,7 +38,7 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
     if (!(input >> pos[0] >> pos[1] >> pos[2])) {
       return false;
     }
-  } else if (strcasecmp(cmd, "size") == 0){
+  } else if (strcasecmp(cmd, "size") == 0) {
     if (!(input >> size[0] >> size[1] >> size[2])) {
       return false;
     }
@@ -116,7 +116,7 @@ void * WorldFileLocation::pack (void *buf) const
 }
 
 // Local variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,8 +32,8 @@ public:
   };
   const char* Name () { return "Fast Map";}
 
-  virtual const char* VDirName(){return "fastmap";}
-  virtual const char* VDirDescription(){return "Deploys maps over HTTP";}
+  virtual const char* VDirName() {return "fastmap";}
+  virtual const char* VDirDescription() {return "Deploys maps over HTTP";}
 
   void Init(const char* /*commandLine*/)
   {
@@ -49,7 +49,7 @@ public:
   }
 
   virtual bzhttp_ePageGenStatus GeneratePage (const bzhttp_Request &,
-		  			      bzhttp_Response &response)
+					      bzhttp_Response &response)
   {
     response.ReturnCode = e200OK;
     response.DocumentType = eOctetStream;

@@ -47,6 +47,6 @@ Example:
 
 /timelimit show
   Shows the current set timelimit
-  
+
 /timelimit reset
   Resets the timelimit back to default (-time setting)

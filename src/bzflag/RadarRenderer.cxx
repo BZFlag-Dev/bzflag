@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -60,11 +60,7 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
 
   setControlColor();
 
-#if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
-  GLint bits;
-  glGetIntergerv(GL_SAMPLES_SGIS, &bits);
-  if (bits > 0) multiSampled = true;
-#endif
+  multiSampled = BZDB.isTrue("multisample");
 }
 
 void RadarRenderer::setWorld(World* _world)
@@ -343,7 +339,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     glVertex2f(left, bottom);
   } glEnd();
 
-  if (0){
+  if (0) {
 	  glBegin(GL_POINTS); {
 		glVertex2f(left, top);
 		glVertex2f(right, top);
@@ -1161,8 +1157,8 @@ void RadarRenderer::renderBasesAndTeles()
   int i;
 
   // draw team bases
-  if(world->allowTeamFlags()) {
-    for(i = 1; i < NumTeams; i++) {
+  if (world->allowTeamFlags()) {
+    for (i = 1; i < NumTeams; i++) {
       for (int j = 0;;j++) {
 	const float *base = world->getBase(i, j);
 	if (base == NULL)
@@ -1249,7 +1245,7 @@ int RadarRenderer::getFrameTriangleCount() const
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

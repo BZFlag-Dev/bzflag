@@ -127,7 +127,6 @@ noinst_HEADERS =			\
 	TimeKeeper.h			\
 	TriWallSceneNode.h		\
 	ViewFrustum.h			\
-	VotingArbiter.h			\
 	VotingBooth.h			\
 	WallObstacle.h			\
 	WallSceneNode.h			\
@@ -148,7 +147,6 @@ noinst_HEADERS =			\
 	messages.h			\
 	multicast.h			\
 	network.h			\
-	resource.h			\
 	vectors.h			\
 	vectors_old.h			\
 	version.h			\

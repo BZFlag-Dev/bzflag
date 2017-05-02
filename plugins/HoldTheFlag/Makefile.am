@@ -10,9 +10,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.HoldTheFlag.txt \
-	HoldTheFlag.def \
 	HoldTheFlag.sln \
-	HoldTheFlag.vcxproj
+	HoldTheFlag.vcxproj	\
+	HoldTheFlag.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

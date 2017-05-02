@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -108,7 +108,7 @@ class WordFilter
 
   /** word expressions to be filtered including compiled regexp versions */
   struct expressionCompare {
-    bool operator () (const filter_t& word1, const filter_t& word2) const {
+    bool operator() (const filter_t& word1, const filter_t& word2) const {
       return (strncasecmp(word1.word.c_str(), word2.word.c_str(), 1024) < 0);
     }
   };
@@ -237,7 +237,7 @@ inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t 
   if (input == NULL) {
     return -1;
   }
-  if (length <= 0){
+  if (length <= 0) {
     return -1;
   }
   if (strlen(input) < start) {

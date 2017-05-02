@@ -48,8 +48,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,6,0
- PRODUCTVERSION 2,4,6,0
+ FILEVERSION 2,5,1,0
+ PRODUCTVERSION 2,5,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -68,7 +68,7 @@ BEGIN
             VALUE "FileDescription", "The BZFlag Client"
             VALUE "FileVersion", "2.5.1.0"
             VALUE "InternalName", "bzflag.rc"
-            VALUE "LegalCopyright", "Copyright (c) 1993-2016 Tim Riker"
+            VALUE "LegalCopyright", "Copyright (c) 1993-2017 Tim Riker"
             VALUE "OriginalFilename", "bzflag.rc"
             VALUE "ProductName", "BZFlag"
             VALUE "ProductVersion", "2.5.1.0"

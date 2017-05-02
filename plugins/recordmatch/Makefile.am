@@ -10,9 +10,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.recordmatch.txt \
-	recordmatch.def \
 	recordmatch.sln \
-	recordmatch.vcxproj
+	recordmatch.vcxproj	\
+	recordmatch.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

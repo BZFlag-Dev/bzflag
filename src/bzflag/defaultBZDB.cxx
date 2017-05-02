@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,7 +20,7 @@
 #include "Protocol.h"
 #include "callbacks.h"
 
-DefaultDBItem	defaultDBItems[] = {
+DefaultDBItem defaultDBItems[] = {
   { "fpsLimit",			"30",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveEnergy",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "saveSettings",		"1",			true,	StateDatabase::ReadWrite,	NULL },
@@ -39,7 +39,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "linedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "sizedradarshots",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "panelopacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
-  { "radaropacity",             "0.3",                  true,   StateDatabase::ReadWrite,       NULL },
+  { "radaropacity",		"0.3",			true,	StateDatabase::ReadWrite,	NULL },
   { "panelheight",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "radarsize",		"4",			true,	StateDatabase::ReadWrite,	NULL },
   { "mouseboxsize",		"5",			true,	StateDatabase::ReadWrite,	NULL },
@@ -48,10 +48,10 @@ DefaultDBItem	defaultDBItems[] = {
   { "controlPanelTimestamp",	"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "scorefontsize",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "colorful",			"1",			true,	StateDatabase::ReadWrite,	NULL },
-  { "tkwarnratio",		"0.0",			true,   StateDatabase::ReadWrite,	NULL },
-  { "showtabs",			"2",			true,   StateDatabase::ReadWrite,	NULL },
+  { "tkwarnratio",		"0.0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "showtabs",			"2",			true,	StateDatabase::ReadWrite,	NULL },
   { "underlineColor",		"cyan",			true,	StateDatabase::ReadWrite,	NULL },
-  { "useMeshForRadar",			"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "useMeshForRadar",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "zbuffer",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "highlightPattern",		"",			true,	StateDatabase::ReadWrite,	NULL },
   { "killerhighlight",		"1",			true,	StateDatabase::ReadWrite,	NULL },
@@ -65,9 +65,9 @@ DefaultDBItem	defaultDBItems[] = {
   { "displayReloadTimer",	"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "displayRadar",		"1",			false,	StateDatabase::ReadWrite,	NULL },
   { "displayRadarRange",	"0.5",			false,	StateDatabase::ReadWrite,	NULL },
-  { "radarPosition",		"0",			true, StateDatabase::ReadWrite, NULL },
-  { "defaultFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
-  { "displayFOV",		"60.0",			false,  StateDatabase::ReadWrite,	NULL },
+  { "radarPosition",		"0",			true,	StateDatabase::ReadWrite,	NULL },
+  { "defaultFOV",		"60.0",			false,	StateDatabase::ReadWrite,	NULL },
+  { "displayFOV",		"60.0",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMax",		"120",			false,	StateDatabase::ReadWrite,	NULL },
   { "roamZoomMin",		"15",			false,	StateDatabase::ReadWrite,	NULL },
   { "maxQuality",		"3",			false,	StateDatabase::ReadWrite,	NULL },
@@ -111,6 +111,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "aniso",			"1",			true,	StateDatabase::ReadWrite,	NULL },
   { "pauseConsole",		"0",			true,	StateDatabase::ReadWrite,	NULL },
   { "shotBrightness",		"0.2",			true,	StateDatabase::ReadWrite,	setColor },
+  { "multisample",		"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // roam smooth follow settings
   { "followDist",		"32.0",			true,	StateDatabase::ReadWrite,	NULL },
@@ -139,7 +140,7 @@ DefaultDBItem	defaultDBItems[] = {
 
   // default fonts
   { "consoleFont",		"DejaVuSansMonoBold",	true,	StateDatabase::ReadWrite,	NULL },
-  { "sansSerifFont",		"DejaVuSansCondensedBold",	true,	StateDatabase::ReadWrite,	NULL },
+  { "sansSerifFont",		"DejaVuSansCondensedBold",true,	StateDatabase::ReadWrite,	NULL },
 
   // team based object sufixes
   { "tankTexture",		"tank",			true,	StateDatabase::ReadWrite,	NULL },
@@ -208,7 +209,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "maxScoreboardLines",	"0",			true,	StateDatabase::ReadWrite,	NULL },
 
   // listFilters
-  { "listFilter",  "",					true, StateDatabase::ReadWrite, NULL },
+  { "listFilter",  "",							true, StateDatabase::ReadWrite, NULL },
   { "listFilter1", "/p>0,# Servers with players",			true, StateDatabase::ReadWrite, NULL },
   { "listFilter2", "/p>0/op>0,# Servers with players or observers",	true, StateDatabase::ReadWrite, NULL },
   { "listFilter3", "/p>0,s>=2,s<=3,# 2 or 3 shots with players",	true, StateDatabase::ReadWrite, NULL },
@@ -220,7 +221,7 @@ DefaultDBItem	defaultDBItems[] = {
   { "listFilter9", "/+replay,# Replay servers",				true, StateDatabase::ReadWrite, NULL },
 
   // We don't want to keep the geometry settings
-  { "geometry",		"",			false,	StateDatabase::ReadWrite, NULL }
+  { "geometry",			"",			false,	StateDatabase::ReadWrite,	NULL }
 };
 
 
@@ -241,7 +242,7 @@ void loadBZDBDefaults ( void )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

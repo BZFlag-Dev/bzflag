@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -139,7 +139,7 @@ void			ServerListCache::loadCache()
 
   if (inFile) {
     char buffer[max_string+1];
-    while(inFile) {
+    while (inFile) {
       std::string serverIndex;
       ServerItem info;
 
@@ -161,7 +161,7 @@ void			ServerListCache::loadCache()
 
 bool			ServerListCache::clearCache()
 {
-  if (serverCache.size() > 0){
+  if (serverCache.size() > 0) {
     serverCache.clear();
     return true;
 

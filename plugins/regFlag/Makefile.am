@@ -10,9 +10,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.regFlag.txt \
-	regFlag.def \
 	regFlag.sln \
-	regFlag.vcxproj
+	regFlag.vcxproj	\
+	regFlag.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

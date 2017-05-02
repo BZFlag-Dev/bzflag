@@ -6,7 +6,7 @@
 class KillAll : public bz_Plugin, bz_CustomSlashCommandHandler
 {
 public:
-	virtual const char* Name(){return "Kill All";}
+	virtual const char* Name() {return "Kill All";}
 
 	virtual void Init ( const char* /* config */ )
 	{
@@ -55,7 +55,7 @@ BZ_PLUGIN(KillAll)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

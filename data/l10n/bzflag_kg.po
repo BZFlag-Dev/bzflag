@@ -763,7 +763,7 @@ msgstr "nIH neH"
 #msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -829,7 +829,7 @@ msgstr "nIH neH"
 #msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 #msgstr ""
 
-#msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

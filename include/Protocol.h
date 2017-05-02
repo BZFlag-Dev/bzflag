@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,11 +40,12 @@ const int		BroadcastPort = 5154;
 
 // URL for default list server
 const char* const	DefaultListServerURL = "https://my.bzflag.org/db/";
-const char* const	DefaultMasterBanURL = "https://bzflag.org/master-bans.txt";
-const char* const	DefaultMOTDServer = "https://bzflag.org/motd.php";
+const char* const	DefaultMasterBanURL = "https://www.bzflag.org/master-bans.txt";
+const char* const	DefaultMOTDServer = "https://www.bzflag.org/motd.php";
 
 // maximum size of any message (including header and length fields)
 const int		MaxPacketLen = 1024;
+const int		MaxUDPPacketLen = 68;
 
 // the banned tag
 const char* const	BanRefusalString = "REFUSED:";
@@ -79,11 +80,11 @@ const uint16_t		MsgGMUpdate = 0x676d;			// 'gm'
 const uint16_t		MsgGetWorld = 0x6777;			// 'gw'
 const uint16_t		MsgGameSettings = 0x6773;		// 'gs'
 const uint16_t		MsgGameTime = 0x6774;			// 'gt'
-const uint16_t	  MsgHandicap = 0x6863;		   // 'hc'
+const uint16_t		MsgHandicap = 0x6863;			// 'hc'
 const uint16_t		MsgKilled = 0x6b6c;			// 'kl'
 const uint16_t		MsgLagState = 0x6c73;			// 'ls'
 const uint16_t		MsgMessage = 0x6d67;			// 'mg'
-const uint16_t	  MsgNearFlag = 0x4e66;		   // 'Nf'
+const uint16_t		MsgNearFlag = 0x4e66;			// 'Nf'
 const uint16_t		MsgNewRabbit = 0x6e52;			// 'nR'
 const uint16_t		MsgNegotiateFlags = 0x6e66;		// 'nf'
 const uint16_t		MsgPause = 0x7061;			// 'pa'
@@ -247,7 +248,7 @@ player to server messages:
 			<== MsgMessage
   MsgWantWHash		(player wants md5 of world file
 			-->
-  MsgNegotiateFlags     -->flagCount/[flagabbv]
+  MsgNegotiateFlags	-->flagCount/[flagabbv]
   MsgPause		-->true or false
 
 server to player messages:

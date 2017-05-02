@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,7 +19,7 @@
 class LastChatCommand : public bz_CustomSlashCommandHandler
 {
 public:
-  virtual ~LastChatCommand(){};
+  virtual ~LastChatCommand() {};
   virtual bool SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *param);
 };
 
@@ -29,7 +29,7 @@ LastChatCommand lastChatCommand;
 class ChatEvents : public bz_Plugin
 {
 public:
-  virtual ~ChatEvents(){};
+  virtual ~ChatEvents() {};
   virtual const char* Name () {return "Chat History";}
   virtual void Init (const char* c);
   virtual void Cleanup (void);
@@ -181,7 +181,7 @@ void ChatEvents::Event (bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

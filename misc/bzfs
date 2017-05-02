@@ -43,25 +43,25 @@ rhstatus() {
 }
 
 restart() {
-  	stop
+	stop
 	start
 }
 
 case "$1" in
   start)
-  	start
+	start
 	;;
   stop)
-  	stop
+	stop
 	;;
   restart)
-  	restart
+	restart
 	;;
   status)
-  	rhstatus
+	rhstatus
 	;;
   condrestart)
-  	[ -f /var/lock/subsys/$prog ] && restart || :
+	[ -f /var/lock/subsys/$prog ] && restart || :
 	;;
   *)
 	gprintf "Usage: %s {start|stop|status|restart|condrestart}\n" "$0"

@@ -1,8 +1,8 @@
 BZFlag Server Plugin: superUser
 ================================================================================
 
-The superUser plugin lets a server owner grant permissions to globally 
-authenticated users based on BZID so they don't have to set up specific 
+The superUser plugin lets a server owner grant permissions to globally
+authenticated users based on BZID so they don't have to set up specific
 admin groups in the global space.
 
 

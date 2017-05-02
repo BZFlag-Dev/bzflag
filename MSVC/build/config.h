@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,6 +42,9 @@
 /* Use modern template for std::count */
 #define HAVE_STD__COUNT 1
 
+/* Use modern template for std::isnan */
+#define HAVE_STD__ISNAN 1
+
 /* We have float math functions */
 #define HAVE_ASINF 1
 #define HAVE_ATAN2F 1
@@ -72,15 +75,15 @@
     #define DEBUG
 	#define DEBUG_RENDERING
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC10Dbg"
+    #define BZ_BUILD_OS			"Win64VC14Dbg"
 #else
-	#define BZ_BUILD_OS			"Win32VC10Dbf"
+	#define BZ_BUILD_OS			"Win32VC14Dbg"
 #endif
   #else
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC10"
+    #define BZ_BUILD_OS			"Win64VC14"
 #else
-	#define BZ_BUILD_OS			"Win32VC10"
+	#define BZ_BUILD_OS			"Win32VC14"
 #endif
   #endif //_DEBUG
 #endif //BZ_BUILD_OS

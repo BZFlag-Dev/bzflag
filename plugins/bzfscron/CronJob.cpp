@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -96,7 +96,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
     if ((*itr).find("*") != std::string::npos) {
       bz_debugMessage(4, "bzfscron: exploding * range");
       for (int i = min; i <= max; ++i) {
-        vi.push_back(i);
+	vi.push_back(i);
       }
     }
     else if ((pos = (int)(*itr).find("-")) != std::string::npos) {
@@ -107,7 +107,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
       if (rmin < min) { rmin = min; }
       if (rmax > max) { rmax = max; }
       for (int i = rmin; i <= rmax; ++i) {
-        vi.push_back(i);
+	vi.push_back(i);
       }
     }
     else {
@@ -122,7 +122,7 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
     std::vector<int> vp;
     for (std::vector<int>::iterator itr2 = vi.begin(); itr2 != vi.end(); ++itr2) {
       if (((*itr2) == 0) || ((*itr2) % period == 0)) {
-        vp.push_back(*itr2);
+	vp.push_back(*itr2);
       }
     }
     return vp;
@@ -135,10 +135,10 @@ std::vector<int> CronJob::parseTimeList(const std::string in, const int min, con
 bool CronJob::matches(int n, int h, int d, int m, int w) const {
   // if we are supposed to execute now, return true, otherwise return false
   return (isInVector(minutes, n) &&
-          isInVector(hours, h) &&
-          isInVector(days, d) &&
-          isInVector(months, m) &&
-          isInVector(weekdays, w));
+	  isInVector(hours, h) &&
+	  isInVector(days, d) &&
+	  isInVector(months, m) &&
+	  isInVector(weekdays, w));
 }
 
 bool CronJob::isInVector(const std::vector<int> &iv, const int x) {

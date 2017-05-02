@@ -764,7 +764,7 @@ msgstr "Graben"
 #msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -830,7 +830,7 @@ msgstr "Geschwindigkeit (+V): Panzer wird schneller."
 msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 msgstr "Drehgeschwindigkeit (+A): Panzer dreht sich schneller."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Oscillation Overthruster (+OO): Ermöglicht das Fahren durch Wände und Gebäude, kann im Gebäude jedoch nicht schießen."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

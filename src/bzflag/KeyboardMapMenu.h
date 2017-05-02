@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,7 +36,7 @@ class KeyboardMapMenu;
 class KeyboardMapMenuDefaultKey : public MenuDefaultKey {
   public:
 			KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
-			~KeyboardMapMenuDefaultKey() { }
+			~KeyboardMapMenuDefaultKey() {}
 
     bool		keyPress(const BzfKeyEvent&);
     bool		keyRelease(const BzfKeyEvent&);
@@ -77,8 +77,8 @@ class KeyboardMapMenu : public HUDDialog {
     KeyKeyMap				mappable;
     KeyboardMapMenuDefaultKey		defaultKey;
     HUDuiControl*			reset;
-    HUDuiControl*		       quickKeys;
-    int				editing;
+    HUDuiControl*			quickKeys;
+    int					editing;
     QuickKeysMenu*			quickKeysMenu;
 };
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -85,7 +85,7 @@ public:
   };
 
   SoundCommand();
-  explicit SoundCommand(SoundCommand::CMD, int code_=-1, 
+  explicit SoundCommand(SoundCommand::CMD, int code_=-1,
 			float x_=0, float y_=0, float z_=0, float t_=0);
 
   CMD			cmd;
@@ -98,7 +98,7 @@ SoundCommand::SoundCommand()
 {
 }
 
-SoundCommand::SoundCommand(CMD cmd_, int code_, 
+SoundCommand::SoundCommand(CMD cmd_, int code_,
 			float x_, float y_, float z_, float t_)
   : cmd(cmd_), code(code_), x(x_), y(y_), z(z_), t(t_)
 {
@@ -108,12 +108,12 @@ class AudioSamples
 {
 public:
   AudioSamples();
-  bool resample(const float* in,	   // stereo sampled data
-		int frames,		   // number of stereo (left, right) frames
-		int rate,		   // sample rate
-		std::string const& name);  // sound name
+  bool resample(const float* in,	// stereo sampled data
+		int frames,		// number of stereo (left, right) frames
+		int rate,		// sample rate
+		std::string const& name); // sound name
 
-  size_t		length() const; // size of the (stereo) data
+  size_t		length() const;	// size of the (stereo) data
 
   long			mlength;	/* total number samples in mono */
   double		dmlength;	/* mlength as a double minus one */
@@ -121,7 +121,7 @@ public:
   std::vector<float>	monoRaw;	/* mono with silence before & after */
   size_t		monoIdx;	// index to start of mono samples
   double		duration;	/* time to play sound */
-  std::string	file;
+  std::string		file;
 };
 
 
@@ -170,8 +170,8 @@ bool AudioSamples::resample(const float* in, int frames, int rate,
   mlength = frames;
   dmlength = double(mlength - 1);
   duration = (float)mlength / outputRate;
-  monoRaw.assign( frames + (2 * safetyMargin), 0.0f ); // fill with silence
-  monoIdx = safetyMargin;		      // start after the (leading) safety margin
+  monoRaw.assign( frames + (2 * safetyMargin), 0.0f );	// fill with silence
+  monoIdx = safetyMargin;		// start after the (leading) safety margin
 
   // filter samples
   size_t localIdx( monoIdx );
@@ -241,7 +241,7 @@ static const char*	soundFiles[] = {
 
 static std::vector<AudioSamples>	soundSamples;
 
-static std::map<std::string, int> customSamples;
+static std::map<std::string, int>	customSamples;
 
 static size_t		audioBufferSize(0);
 static int		soundLevel(0);
@@ -317,7 +317,7 @@ void SoundEvent::reset(AudioSamples* sample_, float attenuation_, float x_, floa
   amplitude = 0;		// not explicit?
   world = fixed = ignoring = important = false;
 }
-      
+
 bool SoundEvent::isWorld() const
 {
   return world;
@@ -493,7 +493,7 @@ bool			isSoundOpen()
 static bool		allocAudioSamples()
 {
   bool anyFile = false;
-  
+
   soundSamples.reserve(STD_SFX_COUNT + 10); // if the world loads sounds, we don't want to resize
 
   // load the default samples
@@ -537,7 +537,7 @@ void			moveSoundReceiver(float x, float y, float z, float t,
   if (soundLevel <= 0) {
     return;
   }
-  SoundCommand::CMD cmd( discontinuity ? SoundCommand::JUMP_POS 
+  SoundCommand::CMD cmd( discontinuity ? SoundCommand::JUMP_POS
 			 : SoundCommand::SET_POS );
   SoundCommand s(cmd, 0, x, y, z, t);
 
@@ -577,9 +577,9 @@ void			playWorldSound(int soundCode, const float pos[3],
 void			playLocalSound(int soundCode)
 {
   // Check for conditions which preclude sounds
-  if (soundLevel <= 0				  // no volume
-      || soundCode >= (int)soundSamples.size()	  // unknown sound
-      || soundSamples[soundCode].length() == 0) { // empty sound
+  if (soundLevel <= 0					// no volume
+      || soundCode >= (int)soundSamples.size()		// unknown sound
+      || soundSamples[soundCode].length() == 0) {	// empty sound
     return;
   }
   SoundCommand s(SoundCommand::LOCAL_SFX, soundCode);
@@ -614,9 +614,9 @@ void			playFixedSound(int soundCode,
 				       float x, float y, float z)
 {
   // Check for conditions which preclude sounds
-  if (soundLevel <= 0				  // no volume
-      || soundCode > (int)soundSamples.size()	  // unknown sound
-      || soundSamples[soundCode].length() == 0) { // empty sound
+  if (soundLevel <= 0					// no volume
+      || soundCode > (int)soundSamples.size()		// unknown sound
+      || soundSamples[soundCode].length() == 0) {	// empty sound
     return;
   }
   SoundCommand s(SoundCommand::FIXED_SFX, soundCode, x, y, z);
@@ -747,7 +747,7 @@ static int		addLocalContribution(SoundEvent* e, size_t& len)
       len = numSamples;
     }
 
-    float* src( &e->samples->data.at(e->ptr)  );
+    float* src( &e->samples->data.at(e->ptr) );
     try {
       if (numSamples <= FadeDuration) {
 	for (size_t n = 0; n < numSamples; n += 2) {
@@ -846,7 +846,7 @@ static int		addWorldContribution(SoundEvent* e, size_t& len)
       nmR = (long)e->ptrFracRight;
       fracL = (float)(e->ptrFracLeft - floor(e->ptrFracLeft));
       fracR = (float)(e->ptrFracRight - floor(e->ptrFracRight));
-    
+
       // get sample (lerp closest two samples)
       fsampleL = (1.0f - fracL) * src[nmL] + fracL * src[nmL+1];
       fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
@@ -1089,7 +1089,9 @@ static bool		audioInnerLoop()
       break;
 
     case SoundCommand::SET_VOL:
-      volumeAtten = 0.2f * cmd.code;
+      // The provided volume value is multiplied by itself to compensate for
+      // human hearing
+      volumeAtten = 0.02f * cmd.code * cmd.code;
       if (volumeAtten <= 0.0f) {
 	mutingOn = true;
 	volumeAtten = 0.0f;
@@ -1155,7 +1157,7 @@ static bool		audioInnerLoop()
       int deltaCount = recalcEventIgnoring(events + slot);
       portUseCount += deltaCount;
     }
-  
+
   /* sum contributions to the port and output samples */
   if (media->isAudioTooEmpty()) {
     size_t numSamples(0);
@@ -1213,10 +1215,10 @@ static bool		audioInnerLoop()
     }
   }
 
-  // Local Variables: ***
-  // mode:C++ ***
-  // tab-width: 8 ***
-  // c-basic-offset: 2 ***
-  // indent-tabs-mode: t ***
-  // End: ***
-  // ex: shiftwidth=2 tabstop=8
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 8 ***
+// c-basic-offset: 2 ***
+// indent-tabs-mode: t ***
+// End: ***
+// ex: shiftwidth=2 tabstop=8

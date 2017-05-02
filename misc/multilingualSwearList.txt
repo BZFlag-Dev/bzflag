@@ -1930,7 +1930,7 @@ futkretzn
 
 
 # Local Variables: ***
-# mode:Text ***
+# mode: Text ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

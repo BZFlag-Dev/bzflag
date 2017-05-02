@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,7 +44,7 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
     base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
     base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
     base[2] = (size[2] - 0.5f * polySize) * (float) bzfrand();
-    for(int j = 0; j < 3; j++) {
+    for (int j = 0; j < 3; j++) {
       // pick point around origin
       GLfloat p[3];
       p[0] = base[0] + polySize * ((float) bzfrand() - 0.5f);
@@ -53,11 +53,11 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
 
       // make sure it's inside the base
       if (p[0] < -size[0]) p[0] = -size[0];
-      else if(p[0] > size[0]) p[0] = size[0];
+      else if (p[0] > size[0]) p[0] = size[0];
       if (p[1] < -size[1]) p[1] = -size[1];
-      else if(p[1] > size[1]) p[1] = size[1];
+      else if (p[1] > size[1]) p[1] = size[1];
       if (p[2] < -size[2]) p[2] = -size[2];
-      else if(p[2] > size[2]) p[2] = size[2];
+      else if (p[2] > size[2]) p[2] = size[2];
 
       // rotate it
       vertex[j][0] = pos[0] + c * p[0] - s * p[1];
@@ -150,7 +150,7 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

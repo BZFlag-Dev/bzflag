@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -66,7 +66,7 @@ std::string	getOldConfigFileName(void)
 	std::string name("C:");
 	char dir[MAX_PATH];
 	ITEMIDLIST* idl;
-	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL , &idl))) {
+	if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl))) {
 		if (SHGetPathFromIDList(idl, dir)) {
 			struct stat statbuf;
 			if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
@@ -254,7 +254,7 @@ void updateConfigFile(void)
   case 3: // Upgrade from 2.0.x to 2.4.0
 
     // Convert from email to motto
-    
+
     // If the email is set, see if we should convert it
     if (BZDB.isSet("email")) {
       std::string email = BZDB.get("email");
@@ -281,7 +281,7 @@ void updateConfigFile(void)
 
     // Turn off dithering (since none of our automatic performance checks turn it on anymore)
     BZDB.setBool("dither", false);
-  
+
   case 4: // Upgrade 2.4.0 (or 2.4.2, since the config file version was not incremented) to 2.4.4
     BZDB.unset("displayZoom");		// removed in r22109
     BZDB.unset("radarShotLineType");	// existed only in r22117
@@ -289,7 +289,7 @@ void updateConfigFile(void)
     // Reset the list server URL so that people who have switched to another
     // URL gets reset back to the new HTTPS URL
     BZDB.set("list", BZDB.getDefault("list"));
-  
+
   case 5:
     break;
 
@@ -306,7 +306,7 @@ void updateConfigFile(void)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

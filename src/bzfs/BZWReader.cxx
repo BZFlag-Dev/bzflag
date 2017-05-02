@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -233,7 +233,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     } else if (strcasecmp(buffer, "end") == 0) {
       if (object) {
 	if (object != fakeObject) {
-          line += object->getLineCount();
+	  line += object->getLineCount();
 
 	  if (object->usesManager()) {
 	    object->writeToManager();
@@ -465,7 +465,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

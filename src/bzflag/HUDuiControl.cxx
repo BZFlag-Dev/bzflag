@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -237,9 +237,9 @@ void			HUDuiControl::renderFocus()
       glTexCoord2f(u, v);
       glVertex2f(x + imageXShift - outputSize, y + imageYShift);
       glTexCoord2f(u + du, v);
-      glVertex2f(x + imageXShift , y + imageYShift);
+      glVertex2f(x + imageXShift, y + imageYShift);
       glTexCoord2f(u + du, v + dv);
-      glVertex2f(x + imageXShift , y + outputSize + imageYShift);
+      glVertex2f(x + imageXShift, y + outputSize + imageYShift);
       glTexCoord2f(u, v + dv);
       glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
     glEnd();
@@ -289,7 +289,7 @@ void			HUDuiControl::render()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -61,7 +61,7 @@ bz_eTeamType HTFscore::colorNameToDef (const char *color)
 
 const char *HTFscore::colorDefToName (bz_eTeamType team)
 {
-  switch (team){
+  switch (team) {
     case eGreenTeam:
       return ("Green");
     case eBlueTeam:
@@ -97,7 +97,7 @@ bool listAdd (int playerID, const char *callsign)
   return true;
 }
 
-bool listDel (int playerID){
+bool listDel (int playerID) {
   if (playerID>MAX_PLAYERID || playerID<0 || !Players[playerID].isValid)
     return false;
   Players[playerID].isValid = false;
@@ -106,7 +106,7 @@ bool listDel (int playerID){
 }
 
 
-int sort_compare (const void *_p1, const void *_p2){
+int sort_compare (const void *_p1, const void *_p2) {
   const int p1 = *(const int *)_p1;
   const int p2 = *(const int *)_p2;
 
@@ -129,9 +129,9 @@ void dispScores (int who)
   if (NumPlayers<1)
     return;
 
-  for (int i=0; i<MAX_PLAYERID; i++){
+  for (int i=0; i<MAX_PLAYERID; i++) {
     if (Players[i].isValid) {
-      if (Players[i].capNum > lastCapnum){
+      if (Players[i].capNum > lastCapnum) {
 	playerLastCapped = i;
 	lastCapnum = Players[i].capNum;
       }
@@ -141,7 +141,7 @@ void dispScores (int who)
   qsort (sortList, NumPlayers, sizeof(int), sort_compare);
   if (x != NumPlayers)
     bz_debugMessage(1, "++++++++++++++++++++++++ HTF INTERNAL ERROR: player count mismatch!");
-  for (int i=0; i<NumPlayers; i++){
+  for (int i=0; i<NumPlayers; i++) {
     x = sortList[i];
     bz_sendTextMessagef(BZ_SERVER, who, "%20.20s :%3d %c", Players[x].callsign, Players[x].score,
 			x == playerLastCapped ? '*' : ' ');
@@ -151,7 +151,7 @@ void dispScores (int who)
 
 void resetScores (void)
 {
-  for (int i=0; i<MAX_PLAYERID; i++){
+  for (int i=0; i<MAX_PLAYERID; i++) {
     Players[i].score = 0;
     Players[i].capNum = -1;
   }
@@ -185,7 +185,7 @@ void htfStartGame (void)
 
 void htfEndGame (void)
 {
-  if (htfEnabled && matchActive){
+  if (htfEnabled && matchActive) {
     dispScores(BZ_ALLUSERS);
     bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "HTF MATCH has ended.");
     if (Leader >= 0)
@@ -206,7 +206,7 @@ void htfStats (int who)
 {
   bz_sendTextMessagef(BZ_SERVER, who, "HTF plugin version %s", HOLDTHEFLAG_VER);
   bz_sendTextMessagef(BZ_SERVER, who,  "  Team: %s", htfScore->colorDefToName(htfTeam));
-  bz_sendTextMessagef(BZ_SERVER, who,  "  Flag Reset: %s" , DO_FLAG_RESET ? "ENabled":"DISabled");
+  bz_sendTextMessagef(BZ_SERVER, who,  "  Flag Reset: %s", DO_FLAG_RESET ? "ENabled" : "DISabled");
 }
 
 void htfReset (int who)
@@ -218,12 +218,12 @@ void htfReset (int who)
 void htfEnable (bool onoff, int who)
 {
   char msg[255];
-  if (onoff == htfEnabled){
+  if (onoff == htfEnabled) {
     bz_sendTextMessage(BZ_SERVER, who, "HTF mode is already that way.");
     return;
   }
   htfEnabled = onoff;
-  sprintf (msg, "*** HTF mode %s by %s", onoff?"ENabled":"DISabled", Players[who].callsign);
+  sprintf (msg, "*** HTF mode %s by %s", onoff ? "ENabled" : "DISabled", Players[who].callsign);
   bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, msg);
 }
 
@@ -234,7 +234,7 @@ void HTFscore::Event ( bz_EventData *eventData )
   if (eventData->eventType == bz_ePlayerJoinEvent) {
     bz_PlayerJoinPartEventData_V1 *joinData = (bz_PlayerJoinPartEventData_V1*)eventData;
 bz_debugMessagef(3, "++++++ HTFscore: Player JOINED (ID:%d, TEAM:%d, CALLSIGN:%s)", joinData->playerID, joinData->record->team, joinData->record->callsign.c_str()); fflush (stdout);
-    if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers){
+    if (htfTeam!=eNoTeam && joinData->record->team!=htfTeam && joinData->record->team != eObservers) {
       char msg[255];
       sprintf (msg, "HTF mode enabled, you must join the %s team to play", htfScore->colorDefToName(htfTeam));
       bz_kickUser (joinData->playerID, msg, true);
@@ -288,20 +288,20 @@ bool HTFscore::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_A
   char subCmd[6];
   if (strcasecmp (cmd.c_str(), "htf"))   // is it for me ?
     return false;
-  if (cmdParams->get(0).c_str()[0] == '\0'){
+  if (cmdParams->get(0).c_str()[0] == '\0') {
     dispScores (playerID);
     return true;
   }
 
   strncpy (subCmd, cmdParams->get(0).c_str(), 5);
   subCmd[4] = '\0';
-  if (strcasecmp (subCmd, "rese") == 0){
+  if (strcasecmp (subCmd, "rese") == 0) {
     if (checkPerms (playerID, "reset", "COUNTDOWN"))
       htfReset (playerID);
-  } else if (strcasecmp (subCmd, "off") == 0){
+  } else if (strcasecmp (subCmd, "off") == 0) {
     if (checkPerms (playerID, "off", "HTFONOFF"))
       htfEnable (false, playerID);
-  } else if (strcasecmp (subCmd, "on") == 0){
+  } else if (strcasecmp (subCmd, "on") == 0) {
     if (checkPerms (playerID, "off", "HTFONOFF"))
       htfEnable (true, playerID);
   } else if (strcasecmp (subCmd, "stat") == 0)
@@ -312,7 +312,7 @@ bool HTFscore::SlashCommand ( int playerID, bz_ApiString cmd, bz_ApiString, bz_A
 }
 
 
-bool commandLineHelp (void){
+bool commandLineHelp (void) {
   const char *help[] = {
     "Command line args:  PLUGINNAME,team=color",
     NULL
@@ -329,7 +329,7 @@ bool parseCommandLine (const char *cmdLine)
   if (cmdLine==NULL || *cmdLine=='\0')
     return false;
   htfTeam = eGreenTeam;
-  if (strcasecmp (cmdLine, "team=") == 0){
+  if (strcasecmp (cmdLine, "team=") == 0) {
     if ((htfTeam = htfScore->colorNameToDef(cmdLine+5)) == eNoTeam) {
       return commandLineHelp ();
     }
@@ -348,9 +348,9 @@ void HTFscore::Init(const char* cmdLine)
   // get current list of player indices ...
   bz_APIIntList *playerList = bz_newIntList();
   bz_getPlayerIndexList (playerList);
-  for (unsigned int i = 0; i < playerList->size(); i++){
+  for (unsigned int i = 0; i < playerList->size(); i++) {
     bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex (playerList->get(i));
-    if (playerRecord != NULL){
+    if (playerRecord != NULL) {
       listAdd (playerList->get(i), playerRecord->callsign.c_str());
     }
     bz_freePlayerRecord (playerRecord);
@@ -374,7 +374,7 @@ void HTFscore::Cleanup(void)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

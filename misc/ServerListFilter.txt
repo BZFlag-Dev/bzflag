@@ -88,7 +88,7 @@ PATTERN FILTERS
   notes:
   1.  ')' for glob patterns
       ']' for regex patterns
-  2.  capitalize the label for case-sensitive matching  
+  2.  capitalize the label for case-sensitive matching
 
   labels:
     a, addr, address      -- server address

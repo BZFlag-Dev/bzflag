@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -111,6 +111,18 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
   option->setCallback(callback, "Y");
   listHUD.push_back(option);
   fillJSOptions();
+  option = new HUDuiList;
+  option->setFontFace(fontFace);
+  option->setLabel("Invert Joystick Axes:");
+  option->setCallback(callback, "I");
+  options = &option->getList();
+  options->push_back(std::string("No"));
+  options->push_back(std::string("X"));
+  options->push_back(std::string("Y"));
+  options->push_back(std::string("X and Y"));
+  option->setIndex(BZDB.evalInt("jsInvertAxes"));
+  option->update();
+  listHUD.push_back(option);
 
   option = new HUDuiList;
   // confine mouse
@@ -214,7 +226,7 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
       getMainWindow()->initJoystick(selectedOption);
       // re-fill all of the joystick-specific options lists
       if (menu)
-        menu->fillJSOptions();
+	menu->fillJSOptions();
       break;
 
     /* Joystick x-axis */
@@ -228,6 +240,12 @@ void			InputMenu::callback(HUDuiControl* w, const void* data) {
       BZDB.set("jsYAxis", selectedOption);
       getMainWindow()->setJoyYAxis(selectedOption);
       break;
+
+    /* Joystick axes inversion */
+    case 'I': {
+      BZDB.setInt("jsInvertAxes", listHUD->getIndex());
+      break;
+    }
 
     /* Active input device */
     case 'A':

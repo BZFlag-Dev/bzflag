@@ -7,8 +7,50 @@ BZFlag 2.5.x
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
+BZFlag 2.4.11
+-------------
+
+
+BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
+------------------------------------------------
+
+* Fix high DPI handling on Windows (again) - Scott Wichser
+* Custom slash commands respect double quotes when tokenizing - Vladimir Jimenez
+* Make /help page names case-insensitive - Vladimir Jimenez
+* Extend bz_ePlayerDieEventData to v2 to hold flag held when killed - Jeff Myers
+* Add bzfs API hooks for polls and allow custom poll types - Vladimir Jimenez
+* Reduce DNS cache time of list server hostname - Scott Wichser
+* Fix bz_addURLJob() to correctly handle default NULL handler - Vladimir Jimenez
+* TextUtils::url_encode and TextUtils::url_decode now use cURL's functions; this
+    change fixes a crash bug with bz_urlEncode() - Vladimir Jimenez
+* Add bz_reloadBadwords() to API - Vladimir Jimenez
+* Add ability to reload badwords list with '/reload badwords' - Vladimir Jimenez
+* Source code now dual licensed under the MPL 2.0 or LGPL 2.1 - Tim Riker
+* Added an option to invert one or both joystick axes - Joshua Bodine
+* Multisampling support under SDL 2 on macOS - Joshua Bodine
+
+
+BZFlag 2.4.8 "Sixteen" (2016-10-10)
+-----------------------------------
+
+* Add Russian transliteration - Ruslan Hihin, Aleksandr Lahin
+* Fix a regression in 2.4.6 where the client would not reduce CPU usage when
+    minimized on Windows - Scott Wichser
+* On autotools platforms, try to use SDL2, then SDL1, and then fall back to
+    native platform code. Allow specifying an SDL version as well.
+    - Scott Wichser
+* Prevent some more bzfs options from being specified in a world file
+    - Scott Wichser
+* Cleaned up some GCC6 warnings - Scott Wichser
+* Spawn all players on base when a timed game starts - Konstantinos Kanavouras
+* Add indicator for -noTeamKill servers on server list - Konstantinos Kanavouras
+* Send a notification to admins when a BZDB variable is reset
+    - Konstantinos Kanavouras
+* Increase the range of the volume slider - Konstantinos Kanavouras
+
+
 BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
---------------------------------------------
+-------------------------------------------------------------
 
 * regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
 * RogueGenocide plugin defaults to ignoring rogue self-kills - Scott Wichser

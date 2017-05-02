@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -156,30 +156,30 @@ class BzfKeyEvent {
 			BZ_Hatswitch_1_down,
 			BZ_Hatswitch_1_downleft,
 			BZ_Hatswitch_1_left,
-                        BZ_Hatswitch_2_upleft,
-                        BZ_Hatswitch_2_up,
-                        BZ_Hatswitch_2_upright,
-                        BZ_Hatswitch_2_right,
-                        BZ_Hatswitch_2_downright,
-                        BZ_Hatswitch_2_down,
-                        BZ_Hatswitch_2_downleft,
-                        BZ_Hatswitch_2_left,
-                        BZ_Hatswitch_3_upleft,
-                        BZ_Hatswitch_3_up,
-                        BZ_Hatswitch_3_upright,
-                        BZ_Hatswitch_3_right,
-                        BZ_Hatswitch_3_downright,
-                        BZ_Hatswitch_3_down,
-                        BZ_Hatswitch_3_downleft,
-                        BZ_Hatswitch_3_left,
-                        BZ_Hatswitch_4_upleft,
-                        BZ_Hatswitch_4_up,
-                        BZ_Hatswitch_4_upright,
-                        BZ_Hatswitch_4_right,
-                        BZ_Hatswitch_4_downright,
-                        BZ_Hatswitch_4_down,
-                        BZ_Hatswitch_4_downleft,
-                        BZ_Hatswitch_4_left,
+			BZ_Hatswitch_2_upleft,
+			BZ_Hatswitch_2_up,
+			BZ_Hatswitch_2_upright,
+			BZ_Hatswitch_2_right,
+			BZ_Hatswitch_2_downright,
+			BZ_Hatswitch_2_down,
+			BZ_Hatswitch_2_downleft,
+			BZ_Hatswitch_2_left,
+			BZ_Hatswitch_3_upleft,
+			BZ_Hatswitch_3_up,
+			BZ_Hatswitch_3_upright,
+			BZ_Hatswitch_3_right,
+			BZ_Hatswitch_3_downright,
+			BZ_Hatswitch_3_down,
+			BZ_Hatswitch_3_downleft,
+			BZ_Hatswitch_3_left,
+			BZ_Hatswitch_4_upleft,
+			BZ_Hatswitch_4_up,
+			BZ_Hatswitch_4_upright,
+			BZ_Hatswitch_4_right,
+			BZ_Hatswitch_4_downright,
+			BZ_Hatswitch_4_down,
+			BZ_Hatswitch_4_downleft,
+			BZ_Hatswitch_4_left,
 			LastButton  // special marker that must be last
     };
     enum {
@@ -230,7 +230,7 @@ class BzfEvent {
 #endif /* BZF_EVENT_H */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -7,9 +7,9 @@
 class CustomFlagSample : public bz_Plugin
 {
 public:
-  virtual ~CustomFlagSample(){};
+  virtual ~CustomFlagSample() {};
   virtual const char* Name () {return "Custom Flag Sample";}
-  virtual void Init ( const char* c);
+  virtual void Init ( const char* c );
   virtual void Cleanup ( void );
   virtual void Event ( bz_EventData *eventData );
 };
@@ -98,7 +98,7 @@ void CustomFlagSample::Event(bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

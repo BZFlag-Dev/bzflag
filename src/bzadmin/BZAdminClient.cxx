@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,8 @@
 #else
 #  include <math.h>
 #endif
+#include <stdio.h>
+#include <string.h>
 #include <iostream>
 #include <sstream>
 
@@ -31,6 +33,7 @@
 #include "ServerList.h"
 #include "ErrorHandler.h"
 #include "cURLManager.h"
+#include "TimeKeeper.h"
 
 StartupInfo startupInfo;
 
@@ -276,26 +279,26 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage() {
       uint8_t numIPs;
       uint8_t tmp;
       vbuf = nboUnpackUByte(vbuf, numIPs);
-      if(numIPs > 1){
+      if (numIPs > 1) {
 	for (i = 0; i < numIPs; ++i) {
 	  vbuf = nboUnpackUByte(vbuf, tmp);
 	  vbuf = nboUnpackUByte(vbuf, p);
 	  vbuf = a.unpack(vbuf);
 	  players[p].ip = a.getDotNotation();
-	  if ((ui != NULL) && messageMask[MsgAdminInfo]){
+	  if ((ui != NULL) && messageMask[MsgAdminInfo]) {
 	    ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
 	      players[p].ip, Default);
 	  }
 	}
       }
       //Alternative to the MsgAddPlayer message
-      else if(numIPs == 1){
+      else if (numIPs == 1) {
 	vbuf = nboUnpackUByte(vbuf, tmp);
 	vbuf = nboUnpackUByte(vbuf, p);
 	vbuf = a.unpack(vbuf);
 	players[p].ip = a.getDotNotation();
 	Team temp;
-	if (messageMask[MsgAdminInfo]){
+	if (messageMask[MsgAdminInfo]) {
 	  std::string joinMsg = std::string("*** \'") + players[p].name + "\' joined the game as " +
 	    temp.getName(players[p].team) + " from " + players[p].ip + ".";
 	  lastMessage.first = joinMsg;
@@ -692,7 +695,7 @@ bool BZAdminClient::getFilterStatus(uint16_t msgType) const {
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

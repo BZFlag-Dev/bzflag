@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -249,9 +249,9 @@ void		    EvdevJoystick::poll()
 
     case EV_ABS:
       if (ev.code > ABS_WHEEL) {
-        if (ABS_HAT0X <= ev.code && ev.code <= ABS_HAT3Y)
-          hataxes[ev.code - ABS_HAT0X] = ev.value;
-        break;
+	if (ABS_HAT0X <= ev.code && ev.code <= ABS_HAT3Y)
+	  hataxes[ev.code - ABS_HAT0X] = ev.value;
+	break;
       }
       currentJoystick->axis_info[ev.code - ABS_X].value = ev.value;
       break;
@@ -341,13 +341,13 @@ void			EvdevJoystick::getJoy(int& x, int& y)
   }
 }
 
-int                     EvdevJoystick::getNumHats()
+int		     EvdevJoystick::getNumHats()
 {
   numHats = 0;
   if (currentJoystick) {
     for (int i = 0; i < 4; ++i) {
       if (test_bit(ABS_HAT0X + i * 2, currentJoystick->absbit)) {
-        numHats++;
+	numHats++;
       }
     }
   }
@@ -356,7 +356,7 @@ int                     EvdevJoystick::getNumHats()
   return numHats;
 }
 
-void                    EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void		    EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
   hatX = hatY = 0;
   if (currentJoystick) {
@@ -679,7 +679,7 @@ void EvdevJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
 #endif /* HAVE_LINUX_INPUT_H */
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

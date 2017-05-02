@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -135,7 +135,7 @@ static void			onSetCB(const std::string& name,
 static std::string		cmdSet(const std::string&,
 				       const CommandManager::ArgList& args, bool* error)
 {
-	if(error) *error = false;
+  if (error) *error = false;
   switch (args.size()) {
 
     case 0:
@@ -151,7 +151,7 @@ static std::string		cmdSet(const std::string&,
 	if (BZDB.isSet(args[0])) {
 	  return args[0] + " is " + BZDB.get(args[0]);
 	} else {
-	  if(error) *error = true;
+	  if (error) *error = true;
 	  return "variable " + args[0] + " does not exist";
 	}
       }
@@ -163,7 +163,7 @@ static std::string		cmdSet(const std::string&,
       }
     default:
       {
-    if(error) *error = true;
+	if (error) *error = true;
 	return "usage: set <name> [<value>]";
       }
   }
@@ -375,7 +375,7 @@ bool				CommandsStandard::isQuit()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

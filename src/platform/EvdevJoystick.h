@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -67,8 +67,8 @@ class EvdevJoystick : public BzfJoystick {
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
     void	getJoy(int& x, int& y);
-    int         getNumHats();
-    void        getJoyHat(int hat, float &hatX, float &hatY);
+    int	 getNumHats();
+    void	getJoyHat(int hat, float &hatX, float &hatY);
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
 
@@ -118,7 +118,7 @@ class EvdevJoystick : public BzfJoystick {
     EvdevJoystickInfo*	  currentJoystick;
     int			 joystickfd;
     int			 buttons;
-    int                  numHats;
+    int		  numHats;
     std::vector<float>   hataxes;
     struct ff_effect*	   ff_rumble;
 };
@@ -129,7 +129,7 @@ class EvdevJoystick : public BzfJoystick {
 #endif // BZF_EVDEV_JOY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

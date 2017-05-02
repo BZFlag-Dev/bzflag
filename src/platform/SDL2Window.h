@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -58,6 +58,7 @@ class SDLWindow : public BzfWindow {
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
+  int	getMaxSamples() const;
   virtual bool hasVerticalSync() const { return true; }
   void	setVerticalSync(bool);
   void  makeCurrent();
@@ -88,7 +89,7 @@ class SDLWindow : public BzfWindow {
 #endif // BZF_SDL2WINDOW_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

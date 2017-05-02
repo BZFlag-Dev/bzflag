@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,7 +30,7 @@ class LocalCommand {
   LocalCommand(std::string _commandName);
   virtual ~LocalCommand();
 
-  virtual bool operator () (const char *commandToken);
+  virtual bool operator() (const char *commandToken);
 
   std::string commandName;
 
