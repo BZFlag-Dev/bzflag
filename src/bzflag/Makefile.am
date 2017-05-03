@@ -26,8 +26,6 @@ bzflag_SOURCES =			\
 	CacheMenu.h			\
 	clientConfig.cxx		\
 	clientConfig.h			\
-	ClientDialogManager.cxx		\
-	ClientDialogManager.h		\
 	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\

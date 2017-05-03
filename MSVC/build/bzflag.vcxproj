@@ -327,7 +327,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
-    <ClCompile Include="..\..\src\bzflag\ClientDialogManager.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
@@ -905,7 +904,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\bzflag\ClientDialogManager.h" />
     <ClInclude Include="..\..\src\bzflag\defaultBZDB.h" />
     <ClInclude Include="..\..\src\bzflag\clientConfig.h" />
     <ClInclude Include="..\..\src\bzflag\AudioMenu.h" />

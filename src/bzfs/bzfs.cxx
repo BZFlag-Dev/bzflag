@@ -52,6 +52,7 @@
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
 
+
 // common implementation headers
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
@@ -68,8 +69,6 @@
 #endif
 
 Shots::Manager ShotManager;
-
-ServerDialogManager dialogManager;
 
 unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int, NetConnectedPeer> netConnectedPeers;
@@ -2368,25 +2367,6 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     playerAlive(playerIndex);
 
   playerData->player.setCompletelyAdded();
-
-  // Example dialog
-  // TODO: Remove team selection from the Join Game menu and actually use a
-  // dialog to pick teams. This should have a better UI than just a multiple
-  // choice selector with current player counts on each team. For now, this
-  // will be enough to serve as a test of the dialog system.
-  /*
-  DialogData* teamSelectionDialog = dialogManager.addDialog(ModalDialog, playerIndex, "Team Selection");
-  teamSelectionDialog->addStaticText("Pick your team, player!");
-  DialogDataMultipleChoiceItem* teamChoices = teamSelectionDialog->addMultipleChoice("Team");
-  teamChoices->addOption("Automatic", "automatic_icon");
-  for (int t = RogueTeam; t < RabbitTeam; t++) {
-    teamChoices->addOption(Team::getName((TeamColor)t), "");
-  }
-  teamSelectionDialog->buttons.push_back("Join Team");
-  teamSelectionDialog->buttons.push_back("Leave Server");
-  dialogManager.send(teamSelectionDialog->dialogID);
-  dialogManager.close(teamSelectionDialog->dialogID);
-  */
 }
 
 

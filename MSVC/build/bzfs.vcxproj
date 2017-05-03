@@ -411,7 +411,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClCompile Include="..\..\src\bzfs\RejoinList.cxx" />
     <ClCompile Include="..\..\src\bzfs\Score.cxx" />
     <ClCompile Include="..\..\src\bzfs\ServerCommand.cxx" />
-    <ClCompile Include="..\..\src\bzfs\ServerDialogManager.cxx" />
     <ClCompile Include="..\..\src\bzfs\ShotManager.cxx" />
     <ClCompile Include="..\..\src\bzfs\SpawnPolicy.cxx" />
     <ClCompile Include="..\..\src\bzfs\SpawnPosition.cxx" />
@@ -692,7 +691,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClInclude Include="..\..\src\bzfs\RejoinList.h" />
     <ClInclude Include="..\..\src\bzfs\Score.h" />
     <ClInclude Include="..\..\src\bzfs\ServerCommand.h" />
-    <ClInclude Include="..\..\src\bzfs\ServerDialogManager.h" />
     <ClInclude Include="..\..\src\bzfs\ShotManager.h" />
     <ClInclude Include="..\..\src\bzfs\SpawnPosition.h" />
     <ClInclude Include="..\..\src\bzfs\TeamBases.h" />

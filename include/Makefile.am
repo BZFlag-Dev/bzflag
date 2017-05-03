@@ -36,7 +36,6 @@ noinst_HEADERS =			\
 	ConeObstacle.h			\
 	ConfigFileManager.h		\
 	Country.h			\
-	DialogData.h			\
 	DirectoryNames.h		\
 	DynamicColor.h			\
 	EighthDBaseSceneNode.h		\

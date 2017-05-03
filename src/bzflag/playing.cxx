@@ -88,7 +88,6 @@
 #include "World.h"
 #include "WorldBuilder.h"
 #include "HUDui.h"
-#include "ClientDialogManager.h"
 
 #include "CollisionManager.h"
 
@@ -167,8 +166,6 @@ static void		setRobotTarget(RobotPlayer* robot);
 #endif
 
 static ResourceGetter	*resourceDownloader = NULL;
-
-static ClientDialogManager *dialogManager = NULL;
 
 // Far and Near Frustum clipping planes
 static const float FarPlaneScale = 1.5f; // gets multiplied by BZDB_WORLDSIZE
@@ -3072,74 +3069,6 @@ static void		handleServerMessage(bool human, uint16_t code,
     case MsgLagPing:
       handlePlayerMessage(code, 0, msg);
       break;
-
-    // Dialog messages
-
-    case MsgDialogCreate: {
-      uint32_t dialogID = dialogManager->unpackDialogCreate(msg);
-
-      if (dialogID > 0) {
-	DialogData* dialog = dialogManager->dialogData[dialogID];
-	controlPanel->addMessage("=== Dialog Start ===");
-	controlPanel->addMessage(TextUtils::format("Dialog ID: %d", dialog->dialogID));
-	controlPanel->addMessage(TextUtils::format("Title: %s", dialog->title.c_str()));
-	for (unsigned int i = 0; i < dialog->dialogItems.size(); i++) {
-	  //controlPanel->addMessage(TextUtils::format("Button %d: %s", i, dialog->buttons[i].c_str()));
-
-	  switch (dialog->dialogItems[i]->type) {
-	    case StaticTextItem: {
-	      DialogDataStaticTextItem* item = (DialogDataStaticTextItem*)dialog->dialogItems[i];
-	      controlPanel->addMessage(TextUtils::format("%s (static): %s", item->label.c_str(), item->text.c_str()));
-	      break;
-	    }
-
-	    case FreeformTextItem: {
-	      DialogDataFreeformTextItem* item = (DialogDataFreeformTextItem*)dialog->dialogItems[i];
-	      controlPanel->addMessage(TextUtils::format("%s (up to %d chars): %s", item->label.c_str(), item->maximumLength, item->text.c_str()));
-	      break;
-	    }
-
-	    case MultipleChoiceItem: {
-	      DialogDataMultipleChoiceItem* item = (DialogDataMultipleChoiceItem*)dialog->dialogItems[i];
-	      controlPanel->addMessage(TextUtils::format("%s (choice):", item->label.c_str()));
-	      for (unsigned int k = 0; k < item->choices.size(); k++) {
-
-		DialogDataMultipleChoiceOption* option = item->choices[k];
-
-		controlPanel->addMessage(TextUtils::format("    %s%s",
-		  (item->selectedChoice == k) ? "*" : " ",
-		  option->label.c_str()
-		));
-	      }
-	      break;
-	    }
-
-	    case CheckboxItem: {
-	      break;
-	    }
-	    default:
-	      controlPanel->addMessage("Unknown item type");
-	      break;
-	  }
-	}
-
-	for (unsigned int i = 0; i < dialog->buttons.size(); i++) {
-	  controlPanel->addMessage(TextUtils::format("Button %d: %s", i, dialog->buttons[i].c_str()));
-	}
-	controlPanel->addMessage("===  Dialog End  ===");
-      }
-      break;
-    }
-
-    case MsgDialogUpdate: {
-      break;
-    }
-
-    case MsgDialogDestroy: {
-      uint32_t dialogID = dialogManager->unpackDialogDestroy(msg);
-      controlPanel->addMessage(TextUtils::format("ClientDialogManager removing dialog %d", dialogID));
-      break;
-    }
   }
 
   if (checkScores) updateHighScores();
@@ -5221,7 +5150,7 @@ static void		renderDialog()
 static void checkDirtyControlPanel(ControlPanel *cp)
 {
   if (cp) {
-    if (HUDDialogStack::get()->isActive() || dialogManager->isActive()) {
+    if (HUDDialogStack::get()->isActive()) {
       cp->invalidate();
     }
   }
@@ -5311,24 +5240,6 @@ static void drawUI()
 
   // update the HUD (menus)
   renderDialog();
-
-  // draw any client dialogs
-  if (dialogManager->isActive()) {
-    const int width = mainWindow->getWidth();
-    const int height = mainWindow->getHeight();
-    const int ox = mainWindow->getOriginX();
-    const int oy = mainWindow->getOriginY();
-    glScissor(ox, oy, width, height);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-    OpenGLGState::resetState();
-    dialogManager->render();
-    glPopMatrix();
-  }
 
   // render the drag-line
   renderRoamMouse();
@@ -5759,12 +5670,12 @@ void drawFrame(const float dt)
 	insideDim = true;
       }
     }
-    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || dialogManager->isActive() || insideDim ||
+    sceneRenderer->setDim(HUDDialogStack::get()->isActive() || insideDim ||
 			  ((myTank && !ROAM.isRoaming() && !devDriving) &&
 			  !myTank->isAlive() && !myTank->isExploding()));
 
     // turn on panel dimming when showing the menu (both radar and chat)
-    if (HUDDialogStack::get()->isActive() || dialogManager->isActive()) {
+    if (HUDDialogStack::get()->isActive()) {
       if (controlPanel) {
 	controlPanel->setDimming(0.8f);
       }
@@ -5781,7 +5692,7 @@ void drawFrame(const float dt)
     }
 
     // set hud state
-    hud->setDim(HUDDialogStack::get()->isActive() || dialogManager->isActive());
+    hud->setDim(HUDDialogStack::get()->isActive());
     hud->setPlaying(myTank && (myTank->isAlive() && !myTank->isPaused()));
     hud->setRoaming(ROAM.isRoaming());
     hud->setCracks(myTank && !firstLife && !justJoined && !myTank->isAlive());
@@ -7279,8 +7190,6 @@ void			startPlaying(BzfDisplay* _display,
   HUDRenderer _hud(display, renderer);
   hud = &_hud;
   scoreboard = hud->getScoreboard();
-
-  dialogManager = new ClientDialogManager(display, renderer);
 
   // initialize control panel and hud
   updateFlag(Flags::Null);
