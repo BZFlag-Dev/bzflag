@@ -353,6 +353,7 @@
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\ShotManager.h">
       <Filter>Headers\Server</Filter>
+    </ClInclude>
     <ClInclude Include="..\..\include\TextChunkManager.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
