@@ -483,7 +483,7 @@ bool PlayerInfo::hasStartedToNotRespond() {
   const float notRespondingTime =
     BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME);
   bool startingToNotRespond = false;
-  if (state > PlayerInLimbo) {
+  if (state > PlayerInLimbo && !paused) {
     bool oldnr = notResponding;
     notResponding = (now - lastupdate) > notRespondingTime;
     if (!oldnr && notResponding) {
