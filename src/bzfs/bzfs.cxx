@@ -1943,7 +1943,7 @@ static void recalcHandicap(int playerIndex)
     }
   }
   
-  bz_ComputeHandiCap_V1 data;
+  bz_ComputeHandicap_V1 data;
   data.playerID = playerIndex;
   data.desiredHandicap = std::max(0, relscore);
 
@@ -1958,15 +1958,18 @@ void recalcAllHandicaps()
   if (!handicapAllowed())
     return;
 
-  worldEventManager.callEvents(&bz_EventData(bz_eBeginHandicapRefreshEvent));
+  bz_EventData beginData = bz_EventData(bz_eBeginHandicapRefreshEvent);
+  worldEventManager.callEvents(&beginData);
 
   for (int i = 0; i < curMaxPlayers; i++) {
     GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-    if (p && realPlayer(i) && !p->player.isObserver())
+    if (p && realPlayer(i) && !p->player.isObserver()) {
       recalcHandicap(i);
+    }
   }
 
-  worldEventManager.callEvents(&bz_EventData(bz_eEndHandicapRefreshEvent));
+  bz_EventData endData = bz_EventData(bz_eEndHandicapRefreshEvent);
+  worldEventManager.callEvents(&endData);
 }
 
 // send handicap values for all players to all players
