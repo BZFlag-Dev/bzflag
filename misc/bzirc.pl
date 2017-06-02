@@ -133,7 +133,7 @@ sub readfrombz {
 $poe_kernel->run();
 
 # Local Variables: ***
-# mode:Perl ***
+# mode: Perl ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

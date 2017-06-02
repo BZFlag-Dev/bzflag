@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -38,7 +38,7 @@ enum RxStatus {
 class NetworkDataLogCallback
 {
 public:
-  virtual ~NetworkDataLogCallback(){};
+  virtual ~NetworkDataLogCallback() {};
 
   virtual void networkDataLog ( bool send, bool udp, const unsigned char *data, unsigned int size, void* param = NULL ) = 0;
 };
@@ -84,19 +84,19 @@ public:
       InitHandlers needs the addr structure filled to point to the local port
       needed for udp communications
   */
-  static bool initHandlers(struct sockaddr_in addr);
-  static void destroyHandlers();
+  static bool	initHandlers(struct sockaddr_in addr);
+  static void	destroyHandlers();
 
   /// General function to support the select statement
-  static void setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
-  static bool isUdpFdSet(fd_set *read_set);
-  bool	isFdSet(fd_set *set);
+  static void	setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
+  static bool	isUdpFdSet(fd_set *read_set);
+  bool		isFdSet(fd_set *set);
 
   /// Supporting DNS Asynchronous resolver
-  static void checkDNS(fd_set *read_set, fd_set *write_set);
+  static void	checkDNS(fd_set *read_set, fd_set *write_set);
 
   /// return the opened socket, usable from all other network internal client
-  static int  getUdpSocket();
+  static int	getUdpSocket();
 
 
   /**
@@ -111,8 +111,8 @@ public:
 
       udpLinkRequest report if the received message is a valid udpLinkRequest
   */
-  static int  udpReceive(char *buffer, struct sockaddr_in *uaddr,
-			 bool &udpLinkRequest);
+  static int	udpReceive(char *buffer, struct sockaddr_in *uaddr,
+			   bool &udpLinkRequest);
 
   /**
      tcpReceive try to get a message from the tcp connection
@@ -125,11 +125,11 @@ public:
      ReadError  : Error detected on the tcp connection
      ReadDiscon : Peer has closed the connection
   */
-  RxStatus    tcpReceive();
-  void       *getTcpBuffer();
+  RxStatus	tcpReceive();
+  void		*getTcpBuffer();
 
   /// Request if there is any buffered udp messages waiting to be sent
-  static bool	anyUDPPending() {return pendingUDP;};
+  static bool	anyUDPPending() { return pendingUDP; };
 
   /// Send all buffered UDP messages, if any
   void		flushUDP();
@@ -147,96 +147,96 @@ public:
   const char*	getHostname();
   bool		reverseDNSDone();
 
-  size_t	getTcpReadSize (){ return tcplen;}
-  bool		hasTcpOutbound(){ return outmsgSize > 0;}
+  size_t	getTcpReadSize () { return tcplen; }
+  bool		hasTcpOutbound() { return outmsgSize > 0; }
 
-  void setPlayer ( PlayerInfo* p, int index );
+  void		setPlayer ( PlayerInfo* p, int index );
 
-  int getPlayerID ( void ){ return playerIndex;}
+  int		getPlayerID ( void ) { return playerIndex; }
 
-  int getFD ( void ) { return fd;}
-  struct sockaddr_in getUADDR ( void ) { return uaddr;}
+  int		getFD ( void ) { return fd; }
+  struct sockaddr_in	getUADDR ( void ) { return uaddr; }
 
   // Returns the time that the connection was accepted
-  TimeKeeper getTimeAccepted( void ) const { return time;}
+  TimeKeeper	getTimeAccepted( void ) const { return time; }
 
   /// Notify that the channel is going to be close.
   /// In the meantime any pwrite call will do nothing.
   /// Cannot be undone.
   void		closing();
 
-  RxStatus    receive(size_t length, bool* retry = NULL);
-  void flushData ( void ){tcplen = 0;}
-  int  bufferedSend(const void *buffer, size_t length);
+  RxStatus	receive(size_t length, bool* retry = NULL);
+  void		flushData ( void ) { tcplen = 0; }
+  int		bufferedSend(const void *buffer, size_t length);
 
-  void SetAllowUDP(bool set);
+  void		SetAllowUDP(bool set);
 private:
-  int  send(const void *buffer, size_t length);
-  void udpSend(const void *b, size_t l);
-  bool isMyUdpAddrPort(struct sockaddr_in uaddr);
+  int		send(const void *buffer, size_t length);
+  void		udpSend(const void *b, size_t l);
+  bool		isMyUdpAddrPort(struct sockaddr_in uaddr);
 #ifdef NETWORK_STATS
-  void	countMessage(uint16_t code, int len, int direction);
-  void	dumpMessageStats();
+  void		countMessage(uint16_t code, int len, int direction);
+  void		dumpMessageStats();
 #endif
   /// On win32, a socket is typedef UINT_PTR SOCKET;
   /// Hopefully int will be ok
-  static int		udpSocket;
+  static int	udpSocket;
   static NetHandler*	netPlayer[maxHandlers];
-  static bool           pendingUDP;
+  static bool	pendingUDP;
 
   std::shared_ptr<AresHandler>	ares;
 
-  PlayerInfo*		info;
+  PlayerInfo*	info;
   struct sockaddr_in	uaddr;
-  int			playerIndex;
-  int			fd; // socket file descriptor
+  int		playerIndex;
+  int		fd; // socket file descriptor
 
   /// peer's network address
-  Address peer;
+  Address	peer;
   /* peer->getDotNotation returns a temp variable that is not safe
    * to pass around.  This variable lets us keep a copy in allocated
    * memory for as long as we need to */
-  std::string dotNotation;
+  std::string	dotNotation;
 
   /// input buffers
   /// current TCP msg
-  char tcpmsg[MaxPacketLen];
+  char		tcpmsg[MaxPacketLen];
   /// bytes read in current msg
-  int tcplen;
+  int		tcplen;
 
   /// Closing flag
-  bool closed;
+  bool		closed;
 
   /// output buffer
-  int outmsgOffset;
-  int outmsgSize;
-  int outmsgCapacity;
-  char* outmsg;
+  int		outmsgOffset;
+  int		outmsgSize;
+  int		outmsgCapacity;
+  char*		outmsg;
 
-  char udpOutputBuffer[MaxPacketLen];
-  int udpOutputLen;
+  char		udpOutputBuffer[MaxPacketLen];
+  int		udpOutputLen;
 
   /// UDP connection
-  bool udpin; // udp inbound up, player is sending us udp
-  bool udpout; // udp outbound up, we can send udp
+  bool		udpin; // udp inbound up, player is sending us udp
+  bool		udpout; // udp outbound up, we can send udp
 
-  bool toBeKicked;
-  std::string toBeKickedReason;
+  bool		toBeKicked;
+  std::string	toBeKickedReason;
 
-  bool	acceptUDP;
+  bool		acceptUDP;
   // time accepted
-  TimeKeeper time;
+  TimeKeeper	time;
 #ifdef NETWORK_STATS
   // message stats bloat
-  TimeKeeper perSecondTime[2];
-  uint32_t perSecondCurrentBytes[2];
-  uint32_t perSecondMaxBytes[2];
-  uint32_t perSecondCurrentMsg[2];
-  uint32_t perSecondMaxMsg[2];
-  uint32_t msgBytes[2];
+  TimeKeeper	perSecondTime[2];
+  uint32_t	perSecondCurrentBytes[2];
+  uint32_t	perSecondMaxBytes[2];
+  uint32_t	perSecondCurrentMsg[2];
+  uint32_t	perSecondMaxMsg[2];
+  uint32_t	msgBytes[2];
 
-  typedef std::map<const uint16_t, struct MessageCount> MessageCountMap;
-  MessageCountMap msg[2];
+  typedef	std::map<const uint16_t, struct MessageCount> MessageCountMap;
+  MessageCountMap	msg[2];
 #endif
 };
 

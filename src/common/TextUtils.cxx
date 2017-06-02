@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -17,6 +17,10 @@
 #include "TextUtils.h"
 
 // system headers
+#ifdef _WIN32
+#include <winsock2.h>
+#endif
+#include <curl/curl.h>
 #include <string>
 #include <string.h>
 #include <algorithm>
@@ -95,7 +99,7 @@ namespace TextUtils
   }
 
 
-  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes){
+  std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes) {
     std::vector<std::string> tokens;
     int numTokens = 0;
     bool inQuote = false;
@@ -115,7 +119,7 @@ namespace TextUtils
       bool foundSlash = false;
 
       currentChar = (pos < len) ? in[pos] : -1;
-      while ((currentChar != -1) && !tokenDone){
+      while ((currentChar != -1) && !tokenDone) {
 
 	tokenDone = false;
 
@@ -124,13 +128,13 @@ namespace TextUtils
 	  break; // breaks out of inner while loop
 	}
 
-	if (!useQuotes){
+	if (!useQuotes) {
 	  currentToken << char(currentChar);
 	} else {
 
-	  switch (currentChar){
+	  switch (currentChar) {
 	    case '\\' : // found a backslash
-	      if (foundSlash){
+	      if (foundSlash) {
 		currentToken << char(currentChar);
 		foundSlash = false;
 	      } else {
@@ -138,11 +142,11 @@ namespace TextUtils
 	      }
 	      break;
 	    case '\"' : // found a quote
-	      if (foundSlash){ // found \"
+	      if (foundSlash) { // found \"
 		currentToken << char(currentChar);
 		foundSlash = false;
 	      } else { // found unescaped "
-		if (inQuote){ // exiting a quote
+		if (inQuote) { // exiting a quote
 		  // finish off current token
 		  tokenDone = true;
 		  inQuote = false;
@@ -160,7 +164,7 @@ namespace TextUtils
 	      }
 	      break;
 	    default:
-	      if (foundSlash){ // don't care about slashes except for above cases
+	      if (foundSlash) { // don't care about slashes except for above cases
 		currentToken << '\\';
 		foundSlash = false;
 	      }
@@ -173,7 +177,7 @@ namespace TextUtils
 	currentChar = (pos < len) ? in[pos] : -1;
       } // end of getting a Token
 
-      if (currentToken.str().size() > 0){ // if the token is something add to list
+      if (currentToken.str().size() > 0) { // if the token is something add to list
 	tokens.push_back(currentToken.str());
 	currentToken.str("");
 	numTokens ++;
@@ -222,16 +226,16 @@ namespace TextUtils
     for (int i = 0; i < len; i++) {
       if (isdigit(duration[i])) {
 	t = t * 10 + (duration[i] - '0');
-      } else if(duration[i] == 'h' || duration[i] == 'H') {
+      } else if (duration[i] == 'h' || duration[i] == 'H') {
 	durationInt += (t * 60);
 	t = 0;
-      } else if(duration[i] == 'd' || duration[i] == 'D') {
+      } else if (duration[i] == 'd' || duration[i] == 'D') {
 	durationInt += (t * 1440);
 	t = 0;
-      } else if(duration[i] == 'w' || duration[i] == 'W') {
+      } else if (duration[i] == 'w' || duration[i] == 'W') {
 	durationInt += (t * 10080);
 	t = 0;
-      } else if(duration[i] == 'm' || duration[i] == 'M') {
+      } else if (duration[i] == 'm' || duration[i] == 'M') {
 	durationInt += (t);
 	t = 0;
       }
@@ -242,57 +246,28 @@ namespace TextUtils
 
   std::string url_encode(const std::string &text)
   {
-    char hex[5];
-    std::string destination;
-    for (int i=0;  i < (int) text.size(); i++) {
-      char c = text[i];
-      if (isAlphanumeric(c)) {
-	destination+=c;
-      } else if (isWhitespace(c)) {
-	destination+='+';
-      } else {
-	destination+='%';
-	sprintf(hex, "%-2.2X", c);
-	destination.append(hex);
-      }
+    std::string encoded = "";
+    char *output = curl_easy_escape(NULL, text.c_str(), 0);
+
+    if (output) {
+      encoded = output;
+      curl_free(output);
     }
-    return destination;
+
+    return encoded;
   }
 
   std::string url_decode(const std::string &text)
   {
-    std::string destination;
+    std::string decoded = "";
+    char *output = curl_easy_unescape(NULL, text.c_str(), 0, NULL);
 
-    std::string::const_iterator itr = text.begin();
-    while (itr != text.end()) {
-      if (*itr != '%' && *itr != '+') {
-	destination += *itr++;
-      } else if (*itr == '+') {
-	destination += " ";
-	++itr;
-      } else {
-	char hex[5] = "0x00";
-
-	++itr;
-	if (itr == text.end())
-	  return destination;
-
-	hex[2] = *itr;
-
-	++itr;
-	if (itr == text.end())
-	  return destination;
-
-	hex[3] = *itr;
-
-	unsigned int val = 0;
-	sscanf(hex,"%x",&val);
-	if (val != 0)
-	  destination += (char)val;
-	++itr;
-      }
+    if (output) {
+      decoded = output;
+      curl_free(output);
     }
-    return destination;
+
+    return decoded;
   }
 
   std::string escape_nonprintable(const std::string &text, const char quotechar)
@@ -358,7 +333,7 @@ namespace TextUtils
   std::string str_trunc_continued (const std::string &text, int len)
   {
     std::string retstr = std::string (text, 0, len);
-    if ( retstr.size() == (unsigned int)len  )
+    if (retstr.size() == (unsigned int)len)
       retstr[len-1] = '~';
     return retstr;
   }

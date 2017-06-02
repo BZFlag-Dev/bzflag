@@ -1,4 +1,4 @@
-AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2
+AUTOMAKE_OPTIONS = 1.6 dist-zip dist-bzip2 subdir-objects
 ACLOCAL_AMFLAGS = -I m4
 
 traversal_dirs = \
@@ -6,8 +6,7 @@ traversal_dirs = \
 	include \
 	man \
 	package \
-	src \
-	tests
+	src
 
 if BUILD_PLUGINS
 PLUGINS=plugins
@@ -30,9 +29,10 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	.editorconfig \
-	.travis.yml \
 	autogen.sh \
 	bzflag.spec \
+	COPYING.LGPL \
+	COPYING.MPL \
 	DEVINFO \
 	PORTING \
 	README.BeOS \

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -86,8 +86,8 @@ class MainWindow {
     // for these values that we need every frame.
     void		getMousePosition(int& mx, int& my) const;
     void		getJoyPosition(int& mx, int& my) const;
-    int                 getNumHats() const;
-    void                getJoyHat(int hat, float &hatX, float &hatY) const;
+    int			getNumHats() const;
+    void		getJoyHat(int hat, float &hatX, float &hatY) const;
     unsigned long	getJoyButtonSet() const;
     void		getJoyDevices(std::vector<std::string> &list) const;
     void		getJoyDeviceAxes(std::vector<std::string> &list) const;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -403,11 +403,11 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     node->setLightedColor(boxLightedColors[part]);
     node->setLightedModulateColor(boxLightedModulateColors[part]);
     node->setMaterial(boxMaterial);
-    if (part < 4){
+    if (part < 4) {
       node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
     }
-    else{
+    else {
       node->setTexture(boxTopTexture);
       node->setUseColorTexture(useColorTexture[1]);
     }
@@ -557,7 +557,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
       node->setTexture(boxTexture);
       node->setUseColorTexture(useColorTexture[0]);
     }
-    else{
+    else {
       if (useColorTexture[1]) {  // only set the texture if we have one and are using it
 	node->setTexture(baseTopTexture);
 	node->setUseColorTexture(useColorTexture[1]);
@@ -665,7 +665,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

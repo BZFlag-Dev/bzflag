@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -212,7 +212,7 @@ void * WorldWeapons::pack(void *buf) const
     buf = nboPackVector(buf, w->origin);
     buf = nboPackFloat(buf, w->direction);
     buf = nboPackFloat(buf, w->initDelay);
-    buf = nboPackUShort(buf, w->delay.size());
+    buf = nboPackUShort(buf, (uint16_t)w->delay.size());
     for (unsigned int j = 0; j < w->delay.size(); j++) {
       buf = nboPackFloat(buf, w->delay[j]);
     }
@@ -253,7 +253,7 @@ int WorldWeapons::getNewWorldShotID(void)
 
 bool shotUsedInList(int shotID, Shots::ShotList& list)
 {
-	for(size_t s = 0; s < list.size(); s++)
+	for (size_t s = 0; s < list.size(); s++)
 	{
 		if (list[s]->GetLocalShotID() == shotID)
 			return true;

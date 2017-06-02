@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -49,8 +49,8 @@ void			BzfWindow::removeExposeCallback(
 				void (*_cb)(void*), void* data)
 {
   std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
-  for(; it != exposeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
+  for (; it != exposeCallbacks.end(); it++) {
+    if ((it->cb == _cb) && (it->data == data)) {
       exposeCallbacks.erase(it);
       break;
     }
@@ -79,8 +79,8 @@ void			BzfWindow::removeResizeCallback(
 				void (*_cb)(void*), void* data)
 {
   std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
-  for(; it != resizeCallbacks.end(); it++) {
-    if((it->cb == _cb) && (it->data == data)) {
+  for (; it != resizeCallbacks.end(); it++) {
+    if ((it->cb == _cb) && (it->data == data)) {
       resizeCallbacks.erase(it);
       break;
     }
@@ -111,7 +111,7 @@ void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

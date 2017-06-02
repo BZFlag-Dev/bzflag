@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,8 +30,8 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 {
   bool fixedUVs = false;
   const float height = base->getHeight() + base->getPosition()[2];
-  if(getNodeNumber() >= 1 && height == 0) return NULL;
-  if(getNodeNumber() >= 6) return NULL;
+  if (getNodeNumber() >= 1 && height == 0) return NULL;
+  if (getNodeNumber() >= 6) return NULL;
   GLfloat bPoint[3], sCorner[3], tCorner[3];
   if (height == 0) {
     fixedUVs = true;
@@ -40,7 +40,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
     base->getCorner(3, tCorner);
     base->getCorner(1, sCorner);
   } else {
-    switch(incNodeNumber()) {
+    switch (incNodeNumber()) {
       case 1:  // This is the top polygon
 	fixedUVs = true;
 	base->getCorner(4, bPoint);
@@ -82,7 +82,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
     }
   }
   GLfloat color[4];
-  switch(base->getTeam()) {
+  switch (base->getTeam()) {
     case 1:
       color[0] = 0.7f; color[1] = 0.0f; color[2] = 0.0f;
       break;
@@ -113,7 +113,7 @@ WallSceneNode*	BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepeat
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

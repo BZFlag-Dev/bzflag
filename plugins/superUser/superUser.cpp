@@ -8,8 +8,8 @@
 class SuperUser : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "SuperUser";}
-  virtual void Init ( const char* config);
+  virtual const char* Name () {return "SuperUser";}
+  virtual void Init ( const char* config );
 
   virtual void Event ( bz_EventData * /* eventData */ );
 
@@ -21,7 +21,7 @@ protected:
 
 BZ_PLUGIN(SuperUser)
 
-void SuperUser::Init ( const char* commandLine)
+void SuperUser::Init ( const char* commandLine )
 {
   if (commandLine == NULL || strlen(commandLine) == 0)
     bz_debugMessage(0,"SuperUser plugin needs a user file to work from");
@@ -44,7 +44,7 @@ std::vector<std::string> SuperUser::GetUserInfo(const char* bzID )
   return perms;
 }
 
-void SuperUser::Event ( bz_EventData * eventData  )
+void SuperUser::Event ( bz_EventData * eventData )
 {
   if (eventData->eventType == bz_eGetPlayerInfoEvent) {
     bz_GetPlayerInfoEventData_V1* playerInfoData = (bz_GetPlayerInfoEventData_V1*)eventData;
@@ -68,7 +68,7 @@ void SuperUser::Event ( bz_EventData * eventData  )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

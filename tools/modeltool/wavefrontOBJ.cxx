@@ -4,17 +4,16 @@
 //
 //
 
-#include "common.h"
-
 /* system headers */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include <vector>
 #include <map>
 
 /* common headers */
-#include "TextUtils.h"
+#include "SimpleTextUtils.h"
 #include "wavefrontOBJ.h"
 
 static void underscoreBeforeNumbers(std::string& name)
@@ -52,9 +51,9 @@ static void readMTL ( CModel &model, std::string file )
 	std::string fileText = pData;
 	free(pData);
 
-	fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+	fileText = SimpleTextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
-	std::vector<std::string> lines = TextUtils::tokenize(fileText, lineTerminator);
+	std::vector<std::string> lines = SimpleTextUtils::tokenize(fileText, lineTerminator);
 
 	if ( lines.size() < 2 )
 		return;
@@ -68,20 +67,20 @@ static void readMTL ( CModel &model, std::string file )
 	{
 		// do a trim here
 
-		std::vector<std::string> lineParts = TextUtils::tokenize(*lineItr,std::string(" "));
+		std::vector<std::string> lineParts = SimpleTextUtils::tokenize(*lineItr,std::string(" "));
 
 		if (lineParts.size() > 1)
 		{
 			std::string tag = lineParts[0];
 			if (tag != "#")
 			{
-				if (TextUtils::tolower(tag) == "newmtl")
+				if (SimpleTextUtils::tolower(tag) == "newmtl")
 				{
 					matName = lineParts[1];
 					underscoreBeforeNumbers(matName);
 					model.materials[matName] = material;
 				}
-				if (TextUtils::tolower(tag) == "ka")
+				if (SimpleTextUtils::tolower(tag) == "ka")
 				{
 					if (lineParts.size() > 3)
 					{
@@ -90,7 +89,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].ambient[2] = (float)atof(lineParts[3].c_str());
 					}
 				}
-				if (TextUtils::tolower(tag) == "kd")
+				if (SimpleTextUtils::tolower(tag) == "kd")
 				{
 					if (lineParts.size() > 3)
 					{
@@ -99,7 +98,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].diffuse[2] = (float)atof(lineParts[3].c_str());
 					}
 				}
-				if (TextUtils::tolower(tag) == "d")
+				if (SimpleTextUtils::tolower(tag) == "d")
 				{
 					if (lineParts.size() > 1)
 					{
@@ -107,7 +106,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].diffuse[3] = (float)atof(lineParts[1].c_str());
 					}
 				}
-				if (TextUtils::tolower(tag) == "ks")
+				if (SimpleTextUtils::tolower(tag) == "ks")
 				{
 					if (lineParts.size() > 3)
 					{
@@ -116,7 +115,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].specular[2] = (float)atof(lineParts[3].c_str());
 					}
 				}
-				if (TextUtils::tolower(tag) == "ns")
+				if (SimpleTextUtils::tolower(tag) == "ns")
 				{
 					if (lineParts.size() > 1) {
 						float shine = (float)atof(lineParts[1].c_str());
@@ -130,7 +129,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
 					}
 				}
-				if (TextUtils::tolower(tag) == "ke")
+				if (SimpleTextUtils::tolower(tag) == "ke")
 				{
 					if (lineParts.size() > 3)
 					{
@@ -139,7 +138,7 @@ static void readMTL ( CModel &model, std::string file )
 						model.materials[matName].emission[2] = (float)atof(lineParts[3].c_str());
 					}
 				}
-				if (TextUtils::tolower(tag) == "map_kd")
+				if (SimpleTextUtils::tolower(tag) == "map_kd")
 				{
 					if (lineParts.size() > 1)
 					{
@@ -194,9 +193,9 @@ void readOBJ ( CModel &model, std::string file )
 	std::string fileText = pData;
 	free(pData);
 
-	fileText = TextUtils::replace_all(fileText,std::string("\r"),std::string(""));
+	fileText = SimpleTextUtils::replace_all(fileText,std::string("\r"),std::string(""));
 
-	std::vector<std::string> lines = TextUtils::tokenize(fileText,lineTerminator);
+	std::vector<std::string> lines = SimpleTextUtils::tokenize(fileText,lineTerminator);
 
 	if ( lines.size() < 2 )
 		return;
@@ -218,15 +217,15 @@ void readOBJ ( CModel &model, std::string file )
 	{
 		// do a trim here
 
-		std::vector<std::string> lineParts = TextUtils::tokenize(*lineItr,std::string(" "));
+		std::vector<std::string> lineParts = SimpleTextUtils::tokenize(*lineItr,std::string(" "));
 
 		if (lineParts.size() > 1)
 		{
 			if (lineParts[0] != "#")
 			{
-				if (TextUtils::tolower(lineParts[0]) == "mtllib" && lineParts.size()>1)
+				if (SimpleTextUtils::tolower(lineParts[0]) == "mtllib" && lineParts.size()>1)
 					readMTL(model,baseFilePath+lineParts[1]);
-				else if (TextUtils::tolower(lineParts[0]) == "v" && lineParts.size()>3)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "v" && lineParts.size()>3)
 				{
 					CVertex vert;
 					vert.x = (float)atof(lineParts[1].c_str());
@@ -244,7 +243,7 @@ void readOBJ ( CModel &model, std::string file )
 					temp_verts.push_back(vert);
 					vCount++;
 				}
-				else if (TextUtils::tolower(lineParts[0]) == "vt" && lineParts.size()>2)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "vt" && lineParts.size()>2)
 				{
 					CTexCoord uv;
 					uv.u = (float)atof(lineParts[1].c_str());
@@ -252,7 +251,7 @@ void readOBJ ( CModel &model, std::string file )
 					temp_texCoords.push_back(uv);
 					tCount++;
 				}
-				else if (TextUtils::tolower(lineParts[0]) == "vn" && lineParts.size()>3)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "vn" && lineParts.size()>3)
 				{
 					CVertex vert;
 					vert.x = (float)atof(lineParts[1].c_str());
@@ -269,7 +268,7 @@ void readOBJ ( CModel &model, std::string file )
 					temp_normals.push_back(vert);
 					nCount++;
 				}
-				else if (TextUtils::tolower(lineParts[0]) == "g" && lineParts.size()>1)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "g" && lineParts.size()>1)
 				{
 					if ( mesh.valid())
 					{
@@ -283,12 +282,12 @@ void readOBJ ( CModel &model, std::string file )
 					mesh.clear();
 					mesh.name = lineParts[1];
 				}
-				else if (TextUtils::tolower(lineParts[0]) == "usemtl" && lineParts.size()>1)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "usemtl" && lineParts.size()>1)
 				{
 					currentMaterial = lineParts[1];
 					underscoreBeforeNumbers(currentMaterial);
 				}
-				else if (TextUtils::tolower(lineParts[0]) == "f" && lineParts.size()>3)
+				else if (SimpleTextUtils::tolower(lineParts[0]) == "f" && lineParts.size()>3)
 				{
 					CFace face;
 					face.material = currentMaterial;
@@ -298,7 +297,7 @@ void readOBJ ( CModel &model, std::string file )
 					{
 						std::string section = lineParts[i];
 
-						// TextUtils::tokenize() does not make 3
+						// SimpleTextUtils::tokenize() does not make 3
 						// strings from "1//2", so do it the hard way
 						const std::string::size_type npos = std::string::npos;
 						std::string::size_type pos1, pos2 = npos;

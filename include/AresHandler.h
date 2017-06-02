@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,14 +37,14 @@ class AresHandler {
     HbNSucceeded
   };
 
-  void		setIndex ( int i ) {index = i;}
+  void		setIndex ( int i ) { index = i; }
   void		queryHostname(const struct sockaddr *clientAddr);
   void		queryHost(const char *hostName);
   const char   *getHostname();
   ResolutionStatus getHostAddress(struct in_addr *clientAddr);
   void		setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
   void		process(fd_set *read_set, fd_set *write_set);
-  ResolutionStatus getStatus() {return status;};
+  ResolutionStatus getStatus() { return status; };
  private:
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
   static void	staticCallback(void *arg, int statusCallback, int timeouts,
@@ -69,7 +69,7 @@ class AresHandler {
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

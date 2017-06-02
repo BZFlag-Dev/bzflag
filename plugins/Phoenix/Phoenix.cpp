@@ -7,7 +7,7 @@
 typedef struct
 {
    float x,y,z,a;
-}trDeathPos;
+} trDeathPos;
 
 
 
@@ -15,8 +15,8 @@ class PhoenixEvents : public bz_Plugin
 {
 public:
 
-  std::map<int,trDeathPos>  lastDeaded;
-  virtual const char* Name (){return "Phoenix";}
+  std::map<int,trDeathPos> lastDeaded;
+  virtual const char* Name () {return "Phoenix";}
   virtual void Init ( const char* /*config*/ )
   {
     lastDeaded.clear();
@@ -29,7 +29,7 @@ public:
 
   virtual void Event ( bz_EventData *eventData )
   {
-    switch(eventData->eventType)
+    switch (eventData->eventType)
     {
       case bz_eCaptureEvent:
 	lastDeaded.clear();
@@ -83,7 +83,7 @@ BZ_PLUGIN(PhoenixEvents)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

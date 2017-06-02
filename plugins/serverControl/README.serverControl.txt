@@ -42,14 +42,14 @@ BZFlag source code.
 
   # This is the relative or absolute location of the main ban file.
   BanFile = db/banfile
-  
+
   # Message to display when bans are reloaded.
   BanReloadMessage = Bans updated
 
   # This is the relative or absolute location of the local copy of the
   # masterbans file.
   MasterBanFile = db/master-bans.txt
-  
+
   # Message to display when the master ban list is reloaded.
   MasterBanReloadMessage = Master bans updated
 
@@ -65,12 +65,12 @@ BZFlag source code.
   # when the server empties out.  Once this triggers, this file is removed, so
   # it only shuts the server down once.
   ResetServerOnceFile = reset-server-once
-  
+
   # This works the same as the ResetServerOnceFile, except it doesn't remove the
   # file when it triggers.  So, this would allow you to make the server restart
   # every time it empties out.
   ResetServerAlwaysFile = reset-server-always
-  
+
   # This option will cause the plugin to ignore observers, allowing the server
   # to shut down when all non-observers leave the server.
   #IgnoreObservers = true

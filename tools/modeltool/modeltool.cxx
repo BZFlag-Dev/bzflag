@@ -8,17 +8,17 @@
 //   g++ -o modeltool modeltool.cxx  -I../../include ../../src/common/libCommon.a
 //
 
-#include "common.h"
-
 /* system headers */
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include <vector>
 #include <map>
+#include <math.h>
 
 /* common headers */
-#include "TextUtils.h"
+#include "SimpleTextUtils.h"
 
 #include "model.h"
 #include "wavefrontOBJ.h"
@@ -130,7 +130,7 @@ static void writeBZW  ( CModel &model, std::string file )
 		while ( vertItr != mesh.normals.end() )
 		{
 			// normalise all normals before writing them
-			float dist = sqrt(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
+			float dist = sqrtf(vertItr->x*vertItr->x+vertItr->y*vertItr->y+vertItr->z*vertItr->z);
 			fprintf (fp,"  normal %f %f %f\n", vertItr->x/dist,vertItr->y/dist,vertItr->z/dist);
 			vertItr++;
 		}
@@ -176,7 +176,7 @@ static void writeBZW  ( CModel &model, std::string file )
 			  fprintf (fp, "    matref %s\n", face.material.c_str());
 			}
 
-			if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL){
+			if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL) {
 				fprintf (fp, "    ricochetn");
 			}
 
@@ -266,7 +266,7 @@ int main(int argc, char* argv[])
 
 	for ( int i = 2; i < argc; i++) {
 		std::string command = argv[i];
-		command = TextUtils::tolower(command);
+		command = SimpleTextUtils::tolower(command);
 
 		if (command == "-yz") {
 			flipYZ = true;
@@ -290,7 +290,7 @@ int main(int argc, char* argv[])
 			  printf ("missing -tx argument\n");
 			}
 		}
-		else if (command == "-ricomat"){
+		else if (command == "-ricomat") {
 			useRicoMat = true;
 		}
 		else if (command == "-sm") {
@@ -328,7 +328,7 @@ int main(int argc, char* argv[])
 		else if (command == "-e") {
 			useEmission = false;
 		}
-		else if (command == "-gx"){
+		else if (command == "-gx") {
 			if ((i + 1) < argc) {
 				i++;
 				globalScale = (float)atof(argv[i]);
@@ -336,7 +336,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gx argument\n");
 			}
 		}
-		else if (command == "-gsx"){
+		else if (command == "-gsx") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[0] = (float)atof(argv[i]);
@@ -344,7 +344,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsx argument\n");
 			}
 		}
-		else if (command == "-gsy"){
+		else if (command == "-gsy") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[1] = (float)atof(argv[i]);
@@ -352,7 +352,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsy argument\n");
 			}
 		}
-		else if (command == "-gsz"){
+		else if (command == "-gsz") {
 			if ((i + 1) < argc) {
 				i++;
 				globalShift[2] = (float)atof(argv[i]);
@@ -360,7 +360,7 @@ int main(int argc, char* argv[])
 				printf ("missing -gsz argument\n");
 			}
 		}
-		else if (command == "-bspskip"){
+		else if (command == "-bspskip") {
 			if ((i + 1) < argc) {
 				i++;
 				bspMaterialSkips.push_back(std::string(argv[i]));
@@ -373,11 +373,11 @@ int main(int argc, char* argv[])
 
 	CModel	model;
 
-	if ( TextUtils::tolower(extenstion) == "obj" )
+	if ( SimpleTextUtils::tolower(extenstion) == "obj" )
 	{
 		readOBJ(model,input);
 	}
-	else if ( TextUtils::tolower(extenstion) == "bsp" )
+	else if ( SimpleTextUtils::tolower(extenstion) == "bsp" )
 	{
 		Quake3Level	level;
 		level.loadFromFile(input.c_str());

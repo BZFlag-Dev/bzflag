@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,7 +63,7 @@ std::vector<std::string> findGroupsWithPerms( const std::vector<std::string> &pe
 std::vector<std::string> findGroupsWithPerm( const char* perm, bool skipLocal )
 {
   std::string name;
-  if(perm)
+  if (perm)
     name = perm;
   return findGroupsWithPerm(name,skipLocal);
 }

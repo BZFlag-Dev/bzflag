@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,7 +32,7 @@ public:
     // c'tor will fill list and local server information variables and
     // do an initial ADD
     ListServerLink(std::string listServerURL, std::string publicizedAddress,
-		   std::string publicizedTitle, std::string advertiseGroups, long dnsCache = 0);
+		   std::string publicizedTitle, std::string advertiseGroups);
     // c'tor with no arguments called when we don't want to use a list server.
     ListServerLink();
     // d'tor will REMOVE server and close connection
@@ -72,7 +72,7 @@ private:
 #endif //__LISTSERVERCONNECTION_H__
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

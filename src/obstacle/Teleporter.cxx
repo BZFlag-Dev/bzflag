@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -478,7 +478,8 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
 
   // fixed x offset, and scale y & z coordinates
   p.x = -size2.x;
-  p.yz() *= dimsScale; // note the .yz()
+  p.y *= dimsScale.x;
+  p.z *= dimsScale.y;
 
   // apply rotation, translate to new position
   p = p.rotateZ(+radians2);
@@ -692,7 +693,7 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) 
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

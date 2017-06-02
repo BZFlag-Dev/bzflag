@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,8 +63,8 @@ static void		gettruePosition(double julianDay,
 }
 
 void			getCelestialTransform(double julianDay,
-					float latitude, float longitude,
-					GLfloat (&xform)[4][4])
+					      float latitude, float longitude,
+					      GLfloat (&xform)[4][4])
 {
   // get local sidereal time
   const float localSidereal = (float)(getGreenwichSideral(julianDay) -
@@ -100,7 +100,7 @@ void			getCelestialTransform(double julianDay,
 }
 
 void			getSunPosition(double julianDay, float latitude,
-					float longitude, float pos[3])
+				       float longitude, float pos[3])
 {
   double T = (julianDay - epoch) / 36525.0;
   double geometricMeanLongitude = radPerDeg *
@@ -205,7 +205,7 @@ void			getMoonPosition(double julianDay, float latitude,
 }
 
 static void		lerpColor(GLfloat out[3], const GLfloat t0[3],
-					const GLfloat t1[3], float t)
+				  const GLfloat t1[3], float t)
 {
   out[0] = (1.0f - t) * t0[0] + t * t1[0];
   out[1] = (1.0f - t) * t0[1] + t * t1[1];
@@ -219,7 +219,7 @@ static const float	dawnElevation = 0.0f;		// sin(0)
 static const float	dayElevation = 0.087f;		// ~sin(5)
 
 void			getSunColor(const float sunDir[3], GLfloat color[3],
-					GLfloat ambient[3], GLfloat& brightness)
+				    GLfloat ambient[3], GLfloat& brightness)
 {
   static const GLfloat	highSunColor[3] = { 1.75f, 1.75f, 1.4f };
   static const GLfloat	lowSunColor[3] = { 0.75f, 0.27f, 0.0f };
@@ -235,7 +235,7 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
   }
   else if (sunDir[2] < dayElevation) {
     const GLfloat t = (sunDir[2] - dawnElevation) /
-			(dayElevation - dawnElevation);
+		      (dayElevation - dawnElevation);
     lerpColor(color, lowSunColor, highSunColor, t);
     brightness = t;
   }
@@ -254,7 +254,7 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
   }
   else if (sunDir[2] < dayElevation) {
     const GLfloat t = (sunDir[2] - duskElevation) /
-			(dayElevation - duskElevation);
+		      (dayElevation - duskElevation);
     lerpColor(ambient, nightAmbient, dayAmbient, t);
   }
   else {
@@ -300,7 +300,7 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   else if (sunDir[2] < twilightElevation) {
     // twilight
     const float t = (sunDir[2] - nightElevation) /
-			(twilightElevation - nightElevation);
+		    (twilightElevation - nightElevation);
     sky[0][0] = nightColor[0];
     sky[0][1] = nightColor[1];
     sky[0][2] = nightColor[2];
@@ -315,7 +315,7 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   else if (sunDir[2] < dawnElevation) {
     // sunrise or sunset
     const float t = (sunDir[2] - twilightElevation) /
-			(dawnElevation - twilightElevation);
+		    (dawnElevation - twilightElevation);
     sky[0][0] = nightColor[0];
     sky[0][1] = nightColor[1];
     sky[0][2] = nightColor[2];
@@ -330,7 +330,7 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
   else if (sunDir[2] < dayElevation) {
     // early morning/late evening
     const float t = (sunDir[2] - dawnElevation) /
-			(dayElevation - dawnElevation);
+		    (dayElevation - dawnElevation);
     lerpColor(sky[0], nightColor, zenithColor, t);
     lerpColor(sky[1], sunrise2Color, horizonColor, t);
     lerpColor(sky[2], nightColor, horizonColor, t);
@@ -382,7 +382,7 @@ bool			areStarsVisible(const float sunDir[3])
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

@@ -10,9 +10,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.playHistoryTracker.txt \
-	playHistoryTracker.def \
 	playHistoryTracker.sln \
-	playHistoryTracker.vcxproj
+	playHistoryTracker.vcxproj	\
+	playHistoryTracker.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

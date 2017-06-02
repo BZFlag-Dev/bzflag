@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,9 +18,9 @@
 class ThiefControl : public bz_Plugin
 {
 public:
-  virtual const char* Name() { return "Thief Control"; }
-  virtual void Init(const char* config);
-  virtual void Event(bz_EventData *eventData);
+  virtual const char* Name() {return "Thief Control";}
+  virtual void Init( const char* config );
+  virtual void Event( bz_EventData *eventData );
 };
 
 BZ_PLUGIN(ThiefControl)

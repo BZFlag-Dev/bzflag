@@ -24,9 +24,9 @@ class CustomZoneSample : public bz_Plugin, bz_CustomMapObjectHandler
 {
 public:
   virtual const char* Name () {return "Custom Zone Sample";}
-  virtual void Init (const char* config);
-  virtual void Event (bz_EventData *eventData);
-  virtual void Cleanup (void);
+  virtual void Init ( const char* config );
+  virtual void Event ( bz_EventData *eventData );
+  virtual void Cleanup ( void );
 
   virtual bool MapObject (bz_ApiString object, bz_CustomMapObjectInfo *data);
 
@@ -140,7 +140,7 @@ void CustomZoneSample::Event (bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

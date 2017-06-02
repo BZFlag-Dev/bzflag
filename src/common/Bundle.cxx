@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -113,7 +113,7 @@ Bundle::TLineType Bundle::parseLine(const std::string &line, std::string &data) 
     endPos = line.find_first_of('"', startPos);
     if (endPos < 0)
       endPos = line.length();
-    data = line.substr( startPos, endPos-startPos);
+    data = line.substr(startPos, endPos-startPos);
   }
   return type;
 }
@@ -129,8 +129,8 @@ std::string Bundle::getLocalString(const std::string &key) const
     return it->second;
   } else {
     if (BZDB.getDebug()) {
-      if (unmapped.find( key ) == unmapped.end( )) {
-	unmapped.insert( key );
+      if (unmapped.find(key) == unmapped.end()) {
+	unmapped.insert(key);
     std::string stripped = stripAnsiCodes (key);
 	std::string debugStr = "Unmapped Locale String: " + stripped + "\n";
 	logDebugMessage(1,"%s", debugStr.c_str());
@@ -261,7 +261,7 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
   int lCurlyPos = messageIn.find_first_of("{");
 
   while (lCurlyPos >= 0) {
-    messageOut += messageIn.substr( startPos, lCurlyPos - startPos);
+    messageOut += messageIn.substr(startPos, lCurlyPos - startPos);
     int rCurlyPos = messageIn.find_first_of("}", lCurlyPos++);
     if (rCurlyPos < 0) {
       messageOut += messageIn.substr(lCurlyPos);
@@ -284,7 +284,7 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

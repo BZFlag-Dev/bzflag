@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -66,26 +66,26 @@ public:
 
 protected:
   void	       *theData;
-  unsigned int  theLen;
+  unsigned int	theLen;
 private:
 
   void		infoComplete(CURLcode result);
 
-  static bool   inited;
-  static bool   justCalled;
+  static bool	inited;
+  static bool	justCalled;
   CURL	       *easyHandle;
   static CURLM *multiHandle;
-  static char   errorBuffer[CURL_ERROR_SIZE];
+  static char	errorBuffer[CURL_ERROR_SIZE];
   bool		added;
-  std::string   usedUrl;
-  std::string   interfaceIP;
-  std::string   userAgent;
-  std::string   postData;
+  std::string	usedUrl;
+  std::string	interfaceIP;
+  std::string	userAgent;
+  std::string	postData;
 
   struct curl_httppost* formPost;
   struct curl_httppost* formLast;
 
-  static void   setup();
+  static void	setup();
 
   static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
 			      void *stream);
@@ -96,44 +96,44 @@ private:
 
 typedef enum
 {
-	eImage,
-	eSound,
-	eFont,
-	eFile,
-	eUnknown
-}teResourceType;
+  eImage,
+  eSound,
+  eFont,
+  eFile,
+  eUnknown
+} teResourceType;
 
 typedef struct
 {
-	teResourceType	resType;
-	std::string		URL;
-	std::string		filePath;
-	std::string		fileName;
-}trResourceItem;
+  teResourceType	resType;
+  std::string		URL;
+  std::string		filePath;
+  std::string		fileName;
+  } trResourceItem;
 
-class ResourceGetter :  cURLManager
+class ResourceGetter : cURLManager
 {
 public:
-	ResourceGetter();
-	virtual ~ResourceGetter();
+  ResourceGetter();
+  virtual ~ResourceGetter();
 
-	void addResource ( trResourceItem &item );
-	void flush ( void );
+  void addResource(trResourceItem &item);
+  void flush(void);
 
-	virtual void finalization(char *data, unsigned int length, bool good);
+  virtual void finalization(char *data, unsigned int length, bool good);
 
 protected:
-	bool itemExists ( trResourceItem &item );
-	void getResource ( void );
+  bool itemExists(trResourceItem &item);
+  void getResource(void);
 
-	std::vector<trResourceItem>	resources;
-	bool doingStuff;
+  std::vector<trResourceItem> resources;
+  bool doingStuff;
 };
 
 #endif // CURL_MANAGER_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

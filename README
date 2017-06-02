@@ -1,13 +1,15 @@
 			    BZFlag 2.5.x
 			 http://BZFlag.org/
-		Copyright (c) 1993-2016 Tim Riker
+		Copyright (c) 1993-2017 Tim Riker
 
 BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
 capture the Flag game.  At its heart, the game is a 3D first person
 tank simulation where opposing teams battle for dominance.  The game
 was originally written for SGI computers running Irix, but now runs
 and is actively maintained on Windows, Linux, Mac OS X, and other
-platforms.  The game is distributed under the LGPL license.
+platforms.
+
+BZFlag may be redistributed under either the LGPL or MPL licenses.
 
 This is the BZFlag README file.  This file includes introductory build
 instructions, user community interaction references, information for

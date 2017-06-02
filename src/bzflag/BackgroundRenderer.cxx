@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -129,7 +129,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 
  /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
   int moonTexture = -1;
-  if (useMoonTexture){
+  if (useMoonTexture) {
     moonTexture = tm.getTextureID( "moon" );
     useMoonTexture = moonTexture>= 0;
   }*/
@@ -347,7 +347,7 @@ void BackgroundRenderer::setupGroundMaterials()
 }
 
 
-void			BackgroundRenderer::notifyStyleChange()
+void BackgroundRenderer::notifyStyleChange()
 {
   if (BZDBCache::texture) {
     if (BZDBCache::lighting)
@@ -378,7 +378,7 @@ void			BackgroundRenderer::notifyStyleChange()
 }
 
 
-void		BackgroundRenderer::resize() {
+void BackgroundRenderer::resize() {
   resizeSky();
   doFreeDisplayLists();
   doInitDisplayLists();
@@ -1111,8 +1111,8 @@ void BackgroundRenderer::drawGroundCentered()
 }
 
 
-void			BackgroundRenderer::drawGroundGrid(
-						SceneRenderer& renderer)
+void BackgroundRenderer::drawGroundGrid(
+					SceneRenderer& renderer)
 {
   const GLfloat* pos = renderer.getViewFrustum().getEye();
   const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
@@ -1144,8 +1144,8 @@ void			BackgroundRenderer::drawGroundGrid(
   glEnd();
 }
 
-void			BackgroundRenderer::drawGroundShadows(
-						SceneRenderer& renderer)
+void BackgroundRenderer::drawGroundShadows(
+					   SceneRenderer& renderer)
 {
   // draw sun shadows -- always stippled so overlapping shadows don't
   // accumulate darkness.  make and multiply by shadow projection matrix.
@@ -1900,7 +1900,7 @@ const GLfloat*	BackgroundRenderer::getSunDirection() const
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

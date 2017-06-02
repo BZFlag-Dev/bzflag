@@ -20,4 +20,5 @@ MAINTAINERCLEANFILES =	\
 
 EXTRA_DIST = \
 	plugin_utils.sln \
-	plugin_utils.vcxproj
+	plugin_utils.vcxproj	\
+	plugin_utils.vcxproj.filters

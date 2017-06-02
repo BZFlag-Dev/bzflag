@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -192,7 +192,7 @@ bool PlayerAccessInfo::hasPerm(PlayerAccessInfo::AccessPerm right) const
   bool isAllowed = false;
   for (std::vector<std::string>::const_iterator itr=groups.begin(); itr!=groups.end(); ++itr) {
     PlayerAccessMap::iterator group = groupAccess.find(*itr);
-    if (group != groupAccess.end()){
+    if (group != groupAccess.end()) {
       if (group->second.explicitDenys.test(right))
       return false;
       else if (group->second.explicitAllows.test(right))
@@ -240,7 +240,7 @@ bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 		PlayerAccessMap::iterator group = groupAccess.find(*itr);
 		if (group != groupAccess.end())
 		{
-			for(unsigned int i = 0; i < group->second.customPerms.size(); i++)
+			for (unsigned int i = 0; i < group->second.customPerms.size(); i++)
 			{
 				if ( perm == TextUtils::toupper(group->second.customPerms[i]) )
 					return true;
@@ -253,7 +253,7 @@ bool PlayerAccessInfo::hasCustomPerm(const char* right) const
 		PlayerAccessMap::iterator group = groupAccess.find(std::string("DISCONNECTED"));
 		if (group != groupAccess.end())
 		{
-			for(unsigned int i = 0; i < group->second.customPerms.size(); i++)
+			for (unsigned int i = 0; i < group->second.customPerms.size(); i++)
 			{
 				if ( perm == TextUtils::toupper(group->second.customPerms[i]) )
 					return true;
@@ -468,7 +468,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
     }
 
     // Operators are not allowed for userdb
-    if (!info.groupState.test(PlayerAccessInfo::isGroup) && first != '\0'){
+    if (!info.groupState.test(PlayerAccessInfo::isGroup) && first != '\0') {
       logDebugMessage(1,"userdb: illegal permission string, operators are not allowed in userdb\n");
       return false;
     }
@@ -581,10 +581,10 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       linenum++;
 
       // strip leading whitespace
-      line.erase(0 , line.find_first_not_of(" \t"));
+      line.erase(0, line.find_first_not_of(" \t"));
 
       // check for a comment string or empty line
-      if(line.empty() || line[0] == '#')
+      if (line.empty() || line[0] == '#')
 	continue;
 
       makeupper(line);
@@ -606,7 +606,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
 
 	// Parse the permission string. If it contains a yet undefined group
 	// add a recursion
-	if(parsePermissionString(perm, accessInfo) && initialRun){
+	if (parsePermissionString(perm, accessInfo) && initialRun) {
 	  recursionNeeded++;
 	}
 
@@ -615,7 +615,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
       }
     }
     initialRun = false;
-  } while(recursionNeeded--);
+  } while (recursionNeeded--);
 
   return true;
 }

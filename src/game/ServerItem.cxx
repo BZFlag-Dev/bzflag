@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -122,8 +122,8 @@ std::string ServerItem::getAgeString() const
   std::string returnMe;
   char buffer [80];
   time_t age = getAgeMinutes();
-  if (age < 60){ // < 1 hr
-    if (age < 1){
+  if (age < 60) { // < 1 hr
+    if (age < 1) {
       time_t ageSecs = getAgeSeconds();
       sprintf(buffer,"%-3ld secs",(long)ageSecs);
     } else {
@@ -131,11 +131,11 @@ std::string ServerItem::getAgeString() const
     }
   } else { // >= 60 minutes
     float fAge;
-    if (age < (24*60)){ // < 24 hours & > 1 hr
+    if (age < (24*60)) { // < 24 hours & > 1 hr
       fAge = ((float)age / 60.0f);
       sprintf(buffer, "%-2.1f hrs", fAge);
     } else  { // > 24 hrs
-      if (age < (24*60*99)){  // > 1 day & < 99 days
+      if (age < (24*60*99)) {  // > 1 day & < 99 days
 	fAge = ((float) age / (60.0f*24.0f));
 	sprintf(buffer, "%-2.1f days", fAge);
       } else { // over 99 days
@@ -163,12 +163,12 @@ time_t ServerItem::getNow() const
 bool ServerItem::operator<(const ServerItem &right)
 {
   const ServerItem & left = *this;
-  if (left.cached && right.cached){
-    if (left.getSortFactor() < right.getSortFactor()){
+  if (left.cached && right.cached) {
+    if (left.getSortFactor() < right.getSortFactor()) {
       return true;
     }
-    else if (left.getSortFactor() == right.getSortFactor()){
-      if (left.getAgeMinutes() > right.getAgeMinutes()){
+    else if (left.getSortFactor() == right.getSortFactor()) {
+      if (left.getAgeMinutes() > right.getAgeMinutes()) {
 	return true;
       }
       else {
@@ -180,7 +180,7 @@ bool ServerItem::operator<(const ServerItem &right)
     }
   }
   else if (!left.cached && !right.cached) {
-    if (left.getSortFactor() < right.getSortFactor()){
+    if (left.getSortFactor() < right.getSortFactor()) {
       return true;
     }
     else {
@@ -228,7 +228,7 @@ unsigned int ServerItem::getSortFactor() const
   // servers starting with an 'a' or a number show higher on the list just
   // because of their hostname.
   value += randomSortWeight;
-  
+
   return value;
 }
 

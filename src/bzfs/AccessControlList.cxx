@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -34,10 +34,8 @@
 #include "TimeKeeper.h"
 #include "TextUtils.h"
 
-#if !defined(CPPUTEST)
 // bzfs specific headers
 #include "bzfs.h"
-#endif // CPPUTEST
 
 
 void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
@@ -291,7 +289,6 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
 }
 
 
-#if !defined(CPPUTEST)
 void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
 {
   std::ostringstream os;
@@ -302,11 +299,11 @@ void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
   if (duration < 365.0f * 24 * 3600)
     os << std::setiosflags(std::ios::fixed) << std::setprecision(1)
        << " (" << duration/60 << " minutes)";
-  if( baninfo.fromMaster )
+  if ( baninfo.fromMaster )
     os << " (m)";
   if (baninfo.bannedBy.length())
     os << " banned by: " << baninfo.bannedBy;
-    bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
+  bz_sendTextMessage(BZ_SERVER, id, os.str().c_str());
 
   // add reason, if any
   if (baninfo.reason.size()) {
@@ -669,7 +666,7 @@ void AccessControlList::purge(bool master) {
   // selectively remove bans, depending on their origin
   // (local or from master list)
   banList_t::iterator	bItr = banList.begin();
-  while (bItr != banList.end()){
+  while (bItr != banList.end()) {
     if (bItr->fromMaster == master)
       bItr = banList.erase(bItr);
     else
@@ -743,7 +740,6 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
 
   return bans;
 }
-#endif
 
 bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_cidr) {
   std::vector<std::string> ipParts;
@@ -848,7 +844,7 @@ void AccessControlList::expire()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

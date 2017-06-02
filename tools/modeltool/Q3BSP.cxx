@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 #include "Q3BSP.h"
-#include "TextUtils.h"
+#include "SimpleTextUtils.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -44,7 +44,7 @@ Quake3Level::~Quake3Level()
 
 void Quake3Level::loadFromFile ( const char* fileName)
 {
-	if(!fileName)
+	if (!fileName)
 		return;
 
 	theFileName = fileName;
@@ -98,7 +98,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
 	for ( int i = 0; i < mNumFaces; i++ )
 	{
-		switch( mFaces[i].type )
+		switch ( mFaces[i].type )
 		{
 			case 1: // polygon face
 			case 3: // mesh face
@@ -163,7 +163,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					{
 						if (mFaces[i].vert_count > 2)
 						{
-							for( int j = 2; j < mFaces[i].vert_count; j++)
+							for ( int j = 2; j < mFaces[i].vert_count; j++)
 							{
 								face.clear();
 
@@ -186,7 +186,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					else
 					{
 						face.clear();
-						for( int j = 0; j < mFaces[i].vert_count; j++)
+						for ( int j = 0; j < mFaces[i].vert_count; j++)
 						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
@@ -202,7 +202,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 						if (mFaces[i].vert_count > 2)
 						{
 							face.clear();
-							for( int j = 0; j < mFaces[i].vert_count; j+= 1)
+							for ( int j = 0; j < mFaces[i].vert_count; j+= 1)
 							{
 								face.verts.push_back(j);
 								face.normals.push_back(j);
@@ -223,7 +223,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					else
 					{
 						face.clear();
-						for( int j = 0; j < mFaces[i].vert_count; j++)
+						for ( int j = 0; j < mFaces[i].vert_count; j++)
 						{
 							face.verts.push_back(j);
 							face.normals.push_back(j);
@@ -297,7 +297,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 					{
 						for ( int y = 0; y < mFaces[i].mesh_cp[1]-1; y++)
 						{
-							for( int x = 0; x < mFaces[i].mesh_cp[0]-1; x++)
+							for ( int x = 0; x < mFaces[i].mesh_cp[0]-1; x++)
 							{
 								face.clear();
 								int index = (y*mFaces[i].mesh_cp[1])+x;
@@ -357,7 +357,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 	if (mEntities)
 	{
 		std::string ents = (char*)mEntities;
-		std::vector<std::string> entList = TextUtils::tokenize(ents,std::string("\n"));
+		std::vector<std::string> entList = SimpleTextUtils::tokenize(ents,std::string("\n"));
 
 		CCustomObject	cObject;
 		bool hasPos = false;
@@ -390,13 +390,13 @@ bool Quake3Level::dumpToModel ( CModel &model )
 				if (inTag)
 				{
 					// parse it up
-					std::vector<std::string> nubs = TextUtils::tokenize(theLine,std::string(" "),0,true);
-					if ( TextUtils::tolower(nubs[0]) == "classname" )
+					std::vector<std::string> nubs = SimpleTextUtils::tokenize(theLine,std::string(" "),0,true);
+					if ( SimpleTextUtils::tolower(nubs[0]) == "classname" )
 					{
 						if (nubs.size()>1)
 							cObject.name = nubs[1];
 					}
-					else if ( TextUtils::tolower(nubs[0]) == "origin" )
+					else if ( SimpleTextUtils::tolower(nubs[0]) == "origin" )
 					{
 						hasPos = true;
 						float pos[3] ={0,0,0};
@@ -414,7 +414,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 						pos[2] *= globalScale;
 						pos[2] += globalShift[2];
 
-						std::string line = "position " + TextUtils::format("%f %f %f",pos[0],pos[1],pos[2]);
+						std::string line = "position " + SimpleTextUtils::format("%f %f %f",pos[0],pos[1],pos[2]);
 						cObject.params.push_back(line);
 					}
 					else

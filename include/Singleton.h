@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,9 +63,9 @@ private:
 protected:
 
   // protection from instantiating a non-singleton Singleton
-  Singleton() { }
+  Singleton() {}
   Singleton(T* instancePointer) { _instance = instancePointer; }
-  Singleton(const Singleton &) { } // do not use
+  Singleton(const Singleton &) {} // do not use
   Singleton& operator=(const Singleton&) { return *this; } // do not use
   ~Singleton() { _instance = 0; } // do not delete
 

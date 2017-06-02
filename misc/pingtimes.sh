@@ -84,7 +84,7 @@ for server in $servers ; do
 	echo "WARNING: $server seems to be unresponsive"
     else
 
-      	if test "`echo $ping_result | awk '{print $18}'`" = "100%" ; then
+	if test "`echo $ping_result | awk '{print $18}'`" = "100%" ; then
 		echo " NOT okay"
 		echo "WARNING: $server seems to be unresponsive"
 	else

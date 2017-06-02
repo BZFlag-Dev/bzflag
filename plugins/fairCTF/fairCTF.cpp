@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -15,14 +15,14 @@
 class fairCTF : public bz_Plugin, public bz_CustomSlashCommandHandler
 {
 public:
-  virtual const char* Name (){return "Fair CTF";}
+  virtual const char* Name () {return "Fair CTF";}
 
-  virtual void Init (const char* config);
-  virtual void Cleanup(void );
-  virtual void Event (bz_EventData *eventData);
-  
+  virtual void Init ( const char* config );
+  virtual void Cleanup ( void );
+  virtual void Event ( bz_EventData *eventData );
+
   virtual bool SlashCommand (int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params);
-  
+
   virtual void DropTeamFlag(int playerID);
   virtual void SetDropTime();
   virtual void UpdateState(bz_eTeamType teamLeaving);
@@ -35,7 +35,7 @@ public:
   int max_gap_by_1;
   int max_gap;
   int drop_delay;
-  
+
 
   double droptime;
 };
@@ -51,11 +51,11 @@ void fairCTF::Init ( const char* config )
   max_gap_by_1 = 2;
   max_gap = 3;
   drop_delay = 5;
-  
+
   // Parse out args
 
   std::string rawparams = config;
-  
+
   std::string params[4];
   params[0] = "";
   params[1] = "";
@@ -63,13 +63,13 @@ void fairCTF::Init ( const char* config )
   params[3] = "";
 
   unsigned int n = 0;
-  
-  for(unsigned int i = 0; i < rawparams.length(); i++)
+
+  for (unsigned int i = 0; i < rawparams.length(); i++)
   {
     if (rawparams.at(i) == ':')
     {
       n++;
-      
+
       if (n > 3)
       {
 	break;
@@ -80,8 +80,8 @@ void fairCTF::Init ( const char* config )
       params[n] += rawparams.at(i);
     }
   }
-  
-  if(params[0].length() > 0)
+
+  if (params[0].length() > 0)
   {
     float tempratio = (float)atof(params[0].c_str());
     if (tempratio > 0.0)
@@ -89,8 +89,8 @@ void fairCTF::Init ( const char* config )
       max_ratio = tempratio;
     }
   }
-  
-  if(params[1].length() > 0)
+
+  if (params[1].length() > 0)
   {
     int tempmax1gap = atoi(params[1].c_str());
     if (tempmax1gap > 0)
@@ -98,8 +98,8 @@ void fairCTF::Init ( const char* config )
       max_gap_by_1 = tempmax1gap;
     }
   }
-  
-  if(params[2].length() > 0)
+
+  if (params[2].length() > 0)
   {
     int tempmaxgap = atoi(params[2].c_str());
     if (tempmaxgap > 0)
@@ -107,8 +107,8 @@ void fairCTF::Init ( const char* config )
       max_gap = tempmaxgap;
     }
   }
-  
-  if(params[3].length() > 0)
+
+  if (params[3].length() > 0)
   {
     int tempdelay = atoi(params[3].c_str());
     if (tempdelay > 0)
@@ -116,16 +116,16 @@ void fairCTF::Init ( const char* config )
       drop_delay = tempdelay;
     }
   }
-  
+
   Register(bz_eAllowFlagGrab);
   Register(bz_ePlayerJoinEvent);
   Register(bz_ePlayerPartEvent);
   Register(bz_eTickEvent);
-  
+
   bz_registerCustomSlashCommand ("ctf", this);
 
   bz_debugMessage(4,"fairCTF plugin loaded");
-  
+
   UpdateState(eNoTeam);
 }
 
@@ -143,7 +143,7 @@ void fairCTF::Event(bz_EventData *eventData)
   if (eventData->eventType == bz_eAllowFlagGrab)
   {
     bz_AllowFlagGrabData_V1* grabData = (bz_AllowFlagGrabData_V1*)eventData;
-    
+
     if (!allowCTF)
     {
       // Don't allow a team flag grab
@@ -167,17 +167,17 @@ void fairCTF::Event(bz_EventData *eventData)
   }
   else if (eventData->eventType == bz_eTickEvent)
   {
-    
+
     if (droptime != 0.0 && bz_getCurrentTime() >= droptime)
     {
       // Time to drop any team flags.
       bz_APIIntList* pl = bz_getPlayerIndexList();
-      
+
       for (unsigned int x = 0; x < pl->size(); x++)
       {
 	DropTeamFlag(pl->get(x));
       }
-      
+
       droptime = 0.0;
     }
   }
@@ -264,19 +264,19 @@ bool fairCTF::SlashCommand (int playerID, bz_ApiString /*command*/, bz_ApiString
 void fairCTF::DropTeamFlag(int playerID)
 {
   bz_BasePlayerRecord* droppr = bz_getPlayerByIndex (playerID);
-  
+
   if (droppr != NULL)
   {
     // Are they carrying a team flag?
-    if (droppr->currentFlag == "Red team flag" || 
-      droppr->currentFlag == "Green team flag" || 
-      droppr->currentFlag == "Blue team flag" || 
+    if (droppr->currentFlag == "Red team flag" ||
+      droppr->currentFlag == "Green team flag" ||
+      droppr->currentFlag == "Blue team flag" ||
       droppr->currentFlag == "Purple team flag")
     {
       bz_removePlayerFlag(playerID);
       bz_sendTextMessage (BZ_SERVER, playerID, "CTF play is currently disabled.");
     }
-    
+
     bz_freePlayerRecord(droppr);
   }
 }
@@ -286,7 +286,7 @@ void fairCTF::UpdateState(bz_eTeamType teamLeaving)
   if (autoMode)
   {
     bool fair = isEven(teamLeaving);
-    
+
     if (fair && !allowCTF)
     {
       allowCTF = true;
@@ -297,14 +297,14 @@ void fairCTF::UpdateState(bz_eTeamType teamLeaving)
     {
       allowCTF = false;
       bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Team sizes are uneven. CTF play is now disabled.");
-      
+
       SetDropTime();
     }
   }
 }
 
 void fairCTF::SetDropTime()
-{  
+{
   bz_APIIntList	*playerList = bz_newIntList();
   bz_getPlayerIndexList(playerList);
   bool TeamFlagIsCarried = false;
@@ -342,20 +342,20 @@ void fairCTF::SetDropTime()
     else
     {
       bz_sendTextMessage(BZ_SERVER, BZ_ALLUSERS, "Currently-held team flags will not be dropped.");
-    }   
+    }
   }
 }
 
 bool fairCTF::isEven(bz_eTeamType teamLeaving)
 {
 
-  int teamsizes[4]; 
+  int teamsizes[4];
 
   teamsizes[0] = bz_getTeamCount (eRedTeam);
   teamsizes[1] = bz_getTeamCount (eGreenTeam);
   teamsizes[2] = bz_getTeamCount (eBlueTeam);
   teamsizes[3] = bz_getTeamCount (ePurpleTeam);
-  
+
   int leavingTeamIndex = (int)teamLeaving;
   if (leavingTeamIndex >= 1 && leavingTeamIndex <= 4)
   {
@@ -399,16 +399,16 @@ bool fairCTF::isEven(bz_eTeamType teamLeaving)
   {
     return false;
   }
-  if (largestTeam - smallestTeam >= max_gap) 
+  if (largestTeam - smallestTeam >= max_gap)
   {
     return false;
   }
 
-  return true; 
+  return true;
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

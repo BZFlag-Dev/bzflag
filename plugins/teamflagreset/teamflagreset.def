@@ -1,8 +1,0 @@
-LIBRARY	teamflagreset
-
-EXPORTS
-    ; Explicit exports can go here
-
-bz_GetPlugin
-bz_FreePlugin
-bz_GetMinVersion

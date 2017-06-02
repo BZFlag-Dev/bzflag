@@ -12,9 +12,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.serverControl.txt \
 	serverControl.cfg \
-	serverControl.def \
 	serverControl.sln \
-	serverControl.vcxproj
+	serverControl.vcxproj	\
+	serverControl.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

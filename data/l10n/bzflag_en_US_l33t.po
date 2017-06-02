@@ -749,8 +749,8 @@ msgstr "533R"
 msgid "Burrow"
 msgstr "8URroW"
 
-msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
-msgstr "O$cILL@+1on 0VErthrU5TEr (OO):  C4n dR1v3 8hr0u9H bU1lc|1n9s.  C4n'7 b4cKuP 0r 5h007 wHi13 iN$ic|3"
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
+msgstr "O$cILL@+1on 0VErthrU5TEr (OO):  C4n dR1v3 8hr0u9H bU1lc|1n9s.  C4n'7 b4cK uP 0r 5h007 wHi13 iN$ic|3"
 
 #msgid "Machine Gun (MG):  Very fast reload and very short range."
 #msgstr ""
@@ -817,8 +817,8 @@ msgstr "Veloc1Ty (+V): t@nk M0V3$ Ph@5TER. OUtruN 8aD GUy$."
 msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 msgstr "4n9ULAr VELOC1+Y (+A): +4NK +uRN$ F@$t3R. D0dG3 KW1cK3R."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
-msgstr "0$CILl4TI0N 0V3RthRU$t3R (+OO): c4N DrIVE +HRoU9h Bu1LD1N95. c4N'+ b4CKup OR 5H00+ WhiLE 1n$1dE. "
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
+msgstr "0$CILl4TI0N 0V3RthRU$t3R (+OO): c4N DrIVE +HRoU9h Bu1LD1N95. c4N'+ b4CK up OR 5H00+ WhiLE 1n$1dE. "
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."
 msgstr "R4PID F1Re (+F): $h0o+5 morE OFTeN. $heLL5 9O F@5+3r bUT nOT 4$ F4R."

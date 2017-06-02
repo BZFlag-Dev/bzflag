@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 #
 # BZFlag
-# Copyright (c) 1993-2016 Tim Riker
+# Copyright (c) 1993-2017 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -93,7 +93,7 @@ if ($#ARGV == 0) {
 }
 
 # Local Variables: ***
-# mode:Perl ***
+# mode: Perl ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

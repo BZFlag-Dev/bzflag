@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -178,7 +178,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
   mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
   mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
   mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
-    + mySphere[2]*mySphere[2];
+		+ mySphere[2]*mySphere[2];
   mySphere[0] += base[0];
   mySphere[1] += base[1];
   mySphere[2] += base[2];
@@ -186,9 +186,9 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
 
   // get length of sides
   const float uLength = sqrtf(uEdge[0] * uEdge[0] +
-				uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]);
+			      uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]);
   const float vLength = sqrtf(vEdge[0] * vEdge[0] +
-				vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]);
+			      vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]);
   float area = 0.5f * uLength * vLength;
 
   // If negative then these values aren't a number of times to repeat
@@ -197,12 +197,12 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
   // as necessary to fit the surface.
   if (uRepeats < 0.0f)
   {
-      uRepeats = - uLength / uRepeats;
+    uRepeats = - uLength / uRepeats;
   }
 
   if (vRepeats < 0.0f)
   {
-      vRepeats = - vLength / vRepeats;
+    vRepeats = - vLength / vRepeats;
   }
 
   // compute how many LODs required to get larger edge down to
@@ -312,7 +312,7 @@ void			TriWallSceneNode::addShadowNodes(
 }
 
 
-bool		    TriWallSceneNode::inAxisBox(const Extents& exts) const
+bool			TriWallSceneNode::inAxisBox(const Extents& exts) const
 {
   if (!extents.touches(exts)) {
     return false;
@@ -328,18 +328,18 @@ bool		    TriWallSceneNode::inAxisBox(const Extents& exts) const
 }
 
 
-int		     TriWallSceneNode::getVertexCount () const
+int			TriWallSceneNode::getVertexCount () const
 {
   return 3;
 }
 
 
-const GLfloat*	  TriWallSceneNode::getVertex (int vertex) const
+const GLfloat*		TriWallSceneNode::getVertex (int vertex) const
 {
   return nodes[0]->getVertex(vertex);
 }
 
-void TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+void			TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
   RenderSet rs = { nodes[0], getWallGState() };
   rnodes.push_back(rs);
@@ -347,7 +347,7 @@ void TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void TriWallSceneNode::renderRadar()
+void			TriWallSceneNode::renderRadar()
 {
   if (plane[2] > 0.0f) {
     nodes[0]->renderRadar();
@@ -357,7 +357,7 @@ void TriWallSceneNode::renderRadar()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

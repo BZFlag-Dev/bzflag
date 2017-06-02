@@ -17,7 +17,6 @@ endif
 
 AM_CPPFLAGS = \
 	-DBUILDING_BZADMIN \
-	-I$(top_srcdir)/src/bzflag \
 	$(LIBCURL_CPPFLAGS) \
 	$(CONF_CPPFLAGS) \
 	-I$(top_srcdir)/include
@@ -35,7 +34,8 @@ bzadmin_SOURCES = \
 	OptionParser.h \
 	OptionParser.cxx \
 	PlayerInfo.h \
-	$(top_srcdir)/src/bzflag/ServerLink.cxx \
+	ServerLink.h \
+	ServerLink.cxx \
 	StdBothUI.h \
 	StdBothUI.cxx \
 	StdInUI.h \

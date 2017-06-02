@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -134,7 +134,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   uint16_t len;
   uint16_t code;
   while (true) {
-    n = recvfrom(udpSocket, buffer, MaxPacketLen, 0, (struct sockaddr *) uaddr,
+    n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
 		 &recvlen);
     if ((n < 0) || (n >= 4))
       break;
@@ -147,6 +147,10 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
   const void *buf = buffer;
   buf = nboUnpackUShort(buf, len);
   buf = nboUnpackUShort(buf, code);
+
+  if (len > MaxUDPPacketLen - 4)
+    return -1;
+
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
 //    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
   if (n == 6 && len == 2 && code == MsgPingCodeRequest)
@@ -523,7 +527,7 @@ RxStatus NetHandler::tcpReceive() {
     // if header not ready yet then skip the read of the body
     return e;
   }
-  
+
   // read body if we don't have it yet
   uint16_t len, code;
   const void *buf = tcpmsg;
@@ -568,13 +572,13 @@ RxStatus NetHandler::tcpReceive() {
 
 RxStatus NetHandler::receive(size_t length, bool *retry) {
   RxStatus returnValue(ReadError);
-  
+
   if (retry)
     *retry = false;
 
   // Degenerate case, becase a closed socket should not be sending data, but be paranoid and test for it anyway
   if (closed) return returnValue;
-  
+
   if ((int)length <= tcplen) return ReadAll;
   int size = recv(fd, tcpmsg + tcplen, (int)length - tcplen, 0);
   if (size > 0) {
@@ -589,7 +593,7 @@ RxStatus NetHandler::receive(size_t length, bool *retry) {
     const int err = getErrno();
 
     // ignore if it's one of these errors
-    if (err == EAGAIN || err == EINTR){
+    if (err == EAGAIN || err == EINTR) {
       if (retry)
 	*retry = true;
       returnValue = ReadPart;
@@ -810,7 +814,7 @@ bool NetHandler::reverseDNSDone()
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

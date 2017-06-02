@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,6 +20,7 @@
 #define _WINSOCKAPI_
 
 #include <windows.h>
+#include <stdio.h>
 #include <float.h>
 
 // missing constants
@@ -54,14 +55,10 @@ typedef unsigned int	uint32_t;
 #  pragma warning(disable: 4355)
 
 // missing functions
+#ifndef snprintf
 #  define snprintf	_snprintf
+#endif
 
-/*
-  namespace std {
-    template<typename _Tp>
-    int isnan(_Tp __f) { return _isnan((double)__f); }
-  }
-*/
 #endif // _MSC_VER
 #endif // __WIN32_H__
 

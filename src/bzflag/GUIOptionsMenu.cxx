@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -403,7 +403,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
 					       ->getPanelOpacity() + 0.5));
    ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
-                                                  ->getRadarOpacity() + 0.5));
+						  ->getRadarOpacity() + 0.5));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
 					 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
@@ -490,20 +490,20 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 
     case 'y':
       {
-        const float newOpacity = (float)list->getIndex() / 10.0f;
-        if (newOpacity == 1.0f || sceneRenderer->getRadarOpacity() == 1.0f)
-          sceneRenderer->setRadarOpacity(newOpacity);
+	const float newOpacity = (float)list->getIndex() / 10.0f;
+	if (newOpacity == 1.0f || sceneRenderer->getRadarOpacity() == 1.0f)
+	  sceneRenderer->setRadarOpacity(newOpacity);
 	sceneRenderer->setPanelOpacity(newOpacity);
 	break;
       }
 
     case 'Y':
       {
-        const float newOpacity = (float)list->getIndex() / 10.0f;
-        sceneRenderer->setRadarOpacity(newOpacity);
-        if (newOpacity == 1.0f || sceneRenderer->getPanelOpacity() == 1.0f)
-          sceneRenderer->setPanelOpacity(newOpacity);
-        break;
+	const float newOpacity = (float)list->getIndex() / 10.0f;
+	sceneRenderer->setRadarOpacity(newOpacity);
+	if (newOpacity == 1.0f || sceneRenderer->getPanelOpacity() == 1.0f)
+	  sceneRenderer->setPanelOpacity(newOpacity);
+	break;
       }
 
     case 'z':

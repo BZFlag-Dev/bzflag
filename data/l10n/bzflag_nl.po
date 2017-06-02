@@ -764,7 +764,7 @@ msgstr "Vlag van de tegenstander: Breng deze naar je basis om deze te veroveren!
 #msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 #msgstr ""
 
-#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+#msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 #msgstr ""
 
 #msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -827,7 +827,7 @@ msgstr "Snelheid (+V): Tank gaat sneller, laat tegenstanders achter je."
 msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 msgstr "Snelle Draaicirkel (+A): Tank draait sneller. Ontwijk sneller."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Oscillation Overthruster (+OO): Kan door gebouwen rijden. Kan niet achteruit of schieten indien in gebouw."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

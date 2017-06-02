@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -30,9 +30,6 @@
 #  include <sys/types.h>
 #  include <sys/stat.h>
 #  include <direct.h>
-#  if !defined(HAVE_SDL)
-#    include <tchar.h>
-#  endif /* !defined(HAVE_SDL) */
 #else
 #  include <pwd.h>
 #  include <dirent.h>
@@ -147,7 +144,7 @@ static void		setVisual(BzfVisual* visual)
   visual->setStencil(1);
 #endif
   if (BZDB.isTrue("multisample"))
-    visual->setMultisample(4);
+    visual->setMultisample(BZDB.evalInt("multisample"));
 #ifdef USE_GL_STEREO
   if (BZDB.isSet("view") && BZDB.get("view") == configViewValues[1])
     visual->setStereo(true);
@@ -283,7 +280,7 @@ static void		parse(int argc, char** argv)
       BZDB.set("list", "");
     }
     else if (strcmp(argv[i], "-m") == 0 ||
-		strcmp(argv[i], "-mute") == 0) {
+	     strcmp(argv[i], "-mute") == 0) {
       noAudio = true;
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
@@ -322,8 +319,8 @@ static void		parse(int argc, char** argv)
 	usage();
       }
     } else if (strcmp(argv[i], "-v") == 0 ||
-	     strcmp(argv[i], "-version") == 0 ||
-	     strcmp(argv[i], "--version") == 0) {
+	       strcmp(argv[i], "-version") == 0 ||
+	       strcmp(argv[i], "--version") == 0) {
       printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
 		getAppVersion(),
 		getProtocolVersion(),
@@ -407,84 +404,84 @@ static void		parse(int argc, char** argv)
     }
     else if (argv[i][0] != '-') {
       if (i == (argc - 1)) {
-        // argv[i] = username:password@server:port
-        // variables to store
-        std::string serverName, callsign, password;
-        int port;
+	// argv[i] = username:password@server:port
+	// variables to store
+	std::string serverName, callsign, password;
+	int port;
 
-        // start splitting stuff
+	// start splitting stuff
 	const std::string argument = std::string(argv[i]);
 	const size_t atSplit = argument.find("@");
 	const size_t portSplit = argument.rfind(":");
 	const size_t passSplit = argument.find(":");
 
-        if (atSplit != std::string::npos) { // we found an "@"
-          if (portSplit != std::string::npos) { // we have a port
-            serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
-            port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
+	if (atSplit != std::string::npos) { // we found an "@"
+	  if (portSplit != std::string::npos) { // we have a port
+	    serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
+	    port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
 
-            if (port < 1 || port > 65535) { // invalid port
-              printFatalError("Bad port, using default %d.", ServerPort);
-              port = ServerPort;
-            }
-          }
-          else { //we don't have a port
-            serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
-            port = ServerPort;
-          }
+	    if (port < 1 || port > 65535) { // invalid port
+	      printFatalError("Bad port, using default %d.", ServerPort);
+	      port = ServerPort;
+	    }
+	  }
+	  else { //we don't have a port
+	    serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
+	    port = ServerPort;
+	  }
 
-          if (portSplit != passSplit) { // there's a password to parse
-            callsign = argument.substr(0, passSplit);
-            password = argument.substr(passSplit + 1, atSplit - passSplit - 1);
-          }
-          else { // just a username
-            callsign = argument.substr(0, atSplit);
-            password = "";
-          }
+	  if (portSplit != passSplit) { // there's a password to parse
+	    callsign = argument.substr(0, passSplit);
+	    password = argument.substr(passSplit + 1, atSplit - passSplit - 1);
+	  }
+	  else { // just a username
+	    callsign = argument.substr(0, atSplit);
+	    password = "";
+	  }
 
-          // length checks and always truncate everything after the max length
-          if (callsign.length() > sizeof(startupInfo.callsign)) {
-            callsign.erase(sizeof(startupInfo.callsign) - 1, std::string::npos);
-            printFatalError("Callsign truncated after %d characters.", sizeof(startupInfo.callsign));
-          }
-          if (password.length() > sizeof(startupInfo.password)) {
-            password.erase(sizeof(startupInfo.password) - 1, std::string::npos);
-            printFatalError("Password truncated after %d characters.", sizeof(startupInfo.password));
-          }
-          if (serverName.length() > sizeof(startupInfo.serverName)) {
-            serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
-            printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
-          }
+	  // length checks and always truncate everything after the max length
+	  if (callsign.length() > sizeof(startupInfo.callsign)) {
+	    callsign.erase(sizeof(startupInfo.callsign) - 1, std::string::npos);
+	    printFatalError("Callsign truncated after %d characters.", sizeof(startupInfo.callsign));
+	  }
+	  if (password.length() > sizeof(startupInfo.password)) {
+	    password.erase(sizeof(startupInfo.password) - 1, std::string::npos);
+	    printFatalError("Password truncated after %d characters.", sizeof(startupInfo.password));
+	  }
+	  if (serverName.length() > sizeof(startupInfo.serverName)) {
+	    serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
+	    printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
+	  }
 
-          // assign variables with strcpy because char[] can't be assigned
-          strcpy(startupInfo.callsign, callsign.c_str());
-          strcpy(startupInfo.password, password.c_str());
-          strcpy(startupInfo.serverName, serverName.c_str());
-          startupInfo.serverPort = port;
-        }
+	  // assign variables with strcpy because char[] can't be assigned
+	  strcpy(startupInfo.callsign, callsign.c_str());
+	  strcpy(startupInfo.password, password.c_str());
+	  strcpy(startupInfo.serverName, serverName.c_str());
+	  startupInfo.serverPort = port;
+	}
 	else { // there is no callsign/password so only a destination
-          if (portSplit != std::string::npos) { // we have a port
-            serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
-            port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
+	  if (portSplit != std::string::npos) { // we have a port
+	    serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
+	    port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
 
-            if (port < 1 || port > 65535) { // invalid port
-              printFatalError("Bad port, using default %d.", ServerPort);
-              port = ServerPort;
-            }
-          }
-          else { //we don't have a port
-            serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
-            port = ServerPort;
-          }
+	    if (port < 1 || port > 65535) { // invalid port
+	      printFatalError("Bad port, using default %d.", ServerPort);
+	      port = ServerPort;
+	    }
+	  }
+	  else { //we don't have a port
+	    serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
+	    port = ServerPort;
+	  }
 
 	  // sanity check for length
-          if (serverName.length() > sizeof(startupInfo.serverName)) {
-            serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
-            printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
-          }
+	  if (serverName.length() > sizeof(startupInfo.serverName)) {
+	    serverName.erase(sizeof(startupInfo.serverName) - 1, std::string::npos);
+	    printFatalError("Server name truncated after %d characters.", sizeof(startupInfo.serverName));
+	  }
 
-          strcpy(startupInfo.serverName, serverName.c_str());
-          startupInfo.serverPort = port;
+	  strcpy(startupInfo.serverName, serverName.c_str());
+	  startupInfo.serverPort = port;
 	}
 
 	startupInfo.autoConnect = true; // automatically connect on start up
@@ -711,33 +708,6 @@ int			main(int argc, char** argv)
 	bail(0);
     exit(0);
   }
-
-#if defined(_WIN32)
-  {
-    /* write HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath with the
-     * current path.  this lets Xfire know that this bzflag.exe running from
-     * here really is bzflag, not some imposter.
-     * since it may be useful to someone else, it's not protected by USE_XFIRE
-     */
-
-    // get our path
-    char temppath[MAX_PATH], temppath2[MAX_PATH];
-    char tempdrive[10];
-    GetModuleFileName(NULL, temppath, MAX_PATH);
-    // strip filename/extension
-    _splitpath(temppath, tempdrive, temppath2, NULL, NULL);
-    _makepath(temppath, tempdrive, temppath2, NULL, NULL);
-
-    // write the registry key in question
-    HKEY key = NULL;
-    if (RegCreateKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-	0, NULL, REG_OPTION_VOLATILE, KEY_ALL_ACCESS, NULL,
-	&key, NULL) == ERROR_SUCCESS) {
-      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)temppath,
-		   (DWORD)strlen(temppath));
-    }
-  }
-#endif
 
   createCacheSignature();
 
@@ -1226,7 +1196,7 @@ int			main(int argc, char** argv)
   //add a fake cursor. Let the defaults file override this, though.
   if (!BZDB.isSet("fakecursor")) {
     // check that the glrenderer is Mesa Glide
-    if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0)){
+    if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0)) {
       BZDB.set("fakecursor", "1");
     }
   }
@@ -1281,7 +1251,7 @@ int			main(int argc, char** argv)
       RENDERER.setPanelOpacity(BZDB.eval("panelopacity"));
 
     if (BZDB.isSet("radaropacity"))
-          RENDERER.setRadarOpacity(BZDB.eval("radaropacity"));
+	  RENDERER.setRadarOpacity(BZDB.eval("radaropacity"));
 
     if (BZDB.isSet("radarsize"))
       RENDERER.setRadarSize(BZDB.getIntClamped("radarsize", 0, GUIOptionsMenu::maxRadarSize));
@@ -1385,18 +1355,6 @@ int			main(int argc, char** argv)
   delete bm;
   Flags::kill();
 
-#if defined(_WIN32)
-  {
-    /* clear HKEY_CURRENT_USER\Software\BZFlag\CurrentRunningPath if it
-     * exists */
-    HKEY key = NULL;
-    if (RegOpenKeyEx(HKEY_CURRENT_USER, "Software\\BZFlag",
-	0, KEY_ALL_ACCESS, &key) == ERROR_SUCCESS) {
-      RegSetValueEx(key, "CurrentRunningPath", 0, REG_SZ, (LPBYTE)"\0", 1);
-    }
-  }
-#endif
-
 #ifdef _WIN32
   // clean up
   WSACleanup();
@@ -1419,14 +1377,6 @@ int			main(int argc, char** argv)
 
 int WINAPI		WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
 {
-  // Tell Windows that we are DPI aware so that it stop trying to scale for us
-  HMODULE hUser32 = LoadLibrary(_T("user32.dll"));
-  typedef BOOL (*SetProcessDPIAwareFunc)();
-  SetProcessDPIAwareFunc setDPIAware = (SetProcessDPIAwareFunc)GetProcAddress(hUser32, "SetProcessDPIAware");
-  if (setDPIAware)
-    setDPIAware();
-  FreeLibrary(hUser32);
-
   // convert command line to argc and argv.  note that it's too late
   // to do this right because spaces that were embedded in a single
   // argument now look like like normal spaces.  not much we can do

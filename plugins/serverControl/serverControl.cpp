@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,16 +22,16 @@
 
 using namespace std;
 
-enum action { join , part };
+enum action { join, part };
 
 class ServerControl : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Server Control";}
-  virtual void Init ( const char* config);
+  virtual const char* Name () {return "Server Control";}
+  virtual void Init ( const char* config );
 
   virtual void Event( bz_EventData *eventData );
-  int loadConfig(const char *cmdLine);
+  int loadConfig( const char *cmdLine );
 private:
   void countPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
   void checkShutdown( void );
@@ -75,7 +75,7 @@ int ServerControl::loadConfig(const char *cmdLine)
   if (config.errors) return -1;
 
   serverActive = false;
-  countPlayers( join , NULL );
+  countPlayers( join, NULL );
 
   lastTime = 0.0;
 
@@ -210,10 +210,10 @@ void ServerControl::Event( bz_EventData *eventData )
 	    data->record->callsign != "")  {
 	  serverActive = true;
 	}
-	countPlayers( join , data );
+	countPlayers( join, data );
 	break;
       case bz_ePlayerPartEvent:
-	countPlayers( part , data );
+	countPlayers( part, data );
 	checkShutdown();
 	break;
       default :
@@ -222,7 +222,7 @@ void ServerControl::Event( bz_EventData *eventData )
   }
 }
 
-void ServerControl::countPlayers(action act , bz_PlayerJoinPartEventData_V1 *data)
+void ServerControl::countPlayers(action act, bz_PlayerJoinPartEventData_V1 *data)
 {
   bz_APIIntList *playerList = bz_newIntList();
   int numLines = 0;
@@ -276,7 +276,7 @@ void ServerControl::checkMasterBanChanges( void )
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

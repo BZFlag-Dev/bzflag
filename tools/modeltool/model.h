@@ -37,14 +37,14 @@ typedef enum
 	eXAxis,
 	eYAxis,
 	eZAxis
-}teModelAxis;
+} teModelAxis;
 
 class CTexCoord
 {
 public:
-	CTexCoord(){u = v = 0;}
-	~CTexCoord(){};
-	float u,v;
+	CTexCoord() {u = v = 0;}
+	~CTexCoord() {};
+	float	u,v;
 
 	bool same ( const CTexCoord &c )
 	{
@@ -57,9 +57,9 @@ typedef std::vector<CTexCoord> tvTexCoordList;
 class CVertex
 {
 public:
-	CVertex(){x = y = z = 0;}
-	~CVertex(){};
-	float x,y,z;
+	CVertex() {x = y = z = 0;}
+	~CVertex() {};
+	float	x,y,z;
 
 	float get ( teModelAxis axis )
 	{
@@ -100,11 +100,11 @@ typedef std::vector<CVertex> tvVertList;
 class CFace
 {
 public:
-	CFace(){};
-	~CFace(){};
+	CFace() {};
+	~CFace() {};
 
-	std::string material;
-	tvIndexList verts;
+	std::string	material;
+	tvIndexList	verts;
 	tvIndexList	normals;
 	tvIndexList	texCoords;
 
@@ -116,10 +116,10 @@ typedef std::vector<CFace> tvFaceList;
 class CMaterial
 {
 public:
-	CMaterial(){clear();}
-	~CMaterial(){};
+	CMaterial() {clear();}
+	~CMaterial() {};
 
-	std::string texture;
+	std::string	texture;
 	float		ambient[4];
 	float		diffuse[4];
 	float		specular[4];
@@ -146,14 +146,14 @@ typedef std::map<std::string,CMaterial> tmMaterialMap;
 class CMesh
 {
 public:
-	CMesh(){};
-	~CMesh(){};
+	CMesh() {};
+	~CMesh() {};
 
-	tvVertList		verts;
-	tvVertList		normals;
+	tvVertList	verts;
+	tvVertList	normals;
 	tvTexCoordList	texCoords;
 
-	std::string name;
+	std::string	name;
 	tvFaceList	faces;
 
 	float getMaxAxisValue ( teModelAxis axis )
@@ -223,10 +223,10 @@ typedef std::vector<CCustomObject> tvCustomObjectList;
 class CModel
 {
 public:
-	CModel(){};
-	~CModel(){};
+	CModel() {};
+	~CModel() {};
 
-	tmMaterialMap	materials;
+	tmMaterialMap		materials;
 	tvMeshList		meshes;
 	tvCustomObjectList	customObjects;
 

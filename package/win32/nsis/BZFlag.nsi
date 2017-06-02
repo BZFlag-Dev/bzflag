@@ -36,10 +36,15 @@
   
   ; Include the date for alpha/beta/RC builds
   !if ${TYPE} != "release"
+	!if ${TYPE} != "devel"
+		!define VERSION_TAIL "-${TYPE}${TYPE_REVISION}"
+	!else
+		!define VERSION_TAIL ""
+	!endif
     !ifndef DATE_OVERRIDE
-      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d-${TYPE}${TYPE_REVISION}"
+      !define /date VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.%Y%m%d${VERSION_TAIL}"
     !else
-      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}-${TYPE}${TYPE_REVISION}"
+      !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}.${DATE_OVERRIDE}${VERSION_TAIL}"
     !endif
   !else
     !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
@@ -150,12 +155,12 @@
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
 
-  !define MUI_FINISHPAGE_SHOWREADME "$INSTDIR\doc\ReadMe.win32.html"
-  !define MUI_FINISHPAGE_SHOWREADME_TEXT "View Readme"
+  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/documentation/getting_started"
+  !define MUI_FINISHPAGE_SHOWREADME_TEXT "Read Getting Started"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 
   !define MUI_FINISHPAGE_LINK "BZFlag Home Page"
-  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.bzflag.org"
+  !define MUI_FINISHPAGE_LINK_LOCATION "https://www.bzflag.org"
 
   !insertmacro MUI_PAGE_FINISH
   
@@ -208,7 +213,6 @@ Section "!BZFlag (Required)" BZFlag
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\ReadMe.win32.html
   File ..\..\..\COPYING
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
 
@@ -220,9 +224,8 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
   ; This requires the Visual C++ runtime file to be located in
-  ; the same directory as the NSIS script
-  ; 32-bit: http://www.microsoft.com/en-us/download/details.aspx?id=8328
-  ; 64-bit: http://www.microsoft.com/en-us/download/details.aspx?id=13523
+  ; the same directory as the NSIS script. The files can be found here:
+  ; C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\1033
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
@@ -235,12 +238,22 @@ Section "!BZFlag (Required)" BZFlag
 
   ; Write the uninstall keys for Windows
   !ifdef BUILD_64
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "DisplayName" "BZFlag ${VERSION} ${BITNESS} (remove only)"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+    !define UNINSTALL_REG_ROOT "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}"
+    WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayName" "BZFlag ${VERSION} ${BITNESS}"
   !else
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "DisplayName" "BZFlag ${VERSION} (remove only)"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+    !define UNINSTALL_REG_ROOT "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}"
+    WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayName" "BZFlag ${VERSION}"
   !endif
+  
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayIcon" "$INSTDIR\bzflag.exe"
+  ; We're roughly 30MB installed
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "EstimatedSize" 30720
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "HelpLink" "https://www.bzflag.org/"
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "Comments" "Online multiplayer tank battle game"
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoRepair" 1
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoModify" 1
+  WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "UninstallString" '"$INSTDIR\uninstall.exe"'
+  
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -258,11 +271,7 @@ Section "!BZFlag (Required)" BZFlag
 
     ; Local User Data
     Var /GLOBAL UserData
-    ${If} ${AtMostWinXP}
-      StrCpy $UserData "%USERPROFILE%\Local Settings\Application Data\BZFlag"
-    ${Else}
-      StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
-    ${EndIf}
+    StrCpy $UserData "%LOCALAPPDATA%\BZFlag"
 
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Browse User Data.lnk" "$UserData"
 
@@ -471,4 +480,11 @@ SectionEnd
 
 Function LaunchLink
   ExecShell "" "$INSTDIR\bzflag.exe"
+FunctionEnd
+
+Function .onInit
+  ${If} ${AtMostWinXP}
+    MessageBox MB_OK "BZFlag requires Windows Vista or higher."
+    Quit
+  ${EndIf}
 FunctionEnd

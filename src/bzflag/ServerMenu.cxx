@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -122,14 +122,14 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     }
   }
   else if (key.ascii == 'e') {
-    if(HUDui::getFocus() && !menu->getFind()) {
+    if (HUDui::getFocus() && !menu->getFind()) {
       if (!serverListFilterMenu) serverListFilterMenu = new ServerListFilterMenu;
       HUDDialogStack::get()->push(serverListFilterMenu);
       return true;
     }
   }
   else if (key.ascii == '?') {
-    if(HUDui::getFocus() && !menu->getFind()) {
+    if (HUDui::getFocus() && !menu->getFind()) {
       HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
       return true;
     }
@@ -511,7 +511,7 @@ void ServerMenu::pick()
 
   // if this is a cached item set the player counts to "?/max count"
   if (item.cached && item.getPlayerCount() == 0) {
-    for (int i = 1; i <=7; i ++){
+    for (int i = 1; i <=7; i ++) {
       sprintf(buf, "?/%d", maxes[i-1]);
       ((HUDuiLabel*)listHUD[i])->setLabel(buf);
     }
@@ -610,7 +610,7 @@ void ServerMenu::pick()
 					    &dropArgs);
   }
   else {
-    ((HUDuiLabel*)listHUD[13])->setString("");
+    ((HUDuiLabel*)listHUD[12])->setString("");
   }
 
   if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0) {
@@ -626,6 +626,12 @@ void ServerMenu::pick()
 					    &dropArgs);
   }
   else {
+    ((HUDuiLabel*)listHUD[12])->setString("");
+  }
+
+  if (ping.gameOptions & NoTeamKillsGameStyle) {
+    ((HUDuiLabel*)listHUD[13])->setString("No Teamkills");
+  } else {
     ((HUDuiLabel*)listHUD[13])->setString("");
   }
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -59,8 +59,8 @@ void bz_ServerSidePlayerHandler::update ( void )
 
 
 // lower level message API
-void bz_ServerSidePlayerHandler::playerAdded(int){}
-void bz_ServerSidePlayerHandler::playerRemoved(int){}
+void bz_ServerSidePlayerHandler::playerAdded(int) {}
+void bz_ServerSidePlayerHandler::playerRemoved(int) {}
 
 void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], float _rot)
 {
@@ -90,7 +90,7 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], floa
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::textMessage(int, int, const char*){}
+void bz_ServerSidePlayerHandler::textMessage(int, int, const char*) {}
 
 void bz_ServerSidePlayerHandler::playerKilled(int victimIndex, int killerIndex,
 					      bz_ePlayerDeathReason reason, int UNUSED(shotIndex),
@@ -111,19 +111,19 @@ void bz_ServerSidePlayerHandler::playerKilled(int victimIndex, int killerIndex,
 		smote (eOtherDeath);
 }
 
-void bz_ServerSidePlayerHandler::scoreLimitReached(int, bz_eTeamType){}
+void bz_ServerSidePlayerHandler::scoreLimitReached(int, bz_eTeamType) {}
 
-void bz_ServerSidePlayerHandler::flagCaptured(int, bz_eTeamType){}
+void bz_ServerSidePlayerHandler::flagCaptured(int, bz_eTeamType) {}
 
-void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, double){}
+void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, double) {}
 
-//void bz_ServerSidePlayerHandler::playerScoreUpdate(int, float, int, int, int){}
+//void bz_ServerSidePlayerHandler::playerScoreUpdate(int, float, int, int, int) {}
 
-void bz_ServerSidePlayerHandler::shotFired(int, unsigned short ){}
+void bz_ServerSidePlayerHandler::shotFired(int, unsigned short ) {}
 
-void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short){}
+void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short) {}
 
-void bz_ServerSidePlayerHandler::playerTeleported( int, bz_PlayerUpdateState *, bz_PlayerUpdateState * ){}
+void bz_ServerSidePlayerHandler::playerTeleported( int, bz_PlayerUpdateState *, bz_PlayerUpdateState * ) {}
 
 void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
 {
@@ -229,7 +229,7 @@ void bz_ServerSidePlayerHandler::sendTeamChatMessage(const char *text, bz_eTeamT
 
 	PlayerId dstPlayer = AllPlayers;
 
-	switch(targetTeam) {
+	switch (targetTeam) {
 	case eRogueTeam:
 	case eRedTeam:
 	case eGreenTeam:
@@ -594,7 +594,7 @@ BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler 
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

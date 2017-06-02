@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,7 +16,7 @@
 class PlayHistoryTracker : public bz_Plugin
 {
 public:
-  virtual const char* Name (){return "Play History Tracker";}
+  virtual const char* Name () {return "Play History Tracker";}
   virtual void Init (const char* /* config */)
   {
     // Register our events
@@ -65,7 +65,7 @@ void PlayHistoryTracker::Event(bz_EventData *eventData)
       if (spreeCount.find(deathRecord->playerID) != spreeCount.end()) {
 	// Store a quick reference to their former spree count
 	int spreeTotal = spreeCount[deathRecord->playerID];
-	
+
 	std::string message;
 
 	// Generate an appropriate message, if any
@@ -127,7 +127,7 @@ void PlayHistoryTracker::Event(bz_EventData *eventData)
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

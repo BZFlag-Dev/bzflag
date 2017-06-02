@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -49,7 +49,7 @@ class BzfWindow {
     virtual void	setMinSize(int width, int height) = 0;
     virtual void	setFullscreen(bool) = 0;
     virtual void	iconify(void) {;};
-    virtual bool	create(void) {return true;};
+    virtual bool	create(void) { return true; };
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;
@@ -66,6 +66,9 @@ class BzfWindow {
     virtual void	setGamma(float) = 0;
     virtual float	getGamma() const = 0;
     virtual bool	hasGammaControl() const = 0;
+
+    bool		hasMultisampling() const { return getMaxSamples() > 1; }
+    virtual int		getMaxSamples() const { return 1; }
 
     virtual bool	hasVerticalSync() const { return false; }
     virtual void	setVerticalSync(bool) {;}
@@ -92,7 +95,7 @@ class BzfWindow {
 };
 
 
-#endif  /* __BZFWINDOW_H__ */
+#endif /* __BZFWINDOW_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

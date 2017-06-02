@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,22 +36,22 @@ class BZAdminUI {
 public:
 
   /** This constructor just sets the BZAdminClient reference. */
-  BZAdminUI(BZAdminClient& c) : client(c) { }
+  BZAdminUI(BZAdminClient& c) : client(c) {}
 
   /** Need a virtual destructor so subclasses get to do their cleanups. */
-  virtual ~BZAdminUI() { }
+  virtual ~BZAdminUI() {}
 
   /** This function prints the message. */
-  virtual void outputMessage(const std::string&, ColorCode) { }
+  virtual void outputMessage(const std::string&, ColorCode) {}
   /** This function is called by the client when a new packet has arrived. */
   virtual void handleNewPacket(uint16_t);
   /** See if the user has entered a command, if it has, store it in str and
       return true. */
   virtual bool checkCommand(std::string&) { return false; }
   /** Tell the UI that a player has been added. */
-  virtual void addedPlayer(PlayerId) { }
+  virtual void addedPlayer(PlayerId) {}
   /** Warn the UI that a player will be removed. */
-  virtual void removingPlayer(PlayerId) { }
+  virtual void removingPlayer(PlayerId) {}
   /** Get the current target (the player that messages should be sent to,
       or 0 for public messages). */
   virtual PlayerId getTarget() const { return AllPlayers; }
@@ -64,7 +64,7 @@ protected:
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

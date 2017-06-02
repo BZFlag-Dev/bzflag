@@ -7,7 +7,7 @@
 // php native code by Tim Riker <Tim@Rikers.org>
 // updated by blast007 <blast007@users.sourceforge.net>
 //
-// Copyright (c) 1993-2016 Tim Riker
+// Copyright (c) 1993-2017 Tim Riker
 //
 // This package is free software;  you can redistribute it and/or
 // modify it under the terms of the license found in the file
@@ -33,7 +33,7 @@
 
 define("MsgQueryGame", 0x7167);			// 'qg'
 define("MsgQueryPlayers", 0x7170);		// 'qp'
-define("MsgTeamUpdate", 0x7475);			// 'tu'
+define("MsgTeamUpdate", 0x7475);		// 'tu'
 define("MsgAddPlayer", 0x6170);			// 'ap'
 
 $GLOBALS['debug'] = false;
@@ -128,7 +128,7 @@ function bzfquery ($hostport) {
       echo "Data: " . $packet['data'] . "\n\n";
     }
 
-    switch($packet['code']) {
+    switch ($packet['code']) {
       case MsgQueryGame:
         $server += unpack("ngameStyle/ngameOptions/nmaxPlayers/nmaxShots/nrogueSize/nredSize/ngreenSize/nblueSize/npurpleSize/nobserverSize/nrogueMax/nredMax/ngreenMax/nblueMax/npurpleMax/nobserverMax/nshakeWins/nshakeTimeout/nmaxPlayerScore/nmaxTeamScore/nmaxTime/ntimeElapsed", $packet['data']);
         $have['QueryGame'] = true;
@@ -197,10 +197,10 @@ function bzfdump ($server) {
   $teamName = array(0=>"Rogue", 1=>"Red", 2=>"Green", 3=>"Blue", 4=>"Purple", 5=>"Observer", 6=>"Rabbit");
   for ( $team = 0; $team < $server['numTeams']; $team++ ) {
     echo $teamName[$team] . " team: "
-        . $server['team'][$team]['size'] . " players, "
-    	. "score: " . ($server['team'][$team]['won'] - $server['team'][$team]['lost'])
-            . " (" . $server['team'][$team]['won'] . " wins, "
-    	. $server['team'][$team]['lost'] . " losses)\n";
+    . $server['team'][$team]['size'] . " players, "
+    . "score: " . ($server['team'][$team]['won'] - $server['team'][$team]['lost'])
+    . " (" . $server['team'][$team]['won'] . " wins, "
+    . $server['team'][$team]['lost'] . " losses)\n";
   }
   echo "\n";
   $playerType = array(0=>"tank", 1=>"observer", 2=>"robot tank");
@@ -218,7 +218,7 @@ function bzfdump ($server) {
 
 
 # Local Variables: ***
-# mode:php ***
+# mode: php ***
 # tab-width: 8 ***
 # c-basic-offset: 2 ***
 # indent-tabs-mode: t ***

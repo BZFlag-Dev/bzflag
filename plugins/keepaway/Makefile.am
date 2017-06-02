@@ -12,9 +12,9 @@ EXTRA_DIST = \
 	README.keepaway.txt \
 	help_keepaway_admin.txt \
 	help_keepaway_rules.txt \
-	keepaway.def \
 	keepaway.sln \
-	keepaway.vcxproj
+	keepaway.vcxproj	\
+	keepaway.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

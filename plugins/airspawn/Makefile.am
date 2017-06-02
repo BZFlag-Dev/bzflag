@@ -10,9 +10,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
 	README.airspawn.txt \
-	airspawn.def \
 	airspawn.sln \
-	airspawn.vcxproj
+	airspawn.vcxproj	\
+	airspawn.vcxproj.filters
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

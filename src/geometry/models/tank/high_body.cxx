@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -40,7 +40,7 @@ float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},
 			  {-1.620000f, -0.877000f, 0.250000f},
 			  {1.760000f, -0.877000f, 1.130000f}};
 
-float sideUVs[][2] =  {{0.996503f, 0.331452f},
+float sideUVs[][2] = {{0.996503f, 0.331452f},
 		      {1.000000f, 0.422581f},
 		      {0.975524f, 0.448387f},
 		      {0.251748f, 0.088710f},
@@ -86,7 +86,7 @@ static int DrawTankSides (void)
 {
   glBegin(GL_TRIANGLES);
     DrawOBJIndexFace( 1,1,1, 2,2,1, 3,3,2);
-    DrawOBJIndexFace( 4,4,3, 5,5,3 ,6,6,3);
+    DrawOBJIndexFace( 4,4,3, 5,5,3, 6,6,3);
     DrawOBJIndexFace( 1,1,1, 3,3,2, 7,7,2);
     DrawOBJIndexFace( 7,7,2, 3,3,2, 8,8,3);
     DrawOBJIndexFace( 3,3,2, 9,9,3, 8,8,3);
@@ -288,7 +288,7 @@ int TankGeometryUtils::buildHighBody (void)
 
 /*
  * Local Variables: ***
- * mode:C ***
+ * mode: C ***
  * tab-width: 8 ***
  * c-basic-offset: 2 ***
  * indent-tabs-mode: t ***

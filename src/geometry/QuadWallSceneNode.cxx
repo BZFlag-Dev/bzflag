@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -399,7 +399,7 @@ void			QuadWallSceneNode::addShadowNodes(
   renderer.addShadowNode(shadowNode);
 }
 
-bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
+bool			QuadWallSceneNode::inAxisBox(const Extents& exts) const
 {
   if (!extents.touches(exts)) {
     return false;
@@ -415,12 +415,12 @@ bool		    QuadWallSceneNode::inAxisBox(const Extents& exts) const
   return testPolygonInAxisBox (4, vertices, getPlane(), exts);
 }
 
-int		     QuadWallSceneNode::getVertexCount () const
+int			QuadWallSceneNode::getVertexCount () const
 {
   return 4;
 }
 
-const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
+const GLfloat*		QuadWallSceneNode::getVertex (int vertex) const
 {
   // re-map these to a counter-clockwise order
   const int order[4] = {0, 1, 3, 2};
@@ -428,7 +428,7 @@ const GLfloat*	  QuadWallSceneNode::getVertex (int vertex) const
 }
 
 
-void QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+void			QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
   RenderSet rs = { nodes[0], getWallGState() };
   rnodes.push_back(rs);
@@ -436,7 +436,7 @@ void QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void QuadWallSceneNode::renderRadar()
+void			QuadWallSceneNode::renderRadar()
 {
   if (plane[2] > 0.0f) {
     nodes[0]->renderRadar();
@@ -446,7 +446,7 @@ void QuadWallSceneNode::renderRadar()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

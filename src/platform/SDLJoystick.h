@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,25 +29,25 @@ class SDLJoystick : public BzfJoystick {
     bool	joystick() const;
     void	getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    int         getNumHats();
-    void        getJoyHat(int hat, float &hatX, float &hatY);
+    int		getNumHats();
+    void	getJoyHat(int hat, float &hatX, float &hatY);
     void	getJoyDevices(std::vector<std::string> &list) const;
     void	getJoyDeviceAxes(std::vector<std::string> &list) const;
     void	setXAxis(const std::string &axis);
     void	setYAxis(const std::string &axis);
 
   private:
-    SDL_Joystick		*joystickID;
-    int			 joystickButtons;
-    int                  numHats;
-    int			 xAxis;
-    int			 yAxis;
+    SDL_Joystick *joystickID;
+    int		joystickButtons;
+    int		numHats;
+    int		xAxis;
+    int		yAxis;
 };
 
 #endif // BZF_SDLJOY_H
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

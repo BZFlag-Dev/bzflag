@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -614,14 +614,17 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.randomBoxes = true;
     }
     else if (strcmp(argv[i], "-badwords") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.filterFilename = argv[i];
     }
     else if (strcmp(argv[i], "-ban") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.acl.ban(argv[i]);
     }
     else if (strcmp(argv[i], "-banfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.acl.setBanFile(argv[i]);
       if (!options.acl.load()) {
@@ -638,10 +641,12 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.gameType = ClassicCTF;
     }
     else if (strcmp(argv[i], "-cache") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.cacheURL = argv[i];
     }
     else if (strcmp(argv[i], "-cacheout") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.cacheOut = argv[i];
     }
@@ -682,6 +687,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       BZDB.set(StateDatabase::BZDB_DISABLEBOTS, "true");
     }
     else if (strncmp(argv[i], "-d", 2) == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // increase debug level - this must be the last
       // option beginning with -d so that -dd, -ddd, etc. work
       const char num = argv[i][2];
@@ -717,12 +723,15 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       options.flagsOnBuildings = true;
     }
     else if (strcmp(argv[i], "-filterCallsigns") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterCallsigns = true;
     }
     else if (strcmp(argv[i], "-filterChat") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterChat = true;
     }
     else if (strcmp(argv[i], "-filterSimple") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.filterSimple = true;
     }
     else if (strcmp(argv[i], "-g") == 0) {
@@ -736,6 +745,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       MATERIALMGR.addMaterial(&material);
     }
     else if (strcmp(argv[i], "-groupdb") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       groupsFile = argv[i];
       logDebugMessage(1,"using group file \"%s\"\n", argv[i]);
@@ -750,14 +760,15 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     checkArgc(2, i, argc, argv[i]);
     std::ifstream helpfile(argv[i]);
     if (!helpfile)
-        std::cerr << "warning: helpmsg file \"" << argv[i] << "\" does not exist or can't be read" << std::endl;
-    else if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)){
+	std::cerr << "warning: helpmsg file \"" << argv[i] << "\" does not exist or can't be read" << std::endl;
+    else if (!options.textChunker.parseFile(argv[i], argv[i+1], 50, MessageLen)) {
 	    std::cerr << "couldn't read helpmsg file \"" << argv[i] << "\"" << std::endl;
 	    usage(argv[0]);
       }
       i++;
     }
     else if (strcmp(argv[i], "-i") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // use a different interface
       checkArgc(1, i, argc, argv[i]);
       options.pingInterface = argv[i];
@@ -847,16 +858,18 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	options.maxTeamScore = 0;
       }
     }
-    else if (strcmp(argv[i],"-noMasterBanlist") == 0){
+    else if (strcmp(argv[i],"-noMasterBanlist") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.suppressMasterBanList = true;
     }
-    else if (strcmp(argv[i],"-noradar") == 0){
+    else if (strcmp(argv[i],"-noradar") == 0) {
       BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
     }
-    else if (strcmp(argv[i],"-masterBanURL") == 0){
+    else if (strcmp(argv[i],"-masterBanURL") == 0) {
       /* if this is the first master ban url, override the default
        * list.  otherwise just keep adding urls.
        */
+      checkFromWorldFile(argv[i], fromWorldFile);
       if (!options.masterBanListOverridden) {
 	options.masterBanListURL.clear();
 	options.masterBanListOverridden = true;
@@ -870,7 +883,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
     else if (strcmp(argv[i], "-noTeamKills") == 0) {
       // disable team killing
-      if(options.gameType == OpenFFA)
+      if (options.gameType == OpenFFA)
 	std::cerr << "noteamkills check WARNING: -noTeamKills is incompatible with -offa, ignoring" << std::endl;
       else
 	options.gameOptions |= int(NoTeamKillsGameStyle);
@@ -901,6 +914,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       memset(argv[i], 'X', options.password.size());
     }
     else if (strcmp(argv[i], "-pidfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       unsigned int pid = 0;
 	  checkArgc(1, i, argc, argv[i]);
       FILE *fp = fopen(argv[i], "wt");
@@ -913,11 +927,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 	fprintf(fp, "%d", pid);
 	fclose(fp);
       }
-    }
-    else if (strcmp(argv[i], "-pf") == 0) {
-      // try wksPort first and if we can't open that port then
-      // let system assign a port for us.
-      options.useFallbackPort = true;
     }
     else if (strcmp(argv[i], "-poll") == 0) {
       // parse the variety of poll system variables
@@ -970,11 +979,11 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       /* if this is the first -publiclist, override the default list
        * server.  otherwise just keep adding urls.
        */
+      checkFromWorldFile(argv[i], fromWorldFile);
       if (!options.listServerOverridden) {
 	options.listServerURL.clear();
 	options.listServerOverridden = true;
       }
-      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.listServerURL.push_back(argv[i]);
     }
@@ -1025,25 +1034,31 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     }
     else if (strcmp(argv[i], "-recbuf") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       Record::setSize (ServerPlayer, atoi(argv[i]));
       options.startRecording = true;
     }
     else if (strcmp(argv[i], "-recbufonly") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       Record::setAllowFileRecs (false);
     }
     else if (strcmp(argv[i], "-recdir") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       Record::setDirectory (argv[i]);
     }
     else if (strcmp(argv[i], "-replay") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       options.replayServer = true;
     }
     else if (strcmp(argv[i], "-reportfile") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.reportFile = argv[i];
     }
     else if (strcmp(argv[i], "-reportpipe") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       options.reportPipe = argv[i];
     }
@@ -1097,9 +1112,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       checkArgc(2, i, argc, argv[i]);
       i++; // move past the flag descriptor for now (we'll store it in a bit)
       int x = 1;
-      if (isdigit(argv[i][0])){
+      if (isdigit(argv[i][0])) {
 	x = atoi(argv[i]);
-	if (x < 1){
+	if (x < 1) {
 	  std::cerr << "can only limit to 1 or more shots, changing to 1" << std::endl;
 	  x = 1;
 	}
@@ -1257,6 +1272,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       }
     }
     else if (strcmp(argv[i], "-ts") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.timestampLog = true;
       // if there is an argument following, see if it is 'micros'
@@ -1269,16 +1285,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     }
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
     else if (strcmp(argv[i], "-UPnP") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.UPnP = true;
     }
 #endif
     else if (strcmp(argv[i], "-utc") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       // timestamp output
       options.timestampLog = true;
       options.timestampUTC = true;
     }
     else if (strcmp(argv[i], "-userdb") == 0) {
+      checkFromWorldFile(argv[i], fromWorldFile);
       checkArgc(1, i, argc, argv[i]);
       userDatabaseFile = argv[i];
       logDebugMessage(1,"using userDB file \"%s\"\n", argv[i]);
@@ -1734,7 +1753,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
 
 // simple syntax check of comma-seperated list of group names (returns true if error)
-bool checkCommaList (const char *list, int maxlen){
+bool checkCommaList (const char *list, int maxlen) {
   int x = strlen (list);
   unsigned char c;
   if (x > maxlen)

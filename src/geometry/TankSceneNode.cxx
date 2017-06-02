@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,8 +41,8 @@ static const float vertExplosionRatio = 0.5f;
 
 // parts: body, turret, barrel, left tread, right tread
 
-const int		TankSceneNode::numLOD = 3;
-int			TankSceneNode::maxLevel = numLOD;
+const int TankSceneNode::numLOD = 3;
+int       TankSceneNode::maxLevel = numLOD;
 
 TankSceneNode::TankSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 				leftTreadOffset(0.0f), rightTreadOffset(0.0f),
@@ -731,8 +731,8 @@ void TankIDLSceneNode::IDLRenderNode::render()
   const GLfloat* sphere = sceneNode->tank->getSphere();
   const GLfloat* _plane = sceneNode->plane;
   const GLfloat azimuth = sceneNode->tank->azimuth;
-  const GLfloat ca = cosf(-azimuth * DEG2RAD);
-  const GLfloat sa = sinf(-azimuth * DEG2RAD);
+  const GLfloat ca = cosf(-azimuth * (float)DEG2RAD);
+  const GLfloat sa = sinf(-azimuth * (float)DEG2RAD);
   GLfloat tankPlane[4];
   tankPlane[0] = ca * _plane[0] - sa * _plane[1];
   tankPlane[1] = sa * _plane[0] + ca * _plane[1];
@@ -1484,7 +1484,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

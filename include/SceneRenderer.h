@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -75,8 +75,8 @@ public:
   bool		useWireframe() const;
   bool		useHiddenLine() const;
   float		getPanelOpacity() const;
-  float         getRadarOpacity() const;
-  bool          isPanelOpaque() const;
+  float		getRadarOpacity() const;
+  bool		isPanelOpaque() const;
   int		getRadarSize() const;
   int		getPanelHeight() const;
   int		getMaxMotionFactor() const;
@@ -92,7 +92,7 @@ public:
   void		setWireframe(bool on);
   void		setHiddenLine(bool on);
   void		setPanelOpacity(float opacity);
-  void          setRadarOpacity(float opacity);
+  void		setRadarOpacity(float opacity);
   void		setRadarSize(int size);
   void		setPanelHeight(int size);
   void		setMaxMotionFactor(int size);
@@ -114,8 +114,8 @@ public:
   const ViewFrustum&	getViewFrustum() const;
   ViewFrustum&	getViewFrustum();
 
-  int			getNumLights() const;
-  int			getNumAllLights() const;
+  int		getNumLights() const;
+  int		getNumAllLights() const;
   const OpenGLLight&	getLight(int index) const;
   void		enableLight(int index, bool = true);
   void		clearLights();
@@ -151,11 +151,11 @@ public:
 
   const RenderNodeList& getShadowList() const;
 
-  bool		isFogActive() const { return fogActive; }
+  bool			isFogActive() const { return fogActive; }
   void			setFogActive(bool b) { fogActive = b; }
 
   const fvec4&	getFogColor() const { return fogColor; }
-  void	setFogColor( float *color) { fogColor = color; }
+  void		setFogColor( float *color) { fogColor = color; }
 
 
   void		render(bool lastFrame = true,
@@ -215,10 +215,10 @@ private:
   int			triangleCount;
   static const GLint	SunLight;
 
-  static const float dimDensity;
-  static const GLfloat dimnessColor[4];
-  static const GLfloat blindnessColor[4];
-  float teleporterProximity;
+  static const float	dimDensity;
+  static const GLfloat	dimnessColor[4];
+  static const GLfloat	blindnessColor[4];
+  float			teleporterProximity;
 
   bool		abgr;
   int		useQualityValue;
@@ -226,7 +226,7 @@ private:
   bool		useWireframeOn;
   bool		useHiddenLineOn;
   float		panelOpacity;
-  float         radarOpacity;
+  float		radarOpacity;
   int		radarSize;
   int		panelHeight;
   int		maxMotionFactor;
@@ -316,7 +316,7 @@ inline GLfloat			SceneRenderer::getSunBrightness() const
   return sunBrightness;
 }
 
-inline const GLfloat* SceneRenderer::getAmbientColor() const
+inline const GLfloat*		SceneRenderer::getAmbientColor() const
 {
   return ambientColor;
 }
@@ -351,8 +351,8 @@ inline int			SceneRenderer::useQuality() const
   return useQualityValue;
 }
 
-inline void SceneRenderer::addRenderNode(RenderNode* node,
-					 const OpenGLGState* gstate)
+inline void			SceneRenderer::addRenderNode(RenderNode* node,
+						const OpenGLGState* gstate)
 {
   if (inOrder || gstate->getNeedsSorting()) {
     // nodes will be drawn in the same order received
@@ -363,7 +363,7 @@ inline void SceneRenderer::addRenderNode(RenderNode* node,
   }
 }
 
-inline void SceneRenderer::addShadowNode(RenderNode* node)
+inline void			SceneRenderer::addShadowNode(RenderNode* node)
 {
   shadowList.append(node);
 }

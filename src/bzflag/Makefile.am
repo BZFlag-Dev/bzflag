@@ -26,8 +26,6 @@ bzflag_SOURCES =			\
 	CacheMenu.h			\
 	clientConfig.cxx		\
 	clientConfig.h			\
-	ClientDialogManager.cxx		\
-	ClientDialogManager.h		\
 	CommandsImplementation.cxx	\
 	ComposeDefaultKey.cxx		\
 	ComposeDefaultKey.h		\
@@ -198,17 +196,11 @@ else
 RESOURCE =
 endif
 
-if MACOS
-NACLIB = \
-	../platform/MacOSX/libMac.la
-endif
-
 LDADD =	\
 	../3D/lib3D.la			\
 	../game/libGame.la		\
 	../net/libNet.la		\
 	../obstacle/libObstacle.la	\
-	$(NACLIB)			\
 	../platform/libPlatform.la	\
 	../ogl/libGLKit.la		\
 	../scene/libSceneDB.la		\

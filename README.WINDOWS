@@ -3,32 +3,9 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
-files are provided for it. The current compiler used is Visual C++ 2013 (VC12).
-Both the full and express versions will build just fine. There may be some
-issues building the bzflag-dependencies package with newer compilers at this
-time. We will work to correct that in future versions of the game/dependencies.
-
-Either of the following should work to build BZFlag.
-
-Visual Studio 2013 Express Edition for Windows Desktop with Update 5:
-  https://www.microsoft.com/en-us/download/details.aspx?id=48131
-Visual Studio 2013 Community with Update 5:
-  http://download.microsoft.com/download/A/A/D/AAD1AA11-FF9A-4B3C-8601-054E89260B78/vs2013.5_ce_enu.iso?type=ISO
-
-Because of an issue with the DirectX SDK installer, you may be unable to finish
-the installation. This is because it tries to install an older version of the
-Visual C++ 2010 runtime, which fails if a newer version is already installed.
-This causes the DirectX SDK install to fail and rollback all changes. So, you
-can either try uninstalling all 2010 versions of the runtime and then reinstall
-the latest version of them afterwards, or you can just start with a clean
-system and follow these install steps:
-1) Install DirectX SDK
-2) Install Visual Studio 2013
-3) If it did not include Service Pack 1, install it:
-  Full ISO: http://go.microsoft.com/fwlink/?LinkId=210710
-  Web Installer: https://www.microsoft.com/en-us/download/details.aspx?id=23691
-4) Enable updates for other Microsoft products (Microsoft Update) and install
-   any available important updates
+files are provided for it. The current compiler used is Visual C++ 2015 (VC14).
+You can download Visual Studio Community 2015 for free from here:
+https://www.visualstudio.com/downloads/#visual-studio-2015
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
@@ -38,9 +15,6 @@ our current script. Also, there's no real performance advantage in having a
 64-bit BZFlag client as the game doesn't use much RAM.
 
 **Required Libraries**
-
-You will need the windows DirectX SDK
-  http://www.microsoft.com/download/en/details.aspx?displaylang=en&id=6812
 
 Various third-party libraries are needed, which are packaged in our
 bzflag-dependencies repository. Either grab a pre-built binary package from
@@ -55,16 +29,6 @@ NSIS 2.46 is needed to build an installer, which is built as part of a release
 build.
   http://nsis.sourceforge.net/
 
-There is a 'tests' project that is part of the fullbuild solution. This will
-run some unit tests, and requires CppUTest. You will need to checkout the git
-repository for CppUTest as described on https://cpputest.github.io/ and then
-open the CppUTest_VS201x.sln file. Build the solution and then create an
-environment variable named CPPUTEST_HOME and point it to the root of the
-CppUTest source checkout, without the trailing slash (for instance,
-C:\cpputest ).  You mean need to relaunch your Visual Studio, log off, or
-reboot for the environment variable to take effect, but then the fullbuild
-solution should be able to build and run the unit tests.
-
 **Running and Debugging**
 By default the compiler will copy the compiled executables to the root level
 of the source drive ( the same place that the data dir is at). From there
@@ -74,5 +38,5 @@ inside VC to use this executable and path.
 
 **Installer**
 If you wish to build the full release package using the fullbuild solution,
-you will need to have NSIS installed. The built installer will be placed in 
-the _bin folder for the target in the root of the source tree.
+you will need to have NSIS installed. The built installer will be placed in
+the bin_Release folder for the target in the root of the source tree.

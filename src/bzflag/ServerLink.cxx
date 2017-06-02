@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -67,7 +67,7 @@ TConnect conn;
 DWORD WINAPI ThreadConnect(LPVOID params)
 {
   TConnect *conn = (TConnect*)params;
-  if(connect(conn->query, conn->addr, conn->saddr) >= 0) {
+  if (connect(conn->query, conn->addr, conn->saddr) >= 0) {
     SetEvent(hConnected); // Connect successful
   }
   ExitThread(0);
@@ -179,8 +179,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
 
   hThread = CreateThread(NULL, 0, ThreadConnect, &conn, 0, &ThreadID);
   okay = (WaitForSingleObject(hConnected, 5000) == WAIT_OBJECT_0);
-  if(!okay)
-    TerminateThread(hThread ,1);
+  if (!okay)
+    TerminateThread(hThread, 1);
 
   // Do some cleanup
   CloseHandle(hConnected);
@@ -222,7 +222,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
   // loop calling select untill we read some data back.
   // its only 8 bytes so it better come back in one packet.
   int loopCount = 0;
-  while(!gotNetData) {
+  while (!gotNetData) {
     loopCount++;
     nfound = select(fdMax + 1, (fd_set*)&read_set, (fd_set*)&write_set, NULL, &timeout);
 
@@ -563,7 +563,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
   buf = nboUnpackUShort(buf, code);
 
 //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-  if (len > MaxPacketLen)
+  if (len > MaxPacketLen - 4)
     return -1;
   if (len > 0)
     rlen = recv(fd, (char*)msg, int(len), 0);
@@ -631,8 +631,8 @@ void			ServerLink::sendEnter(PlayerType type,
   send(MsgEnter, sizeof(msg), msg);
 }
 
-bool ServerLink::readEnter (std::string& reason,
-			    uint16_t& code, uint16_t& rejcode)
+bool ServerLink::readEnter(std::string& reason,
+			   uint16_t& code, uint16_t& rejcode)
 {
   // wait for response
   uint16_t len;
@@ -711,7 +711,6 @@ void			ServerLink::sendKilled(const PlayerId& killer,
 }
 
 
-#ifndef BUILDING_BZADMIN
 void			ServerLink::sendPlayerUpdate(Player* player)
 {
   char msg[PlayerUpdatePLenMax];
@@ -731,7 +730,6 @@ void			ServerLink::sendPlayerUpdate(Player* player)
 
   send(code, len, msg);
 }
-#endif
 
 void			ServerLink::sendBeginShot(const FiringInfo& info)
 {
@@ -870,7 +868,7 @@ void			ServerLink::confirmIncomingUDP()
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

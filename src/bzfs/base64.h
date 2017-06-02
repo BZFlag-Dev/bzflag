@@ -78,7 +78,7 @@ namespace base64 {
 
       // get the next three bytes into "in" (and count how many we actually get)
       bytes = 0;
-      for(; (bytes < 3) && (it != end); ++bytes, ++it) {
+      for (; (bytes < 3) && (it != end); ++bytes, ++it) {
 	input <<= 8;
 	input += static_cast<uint8>(*it);
       }
@@ -106,7 +106,7 @@ namespace base64 {
 
     // add pad characters if necessary
     if (bytes > 0)
-      for(int i=bytes; i < 3; ++i) {
+      for (int i=bytes; i < 3; ++i) {
 	*out = '=';
 	++out;
       }
@@ -126,7 +126,7 @@ namespace base64 {
 
       // get four characters
       chars=0;
-      while((chars<4) && (it != end)) {
+      while ((chars<4) && (it != end)) {
 	uint8 c = static_cast<char>(*it);
 	if (c == '=') break; // pad character marks the end of the stream
 	++it;

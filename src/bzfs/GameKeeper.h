@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,6 +36,7 @@
 #include "Authentication.h"
 #include "messages.h"
 #include "bzfsAPI.h"
+#include "FlagInfo.h"
 #include "ShotUpdate.h"
 
 class ShotInfo {
@@ -169,6 +170,8 @@ public:
     bool hadEnter;
     double addDelayStartTime;
 
+	int lastHeldFlagID;
+
   private:
     static Player*    playerList[PlayerSlot];
     int		      playerIndex;
@@ -246,7 +249,7 @@ inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
 #endif
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

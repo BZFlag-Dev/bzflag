@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -690,7 +690,7 @@ bool BanCommand::operator() (const char	 *message,
     // valid slot or callsign
     victimPlayer = GameKeeper::Player::getPlayerByIndex(victim);
     if (victimPlayer) {
-      if (victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban)){
+      if (victimPlayer->accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
 	char buffer[MessageLen];
 	snprintf(buffer, MessageLen,
 		 "%s is protected from being banned (skipped).",

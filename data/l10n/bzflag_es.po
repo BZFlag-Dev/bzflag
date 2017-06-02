@@ -133,7 +133,7 @@ msgstr "Atravesar paredes"
 msgid "Oscillation Overthruster (+OO)"
 msgstr "Atravesar paredes-Oscillation Overthruster(+OO)"
 
-msgid "Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Puede pasar a través de los edificios. No puede disparar o retroceder en el interior."
 
 msgid "Rapid Fire"
@@ -1345,9 +1345,6 @@ msgstr "Agradecimientos especiales:"
 
 msgid "BZFlag Home Page:"
 msgstr "Página principal de BZFlag:"
-
-msgid "Copyright (c) 1993 - 2008"
-msgstr "Copyright (c) 1993 - 2008"
 
 ####################
 ## HUD RENDERERER ##

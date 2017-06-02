@@ -50,7 +50,7 @@ Define the weapon that will be triggered from this wwzone:
     will let the server generate an appropriate shot ID for you.
   <DT>
     This value is completely ignored, so just pass a 0 to it.
-  
+
 This optional attribute sends custom message to player when he/she triggers the
 world weapon.  It is sent as a private message to the player:
   playermessage "your message here"

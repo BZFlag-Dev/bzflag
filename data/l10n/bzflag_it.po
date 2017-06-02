@@ -764,7 +764,7 @@ msgstr "Velocita' angolare (A): Il tank gira velocemente: si scansa in fretta."
 msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 msgstr "Team flag:  Se e' tua, previeni le altre squadre dal catturarla.  Se non lo e', portala alla tua base per catturala!"
 
-msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Iper Oscillazione (OO):  Puoi guidare attraverso gli edifici.  Non puoi ne tornare indietro, ne sparare menter sei dentro."
 
 msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."
@@ -830,7 +830,7 @@ msgstr "Velocita' (+V): Il tank si muove con maggiore velocita'."
 msgid "Angular velocity (+A):  Tank turns faster.  Dodge quicker."
 msgstr "Velocita angolare (+A): Il tank gira ed evita i colpi piu velocemente."
 
-msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (+OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Iperoscillazione (+OO): Puoi passare attraverso gli edifici ma non arretrare o sparare da dentro."
 
 msgid "rapid Fire (+F):  Shoots more often.  Shells go faster but not as far."

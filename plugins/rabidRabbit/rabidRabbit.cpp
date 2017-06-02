@@ -15,7 +15,7 @@ RabidRabbitHandler rabidrabbithandler;
 class RabidRabbitEventHandler : public bz_Plugin
 {
 public:
-  virtual const char* Name(){return "Rabid Rabbit";}
+  virtual const char* Name() {return "Rabid Rabbit";}
   virtual void Init(const char* config);
   virtual void Cleanup();
 
@@ -130,7 +130,7 @@ void killAllHunters(std::string messagepass)
   bz_getPlayerIndexList(playerList);
 
 
-  for (unsigned int i = 0; i < playerList->size(); i++){
+  for (unsigned int i = 0; i < playerList->size(); i++) {
 
     bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerList->operator[](i));
 
@@ -246,7 +246,7 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

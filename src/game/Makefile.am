@@ -29,8 +29,7 @@ libGame_la_SOURCES =			\
 	ServerList.cxx			\
 	ServerListCache.cxx		\
 	StartupInfo.cxx			\
-	TextureMatrix.cxx		\
-	VotingArbiter.cxx
+	TextureMatrix.cxx
 
 
 EXTRA_DIST = \

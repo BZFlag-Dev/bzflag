@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -109,30 +109,25 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Anisotropic:");
-  option->setCallback(callback, "A");
-  options = &option->getList();
-
   if (OpenGLGState::hasAnisotropicFiltering) {
     static GLint maxAnisotropy = 1;
     glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
     if (maxAnisotropy > 1) {
+      option = new HUDuiList;
+      option->setFontFace(fontFace);
+      option->setLabel("Anisotropic:");
+      option->setCallback(callback, "A");
+      options = &option->getList();
       options->push_back(std::string("Off"));
       for (int i = 1; i < maxAnisotropy; i++) {
 	char buffer[16];
 	snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
 	options->push_back(std::string(buffer));
       }
-    } else {
-      options->push_back(std::string("Unavailable"));
+      option->update();
+      listHUD.push_back(option);
     }
-  } else {
-    options->push_back(std::string("Unavailable"));
   }
-  option->update();
-  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
@@ -157,9 +152,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-#if !defined(DEBUG_RENDERING)
-  if (debugLevel > 0) {
-#endif
+#if defined(DEBUG_RENDERING)
     option = new HUDuiList;
     option->setFontFace(fontFace);
     option->setLabel("Hidden Line:");
@@ -209,39 +202,51 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("On"));
     option->update();
     listHUD.push_back(option);
-#if !defined(DEBUG_RENDERING)
-  }
 #endif
 
-  BzfWindow* window = getMainWindow()->getWindow();
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Brightness:");
-  option->setCallback(callback, "g");
-  if (window->hasGammaControl()) {
+  if (((BzfWindow*) getMainWindow()->getWindow())->hasGammaControl()) {
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Brightness:");
+    option->setCallback(callback, "g");
     option->createSlider(15);
-  } else {
-    options = &option->getList();
-    options->push_back(std::string("Unavailable"));
+    option->update();
+    listHUD.push_back(option);
   }
-  option->update();
-  listHUD.push_back(option);
 
   option = new HUDuiList;
   option->setFontFace(fontFace);
-  option->setLabel("Energy Saver:");
+
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// only SDL 2 can make live changes
+    option->setLabel("(restart required) Energy Saver:");
+#else
+    option->setLabel("Energy Saver:");
+#endif
   option->setCallback(callback, "s");
   options = &option->getList();
   options->push_back(std::string("Off"));
   options->push_back(std::string("FPS Limit"));
   if (getMainWindow()->getWindow()->hasVerticalSync()) {
     options->push_back(std::string("Vertical Sync"));
-#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// SDL 2 can make live changes
-    option->setLabel("(restart required) Energy Saver:");
-#endif
   }
   option->update();
   listHUD.push_back(option);
+
+  if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("(restart required) Anti Aliasing:");
+    option->setCallback(callback, "m");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    for (int i = 1; (int)pow(2.0f, i) <= getMainWindow()->getWindow()->getMaxSamples(); ++i) {
+      char msaaText[4];
+      snprintf(msaaText, 4, "%i", (int) pow(2.0f, i));
+      options->push_back(std::string(msaaText) + "x MSAA");
+    }
+    option->update();
+    listHUD.push_back(option);
+  }
 
   BzfDisplay* display = getDisplay();
   int numFormats = display->getNumResolutions();
@@ -323,9 +328,15 @@ void			DisplayMenu::resize(int _width, int _height)
     }
     ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
-    int aniso = BZDB.evalInt("aniso");
-    aniso = (aniso < 1) ? 1 : aniso;
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+    if (OpenGLGState::hasAnisotropicFiltering) {
+      static GLint maxAnisotropy = 1;
+      glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+      if (maxAnisotropy > 1) {
+	int aniso = BZDB.evalInt("aniso");
+	aniso = (aniso < 1) ? 1 : aniso;
+	((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+      }
+    }
     ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
     int shadowVal = 0;
     if (BZDBCache::shadows) {
@@ -335,9 +346,7 @@ void			DisplayMenu::resize(int _width, int _height)
       }
     }
     ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
-#if !defined(DEBUG_RENDERING)
-    if (debugLevel > 0) {
-#endif
+#if defined(DEBUG_RENDERING)
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
@@ -345,19 +354,21 @@ void			DisplayMenu::resize(int _width, int _height)
       ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
       ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
 					   : 0);
-#if !defined(DEBUG_RENDERING)
-    }
 #endif
   }
 
   // brightness
   BzfWindow* window = getMainWindow()->getWindow();
   if (window->hasGammaControl())
-    ((HUDuiList*)listHUD[i])->setIndex(gammaToIndex(window->getGamma()));
-  i++;
+    ((HUDuiList*)listHUD[i++])->setIndex(gammaToIndex(window->getGamma()));
 
   // energy saver
-  ((HUDuiList*)listHUD[i])->setIndex(BZDB.evalInt("saveEnergy"));
+  ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
+
+  if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+    // multisampling
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") > 0 ? (int) (log(BZDB.eval("multisample")) / log(2.0)) : 0);
+  }
 }
 
 int DisplayMenu::gammaToIndex(float gamma)
@@ -453,8 +464,11 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
     BZDB.setBool("showCollisionGrid", list->getIndex() != 0);
     break;
   case 's':
-    BZDB.set("saveEnergy", list->getIndex() == 2 ? "2" : list->getIndex() == 1 ? "1" : "0");
+    BZDB.setInt("saveEnergy", list->getIndex());
     getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
+    break;
+  case 'm':
+    BZDB.setInt("multisample", list->getIndex() > 0 ? (int) pow(2.0f, list->getIndex()) : 0);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

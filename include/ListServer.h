@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -22,17 +22,17 @@
 #include "Address.h"
 
 
-const int       MaxListServers = 5;
+const int MaxListServers = 5;
 typedef struct _ListServer {
-    Address		address;
-    int			port;
-    int			socket;
-    int			phase;
-    std::string	 hostname;
-    std::string	 pathname;
-    int			failures;
-    int			bufferSize;
-    char		buffer[1024];
+    Address	address;
+    int		port;
+    int		socket;
+    int		phase;
+    std::string	hostname;
+    std::string	pathname;
+    int		failures;
+    int		bufferSize;
+    char	buffer[1024];
 } ListServer;
 
 

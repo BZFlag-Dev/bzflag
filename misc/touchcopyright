@@ -1,6 +1,6 @@
 #!/bin/sh
 # BZFlag
-# Copyright (c) 1993-2016 Tim Riker
+# Copyright (c) 1993-2017 Tim Riker
 #
 # This package is free software;  you can redistribute it and/or
 # modify it under the terms of the license found in the file
@@ -11,27 +11,19 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # NOTE: update just the next two lines and then run this script
-OLDCOPYRIGHTTEXT='Copyright (c) 1993-2012'
-NEWCOPYRIGHTTEXT='Copyright (c) 1993-2013'
+OLDCOPYRIGHTTEXT='Copyright (c) 1993-2016'
+NEWCOPYRIGHTTEXT='Copyright (c) 1993-2017'
 #
 # update copyright in all files
 #
 # bzflag top-level dir
-for root in . .. ; do
-  if [ -r $root/bzflag.spec.in ] ; then
-    break
-  fi
-done
+cd `git worktree list --porcelain | awk '$1 == "worktree" {print $2}'` || exit 1
 
-#if [ -r $root/include/config.h ] ; then
-#  echo "$0 should be run only after a make maintainer-clean!"
-#  exit 1
-#fi
 myname=touchcopyright
-tmpfile=$root/$myname.tmp
+tmpfile=$myname.tmp
 rm -f $tmpfile
 # touch myself last
-files="`find $root -type f -not -name \*.png -not -name \*.wav -not -name \*.icns | grep -v misc/$myname` misc/$myname"
+files="`git ls-files | egrep -v misc/$myname'|\.(bmp|icns|ico|png|psd|wav)$'` misc/$myname"
 
 # do replacement
 for file in $files; do
@@ -48,7 +40,7 @@ done
 rm -f $tmpfile
 
 # Local Variables: ***
-# mode:sh ***
+# mode: sh ***
 # tab-width: 8 ***
 # sh-indentation: 2 ***
 # sh-basic-offset: 2 ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,6 +48,7 @@ GameKeeper::Player::Player(int _playerIndex,
 
   lastState.order  = 0;
   score.playerID = _playerIndex;
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -70,6 +71,7 @@ GameKeeper::Player::Player(int _playerIndex,
   score.playerID = _playerIndex;
 
   netHandler->setPlayer(&player, _playerIndex);
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
@@ -88,6 +90,7 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler
 
   lastState.order  = 0;
   score.playerID = _playerIndex;
+  lastHeldFlagID = -1;
 }
 
 GameKeeper::Player::~Player()
@@ -476,7 +479,7 @@ int GameKeeper::Player::getLastIdFlag() {
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

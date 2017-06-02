@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -467,7 +467,7 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
       for (int cmd = 0; cmd < drawSet.count; cmd++) {
 	DrawCmd& drawCmd = drawSet.cmds[cmd];
 	const int points = drawCmd.count;
-	switch(drawCmd.drawMode) {
+	switch (drawCmd.drawMode) {
 	  // NOTE: points and lines are each counted as a triangle
 	  case DrawCmd::DrawPoints:	   tris += points;	break;
 	  case DrawCmd::DrawLines:	   tris += points / 2;	break;
@@ -1764,7 +1764,7 @@ const void* AnimationInfo::unpack(const void* buf)
 /******************************************************************************/
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

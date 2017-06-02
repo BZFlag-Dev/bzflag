@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -221,9 +221,9 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
 
   int delimiterpos = 0;
-  for(; (delimiterpos < (int)url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++)
+  for (; (delimiterpos < (int)url.length()) && (url[delimiterpos] != ':') && (url[delimiterpos] != ' '); delimiterpos++)
     ;
-  if(url[delimiterpos] != ':')
+  if (url[delimiterpos] != ':')
     return false;
 
   // set defaults
@@ -239,23 +239,23 @@ bool			BzfNetwork::parseURL(const std::string& url,
     if (mungedurl[0] == '/' && mungedurl[1] == '/') {
       mungedurl = mungedurl.substr(2);
       int pos = 0;
-      for(; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++)
+      for (; (pos < (int)mungedurl.length()) && (mungedurl[pos] != ':') && (mungedurl[pos] != '/') && (mungedurl[pos] != '\\') && (mungedurl[pos] != ' '); pos++)
 	;
 
-      if(mungedurl[pos] == ' ')
+      if (mungedurl[pos] == ' ')
 	return false;
 
-      if(pos != 0)
+      if (pos != 0)
 	hostname = mungedurl.substr(0, pos);
 
       mungedurl = mungedurl.substr(pos);
       pos = 0;
 
-      if(mungedurl[0] == ':') {
+      if (mungedurl[0] == ':') {
 	pos++;
 	char portString[10];
 	int i = 0;
-	for(; isdigit(mungedurl[pos]) && i < 9; pos++)
+	for (; isdigit(mungedurl[pos]) && i < 9; pos++)
 	  portString[i++] = mungedurl[pos];
 	portString[i] = '\0';
 	port = atoi(portString);
@@ -263,7 +263,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 
       mungedurl = mungedurl.substr(pos);
 
-      if((mungedurl[0] != '\0') && (mungedurl[0] != '/') && (mungedurl[0] != '\\'))
+      if ((mungedurl[0] != '\0') && (mungedurl[0] != '/') && (mungedurl[0] != '\\'))
 	return false;
 
     }
@@ -277,7 +277,7 @@ bool			BzfNetwork::parseURL(const std::string& url,
 }
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

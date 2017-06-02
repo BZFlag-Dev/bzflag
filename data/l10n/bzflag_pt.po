@@ -846,7 +846,7 @@ msgstr "Velocidade angular (A): O tanque vira mais rapidamente. Desvia-se mais r
 msgid "Team flag:  If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!"
 msgstr "Bandeira da equipa: Se é a sua, previna as outras equipas de agarrá-la. Caso contrário, leve-a para a sua base para captura-la!"
 
-msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't backup or shoot while inside."
+msgid "Oscillation Overthruster (OO):  Can drive through buildings.  Can't back up or shoot while inside."
 msgstr "Booster de Oscilação (OO): Pode atravessar edifícios.  Não pode recuar ou disparar enquanto estiver dentro deles."
 
 msgid "rapid Fire (F):  Shoots more often.  Shells go faster but not as far."

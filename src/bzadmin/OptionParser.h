@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -42,8 +42,8 @@ public:
       @param helpText A short description of what this option does.
   */
   Parser(const std::string& usageText, const std::string& helpText)
-    : usage(usageText), help(helpText) { }
-  virtual ~Parser() { }
+    : usage(usageText), help(helpText) {}
+  virtual ~Parser() {}
   /** This function is called by OptionParser when the option that this
       parser is mapped to is given on the command line. It will return
       the number of parameters that this option takes, so that the
@@ -69,7 +69,7 @@ public:
   */
   VariableParser(T& variable, const std::string& usageText,
 		 const std::string& helpText)
-    : Parser(usageText, helpText), var(variable) { }
+    : Parser(usageText, helpText), var(variable) {}
   virtual int parse(char** argv) {
     std::istringstream iss(argv[0]);
     iss>>var;
@@ -90,7 +90,7 @@ class VariableParser<STRING> : public Parser {
 public:
   VariableParser(std::string& variable, const std::string& usageText,
 		 const std::string& helpText)
-    : Parser(usageText, helpText), var(variable) { }
+    : Parser(usageText, helpText), var(variable) {}
   virtual int parse(char** argv) {
     var = argv[0];
     return 1;
@@ -106,7 +106,7 @@ class VariableParser<bool> : public Parser {
 public:
   VariableParser(bool& variable, const std::string& usageText,
 		 const std::string& helpText)
-    : Parser(usageText, helpText), var(variable) { }
+    : Parser(usageText, helpText), var(variable) {}
   virtual int parse(char**) {
     var = true;
     return 0;
@@ -124,7 +124,7 @@ public:
   VectorParser(std::vector<T>& variable,
 		 const std::string& usageText,
 		 const std::string& helpText)
-    : Parser(usageText, helpText), var(variable) { }
+    : Parser(usageText, helpText), var(variable) {}
   virtual int parse(char** argv) {
     std::vector<std::string> tmpVector = TextUtils::tokenize(argv[0], ",");
     T t;
@@ -215,7 +215,7 @@ protected:
 
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

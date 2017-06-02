@@ -1,6 +1,6 @@
 /* 3dScreamers */
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,7 +41,7 @@ typedef enum
   eFileStart,
   eCurentPos,
   eFileEnd
-}teFilePos;
+} teFilePos;
 
 void setOSFileBaseDir(const std::string &dir);
 void OSFileOSToStdDir(std::string &dir);
@@ -51,7 +51,7 @@ class OSFile
 public:
   OSFile();
   OSFile(const OSFile &r);
-  OSFile& operator = (const OSFile &r);
+  OSFile& operator=(const OSFile &r);
 
   OSFile(const std::string &szName);
   OSFile(const char *szName);
@@ -105,7 +105,7 @@ class OSDir
 public:
   OSDir();
   OSDir(const OSDir &r);
-  OSDir& operator = (const OSDir &r);
+  OSDir& operator=(const OSDir &r);
   OSDir(const std::string &DirName);
   ~OSDir();
 
@@ -138,7 +138,7 @@ protected:
 #endif//_OSFILE_H_
 
 // Local Variables: ***
-// mode:C++ ***
+// mode: C++ ***
 // tab-width: 8 ***
 // c-basic-offset: 2 ***
 // indent-tabs-mode: t ***

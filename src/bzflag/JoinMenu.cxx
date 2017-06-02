@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2016 Tim Riker
+ * Copyright (c) 1993-2017 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -251,7 +251,7 @@ void JoinMenu::centerLabelHorizontally(HUDuiLabel *label)
   FontManager &fm = FontManager::instance();
   const float _width = fm.getStrLength(MainMenu::getFontFace(),
     label->getFontSize(), label->getString());
-  
+
   label->setPosition(center - 0.5f * _width, label->getY());
 }
 
@@ -342,11 +342,11 @@ void JoinMenu::resize(int _width, int _height)
       y -= 1.0f * h;
     if (i <= 2 || i == 9) y -= 0.5f * h;
   }
-  
+
   // these should be centered
   centerLabelHorizontally(status);
   centerLabelHorizontally(failedMessage);
-  
+
   updateTeamTexture();
 }
 
