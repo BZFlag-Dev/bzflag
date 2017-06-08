@@ -133,7 +133,7 @@ void FlagInfo::addFlag()
   if ((flag.endurance == FlagSticky) || (flag.type == Flags::Thief))
     grabs = 1;
   else
-    grabs = int(floor(maxGrabs * (float)bzfrand())) + 1;
+    grabs = int(maxGrabs);
 }
 
 void *FlagInfo::pack(void *buf, bool hide)
