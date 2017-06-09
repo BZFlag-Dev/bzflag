@@ -4004,6 +4004,11 @@ BZF_API bool bz_restart ( void )
   return true;
 }
 
+BZF_API const char* bz_getServerOwner()
+{
+  return getPublicOwner().c_str();
+}
+
 BZF_API void bz_reloadLocalBans()
 {
   // reload the banlist

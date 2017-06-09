@@ -1939,6 +1939,7 @@ BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);
 BZF_API bool bz_restart ( void );
+BZF_API const char* bz_getServerOwner();
 
 BZF_API void bz_reloadLocalBans();
 BZF_API void bz_reloadMasterBans();
