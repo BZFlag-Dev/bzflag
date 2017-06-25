@@ -4,6 +4,13 @@
 BZFlag 2.4.11
 -------------
 
+* Add bz_eAutoPilotEvent to the API - Vladimir Jimenez
+* Add bz_getServerOwner() API function - Vladimir Jimenez
+* The _maxFlagGrabs BZDB setting is no longer a random number - Vladimir Jimenez
+* Add API access for the handicap system - Jeff Myers, Vladimir Jimenez
+* Remove Xcode references to deployment targets except for main project
+    - Joshua Bodine
+
 
 BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
 ------------------------------------------------
