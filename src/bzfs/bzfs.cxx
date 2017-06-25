@@ -4830,7 +4830,14 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     case MsgAutoPilot: {
       uint8_t autopilot;
       nboUnpackUByte(buf, autopilot);
-      autopilotPlayer(t, autopilot != 0);
+
+      bz_AutoPilotData_V1 autoPilotData;
+      autoPilotData.playerID = t;
+      autoPilotData.enabled = (autopilot != 0);
+
+      autopilotPlayer(t, autoPilotData.enabled);
+
+      worldEventManager.callEvents(bz_eAutoPilotEvent ,&autoPilotData);
       break;
     }
 

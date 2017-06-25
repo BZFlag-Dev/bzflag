@@ -310,6 +310,7 @@ typedef enum
   bz_eComputeHandicapEvent,
   bz_eBeginHandicapRefreshEvent,
   bz_eEndHandicapRefreshEvent,
+  bz_eAutoPilotEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1319,6 +1320,18 @@ public:
   bz_BasePlayerRecord *player;
 
   bool allow;
+};
+
+class BZF_API bz_AutoPilotData_V1 : public bz_EventData
+{
+public:
+  bz_AutoPilotData_V1() : bz_EventData(bz_eAutoPilotEvent),
+    playerID(-1),
+    enabled(false)
+  {}
+
+  int playerID;
+  bool enabled;
 };
 
 // logging
