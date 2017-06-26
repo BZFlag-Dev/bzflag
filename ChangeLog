@@ -4,6 +4,7 @@
 BZFlag 2.4.11
 -------------
 
+* Add bz_isPlayerAutoPilot() to the API - Vladimir Jimenez
 * Add bz_eAutoPilotEvent to the API - Vladimir Jimenez
 * Add bz_getServerOwner() API function - Vladimir Jimenez
 * The _maxFlagGrabs BZDB setting is no longer a random number - Vladimir Jimenez

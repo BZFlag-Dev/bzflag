@@ -1160,6 +1160,16 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
   return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv.c_str();
 }
 
+BZF_API bool bz_isPlayerAutoPilot( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return false;
+
+  return player->player.isAutoPilot();
+}
+
 BZF_API bool bz_isPlayerPaused( int playerID )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
