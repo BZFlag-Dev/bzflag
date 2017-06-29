@@ -130,10 +130,18 @@ MP_WITH_CURSES
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
 
+# build the server?
+AC_ARG_ENABLE(server, AS_HELP_STRING([--disable-server],[do not compile server]))
+
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
 if test "x$enable_plugins" != xno ; then
-    AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
+    if test "x$enable_server" != xno ; then
+	AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
+    else
+	enable_plugins=no
+	AC_MSG_WARN([skipping plugins for client-only build])
+    fi
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
@@ -960,8 +968,12 @@ else
 fi
 
 
-# stub it for now, enable the server
-AM_CONDITIONAL(SERVER_INCLUDED, true)
+# Build the server, or do not.  There is no "try."
+if test x$enable_server != xno; then
+    AM_CONDITIONAL(SERVER_INCLUDED, true)
+else
+    AM_CONDITIONAL(SERVER_INCLUDED, false)
+fi
 
 
 # if bzadmin was enabled, make sure we have curses.
@@ -1110,10 +1122,14 @@ else
 	build_bzflag="yes"
     fi
 fi
-if test "x$enable_plugins" != xno ; then
-    build_bzfs="yes (with plugins)"
+if test "x$enable_server" != xno ; then
+    if test "x$enable_plugins" != xno ; then
+	build_bzfs="yes (with plugins)"
+    else
+	build_bzfs="yes (without plugins)"
+    fi
 else
-    build_bzfs="yes (without plugins)"
+	build_bzfs="no (without plugins)"
 fi
 
 if test "x$enable_bzadmin" = "xno"; then
