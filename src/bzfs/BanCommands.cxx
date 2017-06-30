@@ -260,11 +260,11 @@ bool MuteCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, msg);
     }
 
-    bz_MuteEventData_V1 muteData;
-    muteData.victimID = i;
-    muteData.muterID = t;
+    bz_MuteEventData_V1 muteEventData;
+    muteEventData.victimID = i;
+    muteEventData.muterID = t;
 
-    worldEventManager.callEvents(bz_eMuteEvent, &muteData);
+    worldEventManager.callEvents(bz_eMuteEvent, &muteEventData);
   }
   return true;
 }
@@ -324,12 +324,12 @@ bool UnmuteCommand::operator() (const char	 *message,
       sendMessage(ServerPlayer, t, msg);
     }
 
-    bz_MuteEventData_V1 unmuteData;
-    unmuteData.eventType = bz_eUnmuteEvent;
-    unmuteData.victimID = i;
-    unmuteData.muterID = t;
+    bz_MuteEventData_V1 unmuteEventData;
+    unmuteEventData.eventType = bz_eUnmuteEvent;
+    unmuteEventData.victimID = i;
+    unmuteEventData.muterID = t;
 
-    worldEventManager.callEvents(bz_eUnmuteEvent, &unmuteData);
+    worldEventManager.callEvents(bz_eUnmuteEvent, &unmuteEventData);
   }
   return true;
 }
