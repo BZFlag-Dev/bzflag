@@ -311,6 +311,8 @@ typedef enum
   bz_eBeginHandicapRefreshEvent,
   bz_eEndHandicapRefreshEvent,
   bz_eAutoPilotEvent,
+  bz_eMuteEvent,
+  bz_eUnmuteEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1332,6 +1334,18 @@ public:
 
   int playerID;
   bool enabled;
+};
+
+class BZF_API bz_MuteEventData_V1 : public bz_EventData
+{
+public:
+  bz_MuteEventData_V1() : bz_EventData(bz_eMuteEvent),
+    victimID(-1),
+    muterID(-1)
+  {}
+
+  int victimID;
+  int muterID;
 };
 
 // logging

@@ -4,6 +4,7 @@
 BZFlag 2.4.11
 -------------
 
+* Add bz_eMuteEvent and bz_eUnmuteEvent to the API - Vladimir Jimenez
 * Add configure --disable-server option - Jeff Makey
 * Add bz_isPlayerAutoPilot() to the API - Vladimir Jimenez
 * Add bz_eAutoPilotEvent to the API - Vladimir Jimenez
