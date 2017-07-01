@@ -1090,9 +1090,12 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
+  if (!player)
+    return NULL;
+
   bz_PlayerRecordV2 *playerRecord = new bz_PlayerRecordV2;
 
-  if (!player || !playerRecord)
+  if (!playerRecord)
     return NULL;
 
   playerRecord->callsign = player->player.getCallSign();
