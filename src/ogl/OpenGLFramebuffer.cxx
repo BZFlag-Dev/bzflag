@@ -16,11 +16,45 @@
 #include "OpenGLFramebuffer.h"
 
 // system headers
+#include <map>
+#include <string>
 
 // common headers
 #include "OpenGLGState.h"
 
-// local headers
+// GL_ARB_framebuffer_object functions (these need to be loaded by the
+// platform's OpenGL context initialization code)
+PFNGLISRENDERBUFFERPROC glIsRenderbuffer = NULL;
+PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer = NULL;
+PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers = NULL;
+PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers = NULL;
+
+PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage = NULL;
+PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample =
+  NULL;
+
+PFNGLGETRENDERBUFFERPARAMETERIVPROC glGetRenderbufferParameteriv = NULL;
+
+PFNGLISFRAMEBUFFERPROC glIsFramebuffer = NULL;
+PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer = NULL;
+PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers = NULL;
+PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers = NULL;
+
+PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus = NULL;
+
+PFNGLFRAMEBUFFERTEXTURE1DPROC glFramebufferTexture1D = NULL;
+PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D = NULL;
+PFNGLFRAMEBUFFERTEXTURE3DPROC glFramebufferTexture3D = NULL;
+PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer = NULL;
+
+PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer = NULL;
+
+PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
+  glGetFramebufferAttachmentParameteriv = NULL;
+
+PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
+
+PFNGLGENERATEMIPMAPPROC glGenerateMipmap = NULL;
 
 void OpenGLFramebuffer::initFramebuffer() {
   glGenFramebuffers(1, &framebuffer);
@@ -35,13 +69,11 @@ void OpenGLFramebuffer::initFramebuffer() {
 
   glGenRenderbuffers(1, &depthRenderbuffer);
   glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-  glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel, GL_DEPTH_COMPONENT24,
+  glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel,
+				   GL_DEPTH_COMPONENT24,
 				   width, height);
   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
 			    GL_RENDERBUFFER, depthRenderbuffer);
-
-  GLenum drawBuffer = 1;
-  glDrawBuffers(1, &drawBuffer);
 
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     printf("Multisample framebuffer incomplete.\n");
@@ -59,14 +91,17 @@ OpenGLFramebuffer::OpenGLFramebuffer() : contextActive(false), msaaLevel(1),
                                          width(1), height(1),
                                          renderbuffer(0), depthRenderbuffer(0),
 					 framebuffer(0) {
-  OpenGLGState::registerContextInitializer(freeContext, initContext, (void*)this);
+  OpenGLGState::registerContextInitializer(freeContext, initContext,
+					   (void*)this);
 }
 
 OpenGLFramebuffer::~OpenGLFramebuffer() {
-  OpenGLGState::unregisterContextInitializer(freeContext, initContext, (void*)this);
+  OpenGLGState::unregisterContextInitializer(freeContext, initContext,
+					     (void*)this);
 }
 
-void OpenGLFramebuffer::checkState(int newWidth, int newHeight, int newMSAALevel) {
+void OpenGLFramebuffer::checkState(int newWidth, int newHeight,
+				   int newMSAALevel) {
   if(width != newWidth || height != newHeight || msaaLevel != newMSAALevel) {
     width = newWidth;
     height = newHeight;
@@ -82,6 +117,9 @@ void OpenGLFramebuffer::checkState(int newWidth, int newHeight, int newMSAALevel
 
 void OpenGLFramebuffer::freeContext(void* self)
 {
+  if(OpenGLGState::getMaxSamples() == 1)
+    return;
+
   if(! ((OpenGLFramebuffer*)self)->contextActive)
     return;
 
@@ -92,6 +130,9 @@ void OpenGLFramebuffer::freeContext(void* self)
 
 void OpenGLFramebuffer::initContext(void* self)
 {
+  if(OpenGLGState::getMaxSamples() == 1)
+    return;
+
   if(((OpenGLFramebuffer*)self)->contextActive)
     freeContext(self);
 
