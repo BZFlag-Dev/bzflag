@@ -232,16 +232,16 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
   option->update();
   listHUD.push_back(option);
 
-  if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+  if (OpenGLGState::getMaxSamples() > 1) {
     option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("(restart required) Anti Aliasing:");
+    option->setLabel("Anti Aliasing:");
     option->setCallback(callback, "m");
     options = &option->getList();
     options->push_back(std::string("Off"));
-    for (int i = 1; (int)pow(2.0f, i) <= getMainWindow()->getWindow()->getMaxSamples(); ++i) {
+    for (int i = 2; i <= OpenGLGState::getMaxSamples(); ++i) {
       char msaaText[4];
-      snprintf(msaaText, 4, "%i", (int) pow(2.0f, i));
+      snprintf(msaaText, 4, "%i", i);
       options->push_back(std::string(msaaText) + "x MSAA");
     }
     option->update();
@@ -365,9 +365,9 @@ void			DisplayMenu::resize(int _width, int _height)
   // energy saver
   ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
 
-  if (OpenGLGState::hasMultisampling && getMainWindow()->getWindow()->hasMultisampling()) {
+  if (OpenGLGState::getMaxSamples() > 1) {
     // multisampling
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") > 0 ? (int) (log(BZDB.eval("multisample")) / log(2.0)) : 0);
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") - 1);
   }
 }
 
@@ -468,7 +468,7 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data) {
     getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
     break;
   case 'm':
-    BZDB.setInt("multisample", list->getIndex() > 0 ? (int) pow(2.0f, list->getIndex()) : 0);
+    BZDB.setInt("multisample", list->getIndex() + 1);
     break;
   case 'g':
     BzfWindow* window = getMainWindow()->getWindow();

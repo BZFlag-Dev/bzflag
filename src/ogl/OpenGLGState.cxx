@@ -932,10 +932,10 @@ OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::head = NULL;
 OpenGLGState::ContextInitializer*
 			OpenGLGState::ContextInitializer::tail = NULL;
+int OpenGLGState::maxSamples = 1;
 bool OpenGLGState::executingFreeFuncs = false;
 bool OpenGLGState::executingInitFuncs = false;
 bool OpenGLGState::hasAnisotropicFiltering = false;
-bool OpenGLGState::hasMultisampling = false;
 
 OpenGLGState::ContextInitializer::ContextInitializer(
 				OpenGLContextFunction _freeCallback,
@@ -1118,6 +1118,11 @@ int OpenGLGState::getOpaqueStippleIndex()
 }
 
 
+int OpenGLGState::getMaxSamples() {
+  return maxSamples;
+}
+
+
 void OpenGLGState::initStipple(void*)
 {
   stipples = glGenLists(NumStipples);
@@ -1297,14 +1302,15 @@ bool OpenGLGState::initGLExtensions()
   extensionsStream.clear();
   extensionsStream.str(extensions);
 
-  hasMultisampling = false;
-
   while (!extensionsStream.eof()) {
     std::string thisExtension;
     extensionsStream >> thisExtension;
 
-    if (thisExtension == "GL_ARB_multisample")
-      hasMultisampling = true;
+    if (thisExtension == "GL_ARB_framebuffer_object") {
+      GLint sampleCount = 1;
+      glGetIntegerv(GL_MAX_SAMPLES, &sampleCount);
+      maxSamples = sampleCount;
+    }
   }
 
   return false;

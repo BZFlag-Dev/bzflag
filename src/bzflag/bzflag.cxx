@@ -143,8 +143,6 @@ static void		setVisual(BzfVisual* visual)
 #else
   visual->setStencil(1);
 #endif
-  if (BZDB.isTrue("multisample"))
-    visual->setMultisample(BZDB.evalInt("multisample"));
 #ifdef USE_GL_STEREO
   if (BZDB.isSet("view") && BZDB.get("view") == configViewValues[1])
     visual->setStereo(true);
