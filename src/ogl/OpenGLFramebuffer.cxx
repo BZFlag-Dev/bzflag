@@ -70,9 +70,9 @@ void OpenGLFramebuffer::initFramebuffer() {
   glGenRenderbuffers(1, &depthRenderbuffer);
   glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
   glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel,
-				   GL_DEPTH_COMPONENT24,
+				   GL_DEPTH24_STENCIL8,
 				   width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
 			    GL_RENDERBUFFER, depthRenderbuffer);
 
   if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
