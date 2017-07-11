@@ -30,8 +30,11 @@
 # error OpenGL version 1.1 functionality is required
 #endif
 
-
+#ifdef _WIN32
+#include "glext.h"
+#else
 #include <GL/glext.h>
+#endif
 
 // GL_ARB_framebuffer_object functions
 extern PFNGLISRENDERBUFFERPROC glIsRenderbuffer;
