@@ -22,6 +22,7 @@
 // common headers
 #include "OpenGLGState.h"
 
+#ifndef __APPLE__
 // GL_ARB_framebuffer_object functions (these need to be loaded by the
 // platform's OpenGL context initialization code)
 PFNGLISRENDERBUFFERPROC glIsRenderbuffer = NULL;
@@ -55,6 +56,7 @@ PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
 PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
 
 PFNGLGENERATEMIPMAPPROC glGenerateMipmap = NULL;
+#endif // __APPLE__
 
 void OpenGLFramebuffer::initFramebuffer() {
   glGenFramebuffers(1, &framebuffer);

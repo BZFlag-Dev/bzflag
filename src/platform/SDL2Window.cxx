@@ -221,6 +221,7 @@ bool SDLWindow::create(void) {
 
   SDL_GL_SetSwapInterval(swapInterval);
 
+#ifndef __APPLE__
   // initialize opengl extension functions
   glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC)
     SDL_GL_GetProcAddress("glIsRenderbuffer");
@@ -263,6 +264,7 @@ bool SDLWindow::create(void) {
     SDL_GL_GetProcAddress("glBlitFramebuffer");
   glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)
     SDL_GL_GetProcAddress("glGenerateMipmap");
+#endif // __APPLE__
 
   // init opengl context
   OpenGLGState::initContext();

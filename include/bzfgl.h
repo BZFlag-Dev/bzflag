@@ -24,18 +24,19 @@
 #else
 #  include <GL/gl.h>
 #  include <GL/glu.h>
+#  ifdef _WIN32
+#    include "glext.h"
+#  else
+#    include <GL/glext.h>
+#  endif
 #endif
 
 #ifndef GL_VERSION_1_1
 # error OpenGL version 1.1 functionality is required
 #endif
 
-#ifdef _WIN32
-#include "glext.h"
-#else
-#include <GL/glext.h>
-#endif
 
+#ifndef __APPLE__
 // GL_ARB_framebuffer_object functions
 extern PFNGLISRENDERBUFFERPROC glIsRenderbuffer;
 extern PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
@@ -66,6 +67,7 @@ extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentPa
 extern PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer;
 
 extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
+#endif // __APPLE__
 
 
 /* These will track glBegin/End pairs to make sure that they match */
