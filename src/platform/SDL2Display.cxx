@@ -46,6 +46,7 @@ SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
     // this is a workaround for an issue with scaled resolutions on retina screens
     // on macOS where SDL reports a current resolution that isn't actually in the
     // list of supported resolutions and the modeset fails
+    // bug discussion: https://discourse.libsdl.org/t/scaled-resolutions-on-retina-screens-on-macos/22781/7
     bool currentResolutionGood = false;
     SDL_DisplayMode testMode;
 
