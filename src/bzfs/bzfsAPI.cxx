@@ -3450,6 +3450,7 @@ public:
   std::string postData;
   size_t id;
   bz_BaseURLHandler *handler;
+  bz_APIStringList *headers;
   double lastTime;
   void* token;
 };
@@ -3552,6 +3553,16 @@ public:
       if (task.postData.size())
 	curl_easy_setopt(currentJob, CURLOPT_POSTFIELDS, task.postData.c_str());
 
+      if (task.headers) {
+	struct curl_slist *chunk = NULL;
+
+	for (unsigned int i = 0; i < task.headers->size(); i++) {
+	  chunk = curl_slist_append(chunk, task.headers->get(i).c_str());
+	}
+
+	curl_easy_setopt(currentJob, CURLOPT_HTTPHEADER, chunk);
+      }
+
       curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
       curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
 
@@ -3563,8 +3574,7 @@ public:
     }
   }
 
-  size_t addJob(const char *URL, bz_BaseURLHandler *handler,
-    const char *postData, void* token)
+  size_t addJob(const char *URL, bz_BaseURLHandler *handler, const char *postData, void* token, bz_APIStringList *headers)
   {
     if (!curlHandle)
     {
@@ -3577,6 +3587,8 @@ public:
     newTask.url = URL;
     if (postData)
       newTask.postData = postData;
+    if (headers)
+      newTask.headers = headers;
     newTask.id = ++LastJob;
     newTask.lastTime = TimeKeeper::getCurrent().getSeconds();
     Tasks.push_back(newTask);
@@ -3675,15 +3687,20 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     return false;
   }
 
-  return (urlFetchHandler.addJob(URL, handler, postData,NULL) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData, NULL, NULL) != 0);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
 {
+  return bz_addURLJob(URL, handler, token, postData, NULL);
+}
+
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData, bz_APIStringList *headers)
+{
   if (!URL)
     return false;
 
-  return (urlFetchHandler.addJob(URL, handler, postData,token) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData, token, headers) != 0);
 }
 
 //-------------------------------------------------------------------------
@@ -3696,7 +3713,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     return false;
   }
 
-  return urlFetchHandler.addJob(URL, handler, postData,NULL);
+  return urlFetchHandler.addJob(URL, handler, postData, NULL, NULL);
 }
 
 //-------------------------------------------------------------------------

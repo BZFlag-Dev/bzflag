@@ -1906,6 +1906,7 @@ public:
 
 BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL, bz_APIStringList *headers = NULL);
 BZF_API bool bz_removeURLJob(const char* URL);
 BZF_API size_t bz_addURLJobForID(const char* URL,
 				 bz_BaseURLHandler* handler = NULL,
