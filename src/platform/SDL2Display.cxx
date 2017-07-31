@@ -42,32 +42,9 @@ SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
   if (result) {
     printf("Could not get current display mode: %s.\n", SDL_GetError());
   } else {
-#ifdef __APPLE__
-    // this is a workaround for an issue with scaled resolutions on retina screens
-    // on macOS where SDL reports a current resolution that isn't actually in the
-    // list of supported resolutions and the modeset fails
-    // bug discussion: https://discourse.libsdl.org/t/scaled-resolutions-on-retina-screens-on-macos/22781/7
-    bool currentResolutionGood = false;
-    SDL_DisplayMode testMode;
-
-    for (int i = 0; i < _numResolutions; ++i) {
-      if (SDL_GetDisplayMode(0, i, &testMode) == 0) {
-	if (mode.w == testMode.w && mode.h == testMode.h) {
-	  currentResolutionGood = true;
-
-	  break;
-	}
-      }
-    }
-
-    if (currentResolutionGood) {
-#endif // __APPLE__
     h.push_back(mode.h);
     w.push_back(mode.w);
     j++;
-#ifdef __APPLE__
-    }
-#endif // __APPLE__
   }
 
   int i;
