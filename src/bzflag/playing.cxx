@@ -2782,23 +2782,25 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       bool ignore = false;
       unsigned int i;
-      for (i = 0; i < silencePlayers.size(); i++) {
-	const std::string &silenceCallSign = silencePlayers[i];
-	if (srcName == silenceCallSign || "*" == silenceCallSign) {
-	  ignore = true;
-	  break;
-	}
+      if (!fromServer) {
+        for (i = 0; i < silencePlayers.size(); i++) {
+	  const std::string &silenceCallSign = silencePlayers[i];
+	  if (srcName == silenceCallSign || "*" == silenceCallSign || ("-" == silenceCallSign && srcPlayer && !srcPlayer->isRegistered())) {
+	    ignore = true;
+	    break;
+	  }
+        }
       }
 
       if (ignore) {
 #ifdef DEBUG
 	// to verify working
-	std::string msg2 = "Ignored Msg";
-	if (silencePlayers[i] != "*") {
-	  msg2 += " from " + silencePlayers[i];
-	} else {
-	  //if * just echo a generic Ignored
-	}
+	std::string msg2 = "Ignored Msg from " + srcName;
+	if (silencePlayers[i] == "*") {
+	  msg2 += " because all chat is ignored";
+        } else if (silencePlayers[i] == "-") {
+          msg2 += " because chat from unregistered players is ignored";
+        }
 	addMessage(NULL,msg2);
 #endif
 	break;
@@ -7357,6 +7359,9 @@ void			startPlaying(BzfDisplay* _display,
     aString += " Silenced";
     if (silencePlayers[j] == "*") {
       aString = "Silenced All Msgs";
+    }
+    else if (silencePlayers[j] == "-") {
+      aString = "Silenced Unregistered Players";
     }
     controlPanel->addMessage(aString);
   }
