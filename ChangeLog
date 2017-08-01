@@ -4,6 +4,7 @@
 BZFlag 2.4.11
 -------------
 
+* Player records canSpawn value no longer always returns true - Vladimir Jimenez
 * Made multisampling work on all platforms with SDL 1.2/2 - Joshua Bodine
 * Add bz_eMuteEvent and bz_eUnmuteEvent to the API - Vladimir Jimenez
 * Add configure --disable-server option - Jeff Makey
