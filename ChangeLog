@@ -16,6 +16,7 @@ BZFlag 2.4.11
 * Remove Xcode references to deployment targets except for main project
     - Joshua Bodine
 * Allow silencing unregistered players in the client - Scott Wichser
+* Fix the /silence and /unsilence client commands - Scott Wichser
 
 
 BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
