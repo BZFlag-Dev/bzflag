@@ -3585,10 +3585,8 @@ public:
     newTask.token = token;
     newTask.handler = handler;
     newTask.url = URL;
-    if (postData)
-      newTask.postData = postData;
-    if (headers)
-      newTask.headers = headers;
+    newTask.postData = postData;
+    newTask.headers = headers;
     newTask.id = ++LastJob;
     newTask.lastTime = TimeKeeper::getCurrent().getSeconds();
     Tasks.push_back(newTask);
