@@ -547,9 +547,11 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
   case SDL_TEXTINPUT:
     if (event.text.text[0] < '!' || event.text.text[0] > '~')
       break;
-    // workaround for SDL 2 bug on mac where there is a text input event
-    // when a numpad key is pressed even without num luck enabled
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2886
+    // on macOS with SDL 2, a text input event is generated for numpad keys
+    // regardless of whether numlock is on or off; the SDL team has determined
+    // that this is the expected behavior on macOS, but we want to screen out
+    // those text input events
+    // original bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2886
 #ifdef __APPLE__
     if ((lastKeyDownEvent.key.keysym.mod & KMOD_NUM) == 0 && (
 	lastKeyDownEvent.key.keysym.sym == SDLK_KP_0 ||
