@@ -5483,7 +5483,6 @@ void initGroups()
   PlayerAccessInfo info;
   info.explicitAllows[PlayerAccessInfo::actionMessage] = true;
   info.explicitAllows[PlayerAccessInfo::adminMessageSend] = true;
-  info.explicitAllows[PlayerAccessInfo::clientQuery] = true;
   info.explicitAllows[PlayerAccessInfo::date] = true;
   info.explicitAllows[PlayerAccessInfo::flagHistory] = true;
   info.explicitAllows[PlayerAccessInfo::idleStats] = true;
@@ -5504,7 +5503,6 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::vote] = true;
   info.explicitAllows[PlayerAccessInfo::pollBan] = true;
   info.explicitAllows[PlayerAccessInfo::pollKick] = true;
-  info.explicitAllows[PlayerAccessInfo::pollSet] = true;
   info.explicitAllows[PlayerAccessInfo::pollFlagReset] = true;
   info.groupState[PlayerAccessInfo::isGroup] = true;
   info.groupState[PlayerAccessInfo::isDefault] = true;
