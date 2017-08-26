@@ -5,7 +5,7 @@ BZFlag 2.4.11
 -------------
 
 * Don't send client queries on behalf of players - Vladimir Jimenez
-* Removed pollSet as default perms in bzfs - Vladimir Jimenez
+* Removed pollSet as a default perm in bzfs - Vladimir Jimenez
 * Player records canSpawn value no longer always returns true - Vladimir Jimenez
 * Made multisampling work on all platforms with SDL 1.2/2 - Joshua Bodine
 * Add bz_eMuteEvent and bz_eUnmuteEvent to the API - Vladimir Jimenez
