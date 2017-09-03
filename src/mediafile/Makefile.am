@@ -17,8 +17,6 @@ libMediaFile_la_SOURCES =	\
 	MediaFile.cxx		\
 	PNGImageFile.cxx	\
 	PNGImageFile.h		\
-	SGIImageFile.cxx	\
-	SGIImageFile.h		\
 	AudioFile.cxx		\
 	AudioFile.h		\
 	WaveAudioFile.h		\

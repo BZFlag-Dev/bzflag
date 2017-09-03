@@ -36,24 +36,24 @@ public:
   bool isOpen() const;
 
   /** Get the number of channels in the image file. Channels are 8 bits. */
-  int			getNumChannels() const;
+  unsigned int		getNumChannels() const;
 
   /** Get the width of the image file. */
-  int			getWidth() const;
+  unsigned int		getWidth() const;
 
   /** Get the height of the image file. */
-  int			getHeight() const;
+  unsigned int		getHeight() const;
 
 protected:
   ImageFile(std::istream*);
 
   /** Save info about the stream.  Called by the derived c'tor. */
-  void init(int numChannels, int width, int height);
+  void init(unsigned int numChannels, unsigned int width, unsigned int height);
 
 private:
   bool			open;
-  int			numChannels;
-  int			width, height;
+  unsigned int		numChannels;
+  unsigned int		width, height;
 };
 
 #endif

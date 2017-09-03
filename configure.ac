@@ -273,6 +273,10 @@ dnl detect a usable system zlib compression library
 AC_CHECK_LIB(z, compressBound, LIBZ="-lz", AC_MSG_ERROR([working zlib was not found]))
 AC_SUBST(LIBZ)
 
+dnl detect a usable system libpng library
+AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', AC_MSG_ERROR([working libpng was not found]))
+AC_SUBST(LIBPNG)
+
 
 dnl detect a usable system c-ares lookup library
 AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
@@ -422,6 +426,7 @@ AC_LANG(C)
 AC_CHECK_HEADERS( \
 	SDL/SDL.h \
 	SDL2/SDL.h \
+        png.h \
 	bstring.h \
 	dlfcn.h \
 	dsound.h \
