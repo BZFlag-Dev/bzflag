@@ -70,11 +70,11 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFil
     [](png_structp _png, png_bytep _data, png_size_t _length) -> void {
       std::istream* _input = (std::istream*)(png_get_io_ptr(_png));
       try {
-        _input->read((char*)_data, _length);
+	_input->read((char*)_data, _length);
       }
       catch (std::ios_base::failure e) {
-        logDebugMessage(0, e.what());
-        png_error(_png, "error");
+	logDebugMessage(0, e.what());
+	png_error(_png, "error");
       }
     }
   );

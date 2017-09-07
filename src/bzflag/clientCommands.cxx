@@ -21,6 +21,8 @@
 #include <string>
 #include <vector>
 #include <cstdlib>
+#include <png.h>
+#include <zlib.h>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -30,7 +32,6 @@
 #include "version.h"
 #include "SceneRenderer.h"
 #include "bzglob.h"
-#include "BzPNG.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -684,9 +685,8 @@ struct ScreenshotData
 {
   std::string renderer;
   unsigned char* pixels;
-  int xsize;
-  int ysize;
-  int channels;
+  unsigned int width;
+  unsigned int height;
 };
 
 #ifdef _WIN32
@@ -742,16 +742,13 @@ static void* writeScreenshot(void* data)
   snap++;
   std::string filename = dirname + prefix + TextUtils::format("%04d", snap) + ext;
 
-  std::ostream* f = FILEMGR.createDataOutStream(filename.c_str(), true, true);
+  std::ostream* output = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
-  if (f != NULL) {
-    delete(f);
-
+  if (output != NULL) {
     const std::string& renderer = ssdata->renderer;
     unsigned char* pixels       = ssdata->pixels;
-    const int xsize	     = ssdata->xsize;
-    const int ysize	     = ssdata->ysize;
-    const int channels	  = ssdata->channels;
+    const unsigned int width	     = ssdata->width;
+    const unsigned int height	     = ssdata->height;
 
     // Gamma-correction is preapplied by BZFlag's gamma table
     // This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
@@ -764,27 +761,106 @@ static void* writeScreenshot(void* data)
 	  const float lumadj = pow(lum, 1.0f / gamma);
 	  gammaTable[i] = (unsigned char) (lumadj * 256);
 	}
-	const int pixelCount = (xsize * ysize * channels);
+	const int pixelCount = (width * height * 3);
 	for (int i = 0; i < pixelCount; i++) {
 	  pixels[i] = gammaTable[pixels[i]];
 	}
       }
     }
 
-    const std::string versionStr = std::string("BZFlag") + getAppVersion();
-    std::vector<BzPNG::Chunk> chunks;
-    chunks.push_back(BzPNG::Chunk("tEXt", "Software", versionStr));
-    chunks.push_back(BzPNG::Chunk("tEXt", "GL Renderer", renderer));
+    // PNG structures
+    png_structp png;
+    png_infop pnginfo;
 
-    char buf[128];
-    if (BzPNG::save(filename, chunks, xsize, ysize, channels, pixels)) {
-      snprintf(buf, sizeof(buf), "%s: %dx%d", filename.c_str(), xsize, ysize);
-    } else {
-      snprintf(buf, sizeof(buf), "%s: failed to save", filename.c_str());
+    // Create write structure
+    png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    if (png == NULL) {
+      ControlPanel::addMutexMessage("Failed to create libpng write structure.");
+      return NULL;
     }
+
+    // Create info structure
+    pnginfo = png_create_info_struct(png);
+    if (pnginfo == NULL) {
+      ControlPanel::addMutexMessage("Failed to create libpng info structure.");
+      png_destroy_write_struct(&png, (png_infopp)0);
+      return NULL;
+    }
+
+    // Basic error handling
+    if (setjmp(png_jmpbuf(png))) {
+      ControlPanel::addMutexMessage("Error writing screenshot.");
+      png_destroy_write_struct(&png, &pnginfo);
+      return NULL;
+    }
+
+    // Register function to send writes to the output stream
+    png_set_write_fn(png, output,
+      [](png_structp _png, png_bytep _data, png_size_t _length) -> void {
+	std::ostream* _output = (std::ostream*)(png_get_io_ptr(_png));
+	try {
+	  _output->write((char*)_data, _length);
+	}
+	catch (std::ios_base::failure e) {
+	  logDebugMessage(0, e.what());
+	  png_error(_png, "Error writing screenshot.");
+	}
+      },
+      NULL
+    );
+
+    // Use RLE compression
+    png_set_compression_strategy(png, Z_RLE);
+
+    // Use fast filters
+    png_set_filter(png, PNG_FILTER_TYPE_BASE, PNG_FAST_FILTERS);
+
+    // Set header information
+    png_set_IHDR(png, pnginfo, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+
+    // Set Software text chunk
+    const std::string versionStr = std::string("BZFlag ") + getAppVersion();
+    png_text software_text;
+    software_text.compression = PNG_TEXT_COMPRESSION_NONE;
+    software_text.key = const_cast<png_charp>("Software");
+    software_text.text = const_cast<png_charp>(reinterpret_cast<const char *>(versionStr.c_str()));
+    png_set_text(png, pnginfo, &software_text, 1);
+
+    // Set OpenGL Renderer text chunk
+    png_text renderer_text;
+    renderer_text.compression = PNG_TEXT_COMPRESSION_NONE;
+    renderer_text.key = const_cast<png_charp>("OpenGL Renderer");
+    renderer_text.text = const_cast<png_charp>(reinterpret_cast<const char *>(renderer.c_str()));
+    png_set_text(png, pnginfo, &renderer_text, 1);
+
+    // Write PNG header
+    png_write_info(png, pnginfo);
+
+    // Write each row of pixels
+    for (size_t y = 0; y < height; y++) {
+      png_write_row(png, (png_bytep)(pixels + (height - y - 1) * width * 3));
+    }
+
+    // Write the end of the file
+    png_write_end(png, pnginfo);
+
+    // Destroy libpng structures
+    png_destroy_write_struct(&png, &pnginfo);
+
+    // Close output stream
+    delete output;
+
+    // Tell the user about the location and dimensions of the screenshot
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%s: %dx%d", filename.c_str(), width, height);
+    ControlPanel::addMutexMessage(buf);
+  } else {
+    char buf[128];
+    snprintf(buf, sizeof(buf), "%s: failed to save", filename.c_str());
     ControlPanel::addMutexMessage(buf);
   }
 
+  // Free up memory
   delete[] ssdata->pixels;
   delete ssdata;
 
@@ -804,11 +880,8 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
   ssdata->renderer += " (OpenGL ";
   ssdata->renderer += (const char*)(glGetString(GL_VERSION));
   ssdata->renderer += ")";
-  int w = mainWindow->getWidth();
-  int h = mainWindow->getHeight();
-  ssdata->xsize = w;
-  ssdata->ysize = h;
-  ssdata->channels = 3; // GL_RGB
+  int w = ssdata->width = mainWindow->getWidth();
+  int h = ssdata->height = mainWindow->getHeight();
   ssdata->pixels = new unsigned char[h * w * 3];
   glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
   glPixelStorei(GL_PACK_ALIGNMENT, 1);
