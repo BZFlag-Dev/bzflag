@@ -159,6 +159,33 @@ libPlatform_la_SOURCES =			\
 	WinMedia.h
 endif
 
+if APPLE
+libPlatform_la_SOURCES =    \
+	PlatformFactory.cxx     \
+	BzfDisplay.cxx          \
+	BzfJoystick.cxx         \
+	BzfVisual.cxx           \
+	BzfWindow.cxx           \
+	BzfMedia.cxx            \
+	SDLJoystick.h           \
+	SDLJoystick.cxx         \
+	SDLMedia.cxx            \
+	SDLMedia.h              \
+	wave.cxx                \
+	wave.h                  \
+	MacDataPath.cxx         \
+	SDLMain.h               \
+	SDLMain.m               \
+	SDLPlatformFactory.cxx  \
+	SDLPlatformFactory.h    \
+	SDL2Display.cxx         \
+	SDL2Display.h           \
+	SDL2Visual.cxx          \
+	SDL2Visual.h            \
+	SDL2Window.cxx          \
+	SDL2Window.h
+endif
+
 EXTRA_libPlatform_la_SOURCES =		\
 	BeOSPlatformFactory.cxx		\
 	BeOSPlatformFactory.h		\

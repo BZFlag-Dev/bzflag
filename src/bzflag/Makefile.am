@@ -11,6 +11,10 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
+if APPLE
+bzflag_LDFLAGS = -framework CoreFoundation -framework Carbon
+endif
+
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\

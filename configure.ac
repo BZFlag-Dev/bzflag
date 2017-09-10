@@ -235,6 +235,13 @@ AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
 
+# Enable Objective-C compilations for OS X
+case $host_os in
+    darwin*)
+        AC_PROG_OBJC
+        ;;
+esac
+
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE" ; then
     CC="ccache $CC"
@@ -559,6 +566,8 @@ esac
 case $host_os in
     beos*)
 	;;
+    darwin*)
+	;;
     *)
 	CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 	if test x$no_x = x; then
@@ -584,6 +593,12 @@ for ac_lib in opengl32 GL GL2; do
 		   [ac_cv_search_glBegin="-l$ac_lib"
 		    break],[])
 done
+# Force -framework GLUT (instead of -lopengl/-lGL/-lGL2) for OS X
+case $host_os in
+    darwin*)
+	ac_cv_search_glBegin="-framework GLUT"
+	;;
+esac
 if test "$ac_cv_search_glBegin" != no; then
     GLIBS="$ac_cv_search_glBegin $GLIBS"
     if test "$ac_cv_search_glBegin" = -lGL2; then
@@ -901,6 +916,9 @@ BZ_CONFIGURE_STAGE([services], [8 of 9])
 # need to consolidate them to here.
 
 case $host_os in
+    darwin*)
+	apple=true
+	;;
     beos*)
 	beos=true
 	;;
@@ -920,6 +938,7 @@ case $host_os in
 	win32=true
 	;;
 esac
+AM_CONDITIONAL(APPLE, test x$apple = xtrue)
 AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
 AM_CONDITIONAL(IRIX, test x$irix = xtrue)
