@@ -643,6 +643,12 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
+# Use OS X frameworks (required for all three executables; bzflag, bzfs, and bzadmin)
+case $host_os in
+    darwin*)
+        LIBS="${LIBS} -framework Carbon -framework CoreFoundation"
+        ;;
+esac
 
 case $host_os in
     mingw32*)
@@ -916,11 +922,11 @@ BZ_CONFIGURE_STAGE([services], [8 of 9])
 # need to consolidate them to here.
 
 case $host_os in
-    darwin*)
-	apple=true
-	;;
     beos*)
 	beos=true
+	;;
+    darwin*)
+        apple=true
 	;;
     hpux*)
 	hpux=true
@@ -938,9 +944,9 @@ case $host_os in
 	win32=true
 	;;
 esac
-AM_CONDITIONAL(APPLE, test x$apple = xtrue)
 AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
+AM_CONDITIONAL(APPLE, test x$apple = xtrue)
 AM_CONDITIONAL(IRIX, test x$irix = xtrue)
 AM_CONDITIONAL(LINUX, test x$linux = xtrue)
 AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)

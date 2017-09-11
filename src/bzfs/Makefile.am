@@ -17,11 +17,7 @@ else
 plugin_files =
 endif
 
-if APPLE
-bzfs_LDFLAGS = -export-dynamic -static -framework CoreFoundation -framework Carbon
-else
 bzfs_LDFLAGS = -export-dynamic -static
-endif
 
 bzfs_SOURCES =				\
 	${plugin_files}			\

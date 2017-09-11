@@ -23,11 +23,7 @@ AM_CPPFLAGS = \
 AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
-if APPLE
-bzadmin_LDFLAGS = -static -framework CoreFoundation -framework Carbon
-else
 bzadmin_LDFLAGS = -static
-endif
 
 bzadmin_SOURCES = \
 	BZAdminClient.h \
