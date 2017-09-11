@@ -812,9 +812,6 @@ static void* writeScreenshot(void* data)
     // Use RLE compression
     png_set_compression_strategy(png, Z_RLE);
 
-    // Use fast filters
-    png_set_filter(png, PNG_FILTER_TYPE_BASE, PNG_FAST_FILTERS);
-
     // Set header information
     png_set_IHDR(png, pnginfo, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
 
