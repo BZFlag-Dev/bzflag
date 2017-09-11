@@ -586,6 +586,11 @@ case $host_os in
 	;;
 esac
 
+AC_MSG_CHECKING([for gl.h])
+LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
+	       [[glBegin(GL_POINTS)]])],
+		[ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
@@ -593,18 +598,13 @@ for ac_lib in opengl32 GL GL2; do
 		   [ac_cv_search_glBegin="-l$ac_lib"
 		    break],[])
 done
-# Force -framework GLUT (instead of -lopengl/-lGL/-lGL2) for OS X
-case $host_os in
-    darwin*)
-	ac_cv_search_glBegin="-framework GLUT"
-	;;
-esac
 if test "$ac_cv_search_glBegin" != no; then
     GLIBS="$ac_cv_search_glBegin $GLIBS"
     if test "$ac_cv_search_glBegin" = -lGL2; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
 
+    AC_MSG_CHECKING([for glu.h])
     LIBS="-framework OpenGL $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
 		   [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
