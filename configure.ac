@@ -871,6 +871,12 @@ dnl ***************************
 
 BZ_CONFIGURE_STAGE([functions], [7 of 9])
 
+ac_func_search_save_LIBS=$LIBS
+case $host_os in
+    darwin*)
+LIBS="-framework OpenGL $ac_func_search_save_LIBS"
+	;;
+esac
 AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
@@ -887,6 +893,7 @@ AC_CHECK_FUNCS(\
 	vsnprintf \
 	wglGetCurrentContext \
 )
+LIBS=$ac_func_search_save_LIBS
 
 dnl test for isnan() presence
 BZ_FUNC_ISNAN

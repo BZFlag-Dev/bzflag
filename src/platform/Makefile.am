@@ -167,23 +167,35 @@ libPlatform_la_SOURCES =    \
 	BzfVisual.cxx           \
 	BzfWindow.cxx           \
 	BzfMedia.cxx            \
-	SDLJoystick.h           \
-	SDLJoystick.cxx         \
-	SDLMedia.cxx            \
-	SDLMedia.h              \
 	wave.cxx                \
 	wave.h                  \
-	MacDataPath.cxx         \
-	SDLMain.h               \
-	SDLMain.m               \
+	MacDataPath.cxx
+
+if HAVE_SDL
+libPlatform_la_SOURCES +=   \
+	SDLJoystick.cxx         \
+	SDLJoystick.h           \
 	SDLPlatformFactory.cxx  \
 	SDLPlatformFactory.h    \
+	SDLMedia.cxx            \
+	SDLMedia.h
+if HAVE_SDL2
+libPlatform_la_SOURCES +=   \
 	SDL2Display.cxx         \
 	SDL2Display.h           \
 	SDL2Visual.cxx          \
 	SDL2Visual.h            \
 	SDL2Window.cxx          \
 	SDL2Window.h
+else
+libPlatform_la_SOURCES +=   \
+	SDLMain.h               \
+	SDLMain.m               \
+	SDLDisplay.cxx          \
+	SDLDisplay.h
+endif
+endif
+
 endif
 
 EXTRA_libPlatform_la_SOURCES =		\
