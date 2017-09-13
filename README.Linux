@@ -26,16 +26,27 @@ Different Linux distributions use different naming conventions for the
 packages that provide the dependencies needed to compile and run
 BZFlag.  Known build requirements include:
 
-  Debian & Ubuntu:
+  Debian & Ubuntu with SDL 2.0.3 or higher:
 
-    apt-get install g++ libtool automake autoconf libgl1-mesa-dev \
-    libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev \
-    libc-ares-dev zlib1g-dev libncurses-dev make
+    apt-get install automake autoconf g++ libtool make libc-ares-dev \
+    libcurl3-dev libgl1-mesa-dev libglu1-mesa-dev libncurses-dev libpng-dev \
+    libsdl2-dev zlib1g-dev
+
+  Older Debian & Ubuntu with SDL 1.2.10 or higher:
+
+    apt-get install automake autoconf g++ libtool make libc-ares-dev \
+    libcurl3-dev libgl1-mesa-dev libglu1-mesa-dev libncurses-dev libpng-dev \
+    libsdl1.2-dev libsdl-sound1.2-dev zlib1g-dev
 
   Fedora:
 
-    yum install SDL-devel c-ares-devel libSM-devel libcurl-devel \
-    gcc-c++ libidn-devel libtool ncurses-devel zlib-devel
+    dnf install gcc-c++ libtool c-ares-devel libcurl-devel libpng-devel \
+    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL2-devel zlib-devel
+
+  CentOS:
+
+    yum install gcc-c++ libtool c-ares-devel libcurl-devel libpng-devel \
+    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL-devel zlib-devel
 
 After any development packages are installed, execute the following
 commands from the top-level BZFlag source directory:
