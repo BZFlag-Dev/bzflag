@@ -11,7 +11,6 @@ libCommon_la_LDFLAGS = -static
 libCommon_la_SOURCES  =			\
 	AccessList.cxx			\
 	AutoCompleter.cxx		\
-	BzPNG.cxx			\
 	BZDBCache.cxx			\
 	BZDBLocal.cxx			\
 	Bundle.cxx			\

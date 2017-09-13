@@ -10,9 +10,6 @@
     <ClCompile Include="..\..\src\mediafile\PNGImageFile.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\mediafile\SGIImageFile.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\mediafile\ImageFile.h">
@@ -22,9 +19,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\mediafile\PNGImageFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\mediafile\SGIImageFile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

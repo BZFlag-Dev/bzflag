@@ -26,25 +26,25 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-   <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-   <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-   <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseOfMfc>false</UseOfMfc>
     <CharacterSet>MultiByte</CharacterSet>
-   <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -242,7 +242,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\common\bzfio.cxx" />
     <ClCompile Include="..\..\src\common\bzglob.cxx" />
-    <ClCompile Include="..\..\src\common\BzPNG.cxx" />
     <ClCompile Include="..\..\src\common\bzsignal.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -537,7 +536,6 @@
     <ClInclude Include="..\..\include\BZDBCache.h" />
     <ClInclude Include="..\..\include\bzfio.h" />
     <ClInclude Include="..\..\include\bzglob.h" />
-    <ClInclude Include="..\..\include\BzPNG.h" />
     <ClInclude Include="..\..\include\bzsignal.h" />
     <ClInclude Include="..\..\include\CallbackList.h" />
     <ClInclude Include="..\..\include\CommandManager.h" />

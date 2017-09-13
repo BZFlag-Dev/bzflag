@@ -18,7 +18,6 @@ noinst_HEADERS =			\
 	BoxBuilding.h			\
 	Bundle.h			\
 	BundleMgr.h			\
-	BzPNG.h				\
 	BzMaterial.h			\
 	BzfDisplay.h			\
 	BzfEvent.h			\

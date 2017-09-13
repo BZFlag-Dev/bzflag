@@ -27,8 +27,8 @@ ImageFile::~ImageFile()
   // do nothing
 }
 
-void			ImageFile::init(int _numChannels,
-					int _width, int _height)
+void			ImageFile::init(unsigned int _numChannels,
+                                        unsigned int _width, unsigned int _height)
 {
   open	= true;
   numChannels = _numChannels;
@@ -41,17 +41,17 @@ bool			ImageFile::isOpen() const
   return open;
 }
 
-int			ImageFile::getNumChannels() const
+unsigned int		ImageFile::getNumChannels() const
 {
   return numChannels;
 }
 
-int			ImageFile::getWidth() const
+unsigned int		ImageFile::getWidth() const
 {
   return width;
 }
 
-int			ImageFile::getHeight() const
+unsigned int		ImageFile::getHeight() const
 {
   return height;
 }

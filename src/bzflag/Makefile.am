@@ -209,6 +209,7 @@ LDADD =	\
 	../common/libCommon.la		\
 	$(LIBCARES)			\
 	$(LIBREGEX)			\
+        $(LIBPNG)			\
 	$(LIBZ)				\
 	$(RESOURCE)			\
 	$(SDL_LIBS)			\
