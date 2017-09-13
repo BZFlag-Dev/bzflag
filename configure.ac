@@ -274,9 +274,8 @@ AC_CHECK_LIB(z, compressBound, LIBZ="-lz", AC_MSG_ERROR([working zlib was not fo
 AC_SUBST(LIBZ)
 
 dnl detect a usable system libpng library
-AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', AC_MSG_ERROR([working libpng was not found]))
+AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', LIBPNG='')
 AC_SUBST(LIBPNG)
-
 
 dnl detect a usable system c-ares lookup library
 AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
@@ -948,17 +947,26 @@ if test x$ac_ff_effect_directional = xyes; then
 fi
 AC_MSG_RESULT([$ac_ff_effect_directional])
 
-# if the client was enabled, make sure we have GL
+# if the client was enabled, make sure we have GL and libpng
 if test x$enable_client != xno; then
     have_gl=no
+    have_libpng=no
     if test "$ac_cv_search_gluScaleImage" = no; then
 	AC_MSG_WARN(
 	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
     else
-	AM_CONDITIONAL(CLIENT_INCLUDED, true)
 	have_gl=yes
+	if test "x$LIBPNG" = "x"; then
+	    AC_MSG_WARN(
+	    [Client build is enabled, but libpng does not seem to be available ... disabling BZFlag client])
+	    AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	    enable_client=no
+	else
+	    AM_CONDITIONAL(CLIENT_INCLUDED, true)
+	    have_libpng=yes
+	fi
     fi
 else
     AM_CONDITIONAL(CLIENT_INCLUDED, false)
@@ -1102,7 +1110,11 @@ if test "x$enable_client" = "xno"; then
     if test "x$have_gl" = "xno" ; then
 	build_bzflag="no bzflag client binary! (need OpenGL)"
     else
-	build_bzflag="no bzflag client binary!"
+        if test "x$have_libpng" = "xno" ; then
+            build_bzflag="no bzflag client binary! (need libpng)"
+        else
+            build_bzflag="no bzflag client binary!"
+        fi
     fi
 else
     if test x$with_SDL != xno; then
