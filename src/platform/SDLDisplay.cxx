@@ -528,7 +528,7 @@ bool SDLDisplay::createWindow() {
     printf("Could not set Video Mode: %s.\n", SDL_GetError());
     return false;
   } else {
-#ifndef __APPLE
+#ifndef __APPLE__
     // initialize opengl extension functions
     glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC)
       SDL_GL_GetProcAddress("glIsRenderbuffer");

@@ -235,6 +235,13 @@ AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
 
+# Enable Objective-C compilations for OS X
+case $host_os in
+    darwin*)
+        AC_PROG_OBJC
+        ;;
+esac
+
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE" ; then
     CC="ccache $CC"
@@ -559,6 +566,8 @@ esac
 case $host_os in
     beos*)
 	;;
+    darwin*)
+	;;
     *)
 	CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 	if test x$no_x = x; then
@@ -577,6 +586,11 @@ case $host_os in
 	;;
 esac
 
+AC_MSG_CHECKING([for gl.h])
+LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
+	       [[glBegin(GL_POINTS)]])],
+		[ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
@@ -590,6 +604,7 @@ if test "$ac_cv_search_glBegin" != no; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
 
+    AC_MSG_CHECKING([for glu.h])
     LIBS="-framework OpenGL $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
 		   [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
@@ -628,6 +643,12 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
+# Use OS X frameworks (required for all three executables; bzflag, bzfs, and bzadmin)
+case $host_os in
+    darwin*)
+        LIBS="${LIBS} -framework Carbon -framework CoreFoundation"
+        ;;
+esac
 
 case $host_os in
     mingw32*)
@@ -850,6 +871,12 @@ dnl ***************************
 
 BZ_CONFIGURE_STAGE([functions], [7 of 9])
 
+ac_func_search_save_LIBS=$LIBS
+case $host_os in
+    darwin*)
+LIBS="-framework OpenGL $ac_func_search_save_LIBS"
+	;;
+esac
 AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
@@ -866,6 +893,7 @@ AC_CHECK_FUNCS(\
 	vsnprintf \
 	wglGetCurrentContext \
 )
+LIBS=$ac_func_search_save_LIBS
 
 dnl test for isnan() presence
 BZ_FUNC_ISNAN
@@ -904,6 +932,9 @@ case $host_os in
     beos*)
 	beos=true
 	;;
+    darwin*)
+        apple=true
+	;;
     hpux*)
 	hpux=true
 	;;
@@ -922,6 +953,7 @@ case $host_os in
 esac
 AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
+AM_CONDITIONAL(APPLE, test x$apple = xtrue)
 AM_CONDITIONAL(IRIX, test x$irix = xtrue)
 AM_CONDITIONAL(LINUX, test x$linux = xtrue)
 AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)

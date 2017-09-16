@@ -4,6 +4,7 @@
 BZFlag 2.4.11
 -------------
 
+* Fixed compilation on macOS when using autotools/gcc - Mike Miller
 * Don't send client queries on behalf of players - Vladimir Jimenez
 * Removed pollSet as a default perm in bzfs - Vladimir Jimenez
 * Player records canSpawn value no longer always returns true - Vladimir Jimenez
