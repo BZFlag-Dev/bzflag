@@ -771,7 +771,7 @@ msgstr "Efecto de humo de misiles:"
 msgid "GM Effect Timing:"
 msgstr "Efecto de temporizado de misiles:"
 
-msgid "  Ricocet Effect:"
+msgid "  Ricochet Effect:"
 msgstr "Efecto de rebote:"
 
 msgid "  Teleport Shot Effect:"
