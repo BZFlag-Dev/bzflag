@@ -240,6 +240,9 @@ case $host_os in
     darwin*)
         AC_PROG_OBJC
         ;;
+    *)
+        AM_CONDITIONAL(am__fastdepOBJC, false)
+        ;;
 esac
 
 AC_PATH_PROG(CCACHE, ccache)
