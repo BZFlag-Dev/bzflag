@@ -4,6 +4,8 @@
 BZFlag 2.4.11
 -------------
 
+* Fixed an issue with ASCII characters from modified non-ASCII keys in SDL 2
+    - Joshua Bodine
 * Fixed compilation on macOS when using autotools/gcc - Mike Miller
 * Don't send client queries on behalf of players - Vladimir Jimenez
 * Removed pollSet as a default perm in bzfs - Vladimir Jimenez
