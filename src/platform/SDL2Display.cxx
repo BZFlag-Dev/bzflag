@@ -112,7 +112,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
 }
 
 
-bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
+bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char asciiText) const
 {
   SDL_Keycode sym = sdlEvent.key.keysym.sym;
   Uint16      mod = sdlEvent.key.keysym.mod;
@@ -324,14 +324,10 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const
     break;
   default:
     key.button = BzfKeyEvent::NoButton;
-    if ((sym >= 0) && (sym <= 0x7F)) {
-      if (symNeedsConversion(sdlEvent.key.keysym))
-	key.ascii = charsForKeyCodes[sym];
-      else
-	key.ascii = sym;
-    } else {
-      return false;
-    }
+    if (asciiText)
+      key.ascii = asciiText;
+    else if ((sym >= 0) && (sym <= 0x7F))
+      key.ascii = (char) sym;
     break;
   }
 
@@ -373,43 +369,6 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 void SDLDisplay::getMouse(int &_x, int &_y) const {
   _x = mx;
   _y = my;
-}
-
-
-bool SDLDisplay::symNeedsConversion(SDL_Keysym keysym) const
-{
-  if (keysym.sym >= SDLK_EXCLAIM && keysym.sym <= SDLK_z)
-    return true;
-
-  // Handle keypad keys
-  switch (keysym.sym) {
-    case SDLK_KP_0:
-    case SDLK_KP_1:
-    case SDLK_KP_2:
-    case SDLK_KP_3:
-    case SDLK_KP_4:
-    case SDLK_KP_5:
-    case SDLK_KP_6:
-    case SDLK_KP_7:
-    case SDLK_KP_8:
-    case SDLK_KP_9:
-    case SDLK_KP_PERIOD:
-      // If numlock is on, handle keypad keys that would type letters and puctuation
-      if (keysym.mod & KMOD_NUM)
-	return true;
-      break;
-    case SDLK_KP_DIVIDE:
-    case SDLK_KP_MULTIPLY:
-    case SDLK_KP_MINUS:
-    case SDLK_KP_PLUS:
-    case SDLK_KP_EQUALS:
-      // Always handle numpad keys that are unaffected by numlock
-      return true;
-      break;
-  }
-
-
-  return false;
 }
 
 
@@ -530,44 +489,48 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     break;
 
   case SDL_KEYDOWN:
-    lastKeyDownEvent = event;
-    if (! symNeedsConversion(event.key.keysym)) {
-      _event.type = BzfEvent::KeyDown;
-      if (!getKey(event, _event.keyDown))
-	return false;
-    }
+  {
+    _event.type = BzfEvent::KeyDown;
+
+    char asciiText = '\0';
+
+    SDL_Event textInputEvent;
+    SDL_PumpEvents();
+
+    if(SDL_PeepEvents(&textInputEvent, 1, SDL_PEEKEVENT, SDL_TEXTINPUT, SDL_TEXTINPUT) > 0)
+      if (textInputEvent.text.text[0] >= '!' && textInputEvent.text.text[0] <= '~')
+	// on macOS with SDL 2, a text input event is generated for numpad keys
+	// regardless of whether numlock is on or off; the SDL team has determined
+	// that this is the expected behavior on macOS, but we want to screen out
+	// those text input events
+	// original bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2886
+#ifdef __APPLE__
+	if ((event.key.keysym.mod & KMOD_NUM) || (
+	  event.key.keysym.sym != SDLK_KP_0 &&
+	  event.key.keysym.sym != SDLK_KP_1 &&
+	  event.key.keysym.sym != SDLK_KP_2 &&
+	  event.key.keysym.sym != SDLK_KP_3 &&
+	  event.key.keysym.sym != SDLK_KP_4 &&
+	  event.key.keysym.sym != SDLK_KP_5 &&
+	  event.key.keysym.sym != SDLK_KP_6 &&
+	  event.key.keysym.sym != SDLK_KP_7 &&
+	  event.key.keysym.sym != SDLK_KP_8 &&
+	  event.key.keysym.sym != SDLK_KP_9 &&
+	  event.key.keysym.sym != SDLK_KP_PERIOD))
+#endif // __APPLE
+	// we have a valid text input event following, so use that text for
+	// proper text case, symbol handling, etc.
+	asciiText = textInputEvent.text.text[0];
+
+    if (!getKey(event, _event.keyDown, asciiText))
+      return false;
+
     break;
+  }
 
   case SDL_KEYUP:
     _event.type = BzfEvent::KeyUp;
     if (!getKey(event, _event.keyUp))
-      return false;
-    break;
-
-  case SDL_TEXTINPUT:
-    if (event.text.text[0] < '!' || event.text.text[0] > '~')
-      break;
-    // workaround for SDL 2 bug on mac where there is a text input event
-    // when a numpad key is pressed even without num luck enabled
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=2886
-#ifdef __APPLE__
-    if ((lastKeyDownEvent.key.keysym.mod & KMOD_NUM) == 0 && (
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_0 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_1 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_2 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_3 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_4 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_5 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_6 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_7 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_8 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_9 ||
-	lastKeyDownEvent.key.keysym.sym == SDLK_KP_PERIOD))
-      break;
-#endif // __APPLE
-    charsForKeyCodes[lastKeyDownEvent.key.keysym.sym] = event.text.text[0];
-    _event.type = BzfEvent::KeyDown;
-    if (!getKey(lastKeyDownEvent, _event.keyDown))
       return false;
     break;
 

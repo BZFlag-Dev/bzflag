@@ -70,7 +70,6 @@ class SDLVisual : public BzfVisual {
   void setAccum(int, int, int, int) {;};
   void setStereo(bool);
   void setVerticalSync(bool);
-  void setMultisample(int) {;};
   bool build() {return true;};
 };
 

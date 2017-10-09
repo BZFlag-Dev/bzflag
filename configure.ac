@@ -130,10 +130,18 @@ MP_WITH_CURSES
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
 
+# build the server?
+AC_ARG_ENABLE(server, AS_HELP_STRING([--disable-server],[do not compile server]))
+
 # check whether plugins are desired
 AC_ARG_ENABLE(plugins, AS_HELP_STRING([--disable-plugins],[do not compile plugins]))
 if test "x$enable_plugins" != xno ; then
-    AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
+    if test "x$enable_server" != xno ; then
+	AC_DEFINE(BZ_PLUGINS, 1, [Enable plugins])
+    else
+	enable_plugins=no
+	AC_MSG_WARN([skipping plugins for client-only build])
+    fi
 fi
 AM_CONDITIONAL(BUILD_PLUGINS, test "x$enable_plugins" != "xno")
 
@@ -226,6 +234,16 @@ AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
 AC_SUBST(AR)
 AC_SUBST(AR_FLAGS)
+
+# Enable Objective-C compilations for OS X
+case $host_os in
+    darwin*)
+        AC_PROG_OBJC
+        ;;
+    *)
+        AM_CONDITIONAL(am__fastdepOBJC, false)
+        ;;
+esac
 
 AC_PATH_PROG(CCACHE, ccache)
 if test "$CCACHE" ; then
@@ -551,6 +569,8 @@ esac
 case $host_os in
     beos*)
 	;;
+    darwin*)
+	;;
     *)
 	CONF_CPPFLAGS="$CONF_CPPFLAGS $X_CFLAGS"
 	if test x$no_x = x; then
@@ -569,6 +589,11 @@ case $host_os in
 	;;
 esac
 
+AC_MSG_CHECKING([for gl.h])
+LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
+	       [[glBegin(GL_POINTS)]])],
+		[ac_cv_search_glBegin="-framework OpenGL"],[])
 for ac_lib in opengl32 GL GL2; do
     LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
@@ -582,6 +607,7 @@ if test "$ac_cv_search_glBegin" != no; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
 
+    AC_MSG_CHECKING([for glu.h])
     LIBS="-framework OpenGL $ac_func_search_save_LIBS"
     AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
 		   [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
@@ -620,6 +646,12 @@ if test "x$enable_threads" != "xno" ; then
     AC_MSG_RESULT([$pthread_check])
 fi
 
+# Use OS X frameworks (required for all three executables; bzflag, bzfs, and bzadmin)
+case $host_os in
+    darwin*)
+        LIBS="${LIBS} -framework Carbon -framework CoreFoundation"
+        ;;
+esac
 
 case $host_os in
     mingw32*)
@@ -842,6 +874,12 @@ dnl ***************************
 
 BZ_CONFIGURE_STAGE([functions], [7 of 9])
 
+ac_func_search_save_LIBS=$LIBS
+case $host_os in
+    darwin*)
+LIBS="-framework OpenGL $ac_func_search_save_LIBS"
+	;;
+esac
 AC_CHECK_FUNCS(\
 	CGLGetCurrentContext \
 	Sleep \
@@ -858,6 +896,7 @@ AC_CHECK_FUNCS(\
 	vsnprintf \
 	wglGetCurrentContext \
 )
+LIBS=$ac_func_search_save_LIBS
 
 dnl test for isnan() presence
 BZ_FUNC_ISNAN
@@ -896,6 +935,9 @@ case $host_os in
     beos*)
 	beos=true
 	;;
+    darwin*)
+        apple=true
+	;;
     hpux*)
 	hpux=true
 	;;
@@ -914,6 +956,7 @@ case $host_os in
 esac
 AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
+AM_CONDITIONAL(APPLE, test x$apple = xtrue)
 AM_CONDITIONAL(IRIX, test x$irix = xtrue)
 AM_CONDITIONAL(LINUX, test x$linux = xtrue)
 AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)
@@ -960,8 +1003,12 @@ else
 fi
 
 
-# stub it for now, enable the server
-AM_CONDITIONAL(SERVER_INCLUDED, true)
+# Build the server, or do not.  There is no "try."
+if test x$enable_server != xno; then
+    AM_CONDITIONAL(SERVER_INCLUDED, true)
+else
+    AM_CONDITIONAL(SERVER_INCLUDED, false)
+fi
 
 
 # if bzadmin was enabled, make sure we have curses.
@@ -1110,10 +1157,14 @@ else
 	build_bzflag="yes"
     fi
 fi
-if test "x$enable_plugins" != xno ; then
-    build_bzfs="yes (with plugins)"
+if test "x$enable_server" != xno ; then
+    if test "x$enable_plugins" != xno ; then
+	build_bzfs="yes (with plugins)"
+    else
+	build_bzfs="yes (without plugins)"
+    fi
 else
-    build_bzfs="yes (without plugins)"
+	build_bzfs="no (without plugins)"
 fi
 
 if test "x$enable_bzadmin" = "xno"; then

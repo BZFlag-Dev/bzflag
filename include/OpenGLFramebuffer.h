@@ -10,17 +10,40 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef MACGL_H
-#define MACGL_H
+/* OpenGLFramebuffer:
+ *	Encapsulates an OpenGL framebuffer object for multisampled rendering.
+ */
+
+#ifndef OPENGLFRAMEBUFFER_H
+#define OPENGLFRAMEBUFFER_H
+
+#include "common.h"
 
 // common headers
 #include "bzfgl.h"
 
+class OpenGLFramebuffer {
+private:
+  bool contextActive;
+  int msaaLevel, width, height;
+  GLuint renderbuffer, depthRenderbuffer, framebuffer;
 
-bool getCurrentMacOpenGLContext(CGLContextObj* cglContext);
+  void initFramebuffer();
+  void destroyFramebuffer();
 
+public:
+  OpenGLFramebuffer();
+  ~OpenGLFramebuffer();
 
-#endif // MACGL_H
+  void checkState(int, int, int);
+
+  GLint getFramebuffer() { return framebuffer; }
+
+  static void freeContext(void*);
+  static void initContext(void*);
+};
+
+#endif // OPENGLFRAMEBUFFER_H
 
 
 /*

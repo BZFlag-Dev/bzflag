@@ -259,6 +259,12 @@ bool MuteCommand::operator() (const char	 *message,
 	       muteData->player.getCallSign());
       sendMessage(ServerPlayer, t, msg);
     }
+
+    bz_MuteEventData_V1 muteEventData;
+    muteEventData.victimID = i;
+    muteEventData.muterID = t;
+
+    worldEventManager.callEvents(bz_eMuteEvent, &muteEventData);
   }
   return true;
 }
@@ -317,6 +323,13 @@ bool UnmuteCommand::operator() (const char	 *message,
 	       unmuteData->player.getCallSign());
       sendMessage(ServerPlayer, t, msg);
     }
+
+    bz_MuteEventData_V1 unmuteEventData;
+    unmuteEventData.eventType = bz_eUnmuteEvent;
+    unmuteEventData.victimID = i;
+    unmuteEventData.muterID = t;
+
+    worldEventManager.callEvents(bz_eUnmuteEvent, &unmuteEventData);
   }
   return true;
 }

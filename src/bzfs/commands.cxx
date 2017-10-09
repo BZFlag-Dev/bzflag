@@ -3218,28 +3218,25 @@ bool ClientQueryCommand::operator() (const char	 *message,
     for (i = 0; i < curMaxPlayers;i++) {
       target = GameKeeper::Player::getPlayerByIndex(i);
       if (target && strcmp(target->player.getCallSign(), name.c_str()) == 0) {
-	sendMessage(i, t, TextUtils::format("Version: %s",
-		     target->player.getClientVersion()).c_str());
+	sendMessage(ServerPlayer, t, TextUtils::format("%s's client version:", target->player.getCallSign()).c_str());
+	sendMessage(ServerPlayer, t, TextUtils::format("  %s", target->player.getClientVersion()).c_str());
 	return true;
       }
     }
     sendMessage(ServerPlayer, t, "Player not found.");
     return true;
   }
-  sendMessage(ServerPlayer, AllPlayers, "[Sent version information per request]");
+
   // send server's own version string just for kicks
-  sendMessage(ServerPlayer, t,
-	      TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
+  sendMessage(ServerPlayer, t, TextUtils::format("BZFS Version: %s", getAppVersion()).c_str());
+
   // send all players' version strings
-  // is faking a message from the remote client rude?
-  // did that so that /clientquery and CLIENTQUERY look about the same.
   GameKeeper::Player *otherData;
   for (int i = 0; i < curMaxPlayers;i++) {
     otherData = GameKeeper::Player::getPlayerByIndex(i);
     if (otherData && otherData->player.isPlaying()) {
-      sendMessage(i, t, TextUtils::format
-		  ("Version: %s",
-		   otherData->player.getClientVersion()).c_str());
+      sendMessage(ServerPlayer, t, TextUtils::format("%s's client version:", otherData->player.getCallSign()).c_str());
+      sendMessage(ServerPlayer, t, TextUtils::format("  %s", otherData->player.getClientVersion()).c_str());
     }
   }
   return true;

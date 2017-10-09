@@ -24,6 +24,7 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 bzadmin_LDFLAGS = -static
+
 bzadmin_SOURCES = \
 	BZAdminClient.h \
 	BZAdminClient.cxx \

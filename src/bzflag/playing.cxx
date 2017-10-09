@@ -48,6 +48,7 @@
 #include "md5.h"
 #include "ObstacleList.h"
 #include "ObstacleMgr.h"
+#include "OpenGLFramebuffer.h"
 #include "PhysicsDriver.h"
 #include "PlatformFactory.h"
 #include "QuadWallSceneNode.h"
@@ -221,6 +222,8 @@ static AresHandler* ares = NULL;
 void initGlobalAres() { ares = new AresHandler(0); }
 void killGlobalAres() { delete ares; ares = NULL; }
 static Address serverNetworkAddress = Address();
+
+OpenGLFramebuffer glFramebuffer;
 
 static AccessList	ServerAccessList("ServerAccess.txt", NULL);
 
@@ -2779,23 +2782,25 @@ static void		handleServerMessage(bool human, uint16_t code,
 
       bool ignore = false;
       unsigned int i;
-      for (i = 0; i < silencePlayers.size(); i++) {
-	const std::string &silenceCallSign = silencePlayers[i];
-	if (srcName == silenceCallSign || "*" == silenceCallSign) {
-	  ignore = true;
-	  break;
-	}
+      if (!fromServer) {
+        for (i = 0; i < silencePlayers.size(); i++) {
+	  const std::string &silenceCallSign = silencePlayers[i];
+	  if (srcName == silenceCallSign || "*" == silenceCallSign || ("-" == silenceCallSign && srcPlayer && !srcPlayer->isRegistered())) {
+	    ignore = true;
+	    break;
+	  }
+        }
       }
 
       if (ignore) {
 #ifdef DEBUG
 	// to verify working
-	std::string msg2 = "Ignored Msg";
-	if (silencePlayers[i] != "*") {
-	  msg2 += " from " + silencePlayers[i];
-	} else {
-	  //if * just echo a generic Ignored
-	}
+	std::string msg2 = "Ignored Msg from " + srcName;
+	if (silencePlayers[i] == "*") {
+	  msg2 += " because all chat is ignored";
+        } else if (silencePlayers[i] == "-") {
+          msg2 += " because chat from unregistered players is ignored";
+        }
 	addMessage(NULL,msg2);
 #endif
 	break;
@@ -5915,8 +5920,25 @@ void drawFrame(const float dt)
       drawUI();
 
     } else {
+      // bind the multisample framebuffer, if enabled
+      bool useMultisampling = OpenGLGState::getMaxSamples() > 1 && BZDB.evalInt("multisample") > 1;
+      if(useMultisampling) {
+	glFramebuffer.checkState(mainWindow->getWidth(), mainWindow->getHeight(), BZDB.evalInt("multisample"));
+	glBindFramebuffer(GL_FRAMEBUFFER, glFramebuffer.getFramebuffer());
+      }
+
       // normal rendering
       sceneRenderer->render();
+
+      // blit the multisample framebuffer (if enabled) to the main framebuffer
+      if(useMultisampling) {
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, glFramebuffer.getFramebuffer());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
+			  0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
+			  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+      }
 
       // draw other stuff
       drawUI();
@@ -7337,6 +7359,9 @@ void			startPlaying(BzfDisplay* _display,
     aString += " Silenced";
     if (silencePlayers[j] == "*") {
       aString = "Silenced All Msgs";
+    }
+    else if (silencePlayers[j] == "-") {
+      aString = "Silenced Unregistered Players";
     }
     controlPanel->addMessage(aString);
   }

@@ -17,11 +17,6 @@
 #include "OpenGLGState.h"
 #include "TimeKeeper.h"
 
-#ifdef __APPLE__
-#include <CoreGraphics/CoreGraphics.h>
-#include "MacGL.h"
-#endif // __APPLE
-
 #ifdef _WIN32
 HWND SDLWindow::hwnd = NULL;
 #endif
@@ -226,6 +221,51 @@ bool SDLWindow::create(void) {
 
   SDL_GL_SetSwapInterval(swapInterval);
 
+#ifndef __APPLE__
+  // initialize opengl extension functions
+  glIsRenderbuffer = (PFNGLISRENDERBUFFERPROC)
+    SDL_GL_GetProcAddress("glIsRenderbuffer");
+  glBindRenderbuffer = (PFNGLBINDRENDERBUFFERPROC)
+    SDL_GL_GetProcAddress("glBindRenderbuffer");
+  glDeleteRenderbuffers = (PFNGLDELETERENDERBUFFERSPROC)
+    SDL_GL_GetProcAddress("glDeleteRenderbuffers");
+  glGenRenderbuffers = (PFNGLGENRENDERBUFFERSPROC)
+    SDL_GL_GetProcAddress("glGenRenderbuffers");
+  glRenderbufferStorage = (PFNGLRENDERBUFFERSTORAGEPROC)
+    SDL_GL_GetProcAddress("glRenderbufferStorage");
+  glRenderbufferStorageMultisample = (PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC)
+    SDL_GL_GetProcAddress("glRenderbufferStorageMultisample");
+  glGetRenderbufferParameteriv = (PFNGLGETRENDERBUFFERPARAMETERIVPROC)
+    SDL_GL_GetProcAddress("glGetRenderbufferParameteriv");
+  glIsFramebuffer = (PFNGLISFRAMEBUFFERPROC)
+    SDL_GL_GetProcAddress("glIsFramebuffer");
+  glBindFramebuffer = (PFNGLBINDFRAMEBUFFERPROC)
+    SDL_GL_GetProcAddress("glBindFramebuffer");
+  glDeleteFramebuffers = (PFNGLDELETEFRAMEBUFFERSPROC)
+    SDL_GL_GetProcAddress("glDeleteFramebuffers");
+  glGenFramebuffers = (PFNGLGENFRAMEBUFFERSPROC)
+    SDL_GL_GetProcAddress("glGenFramebuffers");
+  glCheckFramebufferStatus = (PFNGLCHECKFRAMEBUFFERSTATUSPROC)
+    SDL_GL_GetProcAddress("glCheckFramebufferStatus");
+  glFramebufferTexture1D = (PFNGLFRAMEBUFFERTEXTURE1DPROC)
+    SDL_GL_GetProcAddress("glFramebufferTexture1D");
+  glFramebufferTexture2D = (PFNGLFRAMEBUFFERTEXTURE2DPROC)
+    SDL_GL_GetProcAddress("glFramebufferTexture2D");
+  glFramebufferTexture3D = (PFNGLFRAMEBUFFERTEXTURE3DPROC)
+    SDL_GL_GetProcAddress("glFramebufferTexture3D");
+  glFramebufferTextureLayer = (PFNGLFRAMEBUFFERTEXTURELAYERPROC)
+    SDL_GL_GetProcAddress("glFramebufferTextureLayer");
+  glFramebufferRenderbuffer = (PFNGLFRAMEBUFFERRENDERBUFFERPROC)
+    SDL_GL_GetProcAddress("glFramebufferRenderbuffer");
+  glGetFramebufferAttachmentParameteriv =
+    (PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC)
+    SDL_GL_GetProcAddress("glGetFramebufferAttachmentParameteriv");
+  glBlitFramebuffer = (PFNGLBLITFRAMEBUFFERPROC)
+    SDL_GL_GetProcAddress("glBlitFramebuffer");
+  glGenerateMipmap = (PFNGLGENERATEMIPMAPPROC)
+    SDL_GL_GetProcAddress("glGenerateMipmap");
+#endif // __APPLE__
+
   // init opengl context
   OpenGLGState::initContext();
 
@@ -287,48 +327,6 @@ void SDLWindow::makeContext() {
   glContext = SDL_GL_CreateContext(windowId);
   if (!glContext)
     printf("Could not Create GL Context: %s.\n", SDL_GetError());
-}
-
-int SDLWindow::getMaxSamples() const {
-  // determine the maximum multisampling level supported by the GPU
-#if defined(__APPLE__)
-  CGDirectDisplayID displayID = CGMainDisplayID();
-  CGOpenGLDisplayMask displayMask = CGDisplayIDToOpenGLDisplayMask(displayID);
-
-  CGLRendererInfoObj rendererInfo;
-  GLint numRenderers;
-  CGLQueryRendererInfo(displayMask, &rendererInfo, &numRenderers);
-
-  GLint currentRenderer;
-
-  CGLContextObj currentContext;
-  if (! getCurrentMacOpenGLContext(&currentContext)) {
-    CGLDestroyRendererInfo(rendererInfo);
-    return 1;
-  }
-
-  CGLGetParameter(currentContext, kCGLCPCurrentRendererID, &currentRenderer);
-
-  for (GLint i = 0; i < numRenderers; ++i) {
-    GLint data;
-
-    CGLDescribeRenderer(rendererInfo, i, kCGLRPRendererID, &data);
-
-    if (data == currentRenderer) {
-      CGLDescribeRenderer(rendererInfo, i, kCGLRPMaxSamples, &data);
-
-      CGLDestroyRendererInfo(rendererInfo);
-      return (int) data;
-    }
-  }
-
-  CGLDestroyRendererInfo(rendererInfo);
-
-  return 1;
-#else
-  // no platform-specific check; unknown what the GPU is capable of
-  return 1;
-#endif
 }
 
 void SDLWindow::setVerticalSync(bool setting) {

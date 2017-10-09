@@ -1012,7 +1012,7 @@ msgstr ""
 msgid "GM Effect Timing:"
 msgstr ""
 
-msgid "  Ricocet Effect:"
+msgid "  Ricochet Effect:"
 msgstr ""
 
 msgid "  Teleport Shot Effect:"

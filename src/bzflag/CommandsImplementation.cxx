@@ -302,33 +302,57 @@ bool BindCommand::operator() (const char *commandLine)
 
 bool SilenceCommand::operator() (const char *commandLine)
 {
-  Player *loudmouth = getPlayerByName(commandLine + 9);
-  if (loudmouth) {
-    silencePlayers.push_back(commandLine + 9);
-    std::string silenceMessage = "Silenced";
-    silenceMessage += (commandLine + 8);
-    addMessage(NULL, silenceMessage);
+  const char* name = commandLine + 9;
+  if (name != NULL && strlen(name) > 0) {
+
+    Player *loudmouth = getPlayerByName(name);
+    if (loudmouth) {
+      // we know this person exists
+      silencePlayers.push_back(name);
+      std::string silenceMessage = "Silenced ";
+      silenceMessage += (name);
+      addMessage(NULL, silenceMessage);
+    } else {
+      if (strcmp (name,"*") == 0) {
+	// check for * case
+	silencePlayers.push_back(name);
+	std::string silenceMessage = "Silenced All Msgs";
+	addMessage(NULL, silenceMessage);
+      } else if (strcmp(name, "-") == 0) {
+	// check for - case
+	silencePlayers.push_back(name);
+	std::string silenceMessage = "Silenced Unregistered Players";
+	addMessage(NULL, silenceMessage);
+      } else {
+	std::string silenceMessage = name;
+	silenceMessage += (" Does not exist");
+	addMessage(NULL, silenceMessage);
+      }
+    }
   }
-  else {
-    std::string silenceMessage = "no such callsign:";
-    silenceMessage += (commandLine + 8);
-    addMessage(NULL, silenceMessage);
-  }
+
   return true;
 }
 
 
 bool UnsilenceCommand::operator() (const char *commandLine)
 {
-  Player *loudmouth = getPlayerByName(commandLine + 11);
-  if (loudmouth) {
+  const char* name = commandLine + 11;
+  if (name != NULL && strlen(name) > 0) {
     std::vector<std::string>::iterator it = silencePlayers.begin();
     for (; it != silencePlayers.end(); ++it) {
-      if (*it == commandLine + 10) {
+      if (*it == name) {
 	silencePlayers.erase(it);
-	std::string unsilenceMessage = "Unsilenced ";
-	unsilenceMessage += (commandLine + 10);
-	addMessage(NULL, unsilenceMessage);
+	std::string silenceMessage = "Unsilenced ";
+	silenceMessage += (name);
+	if (strcmp (name, "*") == 0) {
+	  // to make msg fancier
+	  silenceMessage = "Unblocked Msgs";
+	}
+	else if (strcmp(name, "-") == 0) {
+	  silenceMessage = "Unsilenced Unregistered Players";
+	}
+	addMessage(NULL, silenceMessage);
 	break;
       }
     }

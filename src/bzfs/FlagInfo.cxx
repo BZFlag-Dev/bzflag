@@ -105,7 +105,6 @@ void FlagInfo::addFlag()
 {
   const float flagAltitude = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
   const float gravity      = BZDBCache::gravity;
-  const float maxGrabs     = BZDB.eval(StateDatabase::BZDB_MAXFLAGGRABS);
 
   // flag is now entering game
   numFlagsInAir++;
@@ -133,7 +132,7 @@ void FlagInfo::addFlag()
   if ((flag.endurance == FlagSticky) || (flag.type == Flags::Thief))
     grabs = 1;
   else
-    grabs = int(floor(maxGrabs * (float)bzfrand())) + 1;
+    grabs = BZDB.evalInt(StateDatabase::BZDB_MAXFLAGGRABS);
 }
 
 void *FlagInfo::pack(void *buf, bool hide)

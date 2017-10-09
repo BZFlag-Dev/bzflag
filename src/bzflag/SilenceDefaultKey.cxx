@@ -124,6 +124,9 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	    // to make msg fancier
 	    silenceMessage = "Unblocked Msgs";
 	  }
+          else if (strcmp(name, "-") == 0) {
+            silenceMessage = "Unsilenced Unregistered Players";
+          }
 	  addMessage(NULL, silenceMessage);
 	} else {
 	  // does not exist and not in list -- duh
@@ -133,6 +136,11 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 	      silencePlayers.push_back(name);
 	      std::string silenceMessage = "Silenced All Msgs";
 	      addMessage(NULL, silenceMessage);
+            } else if (strcmp(name, "-") == 0) {
+              // check for - case
+              silencePlayers.push_back(name);
+              std::string silenceMessage = "Silenced Unregistered Players";
+              addMessage(NULL, silenceMessage);
 	    } else {
 	      std::string silenceMessage = name;
 	      silenceMessage += (" Does not exist");
