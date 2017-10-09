@@ -3,9 +3,9 @@ README for Windows (32- and 64-bit) platforms
 
 **Compilers**
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
-files are provided for it. The current compiler used is Visual C++ 2015 (VC14).
-You can download Visual Studio Community 2015 for free from here:
-https://www.visualstudio.com/downloads/#visual-studio-2015
+files are provided for it. The current compiler used is Visual C++ 2017 (VC15).
+You can download Visual Studio Community 2017 for free from here:
+https://www.visualstudio.com/downloads/#visual-studio-2017
 
 **Targets**
 There are a total of 4 build targets in the VC projects. There are targets
