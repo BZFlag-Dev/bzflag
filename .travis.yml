@@ -1,0 +1,40 @@
+sudo: false
+dist: trusty
+language: cpp
+
+os:
+  - linux
+  - osx
+
+env:
+  - HOMEBREW_NO_AUTO_UPDATE=1
+
+addons:
+  apt:
+    packages:
+      - libtool
+      - automake
+      - autoconf
+      - libgl1-mesa-dev
+      - libglu1-mesa-dev
+      - libsdl1.2-dev
+      - libsdl-sound1.2-dev
+      - libc-ares-dev
+      - zlib1g-dev
+      - make
+
+      # Resolved virtual packages
+      - libcurl4-openssl-dev # libcurl3-dev
+      - libncurses-dev # libncurses5-dev
+
+install:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install autoconf automake libtool c-ares sdl2; fi
+
+script:
+  - ./autogen.sh -v
+  - ./configure
+  - make
+  - make check
+
+notifications:
+  email: false

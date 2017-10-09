@@ -9,5 +9,8 @@ indent_style = space
 indent_size = 2
 tab_width = 8
 
-[*.md,*.markdown]
+[*.{md,markdown}]
 trim_trailing_whitespace = false
+
+[*.yml]
+indent_style = space
