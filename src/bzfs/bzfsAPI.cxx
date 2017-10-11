@@ -600,6 +600,16 @@ bz_APIStringList& bz_APIStringList::operator=( const std::vector<std::string>& r
   return *this;
 }
 
+const char* bz_APIStringList::join(const char* delimiter)
+{
+  return bz_join(this, delimiter);
+}
+
+bool bz_APIStringList::contains(const std::string &needle)
+{
+  return (std::find(data->list.begin(), data->list.end(), needle) != data->list.end());
+}
+
 unsigned int bz_APIStringList::size ( void ) const
 {
   return data->list.size();

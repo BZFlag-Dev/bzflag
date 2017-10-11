@@ -223,6 +223,9 @@ public:
   bz_APIStringList& operator=( const bz_APIStringList& r );
   bz_APIStringList& operator=( const std::vector<std::string>& r );
 
+  const char* join(const char* delimiter = ",");
+  bool contains(const std::string &needle);
+
   unsigned int size ( void ) const;
   void clear ( void );
 
