@@ -4,6 +4,7 @@
 BZFlag 2.4.11
 -------------
 
+* Add string utility functions to the API and TextUtils - Vladimir Jimenez
 * Fixed an issue with ASCII characters from modified non-ASCII keys in SDL 2
     - Joshua Bodine
 * Fixed compilation on macOS when using autotools/gcc - Mike Miller
