@@ -989,7 +989,7 @@ msgstr "Effekt dyma PTURS:"
 msgid "GM Effect Timing:"
 msgstr "Dlitel'nost' effekta PTURS:"
 
-msgid "  Ricocet Effect:"
+msgid "  Ricochet Effect:"
 msgstr "  Effekt rikosheta"
 
 msgid "  Teleport Shot Effect:"

@@ -307,6 +307,12 @@ typedef enum
   bz_ePollVoteEvent,
   bz_ePollVetoEvent,
   bz_ePollEndEvent,
+  bz_eComputeHandicapEvent,
+  bz_eBeginHandicapRefreshEvent,
+  bz_eEndHandicapRefreshEvent,
+  bz_eAutoPilotEvent,
+  bz_eMuteEvent,
+  bz_eUnmuteEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -990,6 +996,18 @@ public:
  double stateTime;
 };
 
+class BZF_API bz_ComputeHandicap_V1 : public bz_EventData
+{
+public:
+  bz_ComputeHandicap_V1() : bz_EventData(bz_eComputeHandicapEvent)
+    , playerID(-1), desiredHandicap(0)
+  {
+  }
+
+  int playerID;
+  int desiredHandicap;
+};
+
 class BZF_API bz_NetTransferEventData_V1 : public bz_EventData
 {
 public:
@@ -1306,6 +1324,30 @@ public:
   bool allow;
 };
 
+class BZF_API bz_AutoPilotData_V1 : public bz_EventData
+{
+public:
+  bz_AutoPilotData_V1() : bz_EventData(bz_eAutoPilotEvent),
+    playerID(-1),
+    enabled(false)
+  {}
+
+  int playerID;
+  bool enabled;
+};
+
+class BZF_API bz_MuteEventData_V1 : public bz_EventData
+{
+public:
+  bz_MuteEventData_V1() : bz_EventData(bz_eMuteEvent),
+    victimID(-1),
+    muterID(-1)
+  {}
+
+  int victimID;
+  int muterID;
+};
+
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
@@ -1383,6 +1425,7 @@ BZF_API bool bz_validAdminPassword(const char* passwd);
 
 BZF_API const char* bz_getPlayerFlag( int playerID );
 
+BZF_API bool bz_isPlayerAutoPilot( int playerID );
 BZF_API bool bz_isPlayerPaused( int playerID );
 BZF_API double bz_getPausedTime( int playerID );
 BZF_API double bz_getIdleTime( int playerID );
@@ -1503,6 +1546,9 @@ BZF_API int bz_getPlayerTKs(int playerId);
 BZF_API int bz_howManyTimesPlayerKilledBy(int playerId, int killerId);
 
 BZF_API bool bz_resetPlayerScore(int playerId);
+
+// player handicap
+BZF_API void bz_refreshHandicaps();
 
 // groups API
 BZF_API bz_APIStringList* bz_getGroupList ( void );
@@ -1860,6 +1906,7 @@ public:
 
 BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL, bz_APIStringList *headers = NULL);
 BZF_API bool bz_removeURLJob(const char* URL);
 BZF_API size_t bz_addURLJobForID(const char* URL,
 				 bz_BaseURLHandler* handler = NULL,
@@ -1921,6 +1968,7 @@ BZF_API void bz_shutdown();
 BZF_API void bz_superkill();
 BZF_API void bz_gameOver(int playerID, bz_eTeamType team = eNoTeam);
 BZF_API bool bz_restart ( void );
+BZF_API const char* bz_getServerOwner();
 
 BZF_API void bz_reloadLocalBans();
 BZF_API void bz_reloadMasterBans();

@@ -52,15 +52,12 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
     decay(0.01f),
     smooth(false),
     jammed(false),
-    multiSampled(false),
     useTankModels(false),
     useTankDimensions(false),
     triangleCount()
 {
 
   setControlColor();
-
-  multiSampled = BZDB.isTrue("multisample");
 }
 
 void RadarRenderer::setWorld(World* _world)
@@ -404,7 +401,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     return;
   }
 
-  smooth = !multiSampled && BZDBCache::smooth;
+  smooth = BZDBCache::smooth;
   const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
 			  (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
   const LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -591,8 +588,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // draw the buildings
     renderObstacles(fastRadar, radarRange);
 
-    // antialiasing on for lines and points unless we're multisampling,
-    // in which case it's automatic and smoothing makes them look worse.
     if (smooth) {
       glEnable(GL_BLEND);
       glEnable(GL_LINE_SMOOTH);

@@ -35,15 +35,12 @@ class SDLDisplay : public BzfDisplay {
   bool isEventPending() const;
   bool getEvent(BzfEvent&) const;
   bool peekEvent(BzfEvent&) const;
-  bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
+  bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char asciiText = '\0') const;
   void getWindowSize(int& width, int& height);
   bool hasGetKeyMode() {return true;};
   void getModState(bool &shift, bool &control, bool &alt);
   void getMouse(int& x, int& y) const;
  private:
-  mutable SDL_Event lastKeyDownEvent;
-  mutable std::map<SDL_Keycode,char> charsForKeyCodes; // updated each key press
-  bool symNeedsConversion(SDL_Keysym) const;
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};
   int  min_width;

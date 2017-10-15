@@ -968,7 +968,7 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
   playerRecord->wins = player->score.getWins();
   playerRecord->losses = player->score.getLosses();
   playerRecord->teamKills = player->score.getTKs();
-  playerRecord->canSpawn = true;
+  playerRecord->canSpawn = player->player.isAllowedToSpawn();
 
   playerRecord->clientVersion = player->player.getClientVersion();
 
@@ -1090,9 +1090,12 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
 {
   GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
+  if (!player)
+    return NULL;
+
   bz_PlayerRecordV2 *playerRecord = new bz_PlayerRecordV2;
 
-  if (!player || !playerRecord)
+  if (!playerRecord)
     return NULL;
 
   playerRecord->callsign = player->player.getCallSign();
@@ -1158,6 +1161,16 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
     return NULL;
 
   return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv.c_str();
+}
+
+BZF_API bool bz_isPlayerAutoPilot( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return false;
+
+  return player->player.isAutoPilot();
 }
 
 BZF_API bool bz_isPlayerPaused( int playerID )
@@ -1503,6 +1516,12 @@ BZF_API bool bz_resetPlayerScore(int playerId)
 
   broadcastPlayerScoreUpdate(playerId);
   return true;
+}
+
+BZF_API void bz_refreshHandicaps()
+{
+  recalcAllHandicaps();
+  broadcastHandicaps();
 }
 
 BZF_API bz_APIStringList* bz_getGroupList ( void )
@@ -3431,6 +3450,7 @@ public:
   std::string postData;
   size_t id;
   bz_BaseURLHandler *handler;
+  bz_APIStringList *headers;
   double lastTime;
   void* token;
 };
@@ -3533,6 +3553,16 @@ public:
       if (task.postData.size())
 	curl_easy_setopt(currentJob, CURLOPT_POSTFIELDS, task.postData.c_str());
 
+      if (task.headers) {
+	struct curl_slist *chunk = NULL;
+
+	for (unsigned int i = 0; i < task.headers->size(); i++) {
+	  chunk = curl_slist_append(chunk, task.headers->get(i).c_str());
+	}
+
+	curl_easy_setopt(currentJob, CURLOPT_HTTPHEADER, chunk);
+      }
+
       curl_easy_setopt(currentJob, CURLOPT_WRITEFUNCTION, urlWriteFunction);
       curl_easy_setopt(currentJob, CURLOPT_WRITEDATA, &bufferedJobData);
 
@@ -3544,8 +3574,7 @@ public:
     }
   }
 
-  size_t addJob(const char *URL, bz_BaseURLHandler *handler,
-    const char *postData, void* token)
+  size_t addJob(const char *URL, bz_BaseURLHandler *handler, const char *postData, void* token, bz_APIStringList *headers)
   {
     if (!curlHandle)
     {
@@ -3558,6 +3587,7 @@ public:
     newTask.url = URL;
     if (postData)
       newTask.postData = postData;
+    newTask.headers = headers;
     newTask.id = ++LastJob;
     newTask.lastTime = TimeKeeper::getCurrent().getSeconds();
     Tasks.push_back(newTask);
@@ -3656,15 +3686,20 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     return false;
   }
 
-  return (urlFetchHandler.addJob(URL, handler, postData,NULL) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData, NULL, NULL) != 0);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
 {
+  return bz_addURLJob(URL, handler, token, postData, NULL);
+}
+
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData, bz_APIStringList *headers)
+{
   if (!URL)
     return false;
 
-  return (urlFetchHandler.addJob(URL, handler, postData,token) != 0);
+  return (urlFetchHandler.addJob(URL, handler, postData, token, headers) != 0);
 }
 
 //-------------------------------------------------------------------------
@@ -3677,7 +3712,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     return false;
   }
 
-  return urlFetchHandler.addJob(URL, handler, postData,NULL);
+  return urlFetchHandler.addJob(URL, handler, postData, NULL, NULL);
 }
 
 //-------------------------------------------------------------------------
@@ -3996,6 +4031,11 @@ BZF_API bool bz_restart ( void )
   }
 
   return true;
+}
+
+BZF_API const char* bz_getServerOwner()
+{
+  return getPublicOwner().c_str();
 }
 
 BZF_API void bz_reloadLocalBans()

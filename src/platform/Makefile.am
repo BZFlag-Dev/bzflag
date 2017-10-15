@@ -159,6 +159,45 @@ libPlatform_la_SOURCES =			\
 	WinMedia.h
 endif
 
+if APPLE
+libPlatform_la_SOURCES =    \
+	PlatformFactory.cxx     \
+	BzfDisplay.cxx          \
+	BzfJoystick.cxx         \
+	BzfVisual.cxx           \
+	BzfWindow.cxx           \
+	BzfMedia.cxx            \
+	wave.cxx                \
+	wave.h                  \
+	MacDataPath.cxx
+
+if HAVE_SDL
+libPlatform_la_SOURCES +=   \
+	SDLJoystick.cxx         \
+	SDLJoystick.h           \
+	SDLPlatformFactory.cxx  \
+	SDLPlatformFactory.h    \
+	SDLMedia.cxx            \
+	SDLMedia.h
+if HAVE_SDL2
+libPlatform_la_SOURCES +=   \
+	SDL2Display.cxx         \
+	SDL2Display.h           \
+	SDL2Visual.cxx          \
+	SDL2Visual.h            \
+	SDL2Window.cxx          \
+	SDL2Window.h
+else
+libPlatform_la_SOURCES +=   \
+	SDLMain.h               \
+	SDLMain.m               \
+	SDLDisplay.cxx          \
+	SDLDisplay.h
+endif
+endif
+
+endif
+
 EXTRA_libPlatform_la_SOURCES =		\
 	BeOSPlatformFactory.cxx		\
 	BeOSPlatformFactory.h		\
@@ -231,8 +270,6 @@ AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
 EXTRA_DIST = \
-	MacGL.h \
-	MacGL.mm \
 	NewMedia.cxx \
 	NewMedia.h \
 	SDLMain.h \

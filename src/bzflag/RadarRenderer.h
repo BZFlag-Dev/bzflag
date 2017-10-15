@@ -84,7 +84,6 @@ class RadarRenderer {
     GLfloat		teamColor[3];
     bool		smooth;
     bool		jammed;
-    bool		multiSampled;
     bool		useTankModels;
     bool		useTankDimensions;
     int			triangleCount;

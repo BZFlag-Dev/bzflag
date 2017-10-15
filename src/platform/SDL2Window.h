@@ -58,7 +58,6 @@ class SDLWindow : public BzfWindow {
   void  setGamma(float newGamma);
   float getGamma() const;
   bool  hasGammaControl() const;
-  int	getMaxSamples() const;
   virtual bool hasVerticalSync() const { return true; }
   void	setVerticalSync(bool);
   void  makeCurrent();

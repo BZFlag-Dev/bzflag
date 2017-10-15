@@ -51,6 +51,7 @@ class OpenGLGState {
     static void		setStippleIndex(int index);
     static int		getStippleIndex(float alpha);
     static int		getOpaqueStippleIndex();
+    static int		getMaxSamples();
 
     static void		init();
     static bool		haveGLContext();
@@ -128,11 +129,11 @@ class OpenGLGState {
   private:
     OpenGLGStateRep*	rep;
     static GLuint	stipples;
+    static int maxSamples;
   public:
     static bool executingFreeFuncs;
     static bool executingInitFuncs;
     static bool hasAnisotropicFiltering;
-    static bool hasMultisampling;
 };
 
 inline bool OpenGLGState::getExecutingFreeFuncs()

@@ -410,5 +410,13 @@
     <Filter Include="Source Files\Access Control">
       <UniqueIdentifier>{85afc332-e418-4b42-a6ca-bc5a25f490ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{bf3a26d4-3de5-453b-9141-57c134e83e23}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\Version.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

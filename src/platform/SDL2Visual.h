@@ -35,7 +35,6 @@ class SDLVisual : public BzfVisual {
   void setStencil(int minDepth);
   void setAccum(int, int, int, int) {;};
   void setStereo(bool);
-  void setMultisample(int);
   bool build() {return true;};
 };
 

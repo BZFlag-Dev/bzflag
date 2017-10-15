@@ -53,6 +53,7 @@ noinst_HEADERS =			\
 	Frustum.h			\
 	GameTime.h			\
 	GLCollect.h			\
+	glext.h				\
 	Intersect.h			\
 	KeyManager.h			\
 	LagInfo.h			\
@@ -78,6 +79,7 @@ noinst_HEADERS =			\
 	ObstacleModifier.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OccluderSceneNode.h		\
+	OpenGLFramebuffer.h		\
 	OpenGLGState.h			\
 	OpenGLLight.h			\
 	OpenGLMaterial.h		\

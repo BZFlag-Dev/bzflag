@@ -124,9 +124,9 @@
 		0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */; };
 		0318265E16A0BE61005050BD /* superUser.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0318265816A0BE2F005050BD /* superUser.dylib */; };
 		0318265F16A0BEA1005050BD /* superUser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CDB24516A0BA81001DA037 /* superUser.cpp */; };
+		031B7C3B1F114F4300A5ED20 /* OpenGLFramebuffer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 031B7C391F114F4300A5ED20 /* OpenGLFramebuffer.cxx */; };
 		031FBE431DB5A42500DD84DC /* COPYING.MPL in Resources */ = {isa = PBXBuildFile; fileRef = 031FBE421DB5A42500DD84DC /* COPYING.MPL */; };
 		0342A6FF1DD79C1B00D04E4C /* MacDataPath.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0336ED7A1B7042E40090899C /* MacDataPath.cxx */; };
-		0342A7001DD79C2D00D04E4C /* MacGL.mm in Sources */ = {isa = PBXBuildFile; fileRef = 036F79F21DB70883007AE71A /* MacGL.mm */; };
 		0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */; };
 		0342A7021DD79C4800D04E4C /* SDL2Visual.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */; };
 		0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */; };
@@ -1166,6 +1166,8 @@
 		0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CronJob.cpp; path = bzfscron/CronJob.cpp; sourceTree = "<group>"; };
 		0315BEB21B821C5D00FC7CE0 /* CronJob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CronJob.h; path = bzfscron/CronJob.h; sourceTree = "<group>"; };
 		0318265816A0BE2F005050BD /* superUser.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = superUser.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		031B7C391F114F4300A5ED20 /* OpenGLFramebuffer.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OpenGLFramebuffer.cxx; sourceTree = "<group>"; };
+		031B7C3C1F11563F00A5ED20 /* OpenGLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLFramebuffer.h; sourceTree = "<group>"; };
 		031FBE421DB5A42500DD84DC /* COPYING.MPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.MPL; path = ../COPYING.MPL; sourceTree = "<group>"; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
 		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
@@ -1680,8 +1682,6 @@
 		0357A9F71670BF3A0056C938 /* bzadmin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = bzadmin; sourceTree = BUILT_PRODUCTS_DIR; };
 		0358E67B1BF849EB001FF056 /* ServerListFilterHelpMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ServerListFilterHelpMenu.cxx; sourceTree = "<group>"; };
 		0358E67C1BF849EB001FF056 /* ServerListFilterHelpMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListFilterHelpMenu.h; sourceTree = "<group>"; };
-		036F79F11DB70883007AE71A /* MacGL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacGL.h; sourceTree = "<group>"; };
-		036F79F21DB70883007AE71A /* MacGL.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MacGL.mm; sourceTree = "<group>"; };
 		0370A4681B0C8FBA00FEC9F7 /* model.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = model.h; path = ../tools/modeltool/model.h; sourceTree = "<group>"; };
 		0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = modeltool.cxx; path = ../tools/modeltool/modeltool.cxx; sourceTree = "<group>"; };
 		0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Q3BSP.cxx; path = ../tools/modeltool/Q3BSP.cxx; sourceTree = "<group>"; };
@@ -2342,6 +2342,7 @@
 				0305D5BE166C9DAE00557FC4 /* ObstacleModifier.h */,
 				0305D5BF166C9DAE00557FC4 /* ObstacleSceneNodeGenerator.h */,
 				0305D5C0166C9DAE00557FC4 /* OccluderSceneNode.h */,
+				031B7C3C1F11563F00A5ED20 /* OpenGLFramebuffer.h */,
 				0305D5C1166C9DAE00557FC4 /* OpenGLGState.h */,
 				0305D5C2166C9DAE00557FC4 /* OpenGLLight.h */,
 				0305D5C3166C9DAE00557FC4 /* OpenGLMaterial.h */,
@@ -3025,6 +3026,7 @@
 		035544F0166C846F008806E9 /* ogl */ = {
 			isa = PBXGroup;
 			children = (
+				031B7C391F114F4300A5ED20 /* OpenGLFramebuffer.cxx */,
 				035544F3166C846F008806E9 /* OpenGLGState.cxx */,
 				035544F4166C846F008806E9 /* OpenGLLight.cxx */,
 				035544F5166C846F008806E9 /* OpenGLMaterial.cxx */,
@@ -3045,8 +3047,6 @@
 				0357A89C1670B7670056C938 /* BzfVisual.cxx */,
 				0357A89D1670B7670056C938 /* BzfWindow.cxx */,
 				0336ED7A1B7042E40090899C /* MacDataPath.cxx */,
-				036F79F11DB70883007AE71A /* MacGL.h */,
-				036F79F21DB70883007AE71A /* MacGL.mm */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
 				0397089F1DD7991D00C9215C /* SDLDisplay.cxx */,
 				039708A01DD7991D00C9215C /* SDLDisplay.h */,
@@ -5211,7 +5211,6 @@
 				0357A8B71670B7E40056C938 /* BzfWindow.cxx in Sources */,
 				0357A8B81670B7E40056C938 /* PlatformFactory.cxx in Sources */,
 				0357A8BA1670B7E40056C938 /* SDLJoystick.cxx in Sources */,
-				0342A7001DD79C2D00D04E4C /* MacGL.mm in Sources */,
 				0342A7011DD79C4200D04E4C /* SDL2Display.cxx in Sources */,
 				0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */,
 				0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */,
@@ -5662,6 +5661,7 @@
 				03C8EEE7167AC26A00BB07A5 /* ServerMenu.cxx in Sources */,
 				03C8EEE9167AC26A00BB07A5 /* ServerStartMenu.cxx in Sources */,
 				03C8EEEB167AC26A00BB07A5 /* ShockWaveStrategy.cxx in Sources */,
+				031B7C3B1F114F4300A5ED20 /* OpenGLFramebuffer.cxx in Sources */,
 				03C8EEED167AC26A00BB07A5 /* ShotPath.cxx in Sources */,
 				03C8EEEF167AC26A00BB07A5 /* ShotPathSegment.cxx in Sources */,
 				03C8EEF1167AC26A00BB07A5 /* ShotStatistics.cxx in Sources */,

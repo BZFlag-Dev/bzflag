@@ -902,6 +902,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
+    <ResourceCompile Include="..\Version.rc" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzflag\defaultBZDB.h" />
