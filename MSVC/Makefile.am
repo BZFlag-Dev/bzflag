@@ -1,6 +1,7 @@
 SUBDIRS = build
 
 EXTRA_DIST =	\
+	Version.rc	\
 	bzfs.sln	\
 	bzflag.sln	\
 	bzadmin.sln	\
