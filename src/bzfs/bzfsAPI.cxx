@@ -600,6 +600,16 @@ bz_APIStringList& bz_APIStringList::operator=( const std::vector<std::string>& r
   return *this;
 }
 
+const char* bz_APIStringList::join(const char* delimiter)
+{
+  return bz_join(this, delimiter);
+}
+
+bool bz_APIStringList::contains(const std::string &needle)
+{
+  return (std::find(data->list.begin(), data->list.end(), needle) != data->list.end());
+}
+
 unsigned int bz_APIStringList::size ( void ) const
 {
   return data->list.size();
@@ -3963,6 +3973,50 @@ BZF_API const char *bz_tolower(const char* val )
 
   temp	 =	TextUtils::tolower(std::string(val));
   return temp.c_str();
+}
+
+BZF_API const char* bz_ltrim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::ltrim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_rtrim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::rtrim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_trim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::trim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_join(bz_APIStringList* list, const char* delimiter)
+{
+  if (!list)
+    return NULL;
+
+  if (!delimiter)
+    delimiter = "";
+
+  std::string joined = "";
+
+  for (unsigned int i = 0; i < list->size(); i++) {
+    joined += list->get(i);
+
+    if (i != (list->size() - 1))
+      joined += delimiter;
+  }
+
+  return joined.c_str();
 }
 
 BZF_API const char *bz_urlEncode(const char* val )

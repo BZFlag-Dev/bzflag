@@ -58,6 +58,37 @@ namespace TextUtils {
     return trans;
   }
 
+  inline std::string ltrim(const std::string& s, const char* trim = " ")
+  {
+    if (!trim)
+      return s;
+
+    size_t pos = s.find_first_not_of(trim);
+
+    if (pos == std::string::npos)
+      return s;
+
+    return s.substr(pos, s.length() + 1);
+  }
+
+  inline std::string rtrim(const std::string& s, const char* trim = " ")
+  {
+    if (!trim)
+      return s;
+
+    size_t pos = s.find_last_not_of(trim);
+
+    if (pos == std::string::npos)
+      return s;
+
+    return s.substr(0, pos + 1);
+  }
+
+  inline std::string trim(const std::string& s, const char* trim = " ")
+  {
+    return (rtrim(ltrim(s, trim), trim));
+  }
+
   /** replace all of in in replaceMe with withMe
    */
   std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);

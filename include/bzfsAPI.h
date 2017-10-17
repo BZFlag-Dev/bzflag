@@ -223,6 +223,9 @@ public:
   bz_APIStringList& operator=( const bz_APIStringList& r );
   bz_APIStringList& operator=( const std::vector<std::string>& r );
 
+  const char* join(const char* delimiter = ",");
+  bool contains(const std::string &needle);
+
   unsigned int size ( void ) const;
   void clear ( void );
 
@@ -1945,6 +1948,10 @@ BZF_API bool bz_stopRecBuf( void );
 BZF_API const char *bz_format(const char* fmt, ...);
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
+BZF_API const char *bz_rtrim(const char* val, const char* trim = " ");
+BZF_API const char *bz_ltrim(const char* val, const char* trim = " ");
+BZF_API const char *bz_trim(const char* val, const char* trim = " ");
+BZF_API const char *bz_join(bz_APIStringList* list, const char* delimiter = ",");
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
