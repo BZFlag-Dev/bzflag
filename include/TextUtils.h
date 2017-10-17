@@ -60,6 +60,9 @@ namespace TextUtils {
 
   inline std::string ltrim(const std::string& s, const char* trim = " ")
   {
+    if (!trim)
+      return s;
+
     size_t pos = s.find_first_not_of(trim);
 
     if (pos == std::string::npos)
@@ -70,6 +73,9 @@ namespace TextUtils {
 
   inline std::string rtrim(const std::string& s, const char* trim = " ")
   {
+    if (!trim)
+      return s;
+
     size_t pos = s.find_last_not_of(trim);
 
     if (pos == std::string::npos)
