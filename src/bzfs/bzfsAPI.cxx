@@ -2017,6 +2017,42 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
   return !exists;
 }
 
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setDefaultBZDBDouble(const char* variable, double val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(std::string(variable), TextUtils::format("%f", val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBString(const char* variable, const char* val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(std::string(variable), std::string(val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBInt(const char* variable, int val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(variable, TextUtils::format("%d",val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBBool(const char* variable, bool val)
+{
+  return bz_setDefaultBZDBInt(variable, (int)val);
+}
 
 //-------------------------------------------------------------------------
 
