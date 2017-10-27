@@ -1997,6 +1997,7 @@ int convertTeam( bz_eTeamType team );
 
 // game type info
 BZF_API bz_eGameType bz_getGameType ( void );
+BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eTeamType teamCapped);
 
 
 typedef struct {
