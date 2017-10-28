@@ -4300,6 +4300,14 @@ BZF_API	bz_eGameType bz_getGameType ( void )
   return eFFAGame;
 }
 
+BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eTeamType teamCapped)
+{
+  if (bz_getGameType() != eCTFGame)
+    return false;
+
+  return captureFlag(playerID, (TeamColor)convertTeam(teamCapping), (TeamColor)convertTeam(teamCapped), false);
+}
+
 
 // utility
 BZF_API const char* bz_MD5 ( const char * str )

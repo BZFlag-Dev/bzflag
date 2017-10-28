@@ -162,6 +162,8 @@ extern Shots::Manager	ShotManager;
 
 extern VotingArbiter	*votingarbiter;
 
+bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped = NoTeam, bool checkCheat = true);
+
 void resetTeamScores(void);
 void pauseCountdown(int pausedBy = ServerPlayer);
 void resumeCountdown(int resumedBy = ServerPlayer);

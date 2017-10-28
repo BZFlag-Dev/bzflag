@@ -3602,27 +3602,36 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   return;
 }
 
-static void captureFlag(int playerIndex, TeamColor teamCaptured)
+bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, bool checkCheat)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
-    return;
+    return false;
 
   // Sanity check
   if (teamCaptured < RedTeam || teamCaptured > PurpleTeam)
-    return;
+    return false;
+
+  if (teamCapped != NoTeam && (teamCapped < RedTeam || teamCapped > PurpleTeam))
+    return false;
 
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = playerData->player.getFlag();
   if (flagIndex < 0)
-    return;
+    return false;
   FlagInfo &flag = *FlagInfo::get(flagIndex);
 
-  TeamColor teamIndex = flag.teamIndex();
+  TeamColor teamIndex;
+
+  if (teamCapped != NoTeam)
+    teamIndex = teamCapped;
+  else
+    teamIndex = flag.teamIndex();
+
   if (teamIndex == ::NoTeam)
-    return;
+    return false;
 /*
  * The flag object always shows that it is the player's own team.
  * TODO: understand this situation better and change or document it.
@@ -3632,7 +3641,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
  *	Team::getName(teamCaptured), Team::getName(teamIndex));
  */
 
-  { //cheat checking
+  if (checkCheat) { //cheat checking
     TeamColor base = whoseBase(playerData->lastState.pos[0],
 			       playerData->lastState.pos[1],
 			       playerData->lastState.pos[2]);
@@ -3672,7 +3681,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   worldEventManager.callEvents(bz_eAllowCTFCaptureEvent,&allowCap);
 
   if (!allowCap.allow)
-    return;
+    return false;
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
@@ -3734,6 +3743,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     if (winningTeam != (int)NoTeam)
       checkTeamScore(playerIndex, winningTeam);
   }
+
+  return true;
 }
 
 static void shotUpdate(int playerIndex, void *buf, int len)
