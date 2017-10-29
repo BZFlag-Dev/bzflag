@@ -2,7 +2,7 @@
 			     ====================
 
 BZFlag 2.4.12 "Silence is Golden" (2017-10-29)
--------------
+----------------------------------------------
 
 * Allow API to trigger CTF capture event - Vladimir Jimenez
 * Allow setting default values for BZDB from API - Vladimir Jimenez
