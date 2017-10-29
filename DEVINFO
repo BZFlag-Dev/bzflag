@@ -436,7 +436,7 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Version numbers are updated to the next expected release number.
   This minimally includes updating README, ChangeLog, configure.ac,
-  buildDate.cxx, bzflag.rc, and the title.png image.  Version numbers in all
+  buildDate.cxx, Version.rc, and the title.png image.  Version numbers in all
   other platform-specific README.* files should also be verified.
 
 - Edit updateConfigFile in clientConfig.cxx to update any necessary
