@@ -328,6 +328,8 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
       key.ascii = asciiText;
     else if ((sym >= 0) && (sym <= 0x7F))
       key.ascii = (char) sym;
+    else
+      return false;
     break;
   }
 
