@@ -3092,9 +3092,16 @@ bool changeTeam(int playerIndex, TeamColor newTeam) {
 	return false;
     }
   } else {
+    // If we're switching to observer and they're alive, kill 'em
     if (playerData->player.isAlive())
       playerKilled(playerIndex, ServerPlayer, 5, -1, Flags::Null, -1);
-    //playerData->player.setDead();
+
+    // Reset the player score to 0
+    playerData->score.reset();
+
+    // Send score update
+    GameKeeper::Player *scoreUpdate[] = {playerData};
+    sendPlayerScores(scoreUpdate, 1);
   }
 
   // Store the new team. For rabbit chase, set immediately. For others, set it
