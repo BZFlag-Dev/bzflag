@@ -2564,6 +2564,10 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const
   return true;
 }
 
+BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID) {
+  return changeTeam(playerID, (TeamColor)convertTeam(teamID));
+}
+
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force )
 {
   FlagInfo* fi = NULL;

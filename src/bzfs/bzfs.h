@@ -170,6 +170,7 @@ void cancelCountdown( int playerID = ServerPlayer);
 
 void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3]);
 void playerAlive(int playerIndex);
+bool changeTeam(int playerIndex, TeamColor teamIndex);
 void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message, MessageType type);
 
 void makeWalls (void);

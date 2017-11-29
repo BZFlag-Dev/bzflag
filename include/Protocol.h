@@ -111,6 +111,7 @@ const uint16_t		MsgWantSettings = 0x7773;		// 'ws'
 const uint16_t		MsgPortalAdd = 0x5061;			// 'Pa'
 const uint16_t		MsgPortalRemove = 0x5072;		// 'Pr'
 const uint16_t		MsgPortalUpdate = 0x5075;		// 'Pu'
+const uint16_t		MsgSetTeam = 0x7374;			// 'st'
 
 // world database codes
 const uint16_t		WorldCodeHeader = 0x6865;		// 'he'

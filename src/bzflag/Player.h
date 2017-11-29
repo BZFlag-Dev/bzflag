@@ -64,6 +64,8 @@ public:
   virtual	~Player();
 
   PlayerId	getId() const;
+  TeamColor	getNextTeam() const;
+  void		setNextTeam(TeamColor);
   TeamColor	getTeam() const;
   void		setTeam(TeamColor);
   void		updateTank(float dt, bool local);
@@ -272,6 +274,7 @@ private:
   TimeKeeper		lastTrackDraw;
 
   // permanent data
+  TeamColor		nextTeam;		// team after next spawn
   TeamColor		team;			// my team
 
   char			callSign[CallSignLen];	// my pseudonym
@@ -361,6 +364,17 @@ inline PlayerId		Player::getId() const
   return id;
 }
 
+inline TeamColor	Player::getNextTeam() const
+{
+  return nextTeam;
+}
+
+
+inline void		Player::setNextTeam(TeamColor _nextTeam)
+{
+  nextTeam = _nextTeam;
+}
+
 inline TeamColor	Player::getTeam() const
 {
   return team;
@@ -368,7 +382,7 @@ inline TeamColor	Player::getTeam() const
 
 inline void		Player::setTeam(TeamColor _team)
 {
-  team = _team;
+  nextTeam = team = _team;
 }
 
 inline const char*	Player::getCallSign() const

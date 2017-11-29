@@ -93,6 +93,7 @@ public:
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
   TeamColor	getTeam() const;
+  void		setNextTeam	(TeamColor nextTeam);
   void		setTeam	(TeamColor team);
   void	wasARabbit();
   void	wasNotARabbit();
@@ -180,6 +181,7 @@ private:
   int	clientVersionRevision;
 
   // player's team
+  TeamColor	nextTeam;
   TeamColor	team;
   // true for dead rabbit until respawn
   bool	wasRabbit;

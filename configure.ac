@@ -1087,6 +1087,7 @@ AC_CONFIG_FILES([
 	plugins/airspawn/Makefile
 	plugins/autoFlagReset/Makefile
 	plugins/bzfscron/Makefile
+	plugins/changeTeam/Makefile
 	plugins/chathistory/Makefile
 	plugins/customflagsample/Makefile
 	plugins/customPollTypeSample/Makefile

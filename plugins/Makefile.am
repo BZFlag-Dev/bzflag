@@ -4,6 +4,7 @@ SUBDIRS = \
 	airspawn \
 	autoFlagReset \
 	bzfscron \
+	changeTeam \
 	chathistory \
 	customflagsample \
 	customPollTypeSample \

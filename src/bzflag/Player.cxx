@@ -56,6 +56,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
   verified(false),
   playerList(false),
   lastVisualTeam(NoTeam),
+  nextTeam(_team),
   team(_team),
   type(_type),
   flagType(Flags::Null),
@@ -375,7 +376,7 @@ void Player::calcRelativeMotion(float vel[2], float& speed, float& angVel)
 void Player::changeTeam(TeamColor _team)
 {
   // set team
-  team = _team;
+  setTeam(_team);
 
   // set the scene node
   setVisualTeam(team);

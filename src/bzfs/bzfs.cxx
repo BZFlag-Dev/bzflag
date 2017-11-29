@@ -3051,7 +3051,7 @@ void playerAlive(int playerIndex)
   }
 }
 
-// TODO: In 2.6, we should just handle the kills fully from the server
+// TODO: In a later major release, we should just handle the kills fully from the server
 void cleanupGameOver() {
   double spawnDelay = (double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME);
   for (int i = 0; i < curMaxPlayers; i++) {
@@ -3066,6 +3066,54 @@ void cleanupGameOver() {
     }
   }
 }
+
+bool changeTeam(int playerIndex, TeamColor newTeam) {
+  // Get the player information
+  GameKeeper::Player *playerData
+    = GameKeeper::Player::getPlayerByIndex(playerIndex);
+  // Ensure we have a valid player
+  if (!playerData)
+    return false;
+
+  // If the team hasn't changed, do nothing
+  if (newTeam == playerData->player.getTeam())
+    return true;
+
+  // Validate the team selection
+  // Observer team is always allowed
+  if (newTeam != ObserverTeam) {
+    // In rabbit chase servers, allow rabbit or hunter
+    if (clOptions->gameType == RabbitChase) {
+      if (newTeam != RabbitTeam && newTeam != HunterTeam)
+	return false;
+    // In other modes, allow rogue, red, green, blue, and purple
+    } else {
+      if (newTeam < RogueTeam || newTeam > PurpleTeam)
+	return false;
+    }
+  } else {
+    if (playerData->player.isAlive())
+      playerKilled(playerIndex, ServerPlayer, 5, -1, Flags::Null, -1);
+    //playerData->player.setDead();
+  }
+
+  // Store the new team. For rabbit chase, set immediately. For others, set it
+  // for the next spawn. Do the same when changing to/from observer.
+  if (clOptions->gameType == RabbitChase || newTeam == ObserverTeam || playerData->player.getTeam() == ObserverTeam) {
+    playerData->player.setTeam(newTeam);
+  } else {
+    playerData->player.setNextTeam(newTeam);
+  }
+
+  // Broadcast the team change
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerIndex);
+  buf = nboPackUShort(buf, newTeam);
+  broadcastMessage(MsgSetTeam, (char*)buf - (char*)bufStart, bufStart);
+
+  return true;
+}
+
 
 void checkTeamScore(int playerIndex, int teamIndex)
 {

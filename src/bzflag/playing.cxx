@@ -2085,6 +2085,12 @@ static void		handleServerMessage(bool human, uint16_t code,
       if ((playerIndex >= 0) || (playerIndex == -2)) {
 	static const float zero[3] = { 0.0f, 0.0f, 0.0f };
 	Player* tank = getPlayerByIndex(playerIndex);
+
+	// If this tank is switching to a new team, do so now
+	if (tank->getNextTeam() != tank->getTeam())
+	  tank->changeTeam(tank->getNextTeam());
+
+	// TODO: Check if this breaks by us changing the team above
 	if (tank == myTank) {
 	  wasRabbit = tank->getTeam() == RabbitTeam;
 	  myTank->restart(pos, forward);
@@ -2130,6 +2136,99 @@ static void		handleServerMessage(bool human, uint16_t code,
 	}
 	playSound(SFX_POP, pos, true, isViewTank(tank));
       }
+
+      break;
+    }
+
+    case MsgSetTeam: {
+      PlayerId id;
+      uint16_t nextTeam;
+      msg = nboUnpackUByte(msg, id);
+      msg = nboUnpackUShort(msg, nextTeam);
+      Player* _player = lookupPlayer(id);
+      if (!_player) break;
+
+      // If the team hasn't changed, don't need to do anything
+      if ((TeamColor)nextTeam == _player->getTeam())
+	break;
+
+
+      // Is this a change for my own tank?
+      if (myTank != NULL && myTank == _player) {
+	// If changing to/from observer, change team immediately and set the roaming state.
+	// Changing to observer?
+	if (nextTeam == ObserverTeam) {
+	  // Change team immediately
+	  myTank->changeTeam((TeamColor)nextTeam);
+
+	  // Set up roaming
+	  const std::string roamStr = BZDB.get("roamView");
+	  Roaming::RoamingView roamView = ROAM.parseView(roamStr);
+	  if (roamView <= Roaming::roamViewDisabled) {
+	    roamView = Roaming::roamViewFP;
+	  }
+	  ROAM.setMode(roamView);
+	}
+	// Changing from observer?
+	else if (myTank->getTeam() == ObserverTeam) {
+	  // Change team immediately
+	  myTank->changeTeam((TeamColor)nextTeam);
+
+	  // Disable roaming
+	  ROAM.setMode(Roaming::roamViewDisabled);
+	}
+	// Rabbit chase also needs to change immediately
+	else if (world->allowRabbit()) {
+	  // Only allow rabbit or hunter. (Observer was already handled above)
+	  if ((TeamColor)nextTeam != RabbitTeam && (TeamColor)nextTeam != HunterTeam)
+	    break;
+
+	  // Change team immediately
+	  myTank->changeTeam((TeamColor)nextTeam);
+
+	  // Are we a rabbit now? Notify ourselves and disable hunt.
+	  if ((TeamColor)nextTeam == RabbitTeam) {
+	    wasRabbit = true;
+	    hud->setAlert(0, "You are now the rabbit", 10.0f, false);
+	    playLocalSound(SFX_HUNT_SELECT);
+	    scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
+	  }
+	  // TODO: Verify this is handled correctly since we can now change
+	  // from observer to hunter mid-game, and we changed the team above.
+	  // Should we perhaps always set this to false if we're switching to
+	  // hunter?
+	  else if (myTank->getTeam() != ObserverTeam && (myTank->isPaused() || myTank->isAlive())) {
+	    wasRabbit = false;
+	  }
+	}
+	// Otherwise, we're switching from one playable team to another, so
+	// queue the change for the next spawn
+	else {
+	  myTank->setNextTeam((TeamColor)nextTeam);
+	}
+      }
+      // Otherwise it's some other player
+      else {
+	// If changing to/from observer, do it immediately
+	if ((TeamColor)nextTeam == ObserverTeam || _player->getTeam() == ObserverTeam) {
+	  _player->changeTeam((TeamColor)nextTeam);
+	}
+	// Rabbit chase mode
+	else if (world->allowRabbit()) {
+	  // Only switch to rabbit or hunter
+	  if ((TeamColor)nextTeam != HunterTeam && (TeamColor)nextTeam != RabbitTeam)
+	    break;
+
+	  // Change team immediately
+	  _player->changeTeam((TeamColor)nextTeam);
+	}
+	else {
+	  // Change on next spawn
+	  _player->setNextTeam((TeamColor)nextTeam);
+	}
+      }
+
+      addMessage(_player, TextUtils::format("changed team to %s", Team::getName((TeamColor)nextTeam)));
 
       break;
     }

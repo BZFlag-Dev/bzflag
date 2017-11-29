@@ -1701,6 +1701,9 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 // spawning
 BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 
+// change team
+BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID);
+
 // dying
 BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
 

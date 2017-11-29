@@ -33,6 +33,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   playerIndex(_playerIndex),
   state(PlayerInLimbo),
   hasDoneEntering(false),
+  nextTeam(NoTeam),
   team(NoTeam),
   flag(-1),
   allowedToSpawn(true),
@@ -99,6 +100,8 @@ void PlayerInfo::setAlive() {
   wantsToSpawn = false;
   neverSpawned = false;
   flag = -1;
+  if (nextTeam != team)
+    setTeam(nextTeam);
 }
 
 void PlayerInfo::setDead() {
@@ -370,8 +373,12 @@ TeamColor PlayerInfo::getTeam() const {
   return team;
 }
 
+void PlayerInfo::setNextTeam(TeamColor _nextTeam) {
+  nextTeam = _nextTeam;
+}
+
 void PlayerInfo::setTeam(TeamColor _team) {
-  team = _team;
+  nextTeam = team = _team;
 }
 
 void PlayerInfo::wasARabbit() {
