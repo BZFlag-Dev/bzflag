@@ -35,6 +35,7 @@ public:
 
   void addShot(const FiringInfo&);
   ShotPath* getShot(int index) const;
+  void purgeShots() const;
   void updateShots(float dt);
 
 private:

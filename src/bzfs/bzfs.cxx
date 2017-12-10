@@ -3067,6 +3067,8 @@ void cleanupGameOver() {
   }
 }
 
+// TODO: Add one or two API events, perhaps one for allowing the change, and
+// one for notification of the change.
 bool changeTeam(int playerIndex, TeamColor newTeam) {
   // Get the player information
   GameKeeper::Player *playerData
@@ -3095,6 +3097,12 @@ bool changeTeam(int playerIndex, TeamColor newTeam) {
     // If we're switching to observer and they're alive, kill 'em
     if (playerData->player.isAlive())
       playerKilled(playerIndex, ServerPlayer, 5, -1, Flags::Null, -1);
+
+    // remove the player from any kill counts
+    flushKilledByCounts(playerIndex);
+
+    // clear any shots they had flying around
+    ShotManager.RemovePlayer(playerIndex);
 
     // Reset the player score to 0
     playerData->score.reset();

@@ -2158,6 +2158,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	// If changing to/from observer, change team immediately and set the roaming state.
 	// Changing to observer?
 	if (nextTeam == ObserverTeam) {
+	  // Purge shots
+	  myTank->purgeShots();
+
 	  // Change team immediately
 	  myTank->changeTeam((TeamColor)nextTeam);
 
@@ -2212,6 +2215,9 @@ static void		handleServerMessage(bool human, uint16_t code,
 	// If changing to/from observer, do it immediately
 	if ((TeamColor)nextTeam == ObserverTeam || _player->getTeam() == ObserverTeam) {
 	  _player->changeTeam((TeamColor)nextTeam);
+
+	  // Also purge shots
+	  remotePlayers[_player->getId()]->purgeShots();
 	}
 	// Rabbit chase mode
 	else if (world->allowRabbit()) {

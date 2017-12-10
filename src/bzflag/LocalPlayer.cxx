@@ -65,7 +65,7 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
   deathPhyDrv(-1)
 {
   // initialize shots array to no shots fired
-  const int numShots = World::getWorld()->getMaxShots();
+  numShots = World::getWorld()->getMaxShots();
   shots = new LocalShotPath*[numShots];
   for (int i = 0; i < numShots; i++)
     shots[i] = NULL;
@@ -80,7 +80,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
 LocalPlayer::~LocalPlayer()
 {
   // free shots
-  const int numShots = World::getWorld()->getMaxShots();
   for (int i = 0; i < numShots; i++)
     if (shots[i])
       delete shots[i];
@@ -98,7 +97,6 @@ void			LocalPlayer::setMyTank(LocalPlayer* player)
 void			LocalPlayer::doUpdate(float dt)
 {
   const bool hadShotActive = anyShotActive;
-  const int numShots = World::getWorld()->getMaxShots();
   static TimeKeeper pauseTime = TimeKeeper::getNullTime();
   static bool wasPaused = false;
 
@@ -994,7 +992,7 @@ const GLfloat*		LocalPlayer::getAntidoteLocation() const
 ShotPath*		LocalPlayer::getShot(int index) const
 {
   index &= 0x00FF;
-  if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
+  if ((index < 0) || (index >= numShots))
     return NULL;
   return shots[index];
 }
@@ -1007,8 +1005,6 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
   // can't have a flag
   setFlag(Flags::Null);
 
-  // get rid of existing shots
-  const int numShots = World::getWorld()->getMaxShots();
   // get rid of existing shots
   for (int i = 0; i < numShots; i++)
     if (shots[i]) {
@@ -1168,7 +1164,6 @@ bool			LocalPlayer::fireShot()
     return false;
 
   // find an empty slot
-  const int numShots = World::getWorld()->getMaxShots();
   int i;
   for (i = 0; i < numShots; i++)
     if (!shots[i])
@@ -1262,9 +1257,17 @@ bool			LocalPlayer::fireShot()
   return true;
 }
 
+void			LocalPlayer::purgeShots() const {
+  for (int i = 0; i < numShots; i++) {
+    if (shots[i] != NULL) {
+      delete shots[i];
+      shots[i] = NULL;
+    }
+  }
+}
+
 float			LocalPlayer::getReloadTime() const
 {
-	const int numShots = World::getWorld()->getMaxShots();
 	if (numShots <= 0) {
 		return 0.0f;
 	}
@@ -1310,7 +1313,7 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
     return false;
 
   // ignore bogus shots (those with a bad index or for shots that don't exist)
-  if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
+  if (index < 0 || index >= numShots || !shots[index])
     return false;
 
   // ignore shots that already ending

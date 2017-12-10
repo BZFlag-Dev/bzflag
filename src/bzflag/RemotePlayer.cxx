@@ -82,6 +82,15 @@ ShotPath*		RemotePlayer::getShot(int index) const
   return shots[index];
 }
 
+void			RemotePlayer::purgeShots() const {
+  for (int i = 0; i < numShots; i++) {
+    if (shots[i] != NULL) {
+      delete shots[i];
+      shots[i] = NULL;
+    }
+  }
+}
+
 bool			RemotePlayer::doEndShot(
 				int ident, bool isHit, float* pos)
 {

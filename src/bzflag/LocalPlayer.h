@@ -73,6 +73,7 @@ public:
   void		setPause(bool = true);
   void		activateAutoPilot(bool = true);
   bool		fireShot();
+  void		purgeShots() const;
   void		explodeTank();
   void		doJump();
   void		setJump();
@@ -139,6 +140,7 @@ private:
   void		collectInsideBuildings();
 
 private:
+  int		numShots;
   Location	location;
   FiringStatus	firingStatus;
   TimeKeeper	bounceTime;
