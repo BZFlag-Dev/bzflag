@@ -192,7 +192,6 @@ appropriate to your system for more information:
   Platform			README file
   --------			-----------
   UNIX, Linux			README
-  IRIX				README.IRIX
   Solaris			README.SOLARIS
   Mac OS X			README.MacOSX
   Windows 			README.WINDOWS, README.MINGW32

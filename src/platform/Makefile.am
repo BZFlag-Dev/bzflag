@@ -80,31 +80,6 @@ libPlatform_la_SOURCES =			\
 	XWindow.h
 endif
 
-if IRIX
-libPlatform_la_SOURCES =			\
-	PlatformFactory.cxx			\
-	BzfDisplay.cxx				\
-	BzfJoystick.cxx				\
-	BzfVisual.cxx				\
-	BzfWindow.cxx				\
-	BzfMedia.cxx				\
-	wave.cxx				\
-	wave.h					\
-	SGIPlatformFactory.cxx			\
-	SGIPlatformFactory.h			\
-	SGIDisplay.cxx				\
-	SGIDisplay.h				\
-	SGIMedia.cxx				\
-	SGIMedia.h				\
-	XDisplay.cxx				\
-	XDisplay.h				\
-	XVisual.cxx				\
-	XVisual.h				\
-	XWindow.cxx				\
-	XWindow.h
-endif
-
-
 if BEOS
 libPlatform_la_SOURCES =			\
 	PlatformFactory.cxx			\
@@ -227,12 +202,6 @@ EXTRA_libPlatform_la_SOURCES =		\
 	SDLMedia.h			\
 	SDLDisplay.h			\
 	SDLDisplay.cxx			\
-	SGIPlatformFactory.cxx		\
-	SGIPlatformFactory.h		\
-	SGIDisplay.cxx			\
-	SGIDisplay.h			\
-	SGIMedia.cxx			\
-	SGIMedia.h			\
 	SolarisPlatformFactory.cxx	\
 	SolarisPlatformFactory.h	\
 	SolarisMedia.cxx		\

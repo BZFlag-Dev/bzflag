@@ -144,32 +144,6 @@ void SceneRenderer::setWindow(MainWindow* _window) {
   glGetIntegerv(GL_STENCIL_BITS, &bits);
   useStencilOn = (bits > 0);
 
-  // see if abgr extention is available and system is known to be
-  // faster with abgr.
-  const char* vendor = (const char*)glGetString(GL_VENDOR);
-  const char* renderer = (const char*)glGetString(GL_RENDERER);
-  const char* version = (const char*)glGetString(GL_VERSION);
-  const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-  (void)vendor; (void)renderer; (void)version; (void)extensions; // silence g++
-#ifdef GL_ABGR_EXT
-  if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
-      (vendor != NULL && strcmp(vendor, "SGI") == 0)) {
-    // old hardware is faster with ABGR.  new hardware isn't.
-    if ((renderer != NULL) &&
-	(strncmp(renderer, "GR1", 3) == 0 ||
-	 strncmp(renderer, "VGX", 3) == 0 ||
-	 strncmp(renderer, "LIGHT", 5) == 0 ||
-	 strrncmp(renderer, "-XS", 3) == 0 ||
-	 strrncmp(renderer, "-XSM", 4) == 0 ||
-	 strrncmp(renderer, "-XS24", 5) == 0 ||
-	 strrncmp(renderer, "-XS24-Z", 7) == 0 ||
-	 strrncmp(renderer, "-XZ", 3) == 0 ||
-	 strrncmp(renderer, "-Elan", 5) == 0 ||
-	 strrncmp(renderer, "-Extreme", 8) == 0))
-      abgr = true;
-  }
-#endif
-
   // can only do hidden line if polygon offset is available
   canUseHiddenLine = true;
 

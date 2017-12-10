@@ -1,5 +1,5 @@
 SUBDIRS =
-DIST_SUBDIRS = linux rpm irix win32
+DIST_SUBDIRS = linux rpm win32
 TARGETDIR  = $(top_srcdir)/bin
 PACKAGEDIR = $(top_srcdir)/dist
 
@@ -14,14 +14,8 @@ MKDIR	= mkdir.exe
 RM	= del.exe /F /Q
 RMR	= del.exe /F /Q /S
 else
-if IRIX
-MKDIR	= /usr/bin/mkdir
-RM	= /usr/bin/rm -f
-CD	= cd
-else
 MKDIR	= mkdir
 RM	= rm -f
-endif
 RMR	= $(RM) -r
 endif
 
@@ -124,31 +118,4 @@ clean: $(COMMONPREF)clean
 
 clobber: $(COMMONPREF)clobber
 	$(RMR) $(RPMDIR) $(TMPROOT) newspec
-else
-if IRIX
-
-SPECFILE = irix/spec-$(CONFIG)
-IDBFILE  = irix/idb
-TARDIST  = bzflag.tardist
-GENDIST = $(TOOLROOT)/usr/sbin/gendist
-
-targets: tardist
-
-dist: $(_FORCE)
-	@VERSION=$(VERSION); export VERSION; \
-	VERSIONID=$(VERSIONID); export VERSIONID; \
-	if test ! -d $(PACKAGEDIR); then $(MKDIR) $(PACKAGEDIR); fi; \
-	if test ! -d $(PACKAGEDIR)/irix; then $(MKDIR) $(PACKAGEDIR)/irix; fi; \
-	($(CD) $(PACKAGEDIR)/irix; $(RM) *); \
-	USEALLIMAGES=`grep "^[	 ]*product" < $(SPECFILE) | \
-		awk '{list=list $2 " "}END{print list}'`; \
-	$(GENDIST) -verbose -all -root / -source `\pwd`/$(DEPTH) \
-		-idb $(IDBFILE) -spec $(SPECFILE) \
-		-dist $(PACKAGEDIR)/irix $$USEALLIMAGES
-
-tardist: dist $(_FORCE)
-	($(CD) $(PACKAGEDIR)/irix; tar cf ../$(TARDIST) *)
-
-
-endif
 endif

@@ -526,14 +526,6 @@ else
     AC_DEFINE(HAVE_SOCKLEN_T, 1, [if socklen_t is defined, make note of it])
 fi
 
-#CONFIG is only used for irix packaging
-case $host_os in
-    irix*)
-	CONFIG=irix-mips3;
-	AC_SUBST(CONFIG)
-	;;
-esac
-
 AC_LANG(C++)
 AC_CHECK_TYPES([std::shared_ptr<int>],
 	[# BZFlag expects std::shared_ptr support by default],
@@ -556,9 +548,6 @@ case $host_os in
 	GLIBS="-lresolv $GLIBS"
 	LIBS="$LIBS -lsocket -lnsl -lresolv"
 	LDFLAGS="$LDFLAGS -lresolv"	# for hstrerror()
-	;;
-    irix*)
-	GLIBS="-lXsgivc -lX11 -laudio $GLIBS"
 	;;
     beos)
 	GLIBS=" -lmedia -lgame $GLIBS"
@@ -722,37 +711,11 @@ AM_CONDITIONAL(HAVE_SDL, test x$with_SDL = x1 -o x$with_SDL = x2)
 AM_CONDITIONAL(HAVE_SDL2, test x$with_SDL = x2)
 
 
-# dumb temp hacks to add missing linkage stuff
-case $host_os in
-     irix)
-	if test x$host_cpu = xmips64; then
-	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib32"
-	else
-	   LDFLAGS="$LDFLAGS -L$(ROOT)/usr/lib"
-	fi
-	;;
-esac
-
-
 dnl ******************************************
 dnl *** Check for compiler characteristics ***
 dnl ******************************************
 
 BZ_CONFIGURE_STAGE([compiler], [6 of 9])
-
-dnl On SGI systems, figure out if we are using MIPSPro compiler
-using_mipspro=no
-if test "$build_vendor" = "sgi" ; then
-    AC_MSG_CHECKING([whether we are using the MIPSPro compiler])
-    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],
-		      [[#if defined(sgi) && !defined(__GNUC__) && defined(_COMPILER_VERSION)
-this line should cause a compile failure when building with the MIPSpro compiler;
-#endif
-int main() { return 0; }
-    ]])],[using_mipspro=no],[using_mipspro=yes])
-    AC_MSG_RESULT([$using_mipspro])
-fi
-AM_CONDITIONAL(BUGGY_MIPSPRO, test "x$using_mipspro" = "xyes")
 
 # FIXME: these checks below are not compiler characteristics other
 # than the FLAGS they set.
@@ -812,15 +775,6 @@ case $host_os in
 	    CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	fi
 	;;
-     irix)
-	FLAGS="-Wall";
-	if test x$host_cpu = xmips64; then
-	   FLAGS="FLAGS -march=mips3";
-	else
-	   FLAGS="FLAGS -march=mips2";
-	fi
-	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
-	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
      beos*)
 	AC_DEFINE(HAVE_DEFINED_TOLOWER, 1, [tolower and toupper are not functions])
 	;;
@@ -945,9 +899,6 @@ case $host_os in
     hpux*)
 	hpux=true
 	;;
-    irix*)
-	irix=true
-	;;
     linux*|kfreebsd*|freebsd*|netbsd*|openbsd*|dragonfly*|gnu*)
 	linux=true
 	;;
@@ -961,7 +912,6 @@ esac
 AM_CONDITIONAL(HPUX, test x$hpux = xtrue)
 AM_CONDITIONAL(BEOS, test x$beos = xtrue)
 AM_CONDITIONAL(APPLE, test x$apple = xtrue)
-AM_CONDITIONAL(IRIX, test x$irix = xtrue)
 AM_CONDITIONAL(LINUX, test x$linux = xtrue)
 AM_CONDITIONAL(SOLARIS, test x$solaris = xtrue)
 AM_CONDITIONAL(WIN32, test x$win32 = xtrue)
@@ -1074,7 +1024,6 @@ AC_CONFIG_FILES([
 	man/Makefile
 	misc/Makefile
 	package/Makefile
-	package/irix/Makefile
 	package/linux/Makefile
 	package/rpm/Makefile
 	package/win32/Makefile
