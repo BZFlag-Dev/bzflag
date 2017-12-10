@@ -48,7 +48,6 @@
 #include "DropGeometry.h"
 #include "commands.h"
 #include "MasterBanList.h"
-#include "Filter.h"
 #include "WorldEventManager.h"
 #include "WorldGenerators.h"
 
@@ -142,7 +141,6 @@ char worldSettings[4 + WorldSettingsSize];
 float pluginWorldSize = -1;
 float pluginWorldHeight = -1;
 bool checkShotMismatch = true;
-Filter   filter;
 
 BasesList bases;
 
@@ -2038,15 +2036,6 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 	removePlayer(i, "Ghost");
 	break;
       }
-    }
-  }
-
-  if (clOptions->filterCallsigns) {
-    int filterIndex = 0;
-    Filter::Action filterAction = filter.check(*playerData, filterIndex);
-    if (filterAction == Filter::DROP) {
-      rejectPlayer(playerIndex, RejectBadCallsign, "Player has been banned");
-      return;
     }
   }
 

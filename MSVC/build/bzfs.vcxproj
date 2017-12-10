@@ -369,7 +369,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzfs\Filter.cxx" />
     <ClCompile Include="..\..\src\bzfs\FlagHistory.cxx" />
     <ClCompile Include="..\..\src\bzfs\FlagInfo.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -677,7 +676,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClInclude Include="..\..\src\bzfs\CustomZone.h" />
     <ClInclude Include="..\..\src\bzfs\DropGeometry.h" />
     <ClInclude Include="..\..\src\bzfs\EntryZones.h" />
-    <ClInclude Include="..\..\src\bzfs\Filter.h" />
     <ClInclude Include="..\..\src\bzfs\FlagHistory.h" />
     <ClInclude Include="..\..\src\bzfs\FlagInfo.h" />
     <ClInclude Include="..\..\src\bzfs\GameKeeper.h" />

@@ -166,9 +166,6 @@
     <ClCompile Include="..\..\src\bzfs\base64.cxx">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzfs\Filter.cxx">
-      <Filter>Source Files\Utils</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\bzfs\ListServerConnection.cxx">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
@@ -328,9 +325,6 @@
       <Filter>Header Files\Server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\base64.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\bzfs\Filter.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\ListServerConnection.h">
