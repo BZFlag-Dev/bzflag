@@ -867,6 +867,16 @@ public:
   bz_ApiString message;
 };
 
+class BZF_API bz_SlashCommandEventData_V2 : public bz_SlashCommandEventData_V1
+{
+public:
+	bz_SlashCommandEventData_V2() : bz_SlashCommandEventData_V1(), sourceChannel(-1)
+	{
+	}
+
+	int sourceChannel;
+};
+
 class BZF_API bz_AllowPollEventData_V1 : public bz_EventData
 {
 public:
@@ -1699,11 +1709,19 @@ BZF_API bool bz_removeCustomPollType (const char* option);
 class bz_CustomSlashCommandHandler
 {
 public:
-  virtual ~bz_CustomSlashCommandHandler() {};
-  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+	virtual ~bz_CustomSlashCommandHandler() {};
+	virtual bool SlashCommand(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) = 0;
 };
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
+class bz_CustomSlashCommandHandlerV2
+{
+public:
+  virtual ~bz_CustomSlashCommandHandlerV2() {};
+  virtual bool SlashCommand ( int playerID, int sourceChannel, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+};
+
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandlerV2 *handler );
+BZF_API bool bz_registerCustomSlashCommand (const char* command, bz_CustomSlashCommandHandler *handler);
 BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning

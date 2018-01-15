@@ -2545,7 +2545,7 @@ BZF_API bool bz_removeCustomPollType ( const char* option )
   return true;
 }
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandlerV2 *handler )
 {
   if (!command || !handler)
     return false;
@@ -2554,10 +2554,44 @@ BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlash
   return true;
 }
 
+
+class V1MappingHandler : public bz_CustomSlashCommandHandlerV2
+{
+public:
+	bz_CustomSlashCommandHandler *legacyHandler = nullptr;
+
+	virtual bool SlashCommand(int playerID, int sourceChannel, bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+	{
+		if (legacyHandler == nullptr)
+			return false;
+
+		return legacyHandler->SlashCommand(playerID, command, message, params);
+	}
+};
+
+std::map<std::string, V1MappingHandler> V1Handlers;
+
+
+BZF_API bool bz_registerCustomSlashCommand(const char* command, bz_CustomSlashCommandHandler *handler)
+{
+	if (!command || !handler)
+		return false;
+
+	std::string name = command;
+	V1Handlers[name] = V1MappingHandler();
+	V1Handlers[name].legacyHandler = handler;
+
+	return bz_registerCustomSlashCommand(command, &V1Handlers[name]);
+}
+
 BZF_API bool bz_removeCustomSlashCommand ( const char* command )
 {
   if (!command)
     return false;
+
+  auto v1H = V1Handlers.find(std::string(command));
+  if (v1H != V1Handlers.end())
+	  V1Handlers.erase(v1H);
 
   removeCustomSlashCommand(std::string(command));
   return true;
