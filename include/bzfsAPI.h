@@ -405,6 +405,18 @@ typedef enum
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
 
+#define BZ_ADMINCHAT		252
+#define BZ_ROGUECHAT		251
+#define BZ_REDCHAT		250
+#define BZ_GREENCHAT		249
+#define BZ_BLUECHAT		248
+#define BZ_PURPLECHAT		247
+#define BZ_OBSERVERCHAT		246
+#define BZ_RABBITCHAT		245
+#define BZ_HUNTERCHAT		244
+
+#define BZ_LASTREALPLAYER	243
+
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
 #define BZ_BZDBPERM_SERVER	2
