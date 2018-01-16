@@ -41,11 +41,11 @@ public:
 };
 
 // parser for the server commands
-void parseServerCommand(const char *message, int dstPlayerId);
+void parseServerCommand(const char *message, int dstPlayerId, int sourceChannel);
 
-typedef std::map<std::string, bz_CustomSlashCommandHandler*>	tmCustomSlashCommandMap;
+typedef std::map<std::string, bz_CustomSlashCommandHandlerV2*>	tmCustomSlashCommandMap;
 
-void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandler* handler );
+void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandlerV2* handler );
 void removeCustomSlashCommand ( std::string command );
 
 extern ShutdownCommand shutdownCommand;

@@ -3522,7 +3522,7 @@ bool ModCountCommand::operator() (const char*message,
 
 
 // parse server comands
-void parseServerCommand(const char *message, int t)
+void parseServerCommand(const char *message, int t, int sourceChannel)
 {
   if (!message) {
     std::cerr << "WARNING: parseCommand was given a null message?!" << std::endl;
@@ -3534,8 +3534,9 @@ void parseServerCommand(const char *message, int t)
     return;
 
   // Notify plugins of slash command execution request
-  bz_SlashCommandEventData_V1 commandData;
+  bz_SlashCommandEventData_V2 commandData;
   commandData.from = t;
+  commandData.sourceChannel = sourceChannel;
   commandData.message = message;
 
   worldEventManager.callEvents(bz_eSlashCommandEvent, &commandData);
@@ -3567,7 +3568,7 @@ void parseServerCommand(const char *message, int t)
   // see if we have a registerd custom command and call it
   if (itr != customCommands.end()) {
     // if it handles it, then we are good
-    if (itr->second->SlashCommand(t, command, APIMessage, &APIParams))
+    if (itr->second->SlashCommand(t, sourceChannel, command, APIMessage, &APIParams))
       return;
   }
 
@@ -3589,7 +3590,7 @@ void parseServerCommand(const char *message, int t)
   sendMessage(ServerPlayer, t, reply);
 }
 
-void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandler* handler)
+void registerCustomSlashCommand(std::string command, bz_CustomSlashCommandHandlerV2* handler)
 {
   if (handler)
     customCommands[TextUtils::tolower(command)] = handler;

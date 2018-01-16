@@ -465,11 +465,11 @@ float getPluginMinWaitTime ( void )
   return maxTime;
 }
 
-class DynamicPluginCommands : public bz_CustomSlashCommandHandler
+class DynamicPluginCommands : public bz_CustomSlashCommandHandlerV2
 {
   public:
     virtual ~DynamicPluginCommands() {};
-    virtual bool SlashCommand ( int playerID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
+    virtual bool SlashCommand ( int playerID, int sourceID, bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
     {
       bz_BasePlayerRecord	record;
 

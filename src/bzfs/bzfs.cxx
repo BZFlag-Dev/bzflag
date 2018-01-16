@@ -1415,7 +1415,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 
     // don't intercept other messages beginning with /me...
     if (!isspace(message[3])) {
-      parseServerCommand(message, srcPlayer);
+      parseServerCommand(message, srcPlayer, dstPlayer);
       return;
     }
 
@@ -1447,7 +1447,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       Record::addPacket(MsgMessage, (char*)buf - (char*)bufStart, bufStart,
 			HiddenPacket);
     }
-    parseServerCommand(message, srcPlayer);
+    parseServerCommand(message, srcPlayer, dstPlayer);
     return; // bail out
   }
 
