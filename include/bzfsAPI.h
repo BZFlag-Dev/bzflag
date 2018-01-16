@@ -870,11 +870,11 @@ public:
 class BZF_API bz_SlashCommandEventData_V2 : public bz_SlashCommandEventData_V1
 {
 public:
-	bz_SlashCommandEventData_V2() : bz_SlashCommandEventData_V1(), sourceChannel(-1)
-	{
-	}
+  bz_SlashCommandEventData_V2() : bz_SlashCommandEventData_V1(), sourceChannel(-1)
+  {
+  }
 
-	int sourceChannel;
+  int sourceChannel;
 };
 
 class BZF_API bz_AllowPollEventData_V1 : public bz_EventData
@@ -1709,8 +1709,8 @@ BZF_API bool bz_removeCustomPollType (const char* option);
 class bz_CustomSlashCommandHandler
 {
 public:
-	virtual ~bz_CustomSlashCommandHandler() {};
-	virtual bool SlashCommand(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) = 0;
+  virtual ~bz_CustomSlashCommandHandler() {};
+  virtual bool SlashCommand(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) = 0;
 };
 
 class bz_CustomSlashCommandHandlerV2
