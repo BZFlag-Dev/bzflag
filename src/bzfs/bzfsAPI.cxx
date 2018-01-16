@@ -2554,7 +2554,7 @@ BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlash
   return true;
 }
 
-class V1MappingHandler : public bz_CustomSlashCommandHandlerV2
+class V1SlashCommandWrapper : public bz_CustomSlashCommandHandlerV2
 {
 public:
   bz_CustomSlashCommandHandler *legacyHandler = nullptr;
@@ -2568,7 +2568,7 @@ public:
   }
 };
 
-std::map<std::string, V1MappingHandler> V1Handlers;
+std::map<std::string, V1SlashCommandWrapper> V1Handlers;
 
 BZF_API bool bz_registerCustomSlashCommand(const char* command, bz_CustomSlashCommandHandler *handler)
 {
@@ -2576,7 +2576,7 @@ BZF_API bool bz_registerCustomSlashCommand(const char* command, bz_CustomSlashCo
     return false;
 
   std::string name = command;
-  V1Handlers[name] = V1MappingHandler();
+  V1Handlers[name] = V1SlashCommandWrapper();
   V1Handlers[name].legacyHandler = handler;
 
   return bz_registerCustomSlashCommand(command, &V1Handlers[name]);
