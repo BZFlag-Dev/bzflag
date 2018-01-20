@@ -2062,17 +2062,24 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     std::string rejectionMessage;
 
     rejectionMessage = BanRefusalString;
+    rejectionMessage += " "; // add space between the ban reason and the protocol string, "REFUSED"
+
     if (info.reason.size ())
       rejectionMessage += info.reason;
     else
       rejectionMessage += "General Ban";
 
     rejectionMessage += ColorStrings[WhiteColor];
-    if (info.bannedBy.size ()) {
-      rejectionMessage += " by ";
-      rejectionMessage += ColorStrings[BlueColor];
-      rejectionMessage += info.bannedBy;
+    rejectionMessage += " (";
+
+    double duration = info.banEnd - TimeKeeper::getCurrent();
+    if (duration < 365.0f * 24 * 3600) {
+      rejectionMessage += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+    } else {
+      rejectionMessage += "indefinite";
     }
+
+    rejectionMessage += ")";
 
     rejectionMessage += ColorStrings[GreenColor];
     if (info.fromMaster)
@@ -5344,16 +5351,25 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
 	HostBanInfo hostInfo("*");
 	if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-	  std::string reason = "banned host for: ";
+	  std::string reason = "Host banned for: ";
+
 	  if (hostInfo.reason.size())
 	    reason += hostInfo.reason;
 	  else
 	    reason += "General Ban";
 
-	  if (hostInfo.bannedBy.size()) {
-	    reason += " by ";
-	    reason += hostInfo.bannedBy;
+	  reason += ColorStrings[WhiteColor];
+	  reason += " (";
+
+	  double duration = hostInfo.banEnd - TimeKeeper::getCurrent();
+	  if (duration < 365.0f * 24 * 3600) {
+	    reason += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+	  } else {
+	    reason += "indefinite";
 	  }
+
+	  reason += ")";
+	  reason += ColorStrings[GreenColor];
 
 	  if (hostInfo.fromMaster)
 	    reason += " from the master server";

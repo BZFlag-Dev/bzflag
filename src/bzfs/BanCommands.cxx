@@ -247,8 +247,7 @@ bool MuteCommand::operator() (const char	 *message,
     }
 
     muteData->accessInfo.revokePerm(PlayerAccessInfo::talk);
-    snprintf(msg, MessageLen, "You have been muted by %s.",
-	     playerData->player.getCallSign());
+    snprintf(msg, MessageLen, "You have been muted");
     sendMessage(ServerPlayer, i, msg);
     // confirm player is muted
     snprintf(msg, MessageLen, "player id #%d \"%s\" has been muted by %s.", i,
@@ -311,8 +310,7 @@ bool UnmuteCommand::operator() (const char	 *message,
     }
 
     unmuteData->accessInfo.grantPerm(PlayerAccessInfo::talk);
-    snprintf(msg, MessageLen, "You have been unmuted by %s.",
-	     playerData->player.getCallSign());
+    snprintf(msg, MessageLen, "You have been unmuted");
     sendMessage(ServerPlayer, i, msg);
     // confirm player is unmuted
     snprintf(msg, MessageLen, "player id #%d \"%s\" has been unmuted by %s.", i,
@@ -416,11 +414,10 @@ bool KickCommand::operator() (const char	 *message,
       }
     }
 
-    snprintf(kickmessage, MessageLen, "You were kicked off the server by %s",
-	     playerData->player.getCallSign());
+    snprintf(kickmessage, MessageLen, "You were kicked off the server");
     sendMessage(ServerPlayer, kickEvent.kickedID, kickmessage);
     if (kickEvent.reason.size() > 0) {
-      snprintf(kickmessage, MessageLen, " reason given : %s",
+      snprintf(kickmessage, MessageLen, "Reason given: %s",
 	       kickEvent.reason.c_str());
       sendMessage(ServerPlayer, kickEvent.kickedID, kickmessage);
     }
@@ -503,11 +500,10 @@ bool KillCommand::operator() (const char	 *message,
       }
     }
 
-    snprintf(killmessage, MessageLen, "You were killed by %s",
-	     playerData->player.getCallSign());
+    snprintf(killmessage, MessageLen, "You were killed");
     sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     if (killEvent.reason.size() > 0) {
-      snprintf(killmessage, MessageLen, " reason given : %s",
+      snprintf(killmessage, MessageLen, "Reason given : %s",
 	       killEvent.reason.c_str());
       sendMessage(ServerPlayer, killEvent.killedID, killmessage);
     }
@@ -639,9 +635,7 @@ static bool doBanKick(GameKeeper::Player *victim,
   }
 
   // send a notice to the victim
-  snprintf(buffer, MessageLen,
-	   "You were banned from this server by %s",
-	   banner->player.getCallSign());
+  snprintf(buffer, MessageLen, "You were banned from this server");
   sendMessage(ServerPlayer, victimID, buffer);
   if (strlen(reason) > 0) {
     snprintf(buffer, MessageLen, "Reason given: %s", reason);
