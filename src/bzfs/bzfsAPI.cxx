@@ -2559,7 +2559,7 @@ class V1SlashCommandWrapper : public bz_CustomSlashCommandHandlerV2
 public:
   bz_CustomSlashCommandHandler *legacyHandler = nullptr;
 
-  virtual bool SlashCommand(int playerID, int /* sourceChannel */, bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+  virtual bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
   {
     if (legacyHandler == nullptr)
       return false;
