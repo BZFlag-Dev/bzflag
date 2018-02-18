@@ -50,6 +50,23 @@ const char* bzu_GetTeamName(bz_eTeamType team)
   return "Unknown";
 }
 
+bz_eTeamType bzu_getTeamFromFlag(const char* flagCode)
+{
+  if (!flagCode)
+    return eNoTeam;
+
+  if (strcmp(flagCode, "R*") == 0)
+    return eRedTeam;
+  else if (strcmp(flagCode, "G*") == 0)
+    return eGreenTeam;
+  else if (strcmp(flagCode, "B*") == 0)
+    return eBlueTeam;
+  else if (strcmp(flagCode, "P*") == 0)
+    return ePurpleTeam;
+
+  return eNoTeam;
+}
+
 std::string printTime(bz_Time *ts, const char* _timezone)
 {
   std::string time;

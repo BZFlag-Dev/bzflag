@@ -223,6 +223,9 @@ public:
   bz_APIStringList& operator=( const bz_APIStringList& r );
   bz_APIStringList& operator=( const std::vector<std::string>& r );
 
+  const char* join(const char* delimiter = ",");
+  bool contains(const std::string &needle);
+
   unsigned int size ( void ) const;
   void clear ( void );
 
@@ -401,6 +404,18 @@ typedef enum
 #define BZ_SERVER		-2
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
+
+#define BZ_ADMINCHAT		252
+#define BZ_ROGUECHAT		251
+#define BZ_REDCHAT		250
+#define BZ_GREENCHAT		249
+#define BZ_BLUECHAT		248
+#define BZ_PURPLECHAT		247
+#define BZ_OBSERVERCHAT		246
+#define BZ_RABBITCHAT		245
+#define BZ_HUNTERCHAT		244
+
+#define BZ_LASTREALPLAYER	243
 
 #define BZ_BZDBPERM_NA		0
 #define BZ_BZDBPERM_USER	1
@@ -862,6 +877,16 @@ public:
   int from;
 
   bz_ApiString message;
+};
+
+class BZF_API bz_SlashCommandEventData_V2 : public bz_SlashCommandEventData_V1
+{
+public:
+  bz_SlashCommandEventData_V2() : bz_SlashCommandEventData_V1(), sourceChannel(-1)
+  {
+  }
+
+  int sourceChannel;
 };
 
 class BZF_API bz_AllowPollEventData_V1 : public bz_EventData
@@ -1612,6 +1637,11 @@ BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms 
 BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false );
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false );
 
+BZF_API bool bz_setDefaultBZDBDouble(const char* variable, double val);
+BZF_API bool bz_setDefaultBZDBString(const char* variable, const char* val);
+BZF_API bool bz_setDefaultBZDBBool(const char* variable, bool val);
+BZF_API bool bz_setDefaultBZDBInt(const char* variable, int val);
+
 BZF_API bool bz_updateBZDBDouble(const char* variable, double val);
 BZF_API bool bz_updateBZDBString(const char* variable, const char *val);
 BZF_API bool bz_updateBZDBBool(const char* variable, bool val);
@@ -1692,10 +1722,18 @@ class bz_CustomSlashCommandHandler
 {
 public:
   virtual ~bz_CustomSlashCommandHandler() {};
-  virtual bool SlashCommand ( int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+  virtual bool SlashCommand(int playerID, bz_ApiString command, bz_ApiString message, bz_APIStringList *params) = 0;
 };
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler );
+class bz_CustomSlashCommandHandlerV2
+{
+public:
+  virtual ~bz_CustomSlashCommandHandlerV2() {};
+  virtual bool SlashCommand ( int playerID, int sourceChannel, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+};
+
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandlerV2 *handler );
+BZF_API bool bz_registerCustomSlashCommand (const char* command, bz_CustomSlashCommandHandler *handler);
 BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 
 // spawning
@@ -1948,6 +1986,10 @@ BZF_API bool bz_stopRecBuf( void );
 BZF_API const char *bz_format(const char* fmt, ...);
 BZF_API const char *bz_toupper(const char* val );
 BZF_API const char *bz_tolower(const char* val );
+BZF_API const char *bz_rtrim(const char* val, const char* trim = " ");
+BZF_API const char *bz_ltrim(const char* val, const char* trim = " ");
+BZF_API const char *bz_trim(const char* val, const char* trim = " ");
+BZF_API const char *bz_join(bz_APIStringList* list, const char* delimiter = ",");
 BZF_API const char *bz_urlEncode(const char* val );
 
 // game countdown
@@ -1988,6 +2030,7 @@ int convertTeam( bz_eTeamType team );
 
 // game type info
 BZF_API bz_eGameType bz_getGameType ( void );
+BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eTeamType teamCapped);
 
 
 typedef struct {

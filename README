@@ -187,14 +187,7 @@ installed in the subdir bin of the specified path.
 For additional information on installing, see INSTALL file.
 
 Again, some platforms may be different.  See the README file
-appropriate to your system for more information:
-
-  Platform			README file
-  --------			-----------
-  UNIX, Linux			README
-  Solaris			README.SOLARIS
-  Mac OS X			README.MacOSX
-  Windows 			README.WINDOWS, README.MINGW32
+appropriate to your system for more information.
 
 You can also build an installable package using:
 

@@ -1,6 +1,7 @@
 SUBDIRS = build
 
 EXTRA_DIST =	\
+	.editorconfig	\
 	Version.rc	\
 	bzfs.sln	\
 	bzflag.sln	\

@@ -18,6 +18,7 @@
 
 //common utilities
 const char* bzu_GetTeamName ( bz_eTeamType team );
+bz_eTeamType bzu_getTeamFromFlag (const char* flagCode);
 
 // text functions
 const std::string& tolower(const std::string& s, std::string& dest);

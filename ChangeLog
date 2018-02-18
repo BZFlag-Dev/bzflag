@@ -7,15 +7,21 @@ BZFlag 2.5.x
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
-BZFlag 2.4.11
--------------
+BZFlag 2.4.12 "Silence is Golden" (2017-10-29)
+----------------------------------------------
 
+* Allow API to trigger CTF capture event - Vladimir Jimenez
+* Allow setting default values for BZDB from API - Vladimir Jimenez
+* Add bzu_getTeamFromFlag() convenience function - Vladimir Jimenez
+* Add new functions to the bz_APIStringList - Vladimir Jimenez
+* Add string utility functions to the API and TextUtils - Vladimir Jimenez
 * Fixed an issue with ASCII characters from modified non-ASCII keys in SDL 2
     - Joshua Bodine
 * Fixed compilation on macOS when using autotools/gcc - Mike Miller
 * Don't send client queries on behalf of players - Vladimir Jimenez
 * Removed pollSet as a default perm in bzfs - Vladimir Jimenez
 * Player records canSpawn value no longer always returns true - Vladimir Jimenez
+* bz_addURLJob() now supports setting HTTP headers - Vladimir Jimenez
 * Made multisampling work on all platforms with SDL 1.2/2 - Joshua Bodine
 * Add bz_eMuteEvent and bz_eUnmuteEvent to the API - Vladimir Jimenez
 * Add configure --disable-server option - Jeff Makey

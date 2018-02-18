@@ -600,6 +600,16 @@ bz_APIStringList& bz_APIStringList::operator=( const std::vector<std::string>& r
   return *this;
 }
 
+const char* bz_APIStringList::join(const char* delimiter)
+{
+  return bz_join(this, delimiter);
+}
+
+bool bz_APIStringList::contains(const std::string &needle)
+{
+  return (std::find(data->list.begin(), data->list.end(), needle) != data->list.end());
+}
+
 unsigned int bz_APIStringList::size ( void ) const
 {
   return data->list.size();
@@ -2007,6 +2017,42 @@ BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persi
   return !exists;
 }
 
+//-------------------------------------------------------------------------
+
+BZF_API bool bz_setDefaultBZDBDouble(const char* variable, double val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(std::string(variable), TextUtils::format("%f", val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBString(const char* variable, const char* val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(std::string(variable), std::string(val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBInt(const char* variable, int val)
+{
+  if (!variable || !BZDB.isSet(variable))
+    return false;
+
+  BZDB.setDefault(variable, TextUtils::format("%d",val));
+
+  return true;
+}
+
+BZF_API bool bz_setDefaultBZDBBool(const char* variable, bool val)
+{
+  return bz_setDefaultBZDBInt(variable, (int)val);
+}
 
 //-------------------------------------------------------------------------
 
@@ -2499,7 +2545,7 @@ BZF_API bool bz_removeCustomPollType ( const char* option )
   return true;
 }
 
-BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandler *handler )
+BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandlerV2 *handler )
 {
   if (!command || !handler)
     return false;
@@ -2508,10 +2554,42 @@ BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlash
   return true;
 }
 
+class V1SlashCommandWrapper : public bz_CustomSlashCommandHandlerV2
+{
+public:
+  bz_CustomSlashCommandHandler *legacyHandler = nullptr;
+
+  virtual bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+  {
+    if (legacyHandler == nullptr)
+      return false;
+
+    return legacyHandler->SlashCommand(playerID, command, message, params);
+  }
+};
+
+std::map<std::string, V1SlashCommandWrapper> V1Handlers;
+
+BZF_API bool bz_registerCustomSlashCommand(const char* command, bz_CustomSlashCommandHandler *handler)
+{
+  if (!command || !handler)
+    return false;
+
+  std::string name = command;
+  V1Handlers[name] = V1SlashCommandWrapper();
+  V1Handlers[name].legacyHandler = handler;
+
+  return bz_registerCustomSlashCommand(command, &V1Handlers[name]);
+}
+
 BZF_API bool bz_removeCustomSlashCommand ( const char* command )
 {
   if (!command)
     return false;
+
+  auto v1H = V1Handlers.find(std::string(command));
+  if (v1H != V1Handlers.end())
+	  V1Handlers.erase(v1H);
 
   removeCustomSlashCommand(std::string(command));
   return true;
@@ -3969,6 +4047,50 @@ BZF_API const char *bz_tolower(const char* val )
   return temp.c_str();
 }
 
+BZF_API const char* bz_ltrim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::ltrim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_rtrim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::rtrim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_trim(const char* val, const char* trim)
+{
+  if (!val)
+    return NULL;
+
+  return TextUtils::trim(std::string(val), trim).c_str();
+}
+
+BZF_API const char* bz_join(bz_APIStringList* list, const char* delimiter)
+{
+  if (!list)
+    return NULL;
+
+  if (!delimiter)
+    delimiter = "";
+
+  std::string joined = "";
+
+  for (unsigned int i = 0; i < list->size(); i++) {
+    joined += list->get(i);
+
+    if (i != (list->size() - 1))
+      joined += delimiter;
+  }
+
+  return joined.c_str();
+}
+
 BZF_API const char *bz_urlEncode(const char* val )
 {
   static std::string temp;
@@ -4212,6 +4334,14 @@ BZF_API	bz_eGameType bz_getGameType ( void )
     return eRabbitGame;
 
   return eFFAGame;
+}
+
+BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eTeamType teamCapped)
+{
+  if (bz_getGameType() != eCTFGame)
+    return false;
+
+  return captureFlag(playerID, (TeamColor)convertTeam(teamCapping), (TeamColor)convertTeam(teamCapped), false);
 }
 
 

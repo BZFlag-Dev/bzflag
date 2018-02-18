@@ -1411,7 +1411,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
 
     // don't intercept other messages beginning with /me...
     if (!isspace(message[3])) {
-      parseServerCommand(message, srcPlayer);
+      parseServerCommand(message, srcPlayer, dstPlayer);
       return;
     }
 
@@ -1443,7 +1443,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
       Record::addPacket(MsgMessage, (char*)buf - (char*)bufStart, bufStart,
 			HiddenPacket);
     }
-    parseServerCommand(message, srcPlayer);
+    parseServerCommand(message, srcPlayer, dstPlayer);
     return; // bail out
   }
 
@@ -2049,17 +2049,24 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     std::string rejectionMessage;
 
     rejectionMessage = BanRefusalString;
+    rejectionMessage += " "; // add space between the ban reason and the protocol string, "REFUSED"
+
     if (info.reason.size ())
       rejectionMessage += info.reason;
     else
       rejectionMessage += "General Ban";
 
     rejectionMessage += ColorStrings[WhiteColor];
-    if (info.bannedBy.size ()) {
-      rejectionMessage += " by ";
-      rejectionMessage += ColorStrings[BlueColor];
-      rejectionMessage += info.bannedBy;
+    rejectionMessage += " (";
+
+    double duration = info.banEnd - TimeKeeper::getCurrent();
+    if (duration < 365.0f * 24 * 3600) {
+      rejectionMessage += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+    } else {
+      rejectionMessage += "indefinite";
     }
+
+    rejectionMessage += ")";
 
     rejectionMessage += ColorStrings[GreenColor];
     if (info.fromMaster)
@@ -3652,27 +3659,36 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
   return;
 }
 
-static void captureFlag(int playerIndex, TeamColor teamCaptured)
+bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, bool checkCheat)
 {
   GameKeeper::Player *playerData
     = GameKeeper::Player::getPlayerByIndex(playerIndex);
   if (!playerData)
-    return;
+    return false;
 
   // Sanity check
   if (teamCaptured < RedTeam || teamCaptured > PurpleTeam)
-    return;
+    return false;
+
+  if (teamCapped != NoTeam && (teamCapped < RedTeam || teamCapped > PurpleTeam))
+    return false;
 
   // player captured a flag.  can either be enemy flag in player's own
   // team base, or player's own flag in enemy base.
   int flagIndex = playerData->player.getFlag();
   if (flagIndex < 0)
-    return;
+    return false;
   FlagInfo &flag = *FlagInfo::get(flagIndex);
 
-  TeamColor teamIndex = flag.teamIndex();
+  TeamColor teamIndex;
+
+  if (teamCapped != NoTeam)
+    teamIndex = teamCapped;
+  else
+    teamIndex = flag.teamIndex();
+
   if (teamIndex == ::NoTeam)
-    return;
+    return false;
 /*
  * The flag object always shows that it is the player's own team.
  * TODO: understand this situation better and change or document it.
@@ -3682,7 +3698,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
  *	Team::getName(teamCaptured), Team::getName(teamIndex));
  */
 
-  { //cheat checking
+  if (checkCheat) { //cheat checking
     TeamColor base = whoseBase(playerData->lastState.pos[0],
 			       playerData->lastState.pos[1],
 			       playerData->lastState.pos[2]);
@@ -3722,7 +3738,7 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
   worldEventManager.callEvents(bz_eAllowCTFCaptureEvent,&allowCap);
 
   if (!allowCap.allow)
-    return;
+    return false;
 
   // player no longer has flag and put flag back at it's base
   playerData->player.resetFlag();
@@ -3784,6 +3800,8 @@ static void captureFlag(int playerIndex, TeamColor teamCaptured)
     if (winningTeam != (int)NoTeam)
       checkTeamScore(playerIndex, winningTeam);
   }
+
+  return true;
 }
 
 static void shotUpdate(int playerIndex, void *buf, int len)
@@ -5383,16 +5401,25 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
       if (!playerData.accessInfo.hasPerm(PlayerAccessInfo::antiban)) {
 	HostBanInfo hostInfo("*");
 	if (!clOptions->acl.hostValidate(hostname, &hostInfo)) {
-	  std::string reason = "banned host for: ";
+	  std::string reason = "Host banned for: ";
+
 	  if (hostInfo.reason.size())
 	    reason += hostInfo.reason;
 	  else
 	    reason += "General Ban";
 
-	  if (hostInfo.bannedBy.size()) {
-	    reason += " by ";
-	    reason += hostInfo.bannedBy;
+	  reason += ColorStrings[WhiteColor];
+	  reason += " (";
+
+	  double duration = hostInfo.banEnd - TimeKeeper::getCurrent();
+	  if (duration < 365.0f * 24 * 3600) {
+	    reason += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+	  } else {
+	    reason += "indefinite";
 	  }
+
+	  reason += ")";
+	  reason += ColorStrings[GreenColor];
 
 	  if (hostInfo.fromMaster)
 	    reason += " from the master server";
