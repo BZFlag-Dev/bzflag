@@ -1459,6 +1459,7 @@ BZF_API bz_eTeamType bz_getPlayerTeam(int playerID);
 BZF_API const char* bz_getPlayerCallsign(int playerID);
 BZF_API const char* bz_getPlayerMotto(int playerID);
 BZF_API const char* bz_getPlayerIPAddress(int playerID);
+BZF_API const char* bz_getPlayerLocale(int playerID);
 
 // player lag info
 BZF_API int bz_getPlayerLag( int playerId );
@@ -1534,6 +1535,17 @@ public:
   }
 
   bz_ApiString motto;
+};
+
+class BZF_API bz_PlayerRecordV3 : public bz_PlayerRecordV2
+{
+public:
+  bz_PlayerRecordV3() : bz_PlayerRecordV2()
+  {
+    version = 3;
+  }
+
+  bz_ApiString locale;
 };
 
 // player info

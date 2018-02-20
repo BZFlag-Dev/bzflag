@@ -89,6 +89,8 @@ public:
   const char	*getToken() const;
   void		setToken(const char * c);
   void	clearToken();
+  const char	*getLocale() const;
+  void		setLocale(const char * l);
   void	*packVirtualFlagCapture(void *buf);
   bool	isTeam(TeamColor team) const;
   bool	isObserver() const;
@@ -179,6 +181,8 @@ private:
   int	clientVersionMajor;
   int	clientVersionMinor;
   int	clientVersionRevision;
+  // player's locale
+  char	locale[LocaleLen];
 
   // player's team
   TeamColor	nextTeam;

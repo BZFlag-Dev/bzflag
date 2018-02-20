@@ -4568,7 +4568,7 @@ static void		addRobots()
       robots[j]->setTeam(AutomaticTeam);
       robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
 				robots[j]->getCallSign(),
-				robots[j]->getMotto(), "");
+				robots[j]->getMotto(), "", "default");
     }
     j++;
   }
@@ -5225,7 +5225,8 @@ static void joinInternetGame2()
   serverLink->sendEnter(TankPlayer, myTank->getTeam(),
 			myTank->getCallSign(),
 			myTank->getMotto(),
-			startupInfo.token);
+			startupInfo.token,
+			world->getLocale().c_str());
   startupInfo.token[0] = '\0';
 
   // hopefully it worked!  pop all the menus.

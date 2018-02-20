@@ -27,7 +27,7 @@
 //  misc/bzfquery.py
 //  misc/bzls.lua
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0224"
+#  define BZ_PROTO_VERSION	"0225"
 #endif
 
 // version numbers - also update as needed:
@@ -46,7 +46,7 @@
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		2
+#  define BZ_REV		3
 #endif
 
 // DEVEL | RC# | STABLE | MAINT

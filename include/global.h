@@ -32,6 +32,7 @@ const int		PasswordLen = 32;	// including terminating NUL
 const int		MottoLen = 128;		// including terminating NUL
 const int		TokenLen = 22;		// opaque string (now int(10)) and terminating NUL
 const int		VersionLen = 60;	// including terminating NUL
+const int		LocaleLen = 17;		// including terminating NUL
 const int		MessageLen = 128;	// including terminating NUL
 
 // types of things we can be

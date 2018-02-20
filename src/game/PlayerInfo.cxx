@@ -50,6 +50,7 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
   memset(callSign, 0, CallSignLen);
   memset(token, 0, TokenLen);
   memset(clientVersion, 0, VersionLen);
+  memset(locale, 0, LocaleLen);
   clientVersionMajor = -1;
   clientVersionMinor = -1;
   clientVersionRevision = -1;
@@ -133,6 +134,7 @@ bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *reject
   buf = nboUnpackString(buf, motto, MottoLen);
   buf = nboUnpackString(buf, token, TokenLen);
   buf = nboUnpackString(buf, clientVersion, VersionLen);
+  buf = nboUnpackString(buf, locale, LocaleLen);
 
   return processEnter(rejectCode, rejectMsg);
 }
@@ -353,6 +355,17 @@ void PlayerInfo::setToken(const char * c)
 
 void PlayerInfo::clearToken() {
   token[0] = '\0';
+}
+
+const char *PlayerInfo::getLocale() const {
+  return locale;
+}
+
+void PlayerInfo::setLocale(const char * l) {
+  if (l != NULL) {
+    strncpy(locale, l, LocaleLen);
+    locale[LocaleLen - 1] = '\0'; // ensure null termination
+  }
 }
 
 void *PlayerInfo::packVirtualFlagCapture(void *buf) {

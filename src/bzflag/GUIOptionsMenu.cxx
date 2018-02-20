@@ -211,17 +211,12 @@ GUIOptionsMenu::GUIOptionsMenu()
   option->setCallback(callback, "L");
   options = &option->getList();
   std::vector<std::string> locales;
+  options->push_back(std::string("Default"));
   if (BundleMgr::getLocaleList(&locales) == true) {
-    options->push_back(std::string("Default"));
     for (int i = 0; i < (int)locales.size(); i++) {
       options->push_back(locales[i]);
     }
     locales.erase(locales.begin(), locales.end());
-  }
-  else {
-    // Something failed when trying to compile a list
-    // of all the locales.
-    options->push_back(std::string("Default"));
   }
 
   for (int i = 0; i < (int)options->size(); i++) {

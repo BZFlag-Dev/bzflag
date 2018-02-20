@@ -987,6 +987,12 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
     bz_PlayerRecordV2 *r = (bz_PlayerRecordV2*)playerRecord;
     r->motto = player->player.getMotto();
   }
+
+  if (playerRecord->version > 2)
+  {
+    bz_PlayerRecordV3 *r = (bz_PlayerRecordV3*)playerRecord;
+    r->locale = player->player.getLocale();
+  }
   return true;
 }
 
@@ -1103,7 +1109,7 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
   if (!player)
     return NULL;
 
-  bz_PlayerRecordV2 *playerRecord = new bz_PlayerRecordV2;
+  bz_PlayerRecordV3 *playerRecord = new bz_PlayerRecordV3;
 
   if (!playerRecord)
     return NULL;
@@ -1251,6 +1257,16 @@ BZF_API const char* bz_getPlayerIPAddress( int playerID )
     return NULL;
 
   return player->netHandler->getTargetIP();
+}
+
+BZF_API const char* bz_getPlayerLocale( int playerID )
+{
+  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+  if (!player)
+    return NULL;
+
+  return player->player.getLocale();
 }
 
 BZF_API int bz_getPlayerLag( int playerId )
