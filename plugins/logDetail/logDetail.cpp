@@ -30,6 +30,7 @@ private:
   std::string displayPlayerPrivs( int playerID );
   std::string displayCallsign( bz_ApiString callsign );
   std::string displayCallsign( int playerID );
+  std::string displayMotto( int playerID );
   std::string displayBZid( int playerID );
   std::string displayTeam( bz_eTeamType team );
   virtual void listPlayers( action act, bz_PlayerJoinPartEventData_V1 *data );
@@ -146,6 +147,11 @@ void LogDetail::Event( bz_EventData *eventData )
 			     displayBZid( joinPartData->playerID ).c_str(),
 			     displayTeam( joinPartData->record->team ).c_str(),
 			     displayPlayerPrivs( joinPartData->playerID ).c_str());
+	    bz_debugMessagef(0, "PLAYER-MOTTO %s #%d%s %s",
+			     displayCallsign( joinPartData->playerID).c_str(),
+			     joinPartData->playerID,
+			     displayBZid( joinPartData->playerID ).c_str(),
+			     displayMotto( joinPartData->playerID).c_str());
 	    listPlayers( join, joinPartData);
 	  }
 	}
@@ -224,6 +230,20 @@ std::string LogDetail::displayCallsign( int playerID )
     callsign << "7:UNKNOWN";
   }
   return callsign.str();
+}
+
+std::string LogDetail::displayMotto( int playerID )
+{
+  std::ostringstream motto;
+  bz_PlayerRecordV2 *player = (bz_PlayerRecordV2*)bz_getPlayerByIndex( playerID );
+  if (player) {
+    motto << strlen( player->motto.c_str() ) << ":";
+    motto << player->motto.c_str();
+    bz_freePlayerRecord( player );
+  } else {
+    motto << "7:UNKNOWN";
+  }
+  return motto.str();
 }
 
 
