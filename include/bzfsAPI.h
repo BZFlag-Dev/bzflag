@@ -405,6 +405,8 @@ typedef enum
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
 
+// 253 is reserved for the SERVER player
+#define BZ_PUBLICCHAT		254
 #define BZ_ADMINCHAT		252
 #define BZ_ROGUECHAT		251
 #define BZ_REDCHAT		250
