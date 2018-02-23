@@ -43,6 +43,18 @@
 #define BZF_PLUGIN_CALL extern "C"
 #endif
 
+/* Provide a means to deprecate API functions to discourage their use
+ * in the future
+ */
+#ifdef __GNUC__
+#  define DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#  define DEPRECATED __declspec(deprecated)
+#else
+#  pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+#  define DEPRECATED
+#endif
+
 class bz_Plugin;
 
 #define BZ_API_VERSION	26
