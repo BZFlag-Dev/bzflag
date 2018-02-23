@@ -1798,6 +1798,30 @@ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, flo
   return shotID;
 }
 
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float lookAtVector[3], bz_eTeamType color, int targetPlayerId)
+{
+  float tilt = asinf(lookAtVector[3]);
+  float direction = atan2f(lookAtVector[0], lookAtVector[1]);
+
+  return bz_fireServerShot(shotType, lifetime, origin, tilt, direction, color, targetPlayerId);
+}
+
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float tilt, float direction, bz_eTeamType color, int targetPlayerId)
+{
+  if (!shotType || !origin)
+    return false;
+
+  std::string flagType = shotType;
+  FlagTypeMap &flagMap = FlagType::getFlagMap();
+
+  if (flagMap.find(flagType) == flagMap.end())
+    return false;
+
+  FlagType *flag = flagMap.find(flagType)->second;
+
+  return fireWorldWep(flag, lifetime, ServerPlayer, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
+}
+
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
 {
   uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
