@@ -1732,11 +1732,11 @@ DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, in
 
   FlagType *flag = flagMap.find(std::string(flagType))->second;
 
-  int realShotID = shotID;
-  if (realShotID == 0)
+  int* realShotID = &shotID;
+  if (shotID == 0)
     realShotID = NULL;
 
-  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
+  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
 DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam)
@@ -1750,12 +1750,7 @@ DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, in
 
   FlagType *flag = flagMap.find(std::string(flagType))->second;
 
-  int realShotID = world->getWorldWeapons().getNewWorldShotID(ServerPlayer);
-
-  if (shotID != NULL)
-    *shotID = realShotID;
-
-  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, speed, realShotID, dt, (TeamColor)convertTeam(shotTeam));
+  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, pos, tilt, direction, speed, shotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
 DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam)
@@ -1768,9 +1763,10 @@ DEPRECATED BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float 
   if (!pos)
     return false;
 
-  bz_fireServerShot("GM", lifetime, pos, tilt, direction, shotTeam, targetPlayerID);
+  int* shotID = NULL;
+  bz_fireWorldWep("GM", lifetime, ServerPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
 
-  return world->getWorldWeapons().getNewWorldShotID();
+  return *shotID;
 }
 
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float lookAtVector[3], bz_eTeamType color, int targetPlayerId)
@@ -1794,7 +1790,7 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  return fireWorldWep(flag, lifetime, ServerPlayer, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
+  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
 BZF_API bool bz_endServerShot(uint32_t shotGUID)
@@ -1807,6 +1803,23 @@ BZF_API bool bz_endServerShot(uint32_t shotGUID)
 
   return true;
 }
+
+BZF_API bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name)
+{
+  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
+    return NULL;
+
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  std::string key = name;
+
+  if (shot->shotMetaData.find(key) == shot->shotMetaData.end())
+    return NULL;
+
+  return shot->shotMetaData[key];
+}
+
+//BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name);
+//BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const bz_ApiString value);
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
 {

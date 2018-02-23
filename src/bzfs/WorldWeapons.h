@@ -46,8 +46,7 @@ public:
   int packSize() const;
   void *pack(void *buf) const;
 
-  int getNewWorldShotID ( void );
-  int getNewWorldShotID(PlayerId player);
+  uint32_t fireShot(FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
   struct Weapon
@@ -65,6 +64,8 @@ private:
 
   std::vector<Weapon*> weapons;
   int worldShotId;
+
+  int getNewWorldShotID(void);
 
   WorldWeapons( const WorldWeapons &w);
   WorldWeapons& operator=(const WorldWeapons &w) const;
@@ -85,9 +86,6 @@ protected:
 	float		tilt;
 	bz_eTeamType	team;
 };
-
-uint32_t fireWorldWep(FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float speed, int shotID, float delayTime, TeamColor shotTeam = RogueTeam, PlayerId targetPlayerID = -1);
-uint32_t fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float delayTime, TeamColor shotTeam = RogueTeam);
 
 #endif
 

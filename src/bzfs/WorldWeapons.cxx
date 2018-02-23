@@ -29,9 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
-			    TeamColor teamColor, float *pos, float tilt, float dir, float shotSpeed,
-			    int shotID, float delayTime, PlayerId targetPlayerID = -1)
+uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -50,13 +48,18 @@ static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player
     shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   const float tiltFactor = cosf(tilt);
 
-  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
-  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
+  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(direction);
+  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(direction);
   firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-  firingInfo.shot.id = shotID;
   firingInfo.shot.dt = delayTime;
-
   firingInfo.shot.team = teamColor;
+
+  if (shotID != NULL && shotID == 0) {
+    firingInfo.shot.id = *shotID = getNewWorldShotID();
+  }
+  else {
+    firingInfo.shot.id = getNewWorldShotID();
+  }
 
   buf = firingInfo.pack(bufStart);
 
@@ -83,8 +86,8 @@ static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player
   event.pos[0] = pos[0];
   event.pos[1] = pos[1];
   event.pos[2] = pos[2];
-  event.lookAt[0] = cosf(dir);
-  event.lookAt[1] = sinf(dir);
+  event.lookAt[0] = cosf(direction);
+  event.lookAt[1] = sinf(direction);
   event.lookAt[2] = sinf(tilt);
   event.team = convertTeam(teamColor);
 
@@ -141,9 +144,7 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
       FlagType type = *(w->type);	// non-const copy
 
-      fireWorldWepReal(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction, -1,
-		       getNewWorldShotID(), 0);
+      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), ServerPlayer, w->origin, w->tilt, w->direction, w->direction, NULL, 0, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -244,22 +245,6 @@ bool shotUsedInList(int shotID, Shots::ShotList& list)
 	return false;
 }
 
-int WorldWeapons::getNewWorldShotID(PlayerId player)
-{
-	int maxID = _MAX_WORLD_SHOTS;
-	if (player != ServerPlayer)
-		maxID = clOptions->maxShots;
-
-	Shots::ShotList liveShots = ShotManager.LiveShotsForPlayer(player);
-	Shots::ShotList deadShots = ShotManager.DeadShotsForPlayer(player);
-
-	for (int i = 0; i < maxID; i++)
-	{
-		if (!shotUsedInList(i,liveShots) && !shotUsedInList(i,deadShots))
-			return i;
-	}
-	return -1;
-}
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
@@ -291,31 +276,10 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 
   bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
 
-  if ( capEvent->teamCapped != team )
-	  return;
+  if (capEvent->teamCapped != team)
+    return;
 
-  fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		   ServerPlayer, RogueTeam, origin, tilt, direction, -1,
-		   world->getWorldWeapons().getNewWorldShotID(),0);
-}
-
-
-// for bzfsAPI: it needs to be global
-uint32_t fireWorldWep(FlagType* type, float lifetime, PlayerId player,
-			float *pos, float tilt, float direction, float speed,
-			int shotID, float delayTime, TeamColor shotTeam, PlayerId targetPlayerId)
-{
-  return fireWorldWepReal(type, lifetime, player, shotTeam,
-			  pos, tilt, direction, speed, shotID, delayTime, targetPlayerId);
-}
-
-
-// DEPRECATED
-uint32_t fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
-		PlayerId player, float *pos, float tilt, float direction,
-		int shotID, float delayTime, TeamColor shotTeam)
-{
-  return fireWorldWepReal(type, lifetime, player, shotTeam, pos, tilt, direction, -1, shotID, delayTime, targetPlayerID);
+  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), ServerPlayer, origin, tilt, direction, -1, NULL, 0);
 }
 
 // Local Variables: ***
