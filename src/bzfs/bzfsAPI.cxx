@@ -1822,6 +1822,17 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
   return fireWorldWep(flag, lifetime, ServerPlayer, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
+BZF_API bool bz_endServerShot(uint32_t shotGUID)
+{
+  if (shotGUID == 0 || shotGUID == NULL)
+    return false;
+
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  shot->End();
+
+  return true;
+}
+
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
 {
   uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
