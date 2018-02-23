@@ -1640,6 +1640,10 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
 
 BZF_API bool bz_endServerShot(uint32_t shotGUID);
 
+BZF_API const bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name);
+BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name);
+BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value);
+
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
 BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value);
 BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name);

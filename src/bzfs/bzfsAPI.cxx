@@ -1804,7 +1804,7 @@ BZF_API bool bz_endServerShot(uint32_t shotGUID)
   return true;
 }
 
-BZF_API bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name)
+BZF_API const bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name)
 {
   if (shotGUID == 0 || shotGUID == NULL || name == NULL)
     return NULL;
@@ -1812,14 +1812,33 @@ BZF_API bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* nam
   Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
   std::string key = name;
 
-  if (shot->shotMetaData.find(key) == shot->shotMetaData.end())
+  if (shot->stringMetaData.find(key) == shot->stringMetaData.end())
     return NULL;
 
-  return shot->shotMetaData[key];
+  return bz_ApiString(shot->stringMetaData[key]);
 }
 
-//BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name);
-//BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const bz_ApiString value);
+BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name)
+{
+  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
+    return NULL;
+
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  std::string key = name;
+
+  return (shot->stringMetaData.find(key) == shot->stringMetaData.end());
+}
+
+BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value)
+{
+  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
+    return;
+
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  std::string key = name;
+
+  shot->stringMetaData[key] = std::string(value);
+}
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
 {
@@ -1831,10 +1850,10 @@ BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* nam
   Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
 
   std::string n = name;
-  if (shot->MetaData.find(n) == shot->MetaData.end())
+  if (shot->intMetaData.find(n) == shot->intMetaData.end())
     return 0;
 
-  return shot->MetaData[n];
+  return shot->intMetaData[n];
 }
 
 BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value)
@@ -1847,7 +1866,7 @@ BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, u
   Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
 
   std::string n = name;
-  shot->MetaData[n] = value;
+  shot->intMetaData[n] = value;
 }
 
 BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
@@ -1860,7 +1879,7 @@ BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
   Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
 
   std::string n = name;
-  if (shot->MetaData.find(n) == shot->MetaData.end())
+  if (shot->intMetaData.find(n) == shot->intMetaData.end())
     return false;
 
   return true;

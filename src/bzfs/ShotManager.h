@@ -73,7 +73,8 @@ public:
 	double		LastUpdateTime;
 	double		StartTime;
 
-	std::map<std::string,uint32_t> MetaData;
+	std::map<std::string, std::string> stringMetaData;
+	std::map<std::string, uint32_t> intMetaData;
 
 	FiringInfo	Info;
 
