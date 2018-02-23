@@ -86,9 +86,9 @@ protected:
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float speed, int shotID, float dt, TeamColor shotTeam = RogueTeam );
+uint32_t fireWorldWep(FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float speed, int shotID, float dt, TeamColor shotTeam = RogueTeam, PlayerId targetPlayerID = -1);
+uint32_t fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt, TeamColor shotTeam = RogueTeam);
 
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt, TeamColor shotTeam = RogueTeam);
 #endif
 
 // Local Variables: ***

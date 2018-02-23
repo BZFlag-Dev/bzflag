@@ -29,10 +29,14 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
+static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    TeamColor teamColor, float *pos, float tilt, float dir, float shotSpeed,
-			    int shotID, float dt)
+			    int shotID, float dt, PlayerId targetPlayerID = -1)
 {
+  if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+    return INVALID_SHOT_GUID;
+  }
+
   void *buf, *bufStart = getDirectMessageBuffer();
 
   FiringInfo firingInfo;
@@ -41,9 +45,11 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
   firingInfo.lifetime = lifetime;
   firingInfo.shot.player = player;
   memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+
   if (shotSpeed < 0)
-	  shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+    shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
   const float tiltFactor = cosf(tilt);
+
   firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
   firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
   firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
@@ -54,61 +60,25 @@ static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 
   buf = firingInfo.pack(bufStart);
 
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
-  }
+  broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
 
+  uint32_t shotGUID = ShotManager.AddShot(firingInfo, player);
 
-  ShotManager.AddShot(firingInfo,player);
-  return shotID;
-}
+  // Target the gm, construct it, and send packet
+  if (type->flagAbbv == "GM") {
+    ShotManager.SetShotTarget(shotGUID, targetPlayerID);
 
+    char packet[ShotUpdatePLen + PlayerIdPLen];
+    buf = (void*)packet;
+    buf = firingInfo.shot.pack(buf);
+    buf = nboPackUByte(buf, targetPlayerID);
 
-static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
-    lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
-    float dt, TeamColor shotTeam = RogueTeam)
-{
-
-  void *buf, *bufStart = getDirectMessageBuffer();
-
-  FiringInfo firingInfo;
-  firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
-  firingInfo.flagType = type;
-  firingInfo.lifetime = lifetime;
-  firingInfo.shot.player = player;
-  memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
-  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  const float tiltFactor = cosf(tilt);
-  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
-  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
-  firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-  firingInfo.shot.id = shotID;
-  firingInfo.shot.dt = dt;
-
-  firingInfo.shot.team = shotTeam;
-
-  buf = firingInfo.pack(bufStart);
-
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
-		     bufStart);
-  }
-
-  uint32_t shotGUID = ShotManager.AddShot(firingInfo,player);
-  ShotManager.SetShotTarget(shotGUID,targetPlayerID);
-
-    // Target the gm.
-    // construct and send packet
-
-  char packet[ShotUpdatePLen + PlayerIdPLen];
-  buf = (void*)packet;
-  buf = firingInfo.shot.pack(buf);
-  buf = nboPackUByte(buf, targetPlayerID);
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
   }
 
-  return shotID;
+
+
+  return shotGUID;
 }
 
 WorldWeapons::WorldWeapons()
@@ -318,21 +288,21 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 
 
 // for bzfsAPI: it needs to be global
-int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
+uint32_t fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 			float *pos, float tilt, float direction, float speed,
-			int shotID, float dt, TeamColor shotTeam)
+			int shotID, float dt, TeamColor shotTeam, PlayerId targetPlayerId)
 {
   return fireWorldWepReal(type, lifetime, player, shotTeam,
-			  pos, tilt, direction, speed, shotID, dt);
+			  pos, tilt, direction, speed, shotID, dt, targetPlayerId);
 }
 
 
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
+// DEPRECATED
+uint32_t fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
 		PlayerId player, float *pos, float tilt, float direction,
 		int shotID, float dt, TeamColor shotTeam)
 {
-  return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-			 direction, shotID, dt, shotTeam);
+  return fireWorldWepReal(type, lifetime, player, shotTeam, pos, tilt, direction, -1, shotID, dt, targetPlayerID);
 }
 
 // Local Variables: ***
