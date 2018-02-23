@@ -1721,7 +1721,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam )
+DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam)
 {
   if (!pos || !flagType)
     return false;
@@ -1731,21 +1731,15 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
     return false;
 
   FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  PlayerId player;
-  if ( fromPlayer == BZ_SERVER )
-    player = ServerPlayer;
-  else
-    player = fromPlayer;
 
   int realShotID = shotID;
-  if ( realShotID == 0)
-    realShotID = world->getWorldWeapons().getNewWorldShotID();
+  if (realShotID == 0)
+    realShotID = NULL;
 
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,-1,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam )
+DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam)
 {
   if (!pos || !flagType)
     return false;
@@ -1756,46 +1750,27 @@ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPla
 
   FlagType *flag = flagMap.find(std::string(flagType))->second;
 
-  PlayerId player;
-  if ( fromPlayer == BZ_SERVER )
-    player = ServerPlayer;
-  else
-    player = fromPlayer;
-
-  int realShotID = world->getWorldWeapons().getNewWorldShotID(player);
+  int realShotID = world->getWorldWeapons().getNewWorldShotID(ServerPlayer);
 
   if (shotID != NULL)
     *shotID = realShotID;
 
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction, speed,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+  return fireWorldWep(flag, lifetime, ServerPlayer, pos, tilt, direction, speed, realShotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam )
+DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam)
 {
-  return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam );
+  return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
 }
 
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
+DEPRECATED BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
 {
-  const char* flagType = "GM";
-
-  if (!pos || !flagType)
+  if (!pos)
     return false;
 
-  FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
-    return false;
+  bz_fireServerShot("GM", lifetime, pos, tilt, direction, shotTeam, targetPlayerID);
 
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  PlayerId player = ServerPlayer;
-
-  int shotID =  world->getWorldWeapons().getNewWorldShotID();
-
-  fireWorldGM(flag,targetPlayerID, lifetime,player,pos,tilt,direction,
-    shotID, dt, (TeamColor)convertTeam(shotTeam));
-
-  return shotID;
+  return world->getWorldWeapons().getNewWorldShotID();
 }
 
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float lookAtVector[3], bz_eTeamType color, int targetPlayerId)
