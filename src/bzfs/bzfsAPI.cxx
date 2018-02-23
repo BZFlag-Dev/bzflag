@@ -1736,7 +1736,7 @@ DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, in
   if (shotID == 0)
     realShotID = NULL;
 
-  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
+  return world->getWorldWeapons().fireShot(flag, lifetime, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
 DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam)
@@ -1750,12 +1750,12 @@ DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, in
 
   FlagType *flag = flagMap.find(std::string(flagType))->second;
 
-  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, pos, tilt, direction, speed, shotID, dt, (TeamColor)convertTeam(shotTeam));
+  return world->getWorldWeapons().fireShot(flag, lifetime, pos, tilt, direction, speed, shotID, dt, (TeamColor)convertTeam(shotTeam));
 }
 
-DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam)
+DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam)
 {
-  return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
+  return bz_fireWorldWep(flagType, lifetime, ServerPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
 }
 
 DEPRECATED BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
@@ -1790,7 +1790,7 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  return world->getWorldWeapons().fireShot(flag, lifetime, ServerPlayer, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
+  return world->getWorldWeapons().fireShot(flag, lifetime, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
 BZF_API bool bz_endServerShot(uint32_t shotGUID)

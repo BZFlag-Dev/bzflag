@@ -29,7 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
+uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -41,7 +41,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, PlayerId player,
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
-  firingInfo.shot.player = player;
+  firingInfo.shot.player = ServerPlayer;
   memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
 
   if (shotSpeed < 0)
@@ -55,17 +55,16 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, PlayerId player,
   firingInfo.shot.team = teamColor;
 
   if (shotID != NULL && shotID == 0) {
-    firingInfo.shot.id = *shotID = getNewWorldShotID();
+    *shotID = getNewWorldShotID();
   }
-  else {
-    firingInfo.shot.id = getNewWorldShotID();
-  }
+
+  firingInfo.shot.id = *shotID;
 
   buf = firingInfo.pack(bufStart);
 
   broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
 
-  uint32_t shotGUID = ShotManager.AddShot(firingInfo, player);
+  uint32_t shotGUID = ShotManager.AddShot(firingInfo, ServerPlayer);
 
   // Target the gm, construct it, and send packet
   if (type->flagAbbv == "GM") {
@@ -144,7 +143,7 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
       FlagType type = *(w->type);	// non-const copy
 
-      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), ServerPlayer, w->origin, w->tilt, w->direction, w->direction, NULL, 0, w->teamColor);
+      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), w->origin, w->tilt, w->direction, w->direction, NULL, 0, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -279,7 +278,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   if (capEvent->teamCapped != team)
     return;
 
-  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), ServerPlayer, origin, tilt, direction, -1, NULL, 0);
+  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), origin, tilt, direction, -1, NULL, 0);
 }
 
 // Local Variables: ***
