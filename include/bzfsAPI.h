@@ -328,6 +328,7 @@ typedef enum
   bz_eAutoPilotEvent,
   bz_eMuteEvent,
   bz_eUnmuteEvent,
+  bz_eServerShotFiredEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1019,6 +1020,25 @@ public:
   bz_ApiString type;
   int playerID;
   int shotID;
+};
+
+class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
+{
+public:
+  bz_ServerShotFiredEventData_V1() : bz_EventData(bz_eServerShotFiredEvent)
+    , guid(0)
+    , lifetime(0)
+    , team(eRogueTeam)
+  {
+    pos[0] = pos[1] = pos[2] = 0.0f;
+  }
+
+  uint32_t guid;
+  bz_ApiString flagType;
+  float lifetime;
+  float pos[3];
+  float lookAt[3];
+  bz_eTeamType team;
 };
 
 class BZF_API bz_PlayerUpdateEventData_V1 : public bz_EventData

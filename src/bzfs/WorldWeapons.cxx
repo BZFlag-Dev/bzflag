@@ -76,7 +76,20 @@ static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player
     broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
   }
 
+  bz_ServerShotFiredEventData_V1 event;
+  event.guid = shotGUID;
+  event.flagType = type->flagAbbv;
+  event.lifetime = lifetime;
+  event.pos[0] = pos[0];
+  event.pos[1] = pos[1];
+  event.pos[2] = pos[2];
+  event.lookAt[0] = cosf(dir);
+  event.lookAt[1] = sinf(dir);
+  event.lookAt[2] = sinf(tilt);
+  event.team = convertTeam(teamColor);
 
+  WorldEventManager worldEventManager;
+  worldEventManager.callEvents(bz_eServerShotFiredEvent, &event);
 
   return shotGUID;
 }
