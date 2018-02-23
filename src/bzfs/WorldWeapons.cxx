@@ -31,7 +31,7 @@
 
 static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
 			    TeamColor teamColor, float *pos, float tilt, float dir, float shotSpeed,
-			    int shotID, float dt, PlayerId targetPlayerID = -1)
+			    int shotID, float delayTime, PlayerId targetPlayerID = -1)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -54,7 +54,7 @@ static uint32_t fireWorldWepReal(FlagType* type, float lifetime, PlayerId player
   firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
   firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
   firingInfo.shot.id = shotID;
-  firingInfo.shot.dt = dt;
+  firingInfo.shot.dt = delayTime;
 
   firingInfo.shot.team = teamColor;
 
@@ -303,19 +303,19 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 // for bzfsAPI: it needs to be global
 uint32_t fireWorldWep(FlagType* type, float lifetime, PlayerId player,
 			float *pos, float tilt, float direction, float speed,
-			int shotID, float dt, TeamColor shotTeam, PlayerId targetPlayerId)
+			int shotID, float delayTime, TeamColor shotTeam, PlayerId targetPlayerId)
 {
   return fireWorldWepReal(type, lifetime, player, shotTeam,
-			  pos, tilt, direction, speed, shotID, dt, targetPlayerId);
+			  pos, tilt, direction, speed, shotID, delayTime, targetPlayerId);
 }
 
 
 // DEPRECATED
 uint32_t fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
 		PlayerId player, float *pos, float tilt, float direction,
-		int shotID, float dt, TeamColor shotTeam)
+		int shotID, float delayTime, TeamColor shotTeam)
 {
-  return fireWorldWepReal(type, lifetime, player, shotTeam, pos, tilt, direction, -1, shotID, dt, targetPlayerID);
+  return fireWorldWepReal(type, lifetime, player, shotTeam, pos, tilt, direction, -1, shotID, delayTime, targetPlayerID);
 }
 
 // Local Variables: ***
