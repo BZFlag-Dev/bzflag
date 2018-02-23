@@ -1887,7 +1887,12 @@ BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
 
 BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID)
 {
-  return ShotManager.FindShotGUID(fromPlayer,shotID);
+  int shotOwnerID = fromPlayer;
+
+  if (shotOwnerID == BZ_SERVER)
+    shotOwnerID = ServerPlayer;
+
+  return ShotManager.FindShotGUID(shotOwnerID, shotID);
 }
 
 // time API

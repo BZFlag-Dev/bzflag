@@ -418,7 +418,6 @@ typedef enum
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
 
-// 253 is reserved for the SERVER player
 #define BZ_PUBLICCHAT		254
 #define BZ_ADMINCHAT		252
 #define BZ_ROGUECHAT		251
@@ -430,6 +429,7 @@ typedef enum
 #define BZ_RABBITCHAT		245
 #define BZ_HUNTERCHAT		244
 
+#define BZ_SERVERPLAYER		253
 #define BZ_LASTREALPLAYER	243
 
 #define BZ_BZDBPERM_NA		0
