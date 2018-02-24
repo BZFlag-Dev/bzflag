@@ -4004,12 +4004,13 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(id);
-  if (!playerData)
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
+
+  if (!playerData && id != ServerPlayer)
     return;
 
-  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+  if (id != ServerPlayer)
+    playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
 
   ShotManager.RemoveShot(ShotManager.FindShotGUID(id,shotIndex & 0xff));
 
