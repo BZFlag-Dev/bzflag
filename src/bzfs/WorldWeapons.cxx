@@ -56,9 +56,14 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, float *pos, floa
 
   if (shotID != NULL && shotID == 0) {
     *shotID = getNewWorldShotID();
+    firingInfo.shot.id = *shotID;
   }
-
-  firingInfo.shot.id = *shotID;
+  else if (shotID == NULL) {
+    firingInfo.shot.id = getNewWorldShotID();
+  }
+  else {
+    firingInfo.shot.id = *shotID;
+  }
 
   buf = firingInfo.pack(bufStart);
 
