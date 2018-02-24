@@ -1793,17 +1793,6 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
   return world->getWorldWeapons().fireShot(flag, lifetime, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
-BZF_API bool bz_endServerShot(uint32_t shotGUID)
-{
-  if (shotGUID == 0 || shotGUID == NULL)
-    return false;
-
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
-  shot->End();
-
-  return true;
-}
-
 BZF_API const bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name)
 {
   if (shotGUID == 0 || shotGUID == NULL || name == NULL)

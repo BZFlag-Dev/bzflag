@@ -1638,8 +1638,6 @@ DEPRECATED BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, floa
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float lookAtVector[3], bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float tilt, float direction, bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
 
-BZF_API bool bz_endServerShot(uint32_t shotGUID);
-
 BZF_API const bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name);
 BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name);
 BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value);
