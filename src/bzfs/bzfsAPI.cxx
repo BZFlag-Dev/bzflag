@@ -1722,7 +1722,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 }
 
 // old API, many arguments get ingored.
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
 {
   float v[3] = { 0,0,0 };
   if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1732,7 +1732,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
   float v[3] = { 0,0,0 };
   if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1742,7 +1742,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
   float v[3] = { 0,0,0 };
   if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1752,7 +1752,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-/*DEPRECATED*/ BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction, float UNUSED(dt), bz_eTeamType shotTeam)
 {
   float v[3] = { 0,0,0 };
   if (!pos || !bz_vectorFromRotations(tilt, direction, v))

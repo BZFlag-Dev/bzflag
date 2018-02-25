@@ -1630,23 +1630,23 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
-// deprecated API, will be removed in next version
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
+// will be removed in next breaking version after 2.4.x
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
 
 // new server shot API
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
 
-// deprecated API, will be remvoed in next version
-BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
-BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value);
-BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name);
+// will be removed in next breaking version after 2.4.x
+/*DEPRECATED*/ BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
+/*DEPRECATED*/ BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value);
+/*DEPRECATED*/ BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name);
 
 // new shot metadata API
 BZF_API void bz_setShotMetaData (const uint32_t shotGUID, const char* name, uint32_t value);
-BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value);
+BZF_API void bz_setShotMetaData (const uint32_t shotGUID, const char* name, const char* value);
 BZF_API bool bz_shotHasMetaData (const uint32_t shotGUID, const char* name);
 
 BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name);
