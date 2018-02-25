@@ -31,16 +31,9 @@ void SWDeathHandler::Event ( bz_EventData *eventData )
   // Cast our event data so we can access the death position
   bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
 
-  // Retrieve the current reload time value
-  float reloadTime = (float)bz_getBZDBDouble("_reloadTime");
-
-  // If _swDeathReloadFactor is defined and greater than zero, multiply the
-  // reload time by this factor
-  if (bz_BZDBItemExists("_swDeathReloadFactor") && bz_getBZDBDouble("_swDeathReloadFactor") > 0)
-    reloadTime *= (float)bz_getBZDBDouble("_swDeathReloadFactor");
-
   // Fire a shockwave where the player died
-  bz_fireWorldWep("SW", reloadTime, BZ_SERVER, dieData->state.pos, 0, 0, 0, 0.0f);
+  float vector[3] = {0, 0, 0};
+  bz_fireServerShot("SW", dieData->state.pos, vector);
 }
 
 // Local Variables: ***
