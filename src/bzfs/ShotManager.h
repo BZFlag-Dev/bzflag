@@ -67,14 +67,22 @@ protected:
 	FlightLogic &Logic;
 
 	double	LifeTime;
+
+	class MetaDataItem
+	{
+	public:
+		std::string Name;
+		std::string DataS;
+		uint32_t	DataI;
+	};
+
+	std::map<std::string, MetaDataItem> MetaData;
+
 public:
 	fvec3		StartPosition;
 	fvec3		LastUpdatePosition;
 	double		LastUpdateTime;
 	double		StartTime;
-
-	std::map<std::string, std::string> stringMetaData;
-	std::map<std::string, uint32_t> intMetaData;
 
 	FiringInfo	Info;
 
@@ -103,6 +111,14 @@ public:
 	bool CollideBox ( fvec3 &center, fvec3 size, float rotation ) {return Logic.CollideBox(*this,center,size,rotation);}
 	bool CollideSphere ( fvec3 &center, float radius ) {return Logic.CollideSphere(*this,center,radius);}
 	bool CollideCylinder ( fvec3 &center, float height, float radius) {return Logic.CollideCylinder(*this,center,height,radius);}
+
+	// meta data API
+	void SetMetaData(const std::string& name, const char* data);
+	void SetMetaData(const std::string& name, uint32_t data);
+	bool HasMetaData(const std::string& name);
+	const char * GetMetaDataS(const std::string& name);
+	uint32_t GetMetaDataI(const std::string& name);
+
 };
 
 typedef std::shared_ptr<Shot>	ShotRef;

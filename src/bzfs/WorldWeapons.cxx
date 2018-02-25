@@ -29,7 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
+uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float origin[3], const float vector[3], float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -42,23 +42,22 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, float *pos, floa
   firingInfo.flagType = type;
   firingInfo.lifetime = lifetime;
   firingInfo.shot.player = ServerPlayer;
-  memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
+  memmove(firingInfo.shot.pos, origin, 3 * sizeof(float));
 
   if (shotSpeed < 0)
     shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  const float tiltFactor = cosf(tilt);
 
-  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(direction);
-  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(direction);
-  firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
+  for (int i = 0; i < 3; i++)
+    firingInfo.shot.vel[i] = vector[i] * shotSpeed;
+
   firingInfo.shot.dt = delayTime;
   firingInfo.shot.team = teamColor;
 
-  if (shotID != NULL && shotID == 0) {
+  if (shotID != nullptr && shotID == 0) {
     *shotID = getNewWorldShotID();
     firingInfo.shot.id = *shotID;
   }
-  else if (shotID == NULL) {
+  else if (shotID == nullptr) {
     firingInfo.shot.id = getNewWorldShotID();
   }
   else {
@@ -87,12 +86,10 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, float *pos, floa
   event.guid = shotGUID;
   event.flagType = type->flagAbbv;
   event.lifetime = lifetime;
-  event.pos[0] = pos[0];
-  event.pos[1] = pos[1];
-  event.pos[2] = pos[2];
-  event.lookAt[0] = cosf(direction);
-  event.lookAt[1] = sinf(direction);
-  event.lookAt[2] = sinf(tilt);
+  for (int i = 0; i < 3; i++){
+    event.pos[i] = origin[i];
+    event.velocity[i] = firingInfo.shot.vel[i];
+  }
   event.team = convertTeam(teamColor);
 
   WorldEventManager worldEventManager;
@@ -148,7 +145,9 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
       FlagType type = *(w->type);	// non-const copy
 
-      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), w->origin, w->tilt, w->direction, w->direction, NULL, 0, w->teamColor);
+	  float vec[3] = { 0,0,0 };
+	  bz_vectorFromRotations(w->tilt, w->direction, vec);
+      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), w->origin, vec, -1, nullptr, 0, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -283,7 +282,10 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   if (capEvent->teamCapped != team)
     return;
 
-  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), origin, tilt, direction, -1, NULL, 0);
+  float vec[3] = { 0,0,0 };
+  bz_vectorFromRotations(tilt, direction, vec);
+
+  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), origin, vec, -1, NULL, 0);
 }
 
 // Local Variables: ***

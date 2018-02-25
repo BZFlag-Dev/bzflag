@@ -227,6 +227,37 @@ namespace Shots
 	{
 	}
 
+	void Shot::SetMetaData(const std::string& name, const char* data)
+	{
+		if (MetaData.find(name) == MetaData.end())
+			MetaData[name] = MetaDataItem();
+		MetaData[name].DataS = data;
+	}
+
+	void Shot::SetMetaData(const std::string& name, uint32_t data)
+	{
+		if (MetaData.find(name) == MetaData.end())
+			MetaData[name] = MetaDataItem();
+		MetaData[name].DataI = data;
+	}
+
+	bool Shot::HasMetaData(const std::string& name)
+	{
+		return MetaData.find(name) != MetaData.end();
+	}
+
+	const char * Shot::GetMetaDataS(const std::string& name)
+	{
+		auto itr = MetaData.find(name);
+		return itr == MetaData.end() ? nullptr : itr->second.DataS.c_str();
+	}
+
+	uint32_t Shot::GetMetaDataI(const std::string& name)
+	{
+		auto itr = MetaData.find(name);
+		return itr == MetaData.end() ? 0 : itr->second.DataI;
+	}
+
 	bool Shot::Update()
 	{
 		if (Logic.Update(*this))

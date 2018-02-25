@@ -46,7 +46,7 @@ public:
   int packSize() const;
   void *pack(void *buf) const;
 
-  uint32_t fireShot(FlagType* type, float lifetime, float *pos, float tilt, float direction, float shotSpeed, int *shotID, float delayTime, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
+  uint32_t fireShot(FlagType* type, float lifetime, const float origin[3], const float vector[3], float shotSpeed, int *shotID, float delayTime, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
   struct Weapon

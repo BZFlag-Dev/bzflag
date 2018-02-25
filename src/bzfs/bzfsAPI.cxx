@@ -1721,63 +1721,50 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam)
+// old API, many arguments get ingored.
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  if (!pos || !flagType)
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
+  (int)bz_fireServerShot(flagType, pos, v, shotTeam, -1);
+  return true;
+}
+
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
+{
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  int* realShotID = &shotID;
-  if (shotID == 0)
-    realShotID = NULL;
-
-  return world->getWorldWeapons().fireShot(flag, lifetime, pos, tilt, direction, -1, realShotID, dt, (TeamColor)convertTeam(shotTeam));
+  *shotID = (int)bz_fireServerShot(flagType, pos, v, shotTeam, -1);
+  return true;
 }
 
-DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam)
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  if (!pos || !flagType)
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
-    return false;
-
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  return world->getWorldWeapons().fireShot(flag, lifetime, pos, tilt, direction, speed, shotID, dt, (TeamColor)convertTeam(shotTeam));
+  *shotID = (int)bz_fireServerShot(flagType, pos, v, shotTeam,-1);
+  return true;
 }
 
-DEPRECATED BZF_API bool bz_fireWorldWep(const char* flagType, float lifetime, int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam)
+/*DEPRECATED*/ BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction, float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  return bz_fireWorldWep(flagType, lifetime, ServerPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
+  float v[3] = { 0,0,0 };
+  if (!pos || !bz_vectorFromRotations(tilt, direction, v))
+    return -1;
+
+  return (int)bz_fireServerShot("GM", pos, v, shotTeam, targetPlayerID);
 }
 
-DEPRECATED BZF_API int bz_fireWorldGM(int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
-{
-  if (!pos)
-    return false;
+float GetShotLifetime(FlagType* flagType);
 
-  int* shotID = NULL;
-  bz_fireWorldWep("GM", lifetime, ServerPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam);
-
-  return *shotID;
-}
-
-BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float lookAtVector[3], bz_eTeamType color, int targetPlayerId)
-{
-  float tilt = asinf(lookAtVector[3]);
-  float direction = atan2f(lookAtVector[0], lookAtVector[1]);
-
-  return bz_fireServerShot(shotType, lifetime, origin, tilt, direction, color, targetPlayerId);
-}
-
-BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float origin[3], float tilt, float direction, bz_eTeamType color, int targetPlayerId)
+// new API, much cleaner
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
 {
   if (!shotType || !origin)
     return false;
@@ -1790,88 +1777,88 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float lifetime, float o
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  return world->getWorldWeapons().fireShot(flag, lifetime, origin, tilt, direction, -1, NULL, 0, (TeamColor)convertTeam(color), targetPlayerId);
+  float lifetime = GetShotLifetime(flag);
+
+  return world->getWorldWeapons().fireShot(flag, lifetime, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
-BZF_API const bz_ApiString bz_getShotMetaData(const uint32_t shotGUID, const char* name)
+// math helpers
+BZF_API bool bz_vectorFromPoints(const float p1[3], const float p2[3], float outVec[3])
 {
-  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
-    return NULL;
+  float t = 0;
+  for (int i = 0; i < 3; i++)
+    t += pow(p1[i] - p2[i], 2);
 
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
-  std::string key = name;
+  if (abs(t) < 0.00001)
+    return false;
 
-  if (shot->stringMetaData.find(key) == shot->stringMetaData.end())
-    return NULL;
+  float dist = sqrt(t);
 
-  return bz_ApiString(shot->stringMetaData[key]);
+  for (int i = 0; i < 3; i++)
+    outVec[i] = (p1[i] - p2[i]) / dist;
+
+  return true;
 }
 
-BZF_API bool bz_hasShotMetaData(const uint32_t shotGUID, const char* name)
+BZF_API bool bz_vectorFromRotations(const float tilt, const float rotation, float outVec[3])
 {
-  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
-    return NULL;
+  const float tiltFactor = cosf(tilt);
+  
+  outVec[0] = tiltFactor * cosf(rotation);
+  outVec[1] = tiltFactor * sinf(rotation);
+  outVec[2] = sinf(tilt);
+  
+  return true;
+}
 
+// shot meta data
+BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, uint32_t value)
+{
   Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
-  std::string key = name;
+  if (shot == nullptr || name == nullptr)
+    return;
 
-  return (shot->stringMetaData.find(key) == shot->stringMetaData.end());
+  shot->SetMetaData(std::string(name), value);
 }
 
 BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value)
 {
-  if (shotGUID == 0 || shotGUID == NULL || name == NULL)
-    return;
-
   Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
-  std::string key = name;
-
-  shot->stringMetaData[key] = std::string(value);
-}
-
-BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
-{
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
-
-  if (shotGUId == 0 || name == NULL)
-    return 0;
-
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
-
-  std::string n = name;
-  if (shot->intMetaData.find(n) == shot->intMetaData.end())
-    return 0;
-
-  return shot->intMetaData[n];
-}
-
-BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value)
-{
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
-
-  if (shotGUId == 0 || name == NULL)
+  if (shot == nullptr || name == nullptr)
     return;
 
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+  std::string v;
+  if (value != nullptr)
+    v = value;
 
-  std::string n = name;
-  shot->intMetaData[n] = value;
+  shot->SetMetaData(std::string(name), v.c_str());
 }
 
-BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
+BZF_API bool bz_shotHasMetaData(const uint32_t shotGUID, const char* name)
 {
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
-
-  if (shotGUId == 0 || name == NULL)
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
     return false;
 
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+  return shot->HasMetaData(std::string(name));
+}
 
-  std::string n = name;
-  if (shot->intMetaData.find(n) == shot->intMetaData.end())
-    return false;
+BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return 0;
 
-  return true;
+  return shot->GetMetaDataI(std::string(name));
+}
+
+BZF_API const char* bz_getShotMetaDataS(const uint32_t shotGUID, const char* name)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return nullptr;
+
+  return shot->GetMetaDataS(std::string(name));
 }
 
 BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID)
