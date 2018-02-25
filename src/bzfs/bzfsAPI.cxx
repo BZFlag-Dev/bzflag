@@ -1782,6 +1782,27 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float 
   return world->getWorldWeapons().fireShot(flag, lifetime, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
+BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
+{
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
+
+  return bz_getShotMetaDataI(guid, name);
+}
+
+BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value)
+{
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
+
+  bz_setShotMetaData(guid, name, value);
+}
+
+BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
+{
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
+
+  return bz_shotHasMetaData(guid, name);
+}
+
 // math helpers
 BZF_API bool bz_vectorFromPoints(const float p1[3], const float p2[3], float outVec[3])
 {
