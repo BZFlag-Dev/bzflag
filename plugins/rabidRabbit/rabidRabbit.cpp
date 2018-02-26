@@ -170,13 +170,9 @@ void RabidRabbitEventHandler::Event(bz_EventData *eventData)
 
   for (unsigned int i = 0; i < zoneList.size(); i++) {
     if (!zoneList[i].WWFired && currentKillZone == i) {
-      bz_fireWorldWep(zoneList[i].WW.c_str(),
-		      zoneList[i].WWLifetime,
-		      BZ_SERVER,zoneList[i].WWPosition,
-		      zoneList[i].WWTilt,
-		      zoneList[i].WWDirection,
-		      zoneList[i].WWShotID,
-		      0);
+      float vector[3];
+      bz_vectorFromRotations(zoneList[i].WWTilt, zoneList[i].WWDirection, vector);
+      bz_fireServerShot(zoneList[i].WW.c_str(), zoneList[i].WWPosition, vector);
       zoneList[i].WWFired = true;
       zoneList[i].WWLastFired = bz_getCurrentTime();
     } else {
