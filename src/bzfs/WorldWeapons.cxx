@@ -92,7 +92,6 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float orig
   }
   event.team = convertTeam(teamColor);
 
-  WorldEventManager worldEventManager;
   worldEventManager.callEvents(bz_eServerShotFiredEvent, &event);
 
   return shotGUID;
