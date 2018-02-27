@@ -11,7 +11,6 @@ MAINTAINERCLEANFILES = \
 
 lib3D_la_LDFLAGS = -static
 lib3D_la_SOURCES =		\
-	BitmapFont.cxx		\
 	FontManager.cxx		\
 	ImageFont.cxx		\
 	TextureFont.cxx		\

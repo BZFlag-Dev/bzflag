@@ -34,7 +34,6 @@
 
 // Local implementation headers
 #include "ImageFont.h"
-#include "BitmapFont.h"
 #include "TextureFont.h"
 
 // initialize the singleton
@@ -141,9 +140,6 @@ void FontManager::loadAll(std::string directory)
   if (directory.size() == 0)
     return;
 
-  const bool bitmapRenderer = BZDB.isTrue("useBitmapFontRenderer");
-  canScale = !bitmapRenderer;
-
   // save this in case we have to rebuild
   fontDirectory = directory;
 
@@ -155,11 +151,7 @@ void FontManager::loadAll(std::string directory)
     std::string ext = file.getExtension();
 
     if (TextUtils::compare_nocase(ext, "fmt") == 0) {
-      ImageFont *pFont;
-      if (bitmapRenderer)
-	pFont = new BitmapFont;
-      else
-	pFont = new TextureFont;
+      ImageFont *pFont = new TextureFont;
       if (pFont) {
 	if (pFont->load(file)) {
 	  std::string  str = TextUtils::toupper(pFont->getFaceName());
@@ -302,9 +294,6 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 				   opacity };
   underlineColor[3] = opacity;
 
-  // FIXME - this should not be necessary, but the bitmap font renderer needs it
-  //  OpenGLGState::resetState();
-
   /*
    * ANSI code interpretation is somewhat limited, we only accept values
    * which have been defined in AnsiCodes.h
@@ -339,9 +328,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
       glDepthMask(0);
       pFont->drawString(scale, color, &tmpText[startSend], len);
       if (underline) {
-	if (canScale) {
-	  glDisable(GL_TEXTURE_2D);
-	}
+	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);
 	if (bright && underlineColor[0] >= 0) {
 	  glColor4fv(underlineColor);
@@ -356,9 +343,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 	glVertex2f(0.0f, 0.0f);
 	glVertex2f(width, 0.0f);
 	glEnd();
-	if (canScale) {
-	  glEnable(GL_TEXTURE_2D);
-	}
+	glEnable(GL_TEXTURE_2D);
       }
       glDepthMask(depthMask);
       glPopMatrix();
@@ -556,8 +541,8 @@ ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, flo
    * if the font is too tiny to scale, and a scaled size if it's big enough.
    */
 
-  ImageFont* font = getClosestSize(faceID, desiredSize, canScale ? true : false);
-  if (!canScale || desiredSize < 14.0f) {
+  ImageFont* font = getClosestSize(faceID, desiredSize, true);
+  if (desiredSize < 14.0f) {
     // get the next biggest font size from requested
     if (!font) {
       logDebugMessage(2,"Could not find applicable font size for sizing; font face ID %d, "
