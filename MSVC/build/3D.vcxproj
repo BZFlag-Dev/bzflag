@@ -152,14 +152,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\3d\BitmapFont.cxx" />
     <ClCompile Include="..\..\src\3d\FontManager.cxx" />
     <ClCompile Include="..\..\src\3d\ImageFont.cxx" />
     <ClCompile Include="..\..\src\3d\TextureFont.cxx" />
     <ClCompile Include="..\..\src\3d\TextureManager.cxx" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\3d\BitmapFont.h" />
     <ClInclude Include="..\..\include\FontManager.h" />
     <ClInclude Include="..\..\src\3d\ImageFont.h" />
     <ClInclude Include="..\..\src\3d\TextureFont.h" />
