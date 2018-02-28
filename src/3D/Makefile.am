@@ -15,7 +15,6 @@ lib3D_la_SOURCES =		\
 	ImageFont.cxx		\
 	TextureFont.cxx		\
 	TextureManager.cxx	\
-	BitmapFont.h		\
 	ImageFont.h		\
 	TextureFont.h
 
