@@ -1823,11 +1823,11 @@ BZF_API bool bz_vectorFromPoints(const float p1[3], const float p2[3], float out
 BZF_API bool bz_vectorFromRotations(const float tilt, const float rotation, float outVec[3])
 {
   const float tiltFactor = cosf(tilt);
-  
+
   outVec[0] = tiltFactor * cosf(rotation);
   outVec[1] = tiltFactor * sinf(rotation);
   outVec[2] = sinf(tilt);
-  
+
   return true;
 }
 

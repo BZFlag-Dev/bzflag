@@ -1,14 +1,14 @@
 /* bzflag
-* Copyright (c) 1993-2017 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993-2017 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 /* interface header */
 #include "SegmentedShotStrategy.h"
@@ -45,8 +45,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     TeamColor tmpTeam = _path->getFiringInfo().shot.team;
     team = (tmpTeam < RogueTeam) ? RogueTeam :
       (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
-  }
-  else {
+  } else {
     Player* p = lookupPlayer(_path->getPlayer());
     team = p ? p->getTeam() : RogueTeam;
   }
@@ -58,8 +57,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
   if (faint) {
     boltSceneNode->setColor(c[0], c[1], c[2], 0.2f);
     boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
-  }
-  else {
+  } else {
     boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
   }
 
@@ -92,50 +90,50 @@ void  SegmentedShotStrategy::update(float dt)
     while (segment < numSegments && segments[segment].end <= currentTime) {
       if (++segment < numSegments) {
 	switch (segments[segment].reason) {
-	case ShotPathSegment::Ricochet:
-	{
-	  // play ricochet sound.  ricochet of local player's shots
-	  // are important, others are not.
-	  const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
-	  const bool important = (getPath().getPlayer() == myTankId);
-	  const float* pos = segments[segment].ray.getOrigin();
-	  playWorldSound(SFX_RICOCHET, pos, important);
+	  case ShotPathSegment::Ricochet:
+	  {
+	    // play ricochet sound.  ricochet of local player's shots
+	    // are important, others are not.
+	    const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
+	    const bool important = (getPath().getPlayer() == myTankId);
+	    const float* pos = segments[segment].ray.getOrigin();
+	    playWorldSound(SFX_RICOCHET, pos, important);
 
-	  // this is fugly but it's what we do
-	  float dir[3];
-	  const float* newDir = segments[segment].ray.getDirection();
-	  const float* oldDir = segments[segment - 1].ray.getDirection();
-	  dir[0] = newDir[0] - oldDir[0];
-	  dir[1] = newDir[1] - oldDir[1];
-	  dir[2] = newDir[2] - oldDir[2];
+	    // this is fugly but it's what we do
+	    float dir[3];
+	    const float* newDir = segments[segment].ray.getDirection();
+	    const float* oldDir = segments[segment - 1].ray.getDirection();
+	    dir[0] = newDir[0] - oldDir[0];
+	    dir[1] = newDir[1] - oldDir[1];
+	    dir[2] = newDir[2] - oldDir[2];
 
-	  float rots[2];
-	  const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
-	  rots[0] = atan2f(dir[1], dir[0]);
-	  rots[1] = atan2f(dir[2], horiz);
+	    float rots[2];
+	    const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
+	    rots[0] = atan2f(dir[1], dir[0]);
+	    rots[1] = atan2f(dir[2], horiz);
 
-	  EFFECTS.addRicoEffect(pos, rots);
+	    EFFECTS.addRicoEffect(pos, rots);
+	    break;
+	  }
+	  case ShotPathSegment::Boundary:
+	    break;
+	  default:
+	  {
+	    // this is fugly but it's what we do
+	    float dir[3];
+	    dir[0] = segments[segment].ray.getDirection()[0];
+	    dir[1] = segments[segment].ray.getDirection()[1];
+	    dir[2] = segments[segment].ray.getDirection()[2];
+
+	    float rots[2];
+	    const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
+	    rots[0] = atan2f(dir[1], dir[0]);
+	    rots[1] = atan2f(dir[2], horiz);
+
+	    const float* pos = segments[segment].ray.getOrigin();
+	    EFFECTS.addShotTeleportEffect(pos, rots);
+	  }
 	  break;
-	}
-	case ShotPathSegment::Boundary:
-	  break;
-	default:
-	{
-	  // this is fugly but it's what we do
-	  float dir[3];
-	  dir[0] = segments[segment].ray.getDirection()[0];
-	  dir[1] = segments[segment].ray.getDirection()[1];
-	  dir[2] = segments[segment].ray.getDirection()[2];
-
-	  float rots[2];
-	  const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
-	  rots[0] = atan2f(dir[1], dir[0]);
-	  rots[1] = atan2f(dir[2], horiz);
-
-	  const float* pos = segments[segment].ray.getOrigin();
-	  EFFECTS.addShotTeleportEffect(pos, rots);
-	}
-	break;
 	}
       }
     }
@@ -330,12 +328,10 @@ void  SegmentedShotStrategy::radarRender() const
     if (BZDB.eval("leadingShotLine") == 1) { //leading
       glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
       glEnd();
-    }
-    else if (BZDB.eval("leadingShotLine") == 0) { //lagging
+    } else if (BZDB.eval("leadingShotLine") == 0) { //lagging
       glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
       glEnd();
-    }
-    else if (BZDB.eval("leadingShotLine") == 2) { //both
+    } else if (BZDB.eval("leadingShotLine") == 2) { //both
       glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
       glEnd();
       glBegin(GL_LINES);
@@ -353,8 +349,7 @@ void  SegmentedShotStrategy::radarRender() const
       glEnd();
       glPointSize(1.0f);
     }
-  }
-  else {
+  } else {
     if (size > 0) {
       // draw a sized bullet
       glPointSize((float)size);
@@ -363,8 +358,7 @@ void  SegmentedShotStrategy::radarRender() const
       glEnd();
       glPointSize(1.0f);
 
-    }
-    else {
+    } else {
       // draw the tiny little bullet
       glBegin(GL_POINTS);
       glVertex2fv(orig);
@@ -444,8 +438,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     TimeKeeper endTime(startTime);
     if (t < 0.0f) {
       endTime += Epsilon;
-    }
-    else {
+    } else {
       endTime += t;
     }
     ShotPathSegment segm(startTime, endTime, rs, reason);
@@ -455,8 +448,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // used up this much time in segment
     if (t < 0.0f) {
       timeLeft -= Epsilon;
-    }
-    else {
+    } else {
       timeLeft -= t;
     }
 
@@ -469,8 +461,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       o[1] += t * d[1];
       o[2] += t * d[2];
       reason = ShotPathSegment::Boundary;
-    }
-    else if (teleporter) {
+    } else if (teleporter) {
       // entered teleporter -- teleport it
       unsigned int seed = shotPath.getShotId() + i;
       int source = World::getWorld()->getTeleporter(teleporter, face);
@@ -485,8 +476,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       teleporter->getPointWRT(*outTeleporter, face, outFace,
 	o, d, 0.0f, o, d, NULL);
       reason = ShotPathSegment::Teleport;
-    }
-    else if (building) {
+    } else if (building) {
       // hit building -- can bounce off or stop, buildings ignored for Through
       bool handled = false;
       if (e == Stop){
@@ -506,38 +496,35 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 	building->get3DNormal(o, normal);
 	reflect(d, normal);
 	reason = ShotPathSegment::Ricochet;
-	handled = true;
       }
 
       if (e == Through) {
 	assert(0);
-	handled = true;
       }
-    }
-    else if (hitGround) { // we hit the ground
+    } else if (hitGround) { // we hit the ground
 
       switch (e) {
-      case Stop:
-      case Through: {
-	timeLeft = 0.0f;
-	break;
-      }
+        case Stop:
+        case Through: {
+	  timeLeft = 0.0f;
+	  break;
+        }
 
-      case Reflect: {
-	// move origin to point of reflection
-	o[0] += t * d[0];
-	o[1] += t * d[1];
-	o[2] += t * d[2];
+        case Reflect: {
+	  // move origin to point of reflection
+	  o[0] += t * d[0];
+	  o[1] += t * d[1];
+	  o[2] += t * d[2];
 
-	// reflect direction about normal to ground
-	float normal[3];
-	normal[0] = 0.0f;
-	normal[1] = 0.0f;
-	normal[2] = 1.0f;
-	reflect(d, normal);
-	reason = ShotPathSegment::Ricochet;
-	break;
-      }
+	  // reflect direction about normal to ground
+	  float normal[3];
+	  normal[0] = 0.0f;
+	  normal[1] = 0.0f;
+	  normal[2] = 1.0f;
+	  reflect(d, normal);
+	  reason = ShotPathSegment::Ricochet;
+	  break;
+        }
       }
     }
   }
@@ -562,8 +549,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
       if (bbox[0][2] > segm.bbox[0][2]) bbox[0][2] = segm.bbox[0][2];
       if (bbox[1][2] < segm.bbox[1][2]) bbox[1][2] = segm.bbox[1][2];
     }
-  }
-  else {
+  } else {
     bbox[0][0] = bbox[1][0] = 0.0f;
     bbox[0][1] = bbox[1][1] = 0.0f;
     bbox[0][2] = bbox[1][2] = 0.0f;
