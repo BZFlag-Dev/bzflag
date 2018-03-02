@@ -1728,7 +1728,7 @@ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int U
   if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  return (int)bz_fireServerShot(flagType, pos, v, shotTeam, -1);
+  return bz_fireServerShot(flagType, pos, v, shotTeam, -1) > 0;
 }
 
 BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
