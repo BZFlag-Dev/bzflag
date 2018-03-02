@@ -1027,15 +1027,17 @@ class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
 public:
   bz_ServerShotFiredEventData_V1() : bz_EventData(bz_eServerShotFiredEvent)
     , guid(0)
+    , speed(0)
     , lifetime(0)
     , team(eRogueTeam)
   {
-    pos[0] = pos[1] = pos[2] = 0.0f;
+    pos[0] = pos[1] = pos[2] = velocity[0] = velocity[1] = velocity[2] = 0.0f;
   }
 
   uint32_t guid;
   bz_ApiString flagType;
   float lifetime;
+  float speed;
   float pos[3];
   float velocity[3];
   bz_eTeamType team;

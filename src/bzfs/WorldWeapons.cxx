@@ -86,6 +86,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float orig
   event.guid = shotGUID;
   event.flagType = type->flagAbbv;
   event.lifetime = lifetime;
+  event.speed = shotSpeed;
   for (int i = 0; i < 3; i++){
     event.pos[i] = origin[i];
     event.velocity[i] = firingInfo.shot.vel[i];
