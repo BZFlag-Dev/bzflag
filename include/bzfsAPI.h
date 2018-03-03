@@ -1027,8 +1027,8 @@ class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
 public:
   bz_ServerShotFiredEventData_V1() : bz_EventData(bz_eServerShotFiredEvent)
     , guid(0)
-    , speed(0)
     , lifetime(0)
+    , speed(0)
     , team(eRogueTeam)
   {
     pos[0] = pos[1] = pos[2] = velocity[0] = velocity[1] = velocity[2] = 0.0f;
