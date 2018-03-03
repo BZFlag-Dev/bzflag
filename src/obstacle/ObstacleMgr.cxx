@@ -19,6 +19,7 @@
 // system headers
 #include <string.h>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -538,9 +539,9 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
     newName = "/";
     newName += group->getGroupDef();
     newName += "/";
-    char buffer[8];
-    sprintf (buffer, "%i", count);
-    newName += buffer;
+	std::stringstream buffer;
+	buffer << count;
+    newName += buffer.str();
   }
   depthName += newName;
   depthName += ":";
