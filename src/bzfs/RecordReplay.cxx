@@ -781,8 +781,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
   snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
   sendMessage(ServerPlayer, playerIndex, buffer);
-  snprintf(buffer, MessageLen, "  author:     %s (%s)",
-	    header.callSign, header.motto);
+  snprintf(buffer, MessageLen, "  author:     %s",
+	    header.callSign);
   sendMessage(ServerPlayer, playerIndex, buffer);
   snprintf(buffer, MessageLen, "  protocol:   %.8s", header.ServerVersion);
   sendMessage(ServerPlayer, playerIndex, buffer);
