@@ -4118,7 +4118,8 @@ BZF_API const char* bz_join(bz_APIStringList* list, const char* delimiter)
   if (!delimiter)
     delimiter = "";
 
-  std::string joined = "";
+  static std::string joined;
+  joined = "";
 
   for (unsigned int i = 0; i < list->size(); i++) {
     joined += list->get(i);
