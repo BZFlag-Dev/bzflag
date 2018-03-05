@@ -2252,10 +2252,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   worldEventManager.callEvents(&mottoEvent);
   playerData->player.setMotto(mottoEvent.motto.c_str());
 
-  // broadcast motto only if player has TALK permission
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)
-    && strlen(playerData->player.getMotto()) != 0) {
-    sendMessage(ServerPlayer, playerIndex, "\"talk\" permission is required to show your motto");
+  // broadcast motto only if player has SHOWMOTTO permission
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showMotto) && strlen(playerData->player.getMotto()) != 0) {
+    sendMessage(ServerPlayer, playerIndex, "\"showMotto\" permission is required to show your motto");
     playerData->player.setMotto("");
   }
 
@@ -5517,6 +5516,7 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::idleStats] = true;
   info.explicitAllows[PlayerAccessInfo::lagStats] = true;
   info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
+  info.explicitAllows[PlayerAccessInfo::showMotto] = true;
   info.explicitAllows[PlayerAccessInfo::spawn] = true;
   info.explicitAllows[PlayerAccessInfo::talk] = true;
   info.groupState[PlayerAccessInfo::isGroup] = true;

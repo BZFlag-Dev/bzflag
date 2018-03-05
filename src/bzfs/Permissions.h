@@ -97,6 +97,7 @@ public:
       setVar,
       shortBan,
       showAdmin,
+      showMotto,
       showOthers,
       shutdownServer,
       spawn,

@@ -524,6 +524,7 @@ const std::vector<std::string> bzu_standardPerms (void)
     perms.push_back("setPerms");
     perms.push_back("setVar");
     perms.push_back("showAdmin");
+    perms.push_back("showMotto");
     perms.push_back("showOthers");
     perms.push_back("shortBan");
     perms.push_back("shutdownServer");
