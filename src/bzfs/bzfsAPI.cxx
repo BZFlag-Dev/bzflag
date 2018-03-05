@@ -1011,7 +1011,7 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm )
     return player->accessInfo.hasCustomPerm(permName.c_str());
 }
 
-BZF_API bool bz_grantPerm ( int playerID, const char* perm )
+bool bz_modifyPerm(int playerID, const char* perm, bool grant)
 {
   if (!perm)
     return false;
@@ -1025,38 +1025,40 @@ BZF_API bool bz_grantPerm ( int playerID, const char* perm )
 
   permName = TextUtils::toupper(permName);
 
-  PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+  PlayerAccessInfo::AccessPerm realPerm = permFromName(permName);
 
-  if (realPerm == PlayerAccessInfo::lastPerm)
-    player->accessInfo.grantCustomPerm(permName.c_str());
-  else
-    player->accessInfo.grantPerm(realPerm);
+  bz_PermissionModificationData_V1 data;
+  data.playerID = playerID;
+  data.perm = permName.c_str();
+  data.granted = grant;
+  data.customPerm = realPerm == PlayerAccessInfo::lastPerm;
+
+  if (grant) {
+    if (data.customPerm)
+      player->accessInfo.grantCustomPerm(permName.c_str());
+    else
+      player->accessInfo.grantPerm(realPerm);
+  }
+  else {
+    if (data.customPerm)
+      player->accessInfo.revokeCustomPerm(permName.c_str());
+    else
+      player->accessInfo.revokePerm(realPerm);
+  }
+
+  worldEventManager.callEvents(bz_ePermissionModificationEvent, &data);
 
   return true;
 }
 
+BZF_API bool bz_grantPerm ( int playerID, const char* perm )
+{
+  return bz_modifyPerm(playerID, perm, true);
+}
+
 BZF_API bool bz_revokePerm ( int playerID, const char* perm )
 {
-  if (!perm)
-    return false;
-
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-
-  if (!player)
-    return false;
-
-  std::string permName = perm;
-
-  permName = TextUtils::toupper(permName);
-
-  PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
-
-  if (realPerm == PlayerAccessInfo::lastPerm)
-    player->accessInfo.revokeCustomPerm(permName.c_str());
-  else
-    player->accessInfo.revokePerm(realPerm);
-
-  return true;
+  return bz_modifyPerm(playerID, perm, false);
 }
 
 BZF_API bz_APIIntList *bz_getPlayerIndexList(void)

@@ -329,6 +329,7 @@ typedef enum
   bz_eMuteEvent,
   bz_eUnmuteEvent,
   bz_eServerShotFiredEvent,
+  bz_ePermissionModificationEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1408,6 +1409,22 @@ public:
 
   int victimID;
   int muterID;
+};
+
+class BZF_API bz_PermissionModificationData_V1 : public bz_EventData
+{
+public:
+  bz_PermissionModificationData_V1() : bz_EventData(bz_ePermissionModificationEvent)
+    , playerID(-1)
+    , perm("")
+    , granted(false)
+    , customPerm(false)
+  {}
+
+  int playerID;
+  const char* perm;
+  bool granted;
+  bool customPerm;
 };
 
 // logging
