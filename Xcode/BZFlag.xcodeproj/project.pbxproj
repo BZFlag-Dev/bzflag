@@ -403,7 +403,6 @@
 		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
 		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
-		03C5E82A1670A98C005A26C4 /* BitmapFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FB166C846F008806E9 /* BitmapFont.cxx */; };
 		03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FD166C846F008806E9 /* FontManager.cxx */; };
 		03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FE166C846F008806E9 /* ImageFont.cxx */; };
 		03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554302166C846F008806E9 /* TextureFont.cxx */; };
@@ -1074,8 +1073,6 @@
 		031B7C3C1F11563F00A5ED20 /* OpenGLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLFramebuffer.h; sourceTree = "<group>"; };
 		031FBE421DB5A42500DD84DC /* COPYING.MPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.MPL; path = ../COPYING.MPL; sourceTree = "<group>"; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
-		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
-		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
 		035542FE166C846F008806E9 /* ImageFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFont.cxx; sourceTree = "<group>"; };
 		035542FF166C846F008806E9 /* ImageFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageFont.h; sourceTree = "<group>"; };
@@ -2359,8 +2356,6 @@
 		035542FA166C846F008806E9 /* 3D */ = {
 			isa = PBXGroup;
 			children = (
-				035542FB166C846F008806E9 /* BitmapFont.cxx */,
-				035542FC166C846F008806E9 /* BitmapFont.h */,
 				035542FD166C846F008806E9 /* FontManager.cxx */,
 				035542FE166C846F008806E9 /* ImageFont.cxx */,
 				035542FF166C846F008806E9 /* ImageFont.h */,
@@ -5480,7 +5475,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03C5E82A1670A98C005A26C4 /* BitmapFont.cxx in Sources */,
 				03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */,
 				03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */,
 				03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */,
