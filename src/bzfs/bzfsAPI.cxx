@@ -1762,8 +1762,6 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *po
   return (int)bz_fireServerShot("GM", pos, v, shotTeam, targetPlayerID);
 }
 
-float GetShotLifetime(FlagType* flagType);
-
 // new API, much cleaner
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
 {
@@ -1778,7 +1776,7 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float 
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  float lifetime = GetShotLifetime(flag);
+  float lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 
   return world->getWorldWeapons().fireShot(flag, lifetime, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
