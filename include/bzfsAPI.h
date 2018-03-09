@@ -1029,7 +1029,6 @@ class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
 public:
   bz_ServerShotFiredEventData_V1() : bz_EventData(bz_eServerShotFiredEvent)
     , guid(0)
-    , lifetime(0)
     , speed(0)
     , team(eRogueTeam)
   {
@@ -1038,7 +1037,6 @@ public:
 
   uint32_t guid;
   bz_ApiString flagType;
-  float lifetime;
   float speed;
   float pos[3];
   float velocity[3];

@@ -1762,25 +1762,21 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *po
   return (int)bz_fireServerShot("GM", pos, v, shotTeam, targetPlayerID);
 }
 
-float GetShotLifetime(FlagType* flagType);
-
 // new API, much cleaner
 BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
 {
   if (!shotType || !origin)
-    return false;
+    return INVALID_SHOT_GUID;
 
   std::string flagType = shotType;
   FlagTypeMap &flagMap = FlagType::getFlagMap();
 
   if (flagMap.find(flagType) == flagMap.end())
-    return false;
+    return INVALID_SHOT_GUID;
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  float lifetime = GetShotLifetime(flag);
-
-  return world->getWorldWeapons().fireShot(flag, lifetime, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
+  return world->getWorldWeapons().fireShot(flag, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)

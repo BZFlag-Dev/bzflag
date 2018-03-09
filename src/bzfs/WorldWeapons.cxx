@@ -29,7 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float origin[3], const float vector[3], float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
+uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -40,7 +40,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float orig
   FiringInfo firingInfo;
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
-  firingInfo.lifetime = lifetime;
+  firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
   firingInfo.shot.player = ServerPlayer;
   memmove(firingInfo.shot.pos, origin, 3 * sizeof(float));
 
@@ -85,7 +85,6 @@ uint32_t WorldWeapons::fireShot(FlagType* type, float lifetime, const float orig
   bz_ServerShotFiredEventData_V1 event;
   event.guid = shotGUID;
   event.flagType = type->flagAbbv;
-  event.lifetime = lifetime;
   event.speed = shotSpeed;
   for (int i = 0; i < 3; i++){
     event.pos[i] = origin[i];
@@ -147,7 +146,7 @@ void WorldWeapons::fire()
 
 	  float vec[3] = { 0,0,0 };
 	  bz_vectorFromRotations(w->tilt, w->direction, vec);
-      fireShot(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), w->origin, vec, -1, nullptr, 0, w->teamColor);
+      fireShot(&type, w->origin, vec, -1, nullptr, 0, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -285,7 +284,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   float vec[3] = { 0,0,0 };
   bz_vectorFromRotations(tilt, direction, vec);
 
-  world->getWorldWeapons().fireShot(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME), origin, vec, -1, NULL, 0);
+  world->getWorldWeapons().fireShot(type, origin, vec, -1, NULL, 0);
 }
 
 // Local Variables: ***
