@@ -58,10 +58,7 @@ before_install:
    - eval "${MATRIX_EVAL}"
 
 script:
-  - ./autogen.sh -v
-  - ./configure
-  - if [[ "$XCODE_BUILD" == 1 ]]; then xcodebuild build -scheme BZFlag -configuration Debug -project Xcode/BZFlag.xcodeproj; else make; fi
-  - if [[ "$XCODE_BUILD" != 1 ]]; then make check; fi
+  - if [[ "$XCODE_BUILD" == 1 ]]; then xcodebuild build -scheme BZFlag -configuration Debug -project Xcode/BZFlag.xcodeproj; else ./autogen.sh -v && ./configure --enable-debug && make && make check; fi
 
 notifications:
   email: false
