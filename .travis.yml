@@ -11,7 +11,7 @@ env:
 
 addons:
   apt:
-    packages:
+    packages: &linux_deps
       - libtool
       - automake
       - autoconf
@@ -27,14 +27,45 @@ addons:
       - libcurl4-openssl-dev # libcurl3-dev
       - libncurses-dev # libncurses5-dev
 
-install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install autoconf automake libtool c-ares sdl2; fi
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *linux_deps
+            - [ g++-4.6 ]
+      env:
+        - MATRIX_EVAL="CC=gcc-4.6 && CXX=g++-4.6"
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - *linux_deps
+            - [ g++-7 ]
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    - os: osx
+      env:
+        - MATRIX_EVAL="brew install autoconf automake libtool c-ares sdl2 gcc && CC=gcc-7 && CXX=g++-7"
+
+    - os: osx
+      env:
+        - MATRIX_EVAL="brew install autoconf automake libtool c-ares sdl2 && XCODE_BUILD=1"
+
+before_install:
+   - eval "${MATRIX_EVAL}"
 
 script:
   - ./autogen.sh -v
   - ./configure
-  - make
-  - make check
+  - if [[ "$XCODE_BUILD" == 1 ]]; then xcodebuild build -scheme BZFlag -configuration Debug -project Xcode/BZFlag.xcodeproj; else make; fi
+  - if [[ "$XCODE_BUILD" != 1 ]]; then make check; fi
 
 notifications:
   email: false
