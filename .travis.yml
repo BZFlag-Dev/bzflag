@@ -32,9 +32,9 @@ matrix:
             - ubuntu-toolchain-r-test
           packages:
             - *linux_deps
-            - [ g++-4.6 ]
+            - [ g++-4.8 ]
       env:
-        - MATRIX_EVAL="CC=gcc-4.6 && CXX=g++-4.6"
+        - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
     - os: linux
       addons:
         apt:
