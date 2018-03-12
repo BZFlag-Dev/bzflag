@@ -240,8 +240,8 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options = &option->getList();
     options->push_back(std::string("Off"));
     for (int i = 2; i <= OpenGLGState::getMaxSamples(); ++i) {
-      char msaaText[4];
-      snprintf(msaaText, 4, "%i", i);
+      char msaaText[11];
+      snprintf(msaaText, 11, "%i", i);
       options->push_back(std::string(msaaText) + "x MSAA");
     }
     option->update();
