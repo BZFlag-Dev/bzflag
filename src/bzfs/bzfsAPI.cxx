@@ -2797,16 +2797,16 @@ BZF_API unsigned int bz_getNumFlags( void )
 
 BZF_API const bz_ApiString bz_getName( int flag )
 {
+  return bz_getFlagName(flag);
+}
+
+BZF_API const bz_ApiString bz_getFlagName( int flag )
+{
   FlagInfo *pFlag = FlagInfo::get(flag);
   if (!pFlag)
     return bz_ApiString("");
 
   return bz_ApiString(pFlag->flag.type->flagAbbv);
-}
-
-BZF_API const bz_ApiString bz_getFlagName( int flag )
-{
-	return bz_getName(flag);
 }
 
 BZF_API bool bz_resetFlag ( int flag )
