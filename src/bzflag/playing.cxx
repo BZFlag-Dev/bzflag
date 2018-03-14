@@ -4454,7 +4454,7 @@ static void		addRobots()
       delete robotServer[j];
       continue;
     } else {
-      snprintf(callsign, CallSignLen, "%s%2.2d", myTank->getCallSign(), j);
+      snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), j);
       robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
 				  robotServer[j], myTank->getMotto());
       robots[j]->setTeam(AutomaticTeam);
