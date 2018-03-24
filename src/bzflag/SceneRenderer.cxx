@@ -946,9 +946,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
         doRender();
 
 
-        if (scene && BZDBCache::showCullingGrid)
-            scene->drawCuller();
-
         const World* world = World::getWorld();
         if (scene && BZDBCache::showCollisionGrid && (world != NULL))
             world->drawCollisionGrid();

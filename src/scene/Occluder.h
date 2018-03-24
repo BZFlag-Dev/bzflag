@@ -27,7 +27,6 @@ public:
     int getScore() const;
     int getVertexCount() const;
     const SceneNode* getSceneNode() const;
-    void draw() const;
     void print(const char* string) const; // for debugging
 
 private:
@@ -59,8 +58,6 @@ public:
     bool occludePeek(const Extents& exts);
 
     int getOccluderCount() const;
-
-    void draw() const;
 
 private:
     void setMaxOccluders(int size);

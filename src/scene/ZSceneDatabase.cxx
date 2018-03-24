@@ -414,14 +414,6 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void ZSceneDatabase::drawCuller()
-{
-    if (octree)
-        octree->draw ();
-    return;
-}
-
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

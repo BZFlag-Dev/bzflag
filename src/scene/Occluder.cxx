@@ -259,14 +259,6 @@ void OccluderManager::sort()
 }
 
 
-void OccluderManager::draw() const
-{
-    for (int i = 0; i < activeOccluders; i++)
-        occluders[i]->draw();
-    return;
-}
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // The Occluders
@@ -376,99 +368,6 @@ bool Occluder::makePlanes(const Frustum* frustum)
     }
 
     return true;
-}
-
-
-void Occluder::draw() const
-{
-    int v;
-    GLfloat colors[5][4] =
-    {
-        {1.0f, 0.0f, 1.0f, 1.0f}, // purple  (occluder's normal)
-        {1.0f, 0.0f, 0.0f, 1.0f}, // red
-        {0.0f, 1.0f, 0.0f, 1.0f}, // green
-        {0.0f, 0.0f, 1.0f, 1.0f}, // blue
-        {1.0f, 1.0f, 0.0f, 1.0f}, // yellow
-    };
-    const float length = 5.0f;
-
-    glLineWidth (3.0f);
-    glPointSize (10.0f);
-    glEnable (GL_POINT_SMOOTH);
-
-    if (DrawNormals)
-    {
-        // the tri-wall 'getSphere()' center sucks...
-        float center[3];
-        for (int a = 0; a < 3; a++)
-        {
-            center[a] = 0.0f;
-            for (v = 0; v < vertexCount; v++)
-                center[a] += vertices[v][a];
-            center[a] = center[a] / (float) vertexCount;
-        }
-
-        float outwards[3];
-        outwards[0] = center[0] - (length * planes[0][0]);
-        outwards[1] = center[1] - (length * planes[0][1]);
-        outwards[2] = center[2] - (length * planes[0][2]);
-
-        // draw the plane normal
-        glBegin (GL_LINES);
-        glColor4fv (colors[0]);
-        glVertex3fv (center);
-        glVertex3fv (outwards);
-        glEnd ();
-    }
-
-    // drawn the edges and normals
-    if (DrawEdges || DrawNormals)
-    {
-        for (v = 0; v < vertexCount; v++)
-        {
-            float midpoint[3];
-            float outwards[3];
-            int vn = (v + 1) % vertexCount;
-            for (int a = 0; a < 3; a++)
-            {
-                midpoint[a] = 0.5f * (vertices[v][a] + vertices[vn][a]);
-                outwards[a] = midpoint[a] - (length * planes[vn + 1][a]);
-            }
-            glBegin (GL_LINES);
-            glColor4fv (colors[(v % 4) + 1]);
-            if (DrawEdges)
-            {
-                glVertex3fv (vertices[v]);
-                glVertex3fv (vertices[vn]);
-            }
-            if (DrawNormals)
-            {
-                glVertex3fv (midpoint);
-                glVertex3fv (outwards);
-            }
-            glEnd();
-        }
-    }
-
-    // draw some nice vertex points
-    if (DrawVertices)
-    {
-        for (v = 0; v < vertexCount; v++)
-        {
-            glBegin (GL_POINTS);
-            glColor4fv (colors[(v % 4) + 1]);
-            glVertex3fv (vertices[v]);
-            glEnd();
-        }
-    }
-
-    glDisable (GL_POINT_SMOOTH);
-    glPointSize (1.0f);
-    glLineWidth (1.0f);
-
-//  print("Occluder::draw");
-
-    return;
 }
 
 

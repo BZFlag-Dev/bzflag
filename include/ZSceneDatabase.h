@@ -41,7 +41,6 @@ public:
     void        addShadowNodes(SceneRenderer &renderer);
     void        addRenderNodes(SceneRenderer& renderer);
 
-    void        drawCuller();
     void        setOccluderManager(int);
 
     const Extents*  getVisualExtents() const;

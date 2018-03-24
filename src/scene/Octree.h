@@ -42,8 +42,6 @@ public:
 
     void setOccluderManager(int);
 
-    void draw () const;
-
     const Extents* getVisualExtents() const;
 
 
@@ -82,7 +80,6 @@ public:
     const Extents& getExtents() const;
 
     void tallyStats();
-    void draw ();
 
 private:
 

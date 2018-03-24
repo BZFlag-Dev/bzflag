@@ -344,7 +344,6 @@ void            DisplayMenu::resize(int _width, int _height)
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
         ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
                                              : 0);
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
         ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
                                              : 0);
 #endif
@@ -445,7 +444,6 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
         sceneRenderer->setDepthComplexity(list->getIndex() != 0);
         break;
     case 'd':
-        BZDB.setBool("showCullingGrid", list->getIndex() != 0);
         break;
     case 'e':
         BZDB.setBool("showCollisionGrid", list->getIndex() != 0);

@@ -36,7 +36,6 @@ BZDBCache::Float BZDBCache::pulseRate;
 BZDBCache::Float BZDBCache::pulseDepth;
 BZDBCache::Int   BZDBCache::controlPanelTimestamp;
 BZDBCache::Bool  BZDBCache::showCollisionGrid;
-BZDBCache::Bool  BZDBCache::showCullingGrid;
 
 BZDBCache::Bool  BZDBCache::drawCelestial;
 BZDBCache::Bool  BZDBCache::drawClouds;
@@ -111,7 +110,6 @@ void BZDBCache::init()
     BZDB.addCallback("pulseDepth", clientCallback, NULL);
     BZDB.addCallback("controlPanelTimestamp", clientCallback, NULL);
     BZDB.addCallback("showCollisionGrid", clientCallback, NULL);
-    BZDB.addCallback("showCullingGrid", clientCallback, NULL);
     BZDB.addCallback("hudGUIBorderOpacityFactor", clientCallback, NULL);
     BZDB.addCallback("shotBrightness", clientCallback, NULL);
 
@@ -199,8 +197,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
         controlPanelTimestamp = BZDB.evalInt("controlPanelTimestamp");
     else if (name == "showCollisionGrid")
         showCollisionGrid = BZDB.isTrue("showCollisionGrid");
-    else if (name == "showCullingGrid")
-        showCullingGrid = BZDB.isTrue("showCullingGrid");
     else if (name == "hudGUIBorderOpacityFactor")
         hudGUIBorderOpacityFactor = BZDB.eval("hudGUIBorderOpacityFactor");
     else if (name == "shotBrightness")

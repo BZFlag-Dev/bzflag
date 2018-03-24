@@ -303,29 +303,6 @@ void Octree::getExtents(SceneNode** list, int listSize)
 }
 
 
-void Octree::draw() const
-{
-    if (!root)
-        return;
-
-    GLboolean usingTextures;
-    glGetBooleanv(GL_TEXTURE_2D, &usingTextures);
-    glDisable(GL_TEXTURE_2D);
-
-    // CullFrustum needs to still be valid here
-    // It should still exist in SceneRender.cxx
-    // when this function is called.
-    root->draw();
-    OcclMgr->update(CullFrustum);
-    OcclMgr->draw();
-
-    if (usingTextures)
-        glEnable(GL_TEXTURE_2D);
-
-    return;
-}
-
-
 //////////////////////////////////////////////////////////////////////////////
 //
 // The Nodes
@@ -817,93 +794,6 @@ void OctreeNode::tallyStats()
     }
     else
         leafNodes++;
-
-    return;
-}
-
-
-void OctreeNode::draw()
-{
-    GLfloat red[4] = { 1.0f, 0.0f, 0.0f, 0.75f };    // red
-    GLfloat blue[4] = { 0.0f, 0.0f, 1.0f, 0.75f };   // blue
-    GLfloat green[4] = { 0.0f, 1.0f, 0.0f, 0.75f };  // green
-    GLfloat yellow[4] = { 1.0f, 1.0f, 0.0f, 0.75f }; // yellow
-    GLfloat purple[4] = { 1.0f, 0.0f, 1.0f, 0.75f }; // purple
-    GLfloat *color = purple;
-    int x, y, z, c;
-    float points[5][3];
-    IntersectLevel frustumCull = Contained;
-    bool occludeCull = false;
-
-    if (CullFrustum != NULL)
-    {
-        frustumCull = testAxisBoxInFrustum(extents, CullFrustum);
-        occludeCull = OcclMgr->occludePeek(extents);
-    }
-
-    // choose the color
-    switch (frustumCull)
-    {
-    case Outside:
-        color = purple;
-        break;
-    case Partial:
-        if (!occludeCull)
-            color = blue;
-        else
-            color = green;
-        break;
-    case Contained:
-        if (!occludeCull)
-            color = red;
-        else
-            color = yellow;
-        break;
-    }
-    glColor4fv(color);
-
-    const float* exts[2] = { extents.mins, extents.maxs };
-
-    // draw Z-normal squares
-    for (z = 0; z < 2; z++)
-    {
-        for (c = 0; c < 4; c++)
-        {
-            x = ((c + 0) % 4) / 2;
-            y = ((c + 1) % 4) / 2;
-            points[c][0] = exts[x][0];
-            points[c][1] = exts[y][1];
-            points[c][2] = exts[z][2];
-        }
-        memcpy(points[4], points[0], sizeof(points[4]));
-        glBegin(GL_LINE_STRIP);
-
-        for (int i = 0; i < 5; i++)
-            glVertex3fv(points[i]);
-
-        glEnd();
-    }
-
-    // draw the corner edges
-    for (c = 0; c < 4; c++)
-    {
-        x = ((c + 0) % 4) / 2;
-        y = ((c + 1) % 4) / 2;
-        for (z = 0; z < 2; z++)
-        {
-            points[z][0] = exts[x][0];
-            points[z][1] = exts[y][1];
-            points[z][2] = exts[z][2];
-        }
-        glBegin(GL_LINE_STRIP);
-        glVertex3fv(points[0]);
-        glVertex3fv(points[1]);
-        glEnd();
-    }
-
-    // draw the kids
-    for (c = 0; c < childCount; c++)
-        squeezed[c]->draw();
 
     return;
 }

@@ -93,7 +93,6 @@ DefaultDBItem defaultDBItems[] =
     { "leadingShotLine",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "saveIdentity",     "2",            true,   StateDatabase::ReadWrite,   NULL },
     { "showCollisionGrid",    "0",            true,   StateDatabase::ReadWrite,   NULL },
-    { "showCullingGrid",      "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "showCoordinates",      "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "showVelocities",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "jumpTyping",       "1",            true,   StateDatabase::ReadWrite,   NULL },

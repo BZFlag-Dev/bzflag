@@ -69,7 +69,6 @@ public:
     static Float pulseDepth;
     static Int   controlPanelTimestamp;
     static Bool  showCollisionGrid;
-    static Bool  showCullingGrid;
     static Bool  useMeshForRadar;
 
     static Bool drawCelestial;
