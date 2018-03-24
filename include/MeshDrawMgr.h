@@ -12,8 +12,8 @@
 
 #pragma once
 
-// 1st
-#include "common.h"
+// inherits from
+#include "VBO_Manager.h"
 
 // System headers
 #include <vector>
@@ -22,25 +22,19 @@
 #include "bzfgl.h"
 #include "MeshDrawInfo.h"
 
-class MeshDrawMgr
+class MeshDrawMgr : public VBOclient
 {
 public:
     MeshDrawMgr(const MeshDrawInfo* drawInfo);
     ~MeshDrawMgr();
 
     void executeSet(int lod, int set, bool useNormals, bool useTexcoords);
-    void executeSetGeometry(int lod, int set);
-
-private:
-    void rawExecuteCommands(int lod, int set);
-
-    void makeLists();
-    void freeLists();
-    static void initContext(void* data);
-    static void freeContext(void* data);
+    void initVBO() override;
 
 private:
     const MeshDrawInfo* drawInfo;
+
+    int vboArrayIndex; // this needs some explanation (or encapsulation in VBOclient)
 
     using LodList = std::vector<int>;
     std::vector<LodList> lodLists;

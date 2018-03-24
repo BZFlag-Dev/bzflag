@@ -61,27 +61,19 @@ protected:
         Geometry(MeshFragSceneNode &node);
         ~Geometry();
 
+        void initVBO() override;
+
         void init();
         void setStyle(int style);
         void render() override;
-        void renderRadar() override;
         void renderShadow() override;
         const glm::vec3 getPosition() const override;
 
     private:
-        void drawV() const; // draw with just vertices
-        void drawVT() const; // draw with texcoords
-        void drawVN() const; // draw with normals
-        void drawVTN() const; // draw with texcoords and normals
+        void renderVBO();
 
-        void initDisplayList();
-        void freeDisplayList();
-        static void initContext(void *data);
-        static void freeContext(void *data);
-
-    private:
         int style;
-        GLuint list;
+        int vboIndex;
         MeshFragSceneNode &sceneNode;
     };
 

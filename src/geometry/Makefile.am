@@ -42,6 +42,9 @@ libGeometry_la_SOURCES  =		\
 	ViewFrustum.cxx			\
 	WavefrontOBJ.h			\
 	WavefrontOBJ.cxx		\
+	VBO_Handler.cxx			\
+	VBO_Manager.cxx			\
+	VBO_Vertex.cxx			\
 	WallSceneNode.cxx
 
 libGeometry_la_LIBADD =	\

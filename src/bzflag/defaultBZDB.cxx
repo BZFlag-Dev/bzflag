@@ -131,8 +131,6 @@ DefaultDBItem defaultDBItems[] =
     // hidden graphics rendering params
     { "useDrawInfo",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "f2bsort",          "1",            true,   StateDatabase::ReadWrite,   NULL },
-    { "meshLists",        "1",            true,   StateDatabase::ReadWrite,   NULL },
-    { "flagLists",        "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "lightLists",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "noMeshClusters",       "0",            true,   StateDatabase::ReadWrite,   NULL },
 

@@ -20,8 +20,8 @@
 
 #pragma once
 
-// Before everything
-#include "common.h"
+// Inherits from
+#include "VBO_Manager.h"
 
 // System headers
 #include <glm/fwd.hpp>
@@ -31,11 +31,10 @@
 #include "OpenGLGState.h"
 
 
-class RenderNode
+class RenderNode : public VBOclient
 {
 public:
     RenderNode() = default;
-    virtual ~RenderNode() = default;
 
     virtual void    render() = 0;
     virtual void    renderShadow();
@@ -96,7 +95,6 @@ public:
 private:
     struct Item
     {
-    public:
         using GStatePtr = OpenGLGState const *;
         RenderNode* node;
         GStatePtr   gstate;

@@ -22,6 +22,7 @@
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "VBO_Vertex.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -36,7 +37,6 @@ constexpr int waveLists = 8;      // GL list count
 int      flagChunks = 8;     // draw flag as 8 quads
 bool     geoPole = false;    // draw the pole as quads
 bool     realFlag = false;   // don't use billboarding
-bool     flagLists = false;  // use display lists
 int      triCount = 0;       // number of rendered triangles
 
 const GLfloat Unit = 0.8f;        // meters
@@ -55,6 +55,7 @@ class WaveGeometry
 {
 public:
     WaveGeometry();
+    ~WaveGeometry();
 
     void refer()
     {
@@ -66,52 +67,51 @@ public:
     }
 
     void waveFlag(float dt);
-    void freeFlag();
 
-    void execute() const;
-    void executeNoList() const;
+    void execute(bool shadow) const;
 
 private:
     int refCount;
     float ripple1;
     float ripple2;
 
-    GLuint glList;
+    int vboIndex;
     GLfloat verts[(maxChunks + 1) * 2][3];
     GLfloat txcds[(maxChunks + 1) * 2][2];
 };
 
 
-inline void WaveGeometry::executeNoList() const
+inline void WaveGeometry::execute(bool shadow) const
 {
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, verts);
-    glTexCoordPointer(2, GL_FLOAT, 0, txcds);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, (flagChunks + 1) * 2);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    return;
-}
-
-inline void WaveGeometry::execute() const
-{
-    if (flagLists)
-        glCallList(glList);
+    if (shadow)
+        vboVT.enableVertexOnly();
     else
-        executeNoList();
+        vboVT.enableArrays();
+    glDrawArrays(
+        GL_TRIANGLE_STRIP,
+        vboIndex,
+        (flagChunks + 1) * 2);
     return;
 }
 
 
-WaveGeometry::WaveGeometry() : refCount(0)
+WaveGeometry::WaveGeometry()
+    : refCount(0)
+    , ripple1(2.0 * M_PI * bzfrand())
+    , ripple2(2.0 * M_PI * bzfrand())
 {
-    glList = INVALID_GL_LIST_ID;
-    ripple1 = (float)(2.0 * M_PI * bzfrand());
-    ripple2 = (float)(2.0 * M_PI * bzfrand());
-    return;
+    vboIndex = vboVT.vboAlloc(maxChunks * 2);
+}
+
+WaveGeometry::~WaveGeometry()
+{
+    vboVT.vboFree(vboIndex);
 }
 
 void WaveGeometry::waveFlag(float dt)
 {
+    const int slotSize = (flagChunks + 1) * 2;
+
     if (!refCount)
         return;
 
@@ -171,16 +171,8 @@ void WaveGeometry::waveFlag(float dt)
         txcds[i*2+1][1] = 0.0f;
     }
 
-    // make a GL display list if desired
-    if (flagLists)
-    {
-        glList = glGenLists(1);
-        glNewList(glList, GL_COMPILE);
-        executeNoList();
-        glEndList();
-    }
-    else
-        glList = INVALID_GL_LIST_ID;
+    vboVT.vertexData(vboIndex, slotSize, verts);
+    vboVT.textureData(vboIndex, slotSize, txcds);
 
     triCount = flagChunks * 2;
 
@@ -188,15 +180,7 @@ void WaveGeometry::waveFlag(float dt)
 }
 
 
-void WaveGeometry::freeFlag()
-{
-    if ((refCount > 0) && (glList != INVALID_GL_LIST_ID))
-        glDeleteLists(glList, 1);
-    return;
-}
-
-
-WaveGeometry allWaves[waveLists];
+std::vector<WaveGeometry> allWaves;
 
 
 /******************************************************************************/
@@ -226,15 +210,13 @@ FlagSceneNode::~FlagSceneNode()
 
 void            FlagSceneNode::waveFlag(float dt)
 {
-    flagLists = BZDB.isTrue("flagLists");
-    for (int i = 0; i < waveLists; i++)
-        allWaves[i].waveFlag(dt);
+    for (auto &wave : allWaves)
+        wave.waveFlag(dt);
 }
 
 void            FlagSceneNode::freeFlag()
 {
-    for (int i = 0; i < waveLists; i++)
-        allWaves[i].freeFlag();
+    allWaves.clear();
 }
 
 void            FlagSceneNode::move(const GLfloat pos[3])
@@ -397,6 +379,7 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
     waveReference = (int)((double)waveLists * bzfrand());
     if (waveReference >= waveLists)
         waveReference = waveLists - 1;
+    allWaves.resize(waveLists);
     allWaves[waveReference].refer();
 }
 
@@ -406,7 +389,17 @@ FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 }
 
 
+void            FlagSceneNode::FlagRenderNode::renderShadow()
+{
+    render(true);
+}
+
 void            FlagSceneNode::FlagRenderNode::render()
+{
+    render(false);
+}
+
+void            FlagSceneNode::FlagRenderNode::render(bool shadow)
 {
     float base = BZDBCache::flagPoleSize;
     float poleWidth = BZDBCache::flagPoleWidth;
@@ -446,7 +439,7 @@ void            FlagSceneNode::FlagRenderNode::render()
             else
                 RENDERER.getViewFrustum().executeBillboard();
 
-            allWaves[waveReference].execute();
+            allWaves[waveReference].execute(shadow);
             addTriangleCount(triCount);
 
             if (realFlag)
