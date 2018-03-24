@@ -1086,7 +1086,6 @@ static const GLubyte    stipplePattern[NumStipples][4] =
     { 0xff, 0xdd, 0xff, 0x77 },
     { 0xff, 0xff, 0xff, 0xff },
 };
-GLuint          OpenGLGState::stipples = INVALID_GL_LIST_ID;
 
 OpenGLGState::OpenGLGState()
 {
@@ -1169,7 +1168,24 @@ void            OpenGLGState::setStipple(GLfloat alpha)
 
 void OpenGLGState::setStippleIndex(int index)
 {
-    glCallList(stipples + index);
+    GLubyte stipple[132];
+    GLubyte* sPtr = (GLubyte*)(((unsigned long)stipple & ~3) + 4);
+    GLushort lineStipple = (GLushort)stipplePattern[index][0];
+    GLubyte *temp = sPtr;
+    for (int j = 0; j < 8; j++)
+    {
+        memset(temp, stipplePattern[index][0], 4);
+        temp += 4;
+        memset(temp, stipplePattern[index][1], 4);
+        temp += 4;
+        memset(temp, stipplePattern[index][2], 4);
+        temp += 4;
+        memset(temp, stipplePattern[index][3], 4);
+        temp += 4;
+    }
+    lineStipple += lineStipple << 8;
+    glPolygonStipple(sPtr);
+    glLineStipple(1, lineStipple);
 }
 
 
@@ -1191,55 +1207,6 @@ int OpenGLGState::getMaxSamples()
 }
 
 
-void OpenGLGState::initStipple(void*)
-{
-    stipples = glGenLists(NumStipples);
-    for (int i = 0; i < NumStipples; i++)
-    {
-        GLubyte stipple[132];
-        GLubyte* sPtr = (GLubyte*)(((unsigned long)stipple & ~3) + 4);
-        GLushort lineStipple;
-        for (int j = 0; j < 128; j += 16)
-        {
-            sPtr[j+0] = stipplePattern[i][0];
-            sPtr[j+1] = stipplePattern[i][0];
-            sPtr[j+2] = stipplePattern[i][0];
-            sPtr[j+3] = stipplePattern[i][0];
-            sPtr[j+4] = stipplePattern[i][1];
-            sPtr[j+5] = stipplePattern[i][1];
-            sPtr[j+6] = stipplePattern[i][1];
-            sPtr[j+7] = stipplePattern[i][1];
-            sPtr[j+8] = stipplePattern[i][2];
-            sPtr[j+9] = stipplePattern[i][2];
-            sPtr[j+10] = stipplePattern[i][2];
-            sPtr[j+11] = stipplePattern[i][2];
-            sPtr[j+12] = stipplePattern[i][3];
-            sPtr[j+13] = stipplePattern[i][3];
-            sPtr[j+14] = stipplePattern[i][3];
-            sPtr[j+15] = stipplePattern[i][3];
-        }
-        lineStipple = (GLushort)stipplePattern[i][0] +
-                      (((GLushort)stipplePattern[i][0]) << 8);
-        glNewList(stipples + i, GL_COMPILE);
-        glPolygonStipple(sPtr);
-        glLineStipple(1, lineStipple);
-        glEndList();
-    }
-}
-
-
-void OpenGLGState::freeStipple(void*)
-{
-    if (stipples != INVALID_GL_LIST_ID)
-    {
-        glDeleteLists(stipples, NumStipples);
-        stipples = INVALID_GL_LIST_ID;
-    }
-
-    return;
-}
-
-
 void OpenGLGState::init()
 {
     if (!haveGLContext())
@@ -1250,12 +1217,6 @@ void OpenGLGState::init()
 
     // initialize GL state to what we expect
     initGLState();
-
-    // other initialization
-    initStipple(NULL);
-
-    // redo stipple init if context is recreated
-    registerContextInitializer(freeStipple, initStipple, NULL);
 }
 
 

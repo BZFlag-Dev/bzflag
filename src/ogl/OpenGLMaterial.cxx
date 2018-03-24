@@ -22,6 +22,8 @@
 // OpenGLMaterial::Rep
 //
 
+int OpenGLMaterial::Rep::listCount = 0;
+
 OpenGLMaterial::Rep*    OpenGLMaterial::Rep::head = NULL;
 
 OpenGLMaterial::Rep*    OpenGLMaterial::Rep::getRep(
@@ -56,10 +58,8 @@ OpenGLMaterial::Rep*    OpenGLMaterial::Rep::getRep(
 OpenGLMaterial::Rep::Rep(const GLfloat* _specular,
                          const GLfloat* _emissive,
                          GLfloat _shininess)
-    : refCount(1), shininess(_shininess)
+    : refCount(1), list(0), shininess(_shininess)
 {
-    list = INVALID_GL_LIST_ID;
-
     prev = NULL;
     next = head;
     head = this;
@@ -83,13 +83,6 @@ OpenGLMaterial::Rep::~Rep()
     OpenGLGState::unregisterContextInitializer(freeContext,
             initContext, (void*)this);
 
-    // free OpenGL display list
-    if (list != INVALID_GL_LIST_ID)
-    {
-        glDeleteLists(list, 1);
-        list = INVALID_GL_LIST_ID;
-    }
-
     // remove me from material list
     if (next != NULL) next->prev = prev;
     if (prev != NULL) prev->next = next;
@@ -108,12 +101,11 @@ void            OpenGLMaterial::Rep::unref()
 
 void            OpenGLMaterial::Rep::execute()
 {
-    if (list != INVALID_GL_LIST_ID)
-        glCallList(list);
-    else
+    if (list == 0)
+        list = listCount++;
+    if (list == 0)
+        list = listCount++;
     {
-        list = glGenLists(1);
-        glNewList(list, GL_COMPILE_AND_EXECUTE);
         {
             glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, specular);
             glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
@@ -133,21 +125,13 @@ void            OpenGLMaterial::Rep::execute()
                 }
             }
         }
-        glEndList();
     }
     return;
 }
 
 
-void OpenGLMaterial::Rep::freeContext(void* self)
+void OpenGLMaterial::Rep::freeContext(void*)
 {
-    GLuint& list = ((Rep*)self)->list;
-    if (list != INVALID_GL_LIST_ID)
-    {
-        glDeleteLists(list, 1);
-        list = INVALID_GL_LIST_ID;
-    }
-    return;
 }
 
 

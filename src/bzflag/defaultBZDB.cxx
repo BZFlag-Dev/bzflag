@@ -133,7 +133,6 @@ DefaultDBItem defaultDBItems[] =
     { "f2bsort",          "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "meshLists",        "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "flagLists",        "0",            true,   StateDatabase::ReadWrite,   NULL },
-    { "lightLists",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "noMeshClusters",       "0",            true,   StateDatabase::ReadWrite,   NULL },
 
     // default texture names

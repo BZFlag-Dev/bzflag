@@ -56,14 +56,13 @@ public:
     void        setOnlyGround(bool value);
     bool        getOnlyGround() const;
 
-    void        execute(int index, bool useList) const;
+    void        execute(int index) const;
 
     static GLint    getMaxLights();
     static void     enableLight(int index, bool on); // const
 
 protected:
     void        makeLists();
-    void        freeLists();
     void        genLight(GLenum light) const;
 
 private:
@@ -78,7 +77,6 @@ private:
     GLfloat     importance;
     bool        onlyReal;
     bool        onlyGround;
-    GLuint*     lists;
     static GLint    maxLights;
 };
 
