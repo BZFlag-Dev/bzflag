@@ -442,6 +442,8 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\src\geometry\VBO_Drawing.cxx" />
+    <ClCompile Include="..\..\src\geometry\VBO_Handler.cxx" />
     <ClCompile Include="..\..\src\geometry\ViewFrustum.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -494,6 +496,8 @@
     <ClInclude Include="..\..\include\LaserSceneNode.h" />
     <ClInclude Include="..\..\include\MeshDrawMgr.h" />
     <ClInclude Include="..\..\include\MeshFragSceneNode.h" />
+    <ClInclude Include="..\..\include\VBO_Drawing.h" />
+    <ClInclude Include="..\..\include\VBO_Handler.h" />
     <ClInclude Include="..\..\src\geometry\MeshRenderNode.h" />
     <ClInclude Include="..\..\include\MeshSceneNode.h" />
     <ClInclude Include="..\..\include\OpenGLGState.h" />

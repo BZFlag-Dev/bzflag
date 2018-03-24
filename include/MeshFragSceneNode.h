@@ -20,8 +20,11 @@
 #define BZF_MESH_FRAG_SCENE_NODE_H
 
 #include "common.h"
+
+/* common interface headers */
 #include "WallSceneNode.h"
 #include "BzMaterial.h"
+#include "VBO_Handler.h"
 
 //
 // NOTES:
@@ -52,11 +55,13 @@ public:
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry : public RenderNode, VBOclient
     {
     public:
         Geometry(MeshFragSceneNode* node);
         ~Geometry();
+
+        virtual void initVBO();
 
         void init();
         void setStyle(int _style)
@@ -71,16 +76,10 @@ protected:
         }
 
     private:
-        void drawVTN() const; // draw with texcoords and normals
+        inline void renderVBO();
 
-        void initDisplayList();
-        void freeDisplayList();
-        static void initContext(void *data);
-        static void freeContext(void *data);
-
-    private:
         int style;
-        GLuint list;
+        int vboIndex;
         MeshFragSceneNode* sceneNode;
     };
 

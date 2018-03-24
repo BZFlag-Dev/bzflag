@@ -94,6 +94,12 @@
     <ClCompile Include="..\..\src\geometry\ViewFrustum.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\geometry\VBO_Drawing.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\geometry\VBO_Handler.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\BillboardSceneNode.h">
@@ -187,6 +193,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\WallSceneNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\VBO_Drawing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\VBO_Handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

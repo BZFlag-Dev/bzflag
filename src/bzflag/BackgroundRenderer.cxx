@@ -25,6 +25,8 @@
 #include "TextureMatrix.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
+#include "VBO_Handler.h"
+#include "OpenGLCommon.h"
 
 // local headers
 #include "daylight.h"
@@ -1102,8 +1104,7 @@ void BackgroundRenderer::drawGroundShadows(
     SceneNode::setColorOverride(true);
 
     // disable the unused arrays
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    VBO_Handler::globalArraysEnabling(false);
 
     if (BZDBCache::stencilShadows)
     {
@@ -1150,8 +1151,7 @@ void BackgroundRenderer::drawGroundShadows(
     OpenGLGState::resetState();
 
     // re-enable the arrays
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    VBO_Handler::globalArraysEnabling(true);
 
     glPopMatrix();
 }

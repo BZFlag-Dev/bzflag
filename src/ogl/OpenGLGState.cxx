@@ -1315,10 +1315,6 @@ void OpenGLGState::initGLState()
     glShadeModel(GL_FLAT);
     glDisable(GL_ALPHA_TEST);
     glCullFace(GL_BACK);
-    // all arrays are enabled by default
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 // utility to check if an OpenGL extension is supported on this system

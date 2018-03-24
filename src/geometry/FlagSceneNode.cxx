@@ -25,6 +25,7 @@
 #include "OpenGLMaterial.h"
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "VBO_Handler.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -36,7 +37,6 @@
 static const int    waveLists = 8;      // GL list count
 static int      flagChunks = 8;     // draw flag as 8 quads
 static bool     realFlag = false;   // don't use billboarding
-static bool     flagLists = false;  // use display lists
 static int      triCount = 0;       // number of rendered triangles
 
 static const GLfloat    Unit = 0.8f;        // meters
@@ -50,7 +50,7 @@ static const GLfloat    Height = Unit;
 // WaveGeometry  (local helper class)
 //
 
-class WaveGeometry
+class WaveGeometry : public VBOclient
 {
 public:
     WaveGeometry();
@@ -65,17 +65,18 @@ public:
     }
 
     void waveFlag(float dt);
-    void freeFlag();
 
     void execute() const;
-    void executeNoList() const;
 
 private:
+
+    void initVBO();
+
     int refCount;
     float ripple1;
     float ripple2;
 
-    GLuint glList;
+    int vboIndex;
     GLfloat verts[(maxChunks + 1) * 2][3];
     GLfloat txcds[(maxChunks + 1) * 2][2];
 
@@ -87,37 +88,34 @@ private:
 const float WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
 const float WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
 
-
-inline void WaveGeometry::executeNoList() const
-{
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 0, verts);
-    glTexCoordPointer(2, GL_FLOAT, 0, txcds);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, (flagChunks + 1) * 2);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    return;
-}
-
 inline void WaveGeometry::execute() const
 {
-    if (flagLists)
-        glCallList(glList);
-    else
-        executeNoList();
+    vboVT.enableArrays();
+    glDrawArrays(
+        GL_TRIANGLE_STRIP,
+        vboIndex,
+        (flagChunks + 1) * 2);
     return;
 }
 
 
-WaveGeometry::WaveGeometry() : refCount(0)
+WaveGeometry::WaveGeometry() : refCount(0), vboIndex(0)
 {
-    glList = INVALID_GL_LIST_ID;
+    vboManager.registerClient(this);
     ripple1 = (float)(2.0 * M_PI * bzfrand());
     ripple2 = (float)(2.0 * M_PI * bzfrand());
     return;
 }
 
+void WaveGeometry::initVBO()
+{
+    vboIndex = vboVT.vboAlloc(maxChunks * 2);
+}
+
 void WaveGeometry::waveFlag(float dt)
 {
+    const int slotSize = (flagChunks + 1) * 2;
+
     int i;
     if (!refCount)
         return;
@@ -170,16 +168,8 @@ void WaveGeometry::waveFlag(float dt)
         txcds[i*2+1][1] = 0.0f;
     }
 
-    // make a GL display list if desired
-    if (flagLists)
-    {
-        glList = glGenLists(1);
-        glNewList(glList, GL_COMPILE);
-        executeNoList();
-        glEndList();
-    }
-    else
-        glList = INVALID_GL_LIST_ID;
+    vboVT.vertexData(vboIndex, slotSize, verts);
+    vboVT.textureData(vboIndex, slotSize, txcds);
 
     triCount = flagChunks * 2;
 
@@ -187,15 +177,7 @@ void WaveGeometry::waveFlag(float dt)
 }
 
 
-void WaveGeometry::freeFlag()
-{
-    if ((refCount > 0) && (glList != INVALID_GL_LIST_ID))
-        glDeleteLists(glList, 1);
-    return;
-}
-
-
-WaveGeometry allWaves[waveLists];
+WaveGeometry *allWaves;
 
 
 /******************************************************************************/
@@ -224,15 +206,14 @@ FlagSceneNode::~FlagSceneNode()
 
 void            FlagSceneNode::waveFlag(float dt)
 {
-    flagLists = BZDB.isTrue("flagLists");
+    if (!allWaves)
+        return;
     for (int i = 0; i < waveLists; i++)
         allWaves[i].waveFlag(dt);
 }
 
 void            FlagSceneNode::freeFlag()
 {
-    for (int i = 0; i < waveLists; i++)
-        allWaves[i].freeFlag();
 }
 
 void            FlagSceneNode::move(const GLfloat pos[3])
@@ -392,6 +373,8 @@ FlagSceneNode::FlagRenderNode::FlagRenderNode(
     waveReference = (int)((double)waveLists * bzfrand());
     if (waveReference >= waveLists)
         waveReference = waveLists - 1;
+    if (!allWaves)
+        allWaves = new WaveGeometry[waveLists];
     allWaves[waveReference].refer();
 }
 

@@ -128,6 +128,8 @@ noinst_HEADERS =			\
 	TriWallSceneNode.h		\
 	ViewFrustum.h			\
 	VotingBooth.h			\
+	VBO_Handler.h	\
+	VBO_Drawing.h	\
 	WallObstacle.h			\
 	WallSceneNode.h			\
 	WallSceneNodeGenerator.h	\

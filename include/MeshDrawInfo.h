@@ -88,6 +88,7 @@ public:
     const afvec3* getVertices() const;
     const afvec3* getNormals() const;
     const afvec2* getTexcoords() const;
+    int getCornerCount() const;
 
     int getRadarCount() const;
     const DrawLod* getRadarLods() const;
@@ -205,6 +206,10 @@ inline const afvec3* MeshDrawInfo::getNormals() const
 inline const afvec2* MeshDrawInfo::getTexcoords() const
 {
     return texcoords;
+}
+inline int MeshDrawInfo::getCornerCount() const
+{
+    return cornerCount;
 }
 inline int MeshDrawInfo::getRadarCount() const
 {

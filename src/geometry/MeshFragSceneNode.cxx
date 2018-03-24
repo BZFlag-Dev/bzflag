@@ -41,75 +41,47 @@
 // NOTE: this should be based on visual pixel area
 static int minLightDisabling = 100;
 
-MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)
+MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node): vboIndex(-1)
 {
     style = 0;
     sceneNode = node;
-    list = INVALID_GL_LIST_ID;
-    OpenGLGState::registerContextInitializer (freeContext, initContext, this);
     return;
 }
 
 
 MeshFragSceneNode::Geometry::~Geometry()
 {
-    OpenGLGState::unregisterContextInitializer (freeContext, initContext, this);
+    vboVTN.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
     return;
 }
 
 
 void MeshFragSceneNode::Geometry::init()
 {
-    initDisplayList();
+    vboManager.registerClient(this);
     return;
 }
 
 
-void MeshFragSceneNode::Geometry::initDisplayList()
+void MeshFragSceneNode::Geometry::initVBO()
 {
-    if (list != INVALID_GL_LIST_ID)
-        glDeleteLists(list, 1);
-    list = INVALID_GL_LIST_ID;
-    if (BZDB.isTrue("meshLists"))
-    {
-        list = glGenLists(1);
-        glNewList(list, GL_COMPILE);
-        drawVTN();
-        glEndList();
-    }
+    const int count = sceneNode->arrayCount * 3;
+    vboIndex = vboVTN.vboAlloc(count);
+    vboVTN.vertexData(vboIndex, count, sceneNode->vertices);
+    vboVTN.textureData(vboIndex, count, sceneNode->texcoords);
+    vboVTN.normalData(vboIndex, count, sceneNode->normals);
+
     return;
 }
 
 
-void MeshFragSceneNode::Geometry::freeDisplayList()
+void MeshFragSceneNode::Geometry::renderVBO()
 {
-    if (list != INVALID_GL_LIST_ID)
-        glDeleteLists(list, 1);
-    list = INVALID_GL_LIST_ID;
-    return;
-}
-
-
-void MeshFragSceneNode::Geometry::freeContext(void *data)
-{
-    ((MeshFragSceneNode::Geometry*)data)->freeDisplayList();
-    return;
-}
-
-
-void MeshFragSceneNode::Geometry::initContext(void *data)
-{
-    ((MeshFragSceneNode::Geometry*)data)->initDisplayList();
-    return;
-}
-
-
-inline void MeshFragSceneNode::Geometry::drawVTN() const
-{
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+    const int triangles = sceneNode->arrayCount;
+    vboVTN.enableArrays();
+    glDrawArrays(GL_TRIANGLES, vboIndex, triangles * 3);
+    addTriangleCount(triangles);
 
     return;
 }
@@ -125,15 +97,10 @@ void MeshFragSceneNode::Geometry::render()
     // set the color
     sceneNode->setColor();
 
-    if (list != INVALID_GL_LIST_ID)
-        glCallList(list);
-    else
-        drawVTN();
+    renderVBO();
 
     if (switchLights)
         RENDERER.reenableLights();
-
-    addTriangleCount(triangles);
 
     return;
 }
@@ -141,15 +108,7 @@ void MeshFragSceneNode::Geometry::render()
 
 void MeshFragSceneNode::Geometry::renderShadow()
 {
-    const int triangles = sceneNode->arrayCount;
-    if (list != INVALID_GL_LIST_ID)
-        glCallList(list);
-    else
-    {
-        glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-        glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
-    }
-    addTriangleCount(triangles);
+    renderVBO();
     return;
 }
 
