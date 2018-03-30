@@ -285,6 +285,7 @@ const char *extraUsageString =
 static std::vector<std::string> storedFlagDisallows;
 static std::vector<std::string> storedFlagCounts;
 static std::map<std::string, int> storedFlagLimits;
+static std::map<std::string, std::string> bzdbVarQueue;
 
 /* private */
 
@@ -1084,14 +1085,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       const char *name, *value;
       checkArgc(2, i, argc, argv[i]);
       name = argv[i];
-      if (!BZDB.isSet(name)) {
-	std::cerr << "Unknown BZDB variable: " << name << std::endl;
-	exit (1);
-      }
       i++;
       value = argv[i];
+
+      // give unknown BZDB variables the benefit of the doubt, allow plug-ins to define them
+      if (!BZDB.isSet(name)) {
+        bzdbVarQueue[name] = value;
+        logDebugMessage(1, "queued variable: %s = %s\n", name, value);
+
+        continue;
+      }
+
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1, "set variable: %s = %s\n", name, BZDB.get(name).c_str());
     }
     else if (strcmp(argv[i], "-setforced") == 0) {
       const char *name, *value;
@@ -1099,8 +1105,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       name = argv[i];
       i++;
       value = argv[i];
+
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1, "set variable: %s = %s\n", name, BZDB.get(name).c_str());
     }
     else if (strcmp(argv[i], "-sl") == 0) {
       // shot limits
@@ -1405,6 +1412,18 @@ static int addZoneTeamFlags(int startIndex,
 void finalizeParsing(int UNUSED(argc), char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
+  // set queued BZDB variables; allow plugins to define valid BZDB variables
+  for (auto it = bzdbVarQueue.begin(); it != bzdbVarQueue.end(); it++) {
+    if (!BZDB.isSet(it->first)) {
+      std::cerr << "Unknown BZDB variable: " << it->first << std::endl;
+      exit(1);
+    }
+
+    BZDB.set(it->first, it->second);
+    BZDB.setDefault(it->first, it->second);
+    logDebugMessage(1, "queued variable set: %s = %s\n", it->first.c_str(), BZDB.get(it->first).c_str());
+  }
+
   if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
@@ -1717,7 +1736,6 @@ void finalizeParsing(int UNUSED(argc), char **argv,
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
   }
-
 
   // debugging
   logDebugMessage(1,"type: %d\n", options.gameType);

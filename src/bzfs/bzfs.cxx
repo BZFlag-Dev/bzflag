@@ -6241,11 +6241,10 @@ int main(int argc, char **argv)
   // make flags, check sanity, etc...
   // (do this after the world has been loaded)
   finalizeParsing(argc, argv, *clOptions, world->getEntryZones());
-  {
-    FlagInfo::setNoFlagInAir();
-    for (int i = 0; i < numFlags; i++) {
-      resetFlag(*FlagInfo::get(i));
-    }
+
+  FlagInfo::setNoFlagInAir();
+  for (int i = 0; i < numFlags; i++) {
+    resetFlag(*FlagInfo::get(i));
   }
 
   // loading extra flag number

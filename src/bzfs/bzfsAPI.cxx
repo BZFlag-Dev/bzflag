@@ -1986,76 +1986,101 @@ BZF_API bool bz_BZDBItemHasValue( const char* variable )
   return BZDB.isSet(std::string(variable)) && BZDB.get(std::string(variable)).size() > 0;
 }
 
-
-void setVarPerms ( const char* variable, int perms, bool persistent)
+void setVarPerms(const std::string variable, int perms, bool persistent)
 {
   if (perms != BZ_BZDBPERM_NA)
   {
     switch (perms) {
       case BZ_BZDBPERM_USER:
-	BZDB.setPermission(std::string(variable),StateDatabase::ReadWrite);
-	break;
+        BZDB.setPermission(variable, StateDatabase::ReadWrite);
+        break;
+
       case BZ_BZDBPERM_SERVER:
-	BZDB.setPermission(std::string(variable),StateDatabase::Locked);
-	break;
+        BZDB.setPermission(variable, StateDatabase::Locked);
+        break;
+
       default:
-	BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
-	break;
+        BZDB.setPermission(variable, StateDatabase::ReadOnly);
+        break;
     }
   }
-  BZDB.setPersistent(std::string(variable),persistent);
+
+  BZDB.setPersistent(variable, persistent);
 }
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
+bool registerVar(const std::string variable, const std::string value, int perms, bool persistent)
+{
+  bool canRegister = !BZDB.isSet(variable);
+
+  if (canRegister) {
+    BZDB.set(variable, value);
+    BZDB.setDefault(variable, value);
+
+    setVarPerms(variable, perms, persistent);
+  }
+
+  return canRegister;
+}
+
+BZF_API bool bz_registerCustomBZDBDouble(const char* variable, double val, int perms, bool persistent)
 {
   if (!variable)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),TextUtils::format("%f",val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+  return registerVar(variable, TextUtils::format("%f", val), perms, persistent);
 }
 
-BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
+BZF_API bool bz_registerCustomBZDBString(const char* variable, const char *val, int perms, bool persistent)
 {
   if (!variable || !val)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),std::string(val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+  return registerVar(variable, val, perms, persistent);
 }
 
-BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
+BZF_API bool bz_registerCustomBZDBInt(const char* variable, int val, int perms, bool persistent)
 {
   if (!variable)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
+  return registerVar(variable, TextUtils::format("%d",val), perms, persistent);
+}
 
-  BZDB.set(std::string(variable),TextUtils::format("%d",val));
-  setVarPerms(variable,perms,persistent);
+BZF_API bool bz_registerCustomBZDBBool(const char* variable, bool val, int perms, bool persistent)
+{
+  return bz_registerCustomBZDBInt(variable, (int)val, perms, persistent);
+}
 
-  return !exists;
+BZF_API bool bz_removeCustomBZDBVariable(const char* variable)
+{
+  std::string var = variable;
+
+  if (!variable || !BZDB.isSet(var))
+    return false;
+
+  BZDB.unset(var);
+
+  return true;
+}
+
+BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
+{
+  return bz_registerCustomBZDBDouble(variable, val, perms, persistent);
+}
+
+BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
+{
+  return bz_registerCustomBZDBString(variable, val, perms, persistent);
 }
 
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persistent )
 {
-  if (!variable)
-    return false;
+  return bz_registerCustomBZDBInt(variable, val, perms, persistent);
+}
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),TextUtils::format("%d",val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
+{
+  return bz_registerCustomBZDBBool(variable, val, perms, persistent);
 }
 
 //-------------------------------------------------------------------------

@@ -1701,10 +1701,18 @@ BZF_API bool bz_getBZDBItemPesistent( const char* variable );
 BZF_API bool bz_BZDBItemExists( const char* variable );
 BZF_API bool bz_BZDBItemHasValue( const char* variable );
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false );
+BZF_API bool bz_registerCustomBZDBDouble(const char* variable, double val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBString(const char* variable, const char *val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
+
+BZF_API bool bz_removeCustomBZDBVariable(const char* variable);
+
+// remove in next breaking version after 2.4.x; superseded by bz_registerCustomBZDB*()
+/*DEPRECATED*/ BZF_API bool bz_setBZDBDouble(const char* variable, double val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBString(const char* variable, const char *val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
 
 BZF_API bool bz_setDefaultBZDBDouble(const char* variable, double val);
 BZF_API bool bz_setDefaultBZDBString(const char* variable, const char* val);
