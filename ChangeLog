@@ -4,6 +4,22 @@
 BZFlag 2.4.13
 -------------
 
+* Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
+* Fix truncation warnings - Jeff Makey, Alfredo Tupone
+* Add new bz_PermissionModificationEvent to the API - Vladimir Jimenez
+* Introduce new 'showMotto' permission - Vladimir Jimenez
+* Fix gcc warnings and code formatting - Jeff Myers, Scott Wichser
+* Remove old BitmapFont renderer - Scott Wichser
+* Add new bz_eServerShotFiredEvent to the API - Vladimir Jimenez
+* Revamp the world weapon API entirely - Vladimir Jimenez
+* Add PLAYER-MOTTO output to logDetail plugin - Scott Wichser
+* Display remaining ban time when a banned player joins - Vladimir Jimenez
+* Punitive messages no longer display admin callsigns - Vladimir Jimenez
+* Slash commands in the API now know destination channel - Jeff Myers
+* Allow building with lcc compiler on e2k-alt-linux - Joshua Bodine
+* Fix ability to bind a key with a modifier through menu - Joshua Bodine
+* Disallow -helpmsg from world files - Vladimir Jimenez
+
 
 BZFlag 2.4.12 "Silence is Golden" (2017-10-29)
 ----------------------------------------------
