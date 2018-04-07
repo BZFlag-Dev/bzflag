@@ -6,14 +6,14 @@ BZFlag 2.4.13
 
 * Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
 * Fix truncation warnings - Jeff Makey, Alfredo Tupone
-* Add new bz_PermissionModificationEvent to the API - Vladimir Jimenez
+* Add new bz_ePermissionModificationEvent to the API - Vladimir Jimenez
 * Introduce new 'showMotto' permission - Vladimir Jimenez
 * Fix gcc warnings and code formatting - Jeff Myers, Scott Wichser
 * Remove old BitmapFont renderer - Scott Wichser
 * Add new bz_eServerShotFiredEvent to the API - Vladimir Jimenez
 * Revamp the world weapon API entirely - Vladimir Jimenez
 * Add PLAYER-MOTTO output to logDetail plugin - Scott Wichser
-* Display remaining ban time when a banned player joins - Vladimir Jimenez
+* Display remaining ban time when a banned player connects - Vladimir Jimenez
 * Punitive messages no longer display admin callsigns - Vladimir Jimenez
 * Slash commands in the API now know destination channel - Jeff Myers
 * Allow building with lcc compiler on e2k-alt-linux - Joshua Bodine
