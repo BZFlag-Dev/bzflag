@@ -130,7 +130,14 @@ namespace Shots
 			if ((*itr)->GetPlayerID() == shooter && (*itr)->Info.shot.id == localShotID)
 				return (*itr)->GetGUID();
 		}
-		return 0;
+
+		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
+		{
+			if ((*itr)->GetPlayerID() == shooter && (*itr)->Info.shot.id == localShotID)
+				return (*itr)->GetGUID();
+		}
+
+	  return 0;
 	}
 
 	uint32_t Manager::NewGUID()
@@ -150,6 +157,13 @@ namespace Shots
 			if ((*itr)->GetGUID() == shotID)
 				return *itr;
 		}
+
+		for (ShotList::iterator itr = RecentlyDeadShots.begin(); itr != RecentlyDeadShots.end(); itr++)
+		{
+			if ((*itr)->GetGUID() == shotID)
+				return *itr;
+		}
+
 		return ShotRef();
 	}
 
