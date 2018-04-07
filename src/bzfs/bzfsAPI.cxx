@@ -1776,7 +1776,7 @@ BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float 
 
   FlagType *flag = flagMap.find(flagType)->second;
 
-  return world->getWorldWeapons().fireShot(flag, origin, vector, -1, nullptr, 0, (TeamColor)convertTeam(color), targetPlayerId);
+  return world->getWorldWeapons().fireShot(flag, origin, vector, nullptr, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)

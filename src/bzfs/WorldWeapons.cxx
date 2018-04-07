@@ -29,7 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], float shotSpeed, int *shotID, float delayTime, TeamColor teamColor, PlayerId targetPlayerID)
+uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor, PlayerId targetPlayerID)
 {
   if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
     return INVALID_SHOT_GUID;
@@ -44,13 +44,12 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
   firingInfo.shot.player = ServerPlayer;
   memmove(firingInfo.shot.pos, origin, 3 * sizeof(float));
 
-  if (shotSpeed < 0)
-    shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
 
   for (int i = 0; i < 3; i++)
     firingInfo.shot.vel[i] = vector[i] * shotSpeed;
 
-  firingInfo.shot.dt = delayTime;
+  firingInfo.shot.dt = 0;
   firingInfo.shot.team = teamColor;
 
   if (shotID != nullptr && shotID == 0) {
@@ -146,7 +145,7 @@ void WorldWeapons::fire()
 
 	  float vec[3] = { 0,0,0 };
 	  bz_vectorFromRotations(w->tilt, w->direction, vec);
-      fireShot(&type, w->origin, vec, -1, nullptr, 0, w->teamColor);
+      fireShot(&type, w->origin, vec, nullptr, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -284,7 +283,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
   float vec[3] = { 0,0,0 };
   bz_vectorFromRotations(tilt, direction, vec);
 
-  world->getWorldWeapons().fireShot(type, origin, vec, -1, NULL, 0);
+  world->getWorldWeapons().fireShot(type, origin, vec, NULL);
 }
 
 // Local Variables: ***
