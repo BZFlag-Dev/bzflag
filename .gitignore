@@ -41,6 +41,7 @@
 *.ipch
 *.VC.db
 *.opendb
+.vs
 
 # GNU Autotools
 Makefile.in
