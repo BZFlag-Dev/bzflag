@@ -4,6 +4,7 @@
 BZFlag 2.4.13
 -------------
 
+* Add min/../max to drawTime - Alfredo Tupone
 * Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
 * Fix truncation warnings - Jeff Makey, Alfredo Tupone
 * Add new bz_ePermissionModificationEvent to the API - Vladimir Jimenez
