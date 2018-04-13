@@ -4961,7 +4961,7 @@ static void joinInternetGame()
     msg += ColorStrings[GreyColor];
     msg += "server access is controlled by ";
     msg += ColorStrings[YellowColor];
-    msg += ServerAccessList.getFileName();
+    msg += ServerAccessList.getFilePath();
     addMessage(NULL, msg);
     return;
   }

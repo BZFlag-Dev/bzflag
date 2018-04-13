@@ -108,64 +108,44 @@ std::ostream*			FileManager::createDataOutStream(
   if (truncate)
     mode |= std::ios::trunc;
 
-  const bool relative = !isAbsolute(filename);
-  if (relative) {
-    // try directory stored in DB
-    if (BZDB.isSet("directory")) {
-      std::ofstream* stream = new std::ofstream(catPath(BZDB.get("directory"),
-						filename).c_str(), mode);
-      if (stream && *stream)
-	return stream;
-      delete stream;
-    }
-
-    // try data directory
-    {
-      std::ofstream* stream = new std::ofstream(catPath("data", filename).c_str(), mode);
-      if (stream && *stream)
-	return stream;
-      delete stream;
-    }
-  } else {
-    // try absolute path
-    int successMkdir = 0;
-    int i = 0;
+  // try absolute path
+  int successMkdir = 0;
+  int i = 0;
 #ifndef _WIN32
-    // create all directories above the file
-    while ((i = filename.find('/', i+1)) != -1) {
-      struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
-	    (S_ISDIR(statbuf.st_mode)))) {
-	successMkdir = mkdir(filename.substr(0, i).c_str(), 0777);
-	if (successMkdir != 0) {
-	  perror("Unable to make directory");
-	  return NULL;
-	}
+  // create all directories above the file
+  while ((i = filename.find('/', i+1)) != -1) {
+    struct stat statbuf;
+    if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
+	  (S_ISDIR(statbuf.st_mode)))) {
+      successMkdir = mkdir(filename.substr(0, i).c_str(), 0777);
+      if (successMkdir != 0) {
+	perror("Unable to make directory");
+	return NULL;
       }
     }
-    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
-    if (stream && *stream)
-      return stream;
-#else
-    // create all directories above the file
-    i = 2; // don't stat on a drive, it will fail
-    while ((i = filename.find('\\', i+1)) != -1) {
-      struct stat statbuf;
-      if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
-	    (_S_IFDIR & statbuf.st_mode))) {
-	successMkdir = _mkdir(filename.substr(0, i).c_str());
-	if (successMkdir != 0) {
-	  perror("Unable to make directory");
-	  return NULL;
-	}
-      }
-    }
-    std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
-    if (stream)
-      return stream;
-#endif
-    delete stream;
   }
+  std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
+  if (stream && *stream)
+    return stream;
+#else
+  // create all directories above the file
+  i = 2; // don't stat on a drive, it will fail
+  while ((i = filename.find('\\', i+1)) != -1) {
+    struct stat statbuf;
+    if (!(stat(filename.substr(0, i).c_str(), &statbuf) == 0 &&
+	  (_S_IFDIR & statbuf.st_mode))) {
+      successMkdir = _mkdir(filename.substr(0, i).c_str());
+      if (successMkdir != 0) {
+	perror("Unable to make directory");
+	return NULL;
+      }
+    }
+  }
+  std::ofstream* stream = new std::ofstream(filename.c_str(), mode);
+  if (stream)
+    return stream;
+#endif
+  delete stream;
 
   return NULL;
 }

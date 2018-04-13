@@ -63,8 +63,14 @@ std::string		getConfigDirName( const char* versionName )
 {
   std::string customConfigDir = configDir(0, NULL);
 
-  if (customConfigDir.size() > 0)
-    return customConfigDir;
+  if (customConfigDir.size() > 0) {
+    std::string customName = customConfigDir + DirectorySeparator;
+    if (versionName) {
+      customName += versionName;
+      customName += DirectorySeparator;
+    }
+    return customName;
+  }
 
 #if defined(_WIN32)
   std::string name("C:");

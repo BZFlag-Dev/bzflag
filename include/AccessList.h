@@ -27,14 +27,15 @@ class AccessList {
     bool alwaysAuthorized() const;
     bool authorized(const std::vector<std::string>& strings) const;
 
-    const std::string& getFileName() const;
+    const std::string getFilePath() const;
 
   private:
     bool computeAlwaysAuth() const;
-    void makeContent(const char* content) const;
+    bool makeContent(const char* content) const;
 
   private:
     std::string filename;
+    const char* content;
     bool alwaysAuth;
 
     enum AccessType {

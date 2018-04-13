@@ -303,7 +303,7 @@ static void printAuthNotice()
   msg += ColorStrings[GreyColor];
   msg += "download access is controlled by ";
   msg += ColorStrings[YellowColor];
-  msg += DownloadAccessList.getFileName();
+  msg += DownloadAccessList.getFilePath();
   addMessage(NULL, msg);
   return;
 }

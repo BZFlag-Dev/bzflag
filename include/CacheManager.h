@@ -49,6 +49,7 @@ class CacheManager {
 
   private:
     std::string indexName;
+    std::string getIndexPath();
     std::vector<CacheRecord> records;
 };
 
