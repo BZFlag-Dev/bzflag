@@ -1704,7 +1704,10 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
       for (int j = 0; j < options.flagCount[fDesc]; j++) {
-	FlagInfo::get(f++)->setRequiredFlag(fDesc);
+	FlagInfo *flag = FlagInfo::get(f++);
+        if (!flag)
+           continue;
+	flag->setRequiredFlag(fDesc);
       }
     }
   }
@@ -1718,16 +1721,22 @@ void finalizeParsing(int UNUSED(argc), char **argv,
       if ((ft->flagTeam == ::NoTeam) && // no team flags here
 	  (forbidden.find(ft) == forbidden.end())) {
 	const int count = zfmIt->second;
-	for (int c = 0; c < count; c++) {
+	for (int c = 0; c < count; c++, f++) {
+	  FlagInfo *flag = FlagInfo::get(f);
+          if (!flag)
+             continue;
 	  entryZones.addZoneFlag(z, f);
-	  FlagInfo::get(f++)->setRequiredFlag(ft);
+	  flag->setRequiredFlag(ft);
 	}
       }
     }
   }
   // add extra flags
   for (; f < numFlags; f++) {
-    FlagInfo::get(f)->required = allFlagsOut;
+    FlagInfo *flag = FlagInfo::get(f);
+    if (!flag)
+       continue;
+    flag->required = allFlagsOut;
   }
 
   // sum the sources of team flags

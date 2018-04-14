@@ -4,6 +4,7 @@
 BZFlag 2.4.13
 -------------
 
+* Add safety check when getting flags (bzfs) - Alfredo Tupone
 * Add min/../max to drawTime - Alfredo Tupone
 * Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
 * Fix truncation warnings - Jeff Makey, Alfredo Tupone

@@ -434,8 +434,10 @@ static void sendFlagUpdate(int playerIndex)
   int length = sizeof(uint16_t);
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
   {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.exist())
+    FlagInfo *flag = FlagInfo::get(flagIndex);
+    if (!flag)
+       continue;
+    if (flag->exist())
     {
       if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t))
       {
@@ -448,8 +450,9 @@ static void sendFlagUpdate(int playerIndex)
 	buf = nboPackUShort(bufStart,0); //placeholder
       }
 
-      bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-      buf = flag.pack(buf, hide);
+      bool hide = (flag->flag.type->flagTeam == ::NoTeam) &&
+         (flag->player == -1);
+      buf = flag->pack(buf, hide);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
     }
@@ -1156,7 +1159,10 @@ bool defineWorld ( void )
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++) {
-    resetFlag(*FlagInfo::get(i));
+    FlagInfo *flag = FlagInfo::get(i);
+    if (!flag)
+       continue;
+    resetFlag(*flag);
   }
   bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
   worldEventManager.callEvents(&eventData);
@@ -2525,9 +2531,11 @@ void zapFlag(FlagInfo &flag)
 // Should be called when we sure that tank does not hold any
 static void dropAssignedFlag(int playerIndex) {
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
-      resetFlag(flag);
+    FlagInfo *flag = FlagInfo::get(flagIndex);
+    if (!flag)
+      continue;
+    if (flag->flag.status == FlagOnTank && flag->flag.owner == playerIndex)
+      resetFlag(*flag);
   }
 } // dropAssignedFlag
 
@@ -6244,7 +6252,10 @@ int main(int argc, char **argv)
 
   FlagInfo::setNoFlagInAir();
   for (int i = 0; i < numFlags; i++) {
-    resetFlag(*FlagInfo::get(i));
+    FlagInfo *flag = FlagInfo::get(i);
+    if (!flag)
+       continue;
+    resetFlag(*flag);
   }
 
   // loading extra flag number
@@ -6501,12 +6512,14 @@ int main(int argc, char **argv)
     while ((dropTime = FlagInfo::getNextDrop(tm)) <= 0.0f) {
       // if any flags were in the air, see if they've landed
       for (i = 0; i < numFlags; i++) {
-	FlagInfo &flag = *FlagInfo::get(i);
-	if (flag.landing(tm)) {
-	  if (flag.flag.status == FlagOnGround) {
-	    sendFlagUpdate(flag);
+	FlagInfo *flag = FlagInfo::get(i);
+        if (!flag)
+           continue;
+	if (flag->landing(tm)) {
+	  if (flag->flag.status == FlagOnGround) {
+	    sendFlagUpdate(*flag);
 	  } else {
-	    resetFlag(flag);
+	    resetFlag(*flag);
 	  }
 	}
       }
