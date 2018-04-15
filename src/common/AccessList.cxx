@@ -213,13 +213,13 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
 }
 
 
-bool AccessList::makeContent(const char* content) const
+bool AccessList::makeContent(const char* _content) const
 {
   FILE* file = fopen(getFilePath().c_str(), "w");
   if (file == NULL) {
     return false;
   }
-  fputs(content, file);
+  fputs(_content, file);
   fclose(file);
   return true;
 }

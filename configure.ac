@@ -768,11 +768,15 @@ case $host_os in
 	       else
 		 FLAGS=-march
 	       fi
+	       if expr `$CC -dumpversion` \>= "4.2" > /dev/null ; then
+		 FLAGS="$FLAGS=native"
+	       else
 	       # silly hack, should be a proper configure compiler option test
 	       if test x$host_cpu = xx86_64; then
 		 FLAGS="$FLAGS=k8"
 	       else
 		 FLAGS="$FLAGS=$host_cpu"
+	       fi
 	       fi
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
@@ -826,6 +830,10 @@ if test x$enable_profiling = xyes ; then
     if test "$GCC" = yes ; then
 	CONF_CFLAGS="$CONF_CFLAGS -pg"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	if expr `$CC -dumpversion` \>= "6" > /dev/null ; then
+           CONF_CFLAGS="$CONF_CFLAGS -no-pie"
+           CONF_CXXFLAGS="$CONF_CXXFLAGS -no-pie"
+        fi
     else
 	AC_MSG_WARN([profiling is disabled with non-GNU compiler])
     fi

@@ -4,6 +4,8 @@
 BZFlag 2.4.13
 -------------
 
+* Better cpu selection for x86_64 - Alfredo Tupone
+* Fix build with enable-profile - Alfredo Tupone
 * Add safety check when getting flags (bzfs) - Alfredo Tupone
 * Add min/../max to drawTime - Alfredo Tupone
 * Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
