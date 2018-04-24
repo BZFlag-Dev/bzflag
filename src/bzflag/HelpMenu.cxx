@@ -528,57 +528,10 @@ Help8Menu::Help8Menu() : HelpMenu("Readouts II")
 }
 
 //
-// Help9Menu
-//
-
-class Help9Menu : public HelpMenu {
-public:
-  Help9Menu();
-  ~Help9Menu() {}
-
-protected:
-  float getLeftSide(int width, int height);
-};
-
-Help9Menu::Help9Menu() : HelpMenu("Credits")
-{
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  listHUD.push_back(createLabel("Tim Riker", "Maintainer:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Chris Schoeneman", "Original Author:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("David Hoeferlin, Tom Hubina", "Code Contributors:"));
-  listHUD.push_back(createLabel("Dan Kartch, Jed Lengyel", ""));
-  listHUD.push_back(createLabel("Jeff Myers, Tim Olson", ""));
-  listHUD.push_back(createLabel("Brian Smits, Greg Spencer", ""));
-  listHUD.push_back(createLabel("Daryll Strauss, Frank Thilo", ""));
-  listHUD.push_back(createLabel("Dave Brosius, David Trowbridge", ""));
-  listHUD.push_back(createLabel("Sean Morrison, Tupone Alfredo", ""));
-  listHUD.push_back(createLabel("Lars Luthman, Nils McCarthy", ""));
-  listHUD.push_back(createLabel("Daniel Remenak", ""));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Tamar Cohen", "Tank Models:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Kevin Novins, Rick Pasetto", "Special Thanks:"));
-  listHUD.push_back(createLabel("Adam Rosen, Erin Shaw", ""));
-  listHUD.push_back(createLabel("Ben Trumbore, Don Greenberg", ""));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("http://BZFlag.org/", "BZFlag Home Page:"));
-  listHUD.push_back(createLabel("", ""));
-  listHUD.push_back(createLabel("Tim Riker", "Copyright (c) 1993-2017"));
-}
-
-float Help9Menu::getLeftSide(int _width, int _height)
-{
-  return 0.5f * _width - _height / 20.0f;
-}
-
-//
 // help menu getter
 //
 
-static const int numHelpMenus = 9;
+static const int numHelpMenus = 8;
 HelpMenu** HelpMenu::helpMenus = NULL;
 
 HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
@@ -593,7 +546,6 @@ HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
     helpMenus[5] = new Help6Menu;
     helpMenus[6] = new Help7Menu;
     helpMenus[7] = new Help8Menu;
-    helpMenus[8] = new Help9Menu;
   }
   for (int i = 0; i < numHelpMenus; i++) {
     if (dialog == helpMenus[i]) {
