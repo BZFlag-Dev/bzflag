@@ -128,7 +128,7 @@
   !endif
 
   !insertmacro MUI_PAGE_WELCOME
-  !define MUI_LICENSEPAGE_TEXT_TOP "Known Issues and License"
+  !define MUI_LICENSEPAGE_TEXT_TOP "License"
   !insertmacro MUI_PAGE_LICENSE "copying.rtf"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
@@ -213,8 +213,14 @@ Section "!BZFlag (Required)" BZFlag
 
   ; make the doc dir
   SetOutPath $INSTDIR\doc
-  File ..\..\..\COPYING
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
+  
+  ; make the licenses dir
+  SetOutPath $INSTDIR\licenses
+  File /oname=BZFlag.txt ..\..\..\COPYING
+  File /oname=COPYING.LGPL.txt ..\..\..\COPYING.LGPL
+  File /oname=COPYING.MPL.txt ..\..\..\COPYING.MPL
+  File ..\..\..\bin_Release_${PLATFORM}\licenses\*
 
   ; Add some DLL files
   SetOutPath $INSTDIR
@@ -223,9 +229,9 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\bin_Release_${PLATFORM}\cares.dll
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
-  ; This requires the Visual C++ runtime file to be located in
-  ; the same directory as the NSIS script. The files can be found here:
-  ; C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\redist\1033
+  ; This requires the Visual C++ runtime file to be located in the same directory as the NSIS script. This will be
+  ; found in a location such as:
+  ; C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
@@ -428,12 +434,10 @@ Section "Uninstall"
 
   ; remove directories used.
   RMDir "$INSTDIR\API"
-  RMDir "$INSTDIR\data\l10n"
-  RMDir "$INSTDIR\data\fonts"
-  RMDir "$INSTDIR\data"
+  RMDir /r "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
   RMDir "$INSTDIR\doc"
-  RMDir /r "$INSTDIR\templates"
+  RMDir /r "$INSTDIR\licenses"
   RMDir "$INSTDIR"
   
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
