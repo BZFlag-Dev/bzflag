@@ -211,8 +211,9 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\data
   File ..\..\..\data\*.wav
 
-  ; make the doc dir
-  SetOutPath $INSTDIR\doc
+  ; make the documentation dir
+  SetOutPath $INSTDIR\documentation
+  File /oname=Authors.txt ..\..\..\AUTHORS
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
   
   ; make the licenses dir
@@ -281,9 +282,10 @@ Section "!BZFlag (Required)" BZFlag
 
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Browse User Data.lnk" "$UserData"
 
-    SetOutPath $INSTDIR\doc
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\BZFlag [game] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzflag.html" "" "" 0
+    SetOutPath $INSTDIR\documentation
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\BZFlag [game] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzflag.html" "" "" 0
+	CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\Credits.lnk" "$INSTDIR\documentation\Authors.txt" "" "" 0
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -295,8 +297,8 @@ Section "BZAdmin" BZAdmin
   ; Put file there
   File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
   
-  ; Add to the doc dir
-  SetOutPath $INSTDIR\doc
+  ; Add to the documentation dir
+  SetOutPath $INSTDIR\documentation
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
@@ -309,9 +311,9 @@ Section "BZAdmin" BZAdmin
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\BZAdmin ${VERSION}.lnk" "$INSTDIR\bzadmin.exe" "" "$INSTDIR\bzadmin.exe" 0
 
-    SetOutPath $INSTDIR\doc
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzadmin [admin] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzadmin.html" "" "" 0
+    SetOutPath $INSTDIR\documentation
+    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
+    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzadmin [admin] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzadmin.html" "" "" 0
   
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
@@ -330,8 +332,8 @@ SectionGroup "BZFlag Server" BZFlagServer
     File ..\..\..\misc\groups.conf
     File ..\..\..\misc\vars.txt
 
-    ; Add to the doc dir
-    SetOutPath $INSTDIR\doc
+    ; Add to the documentation dir
+    SetOutPath $INSTDIR\documentation
     File ..\..\..\bin_Release_${PLATFORM}\docs\bzfs.html
     File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
@@ -345,13 +347,13 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 1 shot).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (Simple Jump Teleport 3 shots).lnk" "$INSTDIR\bzfs.exe" "-p 5154 -j -t -ms 3 -s 32 +s 16 -h" "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HIX [Public] CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HiX 2.0 FFA).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -j -tkkr 80 -fb -ms 3 -s 32 +s 16 -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Server\Start Server (HiX 2.0 CTF).lnk" "$INSTDIR\bzfs.exe" '-p 5154 -c -j -fb -world misc\hix.bzw' "$INSTDIR\bzflag.exe" 0
 
-      SetOutPath $INSTDIR\doc
-      CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Doc"
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzfs [server] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzfs.html" "" "" 0
-      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Doc\bzw [maps] Manual Pages (HTML).lnk" "$INSTDIR\doc\bzw.html" "" "" 0
+      SetOutPath $INSTDIR\documentation
+      CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzfs [server] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzfs.html" "" "" 0
+      CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzw [maps] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzw.html" "" "" 0
   
     !insertmacro MUI_STARTMENU_WRITE_END
   SectionEnd
@@ -419,7 +421,7 @@ Section "Uninstall"
   
   ; remove files
   Delete $INSTDIR\*.*
-  Delete $INSTDIR\doc\*.*
+  Delete $INSTDIR\documentation\*.*
   Delete $INSTDIR\misc\*.*
   Delete $INSTDIR\data\*.*
   Delete $INSTDIR\data\fonts\*.*
@@ -436,7 +438,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\API"
   RMDir /r "$INSTDIR\data"
   RMDir "$INSTDIR\misc"
-  RMDir "$INSTDIR\doc"
+  RMDir "$INSTDIR\documentation"
   RMDir /r "$INSTDIR\licenses"
   RMDir "$INSTDIR"
   
@@ -445,9 +447,9 @@ Section "Uninstall"
   ;remove shortcuts, if any.    
   Delete "$SMPROGRAMS\$MUI_TEMP\*.*"
   Delete "$SMPROGRAMS\$MUI_TEMP\Server\*.*"
-  Delete "$SMPROGRAMS\$MUI_TEMP\Doc\*.*"
+  Delete "$SMPROGRAMS\$MUI_TEMP\Documentation\*.*"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Server"
-  RMDir "$SMPROGRAMS\$MUI_TEMP\Doc"
+  RMDir "$SMPROGRAMS\$MUI_TEMP\Documentation"
   RMDir "$SMPROGRAMS\$MUI_TEMP"
   
   ;Delete empty start menu parent diretories
