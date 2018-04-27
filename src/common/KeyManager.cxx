@@ -299,9 +299,9 @@ std::string		KeyManager::keyEventToString(
     name += "Ctrl+";
   if (key.shift & BzfKeyEvent::AltKey)
     name += "Alt+";
+  if (key.button != BzfKeyEvent::NoButton)
+    return name + buttonNames[key.button];
   switch (key.ascii) {
-    case 0:
-      return name + buttonNames[key.button];
     case '\b':
       return name + "Backspace";
     case '\t':
