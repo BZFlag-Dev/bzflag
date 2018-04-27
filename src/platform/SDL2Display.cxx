@@ -193,7 +193,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_0:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp0;
       key.ascii = '0';
     } else {
       key.button = BzfKeyEvent::Insert;
@@ -201,7 +201,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_1:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp1;
       key.ascii = '1';
     } else {
       key.button = BzfKeyEvent::End;
@@ -209,7 +209,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_2:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp2;
       key.ascii = '2';
     } else {
       key.button = BzfKeyEvent::Down;
@@ -217,7 +217,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_3:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp3;
       key.ascii = '3';
     } else {
       key.button = BzfKeyEvent::PageDown;
@@ -225,7 +225,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_4:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp4;
       key.ascii = '4';
     } else {
       key.button = BzfKeyEvent::Left;
@@ -233,7 +233,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_5:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp5;
       key.ascii = '5';
     } else {
       // When numlock is turned off, the keypad 5 key should do nothing
@@ -242,7 +242,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_6:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp6;
       key.ascii = '6';
     } else {
       key.button = BzfKeyEvent::Right;
@@ -250,7 +250,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_7:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp7;
       key.ascii = '7';
     } else {
       key.button = BzfKeyEvent::Home;
@@ -258,7 +258,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_8:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp8;
       key.ascii = '8';
     } else {
       key.button = BzfKeyEvent::Up;
@@ -266,7 +266,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_9:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp9;
       key.ascii = '9';
     } else {
       key.button = BzfKeyEvent::PageUp;
@@ -274,34 +274,34 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
     break;
   case SDLK_KP_PERIOD:
     if (mod & KMOD_NUM) {
-      key.button = BzfKeyEvent::NoButton;
+      key.button = BzfKeyEvent::Kp_Period;
       key.ascii = '.';
     } else {
       key.button = BzfKeyEvent::Delete;
     }
     break;
   case SDLK_KP_DIVIDE:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Divide;
     key.ascii = '/';
     break;
   case SDLK_KP_MULTIPLY:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Multiply;
     key.ascii = '*';
     break;
   case SDLK_KP_MINUS:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Minus;
     key.ascii = '-';
     break;
   case SDLK_KP_PLUS:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Plus;
     key.ascii = '+';
     break;
   case SDLK_KP_ENTER:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Enter;
     key.ascii = 13;
     break;
   case SDLK_KP_EQUALS:
-    key.button = BzfKeyEvent::NoButton;
+    key.button = BzfKeyEvent::Kp_Equals;
     key.ascii = '=';
     break;
   case SDLK_HELP:

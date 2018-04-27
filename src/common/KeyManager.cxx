@@ -250,11 +250,21 @@ std::string		KeyManager::get(const BzfKeyEvent& key,
 {
   const EventToCommandMap* map = press ? &pressEventToCommand :
     &releaseEventToCommand;
-  EventToCommandMap::const_iterator index = map->find(key);
-  if (index == map->end())
-    return "";
-  else
-    return index->second;
+  // If this key has both a button and an ascii value, search the hard way
+  if (key.ascii != '\0' && key.button != BzfKeyEvent::NoButton) {
+    for (EventToCommandMap::const_iterator index = map->begin(); index != map->end(); ++index) {
+      // If either the ascii or button match, return it
+      if ((index->first.ascii == key.ascii || index->first.button == key.button) && index->first.shift == key.shift)
+        return index->second;
+    }
+  } else {
+    // Otherwise just look for an exact match
+    EventToCommandMap::const_iterator index = map->find(key);
+    if (index != map->end())
+      return index->second;
+  }
+
+  return "";
 }
 
 
