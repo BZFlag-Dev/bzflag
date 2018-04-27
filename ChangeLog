@@ -4,6 +4,7 @@
 BZFlag 2.4.13
 -------------
 
+* Treat the number pad keys uniquely for key mapping - Scott Wichser
 * Better cpu selection for x86_64 - Alfredo Tupone
 * Fix build with enable-profile - Alfredo Tupone
 * Add safety check when getting flags (bzfs) - Alfredo Tupone
