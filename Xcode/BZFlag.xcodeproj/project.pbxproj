@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		03071FDC209507250067269F /* licenses in Resources */ = {isa = PBXBuildFile; fileRef = 03071FDB209507250067269F /* licenses */; };
 		030D159D1E496126006FDFA3 /* SimpleTextUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */; };
 		0315BEB51B821C5D00FC7CE0 /* bzfscron.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB01B821C5D00FC7CE0 /* bzfscron.cpp */; };
 		0315BEB61B821C5D00FC7CE0 /* CronJob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0315BEB11B821C5D00FC7CE0 /* CronJob.cpp */; };
@@ -1061,6 +1062,7 @@
 		0305D5FF166C9DAE00557FC4 /* WordFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordFilter.h; sourceTree = "<group>"; };
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
+		03071FDB209507250067269F /* licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = licenses; sourceTree = "<group>"; };
 		030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleTextUtils.cxx; path = ../tools/modeltool/SimpleTextUtils.cxx; sourceTree = "<group>"; };
 		030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleTextUtils.h; path = ../tools/modeltool/SimpleTextUtils.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
@@ -2327,6 +2329,7 @@
 				03D926DF166C67EF00DDDBEB /* BZFlag.icns */,
 				030DF52417424A4D00B3815C /* buildinfo.h */,
 				03C5E79716707857005A26C4 /* config.h */,
+				03071FDB209507250067269F /* licenses */,
 			);
 			name = Xcode;
 			sourceTree = "<group>";
@@ -4847,6 +4850,7 @@
 				036F58231DA2F8C300BF906C /* AUTHORS in Resources */,
 				036F58241DA2F8C800BF906C /* ChangeLog in Resources */,
 				036F58251DA2F8CC00BF906C /* COPYING in Resources */,
+				03071FDC209507250067269F /* licenses in Resources */,
 				036F58261DA2F8D400BF906C /* README in Resources */,
 				036F58271DA2F90900BF906C /* README.MacOSX in Resources */,
 			);
