@@ -63,6 +63,31 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
     firingInfo.shot.id = *shotID;
   }
 
+  bz_AllowServerShotFiredEventData_V1 allowEvent;
+  allowEvent.flagType = type->flagAbbv;
+  allowEvent.speed = shotSpeed;
+  for (int i = 0; i < 3; i++){
+    allowEvent.pos[i] = origin[i];
+    allowEvent.velocity[i] = firingInfo.shot.vel[i];
+  }
+  allowEvent.team = convertTeam(teamColor);
+
+  worldEventManager.callEvents(bz_eAllowServerShotFiredEvent, &allowEvent);
+
+  if (!allowEvent.allow) {
+    return INVALID_SHOT_GUID;
+  }
+
+  if (allowEvent.changed) {
+    FlagTypeMap &flagMap = FlagType::getFlagMap();
+
+    if (flagMap.find(allowEvent.flagType) == flagMap.end())
+      return INVALID_SHOT_GUID;
+
+    FlagType *flag = flagMap.find(allowEvent.flagType)->second;
+    firingInfo.flagType = flag;
+  }
+
   buf = firingInfo.pack(bufStart);
 
   broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
@@ -83,7 +108,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
 
   bz_ServerShotFiredEventData_V1 event;
   event.guid = shotGUID;
-  event.flagType = type->flagAbbv;
+  event.flagType = allowEvent.flagType;
   event.speed = shotSpeed;
   for (int i = 0; i < 3; i++){
     event.pos[i] = origin[i];

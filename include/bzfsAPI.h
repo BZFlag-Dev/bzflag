@@ -330,6 +330,7 @@ typedef enum
   bz_eUnmuteEvent,
   bz_eServerShotFiredEvent,
   bz_ePermissionModificationEvent,
+  bz_eAllowServerShotFiredEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -1022,6 +1023,27 @@ public:
   bz_ApiString type;
   int playerID;
   int shotID;
+};
+
+class BZF_API bz_AllowServerShotFiredEventData_V1 : public bz_EventData
+{
+public:
+  bz_AllowServerShotFiredEventData_V1() : bz_EventData(bz_eAllowServerShotFiredEvent)
+    , allow(true)
+    , changed(false)
+    , flagType("")
+    , team(eRogueTeam)
+  {
+    speed = pos[0] = pos[1] = pos[2] = velocity[0] = velocity[1] = velocity[2] = 0.0f;
+  }
+
+  bool allow;
+  bool changed;
+  bz_ApiString flagType;
+  float speed;
+  float pos[3];
+  float velocity[3];
+  bz_eTeamType team;
 };
 
 class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
