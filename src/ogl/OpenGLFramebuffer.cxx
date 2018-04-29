@@ -125,7 +125,7 @@ void OpenGLFramebuffer::freeContext(void* self)
   if(! ((OpenGLFramebuffer*)self)->contextActive)
     return;
 
-  ((OpenGLFramebuffer*)self)->initFramebuffer();
+  ((OpenGLFramebuffer*)self)->destroyFramebuffer();
   ((OpenGLFramebuffer*)self)->contextActive = false;
 }
 

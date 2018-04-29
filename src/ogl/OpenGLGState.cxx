@@ -1229,6 +1229,9 @@ void OpenGLGState::initContext()
   // initialize GL state
   initGLState();
 
+  // check GL extensions
+  initGLExtensions();
+
   // reset our idea of the state
   resetState();
 
@@ -1251,8 +1254,6 @@ void OpenGLGState::initContext()
   glLoadIdentity();
   glEnable(GL_SCISSOR_TEST);
   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-
-  initGLExtensions();
 }
 
 
@@ -1311,7 +1312,8 @@ bool OpenGLGState::initGLExtensions()
       glGetIntegerv(GL_MAX_SAMPLES, &sampleCount);
       maxSamples = sampleCount;
 
-      // make sure all the functions are good
+      // make sure all the functions are good (macOS should have them built-in)
+#ifndef __APPLE__
       if(glIsRenderbuffer == NULL ||
 	 glIsRenderbuffer == NULL ||
 	 glBindRenderbuffer == NULL ||
@@ -1334,6 +1336,7 @@ bool OpenGLGState::initGLExtensions()
 	 glBlitFramebuffer == NULL ||
 	 glGenerateMipmap == NULL)
 	maxSamples = 1;
+#endif
     }
   }
 
