@@ -2080,7 +2080,11 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     double duration = info.banEnd - TimeKeeper::getCurrent();
     if (duration < 365.0f * 24 * 3600) {
-      rejectionMessage += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+      long int timeArray[4];
+      TimeKeeper::convertTime(duration, timeArray);
+      std::string bantime = TimeKeeper::printTime(timeArray);
+      rejectionMessage += bantime;
+      rejectionMessage += " remaining";
     } else {
       rejectionMessage += "indefinite";
     }
@@ -5371,7 +5375,11 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
 	  double duration = hostInfo.banEnd - TimeKeeper::getCurrent();
 	  if (duration < 365.0f * 24 * 3600) {
-	    reason += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+            long int timeArray[4];
+            TimeKeeper::convertTime(duration, timeArray);
+            std::string bantime = TimeKeeper::printTime(timeArray);
+            reason += bantime;
+            reason += " remaining";
 	  } else {
 	    reason += "indefinite";
 	  }
