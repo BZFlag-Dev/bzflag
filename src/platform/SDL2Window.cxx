@@ -337,11 +337,11 @@ void SDLWindow::setVerticalSync(bool setting) {
 }
 
 void SDLWindow::setMinSize(int width, int height) {
+  min_width  = width;
+  min_height = height;
   if (!windowId)
     return;
   SDL_SetWindowMinimumSize (windowId, width, height);
-  min_width  = width;
-  min_height = height;
 }
 
 void SDLWindow::makeCurrent() {
