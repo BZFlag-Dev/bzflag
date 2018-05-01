@@ -5,11 +5,15 @@ BZFlag 2.4.13
 -------------
 
 * Add new bz_eAllowServerShotFiredEvent to the API - Vladimir Jimenez
-* Treat the number pad keys uniquely for key mapping - Scott Wichser
+* Fix antialiasing when starting the client windowed - Joshua Bodine
+* Update the Windows icon file to include larger icons - Scott Wichser
+* Treat the number pad keys uniquely for key mapping with SDL2 - Scott Wichser
 * Better cpu selection for x86_64 - Alfredo Tupone
 * Fix build with enable-profile - Alfredo Tupone
 * Add safety check when getting flags (bzfs) - Alfredo Tupone
 * Add min/../max to drawTime - Alfredo Tupone
+* Fix the -configdir option for the client - Scott Wichser
+* Upgrade Windows projects to Visual Studio 2017 - Scott Wichser, Jeff Myers
 * Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
 * Fix truncation warnings - Jeff Makey, Alfredo Tupone
 * Add new bz_ePermissionModificationEvent to the API - Vladimir Jimenez
