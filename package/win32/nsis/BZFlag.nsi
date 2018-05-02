@@ -7,12 +7,12 @@
 
   !define VER_MAJOR 2
   !define VER_MINOR 4
-  !define VER_REVISION 13
+  !define VER_REVISION 14
 
-  ;!define TYPE "release"
+  !define TYPE "release"
   ;!define TYPE "alpha"
   ;!define TYPE "beta"
-  !define TYPE "devel"
+  ;!define TYPE "devel"
   ;!define TYPE "RC"
 
   !define TYPE_REVISION "0"
