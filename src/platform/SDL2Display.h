@@ -39,7 +39,6 @@ class SDLDisplay : public BzfDisplay {
   void getWindowSize(int& width, int& height);
   bool hasGetKeyMode() {return true;};
   void getModState(bool &shift, bool &control, bool &alt);
-  void getMouse(int& x, int& y) const;
  private:
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};

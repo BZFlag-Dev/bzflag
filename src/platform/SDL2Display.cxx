@@ -16,9 +16,6 @@
 // System includes
 #include <vector>
 
-static int mx = 0;
-static int my = 0;
-
 SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
 {
   if (SDL_VideoInit(NULL) < 0) {
@@ -368,12 +365,6 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 }
 
 
-void SDLDisplay::getMouse(int &_x, int &_y) const {
-  _x = mx;
-  _y = my;
-}
-
-
 bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 {
   SDL_Keymod mode = SDL_GetModState();
@@ -385,10 +376,8 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
   case SDL_MOUSEMOTION:
     _event.type	= BzfEvent::MouseMove;
-    mx		 = event.motion.x;
-    my		 = event.motion.y;
-    _event.mouseMove.x = mx;
-    _event.mouseMove.y = my;
+    _event.mouseMove.x = event.motion.x;
+    _event.mouseMove.y = event.motion.y;
     break;
 
   case SDL_MOUSEWHEEL:

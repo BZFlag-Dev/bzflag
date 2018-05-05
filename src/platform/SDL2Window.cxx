@@ -86,7 +86,7 @@ void SDLWindow::warpMouse(int _x, int _y) {
 }
 
 void SDLWindow::getMouse(int& _x, int& _y) const {
-  const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getMouse(_x, _y);
+  SDL_GetMouseState(&_x, &_y);
 }
 
 void SDLWindow::setSize(int _width, int _height) {
