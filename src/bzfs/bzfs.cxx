@@ -3465,17 +3465,17 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
   buf = nboPackUByte(bufStart, playerIndex);
   buf = flag.pack(buf);
 
-  bz_FlagGrabbedEventData_V1	data;
+  broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+
+  playerData->flagHistory.add(flag.flag.type);
+
+  bz_FlagGrabbedEventData_V1 data;
   data.flagID = flag.getIndex();
   data.flagType = flag.flag.type->flagAbbv.c_str();
   memcpy(data.pos,fpos,sizeof(float)*3);
   data.playerID = playerIndex;
 
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
-
-  broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
-
-  playerData->flagHistory.add(flag.flag.type);
 }
 
 
