@@ -43,7 +43,7 @@ class SDLWindow : public BzfWindow {
   void  setSize(int width, int height);
   void  setTitle(const char * title);
   void  setPosition(int, int) {;};
-  void  setMinSize(int, int) {;};
+  void  setMinSize(int, int);
   void  setFullscreen(bool);
   void  iconify(void);
   void	disableConfineToMotionbox();
@@ -83,6 +83,8 @@ class SDLWindow : public BzfWindow {
   bool fullScreen;
   int  base_width;
   int  base_height;
+  int  min_width;
+  int  min_height;
 };
 
 #endif // BZF_SDL2WINDOW_H

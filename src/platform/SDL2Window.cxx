@@ -24,7 +24,7 @@ HWND SDLWindow::hwnd = NULL;
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
   : BzfWindow(_display), hasGamma(true), origGamma(-1.0f), lastGamma(1.0f),
   windowId(NULL), glContext(NULL), canGrabMouse(true), fullScreen(false),
-  base_width(640), base_height(480)
+  base_width(640), base_height(480), min_width(-1), min_height(-1)
 {
 }
 
@@ -216,6 +216,9 @@ bool SDLWindow::create(void) {
     return false;
   }
 
+  if (min_width >= 0)
+     setMinSize(min_width, min_height);
+
   makeContext();
   makeCurrent();
 
@@ -331,6 +334,14 @@ void SDLWindow::makeContext() {
 
 void SDLWindow::setVerticalSync(bool setting) {
   SDL_GL_SetSwapInterval(setting ? 1 : 0);
+}
+
+void SDLWindow::setMinSize(int width, int height) {
+  if (!windowId)
+    return;
+  SDL_SetWindowMinimumSize (windowId, width, height);
+  min_width  = width;
+  min_height = height;
 }
 
 void SDLWindow::makeCurrent() {
