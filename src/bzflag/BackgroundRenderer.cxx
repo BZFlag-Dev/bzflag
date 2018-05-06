@@ -1332,7 +1332,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
       }
       float outerAlpha = I;
 
-      glBegin(GL_QUAD_STRIP);
+      glBegin(GL_TRIANGLE_STRIP);
       {
 	for (j = 0; j <= receiverSlices; j++) {
 	  color[3] = innerAlpha;
@@ -1508,7 +1508,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
       outerColor[1] = I * baseColor[1];
       outerColor[2] = I * baseColor[2];
 
-      glBegin(GL_QUAD_STRIP);
+      glBegin(GL_TRIANGLE_STRIP);
       {
 	for (j = 0; j <= receiverSlices; j++) {
 	  glColor3fv(innerColor);

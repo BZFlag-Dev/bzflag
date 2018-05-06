@@ -87,7 +87,7 @@ inline void WaveGeometry::executeNoList() const
   glDisableClientState(GL_NORMAL_ARRAY);
   glVertexPointer(3, GL_FLOAT, 0, verts);
   glTexCoordPointer(2, GL_FLOAT, 0, txcds);
-  glDrawArrays(GL_QUAD_STRIP, 0, (flagChunks + 1) * 2);
+  glDrawArrays(GL_TRIANGLE_STRIP, 0, (flagChunks + 1) * 2);
   glEnableClientState(GL_NORMAL_ARRAY);
   return;
 }
@@ -448,7 +448,7 @@ void			FlagSceneNode::FlagRenderNode::render()
 
       // the pole
       const float topHeight = base + Height;
-      glBegin(GL_QUAD_STRIP);
+      glBegin(GL_TRIANGLE_STRIP);
       {
 	glVertex3f(-poleWidth, 0.0f, 0.0f);
 	glVertex3f(-poleWidth, 0.0f, topHeight);

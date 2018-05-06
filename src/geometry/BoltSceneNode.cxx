@@ -719,7 +719,7 @@ void			BoltSceneNode::BoltRenderNode::render()
     }
     else if (BZDBCache::blend) {
       // draw corona
-      glBegin(GL_QUAD_STRIP);
+      glBegin(GL_TRIANGLE_STRIP);
       myColor4fv(mainColor);  glVertex2fv(core[1]);
       myColor4fv(outerColor); glVertex2fv(corona[0]);
       myColor4fv(mainColor);  glVertex2fv(core[2]);
@@ -762,7 +762,7 @@ void			BoltSceneNode::BoltRenderNode::render()
       // draw corona
       myColor4fv(coronaColor);
       myStipple(coronaColor[3]);
-      glBegin(GL_QUAD_STRIP);
+      glBegin(GL_TRIANGLE_STRIP);
       glVertex2fv(core[1]);
       glVertex2fv(corona[0]);
       glVertex2fv(core[2]);

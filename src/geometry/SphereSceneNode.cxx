@@ -619,7 +619,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
       // one of the handy properties of a sphere.)
       if (highResolution) {
 	for (i = 0; i < SphereRes; i++) {
-	  glBegin(GL_QUAD_STRIP);
+	  glBegin(GL_TRIANGLE_STRIP);
 	  for (j = baseIndex; j < NumSlices; j++) {
 	    glNormal3fv(geom[NumSlices * i + j]);
 	    glVertex3fv(geom[NumSlices * i + j]);
@@ -638,7 +638,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
       }
       else {
 	for (i = 0; i < SphereLowRes; i++) {
-	  glBegin(GL_QUAD_STRIP);
+	  glBegin(GL_TRIANGLE_STRIP);
 	  for (j = baseIndex; j < SphereLowRes; j++) {
 	    glNormal3fv(lgeom[SphereLowRes * i + j]);
 	    glVertex3fv(lgeom[SphereLowRes * i + j]);
@@ -665,7 +665,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
       // draw without normals
       if (highResolution) {
 	for (i = 0; i < SphereRes; i++) {
-	  glBegin(GL_QUAD_STRIP);
+	  glBegin(GL_TRIANGLE_STRIP);
 	  for (j = baseIndex; j < NumSlices; j++) {
 	    glVertex3fv(geom[NumSlices * i + j]);
 	    glVertex3fv(geom[NumSlices * i + j + NumSlices]);
@@ -680,7 +680,7 @@ void			SphereBspSceneNode::SphereBspRenderNode::render()
       }
       else {
 	for (i = 0; i < SphereLowRes; i++) {
-	  glBegin(GL_QUAD_STRIP);
+	  glBegin(GL_TRIANGLE_STRIP);
 	  for (j = baseIndex; j < SphereLowRes; j++) {
 	    glVertex3fv(lgeom[SphereLowRes * i + j]);
 	    glVertex3fv(lgeom[SphereLowRes * i + j + SphereLowRes]);
