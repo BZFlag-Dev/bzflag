@@ -98,7 +98,11 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 
 bool SDLDisplay::peekEvent(BzfEvent& _event) const
 {
-  SDL_PumpEvents();
+  /* It get the event that is in the event queue, is not going to fill it if empty
+   * so it should be called after an SDL_PumpEvents (implicit or explicit)
+   * Actually the peekEvent is always called only if at least an event is already in the queue.
+   * SDL_PollEvent does the job
+   */
   SDL_Event event;
   if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT)
       <= 0) {
