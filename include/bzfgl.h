@@ -17,57 +17,11 @@
 
 #include "common.h"
 
-#ifdef __APPLE__
-#  include <OpenGL/OpenGL.h>
-#  include <OpenGL/gl.h>
-#  include <OpenGL/glu.h>
-#else
-#  include <GL/gl.h>
-#  include <GL/glu.h>
-#  ifdef _WIN32
-#    include "glext.h"
-#  else
-#    include <GL/glext.h>
-#  endif
-#endif
+#include <GL/glew.h>
 
 #ifndef GL_VERSION_1_1
 # error OpenGL version 1.1 functionality is required
 #endif
-
-
-#ifndef __APPLE__
-// GL_ARB_framebuffer_object functions
-extern PFNGLISRENDERBUFFERPROC glIsRenderbuffer;
-extern PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer;
-extern PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers;
-extern PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers;
-
-extern PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage;
-extern PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample;
-
-extern PFNGLGETRENDERBUFFERPARAMETERIVPROC glGetRenderbufferParameteriv;
-
-extern PFNGLISFRAMEBUFFERPROC glIsFramebuffer;
-extern PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer;
-extern PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers;
-extern PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers;
-
-extern PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus;
-
-extern PFNGLFRAMEBUFFERTEXTURE1DPROC glFramebufferTexture1D;
-extern PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D;
-extern PFNGLFRAMEBUFFERTEXTURE3DPROC glFramebufferTexture3D;
-extern PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer;
-
-extern PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer;
-
-extern PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC glGetFramebufferAttachmentParameteriv;
-
-extern PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer;
-
-extern PFNGLGENERATEMIPMAPPROC glGenerateMipmap;
-#endif // __APPLE__
 
 
 /* These will track glBegin/End pairs to make sure that they match */

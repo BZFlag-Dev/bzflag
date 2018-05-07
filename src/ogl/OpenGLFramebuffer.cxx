@@ -22,42 +22,6 @@
 // common headers
 #include "OpenGLGState.h"
 
-#ifndef __APPLE__
-// GL_ARB_framebuffer_object functions (these need to be loaded by the
-// platform's OpenGL context initialization code)
-PFNGLISRENDERBUFFERPROC glIsRenderbuffer = NULL;
-PFNGLBINDRENDERBUFFERPROC glBindRenderbuffer = NULL;
-PFNGLDELETERENDERBUFFERSPROC glDeleteRenderbuffers = NULL;
-PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers = NULL;
-
-PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage = NULL;
-PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample =
-  NULL;
-
-PFNGLGETRENDERBUFFERPARAMETERIVPROC glGetRenderbufferParameteriv = NULL;
-
-PFNGLISFRAMEBUFFERPROC glIsFramebuffer = NULL;
-PFNGLBINDFRAMEBUFFERPROC glBindFramebuffer = NULL;
-PFNGLDELETEFRAMEBUFFERSPROC glDeleteFramebuffers = NULL;
-PFNGLGENFRAMEBUFFERSPROC glGenFramebuffers = NULL;
-
-PFNGLCHECKFRAMEBUFFERSTATUSPROC glCheckFramebufferStatus = NULL;
-
-PFNGLFRAMEBUFFERTEXTURE1DPROC glFramebufferTexture1D = NULL;
-PFNGLFRAMEBUFFERTEXTURE2DPROC glFramebufferTexture2D = NULL;
-PFNGLFRAMEBUFFERTEXTURE3DPROC glFramebufferTexture3D = NULL;
-PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer = NULL;
-
-PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer = NULL;
-
-PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
-  glGetFramebufferAttachmentParameteriv = NULL;
-
-PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
-
-PFNGLGENERATEMIPMAPPROC glGenerateMipmap = NULL;
-#endif // __APPLE__
-
 void OpenGLFramebuffer::initFramebuffer() {
   glGenFramebuffers(1, &framebuffer);
   glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
