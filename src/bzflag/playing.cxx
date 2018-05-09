@@ -3347,6 +3347,12 @@ static void		addExplosions(SceneDatabase* scene)
 #ifdef ROBOT
 static void		handleMyTankKilled(int reason)
 {
+  // restore the sound, this happens when paused tank dies
+  if (savedVolume != -1) {
+    setSoundVolume(savedVolume);
+    savedVolume = -1;
+  }
+
   // blow me up
   myTank->explodeTank();
   if (reason == GotRunOver)
