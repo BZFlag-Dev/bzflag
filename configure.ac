@@ -1,6 +1,6 @@
 dnl                   C O N F I G U R E . A C
 dnl BZFlag
-dnl Copyright (c) 1993-2017 Tim Riker
+dnl Copyright (c) 1993-2018 Tim Riker
 dnl
 dnl This package is free software;  you can redistribute it and/or
 dnl modify it under the terms of the license found in the file
@@ -125,7 +125,11 @@ dnl ***********************
 BZ_CONFIGURE_STAGE([arguments], [1 of 9])
 
 # provide a with-curses option, test for curses
-MP_WITH_CURSES
+PKG_CHECK_MODULES(ncurses, ncurses,
+  [CURSES_LIB="$ncurses_LIBS"]
+  AC_DEFINE(HAVE_NCURSES_H, , [Use the header file ncurses.h]),
+  AC_MSG_ERROR([Could not find ncurses]))
+AC_SUBST(CURSES_LIB)
 
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
@@ -735,11 +739,15 @@ case $host_os in
 	       else
 		 FLAGS=-march
 	       fi
+	       if expr `$CC -dumpversion` \>= "4.2" > /dev/null ; then
+		 FLAGS="$FLAGS=native"
+	       else
 	       # silly hack, should be a proper configure compiler option test
 	       if test x$host_cpu = xx86_64; then
 		 FLAGS="$FLAGS=k8"
 	       else
 		 FLAGS="$FLAGS=$host_cpu"
+	       fi
 	       fi
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
@@ -784,6 +792,10 @@ if test x$enable_profiling = xyes ; then
     if test "$GCC" = yes ; then
 	CONF_CFLAGS="$CONF_CFLAGS -pg"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
+	if expr `$CC -dumpversion` \>= "6" > /dev/null ; then
+           CONF_CFLAGS="$CONF_CFLAGS -no-pie"
+           CONF_CXXFLAGS="$CONF_CXXFLAGS -no-pie"
+        fi
     else
 	AC_MSG_WARN([profiling is disabled with non-GNU compiler])
     fi
@@ -1014,6 +1026,7 @@ AC_CONFIG_FILES([
 	MSVC/build/Makefile
 	Xcode/Makefile
 	Xcode/BZFlag.xcodeproj/Makefile
+	Xcode/licenses/Makefile
 	Makefile
 	bzflag.spec
 	data/Makefile

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -522,7 +522,6 @@ static void parseConfigName(int argc, char** argv)
     if (strcmp(argv[i], "-configdir") == 0) {
       checkArgc(i, argc, argv[i]);
       setCustomConfigDir(argv[i]);
-      alternateConfig += argv[i];
     }
   }
   for (int i = 1; i < argc; i++) {
@@ -707,8 +706,6 @@ int			main(int argc, char** argv)
     exit(0);
   }
 
-  createCacheSignature();
-
   // initialize global objects and classes
   bzfsrand((unsigned int)time(0));
 
@@ -756,6 +753,9 @@ int			main(int argc, char** argv)
       updateConfigFile();
     }
   }
+
+  // Create the cache signature
+  createCacheSignature();
 
   if (startupInfo.hasConfiguration)
     ActionBinding::instance().getFromBindings();
@@ -1111,6 +1111,8 @@ int			main(int argc, char** argv)
   // enable vsync if needed
   pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
 
+  // Make sure the window is created
+  pmainWindow->getWindow()->callResizeCallbacks();
   // initialize graphics state
   pmainWindow->getWindow()->makeCurrent();
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

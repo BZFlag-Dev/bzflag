@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -51,17 +51,19 @@ static bool compareUsedDate(const CacheManager::CacheRecord& a,
 CacheManager CACHEMGR;
 
 
-CacheManager::CacheManager()
+CacheManager::CacheManager() : indexName("CacheIndex.txt")
 {
-  indexName = getCacheDirName();
-  indexName += "CacheIndex.txt";
-  return;
 }
 
 
 CacheManager::~CacheManager()
 {
-  return;
+}
+
+
+std::string CacheManager::getIndexPath()
+{
+  return getCacheDirName() + indexName;
 }
 
 
@@ -164,7 +166,7 @@ bool CacheManager::loadIndex()
 {
   records.clear();
 
-  FILE* file = fopen(indexName.c_str(), "r");
+  FILE* file = fopen(getIndexPath().c_str(), "r");
   if (file == NULL) {
     return false;
   }
@@ -209,7 +211,8 @@ bool CacheManager::saveIndex()
 {
   std::sort(records.begin(), records.end(), compareUsedDate);
 
-  std::string tmpIndexName = indexName + ".tmp";
+  std::string indexPath = getIndexPath();
+  std::string tmpIndexName = indexPath + ".tmp";
 
   FILE* file = fopen(tmpIndexName.c_str(), "w");
   if (file == NULL) {
@@ -234,10 +237,10 @@ bool CacheManager::saveIndex()
   // Windows sucks yet again. You can't rename a file to a file that
   // already exists, you have to remove the existing file first. No
   // atomic transactions.
-  remove(indexName.c_str());
+  remove(indexPath.c_str());
 #endif
 
-  return (rename(tmpIndexName.c_str(), indexName.c_str()) == 0);
+  return (rename(tmpIndexName.c_str(), indexPath.c_str()) == 0);
 }
 
 

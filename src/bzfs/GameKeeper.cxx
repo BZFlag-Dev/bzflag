@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -369,6 +369,25 @@ void GameKeeper::Player::setMaxShots(int _maxShots)
   maxShots = _maxShots;
 }
 
+float GetShotLifetime(FlagType* flagType)
+{
+	float lifeTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME));
+	if (flagType == Flags::RapidFire)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
+	else if (flagType == Flags::MachineGun)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
+	else if (flagType == Flags::GuidedMissile)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE) + .01f;
+	else if (flagType == Flags::Laser)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+	else if (flagType == Flags::ShockWave)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
+	else if (flagType == Flags::Thief)
+		lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+
+	return lifeTime;
+}
+
 bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 {
   float now((float)TimeKeeper::getCurrent().getSeconds());
@@ -387,19 +406,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
   shotsInfo.resize(maxShots);
 
-  float lifeTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME));
-  if (firingInfo.flagType == Flags::RapidFire)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
-  else if (firingInfo.flagType == Flags::MachineGun)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
-  else if (firingInfo.flagType == Flags::GuidedMissile)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE) + .01f;
-  else if (firingInfo.flagType == Flags::Laser)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
-  else if (firingInfo.flagType == Flags::ShockWave)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
-  else if (firingInfo.flagType == Flags::Thief)
-    lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+  float lifeTime = GetShotLifetime(firingInfo.flagType);
 
   ShotInfo myShot;
   myShot.firingInfo  = firingInfo;

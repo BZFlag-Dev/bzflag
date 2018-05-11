@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -126,7 +126,7 @@ typedef struct {
   char callSign[CallSignLen];	// player's callsign
   char motto[MottoLen];		// player's motto
   char ServerVersion[8];	// BZFS protocol version
-  char appVersion[MessageLen];	// BZFS application version
+  char appVersion[MessageLen - 14];	// BZFS application version
   char realHash[64];		// hash of worldDatabase
   char worldSettings[4 + WorldSettingsSize]; // the game settings
   char *flags;			// a list of the flags types

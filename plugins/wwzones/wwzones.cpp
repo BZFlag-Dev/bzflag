@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -210,7 +210,9 @@ void WWZEventHandler::Event (bz_EventData *eventData)
       for (unsigned int i = 0; i < zoneList.size(); i++) {
 	if (zoneList[i].pointInZone(player->lastKnownState.pos) && player->spawned) {
 	  if (wasHere(i, player->playerID) && OKToFire(i, player->playerID) && !zoneList[i].zoneWeaponFired) {
-	    bz_fireWorldWep(zoneList[i].zoneWeapon.c_str(), zoneList[i].zoneWeaponLifetime, BZ_SERVER, zoneList[i].zoneWeaponPosition, zoneList[i].zoneWeaponTilt, zoneList[i].zoneWeaponDirection, zoneList[i].zoneWeaponShotID, 0);
+	    float vector[3];
+	    bz_vectorFromRotations(zoneList[i].zoneWeaponTilt, zoneList[i].zoneWeaponDirection, vector);
+	    bz_fireServerShot(zoneList[i].zoneWeapon.c_str(), zoneList[i].zoneWeaponPosition, vector);
 	    zoneList[i].zoneWeaponFired = true;
 	    zoneList[i].zoneWeaponLastFired = bz_getCurrentTime();
 	  } else {

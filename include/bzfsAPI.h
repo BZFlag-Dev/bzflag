@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -41,6 +41,18 @@
 #else
 #define BZF_API
 #define BZF_PLUGIN_CALL extern "C"
+#endif
+
+/* Provide a means to deprecate API functions to discourage their use
+ * in the future
+ */
+#ifdef __GNUC__
+#  define DEPRECATED __attribute__((deprecated))
+#elif defined(_MSC_VER)
+#  define DEPRECATED __declspec(deprecated)
+#else
+#  pragma message("WARNING: You need to implement DEPRECATED for this compiler")
+#  define DEPRECATED
 #endif
 
 class bz_Plugin;
@@ -316,6 +328,9 @@ typedef enum
   bz_eAutoPilotEvent,
   bz_eMuteEvent,
   bz_eUnmuteEvent,
+  bz_eServerShotFiredEvent,
+  bz_ePermissionModificationEvent,
+  bz_eAllowServerShotFiredEvent,
   bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -369,6 +384,7 @@ typedef enum
 #define bz_perm_setPerms		"setPerms"
 #define bz_perm_setVar			"setVar"
 #define bz_perm_showAdmin		"showAdmin"
+#define bz_perm_showMotto		"showMotto"
 #define bz_perm_showOthers		"showOthers"
 #define bz_perm_shortBan		"shortBan"
 #define bz_perm_shutdownServer		"shutdownServer"
@@ -405,6 +421,7 @@ typedef enum
 #define BZ_ALLUSERS		-1
 #define BZ_NULLUSER		-3
 
+#define BZ_PUBLICCHAT		254
 #define BZ_ADMINCHAT		252
 #define BZ_ROGUECHAT		251
 #define BZ_REDCHAT		250
@@ -415,6 +432,7 @@ typedef enum
 #define BZ_RABBITCHAT		245
 #define BZ_HUNTERCHAT		244
 
+#define BZ_SERVERPLAYER		253
 #define BZ_LASTREALPLAYER	243
 
 #define BZ_BZDBPERM_NA		0
@@ -1007,6 +1025,46 @@ public:
   int shotID;
 };
 
+class BZF_API bz_AllowServerShotFiredEventData_V1 : public bz_EventData
+{
+public:
+  bz_AllowServerShotFiredEventData_V1() : bz_EventData(bz_eAllowServerShotFiredEvent)
+    , allow(true)
+    , changed(false)
+    , flagType("")
+    , team(eRogueTeam)
+  {
+    speed = pos[0] = pos[1] = pos[2] = velocity[0] = velocity[1] = velocity[2] = 0.0f;
+  }
+
+  bool allow;
+  bool changed;
+  bz_ApiString flagType;
+  float speed;
+  float pos[3];
+  float velocity[3];
+  bz_eTeamType team;
+};
+
+class BZF_API bz_ServerShotFiredEventData_V1 : public bz_EventData
+{
+public:
+  bz_ServerShotFiredEventData_V1() : bz_EventData(bz_eServerShotFiredEvent)
+    , guid(0)
+    , speed(0)
+    , team(eRogueTeam)
+  {
+    pos[0] = pos[1] = pos[2] = velocity[0] = velocity[1] = velocity[2] = 0.0f;
+  }
+
+  uint32_t guid;
+  bz_ApiString flagType;
+  float speed;
+  float pos[3];
+  float velocity[3];
+  bz_eTeamType team;
+};
+
 class BZF_API bz_PlayerUpdateEventData_V1 : public bz_EventData
 {
 public:
@@ -1373,6 +1431,22 @@ public:
   int muterID;
 };
 
+class BZF_API bz_PermissionModificationData_V1 : public bz_EventData
+{
+public:
+  bz_PermissionModificationData_V1() : bz_EventData(bz_ePermissionModificationEvent)
+    , playerID(-1)
+    , perm("")
+    , granted(false)
+    , customPerm(false)
+  {}
+
+  int playerID;
+  const char* perm;
+  bool granted;
+  bool customPerm;
+};
+
 // logging
 BZF_API void bz_debugMessage ( int debugLevel, const char* message );
 BZF_API void bz_debugMessagef( int debugLevel, const char* fmt, ... );
@@ -1608,16 +1682,33 @@ BZF_API bool bz_sendTextMessagef(int from, bz_eTeamType to, const char* fmt, ...
 BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
+// will be removed in next breaking version after 2.4.x
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
 
-BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
-BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value);
-BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name);
+// new server shot API
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
+
+// will be removed in next breaking version after 2.4.x
+/*DEPRECATED*/ BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
+/*DEPRECATED*/ BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value);
+/*DEPRECATED*/ BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name);
+
+// new shot metadata API
+BZF_API void bz_setShotMetaData (const uint32_t shotGUID, const char* name, uint32_t value);
+BZF_API void bz_setShotMetaData (const uint32_t shotGUID, const char* name, const char* value);
+BZF_API bool bz_shotHasMetaData (const uint32_t shotGUID, const char* name);
+
+BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name);
+BZF_API const char* bz_getShotMetaDataS(const uint32_t shotGUID, const char* name);
 
 BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID);
+
+// geometry utils
+BZF_API bool bz_vectorFromPoints(const float p1[3], const float p2[3], float outVec[3]);
+BZF_API bool bz_vectorFromRotations(const float tilt, const float rotation, float outVec[3]);
 
 typedef struct {
   int year;
@@ -1644,10 +1735,18 @@ BZF_API bool bz_getBZDBItemPesistent( const char* variable );
 BZF_API bool bz_BZDBItemExists( const char* variable );
 BZF_API bool bz_BZDBItemHasValue( const char* variable );
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms = 0, bool persistent = false );
-BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms = 0, bool persistent = false );
+BZF_API bool bz_registerCustomBZDBDouble(const char* variable, double val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBString(const char* variable, const char *val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
+BZF_API bool bz_registerCustomBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
+
+BZF_API bool bz_removeCustomBZDBVariable(const char* variable);
+
+// remove in next breaking version after 2.4.x; superseded by bz_registerCustomBZDB*()
+/*DEPRECATED*/ BZF_API bool bz_setBZDBDouble(const char* variable, double val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBString(const char* variable, const char *val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
 
 BZF_API bool bz_setDefaultBZDBDouble(const char* variable, double val);
 BZF_API bool bz_setDefaultBZDBString(const char* variable, const char* val);
@@ -1763,7 +1862,7 @@ BZF_API bool bz_removePlayerFlag ( int playerID );
 BZF_API void bz_resetFlags ( bool onlyUnused, bool keepTeamFlags = false );
 
 BZF_API unsigned int bz_getNumFlags( void );
-BZF_API const bz_ApiString bz_getName( int flag );
+/*DEPRECATED*/ BZF_API const bz_ApiString bz_getName( int flag );
 BZF_API const bz_ApiString bz_getFlagName( int flag );
 BZF_API bool bz_resetFlag ( int flag );
 BZF_API bool bz_moveFlag ( int flag, float pos[3] );

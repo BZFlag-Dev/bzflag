@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -248,7 +248,7 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
   else {
     // draw beam
     myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
-    glBegin(GL_QUAD_STRIP);
+    glBegin(GL_TRIANGLE_STRIP);
     {
       glVertex3f(  0.0f, geom[0][0], geom[0][1]);
       glVertex3f(   len, geom[0][0], geom[0][1]);

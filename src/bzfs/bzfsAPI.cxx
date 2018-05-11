@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1017,7 +1017,7 @@ BZF_API bool bz_hasPerm ( int playerID, const char* perm )
     return player->accessInfo.hasCustomPerm(permName.c_str());
 }
 
-BZF_API bool bz_grantPerm ( int playerID, const char* perm )
+bool bz_modifyPerm(int playerID, const char* perm, bool grant)
 {
   if (!perm)
     return false;
@@ -1031,38 +1031,40 @@ BZF_API bool bz_grantPerm ( int playerID, const char* perm )
 
   permName = TextUtils::toupper(permName);
 
-  PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
+  PlayerAccessInfo::AccessPerm realPerm = permFromName(permName);
 
-  if (realPerm == PlayerAccessInfo::lastPerm)
-    player->accessInfo.grantCustomPerm(permName.c_str());
-  else
-    player->accessInfo.grantPerm(realPerm);
+  bz_PermissionModificationData_V1 data;
+  data.playerID = playerID;
+  data.perm = permName.c_str();
+  data.granted = grant;
+  data.customPerm = realPerm == PlayerAccessInfo::lastPerm;
+
+  if (grant) {
+    if (data.customPerm)
+      player->accessInfo.grantCustomPerm(permName.c_str());
+    else
+      player->accessInfo.grantPerm(realPerm);
+  }
+  else {
+    if (data.customPerm)
+      player->accessInfo.revokeCustomPerm(permName.c_str());
+    else
+      player->accessInfo.revokePerm(realPerm);
+  }
+
+  worldEventManager.callEvents(bz_ePermissionModificationEvent, &data);
 
   return true;
 }
 
+BZF_API bool bz_grantPerm ( int playerID, const char* perm )
+{
+  return bz_modifyPerm(playerID, perm, true);
+}
+
 BZF_API bool bz_revokePerm ( int playerID, const char* perm )
 {
-  if (!perm)
-    return false;
-
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-
-  if (!player)
-    return false;
-
-  std::string permName = perm;
-
-  permName = TextUtils::toupper(permName);
-
-  PlayerAccessInfo::AccessPerm realPerm =  permFromName(permName);
-
-  if (realPerm == PlayerAccessInfo::lastPerm)
-    player->accessInfo.revokeCustomPerm(permName.c_str());
-  else
-    player->accessInfo.revokePerm(realPerm);
-
-  return true;
+  return bz_modifyPerm(playerID, perm, false);
 }
 
 BZF_API bz_APIIntList *bz_getPlayerIndexList(void)
@@ -1737,131 +1739,170 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
   return true;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam )
+// old API, many arguments get ingored.
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  if (!pos || !flagType)
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
-    return false;
-
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  PlayerId player;
-  if ( fromPlayer == BZ_SERVER )
-    player = ServerPlayer;
-  else
-    player = fromPlayer;
-
-  int realShotID = shotID;
-  if ( realShotID == 0)
-    realShotID = world->getWorldWeapons().getNewWorldShotID();
-
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction,-1,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+  return bz_fireServerShot(flagType, pos, v, shotTeam, -1) > 0;
 }
 
-BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam )
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  if (!pos || !flagType)
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
     return false;
 
-  FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
-    return false;
-
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
-
-  PlayerId player;
-  if ( fromPlayer == BZ_SERVER )
-    player = ServerPlayer;
-  else
-    player = fromPlayer;
-
-  int realShotID = world->getWorldWeapons().getNewWorldShotID(player);
-
-  if (shotID != NULL)
-    *shotID = realShotID;
-
-  return fireWorldWep(flag,lifetime,player,pos,tilt,direction, speed,realShotID,dt,(TeamColor)convertTeam(shotTeam)) == realShotID;
+  *shotID = (int)bz_fireServerShot(flagType, pos, v, shotTeam, -1);
+  return true;
 }
 
-BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam )
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  return bz_fireWorldWep(flagType, lifetime, fromPlayer, pos, tilt, direction, -1, shotID, dt, shotTeam );
+  float v[3] = { 0,0,0 };
+  if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
+    return false;
+
+  *shotID = (int)bz_fireServerShot(flagType, pos, v, shotTeam,-1);
+  return true;
 }
 
-BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam)
+BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction, float UNUSED(dt), bz_eTeamType shotTeam)
 {
-  const char* flagType = "GM";
+  float v[3] = { 0,0,0 };
+  if (!pos || !bz_vectorFromRotations(tilt, direction, v))
+    return -1;
 
-  if (!pos || !flagType)
-    return false;
+  return (int)bz_fireServerShot("GM", pos, v, shotTeam, targetPlayerID);
+}
 
+// new API, much cleaner
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
+{
+  if (!shotType || !origin)
+    return INVALID_SHOT_GUID;
+
+  std::string flagType = shotType;
   FlagTypeMap &flagMap = FlagType::getFlagMap();
-  if (flagMap.find(std::string(flagType)) == flagMap.end())
-    return false;
 
-  FlagType *flag = flagMap.find(std::string(flagType))->second;
+  if (flagMap.find(flagType) == flagMap.end())
+    return INVALID_SHOT_GUID;
 
-  PlayerId player = ServerPlayer;
+  FlagType *flag = flagMap.find(flagType)->second;
 
-  int shotID =  world->getWorldWeapons().getNewWorldShotID();
-
-  fireWorldGM(flag,targetPlayerID, lifetime,player,pos,tilt,direction,
-    shotID, dt, (TeamColor)convertTeam(shotTeam));
-
-  return shotID;
+  return world->getWorldWeapons().fireShot(flag, origin, vector, nullptr, (TeamColor)convertTeam(color), targetPlayerId);
 }
 
 BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name)
 {
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
 
-  if (shotGUId == 0 || name == NULL)
-    return 0;
-
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
-
-  std::string n = name;
-  if (shot->MetaData.find(n) == shot->MetaData.end())
-    return 0;
-
-  return shot->MetaData[n];
+  return bz_getShotMetaDataI(guid, name);
 }
 
 BZF_API void bz_setShotMetaData (int fromPlayer, int shotID, const char* name, uint32_t value)
 {
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
 
-  if (shotGUId == 0 || name == NULL)
-    return;
-
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
-
-  std::string n = name;
-  shot->MetaData[n] = value;
+  bz_setShotMetaData(guid, name, value);
 }
 
 BZF_API bool bz_shotHasMetaData (int fromPlayer, int shotID, const char* name)
 {
-  uint32_t shotGUId = ShotManager.FindShotGUID(fromPlayer,shotID);
+  uint32_t guid = bz_getShotGUID(fromPlayer, shotID);
 
-  if (shotGUId == 0 || name == NULL)
+  return bz_shotHasMetaData(guid, name);
+}
+
+// math helpers
+BZF_API bool bz_vectorFromPoints(const float p1[3], const float p2[3], float outVec[3])
+{
+  float t = 0;
+  for (int i = 0; i < 3; i++)
+    t += pow(p1[i] - p2[i], 2);
+
+  if (abs(t) < 0.00001)
     return false;
 
-  Shots::ShotRef shot = ShotManager.FindShot(shotGUId);
+  float dist = sqrt(t);
 
-  std::string n = name;
-  if (shot->MetaData.find(n) == shot->MetaData.end())
-    return false;
+  for (int i = 0; i < 3; i++)
+    outVec[i] = (p1[i] - p2[i]) / dist;
 
   return true;
 }
 
+BZF_API bool bz_vectorFromRotations(const float tilt, const float rotation, float outVec[3])
+{
+  const float tiltFactor = cosf(tilt);
+
+  outVec[0] = tiltFactor * cosf(rotation);
+  outVec[1] = tiltFactor * sinf(rotation);
+  outVec[2] = sinf(tilt);
+
+  return true;
+}
+
+// shot meta data
+BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, uint32_t value)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return;
+
+  shot->SetMetaData(std::string(name), value);
+}
+
+BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return;
+
+  std::string v;
+  if (value != nullptr)
+    v = value;
+
+  shot->SetMetaData(std::string(name), v.c_str());
+}
+
+BZF_API bool bz_shotHasMetaData(const uint32_t shotGUID, const char* name)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return false;
+
+  return shot->HasMetaData(std::string(name));
+}
+
+BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return 0;
+
+  return shot->GetMetaDataI(std::string(name));
+}
+
+BZF_API const char* bz_getShotMetaDataS(const uint32_t shotGUID, const char* name)
+{
+  Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+  if (shot == nullptr || name == nullptr)
+    return nullptr;
+
+  return shot->GetMetaDataS(std::string(name));
+}
+
 BZF_API uint32_t bz_getShotGUID (int fromPlayer, int shotID)
 {
-  return ShotManager.FindShotGUID(fromPlayer,shotID);
+  int shotOwnerID = fromPlayer;
+
+  if (shotOwnerID == BZ_SERVER)
+    shotOwnerID = ServerPlayer;
+
+  return ShotManager.FindShotGUID(shotOwnerID, shotID);
 }
 
 // time API
@@ -1961,76 +2002,101 @@ BZF_API bool bz_BZDBItemHasValue( const char* variable )
   return BZDB.isSet(std::string(variable)) && BZDB.get(std::string(variable)).size() > 0;
 }
 
-
-void setVarPerms ( const char* variable, int perms, bool persistent)
+void setVarPerms(const std::string variable, int perms, bool persistent)
 {
   if (perms != BZ_BZDBPERM_NA)
   {
     switch (perms) {
       case BZ_BZDBPERM_USER:
-	BZDB.setPermission(std::string(variable),StateDatabase::ReadWrite);
-	break;
+        BZDB.setPermission(variable, StateDatabase::ReadWrite);
+        break;
+
       case BZ_BZDBPERM_SERVER:
-	BZDB.setPermission(std::string(variable),StateDatabase::Locked);
-	break;
+        BZDB.setPermission(variable, StateDatabase::Locked);
+        break;
+
       default:
-	BZDB.setPermission(std::string(variable),StateDatabase::ReadOnly);
-	break;
+        BZDB.setPermission(variable, StateDatabase::ReadOnly);
+        break;
     }
   }
-  BZDB.setPersistent(std::string(variable),persistent);
+
+  BZDB.setPersistent(variable, persistent);
 }
 
-BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
+bool registerVar(const std::string variable, const std::string value, int perms, bool persistent)
+{
+  bool canRegister = !BZDB.isSet(variable);
+
+  if (canRegister) {
+    BZDB.set(variable, value);
+    BZDB.setDefault(variable, value);
+
+    setVarPerms(variable, perms, persistent);
+  }
+
+  return canRegister;
+}
+
+BZF_API bool bz_registerCustomBZDBDouble(const char* variable, double val, int perms, bool persistent)
 {
   if (!variable)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),TextUtils::format("%f",val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+  return registerVar(variable, TextUtils::format("%f", val), perms, persistent);
 }
 
-BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
+BZF_API bool bz_registerCustomBZDBString(const char* variable, const char *val, int perms, bool persistent)
 {
   if (!variable || !val)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),std::string(val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+  return registerVar(variable, val, perms, persistent);
 }
 
-BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
+BZF_API bool bz_registerCustomBZDBInt(const char* variable, int val, int perms, bool persistent)
 {
   if (!variable)
     return false;
 
-  bool exists = BZDB.isSet(std::string(variable));
+  return registerVar(variable, TextUtils::format("%d",val), perms, persistent);
+}
 
-  BZDB.set(std::string(variable),TextUtils::format("%d",val));
-  setVarPerms(variable,perms,persistent);
+BZF_API bool bz_registerCustomBZDBBool(const char* variable, bool val, int perms, bool persistent)
+{
+  return bz_registerCustomBZDBInt(variable, (int)val, perms, persistent);
+}
 
-  return !exists;
+BZF_API bool bz_removeCustomBZDBVariable(const char* variable)
+{
+  std::string var = variable;
+
+  if (!variable || !BZDB.isSet(var))
+    return false;
+
+  BZDB.unset(var);
+
+  return true;
+}
+
+BZF_API bool bz_setBZDBDouble ( const char* variable, double val, int perms, bool persistent)
+{
+  return bz_registerCustomBZDBDouble(variable, val, perms, persistent);
+}
+
+BZF_API bool bz_setBZDBString( const char* variable, const char *val, int perms, bool persistent )
+{
+  return bz_registerCustomBZDBString(variable, val, perms, persistent);
 }
 
 BZF_API bool bz_setBZDBInt( const char* variable, int val, int perms, bool persistent )
 {
-  if (!variable)
-    return false;
+  return bz_registerCustomBZDBInt(variable, val, perms, persistent);
+}
 
-  bool exists = BZDB.isSet(std::string(variable));
-
-  BZDB.set(std::string(variable),TextUtils::format("%d",val));
-  setVarPerms(variable,perms,persistent);
-
-  return !exists;
+BZF_API bool bz_setBZDBBool( const char* variable, bool val, int perms, bool persistent )
+{
+  return bz_registerCustomBZDBBool(variable, val, perms, persistent);
 }
 
 //-------------------------------------------------------------------------
@@ -2776,16 +2842,16 @@ BZF_API unsigned int bz_getNumFlags( void )
 
 BZF_API const bz_ApiString bz_getName( int flag )
 {
+  return bz_getFlagName(flag);
+}
+
+BZF_API const bz_ApiString bz_getFlagName( int flag )
+{
   FlagInfo *pFlag = FlagInfo::get(flag);
   if (!pFlag)
     return bz_ApiString("");
 
   return bz_ApiString(pFlag->flag.type->flagAbbv);
-}
-
-BZF_API const bz_ApiString bz_getFlagName( int flag )
-{
-	return bz_getName(flag);
 }
 
 BZF_API bool bz_resetFlag ( int flag )
@@ -4095,7 +4161,8 @@ BZF_API const char* bz_join(bz_APIStringList* list, const char* delimiter)
   if (!delimiter)
     delimiter = "";
 
-  std::string joined = "";
+  static std::string joined;
+  joined = "";
 
   for (unsigned int i = 0; i < list->size(); i++) {
     joined += list->get(i);

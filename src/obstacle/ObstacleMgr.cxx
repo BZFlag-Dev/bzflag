@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -19,6 +19,7 @@
 // system headers
 #include <string.h>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -538,9 +539,9 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
     newName = "/";
     newName += group->getGroupDef();
     newName += "/";
-    char buffer[8];
-    sprintf (buffer, "%i", count);
-    newName += buffer;
+	std::stringstream buffer;
+	buffer << count;
+    newName += buffer.str();
   }
   depthName += newName;
   depthName += ":";

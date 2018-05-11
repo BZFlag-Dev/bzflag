@@ -1,4 +1,6 @@
-SUBDIRS = BZFlag.xcodeproj
+SUBDIRS = \
+	BZFlag.xcodeproj \
+	licenses
 
 EXTRA_DIST =	\
 	BZFlag.icns \

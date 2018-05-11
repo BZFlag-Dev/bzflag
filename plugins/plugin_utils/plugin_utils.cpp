@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -524,6 +524,7 @@ const std::vector<std::string> bzu_standardPerms (void)
     perms.push_back("setPerms");
     perms.push_back("setVar");
     perms.push_back("showAdmin");
+    perms.push_back("showMotto");
     perms.push_back("showOthers");
     perms.push_back("shortBan");
     perms.push_back("shutdownServer");

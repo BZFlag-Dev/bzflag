@@ -1,5 +1,5 @@
 .\" bzflag
-.\" Copyright (c) 1993-2017 Tim Riker
+.\" Copyright (c) 1993-2018 Tim Riker
 .\"
 .\" This package is free software;  you can redistribute it and/or
 .\" modify it under the terms of the license found in the file
@@ -1110,9 +1110,9 @@ cheaters and abuse.
 The server will automatically create three groups: EVERYONE, VERIFIED,
 and LOCAL.ADMIN.  EVERYONE  has  ACTIONMESSAGE, ADMINMESSAGESEND,
 CLIENTQUERY, DATE, FLAGHISTORY, IDLESTATS, LAGSTATS, PRIVATEMESSAGE,
-SPAWN and TALK by default. VERIFIED has LISTPLUGINS, POLL, POLLKICK,
-POLLBAN, POLLKICK, POLLSET, POLLFLAGRESET, REPORT and VOTE. The
-LOCAL.ADMIN group has almost every permission possible (similar to
+SHOWMOTTO, SPAWN and TALK by default. VERIFIED has LISTPLUGINS, POLL,
+POLLKICK, POLLBAN, POLLKICK, POLLSET, POLLFLAGRESET, REPORT and VOTE.
+The LOCAL.ADMIN group has almost every permission possible (similar to
 granting admin powers via /password).
 
 Once the server is running, users can register their callsigns and
@@ -1295,6 +1295,8 @@ SETVAR	/set /reset
 SHORTBAN	/ban (with a limited duration)
 .br
 SHOWADMIN	player shows an @ regardless of having 'shortban' perm
+.br
+SHOWMOTTO	player is allowed to display their motto on the scoreboard
 .br
 SHOWOTHERS	/showgroup /showperms (on others)
 .br

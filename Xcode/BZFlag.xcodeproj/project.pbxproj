@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		03071FDC209507250067269F /* licenses in Resources */ = {isa = PBXBuildFile; fileRef = 03071FDB209507250067269F /* licenses */; };
 		0314A5981B300A4C001B72BB /* DejaVuSansCondensedBold_6.fmt in Resources */ = {isa = PBXBuildFile; fileRef = 0314A5681B300A4C001B72BB /* DejaVuSansCondensedBold_6.fmt */; };
 		0314A5991B300A4C001B72BB /* DejaVuSansCondensedBold_6.png in Resources */ = {isa = PBXBuildFile; fileRef = 0314A5691B300A4C001B72BB /* DejaVuSansCondensedBold_6.png */; };
 		0314A59A1B300A4C001B72BB /* DejaVuSansCondensedBold_8.fmt in Resources */ = {isa = PBXBuildFile; fileRef = 0314A56A1B300A4C001B72BB /* DejaVuSansCondensedBold_8.fmt */; };
@@ -499,7 +500,6 @@
 		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
 		03C338C61AFB59FF00E8F655 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C338C51AFB59FF00E8F655 /* SDL2.framework */; };
-		03C5E82A1670A98C005A26C4 /* BitmapFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FB166C846F008806E9 /* BitmapFont.cxx */; };
 		03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FD166C846F008806E9 /* FontManager.cxx */; };
 		03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FE166C846F008806E9 /* ImageFont.cxx */; };
 		03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554302166C846F008806E9 /* TextureFont.cxx */; };
@@ -1158,6 +1158,7 @@
 		0305D5FF166C9DAE00557FC4 /* WordFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WordFilter.h; sourceTree = "<group>"; };
 		0305D600166C9DAE00557FC4 /* WorldEventManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorldEventManager.h; sourceTree = "<group>"; };
 		0305D601166C9DAE00557FC4 /* ZSceneDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZSceneDatabase.h; sourceTree = "<group>"; };
+		03071FDB209507250067269F /* licenses */ = {isa = PBXFileReference; lastKnownFileType = folder; path = licenses; sourceTree = "<group>"; };
 		030D159A1E49610E006FDFA3 /* SimpleTextUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SimpleTextUtils.cxx; path = ../tools/modeltool/SimpleTextUtils.cxx; sourceTree = "<group>"; };
 		030D159B1E49610E006FDFA3 /* SimpleTextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SimpleTextUtils.h; path = ../tools/modeltool/SimpleTextUtils.h; sourceTree = "<group>"; };
 		030DF52417424A4D00B3815C /* buildinfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = buildinfo.h; sourceTree = "<group>"; };
@@ -1170,8 +1171,6 @@
 		031B7C3C1F11563F00A5ED20 /* OpenGLFramebuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenGLFramebuffer.h; sourceTree = "<group>"; };
 		031FBE421DB5A42500DD84DC /* COPYING.MPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.MPL; path = ../COPYING.MPL; sourceTree = "<group>"; };
 		0336ED7A1B7042E40090899C /* MacDataPath.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacDataPath.cxx; sourceTree = "<group>"; };
-		035542FB166C846F008806E9 /* BitmapFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BitmapFont.cxx; sourceTree = "<group>"; };
-		035542FC166C846F008806E9 /* BitmapFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BitmapFont.h; sourceTree = "<group>"; };
 		035542FD166C846F008806E9 /* FontManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = FontManager.cxx; sourceTree = "<group>"; };
 		035542FE166C846F008806E9 /* ImageFont.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImageFont.cxx; sourceTree = "<group>"; };
 		035542FF166C846F008806E9 /* ImageFont.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageFont.h; sourceTree = "<group>"; };
@@ -2426,6 +2425,7 @@
 				03D926DF166C67EF00DDDBEB /* BZFlag.icns */,
 				030DF52417424A4D00B3815C /* buildinfo.h */,
 				03C5E79716707857005A26C4 /* config.h */,
+				03071FDB209507250067269F /* licenses */,
 			);
 			name = Xcode;
 			sourceTree = "<group>";
@@ -2455,8 +2455,6 @@
 		035542FA166C846F008806E9 /* 3D */ = {
 			isa = PBXGroup;
 			children = (
-				035542FB166C846F008806E9 /* BitmapFont.cxx */,
-				035542FC166C846F008806E9 /* BitmapFont.h */,
 				035542FD166C846F008806E9 /* FontManager.cxx */,
 				035542FE166C846F008806E9 /* ImageFont.cxx */,
 				035542FF166C846F008806E9 /* ImageFont.h */,
@@ -4948,6 +4946,7 @@
 				036F58231DA2F8C300BF906C /* AUTHORS in Resources */,
 				036F58241DA2F8C800BF906C /* ChangeLog in Resources */,
 				036F58251DA2F8CC00BF906C /* COPYING in Resources */,
+				03071FDC209507250067269F /* licenses in Resources */,
 				036F58261DA2F8D400BF906C /* README in Resources */,
 				036F58271DA2F90900BF906C /* README.MacOSX in Resources */,
 			);
@@ -4967,7 +4966,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\necho \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n<key>CFBundleDevelopmentRegion</key>\n<string>en</string>\n<key>CFBundleExecutable</key>\n<string>\\${EXECUTABLE_NAME}</string>\n<key>CFBundleIconFile</key>\n<string>BZFlag</string>\n<key>CFBundleIdentifier</key>\n<string>org.BZFlag</string>\n<key>CFBundleInfoDictionaryVersion</key>\n<string>6.0</string>\n<key>CFBundleName</key>\n<string>BZFlag</string>\n<key>CFBundlePackageType</key>\n<string>APPL</string>\n<key>CFBundleShortVersionString</key>\n<string>$BZFLAG_VERSION</string>\n<key>CFBundleSignature</key>\n<string>????</string>\n<key>CFBundleVersion</key>\n<string>$BZFLAG_VERSION</string>\n<key>LSApplicationCategoryType</key>\n<string>public.app-category.arcade-games</string>\n<key>LSMinimumSystemVersion</key>\n<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n<key>NSHumanReadableCopyright</key>\n<string>Copyright (c) 1993-2017 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist";
+			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\necho \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n<key>CFBundleDevelopmentRegion</key>\n<string>en</string>\n<key>CFBundleExecutable</key>\n<string>\\${EXECUTABLE_NAME}</string>\n<key>CFBundleIconFile</key>\n<string>BZFlag</string>\n<key>CFBundleIdentifier</key>\n<string>org.BZFlag</string>\n<key>CFBundleInfoDictionaryVersion</key>\n<string>6.0</string>\n<key>CFBundleName</key>\n<string>BZFlag</string>\n<key>CFBundlePackageType</key>\n<string>APPL</string>\n<key>CFBundleShortVersionString</key>\n<string>$BZFLAG_VERSION</string>\n<key>CFBundleSignature</key>\n<string>????</string>\n<key>CFBundleVersion</key>\n<string>$BZFLAG_VERSION</string>\n<key>LSApplicationCategoryType</key>\n<string>public.app-category.arcade-games</string>\n<key>LSMinimumSystemVersion</key>\n<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n<key>NSHumanReadableCopyright</key>\n<string>Copyright (c) 1993-2018 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist";
 		};
 		03E42D171B32274A006EE763 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -5576,7 +5575,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				03C5E82A1670A98C005A26C4 /* BitmapFont.cxx in Sources */,
 				03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */,
 				03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */,
 				03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */,

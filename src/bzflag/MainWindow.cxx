@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -37,7 +37,6 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
 				faulting(false)
 {
   window->addResizeCallback(resizeCB, this);
-  resize();
 }
 
 MainWindow::~MainWindow()
@@ -50,7 +49,6 @@ void			MainWindow::setMinSize(int _minWidth, int _minHeight)
   minWidth = _minWidth;
   minHeight = _minHeight;
   window->setMinSize(minWidth, minHeight);
-  resize();
 }
 
 void			MainWindow::setPosition(int x, int y)
@@ -61,7 +59,6 @@ void			MainWindow::setPosition(int x, int y)
 void			MainWindow::setSize(int _width, int _height)
 {
   window->setSize(_width, _height);
-  resize();
 }
 
 void			MainWindow::showWindow(bool on)
@@ -158,7 +155,6 @@ void			MainWindow::toggleFullscreen()
 {
   isFullscreen = !isFullscreen;
   window->setFullscreen(isFullscreen);
-  resize();
 }
 
 void			MainWindow::setFullView(bool _isFullView)

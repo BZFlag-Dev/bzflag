@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -46,8 +46,7 @@ public:
   int packSize() const;
   void *pack(void *buf) const;
 
-  int getNewWorldShotID ( void );
-  int getNewWorldShotID(PlayerId player);
+  uint32_t fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
   struct Weapon
@@ -65,6 +64,8 @@ private:
 
   std::vector<Weapon*> weapons;
   int worldShotId;
+
+  int getNewWorldShotID(void);
 
   WorldWeapons( const WorldWeapons &w);
   WorldWeapons& operator=(const WorldWeapons &w) const;
@@ -86,9 +87,6 @@ protected:
 	bz_eTeamType	team;
 };
 
-int fireWorldWep ( FlagType* type, float lifetime, PlayerId player, float *pos, float tilt, float direction, float speed, int shotID, float dt, TeamColor shotTeam = RogueTeam );
-
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime, PlayerId player, float *pos, float tilt, float direction, int shotID, float dt, TeamColor shotTeam = RogueTeam);
 #endif
 
 // Local Variables: ***

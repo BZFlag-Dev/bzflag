@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,12 +28,6 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-#ifndef __MINGW32__
-void			(__stdcall *SceneNode::color3f)(GLfloat, GLfloat, GLfloat);
-void			(__stdcall *SceneNode::color4f)(GLfloat, GLfloat, GLfloat, GLfloat);
-void			(__stdcall *SceneNode::color3fv)(const GLfloat*);
-void			(__stdcall *SceneNode::color4fv)(const GLfloat*);
-#endif
 void			(*SceneNode::stipple)(GLfloat);
 
 SceneNode::SceneNode()
@@ -61,56 +55,17 @@ SceneNode::~SceneNode()
   // do nothing
 }
 
-#if defined(sun)
-static void __stdcall	oglColor3f(GLfloat r, GLfloat g, GLfloat b)
-				{ glColor3f(r, g, b); }
-static void __stdcall	oglColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
-				{ glColor4f(r, g, b, a); }
-static void __stdcall	oglColor3fv(const GLfloat* v)
-				{ glColor3fv(v); }
-static void __stdcall	oglColor4fv(const GLfloat* v)
-				{ glColor4fv(v); }
-#endif
 
-#ifdef __MINGW32__
 bool			SceneNode::colorOverride = true;
-#else
-void __stdcall		SceneNode::noColor3f(GLfloat, GLfloat, GLfloat) {}
-void __stdcall		SceneNode::noColor4f(
-				GLfloat, GLfloat, GLfloat, GLfloat) {}
-void __stdcall		SceneNode::noColor3fv(const GLfloat*) {}
-void __stdcall		SceneNode::noColor4fv(const GLfloat*) {}
-#endif
 void			SceneNode::noStipple(GLfloat) {}
 
 void			SceneNode::setColorOverride(bool on)
 {
-#ifdef __MINGW32__
   colorOverride = on;
-#endif
   if (on) {
-#ifndef __MINGW32__
-    color3f  = &noColor3f;
-    color4f  = &noColor4f;
-    color3fv = &noColor3fv;
-    color4fv = &noColor4fv;
-#endif
     stipple  = &noStipple;
   }
   else {
-#if defined(sun)
-    color3f  = &oglColor3f;
-    color4f  = &oglColor4f;
-    color3fv = &oglColor3fv;
-    color4fv = &oglColor4fv;
-#else
-#ifndef __MINGW32__
-    color3f  = &::glColor3f;
-    color4f  = &::glColor4f;
-    color3fv = &::glColor3fv;
-    color4fv = &::glColor4fv;
-#endif
-#endif
     stipple  = &OpenGLGState::setStipple;
   }
 }

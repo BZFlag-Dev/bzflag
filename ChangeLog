@@ -7,8 +7,38 @@ BZFlag 2.5.x
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
-BZFlag 2.4.12 "Silence is Golden" (2017-10-29)
-----------------------------------------------
+BZFlag 2.4.14  "Hello Motto" (2018-05-02)
+-----------------------------------------
+
+* Add new bz_eAllowServerShotFiredEvent to the API - Vladimir Jimenez
+* Fix antialiasing when starting the client windowed - Joshua Bodine
+* Update the Windows icon file to include larger icons - Scott Wichser
+* Treat the number pad keys uniquely for key mapping with SDL2 - Scott Wichser
+* Better cpu selection for x86_64 - Alfredo Tupone
+* Fix build with enable-profile - Alfredo Tupone
+* Add safety check when getting flags (bzfs) - Alfredo Tupone
+* Add min/../max to drawTime - Alfredo Tupone
+* Fix the -configdir option for the client - Scott Wichser
+* Upgrade Windows projects to Visual Studio 2017 - Scott Wichser, Jeff Myers
+* Improve support for custom BZDB vars in plug-ins - Vladimir Jimenez
+* Fix truncation warnings - Jeff Makey, Alfredo Tupone
+* Add new bz_ePermissionModificationEvent to the API - Vladimir Jimenez
+* Introduce new 'showMotto' permission - Vladimir Jimenez
+* Fix gcc warnings and code formatting - Jeff Myers, Scott Wichser
+* Remove old BitmapFont renderer - Scott Wichser
+* Add new bz_eServerShotFiredEvent to the API - Vladimir Jimenez
+* Revamp the world weapon API entirely - Vladimir Jimenez
+* Add PLAYER-MOTTO output to logDetail plugin - Scott Wichser
+* Display remaining ban time when a banned player connects - Vladimir Jimenez
+* Punitive messages no longer display admin callsigns - Vladimir Jimenez
+* Slash commands in the API now know destination channel - Jeff Myers
+* Allow building with lcc compiler on e2k-alt-linux - Joshua Bodine
+* Fix ability to bind a key with a modifier through menu - Joshua Bodine
+* Disallow -helpmsg from world files - Vladimir Jimenez
+
+
+BZFlag 2.4.12  "Silence is Golden" (2017-10-29)
+-----------------------------------------------
 
 * Allow API to trigger CTF capture event - Vladimir Jimenez
 * Allow setting default values for BZDB from API - Vladimir Jimenez
@@ -36,8 +66,8 @@ BZFlag 2.4.12 "Silence is Golden" (2017-10-29)
 * Fix the /silence and /unsilence client commands - Scott Wichser
 
 
-BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
-------------------------------------------------
+BZFlag 2.4.10  "This is How We Roll" (2017-03-12)
+-------------------------------------------------
 
 * Fix high DPI handling on Windows (again) - Scott Wichser
 * Custom slash commands respect double quotes when tokenizing - Vladimir Jimenez
@@ -55,8 +85,8 @@ BZFlag 2.4.10 "This is How We Roll" (2017-03-12)
 * Multisampling support under SDL 2 on macOS - Joshua Bodine
 
 
-BZFlag 2.4.8 "Sixteen" (2016-10-10)
------------------------------------
+BZFlag 2.4.8  "Sixteen" (2016-10-10)
+------------------------------------
 
 * Add Russian transliteration - Ruslan Hihin, Aleksandr Lahin
 * Fix a regression in 2.4.6 where the client would not reduce CPU usage when
@@ -74,8 +104,8 @@ BZFlag 2.4.8 "Sixteen" (2016-10-10)
 * Increase the range of the volume slider - Konstantinos Kanavouras
 
 
-BZFlag 2.4.6 "Eight, Our Codebase is Overweight" (2016-06-26)
--------------------------------------------------------------
+BZFlag 2.4.6  "Eight, Our Codebase is Overweight" (2016-06-26)
+--------------------------------------------------------------
 
 * regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
 * RogueGenocide plugin defaults to ignoring rogue self-kills - Scott Wichser

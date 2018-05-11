@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -63,8 +63,14 @@ std::string		getConfigDirName( const char* versionName )
 {
   std::string customConfigDir = configDir(0, NULL);
 
-  if (customConfigDir.size() > 0)
-    return customConfigDir;
+  if (customConfigDir.size() > 0) {
+    std::string customName = customConfigDir + DirectorySeparator;
+    if (versionName) {
+      customName += versionName;
+      customName += DirectorySeparator;
+    }
+    return customName;
+  }
 
 #if defined(_WIN32)
   std::string name("C:");

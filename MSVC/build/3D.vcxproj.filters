@@ -13,14 +13,8 @@
     <ClCompile Include="..\..\src\3d\FontManager.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\3d\BitmapFont.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\3d\BitmapFont.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\FontManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -361,6 +361,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
     case PlayerAccessInfo::setPerms: return "setPerms";
     case PlayerAccessInfo::setVar: return "setVar";
     case PlayerAccessInfo::showAdmin: return "showAdmin";
+    case PlayerAccessInfo::showMotto: return "showMotto";
     case PlayerAccessInfo::showOthers: return "showOthers";
     case PlayerAccessInfo::shortBan: return "shortBan";
     case PlayerAccessInfo::shutdownServer: return "shutdownServer";
@@ -432,6 +433,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
   if (name == "SETVAR") return PlayerAccessInfo::setVar;
   if (name == "SHORTBAN") return PlayerAccessInfo::shortBan;
   if (name == "SHOWADMIN") return PlayerAccessInfo::showAdmin;
+  if (name == "SHOWMOTTO") return PlayerAccessInfo::showMotto;
   if (name == "SHOWOTHERS") return PlayerAccessInfo::showOthers;
   if (name == "SHUTDOWNSERVER") return PlayerAccessInfo::shutdownServer;
   if (name == "SPAWN") return PlayerAccessInfo::spawn;

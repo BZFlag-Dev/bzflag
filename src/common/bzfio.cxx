@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -47,7 +47,7 @@ void setDebugTimestamp (bool enable, bool micros, bool utc)
   doUTC = utc;
 }
 
-static const int tsBufferSize = 29;
+static const int tsBufferSize = 512;
 
 static char *timestamp(char *buf, bool micros, bool utc)
 {
@@ -71,6 +71,7 @@ static char *timestamp(char *buf, bool micros, bool utc)
       tm = gmtime (&tt);
     else
       tm = localtime (&tt);
+
     snprintf (buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
 	     tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
   }

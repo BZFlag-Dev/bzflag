@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -432,8 +432,10 @@ static void sendFlagUpdate(int playerIndex)
   int length = sizeof(uint16_t);
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
   {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.exist())
+    FlagInfo *flag = FlagInfo::get(flagIndex);
+    if (!flag)
+       continue;
+    if (flag->exist())
     {
       if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t))
       {
@@ -446,8 +448,9 @@ static void sendFlagUpdate(int playerIndex)
 	buf = nboPackUShort(bufStart,0); //placeholder
       }
 
-      bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-      buf = flag.pack(buf, hide);
+      bool hide = (flag->flag.type->flagTeam == ::NoTeam) &&
+         (flag->player == -1);
+      buf = flag->pack(buf, hide);
       length += sizeof(uint16_t)+FlagPLen;
       cnt++;
     }
@@ -1152,7 +1155,10 @@ bool defineWorld ( void )
   }
   FlagInfo::setNoFlagInAir();
   for (i = 0; i < numFlags; i++) {
-    resetFlag(*FlagInfo::get(i));
+    FlagInfo *flag = FlagInfo::get(i);
+    if (!flag)
+       continue;
+    resetFlag(*flag);
   }
   bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
   worldEventManager.callEvents(&eventData);
@@ -2061,7 +2067,11 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     double duration = info.banEnd - TimeKeeper::getCurrent();
     if (duration < 365.0f * 24 * 3600) {
-      rejectionMessage += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+      long int timeArray[4];
+      TimeKeeper::convertTime(duration, timeArray);
+      std::string bantime = TimeKeeper::printTime(timeArray);
+      rejectionMessage += bantime;
+      rejectionMessage += " remaining";
     } else {
       rejectionMessage += "indefinite";
     }
@@ -2239,10 +2249,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
   worldEventManager.callEvents(&mottoEvent);
   playerData->player.setMotto(mottoEvent.motto.c_str());
 
-  // broadcast motto only if player has TALK permission
-  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::talk)
-    && strlen(playerData->player.getMotto()) != 0) {
-    sendMessage(ServerPlayer, playerIndex, "\"talk\" permission is required to show your motto");
+  // broadcast motto only if player has SHOWMOTTO permission
+  if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::showMotto) && strlen(playerData->player.getMotto()) != 0) {
+    sendMessage(ServerPlayer, playerIndex, "\"showMotto\" permission is required to show your motto");
     playerData->player.setMotto("");
   }
 
@@ -2513,9 +2522,11 @@ void zapFlag(FlagInfo &flag)
 // Should be called when we sure that tank does not hold any
 static void dropAssignedFlag(int playerIndex) {
   for (int flagIndex = 0; flagIndex < numFlags; flagIndex++) {
-    FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.flag.status == FlagOnTank && flag.flag.owner == playerIndex)
-      resetFlag(flag);
+    FlagInfo *flag = FlagInfo::get(flagIndex);
+    if (!flag)
+      continue;
+    if (flag->flag.status == FlagOnTank && flag->flag.owner == playerIndex)
+      resetFlag(*flag);
   }
 } // dropAssignedFlag
 
@@ -3504,17 +3515,17 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
   buf = nboPackUByte(bufStart, playerIndex);
   buf = flag.pack(buf);
 
-  bz_FlagGrabbedEventData_V1	data;
+  broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+
+  playerData->flagHistory.add(flag.flag.type);
+
+  bz_FlagGrabbedEventData_V1 data;
   data.flagID = flag.getIndex();
   data.flagType = flag.flag.type->flagAbbv.c_str();
   memcpy(data.pos,fpos,sizeof(float)*3);
   data.playerID = playerIndex;
 
   worldEventManager.callEvents(bz_eFlagGrabbedEvent,&data);
-
-  broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
-
-  playerData->flagHistory.add(flag.flag.type);
 }
 
 
@@ -4054,12 +4065,13 @@ static void shotFired(int playerIndex, void *buf, int len)
 
 static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(id);
-  if (!playerData)
+  GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
+
+  if (!playerData && id != ServerPlayer)
     return;
 
-  playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+  if (id != ServerPlayer)
+    playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
 
   ShotManager.RemoveShot(ShotManager.FindShotGUID(id,shotIndex & 0xff));
 
@@ -5413,7 +5425,11 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
 
 	  double duration = hostInfo.banEnd - TimeKeeper::getCurrent();
 	  if (duration < 365.0f * 24 * 3600) {
-	    reason += TextUtils::format("~%0.f minutes remaining", (duration / 60));
+            long int timeArray[4];
+            TimeKeeper::convertTime(duration, timeArray);
+            std::string bantime = TimeKeeper::printTime(timeArray);
+            reason += bantime;
+            reason += " remaining";
 	  } else {
 	    reason += "indefinite";
 	  }
@@ -5566,6 +5582,7 @@ void initGroups()
   info.explicitAllows[PlayerAccessInfo::idleStats] = true;
   info.explicitAllows[PlayerAccessInfo::lagStats] = true;
   info.explicitAllows[PlayerAccessInfo::privateMessage] = true;
+  info.explicitAllows[PlayerAccessInfo::showMotto] = true;
   info.explicitAllows[PlayerAccessInfo::spawn] = true;
   info.explicitAllows[PlayerAccessInfo::talk] = true;
   info.groupState[PlayerAccessInfo::isGroup] = true;
@@ -6290,11 +6307,13 @@ int main(int argc, char **argv)
   // make flags, check sanity, etc...
   // (do this after the world has been loaded)
   finalizeParsing(argc, argv, *clOptions, world->getEntryZones());
-  {
-    FlagInfo::setNoFlagInAir();
-    for (int i = 0; i < numFlags; i++) {
-      resetFlag(*FlagInfo::get(i));
-    }
+
+  FlagInfo::setNoFlagInAir();
+  for (int i = 0; i < numFlags; i++) {
+    FlagInfo *flag = FlagInfo::get(i);
+    if (!flag)
+       continue;
+    resetFlag(*flag);
   }
 
   // loading extra flag number
@@ -6551,12 +6570,14 @@ int main(int argc, char **argv)
     while ((dropTime = FlagInfo::getNextDrop(tm)) <= 0.0f) {
       // if any flags were in the air, see if they've landed
       for (i = 0; i < numFlags; i++) {
-	FlagInfo &flag = *FlagInfo::get(i);
-	if (flag.landing(tm)) {
-	  if (flag.flag.status == FlagOnGround) {
-	    sendFlagUpdate(flag);
+	FlagInfo *flag = FlagInfo::get(i);
+        if (!flag)
+           continue;
+	if (flag->landing(tm)) {
+	  if (flag->flag.status == FlagOnGround) {
+	    sendFlagUpdate(*flag);
 	  } else {
-	    resetFlag(flag);
+	    resetFlag(*flag);
 	  }
 	}
       }

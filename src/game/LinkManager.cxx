@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,6 +24,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <sstream>
 
 // common headers
 #include "bzglob.h"
@@ -57,9 +58,11 @@ void LinkManager::clear()
 void LinkManager::makeLinkName(int number, std::string& name)
 {
   name = "/t";
-  char buffer[8];
-  sprintf(buffer, "%i", (number / 2));
-  name += buffer;
+
+  std::stringstream buffer;
+  buffer << (number / 2);
+
+  name += buffer.str();
   name += ":";
   if ((number % 2) == 0) {
     name += "f";

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -29,86 +29,96 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-static int fireWorldWepReal(FlagType* type, float lifetime, PlayerId player,
-			    TeamColor teamColor, float *pos, float tilt, float dir, float shotSpeed,
-			    int shotID, float dt)
+uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor, PlayerId targetPlayerID)
 {
+  if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+    return INVALID_SHOT_GUID;
+  }
+
   void *buf, *bufStart = getDirectMessageBuffer();
 
   FiringInfo firingInfo;
   firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
   firingInfo.flagType = type;
-  firingInfo.lifetime = lifetime;
-  firingInfo.shot.player = player;
-  memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
-  if (shotSpeed < 0)
-	  shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  const float tiltFactor = cosf(tilt);
-  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
-  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
-  firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-  firingInfo.shot.id = shotID;
-  firingInfo.shot.dt = dt;
+  firingInfo.lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+  firingInfo.shot.player = ServerPlayer;
+  memmove(firingInfo.shot.pos, origin, 3 * sizeof(float));
 
+  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
+
+  for (int i = 0; i < 3; i++)
+    firingInfo.shot.vel[i] = vector[i] * shotSpeed;
+
+  firingInfo.shot.dt = 0;
   firingInfo.shot.team = teamColor;
 
-  buf = firingInfo.pack(bufStart);
-
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart, bufStart);
+  if (shotID != nullptr && shotID == 0) {
+    *shotID = getNewWorldShotID();
+    firingInfo.shot.id = *shotID;
+  }
+  else if (shotID == nullptr) {
+    firingInfo.shot.id = getNewWorldShotID();
+  }
+  else {
+    firingInfo.shot.id = *shotID;
   }
 
+  bz_AllowServerShotFiredEventData_V1 allowEvent;
+  allowEvent.flagType = type->flagAbbv;
+  allowEvent.speed = shotSpeed;
+  for (int i = 0; i < 3; i++){
+    allowEvent.pos[i] = origin[i];
+    allowEvent.velocity[i] = firingInfo.shot.vel[i];
+  }
+  allowEvent.team = convertTeam(teamColor);
 
-  ShotManager.AddShot(firingInfo,player);
-  return shotID;
-}
+  worldEventManager.callEvents(bz_eAllowServerShotFiredEvent, &allowEvent);
 
+  if (!allowEvent.allow) {
+    return INVALID_SHOT_GUID;
+  }
 
-static int fireWorldGMReal ( FlagType* type, PlayerId targetPlayerID, float
-    lifetime, PlayerId player, float *pos, float tilt, float dir, int shotID,
-    float dt, TeamColor shotTeam = RogueTeam)
-{
+  if (allowEvent.changed) {
+    FlagTypeMap &flagMap = FlagType::getFlagMap();
 
-  void *buf, *bufStart = getDirectMessageBuffer();
+    if (flagMap.find(allowEvent.flagType) == flagMap.end())
+      return INVALID_SHOT_GUID;
 
-  FiringInfo firingInfo;
-  firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
-  firingInfo.flagType = type;
-  firingInfo.lifetime = lifetime;
-  firingInfo.shot.player = player;
-  memmove(firingInfo.shot.pos, pos, 3 * sizeof(float));
-  const float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-  const float tiltFactor = cosf(tilt);
-  firingInfo.shot.vel[0] = shotSpeed * tiltFactor * cosf(dir);
-  firingInfo.shot.vel[1] = shotSpeed * tiltFactor * sinf(dir);
-  firingInfo.shot.vel[2] = shotSpeed * sinf(tilt);
-  firingInfo.shot.id = shotID;
-  firingInfo.shot.dt = dt;
-
-  firingInfo.shot.team = shotTeam;
+    FlagType *flag = flagMap.find(allowEvent.flagType)->second;
+    firingInfo.flagType = flag;
+  }
 
   buf = firingInfo.pack(bufStart);
 
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
-    broadcastMessage(MsgShotBegin, (char *)buf - (char *)bufStart,
-		     bufStart);
-  }
+  broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
 
-  uint32_t shotGUID = ShotManager.AddShot(firingInfo,player);
-  ShotManager.SetShotTarget(shotGUID,targetPlayerID);
+  uint32_t shotGUID = ShotManager.AddShot(firingInfo, ServerPlayer);
 
-    // Target the gm.
-    // construct and send packet
+  // Target the gm, construct it, and send packet
+  if (type->flagAbbv == "GM") {
+    ShotManager.SetShotTarget(shotGUID, targetPlayerID);
 
-  char packet[ShotUpdatePLen + PlayerIdPLen];
-  buf = (void*)packet;
-  buf = firingInfo.shot.pack(buf);
-  buf = nboPackUByte(buf, targetPlayerID);
-  if (BZDB.isTrue(StateDatabase::BZDB_WEAPONS)) {
+    char packet[ShotUpdatePLen + PlayerIdPLen];
+    buf = (void*)packet;
+    buf = firingInfo.shot.pack(buf);
+    buf = nboPackUByte(buf, targetPlayerID);
+
     broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
   }
 
-  return shotID;
+  bz_ServerShotFiredEventData_V1 event;
+  event.guid = shotGUID;
+  event.flagType = allowEvent.flagType;
+  event.speed = shotSpeed;
+  for (int i = 0; i < 3; i++){
+    event.pos[i] = origin[i];
+    event.velocity[i] = firingInfo.shot.vel[i];
+  }
+  event.team = convertTeam(teamColor);
+
+  worldEventManager.callEvents(bz_eServerShotFiredEvent, &event);
+
+  return shotGUID;
 }
 
 WorldWeapons::WorldWeapons()
@@ -158,9 +168,9 @@ void WorldWeapons::fire()
     if (w->nextTime <= nowTime) {
       FlagType type = *(w->type);	// non-const copy
 
-      fireWorldWepReal(&type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		       ServerPlayer, w->teamColor, w->origin, w->tilt, w->direction, -1,
-		       getNewWorldShotID(), 0);
+	  float vec[3] = { 0,0,0 };
+	  bz_vectorFromRotations(w->tilt, w->direction, vec);
+      fireShot(&type, w->origin, vec, nullptr, w->teamColor);
 
       //Set up timer for next shot, and eat any shots that have been missed
       while (w->nextTime <= nowTime) {
@@ -261,22 +271,6 @@ bool shotUsedInList(int shotID, Shots::ShotList& list)
 	return false;
 }
 
-int WorldWeapons::getNewWorldShotID(PlayerId player)
-{
-	int maxID = _MAX_WORLD_SHOTS;
-	if (player != ServerPlayer)
-		maxID = clOptions->maxShots;
-
-	Shots::ShotList liveShots = ShotManager.LiveShotsForPlayer(player);
-	Shots::ShotList deadShots = ShotManager.DeadShotsForPlayer(player);
-
-	for (int i = 0; i < maxID; i++)
-	{
-		if (!shotUsedInList(i,liveShots) && !shotUsedInList(i,deadShots))
-			return i;
-	}
-	return -1;
-}
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
@@ -308,31 +302,13 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 
   bz_CTFCaptureEventData_V1 *capEvent = (bz_CTFCaptureEventData_V1*)eventData;
 
-  if ( capEvent->teamCapped != team )
-	  return;
+  if (capEvent->teamCapped != team)
+    return;
 
-  fireWorldWepReal(type, BZDB.eval(StateDatabase::BZDB_RELOADTIME),
-		   ServerPlayer, RogueTeam, origin, tilt, direction, -1,
-		   world->getWorldWeapons().getNewWorldShotID(),0);
-}
+  float vec[3] = { 0,0,0 };
+  bz_vectorFromRotations(tilt, direction, vec);
 
-
-// for bzfsAPI: it needs to be global
-int fireWorldWep(FlagType* type, float lifetime, PlayerId player,
-			float *pos, float tilt, float direction, float speed,
-			int shotID, float dt, TeamColor shotTeam)
-{
-  return fireWorldWepReal(type, lifetime, player, shotTeam,
-			  pos, tilt, direction, speed, shotID, dt);
-}
-
-
-int fireWorldGM(FlagType* type, PlayerId targetPlayerID, float lifetime,
-		PlayerId player, float *pos, float tilt, float direction,
-		int shotID, float dt, TeamColor shotTeam)
-{
-  return fireWorldGMReal(type, targetPlayerID, lifetime, player, pos, tilt,
-			 direction, shotID, dt, shotTeam);
+  world->getWorldWeapons().fireShot(type, origin, vec, NULL);
 }
 
 // Local Variables: ***

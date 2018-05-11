@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -174,7 +174,7 @@ static int buildTread(float Yoffset, int divisions)
   const float ty4 = 1.0f;
 
   // the outside of the tread
-  glBegin(GL_QUAD_STRIP);
+  glBegin(GL_TRIANGLE_STRIP);
   {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
@@ -224,7 +224,7 @@ static int buildTread(float Yoffset, int divisions)
   glEnd();
 
   // the inside of the tread
-  glBegin(GL_QUAD_STRIP);
+  glBegin(GL_TRIANGLE_STRIP);
   {
     // first curve
     for (i = 0; i < ((divisions / 2) + 1); i++) {
@@ -277,7 +277,7 @@ static int buildTread(float Yoffset, int divisions)
   {
     // the right edge
     doNormal3f(0.0f, -1.0f, 0.0f);
-    glBegin(GL_QUAD_STRIP);
+    glBegin(GL_TRIANGLE_STRIP);
     {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
@@ -330,7 +330,7 @@ static int buildTread(float Yoffset, int divisions)
 
     // the left edge
     doNormal3f(0.0f, +1.0f, 0.0f);
-    glBegin(GL_QUAD_STRIP);
+    glBegin(GL_TRIANGLE_STRIP);
     {
       // first outside curve
       for (i = 0; i < ((divisions / 2) + 1); i++) {
@@ -400,7 +400,7 @@ static int buildWheel(const float pos[3], float angle, int divisions)
 
   // the edge loop
   doNormal3f(0.0f, +1.0f, 0.0f);
-  glBegin(GL_QUAD_STRIP);
+  glBegin(GL_TRIANGLE_STRIP);
   {
     for (i = 0; i < (divisions + 1); i++) {
       const float ang = astep * (float)i;

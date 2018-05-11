@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -287,6 +287,7 @@ const char *extraUsageString =
 static std::vector<std::string> storedFlagDisallows;
 static std::vector<std::string> storedFlagCounts;
 static std::map<std::string, int> storedFlagLimits;
+static std::map<std::string, std::string> bzdbVarQueue;
 
 /* private */
 
@@ -1090,14 +1091,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       const char *name, *value;
       checkArgc(2, i, argc, argv[i]);
       name = argv[i];
-      if (!BZDB.isSet(name)) {
-	std::cerr << "Unknown BZDB variable: " << name << std::endl;
-	exit (1);
-      }
       i++;
       value = argv[i];
+
+      // give unknown BZDB variables the benefit of the doubt, allow plug-ins to define them
+      if (!BZDB.isSet(name)) {
+        bzdbVarQueue[name] = value;
+        logDebugMessage(1, "queued variable: %s = %s\n", name, value);
+
+        continue;
+      }
+
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1, "set variable: %s = %s\n", name, BZDB.get(name).c_str());
     }
     else if (strcmp(argv[i], "-setforced") == 0) {
       const char *name, *value;
@@ -1105,8 +1111,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
       name = argv[i];
       i++;
       value = argv[i];
+
       BZDB.set(name, value);
-      logDebugMessage(1,"set variable: %s = %s\n", name, BZDB.get(name).c_str());
+      logDebugMessage(1, "set variable: %s = %s\n", name, BZDB.get(name).c_str());
     }
     else if (strcmp(argv[i], "-sl") == 0) {
       // shot limits
@@ -1411,6 +1418,18 @@ static int addZoneTeamFlags(int startIndex,
 void finalizeParsing(int UNUSED(argc), char **argv,
 		     CmdLineOptions &options, EntryZones& entryZones)
 {
+  // set queued BZDB variables; allow plugins to define valid BZDB variables
+  for (auto it = bzdbVarQueue.begin(); it != bzdbVarQueue.end(); it++) {
+    if (!BZDB.isSet(it->first)) {
+      std::cerr << "Unknown BZDB variable: " << it->first << std::endl;
+      exit(1);
+    }
+
+    BZDB.set(it->first, it->second);
+    BZDB.setDefault(it->first, it->second);
+    logDebugMessage(1, "queued variable set: %s = %s\n", it->first.c_str(), BZDB.get(it->first).c_str());
+  }
+
   if (options.flagsOnBuildings && !(options.gameOptions & JumpingGameStyle)) {
     std::cerr << "flags on boxes requires jumping" << std::endl;
     usage(argv[0]);
@@ -1691,7 +1710,10 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
     if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam)) {
       for (int j = 0; j < options.flagCount[fDesc]; j++) {
-	FlagInfo::get(f++)->setRequiredFlag(fDesc);
+	FlagInfo *flag = FlagInfo::get(f++);
+        if (!flag)
+           continue;
+	flag->setRequiredFlag(fDesc);
       }
     }
   }
@@ -1705,16 +1727,22 @@ void finalizeParsing(int UNUSED(argc), char **argv,
       if ((ft->flagTeam == ::NoTeam) && // no team flags here
 	  (forbidden.find(ft) == forbidden.end())) {
 	const int count = zfmIt->second;
-	for (int c = 0; c < count; c++) {
+	for (int c = 0; c < count; c++, f++) {
+	  FlagInfo *flag = FlagInfo::get(f);
+          if (!flag)
+             continue;
 	  entryZones.addZoneFlag(z, f);
-	  FlagInfo::get(f++)->setRequiredFlag(ft);
+	  flag->setRequiredFlag(ft);
 	}
       }
     }
   }
   // add extra flags
   for (; f < numFlags; f++) {
-    FlagInfo::get(f)->required = allFlagsOut;
+    FlagInfo *flag = FlagInfo::get(f);
+    if (!flag)
+       continue;
+    flag->required = allFlagsOut;
   }
 
   // sum the sources of team flags
@@ -1723,7 +1751,6 @@ void finalizeParsing(int UNUSED(argc), char **argv,
       options.numTeamFlags[col] += zoneTeamFlagCounts[col];
     }
   }
-
 
   // debugging
   logDebugMessage(1,"type: %d\n", options.gameType);

@@ -2,7 +2,10 @@ if CLIENT_INCLUDED
 noinst_LTLIBRARIES = libGLKit.la
 endif
 
-AM_CPPFLAGS = $(CONF_CPPFLAGS) -I$(top_srcdir)/include
+AM_CPPFLAGS = \
+	$(SDL_CFLAGS) \
+	$(CONF_CPPFLAGS) \
+	-I$(top_srcdir)/include
 AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 

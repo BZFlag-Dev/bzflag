@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -27,14 +27,15 @@ class AccessList {
     bool alwaysAuthorized() const;
     bool authorized(const std::vector<std::string>& strings) const;
 
-    const std::string& getFileName() const;
+    const std::string getFilePath() const;
 
   private:
     bool computeAlwaysAuth() const;
-    void makeContent(const char* content) const;
+    bool makeContent(const char* content) const;
 
   private:
     std::string filename;
+    const char* content;
     bool alwaysAuth;
 
     enum AccessType {

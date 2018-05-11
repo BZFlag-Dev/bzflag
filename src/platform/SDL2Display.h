@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2017 Tim Riker
+ * Copyright (c) 1993-2018 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -39,7 +39,6 @@ class SDLDisplay : public BzfDisplay {
   void getWindowSize(int& width, int& height);
   bool hasGetKeyMode() {return true;};
   void getModState(bool &shift, bool &control, bool &alt);
-  void getMouse(int& x, int& y) const;
  private:
   bool setupEvent(BzfEvent&, const SDL_Event&) const;
   bool doSetResolution(int) {return true;};
