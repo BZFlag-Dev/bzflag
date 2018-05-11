@@ -5391,6 +5391,13 @@ static void setupFarPlane()
   return;
 }
 
+static void swapBuffers ()
+{
+   if (BZDB.isSet("singleBuffer"))
+      glFinish();
+   else
+      mainWindow->getWindow()->swapBuffers();
+}
 
 void drawFrame(const float dt)
 {
@@ -5996,7 +6003,7 @@ void drawFrame(const float dt)
       glPopMatrix();
     }
 
-    mainWindow->getWindow()->swapBuffers();
+    swapBuffers();
 
     // remove dynamic nodes from this frame
     if (scene) {
@@ -7021,7 +7028,7 @@ static void		startupErrorCallback(const char* msg)
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glClear(GL_COLOR_BUFFER_BIT);
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
+  swapBuffers();
 }
 
 
@@ -7115,7 +7122,7 @@ void			startPlaying(BzfDisplay* _display,
   glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glDisable(GL_SCISSOR_TEST);
   glClear(GL_COLOR_BUFFER_BIT);
-  mainWindow->getWindow()->swapBuffers();
+  swapBuffers();
 
   // resize and draw basic stuff
   glClear(GL_COLOR_BUFFER_BIT);
@@ -7123,7 +7130,7 @@ void			startPlaying(BzfDisplay* _display,
   controlPanel->resize();
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
+  swapBuffers();
 
   // startup error callback adds message to control panel and
   // forces an immediate redraw.
@@ -7206,7 +7213,7 @@ void			startPlaying(BzfDisplay* _display,
   glClear(GL_COLOR_BUFFER_BIT);
   sceneRenderer->render();
   controlPanel->render(*sceneRenderer);
-  mainWindow->getWindow()->swapBuffers();
+  swapBuffers();
   mainWindow->getWindow()->yieldCurrent();
 
   // make heads up display

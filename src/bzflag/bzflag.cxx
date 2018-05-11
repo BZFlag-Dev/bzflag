@@ -123,7 +123,10 @@ static void		setVisual(BzfVisual* visual)
 {
   // sine qua non
   visual->setLevel(0);
-  visual->setDoubleBuffer(true);
+  if (BZDB.isSet("singleBuffer"))
+     visual->setDoubleBuffer(false);
+  else
+     visual->setDoubleBuffer(true);
   visual->setRGBA(1, 1, 1, 0);
 
   // ask for a zbuffer if not disabled.  we might
@@ -283,8 +286,11 @@ static void		parse(int argc, char** argv)
     }
     else if (strcmp(argv[i], "-multisample") == 0) {
       BZDB.set("_multisample", "1");
-#ifdef ROBOT
     }
+    else if (strcmp(argv[i], "-singlebuffer") == 0) {
+      BZDB.set("singleBuffer", "1");
+    }
+#ifdef ROBOT
     else if (strcmp(argv[i], "-solo") == 0) {
       checkArgc(i, argc, argv[i]);
       numRobotTanks = atoi(argv[i]);
@@ -292,8 +298,8 @@ static void		parse(int argc, char** argv)
 	printFatalError("Invalid argument for %s.", argv[i-1]);
 	usage();
       }
-#endif
     }
+#endif
     else if (strcmp(argv[i], "-team") == 0) {
       checkArgc(i, argc, argv[i]);
       if ((strcmp(argv[i], "a") == 0) ||
