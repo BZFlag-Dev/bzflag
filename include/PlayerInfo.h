@@ -223,7 +223,9 @@ private:
 
   // idle kick
   TimeKeeper	lastmsg;
-  TimeKeeper	lastupdate;
+  
+  TimeKeeper	lastIdleUpdate;
+  TimeKeeper	lastRespondingUpdate;
 
   // player played before countdown started
   bool	playedEarly;
