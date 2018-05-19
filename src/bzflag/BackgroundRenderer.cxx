@@ -733,7 +733,7 @@ void BackgroundRenderer::setupSkybox()
   haveSkybox = false;
 
   int i;
-  const char *(skyboxNames[6]) = {
+  const char *skyboxNames[6] = {
     "LeftSkyboxMaterial",
     "FrontSkyboxMaterial",
     "RightSkyboxMaterial",
