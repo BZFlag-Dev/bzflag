@@ -44,11 +44,12 @@ class ObstacleModifier;
 // - uses a group definition and a transform to produce obstacles
 //
 
-class GroupInstance {
+class GroupInstance
+{
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
-  public:
+public:
     GroupInstance(const std::string& groupdef);
     GroupInstance();
     ~GroupInstance();
@@ -64,7 +65,7 @@ class GroupInstance {
     void setShootThrough();
     void setCanRicochet();
     void addMaterialSwap(const BzMaterial* src,
-			 const BzMaterial* dst);
+                         const BzMaterial* dst);
 
     const std::string& getName() const;
 
@@ -77,7 +78,7 @@ class GroupInstance {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::string groupdef;
 
     std::string name;
@@ -102,23 +103,25 @@ class GroupInstance {
 // - defines an obstacle group
 //
 
-class GroupDefinition {
-  public:
+class GroupDefinition
+{
+public:
     GroupDefinition(const std::string& name);
     ~GroupDefinition();
 
-    enum ObstacleTypes {
-      wallType = 0,
-      boxType,
-      pyrType,
-      baseType,
-      teleType,
-      meshType,
-      arcType,
-      coneType,
-      sphereType,
-      tetraType,
-      ObstacleTypeCount
+    enum ObstacleTypes
+    {
+        wallType = 0,
+        boxType,
+        pyrType,
+        baseType,
+        teleType,
+        meshType,
+        arcType,
+        coneType,
+        sphereType,
+        tetraType,
+        ObstacleTypeCount
     };
 
     void addObstacle(Obstacle* obstacle);
@@ -130,7 +133,7 @@ class GroupDefinition {
     void sort(int (*compare)(const void* a, const void* b));
 
     void makeGroups(const MeshTransform& xform,
-		    const ObstacleModifier& obsMod) const;
+                    const ObstacleModifier& obsMod) const;
 
     void replaceBasesWithBoxes();
     void deleteInvalidObstacles();
@@ -151,15 +154,15 @@ class GroupDefinition {
     void printGrouped(std::ostream& out, const std::string& indent) const;
     void printFlatFile(std::ostream& out, const std::string& indent) const;
 
-  public:
+public:
     static void clearDepthName();
 
-  private:
+private:
     Obstacle* newObstacle(int type);
     void makeTeleName(Obstacle* obs, unsigned int pos) const;
     void appendGroupName(const GroupInstance* group) const;
 
-  private:
+private:
     std::string name;
 
     ObstacleList lists[ObstacleTypeCount];
@@ -167,21 +170,21 @@ class GroupDefinition {
 
     mutable bool active; // for recursion checking
 
-  private:
+private:
     static std::string depthName;
 };
 
 inline const std::string& GroupDefinition::getName() const
 {
-  return name;
+    return name;
 }
 inline const ObstacleList& GroupDefinition::getList(int type) const
 {
-  return lists[type];
+    return lists[type];
 }
 inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
 {
-  return groups;
+    return groups;
 }
 
 
@@ -190,8 +193,9 @@ inline const std::vector<GroupInstance*>& GroupDefinition::getGroups() const
 // - utility class to keep track of group definitions
 //
 
-class GroupDefinitionMgr {
-  public:
+class GroupDefinitionMgr
+{
+public:
     GroupDefinitionMgr();
     ~GroupDefinitionMgr();
 
@@ -230,55 +234,55 @@ class GroupDefinitionMgr {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     GroupDefinition world;
     std::vector<GroupDefinition*> list;
 };
 
 inline const GroupDefinition* GroupDefinitionMgr::getWorld() const
 {
-  return &world;
+    return &world;
 }
 
 inline const ObstacleList& GroupDefinitionMgr::getWalls() const
 {
-  return world.getList(GroupDefinition::wallType);
+    return world.getList(GroupDefinition::wallType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getBoxes() const
 {
-  return world.getList(GroupDefinition::boxType);
+    return world.getList(GroupDefinition::boxType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getPyrs() const
 {
-  return world.getList(GroupDefinition::pyrType);
+    return world.getList(GroupDefinition::pyrType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getBases() const
 {
-  return world.getList(GroupDefinition::baseType);
+    return world.getList(GroupDefinition::baseType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getTeles() const
 {
-  return world.getList(GroupDefinition::teleType);
+    return world.getList(GroupDefinition::teleType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getMeshes() const
 {
-  return world.getList(GroupDefinition::meshType);
+    return world.getList(GroupDefinition::meshType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getArcs() const
 {
-  return world.getList(GroupDefinition::arcType);
+    return world.getList(GroupDefinition::arcType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getCones() const
 {
-  return world.getList(GroupDefinition::coneType);
+    return world.getList(GroupDefinition::coneType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getSpheres() const
 {
-  return world.getList(GroupDefinition::sphereType);
+    return world.getList(GroupDefinition::sphereType);
 }
 inline const ObstacleList& GroupDefinitionMgr::getTetras() const
 {
-  return world.getList(GroupDefinition::tetraType);
+    return world.getList(GroupDefinition::tetraType);
 }
 
 

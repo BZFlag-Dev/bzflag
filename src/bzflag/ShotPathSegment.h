@@ -18,20 +18,21 @@
 #include "Ray.h"
 
 
-class ShotPathSegment {
-  public:
+class ShotPathSegment
+{
+public:
     enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
 
-			ShotPathSegment();
-			ShotPathSegment(const TimeKeeper& start,
-					const TimeKeeper& end,
-					const Ray& r,
-					Reason = Initial);
-			ShotPathSegment(const ShotPathSegment&);
-			~ShotPathSegment();
+    ShotPathSegment();
+    ShotPathSegment(const TimeKeeper& start,
+                    const TimeKeeper& end,
+                    const Ray& r,
+                    Reason = Initial);
+    ShotPathSegment(const ShotPathSegment&);
+    ~ShotPathSegment();
     ShotPathSegment&	operator=(const ShotPathSegment&);
 
-  public:
+public:
     TimeKeeper		start;
     TimeKeeper		end;
     Ray			ray;

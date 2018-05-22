@@ -31,22 +31,22 @@ typedef std::map<std::string,Bundle *> BundleMap;
 class BundleMgr
 {
 public:
-	BundleMgr(const std::string &path, const std::string &bundleName);
-	~BundleMgr();
-	Bundle *getBundle(const std::string &locale, bool setcur = true);
+    BundleMgr(const std::string &path, const std::string &bundleName);
+    ~BundleMgr();
+    Bundle *getBundle(const std::string &locale, bool setcur = true);
 
-	static Bundle *getCurrentBundle();
-	static bool getLocaleList(std::vector<std::string> *list);
+    static Bundle *getCurrentBundle();
+    static bool getLocaleList(std::vector<std::string> *list);
 
 private:
-	BundleMgr(const BundleMgr &xBundleMgr);
-	BundleMgr& operator=(const BundleMgr &xBundleMgr);
+    BundleMgr(const BundleMgr &xBundleMgr);
+    BundleMgr& operator=(const BundleMgr &xBundleMgr);
 
-	static std::string bundlePath;
-	std::string bundleName;
-	BundleMap bundles;
+    static std::string bundlePath;
+    std::string bundleName;
+    BundleMap bundles;
 
-	static Bundle *currentBundle;
+    static Bundle *currentBundle;
 };
 
 #endif

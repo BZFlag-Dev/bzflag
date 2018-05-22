@@ -18,19 +18,20 @@
 
 /** Encapsulates a semi-infinite ray. */
 
-class Ray {
-  public:
-			Ray();
-			Ray(const float* o, const float* d);
-			Ray(const Ray&);
-			~Ray();
+class Ray
+{
+public:
+    Ray();
+    Ray(const float* o, const float* d);
+    Ray(const Ray&);
+    ~Ray();
     Ray&		operator=(const Ray&);
 
     const float*	getOrigin() const;
     const float*	getDirection() const;
     void		getPoint(float t, float p[3]) const;
 
-  private:
+private:
     float		o[3];
     float		d[3];
 };
@@ -39,21 +40,25 @@ class Ray {
 // Ray
 //
 
-inline Ray::Ray() { memset(o,0,sizeof(float)*3); memset(d,0,sizeof(float)*3); }
+inline Ray::Ray()
+{
+    memset(o,0,sizeof(float)*3);
+    memset(d,0,sizeof(float)*3);
+}
 
 inline Ray::~Ray()
 {
-  // do nothing
+    // do nothing
 }
 
 inline const float*	Ray::getOrigin() const
 {
-  return o;
+    return o;
 }
 
 inline const float*	Ray::getDirection() const
 {
-  return d;
+    return d;
 }
 
 #endif // BZF_RAY_H

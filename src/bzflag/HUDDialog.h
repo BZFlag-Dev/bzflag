@@ -27,9 +27,10 @@ class HUDuiDefaultKey;
  * HUDDialog:
  *	A dialog of HUDuiControls.
  */
-class HUDDialog {
-  public:
-			HUDDialog();
+class HUDDialog
+{
+public:
+    HUDDialog();
     virtual		~HUDDialog();
 
     void			render();
@@ -39,7 +40,10 @@ class HUDDialog {
     virtual void		execute() = 0;
     virtual void		dismiss() {}
     virtual void		resize(int _width, int _height);
-    virtual void		setFailedMessage(const char *) {;};
+    virtual void		setFailedMessage(const char *)
+    {
+        ;
+    };
 
     HUDuiControl*		getFocus() const;
     void			setFocus(HUDuiControl*);
@@ -48,17 +52,29 @@ class HUDDialog {
 
 
 
-  protected:
-    const std::vector<HUDuiControl*>&	getControls() const { return list; }
-    std::vector<HUDuiControl*>&		getControls() { return list; }
+protected:
+    const std::vector<HUDuiControl*>&	getControls() const
+    {
+        return list;
+    }
+    std::vector<HUDuiControl*>&		getControls()
+    {
+        return list;
+    }
 
-    int				getHeight() const { return height; }
-    int				getWidth() const { return width; }
+    int				getHeight() const
+    {
+        return height;
+    }
+    int				getWidth() const
+    {
+        return width;
+    }
 
-  protected:
+protected:
     int				height, width;
 
-  private:
+private:
     std::vector<HUDuiControl*>	list;
     HUDuiControl*		focus;
 };

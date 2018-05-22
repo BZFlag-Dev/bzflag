@@ -16,14 +16,21 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
-class Authentication {
- public:
-  Authentication();
+class Authentication
+{
+public:
+    Authentication();
 
-  bool isGlobal(void) const {return globallyAuthenticated;};
-  void global(bool set) {globallyAuthenticated = set;}
+    bool isGlobal(void) const
+    {
+        return globallyAuthenticated;
+    };
+    void global(bool set)
+    {
+        globallyAuthenticated = set;
+    }
 private:
-  bool		   globallyAuthenticated;
+    bool		   globallyAuthenticated;
 };
 
 #endif

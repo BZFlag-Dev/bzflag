@@ -28,44 +28,47 @@
 #include "SceneRenderer.h"
 
 EighthDimSceneNode::EighthDimSceneNode(int numPolygons) :
-				renderNode(this, numPolygons)
+    renderNode(this, numPolygons)
 {
-  // do nothing
+    // do nothing
 }
 
 EighthDimSceneNode::~EighthDimSceneNode()
 {
-  // do nothing
+    // do nothing
 }
 
 bool			EighthDimSceneNode::cull(const ViewFrustum&) const
 {
-  // no culling
-  return false;
+    // no culling
+    return false;
 }
 
 void			EighthDimSceneNode::notifyStyleChange()
 {
-  OpenGLGStateBuilder builder(gstate);
-  builder.setCulling(GL_NONE);
-  if (BZDB.isTrue("blend")) {
-    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  } else {
-    builder.setStipple(0.75f);
-  }
-  gstate = builder.getState();
+    OpenGLGStateBuilder builder(gstate);
+    builder.setCulling(GL_NONE);
+    if (BZDB.isTrue("blend"))
+    {
+        builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    }
+    else
+    {
+        builder.setStipple(0.75f);
+    }
+    gstate = builder.getState();
 }
 
 void			EighthDimSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+    SceneRenderer& renderer)
 {
-  renderer.addRenderNode(&renderNode, &gstate);
+    renderer.addRenderNode(&renderNode, &gstate);
 }
 
 void			EighthDimSceneNode::setPolygon(int index,
-						const GLfloat vertex[3][3])
+        const GLfloat vertex[3][3])
 {
-  renderNode.setPolygon(index, vertex);
+    renderNode.setPolygon(index, vertex);
 }
 
 //
@@ -73,46 +76,48 @@ void			EighthDimSceneNode::setPolygon(int index,
 //
 
 EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
-				const EighthDimSceneNode* _sceneNode,
-				int numPolys) :
-				sceneNode(_sceneNode),
-				numPolygons(numPolys)
+    const EighthDimSceneNode* _sceneNode,
+    int numPolys) :
+    sceneNode(_sceneNode),
+    numPolygons(numPolys)
 {
-  color = (GLfloat(*)[4])new GLfloat[4 * numPolygons];
-  poly = (GLfloat(*)[3][3])new GLfloat[9 * numPolygons];
+    color = (GLfloat(*)[4])new GLfloat[4 * numPolygons];
+    poly = (GLfloat(*)[3][3])new GLfloat[9 * numPolygons];
 
-  // make random colors
-  for (int i = 0; i < numPolygons; i++) {
-    color[i][0] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][1] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][2] = 0.2f + 0.8f * (float)bzfrand();
-    color[i][3] = 0.2f + 0.6f * (float)bzfrand();
-  }
+    // make random colors
+    for (int i = 0; i < numPolygons; i++)
+    {
+        color[i][0] = 0.2f + 0.8f * (float)bzfrand();
+        color[i][1] = 0.2f + 0.8f * (float)bzfrand();
+        color[i][2] = 0.2f + 0.8f * (float)bzfrand();
+        color[i][3] = 0.2f + 0.6f * (float)bzfrand();
+    }
 }
 
 EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
 {
-  delete[] color;
-  delete[] poly;
+    delete[] color;
+    delete[] poly;
 }
 
 void			EighthDimSceneNode::EighthDimRenderNode::render()
 {
-  // draw polygons
-  glBegin(GL_TRIANGLES);
-  for (int i = 0; i < numPolygons; i++) {
-    myColor4fv(color[i]);
-    glVertex3fv(poly[i][0]);
-    glVertex3fv(poly[i][2]);
-    glVertex3fv(poly[i][1]);
-  }
-  glEnd();
+    // draw polygons
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < numPolygons; i++)
+    {
+        myColor4fv(color[i]);
+        glVertex3fv(poly[i][0]);
+        glVertex3fv(poly[i][2]);
+        glVertex3fv(poly[i][1]);
+    }
+    glEnd();
 }
 
 void			EighthDimSceneNode::EighthDimRenderNode::setPolygon(
-				int index, const GLfloat vertex[3][3])
+    int index, const GLfloat vertex[3][3])
 {
-  ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
+    ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
 }
 
 // Local Variables: ***

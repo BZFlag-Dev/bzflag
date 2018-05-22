@@ -34,9 +34,10 @@
 
 class ShotPath;
 
-class ShotStrategy {
-  public:
-			ShotStrategy(ShotPath*);
+class ShotStrategy
+{
+public:
+    ShotStrategy(ShotPath*);
     virtual		~ShotStrategy();
 
     virtual void	update(float dt) = 0;
@@ -57,7 +58,7 @@ class ShotStrategy {
     static const Obstacle*	getFirstBuilding(const Ray&, float min, float& t);
     static void		reflect(float* v, const float* n); // const
 
-  protected:
+protected:
     const ShotPath&	getPath() const;
     FiringInfo&		getFiringInfo(ShotPath*) const;
     void		setReloadTime(float) const;
@@ -67,16 +68,16 @@ class ShotStrategy {
     void		setExpired() const;
 
     const Teleporter*	getFirstTeleporter(const Ray&, float min,
-							float& t, int& f) const;
+                                           float& t, int& f) const;
     bool		getGround(const Ray&, float min, float &t) const;
 
-  private:
+private:
     ShotPath*		path;
 };
 
 inline const ShotPath&	ShotStrategy::getPath() const
 {
-  return *path;
+    return *path;
 }
 
 

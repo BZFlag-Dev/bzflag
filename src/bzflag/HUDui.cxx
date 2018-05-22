@@ -22,36 +22,36 @@ HUDuiDefaultKey*	HUDui::defaultKey = NULL;
 
 HUDuiControl*		HUDui::getFocus()
 {
-  return focus;
+    return focus;
 }
 
 void			HUDui::setFocus(HUDuiControl* _focus)
 {
-  focus = _focus;
+    focus = _focus;
 }
 
 HUDuiDefaultKey*	HUDui::getDefaultKey()
 {
-  return defaultKey;
+    return defaultKey;
 }
 
 void			HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey)
 {
-  defaultKey = _defaultKey;
+    defaultKey = _defaultKey;
 }
 
 bool			HUDui::keyPress(const BzfKeyEvent& key)
 {
-  if (defaultKey && defaultKey->keyPress(key)) return true;
-  if (focus && focus->doKeyPress(key)) return true;
-  return false;
+    if (defaultKey && defaultKey->keyPress(key)) return true;
+    if (focus && focus->doKeyPress(key)) return true;
+    return false;
 }
 
 bool			HUDui::keyRelease(const BzfKeyEvent& key)
 {
-  if (defaultKey && defaultKey->keyRelease(key)) return true;
-  if (focus && focus->doKeyRelease(key)) return true;
-  return false;
+    if (defaultKey && defaultKey->keyRelease(key)) return true;
+    if (focus && focus->doKeyRelease(key)) return true;
+    return false;
 }
 
 

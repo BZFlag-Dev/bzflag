@@ -27,9 +27,10 @@ class SceneRenderer;
 class World;
 class ShotPath;
 
-class RadarRenderer {
-  public:
-			RadarRenderer(const SceneRenderer&, World* _world);
+class RadarRenderer
+{
+public:
+    RadarRenderer(const SceneRenderer&, World* _world);
     void		setWorld(World* _world);
 
     void		setControlColor(const GLfloat *color = NULL);
@@ -56,7 +57,7 @@ class RadarRenderer {
 
     int			getFrameTriangleCount() const;
 
-  private:
+private:
     // no copying
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&	operator=(const RadarRenderer&);
@@ -64,8 +65,8 @@ class RadarRenderer {
     void		drawShot(const ShotPath*);
     void		setTankColor(const class Player* player);
     void		drawTank(const float pos[3],
-				 const class Player* player,
-				 bool useSquares);
+                         const class Player* player,
+                         bool useSquares);
     void		drawFancyTank(const class Player* player);
     void		drawFlag(const float pos[3]);
     void		drawFlagOnTank(const float pos[3]);
@@ -73,7 +74,7 @@ class RadarRenderer {
     static float	colorScale(const float z, const float h);
     static float	transScale(const float z, const float h);
 
-  private:
+private:
     World*		world;
     int			x, y;
     int			w, h;
@@ -96,22 +97,22 @@ class RadarRenderer {
 
 inline int		RadarRenderer::getX() const
 {
-  return x;
+    return x;
 }
 
 inline int		RadarRenderer::getY() const
 {
-  return y;
+    return y;
 }
 
 inline int		RadarRenderer::getWidth() const
 {
-  return w;
+    return w;
 }
 
 inline int		RadarRenderer::getHeight() const
 {
-  return h;
+    return h;
 }
 
 #endif // BZF_RADAR_RENDERER_H

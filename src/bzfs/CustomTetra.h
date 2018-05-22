@@ -25,13 +25,14 @@
 /* common interface header */
 #include "BzMaterial.h"
 
-class CustomTetra : public WorldFileObstacle {
-  public:
+class CustomTetra : public WorldFileObstacle
+{
+public:
     CustomTetra();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
+private:
     int vertexCount;
 
     float vertices[4][3];

@@ -28,10 +28,11 @@
 #include "SceneDatabase.h"
 
 
-class BSPSceneDatabase : public SceneDatabase {
-  public:
-			BSPSceneDatabase();
-			~BSPSceneDatabase();
+class BSPSceneDatabase : public SceneDatabase
+{
+public:
+    BSPSceneDatabase();
+    ~BSPSceneDatabase();
 
     // returns true if the node would have been deleted
     bool		addStaticNode(SceneNode*, bool dontFree);
@@ -50,16 +51,17 @@ class BSPSceneDatabase : public SceneDatabase {
 
     void		drawCuller();
 
-  private:
-    class Node {
-      public:
-			Node(bool dynamic, SceneNode* node);
-      public:
-	bool		dynamic;
-	int		count;
-	SceneNode*	node;
-	Node*		front;
-	Node*		back;
+private:
+    class Node
+    {
+    public:
+        Node(bool dynamic, SceneNode* node);
+    public:
+        bool		dynamic;
+        int		count;
+        SceneNode*	node;
+        Node*		front;
+        Node*		back;
     };
 
     void		setNodeStyle(Node*);
@@ -77,7 +79,7 @@ class BSPSceneDatabase : public SceneDatabase {
     void		release(Node*);
     void		setDepth(int newDepth);
 
-  private:
+private:
     Node*		root;
     int			depth;
     // the following members avoid passing parameters around

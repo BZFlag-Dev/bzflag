@@ -20,10 +20,11 @@
 #include "CommandManager.h"
 
 
-typedef struct CommandListItem {
-  const char* name;
-  CommandManager::CommandFunction func;
-  const char* help;
+typedef struct CommandListItem
+{
+    const char* name;
+    CommandManager::CommandFunction func;
+    const char* help;
 } CmdListItem;
 
 /* FIXME -- gcc is not liking array type with sizeof() without size

@@ -24,8 +24,9 @@
 
 const int		TeamPLen = 10;
 
-struct Team {
-  public:
+struct Team
+{
+public:
     Team();
 
     void*		pack(void*) const;
@@ -41,23 +42,35 @@ struct Team {
     static bool			isColorTeam(TeamColor); // const
 
     static void		setColors(TeamColor,
-				  const float* tank,
-				  const float* radar);
+                              const float* tank,
+                              const float* radar);
     static void		updateShotColors();
 
-  public:
+public:
     unsigned short	size;			// num players on team
 
-    short		getWins() const { return won; }
-    short		getLosses() const { return lost; }
-    void		setWins(short v) { won = v; }
-    void		setLosses(short v) { lost = v; }
+    short		getWins() const
+    {
+        return won;
+    }
+    short		getLosses() const
+    {
+        return lost;
+    }
+    void		setWins(short v)
+    {
+        won = v;
+    }
+    void		setLosses(short v)
+    {
+        lost = v;
+    }
 
     static float	tankColor[NumTeams][3];
     static float	radarColor[NumTeams][3];
     static float	shotColor[NumTeams][3];
 
-  private:
+private:
     unsigned short	won;			// wins by team members
     unsigned short	lost;			// losses by team members
 

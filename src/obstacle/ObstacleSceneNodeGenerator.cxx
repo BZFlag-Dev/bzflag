@@ -18,14 +18,14 @@
 //
 
 ObstacleSceneNodeGenerator::ObstacleSceneNodeGenerator() :
-				node(0)
+    node(0)
 {
-  // do nothing
+    // do nothing
 }
 
 ObstacleSceneNodeGenerator::~ObstacleSceneNodeGenerator()
 {
-  // do nothing
+    // do nothing
 }
 
 // Local Variables: ***

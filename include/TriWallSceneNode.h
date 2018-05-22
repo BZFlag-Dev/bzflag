@@ -20,15 +20,16 @@
 #include "common.h"
 #include "WallSceneNode.h"
 
-class TriWallSceneNode : public WallSceneNode {
-  public:
-			TriWallSceneNode(const GLfloat base[3],
-				const GLfloat sEdge[3],
-				const GLfloat tEdge[3],
-				float uRepeats = 1.0,
-				float vRepeats = 1.0,
-				bool makeLODs = true);
-			~TriWallSceneNode();
+class TriWallSceneNode : public WallSceneNode
+{
+public:
+    TriWallSceneNode(const GLfloat base[3],
+                     const GLfloat sEdge[3],
+                     const GLfloat tEdge[3],
+                     float uRepeats = 1.0,
+                     float vRepeats = 1.0,
+                     bool makeLODs = true);
+    ~TriWallSceneNode();
 
     int			split(const float*, SceneNode*&, SceneNode*&) const;
 
@@ -45,37 +46,44 @@ class TriWallSceneNode : public WallSceneNode {
 
     void		getRenderNodes(std::vector<RenderSet>& rnodes);
 
-  protected:
-    class Geometry : public RenderNode {
-      public:
-			Geometry(TriWallSceneNode*,
-				int eCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* normal,
-				float uRepeats, float vRepeats);
-			~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	void		renderShadow();
-	const GLfloat*  getVertex(int i) const;
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
-      private:
-	void		drawV() const;
-	void		drawVT() const;
-      private:
-	WallSceneNode*	wall;
-	int		style;
-	int		de;
-	const GLfloat*	normal;
-      public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
-	int	     triangles;
+protected:
+    class Geometry : public RenderNode
+    {
+    public:
+        Geometry(TriWallSceneNode*,
+                 int eCount,
+                 const GLfloat base[3],
+                 const GLfloat uEdge[3],
+                 const GLfloat vEdge[3],
+                 const GLfloat* normal,
+                 float uRepeats, float vRepeats);
+        ~Geometry();
+        void		setStyle(int _style)
+        {
+            style = _style;
+        }
+        void		render();
+        void		renderShadow();
+        const GLfloat*  getVertex(int i) const;
+        const GLfloat*	getPosition() const
+        {
+            return wall->getSphere();
+        }
+    private:
+        void		drawV() const;
+        void		drawVT() const;
+    private:
+        WallSceneNode*	wall;
+        int		style;
+        int		de;
+        const GLfloat*	normal;
+    public:
+        GLfloat3Array	vertex;
+        GLfloat2Array	uv;
+        int	     triangles;
     };
 
-  private:
+private:
     Geometry**		nodes;
     Geometry*		shadowNode;
 };

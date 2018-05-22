@@ -20,11 +20,12 @@ class Obstacle;
 class GroupInstance;
 
 
-class ObstacleModifier {
-  public:
+class ObstacleModifier
+{
+public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
-		     const GroupInstance& grpinst);
+                     const GroupInstance& grpinst);
     ~ObstacleModifier();
     void init();
 
@@ -32,7 +33,7 @@ class ObstacleModifier {
 
     void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
 
-  private:
+private:
     bool modifyTeam; // only for bases
     int team;
     bool modifyColor; // modify by tinting

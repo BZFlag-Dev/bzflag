@@ -21,8 +21,9 @@
 
 class BzfDisplay;
 
-class BzfWindowCB {
-  public:
+class BzfWindowCB
+{
+public:
     void		(*cb)(void*);
     void*		data;
 };
@@ -30,12 +31,16 @@ class BzfWindowCB {
 /** BzfWindow:
  *	Abstract, platform independent base for OpenGL windows.
  */
-class BzfWindow {
-  public:
-			BzfWindow(const BzfDisplay*);
+class BzfWindow
+{
+public:
+    BzfWindow(const BzfDisplay*);
     virtual		~BzfWindow();
 
-    const BzfDisplay*	getDisplay() const { return display; }
+    const BzfDisplay*	getDisplay() const
+    {
+        return display;
+    }
     virtual bool	isValid() const = 0;
 
     virtual void	showWindow(bool) = 0;
@@ -48,17 +53,29 @@ class BzfWindow {
     virtual void	setSize(int width, int height) = 0;
     virtual void	setMinSize(int width, int height) = 0;
     virtual void	setFullscreen(bool) = 0;
-    virtual void	iconify(void) {;};
-    virtual bool	create(void) { return true; };
+    virtual void	iconify(void)
+    {
+        ;
+    };
+    virtual bool	create(void)
+    {
+        return true;
+    };
 
     virtual void	warpMouse(int x, int y) = 0;
     virtual void	getMouse(int& x, int& y) const = 0;
     virtual void	grabMouse() = 0;
     virtual void	ungrabMouse() = 0;
-    virtual void	enableGrabMouse(bool) {;};
+    virtual void	enableGrabMouse(bool)
+    {
+        ;
+    };
     // TODO: Refactor our handling of confining the mouse to the window or
     // the motionbox to be a bit cleaner.
-    virtual void	disableConfineToMotionbox() {;}
+    virtual void	disableConfineToMotionbox()
+    {
+        ;
+    }
     virtual void	confineToMotionbox(int x1, int y1, int x2, int y2);
     virtual void	showMouse() = 0;
     virtual void	hideMouse() = 0;
@@ -67,8 +84,14 @@ class BzfWindow {
     virtual float	getGamma() const = 0;
     virtual bool	hasGammaControl() const = 0;
 
-    virtual bool	hasVerticalSync() const { return false; }
-    virtual void	setVerticalSync(bool) {;}
+    virtual bool	hasVerticalSync() const
+    {
+        return false;
+    }
+    virtual void	setVerticalSync(bool)
+    {
+        ;
+    }
 
     virtual void	makeCurrent() = 0;
     virtual void	yieldCurrent();
@@ -85,7 +108,7 @@ class BzfWindow {
     void		addResizeCallback(void (*cb)(void*), void* data);
     void		removeResizeCallback(void (*cb)(void*), void* data);
 
-  private:
+private:
     const BzfDisplay*	display;
     std::vector<BzfWindowCB>	exposeCallbacks;
     std::vector<BzfWindowCB>	resizeCallbacks;

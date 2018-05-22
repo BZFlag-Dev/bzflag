@@ -26,20 +26,20 @@ static const double	unixEpoch = 2440587.5;
 
 // return direction of sun given julian day
 void			getSunPosition(double julianDay, float latitude,
-					float longitude, float pos[3]);
+                               float longitude, float pos[3]);
 
 // return direction of moon given julian day
 void			getMoonPosition(double julianDay, float latitude,
-					float longitude, float pos[3]);
+                                float longitude, float pos[3]);
 
 // transform a direction from the celestial coordinate system
 void			getCelestialTransform(double julianDay,
-					float latitude, float longitude,
-					GLfloat (&xform)[4][4]);
+                                      float latitude, float longitude,
+                                      GLfloat (&xform)[4][4]);
 
 // sets color of sun.  if it's nighttime, the sun is actually the moon.
 void			getSunColor(const float sunDir[3], GLfloat color[3],
-				GLfloat ambient[3], GLfloat& brightness);
+                            GLfloat ambient[3], GLfloat& brightness);
 
 // make sky colors given sun direction.  sun direction should be normalized.
 // sky is filled with the colors for the zenith, horizon towards sun, and

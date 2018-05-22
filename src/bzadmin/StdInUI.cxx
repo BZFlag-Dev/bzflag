@@ -21,25 +21,29 @@
 UIAdder StdInUI::uiAdder("stdin", &StdInUI::creator);
 
 
-StdInUI::StdInUI(BZAdminClient& c) : BZAdminUI(c) {
+StdInUI::StdInUI(BZAdminClient& c) : BZAdminUI(c)
+{
 
 }
 
 
-bool StdInUI::checkCommand(std::string& str) {
-  if (std::cin.eof()) {
-    str = "/quit";
+bool StdInUI::checkCommand(std::string& str)
+{
+    if (std::cin.eof())
+    {
+        str = "/quit";
+        return true;
+    }
+    std::getline(std::cin, str);
+    if (str == "")
+        return false;
     return true;
-  }
-  std::getline(std::cin, str);
-  if (str == "")
-    return false;
-  return true;
 }
 
 
-BZAdminUI* StdInUI::creator(BZAdminClient& client) {
-  return new StdInUI(client);
+BZAdminUI* StdInUI::creator(BZAdminClient& client)
+{
+    return new StdInUI(client);
 }
 
 // Local Variables: ***

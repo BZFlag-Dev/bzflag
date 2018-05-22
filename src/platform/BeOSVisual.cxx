@@ -13,13 +13,13 @@
 #include "BeOSVisual.h"
 
 BeOSVisual::BeOSVisual(const BeOSDisplay* _display) :
-								display(_display),
-								color(0),
-								depth(0),
-								stencil(0),
-								accum(0),
-								flags(0),
-								doubleBuffer(false)
+    display(_display),
+    color(0),
+    depth(0),
+    stencil(0),
+    accum(0),
+    flags(0),
+    doubleBuffer(false)
 {
 }
 
@@ -29,16 +29,16 @@ BeOSVisual::~BeOSVisual()
 
 void					BeOSVisual::setLevel(int level)
 {
-/*
-  if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
-  else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
-  else pfd.iLayerType = PFD_MAIN_PLANE;
-*/
+    /*
+      if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
+      else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
+      else pfd.iLayerType = PFD_MAIN_PLANE;
+    */
 }
 
 void					BeOSVisual::setDoubleBuffer(bool on)
 {
-  doubleBuffer = on;
+    doubleBuffer = on;
 }
 
 void					BeOSVisual::setIndex(int minDepth)
@@ -49,7 +49,7 @@ void					BeOSVisual::setIndex(int minDepth)
 }
 
 void					BeOSVisual::setRGBA(int minRed, int minGreen,
-								int minBlue, int minAlpha)
+        int minBlue, int minAlpha)
 {
 // ?
 //  pfd.iPixelType = PFD_TYPE_RGBA;
@@ -58,33 +58,33 @@ void					BeOSVisual::setRGBA(int minRed, int minGreen,
 
 void					BeOSVisual::setDepth(int minDepth)
 {
-  depth = minDepth;
+    depth = minDepth;
 }
 
 void					BeOSVisual::setStencil(int minDepth)
 {
-  stencil = minDepth;
+    stencil = minDepth;
 }
 
 void					BeOSVisual::setAccum(int minRed, int minGreen,
-								int minBlue, int minAlpha)
+        int minBlue, int minAlpha)
 {
-  accum = minRed + minGreen + minBlue + minAlpha;
+    accum = minRed + minGreen + minBlue + minAlpha;
 }
 
 void					BeOSVisual::setStereo(bool on)
 {
-  // do nothing
+    // do nothing
 }
 
 void					BeOSVisual::setMultisample(int)
 {
-  // do nothing
+    // do nothing
 }
 
 bool					BeOSVisual::build()
 {
-  return true;
+    return true;
 }
 
 

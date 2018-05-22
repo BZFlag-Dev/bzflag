@@ -21,10 +21,11 @@
 
 /** builds a bzlfag world
  */
-class WorldBuilder {
-  public:
-			WorldBuilder();
-			~WorldBuilder();
+class WorldBuilder
+{
+public:
+    WorldBuilder();
+    ~WorldBuilder();
 
     const void*		unpack(const void*);
     const void*		unpackGameSettings(const void*);
@@ -40,13 +41,13 @@ class WorldBuilder {
     void		setShakeTimeout(float timeout) const;
     void		setShakeWins(int wins) const;
     void		setBase(TeamColor team,
-				const float* pos, float rotation,
-				float w, float b, float h);
+                        const float* pos, float rotation,
+                        float w, float b, float h);
 
-  private:
+private:
     void		preGetWorld();
 
-  private:
+private:
     bool		owned;
     World*		world;
 };

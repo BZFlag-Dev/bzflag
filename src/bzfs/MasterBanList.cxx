@@ -15,18 +15,18 @@
 
 const std::string &MasterBanList::get(const std::string &URL)
 {
-  data = "";
-  // get all up on the internet and go get the thing
-  setURL(URL);
-  performWait();
-  return data;
+    data = "";
+    // get all up on the internet and go get the thing
+    setURL(URL);
+    performWait();
+    return data;
 }
 
 void MasterBanList::finalization(char *cURLdata, unsigned int length,
-				 bool good)
+                                 bool good)
 {
-  if (good)
-    data = std::string(cURLdata, length);
+    if (good)
+        data = std::string(cURLdata, length);
 }
 
 // Local Variables: ***

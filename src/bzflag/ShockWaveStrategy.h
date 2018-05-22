@@ -25,10 +25,11 @@
 #include "ShotPath.h"
 
 
-class ShockWaveStrategy : public ShotStrategy {
-  public:
-			ShockWaveStrategy(ShotPath*);
-			~ShockWaveStrategy();
+class ShockWaveStrategy : public ShotStrategy
+{
+public:
+    ShockWaveStrategy(ShotPath*);
+    ~ShockWaveStrategy();
 
     void		update(float dt);
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
@@ -36,7 +37,7 @@ class ShockWaveStrategy : public ShotStrategy {
     void		addShot(SceneDatabase*, bool colorblind);
     void		radarRender() const;
 
-  private:
+private:
     SphereSceneNode*	shockNode;
     float		radius;
     float		radius2;

@@ -38,14 +38,15 @@ class MeshDrawInfo;
  * World:
  *	Game database -- buildings, teleporters, game style
  */
-class World {
-  friend class WorldBuilder;
-  public:
-			World();
-			~World();
+class World
+{
+    friend class WorldBuilder;
+public:
+    World();
+    ~World();
 
     bool		allowTeamFlags() const;
-	bool		allowSelfKills() const;
+    bool		allowSelfKills() const;
     bool		allowTeamKills() const;
     bool		allowSuperFlags() const;
     bool		allowJumping() const;
@@ -87,22 +88,22 @@ class World {
 
     TeamColor		whoseBase(const float* pos) const;
     const Obstacle*	inBuilding(const float* pos, float radius,
-				   float tankHeight) const;
+                               float tankHeight) const;
     const Obstacle*	inBuilding(const float* pos, float angle,
-				   float tankWidth, float tankBreadth,
-				   float tankHeight) const;
+                               float tankWidth, float tankBreadth,
+                               float tankHeight) const;
     const Obstacle*	hitBuilding(const float* pos, float angle,
-				    float tankWidth, float tankBreadth,
-				    float tankHeight) const;
+                                float tankWidth, float tankBreadth,
+                                float tankHeight) const;
     const Obstacle*	hitBuilding(const float* oldPos, float oldAngle,
-				    const float* pos, float angle,
-				    float tankWidth, float tankBreadth,
-				    float tankHeight, bool directional) const;
+                                const float* pos, float angle,
+                                float tankWidth, float tankBreadth,
+                                float tankHeight, bool directional) const;
     bool		crossingTeleporter(const float* oldPos, float angle,
-					float tankWidth, float tankBreadth,
-					float tankHeight, float* plane) const;
+                                   float tankWidth, float tankBreadth,
+                                   float tankHeight, float* plane) const;
     const Teleporter*	crossesTeleporter(const float* oldPos,
-					  const float* newPos, int& face) const;
+                                          const float* newPos, int& face) const;
     const Teleporter*	crossesTeleporter(const Ray& r, int& face) const;
     float		getProximity(const float* pos, float radius) const;
 
@@ -134,21 +135,21 @@ class World {
     void		checkCollisionManager();
 
     bool		writeWorld(const std::string& filename,
-				   std::string& fullname);
+                           std::string& fullname);
 
     void		drawCollisionGrid() const;
 
     void		freeInsideNodes() const;
 
-  private:
+private:
     // disallow copy and assignment
-			World(const World&);
+    World(const World&);
     World&		operator=(const World&);
 
     void		freeFlags();
     void		freeMeshDrawMgrs();
 
-  private:
+private:
     short		gameType;
     short   gameOptions;
     float		linearAcceleration;
@@ -163,7 +164,10 @@ class World {
     const BzMaterial*	waterMaterial;
     const BzMaterial*	linkMaterial;
 
-    typedef struct { float p[7]; } BaseParms;
+    typedef struct
+    {
+        float p[7];
+    } BaseParms;
     typedef std::vector<BaseParms> TeamBases;
     TeamBases		bases[NumTeams];
     Team		team[NumTeams];
@@ -201,215 +205,215 @@ class World {
 
 inline  bool		World::allowTeams() const
 {
-  return gameType != OpenFFA;
+    return gameType != OpenFFA;
 }
 
 inline bool		World::allowTeamFlags() const
 {
-  return gameType == ClassicCTF;
+    return gameType == ClassicCTF;
 }
 
 inline bool		World::allowSelfKills() const
 {
-  return (gameOptions & short(NoSelfKillsGameStyle)) == 0;
+    return (gameOptions & short(NoSelfKillsGameStyle)) == 0;
 }
 
 inline bool		World::allowTeamKills() const
 {
-  return (gameOptions & short(NoTeamKillsGameStyle)) == 0;
+    return (gameOptions & short(NoTeamKillsGameStyle)) == 0;
 }
 
 inline bool		World::allowSuperFlags() const
 {
-  return (gameOptions & short(SuperFlagGameStyle)) != 0;
+    return (gameOptions & short(SuperFlagGameStyle)) != 0;
 }
 
 inline bool		World::allowJumping() const
 {
-  return (gameOptions & short(JumpingGameStyle)) != 0;
+    return (gameOptions & short(JumpingGameStyle)) != 0;
 }
 
 inline bool		World::allShotsRicochet() const
 {
-  return (gameOptions & short(RicochetGameStyle)) != 0;
+    return (gameOptions & short(RicochetGameStyle)) != 0;
 }
 
 inline bool		World::allowAntidote() const
 {
-  return (gameOptions & short(AntidoteGameStyle)) != 0;
+    return (gameOptions & short(AntidoteGameStyle)) != 0;
 }
 
 inline bool		World::allowShakeTimeout() const
 {
-  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
+    return (gameOptions & short(ShakableGameStyle)) != 0 && shakeTimeout != 0.0f;
 }
 
 inline bool		World::allowShakeWins() const
 {
-  return (gameOptions & short(ShakableGameStyle)) != 0 && shakeWins != 0;
+    return (gameOptions & short(ShakableGameStyle)) != 0 && shakeWins != 0;
 }
 
 inline bool		World::allowRabbit() const
 {
-  return gameType == RabbitChase;
+    return gameType == RabbitChase;
 }
 
 inline bool		World::allowHandicap() const
 {
-  return (gameOptions & short(HandicapGameStyle)) != 0;
+    return (gameOptions & short(HandicapGameStyle)) != 0;
 }
 
 inline float		World::getWaterLevel() const
 {
-  return waterLevel;
+    return waterLevel;
 }
 
 inline const BzMaterial*	World::getWaterMaterial() const
 {
-  return waterMaterial;
+    return waterMaterial;
 }
 
 inline const BzMaterial*	World::getLinkMaterial() const
 {
-  return linkMaterial;
+    return linkMaterial;
 }
 
 inline float		World::getLinearAcceleration() const
 {
-  return linearAcceleration;
+    return linearAcceleration;
 }
 
 inline float		World::getAngularAcceleration() const
 {
-  return angularAcceleration;
+    return angularAcceleration;
 }
 
 inline float		World::getFlagShakeTimeout() const
 {
-  return shakeTimeout;
+    return shakeTimeout;
 }
 
 inline int		World::getFlagShakeWins() const
 {
-  return shakeWins;
+    return shakeWins;
 }
 
 inline int		World::getMaxPlayers() const
 {
-  return maxPlayers;
+    return maxPlayers;
 }
 
 inline int		World::getCurMaxPlayers() const
 {
-  return curMaxPlayers;
+    return curMaxPlayers;
 }
 
 inline void		World::setCurMaxPlayers(int _curMaxPlayers)
 {
-  curMaxPlayers = _curMaxPlayers;
+    curMaxPlayers = _curMaxPlayers;
 }
 
 inline int		World::getMaxShots() const
 {
-  return maxShots;
+    return maxShots;
 }
 
 inline int		World::getMaxFlags() const
 {
-  return maxFlags;
+    return maxFlags;
 }
 
 inline float		World::getShakeTimeout() const
 {
-  return shakeTimeout;
+    return shakeTimeout;
 }
 
 inline int		World::getShakeWins() const
 {
-  return shakeWins;
+    return shakeWins;
 }
 
 inline const Team*	World::getTeams() const
 {
-  return team;
+    return team;
 }
 
 inline Team*		World::getTeams()
 {
-  return team;
+    return team;
 }
 
 inline const Team&	World::getTeam(int index) const
 {
-  return team[index];
+    return team[index];
 }
 
 inline Team&		World::getTeam(int index)
 {
-  return team[index];
+    return team[index];
 }
 
 inline RemotePlayer**	World::getPlayers() const
 {
-  return players;
+    return players;
 }
 
 inline RemotePlayer*&	World::getPlayer(int index) const
 {
-  return players[index];
+    return players[index];
 }
 
 inline WorldPlayer*	World::getWorldWeapons() const
 {
-  return worldWeapons;
+    return worldWeapons;
 }
 
 inline Flag&		World::getFlag(int index) const
 {
-  return flags[index];
+    return flags[index];
 }
 
 inline const float*	World::getBase(int _team, int base) const
 {
-  const TeamBases &b = bases[_team];
-  if ((base < 0) || (base >= (int)b.size()))
-    return NULL;
+    const TeamBases &b = bases[_team];
+    if ((base < 0) || (base >= (int)b.size()))
+        return NULL;
 
-  return b[base].p;
+    return b[base].p;
 }
 
 inline World*		World::getWorld()
 {
-  return playingField;
+    return playingField;
 }
 
 inline BundleMgr*	World::getBundleMgr()
 {
-  return World::bundleMgr;
+    return World::bundleMgr;
 }
 
 inline void		World::setBundleMgr(BundleMgr *_bundleMgr)
 {
-  bundleMgr = _bundleMgr;
+    bundleMgr = _bundleMgr;
 }
 
 inline std::string	World::getLocale()
 {
-  return locale;
+    return locale;
 }
 
 inline void		World::setLocale(const std::string& _locale)
 {
-  locale = _locale;
+    locale = _locale;
 }
 
 inline void		World::getWind(float w[3], const float[3]) const
 {
-  // homogeneous, for now
-  w[0] = wind[0];
-  w[1] = wind[1];
-  w[2] = wind[2];
-  return;
+    // homogeneous, for now
+    w[0] = wind[0];
+    w[1] = wind[1];
+    w[2] = wind[2];
+    return;
 }
 
 #endif /* __WORLD_H__ */

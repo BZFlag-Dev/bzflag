@@ -20,11 +20,12 @@
 #include "common.h"
 #include "SceneNode.h"
 
-class LaserSceneNode : public SceneNode {
-  public:
-			LaserSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
-			~LaserSceneNode();
+class LaserSceneNode : public SceneNode
+{
+public:
+    LaserSceneNode(const GLfloat pos[3],
+                   const GLfloat forward[3]);
+    ~LaserSceneNode();
 
     void		setTexture(const int);
 
@@ -35,27 +36,34 @@ class LaserSceneNode : public SceneNode {
 
     void		setColor ( float r, float g, float b );
     void		setCenterColor ( float r, float g, float b );
-    void		setFirst ( void ) { first = true; }
+    void		setFirst ( void )
+    {
+        first = true;
+    }
 
-  protected:
-    class LaserRenderNode : public RenderNode {
-      public:
-			LaserRenderNode(const LaserSceneNode*);
-			~LaserRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	void renderFlatLaser();
-	void renderGeoLaser();
-	const LaserSceneNode* sceneNode;
-	static GLfloat	geom[6][2];
+protected:
+    class LaserRenderNode : public RenderNode
+    {
+    public:
+        LaserRenderNode(const LaserSceneNode*);
+        ~LaserRenderNode();
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        void renderFlatLaser();
+        void renderGeoLaser();
+        const LaserSceneNode* sceneNode;
+        static GLfloat	geom[6][2];
     };
-	fvec4 color;
-	fvec4 centerColor;
-	bool first;
+    fvec4 color;
+    fvec4 centerColor;
+    bool first;
     friend class LaserRenderNode;
 
-  private:
+private:
     GLfloat		azimuth, elevation;
     GLfloat		length;
     bool		texturing;

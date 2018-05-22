@@ -24,20 +24,22 @@
 
 
 // command classes used by the API
-class ShutdownCommand : ServerCommand {
+class ShutdownCommand : ServerCommand
+{
 public:
-	ShutdownCommand();
+    ShutdownCommand();
 
-	virtual bool operator() (const char	 *commandLine,
-		GameKeeper::Player *playerData);
+    virtual bool operator() (const char	 *commandLine,
+                             GameKeeper::Player *playerData);
 };
 
-class SuperkillCommand : ServerCommand {
+class SuperkillCommand : ServerCommand
+{
 public:
-	SuperkillCommand();
+    SuperkillCommand();
 
-	virtual bool operator() (const char	 *commandLine,
-		GameKeeper::Player *playerData);
+    virtual bool operator() (const char	 *commandLine,
+                             GameKeeper::Player *playerData);
 };
 
 // parser for the server commands

@@ -17,11 +17,12 @@
 #include "HUDuiDefaultKey.h"
 
 
-class SilenceDefaultKey : public HUDuiDefaultKey {
+class SilenceDefaultKey : public HUDuiDefaultKey
+{
 public:
-  SilenceDefaultKey();
-  bool		keyPress(const BzfKeyEvent&);
-  bool		keyRelease(const BzfKeyEvent&);
+    SilenceDefaultKey();
+    bool		keyPress(const BzfKeyEvent&);
+    bool		keyRelease(const BzfKeyEvent&);
 };
 
 #endif

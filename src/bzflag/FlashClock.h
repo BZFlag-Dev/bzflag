@@ -21,17 +21,18 @@
  * FlashClock
  *	keeps track of time for something that flashes
  */
-class FlashClock {
-  public:
-			FlashClock();
-			~FlashClock();
+class FlashClock
+{
+public:
+    FlashClock();
+    ~FlashClock();
 
     void		setClock(float time);
     void		setClock(float time, float onTime, float offTime);
 
     bool		isOn();
 
-  private:
+private:
     TimeKeeper		startTime;
     float		duration;
     float		onDuration;

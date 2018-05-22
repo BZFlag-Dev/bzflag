@@ -28,11 +28,12 @@
 #include "ViewFrustum.h"
 
 
-class OpenGLLight {
-  public:
-			OpenGLLight();
-			OpenGLLight(const OpenGLLight&);
-			~OpenGLLight();
+class OpenGLLight
+{
+public:
+    OpenGLLight();
+    OpenGLLight(const OpenGLLight&);
+    ~OpenGLLight();
     OpenGLLight&	operator=(const OpenGLLight&);
 
     const GLfloat*	getPosition() const;
@@ -60,16 +61,16 @@ class OpenGLLight {
     static GLint	getMaxLights();
     static void		enableLight(int index, bool on); // const
 
-  protected:
+protected:
     void		makeLists();
     void		freeLists();
     void		genLight(GLenum light) const;
 
-  private:
+private:
     static void		freeContext(void*);
     static void		initContext(void*);
 
-  private:
+private:
     GLfloat		pos[4];
     GLfloat		color[4];
     GLfloat		atten[3];
@@ -87,37 +88,37 @@ class OpenGLLight {
 
 inline const GLfloat*	OpenGLLight::getPosition() const
 {
-  return pos;
+    return pos;
 }
 
 inline const GLfloat*	OpenGLLight::getColor() const
 {
-  return color;
+    return color;
 }
 
 inline const GLfloat*	OpenGLLight::getAttenuation() const
 {
-  return atten;
+    return atten;
 }
 
 inline GLfloat		OpenGLLight::getMaxDist() const
 {
-  return maxDist;
+    return maxDist;
 }
 
 inline GLfloat		 OpenGLLight::getImportance() const
 {
-  return importance;
+    return importance;
 }
 
 inline bool		 OpenGLLight::getOnlyReal() const
 {
-  return onlyReal;
+    return onlyReal;
 }
 
 inline bool		 OpenGLLight::getOnlyGround() const
 {
-  return onlyGround;
+    return onlyGround;
 }
 
 

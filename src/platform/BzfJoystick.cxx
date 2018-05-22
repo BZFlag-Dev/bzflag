@@ -31,54 +31,55 @@ BzfJoystick::~BzfJoystick()
 
 void			BzfJoystick::initJoystick(const char* joystickName)
 {
-  if (strcmp(joystickName, "off") && strcmp(joystickName, "")) {
-    std::vector<std::string> args;
-    args.push_back(joystickName);
-    printError("Joystick '{1}' not supported...", &args);
-  }
+    if (strcmp(joystickName, "off") && strcmp(joystickName, ""))
+    {
+        std::vector<std::string> args;
+        args.push_back(joystickName);
+        printError("Joystick '{1}' not supported...", &args);
+    }
 }
 
 int		     BzfJoystick::getNumHats()
 {
-  return 0;
+    return 0;
 }
 
 void		    BzfJoystick::getJoyHat(int UNUSED(hat), float &hatX, float &hatY)
 {
-  hatX = hatY = 0;
+    hatX = hatY = 0;
 }
 
 unsigned long		BzfJoystick::getJoyButtons()
 {
-  return 0;
+    return 0;
 }
 
 bool			BzfJoystick::joystick() const
 {
-  return false;
+    return false;
 }
 
 void			BzfJoystick::getJoy(int& x, int& y)
 {
-  x = y = 0;
+    x = y = 0;
 }
 
 void		    BzfJoystick::getJoyDevices(std::vector<std::string>
-						 &list) const
+        &list) const
 {
-  list.clear();
+    list.clear();
 }
 
 void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
-						  &list) const
+        &list) const
 {
-  list.clear();
-  list.push_back("default");
+    list.clear();
+    list.push_back("default");
 }
 
 bool		    BzfJoystick::ffHasRumble() const
 {
-  return false;
+    return false;
 }
 
 void		    BzfJoystick::ffRumble(int, float, float, float, float)
@@ -87,7 +88,7 @@ void		    BzfJoystick::ffRumble(int, float, float, float, float)
 
 bool		    BzfJoystick::ffHasDirectional() const
 {
-  return false;
+    return false;
 }
 
 void		    BzfJoystick::ffDirectionalConstant(int, float, float, float, float, float)

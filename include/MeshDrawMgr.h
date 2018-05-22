@@ -16,8 +16,9 @@
 #include "bzfgl.h"
 #include "MeshDrawInfo.h"
 
-class MeshDrawMgr {
-  public:
+class MeshDrawMgr
+{
+public:
     MeshDrawMgr(const MeshDrawInfo* drawInfo);
     ~MeshDrawMgr();
 
@@ -28,7 +29,7 @@ class MeshDrawMgr {
     static void init();
     static void kill();
 
-  private:
+private:
     void rawExecuteCommands(int lod, int set);
     static void rawDisableArrays();
 
@@ -37,7 +38,7 @@ class MeshDrawMgr {
     static void initContext(void* data);
     static void freeContext(void* data);
 
-  private:
+private:
     const MeshDrawInfo* drawInfo;
 
     const DrawLod* drawLods;
@@ -45,9 +46,10 @@ class MeshDrawMgr {
     const GLfloat* normals;
     const GLfloat* texcoords;
 
-    struct LodList {
-      int count;
-      GLuint* setLists;
+    struct LodList
+    {
+        int count;
+        GLuint* setLists;
     };
 
     int lodCount;

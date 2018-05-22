@@ -26,24 +26,25 @@
 #include "ShotPath.h"
 
 
-class RemotePlayer : public Player {
+class RemotePlayer : public Player
+{
 public:
-  RemotePlayer(const PlayerId&, TeamColor team,
-	       const char* name, const char* motto,
-	       const PlayerType);
-  ~RemotePlayer();
+    RemotePlayer(const PlayerId&, TeamColor team,
+                 const char* name, const char* motto,
+                 const PlayerType);
+    ~RemotePlayer();
 
-  void addShot(const FiringInfo&);
-  ShotPath* getShot(int index) const;
-  void purgeShots() const;
-  void updateShots(float dt);
-
-private:
-  bool doEndShot(int index, bool isHit, float* pos);
+    void addShot(const FiringInfo&);
+    ShotPath* getShot(int index) const;
+    void purgeShots() const;
+    void updateShots(float dt);
 
 private:
-  int numShots;
-  RemoteShotPath** shots;
+    bool doEndShot(int index, bool isHit, float* pos);
+
+private:
+    int numShots;
+    RemoteShotPath** shots;
 };
 
 

@@ -23,11 +23,12 @@
 class BzfKeyEvent;
 class XDisplayMode;
 
-class XDisplay : public BzfDisplay {
-  public:
-			XDisplay(const char* displayName,
-				XDisplayMode* adoptedVideoModeChanger = NULL);
-			~XDisplay();
+class XDisplay : public BzfDisplay
+{
+public:
+    XDisplay(const char* displayName,
+             XDisplayMode* adoptedVideoModeChanger = NULL);
+    ~XDisplay();
 
     bool		isValid() const;
     bool		isEventPending() const;
@@ -35,28 +36,38 @@ class XDisplay : public BzfDisplay {
     bool		peekEvent(BzfEvent&) const;
 
     // for other X stuff
-    class Rep {
-      public:
-			Rep(const char*);
-			~Rep();
+    class Rep
+    {
+    public:
+        Rep(const char*);
+        ~Rep();
 
-	void		ref();
-	void		unref();
+        void		ref();
+        void		unref();
 
-	Display*	getDisplay() const { return display; }
-	int		getScreen() const { return screen; }
-	Window		getRootWindow() const;
+        Display*	getDisplay() const
+        {
+            return display;
+        }
+        int		getScreen() const
+        {
+            return screen;
+        }
+        Window		getRootWindow() const;
 
-      private:
-	int		refCount;
-	Display*	display;
-	int		screen;
+    private:
+        int		refCount;
+        Display*	display;
+        int		screen;
     };
-    Rep*		getRep() const { return rep; }
+    Rep*		getRep() const
+    {
+        return rep;
+    }
 
-  private:
+private:
     // not implemented
-			XDisplay(const XDisplay&);
+    XDisplay(const XDisplay&);
     XDisplay&		operator=(const XDisplay&);
 
     bool		setupEvent(BzfEvent&, const XEvent&) const;
@@ -65,16 +76,17 @@ class XDisplay : public BzfDisplay {
     bool		doSetResolution(int);
     bool		doSetDefaultResolution();
 
-  private:
+private:
     Rep*		rep;
     XDisplayMode*	mode;
 };
 
-class XDisplayMode {
-  public:
+class XDisplayMode
+{
+public:
     typedef XDisplay::ResInfo ResInfo;
 
-			XDisplayMode();
+    XDisplayMode();
     virtual		~XDisplayMode();
 
     // override to return the available display modes, how many there

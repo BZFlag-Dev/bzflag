@@ -24,8 +24,9 @@
 // FIXME -- will need a means for off center projections for
 //	looking through teleporters
 
-class ViewFrustum : public Frustum {
-  public:
+class ViewFrustum : public Frustum
+{
+public:
     ViewFrustum();
     ~ViewFrustum();
     void		executeProjection() const;

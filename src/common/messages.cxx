@@ -26,72 +26,72 @@
 
 PlayerAddMessage::PlayerAddMessage()
 {
-	playerID = -1;
-	team = -1;
-	type = -1;
-	wins = 0;
-	losses = 0;
-	tks = 0;
+    playerID = -1;
+    team = -1;
+    type = -1;
+    wins = 0;
+    losses = 0;
+    tks = 0;
 }
 
 bool PlayerAddMessage::unpack ( const void* buf )
 {
-	unsigned char id;
-	uint16_t _team, _type, _wins, _losses, _tks;
-	char _callsign[_CallSignLen] = {0};
-	char _motto[_MottoLen] = {0};
+    unsigned char id;
+    uint16_t _team, _type, _wins, _losses, _tks;
+    char _callsign[_CallSignLen] = {0};
+    char _motto[_MottoLen] = {0};
 
-	buf = nboUnpackUByte(buf, id);
-	buf = nboUnpackUShort(buf, _type);
-	buf = nboUnpackUShort(buf, _team);
-	buf = nboUnpackUShort(buf, _wins);
-	buf = nboUnpackUShort(buf, _losses);
-	buf = nboUnpackUShort(buf, _tks);
-	buf = nboUnpackString(buf, _callsign, _CallSignLen);
-	buf = nboUnpackString(buf, _motto, _MottoLen);
+    buf = nboUnpackUByte(buf, id);
+    buf = nboUnpackUShort(buf, _type);
+    buf = nboUnpackUShort(buf, _team);
+    buf = nboUnpackUShort(buf, _wins);
+    buf = nboUnpackUShort(buf, _losses);
+    buf = nboUnpackUShort(buf, _tks);
+    buf = nboUnpackString(buf, _callsign, _CallSignLen);
+    buf = nboUnpackString(buf, _motto, _MottoLen);
 
-	playerID = id;
-	team = _team;
-	type = _type;
-	wins = _wins;
-	losses = _losses;
-	tks = _tks;
+    playerID = id;
+    team = _team;
+    type = _type;
+    wins = _wins;
+    losses = _losses;
+    tks = _tks;
 
-	callsign = _callsign;
-	motto = _motto;
+    callsign = _callsign;
+    motto = _motto;
 
-	return true;
+    return true;
 }
 
 void*  PlayerAddMessage::pack ( void* buf )
 {
-	uint16_t _team, _type, _wins, _losses, _tks;
-	char _callsign[_CallSignLen] = {0};
-	char _motto[_MottoLen] = {0};
+    uint16_t _team, _type, _wins, _losses, _tks;
+    char _callsign[_CallSignLen] = {0};
+    char _motto[_MottoLen] = {0};
 
-	unsigned char id;
+    unsigned char id;
 
-	id = playerID;
-	_team = team;
-	_type = type;
-	_wins = wins;
-	_losses = losses;
-	_tks = tks;
+    id = playerID;
+    _team = team;
+    _type = type;
+    _wins = wins;
+    _losses = losses;
+    _tks = tks;
 
-	strncpy(_callsign,callsign.c_str(),callsign.size() > _CallSignLen-1 ? _CallSignLen-1 :  callsign.size());
-	strncpy(_motto,motto.c_str(),motto.size() > _MottoLen-1 ? _MottoLen-1 :  motto.size());
+    strncpy(_callsign,callsign.c_str(),callsign.size() > _CallSignLen-1 ? _CallSignLen-1 :  callsign.size());
+    strncpy(_motto,motto.c_str(),motto.size() > _MottoLen-1 ? _MottoLen-1 :  motto.size());
 
-	buf = nboPackUByte(buf, id);
-	buf = nboPackUShort(buf, _type);
-	buf = nboPackUShort(buf, _type);
-	buf = nboPackUShort(buf, _team);
-	buf = nboPackUShort(buf, _wins);
-	buf = nboPackUShort(buf, _losses);
-	buf = nboPackUShort(buf, _tks);
-	buf = nboPackString(buf, _callsign, _CallSignLen);
-	buf = nboPackString(buf, _motto, _MottoLen);
+    buf = nboPackUByte(buf, id);
+    buf = nboPackUShort(buf, _type);
+    buf = nboPackUShort(buf, _type);
+    buf = nboPackUShort(buf, _team);
+    buf = nboPackUShort(buf, _wins);
+    buf = nboPackUShort(buf, _losses);
+    buf = nboPackUShort(buf, _tks);
+    buf = nboPackString(buf, _callsign, _CallSignLen);
+    buf = nboPackString(buf, _motto, _MottoLen);
 
-	return buf;
+    return buf;
 }
 
 

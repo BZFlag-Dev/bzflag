@@ -25,20 +25,21 @@
 #undef private
 #endif
 
-class LinuxDisplayMode : public XDisplayMode {
-  public:
+class LinuxDisplayMode : public XDisplayMode
+{
+public:
 #if defined(USE_XF86VIDMODE_EXT)
-			LinuxDisplayMode();
-			~LinuxDisplayMode();
+    LinuxDisplayMode();
+    ~LinuxDisplayMode();
 
     ResInfo**		init(XDisplay* owner, int& num, int& current);
     bool		set(int);
     bool		setDefault(int);
 
-  private:
+private:
     bool		doSet(int, bool position);
 
-  private:
+private:
     XDisplay*		display;
     int			numResolutions;
     int			lastResolution;

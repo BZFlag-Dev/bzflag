@@ -30,10 +30,11 @@
 
 typedef std::map<std::string, LPDIRECTINPUTEFFECT> EffectMap;
 
-class DXJoystick : public BzfJoystick {
-  public:
-		DXJoystick();
-		~DXJoystick();
+class DXJoystick : public BzfJoystick
+{
+public:
+    DXJoystick();
+    ~DXJoystick();
 
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
@@ -47,23 +48,23 @@ class DXJoystick : public BzfJoystick {
     void	setYAxis(const std::string &axis);
     bool	ffHasRumble() const;
     void	ffRumble(int count,
-			 float delay, float duration,
-			 float strong_motor, float weak_motor=0.0f);
+                     float delay, float duration,
+                     float strong_motor, float weak_motor=0.0f);
     bool	ffHasDirectional() const;
     void	ffDirectionalConstant(int count,
-				      float delay, float duration,
-				      float x_direction, float y_direction,
-				      float strength);
+                                  float delay, float duration,
+                                  float x_direction, float y_direction,
+                                  float strength);
     void	ffDirectionalPeriodic(int count,
-				      float delay, float duration,
-				      float x_direction, float y_direction,
-				      float amplitude, float period,
-				      PeriodicType type);
+                                  float delay, float duration,
+                                  float x_direction, float y_direction,
+                                  float amplitude, float period,
+                                  PeriodicType type);
     void	ffDirectionalResistance(float time, float coefficient,
-				      float saturation, ResistanceType type);
+                                    float saturation, ResistanceType type);
 
-	int		numberOfHats;
-  private:
+    int		numberOfHats;
+private:
     DIJOYSTATE	pollDevice();
     void	reaquireDevice();
     void	enumerateDevices();

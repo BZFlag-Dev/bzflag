@@ -39,8 +39,9 @@
 
 class ShotStrategy;
 
-class ShotPath {
-  public:
+class ShotPath
+{
+public:
     virtual		~ShotPath();
 
     bool		isExpiring() const;
@@ -67,8 +68,8 @@ class ShotPath {
     void		radarRender() const;
     FiringInfo&		getFiringInfo();
     TeamColor		getTeam() const;
-  protected:
-			ShotPath(const FiringInfo&);
+protected:
+    ShotPath(const FiringInfo&);
     void		updateShot(float dt);
     const ShotStrategy*	getStrategy() const;
     ShotStrategy*	getStrategy();
@@ -78,7 +79,7 @@ class ShotPath {
     void		setPosition(const float*);
     void		setVelocity(const float*);
 
-  private:
+private:
     ShotStrategy*	strategy;		// strategy for moving shell
     FiringInfo		firingInfo;		// shell information
     float		reloadTime;		// time to reload
@@ -88,22 +89,24 @@ class ShotPath {
     bool		expired;		// shot has terminated
 };
 
-class LocalShotPath : public ShotPath {
-  public:
-			LocalShotPath(const FiringInfo&);
-			~LocalShotPath();
+class LocalShotPath : public ShotPath
+{
+public:
+    LocalShotPath(const FiringInfo&);
+    ~LocalShotPath();
 
     void		update(float dt);
 };
 
-class RemoteShotPath : public ShotPath {
-  public:
-			RemoteShotPath(const FiringInfo&);
-			~RemoteShotPath();
+class RemoteShotPath : public ShotPath
+{
+public:
+    RemoteShotPath(const FiringInfo&);
+    ~RemoteShotPath();
 
     void		update(float dt);
     void		update(const ShotUpdate& shot,
-				uint16_t code, const void* msg);
+                       uint16_t code, const void* msg);
 };
 
 //
@@ -112,82 +115,82 @@ class RemoteShotPath : public ShotPath {
 
 inline bool		ShotPath::isExpiring() const
 {
-  return expiring;
+    return expiring;
 }
 
 inline bool		ShotPath::isExpired() const
 {
-  return expired;
+    return expired;
 }
 
 inline bool		ShotPath::isReloaded() const
 {
-  return (currentTime - startTime >= reloadTime);
+    return (currentTime - startTime >= reloadTime);
 }
 
 inline const PlayerId&	ShotPath::getPlayer() const
 {
-  return firingInfo.shot.player;
+    return firingInfo.shot.player;
 }
 
 inline uint16_t		ShotPath::getShotId() const
 {
-  return firingInfo.shot.id;
+    return firingInfo.shot.id;
 }
 
 inline FlagType*	ShotPath::getFlag() const
 {
-  return firingInfo.flagType;
+    return firingInfo.flagType;
 }
 
 inline float		ShotPath::getLifetime() const
 {
-  return firingInfo.lifetime;
+    return firingInfo.lifetime;
 }
 
 inline float		ShotPath::getReloadTime() const
 {
-  return reloadTime;
+    return reloadTime;
 }
 
 inline const TimeKeeper	&ShotPath::getStartTime() const
 {
-  return startTime;
+    return startTime;
 }
 
 inline const TimeKeeper	&ShotPath::getCurrentTime() const
 {
-  return currentTime;
+    return currentTime;
 }
 
 inline const float*	ShotPath::getPosition() const
 {
-  return firingInfo.shot.pos;
+    return firingInfo.shot.pos;
 }
 
 inline const float*	ShotPath::getVelocity() const
 {
-  return firingInfo.shot.vel;
+    return firingInfo.shot.vel;
 }
 
 inline FiringInfo&	ShotPath::getFiringInfo()
 {
-  return firingInfo;
+    return firingInfo;
 }
 
 inline	TeamColor	ShotPath::getTeam() const
 {
-  return firingInfo.shot.team;
+    return firingInfo.shot.team;
 }
 
 inline const ShotStrategy*	ShotPath::getStrategy() const
 {
-  return strategy;
+    return strategy;
 }
 
 inline ShotStrategy*	ShotPath::getStrategy()
 {
-  return strategy;
+    return strategy;
 }
 
 #endif /* __SHOTPATH_H__ */

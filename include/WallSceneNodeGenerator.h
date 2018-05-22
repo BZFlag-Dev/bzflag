@@ -16,18 +16,19 @@
 #include "ObstacleSceneNodeGenerator.h"
 #include "WallObstacle.h"
 
-class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
+class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator
+{
+    friend class SceneDatabaseBuilder;
 
-  public:
-			~WallSceneNodeGenerator();
+public:
+    ~WallSceneNodeGenerator();
 
     WallSceneNode*	getNextNode(float, float, bool);
 
-  protected:
-			WallSceneNodeGenerator(const WallObstacle*);
+protected:
+    WallSceneNodeGenerator(const WallObstacle*);
 
-  private:
+private:
     const WallObstacle*	wall;
 };
 

@@ -25,32 +25,33 @@ class QuitMenu;
 
 /** MainMenu is the main menu
  */
-class MainMenu : public HUDDialog {
+class MainMenu : public HUDDialog
+{
 public:
-  MainMenu();
-  ~MainMenu();
+    MainMenu();
+    ~MainMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void execute();
-  void resize(int width, int height);
-  void createControls();
+    HUDuiDefaultKey* getDefaultKey();
+    void execute();
+    void resize(int width, int height);
+    void createControls();
 
-  static int getFontFace();
+    static int getFontFace();
 
 private:
 
-  HUDuiControl* createLabel(const char* string);
+    HUDuiControl* createLabel(const char* string);
 
-  HUDuiControl*	join;
-  HUDuiControl*	options;
-  HUDuiControl*	help;
-  HUDuiControl*	leave;
-  HUDuiControl*	save;
-  HUDuiControl*	quit;
+    HUDuiControl*	join;
+    HUDuiControl*	options;
+    HUDuiControl*	help;
+    HUDuiControl*	leave;
+    HUDuiControl*	save;
+    HUDuiControl*	quit;
 
-  JoinMenu*	joinMenu;
-  OptionsMenu*	optionsMenu;
-  QuitMenu*	quitMenu;
+    JoinMenu*	joinMenu;
+    OptionsMenu*	optionsMenu;
+    QuitMenu*	quitMenu;
 };
 
 

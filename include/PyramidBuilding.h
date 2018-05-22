@@ -21,12 +21,13 @@
 #include <string>
 #include "Obstacle.h"
 
-class PyramidBuilding : public Obstacle {
-  public:
-			PyramidBuilding();
-			PyramidBuilding(const float* pos, float rotation,
-				float width, float breadth, float height, bool drive = false, bool shoot = false, bool ricochet = false);
-			~PyramidBuilding();
+class PyramidBuilding : public Obstacle
+{
+public:
+    PyramidBuilding();
+    PyramidBuilding(const float* pos, float rotation,
+                    float width, float breadth, float height, bool drive = false, bool shoot = false, bool ricochet = false);
+    ~PyramidBuilding();
 
     virtual Obstacle*	copyWithTransform(const MeshTransform&) const;
 
@@ -41,20 +42,20 @@ class PyramidBuilding : public Obstacle {
 
     bool		inCylinder(const float* p, float radius, float height) const;
     bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
+                      float halfWidth, float halfBreadth, float height) const;
     bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
     bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+                           float halfWidth, float halfBreadth, float height,
+                           float* plane) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+        const float* pos1, float azimuth1,
+        const float* pos2, float azimuth2,
+        float halfWidth, float halfBreadth,
+        float height,
+        float* normal) const;
 
     void		getCorner(int index, float* pos) const;
 
@@ -67,13 +68,13 @@ class PyramidBuilding : public Obstacle {
 
     std::string		userTextures[1];
 
-  private:
+private:
     void finalize();
 
     // compute minimum shrinking for height between z and z + height
     float		shrinkFactor(float z, float height = 0.0) const;
 
-  private:
+private:
     static const char*	typeName;
 };
 

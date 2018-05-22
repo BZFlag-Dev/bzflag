@@ -29,51 +29,59 @@
 
 CustomWaterLevel::CustomWaterLevel(): height(0.0)
 {
-  modedMaterial = false;
-  return;
+    modedMaterial = false;
+    return;
 }
 
 
 CustomWaterLevel::~CustomWaterLevel()
 {
-  return;
+    return;
 }
 
 
 bool CustomWaterLevel::read(const char *cmd, std::istream& input)
 {
-  bool materror;
+    bool materror;
 
-  if (strcasecmp ("height", cmd) == 0) {
-    if (!(input >> height)) {
-      return false;
+    if (strcasecmp ("height", cmd) == 0)
+    {
+        if (!(input >> height))
+        {
+            return false;
+        }
     }
-  }
-  else if (parseMaterials(cmd, input, &material, 1, materror)) {
-    if (materror) {
-      return false;
+    else if (parseMaterials(cmd, input, &material, 1, materror))
+    {
+        if (materror)
+        {
+            return false;
+        }
+        modedMaterial = true;
     }
-    modedMaterial = true;
-  }
-  else {
-    // NOTE: we don't use a WorldFileObstacle
-    return WorldFileObject::read(cmd, input);
-  }
+    else
+    {
+        // NOTE: we don't use a WorldFileObstacle
+        return WorldFileObject::read(cmd, input);
+    }
 
-  return true;
+    return true;
 }
 
 
 void CustomWaterLevel::writeToWorld(WorldInfo* world) const
 {
-  if (modedMaterial) {
-    const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
-    world->addWaterLevel(height, matref);
-  } else {
-    world->addWaterLevel(height, NULL); // build the material later
-  }
+    if (modedMaterial)
+    {
+        const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
+        world->addWaterLevel(height, matref);
+    }
+    else
+    {
+        world->addWaterLevel(height, NULL); // build the material later
+    }
 
-  return;
+    return;
 }
 
 

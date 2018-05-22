@@ -26,55 +26,55 @@
 
 Locale::Locale(std::string _language_, std::string _country_)
 {
-  setLanguage(_language_);
-  setCountry(_country_);
-  return;
+    setLanguage(_language_);
+    setCountry(_country_);
+    return;
 }
 
 Locale::~Locale(void)
 {
-  return;
+    return;
 }
 
 void Locale::setLanguage(std::string _language_)
 {
-  _language = Language::number(_language_);
+    _language = Language::number(_language_);
 }
 
 void Locale::setCountry(std::string _country_)
 {
-  _country = Country::number(_country_);
+    _country = Country::number(_country_);
 }
 
 std::string Locale::language() const
 {
-  return Language::iso2(_language);
+    return Language::iso2(_language);
 }
 
 std::string Locale::language3() const
 {
-  return Language::iso3(_language);
+    return Language::iso3(_language);
 }
 
 std::string Locale::languageName() const
 {
-  return Language::englishName(_language);
+    return Language::englishName(_language);
 }
 
 
 std::string Locale::country() const
 {
-  return Language::iso2(_country);
+    return Language::iso2(_country);
 }
 
 std::string Locale::country3() const
 {
-  return Language::iso3(_country);
+    return Language::iso3(_country);
 }
 
 std::string Locale::countryName() const
 {
-  return Country::englishName(_country);
+    return Country::englishName(_country);
 }
 
 

@@ -19,18 +19,19 @@
 
 #include "PlatformFactory.h"
 
-class LinuxPlatformFactory : public PlatformFactory {
-  public:
-			LinuxPlatformFactory();
-			~LinuxPlatformFactory();
+class LinuxPlatformFactory : public PlatformFactory
+{
+public:
+    LinuxPlatformFactory();
+    ~LinuxPlatformFactory();
 
     BzfDisplay*		createDisplay(const char* name, const char*);
     BzfVisual*		createVisual(const BzfDisplay*);
     BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
     BzfJoystick*	createJoystick();
 
-  private:
-			LinuxPlatformFactory(const LinuxPlatformFactory&);
+private:
+    LinuxPlatformFactory(const LinuxPlatformFactory&);
     LinuxPlatformFactory& operator=(const LinuxPlatformFactory&);
 
     BzfMedia*		createMedia();

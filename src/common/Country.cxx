@@ -21,11 +21,11 @@
 /* protected */
 bool Country::isValid(int)
 {
-  return false;
+    return false;
 }
 bool Country::isValid(const std::string &)
 {
-  return false;
+    return false;
 }
 
 /* public: */
@@ -39,66 +39,66 @@ Country::~Country()
 
 int Country::number() const
 {
-  return 0;
+    return 0;
 }
 std::string Country::iso2() const
 {
-  return "";
+    return "";
 }
 std::string Country::iso3() const
 {
-  return "";
+    return "";
 }
 std::string Country::englishName() const
 {
-  return "";
+    return "";
 }
 std::string Country::frenchName() const
 {
-  return "";
+    return "";
 }
 
 
 int Country::number(int country)
 {
-  // XXX - validate number
-  return country;
+    // XXX - validate number
+    return country;
 }
 int Country::number(const std::string& )
 {
-  return 0;
+    return 0;
 }
 std::string Country::iso2(int)
 {
-  return "";
+    return "";
 }
 std::string Country::iso2(const std::string &)
 {
-  return "";
+    return "";
 }
 std::string Country::iso3(int)
 {
-  return "";
+    return "";
 }
 std::string Country::iso3(const std::string& )
 {
-  return "";
+    return "";
 }
 std::string Country::englishName(int)
 {
-  return "";
+    return "";
 }
 std::string Country::englishName(const std::string& )
 {
-  return "";
+    return "";
 }
 std::string Country::frenchName(int)
 {
-  return "";
+    return "";
 }
 std::string Country::frenchName(const std::string& )
 {
-  return "";
+    return "";
 }
 
 

@@ -24,25 +24,39 @@
 #include "SceneNode.h"
 #include "MeshFace.h"
 
-class OccluderSceneNode : public SceneNode {
+class OccluderSceneNode : public SceneNode
+{
 
-  public:
+public:
     OccluderSceneNode(const MeshFace* face);
     ~OccluderSceneNode();
 
     // virtual functions from SceneNode
     bool cull(const ViewFrustum&) const;
     bool inAxisBox(const Extents& exts) const;
-    void addShadowNodes(SceneRenderer&) { return; }
-    void addRenderNodes(SceneRenderer&) { return; }
-    void renderRadar() { return; }
+    void addShadowNodes(SceneRenderer&)
+    {
+        return;
+    }
+    void addRenderNodes(SceneRenderer&)
+    {
+        return;
+    }
+    void renderRadar()
+    {
+        return;
+    }
 
     int getVertexCount () const
-      { return vertexCount; }
+    {
+        return vertexCount;
+    }
     const GLfloat* getVertex (int vertex) const
-      { return vertices[vertex]; }
+    {
+        return vertices[vertex];
+    }
 
-  private:
+private:
     int vertexCount;
     GLfloat3* vertices;
 };

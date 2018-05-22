@@ -29,16 +29,20 @@
 #include "WorldEventManager.h"
 
 
-class CustomWeapon : public WorldFileLocation {
-  public:
+class CustomWeapon : public WorldFileLocation
+{
+public:
     CustomWeapon();
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual bool usesGroupDef()
+    {
+        return false;
+    }
 
     static const float minWeaponDelay;
 
-  protected:
+protected:
 
     FlagType *type;
 

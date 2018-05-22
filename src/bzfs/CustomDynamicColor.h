@@ -19,15 +19,19 @@
 /* common headers */
 #include "DynamicColor.h"
 
-class CustomDynamicColor : public WorldFileObject {
-  public:
+class CustomDynamicColor : public WorldFileObject
+{
+public:
     CustomDynamicColor();
     ~CustomDynamicColor();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable DynamicColor* color;
 };
 

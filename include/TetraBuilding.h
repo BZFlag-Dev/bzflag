@@ -24,15 +24,16 @@
 #include "MeshTransform.h"
 #include "BzMaterial.h"
 
-class TetraBuilding : public Obstacle {
-  public:
+class TetraBuilding : public Obstacle
+{
+public:
 
     TetraBuilding();
     TetraBuilding(const MeshTransform& transform,
-		  const float vertices[4][3], const float normals[4][3][3],
-		  const float texCoords[4][3][2], const bool useNormals[4],
-		  const bool useTexCoords[4], const BzMaterial* materials[4],
-		  bool drive = false, bool shoot = false, bool ricochet = false);
+                  const float vertices[4][3], const float normals[4][3][3],
+                  const float texCoords[4][3][2], const bool useNormals[4],
+                  const bool useTexCoords[4], const BzMaterial* materials[4],
+                  bool drive = false, bool shoot = false, bool ricochet = false);
     ~TetraBuilding();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -51,20 +52,20 @@ class TetraBuilding : public Obstacle {
 
     bool		inCylinder(const float* p, float radius, float height) const;
     bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
+                      float halfWidth, float halfBreadth, float height) const;
     bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
     bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+                           float halfWidth, float halfBreadth, float height,
+                           float* plane) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+        const float* pos1, float azimuth1,
+        const float* pos2, float azimuth2,
+        float halfWidth, float halfBreadth,
+        float height,
+        float* normal) const;
 
     void		getCorner(int index, float* pos) const;
 
@@ -74,10 +75,10 @@ class TetraBuilding : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     void checkVertexOrder();
 
-  private:
+private:
     static const char*	typeName;
 
     MeshTransform transform;

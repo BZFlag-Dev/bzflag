@@ -23,20 +23,22 @@
 #include "BzMaterial.h"
 
 
-class CustomCone : public WorldFileObstacle {
-  public:
+class CustomCone : public WorldFileObstacle
+{
+public:
     CustomCone(bool pyramidStyle);
     ~CustomCone();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    enum {
-      Edge,
-      Bottom,
-      StartFace,
-      EndFace,
-      MaterialCount
+private:
+    enum
+    {
+        Edge,
+        Bottom,
+        StartFace,
+        EndFace,
+        MaterialCount
     };
     static const char* sideNames[MaterialCount];
 

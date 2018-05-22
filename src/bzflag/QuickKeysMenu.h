@@ -25,23 +25,24 @@
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 
-class QuickKeysMenu : public HUDDialog {
+class QuickKeysMenu : public HUDDialog
+{
 public:
-  QuickKeysMenu();
-  ~QuickKeysMenu();
+    QuickKeysMenu();
+    ~QuickKeysMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void show();
-  void dismiss();
-  void execute() {}
-  void resize(int width, int height);
+    void show();
+    void dismiss();
+    void execute() {}
+    void resize(int width, int height);
 
 private:
-  HUDuiLabel* createLabel(const std::string &);
-  HUDuiTypeIn* createInput(const std::string &);
+    HUDuiLabel* createLabel(const std::string &);
+    HUDuiTypeIn* createInput(const std::string &);
 private:
-  int firstKeyControl;
+    int firstKeyControl;
 };
 
 

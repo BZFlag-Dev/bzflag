@@ -23,22 +23,24 @@
 #include "BzMaterial.h"
 
 
-class CustomBox : public WorldFileObstacle {
-  public:
+class CustomBox : public WorldFileObstacle
+{
+public:
     CustomBox();
     ~CustomBox();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    enum {
-      XP = 0,
-      XN,
-      YP,
-      YN,
-      ZP,
-      ZN,
-      FaceCount
+private:
+    enum
+    {
+        XP = 0,
+        XN,
+        YP,
+        YN,
+        ZP,
+        ZN,
+        FaceCount
     };
 
     bool isOldBox;

@@ -19,14 +19,18 @@
 /* common headers */
 #include "BzMaterial.h"
 
-class CustomWaterLevel : public WorldFileObject {
-  public:
+class CustomWaterLevel : public WorldFileObject
+{
+public:
     CustomWaterLevel();
     ~CustomWaterLevel();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
-  private:
+    virtual bool usesGroupDef()
+    {
+        return false;
+    }
+private:
     float height;
     bool modedMaterial;
     mutable BzMaterial material;

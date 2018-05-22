@@ -47,21 +47,21 @@
 class PluginConfig
 {
 public:
-  PluginConfig();
-  PluginConfig(const std::string &filename);
-  ~PluginConfig() {};
+    PluginConfig();
+    PluginConfig(const std::string &filename);
+    ~PluginConfig() {};
 
-  void read(const char* filename);
-  void read(const std::string &filename);
+    void read(const char* filename);
+    void read(const std::string &filename);
 
-  std::string item(const char *section, const  char *key);
-  std::string item(const std::string &section, const std::string &key);
-  unsigned int errors;
+    std::string item(const char *section, const  char *key);
+    std::string item(const std::string &section, const std::string &key);
+    unsigned int errors;
 private:
-  std::string whitespace;
-  void parse(void);
-  std::map<std::string, std::map<std::string, std::string> > sections;
-  std::string configFilename;
+    std::string whitespace;
+    void parse(void);
+    std::map<std::string, std::map<std::string, std::string> > sections;
+    std::string configFilename;
 };
 
 #endif

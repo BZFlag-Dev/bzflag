@@ -27,10 +27,11 @@
 
 #include "BzfEvent.h"
 
-class HUDuiList : public HUDuiControl {
-  public:
-			HUDuiList();
-			~HUDuiList();
+class HUDuiList : public HUDuiControl
+{
+public:
+    HUDuiList();
+    ~HUDuiList();
 
     int			getIndex() const;
     void		setIndex(int);
@@ -40,12 +41,12 @@ class HUDuiList : public HUDuiControl {
     std::vector<std::string>&	getList();
     void		update();
 
-  protected:
+protected:
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
-  private:
+private:
     int			index;
     std::vector<std::string>	list;
 };

@@ -42,8 +42,9 @@ class ViewFrustum;
 class RenderNode;
 
 
-class MeshSceneNode : public SceneNode {
-  public:
+class MeshSceneNode : public SceneNode
+{
+public:
     MeshSceneNode(const MeshObstacle* mesh);
     ~MeshSceneNode();
 
@@ -66,10 +67,10 @@ class MeshSceneNode : public SceneNode {
     static void freeContext(void* data);
 
     static void setLodScale(int pixelsX, float fovx,
-			    int pixelsY, float fovy);
+                            int pixelsY, float fovy);
     static void setRadarLodScale(float lengthPerPixel);
 
-  private:
+private:
     const MeshObstacle* mesh;
 
     MeshDrawMgr* drawMgr;
@@ -80,28 +81,31 @@ class MeshSceneNode : public SceneNode {
     // transform display list
     GLuint xformList;
 
-    struct MeshMaterial {
-      const BzMaterial* bzmat;
-      OpenGLGState gstate;
-      GLfloat color[4];
-      const GLfloat* colorPtr;
-      bool drawRadar;
-      bool drawShadow;
-      bool needsSorting;
-      bool animRepos;
+    struct MeshMaterial
+    {
+        const BzMaterial* bzmat;
+        OpenGLGState gstate;
+        GLfloat color[4];
+        const GLfloat* colorPtr;
+        bool drawRadar;
+        bool drawShadow;
+        bool needsSorting;
+        bool animRepos;
     };
 
-    struct SetNode {
-      int set;
-      MeshMaterial meshMat;
-      // basic render nodes
-      RenderNode* node;
-      RenderNode* radarNode;
+    struct SetNode
+    {
+        int set;
+        MeshMaterial meshMat;
+        // basic render nodes
+        RenderNode* node;
+        RenderNode* radarNode;
     };
 
-    struct LodNode {
-      int count;
-      SetNode* sets;
+    struct LodNode
+    {
+        int count;
+        SetNode* sets;
     };
 
     // Level Of Detail (LOD) information
@@ -117,14 +121,14 @@ class MeshSceneNode : public SceneNode {
     static float LodScale;
     static float RadarLodScale;
 
-  private:
+private:
     void updateMaterial(MeshMaterial* mat);
     const BzMaterial* convertMaterial(const BzMaterial* bzmat);
     int calcNormalLod(const ViewFrustum&);
     int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();
 
-  friend class MeshSceneNodeMgr;
+    friend class MeshSceneNodeMgr;
 };
 
 

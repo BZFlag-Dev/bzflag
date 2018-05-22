@@ -25,8 +25,8 @@
 
 PlatformFactory*	PlatformFactory::getInstance()
 {
-  if (!instance) instance = new WinPlatformFactory;
-  return instance;
+    if (!instance) instance = new WinPlatformFactory;
+    return instance;
 }
 
 #ifdef HAVE_SDL
@@ -38,62 +38,63 @@ WinWindow*		WinPlatformFactory::winWindow = NULL;
 
 WinPlatformFactory::WinPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 WinPlatformFactory::~WinPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
-					      const char* videoFormat)
+        const char* videoFormat)
 {
-  BzfDisplay *display;
+    BzfDisplay *display;
 #ifdef HAVE_SDL
-  SDLDisplay* sdlDisplay = new SDLDisplay();
-  display		= sdlDisplay;
+    SDLDisplay* sdlDisplay = new SDLDisplay();
+    display		= sdlDisplay;
 #else
-  WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
-  display		= winDisplay;
+    WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
+    display		= winDisplay;
 #endif
-  if (!display || !display->isValid()) {
-    delete display;
-    display = NULL;
-  }
-  return display;
+    if (!display || !display->isValid())
+    {
+        delete display;
+        display = NULL;
+    }
+    return display;
 }
 
 BzfVisual*		WinPlatformFactory::createVisual(
-				const BzfDisplay* display)
+    const BzfDisplay* display)
 {
 #ifdef HAVE_SDL
-  return new SDLVisual((const SDLDisplay*)display);
+    return new SDLVisual((const SDLDisplay*)display);
 #else
-  return new WinVisual((const WinDisplay*)display);
+    return new WinVisual((const WinDisplay*)display);
 #endif
 }
 
 BzfWindow*		WinPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
+    const BzfDisplay* display, BzfVisual* visual)
 {
 #ifdef HAVE_SDL
-  sdlWindow = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
-  return sdlWindow;
+    sdlWindow = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
+    return sdlWindow;
 #else
-  winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
-  return winWindow;
+    winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
+    return winWindow;
 #endif
 }
 
 BzfMedia*		WinPlatformFactory::createMedia()
 {
-  return new WinMedia();
+    return new WinMedia();
 }
 
 BzfJoystick*		WinPlatformFactory::createJoystick()
 {
-  return new DXJoystick();
+    return new DXJoystick();
 }
 
 // Local Variables: ***

@@ -22,24 +22,26 @@
 #include "HUDuiLabel.h"
 #include "OpenGLGState.h"
 
-class HUDuiTextureLabel : public HUDuiLabel {
-  public:
-			HUDuiTextureLabel();
-			~HUDuiTextureLabel();
+class HUDuiTextureLabel : public HUDuiLabel
+{
+public:
+    HUDuiTextureLabel();
+    ~HUDuiTextureLabel();
 
     void		setTexture(const int);
     int			getTexture() const;
 
-  protected:
+protected:
     void		doRender();
 
-  private:
+private:
     OpenGLGState	gstate;
     int		texture;
 };
 
-inline int HUDuiTextureLabel::getTexture() const {
-  return texture;
+inline int HUDuiTextureLabel::getTexture() const
+{
+    return texture;
 }
 
 #endif // __HUDUITEXTURELABEL_H__

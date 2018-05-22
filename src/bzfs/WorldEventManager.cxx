@@ -24,143 +24,144 @@ std::map<bz_Plugin*,bz_EventHandler*> HandlerMap;
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
-	callignEvents = false;
+    callignEvents = false;
 }
 
 WorldEventManager::~WorldEventManager()
 {
-  tvEventList::iterator eventItr = eventList.begin();
-  while (eventItr != eventList.end())
-	delete (*eventItr++);
+    tvEventList::iterator eventItr = eventList.begin();
+    while (eventItr != eventList.end())
+        delete (*eventItr++);
 
-  eventList.clear();
+    eventList.clear();
 }
 
 void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-  if (!theEvent)
-    return;
+    if (!theEvent)
+        return;
 
-  theEvent->AddEvent(eventType);
+    theEvent->AddEvent(eventType);
 
-  if (callignEvents)
-	pendingAdds.push_back(theEvent);
-  else
-  {
-	  if (std::find(eventList.begin(),eventList.end(),theEvent) == eventList.end())
-		  eventList.push_back(theEvent);
-  }
+    if (callignEvents)
+        pendingAdds.push_back(theEvent);
+    else
+    {
+        if (std::find(eventList.begin(),eventList.end(),theEvent) == eventList.end())
+            eventList.push_back(theEvent);
+    }
 }
 
 void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent )
 {
-  if (!theEvent)
-    return;
+    if (!theEvent)
+        return;
 
-  theEvent->RemoveEvent(eventType);
+    theEvent->RemoveEvent(eventType);
 }
 
 bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
 {
-  if (callignEvents)
-  {
-	  pendingRemovals.push_back(theEvent);
-	  return std::find(eventList.begin(),eventList.end(),theEvent) != eventList.end();
-  }
+    if (callignEvents)
+    {
+        pendingRemovals.push_back(theEvent);
+        return std::find(eventList.begin(),eventList.end(),theEvent) != eventList.end();
+    }
 
-  tvEventList::iterator itr = std::find(eventList.begin(),eventList.end(),theEvent);
-  if (itr != eventList.end()) {
-    eventList.erase(itr);
-    return true;
-  }
+    tvEventList::iterator itr = std::find(eventList.begin(),eventList.end(),theEvent);
+    if (itr != eventList.end())
+    {
+        eventList.erase(itr);
+        return true;
+    }
 
-  return false;
+    return false;
 }
 
 void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eventData )
 {
-  if (!eventData)
-    return;
-  bool callState = callignEvents;
-  callignEvents = true;
-  eventData->eventType = eventType;
+    if (!eventData)
+        return;
+    bool callState = callignEvents;
+    callignEvents = true;
+    eventData->eventType = eventType;
 
 //  tvEventList::iterator itr = eventList.begin();
 //  while (itr != eventList.end())
-  for (size_t i = 0; i < eventList.size(); i++)
-  {
-	  if (eventList[i]->HasEvent(eventType))
-		  eventList[i]->process(eventData);
-  }
+    for (size_t i = 0; i < eventList.size(); i++)
+    {
+        if (eventList[i]->HasEvent(eventType))
+            eventList[i]->process(eventData);
+    }
 
-  callignEvents = callState;
-  if (!callState)
-	processPending();
+    callignEvents = callState;
+    if (!callState)
+        processPending();
 }
 
 void WorldEventManager::callEvents (  bz_EventData  *eventData )
 {
-  callEvents(eventData->eventType,eventData);
+    callEvents(eventData->eventType,eventData);
 }
 
 void WorldEventManager::processPending()
 {
-	for (size_t i = 0; i < pendingAdds.size(); i++)
-	{
-		if (std::find(eventList.begin(),eventList.end(),pendingAdds[i]) == eventList.end())
-			eventList.push_back(pendingAdds[i]);
-	}
-	pendingAdds.clear();
+    for (size_t i = 0; i < pendingAdds.size(); i++)
+    {
+        if (std::find(eventList.begin(),eventList.end(),pendingAdds[i]) == eventList.end())
+            eventList.push_back(pendingAdds[i]);
+    }
+    pendingAdds.clear();
 
-	for (size_t i = 0; i < pendingRemovals.size(); i++)
-		removeHandler(pendingRemovals[i]);
+    for (size_t i = 0; i < pendingRemovals.size(); i++)
+        removeHandler(pendingRemovals[i]);
 
-	pendingRemovals.clear();
+    pendingRemovals.clear();
 }
 
 bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 {
-  if (!plugin)
-    return false;
+    if (!plugin)
+        return false;
 
-  bz_EventHandler *handler = NULL;
+    bz_EventHandler *handler = NULL;
 
-  if (HandlerMap.find(plugin) == HandlerMap.end())
-  {
-	  handler = new bz_EventHandler();
-      handler->plugin = plugin;
-	  HandlerMap[plugin] = handler;
-  }
-  else
-	  handler = HandlerMap[plugin];
+    if (HandlerMap.find(plugin) == HandlerMap.end())
+    {
+        handler = new bz_EventHandler();
+        handler->plugin = plugin;
+        HandlerMap[plugin] = handler;
+    }
+    else
+        handler = HandlerMap[plugin];
 
-  worldEventManager.addEvent(eventType,handler);
-  return true;
+    worldEventManager.addEvent(eventType,handler);
+    return true;
 }
 
 bool RemoveEvent ( bz_eEventType eventType, bz_Plugin* plugin )
 {
-  if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
-    return false;
+    if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
+        return false;
 
-	bz_EventHandler *handler = HandlerMap[plugin];
-	worldEventManager.removeEvent(eventType,handler);
+    bz_EventHandler *handler = HandlerMap[plugin];
+    worldEventManager.removeEvent(eventType,handler);
 
-	if (handler->HandledEvents.empty())
-		worldEventManager.removeHandler(handler);
+    if (handler->HandledEvents.empty())
+        worldEventManager.removeHandler(handler);
 
-  return true;
+    return true;
 }
 
 bool FlushEvents(bz_Plugin* plugin)
 {
-	if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
-		return false;
+    if (!plugin || HandlerMap.find(plugin) == HandlerMap.end())
+        return false;
 
-	bz_EventHandler *handler = HandlerMap[plugin];
-	worldEventManager.removeHandler(handler);
+    bz_EventHandler *handler = HandlerMap[plugin];
+    worldEventManager.removeHandler(handler);
 
-	return true;
+    return true;
 }
 
 // Local Variables: ***

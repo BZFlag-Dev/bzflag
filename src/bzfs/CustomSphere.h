@@ -23,18 +23,20 @@
 #include "BzMaterial.h"
 
 
-class CustomSphere : public WorldFileObstacle {
-  public:
+class CustomSphere : public WorldFileObstacle
+{
+public:
     CustomSphere();
     ~CustomSphere();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    enum {
-      Edge,
-      Bottom,
-      MaterialCount
+private:
+    enum
+    {
+        Edge,
+        Bottom,
+        MaterialCount
     };
     static const char* sideNames[MaterialCount];
 

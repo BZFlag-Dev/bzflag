@@ -19,16 +19,16 @@
 class TargetingUtils
 {
 public:
-  static float normalizeAngle( float ang );
-  static void getUnitVector( const float *src, const float *target, float unitVector[3] );
-  static void get3DUnitVector( const float *src, const float *target, float unitVector[3] );
-  static float getTargetDistance( const float *src, const float *target );
-  static float getTargetAzimuth( const float *src, const float *target );
-  static float getTargetRotation( const float startAzimuth, float targetAzimuth );
-  static float getTargetAngleDifference( const float *src, float srcAzimuth, const float *target );
-  static bool isLocationObscured( const float *src, const float *target );
-  static float getOpenDistance( const float *src, const float azimuth );
-  static bool getFirstCollisionPoint( const float *src, const float *target, float *collisionPt );
+    static float normalizeAngle( float ang );
+    static void getUnitVector( const float *src, const float *target, float unitVector[3] );
+    static void get3DUnitVector( const float *src, const float *target, float unitVector[3] );
+    static float getTargetDistance( const float *src, const float *target );
+    static float getTargetAzimuth( const float *src, const float *target );
+    static float getTargetRotation( const float startAzimuth, float targetAzimuth );
+    static float getTargetAngleDifference( const float *src, float srcAzimuth, const float *target );
+    static bool isLocationObscured( const float *src, const float *target );
+    static float getOpenDistance( const float *src, const float azimuth );
+    static bool getFirstCollisionPoint( const float *src, const float *target, float *collisionPt );
 };
 
 #endif

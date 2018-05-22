@@ -23,22 +23,26 @@ class Extents;
 class MeshDrawMgr;
 
 
-class OpaqueRenderNode : public RenderNode {
-  public:
+class OpaqueRenderNode : public RenderNode
+{
+public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
-		     GLuint* xformList, bool normalize,
-		     const GLfloat* color, int lod, int set,
-		     const Extents* exts, int triangles);
+                     GLuint* xformList, bool normalize,
+                     const GLfloat* color, int lod, int set,
+                     const Extents* exts, int triangles);
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const GLfloat* getPosition() const { return NULL;}
-  private:
+    virtual const GLfloat* getPosition() const
+    {
+        return NULL;
+    }
+private:
     void drawV() const;
     void drawVN() const;
     void drawVT() const;
     void drawVTN() const;
-  private:
+private:
     MeshDrawMgr* drawMgr;
     GLuint* xformList;
     bool normalize;
@@ -49,16 +53,20 @@ class OpaqueRenderNode : public RenderNode {
 };
 
 
-class AlphaGroupRenderNode : public OpaqueRenderNode {
-  public:
+class AlphaGroupRenderNode : public OpaqueRenderNode
+{
+public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
-			 GLuint* xformList, bool normalize,
-			 const GLfloat* color, int lod, int set,
-			 const Extents* exts, const float pos[3],
-			 int triangles);
-    const GLfloat* getPosition() const { return pos; }
+                         GLuint* xformList, bool normalize,
+                         const GLfloat* color, int lod, int set,
+                         const Extents* exts, const float pos[3],
+                         int triangles);
+    const GLfloat* getPosition() const
+    {
+        return pos;
+    }
     void setPosition(const GLfloat* pos);
-  private:
+private:
     float pos[3];
 };
 

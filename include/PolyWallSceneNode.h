@@ -21,11 +21,12 @@
 #include "common.h"
 #include "WallSceneNode.h"
 
-class PolyWallSceneNode : public WallSceneNode {
-  public:
-			PolyWallSceneNode(const GLfloat3Array& vertices,
-					const GLfloat2Array& uvs);
-			~PolyWallSceneNode();
+class PolyWallSceneNode : public WallSceneNode
+{
+public:
+    PolyWallSceneNode(const GLfloat3Array& vertices,
+                      const GLfloat2Array& uvs);
+    ~PolyWallSceneNode();
 
     int			split(const float*, SceneNode*&, SceneNode*&) const;
 
@@ -35,30 +36,37 @@ class PolyWallSceneNode : public WallSceneNode {
 
     void		getRenderNodes(std::vector<RenderSet>& rnodes);
 
-  protected:
-    class Geometry : public RenderNode {
-      public:
-			Geometry(PolyWallSceneNode*,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
-				const GLfloat* normal);
-			~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
-      private:
-	void		drawV() const;
-	void		drawVT() const;
-      private:
-	PolyWallSceneNode* wall;
-	int		style;
-	const GLfloat*	normal;
-      public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
+protected:
+    class Geometry : public RenderNode
+    {
+    public:
+        Geometry(PolyWallSceneNode*,
+                 const GLfloat3Array& vertices,
+                 const GLfloat2Array& uvs,
+                 const GLfloat* normal);
+        ~Geometry();
+        void		setStyle(int _style)
+        {
+            style = _style;
+        }
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return wall->getSphere();
+        }
+    private:
+        void		drawV() const;
+        void		drawVT() const;
+    private:
+        PolyWallSceneNode* wall;
+        int		style;
+        const GLfloat*	normal;
+    public:
+        GLfloat3Array	vertex;
+        GLfloat2Array	uv;
     };
 
-  private:
+private:
     Geometry*		node;
     Geometry*		shadowNode;
 };

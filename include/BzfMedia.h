@@ -38,9 +38,10 @@ static const std::string	DEFAULT_MEDIA_DIR = "data";
  * main thread is fraught with peril.
  * #define NO_AUDIO_THREAD
  */
-class BzfMedia {
-  public:
-			BzfMedia();
+class BzfMedia
+{
+public:
+    BzfMedia();
     virtual		~BzfMedia();
 
     // get and set default directory to look for media files in
@@ -51,14 +52,14 @@ class BzfMedia {
     // depth indicates how many channels were in the stored image.
     // use delete[] to release the returned memory.
     unsigned char*	readImage(const std::string& filename,
-				int& width, int& height, int& depth) const;
+                              int& width, int& height, int& depth) const;
 
     // sounds are stored as left, right, left, right ..., values are
     // in the range -1 to 1.  numFrames returns the number of left,right
     // pairs.  rate is in frames per second.  use delete[] to release
     // the returned memory.
     float*		readSound(const std::string& filename,
-				int& numFrames, int& rate) const;
+                          int& numFrames, int& rate) const;
 
     // sleep for given number of seconds
     virtual double	stopwatch(bool start);
@@ -85,7 +86,10 @@ class BzfMedia {
     virtual void	startAudioCallback(bool (*)(void)) {};
 
     // returns true if audio is running via callback
-    virtual bool	hasAudioCallback() const { return false; };
+    virtual bool	hasAudioCallback() const
+    {
+        return false;
+    };
 
     // append a command to the sound effect command queue
     virtual void	writeSoundCommand(const void*, int length) = 0;
@@ -110,39 +114,39 @@ class BzfMedia {
     // append sound samples to end of audio output buffer.  this
     // method should return immediately, if possible.
     virtual void	writeAudioFrames(const float* samples,
-				int numFrames) = 0;
+                                     int numFrames) = 0;
 
     // wait for the sound buffer to empty to the low water mark or
     // until a sound effect command is pending or until maxTime
     // seconds have passed.  if maxTime < 0, then do not timeout.
     // if !checkLowWater then don't check the low water mark.
     virtual void	audioSleep(bool checkLowWater,
-				double maxTime = -1.0) = 0;
+                               double maxTime = -1.0) = 0;
 
     virtual void	setDriver(std::string driverName);
     virtual void	setDevice(std::string deviceName);
     virtual void	audioDriver(std::string& driverName);
 
-  protected:
+protected:
     // return default extensions for image and sound files
     virtual std::string	getImageExtension() const;
     virtual std::string	getSoundExtension() const;
 
     // return NULL on failure
     virtual unsigned char* doReadImage(const std::string& filename,
-				int& width, int& height, int& depth) const;
+                                       int& width, int& height, int& depth) const;
 
     // return NULL on failure
     virtual float*	doReadSound(const std::string& filename,
-				int& numFrames, int& rate) const;
+                                int& numFrames, int& rate) const;
 
     // concatenate directory to filename
     virtual std::string	makePath(const std::string& dir,
-				const std::string& filename) const;
+                                 const std::string& filename) const;
 
     // replace (or add) extension to pathname
     std::string		replaceExtension(const std::string& pathname,
-				const std::string& extension) const;
+                                     const std::string& extension) const;
 
     // return the position of the extension separator, or zero if
     // it cannot be found.
@@ -150,7 +154,7 @@ class BzfMedia {
 
     std::string		mediaDir;
 
-  private:
+private:
     static int16_t	getShort(const void*);
     static uint16_t	getUShort(const void*);
     static int32_t	getLong(const void*);

@@ -20,17 +20,18 @@
 #include "MeshTransform.h"
 
 
-class WorldFileLocation : public WorldFileObject {
+class WorldFileLocation : public WorldFileObject
+{
 public:
-  WorldFileLocation();
-  virtual bool read(const char *cmd, std::istream&);
-  virtual void writeToWorld(WorldInfo*) const;
-  void *pack(void *buf) const;
+    WorldFileLocation();
+    virtual bool read(const char *cmd, std::istream&);
+    virtual void writeToWorld(WorldInfo*) const;
+    void *pack(void *buf) const;
 protected:
-  float pos[3];
-  float rotation;
-  float size[3];
-  MeshTransform transform;
+    float pos[3];
+    float rotation;
+    float size[3];
+    MeshTransform transform;
 };
 
 inline void WorldFileLocation::writeToWorld(WorldInfo*) const {}

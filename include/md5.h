@@ -48,21 +48,21 @@
 class MD5
 {
 public:
-  uint8_t digest[16];
-  MD5();
-  MD5(const std::string& text);
-  void update(const unsigned char *buf, uint32_t length);
-  void finalize();
-  std::string hexdigest() const;
-  friend std::ostream& operator<<(std::ostream&, MD5 md5);
+    uint8_t digest[16];
+    MD5();
+    MD5(const std::string& text);
+    void update(const unsigned char *buf, uint32_t length);
+    void finalize();
+    std::string hexdigest() const;
+    friend std::ostream& operator<<(std::ostream&, MD5 md5);
 
 private:
-  uint32_t buf[4];
-  uint32_t bytes[2];
-  uint32_t in[16];
-  bool finalized;
-  void init(void);
-  void transform(void);
+    uint32_t buf[4];
+    uint32_t bytes[2];
+    uint32_t in[16];
+    bool finalized;
+    void init(void);
+    void transform(void);
 };
 
 #endif

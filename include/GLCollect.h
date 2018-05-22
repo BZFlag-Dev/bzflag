@@ -18,13 +18,13 @@
 class GLCollect
 {
 public:
-  GLCollect( GLenum en );
-  ~GLCollect();
+    GLCollect( GLenum en );
+    ~GLCollect();
 private:
-  GLCollect( const GLCollect &c );
-  GLCollect& operator=( const GLCollect &c );
+    GLCollect( const GLCollect &c );
+    GLCollect& operator=( const GLCollect &c );
 
-  static int count;
+    static int count;
 };
 
 #endif

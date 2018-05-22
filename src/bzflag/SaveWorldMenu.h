@@ -23,19 +23,20 @@
 #include "HUDuiLabel.h"
 
 
-class SaveWorldMenu : public HUDDialog {
+class SaveWorldMenu : public HUDDialog
+{
 public:
-  SaveWorldMenu();
-  ~SaveWorldMenu();
+    SaveWorldMenu();
+    ~SaveWorldMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void execute();
-  void resize(int width, int height);
+    void execute();
+    void resize(int width, int height);
 
 private:
-  HUDuiTypeIn* filename;
-  HUDuiLabel* status;
+    HUDuiTypeIn* filename;
+    HUDuiLabel* status;
 };
 
 

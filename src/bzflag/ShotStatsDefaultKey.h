@@ -19,17 +19,18 @@
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
 
-class ShotStatsDefaultKey : public HUDuiDefaultKey {
+class ShotStatsDefaultKey : public HUDuiDefaultKey
+{
 public:
-  ShotStatsDefaultKey();
-  ~ShotStatsDefaultKey();
+    ShotStatsDefaultKey();
+    ~ShotStatsDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
-  static ShotStatsDefaultKey* getInstance();
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
+    static ShotStatsDefaultKey* getInstance();
 
 private:
-  static ShotStatsDefaultKey instance;
+    static ShotStatsDefaultKey instance;
 };
 
 

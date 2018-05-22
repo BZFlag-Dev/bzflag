@@ -77,9 +77,9 @@ extern "C" {
 
 #define herror(_x)	bzfherror(_x)
 
-  void			nerror(const char* msg);
-  void			bzfherror(const char* msg);
-  int			getErrno();
+    void			nerror(const char* msg);
+    void			bzfherror(const char* msg);
+    int			getErrno();
 
 }
 
@@ -110,7 +110,10 @@ extern "C" {
 /* setsockopt prototypes the 4th arg as const char*. */
 #define SSOType		const char*
 
-inline int close(SOCKET s) { return closesocket(s); }
+inline int close(SOCKET s)
+{
+    return closesocket(s);
+}
 #define	ioctl(__fd, __req, __arg) \
 			ioctlsocket(__fd, __req, (u_long*)__arg)
 #define	gethostbyaddr(__addr, __len, __type) \
@@ -118,10 +121,10 @@ inline int close(SOCKET s) { return closesocket(s); }
 
 extern "C" {
 
-  int			inet_aton(const char* cp, struct in_addr* pin);
-  void			nerror(const char* msg);
-  void			herror(const char* msg);
-  int			getErrno();
+    int			inet_aton(const char* cp, struct in_addr* pin);
+    void			nerror(const char* msg);
+    void			herror(const char* msg);
+    int			getErrno();
 
 }
 
@@ -142,15 +145,16 @@ extern "C" {
 #  define INADDR_NONE	((in_addr_t)0xffffffff)
 #endif
 
-class BzfNetwork {
+class BzfNetwork
+{
 public:
-  static int		setNonBlocking(int fd);
-  static int		setBlocking(int fd);
-  static bool	parseURL(const std::string& url,
-			 std::string& protocol,
-			 std::string& hostname,
-			 int& port,
-			 std::string& pathname);
+    static int		setNonBlocking(int fd);
+    static int		setBlocking(int fd);
+    static bool	parseURL(const std::string& url,
+                         std::string& protocol,
+                         std::string& hostname,
+                         int& port,
+                         std::string& pathname);
 };
 
 #endif // BZF_NETWORK_H

@@ -26,13 +26,14 @@
 #include "WorldInfo.h"
 
 
-class CustomGate : public WorldFileObstacle {
-  public:
+class CustomGate : public WorldFileObstacle
+{
+public:
     CustomGate(const char* telename);
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  protected:
+protected:
     std::string telename;
     float border;
     bool horizontal;

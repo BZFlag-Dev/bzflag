@@ -20,10 +20,11 @@
 #include "common.h"
 #include "SceneNode.h"
 
-class ShotSceneNode : public SceneNode {
-  public:
-			ShotSceneNode() {}
-			~ShotSceneNode() {}
+class ShotSceneNode : public SceneNode
+{
+public:
+    ShotSceneNode() {}
+    ~ShotSceneNode() {}
 
     virtual void	move(const GLfloat pos[3], const GLfloat forward[3])=0;
 };

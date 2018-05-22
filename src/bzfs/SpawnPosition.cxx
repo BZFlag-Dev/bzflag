@@ -24,14 +24,15 @@ SpawnPolicy *SpawnPosition::policy = (SpawnPolicy*)0;
 
 SpawnPosition::SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges): azimuth(0.0), pos()
 {
-  /* if a spawn policy hasn't been set yet, just go with the default */
-  if (!SpawnPosition::policy) {
-    // uncomment to test - SpawnPosition::policy = new RandomSpawnPolicy();
-    SpawnPosition::policy = new SpawnPolicy();
-  }
+    /* if a spawn policy hasn't been set yet, just go with the default */
+    if (!SpawnPosition::policy)
+    {
+        // uncomment to test - SpawnPosition::policy = new RandomSpawnPolicy();
+        SpawnPosition::policy = new SpawnPolicy();
+    }
 
-  SpawnPosition::policy->getPosition(pos, playerId, onGroundOnly, notNearEdges);
-  SpawnPosition::policy->getAzimuth(azimuth);
+    SpawnPosition::policy->getPosition(pos, playerId, onGroundOnly, notNearEdges);
+    SpawnPosition::policy->getAzimuth(azimuth);
 }
 
 SpawnPosition::~SpawnPosition()
@@ -40,10 +41,11 @@ SpawnPosition::~SpawnPosition()
 
 void SpawnPosition::setSpawnPolicy(SpawnPolicy *_policy)
 {
-  if (SpawnPosition::policy) {
-    delete SpawnPosition::policy;
-  }
-  SpawnPosition::policy = _policy;
+    if (SpawnPosition::policy)
+    {
+        delete SpawnPosition::policy;
+    }
+    SpawnPosition::policy = _policy;
 }
 
 

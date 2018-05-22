@@ -36,12 +36,13 @@ const int		FiringInfoPLen = ShotUpdatePLen + 10;
 
 class BaseLocalPlayer;
 
-struct ShotUpdate {
-  public:
+struct ShotUpdate
+{
+public:
     void*		pack(void*) const;
     const void*		unpack(const void*);
 
-  public:
+public:
     PlayerId		player;			// who's shot
     uint16_t		id;			// shot id unique to player
     float		pos[3];			// shot position
@@ -50,15 +51,16 @@ struct ShotUpdate {
     TeamColor		team;
 };
 
-struct FiringInfo {
-  public:
-			FiringInfo();
-			FiringInfo(const BaseLocalPlayer&, int id);
+struct FiringInfo
+{
+public:
+    FiringInfo();
+    FiringInfo(const BaseLocalPlayer&, int id);
 
     void*		pack(void*) const;
     const void*		unpack(const void*);
 
-  public:
+public:
     float	       timeSent;
     ShotUpdate		shot;
     FlagType*		flagType;			// flag when fired

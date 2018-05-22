@@ -22,14 +22,15 @@
 #include "Obstacle.h"
 #include "MeshFace.h"
 
-class Teleporter : public Obstacle {
-  public:
-			Teleporter();
-			Teleporter(const float* pos, float rotation,
-				float width, float breadth, float height,
-				float borderSize = 1.0f, bool horizontal = false,
-				bool drive = false, bool shoot = false, bool ricochet = false);
-			~Teleporter();
+class Teleporter : public Obstacle
+{
+public:
+    Teleporter();
+    Teleporter(const float* pos, float rotation,
+               float width, float breadth, float height,
+               float borderSize = 1.0f, bool horizontal = false,
+               bool drive = false, bool shoot = false, bool ricochet = false);
+    ~Teleporter();
 
     Obstacle*		copyWithTransform(const MeshTransform&) const;
 
@@ -48,28 +49,28 @@ class Teleporter : public Obstacle {
 
     bool		inCylinder(const float* p, float radius, float height) const;
     bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
+                      float halfWidth, float halfBreadth, float height) const;
     bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
     bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+                           float halfWidth, float halfBreadth, float height,
+                           float* plane) const;
 
     bool		getHitNormal(
-				     const float* pos1, float azimuth1,
-				     const float* pos2, float azimuth2,
-				     float halfWidth, float halfBreadth,
-				     float height,
-				     float* normal) const;
+        const float* pos1, float azimuth1,
+        const float* pos2, float azimuth2,
+        float halfWidth, float halfBreadth,
+        float height,
+        float* normal) const;
 
     float		isTeleported(const Ray&, int& face) const;
     float		getProximity(const float* p, float radius) const;
     bool		hasCrossed(const float* p1, const float* p2,
-				   int& face) const;
+                           int& face) const;
     void		getPointWRT(const Teleporter& t2, int face1, int face2,
-				    const float* pIn, const float* dIn, float aIn,
-				    float* pOut, float* dOut, float* aOut) const;
+                            const float* pIn, const float* dIn, float aIn,
+                            float* pOut, float* dOut, float* aOut) const;
 
     void		makeLinks();
     const MeshFace*	getBackLink() const;
@@ -84,10 +85,10 @@ class Teleporter : public Obstacle {
 
     std::string		userTextures[1];
 
-  private:
+private:
     void		finalize();
 
-  private:
+private:
     static const char*	typeName;
 
     std::string		name;
@@ -109,33 +110,33 @@ class Teleporter : public Obstacle {
 
 inline float Teleporter::getBorder() const
 {
-  return border;
+    return border;
 }
 
 inline bool Teleporter::isHorizontal() const
 {
-  return horizontal;
+    return horizontal;
 }
 
 inline const MeshFace* Teleporter::getBackLink() const
 {
-  return backLink;
+    return backLink;
 }
 
 inline const MeshFace* Teleporter::getFrontLink() const
 {
-  return frontLink;
+    return frontLink;
 }
 
 inline const std::string& Teleporter::getName() const
 {
-  return name;
+    return name;
 }
 
 inline void Teleporter::setName(const std::string& _name)
 {
-  name = _name;
-  return;
+    name = _name;
+    return;
 }
 
 

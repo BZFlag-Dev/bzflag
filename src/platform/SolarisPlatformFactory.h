@@ -19,17 +19,18 @@
 
 #include "PlatformFactory.h"
 
-class SolarisPlatformFactory : public PlatformFactory {
-  public:
-			SolarisPlatformFactory();
-			~SolarisPlatformFactory();
+class SolarisPlatformFactory : public PlatformFactory
+{
+public:
+    SolarisPlatformFactory();
+    ~SolarisPlatformFactory();
 
     BzfDisplay*		createDisplay(const char* name, const char*);
     BzfVisual*		createVisual(const BzfDisplay*);
     BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
 
-  private:
-			SolarisPlatformFactory(const SolarisPlatformFactory&);
+private:
+    SolarisPlatformFactory(const SolarisPlatformFactory&);
     SolarisPlatformFactory&	operator=(const SolarisPlatformFactory&);
 
     BzfMedia*		createMedia();

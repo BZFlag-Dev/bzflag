@@ -21,10 +21,11 @@
 #include "SceneNode.h"
 
 const int maxChunks = 20;
-class FlagSceneNode : public SceneNode {
-  public:
-			FlagSceneNode(const GLfloat pos[3]);
-			~FlagSceneNode();
+class FlagSceneNode : public SceneNode
+{
+public:
+    FlagSceneNode(const GLfloat pos[3]);
+    ~FlagSceneNode();
 
     static void		waveFlag(float dt);
     static void		freeFlag();
@@ -34,9 +35,12 @@ class FlagSceneNode : public SceneNode {
     void		setWind(const GLfloat wind[3], float dt);
     void		setBillboard(bool billboard);
 
-    const GLfloat*	getColor() const { return color; }
+    const GLfloat*	getColor() const
+    {
+        return color;
+    }
     void		setColor(GLfloat r, GLfloat g,
-				 GLfloat b, GLfloat a = 1.0f);
+                         GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
     void		setTexture(const int);
 
@@ -45,21 +49,25 @@ class FlagSceneNode : public SceneNode {
     void		addShadowNodes(SceneRenderer&);
 
     bool		cullShadow(int planeCount,
-				   const float (*planes)[4]) const;
-  protected:
-    class FlagRenderNode : public RenderNode {
-      public:
-			FlagRenderNode(const FlagSceneNode*);
-			~FlagRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const FlagSceneNode* sceneNode;
-	int	     waveReference;
+                           const float (*planes)[4]) const;
+protected:
+    class FlagRenderNode : public RenderNode
+    {
+    public:
+        FlagRenderNode(const FlagSceneNode*);
+        ~FlagRenderNode();
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const FlagSceneNode* sceneNode;
+        int	     waveReference;
     };
     friend class FlagRenderNode;
 
-  private:
+private:
     bool		billboard;
     GLfloat		angle;
     GLfloat		tilt;

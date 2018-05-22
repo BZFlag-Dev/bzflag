@@ -29,28 +29,32 @@ static ErrorCallback	errorCallback = NULL;
 
 ErrorCallback		setErrorCallback(ErrorCallback cb)
 {
-  ErrorCallback oldErrorCallback = errorCallback;
-  errorCallback = cb;
-  return oldErrorCallback;
+    ErrorCallback oldErrorCallback = errorCallback;
+    errorCallback = cb;
+    return oldErrorCallback;
 }
 
 void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 {
-  std::string msg;
-  Bundle *pBdl = BundleMgr::getCurrentBundle();
-  if (!pBdl)
-    return;
+    std::string msg;
+    Bundle *pBdl = BundleMgr::getCurrentBundle();
+    if (!pBdl)
+        return;
 
-  if ((parms != NULL) && !parms->empty())
-    msg = pBdl->formatMessage(fmt, parms);
-  else
-    msg = pBdl->getLocalString(fmt);
+    if ((parms != NULL) && !parms->empty())
+        msg = pBdl->formatMessage(fmt, parms);
+    else
+        msg = pBdl->getLocalString(fmt);
 
-  if (errorCallback) (*errorCallback)(msg.c_str());
+    if (errorCallback) (*errorCallback)(msg.c_str());
 #if defined(_WIN32)
-  else { OutputDebugString(msg.c_str()); OutputDebugString("\n"); }
+    else
+    {
+        OutputDebugString(msg.c_str());
+        OutputDebugString("\n");
+    }
 #else
-  else std::cerr << msg << std::endl;
+    else std::cerr << msg << std::endl;
 #endif
 }
 
@@ -60,15 +64,15 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 
 void			printFatalError(const char* fmt, ...)
 {
-  char buffer[1024];
-  va_list args;
-  va_start(args, fmt);
-  vsprintf(buffer, fmt, args);
-  va_end(args);
+    char buffer[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(buffer, fmt, args);
+    va_end(args);
 #if defined(_WIN32)
-  MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+    MessageBox(NULL, buffer, "BZFlag Error", MB_OK | MB_ICONERROR | MB_TASKMODAL);
 #else
-  std::cerr << buffer << std::endl;
+    std::cerr << buffer << std::endl;
 #endif
 }
 

@@ -33,14 +33,15 @@
 #include "common.h"
 #include "bzfgl.h"
 
-class OpenGLMaterial {
-  public:
-			OpenGLMaterial();
-			OpenGLMaterial(const GLfloat* specularRGB,
-					const GLfloat* emissiveRGB,
-					GLfloat shininess = 0.0f);
-			OpenGLMaterial(const OpenGLMaterial&);
-			~OpenGLMaterial();
+class OpenGLMaterial
+{
+public:
+    OpenGLMaterial();
+    OpenGLMaterial(const GLfloat* specularRGB,
+                   const GLfloat* emissiveRGB,
+                   GLfloat shininess = 0.0f);
+    OpenGLMaterial(const OpenGLMaterial&);
+    ~OpenGLMaterial();
     OpenGLMaterial&	operator=(const OpenGLMaterial&);
 
     bool		operator==(const OpenGLMaterial&) const;
@@ -54,31 +55,32 @@ class OpenGLMaterial {
     bool		isValid() const;
     void		execute() const;
 
-  private:
-    class Rep {
-      public:
-			~Rep();
-	void		ref();
-	void		unref();
-	void		execute();
-	static Rep*	getRep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
-      private:
-			Rep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
-	static void	freeContext(void*);
-	static void	initContext(void*);
-      public:
-	int		refCount;
-	Rep*		prev;
-	Rep*		next;
-	GLuint		list;
-	GLfloat		specular[4];
-	GLfloat		emissive[4];
-	GLfloat		shininess;
-	static Rep*	head;
+private:
+    class Rep
+    {
+    public:
+        ~Rep();
+        void		ref();
+        void		unref();
+        void		execute();
+        static Rep*	getRep(const GLfloat* specular,
+                           const GLfloat* emissive,
+                           GLfloat shininess);
+    private:
+        Rep(const GLfloat* specular,
+            const GLfloat* emissive,
+            GLfloat shininess);
+        static void	freeContext(void*);
+        static void	initContext(void*);
+    public:
+        int		refCount;
+        Rep*		prev;
+        Rep*		next;
+        GLuint		list;
+        GLfloat		specular[4];
+        GLfloat		emissive[4];
+        GLfloat		shininess;
+        static Rep*	head;
     };
     Rep*		rep;
 };
@@ -89,17 +91,17 @@ class OpenGLMaterial {
 
 inline const GLfloat*	OpenGLMaterial::getSpecularColor() const
 {
-  return rep->specular;
+    return rep->specular;
 }
 
 inline const GLfloat*	OpenGLMaterial::getEmissiveColor() const
 {
-  return rep->emissive;
+    return rep->emissive;
 }
 
 inline GLfloat		OpenGLMaterial::getShininess() const
 {
-  return rep->shininess;
+    return rep->shininess;
 }
 
 #endif // BZF_OPENGL_MATERIAL_H

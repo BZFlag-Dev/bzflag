@@ -25,18 +25,19 @@
 
 /** this class provides options for setting the gui
  */
-class EffectsMenu : public HUDDialog {
+class EffectsMenu : public HUDDialog
+{
 public:
-  EffectsMenu();
-  ~EffectsMenu();
+    EffectsMenu();
+    ~EffectsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, const void* data);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, const void* data);
 
 private:
 };

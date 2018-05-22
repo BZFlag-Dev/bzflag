@@ -33,10 +33,11 @@ class HUDuiControl;
 
 typedef void		(*HUDuiCallback)(HUDuiControl*, const void*);
 
-class HUDuiControl {
-  friend class HUDui;
-  public:
-			HUDuiControl();
+class HUDuiControl
+{
+    friend class HUDui;
+public:
+    HUDuiControl();
     virtual		~HUDuiControl();
 
     float		getX() const;
@@ -68,9 +69,12 @@ class HUDuiControl {
 
     void		render();
 
-    static int  getArrow() { return arrow; }
+    static int  getArrow()
+    {
+        return arrow;
+    }
 
-  protected:
+protected:
     virtual void	onSetFont();
     virtual bool	doKeyPress(const BzfKeyEvent&) = 0;
     virtual bool	doKeyRelease(const BzfKeyEvent&) = 0;
@@ -85,7 +89,7 @@ class HUDuiControl {
     static const GLfloat	moreDimTextColor[3];
     static const GLfloat	textColor[3];
 
-  private:
+private:
     bool		showingFocus;
     int			fontFace;
     float		fontSize;
@@ -111,25 +115,25 @@ class HUDuiControl {
 inline
 float			HUDuiControl::getX() const
 {
-  return x;
+    return x;
 }
 
 inline
 float			HUDuiControl::getY() const
 {
-  return y;
+    return y;
 }
 
 inline
 float			HUDuiControl::getWidth() const
 {
-  return width;
+    return width;
 }
 
 inline
 float			HUDuiControl::getHeight() const
 {
-  return height;
+    return height;
 }
 
 #endif // __HUDUICONTROL_H__

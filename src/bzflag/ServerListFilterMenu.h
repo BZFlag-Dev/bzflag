@@ -25,26 +25,27 @@
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 
-class ServerListFilterMenu : public HUDDialog {
+class ServerListFilterMenu : public HUDDialog
+{
 public:
-  ServerListFilterMenu();
-  ~ServerListFilterMenu();
+    ServerListFilterMenu();
+    ~ServerListFilterMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void show();
-  void dismiss();
-  void execute();
-  void resize(int width, int height);
+    void show();
+    void dismiss();
+    void execute();
+    void resize(int width, int height);
 
 private:
-  HUDuiLabel* createLabel(const std::string &);
-  HUDuiTypeIn* createInput(const std::string &);
-  HUDuiLabel* resetPresets;
-  HUDuiLabel* help;
+    HUDuiLabel* createLabel(const std::string &);
+    HUDuiTypeIn* createInput(const std::string &);
+    HUDuiLabel* resetPresets;
+    HUDuiLabel* help;
 private:
-  int firstKeyControl;
-  int lastKeyControl;
+    int firstKeyControl;
+    int lastKeyControl;
 };
 
 

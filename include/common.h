@@ -76,10 +76,10 @@ extern int debugLevel;
  */
 #ifndef UNUSED
 #  if GCC_PREREQ(2, 5)
-     /* GCC-style */
+/* GCC-style */
 #    define UNUSED(parameter) (parameter) __attribute__((unused))
 #  else
-     /* MSVC/C++ */
+/* MSVC/C++ */
 #    ifdef __cplusplus
 #      if defined(NDEBUG)
 #	define UNUSED(parameter) /* parameter */
@@ -88,7 +88,7 @@ extern int debugLevel;
 #      endif
 #    else
 #      if defined(_MSC_VER)
-	 /* disable reporting an "unreferenced formal parameter" */
+/* disable reporting an "unreferenced formal parameter" */
 #	pragma warning( disable : 4100 )
 #      endif
 #      define UNUSED(parameter) (parameter)
@@ -278,11 +278,11 @@ typedef unsigned char	uint8_t;
 #      ifdef isnan
 #	undef isnan
 #      endif
-       template<typename Tp>
-       inline int isnan(Tp f)
-       {
-	 return (f!=f);
-       }
+template<typename Tp>
+inline int isnan(Tp f)
+{
+    return (f!=f);
+}
 #    else
 #      define isnan(f) ((f) != (f))
 #    endif /* __cplusplus */
@@ -295,14 +295,14 @@ typedef unsigned char	uint8_t;
 #    ifdef max
 #      undef max
 #    endif
-     namespace std
-     {
-       template<typename comparable>
-       inline const comparable& max(const comparable& a, const comparable& b)
-       {
-	 return  a < b ? b : a;
-       }
-     }
+namespace std
+{
+template<typename comparable>
+inline const comparable& max(const comparable& a, const comparable& b)
+{
+    return  a < b ? b : a;
+}
+}
 #  else
 #    ifdef max
 #      undef max
@@ -316,14 +316,14 @@ typedef unsigned char	uint8_t;
 #    ifdef min
 #      undef min
 #    endif
-     namespace std
-     {
-       template<typename comparable>
-       inline const comparable& min(const comparable& a, const comparable& b)
-       {
-	 return b < a ? b : a;
-       }
-     }
+namespace std
+{
+template<typename comparable>
+inline const comparable& min(const comparable& a, const comparable& b)
+{
+    return b < a ? b : a;
+}
+}
 #  else
 #    ifdef min
 #      undef min

@@ -23,12 +23,13 @@
 #include "Flag.h"
 #include "global.h"
 
-class EntryZone {
-  public:
+class EntryZone
+{
+public:
     EntryZone();
     const void* unpack(const void*);
 
-  public:
+public:
     float pos[3];
     float size[3];
     float rot;

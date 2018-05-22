@@ -16,8 +16,9 @@
 #include <vector>
 #include <string>
 
-class CronJob {
-  public:
+class CronJob
+{
+public:
     CronJob();
     CronJob(std::string job);
     ~CronJob();
@@ -26,11 +27,17 @@ class CronJob {
 
     bool matches(int n, int h, int d, int m, int w) const;
 
-    std::string getCommand() const {return command;};
+    std::string getCommand() const
+    {
+        return command;
+    };
 
-    std::string displayJob() const {return inputJob;};
+    std::string displayJob() const
+    {
+        return inputJob;
+    };
 
-  private:
+private:
     static bool isInVector(const std::vector<int> &iv, const int x);
     static std::vector<int> parseTimeList(const std::string times, const int min, const int max);
 

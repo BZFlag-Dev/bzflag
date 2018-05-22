@@ -21,10 +21,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-class LinuxMedia : public BzfMedia {
-  public:
-			LinuxMedia();
-			~LinuxMedia();
+class LinuxMedia : public BzfMedia
+{
+public:
+    LinuxMedia();
+    ~LinuxMedia();
 
     double		stopwatch(bool);
     bool		openAudio();
@@ -41,20 +42,20 @@ class LinuxMedia : public BzfMedia {
     void		writeAudioFrames(const float* samples, int numFrames);
     void		audioSleep(bool checkLowWater, double maxTime);
 
-  private:
+private:
     bool		checkForAudioHardware();
     bool		openAudioHardware();
     bool		openIoctl(int cmd, void* value, bool req = true);
     static void		audioThreadInit(void*);
 
     void		writeAudioFrames8Bit(
-				const float* samples, int numFrames);
+        const float* samples, int numFrames);
     void		writeAudioFrames16Bit(
-				const float* samples, int numFrames);
+        const float* samples, int numFrames);
 
     static double	getTime();
 
-  private:
+private:
     bool		audioReady;
     int			audioOutputRate;
     int			audioBufferSize;

@@ -24,10 +24,11 @@
 
 class XVisual;
 
-class XWindow : public BzfWindow {
-  public:
-			XWindow(const XDisplay*, XVisual*);
-			~XWindow();
+class XWindow : public BzfWindow
+{
+public:
+    XWindow(const XDisplay*, XVisual*);
+    ~XWindow();
 
     bool		isValid() const;
 
@@ -64,13 +65,13 @@ class XWindow : public BzfWindow {
     static void		reactivateAll();
     static void		deactivateAll();
 
-  private:
+private:
     void		loadColormap();
     unsigned short	getIntensityValue(float i) const;
     static float	pixelField(int i, int bits, int offset);
     static void		countBits(unsigned long mask, int& num, int& offset);
 
-  private:
+private:
     XDisplay::Rep*	display;
     Window		window;
     Colormap		colormap;

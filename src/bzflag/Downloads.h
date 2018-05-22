@@ -19,13 +19,14 @@
 #include <string>
 
 
-namespace Downloads {
-  void startDownloads(bool doDownloads,
-		      bool updateDownloads,
-		      bool referencing);
-  void finalizeDownloads();
-  void removeTextures(); // free the downloaded GL textures
-  bool requestFinalized();
+namespace Downloads
+{
+void startDownloads(bool doDownloads,
+                    bool updateDownloads,
+                    bool referencing);
+void finalizeDownloads();
+void removeTextures(); // free the downloaded GL textures
+bool requestFinalized();
 }
 
 bool authorizedServer(const std::string& hostname);

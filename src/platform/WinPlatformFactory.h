@@ -25,24 +25,25 @@ class SDLWindow;
 class WinWindow;
 #endif
 
-class WinPlatformFactory : public PlatformFactory {
-  public:
-			WinPlatformFactory();
-			~WinPlatformFactory();
+class WinPlatformFactory : public PlatformFactory
+{
+public:
+    WinPlatformFactory();
+    ~WinPlatformFactory();
 
     BzfDisplay*		createDisplay(const char* name,
-				const char* videoFormat);
+                                  const char* videoFormat);
     BzfVisual*		createVisual(const BzfDisplay*);
     BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
     BzfJoystick*	createJoystick();
 
-  private:
-			WinPlatformFactory(const WinPlatformFactory&);
+private:
+    WinPlatformFactory(const WinPlatformFactory&);
     WinPlatformFactory&	operator=(const WinPlatformFactory&);
 
     BzfMedia*		createMedia();
 
-  private:
+private:
 #ifdef HAVE_SDL
     static SDLWindow*	sdlWindow;
 #else

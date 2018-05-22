@@ -38,153 +38,153 @@
 class PlayerAccessInfo
 {
 public:
-  PlayerAccessInfo();
+    PlayerAccessInfo();
 
-  // player access info
-  enum AccessPerm
+    // player access info
+    enum AccessPerm
     {
-      actionMessage = 0,
-      adminMessageReceive,
-      adminMessageSend,
-      antiban,
-      antikick,
-      antikill,
-      antipoll,
-      antipollban,
-      antipollkick,
-      antipollkill,
-      ban,
-      banlist,
-      clientQuery,
-      countdown,
-      date,
-      endGame,
-      flagHistory,
-      flagMaster,
-      flagMod,
-      hideAdmin,
-      idleStats,
-      info,
-      kick,
-      kill,
-      lagStats,
-      lagwarn,
-      jitterwarn,
-      listPerms,
-      listPlugins,
-      masterBan,
-      modCount,
-      mute,
-      packetlosswarn,
-      playerList,
-      plugins,
-      poll,
-      pollBan,
-      pollKick,
-      pollKill,
-      pollSet,
-      pollFlagReset,
-      privateMessage,
-      record,
-      rejoin,
-      removePerms,
-      replay,
-      report,
-      say,
-      sendHelp,
-      setAll,
-      setPerms,
-      setVar,
-      shortBan,
-      showAdmin,
-      showMotto,
-      showOthers,
-      shutdownServer,
-      spawn,
-      superKill,
-      talk,
-      unban,
-      unmute,
-      veto,
-      viewReports,
-      vote,
-      // just so we know how many rights there
-      // are this doesn't do anything really, just
-      // make sure it's the last real right
-      lastPerm
+        actionMessage = 0,
+        adminMessageReceive,
+        adminMessageSend,
+        antiban,
+        antikick,
+        antikill,
+        antipoll,
+        antipollban,
+        antipollkick,
+        antipollkill,
+        ban,
+        banlist,
+        clientQuery,
+        countdown,
+        date,
+        endGame,
+        flagHistory,
+        flagMaster,
+        flagMod,
+        hideAdmin,
+        idleStats,
+        info,
+        kick,
+        kill,
+        lagStats,
+        lagwarn,
+        jitterwarn,
+        listPerms,
+        listPlugins,
+        masterBan,
+        modCount,
+        mute,
+        packetlosswarn,
+        playerList,
+        plugins,
+        poll,
+        pollBan,
+        pollKick,
+        pollKill,
+        pollSet,
+        pollFlagReset,
+        privateMessage,
+        record,
+        rejoin,
+        removePerms,
+        replay,
+        report,
+        say,
+        sendHelp,
+        setAll,
+        setPerms,
+        setVar,
+        shortBan,
+        showAdmin,
+        showMotto,
+        showOthers,
+        shutdownServer,
+        spawn,
+        superKill,
+        talk,
+        unban,
+        unmute,
+        veto,
+        viewReports,
+        vote,
+        // just so we know how many rights there
+        // are this doesn't do anything really, just
+        // make sure it's the last real right
+        lastPerm
     };
 
-  enum GroupStates
-	{
-	  isGroup,  // we can check if this is a group or a player
-	  isDefault,   // mark default groups
-	  lastState
-	};
+    enum GroupStates
+    {
+        isGroup,  // we can check if this is a group or a player
+        isDefault,   // mark default groups
+        lastState
+    };
 
-  void	setName(const char* callSign);
+    void	setName(const char* callSign);
 
-  std::string getName();
+    std::string getName();
 
-  void	setLoginFail();
-  bool	passwordAttemptsMax();
+    void	setLoginFail();
+    bool	passwordAttemptsMax();
 
-  /** have successfully provided server password */
-  void  setOperator();
-  bool	isOperator() const;
+    /** have successfully provided server password */
+    void  setOperator();
+    bool	isOperator() const;
 
-  /** have ability to ban */
-  bool	isAdmin() const;
+    /** have ability to ban */
+    bool	isAdmin() const;
 
-  /** are not marked as hidden admins */
-  bool	showAsAdmin() const;
+    /** are not marked as hidden admins */
+    bool	showAsAdmin() const;
 
-  void	setPermissionRights();
-  void	reloadInfo();
+    void	setPermissionRights();
+    void	reloadInfo();
 
-  bool	hasGroup(const std::string& group);
-  bool	addGroup(const std::string &group);
-  bool	removeGroup(const std::string& group);
-  bool	canSet(const std::string& group);
+    bool	hasGroup(const std::string& group);
+    bool	addGroup(const std::string &group);
+    bool	removeGroup(const std::string& group);
+    bool	canSet(const std::string& group);
 
-  bool	hasPerm(AccessPerm right) const;
-  void	grantPerm(AccessPerm right);
-  void	revokePerm(AccessPerm right);
+    bool	hasPerm(AccessPerm right) const;
+    void	grantPerm(AccessPerm right);
+    void	revokePerm(AccessPerm right);
 
-  bool	hasCustomPerm(const char* right) const;
-  void  grantCustomPerm(const char* right);
-  void  revokeCustomPerm(const char* right);
+    bool	hasCustomPerm(const char* right) const;
+    void  grantCustomPerm(const char* right);
+    void  revokeCustomPerm(const char* right);
 
-  bool	isRegistered() const;
-  bool	isAllowedToEnter();
-  bool	isVerified() const;
-  uint8_t     getPlayerProperties();
-  void	storeInfo();
-  bool	exists();
-  static PlayerAccessInfo &getUserInfo(const std::string &nick);
-  static bool readGroupsFile(const std::string &filename);
-  static bool readPermsFile(const std::string &filename);
-  static bool writePermsFile(const std::string &filename);
-  static void updateDatabases();
-  std::bitset<lastPerm>		explicitAllows;
-  std::bitset<lastPerm>		explicitDenys;
-  std::bitset<lastState>	groupState;
-  std::vector<std::string>	groups;
+    bool	isRegistered() const;
+    bool	isAllowedToEnter();
+    bool	isVerified() const;
+    uint8_t     getPlayerProperties();
+    void	storeInfo();
+    bool	exists();
+    static PlayerAccessInfo &getUserInfo(const std::string &nick);
+    static bool readGroupsFile(const std::string &filename);
+    static bool readPermsFile(const std::string &filename);
+    static bool writePermsFile(const std::string &filename);
+    static void updateDatabases();
+    std::bitset<lastPerm>		explicitAllows;
+    std::bitset<lastPerm>		explicitDenys;
+    std::bitset<lastState>	groupState;
+    std::vector<std::string>	groups;
 
-  bool				hasALLPerm;
+    bool				hasALLPerm;
 
-  std::vector<std::string> customPerms;
+    std::vector<std::string> customPerms;
 private:
-  bool				verified;
-  TimeKeeper			loginTime;
-  int				loginAttempts;
+    bool				verified;
+    TimeKeeper			loginTime;
+    int				loginAttempts;
 
-  /** server operator that has provided the server password */
-  bool				serverop;
+    /** server operator that has provided the server password */
+    bool				serverop;
 
-  // number of times they have tried to /password
-  int passwordAttempts;
-  // player's registration name
-  std::string regName;
+    // number of times they have tried to /password
+    int passwordAttempts;
+    // player's registration name
+    std::string regName;
 };
 
 typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
@@ -197,7 +197,7 @@ extern std::string		userDatabaseFile;
 
 inline void makeupper(std::string& str)
 {
-  std::transform(str.begin(), str.end(), str.begin(), (int(*)(int))toupper);
+    std::transform(str.begin(), str.end(), str.begin(), (int(*)(int))toupper);
 }
 
 bool userExists(const std::string &nick);

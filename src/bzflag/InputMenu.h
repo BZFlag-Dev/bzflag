@@ -28,27 +28,28 @@
 
 /** this class provides options for setting the gui
  */
-class InputMenu : public HUDDialog {
+class InputMenu : public HUDDialog
+{
 public:
-  InputMenu();
-  ~InputMenu();
+    InputMenu();
+    ~InputMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, const void* data);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, const void* data);
 
-  void fillJSOptions();
+    void fillJSOptions();
 
 private:
-  HUDuiControl*	   keyMapping;
-  HUDuiList*	   activeInput;
-  HUDuiList*	   jsx;
-  HUDuiList*	   jsy;
-  KeyboardMapMenu* keyboardMapMenu;
+    HUDuiControl*	   keyMapping;
+    HUDuiList*	   activeInput;
+    HUDuiList*	   jsx;
+    HUDuiList*	   jsy;
+    KeyboardMapMenu* keyboardMapMenu;
 };
 
 

@@ -20,27 +20,31 @@
 
 #include "common.h"
 
-class BzfVisual {
-  public:
-			BzfVisual();
+class BzfVisual
+{
+public:
+    BzfVisual();
     virtual		~BzfVisual();
 
     virtual void	setLevel(int level) = 0;
     virtual void	setDoubleBuffer(bool) = 0;
     virtual void	setIndex(int minDepth) = 0;
     virtual void	setRGBA(int minRed, int minGreen,
-				int minBlue, int minAlpha) = 0;
+                            int minBlue, int minAlpha) = 0;
     virtual void	setDepth(int minDepth) = 0;
     virtual void	setStencil(int minDepth) = 0;
     virtual void	setAccum(int minRed, int minGreen,
-				int minBlue, int minAlpha) = 0;
+                             int minBlue, int minAlpha) = 0;
     virtual void	setStereo(bool) = 0;
-    virtual void	setVerticalSync(bool) {;}
+    virtual void	setVerticalSync(bool)
+    {
+        ;
+    }
 
     virtual bool	build() = 0;
 
-  private:
-			BzfVisual(const BzfVisual&);
+private:
+    BzfVisual(const BzfVisual&);
     BzfVisual&		operator=(const BzfVisual&);
 };
 

@@ -19,15 +19,19 @@
 /* common headers */
 #include "BzMaterial.h"
 
-class CustomMaterial : public WorldFileObject {
-  public:
+class CustomMaterial : public WorldFileObject
+{
+public:
     CustomMaterial();
     ~CustomMaterial();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable BzMaterial material;
 };
 

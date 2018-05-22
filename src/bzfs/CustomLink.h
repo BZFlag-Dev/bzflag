@@ -26,14 +26,18 @@
 #include "WorldInfo.h"
 
 
-class CustomLink : public WorldFileObject {
-  public:
+class CustomLink : public WorldFileObject
+{
+public:
     CustomLink();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual bool usesGroupDef()
+    {
+        return false;
+    }
 
-  protected:
+protected:
     std::string from;
     std::string to;
 };

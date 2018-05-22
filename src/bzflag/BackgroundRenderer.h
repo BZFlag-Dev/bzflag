@@ -31,10 +31,11 @@
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
-class BackgroundRenderer {
-  public:
-			BackgroundRenderer(const SceneRenderer&);
-			~BackgroundRenderer();
+class BackgroundRenderer
+{
+public:
+    BackgroundRenderer(const SceneRenderer&);
+    ~BackgroundRenderer();
 
     void		setupGroundMaterials();
     void		setupSkybox();
@@ -54,8 +55,8 @@ class BackgroundRenderer {
     void		setInvert(bool invert = true);
     void		setSimpleGround(bool simple = true);
     void		setCelestial(const SceneRenderer&,
-				     const float sunDirection[3],
-				     const float moonDirection[3]);
+                             const float sunDirection[3],
+                             const float moonDirection[3]);
     void		addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void		notifyStyleChange();
 
@@ -63,7 +64,7 @@ class BackgroundRenderer {
     void		resetTriangleCount();
 
     std::string		userTextures[2];
-  protected:
+protected:
     void		drawSky(SceneRenderer&, bool mirror);
     void		drawSkybox();
     void		drawGround(void);
@@ -75,8 +76,8 @@ class BackgroundRenderer {
     void		drawMountains(void);
 
 
-  private:
-			BackgroundRenderer(const BackgroundRenderer&);
+private:
+    BackgroundRenderer(const BackgroundRenderer&);
     BackgroundRenderer&	operator=(const BackgroundRenderer&);
 
     void		resizeSky();
@@ -89,7 +90,7 @@ class BackgroundRenderer {
     static void		initContext(void*);
     static void		bzdbCallback(const std::string&, void*);
 
-  private:
+private:
     // rendering state
     bool		blank;
     bool		invert;
@@ -182,42 +183,42 @@ class BackgroundRenderer {
 
 inline bool		BackgroundRenderer::getBlank() const
 {
-  return blank;
+    return blank;
 }
 
 inline void		BackgroundRenderer::setBlank(bool _blank)
 {
-  blank = _blank;
+    blank = _blank;
 }
 
 inline bool		BackgroundRenderer::getInvert() const
 {
-  return invert;
+    return invert;
 }
 
 inline void		BackgroundRenderer::setInvert(bool _invert)
 {
-  invert = _invert;
+    invert = _invert;
 }
 
 inline bool		BackgroundRenderer::getSimpleGround() const
 {
-  return simpleGround;
+    return simpleGround;
 }
 
 inline void		BackgroundRenderer::setSimpleGround(bool _simple)
 {
-  simpleGround = _simple;
+    simpleGround = _simple;
 }
 
 inline int		BackgroundRenderer::getTriangleCount() const
 {
-  return triangleCount;
+    return triangleCount;
 }
 
 inline void		BackgroundRenderer::resetTriangleCount()
 {
-  triangleCount = 0;
+    triangleCount = 0;
 }
 
 

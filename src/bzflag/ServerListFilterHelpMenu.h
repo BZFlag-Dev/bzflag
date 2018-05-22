@@ -25,43 +25,45 @@
 
 class MenuDefaultKey;
 
-class ServerListFilterHelpMenuDefaultKey : public MenuDefaultKey {
+class ServerListFilterHelpMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  ServerListFilterHelpMenuDefaultKey() {}
-  ~ServerListFilterHelpMenuDefaultKey() {}
+    ServerListFilterHelpMenuDefaultKey() {}
+    ~ServerListFilterHelpMenuDefaultKey() {}
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 };
 
 
-class ServerListFilterHelpMenu : public HUDDialog {
+class ServerListFilterHelpMenu : public HUDDialog
+{
 public:
-  ServerListFilterHelpMenu(const char* title = "Server List Filter Help");
-  ~ServerListFilterHelpMenu()
-  {
-  }
+    ServerListFilterHelpMenu(const char* title = "Server List Filter Help");
+    ~ServerListFilterHelpMenu()
+    {
+    }
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return &defaultKey;
-  }
-  void execute()
-  {
-  }
-  void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    void execute()
+    {
+    }
+    void resize(int width, int height);
 
-  static ServerListFilterHelpMenu* getServerListFilterHelpMenu(HUDDialog* = NULL, bool next = true);
-  static void done();
+    static ServerListFilterHelpMenu* getServerListFilterHelpMenu(HUDDialog* = NULL, bool next = true);
+    static void done();
 
 protected:
-  HUDuiControl* createLabel(const char* string, const char* label = NULL);
-  HUDuiControl* createInput(const std::string &);
-  virtual float	getLeftSide(int width, int height);
+    HUDuiControl* createLabel(const char* string, const char* label = NULL);
+    HUDuiControl* createInput(const std::string &);
+    virtual float	getLeftSide(int width, int height);
 
 private:
-  ServerListFilterHelpMenuDefaultKey defaultKey;
-  static ServerListFilterHelpMenu** serverListFilterHelpMenus;
+    ServerListFilterHelpMenuDefaultKey defaultKey;
+    static ServerListFilterHelpMenu** serverListFilterHelpMenus;
 };
 
 

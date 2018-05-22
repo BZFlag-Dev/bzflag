@@ -19,18 +19,19 @@
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
 
-class MenuDefaultKey : public HUDuiDefaultKey {
+class MenuDefaultKey : public HUDuiDefaultKey
+{
 public:
-  MenuDefaultKey();
-  ~MenuDefaultKey();
+    MenuDefaultKey();
+    ~MenuDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
-  static MenuDefaultKey* getInstance();
+    static MenuDefaultKey* getInstance();
 
 private:
-  static MenuDefaultKey instance;
+    static MenuDefaultKey instance;
 };
 
 

@@ -19,15 +19,19 @@
 /* common headers */
 #include "PhysicsDriver.h"
 
-class CustomPhysicsDriver : public WorldFileObject {
-  public:
+class CustomPhysicsDriver : public WorldFileObject
+{
+public:
     CustomPhysicsDriver();
     ~CustomPhysicsDriver();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable PhysicsDriver* driver;
 };
 

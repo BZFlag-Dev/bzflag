@@ -18,8 +18,9 @@
 
 class Obstacle;
 
-class ObstacleList {
-  public:
+class ObstacleList
+{
+public:
     ObstacleList();
     ~ObstacleList();
 
@@ -32,7 +33,7 @@ class ObstacleList {
     unsigned int size() const;
     Obstacle* operator[](int index) const;
 
-  private:
+private:
     unsigned int listSize;
     unsigned int listCount;
     Obstacle** list;
@@ -40,19 +41,20 @@ class ObstacleList {
 
 inline unsigned int ObstacleList::size() const
 {
-  return listCount;
+    return listCount;
 }
 inline Obstacle* ObstacleList::operator[](int index) const
 {
-  return list[index];
+    return list[index];
 }
 inline void ObstacleList::remove(unsigned int index)
 {
-  if ((index < listCount) && (listCount > 0)) {
-    listCount--;
-    list[index] = list[listCount]; // order is not preserved
-  }
-  return;
+    if ((index < listCount) && (listCount > 0))
+    {
+        listCount--;
+        list[index] = list[listCount]; // order is not preserved
+    }
+    return;
 }
 
 #endif // BZF_OBSTACLE_LIST_H

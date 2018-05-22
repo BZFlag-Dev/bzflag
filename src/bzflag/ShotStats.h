@@ -23,30 +23,31 @@ class Player;
 
 /** ShotStats displays a set of statistics on player's shots and accuracies
  */
-class ShotStats : public HUDDialog {
+class ShotStats : public HUDDialog
+{
 public:
-  ShotStats();
-  ~ShotStats();
+    ShotStats();
+    ~ShotStats();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void resize(int width, int height);
-  void execute();
-  void dismiss();
-  void show();
+    HUDuiDefaultKey* getDefaultKey();
+    void resize(int width, int height);
+    void execute();
+    void dismiss();
+    void show();
 
-  void refresh();
+    void refresh();
 
-  static int getFontFace();
+    static int getFontFace();
 
 private:
 
-  void addStats(Player* player, std::vector<HUDuiControl*>& list);
-  void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
+    void addStats(Player* player, std::vector<HUDuiControl*>& list);
+    void createLabel(const std::string &str, std::vector<HUDuiControl*>& list);
 
-  int staticLabelCount;
-  int rows;
-  int columns;
-  bool visible;
+    int staticLabelCount;
+    int rows;
+    int columns;
+    bool visible;
 
 };
 

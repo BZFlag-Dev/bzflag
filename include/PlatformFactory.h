@@ -25,13 +25,14 @@ class BzfWindow;
 class BzfMedia;
 class BzfJoystick;
 
-class PlatformFactory {
-  public:
-			PlatformFactory();
+class PlatformFactory
+{
+public:
+    PlatformFactory();
     virtual		~PlatformFactory();
 
     virtual BzfDisplay*	 createDisplay(const char* name,
-				const char* videoFormat) = 0;
+                                       const char* videoFormat) = 0;
     virtual BzfVisual*	 createVisual(const BzfDisplay*) = 0;
     virtual BzfWindow*	 createWindow(const BzfDisplay*, BzfVisual*) = 0;
     virtual BzfJoystick* createJoystick();
@@ -39,13 +40,13 @@ class PlatformFactory {
     static PlatformFactory*	getInstance();
     static BzfMedia*		getMedia();
 
-  private:
-			PlatformFactory(const PlatformFactory&);
+private:
+    PlatformFactory(const PlatformFactory&);
     PlatformFactory&	operator=(const PlatformFactory&);
 
     virtual BzfMedia*	createMedia() = 0;
 
-  private:
+private:
     static PlatformFactory*	instance;
     static BzfMedia*		media;
 };

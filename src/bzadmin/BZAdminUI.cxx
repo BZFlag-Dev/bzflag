@@ -14,10 +14,11 @@
 #include "BZAdminUI.h"
 
 
-void BZAdminUI::handleNewPacket(uint16_t) {
-  if (client.getLastMessage().first.size() > 0)
-    outputMessage(client.getLastMessage().first,
-		  client.getLastMessage().second);
+void BZAdminUI::handleNewPacket(uint16_t)
+{
+    if (client.getLastMessage().first.size() > 0)
+        outputMessage(client.getLastMessage().first,
+                      client.getLastMessage().second);
 }
 
 // Local Variables: ***

@@ -53,9 +53,10 @@
 class ViewFrustum;
 class SceneRenderer;
 
-class SceneNode {
-  public:
-			SceneNode();
+class SceneNode
+{
+public:
+    SceneNode();
     virtual		~SceneNode();
 
     virtual void	notifyStyleChange();
@@ -78,64 +79,77 @@ class SceneNode {
 
     virtual void	addLight(SceneRenderer&);
     virtual int		split(const float* plane,
-			      SceneNode*& front, SceneNode*& back) const;
+                          SceneNode*& front, SceneNode*& back) const;
     virtual void	addShadowNodes(SceneRenderer&);
     virtual void	addRenderNodes(SceneRenderer&);
     virtual void	renderRadar();
 
-    struct RenderSet {
-      RenderNode* node;
-      const OpenGLGState* gstate;
+    struct RenderSet
+    {
+        RenderNode* node;
+        const OpenGLGState* gstate;
     };
     virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
 
     static void		setColorOverride(bool = true);
     static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
-      {if (!colorOverride) ::glColor3f(r, g, b); };
+    {
+        if (!colorOverride) ::glColor3f(r, g, b);
+    };
 
     static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
-      {if (!colorOverride) ::glColor4f(r, g, b, a); };
+    {
+        if (!colorOverride) ::glColor4f(r, g, b, a);
+    };
 
     static void		glColor3fv(const GLfloat* rgb)
-      {if (!colorOverride) ::glColor3fv(rgb); };
+    {
+        if (!colorOverride) ::glColor3fv(rgb);
+    };
 
     static void		glColor4fv(const GLfloat* rgba)
-      {if (!colorOverride) ::glColor4fv(rgba); };
+    {
+        if (!colorOverride) ::glColor4fv(rgba);
+    };
 
-    static void		setStipple(GLfloat alpha) { (*stipple)(alpha); }
+    static void		setStipple(GLfloat alpha)
+    {
+        (*stipple)(alpha);
+    }
 
-    enum CullState {
-      OctreeCulled,
-      OctreePartial,
-      OctreeVisible
+    enum CullState
+    {
+        OctreeCulled,
+        OctreePartial,
+        OctreeVisible
     };
 
     /** This boolean is used by the Octree code.
-	Someone else can 'friend'ify it later.
+    Someone else can 'friend'ify it later.
     */
     CullState octreeState;
 
-  protected:
+protected:
     void		setRadius(GLfloat radiusSquared);
     void		setCenter(const GLfloat center[3]);
     void		setCenter(GLfloat x, GLfloat y, GLfloat z);
     void		setSphere(const GLfloat sphere[4]);
 
-  private:
-			SceneNode(const SceneNode&);
+private:
+    SceneNode(const SceneNode&);
     SceneNode&		operator=(const SceneNode&);
 
 
 
     static void			noStipple(GLfloat);
 
-  protected:
+protected:
     GLfloat		plane[4];	// unit normal, distance to origin
     bool		noPlane;
     bool		occluder;
     Extents		extents;
-  private:
+private:
     GLfloat		sphere[4];
     static bool	 colorOverride;
     static void		(*stipple)(GLfloat);
@@ -143,70 +157,106 @@ class SceneNode {
 
 inline const GLfloat*   SceneNode::getPlane() const
 {
-  if (noPlane)
-    return NULL;
-  return plane;
+    if (noPlane)
+        return NULL;
+    return plane;
 }
 
 inline const GLfloat*   SceneNode::getPlaneRaw() const
 {
-  return plane;
+    return plane;
 }
 
 inline const GLfloat*	SceneNode::getSphere() const
 {
-  return sphere;
+    return sphere;
 }
 
 inline const Extents&	SceneNode::getExtents() const
 {
-  return extents;
+    return extents;
 }
 
 inline bool		SceneNode::isOccluder() const
 {
-  return occluder;
+    return occluder;
 }
 
 inline void		SceneNode::setOccluder(bool value)
 {
-  occluder = value;
+    occluder = value;
 }
 
 
 typedef GLfloat		GLfloat2[2];
 typedef GLfloat		GLfloat3[3];
 
-class GLfloat2Array {
-  public:
-			GLfloat2Array(int s) : size(s)
-				{ data = new GLfloat2[size]; }
-			GLfloat2Array(const GLfloat2Array&);
-			~GLfloat2Array() { delete[] data; }
+class GLfloat2Array
+{
+public:
+    GLfloat2Array(int s) : size(s)
+    {
+        data = new GLfloat2[size];
+    }
+    GLfloat2Array(const GLfloat2Array&);
+    ~GLfloat2Array()
+    {
+        delete[] data;
+    }
     GLfloat2Array&	operator=(const GLfloat2Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
-    const GLfloat2*	getArray() const { return data; }
+    GLfloat*		operator[](int i)
+    {
+        return data[i];
+    }
+    const GLfloat*	operator[](int i) const
+    {
+        return data[i];
+    }
+    int			getSize() const
+    {
+        return size;
+    }
+    const GLfloat2*	getArray() const
+    {
+        return data;
+    }
 
-  private:
+private:
     int			size;
     GLfloat2*		data;
 };
 
-class GLfloat3Array {
-  public:
-			GLfloat3Array(int s) : size(s)
-				{ data = new GLfloat3[size]; }
-			GLfloat3Array(const GLfloat3Array&);
-			~GLfloat3Array() { delete[] data; }
+class GLfloat3Array
+{
+public:
+    GLfloat3Array(int s) : size(s)
+    {
+        data = new GLfloat3[size];
+    }
+    GLfloat3Array(const GLfloat3Array&);
+    ~GLfloat3Array()
+    {
+        delete[] data;
+    }
     GLfloat3Array&	operator=(const GLfloat3Array&);
-    GLfloat*		operator[](int i) { return data[i]; }
-    const GLfloat*	operator[](int i) const { return data[i]; }
-    int			getSize() const { return size; }
-    const GLfloat3*	getArray() const { return data; }
+    GLfloat*		operator[](int i)
+    {
+        return data[i];
+    }
+    const GLfloat*	operator[](int i) const
+    {
+        return data[i];
+    }
+    int			getSize() const
+    {
+        return size;
+    }
+    const GLfloat3*	getArray() const
+    {
+        return data;
+    }
 
-  private:
+private:
     int			size;
     GLfloat3*		data;
 };

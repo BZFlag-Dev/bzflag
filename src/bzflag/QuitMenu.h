@@ -25,28 +25,36 @@
 #include "HUDuiDefaultKey.h"
 
 
-class QuitMenuDefaultKey : public MenuDefaultKey {
+class QuitMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  QuitMenuDefaultKey() {}
-  ~QuitMenuDefaultKey() {}
+    QuitMenuDefaultKey() {}
+    ~QuitMenuDefaultKey() {}
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
 };
 
 
-class QuitMenu : public HUDDialog {
+class QuitMenu : public HUDDialog
+{
 public:
-  QuitMenu();
-  ~QuitMenu();
+    QuitMenu();
+    ~QuitMenu();
 
-  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  void execute() { CommandsStandard::quit(); }
-  void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    void execute()
+    {
+        CommandsStandard::quit();
+    }
+    void resize(int width, int height);
 
 private:
-  QuitMenuDefaultKey defaultKey;
+    QuitMenuDefaultKey defaultKey;
 
 };
 

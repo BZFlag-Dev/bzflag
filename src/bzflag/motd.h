@@ -22,11 +22,12 @@
 // common interface headers
 #include "cURLManager.h"
 
-class MessageOfTheDay : cURLManager {
+class MessageOfTheDay : cURLManager
+{
 public:
 
-  virtual void finalization(char *data, unsigned int length, bool good);
-  void	 getURL(const std::string &URL);
+    virtual void finalization(char *data, unsigned int length, bool good);
+    void	 getURL(const std::string &URL);
 };
 
 #endif //__MOTD_H__

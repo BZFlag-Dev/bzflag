@@ -20,23 +20,24 @@
 #include <string>
 #include <map>
 
-class LocalCommand {
- public:
+class LocalCommand
+{
+public:
 
-  static bool execute(const char *commandToken);
+    static bool execute(const char *commandToken);
 
- protected:
+protected:
 
-  LocalCommand(std::string _commandName);
-  virtual ~LocalCommand();
+    LocalCommand(std::string _commandName);
+    virtual ~LocalCommand();
 
-  virtual bool operator() (const char *commandToken);
+    virtual bool operator() (const char *commandToken);
 
-  std::string commandName;
+    std::string commandName;
 
-  typedef std::map<std::string, LocalCommand *> MapOfCommands;
+    typedef std::map<std::string, LocalCommand *> MapOfCommands;
 
-  static MapOfCommands *mapOfCommands;
+    static MapOfCommands *mapOfCommands;
 };
 
 #endif

@@ -16,13 +16,14 @@
 // common header
 #include "common.h"
 
-namespace RoofTops {
+namespace RoofTops
+{
 
-  void load();
-  void clear();
+void load();
+void clear();
 
-  // returns 0.0f if there are no buildings
-  float getTopHeight(float x, float y, float maxHeight);
+// returns 0.0f if there are no buildings
+float getTopHeight(float x, float y, float maxHeight);
 }
 
 

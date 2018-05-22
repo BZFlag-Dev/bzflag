@@ -23,17 +23,17 @@
 
 SceneDatabase::SceneDatabase()
 {
-  // do nothing
+    // do nothing
 }
 
 SceneDatabase::~SceneDatabase()
 {
-  // do nothing
+    // do nothing
 }
 
 void SceneDatabase::setOccluderManager(int)
 {
-  // do nothing
+    // do nothing
 }
 
 

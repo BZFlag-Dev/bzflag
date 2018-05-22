@@ -21,10 +21,11 @@
 #include "SceneNode.h"
 #include "OpenGLLight.h"
 
-class BillboardSceneNode : public SceneNode {
-  public:
-			BillboardSceneNode(const GLfloat pos[3]);
-			~BillboardSceneNode();
+class BillboardSceneNode : public SceneNode
+{
+public:
+    BillboardSceneNode(const GLfloat pos[3]);
+    ~BillboardSceneNode();
 
     virtual BillboardSceneNode*	copy() const;
 
@@ -45,7 +46,7 @@ class BillboardSceneNode : public SceneNode {
     void		setSize(float side);
     void		setSize(float width, float height);
     void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+                         GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
     void		setTexture(const int);
     void		setTextureAnimation(int cu, int cv);
@@ -57,27 +58,31 @@ class BillboardSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
-    class BillboardRenderNode : public RenderNode {
-      public:
-			BillboardRenderNode(const BillboardSceneNode*);
-			~BillboardRenderNode();
-	void		setColor(const GLfloat* rgba);
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-	void		setFrame(float u, float v);
-	void		setFrameSize(float du, float dv);
-      private:
-	const BillboardSceneNode* sceneNode;
-	float		u, v;
-	GLfloat		du, dv;
+protected:
+    class BillboardRenderNode : public RenderNode
+    {
+    public:
+        BillboardRenderNode(const BillboardSceneNode*);
+        ~BillboardRenderNode();
+        void		setColor(const GLfloat* rgba);
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+        void		setFrame(float u, float v);
+        void		setFrameSize(float du, float dv);
+    private:
+        const BillboardSceneNode* sceneNode;
+        float		u, v;
+        GLfloat		du, dv;
     };
     friend class BillboardRenderNode;
 
     void		setFrame();
     void		prepLight();
 
-  private:
+private:
     bool		show;
     bool		hasAlpha;
     bool		hasTexture;

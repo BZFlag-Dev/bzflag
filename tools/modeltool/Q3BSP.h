@@ -85,61 +85,61 @@
 /* Shader flags */
 enum
 {
-	SHADER_NOCULL	= 1 << 0,
-	SHADER_TRANSPARENT   = 1 << 1,
-	SHADER_DEPTHWRITE    = 1 << 2,
-	SHADER_SKY	   = 1 << 3,
-	SHADER_NOMIPMAPS     = 1 << 4,
-	SHADER_NEEDCOLOURS   = 1 << 5,
-	SHADER_DEFORMVERTS   = 1 << 6
+    SHADER_NOCULL	= 1 << 0,
+    SHADER_TRANSPARENT   = 1 << 1,
+    SHADER_DEPTHWRITE    = 1 << 2,
+    SHADER_SKY	   = 1 << 3,
+    SHADER_NOMIPMAPS     = 1 << 4,
+    SHADER_NEEDCOLOURS   = 1 << 5,
+    SHADER_DEFORMVERTS   = 1 << 6
 };
 
 /* Shaderpass flags */
 enum
 {
-	SHADER_LIGHTMAP   = 1 << 0,
-	SHADER_BLEND      = 1 << 1,
-	SHADER_ALPHAFUNC  = 1 << 3,
-	SHADER_TCMOD      = 1 << 4,
-	SHADER_ANIMMAP    = 1 << 5,
-	SHADER_TCGEN_ENV  = 1 << 6
+    SHADER_LIGHTMAP   = 1 << 0,
+    SHADER_BLEND      = 1 << 1,
+    SHADER_ALPHAFUNC  = 1 << 3,
+    SHADER_TCMOD      = 1 << 4,
+    SHADER_ANIMMAP    = 1 << 5,
+    SHADER_TCGEN_ENV  = 1 << 6
 };
 
 /* Transform functions */
 enum WaveType
 {
-	SHADER_FUNC_NONE	    = 0,
-	SHADER_FUNC_SIN	     = 1,
-	SHADER_FUNC_TRIANGLE	= 2,
-	SHADER_FUNC_SQUARE	  = 3,
-	SHADER_FUNC_SAWTOOTH	= 4,
-	SHADER_FUNC_INVERSESAWTOOTH = 5
+    SHADER_FUNC_NONE	    = 0,
+    SHADER_FUNC_SIN	     = 1,
+    SHADER_FUNC_TRIANGLE	= 2,
+    SHADER_FUNC_SQUARE	  = 3,
+    SHADER_FUNC_SAWTOOTH	= 4,
+    SHADER_FUNC_INVERSESAWTOOTH = 5
 };
 
 /* *Gen functions */
 enum GenFunc
 {
-	SHADER_GEN_IDENTITY = 0,
-	SHADER_GEN_WAVE     = 1,
-	SHADER_GEN_VERTEX   = 2
+    SHADER_GEN_IDENTITY = 0,
+    SHADER_GEN_WAVE     = 1,
+    SHADER_GEN_VERTEX   = 2
 };
 
 enum TexGen
 {
-	TEXGEN_BASE = 0,	// Coord set 0
-	TEXGEN_LIGHTMAP = 1,    // Coord set 1
-	TEXGEN_ENVIRONMENT = 2  // Neither, generated
+    TEXGEN_BASE = 0,	// Coord set 0
+    TEXGEN_LIGHTMAP = 1,    // Coord set 1
+    TEXGEN_ENVIRONMENT = 2  // Neither, generated
 };
 
 enum DeformFunc
 {
-	DEFORM_FUNC_NONE = 0,
-	DEFORM_FUNC_BULGE = 1,
-	DEFORM_FUNC_WAVE = 2,
-	DEFORM_FUNC_NORMAL = 3,
-	DEFORM_FUNC_MOVE = 4,
-	DEFORM_FUNC_AUTOSPRITE = 5,
-	DEFORM_FUNC_AUTOSPRITE2 = 6
+    DEFORM_FUNC_NONE = 0,
+    DEFORM_FUNC_BULGE = 1,
+    DEFORM_FUNC_WAVE = 2,
+    DEFORM_FUNC_NORMAL = 3,
+    DEFORM_FUNC_MOVE = 4,
+    DEFORM_FUNC_AUTOSPRITE = 5,
+    DEFORM_FUNC_AUTOSPRITE2 = 6
 
 };
 /////////////////////////////////////////////////////////
@@ -147,36 +147,40 @@ enum DeformFunc
 // bsp contents
 //
 
-struct bsp_plane_t {
-	float normal[3];
-	float dist;
+struct bsp_plane_t
+{
+    float normal[3];
+    float dist;
 };
 
-struct bsp_model_t {
-	float bbox[6];
-	int face_start;
-	int face_count;
-	int brush_start;
-	int brush_count;
+struct bsp_model_t
+{
+    float bbox[6];
+    int face_start;
+    int face_count;
+    int brush_start;
+    int brush_count;
 };
 
-struct bsp_node_t {
-	int plane;	  // dividing plane
-	//int children[2];    // left and right nodes,
-	// negative are leaves
-	int front;
-	int back;
-	int bbox[6];
+struct bsp_node_t
+{
+    int plane;	  // dividing plane
+    //int children[2];    // left and right nodes,
+    // negative are leaves
+    int front;
+    int back;
+    int bbox[6];
 };
 
-struct bsp_leaf_t {
-	int cluster;    // visibility cluster number
-	int area;
-	int bbox[6];
-	int face_start;
-	int face_count;
-	int brush_start;
-	int brush_count;
+struct bsp_leaf_t
+{
+    int cluster;    // visibility cluster number
+    int area;
+    int bbox[6];
+    int face_start;
+    int face_count;
+    int brush_start;
+    int brush_count;
 };
 
 #define BSP_FACETYPE_NORMAL (1)
@@ -184,70 +188,78 @@ struct bsp_leaf_t {
 #define BSP_FACETYPE_MESH   (3)
 #define BSP_FACETYPE_FLARE  (4)
 
-struct bsp_face_t {
-	int shader;	 // shader ref
-	int unknown;
-	int type;	   // face type
-	int vert_start;
-	int vert_count;
-	int elem_start;
-	int elem_count;
-	int lm_texture;     // lightmap
-	int lm_offset[2];
-	int lm_size[2];
-	float org[3];       // facetype_normal only
-	float bbox[6];      // facetype_patch only
-	float normal[3];    // facetype_normal only
-	int mesh_cp[2];     // patch control point dims
+struct bsp_face_t
+{
+    int shader;	 // shader ref
+    int unknown;
+    int type;	   // face type
+    int vert_start;
+    int vert_count;
+    int elem_start;
+    int elem_count;
+    int lm_texture;     // lightmap
+    int lm_offset[2];
+    int lm_size[2];
+    float org[3];       // facetype_normal only
+    float bbox[6];      // facetype_patch only
+    float normal[3];    // facetype_normal only
+    int mesh_cp[2];     // patch control point dims
 };
 
-struct bsp_shader_t {
-	char name[64];
-	int surface_flags;
-	int content_flags;
+struct bsp_shader_t
+{
+    char name[64];
+    int surface_flags;
+    int content_flags;
 };
 
-struct bsp_vertex_t {
-	float point[3];
-	float texture[2];
-	float lightmap[2];
-	float normal[3];
-	int color;
+struct bsp_vertex_t
+{
+    float point[3];
+    float texture[2];
+    float lightmap[2];
+    float normal[3];
+    int color;
 };
 
-struct bsp_vis_t {
-	int cluster_count;
-	int row_size;
-	unsigned char data[1];
+struct bsp_vis_t
+{
+    int cluster_count;
+    int row_size;
+    unsigned char data[1];
 };
 
 // OGRE additions
-struct bsp_lump_entry_t {
-	int offset;
-	int size;
+struct bsp_lump_entry_t
+{
+    int offset;
+    int size;
 };
-struct bsp_header_t {
-	char magic[4];
-	int version;
-	bsp_lump_entry_t lumps[17];
+struct bsp_header_t
+{
+    char magic[4];
+    int version;
+    bsp_lump_entry_t lumps[17];
 };
 
 //
 // Brushes sides in BSP tree
 //
-struct bsp_brushside_t {
-	int planenum;
-	int content;			// ¿?shader¿?
+struct bsp_brushside_t
+{
+    int planenum;
+    int content;			// ¿?shader¿?
 };
 
 
 //
 // Brushes in BSP tree
 //
-struct bsp_brush_t {
-	int firstside;
-	int numsides;
-	int shaderIndex;
+struct bsp_brush_t
+{
+    int firstside;
+    int numsides;
+    int shaderIndex;
 };
 
 
@@ -303,99 +315,99 @@ for reading it's internal state.
 class Quake3Level
 {
 public:
-	Quake3Level();
-	~Quake3Level();
+    Quake3Level();
+    ~Quake3Level();
 
-	/** Reads Quake3 bsp data from a chunk of memory as read from the file.
-	Since ResourceManagers generally locate data in a variety of
-	places they typically manipulate them as a chunk of data, rather than
-	a file pointer since this is unsupported through compressed archives.</p>
-	Quake3 files are made up of a header (which contains version info and
-	a table of the contents) and 17 'lumps' i.e. sections of data,
-	the offsets to which are kept in the table of contents. The 17 types
-	are predefined (You can find them in OgreQuake3Types.h)
+    /** Reads Quake3 bsp data from a chunk of memory as read from the file.
+    Since ResourceManagers generally locate data in a variety of
+    places they typically manipulate them as a chunk of data, rather than
+    a file pointer since this is unsupported through compressed archives.</p>
+    Quake3 files are made up of a header (which contains version info and
+    a table of the contents) and 17 'lumps' i.e. sections of data,
+    the offsets to which are kept in the table of contents. The 17 types
+    are predefined (You can find them in OgreQuake3Types.h)
 
-	@param inChunk Input chunk of memory containing Quake3 data
-	*/
+    @param inChunk Input chunk of memory containing Quake3 data
+    */
 //	void loadFromChunk(DataChunk& inChunk);
-	void loadFromFile(const char* filename);
+    void loadFromFile(const char* filename);
 
-	/* Extracts the embedded lightmap texture data and loads them as textures.
-	Calling this method makes the lightmap texture data embedded in
-	the .bsp file available to the renderer. Lightmaps are extracted
-	and loaded as Texture objects (subclass specific to RenderSystem
-	subclass) and are named "@lightmap1", "@lightmap2" etc.
-	*/
-	void extractLightmaps(void) const;
+    /* Extracts the embedded lightmap texture data and loads them as textures.
+    Calling this method makes the lightmap texture data embedded in
+    the .bsp file available to the renderer. Lightmaps are extracted
+    and loaded as Texture objects (subclass specific to RenderSystem
+    subclass) and are named "@lightmap1", "@lightmap2" etc.
+    */
+    void extractLightmaps(void) const;
 
-	/** Utility function read the header and set up pointers. */
-	void initialise(void);
+    /** Utility function read the header and set up pointers. */
+    void initialise(void);
 
-	/** Utility function to return a pointer to a lump. */
-	void* getLump(int lumpType);
-	int getLumpSize(int lumpType);
+    /** Utility function to return a pointer to a lump. */
+    void* getLump(int lumpType);
+    int getLumpSize(int lumpType);
 
 
-	/** Debug method. */
-	void dumpContents(void);
+    /** Debug method. */
+    void dumpContents(void);
 
-	bool dumpToModel ( CModel &model );
+    bool dumpToModel ( CModel &model );
 
-	// Internal storage
-	// This is ALL temporary. Don't rely on it being static
+    // Internal storage
+    // This is ALL temporary. Don't rely on it being static
 
-	// NB no brushes, fog or local lightvolumes yet
+    // NB no brushes, fog or local lightvolumes yet
 //	DataChunk mChunk;
-	std::string theFileName;
+    std::string theFileName;
 
-	char *data;
+    char *data;
 
-	bsp_header_t* mHeader;
-	unsigned char* mLumpStart;
+    bsp_header_t* mHeader;
+    unsigned char* mLumpStart;
 
-	int* mElements; // vertex indexes for faces
-	int mNumElements;
+    int* mElements; // vertex indexes for faces
+    int mNumElements;
 
-	void* mEntities;
-	int mNumEntities;
+    void* mEntities;
+    int mNumEntities;
 
-	bsp_model_t* mModels;
-	int mNumModels;
+    bsp_model_t* mModels;
+    int mNumModels;
 
-	bsp_node_t* mNodes;
-	int mNumNodes;
+    bsp_node_t* mNodes;
+    int mNumNodes;
 
-	bsp_leaf_t* mLeaves;
-	int mNumLeaves;
+    bsp_leaf_t* mLeaves;
+    int mNumLeaves;
 
-	int* mLeafFaces;     // Indexes to face groups by leaf
-	int mNumLeafFaces;
+    int* mLeafFaces;     // Indexes to face groups by leaf
+    int mNumLeafFaces;
 
-	bsp_plane_t* mPlanes;
-	int mNumPlanes;
+    bsp_plane_t* mPlanes;
+    int mNumPlanes;
 
-	bsp_face_t* mFaces;      // Groups of faces
-	int mNumFaces;
+    bsp_face_t* mFaces;      // Groups of faces
+    int mNumFaces;
 
-	bsp_vertex_t* mVertices;
-	int mNumVertices;
+    bsp_vertex_t* mVertices;
+    int mNumVertices;
 
-	bsp_shader_t* mShaders;
-	int mNumShaders;
+    bsp_shader_t* mShaders;
+    int mNumShaders;
 
-	unsigned char* mLightmaps;
-	int mNumLightmaps;
+    unsigned char* mLightmaps;
+    int mNumLightmaps;
 
-	bsp_vis_t* mVis;
+    bsp_vis_t* mVis;
 
-	bsp_brush_t* mBrushes;
-	int mNumBrushes;
+    bsp_brush_t* mBrushes;
+    int mNumBrushes;
 
-	bsp_brushside_t* mBrushSides;
-	int mNumBrushSides;
+    bsp_brushside_t* mBrushSides;
+    int mNumBrushSides;
 
-	int* mLeafBrushes;      // Groups of indexes to brushes by leaf
-	int mNumLeafBrushes;
+    int* mLeafBrushes;      // Groups of indexes to brushes by leaf
+    int mNumLeafBrushes;
 };
 
 #endif

@@ -26,24 +26,32 @@
 
 #define	USE_GL_STEREO
 
-class MainWindow {
-  public:
-    enum Quadrant {
-			FullWindow,
-			UpperLeft,
-			UpperRight,
-			LowerLeft,
-			LowerRight,
-			ZoomRegion,
-			UpperHalf,
-			LowerHalf
+class MainWindow
+{
+public:
+    enum Quadrant
+    {
+        FullWindow,
+        UpperLeft,
+        UpperRight,
+        LowerLeft,
+        LowerRight,
+        ZoomRegion,
+        UpperHalf,
+        LowerHalf
     };
 
-			MainWindow(BzfWindow*, BzfJoystick*);
-			~MainWindow();
+    MainWindow(BzfWindow*, BzfJoystick*);
+    ~MainWindow();
 
-    BzfWindow*		getWindow() const { return window; }
-    BzfJoystick*	getJoystick() const { return joystick; }
+    BzfWindow*		getWindow() const
+    {
+        return window;
+    }
+    BzfJoystick*	getJoystick() const
+    {
+        return joystick;
+    }
 
     int			getOriginX() const;
     int			getOriginY() const;
@@ -95,18 +103,21 @@ class MainWindow {
     void		setJoyYAxis(const std::string &axis);
     void		initJoystick(std::string &joystickName);
 
-    bool		isInFault() const { return faulting; };
+    bool		isInFault() const
+    {
+        return faulting;
+    };
 
-  private:
+private:
     // no copying
-			MainWindow(const MainWindow&);
+    MainWindow(const MainWindow&);
     MainWindow&		operator=(const MainWindow&);
 
     static void		resizeCB(void*);
 
     inline int		getYOffset() const;
 
-  private:
+private:
     BzfWindow*		window;
     BzfJoystick*	joystick;
     bool		quit;
@@ -131,32 +142,32 @@ class MainWindow {
 
 inline int		MainWindow::getOriginX() const
 {
-  return xOrigin;
+    return xOrigin;
 }
 
 inline int		MainWindow::getOriginY() const
 {
-  return yOrigin;
+    return yOrigin;
 }
 
 inline int		MainWindow::getWidth() const
 {
-  return width;
+    return width;
 }
 
 inline int		MainWindow::getHeight() const
 {
-  return height;
+    return height;
 }
 
 inline int		MainWindow::getViewHeight() const
 {
-  return viewHeight;
+    return viewHeight;
 }
 
 inline bool		MainWindow::getFullView() const
 {
-  return isFullView;
+    return isFullView;
 }
 
 #endif /* __MAINWINDOW_H__ */

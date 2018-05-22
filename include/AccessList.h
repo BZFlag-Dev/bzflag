@@ -17,8 +17,9 @@
 #include <string>
 #include <vector>
 
-class AccessList {
-  public:
+class AccessList
+{
+public:
     AccessList(const std::string& filename, const char* content);
     ~AccessList();
 
@@ -29,25 +30,27 @@ class AccessList {
 
     const std::string getFilePath() const;
 
-  private:
+private:
     bool computeAlwaysAuth() const;
     bool makeContent(const char* content) const;
 
-  private:
+private:
     std::string filename;
     const char* content;
     bool alwaysAuth;
 
-    enum AccessType {
-      invalid,
-      allow,		// simple globbing
-      deny,
-      allow_regex,	// regular expressions
-      deny_regex
+    enum AccessType
+    {
+        invalid,
+        allow,		// simple globbing
+        deny,
+        allow_regex,	// regular expressions
+        deny_regex
     };
-    typedef struct {
-      AccessType type;
-      std::string pattern;
+    typedef struct
+    {
+        AccessType type;
+        std::string pattern;
     } AccessPattern;
 
     std::vector<AccessPattern> patterns;
@@ -55,7 +58,7 @@ class AccessList {
 
 inline bool AccessList::alwaysAuthorized() const
 {
-  return alwaysAuth;
+    return alwaysAuth;
 }
 
 

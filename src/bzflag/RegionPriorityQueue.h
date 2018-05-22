@@ -17,28 +17,30 @@
 #include "Region.h"
 
 
-class RegionPriorityQueue {
- public:
-  RegionPriorityQueue();
-  ~RegionPriorityQueue();
+class RegionPriorityQueue
+{
+public:
+    RegionPriorityQueue();
+    ~RegionPriorityQueue();
 
-  void insert(BzfRegion* region, float priority);
-  BzfRegion* remove();
-  void removeAll();
-  bool isEmpty() const;
+    void insert(BzfRegion* region, float priority);
+    BzfRegion* remove();
+    void removeAll();
+    bool isEmpty() const;
 
- private:
-  struct Node {
+private:
+    struct Node
+    {
     public:
-     Node(BzfRegion* region, float priority);
+        Node(BzfRegion* region, float priority);
     public:
-     Node* next;
-     BzfRegion*	region;
-     float priority;
-  };
+        Node* next;
+        BzfRegion*	region;
+        float priority;
+    };
 
- private:
-  Node* head;
+private:
+    Node* head;
 };
 
 

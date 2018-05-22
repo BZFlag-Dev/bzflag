@@ -35,148 +35,163 @@
 
 std::string configDir(bool set, const char *str)
 {
-  static std::string customConfigDir = std::string("");
-  if (set) {
-    customConfigDir = std::string(str);
-  }
-  return customConfigDir;
+    static std::string customConfigDir = std::string("");
+    if (set)
+    {
+        customConfigDir = std::string(str);
+    }
+    return customConfigDir;
 }
 
 
 void			setCustomConfigDir(const char *str)
 {
-	std::string dir = str;
-	if (dir.size() > 2)
-	{
-		if (*dir.begin() == '"')
-			dir.erase(dir.begin());
+    std::string dir = str;
+    if (dir.size() > 2)
+    {
+        if (*dir.begin() == '"')
+            dir.erase(dir.begin());
 
-		if (*(dir.end()-1) == '"')
-			dir.erase(dir.end()-1);
+        if (*(dir.end()-1) == '"')
+            dir.erase(dir.end()-1);
 
-	}
-  configDir(1, dir.c_str());
+    }
+    configDir(1, dir.c_str());
 }
 
 
 std::string		getConfigDirName( const char* versionName )
 {
-  std::string customConfigDir = configDir(0, NULL);
+    std::string customConfigDir = configDir(0, NULL);
 
-  if (customConfigDir.size() > 0) {
-    std::string customName = customConfigDir + DirectorySeparator;
-    if (versionName) {
-      customName += versionName;
-      customName += DirectorySeparator;
+    if (customConfigDir.size() > 0)
+    {
+        std::string customName = customConfigDir + DirectorySeparator;
+        if (versionName)
+        {
+            customName += versionName;
+            customName += DirectorySeparator;
+        }
+        return customName;
     }
-    return customName;
-  }
 
 #if defined(_WIN32)
-  std::string name("C:");
-  char dir[MAX_PATH];
-  ITEMIDLIST* idl;
-  if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_LOCAL_APPDATA, &idl))) {
-    if (SHGetPathFromIDList(idl, dir)) {
-      struct stat statbuf;
-      if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-	name = dir;
+    std::string name("C:");
+    char dir[MAX_PATH];
+    ITEMIDLIST* idl;
+    if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_LOCAL_APPDATA, &idl)))
+    {
+        if (SHGetPathFromIDList(idl, dir))
+        {
+            struct stat statbuf;
+            if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
+                name = dir;
+        }
+
+        IMalloc* shalloc;
+        if (SUCCEEDED(SHGetMalloc(&shalloc)))
+        {
+            shalloc->Free(idl);
+            shalloc->Release();
+        }
     }
 
-    IMalloc* shalloc;
-    if (SUCCEEDED(SHGetMalloc(&shalloc))) {
-      shalloc->Free(idl);
-      shalloc->Release();
+    name += "\\BZFlag\\";
+    if (versionName)
+    {
+        name += versionName;
+        name += "\\";
     }
-  }
-
-  name += "\\BZFlag\\";
-  if (versionName) {
-    name += versionName;
-    name += "\\";
-  }
-  return name;
+    return name;
 
 #elif defined(__APPLE__)
-  std::string name;
-  ::FSRef libraryFolder;
-  ::OSErr err;
-  err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
-  if (err == ::noErr) {
-    char buff[1024];
-    err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
-    if (err == ::noErr) {
-      name = buff;
-      name += "/BZFlag/";
-      if (versionName) {
-	name += versionName;
-	name += "/";
-      }
+    std::string name;
+    ::FSRef libraryFolder;
+    ::OSErr err;
+    err = ::FSFindFolder(::kUserDomain, ::kApplicationSupportFolderType, true, &libraryFolder);
+    if (err == ::noErr)
+    {
+        char buff[1024];
+        err = ::FSRefMakePath(&libraryFolder, (UInt8*)buff, sizeof(buff));
+        if (err == ::noErr)
+        {
+            name = buff;
+            name += "/BZFlag/";
+            if (versionName)
+            {
+                name += versionName;
+                name += "/";
+            }
+        }
     }
-  }
-  return name;
+    return name;
 #else
-  std::string name;
-  struct passwd *pwent = getpwuid(getuid());
-  if (pwent && pwent->pw_dir) {
-    name += std::string(pwent->pw_dir);
-    name += "/";
-  }
-  name += ".bzf/";
-  if (versionName) {
-    name += versionName;
-    name += "/";
-  }
-  return name;
+    std::string name;
+    struct passwd *pwent = getpwuid(getuid());
+    if (pwent && pwent->pw_dir)
+    {
+        name += std::string(pwent->pw_dir);
+        name += "/";
+    }
+    name += ".bzf/";
+    if (versionName)
+    {
+        name += versionName;
+        name += "/";
+    }
+    return name;
 #endif
 }
 
 static std::string		setupString(std::string dir)
 {
-  std::string name = getConfigDirName();
-  name += dir;
-  name += DirectorySeparator;
-  return name;
+    std::string name = getConfigDirName();
+    name += dir;
+    name += DirectorySeparator;
+    return name;
 }
 
 std::string getCacheDirName()
 {
-  std::string name = getConfigDirName() + "cache" + DirectorySeparator;
-  return name;
+    std::string name = getConfigDirName() + "cache" + DirectorySeparator;
+    return name;
 }
 
 
 std::string getRecordDirName()
 {
-  return setupString("recordings");
+    return setupString("recordings");
 }
 
 std::string getScreenShotDirName()
 {
-  return setupString("screenshots");
+    return setupString("screenshots");
 }
 
 std::string getTempDirName()
 {
 // FIXME: needs something for Windows and maybe other platforms
 #if defined(_WIN32)
-  std::string name = getConfigDirName();
-  name += "temp";
+    std::string name = getConfigDirName();
+    name += "temp";
 #else
-  std::string name;
-  if (getenv("TMPDIR")) {
-    name = getenv("TMPDIR");
-  } else {
-    name = "/tmp";
-  }
+    std::string name;
+    if (getenv("TMPDIR"))
+    {
+        name = getenv("TMPDIR");
+    }
+    else
+    {
+        name = "/tmp";
+    }
 #endif
-  name += DirectorySeparator;
-  return name;
+    name += DirectorySeparator;
+    return name;
 }
 
 std::string getWorldDirName()
 {
-  return setupString("worlds");
+    return setupString("worlds");
 }
 
 // Local Variables: ***

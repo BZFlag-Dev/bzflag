@@ -23,16 +23,20 @@
 class BzfKeyEvent;
 class Resolution;
 
-class WinDisplay : public BzfDisplay {
-  public:
-			WinDisplay(const char* displayName,
-				const char* videoFormat);
-			~WinDisplay();
+class WinDisplay : public BzfDisplay
+{
+public:
+    WinDisplay(const char* displayName,
+               const char* videoFormat);
+    ~WinDisplay();
 
     virtual bool	isValid() const;
     bool		isEventPending() const;
     bool		getEvent(BzfEvent&) const;
-    bool		hasGetKeyMode() {return true;};
+    bool		hasGetKeyMode()
+    {
+        return true;
+    };
     void		getModState(bool &shift, bool &control, bool &alt);
 
     bool		setDefaultResolution() const;
@@ -41,31 +45,35 @@ class WinDisplay : public BzfDisplay {
     int			getFullWidth() const;
     int			getFullHeight() const;
 
-	bool		peekEvent(BzfEvent& event) const;
+    bool		peekEvent(BzfEvent& event) const;
 
 
     // for other Windows stuff
-    class Rep {
-      public:
-			Rep(const char*);
-			~Rep();
+    class Rep
+    {
+    public:
+        Rep(const char*);
+        ~Rep();
 
-	void		ref();
-	void		unref();
+        void		ref();
+        void		unref();
 
-      private:
-	static LONG WINAPI windowProc(HWND, UINT, WPARAM, LPARAM);
+    private:
+        static LONG WINAPI windowProc(HWND, UINT, WPARAM, LPARAM);
 
-      private:
-	int		refCount;
+    private:
+        int		refCount;
 
-      public:
-	HINSTANCE	hInstance;
+    public:
+        HINSTANCE	hInstance;
     };
-    Rep*		getRep() const { return rep; }
+    Rep*		getRep() const
+    {
+        return rep;
+    }
 
-  private:
-			WinDisplay(const WinDisplay&);
+private:
+    WinDisplay(const WinDisplay&);
     WinDisplay&		operator=(const WinDisplay&);
 
     bool		getKey(const MSG&, BzfKeyEvent&) const;
@@ -74,9 +82,9 @@ class WinDisplay : public BzfDisplay {
     bool		doSetResolution(int);
     ResInfo**		getVideoFormats(int& num, int& current);
 
-	bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
+    bool windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const;
 
-  private:
+private:
     Rep*		rep;
 
     // resolution info

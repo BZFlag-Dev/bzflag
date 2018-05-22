@@ -24,78 +24,86 @@
 #include "GameKeeper.h"
 
 // it's loathsome to expose private structure in a header
-typedef struct RejoinNode {
-  char callsign[CallSignLen];
-  TimeKeeper joinTime;
+typedef struct RejoinNode
+{
+    char callsign[CallSignLen];
+    TimeKeeper joinTime;
 } RejoinNode;
 
 
 RejoinList::RejoinList ()
 {
-  queue.clear(); // call me paranoid
+    queue.clear(); // call me paranoid
 }
 
 RejoinList::~RejoinList ()
 {
-  std::list<struct RejoinNode*>::iterator it;
-  for (it = queue.begin(); it != queue.end(); ++it) {
-    RejoinNode *rn = *it;
-    delete rn;
-  }
-  queue.clear();
+    std::list<struct RejoinNode*>::iterator it;
+    for (it = queue.begin(); it != queue.end(); ++it)
+    {
+        RejoinNode *rn = *it;
+        delete rn;
+    }
+    queue.clear();
 }
 
 bool RejoinList::add (int playerIndex)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (playerData == NULL) {
-    return false;
-  }
-  RejoinNode* rn = new RejoinNode;
-  strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen - 1);
-  rn->callsign[CallSignLen - 1] = '\0';
-  rn->joinTime = TimeKeeper::getCurrent();
-  queue.push_back (rn);
-  return true;
+    GameKeeper::Player *playerData
+        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (playerData == NULL)
+    {
+        return false;
+    }
+    RejoinNode* rn = new RejoinNode;
+    strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen - 1);
+    rn->callsign[CallSignLen - 1] = '\0';
+    rn->joinTime = TimeKeeper::getCurrent();
+    queue.push_back (rn);
+    return true;
 }
 
 float RejoinList::waitTime (int playerIndex)
 {
-  GameKeeper::Player *playerData
-    = GameKeeper::Player::getPlayerByIndex(playerIndex);
-  if (playerData == NULL) {
-    return 0.0f;
-  }
-
-  std::list<struct RejoinNode*>::iterator it;
-  TimeKeeper thenTime = TimeKeeper::getCurrent();
-  thenTime += -BZDB.eval(StateDatabase::BZDB_REJOINTIME);
-
-  // remove old entries
-  it = queue.begin();
-  while (it != queue.end()) {
-    RejoinNode *rn = *it;
-    if (rn->joinTime <= thenTime) {
-      delete rn;
-      it = queue.erase(it);
-      continue;
+    GameKeeper::Player *playerData
+        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (playerData == NULL)
+    {
+        return 0.0f;
     }
-    ++it;
-  }
 
-  const char *callsign = playerData->player.getCallSign();
-  float value = 0.0f;
-  it = queue.begin();
-  while (it != queue.end()) {
-    RejoinNode *rn = *it;
-    if (strcasecmp (rn->callsign, callsign) == 0) {
-      value = float(rn->joinTime - thenTime);
+    std::list<struct RejoinNode*>::iterator it;
+    TimeKeeper thenTime = TimeKeeper::getCurrent();
+    thenTime += -BZDB.eval(StateDatabase::BZDB_REJOINTIME);
+
+    // remove old entries
+    it = queue.begin();
+    while (it != queue.end())
+    {
+        RejoinNode *rn = *it;
+        if (rn->joinTime <= thenTime)
+        {
+            delete rn;
+            it = queue.erase(it);
+            continue;
+        }
+        ++it;
     }
-    ++it;
-  }
 
-  return value;
+    const char *callsign = playerData->player.getCallSign();
+    float value = 0.0f;
+    it = queue.begin();
+    while (it != queue.end())
+    {
+        RejoinNode *rn = *it;
+        if (strcasecmp (rn->callsign, callsign) == 0)
+        {
+            value = float(rn->joinTime - thenTime);
+        }
+        ++it;
+    }
+
+    return value;
 }
 
 // Local Variables: ***

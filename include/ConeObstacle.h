@@ -25,24 +25,26 @@
 #include "BzMaterial.h"
 
 
-class ConeObstacle : public Obstacle {
-  public:
+class ConeObstacle : public Obstacle
+{
+public:
 
-    enum {
-      Edge,
-      Bottom,
-      StartFace,
-      EndFace,
-      MaterialCount
+    enum
+    {
+        Edge,
+        Bottom,
+        StartFace,
+        EndFace,
+        MaterialCount
     };
 
     ConeObstacle();
     ConeObstacle(const MeshTransform& transform,
-		 const float* _pos, const float* _size,
-		 float _rotation, float _angle,
-		 const float _texsize[2], bool _useNormals,
-		 int _divisions, const BzMaterial* mats[MaterialCount],
-		 int physics, bool bounce, bool drive, bool shoot, bool ricochet);
+                 const float* _pos, const float* _size,
+                 float _rotation, float _angle,
+                 const float _texsize[2], bool _useNormals,
+                 int _divisions, const BzMaterial* mats[MaterialCount],
+                 int physics, bool bounce, bool drive, bool shoot, bool ricochet);
     ~ConeObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -59,18 +61,18 @@ class ConeObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
+                     const float *newP, float newAngle,
+                     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+                    float halfWidth, float halfBreadth, float height,
+                    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+                      const float* pos2, float azimuth2,
+                      float halfWidth, float halfBreadth,
+                      float height, float* normal) const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -78,10 +80,10 @@ class ConeObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     void finalize();
 
-  private:
+private:
     static const char* typeName;
 
     MeshTransform transform;

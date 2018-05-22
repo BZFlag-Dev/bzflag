@@ -14,12 +14,12 @@
 
 BzfVisual::BzfVisual()
 {
-  // do nothing
+    // do nothing
 }
 
 BzfVisual::~BzfVisual()
 {
-  // do nothing
+    // do nothing
 }
 
 // Local Variables: ***

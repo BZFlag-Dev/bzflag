@@ -20,10 +20,11 @@
 #include "BzfJoystick.h"
 #include "bzfSDL.h"
 
-class SDLJoystick : public BzfJoystick {
-  public:
-		SDLJoystick();
-		~SDLJoystick();
+class SDLJoystick : public BzfJoystick
+{
+public:
+    SDLJoystick();
+    ~SDLJoystick();
 
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
@@ -36,7 +37,7 @@ class SDLJoystick : public BzfJoystick {
     void	setXAxis(const std::string &axis);
     void	setYAxis(const std::string &axis);
 
-  private:
+private:
     SDL_Joystick *joystickID;
     int		joystickButtons;
     int		numHats;

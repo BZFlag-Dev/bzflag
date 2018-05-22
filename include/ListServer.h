@@ -23,7 +23,8 @@
 
 
 const int MaxListServers = 5;
-typedef struct _ListServer {
+typedef struct _ListServer
+{
     Address	address;
     int		port;
     int		socket;

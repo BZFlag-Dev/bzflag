@@ -28,35 +28,36 @@
 #include "AudioMenu.h"
 #include "DisplayMenu.h"
 
-class OptionsMenu : public HUDDialog {
+class OptionsMenu : public HUDDialog
+{
 public:
-  OptionsMenu();
-  ~OptionsMenu();
+    OptionsMenu();
+    ~OptionsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void		execute();
-  void		resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void		execute();
+    void		resize(int width, int height);
 
-  static void	callback(HUDuiControl* w, const void* data);
+    static void	callback(HUDuiControl* w, const void* data);
 
 private:
-  HUDuiControl*	guiOptions;
-  HUDuiControl*	effectsOptions;
-  HUDuiControl*	cacheOptions;
-  HUDuiControl*	saveWorld;
-  HUDuiControl*	inputSetting;
-  HUDuiControl*	audioSetting;
-  HUDuiControl*	displaySetting;
-  GUIOptionsMenu*	guiOptionsMenu;
-  EffectsMenu*		effectsMenu;
-  CacheMenu*		cacheMenu;
-  SaveWorldMenu*	saveWorldMenu;
-  InputMenu*		inputMenu;
-  AudioMenu*		audioMenu;
-  DisplayMenu*		displayMenu;
+    HUDuiControl*	guiOptions;
+    HUDuiControl*	effectsOptions;
+    HUDuiControl*	cacheOptions;
+    HUDuiControl*	saveWorld;
+    HUDuiControl*	inputSetting;
+    HUDuiControl*	audioSetting;
+    HUDuiControl*	displaySetting;
+    GUIOptionsMenu*	guiOptionsMenu;
+    EffectsMenu*		effectsMenu;
+    CacheMenu*		cacheMenu;
+    SaveWorldMenu*	saveWorldMenu;
+    InputMenu*		inputMenu;
+    AudioMenu*		audioMenu;
+    DisplayMenu*		displayMenu;
 };
 
 

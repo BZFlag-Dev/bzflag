@@ -34,10 +34,11 @@
 class ServerStartMenu;
 class ServerMenu;
 
-class JoinMenu : public HUDDialog {
-  public:
-			JoinMenu();
-			~JoinMenu();
+class JoinMenu : public HUDDialog
+{
+public:
+    JoinMenu();
+    ~JoinMenu();
 
     HUDuiDefaultKey*	getDefaultKey();
 
@@ -47,7 +48,7 @@ class JoinMenu : public HUDDialog {
     void		resize(int width, int height);
     void		updateTeamTexture() const;
 
-  private:
+private:
     static void		teamCallback(HUDuiControl*, const void*);
     TeamColor		getTeam() const;
     void		setTeam(TeamColor);
@@ -56,7 +57,7 @@ class JoinMenu : public HUDDialog {
     void		centerLabelHorizontally(HUDuiLabel* label);
     void		loadInfo();
 
-  private:
+private:
     float		center;
     HUDuiTypeIn*	callsign;
     HUDuiTypeIn*	password;

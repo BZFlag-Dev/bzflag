@@ -31,10 +31,11 @@
 typedef std::string (*TypeInColorFunc)(const std::string&);
 
 
-class HUDuiTypeIn : public HUDuiControl {
-  public:
-			HUDuiTypeIn();
-			~HUDuiTypeIn();
+class HUDuiTypeIn : public HUDuiControl
+{
+public:
+    HUDuiTypeIn();
+    ~HUDuiTypeIn();
 
     void		setObfuscation(bool on);
     int			getMaxLength() const;
@@ -43,14 +44,17 @@ class HUDuiTypeIn : public HUDuiControl {
     void		setMaxLength(int);
     void		setString(const std::string&);
     void		setEditing(bool _allowEdit);
-    void		setColorFunc(TypeInColorFunc func) { colorFunc = func; }
+    void		setColorFunc(TypeInColorFunc func)
+    {
+        colorFunc = func;
+    }
 
-  protected:
+protected:
     bool		doKeyPress(const BzfKeyEvent&);
     bool		doKeyRelease(const BzfKeyEvent&);
     void		doRender();
 
-  private:
+private:
     int			maxLength;
     std::string		string;
     int			cursorPos;

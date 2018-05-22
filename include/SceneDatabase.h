@@ -32,9 +32,10 @@ class Extents;
 // NOTE -- SceneDatabase owns all static nodes added to it,
 //	dynamic nodes are the responsibility of the client.
 
-class SceneDatabase {
-  public:
-			SceneDatabase();
+class SceneDatabase
+{
+public:
+    SceneDatabase();
     virtual		~SceneDatabase();
 
     // returns true if the node would have been deleted
@@ -56,10 +57,13 @@ class SceneDatabase {
 
     virtual void	setOccluderManager(int);
 
-    virtual const Extents* getVisualExtents() const { return NULL; }
+    virtual const Extents* getVisualExtents() const
+    {
+        return NULL;
+    }
 
-  private:
-			SceneDatabase(const SceneDatabase&);
+private:
+    SceneDatabase(const SceneDatabase&);
     SceneDatabase&	operator=(const SceneDatabase&);
 };
 

@@ -71,21 +71,21 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
-  #ifdef _DEBUG
-    #define DEBUG
-	#define DEBUG_RENDERING
+#ifdef _DEBUG
+#define DEBUG
+#define DEBUG_RENDERING
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC14Dbg"
+#define BZ_BUILD_OS			"Win64VC14Dbg"
 #else
-	#define BZ_BUILD_OS			"Win32VC14Dbg"
+#define BZ_BUILD_OS			"Win32VC14Dbg"
 #endif
-  #else
+#else
 #ifdef _M_X64
-    #define BZ_BUILD_OS			"Win64VC14"
+#define BZ_BUILD_OS			"Win64VC14"
 #else
-	#define BZ_BUILD_OS			"Win32VC14"
+#define BZ_BUILD_OS			"Win32VC14"
 #endif
-  #endif //_DEBUG
+#endif //_DEBUG
 #endif //BZ_BUILD_OS
 
 /* Define to 1 if you have the `WaitForSingleObject' function. */
@@ -118,7 +118,10 @@
 
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
-inline void W32_DEBUG_TRACE (const char* buffer ) {printf("%s",buffer);}
+inline void W32_DEBUG_TRACE (const char* buffer )
+{
+    printf("%s",buffer);
+}
 #endif
 
 #ifndef in_addr_t

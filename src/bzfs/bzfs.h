@@ -46,69 +46,69 @@
 class PendingChatMessages
 {
 public:
-  int to;
-  int from;
-  std::string text;
-  MessageType type;
+    int to;
+    int from;
+    std::string text;
+    MessageType type;
 
-  PendingChatMessages ( int t, int f, const std::string &m, MessageType y )
-  {
-    to = t;
-    from = f;
-    text = m;
-    type = y;
-  }
+    PendingChatMessages ( int t, int f, const std::string &m, MessageType y )
+    {
+        to = t;
+        from = f;
+        text = m;
+        type = y;
+    }
 
-  PendingChatMessages ( int t, int f, const char* m, MessageType y )
-  {
-    to = t;
-    from = f;
-    if (m)
-      text = m;
-    type = y;
-  }
+    PendingChatMessages ( int t, int f, const char* m, MessageType y )
+    {
+        to = t;
+        from = f;
+        if (m)
+            text = m;
+        type = y;
+    }
 
-  PendingChatMessages ( const PendingChatMessages &m )
-  {
-    to = m.to;
-    from = m.from;
-    text = m.text;
-    type = m.type;
-  }
+    PendingChatMessages ( const PendingChatMessages &m )
+    {
+        to = m.to;
+        from = m.from;
+        text = m.text;
+        type = m.type;
+    }
 };
 
 extern std::list<PendingChatMessages> pendingChatMessages;
 
 extern void sendMessage(int		playerIndex,
-			PlayerId	dstPlayer,
-			const char	*message,
-			MessageType	type = ChatMessage);
+                        PlayerId	dstPlayer,
+                        const char	*message,
+                        MessageType	type = ChatMessage);
 extern void removePlayer(int		playerIndex,
-			 const char	*reason,
-			 bool		notify = true);
+                         const char	*reason,
+                         bool		notify = true);
 extern void playerKilled(int		victimIndex,
-			 int		killerIndex,
-			 int		reason,
-			 int16_t	shotIndex,
-			 const FlagType	*flagType,
-			 int		phydrv,
-			 bool		respawnOnBase = false);
+                         int		killerIndex,
+                         int		reason,
+                         int16_t	shotIndex,
+                         const FlagType	*flagType,
+                         int		phydrv,
+                         bool		respawnOnBase = false);
 extern void doSpawns();
 extern void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos = true);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
-			      PlayerId dstPlayer,
-			      const char *message);
+                              PlayerId dstPlayer,
+                              const char *message);
 extern char *getDirectMessageBuffer();
 extern void  broadcastMessage(uint16_t code, int len, void *msg);
 extern void  sendTeamUpdate(int playerIndex = -1,
-			    int teamIndex1 = -1,
-			    int teamIndex2 = -1);
+                            int teamIndex1 = -1,
+                            int teamIndex2 = -1);
 extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code,
-			   int len, void *msg);
+                           int len, void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
@@ -186,26 +186,27 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3]);
 void ApiTick(void);
 
 // peer list
-struct NetConnectedPeer {
-  int socket;
-  int player;
+struct NetConnectedPeer
+{
+    int socket;
+    int player;
 
-  NetHandler* netHandler;
-  bz_NonPlayerConnectionHandler* apiHandler;
+    NetHandler* netHandler;
+    bz_NonPlayerConnectionHandler* apiHandler;
 
-  std::list<std::string> sendChunks;
-  std::string bufferedInput;
+    std::list<std::string> sendChunks;
+    std::string bufferedInput;
 
-  TimeKeeper startTime;
-  TimeKeeper lastActivity;
+    TimeKeeper startTime;
+    TimeKeeper lastActivity;
 
-  TimeKeeper lastSend;
-  double minSendTime;
+    TimeKeeper lastSend;
+    double minSendTime;
 
-  double inactivityTimeout;
-  bool   sent;
-  bool   deleteMe;
-  bool   deleteWhenDoneSending;
+    double inactivityTimeout;
+    bool   sent;
+    bool   deleteMe;
+    bool   deleteWhenDoneSending;
 };
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;

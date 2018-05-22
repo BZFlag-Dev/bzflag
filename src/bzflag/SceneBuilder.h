@@ -31,14 +31,15 @@ class BaseBuilding;
 class Teleporter;
 class World;
 
-class SceneDatabaseBuilder {
-  public:
-			SceneDatabaseBuilder(const SceneRenderer*);
-			~SceneDatabaseBuilder();
+class SceneDatabaseBuilder
+{
+public:
+    SceneDatabaseBuilder(const SceneRenderer*);
+    ~SceneDatabaseBuilder();
 
     SceneDatabase*	make(const World*);
 
-  protected:
+protected:
     void		addWall(SceneDatabase*, const WallObstacle&);
     void		addMesh(SceneDatabase*, MeshObstacle*);
     void		addBox(SceneDatabase*, BoxBuilding&);
@@ -47,12 +48,12 @@ class SceneDatabaseBuilder {
     void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
     void		addWaterLevel(SceneDatabase*, const World*);
 
-  private:
+private:
     // disallow duplication
-			SceneDatabaseBuilder(const SceneDatabaseBuilder&);
+    SceneDatabaseBuilder(const SceneDatabaseBuilder&);
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
-  private:
+private:
     const SceneRenderer	*renderer;
 
     OpenGLMaterial	wallMaterial;

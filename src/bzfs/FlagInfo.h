@@ -25,30 +25,31 @@
 
 /** FlagInfo describes a flag as it pertains to the world.
  */
-class FlagInfo {
+class FlagInfo
+{
 public:
 
-  FlagInfo();
+    FlagInfo();
 
-  void setRequiredFlag(FlagType *desc);
-  void addFlag();
-  void *pack(void *buf, bool hide = false);
-  void dropFlag(float pos[3], float landingPos[3], bool vanish);
-  void resetFlag(float position[3], bool teamIsEmpty);
-  void grab(int playerIndex);
-  TeamColor teamIndex() const;
-  int  getIndex() const;
-  bool landing(const TimeKeeper &tm);
-  void getTextualInfo(char *message);
-  bool exist();
+    void setRequiredFlag(FlagType *desc);
+    void addFlag();
+    void *pack(void *buf, bool hide = false);
+    void dropFlag(float pos[3], float landingPos[3], bool vanish);
+    void resetFlag(float position[3], bool teamIsEmpty);
+    void grab(int playerIndex);
+    TeamColor teamIndex() const;
+    int  getIndex() const;
+    bool landing(const TimeKeeper &tm);
+    void getTextualInfo(char *message);
+    bool exist();
 
-  static FlagInfo *get(int index);
-  static void setSize(int _numFlags);
-  static void setAllowed(std::vector<FlagType*> allowed);
-  static void setExtra(int extra);
-  static int  lookupFirstTeamFlag(int teamindex);
-  static float getNextDrop(TimeKeeper &tm);
-  static void  setNoFlagInAir();
+    static FlagInfo *get(int index);
+    static void setSize(int _numFlags);
+    static void setAllowed(std::vector<FlagType*> allowed);
+    static void setExtra(int extra);
+    static int  lookupFirstTeamFlag(int teamindex);
+    static float getNextDrop(TimeKeeper &tm);
+    static void  setNoFlagInAir();
 
     // flag info
     Flag flag;
@@ -62,15 +63,15 @@ public:
     int numShots;
 
 private:
-  int flagIndex;
-  static std::vector<FlagType*> allowedFlags;
-  static int		    numExtraFlags;
-  static int		    numFlags;
-  static int		    numFlagsInAir;
-  static FlagInfo	      *flagList;
+    int flagIndex;
+    static std::vector<FlagType*> allowedFlags;
+    static int		    numExtraFlags;
+    static int		    numFlags;
+    static int		    numFlagsInAir;
+    static FlagInfo	      *flagList;
 
-  // time flag will land
-  TimeKeeper		    dropDone;
+    // time flag will land
+    TimeKeeper		    dropDone;
 };
 #else
 class FlagInfo;

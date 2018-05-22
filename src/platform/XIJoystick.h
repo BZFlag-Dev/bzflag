@@ -22,10 +22,11 @@
 #include <vector>
 #include <string>
 
-class XIJoystick : public BzfJoystick {
-  public:
-		XIJoystick();
-		~XIJoystick();
+class XIJoystick : public BzfJoystick
+{
+public:
+    XIJoystick();
+    ~XIJoystick();
 
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
@@ -33,7 +34,7 @@ class XIJoystick : public BzfJoystick {
     unsigned long getJoyButtons();
     void	getJoyDevices(std::vector<std::string> &list) const;
 
-  private:
+private:
     Display*		display;
 
     XDevice*		device;

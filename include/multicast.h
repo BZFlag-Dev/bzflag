@@ -36,12 +36,12 @@
  *	-1 if failed
  */
 int			openBroadcast(int port, const char* service,
-					struct sockaddr_in* addr);
+                          struct sockaddr_in* addr);
 int			closeBroadcast(int fd);
 int			sendBroadcast(int fd, const void* buffer,
-				int bufferLength, const struct sockaddr_in*);
+                          int bufferLength, const struct sockaddr_in*);
 int			recvBroadcast(int fd, void* buffer,
-				int bufferLength, struct sockaddr_in*);
+                          int bufferLength, struct sockaddr_in*);
 
 #endif  // __MULTICAST_H__
 

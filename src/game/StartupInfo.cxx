@@ -21,36 +21,36 @@
 
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
-			     autoConnect(false),
-			     serverPort(ServerPort),
-			     team(AutomaticTeam),
-			     listServerURL(DefaultListServerURL),
-			     listServerPort(ServerPort + 1)
+    autoConnect(false),
+    serverPort(ServerPort),
+    team(AutomaticTeam),
+    listServerURL(DefaultListServerURL),
+    listServerPort(ServerPort + 1)
 {
-  strcpy(serverName, "");
-  strcpy(callsign, "");
-  strcpy(password, "");
-  strcpy(motto, "default");
-  joystickName = "joystick";
-  joystick = false;
+    strcpy(serverName, "");
+    strcpy(callsign, "");
+    strcpy(password, "");
+    strcpy(motto, "default");
+    joystickName = "joystick";
+    joystick = false;
 }
 
 StartupInfo::~StartupInfo()
 {
-  hasConfiguration = false;
-  autoConnect = false;
-  memset(serverName, 0, 80);
-  serverPort = -1;
-  useUDPconnection = false;
-  team = NoTeam;
-  memset(callsign, 0, CallSignLen);
-  memset(password, 0, PasswordLen);
-  memset(token, 0, TokenLen);
-  memset(motto, 0, MottoLen);
-  listServerURL = "";
-  listServerPort = 0;
-  joystick = false;
-  joystickName = "";
+    hasConfiguration = false;
+    autoConnect = false;
+    memset(serverName, 0, 80);
+    serverPort = -1;
+    useUDPconnection = false;
+    team = NoTeam;
+    memset(callsign, 0, CallSignLen);
+    memset(password, 0, PasswordLen);
+    memset(token, 0, TokenLen);
+    memset(motto, 0, MottoLen);
+    listServerURL = "";
+    listServerPort = 0;
+    joystick = false;
+    joystickName = "";
 }
 
 // Local Variables: ***

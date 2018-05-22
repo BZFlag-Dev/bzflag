@@ -19,12 +19,13 @@
 #include <vector>
 #include "Flag.h"
 
-class Weapon {
-  public:
+class Weapon
+{
+public:
     Weapon();
     const void* unpack(const void*);
 
-  public:
+public:
     FlagType *type;
     float pos[3];
     float dir;

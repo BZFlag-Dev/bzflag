@@ -26,46 +26,50 @@
  some platform independence for files requiring directory names.
 */
 
-class FileManager : public Singleton<FileManager> {
+class FileManager : public Singleton<FileManager>
+{
 public:
 
-  /** Open an input stream.
-   create an input stream for a file in the data directory.
-   this will look in several places until it finds the file.
-   if filename is an absolute path then only that place is
-   checked.  if the file cannot be found or isn't readable
-   then NULL is returned.
-  */
-  std::istream*		createDataInStream(const std::string& filename,
-					   bool binary = false) const;
+    /** Open an input stream.
+     create an input stream for a file in the data directory.
+     this will look in several places until it finds the file.
+     if filename is an absolute path then only that place is
+     checked.  if the file cannot be found or isn't readable
+     then NULL is returned.
+    */
+    std::istream*		createDataInStream(const std::string& filename,
+                                           bool binary = false) const;
 
-  /** Open an output stream.
-   create an output stream in the data directory (or wherever
-   indicated if filename is an absolute path).  if the file
-   can be opened for writing then NULL is returned.
-  */
-  std::ostream*		createDataOutStream(const std::string& filename,
-					    bool binary = false,
-					    bool truncate = true) const;
+    /** Open an output stream.
+     create an output stream in the data directory (or wherever
+     indicated if filename is an absolute path).  if the file
+     can be opened for writing then NULL is returned.
+    */
+    std::ostream*		createDataOutStream(const std::string& filename,
+                                            bool binary = false,
+                                            bool truncate = true) const;
 
-  /** Check for absolute path.
-   returns true if the path is absolute, false if relative
-  */
-  bool			isAbsolute(const std::string& path) const;
+    /** Check for absolute path.
+     returns true if the path is absolute, false if relative
+    */
+    bool			isAbsolute(const std::string& path) const;
 
-  /** Concatenate directory names.
-   concatenate two pathname components with a directory separator
-   between them.
-  */
-  std::string		catPath(const std::string& a, const std::string& b) const;
+    /** Concatenate directory names.
+     concatenate two pathname components with a directory separator
+     between them.
+    */
+    std::string		catPath(const std::string& a, const std::string& b) const;
 
-  void setDataPath ( const std::string &s ) { dataPath = s; }
+    void setDataPath ( const std::string &s )
+    {
+        dataPath = s;
+    }
 protected:
-  friend class Singleton<FileManager>;
-  FileManager();
-  ~FileManager();
+    friend class Singleton<FileManager>;
+    FileManager();
+    ~FileManager();
 
-  std::string dataPath;
+    std::string dataPath;
 };
 
 #endif

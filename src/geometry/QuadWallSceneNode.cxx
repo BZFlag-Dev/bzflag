@@ -34,73 +34,80 @@
 //
 
 QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
-				int uCount, int vCount,
-				const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				const GLfloat* _normal,
-				float uOffset, float vOffset,
-				float uRepeats, float vRepeats, bool fixedUVs) :
-				wall(_wall),
-				style(0),
-				ds(uCount),
-				dt(vCount),
-				dsq(uCount / 4),
-				dsr(uCount % 4),
-				normal(_normal),
-				vertex((uCount+1) * (vCount+1)),
-				uv((uCount+1) * (vCount+1))
+                                      int uCount, int vCount,
+                                      const GLfloat base[3],
+                                      const GLfloat uEdge[3],
+                                      const GLfloat vEdge[3],
+                                      const GLfloat* _normal,
+                                      float uOffset, float vOffset,
+                                      float uRepeats, float vRepeats, bool fixedUVs) :
+    wall(_wall),
+    style(0),
+    ds(uCount),
+    dt(vCount),
+    dsq(uCount / 4),
+    dsr(uCount % 4),
+    normal(_normal),
+    vertex((uCount+1) * (vCount+1)),
+    uv((uCount+1) * (vCount+1))
 {
-  for (int n = 0, j = 0; j <= vCount; j++) {
-    const float t = (float)j / (float)vCount;
-    for (int i = 0; i <= uCount; n++, i++) {
-      const float s = (float)i / (float)uCount;
-      vertex[n][0] = base[0] + s * uEdge[0] + t * vEdge[0];
-      vertex[n][1] = base[1] + s * uEdge[1] + t * vEdge[1];
-      vertex[n][2] = base[2] + s * uEdge[2] + t * vEdge[2];
-      uv[n][0] = uOffset + s * uRepeats;
-      uv[n][1] = vOffset + t * vRepeats;
+    for (int n = 0, j = 0; j <= vCount; j++)
+    {
+        const float t = (float)j / (float)vCount;
+        for (int i = 0; i <= uCount; n++, i++)
+        {
+            const float s = (float)i / (float)uCount;
+            vertex[n][0] = base[0] + s * uEdge[0] + t * vEdge[0];
+            vertex[n][1] = base[1] + s * uEdge[1] + t * vEdge[1];
+            vertex[n][2] = base[2] + s * uEdge[2] + t * vEdge[2];
+            uv[n][0] = uOffset + s * uRepeats;
+            uv[n][1] = vOffset + t * vRepeats;
+        }
     }
-  }
 
-  if (!fixedUVs && BZDB.isTrue("remapTexCoords")) {
-    const float uLen = sqrtf((uEdge[0] * uEdge[0]) +
-			     (uEdge[1] * uEdge[1]) +
-			     (uEdge[2] * uEdge[2]));
-    const float vLen = sqrtf((vEdge[0] * vEdge[0]) +
-			     (vEdge[1] * vEdge[1]) +
-			     (vEdge[2] * vEdge[2]));
-    const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
-    const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
-    if (fabsf(normal[2]) > 0.999f) {
-      // horizontal surface
-      for (int i = 0; i < vertex.getSize(); i++) {
-	uv[i][0] = uScale * vertex[i][0];
-	uv[i][1] = vScale * vertex[i][1];
-      }
+    if (!fixedUVs && BZDB.isTrue("remapTexCoords"))
+    {
+        const float uLen = sqrtf((uEdge[0] * uEdge[0]) +
+                                 (uEdge[1] * uEdge[1]) +
+                                 (uEdge[2] * uEdge[2]));
+        const float vLen = sqrtf((vEdge[0] * vEdge[0]) +
+                                 (vEdge[1] * vEdge[1]) +
+                                 (vEdge[2] * vEdge[2]));
+        const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
+        const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
+        if (fabsf(normal[2]) > 0.999f)
+        {
+            // horizontal surface
+            for (int i = 0; i < vertex.getSize(); i++)
+            {
+                uv[i][0] = uScale * vertex[i][0];
+                uv[i][1] = vScale * vertex[i][1];
+            }
+        }
+        else
+        {
+            // vertical surface
+            const float nh = sqrtf((normal[0] * normal[0]) + (normal[1] * normal[1]));
+            const float nx = normal[0] / nh;
+            const float ny = normal[1] / nh;
+            const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
+            for (int i = 0; i < vertex.getSize(); i++)
+            {
+                const float* v = vertex[i];
+                const float uGeoScale = (nx * v[1]) - (ny * v[0]);
+                const float vGeoScale = v[2] * vs;
+                uv[i][0] = uScale * uGeoScale;
+                uv[i][1] = vScale * vGeoScale;
+            }
+        }
     }
-    else {
-      // vertical surface
-      const float nh = sqrtf((normal[0] * normal[0]) + (normal[1] * normal[1]));
-      const float nx = normal[0] / nh;
-      const float ny = normal[1] / nh;
-      const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
-      for (int i = 0; i < vertex.getSize(); i++) {
-	const float* v = vertex[i];
-	const float uGeoScale = (nx * v[1]) - (ny * v[0]);
-	const float vGeoScale = v[2] * vs;
-	uv[i][0] = uScale * uGeoScale;
-	uv[i][1] = vScale * vGeoScale;
-      }
-    }
-  }
 
-  triangles = 2 * (uCount * vCount);
+    triangles = 2 * (uCount * vCount);
 }
 
 QuadWallSceneNode::Geometry::~Geometry()
 {
-  // do nothing
+    // do nothing
 }
 
 #define	RENDER(_e)							\
@@ -145,42 +152,45 @@ QuadWallSceneNode::Geometry::~Geometry()
 
 void			QuadWallSceneNode::Geometry::render()
 {
-  wall->setColor();
-  glNormal3fv(normal);
-  if (style >= 2) {
-    drawVT();
-  } else {
-    drawV();
-  }
-  addTriangleCount(triangles);
-  return;
+    wall->setColor();
+    glNormal3fv(normal);
+    if (style >= 2)
+    {
+        drawVT();
+    }
+    else
+    {
+        drawV();
+    }
+    addTriangleCount(triangles);
+    return;
 }
 
 void			QuadWallSceneNode::Geometry::renderShadow()
 {
-  int last = (ds + 1) * dt;
-  glBegin(GL_TRIANGLE_STRIP);
-  glVertex3fv(vertex[last]);
-  glVertex3fv(vertex[0]);
-  glVertex3fv(vertex[last + ds]);
-  glVertex3fv(vertex[ds]);
-  glEnd();
-  addTriangleCount(2);
+    int last = (ds + 1) * dt;
+    glBegin(GL_TRIANGLE_STRIP);
+    glVertex3fv(vertex[last]);
+    glVertex3fv(vertex[0]);
+    glVertex3fv(vertex[last + ds]);
+    glVertex3fv(vertex[ds]);
+    glEnd();
+    addTriangleCount(2);
 }
 
 void			QuadWallSceneNode::Geometry::drawV() const
 {
-  RENDER(EMITV)
+    RENDER(EMITV)
 }
 
 void			QuadWallSceneNode::Geometry::drawVT() const
 {
-  RENDER(EMITVT)
+    RENDER(EMITVT)
 }
 
 const GLfloat*		QuadWallSceneNode::Geometry::getVertex(int i) const
 {
-  return vertex[i];
+    return vertex[i];
 }
 
 //
@@ -188,260 +198,273 @@ const GLfloat*		QuadWallSceneNode::Geometry::getVertex(int i) const
 //
 
 QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs)
+                                     const GLfloat uEdge[3],
+                                     const GLfloat vEdge[3],
+                                     float uOffset,
+                                     float vOffset,
+                                     float uRepeats,
+                                     float vRepeats,
+                                     bool makeLODs)
 {
-  init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs, false);
+    init(base, uEdge, vEdge, uOffset, vOffset, uRepeats, vRepeats, makeLODs, false);
 }
 
 QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs, bool fixedUVs)
+                                     const GLfloat uEdge[3],
+                                     const GLfloat vEdge[3],
+                                     float uRepeats,
+                                     float vRepeats,
+                                     bool makeLODs, bool fixedUVs)
 {
-  init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
+    init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
 }
 
 void			QuadWallSceneNode::init(const GLfloat base[3],
-				const GLfloat uEdge[3],
-				const GLfloat vEdge[3],
-				float uOffset,
-				float vOffset,
-				float uRepeats,
-				float vRepeats,
-				bool makeLODs,
-				bool fixedUVs)
+                                        const GLfloat uEdge[3],
+                                        const GLfloat vEdge[3],
+                                        float uOffset,
+                                        float vOffset,
+                                        float uRepeats,
+                                        float vRepeats,
+                                        bool makeLODs,
+                                        bool fixedUVs)
 {
-  // record plane and bounding sphere info
-  GLfloat myPlane[4], mySphere[4];
-  myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
-  myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
-  myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
-  myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
-		 + myPlane[2] * base[2]);
-  setPlane(myPlane);
-  mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
-  mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
-  mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
-  mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
-    + mySphere[2]*mySphere[2];
-  mySphere[0] += base[0];
-  mySphere[1] += base[1];
-  mySphere[2] += base[2];
-  setSphere(mySphere);
+    // record plane and bounding sphere info
+    GLfloat myPlane[4], mySphere[4];
+    myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
+    myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
+    myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
+    myPlane[3] = -(myPlane[0] * base[0] + myPlane[1] * base[1]
+                   + myPlane[2] * base[2]);
+    setPlane(myPlane);
+    mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
+    mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
+    mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
+    mySphere[3] = mySphere[0]*mySphere[0] + mySphere[1]*mySphere[1]
+                  + mySphere[2]*mySphere[2];
+    mySphere[0] += base[0];
+    mySphere[1] += base[1];
+    mySphere[2] += base[2];
+    setSphere(mySphere);
 
-  // get length of sides
-  const float uLength = sqrtf(float(uEdge[0] * uEdge[0] +
-				uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]));
-  const float vLength = sqrtf(float(vEdge[0] * vEdge[0] +
-				vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]));
-  float area = uLength * vLength;
+    // get length of sides
+    const float uLength = sqrtf(float(uEdge[0] * uEdge[0] +
+                                      uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]));
+    const float vLength = sqrtf(float(vEdge[0] * vEdge[0] +
+                                      vEdge[1] * vEdge[1] + vEdge[2] * vEdge[2]));
+    float area = uLength * vLength;
 
-  // If negative then these values aren't a number of times to repeat
-  // the texture along the surface but the width, or a desired scaled
-  // width, of the texture itself. Repeat the texture as many times
-  // as necessary to fit the surface.
-  if (uRepeats < 0.0f)
-  {
-      uRepeats = - uLength / uRepeats;
-  }
-
-  if (vRepeats < 0.0f)
-  {
-      vRepeats = - vLength / vRepeats;
-  }
-
-  // compute how many LODs required to get smaller edge down to
-  // elements no bigger than 4 units on a side.
-  int uElements = int(uLength) / 2;
-  int vElements = int(vLength) / 2;
-  int uLevels = 1, vLevels = 1;
-  while (uElements >>= 1) uLevels++;
-  while (vElements >>= 1) vLevels++;
-  int numLevels = (uLevels < vLevels ? uLevels : vLevels);
-
-  // if overly rectangular then add levels to square it up
-  bool needsSquaring = false;
-  if (makeLODs) {
-    if (uLevels >= vLevels+2) {
-      needsSquaring = true;
-      numLevels += (uLevels - vLevels) / 2;
+    // If negative then these values aren't a number of times to repeat
+    // the texture along the surface but the width, or a desired scaled
+    // width, of the texture itself. Repeat the texture as many times
+    // as necessary to fit the surface.
+    if (uRepeats < 0.0f)
+    {
+        uRepeats = - uLength / uRepeats;
     }
-    else if (vLevels >= uLevels+2) {
-      needsSquaring = true;
-      numLevels += (vLevels - uLevels) / 2;
+
+    if (vRepeats < 0.0f)
+    {
+        vRepeats = - vLength / vRepeats;
     }
-  }
 
-  // if no lod's required then don't make any except most coarse
-  if (!makeLODs)
-    numLevels = 1;
+    // compute how many LODs required to get smaller edge down to
+    // elements no bigger than 4 units on a side.
+    int uElements = int(uLength) / 2;
+    int vElements = int(vLength) / 2;
+    int uLevels = 1, vLevels = 1;
+    while (uElements >>= 1) uLevels++;
+    while (vElements >>= 1) vLevels++;
+    int numLevels = (uLevels < vLevels ? uLevels : vLevels);
 
-  // make level of detail and element area arrays
-  nodes = new Geometry*[numLevels];
-  float* areas = new float[numLevels];
+    // if overly rectangular then add levels to square it up
+    bool needsSquaring = false;
+    if (makeLODs)
+    {
+        if (uLevels >= vLevels+2)
+        {
+            needsSquaring = true;
+            numLevels += (uLevels - vLevels) / 2;
+        }
+        else if (vLevels >= uLevels+2)
+        {
+            needsSquaring = true;
+            numLevels += (vLevels - uLevels) / 2;
+        }
+    }
 
-  // make top level (single polygon)
-  int level = 0;
-  uElements = 1;
-  vElements = 1;
-  areas[level] = area;
-  nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
-  shadowNode = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
-  shadowNode->setStyle(0);
+    // if no lod's required then don't make any except most coarse
+    if (!makeLODs)
+        numLevels = 1;
 
-  // make squaring levels if necessary
-  if (needsSquaring) {
+    // make level of detail and element area arrays
+    nodes = new Geometry*[numLevels];
+    float* areas = new float[numLevels];
+
+    // make top level (single polygon)
+    int level = 0;
     uElements = 1;
     vElements = 1;
-    if (uLevels > vLevels) {
-      int count = (uLevels - vLevels) / 2;
-      while (count-- > 0) {
-	uElements <<= 2;
-	areas[level] = area / (float)uElements;
-	nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
-
-      }
-      area /= (float)uElements;
-    }
-    else {
-      int count = (vLevels - uLevels) / 2;
-      while (count-- > 0) {
-	vElements <<= 2;
-	areas[level] = area / (float)vElements;
-	nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
-
-      }
-      area /= (float)vElements;
-    }
-  }
-
-  // make remaining levels by doubling elements in each dimension
-  while (level < numLevels) {
-    uElements <<= 1;
-    vElements <<= 1;
-    area *= 0.25f;
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, vElements,
-				base, uEdge, vEdge,
-				getPlane(), uOffset, vOffset,
-				uRepeats, vRepeats, fixedUVs);
-  }
+                                  base, uEdge, vEdge,
+                                  getPlane(), uOffset, vOffset,
+                                  uRepeats, vRepeats, fixedUVs);
+    shadowNode = new Geometry(this, uElements, vElements,
+                              base, uEdge, vEdge,
+                              getPlane(), uOffset, vOffset,
+                              uRepeats, vRepeats, fixedUVs);
+    shadowNode->setStyle(0);
 
-  // record extents info
-  for (int i = 0; i < 4; i++) {
-    const float* point = getVertex(i);
-    extents.expandToPoint(point);
-  }
+    // make squaring levels if necessary
+    if (needsSquaring)
+    {
+        uElements = 1;
+        vElements = 1;
+        if (uLevels > vLevels)
+        {
+            int count = (uLevels - vLevels) / 2;
+            while (count-- > 0)
+            {
+                uElements <<= 2;
+                areas[level] = area / (float)uElements;
+                nodes[level++] = new Geometry(this, uElements, vElements,
+                                              base, uEdge, vEdge,
+                                              getPlane(), uOffset, vOffset,
+                                              uRepeats, vRepeats, fixedUVs);
 
-  // record LOD info
-  setNumLODs(numLevels, areas);
+            }
+            area /= (float)uElements;
+        }
+        else
+        {
+            int count = (vLevels - uLevels) / 2;
+            while (count-- > 0)
+            {
+                vElements <<= 2;
+                areas[level] = area / (float)vElements;
+                nodes[level++] = new Geometry(this, uElements, vElements,
+                                              base, uEdge, vEdge,
+                                              getPlane(), uOffset, vOffset,
+                                              uRepeats, vRepeats, fixedUVs);
+
+            }
+            area /= (float)vElements;
+        }
+    }
+
+    // make remaining levels by doubling elements in each dimension
+    while (level < numLevels)
+    {
+        uElements <<= 1;
+        vElements <<= 1;
+        area *= 0.25f;
+        areas[level] = area;
+        nodes[level++] = new Geometry(this, uElements, vElements,
+                                      base, uEdge, vEdge,
+                                      getPlane(), uOffset, vOffset,
+                                      uRepeats, vRepeats, fixedUVs);
+    }
+
+    // record extents info
+    for (int i = 0; i < 4; i++)
+    {
+        const float* point = getVertex(i);
+        extents.expandToPoint(point);
+    }
+
+    // record LOD info
+    setNumLODs(numLevels, areas);
 }
 
 QuadWallSceneNode::~QuadWallSceneNode()
 {
-  // free LODs
-  const int numLevels = getNumLODs();
-  for (int i = 0; i < numLevels; i++)
-    delete nodes[i];
-  delete[] nodes;
-  delete shadowNode;
+    // free LODs
+    const int numLevels = getNumLODs();
+    for (int i = 0; i < numLevels; i++)
+        delete nodes[i];
+    delete[] nodes;
+    delete shadowNode;
 }
 
 int			QuadWallSceneNode::split(const float *_plane,
-				SceneNode*& front, SceneNode*& back) const
+                                     SceneNode*& front, SceneNode*& back) const
 {
-  // need to reorder vertices into counterclockwise order
-  GLfloat3Array vertex(4);
-  GLfloat2Array uv(4);
-  for (int i = 0; i < 4; i++) {
-    int j = i;
-    if (j == 2 || j == 3) j = 5 - j;
-    vertex[i][0] = nodes[0]->vertex[j][0];
-    vertex[i][1] = nodes[0]->vertex[j][1];
-    vertex[i][2] = nodes[0]->vertex[j][2];
-    uv[i][0] = nodes[0]->uv[j][0];
-    uv[i][1] = nodes[0]->uv[j][1];
-  }
-  return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
+    // need to reorder vertices into counterclockwise order
+    GLfloat3Array vertex(4);
+    GLfloat2Array uv(4);
+    for (int i = 0; i < 4; i++)
+    {
+        int j = i;
+        if (j == 2 || j == 3) j = 5 - j;
+        vertex[i][0] = nodes[0]->vertex[j][0];
+        vertex[i][1] = nodes[0]->vertex[j][1];
+        vertex[i][2] = nodes[0]->vertex[j][2];
+        uv[i][0] = nodes[0]->uv[j][0];
+        uv[i][1] = nodes[0]->uv[j][1];
+    }
+    return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
 }
 
 void			QuadWallSceneNode::addRenderNodes(
-				SceneRenderer& renderer)
+    SceneRenderer& renderer)
 {
-  const int lod = pickLevelOfDetail(renderer);
-  nodes[lod]->setStyle(getStyle());
-  renderer.addRenderNode(nodes[lod], getWallGState());
+    const int lod = pickLevelOfDetail(renderer);
+    nodes[lod]->setStyle(getStyle());
+    renderer.addRenderNode(nodes[lod], getWallGState());
 }
 
 void			QuadWallSceneNode::addShadowNodes(
-				SceneRenderer& renderer)
+    SceneRenderer& renderer)
 {
-  renderer.addShadowNode(shadowNode);
+    renderer.addShadowNode(shadowNode);
 }
 
 bool			QuadWallSceneNode::inAxisBox(const Extents& exts) const
 {
-  if (!extents.touches(exts)) {
-    return false;
-  }
+    if (!extents.touches(exts))
+    {
+        return false;
+    }
 
-  // NOTE: inefficient
-  float vertices[4][3];
-  memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
-  memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
-  memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
-  memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
+    // NOTE: inefficient
+    float vertices[4][3];
+    memcpy (vertices[0], nodes[0]->getVertex(0), sizeof(float[3]));
+    memcpy (vertices[1], nodes[0]->getVertex(1), sizeof(float[3]));
+    memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
+    memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
 
-  return testPolygonInAxisBox (4, vertices, getPlane(), exts);
+    return testPolygonInAxisBox (4, vertices, getPlane(), exts);
 }
 
 int			QuadWallSceneNode::getVertexCount () const
 {
-  return 4;
+    return 4;
 }
 
 const GLfloat*		QuadWallSceneNode::getVertex (int vertex) const
 {
-  // re-map these to a counter-clockwise order
-  const int order[4] = {0, 1, 3, 2};
-  return nodes[0]->getVertex(order[vertex]);
+    // re-map these to a counter-clockwise order
+    const int order[4] = {0, 1, 3, 2};
+    return nodes[0]->getVertex(order[vertex]);
 }
 
 
 void			QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
-  RenderSet rs = { nodes[0], getWallGState() };
-  rnodes.push_back(rs);
-  return;
+    RenderSet rs = { nodes[0], getWallGState() };
+    rnodes.push_back(rs);
+    return;
 }
 
 
 void			QuadWallSceneNode::renderRadar()
 {
-  if (plane[2] > 0.0f) {
-    nodes[0]->renderRadar();
-  }
-  return;
+    if (plane[2] > 0.0f)
+    {
+        nodes[0]->renderRadar();
+    }
+    return;
 }
 
 

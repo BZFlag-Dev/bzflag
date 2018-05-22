@@ -21,12 +21,13 @@
 #include "StateDatabase.h"
 
 // default database entries
-struct DefaultDBItem {
-	const char*			name;
-	const char*			value;
-	bool				persistent;
-	StateDatabase::Permission	permission;
-	StateDatabase::Callback	callback;
+struct DefaultDBItem
+{
+    const char*			name;
+    const char*			value;
+    bool				persistent;
+    StateDatabase::Permission	permission;
+    StateDatabase::Callback	callback;
 };
 
 extern DefaultDBItem	defaultDBItems[];

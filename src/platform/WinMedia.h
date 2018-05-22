@@ -22,10 +22,11 @@
 
 class WinWindow;
 
-class WinMedia : public BzfMedia {
-  public:
-			WinMedia();
-			~WinMedia();
+class WinMedia : public BzfMedia
+{
+public:
+    WinMedia();
+    ~WinMedia();
 
     bool		openAudio();
     void		closeAudio();
@@ -41,10 +42,10 @@ class WinMedia : public BzfMedia {
     void		writeAudioFrames(const float* samples, int numFrames);
     void		audioSleep(bool checkLowWater, double maxTime);
 
-  private:
+private:
     static DWORD WINAPI	audioThreadInit(void*);
 
-  private:
+private:
     bool		audioReady;
     bool		audioPlaying;
     IDirectSound*	audioInterface;

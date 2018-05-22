@@ -31,10 +31,11 @@
 
 #include "BzfMedia.h"
 
-class SolarisMedia : public BzfMedia {
-  public:
-			SolarisMedia();
-			~SolarisMedia();
+class SolarisMedia : public BzfMedia
+{
+public:
+    SolarisMedia();
+    ~SolarisMedia();
 
     double		stopwatch(bool);
     bool		openAudio();

@@ -34,17 +34,18 @@
 
 typedef struct in_addr	InAddr;			// shorthand
 
-class Address {
-  public:
-			Address();
-			Address(const std::string&);
-			Address(const Address&);
-			Address(const InAddr&);		    // input in nbo
-			Address(const struct sockaddr_in&); // input in nbo
-			~Address();
+class Address
+{
+public:
+    Address();
+    Address(const std::string&);
+    Address(const Address&);
+    Address(const InAddr&);		    // input in nbo
+    Address(const struct sockaddr_in&); // input in nbo
+    ~Address();
     Address&		operator=(const Address&);
 
-			operator InAddr() const;
+    operator InAddr() const;
     bool		operator==(const Address&) const;
     bool		operator!=(const Address&) const;
     bool		operator<(Address const&) const;
@@ -60,7 +61,7 @@ class Address {
     static std::string	getHostByAddress(InAddr);
     static const std::string getHostName(const std::string &hostname = std::string(""));
 
-  private:
+private:
     std::vector <InAddr> addr;
 };
 
@@ -76,15 +77,16 @@ const PlayerId		AdminPlayers = 252;
 const PlayerId		FirstTeam = 251;
 const PlayerId		LastRealPlayer = FirstTeam - NumTeams;
 
-class ServerId {
-  public:
+class ServerId
+{
+public:
     void*		pack(void*) const;
     const void*		unpack(const void*);
 
     bool		operator==(const ServerId&) const;
     bool		operator!=(const ServerId&) const;
 
-  public:
+public:
     // host and port in network byte order
     InAddr		serverHost;		// server host
     int16_t		port;			// server port

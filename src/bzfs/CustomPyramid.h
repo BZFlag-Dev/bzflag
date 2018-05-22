@@ -23,21 +23,23 @@
 #include "BzMaterial.h"
 
 
-class CustomPyramid : public WorldFileObstacle {
-  public:
+class CustomPyramid : public WorldFileObstacle
+{
+public:
     CustomPyramid();
     ~CustomPyramid();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    enum {
-      XP = 0,
-      XN,
-      YP,
-      YN,
-      ZN,
-      FaceCount
+private:
+    enum
+    {
+        XP = 0,
+        XN,
+        YP,
+        YN,
+        ZN,
+        FaceCount
     };
 
     bool isOldPyramid;

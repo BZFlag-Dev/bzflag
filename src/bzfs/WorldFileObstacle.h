@@ -19,15 +19,16 @@
 #include "WorldFileLocation.h"
 
 
-class WorldFileObstacle : public WorldFileLocation {
+class WorldFileObstacle : public WorldFileLocation
+{
 public:
-  WorldFileObstacle();
-  virtual bool read(const char *cmd, std::istream&);
+    WorldFileObstacle();
+    virtual bool read(const char *cmd, std::istream&);
 
 protected:
-  bool driveThrough;
-  bool shootThrough;
-  bool ricochet;
+    bool driveThrough;
+    bool shootThrough;
+    bool ricochet;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */

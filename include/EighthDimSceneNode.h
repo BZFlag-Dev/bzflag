@@ -20,37 +20,42 @@
 #include "common.h"
 #include "SceneNode.h"
 
-class EighthDimSceneNode : public SceneNode {
-  public:
-			~EighthDimSceneNode();
+class EighthDimSceneNode : public SceneNode
+{
+public:
+    ~EighthDimSceneNode();
 
     bool		cull(const ViewFrustum&) const;
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
-			EighthDimSceneNode(int numPolys);
+protected:
+    EighthDimSceneNode(int numPolys);
 
     void		setPolygon(int index, const GLfloat[3][3]);
 
-  protected:
-    class EighthDimRenderNode : public RenderNode {
-      public:
-			EighthDimRenderNode(
-				const EighthDimSceneNode*,
-				int numPolygons);
-			~EighthDimRenderNode();
-	void		render();
-	void		setPolygon(int index, const GLfloat[3][3]);
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDimSceneNode* sceneNode;
-	int		numPolygons;
-	GLfloat		(*color)[4];
-	GLfloat		(*poly)[3][3];
+protected:
+    class EighthDimRenderNode : public RenderNode
+    {
+    public:
+        EighthDimRenderNode(
+            const EighthDimSceneNode*,
+            int numPolygons);
+        ~EighthDimRenderNode();
+        void		render();
+        void		setPolygon(int index, const GLfloat[3][3]);
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDimSceneNode* sceneNode;
+        int		numPolygons;
+        GLfloat		(*color)[4];
+        GLfloat		(*poly)[3][3];
     };
 
-  private:
+private:
     OpenGLGState	gstate;
     EighthDimRenderNode	renderNode;
 };

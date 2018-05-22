@@ -22,19 +22,20 @@
 #include "common.h"
 
 
-namespace GameTime {
-  void reset();
-  void update();
+namespace GameTime
+{
+void reset();
+void update();
 
-  void setStepTime();
-  double getStepTime();
+void setStepTime();
+double getStepTime();
 
-  int packSize();
-  void* pack(void *, float lag);
-  const void* unpack(const void *);
+int packSize();
+void* pack(void *, float lag);
+const void* unpack(const void *);
 
-  const float startRate = 1.0f;
-  const float finalRate = 10.0f;
+const float startRate = 1.0f;
+const float finalRate = 10.0f;
 }
 
 

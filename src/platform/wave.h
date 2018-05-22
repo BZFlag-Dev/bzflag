@@ -35,7 +35,7 @@
    Returns an open FILE if successful or NULL for error.
 */
 FILE* openWavFile(const char *filename, short *format, long *speed,
-		int *numFrames, short *numChannels, short *width);
+                  int *numFrames, short *numChannels, short *width);
 /*
   Close the given wave file.
 */

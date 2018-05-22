@@ -36,31 +36,34 @@ const int		LocaleLen = 17;		// including terminating NUL
 const int		MessageLen = 128;	// including terminating NUL
 
 // types of things we can be
-enum PlayerType {
-			TankPlayer,
-			ComputerPlayer
+enum PlayerType
+{
+    TankPlayer,
+    ComputerPlayer
 };
 
 // types of text messages
-enum MessageType {
-  ChatMessage,
-  ActionMessage
+enum MessageType
+{
+    ChatMessage,
+    ActionMessage
 };
 
 // team info
 const int		NumTeams = 8;
 const int		CtfTeams = 5;
-enum TeamColor {
-			AutomaticTeam = -2,
-			NoTeam = -1,
-			RogueTeam = 0,
-			RedTeam = 1,
-			GreenTeam = 2,
-			BlueTeam = 3,
-			PurpleTeam = 4,
-			ObserverTeam = 5,
-			RabbitTeam = 6,
-			HunterTeam = 7
+enum TeamColor
+{
+    AutomaticTeam = -2,
+    NoTeam = -1,
+    RogueTeam = 0,
+    RedTeam = 1,
+    GreenTeam = 2,
+    BlueTeam = 3,
+    PurpleTeam = 4,
+    ObserverTeam = 5,
+    RabbitTeam = 6,
+    HunterTeam = 7
 };
 
 #ifdef ROBOT
@@ -86,23 +89,24 @@ const int		MaxMotionSize = 37;		// motion zone size
 // game types
 enum GameType
 {
-  TeamFFA,       // normal teamed FFA
-  ClassicCTF,    // your normal CTF
-  OpenFFA,       // teamless FFA
-  RabbitChase    // hunt the rabbit mode
+    TeamFFA,       // normal teamed FFA
+    ClassicCTF,    // your normal CTF
+    OpenFFA,       // teamless FFA
+    RabbitChase    // hunt the rabbit mode
 };
 // game styles
-enum GameOptions {
-  SuperFlagGameStyle =	 0x0002, // superflags allowed
-  JumpingGameStyle =	 0x0008, // jumping allowed
-  InertiaGameStyle =	 0x0010, // momentum for all
-  RicochetGameStyle =	 0x0020, // all shots ricochet
-  ShakableGameStyle =	 0x0040, // can drop bad flags
-  AntidoteGameStyle =	 0x0080, // anti-bad flags
-  HandicapGameStyle =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
-  NoSelfKillsGameStyle = 0x0200,
-  NoTeamKillsGameStyle = 0x0400
-  // add here before reusing old ones above
+enum GameOptions
+{
+    SuperFlagGameStyle =	 0x0002, // superflags allowed
+    JumpingGameStyle =	 0x0008, // jumping allowed
+    InertiaGameStyle =	 0x0010, // momentum for all
+    RicochetGameStyle =	 0x0020, // all shots ricochet
+    ShakableGameStyle =	 0x0040, // can drop bad flags
+    AntidoteGameStyle =	 0x0080, // anti-bad flags
+    HandicapGameStyle =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
+    NoSelfKillsGameStyle = 0x0200,
+    NoTeamKillsGameStyle = 0x0400
+                           // add here before reusing old ones above
 };
 
 // map object flags
@@ -113,8 +117,9 @@ enum GameOptions {
 
 const int mapVersion = 1;
 
-struct GlobalDBItem {
-  public:
+struct GlobalDBItem
+{
+public:
     const char*			name;
     const char*			value;
     bool			persistent;

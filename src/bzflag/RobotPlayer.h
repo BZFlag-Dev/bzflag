@@ -31,11 +31,12 @@
 #include "ServerLink.h"
 
 
-class RobotPlayer : public LocalPlayer {
-  public:
-			RobotPlayer(const PlayerId&,
-				const char* name, ServerLink*,
-				const char* _motto);
+class RobotPlayer : public LocalPlayer
+{
+public:
+    RobotPlayer(const PlayerId&,
+                const char* name, ServerLink*,
+                const char* _motto);
 
     float		getTargetPriority(const Player*) const;
     const Player*	getTarget() const;
@@ -45,22 +46,22 @@ class RobotPlayer : public LocalPlayer {
     void		restart(const float* pos, float azimuth);
     void		explodeTank();
 
-  private:
+private:
     void		doUpdate(float dt);
     void		doUpdateMotion(float dt);
     BzfRegion*		findRegion(const float p[2], float nearest[2]) const;
     float		getRegionExitPoint(
-				const float p1[2], const float p2[2],
-				const float a[2], const float targetPoint[2],
-				float mid[2], float& priority);
-     void		findPath(RegionPriorityQueue& queue,
-				BzfRegion* region, BzfRegion* targetRegion,
-				const float targetPoint[2], int mailbox);
+        const float p1[2], const float p2[2],
+        const float a[2], const float targetPoint[2],
+        float mid[2], float& priority);
+    void		findPath(RegionPriorityQueue& queue,
+                         BzfRegion* region, BzfRegion* targetRegion,
+                         const float targetPoint[2], int mailbox);
 
-     void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
-     void		getProjectedPosition(const Player *targ, float *projpos) const;
+    void		projectPosition(const Player *targ,const float t,float &x,float &y,float &z) const;
+    void		getProjectedPosition(const Player *targ, float *projpos) const;
 
-  private:
+private:
     const Player*	target;
     std::vector<RegionPoint>	path;
     int			pathIndex;

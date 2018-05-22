@@ -21,8 +21,9 @@
 #include <iostream>
 
 
-class PhysicsDriver {
-  public:
+class PhysicsDriver
+{
+public:
     PhysicsDriver();
     ~PhysicsDriver();
 
@@ -53,7 +54,7 @@ class PhysicsDriver {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     static const float minPeriod;
 
     std::string name;
@@ -70,44 +71,45 @@ class PhysicsDriver {
 
 inline const float* PhysicsDriver::getLinearVel() const
 {
-  return linear;
+    return linear;
 }
 inline float PhysicsDriver::getAngularVel() const
 {
-  return angularVel;
+    return angularVel;
 }
 inline const float* PhysicsDriver::getAngularPos() const
 {
-  return angularPos;
+    return angularPos;
 }
 inline float PhysicsDriver::getRadialVel() const
 {
-  return radialVel;
+    return radialVel;
 }
 inline const float* PhysicsDriver::getRadialPos() const
 {
-  return radialPos;
+    return radialPos;
 }
 inline bool PhysicsDriver::getIsSlide() const
 {
-  return slide;
+    return slide;
 }
 inline float PhysicsDriver::getSlideTime() const
 {
-  return slideTime;
+    return slideTime;
 }
 inline bool PhysicsDriver::getIsDeath() const
 {
-  return death;
+    return death;
 }
 inline const std::string& PhysicsDriver::getDeathMsg() const
 {
-  return deathMsg;
+    return deathMsg;
 }
 
 
-class PhysicsDriverManager {
-  public:
+class PhysicsDriverManager
+{
+public:
     PhysicsDriverManager();
     ~PhysicsDriverManager();
     void update();
@@ -122,17 +124,20 @@ class PhysicsDriverManager {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::vector<PhysicsDriver*> drivers;
 };
 
 inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
 {
-  if ((id >= 0) && (id < (int)drivers.size())) {
-    return drivers[id];
-  } else {
-    return NULL;
-  }
+    if ((id >= 0) && (id < (int)drivers.size()))
+    {
+        return drivers[id];
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 

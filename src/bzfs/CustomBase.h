@@ -25,13 +25,14 @@
 #include "WorldInfo.h"
 
 
-class CustomBase : public WorldFileObstacle {
-  public:
+class CustomBase : public WorldFileObstacle
+{
+public:
     CustomBase();
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  protected:
+protected:
     int color;
     bool triggerWorldWep;
     std::string worldWepType;

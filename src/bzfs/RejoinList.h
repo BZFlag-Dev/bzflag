@@ -19,15 +19,16 @@
 /* system headers */
 #include <list>
 
-class RejoinList {
-  public:
+class RejoinList
+{
+public:
     RejoinList ();
     ~RejoinList ();
 
     bool add (int playerIndex);
     float waitTime (int playerIndex);
 
-  private:
+private:
     std::list<struct RejoinNode*> queue;
 };
 

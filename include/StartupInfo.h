@@ -25,23 +25,23 @@
 class StartupInfo
 {
 public:
-  StartupInfo();
-  ~StartupInfo();
+    StartupInfo();
+    ~StartupInfo();
 
-  bool hasConfiguration;
-  bool autoConnect;
-  char serverName[80];
-  int serverPort;
-  bool useUDPconnection;
-  TeamColor team;
-  char callsign[CallSignLen];
-  char password[PasswordLen];
-  char token[TokenLen];
-  char motto[MottoLen];
-  std::string listServerURL;
-  int listServerPort;
-  bool joystick;
-  std::string joystickName;
+    bool hasConfiguration;
+    bool autoConnect;
+    char serverName[80];
+    int serverPort;
+    bool useUDPconnection;
+    TeamColor team;
+    char callsign[CallSignLen];
+    char password[PasswordLen];
+    char token[TokenLen];
+    char motto[MottoLen];
+    std::string listServerURL;
+    int listServerPort;
+    bool joystick;
+    std::string joystickName;
 };
 
 

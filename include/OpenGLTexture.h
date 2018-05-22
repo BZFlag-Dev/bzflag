@@ -45,26 +45,28 @@
 #include <string>
 #include "bzfgl.h"
 
-class OpenGLTexture {
-  public:
-    enum Filter {
-			Off,
-			Nearest,
-			Linear,
-			NearestMipmapNearest,
-			LinearMipmapNearest,
-			NearestMipmapLinear,
-			LinearMipmapLinear,
-			Max = LinearMipmapLinear,
-			Default = Max
+class OpenGLTexture
+{
+public:
+    enum Filter
+    {
+        Off,
+        Nearest,
+        Linear,
+        NearestMipmapNearest,
+        LinearMipmapNearest,
+        NearestMipmapLinear,
+        LinearMipmapLinear,
+        Max = LinearMipmapLinear,
+        Default = Max
     };
 
-			OpenGLTexture(int width, int height,
-					const GLvoid* pixels,
-					Filter maxFilter = Linear,
-					bool repeat = true,
-					int internalFormat = 0);
-			~OpenGLTexture();
+    OpenGLTexture(int width, int height,
+                  const GLvoid* pixels,
+                  Filter maxFilter = Linear,
+                  bool repeat = true,
+                  int internalFormat = 0);
+    ~OpenGLTexture();
     bool		hasAlpha() const;
 
     void		execute();
@@ -77,7 +79,7 @@ class OpenGLTexture {
     void		setFilter(Filter);
 
     bool		getColorAverages(float rgbaRaw[4],
-					 bool factorAlpha) const;
+                                 bool factorAlpha) const;
 
     void		freeContext();
     void		initContext();
@@ -90,20 +92,26 @@ class OpenGLTexture {
     static Filter	getMaxFilter();
     static void		setMaxFilter(Filter);
 
-  private:
-			OpenGLTexture(const OpenGLTexture&);
+private:
+    OpenGLTexture(const OpenGLTexture&);
     OpenGLTexture&	operator=(const OpenGLTexture&);
 
     bool		operator==(const OpenGLTexture&) const;
     bool		operator!=(const OpenGLTexture&) const;
     bool		operator<(const OpenGLTexture&) const;
     int			getBestFormat(int width, int height,
-				      const GLvoid* pixels);
+                              const GLvoid* pixels);
     void		bind();
     bool		setupImage(const GLubyte* pixels);
 
-    void* operator new(size_t s) { return ::operator new(s); }
-    void  operator delete(void *p) { ::operator delete(p); }
+    void* operator new(size_t s)
+    {
+        return ::operator new(s);
+    }
+    void  operator delete(void *p)
+    {
+        ::operator delete(p);
+    }
 
     bool		alpha;
     const int		width;
@@ -137,16 +145,16 @@ class OpenGLTexture {
 
 inline bool		OpenGLTexture::hasAlpha() const
 {
-  return alpha;
+    return alpha;
 }
 
 inline int		OpenGLTexture::getWidth() const
 {
-  return width;
+    return width;
 }
 inline int		OpenGLTexture::getHeight() const
 {
-  return height;
+    return height;
 }
 
 #endif // BZF_OPENGL_TEXTURE_H

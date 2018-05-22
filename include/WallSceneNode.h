@@ -27,10 +27,11 @@
 #include "common.h"
 #include "SceneNode.h"
 
-class WallSceneNode : public SceneNode {
-  public:
-			WallSceneNode();
-			~WallSceneNode();
+class WallSceneNode : public SceneNode
+{
+public:
+    WallSceneNode();
+    ~WallSceneNode();
 
     const GLfloat*	getColor() const;
     const GLfloat*	getDynamicColor() const;
@@ -41,16 +42,16 @@ class WallSceneNode : public SceneNode {
     virtual bool	inAxisBox (const Extents& exts) const;
 
     void		setColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+                         GLfloat b, GLfloat a = 1.0f);
     void		setColor(const GLfloat* rgba);
     void		setModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+                                 GLfloat b, GLfloat a = 1.0f);
     void		setModulateColor(const GLfloat* rgba);
     void		setLightedColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+                                GLfloat b, GLfloat a = 1.0f);
     void		setLightedColor(const GLfloat* rgba);
     void		setLightedModulateColor(GLfloat r, GLfloat g,
-				GLfloat b, GLfloat a = 1.0f);
+                                        GLfloat b, GLfloat a = 1.0f);
     void		setLightedModulateColor(const GLfloat* rgba);
     void		setMaterial(const OpenGLMaterial&);
     void		setTexture(const int);
@@ -70,29 +71,35 @@ class WallSceneNode : public SceneNode {
 
     void		copyStyle(WallSceneNode*);
 
-    void		setUseColorTexture(bool use) { useColorTexture = use; }
-  protected:
+    void		setUseColorTexture(bool use)
+    {
+        useColorTexture = use;
+    }
+protected:
     int			getNumLODs() const;
     void		setNumLODs(int, float* elementAreas);
     void		setPlane(const GLfloat[4]);
     int			pickLevelOfDetail(const SceneRenderer&) const;
 
     int			getStyle() const;
-    const OpenGLGState*	getGState() const { return &gstate; }
+    const OpenGLGState*	getGState() const
+    {
+        return &gstate;
+    }
     const OpenGLGState*	getWallGState() const;
 
     static int		splitWall(const GLfloat* plane,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
-				SceneNode*& front, SceneNode*& back); // const
+                              const GLfloat3Array& vertices,
+                              const GLfloat2Array& uvs,
+                              SceneNode*& front, SceneNode*& back); // const
 
-  private:
+private:
     static void splitEdge(float d1, float d2,
-			  const GLfloat* p1, const GLfloat* p2,
-			  const GLfloat* uv1, const GLfloat* uv2,
-			  GLfloat* p, GLfloat* uv); //const
+                          const GLfloat* p1, const GLfloat* p2,
+                          const GLfloat* uv1, const GLfloat* uv2,
+                          GLfloat* p, GLfloat* uv); //const
 
-  private:
+private:
     int			numLODs;
     float*		elementAreas;
     const GLfloat*	dynamicColor;
@@ -117,37 +124,37 @@ class WallSceneNode : public SceneNode {
 
 inline int WallSceneNode::getNumLODs() const
 {
-  return numLODs;
+    return numLODs;
 }
 
 inline const GLfloat* WallSceneNode::getColor() const
 {
-  return color;
+    return color;
 }
 inline const GLfloat* WallSceneNode::getDynamicColor() const
 {
-  return dynamicColor;
+    return dynamicColor;
 }
 inline const GLfloat* WallSceneNode::getModulateColor() const
 {
-  return modulateColor;
+    return modulateColor;
 }
 inline const GLfloat* WallSceneNode::getLightedColor() const
 {
-  return lightedColor;
+    return lightedColor;
 }
 inline const GLfloat* WallSceneNode::getLightedModulateColor() const
 {
-  return lightedModulateColor;
+    return lightedModulateColor;
 }
 
 inline int WallSceneNode::getStyle() const
 {
-  return style;
+    return style;
 }
 inline const OpenGLGState* WallSceneNode::getWallGState() const
 {
-  return &gstate;
+    return &gstate;
 }
 
 

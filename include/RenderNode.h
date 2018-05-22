@@ -25,31 +25,38 @@
 #include "OpenGLGState.h"
 
 
-class RenderNode {
-  public:
-			RenderNode() {}
+class RenderNode
+{
+public:
+    RenderNode() {}
     virtual		~RenderNode() {}
 
     virtual void	render() = 0;
-    virtual void	renderShadow() { render(); }
-    virtual void	renderRadar() { renderShadow(); }
+    virtual void	renderShadow()
+    {
+        render();
+    }
+    virtual void	renderRadar()
+    {
+        renderShadow();
+    }
     virtual const GLfloat* getPosition() const = 0;
 
     static int		getTriangleCount();
     static void		resetTriangleCount();
 
-  protected:
+protected:
     static void		addTriangleCount(int triCount);
 
-  private:
+private:
     static int		triangleCount;
 };
 
 
 inline void RenderNode::addTriangleCount(int count)
 {
-  triangleCount += count;
-  return;
+    triangleCount += count;
+    return;
 }
 
 // do not tally unless debugging (for now)
@@ -58,23 +65,24 @@ inline void RenderNode::addTriangleCount(int count)
 #endif
 
 
-class RenderNodeList {
-  public:
-			RenderNodeList();
-			~RenderNodeList();
+class RenderNodeList
+{
+public:
+    RenderNodeList();
+    ~RenderNodeList();
 
     void		clear();
     void		append(RenderNode*);
     void		render() const;
 
-  private:
+private:
     // no copying (cos that'd be slow)
-			RenderNodeList(const RenderNodeList&);
+    RenderNodeList(const RenderNodeList&);
     RenderNodeList&	operator=(const RenderNodeList&);
 
     void		grow();
 
-  private:
+private:
     int			count;
     int			size;
     RenderNode**	list;
@@ -82,17 +90,19 @@ class RenderNodeList {
 
 inline void RenderNodeList::append(RenderNode* node)
 {
-  if (count == size) {
-    grow();
-  }
-  list[count++] = node;
+    if (count == size)
+    {
+        grow();
+    }
+    list[count++] = node;
 }
 
 
-class RenderNodeGStateList {
-  public:
-			RenderNodeGStateList();
-			~RenderNodeGStateList();
+class RenderNodeGStateList
+{
+public:
+    RenderNodeGStateList();
+    ~RenderNodeGStateList();
 
     void		clear();
     void		append(RenderNode*, const OpenGLGState*);
@@ -102,37 +112,39 @@ class RenderNodeGStateList {
     void		sort(const GLfloat* eye);
 
     // public for the qsort() comparison function
-    struct Item {
-      public:
-	typedef const OpenGLGState* GStatePtr;
-	RenderNode*	node;
-	GStatePtr	gstate;
-	float		depth;
+    struct Item
+    {
+    public:
+        typedef const OpenGLGState* GStatePtr;
+        RenderNode*	node;
+        GStatePtr	gstate;
+        float		depth;
     };
 
-  private:
+private:
     // no copying (cos that'd be slow)
-			RenderNodeGStateList(const RenderNodeGStateList&);
+    RenderNodeGStateList(const RenderNodeGStateList&);
     RenderNodeGStateList& operator=(const RenderNodeGStateList&);
 
     void		grow();
 
-  private:
+private:
     int			count;
     int			size;
     Item*		list;
 };
 
 inline void RenderNodeGStateList::append(RenderNode* node,
-					 const OpenGLGState* gstate)
+        const OpenGLGState* gstate)
 {
-  if (count == size) {
-    grow();
-  }
-  list[count].node = node;
-  list[count].gstate = gstate;
-  list[count].depth = 0.0f;
-  count++;
+    if (count == size)
+    {
+        grow();
+    }
+    list[count].node = node;
+    list[count].gstate = gstate;
+    list[count].depth = 0.0f;
+    count++;
 }
 
 #endif // BZF_RENDER_NODE_H

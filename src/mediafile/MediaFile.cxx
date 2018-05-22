@@ -25,7 +25,7 @@
 #ifdef WIN32
 static void ConvertPath(std::string &path)
 {
-  std::replace(path.begin(), path.end(), '/', '\\');
+    std::replace(path.begin(), path.end(), '/', '\\');
 }
 #endif
 
@@ -35,88 +35,88 @@ static void ConvertPath(std::string &path)
 
 MediaFile::MediaFile(std::istream* _stream) : stream(_stream)
 {
-  // do nothing
+    // do nothing
 }
 
 MediaFile::~MediaFile()
 {
-  // do nothing
+    // do nothing
 }
 
 bool		MediaFile::isOkay() const
 {
-  return (stream != NULL && stream->good());
+    return (stream != NULL && stream->good());
 }
 
 void		MediaFile::readRaw(void* vbuffer, uint32_t bytes)
 {
-  char* buffer = reinterpret_cast<char*>(vbuffer);
-  stream->read(buffer, bytes);
+    char* buffer = reinterpret_cast<char*>(vbuffer);
+    stream->read(buffer, bytes);
 }
 
 void		MediaFile::skip(uint32_t bytes)
 {
-  stream->ignore(bytes);
+    stream->ignore(bytes);
 }
 
 uint16_t	MediaFile::read16LE()
 {
-  uint16_t b;
-  stream->read(reinterpret_cast<char*>(&b), sizeof(b));
-  return swap16LE(&b);
+    uint16_t b;
+    stream->read(reinterpret_cast<char*>(&b), sizeof(b));
+    return swap16LE(&b);
 }
 
 uint16_t	MediaFile::read16BE()
 {
-  uint16_t b;
-  stream->read(reinterpret_cast<char*>(&b), sizeof(b));
-  return swap16BE(&b);
+    uint16_t b;
+    stream->read(reinterpret_cast<char*>(&b), sizeof(b));
+    return swap16BE(&b);
 }
 
 uint32_t	MediaFile::read32LE()
 {
-  uint32_t b;
-  stream->read(reinterpret_cast<char*>(&b), sizeof(b));
-  return swap32LE(&b);
+    uint32_t b;
+    stream->read(reinterpret_cast<char*>(&b), sizeof(b));
+    return swap32LE(&b);
 }
 
 uint32_t	MediaFile::read32BE()
 {
-  uint32_t b;
-  stream->read(reinterpret_cast<char*>(&b), sizeof(b));
-  return swap32BE(&b);
+    uint32_t b;
+    stream->read(reinterpret_cast<char*>(&b), sizeof(b));
+    return swap32BE(&b);
 }
 
 uint16_t	MediaFile::swap16LE(uint16_t* d)
 {
-  unsigned char* b = reinterpret_cast<unsigned char*>(d);
-  *d = static_cast<uint16_t>(b[0]) + (static_cast<uint16_t>(b[1]) << 8);
-  return *d;
+    unsigned char* b = reinterpret_cast<unsigned char*>(d);
+    *d = static_cast<uint16_t>(b[0]) + (static_cast<uint16_t>(b[1]) << 8);
+    return *d;
 }
 
 uint16_t	MediaFile::swap16BE(uint16_t* d)
 {
-  unsigned char* b = reinterpret_cast<unsigned char*>(d);
-  *d = static_cast<uint16_t>(b[1]) + (static_cast<uint16_t>(b[0]) << 8);
-  return *d;
+    unsigned char* b = reinterpret_cast<unsigned char*>(d);
+    *d = static_cast<uint16_t>(b[1]) + (static_cast<uint16_t>(b[0]) << 8);
+    return *d;
 }
 
 uint32_t	MediaFile::swap32LE(uint32_t* d)
 {
-  unsigned char* b = reinterpret_cast<unsigned char*>(d);
-  *d = static_cast<uint32_t>(b[0]) + (static_cast<uint32_t>(b[1]) << 8) +
-       (static_cast<uint32_t>(b[2]) << 16) +
-       (static_cast<uint32_t>(b[3]) << 24);
-  return *d;
+    unsigned char* b = reinterpret_cast<unsigned char*>(d);
+    *d = static_cast<uint32_t>(b[0]) + (static_cast<uint32_t>(b[1]) << 8) +
+         (static_cast<uint32_t>(b[2]) << 16) +
+         (static_cast<uint32_t>(b[3]) << 24);
+    return *d;
 }
 
 uint32_t	MediaFile::swap32BE(uint32_t* d)
 {
-  unsigned char* b = reinterpret_cast<unsigned char*>(d);
-  *d = static_cast<uint32_t>(b[3]) + (static_cast<uint32_t>(b[2]) << 8) +
-       (static_cast<uint32_t>(b[1]) << 16) +
-       (static_cast<uint32_t>(b[0]) << 24);
-  return *d;
+    unsigned char* b = reinterpret_cast<unsigned char*>(d);
+    *d = static_cast<uint32_t>(b[3]) + (static_cast<uint32_t>(b[2]) << 8) +
+         (static_cast<uint32_t>(b[1]) << 16) +
+         (static_cast<uint32_t>(b[0]) << 24);
+    return *d;
 }
 
 //
@@ -144,94 +144,108 @@ do {							\
 } while (0)
 
 unsigned char*		MediaFile::readImage(
-				std::string filename,
-				int* width, int* height)
+    std::string filename,
+    int* width, int* height)
 {
-  // get the absolute filename for cache textures
-  if (CACHEMGR.isCacheFileType(filename)) {
-    filename = CACHEMGR.getLocalName(filename);
-  }
+    // get the absolute filename for cache textures
+    if (CACHEMGR.isCacheFileType(filename))
+    {
+        filename = CACHEMGR.getLocalName(filename);
+    }
 
 #ifdef WIN32
-  // cheat and make sure the file is a windows file path
-  ConvertPath(filename);
+    // cheat and make sure the file is a windows file path
+    ConvertPath(filename);
 #endif //WIN32
 
-  // try opening file as an image
-  std::istream* stream;
-  ImageFile* file = NULL;
-  if (file == NULL)
-    OPENMEDIA(PNGImageFile);
-
-  // read the image
-  unsigned char* image = NULL;
-  if (file != NULL) {
-    // get the image size
-    unsigned int dx = *width  = file->getWidth();
-    unsigned int dy = *height = file->getHeight();
-    unsigned int dz = file->getNumChannels();
-
-    // make buffer for final image
-    image = new unsigned char[dx * dy * 4];
-
-    // make buffer to read image.  if the image file has 4 channels
-    // then read directly into the final image buffer.
-    unsigned char* buffer = (dz == 4) ? image : new unsigned char[dx * dy * dz];
+    // try opening file as an image
+    std::istream* stream;
+    ImageFile* file = NULL;
+    if (file == NULL)
+        OPENMEDIA(PNGImageFile);
 
     // read the image
-    if (image != NULL && buffer != NULL) {
-      if (!file->read(buffer)) {
-	// failed to read image.  clean up.
-	if (buffer != image)
-	  delete[] buffer;
-	delete[] image;
-	image  = NULL;
-	buffer = NULL;
-      } else {
-	// expand image into 4 channels
-	int n = dx * dy;
-	const unsigned char* src = buffer;
-	unsigned char* dst = image;
-	if (dz == 1) {
-	  // r=g=b=i, a=max
-	  for (; n > 0; --n) {
-	    dst[0] = dst[1] = dst[2] = src[0];
-	    dst[3] = 0xff;
-	    src += 1;
-	    dst += 4;
-	  }
-	} else if (dz == 2) {
-	  // r=g=b=i
-	  for (; n > 0; --n) {
-	    dst[0] = dst[1] = dst[2] = src[0];
-	    dst[3] = src[1];
-	    src += 2;
-	    dst += 4;
-	  }
-	} else if (dz == 3) {
-	  // a=max
-	  for (; n > 0; --n) {
-	    dst[0] = src[0];
-	    dst[1] = src[1];
-	    dst[2] = src[2];
-	    dst[3] = 0xff;
-	    src += 3;
-	    dst += 4;
-	  }
-	}
-      }
+    unsigned char* image = NULL;
+    if (file != NULL)
+    {
+        // get the image size
+        unsigned int dx = *width  = file->getWidth();
+        unsigned int dy = *height = file->getHeight();
+        unsigned int dz = file->getNumChannels();
+
+        // make buffer for final image
+        image = new unsigned char[dx * dy * 4];
+
+        // make buffer to read image.  if the image file has 4 channels
+        // then read directly into the final image buffer.
+        unsigned char* buffer = (dz == 4) ? image : new unsigned char[dx * dy * dz];
+
+        // read the image
+        if (image != NULL && buffer != NULL)
+        {
+            if (!file->read(buffer))
+            {
+                // failed to read image.  clean up.
+                if (buffer != image)
+                    delete[] buffer;
+                delete[] image;
+                image  = NULL;
+                buffer = NULL;
+            }
+            else
+            {
+                // expand image into 4 channels
+                int n = dx * dy;
+                const unsigned char* src = buffer;
+                unsigned char* dst = image;
+                if (dz == 1)
+                {
+                    // r=g=b=i, a=max
+                    for (; n > 0; --n)
+                    {
+                        dst[0] = dst[1] = dst[2] = src[0];
+                        dst[3] = 0xff;
+                        src += 1;
+                        dst += 4;
+                    }
+                }
+                else if (dz == 2)
+                {
+                    // r=g=b=i
+                    for (; n > 0; --n)
+                    {
+                        dst[0] = dst[1] = dst[2] = src[0];
+                        dst[3] = src[1];
+                        src += 2;
+                        dst += 4;
+                    }
+                }
+                else if (dz == 3)
+                {
+                    // a=max
+                    for (; n > 0; --n)
+                    {
+                        dst[0] = src[0];
+                        dst[1] = src[1];
+                        dst[2] = src[2];
+                        dst[3] = 0xff;
+                        src += 3;
+                        dst += 4;
+                    }
+                }
+            }
+        }
+
+        // clean up
+        if (buffer != image)
+            delete[] buffer;
+        delete file;
     }
 
     // clean up
-    if (buffer != image)
-      delete[] buffer;
-    delete file;
-  }
+    delete stream;
 
-  // clean up
-  delete stream;
-
-  return image;
+    return image;
 }
 
 /*

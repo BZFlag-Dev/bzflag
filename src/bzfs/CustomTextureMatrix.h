@@ -19,15 +19,19 @@
 /* common headers */
 #include "TextureMatrix.h"
 
-class CustomTextureMatrix : public WorldFileObject {
-  public:
+class CustomTextureMatrix : public WorldFileObject
+{
+public:
     CustomTextureMatrix();
     ~CustomTextureMatrix();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable TextureMatrix* texmat;
 };
 

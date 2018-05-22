@@ -31,15 +31,16 @@ static const int	PingPacketHexPackedSize = 4 * 8 + 2 * 13;
 /** PingPacket:
  *	Encapsulates server `ping' info.
  */
-class PingPacket {
-  public:
-			PingPacket();
-			~PingPacket();
+class PingPacket
+{
+public:
+    PingPacket();
+    ~PingPacket();
 
     bool		read(int fd, struct sockaddr_in*);
     bool		write(int fd, const struct sockaddr_in*) const;
     bool		waitForReply(int fd, const Address& from,
-				int millisecondsToBlock = 0);
+                             int millisecondsToBlock = 0);
 
     void*		pack(void*, const char* version) const;
     const void*		unpack(const void*, char* version);
@@ -54,7 +55,7 @@ class PingPacket {
     static bool	isRequest(int fd, struct sockaddr_in*);
     static bool	sendRequest(int fd, const struct sockaddr_in*);
 
-  public:
+public:
     ServerId		serverId;
     Address		sourceAddr;
     uint16_t		gameOptions;
@@ -79,7 +80,7 @@ class PingPacket {
     uint8_t		observerCount;
     uint8_t		observerMax;
 
-  private:
+private:
     static int		hex2bin(char);
     static char		bin2hex(int);
     static char*	packHex16(char*, uint16_t);
@@ -87,7 +88,7 @@ class PingPacket {
     static char*	packHex8(char*, uint8_t);
     static char*	unpackHex8(char*, uint8_t&);
 
-  private:
+private:
     static const int	PacketSize;
 };
 

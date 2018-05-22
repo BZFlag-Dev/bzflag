@@ -33,19 +33,19 @@
 class PlayerAddMessage
 {
 public:
-	PlayerAddMessage();
+    PlayerAddMessage();
 
-	bool unpack ( const void* buf );
-	void* pack ( void* buf );
+    bool unpack ( const void* buf );
+    void* pack ( void* buf );
 
-	int playerID;
-	int team;
-	int type;
-	int wins;
-	int losses;
-	int	tks;
-	std::string callsign;
-	std::string motto;
+    int playerID;
+    int team;
+    int type;
+    int wins;
+    int losses;
+    int	tks;
+    std::string callsign;
+    std::string motto;
 };
 
 #endif // BZF_MESSAGES_H

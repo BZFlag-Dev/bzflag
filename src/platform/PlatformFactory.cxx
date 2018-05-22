@@ -22,34 +22,35 @@ BzfMedia*		PlatformFactory::media = 0;
 PlatformFactory::PlatformFactory()
 {
 #ifdef HAVE_SDL
-  Uint32 flags = 0;
-  if (SDL_Init(flags) < 0) {
-    printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
-    exit(-1);
-  };
+    Uint32 flags = 0;
+    if (SDL_Init(flags) < 0)
+    {
+        printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
+        exit(-1);
+    };
 #endif
 }
 
 PlatformFactory::~PlatformFactory()
 {
 #ifdef HAVE_SDL
-  if (media)
-    media->closeAudio();
-  SDL_Quit();
+    if (media)
+        media->closeAudio();
+    SDL_Quit();
 #endif
-  delete media;
+    delete media;
 }
 
 BzfJoystick*		PlatformFactory::createJoystick()
 {
-  // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
-  return new BzfJoystick();
+    // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
+    return new BzfJoystick();
 }
 
 BzfMedia*		PlatformFactory::getMedia()
 {
-  if (!media) media = getInstance()->createMedia();
-  return media;
+    if (!media) media = getInstance()->createMedia();
+    return media;
 }
 
 // Local Variables: ***

@@ -19,15 +19,19 @@
 /* common headers */
 #include "MeshTransform.h"
 
-class CustomMeshTransform : public WorldFileObject {
-  public:
+class CustomMeshTransform : public WorldFileObject
+{
+public:
     CustomMeshTransform();
     ~CustomMeshTransform();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable MeshTransform* transform;
 };
 

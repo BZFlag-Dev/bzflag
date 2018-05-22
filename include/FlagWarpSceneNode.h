@@ -21,10 +21,11 @@
 #include "common.h"
 #include "SceneNode.h"
 
-class FlagWarpSceneNode : public SceneNode {
-  public:
-			FlagWarpSceneNode(const GLfloat pos[3]);
-			~FlagWarpSceneNode();
+class FlagWarpSceneNode : public SceneNode
+{
+public:
+    FlagWarpSceneNode(const GLfloat pos[3]);
+    ~FlagWarpSceneNode();
 
     void		setSizeFraction(GLfloat);
 
@@ -34,19 +35,23 @@ class FlagWarpSceneNode : public SceneNode {
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
-    class FlagWarpRenderNode : public RenderNode {
-      public:
-			FlagWarpRenderNode(const FlagWarpSceneNode*);
-			~FlagWarpRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const FlagWarpSceneNode* sceneNode;
+protected:
+    class FlagWarpRenderNode : public RenderNode
+    {
+    public:
+        FlagWarpRenderNode(const FlagWarpSceneNode*);
+        ~FlagWarpRenderNode();
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const FlagWarpSceneNode* sceneNode;
     };
     friend class FlagWarpRenderNode;
 
-  private:
+private:
     GLfloat		size;
     OpenGLGState	gstate;
     FlagWarpRenderNode	renderNode;

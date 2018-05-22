@@ -29,10 +29,11 @@
 #include "ShotPathSegment.h"
 
 
-class GuidedMissileStrategy : public ShotStrategy {
-  public:
-			GuidedMissileStrategy(ShotPath*);
-			~GuidedMissileStrategy();
+class GuidedMissileStrategy : public ShotStrategy
+{
+public:
+    GuidedMissileStrategy(ShotPath*);
+    ~GuidedMissileStrategy();
 
     void		update(float dt);
     float		checkHit(const BaseLocalPlayer*, float[3]) const;
@@ -42,10 +43,10 @@ class GuidedMissileStrategy : public ShotStrategy {
     void		expire();
     void		radarRender() const;
 
-  private:
+private:
     float		checkBuildings(const Ray& ray);
 
-  private:
+private:
     TimeKeeper		prevTime;
     TimeKeeper		currentTime;
     std::vector<ShotPathSegment>	segments;
@@ -55,8 +56,8 @@ class GuidedMissileStrategy : public ShotStrategy {
     float		nextPos[3];
     BoltSceneNode*	ptSceneNode;
 
-		float	puffTime,rootPuff;
-		TimeKeeper lastPuff;
+    float	puffTime,rootPuff;
+    TimeKeeper lastPuff;
     mutable bool	needUpdate;
     PlayerId		lastTarget;
 };

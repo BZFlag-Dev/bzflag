@@ -20,21 +20,22 @@
 #include "BzfVisual.h"
 #include "WinDisplay.h"
 
-class WinVisual : public BzfVisual {
-  public:
-			WinVisual(const WinDisplay*);
-			WinVisual(const WinVisual&);
-			~WinVisual();
+class WinVisual : public BzfVisual
+{
+public:
+    WinVisual(const WinDisplay*);
+    WinVisual(const WinVisual&);
+    ~WinVisual();
 
     void		setLevel(int level);
     void		setDoubleBuffer(bool);
     void		setIndex(int minDepth);
     void		setRGBA(int minRed, int minGreen,
-				int minBlue, int minAlpha);
+                        int minBlue, int minAlpha);
     void		setDepth(int minDepth);
     void		setStencil(int minDepth);
     void		setAccum(int minRed, int minGreen,
-				int minBlue, int minAlpha);
+                         int minBlue, int minAlpha);
     void		setStereo(bool);
     void		setMultisample(int minSamples);
 
@@ -44,13 +45,13 @@ class WinVisual : public BzfVisual {
     void		reset();
     int			get(HDC, const PIXELFORMATDESCRIPTOR**);
 
-  protected:
+protected:
     int			findAttribute(int attribute) const;
     void		appendAttribute(int attribute, int value);
     void		removeAttribute(int index);
     void		editAttribute(int index, int value);
 
-  private:
+private:
     WinDisplay::Rep*	display;
     PIXELFORMATDESCRIPTOR pfd;
     int			pixelFormat;

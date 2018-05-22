@@ -24,23 +24,24 @@
 
 /** this class provides options for setting the gui
  */
-class DisplayMenu : public HUDDialog {
+class DisplayMenu : public HUDDialog
+{
 public:
-  DisplayMenu();
-  ~DisplayMenu();
+    DisplayMenu();
+    ~DisplayMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, const void* data);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, const void* data);
 private:
-  FormatMenu*	formatMenu;
-  HUDuiControl*	videoFormat;
-  static int	gammaToIndex(float);
-  static float	indexToGamma(int);
+    FormatMenu*	formatMenu;
+    HUDuiControl*	videoFormat;
+    static int	gammaToIndex(float);
+    static float	indexToGamma(int);
 };
 
 #endif /* __DISPLAYMENU_H__ */

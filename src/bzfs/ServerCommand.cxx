@@ -20,53 +20,55 @@ ServerCommand::MapOfCommands *ServerCommand::mapOfCommands = NULL;
 
 // Use only lower case command name
 ServerCommand::ServerCommand(std::string _commandName,
-			     std::string _oneLineHelp)
-  : commandName(_commandName)
+                             std::string _oneLineHelp)
+    : commandName(_commandName)
 {
-  if (!mapOfCommands)
-    mapOfCommands = new MapOfCommands;
-  (*mapOfCommands)[commandName] = this;
-  oneLineHelp = commandName;
-  if (_oneLineHelp != "")
-    oneLineHelp += " " + _oneLineHelp;
+    if (!mapOfCommands)
+        mapOfCommands = new MapOfCommands;
+    (*mapOfCommands)[commandName] = this;
+    oneLineHelp = commandName;
+    if (_oneLineHelp != "")
+        oneLineHelp += " " + _oneLineHelp;
 }
 
 ServerCommand::~ServerCommand()
 {
-  if (mapOfCommands) {
-    mapOfCommands->erase(commandName);
-    if (mapOfCommands->empty()) {
-      delete mapOfCommands;
-      mapOfCommands = NULL;
+    if (mapOfCommands)
+    {
+        mapOfCommands->erase(commandName);
+        if (mapOfCommands->empty())
+        {
+            delete mapOfCommands;
+            mapOfCommands = NULL;
+        }
     }
-  }
 }
 
 bool ServerCommand::execute(const char	 *commandLine,
-			    GameKeeper::Player *playerData)
+                            GameKeeper::Player *playerData)
 {
-  if (!mapOfCommands)
-    return false;
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
-    ;
-  std::string commandToken(commandLine, i);
+    if (!mapOfCommands)
+        return false;
+    int i;
+    for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
+        ;
+    std::string commandToken(commandLine, i);
 
-  MapOfCommands::iterator it
-    = mapOfCommands->find(TextUtils::tolower(commandToken));
-  if (it == mapOfCommands->end())
-    return false;
-  return (*(it->second))(commandLine, playerData);
+    MapOfCommands::iterator it
+        = mapOfCommands->find(TextUtils::tolower(commandToken));
+    if (it == mapOfCommands->end())
+        return false;
+    return (*(it->second))(commandLine, playerData);
 }
 
 bool ServerCommand::operator() (const char *, GameKeeper::Player *)
 {
-  return true;
+    return true;
 }
 
 std::string ServerCommand::getHelp()
 {
-  return oneLineHelp;
+    return oneLineHelp;
 }
 
 // Local Variables: ***

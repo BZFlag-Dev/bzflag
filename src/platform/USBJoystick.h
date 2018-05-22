@@ -31,10 +31,11 @@
 
 #define MAX_AXIS 3
 
-class USBJoystick : public BzfJoystick {
+class USBJoystick : public BzfJoystick
+{
 public:
-	USBJoystick();
-	~USBJoystick();
+    USBJoystick();
+    ~USBJoystick();
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
     void	getJoy(int& x, int& y);

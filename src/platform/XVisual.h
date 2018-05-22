@@ -22,20 +22,21 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-class XVisual : public BzfVisual {
-  public:
-			XVisual(const XDisplay*);
-			~XVisual();
+class XVisual : public BzfVisual
+{
+public:
+    XVisual(const XDisplay*);
+    ~XVisual();
 
     void		setLevel(int level);
     void		setDoubleBuffer(bool);
     void		setIndex(int minDepth);
     void		setRGBA(int minRed, int minGreen,
-				int minBlue, int minAlpha);
+                        int minBlue, int minAlpha);
     void		setDepth(int minDepth);
     void		setStencil(int minDepth);
     void		setAccum(int minRed, int minGreen,
-				int minBlue, int minAlpha);
+                         int minBlue, int minAlpha);
     void		setStereo(bool);
     void		setMultisample(int minSamples);
 
@@ -44,7 +45,7 @@ class XVisual : public BzfVisual {
     // for other X stuff
     XVisualInfo*	get();
 
-  protected:
+protected:
     int			findAttribute(int attribute) const;
     void		appendAttribute(int attribute, int value);
     void		removeAttribute(int index);
@@ -53,7 +54,7 @@ class XVisual : public BzfVisual {
     bool		matchRequirements(XVisualInfo*) const;
     static bool		visualClassIsBetter(int thisBetter, int thanThis);
 
-  private:
+private:
     XDisplay::Rep*	display;
     bool		multisampleExt;
     int			attributes[65];

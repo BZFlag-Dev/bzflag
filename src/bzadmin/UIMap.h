@@ -36,12 +36,12 @@ typedef BZAdminUI* (*UICreator)(BZAdminClient&);
     BZAdminUI). New interface classes should register using the UIAdder
     class. */
 class UIMap : public std::map<std::string, UICreator>,
-	      public Singleton<UIMap>
+    public Singleton<UIMap>
 {
 protected:
-  friend class Singleton<UIMap>;
-  /** The constructor is hidden, this is a singleton. */
-  UIMap();
+    friend class Singleton<UIMap>;
+    /** The constructor is hidden, this is a singleton. */
+    UIMap();
 
 };
 
@@ -54,9 +54,10 @@ protected:
     <code>UIAdder MyBZAdminUI::myUIAdder("my_ui", &MyBZAdminUI::myCreator)
     </code>. The constructor will then register @c myCreator in the UIMap with
     the name "my_ui". */
-class UIAdder {
+class UIAdder
+{
 public:
-  UIAdder(const std::string& name, UICreator creator);
+    UIAdder(const std::string& name, UICreator creator);
 };
 
 #endif

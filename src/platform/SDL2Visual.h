@@ -23,19 +23,35 @@
 // Local include
 #include "SDL2Display.h"
 
-class SDLVisual : public BzfVisual {
- public:
-  SDLVisual(const SDLDisplay*) { ;};
-  void setLevel(int) {;};
-  void setDoubleBuffer(bool);
-  void setIndex(int) {;};
-  void setRGBA(int minRed, int minGreen,
-	       int minBlue, int minAlpha);
-  void setDepth(int minDepth);
-  void setStencil(int minDepth);
-  void setAccum(int, int, int, int) {;};
-  void setStereo(bool);
-  bool build() {return true;};
+class SDLVisual : public BzfVisual
+{
+public:
+    SDLVisual(const SDLDisplay*)
+    {
+        ;
+    };
+    void setLevel(int)
+    {
+        ;
+    };
+    void setDoubleBuffer(bool);
+    void setIndex(int)
+    {
+        ;
+    };
+    void setRGBA(int minRed, int minGreen,
+                 int minBlue, int minAlpha);
+    void setDepth(int minDepth);
+    void setStencil(int minDepth);
+    void setAccum(int, int, int, int)
+    {
+        ;
+    };
+    void setStereo(bool);
+    bool build()
+    {
+        return true;
+    };
 };
 
 #endif // BZF_SDL2VISUAL_H

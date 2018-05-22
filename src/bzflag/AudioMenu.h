@@ -23,21 +23,22 @@
 
 /** this class provides options for setting the gui
  */
-class AudioMenu : public HUDDialog {
+class AudioMenu : public HUDDialog
+{
 public:
-  AudioMenu();
-  ~AudioMenu();
+    AudioMenu();
+    ~AudioMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, const void* data);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, const void* data);
 private:
-  HUDuiTypeIn*	driver;
-  HUDuiTypeIn*	device;
+    HUDuiTypeIn*	driver;
+    HUDuiTypeIn*	device;
 };
 
 

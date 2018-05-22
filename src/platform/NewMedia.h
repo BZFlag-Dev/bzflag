@@ -19,10 +19,11 @@
 
 #include "BzfMedia.h"
 
-class NewMedia : public BzfMedia {
-  public:
-			NewMedia();
-			~NewMedia();
+class NewMedia : public BzfMedia
+{
+public:
+    NewMedia();
+    ~NewMedia();
 
     double		stopwatch(bool);
     bool		openAudio();

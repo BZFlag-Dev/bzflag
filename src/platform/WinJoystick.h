@@ -21,10 +21,11 @@
 #include <vector>
 #include <string>
 
-class WinJoystick : public BzfJoystick {
-  public:
-		WinJoystick();
-		~WinJoystick();
+class WinJoystick : public BzfJoystick
+{
+public:
+    WinJoystick();
+    ~WinJoystick();
 
     void	initJoystick(const char* joystickName);
     bool	joystick() const;
@@ -35,16 +36,17 @@ class WinJoystick : public BzfJoystick {
     void	setXAxis(const std::string &axis);
     void	setYAxis(const std::string &axis);
 
-  private:
+private:
     unsigned int JoystickID;
     bool	inited;
 
-    struct AxisInfo {
-      std::string name;
-      bool exists;
-      DWORD requestFlag;
-      float min;
-      float max;
+    struct AxisInfo
+    {
+        std::string name;
+        bool exists;
+        DWORD requestFlag;
+        float min;
+        float max;
     };
 
     std::vector<AxisInfo> axes;

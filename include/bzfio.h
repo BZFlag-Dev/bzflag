@@ -25,9 +25,9 @@ void logDebugMessage(int level, const char* fmt, ...);
 class LoggingCallback
 {
 public:
-	virtual ~LoggingCallback() {};
+    virtual ~LoggingCallback() {};
 
-	virtual void log ( int level, const char* message ) = 0;
+    virtual void log ( int level, const char* message ) = 0;
 };
 
 extern LoggingCallback	*loggingCallback;

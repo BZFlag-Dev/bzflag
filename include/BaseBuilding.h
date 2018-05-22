@@ -21,15 +21,16 @@
 #include <string>
 #include "Obstacle.h"
 
-class BaseBuilding : public Obstacle {
+class BaseBuilding : public Obstacle
+{
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
-  public:
-			BaseBuilding();
-			BaseBuilding(const float *pos, float rotation,
-				     const float *size, int _team, bool ricochet);
-			~BaseBuilding();
+public:
+    BaseBuilding();
+    BaseBuilding(const float *pos, float rotation,
+                 const float *size, int _team, bool ricochet);
+    ~BaseBuilding();
 
     Obstacle*	copyWithTransform(const MeshTransform&) const;
 
@@ -44,19 +45,19 @@ class BaseBuilding : public Obstacle {
 
     bool		inCylinder(const float* p, float radius, float height) const;
     bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
+                      float halfWidth, float halfBreadth, float height) const;
     bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
     bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+                           float halfWidth, float halfBreadth, float height,
+                           float* plane) const;
 
     bool		getHitNormal(const float *pos1, float azimuth1,
-				const float *pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float *normal) const;
+                             const float *pos2, float azimuth2,
+                             float halfWidth, float halfBreadth,
+                             float height,
+                             float *normal) const;
     void		getCorner(int index, float *pos) const;
     int			getTeam() const;
 
@@ -69,10 +70,10 @@ class BaseBuilding : public Obstacle {
 
     std::string		userTextures[2];
 
-  private:
+private:
     void finalize();
 
-  private:
+private:
     static const char*	typeName;
     int team;
 };

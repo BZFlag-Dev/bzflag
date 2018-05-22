@@ -21,18 +21,21 @@
 UIAdder StdOutUI::uiAdder("stdout", &StdOutUI::creator);
 
 
-StdOutUI::StdOutUI(BZAdminClient& c) : BZAdminUI(c) {
+StdOutUI::StdOutUI(BZAdminClient& c) : BZAdminUI(c)
+{
 
 }
 
 
-void StdOutUI::outputMessage(const std::string& msg, ColorCode) {
-  std::cout<<msg<<std::endl;
+void StdOutUI::outputMessage(const std::string& msg, ColorCode)
+{
+    std::cout<<msg<<std::endl;
 }
 
 
-BZAdminUI* StdOutUI::creator(BZAdminClient& client) {
-  return new StdOutUI(client);
+BZAdminUI* StdOutUI::creator(BZAdminClient& client)
+{
+    return new StdOutUI(client);
 }
 
 // Local Variables: ***

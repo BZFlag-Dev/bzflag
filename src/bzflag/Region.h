@@ -21,23 +21,25 @@
 
 const float	     maxDistance = 1.0e6;
 
-class RegionPoint {
-  public:
-			RegionPoint(float x, float y);
-			RegionPoint(const float v[2]);
-			~RegionPoint();
+class RegionPoint
+{
+public:
+    RegionPoint(float x, float y);
+    RegionPoint(const float v[2]);
+    ~RegionPoint();
 
     const float*	get() const;
 
-  private:
+private:
     float		p[2];
 };
 
 
-class BzfRegion {
-  public:
-			BzfRegion(int sides, const float p[][2]);
-			~BzfRegion();
+class BzfRegion
+{
+public:
+    BzfRegion(int sides, const float p[][2]);
+    ~BzfRegion();
 
     bool		isInside(const float p[2]) const;
     // get point distance from Region. Point should be outside Region!
@@ -51,23 +53,23 @@ class BzfRegion {
 
     bool		test(int mailboxIndex) const;
     void		setPathStuff(float distance, BzfRegion* target,
-					const float p[2], int mailboxIndex);
+                             const float p[2], int mailboxIndex);
     float		getDistance() const;
     BzfRegion*		getTarget() const;
     const float*	getA() const;
 
-  protected:
-			BzfRegion();
+protected:
+    BzfRegion();
     void		splitEdge(const BzfRegion* oldNeighbor,
-					BzfRegion* newNeighbor,
-					const RegionPoint& p,
-					bool onRight);
+                          BzfRegion* newNeighbor,
+                          const RegionPoint& p,
+                          bool onRight);
     void		addSide(const RegionPoint&, BzfRegion* neighbor);
     void		setNeighbor(const BzfRegion* oldNeighbor,
-					BzfRegion* newNeighbor);
+                            BzfRegion* newNeighbor);
     void		tidy();
 
-  private:
+private:
     std::vector<RegionPoint>	corners;
     std::vector<BzfRegion*>		neighbors;
     int			mailbox;

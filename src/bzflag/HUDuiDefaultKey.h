@@ -20,9 +20,10 @@
 
 #include "BzfEvent.h"
 
-class HUDuiDefaultKey {
-  public:
-			HUDuiDefaultKey();
+class HUDuiDefaultKey
+{
+public:
+    HUDuiDefaultKey();
     virtual		~HUDuiDefaultKey();
 
     virtual bool	keyPress(const BzfKeyEvent&);

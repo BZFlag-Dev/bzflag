@@ -29,85 +29,103 @@ BzfWindow::~BzfWindow()
 
 void			BzfWindow::callExposeCallbacks() const
 {
-  const int count = exposeCallbacks.size();
-  for (int i = 0; i < count; i++) {
-    const BzfWindowCB& cb = exposeCallbacks[i];
-    (*cb.cb)(cb.data);
-  }
+    const int count = exposeCallbacks.size();
+    for (int i = 0; i < count; i++)
+    {
+        const BzfWindowCB& cb = exposeCallbacks[i];
+        (*cb.cb)(cb.data);
+    }
 }
 
 void			BzfWindow::addExposeCallback(
-				void (*_cb)(void*), void* data)
+    void (*_cb)(void*), void* data)
 {
-  BzfWindowCB cb;
-  cb.cb = _cb;
-  cb.data = data;
-  exposeCallbacks.push_back(cb);
+    BzfWindowCB cb;
+    cb.cb = _cb;
+    cb.data = data;
+    exposeCallbacks.push_back(cb);
 }
 
 void			BzfWindow::removeExposeCallback(
-				void (*_cb)(void*), void* data)
+    void (*_cb)(void*), void* data)
 {
-  std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
-  for (; it != exposeCallbacks.end(); it++) {
-    if ((it->cb == _cb) && (it->data == data)) {
-      exposeCallbacks.erase(it);
-      break;
+    std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
+    for (; it != exposeCallbacks.end(); it++)
+    {
+        if ((it->cb == _cb) && (it->data == data))
+        {
+            exposeCallbacks.erase(it);
+            break;
+        }
     }
-  }
 }
 
 void			BzfWindow::callResizeCallbacks() const
 {
-  const int count = resizeCallbacks.size();
-  for (int i = 0; i < count; i++) {
-    const BzfWindowCB& cb = resizeCallbacks[i];
-    (*cb.cb)(cb.data);
-  }
+    const int count = resizeCallbacks.size();
+    for (int i = 0; i < count; i++)
+    {
+        const BzfWindowCB& cb = resizeCallbacks[i];
+        (*cb.cb)(cb.data);
+    }
 }
 
 void			BzfWindow::addResizeCallback(
-				void (*_cb)(void*), void* data)
+    void (*_cb)(void*), void* data)
 {
-  BzfWindowCB cb;
-  cb.cb = _cb;
-  cb.data = data;
-  resizeCallbacks.push_back(cb);
+    BzfWindowCB cb;
+    cb.cb = _cb;
+    cb.data = data;
+    resizeCallbacks.push_back(cb);
 }
 
 void			BzfWindow::removeResizeCallback(
-				void (*_cb)(void*), void* data)
+    void (*_cb)(void*), void* data)
 {
-  std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
-  for (; it != resizeCallbacks.end(); it++) {
-    if ((it->cb == _cb) && (it->data == data)) {
-      resizeCallbacks.erase(it);
-      break;
+    std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
+    for (; it != resizeCallbacks.end(); it++)
+    {
+        if ((it->cb == _cb) && (it->data == data))
+        {
+            resizeCallbacks.erase(it);
+            break;
+        }
     }
-  }
 }
 
 void			BzfWindow::yieldCurrent(void)
 {
-	// do nothing
+    // do nothing
 }
 
 void			BzfWindow::releaseCurrent(void)
 {
-	// do nothing
+    // do nothing
 }
 
 void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 {
-  // Get current mouse position
-  int mouseX, mouseY;
-  getMouse(mouseX, mouseY);
+    // Get current mouse position
+    int mouseX, mouseY;
+    getMouse(mouseX, mouseY);
 
-  // Warp the mouse if it's out of the boundary
-  if (mouseX < x1) { warpMouse(x1, mouseY); }
-  if (mouseX > x2) { warpMouse(x2, mouseY); }
-  if (mouseY < y1) { warpMouse(mouseX, y1); }
-  if (mouseY > y2) { warpMouse(mouseX, y2); }
+    // Warp the mouse if it's out of the boundary
+    if (mouseX < x1)
+    {
+        warpMouse(x1, mouseY);
+    }
+    if (mouseX > x2)
+    {
+        warpMouse(x2, mouseY);
+    }
+    if (mouseY < y1)
+    {
+        warpMouse(mouseX, y1);
+    }
+    if (mouseY > y2)
+    {
+        warpMouse(mouseX, y2);
+    }
 }
 
 // Local Variables: ***

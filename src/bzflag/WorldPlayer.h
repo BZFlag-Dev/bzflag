@@ -18,10 +18,11 @@
 #include "ShotPath.h"
 #include <vector>
 
-class WorldPlayer : public Player {
-  public:
-			WorldPlayer();
-			~WorldPlayer();
+class WorldPlayer : public Player
+{
+public:
+    WorldPlayer();
+    ~WorldPlayer();
 
     void		addShot(const FiringInfo&);
     ShotPath*		getShot(int index) const;
@@ -29,16 +30,16 @@ class WorldPlayer : public Player {
     int			getMaxShots() const;
     void		addShots(SceneDatabase* scene, bool colorblind) const;
 
-  private:
+private:
     bool		doEndShot(int index, bool isHit, float* pos);
 
-  private:
+private:
     std::vector<RemoteShotPath*> shots;
 };
 
 inline int WorldPlayer::getMaxShots() const
 {
-  return shots.size();
+    return shots.size();
 }
 
 #endif // BZF_WORLD_PLAYER_H

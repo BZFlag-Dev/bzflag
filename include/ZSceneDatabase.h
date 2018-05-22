@@ -20,11 +20,12 @@
 #include "common.h"
 #include "SceneDatabase.h"
 
-class ZSceneDatabase : public SceneDatabase {
-  friend class ZSceneIterator;
-  public:
-			ZSceneDatabase();
-			~ZSceneDatabase();
+class ZSceneDatabase : public SceneDatabase
+{
+    friend class ZSceneIterator;
+public:
+    ZSceneDatabase();
+    ~ZSceneDatabase();
 
     // returns true if the node would have been deleted
     bool		addStaticNode(SceneNode*, bool dontFree);
@@ -46,11 +47,11 @@ class ZSceneDatabase : public SceneDatabase {
 
     const Extents*	getVisualExtents() const;
 
-  private:
+private:
     void		setupCullList();
     void		makeCuller();
 
-  private:
+private:
     int			staticCount;
     int			staticSize;
     SceneNode**		staticList;

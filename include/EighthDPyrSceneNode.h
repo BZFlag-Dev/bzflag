@@ -21,30 +21,35 @@
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
-class EighthDPyrSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDPyrSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDPyrSceneNode();
+class EighthDPyrSceneNode : public EighthDimSceneNode
+{
+public:
+    EighthDPyrSceneNode(const float pos[3],
+                        const float size[3], float rotation);
+    ~EighthDPyrSceneNode();
 
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
 
-  protected:
-    class EighthDPyrRenderNode : public RenderNode {
-      public:
-			EighthDPyrRenderNode(const EighthDPyrSceneNode*,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDPyrRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDPyrSceneNode* sceneNode;
-	GLfloat		corner[5][3];
+protected:
+    class EighthDPyrRenderNode : public RenderNode
+    {
+    public:
+        EighthDPyrRenderNode(const EighthDPyrSceneNode*,
+                             const float pos[3],
+                             const float size[3], float rotation);
+        ~EighthDPyrRenderNode();
+        void		render();
+        const GLfloat*	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDPyrSceneNode* sceneNode;
+        GLfloat		corner[5][3];
     };
 
-  private:
+private:
     OpenGLGState	 gstate;
     EighthDPyrRenderNode renderNode;
 };

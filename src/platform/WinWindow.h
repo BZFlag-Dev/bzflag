@@ -21,10 +21,11 @@
 #include "WinDisplay.h"
 #include "WinVisual.h"
 
-class WinWindow : public BzfWindow {
-  public:
-			WinWindow(const WinDisplay*, WinVisual*);
-			~WinWindow();
+class WinWindow : public BzfWindow
+{
+public:
+    WinWindow(const WinDisplay*, WinVisual*);
+    ~WinWindow();
 
     bool		isValid() const;
 
@@ -43,8 +44,8 @@ class WinWindow : public BzfWindow {
 
     void		warpMouse(int x, int y);
     void		getMouse(int& x, int& y) const;
-	void		disableConfineToMotionbox();
-	void		confineToMotionbox(int x1, int y1, int x2, int y2);
+    void		disableConfineToMotionbox();
+    void		confineToMotionbox(int x1, int y1, int x2, int y2);
     void		grabMouse();
     void		ungrabMouse();
     void		enableGrabMouse(bool on);
@@ -71,7 +72,7 @@ class WinWindow : public BzfWindow {
     static void		deactivateAll();
     static void		reactivateAll();
 
-  private:
+private:
     BYTE		getIntensityValue(float) const;
     static float	getComponentFromIndex(int i, UINT nbits, UINT shift);
     void		makeColormap(const PIXELFORMATDESCRIPTOR&);
@@ -82,7 +83,7 @@ class WinWindow : public BzfWindow {
     void		getGammaRamps(WORD*);
     void		setGammaRamps(const WORD*);
 
-  private:
+private:
     const WinDisplay*	display;
     WinVisual		visual;
     bool		inDestroy;

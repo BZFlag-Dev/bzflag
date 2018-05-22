@@ -25,43 +25,45 @@
 
 class MenuDefaultKey;
 
-class HelpMenuDefaultKey : public MenuDefaultKey {
+class HelpMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  HelpMenuDefaultKey() {}
-  ~HelpMenuDefaultKey() {}
+    HelpMenuDefaultKey() {}
+    ~HelpMenuDefaultKey() {}
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 };
 
 
-class HelpMenu : public HUDDialog {
+class HelpMenu : public HUDDialog
+{
 public:
-  HelpMenu(const char* title = "Help");
-  ~HelpMenu()
-  {
-  }
+    HelpMenu(const char* title = "Help");
+    ~HelpMenu()
+    {
+    }
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return &defaultKey;
-  }
-  void execute()
-  {
-  }
-  void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    void execute()
+    {
+    }
+    void resize(int width, int height);
 
-  static HelpMenu* getHelpMenu(HUDDialog* = NULL, bool next = true);
-  static void done();
+    static HelpMenu* getHelpMenu(HUDDialog* = NULL, bool next = true);
+    static void done();
 
 protected:
-  HUDuiControl* createLabel(const char* string,
-			    const char* label = NULL);
-  virtual float	getLeftSide(int width, int height);
+    HUDuiControl* createLabel(const char* string,
+                              const char* label = NULL);
+    virtual float	getLeftSide(int width, int height);
 
 private:
-  HelpMenuDefaultKey defaultKey;
-  static HelpMenu** helpMenus;
+    HelpMenuDefaultKey defaultKey;
+    static HelpMenu** helpMenus;
 };
 
 

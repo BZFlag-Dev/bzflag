@@ -21,12 +21,13 @@
 #include <string>
 #include "Obstacle.h"
 
-class WallObstacle : public Obstacle {
-  public:
-			WallObstacle();
-			WallObstacle(const float* pos, float rotation,
-				     float breadth, float height, bool ricochet);
-			~WallObstacle();
+class WallObstacle : public Obstacle
+{
+public:
+    WallObstacle();
+    WallObstacle(const float* pos, float rotation,
+                 float breadth, float height, bool ricochet);
+    ~WallObstacle();
 
     const char*		getType() const;
     static const char*	getClassName(); // const
@@ -36,17 +37,17 @@ class WallObstacle : public Obstacle {
 
     bool		inCylinder(const float* p, float radius, float height) const;
     bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
+                      float halfWidth, float halfBreadth, float height) const;
     bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
 
     bool		getHitNormal(
-				const float* pos1, float azimuth1,
-				const float* pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float* normal) const;
+        const float* pos1, float azimuth1,
+        const float* pos2, float azimuth2,
+        float halfWidth, float halfBreadth,
+        float height,
+        float* normal) const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -56,10 +57,10 @@ class WallObstacle : public Obstacle {
 
     std::string		userTextures[1];
 
-  private:
+private:
     void finalize();
 
-  private:
+private:
     float		plane[4];
     static const char*	typeName;
 };

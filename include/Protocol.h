@@ -51,10 +51,11 @@ const int		MaxUDPPacketLen = 68;
 const char* const	BanRefusalString = "REFUSED:";
 
 // player attributes for the MsgPlayerInfo message
-enum PlayerAttribute {
-  IsRegistered = 1 << 0,
-  IsVerified   = 1 << 1,
-  IsAdmin      = 1 << 2
+enum PlayerAttribute
+{
+    IsRegistered = 1 << 0,
+    IsVerified   = 1 << 1,
+    IsAdmin      = 1 << 2
 };
 
 // null message code -- should never be sent

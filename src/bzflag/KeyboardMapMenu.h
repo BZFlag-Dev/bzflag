@@ -33,24 +33,32 @@
 
 class KeyboardMapMenu;
 
-class KeyboardMapMenuDefaultKey : public MenuDefaultKey {
-  public:
-			KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
-			~KeyboardMapMenuDefaultKey() {}
+class KeyboardMapMenuDefaultKey : public MenuDefaultKey
+{
+public:
+    KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
+    ~KeyboardMapMenuDefaultKey() {}
 
     bool		keyPress(const BzfKeyEvent&);
     bool		keyRelease(const BzfKeyEvent&);
 
-  public:
+public:
     KeyboardMapMenu*	menu;
 };
 
-class KeyboardMapMenu : public HUDDialog {
-  public:
-			KeyboardMapMenu();
-			~KeyboardMapMenu() { delete quickKeysMenu; }
+class KeyboardMapMenu : public HUDDialog
+{
+public:
+    KeyboardMapMenu();
+    ~KeyboardMapMenu()
+    {
+        delete quickKeysMenu;
+    }
 
-    HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
+    HUDuiDefaultKey*	getDefaultKey()
+    {
+        return &defaultKey;
+    }
     void		execute();
     void		dismiss();
     void		resize(int width, int height);
@@ -59,19 +67,20 @@ class KeyboardMapMenu : public HUDDialog {
     void		setKey(const BzfKeyEvent&);
     void		onScan(const std::string& name, bool press, const std::string& cmd);
     static void		onScanCB(const std::string& name, bool press,
-				 const std::string& cmd, void* userData);
+                             const std::string& cmd, void* userData);
 
-  private:
+private:
     void		update();
 
     HUDuiLabel*		createLabel(const char*, const char* = NULL);
 
     void		initkeymap(const std::string& name, int index);
-  private:
-    struct keymap {
-      int index;	// ui label index
-      std::string key1;
-      std::string key2;
+private:
+    struct keymap
+    {
+        int index;	// ui label index
+        std::string key1;
+        std::string key2;
     };
     typedef std::map<std::string, keymap> KeyKeyMap;
     KeyKeyMap				mappable;

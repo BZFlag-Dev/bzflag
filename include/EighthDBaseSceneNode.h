@@ -21,27 +21,32 @@
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
-class EighthDBaseSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDBaseSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDBaseSceneNode();
+class EighthDBaseSceneNode : public EighthDimSceneNode
+{
+public:
+    EighthDBaseSceneNode(const float pos[3],
+                         const float size[3], float rotation);
+    ~EighthDBaseSceneNode();
     void		notifyStyleChange();
     void		addRenderNodes(SceneRenderer&);
-  protected:
-    class EighthDBaseRenderNode : public RenderNode {
-      public:
-			EighthDBaseRenderNode(const EighthDBaseSceneNode *,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDBaseRenderNode();
-	void		render();
-	const GLfloat *	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDBaseSceneNode *sceneNode;
-	GLfloat corner[8][3];
+protected:
+    class EighthDBaseRenderNode : public RenderNode
+    {
+    public:
+        EighthDBaseRenderNode(const EighthDBaseSceneNode *,
+                              const float pos[3],
+                              const float size[3], float rotation);
+        ~EighthDBaseRenderNode();
+        void		render();
+        const GLfloat *	getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDBaseSceneNode *sceneNode;
+        GLfloat corner[8][3];
     };
-  private:
+private:
     OpenGLGState	  gstate;
     EighthDBaseRenderNode renderNode;
 };

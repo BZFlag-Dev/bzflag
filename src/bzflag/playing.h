@@ -40,8 +40,9 @@
 typedef void		(*JoinGameCallback)(bool success, void* data);
 typedef void		(*ConnectStatusCallback)(std::string& str);
 typedef void		(*PlayingCallback)(void*);
-struct PlayingCallbackItem {
-  public:
+struct PlayingCallbackItem
+{
+public:
     PlayingCallback	cb;
     void*		data;
 };
@@ -61,10 +62,10 @@ StartupInfo*		getStartupInfo();
 void			notifyBzfKeyMapChanged();
 bool			setVideoFormat(int, bool test = false);
 void			startPlaying(BzfDisplay* display,
-				     SceneRenderer&);
+                             SceneRenderer&);
 
 bool			addExplosion(const float* pos,
-				float size, float duration);
+                             float size, float duration);
 void			addTankExplosion(const float* pos);
 void			addShotExplosion(const float* pos);
 void			addShotPuff(const float* pos, float azimuth, float elevation);
@@ -80,14 +81,14 @@ void		    leaveGame();
 std::vector<std::string>& getSilenceList();
 void			updateEvents();
 void			addMessage(const Player* player,
-				   const std::string& msg,
-				   int mode = 3,
-				   bool highlight = false,
-				   const char* oldColor = NULL);
+                           const std::string& msg,
+                           int mode = 3,
+                           bool highlight = false,
+                           const char* oldColor = NULL);
 
 int			curlProgressFunc(void* clientp,
-					 double dltotal, double dlnow,
-					 double ultotal, double ulnow);
+                             double dltotal, double dlnow,
+                             double ultotal, double ulnow);
 
 void selectNextRecipient (bool forward, bool robotIn);
 void handleFlagDropped(Player* tank);
@@ -122,16 +123,17 @@ extern bool	     roamButton;
 #define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
 
-enum BlowedUpReason {
-	GotKilledMsg,
-	GotShot,
-	GotRunOver,
-	GotCaptured,
-	GenocideEffect,
-	SelfDestruct,
-	WaterDeath,
-	LastReason,
-	DeathTouch = PhysicsDriverDeath
+enum BlowedUpReason
+{
+    GotKilledMsg,
+    GotShot,
+    GotRunOver,
+    GotCaptured,
+    GenocideEffect,
+    SelfDestruct,
+    WaterDeath,
+    LastReason,
+    DeathTouch = PhysicsDriverDeath
 };
 
 #endif // BZF_PLAYING_H

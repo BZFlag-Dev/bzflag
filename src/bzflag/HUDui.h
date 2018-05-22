@@ -22,8 +22,9 @@
 #include "HUDuiControl.h"
 #include "HUDuiDefaultKey.h"
 
-class HUDui {
-  public:
+class HUDui
+{
+public:
     static HUDuiControl* getFocus();
     static void		setFocus(HUDuiControl*);
 
@@ -33,7 +34,7 @@ class HUDui {
     static bool	keyPress(const BzfKeyEvent&);
     static bool	keyRelease(const BzfKeyEvent&);
 
-  private:
+private:
     static HUDuiControl *focus;
     static HUDuiDefaultKey* defaultKey;
 };

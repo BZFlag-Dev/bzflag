@@ -19,22 +19,22 @@
 
 HUDuiDefaultKey::HUDuiDefaultKey()
 {
-  // do nothing
+    // do nothing
 }
 
 HUDuiDefaultKey::~HUDuiDefaultKey()
 {
-  // do nothing
+    // do nothing
 }
 
 bool			HUDuiDefaultKey::keyPress(const BzfKeyEvent&)
 {
-  return false;
+    return false;
 }
 
 bool			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 {
-  return false;
+    return false;
 }
 
 // Local Variables: ***

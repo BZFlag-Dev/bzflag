@@ -24,11 +24,12 @@
 
 class std::ostream;
 
-class BaseResources {
-  public:
-			BaseResources();
-			BaseResources(const BaseResources&);
-			~BaseResources();
+class BaseResources
+{
+public:
+    BaseResources();
+    BaseResources(const BaseResources&);
+    ~BaseResources();
     BaseResources&	operator=(const BaseResources&);
 
     bool		hasName(const std::string&) const;
@@ -36,18 +37,18 @@ class BaseResources {
 
     void		addName(const std::string&);
 
-  protected:
-  static std::ostream&	print(std::ostream&, const std::string& name,
-					const char* format, ...); // const
+protected:
+    static std::ostream&	print(std::ostream&, const std::string& name,
+                                  const char* format, ...); // const
     static bool	match(const std::string& wildName,
-					const std::string& name); // const
-  private:
+                      const std::string& name); // const
+private:
     static int		doMatch(const char* pattern,
-					const char* string); // const
+                            const char* string); // const
     static int		matchStar(const char* pattern,
-					const char* string); // const
+                              const char* string); // const
 
-  private:
+private:
     std::vector<std::string>	names;
 };
 
@@ -57,7 +58,7 @@ class BaseResources {
 
 inline const std::vector<std::string>&	BaseResources::getNames() const
 {
-  return names;
+    return names;
 }
 
 #endif // BZF_BASE_RESOURCES_H

@@ -20,65 +20,69 @@
 
 const int ReplayObservers = 16;
 
-enum ReplayPacketMode {
-  RealPacket   = 0, // broadcasted during replay
-  StatePacket  = 1, // broadcasted to those you aren't yet stateful
-  UpdatePacket = 2, // never broadcasted (only for replay use)
-  HiddenPacket = 3  // never broadcasted (stored for admin. purposes)
+enum ReplayPacketMode
+{
+    RealPacket   = 0, // broadcasted during replay
+    StatePacket  = 1, // broadcasted to those you aren't yet stateful
+    UpdatePacket = 2, // never broadcasted (only for replay use)
+    HiddenPacket = 3  // never broadcasted (stored for admin. purposes)
 };
 
-namespace Record {
-  extern bool init ();
-  extern bool kill ();
+namespace Record
+{
+extern bool init ();
+extern bool kill ();
 
-  extern bool setDirectory (const char *dirname);
-  extern const char* getDirectory ();
+extern bool setDirectory (const char *dirname);
+extern const char* getDirectory ();
 
-  extern bool start (int playerIndex);
-  extern bool stop (int playerIndex);
-  extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
-  extern bool setRate (int playerIndex, int seconds); // set state update rate
-  extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
-  extern bool saveBuffer (int playerIndex, const char *filename, int seconds);
-  extern bool sendStats (int playerIndex);
+extern bool start (int playerIndex);
+extern bool stop (int playerIndex);
+extern bool setSize (int playerIndex, int Mbytes);  // set max size, in Mbytes
+extern bool setRate (int playerIndex, int seconds); // set state update rate
+extern bool saveFile (int playerIndex, const char *filename); // unbuffered save
+extern bool saveBuffer (int playerIndex, const char *filename, int seconds);
+extern bool sendStats (int playerIndex);
 
-  extern bool enabled ();
+extern bool enabled ();
 
-  extern bool getAllowFileRecs();
-  extern void setAllowFileRecs(bool value);
+extern bool getAllowFileRecs();
+extern void setAllowFileRecs(bool value);
 
-  extern bool addPacket (uint16_t code, int len, const void * data,
-			 uint16_t mode = RealPacket);
+extern bool addPacket (uint16_t code, int len, const void * data,
+                       uint16_t mode = RealPacket);
 
-  extern void sendHelp (int playerIndex);
+extern void sendHelp (int playerIndex);
 }
 
-namespace Replay {
-  extern bool init (); // must be done before any players join
-  extern bool kill ();
+namespace Replay
+{
+extern bool init (); // must be done before any players join
+extern bool kill ();
 
-  extern bool sendFileList (int playerIndex, const char* options);
-  extern bool loadFile (int playerIndex, const char *filename);
-  extern bool unloadFile (int playerIndex);
-  extern bool play (int playerIndex);
-  extern bool loop (int playerIndex);
-  extern bool sendStats (int playerIndex);
-  extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
-  extern bool pause (int playerIndex);
+extern bool sendFileList (int playerIndex, const char* options);
+extern bool loadFile (int playerIndex, const char *filename);
+extern bool unloadFile (int playerIndex);
+extern bool play (int playerIndex);
+extern bool loop (int playerIndex);
+extern bool sendStats (int playerIndex);
+extern bool skip (int playerIndex, int seconds); // 0 secs jumps to next packet
+extern bool pause (int playerIndex);
 
-  extern bool enabled ();
-  extern bool playing ();
+extern bool enabled ();
+extern bool playing ();
 
-  extern float nextTime ();
-  extern bool sendPackets ();
+extern float nextTime ();
+extern bool sendPackets ();
 
-  extern void sendHelp (int playerIndex);
+extern void sendHelp (int playerIndex);
 
-  enum ReplayListSort {
+enum ReplayListSort
+{
     SortNone = 0,
     SortByName = 1,
     SortByTime = 2
-  };
+};
 }
 
 // OOPS, get rid of these during the next protocol change
@@ -93,51 +97,54 @@ typedef int64_t RRtime;	// should last a while
 typedef __int64 RRtime;
 #endif
 
-enum RecordType {
-  StraightToFile  = 0,
-  BufferedRecord = 1
+enum RecordType
+{
+    StraightToFile  = 0,
+    BufferedRecord = 1
 };
 
-typedef struct RRpacket {
-  struct RRpacket *next;
-  struct RRpacket *prev;
-  u16 mode;
-  u16 code;
-  u32 len;
-  u32 nextFilePos;
-  u32 prevFilePos;
-  RRtime timestamp;
-  const char *data;
+typedef struct RRpacket
+{
+    struct RRpacket *next;
+    struct RRpacket *prev;
+    u16 mode;
+    u16 code;
+    u32 len;
+    u32 nextFilePos;
+    u32 prevFilePos;
+    RRtime timestamp;
+    const char *data;
 } RRpacket;
 //static const unsigned int RRpacketHdrSize =
 //  sizeof(RRpacket) - (2 * sizeof(RRpacket*) - sizeof(char*));
 static const unsigned int RRpacketHdrSize =
-  PACKET_SIZE_STUFFING +
-  (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
+    PACKET_SIZE_STUFFING +
+    (2 * sizeof(u16)) + (3 * sizeof(u32)) + sizeof(RRtime);
 
-typedef struct {
-  u32 magic;			// record file type identifier
-  u32 version;			// record file version
-  u32 offset;			// length of the full header
-  RRtime filetime;		// amount of time in the file
-  u32 player;			// player that saved this record file
-  u32 flagsSize;		// size of the flags data
-  u32 worldSize;		// size of world database
-  char callSign[CallSignLen];	// player's callsign
-  char motto[MottoLen];		// player's motto
-  char ServerVersion[8];	// BZFS protocol version
-  char appVersion[MessageLen - 14];	// BZFS application version
-  char realHash[64];		// hash of worldDatabase
-  char worldSettings[4 + WorldSettingsSize]; // the game settings
-  char *flags;			// a list of the flags types
-  char *world;			// the world
+typedef struct
+{
+    u32 magic;			// record file type identifier
+    u32 version;			// record file version
+    u32 offset;			// length of the full header
+    RRtime filetime;		// amount of time in the file
+    u32 player;			// player that saved this record file
+    u32 flagsSize;		// size of the flags data
+    u32 worldSize;		// size of world database
+    char callSign[CallSignLen];	// player's callsign
+    char motto[MottoLen];		// player's motto
+    char ServerVersion[8];	// BZFS protocol version
+    char appVersion[MessageLen - 14];	// BZFS application version
+    char realHash[64];		// hash of worldDatabase
+    char worldSettings[4 + WorldSettingsSize]; // the game settings
+    char *flags;			// a list of the flags types
+    char *world;			// the world
 } ReplayHeader;
 //static const unsigned int ReplayHeaderSize =
 //  sizeof(ReplayHeader) - (2 * sizeof(char*));
 static const unsigned int ReplayHeaderSize =
-  HEADER_SIZE_STUFFING +
-  (sizeof(u32) * 6) + sizeof(RRtime) +
-  CallSignLen + MottoLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
+    HEADER_SIZE_STUFFING +
+    (sizeof(u32) * 6) + sizeof(RRtime) +
+    CallSignLen + MottoLen + 8 + MessageLen + 64 + 4 + WorldSettingsSize;
 
 // Some notes:
 //

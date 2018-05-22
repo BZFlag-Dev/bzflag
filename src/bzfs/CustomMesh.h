@@ -30,14 +30,15 @@
 #include <vector>
 
 
-class CustomMesh : public WorldFileObstacle {
-  public:
+class CustomMesh : public WorldFileObstacle
+{
+public:
     CustomMesh();
     ~CustomMesh();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
+private:
 
     BzMaterial material; // holds current defaults
 
