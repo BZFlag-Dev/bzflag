@@ -1631,6 +1631,8 @@ BZF_API bool bz_isPlayerSpawnable ( int playerId );
 BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base );
 BZF_API bool bz_getPlayerSpawnAtBase ( int playerId );
 
+BZF_API bool bz_forceSpawnPlayer(int playerID, float pos[3], float rot);
+
 // player access control
 BZF_API bool bz_addPlayerToGame (int playerID );
 

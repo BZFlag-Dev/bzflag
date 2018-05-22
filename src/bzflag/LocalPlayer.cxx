@@ -999,25 +999,27 @@ ShotPath*		LocalPlayer::getShot(int index) const
 
 void			LocalPlayer::restart(const float* pos, float _azimuth)
 {
-  // put me in limbo
-  setStatus(short(PlayerState::DeadStatus));
 
-  // can't have a flag
-  setFlag(Flags::Null);
+  if ((getStatus() & short(PlayerState::Alive)) == 0) { // alive player who gets a spawn means they were forced
+    // put me in limbo if I'm not alive
+    setStatus(short(PlayerState::DeadStatus));
 
-  // get rid of existing shots
-  for (int i = 0; i < numShots; i++)
-    if (shots[i]) {
-      delete shots[i];
-      shots[i] = NULL;
-    }
-  anyShotActive = false;
+    // can't have a flag
+    setFlag(Flags::Null);
 
-  // no target
-  target = NULL;
+    // get rid of existing shots
+    for (int i = 0; i < numShots; i++)
+      if (shots[i]) {
+        delete shots[i];
+        shots[i] = NULL;
+      }
+    anyShotActive = false;
+    // no target
+    target = NULL;
 
-  // no death
-  deathPhyDrv = -1;
+    // no death
+    deathPhyDrv = -1;
+  }
 
   // initialize position/speed state
   static const float zero[3] = { 0.0f, 0.0f, 0.0f };
