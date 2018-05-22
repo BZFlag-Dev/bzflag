@@ -200,8 +200,8 @@ std::string Language::frenchName(std::string)
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
+// tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: s ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

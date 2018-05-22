@@ -182,8 +182,8 @@ void WallObstacle::print(std::ostream& UNUSED(out),
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: s ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
