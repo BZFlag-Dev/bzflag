@@ -172,7 +172,7 @@ The source code serves for examples of the following rules.
 	// mode: C++ ***
 	// tab-width: 4 ***
 	// c-basic-offset: 4 ***
-	// indent-tabs-mode: s ***
+	// indent-tabs-mode: nil ***
 	// End: ***
 	// ex: shiftwidth=4 tabstop=4
 
@@ -248,8 +248,8 @@ The source code serves for examples of the following rules.
       patches with "// Added by foo on xx" comments.  This is what
       version control software is for.
 
- 10)  Do not code very long lines.  Try to stay within 200 columns if
-      possible, but don't go over 250 if you should raise that limit
+ 10)  Do not code very long lines.  Try to stay within 120 columns if
+      possible, but don't go over 200 if you should raise that limit
       for some reason.
 
 Violations of these rules in the existing code are not excuses to
