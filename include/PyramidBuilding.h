@@ -11,11 +11,11 @@
  */
 
 /* PyramidBuilding:
- *	Encapsulates a pyramid in the game environment.
+ *  Encapsulates a pyramid in the game environment.
  */
 
-#ifndef	BZF_PYRAMID_BUILDING_H
-#define	BZF_PYRAMID_BUILDING_H
+#ifndef BZF_PYRAMID_BUILDING_H
+#define BZF_PYRAMID_BUILDING_H
 
 #include "common.h"
 #include <string>
@@ -29,35 +29,35 @@ public:
                     float width, float breadth, float height, bool drive = false, bool shoot = false, bool ricochet = false);
     ~PyramidBuilding();
 
-    virtual Obstacle*	copyWithTransform(const MeshTransform&) const;
+    virtual Obstacle*   copyWithTransform(const MeshTransform&) const;
 
-    const char*		getType() const;
-    static const char*	getClassName(); // const
+    const char*     getType() const;
+    static const char*  getClassName(); // const
 
-    bool		isFlatTop() const;
+    bool        isFlatTop() const;
 
-    float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
-    void		get3DNormal(const float* p, float* n) const;
+    float       intersect(const Ray&) const;
+    void        getNormal(const float* p, float* n) const;
+    void        get3DNormal(const float* p, float* n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
+    bool        inCylinder(const float* p, float radius, float height) const;
+    bool        inBox(const float* p, float angle,
                       float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
+    bool        inMovingBox(const float* oldP, float oldAngle,
                             const float *newP, float newAngle,
                             float halfWidth, float halfBreadth, float height) const;
-    bool		isCrossing(const float* p, float angle,
+    bool        isCrossing(const float* p, float angle,
                            float halfWidth, float halfBreadth, float height,
                            float* plane) const;
 
-    bool		getHitNormal(
+    bool        getHitNormal(
         const float* pos1, float azimuth1,
         const float* pos2, float azimuth2,
         float halfWidth, float halfBreadth,
         float height,
         float* normal) const;
 
-    void		getCorner(int index, float* pos) const;
+    void        getCorner(int index, float* pos) const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -66,16 +66,16 @@ public:
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-    std::string		userTextures[1];
+    std::string     userTextures[1];
 
 private:
     void finalize();
 
     // compute minimum shrinking for height between z and z + height
-    float		shrinkFactor(float z, float height = 0.0) const;
+    float       shrinkFactor(float z, float height = 0.0) const;
 
 private:
-    static const char*	typeName;
+    static const char*  typeName;
 };
 
 #endif // BZF_PYRAMID_BUILDING_H
@@ -84,6 +84,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

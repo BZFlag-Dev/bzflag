@@ -31,10 +31,10 @@
 
 typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
 
-static FlagSuccessMap	flagSuccess;
-static int		totalSum = 0;
-static int		totalCnt = 0;
-static bool		wantJump = false;
+static FlagSuccessMap   flagSuccess;
+static int      totalSum = 0;
+static int      totalCnt = 0;
+static bool     wantJump = false;
 
 static PlanStack planStack;
 
@@ -51,9 +51,7 @@ void teachAutoPilot(FlagType *type, int adjust)
         pr.second++;
     }
     else
-    {
         flagSuccess[type] = std::pair<int,int>(adjust,1);
-    }
     totalSum += adjust;
     totalCnt++;
 }
@@ -74,9 +72,7 @@ static bool isFlagUseful(FlagType *type)
             flagValue = (float)pr.first / (float)pr.second;
     }
     else
-    {
         return true;
-    }
 
     float avg;
     if (totalCnt == 0)
@@ -205,9 +201,7 @@ static bool avoidDeathFall(float & UNUSED(rotation), float &speed)
         }
     }
     else if (collisionPt[2] < (pos2[2] - 1.0f))
-    {
         speed *= 0.5f;
-    }
 
     return false;
 }
@@ -631,9 +625,7 @@ static bool navigate(float &rotation, float &speed)
         }
     }
     else
-    {
         speed = 1.0f;
-    }
     if (myTank->getLocation() == LocalPlayer::InAir
             && myTank->getFlag() == Flags::Wings)
         wantJump = true;
@@ -691,9 +683,7 @@ static bool fireAtTank()
                             t = curMaxPlayers;
                         }
                         else
-                        {
                             hasSWTarget = true;
-                        }
                     }
                 }
             }
@@ -784,7 +774,7 @@ static void dropHardFlags()
     }
 }
 
-void	doAutoPilot(float &rotation, float &speed)
+void    doAutoPilot(float &rotation, float &speed)
 {
     wantJump = false;
 
@@ -796,9 +786,7 @@ void	doAutoPilot(float &rotation, float &speed)
             if (!chasePlayer(rotation, speed))
             {
                 if (!lookForFlag(rotation, speed))
-                {
                     navigate(rotation, speed);
-                }
             }
         }
     }
@@ -817,6 +805,6 @@ void	doAutoPilot(float &rotation, float &speed)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

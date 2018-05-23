@@ -22,13 +22,13 @@
 class Resolution
 {
 public:
-    int			width;
-    int			height;
-    int			refresh;
-    int			depth;
+    int         width;
+    int         height;
+    int         refresh;
+    int         depth;
 };
 
-static int		resolutionCompare(const void* _a, const void* _b)
+static int      resolutionCompare(const void* _a, const void* _b)
 {
     const Resolution* a = (const Resolution*)_a;
     const Resolution* b = (const Resolution*)_b;
@@ -58,18 +58,18 @@ WinDisplay::Rep::Rep(const char*) : refCount(1),
     hInstance = GetModuleHandle(NULL);
 
     WNDCLASSEX wc;
-    wc.cbSize		= sizeof(wc);
-    wc.style		= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    wc.lpfnWndProc	= (WNDPROC)windowProc;
-    wc.cbClsExtra		= 0;
-    wc.cbWndExtra		= 0;
-    wc.hInstance		= hInstance;
-    wc.hIcon		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BZICON));
-    wc.hCursor		= LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground	= (HBRUSH)GetStockObject(NULL_BRUSH);
-    wc.lpszMenuName	= NULL;
-    wc.lpszClassName	= "BZFLAG";
-    wc.hIconSm		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BZICON));
+    wc.cbSize       = sizeof(wc);
+    wc.style        = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
+    wc.lpfnWndProc  = (WNDPROC)windowProc;
+    wc.cbClsExtra       = 0;
+    wc.cbWndExtra       = 0;
+    wc.hInstance        = hInstance;
+    wc.hIcon        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BZICON));
+    wc.hCursor      = LoadCursor(NULL, IDC_ARROW);
+    wc.hbrBackground    = (HBRUSH)GetStockObject(NULL_BRUSH);
+    wc.lpszMenuName = NULL;
+    wc.lpszClassName    = "BZFLAG";
+    wc.hIconSm      = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_BZICON));
 
     if (RegisterClassEx(&wc) == 0)
         hInstance = NULL;
@@ -80,17 +80,17 @@ WinDisplay::Rep::~Rep()
     // do nothing
 }
 
-void			WinDisplay::Rep::ref()
+void            WinDisplay::Rep::ref()
 {
     refCount++;
 }
 
-void			WinDisplay::Rep::unref()
+void            WinDisplay::Rep::unref()
 {
     if (--refCount <= 0) delete this;
 }
 
-LONG WINAPI		WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
+LONG WINAPI     WinDisplay::Rep::windowProc(HWND hwnd, UINT msg,
         WPARAM wparam, LPARAM lparam)
 {
     switch (msg)
@@ -214,27 +214,27 @@ WinDisplay::~WinDisplay()
     rep->unref();
 }
 
-bool			WinDisplay::isFullScreenOnly() const
+bool            WinDisplay::isFullScreenOnly() const
 {
     return false;
 }
 
-int			WinDisplay::getFullWidth() const
+int         WinDisplay::getFullWidth() const
 {
     return fullWidth;
 }
 
-int			WinDisplay::getFullHeight() const
+int         WinDisplay::getFullHeight() const
 {
     return fullHeight;
 }
 
-bool			WinDisplay::isValid() const
+bool            WinDisplay::isValid() const
 {
     return rep->hInstance != NULL;
 }
 
-bool			WinDisplay::isEventPending() const
+bool            WinDisplay::isEventPending() const
 {
     MSG msg;
     return (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
@@ -255,7 +255,7 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
 
     case WM_PAINT:
         event.type = BzfEvent::Redraw;
-        ValidateRect(msg.hwnd, NULL);		// no more WM_PAINTs, please!
+        ValidateRect(msg.hwnd, NULL);       // no more WM_PAINTs, please!
         break;
 
     case WM_SIZE:
@@ -373,34 +373,34 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
     return true;
 }
 
-bool			WinDisplay::peekEvent(BzfEvent& event) const
+bool            WinDisplay::peekEvent(BzfEvent& event) const
 {
     MSG msg;
     if (PeekMessage(&msg, NULL, 0, 0,0) == -1) return false;
     return windowsEventToBZFEvent(msg,event);
 }
 
-bool			WinDisplay::getEvent(BzfEvent& event) const
+bool            WinDisplay::getEvent(BzfEvent& event) const
 {
     MSG msg;
     if (GetMessage(&msg, NULL, 0, 0) == -1) return false;
     return windowsEventToBZFEvent(msg,event);
 }
 
-void			WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
+void            WinDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 {
     shift = (GetKeyState(VK_SHIFT) < 0);
     ctrl  = (GetKeyState(VK_CONTROL) < 0);
     alt   = (GetKeyState(VK_MENU) < 0);
 }
 
-bool			WinDisplay::getKey(const MSG& msg,
+bool            WinDisplay::getKey(const MSG& msg,
                                    BzfKeyEvent& key) const
 {
     key.shift = 0;
-    if (GetKeyState(VK_SHIFT) < 0)	key.shift |= BzfKeyEvent::ShiftKey;
-    if (GetKeyState(VK_CONTROL) < 0)	key.shift |= BzfKeyEvent::ControlKey;
-    if (GetKeyState(VK_MENU) < 0)		key.shift |= BzfKeyEvent::AltKey;
+    if (GetKeyState(VK_SHIFT) < 0)  key.shift |= BzfKeyEvent::ShiftKey;
+    if (GetKeyState(VK_CONTROL) < 0)    key.shift |= BzfKeyEvent::ControlKey;
+    if (GetKeyState(VK_MENU) < 0)       key.shift |= BzfKeyEvent::AltKey;
 
     if (translated)
     {
@@ -412,9 +412,7 @@ bool			WinDisplay::getKey(const MSG& msg,
             ((WinDisplay*)this)->charCode = (char)(TCHAR)cmsg.wParam;
         }
         else
-        {
             ((WinDisplay*)this)->charCode = 0;
-        }
     }
 
     if (charCode != 0)
@@ -428,7 +426,7 @@ bool			WinDisplay::getKey(const MSG& msg,
     return (key.ascii != 0 || key.button != 0);
 }
 
-bool			WinDisplay::isNastyKey(const MSG& msg) const
+bool            WinDisplay::isNastyKey(const MSG& msg) const
 {
     switch (msg.wParam)
     {
@@ -446,24 +444,24 @@ bool			WinDisplay::isNastyKey(const MSG& msg) const
     return false;
 }
 
-bool			WinDisplay::setDefaultResolution() const
+bool            WinDisplay::setDefaultResolution() const
 {
     ChangeDisplaySettings(0, 0);
     return true;
 }
 
-bool			WinDisplay::doSetResolution(int index)
+bool            WinDisplay::doSetResolution(int index)
 {
     // try setting the format
     Resolution& format = resolutions[index];
     DEVMODE dm;
     memset(&dm, 0, sizeof(dm));
-    dm.dmSize	     = sizeof(dm);
-    dm.dmPelsWidth	= format.width;
+    dm.dmSize        = sizeof(dm);
+    dm.dmPelsWidth  = format.width;
     dm.dmPelsHeight       = format.height;
     dm.dmBitsPerPel       = format.depth;
     dm.dmDisplayFrequency = format.refresh;
-    dm.dmFields	   = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
+    dm.dmFields    = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
     if (dm.dmDisplayFrequency != 0)
         dm.dmFields |= DM_DISPLAYFREQUENCY;
 
@@ -486,7 +484,7 @@ bool			WinDisplay::doSetResolution(int index)
     return changed;
 }
 
-BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
+BzfDisplay::ResInfo**   WinDisplay::getVideoFormats(
     int& numModes, int& currentMode)
 {
     HDC hDC = GetDC(GetDesktopWindow());
@@ -593,790 +591,790 @@ BzfDisplay::ResInfo**	WinDisplay::getVideoFormats(
     return resInfo;
 }
 
-const int		WinDisplay::asciiMap[] =
+const int       WinDisplay::asciiMap[] =
 {
-    0,			// no VK_ code
-    0,			// VK_LBUTTON
-    0,			// VK_RBUTTON
-    0,			// VK_CANCEL
-    0,			// VK_MBUTTON
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    8,			// VK_BACK
-    9,			// VK_TAB
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_CLEAR
-    13,			// VK_RETURN
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_SHIFT
-    0,			// VK_CONTROL
-    0,			// VK_MENU
-    0,			// VK_PAUSE
-    0,			// VK_CAPITAL
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    27,			// VK_ESCAPE
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    ' ',			// VK_SPACE
-    0,			// VK_PRIOR
-    0,			// VK_NEXT
-    0,			// VK_END
-    0,			// VK_HOME
-    0,			// VK_LEFT
-    0,			// VK_UP
-    0,			// VK_RIGHT
-    0,			// VK_DOWN
-    0,			// VK_SELECT
-    0,			// VK_PRINT
-    0,			// VK_EXECUTE
-    0,			// VK_SNAPSHOT
-    0,			// VK_INSERT
-    127,			// VK_DELETE
-    0,			// VK_HELP
-    '0',			// VK_0
-    '1',			// VK_1
-    '2',			// VK_2
-    '3',			// VK_3
-    '4',			// VK_4
-    '5',			// VK_5
-    '6',			// VK_6
-    '7',			// VK_7
-    '8',			// VK_8
-    '9',			// VK_9
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    'A',			// VK_A
-    'B',			// VK_B
-    'C',			// VK_C
-    'D',			// VK_D
-    'E',			// VK_E
-    'F',			// VK_F
-    'G',			// VK_G
-    'H',			// VK_H
-    'I',			// VK_I
-    'J',			// VK_J
-    'K',			// VK_K
-    'L',			// VK_L
-    'M',			// VK_M
-    'N',			// VK_N
-    'O',			// VK_O
-    'P',			// VK_P
-    'Q',			// VK_Q
-    'R',			// VK_R
-    'S',			// VK_S
-    'T',			// VK_T
-    'U',			// VK_U
-    'V',			// VK_V
-    'W',			// VK_W
-    'X',			// VK_X
-    'Y',			// VK_Y
-    'Z',			// VK_Z
-    0,			// VK_LWIN
-    0,			// VK_RWIN
-    0,			// VK_APPS
-    0,			// no VK_ code
-    0,			// no VK_ code
-    '0',			// VK_NUMPAD0
-    '1',			// VK_NUMPAD1
-    '2',			// VK_NUMPAD2
-    '3',			// VK_NUMPAD3
-    '4',			// VK_NUMPAD4
-    '5',			// VK_NUMPAD5
-    '6',			// VK_NUMPAD6
-    '7',			// VK_NUMPAD7
-    '8',			// VK_NUMPAD8
-    '9',			// VK_NUMPAD9
-    '*',			// VK_MULTIPLY
-    '+',			// VK_ADD
-    0,			// VK_SEPARATOR
-    '-',			// VK_SUBTRACT
-    '.',			// VK_DECIMAL
-    '/',			// VK_DIVIDE
-    0,			// VK_F1
-    0,			// VK_F2
-    0,			// VK_F3
-    0,			// VK_F4
-    0,			// VK_F5
-    0,			// VK_F6
-    0,			// VK_F7
-    0,			// VK_F8
-    0,			// VK_F9
-    0,			// VK_F10
-    0,			// VK_F11
-    0,			// VK_F12
-    0,			// VK_F13
-    0,			// VK_F14
-    0,			// VK_F15
-    0,			// VK_F16
-    0,			// VK_F17
-    0,			// VK_F18
-    0,			// VK_F19
-    0,			// VK_F20
-    0,			// VK_F21
-    0,			// VK_F22
-    0,			// VK_F23
-    0,			// VK_F24
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_NUMLOCK
-    0,			// VK_SCROLL
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_LSHIFT
-    0,			// VK_RSHIFT
-    0,			// VK_LCONTROL
-    0,			// VK_RCONTROL
-    0,			// VK_LMENU
-    0,			// VK_RMENU
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    ';',			// no VK_ code
-    '=',			// no VK_ code
-    ',',			// no VK_ code
-    '-',			// no VK_ code
-    '.',			// no VK_ code
-    '/',			// no VK_ code
-    '`',			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    '[',			// no VK_ code
-    '\\',			// no VK_ code
-    ']',			// no VK_ code
-    '\'',			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_PROCESSKEY
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_ATTN
-    0,			// VK_CRSEL
-    0,			// VK_EXSEL
-    0,			// VK_EREOF
-    0,			// VK_PLAY
-    0,			// VK_ZOOM
-    0,			// VK_NONAME
-    0,			// VK_PA1
-    0,			// VK_OEM_CLEAR
-    0			// no VK_ code
+    0,          // no VK_ code
+    0,          // VK_LBUTTON
+    0,          // VK_RBUTTON
+    0,          // VK_CANCEL
+    0,          // VK_MBUTTON
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    8,          // VK_BACK
+    9,          // VK_TAB
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_CLEAR
+    13,         // VK_RETURN
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_SHIFT
+    0,          // VK_CONTROL
+    0,          // VK_MENU
+    0,          // VK_PAUSE
+    0,          // VK_CAPITAL
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    27,         // VK_ESCAPE
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    ' ',            // VK_SPACE
+    0,          // VK_PRIOR
+    0,          // VK_NEXT
+    0,          // VK_END
+    0,          // VK_HOME
+    0,          // VK_LEFT
+    0,          // VK_UP
+    0,          // VK_RIGHT
+    0,          // VK_DOWN
+    0,          // VK_SELECT
+    0,          // VK_PRINT
+    0,          // VK_EXECUTE
+    0,          // VK_SNAPSHOT
+    0,          // VK_INSERT
+    127,            // VK_DELETE
+    0,          // VK_HELP
+    '0',            // VK_0
+    '1',            // VK_1
+    '2',            // VK_2
+    '3',            // VK_3
+    '4',            // VK_4
+    '5',            // VK_5
+    '6',            // VK_6
+    '7',            // VK_7
+    '8',            // VK_8
+    '9',            // VK_9
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    'A',            // VK_A
+    'B',            // VK_B
+    'C',            // VK_C
+    'D',            // VK_D
+    'E',            // VK_E
+    'F',            // VK_F
+    'G',            // VK_G
+    'H',            // VK_H
+    'I',            // VK_I
+    'J',            // VK_J
+    'K',            // VK_K
+    'L',            // VK_L
+    'M',            // VK_M
+    'N',            // VK_N
+    'O',            // VK_O
+    'P',            // VK_P
+    'Q',            // VK_Q
+    'R',            // VK_R
+    'S',            // VK_S
+    'T',            // VK_T
+    'U',            // VK_U
+    'V',            // VK_V
+    'W',            // VK_W
+    'X',            // VK_X
+    'Y',            // VK_Y
+    'Z',            // VK_Z
+    0,          // VK_LWIN
+    0,          // VK_RWIN
+    0,          // VK_APPS
+    0,          // no VK_ code
+    0,          // no VK_ code
+    '0',            // VK_NUMPAD0
+    '1',            // VK_NUMPAD1
+    '2',            // VK_NUMPAD2
+    '3',            // VK_NUMPAD3
+    '4',            // VK_NUMPAD4
+    '5',            // VK_NUMPAD5
+    '6',            // VK_NUMPAD6
+    '7',            // VK_NUMPAD7
+    '8',            // VK_NUMPAD8
+    '9',            // VK_NUMPAD9
+    '*',            // VK_MULTIPLY
+    '+',            // VK_ADD
+    0,          // VK_SEPARATOR
+    '-',            // VK_SUBTRACT
+    '.',            // VK_DECIMAL
+    '/',            // VK_DIVIDE
+    0,          // VK_F1
+    0,          // VK_F2
+    0,          // VK_F3
+    0,          // VK_F4
+    0,          // VK_F5
+    0,          // VK_F6
+    0,          // VK_F7
+    0,          // VK_F8
+    0,          // VK_F9
+    0,          // VK_F10
+    0,          // VK_F11
+    0,          // VK_F12
+    0,          // VK_F13
+    0,          // VK_F14
+    0,          // VK_F15
+    0,          // VK_F16
+    0,          // VK_F17
+    0,          // VK_F18
+    0,          // VK_F19
+    0,          // VK_F20
+    0,          // VK_F21
+    0,          // VK_F22
+    0,          // VK_F23
+    0,          // VK_F24
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_NUMLOCK
+    0,          // VK_SCROLL
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_LSHIFT
+    0,          // VK_RSHIFT
+    0,          // VK_LCONTROL
+    0,          // VK_RCONTROL
+    0,          // VK_LMENU
+    0,          // VK_RMENU
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    ';',            // no VK_ code
+    '=',            // no VK_ code
+    ',',            // no VK_ code
+    '-',            // no VK_ code
+    '.',            // no VK_ code
+    '/',            // no VK_ code
+    '`',            // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    '[',            // no VK_ code
+    '\\',           // no VK_ code
+    ']',            // no VK_ code
+    '\'',           // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_PROCESSKEY
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_ATTN
+    0,          // VK_CRSEL
+    0,          // VK_EXSEL
+    0,          // VK_EREOF
+    0,          // VK_PLAY
+    0,          // VK_ZOOM
+    0,          // VK_NONAME
+    0,          // VK_PA1
+    0,          // VK_OEM_CLEAR
+    0           // no VK_ code
 };
 
-const int		WinDisplay::asciiShiftMap[] =
+const int       WinDisplay::asciiShiftMap[] =
 {
-    0,			// no VK_ code
-    0,			// VK_LBUTTON
-    0,			// VK_RBUTTON
-    0,			// VK_CANCEL
-    0,			// VK_MBUTTON
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    8,			// VK_BACK
-    9,			// VK_TAB
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_CLEAR
-    13,			// VK_RETURN
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_SHIFT
-    0,			// VK_CONTROL
-    0,			// VK_MENU
-    0,			// VK_PAUSE
-    0,			// VK_CAPITAL
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    27,			// VK_ESCAPE
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    ' ',			// VK_SPACE
-    0,			// VK_PRIOR
-    0,			// VK_NEXT
-    0,			// VK_END
-    0,			// VK_HOME
-    0,			// VK_LEFT
-    0,			// VK_UP
-    0,			// VK_RIGHT
-    0,			// VK_DOWN
-    0,			// VK_SELECT
-    0,			// VK_PRINT
-    0,			// VK_EXECUTE
-    0,			// VK_SNAPSHOT
-    0,			// VK_INSERT
-    127,			// VK_DELETE
-    0,			// VK_HELP
-    ')',			// VK_0
-    '!',			// VK_1
-    '@',			// VK_2
-    '#',			// VK_3
-    '$',			// VK_4
-    '%',			// VK_5
-    '^',			// VK_6
-    '&',			// VK_7
-    '*',			// VK_8
-    '(',			// VK_9
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    'a',			// VK_A
-    'b',			// VK_B
-    'c',			// VK_C
-    'd',			// VK_D
-    'e',			// VK_E
-    'f',			// VK_F
-    'g',			// VK_G
-    'h',			// VK_H
-    'i',			// VK_I
-    'j',			// VK_J
-    'k',			// VK_K
-    'l',			// VK_L
-    'm',			// VK_M
-    'n',			// VK_N
-    'o',			// VK_O
-    'p',			// VK_P
-    'q',			// VK_Q
-    'r',			// VK_R
-    's',			// VK_S
-    't',			// VK_T
-    'u',			// VK_U
-    'v',			// VK_V
-    'w',			// VK_W
-    'x',			// VK_X
-    'y',			// VK_Y
-    'z',			// VK_Z
-    0,			// VK_LWIN
-    0,			// VK_RWIN
-    0,			// VK_APPS
-    0,			// no VK_ code
-    0,			// no VK_ code
-    '0',			// VK_NUMPAD0
-    '1',			// VK_NUMPAD1
-    '2',			// VK_NUMPAD2
-    '3',			// VK_NUMPAD3
-    '4',			// VK_NUMPAD4
-    '5',			// VK_NUMPAD5
-    '6',			// VK_NUMPAD6
-    '7',			// VK_NUMPAD7
-    '8',			// VK_NUMPAD8
-    '9',			// VK_NUMPAD9
-    '*',			// VK_MULTIPLY
-    '+',			// VK_ADD
-    0,			// VK_SEPARATOR
-    '-',			// VK_SUBTRACT
-    '.',			// VK_DECIMAL
-    '/',			// VK_DIVIDE
-    0,			// VK_F1
-    0,			// VK_F2
-    0,			// VK_F3
-    0,			// VK_F4
-    0,			// VK_F5
-    0,			// VK_F6
-    0,			// VK_F7
-    0,			// VK_F8
-    0,			// VK_F9
-    0,			// VK_F10
-    0,			// VK_F11
-    0,			// VK_F12
-    0,			// VK_F13
-    0,			// VK_F14
-    0,			// VK_F15
-    0,			// VK_F16
-    0,			// VK_F17
-    0,			// VK_F18
-    0,			// VK_F19
-    0,			// VK_F20
-    0,			// VK_F21
-    0,			// VK_F22
-    0,			// VK_F23
-    0,			// VK_F24
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_NUMLOCK
-    0,			// VK_SCROLL
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_LSHIFT
-    0,			// VK_RSHIFT
-    0,			// VK_LCONTROL
-    0,			// VK_RCONTROL
-    0,			// VK_LMENU
-    0,			// VK_RMENU
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    ':',			// no VK_ code
-    '+',			// no VK_ code
-    '<',			// no VK_ code
-    '_',			// no VK_ code
-    '>',			// no VK_ code
-    '?',			// no VK_ code
-    '~',			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    '{',			// no VK_ code
-    '|',			// no VK_ code
-    '}',			// no VK_ code
-    '"',			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_PROCESSKEY
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// no VK_ code
-    0,			// VK_ATTN
-    0,			// VK_CRSEL
-    0,			// VK_EXSEL
-    0,			// VK_EREOF
-    0,			// VK_PLAY
-    0,			// VK_ZOOM
-    0,			// VK_NONAME
-    0,			// VK_PA1
-    0,			// VK_OEM_CLEAR
-    0			// no VK_ code
+    0,          // no VK_ code
+    0,          // VK_LBUTTON
+    0,          // VK_RBUTTON
+    0,          // VK_CANCEL
+    0,          // VK_MBUTTON
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    8,          // VK_BACK
+    9,          // VK_TAB
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_CLEAR
+    13,         // VK_RETURN
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_SHIFT
+    0,          // VK_CONTROL
+    0,          // VK_MENU
+    0,          // VK_PAUSE
+    0,          // VK_CAPITAL
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    27,         // VK_ESCAPE
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    ' ',            // VK_SPACE
+    0,          // VK_PRIOR
+    0,          // VK_NEXT
+    0,          // VK_END
+    0,          // VK_HOME
+    0,          // VK_LEFT
+    0,          // VK_UP
+    0,          // VK_RIGHT
+    0,          // VK_DOWN
+    0,          // VK_SELECT
+    0,          // VK_PRINT
+    0,          // VK_EXECUTE
+    0,          // VK_SNAPSHOT
+    0,          // VK_INSERT
+    127,            // VK_DELETE
+    0,          // VK_HELP
+    ')',            // VK_0
+    '!',            // VK_1
+    '@',            // VK_2
+    '#',            // VK_3
+    '$',            // VK_4
+    '%',            // VK_5
+    '^',            // VK_6
+    '&',            // VK_7
+    '*',            // VK_8
+    '(',            // VK_9
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    'a',            // VK_A
+    'b',            // VK_B
+    'c',            // VK_C
+    'd',            // VK_D
+    'e',            // VK_E
+    'f',            // VK_F
+    'g',            // VK_G
+    'h',            // VK_H
+    'i',            // VK_I
+    'j',            // VK_J
+    'k',            // VK_K
+    'l',            // VK_L
+    'm',            // VK_M
+    'n',            // VK_N
+    'o',            // VK_O
+    'p',            // VK_P
+    'q',            // VK_Q
+    'r',            // VK_R
+    's',            // VK_S
+    't',            // VK_T
+    'u',            // VK_U
+    'v',            // VK_V
+    'w',            // VK_W
+    'x',            // VK_X
+    'y',            // VK_Y
+    'z',            // VK_Z
+    0,          // VK_LWIN
+    0,          // VK_RWIN
+    0,          // VK_APPS
+    0,          // no VK_ code
+    0,          // no VK_ code
+    '0',            // VK_NUMPAD0
+    '1',            // VK_NUMPAD1
+    '2',            // VK_NUMPAD2
+    '3',            // VK_NUMPAD3
+    '4',            // VK_NUMPAD4
+    '5',            // VK_NUMPAD5
+    '6',            // VK_NUMPAD6
+    '7',            // VK_NUMPAD7
+    '8',            // VK_NUMPAD8
+    '9',            // VK_NUMPAD9
+    '*',            // VK_MULTIPLY
+    '+',            // VK_ADD
+    0,          // VK_SEPARATOR
+    '-',            // VK_SUBTRACT
+    '.',            // VK_DECIMAL
+    '/',            // VK_DIVIDE
+    0,          // VK_F1
+    0,          // VK_F2
+    0,          // VK_F3
+    0,          // VK_F4
+    0,          // VK_F5
+    0,          // VK_F6
+    0,          // VK_F7
+    0,          // VK_F8
+    0,          // VK_F9
+    0,          // VK_F10
+    0,          // VK_F11
+    0,          // VK_F12
+    0,          // VK_F13
+    0,          // VK_F14
+    0,          // VK_F15
+    0,          // VK_F16
+    0,          // VK_F17
+    0,          // VK_F18
+    0,          // VK_F19
+    0,          // VK_F20
+    0,          // VK_F21
+    0,          // VK_F22
+    0,          // VK_F23
+    0,          // VK_F24
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_NUMLOCK
+    0,          // VK_SCROLL
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_LSHIFT
+    0,          // VK_RSHIFT
+    0,          // VK_LCONTROL
+    0,          // VK_RCONTROL
+    0,          // VK_LMENU
+    0,          // VK_RMENU
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    ':',            // no VK_ code
+    '+',            // no VK_ code
+    '<',            // no VK_ code
+    '_',            // no VK_ code
+    '>',            // no VK_ code
+    '?',            // no VK_ code
+    '~',            // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    '{',            // no VK_ code
+    '|',            // no VK_ code
+    '}',            // no VK_ code
+    '"',            // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_PROCESSKEY
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // no VK_ code
+    0,          // VK_ATTN
+    0,          // VK_CRSEL
+    0,          // VK_EXSEL
+    0,          // VK_EREOF
+    0,          // VK_PLAY
+    0,          // VK_ZOOM
+    0,          // VK_NONAME
+    0,          // VK_PA1
+    0,          // VK_OEM_CLEAR
+    0           // no VK_ code
 };
 
-const int		WinDisplay::buttonMap[] =
+const int       WinDisplay::buttonMap[] =
 {
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_LBUTTON
-    BzfKeyEvent::NoButton,	// VK_RBUTTON
-    BzfKeyEvent::NoButton,	// VK_CANCEL
-    BzfKeyEvent::NoButton,	// VK_MBUTTON
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_BACK
-    BzfKeyEvent::NoButton,	// VK_TAB
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_CLEAR
-    BzfKeyEvent::NoButton,	// VK_RETURN
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_SHIFT
-    BzfKeyEvent::NoButton,	// VK_CONTROL
-    BzfKeyEvent::NoButton,	// VK_MENU
-    BzfKeyEvent::Pause,	// VK_PAUSE
-    BzfKeyEvent::NoButton,	// VK_CAPITAL
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_ESCAPE
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_SPACE
-    BzfKeyEvent::PageUp,	// VK_PRIOR
-    BzfKeyEvent::PageDown,	// VK_NEXT
-    BzfKeyEvent::End,	// VK_END
-    BzfKeyEvent::Home,	// VK_HOME
-    BzfKeyEvent::Left,	// VK_LEFT
-    BzfKeyEvent::Up,	// VK_UP
-    BzfKeyEvent::Right,	// VK_RIGHT
-    BzfKeyEvent::Down,	// VK_DOWN
-    BzfKeyEvent::NoButton,	// VK_SELECT
-    BzfKeyEvent::NoButton,	// VK_PRINT
-    BzfKeyEvent::NoButton,	// VK_EXECUTE
-    BzfKeyEvent::NoButton,	// VK_SNAPSHOT
-    BzfKeyEvent::Insert,	// VK_INSERT
-    BzfKeyEvent::Delete,	// VK_DELETE
-    BzfKeyEvent::NoButton,	// VK_HELP
-    BzfKeyEvent::NoButton,	// VK_0
-    BzfKeyEvent::NoButton,	// VK_1
-    BzfKeyEvent::NoButton,	// VK_2
-    BzfKeyEvent::NoButton,	// VK_3
-    BzfKeyEvent::NoButton,	// VK_4
-    BzfKeyEvent::NoButton,	// VK_5
-    BzfKeyEvent::NoButton,	// VK_6
-    BzfKeyEvent::NoButton,	// VK_7
-    BzfKeyEvent::NoButton,	// VK_8
-    BzfKeyEvent::NoButton,	// VK_9
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_A
-    BzfKeyEvent::NoButton,	// VK_B
-    BzfKeyEvent::NoButton,	// VK_C
-    BzfKeyEvent::NoButton,	// VK_D
-    BzfKeyEvent::NoButton,	// VK_E
-    BzfKeyEvent::NoButton,	// VK_F
-    BzfKeyEvent::NoButton,	// VK_G
-    BzfKeyEvent::NoButton,	// VK_H
-    BzfKeyEvent::NoButton,	// VK_I
-    BzfKeyEvent::NoButton,	// VK_J
-    BzfKeyEvent::NoButton,	// VK_K
-    BzfKeyEvent::NoButton,	// VK_L
-    BzfKeyEvent::NoButton,	// VK_M
-    BzfKeyEvent::NoButton,	// VK_N
-    BzfKeyEvent::NoButton,	// VK_O
-    BzfKeyEvent::NoButton,	// VK_P
-    BzfKeyEvent::NoButton,	// VK_Q
-    BzfKeyEvent::NoButton,	// VK_R
-    BzfKeyEvent::NoButton,	// VK_S
-    BzfKeyEvent::NoButton,	// VK_T
-    BzfKeyEvent::NoButton,	// VK_U
-    BzfKeyEvent::NoButton,	// VK_V
-    BzfKeyEvent::NoButton,	// VK_W
-    BzfKeyEvent::NoButton,	// VK_X
-    BzfKeyEvent::NoButton,	// VK_Y
-    BzfKeyEvent::NoButton,	// VK_Z
-    BzfKeyEvent::NoButton,	// VK_LWIN
-    BzfKeyEvent::NoButton,	// VK_RWIN
-    BzfKeyEvent::NoButton,	// VK_APPS
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_NUMPAD0
-    BzfKeyEvent::NoButton,	// VK_NUMPAD1
-    BzfKeyEvent::NoButton,	// VK_NUMPAD2
-    BzfKeyEvent::NoButton,	// VK_NUMPAD3
-    BzfKeyEvent::NoButton,	// VK_NUMPAD4
-    BzfKeyEvent::NoButton,	// VK_NUMPAD5
-    BzfKeyEvent::NoButton,	// VK_NUMPAD6
-    BzfKeyEvent::NoButton,	// VK_NUMPAD7
-    BzfKeyEvent::NoButton,	// VK_NUMPAD8
-    BzfKeyEvent::NoButton,	// VK_NUMPAD9
-    BzfKeyEvent::NoButton,	// VK_MULTIPLY
-    BzfKeyEvent::NoButton,	// VK_ADD
-    BzfKeyEvent::NoButton,	// VK_SEPARATOR
-    BzfKeyEvent::NoButton,	// VK_SUBTRACT
-    BzfKeyEvent::NoButton,	// VK_DECIMAL
-    BzfKeyEvent::NoButton,	// VK_DIVIDE
-    BzfKeyEvent::F1,	// VK_F1
-    BzfKeyEvent::F2,	// VK_F2
-    BzfKeyEvent::F3,	// VK_F3
-    BzfKeyEvent::F4,	// VK_F4
-    BzfKeyEvent::F5,	// VK_F5
-    BzfKeyEvent::F6,	// VK_F6
-    BzfKeyEvent::F7,	// VK_F7
-    BzfKeyEvent::F8,	// VK_F8
-    BzfKeyEvent::F9,	// VK_F9
-    BzfKeyEvent::F10,	// VK_F10
-    BzfKeyEvent::F11,	// VK_F11
-    BzfKeyEvent::F12,	// VK_F12
-    BzfKeyEvent::NoButton,	// VK_F13
-    BzfKeyEvent::NoButton,	// VK_F14
-    BzfKeyEvent::NoButton,	// VK_F15
-    BzfKeyEvent::NoButton,	// VK_F16
-    BzfKeyEvent::NoButton,	// VK_F17
-    BzfKeyEvent::NoButton,	// VK_F18
-    BzfKeyEvent::NoButton,	// VK_F19
-    BzfKeyEvent::NoButton,	// VK_F20
-    BzfKeyEvent::NoButton,	// VK_F21
-    BzfKeyEvent::NoButton,	// VK_F22
-    BzfKeyEvent::NoButton,	// VK_F23
-    BzfKeyEvent::NoButton,	// VK_F24
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_NUMLOCK
-    BzfKeyEvent::NoButton,	// VK_SCROLL
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_LSHIFT
-    BzfKeyEvent::NoButton,	// VK_RSHIFT
-    BzfKeyEvent::NoButton,	// VK_LCONTROL
-    BzfKeyEvent::NoButton,	// VK_RCONTROL
-    BzfKeyEvent::NoButton,	// VK_LMENU
-    BzfKeyEvent::NoButton,	// VK_RMENU
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_PROCESSKEY
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// no VK_ code
-    BzfKeyEvent::NoButton,	// VK_ATTN
-    BzfKeyEvent::NoButton,	// VK_CRSEL
-    BzfKeyEvent::NoButton,	// VK_EXSEL
-    BzfKeyEvent::NoButton,	// VK_EREOF
-    BzfKeyEvent::NoButton,	// VK_PLAY
-    BzfKeyEvent::NoButton,	// VK_ZOOM
-    BzfKeyEvent::NoButton,	// VK_NONAME
-    BzfKeyEvent::NoButton,	// VK_PA1
-    BzfKeyEvent::NoButton,	// VK_OEM_CLEAR
-    BzfKeyEvent::NoButton	// no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_LBUTTON
+    BzfKeyEvent::NoButton,  // VK_RBUTTON
+    BzfKeyEvent::NoButton,  // VK_CANCEL
+    BzfKeyEvent::NoButton,  // VK_MBUTTON
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_BACK
+    BzfKeyEvent::NoButton,  // VK_TAB
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_CLEAR
+    BzfKeyEvent::NoButton,  // VK_RETURN
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_SHIFT
+    BzfKeyEvent::NoButton,  // VK_CONTROL
+    BzfKeyEvent::NoButton,  // VK_MENU
+    BzfKeyEvent::Pause, // VK_PAUSE
+    BzfKeyEvent::NoButton,  // VK_CAPITAL
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_ESCAPE
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_SPACE
+    BzfKeyEvent::PageUp,    // VK_PRIOR
+    BzfKeyEvent::PageDown,  // VK_NEXT
+    BzfKeyEvent::End,   // VK_END
+    BzfKeyEvent::Home,  // VK_HOME
+    BzfKeyEvent::Left,  // VK_LEFT
+    BzfKeyEvent::Up,    // VK_UP
+    BzfKeyEvent::Right, // VK_RIGHT
+    BzfKeyEvent::Down,  // VK_DOWN
+    BzfKeyEvent::NoButton,  // VK_SELECT
+    BzfKeyEvent::NoButton,  // VK_PRINT
+    BzfKeyEvent::NoButton,  // VK_EXECUTE
+    BzfKeyEvent::NoButton,  // VK_SNAPSHOT
+    BzfKeyEvent::Insert,    // VK_INSERT
+    BzfKeyEvent::Delete,    // VK_DELETE
+    BzfKeyEvent::NoButton,  // VK_HELP
+    BzfKeyEvent::NoButton,  // VK_0
+    BzfKeyEvent::NoButton,  // VK_1
+    BzfKeyEvent::NoButton,  // VK_2
+    BzfKeyEvent::NoButton,  // VK_3
+    BzfKeyEvent::NoButton,  // VK_4
+    BzfKeyEvent::NoButton,  // VK_5
+    BzfKeyEvent::NoButton,  // VK_6
+    BzfKeyEvent::NoButton,  // VK_7
+    BzfKeyEvent::NoButton,  // VK_8
+    BzfKeyEvent::NoButton,  // VK_9
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_A
+    BzfKeyEvent::NoButton,  // VK_B
+    BzfKeyEvent::NoButton,  // VK_C
+    BzfKeyEvent::NoButton,  // VK_D
+    BzfKeyEvent::NoButton,  // VK_E
+    BzfKeyEvent::NoButton,  // VK_F
+    BzfKeyEvent::NoButton,  // VK_G
+    BzfKeyEvent::NoButton,  // VK_H
+    BzfKeyEvent::NoButton,  // VK_I
+    BzfKeyEvent::NoButton,  // VK_J
+    BzfKeyEvent::NoButton,  // VK_K
+    BzfKeyEvent::NoButton,  // VK_L
+    BzfKeyEvent::NoButton,  // VK_M
+    BzfKeyEvent::NoButton,  // VK_N
+    BzfKeyEvent::NoButton,  // VK_O
+    BzfKeyEvent::NoButton,  // VK_P
+    BzfKeyEvent::NoButton,  // VK_Q
+    BzfKeyEvent::NoButton,  // VK_R
+    BzfKeyEvent::NoButton,  // VK_S
+    BzfKeyEvent::NoButton,  // VK_T
+    BzfKeyEvent::NoButton,  // VK_U
+    BzfKeyEvent::NoButton,  // VK_V
+    BzfKeyEvent::NoButton,  // VK_W
+    BzfKeyEvent::NoButton,  // VK_X
+    BzfKeyEvent::NoButton,  // VK_Y
+    BzfKeyEvent::NoButton,  // VK_Z
+    BzfKeyEvent::NoButton,  // VK_LWIN
+    BzfKeyEvent::NoButton,  // VK_RWIN
+    BzfKeyEvent::NoButton,  // VK_APPS
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_NUMPAD0
+    BzfKeyEvent::NoButton,  // VK_NUMPAD1
+    BzfKeyEvent::NoButton,  // VK_NUMPAD2
+    BzfKeyEvent::NoButton,  // VK_NUMPAD3
+    BzfKeyEvent::NoButton,  // VK_NUMPAD4
+    BzfKeyEvent::NoButton,  // VK_NUMPAD5
+    BzfKeyEvent::NoButton,  // VK_NUMPAD6
+    BzfKeyEvent::NoButton,  // VK_NUMPAD7
+    BzfKeyEvent::NoButton,  // VK_NUMPAD8
+    BzfKeyEvent::NoButton,  // VK_NUMPAD9
+    BzfKeyEvent::NoButton,  // VK_MULTIPLY
+    BzfKeyEvent::NoButton,  // VK_ADD
+    BzfKeyEvent::NoButton,  // VK_SEPARATOR
+    BzfKeyEvent::NoButton,  // VK_SUBTRACT
+    BzfKeyEvent::NoButton,  // VK_DECIMAL
+    BzfKeyEvent::NoButton,  // VK_DIVIDE
+    BzfKeyEvent::F1,    // VK_F1
+    BzfKeyEvent::F2,    // VK_F2
+    BzfKeyEvent::F3,    // VK_F3
+    BzfKeyEvent::F4,    // VK_F4
+    BzfKeyEvent::F5,    // VK_F5
+    BzfKeyEvent::F6,    // VK_F6
+    BzfKeyEvent::F7,    // VK_F7
+    BzfKeyEvent::F8,    // VK_F8
+    BzfKeyEvent::F9,    // VK_F9
+    BzfKeyEvent::F10,   // VK_F10
+    BzfKeyEvent::F11,   // VK_F11
+    BzfKeyEvent::F12,   // VK_F12
+    BzfKeyEvent::NoButton,  // VK_F13
+    BzfKeyEvent::NoButton,  // VK_F14
+    BzfKeyEvent::NoButton,  // VK_F15
+    BzfKeyEvent::NoButton,  // VK_F16
+    BzfKeyEvent::NoButton,  // VK_F17
+    BzfKeyEvent::NoButton,  // VK_F18
+    BzfKeyEvent::NoButton,  // VK_F19
+    BzfKeyEvent::NoButton,  // VK_F20
+    BzfKeyEvent::NoButton,  // VK_F21
+    BzfKeyEvent::NoButton,  // VK_F22
+    BzfKeyEvent::NoButton,  // VK_F23
+    BzfKeyEvent::NoButton,  // VK_F24
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_NUMLOCK
+    BzfKeyEvent::NoButton,  // VK_SCROLL
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_LSHIFT
+    BzfKeyEvent::NoButton,  // VK_RSHIFT
+    BzfKeyEvent::NoButton,  // VK_LCONTROL
+    BzfKeyEvent::NoButton,  // VK_RCONTROL
+    BzfKeyEvent::NoButton,  // VK_LMENU
+    BzfKeyEvent::NoButton,  // VK_RMENU
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_PROCESSKEY
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // no VK_ code
+    BzfKeyEvent::NoButton,  // VK_ATTN
+    BzfKeyEvent::NoButton,  // VK_CRSEL
+    BzfKeyEvent::NoButton,  // VK_EXSEL
+    BzfKeyEvent::NoButton,  // VK_EREOF
+    BzfKeyEvent::NoButton,  // VK_PLAY
+    BzfKeyEvent::NoButton,  // VK_ZOOM
+    BzfKeyEvent::NoButton,  // VK_NONAME
+    BzfKeyEvent::NoButton,  // VK_PA1
+    BzfKeyEvent::NoButton,  // VK_OEM_CLEAR
+    BzfKeyEvent::NoButton   // no VK_ code
 };
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

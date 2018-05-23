@@ -43,21 +43,13 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
     int channel = -1;
 
     if (strcasecmp ("red", cmd) == 0)
-    {
         channel = 0;
-    }
     else if (strcasecmp ("green", cmd) == 0)
-    {
         channel = 1;
-    }
     else if (strcasecmp ("blue", cmd) == 0)
-    {
         channel = 2;
-    }
     else if (strcasecmp ("alpha", cmd) == 0)
-    {
         channel = 3;
-    }
     else
     {
         // NOTE: we don't use a WorldFileObstacle
@@ -139,15 +131,11 @@ bool CustomDynamicColor::read(const char *cmd, std::istream& input)
         }
         int tmp;
         while (parms >> tmp)
-        {
             list.push_back((char)tmp);
-        }
         color->setSequence(channel, period, offset, list);
     }
     else
-    {
         return false;
-    }
 
     return true;
 }
@@ -172,6 +160,6 @@ void CustomDynamicColor::writeToManager() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

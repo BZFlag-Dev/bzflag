@@ -57,7 +57,7 @@
 
 class bz_Plugin;
 
-#define BZ_API_VERSION	26
+#define BZ_API_VERSION  26
 
 #define BZ_GET_PLUGIN_VERSION BZF_PLUGIN_CALL int bz_GetMinVersion ( void ) { return BZ_API_VERSION; }
 
@@ -172,8 +172,8 @@ class BZF_API bz_APIIntList
 {
 public:
     bz_APIIntList();
-    bz_APIIntList(const bz_APIIntList	&r);
-    bz_APIIntList(const std::vector<int>	&r);
+    bz_APIIntList(const bz_APIIntList   &r);
+    bz_APIIntList(const std::vector<int>    &r);
 
     ~bz_APIIntList();
 
@@ -200,8 +200,8 @@ class BZF_API bz_APIFloatList
 {
 public:
     bz_APIFloatList();
-    bz_APIFloatList(const bz_APIFloatList		&r);
-    bz_APIFloatList(const std::vector<float>	&r);
+    bz_APIFloatList(const bz_APIFloatList       &r);
+    bz_APIFloatList(const std::vector<float>    &r);
 
     ~bz_APIFloatList();
 
@@ -228,8 +228,8 @@ class BZF_API bz_APIStringList
 {
 public:
     bz_APIStringList();
-    bz_APIStringList(const bz_APIStringList		&r);
-    bz_APIStringList(const std::vector<std::string>	&r);
+    bz_APIStringList(const bz_APIStringList     &r);
+    bz_APIStringList(const std::vector<std::string> &r);
 
     ~bz_APIStringList();
 
@@ -275,8 +275,8 @@ typedef enum
     bz_eZoneExitEvent,
     bz_ePlayerJoinEvent,
     bz_ePlayerPartEvent,
-    bz_eRawChatMessageEvent,	// before filter
-    bz_eFilteredChatMessageEvent,	// after filter
+    bz_eRawChatMessageEvent,    // before filter
+    bz_eFilteredChatMessageEvent,   // after filter
     bz_eUnknownSlashCommand,
     bz_eGetPlayerSpawnPosEvent,
     bz_eGetAutoTeamEvent,
@@ -341,67 +341,67 @@ typedef enum
 } bz_eEventType;
 
 // permision #defines
-#define bz_perm_actionMessage		"actionMessage"
-#define bz_perm_adminMessageReceive	"adminMessageReceive"
-#define bz_perm_adminMessageSend	"adminMessageSend"
-#define bz_perm_antiban			"antiban"
-#define bz_perm_antikick		"antikick"
-#define bz_perm_antikill		"antikill"
-#define bz_perm_antipoll		"antipoll"
-#define bz_perm_antipollban		"antipollban"
-#define bz_perm_antipollkick		"antipollkick"
-#define bz_perm_antipollkill		"antipollkill"
-#define bz_perm_ban			"ban"
-#define bz_perm_banlist			"banlist"
-#define bz_perm_clientQuery		"clientQuery"
-#define bz_perm_countdown		"countdown"
-#define bz_perm_date			"date"
-#define bz_perm_endGame			"endGame"
-#define bz_perm_flagHistory		"flagHistory"
-#define bz_perm_flagMod			"flagMod"
-#define bz_perm_hideAdmin		"hideAdmin"
-#define bz_perm_idleStats		"idleStats"
-#define bz_perm_info			"info"
-#define bz_perm_kick			"kick"
-#define bz_perm_kill			"kill"
-#define bz_perm_lagStats		"lagStats"
-#define bz_perm_lagwarn			"lagwarn"
-#define bz_perm_listPerms		"listPerms"
-#define bz_perm_listPlugins		"listPlugins"
-#define bz_perm_masterBan		"masterban"
-#define bz_perm_mute			"mute"
-#define bz_perm_playerList		"playerList"
-#define bz_perm_plugins			"plugins"
-#define bz_perm_poll			"poll"
-#define bz_perm_pollBan			"pollBan"
-#define bz_perm_pollKick		"pollKick"
-#define bz_perm_pollKill		"pollKill"
-#define bz_perm_pollSet			"pollSet"
-#define bz_perm_pollFlagReset		"pollFlagReset"
-#define bz_perm_privateMessage		"privateMessage"
-#define bz_perm_record			"record"
-#define bz_perm_rejoin			"rejoin"
-#define bz_perm_removePerms		"removePerms"
-#define bz_perm_replay			"replay"
-#define bz_perm_report			"report"
-#define bz_perm_say			"say"
-#define bz_perm_sendHelp		"sendHelp"
-#define bz_perm_setAll			"setAll"
-#define bz_perm_setPerms		"setPerms"
-#define bz_perm_setVar			"setVar"
-#define bz_perm_showAdmin		"showAdmin"
-#define bz_perm_showMotto		"showMotto"
-#define bz_perm_showOthers		"showOthers"
-#define bz_perm_shortBan		"shortBan"
-#define bz_perm_shutdownServer		"shutdownServer"
-#define bz_perm_spawn			"spawn"
-#define bz_perm_superKill		"superKill"
-#define bz_perm_talk			"talk"
-#define bz_perm_unban			"unban"
-#define bz_perm_unmute			"unmute"
-#define bz_perm_veto			"veto"
-#define bz_perm_viewReports		"viewReports"
-#define bz_perm_vote			"vote"
+#define bz_perm_actionMessage       "actionMessage"
+#define bz_perm_adminMessageReceive "adminMessageReceive"
+#define bz_perm_adminMessageSend    "adminMessageSend"
+#define bz_perm_antiban         "antiban"
+#define bz_perm_antikick        "antikick"
+#define bz_perm_antikill        "antikill"
+#define bz_perm_antipoll        "antipoll"
+#define bz_perm_antipollban     "antipollban"
+#define bz_perm_antipollkick        "antipollkick"
+#define bz_perm_antipollkill        "antipollkill"
+#define bz_perm_ban         "ban"
+#define bz_perm_banlist         "banlist"
+#define bz_perm_clientQuery     "clientQuery"
+#define bz_perm_countdown       "countdown"
+#define bz_perm_date            "date"
+#define bz_perm_endGame         "endGame"
+#define bz_perm_flagHistory     "flagHistory"
+#define bz_perm_flagMod         "flagMod"
+#define bz_perm_hideAdmin       "hideAdmin"
+#define bz_perm_idleStats       "idleStats"
+#define bz_perm_info            "info"
+#define bz_perm_kick            "kick"
+#define bz_perm_kill            "kill"
+#define bz_perm_lagStats        "lagStats"
+#define bz_perm_lagwarn         "lagwarn"
+#define bz_perm_listPerms       "listPerms"
+#define bz_perm_listPlugins     "listPlugins"
+#define bz_perm_masterBan       "masterban"
+#define bz_perm_mute            "mute"
+#define bz_perm_playerList      "playerList"
+#define bz_perm_plugins         "plugins"
+#define bz_perm_poll            "poll"
+#define bz_perm_pollBan         "pollBan"
+#define bz_perm_pollKick        "pollKick"
+#define bz_perm_pollKill        "pollKill"
+#define bz_perm_pollSet         "pollSet"
+#define bz_perm_pollFlagReset       "pollFlagReset"
+#define bz_perm_privateMessage      "privateMessage"
+#define bz_perm_record          "record"
+#define bz_perm_rejoin          "rejoin"
+#define bz_perm_removePerms     "removePerms"
+#define bz_perm_replay          "replay"
+#define bz_perm_report          "report"
+#define bz_perm_say         "say"
+#define bz_perm_sendHelp        "sendHelp"
+#define bz_perm_setAll          "setAll"
+#define bz_perm_setPerms        "setPerms"
+#define bz_perm_setVar          "setVar"
+#define bz_perm_showAdmin       "showAdmin"
+#define bz_perm_showMotto       "showMotto"
+#define bz_perm_showOthers      "showOthers"
+#define bz_perm_shortBan        "shortBan"
+#define bz_perm_shutdownServer      "shutdownServer"
+#define bz_perm_spawn           "spawn"
+#define bz_perm_superKill       "superKill"
+#define bz_perm_talk            "talk"
+#define bz_perm_unban           "unban"
+#define bz_perm_unmute          "unmute"
+#define bz_perm_veto            "veto"
+#define bz_perm_viewReports     "viewReports"
+#define bz_perm_vote            "vote"
 
 // types of text messages
 typedef enum
@@ -424,28 +424,28 @@ typedef enum
     eAdministrators
 } bz_eTeamType;
 
-#define BZ_SERVER		-2
-#define BZ_ALLUSERS		-1
-#define BZ_NULLUSER		-3
+#define BZ_SERVER       -2
+#define BZ_ALLUSERS     -1
+#define BZ_NULLUSER     -3
 
-#define BZ_PUBLICCHAT		254
-#define BZ_ADMINCHAT		252
-#define BZ_ROGUECHAT		251
-#define BZ_REDCHAT		250
-#define BZ_GREENCHAT		249
-#define BZ_BLUECHAT		248
-#define BZ_PURPLECHAT		247
-#define BZ_OBSERVERCHAT		246
-#define BZ_RABBITCHAT		245
-#define BZ_HUNTERCHAT		244
+#define BZ_PUBLICCHAT       254
+#define BZ_ADMINCHAT        252
+#define BZ_ROGUECHAT        251
+#define BZ_REDCHAT      250
+#define BZ_GREENCHAT        249
+#define BZ_BLUECHAT     248
+#define BZ_PURPLECHAT       247
+#define BZ_OBSERVERCHAT     246
+#define BZ_RABBITCHAT       245
+#define BZ_HUNTERCHAT       244
 
-#define BZ_SERVERPLAYER		253
-#define BZ_LASTREALPLAYER	243
+#define BZ_SERVERPLAYER     253
+#define BZ_LASTREALPLAYER   243
 
-#define BZ_BZDBPERM_NA		0
-#define BZ_BZDBPERM_USER	1
-#define BZ_BZDBPERM_SERVER	2
-#define BZ_BZDBPERM_CLIENT	3
+#define BZ_BZDBPERM_NA      0
+#define BZ_BZDBPERM_USER    1
+#define BZ_BZDBPERM_SERVER  2
+#define BZ_BZDBPERM_CLIENT  3
 
 typedef enum
 {
@@ -460,24 +460,24 @@ class bz_BasePlayerRecord;
 
 typedef enum
 {
-    eDead,		// not alive, not paused, etc.
-    eAlive,		// player is alive
-    ePaused,		// player is paused
-    eExploding,		// currently blowing up
-    eTeleporting		// teleported recently
+    eDead,      // not alive, not paused, etc.
+    eAlive,     // player is alive
+    ePaused,        // player is paused
+    eExploding,     // currently blowing up
+    eTeleporting        // teleported recently
 } bz_ePlayerStatus;
 
 typedef struct bz_PlayerUpdateState
 {
-    bz_ePlayerStatus	status;			// special states
-    bool			falling;		// not driving on the ground or an obstacle
-    bool			crossingWall;		// crossing an obstacle wall
-    bool			inPhantomZone;		// zoned
-    float			pos[3];			// position of tank
-    float			velocity[3];		// velocity of tank
-    float			rotation;		// orientation of tank
-    float			angVel;			// angular velocity of tank
-    int			phydrv;			// physics driver
+    bz_ePlayerStatus    status;         // special states
+    bool            falling;        // not driving on the ground or an obstacle
+    bool            crossingWall;       // crossing an obstacle wall
+    bool            inPhantomZone;      // zoned
+    float           pos[3];         // position of tank
+    float           velocity[3];        // velocity of tank
+    float           rotation;       // orientation of tank
+    float           angVel;         // angular velocity of tank
+    int         phydrv;         // physics driver
 } bz_PlayerUpdateState;
 
 
@@ -678,7 +678,7 @@ public:
     bool openFFA;
 
     bz_ApiString worldFile;
-    char* worldBlob;	// if assigned, the world will be read from this NUL
+    char* worldBlob;    // if assigned, the world will be read from this NUL
     // terminated string. BZFS does not free this memory,
     // so the plugin must do so (this can be done in the
     // WorldFinalize event)
@@ -1280,7 +1280,8 @@ typedef enum
 class BZF_API bz_PlayerScoreChangeEventData_V1 : public bz_EventData
 {
 public:
-    bz_PlayerScoreChangeEventData_V1( int id, bz_eScoreElement e, int lastV, int thisv) : bz_EventData(bz_ePlayerScoreChanged)
+    bz_PlayerScoreChangeEventData_V1( int id, bz_eScoreElement e, int lastV,
+                                      int thisv) : bz_EventData(bz_ePlayerScoreChanged)
         , playerID(id), element(e), thisValue(thisv), lastValue(lastV)
     {
     }
@@ -1294,7 +1295,8 @@ public:
 class BZF_API bz_TeamScoreChangeEventData_V1 : public bz_EventData
 {
 public:
-    bz_TeamScoreChangeEventData_V1(bz_eTeamType t, bz_eScoreElement e, int lastV, int thisv) : bz_EventData(bz_eTeamScoreChanged)
+    bz_TeamScoreChangeEventData_V1(bz_eTeamType t, bz_eScoreElement e, int lastV,
+                                   int thisv) : bz_EventData(bz_eTeamScoreChanged)
         , team(t), element(e), thisValue(thisv), lastValue(lastV)
     {
     }
@@ -1714,13 +1716,18 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 
 // world weapons
 // will be removed in next breaking version after 2.4.x
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos, float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
-/*DEPRECATED*/ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction, float dt, bz_eTeamType shotTeam = eRogueTeam);
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep ( const char* flagType, float lifetime, int fromPlayer, float *pos,
+        float tilt, float direction, int shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos,
+        float tilt, float direction, float speed, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API bool bz_fireWorldWep( const char* flagType, float lifetime, int fromPlayer, float *pos,
+        float tilt, float direction, int* shotID, float dt, bz_eTeamType shotTeam = eRogueTeam );
+/*DEPRECATED*/ BZF_API int bz_fireWorldGM ( int targetPlayerID, float lifetime, float *pos, float tilt, float direction,
+        float dt, bz_eTeamType shotTeam = eRogueTeam);
 
 // new server shot API
-BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3],
+                                   bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
 
 // will be removed in next breaking version after 2.4.x
 /*DEPRECATED*/ BZF_API uint32_t bz_getShotMetaData (int fromPlayer, int shotID, const char* name);
@@ -1776,7 +1783,8 @@ BZF_API bool bz_removeCustomBZDBVariable(const char* variable);
 
 // remove in next breaking version after 2.4.x; superseded by bz_registerCustomBZDB*()
 /*DEPRECATED*/ BZF_API bool bz_setBZDBDouble(const char* variable, double val, int perms = 0, bool persistent = false);
-/*DEPRECATED*/ BZF_API bool bz_setBZDBString(const char* variable, const char *val, int perms = 0, bool persistent = false);
+/*DEPRECATED*/ BZF_API bool bz_setBZDBString(const char* variable, const char *val, int perms = 0,
+        bool persistent = false);
 /*DEPRECATED*/ BZF_API bool bz_setBZDBBool(const char* variable, bool val, int perms = 0, bool persistent = false);
 /*DEPRECATED*/ BZF_API bool bz_setBZDBInt(const char* variable, int val, int perms = 0, bool persistent = false);
 
@@ -1872,7 +1880,8 @@ class bz_CustomSlashCommandHandlerV2
 {
 public:
     virtual ~bz_CustomSlashCommandHandlerV2() {};
-    virtual bool SlashCommand ( int playerID, int sourceChannel, bz_ApiString command, bz_ApiString message, bz_APIStringList *params ) = 0;
+    virtual bool SlashCommand ( int playerID, int sourceChannel, bz_ApiString command, bz_ApiString message,
+                                bz_APIStringList *params ) = 0;
 };
 
 BZF_API bool bz_registerCustomSlashCommand ( const char* command, bz_CustomSlashCommandHandlerV2 *handler );
@@ -1906,24 +1915,24 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos );
 // world
 typedef struct
 {
-    bool	driveThru;
-    bool	shootThru;
+    bool    driveThru;
+    bool    shootThru;
 } bz_WorldObjectOptions;
 
 typedef struct
 {
-    bz_ApiString	texture;
-    bool		useAlpha;
-    bool		useColorOnTexture;
-    bool		useSphereMap;
-    int		combineMode;
+    bz_ApiString    texture;
+    bool        useAlpha;
+    bool        useColorOnTexture;
+    bool        useSphereMap;
+    int     combineMode;
 } bz_MaterialTexture;
 
 class BZF_API bzAPITextureList
 {
 public:
     bzAPITextureList();
-    bzAPITextureList(const bzAPITextureList	&r);
+    bzAPITextureList(const bzAPITextureList &r);
 
     ~bzAPITextureList();
 
@@ -1947,15 +1956,15 @@ typedef struct bz_MaterialInfo
     bz_ApiString name;
     bzAPITextureList textures;
 
-    float		ambient[4];
-    float		diffuse[4];
-    float		specular[4];
-    float		emisive[4];
-    float		shine;
+    float       ambient[4];
+    float       diffuse[4];
+    float       specular[4];
+    float       emisive[4];
+    float       shine;
 
-    float		alphaThresh;
-    bool		culling;
-    bool		sorting;
+    float       alphaThresh;
+    bool        culling;
+    bool        sorting;
 } bz_MaterialInfo;
 
 // have bz make you a new material
@@ -1968,7 +1977,8 @@ BZF_API bool bz_addWorldPyramid ( float *pos, float rot, float* scale, bool flip
 BZF_API bool bz_addWorldBase( float *pos, float rot, float* scale, bz_eTeamType team, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float border, bz_WorldObjectOptions options );
 BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material );
-BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays );
+BZF_API bool bz_addWorldWeapon( const char* flagType, float *pos, float rot, float tilt, float initDelay,
+                                bz_APIFloatList &delays );
 
 BZF_API float bz_getWorldMaxHeight ( void );
 
@@ -2097,7 +2107,8 @@ public:
 
 BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL);
-BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL, bz_APIStringList *headers = NULL);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL,
+                          bz_APIStringList *headers = NULL);
 BZF_API bool bz_removeURLJob(const char* URL);
 BZF_API size_t bz_addURLJobForID(const char* URL,
                                  bz_BaseURLHandler* handler = NULL,
@@ -2278,7 +2289,8 @@ public:
     virtual void scoreLimitReached(int player, bz_eTeamType team);
     virtual void flagCaptured(int player, bz_eTeamType team);
 
-    virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState, double timestamp); // implement when server side scoring is in
+    virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
+                                   double timestamp); // implement when server side scoring is in
 // virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs); // implement when server side scoring is in
     virtual void shotFired(int player, unsigned short shotID);
     virtual void shotEnded(int player, unsigned short shotID, unsigned short reason);
@@ -2396,7 +2408,8 @@ private:
 //  there WILL be crashes if you add one.
 // this message will be removed when the code is complete.
 BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler);
-BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
+BZF_API bool bz_removeServerSidePlayer(int playerID,
+                                       bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
 
 // no ShotType support in 2.4 (yet?).  still accept the ShotType parameter for compatibility.
 typedef int bz_eShotType;
@@ -2429,6 +2442,6 @@ BZF_API void bz_ClearFilter(void);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

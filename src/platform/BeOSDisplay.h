@@ -11,7 +11,7 @@
  */
 
 /* BeOSDisplay:
- *	Encapsulates an BeOS windows display
+ *  Encapsulates an BeOS windows display
  */
 
 #ifndef BZF_BEOSDISPLAY_H
@@ -31,26 +31,26 @@ public:
     BeOSDisplay(const char* displayName, const char* videoFormat);
     ~BeOSDisplay();
 
-    bool				isValid() const;
-    bool				isEventPending() const;
-    bool				getEvent(BzfEvent&) const;
-    bool				peekEvent(BzfEvent&) const;
+    bool                isValid() const;
+    bool                isEventPending() const;
+    bool                getEvent(BzfEvent&) const;
+    bool                peekEvent(BzfEvent&) const;
 
-    void				postBzfEvent(BzfEvent&);
+    void                postBzfEvent(BzfEvent&);
 
 private:
     BeOSDisplay(const BeOSDisplay&);
-    BeOSDisplay&			operator=(const BeOSDisplay&);
+    BeOSDisplay&            operator=(const BeOSDisplay&);
 
-    bool				doSetResolution(int);
-    bool				doSetDefaultResolution();
+    bool                doSetResolution(int);
+    bool                doSetDefaultResolution();
 
 private:
-    BScreen				*bScreen;
+    BScreen             *bScreen;
     /* Event stuff */
-    port_id				eventPort;
+    port_id             eventPort;
 public: //XXX
-    BeOSWindow			*beosWin;
+    BeOSWindow          *beosWin;
 };
 
 #endif // BZF_BEOSDISPLAY_H

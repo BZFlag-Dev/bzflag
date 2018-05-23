@@ -52,9 +52,7 @@ bool RejoinList::add (int playerIndex)
     GameKeeper::Player *playerData
         = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData == NULL)
-    {
         return false;
-    }
     RejoinNode* rn = new RejoinNode;
     strncpy (rn->callsign, playerData->player.getCallSign(), CallSignLen - 1);
     rn->callsign[CallSignLen - 1] = '\0';
@@ -68,9 +66,7 @@ float RejoinList::waitTime (int playerIndex)
     GameKeeper::Player *playerData
         = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData == NULL)
-    {
         return 0.0f;
-    }
 
     std::list<struct RejoinNode*>::iterator it;
     TimeKeeper thenTime = TimeKeeper::getCurrent();
@@ -97,9 +93,7 @@ float RejoinList::waitTime (int playerIndex)
     {
         RejoinNode *rn = *it;
         if (strcasecmp (rn->callsign, callsign) == 0)
-        {
             value = float(rn->joinTime - thenTime);
-        }
         ++it;
     }
 
@@ -110,6 +104,6 @@ float RejoinList::waitTime (int playerIndex)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

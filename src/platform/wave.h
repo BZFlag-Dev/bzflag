@@ -17,17 +17,17 @@
 
 /* A very simple wav file reader */
 
-#define	WAV_FORMAT_UNKNOWN		(0x0000)
-#define	WAV_FORMAT_PCM			(0x0001)
-#define	WAV_FORMAT_ADPCM		(0x0002)
-#define	WAV_FORMAT_ALAW			(0x0006)
-#define	WAV_FORMAT_MULAW		(0x0007)
-#define	WAV_FORMAT_OKI_ADPCM		(0x0010)
-#define	WAV_FORMAT_DIGISTD		(0x0015)
-#define	WAV_FORMAT_DIGIFIX		(0x0016)
-#define	IBM_FORMAT_MULAW		(0x0101)
-#define	IBM_FORMAT_ALAW			(0x0102)
-#define	IBM_FORMAT_ADPCM		(0x0103)
+#define WAV_FORMAT_UNKNOWN      (0x0000)
+#define WAV_FORMAT_PCM          (0x0001)
+#define WAV_FORMAT_ADPCM        (0x0002)
+#define WAV_FORMAT_ALAW         (0x0006)
+#define WAV_FORMAT_MULAW        (0x0007)
+#define WAV_FORMAT_OKI_ADPCM        (0x0010)
+#define WAV_FORMAT_DIGISTD      (0x0015)
+#define WAV_FORMAT_DIGIFIX      (0x0016)
+#define IBM_FORMAT_MULAW        (0x0101)
+#define IBM_FORMAT_ALAW         (0x0102)
+#define IBM_FORMAT_ADPCM        (0x0103)
 
 /*
    Open the given filename as a wav file. Read the header and return the
@@ -55,6 +55,6 @@ int readWavData(FILE*, char *data, int numSamples, int width);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

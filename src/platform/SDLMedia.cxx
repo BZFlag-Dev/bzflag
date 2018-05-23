@@ -80,7 +80,7 @@ void SDLMedia::setMediaDirectory(const std::string& _dir)
     mediaDir = mdir;
 }
 
-double			SDLMedia::stopwatch(bool start)
+double          SDLMedia::stopwatch(bool start)
 {
     Uint32 currentTick = SDL_GetTicks(); //msec
 
@@ -97,7 +97,7 @@ double			SDLMedia::stopwatch(bool start)
         return (double) currentTick * 0.001;
 }
 
-bool			SDLMedia::openAudio()
+bool            SDLMedia::openAudio()
 {
     // don't re-initialize
     if (audioReady) return false;
@@ -129,7 +129,7 @@ bool			SDLMedia::openAudio()
     desired.channels   = 2;
     desired.samples    = 1 << n; // In stereo samples
     desired.callback   = &fillAudioWrapper;
-    desired.userdata   = (void *) this;	// To handle Wrap of func
+    desired.userdata   = (void *) this; // To handle Wrap of func
 
     /* Open the audio device */
     if (SDL_OpenAudio(&desired, &obtained) < 0)
@@ -179,7 +179,7 @@ bool			SDLMedia::openAudio()
     return true;
 }
 
-void			SDLMedia::closeAudio()
+void            SDLMedia::closeAudio()
 {
     // Stop Audio to avoid callback
     SDL_PauseAudio(1);
@@ -191,14 +191,14 @@ void			SDLMedia::closeAudio()
     audioReady    = false;
 }
 
-void			SDLMedia::startAudioCallback(bool (*proc)(void))
+void            SDLMedia::startAudioCallback(bool (*proc)(void))
 {
     userCallback = proc;
     // Stop sending silence and start calling audio callback
     SDL_PauseAudio(0);
 }
 
-void			SDLMedia::writeSoundCommand(const void* cmd, int len)
+void            SDLMedia::writeSoundCommand(const void* cmd, int len)
 {
     if (!audioReady) return;
 
@@ -216,7 +216,7 @@ void			SDLMedia::writeSoundCommand(const void* cmd, int len)
     SDL_UnlockAudio();
 }
 
-bool			SDLMedia::readSoundCommand(void* cmd, int len)
+bool            SDLMedia::readSoundCommand(void* cmd, int len)
 {
     bool result = false;
 
@@ -231,17 +231,17 @@ bool			SDLMedia::readSoundCommand(void* cmd, int len)
     return result;
 }
 
-int			SDLMedia::getAudioOutputRate() const
+int         SDLMedia::getAudioOutputRate() const
 {
     return audioOutputRate;
 }
 
-int			SDLMedia::getAudioBufferSize() const
+int         SDLMedia::getAudioBufferSize() const
 {
     return convert.len >> 1;
 }
 
-int			SDLMedia::getAudioBufferChunkSize() const
+int         SDLMedia::getAudioBufferChunkSize() const
 {
     return convert.len >> 2;
 }
@@ -262,9 +262,7 @@ void SDLMedia::fillAudio (Uint8 * stream, int len)
         outputBufferEmpty = false;
     }
     else
-    {
         outputBufferEmpty = true;
-    }
 
     // just copying into the soundBuffer is enough, SDL is looking for
     // something different from silence sample
@@ -281,7 +279,7 @@ void SDLMedia::fillAudioWrapper (void * userdata, Uint8 * stream, int len)
 void SDLMedia::writeAudioFrames(const float* samples, int)
 {
     int    audioBufferSize = convert.len >> 1;
-    short *buffer	  = (short *)convert.buf;
+    short *buffer     = (short *)convert.buf;
 
     for (int j = 0; j < audioBufferSize; j++)
     {
@@ -296,7 +294,7 @@ void SDLMedia::writeAudioFrames(const float* samples, int)
 }
 
 // Setting Audio Driver
-void	SDLMedia::setDriver(std::string driverName)
+void    SDLMedia::setDriver(std::string driverName)
 {
     static char envAssign[256];
     std::string envVar = "SDL_AUDIODRIVER=" + driverName;
@@ -306,7 +304,7 @@ void	SDLMedia::setDriver(std::string driverName)
 }
 
 // Setting Audio Device
-void	SDLMedia::setDevice(std::string deviceName)
+void    SDLMedia::setDevice(std::string deviceName)
 {
     static char envAssign[256];
     std::string envVar = "AUDIODEV=" + deviceName;
@@ -315,19 +313,19 @@ void	SDLMedia::setDevice(std::string deviceName)
     putenv(envAssign);
 }
 
-float*	    SDLMedia::doReadSound(const std::string &filename, int &numFrames,
+float*      SDLMedia::doReadSound(const std::string &filename, int &numFrames,
                                   int &rate) const
 {
     SDL_AudioSpec wav_spec;
-    Uint32	wav_length;
-    Uint8	*wav_buffer;
-    int	   ret;
+    Uint32  wav_length;
+    Uint8   *wav_buffer;
+    int    ret;
     SDL_AudioCVT  wav_cvt;
     int16_t      *cvt16;
-    int	   i;
+    int    i;
 
-    float	*data;
-    rate	= defaultAudioRate;
+    float   *data;
+    rate    = defaultAudioRate;
     if (!SDL_LoadWAV(filename.c_str(), &wav_spec, &wav_buffer, &wav_length))
         return NULL;
 
@@ -378,6 +376,6 @@ void SDLMedia::audioDriver(std::string& driverName)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

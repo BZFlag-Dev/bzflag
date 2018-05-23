@@ -39,7 +39,7 @@ class Parser
 public:
     /** This constructor should be called by all subclasses.
         @param usageText A text string that describes how this command line
-    	       option should be used, e.g. "[-ui curses|stdout]".
+               option should be used, e.g. "[-ui curses|stdout]".
         @param helpText A short description of what this option does.
     */
     Parser(const std::string& usageText, const std::string& helpText)
@@ -231,6 +231,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

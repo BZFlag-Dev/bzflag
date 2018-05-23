@@ -28,17 +28,11 @@ CustomLink::CustomLink()
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
     if (strcmp(cmd, "from") == 0)
-    {
         input >> from;
-    }
     else if (strcmp(cmd, "to") == 0)
-    {
         input >> to;
-    }
     else
-    {
         return WorldFileObject::read(cmd, input);
-    }
     return true;
 }
 
@@ -52,6 +46,6 @@ void CustomLink::writeToWorld(WorldInfo *world) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

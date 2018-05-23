@@ -103,9 +103,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
         // how many characters will fit?
         // the unprinted ANSI codes don't count
         if ((fm.getStrLength(fontFace, fontSize, msg) <= maxLength) && (lastTab <= 0))
-        {
             n = lineLen;
-        }
         else
         {
             n = 0;
@@ -141,9 +139,7 @@ void ControlPanelMessage::breakLines(float maxLength, int fontFace, float fontSi
                     }
                 }
                 else
-                {
                     n++;
-                }
                 if (TextUtils::isWhitespace(msg[n]))
                 {
                     lastWhitespace = n;
@@ -199,7 +195,7 @@ static CRITICAL_SECTION controlpanel_critical;
 //
 // ControlPanel
 //
-int			ControlPanel::messagesOffset = 0;
+int         ControlPanel::messagesOffset = 0;
 
 ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
     tabsOnRight(true),
@@ -282,9 +278,7 @@ ControlPanel::~ControlPanel()
 #endif
 
     if (echoToConsole && echoAnsi)
-    {
         std::cout << ColorStrings[FinalResetColor] << std::flush;
-    }
     if (tabs != NULL)
     {
         tabs->clear();
@@ -300,7 +294,7 @@ void ControlPanel::bzdbCallback(const std::string& UNUSED(name), void* data)
     return;
 }
 
-void			ControlPanel::setControlColor(const GLfloat *color)
+void            ControlPanel::setControlColor(const GLfloat *color)
 {
     if (color)
         memcpy(teamColor, color, 3 * sizeof(float));
@@ -308,7 +302,7 @@ void			ControlPanel::setControlColor(const GLfloat *color)
         memset(teamColor, 0, 3 * sizeof(float));
 }
 
-void			ControlPanel::render(SceneRenderer& _renderer)
+void            ControlPanel::render(SceneRenderer& _renderer)
 {
     while (!mutexMsgs.empty())
     {
@@ -321,18 +315,14 @@ void			ControlPanel::render(SceneRenderer& _renderer)
         // always draw the console if its fully opaque
         const float opacity = RENDERER.getPanelOpacity();
         if (opacity != 1.0f)
-        {
             return;
-        }
     }
 
     if (!resized) resize();
 
     // optimization for software rendering folks
     if (!changedMessage && _renderer.getPanelOpacity() == 1.0f)
-    {
         return;
-    }
 
     int i, j;
     const int x = window.getOriginX();
@@ -354,9 +344,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     fm.setOpacity(dimming);
 
     if (changedMessage > 0)
-    {
         changedMessage--;
-    }
     float fx = messageAreaPixels[0] + margin;
     float fy = messageAreaPixels[1] + margin + 1.0f;
     int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
@@ -390,20 +378,17 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
                 // current mode is given a dark background to match the control panel
                 if (messageMode == MessageModes(tab))
-                {
                     glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
-                }
                 else
-                {
                     glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
-                }
 
                 if (tabsOnRight)
                 {
                     // draw the tabs on the right side
                     glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
                             messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-                            messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(tabTextWidth[tab]), //+ drawnTabWidth + int(tabTextWidth[tab]),
+                            messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(
+                                tabTextWidth[tab]), //+ drawnTabWidth + int(tabTextWidth[tab]),
                             messageAreaPixels[1] + messageAreaPixels[3] + ay);
                 }
                 else
@@ -434,9 +419,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
             const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
             int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
             if (top > maxTop)
-            {
                 top = maxTop;
-            }
             glColor3f(0.7f, 0.7f, 0.7f);
             glRecti(messageAreaPixels[0],
                     messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
@@ -454,17 +437,11 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
             // current mode is bright, others are not so bright
             if (messageMode == MessageModes(tab))
-            {
                 glColor4f(1.0f, 1.0f, 1.0f, dimming);
-            }
             else if (unRead[MessageModes(tab)])
-            {
                 glColor4f(0.5f, 0.0f, 0.0f, dimming);
-            }
             else
-            {
                 glColor4f(0.5f, 0.5f, 0.5f, dimming);
-            }
 
             if (tabsOnRight)
             {
@@ -508,13 +485,9 @@ void			ControlPanel::render(SceneRenderer& _renderer)
               messageAreaPixels[3] - (showTabs ? int(lineHeight + 4) : 0) + ay);
 
     if (messageMode >= 0)
-    {
         i = (int)messages[messageMode].size() - 1;
-    }
     else
-    {
         i = -1;
-    }
     if (i >= 0 && messagesOffset > 0)
     {
         i -= messagesOffset;
@@ -550,9 +523,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
                 const std::string &msg = messages[messageMode][i].lines[l];
                 std::string raw = stripAnsiCodes(msg);
                 if (regexec(&re, raw.c_str(), 0, NULL, 0) == 0)
-                {
                     highlight = true;
-                }
             }
         }
 
@@ -577,9 +548,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
                 msgy++;
             }
             else
-            {
                 msgx = 0;
-            }
 
             assert(msgy >= 0);
 
@@ -587,9 +556,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
             if (j + msgy < maxLines)
             {
                 if (!highlight)
-                {
                     fm.drawString(fx + msgx, fy + msgy * lineHeight, 0, fontFace, fontSize, msg);
-                }
                 else
                 {
                     // highlight this line
@@ -610,9 +577,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
     // free the regex memory
     if (useHighlight)
-    {
         regfree(&re);
-    }
 
     glScissor(x + messageAreaPixels[0] - 2,
               y + messageAreaPixels[1] - 2,
@@ -622,7 +587,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
 
     // draw the lines around the console panel
     float outlineOpacity = RENDERER.getPanelOpacity();
-    float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this maybe?
+    float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;   // bzdb cache this maybe?
     if ( outlineOpacity < 1.0f )
         outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 
@@ -709,7 +674,8 @@ void			ControlPanel::render(SceneRenderer& _renderer)
                     {
                         glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition),
                                    (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
-                        glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(tabTextWidth[tab])),
+                        glVertex2f((float) (x + messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + tabPosition + long(
+                                                tabTextWidth[tab])),
                                    (float) (y + messageAreaPixels[1] + messageAreaPixels[3] + ay));
                     }
                     else
@@ -736,7 +702,7 @@ void			ControlPanel::render(SceneRenderer& _renderer)
     fm.setOpacity(1.0f);
 }
 
-void			ControlPanel::resize()
+void            ControlPanel::resize()
 {
     float radarSpace, radarSize, panelHeight;
     // get important metrics
@@ -760,18 +726,18 @@ void			ControlPanel::resize()
     // leave off 1 pixel for the border
     radarAreaPixels[1] = (int)radarSpace + 1;
     radarAreaPixels[2] = radarAreaPixels[3] = (int)(radarSize - (radarSpace * 2.0f)) - 2;
-    if (BZDB.get("radarPosition") == "1")  	//radar on right
+    if (BZDB.get("radarPosition") == "1")   //radar on right
     {
         radarAreaPixels[0] = (int)(w - radarSize + radarSpace); // radar X coord
-        messageAreaPixels[0] = (int)radarSpace + 1;	// message box X coord
+        messageAreaPixels[0] = (int)radarSpace + 1; // message box X coord
     }
-    else  					//radar on left
+    else                    //radar on left
     {
-        radarAreaPixels[0] = radarAreaPixels[1];	// radar X coord
-        messageAreaPixels[0] = (int)radarSize + 1;	// message box X coord
+        radarAreaPixels[0] = radarAreaPixels[1];    // radar X coord
+        messageAreaPixels[0] = (int)radarSize + 1;  // message box X coord
     }
-    messageAreaPixels[1] = radarAreaPixels[1];			// Y coord
-    messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;	// Width
+    messageAreaPixels[1] = radarAreaPixels[1];          // Y coord
+    messageAreaPixels[2] = (int)(w - radarSize - radarSpace) - 2;   // Width
     messageAreaPixels[3] = (int)(panelHeight - (radarSpace * 2.0f)) - 2; // Height
 
     if (!BZDB.isTrue("displayRadar") || (BZDBCache::radarLimit <= 0.0f))
@@ -834,9 +800,7 @@ void			ControlPanel::resize()
     for (int i = 0; i < MessageModeCount; i++)
     {
         for (int j = 0; j < (int)messages[i].size(); j++)
-        {
             messages[i][j].breakLines(messageAreaPixels[2] - 2 * margin, fontFace, fontSize);
-        }
     }
 
     // note that we've been resized at least once
@@ -844,12 +808,12 @@ void			ControlPanel::resize()
     invalidate();
 }
 
-void			ControlPanel::resizeCallback(void* self)
+void            ControlPanel::resizeCallback(void* self)
 {
     ((ControlPanel*)self)->resize();
 }
 
-void			ControlPanel::setNumberOfFrameBuffers(int n)
+void            ControlPanel::setNumberOfFrameBuffers(int n)
 {
     numBuffers = n;
 }
@@ -857,32 +821,24 @@ void			ControlPanel::setNumberOfFrameBuffers(int n)
 void ControlPanel::invalidate()
 {
     if (numBuffers)
-    {
         changedMessage = numBuffers;
-    }
     else
-    {
         changedMessage++;
-    }
 }
 
-void			ControlPanel::exposeCallback(void* self)
+void            ControlPanel::exposeCallback(void* self)
 {
     ((ControlPanel*)self)->invalidate();
 }
 
-void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
+void            ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
 {
     if (paged)
     {
         if (abs(offset) <= 1)
-        {
             offset = offset * (maxLines - 1);
-        }
         else
-        {
             offset = offset * maxLines;
-        }
     }
 
     // offset = offset from whence (offset of 0 is the bottom/most recent)
@@ -925,7 +881,7 @@ void			ControlPanel::setMessagesOffset(int offset, int whence, bool paged)
     invalidate();
 }
 
-void			ControlPanel::setMessagesMode(int _messageMode)
+void            ControlPanel::setMessagesMode(int _messageMode)
 {
     messageMode = _messageMode;
     if (messageMode == MessageAll)
@@ -943,7 +899,7 @@ void ControlPanel::addMutexMessage(const std::string& msg)
     UNLOCK_CONTROLPANEL_MUTEX
 }
 
-void			ControlPanel::addMessage(const std::string& line,
+void            ControlPanel::addMessage(const std::string& line,
         const int realmode)
 {
     ControlPanelMessage item(line);
@@ -989,9 +945,7 @@ void			ControlPanel::addMessage(const std::string& line,
                 // Don't scroll the messages unless we're at the bottom
                 if ((BZDB.isTrue("pauseConsole") && messagesOffset > 0 && messageMode >= 0) ||
                         paused)
-                {
                     setMessagesOffset(1, 1 /* current */, false);
-                }
 
                 invalidate();
             }
@@ -999,9 +953,7 @@ void			ControlPanel::addMessage(const std::string& line,
             // mark the tab as unread (if viewing tabs)
             const bool showTabs = (BZDB.evalInt("showtabs") > 0);
             if (showTabs && (messageMode != tab) && (messageMode != MessageAll))
-            {
                 unRead[tab] = true;
-            }
         }
     }
 
@@ -1018,13 +970,9 @@ void			ControlPanel::addMessage(const std::string& line,
         }
 #else
         if (echoAnsi)
-        {
             std::cout << line << ColorStrings[ResetColor] << std::endl;
-        }
         else
-        {
             std::cout << stripAnsiCodes(line) << std::endl;
-        }
         fflush(stdout);
 #endif
     }
@@ -1036,9 +984,7 @@ void ControlPanel::saveMessages(const std::string& filename,
 {
     FILE* file = fopen(filename.c_str(), "a+");
     if (!file)
-    {
         return;
-    }
 
     const time_t nowTime = time (NULL);
     fprintf(file, "\n----------------------------------------\n");
@@ -1051,13 +997,9 @@ void ControlPanel::saveMessages(const std::string& filename,
     {
         const std::string line = msg->getString(timestamp);
         if (stripAnsi)
-        {
             fprintf(file, "%s\n", stripAnsiCodes(line).c_str());
-        }
         else
-        {
             fprintf(file, "%s%s\n", line.c_str(), ColorStrings[ResetColor].c_str());
-        }
     }
 
     fclose(file);
@@ -1076,6 +1018,6 @@ void ControlPanel::setRadarRenderer(RadarRenderer* rr)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

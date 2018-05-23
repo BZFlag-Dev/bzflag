@@ -40,7 +40,7 @@ HUDuiLabel::~HUDuiLabel()
         delete params;
 }
 
-std::string		HUDuiLabel::getString() const
+std::string     HUDuiLabel::getString() const
 {
     std::string theString;
     Bundle *bdl = BundleMgr::getCurrentBundle();
@@ -52,7 +52,7 @@ std::string		HUDuiLabel::getString() const
     return theString;
 }
 
-void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
+void            HUDuiLabel::setString(const std::string& _string, const std::vector<std::string> *_params)
 {
     string = _string;
     if (_params)
@@ -65,12 +65,12 @@ void			HUDuiLabel::setString(const std::string& _string, const std::vector<std::
     onSetFont();
 }
 
-void			HUDuiLabel::onSetFont()
+void            HUDuiLabel::onSetFont()
 {
     HUDuiControl::onSetFont();
 }
 
-bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
+bool            HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
 {
     if (key.ascii == 0) switch (key.button)
         {
@@ -101,44 +101,36 @@ bool			HUDuiLabel::doKeyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
+bool            HUDuiLabel::doKeyRelease(const BzfKeyEvent&)
 {
     return false;
 }
 
-void			HUDuiLabel::setDarker(bool d)
+void            HUDuiLabel::setDarker(bool d)
 {
     darker = d;
 }
 
-void			HUDuiLabel::setColor(GLfloat r, GLfloat g, GLfloat b)
+void            HUDuiLabel::setColor(GLfloat r, GLfloat g, GLfloat b)
 {
     color[0] = r;
     color[1] = g;
     color[2] = b;
 }
 
-void			HUDuiLabel::doRender()
+void            HUDuiLabel::doRender()
 {
     if (getFontFace() < 0)
-    {
         return;
-    }
     // render string
     FontManager &fm = FontManager::instance();
     float darkness;
     if (hasFocus())
-    {
         darkness = 1.0f;
-    }
     else if (!darker)
-    {
         darkness = 0.7f;
-    }
     else
-    {
         darkness = 0.4f;
-    }
     fm.setDarkness(darkness);
     fm.drawString(getX(), getY(), 0,
                   getFontFace(), getFontSize(),
@@ -150,6 +142,6 @@ void			HUDuiLabel::doRender()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

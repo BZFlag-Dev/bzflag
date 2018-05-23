@@ -11,11 +11,11 @@
  */
 
 /* SDLDisplay:
- *	Encapsulates an SDL display
+ *  Encapsulates an SDL display
  */
 
 #ifndef BZF_SDLDISPLAY_H
-#define	BZF_SDLDISPLAY_H
+#define BZF_SDLDISPLAY_H
 
 // Inherits from
 #include "BzfDisplay.h"
@@ -64,6 +64,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

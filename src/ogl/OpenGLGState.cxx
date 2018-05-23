@@ -46,50 +46,50 @@ public:
     OpenGLGStateState();
     ~OpenGLGStateState();
 
-    void		reset();
-    void		enableTexture(bool);
-    void		enableTextureMatrix(bool);
-    void		enableSphereMap(bool);
-    void		enableMaterial(bool);
-    void		setTexture(const int tex);
-    void		setTextureMatrix(const GLfloat* matrix);
-    void		setTextureEnvMode(GLenum mode);
-    void		setMaterial(const OpenGLMaterial&);
-    void		setBlending(GLenum sFactor, GLenum dFactor);
-    void		setStipple(float alpha);
-    void		setSmoothing(bool smooth);
-    void		setCulling(GLenum culling);
-    void		setShading(GLenum);
-    void		setAlphaFunc(GLenum func, GLclampf ref);
-    void		setNeedsSorting(bool value);
+    void        reset();
+    void        enableTexture(bool);
+    void        enableTextureMatrix(bool);
+    void        enableSphereMap(bool);
+    void        enableMaterial(bool);
+    void        setTexture(const int tex);
+    void        setTextureMatrix(const GLfloat* matrix);
+    void        setTextureEnvMode(GLenum mode);
+    void        setMaterial(const OpenGLMaterial&);
+    void        setBlending(GLenum sFactor, GLenum dFactor);
+    void        setStipple(float alpha);
+    void        setSmoothing(bool smooth);
+    void        setCulling(GLenum culling);
+    void        setShading(GLenum);
+    void        setAlphaFunc(GLenum func, GLclampf ref);
+    void        setNeedsSorting(bool value);
 
-    bool		getNeedsSorting() const
+    bool        getNeedsSorting() const
     {
         return unsorted.needsSorting;
     }
-    bool		isBlended() const
+    bool        isBlended() const
     {
         return unsorted.hasBlending;
     }
-    bool		isTextured() const
+    bool        isTextured() const
     {
         return sorted.texture >= 0;
     }
-    bool		isTextureMatrix() const
+    bool        isTextureMatrix() const
     {
         return sorted.hasTextureMatrix;
     }
-    bool		isSphereMap() const
+    bool        isSphereMap() const
     {
         return sorted.hasSphereMap;
     }
-    bool		isLighted() const
+    bool        isLighted() const
     {
         return sorted.material.isValid();
     }
 
-    void		resetOpenGLState() const;
-    void		setOpenGLState(const OpenGLGStateState* prev) const;
+    void        resetOpenGLState() const;
+    void        setOpenGLState(const OpenGLGStateState* prev) const;
 
 public:
     class Sorted
@@ -98,19 +98,19 @@ public:
         Sorted();
         ~Sorted();
 
-        void		reset();
-        bool		operator==(const Sorted&) const;
-        bool		operator<(const Sorted&) const;
+        void        reset();
+        bool        operator==(const Sorted&) const;
+        bool        operator<(const Sorted&) const;
 
     public:
-        bool		hasTexture;
-        bool		hasTextureMatrix;
-        bool		hasSphereMap;
-        bool		hasMaterial;
-        int		texture;
-        const GLfloat*	textureMatrix;
-        GLenum		textureEnvMode;
-        OpenGLMaterial	material;
+        bool        hasTexture;
+        bool        hasTextureMatrix;
+        bool        hasSphereMap;
+        bool        hasMaterial;
+        int     texture;
+        const GLfloat*  textureMatrix;
+        GLenum      textureEnvMode;
+        OpenGLMaterial  material;
     };
 
     class Unsorted
@@ -119,27 +119,27 @@ public:
         Unsorted();
         ~Unsorted();
 
-        void		reset();
+        void        reset();
 
     public:
-        bool		needsSorting;
-        bool		hasBlending;
-        bool		hasStipple;
-        bool		hasSmoothing;
-        bool		hasCulling;
-        bool		hasShading;
-        bool		hasAlphaFunc;
-        GLenum		blendSFactor;
-        GLenum		blendDFactor;
-        int		stippleIndex;
-        GLenum		culling;
-        GLenum		alphaFunc;
-        GLclampf	alphaRef;
+        bool        needsSorting;
+        bool        hasBlending;
+        bool        hasStipple;
+        bool        hasSmoothing;
+        bool        hasCulling;
+        bool        hasShading;
+        bool        hasAlphaFunc;
+        GLenum      blendSFactor;
+        GLenum      blendDFactor;
+        int     stippleIndex;
+        GLenum      culling;
+        GLenum      alphaFunc;
+        GLclampf    alphaRef;
     };
 
 public:
-    Sorted		sorted;
-    Unsorted		unsorted;
+    Sorted      sorted;
+    Unsorted        unsorted;
 };
 
 //
@@ -156,55 +156,55 @@ public:
     OpenGLGStateRep(const OpenGLGStateState&);
     ~OpenGLGStateRep();
 
-    bool		getNeedsSorting()
+    bool        getNeedsSorting()
     {
         return state.getNeedsSorting();
     }
-    bool		isBlended()
+    bool        isBlended()
     {
         return state.isBlended();
     }
-    bool		isTextured()
+    bool        isTextured()
     {
         return state.isTextured();
     }
-    bool		isTextureMatrix()
+    bool        isTextureMatrix()
     {
         return state.isTextureMatrix();
     }
-    bool		isSphereMap()
+    bool        isSphereMap()
     {
         return state.isSphereMap();
     }
-    bool		isLighted()
+    bool        isLighted()
     {
         return state.isLighted();
     }
-    void		setState();
-    static void		resetState();
+    void        setState();
+    static void     resetState();
 
-    void		ref();
-    void		unref();
+    void        ref();
+    void        unref();
 
     const OpenGLGStateState& getState() const
     {
         return state;
     }
-    void		addRenderNode(RenderNode* node,
+    void        addRenderNode(RenderNode* node,
                               const OpenGLGState* gstate);
 
 private:
     friend class SortedGState;
 
-    int			refCount;
-    OpenGLGStateState	state;
+    int         refCount;
+    OpenGLGStateState   state;
 
     // modified by SortedGState
-    SortedGState*	bucket;
-    OpenGLGStateRep*	prev;
-    OpenGLGStateRep*	next;
+    SortedGState*   bucket;
+    OpenGLGStateRep*    prev;
+    OpenGLGStateRep*    next;
 
-    static OpenGLGStateState*	lastState;
+    static OpenGLGStateState*   lastState;
 };
 
 //
@@ -229,7 +229,7 @@ OpenGLGStateState::Sorted::~Sorted()
     // do nothing
 }
 
-void			OpenGLGStateState::Sorted::reset()
+void            OpenGLGStateState::Sorted::reset()
 {
     hasTexture = false;
     hasTextureMatrix = false;
@@ -241,78 +241,52 @@ void			OpenGLGStateState::Sorted::reset()
     material = OpenGLMaterial();
 }
 
-bool			OpenGLGStateState::Sorted::operator==(
+bool            OpenGLGStateState::Sorted::operator==(
     const Sorted& s) const
 {
     if (hasTexture != s.hasTexture || texture != s.texture)
-    {
         return false;
-    }
     if ((hasTextureMatrix != s.hasTextureMatrix) ||
             (textureMatrix != s.textureMatrix))
-    {
         return false;
-    }
     if (textureEnvMode != s.textureEnvMode)
-    {
         return false;
-    }
     if (hasSphereMap != s.hasSphereMap)
-    {
         return false;
-    }
     if (hasMaterial != s.hasMaterial || material != s.material)
-    {
         return false;
-    }
     return true;
 }
 
-bool			OpenGLGStateState::Sorted::operator<(
+bool            OpenGLGStateState::Sorted::operator<(
     const Sorted& s) const
 {
     // do arbitrary sorting:
     // this < s if this has no texture and s does or texture < s.texture
     if (hasTexture != s.hasTexture)
-    {
         return s.hasTexture;
-    }
     else if (hasTexture)
     {
         if (texture != s.texture)
-        {
             return (texture < s.texture);
-        }
 
         if (hasTextureMatrix != s.hasTextureMatrix)
-        {
             return hasTextureMatrix;
-        }
         else if (hasTextureMatrix)
-        {
             return (textureMatrix < s.textureMatrix);
-        }
 
         if (textureEnvMode != s.textureEnvMode)
-        {
             return (textureEnvMode < s.textureEnvMode);
-        }
 
         if (hasSphereMap != s.hasSphereMap)
-        {
             return hasSphereMap;
-        }
     }
 
     // this < s if this has no material and s does or material < s.material
     if (hasMaterial != s.hasMaterial)
-    {
         return s.hasMaterial;
-    }
     else if (hasMaterial)
-    {
         return (material < s.material);
-    }
 
     // states are the same
     return false;
@@ -341,7 +315,7 @@ OpenGLGStateState::Unsorted::~Unsorted()
     // do nothing
 }
 
-void			OpenGLGStateState::Unsorted::reset()
+void            OpenGLGStateState::Unsorted::reset()
 {
     needsSorting = false;
     hasBlending = false;
@@ -363,13 +337,13 @@ OpenGLGStateState::~OpenGLGStateState()
     // do nothing
 }
 
-void			OpenGLGStateState::reset()
+void            OpenGLGStateState::reset()
 {
     sorted.reset();
     unsorted.reset();
 }
 
-void			OpenGLGStateState::enableTexture(bool on)
+void            OpenGLGStateState::enableTexture(bool on)
 {
     if (on)
         sorted.hasTexture = sorted.texture >= 0;
@@ -377,7 +351,7 @@ void			OpenGLGStateState::enableTexture(bool on)
         sorted.hasTexture = false;
 }
 
-void			OpenGLGStateState::enableTextureMatrix(bool on)
+void            OpenGLGStateState::enableTextureMatrix(bool on)
 {
     if (on)
         sorted.hasTextureMatrix = (sorted.textureMatrix != NULL);
@@ -385,45 +359,45 @@ void			OpenGLGStateState::enableTextureMatrix(bool on)
         sorted.hasTexture = false;
 }
 
-void			OpenGLGStateState::enableSphereMap(bool on)
+void            OpenGLGStateState::enableSphereMap(bool on)
 {
     sorted.hasSphereMap = on;
 }
 
-void			OpenGLGStateState::enableMaterial(bool on)
+void            OpenGLGStateState::enableMaterial(bool on)
 {
     if (on) sorted.hasMaterial = sorted.material.isValid();
     else sorted.hasMaterial = false;
 }
 
-void			OpenGLGStateState::setTexture(
+void            OpenGLGStateState::setTexture(
     const int _texture)
 {
     sorted.hasTexture = _texture>=0;
     sorted.texture = _texture;
 }
 
-void			OpenGLGStateState::setTextureMatrix(
+void            OpenGLGStateState::setTextureMatrix(
     const GLfloat* _textureMatrix)
 {
     sorted.hasTextureMatrix = (_textureMatrix != NULL);
     sorted.textureMatrix = _textureMatrix;
 }
 
-void			OpenGLGStateState::setTextureEnvMode(
+void            OpenGLGStateState::setTextureEnvMode(
     GLenum mode)
 {
     sorted.textureEnvMode = mode;
 }
 
-void			OpenGLGStateState::setMaterial(
+void            OpenGLGStateState::setMaterial(
     const OpenGLMaterial& _material)
 {
     sorted.hasMaterial = _material.isValid();
     sorted.material = _material;
 }
 
-void			OpenGLGStateState::setBlending(
+void            OpenGLGStateState::setBlending(
     GLenum sFactor, GLenum dFactor)
 {
     unsorted.hasBlending = (sFactor != GL_ONE || dFactor != GL_ZERO);
@@ -432,30 +406,30 @@ void			OpenGLGStateState::setBlending(
     unsorted.blendDFactor = dFactor;
 }
 
-void			OpenGLGStateState::setStipple(float alpha)
+void            OpenGLGStateState::setStipple(float alpha)
 {
     unsorted.stippleIndex = OpenGLGState::getStippleIndex(alpha);
     unsorted.hasStipple =
         (unsorted.stippleIndex < OpenGLGState::getOpaqueStippleIndex());
 }
 
-void			OpenGLGStateState::setSmoothing(bool smooth)
+void            OpenGLGStateState::setSmoothing(bool smooth)
 {
     unsorted.hasSmoothing = smooth;
 }
 
-void			OpenGLGStateState::setCulling(GLenum _culling)
+void            OpenGLGStateState::setCulling(GLenum _culling)
 {
     unsorted.hasCulling = (_culling != GL_NONE);
     unsorted.culling = _culling;
 }
 
-void			OpenGLGStateState::setShading(GLenum shading)
+void            OpenGLGStateState::setShading(GLenum shading)
 {
     unsorted.hasShading = (shading != GL_FLAT);
 }
 
-void			OpenGLGStateState::setAlphaFunc(
+void            OpenGLGStateState::setAlphaFunc(
     GLenum func, GLclampf ref)
 {
     unsorted.hasAlphaFunc = (func != GL_ALWAYS);
@@ -463,21 +437,17 @@ void			OpenGLGStateState::setAlphaFunc(
     unsorted.alphaRef = ref;
 }
 
-void			OpenGLGStateState::setNeedsSorting(bool value)
+void            OpenGLGStateState::setNeedsSorting(bool value)
 {
     unsorted.needsSorting = value;
 }
 
-void			OpenGLGStateState::resetOpenGLState() const
+void            OpenGLGStateState::resetOpenGLState() const
 {
     if (sorted.hasTexture)
-    {
         glDisable(GL_TEXTURE_2D);
-    }
     if (sorted.textureEnvMode != GL_MODULATE)
-    {
         glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    }
     if (sorted.hasTextureMatrix)
     {
         glMatrixMode(GL_TEXTURE);
@@ -515,16 +485,12 @@ void			OpenGLGStateState::resetOpenGLState() const
         glEnable(GL_CULL_FACE);
     }
     if (unsorted.hasShading)
-    {
         glShadeModel(GL_FLAT);
-    }
     if (unsorted.hasAlphaFunc)
-    {
         glDisable(GL_ALPHA_TEST);
-    }
 }
 
-void			OpenGLGStateState::setOpenGLState(
+void            OpenGLGStateState::setOpenGLState(
     const OpenGLGStateState* oldState) const
 {
     TextureManager &tm = TextureManager::instance();
@@ -539,13 +505,9 @@ void			OpenGLGStateState::setOpenGLState(
             if (oldState->sorted.hasTexture)
             {
                 if (sorted.texture != oldState->sorted.texture)
-                {
                     tm.bind(sorted.texture);
-                }
                 if (oldState->sorted.textureEnvMode != sorted.textureEnvMode)
-                {
                     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
-                }
             }
             else
             {
@@ -560,9 +522,7 @@ void			OpenGLGStateState::setOpenGLState(
             {
                 glDisable(GL_TEXTURE_2D);
                 if (oldState->sorted.textureEnvMode != GL_MODULATE)
-                {
                     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-                }
             }
         }
 
@@ -809,9 +769,7 @@ void			OpenGLGStateState::setOpenGLState(
             glEnable(GL_BLEND);
         }
         else
-        {
             glDisable(GL_BLEND);
-        }
 
         // antialiasing
         if (unsorted.hasSmoothing)
@@ -845,19 +803,13 @@ void			OpenGLGStateState::setOpenGLState(
             glEnable(GL_CULL_FACE);
         }
         else
-        {
             glDisable(GL_CULL_FACE);
-        }
 
         // shading
         if (unsorted.hasShading)
-        {
             glShadeModel(GL_SMOOTH);
-        }
         else
-        {
             glShadeModel(GL_FLAT);
-        }
 
         // alpha function
         if (unsorted.hasAlphaFunc)
@@ -866,9 +818,7 @@ void			OpenGLGStateState::setOpenGLState(
             glEnable(GL_ALPHA_TEST);
         }
         else
-        {
             glDisable(GL_ALPHA_TEST);
-        }
     }
 }
 
@@ -879,35 +829,35 @@ void			OpenGLGStateState::setOpenGLState(
 class SortedGState
 {
 public:
-    void		addRenderNode(RenderNode* node,
+    void        addRenderNode(RenderNode* node,
                               const OpenGLGState* gstate)
     {
         nodes.append(node, gstate);
     }
 
-    static void		add(OpenGLGStateRep*);
-    static void		remove(OpenGLGStateRep*);
-    static void		clearRenderNodes();
-    static void		render();
+    static void     add(OpenGLGStateRep*);
+    static void     remove(OpenGLGStateRep*);
+    static void     clearRenderNodes();
+    static void     render();
 
 protected: // only protected to shutup compiler;  would be private
     SortedGState(const OpenGLGStateState::Sorted& state);
     ~SortedGState();
 
 private:
-    void		doAdd(OpenGLGStateRep*);
-    void		doRemove(OpenGLGStateRep*);
+    void        doAdd(OpenGLGStateRep*);
+    void        doRemove(OpenGLGStateRep*);
 
 private:
-    SortedGState*		prev;
-    SortedGState*		next;
-    OpenGLGStateState::Sorted	state;
-    OpenGLGStateRep*		firstGState;
-    RenderNodeGStateList	nodes;
-    static SortedGState*	list;
+    SortedGState*       prev;
+    SortedGState*       next;
+    OpenGLGStateState::Sorted   state;
+    OpenGLGStateRep*        firstGState;
+    RenderNodeGStateList    nodes;
+    static SortedGState*    list;
 };
 
-SortedGState*		SortedGState::list = NULL;
+SortedGState*       SortedGState::list = NULL;
 
 SortedGState::SortedGState(const OpenGLGStateState::Sorted& _state) :
     prev(NULL),
@@ -941,7 +891,7 @@ SortedGState::~SortedGState()
     if (next) next->prev = prev;
 }
 
-void			SortedGState::add(OpenGLGStateRep* rep)
+void            SortedGState::add(OpenGLGStateRep* rep)
 {
     assert(rep != NULL);
 
@@ -959,7 +909,7 @@ void			SortedGState::add(OpenGLGStateRep* rep)
     newState->doAdd(rep);
 }
 
-void			SortedGState::remove(OpenGLGStateRep* rep)
+void            SortedGState::remove(OpenGLGStateRep* rep)
 {
     assert(rep != NULL && rep->bucket != NULL);
     SortedGState* bucket = rep->bucket;
@@ -969,7 +919,7 @@ void			SortedGState::remove(OpenGLGStateRep* rep)
     if (bucket->firstGState == NULL) delete bucket;
 }
 
-void			SortedGState::doAdd(OpenGLGStateRep* rep)
+void            SortedGState::doAdd(OpenGLGStateRep* rep)
 {
     rep->bucket = this;
     rep->prev = NULL;
@@ -978,7 +928,7 @@ void			SortedGState::doAdd(OpenGLGStateRep* rep)
     firstGState = rep;
 }
 
-void			SortedGState::doRemove(OpenGLGStateRep* rep)
+void            SortedGState::doRemove(OpenGLGStateRep* rep)
 {
     if (rep->prev == NULL) firstGState = rep->next;
     else rep->prev->next = rep->next;
@@ -988,13 +938,13 @@ void			SortedGState::doRemove(OpenGLGStateRep* rep)
     rep->next = NULL;
 }
 
-void			SortedGState::clearRenderNodes()
+void            SortedGState::clearRenderNodes()
 {
     for (SortedGState* scan = list; scan; scan = scan->next)
         scan->nodes.clear();
 }
 
-void			SortedGState::render()
+void            SortedGState::render()
 {
     for (SortedGState* scan = list; scan; scan = scan->next)
         scan->nodes.render();
@@ -1004,7 +954,7 @@ void			SortedGState::render()
 // OpenGLGStateRep
 //
 
-OpenGLGStateState*	OpenGLGStateRep::lastState = NULL;
+OpenGLGStateState*  OpenGLGStateRep::lastState = NULL;
 
 OpenGLGStateRep::OpenGLGStateRep() : refCount(1)
 {
@@ -1026,25 +976,25 @@ OpenGLGStateRep::~OpenGLGStateRep()
     if (lastState == &state) resetState();
 }
 
-void			OpenGLGStateRep::ref()
+void            OpenGLGStateRep::ref()
 {
     refCount++;
 }
 
-void			OpenGLGStateRep::unref()
+void            OpenGLGStateRep::unref()
 {
     if (refCount == 1) delete this;
     else refCount--;
 }
 
-void			OpenGLGStateRep::addRenderNode(RenderNode* node,
+void            OpenGLGStateRep::addRenderNode(RenderNode* node,
         const OpenGLGState* gstate)
 {
     assert(bucket != NULL);
     bucket->addRenderNode(node, gstate);
 }
 
-void			OpenGLGStateRep::resetState()
+void            OpenGLGStateRep::resetState()
 {
     if (lastState)
     {
@@ -1053,7 +1003,7 @@ void			OpenGLGStateRep::resetState()
     }
 }
 
-void			OpenGLGStateRep::setState()
+void            OpenGLGStateRep::setState()
 {
     state.setOpenGLState(lastState);
     lastState = &state;
@@ -1146,7 +1096,7 @@ OpenGLGState::ContextInitializer::find(
 //
 
 const int NumStipples = 9;
-static const GLubyte	stipplePattern[NumStipples][4] =
+static const GLubyte    stipplePattern[NumStipples][4] =
 {
     { 0x00, 0x00, 0x00, 0x00 },
     { 0x88, 0x00, 0x22, 0x00 },
@@ -1158,7 +1108,7 @@ static const GLubyte	stipplePattern[NumStipples][4] =
     { 0xff, 0xdd, 0xff, 0x77 },
     { 0xff, 0xff, 0xff, 0xff },
 };
-GLuint			OpenGLGState::stipples = INVALID_GL_LIST_ID;
+GLuint          OpenGLGState::stipples = INVALID_GL_LIST_ID;
 
 OpenGLGState::OpenGLGState()
 {
@@ -1181,7 +1131,7 @@ OpenGLGState::~OpenGLGState()
     rep->unref();
 }
 
-OpenGLGState&		OpenGLGState::operator=(const OpenGLGState& state)
+OpenGLGState&       OpenGLGState::operator=(const OpenGLGState& state)
 {
     state.rep->ref();
     rep->unref();
@@ -1189,52 +1139,52 @@ OpenGLGState&		OpenGLGState::operator=(const OpenGLGState& state)
     return *this;
 }
 
-void			OpenGLGState::setState() const
+void            OpenGLGState::setState() const
 {
     rep->setState();
 }
 
-bool			OpenGLGState::isBlended() const
+bool            OpenGLGState::isBlended() const
 {
     return rep->isBlended();
 }
 
-bool			OpenGLGState::getNeedsSorting() const
+bool            OpenGLGState::getNeedsSorting() const
 {
     return rep->getNeedsSorting();
 }
 
-bool			OpenGLGState::isTextured() const
+bool            OpenGLGState::isTextured() const
 {
     return rep->isTextured();
 }
 
-bool			OpenGLGState::isLighted() const
+bool            OpenGLGState::isLighted() const
 {
     return rep->isLighted();
 }
 
-void			OpenGLGState::resetState()
+void            OpenGLGState::resetState()
 {
     OpenGLGStateRep::resetState();
 }
 
-void			OpenGLGState::addRenderNode(RenderNode* node) const
+void            OpenGLGState::addRenderNode(RenderNode* node) const
 {
     rep->addRenderNode(node, this);
 }
 
-void			OpenGLGState::clearLists()
+void            OpenGLGState::clearLists()
 {
     SortedGState::clearRenderNodes();
 }
 
-void			OpenGLGState::renderLists()
+void            OpenGLGState::renderLists()
 {
     SortedGState::render();
 }
 
-void			OpenGLGState::setStipple(GLfloat alpha)
+void            OpenGLGState::setStipple(GLfloat alpha)
 {
     setStippleIndex(getStippleIndex(alpha));
 }
@@ -1353,9 +1303,7 @@ void OpenGLGState::unregisterContextInitializer(
     ContextInitializer* ci =
         ContextInitializer::find(freeCallback, initCallback, userData);
     if (ci == NULL)
-    {
         logDebugMessage(3,"unregisterContextInitializer() error\n");
-    }
     delete ci;
 }
 
@@ -1514,120 +1462,120 @@ OpenGLGStateBuilder::~OpenGLGStateBuilder()
     delete state;
 }
 
-OpenGLGStateBuilder&	OpenGLGStateBuilder::operator=(
+OpenGLGStateBuilder&    OpenGLGStateBuilder::operator=(
     const OpenGLGState& gstate)
 {
     init(gstate);
     return *this;
 }
 
-void			OpenGLGStateBuilder::init(const OpenGLGState& gstate)
+void            OpenGLGStateBuilder::init(const OpenGLGState& gstate)
 {
     *state = gstate.rep->getState();
 }
 
-void			OpenGLGStateBuilder::reset()
+void            OpenGLGStateBuilder::reset()
 {
     state->reset();
 }
 
-void			OpenGLGStateBuilder::enableTexture(bool on)
+void            OpenGLGStateBuilder::enableTexture(bool on)
 {
     state->enableTexture(on);
 }
 
-void			OpenGLGStateBuilder::enableTextureMatrix(bool on)
+void            OpenGLGStateBuilder::enableTextureMatrix(bool on)
 {
     state->enableTextureMatrix(on);
 }
 
-void			OpenGLGStateBuilder::enableSphereMap(bool on)
+void            OpenGLGStateBuilder::enableSphereMap(bool on)
 {
     state->enableSphereMap(on);
 }
 
-void			OpenGLGStateBuilder::enableMaterial(bool on)
+void            OpenGLGStateBuilder::enableMaterial(bool on)
 {
     state->enableMaterial(on);
 }
 
-void			OpenGLGStateBuilder::resetBlending()
+void            OpenGLGStateBuilder::resetBlending()
 {
     state->setBlending(GL_ONE, GL_ZERO);
 }
 
-void			OpenGLGStateBuilder::resetSmoothing()
+void            OpenGLGStateBuilder::resetSmoothing()
 {
     state->setSmoothing(false);
 }
 
-void			OpenGLGStateBuilder::resetAlphaFunc()
+void            OpenGLGStateBuilder::resetAlphaFunc()
 {
     state->setAlphaFunc(GL_ALWAYS, 0.0f);
 }
 
-void			OpenGLGStateBuilder::setTexture(
+void            OpenGLGStateBuilder::setTexture(
     const int texture)
 {
     state->setTexture(texture);
 }
 
-void			OpenGLGStateBuilder::setTextureMatrix(
+void            OpenGLGStateBuilder::setTextureMatrix(
     const GLfloat* textureMatrix)
 {
     state->setTextureMatrix(textureMatrix);
 }
 
-void			OpenGLGStateBuilder::setTextureEnvMode(
+void            OpenGLGStateBuilder::setTextureEnvMode(
     GLenum mode)
 {
     state->setTextureEnvMode(mode);
 }
 
-void			OpenGLGStateBuilder::setMaterial(
+void            OpenGLGStateBuilder::setMaterial(
     const OpenGLMaterial& material)
 {
     state->setMaterial(material);
 }
 
-void			OpenGLGStateBuilder::setBlending(
+void            OpenGLGStateBuilder::setBlending(
     GLenum sFactor, GLenum dFactor)
 {
     state->setBlending(sFactor, dFactor);
 }
 
-void			OpenGLGStateBuilder::setStipple(float alpha)
+void            OpenGLGStateBuilder::setStipple(float alpha)
 {
     state->setStipple(alpha);
 }
 
-void			OpenGLGStateBuilder::setSmoothing(bool smooth)
+void            OpenGLGStateBuilder::setSmoothing(bool smooth)
 {
     state->setSmoothing(smooth);
 }
 
-void			OpenGLGStateBuilder::setCulling(GLenum culling)
+void            OpenGLGStateBuilder::setCulling(GLenum culling)
 {
     state->setCulling(culling);
 }
 
-void			OpenGLGStateBuilder::setShading(GLenum shading)
+void            OpenGLGStateBuilder::setShading(GLenum shading)
 {
     state->setShading(shading);
 }
 
-void			OpenGLGStateBuilder::setAlphaFunc(
+void            OpenGLGStateBuilder::setAlphaFunc(
     GLenum func, GLclampf ref)
 {
     state->setAlphaFunc(func, ref);
 }
 
-void			OpenGLGStateBuilder::setNeedsSorting(bool value)
+void            OpenGLGStateBuilder::setNeedsSorting(bool value)
 {
     state->setNeedsSorting(value);
 }
 
-OpenGLGState		OpenGLGStateBuilder::getState() const
+OpenGLGState        OpenGLGStateBuilder::getState() const
 {
     return OpenGLGState(*state);
 }
@@ -1661,9 +1609,7 @@ void bzNewList(GLuint list, GLenum mode)
 GLuint bzGenLists(GLsizei count)
 {
     if (OpenGLGState::getExecutingFreeFuncs())
-    {
         contextFreeError ("bzGenLists() is having issues");
-    }
     GLuint base = glGenLists(count);
     //logDebugMessage(4,"genList = %i (%i)\n", (int)base, (int)count);
     return base;
@@ -1673,17 +1619,11 @@ GLuint bzGenLists(GLsizei count)
 void bzDeleteLists(GLuint base, GLsizei count)
 {
     if (OpenGLGState::getExecutingInitFuncs())
-    {
         contextInitError ("bzDeleteLists() is having issues");
-    }
     if (OpenGLGState::haveGLContext())
-    {
         glDeleteLists(base, count);
-    }
     else
-    {
         logDebugMessage(4,"bzDeleteLists(), no context\n");
-    }
     return;
 }
 
@@ -1691,9 +1631,7 @@ void bzDeleteLists(GLuint base, GLsizei count)
 void bzGenTextures(GLsizei count, GLuint *textures)
 {
     if (OpenGLGState::getExecutingFreeFuncs())
-    {
         contextFreeError ("bzGenTextures() is having issues");
-    }
     glGenTextures(count, textures);
     return;
 }
@@ -1702,17 +1640,11 @@ void bzGenTextures(GLsizei count, GLuint *textures)
 void bzDeleteTextures(GLsizei count, const GLuint *textures)
 {
     if (OpenGLGState::getExecutingInitFuncs())
-    {
         contextInitError ("bzDeleteTextures() is having issues");
-    }
     if (OpenGLGState::haveGLContext())
-    {
         glDeleteTextures(count, textures);
-    }
     else
-    {
         logDebugMessage(4,"bzDeleteTextures(), no context\n");
-    }
     return;
 }
 
@@ -1729,21 +1661,13 @@ static const int maxMatrixDepth[3] = {32, 2, 2}; // guaranteed
 static inline int getMatrixSlot(GLenum mode)
 {
     if (mode == GL_MODELVIEW)
-    {
         return 0;
-    }
     else if (mode == GL_PROJECTION)
-    {
         return 1;
-    }
     else if (mode == GL_TEXTURE)
-    {
         return 2;
-    }
     else
-    {
         return -1;
-    }
 }
 
 #undef glPushMatrix
@@ -1827,13 +1751,9 @@ void bzMatrixMode(GLenum mode)
 bool OpenGLGState::haveGLContext()
 {
     if (GET_CURRENT_CONTEXT() != NULL)
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }
 
 
@@ -1841,6 +1761,6 @@ bool OpenGLGState::haveGLContext()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

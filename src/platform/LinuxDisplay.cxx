@@ -17,10 +17,10 @@
 #include <stdio.h>
 
 // evaluates to the (approximate) vertical retrace speed of modeinfo _r
-#define getRetrace(_r)	((int)(0.5f + (1000.0f * (_r)->dotclock) / \
-					((_r)->htotal * (_r)->vtotal)))
+#define getRetrace(_r)  ((int)(0.5f + (1000.0f * (_r)->dotclock) / \
+                    ((_r)->htotal * (_r)->vtotal)))
 
-static int		resolutionCompare(const void* _a, const void* _b)
+static int      resolutionCompare(const void* _a, const void* _b)
 {
     const XF86VidModeModeInfo* a = *((const XF86VidModeModeInfo* const *)_a);
     const XF86VidModeModeInfo* b = *((const XF86VidModeModeInfo* const *)_b);
@@ -58,7 +58,7 @@ LinuxDisplayMode::~LinuxDisplayMode()
         XFree(origResolutions);
 }
 
-XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
+XDisplayMode::ResInfo** LinuxDisplayMode::init(XDisplay* _display,
         int& numModes, int& currentMode)
 {
     int i, eventbase, errorbase;
@@ -98,7 +98,7 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
     for (current = 0; current < numResolutions; current++)
     {
         const XF86VidModeModeInfo* r = resolutions[current];
-        if (dotclock	== (int)r->dotclock &&
+        if (dotclock    == (int)r->dotclock &&
                 mode.hdisplay   == r->hdisplay &&
                 mode.hsyncstart == r->hsyncstart &&
                 mode.hsyncend   == r->hsyncend &&
@@ -138,9 +138,7 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
             numResolutions--;
         }
         else
-        {
             i++;
-        }
     }
 
     // make ResInfo list
@@ -160,17 +158,17 @@ XDisplayMode::ResInfo**	LinuxDisplayMode::init(XDisplay* _display,
     return resInfo;
 }
 
-bool			LinuxDisplayMode::set(int index)
+bool            LinuxDisplayMode::set(int index)
 {
     return doSet(index, true);
 }
 
-bool			LinuxDisplayMode::setDefault(int index)
+bool            LinuxDisplayMode::setDefault(int index)
 {
     return doSet(index, false);
 }
 
-bool			LinuxDisplayMode::doSet(int index, bool position)
+bool            LinuxDisplayMode::doSet(int index, bool position)
 {
     // ignore attempts to set video format to current format.
     // normally this only happens when restoring the default

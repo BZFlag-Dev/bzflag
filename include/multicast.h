@@ -14,8 +14,8 @@
  * Broadcast socket utility functions
  */
 
-#ifndef	__MULTICAST_H__
-#define	__MULTICAST_H__
+#ifndef __MULTICAST_H__
+#define __MULTICAST_H__
 
 #include "common.h"
 
@@ -28,19 +28,19 @@
 
 
 /** openBroadcast:
- *	port:		port number
- *	service:	name of service (overrides port if not NULL)
- *	addr:		resulting address of socket
+ *  port:       port number
+ *  service:    name of service (overrides port if not NULL)
+ *  addr:       resulting address of socket
  * return value:
- *	file descriptor of socket if successful
- *	-1 if failed
+ *  file descriptor of socket if successful
+ *  -1 if failed
  */
-int			openBroadcast(int port, const char* service,
+int         openBroadcast(int port, const char* service,
                           struct sockaddr_in* addr);
-int			closeBroadcast(int fd);
-int			sendBroadcast(int fd, const void* buffer,
+int         closeBroadcast(int fd);
+int         sendBroadcast(int fd, const void* buffer,
                           int bufferLength, const struct sockaddr_in*);
-int			recvBroadcast(int fd, void* buffer,
+int         recvBroadcast(int fd, void* buffer,
                           int bufferLength, struct sockaddr_in*);
 
 #endif  // __MULTICAST_H__
@@ -49,6 +49,6 @@ int			recvBroadcast(int fd, void* buffer,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

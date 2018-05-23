@@ -33,7 +33,7 @@
 #include "Triangulate.h"
 
 
-const char*	MeshObstacle::typeName = "MeshObstacle";
+const char* MeshObstacle::typeName = "MeshObstacle";
 
 
 MeshObstacle::MeshObstacle()
@@ -64,9 +64,7 @@ static void cfvec3ListToArray(const std::vector<cfvec3>& list,
     count = list.size();
     array = new afvec3[count];
     for (int i = 0; i < count; i++)
-    {
         memcpy (array[i], list[i].data, sizeof(afvec3));
-    }
     return;
 }
 
@@ -75,9 +73,7 @@ static void arrayToCafvec3List(const afvec3* array, int count,
 {
     list.clear();
     for (int i = 0; i < count; i++)
-    {
         list.push_back(array[i]);
-    }
     return;
 }
 
@@ -100,9 +96,7 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
     // copy the info
     checkTypes = new char[checkTypesL.size()];
     for (i = 0; i < checkTypesL.size(); i++)
-    {
         checkTypes[i] = checkTypesL[i];
-    }
     cfvec3ListToArray (checkList, checkCount, checkPoints);
     cfvec3ListToArray (verticeList, vertexCount, vertices);
     cfvec3ListToArray (normalList, normalCount, normals);
@@ -110,24 +104,16 @@ MeshObstacle::MeshObstacle(const MeshTransform& transform,
     // modify according to the transform
     int j;
     for (j = 0; j < checkCount; j++)
-    {
         xformtool.modifyVertex(checkPoints[j]);
-    }
     for (j = 0; j < vertexCount; j++)
-    {
         xformtool.modifyVertex(vertices[j]);
-    }
     for (j = 0; j < normalCount; j++)
-    {
         xformtool.modifyNormal(normals[j]);
-    }
 
     texcoordCount = texcoordList.size();
     texcoords = new afvec2[texcoordCount];
     for (i = 0; i < (unsigned int)texcoordCount; i++)
-    {
         memcpy (texcoords[i], texcoordList[i].data, sizeof(afvec2));
-    }
 
     faceSize = _faceCount;
     faceCount = 0;
@@ -155,9 +141,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
 {
     // protect the face list from overrun
     if (faceCount >= faceSize)
-    {
         return false;
-    }
 
     // make sure the list lengths are the same
     unsigned int i;
@@ -165,31 +149,23 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
     if ((count < 3) ||
             ((_normals.size() > 0) && (_normals.size() != count)) ||
             ((_texcoords.size() > 0) && (_texcoords.size() != count)))
-    {
         return false;
-    }
 
     // validate the indices
     for (i = 0; i < _vertices.size(); i++)
     {
         if (_vertices[i] >= vertexCount)
-        {
             return false;
-        }
     }
     for (i = 0; i < _normals.size(); i++)
     {
         if (_normals[i] >= normalCount)
-        {
             return false;
-        }
     }
     for (i = 0; i < _texcoords.size(); i++)
     {
         if (_texcoords[i] >= texcoordCount)
-        {
             return false;
-        }
     }
 
     // use the indices to makes lists of pointers
@@ -237,9 +213,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
         delete face; // delete the old face
         const unsigned int triSize = triIndices.size();
         if (triSize == 0)
-        {
             return false;
-        }
         else
         {
             // prepare array for extra faces
@@ -258,13 +232,9 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                     const int index = triIndices[i].indices[j];
                     triV.push_back(_vertices[index]);
                     if (_normals.size() > 0)
-                    {
                         triN.push_back(_normals[index]);
-                    }
                     if (_texcoords.size() > 0)
-                    {
                         triT.push_back(_texcoords[index]);
-                    }
                 }
                 makeFacePointers(triV, triN, triT, v, n, t);
                 face = new MeshFace(this, 3, v, n, t, _material, phydrv,
@@ -275,9 +245,7 @@ bool MeshObstacle::addFace(const std::vector<int>& _vertices,
                     faceCount++;
                 }
                 else
-                {
                     delete face;
-                }
             }
         }
     }
@@ -305,13 +273,9 @@ void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
     t = NULL;
 
     if (_normals.size() > 0)
-    {
         n = new float*[count];
-    }
     if (_texcoords.size() > 0)
-    {
         t = new float*[count];
-    }
 
     for (int i = 0; i < count; i++)
     {
@@ -319,13 +283,9 @@ void MeshObstacle::makeFacePointers(const std::vector<int>& _vertices,
         int index = (inverted ? ((count - 1) - i) : i);
         v[index] = (float*)vertices[_vertices[i]];
         if (n != NULL)
-        {
             n[index] = (float*)normals[_normals[i]];
-        }
         if (t != NULL)
-        {
             t[index] = (float*)texcoords[_texcoords[i]];
-        }
     }
     return;
 }
@@ -339,9 +299,7 @@ MeshObstacle::~MeshObstacle()
     delete[] normals;
     delete[] texcoords;
     for (int i = 0; i < faceCount; i++)
-    {
         delete faces[i];
-    }
     delete[] faces;
     delete drawInfo;
     return;
@@ -370,25 +328,19 @@ Obstacle* MeshObstacle::copyWithTransform(const MeshTransform& xform) const
     {
         int i;
         for (i = 0; i < checkCount; i++)
-        {
             ctlist.push_back(checkTypes[i]);
-        }
         arrayToCafvec3List(checkPoints, checkCount, clist);
         arrayToCafvec3List(vertices, vertexCount, vlist);
         arrayToCafvec3List(normals, normalCount, nlist);
         for (i = 0; i < texcoordCount; i++)
-        {
             tlist.push_back(texcoords[i]);
-        }
 
         copy = new MeshObstacle(xform, ctlist, clist,
                                 vlist, nlist, tlist, faceCount, noclusters,
                                 smoothBounce, driveThrough, shootThrough, ricochet);
 
         for (i = 0; i < faceCount; i++)
-        {
             copyFace(i, copy);
-        }
     }
 
     copy->finalize();
@@ -438,9 +390,7 @@ void MeshObstacle::finalize()
 
     // cross-link the face edges - FIXME
     for (f = 0; f < faceCount; f++)
-    {
         faces[f]->edges = NULL;
-    }
 
     // set the extents
     for (f = 0; f < faceCount; f++)
@@ -483,9 +433,7 @@ void MeshObstacle::setDrawInfo(MeshDrawInfo* di)
         exit(1);
     }
     else
-    {
         drawInfo = di;
-    }
     return;
 }
 
@@ -507,9 +455,7 @@ bool MeshObstacle::isValid() const
         for (int a = 0; a < 3; a++)
         {
             if (fabsf(vertices[v][a]) > maxExtent)
-            {
                 return false;
-            }
         }
     }
 
@@ -528,9 +474,7 @@ bool MeshObstacle::containsPoint(const float point[3]) const
 bool MeshObstacle::containsPointNoOctree(const float point[3]) const
 {
     if (checkCount <= 0)
-    {
         return false;
-    }
 
     int c, f;
     float dir[3];
@@ -554,9 +498,7 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
                 }
             }
             if (!hitFace)
-            {
                 return true;
-            }
         }
         else if (checkTypes[c] == CheckOutside)
         {
@@ -575,9 +517,7 @@ bool MeshObstacle::containsPointNoOctree(const float point[3]) const
                 }
             }
             if (!hitFace)
-            {
                 return false;
-            }
         }
         else
         {
@@ -608,9 +548,7 @@ void MeshObstacle::getNormal(const float* p, float* n) const
     afvec3 out;
     vec3sub (out, p, center);
     if (out[2] < 0.0f)
-    {
         out[2] = 0.0f;
-    }
     float len = vec3dot(out, out);
     if (len > 0.0f)
     {
@@ -636,9 +574,7 @@ bool MeshObstacle::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAng
                                 float* n) const
 {
     if (n != NULL)
-    {
         getNormal(p, n);
-    }
     return true;
 }
 
@@ -702,9 +638,7 @@ int MeshObstacle::packSize() const
         }
     }
     for (int f = 0; f < faceCount; f++)
-    {
         fullSize += faces[f]->packSize();
-    }
     fullSize += sizeof(unsigned char); // state byte
     return fullSize;
 }
@@ -723,15 +657,11 @@ void *MeshObstacle::pack(void *buf) const
 
     buf = nboPackInt(buf, vertexCount);
     for (i = 0; i < vertexCount; i++)
-    {
         buf = nboPackVector(buf, vertices[i]);
-    }
 
     buf = nboPackInt(buf, normalCount);
     for (i = 0; i < normalCount; i++)
-    {
         buf = nboPackVector(buf, normals[i]);
-    }
 
     void* txcdStart = buf;
     buf = nboPackInt(buf, texcoordCount);
@@ -752,9 +682,7 @@ void *MeshObstacle::pack(void *buf) const
         const int length = (char*)buf - (char*)drawInfoStart;
         const int missing = (align - (length % align)) % align;
         for (i = 0; i < missing; i++)
-        {
             buf = nboPackUByte(buf, 0);
-        }
         // bump up the texture coordinate count
         const int fullLength = ((char*)buf - (char*)drawInfoStart);
         const int extraTxcds = fullLength / sizeof(afvec2);
@@ -771,9 +699,7 @@ void *MeshObstacle::pack(void *buf) const
 
     buf = nboPackInt(buf, faceCount);
     for (i = 0; i < faceCount; i++)
-    {
         buf = faces[i]->pack(buf);
-    }
 
     // pack the state byte
     unsigned char stateByte = 0;
@@ -810,17 +736,13 @@ const void *MeshObstacle::unpack(const void *buf)
     vertexCount = int(inTmp);
     vertices = new afvec3[vertexCount];
     for (i = 0; i < vertexCount; i++)
-    {
         buf = nboUnpackVector(buf, vertices[i]);
-    }
 
     buf = nboUnpackInt(buf, inTmp);
     normalCount = int(inTmp);
     normals = new afvec3[normalCount];
     for (i = 0; i < normalCount; i++)
-    {
         buf = nboUnpackVector(buf, normals[i]);
-    }
 
     buf = nboUnpackInt(buf, inTmp);
     texcoordCount = int(inTmp);
@@ -828,7 +750,7 @@ const void *MeshObstacle::unpack(const void *buf)
     // note where the texture coordinates begin; skip past them
     const void* texCoordPtr = buf;
     buf = (const char*)buf + sizeof(float) * 2 * texcoordCount;
-    const char* texcoordEnd = (const char*)buf;	// for locating hidden drawInfo data
+    const char* texcoordEnd = (const char*)buf; // for locating hidden drawInfo data
 
     buf = nboUnpackInt(buf, inTmp);
     faceSize = int(inTmp);
@@ -839,13 +761,9 @@ const void *MeshObstacle::unpack(const void *buf)
         faces[faceCount] = new MeshFace(this);
         buf = faces[faceCount]->unpack(buf);
         if (!faces[faceCount]->isValid())
-        {
             delete faces[faceCount];
-        }
         else
-        {
             faceCount++;
-        }
     }
 
     // unpack the state byte
@@ -975,87 +893,59 @@ void MeshObstacle::print(std::ostream& out, const std::string& indent) const
         << extents.maxs[2] << std::endl;
 
     if (name.size() > 0)
-    {
         out << indent << "  name " << name << std::endl;
-    }
 
     if (noclusters)
-    {
         out << indent << "  noclusters" << std::endl;
-    }
     if (smoothBounce)
-    {
         out << indent << "  smoothBounce" << std::endl;
-    }
     if (driveThrough && shootThrough)
-    {
         out << indent << "  passable" << std::endl;
-    }
     else
     {
         if (driveThrough)
-        {
             out << indent << "  driveThrough" << std::endl;
-        }
         if (shootThrough)
-        {
             out << indent << "  shootThrough" << std::endl;
-        }
     }
     if (ricochet)
-    {
         out << indent << "  ricochet" << std::endl;
-    }
 
     int i, j;
     for (i = 0; i < checkCount; i++)
     {
         if (checkTypes[i] == CheckInside)
-        {
             out << indent << "  inside";
-        }
         else
-        {
             out << indent << "  outside";
-        }
         for (j = 0; j < 3; j++)
-        {
             outputFloat(out, checkPoints[i][j]);
-        }
         out << std::endl;
     }
     for (i = 0; i < vertexCount; i++)
     {
         out << indent << "  vertex";
         for (j = 0; j < 3; j++)
-        {
             outputFloat(out, vertices[i][j]);
-        }
         out << std::endl;
     }
     for (i = 0; i < normalCount; i++)
     {
         out << indent << "  normal";
         for (j = 0; j < 3; j++)
-        {
             outputFloat(out, normals[i][j]);
-        }
         out << std::endl;
     }
     for (i = 0; i < texcoordCount; i++)
     {
         out << indent << "  texcoord";
         for (j = 0; j < 2; j++)
-        {
             outputFloat(out, texcoords[i][j]);
-        }
         out << std::endl;
     }
 
     for (int f = 0; f < faceCount; f++)
-    {
         faces[f]->print(out, indent);
-    }
 
     // MeshDrawInfo
     if ((drawInfo != NULL) && !drawInfo->isCopy())
@@ -1077,13 +967,9 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 
     out << "# OBJ - start" << std::endl;
     if (name.size() > 0)
-    {
         out << "o " << name << "_" << getObjCounter() << std::endl;
-    }
     else
-    {
         out << "o unnamed_" << getObjCounter() << std::endl;
-    }
 
     out << "# faces = " << faceCount << std::endl;
     out << "# vertices = " << vertexCount << std::endl;
@@ -1150,9 +1036,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
             if (useNormals)
             {
                 if (!useTexcoords)
-                {
                     out << "/";
-                }
                 int nIndex = (const afvec3*)face->getNormal(i) - normals;
                 nIndex = nIndex - normalCount;
                 out << "/" << nIndex;
@@ -1173,6 +1057,6 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

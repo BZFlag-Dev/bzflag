@@ -12,7 +12,7 @@
 
 #include "stars.h"
 
-const float	stars[][6] =
+const float stars[][6] =
 {
     { 1.00f, 1.00f, 1.00f, -0.18746032f, 0.93921369f, -0.28763914f },
     { 1.00f, 1.00f, 1.00f, -0.06323564f, 0.60291260f, -0.79529721f },
@@ -421,6 +421,6 @@ const unsigned int NumStars = countof(stars);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

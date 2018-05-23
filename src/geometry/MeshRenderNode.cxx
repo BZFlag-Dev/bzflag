@@ -51,9 +51,7 @@ void OpaqueRenderNode::render()
 {
     const bool switchLights = (exts != NULL);
     if (switchLights)
-    {
         RENDERER.disableLights(exts->mins, exts->maxs);
-    }
 
     // set the color
     myColor4fv(color);
@@ -65,27 +63,19 @@ void OpaqueRenderNode::render()
         glCallList(*xformList);
     }
     if (normalize)
-    {
         glEnable(GL_NORMALIZE);
-    }
 
     // draw the elements
     drawMgr->executeSet(lod, set, BZDBCache::lighting, BZDBCache::texture);
 
     // undo the transformation
     if (normalize)
-    {
         glDisable(GL_NORMALIZE);
-    }
     if (*xformList != INVALID_GL_LIST_ID)
-    {
         glPopMatrix();
-    }
 
     if (switchLights)
-    {
         RENDERER.reenableLights();
-    }
 
     addTriangleCount(triangles);
 
@@ -102,9 +92,7 @@ void OpaqueRenderNode::renderRadar()
     }
     drawMgr->executeSetGeometry(lod, set);
     if (*xformList != INVALID_GL_LIST_ID)
-    {
         glPopMatrix();
-    }
 
     addTriangleCount(triangles);
 
@@ -121,9 +109,7 @@ void OpaqueRenderNode::renderShadow()
     }
     drawMgr->executeSetGeometry(lod, set);
     if (*xformList != INVALID_GL_LIST_ID)
-    {
         glPopMatrix();
-    }
 
     addTriangleCount(triangles);
 
@@ -163,6 +149,6 @@ void AlphaGroupRenderNode::setPosition(const GLfloat* _pos)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

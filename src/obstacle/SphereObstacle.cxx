@@ -117,9 +117,7 @@ MeshObstacle* SphereObstacle::makeMesh()
 
     // setup the multiplying factor
     if (hemisphere)
-    {
         factor = 1;
-    }
 
     // absolute the sizes
     sz[0] = fabsf(size[0]);
@@ -140,17 +138,13 @@ MeshObstacle* SphereObstacle::makeMesh()
         texsz[0] = -floorf(circ / texsz[0]);
     }
     if (texsz[1] < 0.0f)
-    {
         texsz[1] = -((2.0f * sz[2]) / texsz[1]);
-    }
 
 
     // validity checking
     if ((divisions < 1) || (texsz[0] < minSize) || (texsz[1] < minSize) ||
             (sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize))
-    {
         return NULL;
-    }
 
     // setup the coordinates
     std::vector<char> checkTypes;
@@ -166,9 +160,7 @@ MeshObstacle* SphereObstacle::makeMesh()
     v[1] = pos[1];
     v[2] = pos[2];
     if (hemisphere)
-    {
         v[2] = v[2] + (0.5f * fabsf(size[2]));
-    }
     checkPoints.push_back(v);
     checkTypes.push_back(MeshObstacle::CheckInside);
 
@@ -238,9 +230,7 @@ MeshObstacle* SphereObstacle::makeMesh()
             t[0] = t[0] * texsz[0];
             t[1] = (float)(divisions - i - 1) / (float)divisions;
             if (!hemisphere)
-            {
                 t[1] = 0.5f + (0.5f * t[1]);
-            }
             t[1] = t[1] * texsz[1];
             texcoords.push_back(t);
 
@@ -281,9 +271,7 @@ MeshObstacle* SphereObstacle::makeMesh()
         t[0] = texsz[0] * 1.0f;
         t[1] = (float)(divisions - i - 1) / (float)divisions;
         if (!hemisphere)
-        {
             t[1] = 0.5f + (0.5f * t[1]);
-        }
         t[1] = texsz[1] * t[1];
         texcoords.push_back(t);
         // the bottom hemisphere
@@ -325,13 +313,9 @@ MeshObstacle* SphereObstacle::makeMesh()
     int k = (divisions - 1);
     int ringOffset;
     if (!hemisphere)
-    {
         ringOffset = 1 + (((k*k)+k)*2);
-    }
     else
-    {
         ringOffset = 0;
-    }
 
     for (q = 0; q < 4; q++)
     {
@@ -361,22 +345,16 @@ MeshObstacle* SphereObstacle::makeMesh()
                     }
                 }
                 else
-                {
                     a = 0;
-                }
 
                 // setup 'b'
                 b = 1 + (((i*i)+i)*2) + (q*(i+1)) + j;
 
                 // setup 'c'
                 if (lastStrip)
-                {
                     c = 1 + (((i*i)+i)*2);
-                }
                 else
-                {
                     c = b + 1;
-                }
 
                 // setup 'd' for the down-pointing triangle
                 k = (i + 1);
@@ -396,13 +374,9 @@ MeshObstacle* SphereObstacle::makeMesh()
                     c = c + ringOffset;
                 }
                 if (i != (divisions - 2))
-                {
                     d = d * factor;
-                }
                 else
-                {
                     d = d + ringOffset;
-                }
 
                 // deal with the last strip of texture coordinates
                 if (!lastStrip)
@@ -440,9 +414,7 @@ MeshObstacle* SphereObstacle::makeMesh()
                         tc = tc + 1;
                     }
                     if (i != (divisions - 2))
-                    {
                         d = d + 1;
-                    }
                     push3Ints(vlist, a, c, b);
                     if (useNormals) push3Ints(nlist, a, c, b);
                     push3Ints(tlist, ta, tc, b);
@@ -549,9 +521,7 @@ void *SphereObstacle::pack(void *buf) const
 
     int i;
     for (i = 0; i < 2; i++)
-    {
         buf = nboPackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int matindex = MATERIALMGR.getIndex(materials[i]);
@@ -586,9 +556,7 @@ const void *SphereObstacle::unpack(const void *buf)
 
     int i;
     for (i = 0; i < 2; i++)
-    {
         buf = nboUnpackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int32_t matindex;
@@ -639,9 +607,7 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
     out << indent << "  rotation " << (angle * RAD2DEGf) << std::endl;
     out << indent << "  divisions " << divisions << std::endl;
     if (hemisphere)
-    {
         out << indent << "  hemisphere" << std::endl;
-    }
 
     transform.printTransforms(out, indent);
 
@@ -662,36 +628,22 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << "  phydrv ";
         if (driver->getName().size() > 0)
-        {
             out << driver->getName();
-        }
         else
-        {
             out << phydrv;
-        }
         out << std::endl;
     }
 
     if (smoothBounce)
-    {
         out << indent << "  smoothBounce" << std::endl;
-    }
     if (driveThrough)
-    {
         out << indent << "  driveThrough" << std::endl;
-    }
     if (shootThrough)
-    {
         out << indent << "  shootThrough" << std::endl;
-    }
     if (!useNormals)
-    {
         out << indent << "  flatshading" << std::endl;
-    }
     if (ricochet)
-    {
         out << indent << "  ricochet" << std::endl;
-    }
 
     out << indent << "end" << std::endl;
 
@@ -703,6 +655,6 @@ void SphereObstacle::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -27,13 +27,13 @@
 typedef std::deque<std::string> MessageQueue;
 
 extern MessageQueue messageHistory;
-extern unsigned int	messageHistoryIndex;
+extern unsigned int messageHistoryIndex;
 
 class ComposeDefaultKey : public HUDuiDefaultKey
 {
 public:
-    bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
+    bool        keyPress(const BzfKeyEvent&);
+    bool        keyRelease(const BzfKeyEvent&);
 };
 
 
@@ -43,6 +43,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

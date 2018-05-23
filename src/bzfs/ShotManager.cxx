@@ -230,7 +230,8 @@ ShotList Manager::DeadShotsForPlayer( PlayerId player )
 
 //----------------Shot
 
-Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), LastUpdateTime(-1.0), Info(info), Pimple(NULL)
+Shot::Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic): GUID(guid), Logic(logic), LastUpdateTime(-1.0),
+    Info(info), Pimple(NULL)
 {
     StartTime = -1;
     LifeTime = info.lifetime;
@@ -361,7 +362,8 @@ bool ShockwaveLogic::CollideBox ( Shot& shot, fvec3& center, fvec3& size, float 
     xNegYPlus += center;
 
     // check the top
-    if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot) || PointInSphere(xNegYPlus,shot))
+    if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot)
+            || PointInSphere(xNegYPlus,shot))
         return true;
 
     // check the bottom
@@ -370,7 +372,8 @@ bool ShockwaveLogic::CollideBox ( Shot& shot, fvec3& center, fvec3& size, float 
     xPlusYNeg.z = center.z;
     xNegYPlus.z = center.z;
 
-    if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot) || PointInSphere(xNegYPlus,shot))
+    if (PointInSphere(xyPlus,shot) || PointInSphere(xyNeg,shot) || PointInSphere(xPlusYNeg,shot)
+            || PointInSphere(xNegYPlus,shot))
         return true;
 
     return false;
@@ -407,6 +410,6 @@ bool ShockwaveLogic::PointInSphere ( fvec3& point, Shot& shot )
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

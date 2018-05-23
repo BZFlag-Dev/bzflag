@@ -56,9 +56,7 @@ inline void MeshPolySceneNode::Geometry::drawV() const
     const int count = vertices.getSize();
     glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < count; i++)
-    {
         glVertex3fv(vertices[i]);
-    }
     glEnd();
     return;
 }
@@ -114,25 +112,17 @@ void MeshPolySceneNode::Geometry::render()
     if (normals.getSize() != 0)
     {
         if (style >= 2)
-        {
             drawVTN();
-        }
         else
-        {
             drawVN();
-        }
     }
     else
     {
         glNormal3fv(normal);
         if (style >= 2)
-        {
             drawVT();
-        }
         else
-        {
             drawV();
-        }
     }
 
     addTriangleCount(vertices.getSize() - 2);
@@ -183,24 +173,16 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     if (fabsf(normal[0]) > fabsf(normal[1]))
     {
         if (fabsf(normal[0]) > fabsf(normal[2]))
-        {
             ignoreAxis = 0;
-        }
         else
-        {
             ignoreAxis = 2;
-        }
     }
     else
     {
         if (fabsf(normal[1]) > fabsf(normal[2]))
-        {
             ignoreAxis = 1;
-        }
         else
-        {
             ignoreAxis = 2;
-        }
     }
 
     // project vertices onto plane
@@ -234,9 +216,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     float* area = new float[1];
     area[0] = 0.0f;
     for (j = count - 1, i = 0; i < count; j = i, i++)
-    {
         area[0] += flat[j][0] * flat[i][1] - flat[j][1] * flat[i][0];
-    }
     area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
 
     // set lod info
@@ -261,17 +241,13 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
         const float dz = mySphere[2] - vertices[i][2];
         GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
         if (r > mySphere[3])
-        {
             mySphere[3] = r;
-        }
     }
     setSphere(mySphere);
 
     // record extents info
     for (i = 0; i < count; i++)
-    {
         extents.expandToPoint(vertices[i]);
-    }
 
     return;
 }
@@ -289,22 +265,16 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
     const GLfloat* eye = frustum.getEye();
     if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
             plane[3]) <= 0.0f)
-    {
         return true;
-    }
 
     // if the Visibility culler tells us that we're
     // fully visible, then skip the rest of these tests
     if (octreeState == OctreeVisible)
-    {
         return false;
-    }
 
     const Frustum* f = (const Frustum *) &frustum;
     if (testAxisBoxInFrustum(extents, f) == Outside)
-    {
         return true;
-    }
 
     // probably visible
     return false;
@@ -314,9 +284,7 @@ bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
 {
     if (!extents.touches(exts))
-    {
         return false;
-    }
 
     return testPolygonInAxisBox (getVertexCount(), getVertices(),
                                  getPlane(), exts);
@@ -332,9 +300,7 @@ int MeshPolySceneNode::split(const float* splitPlane,
                             front, back);
     }
     else
-    {
         return splitWallVT(splitPlane, node.vertices, node.texcoords, front, back);
-    }
 }
 
 
@@ -343,9 +309,7 @@ void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
     node.setStyle(getStyle());
     const GLfloat* dyncol = getDynamicColor();
     if ((dyncol == NULL) || (dyncol[3] != 0.0f))
-    {
         renderer.addRenderNode(&node, getWallGState());
-    }
     return;
 }
 
@@ -356,9 +320,7 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
     {
         const GLfloat* dyncol = getDynamicColor();
         if ((dyncol == NULL) || (dyncol[3] != 0.0f))
-        {
             renderer.addShadowNode(&node);
-        }
     }
     return;
 }
@@ -367,9 +329,7 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 void MeshPolySceneNode::renderRadar()
 {
     if (!noRadar)
-    {
         node.renderRadar();
-    }
     return;
 }
 
@@ -464,16 +424,12 @@ int MeshPolySceneNode::splitWallVTN(const GLfloat* splitPlane,
         if (array[next] & FRONT_SIDE)
         {
             if (!(array[i] & FRONT_SIDE))
-            {
                 firstFront = next;
-            }
         }
         if (array[next] & BACK_SIDE)
         {
             if (!(array[i] & BACK_SIDE))
-            {
                 firstBack = next;
-            }
         }
     }
 
@@ -585,9 +541,7 @@ void MeshPolySceneNode::splitEdgeVTN(float d1, float d2,
     // compute fraction along edge where split occurs
     float t1 = (d2 - d1);
     if (t1 != 0.0f)   // shouldn't happen
-    {
         t1 = -(d1 / t1);
-    }
 
     // compute vertex
     p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
@@ -706,16 +660,12 @@ int MeshPolySceneNode::splitWallVT(const GLfloat* splitPlane,
         if (array[next] & FRONT_SIDE)
         {
             if (!(array[i] & FRONT_SIDE))
-            {
                 firstFront = next;
-            }
         }
         if (array[next] & BACK_SIDE)
         {
             if (!(array[i] & BACK_SIDE))
-            {
                 firstBack = next;
-            }
         }
     }
 
@@ -818,9 +768,7 @@ void MeshPolySceneNode::splitEdgeVT(float d1, float d2,
     // compute fraction along edge where split occurs
     float t1 = (d2 - d1);
     if (t1 != 0.0f)   // shouldn't happen
-    {
         t1 = -(d1 / t1);
-    }
 
     // compute vertex
     p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
@@ -847,6 +795,6 @@ void MeshPolySceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

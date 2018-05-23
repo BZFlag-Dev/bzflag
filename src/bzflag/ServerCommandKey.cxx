@@ -31,7 +31,7 @@ ServerCommandKey::ServerCommandKey(): mode(LagStats), numModes(35), numNonAdminM
     return;
 }
 
-void			ServerCommandKey::nonAdminInit()
+void            ServerCommandKey::nonAdminInit()
 {
     // if we are in a non admin mode stay there
     bool inNonAdminCommand = false;
@@ -48,17 +48,17 @@ void			ServerCommandKey::nonAdminInit()
 
     updatePrompt();
 }
-void			ServerCommandKey::adminInit()
+void            ServerCommandKey::adminInit()
 {
     updatePrompt();
 }
 
-void			ServerCommandKey::init()
+void            ServerCommandKey::init()
 {
     updatePrompt();
 }
 
-void			ServerCommandKey::updatePrompt()
+void            ServerCommandKey::updatePrompt()
 {
     std::string composePrompt;
     // decide what should be on the composing prompt
@@ -244,7 +244,7 @@ void			ServerCommandKey::updatePrompt()
 
 // return the right ban pattern 123.32.12.* for example depending on the
 // mode of the class. Returns an empty string on errors.
-std::string		ServerCommandKey::makePattern(const InAddr& address)
+std::string     ServerCommandKey::makePattern(const InAddr& address)
 {
     const char * c = inet_ntoa(address);
     if (c == NULL) return "";
@@ -269,7 +269,7 @@ std::string		ServerCommandKey::makePattern(const InAddr& address)
     return "";
 }
 
-bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
+bool            ServerCommandKey::keyPress(const BzfKeyEvent& key)
 {
     bool sendIt;
     LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -290,14 +290,14 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
 
     switch (key.ascii)
     {
-    case 3:	// ^C
-    case 27:	// escape
+    case 3: // ^C
+    case 27:    // escape
         // case 127:   // delete
-        sendIt = false;			// finished composing -- don't send
+        sendIt = false;         // finished composing -- don't send
         break;
 
-    case 4:	// ^D
-    case 13:	// return
+    case 4: // ^D
+    case 13:    // return
         sendIt = true;
         break;
 
@@ -509,7 +509,7 @@ bool			ServerCommandKey::keyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
+bool            ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     if (myTank->getInputMethod() != LocalPlayer::Keyboard)
@@ -526,13 +526,9 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
             // choose which mode we are in
             int maxModes;
             if (myTank->isAdmin())
-            {
                 maxModes = numModes;
-            }
             else
-            {
                 maxModes = numNonAdminModes;
-            }
 
             if (key.button == BzfKeyEvent::Down)
             {
@@ -597,6 +593,6 @@ bool			ServerCommandKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

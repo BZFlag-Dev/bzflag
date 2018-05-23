@@ -62,32 +62,32 @@ public:
     virtual void collectData(char *ptr, int len);
     virtual void finalization(char *data, unsigned int length, bool good);
 
-    static int	fdset(fd_set &read, fd_set &write);
-    static bool	perform();
-    void		performWait();
+    static int  fdset(fd_set &read, fd_set &write);
+    static bool perform();
+    void        performWait();
 
 protected:
-    void	       *theData;
-    unsigned int	theLen;
+    void           *theData;
+    unsigned int    theLen;
 private:
 
-    void		infoComplete(CURLcode result);
+    void        infoComplete(CURLcode result);
 
-    static bool	inited;
-    static bool	justCalled;
-    CURL	       *easyHandle;
+    static bool inited;
+    static bool justCalled;
+    CURL           *easyHandle;
     static CURLM *multiHandle;
-    static char	errorBuffer[CURL_ERROR_SIZE];
-    bool		added;
-    std::string	usedUrl;
-    std::string	interfaceIP;
-    std::string	userAgent;
-    std::string	postData;
+    static char errorBuffer[CURL_ERROR_SIZE];
+    bool        added;
+    std::string usedUrl;
+    std::string interfaceIP;
+    std::string userAgent;
+    std::string postData;
 
     struct curl_httppost* formPost;
     struct curl_httppost* formLast;
 
-    static void	setup();
+    static void setup();
 
     static size_t writeFunction(void *ptr, size_t size, size_t nmemb,
                                 void *stream);
@@ -107,10 +107,10 @@ typedef enum
 
 typedef struct
 {
-    teResourceType	resType;
-    std::string		URL;
-    std::string		filePath;
-    std::string		fileName;
+    teResourceType  resType;
+    std::string     URL;
+    std::string     filePath;
+    std::string     fileName;
 } trResourceItem;
 
 class ResourceGetter : cURLManager
@@ -138,6 +138,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -74,25 +74,19 @@ void Score::changeScoreElement(bz_eScoreElement element, int *toChange, int newV
 void Score::tK()
 {
     if (KeepPlayerScores)
-    {
         changeScoreElement(bz_eTKs, &tks, tks + 1);
-    }
 }
 
 void Score::killedBy()
 {
     if (KeepPlayerScores)
-    {
         changeScoreElement(bz_eLosses, &losses, losses + 1);
-    }
 }
 
 void Score::kill()
 {
     if (KeepPlayerScores)
-    {
         changeScoreElement(bz_eWins, &wins, wins + 1);
-    }
 }
 
 
@@ -135,6 +129,6 @@ void Score::setRandomRanking()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

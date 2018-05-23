@@ -28,7 +28,7 @@
 // XWindow
 //
 
-XWindow*		XWindow::first = NULL;
+XWindow*        XWindow::first = NULL;
 
 XWindow::XWindow(const XDisplay* _display, XVisual* _visual) :
     BzfWindow(_display),
@@ -173,12 +173,12 @@ XWindow::~XWindow()
     XFree(xsh);
 }
 
-bool			XWindow::isValid() const
+bool            XWindow::isValid() const
 {
     return window != None;
 }
 
-void			XWindow::showWindow(bool show)
+void            XWindow::showWindow(bool show)
 {
     if (show)
     {
@@ -206,7 +206,7 @@ void			XWindow::showWindow(bool show)
     }
 }
 
-void			XWindow::getPosition(int& x, int& y)
+void            XWindow::getPosition(int& x, int& y)
 {
     XWindowAttributes attr;
     XGetWindowAttributes(display->getDisplay(), window, &attr);
@@ -214,7 +214,7 @@ void			XWindow::getPosition(int& x, int& y)
     y = attr.y;
 }
 
-void			XWindow::getSize(int& width, int& height) const
+void            XWindow::getSize(int& width, int& height) const
 {
     XWindowAttributes attr;
     XGetWindowAttributes(display->getDisplay(), window, &attr);
@@ -222,13 +222,13 @@ void			XWindow::getSize(int& width, int& height) const
     height = attr.height;
 }
 
-void			XWindow::setTitle(const char* title)
+void            XWindow::setTitle(const char* title)
 {
     XStoreName(display->getDisplay(), window, title);
     XSetIconName(display->getDisplay(), window, title);
 }
 
-void			XWindow::setPosition(int x, int y)
+void            XWindow::setPosition(int x, int y)
 {
     long dummy;
     XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
@@ -240,7 +240,7 @@ void			XWindow::setPosition(int x, int y)
     XSync(display->getDisplay(), false);
 }
 
-void			XWindow::setSize(int width, int height)
+void            XWindow::setSize(int width, int height)
 {
     long dummy;
     XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
@@ -252,14 +252,12 @@ void			XWindow::setSize(int width, int height)
     XSync(display->getDisplay(), false);
 }
 
-void			XWindow::setMinSize(int width, int height)
+void            XWindow::setMinSize(int width, int height)
 {
     long dummy;
     XGetWMNormalHints(display->getDisplay(), window, xsh, &dummy);
     if (width < 1 || height < 1)
-    {
         xsh->flags &= ~PMinSize;
-    }
     else
     {
         xsh->min_width = width;
@@ -269,7 +267,7 @@ void			XWindow::setMinSize(int width, int height)
     XSetWMNormalHints(display->getDisplay(), window, xsh);
 }
 
-void			XWindow::setFullscreen(bool on)
+void            XWindow::setFullscreen(bool on)
 {
     // FIXME: support toggle back to windowed mode
     if (!on) return;
@@ -284,8 +282,8 @@ void			XWindow::setFullscreen(bool on)
         struct BzfPropMotifWmInfo
         {
         public:
-            long		flags;
-            Window		wmWindow;
+            long        flags;
+            Window      wmWindow;
         };
 
         Atom type;
@@ -345,8 +343,8 @@ void			XWindow::setFullscreen(bool on)
                 XFree(xhints);
             }
         }
-        hints[0] |= 2;		// MWM_HINTS_DECORATIONS flag
-        hints[2] = 0;			// no decorations
+        hints[0] |= 2;      // MWM_HINTS_DECORATIONS flag
+        hints[2] = 0;           // no decorations
         XChangeProperty(display->getDisplay(), window, a, a, 32,
                         PropModeReplace, (unsigned char*)&hints, 4);
         noWM = false;
@@ -431,12 +429,12 @@ void			XWindow::setFullscreen(bool on)
     XSync(display->getDisplay(), false);
 }
 
-void			XWindow::warpMouse(int x, int y)
+void            XWindow::warpMouse(int x, int y)
 {
     XWarpPointer(display->getDisplay(), None, window, 0, 0, 0, 0, x, y);
 }
 
-void			XWindow::getMouse(int& x, int& y) const
+void            XWindow::getMouse(int& x, int& y) const
 {
     Window rootWindow, childWindow;
     int rootX, rootY;
@@ -449,24 +447,24 @@ void			XWindow::getMouse(int& x, int& y) const
     y = my;
 }
 
-void			XWindow::grabMouse()
+void            XWindow::grabMouse()
 {
     XGrabPointer(display->getDisplay(), window,
                  true, 0, GrabModeAsync, GrabModeAsync,
                  window, None, CurrentTime);
 }
 
-void			XWindow::ungrabMouse()
+void            XWindow::ungrabMouse()
 {
     XUngrabPointer(display->getDisplay(), CurrentTime);
 }
 
-void			XWindow::showMouse()
+void            XWindow::showMouse()
 {
     XDefineCursor(display->getDisplay(), window, None);
 }
 
-void			XWindow::hideMouse()
+void            XWindow::hideMouse()
 {
     static Cursor cursor = None;
 
@@ -490,41 +488,41 @@ void			XWindow::hideMouse()
         XDefineCursor(display->getDisplay(), window, cursor);
 }
 
-void			XWindow::setGamma(float newGamma)
+void            XWindow::setGamma(float newGamma)
 {
     gammaVal = newGamma;
     loadColormap();
 }
 
-float			XWindow::getGamma() const
+float           XWindow::getGamma() const
 {
     return gammaVal;
 }
 
-bool			XWindow::hasGammaControl() const
+bool            XWindow::hasGammaControl() const
 {
     return !defaultColormap;
 }
 
-void			XWindow::makeCurrent()
+void            XWindow::makeCurrent()
 {
     if (context)
         glXMakeCurrent(display->getDisplay(), window, context);
 }
 
-void			XWindow::swapBuffers()
+void            XWindow::swapBuffers()
 {
     glXSwapBuffers(display->getDisplay(), window);
 }
 
-void			XWindow::makeContext()
+void            XWindow::makeContext()
 {
     if (!context)
         context = glXCreateContext(display->getDisplay(), &visual, NULL, true);
     makeCurrent();
 }
 
-void			XWindow::freeContext()
+void            XWindow::freeContext()
 {
     if (context)
     {
@@ -535,7 +533,7 @@ void			XWindow::freeContext()
     }
 }
 
-void			XWindow::loadColormap()
+void            XWindow::loadColormap()
 {
     if (defaultColormap)
         return;
@@ -623,16 +621,14 @@ void			XWindow::loadColormap()
     }
 
     else
-    {
         assert(0 && "bad visual in loadColormap()");
-    }
 
     // set colors
     XStoreColors(display->getDisplay(), colormap, colors, visual.colormap_size);
     delete[] colors;
 }
 
-unsigned short		XWindow::getIntensityValue(float i) const
+unsigned short      XWindow::getIntensityValue(float i) const
 {
     if (i <= 0.0f) return 0;
     if (i >= 1.0f) return 65535;
@@ -640,13 +636,13 @@ unsigned short		XWindow::getIntensityValue(float i) const
     return (unsigned short)(0.5f + 65535.0f * i);
 }
 
-float			XWindow::pixelField(int i, int bits, int offset)
+float           XWindow::pixelField(int i, int bits, int offset)
 {
     const int mask = (1 << bits) - 1;
     return (float)((i >> offset) & mask) / (float)mask;
 }
 
-void			XWindow::countBits(
+void            XWindow::countBits(
     unsigned long mask, int& num, int& offset)
 {
     num = 0;
@@ -670,20 +666,20 @@ void			XWindow::countBits(
     if (mask) num = 0;
 }
 
-XWindow*		XWindow::lookupWindow(Window w)
+XWindow*        XWindow::lookupWindow(Window w)
 {
     XWindow* scan = first;
     while (scan && scan->window != w) scan = scan->next;
     return scan;
 }
 
-void			XWindow::deactivateAll()
+void            XWindow::deactivateAll()
 {
     for (XWindow* scan = first; scan; scan = scan->next)
         scan->freeContext();
 }
 
-void			XWindow::reactivateAll()
+void            XWindow::reactivateAll()
 {
     for (XWindow* scan = first; scan; scan = scan->next)
         scan->makeContext();

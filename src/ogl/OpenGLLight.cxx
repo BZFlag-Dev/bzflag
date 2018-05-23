@@ -105,9 +105,7 @@ void OpenGLLight::makeLists()
     // invalidate the lists
     lists = new GLuint[numLights];
     for (int i = 0; i < numLights; i++)
-    {
         lists[i] = INVALID_GL_LIST_ID;
-    }
 
     OpenGLGState::registerContextInitializer(freeContext,
             initContext, (void*)this);
@@ -255,13 +253,9 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
     // compute the 'importance' factor
     if (dist == 0.0f)
-    {
         importance = 0.5f * MAXFLOAT;
-    }
     else
-    {
         importance = 1.0f / dist;
-    }
 
     return;
 }
@@ -270,13 +264,9 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 void OpenGLLight::enableLight(int index, bool on) // const
 {
     if (on)
-    {
         glEnable((GLenum)(GL_LIGHT0 + index));
-    }
     else
-    {
         glDisable((GLenum)(GL_LIGHT0 + index));
-    }
     return;
 }
 
@@ -292,9 +282,7 @@ void OpenGLLight::execute(int index, bool useList) const
     // setup the light parameters (buffered in
     // a display list), but do not turn it on.
     if (lists[index] != INVALID_GL_LIST_ID)
-    {
         glCallList(lists[index]);
-    }
     else
     {
         lists[index] = glGenLists(1);
@@ -337,9 +325,7 @@ void OpenGLLight::freeLists()
 GLint OpenGLLight::getMaxLights()
 {
     if (maxLights == 0)
-    {
         glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
-    }
     return maxLights;
 }
 
@@ -362,6 +348,6 @@ void OpenGLLight::initContext(void* UNUSED(self))
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

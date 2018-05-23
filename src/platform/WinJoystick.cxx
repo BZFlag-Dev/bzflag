@@ -37,14 +37,12 @@ WinJoystick::~WinJoystick()
 {
 }
 
-void	      WinJoystick::initJoystick(const char* joystickName)
+void          WinJoystick::initJoystick(const char* joystickName)
 {
     inited = false;
 
     if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, ""))
-    {
         return;
-    }
 
     if (strlen(joystickName) < 11)
     {
@@ -123,12 +121,12 @@ void	      WinJoystick::initJoystick(const char* joystickName)
     inited = true;
 }
 
-bool	      WinJoystick::joystick() const
+bool          WinJoystick::joystick() const
 {
     return inited;
 }
 
-void	      WinJoystick::getJoy(int& x, int& y)
+void          WinJoystick::getJoy(int& x, int& y)
 {
     if (!inited)
         return;
@@ -241,7 +239,7 @@ unsigned long WinJoystick::getJoyButtons()
     return buttons;
 }
 
-void	      WinJoystick::getJoyDevices(std::vector<std::string> &list) const
+void          WinJoystick::getJoyDevices(std::vector<std::string> &list) const
 {
     list.clear();
     if (joyGetNumDevs() != 0)
@@ -249,17 +247,13 @@ void	      WinJoystick::getJoyDevices(std::vector<std::string> &list) const
         // we have at least one joystick driver, get the name of both joystick IDs if they exist.
         JOYCAPS joyCaps;
         if (joyGetDevCaps(JOYSTICKID1, &joyCaps, sizeof(joyCaps)) == JOYERR_NOERROR)
-        {
             list.push_back(TextUtils::format("Joystick 1 (%s)", joyCaps.szPname));
-        }
         if (joyGetDevCaps(JOYSTICKID2, &joyCaps, sizeof(joyCaps)) == JOYERR_NOERROR)
-        {
             list.push_back(TextUtils::format("Joystick 2 (%s)", joyCaps.szPname));
-        }
     }
 }
 
-void	      WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
+void          WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
 {
     list.clear();
     if (!inited)
@@ -272,7 +266,7 @@ void	      WinJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
     }
 }
 
-void	      WinJoystick::setXAxis(const std::string &axis)
+void          WinJoystick::setXAxis(const std::string &axis)
 {
     if (!inited)
         return;
@@ -290,7 +284,7 @@ void	      WinJoystick::setXAxis(const std::string &axis)
     }
 }
 
-void	      WinJoystick::setYAxis(const std::string &axis)
+void          WinJoystick::setYAxis(const std::string &axis)
 {
     if (!inited)
         return;
@@ -313,6 +307,6 @@ void	      WinJoystick::setYAxis(const std::string &axis)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

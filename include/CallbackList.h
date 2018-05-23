@@ -31,25 +31,25 @@ public:
     ~CallbackList();
 
     // add/remove callback.  adding an existing callback has no effect.
-    void				add(F func, void* userData);
-    void				remove(F func, void* userData);
+    void                add(F func, void* userData);
+    void                remove(F func, void* userData);
 
     // iterate over callbacks.  this is done by invoking the given
     // callback function for each stored callback.  it is safe to
     // add and remove callbacks during iteration.  stops iterating
     // if the callback returns false.
-    void				iterate(Callback, void* userData) const;
+    void                iterate(Callback, void* userData) const;
 
 private:
-    void				doIterate(Callback, void* userData);
+    void                doIterate(Callback, void* userData);
 
 private:
     typedef std::pair<F, void*> Item;
     typedef std::list<Item> ItemList;
     typedef std::map<Item, typename ItemList::iterator> ItemMap;
 
-    ItemList			items;
-    ItemMap			itemMap;
+    ItemList            items;
+    ItemMap         itemMap;
 };
 
 //
@@ -69,7 +69,7 @@ CallbackList<F>::~CallbackList()
 }
 
 template <class F>
-void			CallbackList<F>::add(F callback, void* userData)
+void            CallbackList<F>::add(F callback, void* userData)
 {
     Item item = std::make_pair(callback, userData);
     if (itemMap.find(item) == itemMap.end())
@@ -80,7 +80,7 @@ void			CallbackList<F>::add(F callback, void* userData)
 }
 
 template <class F>
-void			CallbackList<F>::remove(F callback, void* userData)
+void            CallbackList<F>::remove(F callback, void* userData)
 {
     Item item = std::make_pair(callback, userData);
     typename ItemMap::iterator index = itemMap.find(item);
@@ -92,14 +92,14 @@ void			CallbackList<F>::remove(F callback, void* userData)
 }
 
 template <class F>
-void			CallbackList<F>::iterate(Callback callback,
+void            CallbackList<F>::iterate(Callback callback,
         void* userData) const
 {
     const_cast<CallbackList<F>*>(this)->doIterate(callback, userData);
 }
 
 template <class F>
-void			CallbackList<F>::doIterate(Callback callback,
+void            CallbackList<F>::doIterate(Callback callback,
         void* userData)
 {
     // insert a dummy item into the list.  this is our safe harbor
@@ -134,6 +134,6 @@ void			CallbackList<F>::doIterate(Callback callback,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

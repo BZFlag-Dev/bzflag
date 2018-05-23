@@ -121,9 +121,7 @@ int main(int argc, char** argv)
             std::cout << "Password (optional): ";
             std::getline(std::cin, password);
             if (password.size() <= 1)
-            {
                 std::cerr << "Not using central login" << std::endl;
-            }
             std::cout << "Server[:port] to connect to: ";
             std::getline(std::cin, serverName);
             if (serverName.size() <= 1)
@@ -165,9 +163,7 @@ int main(int argc, char** argv)
               startupInfo.serverPort;
     // Check if password is not empty
     if (startupInfo.password[0])
-    {
         std::cerr << " using central login";
-    }
     std::cerr << std::endl;
 
     // try to connect
@@ -202,14 +198,10 @@ int main(int argc, char** argv)
                 char* endptr;
                 double sleepTime = strtod(start, &endptr);
                 if (endptr != start)
-                {
                     TimeKeeper::sleep(sleepTime);
-                }
             }
             else
-            {
                 client.sendMessage(cmd, AllPlayers);
-            }
         }
     }
 
@@ -226,6 +218,6 @@ int main(int argc, char** argv)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

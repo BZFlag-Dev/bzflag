@@ -56,20 +56,20 @@ std::string lastPluginDir;
 
 typedef struct
 {
-    std::string	name;
-    std::string	filename;
-    bz_Plugin*	plugin;
+    std::string name;
+    std::string filename;
+    bz_Plugin*  plugin;
 #ifdef _WIN32
-    HINSTANCE	handle;
+    HINSTANCE   handle;
 #else
-    void*		handle;
+    void*       handle;
 #endif
 } trPluginRecord;
 
 std::string findPlugin ( std::string pluginName )
 {
     // see if we can just open the bloody thing
-    FILE	*fp = fopen(pluginName.c_str(),"rb");
+    FILE    *fp = fopen(pluginName.c_str(),"rb");
     if (fp)
     {
         fclose(fp);
@@ -122,9 +122,7 @@ std::string findPlugin ( std::string pluginName )
 std::string getPluginPath ( const std::string & path )
 {
     if ( path.find('/') == std::string::npos && path.find('\\') == std::string::npos )
-    {
         return std::string ("./");
-    }
 
     std::string newPath = path;
     size_t lastSlash = newPath.find_last_of('/');
@@ -195,7 +193,8 @@ bool load1Plugin ( std::string plugin, std::string config )
     {
         if (getPluginVersion(hLib) > BZ_API_VERSION)
         {
-            logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),getPluginVersion(hLib));
+            logDebugMessage(1,"Plugin: %s found but needs a newer API version (%d), upgrade server\n",plugin.c_str(),
+                            getPluginVersion(hLib));
             FreeLibrary(hLib);
             return false;
         }
@@ -372,7 +371,8 @@ void unload1Plugin ( int iPluginID )
     if (lpProc)
         (*lpProc)(plugin.plugin);
     else
-        logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d, error %s. Leaking memory.\n",iPluginID,dlerror());
+        logDebugMessage(1,"Plugin: bz_FreePlugin method not used by number %d, error %s. Leaking memory.\n",iPluginID,
+                        dlerror());
 
     dlclose(plugin.handle);
     plugin.handle = NULL;
@@ -462,7 +462,8 @@ float getPluginMinWaitTime ( void )
 
     for (unsigned int i = 0; i < vPluginList.size(); i++)
     {
-        if (vPluginList[i].plugin &&  (vPluginList[i].plugin->MaxWaitTime > 0) && (vPluginList[i].plugin->MaxWaitTime < maxTime))
+        if (vPluginList[i].plugin &&  (vPluginList[i].plugin->MaxWaitTime > 0)
+                && (vPluginList[i].plugin->MaxWaitTime < maxTime))
             maxTime = vPluginList[i].plugin->MaxWaitTime;
     }
     if (pendingHTTPAuths > 0)
@@ -475,14 +476,15 @@ class DynamicPluginCommands : public bz_CustomSlashCommandHandlerV2
 {
 public:
     virtual ~DynamicPluginCommands() {};
-    virtual bool SlashCommand ( int playerID, int UNUSED(sourceID), bz_ApiString _command, bz_ApiString _message, bz_APIStringList *params )
+    virtual bool SlashCommand ( int playerID, int UNUSED(sourceID), bz_ApiString _command, bz_ApiString _message,
+                                bz_APIStringList *params )
     {
-        bz_BasePlayerRecord	record;
+        bz_BasePlayerRecord record;
 
         std::string command = _command.c_str();
         std::string message = _message.c_str();
 
-        bz_BasePlayerRecord	*p = bz_getPlayerByIndex(playerID);
+        bz_BasePlayerRecord *p = bz_getPlayerByIndex(playerID);
         if (!p)
             return false;
 
@@ -497,9 +499,7 @@ public:
                 std::vector<std::string> plugins = getPluginList();
 
                 if (plugins.empty())
-                {
                     bz_sendTextMessage(BZ_SERVER,playerID,"No Plug-ins loaded.");
-                }
                 else
                 {
                     bz_sendTextMessage(BZ_SERVER,playerID,"Plug-ins loaded:");
@@ -513,9 +513,7 @@ public:
                 }
             }
             else
-            {
                 bz_sendTextMessage(BZ_SERVER,playerID,"You do not have permission to view loaded plug-ins.");
-            }
 
             return true;
         }
@@ -565,7 +563,7 @@ public:
             if (TextUtils::isNumeric(name[0]))
             {
                 int index = atoi(name.c_str())-1;
-                std::vector<std::string>	plugins = getPluginList();
+                std::vector<std::string>    plugins = getPluginList();
                 if (index > 0 && index < (int)plugins.size())
                     name = plugins[index];
             }
@@ -581,7 +579,7 @@ public:
     }
 };
 
-DynamicPluginCommands	command;
+DynamicPluginCommands   command;
 
 void initPlugins ( void )
 {
@@ -617,6 +615,6 @@ bool removeCustomPluginHandler ( std::string ext, bz_APIPluginHandler *handler )
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

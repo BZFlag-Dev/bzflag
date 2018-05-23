@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTPATHSEGMENT_H__
-#define	__SHOTPATHSEGMENT_H__
+#ifndef __SHOTPATHSEGMENT_H__
+#define __SHOTPATHSEGMENT_H__
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -21,7 +21,7 @@
 class ShotPathSegment
 {
 public:
-    enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
+    enum Reason     { Initial, Through, Ricochet, Teleport, Boundary };
 
     ShotPathSegment();
     ShotPathSegment(const TimeKeeper& start,
@@ -30,14 +30,14 @@ public:
                     Reason = Initial);
     ShotPathSegment(const ShotPathSegment&);
     ~ShotPathSegment();
-    ShotPathSegment&	operator=(const ShotPathSegment&);
+    ShotPathSegment&    operator=(const ShotPathSegment&);
 
 public:
-    TimeKeeper		start;
-    TimeKeeper		end;
-    Ray			ray;
-    Reason		reason;
-    float		bbox[2][3];
+    TimeKeeper      start;
+    TimeKeeper      end;
+    Ray         ray;
+    Reason      reason;
+    float       bbox[2][3];
 };
 
 

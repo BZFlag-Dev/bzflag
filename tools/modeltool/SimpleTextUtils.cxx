@@ -70,7 +70,8 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
 }
 
 
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes)
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens,
+                                  const bool useQuotes)
 {
     std::vector<std::string> tokens;
     int numTokens = 0;
@@ -104,9 +105,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
             }
 
             if (!useQuotes)
-            {
                 currentToken << char(currentChar);
-            }
             else
             {
 
@@ -119,9 +118,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
                         foundSlash = false;
                     }
                     else
-                    {
                         foundSlash = true;
-                    }
                     break;
                 case '\"' : // found a quote
                     if (foundSlash)   // found \"
@@ -139,9 +136,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
                             //slurp off one additional delimeter if possible
                             if (pos+1 < len &&
                                     delims.find(in[pos+1]) != std::string::npos)
-                            {
                                 pos++;
-                            }
 
                         }
                         else     // entering a quote
@@ -176,9 +171,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
         enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
         if ((pos < len) && (pos != std::string::npos))
-        {
             pos = in.find_first_not_of(delims,pos);
-        }
 
     } // end of getting all tokens -- either EOL or max tokens reached
 

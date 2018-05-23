@@ -37,16 +37,12 @@ struct BanInfo
 
         // Zero out the host bits
         if (cidr > 0 || cidr < 32)
-        {
             addr.s_addr &= htonl(0xFFFFFFFFu << (32 - cidr));
-        }
 
         if (_bannedBy)
             bannedBy = _bannedBy;
         if (period == 0)
-        {
             banEnd = TimeKeeper::getSunExplodeTime();
-        }
         else
         {
             banEnd = TimeKeeper::getCurrent();
@@ -75,12 +71,12 @@ struct BanInfo
         return !((addr.s_addr ^ checkAddr.s_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
     }
 
-    in_addr	addr;
-    unsigned char	cidr;
-    TimeKeeper	banEnd;
-    std::string	bannedBy;	// Who did perform the ban
-    std::string	reason;		// reason for banning
-    bool fromMaster;		// where the ban came from, local or master list.
+    in_addr addr;
+    unsigned char   cidr;
+    TimeKeeper  banEnd;
+    std::string bannedBy;   // Who did perform the ban
+    std::string reason;     // reason for banning
+    bool fromMaster;        // where the ban came from, local or master list.
 };
 
 
@@ -100,9 +96,7 @@ struct HostBanInfo
         if (_bannedBy)
             bannedBy = _bannedBy;
         if (period == 0)
-        {
             banEnd = TimeKeeper::getSunExplodeTime();
-        }
         else
         {
             banEnd = TimeKeeper::getCurrent();
@@ -125,7 +119,7 @@ struct HostBanInfo
     TimeKeeper banEnd;
     std::string bannedBy;
     std::string reason;
-    bool fromMaster;	// where the ban came from, local or master list.
+    bool fromMaster;    // where the ban came from, local or master list.
 };
 
 
@@ -145,9 +139,7 @@ struct IdBanInfo
         if (_bannedBy)
             bannedBy = _bannedBy;
         if (period == 0)
-        {
             banEnd = TimeKeeper::getSunExplodeTime();
-        }
         else
         {
             banEnd = TimeKeeper::getCurrent();
@@ -170,7 +162,7 @@ struct IdBanInfo
     TimeKeeper banEnd;
     std::string bannedBy;
     std::string reason;
-    bool fromMaster;	// where the ban came from, local or master list.
+    bool fromMaster;    // where the ban came from, local or master list.
 };
 
 
@@ -338,6 +330,6 @@ inline void AccessControlList::setBanFile(const std::string& filename)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

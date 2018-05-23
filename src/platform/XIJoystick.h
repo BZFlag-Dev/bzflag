@@ -11,11 +11,11 @@
  */
 
 /* XIJoystick:
- *	Encapsulates an XInput joystick
+ *  Encapsulates an XInput joystick
  */
 
 #ifndef BZF_XIJOY_H
-#define	BZF_XIJOY_H
+#define BZF_XIJOY_H
 
 #include "BzfJoystick.h"
 #include <X11/extensions/XInput.h>
@@ -28,25 +28,25 @@ public:
     XIJoystick();
     ~XIJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void    initJoystick(const char* joystickName);
+    bool    joystick() const;
+    void    getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
+    void    getJoyDevices(std::vector<std::string> &list) const;
 
 private:
-    Display*		display;
+    Display*        display;
 
-    XDevice*		device;
-    int			scaleX, constX;
-    int			scaleY, constY;
+    XDevice*        device;
+    int         scaleX, constX;
+    int         scaleY, constY;
 
-    XDeviceInfo*	devices;
-    int			ndevices;
+    XDeviceInfo*    devices;
+    int         ndevices;
 
     // are these necessary?
-    int			buttonPressType;
-    int			buttonReleaseType;
+    int         buttonPressType;
+    int         buttonReleaseType;
 };
 
 #endif // BZF_XIJOY_H
@@ -55,6 +55,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

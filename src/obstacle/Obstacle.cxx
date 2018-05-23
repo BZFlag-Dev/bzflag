@@ -69,19 +69,17 @@ Obstacle::~Obstacle()
     return;
 }
 
-bool			Obstacle::isValid() const
+bool            Obstacle::isValid() const
 {
     for (int a = 0; a < 3; a++)
     {
         if ((extents.mins[a] < -maxExtent) || (extents.maxs[a] > maxExtent))
-        {
             return false;
-        }
     }
     return true;
 }
 
-void			Obstacle::setExtents()
+void            Obstacle::setExtents()
 {
     float xspan = (fabsf(cosf(angle)) * size[0]) + (fabsf(sinf(angle)) * size[1]);
     float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * size[0]);
@@ -94,30 +92,30 @@ void			Obstacle::setExtents()
     return;
 }
 
-bool			Obstacle::isFlatTop ( void ) const
+bool            Obstacle::isFlatTop ( void ) const
 {
     return false;
 }
 
-void			Obstacle::setZFlip ( void )
+void            Obstacle::setZFlip ( void )
 {
     ZFlip = true;
 }
 
-bool			Obstacle::getZFlip ( void ) const
+bool            Obstacle::getZFlip ( void ) const
 {
     return ZFlip;
 }
 
 
-bool			Obstacle::isCrossing(const float*, float,
+bool            Obstacle::isCrossing(const float*, float,
                                      float, float, float, float*) const
 {
     // never crossing by default
     return false;
 }
 
-float			Obstacle::getHitNormal(
+float           Obstacle::getHitNormal(
     const float* pos1, float azimuth1,
     const float* pos2, float azimuth2,
     float width, float breadth,
@@ -125,7 +123,7 @@ float			Obstacle::getHitNormal(
     float oWidth, float oBreadth, float oHeight,
     float* normal) const
 {
-    static const float	square[4][2] =
+    static const float  square[4][2] =
     {
         {  1.0f,  1.0f },
         { -1.0f,  1.0f },
@@ -279,6 +277,6 @@ Obstacle* Obstacle::copyWithTransform(MeshTransform const&) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

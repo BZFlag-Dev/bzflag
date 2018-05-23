@@ -869,7 +869,8 @@ public:
         }
 
         // easy outs
-        if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut && (vDir && !vDir->SupportPut())))
+        if (Request.RequestType == eHTTPDelete || Request.RequestType == eHTTPConnect || (Request.RequestType == eHTTPPut
+                && (vDir && !vDir->SupportPut())))
         {
             send501Error(connectionID);
             return;
@@ -1112,7 +1113,8 @@ public:
                                 std::vector<std::string> parts = TextUtils::tokenize(base64_decode(trimLeadingWhitespace(authHeader)),":",2);
                                 if (parts.size() > 1)
                                 {
-                                    authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),Request);
+                                    authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),parts[0].c_str(),parts[1].c_str(),
+                                                                            Request);
                                     if (authStatus == eAuthOK)
                                         Authenticated = true;
                                 }
@@ -1188,7 +1190,8 @@ public:
             {
                 if (vDir->RequiredAuthentiction == eHTTPOther)
                 {
-                    bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,NULL,Request);
+                    bzhttp_eAuthenticationStatus authStatus = vDir->AuthenticateHTTPUser(bz_getNonPlayerConnectionIP(connectionID),NULL,
+                            NULL,Request);
                     if (authStatus == eAuthOK)
                     {
                         Authenticated = true;
@@ -1376,9 +1379,7 @@ public:
                 pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
             }
             else
-            {
                 pageBuffer += " 500 Server Error\n";
-            }
 
             pageBuffer += "Host: " + ServerHostPort + "\n";
             break;
@@ -1391,18 +1392,14 @@ public:
                 pageBuffer += "Location: " + std::string(Response.RedirectLocation.c_str()) + "\n";
             }
             else
-            {
                 pageBuffer += " 500 Server Error\n";
-            }
 
             pageBuffer += "Host: " + ServerHostPort + "\n";
             break;
 
         case e401Unauthorized:
             if (!vDir || vDir->RequiredAuthentiction == eBZID)
-            {
                 pageBuffer += " 403 Forbidden\n";
-            }
             else
             {
                 pageBuffer += " 401 Unauthorized\n";
@@ -1525,7 +1522,8 @@ public:
                     p = cookiePath;
                 }
 
-                pageBuffer +=  TextUtils::format("Set-Cookie: %s=%s; Domain=%s; Path=%s; Max-Age=3600; HttpOnly\n",itr->first.c_str(),itr->second.c_str(),d.c_str(),p.c_str());
+                pageBuffer +=  TextUtils::format("Set-Cookie: %s=%s; Domain=%s; Path=%s; Max-Age=3600; HttpOnly\n",itr->first.c_str(),
+                                                 itr->second.c_str(),d.c_str(),p.c_str());
                 ++itr;
             }
         }
@@ -1707,9 +1705,7 @@ public:
         response.AddBodyData("</title></head><body>");
 
         if (VDirs.empty())
-        {
             response.AddBodyData("No HTTP Services are running on this server");
-        }
         else
         {
             std::map<std::string,VDir>::iterator itr = VDirs.begin();
@@ -1865,9 +1861,7 @@ void NewHTTPConnection ( bz_EventData *eventData )
             {
                 std::map<std::string,VDir>::iterator itr = VDirs.find(TextUtils::toupper(dirName));
                 if (itr != VDirs.end())
-                {
                     dir = itr->second.vdir;
-                }
             }
         }
 
@@ -2141,7 +2135,8 @@ std::string::const_iterator readKey ( std::string &key, std::string::const_itera
 }
 
 
-std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code, std::string::const_iterator inItr, const std::string &str )
+std::string::const_iterator findNextTag ( const std::vector<std::string> &keys, std::string &endKey, std::string &code,
+        std::string::const_iterator inItr, const std::string &str )
 {
     if (keys.empty())
         return inItr;
@@ -2202,21 +2197,14 @@ std::string CallKey ( std::string& key, bzhttp_TemplateCallback* callback)
         return data;
     }
     else if (key == "pagetime")
-    {
         return TextUtils::format("%.3f",bz_getCurrentTime()-startTime).c_str();
-    }
     else if (key == "baseurl")
-    {
         return HTTPConnectedPeer::Current->vDir->BaseURL.c_str();
-    }
     else if (key == "pluginname")
-    {
-        return VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin ? VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin->Name() : "";
-    }
+        return VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin ?
+               VDirs[HTTPConnectedPeer::Current->vDir->VDirName()].plugin->Name() : "";
     else if (callback)
-    {
         return callback->GetTemplateKey(key.c_str());
-    }
 
     return "";
 }
@@ -2362,13 +2350,15 @@ void processIF ( std::string &code, std::string::const_iterator &inItr, const st
     inItr = itr;
 }
 
-void processComment ( std::string & UNUSED(code), std::string::const_iterator &inItr, const std::string &str,  TemplateInfo& UNUSED(info) )
+void processComment ( std::string & UNUSED(code), std::string::const_iterator &inItr, const std::string &str,
+                      TemplateInfo& UNUSED(info) )
 {
     std::string key;
     inItr = readKey(key,inItr,str);
 }
 
-void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str, TemplateInfo& info )
+void processInclude ( std::string &code, std::string::const_iterator &inItr, const std::string &str,
+                      TemplateInfo& info )
 {
     std::string key;
     inItr = readKey(key,inItr,str);
@@ -2439,9 +2429,7 @@ std::string processTemplate ( const std::string &templateText, TemplateInfo& inf
             ++templateItr;
 
             if (templateItr == templateText.end())
-            {
                 code += '[';
-            }
             else
             {
                 switch (*templateItr)
@@ -2503,7 +2491,8 @@ BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCa
 }
 
 
-BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback, const char* pathSet )
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback,
+        const char* pathSet )
 {
     if (!text || !*text)
         return bz_ApiString();
@@ -2578,6 +2567,6 @@ BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename 
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

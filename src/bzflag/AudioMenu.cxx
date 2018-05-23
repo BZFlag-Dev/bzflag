@@ -57,9 +57,7 @@ AudioMenu::AudioMenu()
         option->createSlider(10);
     }
     else
-    {
         options->push_back(std::string("Unavailable"));
-    }
     option->update();
     listHUD.push_back(option);
 
@@ -109,20 +107,16 @@ AudioMenu::~AudioMenu()
 {
 }
 
-void			AudioMenu::execute()
+void            AudioMenu::execute()
 {
     HUDuiControl* _focus = HUDui::getFocus();
     if (_focus == driver)
-    {
         BZDB.set("audioDriver", driver->getString().c_str());
-    }
     else if (_focus == device)
-    {
         BZDB.set("audioDevice", device->getString().c_str());
-    }
 }
 
-void			AudioMenu::resize(int _width, int _height)
+void            AudioMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
     int i;
@@ -165,7 +159,7 @@ void			AudioMenu::resize(int _width, int _height)
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 }
 
-void			AudioMenu::callback(HUDuiControl* w, const void* data)
+void            AudioMenu::callback(HUDuiControl* w, const void* data)
 {
     HUDuiList* list = (HUDuiList*)w;
     switch (((const char*)data)[0])
@@ -185,6 +179,6 @@ void			AudioMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

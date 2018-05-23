@@ -57,19 +57,19 @@ public:
     virtual ~bzhttp_Request();
 
     bzhttp_eRequestType RequestType;
-    bz_ApiString	URL;
-    bz_ApiString	Resource;
+    bz_ApiString    URL;
+    bz_ApiString    Resource;
 
-    bz_ApiString	RequesterIP;
-    bz_ApiString	RequesterHost;
+    bz_ApiString    RequesterIP;
+    bz_ApiString    RequesterHost;
 
-    bz_ApiString	BZID;
-    bz_ApiString	BZIDCallsign;
+    bz_ApiString    BZID;
+    bz_ApiString    BZIDCallsign;
     bz_APIStringList BZIDGroups;
 
     virtual bool UserHasPerm ( const char* perm ) const;
 
-    bz_ApiString	Body;
+    bz_ApiString    Body;
 
     virtual void AddHeader ( const char* name, const char* value);
     virtual const char* GetHeader ( const char* name) const;
@@ -133,10 +133,10 @@ public:
 
     bool ForceNoCache;
 
-    bz_ApiString	RedirectLocation;
-    bz_ApiString	MimeType;
+    bz_ApiString    RedirectLocation;
+    bz_ApiString    MimeType;
 
-    bz_ApiString	MD5Hash;
+    bz_ApiString    MD5Hash;
 
     bz_ApiString CookieDomain;
     bz_ApiString CookiePath;
@@ -206,7 +206,8 @@ public:
     bz_APIStringList BZIDAuthenicationGroups;
     bool CacheAuthentication;
 
-    virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/, const char* /*password*/, const bzhttp_Request& /*request*/ )
+    virtual bzhttp_eAuthenticationStatus AuthenticateHTTPUser ( const char* /*ipAddress*/, const char* /*user*/,
+            const char* /*password*/, const bzhttp_Request& /*request*/ )
     {
         return eAuthFail;
     }
@@ -266,8 +267,10 @@ public:
     bzhttp_TemplateMetaData* MetaData;
 };
 
-BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback, const char* pathSet = NULL );
-BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback, const char* pathSet = NULL );
+BZF_API bz_ApiString bzhttp_RenderTemplate ( const char* file, bzhttp_TemplateCallback* callback,
+        const char* pathSet = NULL );
+BZF_API bz_ApiString bzhttp_RenderTemplateFromText ( const char* text, bzhttp_TemplateCallback* callback,
+        const char* pathSet = NULL );
 
 BZF_API bzhttp_TemplateMetaData bzhttp_GetTemplateMetaData( const char* file );
 
@@ -282,6 +285,6 @@ BZF_API const char* bzhttp_FindFile ( const char* pathSet, const char* filename 
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

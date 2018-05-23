@@ -21,7 +21,7 @@
 #include "common.h"
 
 // must be before network.h because that defines a close() macro which
-// messes up fstreams.	luckily, we don't need to call the close() method
+// messes up fstreams.  luckily, we don't need to call the close() method
 // on any fstream.
 #include <fstream>
 
@@ -79,20 +79,20 @@ public:
 
 extern std::list<PendingChatMessages> pendingChatMessages;
 
-extern void sendMessage(int		playerIndex,
-                        PlayerId	dstPlayer,
-                        const char	*message,
-                        MessageType	type = ChatMessage);
-extern void removePlayer(int		playerIndex,
-                         const char	*reason,
-                         bool		notify = true);
-extern void playerKilled(int		victimIndex,
-                         int		killerIndex,
-                         int		reason,
-                         int16_t	shotIndex,
-                         const FlagType	*flagType,
-                         int		phydrv,
-                         bool		respawnOnBase = false);
+extern void sendMessage(int     playerIndex,
+                        PlayerId    dstPlayer,
+                        const char  *message,
+                        MessageType type = ChatMessage);
+extern void removePlayer(int        playerIndex,
+                         const char *reason,
+                         bool       notify = true);
+extern void playerKilled(int        victimIndex,
+                         int        killerIndex,
+                         int        reason,
+                         int16_t    shotIndex,
+                         const FlagType *flagType,
+                         int        phydrv,
+                         bool       respawnOnBase = false);
 extern void doSpawns();
 extern void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos = true);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
@@ -131,36 +131,36 @@ void rescanForBans(bool isOperator = false, const char* callsign = NULL, int pla
 // initialize permission groups
 extern void initGroups();
 
-extern BasesList	bases;
-extern CmdLineOptions	*clOptions;
-extern uint16_t		curMaxPlayers;
-extern bool		done;
-extern bool		gameOver;
-extern TeamInfo		team[NumTeams];
-extern int		numFlags;
-extern TimeKeeper	gameStartTime;
-extern bool		countdownActive;
-extern int		countdownDelay;
-extern TimeKeeper	countdownPauseStart;
-extern int		countdownResumeDelay;
-extern std::string	hexDigest;
-extern WorldInfo	*world;
-extern char		*worldDatabase;
-extern uint32_t		worldDatabaseSize;
-extern char		worldSettings[4 + WorldSettingsSize];
-extern uint8_t		rabbitIndex;
-extern float		speedTolerance;
-extern bool		handlePings;
-extern uint16_t		maxPlayers;
-extern uint16_t		maxRealPlayers;
-extern float		pluginWorldSize;
-extern float		pluginWorldHeight;
-extern bool		checkShotMismatch;
-extern bool		publiclyDisconnected;
+extern BasesList    bases;
+extern CmdLineOptions   *clOptions;
+extern uint16_t     curMaxPlayers;
+extern bool     done;
+extern bool     gameOver;
+extern TeamInfo     team[NumTeams];
+extern int      numFlags;
+extern TimeKeeper   gameStartTime;
+extern bool     countdownActive;
+extern int      countdownDelay;
+extern TimeKeeper   countdownPauseStart;
+extern int      countdownResumeDelay;
+extern std::string  hexDigest;
+extern WorldInfo    *world;
+extern char     *worldDatabase;
+extern uint32_t     worldDatabaseSize;
+extern char     worldSettings[4 + WorldSettingsSize];
+extern uint8_t      rabbitIndex;
+extern float        speedTolerance;
+extern bool     handlePings;
+extern uint16_t     maxPlayers;
+extern uint16_t     maxRealPlayers;
+extern float        pluginWorldSize;
+extern float        pluginWorldHeight;
+extern bool     checkShotMismatch;
+extern bool     publiclyDisconnected;
 
-extern Shots::Manager	ShotManager;
+extern Shots::Manager   ShotManager;
 
-extern VotingArbiter	*votingarbiter;
+extern VotingArbiter    *votingarbiter;
 
 bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped = NoTeam, bool checkCheat = true);
 
@@ -229,6 +229,6 @@ void broadcastHandicaps(int toPlayer = -1);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

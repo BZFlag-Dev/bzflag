@@ -16,7 +16,7 @@
 #include "XWindow.h"
 #include "SolarisMedia.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory*    PlatformFactory::getInstance()
 {
     if (!instance) instance = new SolarisPlatformFactory;
     return instance;
@@ -32,7 +32,7 @@ SolarisPlatformFactory::~SolarisPlatformFactory()
     // do nothing
 }
 
-BzfDisplay*		SolarisPlatformFactory::createDisplay(
+BzfDisplay*     SolarisPlatformFactory::createDisplay(
     const char* name, const char*)
 {
     XDisplay* display = new XDisplay(name);
@@ -44,19 +44,19 @@ BzfDisplay*		SolarisPlatformFactory::createDisplay(
     return display;
 }
 
-BzfVisual*		SolarisPlatformFactory::createVisual(
+BzfVisual*      SolarisPlatformFactory::createVisual(
     const BzfDisplay* display)
 {
     return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		SolarisPlatformFactory::createWindow(
+BzfWindow*      SolarisPlatformFactory::createWindow(
     const BzfDisplay* display, BzfVisual* visual)
 {
     return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfMedia*		SolarisPlatformFactory::createMedia()
+BzfMedia*       SolarisPlatformFactory::createMedia()
 {
     return new SolarisMedia;
 }

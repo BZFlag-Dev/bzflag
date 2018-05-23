@@ -83,9 +83,7 @@ void LagInfo::getLagStats(char* msg, bool isAdmin) const
                            TextUtils::str_trunc_continued (info->getCallSign(), 22).c_str(), lag);
 
     if (info->isObserver())
-    {
         sprintf(msg+numchars, "ms");
-    }
     else
     {
         numchars += sprintf(msg + numchars, " +- %2dms", int(jitteravg * 1000));
@@ -136,9 +134,7 @@ void LagInfo::updatePingLag(const void *buf, bool &warn, bool &kick, bool &jittw
             alagannouncewarn = true;
         }
         else
-        {
             alagannouncewarn = false;
-        }
 
         if (!info->isObserver() && (lagannouncetresh > 0) && lagavg > lagannouncetresh
                 && (
@@ -152,9 +148,7 @@ void LagInfo::updatePingLag(const void *buf, bool &warn, bool &kick, bool &jittw
             lagannouncewarn = true;
         }
         else
-        {
             lagannouncewarn = false;
-        }
 
         // warn players from time to time whose lag is > threshold (-lagwarn)
         if (!info->isObserver() && (threshold > 0) && lagavg > threshold
@@ -312,6 +306,6 @@ void LagInfo::setPacketLossThreshold(float _lossthreshold, float _lossmax)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

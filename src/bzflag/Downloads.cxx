@@ -81,12 +81,12 @@ private:
 
     virtual void collectData(char* ptr, int len);
 
-    std::string	       url;
-    static bool	       checkForCache;
-    static long	       httpTimeout;
-    static int		textureCounter;
-    static int				byteTransferred;
-    bool		      timeRequest;
+    std::string        url;
+    static bool        checkForCache;
+    static long        httpTimeout;
+    static int      textureCounter;
+    static int              byteTransferred;
+    bool              timeRequest;
 };
 bool CachedTexture::checkForCache   = false;
 long CachedTexture::httpTimeout     = 0;
@@ -98,7 +98,7 @@ CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
     CacheManager::CacheRecord oldrec;
 
     setURL(texUrl);
-    url	 = texUrl;
+    url  = texUrl;
 
     // use the cache?
     bool cached = CACHEMGR.findURL(texUrl, oldrec);
@@ -115,7 +115,7 @@ CachedTexture::CachedTexture(const std::string &texUrl) : cURLManager()
         setRequestFileTime(true);
         timeRequest = cached;
         std::string msg = ColorStrings[GreyColor];
-        msg	    += "downloading: " + url;
+        msg     += "downloading: " + url;
         addMessage(NULL, msg);
         if (cached)
         {
@@ -164,13 +164,9 @@ void CachedTexture::finalization(char *data, unsigned int length, bool good)
     {
         CacheManager::CacheRecord rec;
         if (CACHEMGR.findURL(url, rec))
-        {
             MATERIALMGR.setTextureLocal(url, rec.name);
-        }
         else
-        {
             MATERIALMGR.setTextureLocal(url, "");
-        }
     }
 }
 
@@ -219,9 +215,7 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
 
     float timeout = 15;
     if (BZDB.isSet("httpTimeout"))
-    {
         timeout = BZDB.eval("httpTimeout");
-    }
     CachedTexture::setParams(updateDownloads, (long)timeout);
 
     // check hosts' access permissions
@@ -274,9 +268,7 @@ void Downloads::startDownloads(bool doDownloads, bool updateDownloads,
         }
 
     if (authNotice)
-    {
         printAuthNotice();
-    }
     textureDownloading = true;
 }
 
@@ -312,9 +304,7 @@ void Downloads::removeTextures()
         {
             const std::string& localname = CACHEMGR.getLocalName(texUrl);
             if (TEXMGR.isLoaded(localname))
-            {
                 TEXMGR.removeTexture(localname);
-            }
         }
     }
 
@@ -343,9 +333,7 @@ bool authorizedServer(const std::string& hostname)
     // make the list of strings to check
     std::vector<std::string> nameAndIp;
     if (hostname.size() > 0)
-    {
         nameAndIp.push_back(hostname);
-    }
 
     return DownloadAccessList.authorized(nameAndIp);
 }
@@ -358,9 +346,7 @@ bool parseHostname(const std::string& url, std::string& hostname)
     if (BzfNetwork::parseURL(url, protocol, hostname, port, path))
     {
         if ((protocol == "http") || (protocol == "ftp"))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -370,9 +356,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
 {
     // avoid the DNS lookup
     if (DownloadAccessList.alwaysAuthorized())
-    {
         return false;
-    }
 
     bool hostFailed = false;
 
@@ -387,9 +371,7 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
         const std::string& url = *set_it;
         std::string hostname;
         if (parseHostname(url, hostname))
-        {
             hostAccess[hostname] = true;
-        }
     }
 
     // check the hosts
@@ -431,6 +413,6 @@ static bool checkAuthorizations(BzMaterialManager::TextureSet& set)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

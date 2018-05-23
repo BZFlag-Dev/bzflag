@@ -73,9 +73,7 @@ void SwapFourBytesGrup (unsigned long *src, int size)
     unsigned long *ptr = (unsigned long *)src;
     int i;
     for (i = 0; i < size/4; ++i)
-    {
         SwapFourBytes (&ptr[i]);
-    }
 }
 
 bool Quake3Level::dumpToModel ( CModel &model )
@@ -84,9 +82,9 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
     for ( int i = 0; i < mNumShaders; i++)
     {
-        CMaterial	material;
+        CMaterial   material;
 
-        char	temp[128];
+        char    temp[128];
         strcpy(temp, mShaders[i].name);
         if (strrchr(temp,'.'))
             *(strrchr(temp,'.')) = 0;
@@ -109,9 +107,9 @@ bool Quake3Level::dumpToModel ( CModel &model )
             // add in the verts and normals and UVs
             for ( int j = 0; j < mFaces[i].vert_count; j++ )
             {
-                CVertex	vert;
-                CVertex	norm;
-                CTexCoord	coord;
+                CVertex vert;
+                CVertex norm;
+                CTexCoord   coord;
 
                 int index = mFaces[i].vert_start + j;
                 if ( index > 0 && index < mNumVertices)
@@ -133,13 +131,13 @@ bool Quake3Level::dumpToModel ( CModel &model )
             }
 
             // now do the face
-            CFace	face;
+            CFace   face;
 
             bool skipFace = false;
 
             if ( mFaces[i].shader > 0 && mFaces[i].shader < mNumShaders)
             {
-                char	temp[128];
+                char    temp[128];
                 if (strlen(mShaders[mFaces[i].shader].name) )
                 {
                     strcpy(temp, mShaders[mFaces[i].shader].name);
@@ -196,7 +194,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
                     mesh.faces.push_back(face);
                 }
             }
-            else	// it's a mesh
+            else    // it's a mesh
             {
                 if (0)
                 {
@@ -239,17 +237,17 @@ bool Quake3Level::dumpToModel ( CModel &model )
         }
         break;
 
-        case 2:	// surface
+        case 2: // surface
         {
             CMesh mesh;
-            CFace	face;
+            CFace   face;
 
             // add in the verts and normals and UVs
             for ( int j = mFaces[i].vert_count-1; j >= 0; j-- )
             {
-                CVertex	vert;
-                CVertex	norm;
-                CTexCoord	coord;
+                CVertex vert;
+                CVertex norm;
+                CTexCoord   coord;
 
                 int index = mFaces[i].vert_start + j;
                 if ( index > 0 && index < mNumVertices)
@@ -276,7 +274,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
 
             if ( mFaces[i].shader > 0 && mFaces[i].shader < mNumShaders)
             {
-                char	temp[128];
+                char    temp[128];
                 if (strlen(mShaders[mFaces[i].shader].name) )
                 {
                     strcpy(temp, mShaders[mFaces[i].shader].name);
@@ -360,7 +358,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
         std::string ents = (char*)mEntities;
         std::vector<std::string> entList = SimpleTextUtils::tokenize(ents,std::string("\n"));
 
-        CCustomObject	cObject;
+        CCustomObject   cObject;
         bool hasPos = false;
 
         bool inTag = false;
@@ -383,7 +381,7 @@ bool Quake3Level::dumpToModel ( CModel &model )
                         cObject.name = "spawn";
 
                     //if (cObject.name  == "spawn" )
-                    //	model.customObjects.push_back(cObject);
+                    //  model.customObjects.push_back(cObject);
                 }
             }
             else
@@ -567,15 +565,13 @@ void Quake3Level::dumpContents(void)
     of << "Planes       : " << mNumPlanes << std::endl;
     of << "Shaders      : " << mNumShaders << std::endl;
     of << "Vertices     : " << mNumVertices << std::endl;
-//	of << "Vis Clusters : " << mVis->cluster_count << std::endl;
+//  of << "Vis Clusters : " << mVis->cluster_count << std::endl;
 
     of << std::endl;
     of << "-= Shaders =-";
     of << std::endl;
     for (int i = 0; i < mNumShaders; ++i)
-    {
         of << "Shader " << i << ": " << mShaders[i].name << std::endl;
-    }
 
     of << std::endl;
     of << "-= Entities =-";
@@ -592,16 +588,16 @@ void Quake3Level::dumpContents(void)
 void Quake3Level::extractLightmaps(void) const
 {
     // Lightmaps are always 128x128x24 (RGB)
-//	unsigned char* pLightmap = mLightmaps;
+//  unsigned char* pLightmap = mLightmaps;
     for (int i = 0; i < mNumLightmaps; ++i)
     {
         char name[32];
         sprintf(name, "@lightmap%d", i);
 
-        /*	// Load, no mipmaps, brighten by factor 2.5
-        	Image img; img.loadRawData( DataChunk( pLightmap, 128 * 128 * 3 ), 128, 128, PF_R8G8B8 );
-        	TextureManager::getSingleton().loadImage( name, img, TEX_TYPE_2D, 0, 4.0f );
-        	pLightmap += BSP_LIGHTMAP_BANKSIZE;
+        /*  // Load, no mipmaps, brighten by factor 2.5
+            Image img; img.loadRawData( DataChunk( pLightmap, 128 * 128 * 3 ), 128, 128, PF_R8G8B8 );
+            TextureManager::getSingleton().loadImage( name, img, TEX_TYPE_2D, 0, 4.0f );
+            pLightmap += BSP_LIGHTMAP_BANKSIZE;
         */
     }
 }

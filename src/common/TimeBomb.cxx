@@ -20,7 +20,7 @@
 #define TIME_BOMB ""
 #endif
 
-bool			timeBombBoom()
+bool            timeBombBoom()
 {
     const char* timeBomb = timeBombString();
     if (timeBomb)
@@ -37,7 +37,7 @@ bool			timeBombBoom()
     return false;
 }
 
-const char*		timeBombString()
+const char*     timeBombString()
 {
     static const char timeBomb[] = TIME_BOMB;
     if (timeBomb[0] == '\0') return NULL;
@@ -48,6 +48,6 @@ const char*		timeBombString()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

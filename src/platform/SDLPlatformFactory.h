@@ -11,11 +11,11 @@
  */
 
 /* SDLPlatformFactory:
- *	Factory for SDL platform stuff.
+ *  Factory for SDL platform stuff.
  */
 
 #ifndef BZF_SDL_PLATFORM_FACTORY_H
-#define	BZF_SDL_PLATFORM_FACTORY_H
+#define BZF_SDL_PLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
@@ -25,11 +25,11 @@ public:
     SdlPlatformFactory();
     ~SdlPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-    BzfMedia*		createMedia();
-    BzfJoystick*		createJoystick();
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
+    BzfMedia*       createMedia();
+    BzfJoystick*        createJoystick();
 
 private:
     SdlPlatformFactory(const SdlPlatformFactory&);
@@ -42,6 +42,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

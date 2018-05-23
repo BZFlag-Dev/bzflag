@@ -110,63 +110,59 @@ QuadWallSceneNode::Geometry::~Geometry()
     // do nothing
 }
 
-#define	RENDER(_e)							\
-  for (int k = 0, t = 0; t < dt; t++) {					\
-    glBegin(GL_TRIANGLE_STRIP);						\
-    for (int s = 0; s < dsq; k += 4, s++) {				\
-      _e(k+ds+1);							\
-      _e(k);								\
-      _e(k+ds+2);							\
-      _e(k+1);								\
-      _e(k+ds+3);							\
-      _e(k+2);								\
-      _e(k+ds+4);							\
-      _e(k+3);								\
-    }									\
-    switch (dsr) {							\
-      case 3:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 2:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 1:								\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-	/* fall through */						\
-      case 0:								\
-	/* don't forget right edge of last quad on row */		\
-	_e(k+ds+1);							\
-	_e(k);								\
-	k++;								\
-    }									\
-    glEnd();								\
+#define RENDER(_e)                          \
+  for (int k = 0, t = 0; t < dt; t++) {                 \
+    glBegin(GL_TRIANGLE_STRIP);                     \
+    for (int s = 0; s < dsq; k += 4, s++) {             \
+      _e(k+ds+1);                           \
+      _e(k);                                \
+      _e(k+ds+2);                           \
+      _e(k+1);                              \
+      _e(k+ds+3);                           \
+      _e(k+2);                              \
+      _e(k+ds+4);                           \
+      _e(k+3);                              \
+    }                                   \
+    switch (dsr) {                          \
+      case 3:                               \
+    _e(k+ds+1);                         \
+    _e(k);                              \
+    k++;                                \
+    /* fall through */                      \
+      case 2:                               \
+    _e(k+ds+1);                         \
+    _e(k);                              \
+    k++;                                \
+    /* fall through */                      \
+      case 1:                               \
+    _e(k+ds+1);                         \
+    _e(k);                              \
+    k++;                                \
+    /* fall through */                      \
+      case 0:                               \
+    /* don't forget right edge of last quad on row */       \
+    _e(k+ds+1);                         \
+    _e(k);                              \
+    k++;                                \
+    }                                   \
+    glEnd();                                \
   }
-#define EMITV(_i)	glVertex3fv(vertex[_i])
-#define EMITVT(_i)	glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
+#define EMITV(_i)   glVertex3fv(vertex[_i])
+#define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
-void			QuadWallSceneNode::Geometry::render()
+void            QuadWallSceneNode::Geometry::render()
 {
     wall->setColor();
     glNormal3fv(normal);
     if (style >= 2)
-    {
         drawVT();
-    }
     else
-    {
         drawV();
-    }
     addTriangleCount(triangles);
     return;
 }
 
-void			QuadWallSceneNode::Geometry::renderShadow()
+void            QuadWallSceneNode::Geometry::renderShadow()
 {
     int last = (ds + 1) * dt;
     glBegin(GL_TRIANGLE_STRIP);
@@ -178,17 +174,17 @@ void			QuadWallSceneNode::Geometry::renderShadow()
     addTriangleCount(2);
 }
 
-void			QuadWallSceneNode::Geometry::drawV() const
+void            QuadWallSceneNode::Geometry::drawV() const
 {
     RENDER(EMITV)
 }
 
-void			QuadWallSceneNode::Geometry::drawVT() const
+void            QuadWallSceneNode::Geometry::drawVT() const
 {
     RENDER(EMITVT)
 }
 
-const GLfloat*		QuadWallSceneNode::Geometry::getVertex(int i) const
+const GLfloat*      QuadWallSceneNode::Geometry::getVertex(int i) const
 {
     return vertex[i];
 }
@@ -219,7 +215,7 @@ QuadWallSceneNode::QuadWallSceneNode(const GLfloat base[3],
     init(base, uEdge, vEdge, 0.0f, 0.0f, uRepeats, vRepeats, makeLODs, fixedUVs);
 }
 
-void			QuadWallSceneNode::init(const GLfloat base[3],
+void            QuadWallSceneNode::init(const GLfloat base[3],
                                         const GLfloat uEdge[3],
                                         const GLfloat vEdge[3],
                                         float uOffset,
@@ -259,14 +255,10 @@ void			QuadWallSceneNode::init(const GLfloat base[3],
     // width, of the texture itself. Repeat the texture as many times
     // as necessary to fit the surface.
     if (uRepeats < 0.0f)
-    {
         uRepeats = - uLength / uRepeats;
-    }
 
     if (vRepeats < 0.0f)
-    {
         vRepeats = - vLength / vRepeats;
-    }
 
     // compute how many LODs required to get smaller edge down to
     // elements no bigger than 4 units on a side.
@@ -387,7 +379,7 @@ QuadWallSceneNode::~QuadWallSceneNode()
     delete shadowNode;
 }
 
-int			QuadWallSceneNode::split(const float *_plane,
+int         QuadWallSceneNode::split(const float *_plane,
                                      SceneNode*& front, SceneNode*& back) const
 {
     // need to reorder vertices into counterclockwise order
@@ -406,7 +398,7 @@ int			QuadWallSceneNode::split(const float *_plane,
     return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
 }
 
-void			QuadWallSceneNode::addRenderNodes(
+void            QuadWallSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     const int lod = pickLevelOfDetail(renderer);
@@ -414,18 +406,16 @@ void			QuadWallSceneNode::addRenderNodes(
     renderer.addRenderNode(nodes[lod], getWallGState());
 }
 
-void			QuadWallSceneNode::addShadowNodes(
+void            QuadWallSceneNode::addShadowNodes(
     SceneRenderer& renderer)
 {
     renderer.addShadowNode(shadowNode);
 }
 
-bool			QuadWallSceneNode::inAxisBox(const Extents& exts) const
+bool            QuadWallSceneNode::inAxisBox(const Extents& exts) const
 {
     if (!extents.touches(exts))
-    {
         return false;
-    }
 
     // NOTE: inefficient
     float vertices[4][3];
@@ -437,12 +427,12 @@ bool			QuadWallSceneNode::inAxisBox(const Extents& exts) const
     return testPolygonInAxisBox (4, vertices, getPlane(), exts);
 }
 
-int			QuadWallSceneNode::getVertexCount () const
+int         QuadWallSceneNode::getVertexCount () const
 {
     return 4;
 }
 
-const GLfloat*		QuadWallSceneNode::getVertex (int vertex) const
+const GLfloat*      QuadWallSceneNode::getVertex (int vertex) const
 {
     // re-map these to a counter-clockwise order
     const int order[4] = {0, 1, 3, 2};
@@ -450,7 +440,7 @@ const GLfloat*		QuadWallSceneNode::getVertex (int vertex) const
 }
 
 
-void			QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+void            QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
     RenderSet rs = { nodes[0], getWallGState() };
     rnodes.push_back(rs);
@@ -458,12 +448,10 @@ void			QuadWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void			QuadWallSceneNode::renderRadar()
+void            QuadWallSceneNode::renderRadar()
 {
     if (plane[2] > 0.0f)
-    {
         nodes[0]->renderRadar();
-    }
     return;
 }
 
@@ -472,6 +460,6 @@ void			QuadWallSceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

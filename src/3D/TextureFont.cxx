@@ -32,9 +32,7 @@
 TextureFont::TextureFont()
 {
     for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++)
-    {
         listIDs[i] = INVALID_GL_LIST_ID;
-    }
 
     textureID = -1;
 }
@@ -200,6 +198,6 @@ void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

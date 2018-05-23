@@ -22,7 +22,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-PlatformFactory*		PlatformFactory::getInstance()
+PlatformFactory*        PlatformFactory::getInstance()
 {
     if (instance == NULL)
         instance = new BeOSPlatformFactory;
@@ -74,7 +74,7 @@ BeOSPlatformFactory::~BeOSPlatformFactory()
     }
 }
 
-BzfDisplay*				BeOSPlatformFactory::createDisplay(
+BzfDisplay*             BeOSPlatformFactory::createDisplay(
     const char* name, const char*videoFormat)
 {
 
@@ -88,13 +88,13 @@ BzfDisplay*				BeOSPlatformFactory::createDisplay(
     return display;
 }
 
-BzfVisual*				BeOSPlatformFactory::createVisual(
+BzfVisual*              BeOSPlatformFactory::createVisual(
     const BzfDisplay* display)
 {
     return new BeOSVisual((BeOSDisplay *)display);
 }
 
-BzfWindow*				BeOSPlatformFactory::createWindow(
+BzfWindow*              BeOSPlatformFactory::createWindow(
     const BzfDisplay* display, BzfVisual* visual)
 {
     BeOSWindow *win;
@@ -107,7 +107,7 @@ BzfWindow*				BeOSPlatformFactory::createWindow(
     return win;
 }
 
-BzfMedia*				BeOSPlatformFactory::createMedia()
+BzfMedia*               BeOSPlatformFactory::createMedia()
 {
     return new BeOSMedia;
 }

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__WORLDBUILDER_H__
-#define	__WORLDBUILDER_H__
+#ifndef __WORLDBUILDER_H__
+#define __WORLDBUILDER_H__
 
 #include "common.h"
 
@@ -27,29 +27,29 @@ public:
     WorldBuilder();
     ~WorldBuilder();
 
-    const void*		unpack(const void*);
-    const void*		unpackGameSettings(const void*);
+    const void*     unpack(const void*);
+    const void*     unpackGameSettings(const void*);
 
-    World*		getWorld();
-    World*		peekWorld();	// doesn't give up ownership
+    World*      getWorld();
+    World*      peekWorld();    // doesn't give up ownership
 
-    void		setGameType(short gameType);
-    void		setGameOptions(short gameOptions);
-    void		setMaxPlayers(int maxPlayers);
-    void		setMaxShots(int maxSimultaneousShots);
-    void		setMaxFlags(int maxFlags);
-    void		setShakeTimeout(float timeout) const;
-    void		setShakeWins(int wins) const;
-    void		setBase(TeamColor team,
+    void        setGameType(short gameType);
+    void        setGameOptions(short gameOptions);
+    void        setMaxPlayers(int maxPlayers);
+    void        setMaxShots(int maxSimultaneousShots);
+    void        setMaxFlags(int maxFlags);
+    void        setShakeTimeout(float timeout) const;
+    void        setShakeWins(int wins) const;
+    void        setBase(TeamColor team,
                         const float* pos, float rotation,
                         float w, float b, float h);
 
 private:
-    void		preGetWorld();
+    void        preGetWorld();
 
 private:
-    bool		owned;
-    World*		world;
+    bool        owned;
+    World*      world;
 };
 
 
@@ -59,6 +59,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -119,9 +119,7 @@ MeshObstacle* TetraBuilding::makeMesh()
     checkTypes.push_back(MeshObstacle::CheckInside);
 
     for (i = 0; i < 4; i++)
-    {
         verts.push_back(vertices[i]);
-    }
 
     mesh = new MeshObstacle(transform,
                             checkTypes, checkPoints, verts, norms, texcds,
@@ -162,9 +160,7 @@ void TetraBuilding::checkVertexOrder()
     for (v = 0; v < 3; v++)
     {
         for (a = 0; a < 3; a++)
-        {
             edge[v][a] = vertices[v+1][a] - vertices[0][a];
-        }
     }
     float cross[3];
     vec3cross(cross, edge[0], edge[1]);
@@ -297,9 +293,7 @@ static void pack4Bools (unsigned char* byte, const bool bools[4])
     for (int i = 0; i < 4; i++)
     {
         if (bools[i])
-        {
             *byte = *byte | (1 << i);
-        }
     }
     return;
 }
@@ -309,13 +303,9 @@ static void unpack4Bools (unsigned char byte, bool bools[4])
     for (int i = 0; i < 4; i++)
     {
         if (byte & (1 << i))
-        {
             bools[i] = true;
-        }
         else
-        {
             bools[i] = false;
-        }
     }
     return;
 }
@@ -337,9 +327,7 @@ void *TetraBuilding::pack(void* buf) const
 
     // pack the vertices
     for (v = 0; v < 4; v++)
-    {
         buf = nboPackVector(buf, vertices[v]);
-    }
 
     // pack the normals
     unsigned char useNormalsByte;
@@ -350,9 +338,7 @@ void *TetraBuilding::pack(void* buf) const
         if (useNormals[v])
         {
             for (int i = 0; i < 3; i++)
-            {
                 buf = nboPackVector(buf, normals[v][i]);
-            }
         }
     }
 
@@ -399,9 +385,7 @@ const void *TetraBuilding::unpack(const void* buf)
 
     // unpack the vertices
     for (v = 0; v < 4; v++)
-    {
         buf = nboUnpackVector(buf, vertices[v]);
-    }
 
     // unpack the normals
     unsigned char useNormalsByte;
@@ -412,9 +396,7 @@ const void *TetraBuilding::unpack(const void* buf)
         if (useNormals[v])
         {
             for (int i = 0; i < 3; i++)
-            {
                 buf = nboUnpackVector(buf, normals[v][i]);
-            }
         }
     }
 
@@ -461,18 +443,14 @@ int TetraBuilding::packSize() const
     for (v = 0; v < 4; v++)
     {
         if (useNormals[v])
-        {
             fullSize = fullSize + sizeof(float[3][3]);
-        }
     }
     // texcoords
     fullSize = fullSize + sizeof(unsigned char);
     for (v = 0; v < 4; v++)
     {
         if (useTexcoords[v])
-        {
             fullSize = fullSize + sizeof(float[3][2]);
-        }
     }
     // materials
     fullSize = fullSize + sizeof(int32_t[4]);
@@ -521,24 +499,16 @@ void TetraBuilding::print(std::ostream& out, const std::string& indent) const
 
     // write the regular stuff
     if (isPassable())
-    {
         out << indent << "\tpassable" << std::endl;
-    }
     else
     {
         if (isDriveThrough())
-        {
             out << indent << "\tdrivethrough" << std::endl;
-        }
         if (isShootThrough())
-        {
             out << indent << "\tshootthrough" << std::endl;
-        }
     }
     if (canRicochet())
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     out << indent << "end" << std::endl;
 
     return;

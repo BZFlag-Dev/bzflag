@@ -11,11 +11,11 @@
  */
 
 /* SDLDisplay:
- *	Encapsulates an SDL display
+ *  Encapsulates an SDL display
  */
 
 #ifndef BZF_SDLDISPLAY_H
-#define	BZF_SDLDISPLAY_H
+#define BZF_SDLDISPLAY_H
 
 #include "bzfSDL.h"
 #include "BzfDisplay.h"
@@ -169,7 +169,7 @@ public:
     };
     bool  create(void);
 private:
-    bool	 hasGamma;
+    bool     hasGamma;
 };
 
 #endif // BZF_SDLDISPLAY_H

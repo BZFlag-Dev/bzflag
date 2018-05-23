@@ -29,25 +29,25 @@ HUDDialog::~HUDDialog()
         delete list[i];
 }
 
-void			HUDDialog::render()
+void            HUDDialog::render()
 {
     const int count = list.size();
     for (int i = 0; i < count; i++)
         list[i]->render();
 }
 
-void			HUDDialog::resize(int _width, int _height)
+void            HUDDialog::resize(int _width, int _height)
 {
-    width		= _width;
-    height	= _height;
+    width       = _width;
+    height  = _height;
 }
 
-HUDuiControl*		HUDDialog::getFocus() const
+HUDuiControl*       HUDDialog::getFocus() const
 {
     return focus;
 }
 
-void			HUDDialog::setFocus(HUDuiControl* _focus)
+void            HUDDialog::setFocus(HUDuiControl* _focus)
 {
     focus = _focus;
 }
@@ -91,6 +91,6 @@ void HUDDialog::initNavigation(std::vector<HUDuiControl*> &listHUD,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

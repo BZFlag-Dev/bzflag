@@ -100,38 +100,34 @@ TriWallSceneNode::Geometry::~Geometry()
 }
 
 
-#define	RENDER(_e)							\
-  for (int k = 0, t = 0; t < de; t++) {					\
-    int e = de - t;							\
-    glBegin(GL_TRIANGLE_STRIP);						\
-    for (int s = 0; s < e; k++, s++) {					\
-      _e(k+e+1);							\
-      _e(k);								\
-    }									\
-    _e(k);								\
-    glEnd();								\
-    k++;								\
+#define RENDER(_e)                          \
+  for (int k = 0, t = 0; t < de; t++) {                 \
+    int e = de - t;                         \
+    glBegin(GL_TRIANGLE_STRIP);                     \
+    for (int s = 0; s < e; k++, s++) {                  \
+      _e(k+e+1);                            \
+      _e(k);                                \
+    }                                   \
+    _e(k);                              \
+    glEnd();                                \
+    k++;                                \
   }
-#define EMITV(_i)	glVertex3fv(vertex[_i])
-#define EMITVT(_i)	glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
+#define EMITV(_i)   glVertex3fv(vertex[_i])
+#define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
 
-void			TriWallSceneNode::Geometry::render()
+void            TriWallSceneNode::Geometry::render()
 {
     wall->setColor();
     glNormal3fv(normal);
     if (style >= 2)
-    {
         drawVT();
-    }
     else
-    {
         drawV();
-    }
     addTriangleCount(triangles);
     return;
 }
 
-void			TriWallSceneNode::Geometry::renderShadow()
+void            TriWallSceneNode::Geometry::renderShadow()
 {
     glBegin(GL_TRIANGLE_STRIP);
     glVertex3fv(vertex[(de + 1) * (de + 2) / 2 - 1]);
@@ -142,19 +138,19 @@ void			TriWallSceneNode::Geometry::renderShadow()
 }
 
 
-void			TriWallSceneNode::Geometry::drawV() const
+void            TriWallSceneNode::Geometry::drawV() const
 {
     RENDER(EMITV)
 }
 
 
-void			TriWallSceneNode::Geometry::drawVT() const
+void            TriWallSceneNode::Geometry::drawVT() const
 {
     RENDER(EMITVT)
 }
 
 
-const GLfloat*		TriWallSceneNode::Geometry::getVertex(int i) const
+const GLfloat*      TriWallSceneNode::Geometry::getVertex(int i) const
 {
     return vertex[i];
 }
@@ -206,14 +202,10 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     // width, of the texture itself. Repeat the texture as many times
     // as necessary to fit the surface.
     if (uRepeats < 0.0f)
-    {
         uRepeats = - uLength / uRepeats;
-    }
 
     if (vRepeats < 0.0f)
-    {
         vRepeats = - vLength / vRepeats;
-    }
 
     // compute how many LODs required to get larger edge down to
     // elements no bigger than 4 units on a side.
@@ -275,35 +267,29 @@ TriWallSceneNode::~TriWallSceneNode()
 }
 
 
-bool			TriWallSceneNode::cull(const ViewFrustum& frustum) const
+bool            TriWallSceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
     const GLfloat* eye = frustum.getEye();
     if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
             plane[3]) <= 0.0f)
-    {
         return true;
-    }
 
     // if the Visibility culler tells us that we're
     // fully visible, then skip the rest of these tests
     if (octreeState == OctreeVisible)
-    {
         return false;
-    }
 
     const Frustum* f = (const Frustum *) &frustum;
     if (testAxisBoxInFrustum(extents, f) == Outside)
-    {
         return true;
-    }
 
     // probably visible
     return false;
 }
 
 
-int			TriWallSceneNode::split(const float* _plane,
+int         TriWallSceneNode::split(const float* _plane,
                                     SceneNode*& front, SceneNode*& back) const
 {
     return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
@@ -311,7 +297,7 @@ int			TriWallSceneNode::split(const float* _plane,
 }
 
 
-void			TriWallSceneNode::addRenderNodes(
+void            TriWallSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     const int lod = pickLevelOfDetail(renderer);
@@ -320,19 +306,17 @@ void			TriWallSceneNode::addRenderNodes(
 }
 
 
-void			TriWallSceneNode::addShadowNodes(
+void            TriWallSceneNode::addShadowNodes(
     SceneRenderer& renderer)
 {
     renderer.addShadowNode(shadowNode);
 }
 
 
-bool			TriWallSceneNode::inAxisBox(const Extents& exts) const
+bool            TriWallSceneNode::inAxisBox(const Extents& exts) const
 {
     if (!extents.touches(exts))
-    {
         return false;
-    }
 
     // NOTE: inefficient
     float vertices[3][3];
@@ -344,18 +328,18 @@ bool			TriWallSceneNode::inAxisBox(const Extents& exts) const
 }
 
 
-int			TriWallSceneNode::getVertexCount () const
+int         TriWallSceneNode::getVertexCount () const
 {
     return 3;
 }
 
 
-const GLfloat*		TriWallSceneNode::getVertex (int vertex) const
+const GLfloat*      TriWallSceneNode::getVertex (int vertex) const
 {
     return nodes[0]->getVertex(vertex);
 }
 
-void			TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
+void            TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
     RenderSet rs = { nodes[0], getWallGState() };
     rnodes.push_back(rs);
@@ -363,12 +347,10 @@ void			TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void			TriWallSceneNode::renderRadar()
+void            TriWallSceneNode::renderRadar()
 {
     if (plane[2] > 0.0f)
-    {
         nodes[0]->renderRadar();
-    }
     return;
 }
 
@@ -377,6 +359,6 @@ void			TriWallSceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

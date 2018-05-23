@@ -80,7 +80,8 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
          */
 
         const float tankRadius = BZDBCache::tankRadius;
-        safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) * BZDB.eval("_spawnSafeSWMod"));
+        safeSWRadius = (float)((BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) + BZDBCache::tankRadius) *
+                               BZDB.eval("_spawnSafeSWMod"));
         safeSRRadius = tankRadius * BZDB.eval("_spawnSafeSRMod");
         safeDistance = tankRadius * BZDB.eval("_spawnSafeRadMod");
         const float size = BZDBCache::worldSize;
@@ -115,19 +116,13 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
             const float waterLevel = world->getWaterLevel();
             float minZ = 0.0f;
             if (waterLevel > minZ)
-            {
                 minZ = waterLevel;
-            }
             float maxZ = maxHeight;
             if (onGroundOnly)
-            {
                 maxZ = 0.0f;
-            }
 
             if (DropGeometry::dropPlayer(testPos, minZ, maxZ))
-            {
                 foundspot = true;
-            }
 
             // check every now and then if we have already used up 10ms of time
             if (tries >= 50)
@@ -167,9 +162,7 @@ void SpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnly, boo
                 }
             }
             else if (dangerous)
-            {
                 foundspot = false;
-            }
         }
     }
 }
@@ -184,9 +177,7 @@ void SpawnPolicy::getAzimuth(float &azimuth)
         azimuth = fmod((float)(enemyAngle + M_PI), (float)(2.0 * M_PI));
     }
     else
-    {
         azimuth = (float)(bzfrand() * 2.0 * M_PI);
-    }
 }
 
 
@@ -210,13 +201,9 @@ bool SpawnPolicy::isFacing(const float *enemyPos, const float enemyAzimuth,
     diff = fabsf ((float)(diff - M_PI));
 
     if (diff < (deviation / 2.0f))
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }
 
 
@@ -244,21 +231,21 @@ bool SpawnPolicy::isImminentlyDangerous() const
                 {
                     if (isFacing(enemyPos, enemyAngle, twentyDegrees))   // he's looking within 20 degrees of spawn point
                     {
-                        return true;	// eek, don't spawn here
+                        return true;    // eek, don't spawn here
                     }
                 }
                 else if (ftype == Flags::ShockWave)      // don't spawn next to a SW
                 {
                     if (distanceFrom(enemyPos) < safeSWRadius)   // too close to SW
                     {
-                        return true;	// eek, don't spawn here
+                        return true;    // eek, don't spawn here
                     }
                 }
                 else if (ftype == Flags::Steamroller || ftype == Flags::Burrow)     // don't spawn if you'll squish or be squished
                 {
                     if (distanceFrom(enemyPos) < safeSRRadius)   // too close to SR or BU
                     {
-                        return true;	// eek, don't spawn here
+                        return true;    // eek, don't spawn here
                     }
                 }
             }
@@ -266,9 +253,7 @@ bool SpawnPolicy::isImminentlyDangerous() const
             if (distanceFrom(enemyPos) < safeDistance)   // within danger zone?
             {
                 if (isFacing(enemyPos, enemyAngle, twentyDegrees))   //and he's looking at me
-                {
                     return true;
-                }
             }
         }
     }
@@ -327,6 +312,6 @@ float SpawnPolicy::distanceFrom(const float* farPos) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

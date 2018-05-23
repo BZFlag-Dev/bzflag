@@ -11,11 +11,11 @@
  */
 
 /* TankSceneNode:
- *	Encapsulates information for rendering a tank
+ *  Encapsulates information for rendering a tank
  */
 
-#ifndef	BZF_TANK_SCENE_NODE_H
-#define	BZF_TANK_SCENE_NODE_H
+#ifndef BZF_TANK_SCENE_NODE_H
+#define BZF_TANK_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -60,10 +60,10 @@ public:
     TankIDLSceneNode(const TankSceneNode*);
     ~TankIDLSceneNode();
 
-    void		move(const GLfloat plane[4]);
+    void        move(const GLfloat plane[4]);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
     // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
     // following declaration isn't public it generates an error when trying
     // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
@@ -79,23 +79,23 @@ public:
     public:
         IDLRenderNode(const TankIDLSceneNode*);
         ~IDLRenderNode();
-        void		render();
-        const GLfloat*	getPosition() const
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
     private:
         const TankIDLSceneNode* sceneNode;
-        static const int	idlFaces[][5];
-        static const GLfloat	idlVertex[][3];
+        static const int    idlFaces[][5];
+        static const GLfloat    idlVertex[][3];
     };
     friend class IDLRenderNode;
 
 private:
-    const TankSceneNode	*tank;
-    GLfloat		plane[4];
-    OpenGLGState	gstate;
-    IDLRenderNode	renderNode;
+    const TankSceneNode *tank;
+    GLfloat     plane[4];
+    OpenGLGState    gstate;
+    IDLRenderNode   renderNode;
 };
 
 class TankSceneNode : public SceneNode
@@ -107,142 +107,142 @@ public:
                   const GLfloat forward[3]);
     ~TankSceneNode();
 
-    void		move(const GLfloat pos[3], const GLfloat forward[3]);
+    void        move(const GLfloat pos[3], const GLfloat forward[3]);
 
-    void		setColor(GLfloat r, GLfloat g,
+    void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setMaterial(const OpenGLMaterial&);
-    void		setTexture(const int);
-    void		setJumpJetsTexture(const int);
+    void        setColor(const GLfloat* rgba);
+    void        setMaterial(const OpenGLMaterial&);
+    void        setTexture(const int);
+    void        setJumpJetsTexture(const int);
 
-    void		setNormal();
-    void		setObese();
-    void		setTiny();
-    void		setNarrow();
-    void		setThief();
-    void		setDimensions(const float size[3]);
+    void        setNormal();
+    void        setObese();
+    void        setTiny();
+    void        setNarrow();
+    void        setThief();
+    void        setDimensions(const float size[3]);
 
-    void		setClipPlane(const GLfloat* plane);
-    void		setExplodeFraction(float t);
-    void		setJumpJets(float scale);
+    void        setClipPlane(const GLfloat* plane);
+    void        setExplodeFraction(float t);
+    void        setJumpJets(float scale);
 
-    void		setInTheCockpit(bool value);
-    void		setOnlyShadows(bool value);
+    void        setInTheCockpit(bool value);
+    void        setOnlyShadows(bool value);
 
-    void		rebuildExplosion();
-    void		addTreadOffsets(float left, float right);
+    void        rebuildExplosion();
+    void        addTreadOffsets(float left, float right);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
 
-    bool		cullShadow(int planeCount,
+    bool        cullShadow(int planeCount,
                            const float (*planes)[4]) const;
 
-    void		addLight(SceneRenderer&);
+    void        addLight(SceneRenderer&);
 
-    void		renderRadar();
+    void        renderRadar();
 
-    static void		setMaxLOD(int maxLevel);
+    static void     setMaxLOD(int maxLevel);
 
-    void		setDeathOverride( TankDeathOverride* o)
+    void        setDeathOverride( TankDeathOverride* o)
     {
         deathOverride = o;
     }
-    TankDeathOverride	*getDeathOverride( void )
+    TankDeathOverride   *getDeathOverride( void )
     {
         return deathOverride;
     }
 
-    fvec3		explodePos;
+    fvec3       explodePos;
 protected:
-    TankDeathOverride	*deathOverride;
+    TankDeathOverride   *deathOverride;
 
     class TankRenderNode : public RenderNode
     {
     public:
         TankRenderNode(const TankSceneNode*);
         ~TankRenderNode();
-        void		setShadow();
-        void		setRadar(bool);
-        void		setTreads(bool);
-        void		setTankLOD(TankGeometryEnums::TankLOD);
-        void		setTankSize(TankGeometryEnums::TankSize);
-        void		sortOrder(bool above, bool towards, bool left);
-        void		setNarrowWithDepth(bool narrow);
-        const GLfloat*	getPosition() const
+        void        setShadow();
+        void        setRadar(bool);
+        void        setTreads(bool);
+        void        setTankLOD(TankGeometryEnums::TankLOD);
+        void        setTankSize(TankGeometryEnums::TankSize);
+        void        sortOrder(bool above, bool towards, bool left);
+        void        setNarrowWithDepth(bool narrow);
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
 
-        void		render();
-        void		renderPart(TankGeometryEnums::TankPart part);
-        void		renderParts();
-        void		renderTopParts();
-        void		renderLeftParts();
-        void		renderRightParts();
-        void		renderNarrowWithDepth();
-        void		renderLights();
-        void		renderJumpJets();
-        void		setupPartColor(TankGeometryEnums::TankPart part);
-        bool		setupTextureMatrix(TankGeometryEnums::TankPart part);
+        void        render();
+        void        renderPart(TankGeometryEnums::TankPart part);
+        void        renderParts();
+        void        renderTopParts();
+        void        renderLeftParts();
+        void        renderRightParts();
+        void        renderNarrowWithDepth();
+        void        renderLights();
+        void        renderJumpJets();
+        void        setupPartColor(TankGeometryEnums::TankPart part);
+        bool        setupTextureMatrix(TankGeometryEnums::TankPart part);
 
     protected:
         const TankSceneNode* sceneNode;
         TankGeometryEnums::TankLOD drawLOD;
         TankGeometryEnums::TankSize drawSize;
-        const GLfloat*	color;
-        GLfloat		alpha;
-        bool		isRadar;
-        bool		isTreads;
-        bool		isShadow;
-        bool		left;
-        bool		above;
-        bool		towards;
-        bool		isExploding;
-        bool		narrowWithDepth;
-        GLfloat		explodeFraction;
+        const GLfloat*  color;
+        GLfloat     alpha;
+        bool        isRadar;
+        bool        isTreads;
+        bool        isShadow;
+        bool        left;
+        bool        above;
+        bool        towards;
+        bool        isExploding;
+        bool        narrowWithDepth;
+        GLfloat     explodeFraction;
         static const GLfloat centerOfGravity[TankGeometryEnums::LastTankPart][3];
     };
     friend class TankRenderNode;
 
 private:
-    GLfloat		azimuth, elevation;
-    GLfloat		baseRadius;
-    float		dimensions[3]; // tank dimensions
-    float		leftTreadOffset;
-    float		rightTreadOffset;
-    float		leftWheelOffset;
-    float		rightWheelOffset;
-    bool		useDimensions;
-    bool		onlyShadows;
-    bool		transparent, sort;
-    float		explodeFraction;
-    bool		clip;
-    bool		inTheCockpit;
-    GLfloat		color[4];
-    GLdouble		clipPlane[4];
-    OpenGLGState	gstate;
-    OpenGLGState	treadState;
-    OpenGLGState	lightsGState;
-    TankRenderNode	tankRenderNode;
-    TankRenderNode	treadsRenderNode;
-    TankRenderNode	shadowRenderNode;
+    GLfloat     azimuth, elevation;
+    GLfloat     baseRadius;
+    float       dimensions[3]; // tank dimensions
+    float       leftTreadOffset;
+    float       rightTreadOffset;
+    float       leftWheelOffset;
+    float       rightWheelOffset;
+    bool        useDimensions;
+    bool        onlyShadows;
+    bool        transparent, sort;
+    float       explodeFraction;
+    bool        clip;
+    bool        inTheCockpit;
+    GLfloat     color[4];
+    GLdouble        clipPlane[4];
+    OpenGLGState    gstate;
+    OpenGLGState    treadState;
+    OpenGLGState    lightsGState;
+    TankRenderNode  tankRenderNode;
+    TankRenderNode  treadsRenderNode;
+    TankRenderNode  shadowRenderNode;
     TankGeometryEnums::TankSize tankSize;
-    GLfloat		vel[TankGeometryEnums::LastTankPart][3];
-    GLfloat		spin[TankGeometryEnums::LastTankPart][4];
-    bool		jumpJetsOn;
-    GLfloat		jumpJetsScale;
-    GLfloat		jumpJetsLengths[4];
-    GLfloat		jumpJetsPositions[4][3];
-    OpenGLLight		jumpJetsRealLight;
-    OpenGLLight		jumpJetsGroundLights[4];
-    OpenGLGState	jumpJetsGState;
+    GLfloat     vel[TankGeometryEnums::LastTankPart][3];
+    GLfloat     spin[TankGeometryEnums::LastTankPart][4];
+    bool        jumpJetsOn;
+    GLfloat     jumpJetsScale;
+    GLfloat     jumpJetsLengths[4];
+    GLfloat     jumpJetsPositions[4][3];
+    OpenGLLight     jumpJetsRealLight;
+    OpenGLLight     jumpJetsGroundLights[4];
+    OpenGLGState    jumpJetsGState;
 
-    static int		maxLevel;
-    static const int	numLOD;
-    static GLfloat	jumpJetsModel[4][3];
+    static int      maxLevel;
+    static const int    numLOD;
+    static GLfloat  jumpJetsModel[4][3];
 };
 
 
@@ -252,6 +252,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

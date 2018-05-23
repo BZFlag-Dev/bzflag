@@ -11,11 +11,11 @@
  */
 
 /* BzfJoystick:
- *	Abstract, platform independent base for Joysticks.
+ *  Abstract, platform independent base for Joysticks.
  */
 
 #ifndef BZF_JOYSTICK_H
-#define	BZF_JOYSTICK_H
+#define BZF_JOYSTICK_H
 
 #include "common.h"
 #include <string>
@@ -25,22 +25,22 @@ class BzfJoystick
 {
 public:
     BzfJoystick();
-    virtual		~BzfJoystick();
+    virtual     ~BzfJoystick();
 
-    virtual void	initJoystick(const char* joystickName);
-    virtual bool	joystick() const;
-    virtual void	getJoy(int& x, int& y);
-    virtual int	 getNumHats();
-    virtual void	getJoyHat(int hat, float &hatX, float &hatY);
+    virtual void    initJoystick(const char* joystickName);
+    virtual bool    joystick() const;
+    virtual void    getJoy(int& x, int& y);
+    virtual int  getNumHats();
+    virtual void    getJoyHat(int hat, float &hatX, float &hatY);
     virtual unsigned long getJoyButtons();
-    virtual void	getJoyDevices(std::vector<std::string> &list) const;
+    virtual void    getJoyDevices(std::vector<std::string> &list) const;
 
     /** Return a list of axes belonging to the joystick.  The first and second
      ** are assumed to be default X and Y axes, respectively.
      **/
-    virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    virtual void	setXAxis(const std::string &axis);
-    virtual void	setYAxis(const std::string &axis);
+    virtual void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    virtual void    setXAxis(const std::string &axis);
+    virtual void    setYAxis(const std::string &axis);
 
     /* Rumble force feedback support - a motor in the controller vibrates it,
      * as tactile feedback for explosions, collisions, engines starting, death,
@@ -62,8 +62,8 @@ public:
      * one effect is supported at a time, so using a count of zero will cancel
      * any rumble that may be in progress.
      */
-    virtual bool	ffHasRumble() const;
-    virtual void	ffRumble(int count,
+    virtual bool    ffHasRumble() const;
+    virtual void    ffRumble(int count,
                              float delay, float duration,
                              float strong_motor, float weak_motor=0.0f);
 
@@ -88,17 +88,17 @@ public:
         FF_Velocity,
         FF_Acceleration
     };
-    virtual bool	ffHasDirectional() const;
-    virtual void	ffDirectionalConstant(int count,
+    virtual bool    ffHasDirectional() const;
+    virtual void    ffDirectionalConstant(int count,
                                           float delay, float duration,
                                           float x_direction, float y_direction,
                                           float strength);
-    virtual void	ffDirectionalPeriodic(int count,
+    virtual void    ffDirectionalPeriodic(int count,
                                           float delay, float duration,
                                           float x_direction, float y_direction,
                                           float amplitude, float period,
                                           PeriodicType type);
-    virtual void	ffDirectionalResistance(float time, float coefficient,
+    virtual void    ffDirectionalResistance(float time, float coefficient,
                                             float saturation, ResistanceType type);
 };
 
@@ -108,6 +108,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

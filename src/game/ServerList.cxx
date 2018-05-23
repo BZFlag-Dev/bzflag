@@ -250,13 +250,9 @@ void ServerList::addToList(ServerItem info, bool doCache)
         info.favorite = true;
 
     if (insertPoint == -1)   // no spot to insert it into -- goes on back
-    {
         servers.push_back(info);
-    }
     else      // found a spot to insert it into
-    {
         servers.insert(servers.begin() + insertPoint, info);
-    }
 
     // update display
     /*
@@ -283,9 +279,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
         ServerListCache::SRV_STR_MAP::iterator iter;
         iter = serverCache->find(serverAddress);  // find entry to allow update
         if (iter != serverCache->end())   // if we find it, update it
-        {
             iter->second = info;
-        }
         else
         {
             // insert into cache -- wasn't found
@@ -295,7 +289,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
 }
 
 // mark server identified by host:port string as favorite
-void		    ServerList::markFav(const std::string &serverAddress, bool fav)
+void            ServerList::markFav(const std::string &serverAddress, bool fav)
 {
     for (int i = 0; i < (int)servers.size(); i++)
     {
@@ -307,7 +301,7 @@ void		    ServerList::markFav(const std::string &serverAddress, bool fav)
     }
 }
 
-void			ServerList::checkEchos(StartupInfo *info)
+void            ServerList::checkEchos(StartupInfo *info)
 {
     startupInfo = info;
 
@@ -320,11 +314,11 @@ void			ServerList::checkEchos(StartupInfo *info)
         std::string url = info->listServerURL;
 
         std::string msg = "action=LIST&version=";
-        msg	    += getServerVersion();
-        msg	    += "&callsign=";
-        msg	    += TextUtils::url_encode(info->callsign);
-        msg	    += "&password=";
-        msg	    += TextUtils::url_encode(info->password);
+        msg     += getServerVersion();
+        msg     += "&callsign=";
+        msg     += TextUtils::url_encode(info->callsign);
+        msg     += "&password=";
+        msg     += TextUtils::url_encode(info->password);
         setPostMode(msg);
         setURLwithNonce(url);
         addHandle();
@@ -346,9 +340,7 @@ void			ServerList::checkEchos(StartupInfo *info)
         FD_ZERO(&read_set);
         FD_ZERO(&write_set);
         if (pingBcastSocket != -1)
-        {
             FD_SET((unsigned int)pingBcastSocket, &read_set);
-        }
         int fdMax = pingBcastSocket;
 
         const int nfound = select(fdMax+1, (fd_set*)&read_set,
@@ -372,7 +364,7 @@ void			ServerList::checkEchos(StartupInfo *info)
     } // end loop waiting for input/output on any list server
 }
 
-void			ServerList::addToListWithLookup(ServerItem& info)
+void            ServerList::addToListWithLookup(ServerItem& info)
 {
     info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
 
@@ -391,16 +383,14 @@ void			ServerList::addToListWithLookup(ServerItem& info)
 }
 
 // add the entire cache to the server list
-void			ServerList::addCacheToList()
+void            ServerList::addCacheToList()
 {
     if (addedCacheToList)
         return;
     addedCacheToList = true;
     for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
             iter != serverCache->end(); ++iter)
-    {
         addToList(iter->second);
-    }
 }
 
 void ServerList::collectData(char *ptr, int len)
@@ -421,9 +411,7 @@ void ServerList::finalization(char *, unsigned int, bool good)
         phase = -1;
     }
     else
-    {
         phase = 4;
-    }
 }
 
 const std::vector<ServerItem>& ServerList::getServers()
@@ -485,6 +473,6 @@ void ServerList::_shutDown()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

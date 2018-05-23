@@ -41,9 +41,7 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
 
     double currentTime = TimeKeeper::getCurrent().getSeconds();
     if (lastShotTime > 0)
-    {
         lastShotTimeDelta = currentTime-lastShotTime;
-    }
     lastShotTime = currentTime;
 
     float playerNorm[3];
@@ -90,9 +88,7 @@ FlagType* ShotStatistics::getFavoriteFlag() const
     {
         // ignore none/null - looking for favorite *flags*
         if (it->second > getFired(greatest) && it->first != Flags::Null)
-        {
             greatest = it->first;
-        }
     }
 
     return greatest;
@@ -125,6 +121,6 @@ FlagType* ShotStatistics::getBestFlag() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

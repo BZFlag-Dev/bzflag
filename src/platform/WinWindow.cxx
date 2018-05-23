@@ -21,8 +21,8 @@
 #include "TextureManager.h"
 #include "CommandsStandard.h"
 
-WinWindow*		WinWindow::first = NULL;
-HPALETTE		WinWindow::colormap = NULL;
+WinWindow*      WinWindow::first = NULL;
+HPALETTE        WinWindow::colormap = NULL;
 
 HWND WinWindow::hwnd = NULL;
 
@@ -100,17 +100,17 @@ WinWindow::~WinWindow()
     display->getRep()->unref();
 }
 
-bool			WinWindow::isValid() const
+bool            WinWindow::isValid() const
 {
     return hwnd != NULL;
 }
 
-void			WinWindow::showWindow(bool on)
+void            WinWindow::showWindow(bool on)
 {
     ShowWindow(hwnd, on ? SW_SHOW : SW_HIDE);
 }
 
-void			WinWindow::getPosition(int& x, int& y)
+void            WinWindow::getPosition(int& x, int& y)
 {
     RECT rect;
     GetWindowRect(hwnd, &rect);
@@ -118,7 +118,7 @@ void			WinWindow::getPosition(int& x, int& y)
     y = (int)rect.top;
 }
 
-void			WinWindow::getSize(int& width, int& height) const
+void            WinWindow::getSize(int& width, int& height) const
 {
     RECT rect;
     GetClientRect(hwnd, &rect);
@@ -126,19 +126,19 @@ void			WinWindow::getSize(int& width, int& height) const
     height = (int)rect.bottom - (int)rect.top;
 }
 
-void			WinWindow::setTitle(const char* title)
+void            WinWindow::setTitle(const char* title)
 {
     SetWindowText(hwnd, title);
 }
 
-void			WinWindow::setPosition(int x, int y)
+void            WinWindow::setPosition(int x, int y)
 {
     RECT rect;
     GetWindowRect(hwnd, &rect);
     MoveWindow(hwnd, x, y, rect.right - rect.left, rect.bottom - rect.top, FALSE);
 }
 
-void			WinWindow::setSize(int width, int height)
+void            WinWindow::setSize(int width, int height)
 {
     RECT rect;
     GetWindowRect(hwnd, &rect);
@@ -152,12 +152,12 @@ void			WinWindow::setSize(int width, int height)
     MoveWindow(hwndChild, 0, 0, width, height, FALSE);
 }
 
-void			WinWindow::setMinSize(int, int)
+void            WinWindow::setMinSize(int, int)
 {
     // FIXME
 }
 
-void			WinWindow::setFullscreen(bool on)
+void            WinWindow::setFullscreen(bool on)
 {
     // Stop grabbing the mouse so the cursor can't get stuck outside of the window
     ungrabMouse();
@@ -230,12 +230,12 @@ void			WinWindow::setFullscreen(bool on)
         grabMouse();
 }
 
-void			WinWindow::iconify()
+void            WinWindow::iconify()
 {
     ShowWindow(hwnd, SW_MINIMIZE);
 }
 
-void			WinWindow::warpMouse(int x, int y)
+void            WinWindow::warpMouse(int x, int y)
 {
     POINT point;
     point.x = x;
@@ -244,7 +244,7 @@ void			WinWindow::warpMouse(int x, int y)
     SetCursorPos((int)point.x, (int)point.y);
 }
 
-void			WinWindow::getMouse(int& x, int& y) const
+void            WinWindow::getMouse(int& x, int& y) const
 {
     POINT point;
     GetCursorPos(&point);
@@ -253,12 +253,12 @@ void			WinWindow::getMouse(int& x, int& y) const
     y = (int)point.y;
 }
 
-void			WinWindow::disableConfineToMotionbox()
+void            WinWindow::disableConfineToMotionbox()
 {
     ungrabMouse();
 }
 
-void			WinWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+void            WinWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 {
     // Store the boundary positions as two points (top left and bottom right)
     POINT p1, p2;
@@ -282,7 +282,7 @@ void			WinWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
     ClipCursor(&rect);
 }
 
-void			WinWindow::grabMouse()
+void            WinWindow::grabMouse()
 {
     RECT wrect;
     GetWindowRect(hwnd, &wrect);
@@ -305,12 +305,12 @@ void			WinWindow::grabMouse()
     ClipCursor(&rect);
 }
 
-void			WinWindow::ungrabMouse()
+void            WinWindow::ungrabMouse()
 {
     ClipCursor(NULL);
 }
 
-void			WinWindow::enableGrabMouse(bool on)
+void            WinWindow::enableGrabMouse(bool on)
 {
     if (on)
     {
@@ -324,17 +324,17 @@ void			WinWindow::enableGrabMouse(bool on)
     }
 }
 
-void			WinWindow::showMouse()
+void            WinWindow::showMouse()
 {
     // FIXME
 }
 
-void			WinWindow::hideMouse()
+void            WinWindow::hideMouse()
 {
     // FIXME
 }
 
-void			WinWindow::setGamma(float newGamma)
+void            WinWindow::setGamma(float newGamma)
 {
     if (!useColormap && !hasGamma)
         return;
@@ -361,17 +361,17 @@ void			WinWindow::setGamma(float newGamma)
     }
 }
 
-float			WinWindow::getGamma() const
+float           WinWindow::getGamma() const
 {
     return gammaVal;
 }
 
-bool			WinWindow::hasGammaControl() const
+bool            WinWindow::hasGammaControl() const
 {
     return useColormap || hasGamma;
 }
 
-void			WinWindow::makeCurrent()
+void            WinWindow::makeCurrent()
 {
     if (hDCChild != NULL)
     {
@@ -385,13 +385,13 @@ void			WinWindow::makeCurrent()
     }
 }
 
-void			WinWindow::swapBuffers()
+void            WinWindow::swapBuffers()
 {
     if (hDCChild != NULL)
         SwapBuffers(hDCChild);
 }
 
-void			WinWindow::makeContext()
+void            WinWindow::makeContext()
 {
     if (!inactiveDueToDeactivate && !inactiveDueToDeactivateAll)
         if (hDCChild == NULL)
@@ -399,13 +399,13 @@ void			WinWindow::makeContext()
     makeCurrent();
 }
 
-void			WinWindow::freeContext()
+void            WinWindow::freeContext()
 {
     if (hDCChild != NULL)
         destroyChild();
 }
 
-void			WinWindow::createChild()
+void            WinWindow::createChild()
 {
     // get parent size
     int width, height;
@@ -477,7 +477,7 @@ void			WinWindow::createChild()
     SetMapMode(hDCChild, MM_TEXT);
 }
 
-void			WinWindow::destroyChild()
+void            WinWindow::destroyChild()
 {
     setGammaRamps(origGammaRamps);
     if (hRC != NULL)
@@ -500,7 +500,7 @@ void			WinWindow::destroyChild()
 }
 
 
-void			WinWindow::getGammaRamps(WORD* ramps)
+void            WinWindow::getGammaRamps(WORD* ramps)
 {
     if (hDCChild == NULL)
         return;
@@ -509,7 +509,7 @@ void			WinWindow::getGammaRamps(WORD* ramps)
     hasGamma = GetDeviceGammaRamp(hDCChild, ramps) != FALSE;
 }
 
-void			WinWindow::setGammaRamps(const WORD* ramps)
+void            WinWindow::setGammaRamps(const WORD* ramps)
 {
     if (hDCChild == NULL)
         return;
@@ -518,7 +518,7 @@ void			WinWindow::setGammaRamps(const WORD* ramps)
         SetDeviceGammaRamp(hDCChild, (LPVOID)ramps);
 }
 
-WinWindow*		WinWindow::lookupWindow(HWND hwnd)
+WinWindow*      WinWindow::lookupWindow(HWND hwnd)
 {
     if (hwnd == NULL)
         return NULL;
@@ -529,7 +529,7 @@ WinWindow*		WinWindow::lookupWindow(HWND hwnd)
     return scan;
 }
 
-void			WinWindow::deactivateAll()
+void            WinWindow::deactivateAll()
 {
     for (WinWindow* scan = first; scan; scan = scan->next)
     {
@@ -538,7 +538,7 @@ void			WinWindow::deactivateAll()
     }
 }
 
-void			WinWindow::reactivateAll()
+void            WinWindow::reactivateAll()
 {
     for (WinWindow* scan = first; scan; scan = scan->next)
     {
@@ -548,12 +548,12 @@ void			WinWindow::reactivateAll()
     }
 }
 
-HWND			WinWindow::getHandle()
+HWND            WinWindow::getHandle()
 {
     return hwnd;
 }
 
-LONG			WinWindow::queryNewPalette()
+LONG            WinWindow::queryNewPalette()
 {
     if (colormap == NULL) return FALSE;
 
@@ -571,7 +571,7 @@ LONG			WinWindow::queryNewPalette()
     return TRUE;
 }
 
-void			WinWindow::paletteChanged()
+void            WinWindow::paletteChanged()
 {
     if (colormap == NULL) return;
 
@@ -587,7 +587,7 @@ void			WinWindow::paletteChanged()
     }
 }
 
-bool			WinWindow::activate()
+bool            WinWindow::activate()
 {
     inactiveDueToDeactivate = false;
 
@@ -614,7 +614,7 @@ bool			WinWindow::activate()
     return false;
 }
 
-bool			WinWindow::deactivate()
+bool            WinWindow::deactivate()
 {
     // minimize window while not active.  skip if being destroyed.
     if (!inDestroy)
@@ -631,13 +631,13 @@ bool			WinWindow::deactivate()
     return hadChild;
 }
 
-void			WinWindow::onDestroy()
+void            WinWindow::onDestroy()
 {
     inDestroy = true;
     CommandsStandard::quit();
 }
 
-BYTE			WinWindow::getIntensityValue(float i) const
+BYTE            WinWindow::getIntensityValue(float i) const
 {
     if (i <= 0.0f) return 0;
     if (i >= 1.0f) return 255;
@@ -645,14 +645,14 @@ BYTE			WinWindow::getIntensityValue(float i) const
     return (BYTE)(0.5f + 255.0f * i);
 }
 
-float			WinWindow::getComponentFromIndex(
+float           WinWindow::getComponentFromIndex(
     int i, UINT nbits, UINT shift)
 {
     const int mask = (1 << nbits) - 1;
     return (float)((i >> shift) & mask) / (float)mask;
 }
 
-void			WinWindow::makeColormap(
+void            WinWindow::makeColormap(
     const PIXELFORMATDESCRIPTOR& pfd)
 {
     // compute number of colors
@@ -731,7 +731,7 @@ void			WinWindow::makeColormap(
         {
             if (exactMatch[j]) continue;
 
-            int minError = 4 * 256 * 256;		// bigger than largest error
+            int minError = 4 * 256 * 256;       // bigger than largest error
             int bestMatch = -1;
 
             for (i = 0; i < n; i++)
@@ -777,6 +777,6 @@ void			WinWindow::makeColormap(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

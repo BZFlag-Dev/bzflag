@@ -88,23 +88,17 @@ bool CustomCone::read(const char *cmd, std::istream& input)
     if (strcasecmp(cmd, "divisions") == 0)
     {
         if (!(input >> divisions))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "angle") == 0)
     {
         if (!(input >> angle))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "texsize") == 0)
     {
         if (!(input >> texsize[0] >> texsize[1]))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "phydrv") == 0)
     {
@@ -116,41 +110,27 @@ bool CustomCone::read(const char *cmd, std::istream& input)
         }
         phydrv = PHYDRVMGR.findDriver(drvname);
         if ((phydrv == -1) && (drvname != "-1"))
-        {
             std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-        }
     }
     else if (strcasecmp(cmd, "smoothbounce") == 0)
-    {
         smoothBounce = true;
-    }
     else if (strcasecmp(cmd, "flatshading") == 0)
-    {
         useNormals = false;
-    }
     else if (parseMaterials(cmd, input, materials, MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else if (parseMaterialsByName(cmd, input, materials, sideNames,
                                   MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else if (pyramidStyle && (strcasecmp(cmd, "flipz") == 0))
-    {
         flipz = true;
-    }
     else
-    {
         return WorldFileObstacle::read(cmd, input);
-    }
 
     return true;
 }
@@ -161,9 +141,7 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     int i;
     const BzMaterial* mats[MaterialCount];
     for (i = 0; i < MaterialCount; i++)
-    {
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
-    }
     ConeObstacle* cone;
     if (!pyramidStyle)
     {
@@ -196,13 +174,9 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
     }
 
     if (cone->isValid())
-    {
         groupdef->addObstacle(cone);
-    }
     else
-    {
         delete cone;
-    }
 
     return;
 }
@@ -212,6 +186,6 @@ void CustomCone::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -19,7 +19,7 @@
 */
 
 #ifndef WORLD_EVENT_MANAGER_H
-#define	WORLD_EVENT_MANAGER_H
+#define WORLD_EVENT_MANAGER_H
 
 #include <map>
 #include <vector>
@@ -76,8 +76,8 @@ public:
     void removeEvent ( bz_eEventType eventType, bz_EventHandler* theEvent );
     bool removeHandler ( bz_EventHandler* theEvent );
 
-    void callEvents ( bz_eEventType eventType, bz_EventData	*eventData );
-    void callEvents ( bz_EventData	*eventData );
+    void callEvents ( bz_eEventType eventType, bz_EventData *eventData );
+    void callEvents ( bz_EventData  *eventData );
 
 private:
     tvEventList eventList;
@@ -92,7 +92,7 @@ protected:
     tvEventList pendingRemovals;
 };
 
-extern WorldEventManager	worldEventManager;
+extern WorldEventManager    worldEventManager;
 
 bool RegisterEvent ( bz_eEventType eventType, bz_Plugin* plugin );
 bool RemoveEvent ( bz_eEventType eventType, bz_Plugin* plugin );
@@ -105,6 +105,6 @@ bool FlushEvents(bz_Plugin* plugin);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

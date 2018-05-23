@@ -44,23 +44,19 @@ PolyWallSceneNode::Geometry::~Geometry()
     // do nothing
 }
 
-void			PolyWallSceneNode::Geometry::render()
+void            PolyWallSceneNode::Geometry::render()
 {
     wall->setColor();
     glNormal3fv(normal);
     if (style >= 2)
-    {
         drawVT();
-    }
     else
-    {
         drawV();
-    }
     addTriangleCount(vertex.getSize() - 2);
     return;
 }
 
-void			PolyWallSceneNode::Geometry::drawV() const
+void            PolyWallSceneNode::Geometry::drawV() const
 {
     const int count = vertex.getSize();
     glBegin(GL_TRIANGLE_FAN);
@@ -69,7 +65,7 @@ void			PolyWallSceneNode::Geometry::drawV() const
     glEnd();
 }
 
-void			PolyWallSceneNode::Geometry::drawVT() const
+void            PolyWallSceneNode::Geometry::drawVT() const
 {
     const int count = vertex.getSize();
     glBegin(GL_TRIANGLE_FAN);
@@ -202,20 +198,20 @@ PolyWallSceneNode::~PolyWallSceneNode()
     delete shadowNode;
 }
 
-int			PolyWallSceneNode::split(const float* _plane,
+int         PolyWallSceneNode::split(const float* _plane,
                                      SceneNode*& front, SceneNode*& back) const
 {
     return WallSceneNode::splitWall(_plane, node->vertex, node->uv, front, back);
 }
 
-void			PolyWallSceneNode::addRenderNodes(
+void            PolyWallSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     node->setStyle(getStyle());
     renderer.addRenderNode(node, getWallGState());
 }
 
-void			PolyWallSceneNode::addShadowNodes(
+void            PolyWallSceneNode::addShadowNodes(
     SceneRenderer& renderer)
 {
     renderer.addShadowNode(shadowNode);
@@ -233,9 +229,7 @@ void PolyWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 void PolyWallSceneNode::renderRadar()
 {
     if (plane[2] > 0.0f)
-    {
         node->renderRadar();
-    }
     return;
 }
 
@@ -244,6 +238,6 @@ void PolyWallSceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

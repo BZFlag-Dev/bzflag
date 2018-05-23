@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SCOREBOARDRENDERER_H__
-#define	__SCOREBOARDRENDERER_H__
+#ifndef __SCOREBOARDRENDERER_H__
+#define __SCOREBOARDRENDERER_H__
 
 #include "common.h"
 
@@ -28,7 +28,7 @@
 
 /**
  * ScoreboardRenderer:
- *	Encapsulates information about rendering the scoreboard display.
+ *  Encapsulates information about rendering the scoreboard display.
  */
 class ScoreboardRenderer
 {
@@ -36,22 +36,22 @@ public:
     ScoreboardRenderer();
     ~ScoreboardRenderer();
 
-    void		setDim(bool);
+    void        setDim(bool);
     void    setWindowSize (float x, float y, float width, float height);
-    void		render(bool forceDisplay);
+    void        render(bool forceDisplay);
     static Player* getLeader(std::string *label = NULL);
 
     static const int HUNT_NONE = 0;
     static const int HUNT_SELECTING = 1;
     static const int HUNT_ENABLED = 2;
-    void	  setHuntState(int _state);
-    int		  getHuntState() const;
-    void		setHuntNextEvent ();	// invoked when 'down' button pressed
-    void		setHuntPrevEvent ();	// invoked when 'up' button pressed
-    void		setHuntSelectEvent ();      // invoked when 'fire' button pressed
+    void      setHuntState(int _state);
+    int       getHuntState() const;
+    void        setHuntNextEvent ();    // invoked when 'down' button pressed
+    void        setHuntPrevEvent ();    // invoked when 'up' button pressed
+    void        setHuntSelectEvent ();      // invoked when 'fire' button pressed
     void    huntKeyEvent (bool isAdd);  // invoked when '7' or 'U' is pressed
     void    clearHuntedTanks ();
-    void    huntReset ();	       // invoked when joining a server
+    void    huntReset ();          // invoked when joining a server
 
     static void    setAlwaysTeamScore (bool onoff);
     static bool    getAlwaysTeamScore ();

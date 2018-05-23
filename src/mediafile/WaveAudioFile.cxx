@@ -13,17 +13,17 @@
 #include "WaveAudioFile.h"
 #include <string.h>
 
-#define	WAV_FORMAT_UNKNOWN	(0x0000)
-#define	WAV_FORMAT_PCM		(0x0001)
-#define	WAV_FORMAT_ADPCM	(0x0002)
-#define	WAV_FORMAT_ALAW		(0x0006)
-#define	WAV_FORMAT_MULAW	(0x0007)
-#define	WAV_FORMAT_OKI_ADPCM	(0x0010)
-#define	WAV_FORMAT_DIGISTD	(0x0015)
-#define	WAV_FORMAT_DIGIFIX	(0x0016)
-#define	IBM_FORMAT_MULAW	(0x0101)
-#define	IBM_FORMAT_ALAW		(0x0102)
-#define	IBM_FORMAT_ADPCM	(0x0103)
+#define WAV_FORMAT_UNKNOWN  (0x0000)
+#define WAV_FORMAT_PCM      (0x0001)
+#define WAV_FORMAT_ADPCM    (0x0002)
+#define WAV_FORMAT_ALAW     (0x0006)
+#define WAV_FORMAT_MULAW    (0x0007)
+#define WAV_FORMAT_OKI_ADPCM    (0x0010)
+#define WAV_FORMAT_DIGISTD  (0x0015)
+#define WAV_FORMAT_DIGIFIX  (0x0016)
+#define IBM_FORMAT_MULAW    (0x0101)
+#define IBM_FORMAT_ALAW     (0x0102)
+#define IBM_FORMAT_ADPCM    (0x0103)
 
 WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
 {
@@ -74,9 +74,7 @@ WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
     // frames per second
     uint32_t data32 = read32LE();
     if (!isOkay())
-    {
         return;
-    }
     int _framesPerSecond = static_cast<int>(data32);
 
     // bytes per second
@@ -88,9 +86,7 @@ WaveAudioFile::WaveAudioFile(std::istream* input) : AudioFile(input)
     // bits per sample
     data16 = read16LE();
     if (!isOkay() || (data16 != 8 && data16 != 16 && data16 != 32))
-    {
         return;
-    }
     const int _sampWidth = static_cast<int>(data16 / 8);
 
     // go find the data
@@ -113,12 +109,12 @@ WaveAudioFile::~WaveAudioFile()
     // do nothing
 }
 
-std::string	WaveAudioFile::getExtension()
+std::string WaveAudioFile::getExtension()
 {
     return ".wav";
 }
 
-bool		WaveAudioFile::read(void* buffer, int _numFrames)
+bool        WaveAudioFile::read(void* buffer, int _numFrames)
 {
     // read data
     const int width = getSampleWidth();
@@ -157,14 +153,14 @@ bool		WaveAudioFile::read(void* buffer, int _numFrames)
     return true;
 }
 
-bool		WaveAudioFile::readHeader(char* tag, uint32_t* length)
+bool        WaveAudioFile::readHeader(char* tag, uint32_t* length)
 {
     readRaw(tag, 4);
     *length = read32LE();
     return isOkay();
 }
 
-bool		WaveAudioFile::findChunk(const char* tag, uint32_t* length)
+bool        WaveAudioFile::findChunk(const char* tag, uint32_t* length)
 {
     while (isOkay())
     {

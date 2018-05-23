@@ -11,11 +11,11 @@
  */
 
 /* BSPSceneDatabase:
- *	BSP tree database of geometry to render
+ *  BSP tree database of geometry to render
  */
 
-#ifndef	BZF_BSP_SCENE_DATABASE_H
-#define	BZF_BSP_SCENE_DATABASE_H
+#ifndef BZF_BSP_SCENE_DATABASE_H
+#define BZF_BSP_SCENE_DATABASE_H
 
 // common goes first
 #include "common.h"
@@ -35,21 +35,21 @@ public:
     ~BSPSceneDatabase();
 
     // returns true if the node would have been deleted
-    bool		addStaticNode(SceneNode*, bool dontFree);
-    void		addDynamicNode(SceneNode*);
-    void		addDynamicSphere(SphereSceneNode*);
-    void		finalizeStatics();
-    void		removeDynamicNodes();
-    void		removeAllNodes();
-    bool		isOrdered();
+    bool        addStaticNode(SceneNode*, bool dontFree);
+    void        addDynamicNode(SceneNode*);
+    void        addDynamicSphere(SphereSceneNode*);
+    void        finalizeStatics();
+    void        removeDynamicNodes();
+    void        removeAllNodes();
+    bool        isOrdered();
 
-    void		updateNodeStyles();
-    void		addLights(SceneRenderer& renderer);
-    void		addShadowNodes(SceneRenderer &renderer);
-    void		addRenderNodes(SceneRenderer& renderer);
-    void		renderRadarNodes(const ViewFrustum&);
+    void        updateNodeStyles();
+    void        addLights(SceneRenderer& renderer);
+    void        addShadowNodes(SceneRenderer &renderer);
+    void        addRenderNodes(SceneRenderer& renderer);
+    void        renderRadarNodes(const ViewFrustum&);
 
-    void		drawCuller();
+    void        drawCuller();
 
 private:
     class Node
@@ -57,35 +57,35 @@ private:
     public:
         Node(bool dynamic, SceneNode* node);
     public:
-        bool		dynamic;
-        int		count;
-        SceneNode*	node;
-        Node*		front;
-        Node*		back;
+        bool        dynamic;
+        int     count;
+        SceneNode*  node;
+        Node*       front;
+        Node*       back;
     };
 
-    void		setNodeStyle(Node*);
-    void		nodeAddLights(Node*);
-    void		nodeAddShadowNodes(Node*);
-    void		nodeAddRenderNodes(Node*);
+    void        setNodeStyle(Node*);
+    void        nodeAddLights(Node*);
+    void        nodeAddShadowNodes(Node*);
+    void        nodeAddRenderNodes(Node*);
 
     // returns true if the node would have been deleted
-    bool		insertStatic(int, Node*, SceneNode*, bool dontFree);
-    void		insertDynamic(int, Node*, SceneNode*);
-    void		insertNoPlane(int, Node*, SceneNode*);
-    void		insertNoPlaneNodes();
-    void		removeDynamic(Node*);
-    void		free(Node*);
-    void		release(Node*);
-    void		setDepth(int newDepth);
+    bool        insertStatic(int, Node*, SceneNode*, bool dontFree);
+    void        insertDynamic(int, Node*, SceneNode*);
+    void        insertNoPlane(int, Node*, SceneNode*);
+    void        insertNoPlaneNodes();
+    void        removeDynamic(Node*);
+    void        free(Node*);
+    void        release(Node*);
+    void        setDepth(int newDepth);
 
 private:
-    Node*		root;
-    int			depth;
+    Node*       root;
+    int         depth;
     // the following members avoid passing parameters around
-    GLfloat		eye[3];
-    SceneRenderer*	renderer;
-    const ViewFrustum*	frustum;
+    GLfloat     eye[3];
+    SceneRenderer*  renderer;
+    const ViewFrustum*  frustum;
 
     bool needNoPlaneNodes;
     std::vector<SceneNode*> noPlaneNodes;
@@ -98,6 +98,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

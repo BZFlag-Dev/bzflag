@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__REGIONPRIORITYQUEUE_H__
-#define	__REGIONPRIORITYQUEUE_H__
+#ifndef __REGIONPRIORITYQUEUE_H__
+#define __REGIONPRIORITYQUEUE_H__
 
 /* local interface headers */
 #include "Region.h"
@@ -35,7 +35,7 @@ private:
         Node(BzfRegion* region, float priority);
     public:
         Node* next;
-        BzfRegion*	region;
+        BzfRegion*  region;
         float priority;
     };
 
@@ -50,6 +50,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

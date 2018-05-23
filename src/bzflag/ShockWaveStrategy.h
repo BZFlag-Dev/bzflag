@@ -31,17 +31,17 @@ public:
     ShockWaveStrategy(ShotPath*);
     ~ShockWaveStrategy();
 
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void        update(float dt);
+    float       checkHit(const BaseLocalPlayer*, float[3]) const;
+    bool        isStoppedByHit() const;
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        radarRender() const;
 
 private:
-    SphereSceneNode*	shockNode;
-    float		radius;
-    float		radius2;
-    TeamColor		team;
+    SphereSceneNode*    shockNode;
+    float       radius;
+    float       radius2;
+    TeamColor       team;
 };
 
 
@@ -51,6 +51,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

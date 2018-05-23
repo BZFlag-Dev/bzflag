@@ -21,8 +21,8 @@
 
 struct FileTextureInit
 {
-    std::string		name;
-    OpenGLTexture::Filter	filter;
+    std::string     name;
+    OpenGLTexture::Filter   filter;
 };
 
 
@@ -40,10 +40,10 @@ class TextureManager;
 
 struct ProcTextureInit
 {
-    std::string		name;
-    TextureManager	*manager;
-    OpenGLTexture::Filter	filter;
-    int			(*proc)(ProcTextureInit &init);
+    std::string     name;
+    TextureManager  *manager;
+    OpenGLTexture::Filter   filter;
+    int         (*proc)(ProcTextureInit &init);
 };
 
 
@@ -93,8 +93,8 @@ private:
     typedef std::map<std::string, ImageInfo> TextureNameMap;
     typedef std::map<int, ImageInfo*> TextureIDMap;
 
-    int	    lastImageID;
-    int	    lastBoundID;
+    int     lastImageID;
+    int     lastBoundID;
     TextureIDMap   textureIDs;
     TextureNameMap textureNames;
 };
@@ -106,6 +106,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

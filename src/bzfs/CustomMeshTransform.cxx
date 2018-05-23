@@ -89,13 +89,9 @@ bool CustomMeshTransform::read(const char *cmd, std::istream& input)
         }
         int xform = TRANSFORMMGR.findTransform(_name);
         if (xform == -1)
-        {
             std::cout << "couldn't find Transform: " << _name << std::endl;
-        }
         else
-        {
             transform->addReference(xform);
-        }
     }
     else
     {
@@ -126,6 +122,6 @@ void CustomMeshTransform::writeToManager() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

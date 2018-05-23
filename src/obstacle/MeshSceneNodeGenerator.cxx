@@ -42,9 +42,7 @@ MeshSceneNodeGenerator::MeshSceneNodeGenerator(const MeshObstacle* _mesh)
     const MeshDrawInfo* drawInfo = mesh->getDrawInfo();
     useDrawInfo = (drawInfo != NULL) && drawInfo->isValid();
     if (!useDrawInfo)
-    {
         setupFacesAndFrags();
-    }
     return;
 }
 
@@ -93,9 +91,7 @@ static bool translucentMaterial(const BzMaterial* mat)
             {
                 const ImageInfo& imageInfo = tm.getInfo(faceTexture);
                 if (imageInfo.alpha && mat->getUseTextureAlpha(0))
-                {
                     return true;
-                }
             }
         }
     }
@@ -106,14 +102,10 @@ static bool translucentMaterial(const BzMaterial* mat)
     if (dyncol == NULL)
     {
         if (mat->getDiffuse()[3] != 1.0f)
-        {
             translucentColor = true;
-        }
     }
     else if (dyncol->canHaveAlpha())
-    {
         translucentColor = true;
-    }
 
     // is the color used?
     if (translucentColor)
@@ -156,22 +148,14 @@ static int sortByMaterial(const void* a, const void *b)
     const bool noClusterB = faceB->noClusters();
 
     if (noClusterA && !noClusterB)
-    {
         return -1;
-    }
     if (noClusterB && !noClusterA)
-    {
         return +1;
-    }
 
     if (faceA->getMaterial() > faceB->getMaterial())
-    {
         return +1;
-    }
     else
-    {
         return -1;
-    }
 }
 
 void MeshSceneNodeGenerator::setupFacesAndFrags()
@@ -240,9 +224,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
             const MeshFace* lastFace = sortList[last];
             const BzMaterial* lastMat = lastFace->getMaterial();
             if (lastMat != firstMat)
-            {
                 break;
-            }
             last++;
         }
 
@@ -259,9 +241,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
             MeshNode mn;
             mn.isFace = false;
             for (int i = first; i < last; i++)
-            {
                 mn.faces.push_back(sortList[i]);
-            }
             nodes.push_back(mn);
         }
 
@@ -289,9 +269,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool UNUSED(lod))
             return (WallSceneNode*)occluders[currentNode - 1];
         }
         else
-        {
             return NULL;
-        }
     }
 
     // divert for the MeshSceneNode
@@ -301,9 +279,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool UNUSED(lod))
         if (drawInfo->isInvisible())
         {
             if (occluders.size() <= 0)
-            {
                 return NULL;
-            }
             else
             {
                 currentNode = 1;
@@ -334,9 +310,7 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool UNUSED(lod))
                 return (WallSceneNode*)occluders[0];
             }
             else
-            {
                 return NULL;
-            }
         }
 
         mn = &nodes[currentNode];
@@ -368,16 +342,12 @@ WallSceneNode* MeshSceneNodeGenerator::getNextNode(bool UNUSED(lod))
 
     WallSceneNode* node;
     if (mn->isFace)
-    {
         node = getMeshPolySceneNode(face);
-    }
     else
     {
         const MeshFace** faces = new const MeshFace*[mn->faces.size()];
         for (int i = 0; i < (int)mn->faces.size(); i++)
-        {
             faces[i] = mn->faces[i];
-        }
         // the MeshFragSceneNode will delete the faces
         node = new MeshFragSceneNode(mn->faces.size(), faces);
     }
@@ -398,35 +368,25 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
     const int vertexCount = face->getVertexCount();
     GLfloat3Array vertices(vertexCount);
     for (i = 0; i < vertexCount; i++)
-    {
         memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
-    }
 
     // normals
     int normalCount = 0;
     if (face->useNormals())
-    {
         normalCount = vertexCount;
-    }
     GLfloat3Array normals(normalCount);
     for (i = 0; i < normalCount; i++)
-    {
         memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
-    }
 
     // texcoords
     GLfloat2Array texcoords(vertexCount);
     if (face->useTexcoords())
     {
         for (i = 0; i < vertexCount; i++)
-        {
             memcpy (texcoords[i], face->getTexcoord(i), sizeof(float[2]));
-        }
     }
     else
-    {
         makeTexcoords (face->getPlane(), vertices, texcoords);
-    }
 
     bool noRadar = false;
     bool noShadow = false;
@@ -461,23 +421,15 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     {
         const std::string& texname = mat->getTextureLocal(0);
         if (texname.size() > 0)
-        {
             faceTexture = tm.getTextureID(texname.c_str());
-        }
         if (faceTexture >= 0)
-        {
             gotSpecifiedTexture = true;
-        }
         else
-        {
             faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
-        }
     }
 
     if (!mat->getNoLighting())
-    {
         node->setMaterial(oglMaterial);
-    }
 
     // NOTE: the diffuse color is used, and not the ambient color
     //       could use the ambient color for non-lighted,and diffuse
@@ -485,9 +437,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(mat->getDynamicColor());
     const GLfloat* dc = NULL;
     if (dyncol != NULL)
-    {
         dc = dyncol->getColor();
-    }
     node->setDynamicColor(dc);
     node->setColor(mat->getDiffuse()); // redundant, see below
     node->setModulateColor(mat->getDiffuse());
@@ -502,18 +452,14 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
         node->setUseColorTexture(false);
     }
     else
-    {
         node->setUseColorTexture(true);
-    }
     const int texMatId = mat->getTextureMatrix(0);
     const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
     if (texmat != NULL)
     {
         const GLfloat* matrix = texmat->getMatrix();
         if (matrix != NULL)
-        {
             node->setTextureMatrix(matrix);
-        }
     }
 
     // deal with the blending setting for textures
@@ -566,9 +512,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
         x[2] = x[2] * len;
     }
     else
-    {
         return false;
-    }
 
     len = vec3dot(y, y);
     if (len > 0.0f)
@@ -579,9 +523,7 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
         y[2] = y[2] * len;
     }
     else
-    {
         return false;
-    }
 
     const float uvScale = 8.0f;
 
@@ -604,6 +546,6 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

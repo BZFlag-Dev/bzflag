@@ -32,44 +32,44 @@
 #include "SceneNode.h"
 #include "effectsRenderer.h"
 
-static const GLfloat	squareShape[4][2] =
+static const GLfloat    squareShape[4][2] =
 {
     {  1.0f,  1.0f }, { -1.0f,  1.0f },
     { -1.0f, -1.0f }, {  1.0f, -1.0f }
 };
 
 
-GLfloat			BackgroundRenderer::skyPyramid[5][3];
-const GLfloat		BackgroundRenderer::cloudRepeats = 3.0f;
-static const int	NumMountainFaces = 16;
+GLfloat         BackgroundRenderer::skyPyramid[5][3];
+const GLfloat       BackgroundRenderer::cloudRepeats = 3.0f;
+static const int    NumMountainFaces = 16;
 
-GLfloat			BackgroundRenderer::groundColor[4][4];
-GLfloat			BackgroundRenderer::groundColorInv[4][4];
+GLfloat         BackgroundRenderer::groundColor[4][4];
+GLfloat         BackgroundRenderer::groundColorInv[4][4];
 
-const GLfloat		BackgroundRenderer::defaultGroundColor[4][4] =
+const GLfloat       BackgroundRenderer::defaultGroundColor[4][4] =
 {
     { 0.0f, 0.35f, 0.0f, 1.0f },
     { 0.0f, 0.20f, 0.0f, 1.0f },
     { 1.0f, 1.00f, 1.0f, 1.0f },
     { 1.0f, 1.00f, 1.0f, 1.0f }
 };
-const GLfloat		BackgroundRenderer::defaultGroundColorInv[4][4] =
+const GLfloat       BackgroundRenderer::defaultGroundColorInv[4][4] =
 {
     { 0.35f, 0.00f, 0.35f, 1.0f },
     { 0.20f, 0.00f, 0.20f, 1.0f },
     { 1.00f, 1.00f, 1.00f, 1.0f },
     { 1.00f, 1.00f, 1.00f, 1.0f }
 };
-const GLfloat		BackgroundRenderer::receiverColor[3] =
+const GLfloat       BackgroundRenderer::receiverColor[3] =
 { 0.3f, 0.55f, 0.3f };
-const GLfloat		BackgroundRenderer::receiverColorInv[3] =
+const GLfloat       BackgroundRenderer::receiverColorInv[3] =
 { 0.55f, 0.3f, 0.55f };
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     blank(false),
     invert(false),
     style(0),
-    gridSpacing(60.0f),	// meters
+    gridSpacing(60.0f), // meters
     gridCount(4.0f),
     mountainsAvailable(false),
     numMountainTextures(0),
@@ -80,8 +80,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 {
     static bool init = false;
     OpenGLGStateBuilder gstate;
-    static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    static const GLfloat	white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const GLfloat    black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static const GLfloat    white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
     OpenGLMaterial rainMaterial(white, white, 0.0f);
 
@@ -214,16 +214,12 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
             // find power of two at least as large as height
             int scaledHeight = 1;
             while (scaledHeight < height)
-            {
                 scaledHeight <<= 1;
-            }
 
             // choose minimum width
             int minWidth = scaledHeight;
             if (minWidth > scaledHeight)
-            {
                 minWidth = scaledHeight;
-            }
             mountainsMinWidth = minWidth;
 
             // prepare each texture
@@ -267,9 +263,7 @@ void BackgroundRenderer::bzdbCallback(const std::string& name, void* data)
 {
     BackgroundRenderer* br = (BackgroundRenderer*) data;
     if (name == "_skyColor")
-    {
         br->setSkyColors();
-    }
     return;
 }
 
@@ -295,9 +289,7 @@ void BackgroundRenderer::setupGroundMaterials()
         // map specified material
         bzmat->setReference();
         for (int i = 0; i < 4; i++)
-        {
             memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
-        }
         if (bzmat->getTextureCount() > 0)
         {
             groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
@@ -313,14 +305,12 @@ void BackgroundRenderer::setupGroundMaterials()
                 const int texMatId = bzmat->getTextureMatrix(0);
                 const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
                 if (texmat != NULL)
-                {
                     groundTextureMatrix = texmat->getMatrix();
-                }
             }
         }
     }
 
-    static const GLfloat	black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static const GLfloat    black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
     OpenGLGStateBuilder gb;
@@ -346,9 +336,7 @@ void BackgroundRenderer::setupGroundMaterials()
     int groundInvTextureID = -1;
     memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
     if (groundInvTextureID < 0)
-    {
         groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
-    }
 
     // inverted ground gstates
     gb.reset();
@@ -572,13 +560,9 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
                                    bool mirror)
 {
     if (!BZDBCache::drawSky)
-    {
         return;
-    }
     if (renderer.useQuality() > 0)
-    {
         drawSky(renderer, mirror);
-    }
     else
     {
         // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -627,9 +611,7 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
                                       bool fullWindow)
 {
     if (renderer.useQuality() > 0)
-    {
         drawGround();
-    }
     else
     {
         // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
@@ -683,16 +665,12 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 
     // only draw the grid lines if texturing is disabled
     if (!BZDBCache::texture || (renderer.useQuality() <= 0))
-    {
         drawGroundGrid(renderer);
-    }
 
     if (!blank)
     {
         if (doShadows && shadowsVisible && !drawingMirror)
-        {
             drawGroundShadows(renderer);
-        }
 
         // draw light receivers on ground (little meshes under light sources so
         // the ground gets illuminated).  this is necessary because lighting is
@@ -703,16 +681,14 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
         {
             if (BZDBCache::tesselation && (renderer.useQuality() >= 3))
             {
-//	  (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
+//    (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
                 // not really tesselation, but it is tied to the "Best" lighting,
                 // avoid on foggy maps, because the blending function accumulates
                 // too much brightness.
                 drawAdvancedGroundReceivers(renderer);
             }
             else
-            {
                 drawGroundReceivers(renderer);
-            }
         }
 
         if (renderer.useQuality() > 1)
@@ -721,9 +697,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
             // don't do zbuffer test since they occlude all drawn before them and
             // are occluded by all drawn after.
             if (mountainsVisible && BZDBCache::drawMountains)
-            {
                 drawMountains();
-            }
 
             // draw clouds
             if (cloudsVisible && BZDBCache::drawClouds)
@@ -733,7 +707,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
                 glPushMatrix();
                 glTranslatef(cloudDriftU, cloudDriftV, 0.0f);
                 glCallList(cloudsList);
-                glLoadIdentity();	// maybe works around bug in some systems
+                glLoadIdentity();   // maybe works around bug in some systems
                 glPopMatrix();
                 glMatrixMode(GL_MODELVIEW);
             }
@@ -745,20 +719,14 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
 void BackgroundRenderer::renderEnvironment(SceneRenderer& renderer, bool update)
 {
     if (blank)
-    {
         return;
-    }
 
     if (update)
-    {
         weather.update();
-    }
     weather.draw(renderer);
 
     if (update)
-    {
         EFFECTS.update();
-    }
     EFFECTS.draw(renderer);
 }
 
@@ -802,14 +770,10 @@ void BackgroundRenderer::setupSkybox()
     {
         bzmats[i] = MATERIALMGR.findMaterial(skyboxNames[i]);
         if ((bzmats[i] == NULL) || (bzmats[i]->getTextureCount() <= 0))
-        {
             break;
-        }
         skyboxTexID[i] = tm.getTextureID(bzmats[i]->getTextureLocal(0).c_str());
         if (skyboxTexID[i] < 0)
-        {
             break;
-        }
     }
 
     // unload textures if they were not all successful
@@ -829,18 +793,14 @@ void BackgroundRenderer::setupSkybox()
 
     // reference map specified materials
     for (i = 0; i < 6; i++)
-    {
         bzmats[i]->setReference();
-    }
 
     // setup the wrap mode
     skyboxWrapMode = GL_CLAMP;
 #ifdef GL_VERSION_1_2
     const char* extStr = (const char*) glGetString(GL_EXTENSIONS);
     if (strstr(extStr, "GL_EXT_texture_edge_clamp") != NULL)
-    {
         skyboxWrapMode = GL_CLAMP_TO_EDGE;
-    }
 #endif
 
     // setup the corner colors
@@ -855,9 +815,7 @@ void BackgroundRenderer::setupSkybox()
         {
             skyboxColor[i][c] = 0.0f;
             for (int f = 0; f < 3; f++)
-            {
                 skyboxColor[i][c] += bzmats[cornerFaces[i][f]]->getDiffuse()[c];
-            }
             skyboxColor[i][c] /= 3.0f;
         }
     }
@@ -1116,9 +1074,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     }
 
     if (doSkybox)
-    {
         drawSkybox();
-    }
 
     if (BZDBCache::drawCelestial)
     {
@@ -1147,9 +1103,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     }
 
     if (useClipPlane)
-    {
         glDisable(GL_CLIP_PLANE0);
-    }
 
     glPopMatrix();
 }
@@ -1173,24 +1127,16 @@ void BackgroundRenderer::drawGround()
             float color[4];
             if (BZDB.isSet("GroundOverideColor") &&
                     parseColorString(BZDB.get("GroundOverideColor"), color))
-            {
                 glColor4fv(color);
-            }
             else
-            {
                 glColor4fv(groundColor[styleIndex]);
-            }
             groundGState[styleIndex].setState();
         }
 
         if (RENDERER.useQuality() >= 2)
-        {
             drawGroundCentered();
-        }
         else
-        {
             glCallList(simpleGroundList[styleIndex]);
-        }
     }
 }
 
@@ -1204,21 +1150,13 @@ void BackgroundRenderer::drawGroundCentered()
     const float minDist = -groundSize + centerSize;
     const float maxDist = +groundSize - centerSize;
     if (center[0] < minDist)
-    {
         center[0] = minDist;
-    }
     if (center[0] > maxDist)
-    {
         center[0] = maxDist;
-    }
     if (center[1] < minDist)
-    {
         center[1] = minDist;
-    }
     if (center[1] > maxDist)
-    {
         center[1] = maxDist;
-    }
 
     const float vertices[8][2] =
     {
@@ -1386,7 +1324,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 {
     static const int receiverRings = 4;
     static const int receiverSlices = 8;
-    static const float receiverRingSize = 1.2f;	// meters
+    static const float receiverRingSize = 1.2f; // meters
     static float angle[receiverSlices + 1][2];
 
     static bool init = false;
@@ -1403,9 +1341,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
     const int count = renderer.getNumAllLights();
     if (count == 0)
-    {
         return;
-    }
 
     // bright sun dims intensity of ground receivers
     const float B = 1.0f - (0.6f * renderer.getSunBrightness());
@@ -1422,9 +1358,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     {
         const OpenGLLight& light = renderer.getLight(k);
         if (light.getOnlyReal())
-        {
             continue;
-        }
 
         const GLfloat* pos = light.getPosition();
         const GLfloat* lightColor = light.getColor();
@@ -1443,9 +1377,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
 
         // if I is too attenuated, don't bother drawing anything
         if ((I * maxVal) < 0.02f)
-        {
             continue;
-        }
 
         // move to the light's position
         glTranslatef(pos[0], pos[1], 0.0f);
@@ -1490,9 +1422,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
             float innerAlpha = I;
 
             if (i + 1 == receiverRings)
-            {
                 I = 0.0f;
-            }
             else
             {
                 d = hypotf(outerSize, pos[2]);
@@ -1529,7 +1459,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 {
     const float minLuminance = 0.02f;
     static const int receiverSlices = 32;
-    static const float receiverRingSize = 0.5f;	// meters
+    static const float receiverRingSize = 0.5f; // meters
     static float angle[receiverSlices + 1][2];
 
     static bool init = false;
@@ -1546,18 +1476,14 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
     const int count = renderer.getNumAllLights();
     if (count == 0)
-    {
         return;
-    }
 
     // setup the ground tint
     const GLfloat* gndColor = groundColor[styleIndex];
     GLfloat overrideColor[4];
     if (BZDB.isSet("GroundOverideColor") &&
             parseColorString(BZDB.get("GroundOverideColor"), overrideColor))
-    {
         gndColor = overrideColor;
-    }
 
     const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
     OpenGLGState advGState;
@@ -1596,9 +1522,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     {
         const OpenGLLight& light = renderer.getLight(k);
         if (light.getOnlyReal())
-        {
             continue;
-        }
 
         // get the light parameters
         const GLfloat* pos = light.getPosition();
@@ -1630,9 +1554,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
         // if I is too attenuated, don't bother drawing anything
         if ((I * maxVal) < minLuminance)
-        {
             continue;
-        }
 
         // move to the light's position
         glTranslatef(pos[0], pos[1], 0.0f);
@@ -1846,7 +1768,7 @@ void BackgroundRenderer::doInitDisplayLists()
         GLfloat xtexdist, ytexdist;
         float vec[2];
 
-#define GROUND_DIVS	(4)	//FIXME -- seems to be enough
+#define GROUND_DIVS (4) //FIXME -- seems to be enough
 
         xmax = groundPlane[0][0];
         ymax = groundPlane[0][1];
@@ -2093,22 +2015,18 @@ void BackgroundRenderer::initContext(void* self)
 }
 
 
-const GLfloat*	BackgroundRenderer::getSunDirection() const
+const GLfloat*  BackgroundRenderer::getSunDirection() const
 {
     if (areShadowsCast(sunDirection))
-    {
         return sunDirection;
-    }
     else
-    {
         return NULL;
-    }
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

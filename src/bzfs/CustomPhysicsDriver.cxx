@@ -88,9 +88,7 @@ bool CustomPhysicsDriver::read(const char *cmd, std::istream& input)
         driver->setDeathMessage(line);
         input.putback('\n');
         if (driver->getDeathMsg().size() == 0)
-        {
             std::cout << "Physics Driver: empty death message, pacifying" << std::endl;
-        }
     }
     else
     {
@@ -121,6 +119,6 @@ void CustomPhysicsDriver::writeToManager() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

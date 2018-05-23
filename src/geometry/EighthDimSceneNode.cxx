@@ -38,34 +38,30 @@ EighthDimSceneNode::~EighthDimSceneNode()
     // do nothing
 }
 
-bool			EighthDimSceneNode::cull(const ViewFrustum&) const
+bool            EighthDimSceneNode::cull(const ViewFrustum&) const
 {
     // no culling
     return false;
 }
 
-void			EighthDimSceneNode::notifyStyleChange()
+void            EighthDimSceneNode::notifyStyleChange()
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setCulling(GL_NONE);
     if (BZDB.isTrue("blend"))
-    {
         builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
     else
-    {
         builder.setStipple(0.75f);
-    }
     gstate = builder.getState();
 }
 
-void			EighthDimSceneNode::addRenderNodes(
+void            EighthDimSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void			EighthDimSceneNode::setPolygon(int index,
+void            EighthDimSceneNode::setPolygon(int index,
         const GLfloat vertex[3][3])
 {
     renderNode.setPolygon(index, vertex);
@@ -100,7 +96,7 @@ EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
     delete[] poly;
 }
 
-void			EighthDimSceneNode::EighthDimRenderNode::render()
+void            EighthDimSceneNode::EighthDimRenderNode::render()
 {
     // draw polygons
     glBegin(GL_TRIANGLES);
@@ -114,7 +110,7 @@ void			EighthDimSceneNode::EighthDimRenderNode::render()
     glEnd();
 }
 
-void			EighthDimSceneNode::EighthDimRenderNode::setPolygon(
+void            EighthDimSceneNode::EighthDimRenderNode::setPolygon(
     int index, const GLfloat vertex[3][3])
 {
     ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
@@ -124,6 +120,6 @@ void			EighthDimSceneNode::EighthDimRenderNode::setPolygon(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

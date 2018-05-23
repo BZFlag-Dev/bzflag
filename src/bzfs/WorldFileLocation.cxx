@@ -37,24 +37,18 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
             (strcasecmp(cmd, "position") == 0))
     {
         if (!(input >> pos[0] >> pos[1] >> pos[2]))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "size") == 0)
     {
         if (!(input >> size[0] >> size[1] >> size[2]))
-        {
             return false;
-        }
     }
     else if ((strcasecmp(cmd, "rot") == 0) ||
              (strcasecmp(cmd, "rotation") == 0))
     {
         if (!(input >> rotation))
-        {
             return false;
-        }
         // convert to radians
         rotation *= DEG2RADf;
     }
@@ -112,18 +106,12 @@ bool WorldFileLocation::read(const char *cmd, std::istream& input)
         }
         int xform = TRANSFORMMGR.findTransform(_name);
         if (xform == -1)
-        {
             std::cout << "couldn't find Transform: " << _name << std::endl;
-        }
         else
-        {
             transform.addReference(xform);
-        }
     }
     else
-    {
         return WorldFileObject::read(cmd, input);
-    }
 
     return true;
 }
@@ -140,6 +128,6 @@ void * WorldFileLocation::pack (void *buf) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

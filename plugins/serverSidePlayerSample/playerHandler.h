@@ -18,7 +18,7 @@
 class PlayerHandler: public bz_ServerSidePlayerHandler
 {
 public:
-    virtual void added(int player);	// it is required that the bot provide this method
+    virtual void added(int player); // it is required that the bot provide this method
 
     virtual void textMessage(int dest, int source, const char *text);
 

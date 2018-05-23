@@ -12,7 +12,7 @@
 
 /* Dev-C++ builds successfully if sstream is included before CursesMenu.h */
 #ifdef _DEVCPP
-#	include <sstream>
+#   include <sstream>
 #endif
 
 /* interface header */
@@ -99,9 +99,7 @@ bool CallbackCMItem::handleKey(int c, std::string&, CursesMenu& menu)
 {
     // different key codes for the enter key
     if (c == '\n' || c == 13)
-    {
         cb(menu);
-    }
     return false;
 }
 
@@ -511,6 +509,6 @@ void CursesMenu::handleNewPacket(uint16_t msgType)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

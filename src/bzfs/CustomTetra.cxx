@@ -53,22 +53,16 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
     {
         // try to parse all 4 materials
         if (parseMaterials(cmd, input, materials, 4, materror))
-        {
             return !materror;
-        }
     }
     else
     {
         // try to parse the specific vertex's material
         int vc = vertexCount - 1;
         if (vc > 3)
-        {
             vc = 3;
-        }
         if (parseMaterials(cmd, input, &materials[vc], 1, materror))
-        {
             return !materror;
-        }
     }
 
     if (strcasecmp(cmd, "vertex") == 0)
@@ -130,9 +124,7 @@ bool CustomTetra::read(const char *cmd, std::istream& input)
         }
     }
     else
-    {
         return WorldFileObstacle::read(cmd, input);
-    }
 
     return true;
 }
@@ -149,16 +141,12 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 
     const BzMaterial* mats[4];
     for (int i = 0; i < 4; i++)
-    {
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
-    }
     TetraBuilding* tetra = new TetraBuilding(transform, vertices, normals, texcoords,
             useNormals, useTexcoords,
             mats, driveThrough, shootThrough, ricochet);
     if (tetra->isValid())
-    {
         groupdef->addObstacle(tetra);
-    }
     else
     {
         std::cout << "Error generating tetra obstacle." << std::endl;
@@ -173,6 +161,6 @@ void CustomTetra::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

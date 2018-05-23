@@ -193,35 +193,35 @@ static std::string cmdCyclePanel(const std::string&,
 
 const struct CommandListItem commandList[] =
 {
-    { "fire",		&cmdFire,		"fire:  fire a shot" },
-    { "jump",		&cmdJump,		"jump:  make player jump" },
-    { "drop",		&cmdDrop,		"drop:  drop the current flag" },
-    { "identify",		&cmdIdentify,		"identify:  identify/lock-on-to player in view" },
-    { "restart",		&cmdRestart,		"restart:  restart playing" },
-    { "destruct",		&cmdDestruct,		"destruct:  self destruct" },
-    { "pause",		&cmdPause,		"pause:  pause/resume" },
-    { "send",		&cmdSend,		"send {all|team|nemesis|recipient|admin}:  start composing a message" },
-    { "screenshot",	&cmdScreenshot,		"screenshot:  take a screenshot" },
-    { "time",		&cmdTime,		"time {forward|backward}:  adjust the current time" },
-    { "roam",		&cmdRoam,		"roam {zoom|cycle} <args>:  roam around" },
-    { "silence",		&cmdSilence,		"silence:  silence/unsilence a player" },
-    { "servercommand",	&cmdServerCommand,	"servercommand:  quick admin" },
-    { "scrollpanel",	&cmdScrollPanel,	"scrollpanel {up|down}:  scroll message panel" },
-    { "hunt",		&cmdHunt,		"hunt:  hunt a specific player" },
-    { "addhunt",		&cmdAddHunt,		"addhunt:  add/modify hunted player(s)" },
-    { "iconify",		&cmdIconify,		"iconify: iconify & pause bzflag" },
-    { "mousebox",		&cmdMouseBox,		"mousebox <size>:  change the mousebox size"},
-    { "mousegrab",	&cmdMouseGrab,		"mousegrab: toggle exclusive mouse mode" },
-    { "fullscreen",	&cmdToggleFS,		"fullscreen: toggle fullscreen mode" },
-    { "autopilot",	&cmdAutoPilot,		"autopilot:  set/unset autopilot bot code" },
-    { "radarZoom",	&cmdRadarZoom,		"radarZoom {in/out}: change maxRadar range"},
-    { "viewZoom",		&cmdViewZoom,		"viewZoom {in/out/toggle}: change view angle" },
-    { "messagepanel",	&cmdMessagePanel,	"messagepanel {all|chat|server|misc}:  set message tab" },
-    { "toggleRadar",	&cmdToggleRadar,	"toggleRadar:  toggle radar visibility" },
-    { "toggleConsole",	&cmdToggleConsole,	"toggleConsole:  toggle console visibility" },
-    { "toggleFlags",	&cmdToggleFlags,	"toggleFlags {main|radar}:  turn off/on field radar flags" },
-    { "cycleRadar",	&cmdCycleRadar,		"cycleRadar {level1 [level2 ...] [off]}:  cycle to the next radar zoom level" },
-    { "cyclePanel",	&cmdCyclePanel,		"cyclePanel {left[_off]|right[_off]}:  cycle to the previous or next message panel tab" }
+    { "fire",       &cmdFire,       "fire:  fire a shot" },
+    { "jump",       &cmdJump,       "jump:  make player jump" },
+    { "drop",       &cmdDrop,       "drop:  drop the current flag" },
+    { "identify",       &cmdIdentify,       "identify:  identify/lock-on-to player in view" },
+    { "restart",        &cmdRestart,        "restart:  restart playing" },
+    { "destruct",       &cmdDestruct,       "destruct:  self destruct" },
+    { "pause",      &cmdPause,      "pause:  pause/resume" },
+    { "send",       &cmdSend,       "send {all|team|nemesis|recipient|admin}:  start composing a message" },
+    { "screenshot", &cmdScreenshot,     "screenshot:  take a screenshot" },
+    { "time",       &cmdTime,       "time {forward|backward}:  adjust the current time" },
+    { "roam",       &cmdRoam,       "roam {zoom|cycle} <args>:  roam around" },
+    { "silence",        &cmdSilence,        "silence:  silence/unsilence a player" },
+    { "servercommand",  &cmdServerCommand,  "servercommand:  quick admin" },
+    { "scrollpanel",    &cmdScrollPanel,    "scrollpanel {up|down}:  scroll message panel" },
+    { "hunt",       &cmdHunt,       "hunt:  hunt a specific player" },
+    { "addhunt",        &cmdAddHunt,        "addhunt:  add/modify hunted player(s)" },
+    { "iconify",        &cmdIconify,        "iconify: iconify & pause bzflag" },
+    { "mousebox",       &cmdMouseBox,       "mousebox <size>:  change the mousebox size"},
+    { "mousegrab",  &cmdMouseGrab,      "mousegrab: toggle exclusive mouse mode" },
+    { "fullscreen", &cmdToggleFS,       "fullscreen: toggle fullscreen mode" },
+    { "autopilot",  &cmdAutoPilot,      "autopilot:  set/unset autopilot bot code" },
+    { "radarZoom",  &cmdRadarZoom,      "radarZoom {in/out}: change maxRadar range"},
+    { "viewZoom",       &cmdViewZoom,       "viewZoom {in/out/toggle}: change view angle" },
+    { "messagepanel",   &cmdMessagePanel,   "messagepanel {all|chat|server|misc}:  set message tab" },
+    { "toggleRadar",    &cmdToggleRadar,    "toggleRadar:  toggle radar visibility" },
+    { "toggleConsole",  &cmdToggleConsole,  "toggleConsole:  toggle console visibility" },
+    { "toggleFlags",    &cmdToggleFlags,    "toggleFlags {main|radar}:  turn off/on field radar flags" },
+    { "cycleRadar", &cmdCycleRadar,     "cycleRadar {level1 [level2 ...] [off]}:  cycle to the next radar zoom level" },
+    { "cyclePanel", &cmdCyclePanel,     "cyclePanel {left[_off]|right[_off]}:  cycle to the previous or next message panel tab" }
 };
 
 
@@ -239,16 +239,12 @@ static std::string cmdMouseBox(const std::string&,
                                const CommandManager::ArgList& args, bool*)
 {
     if (args.size() != 1)
-    {
         return "usage: mousebox <size>";
-    }
     const char* start = args[0].c_str();
     char* end;
     const int value = (int) strtol(args[0].c_str(), &end, 10);
     if (start == end)
-    {
         return "bad number";
-    }
     RENDERER.setMaxMotionFactor(value);
     return std::string();
 }
@@ -302,9 +298,7 @@ static std::string cmdToggleFlags(const std::string&, const
         warnAboutRadarFlags();
     }
     else
-    {
         return "usage: main|radar";
-    }
 
     return std::string();
 }
@@ -313,9 +307,7 @@ static std::string cmdToggleRadar(const std::string&,
                                   const CommandManager::ArgList& args, bool*)
 {
     if (args.size() != 0)
-    {
         return "usage: toggleRadar";
-    }
 
     CMDMGR.run("toggle displayRadar");
 
@@ -328,9 +320,7 @@ static std::string cmdToggleConsole(const std::string&,
                                     const CommandManager::ArgList& args, bool*)
 {
     if (args.size() != 0)
-    {
         return "usage: toggleConsole";
-    }
 
     CMDMGR.run("toggle displayConsole");
 
@@ -394,7 +384,8 @@ static std::string cmdRestart(const std::string&,
         return "usage: restart";
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     if (myTank != NULL)
-        if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive() && !myTank->isExploding())
+        if (!gameOver && !myTank->isSpawning() && (myTank->getTeam() != ObserverTeam) && !myTank->isAlive()
+                && !myTank->isExploding())
         {
             serverLink->sendAlive();
             myTank->setSpawning(true);
@@ -527,9 +518,7 @@ static std::string cmdAutoPilot(const std::string&,
 
     }
     else if (BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS))
-    {
         hud->setAlert(0, "autopilot not allowed on this server", 1.0f, true);
-    }
     else
     {
 
@@ -548,9 +537,7 @@ static std::string cmdAutoPilot(const std::string&,
             mainWindow->ungrabMouse();
         }
         else
-        {
             controlPanel->addMessage("You may not enable the Autopilot more than once every five seconds.");
-        }
 
     }
 
@@ -580,9 +567,7 @@ static std::string cmdRadarZoom(const std::string&,
         BZDB.setFloat("displayRadarRange", range);
     }
     else
-    {
         return "usage: radarZoom {in|out}";
-    }
 
     return std::string();
 }
@@ -613,23 +598,15 @@ static std::string cmdViewZoom(const std::string&,
     else if (args[0] == "toggle")
     {
         if (fov < 15.5f)
-        {
             fov = defFov;
-        }
         else
-        {
             fov = 15.0f;
-        }
         BZDB.setFloat("displayFOV", fov);
         // also toggle the observer fov
         if (ROAM.getZoom() != defFov)
-        {
             ROAM.setZoom(defFov);
-        }
         else
-        {
             ROAM.setZoom(15.0f);
-        }
     }
     else if (args[0] == "reset")
     {
@@ -638,9 +615,7 @@ static std::string cmdViewZoom(const std::string&,
         BZDB.setFloat("displayFOV", fov);
     }
     else
-    {
         return "usage: viewZoom {in|out|toggle|reset}";
-    }
 
     return std::string();
 }
@@ -745,9 +720,7 @@ static std::string cmdSend(const std::string&,
 
     }
     else
-    {
         return "usage: send {all|team|nemesis|recipient|admin}";
-    }
     messageHistoryIndex = 0;
     hud->setComposing(composePrompt);
     HUDui::setDefaultKey(&composeKeyHandler);
@@ -792,9 +765,7 @@ static void* writeScreenshot(void* data)
             file = findData.cFileName;
             const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
             if (snap < number)
-            {
                 snap = number;
-            }
         }
     }
 #else
@@ -811,9 +782,7 @@ static void* writeScreenshot(void* data)
             {
                 const int number = atoi((file.substr(file.length() - 8, 4)).c_str());
                 if (snap < number)
-                {
                     snap = number;
-                }
             }
         }
         closedir(directory);
@@ -829,8 +798,8 @@ static void* writeScreenshot(void* data)
     {
         const std::string& renderer = ssdata->renderer;
         unsigned char* pixels       = ssdata->pixels;
-        const unsigned int width	     = ssdata->width;
-        const unsigned int height	     = ssdata->height;
+        const unsigned int width         = ssdata->width;
+        const unsigned int height        = ssdata->height;
 
         // Gamma-correction is preapplied by BZFlag's gamma table
         // This ignores the PNG gAMA chunk, but so do many viewers (including Mozilla)
@@ -848,9 +817,7 @@ static void* writeScreenshot(void* data)
                 }
                 const int pixelCount = (width * height * 3);
                 for (int i = 0; i < pixelCount; i++)
-                {
                     pixels[i] = gammaTable[pixels[i]];
-                }
             }
         }
 
@@ -904,7 +871,8 @@ static void* writeScreenshot(void* data)
         png_set_compression_strategy(png, Z_RLE);
 
         // Set header information
-        png_set_IHDR(png, pnginfo, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT, PNG_FILTER_TYPE_DEFAULT);
+        png_set_IHDR(png, pnginfo, width, height, 8, PNG_COLOR_TYPE_RGB, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
+                     PNG_FILTER_TYPE_DEFAULT);
 
         // Set Software text chunk
         const std::string versionStr = std::string("BZFlag ") + getAppVersion();
@@ -926,9 +894,7 @@ static void* writeScreenshot(void* data)
 
         // Write each row of pixels
         for (size_t y = 0; y < height; y++)
-        {
             png_write_row(png, (png_bytep)(pixels + (height - y - 1) * width * 3));
-        }
 
         // Write the end of the file
         png_write_end(png, pnginfo);
@@ -961,9 +927,7 @@ static void* writeScreenshot(void* data)
 static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args, bool*)
 {
     if (args.size() != 0)
-    {
         return "usage: screenshot";
-    }
 
     ScreenshotData* ssdata = new ScreenshotData;
     ssdata->renderer += (const char*)(glGetString(GL_VENDOR));
@@ -1011,17 +975,11 @@ static std::string cmdTime(const std::string&,
     if (args.size() != 1)
         return "usage: time {forward|backward}";
     if (args[0] == "forward")
-    {
         clockAdjust += 5.0f * 60.0f;
-    }
     else if (args[0] == "backward")
-    {
         clockAdjust -= 5.0f * 60.0f;
-    }
     else
-    {
         return "usage: time {forward|backward}";
-    }
     return std::string();
 }
 
@@ -1037,25 +995,15 @@ static std::string cmdRoam(const std::string&,
         if (args.size() != 2)
             return "usage: roam zoom {in|out|normal|stop}";
         if (!roamButton || args[1] == "stop")
-        {
             roamDZoom = 0.0f;
-        }
         else if (args[1] == "out")
-        {
             roamDZoom = +2.0f * BZDBCache::tankSpeed;
-        }
         else if (args[1] == "in")
-        {
             roamDZoom = -2.0f * BZDBCache::tankSpeed;
-        }
         else if (args[1] == "normal")
-        {
             ROAM.setZoom(60.0f);
-        }
         else
-        {
             return "usage: roam zoom {in|out|normal|stop}";
-        }
     }
     else if (args[0] == "cycle")
     {
@@ -1064,9 +1012,7 @@ static std::string cmdRoam(const std::string&,
         if (args[1] == "type")
         {
             if (args[2] == "forward")
-            {
                 ROAM.setMode(Roaming::RoamingView((ROAM.getMode() + 1) % Roaming::roamViewCount));
-            }
             else if (args[2] == "backward")
             {
                 int setto = (ROAM.getMode() - 1) % Roaming::roamViewCount;
@@ -1074,34 +1020,22 @@ static std::string cmdRoam(const std::string&,
                 ROAM.setMode(Roaming::RoamingView(setto));
             }
             else
-            {
                 return "usage: roam cycle {type|subject} {forward|backward}";
-            }
         }
         else if (args[1] == "subject")
         {
             if (args[2] == "forward")
-            {
                 ROAM.changeTarget(Roaming::next);
-            }
             else if (args[2] == "backward")
-            {
                 ROAM.changeTarget(Roaming::previous);
-            }
             else
-            {
                 return "usage: roam cycle {type|subject} {forward|backward}";
-            }
         }
         else
-        {
             return "usage: roam cycle {type|subject} {forward|backward}";
-        }
     }
     else
-    {
         return "usage: roam {zoom|cycle} <args>";
-    }
     return std::string();
 }
 
@@ -1141,9 +1075,7 @@ static std::string cmdScrollPanel(const std::string&,
                                   const CommandManager::ArgList& args, bool*)
 {
     if ((args.size() < 1) || (args.size() > 2))
-    {
         return "usage: scrollpanel {up|up_page|down|down_page|top|bottom} [count]\n";
-    }
     int count = 1;
     int linecount = 2;
     if (args.size() == 2)
@@ -1153,33 +1085,19 @@ static std::string cmdScrollPanel(const std::string&,
     }
     // whence - (0 = set, 1 = cur, 2 = end)
     if (args[0] == "up")
-    {
         controlPanel->setMessagesOffset(+linecount, 1 /* current */, false);
-    }
     else if (args[0] == "down")
-    {
         controlPanel->setMessagesOffset(-linecount, 1 /* current */, false);
-    }
     else if (args[0] == "up_page")
-    {
         controlPanel->setMessagesOffset(+count, 1 /* current */, true);
-    }
     else if (args[0] == "down_page")
-    {
         controlPanel->setMessagesOffset(-count, 1 /* current */, true);
-    }
     else if (args[0] == "top")
-    {
         controlPanel->setMessagesOffset(123456789, 0 /* set */, false);
-    }
     else if (args[0] == "bottom")
-    {
         controlPanel->setMessagesOffset(0, 0 /* set */, false);
-    }
     else if (args[0] == "pause")
-    {
         controlPanel->togglePaused();
-    }
     return std::string();
 }
 
@@ -1250,9 +1168,7 @@ static std::string cmdCycleRadar(const std::string&,
         radarLevelIndex = 0;
 
     if (radarLevels[radarLevelIndex] == 0.0f)
-    {
         BZDB.set("displayRadar", "0");
-    }
     else
     {
         BZDB.setFloat("displayRadarRange", radarLevels[radarLevelIndex]);
@@ -1292,13 +1208,9 @@ static std::string cmdCyclePanel(const std::string&,
                 BZDB.setBool("displayConsole", false);
         }
         else if (controlPanel->getMessagesMode() == 1)
-        {
             controlPanel->setMessagesMode(forward ? 2 : 0);
-        }
         else if (controlPanel->getMessagesMode() == 2)
-        {
             controlPanel->setMessagesMode(forward ? 3 : 1);
-        }
         else
         {
             controlPanel->setMessagesMode(forward ? 0 : 2);
@@ -1316,6 +1228,6 @@ static std::string cmdCyclePanel(const std::string&,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__COLLISION_GRID__
-#define	__COLLISION_GRID__
+#ifndef __COLLISION_GRID__
+#define __COLLISION_GRID__
 
 #include "common.h"
 
@@ -74,7 +74,7 @@ public:
     void clear ();
 
     // some basics
-    bool needReload() const;	 // octree parameter has changed
+    bool needReload() const;     // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     const Extents& getWorldExtents() const;
 
@@ -100,7 +100,7 @@ public:
 
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit (const float* pos, float angle,
-    //				  float dx, float dy, float dz) const;
+    //                float dx, float dy, float dz) const;
 
     // drawing function
     void draw (DrawLinesFunc drawLinesFunc);
@@ -187,13 +187,9 @@ inline float ColDetNode::getOutTime() const
 inline int CollisionManager::getObstacleCount() const
 {
     if (root == NULL)
-    {
         return 0;
-    }
     else
-    {
         return root->getCount();
-    }
 }
 
 inline const Extents& CollisionManager::getWorldExtents() const
@@ -208,6 +204,6 @@ inline const Extents& CollisionManager::getWorldExtents() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

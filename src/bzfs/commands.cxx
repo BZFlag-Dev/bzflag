@@ -51,7 +51,7 @@
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
-#include "PackVars.h"	// uses directMessage() from bzfs.h
+#include "PackVars.h"   // uses directMessage() from bzfs.h
 
 
 #if defined(_WIN32)
@@ -61,14 +61,14 @@
 
 #include "PlayerInfo.h"
 
-tmCustomSlashCommandMap	customCommands;
+tmCustomSlashCommandMap customCommands;
 
 class MsgCommand : ServerCommand
 {
 public:
     MsgCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -77,7 +77,7 @@ class ServerQueryCommand : ServerCommand
 public:
     ServerQueryCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -86,7 +86,7 @@ class PartCommand : ServerCommand
 public:
     PartCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -95,7 +95,7 @@ class QuitCommand : ServerCommand
 public:
     QuitCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -104,7 +104,7 @@ class UpTimeCommand : ServerCommand
 public:
     UpTimeCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -113,7 +113,7 @@ class PasswordCommand : ServerCommand
 public:
     PasswordCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -122,7 +122,7 @@ class SetCommand : ServerCommand
 public:
     SetCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -131,7 +131,7 @@ class ResetCommand : ServerCommand
 public:
     ResetCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -140,7 +140,7 @@ class GameOverCommand : ServerCommand
 public:
     GameOverCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -149,7 +149,7 @@ class CountdownCommand : ServerCommand
 public:
     CountdownCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -158,7 +158,7 @@ class FlagCommand : ServerCommand
 public:
     FlagCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -167,7 +167,7 @@ class JitterWarnCommand : ServerCommand
 public:
     JitterWarnCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -176,7 +176,7 @@ class JitterDropCommand : ServerCommand
 public:
     JitterDropCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -185,7 +185,7 @@ class LagWarnCommand : ServerCommand
 public:
     LagWarnCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -194,7 +194,7 @@ class LagDropCommand : ServerCommand
 public:
     LagDropCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -203,7 +203,7 @@ class LagStatCommand : ServerCommand
 public:
     LagStatCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -212,7 +212,7 @@ class IdleStatCommand : ServerCommand
 public:
     IdleStatCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -221,7 +221,7 @@ class IdleTimeCommand : ServerCommand
 public:
     IdleTimeCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -230,7 +230,7 @@ class HandicapCommand : ServerCommand
 public:
     HandicapCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -239,7 +239,7 @@ class FlagHistoryCommand : ServerCommand
 public:
     FlagHistoryCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -248,7 +248,7 @@ class IdListCommand : ServerCommand
 public:
     IdListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -257,7 +257,7 @@ class PacketLossWarnCommand : public ServerCommand
 public:
     PacketLossWarnCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -267,7 +267,7 @@ class PacketLossDropCommand : public ServerCommand
 public:
     PacketLossDropCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -276,7 +276,7 @@ class PlayerListCommand : ServerCommand
 public:
     PlayerListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -285,7 +285,7 @@ class ReportCommand : ServerCommand
 public:
     ReportCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -294,7 +294,7 @@ class HelpCommand : ServerCommand
 public:
     HelpCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -303,7 +303,7 @@ class SendHelpCommand : ServerCommand
 public:
     SendHelpCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -312,7 +312,7 @@ class GroupListCommand : ServerCommand
 public:
     GroupListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -321,7 +321,7 @@ class ShowGroupCommand : ServerCommand
 public:
     ShowGroupCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -330,7 +330,7 @@ class ShowPermsCommand : ServerCommand
 public:
     ShowPermsCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -339,7 +339,7 @@ class GroupPermsCommand : ServerCommand
 public:
     GroupPermsCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -348,7 +348,7 @@ class SetGroupCommand : ServerCommand
 public:
     SetGroupCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -357,7 +357,7 @@ class RemoveGroupCommand : ServerCommand
 public:
     RemoveGroupCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -366,7 +366,7 @@ class ReloadCommand : ServerCommand
 public:
     ReloadCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -375,7 +375,7 @@ class PollCommand : ServerCommand
 public:
     PollCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -384,7 +384,7 @@ class VoteCommand : ServerCommand
 public:
     VoteCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -393,7 +393,7 @@ class VetoCommand : ServerCommand
 public:
     VetoCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -402,7 +402,7 @@ class ViewReportCommand : ServerCommand
 public:
     ViewReportCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -411,7 +411,7 @@ class ClientQueryCommand : ServerCommand
 public:
     ClientQueryCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -419,7 +419,7 @@ class DateTimeCommand : ServerCommand
 {
 public:
     DateTimeCommand();
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 protected:
     DateTimeCommand(std::string _commandName) : ServerCommand(_commandName, "- display current server time") {};
@@ -442,7 +442,7 @@ class RecordCommand : ServerCommand
 public:
     RecordCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -451,7 +451,7 @@ class ReplayCommand : ServerCommand
 public:
     ReplayCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -460,7 +460,7 @@ class SayCommand : ServerCommand
 public:
     SayCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -469,7 +469,7 @@ class CmdList : ServerCommand
 public:
     CmdList();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -478,7 +478,7 @@ class CmdHelp : ServerCommand
 public:
     CmdHelp();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -496,7 +496,7 @@ class DebugCommand : ServerCommand
 public:
     DebugCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -506,24 +506,24 @@ class OwnerCommand : ServerCommand
 public:
     OwnerCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
 
-static MsgCommand	  msgCommand;
+static MsgCommand     msgCommand;
 static ServerQueryCommand serverQueryCommand;
-static PartCommand	  partCommand;
-static QuitCommand	  quitCommand;
+static PartCommand    partCommand;
+static QuitCommand    quitCommand;
 static UpTimeCommand      upTimeCommand;
 static PasswordCommand    passwordCommand;
-static SetCommand	  setCommand;
+static SetCommand     setCommand;
 static ResetCommand       resetCommand;
-ShutdownCommand		  shutdownCommand;	// used by the API
-SuperkillCommand	  superkillCommand;	// used by the API
+ShutdownCommand       shutdownCommand;  // used by the API
+SuperkillCommand      superkillCommand; // used by the API
 static GameOverCommand    gameOverCommand;
 static CountdownCommand   countdownCommand;
-static FlagCommand	  flagCommand;
+static FlagCommand    flagCommand;
 static LagWarnCommand     lagWarnCommand;
 static LagDropCommand     lagDropCommand;
 static JitterWarnCommand  jitterWarnCommand;
@@ -538,7 +538,7 @@ static FlagHistoryCommand flagHistoryCommand;
 static IdListCommand      idListCommand;
 static PlayerListCommand  playerListCommand;
 static ReportCommand      ReportCommand;
-static HelpCommand	  helpCommand;
+static HelpCommand    helpCommand;
 static SendHelpCommand    sendHelpCommand;
 static GroupListCommand   groupListCommand;
 static ShowGroupCommand   showGroupCommand;
@@ -547,40 +547,40 @@ static GroupPermsCommand  groupPermsCommand;
 static SetGroupCommand    setGroupCommand;
 static RemoveGroupCommand removeGroupCommand;
 static ReloadCommand      reloadCommand;
-static PollCommand	  pollCommand;
-static VoteCommand	  voteCommand;
-static VetoCommand	  vetoCommand;
+static PollCommand    pollCommand;
+static VoteCommand    voteCommand;
+static VetoCommand    vetoCommand;
 static ViewReportCommand  viewReportCommand;
 static ClientQueryCommand clientQueryCommand;
-static DateCommand	  dateCommand;
-static TimeCommand	  timeCommand;
+static DateCommand    dateCommand;
+static TimeCommand    timeCommand;
 static RecordCommand      recordCommand;
 static ReplayCommand      replayCommand;
-static SayCommand	  sayCommand;
-static CmdList		  cmdList;
-static CmdHelp		  cmdHelp;
+static SayCommand     sayCommand;
+static CmdList        cmdList;
+static CmdHelp        cmdHelp;
 static ModCountCommand    modCountCommand;
 static DebugCommand       debugCommand;
 static OwnerCommand       ownerCommand;
 
-CmdHelp::CmdHelp()			 : ServerCommand("") {} // fake entry
-CmdList::CmdList()			 : ServerCommand("/?",
+CmdHelp::CmdHelp()           : ServerCommand("") {} // fake entry
+CmdList::CmdList()           : ServerCommand("/?",
             "- display the list of server-side commands") {}
-MsgCommand::MsgCommand()		 : ServerCommand("/msg",
+MsgCommand::MsgCommand()         : ServerCommand("/msg",
             "<nick> text - Send text message to nick") {}
 ServerQueryCommand::ServerQueryCommand() : ServerCommand("/serverquery",
             "- show the server version") {}
-PartCommand::PartCommand()		 : ServerCommand("/part",
+PartCommand::PartCommand()       : ServerCommand("/part",
             "[message] - leave the game with a parting message") {}
-QuitCommand::QuitCommand()		 : ServerCommand("/quit",
+QuitCommand::QuitCommand()       : ServerCommand("/quit",
             "[message] - leave the game with a parting message, and close the client") {}
-UpTimeCommand::UpTimeCommand()		 : ServerCommand("/uptime",
+UpTimeCommand::UpTimeCommand()       : ServerCommand("/uptime",
             "- show the server's uptime") {}
 PasswordCommand::PasswordCommand()       : ServerCommand("/password",
             "<passwd> - become an administrator with <passwd>") {}
-SetCommand::SetCommand()		 : ServerCommand("/set",
+SetCommand::SetCommand()         : ServerCommand("/set",
             "[ var [ value ] ] - set BZDB variable to value, or display variables") {}
-ResetCommand::ResetCommand()		 : ServerCommand("/reset",
+ResetCommand::ResetCommand()         : ServerCommand("/reset",
             "- reset the BZDB variables") {}
 ShutdownCommand::ShutdownCommand()       : ServerCommand("/shutdownserver",
             "- kill the server") {}
@@ -590,37 +590,37 @@ GameOverCommand::GameOverCommand()       : ServerCommand("/gameover",
             "- end the current game") {}
 CountdownCommand::CountdownCommand()     : ServerCommand("/countdown",
             "- start the countdown sequence for a timed game") {}
-FlagCommand::FlagCommand()		 : ServerCommand("/flag",
+FlagCommand::FlagCommand()       : ServerCommand("/flag",
             "<reset|up|show> - reset, remove or show the flags") {}
-LagWarnCommand::LagWarnCommand()	 : ServerCommand("/lagwarn",
+LagWarnCommand::LagWarnCommand()     : ServerCommand("/lagwarn",
             "[milliseconds] - display or set the maximum allowed lag time") {}
-LagDropCommand::LagDropCommand()	 : ServerCommand("/lagdrop",
+LagDropCommand::LagDropCommand()     : ServerCommand("/lagdrop",
             "[count] - display or set the number of lag warings before a player is kicked") {}
-JitterWarnCommand::JitterWarnCommand()	 : ServerCommand("/jitterwarn",
+JitterWarnCommand::JitterWarnCommand()   : ServerCommand("/jitterwarn",
             "[milliseconds] - display or set the maximum allowed jitter time") {}
-JitterDropCommand::JitterDropCommand()	 : ServerCommand("/jitterdrop",
+JitterDropCommand::JitterDropCommand()   : ServerCommand("/jitterdrop",
             "[count] - display or set the number of jitter warings before a player is kicked") {}
-PacketLossWarnCommand::PacketLossWarnCommand()	 : ServerCommand("/packetlosswarn",
+PacketLossWarnCommand::PacketLossWarnCommand()   : ServerCommand("/packetlosswarn",
             "<%> - change the maximum allowed packetloss") {}
-PacketLossDropCommand::PacketLossDropCommand()	 : ServerCommand("/packetlossdrop",
+PacketLossDropCommand::PacketLossDropCommand()   : ServerCommand("/packetlossdrop",
             "<count> - display or set the number of packetloss warnings before a player is kicked") {}
-LagStatCommand::LagStatCommand()	 : ServerCommand("/lagstats",
+LagStatCommand::LagStatCommand()     : ServerCommand("/lagstats",
             "- list network delays, jitter and number of lost resp. out of order packets by player") {}
 IdleStatCommand::IdleStatCommand()       : ServerCommand("/idlestats",
             "- display the idle time in seconds for each player") {}
 IdleTimeCommand::IdleTimeCommand()       : ServerCommand("/idletime",
             "[seconds] - display or set the idle time") {}
-HandicapCommand::HandicapCommand()	 : ServerCommand("/handicap",
+HandicapCommand::HandicapCommand()   : ServerCommand("/handicap",
             "- list handicap values by player") {}
 FlagHistoryCommand::FlagHistoryCommand() : ServerCommand("/flaghistory",
             "- list what flags players have grabbed in the past") {}
-IdListCommand::IdListCommand()		 : ServerCommand("/idlist",
+IdListCommand::IdListCommand()       : ServerCommand("/idlist",
             "- list player BZIDs") {}
 PlayerListCommand::PlayerListCommand()   : ServerCommand("/playerlist",
             "- list player slots, names and IP addresses") {}
-ReportCommand::ReportCommand()		 : ServerCommand("/report",
+ReportCommand::ReportCommand()       : ServerCommand("/report",
             "<message> - write a message to the server administrator") {}
-HelpCommand::HelpCommand()		 : ServerCommand("/help",
+HelpCommand::HelpCommand()       : ServerCommand("/help",
             "<help page> - display the specified help page") {}
 SendHelpCommand::SendHelpCommand()       : ServerCommand("/sendhelp",
             "<#slot|PlayerName|\"Player Name\"> <help page> - send the specified help page to a user") {}
@@ -636,31 +636,31 @@ SetGroupCommand::SetGroupCommand()       : ServerCommand("/setgroup",
             "<callsign> <group> - add the user to the specified group") {}
 RemoveGroupCommand::RemoveGroupCommand() : ServerCommand("/removegroup",
             "<callsign> <group> - remove a user from a group") {}
-ReloadCommand::ReloadCommand()		 : ServerCommand("/reload",
+ReloadCommand::ReloadCommand()       : ServerCommand("/reload",
             "[all|groups|users|bans|helpfiles|badwords] - reload groups, users, help files, and/or bad words") {}
-PollCommand::PollCommand()		 : ServerCommand("/poll",
+PollCommand::PollCommand()       : ServerCommand("/poll",
             "<ban|kick|kill|vote|veto> <callsign> - interact and make requests of the bzflag voting system") {}
-VoteCommand::VoteCommand()		 : ServerCommand("/vote",
+VoteCommand::VoteCommand()       : ServerCommand("/vote",
             "<yes|no> - place a vote in favor or in opposition to the poll") {}
-VetoCommand::VetoCommand()		 : ServerCommand("/veto",
+VetoCommand::VetoCommand()       : ServerCommand("/veto",
             "- will cancel the poll if there is one active") {}
 ViewReportCommand::ViewReportCommand()   : ServerCommand("/viewreports",
             "[pattern] - view the server's report file") {}
 ClientQueryCommand::ClientQueryCommand() : ServerCommand("/clientquery",
             "[callsign] - retrieve client version info from all users, or just CALLSIGN if given") {}
-RecordCommand::RecordCommand()		 : ServerCommand("/record",
+RecordCommand::RecordCommand()       : ServerCommand("/record",
             "[start|stop|size|list|rate..] - manage the bzflag record system") {}
-ReplayCommand::ReplayCommand()		 : ServerCommand("/replay",
+ReplayCommand::ReplayCommand()       : ServerCommand("/replay",
             "[ list [-t|-n] | load <filename|#index> | loop | play | skip [+/-seconds] | stats ] - interact with recorded files") {}
-SayCommand::SayCommand()		 : ServerCommand("/say",
+SayCommand::SayCommand()         : ServerCommand("/say",
             "[message] - generate a public message sent by the server") {}
-DateCommand::DateCommand()		 : DateTimeCommand("/date") {}
-TimeCommand::TimeCommand()		 : DateTimeCommand("/time") {}
+DateCommand::DateCommand()       : DateTimeCommand("/date") {}
+TimeCommand::TimeCommand()       : DateTimeCommand("/time") {}
 ModCountCommand::ModCountCommand() : ServerCommand("/modcount",
             "[+-seconds] - adjust countdown (if any)") {}
-DebugCommand::DebugCommand()		 : ServerCommand("/serverdebug",
+DebugCommand::DebugCommand()         : ServerCommand("/serverdebug",
             "[value] - set debug level or display the current setting") {}
-OwnerCommand::OwnerCommand()		 : ServerCommand("/owner",
+OwnerCommand::OwnerCommand()         : ServerCommand("/owner",
             "display the server owner's BZBB name") {}
 
 
@@ -684,7 +684,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
     if (!mapOfCommands)
     {
         sendMessage(ServerPlayer, playerId,
-                    "No server commands are defined");	// should not happen
+                    "No server commands are defined");  // should not happen
         return false;
     }
 
@@ -698,9 +698,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
             continue; // ignore any fake entries (ex: CmdHelp)
         }
         else
-        {
             commands.push_back(&cmd);
-        }
     }
     const int cmdCount = (int)commands.size();
 
@@ -709,9 +707,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
     for (i = 0; i < cmdCount; i++)
     {
         if (commands[i]->size() > maxCmdLen)
-        {
             maxCmdLen = commands[i]->size();
-        }
     }
     maxCmdLen += 2; // add some padding
 
@@ -732,9 +728,7 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
         {
             const int index = (col * rows) + row;
             if (index >= cmdCount)
-            {
                 break;
-            }
             sprintf(cptr, format, commands[index]->c_str());
             cptr += maxCmdLen;
         }
@@ -745,14 +739,14 @@ bool CmdList::operator() (const char*, GameKeeper::Player *playerData)
 }
 
 
-bool CmdHelp::operator() (const char	 *message,
+bool CmdHelp::operator() (const char     *message,
                           GameKeeper::Player *playerData)
 {
     const int t = playerData->getIndex();
     if (!mapOfCommands)
     {
         sendMessage(ServerPlayer, t,
-                    "No server commands are defined");	// should not happen
+                    "No server commands are defined");  // should not happen
         return false;
     }
 
@@ -795,9 +789,7 @@ bool CmdHelp::operator() (const char	 *message,
             if (master == commandToken)
             {
                 if (matching > 1 || listOnly)
-                {
                     sendMessage(ServerPlayer, t, it->second->getHelp().c_str());
-                }
                 else
                 {
                     std::string commandLine = it->first + (message + i + 1);
@@ -809,7 +801,7 @@ bool CmdHelp::operator() (const char	 *message,
 }
 
 
-bool UpTimeCommand::operator() (const char	 *,
+bool UpTimeCommand::operator() (const char   *,
                                 GameKeeper::Player *playerData)
 {
     float rawTime;
@@ -822,7 +814,7 @@ bool UpTimeCommand::operator() (const char	 *,
     return true;
 }
 
-bool ServerQueryCommand::operator() (const char	 *,
+bool ServerQueryCommand::operator() (const char  *,
                                      GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -835,7 +827,7 @@ bool ServerQueryCommand::operator() (const char	 *,
 }
 
 
-bool PartCommand::operator() (const char	 *message,
+bool PartCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     std::string byeStatement = "";
@@ -878,7 +870,7 @@ bool PartCommand::operator() (const char	 *message,
 }
 
 
-bool QuitCommand::operator() (const char	 *message,
+bool QuitCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     std::string byeStatement = "";
@@ -921,7 +913,7 @@ bool QuitCommand::operator() (const char	 *message,
 }
 
 
-bool MsgCommand::operator() (const char	 *message,
+bool MsgCommand::operator() (const char  *message,
                              GameKeeper::Player *playerData)
 {
     int from = playerData->getIndex();
@@ -938,9 +930,7 @@ bool MsgCommand::operator() (const char	 *message,
     callsignStart = 0;
     while ((callsignStart < arguments.size()) &&
             (isspace(arguments[callsignStart])))
-    {
         callsignStart++;
-    }
 
     // make sure there was _some_ whitespace after /msg
     if (callsignStart == 0)
@@ -990,9 +980,7 @@ bool MsgCommand::operator() (const char	 *message,
         {
             callsignEnd++;
             if (!isspace(arguments[callsignEnd]))
-            {
                 continue;
-            }
 
             // we have a space
             recipient = arguments.substr(callsignStart, callsignEnd - callsignStart);
@@ -1059,7 +1047,7 @@ bool MsgCommand::operator() (const char	 *message,
 }
 
 
-bool PasswordCommand::operator() (const char	 *message,
+bool PasswordCommand::operator() (const char     *message,
                                   GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1072,7 +1060,8 @@ bool PasswordCommand::operator() (const char	 *message,
     }
     else
     {
-        if (clOptions->password.length() != 0 && strlen(message) > 10 && strcmp(message + 10, clOptions->password.c_str()) == 0)  	// skip past "/password "
+        if (clOptions->password.length() != 0 && strlen(message) > 10
+                && strcmp(message + 10, clOptions->password.c_str()) == 0)    // skip past "/password "
         {
             playerData->accessInfo.setOperator();
             sendPlayerInfo();
@@ -1095,7 +1084,7 @@ bool PasswordCommand::operator() (const char	 *message,
 }
 
 
-bool SetCommand::operator() (const char	 *message,
+bool SetCommand::operator() (const char  *message,
                              GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1120,7 +1109,7 @@ bool SetCommand::operator() (const char	 *message,
     for (int i = 0; i < 3 /*"set"*/; ++i)
         command[i] = tolower(command[i]);
 
-    bool	cmdError = false;
+    bool    cmdError = false;
 
     std::string cmdReturn = CMDMGR.run(command,&cmdError);
     if (!cmdError)
@@ -1140,7 +1129,7 @@ bool SetCommand::operator() (const char	 *message,
 }
 
 
-bool ResetCommand::operator() (const char	 *message,
+bool ResetCommand::operator() (const char    *message,
                                GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1174,7 +1163,7 @@ bool ResetCommand::operator() (const char	 *message,
 }
 
 
-bool ShutdownCommand::operator() (const char	 *,
+bool ShutdownCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
     // If no playerData - dont perfom permission check, since it is probably the API
@@ -1192,7 +1181,7 @@ bool ShutdownCommand::operator() (const char	 *,
 }
 
 
-bool SuperkillCommand::operator() (const char	 *,
+bool SuperkillCommand::operator() (const char    *,
                                    GameKeeper::Player *playerData)
 {
     // If no playerData - dont perfom permission check, since it is probably the API
@@ -1213,7 +1202,7 @@ bool SuperkillCommand::operator() (const char	 *,
     {
         gameOver = true;
         // fire off a game end event
-        bz_GameStartEndEventData_V2	gameData;
+        bz_GameStartEndEventData_V2 gameData;
         gameData.eventType = bz_eGameEndEvent;
         gameData.duration = clOptions->timeLimit;
         gameData.playerID = t;
@@ -1226,7 +1215,7 @@ bool SuperkillCommand::operator() (const char	 *,
 }
 
 
-bool GameOverCommand::operator() (const char	 *,
+bool GameOverCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1249,7 +1238,7 @@ bool GameOverCommand::operator() (const char	 *,
     }
 
     // fire off a game end event
-    bz_GameStartEndEventData_V2	gameData;
+    bz_GameStartEndEventData_V2 gameData;
     gameData.eventType = bz_eGameEndEvent;
     gameData.duration = clOptions->timeLimit;
     gameData.playerID = t;
@@ -1260,7 +1249,7 @@ bool GameOverCommand::operator() (const char	 *,
 }
 
 
-bool CountdownCommand::operator() (const char	 * message,
+bool CountdownCommand::operator() (const char    * message,
                                    GameKeeper::Player *playerData)
 {
     // /countdown starts timed game, if start is manual, everyone is allowed to
@@ -1315,13 +1304,9 @@ bool CountdownCommand::operator() (const char	 * message,
             else if (parts[1] == "cancel")
             {
                 if (countdownDelay <= 0)
-                {
                     sendMessage(ServerPlayer, t, "There is no running countdown to cancel");
-                }
                 else
-                {
                     cancelCountdown(t);
-                }
 
                 return true;
             }
@@ -1427,14 +1412,12 @@ static bool checkFlagMaster(GameKeeper::Player* playerData)
 }
 
 
-bool FlagCommand::operator() (const char	 *message,
+bool FlagCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
     if (!checkFlagMod(playerData))
-    {
         return true;
-    }
 
     const char* msg = message + 6;
     while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
@@ -1463,9 +1446,7 @@ bool FlagCommand::operator() (const char	 *message,
                 }
                 flag.flag.status = FlagGoing;
                 if (!flag.required)
-                {
                     flag.flag.type = Flags::Null;
-                }
                 sendFlagUpdate(flag);
             }
         }
@@ -1498,13 +1479,9 @@ bool FlagCommand::operator() (const char	 *message,
         FlagType* ft = Flag::getDescFromAbbreviation(command);
 
         if (strncasecmp(command, "all", 3) == 0)
-        {
             bz_resetFlags(false, keepTeamFlags);
-        }
         else if (strncasecmp(command, "unused", 6) == 0)
-        {
             bz_resetFlags(true, keepTeamFlags);
-        }
         else if (strncasecmp(command, "team", 4) == 0)
         {
             // team flags
@@ -1515,9 +1492,7 @@ bool FlagCommand::operator() (const char	 *message,
                 {
                     const int playerIndex = fi->player;
                     if (playerIndex != -1)
-                    {
                         sendDrop(*fi);
-                    }
                     resetFlag(*fi);
                 }
             }
@@ -1525,27 +1500,21 @@ bool FlagCommand::operator() (const char	 *message,
         else if (command[0] == '#')
         {
             if (!checkFlagMaster(playerData))
-            {
                 return true;
-            }
             int fIndex = atoi(command + 1);
             FlagInfo* fi = FlagInfo::get(fIndex);
             if (fi != NULL)
             {
                 const int playerIndex = fi->player;
                 if (playerIndex != -1)
-                {
                     sendDrop(*fi);
-                }
                 resetFlag(*fi);
             }
         }
         else if (ft != Flags::Null)
         {
             if (!checkFlagMaster(playerData))
-            {
                 return true;
-            }
             // by flag abbreviation
             for (int i = 0; i < numFlags; i++)
             {
@@ -1554,9 +1523,7 @@ bool FlagCommand::operator() (const char	 *message,
                 {
                     const int playerIndex = fi->player;
                     if (playerIndex != -1)
-                    {
                         sendDrop(*fi);
-                    }
                     resetFlag(*fi);
                 }
             }
@@ -1570,9 +1537,7 @@ bool FlagCommand::operator() (const char	 *message,
     else if (strncasecmp(msg, "take", 4) == 0)
     {
         if (!checkFlagMaster(playerData))
-        {
             return true;
-        }
 
         msg += 4;
         while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
@@ -1620,9 +1585,7 @@ bool FlagCommand::operator() (const char	 *message,
     else if (strncasecmp(msg, "give", 4) == 0)
     {
         if (!checkFlagMaster(playerData))
-        {
             return true;
-        }
 
         msg += 4;
         while ((*msg != '\0') && isspace(*msg)) msg++; // eat whitespace
@@ -1647,9 +1610,7 @@ bool FlagCommand::operator() (const char	 *message,
                 int fIndex = atoi(argv[1].c_str() + 1);
                 fi = FlagInfo::get(fIndex);
                 if ((fi != NULL) && ((fi->player >= 0) && !force))
-                {
                     fi = NULL;
-                }
             }
             else
             {
@@ -1674,15 +1635,11 @@ bool FlagCommand::operator() (const char	 *message,
                     }
                     // see if we need to force it
                     if (unused != NULL)
-                    {
                         fi = unused;
-                    }
                     else if (forced != NULL)
                     {
                         if (force)
-                        {
                             fi = forced;
-                        }
                         else
                         {
                             sendMessage(ServerPlayer, t, "you may need to use the force");
@@ -1768,15 +1725,13 @@ bool FlagCommand::operator() (const char	 *message,
         }
     }
     else
-    {
         flagCommandHelp(t);
-    }
 
     return true;
 }
 
 
-bool LagWarnCommand::operator() (const char	 *message,
+bool LagWarnCommand::operator() (const char  *message,
                                  GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1848,7 +1803,7 @@ bool LagDropCommand::operator() (const char      *message,
 }
 
 
-bool JitterWarnCommand::operator() (const char	 *message,
+bool JitterWarnCommand::operator() (const char   *message,
                                     GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1885,7 +1840,7 @@ bool JitterWarnCommand::operator() (const char	 *message,
 }
 
 
-bool JitterDropCommand::operator() (const char	 *message,
+bool JitterDropCommand::operator() (const char   *message,
                                     GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2000,7 +1955,7 @@ bool lagCompare(const GameKeeper::Player *a, const GameKeeper::Player *b)
     return a->lagInfo.getLag() < b->lagInfo.getLag();
 }
 
-bool LagStatCommand::operator() (const char	 *,
+bool LagStatCommand::operator() (const char  *,
                                  GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2016,9 +1971,7 @@ bool LagStatCommand::operator() (const char	 *,
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if (p != NULL)
-        {
             sortedPlayer[j++] = p;
-        }
     }
     std::sort(sortedPlayer, sortedPlayer + j, lagCompare);
 
@@ -2034,7 +1987,7 @@ bool LagStatCommand::operator() (const char	 *,
 }
 
 
-bool IdleStatCommand::operator() (const char	 *,
+bool IdleStatCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2077,9 +2030,7 @@ bool IdleTimeCommand::operator() (const char* message,
         char* end;
         value = (float) strtod(message, &end);
         if (end != message)
-        {
             setting = true;
-        }
         else
         {
             std::string reply = "bad time format: ";
@@ -2115,34 +2066,34 @@ bool IdleTimeCommand::operator() (const char* message,
 }
 
 
-bool HandicapCommand::operator() (const char	 *,
+bool HandicapCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
 
     if (clOptions->gameOptions & HandicapGameStyle)
     {
-        const float maxhandicap = std::max(1.0f, BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));	// prevent division by zero below
+        const float maxhandicap = std::max(1.0f,
+                                           BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF)); // prevent division by zero below
         for (int i = 0; i < curMaxPlayers; i++)
         {
             GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
             if (p != NULL && !p->player.isObserver())
             {
                 char reply[MessageLen];
-                snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(), int(100.0 * std::min((float)p->score.getHandicap(), maxhandicap) / maxhandicap + 0.5));
+                snprintf(reply, MessageLen, "%-16s : %2d%%", p->player.getCallSign(),
+                         int(100.0 * std::min((float)p->score.getHandicap(), maxhandicap) / maxhandicap + 0.5));
                 sendMessage(ServerPlayer, t, reply);
             }
         }
     }
     else
-    {
         sendMessage(ServerPlayer, t, "Server does not use handicap mode.");
-    }
     return true;
 }
 
 
-bool FlagHistoryCommand::operator() (const char	 *,
+bool FlagHistoryCommand::operator() (const char  *,
                                      GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2195,7 +2146,7 @@ bool IdListCommand::operator() (const char*, GameKeeper::Player *playerData)
 }
 
 
-bool PlayerListCommand::operator() (const char	 *,
+bool PlayerListCommand::operator() (const char   *,
                                     GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2230,7 +2181,7 @@ bool PlayerListCommand::operator() (const char	 *,
 }
 
 
-bool ReportCommand::operator() (const char	 *message,
+bool ReportCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2241,9 +2192,7 @@ bool ReportCommand::operator() (const char	 *message,
     }
 
     if (strlen(message + 1) < 8)
-    {
         sendMessage(ServerPlayer, t, "Nothing reported");
-    }
     else
     {
         time_t now = time(NULL);
@@ -2260,19 +2209,13 @@ bool ReportCommand::operator() (const char	 *message,
         {
             FILE* pipeWrite = popen(clOptions->reportPipe.c_str(), "w");
             if (pipeWrite != NULL)
-            {
                 fprintf(pipeWrite, "%s\n\n", reportStr.c_str());
-            }
             else
-            {
                 logDebugMessage(1,"Couldn't write report to the pipe\n");
-            }
             pclose(pipeWrite);
         }
         if (clOptions->reportFile.size() == 0 && clOptions->reportPipe.size() == 0)
-        {
             sendMessage(ServerPlayer, t, "The report command is disabled on this server");
-        }
         else
         {
             std::string temp = std::string("**\"") + playerData->player.getCallSign() + "\" reports: " +
@@ -2324,9 +2267,7 @@ static bool sendHelpTopic (int sendSlot, const char *helpTopic)
             if (lines != NULL)
             {
                 for (int j = 0; j < (int)lines->size(); j++)
-                {
                     sendMessage(ServerPlayer, sendSlot, (*lines)[j].c_str());
-                }
                 return true;
             }
         }
@@ -2394,9 +2335,7 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
         const std::vector<std::string>& chunks = clOptions->textChunker.getChunkNames();
         sendMessage(ServerPlayer, t, "Available help pages (use /help <page>)");
         for (int i = 0; i < (int) chunks.size(); i++)
-        {
             sendMessage(ServerPlayer, t, chunks[i].c_str());
-        }
     }
     else
     {
@@ -2410,16 +2349,14 @@ bool HelpCommand::operator() (const char *message, GameKeeper::Player *playerDat
 }
 
 
-bool GroupListCommand::operator() (const char	 *,
+bool GroupListCommand::operator() (const char    *,
                                    GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
     sendMessage(ServerPlayer, t, "Group List:");
     PlayerAccessMap::iterator itr;
     for (itr = groupAccess.begin(); itr != groupAccess.end(); ++itr)
-    {
         sendMessage(ServerPlayer, t, itr->first.c_str());
-    }
     return true;
 }
 
@@ -2455,9 +2392,7 @@ bool ShowGroupCommand::operator() (const char* msg,
             return true;
         }
         else
-        {
             queryName = TextUtils::toupper(playerData->accessInfo.getName());
-        }
     }
 
     // once for global groups
@@ -2506,9 +2441,7 @@ bool ShowGroupCommand::operator() (const char* msg,
         sendMessage(ServerPlayer, t, line.c_str());
     }
     else
-    {
         sendMessage(ServerPlayer, t, "There is no user by that name");
-    }
 
     return true;
 }
@@ -2574,9 +2507,7 @@ bool ShowPermsCommand::operator() (const char* msg,
         }
 
         if (query->accessInfo.hasPerm(perm))
-        {
             sendMessage(ServerPlayer, t, permName.c_str());
-        }
     }
 
     return true;
@@ -2725,9 +2656,7 @@ bool SetGroupCommand::operator() (const char* msg,
         PlayerAccessInfo::updateDatabases();
     }
     else
-    {
         sendMessage(ServerPlayer, t, "Group Add failed (user may already be in that group)");
-    }
 
     return true;
 }
@@ -2785,15 +2714,13 @@ bool RemoveGroupCommand::operator() (const char* msg,
         PlayerAccessInfo::updateDatabases();
     }
     else
-    {
         sendMessage(ServerPlayer, t, "Group Remove failed (user may not have been in group)");
-    }
 
     return true;
 }
 
 
-bool ReloadCommand::operator() (const char	 *message,
+bool ReloadCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2813,9 +2740,7 @@ bool ReloadCommand::operator() (const char	 *message,
     size_t startPosition = 0;
     while ((startPosition < arguments.size()) &&
             (isspace(arguments[startPosition])))
-    {
         startPosition++;
-    }
 
     logDebugMessage(3,"Start position is %d\n", (int)startPosition);
 
@@ -2823,9 +2748,7 @@ bool ReloadCommand::operator() (const char	 *message,
     size_t endPosition = startPosition + 1;
     while ((endPosition < arguments.size()) &&
             (!isspace(arguments[endPosition])))
-    {
         endPosition++;
-    }
 
     logDebugMessage(3,"End position is %d\n", (int)endPosition);
 
@@ -2834,9 +2757,7 @@ bool ReloadCommand::operator() (const char	 *message,
             (endPosition > startPosition))
     {
         for (size_t i = startPosition; i < endPosition; i++)
-        {
             cmd += tolower(arguments[i]);
-        }
     }
 
     logDebugMessage(3,"Command is %s\n", cmd.c_str());
@@ -2935,7 +2856,7 @@ bool ReloadCommand::operator() (const char	 *message,
 }
 
 
-bool VoteCommand::operator() (const char	 *message,
+bool VoteCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -2974,15 +2895,11 @@ bool VoteCommand::operator() (const char	 *message,
     size_t startPosition = 0;
     while ((startPosition < voteCmd.size()) &&
             (isspace(voteCmd[startPosition])))
-    {
         startPosition++;
-    }
 
     /* stash the answer ('yes', 'no', etc) in lowercase to simplify comparison */
     for (size_t i = startPosition;  i < voteCmd.size() && !isspace(voteCmd[i]); i++)
-    {
         answer += tolower(voteCmd[i]);
-    }
 
     std::vector<std::string> yesAnswers;
     yesAnswers.push_back("y");
@@ -3046,13 +2963,11 @@ bool VoteCommand::operator() (const char	 *message,
         }
 
         if (vote == 0 && (cast = arbiter->voteNo(callsign)) == true)
-        {
-            snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-        }
+            snprintf(reply, MessageLen, "%s, your vote in opposition of the %s has been recorded", callsign.c_str(),
+                     arbiter->getPollAction().c_str());
         else if (vote == 1 && (cast = arbiter->voteYes(callsign)) == true)
-        {
-            snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(), arbiter->getPollAction().c_str());
-        }
+            snprintf(reply, MessageLen, "%s, your vote in favor of the %s has been recorded", callsign.c_str(),
+                     arbiter->getPollAction().c_str());
 
         sendMessage(ServerPlayer, t, reply);
     }
@@ -3075,7 +2990,8 @@ bool VoteCommand::operator() (const char	 *message,
     if (arbiter->hasVoted(callsign) && !cast)
     {
         /* player already voted */
-        snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+        snprintf(reply, MessageLen, "%s, you have already voted on the poll to %s %s", callsign.c_str(),
+                 arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
         sendMessage(ServerPlayer, t, reply);
         return true;
     }
@@ -3083,7 +2999,8 @@ bool VoteCommand::operator() (const char	 *message,
     if (!cast)
     {
         /* There was an error while voting, probably could send a less generic message */
-        snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(), arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+        snprintf(reply, MessageLen, "%s, there was an error while voting on the poll to %s %s", callsign.c_str(),
+                 arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
         sendMessage(ServerPlayer, t, reply);
         return true;
     }
@@ -3092,7 +3009,7 @@ bool VoteCommand::operator() (const char	 *message,
 }
 
 
-bool VetoCommand::operator() (const char	 *,
+bool VetoCommand::operator() (const char     *,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -3148,7 +3065,7 @@ bool VetoCommand::operator() (const char	 *,
 }
 
 
-bool PollCommand::operator() (const char	 *message,
+bool PollCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -3184,7 +3101,8 @@ bool PollCommand::operator() (const char	 *message,
     /* make sure that there is not a poll active already */
     if (arbiter->knowsPoll())
     {
-        snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(), arbiter->getPollTarget().c_str());
+        snprintf(reply, MessageLen, "A poll to %s %s is presently in progress", arbiter->getPollAction().c_str(),
+                 arbiter->getPollTarget().c_str());
         sendMessage(ServerPlayer, t, reply);
         sendMessage(ServerPlayer, t, "Unable to start a new poll until the current one is over");
         return true;
@@ -3200,9 +3118,7 @@ bool PollCommand::operator() (const char	 *message,
         // are eligible to vote
         GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(i);
         if (otherData && otherData->accessInfo.exists() && otherData->accessInfo.hasPerm(PlayerAccessInfo::poll))
-        {
             available++;
-        }
     }
 
     logDebugMessage(3,"There are %d available players for %d votes required\n", available, clOptions->votesRequired);
@@ -3231,9 +3147,7 @@ bool PollCommand::operator() (const char	 *message,
     size_t startPosition = 0;
     while ((startPosition < arguments.size()) &&
             (isspace(arguments[startPosition])))
-    {
         startPosition++;
-    }
 
     logDebugMessage(3,"Start position is %d\n", (int)startPosition);
 
@@ -3241,9 +3155,7 @@ bool PollCommand::operator() (const char	 *message,
     size_t endPosition = startPosition + 1;
     while ((endPosition < arguments.size()) &&
             (!isspace(arguments[endPosition])))
-    {
         endPosition++;
-    }
 
     logDebugMessage(3,"End position is %d\n", (int)endPosition);
 
@@ -3252,9 +3164,7 @@ bool PollCommand::operator() (const char	 *message,
             (endPosition > startPosition))
     {
         for (size_t i = startPosition; i < endPosition; i++)
-        {
             cmd += tolower(arguments[i]);
-        }
     }
 
     logDebugMessage(3,"Command is %s\n", cmd.c_str());
@@ -3282,14 +3192,10 @@ bool PollCommand::operator() (const char	 *message,
         startPosition = 0;
         while ((startPosition < arguments.size()) &&
                 (isspace(arguments[startPosition])))
-        {
             startPosition++;
-        }
         // do not include a starting quote, if given
         if (arguments[startPosition] == '"')
-        {
             startPosition++;
-        }
 
         logDebugMessage(3,"Start position for target is %d\n", (int)startPosition);
 
@@ -3297,14 +3203,10 @@ bool PollCommand::operator() (const char	 *message,
         endPosition = arguments.size() - 1;
         while ((endPosition > 0) &&
                 (isspace(arguments[endPosition])))
-        {
             endPosition--;
-        }
         // do not include a trailing quote, if given
         if (arguments[endPosition] == '"')
-        {
             endPosition--;
-        }
 
         logDebugMessage(3,"End position for target is %d\n", (int)endPosition);
 
@@ -3368,9 +3270,7 @@ bool PollCommand::operator() (const char	 *message,
             bz_freePlayerRecord(pr);
 
             if (stopPoll)
-            {
                 return true;
-            }
         }
 
         if ((cmd != "set") && (cmd != "flagreset") && !customPollType)
@@ -3463,29 +3363,17 @@ bool PollCommand::operator() (const char	 *message,
         /* create and announce the new poll */
         bool canDo = false;
         if (customPollType)
-        {
             canDo = (arbiter->poll(target, t, cmd));
-        }
         else if (cmd == "ban")
-        {
             canDo = (arbiter->pollToBan(target, t, targetIP));
-        }
         else if (cmd == "kick")
-        {
             canDo = (arbiter->pollToKick(target, t, targetIP));
-        }
         else if (cmd == "kill")
-        {
             canDo = (arbiter->pollToKill(target, t, targetIP));
-        }
         else if (cmd == "set")
-        {
             canDo = (arbiter->pollToSet(target, t));
-        }
         else if (cmd == "flagreset")
-        {
             canDo = (arbiter->pollToResetFlags(t));
-        }
 
         if (!canDo)
         {
@@ -3507,7 +3395,8 @@ bool PollCommand::operator() (const char	 *message,
         }
 
         unsigned int necessaryToSucceed = (unsigned int)((clOptions->votePercentage / 100.0) * (double)available);
-        snprintf(reply, MessageLen, "%d player%s available, %d additional affirming vote%s required to pass the poll (%f %%)", available, available==1?" is":"s are", necessaryToSucceed, necessaryToSucceed==1?"":"s", clOptions->votePercentage);
+        snprintf(reply, MessageLen, "%d player%s available, %d additional affirming vote%s required to pass the poll (%f %%)",
+                 available, available==1?" is":"s are", necessaryToSucceed, necessaryToSucceed==1?"":"s", clOptions->votePercentage);
         sendMessage(ServerPlayer, AllPlayers, reply);
 
         // set the number of available voters
@@ -3520,9 +3409,7 @@ bool PollCommand::operator() (const char	 *message,
             // observers) are eligible to vote
             GameKeeper::Player *otherData = GameKeeper::Player::getPlayerByIndex(j);
             if (otherData && otherData->accessInfo.exists())
-            {
                 arbiter->grantSuffrage(otherData->player.getCallSign());
-            }
         }
 
         // automatically place a vote for the player requesting the poll
@@ -3610,9 +3497,7 @@ bool ViewReportCommand::operator() (const char* message,
         pattern = message;
         pattern = TextUtils::toupper(pattern);
         if (pattern.find('*') == std::string::npos)
-        {
             pattern = "*" + pattern + "*";
-        }
     }
 
     // assumes that empty lines separate the reports
@@ -3628,9 +3513,7 @@ bool ViewReportCommand::operator() (const char* message,
             if (matched)
             {
                 for (int i = 0; i < (int)buffers.size(); i++)
-                {
                     sendMessage(ServerPlayer, t, buffers[i].c_str());
-                }
             }
             buffers.clear();
             matched = false;
@@ -3639,25 +3522,21 @@ bool ViewReportCommand::operator() (const char* message,
         {
             // non-blank line
             if (glob_match(pattern, TextUtils::toupper(line)))
-            {
                 matched = true;
-            }
         }
     }
     // in case the file doesn't end with a blank line
     if (matched)
     {
         for (int i = 0; i < (int)buffers.size(); i++)
-        {
             sendMessage(ServerPlayer, t, buffers[i].c_str());
-        }
     }
 
     return true;
 }
 
 
-bool ClientQueryCommand::operator() (const char	 *message,
+bool ClientQueryCommand::operator() (const char  *message,
                                      GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -3714,15 +3593,15 @@ bool ClientQueryCommand::operator() (const char	 *message,
 
 /** /record command
  *
- *  /record start	       # start buffering
- *  /record stop		# stop buffering (or saving to file)
+ *  /record start          # start buffering
+ *  /record stop        # stop buffering (or saving to file)
  *  /record size <Mbytes>       # set the buffer size, and truncate
- *  /record rate <secs>	 # set the state capture rate
- *  /record stats	       # display buffer time and memory information
+ *  /record rate <secs>  # set the state capture rate
+ *  /record stats          # display buffer time and memory information
  *  /record file [filename]     # begin capturing straight to file, flush buffer
  *  /record save [filename]     # save buffer to file (or default filename)
  */
-bool RecordCommand::operator() (const char	 *message,
+bool RecordCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -3735,13 +3614,9 @@ bool RecordCommand::operator() (const char	 *message,
     while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
     if (strncasecmp (buf, "start", 5) == 0)
-    {
         Record::start(t);
-    }
     else if (strncasecmp (buf, "stop", 4) == 0)
-    {
         Record::stop(t);
-    }
     else if (strncasecmp (buf, "size", 4) == 0)
     {
         buf = buf + 4;
@@ -3769,16 +3644,12 @@ bool RecordCommand::operator() (const char	 *message,
         Record::setRate (t, seconds);
     }
     else if (strncasecmp (buf, "stats", 5) == 0)
-    {
         Record::sendStats(t);
-    }
     else if (strncasecmp (buf, "list", 4) == 0)
     {
         const char* options = buf + 4;
         if (!Replay::sendFileList (t, options))
-        {
             Record::sendHelp (t);
-        }
     }
     else if (strncasecmp (buf, "save", 4) == 0)
     {
@@ -3800,13 +3671,9 @@ bool RecordCommand::operator() (const char	 *message,
         while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
         if (*buf == '\0')
-        {
             Record::saveBuffer (t, filename, 0);
-        }
         else
-        {
             Record::saveBuffer (t, filename, atoi(buf));
-        }
     }
     else if (strncasecmp (buf, "file", 4) == 0)
     {
@@ -3814,18 +3681,12 @@ bool RecordCommand::operator() (const char	 *message,
         while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
         if (*buf == '\0')
-        {
             Record::sendHelp (t);
-        }
         else
-        {
             Record::saveFile (t, buf);
-        }
     }
     else
-    {
         Record::sendHelp (t);
-    }
 
     return true;
 }
@@ -3833,22 +3694,20 @@ bool RecordCommand::operator() (const char	 *message,
 
 /** /replay command
  *
- *  /replay list		# list available replay files
+ *  /replay list        # list available replay files
  *  /replay load [filename]     # set the replay file (or load the default)
- *  /replay play		# began playing
- *  /replay loop		# began playing in looped mode
- *  /replay stats		# report the current replay state
- *  /replay skip <secs>	 # fast foward or rewind in time
+ *  /replay play        # began playing
+ *  /replay loop        # began playing in looped mode
+ *  /replay stats       # report the current replay state
+ *  /replay skip <secs>  # fast foward or rewind in time
  */
-bool ReplayCommand::operator() (const char	 *message,
+bool ReplayCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
     const char *buf = message + 7;
     while ((*buf != '\0') && isspace (*buf))   // eat whitespace
-    {
         buf++;
-    }
 
     // everyone can use the replay stats command
     if (strncasecmp (buf, "stats", 5) == 0)
@@ -3867,9 +3726,7 @@ bool ReplayCommand::operator() (const char	 *message,
     {
         const char* options = buf + 4;
         if (!Replay::sendFileList (t, options))
-        {
             Record::sendHelp (t);
-        }
     }
     else if (strncasecmp (buf, "load", 4) == 0)
     {
@@ -3877,31 +3734,21 @@ bool ReplayCommand::operator() (const char	 *message,
         while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
         if (*buf == '\0')
-        {
             Replay::sendHelp (t);
-        }
         else
-        {
             Replay::loadFile (t, buf);
-        }
     }
     else if (strncasecmp (buf, "play", 4) == 0)
-    {
         Replay::play (t);
-    }
     else if (strncasecmp (buf, "loop", 4) == 0)
-    {
         Replay::loop (t);
-    }
     else if (strncasecmp (buf, "skip", 4) == 0)
     {
         buf = buf + 4;
         while ((*buf != '\0') && isspace (*buf)) buf++; // eat whitespace
 
         if (*buf == '\0')
-        {
             Replay::skip (t, 0);
-        }
         else
         {
             int skip = atoi (buf);
@@ -3909,19 +3756,15 @@ bool ReplayCommand::operator() (const char	 *message,
         }
     }
     else if (strncasecmp (buf, "pause", 5) == 0)
-    {
         Replay::pause (t);
-    }
     else
-    {
         Replay::sendHelp (t);
-    }
 
     return true;
 }
 
 
-bool SayCommand::operator() (const char	 *message,
+bool SayCommand::operator() (const char  *message,
                              GameKeeper::Player *playerData)
 {
     size_t messageStart = 0;
@@ -3940,9 +3783,7 @@ bool SayCommand::operator() (const char	 *message,
     // skip any leading whitespace
     while ((messageStart < messageText.size()) &&
             (isspace(messageText[messageStart])))
-    {
         messageStart++;
-    }
 
     // make sure there was _some_ whitespace after /say
     if (messageStart == 0)
@@ -3963,7 +3804,7 @@ bool SayCommand::operator() (const char	 *message,
 
 
 
-bool DateTimeCommand::operator() (const char	 *,
+bool DateTimeCommand::operator() (const char     *,
                                   GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -3998,9 +3839,7 @@ bool ModCountCommand::operator() (const char*message,
     // skip any leading whitespace
     while ((messageStart < messageText.size()) &&
             (isspace(messageText[messageStart])))
-    {
         messageStart++;
-    }
 
     if (messageStart == messageText.size())
     {
@@ -4155,9 +3994,7 @@ bool OwnerCommand::operator() (const char* UNUSED(message),
     const int playerIndex = playerData->getIndex();
     const std::string& owner = getPublicOwner();
     if (owner.empty())
-    {
         sendMessage(ServerPlayer, playerIndex, "server has no registered owner");
-    }
     else
     {
         std::string msg = "this server's registered owner is: ";
@@ -4172,6 +4009,6 @@ bool OwnerCommand::operator() (const char* UNUSED(message),
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

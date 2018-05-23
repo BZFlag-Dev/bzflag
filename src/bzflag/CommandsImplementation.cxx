@@ -158,43 +158,43 @@ public:
 
 
 // class instantiations
-static CommandList	  commandList;
-static BindCommand	  bindCommand;
+static CommandList    commandList;
+static BindCommand    bindCommand;
 static SilenceCommand     silenceCommand;
 static UnsilenceCommand   unsilenceCommand;
-static DumpCommand	  dumpCommand;
+static DumpCommand    dumpCommand;
 static ClientQueryCommand clientQueryCommand;
 static HighlightCommand   highlightCommand;
-static SetCommand	  setCommand;
-static DiffCommand	  diffCommand;
+static SetCommand     setCommand;
+static DiffCommand    diffCommand;
 static LocalSetCommand    localSetCommand;
-static QuitCommand	  quitCommand;
+static QuitCommand    quitCommand;
 static RoamPosCommand     roamPosCommand;
 static ReTextureCommand   reTextureCommand;
-static SaveMsgsCommand	  saveMsgsCommand;
+static SaveMsgsCommand    saveMsgsCommand;
 static SaveWorldCommand   saveWorldCommand;
 static ForceRadarCommand  forceRadarCommand;
 static DebugLevelCommand  debugLevelCommand;
 
 
 // class constructors
-BindCommand::BindCommand()			: LocalCommand("/bind") {}
-CommandList::CommandList()			: LocalCommand("/cmds") {}
-DiffCommand::DiffCommand()			: LocalCommand("/diff") {}
-DumpCommand::DumpCommand()			: LocalCommand("/dumpvars") {}
-HighlightCommand::HighlightCommand()		: LocalCommand("/highlight") {}
-LocalSetCommand::LocalSetCommand()		: LocalCommand("/localset") {}
-QuitCommand::QuitCommand()			: LocalCommand("/quit") {}
-ReTextureCommand::ReTextureCommand()		: LocalCommand("/retexture") {}
-RoamPosCommand::RoamPosCommand()		: LocalCommand("/roampos") {}
-SaveMsgsCommand::SaveMsgsCommand()		: LocalCommand("/savemsgs") {}
-SaveWorldCommand::SaveWorldCommand()		: LocalCommand("/saveworld") {}
-ForceRadarCommand::ForceRadarCommand()		: LocalCommand("/forceradar") {}
-DebugLevelCommand::DebugLevelCommand()		: LocalCommand("/debug") {}
-SetCommand::SetCommand()			: LocalCommand("/set") {}
-SilenceCommand::SilenceCommand()		: LocalCommand("/silence") {}
-UnsilenceCommand::UnsilenceCommand()		: LocalCommand("/unsilence") {}
-ClientQueryCommand::ClientQueryCommand()	: LocalCommand("CLIENTQUERY") {}
+BindCommand::BindCommand()          : LocalCommand("/bind") {}
+CommandList::CommandList()          : LocalCommand("/cmds") {}
+DiffCommand::DiffCommand()          : LocalCommand("/diff") {}
+DumpCommand::DumpCommand()          : LocalCommand("/dumpvars") {}
+HighlightCommand::HighlightCommand()        : LocalCommand("/highlight") {}
+LocalSetCommand::LocalSetCommand()      : LocalCommand("/localset") {}
+QuitCommand::QuitCommand()          : LocalCommand("/quit") {}
+ReTextureCommand::ReTextureCommand()        : LocalCommand("/retexture") {}
+RoamPosCommand::RoamPosCommand()        : LocalCommand("/roampos") {}
+SaveMsgsCommand::SaveMsgsCommand()      : LocalCommand("/savemsgs") {}
+SaveWorldCommand::SaveWorldCommand()        : LocalCommand("/saveworld") {}
+ForceRadarCommand::ForceRadarCommand()      : LocalCommand("/forceradar") {}
+DebugLevelCommand::DebugLevelCommand()      : LocalCommand("/debug") {}
+SetCommand::SetCommand()            : LocalCommand("/set") {}
+SilenceCommand::SilenceCommand()        : LocalCommand("/silence") {}
+UnsilenceCommand::UnsilenceCommand()        : LocalCommand("/unsilence") {}
+ClientQueryCommand::ClientQueryCommand()    : LocalCommand("CLIENTQUERY") {}
 
 
 // the meat of the matter
@@ -220,9 +220,7 @@ bool CommandList::operator() (const char * UNUSED(cmdLine))
     for (i = 0; i < cmdCount; i++)
     {
         if (cmds[i]->size() > maxCmdLen)
-        {
             maxCmdLen = cmds[i]->size();
-        }
     }
     maxCmdLen += 2; // add some padding
 
@@ -252,9 +250,7 @@ bool CommandList::operator() (const char * UNUSED(cmdLine))
         {
             const int index = (col * rows) + row;
             if (index >= cmdCount)
-            {
                 break;
-            }
             sprintf(cptr, format, cmds[index]->c_str());
             cptr += maxCmdLen;
         }
@@ -300,17 +296,11 @@ bool BindCommand::operator() (const char *commandLine)
     }
     bool press, both = false;
     if (tokens[1] == "up")
-    {
         press = true;
-    }
     else if (tokens[1] == "down")
-    {
         press = false;
-    }
     else if (tokens[1] == "both")
-    {
         both = true;
-    }
     else
     {
         printBindHelp();
@@ -398,9 +388,7 @@ bool UnsilenceCommand::operator() (const char *commandLine)
                     silenceMessage = "Unblocked Msgs";
                 }
                 else if (strcmp(name, "-") == 0)
-                {
                     silenceMessage = "Unsilenced Unregistered Players";
-                }
                 addMessage(NULL, silenceMessage);
                 break;
             }
@@ -470,19 +458,13 @@ static float parseFloatExpr(const std::string& str, bool zeroNan)
     BZDB.setPersistent("tmp", false);
     float value = BZDB.eval("tmp");
     if (!zeroNan)
-    {
         return value;
-    }
     else
     {
         if (!isnan(value))
-        {
             return value;
-        }
         else
-        {
             return 0.0f;
-        }
     }
 }
 
@@ -490,9 +472,7 @@ static bool varIsEqual(const std::string& name)
 {
     // avoid "poll"
     if (name[0] != '_')
-    {
         return true;
-    }
 
     // get the parameters
     const std::string exp = BZDB.get(name);
@@ -503,18 +483,12 @@ static bool varIsEqual(const std::string& name)
     const bool defNaN = (isnan(defval) != 0);
 
     if (valNaN != defNaN)
-    {
         return false;
-    }
 
     if (valNaN)
-    {
         return (exp == defexp);
-    }
     else
-    {
         return (val == defval);
-    }
 }
 
 static void listSetVars(const std::string& name, void* varDispPtr)
@@ -523,14 +497,10 @@ static void listSetVars(const std::string& name, void* varDispPtr)
     const bool diff = varDisp->diff;
 
     if (!glob_match(varDisp->pattern.c_str(), name))
-    {
         return;
-    }
 
     if (diff && varIsEqual(name))
-    {
         return;
-    }
 
     foundVar = true;
 
@@ -562,15 +532,11 @@ bool SetCommand::operator() (const char *commandLine)
     std::string params = commandLine + 4;
     std::vector<std::string> tokens = TextUtils::tokenize(params, " ", 2);
     if (tokens.size() > 1)
-    {
         return false;
-    }
 
     std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
     if (pattern[0] != '_')
-    {
         pattern = '_' + pattern;
-    }
 
     const std::string header = "/set " + pattern;
     addMessage(LocalPlayer::getMyTank(), header, 2);
@@ -582,9 +548,7 @@ bool SetCommand::operator() (const char *commandLine)
     foundVar = false;
     BZDB.iterate(listSetVars, &varDisp);
     if (!foundVar)
-    {
         addMessage(LocalPlayer::getMyTank(), "no matching variables", 2);
-    }
     return true;
 }
 
@@ -596,9 +560,7 @@ bool DiffCommand::operator() (const char *commandLine)
 
     std::string pattern = (tokens.size() == 1) ? tokens[0] : "_*";
     if (pattern[0] != '_')
-    {
         pattern = '_' + pattern;
-    }
 
     const std::string header = "/diff " + pattern;
     addMessage(LocalPlayer::getMyTank(), header, 2);
@@ -688,13 +650,9 @@ bool LocalSetCommand::operator() (const char *commandLine)
     else
     {
         if (debug)
-        {
             addMessage(NULL, "usage: /localset <pattern> [value]");
-        }
         else
-        {
             addMessage(NULL, "usage: /localset <variable> [value]");
-        }
     }
     return true;
 }
@@ -721,9 +679,7 @@ bool RoamPosCommand::operator() (const char *commandLine)
     {
         Roaming::RoamingCamera cam;
         if (TextUtils::tolower(tokens[0]) == "reset")
-        {
             ROAM.resetCamera();
-        }
         else if (TextUtils::tolower(tokens[0]) == "send")
         {
             LocalPlayer* myTank = LocalPlayer::getMyTank();
@@ -757,29 +713,17 @@ bool RoamPosCommand::operator() (const char *commandLine)
         cam.pos[1] = parseFloatExpr(tokens[1], true);
         cam.pos[2] = parseFloatExpr(tokens[2], true);
         if (tokens.size() >= 4)
-        {
             cam.theta = parseFloatExpr(tokens[3], true);
-        }
         else
-        {
             cam.theta = ROAM.getCamera()->theta;
-        }
         if (tokens.size() >= 5)
-        {
             cam.phi = parseFloatExpr(tokens[4], true);
-        }
         else
-        {
             cam.phi = ROAM.getCamera()->phi;
-        }
         if (tokens.size() == 6)
-        {
             cam.zoom = parseFloatExpr(tokens[5], true);
-        }
         else
-        {
             cam.zoom = ROAM.getCamera()->zoom;
-        }
         ROAM.setCamera(&cam);
     }
     else
@@ -812,9 +756,7 @@ bool ReTextureCommand::operator() (const char *)
 bool SaveMsgsCommand::operator() (const char *commandLine)
 {
     if (controlPanel == NULL)
-    {
         return true;
-    }
 
     bool stripAnsi = false;
     bool timestamp = false;
@@ -826,13 +768,9 @@ bool SaveMsgsCommand::operator() (const char *commandLine)
     for (int pos = 1; pos < argCount; pos++)
     {
         if (args[pos] == "-s")
-        {
             stripAnsi = true;
-        }
         else if (args[pos] == "-t")
-        {
             timestamp = true;
-        }
     }
 
     int year, month, day, hour, minute, second;
@@ -881,13 +819,9 @@ bool SaveWorldCommand::operator() (const char *commandLine)
     {
         const std::string& arg = args[pos];
         if (arg == "-m")
-        {
             meshprims = true;
-        }
         else if (arg == "-g")
-        {
             ungrouped = true;
-        }
         else if (arg == "-o")
         {
             wavefront = true;
@@ -895,9 +829,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
             ungrouped = true;
         }
         else
-        {
             break;
-        }
         pos++;
     }
     if (pos != (argCount - 1))
@@ -913,9 +845,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
 
     World* world = World::getWorld();
     if (!world)
-    {
         return true;
-    }
 
     char buffer[256];
     std::string fullname;
@@ -927,9 +857,7 @@ bool SaveWorldCommand::operator() (const char *commandLine)
                  wavefront ? " [wavefront]" : "");
     }
     else
-    {
         snprintf(buffer, 256, "Error saving:  %s", fullname.c_str());
-    }
     addMessage(NULL, buffer);
 
     return true;
@@ -940,9 +868,7 @@ bool ForceRadarCommand::operator() (const char*)
 {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank == NULL)
-    {
         return true;
-    }
     if (myTank->getTeam() != ObserverTeam)
     {
         addMessage(NULL, "the /forceradar command only works for observers");
@@ -950,13 +876,9 @@ bool ForceRadarCommand::operator() (const char*)
     }
     float value;
     if (BZDBCache::radarLimit == 0.0f)
-    {
         value = +BZDBCache::worldSize;
-    }
     else
-    {
         value = -BZDBCache::radarLimit;
-    }
     BZDB.setFloat(StateDatabase::BZDB_RADARLIMIT, value, StateDatabase::Server);
     return true;
 }
@@ -987,6 +909,6 @@ bool DebugLevelCommand::operator() (const char* cmdLine)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

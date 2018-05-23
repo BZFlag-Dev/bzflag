@@ -39,18 +39,12 @@ bool glob_match (const std::string& pattern, const std::string& string)
 bool glob_match (const char *pattern, const char *string)
 {
     if (pattern == NULL)
-    {
         return false;
-    }
     if (string == NULL)
-    {
         return false;
-    }
 
     if ((pattern[0] == MATCH_MULTI) && (pattern[1] == '\0'))
-    {
         return true;
-    }
 
     while (*pattern != '\0')
     {
@@ -70,28 +64,20 @@ bool glob_match (const char *pattern, const char *string)
             }
         }
         else if (*string == '\0')
-        {
             return false;
-        }
         else if ((*pattern == MATCH_SINGLE) || (*pattern == *string))
         {
             pattern++;
             string++;
         }
         else
-        {
             return false;
-        }
     }
 
     if (*string == '\0')
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }
 
 /******************************************************************************/
@@ -107,9 +93,7 @@ static int match_multi (const char **pattern, const char **string)
     }
 
     if (*str == '\0')   // '*' was last, auto-match
-    {
         return +1;
-    }
 
     const char *strtop = str;
     const char *objtop = obj;
@@ -161,6 +145,6 @@ static int match_multi (const char **pattern, const char **string)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

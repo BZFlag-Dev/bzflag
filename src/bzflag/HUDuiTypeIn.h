@@ -12,11 +12,11 @@
 
 /*
  * HUDuiTypeIn:
- *	User interface class for the heads-up display's editable input control.
+ *  User interface class for the heads-up display's editable input control.
  */
 
-#ifndef	__HUDUITYPEIN_H__
-#define	__HUDUITYPEIN_H__
+#ifndef __HUDUITYPEIN_H__
+#define __HUDUITYPEIN_H__
 
 #include "common.h"
 
@@ -37,30 +37,30 @@ public:
     HUDuiTypeIn();
     ~HUDuiTypeIn();
 
-    void		setObfuscation(bool on);
-    int			getMaxLength() const;
-    std::string		getString() const;
+    void        setObfuscation(bool on);
+    int         getMaxLength() const;
+    std::string     getString() const;
 
-    void		setMaxLength(int);
-    void		setString(const std::string&);
-    void		setEditing(bool _allowEdit);
-    void		setColorFunc(TypeInColorFunc func)
+    void        setMaxLength(int);
+    void        setString(const std::string&);
+    void        setEditing(bool _allowEdit);
+    void        setColorFunc(TypeInColorFunc func)
     {
         colorFunc = func;
     }
 
 protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
+    bool        doKeyPress(const BzfKeyEvent&);
+    bool        doKeyRelease(const BzfKeyEvent&);
+    void        doRender();
 
 private:
-    int			maxLength;
-    std::string		string;
-    int			cursorPos;
-    bool		allowEdit;
-    bool		obfuscate;
-    TypeInColorFunc	colorFunc;
+    int         maxLength;
+    std::string     string;
+    int         cursorPos;
+    bool        allowEdit;
+    bool        obfuscate;
+    TypeInColorFunc colorFunc;
 };
 
 #endif // __HUDUITYPEIN_H__
@@ -69,6 +69,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

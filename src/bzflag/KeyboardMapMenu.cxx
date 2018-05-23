@@ -192,7 +192,8 @@ void KeyboardMapMenu::setKey(const BzfKeyEvent& event)
     for (it = mappable.begin(); it != mappable.end(); ++it)
         if (it->second.index == editing)
             break;
-    if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty()) || (KEYMGR.keyEventToString(event) == it->second.key2))
+    if ((KEYMGR.keyEventToString(event) == it->second.key1 && it->second.key2.empty())
+            || (KEYMGR.keyEventToString(event) == it->second.key2))
         return;
     ActionBinding::instance().associate(KEYMGR.keyEventToString(event),
                                         it->first);
@@ -223,9 +224,7 @@ void KeyboardMapMenu::execute()
             {
                 editing = it->second.index;
                 if (!it->second.key1.empty() && !it->second.key2.empty())
-                {
                     ActionBinding::instance().deassociate(it->first);
-                }
             }
     }
     update();
@@ -321,13 +320,9 @@ void KeyboardMapMenu::update()
         {
             value += it->second.key1;
             if (!it->second.key2.empty())
-            {
                 value += " or " + it->second.key2;
-            }
             else if (isEditing() && (it->second.index == editing))
-            {
                 value += " or ???";
-            }
         }
         ((HUDuiLabel*)listHUD[it->second.index])->setString(value);
     }
@@ -366,6 +361,6 @@ HUDuiLabel* KeyboardMapMenu::createLabel(const char* str, const char* _label)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

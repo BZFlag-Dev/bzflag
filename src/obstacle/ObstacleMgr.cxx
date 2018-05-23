@@ -190,9 +190,7 @@ void* GroupInstance::pack(void* buf)
     buf = nboPackStdString(buf, groupdef);
 
     if (matMap.size() <= 0)
-    {
         buf = nboPackStdString(buf, name);
-    }
     else
     {
         // hack to stuff in material map data
@@ -215,9 +213,7 @@ void* GroupInstance::pack(void* buf)
             p = nboPackInt(p, dstIndex);
         }
         for (unsigned int i = 0; i < fakeSize; i++)
-        {
             fakeString[origSize + i] = buffer[i];
-        }
         delete[] buffer;
         buf = nboPackStdString(buf, fakeString);
     }
@@ -225,28 +221,24 @@ void* GroupInstance::pack(void* buf)
     buf = transform.pack(buf);
 
     uint8_t bits = 0;
-    if (modifyTeam)	   bits |= (1 << 0);
-    if (modifyColor)	   bits |= (1 << 1);
+    if (modifyTeam)    bits |= (1 << 0);
+    if (modifyColor)       bits |= (1 << 1);
     if (modifyPhysicsDriver) bits |= (1 << 2);
-    if (modifyMaterial)	   bits |= (1 << 3);
-    if (driveThrough)	   bits |= (1 << 4);
-    if (shootThrough)	   bits |= (1 << 5);
-    if (ricochet)	    bits |= (1 << 6);
+    if (modifyMaterial)    bits |= (1 << 3);
+    if (driveThrough)      bits |= (1 << 4);
+    if (shootThrough)      bits |= (1 << 5);
+    if (ricochet)       bits |= (1 << 6);
     buf = nboPackUByte(buf, bits);
 
     if (modifyTeam)
-    {
         buf = nboPackUShort(buf, team);
-    }
     if (modifyColor)
     {
         buf = nboPackVector(buf, tint);
         buf = nboPackFloat(buf, tint[3]);
     }
     if (modifyPhysicsDriver)
-    {
         buf = nboPackInt(buf, phydrv);
-    }
     if (modifyMaterial)
     {
         int matindex = MATERIALMGR.getIndex(material);
@@ -288,13 +280,13 @@ const void* GroupInstance::unpack(const void* buf)
 
     uint8_t bits;
     buf = nboUnpackUByte(buf, bits);
-    modifyTeam =		((bits & (1 << 0)) == 0) ? false : true;
-    modifyColor =		((bits & (1 << 1)) == 0) ? false : true;
+    modifyTeam =        ((bits & (1 << 0)) == 0) ? false : true;
+    modifyColor =       ((bits & (1 << 1)) == 0) ? false : true;
     modifyPhysicsDriver = ((bits & (1 << 2)) == 0) ? false : true;
-    modifyMaterial =	((bits & (1 << 3)) == 0) ? false : true;
-    driveThrough =	((bits & (1 << 4)) == 0) ? false : true;
-    shootThrough =	((bits & (1 << 5)) == 0) ? false : true;
-    ricochet =	    ((bits & (1 << 6)) == 0) ? false : true;
+    modifyMaterial =    ((bits & (1 << 3)) == 0) ? false : true;
+    driveThrough =  ((bits & (1 << 4)) == 0) ? false : true;
+    shootThrough =  ((bits & (1 << 5)) == 0) ? false : true;
+    ricochet =      ((bits & (1 << 6)) == 0) ? false : true;
 
     if (modifyTeam)
     {
@@ -340,21 +332,13 @@ int GroupInstance::packSize()
     fullSize += transform.packSize();
     fullSize += sizeof(uint8_t);
     if (modifyTeam)
-    {
         fullSize += sizeof(uint16_t);
-    }
     if (modifyColor)
-    {
         fullSize += sizeof(float[4]);
-    }
     if (modifyPhysicsDriver)
-    {
         fullSize += sizeof(int32_t);
-    }
     if (modifyMaterial)
-    {
         fullSize += sizeof(int32_t);
-    }
     return fullSize;
 }
 
@@ -364,15 +348,11 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     out << indent << "group " << groupdef << std::endl;
 
     if (name.size() > 0)
-    {
         out << indent << "  name " << name << std::endl;
-    }
 
     transform.printTransforms(out, indent);
     if (modifyTeam)
-    {
         out << indent << "  team " << team << std::endl;
-    }
     if (modifyColor)
     {
         out << indent << "  tint " << tint[0] << " " << tint[1] << " "
@@ -386,13 +366,9 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
         {
             out << indent << "  phydrv ";
             if (driver->getName().size() > 0)
-            {
                 out << driver->getName();
-            }
             else
-            {
                 out << phydrv;
-            }
             out << std::endl;
         }
     }
@@ -416,17 +392,11 @@ void GroupInstance::print(std::ostream& out, const std::string& indent) const
     }
 
     if (driveThrough)
-    {
         out << indent << "  driveThrough"  << std::endl;
-    }
     if (shootThrough)
-    {
         out << indent << "  shootThrough"  << std::endl;
-    }
     if (ricochet)
-    {
         out << indent << "  ricochet"      << std::endl;
-    }
     out << indent << "end" << std::endl;
 
     return;
@@ -461,45 +431,25 @@ Obstacle* GroupDefinition::newObstacle(int type)
     Obstacle* obs = NULL;
 
     if (type == wallType)
-    {
         obs = new WallObstacle();
-    }
     else if (type == boxType)
-    {
         obs = new BoxBuilding();
-    }
     else if (type == pyrType)
-    {
         obs = new PyramidBuilding();
-    }
     else if (type == baseType)
-    {
         obs = new BaseBuilding();
-    }
     else if (type == teleType)
-    {
         obs = new Teleporter();
-    }
     else if (type == meshType)
-    {
         obs = new MeshObstacle();
-    }
     else if (type == arcType)
-    {
         obs = new ArcObstacle();
-    }
     else if (type == coneType)
-    {
         obs = new ConeObstacle();
-    }
     else if (type == sphereType)
-    {
         obs = new SphereObstacle();
-    }
     else if (type == tetraType)
-    {
         obs = new TetraBuilding();
-    }
 
     return obs;
 }
@@ -510,45 +460,25 @@ void GroupDefinition::addObstacle(Obstacle* obstacle)
     const char* type = obstacle->getType();
 
     if (WallObstacle::getClassName() == type)
-    {
         lists[wallType].push_back(obstacle);
-    }
     else if (BoxBuilding::getClassName() == type)
-    {
         lists[boxType].push_back(obstacle);
-    }
     else if (BaseBuilding::getClassName() == type)
-    {
         lists[baseType].push_back(obstacle);
-    }
     else if (PyramidBuilding::getClassName() == type)
-    {
         lists[pyrType].push_back(obstacle);
-    }
     else if (Teleporter::getClassName() == type)
-    {
         lists[teleType].push_back(obstacle);
-    }
     else if (MeshObstacle::getClassName() == type)
-    {
         lists[meshType].push_back(obstacle);
-    }
     else if (ArcObstacle::getClassName() == type)
-    {
         lists[arcType].push_back(obstacle);
-    }
     else if (ConeObstacle::getClassName() == type)
-    {
         lists[coneType].push_back(obstacle);
-    }
     else if (SphereObstacle::getClassName() == type)
-    {
         lists[sphereType].push_back(obstacle);
-    }
     else if (TetraBuilding::getClassName() == type)
-    {
         lists[tetraType].push_back(obstacle);
-    }
     else
     {
         printf ("GroupDefinition::addObstacle() ERROR: type = %s\n", type);
@@ -586,9 +516,7 @@ void GroupDefinition::makeTeleName(Obstacle* obs, unsigned int pos) const
     Teleporter* tele = (Teleporter*) obs;
     std::string fullname = depthName;
     if (tele->getName().size() > 0)
-    {
         fullname += tele->getName();
-    }
     else
     {
         // make the default name
@@ -606,9 +534,7 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
 {
     std::string newName;
     if (group->getName().size() > 0)
-    {
         newName = group->getName();
-    }
     else
     {
         // make the default name
@@ -617,13 +543,9 @@ void GroupDefinition::appendGroupName(const GroupInstance* group) const
         {
             const GroupInstance* g = groups[i];
             if (g == group)
-            {
                 break;
-            }
             if (g->getGroupDef() == group->getGroupDef())
-            {
                 count++;
-            }
         }
         newName = "/";
         newName += group->getGroupDef();
@@ -694,17 +616,13 @@ void GroupDefinition::makeGroups(const MeshTransform& xform,
                 obs = list[i]; // no need to copy
             }
             else
-            {
                 obs = list[i]->copyWithTransform(xform);
-            }
 
             // the tele names are setup with default names if
             // they are not named (even for those in the world
             // groupd def). invalid teleporters are also named
             if (type == teleType)
-            {
                 makeTeleName(obs, i);
-            }
 
             if (obs->isValid())
             {
@@ -808,16 +726,12 @@ void GroupDefinition::clear()
     {
         ObstacleList& list = lists[type];
         for (unsigned int i = 0; i < list.size(); i++)
-        {
             delete list[i];
-        }
         list.clear();
     }
 
     for (unsigned int i = 0; i < groups.size(); i++)
-    {
         delete groups[i];
-    }
     groups.clear();
 
     return;
@@ -827,9 +741,7 @@ void GroupDefinition::clear()
 void GroupDefinition::tighten()
 {
     for (int type = 0; type < ObstacleTypeCount; type++)
-    {
         lists[type].tighten();
-    }
     return;
 }
 
@@ -841,9 +753,7 @@ void GroupDefinition::sort(int (*compare)(const void* a, const void* b))
         return; // only sort the world groupdef
     }
     for (int type = 0; type < ObstacleTypeCount; type++)
-    {
         lists[type].sort(compare);
-    }
     return;
 }
 
@@ -888,9 +798,7 @@ void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
             for (j = 0; j < listSize; j++)
             {
                 if (meshes[j] == mesh)
-                {
                     break;
-                }
             }
             if (j == listSize)
             {
@@ -905,9 +813,7 @@ void GroupDefinition::getSourceMeshes(std::vector<MeshObstacle*>& meshes) const
         const GroupDefinition* groupDef =
             OBSTACLEMGR.findGroupDef(group->getGroupDef());
         if (groupDef != NULL)
-        {
             groupDef->getSourceMeshes(meshes);
-        }
     }
 
     return;
@@ -926,25 +832,19 @@ void* GroupDefinition::pack(void* buf) const
         for (i = 0; i < list.size(); i++)
         {
             if (list[i]->isFromWorldFile())
-            {
                 count++;
-            }
         }
         buf = nboPackUInt(buf, count);
         for (i = 0; i < list.size(); i++)
         {
             if (list[i]->isFromWorldFile())
-            {
                 buf = list[i]->pack(buf);
-            }
         }
     }
 
     buf = nboPackUInt(buf, groups.size());
     for (i = 0; i < groups.size(); i++)
-    {
         buf = groups[i]->pack(buf);
-    }
 
     return buf;
 }
@@ -966,9 +866,7 @@ const void* GroupDefinition::unpack(const void* buf)
             {
                 buf = obs->unpack(buf);
                 if (obs->isValid())
-                {
                     lists[type].push_back(obs);
-                }
             }
         }
     }
@@ -998,16 +896,12 @@ int GroupDefinition::packSize() const
         for (unsigned int i = 0; i < list.size(); i++)
         {
             if (list[i]->isFromWorldFile())
-            {
                 fullSize += list[i]->packSize();
-            }
         }
     }
     fullSize += sizeof(uint32_t);
     for (unsigned int i = 0; i < groups.size(); i++)
-    {
         fullSize += groups[i]->packSize();
-    }
 
     return fullSize;
 }
@@ -1040,24 +934,18 @@ void GroupDefinition::printGrouped(std::ostream& out,
                 if (!saveAsMeshes)
                 {
                     if (!obs->isFromContainer())
-                    {
                         obs->print(out, myIndent);
-                    }
                 }
                 else
                 {
                     if (!isContainer(type))
-                    {
                         obs->print(out, myIndent);
-                    }
                     else
                     {
                         // rebuild the mesh  (ya, just to print it)
                         MeshObstacle* mesh = makeContainedMesh(type, obs);
                         if ((mesh != NULL) && (mesh->isValid()))
-                        {
                             mesh->print(out, myIndent);
-                        }
                         delete mesh;
                     }
                 }
@@ -1067,15 +955,11 @@ void GroupDefinition::printGrouped(std::ostream& out,
 
     // print the groups
     for (unsigned int i = 0; i < groups.size(); i++)
-    {
         groups[i]->print(out, myIndent);
-    }
 
     // deal with indenting
     if (!isWorld)
-    {
         out << indent << "enddef" << std::endl << std::endl;
-    }
 
     return;
 }
@@ -1098,22 +982,16 @@ void GroupDefinition::printFlatFile(std::ostream& out,
             if (!saveAsMeshes)
             {
                 if (!obs->isFromContainer())
-                {
                     obs->print(out, indent);
-                }
             }
             else
             {
                 if (!isContainer(type))
                 {
                     if (!saveAsOBJ)
-                    {
                         obs->print(out, indent);
-                    }
                     else
-                    {
                         obs->printOBJ(out, indent);
-                    }
                 }
             }
         }
@@ -1168,9 +1046,7 @@ void GroupDefinitionMgr::clear()
 void GroupDefinitionMgr::tighten()
 {
     for (unsigned int i = 0; i < list.size(); i++)
-    {
         list[i]->tighten();
-    }
     world.tighten();
     return;
 }
@@ -1184,13 +1060,9 @@ static int compareHeights(const void* a, const void* b)
     const Extents& eB = obsB->getExtents();
 
     if (eA.maxs[2] > eB.maxs[2])
-    {
         return -1;
-    }
     else
-    {
         return +1;
-    }
 }
 
 
@@ -1207,9 +1079,7 @@ void GroupDefinitionMgr::makeWorld()
 
     // sort from top to bottom for enhanced radar
     for (int type = 0; type < GroupDefinition::ObstacleTypeCount; type++)
-    {
         world.sort(compareHeights);
-    }
 
     tighten();
 
@@ -1233,13 +1103,9 @@ void GroupDefinitionMgr::addWorldObstacle(Obstacle* obstacle)
 void GroupDefinitionMgr::addGroupDef(GroupDefinition* groupdef)
 {
     if (groupdef->getName().size() > 0)
-    {
         list.push_back(groupdef);
-    }
     else
-    {
         delete groupdef;
-    }
     return;
 }
 
@@ -1247,15 +1113,11 @@ void GroupDefinitionMgr::addGroupDef(GroupDefinition* groupdef)
 GroupDefinition* GroupDefinitionMgr::findGroupDef(const std::string& name) const
 {
     if (name.size() <= 0)
-    {
         return NULL;
-    }
     for (unsigned int i = 0; i < list.size(); i++)
     {
         if (name == list[i]->getName())
-        {
             return list[i];
-        }
     }
     return NULL;
 }
@@ -1274,9 +1136,7 @@ void* GroupDefinitionMgr::pack(void* buf) const
     buf = world.pack(buf);
     buf = nboPackUInt(buf, list.size());
     for (unsigned int i = 0; i < list.size(); i++)
-    {
         buf = list[i]->pack(buf);
-    }
     return buf;
 }
 
@@ -1303,9 +1163,7 @@ int GroupDefinitionMgr::packSize() const
     fullSize += world.packSize();
     fullSize += sizeof(uint32_t);
     for (unsigned int i = 0; i < list.size(); i++)
-    {
         fullSize += list[i]->packSize();
-    }
     return fullSize;
 }
 
@@ -1329,9 +1187,7 @@ void GroupDefinitionMgr::print(std::ostream& out,
     {
         // print the group definitions
         for (unsigned int i = 0; i < list.size(); i++)
-        {
             list[i]->printGrouped(out, indent);
-        }
         // print the world
         world.printGrouped(out, indent);
     }
@@ -1355,6 +1211,6 @@ void GroupDefinitionMgr::print(std::ostream& out,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

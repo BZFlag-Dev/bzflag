@@ -417,7 +417,7 @@ void CursesUI::initMainMenu(CursesMenu& menu)
     menu.addItem(new SubmenuCMItem("Show players",
                                    &CursesUI::initPlayerMenu));
     //menu.addItem(new SubmenuCMItem("Edit banlist",
-    //				  &CursesUI::initBanMenu));
+    //                &CursesUI::initBanMenu));
     menu.addItem(new SubmenuCMItem("Edit server variables",
                                    &CursesUI::initServerVarMenu));
     menu.addItem(new SubmenuCMItem("Edit message filter",
@@ -496,6 +496,6 @@ BZAdminUI* CursesUI::creator(BZAdminClient& client)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

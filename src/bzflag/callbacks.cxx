@@ -20,7 +20,7 @@
 #include "Team.h"
 #include "playing.h"
 
-static void		setTeamColor(TeamColor team, const std::string& str)
+static void     setTeamColor(TeamColor team, const std::string& str)
 {
     float color[4];
     parseColorString(str, color);
@@ -28,7 +28,7 @@ static void		setTeamColor(TeamColor team, const std::string& str)
     Team::setColors(team, color, Team::getRadarColor(team));
 }
 
-static void		setRadarColor(TeamColor team, const std::string& str)
+static void     setRadarColor(TeamColor team, const std::string& str)
 {
     float color[4];
     parseColorString(str, color);
@@ -50,73 +50,39 @@ void setFlagHelp(const std::string& name, void*)
 void setColor(const std::string& name, void*)
 {
     if (name == "roguecolor")
-    {
         setTeamColor(RogueTeam, BZDB.get(name));
-    }
     else if (name == "redcolor")
-    {
         setTeamColor(RedTeam, BZDB.get(name));
-    }
     else if (name == "greencolor")
-    {
         setTeamColor(GreenTeam, BZDB.get(name));
-    }
     else if (name == "bluecolor")
-    {
         setTeamColor(BlueTeam, BZDB.get(name));
-    }
     else if (name == "purplecolor")
-    {
         setTeamColor(PurpleTeam, BZDB.get(name));
-    }
     else if (name == "observercolor")
-    {
         setTeamColor(ObserverTeam, BZDB.get(name));
-    }
     else if (name == "rabbitcolor")
-    {
         setTeamColor(RabbitTeam, BZDB.get(name));
-    }
     else if (name == "huntercolor")
-    {
         setTeamColor(HunterTeam, BZDB.get(name));
-    }
     else if (name == "rogueradar")
-    {
         setRadarColor(RogueTeam, BZDB.get(name));
-    }
     else if (name == "redradar")
-    {
         setRadarColor(RedTeam, BZDB.get(name));
-    }
     else if (name == "greenradar")
-    {
         setRadarColor(GreenTeam, BZDB.get(name));
-    }
     else if (name == "blueradar")
-    {
         setRadarColor(BlueTeam, BZDB.get(name));
-    }
     else if (name == "purpleradar")
-    {
         setRadarColor(PurpleTeam, BZDB.get(name));
-    }
     else if (name == "observerradar")
-    {
         setRadarColor(ObserverTeam, BZDB.get(name));
-    }
     else if (name == "rabbitradar")
-    {
         setRadarColor(RabbitTeam, BZDB.get(name));
-    }
     else if (name == "hunterradar")
-    {
         setRadarColor(HunterTeam, BZDB.get(name));
-    }
     else
-    {
         Team::updateShotColors();
-    }
 }
 
 void setDepthBuffer(const std::string& name, void*)
@@ -141,6 +107,6 @@ void setDepthBuffer(const std::string& name, void*)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

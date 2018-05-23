@@ -39,9 +39,7 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
         shockNode->setShockWave(true);
     }
     else
-    {
         shockNode = new SphereBspSceneNode(pos, radius);
-    }
 
     // get team
     if (_path->getPlayer() == ServerPlayer)
@@ -58,13 +56,9 @@ ShockWaveStrategy::ShockWaveStrategy(ShotPath *_path) :
 
     const float* c = Team::getShotColor(team);
     if (RENDERER.useQuality() >= 2)
-    {
         shockNode->setColor(c[0], c[1], c[2], 0.5f);
-    }
     else
-    {
         shockNode->setColor(c[0], c[1], c[2], 0.75f);
-    }
 }
 
 
@@ -76,7 +70,8 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void ShockWaveStrategy::update(float dt)
 {
-    radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getPath().getLifetime();
+    radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
+              getPath().getLifetime();
     radius2 = radius * radius;
 
     // update shock wave scene node
@@ -87,21 +82,15 @@ void ShockWaveStrategy::update(float dt)
     TeamColor currentTeam;
     if ((myTank->getFlag() == Flags::Colorblindness) &&
             (getPath().getPlayer() != ServerPlayer))
-    {
         currentTeam = RogueTeam;
-    }
     else
-    {
         currentTeam = team;
-    }
 
     const float* c = Team::getShotColor(currentTeam);
 
     // fade old-style shockwaves
     if (RENDERER.useQuality() >= 2)
-    {
         shockNode->setColor(c[0], c[1], c[2], 0.5f);
-    }
     else
     {
         const float shockIn = BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS);
@@ -133,9 +122,7 @@ float ShockWaveStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]
         return 0.5f;
     }
     else
-    {
         return Infinity;
-    }
 }
 
 bool ShockWaveStrategy::isStoppedByHit() const
@@ -168,6 +155,6 @@ void ShockWaveStrategy::radarRender() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

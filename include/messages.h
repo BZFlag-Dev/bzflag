@@ -14,8 +14,8 @@
 * Communication protocol constants
 */
 
-#ifndef	BZF_MESSAGES_H
-#define	BZF_MESSAGES_H
+#ifndef BZF_MESSAGES_H
+#define BZF_MESSAGES_H
 
 #include "common.h"
 
@@ -23,12 +23,12 @@
 #include <string>
 
 
-#define _CallSignLen		32		// including terminating NUL
-#define _PasswordLen		32		// including terminating NUL
-#define _MottoLen				128		// including terminating NUL
-#define _TokenLen				22		// opaque string (now int(10)) and terminating NUL
-#define _VersionLen			60		// including terminating NUL
-#define _MessageLen			128		// including terminating NUL
+#define _CallSignLen        32      // including terminating NUL
+#define _PasswordLen        32      // including terminating NUL
+#define _MottoLen               128     // including terminating NUL
+#define _TokenLen               22      // opaque string (now int(10)) and terminating NUL
+#define _VersionLen         60      // including terminating NUL
+#define _MessageLen         128     // including terminating NUL
 
 class PlayerAddMessage
 {
@@ -43,7 +43,7 @@ public:
     int type;
     int wins;
     int losses;
-    int	tks;
+    int tks;
     std::string callsign;
     std::string motto;
 };
@@ -54,6 +54,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

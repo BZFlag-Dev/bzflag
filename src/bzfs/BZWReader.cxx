@@ -73,9 +73,7 @@ BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
         input = new std::istringstream(httpData);
     }
     else
-    {
         input = new std::ifstream(filename.c_str(), std::ios::in);
-    }
 
     // .BZW is the official worldfile extension, warn for others
     if ((filename.length() < 4) ||
@@ -87,9 +85,7 @@ BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
     }
 
     if (input->peek() == EOF)
-    {
         errorHandler->fatalError(std::string("could not find bzflag world file"), 0);
-    }
 }
 
 
@@ -140,81 +136,43 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
     WorldFileObject* tmpObj = NULL;
 
     if (strcasecmp(token, "box") == 0)
-    {
         tmpObj = new CustomBox;
-    }
     else if (strcasecmp(token, "pyramid") == 0)
-    {
         tmpObj = new CustomPyramid();
-    }
     else if (strcasecmp(token, "base") == 0)
-    {
         tmpObj = new CustomBase;
-    }
     else if (strcasecmp(token, "link") == 0)
-    {
         tmpObj = new CustomLink();
-    }
     else if (strcasecmp(token, "mesh") == 0)
-    {
         tmpObj = new CustomMesh;
-    }
     else if (strcasecmp(token, "arc") == 0)
-    {
         tmpObj = new CustomArc(false);
-    }
     else if (strcasecmp(token, "meshbox") == 0)
-    {
         tmpObj = new CustomArc(true);
-    }
     else if (strcasecmp(token, "cone") == 0)
-    {
         tmpObj = new CustomCone(false);
-    }
     else if (strcasecmp(token, "meshpyr") == 0)
-    {
         tmpObj = new CustomCone(true);
-    }
     else if (strcasecmp(token, "sphere") == 0)
-    {
         tmpObj = new CustomSphere;
-    }
     else if (strcasecmp(token, "tetra") == 0)
-    {
         tmpObj = new CustomTetra();
-    }
     else if (strcasecmp(token, "weapon") == 0)
-    {
         tmpObj = new CustomWeapon;
-    }
     else if (strcasecmp(token, "zone") == 0)
-    {
         tmpObj = new CustomZone;
-    }
     else if (strcasecmp(token, "waterLevel") == 0)
-    {
         tmpObj = new CustomWaterLevel;
-    }
     else if (strcasecmp(token, "dynamicColor") == 0)
-    {
         tmpObj = new CustomDynamicColor;
-    }
     else if (strcasecmp(token, "textureMatrix") == 0)
-    {
         tmpObj = new CustomTextureMatrix;
-    }
     else if (strcasecmp(token, "material") == 0)
-    {
         tmpObj = new CustomMaterial;
-    }
     else if (strcasecmp(token, "physics") == 0)
-    {
         tmpObj = new CustomPhysicsDriver;
-    }
     else if (strcasecmp(token, "transform") == 0)
-    {
         tmpObj = new CustomMeshTransform;
-    }
 
     if (tmpObj != NULL)
     {
@@ -222,9 +180,7 @@ static bool parseNormalObject(const char* token, WorldFileObject** object)
         return true;
     }
     else
-    {
         return false;
-    }
 }
 
 bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
@@ -246,7 +202,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     GroupDefinition* const startDef = groupDef;
 
     std::string customObject;
-    std::vector<std::string>	customLines;
+    std::vector<std::string>    customLines;
 
     bool gotWorld = false;
 
@@ -260,9 +216,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
                 errorHandler->warning(
                     std::string("discarding incomplete object"), line);
                 if (object != fakeObject)
-                {
                     delete object;
-                }
                 else if (customObject.size())
                 {
                     customObject = "";
@@ -303,9 +257,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
                         delete object;
                     }
                     else
-                    {
                         wlist.push_back(object);
-                    }
                 }
                 else if (customObject.size())
                 {
@@ -392,10 +344,8 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
 
         }
         else if (strcasecmp(buffer, "options") == 0)
-        {
             newObject = fakeObject;
 
-        }
         else if (strcasecmp(buffer, "include") == 0)
         {
             // NOTE: intentionally undocumented  (at the moment)
@@ -414,9 +364,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
                 {
                     // add the included objects
                     for (unsigned int i = 0; i < incWlist.size(); i++)
-                    {
                         wlist.push_back(incWlist[i]);
-                    }
                 }
                 else
                 {
@@ -512,18 +460,14 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     {
         errorHandler->fatalError(std::string("missing \"end\" parameter"), line);
         if (object != fakeObject)
-        {
             delete object;
-        }
         retval = false;
     }
     if (groupDef != startDef)
     {
         errorHandler->fatalError(std::string("missing \"enddef\" parameter"), line);
         if (startDef == worldDef)
-        {
             delete groupDef;
-        }
         retval = false;
     }
     return retval;
@@ -565,9 +509,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
         const BaseBuilding* base = (const BaseBuilding*) baseList[i];
         TeamColor color = (TeamColor)base->getTeam();
         if (bases.find(color) == bases.end())
-        {
             bases[color] = TeamBases((TeamColor)color);
-        }
         bases[color].addBase(base->getPosition(), base->getSize(),
                              base->getRotation());
     }
@@ -575,9 +517,7 @@ WorldInfo* BZWReader::defineWorldFromFile()
     // add objects
     const unsigned int n = list.size();
     for (i = 0; i < n; ++i)
-    {
         list[i]->writeToWorld(myWorld);
-    }
 
     // clean up
     emptyWorldFileObjectList(list);
@@ -591,6 +531,6 @@ WorldInfo* BZWReader::defineWorldFromFile()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

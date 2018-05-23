@@ -12,11 +12,11 @@
 
 /*
  * SceneDatabaseBuilder:
- *	Encapsulates creation of display database
+ *  Encapsulates creation of display database
  */
 
-#ifndef	BZF_SCENE_BUILDER_H
-#define	BZF_SCENE_BUILDER_H
+#ifndef BZF_SCENE_BUILDER_H
+#define BZF_SCENE_BUILDER_H
 
 #include "common.h"
 #include "OpenGLMaterial.h"
@@ -37,16 +37,16 @@ public:
     SceneDatabaseBuilder(const SceneRenderer*);
     ~SceneDatabaseBuilder();
 
-    SceneDatabase*	make(const World*);
+    SceneDatabase*  make(const World*);
 
 protected:
-    void		addWall(SceneDatabase*, const WallObstacle&);
-    void		addMesh(SceneDatabase*, MeshObstacle*);
-    void		addBox(SceneDatabase*, BoxBuilding&);
-    void		addPyramid(SceneDatabase*, PyramidBuilding&);
-    void		addBase(SceneDatabase*, BaseBuilding&);
-    void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
-    void		addWaterLevel(SceneDatabase*, const World*);
+    void        addWall(SceneDatabase*, const WallObstacle&);
+    void        addMesh(SceneDatabase*, MeshObstacle*);
+    void        addBox(SceneDatabase*, BoxBuilding&);
+    void        addPyramid(SceneDatabase*, PyramidBuilding&);
+    void        addBase(SceneDatabase*, BaseBuilding&);
+    void        addTeleporter(SceneDatabase*, const Teleporter&, const World*);
+    void        addWaterLevel(SceneDatabase*, const World*);
 
 private:
     // disallow duplication
@@ -54,23 +54,23 @@ private:
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
 private:
-    const SceneRenderer	*renderer;
+    const SceneRenderer *renderer;
 
-    OpenGLMaterial	wallMaterial;
-    float		wallTexWidth, wallTexHeight;
-    bool		wallLOD;
+    OpenGLMaterial  wallMaterial;
+    float       wallTexWidth, wallTexHeight;
+    bool        wallLOD;
 
-    OpenGLMaterial	boxMaterial;
-    float		boxTexWidth, boxTexHeight;
-    bool		boxLOD;
+    OpenGLMaterial  boxMaterial;
+    float       boxTexWidth, boxTexHeight;
+    bool        boxLOD;
 
-    OpenGLMaterial	pyramidMaterial;
-    bool		pyramidLOD;
+    OpenGLMaterial  pyramidMaterial;
+    bool        pyramidLOD;
 
-    bool		baseLOD;
+    bool        baseLOD;
 
-    OpenGLMaterial	teleporterMaterial;
-    bool		teleporterLOD;
+    OpenGLMaterial  teleporterMaterial;
+    bool        teleporterLOD;
 
     static const GLfloat wallColors[4][4];
     static const GLfloat wallModulateColors[4][4];
@@ -96,6 +96,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

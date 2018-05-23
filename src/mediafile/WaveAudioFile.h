@@ -24,14 +24,14 @@ public:
     virtual ~WaveAudioFile();
 
     /** This function returns the default extension of WAVE audio files. */
-    static std::string	getExtension();
+    static std::string  getExtension();
 
     /** This function reads data from a WAVE file. */
-    virtual bool		read(void* buffer, int numFrames);
+    virtual bool        read(void* buffer, int numFrames);
 
 protected:
-    bool			readHeader(char* tag, uint32_t* length);
-    bool			findChunk(const char* tag, uint32_t* length);
+    bool            readHeader(char* tag, uint32_t* length);
+    bool            findChunk(const char* tag, uint32_t* length);
 };
 
 #endif

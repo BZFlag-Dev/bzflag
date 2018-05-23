@@ -82,9 +82,7 @@ static inline bool isConvex(int w0, int w1, int w2)
     afvec3 cross;
     vec3cross(cross, e0, e1);
     if (vec3dot(cross, Normal) <= 0.0f)
-    {
         return false;
-    }
     return true;
 }
 
@@ -131,9 +129,7 @@ static inline bool isFaceClear(int w0, int w1, int w2)
             }
         }
         if (i == 3)
-        {
             return false;
-        }
     }
     return true;
 }
@@ -162,9 +158,7 @@ void triangulateFace(int count, const float* const* verts,
     Count = count;
     WorkSet = new int[Count];
     for (int i = 0; i < Count; i++)
-    {
         WorkSet[i] = i;
-    }
     makeNormal();
 
     int best = 0;
@@ -179,19 +173,13 @@ void triangulateFace(int count, const float* const* verts,
 
         int offset;
         if (best == Count)
-        {
             offset = Count - 1;
-        }
         else
-        {
             offset = (best % Count);
-        }
 
         // stripping pattern
         if (left)
-        {
             offset = (offset + (Count - 1)) % Count;
-        }
         left = !left;
 
         // find the best triangle
@@ -203,35 +191,25 @@ void triangulateFace(int count, const float* const* verts,
 
             const bool convex2 = isConvex(w0, w1, w2);
             if (convex && !convex2)
-            {
                 continue;
-            }
 
             const bool faceClear2 = isFaceClear(w0, w1, w2);
             if ((faceClear && !faceClear2) && (convex || !convex2))
-            {
                 continue;
-            }
 
             if (first)
             {
                 const float score2 = 2.0f - getDot(w0, w1, w2);
                 if ((score2 < score) &&
                         (convex || !convex2) && (faceClear || !faceClear2))
-                {
                     continue;
-                }
                 else
-                {
                     score = score2;
-                }
             }
 
             best = w0;
             if (convex && faceClear)
-            {
                 break;
-            }
             convex = convex2;
             faceClear = faceClear2;
         }
@@ -261,6 +239,6 @@ void triangulateFace(int count, const float* const* verts,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

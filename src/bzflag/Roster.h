@@ -46,13 +46,13 @@ extern int numRobots;
 extern NameList silencePlayers;
 
 
-Player*			lookupPlayer(PlayerId id);
-int			lookupPlayerIndex(PlayerId id);
-Player*			getPlayerByIndex(int index);
-Player*			getPlayerByName(const char* name);
-BaseLocalPlayer*	getLocalPlayer(PlayerId id);
-TeamColor		PlayerIdToTeam(PlayerId id);
-PlayerId		TeamToPlayerId(TeamColor team);
+Player*         lookupPlayer(PlayerId id);
+int         lookupPlayerIndex(PlayerId id);
+Player*         getPlayerByIndex(int index);
+Player*         getPlayerByName(const char* name);
+BaseLocalPlayer*    getLocalPlayer(PlayerId id);
+TeamColor       PlayerIdToTeam(PlayerId id);
+PlayerId        TeamToPlayerId(TeamColor team);
 
 #endif /* __ROSTER_H__ */
 
@@ -60,6 +60,6 @@ PlayerId		TeamToPlayerId(TeamColor team);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

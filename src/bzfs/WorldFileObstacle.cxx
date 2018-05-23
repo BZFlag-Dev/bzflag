@@ -27,25 +27,15 @@ WorldFileObstacle::WorldFileObstacle()
 bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
     if (strcasecmp(cmd, "drivethrough") == 0)
-    {
         driveThrough = true;
-    }
     else if (strcasecmp(cmd, "shootthrough") == 0)
-    {
         shootThrough = true;
-    }
     else if (strcasecmp(cmd, "passable") == 0)
-    {
         driveThrough = shootThrough = true;
-    }
     else if (strcasecmp(cmd, "ricochet") == 0)
-    {
         ricochet = true;
-    }
     else
-    {
         return WorldFileLocation::read(cmd, input);
-    }
     return true;
 }
 
@@ -53,6 +43,6 @@ bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

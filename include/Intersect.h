@@ -14,8 +14,8 @@
  * Utilities for doing intersection calculations.
  */
 
-#ifndef	BZF_INTERSECT_H
-#define	BZF_INTERSECT_H
+#ifndef BZF_INTERSECT_H
+#define BZF_INTERSECT_H
 
 #include "common.h"
 #include "Ray.h"
@@ -133,6 +133,6 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& extents,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

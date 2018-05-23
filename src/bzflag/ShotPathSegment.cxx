@@ -70,7 +70,7 @@ ShotPathSegment::~ShotPathSegment()
     // do nothing
 }
 
-ShotPathSegment&	ShotPathSegment::operator=(const
+ShotPathSegment&    ShotPathSegment::operator=(const
         ShotPathSegment& segment)
 {
     if (this != &segment)
@@ -94,6 +94,6 @@ ShotPathSegment&	ShotPathSegment::operator=(const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

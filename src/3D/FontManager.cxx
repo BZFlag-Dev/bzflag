@@ -116,7 +116,7 @@ void FontManager::initContext(void* data)
 }
 
 
-void FontManager::clear(void)	// clear all the lists
+void FontManager::clear(void)   // clear all the lists
 {
     // destroy all the fonts
     faceNames.clear();
@@ -136,7 +136,7 @@ void FontManager::clear(void)	// clear all the lists
 }
 
 
-void FontManager::rebuild(void)	// rebuild all the lists
+void FontManager::rebuild(void) // rebuild all the lists
 {
     clear();
     loadAll(fontDirectory);
@@ -180,9 +180,7 @@ void FontManager::loadAll(std::string directory)
                         faceNames[str] = faceID;
                     }
                     else
-                    {
                         faceID = faceItr->second;
-                    }
 
                     fontFaces[faceID][pFont->getSize()] = pFont;
                 }
@@ -225,7 +223,7 @@ int FontManager::getFaceID(std::string faceName)
                 if (faceItr == faceNames.end())
                 {
                     logDebugMessage(2,"No fonts loaded\n");
-                    return -1;	// we must have NO fonts, so you are screwed no matter what
+                    return -1;  // we must have NO fonts, so you are screwed no matter what
                 }
             }
         }
@@ -311,9 +309,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
         color[2] = resetColor[2] * darkness;
     }
     else
-    {
         resetColor = BrightColors[WhiteColor];
-    }
 
     const float darkDim = dimFactor * darkness;
 
@@ -366,17 +362,11 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_BLEND);
                 if (bright && underlineColor[0] >= 0)
-                {
                     glColor4fv(underlineColor);
-                }
                 else if (underlineColor[0] >= 0)
-                {
                     glColor4fv(dimUnderlineColor);
-                }
                 else if (color[0] >= 0)
-                {
                     glColor4fv(color);
-                }
                 // still have a translated matrix, these coordinates are
                 // with respect to the string just drawn
                 glBegin(GL_LINES);
@@ -391,9 +381,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
             x += width;
         }
         if (!doneLastSection)
-        {
             startSend = (int)text.find('m', endSend) + 1;
-        }
         // we stopped sending text at an ANSI code, find out what it is
         // and do something about it
         if (endSend != (int)text.size())
@@ -444,29 +432,17 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
                     color[2] = resetColor[2] * darkDim;
                 }
                 else if (tmpText == ANSI_STR_BRIGHT)
-                {
                     bright = true;
-                }
                 else if (tmpText == ANSI_STR_DIM)
-                {
                     bright = false;
-                }
                 else if (tmpText == ANSI_STR_UNDERLINE)
-                {
                     underline = true;
-                }
                 else if (tmpText == ANSI_STR_PULSATING)
-                {
                     pulsating = true;
-                }
                 else if (tmpText == ANSI_STR_NO_UNDERLINE)
-                {
                     underline = false;
-                }
                 else if (tmpText == ANSI_STR_NO_PULSATE)
-                {
                     pulsating = false;
-                }
                 else if (tmpText.substr(0, strlen(ANSI_STR_FG_RGB)) == ANSI_STR_FG_RGB)
                 {
                     // 24-bit foreground RGB (ISO-8613-3)
@@ -478,22 +454,16 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
                         rgb >> value;
 
                         if (bright)
-                        {
                             color[i] = value * darkness / 255.0f;
-                        }
                         else
-                        {
                             color[i] = value * darkDim / 255.0f;
-                        }
 
                         // jump over the ; delimiter
                         rgb.ignore();
                     }
                 }
                 else
-                {
                     logDebugMessage(2,"ANSI Code %s not supported\n", tmpText.c_str());
-                }
             }
         }
         endSend = (int)text.find("\033[", startSend);
@@ -506,9 +476,7 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
 
     // revert the filtering state
     if (filtering)
-    {
         pFont->filter(false);
-    }
 
     return;
 }
@@ -521,7 +489,7 @@ void FontManager::drawString(float x, float y, float z,
     drawString(x, y, z, getFaceID(face), size, text, resetColor);
 }
 
-float FontManager::getStrLength(int faceID, float size,	const std::string &text,
+float FontManager::getStrLength(int faceID, float size, const std::string &text,
                                 bool alreadyStripped)
 {
     if (text.size() == 0)
@@ -547,13 +515,9 @@ float FontManager::getStrLength(int faceID, float size,	const std::string &text,
     // don't include ansi codes in the length, but allow outside funcs to skip this step
     float strippedLength;
     if (alreadyStripped)
-    {
         strippedLength = pFont->getStrLength(scale, text);
-    }
     else
-    {
         strippedLength = pFont->getStrLength(scale, stripAnsiCodes(text));
-    }
     return strippedLength;
 }
 
@@ -637,13 +601,11 @@ ImageFont*    FontManager::getClosestRealSize(int faceID, float desiredSize, flo
         actualSize = (float)font->getSize();
     }
     else
-    {
         actualSize = desiredSize;
-    }
     return font;
 }
 
-void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
+void        FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) const
 {
     float pulseTime = (float)TimeKeeper::getCurrent().getSeconds();
 
@@ -665,6 +627,6 @@ void	    FontManager::getPulseColor(const GLfloat *color, GLfloat *pulseColor) c
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

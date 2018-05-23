@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_MODIFIER_H
-#define	BZF_OBSTACLE_MODIFIER_H
+#ifndef BZF_OBSTACLE_MODIFIER_H
+#define BZF_OBSTACLE_MODIFIER_H
 
 // common headers
 #include "BzMaterial.h"
@@ -56,6 +56,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

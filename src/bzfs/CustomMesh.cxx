@@ -76,9 +76,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     else if (strcasecmp(cmd, "endface") == 0)
     {
         if (face == NULL)
-        {
             std::cout << "extra 'endface' keyword found" << std::endl;
-        }
         else
         {
             faces.push_back(face);
@@ -104,9 +102,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     {
         cfvec3 inside;
         if (!(input >> inside[0] >> inside[1] >> inside[2]))
-        {
             return false;
-        }
         checkTypes.push_back(MeshObstacle::CheckInside);
         checkPoints.push_back(inside);
     }
@@ -114,9 +110,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     {
         cfvec3 outside;
         if (!(input >> outside[0] >> outside[1] >> outside[2]))
-        {
             return false;
-        }
         checkTypes.push_back(MeshObstacle::CheckOutside);
         checkPoints.push_back(outside);
     }
@@ -124,27 +118,21 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     {
         cfvec3 vertex;
         if (!(input >> vertex[0] >> vertex[1] >> vertex[2]))
-        {
             return false;
-        }
         vertices.push_back(vertex);
     }
     else if (strcasecmp(cmd, "normal") == 0)
     {
         cfvec3 normal;
         if (!(input >> normal[0] >> normal[1] >> normal[2]))
-        {
             return false;
-        }
         normals.push_back(normal);
     }
     else if (strcasecmp(cmd, "texcoord") == 0)
     {
         cfvec2 texcoord;
         if (!(input >> texcoord[0] >> texcoord[1]))
-        {
             return false;
-        }
         texcoords.push_back(texcoord);
     }
     else if (strcasecmp(cmd, "phydrv") == 0)
@@ -157,28 +145,18 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
         }
         phydrv = PHYDRVMGR.findDriver(drvname);
         if ((phydrv == -1) && (drvname != "-1"))
-        {
             std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-        }
     }
     else if (strcasecmp(cmd, "smoothbounce") == 0)
-    {
         smoothBounce = true;
-    }
     else if (strcasecmp(cmd, "noclusters") == 0)
-    {
         noclusters = true;
-    }
     else if (strcasecmp(cmd, "decorative") == 0)
-    {
         decorative = true;
-    }
     else if (strcasecmp(cmd, "drawInfo") == 0)
     {
         if (drawInfo != NULL)
-        {
             std::cout << "WARNING: multiple drawInfo, using first" << std::endl;
-        }
         else
         {
             drawInfo = new MeshDrawInfo();
@@ -197,9 +175,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     else if (parseMaterials(cmd, input, &material, 1, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else
     {
@@ -217,18 +193,14 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     // include the old style parameters
     MeshTransform xform;
     if ((size[0] != 1.0f) || (size[1] != 1.0f) || (size[2] != 1.0f))
-    {
         xform.addScale(size);
-    }
     if (rotation != 0.0f)
     {
         const float zAxis[3] = {0.0f, 0.0f, 1.0f};
         xform.addSpin(rotation * RAD2DEGf, zAxis);
     }
     if ((pos[0] != 0.0f) || (pos[1] != 0.0f) || (pos[2] != 0.0f))
-    {
         xform.addShift(pos);
-    }
     xform.append(transform);
 
     // hack to invalidate decorative meshes on older clients
@@ -246,9 +218,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
             }
         }
         else
-        {
             vert[0] = vert[1] = vert[2] = 0.0f;
-        }
         const_cast<std::vector<cfvec3>*>(&vertices)->push_back(vert);
     }
 
@@ -276,13 +246,9 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     {
         ((MeshDrawInfo*)drawInfo)->serverSetup(mesh);
         if (drawInfo->isValid())
-        {
             mesh->setDrawInfo(drawInfo);
-        }
         else
-        {
             delete ((MeshDrawInfo*)drawInfo);
-        }
     }
 
     groupdef->addObstacle(mesh);
@@ -295,6 +261,6 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

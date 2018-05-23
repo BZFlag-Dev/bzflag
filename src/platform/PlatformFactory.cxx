@@ -16,8 +16,8 @@
 #include "BzfMedia.h"
 #include "BzfJoystick.h"
 
-PlatformFactory*	PlatformFactory::instance = 0;
-BzfMedia*		PlatformFactory::media = 0;
+PlatformFactory*    PlatformFactory::instance = 0;
+BzfMedia*       PlatformFactory::media = 0;
 
 PlatformFactory::PlatformFactory()
 {
@@ -41,13 +41,13 @@ PlatformFactory::~PlatformFactory()
     delete media;
 }
 
-BzfJoystick*		PlatformFactory::createJoystick()
+BzfJoystick*        PlatformFactory::createJoystick()
 {
     // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
     return new BzfJoystick();
 }
 
-BzfMedia*		PlatformFactory::getMedia()
+BzfMedia*       PlatformFactory::getMedia()
 {
     if (!media) media = getInstance()->createMedia();
     return media;
@@ -57,6 +57,6 @@ BzfMedia*		PlatformFactory::getMedia()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

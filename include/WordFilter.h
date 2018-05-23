@@ -42,7 +42,7 @@
  * a time or manually.
  *
  * Loading from file assumes that words/phrases are listed one per line;
- * comments are possible using the shell-style "#" delimiter.	 Words are
+ * comments are possible using the shell-style "#" delimiter.    Words are
  * matched case-insensitive; punctuation and non-newline white-space are
  * always ignored with the default filter.
  *
@@ -61,29 +61,29 @@
  * e.g. "ass whipe" should match "@sz wh1p3", etc
  *
  * Strings should also match common word suffixes (at least for English)
- *	 (dom|ity|memt|sion|tion|ness|ance|ence|er|or|ist) for nouns
- *	 (ive|en|ic|al|able|y|ous|ful|less) for adjectives
- *	 (en|ize|ate|ify|fy|ed) for verbs
- *	 (ly) for adverbs
- *	 (a|z|r|ah|io|rs|rz|in|n|ster|meister) for slang
- *	 (s|es) for plurality
- *	 (ing|let) for imperfect verb, and diminutive
+ *   (dom|ity|memt|sion|tion|ness|ance|ence|er|or|ist) for nouns
+ *   (ive|en|ic|al|able|y|ous|ful|less) for adjectives
+ *   (en|ize|ate|ify|fy|ed) for verbs
+ *   (ly) for adverbs
+ *   (a|z|r|ah|io|rs|rz|in|n|ster|meister) for slang
+ *   (s|es) for plurality
+ *   (ing|let) for imperfect verb, and diminutive
  *
  * e.g. "dumb ass" should match "dumb assness", "dumb asses", "dumb assly", etc
  *
  * Strings should also match common word prefixes (at least for English)
- *	 (bz|beze) for bzflag-centric words
+ *   (bz|beze) for bzflag-centric words
  *
  * e.g. "bitch" should also match "bzbitch", "beezzeebitch", etc
  *
  * Since all of the above matchings are done for free with aggressive matching,
- * only root words need to be provided.	 For foreign languages, it may be
+ * only root words need to be provided.  For foreign languages, it may be
  * necessary to list all tenses of certain verbs, unless the rules can be
  * strictly and simply quantified.
  *
  * There is also a simple filter mode which is not as resource intensive and
  * performs a literal match with the filter words (so you have to specify
- * absolutely everything you want to filter and all variations).	It is still
+ * absolutely everything you want to filter and all variations).    It is still
  * case-insensitive and ignores punctuation.
  */
 class WordFilter
@@ -238,17 +238,11 @@ public:
 inline int WordFilter::filterCharacters(char *input, unsigned int start, size_t length, bool filterSpaces=false) const
 {
     if (input == NULL)
-    {
         return -1;
-    }
     if (length <= 0)
-    {
         return -1;
-    }
     if (strlen(input) < start)
-    {
         return 0;
-    }
 
     int randomCharPos, previousCharPos = -1;
     int maxFilterChar = (int)filterChars.size();
@@ -290,17 +284,13 @@ inline void WordFilter::appendUniqueChar(std::string& string, char c) const
 #ifdef HAVE_STD__COUNT
 // ISO standard std::count
     if (std::count(string.begin(), string.end(), c) == 0)
-    {
         string += c;
-    }
 #else
 // old HP-style std::count (SunPRO for instance)
     int n = 0;
     std::count(string.begin(), string.end(), c, n);
     if (n == 0)
-    {
         string += c;
-    }
 #endif
 }
 
@@ -342,6 +332,6 @@ class WordFilter;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

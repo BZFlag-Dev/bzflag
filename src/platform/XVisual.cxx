@@ -31,17 +31,17 @@ XVisual::~XVisual()
 }
 
 // NOTE:  to keep searching simple I cheat.  All bool attributes
-//	are followed by GLX_USE_GL (which is a bool and ignored)
-//	so that interesting attributes always fall on even indices.
+//  are followed by GLX_USE_GL (which is a bool and ignored)
+//  so that interesting attributes always fall on even indices.
 
-void			XVisual::setLevel(int level)
+void            XVisual::setLevel(int level)
 {
     int index = findAttribute(GLX_LEVEL);
     if (index == -1) appendAttribute(GLX_LEVEL, level);
     else editAttribute(index, level);
 }
 
-void			XVisual::setDoubleBuffer(bool on)
+void            XVisual::setDoubleBuffer(bool on)
 {
     int index = findAttribute(GLX_DOUBLEBUFFER);
     if (!on)
@@ -54,7 +54,7 @@ void			XVisual::setDoubleBuffer(bool on)
     }
 }
 
-void			XVisual::setIndex(int minDepth)
+void            XVisual::setIndex(int minDepth)
 {
     int index = findAttribute(GLX_RGBA);
     if (index != -1) removeAttribute(index);
@@ -63,7 +63,7 @@ void			XVisual::setIndex(int minDepth)
     else editAttribute(index, minDepth);
 }
 
-void			XVisual::setRGBA(int minRed, int minGreen,
+void            XVisual::setRGBA(int minRed, int minGreen,
                                  int minBlue, int minAlpha)
 {
     int index = findAttribute(GLX_RGBA);
@@ -86,7 +86,7 @@ void			XVisual::setRGBA(int minRed, int minGreen,
     else editAttribute(index, minAlpha);
 }
 
-void			XVisual::setDepth(int minDepth)
+void            XVisual::setDepth(int minDepth)
 {
     int index = findAttribute(GLX_DEPTH_SIZE);
     if (minDepth == 0)
@@ -97,7 +97,7 @@ void			XVisual::setDepth(int minDepth)
     else editAttribute(index, minDepth);
 }
 
-void			XVisual::setStencil(int minDepth)
+void            XVisual::setStencil(int minDepth)
 
 {
     int index = findAttribute(GLX_STENCIL_SIZE);
@@ -109,7 +109,7 @@ void			XVisual::setStencil(int minDepth)
     else editAttribute(index, minDepth);
 }
 
-void			XVisual::setAccum(int minRed, int minGreen,
+void            XVisual::setAccum(int minRed, int minGreen,
                                   int minBlue, int minAlpha)
 {
     int index = findAttribute(GLX_ACCUM_RED_SIZE);
@@ -126,7 +126,7 @@ void			XVisual::setAccum(int minRed, int minGreen,
     else editAttribute(index, minAlpha);
 }
 
-void			XVisual::setStereo(bool on)
+void            XVisual::setStereo(bool on)
 {
     int index = findAttribute(GLX_STEREO);
     if (!on)
@@ -139,7 +139,7 @@ void			XVisual::setStereo(bool on)
     }
 }
 
-void			XVisual::setMultisample(int minSamples)
+void            XVisual::setMultisample(int minSamples)
 {
     (void)minSamples;  // quiet compiler if ifdef'd code not used
 #if defined(GLX_SAMPLES_SGIS) && defined(GLX_SGIS_multisample)
@@ -149,7 +149,7 @@ void			XVisual::setMultisample(int minSamples)
 #endif
 }
 
-int			XVisual::findAttribute(int attribute) const
+int         XVisual::findAttribute(int attribute) const
 {
     for (int i = 0; i < attributeCount; i += 2)
         if (attributes[i] == attribute)
@@ -157,7 +157,7 @@ int			XVisual::findAttribute(int attribute) const
     return -1;
 }
 
-void			XVisual::appendAttribute(int attribute, int value)
+void            XVisual::appendAttribute(int attribute, int value)
 {
     attributes[attributeCount] = attribute;
     attributes[attributeCount+1] = value;
@@ -165,7 +165,7 @@ void			XVisual::appendAttribute(int attribute, int value)
     attributes[attributeCount] = None;
 }
 
-void			XVisual::removeAttribute(int index)
+void            XVisual::removeAttribute(int index)
 {
     attributeCount -= 2;
     attributes[index] = attributes[attributeCount];
@@ -173,12 +173,12 @@ void			XVisual::removeAttribute(int index)
     attributes[attributeCount] = None;
 }
 
-void			XVisual::editAttribute(int index, int value)
+void            XVisual::editAttribute(int index, int value)
 {
     attributes[index+1] = value;
 }
 
-bool			XVisual::build()
+bool            XVisual::build()
 {
     if (!visual && getenv("MESA_RGB_VISUAL") == NULL)
     {
@@ -276,7 +276,7 @@ bool			XVisual::build()
     return visual != NULL;
 }
 
-bool			XVisual::matchRequirements(XVisualInfo* v) const
+bool            XVisual::matchRequirements(XVisualInfo* v) const
 {
     // check RGBA, DOUBLEBUFFER, and STEREO
     int value;
@@ -337,7 +337,7 @@ bool			XVisual::matchRequirements(XVisualInfo* v) const
     return true;
 }
 
-bool			XVisual::visualClassIsBetter(int a, int b)
+bool            XVisual::visualClassIsBetter(int a, int b)
 {
     // not better if the same
     if (a == b)
@@ -374,7 +374,7 @@ bool			XVisual::visualClassIsBetter(int a, int b)
     return false;
 }
 
-XVisualInfo*		XVisual::get()
+XVisualInfo*        XVisual::get()
 {
     if (!build()) return NULL;
     return visual;

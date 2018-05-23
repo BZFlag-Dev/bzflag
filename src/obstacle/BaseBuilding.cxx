@@ -19,7 +19,7 @@
 #include "MeshTransform.h"
 
 
-const char*		BaseBuilding::typeName = "BaseBuilding";
+const char*     BaseBuilding::typeName = "BaseBuilding";
 
 BaseBuilding::BaseBuilding()
 {
@@ -61,28 +61,28 @@ Obstacle* BaseBuilding::copyWithTransform(const MeshTransform& xform) const
     return copy;
 }
 
-const char*		BaseBuilding::getType() const
+const char*     BaseBuilding::getType() const
 {
     return typeName;
 }
 
-const char*		BaseBuilding::getClassName()
+const char*     BaseBuilding::getClassName()
 {
     return typeName;
 }
 
-float			BaseBuilding::intersect(const Ray &r) const
+float           BaseBuilding::intersect(const Ray &r) const
 {
     return timeRayHitsBlock(r, getPosition(), getRotation(),
                             getWidth(), getBreadth(), getHeight());
 }
 
-void			BaseBuilding::getNormal(const float *p, float *n) const
+void            BaseBuilding::getNormal(const float *p, float *n) const
 {
     getNormalRect(p, getPosition(), getRotation(), getWidth(), getBreadth(), n);
 }
 
-void			BaseBuilding::get3DNormal(const float* p, float* n) const
+void            BaseBuilding::get3DNormal(const float* p, float* n) const
 {
     // This bit of cruft causes bullets to bounce of buildings in the z direction
     if (fabs(p[2] - getPosition()[2]) < Epsilon)
@@ -101,14 +101,14 @@ void			BaseBuilding::get3DNormal(const float* p, float* n) const
         getNormal(p, n);
 }
 
-bool			BaseBuilding::inCylinder(const float *p, float radius, float height) const
+bool            BaseBuilding::inCylinder(const float *p, float radius, float height) const
 {
     return (p[2] < (getPosition()[2] + getHeight()))
            &&     ((p[2]+height) > getPosition()[2])
            &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			BaseBuilding::inBox(const float *p, float _angle,
+bool            BaseBuilding::inBox(const float *p, float _angle,
                                     float dx, float dy, float height) const
 {
     return (p[2] < (getPosition()[2] + getHeight()))
@@ -117,7 +117,7 @@ bool			BaseBuilding::inBox(const float *p, float _angle,
                                p, _angle, dx, dy);
 }
 
-bool			BaseBuilding::inMovingBox(const float* oldP, float,
+bool            BaseBuilding::inMovingBox(const float* oldP, float,
         const float *p, float _angle,
         float dx, float dy, float height) const
 {
@@ -146,7 +146,7 @@ bool			BaseBuilding::inMovingBox(const float* oldP, float,
                         p, _angle, dx, dy);
 }
 
-bool			BaseBuilding::isCrossing(const float *p, float _angle,
+bool            BaseBuilding::isCrossing(const float *p, float _angle,
         float dx, float dy, float height,
         float *plane) const
 {
@@ -187,7 +187,7 @@ bool			BaseBuilding::isCrossing(const float *p, float _angle,
     return true;
 }
 
-bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
+bool            BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
         const float *pos2, float azimuth2,
         float halfWidth, float halfBreadth, float,
         float *normal) const
@@ -197,7 +197,7 @@ bool			BaseBuilding::getHitNormal(const float *pos1, float azimuth1,
                                   getHeight(), normal) >= 0.0f;
 }
 
-void			BaseBuilding::getCorner(int index, float *_pos) const
+void            BaseBuilding::getCorner(int index, float *_pos) const
 {
     const float *base = getPosition();
     const float c = cosf(getRotation());
@@ -227,12 +227,12 @@ void			BaseBuilding::getCorner(int index, float *_pos) const
     if (index >= 4) _pos[2] += getHeight();
 }
 
-int	BaseBuilding::getTeam() const
+int BaseBuilding::getTeam() const
 {
     return team;
 }
 
-bool			BaseBuilding::isFlatTop() const
+bool            BaseBuilding::isFlatTop() const
 {
     return true;
 }
@@ -302,24 +302,16 @@ void BaseBuilding::print(std::ostream& out, const std::string& indent) const
         << std::endl;
     out << indent << "  color " << getTeam() << std::endl;
     if (isPassable())
-    {
         out << indent << "  passable" << std::endl;
-    }
     else
     {
         if (isDriveThrough())
-        {
             out << indent << "  drivethrough" << std::endl;
-        }
         if (isShootThrough())
-        {
             out << indent << "  shootthrough" << std::endl;
-        }
     }
     if (canRicochet())
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     out << indent << "end" << std::endl;
     return;
 }
@@ -366,13 +358,9 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
     xform.finalize();
     MeshTransform::Tool xtool(xform);
     for (i = 0; i < 8; i++)
-    {
         xtool.modifyVertex(verts[i]);
-    }
     for (i = 0; i < 6; i++)
-    {
         xtool.modifyNormal(norms[i]);
-    }
 
     out << "# OBJ - start base" << std::endl;
     out << "o bzbase_team" << team << "_" << getObjCounter() << std::endl;
@@ -421,6 +409,6 @@ void BaseBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

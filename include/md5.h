@@ -39,10 +39,10 @@
 // it is not meant to be fast or secure
 //
 // usage: 1) feed it blocks of uchars with update()
-//	2) finalize()
-//	3) get hexdigest() string
+//  2) finalize()
+//  3) get hexdigest() string
 //      or
-//	MD5(std::string).hexdigest()
+//  MD5(std::string).hexdigest()
 //
 // assumes that char is 8 bit and int is 32 bit
 class MD5
@@ -71,6 +71,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

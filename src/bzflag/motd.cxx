@@ -50,9 +50,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
         // parse into messages
         std::vector<std::string> lines = TextUtils::tokenize(data, "\n");
         if (lines.size() % 4)
-        {
             data = "MOTD contains unexpected data";
-        }
         else
         {
             for (i = 0; i < lines.size(); ++i)
@@ -66,9 +64,7 @@ void MessageOfTheDay::finalization(char *_data, unsigned int length, bool good)
                 if (isdigit(msg.version[0]))
                 {
                     if (msg.version == "0.0")
-                    {
                         msg.version = "[a-z0-9\\.-]*";
-                    }
                     else
                     {
                         msg.version.insert(0, "^");
@@ -137,6 +133,6 @@ void MessageOfTheDay::getURL(const std::string &URL)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

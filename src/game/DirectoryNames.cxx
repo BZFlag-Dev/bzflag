@@ -37,14 +37,12 @@ std::string configDir(bool set, const char *str)
 {
     static std::string customConfigDir = std::string("");
     if (set)
-    {
         customConfigDir = std::string(str);
-    }
     return customConfigDir;
 }
 
 
-void			setCustomConfigDir(const char *str)
+void            setCustomConfigDir(const char *str)
 {
     std::string dir = str;
     if (dir.size() > 2)
@@ -60,7 +58,7 @@ void			setCustomConfigDir(const char *str)
 }
 
 
-std::string		getConfigDirName( const char* versionName )
+std::string     getConfigDirName( const char* versionName )
 {
     std::string customConfigDir = configDir(0, NULL);
 
@@ -143,7 +141,7 @@ std::string		getConfigDirName( const char* versionName )
 #endif
 }
 
-static std::string		setupString(std::string dir)
+static std::string      setupString(std::string dir)
 {
     std::string name = getConfigDirName();
     name += dir;
@@ -177,13 +175,9 @@ std::string getTempDirName()
 #else
     std::string name;
     if (getenv("TMPDIR"))
-    {
         name = getenv("TMPDIR");
-    }
     else
-    {
         name = "/tmp";
-    }
 #endif
     name += DirectorySeparator;
     return name;
@@ -198,6 +192,6 @@ std::string getWorldDirName()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -44,14 +44,10 @@ bool CustomMaterial::read(const char *cmd, std::istream& input)
     if (parseMaterials(cmd, input, &material, 1, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else
-    {
         return WorldFileObject::read(cmd, input);
-    }
 
     return true;
 }
@@ -72,9 +68,7 @@ void CustomMaterial::writeToManager() const
 
     int index = MATERIALMGR.getIndex(matref);
     if (index < 0)
-    {
         std::cout << "CustomMaterial::write: material didn't register" << std::endl;
-    }
     return;
 }
 
@@ -83,6 +77,6 @@ void CustomMaterial::writeToManager() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

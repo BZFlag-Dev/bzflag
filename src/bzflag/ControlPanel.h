@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_CONTROL_PANEL_H
-#define	BZF_CONTROL_PANEL_H
+#ifndef BZF_CONTROL_PANEL_H
+#define BZF_CONTROL_PANEL_H
 
 // common - 1st
 #include "common.h"
@@ -34,16 +34,16 @@ struct ControlPanelMessage
 {
 public:
     ControlPanelMessage(const std::string&);
-    std::string		getString() const;
-    std::string		getString(bool withDateTime) const;
-    std::string		formatTimestamp(int mode) const;
-    void		breakLines(float maxLength, int fontFace, float fontSize);
+    std::string     getString() const;
+    std::string     getString(bool withDateTime) const;
+    std::string     formatTimestamp(int mode) const;
+    void        breakLines(float maxLength, int fontFace, float fontSize);
 
-    std::vector<std::string>	lines;
+    std::vector<std::string>    lines;
     int numlines;
 
 private:
-    std::string		string;
+    std::string     string;
 
     // Message timestamp variables
     int year, month, day, hour, min, sec;
@@ -55,39 +55,39 @@ public:
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
 
-    void		setControlColor(const GLfloat *color = NULL);
-    void		render(SceneRenderer&);
-    void		resize();
-    void		invalidate();
+    void        setControlColor(const GLfloat *color = NULL);
+    void        render(SceneRenderer&);
+    void        resize();
+    void        invalidate();
 
-    void		setNumberOfFrameBuffers(int);
+    void        setNumberOfFrameBuffers(int);
 
-    void		addMessage(const std::string&, const int mode = 3);
-    static void	addMutexMessage(const std::string&);
-    void		setMessagesOffset(int offset, int whence, bool paged);
-    void		setMessagesMode(int _messageMode);
-    int		getMessagesMode()
+    void        addMessage(const std::string&, const int mode = 3);
+    static void addMutexMessage(const std::string&);
+    void        setMessagesOffset(int offset, int whence, bool paged);
+    void        setMessagesMode(int _messageMode);
+    int     getMessagesMode()
     {
         return messageMode;
     };
-    void		setStatus(const char*);
-    void		setRadarRenderer(RadarRenderer*);
+    void        setStatus(const char*);
+    void        setRadarRenderer(RadarRenderer*);
 
-    void		setDimming(float dimming);
+    void        setDimming(float dimming);
 
-    void		togglePaused();
+    void        togglePaused();
 
-    void		saveMessages(const std::string& filename,
+    void        saveMessages(const std::string& filename,
                              bool stripAnsi, bool timestamp) const;
 
 private:
     // no copying!
     ControlPanel(const ControlPanel&);
-    ControlPanel&	operator=(const ControlPanel&);
+    ControlPanel&   operator=(const ControlPanel&);
 
-    static void		resizeCallback(void*);
-    static void		exposeCallback(void*);
-    static void		bzdbCallback(const std::string& name, void* data);
+    static void     resizeCallback(void*);
+    static void     exposeCallback(void*);
+    static void     bzdbCallback(const std::string& name, void* data);
 
     enum MessageModes
     {
@@ -105,30 +105,30 @@ private:
     long totalTabWidth;
 
 
-    MainWindow&		window;
-    bool		resized;
-    int			numBuffers;
-    int			changedMessage;
-    RadarRenderer*	radarRenderer;
-    SceneRenderer*	renderer;
+    MainWindow&     window;
+    bool        resized;
+    int         numBuffers;
+    int         changedMessage;
+    RadarRenderer*  radarRenderer;
+    SceneRenderer*  renderer;
 
-    int			fontFace;
-    float		fontSize;
+    int         fontFace;
+    float       fontSize;
 
-    float		dimming;
-    float		du, dv;
-    int			radarAreaPixels[4];
-    int			messageAreaPixels[4];
-    std::deque<ControlPanelMessage>	messages[MessageModeCount];
+    float       dimming;
+    float       du, dv;
+    int         radarAreaPixels[4];
+    int         messageAreaPixels[4];
+    std::deque<ControlPanelMessage> messages[MessageModeCount];
     int messageMode;
-    GLfloat		teamColor[3];
-    static int		messagesOffset;
-    static const int	maxScrollPages;
-    int			maxLines;
-    float		margin;
-    float		lineHeight;
-    bool		unRead[MessageModeCount];
-    bool		paused;
+    GLfloat     teamColor[3];
+    static int      messagesOffset;
+    static const int    maxScrollPages;
+    int         maxLines;
+    float       margin;
+    float       lineHeight;
+    bool        unRead[MessageModeCount];
+    bool        paused;
 
 };
 
@@ -150,6 +150,6 @@ inline void ControlPanel::togglePaused()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

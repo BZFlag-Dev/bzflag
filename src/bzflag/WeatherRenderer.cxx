@@ -177,7 +177,7 @@ void WeatherRenderer::set(void)
         rainSize[0] = rainSize[1] = 1.0f;
         maxPuddleTime = 1.5f;
         puddleSpeed = 1.0f;
-        puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] =	1.0f;
+        puddleColor[0] = puddleColor[1] = puddleColor[2] = puddleColor[3] = 1.0f;
         spinRain = true;
         cullRoofTops = true;
         roofPuddles = false;
@@ -406,18 +406,12 @@ void WeatherRenderer::set(void)
                         RoofTops::getTopHeight(drop.pos[0], drop.pos[1], drop.pos[2]);
                 }
                 else
-                {
                     drop.roofTop = 0.0f;
-                }
 
                 if (_CULLING_RAIN)
-                {
                     addDrop (drop);
-                }
                 else
-                {
                     raindrops.push_back (drop);
-                }
             }
             lastRainTime = float(TimeKeeper::getCurrent().getSeconds());
         }
@@ -487,9 +481,7 @@ void WeatherRenderer::update(void)
                 while (dropItr != itr->second.drops.end())
                 {
                     if (updateDrop(dropItr, frameTime, dropsToAdd))
-                    {
                         dropItr++;
-                    }
                     else
                     {
                         dropItr = itr->second.drops.erase(dropItr);
@@ -545,9 +537,7 @@ void WeatherRenderer::draw(const SceneRenderer& sr)
         glBegin(GL_LINES);
     }
     else
-    {
         texturedRainState.setState();
-    }
 
     if (!_CULLING_RAIN)   // draw ALL the rain
     {
@@ -715,9 +705,7 @@ void WeatherRenderer::buildDropList(bool _draw)
     }
 
     if (!_draw)
-    {
         glEndList();
-    }
 }
 
 
@@ -750,9 +738,7 @@ void WeatherRenderer::buildPuddleList(bool _draw)
     glEnd();
 
     if (!_draw)
-    {
         glEndList();
-    }
 }
 
 
@@ -766,18 +752,12 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
     if (drop->speed < 0)
     {
         if (cullRoofTops)
-        {
             killDrop = (drop->pos[2] < drop->roofTop);
-        }
         else
-        {
             killDrop = (drop->pos[2] < rainEndZ);
-        }
     }
     else
-    {
         killDrop = (drop->pos[2] > rainEndZ);
-    }
 
     if (killDrop)
     {
@@ -788,13 +768,9 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
             thePuddle.pos[0] = drop->pos[0];
             thePuddle.pos[1] = drop->pos[1];
             if (!cullRoofTops)
-            {
                 thePuddle.pos[2] = rainEndZ;
-            }
             else
-            {
                 thePuddle.pos[2] = drop->roofTop + 0.05f;
-            }
             thePuddle.time = 0.001f;
             puddles.push_back (thePuddle);
         }
@@ -823,9 +799,7 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
                     }
                 }
                 else
-                {
                     drop->roofTop = rainEndZ;
-                }
 
                 return true;
             }
@@ -860,9 +834,7 @@ bool WeatherRenderer::updateDrop(std::vector<rain>::iterator& drop,
                     }
                 }
                 else
-                {
                     newDrop.roofTop = rainEndZ;
-                }
 
                 toAdd.push_back(newDrop);
             }
@@ -930,13 +902,9 @@ void WeatherRenderer::drawDrop(rain& drop, const SceneRenderer& sr)
             glRotatef(lastRainTime * 10.0f * rainSpeed, 0, 0, 1);
 
         if (1)
-        {
             glCallList(dropList);
-        }
         else
-        {
             buildDropList(true);
-        }
         glPopMatrix();
     }
 }
@@ -954,13 +922,9 @@ void WeatherRenderer::drawPuddle(puddle& splash)
 
     glScalef(scale, scale, scale);
     if (1)
-    {
         glCallList(puddleList);
-    }
     else
-    {
         buildPuddleList(true);
-    }
 
     glPopMatrix();
 }
@@ -1032,6 +996,6 @@ bool WeatherRenderer::dbItemSet(const char *name)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

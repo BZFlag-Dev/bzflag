@@ -43,40 +43,40 @@ public:
     typedef void (*Callback)(const std::string& name, void* userData);
 
     // add/replace a command handler
-    void				add(const std::string& name,
+    void                add(const std::string& name,
                             CommandFunction, const std::string& help);
 
     // remove a command handler
-    void				remove(const std::string& name);
+    void                remove(const std::string& name);
 
     // get the help string for a command
-    std::string			getHelp(const std::string& name) const;
+    std::string         getHelp(const std::string& name) const;
 
     // execute a command
-    std::string			run(const std::string& name, const ArgList& args, bool *ret = NULL) const;
+    std::string         run(const std::string& name, const ArgList& args, bool *ret = NULL) const;
 
     // parse and execute a command
-    std::string			run(const std::string& cmd, bool *ret = NULL) const;
+    std::string         run(const std::string& cmd, bool *ret = NULL) const;
 
     // invoke the callback for each registered command
-    void				iterate(Callback, void* userData) const;
+    void                iterate(Callback, void* userData) const;
 
 private:
 
-    static const char*	readValue(const char* string, std::string* value);
-    static const char*	readUnquoted(const char* string, std::string* value);
-    static const char*	readQuoted(const char* string, std::string* value);
-    static const char*	skipWhitespace(const char* string);
+    static const char*  readValue(const char* string, std::string* value);
+    static const char*  readUnquoted(const char* string, std::string* value);
+    static const char*  readQuoted(const char* string, std::string* value);
+    static const char*  skipWhitespace(const char* string);
 
     struct CmdInfo
     {
     public:
-        CommandFunction	func;
-        std::string		help;
+        CommandFunction func;
+        std::string     help;
     };
     typedef std::map<std::string, CmdInfo> Commands;
 
-    Commands			commands;
+    Commands            commands;
 };
 
 
@@ -86,6 +86,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

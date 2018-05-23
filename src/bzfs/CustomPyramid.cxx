@@ -104,9 +104,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     if (faceList.empty())
     {
         if (strcasecmp(cmd, "bottom") == 0)
-        {
             faceList.push_back(ZN);
-        }
         else if ((strcasecmp(cmd, "edge") == 0) || // meshpyr keyword
                  (strcasecmp(cmd, "sides") == 0))
         {
@@ -133,9 +131,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
     else
     {
         for (int i = 0; i < FaceCount; i++)
-        {
             faceList.push_back(i);
-        }
     }
     const int faceCount = (int)faceList.size();
 
@@ -184,9 +180,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
         isOldPyramid = false;
         float tmp[2];
         if (!(parms >> tmp[0] >> tmp[1]))
-        {
             return false;
-        }
         else
         {
             for (int i = 0; i < (int)faceList.size(); i++)
@@ -203,9 +197,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
         isOldPyramid = false;
         float tmp[2];
         if (!(parms >> tmp[0] >> tmp[1]))
-        {
             return false;
-        }
         else
         {
             for (int i = 0; i < (int)faceList.size(); i++)
@@ -256,16 +248,12 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
         }
         const int f = faceList[i];
         if (!parseMaterials(cmd, parmsCopy, &materials[f], 1, materror))
-        {
             break;
-        }
         else
         {
             gotMaterial = true;
             if (materror)
-            {
                 gotMatError = true;
-            }
         }
     }
     if (gotMaterial)
@@ -276,9 +264,7 @@ bool CustomPyramid::read(const char *cmd, std::istream& input)
 
     // last chance
     if (WorldFileObstacle::read(cmd, parms))
-    {
         return true;
-    }
 
     return false;
 }
@@ -329,9 +315,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
                                 fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
                                 driveThrough, shootThrough, ricochet);
         if (flipz || (size[2] < 0.0f))
-        {
             pyr->setZFlip();
-        }
         groupdef->addObstacle(pyr);
         return;
     }
@@ -379,9 +363,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
         {+0.0f, +0.0f, 1.0f}
     };
     for (i = 0; i < 5; i++)
-    {
         verts.push_back(vertsData[i]);
-    }
 
     // add the texture coordinates
     const int txcdAxis[6][2] =
@@ -418,9 +400,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
             {
                 float scale;
                 if (texsize[face][a] >= 0.0f)
-                {
                     scale = texsize[face][a];
-                }
                 else
                 {
                     const int axis = txcdAxis[face][a];
@@ -441,9 +421,7 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
     // get the material refs
     const BzMaterial* mats[FaceCount];
     for (i = 0; i < FaceCount; i++)
-    {
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
-    }
 
     // the index arrays
     std::vector<int> iv;
@@ -514,13 +492,9 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 
     // to be or not to be...
     if (mesh->isValid())
-    {
         groupdef->addObstacle(mesh);
-    }
     else
-    {
         delete mesh;
-    }
 
     return;
 }
@@ -530,6 +504,6 @@ void CustomPyramid::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

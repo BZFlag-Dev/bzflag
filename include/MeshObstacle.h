@@ -11,11 +11,11 @@
  */
 
 /* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+ *  Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZF_MESH_OBSTACLE_H
-#define	BZF_MESH_OBSTACLE_H
+#ifndef BZF_MESH_OBSTACLE_H
+#define BZF_MESH_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -57,7 +57,7 @@ public:
     void copyFace(int face, MeshObstacle* mesh) const;
 
     void setName(const std::string& name);
-    const std::string&	getName() const;
+    const std::string&  getName() const;
 
     enum CheckType
     {
@@ -247,6 +247,6 @@ inline void MeshObstacle::setName(const std::string& str)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -26,7 +26,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-const int		PyrPolygons = 20;
+const int       PyrPolygons = 20;
 
 EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
         const float size[3], float rotation) :
@@ -82,7 +82,7 @@ EighthDPyrSceneNode::~EighthDPyrSceneNode()
     // do nothing
 }
 
-void			EighthDPyrSceneNode::notifyStyleChange()
+void            EighthDPyrSceneNode::notifyStyleChange()
 {
     EighthDimSceneNode::notifyStyleChange();
 
@@ -100,7 +100,7 @@ void			EighthDPyrSceneNode::notifyStyleChange()
     gstate = builder.getState();
 }
 
-void			EighthDPyrSceneNode::addRenderNodes(
+void            EighthDPyrSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     EighthDimSceneNode::addRenderNodes(renderer);
@@ -141,7 +141,7 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()
     // do nothing
 }
 
-void			EighthDPyrSceneNode::EighthDPyrRenderNode::render()
+void            EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
@@ -166,6 +166,6 @@ void			EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

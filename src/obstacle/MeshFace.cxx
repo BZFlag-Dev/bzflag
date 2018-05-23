@@ -114,9 +114,7 @@ void MeshFace::finalize()
         {
             logDebugMessage(0,":");
             for (i = 0; i < vertexCount; i++)
-            {
                 logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
-            }
             print(std::cerr, "");
         }
         logDebugMessage(1,"\n");
@@ -150,9 +148,7 @@ void MeshFace::finalize()
             {
                 logDebugMessage(0,":");
                 for (i = 0; i < vertexCount; i++)
-                {
                     logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
-                }
                 print(std::cerr, "");
             }
             logDebugMessage(1,"\n");
@@ -173,9 +169,7 @@ void MeshFace::finalize()
             {
                 logDebugMessage(0,":");
                 for (i = 0; i < vertexCount; i++)
-                {
                     logDebugMessage(0," %i", (int)((afvec3*)vertices[i] - mesh->getVertices()));
-                }
                 print(std::cerr, "");
             }
             logDebugMessage(1,"\n");
@@ -187,9 +181,7 @@ void MeshFace::finalize()
 
     // setup extents
     for (v = 0; v < vertexCount; v++)
-    {
         extents.expandToPoint(vertices[v]);
-    }
 
     // setup fake obstacle parameters
     pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;
@@ -241,18 +233,12 @@ void MeshFace::finalize()
         plane[1] = 0.0f;
     }
     else if ((fabsf(plane[0]) + fudge) >= 1.0f)
-    {
         planeBits |= XPlane;
-    }
     else if ((fabsf(plane[1]) + fudge) >= 1.0f)
-    {
         planeBits |= YPlane;
-    }
 
     if (fabsf(plane[2]) < fudge)
-    {
         planeBits |= WallPlane;
-    }
 
     return;
 }
@@ -286,13 +272,9 @@ bool MeshFace::isValid() const
 {
     // this is used as a tag in finalize()
     if (vertexCount == 0)
-    {
         return false;
-    }
     else
-    {
         return true;
-    }
 }
 
 
@@ -314,12 +296,12 @@ float MeshFace::intersect(const Ray& ray) const
     // to see if the intersection point is contained within
     // the face.
     //
-    //  L - line unit vector	  Lo - line origin
+    //  L - line unit vector      Lo - line origin
     //  N - plane normal unit vector  d  - plane offset
-    //  P - point in question	 t - time
+    //  P - point in question    t - time
     //
-    //  (N dot P) + d = 0		      { plane equation }
-    //  P = (t * L) + Lo		       { line equation }
+    //  (N dot P) + d = 0             { plane equation }
+    //  P = (t * L) + Lo               { line equation }
     //  t (N dot L) + (N dot Lo) + d = 0
     //
     //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
@@ -343,9 +325,7 @@ float MeshFace::intersect(const Ray& ray) const
     // linedot should be safe to divide with now
     hitTime = - (plane[3] + origindot) / linedot;
     if (hitTime < 0.0f)
-    {
         return -1.0f;
-    }
 
     // get the contact location
     float point[3];
@@ -360,9 +340,7 @@ float MeshFace::intersect(const Ray& ray) const
                   (edgePlanes[q][1] * point[1]) +
                   (edgePlanes[q][2] * point[2]) + edgePlanes[q][3];
         if (d > 0.001f)
-        {
             return -1.0f;
-        }
     }
 
     return hitTime;
@@ -406,9 +384,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
                 return;
             }
             if (twinAreas[i] < smallestArea)
-            {
                 smallestArea = twinAreas[i];
-            }
         }
         float normal[3] = {0.0f, 0.0f, 0.0f};
         for (i = 0; i < vertexCount; i++)
@@ -443,9 +419,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
 void MeshFace::getNormal(const float* UNUSED(p), float* n) const
 {
     if (n)
-    {
         memcpy (n, plane, sizeof(float[3]));
-    }
     return;
 }
 
@@ -461,9 +435,7 @@ bool MeshFace::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAngle),
                             float* normal) const
 {
     if (normal)
-    {
         memcpy (normal, plane, sizeof(float[3]));
-    }
     return true;
 }
 
@@ -481,9 +453,7 @@ bool MeshFace::inBox(const float* p, float _angle,
 
     // Z axis separation test
     if ((extents.mins[2] > (p[2] + height)) || (extents.maxs[2] < p[2]))
-    {
         return false;
-    }
 
     // translate the face so that the box is an origin box
     // centered at 0,0,0  (this assumes that it is cheaper
@@ -520,13 +490,9 @@ bool MeshFace::inBox(const float* p, float _angle,
     for (i = 0; i < vertexCount; i++)
     {
         if (v[i][0] < min)
-        {
             min = v[i][0];
-        }
         if (v[i][0] > max)
-        {
             max = v[i][0];
-        }
     }
     if ((min > dx) || (max < -dx))
     {
@@ -540,13 +506,9 @@ bool MeshFace::inBox(const float* p, float _angle,
     for (i = 0; i < vertexCount; i++)
     {
         if (v[i][1] < min)
-        {
             min = v[i][1];
-        }
         if (v[i][1] > max)
-        {
             max = v[i][1];
-        }
     }
     if ((min > dy) || (max < -dy))
     {
@@ -582,13 +544,9 @@ bool MeshFace::inMovingBox(const float* oldPos, float UNUSED(oldAngle),
     _pos[0] = newPos[0];
     _pos[1] = newPos[1];
     if (oldPos[2] < newPos[2])
-    {
         _pos[2] = oldPos[2];
-    }
     else
-    {
         _pos[2] = newPos[2];
-    }
     height = height + fabsf(oldPos[2] - newPos[2]);
 
     return inBox(_pos, newAngle, dx, dy, height);
@@ -600,9 +558,7 @@ bool MeshFace::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
                           float* _plane) const
 {
     if (_plane != NULL)
-    {
         memcpy(_plane, plane, sizeof(float[4]));
-    }
     return true;
 }
 
@@ -731,13 +687,9 @@ int MeshFace::packSize() const
     fullSize += sizeof(int32_t);
     fullSize += sizeof(int32_t) * vertexCount;
     if (useNormals())
-    {
         fullSize += sizeof(int32_t) * vertexCount;
-    }
     if (useTexcoords())
-    {
         fullSize += sizeof(int32_t) * vertexCount;
-    }
     fullSize += sizeof(int32_t); // material
     fullSize += sizeof(int32_t); // physics driver
 
@@ -748,9 +700,7 @@ int MeshFace::packSize() const
 void MeshFace::print(std::ostream& out, const std::string& indent) const
 {
     if (mesh == NULL)
-    {
         return;
-    }
 
     int i;
     out << indent << "  face" << std::endl;
@@ -771,9 +721,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << " #";
         for (i = 0; i < vertexCount; i++)
-        {
             out << " " << vertices[i][0] << " " << vertices[i][1] << " " << vertices[i][2];
-        }
     }
     out << std::endl;
 
@@ -789,9 +737,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
         {
             out << " #";
             for (i = 0; i < vertexCount; i++)
-            {
                 out << " " << normals[i][0] <<  " " << normals[i][1] << " " << normals[i][2];
-            }
         }
         out << std::endl;
     }
@@ -808,9 +754,7 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
         {
             out << " #";
             for (i = 0; i < vertexCount; i++)
-            {
                 out << " " << texcoords[i][0] <<  " " << texcoords[i][1];
-            }
         }
         out << std::endl;
     }
@@ -824,44 +768,28 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << "    phydrv ";
         if (driver->getName().size() > 0)
-        {
             out << driver->getName();
-        }
         else
-        {
             out << phydrv;
-        }
         out << std::endl;
     }
 
     if (noclusters && !mesh->noClusters())
-    {
         out << indent << "    noclusters" << std::endl;
-    }
     if (smoothBounce && !mesh->useSmoothBounce())
-    {
         out << indent << "    smoothBounce" << std::endl;
-    }
     if ((driveThrough && shootThrough) &&
             !(mesh->isDriveThrough() && mesh->isShootThrough()))
-    {
         out << indent << "    passable" << std::endl;
-    }
     else
     {
         if (driveThrough && !mesh->isDriveThrough())
-        {
             out << indent << "    driveThrough" << std::endl;
-        }
         if (shootThrough && !mesh->isShootThrough())
-        {
             out << indent << "    shootThrough" << std::endl;
-        }
     }
     if (ricochet &&  !mesh->canRicochet())
-    {
         out << indent << "  ricochet" << std::endl;
-    }
 
     out << indent << "  endface" << std::endl;
 
@@ -873,6 +801,6 @@ void MeshFace::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

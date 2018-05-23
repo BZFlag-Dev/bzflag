@@ -92,7 +92,7 @@ static const int HEADER_SIZE_STUFFING = 0;
 typedef uint16_t u16;
 typedef uint32_t u32;
 #ifndef _WIN32
-typedef int64_t RRtime;	// should last a while
+typedef int64_t RRtime; // should last a while
 #else
 typedef __int64 RRtime;
 #endif
@@ -123,21 +123,21 @@ static const unsigned int RRpacketHdrSize =
 
 typedef struct
 {
-    u32 magic;			// record file type identifier
-    u32 version;			// record file version
-    u32 offset;			// length of the full header
-    RRtime filetime;		// amount of time in the file
-    u32 player;			// player that saved this record file
-    u32 flagsSize;		// size of the flags data
-    u32 worldSize;		// size of world database
-    char callSign[CallSignLen];	// player's callsign
-    char motto[MottoLen];		// player's motto
-    char ServerVersion[8];	// BZFS protocol version
-    char appVersion[MessageLen - 14];	// BZFS application version
-    char realHash[64];		// hash of worldDatabase
+    u32 magic;          // record file type identifier
+    u32 version;            // record file version
+    u32 offset;         // length of the full header
+    RRtime filetime;        // amount of time in the file
+    u32 player;         // player that saved this record file
+    u32 flagsSize;      // size of the flags data
+    u32 worldSize;      // size of world database
+    char callSign[CallSignLen]; // player's callsign
+    char motto[MottoLen];       // player's motto
+    char ServerVersion[8];  // BZFS protocol version
+    char appVersion[MessageLen - 14];   // BZFS application version
+    char realHash[64];      // hash of worldDatabase
     char worldSettings[4 + WorldSettingsSize]; // the game settings
-    char *flags;			// a list of the flags types
-    char *world;			// the world
+    char *flags;            // a list of the flags types
+    char *world;            // the world
 } ReplayHeader;
 //static const unsigned int ReplayHeaderSize =
 //  sizeof(ReplayHeader) - (2 * sizeof(char*));
@@ -179,6 +179,6 @@ static const unsigned int ReplayHeaderSize =
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

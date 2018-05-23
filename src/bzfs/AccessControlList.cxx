@@ -97,13 +97,9 @@ void AccessControlList::hostBan(std::string hostpat, const char *bannedBy, int p
     if (reason) toban.reason = reason;
     hostBanList_t::iterator oldit = std::find(hostBanList.begin(), hostBanList.end(), toban);
     if (oldit != hostBanList.end())
-    {
         *oldit = toban;
-    }
     else
-    {
         hostBanList.push_back(toban);
-    }
 }
 
 
@@ -114,13 +110,9 @@ void AccessControlList::idBan(std::string idpat, const char *bannedBy, int perio
     if (reason) toban.reason = reason;
     idBanList_t::iterator oldit = std::find(idBanList.begin(), idBanList.end(), toban);
     if (oldit != idBanList.end())
-    {
         *oldit = toban;
-    }
     else
-    {
         idBanList.push_back(toban);
-    }
 }
 
 
@@ -232,9 +224,7 @@ bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
 {
     expire();
     if (strlen(id) == 0)
-    {
         return true;
-    }
     for (idBanList_t::iterator it = idBanList.begin(); it != idBanList.end(); ++it)
     {
         if (strcmp(id, it->idpat.c_str()) == 0)
@@ -252,20 +242,14 @@ bool AccessControlList::idValidate(const char *id, IdBanInfo *info)
 static std::string makeGlobPattern(const char* str)
 {
     if (str == NULL)
-    {
         return "*";
-    }
     while ((*str != '\0') && isspace(*str)) str++;
     if (*str == '\0')
-    {
         return "*";
-    }
     std::string pattern = str;
     pattern = TextUtils::toupper(pattern);
     if (pattern.find('*') == std::string::npos)
-    {
         pattern = "*" + pattern + "*";
-    }
     printf ("PATTERN = \"%s\"\n", pattern.c_str());
     return pattern;
 }
@@ -284,27 +268,19 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
     {
         os << (ntohl(mask.s_addr) >> 24) << '.';
         if (cidr == 8)
-        {
             os << "*.*.*";
-        }
         else
         {
             os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
             if (cidr == 16)
-            {
                 os << "*.*";
-            }
             else
             {
                 os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
                 if (cidr == 24)
-                {
                     os << "*";
-                }
                 else
-                {
                     os << (ntohl(mask.s_addr) & 0xff);
-                }
             }
         }
     }
@@ -366,9 +342,7 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
                 (glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
                  glob_match(glob, TextUtils::toupper(bi.reason)) ||
                  glob_match(glob, TextUtils::toupper(bi.bannedBy))))
-        {
             sendBan(id, *it);
-        }
     }
 
     // normal bans last
@@ -379,9 +353,7 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
                 (glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
                  glob_match(glob, TextUtils::toupper(bi.reason)) ||
                  glob_match(glob, TextUtils::toupper(bi.bannedBy))))
-        {
             sendBan(id, *it);
-        }
     }
 }
 
@@ -402,9 +374,7 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
         if (!glob_match(glob, TextUtils::toupper(bi.hostpat)) &&
                 !glob_match(glob, TextUtils::toupper(bi.reason)) &&
                 !glob_match(glob, TextUtils::toupper(bi.bannedBy)))
-        {
             continue;
-        }
 
         char *pMsg = banlistmessage;
         snprintf(pMsg, MessageLen, "%s", bi.hostpat.c_str());
@@ -414,19 +384,13 @@ void AccessControlList::sendHostBans(PlayerId id, const char* pattern)
         int remaining;
         remaining = MessageLen - strlen(pMsg);
         if (duration < 365.0f * 24 * 3600)
-        {
             snprintf(pMsg + strlen(pMsg), remaining, " (%.1f minutes)", duration / 60);
-        }
         remaining = MessageLen - strlen(pMsg);
         if (bi.bannedBy.length())
-        {
             snprintf(pMsg + strlen(pMsg), remaining, " banned by: %s", bi.bannedBy.c_str());
-        }
         remaining = MessageLen - strlen(pMsg);
         if (bi.fromMaster)
-        {
             snprintf(pMsg + strlen(pMsg), remaining, "(m)");
-        }
 
         sendMessage(ServerPlayer, id, banlistmessage);
 
@@ -457,40 +421,28 @@ void AccessControlList::sendIdBans(PlayerId id, const char* pattern)
         if (!glob_match(glob, TextUtils::toupper(bi.idpat)) &&
                 !glob_match(glob, TextUtils::toupper(bi.reason)) &&
                 !glob_match(glob, TextUtils::toupper(bi.bannedBy)))
-        {
             continue;
-        }
 
         char *pMsg = banlistmessage;
 
         bool useQuotes = (bi.idpat.find_first_of(" \t") != std::string::npos);
         if (useQuotes)
-        {
             snprintf(pMsg, MessageLen, "\"%s\"", bi.idpat.c_str());
-        }
         else
-        {
             snprintf(pMsg, MessageLen, "%s", bi.idpat.c_str());
-        }
 
         // print duration when < 1 year
         double duration = bi.banEnd - TimeKeeper::getCurrent();
         int remaining;
         remaining = MessageLen - strlen(pMsg);
         if (duration < 365.0f * 24 * 3600)
-        {
             snprintf(pMsg + strlen(pMsg), remaining, " (%.1f minutes)", duration / 60);
-        }
         remaining = MessageLen - strlen(pMsg);
         if (bi.bannedBy.length())
-        {
             snprintf(pMsg + strlen(pMsg), remaining, " banned by: %s", bi.bannedBy.c_str());
-        }
         remaining = MessageLen - strlen(pMsg);
         if (bi.fromMaster)
-        {
             snprintf(pMsg + strlen(pMsg), remaining, "(m)");
-        }
 
         sendMessage(ServerPlayer, id, banlistmessage);
 
@@ -528,9 +480,7 @@ bool AccessControlList::load()
     {
         is >> ipAddress;
         if (ipAddress == "host:")
-        {
             is >> hostpat;
-        }
         else if (ipAddress == "bzid:")
         {
             is.ignore(1);
@@ -603,9 +553,7 @@ bool AccessControlList::load()
 int AccessControlList::merge(const std::string& banData)
 {
     if (!banData.size())
-    {
         return 0;
-    }
     int bansAdded = 0;
     std::stringstream is(banData,std::stringstream::in);
 
@@ -617,9 +565,7 @@ int AccessControlList::merge(const std::string& banData)
     {
         is >> ipAddress;
         if (ipAddress == "host:")
-        {
             is >> hostpat;
-        }
         else if (ipAddress == "bzid:")
         {
             is.ignore(1);
@@ -673,9 +619,7 @@ int AccessControlList::merge(const std::string& banData)
         {
             std::string::size_type n;
             while ((n = ipAddress.find('*')) != std::string::npos)
-            {
                 ipAddress.replace(n, 1, "255");
-            }
             if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
                      (reason.size() > 0 ? reason.c_str() : NULL),true))
             {
@@ -701,7 +645,7 @@ void AccessControlList::save()
     }
     for (banList_t::const_iterator it = banList.begin(); it != banList.end(); ++it)
     {
-        if (!it->fromMaster)  	// don't save stuff from the master list
+        if (!it->fromMaster)    // don't save stuff from the master list
         {
             // print address
             os << getBanMaskString(it->addr, it->cidr) << '\n';
@@ -709,9 +653,7 @@ void AccessControlList::save()
             // print ban end, banner, and reason
             if (it->banEnd.getSeconds() ==
                     TimeKeeper::getSunExplodeTime().getSeconds())
-            {
                 os << "end: 0" << '\n';
-            }
             else
             {
                 os << "end: " << (long(it->banEnd.getSeconds() + time(NULL) -
@@ -730,9 +672,7 @@ void AccessControlList::save()
         // print ban end, banner, and reason
         if (ith->banEnd.getSeconds() ==
                 TimeKeeper::getSunExplodeTime().getSeconds())
-        {
             os << "end: 0" << '\n';
-        }
         else
         {
             os << "end: " << (long(ith->banEnd.getSeconds() + time(NULL) -
@@ -750,9 +690,7 @@ void AccessControlList::save()
         // print ban end, banner, and reason
         if (iti->banEnd.getSeconds() ==
                 TimeKeeper::getSunExplodeTime().getSeconds())
-        {
             os << "end: 0" << '\n';
-        }
         else
         {
             os << "end: " << (long(iti->banEnd.getSeconds() + time(NULL) -
@@ -769,7 +707,7 @@ void AccessControlList::purge(bool master)
 {
     // selectively remove bans, depending on their origin
     // (local or from master list)
-    banList_t::iterator	bItr = banList.begin();
+    banList_t::iterator bItr = banList.begin();
     while (bItr != banList.end())
     {
         if (bItr->fromMaster == master)
@@ -777,7 +715,7 @@ void AccessControlList::purge(bool master)
         else
             ++bItr;
     }
-    hostBanList_t::iterator	hItr = hostBanList.begin();
+    hostBanList_t::iterator hItr = hostBanList.begin();
     while (hItr != hostBanList.end())
     {
         if (hItr->fromMaster == master)
@@ -785,17 +723,13 @@ void AccessControlList::purge(bool master)
         else
             ++hItr;
     }
-    idBanList_t::iterator	iItr = idBanList.begin();
+    idBanList_t::iterator   iItr = idBanList.begin();
     while (iItr != idBanList.end())
     {
         if (iItr->fromMaster == master)
-        {
             iItr = idBanList.erase(iItr);
-        }
         else
-        {
             ++iItr;
-        }
     }
 }
 
@@ -947,35 +881,23 @@ void AccessControlList::expire()
     for (banList_t::iterator it = banList.begin(); it != banList.end();)
     {
         if (it->banEnd <= now)
-        {
             it = banList.erase(it);
-        }
         else
-        {
             ++it;
-        }
     }
     for (hostBanList_t::iterator ith = hostBanList.begin(); ith != hostBanList.end();)
     {
         if (ith->banEnd <= now)
-        {
             ith = hostBanList.erase(ith);
-        }
         else
-        {
             ++ith;
-        }
     }
     for (idBanList_t::iterator iti = idBanList.begin(); iti != idBanList.end();)
     {
         if (iti->banEnd <= now)
-        {
             iti = idBanList.erase(iti);
-        }
         else
-        {
             ++iti;
-        }
     }
 }
 
@@ -984,6 +906,6 @@ void AccessControlList::expire()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

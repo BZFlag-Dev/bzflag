@@ -37,10 +37,10 @@ bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
     // special keys to get out
     switch (key.ascii)
     {
-    case 27:	// escape
+    case 27:    // escape
         HUDDialogStack::get()->pop();
         return true;
-    case 13:	// return
+    case 13:    // return
         HUDDialogStack::get()->top()->execute();
         return true;
     }
@@ -73,6 +73,6 @@ bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& UNUSED(key))
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

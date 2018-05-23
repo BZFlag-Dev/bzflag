@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_MGR_H
-#define	BZF_OBSTACLE_MGR_H
+#ifndef BZF_OBSTACLE_MGR_H
+#define BZF_OBSTACLE_MGR_H
 
 #include "common.h"
 
@@ -166,7 +166,7 @@ private:
     std::string name;
 
     ObstacleList lists[ObstacleTypeCount];
-    std::vector<GroupInstance*>		groups;
+    std::vector<GroupInstance*>     groups;
 
     mutable bool active; // for recursion checking
 
@@ -296,6 +296,6 @@ extern GroupDefinitionMgr OBSTACLEMGR;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

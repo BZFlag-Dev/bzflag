@@ -41,32 +41,32 @@ public:
 
     /** Get the frame rate of the audio file. A frame is one sample
         for each channel. */
-    int			getFramesPerSecond() const;
+    int         getFramesPerSecond() const;
 
     /** Get the number of channels in the audio file. */
-    int			getNumChannels() const;
+    int         getNumChannels() const;
 
     /** Get the number of frames in the audio file. A frame is one sample
         for each channel. */
-    int			getNumFrames() const;
+    int         getNumFrames() const;
 
     /** Get the sample width of the audio file, in bytes. */
-    int			getSampleWidth() const;
+    int         getSampleWidth() const;
 
 protected:
     AudioFile(std::istream*);
 
     // save info about the stream.  called by the derived c'tor.
     // don't call this if the stream is not an audio file.
-    void			init(int framesPerSecond, int numChannels,
+    void            init(int framesPerSecond, int numChannels,
                          int numFrames, int sampWidth);
 
 private:
-    bool			open;
-    int			framesPerSecond;
-    int			numChannels;
-    int			numFrames;
-    int			sampWidth;
+    bool            open;
+    int         framesPerSecond;
+    int         numChannels;
+    int         numFrames;
+    int         sampWidth;
 };
 
 #endif

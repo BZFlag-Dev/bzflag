@@ -23,9 +23,9 @@
 #include "playing.h"
 #include "HUDui.h"
 
-const int		FormatMenu::NumReadouts = 4;
-const int		FormatMenu::NumItems = 30;
-const int		FormatMenu::NumColumns = 3;
+const int       FormatMenu::NumReadouts = 4;
+const int       FormatMenu::NumItems = 30;
+const int       FormatMenu::NumColumns = 3;
 
 bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
@@ -33,39 +33,29 @@ bool FormatMenuDefaultKey::keyPress(const BzfKeyEvent& key)
         {
         case BzfKeyEvent::Up:
             if (HUDui::getFocus())
-            {
                 menu->setSelected(menu->getSelected() - 1);
-            }
             return true;
 
         case BzfKeyEvent::Down:
             if (HUDui::getFocus())
-            {
                 menu->setSelected(menu->getSelected() + 1);
-            }
             return true;
 
         case BzfKeyEvent::PageUp:
             if (HUDui::getFocus())
-            {
                 menu->setSelected(menu->getSelected() - FormatMenu::NumItems);
-            }
             return true;
 
         case BzfKeyEvent::PageDown:
             if (HUDui::getFocus())
-            {
                 menu->setSelected(menu->getSelected() + FormatMenu::NumItems);
-            }
             return true;
         }
 
     else if (key.ascii == '\t')
     {
         if (HUDui::getFocus())
-        {
             menu->setSelected(menu->getSelected() + 1);
-        }
         return true;
     }
 
@@ -89,8 +79,8 @@ bool FormatMenuDefaultKey::keyRelease(const BzfKeyEvent& key)
     }
     switch (key.ascii)
     {
-    case 27:	// escape
-    case 13:	// return
+    case 27:    // escape
+    case 13:    // return
     case 'T':
     case 't':
         return true;
@@ -110,9 +100,9 @@ FormatMenu::FormatMenu() : defaultKey(this), badFormats(NULL)
 
     // add controls
     addLabel("Video Format", "");
-    addLabel("", "");			// instructions
-    addLabel("", "Current Format:");	// current format readout
-    addLabel("", "");			// page readout
+    addLabel("", "");           // instructions
+    addLabel("", "Current Format:");    // current format readout
+    addLabel("", "");           // page readout
     currentLabel = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
     pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
 
@@ -213,9 +203,7 @@ void FormatMenu::setSelected(int index)
         getControls()[NumReadouts + indexOnPage]->setFocus();
     }
     else
-    {
         setFocus(NULL);
-    }
 }
 
 void FormatMenu::show()
@@ -327,6 +315,6 @@ void FormatMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

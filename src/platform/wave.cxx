@@ -15,20 +15,20 @@
 #include <stdio.h>
 #include <string.h>
 
-static void		ltohs(int16_t* data)
+static void     ltohs(int16_t* data)
 {
     unsigned char* b = (unsigned char*)data;
     *data = (int16_t)((uint16_t)b[0] + ((uint16_t)b[1] << 8));
 }
 
-static void		ltohl(int32_t* data)
+static void     ltohl(int32_t* data)
 {
     unsigned char* b = (unsigned char*)data;
     *data = (int32_t)((uint32_t)b[0] + ((uint32_t)b[1] << 8) +
                       ((uint32_t)b[2] << 16) + ((uint32_t)b[3] << 24));
 }
 
-static int		readShort(FILE* file, int16_t* data)
+static int      readShort(FILE* file, int16_t* data)
 {
     unsigned char b[2];
     if (fread(&b, 1, 2, file) != 2)
@@ -37,7 +37,7 @@ static int		readShort(FILE* file, int16_t* data)
     return 0;
 }
 
-static int		readLong(FILE* file, int32_t* data)
+static int      readLong(FILE* file, int32_t* data)
 {
     unsigned char b[4];
     if (fread(&b, 1, 4, file) != 4)
@@ -47,7 +47,7 @@ static int		readLong(FILE* file, int32_t* data)
     return 0;
 }
 
-static int		readHeader(FILE* file, char *tag, int32_t *size)
+static int      readHeader(FILE* file, char *tag, int32_t *size)
 {
     if (fread(tag, 1, 4, file) != 4)
     {
@@ -62,14 +62,14 @@ static int		readHeader(FILE* file, char *tag, int32_t *size)
     return 0;
 }
 
-static int		skipChunk(FILE* file, int size)
+static int      skipChunk(FILE* file, int size)
 {
     if (size != 0)
         return 0;
     return fseek(file, size, SEEK_CUR);
 }
 
-static int		findChunk(FILE* file, const char *tag, int32_t *size)
+static int      findChunk(FILE* file, const char *tag, int32_t *size)
 {
     char curtag[4];
 
@@ -92,16 +92,16 @@ public:
     {
         if (file) fclose(file);
     }
-    void		release()
+    void        release()
     {
         file = NULL;
     }
 
 private:
-    FILE*		file;
+    FILE*       file;
 };
 
-FILE*			openWavFile(const char *filename,
+FILE*           openWavFile(const char *filename,
                             short *format, long *speed,
                             int *samples, short *channels, short *width)
 {
@@ -193,13 +193,13 @@ FILE*			openWavFile(const char *filename,
     return file;
 }
 
-void			closeWavFile(FILE* file)
+void            closeWavFile(FILE* file)
 {
     if (file)
         fclose(file);
 }
 
-int			readWavData(FILE* file, char *data,
+int         readWavData(FILE* file, char *data,
                         int numSamples, int width)
 {
     // read data
@@ -231,6 +231,6 @@ int			readWavData(FILE* file, char *data,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

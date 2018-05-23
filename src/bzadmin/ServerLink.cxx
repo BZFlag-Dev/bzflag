@@ -44,17 +44,17 @@
 #define UDEBUGMSG false
 
 #if defined(NETWORK_STATS)
-static TimeKeeper	startTime;
-static uint32_t		bytesSent;
-static uint32_t		bytesReceived;
-static uint32_t		packetsSent;
-static uint32_t		packetsReceived;
+static TimeKeeper   startTime;
+static uint32_t     bytesSent;
+static uint32_t     bytesReceived;
+static uint32_t     packetsSent;
+static uint32_t     packetsReceived;
 #endif
 
 #if defined(_WIN32)
-DWORD ThreadID;		// Thread ID
-HANDLE hConnected;	// "Connected" event
-HANDLE hThread;		// Connection thread
+DWORD ThreadID;     // Thread ID
+HANDLE hConnected;  // "Connected" event
+HANDLE hThread;     // Connection thread
 
 typedef struct
 {
@@ -84,11 +84,11 @@ TimeKeeper packetStartTime;
 static const unsigned long serverPacket = 1;
 static const unsigned long endPacket = 0;
 
-ServerLink*		ServerLink::server = NULL;
+ServerLink*     ServerLink::server = NULL;
 
 ServerLink::ServerLink(const Address& serverAddress, int port) :
-    state(SocketError),	// assume failure
-    fd(-1),			// assume failure
+    state(SocketError), // assume failure
+    fd(-1),         // assume failure
     udpLength(0),
     udpBufferPtr(),
     ubuf()
@@ -302,13 +302,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
             char message[512];
             int len = recv(query, (char*)message, 512, 0);
             if (len > 0)
-            {
                 message[len - 1] = 0;
-            }
             else
-            {
                 message[0] = 0;
-            }
             rejectionMessage = message;
         }
 
@@ -411,17 +407,17 @@ ServerLink::~ServerLink()
 #endif
 }
 
-ServerLink*		ServerLink::getServer() // const
+ServerLink*     ServerLink::getServer() // const
 {
     return server;
 }
 
-void			ServerLink::setServer(ServerLink* _server)
+void            ServerLink::setServer(ServerLink* _server)
 {
     server = _server;
 }
 
-void			ServerLink::send(uint16_t code, uint16_t len,
+void            ServerLink::send(uint16_t code, uint16_t len,
                                  const void* msg)
 {
     bool needForSpeed=false;
@@ -495,7 +491,7 @@ void			ServerLink::send(uint16_t code, uint16_t len,
 #endif
 #endif //WIN32
 
-int			ServerLink::read(uint16_t& code, uint16_t& len,
+int         ServerLink::read(uint16_t& code, uint16_t& len,
                              void* msg, int blockTime)
 {
 
@@ -530,7 +526,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, len);
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
 //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
-//	logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
             UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
             if (len > udpLength)
             {
@@ -646,7 +642,7 @@ int			ServerLink::read(uint16_t& code, uint16_t& len,
     return 1;
 }
 
-void			ServerLink::sendEnter(PlayerType type,
+void            ServerLink::sendEnter(PlayerType type,
                                       TeamColor team,
                                       const char* name,
                                       const char* motto,
@@ -688,9 +684,7 @@ bool ServerLink::readEnter(std::string& reason,
         }
 
         if (code == MsgAccept)
-        {
             return true;
-        }
         else if (code == MsgSuperKill)
         {
             reason = "Server forced disconnection.";
@@ -718,6 +712,6 @@ bool ServerLink::readEnter(std::string& reason,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

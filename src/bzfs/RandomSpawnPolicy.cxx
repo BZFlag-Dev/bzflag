@@ -93,19 +93,13 @@ void RandomSpawnPolicy::getPosition(float pos[3], int playerId, bool onGroundOnl
             const float waterLevel = world->getWaterLevel();
             float minZ = 0.0f;
             if (waterLevel > minZ)
-            {
                 minZ = waterLevel;
-            }
             float maxZ = maxHeight;
             if (onGroundOnly)
-            {
                 maxZ = 0.0f;
-            }
 
             if (DropGeometry::dropPlayer(pos, minZ, maxZ))
-            {
                 foundspot = true;
-            }
 
             // check every now and then if we have already used up 10ms of time
             if (tries >= 50)

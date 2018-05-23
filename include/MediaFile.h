@@ -45,8 +45,8 @@ public:
     // read a sound file.  use delete[] to release the returned
     // audio.  returns NULL on failure.  sounds are stored
     // left/right.
-    //	static float*		readSound(const std::string& filename,
-    //							int* numFrames, int* rate);
+    //  static float*       readSound(const std::string& filename,
+    //                          int* numFrames, int* rate);
 
 protected:
     MediaFile(std::istream*);
@@ -96,7 +96,7 @@ protected:
     static uint32_t swap32BE(uint32_t*);
 
 private:
-    std::istream*			stream;
+    std::istream*           stream;
 };
 
 #endif
@@ -105,6 +105,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

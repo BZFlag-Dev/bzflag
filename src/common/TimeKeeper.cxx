@@ -26,14 +26,14 @@
 #if !defined(_WIN32)
 #  include <sys/time.h>
 #  include <sys/types.h>
-static struct timeval	lastTime = { 0, 0 };
+static struct timeval   lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
 #  include <mmsystem.h>
-static unsigned long int	lastTime = 0;
-static LARGE_INTEGER	qpcLastTime;
-static LONGLONG		qpcFrequency = 0;
-static LONGLONG	 qpcLastCalibration;
-static DWORD	    timeLastCalibration;
+static unsigned long int    lastTime = 0;
+static LARGE_INTEGER    qpcLastTime;
+static LONGLONG     qpcFrequency = 0;
+static LONGLONG  qpcLastCalibration;
+static DWORD        timeLastCalibration;
 #endif /* !defined(_WIN32) */
 
 /* common implementation headers */
@@ -48,7 +48,7 @@ TimeKeeper TimeKeeper::sunGenesisTime;
 TimeKeeper TimeKeeper::nullTime;
 TimeKeeper TimeKeeper::startTime = TimeKeeper::getCurrent();
 
-const TimeKeeper&	TimeKeeper::getCurrent(void)
+const TimeKeeper&   TimeKeeper::getCurrent(void)
 {
     // if not first call then update current time, else use default initial time
 #if !defined(_WIN32)
@@ -61,9 +61,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
         lastTime = now;
     }
     else
-    {
         gettimeofday(&lastTime, NULL);
-    }
 #else /* !defined(_WIN32) */
     if (qpcFrequency != 0)
     {
@@ -78,14 +76,14 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
         if (clkSpent > qpcFrequency)
         {
             // Recalibrate Frequency
-            DWORD tgt	   = timeGetTime();
+            DWORD tgt      = timeGetTime();
             DWORD deltaTgt      = tgt - timeLastCalibration;
             timeLastCalibration = tgt;
             qpcLastCalibration  = now.QuadPart;
             if (deltaTgt > 0)
             {
                 LONGLONG oldqpcfreq = qpcFrequency;
-                qpcFrequency	= (clkSpent * 1000) / deltaTgt;
+                qpcFrequency    = (clkSpent * 1000) / deltaTgt;
                 if (qpcFrequency != oldqpcfreq)
                     logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",
                                     (double)oldqpcfreq, (double)qpcFrequency);
@@ -105,9 +103,7 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
             diff = 0;
         }
         else
-        {
             diff = now - lastTime;
-        }
         currentTime += 1.0e-3 * (double)diff;
         lastTime = now;
     }
@@ -117,16 +113,14 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
 
         // should only get into here once on app start
         if (!sane)
-        {
             logDebugMessage(1,"Sanity check failure in TimeKeeper::getCurrent()\n");
-        }
         sane = false;
 
         LARGE_INTEGER freq;
         if (QueryPerformanceFrequency(&freq))
         {
             QueryPerformanceCounter(&qpcLastTime);
-            qpcFrequency	= freq.QuadPart;
+            qpcFrequency    = freq.QuadPart;
             logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
             qpcLastCalibration  = qpcLastTime.QuadPart;
             timeLastCalibration = timeGetTime();
@@ -145,17 +139,17 @@ const TimeKeeper&	TimeKeeper::getCurrent(void)
     return currentTime;
 }
 
-const TimeKeeper&	TimeKeeper::getStartTime(void) // const
+const TimeKeeper&   TimeKeeper::getStartTime(void) // const
 {
     return startTime;
 }
 
-const TimeKeeper&	TimeKeeper::getTick(void) // const
+const TimeKeeper&   TimeKeeper::getTick(void) // const
 {
     return tickTime;
 }
 
-void			TimeKeeper::setTick(void)
+void            TimeKeeper::setTick(void)
 {
     tickTime = getCurrent();
 }
@@ -227,37 +221,21 @@ void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
     ++now->tm_mon;
 
     if (year)
-    {
         *year  = now->tm_year;
-    }
     if (month)
-    {
         *month = now->tm_mon;
-    }
     if (day)
-    {
         *day   = now->tm_mday;
-    }
     if (wday)
-    {
         *wday  = now->tm_wday;
-    }
     if (hour)
-    {
         *hour  = now->tm_hour;
-    }
     if (min)
-    {
         *min   = now->tm_min;
-    }
     if (sec)
-    {
         *sec   = now->tm_sec;
-    }
     if (dst)
-    {
         *dst   = (now->tm_isdst != 0);
-    }
 }
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
@@ -299,27 +277,21 @@ const std::string TimeKeeper::printTime(long int timeValue[])
     if (timeValue[1] > 0)
     {
         if (timeValue[0] > 0)
-        {
             valueNames.append(", ");
-        }
         snprintf(temp, 20, "%ld hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
         valueNames.append(temp);
     }
     if (timeValue[2] > 0)
     {
         if ((timeValue[1] > 0) || (timeValue[0] > 0))
-        {
             valueNames.append(", ");
-        }
         snprintf(temp, 20, "%ld min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
         valueNames.append(temp);
     }
     if (timeValue[3] > 0)
     {
         if ((timeValue[2] > 0) || (timeValue[1] > 0) || (timeValue[0] > 0))
-        {
             valueNames.append(", ");
-        }
         snprintf(temp, 20, "%ld sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
         valueNames.append(temp);
     }
@@ -339,9 +311,7 @@ const std::string TimeKeeper::printTime(double diff)
 void TimeKeeper::sleep(double seconds)
 {
     if (seconds <= 0.0)
-    {
         return;
-    }
 
 #ifdef HAVE_USLEEP
     usleep((unsigned int)(1.0e6 * seconds));
@@ -373,9 +343,7 @@ void TimeKeeper::sleep(double seconds)
     // fall-back case is fugly manual timekeeping
     TimeKeeper now = TimeKeeper::getCurrent();
     while ((TimeKeeper::getCurrent() - now) < seconds)
-    {
         continue;
-    }
     return;
 }
 
@@ -384,6 +352,6 @@ void TimeKeeper::sleep(double seconds)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

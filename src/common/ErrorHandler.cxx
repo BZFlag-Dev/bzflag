@@ -25,16 +25,16 @@
 #include "BundleMgr.h"
 #include "Bundle.h"
 
-static ErrorCallback	errorCallback = NULL;
+static ErrorCallback    errorCallback = NULL;
 
-ErrorCallback		setErrorCallback(ErrorCallback cb)
+ErrorCallback       setErrorCallback(ErrorCallback cb)
 {
     ErrorCallback oldErrorCallback = errorCallback;
     errorCallback = cb;
     return oldErrorCallback;
 }
 
-void			printError(const std::string &fmt, const std::vector<std::string> *parms)
+void            printError(const std::string &fmt, const std::vector<std::string> *parms)
 {
     std::string msg;
     Bundle *pBdl = BundleMgr::getCurrentBundle();
@@ -62,7 +62,7 @@ void			printError(const std::string &fmt, const std::vector<std::string> *parms)
 // special error handler.  shows a message box on Windows.
 //
 
-void			printFatalError(const char* fmt, ...)
+void            printFatalError(const char* fmt, ...)
 {
     char buffer[1024];
     va_list args;
@@ -81,6 +81,6 @@ void			printFatalError(const char* fmt, ...)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

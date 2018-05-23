@@ -17,7 +17,7 @@
 #include "WallObstacle.h"
 #include "Intersect.h"
 
-const char*		WallObstacle::typeName = "WallObstacle";
+const char*     WallObstacle::typeName = "WallObstacle";
 
 WallObstacle::WallObstacle()
 {
@@ -48,17 +48,17 @@ WallObstacle::~WallObstacle()
     // do nothing
 }
 
-const char*		WallObstacle::getType() const
+const char*     WallObstacle::getType() const
 {
     return typeName;
 }
 
-const char*		WallObstacle::getClassName() // const
+const char*     WallObstacle::getClassName() // const
 {
     return typeName;
 }
 
-float			WallObstacle::intersect(const Ray& r) const
+float           WallObstacle::intersect(const Ray& r) const
 {
     const float* o = r.getOrigin();
     const float* d = r.getDirection();
@@ -69,19 +69,19 @@ float			WallObstacle::intersect(const Ray& r) const
     return t;
 }
 
-void			WallObstacle::getNormal(const float*, float* n) const
+void            WallObstacle::getNormal(const float*, float* n) const
 {
     n[0] = plane[0];
     n[1] = plane[1];
     n[2] = plane[2];
 }
 
-bool			WallObstacle::inCylinder(const float* p, float r, float UNUSED( height )) const
+bool            WallObstacle::inCylinder(const float* p, float r, float UNUSED( height )) const
 {
     return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-bool			WallObstacle::inBox(const float* p, float _angle,
+bool            WallObstacle::inBox(const float* p, float _angle,
                                     float halfWidth, float halfBreadth,
                                     float UNUSED( height )) const
 {
@@ -109,7 +109,7 @@ bool			WallObstacle::inBox(const float* p, float _angle,
     return false;
 }
 
-bool			WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldAngle ),
+bool            WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldAngle ),
         const float* p, float _angle,
         float halfWidth, float halfBreadth, float height) const
 
@@ -117,7 +117,7 @@ bool			WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldA
     return inBox (p, _angle, halfWidth, halfBreadth, height);
 }
 
-bool			WallObstacle::getHitNormal(
+bool            WallObstacle::getHitNormal(
     const float*, float,
     const float*, float,
     float, float, float,
@@ -166,8 +166,8 @@ int WallObstacle::packSize() const
     int fullSize = 0;
     fullSize += sizeof(float[3]); // pos
     fullSize += sizeof(float);    // rotation
-    fullSize += sizeof(float);	// breadth
-    fullSize += sizeof(float);	// height
+    fullSize += sizeof(float);  // breadth
+    fullSize += sizeof(float);  // height
     fullSize += sizeof(uint8_t);
     return fullSize;
 }
@@ -184,6 +184,6 @@ void WallObstacle::print(std::ostream& UNUSED(out),
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

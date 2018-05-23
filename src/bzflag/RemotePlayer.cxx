@@ -35,7 +35,7 @@ RemotePlayer::~RemotePlayer()
     delete[] shots;
 }
 
-void			RemotePlayer::addShot(const FiringInfo& info)
+void            RemotePlayer::addShot(const FiringInfo& info)
 {
     float newpos[3];
     const float *f = getForward();
@@ -67,16 +67,16 @@ void			RemotePlayer::addShot(const FiringInfo& info)
     }
     shotStatistics.recordFire(info.flagType,f,info.shot.vel);
     // FIXME - with dynamic dimensions, this may not be a good idea
-    //	 (flag each shot with a 'default dimensions' state?)
+    //   (flag each shot with a 'default dimensions' state?)
     move(newpos, getAngle());
     // FIXME - timestamp of shots are handled slightly different than for
-    //	 tank position updates, better so ignore them for now
-    //	 detail: settick | shot: current() | move | draw | tankpos: tick()
+    //   tank position updates, better so ignore them for now
+    //   detail: settick | shot: current() | move | draw | tankpos: tick()
     //setDeadReckoning(info.timeSent);
     setDeadReckoning(-1.0f);
 }
 
-ShotPath*		RemotePlayer::getShot(int index) const
+ShotPath*       RemotePlayer::getShot(int index) const
 {
     index &= 0x00FF;
     if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
@@ -84,7 +84,7 @@ ShotPath*		RemotePlayer::getShot(int index) const
     return shots[index];
 }
 
-void			RemotePlayer::purgeShots() const
+void            RemotePlayer::purgeShots() const
 {
     for (int i = 0; i < numShots; i++)
     {
@@ -96,7 +96,7 @@ void			RemotePlayer::purgeShots() const
     }
 }
 
-bool			RemotePlayer::doEndShot(
+bool            RemotePlayer::doEndShot(
     int ident, bool isHit, float* pos)
 {
     const int index = ident & 255;
@@ -138,7 +138,7 @@ bool			RemotePlayer::doEndShot(
     return true;
 }
 
-void			RemotePlayer::updateShots(float dt)
+void            RemotePlayer::updateShots(float dt)
 {
     for (int i = 0; i < numShots; i++)
         if (shots[i])
@@ -149,6 +149,6 @@ void			RemotePlayer::updateShots(float dt)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

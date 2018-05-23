@@ -42,7 +42,7 @@ protected:
 };
 
 
-extern std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+extern std::map<std::string,bz_CustomMapObjectHandler*> customObjectMap;
 
 void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
 void removeCustomMapObject ( const char* object );
@@ -52,6 +52,6 @@ void removeCustomMapObject ( const char* object );
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

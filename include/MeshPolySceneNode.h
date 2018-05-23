@@ -11,12 +11,12 @@
  */
 
 /* MeshPolySceneNode:
- *	Encapsulates information for rendering a planar
- *	polygonal wall.  Does not support level of detail.
+ *  Encapsulates information for rendering a planar
+ *  polygonal wall.  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_POLY_SCENE_NODE_H
-#define	BZF_MESH_POLY_SCENE_NODE_H
+#ifndef BZF_MESH_POLY_SCENE_NODE_H
+#define BZF_MESH_POLY_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"

@@ -11,11 +11,11 @@
  */
 
 /* BillboardSceneNode:
- *	Encapsulates information for rendering a textured billboard.
+ *  Encapsulates information for rendering a textured billboard.
  */
 
-#ifndef	BZF_BILLBOARD_SCENE_NODE_H
-#define	BZF_BILLBOARD_SCENE_NODE_H
+#ifndef BZF_BILLBOARD_SCENE_NODE_H
+#define BZF_BILLBOARD_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -27,36 +27,36 @@ public:
     BillboardSceneNode(const GLfloat pos[3]);
     ~BillboardSceneNode();
 
-    virtual BillboardSceneNode*	copy() const;
+    virtual BillboardSceneNode* copy() const;
 
-    void		setLoop(bool = true);
-    void		setDuration(float);
-    void		resetTime();
-    void		updateTime(float dt);
-    bool		isAtEnd() const;
+    void        setLoop(bool = true);
+    void        setDuration(float);
+    void        resetTime();
+    void        updateTime(float dt);
+    bool        isAtEnd() const;
 
-    bool		isLight() const;
-    void		setLight(bool = true);
-    void		setLightColor(GLfloat r, GLfloat g, GLfloat b);
-    void		setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
-    void		setLightScaling(GLfloat intensityScaleFactor);
-    void		setLightFadeStartTime(float t);
-    void		setGroundLight(bool value);
+    bool        isLight() const;
+    void        setLight(bool = true);
+    void        setLightColor(GLfloat r, GLfloat g, GLfloat b);
+    void        setLightAttenuation(GLfloat c, GLfloat l, GLfloat q);
+    void        setLightScaling(GLfloat intensityScaleFactor);
+    void        setLightFadeStartTime(float t);
+    void        setGroundLight(bool value);
 
-    void		setSize(float side);
-    void		setSize(float width, float height);
-    void		setColor(GLfloat r, GLfloat g,
+    void        setSize(float side);
+    void        setSize(float width, float height);
+    void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setTexture(const int);
-    void		setTextureAnimation(int cu, int cv);
+    void        setColor(const GLfloat* rgba);
+    void        setTexture(const int);
+    void        setTextureAnimation(int cu, int cv);
 
-    void		move(const GLfloat pos[3]);
-    void		setAngle(GLfloat);
-    void		addLight(SceneRenderer&);
+    void        move(const GLfloat pos[3]);
+    void        setAngle(GLfloat);
+    void        addLight(SceneRenderer&);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
 protected:
     class BillboardRenderNode : public RenderNode
@@ -64,43 +64,43 @@ protected:
     public:
         BillboardRenderNode(const BillboardSceneNode*);
         ~BillboardRenderNode();
-        void		setColor(const GLfloat* rgba);
-        void		render();
-        const GLfloat*	getPosition() const
+        void        setColor(const GLfloat* rgba);
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
-        void		setFrame(float u, float v);
-        void		setFrameSize(float du, float dv);
+        void        setFrame(float u, float v);
+        void        setFrameSize(float du, float dv);
     private:
         const BillboardSceneNode* sceneNode;
-        float		u, v;
-        GLfloat		du, dv;
+        float       u, v;
+        GLfloat     du, dv;
     };
     friend class BillboardRenderNode;
 
-    void		setFrame();
-    void		prepLight();
+    void        setFrame();
+    void        prepLight();
 
 private:
-    bool		show;
-    bool		hasAlpha;
-    bool		hasTexture;
-    bool		hasTextureAlpha;
-    bool		looping;
-    bool		lightSource;
-    bool		groundLight;
-    float		width, height;
-    GLfloat		color[4];
-    GLfloat		angle;
-    GLfloat		lightColor[3];
-    GLfloat		lightScale;
-    float		lightCutoffTime;
-    int			cu, cv;
-    float		t, duration;
-    OpenGLLight		light;
-    OpenGLGState	gstate;
-    BillboardRenderNode	renderNode;
+    bool        show;
+    bool        hasAlpha;
+    bool        hasTexture;
+    bool        hasTextureAlpha;
+    bool        looping;
+    bool        lightSource;
+    bool        groundLight;
+    float       width, height;
+    GLfloat     color[4];
+    GLfloat     angle;
+    GLfloat     lightColor[3];
+    GLfloat     lightScale;
+    float       lightCutoffTime;
+    int         cu, cv;
+    float       t, duration;
+    OpenGLLight     light;
+    OpenGLGState    gstate;
+    BillboardRenderNode renderNode;
 };
 
 #endif // BZF_BILLBOARD_SCENE_NODE_H
@@ -109,6 +109,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

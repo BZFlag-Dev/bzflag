@@ -44,7 +44,7 @@ ServerCommand::~ServerCommand()
     }
 }
 
-bool ServerCommand::execute(const char	 *commandLine,
+bool ServerCommand::execute(const char   *commandLine,
                             GameKeeper::Player *playerData)
 {
     if (!mapOfCommands)
@@ -75,6 +75,6 @@ std::string ServerCommand::getHelp()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

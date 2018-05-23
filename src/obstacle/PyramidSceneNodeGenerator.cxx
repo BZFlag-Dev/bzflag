@@ -32,7 +32,7 @@ PyramidSceneNodeGenerator::~PyramidSceneNodeGenerator()
     // do nothing
 }
 
-WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
+WallSceneNode*      PyramidSceneNodeGenerator::getNextNode(
     float uRepeats, float vRepeats, bool lod)
 {
 
@@ -114,9 +114,7 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
                 isQuad = true;
             }
             else
-            {
                 return NULL;
-            }
             break;
         }
     }
@@ -141,6 +139,6 @@ WallSceneNode*		PyramidSceneNodeGenerator::getNextNode(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

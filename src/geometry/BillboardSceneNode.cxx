@@ -71,7 +71,7 @@ BillboardSceneNode::~BillboardSceneNode()
     // do nothing
 }
 
-BillboardSceneNode*	BillboardSceneNode::copy() const
+BillboardSceneNode* BillboardSceneNode::copy() const
 {
     BillboardSceneNode* e = new BillboardSceneNode(getSphere());
     e->show = show;
@@ -104,25 +104,25 @@ BillboardSceneNode*	BillboardSceneNode::copy() const
     return e;
 }
 
-void			BillboardSceneNode::setLoop(bool _looping)
+void            BillboardSceneNode::setLoop(bool _looping)
 {
     looping = _looping;
 }
 
-void			BillboardSceneNode::setDuration(float _duration)
+void            BillboardSceneNode::setDuration(float _duration)
 {
     duration = _duration;
     if (t > duration) t = duration;
     setFrame();
 }
 
-void			BillboardSceneNode::resetTime()
+void            BillboardSceneNode::resetTime()
 {
     t = 0.0f;
     setFrame();
 }
 
-void			BillboardSceneNode::updateTime(float dt)
+void            BillboardSceneNode::updateTime(float dt)
 {
     // change time by dt then make sure it's in bounds
     const float ot = t;
@@ -142,23 +142,19 @@ void			BillboardSceneNode::updateTime(float dt)
 
     // update light intensity if it changed
     if (t > lightCutoffTime || ot > lightCutoffTime)
-    {
         prepLight();
-    }
 }
 
-bool			BillboardSceneNode::isAtEnd() const
+bool            BillboardSceneNode::isAtEnd() const
 {
     return t == duration;
 }
 
-void			BillboardSceneNode::setFrame()
+void            BillboardSceneNode::setFrame()
 {
     // update frame
     if (duration == 0.0f)
-    {
         renderNode.setFrame(0.0f, 0.0f);
-    }
     else
     {
         int frame = (int)((t / duration) * (float)cu * (float)cv);
@@ -168,19 +164,19 @@ void			BillboardSceneNode::setFrame()
     }
 }
 
-bool			BillboardSceneNode::isLight() const
+bool            BillboardSceneNode::isLight() const
 {
     return lightSource && show;
 }
 
-void			BillboardSceneNode::setLight(bool on)
+void            BillboardSceneNode::setLight(bool on)
 {
     if (lightSource == on) return;
     lightSource = on;
     if (lightSource) prepLight();
 }
 
-void			BillboardSceneNode::setLightColor(
+void            BillboardSceneNode::setLightColor(
     GLfloat r, GLfloat g, GLfloat b)
 {
     lightColor[0] = r;
@@ -189,7 +185,7 @@ void			BillboardSceneNode::setLightColor(
     prepLight();
 }
 
-void			BillboardSceneNode::setLightAttenuation(
+void            BillboardSceneNode::setLightAttenuation(
     GLfloat c, GLfloat l, GLfloat q)
 {
     light.setAttenuation(0, c);
@@ -197,25 +193,25 @@ void			BillboardSceneNode::setLightAttenuation(
     light.setAttenuation(2, q);
 }
 
-void			BillboardSceneNode::setLightScaling(GLfloat s)
+void            BillboardSceneNode::setLightScaling(GLfloat s)
 {
     lightScale = s;
     prepLight();
 }
 
-void			BillboardSceneNode::setLightFadeStartTime(float _t)
+void            BillboardSceneNode::setLightFadeStartTime(float _t)
 {
     lightCutoffTime = _t;
     prepLight();
 }
 
-void			BillboardSceneNode::setGroundLight(bool value)
+void            BillboardSceneNode::setGroundLight(bool value)
 {
     groundLight = value;
     light.setOnlyGround(value);
 }
 
-void			BillboardSceneNode::prepLight()
+void            BillboardSceneNode::prepLight()
 {
     if (!lightSource) return;
     const float s = (t <= lightCutoffTime || lightCutoffTime >= duration) ? 1.0f :
@@ -225,19 +221,19 @@ void			BillboardSceneNode::prepLight()
                    lightColor[2] * lightScale * s);
 }
 
-void			BillboardSceneNode::setSize(float side)
+void            BillboardSceneNode::setSize(float side)
 {
     setSize(side, side);
 }
 
-void			BillboardSceneNode::setSize(float _width, float _height)
+void            BillboardSceneNode::setSize(float _width, float _height)
 {
     width = 0.5f * _width;
     height = 0.5f * _height;
     setRadius(width * width + height * height);
 }
 
-void			BillboardSceneNode::setColor(
+void            BillboardSceneNode::setColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     color[0] = r;
@@ -247,12 +243,12 @@ void			BillboardSceneNode::setColor(
     hasAlpha = (color[3] != 1.0f || hasTextureAlpha);
 }
 
-void			BillboardSceneNode::setColor(const GLfloat* rgba)
+void            BillboardSceneNode::setColor(const GLfloat* rgba)
 {
     setColor(rgba[0], rgba[1], rgba[2], rgba[3]);
 }
 
-void			BillboardSceneNode::setTexture(
+void            BillboardSceneNode::setTexture(
     const int texture)
 {
     hasTexture = texture >= 0;
@@ -266,7 +262,7 @@ void			BillboardSceneNode::setTexture(
     gstate = builder.getState();
 }
 
-void			BillboardSceneNode::
+void            BillboardSceneNode::
 setTextureAnimation(int _cu, int _cv)
 {
     cu = _cu;
@@ -275,27 +271,25 @@ setTextureAnimation(int _cu, int _cv)
     setFrame();
 }
 
-void			BillboardSceneNode::move(const GLfloat pos[3])
+void            BillboardSceneNode::move(const GLfloat pos[3])
 {
     setCenter(pos);
     light.setPosition(pos);
 }
 
-void			BillboardSceneNode::setAngle(GLfloat _angle)
+void            BillboardSceneNode::setAngle(GLfloat _angle)
 {
     angle = (float)(RAD2DEG * _angle);
 }
 
-void			BillboardSceneNode::addLight(
+void            BillboardSceneNode::addLight(
     SceneRenderer& renderer)
 {
     if (show && lightSource)
-    {
         renderer.addLight(light);
-    }
 }
 
-void			BillboardSceneNode::notifyStyleChange()
+void            BillboardSceneNode::notifyStyleChange()
 {
     show = hasTexture && BZDBCache::texture &&
            (!hasAlpha || BZDBCache::blend);
@@ -316,7 +310,7 @@ void			BillboardSceneNode::notifyStyleChange()
     }
 }
 
-void			BillboardSceneNode::addRenderNodes(
+void            BillboardSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     if (show)
@@ -340,21 +334,21 @@ BillboardSceneNode::BillboardRenderNode::~BillboardRenderNode()
     // do nothing
 }
 
-void			BillboardSceneNode::BillboardRenderNode::
+void            BillboardSceneNode::BillboardRenderNode::
 setFrame(float _u, float _v)
 {
     u = _u;
     v = _v;
 }
 
-void			BillboardSceneNode::BillboardRenderNode::
+void            BillboardSceneNode::BillboardRenderNode::
 setFrameSize(float _du, float _dv)
 {
     du = _du;
     dv = _dv;
 }
 
-void			BillboardSceneNode::BillboardRenderNode::render()
+void            BillboardSceneNode::BillboardRenderNode::render()
 {
     static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
 
@@ -406,6 +400,6 @@ void			BillboardSceneNode::BillboardRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

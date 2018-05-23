@@ -451,9 +451,7 @@ void BZDBLocalManager::init()
 {
     std::vector<BZDBLocal*>& entries = getEntryVector();
     for (unsigned int i = 0; i < entries.size(); i++)
-    {
         entries[i]->addCallbacks();
-    }
     return;
 }
 
@@ -462,9 +460,7 @@ void BZDBLocalManager::kill()
 {
     std::vector<BZDBLocal*>& entries = getEntryVector();
     for (unsigned int i = 0; i < entries.size(); i++)
-    {
         entries[i]->removeCallbacks();
-    }
     return;
 }
 
@@ -516,6 +512,6 @@ static void safeSetString(const std::string& name, const std::string&value)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

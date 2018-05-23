@@ -64,9 +64,7 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
         lodList.count = drawLods[i].count;
         lodList.setLists = new GLuint[lodList.count];
         for (int j = 0; j < lodList.count; j++)
-        {
             lodList.setLists[j] = INVALID_GL_LIST_ID;
-        }
     }
 
     makeLists();
@@ -83,9 +81,7 @@ MeshDrawMgr::~MeshDrawMgr()
     freeLists();
 
     for (int i = 0; i < lodCount; i++)
-    {
         delete[] lodLists[i].setLists;
-    }
     delete[] lodLists;
 
     return;
@@ -118,46 +114,30 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
 
     const GLuint list = lodLists[lod].setLists[set];
     if (list != INVALID_GL_LIST_ID)
-    {
         glCallList(list);
-    }
     else
     {
         glVertexPointer(3, GL_FLOAT, 0, vertices);
 
         if (_normals)
-        {
             glNormalPointer(GL_FLOAT, 0, normals);
-        }
         else
-        {
             glDisableClientState(GL_NORMAL_ARRAY);
-        }
         if (_texcoords)
-        {
             glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
-        }
         else
-        {
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        }
 
         rawExecuteCommands(lod, set);
 
         if (!_normals)
-        {
             glEnableClientState(GL_NORMAL_ARRAY);
-        }
         if (!_texcoords)
-        {
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        }
     }
 
     if (animInfo != NULL)
-    {
         glPopMatrix();
-    }
 
     return;
 }
@@ -175,9 +155,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
 
     const GLuint list = lodLists[lod].setLists[set];
     if (list != INVALID_GL_LIST_ID)
-    {
         glCallList(list);
-    }
     else
     {
         glVertexPointer(3, GL_FLOAT, 0, vertices);
@@ -185,9 +163,7 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
     }
 
     if (animInfo != NULL)
-    {
         glPopMatrix();
-    }
 
     return;
 }
@@ -205,13 +181,9 @@ inline void MeshDrawMgr::rawDisableArrays()
 void MeshDrawMgr::disableArrays()
 {
     if (unloadList == INVALID_GL_LIST_ID)
-    {
         rawDisableArrays();
-    }
     else
-    {
         glCallList(unloadList);
-    }
     return;
 }
 
@@ -225,9 +197,7 @@ void MeshDrawMgr::makeLists()
     {
         error = glGetError();
         if (error == GL_NO_ERROR)
-        {
             break;
-        }
         errCount++; // avoid a possible spin-lock?
         if (errCount > 666)
         {
@@ -284,9 +254,7 @@ void MeshDrawMgr::makeLists()
                     lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
                 }
                 else
-                {
                     logDebugMessage(3,"MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
-                }
             }
         }
     }
@@ -339,6 +307,6 @@ void MeshDrawMgr::freeContext(void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

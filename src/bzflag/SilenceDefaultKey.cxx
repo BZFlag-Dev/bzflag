@@ -33,7 +33,7 @@ SilenceDefaultKey::SilenceDefaultKey()
 {
 }
 
-bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
+bool            SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 {
     bool sendIt;
     LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -55,14 +55,14 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
 
     switch (key.ascii)
     {
-    case 3:	// ^C
-    case 27:	// escape
-        //    case 127:	// delete
-        sendIt = false;			// finished composing -- don't send
+    case 3: // ^C
+    case 27:    // escape
+        //    case 127: // delete
+        sendIt = false;         // finished composing -- don't send
         break;
 
-    case 4:	// ^D
-    case 13:	// return
+    case 4: // ^D
+    case 13:    // return
         sendIt = true;
         break;
 
@@ -83,9 +83,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
             // silence just by picking arrowkeys
             const Player * silenceMe = myTank->getRecipient();
             if (silenceMe)
-            {
                 name = silenceMe->getCallSign();
-            }
         }
         else if (message.size() > 0)
         {
@@ -101,9 +99,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
             for (unsigned int i = 0; i < silencePlayers.size(); i++)
             {
                 if (strcmp(silencePlayers[i].c_str(),name) == 0)
-                {
                     inListPos = i;
-                }
             }
 
             bool isInList = (inListPos != -1);
@@ -144,9 +140,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
                         silenceMessage = "Unblocked Msgs";
                     }
                     else if (strcmp(name, "-") == 0)
-                    {
                         silenceMessage = "Unsilenced Unregistered Players";
-                    }
                     addMessage(NULL, silenceMessage);
                 }
                 else
@@ -186,7 +180,7 @@ bool			SilenceDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool            SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     if (!myTank)
@@ -230,6 +224,6 @@ bool			SilenceDefaultKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

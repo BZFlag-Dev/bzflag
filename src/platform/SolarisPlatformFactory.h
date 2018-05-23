@@ -11,11 +11,11 @@
  */
 
 /* SolarisPlatformFactory:
- *	Factory for Sun Sparc/Solaris platform stuff.
+ *  Factory for Sun Sparc/Solaris platform stuff.
  */
 
 #ifndef BZF_SOLARISPLATFORM_FACTORY_H
-#define	BZF_SOLARISPLATFORM_FACTORY_H
+#define BZF_SOLARISPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
@@ -25,15 +25,15 @@ public:
     SolarisPlatformFactory();
     ~SolarisPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
 
 private:
     SolarisPlatformFactory(const SolarisPlatformFactory&);
-    SolarisPlatformFactory&	operator=(const SolarisPlatformFactory&);
+    SolarisPlatformFactory& operator=(const SolarisPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_SOLARISPLATFORM_FACTORY_H

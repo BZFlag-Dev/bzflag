@@ -21,7 +21,7 @@
 #include "playing.h"
 
 static BzfJoystick*     getJoystick();
-static bool	     useForceFeedback(const char *type = "Rumble");
+static bool      useForceFeedback(const char *type = "Rumble");
 
 
 static BzfJoystick*     getJoystick()
@@ -33,7 +33,7 @@ static BzfJoystick*     getJoystick()
         return NULL;
 }
 
-static bool	     useForceFeedback(const char *type)
+static bool      useForceFeedback(const char *type)
 {
     BzfJoystick* js = getJoystick();
 
@@ -120,6 +120,6 @@ void solidMatterFriction()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

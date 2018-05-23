@@ -59,7 +59,7 @@ public:
 protected:
     HUDuiControl* createLabel(const char* string,
                               const char* label = NULL);
-    virtual float	getLeftSide(int width, int height);
+    virtual float   getLeftSide(int width, int height);
 
 private:
     HelpMenuDefaultKey defaultKey;
@@ -73,6 +73,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

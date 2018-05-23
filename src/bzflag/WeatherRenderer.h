@@ -12,12 +12,12 @@
 
 /*
 * WeatherRenderer:
-*	Encapsulates rendering of weather stuff (rain and clouds)
+*   Encapsulates rendering of weather stuff (rain and clouds)
 *
 */
 
-#ifndef	BZF_WEATHER_RENDERER_H
-#define	BZF_WEATHER_RENDERER_H
+#ifndef BZF_WEATHER_RENDERER_H
+#define BZF_WEATHER_RENDERER_H
 
 #include "common.h"
 
@@ -56,52 +56,52 @@ public:
     void rebuildContext(void);
 
 protected:
-    OpenGLGState				rainGState;
-    OpenGLGState				texturedRainState;
-    OpenGLGState				puddleState;
-    std::string				rainSkin;
-    std::vector<std::string>		rainTextures;
-    float					rainColor[2][4];
-    float					rainSize[2];
-    int					rainDensity;
-    float					rainSpeed;
-    float					rainSpeedMod;
-    float					rainSpread;
-    bool					doPuddles;
-    bool					doLineRain;
-    bool					doBillBoards;
-    bool					spinRain;
-    bool					cullRoofTops;
-    bool					roofPuddles;
-    float					rainStartZ;
-    float					rainEndZ;
-    float					maxPuddleTime;
-    float					puddleSpeed;
-    float					puddleColor[4];
-    GLuint					dropList;
-    GLuint					puddleList;
+    OpenGLGState                rainGState;
+    OpenGLGState                texturedRainState;
+    OpenGLGState                puddleState;
+    std::string             rainSkin;
+    std::vector<std::string>        rainTextures;
+    float                   rainColor[2][4];
+    float                   rainSize[2];
+    int                 rainDensity;
+    float                   rainSpeed;
+    float                   rainSpeedMod;
+    float                   rainSpread;
+    bool                    doPuddles;
+    bool                    doLineRain;
+    bool                    doBillBoards;
+    bool                    spinRain;
+    bool                    cullRoofTops;
+    bool                    roofPuddles;
+    float                   rainStartZ;
+    float                   rainEndZ;
+    float                   maxPuddleTime;
+    float                   puddleSpeed;
+    float                   puddleColor[4];
+    GLuint                  dropList;
+    GLuint                  puddleList;
 
 public:
     typedef struct
     {
-        float		pos[3];
-        float		speed;
-        float		roofTop;
-        int		texture;
+        float       pos[3];
+        float       speed;
+        float       roofTop;
+        int     texture;
     } rain;
 
 protected:
-    std::vector<rain>	raindrops;
+    std::vector<rain>   raindrops;
 
     typedef struct
     {
-        float		pos[3];
-        float		time;
-        int		texture;
+        float       pos[3];
+        float       time;
+        int     texture;
     } puddle;
-    std::vector<puddle>	puddles;
+    std::vector<puddle> puddles;
 
-    float			lastRainTime;
+    float           lastRainTime;
 
     void buildDropList(bool draw = false);
     void buildPuddleList(bool draw = false);
@@ -117,8 +117,8 @@ protected:
 
     int keyFromPos(float x, float y) const;
 
-    float			gridSize;
-    float			keyFactor;
+    float           gridSize;
+    float           keyFactor;
 
 public:
     typedef struct
@@ -130,18 +130,18 @@ public:
 protected:
     typedef struct
     {
-        std::vector<rain>	drops;
-        copyExtents		bbox;
+        std::vector<rain>   drops;
+        copyExtents     bbox;
     } visibleChunk;
 
-    std::map<int, visibleChunk>	chunkMap;
+    std::map<int, visibleChunk> chunkMap;
 
     void setChunkFromDrop(visibleChunk &chunk, rain &drop);
 
     bool dbItemSet(const char* name);
 
-    int	rainCount;
-    int	cellCount;
+    int rainCount;
+    int cellCount;
 };
 
 #endif // BZF_WEATHER_RENDERER_H
@@ -150,6 +150,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,21 +11,21 @@
  */
 
 /* SceneNode:
- *	Encapsulates information for rendering an object in the scene.
+ *  Encapsulates information for rendering an object in the scene.
  *
  * GLfloat2
  * GLfloat3
- *	Arrays of two and three GLfloat's
+ *  Arrays of two and three GLfloat's
  *
  * GLfloat2Array
  * GLfloat3Array
- *	Arrays of GLfloat2's and GLfloat3's
+ *  Arrays of GLfloat2's and GLfloat3's
  *
  * Probably shouldn't use names like this (GLfloat...).  Oh well.
  */
 
-#ifndef	BZF_SCENE_NODE_H
-#define	BZF_SCENE_NODE_H
+#ifndef BZF_SCENE_NODE_H
+#define BZF_SCENE_NODE_H
 
 #include "common.h"
 #include "bzfgl.h"
@@ -41,14 +41,14 @@
 #ifdef __stdcall
 #undef __stdcall
 #endif
-#define	__stdcall
+#define __stdcall
 #endif
 
-#define	myColor3f(r, g, b)	SceneNode::glColor3f(r, g, b)
-#define	myColor4f(r, g, b, a)	SceneNode::glColor4f(r, g, b, a)
-#define	myColor3fv(rgb)		SceneNode::glColor3fv(rgb)
-#define	myColor4fv(rgba)	SceneNode::glColor4fv(rgba)
-#define	myStipple(alpha)	SceneNode::setStipple(alpha)
+#define myColor3f(r, g, b)  SceneNode::glColor3f(r, g, b)
+#define myColor4f(r, g, b, a)   SceneNode::glColor4f(r, g, b, a)
+#define myColor3fv(rgb)     SceneNode::glColor3fv(rgb)
+#define myColor4fv(rgba)    SceneNode::glColor4fv(rgba)
+#define myStipple(alpha)    SceneNode::setStipple(alpha)
 
 class ViewFrustum;
 class SceneRenderer;
@@ -57,32 +57,32 @@ class SceneNode
 {
 public:
     SceneNode();
-    virtual		~SceneNode();
+    virtual     ~SceneNode();
 
-    virtual void	notifyStyleChange();
+    virtual void    notifyStyleChange();
 
-    const GLfloat*	getSphere() const;
-    const Extents&	getExtents() const;
-    virtual int		getVertexCount () const;
+    const GLfloat*  getSphere() const;
+    const Extents&  getExtents() const;
+    virtual int     getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     const GLfloat*      getPlane() const;
     const GLfloat*      getPlaneRaw() const;
-    virtual GLfloat	getDistance(const GLfloat* eye) const; // for BSP
+    virtual GLfloat getDistance(const GLfloat* eye) const; // for BSP
 
-    virtual bool	inAxisBox (const Extents& exts) const;
+    virtual bool    inAxisBox (const Extents& exts) const;
 
-    virtual bool	cull(const ViewFrustum&) const;
-    virtual bool	cullShadow(int pCount, const float (*planes)[4]) const;
+    virtual bool    cull(const ViewFrustum&) const;
+    virtual bool    cullShadow(int pCount, const float (*planes)[4]) const;
 
-    bool		isOccluder() const;
-    void		setOccluder(bool value);
+    bool        isOccluder() const;
+    void        setOccluder(bool value);
 
-    virtual void	addLight(SceneRenderer&);
-    virtual int		split(const float* plane,
+    virtual void    addLight(SceneRenderer&);
+    virtual int     split(const float* plane,
                           SceneNode*& front, SceneNode*& back) const;
-    virtual void	addShadowNodes(SceneRenderer&);
-    virtual void	addRenderNodes(SceneRenderer&);
-    virtual void	renderRadar();
+    virtual void    addShadowNodes(SceneRenderer&);
+    virtual void    addRenderNodes(SceneRenderer&);
+    virtual void    renderRadar();
 
     struct RenderSet
     {
@@ -92,28 +92,28 @@ public:
     virtual void getRenderNodes(std::vector<RenderSet>& rnodes);
 
 
-    static void		setColorOverride(bool = true);
-    static void		glColor3f(GLfloat r, GLfloat g, GLfloat b)
+    static void     setColorOverride(bool = true);
+    static void     glColor3f(GLfloat r, GLfloat g, GLfloat b)
     {
         if (!colorOverride) ::glColor3f(r, g, b);
     };
 
-    static void		glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+    static void     glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
     {
         if (!colorOverride) ::glColor4f(r, g, b, a);
     };
 
-    static void		glColor3fv(const GLfloat* rgb)
+    static void     glColor3fv(const GLfloat* rgb)
     {
         if (!colorOverride) ::glColor3fv(rgb);
     };
 
-    static void		glColor4fv(const GLfloat* rgba)
+    static void     glColor4fv(const GLfloat* rgba)
     {
         if (!colorOverride) ::glColor4fv(rgba);
     };
 
-    static void		setStipple(GLfloat alpha)
+    static void     setStipple(GLfloat alpha)
     {
         (*stipple)(alpha);
     }
@@ -131,28 +131,28 @@ public:
     CullState octreeState;
 
 protected:
-    void		setRadius(GLfloat radiusSquared);
-    void		setCenter(const GLfloat center[3]);
-    void		setCenter(GLfloat x, GLfloat y, GLfloat z);
-    void		setSphere(const GLfloat sphere[4]);
+    void        setRadius(GLfloat radiusSquared);
+    void        setCenter(const GLfloat center[3]);
+    void        setCenter(GLfloat x, GLfloat y, GLfloat z);
+    void        setSphere(const GLfloat sphere[4]);
 
 private:
     SceneNode(const SceneNode&);
-    SceneNode&		operator=(const SceneNode&);
+    SceneNode&      operator=(const SceneNode&);
 
 
 
-    static void			noStipple(GLfloat);
+    static void         noStipple(GLfloat);
 
 protected:
-    GLfloat		plane[4];	// unit normal, distance to origin
-    bool		noPlane;
-    bool		occluder;
-    Extents		extents;
+    GLfloat     plane[4];   // unit normal, distance to origin
+    bool        noPlane;
+    bool        occluder;
+    Extents     extents;
 private:
-    GLfloat		sphere[4];
-    static bool	 colorOverride;
-    static void		(*stipple)(GLfloat);
+    GLfloat     sphere[4];
+    static bool  colorOverride;
+    static void     (*stipple)(GLfloat);
 };
 
 inline const GLfloat*   SceneNode::getPlane() const
@@ -167,29 +167,29 @@ inline const GLfloat*   SceneNode::getPlaneRaw() const
     return plane;
 }
 
-inline const GLfloat*	SceneNode::getSphere() const
+inline const GLfloat*   SceneNode::getSphere() const
 {
     return sphere;
 }
 
-inline const Extents&	SceneNode::getExtents() const
+inline const Extents&   SceneNode::getExtents() const
 {
     return extents;
 }
 
-inline bool		SceneNode::isOccluder() const
+inline bool     SceneNode::isOccluder() const
 {
     return occluder;
 }
 
-inline void		SceneNode::setOccluder(bool value)
+inline void     SceneNode::setOccluder(bool value)
 {
     occluder = value;
 }
 
 
-typedef GLfloat		GLfloat2[2];
-typedef GLfloat		GLfloat3[3];
+typedef GLfloat     GLfloat2[2];
+typedef GLfloat     GLfloat3[3];
 
 class GLfloat2Array
 {
@@ -203,27 +203,27 @@ public:
     {
         delete[] data;
     }
-    GLfloat2Array&	operator=(const GLfloat2Array&);
-    GLfloat*		operator[](int i)
+    GLfloat2Array&  operator=(const GLfloat2Array&);
+    GLfloat*        operator[](int i)
     {
         return data[i];
     }
-    const GLfloat*	operator[](int i) const
+    const GLfloat*  operator[](int i) const
     {
         return data[i];
     }
-    int			getSize() const
+    int         getSize() const
     {
         return size;
     }
-    const GLfloat2*	getArray() const
+    const GLfloat2* getArray() const
     {
         return data;
     }
 
 private:
-    int			size;
-    GLfloat2*		data;
+    int         size;
+    GLfloat2*       data;
 };
 
 class GLfloat3Array
@@ -238,27 +238,27 @@ public:
     {
         delete[] data;
     }
-    GLfloat3Array&	operator=(const GLfloat3Array&);
-    GLfloat*		operator[](int i)
+    GLfloat3Array&  operator=(const GLfloat3Array&);
+    GLfloat*        operator[](int i)
     {
         return data[i];
     }
-    const GLfloat*	operator[](int i) const
+    const GLfloat*  operator[](int i) const
     {
         return data[i];
     }
-    int			getSize() const
+    int         getSize() const
     {
         return size;
     }
-    const GLfloat3*	getArray() const
+    const GLfloat3* getArray() const
     {
         return data;
     }
 
 private:
-    int			size;
-    GLfloat3*		data;
+    int         size;
+    GLfloat3*       data;
 };
 
 #endif // BZF_SCENE_NODE_H
@@ -267,6 +267,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

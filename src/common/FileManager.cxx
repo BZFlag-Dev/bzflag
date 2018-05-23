@@ -44,7 +44,7 @@ FileManager::~FileManager()
 {
 }
 
-std::istream*			FileManager::createDataInStream(
+std::istream*           FileManager::createDataInStream(
     const std::string& filename,
     bool binary) const
 {
@@ -99,7 +99,7 @@ std::istream*			FileManager::createDataInStream(
     return NULL;
 }
 
-std::ostream*			FileManager::createDataOutStream(
+std::ostream*           FileManager::createDataOutStream(
     const std::string& filename,
     bool binary,
     bool truncate) const
@@ -159,7 +159,7 @@ std::ostream*			FileManager::createDataOutStream(
     return NULL;
 }
 
-bool				FileManager::isAbsolute(const std::string& path) const
+bool                FileManager::isAbsolute(const std::string& path) const
 {
     if (path.empty())
         return false;
@@ -179,7 +179,7 @@ bool				FileManager::isAbsolute(const std::string& path) const
     return false;
 }
 
-std::string			FileManager::catPath(
+std::string         FileManager::catPath(
     const std::string& a,
     const std::string& b) const
 {
@@ -204,6 +204,6 @@ std::string			FileManager::catPath(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

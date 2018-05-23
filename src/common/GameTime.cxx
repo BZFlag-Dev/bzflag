@@ -12,7 +12,7 @@
 
 /**
  * GameTime:
- *	Manages the network time.
+ *  Manages the network time.
  *      Time is stored as microseconds since the epoch.
  */
 
@@ -196,9 +196,7 @@ void GameTime::setStepTime()
     static s64 lastStep = 0;
     const s64 thisStep = getRawTime();
     if (timeRecs.empty())
-    {
         stepTime = thisStep;
-    }
     else
     {
         // long term prediction
@@ -243,12 +241,10 @@ void* GameTime::pack(void *buf, float lag)
         halfLag = 0.075;
     }
     else
-    {
         halfLag = (double)(lag * 0.5f);
-    }
     const s64 nowTime = getRawTime() + (s64)(halfLag * 1.0e6);
-    buf = nboPackUInt(buf, (u32)(nowTime >> 32));		// msb's
-    buf = nboPackUInt(buf, (u32)(nowTime & 0xFFFFFFFF));	// lsb's
+    buf = nboPackUInt(buf, (u32)(nowTime >> 32));       // msb's
+    buf = nboPackUInt(buf, (u32)(nowTime & 0xFFFFFFFF));    // lsb's
     return buf;
 }
 
@@ -266,9 +262,7 @@ const void* GameTime::unpack(const void *buf)
 
     // clear oversize entries
     while (timeRecs.size() > maxRecords)
-    {
         timeRecs.pop_back();
-    }
 
     // clear the aged entries
     if (!timeRecs.empty())
@@ -278,9 +272,7 @@ const void* GameTime::unpack(const void *buf)
         {
             TimeRecord back = *timeRecs.rbegin();
             if ((nowTime - back.localTime) < maxRecordAge)
-            {
                 break;
-            }
             timeRecs.pop_back();
         }
     }
@@ -296,6 +288,6 @@ const void* GameTime::unpack(const void *buf)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

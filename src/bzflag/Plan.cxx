@@ -91,9 +91,7 @@ void Plan::execute(float &, float &)
                             t = curMaxPlayers;
                         }
                         else
-                        {
                             hasSWTarget = true;
-                        }
                     }
                 }
             }
@@ -514,9 +512,7 @@ Plan *HuntPlayerPlan::createSubPlan()
         return new GotoPointPlan(pt);
     }
     else
-    {
         return new WeavePlan(playerID, bzfrand() > 0.5f);
-    }
 }
 
 
@@ -571,6 +567,6 @@ Plan *CaptureFlagPlan::createSubPlan()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

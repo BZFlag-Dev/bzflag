@@ -164,9 +164,7 @@ int main(int argc, char** argv)
         endTime = (time_t)((header.filetime + p->timestamp) / 1000000);
     }
     else
-    {
         startTime = endTime = 0;
-    }
 
     printf("magic:     0x%04X\n", header.magic);
     printf("replay:    version %i\n", header.version);
@@ -199,9 +197,7 @@ int main(int argc, char** argv)
     do
     {
         if (needUpdate && (p->mode == RealPacket))
-        {
             needUpdate = false;
-        }
         if ((p->mode == RealPacket) || (p->mode == HiddenPacket) ||
                 ((p->mode == StatePacket) && needUpdate))
         {
@@ -212,35 +208,23 @@ int main(int argc, char** argv)
                 for (i = 0; i < (int) list.size(); i++)
                 {
                     if (list[i].level > outputLevel)
-                    {
                         break;
-                    }
                     if (i == 0)
-                    {
                         std::cout << strRRtime(p->timestamp) << ": ";
-                    }
                     for (j = 0; j < list[i].level; j++)
-                    {
                         std::cout << "  ";
-                    }
                     std::cout << list[i].color;
                     std::cout << list[i].text;
                     if (useColor)
-                    {
                         std::cout << "\033[0m";
-                    }
                     std::cout << std::endl;
                 }
             }
         }
         else if (p->mode == StatePacket)
-        {
             MsgStrings::msgFromServer(p->len, p->code, p->data);
-        }
         else if (p->mode == UpdatePacket)
-        {
             std::cout << strRRtime(p->timestamp) << ": UPDATE PACKET" << std::endl;
-        }
 
         delete[] p->data;
         delete p;
@@ -263,8 +247,8 @@ static void printHelp(const char* execName)
     printf("  -h	  : print help\n");
     printf("  -o <level>  : set output level\n");
     printf("  -c	  : disable printing ANSI colors\n");
-//  printf("  -e	  : disable printing mottos\n");
-//  printf("  -m	  : only print message packets\n");
+//  printf("  -e      : disable printing mottos\n");
+//  printf("  -m      : only print message packets\n");
     printf("\n");
     return;
 }
@@ -277,9 +261,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     const void *buf;
 
     if (fread(buffer, ReplayHeaderSize, 1, f) <= 0)
-    {
         return false;
-    }
 
     buf = nboUnpackUInt(buffer, h->magic);
     buf = nboUnpackUInt(buf, h->version);
@@ -299,21 +281,15 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     {
         h->flags = new char [h->flagsSize];
         if (fread(h->flags, h->flagsSize, 1, f) == 0)
-        {
             return false;
-        }
     }
     else
-    {
         h->flags = NULL;
-    }
 
     // load the world database
     h->world = new char [h->worldSize];
     if (fread(h->world, h->worldSize, 1, f) == 0)
-    {
         return false;
-    }
 
     return true;
 }
@@ -327,9 +303,7 @@ static RRpacket* loadPacket(FILE *f)
     const void *buf;
 
     if (f == NULL)
-    {
         return NULL;
-    }
 
     p = new RRpacket;
 
@@ -353,9 +327,7 @@ static RRpacket* loadPacket(FILE *f)
     }
 
     if (p->len == 0)
-    {
         p->data = NULL;
-    }
     else
     {
         char *d = new char [p->len];

@@ -29,7 +29,7 @@ class ShutdownCommand : ServerCommand
 public:
     ShutdownCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -38,14 +38,14 @@ class SuperkillCommand : ServerCommand
 public:
     SuperkillCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId, int sourceChannel);
 
-typedef std::map<std::string, bz_CustomSlashCommandHandlerV2*>	tmCustomSlashCommandMap;
+typedef std::map<std::string, bz_CustomSlashCommandHandlerV2*>  tmCustomSlashCommandMap;
 
 void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandlerV2* handler );
 void removeCustomSlashCommand ( std::string command );
@@ -59,6 +59,6 @@ extern SuperkillCommand superkillCommand;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -37,13 +37,13 @@ public:
     bool isOpen() const;
 
     /** Get the number of channels in the image file. Channels are 8 bits. */
-    unsigned int		getNumChannels() const;
+    unsigned int        getNumChannels() const;
 
     /** Get the width of the image file. */
-    unsigned int		getWidth() const;
+    unsigned int        getWidth() const;
 
     /** Get the height of the image file. */
-    unsigned int		getHeight() const;
+    unsigned int        getHeight() const;
 
 protected:
     ImageFile(std::istream*);
@@ -52,9 +52,9 @@ protected:
     void init(unsigned int numChannels, unsigned int width, unsigned int height);
 
 private:
-    bool			open;
-    unsigned int		numChannels;
-    unsigned int		width, height;
+    bool            open;
+    unsigned int        numChannels;
+    unsigned int        width, height;
 };
 
 #endif
@@ -63,6 +63,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

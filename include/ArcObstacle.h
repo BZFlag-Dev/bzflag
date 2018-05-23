@@ -11,11 +11,11 @@
  */
 
 /* ArcObstacle:
- *	Encapsulates an arc in the game environment.
+ *  Encapsulates an arc in the game environment.
  */
 
-#ifndef	BZF_ARC_OBSTACLE_H
-#define	BZF_ARC_OBSTACLE_H
+#ifndef BZF_ARC_OBSTACLE_H
+#define BZF_ARC_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -111,6 +111,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

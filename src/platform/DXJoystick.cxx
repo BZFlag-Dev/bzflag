@@ -76,14 +76,12 @@ BOOL CALLBACK EnumObjectsCallback( const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* p
     DXJoystick *stick = ( DXJoystick * )pContext;
 
     if ( pdidoi->guidType == GUID_POV )
-    {
         stick->numberOfHats++;
-    }
 
     return DIENUM_CONTINUE;
 }
 
-void	      DXJoystick::initJoystick(const char* joystickName)
+void          DXJoystick::initJoystick(const char* joystickName)
 {
     // turn it off
     if (!joystickName || strcasecmp(joystickName, "off") == 0)
@@ -180,9 +178,9 @@ void	      DXJoystick::initJoystick(const char* joystickName)
     DIPROPRANGE range;
     range.diph.dwSize       = sizeof(range);
     range.diph.dwHeaderSize = sizeof(range.diph);
-    range.diph.dwHow	  = DIPH_BYOFFSET;
-    range.lMin		  = -1000;
-    range.lMax		  = +1000;
+    range.diph.dwHow      = DIPH_BYOFFSET;
+    range.lMin        = -1000;
+    range.lMax        = +1000;
 
     range.diph.dwObj = DIJOFS_X;
     success = device->SetProperty(DIPROP_RANGE, &range.diph);
@@ -203,9 +201,7 @@ void	      DXJoystick::initJoystick(const char* joystickName)
         range.diph.dwObj = DIJOFS_SLIDER(0);
         success = device->SetProperty(DIPROP_RANGE, &range.diph);
         if (success == DI_OK)
-        {
             yAxis = "Slider 1";
-        }
         else
         {
             // couldn't set y axis range, what to do now?
@@ -254,18 +250,18 @@ void	      DXJoystick::initJoystick(const char* joystickName)
     reaquireDevice();
 }
 
-bool	      DXJoystick::joystick() const
+bool          DXJoystick::joystick() const
 {
     return (device != NULL);
 }
 
-void	      DXJoystick::getJoy(int& x, int& y)
+void          DXJoystick::getJoy(int& x, int& y)
 {
     if (!device) return;
 
     DIJOYSTATE state = pollDevice();
 
-    if (xAxis == "X")	 x = state.lX;
+    if (xAxis == "X")    x = state.lX;
     else if (xAxis == "Y")  x = state.lY;
     else if (xAxis == "Z")  x = state.lZ;
     else if (xAxis == "Rx") x = state.lRx;
@@ -274,7 +270,7 @@ void	      DXJoystick::getJoy(int& x, int& y)
     else if (xAxis == "Slider 1") x = state.rglSlider[0];
     else if (xAxis == "Slider 2") x = state.rglSlider[1];
 
-    if (yAxis == "X")	 y = state.lX;
+    if (yAxis == "X")    y = state.lX;
     else if (yAxis == "Y")  y = state.lY;
     else if (yAxis == "Z")  y = state.lZ;
     else if (yAxis == "Rx") y = state.lRx;
@@ -307,12 +303,12 @@ unsigned long DXJoystick::getJoyButtons()
     return buttons;
 }
 
-int	   DXJoystick::getNumHats()
+int    DXJoystick::getNumHats()
 {
     return numberOfHats;
 }
 
-void	  DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void      DXJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
     DIJOYSTATE state = pollDevice();
 
@@ -363,15 +359,13 @@ DIJOYSTATE    DXJoystick::pollDevice()
     return state;
 }
 
-void	      DXJoystick::getJoyDevices(std::vector<std::string> &list) const
+void          DXJoystick::getJoyDevices(std::vector<std::string> &list) const
 {
     for (unsigned int i = 0; i < devices.size(); i++)
-    {
         list.push_back(devices[i].tszProductName);
-    }
 }
 
-void	      DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
+void          DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
 {
     list.clear();
     std::map<std::string,bool>::const_iterator itr = axes.begin();
@@ -383,13 +377,13 @@ void	      DXJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
     }
 }
 
-void	      DXJoystick::setXAxis(const std::string &axis)
+void          DXJoystick::setXAxis(const std::string &axis)
 {
     if (axes[axis] == false) return;
     xAxis = axis;
 }
 
-void	      DXJoystick::setYAxis(const std::string &axis)
+void          DXJoystick::setYAxis(const std::string &axis)
 {
     if (axes[axis] == false) return;
     yAxis = axis;
@@ -399,7 +393,7 @@ void	      DXJoystick::setYAxis(const std::string &axis)
  * Cool force feedback functions.
  */
 
-bool	      DXJoystick::ffHasRumble() const
+bool          DXJoystick::ffHasRumble() const
 {
     if (!device)
         return false;
@@ -423,7 +417,7 @@ bool	      DXJoystick::ffHasRumble() const
     return false;
 }
 
-void	      DXJoystick::ffRumble(int count, float delay, float duration,
+void          DXJoystick::ffRumble(int count, float delay, float duration,
                                    float strong_motor, float weak_motor)
 {
     if (!ffHasRumble())
@@ -515,7 +509,7 @@ void	      DXJoystick::ffRumble(int count, float delay, float duration,
     return;
 }
 
-void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
+void    DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
         float x_direction, float y_direction,
         float strength)
 {
@@ -533,7 +527,8 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
 
     // Generate a string to identify a specific constant effect,
     // based on the parameters of the effect
-    std::string effectType = TextUtils::format("C%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, strength);
+    std::string effectType = TextUtils::format("C%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction,
+                             strength);
 
     // Check if we need to create the effect
     EffectMap::iterator itr = effectDatabase.find(effectType);
@@ -600,7 +595,7 @@ void	DXJoystick::ffDirectionalConstant(int count, float delay, float duration,
     return;
 }
 
-void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
+void    DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
         float x_direction, float y_direction,
         float amplitude, float period, PeriodicType type)
 {
@@ -621,7 +616,8 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
 
     // Generate a string to identify a specific periodic effect,
     // based on the parameters of the effect
-    std::string effectType = TextUtils::format("P%d|%d|%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction, amplitude, period, type);
+    std::string effectType = TextUtils::format("P%d|%d|%d|%d|%d|%d|%d|%d", count, delay, duration, x_direction, y_direction,
+                             amplitude, period, type);
 
     // Check if we need to create the effect
     EffectMap::iterator itr = effectDatabase.find(effectType);
@@ -710,7 +706,7 @@ void	DXJoystick::ffDirectionalPeriodic(int count, float delay, float duration,
     return;
 }
 
-void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
+void    DXJoystick::ffDirectionalResistance(float time, float coefficient,
         float saturation, ResistanceType type)
 {
     if (!ffHasDirectional())
@@ -816,7 +812,7 @@ void	DXJoystick::ffDirectionalResistance(float time, float coefficient,
     return;
 }
 
-bool	DXJoystick::ffHasDirectional() const
+bool    DXJoystick::ffHasDirectional() const
 {
     /* FIXME: sadly, there's no easy way to figure out what TYPE of
        force feedback a windows joystick supports :( */
@@ -948,6 +944,6 @@ BOOL CALLBACK DXJoystick::deviceEnumCallback(LPCDIDEVICEINSTANCE device, void* U
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

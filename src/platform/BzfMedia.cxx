@@ -23,7 +23,7 @@
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {}
 BzfMedia::~BzfMedia() {}
 
-double			BzfMedia::stopwatch(bool start)
+double          BzfMedia::stopwatch(bool start)
 {
     static TimeKeeper prev;
     if (start)
@@ -32,22 +32,20 @@ double			BzfMedia::stopwatch(bool start)
         return 0.0;
     }
     else
-    {
         return (double)(TimeKeeper::getCurrent() - prev);
-    }
 }
 
-std::string		BzfMedia::getMediaDirectory() const
+std::string     BzfMedia::getMediaDirectory() const
 {
     return mediaDir;
 }
 
-void			BzfMedia::setMediaDirectory(const std::string& _dir)
+void            BzfMedia::setMediaDirectory(const std::string& _dir)
 {
     mediaDir = _dir;
 }
 
-unsigned char*		BzfMedia::readImage(const std::string& filename,
+unsigned char*      BzfMedia::readImage(const std::string& filename,
                                         int& width, int& height, int& depth) const
 {
     // try mediaDir/filename
@@ -129,7 +127,7 @@ unsigned char*		BzfMedia::readImage(const std::string& filename,
     return NULL;
 }
 
-float*			BzfMedia::readSound(const std::string& filename,
+float*          BzfMedia::readSound(const std::string& filename,
                                     int& numFrames, int& rate) const
 {
     // try mediaDir/filename
@@ -211,7 +209,7 @@ float*			BzfMedia::readSound(const std::string& filename,
     return NULL;
 }
 
-std::string		BzfMedia::makePath(const std::string& dir,
+std::string     BzfMedia::makePath(const std::string& dir,
                                    const std::string& filename) const
 {
     if ((dir.length() == 0) || filename[0] == '/') return filename;
@@ -221,7 +219,7 @@ std::string		BzfMedia::makePath(const std::string& dir,
     return path;
 }
 
-std::string		BzfMedia::replaceExtension(
+std::string     BzfMedia::replaceExtension(
     const std::string& pathname,
     const std::string& extension) const
 {
@@ -238,49 +236,49 @@ std::string		BzfMedia::replaceExtension(
     return newName;
 }
 
-int			BzfMedia::findExtension(const std::string& pathname) const
+int         BzfMedia::findExtension(const std::string& pathname) const
 {
     int dot = pathname.rfind(".");
     int slash = pathname.rfind("/");
     return ((slash > dot) ? 0 : dot);
 }
 
-std::string		BzfMedia::getImageExtension() const
+std::string     BzfMedia::getImageExtension() const
 {
     return std::string("png");
 }
 
-std::string		BzfMedia::getSoundExtension() const
+std::string     BzfMedia::getSoundExtension() const
 {
     return std::string("wav");
 }
 
-unsigned char*		BzfMedia::doReadImage(const std::string& filename,
+unsigned char*      BzfMedia::doReadImage(const std::string& filename,
         int& dx, int& dy, int&) const
 {
     return MediaFile::readImage( filename, &dx, &dy );
 }
 
-int16_t			BzfMedia::getShort(const void* ptr)
+int16_t         BzfMedia::getShort(const void* ptr)
 {
     const unsigned char* data = (const unsigned char*)ptr;
     return ((int16_t)data[0] << 8) + (int16_t)data[1];
 }
 
-uint16_t		BzfMedia::getUShort(const void* ptr)
+uint16_t        BzfMedia::getUShort(const void* ptr)
 {
     const unsigned char* data = (const unsigned char*)ptr;
     return ((uint16_t)data[0] << 8) + (uint16_t)data[1];
 }
 
-int32_t			BzfMedia::getLong(const void* ptr)
+int32_t         BzfMedia::getLong(const void* ptr)
 {
     const unsigned char* data = (const unsigned char*)ptr;
     return ((int32_t)data[0] << 24) + ((int32_t)data[1] << 16) +
            ((int32_t)data[2] << 8) + (int32_t)data[3];
 }
 
-bool			BzfMedia::doReadVerbatim(FILE* file,
+bool            BzfMedia::doReadVerbatim(FILE* file,
         int dx, int dy, int dz,
         unsigned char* image)
 {
@@ -313,7 +311,7 @@ bool			BzfMedia::doReadVerbatim(FILE* file,
     return true;
 }
 
-bool			BzfMedia::doReadRLE(FILE* file,
+bool            BzfMedia::doReadRLE(FILE* file,
                                     int dx, int dy, int dz,
                                     unsigned char* image)
 {
@@ -413,12 +411,12 @@ bool			BzfMedia::doReadRLE(FILE* file,
 }
 
 #if defined(HAVE_SDL) && !defined(_WIN32)
-float*			BzfMedia::doReadSound(const std::string&, int&, int&) const
+float*          BzfMedia::doReadSound(const std::string&, int&, int&) const
 {
     return NULL;
 }
 #else
-float*			BzfMedia::doReadSound(const std::string& filename,
+float*          BzfMedia::doReadSound(const std::string& filename,
                                       int& numFrames, int& rate) const
 {
     short format, channels, width;
@@ -499,12 +497,12 @@ float*			BzfMedia::doReadSound(const std::string& filename,
 #endif
 
 // Setting Audio Driver
-void	BzfMedia::setDriver(std::string)
+void    BzfMedia::setDriver(std::string)
 {
 }
 
 // Setting Audio Device
-void	BzfMedia::setDevice(std::string)
+void    BzfMedia::setDevice(std::string)
 {
 }
 
@@ -517,6 +515,6 @@ void BzfMedia::audioDriver(std::string& driverName)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

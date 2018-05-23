@@ -14,8 +14,8 @@
  *  Wraps a normal SceneNode within an inverted-view environment.
  */
 
-#ifndef	BZF_EIGHTH_DIM_SHELL_NODE_H
-#define	BZF_EIGHTH_DIM_SHELL_NODE_H
+#ifndef BZF_EIGHTH_DIM_SHELL_NODE_H
+#define BZF_EIGHTH_DIM_SHELL_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -72,6 +72,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

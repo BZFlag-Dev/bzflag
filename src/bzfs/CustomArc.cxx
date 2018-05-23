@@ -86,30 +86,22 @@ bool CustomArc::read(const char *cmd, std::istream& input)
     if (strcasecmp(cmd, "divisions") == 0)
     {
         if (!(input >> divisions))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "angle") == 0)
     {
         if (!(input >> angle))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "ratio") == 0)
     {
         if (!(input >> ratio))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "texsize") == 0)
     {
         if (!(input >> texsize[0] >> texsize[1] >> texsize[2] >> texsize[3]))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "phydrv") == 0)
     {
@@ -121,37 +113,25 @@ bool CustomArc::read(const char *cmd, std::istream& input)
         }
         phydrv = PHYDRVMGR.findDriver(drvname);
         if ((phydrv == -1) && (drvname != "-1"))
-        {
             std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-        }
     }
     else if (strcasecmp(cmd, "smoothbounce") == 0)
-    {
         smoothBounce = true;
-    }
     else if (strcasecmp(cmd, "flatshading") == 0)
-    {
         useNormals = false;
-    }
     else if (parseMaterials(cmd, input, materials, MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else if (parseMaterialsByName(cmd, input, materials, sideNames,
                                   MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else
-    {
         return WorldFileObstacle::read(cmd, input);
-    }
 
     return true;
 }
@@ -162,9 +142,7 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     int i;
     const BzMaterial* mats[MaterialCount];
     for (i = 0; i < MaterialCount; i++)
-    {
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
-    }
     ArcObstacle* arc;
     if (!boxStyle)
     {
@@ -190,13 +168,9 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
     }
 
     if (arc->isValid())
-    {
         groupdef->addObstacle(arc);
-    }
     else
-    {
         delete arc;
-    }
 
     return;
 }
@@ -206,6 +180,6 @@ void CustomArc::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

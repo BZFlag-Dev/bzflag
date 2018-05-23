@@ -70,13 +70,9 @@ std::string CacheManager::getIndexPath()
 bool CacheManager::isCacheFileType(const std::string &name) const
 {
     if (strncasecmp(name.c_str(), "http://", 7) == 0)
-    {
         return true;
-    }
     if (strncasecmp(name.c_str(), "ftp://", 6) == 0)
-    {
         return true;
-    }
     return false;
 }
 
@@ -118,16 +114,12 @@ bool CacheManager::findURL(const std::string& url, CacheRecord& record)
 bool CacheManager::addFile(CacheRecord& record, const void* data)
 {
     if (((data == NULL) && (record.size != 0)) || (record.url.size() <= 0))
-    {
         return false;
-    }
 
     record.name = getLocalName(record.url);
     std::ostream* out = FILEMGR.createDataOutStream(record.name, true /* binary*/);
     if (out == NULL)
-    {
         return false;
-    }
 
     bool replacement = false;
     CacheRecord* rec = &record;
@@ -150,9 +142,7 @@ bool CacheManager::addFile(CacheRecord& record, const void* data)
     rec->key = md5.hexdigest();
 
     if (!replacement)
-    {
         records.push_back(*rec);
-    }
 
     delete out;
     return true;
@@ -165,9 +155,7 @@ int CacheManager::findRecord(const std::string& url)
     {
         CacheRecord* rec = &(records[i]);
         if (url == rec->url)
-        {
             return i;
-        }
     }
     return -1;
 }
@@ -179,31 +167,23 @@ bool CacheManager::loadIndex()
 
     FILE* file = fopen(getIndexPath().c_str(), "r");
     if (file == NULL)
-    {
         return false;
-    }
 
     char buffer[1024];
     while (fgets(buffer, 1024, file) != NULL)
     {
         removeNewlines(buffer);
         if ((buffer[0] == '\0') || (buffer[0] == '#'))
-        {
             continue;
-        }
 
         CacheRecord rec;
         rec.url = buffer;
         rec.name = getLocalName(rec.url);
 
         if (fgets(buffer, 1024, file) == NULL)
-        {
             break;
-        }
         else
-        {
             removeNewlines(buffer);
-        }
         std::string line = buffer;
         std::vector<std::string> tokens = TextUtils::tokenize(line, " ");
         if (tokens.size() != 4)
@@ -216,9 +196,7 @@ bool CacheManager::loadIndex()
         rec.usedDate = strtoul(tokens[2].c_str(), NULL, 10);
         rec.key = tokens[3];
         if (fileExists(rec.name))
-        {
             records.push_back(rec);
-        }
     }
 
     fclose(file);
@@ -235,9 +213,7 @@ bool CacheManager::saveIndex()
 
     FILE* file = fopen(tmpIndexName.c_str(), "w");
     if (file == NULL)
-    {
         return false;
-    }
 
     const time_t nowTime = time(NULL);
     fprintf(file, "#\n");
@@ -248,7 +224,8 @@ bool CacheManager::saveIndex()
     for (unsigned int i = 0; i < records.size(); i++)
     {
         const CacheRecord& rec = records[i];
-        fprintf(file, "%s\n%u %llu %llu ", rec.url.c_str(), rec.size, (long long unsigned)rec.date, (long long unsigned)rec.usedDate);
+        fprintf(file, "%s\n%u %llu %llu ", rec.url.c_str(), rec.size, (long long unsigned)rec.date,
+                (long long unsigned)rec.usedDate);
         fprintf(file, "%s\n\n", rec.key.c_str());
     }
 
@@ -269,15 +246,11 @@ void CacheManager::limitCacheSize()
 {
     int maxSize = BZDB.evalInt("maxCacheMB") * 1024 * 1024;
     if (maxSize < 0)
-    {
         maxSize = 0;
-    }
 
     int currentSize = 0;
     for (unsigned int i = 0; i < records.size(); i++)
-    {
         currentSize += records[i].size;
-    }
 
     std::sort(records.begin(), records.end(), compareUsedDate);
 
@@ -310,9 +283,7 @@ static bool fileExists (const std::string& name)
     // at the end of the filename, _stat will return -1.
     std::string dirname = name;
     while (dirname.find_last_of('\\') == (dirname.size() - 1))
-    {
         dirname.resize(dirname.size() - 1);
-    }
     return (_stat(dirname.c_str(), (struct _stat *) &buf) == 0);
 #endif
 }
@@ -331,9 +302,7 @@ static void removeDirs(const std::string& path)
 #endif
         tmp = tmp.substr(0, i);
         if (remove(tmp.c_str()) != 0)
-        {
             break;
-        }
     }
     return;
 }
@@ -344,9 +313,7 @@ static void removeNewlines(char* c)
     while (*c != '\0')
     {
         if ((*c == '\n') || (*c == '\r'))
-        {
             *c = '\0';
-        }
         c++;
     }
     return;
@@ -365,9 +332,7 @@ static std::string partialEncoding(const std::string& string)
     {
         const char c = string[i];
         if (TextUtils::isWhitespace(c))
-        {
             tmp += "%20";
-        }
         else if ((c == '%') || (c == '*') || (c == '?') ||
                  (c == ':') || (c == '"') || (c == '\\'))
         {
@@ -376,9 +341,7 @@ static std::string partialEncoding(const std::string& string)
             tmp += hex;
         }
         else
-        {
             tmp += c;
-        }
     }
     return tmp;
 }

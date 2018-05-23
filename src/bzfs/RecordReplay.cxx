@@ -150,7 +150,7 @@ static RRpacket *nextStatePacket();
 static RRpacket *prevStatePacket();
 
 static bool savePacket(RRpacket *p, FILE *f);
-static RRpacket *loadPacket(FILE *f);	    // makes a new packet
+static RRpacket *loadPacket(FILE *f);       // makes a new packet
 
 static bool saveHeader(int playerIndex, RRtime filetime, FILE *f);
 static bool loadHeader(ReplayHeader *h, FILE *f);
@@ -172,11 +172,11 @@ static bool makeDirExistMsg(const char *dirname, int playerIndex);
 static RRpacket *newPacket(u16 mode, u16 code, int len, const void *data);
 static void addHeadPacket(RRbuffer *b, RRpacket *p); // add to the head
 static void addTailPacket(RRbuffer *b, RRpacket *p); // add to the tail
-static RRpacket *delTailPacket(RRbuffer *b);	 // delete from the tail
-static RRpacket *delHeadPacket(RRbuffer *b);	 // delete from the head
-static void freeBuffer(RRbuffer *buf);	       // clean it out
+static RRpacket *delTailPacket(RRbuffer *b);     // delete from the tail
+static RRpacket *delHeadPacket(RRbuffer *b);     // delete from the head
+static void freeBuffer(RRbuffer *buf);         // clean it out
 static void initPacket(u16 mode, u16 code, int len, const void *data,
-                       RRpacket *p);	       // copy params into packet
+                       RRpacket *p);           // copy params into packet
 
 static RRtime getRRtime();
 static void *nboPackRRtime(void *buf, RRtime value);
@@ -244,9 +244,7 @@ bool Record::start(int playerIndex)
         return false;
     }
     if (!makeDirExistMsg(RecordDir.c_str(), playerIndex))
-    {
         return false;
-    }
     Recording = true;
     saveStates();
     sendMessage(ServerPlayer, playerIndex, "Recording started");
@@ -282,9 +280,7 @@ bool Record::setDirectory(const char *dirname)
     int len = strlen(dirname);
     RecordDir = dirname;
     if (dirname[len - 1] != DirectorySeparator)
-    {
         RecordDir += DirectorySeparator;
-    }
 
     if (!makeDirExist(RecordDir.c_str()))
     {
@@ -301,9 +297,7 @@ bool Record::setSize(int playerIndex, int Mbytes)
 {
     char buffer[MessageLen];
     if (Mbytes <= 0)
-    {
         Mbytes = 1;
-    }
     RecordMaxBytes = Mbytes * (1024) * (1024);
     snprintf(buffer, MessageLen, "Record size set to %i", Mbytes);
     sendMessage(ServerPlayer, playerIndex, buffer);
@@ -315,13 +309,9 @@ bool Record::setRate(int playerIndex, int seconds)
 {
     char buffer[MessageLen];
     if (seconds <= 0)
-    {
         seconds = 1;
-    }
     else if (seconds > 30)
-    {
         seconds = 30;
-    }
     RecordUpdateRate = seconds * 1000000;
     snprintf(buffer, MessageLen, "Record rate set to %i", seconds);
     sendMessage(ServerPlayer, playerIndex, buffer);
@@ -475,9 +465,7 @@ bool Record::saveBuffer(int playerIndex, const char *filename, int seconds)
             {
                 RRtime diff = RecordBuf.head->timestamp - p->timestamp;
                 if (diff >= usecs)
-                {
                     break;
-                }
             }
             p = p->prev;
         }
@@ -488,9 +476,7 @@ bool Record::saveBuffer(int playerIndex, const char *filename, int seconds)
         // save the whole buffer from the first update
         p = RecordBuf.tail;
         while (p->mode != UpdatePacket)
-        {
             p = p->next;
-        }
 
         if (p == NULL)
         {
@@ -550,9 +536,7 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
     // but it's nice to be able to see the trigger message.
 
     if (code == MsgAddPlayer)
-    {
         retval = routePacket(code, len, data, mode);
-    }
 
     if ((getRRtime() - RecordUpdateTime) > (int)RecordUpdateRate)
     {
@@ -563,22 +547,16 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
     }
 
     if (code == MsgAddPlayer)
-    {
         return retval;
-    }
     else
-    {
         return routePacket(code, len, data, mode);
-    }
 }
 
 
 static bool routePacket(u16 code, int len, const void * data, u16 mode)
 {
     if (!Recording)
-    {
         return false;
-    }
 
     if (RecordMode == BufferedRecord)
     {
@@ -685,9 +663,7 @@ static bool replayReset()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer != NULL)
-        {
             gkPlayer->player.setReplayState(ReplayNone);
-        }
     }
 
     return true;
@@ -697,9 +673,7 @@ static bool replayReset()
 bool Replay::init()
 {
     if (Recording)
-    {
         return false;
-    }
     replayReset();
 
     return true;
@@ -719,13 +693,9 @@ static bool preloadVariables()
 
     // find the first BZDB update packet in the first state update block
     while ((p != NULL) && (p->mode != RealPacket) && (p->code != MsgSetVar))
-    {
         p = p->next;
-    }
     if ((p == NULL) || (p->mode != StatePacket) || (p->code != MsgSetVar))
-    {
         return false;
-    }
 
     // load the variables into BZDB
     do
@@ -742,9 +712,7 @@ static bool preloadVariables()
 bool Replay::loadFile(int playerIndex, const char *filename)
 {
     if (!checkReplayMode(playerIndex))
-    {
         return false;
-    }
 
     std::string indexname;
     if (filename[0] == '#')
@@ -814,13 +782,9 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     {
         p = loadPacket(ReplayFile);
         if (p == NULL)
-        {
             break;
-        }
         else
-        {
             addHeadPacket(&ReplayBuf, p);
-        }
     }
 
     if (ReplayBuf.tail == NULL)
@@ -879,9 +843,7 @@ static FILE *getRecordFile(const char *filename)
 
     FILE *file = fopen(filename, "rb");
     if (file == NULL)
-    {
         return NULL;
-    }
 
     if (fread(buffer, sizeof(magic), 1, file) != 1)
     {
@@ -911,15 +873,11 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
     struct dirent *de;
 
     if (!makeDirExistMsg(RecordDir.c_str(), playerIndex))
-    {
         return false;
-    }
 
     dir = opendir(RecordDir.c_str());
     if (dir == NULL)
-    {
         return false;
-    }
 
     while ((de = readdir(dir)) != NULL)
     {
@@ -946,9 +904,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
 #else  // _MSC_VER
 
     if (!makeDirExistMsg(RecordDir.c_str(), playerIndex))
-    {
         return false;
-    }
 
     std::string pattern = RecordDir;
     pattern += "*";
@@ -1034,9 +990,7 @@ static bool parseListOptions(const char* opts,
             }
         }
         else
-        {
             break;
-        }
     }
 
     while ((opts[0] != '\0') && isspace(opts[0]))
@@ -1049,9 +1003,7 @@ static bool parseListOptions(const char* opts,
     {
         pattern = opts;
         if (strstr(pattern.c_str(), "*") == NULL)
-        {
             pattern = "*" + pattern + "*";
-        }
     }
 
     return true;
@@ -1063,28 +1015,20 @@ bool Replay::sendFileList(int playerIndex, const char* options)
     int sortMode;
     std::string pattern;
     if (!parseListOptions(options, sortMode, pattern))
-    {
         return false;
-    }
 
     std::vector<FileEntry> entries;
     if (!getFileList(playerIndex, entries))
-    {
         return false;
-    }
 
     char buffer[MessageLen];
     snprintf(buffer, MessageLen, "dir:  %s",RecordDir.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     if (sortMode == SortByTime)
-    {
         std::sort (entries.begin(), entries.end(), sortFileTime);
-    }
     else if (sortMode == SortByName)
-    {
         std::sort (entries.begin(), entries.end(), sortFileName);
-    }
 
     int entriesSent = 0;
     for (unsigned int i = 0; i < entries.size(); i++)
@@ -1113,9 +1057,7 @@ bool Replay::sendFileList(int playerIndex, const char* options)
 bool Replay::play(int playerIndex)
 {
     if (!checkReplayMode(playerIndex))
-    {
         return false;
-    }
 
     if (ReplayFile == NULL)
     {
@@ -1127,9 +1069,7 @@ bool Replay::play(int playerIndex)
     ReplayLoop = false;
 
     if (ReplayPos != NULL)
-    {
         ReplayOffset = getRRtime() - ReplayPos->timestamp;
-    }
     else
     {
         sendMessage(ServerPlayer, playerIndex, "Internal replay error");
@@ -1149,9 +1089,7 @@ bool Replay::play(int playerIndex)
 bool Replay::loop(int playerIndex)
 {
     if (!checkReplayMode(playerIndex))
-    {
         return false;
-    }
 
     if (ReplayFile == NULL)
     {
@@ -1163,9 +1101,7 @@ bool Replay::loop(int playerIndex)
     ReplayLoop = true;
 
     if (ReplayPos != NULL)
-    {
         ReplayOffset = getRRtime() - ReplayPos->timestamp;
-    }
     else
     {
         sendMessage(ServerPlayer, playerIndex, "Internal replay error");
@@ -1185,9 +1121,7 @@ bool Replay::loop(int playerIndex)
 bool Replay::sendStats(int playerIndex)
 {
     if (!checkReplayMode(playerIndex))
-    {
         return false;
-    }
 
     if (ReplayFile == NULL)
     {
@@ -1222,9 +1156,7 @@ bool Replay::sendStats(int playerIndex)
 bool Replay::skip(int playerIndex, int seconds)
 {
     if (!checkReplayMode(playerIndex))
-    {
         return false;
-    }
 
     if ((ReplayFile == NULL) || (ReplayPos == NULL))
     {
@@ -1234,13 +1166,9 @@ bool Replay::skip(int playerIndex, int seconds)
 
     RRtime nowtime;
     if (Replaying)
-    {
         nowtime = getRRtime() - ReplayOffset;
-    }
     else
-    {
         nowtime = ReplayPos->timestamp;
-    }
 
     if (seconds != 0)
     {
@@ -1255,9 +1183,7 @@ bool Replay::skip(int playerIndex, int seconds)
             }
             while ((p != NULL) && (p->timestamp < target));
             if (p == NULL)
-            {
                 sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "skipped to the end");
-            }
         }
         else
         {
@@ -1267,9 +1193,7 @@ bool Replay::skip(int playerIndex, int seconds)
             }
             while ((p != NULL) && (p->timestamp > target));
             if (p == NULL)
-            {
                 sendMessage(playerIndex, AllPlayers, REPLAY_LABEL "skipped to the beginning");
-            }
         }
 
         // reset the replay observers' view of state
@@ -1312,9 +1236,7 @@ bool Replay::sendPackets()
     RRpacket *p = ReplayPos;
 
     if (!Replaying)
-    {
         return false;
-    }
 
     while ((p != NULL) && (Replay::nextTime() < 0.0f))
     {
@@ -1337,18 +1259,14 @@ bool Replay::sendPackets()
 
             // set the database variables if this is MsgSetVar
             if (p->code == MsgSetVar)
-            {
                 setVariables(p->data);
-            }
 
             // send message to all replay observers
             for (i = MaxPlayers; i < curMaxPlayers; i++)
             {
                 GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
                 if (gkPlayer == NULL)
-                {
                     continue;
-                }
 
                 PlayerInfo *pi = &gkPlayer->player;
 
@@ -1358,9 +1276,7 @@ bool Replay::sendPackets()
                     if (p->mode == UpdatePacket)
                     {
                         if (pi->getReplayState() == ReplayNone)
-                        {
                             pi->setReplayState(ReplayReceiving);
-                        }
                         else if (pi->getReplayState() == ReplayReceiving)
                         {
                             // two state updates in a row
@@ -1370,9 +1286,7 @@ bool Replay::sendPackets()
                     else if (p->mode != StatePacket)
                     {
                         if (pi->getReplayState() == ReplayReceiving)
-                        {
                             pi->setReplayState(ReplayStateful);
-                        }
                     }
 
                     PlayerReplayState state = pi->getReplayState();
@@ -1390,9 +1304,7 @@ bool Replay::sendPackets()
             } // for loop
         } // if (p->mode != HiddenPacket)
         else
-        {
             logDebugMessage(4,"  skipping hidden packet\n");
-        }
 
         p = nextPacket();
         sent = true;
@@ -1437,9 +1349,7 @@ bool Replay::sendPackets()
 float Replay::nextTime()
 {
     if (!ReplayMode || !Replaying || (ReplayPos == NULL))
-    {
         return 1000.0f;
-    }
     else
     {
         RRtime diff = (ReplayPos->timestamp + ReplayOffset) - getRRtime();
@@ -1533,9 +1443,7 @@ static RRpacket *nextPacket()
         return ReplayPos;
     }
     else
-    {
         return nextFilePacket();
-    }
 }
 
 
@@ -1552,9 +1460,7 @@ static RRpacket *prevPacket()
         return ReplayPos;
     }
     else
-    {
         return prevFilePacket();
-    }
 }
 
 
@@ -1624,9 +1530,7 @@ static RRpacket *nextStatePacket()
     RRpacket *p = nextPacket();
 
     while ((p != NULL) && (p->mode != UpdatePacket))
-    {
         p = nextPacket();
-    }
 
     return p;
 }
@@ -1637,9 +1541,7 @@ static RRpacket *prevStatePacket()
     RRpacket *p = prevPacket();
 
     while ((p != NULL) && (p->mode != UpdatePacket))
-    {
         p = prevPacket();
-    }
 
     return p;
 }
@@ -1767,9 +1669,7 @@ static bool savePlayersState()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
-        {
             continue;
-        }
         PlayerInfo *pi = &gkPlayer->player;
         if (pi->isPlaying())
         {
@@ -1811,9 +1711,7 @@ static bool savePlayersState()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
-        {
             continue;
-        }
         PlayerInfo *pi = &gkPlayer->player;
         if (pi->isAlive())
         {
@@ -1888,12 +1786,12 @@ static bool saveVariablesState()
 static bool saveGameTimeState()
 {
     // FIXME: the packets that are sent out during replay will not
-    //	be properly lag compensated for the connections over
-    //	which they are sent.
-    //	- provide GameTime with an offset capability
-    //	- allow resetting of players' next GameTime update
-    //	  (and do so during a replay state update)
-    //	- send GameTime packets out regardless of replay state
+    //  be properly lag compensated for the connections over
+    //  which they are sent.
+    //  - provide GameTime with an offset capability
+    //  - allow resetting of players' next GameTime update
+    //    (and do so during a replay state update)
+    //  - send GameTime packets out regardless of replay state
     char buffer[MaxPacketLen];
     void* buf = GameTime::pack(buffer, 0.150f);
     int length = (char*)buf - buffer;
@@ -1918,13 +1816,9 @@ static bool resetStates()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
-        {
             continue;
-        }
         if (gkPlayer->player.isPlaying())
-        {
             directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
-        }
     }
 
     // reset players and flags using MsgReplayReset
@@ -1933,13 +1827,9 @@ static bool resetStates()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
-        {
             continue;
-        }
         if (gkPlayer->player.isPlaying())
-        {
             directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
-        }
     }
 
     // reset the local view of the players' state
@@ -1947,9 +1837,7 @@ static bool resetStates()
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
-        {
             continue;
-        }
         gkPlayer->player.setReplayState(ReplayNone);
     }
 
@@ -1970,9 +1858,7 @@ static bool savePacket(RRpacket *p, FILE *f)
     void *buf;
 
     if (f == NULL)
-    {
         return false;
-    }
 
     // file pointer to the next packet location
     u32 thisFilePos = ftell(f);
@@ -1986,14 +1872,10 @@ static bool savePacket(RRpacket *p, FILE *f)
     buf = nboPackRRtime(buf, p->timestamp);
 
     if (fwrite(bufStart, RRpacketHdrSize, 1, f) != 1)
-    {
         return false;
-    }
 
     if ((p->len != 0) && (fwrite(p->data, p->len, 1, f) != 1))
-    {
         return false;
-    }
 
     RecordFileBytes += p->len + RRpacketHdrSize;
     RecordFilePackets++;
@@ -2010,9 +1892,7 @@ static RRpacket *loadPacket(FILE *f)
     const void *buf;
 
     if (f == NULL)
-    {
         return NULL;
-    }
 
     p = new RRpacket;
 
@@ -2037,9 +1917,7 @@ static RRpacket *loadPacket(FILE *f)
     }
 
     if (p->len == 0)
-    {
         p->data = NULL;
-    }
     else
     {
         char *d = new char [p->len];
@@ -2072,9 +1950,7 @@ static FILE *openFile(const char *filename, const char *mode)
 static FILE *openWriteFile(int playerIndex, const char *filename)
 {
     if (!makeDirExistMsg(RecordDir.c_str(), playerIndex))
-    {
         return NULL;
-    }
 
     return openFile(filename, "wb");
 }
@@ -2086,9 +1962,7 @@ static inline int osStat(const char *dir, struct stat *buf)
     // at the end of the filename, _stat will return -1.
     std::string dirname = dir;
     while (dirname.find_last_of('\\') == (dirname.size() - 1))
-    {
         dirname.resize(dirname.size() - 1);
-    }
     return _stat(dirname.c_str(), (struct _stat *) buf);
 #else
     return stat(dir, buf);
@@ -2114,15 +1988,11 @@ static bool makeDirExist(const char *dirname)
     {
         // try to make the directory
         if (osMkDir(dirname, 0755) < 0)
-        {
             return false;
-        }
     }
     // is it a directory?
     else if (!S_ISDIR (statbuf.st_mode))
-    {
         return false;
-    }
 
     return true;
 }
@@ -2158,9 +2028,7 @@ static bool badFilename(const char *name)
         case '.':
         {
             if (name[1] == '.')
-            {
                 return true;
-            }
         }
         }
         name++;
@@ -2177,9 +2045,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     ReplayHeader hdr;
 
     if (f == NULL)
-    {
         return false;
-    }
 
     // player callsign and motto
     const char* callsign = "SERVER";
@@ -2188,9 +2054,7 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(p);
         if (gkPlayer == NULL)
-        {
             return false;
-        }
         else
         {
             PlayerInfo *pi = &gkPlayer->player;
@@ -2228,20 +2092,14 @@ static bool saveHeader(int p, RRtime filetime, FILE *f)
 
     // store the data
     if (fwrite(buffer, ReplayHeaderSize, 1, f) != 1)
-    {
         return false;
-    }
     if (hdr.flagsSize > 0)
     {
         if (fwrite(hdr.flags, hdr.flagsSize, 1, f) != 1)
-        {
             return false;
-        }
     }
     if (fwrite(worldDatabase, worldDatabaseSize, 1, f) != 1)
-    {
         return false;
-    }
 
     RecordFileBytes += totalSize;
 
@@ -2255,9 +2113,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     const void *buf;
 
     if (fread(buffer, ReplayHeaderSize, 1, f) != 1)
-    {
         return false;
-    }
 
     buf = nboUnpackUInt(buffer, h->magic);
     buf = nboUnpackUInt(buf, h->version);
@@ -2278,21 +2134,15 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     {
         h->flags = new char [h->flagsSize];
         if (fread(h->flags, h->flagsSize, 1, f) != 1)
-        {
             return false;
-        }
     }
     else
-    {
         h->flags = NULL;
-    }
 
     // load the world database
     h->world = new char [h->worldSize];
     if (fread(h->world, h->worldSize, 1, f) != 1)
-    {
         return false;
-    }
 
     // remember where the header ends
     ReplayFileStart = ftell(f);
@@ -2357,7 +2207,7 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
      * 6) leave it be, and let clients fall where they may.
      *
      * 7) MAC: get to the client to use STL, so segv's aren't a problem
-     *	 (and kick 'em anyways, to force a map reload)
+     *   (and kick 'em anyways, to force a map reload)
      *
      *
      * maxPlayers [from WorldBuilder.cxx]
@@ -2381,15 +2231,11 @@ static bool saveFileTime(RRtime filetime, FILE *f)
 {
     rewind(f);
     if (fseek(f, sizeof(u32) * 3, SEEK_SET) < 0)
-    {
         return false;
-    }
     char buffer[sizeof(RRtime)];
     nboPackRRtime(buffer, filetime);
     if (fwrite(buffer, sizeof(RRtime), 1, f) != 1)
-    {
         return false;
-    }
     return true;
 }
 
@@ -2398,14 +2244,10 @@ static bool loadFileTime(RRtime *filetime, FILE *f)
 {
     rewind(f);
     if (fseek(f, sizeof(u32) * 3, SEEK_SET) < 0)
-    {
         return false;
-    }
     char buffer[sizeof(RRtime)];
     if (fread(buffer, sizeof(RRtime), 1, f) != 1)
-    {
         return false;
-    }
     nboUnpackRRtime(buffer, *filetime);
     return true;
 }
@@ -2425,9 +2267,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
         buf = FlagType::unpack(buf, type);
         headerFlag[type] = false;
         if (type != Flags::Null)
-        {
             headerFlag[type] = true;
-        }
     }
 
     // we're done with this
@@ -2455,9 +2295,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
         {
             FlagType* &type = it->second;
             if (headerFlag[type])
-            {
                 clOptions->flagCount[type] = 1;
-            }
             clOptions->flagDisallowed[type] = false;
         }
         return true; // flag types were replaced
@@ -2485,9 +2323,7 @@ static bool replaceSettings(ReplayHeader *h)
 
     // compare the settings (now that maxPlayer has been adjusted)
     if (memcmp(worldSettings, h->worldSettings, length) == 0)
-    {
         replaced = false;
-    }
 
     // replace the world settings
     memcpy(worldSettings, h->worldSettings, length);
@@ -2532,9 +2368,7 @@ static bool flagIsActive(FlagType *type)
     if ((clOptions->flagCount[type] > 0) ||
             ((clOptions->numExtraFlags > 0) &&
              !clOptions->flagDisallowed[type]))
-    {
         return true;
-    }
     return false;
 }
 
@@ -2549,9 +2383,7 @@ static bool packFlagTypes(char *flags, u32 *flagsSize)
     {
         FlagType* &type = it->second;
         if ((type != Flags::Null) && flagIsActive(type))
-        {
             buf = type->pack(buf);
-        }
     }
 
     *flagsSize = (char*)buf - flags;
@@ -2583,9 +2415,7 @@ static RRpacket *newPacket(u16 mode, u16 code, int len, const void *data)
 
     char *d = new char [len];
     if (d != NULL)
-    {
         memcpy(d, data, len);
-    }
     p->data = d;
     initPacket(mode, code, len, p->data, p);
 
@@ -2596,13 +2426,9 @@ static RRpacket *newPacket(u16 mode, u16 code, int len, const void *data)
 static void addHeadPacket(RRbuffer *b, RRpacket *p)
 {
     if (b->head != NULL)
-    {
         b->head->next = p;
-    }
     else
-    {
         b->tail = p;
-    }
     p->prev = b->head;
     p->next = NULL;
     b->head = p;
@@ -2617,13 +2443,9 @@ static void addHeadPacket(RRbuffer *b, RRpacket *p)
 static void addTailPacket(RRbuffer *b, RRpacket *p)
 {
     if (b->tail != NULL)
-    {
         b->tail->prev = p;
-    }
     else
-    {
         b->head = p;
-    }
     p->next = b->tail;
     p->prev = NULL;
     b->tail = p;
@@ -2640,9 +2462,7 @@ static RRpacket *delTailPacket(RRbuffer *b)
     RRpacket *p = b->tail;
 
     if (p == NULL)
-    {
         return NULL;
-    }
 
     b->byteCount = b->byteCount - (p->len + RRpacketHdrSize);
     b->packetCount--;
@@ -2650,9 +2470,7 @@ static RRpacket *delTailPacket(RRbuffer *b)
     b->tail = p->next;
 
     if (p->next != NULL)
-    {
         p->next->prev = NULL;
-    }
     else
     {
         b->head = NULL;
@@ -2668,9 +2486,7 @@ static RRpacket *delHeadPacket(RRbuffer *b)
     RRpacket *p = b->head;
 
     if (p == NULL)
-    {
         return NULL;
-    }
 
     b->byteCount = b->byteCount - (p->len + RRpacketHdrSize);
     b->packetCount--;
@@ -2678,9 +2494,7 @@ static RRpacket *delHeadPacket(RRbuffer *b)
     b->head = p->prev;
 
     if (p->prev != NULL)
-    {
         p->prev->next = NULL;
-    }
     else
     {
         b->tail = NULL;
@@ -2730,7 +2544,7 @@ static RRtime getRRtime()
 
     // FIXME - use QPC if available? (10ms[pat] good enough?)
     //       - during rollovers, check time() against the
-    //	 current value to see if a rollover was missed?
+    //   current value to see if a rollover was missed?
 
     static RRtime offset = ((RRtime)time(NULL) * (RRtime)1000000) -
                            ((RRtime)timeGetTime() * (RRtime)1000);
@@ -2836,6 +2650,6 @@ static const char *msgString(u16 code)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

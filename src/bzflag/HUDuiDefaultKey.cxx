@@ -27,12 +27,12 @@ HUDuiDefaultKey::~HUDuiDefaultKey()
     // do nothing
 }
 
-bool			HUDuiDefaultKey::keyPress(const BzfKeyEvent&)
+bool            HUDuiDefaultKey::keyPress(const BzfKeyEvent&)
 {
     return false;
 }
 
-bool			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
+bool            HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 {
     return false;
 }
@@ -41,6 +41,6 @@ bool			HUDuiDefaultKey::keyRelease(const BzfKeyEvent&)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -44,17 +44,11 @@ bool CustomWorld::read(const char *cmd, std::istream& input)
         BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, TextUtils::format("%f", _fHeight));
     }
     else if (strcasecmp(cmd, "noWalls") == 0)
-    {
         BZDB.setBool("noWalls", true);
-    }
     else if (strcasecmp(cmd, "freeCtfSpawns") == 0)
-    {
         BZDB.setBool("freeCtfSpawns", true);
-    }
     else
-    {
         return WorldFileObject::read(cmd, input);
-    }
     return true;
 }
 
@@ -63,7 +57,7 @@ void CustomWorld::writeToWorld(WorldInfo*) const
 {
 }
 
-std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+std::map<std::string,bz_CustomMapObjectHandler*>    customObjectMap;
 
 void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
@@ -84,6 +78,6 @@ void removeCustomMapObject ( const char* object )
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

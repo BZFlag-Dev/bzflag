@@ -46,9 +46,7 @@ CustomWeapon::CustomWeapon()
 bool CustomWeapon::read(const char *cmd, std::istream& input)
 {
     if (strcmp(cmd, "initdelay") == 0)
-    {
         input >> initdelay;
-    }
     else if (strcmp(cmd, "delay") == 0)
     {
         std::string args;
@@ -66,9 +64,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
                 continue;
             }
             else
-            {
                 delay.push_back(d);
-            }
         }
         input.putback('\n');
         if (delay.empty())
@@ -86,20 +82,14 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
     {
         int team;
         if (!(input >> team))
-        {
             std::cout << "weapon color requires a team number" << std::endl;
-        }
         else
-        {
             teamColor = (TeamColor)team;
-        }
     }
     else if (strcmp(cmd, "tilt") == 0)
     {
         if (!(input >> tilt))
-        {
             std::cout << "weapon tilt requires a value" << std::endl;
-        }
         // convert to radians
         tilt *= DEG2RADf;
     }
@@ -112,17 +102,11 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
 
         TextUtils::tolower(triggerName);
         if (triggerName == "oncap")
-        {
             triggerType = bz_eCaptureEvent;
-        }
         else if (triggerName == "onspawn")
-        {
             triggerType = bz_ePlayerSpawnEvent;
-        }
         else if (triggerName == "ondie")
-        {
             triggerType = bz_ePlayerDieEvent;
-        }
         else
         {
             std::cout << "weapon trigger type:" << triggerName << " unknown" << std::endl;
@@ -131,13 +115,9 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
         logDebugMessage(4,"Adding world weapon triggered '%s'\n", triggerName.c_str());
     }
     else if (strcmp(cmd, "eventteam") == 0)
-    {
         input >> eventTeam;
-    }
     else if (!WorldFileLocation::read(cmd, input))
-    {
         return false;
-    }
 
     return true;
 }
@@ -163,6 +143,6 @@ void CustomWeapon::writeToWorld(WorldInfo* world) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

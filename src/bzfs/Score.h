@@ -36,36 +36,36 @@ public:
     void  reset();
     void *pack(void *buf);
     bool  reached() const;
-    int	getWins() const
+    int getWins() const
     {
         return wins;
     }
-    int	getLosses() const
+    int getLosses() const
     {
         return losses;
     }
-    int	getTKs() const
+    int getTKs() const
     {
         return tks;
     }
-    int	getHandicap() const
+    int getHandicap() const
     {
         return handicap;
     };
 
-    void	setWins(int v)
+    void    setWins(int v)
     {
         wins = v;
     }
-    void	setLosses(int v)
+    void    setLosses(int v)
     {
         losses = v;
     }
-    void	setTKs(int v)
+    void    setTKs(int v)
     {
         tks = v;
     }
-    void	setHandicap(int v)
+    void    setHandicap(int v)
     {
         handicap = v;
     }
@@ -95,6 +95,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -28,7 +28,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-void			(*SceneNode::stipple)(GLfloat);
+void            (*SceneNode::stipple)(GLfloat);
 
 SceneNode::SceneNode()
 {
@@ -57,42 +57,38 @@ SceneNode::~SceneNode()
 }
 
 
-bool			SceneNode::colorOverride = true;
-void			SceneNode::noStipple(GLfloat) {}
+bool            SceneNode::colorOverride = true;
+void            SceneNode::noStipple(GLfloat) {}
 
-void			SceneNode::setColorOverride(bool on)
+void            SceneNode::setColorOverride(bool on)
 {
     colorOverride = on;
     if (on)
-    {
         stipple  = &noStipple;
-    }
     else
-    {
         stipple  = &OpenGLGState::setStipple;
-    }
 }
 
-void			SceneNode::setRadius(GLfloat radiusSquared)
+void            SceneNode::setRadius(GLfloat radiusSquared)
 {
     sphere[3] = radiusSquared;
 }
 
-void			SceneNode::setCenter(const GLfloat center[3])
+void            SceneNode::setCenter(const GLfloat center[3])
 {
     sphere[0] = center[0];
     sphere[1] = center[1];
     sphere[2] = center[2];
 }
 
-void			SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
+void            SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
 {
     sphere[0] = x;
     sphere[1] = y;
     sphere[2] = z;
 }
 
-void			SceneNode::setSphere(const GLfloat _sphere[4])
+void            SceneNode::setSphere(const GLfloat _sphere[4])
 {
     sphere[0] = _sphere[0];
     sphere[1] = _sphere[1];
@@ -100,41 +96,41 @@ void			SceneNode::setSphere(const GLfloat _sphere[4])
     sphere[3] = _sphere[3];
 }
 
-void			SceneNode::notifyStyleChange()
+void            SceneNode::notifyStyleChange()
 {
     // do nothing
 }
 
-void			SceneNode::addRenderNodes(SceneRenderer&)
+void            SceneNode::addRenderNodes(SceneRenderer&)
 {
     // do nothing
 }
 
-void			SceneNode::addShadowNodes(SceneRenderer&)
+void            SceneNode::addShadowNodes(SceneRenderer&)
 {
     // do nothing
 }
 
-void			SceneNode::addLight(SceneRenderer&)
+void            SceneNode::addLight(SceneRenderer&)
 {
     // do nothing
 }
 
-GLfloat			SceneNode::getDistance(const GLfloat* eye) const
+GLfloat         SceneNode::getDistance(const GLfloat* eye) const
 {
     return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
            (eye[1] - sphere[1]) * (eye[1] - sphere[1]) +
            (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
 }
 
-int			SceneNode::split(const float*,
+int         SceneNode::split(const float*,
                              SceneNode*&, SceneNode*&) const
 {
     // can't split me
     return 1;
 }
 
-bool			SceneNode::cull(const ViewFrustum& view) const
+bool            SceneNode::cull(const ViewFrustum& view) const
 {
     // if center of object is outside view frustum and distance is
     // greater than radius of object then cull.
@@ -162,9 +158,7 @@ bool SceneNode::cullShadow(int, const float (*)[4]) const
 bool SceneNode::inAxisBox (const Extents& exts) const
 {
     if (!extents.touches(exts))
-    {
         return false;
-    }
     return true;
 }
 
@@ -190,7 +184,7 @@ GLfloat2Array::GLfloat2Array(const GLfloat2Array& a) :
     ::memcpy(data, a.data, size * sizeof(GLfloat2));
 }
 
-GLfloat2Array&		GLfloat2Array::operator=(const GLfloat2Array& a)
+GLfloat2Array&      GLfloat2Array::operator=(const GLfloat2Array& a)
 {
     if (this != &a)
     {
@@ -214,7 +208,7 @@ GLfloat3Array::GLfloat3Array(const GLfloat3Array& a) :
     ::memcpy(data, a.data, size * sizeof(GLfloat3));
 }
 
-GLfloat3Array&		GLfloat3Array::operator=(const GLfloat3Array& a)
+GLfloat3Array&      GLfloat3Array::operator=(const GLfloat3Array& a)
 {
     if (this != &a)
     {
@@ -244,6 +238,6 @@ void SceneNode::renderRadar()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

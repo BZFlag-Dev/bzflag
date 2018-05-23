@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__OPTIONSMENU_H__
-#define	__OPTIONSMENU_H__
+#ifndef __OPTIONSMENU_H__
+#define __OPTIONSMENU_H__
 
 #include "common.h"
 
@@ -38,26 +38,26 @@ public:
     {
         return MenuDefaultKey::getInstance();
     }
-    void		execute();
-    void		resize(int width, int height);
+    void        execute();
+    void        resize(int width, int height);
 
-    static void	callback(HUDuiControl* w, const void* data);
+    static void callback(HUDuiControl* w, const void* data);
 
 private:
-    HUDuiControl*	guiOptions;
-    HUDuiControl*	effectsOptions;
-    HUDuiControl*	cacheOptions;
-    HUDuiControl*	saveWorld;
-    HUDuiControl*	inputSetting;
-    HUDuiControl*	audioSetting;
-    HUDuiControl*	displaySetting;
-    GUIOptionsMenu*	guiOptionsMenu;
-    EffectsMenu*		effectsMenu;
-    CacheMenu*		cacheMenu;
-    SaveWorldMenu*	saveWorldMenu;
-    InputMenu*		inputMenu;
-    AudioMenu*		audioMenu;
-    DisplayMenu*		displayMenu;
+    HUDuiControl*   guiOptions;
+    HUDuiControl*   effectsOptions;
+    HUDuiControl*   cacheOptions;
+    HUDuiControl*   saveWorld;
+    HUDuiControl*   inputSetting;
+    HUDuiControl*   audioSetting;
+    HUDuiControl*   displaySetting;
+    GUIOptionsMenu* guiOptionsMenu;
+    EffectsMenu*        effectsMenu;
+    CacheMenu*      cacheMenu;
+    SaveWorldMenu*  saveWorldMenu;
+    InputMenu*      inputMenu;
+    AudioMenu*      audioMenu;
+    DisplayMenu*        displayMenu;
 };
 
 
@@ -67,6 +67,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

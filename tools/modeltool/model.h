@@ -47,7 +47,7 @@ public:
         u = v = 0;
     }
     ~CTexCoord() {};
-    float	u,v;
+    float   u,v;
 
     bool same ( const CTexCoord &c )
     {
@@ -65,7 +65,7 @@ public:
         x = y = z = 0;
     }
     ~CVertex() {};
-    float	x,y,z;
+    float   x,y,z;
 
     float get ( teModelAxis axis )
     {
@@ -109,10 +109,10 @@ public:
     CFace() {};
     ~CFace() {};
 
-    std::string	material;
-    tvIndexList	verts;
-    tvIndexList	normals;
-    tvIndexList	texCoords;
+    std::string material;
+    tvIndexList verts;
+    tvIndexList normals;
+    tvIndexList texCoords;
 
     void clear ( void )
     {
@@ -133,12 +133,12 @@ public:
     }
     ~CMaterial() {};
 
-    std::string	texture;
-    float		ambient[4];
-    float		diffuse[4];
-    float		specular[4];
-    float		emission[4];
-    float		shine;
+    std::string texture;
+    float       ambient[4];
+    float       diffuse[4];
+    float       specular[4];
+    float       emission[4];
+    float       shine;
 
     void clear ( void )
     {
@@ -163,12 +163,12 @@ public:
     CMesh() {};
     ~CMesh() {};
 
-    tvVertList	verts;
-    tvVertList	normals;
-    tvTexCoordList	texCoords;
+    tvVertList  verts;
+    tvVertList  normals;
+    tvTexCoordList  texCoords;
 
-    std::string	name;
-    tvFaceList	faces;
+    std::string name;
+    tvFaceList  faces;
 
     float getMaxAxisValue ( teModelAxis axis )
     {
@@ -244,9 +244,9 @@ public:
     CModel() {};
     ~CModel() {};
 
-    tmMaterialMap		materials;
-    tvMeshList		meshes;
-    tvCustomObjectList	customObjects;
+    tmMaterialMap       materials;
+    tvMeshList      meshes;
+    tvCustomObjectList  customObjects;
 
     void pushAboveAxis ( teModelAxis axis )
     {

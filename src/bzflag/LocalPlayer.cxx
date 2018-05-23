@@ -32,7 +32,7 @@
 /* system implementation headers */
 #include <algorithm>
 
-LocalPlayer*		LocalPlayer::mainPlayer = NULL;
+LocalPlayer*        LocalPlayer::mainPlayer = NULL;
 
 LocalPlayer::LocalPlayer(const PlayerId& _id,
                          const char* name, const char* _motto) :
@@ -71,13 +71,9 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
         shots[i] = NULL;
     // set input method
     if (BZDB.isTrue("allowInputChange"))
-    {
         inputMethod = Mouse;
-    }
     else
-    {
         setInputMethod(BZDB.get("activeInputDevice"));
-    }
 }
 
 LocalPlayer::~LocalPlayer()
@@ -92,12 +88,12 @@ LocalPlayer::~LocalPlayer()
     delete antidoteFlag;
 }
 
-void			LocalPlayer::setMyTank(LocalPlayer* player)
+void            LocalPlayer::setMyTank(LocalPlayer* player)
 {
     mainPlayer = player;
 }
 
-void			LocalPlayer::doUpdate(float dt)
+void            LocalPlayer::doUpdate(float dt)
 {
     const bool hadShotActive = anyShotActive;
     static TimeKeeper pauseTime = TimeKeeper::getNullTime();
@@ -111,9 +107,7 @@ void			LocalPlayer::doUpdate(float dt)
         for (i = 0; i < numShots; i++)
         {
             if (shots[i])
-            {
                 shots[i]->boostReloadTime(dt);
-            }
         }
 
         // if we've been paused for a long time, drop our flag
@@ -201,14 +195,10 @@ void LocalPlayer::doSlideMotion(float dt, float slideTime,
         {
             adjSpeed = oldSpeed - (dt * (maxSpeed / slideTime));
             if (adjSpeed < 0.0f)
-            {
                 adjSpeed = 0.0f;
-            }
         }
         else
-        {
             adjSpeed = maxSpeed;
-        }
         const float speedScale = adjSpeed / newSpeed;
         nv[0] *= speedScale;
         nv[1] *= speedScale;
@@ -241,15 +231,13 @@ float LocalPlayer::getNewAngVel(float old, float desired)
         // instant stop
         if ((old * desired < 0.0f) ||
                 (NEAR_ZERO(desired, ZERO_TOLERANCE)))
-        {
             newAngVel = desired;
-        }
     }
     return newAngVel;
 }
 
 
-void			LocalPlayer::doUpdateMotion(float dt)
+void            LocalPlayer::doUpdateMotion(float dt)
 {
     static const float MinSearchStep = 0.0001f;
     static const int MaxSearchSteps = 7;
@@ -303,20 +291,16 @@ void			LocalPlayer::doUpdateMotion(float dt)
             {
                 dt -= float((lastTime - getExplodeTime()) - BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
                 if (dt < 0.0f)
-                {
                     dt = 0.0f;
-                }
                 setStatus(PlayerState::DeadStatus);
                 location = Dead;
                 if (isAutoPilot())
-                {
                     CMDMGR.run("restart");
-                }
             }
 
             // can't control explosion motion
             newVelocity[2] += BZDBCache::gravity * dt;
-            newAngVel = 0.0f;	// or oldAngVel to spin while exploding
+            newAngVel = 0.0f;   // or oldAngVel to spin while exploding
         }
         else if ((location == OnGround) || (location == OnBuilding) ||
                  (location == InBuilding && oldPosition[2] == groundLimit))
@@ -364,9 +348,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
                 // compute horizontal velocity so far
                 const float slideTime = BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME);
                 if (slideTime > 0.0)
-                {
                     doSlideMotion(dt, slideTime, newAngVel, newVelocity);
-                }
                 else
                 {
                     const float angle = oldAzimuth + 0.5f * dt * newAngVel;
@@ -390,9 +372,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
 
         // below the ground: however I got there, creep up
         if (oldPosition[2] < groundLimit)
-        {
             newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
-        }
     }
 
     // jump here, we allow a little change in horizontal motion
@@ -479,9 +459,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
             stuck = true;
         }
         else
-        {
             stuckFrameCount = 0;
-        }
 
         if (stuckFrameCount > 100)
         {
@@ -589,9 +567,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
             newPos[1] = tmpPos[1] + (t * newVelocity[1]);
             newPos[2] = tmpPos[2] + (t * newVelocity[2]);
             if ((newPos[2] < groundLimit) && (newVelocity[2] < 0))
-            {
                 newPos[2] = groundLimit;
-            }
 
             // see if we hit anything
             bool searchExpelled;
@@ -623,9 +599,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
         newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
         if (oldPosition[2] < groundLimit)
-        {
             newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
-        }
 
 
         // record how much time is left in time step
@@ -636,9 +610,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         // back to simple normal calculation.
         float normal[3];
         if (!getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal))
-        {
             obstacle->getNormal(newPos, normal);
-        }
 
         // check for being on a building
         if ((newPos[2] > 0.0f) && (normal[2] > 0.001f))
@@ -662,16 +634,12 @@ void			LocalPlayer::doUpdateMotion(float dt)
                 // if going down then stop falling
                 if (newVelocity[2] < 0.0f && newVelocity[2] -
                         (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
-                {
                     newVelocity[2] = 0.0f;
-                }
 
                 // normalize force magnitude in horizontal plane
                 float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
                 if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE))
-                {
                     mag /= horNormal;
-                }
             }
 
             // cancel out component in normal direction (if velocity and
@@ -699,13 +667,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
     if (location == OnGround)
     {
         if (obstacle && (!expelled || stuck))
-        {
             location = InBuilding;
-        }
         else if (newPos[2] > 0.0f)
-        {
             location = InAir;
-        }
     }
 
     // see if we're crossing a wall
@@ -715,25 +679,17 @@ void			LocalPlayer::doUpdateMotion(float dt)
                                  0.5f * BZDBCache::tankLength,
                                  0.5f * BZDBCache::tankWidth,
                                  BZDBCache::tankHeight, NULL))
-        {
             setStatus(getStatus() | int(PlayerState::CrossingWall));
-        }
         else
-        {
             setStatus(getStatus() & ~int(PlayerState::CrossingWall));
-        }
     }
     else if (World::getWorld()->crossingTeleporter( newPos, newAzimuth,
              0.5f * BZDBCache::tankLength,
              0.5f * BZDBCache::tankWidth,
              BZDBCache::tankHeight, crossingPlane))
-    {
         setStatus(getStatus() | int(PlayerState::CrossingWall));
-    }
     else
-    {
         setStatus(getStatus() & ~int(PlayerState::CrossingWall));
-    }
 
     // compute actual velocities.  do this before teleportation.
     if (!NEAR_ZERO(dt, ZERO_TOLERANCE))
@@ -759,13 +715,9 @@ void			LocalPlayer::doUpdateMotion(float dt)
     int face;
     const Teleporter* teleporter;
     if (!isAlive())
-    {
         teleporter = NULL;
-    }
     else
-    {
         teleporter = World::getWorld()->crossesTeleporter(oldPosition, newPos, face);
-    }
 
     if (teleporter)
     {
@@ -774,9 +726,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
             // change zoned state
             setStatus(getStatus() ^ PlayerState::FlagActive);
             if (gettingSound)
-            {
                 playLocalSound(SFX_PHANTOM);
-            }
         }
         else
         {
@@ -808,9 +758,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
                 setTeleport(lastTime, source, targetTele);
                 server->sendTeleport(source, targetTele);
                 if (gettingSound)
-                {
                     playLocalSound(SFX_TELEPORT);
-                }
             }
         }
     }
@@ -824,9 +772,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         int driverIdent = meshFace->getPhysicsDriver();
         const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(driverIdent);
         if (phydriver != NULL)
-        {
             setPhysicsDriver(driverIdent);
-        }
     }
 
     // deal with drop sounds and effects
@@ -837,9 +783,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         // a false jump mess with the spawnEffect()
         // FIXME: this isn't a clean way to do it
         if ((oldLocation == InAir) == (location == InAir))
-        {
             entryDrop = false;
-        }
     }
 
     const bool justLanded =
@@ -860,39 +804,27 @@ void			LocalPlayer::doUpdateMotion(float dt)
             addRemoteSound(PlayerState::BounceSound);
         }
         else if (justLanded && !entryDrop)
-        {
             playLocalSound(SFX_LAND);
-        }
         else if ((location == OnGround) &&
                  (oldPosition[2] == 0.0f) && (newPos[2] < 0.f))
-        {
             playLocalSound(SFX_BURROW);
-        }
     }
 
     // set falling status
     if (location == OnGround || location == OnBuilding ||
             (location == InBuilding && newPos[2] == 0.0f))
-    {
         setStatus(getStatus() & ~short(PlayerState::Falling));
-    }
     else if (location == InAir || location == InBuilding)
-    {
         setStatus(getStatus() | short(PlayerState::Falling));
-    }
 
     // set UserInput status (determines how animated treads are drawn)
     const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(getPhysicsDriver());
     if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||
             ((getFlag() == Flags::Wings) && (location == InAir) &&
              (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f)))
-    {
         setStatus(getStatus() | short(PlayerState::UserInputs));
-    }
     else
-    {
         setStatus(getStatus() & ~short(PlayerState::UserInputs));
-    }
 
     // compute firing status
     switch (location)
@@ -922,9 +854,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
     // calculate the list of inside buildings
     insideBuildings.clear();
     if (location == InBuilding)
-    {
         collectInsideBuildings();
-    }
 
     // move tank
     move(newPos, newAzimuth);
@@ -941,9 +871,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
             ((flagAntidotePos[1] - newPos[1]) * (flagAntidotePos[1] - newPos[1]));
         const float twoRads = getRadius() + BZDBCache::flagRadius;
         if (dist < (twoRads * twoRads))
-        {
             server->sendDropFlag(getPosition());
-        }
     }
 
     if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding)))
@@ -951,9 +879,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
         if (oldLocation != InAir)
         {
             if ((TimeKeeper::getTick() - bounceTime) > 0)
-            {
                 doJump();
-            }
         }
         else
         {
@@ -972,9 +898,7 @@ void			LocalPlayer::doUpdateMotion(float dt)
                               ((teleporter != NULL) && (getFlag() != Flags::PhantomZone)));
         }
         if (NEAR_ZERO(dt, ZERO_TOLERANCE))
-        {
             speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
-        }
         else
         {
             speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
@@ -1025,9 +949,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
             const int driver = face->getPhysicsDriver();
             const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
             if ((phydrv != NULL) && phydrv->getIsDeath())
-            {
                 deathPhyDrv = driver;
-            }
         }
     }
 
@@ -1052,9 +974,7 @@ static bool notInObstacleList(const Obstacle* obs,
     for (unsigned int i = 0; i < list.size(); i++)
     {
         if (obs == list[i])
-        {
             return false;
-        }
     }
     return true;
 }
@@ -1085,16 +1005,12 @@ void LocalPlayer::collectInsideBuildings()
                     const int driver = face->getPhysicsDriver();
                     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
                     if ((phydrv != NULL) && (phydrv->getIsDeath()))
-                    {
                         deathPhyDrv = driver;
-                    }
                 }
                 // add the mesh if not already present
                 if (!obs->isDriveThrough() &&
                         notInObstacleList(mesh, insideBuildings))
-                {
                     insideBuildings.push_back(mesh);
-                }
             }
             else if (!obs->isDriveThrough())
             {
@@ -1102,14 +1018,10 @@ void LocalPlayer::collectInsideBuildings()
                 {
                     // add the mesh if not already present
                     if (notInObstacleList(obs, insideBuildings))
-                    {
                         insideBuildings.push_back(obs);
-                    }
                 }
                 else
-                {
                     insideBuildings.push_back(obs);
-                }
             }
         }
     }
@@ -1118,22 +1030,22 @@ void LocalPlayer::collectInsideBuildings()
 }
 
 
-float			LocalPlayer::getFlagShakingTime() const
+float           LocalPlayer::getFlagShakingTime() const
 {
     return flagShakingTime;
 }
 
-int			LocalPlayer::getFlagShakingWins() const
+int         LocalPlayer::getFlagShakingWins() const
 {
     return flagShakingWins;
 }
 
-const GLfloat*		LocalPlayer::getAntidoteLocation() const
+const GLfloat*      LocalPlayer::getAntidoteLocation() const
 {
     return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
 }
 
-ShotPath*		LocalPlayer::getShot(int index) const
+ShotPath*       LocalPlayer::getShot(int index) const
 {
     index &= 0x00FF;
     if ((index < 0) || (index >= numShots))
@@ -1141,7 +1053,7 @@ ShotPath*		LocalPlayer::getShot(int index) const
     return shots[index];
 }
 
-void			LocalPlayer::restart(const float* pos, float _azimuth)
+void            LocalPlayer::restart(const float* pos, float _azimuth)
 {
     // put me in limbo
     setStatus(short(PlayerState::DeadStatus));
@@ -1186,12 +1098,12 @@ void			LocalPlayer::restart(const float* pos, float _azimuth)
     setStatus(getStatus() | short(PlayerState::Alive));
 }
 
-void			LocalPlayer::setTeam(TeamColor _team)
+void            LocalPlayer::setTeam(TeamColor _team)
 {
     changeTeam(_team);
 }
 
-void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
+void            LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
     FlagType* flag = getFlag();
     // can't go faster forward than at top speed, and backward at half speed
@@ -1201,37 +1113,23 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
     // oscillation overthruster tank in building can't back up
     if (fracOfMaxSpeed < 0.0f && getLocation() == InBuilding &&
             flag == Flags::OscillationOverthruster)
-    {
         fracOfMaxSpeed = 0.0f;
-    }
 
     // boost speed for certain flags
     if (flag == Flags::Velocity)
-    {
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    }
     else if (flag == Flags::Thief)
-    {
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    }
     else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
-    {
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-    }
     else if ((flag == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
-    {
         fracOfMaxSpeed = 0.0f;
-    }
     else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
-    {
         fracOfMaxSpeed = 0.0f;
-    }
     else if (flag == Flags::Agility)
     {
         if ((TimeKeeper::getTick() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
-        {
             fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-        }
         else
         {
             float oldFrac = desiredSpeed / BZDBCache::tankSpeed;
@@ -1261,7 +1159,7 @@ void			LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 }
 
 
-void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
+void            LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
     FlagType* flag = getFlag();
 
@@ -1277,13 +1175,9 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 
     // boost turn speed for other flags
     if (flag == Flags::QuickTurn)
-    {
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-    }
     else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
-    {
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
-    }
 
     // apply handicap advantage to tank speed
     fracOfMaxAngVel *= (1.0f + (handicap * (BZDB.eval(StateDatabase::BZDB_HANDICAPANGAD) - 1.0f)));
@@ -1296,7 +1190,7 @@ void			LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 }
 
 
-void			LocalPlayer::setPause(bool pause)
+void            LocalPlayer::setPause(bool pause)
 {
     if (isAlive())
     {
@@ -1313,7 +1207,7 @@ void			LocalPlayer::setPause(bool pause)
     }
 }
 
-void			LocalPlayer::activateAutoPilot(bool autopilot)
+void            LocalPlayer::activateAutoPilot(bool autopilot)
 {
     // If desired and actual state is the same, ignore the request
     if (autopilot == isAutoPilot())
@@ -1325,7 +1219,7 @@ void			LocalPlayer::activateAutoPilot(bool autopilot)
         setTarget(NULL);
 }
 
-bool			LocalPlayer::fireShot()
+bool            LocalPlayer::fireShot()
 {
     if (! (firingStatus == Ready || firingStatus == Zoned))
         return false;
@@ -1340,9 +1234,7 @@ bool			LocalPlayer::fireShot()
     // make sure we're allowed to shoot
     if (!isAlive() || isPaused() ||
             ((location == InBuilding) && !isPhantomZoned()))
-    {
         return false;
-    }
 
     // prepare shot
     FiringInfo firingInfo(*this, i + getSalt());
@@ -1435,7 +1327,7 @@ bool			LocalPlayer::fireShot()
     return true;
 }
 
-void			LocalPlayer::purgeShots() const
+void            LocalPlayer::purgeShots() const
 {
     for (int i = 0; i < numShots; i++)
     {
@@ -1447,27 +1339,21 @@ void			LocalPlayer::purgeShots() const
     }
 }
 
-float			LocalPlayer::getReloadTime() const
+float           LocalPlayer::getReloadTime() const
 {
     if (numShots <= 0)
-    {
         return 0.0f;
-    }
 
     float time = float(jamTime - TimeKeeper::getTick());
     if (time > 0.0f)
-    {
         return time;
-    }
 
     // look for an empty slot
     int i;
     for (i = 0; i < numShots; i++)
     {
         if (!shots[i])
-        {
             return 0.0f;
-        }
     }
 
     // look for the shot fired least recently
@@ -1478,15 +1364,11 @@ float			LocalPlayer::getReloadTime() const
         const float t = float(shots[i]->getReloadTime() -
                               (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
         if (t < minTime)
-        {
             minTime = t;
-        }
     }
 
     if (minTime < 0.0f)
-    {
         minTime = 0.0f;
-    }
 
     return minTime;
 }
@@ -1532,32 +1414,28 @@ bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
     return true;
 }
 
-void			LocalPlayer::setJump()
+void            LocalPlayer::setJump()
 {
     wantJump = jumpPressed;
 }
 
-void			LocalPlayer::setJumpPressed(bool value)
+void            LocalPlayer::setJumpPressed(bool value)
 {
     jumpPressed = value;
 }
 
-void			LocalPlayer::doJump()
+void            LocalPlayer::doJump()
 {
     FlagType* flag = getFlag();
 
     // can't jump while burrowed
     if (getPosition()[2] < 0.0f)
-    {
         return;
-    }
 
     if (flag == Flags::Wings)
     {
         if (wingsFlapCount <= 0)
-        {
             return;
-        }
         wingsFlapCount--;
     }
     else if ((location != OnGround) && (location != OnBuilding))
@@ -1572,9 +1450,7 @@ void			LocalPlayer::doJump()
     else if ((flag != Flags::Bouncy) &&
              ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
               (flag == Flags::NoJumping)))
-    {
         return;
-    }
 
     // jump velocity
     const float* oldVelocity = getVelocity();
@@ -1591,9 +1467,7 @@ void			LocalPlayer::doJump()
             // if you're already going up faster, just keep doing that
         }
         else if (oldVelocity[2] > newVelocity[2])
-        {
             newVelocity[2] = oldVelocity[2];
-        }
     }
     else if (flag == Flags::Bouncy)
     {
@@ -1601,9 +1475,7 @@ void			LocalPlayer::doJump()
         newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
     }
     else
-    {
         newVelocity[2] = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-    }
     setVelocity(newVelocity);
     location = InAir;
 
@@ -1628,24 +1500,24 @@ void			LocalPlayer::doJump()
     wantJump = false;
 }
 
-void			LocalPlayer::setTarget(const Player* _target)
+void            LocalPlayer::setTarget(const Player* _target)
 {
     target = _target;
 }
 
-void			LocalPlayer::setNemesis(const Player* _nemesis)
+void            LocalPlayer::setNemesis(const Player* _nemesis)
 {
     if ((_nemesis == NULL) || _nemesis->getPlayerType() == TankPlayer)
         nemesis = _nemesis;
 }
 
-void			LocalPlayer::setRecipient(const Player* _recipient)
+void            LocalPlayer::setRecipient(const Player* _recipient)
 {
     if ((_recipient == NULL) || (_recipient->getId() <= LastRealPlayer))
         recipient = _recipient;
 }
 
-void			LocalPlayer::explodeTank()
+void            LocalPlayer::explodeTank()
 {
     if (location == Dead || location == Exploding) return;
     float gravity      = BZDBCache::gravity;
@@ -1670,9 +1542,7 @@ void			LocalPlayer::explodeTank()
             newVelocity[2] = maxSpeed;
     }
     else
-    {
         newVelocity[2] = oldVelocity[2];
-    }
     TankDeathOverride* death = getDeathEffect();
     if (death)
     {
@@ -1686,10 +1556,10 @@ void			LocalPlayer::explodeTank()
     }
     setVelocity(newVelocity);
     location = Exploding;
-    target = NULL;		// lose lock when dead
+    target = NULL;      // lose lock when dead
 }
 
-void			LocalPlayer::doMomentum(float dt,
+void            LocalPlayer::doMomentum(float dt,
                                         float& speed, float& angVel)
 {
     // get maximum linear and angular accelerations
@@ -1716,7 +1586,7 @@ void			LocalPlayer::doMomentum(float dt,
     }
 }
 
-void			LocalPlayer::doFriction(float dt,
+void            LocalPlayer::doFriction(float dt,
                                         const float *oldVelocity, float *newVelocity)
 {
     const float friction = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
@@ -1739,7 +1609,7 @@ void			LocalPlayer::doFriction(float dt,
     }
 }
 
-void			LocalPlayer::doForces(float UNUSED(dt),
+void            LocalPlayer::doForces(float UNUSED(dt),
                                       float* UNUSED(velocity),
                                       float& UNUSED(angVel))
 {
@@ -1748,7 +1618,7 @@ void			LocalPlayer::doForces(float UNUSED(dt),
 }
 
 // NOTE -- minTime should be initialized to Infinity by the caller
-bool			LocalPlayer::checkHit(const Player* source,
+bool            LocalPlayer::checkHit(const Player* source,
                                       const ShotPath*& hit, float& minTime) const
 {
     bool goodHit = false;
@@ -1791,9 +1661,7 @@ bool			LocalPlayer::checkHit(const Player* source,
 
         // zoned shots only kill zoned tanks
         if ((shotFlag == Flags::PhantomZone) && !isPhantomZoned())
-        {
             continue;
-        }
 
         // test myself against shot
         float position[3];
@@ -1815,7 +1683,7 @@ bool			LocalPlayer::checkHit(const Player* source,
     return goodHit;
 }
 
-void			LocalPlayer::setFlag(FlagType* flag)
+void            LocalPlayer::setFlag(FlagType* flag)
 {
     Player::setFlag(flag);
 
@@ -1867,7 +1735,7 @@ void			LocalPlayer::setFlag(FlagType* flag)
     }
 }
 
-void			LocalPlayer::changeScore(short deltaWins,
+void            LocalPlayer::changeScore(short deltaWins,
         short deltaLosses,
         short deltaTks)
 {
@@ -1884,13 +1752,13 @@ void			LocalPlayer::changeScore(short deltaWins,
     }
 }
 
-void			LocalPlayer::addAntidote(SceneDatabase* scene)
+void            LocalPlayer::addAntidote(SceneDatabase* scene)
 {
     if (antidoteFlag)
         scene->addDynamicNode(antidoteFlag);
 }
 
-std::string		LocalPlayer::getInputMethodName(InputMethod whatInput)
+std::string     LocalPlayer::getInputMethodName(InputMethod whatInput)
 {
     switch (whatInput)
     {
@@ -1931,6 +1799,6 @@ void LocalPlayer::setKey(int button, bool pressed)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

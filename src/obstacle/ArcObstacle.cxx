@@ -134,9 +134,7 @@ MeshObstacle* ArcObstacle::makeMesh()
             (fabsf(texsize[0]) < minSize) || (fabsf(texsize[1]) < minSize) ||
             (fabsf(texsize[2]) < minSize) || (fabsf(texsize[3]) < minSize) ||
             (ratio < 0.0f) || (ratio > 1.0f))
-    {
         return NULL;
-    }
 
     // adjust the texture sizes   FIXME: finish texsz[2] & texsz[3]
     float texsz[4];
@@ -153,21 +151,15 @@ MeshObstacle* ArcObstacle::makeMesh()
         texsz[0] = -floorf(circ / texsz[0]);
     }
     if (texsz[1] < 0.0f)
-    {
         texsz[1] = -(sz[2] / texsz[1]);
-    }
 
     // setup the angles
     float r = getRotation();
     float a = sweepAngle;
     if (a > +360.0f)
-    {
         a = +360.0f;
-    }
     if (a < -360.0f)
-    {
         a = -360.0f;
-    }
     a *= DEG2RADf; // convert to radians
     if (a < 0.0f)
     {
@@ -177,14 +169,10 @@ MeshObstacle* ArcObstacle::makeMesh()
 
     // more validity checking
     if (divisions <= (int) ((a + minSize) / M_PI))
-    {
         return NULL;
-    }
 
     if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize)
-    {
         isCircle = true;
-    }
 
     // setup the radii
     float inrad = sz[0] * (1.0f - ratio);
@@ -196,31 +184,21 @@ MeshObstacle* ArcObstacle::makeMesh()
         outrad = tmp;
     }
     if ((outrad < minSize) || ((outrad - inrad) < minSize))
-    {
         return NULL;
-    }
     if (inrad < minSize)
-    {
         isPie = true;
-    }
     const float squish = sz[1] / sz[0];
 
     if (isPie)
-    {
         mesh = makePie(isCircle, a, r, sz[2], outrad, squish, texsz);
-    }
     else
-    {
         mesh = makeRing(isCircle, a, r, sz[2], inrad, outrad, squish, texsz);
-    }
 
     // wrap it up
     mesh->finalize();
 
     if (mesh->isValid())
-    {
         return mesh;
-    }
     else
     {
         delete mesh;
@@ -263,13 +241,9 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 
     // setup the texsize across the disc
     if (texsz[2] < 0.0f)
-    {
         texsz[2] = -((2.0f * radius) / texsz[2]);
-    }
     if (texsz[3] < 0.0f)
-    {
         texsz[3] = -((2.0f * radius * squish) / texsz[3]);
-    }
 
     const float astep = a / (float) divisions;
 
@@ -375,7 +349,7 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
 // handy macros
 #define PV(x) (((x) + (i * 2)) % vlen)
 #define PN(x) (((x) + i) % nlen)
-#define PTO(x) ((x) + (i * 2))		     // outside edge
+#define PTO(x) ((x) + (i * 2))           // outside edge
 #define PTC(x) (((divisions + 1) * 2) + (x) + i)   // around the disc
 #define PTCI(x) (((divisions + 1) * 3) - (x) - i - 1)
 
@@ -682,9 +656,7 @@ void* ArcObstacle::pack(void* buf) const
 
     int i;
     for (i = 0; i < 4; i++)
-    {
         buf = nboPackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int matindex = MATERIALMGR.getIndex(materials[i]);
@@ -720,9 +692,7 @@ const void* ArcObstacle::unpack(const void* buf)
 
     int i;
     for (i = 0; i < 4; i++)
-    {
         buf = nboUnpackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int matindex;
@@ -798,36 +768,22 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << "  phydrv ";
         if (driver->getName().size() > 0)
-        {
             out << driver->getName();
-        }
         else
-        {
             out << phydrv;
-        }
         out << std::endl;
     }
 
     if (smoothBounce)
-    {
         out << indent << "  smoothBounce" << std::endl;
-    }
     if (driveThrough)
-    {
         out << indent << "  driveThrough" << std::endl;
-    }
     if (shootThrough)
-    {
         out << indent << "  shootThrough" << std::endl;
-    }
     if (ricochet)
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     if (!useNormals)
-    {
         out << indent << "  flatshading" << std::endl;
-    }
 
     out << indent << "end" << std::endl;
 
@@ -839,6 +795,6 @@ void ArcObstacle::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

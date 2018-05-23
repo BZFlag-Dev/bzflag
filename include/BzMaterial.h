@@ -11,11 +11,11 @@
  */
 
 /* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+ *  Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZ_MATERIAL_H
-#define	BZ_MATERIAL_H
+#ifndef BZ_MATERIAL_H
+#define BZ_MATERIAL_H
 
 #include "common.h"
 #include <string>
@@ -45,7 +45,7 @@ public:
 
     void reset();
 
-    void setReference() const;	// const exploits mutable "referenced" variable below
+    void setReference() const;  // const exploits mutable "referenced" variable below
     bool getReference() const;
 
     //
@@ -249,6 +249,6 @@ extern BzMaterialManager MATERIALMGR;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

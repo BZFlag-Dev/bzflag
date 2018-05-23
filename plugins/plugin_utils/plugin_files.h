@@ -17,7 +17,8 @@
 #include "bzfsAPI.h"
 
 std::vector<std::string> getFilesInDir ( const char* dir, const char* filter = "*.*", bool recursive = false );
-inline std::vector<std::string> getFilesInDir ( const std::string &dir, const char* filter = "*.*", bool recursive = false )
+inline std::vector<std::string> getFilesInDir ( const std::string &dir, const char* filter = "*.*",
+        bool recursive = false )
 {
     return getFilesInDir(dir.c_str(),filter,recursive);
 }
@@ -88,6 +89,6 @@ inline bool fileExists ( const std::string &p1 )
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

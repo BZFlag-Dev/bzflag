@@ -11,11 +11,11 @@
  */
 
 /* LaserSceneNode:
- *	Encapsulates information for rendering a laser beam.
+ *  Encapsulates information for rendering a laser beam.
  */
 
-#ifndef	BZF_LASER_SCENE_NODE_H
-#define	BZF_LASER_SCENE_NODE_H
+#ifndef BZF_LASER_SCENE_NODE_H
+#define BZF_LASER_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -27,16 +27,16 @@ public:
                    const GLfloat forward[3]);
     ~LaserSceneNode();
 
-    void		setTexture(const int);
+    void        setTexture(const int);
 
-    bool		cull(const ViewFrustum&) const;
+    bool        cull(const ViewFrustum&) const;
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
-    void		setColor ( float r, float g, float b );
-    void		setCenterColor ( float r, float g, float b );
-    void		setFirst ( void )
+    void        setColor ( float r, float g, float b );
+    void        setCenterColor ( float r, float g, float b );
+    void        setFirst ( void )
     {
         first = true;
     }
@@ -47,8 +47,8 @@ protected:
     public:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
-        void		render();
-        const GLfloat*	getPosition() const
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
@@ -56,7 +56,7 @@ protected:
         void renderFlatLaser();
         void renderGeoLaser();
         const LaserSceneNode* sceneNode;
-        static GLfloat	geom[6][2];
+        static GLfloat  geom[6][2];
     };
     fvec4 color;
     fvec4 centerColor;
@@ -64,11 +64,11 @@ protected:
     friend class LaserRenderNode;
 
 private:
-    GLfloat		azimuth, elevation;
-    GLfloat		length;
-    bool		texturing;
-    OpenGLGState	gstate;
-    LaserRenderNode	renderNode;
+    GLfloat     azimuth, elevation;
+    GLfloat     length;
+    bool        texturing;
+    OpenGLGState    gstate;
+    LaserRenderNode renderNode;
 };
 
 #endif // BZF_LASER_SCENE_NODE_H
@@ -77,6 +77,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

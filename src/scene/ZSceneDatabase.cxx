@@ -42,17 +42,11 @@ static int compareZExtents(const void* a, const void* b)
     const Extents& eA = nodeA->getExtents();
     const Extents& eB = nodeB->getExtents();
     if (eA.maxs[2] > eB.maxs[2])
-    {
         return +1;
-    }
     else if (eB.maxs[2] > eA.maxs[2])
-    {
         return -1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 
@@ -72,17 +66,13 @@ ZSceneDatabase::~ZSceneDatabase()
 {
     // free static nodes
     for (int i = 0; i < staticCount; i++)
-    {
         delete staticList[i];
-    }
 
     // free lists
     delete[] staticList;
     delete[] dynamicList;
     if (culledList != staticList)
-    {
         delete[] culledList;
-    }
 
     // delete the octree
     delete octree;
@@ -158,22 +148,16 @@ bool ZSceneDatabase::isOrdered()
 const Extents* ZSceneDatabase::getVisualExtents() const
 {
     if (octree)
-    {
         return octree->getVisualExtents();
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
 void ZSceneDatabase::updateNodeStyles()
 {
     for (int i = 0; i < staticCount; i++)
-    {
         staticList[i]->notifyStyleChange();
-    }
     return;
 }
 
@@ -181,9 +165,7 @@ void ZSceneDatabase::updateNodeStyles()
 void ZSceneDatabase::setOccluderManager(int occl)
 {
     if (octree)
-    {
         octree->setOccluderManager(occl);
-    }
     return;
 }
 
@@ -204,15 +186,11 @@ void ZSceneDatabase::setupCullList()
         octree = NULL;
 
         if (cullDepth > 0)
-        {
             makeCuller();
-        }
         else
         {
             if (culledList != staticList)
-            {
                 delete culledList;
-            }
             culledList = staticList;
             culledCount = staticCount;
         }
@@ -239,9 +217,7 @@ void ZSceneDatabase::makeCuller()
     logDebugMessage(2,"SceneNode Octree processed in %.3f seconds.\n", elapsed);
 
     if (culledList != staticList)
-    {
         delete culledList;
-    }
 
     // make scratch pad for the culler
     culledList = new SceneNode*[staticCount];
@@ -252,9 +228,7 @@ void ZSceneDatabase::addLights(SceneRenderer& renderer)
 {
     // add the lights from the dynamic nodes
     for (int i = 0; i < dynamicCount; i++)
-    {
         dynamicList[i]->addLight(renderer);
-    }
 
     return;
 }
@@ -264,7 +238,7 @@ static void setupShadowPlanes(const Frustum* frustum, const float* sunDir,
                               int& planeCount, float planes[4][4])
 {
     // FIXME: As a first cut, we'll assume that
-    //	    the frustum top points towards Z.
+    //      the frustum top points towards Z.
 
     const float* eye = frustum->getEye();
     if (frustum->getUp()[2] < 0.999f)
@@ -366,9 +340,7 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
     {
         SceneNode* node = dynamicList[i];
         if (!node->cullShadow(planeCount, planes))
-        {
             node->addShadowNodes(renderer);
-        }
     }
 
     return;
@@ -388,9 +360,7 @@ void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
 
         // sort based on heights
         if (BZDBCache::radarStyle == 2)
-        {
             qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
-        }
     }
 
     // render through the sceneNodes
@@ -465,9 +435,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     {
         SceneNode* node = dynamicList[i];
         if (!node->cull(frustum))
-        {
             node->addRenderNodes(renderer);
-        }
     }
 
     return;
@@ -477,9 +445,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 void ZSceneDatabase::drawCuller()
 {
     if (octree)
-    {
         octree->draw ();
-    }
     return;
 }
 
@@ -488,6 +454,6 @@ void ZSceneDatabase::drawCuller()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

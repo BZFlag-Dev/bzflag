@@ -45,35 +45,35 @@ public:
     FormatMenu();
     ~FormatMenu();
 
-    HUDuiDefaultKey*	getDefaultKey()
+    HUDuiDefaultKey*    getDefaultKey()
     {
         return &defaultKey;
     }
-    int			getSelected() const;
-    void			setSelected(int);
-    void			show();
-    void			execute();
-    void			resize(int width, int height);
+    int         getSelected() const;
+    void            setSelected(int);
+    void            show();
+    void            execute();
+    void            resize(int width, int height);
 
-    void			setFormat(bool test);
+    void            setFormat(bool test);
 
 public:
-    static const int	NumItems;
+    static const int    NumItems;
 
 private:
-    void			addLabel(const char* msg, const char* _label);
+    void            addLabel(const char* msg, const char* _label);
 
 private:
-    FormatMenuDefaultKey	defaultKey;
-    int			numFormats;
+    FormatMenuDefaultKey    defaultKey;
+    int         numFormats;
 
-    HUDuiLabel*		currentLabel;
-    HUDuiLabel*		pageLabel;
-    int			selectedIndex;
-    bool*			badFormats;
+    HUDuiLabel*     currentLabel;
+    HUDuiLabel*     pageLabel;
+    int         selectedIndex;
+    bool*           badFormats;
 
-    static const int	NumColumns;
-    static const int	NumReadouts;
+    static const int    NumColumns;
+    static const int    NumReadouts;
 };
 
 
@@ -83,6 +83,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

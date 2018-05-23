@@ -36,22 +36,16 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFil
     input->read((char*)signature, 8);
 
     if (!input->good())
-    {
         return;
-    }
 
     // Verify that the signature is correct
     if (png_sig_cmp(signature, 0, 8) != 0)
-    {
         return;
-    }
 
     // Create the read structure
     png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png)
-    {
         return;
-    }
 
     // Create the info structure
     pnginfo = png_create_info_struct(png);
@@ -143,7 +137,8 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFil
 
     init(channels, myWidth, myHeight);
 
-    logDebugMessage(4,"PNGImageFile finishing reading headers for %s: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
+    logDebugMessage(4,
+                    "PNGImageFile finishing reading headers for %s: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
                     "Interlace Method %d, Channels %d.\n",
                     filename.c_str(), myWidth, myHeight, bitDepth, colorType, filterMethod, interlaceMethod, channels);
 
@@ -160,13 +155,9 @@ PNGImageFile::~PNGImageFile()
     if (png != NULL)
     {
         if (pnginfo != NULL)
-        {
             png_destroy_read_struct(&png, &pnginfo, (png_infopp)0);
-        }
         else
-        {
             png_destroy_read_struct(&png, (png_infopp)0, (png_infopp)0);
-        }
     }
 
     if (rowPtrs != NULL)
@@ -174,12 +165,12 @@ PNGImageFile::~PNGImageFile()
 }
 
 /*
-std::string	PNGImageFile::getExtension()
+std::string PNGImageFile::getExtension()
 
   returns the expected file extension of .png for files
 */
 
-std::string				PNGImageFile::getExtension()
+std::string             PNGImageFile::getExtension()
 {
     return ".png";
 }
@@ -191,7 +182,7 @@ bool PNGImageFile::read(void* buffer)
   in 1, 2, 3, or 4 channels
 */
 
-bool					PNGImageFile::read(void* buffer)
+bool                    PNGImageFile::read(void* buffer)
 {
     // Get attributes
     unsigned int myHeight = getHeight();
@@ -217,6 +208,6 @@ bool					PNGImageFile::read(void* buffer)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

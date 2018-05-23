@@ -101,17 +101,13 @@ void SDLWindow::setSize(int _width, int _height)
     base_width  = _width;
     base_height = _height;
     if (!fullScreen && windowId)
-    {
         SDL_SetWindowSize(windowId, base_width, base_height);
-    }
 }
 
 void SDLWindow::getSize(int& width, int& height) const
 {
     if (fullScreen)
-    {
         const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getWindowSize(width, height);
-    }
     else
     {
         width  = base_width;
@@ -228,9 +224,7 @@ bool SDLWindow::create(void)
     if (SDL_GetWindowWMInfo(windowId,&info))
     {
         if (info.subsystem == SDL_SYSWM_WINDOWS)
-        {
             hwnd = info.info.win.window;
-        }
     }
 #endif
 
@@ -332,9 +326,7 @@ bool SDLWindow::create(void)
                 eventStack.push_back(thisEvent);
         }
         else
-        {
             eventStack.push_back(thisEvent);
-        }
     }
 
     // push them back on in the same order
@@ -402,6 +394,6 @@ void SDLWindow::freeContext()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

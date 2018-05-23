@@ -121,65 +121,65 @@ public:
         lastState
     };
 
-    void	setName(const char* callSign);
+    void    setName(const char* callSign);
 
     std::string getName();
 
-    void	setLoginFail();
-    bool	passwordAttemptsMax();
+    void    setLoginFail();
+    bool    passwordAttemptsMax();
 
     /** have successfully provided server password */
     void  setOperator();
-    bool	isOperator() const;
+    bool    isOperator() const;
 
     /** have ability to ban */
-    bool	isAdmin() const;
+    bool    isAdmin() const;
 
     /** are not marked as hidden admins */
-    bool	showAsAdmin() const;
+    bool    showAsAdmin() const;
 
-    void	setPermissionRights();
-    void	reloadInfo();
+    void    setPermissionRights();
+    void    reloadInfo();
 
-    bool	hasGroup(const std::string& group);
-    bool	addGroup(const std::string &group);
-    bool	removeGroup(const std::string& group);
-    bool	canSet(const std::string& group);
+    bool    hasGroup(const std::string& group);
+    bool    addGroup(const std::string &group);
+    bool    removeGroup(const std::string& group);
+    bool    canSet(const std::string& group);
 
-    bool	hasPerm(AccessPerm right) const;
-    void	grantPerm(AccessPerm right);
-    void	revokePerm(AccessPerm right);
+    bool    hasPerm(AccessPerm right) const;
+    void    grantPerm(AccessPerm right);
+    void    revokePerm(AccessPerm right);
 
-    bool	hasCustomPerm(const char* right) const;
+    bool    hasCustomPerm(const char* right) const;
     void  grantCustomPerm(const char* right);
     void  revokeCustomPerm(const char* right);
 
-    bool	isRegistered() const;
-    bool	isAllowedToEnter();
-    bool	isVerified() const;
+    bool    isRegistered() const;
+    bool    isAllowedToEnter();
+    bool    isVerified() const;
     uint8_t     getPlayerProperties();
-    void	storeInfo();
-    bool	exists();
+    void    storeInfo();
+    bool    exists();
     static PlayerAccessInfo &getUserInfo(const std::string &nick);
     static bool readGroupsFile(const std::string &filename);
     static bool readPermsFile(const std::string &filename);
     static bool writePermsFile(const std::string &filename);
     static void updateDatabases();
-    std::bitset<lastPerm>		explicitAllows;
-    std::bitset<lastPerm>		explicitDenys;
-    std::bitset<lastState>	groupState;
-    std::vector<std::string>	groups;
+    std::bitset<lastPerm>       explicitAllows;
+    std::bitset<lastPerm>       explicitDenys;
+    std::bitset<lastState>  groupState;
+    std::vector<std::string>    groups;
 
-    bool				hasALLPerm;
+    bool                hasALLPerm;
 
     std::vector<std::string> customPerms;
 private:
-    bool				verified;
-    TimeKeeper			loginTime;
-    int				loginAttempts;
+    bool                verified;
+    TimeKeeper          loginTime;
+    int             loginAttempts;
 
     /** server operator that has provided the server password */
-    bool				serverop;
+    bool                serverop;
 
     // number of times they have tried to /password
     int passwordAttempts;
@@ -192,8 +192,8 @@ typedef std::map<std::string, PlayerAccessInfo> PlayerAccessMap;
 extern PlayerAccessMap  groupAccess;
 extern PlayerAccessMap  userDatabase;
 
-extern std::string		groupsFile;
-extern std::string		userDatabaseFile;
+extern std::string      groupsFile;
+extern std::string      userDatabaseFile;
 
 inline void makeupper(std::string& str)
 {
@@ -214,6 +214,6 @@ uint8_t GetPlayerProperties( bool registered, bool verified, bool admin );
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -23,16 +23,16 @@
 #include "WinMedia.h"
 #include "StateDatabase.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory*    PlatformFactory::getInstance()
 {
     if (!instance) instance = new WinPlatformFactory;
     return instance;
 }
 
 #ifdef HAVE_SDL
-SDLWindow*		WinPlatformFactory::sdlWindow = NULL;
+SDLWindow*      WinPlatformFactory::sdlWindow = NULL;
 #else
-WinWindow*		WinPlatformFactory::winWindow = NULL;
+WinWindow*      WinPlatformFactory::winWindow = NULL;
 #endif
 
 
@@ -52,10 +52,10 @@ BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
     BzfDisplay *display;
 #ifdef HAVE_SDL
     SDLDisplay* sdlDisplay = new SDLDisplay();
-    display		= sdlDisplay;
+    display     = sdlDisplay;
 #else
     WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
-    display		= winDisplay;
+    display     = winDisplay;
 #endif
     if (!display || !display->isValid())
     {
@@ -65,7 +65,7 @@ BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
     return display;
 }
 
-BzfVisual*		WinPlatformFactory::createVisual(
+BzfVisual*      WinPlatformFactory::createVisual(
     const BzfDisplay* display)
 {
 #ifdef HAVE_SDL
@@ -75,7 +75,7 @@ BzfVisual*		WinPlatformFactory::createVisual(
 #endif
 }
 
-BzfWindow*		WinPlatformFactory::createWindow(
+BzfWindow*      WinPlatformFactory::createWindow(
     const BzfDisplay* display, BzfVisual* visual)
 {
 #ifdef HAVE_SDL
@@ -87,12 +87,12 @@ BzfWindow*		WinPlatformFactory::createWindow(
 #endif
 }
 
-BzfMedia*		WinPlatformFactory::createMedia()
+BzfMedia*       WinPlatformFactory::createMedia()
 {
     return new WinMedia();
 }
 
-BzfJoystick*		WinPlatformFactory::createJoystick()
+BzfJoystick*        WinPlatformFactory::createJoystick()
 {
     return new DXJoystick();
 }
@@ -101,6 +101,6 @@ BzfJoystick*		WinPlatformFactory::createJoystick()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

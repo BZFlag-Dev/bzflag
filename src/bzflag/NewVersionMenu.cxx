@@ -49,9 +49,7 @@ NewVersionMenu::NewVersionMenu(std::string announce, std::string url, std::strin
 #ifdef AUTOUPGRADE
     long timeout = 15;
     if (BZDB.isSet("httpTimeout"))
-    {
         timeout = (long)BZDB.eval("httpTimeout");
-    }
     setTimeout(timeout);
 #endif
 
@@ -138,9 +136,7 @@ void NewVersionMenu::execute()
 #endif
     }
     else if (_focus == no)
-    {
         HUDDialogStack::get()->pop();
-    }
 }
 
 void NewVersionMenu::collectData(char* ptr, int len)
@@ -198,9 +194,7 @@ void NewVersionMenu::finalization(char *data, unsigned int length, bool good)
         }
     }
     else
-    {
         status->setLabel("Download Failed!");
-    }
 }
 
 void NewVersionMenu::resize(int _width, int _height)
@@ -296,6 +290,6 @@ void NewVersionMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

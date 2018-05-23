@@ -60,30 +60,22 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
     if (strcasecmp(cmd, "divisions") == 0)
     {
         if (!(input >> divisions))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "radius") == 0)
     {
         float radius;
         if (!(input >> radius))
-        {
             return false;
-        }
         size[0] = size[1] = size[2] = radius;
     }
     else if ((strcasecmp(cmd, "hemi") == 0) ||
              (strcasecmp(cmd, "hemisphere") == 0))
-    {
         hemisphere = true;
-    }
     else if (strcasecmp(cmd, "texsize") == 0)
     {
         if (!(input >> texsize[0] >> texsize[1]))
-        {
             return false;
-        }
     }
     else if (strcasecmp(cmd, "phydrv") == 0)
     {
@@ -95,37 +87,25 @@ bool CustomSphere::read(const char *cmd, std::istream& input)
         }
         phydrv = PHYDRVMGR.findDriver(drvname);
         if ((phydrv == -1) && (drvname != "-1"))
-        {
             std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-        }
     }
     else if (strcasecmp(cmd, "smoothbounce") == 0)
-    {
         smoothBounce = true;
-    }
     else if (strcasecmp(cmd, "flatshading") == 0)
-    {
         useNormals = false;
-    }
     else if (parseMaterials(cmd, input, materials, MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else if (parseMaterialsByName(cmd, input, materials, sideNames,
                                   MaterialCount, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else
-    {
         return WorldFileObstacle::read(cmd, input);
-    }
 
     return true;
 }
@@ -136,22 +116,16 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
     int i;
     const BzMaterial* mats[MaterialCount];
     for (i = 0; i < MaterialCount; i++)
-    {
         mats[i] = MATERIALMGR.addMaterial(&materials[i]);
-    }
     SphereObstacle* sphere = new SphereObstacle(transform, pos, size, rotation, texsize,
             useNormals, hemisphere, divisions, mats,
             phydrv,
             smoothBounce, driveThrough, shootThrough, ricochet);
 
     if (sphere->isValid())
-    {
         groupdef->addObstacle(sphere);
-    }
     else
-    {
         delete sphere;
-    }
 
     return;
 }
@@ -161,6 +135,6 @@ void CustomSphere::writeToGroupDef(GroupDefinition *groupdef) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

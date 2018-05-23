@@ -123,9 +123,7 @@ MeshObstacle* ConeObstacle::makeMesh()
     // validity checking
     if ((sz[0] < minSize) || (sz[1] < minSize) || (sz[2] < minSize) ||
             (fabs(texsize[0]) < minSize) || (fabs(texsize[1]) < minSize))
-    {
         return NULL;
-    }
 
     // adjust the texture sizes
     float texsz[2];
@@ -142,21 +140,15 @@ MeshObstacle* ConeObstacle::makeMesh()
         texsz[0] = -floorf(circ / texsz[0]);
     }
     if (texsz[1] < 0.0f)
-    {
         texsz[1] = -(sz[2] / texsz[1]);
-    }
 
     // setup the angles
     float r = angle;
     float a = sweepAngle;
     if (a > +360.0f)
-    {
         a = +360.0f;
-    }
     if (a < -360.0f)
-    {
         a = -360.0f;
-    }
     a *= DEG2RADf; // convert to radians
     if (a < 0.0f)
     {
@@ -166,14 +158,10 @@ MeshObstacle* ConeObstacle::makeMesh()
 
     // more validity checking
     if (divisions <= (int) ((a + minSize) / M_PI))
-    {
         return NULL;
-    }
 
     if (fabsf ((float)M_PI - fmodf (a + (float)M_PI, (float)M_PI * 2.0f)) < minSize)
-    {
         isCircle = true;
-    }
 
     // setup the coordinates
     std::vector<char> checkTypes;
@@ -305,13 +293,9 @@ MeshObstacle* ConeObstacle::makeMesh()
     // now make the faces
     int vlen;
     if (isCircle)
-    {
         vlen = divisions;
-    }
     else
-    {
         vlen = divisions + 1;
-    }
 
     std::vector<int> vlist;
     std::vector<int> nlist;
@@ -331,8 +315,8 @@ MeshObstacle* ConeObstacle::makeMesh()
 // handy macros
 #define V(x) (((x) + i) % vlen)  // edge
 #define NE(x) (((x) + i) % vlen) // edge
-#define NC(x) (vlen + i)	 // center
-#define T(x) ((x) + i)	   // edge
+#define NC(x) (vlen + i)     // center
+#define T(x) ((x) + i)     // edge
 #define TI(x) (divisions - T(x)) // edge, backwards
 
         // edge
@@ -435,9 +419,7 @@ void *ConeObstacle::pack(void *buf) const
 
     int i;
     for (i = 0; i < 2; i++)
-    {
         buf = nboPackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int matindex = MATERIALMGR.getIndex(materials[i]);
@@ -450,7 +432,7 @@ void *ConeObstacle::pack(void *buf) const
     stateByte |= isShootThrough() ? (1 << 1) : 0;
     stateByte |= smoothBounce     ? (1 << 2) : 0;
     stateByte |= useNormals       ? (1 << 3) : 0;
-    stateByte |= ricochet	 ? (1 << 4) : 0;
+    stateByte |= ricochet    ? (1 << 4) : 0;
     buf = nboPackUByte(buf, stateByte);
 
     return buf;
@@ -472,9 +454,7 @@ const void *ConeObstacle::unpack(const void *buf)
 
     int i;
     for (i = 0; i < 2; i++)
-    {
         buf = nboUnpackFloat(buf, texsize[i]);
-    }
     for (i = 0; i < MaterialCount; i++)
     {
         int32_t matindex;
@@ -546,36 +526,22 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << "  phydrv ";
         if (driver->getName().size() > 0)
-        {
             out << driver->getName();
-        }
         else
-        {
             out << phydrv;
-        }
         out << std::endl;
     }
 
     if (smoothBounce)
-    {
         out << indent << "  smoothBounce" << std::endl;
-    }
     if (driveThrough)
-    {
         out << indent << "  driveThrough" << std::endl;
-    }
     if (shootThrough)
-    {
         out << indent << "  shootThrough" << std::endl;
-    }
     if (ricochet)
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     if (!useNormals)
-    {
         out << indent << "  flatshading" << std::endl;
-    }
 
     out << indent << "end" << std::endl;
 
@@ -587,6 +553,6 @@ void ConeObstacle::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

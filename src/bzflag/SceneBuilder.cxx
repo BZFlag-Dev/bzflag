@@ -50,32 +50,32 @@
 // SceneDatabaseBuilder
 //
 
-static const GLfloat	black[3] = { 0.0f, 0.0f, 0.0f };
+static const GLfloat    black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat		SceneDatabaseBuilder::wallColors[4][4] =
+const GLfloat       SceneDatabaseBuilder::wallColors[4][4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.4f, 0.4f, 0.4f, 1.0f },
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.6f, 0.6f, 0.6f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::wallModulateColors[4][4] =
+const GLfloat       SceneDatabaseBuilder::wallModulateColors[4][4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.4f, 0.4f, 0.4f, 1.0f },
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.6f, 0.6f, 0.6f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::wallLightedColors[1][4] =
+const GLfloat       SceneDatabaseBuilder::wallLightedColors[1][4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::wallLightedModulateColors[1][4] =
+const GLfloat       SceneDatabaseBuilder::wallLightedModulateColors[1][4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f }
 };
 
-const GLfloat		SceneDatabaseBuilder::boxColors[6][4] =
+const GLfloat       SceneDatabaseBuilder::boxColors[6][4] =
 {
     { 0.75f, 0.25f, 0.25f, 1.0f },
     { 0.63f, 0.25f, 0.25f, 1.0f },
@@ -84,7 +84,7 @@ const GLfloat		SceneDatabaseBuilder::boxColors[6][4] =
     { 0.875f, 0.5f, 0.5f, 1.0f },
     { 0.275f, 0.2f, 0.2f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] =
+const GLfloat       SceneDatabaseBuilder::boxModulateColors[6][4] =
 {
     { 0.75f, 0.75f, 0.75f, 1.0f },
     { 0.63f, 0.63f, 0.63f, 1.0f },
@@ -93,7 +93,7 @@ const GLfloat		SceneDatabaseBuilder::boxModulateColors[6][4] =
     { 0.875f, 0.875f, 0.875f, 1.0f },
     { 0.375f, 0.375f, 0.375f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] =
+const GLfloat       SceneDatabaseBuilder::boxLightedColors[6][4] =
 {
     { 0.75f, 0.25f, 0.25f, 1.0f },
     { 0.75f, 0.25f, 0.25f, 1.0f },
@@ -102,7 +102,7 @@ const GLfloat		SceneDatabaseBuilder::boxLightedColors[6][4] =
     { 0.875f, 0.5f, 0.5f, 1.0f },
     { 0.875f, 0.5f, 0.5f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] =
+const GLfloat       SceneDatabaseBuilder::boxLightedModulateColors[6][4] =
 {
     { 0.75f, 0.75f, 0.75f, 1.0f },
     { 0.75f, 0.75f, 0.75f, 1.0f },
@@ -112,7 +112,7 @@ const GLfloat		SceneDatabaseBuilder::boxLightedModulateColors[6][4] =
     { 0.875f, 0.875f, 0.875f, 1.0f }
 };
 
-const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] =
+const GLfloat       SceneDatabaseBuilder::pyramidColors[5][4] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.13f, 0.13f, 0.51f, 1.0f },
@@ -121,7 +121,7 @@ const GLfloat		SceneDatabaseBuilder::pyramidColors[5][4] =
     { 0.175f, 0.175f, 0.35f, 1.0f }
 };
 
-const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] =
+const GLfloat       SceneDatabaseBuilder::pyramidModulateColors[5][4] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.13f, 0.13f, 0.51f, 1.0f },
@@ -129,7 +129,7 @@ const GLfloat		SceneDatabaseBuilder::pyramidModulateColors[5][4] =
     { 0.375f, 0.375f, 0.75f, 1.0f },
     { 0.175f, 0.175f, 0.35f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] =
+const GLfloat       SceneDatabaseBuilder::pyramidLightedColors[5][4] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f },
@@ -137,7 +137,7 @@ const GLfloat		SceneDatabaseBuilder::pyramidLightedColors[5][4] =
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f }
 };
-const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] =
+const GLfloat       SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f },
@@ -146,25 +146,25 @@ const GLfloat		SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] =
     { 0.25f, 0.25f, 0.63f, 1.0f }
 };
 
-const GLfloat		SceneDatabaseBuilder::teleporterColors[3][4] =
+const GLfloat       SceneDatabaseBuilder::teleporterColors[3][4] =
 {
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 0.9f, 0.8f, 0.0f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat		SceneDatabaseBuilder::teleporterModulateColors[3][4] =
+const GLfloat       SceneDatabaseBuilder::teleporterModulateColors[3][4] =
 {
     { 1.0f, 1.0f, 1.0f, 1.0f },
     { 0.9f, 0.9f, 0.9f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat		SceneDatabaseBuilder::teleporterLightedColors[3][4] =
+const GLfloat       SceneDatabaseBuilder::teleporterLightedColors[3][4] =
 {
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat		SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] =
+const GLfloat       SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] =
 {
     { 1.0f, 1.0f, 1.0f, 1.0f },
     { 1.0f, 1.0f, 1.0f, 1.0f },
@@ -227,9 +227,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
     // FIXME -- when making BSP tree, try several shuffles for best tree
 
     if (!world)
-    {
         return db;
-    }
 
     // free any prior inside nodes
     world->freeInsideNodes();
@@ -240,39 +238,27 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
     const ObstacleList& walls = OBSTACLEMGR.getWalls();
     for (i = 0; i < walls.size(); i++)
-    {
         addWall(db, *((WallObstacle*) walls[i]));
-    }
 
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
     for (i = 0; i < boxes.size(); i++)
-    {
         addBox (db, *((BoxBuilding*) boxes[i]));
-    }
 
     const ObstacleList& bases = OBSTACLEMGR.getBases();
     for (i = 0; i < bases.size(); i++)
-    {
         addBase (db, *((BaseBuilding*) bases[i]));
-    }
 
     const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
     for (i = 0; i < pyramids.size(); i++)
-    {
         addPyramid (db, *((PyramidBuilding*) pyramids[i]));
-    }
 
     const ObstacleList& teles = OBSTACLEMGR.getTeles();
     for (i = 0; i < teles.size(); i++)
-    {
         addTeleporter (db, *((Teleporter*) teles[i]), world);
-    }
 
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     for (i = 0; i < meshes.size(); i++)
-    {
         addMesh (db, (MeshObstacle*) meshes[i]);
-    }
 
     // add the water level node
     addWaterLevel(db, world);
@@ -292,9 +278,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 
     // don't draw it if it isn't active
     if (level < 0.0f)
-    {
         return;
-    }
 
     // setup the vertex and texture coordinates
     float size = BZDBCache::worldSize;
@@ -327,9 +311,7 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 void SceneDatabaseBuilder::addWall(SceneDatabase* db, const WallObstacle& o)
 {
     if (o.getHeight() <= 0.0f)
-    {
         return;
-    }
 
     int part = 0;
     WallSceneNode* node;
@@ -635,7 +617,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     ObstacleSceneNodeGenerator* nodeGen = new TeleporterSceneNodeGenerator(&o);
 
     TextureManager &tm = TextureManager::instance();
-    int	     teleporterTexture = -1;
+    int      teleporterTexture = -1;
 
     bool  useColorTexture = false;
 
@@ -711,6 +693,6 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

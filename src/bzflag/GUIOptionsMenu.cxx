@@ -215,9 +215,7 @@ GUIOptionsMenu::GUIOptionsMenu()
     if (BundleMgr::getLocaleList(&locales) == true)
     {
         for (int i = 0; i < (int)locales.size(); i++)
-        {
             options->push_back(locales[i]);
-        }
         locales.erase(locales.begin(), locales.end());
     }
 
@@ -352,11 +350,11 @@ GUIOptionsMenu::~GUIOptionsMenu()
 {
 }
 
-void			GUIOptionsMenu::execute()
+void            GUIOptionsMenu::execute()
 {
 }
 
-void			GUIOptionsMenu::resize(int _width, int _height)
+void            GUIOptionsMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
 
@@ -446,7 +444,7 @@ void			GUIOptionsMenu::resize(int _width, int _height)
     }
 }
 
-void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
+void            GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 {
     HUDuiList* list = (HUDuiList*)w;
 
@@ -633,6 +631,6 @@ void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

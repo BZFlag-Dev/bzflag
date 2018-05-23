@@ -27,7 +27,7 @@
 //  misc/bzfquery.py
 //  misc/bzls.lua
 #ifndef BZ_PROTO_VERSION
-#  define BZ_PROTO_VERSION	"0225"
+#  define BZ_PROTO_VERSION  "0225"
 #endif
 
 // version numbers - also update as needed:
@@ -38,20 +38,20 @@
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
 #ifndef BZ_MAJOR_VERSION
-#  define BZ_MAJOR_VERSION	2
+#  define BZ_MAJOR_VERSION  2
 #endif
 
 #ifndef BZ_MINOR_VERSION
-#  define BZ_MINOR_VERSION	5
+#  define BZ_MINOR_VERSION  5
 #endif
 
 #ifndef BZ_REV
-#  define BZ_REV		3
+#  define BZ_REV        3
 #endif
 
 // DEVEL | RC# | STABLE | MAINT
 #ifndef BZ_BUILD_TYPE
-#  define BZ_BUILD_TYPE		"DEVEL"
+#  define BZ_BUILD_TYPE     "DEVEL"
 #endif
 
 const char *bzfcopyright = "Copyright (c) 1993-2018 Tim Riker";
@@ -97,48 +97,48 @@ static int getBuildDate()
     return (year*10000) + (month*100) + day;
 }
 
-const char*		getProtocolVersion()
+const char*     getProtocolVersion()
 {
     static std::string protVersion = BZ_PROTO_VERSION;
     return protVersion.c_str();
 }
 
-const char*		getServerVersion()
+const char*     getServerVersion()
 {
     static std::string serverVersion = std::string("BZFS") + getProtocolVersion();
     return serverVersion.c_str();
 }
 
-const char*		getMajorMinorVersion()
+const char*     getMajorMinorVersion()
 {
-    static std::string	version = "";
+    static std::string  version = "";
     if (!version.size())
     {
-        std::ostringstream	versionStream;
+        std::ostringstream  versionStream;
         versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION;
         version = versionStream.str();
     }
     return version.c_str();
 }
 
-const char*		getMajorMinorRevVersion()
+const char*     getMajorMinorRevVersion()
 {
-    static std::string	version = "";
+    static std::string  version = "";
     if (!version.size())
     {
-        std::ostringstream	versionStream;
+        std::ostringstream  versionStream;
         versionStream << BZ_MAJOR_VERSION << "." << BZ_MINOR_VERSION << "." << BZ_REV;
         version = versionStream.str();
     }
     return version.c_str();
 }
 
-const char*		getAppVersion()
+const char*     getAppVersion()
 {
-    static std::string	appVersion = "";
+    static std::string  appVersion = "";
     if (!appVersion.size())
     {
-        std::ostringstream	appVersionStream;
+        std::ostringstream  appVersionStream;
         // TODO add current platform, release, cpu, etc
         appVersionStream << getMajorMinorRevVersion() << "." << getBuildDate()
                          << "-" << BZ_BUILD_TYPE << "-" << BZ_BUILD_OS;
@@ -157,6 +157,6 @@ const char*		getAppVersion()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

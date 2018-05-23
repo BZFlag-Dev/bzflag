@@ -51,9 +51,7 @@ void PhysicsDriverManager::clear()
 {
     std::vector<PhysicsDriver*>::iterator it;
     for (it = drivers.begin(); it != drivers.end(); ++it)
-    {
         delete *it;
-    }
     drivers.clear();
 }
 
@@ -80,29 +78,21 @@ int PhysicsDriverManager::addDriver(PhysicsDriver* driver)
 int PhysicsDriverManager::findDriver(const std::string& dyncol) const
 {
     if (dyncol.size() <= 0)
-    {
         return -1;
-    }
     else if ((dyncol[0] >= '0') && (dyncol[0] <= '9'))
     {
         int index = atoi (dyncol.c_str());
         if ((index < 0) || (index >= (int)drivers.size()))
-        {
             return -1;
-        }
         else
-        {
             return index;
-        }
     }
     else
     {
         for (int i = 0; i < (int)drivers.size(); i++)
         {
             if (drivers[i]->getName() == dyncol)
-            {
                 return i;
-            }
         }
         return -1;
     }
@@ -191,18 +181,14 @@ PhysicsDriver::~PhysicsDriver()
 void PhysicsDriver::finalize()
 {
     if (slideTime > 0.0f)
-    {
         slide = true;
-    }
     else
     {
         slide = false;
         slideTime = 0.0f;
     }
     if (deathMsg.size() > 0)
-    {
         death = true;
-    }
     return;
 }
 
@@ -220,9 +206,7 @@ bool PhysicsDriver::setName(const std::string& drvname)
         return false;
     }
     else
-    {
         name = drvname;
-    }
     return true;
 }
 
@@ -280,9 +264,7 @@ void PhysicsDriver::setDeathMessage(const std::string& msg)
 
     // limit the length
     if (str.size() > 256)
-    {
         str.resize(256);
-    }
 
     deathMsg = str;
 
@@ -358,9 +340,7 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
     out << indent << "physics" << std::endl;
 
     if (name.size() > 0)
-    {
         out << indent << "  name " << name << std::endl;
-    }
 
     const float* v = linear;
     if ((v[0] != 0.0f) || (v[1] != 0.0f) || (v[2] != 0.0f))
@@ -384,14 +364,10 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
     }
 
     if (slide)
-    {
         out << indent << "  slide " << slideTime << std::endl;
-    }
 
     if (death)
-    {
         out << indent << "  death " << deathMsg << std::endl;
-    }
 
     out << indent << "end" << std::endl << std::endl;
 
@@ -403,6 +379,6 @@ void PhysicsDriver::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

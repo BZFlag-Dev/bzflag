@@ -227,77 +227,43 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 void BZDBCache::serverCallback(const std::string& name, void *)
 {
     if (name == StateDatabase::BZDB_DRAWCELESTIAL)
-    {
         drawCelestial = BZDB.isTrue(StateDatabase::BZDB_DRAWCELESTIAL);
-    }
     else if (name == StateDatabase::BZDB_DRAWCLOUDS)
-    {
         drawClouds = BZDB.isTrue(StateDatabase::BZDB_DRAWCLOUDS);
-    }
     else if (name == StateDatabase::BZDB_DRAWGROUND)
-    {
         drawGround = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUND);
-    }
     else if (name == StateDatabase::BZDB_DRAWGROUNDLIGHTS)
-    {
         drawGroundLights = BZDB.isTrue(StateDatabase::BZDB_DRAWGROUNDLIGHTS);
-    }
     else if (name == StateDatabase::BZDB_DRAWMOUNTAINS)
-    {
         drawMountains = BZDB.isTrue(StateDatabase::BZDB_DRAWMOUNTAINS);
-    }
     else if (name == StateDatabase::BZDB_DRAWSKY)
-    {
         drawSky = BZDB.isTrue(StateDatabase::BZDB_DRAWSKY);
-    }
     else if (name == StateDatabase::BZDB_MAXLOD)
-    {
         maxLOD = BZDB.eval(StateDatabase::BZDB_MAXLOD);
-    }
     else if (name == StateDatabase::BZDB_WORLDSIZE)
-    {
         worldSize = getGoodPosValue(worldSize,StateDatabase::BZDB_WORLDSIZE);
-    }
     else if (name == StateDatabase::BZDB_RADARLIMIT)
-    {
         radarLimit = BZDB.eval(StateDatabase::BZDB_RADARLIMIT);
-    }
     else if (name == StateDatabase::BZDB_GRAVITY)
-    {
         gravity = getGoodNonZeroValue(gravity,StateDatabase::BZDB_GRAVITY);
-    }
     else if (name == StateDatabase::BZDB_TANKWIDTH)
-    {
         tankWidth = getGoodPosValue(tankWidth,StateDatabase::BZDB_TANKWIDTH);
-    }
     else if (name == StateDatabase::BZDB_TANKLENGTH)
-    {
         tankLength = getGoodPosValue(tankLength,StateDatabase::BZDB_TANKLENGTH);
-    }
     else if (name == StateDatabase::BZDB_TANKHEIGHT)
-    {
         tankHeight = getGoodPosValue(tankHeight,StateDatabase::BZDB_TANKHEIGHT);
-    }
     else if (name == StateDatabase::BZDB_TANKSPEED)
-    {
         tankSpeed = getGoodPosValue(tankSpeed,StateDatabase::BZDB_TANKSPEED);
-    }
 // Why only in update() ?
 //  else if (name == StateDatabase::BZDB_FLAGRADIUS) {
 //    flagRadius = BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
 //  }
     else if (name == StateDatabase::BZDB_FLAGPOLESIZE)
-    {
         flagPoleSize = getGoodPosValue(flagPoleSize,StateDatabase::BZDB_FLAGPOLESIZE);
-    }
     else if (name == StateDatabase::BZDB_FLAGPOLEWIDTH)
-    {
         flagPoleWidth = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_FLAGPOLEWIDTH);
-    }
     else if (name == StateDatabase::BZDB_GMSIZE)
-    {
         gmSize = getGoodPosValue(flagPoleWidth,StateDatabase::BZDB_GMSIZE);
-    }
 }
 
 
@@ -313,6 +279,6 @@ void BZDBCache::update()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

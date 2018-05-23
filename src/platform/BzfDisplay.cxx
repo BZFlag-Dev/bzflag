@@ -52,35 +52,35 @@ BzfDisplay::~BzfDisplay()
     delete[] resolutions;
 }
 
-int			BzfDisplay::getWidth() const
+int         BzfDisplay::getWidth() const
 {
     if (currentResolution == -1) return 640;
     return resolutions[currentResolution]->width;
 }
 
-int			BzfDisplay::getHeight() const
+int         BzfDisplay::getHeight() const
 {
     if (currentResolution == -1) return 480;
     return resolutions[currentResolution]->height;
 }
 
-void			BzfDisplay::setPassthroughSize(int w, int h)
+void            BzfDisplay::setPassthroughSize(int w, int h)
 {
     passWidth = w;
     passHeight = h;
 }
 
-int			BzfDisplay::getPassthroughWidth() const
+int         BzfDisplay::getPassthroughWidth() const
 {
     return passWidth;
 }
 
-int			BzfDisplay::getPassthroughHeight() const
+int         BzfDisplay::getPassthroughHeight() const
 {
     return passHeight;
 }
 
-int			BzfDisplay::getNumResolutions() const
+int         BzfDisplay::getNumResolutions() const
 {
     return numResolutions;
 }
@@ -91,17 +91,17 @@ const BzfDisplay::ResInfo* BzfDisplay::getResolution(int index) const
     return resolutions[index];
 }
 
-int			BzfDisplay::getResolution() const
+int         BzfDisplay::getResolution() const
 {
     return currentResolution;
 }
 
-int			BzfDisplay::getDefaultResolution() const
+int         BzfDisplay::getDefaultResolution() const
 {
     return defaultResolution;
 }
 
-bool			BzfDisplay::setResolution(int index)
+bool            BzfDisplay::setResolution(int index)
 {
     if (index < 0 || index >= numResolutions) return false;
     if (index == currentResolution) return true;
@@ -117,7 +117,7 @@ bool			BzfDisplay::setResolution(int index)
     return true;
 }
 
-bool			BzfDisplay::setDefaultResolution()
+bool            BzfDisplay::setDefaultResolution()
 {
     const int oldResolution = currentResolution;
     currentResolution = -1;
@@ -129,7 +129,7 @@ bool			BzfDisplay::setDefaultResolution()
     return true;
 }
 
-bool			BzfDisplay::doSetDefaultResolution()
+bool            BzfDisplay::doSetDefaultResolution()
 {
     if (numResolutions >= 2 && defaultResolution < numResolutions)
         return setResolution(defaultResolution);
@@ -137,7 +137,7 @@ bool			BzfDisplay::doSetDefaultResolution()
         return false;
 }
 
-int			BzfDisplay::findResolution(const char* name) const
+int         BzfDisplay::findResolution(const char* name) const
 {
     for (int i = 0; i < numResolutions; i++)
         if (strcmp(name, resolutions[i]->name) == 0)
@@ -145,13 +145,13 @@ int			BzfDisplay::findResolution(const char* name) const
     return -1;
 }
 
-bool			BzfDisplay::isValidResolution(int index) const
+bool            BzfDisplay::isValidResolution(int index) const
 {
     if (index < 0 || index >= numResolutions) return false;
     return resolutions[index] != NULL;
 }
 
-void			BzfDisplay::initResolutions(ResInfo** _resolutions,
+void            BzfDisplay::initResolutions(ResInfo** _resolutions,
         int _numResolutions, int _currentResolution)
 {
     resolutions = _resolutions;
@@ -169,6 +169,6 @@ void BzfDisplay::setFullScreenFormat(int index)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

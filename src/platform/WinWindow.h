@@ -11,11 +11,11 @@
  */
 
 /* WinWindow:
- *	OpenGL Windows window.
+ *  OpenGL Windows window.
  */
 
 #ifndef BZF_WINWINDOW_H
-#define	BZF_WINWINDOW_H
+#define BZF_WINWINDOW_H
 
 #include "BzfWindow.h"
 #include "WinDisplay.h"
@@ -27,84 +27,84 @@ public:
     WinWindow(const WinDisplay*, WinVisual*);
     ~WinWindow();
 
-    bool		isValid() const;
+    bool        isValid() const;
 
-    void		showWindow(bool);
+    void        showWindow(bool);
 
-    void		getPosition(int& x, int& y);
-    void		getSize(int& width, int& height) const;
+    void        getPosition(int& x, int& y);
+    void        getSize(int& width, int& height) const;
 
-    void		setTitle(const char*);
-    void		setPosition(int x, int y);
-    void		setSize(int width, int height);
-    void		setMinSize(int width, int height);
-    void		setFullscreen(bool on);
+    void        setTitle(const char*);
+    void        setPosition(int x, int y);
+    void        setSize(int width, int height);
+    void        setMinSize(int width, int height);
+    void        setFullscreen(bool on);
 
-    void		iconify();
+    void        iconify();
 
-    void		warpMouse(int x, int y);
-    void		getMouse(int& x, int& y) const;
-    void		disableConfineToMotionbox();
-    void		confineToMotionbox(int x1, int y1, int x2, int y2);
-    void		grabMouse();
-    void		ungrabMouse();
-    void		enableGrabMouse(bool on);
-    void		showMouse();
-    void		hideMouse();
+    void        warpMouse(int x, int y);
+    void        getMouse(int& x, int& y) const;
+    void        disableConfineToMotionbox();
+    void        confineToMotionbox(int x1, int y1, int x2, int y2);
+    void        grabMouse();
+    void        ungrabMouse();
+    void        enableGrabMouse(bool on);
+    void        showMouse();
+    void        hideMouse();
 
-    void		setGamma(float);
-    float		getGamma() const;
-    bool		hasGammaControl() const;
+    void        setGamma(float);
+    float       getGamma() const;
+    bool        hasGammaControl() const;
 
-    void		makeCurrent();
-    void		swapBuffers();
-    void		makeContext();
-    void		freeContext();
+    void        makeCurrent();
+    void        swapBuffers();
+    void        makeContext();
+    void        freeContext();
 
     // other Windows stuff
-    static HWND		getHandle();
-    LONG		queryNewPalette();
-    void		paletteChanged();
-    bool		activate();
-    bool		deactivate();
-    void		onDestroy();
-    static WinWindow*	lookupWindow(HWND);
-    static void		deactivateAll();
-    static void		reactivateAll();
+    static HWND     getHandle();
+    LONG        queryNewPalette();
+    void        paletteChanged();
+    bool        activate();
+    bool        deactivate();
+    void        onDestroy();
+    static WinWindow*   lookupWindow(HWND);
+    static void     deactivateAll();
+    static void     reactivateAll();
 
 private:
-    BYTE		getIntensityValue(float) const;
-    static float	getComponentFromIndex(int i, UINT nbits, UINT shift);
-    void		makeColormap(const PIXELFORMATDESCRIPTOR&);
+    BYTE        getIntensityValue(float) const;
+    static float    getComponentFromIndex(int i, UINT nbits, UINT shift);
+    void        makeColormap(const PIXELFORMATDESCRIPTOR&);
 
-    void		createChild();
-    void		destroyChild();
+    void        createChild();
+    void        destroyChild();
 
-    void		getGammaRamps(WORD*);
-    void		setGammaRamps(const WORD*);
+    void        getGammaRamps(WORD*);
+    void        setGammaRamps(const WORD*);
 
 private:
-    const WinDisplay*	display;
-    WinVisual		visual;
-    bool		inDestroy;
-    bool		isNewContext;
-    static HWND		hwnd;
-    HWND		hwndChild;
-    HGLRC		hRC;
-    HDC			hDC;
-    HDC			hDCChild;
-    bool		inactiveDueToDeactivate;
-    bool		inactiveDueToDeactivateAll;
-    bool		useColormap;
-    bool		hasGamma;
-    float		gammaVal;
-    WORD		origGammaRamps[6 * 256];
+    const WinDisplay*   display;
+    WinVisual       visual;
+    bool        inDestroy;
+    bool        isNewContext;
+    static HWND     hwnd;
+    HWND        hwndChild;
+    HGLRC       hRC;
+    HDC         hDC;
+    HDC         hDCChild;
+    bool        inactiveDueToDeactivate;
+    bool        inactiveDueToDeactivateAll;
+    bool        useColormap;
+    bool        hasGamma;
+    float       gammaVal;
+    WORD        origGammaRamps[6 * 256];
     PIXELFORMATDESCRIPTOR pfd;
-    WinWindow*		prev;
-    WinWindow*		next;
-    static WinWindow*	first;
-    static HPALETTE	colormap;
-    bool		mouseGrab;
+    WinWindow*      prev;
+    WinWindow*      next;
+    static WinWindow*   first;
+    static HPALETTE colormap;
+    bool        mouseGrab;
 };
 
 #endif // BZF_WINWINDOW_H
@@ -113,6 +113,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

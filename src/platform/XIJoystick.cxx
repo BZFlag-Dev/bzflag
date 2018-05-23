@@ -39,7 +39,7 @@
 /* implementation headers */
 #include "ErrorHandler.h"
 
-static int	ioErrorHandler(Display*)
+static int  ioErrorHandler(Display*)
 {
     abort();
     return 0;
@@ -68,7 +68,7 @@ XIJoystick::~XIJoystick()
         XCloseDevice(display, device);
 }
 
-void	      XIJoystick::initJoystick(const char* joystickName)
+void          XIJoystick::initJoystick(const char* joystickName)
 {
     XAnyClassPtr c;
     XValuatorInfo *v = NULL;
@@ -138,12 +138,12 @@ void	      XIJoystick::initJoystick(const char* joystickName)
     }
 }
 
-bool	      XIJoystick::joystick() const
+bool          XIJoystick::joystick() const
 {
     return (device != NULL);
 }
 
-void	      XIJoystick::getJoy(int& x, int& y)
+void          XIJoystick::getJoy(int& x, int& y)
 {
     x = y = 0;
 
@@ -189,7 +189,7 @@ unsigned long XIJoystick::getJoyButtons()
      */
 }
 
-void	      XIJoystick::getJoyDevices(std::vector<std::string> &list) const
+void          XIJoystick::getJoyDevices(std::vector<std::string> &list) const
 {
     XAnyClassPtr c;
     XValuatorInfo *v = NULL;

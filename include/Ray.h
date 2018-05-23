@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_RAY_H
-#define	BZF_RAY_H
+#ifndef BZF_RAY_H
+#define BZF_RAY_H
 
 #include "common.h"
 #include <string.h> // for memset()
@@ -25,15 +25,15 @@ public:
     Ray(const float* o, const float* d);
     Ray(const Ray&);
     ~Ray();
-    Ray&		operator=(const Ray&);
+    Ray&        operator=(const Ray&);
 
-    const float*	getOrigin() const;
-    const float*	getDirection() const;
-    void		getPoint(float t, float p[3]) const;
+    const float*    getOrigin() const;
+    const float*    getDirection() const;
+    void        getPoint(float t, float p[3]) const;
 
 private:
-    float		o[3];
-    float		d[3];
+    float       o[3];
+    float       d[3];
 };
 
 //
@@ -51,12 +51,12 @@ inline Ray::~Ray()
     // do nothing
 }
 
-inline const float*	Ray::getOrigin() const
+inline const float* Ray::getOrigin() const
 {
     return o;
 }
 
-inline const float*	Ray::getDirection() const
+inline const float* Ray::getDirection() const
 {
     return d;
 }
@@ -67,6 +67,6 @@ inline const float*	Ray::getDirection() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

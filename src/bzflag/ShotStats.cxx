@@ -79,34 +79,26 @@ ShotStats::~ShotStats()
 void ShotStats::refresh()
 {
     if (!visible)
-    {
         return;
-    }
 
     std::vector<HUDuiControl*>& listHUD = getControls();
 
     // Delete all the controls apart from the headings
     const int count = listHUD.size();
     for (int i = staticLabelCount; i < count; i++)
-    {
         delete listHUD[i];
-    }
     listHUD.erase(listHUD.begin() + staticLabelCount, listHUD.end());
 
     // my statistics first
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (myTank->getTeam() != ObserverTeam)
-    {
         addStats((Player*)myTank, listHUD);
-    }
 
     // add statistics for each player
     for (int i = 0; i < curMaxPlayers; ++i)
     {
         if (remotePlayers[i] && (remotePlayers[i]->getTeam() != ObserverTeam))
-        {
             addStats((Player*)remotePlayers[i], listHUD);
-        }
     }
 
     resize(HUDDialog::getWidth(), HUDDialog::getHeight());
@@ -155,35 +147,35 @@ void ShotStats::addStats(Player *_player, std::vector<HUDuiControl*> &_list)
     ++rows;
 }
 
-int			ShotStats::getFontFace()
+int         ShotStats::getFontFace()
 {
     // create font
     return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
 }
 
-HUDuiDefaultKey*	ShotStats::getDefaultKey()
+HUDuiDefaultKey*    ShotStats::getDefaultKey()
 {
     return ShotStatsDefaultKey::getInstance();
 }
 
-void			ShotStats::execute()
+void            ShotStats::execute()
 {
     HUDDialogStack::get()->pop();
 }
 
-void			ShotStats::dismiss()
+void            ShotStats::dismiss()
 {
     visible = false;
 }
 
-void			ShotStats::show()
+void            ShotStats::show()
 {
     visible = true;
 
     refresh();
 }
 
-void			ShotStats::resize(int _width, int _height)
+void            ShotStats::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
 
@@ -243,6 +235,6 @@ void			ShotStats::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

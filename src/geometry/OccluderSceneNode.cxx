@@ -44,9 +44,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
     vertexCount = face->getVertexCount();
     vertices = new GLfloat3[vertexCount];
     for (i = 0; i < vertexCount; i++)
-    {
         memcpy(vertices[i], face->getVertex(i), sizeof(float[3]));
-    }
 
     // record sphere info
     GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -69,9 +67,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
         const float dz = mySphere[2] - v[2];
         GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
         if (r > mySphere[3])
-        {
             mySphere[3] = r;
-        }
     }
     setSphere(mySphere);
 
@@ -92,22 +88,16 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
     const GLfloat* eye = frustum.getEye();
     if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
             plane[3]) <= 0.0f)
-    {
         return true;
-    }
 
     // if the Visibility culler tells us that we're
     // fully visible, then skip the rest of these tests
     if (octreeState == OctreeVisible)
-    {
         return false;
-    }
 
     const Frustum* f = (const Frustum *) &frustum;
     if (testAxisBoxInFrustum(extents, f) == Outside)
-    {
         return true;
-    }
 
     // probably visible
     return false;
@@ -117,9 +107,7 @@ bool OccluderSceneNode::cull(const ViewFrustum& frustum) const
 bool OccluderSceneNode::inAxisBox (const Extents& exts) const
 {
     if (!extents.touches(exts))
-    {
         return false;
-    }
 
     return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
 }
@@ -129,6 +117,6 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

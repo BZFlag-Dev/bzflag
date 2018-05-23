@@ -18,34 +18,34 @@ WinVisual::WinVisual(const WinDisplay* _display) :
     hDC(NULL)
 {
     display->ref();
-    pfd.nSize		= sizeof(pfd);
-    pfd.nVersion		= 1;
-    pfd.dwFlags		= PFD_DRAW_TO_WINDOW |
+    pfd.nSize       = sizeof(pfd);
+    pfd.nVersion        = 1;
+    pfd.dwFlags     = PFD_DRAW_TO_WINDOW |
                       PFD_SUPPORT_OPENGL |
                       PFD_DEPTH_DONTCARE;
-    pfd.iPixelType	= PFD_TYPE_RGBA;
-    pfd.cColorBits	= 0;
-    pfd.cRedBits		= 0;
-    pfd.cRedShift		= 0;
-    pfd.cGreenBits	= 0;
-    pfd.cGreenShift	= 0;
-    pfd.cBlueBits		= 0;
-    pfd.cBlueShift	= 0;
-    pfd.cAlphaBits	= 0;
-    pfd.cAlphaShift	= 0;
-    pfd.cAccumBits	= 0;
-    pfd.cAccumRedBits	= 0;
-    pfd.cAccumGreenBits	= 0;
-    pfd.cAccumBlueBits	= 0;
-    pfd.cAccumAlphaBits	= 0;
-    pfd.cDepthBits	= 0;
-    pfd.cStencilBits	= 0;
-    pfd.cAuxBuffers	= 0;
-    pfd.iLayerType	= PFD_MAIN_PLANE;
-    pfd.bReserved		= 0;
-    pfd.dwLayerMask	= 0;
-    pfd.dwVisibleMask	= 0;
-    pfd.dwDamageMask	= 0;
+    pfd.iPixelType  = PFD_TYPE_RGBA;
+    pfd.cColorBits  = 0;
+    pfd.cRedBits        = 0;
+    pfd.cRedShift       = 0;
+    pfd.cGreenBits  = 0;
+    pfd.cGreenShift = 0;
+    pfd.cBlueBits       = 0;
+    pfd.cBlueShift  = 0;
+    pfd.cAlphaBits  = 0;
+    pfd.cAlphaShift = 0;
+    pfd.cAccumBits  = 0;
+    pfd.cAccumRedBits   = 0;
+    pfd.cAccumGreenBits = 0;
+    pfd.cAccumBlueBits  = 0;
+    pfd.cAccumAlphaBits = 0;
+    pfd.cDepthBits  = 0;
+    pfd.cStencilBits    = 0;
+    pfd.cAuxBuffers = 0;
+    pfd.iLayerType  = PFD_MAIN_PLANE;
+    pfd.bReserved       = 0;
+    pfd.dwLayerMask = 0;
+    pfd.dwVisibleMask   = 0;
+    pfd.dwDamageMask    = 0;
 }
 
 WinVisual::WinVisual(const WinVisual& visual) : BzfVisual(),
@@ -62,62 +62,62 @@ WinVisual::~WinVisual()
     display->unref();
 }
 
-void			WinVisual::setLevel(int level)
+void            WinVisual::setLevel(int level)
 {
     if (level < 0) pfd.iLayerType = (BYTE)PFD_UNDERLAY_PLANE;
     else if (level > 0) pfd.iLayerType = PFD_OVERLAY_PLANE;
     else pfd.iLayerType = PFD_MAIN_PLANE;
 }
 
-void			WinVisual::setDoubleBuffer(bool on)
+void            WinVisual::setDoubleBuffer(bool on)
 {
     if (on) pfd.dwFlags |= PFD_DOUBLEBUFFER;
     else pfd.dwFlags &= ~PFD_DOUBLEBUFFER;
 }
 
-void			WinVisual::setIndex(int minDepth)
+void            WinVisual::setIndex(int minDepth)
 {
     pfd.iPixelType = PFD_TYPE_COLORINDEX;
     pfd.cColorBits = minDepth;
 }
 
-void			WinVisual::setRGBA(int minRed, int minGreen,
+void            WinVisual::setRGBA(int minRed, int minGreen,
                                    int minBlue, int minAlpha)
 {
     pfd.iPixelType = PFD_TYPE_RGBA;
     pfd.cColorBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void			WinVisual::setDepth(int minDepth)
+void            WinVisual::setDepth(int minDepth)
 {
     pfd.cDepthBits = minDepth;
     if (pfd.cDepthBits == 0) pfd.dwFlags |= PFD_DEPTH_DONTCARE;
     else pfd.dwFlags &= ~PFD_DEPTH_DONTCARE;
 }
 
-void			WinVisual::setStencil(int minDepth)
+void            WinVisual::setStencil(int minDepth)
 {
     pfd.cStencilBits = minDepth;
 }
 
-void			WinVisual::setAccum(int minRed, int minGreen,
+void            WinVisual::setAccum(int minRed, int minGreen,
                                     int minBlue, int minAlpha)
 {
     pfd.cAccumBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void			WinVisual::setStereo(bool on)
+void            WinVisual::setStereo(bool on)
 {
     if (on) pfd.dwFlags |= PFD_STEREO;
     else pfd.dwFlags &= ~PFD_STEREO;
 }
 
-void			WinVisual::setMultisample(int)
+void            WinVisual::setMultisample(int)
 {
     // do nothing
 }
 
-bool			WinVisual::build()
+bool            WinVisual::build()
 {
     if (pixelFormat == -1)
     {
@@ -134,19 +134,17 @@ bool			WinVisual::build()
             hDC = NULL;
         }
         else
-        {
             pixelFormat = ChoosePixelFormat(hDC, &pfd);
-        }
     }
     return pixelFormat > 0;
 }
 
-void			WinVisual::reset()
+void            WinVisual::reset()
 {
     pixelFormat = -1;
 }
 
-int			WinVisual::get(HDC _hDC,
+int         WinVisual::get(HDC _hDC,
                            const PIXELFORMATDESCRIPTOR** _pfd)
 {
     hDC = _hDC;
@@ -160,6 +158,6 @@ int			WinVisual::get(HDC _hDC,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

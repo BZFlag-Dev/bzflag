@@ -107,11 +107,11 @@ float BzfRegion::getDistance(const float p[2], float nearest[2]) const
     //compute distance from any edge
     const float* p1 = corners[count - 1].get();
     const float* p2 = NULL;
-    float	d[2];
-    float	m[2];
-    float	t;
-    float	edgeSquareDist;
-    float	x, y;
+    float   d[2];
+    float   m[2];
+    float   t;
+    float   edgeSquareDist;
+    float   x, y;
     for (int c = 0; c < count; c++)
     {
         p2   = corners[c].get();
@@ -165,9 +165,9 @@ int BzfRegion::classify(const float e1[2], const float e2[2]) const
         if (e < -0.00001) toRight++;
         else if (e <= 0.00001) onEdge++;
     }
-    if (toRight + onEdge == count) return 1;	// all to right
-    if (toRight != 0) return 0;			// not all to left -- split
-    return -1;					// all to left
+    if (toRight + onEdge == count) return 1;    // all to right
+    if (toRight != 0) return 0;         // not all to left -- split
+    return -1;                  // all to left
 }
 
 int BzfRegion::getNumSides() const
@@ -422,6 +422,6 @@ const float* BzfRegion::getA() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

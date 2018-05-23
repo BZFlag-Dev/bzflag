@@ -221,7 +221,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option = new HUDuiList;
     option->setFontFace(fontFace);
 
-#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))	// only SDL 2 can make live changes
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))  // only SDL 2 can make live changes
     option->setLabel("(restart required) Energy Saver:");
 #else
     option->setLabel("Energy Saver:");
@@ -231,9 +231,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     options->push_back(std::string("Off"));
     options->push_back(std::string("FPS Limit"));
     if (getMainWindow()->getWindow()->hasVerticalSync())
-    {
         options->push_back(std::string("Vertical Sync"));
-    }
     option->update();
     listHUD.push_back(option);
 
@@ -258,9 +256,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     BzfDisplay* display = getDisplay();
     int numFormats = display->getNumResolutions();
     if (numFormats < 2)
-    {
         videoFormat = NULL;
-    }
     else
     {
         videoFormat = label = new HUDuiLabel;
@@ -277,7 +273,7 @@ DisplayMenu::~DisplayMenu()
     delete formatMenu;
 }
 
-void			DisplayMenu::execute()
+void            DisplayMenu::execute()
 {
     HUDuiControl* _focus = HUDui::getFocus();
     if (_focus == videoFormat)
@@ -288,7 +284,7 @@ void			DisplayMenu::execute()
     }
 }
 
-void			DisplayMenu::resize(int _width, int _height)
+void            DisplayMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
     int i;
@@ -333,18 +329,12 @@ void			DisplayMenu::resize(int _width, int _height)
         if (BZDBCache::lighting)
         {
             if (BZDB.isTrue("tesselation"))
-            {
                 ((HUDuiList*)listHUD[i++])->setIndex(2);
-            }
             else
-            {
                 ((HUDuiList*)listHUD[i++])->setIndex(1);
-            }
         }
         else
-        {
             ((HUDuiList*)listHUD[i++])->setIndex(0);
-        }
         ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
         if (OpenGLGState::hasAnisotropicFiltering)
@@ -364,9 +354,7 @@ void			DisplayMenu::resize(int _width, int _height)
         {
             shadowVal++;
             if (BZDBCache::stencilShadows)
-            {
                 shadowVal++;
-            }
         }
         ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
 #if defined(DEBUG_RENDERING)
@@ -406,7 +394,7 @@ float DisplayMenu::indexToGamma(int index)
     return powf(2.0f, (float)index / 5.0f - 1.0f);
 }
 
-void			DisplayMenu::callback(HUDuiControl* w, const void* data)
+void            DisplayMenu::callback(HUDuiControl* w, const void* data)
 {
     HUDuiList* list = (HUDuiList*)w;
     SceneRenderer* sceneRenderer = getSceneRenderer();
@@ -516,6 +504,6 @@ void			DisplayMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_SERVER_LIST_CACHE_H
-#define	BZF_SERVER_LIST_CACHE_H
+#ifndef BZF_SERVER_LIST_CACHE_H
+#define BZF_SERVER_LIST_CACHE_H
 
 #include "common.h"
 
@@ -45,10 +45,10 @@ public:
     static ServerListCache* get();
 
     /** save the cache to file */
-    void			saveCache();
+    void            saveCache();
 
     /** read the cache from file */
-    void			loadCache();
+    void            loadCache();
 
     /** set the max age to # of minutes after which items in cache.  are
      * this old they are no longer shown on the find menu-- 0
@@ -56,10 +56,10 @@ public:
     void setMaxCacheAge(time_t time);
 
     /** get the set maximum cache age */
-    time_t		getMaxCacheAge();
+    time_t      getMaxCacheAge();
 
     /** clear the server list cache */
-    bool			clearCache();
+    bool            clearCache();
 
     /** first item in the cache.  this is a wrapper that allows access
      * to the maps begin method */
@@ -74,20 +74,20 @@ public:
     SRV_STR_MAP::iterator find(const std::string &ServerAddress);
 
     /** add an entry to the cache list */
-    void			insert(const std::string &serverAddress, const ServerItem &info);
+    void            insert(const std::string &serverAddress, const ServerItem &info);
 
     /** is given server in cache and marked as favorite? */
-    bool		  isFavorite(const std::string &serverAddress) const;
+    bool          isFavorite(const std::string &serverAddress) const;
 
 private:
     /** the full path of the file the cache is stored in **/
     std::string getCacheFilename(int subrevision) const;
 
     /** the actual map container of entries */
-    SRV_STR_MAP		serverCache;
+    SRV_STR_MAP     serverCache;
 
     /** age after we don't show servers in cache */
-    time_t		maxCacheAge;
+    time_t      maxCacheAge;
 
     /** one cache to rule them all */
     static ServerListCache globalCache;
@@ -100,6 +100,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

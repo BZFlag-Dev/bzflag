@@ -11,11 +11,11 @@
  */
 
 /* SphereSceneNode:
- *	Encapsulates information for rendering a sphere.
+ *  Encapsulates information for rendering a sphere.
  */
 
-#ifndef	BZF_SPHERE_SCENE_NODE_H
-#define	BZF_SPHERE_SCENE_NODE_H
+#ifndef BZF_SPHERE_SCENE_NODE_H
+#define BZF_SPHERE_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -45,10 +45,10 @@ public:
     virtual void addShadowNodes(SceneRenderer&) = 0;
 
 protected:
-    GLfloat		radius;
-    GLfloat		color[4];
-    bool		transparent;
-    OpenGLGState	gstate;
+    GLfloat     radius;
+    GLfloat     color[4];
+    bool        transparent;
+    OpenGLGState    gstate;
 };
 
 
@@ -102,7 +102,7 @@ protected:
     };
 
 private:
-    SphereLodRenderNode	renderNode;
+    SphereLodRenderNode renderNode;
     bool shockWave;
     bool inside;
 
@@ -117,8 +117,8 @@ private:
 
 /******************************************************************************/
 
-const int		SphereRes = 8;
-const int		SphereLowRes = 6;
+const int       SphereRes = 8;
+const int       SphereLowRes = 6;
 
 class SphereBspSceneNode;
 
@@ -129,10 +129,10 @@ public:
                             SphereBspSceneNode* sphere);
     ~SphereFragmentSceneNode();
 
-    void		move();
+    void        move();
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
 
     // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
     // following declaration isn't public it generates an error when trying
@@ -150,19 +150,19 @@ public:
         FragmentRenderNode(const SphereBspSceneNode*,
                            int theta, int phi);
         ~FragmentRenderNode();
-        const GLfloat*	getVertex() const;
-        void		render();
-        const GLfloat*	getPosition() const;
+        const GLfloat*  getVertex() const;
+        void        render();
+        const GLfloat*  getPosition() const;
     private:
-        const SphereBspSceneNode*	sceneNode;
-        int		theta, phi;
-        int		theta2, phi2;
+        const SphereBspSceneNode*   sceneNode;
+        int     theta, phi;
+        int     theta2, phi2;
     };
     friend class FragmentRenderNode;
 
 private:
-    SphereBspSceneNode*	parentSphere;
-    FragmentRenderNode	renderNode;
+    SphereBspSceneNode* parentSphere;
+    FragmentRenderNode  renderNode;
 };
 
 class SphereBspSceneNode : public SphereSceneNode
@@ -173,24 +173,24 @@ public:
     SphereBspSceneNode(const GLfloat pos[3], GLfloat radius);
     ~SphereBspSceneNode();
 
-    void		setColor(GLfloat r, GLfloat g,
+    void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		move(const GLfloat pos[3], GLfloat radius);
+    void        setColor(const GLfloat* rgba);
+    void        move(const GLfloat pos[3], GLfloat radius);
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
 
-    SceneNode**		getParts(int& numParts);
+    SceneNode**     getParts(int& numParts);
 
 protected:
-    GLfloat		getRadius() const
+    GLfloat     getRadius() const
     {
         return radius;
     }
 
 private:
-    void		freeParts();
+    void        freeParts();
 
 protected:
     class SphereBspRenderNode : public RenderNode
@@ -200,24 +200,24 @@ protected:
     public:
         SphereBspRenderNode(const SphereBspSceneNode*);
         ~SphereBspRenderNode();
-        void		setHighResolution(bool);
-        void		setBaseIndex(int index);
-        void		render();
-        const GLfloat*	getPosition() const
+        void        setHighResolution(bool);
+        void        setBaseIndex(int index);
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
     private:
         const SphereBspSceneNode* sceneNode;
-        bool		highResolution;
-        int		baseIndex;
-        static GLfloat	geom[2 * SphereRes * (SphereRes + 1)][3];
-        static GLfloat	lgeom[SphereLowRes * (SphereLowRes + 1)][3];
+        bool        highResolution;
+        int     baseIndex;
+        static GLfloat  geom[2 * SphereRes * (SphereRes + 1)][3];
+        static GLfloat  lgeom[SphereLowRes * (SphereLowRes + 1)][3];
     };
     friend class SphereBspRenderNode;
 
 private:
-    SphereBspRenderNode	renderNode;
+    SphereBspRenderNode renderNode;
     SphereFragmentSceneNode** parts;
 };
 
@@ -231,6 +231,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

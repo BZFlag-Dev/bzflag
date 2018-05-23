@@ -121,7 +121,7 @@ float TargetingUtils::getOpenDistance( const float *src, const float azimuth )
     float t = MAXFLOAT; //Some constant?
 
     float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
-    const float pos[3] = { src[0], src[1], src[2] + 0.1f };	// Don't hit building because you're sitting on one.
+    const float pos[3] = { src[0], src[1], src[2] + 0.1f }; // Don't hit building because you're sitting on one.
     Ray tankRay( pos, dir );
     ShotStrategy::getFirstBuilding(tankRay, -0.5f, t);
     return t;
@@ -148,6 +148,6 @@ bool TargetingUtils::getFirstCollisionPoint( const float *src, const float *targ
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

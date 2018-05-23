@@ -43,7 +43,7 @@ public:
     float getAzimuth() const;
 
 private:
-    float	      azimuth;
+    float         azimuth;
     float       pos[3];
 
     /* class data - determines how the pos and azimuth are determined */
@@ -81,6 +81,6 @@ class SpawnPosition;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

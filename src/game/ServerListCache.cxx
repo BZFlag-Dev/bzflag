@@ -27,7 +27,7 @@
 #include "TextUtils.h"
 
 
-ServerListCache	ServerListCache::globalCache;
+ServerListCache ServerListCache::globalCache;
 
 
 ServerListCache::ServerListCache()
@@ -75,7 +75,7 @@ bool ServerListCache::isFavorite(const std::string &serverAddress) const
     return i!=serverCache.end() && i->second.favorite;
 }
 
-std::string	     ServerListCache::getCacheFilename(int subrevision) const
+std::string      ServerListCache::getCacheFilename(int subrevision) const
 {
     // get a file named e.g. BZFS1910Server.bzs in the cache dir
     // allows separation of server caches by protocol version
@@ -89,7 +89,7 @@ std::string	     ServerListCache::getCacheFilename(int subrevision) const
     return fileName;
 }
 
-void			ServerListCache::saveCache()
+void            ServerListCache::saveCache()
 {
     const int subrevision = 1;
     std::string fileName = getCacheFilename(subrevision);
@@ -122,7 +122,7 @@ void			ServerListCache::saveCache()
 }
 
 
-void			ServerListCache::loadCache()
+void            ServerListCache::loadCache()
 {
     int subrevision = 1;
     std::string fileName = getCacheFilename(subrevision);
@@ -163,7 +163,7 @@ void			ServerListCache::loadCache()
 }
 
 
-bool			ServerListCache::clearCache()
+bool            ServerListCache::clearCache()
 {
     if (serverCache.size() > 0)
     {
@@ -172,19 +172,17 @@ bool			ServerListCache::clearCache()
 
     }
     else
-    {
         return false;
-    }
 
 }
 
 
-void			ServerListCache::setMaxCacheAge(time_t time)
+void            ServerListCache::setMaxCacheAge(time_t time)
 {
     maxCacheAge = time;
 }
 
-time_t			ServerListCache::getMaxCacheAge()
+time_t          ServerListCache::getMaxCacheAge()
 {
     return maxCacheAge;
 }
@@ -194,6 +192,6 @@ time_t			ServerListCache::getMaxCacheAge()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

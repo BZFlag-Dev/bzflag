@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__KEYBOARDMAPMENU_H__
-#define	__KEYBOARDMAPMENU_H__
+#ifndef __KEYBOARDMAPMENU_H__
+#define __KEYBOARDMAPMENU_H__
 
 #include "common.h"
 
@@ -39,11 +39,11 @@ public:
     KeyboardMapMenuDefaultKey(KeyboardMapMenu*);
     ~KeyboardMapMenuDefaultKey() {}
 
-    bool		keyPress(const BzfKeyEvent&);
-    bool		keyRelease(const BzfKeyEvent&);
+    bool        keyPress(const BzfKeyEvent&);
+    bool        keyRelease(const BzfKeyEvent&);
 
 public:
-    KeyboardMapMenu*	menu;
+    KeyboardMapMenu*    menu;
 };
 
 class KeyboardMapMenu : public HUDDialog
@@ -55,40 +55,40 @@ public:
         delete quickKeysMenu;
     }
 
-    HUDuiDefaultKey*	getDefaultKey()
+    HUDuiDefaultKey*    getDefaultKey()
     {
         return &defaultKey;
     }
-    void		execute();
-    void		dismiss();
-    void		resize(int width, int height);
+    void        execute();
+    void        dismiss();
+    void        resize(int width, int height);
 
-    bool		isEditing() const;
-    void		setKey(const BzfKeyEvent&);
-    void		onScan(const std::string& name, bool press, const std::string& cmd);
-    static void		onScanCB(const std::string& name, bool press,
+    bool        isEditing() const;
+    void        setKey(const BzfKeyEvent&);
+    void        onScan(const std::string& name, bool press, const std::string& cmd);
+    static void     onScanCB(const std::string& name, bool press,
                              const std::string& cmd, void* userData);
 
 private:
-    void		update();
+    void        update();
 
-    HUDuiLabel*		createLabel(const char*, const char* = NULL);
+    HUDuiLabel*     createLabel(const char*, const char* = NULL);
 
-    void		initkeymap(const std::string& name, int index);
+    void        initkeymap(const std::string& name, int index);
 private:
     struct keymap
     {
-        int index;	// ui label index
+        int index;  // ui label index
         std::string key1;
         std::string key2;
     };
     typedef std::map<std::string, keymap> KeyKeyMap;
-    KeyKeyMap				mappable;
-    KeyboardMapMenuDefaultKey		defaultKey;
-    HUDuiControl*			reset;
-    HUDuiControl*			quickKeys;
-    int					editing;
-    QuickKeysMenu*			quickKeysMenu;
+    KeyKeyMap               mappable;
+    KeyboardMapMenuDefaultKey       defaultKey;
+    HUDuiControl*           reset;
+    HUDuiControl*           quickKeys;
+    int                 editing;
+    QuickKeysMenu*          quickKeysMenu;
 };
 
 
@@ -98,6 +98,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

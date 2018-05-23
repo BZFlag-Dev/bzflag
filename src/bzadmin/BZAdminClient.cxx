@@ -92,13 +92,9 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     std::string reason;
     uint16_t code, rejcode;
     if (sLink.readEnter (reason, code, rejcode))
-    {
         valid = true;
-    }
     else
-    {
         std::cerr << reason << std::endl;
-    }
 
 
     // tell BZDB to shut up, we can't have debug data printed to stdout
@@ -390,9 +386,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
                 killerName = (it != players.end() ? it->second.name : "<unknown>");
                 lastMessage.first = std::string("*** ") + "'" + victimName + "' ";
                 if (killer == victim)
-                {
                     lastMessage.first = lastMessage.first + "blew myself up.";
-                }
                 else
                 {
                     lastMessage.first = lastMessage.first + "destroyed by '" +
@@ -504,19 +498,13 @@ void BZAdminClient::outputServerList() const
     for (int i = 0; i < 20; i++)
     {
         if (!serverList.searchActive() && serverList.serverFound())
-        {
             break;
-        }
         if (ui)
         {
             if (!serverList.serverFound())
-            {
                 ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
-            }
             else
-            {
                 ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
-            }
         }
         serverList.checkEchos(&startupInfo);
         cURLManager::perform();
@@ -531,9 +519,7 @@ void BZAdminClient::outputServerList() const
         for (std::vector<ServerItem>::const_iterator server = servers.begin();
                 server != servers.end();
                 ++server)
-        {
             ui->outputMessage(std::string("  ") + server->description, Yellow);
-        }
         ui->outputMessage(std::string("End Server List."), Yellow);
     }
 
@@ -582,9 +568,7 @@ void BZAdminClient::runLoop()
                 }
             }
             else if (cmd == "/list")
-            {
                 outputServerList();
-            }
             else if (cmd != "")
                 sendMessage(cmd, ui->getTarget());
         }
@@ -656,30 +640,20 @@ std::string BZAdminClient::formatMessage(const std::string& msg,
             if (src == me)
             {
                 if (type == ActionMessage)
-                {
                     formatted += "[->" + dstName + "][" + srcName + " " + msg + "]";
-                }
                 else
-                {
                     formatted += "[->" + dstName + "] " + msg;
-                }
             }
             else
             {
                 if (type == ActionMessage)
-                {
                     formatted += "[" + srcName + " " + msg + "]";
-                }
                 else
-                {
                     formatted += "[" + srcName + "->] " + msg;
-                }
             }
         }
         else
-        {
             formatted += msg;
-        }
     }
 
     // public or admin or team message
@@ -719,7 +693,8 @@ void BZAdminClient::waitForServer()
     {
         sendMessage("bzadminping", me);
         std::string expected = formatMessage("bzadminping", ChatMessage, me, me, NoTeam, me);
-        std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ChatMessage, ServerPlayer, me, NoTeam, me);
+        std::string noTalk = formatMessage("We're sorry, you are not allowed to talk!", ChatMessage, ServerPlayer, me, NoTeam,
+                                           me);
         BZAdminUI* tmpUI = ui;
         ui = NULL;
         do
@@ -789,6 +764,6 @@ bool BZAdminClient::getFilterStatus(uint16_t msgType) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

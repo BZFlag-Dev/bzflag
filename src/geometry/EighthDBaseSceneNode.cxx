@@ -26,7 +26,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-const int		BasePolygons = 60;
+const int       BasePolygons = 60;
 
 EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
         const float size[3], float rotation) :
@@ -162,6 +162,6 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -27,35 +27,35 @@ public:
 
     /** Resetting lag value
     */
-    void	reset();
+    void    reset();
     /** Getting lag value (in milliseconds)
     */
-    int	getLag() const;
+    int getLag() const;
     /** Getting jitter value (in milliseconds)
     */
-    int	getJitter() const;
+    int getJitter() const;
     /** Getting packetloss value (in percent)
     */
-    int	getLoss() const;
+    int getLoss() const;
     /** Get the floating point value of the lag (in seconds)
     */
-    float	getLagAvg() const;
+    float   getLagAvg() const;
     /** Get a printable version of lag statistics
     */
-    void	getLagStats(char* msg, bool isAdmin) const;
+    void    getLagStats(char* msg, bool isAdmin) const;
     /** functions to be called whenever a playerUpdate or ping message arrives
      */
-    void	updatePingLag(const void *buf, bool &warn, bool &kick,
+    void    updatePingLag(const void *buf, bool &warn, bool &kick,
                           bool &jittwarn, bool &jittkick,
                           bool &plosswarn, bool &plosskick,
                           bool &alagannouncewarn, bool &lagannouncewarn);
-    void	updateLag(float timestamp, bool ooo);
+    void    updateLag(float timestamp, bool ooo);
     /** get the ping seqno, if need to send one now!
      */
-    int	getNextPingSeqno(bool &warn, bool &kick);
+    int getNextPingSeqno(bool &warn, bool &kick);
     /** update the latency
      */
-    void	updateLatency(float &waitTime);
+    void    updateLatency(float &waitTime);
     /** set the threshold for warning/kicking
      */
     static void setAdminLagAnnounceThreshold(float _adminlagannouncetresh);
@@ -72,31 +72,31 @@ private:
     float       lagalpha;
     float       jitteralpha;
     float       lostalpha;
-    int	 lagcount;
-    int	 laglastwarn;
-    int	 lagwarncount;
-    int	 jittercount;
-    int	 jitterlastwarn;
-    int	 jitterwarncount;
+    int  lagcount;
+    int  laglastwarn;
+    int  lagwarncount;
+    int  jittercount;
+    int  jitterlastwarn;
+    int  jitterwarncount;
     int    losscount;
     int    losslastwarn;
     int    losswarncount;
-    bool	pingpending;
+    bool    pingpending;
     TimeKeeper  nextping;
     TimeKeeper  lastping;
     TimeKeeper  lastupdate;
-    int	 pingseqno;
-    int	 pingssent;
+    int  pingseqno;
+    int  pingssent;
     // jitter measurement
     float       lasttimestamp;
 
     // announcements
     static float adminlagannouncetresh;
-    int	 alagcount;
-    int	 alaglastannounce;
-    int	 alagannouncecount;
+    int  alagcount;
+    int  alaglastannounce;
+    int  alagannouncecount;
     static float lagannouncetresh;
-    int	 lagannouncecount;
+    int  lagannouncecount;
     TimeKeeper laglastannounce;
 
 
@@ -115,6 +115,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

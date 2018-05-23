@@ -103,7 +103,8 @@ std::string no_whitespace(const std::string &s)
 }
 
 
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes)
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens,
+                                  const bool useQuotes)
 {
     std::vector<std::string> tokens;
     int numTokens = 0;
@@ -137,9 +138,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
             }
 
             if (!useQuotes)
-            {
                 currentToken << char(currentChar);
-            }
             else
             {
 
@@ -152,9 +151,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
                         foundSlash = false;
                     }
                     else
-                    {
                         foundSlash = true;
-                    }
                     break;
                 case '\"' : // found a quote
                     if (foundSlash)   // found \"
@@ -172,9 +169,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
                             //slurp off one additional delimeter if possible
                             if (pos+1 < len &&
                                     delims.find(in[pos+1]) != std::string::npos)
-                            {
                                 pos++;
-                            }
 
                         }
                         else     // entering a quote
@@ -209,9 +204,7 @@ std::vector<std::string> tokenize(const std::string& in, const std::string &deli
 
         enoughTokens = (maxTokens && (numTokens >= (maxTokens-1)));
         if ((pos < len) && (pos != std::string::npos))
-        {
             pos = in.find_first_not_of(delims,pos);
-        }
 
     } // end of getting all tokens -- either EOL or max tokens reached
 
@@ -254,9 +247,7 @@ bool parseDuration(const char *duration, int &durationInt)
     for (int i = 0; i < len; i++)
     {
         if (isdigit(duration[i]))
-        {
             t = t * 10 + (duration[i] - '0');
-        }
         else if (duration[i] == 'h' || duration[i] == 'H')
         {
             durationInt += (t * 60);
@@ -317,13 +308,9 @@ std::string escape_nonprintable(const std::string &text, const char quotechar)
     {
         const unsigned char c = text[i];
         if (c != '\\' && c != quotechar && (c == ' ' || isVisible(c)))
-        {
             destination += c;
-        }
         else
-        {
             destination += format("\\%-3.3o", c);
-        }
     }
     return destination;
 }
@@ -355,9 +342,7 @@ std::string unescape(const std::string &text, char escaper)
             // Should print an error otherwise
         }
         else
-        {
             destination += c;
-        }
     }
     return destination;
 }
@@ -422,6 +407,6 @@ size_t find_first_substr(const std::string &findin, const std::string &findwhat,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

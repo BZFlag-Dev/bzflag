@@ -59,7 +59,7 @@ static void readMTL ( CModel &model, std::string file )
     if ( lines.size() < 2 )
         return;
 
-    CMaterial	material;
+    CMaterial   material;
     std::string matName;
     material.clear();
 
@@ -124,13 +124,9 @@ static void readMTL ( CModel &model, std::string file )
                         // convert MTL "Ns" to OpenGL shininess  [0 - 1000] => [0 - 128]
                         shine = shine / 1000.0f;
                         if (shine < 0.0f)
-                        {
                             shine = 0.0f;
-                        }
                         else if (shine > 1.0f)
-                        {
                             shine = 1.0f;
-                        }
                         model.materials[matName].shine = (shine * maxShineExponent * shineFactor);
                     }
                 }
@@ -206,10 +202,10 @@ void readOBJ ( CModel &model, std::string file )
     if ( lines.size() < 2 )
         return;
 
-    CMesh			mesh;
-    tvVertList		temp_verts;
-    tvVertList		temp_normals;
-    tvTexCoordList	temp_texCoords;
+    CMesh           mesh;
+    tvVertList      temp_verts;
+    tvVertList      temp_normals;
+    tvTexCoordList  temp_texCoords;
 
     int vCount = 0;
     int nCount = 0;
@@ -281,7 +277,7 @@ void readOBJ ( CModel &model, std::string file )
                         mesh.verts = temp_verts;
                         mesh.normals = temp_normals;
                         mesh.texCoords = temp_texCoords;
-                        //	mesh.reindex();
+                        //  mesh.reindex();
                         model.meshes.push_back(mesh);
                     }
 
@@ -309,22 +305,16 @@ void readOBJ ( CModel &model, std::string file )
                         std::string::size_type pos1, pos2 = npos;
                         pos1 = section.find_first_of('/');
                         if (pos1 != npos)
-                        {
                             pos2 = section.find_first_of('/', pos1 + 1);
-                        }
 
                         std::string vertPart, uvPart, normPart;
                         if (pos1 == npos)
-                        {
                             vertPart = section;
-                        }
                         else
                         {
                             vertPart = section.substr(0, pos1);
                             if (pos2 == npos)
-                            {
                                 uvPart = section.substr(pos1 + 1, npos);
-                            }
                             else
                             {
                                 uvPart = section.substr(pos1 + 1, pos2 - pos1 - 1);
@@ -336,27 +326,21 @@ void readOBJ ( CModel &model, std::string file )
                         {
                             int index = atoi(vertPart.c_str());
                             if (index < 0)
-                            {
                                 index = (vCount + 1) + index;
-                            }
                             face.verts.push_back(index - 1);
                         }
                         if (uvPart.size() > 0)
                         {
                             int index = atoi(uvPart.c_str());
                             if (index < 0)
-                            {
                                 index = (tCount + 1) + index;
-                            }
                             face.texCoords.push_back(index - 1);
                         }
                         if (normPart.size() > 0)
                         {
                             int index = atoi(normPart.c_str());
                             if (index < 0)
-                            {
                                 index = (nCount + 1) + index;
-                            }
                             face.normals.push_back(index - 1);
                         }
                     }
@@ -376,9 +360,7 @@ void readOBJ ( CModel &model, std::string file )
                         valid = false;
                     }
                     if (valid)
-                    {
                         mesh.faces.push_back(face);
-                    }
                 }
             }
         }

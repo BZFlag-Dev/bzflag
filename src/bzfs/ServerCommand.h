@@ -27,12 +27,12 @@ class ServerCommand
 {
 public:
 
-    static bool execute(const char	 *commandToken,
+    static bool execute(const char   *commandToken,
                         GameKeeper::Player *playerData);
 
     std::string getHelp();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 
 
@@ -55,6 +55,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

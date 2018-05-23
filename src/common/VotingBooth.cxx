@@ -60,9 +60,7 @@ VotingBooth *YesNoVotingBooth(std::string question)
 bool VotingBooth::addResponse(const std::string &response)
 {
     if (response.size() == 0)
-    {
         return false;
-    }
 
     _choice.push_back(response);
 
@@ -73,13 +71,9 @@ bool VotingBooth::addResponse(const std::string &response)
 bool VotingBooth::hasVoted(const std::string &voterName) const
 {
     if (voterName.size() <= 0)
-    {
         return false;
-    }
     if (_vote.find(voterName) != _vote.end())
-    {
         return true;
-    }
     return false;
 }
 
@@ -95,9 +89,7 @@ bool VotingBooth::vote(const std::string &voterName, const std::string &response
     /* make sure the response is valid */
     std::vector<std::string>::iterator i = std::find(_choice.begin(), _choice.end(), response);
     if (i == _choice.end())
-    {
         return false;
-    }
 
     /* record the dang vote */
     _vote[voterName] = i - _choice.begin();
@@ -111,9 +103,7 @@ bool VotingBooth::retractVote(const std::string &voterName)
 
     /* if not found, then nothing to retract */
     if (i == _vote.end())
-    {
         return false;
-    }
 
     _vote[voterName] = RETRACTED_VOTE;
 
@@ -129,9 +119,7 @@ unsigned long int VotingBooth::getVoteCount(const std::string &response) const
     {
         /* negative indices indicate an uncounted vote (perhaps retracted) */
         if ( (i->second >= 0) && (_choice[i->second] == response) )
-        {
             total++;
-        }
     }
     return total;
 }
@@ -143,9 +131,7 @@ unsigned long int VotingBooth::getTotalVotes(void) const
 
     for (std::vector<std::string>::const_iterator i = _choice.begin();
             i != _choice.end(); ++i)
-    {
         total += this->getVoteCount(*i);
-    }
     return total;
 }
 
@@ -154,6 +140,6 @@ unsigned long int VotingBooth::getTotalVotes(void) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

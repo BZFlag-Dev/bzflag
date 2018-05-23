@@ -58,9 +58,7 @@ void HUDDialogStack::push(HUDDialog* dialog)
         stack[index]->dismiss();
     }
     else
-    {
         getMainWindow()->getWindow()->addResizeCallback(resize, this);
-    }
     stack.push_back(dialog);
     HUDui::setDefaultKey(dialog->getDefaultKey());
     HUDui::setFocus(dialog->getFocus());
@@ -121,6 +119,6 @@ void HUDDialogStack::setFailedMessage(const char *msg)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

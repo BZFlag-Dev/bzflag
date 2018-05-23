@@ -240,13 +240,9 @@ ServerStartMenu::ServerStartMenu()
     searchDir += DirectorySeparator;
 #else
     if (searchDir.length() > 0)
-    {
         searchDir += DirectorySeparator;
-    }
     else
-    {
         searchDir = ".";
-    }
 #endif // _WIN32
     scanWorldFiles (searchDir, items);
 
@@ -359,7 +355,7 @@ void ServerStartMenu::dismiss()
 
 void ServerStartMenu::execute()
 {
-    static const char*	serverApp = "bzfs";
+    static const char*  serverApp = "bzfs";
     bool success = false;
 
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -415,9 +411,7 @@ void ServerStartMenu::execute()
             args[arg++] = "-b";
         }
         else if (((HUDuiList*)listHUD[1])->getIndex() == 1)
-        {
             args[arg++] = "-h";
-        }
         else
         {
             static const char* rabbitStyles[] = { "random", "score", "killer" };
@@ -563,9 +557,7 @@ void ServerStartMenu::execute()
         pid = fork();
 
         if (pid == -1)
-        {
             setStatus("Failed... cannot fork.");
-        }
         else if (pid == 0)
         {
             // child process.  close down stdio.
@@ -591,17 +583,11 @@ void ServerStartMenu::execute()
                 pid = -1;
                 char failBuf[64];
                 if (WIFEXITED(pStatus))
-                {
                     snprintf(failBuf, 64, "Failed (exit = %i).", WEXITSTATUS(pStatus));
-                }
                 else if (WIFSIGNALED(pStatus))
-                {
                     snprintf(failBuf, 64, "Failed (signal = %i).", WTERMSIG(pStatus));
-                }
                 else
-                {
                     strcpy(failBuf, "Failed.");
-                }
                 setStatus(failBuf);
             }
             else
@@ -696,6 +682,6 @@ HUDuiLabel* ServerStartMenu::createLabel(const char* str)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

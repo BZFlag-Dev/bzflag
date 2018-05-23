@@ -24,9 +24,9 @@
 #include "common.h"
 #include "Bundle.h"
 
-Bundle		*BundleMgr::currentBundle	= NULL;
+Bundle      *BundleMgr::currentBundle   = NULL;
 
-std::string	BundleMgr::bundlePath		= "./data";
+std::string BundleMgr::bundlePath       = "./data";
 
 BundleMgr::BundleMgr(const std::string &path, const std::string &name)
 {
@@ -79,10 +79,10 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
     // to find the correct language resource if 'default' is specified.
     if (locale.length() == 7 && locale.compare("default") == 0)
     {
-        char	localePath[512];
-        CFBundleRef	mainBundle = CFBundleGetMainBundle();
-        CFArrayRef	locales	= NULL;
-        CFURLRef	localeURL	= NULL;
+        char    localePath[512];
+        CFBundleRef mainBundle = CFBundleGetMainBundle();
+        CFArrayRef  locales = NULL;
+        CFURLRef    localeURL   = NULL;
         // Look for a resource in the main bundle by name and type.
         do
         {
@@ -93,9 +93,7 @@ Bundle *BundleMgr::getBundle(const std::string &locale, bool setcur /*= true*/)
             if (localeURL != NULL && ::CFURLGetFileSystemRepresentation(
                         localeURL, true, reinterpret_cast<UInt8 *>(localePath), sizeof(localePath))
                )
-            {
                 path = localePath;
-            }
         }
         while (0);
         CFRelease(locales);
@@ -121,7 +119,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list)
     if (list == NULL) return false;
     // There could have been stuff added to the list
     // prior to this call. Save the list count.
-    int	initSize = list->size();
+    int initSize = list->size();
 
     do
     {
@@ -132,11 +130,11 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list)
         // Prepare the wildcarded file path to search for and copy it to fileName
         sprintf(fileName, "%s\\l10n\\bzflag_*.po", bundlePath.c_str());
 
-        HANDLE		hFoundFile	= NULL;
-        WIN32_FIND_DATA	data;
+        HANDLE      hFoundFile  = NULL;
+        WIN32_FIND_DATA data;
 
         hFoundFile = FindFirstFile((LPCTSTR) fileName, &data);
-        if (hFoundFile == INVALID_HANDLE_VALUE) break;	// Invalid path
+        if (hFoundFile == INVALID_HANDLE_VALUE) break;  // Invalid path
 
         do
         {
@@ -164,7 +162,7 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list)
         // non Windows platforms i believe.
         DIR *localedir = opendir((bundlePath + "/l10n/").c_str());
         if (localedir == NULL) break;
-        struct dirent	*dirinfo = NULL;
+        struct dirent   *dirinfo = NULL;
         while ((dirinfo = readdir(localedir)) != NULL)
         {
 
@@ -196,6 +194,6 @@ bool BundleMgr::getLocaleList(std::vector<std::string> *list)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

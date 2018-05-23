@@ -12,12 +12,12 @@
 
 /**
  * GameTime:
- *	Manages the network time.
+ *  Manages the network time.
  *      Time is stored as microseconds since the epoch.
  */
 
-#ifndef	BZF_GAME_TIME_H
-#define	BZF_GAME_TIME_H
+#ifndef BZF_GAME_TIME_H
+#define BZF_GAME_TIME_H
 
 #include "common.h"
 
@@ -45,6 +45,6 @@ const float finalRate = 10.0f;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

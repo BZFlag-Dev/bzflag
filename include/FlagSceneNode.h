@@ -11,11 +11,11 @@
  */
 
 /* FlagSceneNode:
- *	Encapsulates information for rendering a flag.
+ *  Encapsulates information for rendering a flag.
  */
 
-#ifndef	BZF_FLAG_SCENE_NODE_H
-#define	BZF_FLAG_SCENE_NODE_H
+#ifndef BZF_FLAG_SCENE_NODE_H
+#define BZF_FLAG_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -27,28 +27,28 @@ public:
     FlagSceneNode(const GLfloat pos[3]);
     ~FlagSceneNode();
 
-    static void		waveFlag(float dt);
-    static void		freeFlag();
+    static void     waveFlag(float dt);
+    static void     freeFlag();
 
-    void		move(const GLfloat pos[3]);
-    void		setAngle(GLfloat angle);
-    void		setWind(const GLfloat wind[3], float dt);
-    void		setBillboard(bool billboard);
+    void        move(const GLfloat pos[3]);
+    void        setAngle(GLfloat angle);
+    void        setWind(const GLfloat wind[3], float dt);
+    void        setBillboard(bool billboard);
 
-    const GLfloat*	getColor() const
+    const GLfloat*  getColor() const
     {
         return color;
     }
-    void		setColor(GLfloat r, GLfloat g,
+    void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
-    void		setColor(const GLfloat* rgba);
-    void		setTexture(const int);
+    void        setColor(const GLfloat* rgba);
+    void        setTexture(const int);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
 
-    bool		cullShadow(int planeCount,
+    bool        cullShadow(int planeCount,
                            const float (*planes)[4]) const;
 protected:
     class FlagRenderNode : public RenderNode
@@ -56,27 +56,27 @@ protected:
     public:
         FlagRenderNode(const FlagSceneNode*);
         ~FlagRenderNode();
-        void		render();
-        const GLfloat*	getPosition() const
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
     private:
         const FlagSceneNode* sceneNode;
-        int	     waveReference;
+        int      waveReference;
     };
     friend class FlagRenderNode;
 
 private:
-    bool		billboard;
-    GLfloat		angle;
-    GLfloat		tilt;
-    GLfloat		hscl;
-    GLfloat		color[4];
-    bool		transparent;
-    bool		texturing;
-    OpenGLGState	gstate;
-    FlagRenderNode	renderNode;
+    bool        billboard;
+    GLfloat     angle;
+    GLfloat     tilt;
+    GLfloat     hscl;
+    GLfloat     color[4];
+    bool        transparent;
+    bool        texturing;
+    OpenGLGState    gstate;
+    FlagRenderNode  renderNode;
 };
 
 #endif // BZF_FLAG_SCENE_NODE_H
@@ -85,6 +85,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,15 +11,15 @@
  */
 
 /* RenderNode:
- *	Encapsulates information for rendering geometry with a
- *	single gstate.
+ *  Encapsulates information for rendering geometry with a
+ *  single gstate.
  *
  * RenderNodeList:
- *	Keeps a list of RenderNode* and can render them in order.
+ *  Keeps a list of RenderNode* and can render them in order.
  */
 
-#ifndef	BZF_RENDER_NODE_H
-#define	BZF_RENDER_NODE_H
+#ifndef BZF_RENDER_NODE_H
+#define BZF_RENDER_NODE_H
 
 #include "common.h"
 #include "OpenGLGState.h"
@@ -29,27 +29,27 @@ class RenderNode
 {
 public:
     RenderNode() {}
-    virtual		~RenderNode() {}
+    virtual     ~RenderNode() {}
 
-    virtual void	render() = 0;
-    virtual void	renderShadow()
+    virtual void    render() = 0;
+    virtual void    renderShadow()
     {
         render();
     }
-    virtual void	renderRadar()
+    virtual void    renderRadar()
     {
         renderShadow();
     }
     virtual const GLfloat* getPosition() const = 0;
 
-    static int		getTriangleCount();
-    static void		resetTriangleCount();
+    static int      getTriangleCount();
+    static void     resetTriangleCount();
 
 protected:
-    static void		addTriangleCount(int triCount);
+    static void     addTriangleCount(int triCount);
 
 private:
-    static int		triangleCount;
+    static int      triangleCount;
 };
 
 
@@ -71,29 +71,27 @@ public:
     RenderNodeList();
     ~RenderNodeList();
 
-    void		clear();
-    void		append(RenderNode*);
-    void		render() const;
+    void        clear();
+    void        append(RenderNode*);
+    void        render() const;
 
 private:
     // no copying (cos that'd be slow)
     RenderNodeList(const RenderNodeList&);
-    RenderNodeList&	operator=(const RenderNodeList&);
+    RenderNodeList& operator=(const RenderNodeList&);
 
-    void		grow();
+    void        grow();
 
 private:
-    int			count;
-    int			size;
-    RenderNode**	list;
+    int         count;
+    int         size;
+    RenderNode**    list;
 };
 
 inline void RenderNodeList::append(RenderNode* node)
 {
     if (count == size)
-    {
         grow();
-    }
     list[count++] = node;
 }
 
@@ -104,21 +102,21 @@ public:
     RenderNodeGStateList();
     ~RenderNodeGStateList();
 
-    void		clear();
-    void		append(RenderNode*, const OpenGLGState*);
-    void		append(RenderNode*, const OpenGLGState*, float depth);
-    void		render() const;
+    void        clear();
+    void        append(RenderNode*, const OpenGLGState*);
+    void        append(RenderNode*, const OpenGLGState*, float depth);
+    void        render() const;
 
-    void		sort(const GLfloat* eye);
+    void        sort(const GLfloat* eye);
 
     // public for the qsort() comparison function
     struct Item
     {
     public:
         typedef const OpenGLGState* GStatePtr;
-        RenderNode*	node;
-        GStatePtr	gstate;
-        float		depth;
+        RenderNode* node;
+        GStatePtr   gstate;
+        float       depth;
     };
 
 private:
@@ -126,21 +124,19 @@ private:
     RenderNodeGStateList(const RenderNodeGStateList&);
     RenderNodeGStateList& operator=(const RenderNodeGStateList&);
 
-    void		grow();
+    void        grow();
 
 private:
-    int			count;
-    int			size;
-    Item*		list;
+    int         count;
+    int         size;
+    Item*       list;
 };
 
 inline void RenderNodeGStateList::append(RenderNode* node,
         const OpenGLGState* gstate)
 {
     if (count == size)
-    {
         grow();
-    }
     list[count].node = node;
     list[count].gstate = gstate;
     list[count].depth = 0.0f;
@@ -153,6 +149,6 @@ inline void RenderNodeGStateList::append(RenderNode* node,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

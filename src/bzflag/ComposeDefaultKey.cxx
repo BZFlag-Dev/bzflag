@@ -27,8 +27,8 @@
 
 #define MAX_MESSAGE_HISTORY (20)
 
-MessageQueue	messageHistory;
-unsigned int	messageHistoryIndex = 0;
+MessageQueue    messageHistory;
+unsigned int    messageHistoryIndex = 0;
 
 
 static bool isWordCompletion(const BzfKeyEvent& key)
@@ -36,17 +36,13 @@ static bool isWordCompletion(const BzfKeyEvent& key)
     if ((key.ascii == 6) || // ^F
             (key.ascii == 9) || // <TAB>
             ((key.shift == 0) && (key.button == BzfKeyEvent::F2)))
-    {
         return true;
-    }
     else
-    {
         return false;
-    }
 }
 
 
-bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
+bool            ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
 {
     bool sendIt;
     LocalPlayer *myTank = LocalPlayer::getMyTank();
@@ -69,22 +65,20 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
         std::string matches;
         hud->setComposeString(completer.complete(hud->getComposeString(), &matches));
         if (matches.size() > 0)
-        {
             controlPanel->addMessage(matches, -1);
-        }
         return true;
     }
 
     switch (key.ascii)
     {
-    case 3:	// ^C
-    case 27:  	// escape
+    case 3: // ^C
+    case 27:    // escape
     {
-        sendIt = false;			// finished composing -- don't send
+        sendIt = false;         // finished composing -- don't send
         break;
     }
-    case 4:	// ^D
-    case 13:  	// return
+    case 4: // ^D
+    case 13:    // return
     {
         sendIt = true;
         break;
@@ -102,9 +96,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
         {
             const char* cmd = message.c_str();
             if (LocalCommand::execute(cmd))
-            {
                 ;
-            }
             else if (serverLink)
             {
                 char messageBuffer[MessageLen];
@@ -129,9 +121,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
             if (i == mhLen)
             {
                 if (mhLen >= MAX_MESSAGE_HISTORY)
-                {
                     messageHistory.pop_back();
-                }
                 messageHistory.push_front(message);
             }
 
@@ -144,7 +134,7 @@ bool			ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
+bool            ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     if (!myTank || myTank->getInputMethod() != LocalPlayer::Keyboard)
@@ -197,9 +187,7 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
             (key.ascii == 6) || // ^F
             (key.ascii == 13) || // return
             isWordCompletion(key))
-    {
         return true;
-    }
 
     return keyPress(key);
 }
@@ -208,6 +196,6 @@ bool			ComposeDefaultKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

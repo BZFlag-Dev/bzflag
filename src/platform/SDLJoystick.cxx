@@ -45,7 +45,7 @@ SDLJoystick::~SDLJoystick()
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
-void			SDLJoystick::initJoystick(const char* joystickName)
+void            SDLJoystick::initJoystick(const char* joystickName)
 {
     if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, ""))
     {
@@ -78,12 +78,12 @@ void			SDLJoystick::initJoystick(const char* joystickName)
     numHats = SDL_JoystickNumHats(joystickID);
 }
 
-bool			SDLJoystick::joystick() const
+bool            SDLJoystick::joystick() const
 {
     return joystickID != NULL;
 }
 
-void			SDLJoystick::getJoy(int& x, int& y)
+void            SDLJoystick::getJoy(int& x, int& y)
 {
     x = y = 0;
 
@@ -103,7 +103,7 @@ void			SDLJoystick::getJoy(int& x, int& y)
 
 }
 
-unsigned long		SDLJoystick::getJoyButtons()
+unsigned long       SDLJoystick::getJoyButtons()
 {
     unsigned long buttons = 0;
 
@@ -117,7 +117,7 @@ unsigned long		SDLJoystick::getJoyButtons()
     return buttons;
 }
 
-int		 SDLJoystick::getNumHats()
+int      SDLJoystick::getNumHats()
 {
     if (!joystickID)
         return 0;
@@ -125,7 +125,7 @@ int		 SDLJoystick::getNumHats()
     return numHats;
 }
 
-void		SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void        SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
     hatX = hatY = 0;
 
@@ -156,12 +156,10 @@ void		SDLJoystick::getJoyHat(int hat, float &hatX, float &hatY)
         hatX = 1;
     }
     if (value - 1 >= 0)
-    {
         hatY = -1;
-    }
 }
 
-void		    SDLJoystick::getJoyDevices(std::vector<std::string>
+void            SDLJoystick::getJoyDevices(std::vector<std::string>
         &list) const
 {
     int numJoystick = SDL_NumJoysticks();
@@ -180,25 +178,23 @@ void		    SDLJoystick::getJoyDevices(std::vector<std::string>
     }
 }
 
-void		    SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
+void            SDLJoystick::getJoyDeviceAxes(std::vector<std::string> &list) const
 {
     if (!joystickID) return;
     list.clear();
     // number all the axes and send them off
     for (int i = 0; i < SDL_JoystickNumAxes(joystickID); ++i)
-    {
         list.push_back(TextUtils::format("%d", i));
-    }
 }
 
-void		    SDLJoystick::setXAxis(const std::string &axis)
+void            SDLJoystick::setXAxis(const std::string &axis)
 {
     // unset
     if (axis == "") return;
     xAxis = atoi(axis.c_str());
 }
 
-void		    SDLJoystick::setYAxis(const std::string &axis)
+void            SDLJoystick::setYAxis(const std::string &axis)
 {
     // unset
     if (axis == "") return;
@@ -211,6 +207,6 @@ void		    SDLJoystick::setYAxis(const std::string &axis)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

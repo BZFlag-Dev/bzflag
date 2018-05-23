@@ -190,9 +190,7 @@ const void* WorldBuilder::unpack(const void* buf)
         }
     }
     else
-    {
         OBSTACLEMGR.replaceBasesWithBoxes();
-    }
 
     world->makeLinkMaterial();
 
@@ -248,9 +246,7 @@ void WorldBuilder::preGetWorld()
 {
     // prepare players array
     if (world->players)
-    {
         delete[] world->players;
-    }
     // FIXME
     // world->maxPlayers do not work as bzfs uses more player slot than
     // real players. Any tcp connection is assigned a slot.
@@ -259,9 +255,7 @@ void WorldBuilder::preGetWorld()
     world->players = new RemotePlayer*[maxPlayers];
     int i;
     for (i = 0; i < maxPlayers; i++)
-    {
         world->players[i] = NULL;
-    }
 
     // prepare flags array
     world->freeFlags();
@@ -355,6 +349,6 @@ void WorldBuilder::setBase(TeamColor team,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

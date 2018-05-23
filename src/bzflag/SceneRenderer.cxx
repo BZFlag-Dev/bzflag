@@ -65,7 +65,7 @@ FlareLight::~FlareLight()
 // SceneRenderer
 //
 
-const GLint   SceneRenderer::SunLight = 0;		// also for the moon
+const GLint   SceneRenderer::SunLight = 0;      // also for the moon
 const float   SceneRenderer::dimDensity = 0.75f;
 const GLfloat SceneRenderer::dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
@@ -138,8 +138,8 @@ void SceneRenderer::setWindow(MainWindow* _window)
     // prepare context with stuff that'll never change
     glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
     glGetIntegerv(GL_MAX_LIGHTS, &maxLights);
-    reservedLights = 1;			// only one light between sun and moon
-    maxLights -= reservedLights;		// can't use the reserved lights
+    reservedLights = 1;         // only one light between sun and moon
+    maxLights -= reservedLights;        // can't use the reserved lights
 
     // prepare sun
     setTimeOfDay(unixEpoch);
@@ -174,7 +174,7 @@ bool SceneRenderer::useStencil() const
 }
 
 
-SceneRenderer::ViewType	SceneRenderer::getViewType() const
+SceneRenderer::ViewType SceneRenderer::getViewType() const
 {
     return viewType;
 }
@@ -220,17 +220,11 @@ void SceneRenderer::setQuality(int value)
     // 3 = Experimental
 
     if (value < 0)
-    {
         value = 0;
-    }
     else if (value > BZDB.evalInt("maxQuality"))
-    {
         value = BZDB.evalInt("maxQuality");
-    }
     if (useQualityValue != value)
-    {
         rebuildTanks = true;
-    }
     useQualityValue = value;
 
     notifyStyleChange();
@@ -411,9 +405,7 @@ void SceneRenderer::setRadarSize(int size)
     radarSize = size;
     notifyStyleChange();
     if (window)
-    {
         window->getWindow()->callResizeCallbacks();
-    }
 }
 
 
@@ -422,9 +414,7 @@ void SceneRenderer::setPanelHeight(int size)
     panelHeight = size;
     notifyStyleChange();
     if (window)
-    {
         window->getWindow()->callResizeCallbacks();
-    }
 }
 
 
@@ -447,9 +437,7 @@ void SceneRenderer::setMaxMotionFactor(int factor)
     maxMotionFactor = factor;
     notifyStyleChange();
     if (window)
-    {
         window->getWindow()->callResizeCallbacks();
-    }
 }
 
 
@@ -497,13 +485,9 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
 
     scene = db;
     if (scene)
-    {
         inOrder = scene->isOrdered();
-    }
     else
-    {
         inOrder = false;
-    }
 
     // update the background materials
     setupBackgroundMaterials();
@@ -541,18 +525,14 @@ void SceneRenderer::enableLight(int index, bool on)
 void SceneRenderer::enableSun(bool on)
 {
     if (BZDBCache::lighting && sunOrMoonUp)
-    {
         theSun.enableLight(SunLight, on);
-    }
 }
 
 
 void SceneRenderer::setupSun()
 {
     if (BZDBCache::lighting && sunOrMoonUp)
-    {
         theSun.execute(SunLight, BZDB.isTrue("lightLists"));
-    }
 }
 
 
@@ -672,47 +652,31 @@ static int sortLights (const void* a, const void* b)
     if (valA < 0.0f)
     {
         if (valB >= 0.0f)
-        {
             return +1;
-        }
         else
-        {
             return 0;
-        }
     }
     if (valB < 0.0f)
     {
         if (valA >= 0.0f)
-        {
             return -1;
-        }
         else
-        {
             return 0;
-        }
     }
 
     // sort by grounded state
     const bool groundedA = lightA->getOnlyGround();
     const bool groundedB = lightB->getOnlyGround();
     if (groundedA && !groundedB)
-    {
         return +1;
-    }
     if (!groundedA && groundedB)
-    {
         return -1;
-    }
 
     // sort by importance
     if (valA > valB)
-    {
         return -1;
-    }
     else
-    {
         return +1;
-    }
 }
 
 
@@ -725,21 +689,15 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
     triangleCount = 0;
     RenderNode::resetTriangleCount();
     if (background)
-    {
         background->resetTriangleCount();
-    }
 
     // update the SceneNode, Background, and TrackMark styles
     if (needStyleUpdate)
     {
         if (scene)
-        {
             scene->updateNodeStyles();
-        }
         if (background)
-        {
             background->notifyStyleChange();
-        }
         TrackMarks::notifyStyleChange();
         needStyleUpdate = false;
     }
@@ -759,9 +717,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
     // make sure there is something to render on
     if (!window)
-    {
         return;
-    }
 
     // setup the viewport LOD scale
     MeshSceneNode::setLodScale(window->getWidth(), frustum.getFOVx(),
@@ -779,17 +735,13 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
     // get the track mark sceneNodes (only for BSP)
     if (scene)
-    {
         TrackMarks::addSceneNodes(scene);
-    }
 
     // turn on fog for teleporter blindness if close to a teleporter
     teleporterProximity = 0.0f;
     if (!blank && LocalPlayer::getMyTank() &&
             (LocalPlayer::getMyTank()->getTeam() != ObserverTeam))
-    {
         teleporterProximity = LocalPlayer::getMyTank()->getTeleporterProximity();
-    }
 
     // fog setup
     mapFog = setupMapFog();
@@ -810,18 +762,14 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
         // different occluders for the mirror
         if (scene)
-        {
             scene->setOccluderManager(1);
-        }
 
         // the reflected scene
         renderScene(_lastFrame, _sameFrame, fullWindow);
 
         // different occluders for the mirror
         if (scene)
-        {
             scene->setOccluderManager(0);
-        }
 
         // flip back
         frustum.flipVertical();
@@ -909,17 +857,13 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
 
     // finalize dimming
     if (mapFog)
-    {
         glDisable(GL_FOG);
-    }
 
     renderDimming();
 
     triangleCount = RenderNode::getTriangleCount();
     if (background)
-    {
         triangleCount += background->getTriangleCount();
-    }
 
     return;
 }
@@ -960,14 +904,10 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     if (useDepthComplexityOn)
     {
         if (BZDBCache::stencilShadows)
-        {
             BZDB.set("stencilShadows", "0");
-        }
         glEnable(GL_STENCIL_TEST);
         if (!mirror || (clearZbuffer))
-        {
             glClear(GL_STENCIL_BUFFER_BIT);
-        }
         glStencilFunc(GL_ALWAYS, 0, 0xf);
         glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
     }
@@ -994,24 +934,18 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     if (BZDBCache::zbuffer)
     {
         if (sameFrame && ++depthRange == numDepthRanges)
-        {
             depthRange = 0;
-        }
         if (exposed || useHiddenLineOn || --depthRange < 0)
         {
             depthRange = numDepthRanges - 1;
             if (clearZbuffer)
-            {
                 glClear(GL_DEPTH_BUFFER_BIT);
-            }
             exposed = false;
         }
         if (!sameFrame && numDepthRanges != 1)
         {
             if (useHiddenLineOn)
-            {
                 glDepthRange(0.0, 1.0);
-            }
             else
             {
                 GLclampd x_near = (GLclampd)depthRange * depthRangeSize;
@@ -1035,14 +969,10 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
             glEnable(GL_FOG);
         }
         else
-        {
             background->renderSky(*this, fullWindow, mirror);
-        }
 
         if (drawGround)
-        {
             background->renderGround(*this, fullWindow);
-        }
     }
 
     // prepare the other lights but don't turn them on yet --
@@ -1050,17 +980,13 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     if (BZDBCache::lighting)
     {
         for (i = 0; i < dynamicLights; i++)
-        {
             lights[i]->execute(i + reservedLights, lightLists);
-        }
     }
 
     // draw rest of background
     // (ground grid, shadows, fake shot lights, mountains, clouds)
     if (background)
-    {
         background->renderGroundEffects(*this, mirror && clearZbuffer);
-    }
 
     if (!blank)
     {
@@ -1068,22 +994,16 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
         {
             // now turn on the remaining lights
             for (i = 0; i < dynamicLights; i++)
-            {
                 OpenGLLight::enableLight(i + reservedLights, true);
-            }
         }
 
         frustum.executeProjection();
 
         if (BZDBCache::zbuffer)
-        {
             glEnable(GL_DEPTH_TEST);
-        }
 
         if (useHiddenLineOn)
-        {
             glEnable(GL_POLYGON_OFFSET_FILL);
-        }
 
 
         ///////////////////////
@@ -1093,15 +1013,11 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
 
         if (scene && BZDBCache::showCullingGrid)
-        {
             scene->drawCuller();
-        }
 
         const World* world = World::getWorld();
         if (scene && BZDBCache::showCollisionGrid && (world != NULL))
-        {
             world->drawCollisionGrid();
-        }
 
         if (useHiddenLineOn)
         {
@@ -1119,15 +1035,11 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
         {
             theSun.enableLight(SunLight, false);
             for (i = 0; i < dynamicLights; i++)
-            {
                 OpenGLLight::enableLight(i + reservedLights, false);
-            }
         }
 
         if (BZDBCache::zbuffer)
-        {
             glDisable(GL_DEPTH_TEST);
-        }
 
         // FIXME -- must do post-rendering: flare lights, etc.
         // flare lights are in world coordinates.  trace ray to that world
@@ -1138,16 +1050,12 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
     // back to original state
     if (!useHiddenLineOn && useWireframeOn)
-    {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    }
     glPopMatrix();
 
     // do depth complexity
     if (useDepthComplexityOn)
-    {
         renderDepthComplexity();
-    }
 
     return;
 }
@@ -1159,9 +1067,7 @@ void SceneRenderer::doRender()
 
     // render the ground tank tracks
     if (!mirrorPass)
-    {
         TrackMarks::renderGroundTracks();
-    }
 
     // NOTE -- this should go into a separate thread
     // now draw each render node list
@@ -1182,9 +1088,7 @@ void SceneRenderer::doRender()
 
     // render the ground tank tracks
     if (!mirrorPass)
-    {
         TrackMarks::renderObstacleTracks();
-    }
 
     return;
 }
@@ -1209,21 +1113,13 @@ static bool setupMapFog()
     // parse the values;
     const std::string modeStr = BZDB.get("_fogMode");
     if (modeStr == "linear")
-    {
         fogMode = GL_LINEAR;
-    }
     else if (modeStr == "exp")
-    {
         fogMode = GL_EXP;
-    }
     else if (modeStr == "exp2")
-    {
         fogMode = GL_EXP2;
-    }
     else
-    {
         fogMode = GL_EXP;
-    }
     fogDensity = BZDB.eval(StateDatabase::BZDB_FOGDENSITY);
     fogStart = BZDB.eval(StateDatabase::BZDB_FOGSTART);
     fogEnd = BZDB.eval(StateDatabase::BZDB_FOGEND);
@@ -1233,13 +1129,9 @@ static bool setupMapFog()
         fogColor[3] = 0.0f; // has no effect
     }
     if (BZDB.evalInt("fogEffect") >= 1)
-    {
         glHint(GL_FOG_HINT, GL_NICEST);
-    }
     else
-    {
         glHint(GL_FOG_HINT, GL_FASTEST);
-    }
 
     // setup GL fog
     glFogi(GL_FOG_MODE, fogMode);
@@ -1339,22 +1231,16 @@ void SceneRenderer::getRenderNodes()
 
         // make the lists of render nodes sorted in optimal rendering order
         if (scene)
-        {
             scene->addRenderNodes(*this);
-        }
 
         // sort ordered list in reverse depth order
         if (!inOrder)
-        {
             orderedList.sort(frustum.getEye());
-        }
 
         // add the shadow rendering nodes
         if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)
                 && (!mirror || !clearZbuffer))
-        {
             scene->addShadowNodes(*this);
-        }
     }
     return;
 }
@@ -1377,9 +1263,7 @@ void SceneRenderer::getLights()
             // calculate the light importances
             int i;
             for (i = 0; i < lightsCount; i++)
-            {
                 lights[i]->calculateImportance(frustum);
-            }
 
             // sort by cull state, grounded state, and importance
             qsort (lights, lightsCount, sizeof(OpenGLLight*), sortLights);
@@ -1394,9 +1278,7 @@ void SceneRenderer::getLights()
                 {
                     unculledCount++;
                     if (!lights[i]->getOnlyGround())
-                    {
                         dynamicLights++;
-                    }
                 }
             }
 
@@ -1405,9 +1287,7 @@ void SceneRenderer::getLights()
 
             // limit the dynamic OpenGL light count
             if (dynamicLights > maxLights)
-            {
                 dynamicLights = maxLights;
-            }
         }
     }
     return;
@@ -1424,9 +1304,7 @@ void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
         if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
                 (pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||
                 (pos[2] < (mins[2] - dist)) || (pos[2] > (maxs[2] + dist)))
-        {
             lights[i]->enableLight(i + reservedLights, false);
-        }
     }
     return;
 }
@@ -1436,9 +1314,7 @@ void SceneRenderer::reenableLights()
 {
     // reenable the disabled lights
     for (int i = 0; i < dynamicLights; i++)
-    {
         lights[i]->enableLight(i + reservedLights, true);
-    }
     return;
 }
 
@@ -1459,26 +1335,18 @@ const RenderNodeList& SceneRenderer::getShadowList() const
 const GLfloat* SceneRenderer::getSunDirection() const
 {
     if (background)
-    {
         return background->getSunDirection();
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
 const Extents* SceneRenderer::getVisualExtents() const
 {
     if (scene)
-    {
         return scene->getVisualExtents();
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
@@ -1492,6 +1360,6 @@ int SceneRenderer::getFrameTriangleCount() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

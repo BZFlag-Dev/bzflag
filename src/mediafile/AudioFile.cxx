@@ -27,37 +27,37 @@ AudioFile::~AudioFile()
     // do nothing
 }
 
-void		AudioFile::init(int _framesPerSecond, int _numChannels,
+void        AudioFile::init(int _framesPerSecond, int _numChannels,
                             int _numFrames, int _sampWidth)
 {
-    open	    = true;
+    open        = true;
     framesPerSecond = _framesPerSecond;
     numChannels     = _numChannels;
     numFrames       = _numFrames;
     sampWidth       = _sampWidth;
 }
 
-bool		AudioFile::isOpen() const
+bool        AudioFile::isOpen() const
 {
     return open;
 }
 
-int		AudioFile::getFramesPerSecond() const
+int     AudioFile::getFramesPerSecond() const
 {
     return framesPerSecond;
 }
 
-int		AudioFile::getNumChannels() const
+int     AudioFile::getNumChannels() const
 {
     return numChannels;
 }
 
-int		AudioFile::getNumFrames() const
+int     AudioFile::getNumFrames() const
 {
     return numFrames;
 }
 
-int		AudioFile::getSampleWidth() const
+int     AudioFile::getSampleWidth() const
 {
     return sampWidth;
 }

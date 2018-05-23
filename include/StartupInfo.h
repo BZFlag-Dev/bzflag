@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__STARTUPINFO_H__
-#define	__STARTUPINFO_H__
+#ifndef __STARTUPINFO_H__
+#define __STARTUPINFO_H__
 
 #include "common.h"
 
@@ -51,6 +51,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

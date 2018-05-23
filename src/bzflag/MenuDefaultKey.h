@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MENUDEFAULTKEY_H__
-#define	__MENUDEFAULTKEY_H__
+#ifndef __MENUDEFAULTKEY_H__
+#define __MENUDEFAULTKEY_H__
 
 /* common interface headers */
 #include "BzfEvent.h"
@@ -41,6 +41,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

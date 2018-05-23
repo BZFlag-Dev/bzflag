@@ -55,7 +55,8 @@ class TextChunkManager
 public:
     // load the file fileName into the chunk specified by chunkname
     // if the chunkname is already taken it will *not* be replaced
-    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1, const int maxLineLength = -1);
+    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1,
+                   const int maxLineLength = -1);
 
     // get a chunk given a name of the chunk returns null if it can't find it
     const StringVector* getTextChunk(const std::string &chunkName) const;
@@ -79,6 +80,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

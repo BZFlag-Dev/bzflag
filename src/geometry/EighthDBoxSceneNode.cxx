@@ -26,7 +26,7 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-const int		BoxPolygons = 60;
+const int       BoxPolygons = 60;
 
 EighthDBoxSceneNode::EighthDBoxSceneNode(const float pos[3],
         const float size[3], float rotation) :
@@ -80,7 +80,7 @@ EighthDBoxSceneNode::~EighthDBoxSceneNode()
     // do nothing
 }
 
-void			EighthDBoxSceneNode::notifyStyleChange()
+void            EighthDBoxSceneNode::notifyStyleChange()
 {
     EighthDimSceneNode::notifyStyleChange();
 
@@ -98,7 +98,7 @@ void			EighthDBoxSceneNode::notifyStyleChange()
     gstate = builder.getState();
 }
 
-void			EighthDBoxSceneNode::addRenderNodes(
+void            EighthDBoxSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     EighthDimSceneNode::addRenderNodes(renderer);
@@ -137,7 +137,7 @@ EighthDBoxSceneNode::EighthDBoxRenderNode::~EighthDBoxRenderNode()
     // do nothing
 }
 
-void			EighthDBoxSceneNode::EighthDBoxRenderNode::render()
+void            EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
@@ -168,6 +168,6 @@ void			EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

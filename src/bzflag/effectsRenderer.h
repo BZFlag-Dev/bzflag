@@ -12,12 +12,12 @@
 
 /*
 * EffectsRenderer:
-*	Encapsulates rendering of effects ( spawn flashes, sparks, explosions, etc...)
+*   Encapsulates rendering of effects ( spawn flashes, sparks, explosions, etc...)
 *
 */
 
-#ifndef	BZF_EFFECTS_RENDERER_H
-#define	BZF_EFFECTS_RENDERER_H
+#ifndef BZF_EFFECTS_RENDERER_H
+#define BZF_EFFECTS_RENDERER_H
 
 #include "common.h"
 
@@ -57,16 +57,16 @@ public:
 
 protected:
 
-    float	position[3];
-    float	rotation[3];
+    float   position[3];
+    float   rotation[3];
     float velocity[3];
-    float	color[3];
-    float	startTime;
-    float	lifetime;
-    float	lastTime;
-    float	deltaTime;
-    float	age;
-    float	lifeParam;
+    float   color[3];
+    float   startTime;
+    float   lifetime;
+    float   lastTime;
+    float   deltaTime;
+    float   age;
+    float   lifeParam;
 };
 
 class DeathEffect : public BasicEffect, public TankDeathOverride
@@ -99,7 +99,7 @@ protected:
     Player *player;
 };
 
-typedef std::vector<BasicEffect*>	tvEffectsList;
+typedef std::vector<BasicEffect*>   tvEffectsList;
 
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
@@ -132,7 +132,8 @@ public:
     std::vector<std::string> getGMPuffEffectTypes ( void );
 
     // death effects
-    DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player, FlagType* flag = NULL );
+    DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player,
+                                  FlagType* flag = NULL );
     std::vector<std::string> getDeathEffectTypes ( void );
 
     // landing effects
@@ -155,7 +156,7 @@ protected:
     EffectsRenderer();
     ~EffectsRenderer();
 
-    tvEffectsList	effectsList;
+    tvEffectsList   effectsList;
 };
 
 #endif // BZF_EFFECTS_RENDERER_H
@@ -164,6 +165,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -28,34 +28,34 @@
 /* public */
 
 // flags list
-FlagInfo	      *FlagInfo::flagList      = NULL;
+FlagInfo          *FlagInfo::flagList      = NULL;
 std::vector<FlagType*> FlagInfo::allowedFlags;
-int		    FlagInfo::numExtraFlags = 0;
-int		    FlagInfo::numFlags      = 0;
-int		    FlagInfo::numFlagsInAir;
+int         FlagInfo::numExtraFlags = 0;
+int         FlagInfo::numFlags      = 0;
+int         FlagInfo::numFlagsInAir;
 
 FlagInfo::FlagInfo(): numShots(0), flagIndex(0)
 {
     // prep flag
-    flag.type		  = Flags::Null;
-    flag.status		  = FlagNoExist;
-    flag.endurance	  = FlagNormal;
-    flag.owner		  = NoPlayer;
-    flag.position[0]	  = 0.0f;
-    flag.position[1]	  = 0.0f;
-    flag.position[2]	  = 0.0f;
+    flag.type         = Flags::Null;
+    flag.status       = FlagNoExist;
+    flag.endurance    = FlagNormal;
+    flag.owner        = NoPlayer;
+    flag.position[0]      = 0.0f;
+    flag.position[1]      = 0.0f;
+    flag.position[2]      = 0.0f;
     flag.launchPosition[0]  = 0.0f;
     flag.launchPosition[1]  = 0.0f;
     flag.launchPosition[2]  = 0.0f;
     flag.landingPosition[0] = 0.0f;
     flag.landingPosition[1] = 0.0f;
     flag.landingPosition[2] = 0.0f;
-    flag.flightTime	  = 0.0f;
-    flag.flightEnd	  = 0.0f;
+    flag.flightTime   = 0.0f;
+    flag.flightEnd    = 0.0f;
     flag.initialVelocity    = 0.0f;
-    player		  = -1;
-    grabs			  = 0;
-    required		  = false;
+    player        = -1;
+    grabs             = 0;
+    required          = false;
 }
 
 void FlagInfo::setSize(int _numFlags)
@@ -110,15 +110,15 @@ void FlagInfo::addFlag()
 
     // flag is now entering game
     numFlagsInAir++;
-    flag.status	  = FlagComing;
+    flag.status   = FlagComing;
 
     // compute drop time
     const float flightTime = 2.0f * sqrtf(-2.0f * flagAltitude / gravity);
-    flag.flightTime	= 0.0f;
-    flag.flightEnd	 = flightTime;
+    flag.flightTime = 0.0f;
+    flag.flightEnd   = flightTime;
     flag.initialVelocity   = -0.5f * gravity * flightTime;
-    dropDone	       = TimeKeeper::getCurrent();
-    dropDone	      += flightTime;
+    dropDone           = TimeKeeper::getCurrent();
+    dropDone          += flightTime;
 
     if (flag.type == Flags::Null)
         // pick a random flag
@@ -154,7 +154,7 @@ void *FlagInfo::pack(void *buf, bool hide)
 void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
     numFlagsInAir++;
-    flag.status	     = vanish ? FlagGoing : FlagInAir;
+    flag.status      = vanish ? FlagGoing : FlagInAir;
 
     flag.landingPosition[0] = landingPos[0];
     flag.landingPosition[1] = landingPos[1];
@@ -169,17 +169,17 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 
     // compute flight info -- flight time depends depends on start and end
     // altitudes and desired height above start altitude
-    const float gravity	= BZDBCache::gravity;
+    const float gravity = BZDBCache::gravity;
     const float flagAltitude   = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
     const float thrownAltitude = (flag.type == Flags::Shield) ?
                                  BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
     const float maxAltitude    = pos[2] + thrownAltitude;
-    const float upTime	 = sqrtf(-2.0f * thrownAltitude / gravity);
+    const float upTime   = sqrtf(-2.0f * thrownAltitude / gravity);
     const float downTime       = sqrtf(-2.0f * (maxAltitude - pos[2]) / gravity);
     const float flightTime     = upTime + downTime;
 
-    dropDone	     = TimeKeeper::getCurrent();
-    dropDone	    += flightTime;
+    dropDone         = TimeKeeper::getCurrent();
+    dropDone        += flightTime;
     flag.flightTime      = 0.0f;
     flag.flightEnd       = flightTime;
     flag.initialVelocity = -gravity * upTime;
@@ -209,9 +209,7 @@ void FlagInfo::resetFlag(float position[3], bool teamIsEmpty)
             flag.status = FlagOnGround;
     }
     else
-    {
         flag.status = FlagNoExist;
-    }
 }
 
 void FlagInfo::grab(int playerIndex)
@@ -263,7 +261,7 @@ bool FlagInfo::landing(const TimeKeeper &tm)
         {
             flag.status = FlagOnGround;
             numFlagsInAir--;
-            land	= true;
+            land    = true;
         }
     }
     else if (flag.status == FlagGoing)
@@ -272,7 +270,7 @@ bool FlagInfo::landing(const TimeKeeper &tm)
         {
             flag.status = FlagNoExist;
             numFlagsInAir--;
-            land	= true;
+            land    = true;
         }
     }
     return land;
@@ -310,6 +308,6 @@ FlagInfo *FlagInfo::get(int index)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

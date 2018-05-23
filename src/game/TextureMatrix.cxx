@@ -46,9 +46,7 @@ void TextureMatrixManager::clear()
 {
     std::vector<TextureMatrix*>::iterator it;
     for (it = matrices.begin(); it != matrices.end(); ++it)
-    {
         delete *it;
-    }
     matrices.clear();
 }
 
@@ -75,29 +73,21 @@ int TextureMatrixManager::addMatrix(TextureMatrix* texmat)
 int TextureMatrixManager::findMatrix(const std::string& texmat) const
 {
     if (texmat.size() <= 0)
-    {
         return -1;
-    }
     else if ((texmat[0] >= '0') && (texmat[0] <= '9'))
     {
         int index = atoi (texmat.c_str());
         if ((index < 0) || (index >= (int)matrices.size()))
-        {
             return -1;
-        }
         else
-        {
             return index;
-        }
     }
     else
     {
         for (int i = 0; i < (int)matrices.size(); i++)
         {
             if (matrices[i]->getName() == texmat)
-            {
                 return i;
-            }
         }
         return -1;
     }
@@ -107,13 +97,9 @@ int TextureMatrixManager::findMatrix(const std::string& texmat) const
 const TextureMatrix* TextureMatrixManager::getMatrix(int id) const
 {
     if ((id >= 0) && (id < (int)matrices.size()))
-    {
         return matrices[id];
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
@@ -293,16 +279,12 @@ void TextureMatrix::finalize()
     if ((rotation != 0.0f) ||
             (uFixedShift != 0.0f) || (vFixedShift != 0.0f) ||
             (uFixedScale != 1.0f) || (vFixedScale != 1.0f))
-    {
         useStatic = true;
-    }
 
     if ((spinFreq != 0.0f) ||
             (uShiftFreq != 0.0f) || (vShiftFreq != 0.0f) ||
             (uScaleFreq != 0.0f) || (vScaleFreq != 0.0f))
-    {
         useDynamic = true;
-    }
 
     if (useStatic)
     {
@@ -313,9 +295,7 @@ void TextureMatrix::finalize()
               -(vFixedShift + vFixedCenter));
         spin(staticMatrix, -radians);
         if ((uFixedScale != 0.0f) && (vFixedScale != 0.0f))
-        {
             scale(staticMatrix, (1.0f / uFixedScale), (1.0f / vFixedScale));
-        }
         shift(staticMatrix, +uFixedCenter, +vFixedCenter);
 
         if (!useDynamic)
@@ -342,9 +322,7 @@ bool TextureMatrix::setName(const std::string& texmat)
         return false;
     }
     else
-    {
         name = texmat;
-    }
     return true;
 }
 
@@ -373,13 +351,9 @@ void TextureMatrix::setStaticSpin (float angle)
 void TextureMatrix::setStaticScale (float u, float v)
 {
     if (u != 0.0f)
-    {
         uFixedScale = u;
-    }
     if (v != 0.0f)
-    {
         vFixedScale = v;
-    }
     return;
 }
 
@@ -413,13 +387,9 @@ void TextureMatrix::setDynamicScale (float uFreq, float vFreq,
     uScaleFreq = uFreq;
     vScaleFreq = vFreq;
     if (_uScale >= 1.0f)
-    {
         uScale = _uScale;
-    }
     if (_vScale >= 1.0f)
-    {
         vScale = _vScale;
-    }
     return;
 }
 
@@ -466,9 +436,7 @@ void TextureMatrix::update (double t)
     shift(partial, +uCenter, +vCenter);
 
     if (useStatic)
-    {
         multiply(partial, staticMatrix);
-    }
 
     makeFullMatrix(matrix, partial);
 
@@ -558,13 +526,9 @@ int TextureMatrix::packSize() const
     fullSize += nboStdStringPackSize(name);
     fullSize += sizeof(uint8_t);
     if (useStatic)
-    {
         fullSize += sizeof(float[7]);
-    }
     if (useDynamic)
-    {
         fullSize += sizeof(float[9]);
-    }
     return fullSize;
 }
 
@@ -574,40 +538,26 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
     out << indent << "textureMatrix" << std::endl;
 
     if (name.size() > 0)
-    {
         out << indent << "  name " << name << std::endl;
-    }
 
     if (useStatic)
     {
         if (rotation != 0.0f)
-        {
             out << indent << "  fixedspin " << rotation << std::endl;
-        }
         if ((uFixedShift != 0.0f) || (vFixedShift != 0.0f))
-        {
             out << indent << "  fixedshift " << uFixedShift << " " << vFixedShift << std::endl;
-        }
         if ((uFixedScale != 1.0f) || (vFixedScale != 1.0f))
-        {
             out << indent << "  fixedscale " << uFixedScale << " " << vFixedScale << std::endl;
-        }
         if ((uFixedCenter != 0.5f) || (vFixedCenter != 0.5f))
-        {
             out << indent << "  fixedcenter " << uFixedCenter << " " << vFixedCenter << std::endl;
-        }
     }
 
     if (useDynamic)
     {
         if (spinFreq != 0.0f)
-        {
             out << indent << "  spin " << spinFreq << std::endl;
-        }
         if ((uShiftFreq != 0.0f) || (vShiftFreq != 0.0f))
-        {
             out << indent << "  shift " << uShiftFreq << " " << vShiftFreq << std::endl;
-        }
         if ((uScaleFreq != 0.0f) || (vScaleFreq != 0.0f) ||
                 (uScale != 1.0f) || (vScale != 1.0f))
         {
@@ -615,9 +565,7 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
                 << uScale << " " << vScale << std::endl;
         }
         if ((uCenter != 0.5f) || (uCenter != 0.5f))
-        {
             out << indent << "  center " << uCenter << " " << vCenter << std::endl;
-        }
     }
 
     out << indent << "end" << std::endl << std::endl;
@@ -630,6 +578,6 @@ void TextureMatrix::print(std::ostream& out, const std::string& indent) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -160,15 +160,13 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
             if (goodRabbitSelected)
             {
                 if (goodRabbit && (ratio > topRatio))
-                {
                     select = true;
-                }
             }
             else
             {
                 if (goodRabbit)
                 {
-                    select	     = true;
+                    select       = true;
                     goodRabbitSelected = true;
                 }
                 else
@@ -189,17 +187,11 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
 void GameKeeper::Player::updateNextGameTime()
 {
     if (gameTimeRate < GameTime::startRate)
-    {
         gameTimeRate = GameTime::startRate;
-    }
     else if (gameTimeRate < GameTime::finalRate)
-    {
         gameTimeRate = gameTimeRate * 1.25f;
-    }
     else
-    {
         gameTimeRate = GameTime::finalRate;
-    }
     gameTimeNext = TimeKeeper::getCurrent();
     gameTimeNext += gameTimeRate;
     return;
@@ -361,9 +353,7 @@ bool GameKeeper::Player::clean()
                 ICleaned = true;
             }
             else
-            {
                 empty = false;
-            }
         }
     }
     return empty && ICleaned;
@@ -450,7 +440,7 @@ bool GameKeeper::Player::addShot(int id, int salt, FiringInfo &firingInfo)
 
     ShotInfo myShot;
     myShot.firingInfo  = firingInfo;
-    myShot.salt	= salt;
+    myShot.salt = salt;
     myShot.expireTime  = now + lifeTime;
     myShot.present     = true;
     myShot.running     = true;
@@ -536,6 +526,6 @@ int GameKeeper::Player::getLastIdFlag()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

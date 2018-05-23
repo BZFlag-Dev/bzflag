@@ -142,13 +142,9 @@ private:
 inline const MeshTransform* MeshTransformManager::getTransform(int id) const
 {
     if ((id >= 0) && (id < (int)transforms.size()))
-    {
         return transforms[id];
-    }
     else
-    {
         return NULL;
-    }
 }
 
 

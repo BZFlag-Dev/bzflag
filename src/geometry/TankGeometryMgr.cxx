@@ -199,13 +199,9 @@ void TankGeometryMgr::buildLists()
     };
     int quality = RENDERER.useQuality();
     if (quality < 0)
-    {
         quality = 0;
-    }
     else if (quality > 3)
-    {
         quality = 3;
-    }
     int wheelDivs = divisionLevels[quality][0];
     int treadDivs = divisionLevels[quality][1];
 
@@ -219,9 +215,7 @@ void TankGeometryMgr::buildLists()
                 // only do the basics, unless we're making an animated tank
                 int lastPart = BasicTankParts;
                 if (animated)
-                {
                     lastPart = HighTankParts;
-                }
 
                 // set the shadow mode for the doNormal3f() and doTexcoord2f() calls
                 shadowMode = (TankShadow) shadow;
@@ -248,21 +242,13 @@ void TankGeometryMgr::buildLists()
                     {
                         // the animated parts
                         if (part == LeftCasing)
-                        {
                             count = buildHighLCasingAnim();
-                        }
                         else if (part == RightCasing)
-                        {
                             count = buildHighRCasingAnim();
-                        }
                         else if (part == LeftTread)
-                        {
                             count = buildHighLTread(treadDivs);
-                        }
                         else if (part == RightTread)
-                        {
                             count = buildHighRTread(treadDivs);
-                        }
                         else if ((part >= LeftWheel0) && (part <= LeftWheel3))
                         {
                             int wheel = part - LeftWheel0;
@@ -401,9 +387,7 @@ void TankGeometryUtils::doVertex3f(GLfloat x, GLfloat y, GLfloat z)
 void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
 {
     if (shadowMode == ShadowOn)
-    {
         return;
-    }
     const float* scale = currentScaleFactor;
     GLfloat sx = x * scale[0];
     GLfloat sy = y * scale[1];
@@ -423,9 +407,7 @@ void TankGeometryUtils::doNormal3f(GLfloat x, GLfloat y, GLfloat z)
 void TankGeometryUtils::doTexCoord2f(GLfloat x, GLfloat y)
 {
     if (shadowMode == ShadowOn)
-    {
         return;
-    }
     glTexCoord2f(x, y);
     return;
 }

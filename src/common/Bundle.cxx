@@ -135,9 +135,7 @@ std::string Bundle::getLocalString(const std::string &key) const
     if (key == "") return key;
     BundleStringMap::const_iterator it = mappings.find(key);
     if (it != mappings.end())
-    {
         return it->second;
-    }
     else
     {
         if (BZDB.getDebug())
@@ -185,7 +183,7 @@ case '':
     msg[i] = 'o';
     break;
 case '
-':
+        ':
     msg[i] = 'O';
     break;
 case '':
@@ -316,6 +314,6 @@ std::string Bundle::formatMessage(const std::string &key, const std::vector<std:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

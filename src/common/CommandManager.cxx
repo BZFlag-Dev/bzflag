@@ -37,7 +37,7 @@ CommandManager::~CommandManager()
     // do nothing
 }
 
-void				CommandManager::add(const std::string& name,
+void                CommandManager::add(const std::string& name,
                                         CommandFunction func,
                                         const std::string& help)
 {
@@ -48,12 +48,12 @@ void				CommandManager::add(const std::string& name,
     commands.insert(std::make_pair(name, info));
 }
 
-void				CommandManager::remove(const std::string& name)
+void                CommandManager::remove(const std::string& name)
 {
     commands.erase(name);
 }
 
-std::string			CommandManager::getHelp(const std::string& name) const
+std::string         CommandManager::getHelp(const std::string& name) const
 {
     // look up command
     Commands::const_iterator index = commands.find(name);
@@ -64,7 +64,7 @@ std::string			CommandManager::getHelp(const std::string& name) const
     return index->second.help;
 }
 
-std::string			CommandManager::run(const std::string& name,
+std::string         CommandManager::run(const std::string& name,
                                         const ArgList& args, bool* ret) const
 {
     // look up command
@@ -81,7 +81,7 @@ std::string			CommandManager::run(const std::string& name,
     return (*index->second.func)(name, args,ret);
 }
 
-std::string			CommandManager::run(const std::string& cmd,bool *ret) const
+std::string         CommandManager::run(const std::string& cmd,bool *ret) const
 {
     std::string result;
     const char* scan = cmd.c_str();
@@ -132,7 +132,7 @@ std::string			CommandManager::run(const std::string& cmd,bool *ret) const
     return result;
 }
 
-void				CommandManager::iterate(Callback callback,
+void                CommandManager::iterate(Callback callback,
         void* userData) const
 {
     assert(callback != NULL);
@@ -143,7 +143,7 @@ void				CommandManager::iterate(Callback callback,
 }
 
 
-const char*			CommandManager::readValue(const char* string,
+const char*         CommandManager::readValue(const char* string,
         std::string* value)
 {
     if (*string == '\"')
@@ -154,7 +154,7 @@ const char*			CommandManager::readValue(const char* string,
         return string;
 }
 
-const char*			CommandManager::readUnquoted(const char* string,
+const char*         CommandManager::readUnquoted(const char* string,
         std::string* value)
 {
     // read up to next whitespace.  escapes are not interpreted.
@@ -165,7 +165,7 @@ const char*			CommandManager::readUnquoted(const char* string,
     return string;
 }
 
-const char*			CommandManager::readQuoted(const char* string,
+const char*         CommandManager::readQuoted(const char* string,
         std::string* value)
 {
     *value = "";
@@ -198,24 +198,18 @@ const char*			CommandManager::readQuoted(const char* string,
             escaped = false;
         }
         else if (*string == '\\')
-        {
             escaped = true;
-        }
         else if (*string == '\"')
-        {
             return string + 1;
-        }
         else
-        {
             value->append(string, 1);
-        }
     }
     // closing quote is missing.  if escaped is true the called may have
     // wanted to continue the line but we don't allow that.
     return NULL;
 }
 
-const char*			CommandManager::skipWhitespace(const char* string)
+const char*         CommandManager::skipWhitespace(const char* string)
 {
     while (*string != '\0' && isspace(*string))
         ++string;
@@ -226,6 +220,6 @@ const char*			CommandManager::skipWhitespace(const char* string)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

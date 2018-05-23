@@ -11,12 +11,12 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a box building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a box building.
  */
 
-#ifndef	BZF_EIGHTHD_BOX_SCENE_NODE_H
-#define	BZF_EIGHTHD_BOX_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_BOX_SCENE_NODE_H
+#define BZF_EIGHTHD_BOX_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
@@ -28,8 +28,8 @@ public:
                         const float size[3], float rotation);
     ~EighthDBoxSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
 protected:
     class EighthDBoxRenderNode : public RenderNode
@@ -39,18 +39,18 @@ protected:
                              const float pos[3],
                              const float size[3], float rotation);
         ~EighthDBoxRenderNode();
-        void		render();
-        const GLfloat*	getPosition() const
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
     private:
         const EighthDBoxSceneNode* sceneNode;
-        GLfloat		corner[8][3];
+        GLfloat     corner[8][3];
     };
 
 private:
-    OpenGLGState	 gstate;
+    OpenGLGState     gstate;
     EighthDBoxRenderNode renderNode;
 };
 
@@ -60,6 +60,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

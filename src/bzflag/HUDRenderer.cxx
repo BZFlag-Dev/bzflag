@@ -37,14 +37,14 @@
 
 // headingOffset:  the number of degrees from the center of the heading
 // strip display to either side.  altitudeOffset is similar.
-const float		HUDRenderer::altitudeOffset = 20.0f;
-const GLfloat		HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
-std::string		HUDRenderer::headingLabel[36];
-std::string		HUDRenderer::restartLabelFormat("Press %s to start");
-std::string		HUDRenderer::resumeLabel("Press Pause to resume");
-std::string		HUDRenderer::autoPilotLabel("AutoPilot on");
-std::string		HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
-std::string		HUDRenderer::gameOverLabel("GAME OVER");
+const float     HUDRenderer::altitudeOffset = 20.0f;
+const GLfloat       HUDRenderer::black[3] = { 0.0f, 0.0f, 0.0f };
+std::string     HUDRenderer::headingLabel[36];
+std::string     HUDRenderer::restartLabelFormat("Press %s to start");
+std::string     HUDRenderer::resumeLabel("Press Pause to resume");
+std::string     HUDRenderer::autoPilotLabel("AutoPilot on");
+std::string     HUDRenderer::cancelDestructLabel("Press Destruct to cancel");
+std::string     HUDRenderer::gameOverLabel("GAME OVER");
 
 HUDRenderer::HUDRenderer(const BzfDisplay* _display,
                          const SceneRenderer& renderer) :
@@ -95,9 +95,7 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
     {
         int i;
         for (i = 0; i < 36; i++)
-        {
             headingLabel[i] = TextUtils::format("%d", i * 10);
-        }
     }
 
     // initialize clocks
@@ -134,12 +132,12 @@ ScoreboardRenderer *HUDRenderer::getScoreboard ()
 
 
 
-void			HUDRenderer::resizeCallback(void* self)
+void            HUDRenderer::resizeCallback(void* self)
 {
     ((HUDRenderer*)self)->resize(false);
 }
 
-void			HUDRenderer::resize(bool firstTime)
+void            HUDRenderer::resize(bool firstTime)
 {
     // get important metrics
     const int w = firstTime ? MinX : window.getWidth();
@@ -194,17 +192,17 @@ void			HUDRenderer::resize(bool firstTime)
         initCracks();
 }
 
-int			HUDRenderer::getNoMotionSize() const
+int         HUDRenderer::getNoMotionSize() const
 {
     return noMotionSize;
 }
 
-int			HUDRenderer::getMaxMotionSize() const
+int         HUDRenderer::getMaxMotionSize() const
 {
     return maxMotionSize;
 }
 
-void			HUDRenderer::setBigFontSize(int, int height)
+void            HUDRenderer::setBigFontSize(int, int height)
 {
     const float s = (float)height / 22.0f;
     FontManager &fm = FontManager::instance();
@@ -218,7 +216,7 @@ void			HUDRenderer::setBigFontSize(int, int height)
     autoPilotWidth = fm.getStrLength(bigFontFace, bigFontSize, autoPilotLabel);
 }
 
-void			HUDRenderer::setAlertFontSize(int, int height)
+void            HUDRenderer::setAlertFontSize(int, int height)
 {
     const float s = (float)height / 36.0f;
     FontManager &fm = FontManager::instance();
@@ -231,7 +229,7 @@ void			HUDRenderer::setAlertFontSize(int, int height)
             alertLabelWidth[i] = fm.getStrLength(alertFontFace, alertFontSize, alertLabel[i]);
 }
 
-void			HUDRenderer::setMajorFontSize(int, int height)
+void            HUDRenderer::setMajorFontSize(int, int height)
 {
     const float s = (float)height / 36.0f;
     FontManager &fm = FontManager::instance();
@@ -240,7 +238,7 @@ void			HUDRenderer::setMajorFontSize(int, int height)
     majorFontHeight = fm.getStrHeight(majorFontFace, majorFontSize, " ");
 }
 
-void			HUDRenderer::setMinorFontSize(int, int height)
+void            HUDRenderer::setMinorFontSize(int, int height)
 {
     FontManager &fm = FontManager::instance();
     minorFontFace = fm.getFaceID(BZDB.get("consoleFont"));
@@ -268,7 +266,7 @@ void			HUDRenderer::setMinorFontSize(int, int height)
     }
 }
 
-void			HUDRenderer::setHeadingFontSize(int, int height)
+void            HUDRenderer::setHeadingFontSize(int, int height)
 {
     const float s = (float)height / 144.0f;
     FontManager &fm = FontManager::instance();
@@ -284,7 +282,7 @@ void			HUDRenderer::setHeadingFontSize(int, int height)
     altitudeLabelMaxWidth = fm.getStrLength(headingFontFace, headingFontSize, "9999");
 }
 
-void			HUDRenderer::setComposeFontSize(int, int height)
+void            HUDRenderer::setComposeFontSize(int, int height)
 {
     const float s = (float)height / 72.0f;
     FontManager &fm = FontManager::instance();
@@ -293,7 +291,7 @@ void			HUDRenderer::setComposeFontSize(int, int height)
     composeTypeIn->setFontSize(floorf(s));
 }
 
-void			HUDRenderer::setLabelsFontSize(int, int height)
+void            HUDRenderer::setLabelsFontSize(int, int height)
 {
     const float s = (float)height / 96.0f;
     FontManager &fm = FontManager::instance();
@@ -301,62 +299,62 @@ void			HUDRenderer::setLabelsFontSize(int, int height)
     labelsFontSize = floorf(s);
 }
 
-void			HUDRenderer::setColor(float r, float g, float b)
+void            HUDRenderer::setColor(float r, float g, float b)
 {
     hudColor[0] = r;
     hudColor[1] = g;
     hudColor[2] = b;
 }
 
-void			HUDRenderer::setPlaying(bool _playing)
+void            HUDRenderer::setPlaying(bool _playing)
 {
     playing = _playing;
 }
 
-void			HUDRenderer::setRoaming(bool _roaming)
+void            HUDRenderer::setRoaming(bool _roaming)
 {
     roaming = _roaming;
 }
 
-void			HUDRenderer::setDim(bool _dim)
+void            HUDRenderer::setDim(bool _dim)
 {
     dim = _dim;
     scoreboard->setDim (_dim);
 }
 
-void			HUDRenderer::setPlayerHasHighScore(bool hasHigh)
+void            HUDRenderer::setPlayerHasHighScore(bool hasHigh)
 {
     playerHasHighScore = hasHigh;
 }
 
-void			HUDRenderer::setTeamHasHighScore(bool hasHigh)
+void            HUDRenderer::setTeamHasHighScore(bool hasHigh)
 {
     teamHasHighScore = hasHigh;
 }
 
-void			HUDRenderer::setHeading(float angle)
+void            HUDRenderer::setHeading(float angle)
 {
     heading = 90.0f - RAD2DEGf * angle;
     while (heading < 0.0f) heading += 360.0f;
     while (heading >= 360.0f) heading -= 360.0f;
 }
 
-void			HUDRenderer::setAltitude(float _altitude)
+void            HUDRenderer::setAltitude(float _altitude)
 {
     altitude = _altitude;
 }
 
-void			HUDRenderer::setAltitudeTape(bool on)
+void            HUDRenderer::setAltitudeTape(bool on)
 {
     altitudeTape = on;
 }
 
-void			HUDRenderer::setFPS(float _fps)
+void            HUDRenderer::setFPS(float _fps)
 {
     fps = _fps;
 }
 
-void			HUDRenderer::setDrawTime(float drawTimeInseconds)
+void            HUDRenderer::setDrawTime(float drawTimeInseconds)
 {
     if (drawTime < 0.)
     {
@@ -370,25 +368,23 @@ void			HUDRenderer::setDrawTime(float drawTimeInseconds)
         maxDrawTime = drawTime;
 }
 
-void			HUDRenderer::setFrameTriangleCount(int tpf)
+void            HUDRenderer::setFrameTriangleCount(int tpf)
 {
     triangleCount = tpf;
 }
 
-void			HUDRenderer::setFrameRadarTriangleCount(int rtpf)
+void            HUDRenderer::setFrameRadarTriangleCount(int rtpf)
 {
     radarTriangleCount = rtpf;
 }
 
-void			HUDRenderer::setAlert(int index, const char* string,
+void            HUDRenderer::setAlert(int index, const char* string,
                                       float duration, bool warning)
 {
     if (index < 0) index = 0;
     else if (index >= MaxAlerts) index = MaxAlerts - 1;
     if (!string)
-    {
         alertClock[index].setClock(0.0f);
-    }
     else
     {
         FontManager &fm = FontManager::instance();
@@ -399,25 +395,25 @@ void			HUDRenderer::setAlert(int index, const char* string,
     }
 }
 
-bool			HUDRenderer::getComposing() const
+bool            HUDRenderer::getComposing() const
 {
     return showCompose;
 }
 
-std::string		HUDRenderer::getComposeString() const
+std::string     HUDRenderer::getComposeString() const
 {
     return composeTypeIn->getString();
 }
 
 // Sets the string and allows editing by default
-void			HUDRenderer::setComposeString(const std::string &message) const
+void            HUDRenderer::setComposeString(const std::string &message) const
 {
     composeTypeIn->setEditing(true);
     composeTypeIn->setString(message);
 }
 
 // Sets the string and allows you to edit if _allowEdit is true
-void			HUDRenderer::setComposeString(const std::string &message,
+void            HUDRenderer::setComposeString(const std::string &message,
         bool _allowEdit) const
 {
     composeTypeIn->setEditing(_allowEdit);
@@ -426,14 +422,14 @@ void			HUDRenderer::setComposeString(const std::string &message,
 
 
 // Set the prompt and allow editing by default
-void			HUDRenderer::setComposing(const std::string &prompt)
+void            HUDRenderer::setComposing(const std::string &prompt)
 {
     this->setComposing(prompt, true);
 }
 
 
 // Set the prompt and allow editing or not depending on _allowEdit
-void			HUDRenderer::setComposing(const std::string &prompt,
+void            HUDRenderer::setComposing(const std::string &prompt,
         bool _allowEdit)
 {
     showCompose = (prompt.length() != 0);
@@ -459,12 +455,10 @@ void			HUDRenderer::setComposing(const std::string &prompt,
         }
     }
     else
-    {
         HUDui::setFocus(NULL);
-    }
 }
 
-void			HUDRenderer::setFlagHelp(FlagType* desc, float duration)
+void            HUDRenderer::setFlagHelp(FlagType* desc, float duration)
 {
     flagHelpClock.setClock(duration);
 
@@ -480,7 +474,7 @@ void			HUDRenderer::setFlagHelp(FlagType* desc, float duration)
             flagHelpLines++;
 }
 
-void			HUDRenderer::initCracks()
+void            HUDRenderer::initCracks()
 {
     for (int i = 0; i < HUDNumCracks; i++)
     {
@@ -494,7 +488,7 @@ void			HUDRenderer::initCracks()
     }
 }
 
-void			HUDRenderer::setCracks(bool _showCracks)
+void            HUDRenderer::setCracks(bool _showCracks)
 {
     if ((showCracks != _showCracks) && _showCracks)
     {
@@ -504,7 +498,7 @@ void			HUDRenderer::setCracks(bool _showCracks)
     showCracks = _showCracks;
 }
 
-void			HUDRenderer::addMarker(float _heading, const float *_color )
+void            HUDRenderer::addMarker(float _heading, const float *_color )
 {
     markers.resize(markers.size() + 1);
     HUDMarker &m = markers[markers.size() - 1];
@@ -550,14 +544,15 @@ void HUDRenderer::AddLockOnMarker(const fvec3& pos, std::string name,
     lockOnMarkers.push_back(newMarker);
 }
 
-void			HUDRenderer::setRestartKeyLabel(const std::string& label)
+void            HUDRenderer::setRestartKeyLabel(const std::string& label)
 {
-    restartLabel = TextUtils::format(BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(), label.c_str());
+    restartLabel = TextUtils::format(BundleMgr::getCurrentBundle()->getLocalString(restartLabelFormat).c_str(),
+                                     label.c_str());
     FontManager &fm = FontManager::instance();
     restartLabelWidth = fm.getStrLength(bigFontFace, bigFontSize, restartLabel);
 }
 
-void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
+void            HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 {
     timeLeft = _timeLeft;
     timeSet = TimeKeeper::getTick();
@@ -566,7 +561,7 @@ void			HUDRenderer::setTimeLeft(uint32_t _timeLeft)
 /* FIXME - makeHelpString should return an array of strings instead of
  * using implicit null chars.
  */
-std::string		HUDRenderer::makeHelpString(const char* help) const
+std::string     HUDRenderer::makeHelpString(const char* help) const
 {
     if (!help) return std::string();
 
@@ -599,9 +594,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
             wordWidth = fm.getStrLength(minorFontFace, minorFontSize, word);
             msg += c;
             if (wordWidth + currentLineWidth + spaceWidth < maxWidth)
-            {
                 currentLineWidth += wordWidth;
-            }
             else
             {
                 msg += '\0';
@@ -612,9 +605,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
 
         }
         else
-        {
             word += c;
-        }
         position++;
     }
 
@@ -622,9 +613,7 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
     {
         wordWidth = fm.getStrLength(minorFontFace, minorFontSize, word);
         if (wordWidth + currentLineWidth + spaceWidth >= maxWidth)
-        {
             msg += '\0';
-        }
         msg += ' ';
         msg.append(word);
     }
@@ -635,7 +624,8 @@ std::string		HUDRenderer::makeHelpString(const char* help) const
     return msg;
 }
 
-void			HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a)
+void            HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l,
+                                       float a)
 {
     if (l >= (1 << (HUDCrackLevels - 1))) return;
     float d = 0.5f * float(maxMotionSize) *
@@ -654,7 +644,7 @@ void			HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLev
 
 static const float dimFactor = 0.2f;
 
-void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
+void            HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
 {
     if (dim)
         glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
@@ -662,7 +652,7 @@ void			HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
         glColor3f(r, g, b);
 }
 
-void			HUDRenderer::hudColor4f(
+void            HUDRenderer::hudColor4f(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     if (dim)
@@ -671,7 +661,7 @@ void			HUDRenderer::hudColor4f(
         glColor4f(r, g, b, a);
 }
 
-void			HUDRenderer::hudColor3fv(const GLfloat* c)
+void            HUDRenderer::hudColor3fv(const GLfloat* c)
 {
     if (dim)
         glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
@@ -687,7 +677,7 @@ void HUDRenderer::hudColor3Afv(const float * c, const float a)
         glColor4f( c[0],c[1],c[2],a );
 }
 
-void			HUDRenderer::hudSColor3fv(const GLfloat* c)
+void            HUDRenderer::hudSColor3fv(const GLfloat* c)
 {
     if (dim)
         glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
@@ -695,7 +685,7 @@ void			HUDRenderer::hudSColor3fv(const GLfloat* c)
         glColor3fv(c);
 }
 
-void			HUDRenderer::hudColor4fv(const GLfloat* c)
+void            HUDRenderer::hudColor4fv(const GLfloat* c)
 {
     if (dim)
         glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
@@ -704,7 +694,7 @@ void			HUDRenderer::hudColor4fv(const GLfloat* c)
 }
 
 
-void			HUDRenderer::drawGeometry()
+void            HUDRenderer::drawGeometry()
 {
     float lockonSize = 40;
 
@@ -756,7 +746,7 @@ void			HUDRenderer::drawGeometry()
     glLineWidth(2.0f);
 }
 
-void			HUDRenderer::render(SceneRenderer& renderer)
+void            HUDRenderer::render(SceneRenderer& renderer)
 {
     if (firstRender)
     {
@@ -768,17 +758,11 @@ void			HUDRenderer::render(SceneRenderer& renderer)
     if (!BZDB.isTrue("noGUI"))
     {
         if (playing)
-        {
             renderPlaying(renderer);
-        }
         else if (roaming)
-        {
             renderRoaming(renderer);
-        }
         else
-        {
             renderNotPlaying(renderer);
-        }
     }
     else
     {
@@ -805,24 +789,18 @@ void			HUDRenderer::render(SceneRenderer& renderer)
             glLoadIdentity();
 
             if (showCompose)
-            {
                 renderCompose(renderer);
-            }
             if (showTimes)
-            {
                 renderTimes();
-            }
             if (showTankLabels)
-            {
                 renderTankLabels(renderer);
-            }
 
             glPopMatrix();
         }
     }
 }
 
-void			HUDRenderer::renderAlerts(void)
+void            HUDRenderer::renderAlerts(void)
 {
     const float centerx = 0.5f * (float)window.getWidth();
 
@@ -851,7 +829,7 @@ void			HUDRenderer::renderAlerts(void)
     }
 }
 
-void			HUDRenderer::renderStatus(void)
+void            HUDRenderer::renderStatus(void)
 {
     LocalPlayer* myTank = LocalPlayer::getMyTank();
     if (!myTank || !World::getWorld()) return;
@@ -902,9 +880,7 @@ void			HUDRenderer::renderStatus(void)
             }
         }
         else
-        {
             dater = (BZDB.eval("timedate") == 1);
-        }
 
         // print time or date
         const std::string datetime = (dater) ?
@@ -950,9 +926,7 @@ void			HUDRenderer::renderStatus(void)
 
             if (maxApparentLinSpeed > apparentLinSpeed &&
                     TimeKeeper::getTick() - maxApparentLinTime < 0.5f)
-            {
                 apparentLinSpeed = maxApparentLinSpeed;
-            }
             else
             {
                 maxApparentLinSpeed = apparentLinSpeed;
@@ -968,7 +942,8 @@ void			HUDRenderer::renderStatus(void)
             fm.drawString(x, drawY, 0, minorFontFace, minorFontSize, msg);
 
             // draw the postion
-            msg = TextUtils::format("Position [%d %d %d]", (int)target->getPosition()[0], (int)target->getPosition()[1], (int)target->getPosition()[2]);
+            msg = TextUtils::format("Position [%d %d %d]", (int)target->getPosition()[0], (int)target->getPosition()[1],
+                                    (int)target->getPosition()[2]);
             x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
             fm.drawString(x,drawY-smallZHeight, 0, minorFontFace, minorFontSize, msg);
 
@@ -1008,7 +983,8 @@ void			HUDRenderer::renderStatus(void)
             if (BZDB.evalInt("showVelocities") > 2)
             {
                 offset += 1.0f;
-                msg = TextUtils::format("ReportedHits %d ComputedHits %d ratio %.2f", target->reportedHits, target->computedHits, target->computedHits == 0 ? 0.0f : (float)target->reportedHits/(float)target->computedHits);
+                msg = TextUtils::format("ReportedHits %d ComputedHits %d ratio %.2f", target->reportedHits, target->computedHits,
+                                        target->computedHits == 0 ? 0.0f : (float)target->reportedHits/(float)target->computedHits);
                 x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(minorFontFace, minorFontSize, msg);
                 fm.drawString(x,drawY-smallZHeight*offset, 0, minorFontFace, minorFontSize, msg);
             }
@@ -1032,9 +1008,7 @@ void			HUDRenderer::renderStatus(void)
     // TODO: the upper 4 values of timeLeft (~0u-3 to ~0u)
     // are reserved for future use as timer flags (e.g. paused)
     if ((timeLeft == 0) || (timeLeft >= (~0u - 3)))
-    {
         msg = "";
-    }
     else
     {
         int t = timeLeft - (int)(TimeKeeper::getTick() - timeSet);
@@ -1100,7 +1074,7 @@ void			HUDRenderer::renderStatus(void)
     fm.drawString(x, y, 0, majorFontFace, majorFontSize, msg);
 }
 
-void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
+void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 {
     if (!World::getWorld()) return;
 
@@ -1163,7 +1137,7 @@ void			HUDRenderer::renderTankLabels(SceneRenderer& renderer)
     }
 }
 
-void			HUDRenderer::renderCracks()
+void            HUDRenderer::renderCracks()
 {
     double delta = (TimeKeeper::getTick() - crackStartTime) * 5.0;
     if (delta > 1.0)
@@ -1197,13 +1171,13 @@ void			HUDRenderer::renderCracks()
     glPopMatrix();
 }
 
-void			HUDRenderer::renderCompose(SceneRenderer&)
+void            HUDRenderer::renderCompose(SceneRenderer&)
 {
     composeTypeIn->render();
     OpenGLGState::resetState();
 }
 
-void			HUDRenderer::renderTimes(void)
+void            HUDRenderer::renderTimes(void)
 {
     const int centerx = window.getWidth() >> 1;
     const int centery = window.getViewHeight() >> 1;
@@ -1321,25 +1295,25 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     if (name.size())
         triangleSize *= 0.75f;
 
-    if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// right side
+    if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight)   // right side
         glRotatef(90,0,0,1);
 
-    if (map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)	// Left side
+    if (map[0] == -halfWidth && map[1] != -halfHeight && map[1] != halfHeight)  // Left side
         glRotatef(-90,0,0,1);
 
-    if (map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)	// Top side
+    if (map[1] == halfHeight && map[0] != -halfWidth && map[0] != halfWidth)    // Top side
         glRotatef(180,0,0,1);
 
-    if (map[0] == halfWidth && map[1] == -halfHeight)	// Lower right
+    if (map[0] == halfWidth && map[1] == -halfHeight)   // Lower right
         glRotatef(45,0,0,1);
 
-    if (map[0] == -halfWidth && map[1] == -halfHeight)	// Lower left
+    if (map[0] == -halfWidth && map[1] == -halfHeight)  // Lower left
         glRotatef(-45,0,0,1);
 
-    if (map[0] == halfWidth && map[1] == halfHeight)	// upper right
+    if (map[0] == halfWidth && map[1] == halfHeight)    // upper right
         glRotatef(180-45,0,0,1);
 
-    if (map[0] == -halfWidth && map[1] == halfHeight)	// upper left
+    if (map[0] == -halfWidth && map[1] == halfHeight)   // upper left
         glRotatef(180+45,0,0,1);
 
     glBegin(GL_TRIANGLES);
@@ -1479,7 +1453,7 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
     glPopMatrix();
 }
 
-void			HUDRenderer::renderBox(SceneRenderer&)
+void            HUDRenderer::renderBox(SceneRenderer&)
 {
     // get view metrics
     const int width = window.getWidth();
@@ -1786,7 +1760,7 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 }
 
 
-void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
+void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
 {
     // get view metrics
     const int width = window.getWidth();
@@ -1813,14 +1787,13 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     if (myTank && myTank->getPosition()[2] < 0.0f)
     {
         glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((
+                    float)viewHeight/2.0f));
     }
 
     // draw shot reload status
     if (BZDB.isTrue("displayReloadTimer"))
-    {
         renderShots(myTank);
-    }
 
     // draw cracks
     if (showCracks)
@@ -1895,7 +1868,7 @@ void			HUDRenderer::renderPlaying(SceneRenderer& renderer)
     glPopMatrix();
 }
 
-void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
+void            HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
 {
     // get view metrics
     const int width = window.getWidth();
@@ -1971,7 +1944,7 @@ void			HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
     glPopMatrix();
 }
 
-void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
+void            HUDRenderer::renderRoaming(SceneRenderer& renderer)
 {
     // get view metrics
     const int width = window.getWidth();
@@ -1996,14 +1969,13 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
     if (myTank && myTank->getPosition()[2] < 0.0f)
     {
         glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((float)viewHeight/2.0f));
+        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((
+                    float)viewHeight/2.0f));
     }
 
     // draw shot reload status
     if ((ROAM.getMode() == Roaming::roamViewFP) && BZDB.isTrue("displayReloadTimer"))
-    {
         renderShots(ROAM.getTargetTank());
-    }
 
     // draw alert messages
     renderAlerts();
@@ -2046,21 +2018,17 @@ void			HUDRenderer::renderRoaming(SceneRenderer& renderer)
 
 
 
-static int		compare_float(const void* a, const void* b)
+static int      compare_float(const void* a, const void* b)
 {
     const float fa = *((const float*)a);
     const float fb = *((const float*)b);
     if (fa > fb)
-    {
         return 1;
-    }
     else
-    {
         return -1;
-    }
 }
 
-void			HUDRenderer::renderShots(const Player* target)
+void            HUDRenderer::renderShots(const Player* target)
 {
     // get the target tank
     if (!target) return;
@@ -2130,6 +2098,6 @@ void			HUDRenderer::renderShots(const Player* target)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

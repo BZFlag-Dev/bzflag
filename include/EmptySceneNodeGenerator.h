@@ -18,7 +18,7 @@
 class EmptySceneNodeGenerator : public ObstacleSceneNodeGenerator
 {
 public:
-    virtual		~EmptySceneNodeGenerator();
+    virtual     ~EmptySceneNodeGenerator();
 
     virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
                                        bool lod);
@@ -30,6 +30,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

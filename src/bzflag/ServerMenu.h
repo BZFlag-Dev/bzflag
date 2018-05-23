@@ -51,8 +51,8 @@ public:
 
 private:
     ServerMenu* menu;
-    ServerListFilterMenu*	serverListFilterMenu;
-    ServerListFilterHelpMenu*	serverListFilterHelpMenu;
+    ServerListFilterMenu*   serverListFilterMenu;
+    ServerListFilterHelpMenu*   serverListFilterHelpMenu;
 };
 
 class ServerMenu : public HUDDialog
@@ -95,7 +95,7 @@ private:
 private:
     ServerList realServerList;
     ServerList serverList;
-    ServerMenuDefaultKey	defaultKey;
+    ServerMenuDefaultKey    defaultKey;
     HUDuiLabel* status;
     HUDuiLabel* help1;
     HUDuiLabel* help2;
@@ -124,6 +124,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -39,7 +39,7 @@ static inline int test_bit (int nr, const volatile void *addr)
     return 1 & (((const volatile __u32 *) addr)[nr >> 5] >> (nr & 31));
 }
 
-bool	     EvdevJoystick::isEvdevAvailable()
+bool         EvdevJoystick::isEvdevAvailable()
 {
     /* Test whether this driver should be used without actually
      * loading it. Will return false if no event devices can be
@@ -75,7 +75,7 @@ EvdevJoystick::~EvdevJoystick()
     delete ff_rumble;
 }
 
-void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
+void         EvdevJoystick::scanForJoysticks(std::map<std::string,
         EvdevJoystickInfo> &joysticks)
 {
     joysticks.clear();
@@ -104,9 +104,7 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
             if (fd) logDebugMessage(4,"Opened event device %s as read-only.\n", info.filename.c_str());
         }
         else
-        {
             logDebugMessage(4,"Opened event device %s as read-write.\n", info.filename.c_str());
-        }
         /* no good, can't open it */
         if (!fd)
         {
@@ -136,9 +134,9 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
         /* Yay, add it to our map.
          *
          * FIXME: we can't handle multiple joysticks with the same name yet.
-         *	This could be fixed by disambiguating jsname if it already
-         *	exists in 'joysticks', but the user would still have a hard
-         *	time knowing which device to pick.
+         *  This could be fixed by disambiguating jsname if it already
+         *  exists in 'joysticks', but the user would still have a hard
+         *  time knowing which device to pick.
          */
         joysticks[jsname] = info;
     }
@@ -146,7 +144,7 @@ void	     EvdevJoystick::scanForJoysticks(std::map<std::string,
     closedir(inputdir);
 }
 
-bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &info)
+bool            EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &info)
 {
     /* Collect all the bitfields we're interested in from an event device
      * at the given file descriptor.
@@ -173,7 +171,7 @@ bool		    EvdevJoystick::collectJoystickBits(int fd, struct EvdevJoystickInfo &i
     return true;
 }
 
-bool			EvdevJoystick::isJoystick(struct EvdevJoystickInfo &info)
+bool            EvdevJoystick::isJoystick(struct EvdevJoystickInfo &info)
 {
     /* Look at the capability bitfields in the given EvdevJoystickInfo, and
      * decide whether the device is indeed a joystick. This uses the same criteria
@@ -195,7 +193,7 @@ bool			EvdevJoystick::isJoystick(struct EvdevJoystickInfo &info)
     return true;
 }
 
-void			EvdevJoystick::initJoystick(const char* joystickName)
+void            EvdevJoystick::initJoystick(const char* joystickName)
 {
     /* Close the previous joystick */
     ffResetEffect();
@@ -238,9 +236,7 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
             printError("No write access to joystick device, force feedback disabled.");
         }
         else
-        {
             printError("Error opening the selected joystick.");
-        }
     }
 
     useaxis[0] = ABS_X;
@@ -250,12 +246,12 @@ void			EvdevJoystick::initJoystick(const char* joystickName)
     hataxes.assign(4 * 2, 0);
 }
 
-bool			EvdevJoystick::joystick() const
+bool            EvdevJoystick::joystick() const
 {
     return currentJoystick != NULL;
 }
 
-void		    EvdevJoystick::poll()
+void            EvdevJoystick::poll()
 {
     /* Read as many input events as are available, and update our current state
      */
@@ -283,7 +279,7 @@ void		    EvdevJoystick::poll()
     }
 }
 
-int		     EvdevJoystick::mapButton(int bit_num)
+int          EvdevJoystick::mapButton(int bit_num)
 {
     /* Given an evdev button number, map it back to a small integer that most
      * people would consider the button's actual number. This also ensures
@@ -310,7 +306,7 @@ int		     EvdevJoystick::mapButton(int bit_num)
     return -1;
 }
 
-void		    EvdevJoystick::setButton(int button_num, int state)
+void            EvdevJoystick::setButton(int button_num, int state)
 {
 
     if (button_num >= 0)
@@ -323,7 +319,7 @@ void		    EvdevJoystick::setButton(int button_num, int state)
     }
 }
 
-void			EvdevJoystick::getJoy(int& x, int& y)
+void            EvdevJoystick::getJoy(int& x, int& y)
 {
     if (currentJoystick)
     {
@@ -361,12 +357,10 @@ void			EvdevJoystick::getJoy(int& x, int& y)
         y = axes[useaxis[1]];
     }
     else
-    {
         x = y = 0;
-    }
 }
 
-int		     EvdevJoystick::getNumHats()
+int          EvdevJoystick::getNumHats()
 {
     numHats = 0;
     if (currentJoystick)
@@ -374,9 +368,7 @@ int		     EvdevJoystick::getNumHats()
         for (int i = 0; i < 4; ++i)
         {
             if (test_bit(ABS_HAT0X + i * 2, currentJoystick->absbit))
-            {
                 numHats++;
-            }
         }
     }
     //for some reason, I can't move this from initJoystick
@@ -384,7 +376,7 @@ int		     EvdevJoystick::getNumHats()
     return numHats;
 }
 
-void		    EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
+void            EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
 {
     hatX = hatY = 0;
     if (currentJoystick)
@@ -398,7 +390,7 @@ void		    EvdevJoystick::getJoyHat(int hat, float &hatX, float &hatY)
     }
 }
 
-unsigned long		EvdevJoystick::getJoyButtons()
+unsigned long       EvdevJoystick::getJoyButtons()
 {
     if (currentJoystick)
     {
@@ -406,12 +398,10 @@ unsigned long		EvdevJoystick::getJoyButtons()
         return buttons;
     }
     else
-    {
         return 0;
-    }
 }
 
-void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
+void            EvdevJoystick::getJoyDevices(std::vector<std::string>
         &list) const
 {
     std::map<std::string,EvdevJoystickInfo>::const_iterator i;
@@ -421,7 +411,7 @@ void		    EvdevJoystick::getJoyDevices(std::vector<std::string>
 
 static const std::string anames[9] = { "X", "Y", "Z", "Rx", "Ry", "Rz", "Throttle", "Rudder", "Wheel" };
 
-void		EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
+void        EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
         &list) const
 {
     list.clear();
@@ -434,21 +424,21 @@ void		EvdevJoystick::getJoyDeviceAxes(std::vector<std::string>
             list.push_back(anames[i]);
 }
 
-void		    EvdevJoystick::setXAxis(const std::string &axis)
+void            EvdevJoystick::setXAxis(const std::string &axis)
 {
     for (int i = 0; i < 9; ++i)
         if (anames[i] == axis)
             useaxis[0] = ABS_X + i;
 }
 
-void		    EvdevJoystick::setYAxis(const std::string &axis)
+void            EvdevJoystick::setYAxis(const std::string &axis)
 {
     for (int i = 0; i < 9; ++i)
         if (anames[i] == axis)
             useaxis[1] = ABS_X + i;
 }
 
-bool		    EvdevJoystick::ffHasRumble() const
+bool            EvdevJoystick::ffHasRumble() const
 {
 #ifdef HAVE_FF_EFFECT_RUMBLE
     if (!currentJoystick)
@@ -466,7 +456,7 @@ bool		    EvdevJoystick::ffHasRumble() const
 void EvdevJoystick::writeJoystick(int count)
 {
     struct input_event event;
-    ssize_t	    written_byte;
+    ssize_t     written_byte;
 
     event.type   = EV_FF;
     event.code   = ff_rumble->id;
@@ -481,7 +471,7 @@ void EvdevJoystick::writeJoystick(int)
 }
 #endif
 
-void		    EvdevJoystick::ffResetEffect()
+void            EvdevJoystick::ffResetEffect()
 {
 #if (defined HAVE_FF_EFFECT_DIRECTIONAL || defined HAVE_FF_EFFECT_RUMBLE)
     /* Erase old effects before closing a device,
@@ -508,7 +498,7 @@ void		    EvdevJoystick::ffResetEffect()
 }
 
 #ifdef HAVE_FF_EFFECT_RUMBLE
-void		    EvdevJoystick::ffRumble(int count,
+void            EvdevJoystick::ffRumble(int count,
                                         float delay, float duration,
                                         float strong_motor,
                                         float weak_motor)
@@ -570,13 +560,9 @@ void EvdevJoystick::ffDirectionalConstant(int count, float delay, float duration
      * effect we were playing, if any.
      */
     if (ff_rumble->type != FF_CONSTANT)
-    {
         ffResetEffect();
-    }
     else if (ff_rumble->id != -1)
-    {
         writeJoystick(0);
-    }
 
     if (count > 0)
     {
@@ -620,13 +606,9 @@ void EvdevJoystick::ffDirectionalPeriodic(int count, float delay, float duration
      * effect we were playing, if any.
      */
     if (ff_rumble->type != FF_PERIODIC)
-    {
         ffResetEffect();
-    }
     else if (ff_rumble->id != -1)
-    {
         writeJoystick(0);
-    }
 
     if (count > 0)
     {
@@ -696,13 +678,9 @@ void EvdevJoystick::ffDirectionalResistance(float time, float coefficient,
     if ((ff_rumble->type != FF_SPRING) &&
             (ff_rumble->type != FF_FRICTION) &&
             (ff_rumble->type != FF_DAMPER))
-    {
         ffResetEffect();
-    }
     else if (ff_rumble->id != -1)
-    {
         writeJoystick(0);
-    }
 
     if (1 > 0)
     {
@@ -752,6 +730,6 @@ void EvdevJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

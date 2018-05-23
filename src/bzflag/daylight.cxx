@@ -17,12 +17,12 @@
 #include "StateDatabase.h"
 #include "ParseColor.h"
 
-static const double	radPerDeg = DEG2RAD;
-static const double	radPerHour = M_PI / 12.0;
-static const double	siderealHoursPerHour = 1.002737908;
-static const double	epoch = 2415020.0;
+static const double radPerDeg = DEG2RAD;
+static const double radPerHour = M_PI / 12.0;
+static const double siderealHoursPerHour = 1.002737908;
+static const double epoch = 2415020.0;
 
-static double		getGreenwichSideral(double julianDay)
+static double       getGreenwichSideral(double julianDay)
 {
     // true position requires sidereal time of midnight at prime meridian.
     // get midnight of given julian day (midnight has decimal of .5)
@@ -42,7 +42,7 @@ static double		getGreenwichSideral(double julianDay)
     return radPerHour * (greenwichMidnight + dayFraction * siderealHoursPerHour);
 }
 
-static void		gettruePosition(double julianDay,
+static void     gettruePosition(double julianDay,
                                 float latitude, float longitude,
                                 double sx, double sy, double sz,
                                 float pos[3])
@@ -62,7 +62,7 @@ static void		gettruePosition(double julianDay,
     pos[2] = tz * cosf(latitude * DEG2RADf) + ty * sinf(latitude * DEG2RADf);
 }
 
-void			getCelestialTransform(double julianDay,
+void            getCelestialTransform(double julianDay,
                                       float latitude, float longitude,
                                       GLfloat (&xform)[4][4])
 {
@@ -99,7 +99,7 @@ void			getCelestialTransform(double julianDay,
     xform[2][2] = sla;
 }
 
-void			getSunPosition(double julianDay, float latitude,
+void            getSunPosition(double julianDay, float latitude,
                                float longitude, float pos[3])
 {
     double T = (julianDay - epoch) / 36525.0;
@@ -112,7 +112,7 @@ void			getSunPosition(double julianDay, float latitude,
     meanAnomaly = fmod(meanAnomaly, 2.0 * M_PI);
 
 //  double eccentricity = 0.01675104 +
-//		T * (-0.000000126 * T - 0.0000418);
+//      T * (-0.000000126 * T - 0.0000418);
 
     double C = radPerDeg *
                (sin(meanAnomaly) * (1.919460 - (0.004789 + 0.000014 * T) * T) +
@@ -139,7 +139,7 @@ void			getSunPosition(double julianDay, float latitude,
     gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
-void			getMoonPosition(double julianDay, float latitude,
+void            getMoonPosition(double julianDay, float latitude,
                                 float longitude, float pos[3])
 {
     double T = (julianDay - epoch) / 36525.0;
@@ -204,7 +204,7 @@ void			getMoonPosition(double julianDay, float latitude,
     gettruePosition(julianDay, latitude, longitude, sx, sy, sz, pos);
 }
 
-static void		lerpColor(GLfloat out[3], const GLfloat t0[3],
+static void     lerpColor(GLfloat out[3], const GLfloat t0[3],
                           const GLfloat t1[3], float t)
 {
     out[0] = (1.0f - t) * t0[0] + t * t1[0];
@@ -212,22 +212,22 @@ static void		lerpColor(GLfloat out[3], const GLfloat t0[3],
     out[2] = (1.0f - t) * t0[2] + t * t1[2];
 }
 
-static const float	nightElevation = -0.25f;	// ~sin(-15)
-static const float	duskElevation = -0.17f;		// ~sin(-10)
-static const float	twilightElevation = -0.087f;	// ~sin(-5)
-static const float	dawnElevation = 0.0f;		// sin(0)
-static const float	dayElevation = 0.087f;		// ~sin(5)
+static const float  nightElevation = -0.25f;    // ~sin(-15)
+static const float  duskElevation = -0.17f;     // ~sin(-10)
+static const float  twilightElevation = -0.087f;    // ~sin(-5)
+static const float  dawnElevation = 0.0f;       // sin(0)
+static const float  dayElevation = 0.087f;      // ~sin(5)
 
-void			getSunColor(const float sunDir[3], GLfloat color[3],
+void            getSunColor(const float sunDir[3], GLfloat color[3],
                             GLfloat ambient[3], GLfloat& brightness)
 {
-    static const GLfloat	highSunColor[3] = { 1.75f, 1.75f, 1.4f };
-    static const GLfloat	lowSunColor[3] = { 0.75f, 0.27f, 0.0f };
-    static const GLfloat	moonColor[3] = { 0.4f, 0.4f, 0.4f };
-    static const GLfloat	nightAmbient[3] = { 0.3f, 0.3f, 0.3f };
-    static const GLfloat	dayAmbient[3] = { 0.35f, 0.5f, 0.5f };
+    static const GLfloat    highSunColor[3] = { 1.75f, 1.75f, 1.4f };
+    static const GLfloat    lowSunColor[3] = { 0.75f, 0.27f, 0.0f };
+    static const GLfloat    moonColor[3] = { 0.4f, 0.4f, 0.4f };
+    static const GLfloat    nightAmbient[3] = { 0.3f, 0.3f, 0.3f };
+    static const GLfloat    dayAmbient[3] = { 0.35f, 0.5f, 0.5f };
 
-    if (sunDir[2] <= -0.009f)  		// it's the moon
+    if (sunDir[2] <= -0.009f)       // it's the moon
     {
         color[0] = moonColor[0];
         color[1] = moonColor[1];
@@ -270,7 +270,7 @@ void			getSunColor(const float sunDir[3], GLfloat color[3],
     }
 }
 
-bool			getSunsetTop(const float sunDir[3], float& topAltitude)
+bool            getSunsetTop(const float sunDir[3], float& topAltitude)
 {
     if (sunDir[2] > nightElevation && sunDir[2] < dayElevation)
     {
@@ -280,13 +280,13 @@ bool			getSunsetTop(const float sunDir[3], float& topAltitude)
     return false;
 }
 
-void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
+void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
 {
-    static const GLfloat	nightColor[3] = { 0.04f, 0.04f, 0.08f };
-    static const GLfloat	zenithColor[3] = { 0.25f, 0.55f, 0.86f };
-    static const GLfloat	horizonColor[3] = { 0.43f, 0.75f, 0.95f };
-    static const GLfloat	sunrise1Color[3] = { 0.30f, 0.12f, 0.08f };
-    static const GLfloat	sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
+    static const GLfloat    nightColor[3] = { 0.04f, 0.04f, 0.08f };
+    static const GLfloat    zenithColor[3] = { 0.25f, 0.55f, 0.86f };
+    static const GLfloat    horizonColor[3] = { 0.43f, 0.75f, 0.95f };
+    static const GLfloat    sunrise1Color[3] = { 0.30f, 0.12f, 0.08f };
+    static const GLfloat    sunrise2Color[3] = { 0.47f, 0.12f, 0.08f };
 
     // sky colors
     if (sunDir[2] < nightElevation)
@@ -384,12 +384,12 @@ void			getSkyColor(const float sunDir[3], GLfloat sky[4][3])
     }
 }
 
-bool			areShadowsCast(const float sunDir[3])
+bool            areShadowsCast(const float sunDir[3])
 {
     return sunDir[2] > 0.5 * dayElevation;
 }
 
-bool			areStarsVisible(const float sunDir[3])
+bool            areStarsVisible(const float sunDir[3])
 {
     return sunDir[2] < dawnElevation;
 }
@@ -398,6 +398,6 @@ bool			areStarsVisible(const float sunDir[3])
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

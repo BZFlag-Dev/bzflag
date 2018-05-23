@@ -14,8 +14,8 @@
  * main game loop stuff
  */
 
-#ifndef	BZF_PLAYING_H
-#define	BZF_PLAYING_H
+#ifndef BZF_PLAYING_H
+#define BZF_PLAYING_H
 
 #include "common.h"
 
@@ -37,14 +37,14 @@
 
 #define MAX_MESSAGE_HISTORY (20)
 
-typedef void		(*JoinGameCallback)(bool success, void* data);
-typedef void		(*ConnectStatusCallback)(std::string& str);
-typedef void		(*PlayingCallback)(void*);
+typedef void        (*JoinGameCallback)(bool success, void* data);
+typedef void        (*ConnectStatusCallback)(std::string& str);
+typedef void        (*PlayingCallback)(void*);
 struct PlayingCallbackItem
 {
 public:
-    PlayingCallback	cb;
-    void*		data;
+    PlayingCallback cb;
+    void*       data;
 };
 
 class BzfDisplay;
@@ -53,40 +53,40 @@ class SceneRenderer;
 class Player;
 class ServerLink;
 
-BzfDisplay*		getDisplay();
-MainWindow*		getMainWindow();
-ShotStats*		getShotStats();
-SceneRenderer*		getSceneRenderer();
-void			setSceneDatabase();
-StartupInfo*		getStartupInfo();
-void			notifyBzfKeyMapChanged();
-bool			setVideoFormat(int, bool test = false);
-void			startPlaying(BzfDisplay* display,
+BzfDisplay*     getDisplay();
+MainWindow*     getMainWindow();
+ShotStats*      getShotStats();
+SceneRenderer*      getSceneRenderer();
+void            setSceneDatabase();
+StartupInfo*        getStartupInfo();
+void            notifyBzfKeyMapChanged();
+bool            setVideoFormat(int, bool test = false);
+void            startPlaying(BzfDisplay* display,
                              SceneRenderer&);
 
-bool			addExplosion(const float* pos,
+bool            addExplosion(const float* pos,
                              float size, float duration);
-void			addTankExplosion(const float* pos);
-void			addShotExplosion(const float* pos);
-void			addShotPuff(const float* pos, float azimuth, float elevation);
-void			warnAboutMainFlags();
-void			warnAboutRadarFlags();
-void		    warnAboutRadar();
-void		    warnAboutConsole();
-void			addPlayingCallback(PlayingCallback, void* data);
-void			removePlayingCallback(PlayingCallback, void* data);
+void            addTankExplosion(const float* pos);
+void            addShotExplosion(const float* pos);
+void            addShotPuff(const float* pos, float azimuth, float elevation);
+void            warnAboutMainFlags();
+void            warnAboutRadarFlags();
+void            warnAboutRadar();
+void            warnAboutConsole();
+void            addPlayingCallback(PlayingCallback, void* data);
+void            removePlayingCallback(PlayingCallback, void* data);
 
-void			joinGame(JoinGameCallback, void* userData);
-void		    leaveGame();
+void            joinGame(JoinGameCallback, void* userData);
+void            leaveGame();
 std::vector<std::string>& getSilenceList();
-void			updateEvents();
-void			addMessage(const Player* player,
+void            updateEvents();
+void            addMessage(const Player* player,
                            const std::string& msg,
                            int mode = 3,
                            bool highlight = false,
                            const char* oldColor = NULL);
 
-int			curlProgressFunc(void* clientp,
+int         curlProgressFunc(void* clientp,
                              double dltotal, double dlnow,
                              double ultotal, double ulnow);
 
@@ -102,23 +102,23 @@ void killGlobalAres();
 
 extern void joinGame();
 
-extern HUDRenderer	*hud;
-extern char		messageMessage[PlayerIdPLen + MessageLen];
-extern ServerLink*	serverLink;
-extern int		numFlags;
-extern StartupInfo	startupInfo;
+extern HUDRenderer  *hud;
+extern char     messageMessage[PlayerIdPLen + MessageLen];
+extern ServerLink*  serverLink;
+extern int      numFlags;
+extern StartupInfo  startupInfo;
 extern DefaultCompleter completer;
-extern bool	     gameOver;
+extern bool      gameOver;
 extern ControlPanel    *controlPanel;
-extern bool	     fireButton;
-extern float	    destructCountdown;
-extern bool	     pausedByUnmap;
-extern int	      savedVolume;
+extern bool      fireButton;
+extern float        destructCountdown;
+extern bool      pausedByUnmap;
+extern int        savedVolume;
 extern MainWindow      *mainWindow;
-extern float	    pauseCountdown;
-extern float	    clockAdjust;
-extern float	    roamDZoom;
-extern bool	     roamButton;
+extern float        pauseCountdown;
+extern float        clockAdjust;
+extern float        roamDZoom;
+extern bool      roamButton;
 
 #define MAX_DT_LIMIT 0.1f
 #define MIN_DT_LIMIT 0.001f
@@ -142,6 +142,6 @@ enum BlowedUpReason
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

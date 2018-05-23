@@ -52,9 +52,7 @@ static void getIntList (std::istream& input, std::vector<int>& list)
     input.putback('\n');
 
     while (parms >> value)
-    {
         list.push_back(value);
-    }
 
     return;
 }
@@ -101,40 +99,24 @@ bool CustomMeshFace::read(const char *cmd, std::istream& input)
         }
         phydrv = PHYDRVMGR.findDriver(drvname);
         if ((phydrv == -1) && (drvname != "-1"))
-        {
             std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
-        }
     }
     else if (strcasecmp(cmd, "smoothbounce") == 0)
-    {
         smoothBounce = true;
-    }
     else if (strcasecmp(cmd, "noclusters") == 0)
-    {
         noclusters = true;
-    }
     else if (strcasecmp(cmd, "drivethrough") == 0)
-    {
         driveThrough = true;
-    }
     else if (strcasecmp(cmd, "shootthrough") == 0)
-    {
         shootThrough = true;
-    }
     else if (strcasecmp(cmd, "passable") == 0)
-    {
         driveThrough = shootThrough = true;
-    }
     else if (strcasecmp(cmd, "ricochet") == 0)
-    {
         ricochet = true;
-    }
     else if (parseMaterials(cmd, input, &material, 1, materror))
     {
         if (materror)
-        {
             return false;
-        }
     }
     else
     {
@@ -160,6 +142,6 @@ void CustomMeshFace::write(MeshObstacle *mesh) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -51,9 +51,7 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
     if (stream == NULL)
     {
         if (verbose)
-        {
             std::cerr << "Warning: '" << filename << "' language file not found" << std::endl;
-        }
         return 0;
     }
     std::cout << "loading from " << filename << std::endl;
@@ -66,37 +64,27 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
 
         // trim leading whitespace
         if (position > 0)
-        {
             languageLine = languageLine.substr(position);
-        }
 
         position = languageLine.find_first_of("#\r\n");
 
         // trim trailing comments
         if ((position >=0) && (position < (int)languageLine.length()))
-        {
             languageLine = languageLine.substr(0, position);
-        }
 
         position = languageLine.find_last_not_of("\r\n\t ");
         position += 1;
 
         // trim trailing whitespace
         if ((position >= 0) && (position < (int)languageLine.length()))
-        {
             languageLine = languageLine.substr(0, position);
-        }
 
         // make sure there is something left to add
         if (languageLine.length() == 0)
-        {
             continue;
-        }
 
         if (verbose)
-        {
             std::cout << ".";
-        }
 
         // parse out the keywords
         int num = -1;
@@ -107,27 +95,19 @@ unsigned int Language::loadFromFile(std::string filename, bool verbose)
 
         // need at least the number and the iso2
         if ((num == -1) || (iso2.length() == 0))
-        {
             continue;
-        }
 
         Language lang = Language(num, iso2, iso3, english, french);
 
         if (addLanguage(lang) && verbose)
-        {
             std::cout << std::endl << "Language is already added: " << iso2;
-        }
         else
-        {
             totalAdded++;
-        }
 
     } // end iteration over lines in input file
 
     if (verbose)
-    {
         std::cout << std::endl;
-    }
 
     return totalAdded;
 } // end loadFromFile
@@ -202,6 +182,6 @@ std::string Language::frenchName(std::string)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -66,9 +66,7 @@ TextureManager::~TextureManager()
     {
         ImageInfo &tex = it->second;
         if (tex.texture != NULL)
-        {
             delete tex.texture;
-        }
     }
     textureNames.clear();
     textureIDs.clear();
@@ -85,9 +83,7 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
     // see if we have the texture
     TextureNameMap::iterator it = textureNames.find(name);
     if (it != textureNames.end())
-    {
         return it->second.id;
-    }
     else     // we don't have it so try and load it
     {
 
@@ -114,9 +110,7 @@ bool TextureManager::isLoaded(const std::string& name)
 {
     TextureNameMap::iterator it = textureNames.find(name);
     if (it == textureNames.end())
-    {
         return false;
-    }
     return true;
 }
 
@@ -125,9 +119,7 @@ bool TextureManager::removeTexture(const std::string& name)
 {
     TextureNameMap::iterator it = textureNames.find(name);
     if (it == textureNames.end())
-    {
         return false;
-    }
 
     // delete the OpenGLTexture
     ImageInfo& info = it->second;
@@ -160,9 +152,7 @@ bool TextureManager::reloadTextureImage(const std::string& name)
 {
     TextureNameMap::iterator it = textureNames.find(name);
     if (it == textureNames.end())
-    {
         return false;
-    }
 
     ImageInfo& info = it->second;
     OpenGLTexture* oldTex = info.texture;
@@ -455,6 +445,6 @@ int noiseProc(ProcTextureInit &init)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,11 +11,11 @@
  */
 
 /* SDL2Window:
- *	Encapsulates an SDL window
+ *  Encapsulates an SDL window
  */
 
 #ifndef BZF_SDL2WINDOW_H
-#define	BZF_SDL2WINDOW_H
+#define BZF_SDL2WINDOW_H
 
 // Inherits from
 #include "BzfWindow.h"
@@ -59,8 +59,8 @@ public:
     void  setMinSize(int, int);
     void  setFullscreen(bool);
     void  iconify(void);
-    void	disableConfineToMotionbox();
-    void	confineToMotionbox(int x1, int y1, int x2, int y2);
+    void    disableConfineToMotionbox();
+    void    confineToMotionbox(int x1, int y1, int x2, int y2);
     void  warpMouse(int x, int y);
     void  getMouse(int& x, int& y) const;
     void  grabMouse()
@@ -87,7 +87,7 @@ public:
     {
         return true;
     }
-    void	setVerticalSync(bool);
+    void    setVerticalSync(bool);
     void  makeCurrent();
     void  swapBuffers();
     void  makeContext();
@@ -100,9 +100,9 @@ public:
     }
 #endif
 private:
-    bool	 hasGamma;
-    float	 origGamma;
-    float	 lastGamma;
+    bool     hasGamma;
+    float    origGamma;
+    float    lastGamma;
     SDL_Window *windowId;
 #ifdef _WIN32
     SDL_SysWMinfo info;
@@ -124,6 +124,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

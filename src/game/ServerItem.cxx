@@ -37,7 +37,8 @@ void ServerItem::writeToFile(std::ostream& out) const
 
     // write out desc.
     memset(buffer,0,sizeof(buffer));
-    int copyLength = int(description.size() < ServerListCache::max_string ? description.size(): ServerListCache::max_string);
+    int copyLength = int(description.size() < ServerListCache::max_string ? description.size():
+                         ServerListCache::max_string);
     strncpy(&buffer[0],description.c_str(),copyLength);
     out.write(buffer,sizeof(buffer));
 
@@ -131,9 +132,7 @@ std::string ServerItem::getAgeString() const
             sprintf(buffer,"%-3ld secs",(long)ageSecs);
         }
         else
-        {
             sprintf(buffer,"%-3ld mins",(long)age);
-        }
     }
     else     // >= 60 minutes
     {
@@ -179,40 +178,26 @@ bool ServerItem::operator<(const ServerItem &right)
     if (left.cached && right.cached)
     {
         if (left.getSortFactor() < right.getSortFactor())
-        {
             return true;
-        }
         else if (left.getSortFactor() == right.getSortFactor())
         {
             if (left.getAgeMinutes() > right.getAgeMinutes())
-            {
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
         else
-        {
             return false;
-        }
     }
     else if (!left.cached && !right.cached)
     {
         if (left.getSortFactor() < right.getSortFactor())
-        {
             return true;
-        }
         else
-        {
             return false;
-        }
     }
     else if (!left.cached && right.cached)
-    {
         return false;
-    }
     else
     {
         // left.cached && !right.cached // always less
@@ -263,14 +248,10 @@ void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
     title = "";
     const std::string::size_type pos = addr.find_first_of(';');
     if (pos == std::string::npos)
-    {
         return;
-    }
     const std::string::size_type tpos = pos + 2; // skip the ';' and ' '
     if (addr.size() > tpos)
-    {
         title = addr.substr(tpos);
-    }
     addr.resize(pos);
 }
 
@@ -279,6 +260,6 @@ void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

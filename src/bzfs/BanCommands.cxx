@@ -32,7 +32,7 @@ class KickCommand : ServerCommand
 public:
     KickCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -41,7 +41,7 @@ class KillCommand : ServerCommand
 public:
     KillCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -50,7 +50,7 @@ class BanListCommand : ServerCommand
 public:
     BanListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -59,7 +59,7 @@ class CheckIPCommand : ServerCommand
 public:
     CheckIPCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -68,7 +68,7 @@ class HostbanListCommand : ServerCommand
 public:
     HostbanListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -77,7 +77,7 @@ class IdBanListCommand : ServerCommand
 public:
     IdBanListCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -86,7 +86,7 @@ class BanCommand : ServerCommand
 public:
     BanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -95,7 +95,7 @@ class HostbanCommand : ServerCommand
 public:
     HostbanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -104,7 +104,7 @@ class IdBanCommand : ServerCommand
 public:
     IdBanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -113,7 +113,7 @@ class UnbanCommand : ServerCommand
 public:
     UnbanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -122,7 +122,7 @@ class HostUnbanCommand : ServerCommand
 public:
     HostUnbanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -131,7 +131,7 @@ class IdUnbanCommand : ServerCommand
 public:
     IdUnbanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -140,7 +140,7 @@ class MuteCommand : ServerCommand
 public:
     MuteCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -149,7 +149,7 @@ class UnmuteCommand : ServerCommand
 public:
     UnmuteCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
@@ -167,61 +167,61 @@ class MasterBanCommand : ServerCommand
 public:
     MasterBanCommand();
 
-    virtual bool operator() (const char	 *commandLine,
+    virtual bool operator() (const char  *commandLine,
                              GameKeeper::Player *playerData);
 };
 
-static KickCommand	  kickCommand;
-static KillCommand	  killCommand;
-static CheckIPCommand	  checkIPCommand;
-static BanCommand	  banCommand;
-static UnbanCommand	  unbanCommand;
-static BanListCommand	  banListCommand;
-static HostbanCommand	  hostbanCommand;
+static KickCommand    kickCommand;
+static KillCommand    killCommand;
+static CheckIPCommand     checkIPCommand;
+static BanCommand     banCommand;
+static UnbanCommand   unbanCommand;
+static BanListCommand     banListCommand;
+static HostbanCommand     hostbanCommand;
 static HostUnbanCommand   hostUnbanCommand;
 static HostbanListCommand hostbanListCommand;
-static IdBanCommand	  idBanCommand;
+static IdBanCommand   idBanCommand;
 static IdUnbanCommand     idUnbanCommand;
 static IdBanListCommand   idBanListCommand;
-static MuteCommand	  muteCommand;
-static UnmuteCommand	  unmuteCommand;
-static MuteListCommand	  muteListCommand;
+static MuteCommand    muteCommand;
+static UnmuteCommand      unmuteCommand;
+static MuteListCommand    muteListCommand;
 static MasterBanCommand   masterBanCommand;
 
-KickCommand::KickCommand()		 : ServerCommand("/kick",
+KickCommand::KickCommand()       : ServerCommand("/kick",
             "<#slot|PlayerName|\"Player Name\"> <reason> - kick the player off the server") {}
-KillCommand::KillCommand()		 : ServerCommand("/kill",
+KillCommand::KillCommand()       : ServerCommand("/kill",
             "<#slot|PlayerName|\"Player Name\"> [reason] - kill a player") {}
-BanListCommand::BanListCommand()	 : ServerCommand("/banlist",
+BanListCommand::BanListCommand()     : ServerCommand("/banlist",
             "[pattern] - List the IPs currently banned from this server") {}
-CheckIPCommand::CheckIPCommand()	 : ServerCommand("/checkip",
+CheckIPCommand::CheckIPCommand()     : ServerCommand("/checkip",
             "<ip> - check if IP is banned and print corresponding ban info") {}
-BanCommand::BanCommand()		 : ServerCommand("/ban",
+BanCommand::BanCommand()         : ServerCommand("/ban",
             "<#slot|PlayerName|\"Player Name\"|ip> <duration> <reason>  - ban a player, ip or ip range off the server") {}
-UnbanCommand::UnbanCommand()		 : ServerCommand("/unban",
+UnbanCommand::UnbanCommand()         : ServerCommand("/unban",
             "<ip> - remove a ip pattern from the ban list") {}
-HostbanCommand::HostbanCommand()	 : ServerCommand("/hostban",
+HostbanCommand::HostbanCommand()     : ServerCommand("/hostban",
             "<host pattern> [duration] [reason] - ban using host pattern off the server") {}
 HostUnbanCommand::HostUnbanCommand()     : ServerCommand("/hostunban",
             "<host pattern> - remove a host pattern from the host ban list") {}
 HostbanListCommand::HostbanListCommand() : ServerCommand("/hostbanlist",
             "[pattern] - List the host patterns currently banned from this server") {}
-IdBanCommand::IdBanCommand()		 : ServerCommand("/idban",
+IdBanCommand::IdBanCommand()         : ServerCommand("/idban",
             "<#slot|+id|PlayerName|\"Player Name\"> <duration> <reason> - ban using BZID") {}
-IdUnbanCommand::IdUnbanCommand()	 : ServerCommand("/idunban",
+IdUnbanCommand::IdUnbanCommand()     : ServerCommand("/idunban",
             "<id> - remove a BZID from the ban list") {}
-IdBanListCommand::IdBanListCommand():	 ServerCommand("/idbanlist",
+IdBanListCommand::IdBanListCommand():    ServerCommand("/idbanlist",
             "[pattern] - List the BZIDs currently banned from this server") {}
-MuteCommand::MuteCommand()		 : ServerCommand("/mute",
+MuteCommand::MuteCommand()       : ServerCommand("/mute",
             "<#slot|PlayerName|\"Player Name\"> - remove the ability for a player to communicate with other players") {}
-UnmuteCommand::UnmuteCommand()		 : ServerCommand("/unmute",
+UnmuteCommand::UnmuteCommand()       : ServerCommand("/unmute",
             "<#slot|PlayerName|\"Player Name\"> - restore the TALK permission to a previously muted player") {}
-MuteListCommand::MuteListCommand()	 : ServerCommand("/mutelist",
+MuteListCommand::MuteListCommand()   : ServerCommand("/mutelist",
             "list the players current muted") {}
-MasterBanCommand::MasterBanCommand()	 : ServerCommand("/masterban",
+MasterBanCommand::MasterBanCommand()     : ServerCommand("/masterban",
             "<flush|reload|list> - manage the masterban list") {}
 
-bool MuteCommand::operator() (const char	 *message,
+bool MuteCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -290,7 +290,7 @@ bool MuteCommand::operator() (const char	 *message,
     return true;
 }
 
-bool UnmuteCommand::operator() (const char	 *message,
+bool UnmuteCommand::operator() (const char   *message,
                                 GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -380,15 +380,13 @@ bool MuteListCommand::operator() (const char * UNUSED(message),
         if (iPlayerData)
         {
             if (!iPlayerData->accessInfo.hasPerm(PlayerAccessInfo::talk))
-            {
                 sendMessage(ServerPlayer, t, iPlayerData->player.getCallSign());
-            }
         }
     }
     return true;
 }
 
-bool KickCommand::operator() (const char	 *message,
+bool KickCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -476,7 +474,7 @@ bool KickCommand::operator() (const char	 *message,
     return true;
 }
 
-bool KillCommand::operator() (const char	 *message,
+bool KillCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -662,9 +660,7 @@ static void addNamePrefix(std::string& reason, const std::string& name)
 {
     // add the name prefix if the name isn't already contained
     if (strstr(reason.c_str(), name.c_str()) == NULL)
-    {
         reason = "(" + name + ") " + reason;
-    }
     return;
 }
 
@@ -719,7 +715,7 @@ static bool doBanKick(GameKeeper::Player *victim,
 }
 
 
-bool BanCommand::operator() (const char	 *message,
+bool BanCommand::operator() (const char  *message,
                              GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -800,18 +796,14 @@ bool BanCommand::operator() (const char	 *message,
                          " using default ban time");
         }
         else
-        {
             durationInt = specifiedDuration;
-        }
     }
 
     // set the ban reason
     std::string reason;
     reason = argv[3];
     if (victimPlayer)
-    {
         addNamePrefix(reason, victimPlayer->player.getCallSign());
-    }
 
     // call any plugin events registered for /ban
     bz_BanEventData_V1 banEvent;
@@ -821,9 +813,7 @@ bool BanCommand::operator() (const char	 *message,
     banEvent.duration = durationInt;
     // if we know for sure who is to be banned, submit it
     if (victim >= 0)
-    {
         banEvent.banneeID = victim;
-    }
     worldEventManager.callEvents(bz_eBanEvent,&banEvent);
 
     // a plugin might have changed bannerID
@@ -941,18 +931,14 @@ bool HostbanCommand::operator() (const char* message,
                              " using default ban time");
             }
             else
-            {
                 durationInt = specifiedDuration;
-            }
         }
     }
 
     // set the ban reason
     std::string reason;
     if (argv.size() == 4)
-    {
         reason = argv[3];
-    }
 
     // call any plugin events registered for /hostban
     bz_HostBanEventData_V1 hostBanEvent;
@@ -1085,17 +1071,13 @@ bool IdBanCommand::operator() (const char* message,
                          " using default ban time");
         }
         else
-        {
             durationInt = specifiedDuration;
-        }
     }
 
     // set the ban reason
     std::string reason = argv[3];
     if (victimPlayer)
-    {
         addNamePrefix(reason, victimPlayer->player.getCallSign());
-    }
 
     // remove the victim if we have one
     if (victimPlayer)
@@ -1123,7 +1105,7 @@ bool IdBanCommand::operator() (const char* message,
 }
 
 
-bool UnbanCommand::operator() (const char	 *message,
+bool UnbanCommand::operator() (const char    *message,
                                GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1140,14 +1122,12 @@ bool UnbanCommand::operator() (const char	 *message,
         clOptions->acl.save();
     }
     else
-    {
         sendMessage(ServerPlayer, t, "No pattern removed");
-    }
     return true;
 }
 
 
-bool HostUnbanCommand::operator() (const char	 *message,
+bool HostUnbanCommand::operator() (const char    *message,
                                    GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1164,9 +1144,7 @@ bool HostUnbanCommand::operator() (const char	 *message,
         clOptions->acl.save();
     }
     else
-    {
         sendMessage(ServerPlayer, t, "No pattern removed");
-    }
     return true;
 }
 
@@ -1188,20 +1166,18 @@ bool IdUnbanCommand::operator() (const char *message,
         clOptions->acl.save();
     }
     else
-    {
         sendMessage(ServerPlayer, t, "No pattern removed");
-    }
     return true;
 }
 
 
 /** /masterban command
  *
- * /masterban flush	     # remove all master ban entries from this server
- * /masterban reload	    # reread and reload all master ban entries
- * /masterban list	      # output a list of who is banned
+ * /masterban flush      # remove all master ban entries from this server
+ * /masterban reload        # reread and reload all master ban entries
+ * /masterban list        # output a list of who is banned
  */
-bool MasterBanCommand::operator() (const char	 *message,
+bool MasterBanCommand::operator() (const char    *message,
                                    GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
@@ -1238,16 +1214,12 @@ bool MasterBanCommand::operator() (const char	 *message,
     size_t start = 0;
     while ((start < argument.size()) &&
             (isspace(argument[start])))
-    {
         start++;
-    }
 
     size_t end = 0;
     while ((end < argument.size()) &&
             (!isspace(argument[end])))
-    {
         end++;
-    }
 
     // make sure the command is lower case for comparison
     // simplicity/insensitivity
@@ -1269,15 +1241,13 @@ bool MasterBanCommand::operator() (const char	 *message,
 
         if (clOptions->publicizeServer && !clOptions->suppressMasterBanList)
         {
-            MasterBanList	banList;
+            MasterBanList   banList;
 
             sendMessage(ServerPlayer, t, "Previous master ban list entries have been flushed, reloading in background");
             bz_reloadMasterBans();
         }
         else
-        {
             sendMessage(ServerPlayer, t, "No action taken.");
-        }
 
     }
     else if (cmd == "flush")
@@ -1309,10 +1279,8 @@ bool MasterBanCommand::operator() (const char	 *message,
 
         }
         else if (bans.empty())
-        {
             sendMessage(ServerPlayer, t, "There are no master bans loaded.");
 
-        }
         else
         {
             // print out a list header
@@ -1320,9 +1288,7 @@ bool MasterBanCommand::operator() (const char	 *message,
                                                    DefaultMasterBanURL);
             sendMessage(ServerPlayer, t, banmsg.c_str());
             for (size_t i = 0; i < banmsg.size(); i++)
-            {
                 banmsg[i] = '-';
-            }
             sendMessage(ServerPlayer, t, banmsg.c_str());
         }
 
@@ -1357,6 +1323,6 @@ bool MasterBanCommand::operator() (const char	 *message,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

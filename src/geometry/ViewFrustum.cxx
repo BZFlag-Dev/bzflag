@@ -29,32 +29,32 @@ ViewFrustum::~ViewFrustum()
     // do nothing
 }
 
-void			ViewFrustum::executeProjection() const
+void            ViewFrustum::executeProjection() const
 {
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(projectionMatrix);
     glMatrixMode(GL_MODELVIEW);
 }
 
-void			ViewFrustum::executeDeepProjection() const
+void            ViewFrustum::executeDeepProjection() const
 {
     glMatrixMode(GL_PROJECTION);
     glLoadMatrixf(deepProjectionMatrix);
     glMatrixMode(GL_MODELVIEW);
 }
 
-void			ViewFrustum::executeView() const
+void            ViewFrustum::executeView() const
 {
     glMultMatrixf(viewMatrix);
 }
 
-void			ViewFrustum::executeOrientation() const
+void            ViewFrustum::executeOrientation() const
 {
     glMultMatrixf(viewMatrix);
     glTranslatef(eye[0], eye[1], eye[2]);
 }
 
-void			ViewFrustum::executeBillboard() const
+void            ViewFrustum::executeBillboard() const
 {
     glMultMatrixf(billboardMatrix);
 }
@@ -63,6 +63,6 @@ void			ViewFrustum::executeBillboard() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -35,22 +35,22 @@ class LocalPlayer : public BaseLocalPlayer
 public:
     enum FiringStatus
     {
-        Deceased,		// can't shoot cos I'm dead
-        Ready,		// ready to shoot
-        Loading,		// reloading
-        Sealed,		// I'm inside a building
-        Zoned		// I'm zoned
+        Deceased,       // can't shoot cos I'm dead
+        Ready,      // ready to shoot
+        Loading,        // reloading
+        Sealed,     // I'm inside a building
+        Zoned       // I'm zoned
     };
     enum Location
     {
-        Dead,		// dead, explosion over
-        Exploding,		// dead and exploding
-        OnGround,		// playing on ground
-        InBuilding,		// playing in building
-        OnBuilding,		// playing on building
-        InAir		// playing in air
+        Dead,       // dead, explosion over
+        Exploding,      // dead and exploding
+        OnGround,       // playing on ground
+        InBuilding,     // playing in building
+        OnBuilding,     // playing on building
+        InAir       // playing in air
     };
-    enum InputMethod  	// what device am I using to move around
+    enum InputMethod    // what device am I using to move around
     {
         Keyboard = 0,
         Mouse,
@@ -61,120 +61,120 @@ public:
                 const char* name, const char* motto);
     ~LocalPlayer();
 
-    Location	getLocation() const;
-    FiringStatus	getFiringStatus() const;
-    float		getFlagShakingTime() const;
-    int		getFlagShakingWins() const;
-    const float*	getAntidoteLocation() const;
-    ShotPath*	getShot(int index) const;
-    const Player*	getTarget() const;
-    int		getDeathPhysicsDriver() const;
+    Location    getLocation() const;
+    FiringStatus    getFiringStatus() const;
+    float       getFlagShakingTime() const;
+    int     getFlagShakingWins() const;
+    const float*    getAntidoteLocation() const;
+    ShotPath*   getShot(int index) const;
+    const Player*   getTarget() const;
+    int     getDeathPhysicsDriver() const;
     const std::vector<const Obstacle*>& getInsideBuildings() const;
 
-    void		setTeam(TeamColor);
-    void		setDesiredSpeed(float fracOfMaxSpeed);
-    void		setDesiredAngVel(float fracOfMaxAngVel);
-    void		setPause(bool = true);
-    void		activateAutoPilot(bool = true);
-    bool		fireShot();
-    void		purgeShots() const;
-    void		explodeTank();
-    void		doJump();
-    void		setJump();
-    void		setJumpPressed(bool value);
-    void		setTarget(const Player*);
+    void        setTeam(TeamColor);
+    void        setDesiredSpeed(float fracOfMaxSpeed);
+    void        setDesiredAngVel(float fracOfMaxAngVel);
+    void        setPause(bool = true);
+    void        activateAutoPilot(bool = true);
+    bool        fireShot();
+    void        purgeShots() const;
+    void        explodeTank();
+    void        doJump();
+    void        setJump();
+    void        setJumpPressed(bool value);
+    void        setTarget(const Player*);
 
-    float		getReloadTime() const;
+    float       getReloadTime() const;
 
 
-    void		setNemesis(const Player*);
-    const Player*	getNemesis() const;
+    void        setNemesis(const Player*);
+    const Player*   getNemesis() const;
 
-    void		setRecipient(const Player*);
-    const Player*	getRecipient() const;
+    void        setRecipient(const Player*);
+    const Player*   getRecipient() const;
 
-    void		restart(const float* pos, float azimuth);
-    bool		checkHit(const Player* source, const ShotPath*& hit,
+    void        restart(const float* pos, float azimuth);
+    bool        checkHit(const Player* source, const ShotPath*& hit,
                          float& minTime) const;
-    void		setFlag(FlagType*);
-    void		changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void        setFlag(FlagType*);
+    void        changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
-    void		addAntidote(SceneDatabase*);
+    void        addAntidote(SceneDatabase*);
 
-    InputMethod	getInputMethod() const;
-    void		setInputMethod(InputMethod newInput);
-    void		setInputMethod(std::string newInput);
-    static std::string	getInputMethodName(InputMethod whatInput);
-    bool		queryInputChange();
-    void		setKey(int button, bool pressed);
-    int		getRotation();
-    int		getSpeed();
-    bool		isSpawning();
-    void		setSpawning( bool spawn );
+    InputMethod getInputMethod() const;
+    void        setInputMethod(InputMethod newInput);
+    void        setInputMethod(std::string newInput);
+    static std::string  getInputMethodName(InputMethod whatInput);
+    bool        queryInputChange();
+    void        setKey(int button, bool pressed);
+    int     getRotation();
+    int     getSpeed();
+    bool        isSpawning();
+    void        setSpawning( bool spawn );
 
 
-    static LocalPlayer*	getMyTank();
-    static void		setMyTank(LocalPlayer*);
+    static LocalPlayer* getMyTank();
+    static void     setMyTank(LocalPlayer*);
 
-    const Obstacle*	getHitBuilding(const float* pos, float angle,
+    const Obstacle* getHitBuilding(const float* pos, float angle,
                                    bool phased, bool& expel) const;
-    const Obstacle*	getHitBuilding(const float* oldPos, float oldAngle,
+    const Obstacle* getHitBuilding(const float* oldPos, float oldAngle,
                                    const float* pos, float angle,
                                    bool phased, bool& expel);
-    bool		getHitNormal(const Obstacle* o,
+    bool        getHitNormal(const Obstacle* o,
                              const float* pos1, float azimuth1,
                              const float* pos2, float azimuth2,
                              float* normal) const;
 
 protected:
-    bool		doEndShot(int index, bool isHit, float* pos);
-    void		doUpdate(float dt);
-    void		doUpdateMotion(float dt);
-    void		doMomentum(float dt, float& speed, float& angVel);
-    void		doFriction(float dt, const float *oldVelocity, float *newVelocity);
-    void		doForces(float dt, float* velocity, float& angVel);
-    LocalShotPath**	shots;
-    bool	  gettingSound;
-    ServerLink*	server;
+    bool        doEndShot(int index, bool isHit, float* pos);
+    void        doUpdate(float dt);
+    void        doUpdateMotion(float dt);
+    void        doMomentum(float dt, float& speed, float& angVel);
+    void        doFriction(float dt, const float *oldVelocity, float *newVelocity);
+    void        doForces(float dt, float* velocity, float& angVel);
+    LocalShotPath** shots;
+    bool      gettingSound;
+    ServerLink* server;
 
 private:
-    void		doSlideMotion(float dt, float slideTime,
+    void        doSlideMotion(float dt, float slideTime,
                               float newAngVel, float* newVelocity);
-    float		getNewAngVel(float old, float desired);
-    void		collectInsideBuildings();
+    float       getNewAngVel(float old, float desired);
+    void        collectInsideBuildings();
 
 private:
-    int		numShots;
-    Location	location;
-    FiringStatus	firingStatus;
-    TimeKeeper	bounceTime;
-    TimeKeeper	agilityTime;
-    float		flagShakingTime;
-    int		flagShakingWins;
-    float		flagAntidotePos[3];
-    FlagSceneNode*	antidoteFlag;
-    float		desiredSpeed;
-    float		desiredAngVel;
-    float		lastSpeed;
-    float		crossingPlane[4];
-    bool		anyShotActive;
-    const Player*	target;
-    const Player*	nemesis;
-    const Player*	recipient;
-    static LocalPlayer*	mainPlayer;
-    InputMethod	inputMethod;
-    bool		inputChanged;
-    int		stuckFrameCount;
-    bool		spawning;
-    int		wingsFlapCount;
-    bool		left;
-    bool		right;
-    bool		up;
-    bool		down;
-    bool		entryDrop; // first drop since entering
-    bool		wantJump;
-    bool		jumpPressed;
-    int		deathPhyDrv;	// physics driver that caused death
+    int     numShots;
+    Location    location;
+    FiringStatus    firingStatus;
+    TimeKeeper  bounceTime;
+    TimeKeeper  agilityTime;
+    float       flagShakingTime;
+    int     flagShakingWins;
+    float       flagAntidotePos[3];
+    FlagSceneNode*  antidoteFlag;
+    float       desiredSpeed;
+    float       desiredAngVel;
+    float       lastSpeed;
+    float       crossingPlane[4];
+    bool        anyShotActive;
+    const Player*   target;
+    const Player*   nemesis;
+    const Player*   recipient;
+    static LocalPlayer* mainPlayer;
+    InputMethod inputMethod;
+    bool        inputChanged;
+    int     stuckFrameCount;
+    bool        spawning;
+    int     wingsFlapCount;
+    bool        left;
+    bool        right;
+    bool        up;
+    bool        down;
+    bool        entryDrop; // first drop since entering
+    bool        wantJump;
+    bool        jumpPressed;
+    int     deathPhyDrv;    // physics driver that caused death
     std::vector<const Obstacle*> insideBuildings;
 };
 
@@ -204,7 +204,7 @@ inline const Player* LocalPlayer::getRecipient() const
     return recipient;
 }
 
-inline int		LocalPlayer::getDeathPhysicsDriver() const
+inline int      LocalPlayer::getDeathPhysicsDriver() const
 {
     return deathPhyDrv;
 }
@@ -283,6 +283,6 @@ inline LocalPlayer* LocalPlayer::getMyTank()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

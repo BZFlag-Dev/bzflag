@@ -41,8 +41,8 @@
  * random.
  */
 
-#ifndef	BZF_FLAG_H
-#define	BZF_FLAG_H
+#ifndef BZF_FLAG_H
+#define BZF_FLAG_H
 
 #include "common.h"
 
@@ -102,7 +102,7 @@ enum ShotType
     SpecialShot = 1
 };
 
-const int		FlagPLen = 55;
+const int       FlagPLen = 55;
 
 class FlagType;
 typedef std::map<std::string, FlagType*> FlagTypeMap;
@@ -131,9 +131,7 @@ public:
          * std::set compiler bug of making flagSets a fixed array.
          */
         if (flagSets == NULL)
-        {
             flagSets = new FlagSet[NumQualities];
-        }
 
         if (custom)
             customFlags.insert(this);
@@ -176,7 +174,7 @@ public:
     const std::string flagName;
     const std::string flagAbbv;
     const std::string flagHelp;
-    FlagEndurance	endurance;
+    FlagEndurance   endurance;
     FlagQuality flagQuality;
     ShotType flagShot;
     TeamColor flagTeam;
@@ -225,14 +223,14 @@ public:
 
     FlagType* type;
     FlagStatus status;
-    FlagEndurance	endurance;
-    PlayerId owner;		// who has flag
-    float position[3];		// position on ground
-    float launchPosition[3];	// position flag launched from
-    float landingPosition[3];	// position flag will land
-    float flightTime;		// flight time so far
-    float flightEnd;		// total duration of flight
-    float initialVelocity;	// initial launch velocity
+    FlagEndurance   endurance;
+    PlayerId owner;     // who has flag
+    float position[3];      // position on ground
+    float launchPosition[3];    // position flag launched from
+    float landingPosition[3];   // position flag will land
+    float flightTime;       // flight time so far
+    float flightEnd;        // total duration of flight
+    float initialVelocity;  // initial launch velocity
 };
 
 /** Flags no longer use enumerated IDs. Over the wire, flags are all
@@ -271,6 +269,6 @@ void clearCustomFlags();
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

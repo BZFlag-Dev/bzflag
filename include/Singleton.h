@@ -15,12 +15,12 @@
 
 /* system headers */
 #ifdef HAVE_ATEXIT
-#	ifdef HAVE_CSTDLIB
+#   ifdef HAVE_CSTDLIB
 #include <cstdlib>
 using std::atexit;
-#	else
+#   else
 #include <stdlib.h>
-#	endif
+#   endif
 #endif
 
 /* Singleton template class
@@ -134,6 +134,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -52,7 +52,7 @@ void initConfigData(void)
     configViewValues.push_back(std::string("interlaced"));
 }
 
-std::string	getOldConfigFileName(void)
+std::string getOldConfigFileName(void)
 {
 #if !defined(_WIN32)
 
@@ -89,8 +89,8 @@ std::string	getOldConfigFileName(void)
 #endif /* !defined(_WIN32) */
 }
 
-#if !defined(_WIN32)		// who uses this sucker any more?
-static std::string	getReallyOldConfigFileName()
+#if !defined(_WIN32)        // who uses this sucker any more?
+static std::string  getReallyOldConfigFileName()
 {
     std::string name = getConfigDirName();
     name += "config";
@@ -179,7 +179,7 @@ void findConfigFile(void)
         // copy the old config to the new dir location with the new name
         CopyFile(oldConfigName.c_str(), configName.c_str(), true);
     }
-#else	// the other OSs should do what they need to do
+#else   // the other OSs should do what they need to do
     copyConfigFile(oldConfigName.c_str(), configName);
 #endif
 
@@ -194,7 +194,7 @@ void findConfigFile(void)
 
 void updateConfigFile(void)
 {
-    int		configVersion = 0;
+    int     configVersion = 0;
     if (BZDB.isSet("config_version"))
         configVersion = BZDB.evalInt("config_version");
 
@@ -263,26 +263,24 @@ void updateConfigFile(void)
 
     if (configVersion <= 3)     // Upgrade from 2.0.x to 2.4.0
     {
-        if (BZDB.isSet("email"))  	// Convert from email to motto
+        if (BZDB.isSet("email"))    // Convert from email to motto
         {
-            std::string email = BZDB.get("email");	// If the email is set, see if we should convert it
+            std::string email = BZDB.get("email");  // If the email is set, see if we should convert it
             // If the email is set and does not contain an @ sign, move it to motto
             if (!email.empty() && email.find('@') == std::string::npos)
-            {
                 BZDB.set("motto", email);
-            }
-            BZDB.unset("email");	// discard email string from before version 2.4
+            BZDB.unset("email");    // discard email string from before version 2.4
         }
         if (BZDB.isSet("emailDispLen"))
         {
             BZDB.set("mottoDispLen", BZDB.get("emailDispLen"));
-            BZDB.unset("emailDispLen");	// discard setting from before version 2.4
+            BZDB.unset("emailDispLen"); // discard setting from before version 2.4
         }
 
         if (BZDB.isSet("hideEmails"))
         {
             BZDB.setBool("hideMottos", BZDB.isTrue("hideEmails"));
-            BZDB.unset("hideEmails");	// discard setting from before version 2.4
+            BZDB.unset("hideEmails");   // discard setting from before version 2.4
         }
 
         // Get rid of geometry and lastScreenshot settings
@@ -295,9 +293,9 @@ void updateConfigFile(void)
 
     if (configVersion <= 4)   // Upgrade 2.4.0 (or 2.4.2, since the config file version was not incremented) to 2.4.4
     {
-        BZDB.unset("displayZoom");		// removed in r22109
-        BZDB.unset("radarShotLineType");	// existed only in r22117
-        BZDB.unset("serifFont");		// serif font was removed
+        BZDB.unset("displayZoom");      // removed in r22109
+        BZDB.unset("radarShotLineType");    // existed only in r22117
+        BZDB.unset("serifFont");        // serif font was removed
         // Reset the list server URL so that people who have switched to another
         // URL gets reset back to the new HTTPS URL
         BZDB.set("list", BZDB.getDefault("list"));
@@ -323,6 +321,6 @@ void updateConfigFile(void)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

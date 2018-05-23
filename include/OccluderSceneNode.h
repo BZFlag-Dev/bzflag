@@ -11,12 +11,12 @@
  */
 
 /* OccluderSceneNode:
- *	Encapsulates information for an occluder
+ *  Encapsulates information for an occluder
  *      plane. Occluders are never rendered.
  */
 
-#ifndef	BZF_OCCLUDER_SCENE_NODE_H
-#define	BZF_OCCLUDER_SCENE_NODE_H
+#ifndef BZF_OCCLUDER_SCENE_NODE_H
+#define BZF_OCCLUDER_SCENE_NODE_H
 
 #include "common.h"
 

@@ -35,31 +35,31 @@ public:
     GuidedMissileStrategy(ShotPath*);
     ~GuidedMissileStrategy();
 
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate(uint16_t, const void*);
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		expire();
-    void		radarRender() const;
+    void        update(float dt);
+    float       checkHit(const BaseLocalPlayer*, float[3]) const;
+    void        sendUpdate(const FiringInfo&) const;
+    void        readUpdate(uint16_t, const void*);
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        expire();
+    void        radarRender() const;
 
 private:
-    float		checkBuildings(const Ray& ray);
+    float       checkBuildings(const Ray& ray);
 
 private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
-    std::vector<ShotPathSegment>	segments;
-    int			renderTimes;
-    float		azimuth;
-    float		elevation;
-    float		nextPos[3];
-    BoltSceneNode*	ptSceneNode;
+    TimeKeeper      prevTime;
+    TimeKeeper      currentTime;
+    std::vector<ShotPathSegment>    segments;
+    int         renderTimes;
+    float       azimuth;
+    float       elevation;
+    float       nextPos[3];
+    BoltSceneNode*  ptSceneNode;
 
-    float	puffTime,rootPuff;
+    float   puffTime,rootPuff;
     TimeKeeper lastPuff;
-    mutable bool	needUpdate;
-    PlayerId		lastTarget;
+    mutable bool    needUpdate;
+    PlayerId        lastTarget;
 };
 
 
@@ -69,6 +69,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

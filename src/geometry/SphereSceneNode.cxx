@@ -284,29 +284,21 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
 
     float distSqr = (dx*dx) + (dy*dy) + (dz*dz);
     if (distSqr <= 0.0f)
-    {
         distSqr = 1.0e-6f;
-    }
 
     const float lpp = renderer.getLengthPerPixel();
     float ppl;
     if (lpp <= 0.0f)
-    {
         ppl = +MAXFLOAT;
-    }
     else
-    {
         ppl = 1.0f / lpp;
-    }
     const float pixelsSqr = (s[3] * (ppl * ppl)) / distSqr;
 
     int lod;
     for (lod = 0; lod < (sphereLods - 1); lod++)
     {
         if (lodPixelsSqr[lod] < pixelsSqr)
-        {
             break;
-        }
     }
     renderNode.setLod(lod);
 
@@ -397,13 +389,9 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
             if (transparent)
             {
                 if (BZDBCache::blend)
-                {
                     glDisable(GL_BLEND);
-                }
                 else
-                {
                     myStipple(1.0f);
-                }
             }
             glDisable(GL_LIGHTING);
 
@@ -430,13 +418,9 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
             if (transparent)
             {
                 if (BZDBCache::blend)
-                {
                     glEnable(GL_BLEND);
-                }
                 else
-                {
                     myStipple(0.5f);
-                }
             }
             glEnable(GL_LIGHTING);
         }
@@ -444,9 +428,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
         // draw the surface
         myColor4fv(sceneNode->color);
         if (stippled)
-        {
             myStipple(sceneNode->color[3]);
-        }
         if (!stippled)
         {
             glCullFace(GL_FRONT);
@@ -467,9 +449,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
             addTriangleCount(2);
         }
         if (stippled)
-        {
             myStipple(0.5f);
-        }
     }
     glPopMatrix();
 
@@ -491,8 +471,8 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 // SphereBspSceneNode
 //
 
-const int		NumSlices = 2 * SphereRes;
-const int		NumParts = SphereLowRes * SphereLowRes;
+const int       NumSlices = 2 * SphereRes;
+const int       NumParts = SphereLowRes * SphereLowRes;
 
 SphereBspSceneNode::SphereBspSceneNode(const GLfloat pos[3], GLfloat _radius) :
     SphereSceneNode(pos, _radius),
@@ -511,7 +491,7 @@ SphereBspSceneNode::~SphereBspSceneNode()
     }
 }
 
-SceneNode**		SphereBspSceneNode::getParts(int& numParts)
+SceneNode**     SphereBspSceneNode::getParts(int& numParts)
 {
     if (!parts)
     {
@@ -535,7 +515,7 @@ SceneNode**		SphereBspSceneNode::getParts(int& numParts)
     return (SceneNode**)parts;
 }
 
-void			SphereBspSceneNode::addRenderNodes(
+void            SphereBspSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     const GLfloat* mySphere = getSphere();
@@ -558,7 +538,7 @@ void			SphereBspSceneNode::addRenderNodes(
     renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void			SphereBspSceneNode::addShadowNodes(SceneRenderer& UNUSED(renderer))
+void            SphereBspSceneNode::addShadowNodes(SceneRenderer& UNUSED(renderer))
 {
     return;
     /*
@@ -572,9 +552,9 @@ void			SphereBspSceneNode::addShadowNodes(SceneRenderer& UNUSED(renderer))
 // SphereBspSceneNode::SphereBspRenderNode
 //
 
-GLfloat			SphereBspSceneNode::SphereBspRenderNode::
+GLfloat         SphereBspSceneNode::SphereBspRenderNode::
 geom[NumSlices * (SphereRes + 1)][3];
-GLfloat			SphereBspSceneNode::SphereBspRenderNode::
+GLfloat         SphereBspSceneNode::SphereBspRenderNode::
 lgeom[SphereLowRes * (SphereLowRes + 1)][3];
 
 SphereBspSceneNode::SphereBspRenderNode::SphereBspRenderNode(
@@ -623,19 +603,19 @@ SphereBspSceneNode::SphereBspRenderNode::~SphereBspRenderNode()
     // do nothing
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::
+void            SphereBspSceneNode::SphereBspRenderNode::
 setHighResolution(bool _highResolution)
 {
     highResolution = _highResolution;
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::
+void            SphereBspSceneNode::SphereBspRenderNode::
 setBaseIndex(int _baseIndex)
 {
     baseIndex = _baseIndex;
 }
 
-void			SphereBspSceneNode::SphereBspRenderNode::render()
+void            SphereBspSceneNode::SphereBspRenderNode::render()
 {
     static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
 
@@ -783,7 +763,7 @@ SphereFragmentSceneNode::~SphereFragmentSceneNode()
     // do nothing
 }
 
-void			SphereFragmentSceneNode::move()
+void            SphereFragmentSceneNode::move()
 {
     const GLfloat* pSphere = parentSphere->getSphere();
     const GLfloat pRadius = parentSphere->getRadius();
@@ -795,13 +775,13 @@ void			SphereFragmentSceneNode::move()
               GLfloat(SphereLowRes * SphereLowRes));
 }
 
-void			SphereFragmentSceneNode::addRenderNodes
+void            SphereFragmentSceneNode::addRenderNodes
 (SceneRenderer& renderer)
 {
     renderer.addRenderNode(&renderNode, &parentSphere->gstate);
 }
 
-void			SphereFragmentSceneNode::addShadowNodes(
+void            SphereFragmentSceneNode::addShadowNodes(
     SceneRenderer& UNUSED(renderer))
 {
     return;
@@ -831,19 +811,19 @@ SphereFragmentSceneNode::FragmentRenderNode::~FragmentRenderNode()
     // do nothing
 }
 
-const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
+const GLfloat*      SphereFragmentSceneNode::FragmentRenderNode::
 getVertex() const
 {
     return SphereBspSceneNode::SphereBspRenderNode::lgeom[phi * SphereLowRes + theta];
 }
 
-const GLfloat*		SphereFragmentSceneNode::FragmentRenderNode::
+const GLfloat*      SphereFragmentSceneNode::FragmentRenderNode::
 getPosition() const
 {
     return sceneNode->getSphere();
 }
 
-void			SphereFragmentSceneNode::FragmentRenderNode::render()
+void            SphereFragmentSceneNode::FragmentRenderNode::render()
 {
     const GLfloat pRadius = sceneNode->getRadius();
     const GLfloat* pSphere = sceneNode->getSphere();
@@ -894,6 +874,6 @@ void			SphereFragmentSceneNode::FragmentRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

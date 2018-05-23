@@ -129,25 +129,25 @@ public:
     Help1Menu();
     ~Help1Menu() {}
 
-    void		resize(int width, int height);
+    void        resize(int width, int height);
 
-    void		onScan(const std::string& name, bool, const std::string&);
-    static void		onScanCB(const std::string& name, bool press,
+    void        onScan(const std::string& name, bool, const std::string&);
+    static void     onScanCB(const std::string& name, bool press,
                              const std::string& cmd, void* userData);
 
 protected:
-    float		getLeftSide(int width, int height);
+    float       getLeftSide(int width, int height);
 
 private:
-    void		initKeymap(const std::string& name, int index);
+    void        initKeymap(const std::string& name, int index);
     struct keymap
     {
-        int index;	// ui label index
+        int index;  // ui label index
         std::string key1;
         std::string key2;
     };
     typedef std::map<std::string, keymap> KeyKeyMap;
-    KeyKeyMap	mappable;
+    KeyKeyMap   mappable;
 };
 
 Help1Menu::Help1Menu() : HelpMenu("Controls")
@@ -278,9 +278,7 @@ void Help1Menu::resize(int _width, int _height)
     {
         std::string value = "";
         if (it->second.key1.empty())
-        {
             value = "<not mapped>";
-        }
         else
         {
             value += it->second.key1;
@@ -323,7 +321,8 @@ Help2Menu::Help2Menu() : HelpMenu("General")
     listHUD.push_back(createLabel("the white tank tries to stay alive while all other tanks try to hunt and kill it."));
     listHUD.push_back(createLabel("The object in capture-the-flag is to capture enemy flags while preventing opponents"));
     listHUD.push_back(createLabel(" from capturing yours.  In this style, each team (but not rogues) has a team base"));
-    listHUD.push_back(createLabel("and each team with at least one player has a team flag which has the color of the team."));
+    listHUD.push_back(
+        createLabel("and each team with at least one player has a team flag which has the color of the team."));
     listHUD.push_back(createLabel("To capture a flag, you must grab it and bring it back to your team base (you must be"));
     listHUD.push_back(createLabel("on the ground in your base to register the capture).  Capturing a flag destroys"));
     listHUD.push_back(createLabel("all the players on that team and gives your team score a bonus;  the players will"));
@@ -426,15 +425,13 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
         if (((*it)->flagQuality != FlagGood) ||
                 ((*it)->flagTeam != NoTeam) ||
                 (strcmp((*it)->flagName.c_str(),"") == 0))
-        {
             continue;
-        }
 
         listHUD.push_back(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()));
     }
 }
 
-float			Help5Menu::getLeftSide(int _width, int)
+float           Help5Menu::getLeftSide(int _width, int)
 {
     return 0.35f * _width;
 }
@@ -450,7 +447,7 @@ public:
     ~Help6Menu() {}
 
 protected:
-    float		getLeftSide(int width, int height);
+    float       getLeftSide(int width, int height);
 };
 
 Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
@@ -465,9 +462,7 @@ Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
         if (((*it)->flagQuality != FlagBad) ||
                 ((*it)->flagTeam != NoTeam) ||
                 (strcmp((*it)->flagName.c_str(),"") == 0))
-        {
             continue;
-        }
 
         listHUD.push_back(createLabel((*it)->flagHelp.c_str(), (*it)->label().c_str()));
     }
@@ -574,26 +569,20 @@ HelpMenu* HelpMenu::getHelpMenu(HUDDialog* dialog, bool next)
         if (dialog == helpMenus[i])
         {
             if (next)
-            {
                 return helpMenus[(i + 1) % numHelpMenus];
-            }
             else
-            {
                 return helpMenus[(i - 1 + numHelpMenus) % numHelpMenus];
-            }
         }
     }
     return next ? helpMenus[0] : helpMenus[numHelpMenus - 1];
 }
 
-void			HelpMenu::done()
+void            HelpMenu::done()
 {
     if (helpMenus)
     {
         for (int i = 0; i < numHelpMenus; i++)
-        {
             delete helpMenus[i];
-        }
         delete[] helpMenus;
         helpMenus = NULL;
     }
@@ -604,6 +593,6 @@ void			HelpMenu::done()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

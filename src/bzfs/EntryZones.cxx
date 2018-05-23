@@ -149,9 +149,7 @@ bool EntryZones::getClosePoint(const std::string &qual, const float pos[3],
     }
 
     if (closest == -1)
-    {
         return false;
-    }
 
     zones[closest].getRandomPoint(pt);
 
@@ -214,9 +212,7 @@ bool EntryZones::getSafetyPoint( const std::string &qualifier,
     }
 
     if (closest == -1)
-    {
         return false;
-    }
 
     const CustomZone *zone = &zones[closest];
     zone->getRandomPoint(pt);
@@ -249,21 +245,13 @@ void EntryZones::makeSplitLists (int zone,
                 int team;
                 FlagType *type;
                 if ((type = CustomZone::getFlagTypeFromQualifier(qual)) != Flags::Null)
-                {
                     flags.push_back(type);
-                }
                 else if ((team = CustomZone::getPlayerTeamFromQualifier(qual)) >= 0)
-                {
                     teams.push_back((TeamColor)team);
-                }
                 else if ((team = CustomZone::getFlagSafetyFromQualifier(qual)) >= 0)
-                {
                     safety.push_back((TeamColor)team);
-                }
                 else
-                {
                     printf ("EntryZones::makeSplitLists() ERROR on (%s)\n", mit->first.c_str());
-                }
             }
         }
     }
@@ -289,17 +277,11 @@ void * EntryZones::pack(void *buf) const
         buf = nboPackUShort(buf, (uint16_t)safety.size());
         unsigned int j;
         for (j = 0; j < flags.size(); j++)
-        {
             buf = flags[j]->pack(buf);
-        }
         for (j = 0; j < teams.size(); j++)
-        {
             buf = nboPackUShort(buf, teams[j]);
-        }
         for (j = 0; j < safety.size(); j++)
-        {
             buf = nboPackUShort(buf, safety[j]);
-        }
     }
     return buf;
 }
@@ -325,17 +307,11 @@ int EntryZones::packSize() const
         fullSize += sizeof(uint16_t); // safety count
         unsigned int j;
         for (j = 0; j < flags.size(); j++)
-        {
             fullSize += FlagType::packSize;
-        }
         for (j = 0; j < teams.size(); j++)
-        {
             fullSize += sizeof(uint16_t);
-        }
         for (j = 0; j < safety.size(); j++)
-        {
             fullSize += sizeof(uint16_t);
-        }
     }
 
     return fullSize;
@@ -346,6 +322,6 @@ int EntryZones::packSize() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -38,10 +38,10 @@ public:
     void resize(int width, int height);
     static void callback(HUDuiControl* w, const void* data);
 private:
-    FormatMenu*	formatMenu;
-    HUDuiControl*	videoFormat;
-    static int	gammaToIndex(float);
-    static float	indexToGamma(int);
+    FormatMenu* formatMenu;
+    HUDuiControl*   videoFormat;
+    static int  gammaToIndex(float);
+    static float    indexToGamma(int);
 };
 
 #endif /* __DISPLAYMENU_H__ */
@@ -50,6 +50,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,12 +11,12 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a pyramid building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a pyramid building.
  */
 
-#ifndef	BZF_EIGHTHD_PYR_SCENE_NODE_H
-#define	BZF_EIGHTHD_PYR_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_PYR_SCENE_NODE_H
+#define BZF_EIGHTHD_PYR_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
@@ -28,8 +28,8 @@ public:
                         const float size[3], float rotation);
     ~EighthDPyrSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
 protected:
     class EighthDPyrRenderNode : public RenderNode
@@ -39,18 +39,18 @@ protected:
                              const float pos[3],
                              const float size[3], float rotation);
         ~EighthDPyrRenderNode();
-        void		render();
-        const GLfloat*	getPosition() const
+        void        render();
+        const GLfloat*  getPosition() const
         {
             return sceneNode->getSphere();
         }
     private:
         const EighthDPyrSceneNode* sceneNode;
-        GLfloat		corner[5][3];
+        GLfloat     corner[5][3];
     };
 
 private:
-    OpenGLGState	 gstate;
+    OpenGLGState     gstate;
     EighthDPyrRenderNode renderNode;
 };
 
@@ -60,6 +60,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

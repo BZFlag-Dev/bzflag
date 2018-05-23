@@ -63,9 +63,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
         boltSceneNode->setTextureColor(1.0f, 1.0f, 1.0f, 0.3f);
     }
     else
-    {
         boltSceneNode->setColor(c[0], c[1], c[2], 1.0f);
-    }
 
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(team);
@@ -182,7 +180,7 @@ void  SegmentedShotStrategy::setCurrentTime(const
     currentTime = _currentTime;
 }
 
-const TimeKeeper&	SegmentedShotStrategy::getLastTime() const
+const TimeKeeper&   SegmentedShotStrategy::getLastTime() const
 {
     return lastTime;
 }
@@ -406,20 +404,18 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     const float    *v = shotPath.getVelocity();
     TimeKeeper      startTime = shotPath.getStartTime();
     float timeLeft = shotPath.getLifetime();
-    float	   minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
+    float      minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT)
                          / hypotf(v[0], hypotf(v[1], v[2]));
 
     // if all shots ricochet and obstacle effect is stop, then make it ricochet
     if (e == Stop && World::getWorld()->allShotsRicochet())
-    {
         e = Reflect;
-    }
 
     // prepare first segment
     float o[3], d[3];
     d[0] = v[0];
     d[1] = v[1];
-    d[2] = v[2];		// use v[2] to have jumping affect shot velocity
+    d[2] = v[2];        // use v[2] to have jumping affect shot velocity
     o[0] = shotPath.getPosition()[0];
     o[1] = shotPath.getPosition()[1];
     o[2] = shotPath.getPosition()[2];
@@ -463,33 +459,23 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
         if (!teleporter && building && (e == Reflect) &&
                 (building->getType() == WallObstacle::getClassName()) &&
                 ((o[2] + t * d[2]) > building->getHeight()))
-        {
             ignoreHit = true;
-        }
 
         // construct next shot segment and add it to list
         TimeKeeper endTime(startTime);
         if (t < 0.0f)
-        {
             endTime += Epsilon;
-        }
         else
-        {
             endTime += t;
-        }
         ShotPathSegment segm(startTime, endTime, rs, reason);
         segments.push_back(segm);
         startTime = endTime;
 
         // used up this much time in segment
         if (t < 0.0f)
-        {
             timeLeft -= Epsilon;
-        }
         else
-        {
             timeLeft -= t;
-        }
 
         // check in reverse order to see what we hit first
         reason = ShotPathSegment::Through;
@@ -546,9 +532,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
             }
 
             if (e == Through)
-            {
                 assert(0);
-            }
         }
         else if (hitGround)     // we hit the ground
         {
@@ -613,7 +597,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     }
 }
 
-const std::vector<ShotPathSegment>&	SegmentedShotStrategy::getSegments() const
+const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const
 {
     return segments;
 }
@@ -704,9 +688,7 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
             thiefNodes[i]->setTexture(texture);
 
         if (i == 0)
-        {
             thiefNodes[i]->setFirst();
-        }
 
         thiefNodes[i]->setColor(0, 1, 1);
         thiefNodes[i]->setCenterColor(0, 0, 0);
@@ -882,9 +864,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
         laserNodes[i]->setColor(color[0], color[1], color[2]);
 
         if (i == 0)
-        {
             laserNodes[i]->setFirst();
-        }
     }
     setCurrentSegment(numSegments - 1);
 }
@@ -938,6 +918,6 @@ bool  LaserStrategy::isStoppedByHit() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

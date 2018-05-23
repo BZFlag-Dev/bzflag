@@ -26,22 +26,22 @@ public:
     virtual ~PNGImageFile();
 
     /** This function returns the default extension of PNG image files. */
-    static std::string	getExtension();
+    static std::string  getExtension();
 
     /** Read image data from a PNG file. */
-    virtual bool		read(void* buffer);
+    virtual bool        read(void* buffer);
 private:
-    png_structp				png;
-    png_infop				pnginfo;
+    png_structp             png;
+    png_infop               pnginfo;
 
     // Storage for reading the image
-    png_bytep*				rowPtrs;
+    png_bytep*              rowPtrs;
 
-    png_uint_32				bitDepth;
-    png_uint_32				colorType;
-    png_uint_32				compressionMethod;
-    png_uint_32				filterMethod;
-    png_uint_32				interlaceMethod;
+    png_uint_32             bitDepth;
+    png_uint_32             colorType;
+    png_uint_32             compressionMethod;
+    png_uint_32             filterMethod;
+    png_uint_32             interlaceMethod;
 };
 
 #endif
@@ -50,6 +50,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -71,13 +71,9 @@ void AutoCompleter::unregisterWord(const std::string& str)
         std::vector<WordRecord>::iterator iter =
             std::lower_bound(words.begin(), words.end(), rec);
         if (iter != words.end() && *iter == rec)
-        {
             words.erase(iter);
-        }
         else
-        {
             return;
-        }
     }
 }
 
@@ -85,17 +81,13 @@ void AutoCompleter::unregisterWord(const std::string& str)
 std::string AutoCompleter::complete(const std::string& str, std::string* matches)
 {
     if (str.size() == 0)
-    {
         return str;
-    }
 
     // from the last space
     const int lastSpace = str.find_last_of(" \t");
     const std::string tail = str.substr(lastSpace + 1);
     if (tail.size() == 0)
-    {
         return str;
-    }
     const std::string head = str.substr(0, lastSpace + 1);
 
     // find the first and last word with the prefix str
@@ -123,19 +115,13 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
                 std::string tmp2 = it->word;
                 // strip the trailing whitespace
                 while ((tmp2.size() > 0) && isspace(tmp2[tmp2.size() - 1]))
-                {
                     tmp2.resize(tmp2.size() - 1);
-                }
                 if (tmp2.size() > 0)
                 {
                     if (it->quoteString)
-                    {
                         *matches += "\"" + tmp2 + "\" ";
-                    }
                     else
-                    {
                         *matches += tmp2 + " ";
-                    }
                 }
             }
         }
@@ -156,9 +142,7 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
     {
         if ((!noQuotes && isspace(first->word[i])) ||
                 (first->word[i] != last->word[i]))
-        {
             break;
-        }
     }
 
     if (!noQuotes && first->quoteString && (first == last))
@@ -167,9 +151,7 @@ std::string AutoCompleter::complete(const std::string& str, std::string* matches
         return (head + quoted);
     }
     else
-    {
         return (head + first->word.substr(0, i));
-    }
 }
 
 
@@ -280,6 +262,6 @@ void DefaultCompleter::setDefaults()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

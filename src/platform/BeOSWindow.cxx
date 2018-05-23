@@ -55,12 +55,12 @@ private:
 class MyGLWindow : public BDirectWindow
 {
 public:
-    MyGLWindow(BeOSWindow		*beosWindow,
-               BRect		frame,
-               const char	*title,
-               window_type	type,
-               uint32		flags,
-               uint32		workspace = B_CURRENT_WORKSPACE);
+    MyGLWindow(BeOSWindow       *beosWindow,
+               BRect        frame,
+               const char   *title,
+               window_type  type,
+               uint32       flags,
+               uint32       workspace = B_CURRENT_WORKSPACE);
 
     virtual bool QuitRequested(void);
     virtual void MessageReceived(BMessage *msg);
@@ -83,9 +83,9 @@ public:
 
 private:
     friend class MyGLView;
-    BzfEvent		bzfEvent;
-    BeOSWindow		*ref;
-    MyGLView		*glv;
+    BzfEvent        bzfEvent;
+    BeOSWindow      *ref;
+    MyGLView        *glv;
 };
 
 /****** MyGLView implementation ******/
@@ -147,7 +147,8 @@ void MyGLView::MouseMoved(BPoint where, uint32 code, const BMessage *a_message)
 
 /****** MyGLWindow implementation ******/
 
-MyGLWindow::MyGLWindow(BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags, uint32 workspace)
+MyGLWindow::MyGLWindow(BeOSWindow *beosWindow, BRect frame, const char *title, window_type type, uint32 flags,
+                       uint32 workspace)
     : BDirectWindow(frame, title, type, flags, workspace)
 {
     ref = beosWindow;
@@ -265,13 +266,9 @@ void MyGLWindow::MessageReceived(BMessage *msg)
             else if (byteslen == 2 && bytes[0] == B_FUNCTION_KEY)
             {
                 if (bytes[1] >= B_F1_KEY && bytes[1] < B_PRINT_KEY)
-                {
                     bzfEvent.keyDown.button = BzfKeyEvent::F1 + bytes[1] - B_F1_KEY;
-                }
                 else if (bytes[1] < B_PAUSE_KEY)
-                {
                     bzfEvent.keyDown.button = BzfKeyEvent::Pause;
-                }
             }
             else
             {
@@ -367,11 +364,11 @@ BeOSWindow::BeOSWindow(const BeOSDisplay* _display, const BeOSVisual* _visual) :
         return;
     //utilView = new BView(BRect(0, 0, 0, 0), "utilview", B_FOLLOW_NONE, B_WILL_DRAW);
     //if (!utilView)
-    //	return;
+    //  return;
     utilView = bWindow->GetGLView();
     //bWindow->AddChild(utilView); /* for getMouse() */
     makeContext();
-    //	bWindow->ReleaseCurrent();
+    //  bWindow->ReleaseCurrent();
 }
 
 BeOSWindow::~BeOSWindow()
@@ -383,15 +380,15 @@ BeOSWindow::~BeOSWindow()
     //delete bWindow; //Quit() DOES delete !!
 }
 
-bool					BeOSWindow::isValid() const
+bool                    BeOSWindow::isValid() const
 {
     return (bWindow != NULL && utilView != NULL);
 }
 
-void					BeOSWindow::showWindow(bool on)
+void                    BeOSWindow::showWindow(bool on)
 {
     MSGDBG(("BeOSWindow::showWindow(%s)\n", on?"true":"false"));
-    //	bWindow->Lock();
+    //  bWindow->Lock();
     thread_id tid = find_thread(NULL);
     if (tid == currentOglContext)
         bWindow->ReleaseCurrent();
@@ -411,7 +408,7 @@ void					BeOSWindow::showWindow(bool on)
     MSGDBG(("< BeOSWindow::showWindow()\n"));
 }
 
-void					BeOSWindow::getPosition(int& x, int& y)
+void                    BeOSWindow::getPosition(int& x, int& y)
 {
     BRect rect;
     bWindow->Lock();
@@ -421,7 +418,7 @@ void					BeOSWindow::getPosition(int& x, int& y)
     y = (int)rect.top;
 }
 
-void					BeOSWindow::getSize(int& width, int& height) const
+void                    BeOSWindow::getSize(int& width, int& height) const
 {
     BRect rect;
     bWindow->Lock();
@@ -431,28 +428,28 @@ void					BeOSWindow::getSize(int& width, int& height) const
     height = (int)rect.bottom - (int)rect.top;
 }
 
-void					BeOSWindow::setTitle(const char* title)
+void                    BeOSWindow::setTitle(const char* title)
 {
     bWindow->Lock();
     bWindow->SetTitle(title);
     bWindow->Unlock();
 }
 
-void					BeOSWindow::setPosition(int x, int y)
+void                    BeOSWindow::setPosition(int x, int y)
 {
     bWindow->Lock();
     bWindow->MoveTo((float)x, (float)y);
     bWindow->Unlock();
 }
 
-void					BeOSWindow::setSize(int width, int height)
+void                    BeOSWindow::setSize(int width, int height)
 {
     bWindow->Lock();
     bWindow->ResizeTo((float)width, (float)height);
     bWindow->Unlock();
 }
 
-void					BeOSWindow::setMinSize(int width, int height)
+void                    BeOSWindow::setMinSize(int width, int height)
 {
     float minW, maxW, minH, maxH;
     bWindow->Lock();
@@ -461,21 +458,21 @@ void					BeOSWindow::setMinSize(int width, int height)
     bWindow->Unlock();
 }
 
-void					BeOSWindow::setFullscreen(bool on)
+void                    BeOSWindow::setFullscreen(bool on)
 {
     bWindow->Lock();
     // FIXME
     bWindow->Unlock();
 }
 
-void					BeOSWindow::warpMouse(int x, int y)
+void                    BeOSWindow::warpMouse(int x, int y)
 {
     int px, py;
     getPosition(px, py);
     set_mouse_position(px+x, py+y);
 }
 
-void					BeOSWindow::getMouse(int& x, int& y) const
+void                    BeOSWindow::getMouse(int& x, int& y) const
 {
     BPoint point;
     uint32 buttons;
@@ -489,44 +486,44 @@ void					BeOSWindow::getMouse(int& x, int& y) const
     }
 }
 
-void					BeOSWindow::grabMouse()
+void                    BeOSWindow::grabMouse()
 {
     // FIXME
 }
 
-void					BeOSWindow::ungrabMouse()
+void                    BeOSWindow::ungrabMouse()
 {
     // FIXME
 }
 
-void					BeOSWindow::showMouse()
+void                    BeOSWindow::showMouse()
 {
     // FIXME
 }
 
-void					BeOSWindow::hideMouse()
+void                    BeOSWindow::hideMouse()
 {
     // FIXME
 }
 
-void					BeOSWindow::setGamma(float newGamma)
+void                    BeOSWindow::setGamma(float newGamma)
 {
     // FIXME
 }
 
-float					BeOSWindow::getGamma() const
+float                   BeOSWindow::getGamma() const
 {
     return 1.0f;
 }
 
-bool					BeOSWindow::hasGammaControl() const
+bool                    BeOSWindow::hasGammaControl() const
 {
     // FIXME
     return false;
-    //	return useColormap || hasGamma || has3DFXGamma;
+    //  return useColormap || hasGamma || has3DFXGamma;
 }
 
-void					BeOSWindow::makeCurrent()
+void                    BeOSWindow::makeCurrent()
 {
     MSGDBG(("BeOSWindow::makeCurrent()\n"));
     if (!oglContextInitialized)
@@ -534,21 +531,21 @@ void					BeOSWindow::makeCurrent()
     if (bWindow != NULL)
     {
         thread_id tid = find_thread(NULL);
-        //		bWindow->Lock();
+        //      bWindow->Lock();
         /* deadlocks... */
-        //		bWindow->ReleaseCurrent();
+        //      bWindow->ReleaseCurrent();
         if (tid != currentOglContext)
         {
             MSGDBG(("bWindow->MakeCurrent()\n"));
             bWindow->MakeCurrent();
             currentOglContext = tid;
         }
-        //		bWindow->Unlock();
+        //      bWindow->Unlock();
     }
 }
 
 
-void					BeOSWindow::yieldCurrent()
+void                    BeOSWindow::yieldCurrent()
 {
     MSGDBG(("BeOSWindow::yieldCurrent()\n"));
     if (!oglContextInitialized)
@@ -559,7 +556,7 @@ void					BeOSWindow::yieldCurrent()
         if (tid == currentOglContext)
         {
             MSGDBG(("bWindow->YieldCurrent()\n"));
-            //			bWindow->YieldCurrent();
+            //          bWindow->YieldCurrent();
 
             bWindow->ReleaseCurrent();
             snooze(10000);
@@ -568,7 +565,7 @@ void					BeOSWindow::yieldCurrent()
     }
 }
 
-void					BeOSWindow::releaseCurrent()
+void                    BeOSWindow::releaseCurrent()
 {
     MSGDBG(("BeOSWindow::releaseCurrent()\n"));
     if (!oglContextInitialized)
@@ -585,15 +582,13 @@ void					BeOSWindow::releaseCurrent()
     }
 }
 
-void					BeOSWindow::swapBuffers()
+void                    BeOSWindow::swapBuffers()
 {
     if (bWindow != NULL && oglContextInitialized)
-    {
         bWindow->SwapBuffers();
-    }
 }
 
-void					BeOSWindow::makeContext()
+void                    BeOSWindow::makeContext()
 {
     MSGDBG(("BeOSWindow::makeContext()\n"));
     if (oglContextInitialized)
@@ -606,22 +601,22 @@ void					BeOSWindow::makeContext()
     //bWindow->EnumerateDevices( BGL_MONITOR_PRIMARY, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
     //bWindow->InitializeGL( openglDevice, minColor, BGL_ANY, BGL_NONE, BGL_NONE );
 
-    //	bWindow->SaveDebuggingInfo("/boot/home/bzf_ogl_debug_log.txt");
+    //  bWindow->SaveDebuggingInfo("/boot/home/bzf_ogl_debug_log.txt");
 
     bWindow->Unlock();
 
     oglContextInitialized = true;
     //showWindow(true);
     makeCurrent();
-    //	OpenGLGState::init();
+    //  OpenGLGState::init();
     OpenGLGState::initContext();
 }
 
-void					BeOSWindow::freeContext()
+void                    BeOSWindow::freeContext()
 {
     MSGDBG(("BeOSWindow::freeContext()\n"));
     // release context data
-    //	OpenGLGState::freeContext();
+    //  OpenGLGState::freeContext();
     //bWindow->ReleaseCurrent();
     releaseCurrent();
 }

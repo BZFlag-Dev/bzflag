@@ -39,9 +39,7 @@ EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 EighthDimShellNode::~EighthDimShellNode()
 {
     if (ownTheNode)
-    {
         delete sceneNode;
-    }
     killNodes();
     return;
 }
@@ -61,9 +59,7 @@ void EighthDimShellNode::makeNodes()
 
     shellNodes = new ShellRenderNode*[shellNodeCount];
     for (int i = 0; i < shellNodeCount; i++)
-    {
         shellNodes[i] = new ShellRenderNode(rnodes[i].node, rnodes[i].gstate);
-    }
 
     return;
 }
@@ -72,9 +68,7 @@ void EighthDimShellNode::makeNodes()
 void EighthDimShellNode::killNodes()
 {
     for (int i = 0; i < shellNodeCount; i++)
-    {
         delete shellNodes[i];
-    }
     delete[] shellNodes;
     shellNodes = NULL;
     shellNodeCount = 0;
@@ -100,9 +94,7 @@ bool EighthDimShellNode::cull(const ViewFrustum&) const
 void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 {
     for (int i = 0; i < shellNodeCount; i++)
-    {
         renderer.addRenderNode(shellNodes[i], shellNodes[i]->getGState());
-    }
     return;
 }
 
@@ -119,13 +111,9 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
 
     OpenGLGStateBuilder gb = *gs;
     if (BZDBCache::blend && (RENDERER.useQuality() >= 2))
-    {
         gb.setBlending(GL_ONE, GL_ONE);
-    }
     else
-    {
         gb.resetBlending();
-    }
     gb.setCulling(GL_FRONT); // invert the culling
     gstate = gb.getState(); // get the modified gstate
 
@@ -152,9 +140,7 @@ void EighthDimShellNode::ShellRenderNode::render()
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
     if (BZDBCache::blend && RENDERER.useQuality() >= 2)
-    {
         renderNode->render();
-    }
 
     glPolygonMode(GL_BACK, GL_LINE);
     glLineWidth(3.0f);
@@ -175,6 +161,6 @@ void EighthDimShellNode::ShellRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -85,9 +85,7 @@ void Teleporter::finalize()
     // that we use the larger of the border half-width and size[0].
     float sizeX = border * 0.5f;
     if (size[0] > sizeX)
-    {
         sizeX = size[0];
-    }
     float xspan = (fabsf(cosf(angle)) * sizeX) + (fabsf(sinf(angle)) * size[1]);
     float yspan = (fabsf(cosf(angle)) * size[1]) + (fabsf(sinf(angle)) * sizeX);
     extents.mins[0] = pos[0] - xspan;
@@ -133,13 +131,9 @@ void Teleporter::makeLinks()
     const float xtxcd = 1.0f;
     float ytxcd;
     if ((b - br) > 0.0f)
-    {
         ytxcd = h / (2.0f * (b - br));
-    }
     else
-    {
         ytxcd = 1.0f;
-    }
     texcoords[0][0] = 0.0f;
     texcoords[0][1] = 0.0f;
     texcoords[1][0] = xtxcd;
@@ -224,9 +218,7 @@ const char* Teleporter::getClassName() // const
 bool Teleporter::isValid() const
 {
     if (!backLink->isValid() || !frontLink->isValid())
-    {
         return false;
-    }
     return Obstacle::isValid();
 }
 
@@ -282,15 +274,11 @@ bool Teleporter::inBox(const float* p, float a,
         o[0] = getPosition()[0] - (s * d);
         o[1] = getPosition()[1] + (c * d);
         if (testRectRect(p, a, dx, dy, o, getRotation(), r, r))
-        {
             return true;
-        }
         o[0] = getPosition()[0] + (s * d);
         o[1] = getPosition()[1] - (c * d);
         if (testRectRect(p, a, dx, dy, o, getRotation(), r, r))
-        {
             return true;
-        }
     }
 
     if ((p[2] < teleTop) && (tankTop >= crossbarBottom))
@@ -298,9 +286,7 @@ bool Teleporter::inBox(const float* p, float a,
         // test crossbar
         if (testRectRect(p, a, dx, dy, getPosition(),
                          getRotation(), getWidth(), getBreadth()))
-        {
             return true;
-        }
     }
 
     return false;
@@ -315,13 +301,9 @@ bool Teleporter::inMovingBox(const float* oldP, float UNUSED(oldAngle),
     minPos[0] = p[0];
     minPos[1] = p[1];
     if (oldP[2] < p[2])
-    {
         minPos[2] = oldP[2];
-    }
     else
-    {
         minPos[2] = p[2];
-    }
     dz += fabsf(oldP[2] - p[2]);
     return inBox(minPos, a, dx, dy, dz);
 }
@@ -377,12 +359,10 @@ float Teleporter::isTeleported(const Ray& r, int& face) const
     r.getPoint(t, p);
     p[2] -= getPosition()[2];
     if (p[2] < 0.0f || p[2] > getHeight() - getBorder())
-    {
         return -1.0f;
-    }
 
     // figure out which face:  rotate intersection into teleporter space,
-    //	if to east of teleporter then face 0 else face 1.
+    //  if to east of teleporter then face 0 else face 1.
     const float x = cosf(-getRotation()) * (p[0] - getPosition()[0]) -
                     sinf(-getRotation()) * (p[1] - getPosition()[1]);
     face = (x > 0.0f) ? 0 : 1;
@@ -396,9 +376,7 @@ float Teleporter::getProximity(const float* p, float radius) const
     if (!testRectCircle(getPosition(), getRotation(),
                         getWidth(), getBreadth() - getBorder(),
                         p, 1.2f * radius))
-    {
         return 0.0f;
-    }
 
     // transform point to teleporter space
     // translate origin
@@ -519,9 +497,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
     // fill in output angle and direction variables, if requested
     const float a = radians2 - radians1;
     if (aOut)
-    {
         *aOut = aIn + a;
-    }
     if (dOut && dIn)
     {
         const float c = cosf(a);
@@ -613,9 +589,7 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
 {
     out << indent << "teleporter";
     if (name.size() > 0)
-    {
         out << " " << name;
-    }
     out << std::endl;
     const float *_pos = getPosition();
     out << indent << "  position " << _pos[0] << " " << _pos[1] << " "
@@ -626,13 +600,9 @@ void Teleporter::print(std::ostream& out, const std::string& indent) const
         << std::endl;
     out << indent << "  border " << getBorder() << std::endl;
     if (horizontal)
-    {
         out << indent << "  horizontal" << std::endl;
-    }
     if (ricochet)
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     out << indent << "end" << std::endl;
     return;
 }
@@ -679,13 +649,9 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) 
     xform.finalize();
     MeshTransform::Tool xtool(xform);
     for (i = 0; i < 8; i++)
-    {
         xtool.modifyVertex(verts[i]);
-    }
     for (i = 0; i < 6; i++)
-    {
         xtool.modifyNormal(norms[i]);
-    }
 
     out << "# OBJ - start tele" << std::endl;
     out << "o bztele_" << getObjCounter() << std::endl;
@@ -735,6 +701,6 @@ void Teleporter::printOBJ(std::ostream& out, const std::string& UNUSED(indent)) 
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

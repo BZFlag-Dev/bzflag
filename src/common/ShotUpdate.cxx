@@ -22,7 +22,7 @@
 // ShotUpdate
 //
 
-void*			ShotUpdate::pack(void* buf) const
+void*           ShotUpdate::pack(void* buf) const
 {
     buf = nboPackUByte(buf, player);
     buf = nboPackUShort(buf, id);
@@ -33,7 +33,7 @@ void*			ShotUpdate::pack(void* buf) const
     return buf;
 }
 
-const void*		ShotUpdate::unpack(const void* buf)
+const void*     ShotUpdate::unpack(const void* buf)
 {
     buf = nboUnpackUByte(buf, player);
     buf = nboUnpackUShort(buf, id);
@@ -55,7 +55,7 @@ FiringInfo::FiringInfo()
     // do nothing -- must be prepared before use by unpack() or assignment
 }
 
-void*			FiringInfo::pack(void* buf) const
+void*           FiringInfo::pack(void* buf) const
 {
     buf = nboPackFloat(buf, timeSent);
     buf = shot.pack(buf);
@@ -64,7 +64,7 @@ void*			FiringInfo::pack(void* buf) const
     return buf;
 }
 
-const void*		FiringInfo::unpack(const void* buf)
+const void*     FiringInfo::unpack(const void* buf)
 {
     buf = nboUnpackFloat(buf, timeSent);
     buf = shot.unpack(buf);
@@ -77,6 +77,6 @@ const void*		FiringInfo::unpack(const void* buf)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

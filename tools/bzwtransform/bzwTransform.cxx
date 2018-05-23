@@ -78,7 +78,7 @@ public:
         {
             for (int x = 0; x < 4; x++)
             {
-                matrix[x][y] =	src[0][y]*inMatrix.matrix[x][0] +
+                matrix[x][y] =  src[0][y]*inMatrix.matrix[x][0] +
                                 src[1][y]*inMatrix.matrix[x][1] +
                                 src[2][y]*inMatrix.matrix[x][2] +
                                 src[3][y]*inMatrix.matrix[x][3];
@@ -98,7 +98,7 @@ public:
         {
             for (int x = 0; x < 4; x++)
             {
-                matrix[x][y] =	inMatrix.matrix[0][y]*src[x][0] +
+                matrix[x][y] =  inMatrix.matrix[0][y]*src[x][0] +
                                 inMatrix.matrix[1][y]*src[x][1] +
                                 inMatrix.matrix[2][y]*src[x][2] +
                                 inMatrix.matrix[3][y]*src[x][3];
@@ -175,10 +175,10 @@ public:
     }
 public:
 
-    std::string	type;
-    Point3D	position;
-    Point3D	size;
-    float	rotation;
+    std::string type;
+    Point3D position;
+    Point3D size;
+    float   rotation;
 };
 
 
@@ -206,7 +206,8 @@ void pyramid( std::ofstream &bzw, Point3D &position, Point3D &size, float rotati
     bzw << std::endl;
 }
 
-void generateObjects( std::ofstream &bzw, std::vector<BZObject *> objects, Matrix3D &posMatrix, Matrix3D &sizeMatrix, float rotation, int count )
+void generateObjects( std::ofstream &bzw, std::vector<BZObject *> objects, Matrix3D &posMatrix, Matrix3D &sizeMatrix,
+                      float rotation, int count )
 {
     for (int cur = 0; cur < count; cur++)
     {
@@ -440,9 +441,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
                         state = IN_TRANSLATE0;
                     }
                     else if (token == "end")
-                    {
                         state = IN_MATRIX;
-                    }
                     else
                         throw "expecting a matrix operation, or end";
                     break;
@@ -464,9 +463,7 @@ void parsebzwt( std::ifstream &bzwt, std::ofstream &bzw )
                         state = IN_TRANSLATE0;
                     }
                     else if (token == "end")
-                    {
                         state = IN_MATRIX;
-                    }
                     else
                         throw "expecting a matrix operation, or end";
                     break;
@@ -561,10 +558,8 @@ int main( int argc, char **argv )
     {
         std::ofstream bzw( argv[2] );
         if (bzw.is_open())
-        {
             parsebzwt( bzwt, bzw );
 
-        }
         bzwt.close();
     }
 

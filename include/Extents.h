@@ -11,12 +11,12 @@
  */
 
 /* Extents
- *	Encapsulates the data to record the minimum and maximum
+ *  Encapsulates the data to record the minimum and maximum
  *      values along each axis of an axis-aligned bounding box.
  */
 
-#ifndef	BZF_EXTENTS_H
-#define	BZF_EXTENTS_H
+#ifndef BZF_EXTENTS_H
+#define BZF_EXTENTS_H
 
 #include "common.h"
 
@@ -101,30 +101,18 @@ inline void Extents::expandToBox(const Extents& test)
 {
     // test mins
     if (test.mins[0] < mins[0])
-    {
         mins[0] = test.mins[0];
-    }
     if (test.mins[1] < mins[1])
-    {
         mins[1] = test.mins[1];
-    }
     if (test.mins[2] < mins[2])
-    {
         mins[2] = test.mins[2];
-    }
     // test maxs
     if (test.maxs[0] > maxs[0])
-    {
         maxs[0] = test.maxs[0];
-    }
     if (test.maxs[1] > maxs[1])
-    {
         maxs[1] = test.maxs[1];
-    }
     if (test.maxs[2] > maxs[2])
-    {
         maxs[2] = test.maxs[2];
-    }
     return;
 }
 
@@ -133,30 +121,18 @@ inline void Extents::expandToPoint(const float point[3])
 {
     // test mins
     if (point[0] < mins[0])
-    {
         mins[0] = point[0];
-    }
     if (point[1] < mins[1])
-    {
         mins[1] = point[1];
-    }
     if (point[2] < mins[2])
-    {
         mins[2] = point[2];
-    }
     // test maxs
     if (point[0] > maxs[0])
-    {
         maxs[0] = point[0];
-    }
     if (point[1] > maxs[1])
-    {
         maxs[1] = point[1];
-    }
     if (point[2] > maxs[2])
-    {
         maxs[2] = point[2];
-    }
     return;
 }
 
@@ -166,9 +142,7 @@ inline bool Extents::touches(const Extents& test) const
     if ((mins[0] > test.maxs[0]) || (maxs[0] < test.mins[0]) ||
             (mins[1] > test.maxs[1]) || (maxs[1] < test.mins[1]) ||
             (mins[2] > test.maxs[2]) || (maxs[2] < test.mins[2]))
-    {
         return false;
-    }
     return true;
 }
 
@@ -178,9 +152,7 @@ inline bool Extents::contains(const Extents& test) const
     if ((mins[0] < test.mins[0]) && (maxs[0] > test.maxs[0]) &&
             (mins[1] < test.mins[1]) && (maxs[1] > test.maxs[1]) &&
             (mins[2] < test.mins[2]) && (maxs[2] > test.maxs[2]))
-    {
         return true;
-    }
     return false;
 }
 

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MAINMENU_H__
-#define	__MAINMENU_H__
+#ifndef __MAINMENU_H__
+#define __MAINMENU_H__
 
 #include "common.h"
 
@@ -42,16 +42,16 @@ private:
 
     HUDuiControl* createLabel(const char* string);
 
-    HUDuiControl*	join;
-    HUDuiControl*	options;
-    HUDuiControl*	help;
-    HUDuiControl*	leave;
-    HUDuiControl*	save;
-    HUDuiControl*	quit;
+    HUDuiControl*   join;
+    HUDuiControl*   options;
+    HUDuiControl*   help;
+    HUDuiControl*   leave;
+    HUDuiControl*   save;
+    HUDuiControl*   quit;
 
-    JoinMenu*	joinMenu;
-    OptionsMenu*	optionsMenu;
-    QuitMenu*	quitMenu;
+    JoinMenu*   joinMenu;
+    OptionsMenu*    optionsMenu;
+    QuitMenu*   quitMenu;
 };
 
 
@@ -61,6 +61,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -23,7 +23,7 @@
 #include "bzfgl.h"
 #include "OSFile.h"
 
-#define MAX_TEXTURE_FONT_CHARS	(128)
+#define MAX_TEXTURE_FONT_CHARS  (128)
 
 class ImageFont
 {
@@ -59,15 +59,15 @@ protected:
         int startY;
         int endY;
     };
-    FontMetrics	fontMetrics[MAX_TEXTURE_FONT_CHARS];
+    FontMetrics fontMetrics[MAX_TEXTURE_FONT_CHARS];
 
     std::string faceName;
     std::string texture;
     long int    size;
-    int	      textureXSize;
-    int	      textureYSize;
-    int	      textureZStep;
-    int	      numberOfCharacters;
+    int       textureXSize;
+    int       textureYSize;
+    int       textureZStep;
+    int       numberOfCharacters;
 
 private:
     // don't copy me
@@ -81,6 +81,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

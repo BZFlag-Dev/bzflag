@@ -11,13 +11,13 @@
  */
 
 /* MeshSceneNode:
- *	Encapsulates information for rendering a mesh fragment
+ *  Encapsulates information for rendering a mesh fragment
  *      (a collection of faces with the same material properties).
- *	Does not support level of detail.
+ *  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_SCENE_NODE_H
-#define	BZF_MESH_SCENE_NODE_H
+#ifndef BZF_MESH_SCENE_NODE_H
+#define BZF_MESH_SCENE_NODE_H
 
 #include "common.h"
 #include "bzfgl.h"
@@ -138,6 +138,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

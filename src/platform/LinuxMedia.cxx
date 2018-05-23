@@ -56,14 +56,14 @@ LinuxMedia::~LinuxMedia()
     // do nothing
 }
 
-double			LinuxMedia::getTime()
+double          LinuxMedia::getTime()
 {
     struct timeval tv;
     gettimeofday(&tv, 0);
     return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec;
 }
 
-double			LinuxMedia::stopwatch(bool start)
+double          LinuxMedia::stopwatch(bool start)
 {
     if (start)
     {
@@ -73,7 +73,7 @@ double			LinuxMedia::stopwatch(bool start)
     return getTime() - stopwatchTime;
 }
 
-bool			LinuxMedia::openAudio()
+bool            LinuxMedia::openAudio()
 {
     // don't re-initialize
     if (audioReady) return false;
@@ -111,7 +111,7 @@ bool			LinuxMedia::openAudio()
     return true;
 }
 
-bool			LinuxMedia::checkForAudioHardware()
+bool            LinuxMedia::checkForAudioHardware()
 {
     bool flag=false;
     if (!access("/dev/dsp", W_OK)) flag=true;
@@ -119,7 +119,7 @@ bool			LinuxMedia::checkForAudioHardware()
     return flag;
 }
 
-bool			LinuxMedia::openIoctl(
+bool            LinuxMedia::openIoctl(
     int cmd, void* value, bool req)
 {
     if (audioPortFd == -1)
@@ -135,17 +135,15 @@ bool			LinuxMedia::openIoctl(
             fprintf(stderr, "giving up on audio\n");
         }
         else
-        {
             fprintf(stderr, "ignored\n");
-        }
         return false;
     }
     return true;
 }
 
-static const int	NumChunks = 4;
+static const int    NumChunks = 4;
 
-bool			LinuxMedia::openAudioHardware()
+bool            LinuxMedia::openAudioHardware()
 {
     int format, n;
 
@@ -253,7 +251,7 @@ bool			LinuxMedia::openAudioHardware()
     return (audioPortFd != -1);
 }
 
-void			LinuxMedia::closeAudio()
+void            LinuxMedia::closeAudio()
 {
     delete [] outputBuffer;
     if (audioPortFd>=0) close(audioPortFd);
@@ -266,7 +264,7 @@ void			LinuxMedia::closeAudio()
     outputBuffer=0;
 }
 
-bool			LinuxMedia::startAudioThread(
+bool            LinuxMedia::startAudioThread(
     void (*proc)(void*), void* data)
 {
     // if no audio thread then just call proc and return
@@ -285,21 +283,19 @@ bool			LinuxMedia::startAudioThread(
         return true;
     }
     else if (childProcID < 0)
-    {
         return false;
-    }
     close(queueIn);
     proc(data);
     exit(0);
 }
 
-void			LinuxMedia::stopAudioThread()
+void            LinuxMedia::stopAudioThread()
 {
     if (childProcID != 0) kill(childProcID, SIGTERM);
     childProcID=0;
 }
 
-bool			LinuxMedia::hasAudioThread() const
+bool            LinuxMedia::hasAudioThread() const
 {
 #if defined(NO_AUDIO_THREAD)
     return false;
@@ -308,37 +304,37 @@ bool			LinuxMedia::hasAudioThread() const
 #endif
 }
 
-void			LinuxMedia::audioThreadInit(void*)
+void            LinuxMedia::audioThreadInit(void*)
 {
 }
 
-void			LinuxMedia::writeSoundCommand(const void* cmd, int len)
+void            LinuxMedia::writeSoundCommand(const void* cmd, int len)
 {
     if (!audioReady) return;
     write(queueIn, cmd, len);
 }
 
-bool			LinuxMedia::readSoundCommand(void* cmd, int len)
+bool            LinuxMedia::readSoundCommand(void* cmd, int len)
 {
     return (read(queueOut, cmd, len)==len);
 }
 
-int			LinuxMedia::getAudioOutputRate() const
+int         LinuxMedia::getAudioOutputRate() const
 {
     return audioOutputRate;
 }
 
-int			LinuxMedia::getAudioBufferSize() const
+int         LinuxMedia::getAudioBufferSize() const
 {
     return NumChunks*(audioBufferSize>>1);
 }
 
-int			LinuxMedia::getAudioBufferChunkSize() const
+int         LinuxMedia::getAudioBufferChunkSize() const
 {
     return audioBufferSize>>1;
 }
 
-bool			LinuxMedia::isAudioTooEmpty() const
+bool            LinuxMedia::isAudioTooEmpty() const
 {
     if (getospaceBroken)
     {
@@ -369,7 +365,7 @@ bool			LinuxMedia::isAudioTooEmpty() const
     }
 }
 
-void			LinuxMedia::writeAudioFrames8Bit(
+void            LinuxMedia::writeAudioFrames8Bit(
     const float* samples, int numFrames)
 {
     int numSamples = 2 * numFrames;
@@ -402,7 +398,7 @@ void			LinuxMedia::writeAudioFrames8Bit(
     }
 }
 
-void			LinuxMedia::writeAudioFrames16Bit(
+void            LinuxMedia::writeAudioFrames16Bit(
     const float* samples, int numFrames)
 {
     int numSamples = 2 * numFrames;
@@ -433,7 +429,7 @@ void			LinuxMedia::writeAudioFrames16Bit(
     }
 }
 
-void			LinuxMedia::writeAudioFrames(
+void            LinuxMedia::writeAudioFrames(
     const float* samples, int numFrames)
 {
     if (audio8Bit) writeAudioFrames8Bit(samples, numFrames);
@@ -456,7 +452,7 @@ void			LinuxMedia::writeAudioFrames(
     }
 }
 
-void			LinuxMedia::audioSleep(
+void            LinuxMedia::audioSleep(
     bool checkLowWater, double endTime)
 {
     fd_set commandSelectSet;

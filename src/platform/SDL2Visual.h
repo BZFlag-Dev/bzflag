@@ -11,11 +11,11 @@
  */
 
 /* SDL2Visual:
- *	Encapsulates an SDL2 Visual
+ *  Encapsulates an SDL2 Visual
  */
 
 #ifndef BZF_SDL2VISUAL_H
-#define	BZF_SDL2VISUAL_H
+#define BZF_SDL2VISUAL_H
 
 // Inherits from
 #include "BzfVisual.h"
@@ -60,6 +60,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

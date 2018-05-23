@@ -56,9 +56,7 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     getMainWindow()->getJoyDevices(joystickDevices);
     int i;
     for (i = 0; i < (int)joystickDevices.size(); i++)
-    {
         options->push_back(joystickDevices[i]);
-    }
     joystickDevices.erase(joystickDevices.begin(), joystickDevices.end());
     for (i = 0; i < (int)options->size(); i++)
     {
@@ -138,17 +136,11 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     options->push_back(std::string("Window"));
     options->push_back(std::string("MotionBox"));
     if (getMainWindow()->isGrabEnabled())
-    {
         option->setIndex(1);
-    }
     else if (BZDB.isTrue("mouseClamp"))
-    {
         option->setIndex(2);
-    }
     else
-    {
         option->setIndex(0);
-    }
     option->update();
     listHUD.push_back(option);
 
@@ -219,7 +211,7 @@ void InputMenu::fillJSOptions()
     jsy->update();
 }
 
-void			InputMenu::execute()
+void            InputMenu::execute()
 {
     HUDuiControl* _focus = HUDui::getFocus();
     if (_focus == keyMapping)
@@ -229,7 +221,7 @@ void			InputMenu::execute()
     }
 }
 
-void			InputMenu::callback(HUDuiControl* w, const void* data)
+void            InputMenu::callback(HUDuiControl* w, const void* data)
 {
     HUDuiList* listHUD = (HUDuiList*)w;
     std::vector<std::string> *options = &listHUD->getList();
@@ -272,18 +264,14 @@ void			InputMenu::callback(HUDuiControl* w, const void* data)
         LocalPlayer*   myTank = LocalPlayer::getMyTank();
         // Are we forced to use one input device, or do we allow it to change automatically?
         if (selectedOption == "Auto")
-        {
             BZDB.set("allowInputChange", "1");
-        }
         else
         {
             BZDB.set("allowInputChange", "0");
             BZDB.set("activeInputDevice", selectedOption);
             // Set the current input device to whatever we're forced to
             if (myTank)
-            {
                 myTank->setInputMethod(BZDB.get("activeInputDevice"));
-            }
         }
     }
     break;
@@ -316,7 +304,7 @@ void			InputMenu::callback(HUDuiControl* w, const void* data)
     }
 }
 
-void			InputMenu::resize(int _width, int _height)
+void            InputMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
     int i;
@@ -365,6 +353,6 @@ void			InputMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

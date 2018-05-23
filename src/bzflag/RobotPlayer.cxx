@@ -123,7 +123,7 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
 }
 
 
-void			RobotPlayer::doUpdate(float dt)
+void            RobotPlayer::doUpdate(float dt)
 {
     LocalPlayer::doUpdate(dt);
 
@@ -139,7 +139,7 @@ void			RobotPlayer::doUpdate(float dt)
     if (getFiringStatus() != Ready)
         return;
 
-    bool	shoot   = false;
+    bool    shoot   = false;
     const float azimuth = getAngle();
     // Allow shooting only if angle is near and timer has elapsed
     if ((!path.empty()) && timerForShot <= 0.0f)
@@ -207,7 +207,7 @@ void			RobotPlayer::doUpdate(float dt)
     }
 }
 
-void			RobotPlayer::doUpdateMotion(float dt)
+void            RobotPlayer::doUpdateMotion(float dt)
 {
     if (isAlive())
     {
@@ -309,17 +309,11 @@ void			RobotPlayer::doUpdateMotion(float dt)
                 setDesiredSpeed(drivingForward ? 1.0f : -1.0f);
                 // set desired turn speed
                 if (azimuthDiff >= dt * tankAngVel)
-                {
                     setDesiredAngVel(1.0f);
-                }
                 else if (azimuthDiff <= -dt * tankAngVel)
-                {
                     setDesiredAngVel(-1.0f);
-                }
                 else
-                {
                     setDesiredAngVel(azimuthDiff / dt / tankAngVel);
-                }
             }
             else
             {
@@ -334,23 +328,21 @@ void			RobotPlayer::doUpdateMotion(float dt)
                     setDesiredSpeed(distance / dt / tankSpeed);
                 }
                 else
-                {
                     setDesiredSpeed(1.0f);
-                }
             }
         }
     }
     LocalPlayer::doUpdateMotion(dt);
 }
 
-void			RobotPlayer::explodeTank()
+void            RobotPlayer::explodeTank()
 {
     LocalPlayer::explodeTank();
     target = NULL;
     path.clear();
 }
 
-void			RobotPlayer::restart(const float* pos, float _azimuth)
+void            RobotPlayer::restart(const float* pos, float _azimuth)
 {
     LocalPlayer::restart(pos, _azimuth);
     // no target
@@ -360,7 +352,7 @@ void			RobotPlayer::restart(const float* pos, float _azimuth)
 
 }
 
-float			RobotPlayer::getTargetPriority(const
+float           RobotPlayer::getTargetPriority(const
         Player* _target) const
 {
     // don't target teammates or myself
@@ -389,18 +381,18 @@ float			RobotPlayer::getTargetPriority(const
            - 0.5f * hypotf(p2[0] - p1[0], p2[1] - p1[1]) / worldSize;
 }
 
-void		    RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
+void            RobotPlayer::setObstacleList(std::vector<BzfRegion*>*
         _obstacleList)
 {
     obstacleList = _obstacleList;
 }
 
-const Player*		RobotPlayer::getTarget() const
+const Player*       RobotPlayer::getTarget() const
 {
     return target;
 }
 
-void			RobotPlayer::setTarget(const Player* _target)
+void            RobotPlayer::setTarget(const Player* _target)
 {
     static int mailbox = 0;
 
@@ -446,7 +438,7 @@ void			RobotPlayer::setTarget(const Player* _target)
     pathIndex = 0;
 }
 
-BzfRegion*		RobotPlayer::findRegion(const float p[2],
+BzfRegion*      RobotPlayer::findRegion(const float p[2],
                                         float nearest[2]) const
 {
     nearest[0] = p[0];
@@ -474,7 +466,7 @@ BzfRegion*		RobotPlayer::findRegion(const float p[2],
     return nearestRegion;
 }
 
-float			RobotPlayer::getRegionExitPoint(
+float           RobotPlayer::getRegionExitPoint(
     const float p1[2], const float p2[2],
     const float a[2], const float targetPoint[2],
     float mid[2], float& priority)
@@ -508,7 +500,7 @@ float			RobotPlayer::getRegionExitPoint(
     return distance;
 }
 
-void			RobotPlayer::findPath(RegionPriorityQueue& queue,
+void            RobotPlayer::findPath(RegionPriorityQueue& queue,
                                       BzfRegion* region,
                                       BzfRegion* targetRegion,
                                       const float targetPoint[2],
@@ -542,6 +534,6 @@ void			RobotPlayer::findPath(RegionPriorityQueue& queue,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

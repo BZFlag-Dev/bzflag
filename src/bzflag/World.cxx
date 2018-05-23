@@ -39,10 +39,10 @@
 // World
 //
 
-World*			World::playingField = NULL;
-BundleMgr*		World::bundleMgr;
-std::string		World::locale("");
-int			World::flagTexture(-1);
+World*          World::playingField = NULL;
+BundleMgr*      World::bundleMgr;
+std::string     World::locale("");
+int         World::flagTexture(-1);
 
 
 World::World() :
@@ -84,9 +84,7 @@ World::~World()
     delete[] players;
     delete worldWeapons;
     for (i = 0; i < NumTeams; i++)
-    {
         bases[i].clear();
-    }
 
     // clear the managers
     links.clear();
@@ -102,24 +100,24 @@ World::~World()
 }
 
 
-void			World::init()
+void            World::init()
 {
     TextureManager &tm = TextureManager::instance();
     flagTexture = tm.getTextureID( "flag" );
 }
 
-void			World::done()
+void            World::done()
 {
     flagTexture = 0;
 }
 
-void		    World::loadCollisionManager()
+void            World::loadCollisionManager()
 {
     COLLISIONMGR.load();
     return;
 }
 
-void		    World::checkCollisionManager()
+void            World::checkCollisionManager()
 {
     if (COLLISIONMGR.needReload())
     {
@@ -129,12 +127,12 @@ void		    World::checkCollisionManager()
     return;
 }
 
-void			World::setFlagTexture(FlagSceneNode* flag)
+void            World::setFlagTexture(FlagSceneNode* flag)
 {
     flag->setTexture(flagTexture);
 }
 
-void			World::setWorld(World* _playingField)
+void            World::setWorld(World* _playingField)
 {
     playingField = _playingField;
 }
@@ -160,9 +158,7 @@ int World::getTeleporter(const Teleporter* teleporter, int face) const
     for (int i = 0; i < count; i++)
     {
         if (teleporter == (const Teleporter*)teleporters[i])
-        {
             return ((2 * i) + face);
-        }
     }
     printf ("World::getTeleporter() error\n");
     fflush(stdout);
@@ -182,7 +178,7 @@ const Teleporter* World::getTeleporter(int source, int& face) const
 }
 
 
-TeamColor		World::whoseBase(const float* pos) const
+TeamColor       World::whoseBase(const float* pos) const
 {
     if (gameType != ClassicCTF)
         return NoTeam;
@@ -201,9 +197,7 @@ TeamColor		World::whoseBase(const float* pos) const
                 float nz = it->p[2] + it->p[6];
                 float rz = pos[2] - nz;
                 if (fabsf(rz) < 0.1)   // epsilon kludge
-                {
                     return TeamColor(i);
-                }
             }
         }
     }
@@ -211,7 +205,7 @@ TeamColor		World::whoseBase(const float* pos) const
     return NoTeam;
 }
 
-const Obstacle*		World::inBuilding(const float* pos,
+const Obstacle*     World::inBuilding(const float* pos,
                                       float radius, float height) const
 {
     // check everything but walls
@@ -220,15 +214,13 @@ const Obstacle*		World::inBuilding(const float* pos,
     {
         const Obstacle* obs = olist->list[i];
         if (obs->inCylinder(pos, radius, height))
-        {
             return obs;
-        }
     }
 
     return NULL;
 }
 
-const Obstacle*		World::inBuilding(const float* pos, float angle,
+const Obstacle*     World::inBuilding(const float* pos, float angle,
                                       float dx, float dy, float dz) const
 {
     // check everything but the walls
@@ -238,16 +230,14 @@ const Obstacle*		World::inBuilding(const float* pos, float angle,
     {
         const Obstacle* obs = olist->list[i];
         if (obs->inBox(pos, angle, dx, dy, dz))
-        {
             return obs;
-        }
     }
 
     return NULL;
 }
 
 
-const Obstacle*		World::hitBuilding(const float* pos, float angle,
+const Obstacle*     World::hitBuilding(const float* pos, float angle,
                                        float dx, float dy, float dz) const
 {
     // check walls
@@ -256,9 +246,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
     {
         const WallObstacle* wall = (const WallObstacle*) walls[w];
         if (wall->inBox(pos, angle, dx, dy, dz))
-        {
             return wall;
-        }
     }
 
     // check everything else
@@ -268,9 +256,7 @@ const Obstacle*		World::hitBuilding(const float* pos, float angle,
     {
         const Obstacle* obs = olist->list[i];
         if (!obs->isDriveThrough() && obs->inBox(pos, angle, dx, dy, dz))
-        {
             return obs;
-        }
     }
 
     return NULL;
@@ -282,13 +268,9 @@ static inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB)
     const Extents& eA = obsA->getExtents();
     const Extents& eB = obsB->getExtents();
     if (eA.maxs[2] > eB.maxs[2])
-    {
         return -1;
-    }
     else
-    {
         return +1;
-    }
 }
 
 static int compareObstacles(const void* a, const void* b)
@@ -307,25 +289,17 @@ static int compareObstacles(const void* a, const void* b)
     if (isMeshA)
     {
         if (!isMeshB)
-        {
             return +1;
-        }
         else
-        {
             return compareHeights(obsA, obsB);
-        }
     }
 
     if (isMeshB)
     {
         if (!isMeshA)
-        {
             return -1;
-        }
         else
-        {
             return compareHeights(obsA, obsB);
-        }
     }
 
     bool isFaceA = (typeA == MeshFace::getClassName());
@@ -334,25 +308,17 @@ static int compareObstacles(const void* a, const void* b)
     if (isFaceA)
     {
         if (!isFaceB)
-        {
             return +1;
-        }
         else
-        {
             return compareHeights(obsA, obsB);
-        }
     }
 
     if (isFaceB)
     {
         if (!isFaceA)
-        {
             return -1;
-        }
         else
-        {
             return compareHeights(obsA, obsB);
-        }
     }
 
     return compareHeights(obsB, obsA); // reversed
@@ -365,36 +331,24 @@ static int compareHitNormal (const void* a, const void* b)
 
     // Up Planes come first
     if (faceA->isUpPlane() && !faceB->isUpPlane())
-    {
         return -1;
-    }
     if (faceB->isUpPlane() && !faceA->isUpPlane())
-    {
         return +1;
-    }
 
     // highest Up Plane comes first
     if (faceA->isUpPlane() && faceB->isUpPlane())
     {
         if (faceA->getPosition()[2] > faceB->getPosition()[2])
-        {
             return -1;
-        }
         else
-        {
             return +1;
-        }
     }
 
     // compare the dot products
     if (faceA->scratchPad < faceB->scratchPad)
-    {
         return -1;
-    }
     else
-    {
         return +1;
-    }
 }
 
 const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
@@ -408,9 +362,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     {
         const WallObstacle* wall = (const WallObstacle*) walls[w];
         if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-        {
             return wall;
-        }
     }
 
     // get the list of potential hits from the collision manager
@@ -430,14 +382,10 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
         const char* type = obs->getType();
         if ((type == MeshFace::getClassName()) ||
                 (type == MeshObstacle::getClassName()))
-        {
             break;
-        }
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-        {
             return obs;
-        }
     }
     if (i == olist->count)
     {
@@ -458,9 +406,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
         Obstacle* obs = olist->list[i];
         const char* type = obs->getType();
         if (type == MeshObstacle::getClassName())
-        {
             break;
-        }
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
         {
@@ -468,13 +414,9 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
             const float facePos2 = face->getPosition()[2];
             if (face->isUpPlane() &&
                     (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
-            {
                 continue;
-            }
             else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
-            {
                 continue;
-            }
             else
             {
                 // add the face to the hitlist
@@ -495,9 +437,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
     {
         const MeshFace* face = (const MeshFace*) olist->list[0];
         if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
-        {
             return face;
-        }
     }
     if (i == olist->count)
     {
@@ -510,16 +450,14 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
         const Obstacle* obs = olist->list[i];
         if (!obs->isDriveThrough() &&
                 obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
-        {
             return obs;
-        }
     }
 
     return NULL; // no more obstacles, we are done
 }
 
 
-bool			World::crossingTeleporter(const float* pos,
+bool            World::crossingTeleporter(const float* pos,
         float angle, float dx, float dy, float dz,
         float* plane) const
 {
@@ -528,14 +466,12 @@ bool			World::crossingTeleporter(const float* pos,
     {
         const Teleporter* teleporter = (const Teleporter*) teleporters[i];
         if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane))
-        {
             return true;
-        }
     }
     return false;
 }
 
-const Teleporter*	World::crossesTeleporter(const float* oldPos,
+const Teleporter*   World::crossesTeleporter(const float* oldPos,
         const float* newPos,
         int& face) const
 {
@@ -545,16 +481,14 @@ const Teleporter*	World::crossesTeleporter(const float* oldPos,
     {
         const Teleporter* teleporter = (const Teleporter*) teleporters[i];
         if (teleporter->hasCrossed(oldPos, newPos, face))
-        {
             return teleporter;
-        }
     }
 
     // didn't cross
     return NULL;
 }
 
-const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
+const Teleporter*   World::crossesTeleporter(const Ray& r, int& face) const
 {
     // check teleporters
     const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
@@ -562,16 +496,14 @@ const Teleporter*	World::crossesTeleporter(const Ray& r, int& face) const
     {
         const Teleporter* teleporter = (const Teleporter*) teleporters[i];
         if (teleporter->isTeleported(r, face) > Epsilon)
-        {
             return teleporter;
-        }
     }
 
     // didn't cross
     return NULL;
 }
 
-float			World::getProximity(const float* p, float r) const
+float           World::getProximity(const float* p, float r) const
 {
     // get maximum over all teleporters
     float bestProximity = 0.0;
@@ -581,14 +513,12 @@ float			World::getProximity(const float* p, float r) const
         const Teleporter* teleporter = (const Teleporter*) teleporters[i];
         const float proximity = teleporter->getProximity(p, r);
         if (proximity > bestProximity)
-        {
             bestProximity = proximity;
-        }
     }
     return bestProximity;
 }
 
-void			World::freeFlags()
+void            World::freeFlags()
 {
     int i;
     if (flagNodes)
@@ -605,7 +535,7 @@ void			World::freeFlags()
     flagWarpNodes = NULL;
 }
 
-void			World::makeMeshDrawMgrs()
+void            World::makeMeshDrawMgrs()
 {
     // make the display list managers for source meshes
     std::vector<MeshObstacle*> sourceMeshes;
@@ -628,7 +558,7 @@ void			World::makeMeshDrawMgrs()
 }
 
 
-void			World::freeMeshDrawMgrs()
+void            World::freeMeshDrawMgrs()
 {
     for (int i = 0; i < drawInfoCount; i++)
     {
@@ -644,7 +574,7 @@ void			World::freeMeshDrawMgrs()
 }
 
 
-void			World::updateAnimations(float UNUSED(dt))
+void            World::updateAnimations(float UNUSED(dt))
 {
     const double gameTime = GameTime::getStepTime();
     for (int i = 0; i < drawInfoCount; i++)
@@ -656,7 +586,7 @@ void			World::updateAnimations(float UNUSED(dt))
 }
 
 
-void			World::freeInsideNodes() const
+void            World::freeInsideNodes() const
 {
     unsigned int i;
     int j;
@@ -665,9 +595,7 @@ void			World::freeInsideNodes() const
     {
         Obstacle* obs = boxes[i];
         for (j = 0; j < obs->getInsideSceneNodeCount(); j++)
-        {
             delete obs->getInsideSceneNodeList()[j];
-        }
         obs->freeInsideSceneNodeList();
     }
     const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
@@ -675,9 +603,7 @@ void			World::freeInsideNodes() const
     {
         Obstacle* obs = pyramids[i];
         for (j = 0; j < obs->getInsideSceneNodeCount(); j++)
-        {
             delete obs->getInsideSceneNodeList()[j];
-        }
         obs->freeInsideSceneNodeList();
     }
     const ObstacleList& basesR = OBSTACLEMGR.getBases();
@@ -685,9 +611,7 @@ void			World::freeInsideNodes() const
     {
         Obstacle* obs = basesR[i];
         for (j = 0; j < obs->getInsideSceneNodeCount(); j++)
-        {
             delete obs->getInsideSceneNodeList()[j];
-        }
         obs->freeInsideSceneNodeList();
     }
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
@@ -695,24 +619,20 @@ void			World::freeInsideNodes() const
     {
         Obstacle* obs = meshes[i];
         for (j = 0; j < obs->getInsideSceneNodeCount(); j++)
-        {
             delete obs->getInsideSceneNodeList()[j];
-        }
         obs->freeInsideSceneNodeList();
     }
     return;
 }
 
 
-void		World::makeLinkMaterial()
+void        World::makeLinkMaterial()
 {
     const std::string name = "LinkMaterial";
 
     linkMaterial = MATERIALMGR.findMaterial(name);
     if (linkMaterial != NULL)
-    {
         return;
-    }
 
     int dyncolId = DYNCOLORMGR.findColor(name);
     if (dyncolId < 0)
@@ -759,7 +679,7 @@ void		World::makeLinkMaterial()
 }
 
 
-void			World::initFlag(int index)
+void            World::initFlag(int index)
 {
     // make sure the server has not sent us a bogus value.
     if (index >= maxFlags || index < 0)
@@ -782,7 +702,7 @@ void			World::initFlag(int index)
     }
 }
 
-void			World::updateWind(float UNUSED(dt))
+void            World::updateWind(float UNUSED(dt))
 {
     const float minWindSpeed = 0.0f; // FIXME - BZDB
     const float maxWindSpeed = 10.0f; // FIXME - BZDB
@@ -804,7 +724,7 @@ void			World::updateWind(float UNUSED(dt))
     wind[2] = 0.0f;
 }
 
-void			World::updateFlag(int index, float dt)
+void            World::updateFlag(int index, float dt)
 {
     if (!flagNodes) return;
     const GLfloat* color = flagNodes[index]->getColor();
@@ -971,9 +891,7 @@ void			World::updateFlag(int index, float dt)
                 myWind[0] -= vel[0];
                 myWind[1] -= vel[1];
                 if (flagPlayer->isFalling())
-                {
                     myWind[2] -= vel[2];
-                }
                 flagNodes[index]->setWind(myWind, dt);
                 flagNodes[index]->setBillboard(true);
             }
@@ -986,16 +904,14 @@ void			World::updateFlag(int index, float dt)
     }
 }
 
-void			World::addFlags(SceneDatabase* scene, bool seerView)
+void            World::addFlags(SceneDatabase* scene, bool seerView)
 {
     if (!flagNodes) return;
     for (int i = 0; i < maxFlags; i++)
     {
         // if not showing flags, only allow FlagOnTank through
         if (flags[i].status != FlagOnTank && !BZDBCache::displayMainFlags)
-        {
             continue;
-        }
 
         if (flags[i].status == FlagNoExist) continue;
         // skip flag on a tank that isn't alive. also skip
@@ -1003,9 +919,7 @@ void			World::addFlags(SceneDatabase* scene, bool seerView)
         if (flags[i].status == FlagOnTank)
         {
             if ((flags[i].type == Flags::Cloaking) && !seerView)
-            {
                 continue;
-            }
             int j;
             for (j = 0; j < curMaxPlayers; j++)
                 if (players[j] && players[j]->getId() == flags[i].owner)
@@ -1040,21 +954,21 @@ static void writeDefaultOBJMaterials(std::ostream& out)
     } MatProps;
     const MatProps defaultMats[] =
     {
-        {"std_ground",	"std_ground.png",	{0.5f, 0.5f, 0.5f, 1.0f}},
-        {"boxtop",		"roof.png",		{1.0f, 1.0f, 0.9f, 1.0f}},
-        {"boxwall",		"boxwall.png",		{1.0f, 0.9f, 0.8f, 1.0f}},
-        {"pyrwall",		"pyrwall.png",		{0.8f, 0.8f, 1.0f, 1.0f}},
-        {"telefront",	"telelink.png",		{1.0f, 0.0f, 0.0f, 0.5f}},
-        {"teleback",	"telelink.png",		{0.0f, 1.0f, 0.0f, 0.5f}},
-        {"telerim",		"caution.png",		{1.0f, 1.0f, 0.0f, 0.5f}},
-        {"basetop_team1",	"red_basetop.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-        {"basewall_team1",	"red_basewall.png",	{1.0f, 0.8f, 0.8f, 1.0f}},
-        {"basetop_team2",	"green_basetop.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-        {"basewall_team2",	"green_basewall.png",	{0.8f, 1.0f, 0.8f, 1.0f}},
-        {"basetop_team3",	"blue_basetop.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-        {"basewall_team3",	"blue_basewall.png",	{0.8f, 0.8f, 1.0f, 1.0f}},
-        {"basetop_team4",	"purple_basetop.png",	{1.0f, 0.8f, 1.0f, 1.0f}},
-        {"basewall_team4",	"purple_basewall.png",	{1.0f, 0.8f, 1.0f, 1.0f}}
+        {"std_ground",  "std_ground.png",   {0.5f, 0.5f, 0.5f, 1.0f}},
+        {"boxtop",      "roof.png",     {1.0f, 1.0f, 0.9f, 1.0f}},
+        {"boxwall",     "boxwall.png",      {1.0f, 0.9f, 0.8f, 1.0f}},
+        {"pyrwall",     "pyrwall.png",      {0.8f, 0.8f, 1.0f, 1.0f}},
+        {"telefront",   "telelink.png",     {1.0f, 0.0f, 0.0f, 0.5f}},
+        {"teleback",    "telelink.png",     {0.0f, 1.0f, 0.0f, 0.5f}},
+        {"telerim",     "caution.png",      {1.0f, 1.0f, 0.0f, 0.5f}},
+        {"basetop_team1",   "red_basetop.png",  {1.0f, 0.8f, 0.8f, 1.0f}},
+        {"basewall_team1",  "red_basewall.png", {1.0f, 0.8f, 0.8f, 1.0f}},
+        {"basetop_team2",   "green_basetop.png",    {0.8f, 1.0f, 0.8f, 1.0f}},
+        {"basewall_team2",  "green_basewall.png",   {0.8f, 1.0f, 0.8f, 1.0f}},
+        {"basetop_team3",   "blue_basetop.png", {0.8f, 0.8f, 1.0f, 1.0f}},
+        {"basewall_team3",  "blue_basewall.png",    {0.8f, 0.8f, 1.0f, 1.0f}},
+        {"basetop_team4",   "purple_basetop.png",   {1.0f, 0.8f, 1.0f, 1.0f}},
+        {"basewall_team4",  "purple_basewall.png",  {1.0f, 0.8f, 1.0f, 1.0f}}
     };
     const int count = sizeof(defaultMats) / sizeof(defaultMats[0]);
     BzMaterial mat;
@@ -1100,9 +1014,7 @@ static void writeBZDBvar (const std::string& name, void *userData)
     {
         std::string qmark = "";
         if (BZDB.get(name).find(' ') != std::string::npos)
-        {
             qmark = '"';
-        }
         out << indent << "  -set " << name << " "
             << qmark << BZDB.get(name) << qmark << std::endl;
     }
@@ -1114,36 +1026,26 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 {
     const bool saveAsOBJ = BZDB.isTrue("saveAsOBJ");
     if (saveAsOBJ)
-    {
         indent = "# ";
-    }
     else
-    {
         indent = "";
-    }
 
     fullname = getWorldDirName();
     fullname += filename;
     if (saveAsOBJ)
     {
         if (strstr(fullname.c_str(), ".obj") == NULL)
-        {
             fullname += ".obj";
-        }
     }
     else
     {
         if (strstr(fullname.c_str(), ".bzw") == NULL)
-        {
             fullname += ".bzw";
-        }
     }
 
     std::ostream *stream = FILEMGR.createDataOutStream(fullname.c_str());
     if (stream == NULL)
-    {
         return false;
-    }
 
     // for notational convenience
     std::ostream& out = *stream;
@@ -1156,7 +1058,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
         out << indent << "options" << std::endl;
 
         // FIXME - would be nice to get a few other thing
-        //	 -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
+        //   -fb, -sb, rabbit style, a real -mp, etc... (also, flags?)
 
         if (allowTeamFlags())
         {
@@ -1209,13 +1111,9 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
         {
             out << indent << "world" << std::endl;
             if (worldSize != atof(BZDB.getDefault(StateDatabase::BZDB_WORLDSIZE).c_str()))
-            {
                 out << indent << "  size " << worldSize / 2.0f << std::endl;
-            }
             if (flagHeight != atof(BZDB.getDefault(StateDatabase::BZDB_FLAGHEIGHT).c_str()))
-            {
                 out << indent << "  flagHeight " << flagHeight << std::endl;
-            }
             out << indent << "end" << std::endl << std::endl;
         }
     }
@@ -1228,9 +1126,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
 
     // Write materials
     if (!saveAsOBJ)
-    {
         MATERIALMGR.print(out, indent);
-    }
     else
     {
         const std::string mtlname = filename + ".mtl";
@@ -1270,9 +1166,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
     // Write the world obstacles
     {
         if (saveAsOBJ)
-        {
             writeOBJGround(out);
-        }
         OBSTACLEMGR.print(out, indent);
     }
 
@@ -1289,9 +1183,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
             Weapon weapon = *it;
             out << indent << "weapon" << std::endl;
             if (weapon.type != Flags::Null)
-            {
                 out << indent << "  type " << weapon.type->flagAbbv << std::endl;
-            }
             out << indent << "  position " << weapon.pos[0] << " " << weapon.pos[1] << " "
                 << weapon.pos[2] << std::endl;
             out << indent << "  rotation " << (weapon.dir * RAD2DEGf) << std::endl;
@@ -1301,9 +1193,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
                 out << indent << "  delay";
                 for (std::vector<float>::iterator dit = weapon.delay.begin();
                         dit != weapon.delay.end(); ++dit)
-                {
                     out << " " << (float)*dit;
-                }
                 out << std::endl;
             }
             out << indent << "end" << std::endl << std::endl;
@@ -1327,9 +1217,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
                 out << indent << "  flag";
                 std::vector<FlagType*>::iterator fit;
                 for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit)
-                {
                     out << " " << (*fit)->flagAbbv;
-                }
                 out << std::endl;
             }
             if (!zone.teams.empty())
@@ -1337,9 +1225,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
                 out << indent << "  team";
                 std::vector<TeamColor>::iterator tit;
                 for (tit = zone.teams.begin(); tit != zone.teams.end(); ++tit)
-                {
                     out << " " << (*tit);
-                }
                 out << std::endl;
             }
             if (!zone.safety.empty())
@@ -1347,9 +1233,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
                 out << indent << "  safety";
                 std::vector<TeamColor>::iterator sit;
                 for (sit = zone.safety.begin(); sit != zone.safety.end(); ++sit)
-                {
                     out << " " << (*sit);
-                }
                 out << std::endl;
             }
             out << indent << "end" << std::endl << std::endl;
@@ -1373,20 +1257,14 @@ static void drawLines (int count, float (*vertices)[3], int color)
     const int colorCount = sizeof(colors) / sizeof(colors[0]);
 
     if (color < 0)
-    {
         color = 0;
-    }
     else if (color >= colorCount)
-    {
         color = colorCount - 1;
-    }
     glColor4fv (colors[color]);
 
     glBegin (GL_LINE_STRIP);
     for (int i = 0; i < count; i++)
-    {
         glVertex3fv (vertices[i]);
-    }
     glEnd ();
 
     return;
@@ -1439,14 +1317,10 @@ static void drawInsideOutsidePoints()
     {
         glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
         for (size_t i = 0; i < insides.size(); i++)
-        {
             glVertex3fv(insides[i]);
-        }
         glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
         for (size_t i = 0; i < outsides.size(); i++)
-        {
             glVertex3fv(outsides[i]);
-        }
     }
     glEnd();
 
@@ -1483,9 +1357,7 @@ void World::drawCollisionGrid() const
     drawInsideOutsidePoints();
 
     if (usingTextures)
-    {
         glEnable (GL_TEXTURE_2D);
-    }
 
     return;
 }
@@ -1493,16 +1365,12 @@ void World::drawCollisionGrid() const
 RemotePlayer* World::getCurrentRabbit() const
 {
     if (players == NULL)
-    {
         return NULL;
-    }
     for (int i = 0; i < curMaxPlayers; i++)
     {
         RemotePlayer* p = players[i];
         if (p && p->isAlive() && (p->getTeam() == RabbitTeam))
-        {
             return p;
-        }
     }
     return NULL;
 }
@@ -1512,6 +1380,6 @@ RemotePlayer* World::getCurrentRabbit() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

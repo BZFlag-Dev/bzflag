@@ -41,7 +41,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 {
 
     std::string bzfsUserAgent = "bzfs ";
-    bzfsUserAgent	    += getAppVersion();
+    bzfsUserAgent       += getAppVersion();
 
     setURLwithNonce(listServerURL);
     setUserAgent(bzfsUserAgent);
@@ -58,7 +58,7 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
     //if this c'tor is called, it's safe to publicize
     publicizeServer      = true;
-    queuedRequest	= false;
+    queuedRequest   = false;
     // schedule initial ADD message
     queueMessage(ListServerLink::ADD);
 }
@@ -149,17 +149,13 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
                 authReply  = true;
             }
             else if (!strncmp(base, ownerIdentifier, strlen(ownerIdentifier)))
-            {
                 setPublicOwner(base + strlen(ownerIdentifier));
-            }
             else if (!strncmp(base, bzIdentifier, strlen(bzIdentifier)))
             {
                 std::string line = base;
                 std::vector<std::string> args = TextUtils::tokenize(line, " \t", 3, true);
                 if (args.size() < 3)
-                {
                     logDebugMessage(3,"Bad BZID string: %s\n", line.c_str());
-                }
                 else
                 {
                     const std::string& bzId = args[1];
@@ -181,48 +177,48 @@ void ListServerLink::finalization(char *data, unsigned int length, bool good)
                 }
             }
             /*
-            	char* start = base + strlen(bzIdentifier);
-            	// skip leading white
-            	while ((*start != '\0') && isspace(*start)) start++;
-            	const bool useQuotes = (*start == '"');
-            	if (useQuotes) start++; // ditch the '"'
-            	char* end = start;
-            	// skip until the end of the id
-            	if (useQuotes) {
-            	  while ((*end != '\0') && (*end != '"')) end++;
-            	} else {
-            	  while ((*end != '\0') && !isspace(*end)) end++;
-            	}
-            	if ((*end != '\0') && (useQuotes && (*end != '"'))) {
-            	  if (useQuotes) {
-            	    callsign = end + 1;
-            	    end--; // ditch the '"'
-            	  } else {
-            	    callsign = end;
-            	  }
-            	  // skip leading white
-            	  while ((*callsign != '\0') && isspace(*callsign)) callsign++;
-            	  if (*callsign != '\0') {
-            	    bzId = start;
-            	    bzId = bzId.substr(end - start);
-            	    if ((bzId.size() > 0) && (strlen(callsign) > 0)) {
-            	      bzIdInfo = true;
-            	    }
-            	  }
-            	}
+                char* start = base + strlen(bzIdentifier);
+                // skip leading white
+                while ((*start != '\0') && isspace(*start)) start++;
+                const bool useQuotes = (*start == '"');
+                if (useQuotes) start++; // ditch the '"'
+                char* end = start;
+                // skip until the end of the id
+                if (useQuotes) {
+                  while ((*end != '\0') && (*end != '"')) end++;
+                } else {
+                  while ((*end != '\0') && !isspace(*end)) end++;
+                }
+                if ((*end != '\0') && (useQuotes && (*end != '"'))) {
+                  if (useQuotes) {
+                    callsign = end + 1;
+                    end--; // ditch the '"'
+                  } else {
+                    callsign = end;
+                  }
+                  // skip leading white
+                  while ((*callsign != '\0') && isspace(*callsign)) callsign++;
+                  if (*callsign != '\0') {
+                    bzId = start;
+                    bzId = bzId.substr(end - start);
+                    if ((bzId.size() > 0) && (strlen(callsign) > 0)) {
+                      bzIdInfo = true;
+                    }
+                  }
+                }
                   }
 
                   if (bzIdInfo == true) {
-            	logDebugMessage(3,"Got BZID: %s", base);
-            	for (int i = 0; i < curMaxPlayers; i++) {
-            	  GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
-            	  if ((gkp != NULL) &&
-            	      (strcasecmp(gkp->player.getCallSign(), callsign) == 0)) {
-            	    gkp->setBzIdentifier(bzId);
-            	    logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n", callsign, i, bzId.c_str());
-            	    break;
-            	  }
-            	}
+                logDebugMessage(3,"Got BZID: %s", base);
+                for (int i = 0; i < curMaxPlayers; i++) {
+                  GameKeeper::Player* gkp = GameKeeper::Player::getPlayerByIndex(i);
+                  if ((gkp != NULL) &&
+                      (strcasecmp(gkp->player.getCallSign(), callsign) == 0)) {
+                    gkp->setBzIdentifier(bzId);
+                    logDebugMessage(3,"Set player (%s [%i]) bzId to (%s)\n", callsign, i, bzId.c_str());
+                    break;
+                  }
+                }
                   }
             */
             if (authReply)
@@ -356,14 +352,15 @@ void ListServerLink::sendQueuedMessages()
     {
         logDebugMessage(3,"Queuing ADD message to list server\n");
 
-        bz_ListServerUpdateEvent_V1	updateEvent;
+        bz_ListServerUpdateEvent_V1 updateEvent;
         updateEvent.address = publicizeAddress;
         updateEvent.description = publicizeDescription;
         updateEvent.groups = advertiseGroups;
 
         worldEventManager.callEvents(bz_eListServerUpdateEvent,&updateEvent);
 
-        addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()), std::string(updateEvent.groups.c_str()));
+        addMe(getTeamCounts(), std::string(updateEvent.address.c_str()), std::string(updateEvent.description.c_str()),
+              std::string(updateEvent.groups.c_str()));
         lastAddTime = TimeKeeper::getCurrent();
     }
     else if (nextMessageType == ListServerLink::REMOVE)
@@ -436,9 +433,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
     }
 
     if (clOptions && !clOptions->publicizedKey.empty())
-    {
         msg += "&key=" + clOptions->publicizedKey;
-    }
 
     msg += "&advertgroups=";
     msg += TextUtils::url_encode(_advertiseGroups);
@@ -464,6 +459,6 @@ void ListServerLink::removeMe(std::string publicizedAddress)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

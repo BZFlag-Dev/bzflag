@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATISTICS_H__
-#define	__SHOTSTATISTICS_H__
+#ifndef __SHOTSTATISTICS_H__
+#define __SHOTSTATISTICS_H__
 
 #include "common.h"
 
@@ -32,19 +32,19 @@ public:
     ~ShotStatistics();
 
     // raw stats returns
-    int	 getFired(FlagType* flag) const;
-    int	 getHit(FlagType* flag) const;
+    int  getFired(FlagType* flag) const;
+    int  getHit(FlagType* flag) const;
 
     // stats processing
-    int	 getTotalFired() const;
-    int	 getTotalHit() const;
-    int	 getTotalPerc() const;
+    int  getTotalFired() const;
+    int  getTotalHit() const;
+    int  getTotalPerc() const;
     FlagType*   getFavoriteFlag() const;
     FlagType*   getBestFlag() const;
 
     // tally functions
-    void	      recordFire(FlagType* flag, const float *pVec, const float *shotVec);
-    void	      recordHit(FlagType* flag);
+    void          recordFire(FlagType* flag, const float *pVec, const float *shotVec);
+    void          recordHit(FlagType* flag);
 
     double getLastShotTimeDelta ( void ) const
     {
@@ -59,13 +59,13 @@ private:
     FlagMap     fired;
     FlagMap     hit;
 
-    int	      totalFired;
-    int	      totalHit;
+    int       totalFired;
+    int       totalHit;
 
-    double	  lastShotTimeDelta;
-    double	  lastShotTime;
+    double    lastShotTimeDelta;
+    double    lastShotTime;
 
-    float		  lastShotDeviation;
+    float         lastShotDeviation;
 };
 
 
@@ -99,6 +99,6 @@ inline int ShotStatistics::getTotalHit() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

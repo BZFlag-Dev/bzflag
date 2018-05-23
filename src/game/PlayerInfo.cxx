@@ -25,9 +25,9 @@
 WordFilter PlayerInfo::serverSpoofingFilter;
 TimeKeeper PlayerInfo::now = TimeKeeper::getCurrent();
 
-bool	PlayerInfo::callSignFiltering = false;
-WordFilter *PlayerInfo::filterData	= NULL;
-bool	PlayerInfo::simpleFiltering   = true;
+bool    PlayerInfo::callSignFiltering = false;
+WordFilter *PlayerInfo::filterData  = NULL;
+bool    PlayerInfo::simpleFiltering   = true;
 
 PlayerInfo::PlayerInfo(int _playerIndex) :
     playerIndex(_playerIndex),
@@ -61,12 +61,12 @@ PlayerInfo::PlayerInfo(int _playerIndex) :
     type = TankPlayer;
 }
 
-void PlayerInfo::setFilterParameters(bool	_callSignFiltering,
+void PlayerInfo::setFilterParameters(bool   _callSignFiltering,
                                      WordFilter &_filterData,
-                                     bool	_simpleFiltering)
+                                     bool   _simpleFiltering)
 {
     callSignFiltering = _callSignFiltering;
-    filterData	= &_filterData;
+    filterData  = &_filterData;
     simpleFiltering   = _simpleFiltering;
 }
 
@@ -170,9 +170,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
 
     // spoof filter holds "SERVER" for robust name comparisons
     if (serverSpoofingFilter.wordCount() == 0)
-    {
         serverSpoofingFilter.addToFilter("SERVER", "");
-    }
 
     if (isBot() && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS))
     {
@@ -236,9 +234,7 @@ bool PlayerInfo::processEnter ( uint16_t &rejectCode, char *rejectMsg )
     }
 
     if (token[0] == 0)
-    {
         strcpy(token, "NONE");
-    }
     hasDoneEntering = true;
     return true;
 }
@@ -253,7 +249,7 @@ void PlayerInfo::setCallSign(const char * c)
     if (c != NULL)
     {
         strncpy(callSign, c, CallSignLen);
-        callSign[CallSignLen - 1] = '\0';	// ensure null termination
+        callSign[CallSignLen - 1] = '\0';   // ensure null termination
     }
 }
 
@@ -347,18 +343,14 @@ void PlayerInfo::cleanMotto()
     do
     {
         if (isprint(*sp) && (*sp != '\'') && (*sp != '"'))
-        {
             *tp++ = *sp;
-        }
     }
     while (*++sp);
     *tp = *sp;
 
     // strip trailing whitespace from motto
     while (isspace(*--tp))
-    {
         *tp=0;
-    }
 }
 
 bool PlayerInfo::isMottoReadable()
@@ -370,9 +362,7 @@ bool PlayerInfo::isMottoReadable()
     do
     {
         if (isalnum(*sp))
-        {
             mottoAlnumCount++;
-        }
     }
     while (*++sp);
     int mottolen = (int)strlen(motto);
@@ -382,7 +372,7 @@ bool PlayerInfo::isMottoReadable()
 void PlayerInfo::setMotto(const char* _motto)
 {
     strncpy(motto, _motto, MottoLen);
-    motto[MottoLen - 1] = '\0';	// ensure null termination
+    motto[MottoLen - 1] = '\0'; // ensure null termination
 }
 
 const char *PlayerInfo::getToken() const
@@ -395,7 +385,7 @@ void PlayerInfo::setToken(const char * c)
     if (c != NULL)
     {
         strncpy(token, c, TokenLen);
-        token[TokenLen - 1] = '\0';	// ensure null termination
+        token[TokenLen - 1] = '\0'; // ensure null termination
     }
 }
 
@@ -492,7 +482,7 @@ void PlayerInfo::setClientVersion(const char * c)
     if (c != NULL)
     {
         strncpy(clientVersion, c, VersionLen);
-        clientVersion[VersionLen - 1] = '\0';	// ensure null termination
+        clientVersion[VersionLen - 1] = '\0';   // ensure null termination
     }
 }
 
@@ -507,9 +497,7 @@ void PlayerInfo::getClientVersionNumbers(int& major, int& minor, int& rev)
 double PlayerInfo::getPausedTime()
 {
     if ((state > PlayerInLimbo) && (team != ObserverTeam) && (paused))
-    {
         return (now - pausedSince);
-    }
 
     return 0;
 }
@@ -517,13 +505,9 @@ double PlayerInfo::getPausedTime()
 double PlayerInfo::getIdleTime()
 {
     if ((state > PlayerInLimbo) && (team != ObserverTeam))
-    {
         return (now - lastupdate);
-    }
     else if (team == ObserverTeam)
-    {
         return -1;
-    }
 
     return 0;
 }
@@ -536,9 +520,7 @@ std::string PlayerInfo::getIdleStat()
         reply = TextUtils::format("%s\t: %4ds", callSign,
                                   int(now - lastupdate));
         if (paused)
-        {
             reply += TextUtils::format("  paused %4ds", int(now - pausedSince));
-        }
     }
     return reply;
 }
@@ -568,9 +550,7 @@ bool PlayerInfo::isTooMuchIdling(float kickThresh)
     {
         const float idletime = (float)(now - lastupdate);
         if (idletime > kickThresh)
-        {
             idling = true;
-        }
     }
     return idling;
 }
@@ -585,9 +565,7 @@ bool PlayerInfo::hasStartedToNotRespond()
         bool oldnr = notResponding;
         notResponding = (now - lastupdate) > notRespondingTime;
         if (!oldnr && notResponding)
-        {
             startingToNotRespond = true;
-        }
     }
     return startingToNotRespond;
 }
@@ -612,12 +590,10 @@ void PlayerInfo::setPlayedEarly(bool early)
 void PlayerInfo::updateIdleTime()
 {
     if (!paused && (state != PlayerDead))
-    {
         lastupdate = now;
-    }
 }
 
-void	PlayerInfo::setReplayState(PlayerReplayState _state)
+void    PlayerInfo::setReplayState(PlayerReplayState _state)
 {
     replayState = _state;
 }
@@ -678,6 +654,6 @@ void PlayerInfo::setNotifiedOfSpawnable(bool notified)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

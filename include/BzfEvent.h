@@ -11,11 +11,11 @@
  */
 
 /* BzfEvent:
- *	Abstract, platform independent base for OpenGL windows.
+ *  Abstract, platform independent base for OpenGL windows.
  */
 
 #ifndef BZF_EVENT_H
-#define	BZF_EVENT_H
+#define BZF_EVENT_H
 
 #include "common.h"
 
@@ -29,15 +29,15 @@ public:
 class BzfMotionEvent
 {
 public:
-    int			x;
-    int			y;
+    int         x;
+    int         y;
 };
 
 class BzfResizeEvent
 {
 public:
-    int			width;
-    int			height;
+    int         width;
+    int         height;
 };
 
 class BzfMapEvent
@@ -196,9 +196,9 @@ public:
         AltKey = 4
     };
 
-    char		ascii;
-    int			button;
-    int			shift;
+    char        ascii;
+    int         button;
+    int         shift;
 };
 
 class BzfEvent
@@ -217,18 +217,18 @@ public:
         KeyDown
     };
 
-    Type		type;
-    BzfWindow*		window;
+    Type        type;
+    BzfWindow*      window;
     union
     {
 public:
-        BzfQuitEvent	quit;
-        BzfResizeEvent	resize;
-        BzfMotionEvent	mouseMove;
-        BzfMapEvent	map;
-        BzfUnmapEvent	unmap;
-        BzfKeyEvent	keyUp;
-        BzfKeyEvent	keyDown;
+        BzfQuitEvent    quit;
+        BzfResizeEvent  resize;
+        BzfMotionEvent  mouseMove;
+        BzfMapEvent map;
+        BzfUnmapEvent   unmap;
+        BzfKeyEvent keyUp;
+        BzfKeyEvent keyDown;
     };
     BzfEvent() :
         type(Unset),
@@ -244,6 +244,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

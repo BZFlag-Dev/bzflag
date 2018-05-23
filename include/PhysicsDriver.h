@@ -131,13 +131,9 @@ private:
 inline const PhysicsDriver* PhysicsDriverManager::getDriver(int id) const
 {
     if ((id >= 0) && (id < (int)drivers.size()))
-    {
         return drivers[id];
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
@@ -150,6 +146,6 @@ extern PhysicsDriverManager PHYDRVMGR;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

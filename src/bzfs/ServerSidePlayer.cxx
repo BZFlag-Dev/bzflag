@@ -20,7 +20,8 @@
 
 // server side bot API
 
-bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0), alive(false)
+bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0),
+    alive(false)
 {
     input[0] = input[1] = 0;
     lastUpdate.rotVel = 0;
@@ -126,7 +127,8 @@ void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short) 
 
 void bz_ServerSidePlayerHandler::playerTeleported( int, bz_PlayerUpdateState *, bz_PlayerUpdateState * ) {}
 
-void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
+void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion,
+        bz_eTeamType _team)
 {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -497,7 +499,8 @@ class BotEventHandler : public bz_EventHandler
             case bz_ePlayerDieEvent:
             {
                 bz_PlayerDieEventData_V1* die = (bz_PlayerDieEventData_V1*)eventData;
-                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(), die->driverID);
+                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(),
+                                      die->driverID);
             }
             break;
 
@@ -581,7 +584,8 @@ BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler 
     if (playerID < 0)
         return false;
 
-    std::vector<bz_ServerSidePlayerHandler*>::iterator itr = std::find(serverSidePlayer.begin(),serverSidePlayer.end(),handler);
+    std::vector<bz_ServerSidePlayerHandler*>::iterator itr = std::find(serverSidePlayer.begin(),serverSidePlayer.end(),
+            handler);
     if (itr != serverSidePlayer.end())
         serverSidePlayer.erase(itr);
 
@@ -601,6 +605,6 @@ BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler 
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

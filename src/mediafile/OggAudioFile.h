@@ -19,8 +19,8 @@
 
 struct OAFInputBundle
 {
-    std::istream*		input;
-    std::streamoff	length;
+    std::istream*       input;
+    std::streamoff  length;
 };
 
 /** This class represents an Ogg Vorbis audio file. It implements the read()
@@ -32,21 +32,21 @@ public:
     virtual ~OggAudioFile();
 
     /** This class returns the default extension of Ogg Vorbis files. */
-    static std::string	getExtension();
+    static std::string  getExtension();
 
     /** This function reads data from an Ogg Vorbis file. */
-    virtual bool		read(void* buffer, int numFrames);
+    virtual bool        read(void* buffer, int numFrames);
 
 protected:
-    OggVorbis_File	file;
-    vorbis_info*		info;
-    int			stream;
+    OggVorbis_File  file;
+    vorbis_info*        info;
+    int         stream;
 };
 
-size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource);
-int	OAFSeek(void* datasource, ogg_int64_t offset, int whence);
-int	OAFClose(void* datasource);
-long	OAFTell(void* datasource);
+size_t  OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource);
+int OAFSeek(void* datasource, ogg_int64_t offset, int whence);
+int OAFClose(void* datasource);
+long    OAFTell(void* datasource);
 
 #endif
 

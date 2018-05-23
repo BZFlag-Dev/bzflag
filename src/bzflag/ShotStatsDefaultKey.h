@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATSDEFAULTKEY_H__
-#define	__SHOTSTATSDEFAULTKEY_H__
+#ifndef __SHOTSTATSDEFAULTKEY_H__
+#define __SHOTSTATSDEFAULTKEY_H__
 
 /* common interface headers */
 #include "BzfEvent.h"
@@ -40,6 +40,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

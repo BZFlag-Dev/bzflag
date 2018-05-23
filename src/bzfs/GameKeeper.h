@@ -45,7 +45,7 @@ public:
     ShotInfo() : salt(0), expireTime(0.0), present(false), running(false) {};
 
     FiringInfo firingInfo;
-    int	salt;
+    int salt;
     float      expireTime;
     bool       present;
     bool       running;
@@ -73,7 +73,7 @@ public:
         Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
         ~Player();
 
-        int		   getIndex();
+        int        getIndex();
         static int     getFreeIndex(int min, int max);
         static Player* getPlayerByIndex(int _playerIndex);
         static int     count();
@@ -85,45 +85,45 @@ public:
         static int     getPlayerIDByName(const std::string &name);
         static void    reloadAccessDatabase();
 
-        bool	   loadEnterData(uint16_t& rejectCode,
+        bool       loadEnterData(uint16_t& rejectCode,
                                  char* rejectMsg);
-        void*	   packAdminInfo(void* buf);
-        void*	   packPlayerInfo(void* buf);
-        void*	   packPlayerUpdate(void* buf);
+        void*      packAdminInfo(void* buf);
+        void*      packPlayerInfo(void* buf);
+        void*      packPlayerUpdate(void* buf);
 
-        void	   setPlayerAddMessage ( PlayerAddMessage &msg );
+        void       setPlayerAddMessage ( PlayerAddMessage &msg );
 
-        void	   signingOn(bool ctf);
-        void	   close();
+        void       signingOn(bool ctf);
+        void       close();
         static bool    clean();
-        void	   handleTcpPacket(fd_set *set);
+        void       handleTcpPacket(fd_set *set);
 
         // For hostban checking, to avoid check and check again
         static void    setAllNeedHostbanChecked(bool set);
-        void	   setNeedThisHostbanChecked(bool set);
-        bool	   needsHostbanChecked();
+        void       setNeedThisHostbanChecked(bool set);
+        bool       needsHostbanChecked();
 
         // To handle player State
-        void	   setPlayerState(float pos[3], float azimuth);
-        void	   getPlayerState(float pos[3], float &azimuth);
-        void	   setPlayerState(PlayerState state, float timestamp);
+        void       setPlayerState(float pos[3], float azimuth);
+        void       getPlayerState(float pos[3], float &azimuth);
+        void       setPlayerState(PlayerState state, float timestamp);
 
-        void	   setBzIdentifier(const std::string& id);
+        void       setBzIdentifier(const std::string& id);
         const std::string& getBzIdentifier() const;
 
         // When is the player's next GameTime?
-        const TimeKeeper&	getNextGameTime() const;
-        void		updateNextGameTime();
+        const TimeKeeper&   getNextGameTime() const;
+        void        updateNextGameTime();
 
         // To handle Identify
-        void	   setLastIdFlag(int _idFlag);
-        int	    getLastIdFlag();
+        void       setLastIdFlag(int _idFlag);
+        int     getLastIdFlag();
 
         // To handle shot
         static void    setMaxShots(int _maxShots);
-        bool	   addShot(int id, int salt, FiringInfo &firingInfo);
-        bool	   removeShot(int id, int salt);
-        bool	   updateShot(int id, int salt);
+        bool       addShot(int id, int salt, FiringInfo &firingInfo);
+        bool       removeShot(int id, int salt);
+        bool       updateShot(int id, int salt);
 
 
         enum LSAState
@@ -140,24 +140,24 @@ public:
         } _LSAState;
 
         // players
-        PlayerInfo	      player;
+        PlayerInfo        player;
         // Net Handler
         std::shared_ptr<NetHandler> netHandler;
         // player lag info
-        LagInfo	      lagInfo;
+        LagInfo       lagInfo;
         // player access
         PlayerAccessInfo  accessInfo;
         // Last known position, vel, etc
         PlayerState       lastState;
-        float	      stateTimeStamp;
-        float	      serverTimeStamp;
+        float         stateTimeStamp;
+        float         serverTimeStamp;
         // GameTime update
-        float	      gameTimeRate;
-        TimeKeeper	      gameTimeNext;
+        float         gameTimeRate;
+        TimeKeeper        gameTimeNext;
         // FlagHistory
         FlagHistory       flagHistory;
         // Score
-        Score	      score;
+        Score         score;
         // Authentication
         Authentication    authentication;
 
@@ -167,7 +167,7 @@ public:
         bool hasEntered;
 
         // logic class for server side players
-        bz_ServerSidePlayerHandler*	playerHandler;
+        bz_ServerSidePlayerHandler* playerHandler;
 
         bool addWasDelayed;
         bool hadEnter;
@@ -177,18 +177,18 @@ public:
 
     private:
         static Player*    playerList[PlayerSlot];
-        int		      playerIndex;
-        bool	      closed;
+        int           playerIndex;
+        bool          closed;
         tcpCallback       clientCallback;
-        std::string	      bzIdentifier;
-        bool	      needThisHostbanChecked;
+        std::string       bzIdentifier;
+        bool          needThisHostbanChecked;
         // In case you want recheck all condition on all players
         static bool       allNeedHostbanChecked;
 
-        static int	     maxShots;
+        static int       maxShots;
         std::vector<ShotInfo> shotsInfo;
 
-        int	       idFlag;
+        int        idFlag;
 
     };
 
@@ -256,6 +256,6 @@ inline const TimeKeeper& GameKeeper::Player::getNextGameTime() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

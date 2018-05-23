@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_GLOBAL_H
-#define	BZF_GLOBAL_H
+#ifndef BZF_GLOBAL_H
+#define BZF_GLOBAL_H
 
 /*
  * Global constants
@@ -27,13 +27,13 @@
 
 
 // values affecting struct and class layout
-const int		CallSignLen = 32;	// including terminating NUL
-const int		PasswordLen = 32;	// including terminating NUL
-const int		MottoLen = 128;		// including terminating NUL
-const int		TokenLen = 22;		// opaque string (now int(10)) and terminating NUL
-const int		VersionLen = 60;	// including terminating NUL
-const int		LocaleLen = 17;		// including terminating NUL
-const int		MessageLen = 128;	// including terminating NUL
+const int       CallSignLen = 32;   // including terminating NUL
+const int       PasswordLen = 32;   // including terminating NUL
+const int       MottoLen = 128;     // including terminating NUL
+const int       TokenLen = 22;      // opaque string (now int(10)) and terminating NUL
+const int       VersionLen = 60;    // including terminating NUL
+const int       LocaleLen = 17;     // including terminating NUL
+const int       MessageLen = 128;   // including terminating NUL
 
 // types of things we can be
 enum PlayerType
@@ -50,8 +50,8 @@ enum MessageType
 };
 
 // team info
-const int		NumTeams = 8;
-const int		CtfTeams = 5;
+const int       NumTeams = 8;
+const int       CtfTeams = 5;
 enum TeamColor
 {
     AutomaticTeam = -2,
@@ -74,17 +74,17 @@ enum TeamColor
 #endif
 
 // epsilon and very far for ray intersections
-const float		Epsilon =	ZERO_TOLERANCE;	// arbitrary
-const float		Infinity =	MAXFLOAT;	// arbitrary
+const float     Epsilon =   ZERO_TOLERANCE; // arbitrary
+const float     Infinity =  MAXFLOAT;   // arbitrary
 
-#define DEFAULT_WORLD	800
+#define DEFAULT_WORLD   800
 
 // readout stuff
-const int		MaxMessages =	20;		// msg. history length
-const int		MinX = 256;
-const int		MinY = 192;
-const int		NoMotionSize =	10;		// no motion zone size
-const int		MaxMotionSize = 37;		// motion zone size
+const int       MaxMessages =   20;     // msg. history length
+const int       MinX = 256;
+const int       MinY = 192;
+const int       NoMotionSize =  10;     // no motion zone size
+const int       MaxMotionSize = 37;     // motion zone size
 
 // game types
 enum GameType
@@ -97,13 +97,13 @@ enum GameType
 // game styles
 enum GameOptions
 {
-    SuperFlagGameStyle =	 0x0002, // superflags allowed
-    JumpingGameStyle =	 0x0008, // jumping allowed
-    InertiaGameStyle =	 0x0010, // momentum for all
-    RicochetGameStyle =	 0x0020, // all shots ricochet
-    ShakableGameStyle =	 0x0040, // can drop bad flags
-    AntidoteGameStyle =	 0x0080, // anti-bad flags
-    HandicapGameStyle =	 0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
+    SuperFlagGameStyle =     0x0002, // superflags allowed
+    JumpingGameStyle =   0x0008, // jumping allowed
+    InertiaGameStyle =   0x0010, // momentum for all
+    RicochetGameStyle =  0x0020, // all shots ricochet
+    ShakableGameStyle =  0x0040, // can drop bad flags
+    AntidoteGameStyle =  0x0080, // anti-bad flags
+    HandicapGameStyle =  0x0100, // handicap players based on score (eek! was TimeSyncGameStyle)
     NoSelfKillsGameStyle = 0x0200,
     NoTeamKillsGameStyle = 0x0400
                            // add here before reusing old ones above
@@ -112,7 +112,7 @@ enum GameOptions
 // map object flags
 #define _DRIVE_THRU  ( 1 << 0 )
 #define _SHOOT_THRU  ( 1 << 1 )
-#define _FLIP_Z	     ( 1 << 2 )
+#define _FLIP_Z      ( 1 << 2 )
 #define _RICOCHET    ( 1 << 3 )
 
 const int mapVersion = 1;
@@ -120,10 +120,10 @@ const int mapVersion = 1;
 struct GlobalDBItem
 {
 public:
-    const char*			name;
-    const char*			value;
-    bool			persistent;
-    StateDatabase::Permission	permission;
+    const char*         name;
+    const char*         value;
+    bool            persistent;
+    StateDatabase::Permission   permission;
 };
 extern const unsigned int numGlobalDBItems;
 extern const struct GlobalDBItem globalDBItems[];
@@ -134,6 +134,6 @@ extern const struct GlobalDBItem globalDBItems[];
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -35,13 +35,13 @@
 #include "Roaming.h"
 
 // for dead reckoning
-static const float	MaxUpdateTime = 1.0f;		// seconds
+static const float  MaxUpdateTime = 1.0f;       // seconds
 
 //
 // Player
 //
 
-int		Player::tankTexture = -1;
+int     Player::tankTexture = -1;
 
 Player::Player(const PlayerId& _id, TeamColor _team,
                const char* name, const char* _motto, const PlayerType _type) :
@@ -101,7 +101,7 @@ Player::Player(const PlayerId& _id, TeamColor _team,
     ::strncpy(callSign, name, CallSignLen);
     callSign[CallSignLen-1] = '\0';
 
-    setMotto(_motto);	// will be superseded by the server
+    setMotto(_motto);   // will be superseded by the server
 
     if (id != ServerPlayer)
     {
@@ -111,13 +111,9 @@ Player::Player(const PlayerId& _id, TeamColor _team,
         changeTeam(team);
         const float sphereRad = (1.5f * BZDBCache::tankRadius);
         if (RENDERER.useQuality() >= 2)
-        {
             pausedSphere = new SphereLodSceneNode(state.pos, sphereRad);
-        }
         else
-        {
             pausedSphere = new SphereBspSceneNode(state.pos, sphereRad);
-        }
         pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
     }
 
@@ -174,7 +170,7 @@ static float rabbitRank (int wins, int losses)
 void Player::setMotto(const char* _motto)
 {
     strncpy(motto, _motto, MottoLen);
-    motto[MottoLen - 1] = '\0';	// ensure null termination
+    motto[MottoLen - 1] = '\0'; // ensure null termination
 }
 
 float Player::getTKRatio() const
@@ -185,9 +181,7 @@ float Player::getTKRatio() const
         return (float)tks/1.0f;
     }
     else
-    {
         return (float)tks/(float)wins;
-    }
 }
 
 // returns a value between 1.0 and -1.0
@@ -222,13 +216,9 @@ float Player::getMaxSpeed ( void ) const
     const FlagType* flag = getFlag();
     float maxSpeed = BZDBCache::tankSpeed;
     if (flag == Flags::Velocity)
-    {
         maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    }
     else if (flag == Flags::Thief)
-    {
         maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    }
     return maxSpeed;
 }
 
@@ -240,9 +230,7 @@ void Player::getMuzzle(float* m) const
     //       scaled version of tankRadius.
     float front = (dimensionsScale[0] * BZDBCache::tankRadius);
     if (dimensionsRate[0] > 0.0f)
-    {
         front = front + (dimensionsRate[0] * 0.1f);
-    }
     front = front + 0.1f;
 
     m[0] = state.pos[0] + (front * forward[0]);
@@ -274,13 +262,9 @@ void Player::move(const float* _pos, float _azimuth)
 
     // limit angle
     if (state.azimuth < 0.0f)
-    {
         state.azimuth = (float)((2.0 * M_PI) - fmodf(-state.azimuth, (float)(2.0 * M_PI)));
-    }
     else if (state.azimuth >= (2.0f * M_PI))
-    {
         state.azimuth = fmodf(state.azimuth, (float)(2.0 * M_PI));
-    }
 
     // update forward vector (always in horizontal plane)
     forward[0] = cosf(state.azimuth);
@@ -316,13 +300,9 @@ void Player::setPhysicsDriver(int driver)
 
     const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
     if (phydrv != NULL)
-    {
         state.status |= PlayerState::OnDriver;
-    }
     else
-    {
         state.status &= ~PlayerState::OnDriver;
-    }
 
     return;
 }
@@ -462,13 +442,9 @@ void Player::updateJumpJets(float dt)
 {
     float jumpVel;
     if (getFlag() == Flags::Wings)
-    {
         jumpVel = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
-    }
     else
-    {
         jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
-    }
     const float jetTime = 0.5f * (jumpVel / -BZDBCache::gravity);
     state.jumpJetsScale -= (dt / jetTime);
     if (state.jumpJetsScale < 0.0f)
@@ -511,9 +487,7 @@ void Player::updateTrackMarks()
                 markPos[1] = state.pos[1] + (forward[1] * dist);
             }
             else
-            {
                 drawMark = false;
-            }
 
             if (drawMark)
             {
@@ -592,13 +566,9 @@ void Player::updateDimensions(float dt, bool local)
     if ((dimensionsScale[0] == dimensionsTarget[0]) &&
             (dimensionsScale[1] == dimensionsTarget[1]) &&
             (dimensionsScale[2] == dimensionsTarget[2]))
-    {
         useDimensions = false;
-    }
     else
-    {
         useDimensions = true;
-    }
 
     return;
 }
@@ -617,9 +587,7 @@ bool Player::hitObstacleResizing()
         {
             const WallObstacle* wall = (const WallObstacle*) walls[i];
             if (wall->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2]))
-            {
                 return true;
-            }
         }
     }
 
@@ -634,9 +602,7 @@ bool Player::hitObstacleResizing()
                            ((obs->getPosition()[2] + obs->getHeight()) <= getPosition()[2]);
         if (!obs->isDriveThrough() && !onTop &&
                 obs->inBox(getPosition(), getAngle(), dims[0], dims[1], dims[2]))
-        {
             return true;
-        }
     }
 
     return false;
@@ -683,9 +649,7 @@ void Player::updateTranslucency(float dt)
             color[3] = 0.0f; // not trusting FP accuracy
         }
         else
-        {
             color[3] = teleAlpha * alpha;
-        }
     }
 
     return;
@@ -710,13 +674,9 @@ void Player::updateTreads(float dt)
 
     // setup the linear component
     if (dimensionsScale[0] > 1.0e-6f)
-    {
         speedFactor = speedFactor / dimensionsScale[0];
-    }
     else
-    {
         speedFactor = speedFactor * 1.0e6f;
-    }
 
     // setup the angular component
     const float angularScale = 4.0f; // spin factor (at 1.0, the edges line up)
@@ -794,9 +754,7 @@ void Player::updateFlagEffect(FlagType* effectFlag)
         dimensionsTarget[1] = factor;
     }
     else if (effectFlag == Flags::Narrow)
-    {
         dimensionsTarget[1] = 0.001f;
-    }
 
     // set the dimension rates
     for (int i = 0; i < 3; i++)
@@ -810,19 +768,13 @@ void Player::updateFlagEffect(FlagType* effectFlag)
 
     // set the alpha target
     if (effectFlag == Flags::Cloaking)
-    {
         alphaTarget = 0.0f;
-    }
     else
-    {
         alphaTarget = 1.0f;
-    }
 
     // set the alpha rate
     if (alphaTarget != alpha)
-    {
         alphaRate = (alphaTarget - alpha) / FlagEffectTime;
-    }
 
     return;
 }
@@ -832,9 +784,7 @@ void Player::endShot(int index, bool isHit, bool showExplosion)
 {
     float pos[3];
     if (doEndShot(index, isHit, pos) && showExplosion)
-    {
         addShotExplosion(pos);
-    }
     return;
 }
 
@@ -846,11 +796,11 @@ void Player::setVisualTeam (TeamColor visualTeam)
         return;
     lastVisualTeam = visualTeam;
 
-    static const GLfloat	tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
-    static GLfloat	tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
-    static float		tankShininess = 20.0f;
-    static GLfloat	rabbitEmissive[3] = { 0.0f, 0.0f, 0.0f };
-    static float		rabbitShininess = 100.0f;
+    static const GLfloat    tankSpecular[3] = { 0.1f, 0.1f, 0.1f };
+    static GLfloat  tankEmissive[3] = { 0.0f, 0.0f, 0.0f };
+    static float        tankShininess = 20.0f;
+    static GLfloat  rabbitEmissive[3] = { 0.0f, 0.0f, 0.0f };
+    static float        rabbitShininess = 100.0f;
 
     GLfloat *emissive;
     GLfloat shininess;
@@ -913,9 +863,7 @@ void Player::addRemoteSound(int sound)
 {
     state.sounds |= sound;
     if (state.sounds != PlayerState::NoSounds)
-    {
         state.status |= PlayerState::PlaySound;
-    }
     return;
 }
 
@@ -938,9 +886,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     // this is done because it's more expensive to use
     // GL_NORMALIZE then to use precalculated normals.
     if (useDimensions)
-    {
         tankNode->setDimensions(dimensionsScale);
-    }
     else
     {
         if (flagType == Flags::Obesity) tankNode->setObese();
@@ -960,25 +906,17 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
     // setup the visibility properties
     if (inCockpit && !showTreads)
-    {
         tankNode->setOnlyShadows(true);
-    }
     else
-    {
         tankNode->setOnlyShadows(false);
-    }
 
     // adjust alpha for seerView
     if (seerView)
     {
         if (isPhantomZoned())
-        {
             color[3] = 0.25f;
-        }
         else
-        {
             color[3] = teleAlpha;
-        }
     }
 
     // setup the color and material
@@ -1023,9 +961,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
 
                 // add clipping plane to tank node
                 if (!inCockpit)
-                {
                     tankNode->setClipPlane(plane);
-                }
             }
         }
         else if (getPosition()[2] < 0.0f)
@@ -1076,19 +1012,13 @@ void Player::setLandingSpeed(float velocity)
 {
     float squishiness = BZDB.eval(StateDatabase::BZDB_SQUISHFACTOR);
     if (squishiness < 0.001f)
-    {
         return;
-    }
     float squishTime = BZDB.eval(StateDatabase::BZDB_SQUISHTIME);
     if (squishTime < 0.001)
-    {
         return;
-    }
     const float gravity = BZDBCache::gravity;
     if (velocity > 0.0f)
-    {
         velocity = 0.0f;
-    }
 
     // Setup so that a drop height of BZDB_GRAVITY squishes
     // by a factor of 1/11, when BZDB_SQUISHFACTOR is set to 1
@@ -1105,9 +1035,7 @@ void Player::setLandingSpeed(float velocity)
     float k = 0.1f / (2.0f * gravity * gravity);
     k = k * squishiness;
     if (flagType == Flags::Bouncy)
-    {
         k = k * 4.0f;
-    }
     const float newZscale = 1.0f / (1.0f + (k * (velocity * velocity)));
 
     // don't update if the tank is still recovering
@@ -1180,14 +1108,10 @@ bool Player::validTeamTarget(const Player *possibleTarget) const
     TeamColor myTeam = getTeam();
     TeamColor targetTeam = possibleTarget->getTeam();
     if (myTeam != targetTeam || !World::getWorld()->allowTeams())
-    {
         return true;
-    }
 
     if (myTeam != RogueTeam)
-    {
         return false;
-    }
 
     return !World::getWorld()->allowRabbit();
 }
@@ -1217,9 +1141,7 @@ void Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth,
         predictedPos[1] = inputPos[1] + (dt * inputVel[1]);
         // only turn if alive
         if (inputStatus & PlayerState::Alive)
-        {
             *predictedAzimuth += (dt * inputAngVel);
-        }
         // following the parabola
         predictedVel[2] = inputVel[2] + (BZDBCache::gravity * dt);
         predictedPos[2] = inputPos[2] + (inputVel[2] * dt) +
@@ -1306,36 +1228,26 @@ bool Player::isDeadReckoningWrong() const
         (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
     // always send a new packet when some kinds of status change
     if ((state.status & checkStates) != (inputStatus & checkStates))
-    {
         return true;
-    }
 
     // never send a packet when dead
     if ((state.status & PlayerState::Alive) == 0)
-    {
         return false;
-    }
 
     //  send a packet if we've made some noise
     if (state.sounds != PlayerState::NoSounds)
-    {
         return true;
-    }
 
     //  send a packet if we've crossed a physics driver boundary
     if (state.phydrv != inputPhyDrv)
-    {
         return true;
-    }
 
     // time since setdeadreckoning
     const float dt = float(TimeKeeper::getTick() - inputTime);
 
     // otherwise always send at least one packet per second
     if (dt >= MaxUpdateTime)
-    {
         return true;
-    }
 
     // get predicted state
     float predictedPos[3];
@@ -1346,21 +1258,15 @@ bool Player::isDeadReckoningWrong() const
     // always send a new packet on reckoned touchdown
     float groundLimit = 0.0f;
     if (getFlag() == Flags::Burrow)
-    {
         groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
-    }
     if (predictedPos[2] < groundLimit)
-    {
         return true;
-    }
 
     // client side throttling
     const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
     const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
     if (dt < minUpdateTime)
-    {
         return false;
-    }
 
     // see if position and azimuth are close enough
     float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
@@ -1405,9 +1311,7 @@ bool Player::isDeadReckoningWrong() const
 void Player::doDeadReckoning()
 {
     if (!isAlive() && !isExploding())
-    {
         return;
-    }
 
     // get predicted state
     float predictedPos[3];
@@ -1418,20 +1322,14 @@ void Player::doDeadReckoning()
 
     // setup notResponding
     if (!isAlive())
-    {
         notResponding = false;
-    }
     else
-    {
         notResponding = (dt > BZDB.eval(StateDatabase::BZDB_NOTRESPONDINGTIME));
-    }
 
     // if hit ground then update input state (we don't want to fall anymore)
     float groundLimit = 0.0f;
     if (getFlag() == Flags::Burrow)
-    {
         groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
-    }
     // the velocity check is for when a Burrow flag is dropped
     if ((predictedPos[2] < groundLimit) && (predictedVel[2] <= 0.0f))
     {
@@ -1464,9 +1362,7 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f))
-                {
                     playSound(SFX_LAND, state.pos, soundImportance, localSound);
-                }
                 else
                 {
                     // probably never gets played
@@ -1481,17 +1377,11 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((state.sounds & PlayerState::JumpSound) != 0)
-                {
                     playSound(SFX_JUMP, state.pos, soundImportance, localSound);
-                }
                 if ((state.sounds & PlayerState::WingsSound) != 0)
-                {
                     playSound(SFX_FLAP, state.pos, soundImportance, localSound);
-                }
                 if ((state.sounds & PlayerState::BounceSound) != 0)
-                {
                     playSound(SFX_BOUNCE, state.pos, soundImportance, localSound);
-                }
             }
             state.sounds = PlayerState::NoSounds;
         }
@@ -1579,9 +1469,7 @@ void Player::renderRadar() const
         return; // don't draw anything
     }
     if (tankNode)
-    {
         ((TankSceneNode*)tankNode)->renderRadar();
-    }
     return;
 }
 
@@ -1589,9 +1477,7 @@ void Player::renderRadar() const
 bool Player::getIpAddress(Address& addr)
 {
     if (!haveIpAddr)
-    {
         return false;
-    }
     addr = ipAddr;
     return true;
 }
@@ -1613,6 +1499,6 @@ void Player::setHandicap(float _handicap)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

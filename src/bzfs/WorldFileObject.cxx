@@ -72,9 +72,7 @@ void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 {
     const int n = wlist.size();
     for (int i = 0; i < n; ++i)
-    {
         delete wlist[i];
-    }
     wlist.clear();
 }
 
@@ -83,6 +81,6 @@ void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

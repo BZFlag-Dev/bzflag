@@ -15,7 +15,7 @@
  */
 
 #ifndef __SIMPLETEXTUTILS_H__
-#define	__SIMPLETEXTUTILS_H__
+#define __SIMPLETEXTUTILS_H__
 
 /* system interface headers */
 #include <string>
@@ -68,7 +68,8 @@ std::string replace_all(const std::string& in, const std::string& replaceMe, con
  * escaping is not currently done for any other character.
  * Should not have " as a delimeter if you want to use quotes
  */
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0, const bool useQuotes = false);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0,
+                                  const bool useQuotes = false);
 }
 
 

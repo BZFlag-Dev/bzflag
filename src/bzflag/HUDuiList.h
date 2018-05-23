@@ -12,12 +12,12 @@
 
 /*
  * HUDuiList:
- *	User interface class for the heads-up display's list (value selection from
+ *  User interface class for the heads-up display's list (value selection from
  *  a set) control.
  */
 
-#ifndef	__HUDUILIST_H__
-#define	__HUDUILIST_H__
+#ifndef __HUDUILIST_H__
+#define __HUDUILIST_H__
 
 // ancestor class
 #include "HUDuiControl.h"
@@ -33,22 +33,22 @@ public:
     HUDuiList();
     ~HUDuiList();
 
-    int			getIndex() const;
-    void		setIndex(int);
+    int         getIndex() const;
+    void        setIndex(int);
 
-    void		createSlider(const int);
+    void        createSlider(const int);
 
-    std::vector<std::string>&	getList();
-    void		update();
+    std::vector<std::string>&   getList();
+    void        update();
 
 protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
+    bool        doKeyPress(const BzfKeyEvent&);
+    bool        doKeyRelease(const BzfKeyEvent&);
+    void        doRender();
 
 private:
-    int			index;
-    std::vector<std::string>	list;
+    int         index;
+    std::vector<std::string>    list;
 };
 
 #endif // __HUDUILIST_H__
@@ -57,6 +57,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_LIST_H
-#define	BZF_OBSTACLE_LIST_H
+#ifndef BZF_OBSTACLE_LIST_H
+#define BZF_OBSTACLE_LIST_H
 
 #include "common.h"
 
@@ -64,6 +64,6 @@ inline void ObstacleList::remove(unsigned int index)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -47,16 +47,12 @@ bool CustomWaterLevel::read(const char *cmd, std::istream& input)
     if (strcasecmp ("height", cmd) == 0)
     {
         if (!(input >> height))
-        {
             return false;
-        }
     }
     else if (parseMaterials(cmd, input, &material, 1, materror))
     {
         if (materror)
-        {
             return false;
-        }
         modedMaterial = true;
     }
     else
@@ -89,6 +85,6 @@ void CustomWaterLevel::writeToWorld(WorldInfo* world) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

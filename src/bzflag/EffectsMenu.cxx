@@ -312,13 +312,9 @@ void EffectsMenu::resize(int _width, int _height)
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
         if ((i == 3) || (i == 4) || (i == 6) || (i == 8))
-        {
             y -= 1.75f * h;
-        }
         else
-        {
             y -= 1.0f * h;
-        }
     }
 
     // load current settings
@@ -334,26 +330,18 @@ void EffectsMenu::resize(int _width, int _height)
     {
         treadIndex++;
         if (BZDB.isTrue("treadStyle"))
-        {
             treadIndex++;
-        }
     }
     ((HUDuiList*)listHUD[i++])->setIndex(treadIndex);
     ((HUDuiList*)listHUD[i++])->setIndex(int((TrackMarks::getUserFade() * 10.0f)
                                          + 0.5f));
     TrackMarks::AirCullStyle style = TrackMarks::getAirCulling();
     if (style == TrackMarks::NoAirCull)
-    {
         ((HUDuiList*)listHUD[i++])->setIndex(0);
-    }
     else if (style != TrackMarks::FullAirCull)
-    {
         ((HUDuiList*)listHUD[i++])->setIndex(1);
-    }
     else
-    {
         ((HUDuiList*)listHUD[i++])->setIndex(2);
-    }
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("useFancyEffects") ? 1 : 0);
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("spawnEffect"));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("enableLocalSpawnEffect") ? 1 : 0);
@@ -426,17 +414,11 @@ void EffectsMenu::callback(HUDuiControl* w, const void* data)
     {
         int culling = list->getIndex();
         if (culling <= 0)
-        {
             TrackMarks::setAirCulling(TrackMarks::NoAirCull);
-        }
         else if (culling == 1)
-        {
             TrackMarks::setAirCulling(TrackMarks::InitAirCull);
-        }
         else
-        {
             TrackMarks::setAirCulling(TrackMarks::FullAirCull);
-        }
         break;
     }
     case 'x':
@@ -513,6 +495,6 @@ void EffectsMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

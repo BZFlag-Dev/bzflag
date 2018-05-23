@@ -60,45 +60,25 @@ main (int argc, char **argv)
     while (argc > 1)
     {
         if (strcmp ("-i", argv[1]) == 0)
-        {
             Invert = 1;
-        }
         else if (strcmp ("-cs", argv[1]) == 0)
-        {
             ColorSwap = 1;
-        }
         else if (strcmp ("-t", argv[1]) == 0)
-        {
             Textures = 0;
-        }
         else if (strcmp ("-n", argv[1]) == 0)
-        {
             Normals = 0;
-        }
         else if (strcmp ("-c", argv[1]) == 0)
-        {
             Colors = 0;
-        }
         else if (strcmp ("-a", argv[1]) == 0)
-        {
             Ambient = 0;
-        }
         else if (strcmp ("-d", argv[1]) == 0)
-        {
             Diffuse = 0;
-        }
         else if (strcmp ("-s", argv[1]) == 0)
-        {
             Specular = 0;
-        }
         else if (strcmp ("-sh", argv[1]) == 0)
-        {
             Shininess = 0;
-        }
         else
-        {
             break;
-        }
         argc--;
         argv++;
     }
@@ -142,13 +122,9 @@ main (int argc, char **argv)
         printf ("mesh  # %s\n", mesh->name);
         printf ("# vertices:  %i\n", (int) mesh->points);
         if (Normals)
-        {
             printf ("# normals:   %i\n", (int) mesh->faces * 3);
-        }
         if (Textures)
-        {
             printf ("# texcoords: %i\n", (int) mesh->texels);
-        }
         printf ("# faces:     %i\n", (int) mesh->faces);
 
         // vertices
@@ -243,9 +219,7 @@ main (int argc, char **argv)
                                 mat->specular[1], mat->specular[2], mat->specular[3]);
                     }
                     if (Shininess)
-                    {
                         printf ("    shininess %f\n", mat->shininess);
-                    }
                 }
             }
             printf ("  endface\n");

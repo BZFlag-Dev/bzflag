@@ -28,8 +28,8 @@
 
 #include "bzfs.h"
 
-PlayerAccessMap	groupAccess;
-PlayerAccessMap	userDatabase;
+PlayerAccessMap groupAccess;
+PlayerAccessMap userDatabase;
 
 uint8_t GetPlayerProperties(bool registered, bool verified, bool admin)
 {
@@ -75,8 +75,8 @@ void PlayerAccessInfo::reloadInfo()
         PlayerAccessInfo accessInfo = getUserInfo(regName);
         explicitAllows = accessInfo.explicitAllows;
         explicitDenys  = accessInfo.explicitDenys;
-        groups	   = accessInfo.groups;
-        loginTime	   = accessInfo.loginTime;
+        groups     = accessInfo.groups;
+        loginTime      = accessInfo.loginTime;
         loginAttempts  = accessInfo.loginAttempts;
     }
 }
@@ -112,9 +112,7 @@ bool PlayerAccessInfo::passwordAttemptsMax()
     bool maxAttempts = passwordAttempts >= 5;
     // see how many times they have tried, you only get 5
     if (!maxAttempts)
-    {
         passwordAttempts++;
-    }
     return maxAttempts;
 }
 
@@ -583,9 +581,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
                     info.explicitDenys |= refgroup->second.explicitDenys;
                 }
                 else
-                {
                     invokeGroupdbRecursion = true;
-                }
 
                 continue;
             }
@@ -595,9 +591,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
                 // forbid a permission
                 PlayerAccessInfo::AccessPerm perm = permFromName(word);
                 if (perm != PlayerAccessInfo::lastPerm)
-                {
                     info.explicitDenys.set(perm);
-                }
                 else
                 {
                     if (word == "ALL")
@@ -607,9 +601,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
                         info.hasALLPerm = false;
                     }
                     else
-                    {
                         logDebugMessage(1,"groupdb: Cannot forbid unknown permission %s\n", word.c_str());
-                    }
                 }
 
                 continue;
@@ -620,9 +612,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
                 // remove a permission
                 PlayerAccessInfo::AccessPerm perm = permFromName(word);
                 if (perm != PlayerAccessInfo::lastPerm)
-                {
                     info.explicitAllows.reset(perm);
-                }
                 else
                 {
                     if (word == "ALL")
@@ -649,9 +639,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
         // regular permission
         PlayerAccessInfo::AccessPerm perm = permFromName(word);
         if (perm != PlayerAccessInfo::lastPerm)
-        {
             info.explicitAllows.set(perm);
-        }
         else
         {
             if (word == "ALL")
@@ -667,9 +655,7 @@ bool parsePermissionString(const std::string &permissionString, PlayerAccessInfo
 
                 // Only store the custom permission if it doesn't exist, in order to prevent duplicates
                 if (std::find(c.begin(), c.end(), word) == c.end())
-                {
                     c.push_back(word);
-                }
             }
         }
     }
@@ -727,9 +713,7 @@ bool PlayerAccessInfo::readGroupsFile(const std::string &filename)
                 // Parse the permission string. If it contains a yet undefined group
                 // add a recursion
                 if (parsePermissionString(perm, accessInfo) && initialRun)
-                {
                     recursionNeeded++;
-                }
 
                 accessInfo.verified = true;
                 groupAccess[name] = accessInfo;
@@ -763,9 +747,7 @@ bool PlayerAccessInfo::readPermsFile(const std::string &filename)
         std::istringstream groupstream(groupline);
         std::string group;
         while (groupstream >> group)
-        {
             accessInfo.addGroup(group);
-        }
 
         // 3rd line - allows
         std::string perms;
@@ -819,8 +801,8 @@ bool PlayerAccessInfo::writePermsFile(const std::string &filename)
     return true;
 }
 
-std::string		groupsFile;
-std::string		userDatabaseFile;
+std::string     groupsFile;
+std::string     userDatabaseFile;
 
 void PlayerAccessInfo::updateDatabases()
 {
@@ -833,6 +815,6 @@ void PlayerAccessInfo::updateDatabases()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

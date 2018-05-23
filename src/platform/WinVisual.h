@@ -11,11 +11,11 @@
  */
 
 /* WinVisual:
- *	Builders for Windows visuals suitable for OpenGL contexts and windows.
+ *  Builders for Windows visuals suitable for OpenGL contexts and windows.
  */
 
 #ifndef BZF_WINVISUAL_H
-#define	BZF_WINVISUAL_H
+#define BZF_WINVISUAL_H
 
 #include "BzfVisual.h"
 #include "WinDisplay.h"
@@ -27,35 +27,35 @@ public:
     WinVisual(const WinVisual&);
     ~WinVisual();
 
-    void		setLevel(int level);
-    void		setDoubleBuffer(bool);
-    void		setIndex(int minDepth);
-    void		setRGBA(int minRed, int minGreen,
+    void        setLevel(int level);
+    void        setDoubleBuffer(bool);
+    void        setIndex(int minDepth);
+    void        setRGBA(int minRed, int minGreen,
                         int minBlue, int minAlpha);
-    void		setDepth(int minDepth);
-    void		setStencil(int minDepth);
-    void		setAccum(int minRed, int minGreen,
+    void        setDepth(int minDepth);
+    void        setStencil(int minDepth);
+    void        setAccum(int minRed, int minGreen,
                          int minBlue, int minAlpha);
-    void		setStereo(bool);
-    void		setMultisample(int minSamples);
+    void        setStereo(bool);
+    void        setMultisample(int minSamples);
 
-    bool		build();
+    bool        build();
 
     // for other Windows stuff
-    void		reset();
-    int			get(HDC, const PIXELFORMATDESCRIPTOR**);
+    void        reset();
+    int         get(HDC, const PIXELFORMATDESCRIPTOR**);
 
 protected:
-    int			findAttribute(int attribute) const;
-    void		appendAttribute(int attribute, int value);
-    void		removeAttribute(int index);
-    void		editAttribute(int index, int value);
+    int         findAttribute(int attribute) const;
+    void        appendAttribute(int attribute, int value);
+    void        removeAttribute(int index);
+    void        editAttribute(int index, int value);
 
 private:
-    WinDisplay::Rep*	display;
+    WinDisplay::Rep*    display;
     PIXELFORMATDESCRIPTOR pfd;
-    int			pixelFormat;
-    HDC			hDC;
+    int         pixelFormat;
+    HDC         hDC;
 };
 
 #endif // BZF_WINVISUAL_H
@@ -64,6 +64,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

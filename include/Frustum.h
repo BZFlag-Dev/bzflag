@@ -28,138 +28,138 @@ public:
     Frustum();
     ~Frustum();
 
-    const float*	getEye() const;
-    const float*	getDirection() const;
-    const float*	getUp() const;
-    const float*	getRight() const;
-    const float*	getSide(int index) const;
-    int			getPlaneCount() const;
-    const float*	getFarCorner(int index) const;
-    float		getTilt() const; // degrees
-    float		getRotation() const; // degrees
-    float		getNear() const;
-    float		getFar() const;
-    const float*	getViewMatrix() const;
-    float		getFOVx() const;
-    float		getFOVy() const;
-    const float*	getProjectionMatrix() const;
-    float		getEyeDepth(const float*) const;
-    float		getAreaFactor() const;
+    const float*    getEye() const;
+    const float*    getDirection() const;
+    const float*    getUp() const;
+    const float*    getRight() const;
+    const float*    getSide(int index) const;
+    int         getPlaneCount() const;
+    const float*    getFarCorner(int index) const;
+    float       getTilt() const; // degrees
+    float       getRotation() const; // degrees
+    float       getNear() const;
+    float       getFar() const;
+    const float*    getViewMatrix() const;
+    float       getFOVx() const;
+    float       getFOVy() const;
+    const float*    getProjectionMatrix() const;
+    float       getEyeDepth(const float*) const;
+    float       getAreaFactor() const;
 
-    void		setView(const float* eye, const float* target);
-    void		setProjection(float fov,
+    void        setView(const float* eye, const float* target);
+    void        setProjection(float fov,
                               float m_near, float m_far, float m_deep_far,
                               int width, int height, int viewHeight);
-    void		setOffset(float eyeOffset, float focalPlane);
-    void		setFarPlaneCull(bool useCulling);
-    void		flipVertical();
-    void		flipHorizontal();
+    void        setOffset(float eyeOffset, float focalPlane);
+    void        setFarPlaneCull(bool useCulling);
+    void        flipVertical();
+    void        flipHorizontal();
 
     // used for radar culling
-    void		setOrthoPlanes(const Frustum& view,
+    void        setOrthoPlanes(const Frustum& view,
                                float width, float breadth);
 
 protected:
-    void		makePlane(const float* v1, const float* v2, int);
+    void        makePlane(const float* v1, const float* v2, int);
 
 protected:
-    float		eye[3];
-    float		target[3];
-    float		right[3], up[3];
-    float		plane[6][4];		// pointing in
-    int			planeCount;
-    float		farCorner[4][3];
-    float		tilt;
-    float		rotation;
-    float		viewMatrix[16];
-    float		billboardMatrix[16];
-    float		m_near, m_far;
-    float		fovx, fovy;
-    float		areaFactor;
-    float		projectionMatrix[16];
-    float		deepProjectionMatrix[16];
+    float       eye[3];
+    float       target[3];
+    float       right[3], up[3];
+    float       plane[6][4];        // pointing in
+    int         planeCount;
+    float       farCorner[4][3];
+    float       tilt;
+    float       rotation;
+    float       viewMatrix[16];
+    float       billboardMatrix[16];
+    float       m_near, m_far;
+    float       fovx, fovy;
+    float       areaFactor;
+    float       projectionMatrix[16];
+    float       deepProjectionMatrix[16];
 };
 
 //
 // Frustum
 //
 
-inline const float*	Frustum::getEye() const
+inline const float* Frustum::getEye() const
 {
     return eye;
 }
 
-inline const float*	Frustum::getDirection() const
+inline const float* Frustum::getDirection() const
 {
     return plane[0];
 }
 
-inline const float*	Frustum::getSide(int index) const
+inline const float* Frustum::getSide(int index) const
 {
     return plane[index];
 }
 
-inline int		Frustum::getPlaneCount() const
+inline int      Frustum::getPlaneCount() const
 {
     return planeCount;
 }
 
-inline const float*	Frustum::getFarCorner(int index) const
+inline const float* Frustum::getFarCorner(int index) const
 {
     return farCorner[index];
 }
 
-inline float		Frustum::getTilt() const
+inline float        Frustum::getTilt() const
 {
     return tilt;
 }
 
-inline float		Frustum::getRotation() const
+inline float        Frustum::getRotation() const
 {
     return rotation;
 }
 
-inline const float*	Frustum::getUp() const
+inline const float* Frustum::getUp() const
 {
     return up;
 }
 
-inline const float*	Frustum::getRight() const
+inline const float* Frustum::getRight() const
 {
     return right;
 }
 
-inline float		Frustum::getNear() const
+inline float        Frustum::getNear() const
 {
     return m_near;
 }
 
-inline float		Frustum::getFar() const
+inline float        Frustum::getFar() const
 {
     return m_far;
 }
 
-inline float		Frustum::getFOVx() const
+inline float        Frustum::getFOVx() const
 {
     return fovx;
 }
 
-inline float		Frustum::getFOVy() const
+inline float        Frustum::getFOVy() const
 {
     return fovy;
 }
 
-inline const float*	Frustum::getViewMatrix() const
+inline const float* Frustum::getViewMatrix() const
 {
     return viewMatrix;
 }
 
-inline const float*	Frustum::getProjectionMatrix() const
+inline const float* Frustum::getProjectionMatrix() const
 {
     return projectionMatrix;
 }
 
-inline float		Frustum::getAreaFactor() const
+inline float        Frustum::getAreaFactor() const
 {
     return areaFactor;
 }
@@ -170,6 +170,6 @@ inline float		Frustum::getAreaFactor() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

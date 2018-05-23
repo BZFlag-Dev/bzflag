@@ -92,9 +92,7 @@ void ServerListFilterMenu::execute()
         }
     }
     else if (_focus == help)
-    {
         HUDDialogStack::get()->push(ServerListFilterHelpMenu::getServerListFilterHelpMenu());
-    }
 }
 
 void ServerListFilterMenu::dismiss()
@@ -136,7 +134,8 @@ void ServerListFilterMenu::resize(int _width, int _height)
     title->setPosition(x, y);
 
     // reposition options
-    const float labelWidth = fm.getStrLength(controls[firstKeyControl]->getFontFace(), fontSize, controls[firstKeyControl]->getLabel());
+    const float labelWidth = fm.getStrLength(controls[firstKeyControl]->getFontFace(), fontSize,
+                             controls[firstKeyControl]->getLabel());
     x = (0.1f * (float)_width) + labelWidth;
     y -= 0.6f * titleHeight;
     const float h = fm.getStrHeight(fontFace, fontSize, " ");
@@ -175,6 +174,6 @@ HUDuiTypeIn* ServerListFilterMenu::createInput(const std::string &label)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

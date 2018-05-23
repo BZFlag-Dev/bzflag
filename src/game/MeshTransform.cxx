@@ -52,9 +52,7 @@ void MeshTransformManager::clear()
 {
     std::vector<MeshTransform*>::iterator it;
     for (it = transforms.begin(); it != transforms.end(); ++it)
-    {
         delete *it;
-    }
     transforms.clear();
     return;
 }
@@ -76,29 +74,21 @@ int MeshTransformManager::addTransform(MeshTransform* transform)
 int MeshTransformManager::findTransform(const std::string& transform) const
 {
     if (transform.size() <= 0)
-    {
         return -1;
-    }
     else if ((transform[0] >= '0') && (transform[0] <= '9'))
     {
         int index = atoi (transform.c_str());
         if ((index < 0) || (index >= (int)transforms.size()))
-        {
             return -1;
-        }
         else
-        {
             return index;
-        }
     }
     else
     {
         for (int i = 0; i < (int)transforms.size(); i++)
         {
             if (transforms[i]->getName() == transform)
-            {
                 return i;
-            }
         }
         return -1;
     }
@@ -220,9 +210,7 @@ static void spin(float m[4][4], const float radians, const float normal[3])
                       (normal[1] * normal[1]) +
                       (normal[2] * normal[2]);
     if (len <= 0.0f)
-    {
         return;
-    }
     const float scale = 1.0f / sqrtf(len);
     const float n[3] = {normal[0] * scale,
                         normal[1] * scale,
@@ -263,13 +251,9 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
         for (j = 0; j < 4; j++)
         {
             if (i == j)
-            {
                 vertexMatrix[i][j] = 1.0f;
-            }
             else
-            {
                 vertexMatrix[i][j] = 0.0f;
-            }
         }
     }
     for (i = 0; i < 3; i++)
@@ -277,21 +261,15 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
         for (j = 0; j < 3; j++)
         {
             if (i == j)
-            {
                 normalMatrix[i][j] = 1.0f;
-            }
             else
-            {
                 normalMatrix[i][j] = 0.0f;
-            }
         }
     }
 
     skewed = false;
     if (xform.transforms.size() > 0)
-    {
         empty = false;
-    }
     else
     {
         empty = true;
@@ -320,13 +298,9 @@ MeshTransform::Tool::Tool(const MeshTransform& xform)
         (vm[0][1] * ((vm[1][2] * vm[2][0]) - (vm[1][0] * vm[2][2]))) +
         (vm[0][2] * ((vm[1][0] * vm[2][1]) - (vm[1][1] * vm[2][0])));
     if (determinant < 0.0f)
-    {
         inverted = true;
-    }
     else
-    {
         inverted = false;
-    }
 
     return;
 }
@@ -373,9 +347,7 @@ void MeshTransform::Tool::processTransforms(
             const MeshTransform* xform =
                 TRANSFORMMGR.getTransform(transform.index);
             if (xform != NULL)
-            {
                 processTransforms(xform->transforms);
-            }
             break;
         }
         default:
@@ -394,9 +366,7 @@ void MeshTransform::Tool::processTransforms(
 void MeshTransform::Tool::modifyVertex(float v[3]) const
 {
     if (empty)
-    {
         return;
-    }
 
     float t[3];
     const float (*vm)[4] = vertexMatrix;
@@ -410,9 +380,7 @@ void MeshTransform::Tool::modifyVertex(float v[3]) const
 void MeshTransform::Tool::modifyNormal(float n[3]) const
 {
     if (empty)
-    {
         return;
-    }
 
     float t[3];
     const float (*nm)[3] = normalMatrix;
@@ -489,9 +457,7 @@ void MeshTransform::Tool::modifyOldStyle(float pos[3], float size[3],
         pos[2] = pos[2] - size[2];
     }
     else
-    {
         flipz = false;
-    }
 
     return;
 }
@@ -521,9 +487,7 @@ MeshTransform& MeshTransform::operator=(const MeshTransform& old)
     name = ""; // not copied
     transforms.clear();
     for (unsigned int i = 0; i < old.transforms.size(); i++)
-    {
         transforms.push_back(old.transforms[i]);
-    }
     return *this;
 }
 
@@ -531,9 +495,7 @@ MeshTransform& MeshTransform::operator=(const MeshTransform& old)
 void MeshTransform::append(const MeshTransform& xform)
 {
     for (unsigned int i = 0; i < xform.transforms.size(); i++)
-    {
         transforms.push_back(xform.transforms[i]);
-    }
     return;
 }
 
@@ -541,20 +503,14 @@ void MeshTransform::append(const MeshTransform& xform)
 void MeshTransform::prepend(const MeshTransform& xform)
 {
     if (xform.transforms.size() <= 0)
-    {
         return;
-    }
     MeshTransform oldCopy = *this;
     transforms.clear();
     unsigned int i;
     for (i = 0; i < xform.transforms.size(); i++)
-    {
         transforms.push_back(xform.transforms[i]);
-    }
     for (i = 0; i < oldCopy.transforms.size(); i++)
-    {
         transforms.push_back(oldCopy.transforms[i]);
-    }
     return;
 }
 
@@ -578,9 +534,7 @@ bool MeshTransform::setName(const std::string& xformname)
         return false;
     }
     else
-    {
         name = xformname;
-    }
     return true;
 }
 
@@ -661,16 +615,12 @@ void * MeshTransform::pack(void *buf) const
         const TransformData& transform = transforms[i];
         buf = nboPackUByte (buf, (uint8_t) transform.type);
         if (transform.type == IndexTransform)
-        {
             buf = nboPackInt (buf, transform.index);
-        }
         else
         {
             buf = nboPackVector (buf, transform.data);
             if (transform.type == SpinTransform)
-            {
                 buf = nboPackFloat (buf, transform.data[3]);
-            }
         }
     }
 
@@ -704,13 +654,9 @@ const void * MeshTransform::unpack(const void *buf)
             transform.index = -1;
             buf = nboUnpackVector (buf, transform.data);
             if (transform.type == SpinTransform)
-            {
                 buf = nboUnpackFloat (buf, transform.data[3]);
-            }
             else
-            {
                 transform.data[3] = 0.0f;
-            }
         }
         transforms.push_back(transform);
     }
@@ -731,16 +677,12 @@ int MeshTransform::packSize() const
         const TransformData& transform = transforms[i];
         fullSize += sizeof(uint8_t);
         if (transform.type == IndexTransform)
-        {
             fullSize += sizeof(int32_t);
-        }
         else
         {
             fullSize += sizeof(float[3]);
             if (transform.type == SpinTransform)
-            {
                 fullSize += sizeof(float);
-            }
         }
     }
 
@@ -753,9 +695,7 @@ void MeshTransform::print(std::ostream& out, const std::string& indent) const
     out << indent << "transform" << std::endl;
 
     if (name.size() > 0)
-    {
         out << indent << "  name " << name << std::endl;
-    }
 
     printTransforms(out, indent);
 
@@ -806,13 +746,9 @@ void MeshTransform::printTransforms(std::ostream& out,
             {
                 out << indent << "  xform ";
                 if (xform->getName().size() > 0)
-                {
                     out << xform->getName();
-                }
                 else
-                {
                     out << transform.index;
-                }
                 out << std::endl;
             }
             break;
@@ -831,6 +767,6 @@ void MeshTransform::printTransforms(std::ostream& out,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

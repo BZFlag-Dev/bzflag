@@ -107,7 +107,7 @@ public:
     }
 };
 
-MasterBanURLHandler	masterBanHandler;
+MasterBanURLHandler masterBanHandler;
 
 // utility functions
 void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
@@ -128,7 +128,7 @@ void setBZMatFromAPIMat (BzMaterial &bzmat, bz_MaterialInfo* material )
 
     for ( unsigned int i = 0; i < material->textures.size(); i++ )
     {
-        bz_ApiString	name = material->textures[i].texture;
+        bz_ApiString    name = material->textures[i].texture;
 
         bzmat.addTexture(std::string(name.c_str()));
         bzmat.setCombineMode(material->textures[i].combineMode);
@@ -360,7 +360,7 @@ void bz_ApiString::toupper ( void )
 class bz_APIIntList::dataBlob
 {
 public:
-    std::vector<int>	list;
+    std::vector<int>    list;
 };
 
 bz_APIIntList::bz_APIIntList()
@@ -368,13 +368,13 @@ bz_APIIntList::bz_APIIntList()
     data = new dataBlob;
 }
 
-bz_APIIntList::bz_APIIntList(const bz_APIIntList	&r)
+bz_APIIntList::bz_APIIntList(const bz_APIIntList    &r)
 {
     data = new dataBlob;
     data->list = r.data->list;
 }
 
-bz_APIIntList::bz_APIIntList(const std::vector<int>	&r)
+bz_APIIntList::bz_APIIntList(const std::vector<int> &r)
 {
     data = new dataBlob;
     data->list = r;
@@ -439,7 +439,7 @@ BZF_API void bz_deleteIntList( bz_APIIntList * l )
 class bz_APIFloatList::dataBlob
 {
 public:
-    std::vector<float>	list;
+    std::vector<float>  list;
 };
 
 bz_APIFloatList::bz_APIFloatList()
@@ -447,13 +447,13 @@ bz_APIFloatList::bz_APIFloatList()
     data = new dataBlob;
 }
 
-bz_APIFloatList::bz_APIFloatList(const bz_APIFloatList	&r)
+bz_APIFloatList::bz_APIFloatList(const bz_APIFloatList  &r)
 {
     data = new dataBlob;
     data->list = r.data->list;
 }
 
-bz_APIFloatList::bz_APIFloatList(const std::vector<float>	&r)
+bz_APIFloatList::bz_APIFloatList(const std::vector<float>   &r)
 {
     data = new dataBlob;
     data->list = r;
@@ -539,13 +539,13 @@ bz_APIStringList::bz_APIStringList()
     data = new dataBlob;
 }
 
-bz_APIStringList::bz_APIStringList(const bz_APIStringList	&r)
+bz_APIStringList::bz_APIStringList(const bz_APIStringList   &r)
 {
     data = new dataBlob;
     data->list = r.data->list;
 }
 
-bz_APIStringList::bz_APIStringList(const std::vector<std::string>	&r)
+bz_APIStringList::bz_APIStringList(const std::vector<std::string>   &r)
 {
     data = new dataBlob;
 
@@ -646,7 +646,7 @@ bzAPITextureList::bzAPITextureList()
     data = new dataBlob;
 }
 
-bzAPITextureList::bzAPITextureList(const bzAPITextureList	&r)
+bzAPITextureList::bzAPITextureList(const bzAPITextureList   &r)
 {
     data = new dataBlob;
     data->list = r.data->list;
@@ -764,14 +764,10 @@ static inline NetConnectedPeer* getNonPlayerPeer(int connID)
 {
     std::map<int, NetConnectedPeer>::iterator it = netConnectedPeers.find(connID);
     if (it == netConnectedPeers.end())
-    {
         return NULL;
-    }
     NetConnectedPeer* peer = &(it->second);
     if (peer->player != -1)
-    {
         return NULL;
-    }
     return peer;
 }
 
@@ -779,14 +775,10 @@ static inline NetConnectedPeer* getNonPlayerPeer(int connID)
 BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler)
 {
     if (!handler)
-    {
         return false;
-    }
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if ((peer == NULL) || (peer->apiHandler != NULL))
-    {
         return false;
-    }
     peer->apiHandler = handler;
     return true;
 }
@@ -796,14 +788,10 @@ BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlaye
 BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler *handler)
 {
     if (!handler)
-    {
         return false;
-    }
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if ((peer == NULL) || (peer->apiHandler != handler))
-    {
         return false;
-    }
     peer->apiHandler = NULL;
     return true;
 }
@@ -814,9 +802,7 @@ BZF_API bool bz_setNonPlayerDisconnectOnSend(int connectionID, bool bSet)
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return false;
-    }
 
     peer->deleteWhenDoneSending = bSet;
     return true;
@@ -826,9 +812,7 @@ BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time)
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return false;
-    }
 
     peer->minSendTime = time;
     return true;
@@ -838,9 +822,7 @@ BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time)
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return false;
-    }
 
     peer->inactivityTimeout = time;
     return true;
@@ -849,15 +831,11 @@ BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time)
 BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int size)
 {
     if (!data || !size)
-    {
         return false;
-    }
 
     NetConnectedPeer* peer = getNonPlayerPeer(connID);
     if (peer == NULL)
-    {
         return false;
-    }
 
     const bool sendOneNow = false; //peer->sendChunks.empty();
 
@@ -874,9 +852,7 @@ BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int siz
 
     // send off at least one now if it was empty
     if (sendOneNow)
-    {
         sendBufferedNetDataForPeer(*peer);
-    }
 
     return true;
 }
@@ -886,9 +862,7 @@ BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connection
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return 0;
-    }
     return peer->sendChunks.size();
 }
 
@@ -897,9 +871,7 @@ BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return NULL;
-    }
 
     unsigned int address = (unsigned int)peer->netHandler->getIPAddress().s_addr;
     unsigned char* a = (unsigned char*)&address;
@@ -916,9 +888,7 @@ BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID )
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return NULL;
-    }
     return peer->netHandler->getHostname();
 }
 
@@ -929,20 +899,14 @@ BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
 {
     NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
     if (peer == NULL)
-    {
         return false;
-    }
 
     // flush out the rest of it's sends
     while (!peer->sendChunks.empty())
-    {
         sendBufferedNetDataForPeer(*peer);
-    }
 
     if (peer->apiHandler)
-    {
         peer->apiHandler->disconnect(connectionID);
-    }
 
     peer->netHandler->flushData();
     delete(peer->netHandler);
@@ -1764,7 +1728,8 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 }
 
 // old API, many arguments get ingored.
-BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos,
+                             float tilt, float direction, int UNUSED(shotID), float UNUSED(dt), bz_eTeamType shotTeam)
 {
     float v[3] = { 0,0,0 };
     if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1773,7 +1738,8 @@ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int U
     return bz_fireServerShot(flagType, pos, v, shotTeam, -1) > 0;
 }
 
-BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos,
+                             float tilt, float direction, float UNUSED(speed), int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
     float v[3] = { 0,0,0 };
     if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1783,7 +1749,8 @@ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int U
     return true;
 }
 
-BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos, float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int UNUSED(fromPlayer), float *pos,
+                             float tilt, float direction, int* shotID, float UNUSED(dt), bz_eTeamType shotTeam)
 {
     float v[3] = { 0,0,0 };
     if (flagType == nullptr || !pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1793,7 +1760,8 @@ BZF_API bool bz_fireWorldWep(const char* flagType, float UNUSED(lifetime), int U
     return true;
 }
 
-BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction, float UNUSED(dt), bz_eTeamType shotTeam)
+BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *pos, float tilt, float direction,
+                           float UNUSED(dt), bz_eTeamType shotTeam)
 {
     float v[3] = { 0,0,0 };
     if (!pos || !bz_vectorFromRotations(tilt, direction, v))
@@ -1803,7 +1771,8 @@ BZF_API int bz_fireWorldGM(int targetPlayerID, float UNUSED(lifetime), float *po
 }
 
 // new API, much cleaner
-BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
+BZF_API uint32_t bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color,
+                                   int targetPlayerId)
 {
     if (!shotType || !origin)
         return INVALID_SHOT_GUID;
@@ -1935,7 +1904,7 @@ BZF_API double bz_getCurrentTime ( void )
     return TimeKeeper::getCurrent().getSeconds();
 }
 
-BZF_API void bz_getLocaltime ( bz_Time	*ts )
+BZF_API void bz_getLocaltime ( bz_Time  *ts )
 {
     if (!ts)
         return;
@@ -1943,12 +1912,13 @@ BZF_API void bz_getLocaltime ( bz_Time	*ts )
     TimeKeeper::localTime(&ts->year,&ts->month,&ts->day,&ts->hour,&ts->minute,&ts->second,&ts->daylightSavings);
 }
 
-BZF_API void bz_getUTCtime ( bz_Time	*ts )
+BZF_API void bz_getUTCtime ( bz_Time    *ts )
 {
     if (!ts)
         return;
 
-    TimeKeeper::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second, &ts->daylightSavings);
+    TimeKeeper::UTCTime(&ts->year, &ts->month, &ts->day,&ts->dayofweek, &ts->hour, &ts->minute, &ts->second,
+                        &ts->daylightSavings);
 }
 
 // info
@@ -2225,11 +2195,11 @@ BZF_API bool bz_updateBZDBInt(const char *variable, int val)
 
 void bzdbIterator (const std::string& name, void* userData)
 {
-    bz_APIStringList	* varList = static_cast<bz_APIStringList*>(userData);
+    bz_APIStringList    * varList = static_cast<bz_APIStringList*>(userData);
     varList->push_back(name);
 }
 
-BZF_API int bz_getBZDBVarList( bz_APIStringList	*varList )
+BZF_API int bz_getBZDBVarList( bz_APIStringList *varList )
 {
     if (!varList)
         return -1;
@@ -2418,7 +2388,8 @@ BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item 
     {
     default:
     case eIPList:
-        API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr, clOptions->acl.banList[item].cidr).c_str();
+        API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr,
+                       clOptions->acl.banList[item].cidr).c_str();
         break;
 
     case eHostList:
@@ -2539,16 +2510,12 @@ BZF_API  bz_APIStringList *bz_getReports( void )
 
     std::ifstream ifs(clOptions->reportFile.c_str(), std::ios::in);
     if (ifs.fail())
-    {
         return buffer;
-    }
 
     std::string line;
 
     while (std::getline(ifs, line))
-    {
         buffer->push_back(line);
-    }
 
     return buffer;
 }
@@ -2677,7 +2644,8 @@ class V1SlashCommandWrapper : public bz_CustomSlashCommandHandlerV2
 public:
     bz_CustomSlashCommandHandler *legacyHandler = nullptr;
 
-    virtual bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message, bz_APIStringList *params)
+    virtual bool SlashCommand(int playerID, int UNUSED(sourceChannel), bz_ApiString command, bz_ApiString message,
+                              bz_APIStringList *params)
     {
         if (legacyHandler == nullptr)
             return false;
@@ -2967,9 +2935,7 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
 BZF_API float bz_getWorldMaxHeight ( void )
 {
     if (BZDB.isTrue("_disableHeightChecks"))
-    {
         return -1;
-    }
 
     return getMaxWorldHeight();
 }
@@ -3059,7 +3025,8 @@ BZF_API bool bz_addWorldTeleporter ( float *pos, float rot, float* scale, float 
     if (!world || world->isFinisihed() || !pos || !scale)
         return false;
 
-    world->addTeleporter(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],border,false,options.driveThru,options.shootThru);
+    world->addTeleporter(pos[0],pos[1],pos[2],rot,scale[0],scale[1],scale[2],border,false,options.driveThru,
+                         options.shootThru);
     return true;
 }
 
@@ -3083,13 +3050,14 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
         return true;
     }
 
-    BzMaterial	bzmat;
+    BzMaterial  bzmat;
     setBZMatFromAPIMat(bzmat,material);
     world->addWaterLevel(level,MATERIALMGR.addMaterial(&bzmat));
     return true;
 }
 
-BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay, bz_APIFloatList &delays )
+BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, float tilt, float initDelay,
+                                bz_APIFloatList &delays )
 {
     if (!world || world->isFinisihed() || !_flagType )
         return false;
@@ -3225,7 +3193,8 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 zMin = (float)atof(nubs->get(5).c_str());
                 zMax = (float)atof(nubs->get(6).c_str());
 
-                bz_debugMessagef(0, "WARNING: The \"BBOX\" attribute has been deprecated. Please use the `position` and `size` attributes instead:");
+                bz_debugMessagef(0,
+                                 "WARNING: The \"BBOX\" attribute has been deprecated. Please use the `position` and `size` attributes instead:");
                 bz_debugMessagef(0, "  position %.0f %.0f %.0f", (xMax + xMin), (yMax + yMin), zMin);
                 bz_debugMessagef(0, "  size %.0f %.0f %.0f", ((xMax - xMin) / 2), ((yMax - yMin) / 2), (zMax - zMin));
             }
@@ -3240,7 +3209,8 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 zMax = (float)atof(nubs->get(4).c_str());
                 radius = (float)atof(nubs->get(5).c_str());
 
-                bz_debugMessagef(0, "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
+                bz_debugMessagef(0,
+                                 "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
                 bz_debugMessagef(0, "  position %.0f %.0f %.0f", xMax, yMax, zMin);
                 bz_debugMessagef(0, "  radius %.0f", radius);
                 bz_debugMessagef(0, "  height %.0f", (zMax - zMin));
@@ -3259,18 +3229,14 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 _size[2] = (float)atof(nubs->get(3).c_str());
             }
             else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 1)
-            {
                 _rotation = (float)atof(nubs->get(1).c_str());
-            }
             else if ((key == "RADIUS" || key == "RAD") && nubs->size() > 1)
             {
                 box = false;
                 _radius = (float)atof(nubs->get(1).c_str());
             }
             else if (key == "HEIGHT" && nubs->size() > 1)
-            {
                 _height = (float)atof(nubs->get(1).c_str());
-            }
         }
 
         bz_deleteStringList(nubs);
@@ -3705,9 +3671,7 @@ public:
     {
         KillCurrentJob(false); // don't notify, since the handler might have been destructed
         if (curlHandle)
-        {
             curl_multi_cleanup(curlHandle);
-        }
     }
 
     void Tick ( void )
@@ -3732,9 +3696,7 @@ public:
                     if (task.handler)
                     {
                         if (task.handler->version >= 2)
-                        {
                             ((bz_URLHandler_V2*)task.handler)->token = task.token;
-                        }
                         if (bufferedJobData.size())
                             task.handler->URLDone(task.url.c_str(),bufferedJobData.c_str(),bufferedJobData.size(),true);
                         else
@@ -3749,9 +3711,7 @@ public:
             if (Tasks.size() &&(TimeKeeper::getCurrent().getSeconds() > task.lastTime +HTTPTimeout))
             {
                 if (task.handler)
-                {
                     task.handler->URLTimeout(Tasks[0].url.c_str(),1);
-                }
 
                 KillCurrentJob(false);
             }
@@ -3770,9 +3730,7 @@ public:
                 struct curl_slist *chunk = NULL;
 
                 for (unsigned int i = 0; i < task.headers->size(); i++)
-                {
                     chunk = curl_slist_append(chunk, task.headers->get(i).c_str());
-                }
 
                 curl_easy_setopt(currentJob, CURLOPT_HTTPHEADER, chunk);
             }
@@ -3791,9 +3749,7 @@ public:
     size_t addJob(const char *URL, bz_BaseURLHandler *handler, const char *postData, void* token, bz_APIStringList *headers)
     {
         if (!curlHandle)
-        {
             curlHandle = curl_multi_init();
-        }
 
         URLFetchTask newTask;
         newTask.token = token;
@@ -3898,9 +3854,7 @@ void ApiTick ( void )
 BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const char *postData)
 {
     if (!URL)
-    {
         return false;
-    }
 
     return (urlFetchHandler.addJob(URL, handler, postData, NULL, NULL) != 0);
 }
@@ -3910,7 +3864,8 @@ BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* toke
     return bz_addURLJob(URL, handler, token, postData, NULL);
 }
 
-BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData, bz_APIStringList *headers)
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData,
+                          bz_APIStringList *headers)
 {
     if (!URL)
         return false;
@@ -3925,9 +3880,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
                                  const char *postData)
 {
     if (!URL)
-    {
         return false;
-    }
 
     return urlFetchHandler.addJob(URL, handler, postData, NULL, NULL);
 }
@@ -3937,9 +3890,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
 BZF_API bool bz_removeURLJob(const char *URL)
 {
     if (!URL)
-    {
         return false;
-    }
     return urlFetchHandler.removeJob(URL);
 }
 
@@ -3948,9 +3899,7 @@ BZF_API bool bz_removeURLJob(const char *URL)
 BZF_API bool bz_removeURLJobByID(size_t id)
 {
     if (id == 0)
-    {
         return false;
-    }
     return urlFetchHandler.removeJob(id);
 }
 
@@ -3963,7 +3912,7 @@ BZF_API bool bz_stopAllURLJobs(void)
 }
 
 // inter plugin communication
-std::map<std::string,std::string>	globalPluginData;
+std::map<std::string,std::string>   globalPluginData;
 
 BZF_API bool bz_clipFieldExists ( const char *_name )
 {
@@ -4170,7 +4119,7 @@ BZF_API const char *bz_toupper(const char* val )
     if (!val)
         return NULL;
 
-    temp	 =	TextUtils::toupper(std::string(val));
+    temp     =  TextUtils::toupper(std::string(val));
     return temp.c_str();
 }
 
@@ -4180,7 +4129,7 @@ BZF_API const char *bz_tolower(const char* val )
     if (!val)
         return NULL;
 
-    temp	 =	TextUtils::tolower(std::string(val));
+    temp     =  TextUtils::tolower(std::string(val));
     return temp.c_str();
 }
 
@@ -4236,7 +4185,7 @@ BZF_API const char *bz_urlEncode(const char* val )
     if (!val)
         return NULL;
 
-    temp	 =	TextUtils::url_encode(std::string(val));
+    temp     =  TextUtils::url_encode(std::string(val));
     return temp.c_str();
 }
 
@@ -4378,7 +4327,7 @@ BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
     }
 
     // fire off a game end event
-    bz_GameStartEndEventData_V2	gameData;
+    bz_GameStartEndEventData_V2 gameData;
     gameData.eventType = bz_eGameEndEvent;
     gameData.duration = clOptions->timeLimit;
     gameData.playerID = playerID;
@@ -4442,18 +4391,14 @@ BZF_API void bz_startCountdown ( int delay, float limit, const char *byWho )
 BZF_API float bz_getCountdownRemaining ( void )
 {
     if (!bz_isCountDownActive())
-    {
         return -1;
-    }
 
     TimeKeeper tm = TimeKeeper::getCurrent();
     TimeKeeper gameTime = gameStartTime;
     PlayerInfo::setCurrentTime(tm);
 
     if (bz_isCountDownPaused() || bz_isCountDownInProgress())
-    {
         gameTime += (float)(tm - countdownPauseStart);
-    }
 
     float newTimeElapsed = (float)(tm - gameTime);
 
@@ -4465,7 +4410,7 @@ BZF_API void bz_resetTeamScores ( void )
     resetTeamScores();
 }
 
-BZF_API	bz_eGameType bz_getGameType ( void )
+BZF_API bz_eGameType bz_getGameType ( void )
 {
     if (clOptions->gameType == ClassicCTF)
         return eCTFGame;
@@ -4620,6 +4565,6 @@ BZF_API void bz_ClearFilter(void)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

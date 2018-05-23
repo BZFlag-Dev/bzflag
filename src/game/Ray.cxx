@@ -33,7 +33,7 @@ Ray::Ray(const Ray& r)
     d[2] = r.d[2];
 }
 
-Ray&			Ray::operator=(const Ray& r)
+Ray&            Ray::operator=(const Ray& r)
 {
     if (this != &r)
     {
@@ -47,7 +47,7 @@ Ray&			Ray::operator=(const Ray& r)
     return *this;
 }
 
-void			Ray::getPoint(float t, float p[3]) const
+void            Ray::getPoint(float t, float p[3]) const
 {
     p[0] = o[0] + t * d[0];
     p[1] = o[1] + t * d[1];
@@ -58,6 +58,6 @@ void			Ray::getPoint(float t, float p[3]) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

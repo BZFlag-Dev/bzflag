@@ -17,7 +17,7 @@
 #include "StateDatabase.h"
 #include "KeyManager.h"
 
-static const int	MaximumLineLength = 1024;
+static const int    MaximumLineLength = 1024;
 
 // initialize the singleton
 template <>
@@ -33,9 +33,7 @@ void writeBZDB(const std::string& name, void *stream)
 
     // quotify empty strings and anything with a space or a semicolon
     if ((value.find(' ') != value.npos) || (value.find(';') != value.npos) || (value.size() == 0))
-    {
         value = std::string("\"") + value + "\"";
-    }
 
     // quotify the key if there's a space or a semicolon
     if ((name.find(' ') != name.npos) || (name.find(';') != name.npos))
@@ -69,7 +67,7 @@ ConfigFileManager::~ConfigFileManager()
 {
 }
 
-bool				ConfigFileManager::parse(std::istream& stream)
+bool                ConfigFileManager::parse(std::istream& stream)
 {
     char buffer[MaximumLineLength];
     while (stream.good())
@@ -80,30 +78,26 @@ bool				ConfigFileManager::parse(std::istream& stream)
     return true;
 }
 
-bool				ConfigFileManager::read(const std::string& filename)
+bool                ConfigFileManager::read(const std::string& filename)
 {
     std::istream* stream = FILEMGR.createDataInStream(filename);
     if (stream == NULL)
-    {
         return false;
-    }
     bool ret = parse(*stream);
     delete stream;
     return ret;
 }
 
-void				ConfigFileManager::read(std::istream& stream)
+void                ConfigFileManager::read(std::istream& stream)
 {
     parse(stream);
 }
 
-bool				ConfigFileManager::write(const std::string& filename)
+bool                ConfigFileManager::write(const std::string& filename)
 {
     std::ostream* stream = FILEMGR.createDataOutStream(filename);
     if (stream == NULL)
-    {
         return false;
-    }
     BZDB.write(writeBZDB, stream);
     KEYMGR.iterate(writeKEYMGR, stream);
     delete stream;
@@ -115,6 +109,6 @@ bool				ConfigFileManager::write(const std::string& filename)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -166,9 +166,7 @@ void CacheMenu::execute()
     else if (_focus == clearServerListCache)
     {
         if ((ServerListCache::get())->clearCache())
-        {
             controlPanel->addMessage("Server List Cache Cleared");
-        }
         else
         {
             // already cleared -- do nothing
@@ -222,13 +220,9 @@ void CacheMenu::resize(int _width, int _height)
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
         if ((i == 2) || (i == 4) || (i == 7))
-        {
             y -= 1.75f * h;
-        }
         else
-        {
             y -= 1.0f * h;
-        }
     }
 
     // load current settings
@@ -351,6 +345,6 @@ void CacheMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

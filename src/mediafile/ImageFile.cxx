@@ -27,31 +27,31 @@ ImageFile::~ImageFile()
     // do nothing
 }
 
-void			ImageFile::init(unsigned int _numChannels,
+void            ImageFile::init(unsigned int _numChannels,
                                 unsigned int _width, unsigned int _height)
 {
-    open	= true;
+    open    = true;
     numChannels = _numChannels;
     width       = _width;
     height      = _height;
 }
 
-bool			ImageFile::isOpen() const
+bool            ImageFile::isOpen() const
 {
     return open;
 }
 
-unsigned int		ImageFile::getNumChannels() const
+unsigned int        ImageFile::getNumChannels() const
 {
     return numChannels;
 }
 
-unsigned int		ImageFile::getWidth() const
+unsigned int        ImageFile::getWidth() const
 {
     return width;
 }
 
-unsigned int		ImageFile::getHeight() const
+unsigned int        ImageFile::getHeight() const
 {
     return height;
 }
@@ -60,6 +60,6 @@ unsigned int		ImageFile::getHeight() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

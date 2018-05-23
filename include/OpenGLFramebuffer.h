@@ -11,7 +11,7 @@
  */
 
 /* OpenGLFramebuffer:
- *	Encapsulates an OpenGL framebuffer object for multisampled rendering.
+ *  Encapsulates an OpenGL framebuffer object for multisampled rendering.
  */
 
 #ifndef OPENGLFRAMEBUFFER_H

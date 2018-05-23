@@ -28,8 +28,8 @@
 // FIXME - this should use a pregenerated list of 3D polygons
 //       - use something like a split quadtree  (16 divs top layer, etc...)
 //       - splitting polygons is only helpful if they break into diff cells
-//	 - return the isFlatTop() state?  (for making puddles)
-//	 - return the plane normal?  (also for making puddles)
+//   - return the isFlatTop() state?  (for making puddles)
+//   - return the plane normal?  (also for making puddles)
 //       - check the hit position for under-the-wall leaks?
 
 void RoofTops::load()
@@ -68,17 +68,13 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
             continue;
         }
         else if ((t > 0.0f) && (t < minTime))
-        {
             minTime = t;
-        }
     }
 
     float height = maxHeight + (minTime * zSpeed);
 
     if (height < 0.0f)
-    {
         height = 0.0f;
-    }
 
     return height;
 }
@@ -88,6 +84,6 @@ float RoofTops::getTopHeight(float x, float y, float maxHeight)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

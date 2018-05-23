@@ -11,11 +11,11 @@
  */
 
 /* WallObstacle:
- *	Encapsulates an infinite wall in the game environment.
+ *  Encapsulates an infinite wall in the game environment.
  */
 
-#ifndef	BZF_WALL_OBSTACLE_H
-#define	BZF_WALL_OBSTACLE_H
+#ifndef BZF_WALL_OBSTACLE_H
+#define BZF_WALL_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -29,20 +29,20 @@ public:
                  float breadth, float height, bool ricochet);
     ~WallObstacle();
 
-    const char*		getType() const;
-    static const char*	getClassName(); // const
+    const char*     getType() const;
+    static const char*  getClassName(); // const
 
-    float		intersect(const Ray&) const;
-    void		getNormal(const float* p, float* n) const;
+    float       intersect(const Ray&) const;
+    void        getNormal(const float* p, float* n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
+    bool        inCylinder(const float* p, float radius, float height) const;
+    bool        inBox(const float* p, float angle,
                       float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
+    bool        inMovingBox(const float* oldP, float oldAngle,
                             const float *newP, float newAngle,
                             float halfWidth, float halfBreadth, float height) const;
 
-    bool		getHitNormal(
+    bool        getHitNormal(
         const float* pos1, float azimuth1,
         const float* pos2, float azimuth2,
         float halfWidth, float halfBreadth,
@@ -55,14 +55,14 @@ public:
 
     void print(std::ostream& out, const std::string& indent) const;
 
-    std::string		userTextures[1];
+    std::string     userTextures[1];
 
 private:
     void finalize();
 
 private:
-    float		plane[4];
-    static const char*	typeName;
+    float       plane[4];
+    static const char*  typeName;
 };
 
 #endif // BZF_WALL_OBSTACLE_H
@@ -71,6 +71,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

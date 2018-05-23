@@ -59,9 +59,7 @@ template <typename T> inline std::string tostring(T value, const char* fmt)
 {
     char buf[256];
     if (fmt == NULL)
-    {
         fmt = "%.9g";
-    }
     snprintf(buf, sizeof(buf), fmt, (double)value);
     return std::string(buf);
 }
@@ -234,21 +232,13 @@ public:
     bool operator<(const vec2& v) const
     {
         if (x < v.x)
-        {
             return true;
-        }
         if (x > v.x)
-        {
             return false;
-        }
         if (y < v.y)
-        {
             return true;
-        }
         if (y > v.y)
-        {
             return false;
-        }
         return false;
     }
     bool operator==(const vec2& v) const
@@ -282,9 +272,7 @@ public:
     {
         const T len = v.length();
         if (len == (T)0)
-        {
             return false;
-        }
         const T scale = ((T)1 / len);
         v *= scale;
         return true;
@@ -312,9 +300,7 @@ public:
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const
     {
         if (sep == NULL)
-        {
             sep = " ";
-        }
         return ::tostring(x, fmt) + sep +
                ::tostring(y, fmt);
     }
@@ -543,29 +529,17 @@ public:
     bool operator<(const vec3& v) const
     {
         if (x < v.x)
-        {
             return true;
-        }
         if (x > v.x)
-        {
             return false;
-        }
         if (y < v.y)
-        {
             return true;
-        }
         if (y > v.y)
-        {
             return false;
-        }
         if (z < v.z)
-        {
             return true;
-        }
         if (z > v.z)
-        {
             return false;
-        }
         return false;
     }
     bool operator==(const vec3& v) const
@@ -612,9 +586,7 @@ public:
     {
         const T len = v.length();
         if (len == (T)0)
-        {
             return false;
-        }
         const T scale = ((T)1 / len);
         v *= scale;
         return true;
@@ -696,9 +668,7 @@ public:
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const
     {
         if (sep == NULL)
-        {
             sep = " ";
-        }
         return ::tostring(x, fmt) + sep +
                ::tostring(y, fmt) + sep +
                ::tostring(z, fmt);
@@ -972,37 +942,21 @@ public:
     bool operator<(const vec4& v) const
     {
         if (x < v.x)
-        {
             return true;
-        }
         if (x > v.x)
-        {
             return false;
-        }
         if (y < v.y)
-        {
             return true;
-        }
         if (y > v.y)
-        {
             return false;
-        }
         if (z < v.z)
-        {
             return true;
-        }
         if (z > v.z)
-        {
             return false;
-        }
         if (w < v.w)
-        {
             return true;
-        }
         if (w > v.w)
-        {
             return false;
-        }
         return false;
     }
     bool operator==(const vec4& v) const
@@ -1042,9 +996,7 @@ public:
     std::string tostring(const char* fmt = NULL, const char* sep = NULL) const
     {
         if (sep == NULL)
-        {
             sep = " ";
-        }
         return ::tostring(x, fmt) + sep +
                ::tostring(y, fmt) + sep +
                ::tostring(z, fmt) + sep +

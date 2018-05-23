@@ -30,7 +30,7 @@ public:
         globallyAuthenticated = set;
     }
 private:
-    bool		   globallyAuthenticated;
+    bool           globallyAuthenticated;
 };
 
 #endif
@@ -39,6 +39,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

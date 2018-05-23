@@ -32,7 +32,7 @@ TeleporterSceneNodeGenerator::~TeleporterSceneNodeGenerator()
     // do nothing
 }
 
-WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
+WallSceneNode*      TeleporterSceneNodeGenerator::getNextNode(
     float UNUSED(uRepeats), float UNUSED(vRepeats),
     bool lod)
 {
@@ -53,9 +53,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
     };
 
     if (fabsf(teleporter->getBorder()) < 1.0e-6f)
-    {
         return NULL;
-    }
 
     if (teleporter->isHorizontal ())
     {
@@ -82,7 +80,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
         const int n = incNodeNumber ();
         switch (n)
         {
-        case 1:		    // -x outside edge
+        case 1:         // -x outside edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -93,7 +91,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = c * (2.0f * d);
             tEdge[2] = 0.0f;
             break;
-        case 2:		    // -y outside edge
+        case 2:         // -y outside edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -104,7 +102,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = 0.0f;
             tEdge[2] = b;
             break;
-        case 3:		    // +x outside edge
+        case 3:         // +x outside edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -115,7 +113,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = (-2.0f * d) * c;
             tEdge[2] = 0.0f;
             break;
-        case 4:		    // +y outside edge
+        case 4:         // +y outside edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -126,7 +124,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = 0.0f;
             tEdge[2] = b;
             break;
-        case 5:		    // -x inner edge
+        case 5:         // -x inner edge
             base[0] = pos[0] + ((b - w) * c - (b - d) * s);
             base[1] = pos[1] + ((b - w) * s + (b - d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -137,7 +135,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = 0.0f;
             tEdge[2] = b;
             break;
-        case 6:		    // -y inner edge
+        case 6:         // -y inner edge
             base[0] = pos[0] + ((b - w) * c - (b - d) * s);
             base[1] = pos[1] + ((b - w) * s + (b - d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -148,7 +146,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = (2.0f * (w - b)) * s;
             tEdge[2] = 0.0f;
             break;
-        case 7:		    // +x inner edge
+        case 7:         // +x inner edge
             base[0] = pos[0] + ((w - b) * c - (d - b) * s);
             base[1] = pos[1] + ((w - b) * s + (d - b) * c);
             base[2] = pos[2] + size[2] - b;
@@ -159,7 +157,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = 0.0f;
             tEdge[2] = b;
             break;
-        case 8:		    // +y inner edge
+        case 8:         // +y inner edge
             base[0] = pos[0] + ((w - b) * c - (d - b) * s);
             base[1] = pos[1] + ((w - b) * s + (d - b) * c);
             base[2] = pos[2] + size[2] - b;
@@ -170,7 +168,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = (-2.0f * (w - b)) * s;
             tEdge[2] = 0.0f;
             break;
-        case 9:		    // -x bottom edge
+        case 9:         // -x bottom edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -181,7 +179,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = (b) * s;
             tEdge[2] = 0.0f;
             break;
-        case 10:		   // -y bottom edge
+        case 10:           // -y bottom edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -192,7 +190,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = s * (2.0f * w);
             tEdge[2] = 0.0f;
             break;
-        case 11:		   // +x bottom edge
+        case 11:           // +x bottom edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -203,7 +201,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = s * (-b);
             tEdge[2] = 0.0f;
             break;
-        case 12:		   // +y bottom edge
+        case 12:           // +y bottom edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2] - b;
@@ -214,7 +212,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = (-2.0f * (w)) * s;
             tEdge[2] = 0.0f;
             break;
-        case 13:		   // -x top edge
+        case 13:           // -x top edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2];
@@ -225,7 +223,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = c * (2.0f * (d));
             tEdge[2] = 0.0f;
             break;
-        case 14:		   // -y top edge
+        case 14:           // -y top edge
             base[0] = pos[0] + ((-w) * c - (-d) * s);
             base[1] = pos[1] + ((-w) * s + (-d) * c);
             base[2] = pos[2] + size[2];
@@ -236,7 +234,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = c * (b);
             tEdge[2] = 0.0f;
             break;
-        case 15:		   // +x top edge
+        case 15:           // +x top edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2];
@@ -247,7 +245,7 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
             tEdge[1] = c * (-2.0f * (d));
             tEdge[2] = 0.0f;
             break;
-        case 16:		   // +y top edge
+        case 16:           // +y top edge
             base[0] = pos[0] + ((w) * c - (d) * s);
             base[1] = pos[1] + ((w) * s + (d) * c);
             base[2] = pos[2] + size[2];
@@ -458,6 +456,6 @@ WallSceneNode*		TeleporterSceneNodeGenerator::getNextNode(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

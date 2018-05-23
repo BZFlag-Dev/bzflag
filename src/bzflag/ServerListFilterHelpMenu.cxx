@@ -139,10 +139,12 @@ void ServerListFilterHelpMenu::resize(int _width, int _height)
 
     // Find the longest line
     int longestLine = 2;
-    float longestLineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight, ((HUDuiLabel*)listHUD[1])->getString());
+    float longestLineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight,
+                             ((HUDuiLabel*)listHUD[1])->getString());
     for (int i = 2; i < count; i++)
     {
-        float lineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight, ((HUDuiLabel*)listHUD[i])->getString());
+        float lineWidth = fm.getStrLength(MainMenu::getFontFace(), maxFontSizeForHeight,
+                                          ((HUDuiLabel*)listHUD[i])->getString());
         if (lineWidth > longestLineWidth)
         {
             longestLine = i;
@@ -201,20 +203,25 @@ ServerListFilterHelp1Menu::ServerListFilterHelp1Menu() : ServerListFilterHelpMen
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    listHUD.push_back(createLabel("By default, when using the \"search\" function in the server list, it will search for the"));
-    listHUD.push_back(createLabel("exact string of text you provided in both the server address and the description. Only"));
+    listHUD.push_back(
+        createLabel("By default, when using the \"search\" function in the server list, it will search for the"));
+    listHUD.push_back(
+        createLabel("exact string of text you provided in both the server address and the description. Only"));
     listHUD.push_back(createLabel("servers that have that string in the address or description will be shown."));
     listHUD.push_back(createLabel(""));
-    listHUD.push_back(createLabel("But there are also powerful filters you can use. These allow filtering the server list"));
+    listHUD.push_back(
+        createLabel("But there are also powerful filters you can use. These allow filtering the server list"));
     listHUD.push_back(createLabel("based on criteria such as player counts, shot count, address, description, and"));
     listHUD.push_back(createLabel("various server settings (such as jumping and ricochet). For instance, this filter"));
     listHUD.push_back(createLabel("would find any 2 or 3 shot servers that have at least one player online:"));
     listHUD.push_back(createLabel("    /p>1,s>1,s<4,# busy - 2 or 3 shots"));
     listHUD.push_back(createLabel(""));
-    listHUD.push_back(createLabel("Notice that the line begins with a forward slash. This tells the server list that this"));
+    listHUD.push_back(
+        createLabel("Notice that the line begins with a forward slash. This tells the server list that this"));
     listHUD.push_back(createLabel("is an advanced filter. Multiple statements after the slash are then split apart by a"));
     listHUD.push_back(createLabel("comma, letting the filter know they are separate items. These are combined together"));
-    listHUD.push_back(createLabel("with an \"and\" statement internally. So, with the example above, you can think of it as"));
+    listHUD.push_back(
+        createLabel("with an \"and\" statement internally. So, with the example above, you can think of it as"));
     listHUD.push_back(createLabel("\"Player count must be greater than 1 AND shot count must be greater than 1 AND"));
     listHUD.push_back(createLabel("shot count must be less than 4.\""));
 }
@@ -264,8 +271,10 @@ ServerListFilterHelp3Menu::ServerListFilterHelp3Menu() : ServerListFilterHelpMen
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    listHUD.push_back(createLabel("At present, you are limited to having only one of each of the following per filter set."));
-    listHUD.push_back(createLabel(" If you use two or more within a single filter set, only the last one will take effect."));
+    listHUD.push_back(
+        createLabel("At present, you are limited to having only one of each of the following per filter set."));
+    listHUD.push_back(
+        createLabel(" If you use two or more within a single filter set, only the last one will take effect."));
     listHUD.push_back(createLabel(""));
     listHUD.push_back(createLabel("There are two possible operators that would immediately follow the filter name:"));
     listHUD.push_back(createLabel(") glob: A pattern with wildcards in the form of an asterisk. If no asterisk is"));
@@ -512,7 +521,8 @@ ServerListFilterHelp10Menu::ServerListFilterHelp10Menu() : ServerListFilterHelpM
 {
     // add controls
     std::vector<HUDuiControl*>& listHUD = getControls();
-    listHUD.push_back(createLabel("Comments begin with a # to document the purpose of a filter. This is entirely optional."));
+    listHUD.push_back(
+        createLabel("Comments begin with a # to document the purpose of a filter. This is entirely optional."));
     listHUD.push_back(createLabel(""));
     listHUD.push_back(createLabel("Example:"));
     listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /op>3,# More than 3 observers").c_str()));
@@ -539,7 +549,8 @@ ServerListFilterHelp11Menu::ServerListFilterHelp11Menu() : ServerListFilterHelpM
     listHUD.push_back(createLabel("Find CTF maps with two teams:"));
     listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /vt=2,+ctf").c_str()));
     listHUD.push_back(createLabel(""));
-    listHUD.push_back(createLabel("Find league servers with at least one player or one observer (notice the second forward"));
+    listHUD.push_back(
+        createLabel("Find league servers with at least one player or one observer (notice the second forward"));
     listHUD.push_back(createLabel("slash that starts a new filter set):"));
     listHUD.push_back(createLabel(ServerListFilter::colorizeSearch("  /d)league,p>0/d)league,op>0").c_str()));
     listHUD.push_back(createLabel(""));
@@ -580,26 +591,20 @@ ServerListFilterHelpMenu* ServerListFilterHelpMenu::getServerListFilterHelpMenu(
         if (dialog == serverListFilterHelpMenus[i])
         {
             if (next)
-            {
                 return serverListFilterHelpMenus[(i + 1) % numServerListFilterHelpMenus];
-            }
             else
-            {
                 return serverListFilterHelpMenus[(i - 1 + numServerListFilterHelpMenus) % numServerListFilterHelpMenus];
-            }
         }
     }
     return next ? serverListFilterHelpMenus[0] : serverListFilterHelpMenus[numServerListFilterHelpMenus - 1];
 }
 
-void			ServerListFilterHelpMenu::done()
+void            ServerListFilterHelpMenu::done()
 {
     if (serverListFilterHelpMenus)
     {
         for (int i = 0; i < numServerListFilterHelpMenus; i++)
-        {
             delete serverListFilterHelpMenus[i];
-        }
         delete[] serverListFilterHelpMenus;
         serverListFilterHelpMenus = NULL;
     }
@@ -610,6 +615,6 @@ void			ServerListFilterHelpMenu::done()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

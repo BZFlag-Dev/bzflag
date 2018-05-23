@@ -23,13 +23,13 @@ class WallSceneNodeGenerator : public ObstacleSceneNodeGenerator
 public:
     ~WallSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
 
 protected:
     WallSceneNodeGenerator(const WallObstacle*);
 
 private:
-    const WallObstacle*	wall;
+    const WallObstacle* wall;
 };
 
 #endif
@@ -38,6 +38,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

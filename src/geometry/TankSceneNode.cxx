@@ -233,17 +233,11 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     // set the level of detail
     TankLOD mode = LowTankLOD;
     if ((maxLevel == -1) || ((maxLevel > 2) && (size > 55.0f)))
-    {
         mode = HighTankLOD;
-    }
     else if ((maxLevel > 1) && (size > 25.0f))
-    {
         mode = MedTankLOD;
-    }
     else
-    {
         mode = LowTankLOD;
-    }
     tankRenderNode.setTankLOD(mode);
     treadsRenderNode.setTankLOD(mode);
 
@@ -255,9 +249,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     if ((tankSize == Narrow) &&
             (!useDimensions || (dimensions[1] < 0.01f)) &&
             BZDBCache::animatedTreads && BZDBCache::zbuffer)
-    {
         narrow = true;
-    }
     tankRenderNode.setNarrowWithDepth(narrow);
     treadsRenderNode.setNarrowWithDepth(narrow);
 
@@ -291,9 +283,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     // Also don't return without doing anything,
     // fancy radar tanks need TankLOD set.
     if (onlyShadows)
-    {
         return;
-    }
 
     renderer.addRenderNode(&tankRenderNode, &gstate);
     renderer.addRenderNode(&treadsRenderNode, &treadState);
@@ -305,13 +295,9 @@ void TankSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
     // use HighTankLOD shadows in experimental mode
     if (TankSceneNode::maxLevel == -1)
-    {
         shadowRenderNode.setTankLOD (HighTankLOD);
-    }
     else
-    {
         shadowRenderNode.setTankLOD (LowTankLOD);
-    }
     renderer.addShadowNode(&shadowRenderNode);
 }
 
@@ -443,9 +429,7 @@ void TankSceneNode::setJumpJets(float scale)
 void TankSceneNode::setClipPlane(const GLfloat* _plane)
 {
     if (!_plane)
-    {
         clip = false;
-    }
     else
     {
         clip = true;
@@ -509,9 +493,7 @@ void TankSceneNode::rebuildExplosion()
         const float vz = sqrtf(fabsf((vhMax*vhMax) - (vhMag*vhMag)));
         vel[i][2] = vz * vertExplosionRatio; // flatten it a little
         if (bzfrand() > 0.5)
-        {
             vel[i][2] = -vel[i][2];
-        }
     }
     return;
 }
@@ -529,22 +511,16 @@ void TankSceneNode::renderRadar()
     tankPos[0] = 0.0f;
     tankPos[1] = 0.0f;
     if (mySphere[2] >= 0.0f)
-    {
         tankPos[2] = 0.0f;
-    }
     else
-    {
         tankPos[2] = mySphere[2];
-    }
 
     setCenter(tankPos);
     azimuth = 0.0f;
 
     float oldAlpha = color[3];
     if (color[3] < 0.15f)
-    {
         color[3] = 0.15f;
-    }
 
     if (BZDBCache::animatedTreads)
     {
@@ -578,9 +554,7 @@ bool TankSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
         const float* p = planes[i];
         const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
         if ((d < 0.0f) && ((d * d) > s[3]))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -695,7 +669,7 @@ const int TankIDLSceneNode::IDLRenderNode::idlFaces[][5] =
     { 4,  37, 36, 38, 32 }
 };
 
-const GLfloat		TankIDLSceneNode::IDLRenderNode::idlVertex[][3] =
+const GLfloat       TankIDLSceneNode::IDLRenderNode::idlVertex[][3] =
 {
     // body
     { 2.430f, 0.877f, 0.000f },
@@ -859,7 +833,7 @@ const GLfloat  // FIXME: setup so these come from TANKGEOMMGR
 TankSceneNode::TankRenderNode::centerOfGravity[LastTankPart][3] =
 {
     { 0.000f,  0.0f, 1.5f * 0.68f }, // body
-    { 3.252f,  0.0f, 1.532f },	   // barrel
+    { 3.252f,  0.0f, 1.532f },     // barrel
     { 0.125f,  0.0f, 2.5f * 0.68f }, // turret
     { 0.000f, +0.7f, 0.5f * 0.68f }, // left case
     { 0.000f, -0.7f, 0.5f * 0.68f }, // right case
@@ -947,9 +921,7 @@ void TankSceneNode::TankRenderNode::setTankSize(TankSize size)
 void TankSceneNode::TankRenderNode::render()
 {
     if (!sceneNode->useDimensions)
-    {
         drawSize = sceneNode->tankSize;
-    }
     else
     {
         // for animated resizing effects, setup with the Normal size,
@@ -963,9 +935,7 @@ void TankSceneNode::TankRenderNode::render()
     alpha = sceneNode->color[3];
 
     if (!BZDBCache::blend && sceneNode->transparent)
-    {
         myStipple(alpha);
-    }
 
     if (sceneNode->clip && !isShadow)
     {
@@ -992,9 +962,7 @@ void TankSceneNode::TankRenderNode::render()
     const bool switchLights = BZDBCache::lighting &&
                               !isShadow && (drawLOD == HighTankLOD);
     if (switchLights)
-    {
         RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
-    }
 
     if (isRadar && !isExploding)
     {
@@ -1024,9 +992,7 @@ void TankSceneNode::TankRenderNode::render()
         }
     }
     else if (narrowWithDepth)
-    {
         renderNarrowWithDepth();
-    }
     else if (isShadow && (sphere[2] < 0.0f))
     {
         // burrowed or burrowing tank, just render the top shadows
@@ -1037,9 +1003,7 @@ void TankSceneNode::TankRenderNode::render()
     {
         // any old order is fine.  if exploding then draw both sides.
         if (isExploding)
-        {
             glDisable(GL_CULL_FACE);
-        }
         renderPart(Body);
         renderPart(Turret);
         renderPart(Barrel);
@@ -1050,9 +1014,7 @@ void TankSceneNode::TankRenderNode::render()
             for (int i = 0; i < 4; i++)
             {
                 if (isShadow && ((i == 1) || (i == 2)) && !isExploding)
-                {
                     continue;
-                }
                 renderPart((TankPart)(LeftWheel0 + i));
                 renderPart((TankPart)(RightWheel0 + i));
             }
@@ -1060,21 +1022,15 @@ void TankSceneNode::TankRenderNode::render()
             renderPart(RightTread);
         }
         if (isExploding)
-        {
             glEnable(GL_CULL_FACE);
-        }
     }
 
     // re-enable the dynamic lights
     if (switchLights)
-    {
         RENDERER.reenableLights();
-    }
 
     if (sceneNode->useDimensions)
-    {
         glDisable(GL_NORMALIZE);
-    }
 
     // restore the MODELVIEW matrix
     glPopMatrix();
@@ -1086,17 +1042,13 @@ void TankSceneNode::TankRenderNode::render()
     }
 
     // FIXME -- add flare lights using addFlareLight().
-    //	  pass light position in world space.
+    //    pass light position in world space.
 
     glShadeModel(GL_FLAT);
     if (!BZDBCache::blend && sceneNode->transparent)
-    {
         myStipple(0.5f);
-    }
     if (sceneNode->clip)
-    {
         glDisable(GL_CLIP_PLANE0);
-    }
 
     return;
 }
@@ -1111,9 +1063,7 @@ void TankSceneNode::TankRenderNode::renderLeftParts()
         {
             // don't need the middle two wheels for shadows
             if (isShadow && ((i == 1) || (i == 2)) && !isExploding)
-            {
                 continue;
-            }
             renderPart((TankPart)(LeftWheel0 + i));
         }
         renderPart(LeftTread);
@@ -1131,9 +1081,7 @@ void TankSceneNode::TankRenderNode::renderRightParts()
         {
             // don't need the middle two wheels for shadows
             if (isShadow && ((i == 1) || (i == 2)) && !isExploding)
-            {
                 continue;
-            }
             renderPart((TankPart)(RightWheel0 + i));
         }
         renderPart(RightTread);
@@ -1160,58 +1108,38 @@ void TankSceneNode::TankRenderNode::renderNarrowWithDepth()
         glGetFloatv(GL_POLYGON_OFFSET_UNITS, &units);
     }
     else
-    {
         glEnable(GL_POLYGON_OFFSET_FILL);
-    }
 
     const float offsetFactor = -0.1f;
     const float offsetDepth = -1.0f;
 
     glPolygonOffset(1.0f * offsetFactor, 1.0f * offsetDepth);
     if (left)
-    {
         renderPart(LeftCasing);
-    }
     else
-    {
         renderPart(RightCasing);
-    }
 
     glPolygonOffset(2.0f * offsetFactor, 2.0f * offsetDepth);
     for (int i = 0; i < 4; i++)
     {
         if (isShadow && ((i == 1) || (i == 2)) && !isExploding)
-        {
             continue;
-        }
         if (left)
-        {
             renderPart((TankPart)(LeftWheel0 + i));
-        }
         else
-        {
             renderPart((TankPart)(RightWheel0 + i));
-        }
     }
 
     glPolygonOffset(3.0f * offsetFactor, 3.0f * offsetDepth);
     if (left)
-    {
         renderPart(LeftTread);
-    }
     else
-    {
         renderPart(RightTread);
-    }
 
     if (usingPolyOffset)
-    {
         glPolygonOffset(factor, units);
-    }
     else
-    {
         glDisable(GL_POLYGON_OFFSET_FILL);
-    }
     glDepthFunc(GL_LESS);
 
     return;
@@ -1237,42 +1165,26 @@ void TankSceneNode::TankRenderNode::renderTopParts()
 void TankSceneNode::TankRenderNode::renderParts()
 {
     if (!above)
-    {
         renderTopParts();
-    }
 
     if (left)
-    {
         renderRightParts();
-    }
     else
-    {
         renderLeftParts();
-    }
 
     if (!sceneNode->inTheCockpit)
-    {
         renderPart(Body);
-    }
 
     if (left)
-    {
         renderLeftParts();
-    }
     else
-    {
         renderRightParts();
-    }
 
     if (sceneNode->inTheCockpit)
-    {
         renderPart(Body);
-    }
 
     if (above)
-    {
         renderTopParts();
-    }
 
     return;
 }
@@ -1334,9 +1246,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     // setup the animation texture matrix
     bool usingTexMat = false;
     if (!isShadow && BZDBCache::animatedTreads && (part >= BasicTankParts))
-    {
         usingTexMat = setupTextureMatrix(part);
-    }
 
     // set color
     if (!isShadow)
@@ -1363,9 +1273,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
     // draw the lights on the turret
     if ((part == Turret) && !isExploding && !isShadow)
-    {
         renderLights();
-    }
 
     // restore texture transform
     if (usingTexMat)
@@ -1377,9 +1285,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
     // restore modelview transform
     if (isExploding)
-    {
         glPopMatrix();
-    }
 
     return;
 }
@@ -1392,9 +1298,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
 
     // do not use color modulation with tank textures
     if (BZDBCache::texture)
-    {
         clr = white;
-    }
 
     switch (part)
     {
@@ -1555,9 +1459,7 @@ GLfloat TankSceneNode::jumpJetsModel[4][3] =
 void TankSceneNode::TankRenderNode::renderJumpJets()
 {
     if (!sceneNode->jumpJetsOn)
-    {
         return;
-    }
 
     typedef struct
     {
@@ -1617,6 +1519,6 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

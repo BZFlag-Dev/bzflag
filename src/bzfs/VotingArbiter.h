@@ -294,27 +294,19 @@ inline bool VotingArbiter::knowsPoll(void) const
 inline bool VotingArbiter::isPollClosed(void) const
 {
     if (!this->knowsPoll())
-    {
         return false;
-    }
     // check timer
     if ((TimeKeeper::getCurrent() - _startTime) >= _voteTime)
-    {
         return true;
-    }
     return false;
 }
 
 inline bool VotingArbiter::isPollOpen(void) const
 {
     if (!this->knowsPoll())
-    {
         return false;
-    }
     if ((TimeKeeper::getCurrent() - _startTime) < _voteTime)
-    {
         return true;
-    }
     return false;
 }
 
@@ -322,23 +314,17 @@ inline bool VotingArbiter::isPollExpired(void) const
 {
     // if the poll is not at least closed, then it's not expired
     if (!this->knowsPoll())
-    {
         return false;
-    }
     // check timer
     if ((TimeKeeper::getCurrent() - _startTime) > _voteTime + _vetoTime)
-    {
         return true;
-    }
     return false;
 }
 
 inline std::string VotingArbiter::getPollAction(void) const
 {
     if (_action.size() <= 0)
-    {
         return "do something unknown to";
-    }
     return _action;
 }
 
@@ -370,9 +356,7 @@ inline unsigned short int VotingArbiter::getVetoTime(void) const
 inline TimeKeeper VotingArbiter::getStartTime(void) const
 {
     if (!this->knowsPoll())
-    {
         return TimeKeeper::getNullTime();
-    }
     return _startTime;
 }
 
@@ -399,6 +383,6 @@ class VotingArbiter;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

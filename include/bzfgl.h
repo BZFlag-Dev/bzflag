@@ -108,18 +108,18 @@ extern int __beginendCount;
  */
 //#define DEBUG_GL_MATRIX_STACKS
 #ifdef DEBUG
-#  define glNewList(list,mode)			bzNewList((list), (mode))
-#  define glGenLists(count)			bzGenLists((count))
-#  define glGenTextures(count, textures)	bzGenTextures((count), (textures))
+#  define glNewList(list,mode)          bzNewList((list), (mode))
+#  define glGenLists(count)         bzGenLists((count))
+#  define glGenTextures(count, textures)    bzGenTextures((count), (textures))
 #  ifdef DEBUG_GL_MATRIX_STACKS
-#    define glPushMatrix()			bzPushMatrix()
-#    define glPopMatrix()			bzPopMatrix()
-#    define glMatrixMode(mode)			bzMatrixMode(mode)
+#    define glPushMatrix()          bzPushMatrix()
+#    define glPopMatrix()           bzPopMatrix()
+#    define glMatrixMode(mode)          bzMatrixMode(mode)
 #  endif // DEBUG_GL_MATRIX_STACKS
 #endif
 // always swap these calls (context protection)
-#define glDeleteLists(base, count)		bzDeleteLists((base), (count))
-#define glDeleteTextures(count, textures)	bzDeleteTextures((count), (textures))
+#define glDeleteLists(base, count)      bzDeleteLists((base), (count))
+#define glDeleteTextures(count, textures)   bzDeleteTextures((count), (textures))
 
 // these are housed at the end of OpenGLGState.cxx, for now
 extern void   bzNewList(GLuint list, GLenum mode);
@@ -138,6 +138,6 @@ extern void   bzMatrixMode(GLenum mode);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

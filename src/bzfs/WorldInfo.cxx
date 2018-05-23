@@ -133,9 +133,7 @@ void WorldInfo::addPyramid(float x, float y, float z, float r,
     const float pos[3] = {x, y, z};
     PyramidBuilding* pyr = new PyramidBuilding(pos, r, w, d, h, drive, shoot, rico);
     if (flipZ)
-    {
         pyr->setZFlip();
-    }
     OBSTACLEMGR.addWorldObstacle(pyr);
 }
 
@@ -204,13 +202,13 @@ EntryZones& WorldInfo::getEntryZones()
 }
 
 
-void		    WorldInfo::loadCollisionManager()
+void            WorldInfo::loadCollisionManager()
 {
     COLLISIONMGR.load();
     return;
 }
 
-void		    WorldInfo::checkCollisionManager()
+void            WorldInfo::checkCollisionManager()
 {
     if (COLLISIONMGR.needReload())
     {
@@ -274,9 +272,7 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
         float radius, float height) const
 {
     if (height < Epsilon)
-    {
         height = Epsilon;
-    }
 
     float pos[3] = {x, y, z};
 
@@ -289,18 +285,14 @@ InBuildingType WorldInfo::inCylinderNoOctree(Obstacle **location,
             if (obs->inCylinder(pos, radius, height))
             {
                 if (location != NULL)
-                {
                     *location = obs;
-                }
                 return classifyHit(obs);
             }
         }
     }
 
     if (location != NULL)
-    {
         *location = (Obstacle *)NULL;
-    }
 
     return NOT_IN_BUILDING;
 }
@@ -311,9 +303,7 @@ InBuildingType WorldInfo::cylinderInBuilding(const Obstacle **location,
         float height) const
 {
     if (height < Epsilon)
-    {
         height = Epsilon;
-    }
 
     *location = NULL;
 
@@ -347,9 +337,7 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
                                         float width, float breadth, float height) const
 {
     if (height < Epsilon)
-    {
         height = Epsilon;
-    }
 
     *location = NULL;
 
@@ -373,44 +361,26 @@ InBuildingType WorldInfo::boxInBuilding(const Obstacle **location,
 InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 {
     if (obstacle == NULL)
-    {
         return NOT_IN_BUILDING;
-    }
     else if (obstacle->getType() == BoxBuilding::getClassName())
     {
         if (obstacle->isDriveThrough())
-        {
             return IN_BOX_DRIVETHROUGH;
-        }
         else
-        {
             return IN_BOX_NOTDRIVETHROUGH;
-        }
     }
     else if (obstacle->getType() == PyramidBuilding::getClassName())
-    {
         return IN_PYRAMID;
-    }
     else if (obstacle->getType() == TetraBuilding::getClassName())
-    {
         return IN_TETRA;
-    }
     else if (obstacle->getType() == MeshObstacle::getClassName())
-    {
         return IN_MESH;
-    }
     else if (obstacle->getType() == MeshFace::getClassName())
-    {
         return IN_MESHFACE;
-    }
     else if (obstacle->getType() == BaseBuilding::getClassName())
-    {
         return IN_BASE;
-    }
     else if (obstacle->getType() == Teleporter::getClassName())
-    {
         return IN_TELEPORTER;
-    }
     else
     {
         // FIXME - choke here?
@@ -432,24 +402,18 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
         const std::string& safetyQual =
             CustomZone::getFlagSafetyQualifier(team);
         if (entryZones.getClosePoint(safetyQual, pos, pt))
-        {
             return true;
-        }
     }
     else
     {
         const std::string& idQual =
             CustomZone::getFlagIdQualifier(fi->getIndex());
         if (entryZones.getClosePoint(idQual, pos, pt))
-        {
             return true;
-        }
         const std::string& typeQual =
             CustomZone::getFlagTypeQualifier(flagType);
         if (entryZones.getClosePoint(typeQual, pos, pt))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -464,18 +428,14 @@ bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
     const std::string& idQual =
         CustomZone::getFlagIdQualifier(fi->getIndex());
     if (entryZones.getRandomPoint(idQual, pt))
-    {
         return true;
-    }
 
     if (!teamFlag)
     {
         const std::string& typeQual =
             CustomZone::getFlagTypeQualifier(flagType);
         if (entryZones.getRandomPoint(typeQual, pt))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -486,9 +446,7 @@ bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const
     const std::string& teamQual =
         CustomZone::getPlayerTeamQualifier((int)pi->getTeam());
     if (entryZones.getRandomPoint(teamQual, pt))
-    {
         return true;
-    }
     return false;
 }
 
@@ -504,13 +462,9 @@ void WorldInfo::finishWorld()
     maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
     const float wallHeight = BZDB.eval(StateDatabase::BZDB_WALLHEIGHT);
     if (maxHeight < wallHeight)
-    {
         maxHeight = wallHeight;
-    }
     if (maxHeight < 0.0f)
-    {
         maxHeight = 0.0f;
-    }
 
     finished = true;
 
@@ -524,9 +478,7 @@ int WorldInfo::packDatabase()
     // to avoid messing up any user indexing. this has to be done before
     // the texture matrices and materials are packed.
     if ((waterLevel >= 0.0f) && (waterMatRef == NULL))
-    {
         makeWaterMaterial();
-    }
 
     // compute the database size
     databaseSize =
@@ -537,9 +489,7 @@ int WorldInfo::packDatabase()
     // add water level size
     databaseSize += sizeof(float);
     if (waterLevel >= 0.0f)
-    {
         databaseSize += sizeof(int32_t);
-    }
 
 
     // allocate the buffer
@@ -631,6 +581,6 @@ int WorldInfo::getUncompressedSize() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__REGION_H__
-#define	__REGION_H__
+#ifndef __REGION_H__
+#define __REGION_H__
 
 #include "common.h"
 
@@ -19,7 +19,7 @@
 #include <vector>
 
 
-const float	     maxDistance = 1.0e6;
+const float      maxDistance = 1.0e6;
 
 class RegionPoint
 {
@@ -28,10 +28,10 @@ public:
     RegionPoint(const float v[2]);
     ~RegionPoint();
 
-    const float*	get() const;
+    const float*    get() const;
 
 private:
-    float		p[2];
+    float       p[2];
 };
 
 
@@ -41,42 +41,42 @@ public:
     BzfRegion(int sides, const float p[][2]);
     ~BzfRegion();
 
-    bool		isInside(const float p[2]) const;
+    bool        isInside(const float p[2]) const;
     // get point distance from Region. Point should be outside Region!
-    float		getDistance(const float p[2], float nearest[2]) const;
-    int			classify(const float p1[2], const float p2[2]) const;
-    BzfRegion*		orphanSplitRegion(const float p1[2], const float p2[2]);
+    float       getDistance(const float p[2], float nearest[2]) const;
+    int         classify(const float p1[2], const float p2[2]) const;
+    BzfRegion*      orphanSplitRegion(const float p1[2], const float p2[2]);
 
-    int			getNumSides() const;
-    const RegionPoint&	getCorner(int index) const;
-    BzfRegion*		getNeighbor(int index) const;
+    int         getNumSides() const;
+    const RegionPoint&  getCorner(int index) const;
+    BzfRegion*      getNeighbor(int index) const;
 
-    bool		test(int mailboxIndex) const;
-    void		setPathStuff(float distance, BzfRegion* target,
+    bool        test(int mailboxIndex) const;
+    void        setPathStuff(float distance, BzfRegion* target,
                              const float p[2], int mailboxIndex);
-    float		getDistance() const;
-    BzfRegion*		getTarget() const;
-    const float*	getA() const;
+    float       getDistance() const;
+    BzfRegion*      getTarget() const;
+    const float*    getA() const;
 
 protected:
     BzfRegion();
-    void		splitEdge(const BzfRegion* oldNeighbor,
+    void        splitEdge(const BzfRegion* oldNeighbor,
                           BzfRegion* newNeighbor,
                           const RegionPoint& p,
                           bool onRight);
-    void		addSide(const RegionPoint&, BzfRegion* neighbor);
-    void		setNeighbor(const BzfRegion* oldNeighbor,
+    void        addSide(const RegionPoint&, BzfRegion* neighbor);
+    void        setNeighbor(const BzfRegion* oldNeighbor,
                             BzfRegion* newNeighbor);
-    void		tidy();
+    void        tidy();
 
 private:
-    std::vector<RegionPoint>	corners;
-    std::vector<BzfRegion*>		neighbors;
-    int			mailbox;
+    std::vector<RegionPoint>    corners;
+    std::vector<BzfRegion*>     neighbors;
+    int         mailbox;
 
-    BzfRegion*		target;
-    float		distance;
-    RegionPoint		A;
+    BzfRegion*      target;
+    float       distance;
+    RegionPoint     A;
 };
 
 
@@ -86,6 +86,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

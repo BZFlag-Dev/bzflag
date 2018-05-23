@@ -32,9 +32,7 @@ OccluderManager::OccluderManager()
     activeOccluders = 0;
     allowedOccluders = 0;
     for (int i = 0; i < MaxOccluders; i++)
-    {
         occluders[i] = NULL;
-    }
 }
 
 
@@ -58,17 +56,13 @@ void OccluderManager::clear()
 void OccluderManager::setMaxOccluders(int size)
 {
     if (size > MaxOccluders)
-    {
         size = MaxOccluders;
-    }
     else if (size == 1)
     {
         size = 2; // minimum of two: one active, one scanning
     }
     else if (size < 0)
-    {
         size = 0;
-    }
 
     allowedOccluders = size;
 
@@ -100,12 +94,10 @@ IntersectLevel OccluderManager::occlude(const Extents& exts,
             oc->addScore (score);
             return Contained;
             // FIXME - this only makes sense for randomly selected
-            //	 occluders where there can be overlap
+            //   occluders where there can be overlap
         }
         else if (tmp == Partial)
-        {
             level = Partial;
-        }
     }
 
     return level;
@@ -122,9 +114,7 @@ bool OccluderManager::occludePeek(const Extents& exts)
     {
         Occluder* oc = occluders[i];
         if (oc->doCullAxisBox (exts) == Contained)
-        {
             result = true;
-        }
     }
 
     return result;
@@ -171,9 +161,7 @@ static void print_scores (Occluder** olist, int count, const char* str)
         }
     }
     if (!first)
-    {
         putchar ('\n');
-    }
 }
 
 
@@ -184,9 +172,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
     // see if our limit has changed
     int max = BZDB.evalInt (StateDatabase::BZDB_CULLOCCLUDERS);
     if (max != allowedOccluders)
-    {
         setMaxOccluders (max);
-    }
 
     // don't need more occluders then scenenodes
     if (activeOccluders > listCount)
@@ -215,9 +201,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
     // sort before picking a new occluder
     // they are sorted in descending order  (occluders[0] has the best score)
     if (activeOccluders > 1)
-    {
         sort();
-    }
 
     // pick a new one, this will obviously require a better algorithm,
     // i'm hoping to use a GL query extension (preferably ARB, then NV)
@@ -225,9 +209,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
     // area of scene node, etc...
     int target = allowedOccluders;
     if (listCount < allowedOccluders)
-    {
         target = listCount;
-    }
     while (activeOccluders < target)
     {
         const SceneNode* sceneNode = list[rand() % listCount];
@@ -241,9 +223,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
             // that would eat up CPU time in a large list
         }
         else
-        {
             activeOccluders++;
-        }
     }
 
     // FIXME  - debugging
@@ -251,9 +231,7 @@ void OccluderManager::select(const SceneNode* const* list, int listCount)
 
     // decrease the scores
     for (oc = 0; oc < activeOccluders; oc++)
-    {
         occluders[oc]->divScore();
-    }
 
     return;
 }
@@ -267,17 +245,11 @@ static int compareOccluders (const void* a, const void* b)
     int scoreB = (*ptrB)->getScore();
 
     if (scoreA > scoreB)
-    {
         return -1;
-    }
     else if (scoreA < scoreB)
-    {
         return +1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 
@@ -290,9 +262,7 @@ void OccluderManager::sort()
 void OccluderManager::draw() const
 {
     for (int i = 0; i < activeOccluders; i++)
-    {
         occluders[i]->draw();
-    }
     return;
 }
 
@@ -367,13 +337,9 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
     // normalize
     float len = (n[0] * n[0]) + (n[1] * n[1]) + (n[2] * n[2]);
     if (len < +0.001f)
-    {
         return false;
-    }
     else
-    {
         len = 1.0f / sqrtf (len);
-    }
     r[0] = n[0] * len;
     r[1] = n[1] * len;
     r[2] = n[2] * len;
@@ -391,9 +357,7 @@ bool Occluder::makePlanes(const Frustum* frustum)
     const float* p = sceneNode->getPlane();
     float tmp = (p[0] * eye[0]) + (p[1] * eye[1]) + (p[2] * eye[2]) + p[3];
     if (tmp < +0.1f)
-    {
         return false;
-    }
     // FIXME - store/flag this so we don't have to do it again?
 
     // make the occluder's normal plane
@@ -408,9 +372,7 @@ bool Occluder::makePlanes(const Frustum* frustum)
     {
         int second = (i + vertexCount - 1) % vertexCount;
         if (!makePlane (vertices[i], vertices[second], eye, planes[i + 1]))
-        {
             return false;
-        }
     }
 
     return true;
@@ -442,9 +404,7 @@ void Occluder::draw() const
         {
             center[a] = 0.0f;
             for (v = 0; v < vertexCount; v++)
-            {
                 center[a] += vertices[v][a];
-            }
             center[a] = center[a] / (float) vertexCount;
         }
 
@@ -517,13 +477,9 @@ void Occluder::print(const char* string) const
     // FIXME - debugging
     printf ("%s: %p, V = %i, P = %i\n", string, (const void *)sceneNode, vertexCount, planeCount);
     for (int v = 0; v < vertexCount; v++)
-    {
         printf ("  v%i: %f, %f, %f\n", v, vertices[v][0], vertices[v][1],vertices[v][2]);
-    }
     for (int p = 0; p < planeCount; p++)
-    {
         printf ("  p%i: %f, %f, %f, %f\n", p, planes[p][0], planes[p][1],planes[p][2],planes[p][3]);
-    }
 
     return;
 }
@@ -532,6 +488,6 @@ void Occluder::print(const char* string) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

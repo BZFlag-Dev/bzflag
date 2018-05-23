@@ -75,57 +75,57 @@ void ServerListFilter::reset()
     }
 
     // pattern filters
-    addrPat	.reset();
-    descPat	.reset();
-    addrDescPat	.reset();
+    addrPat .reset();
+    descPat .reset();
+    addrDescPat .reset();
 
     // boolean filters
-    ffa		.reset();
-    offa		.reset();
-    ctf		.reset();
-    rabbit	.reset();
+    ffa     .reset();
+    offa        .reset();
+    ctf     .reset();
+    rabbit  .reset();
 
-    jump		.reset();
-    rico		.reset();
-    handi		.reset();
-    replay	.reset();
-    inertia	.reset();
-    antidote	.reset();
-    favorite	.reset();
+    jump        .reset();
+    rico        .reset();
+    handi       .reset();
+    replay  .reset();
+    inertia .reset();
+    antidote    .reset();
+    favorite    .reset();
 
     // range filters
-    shots		.reset();
-    players	.reset();
-    freeSlots	.reset();
-    validTeams	.reset();
+    shots       .reset();
+    players .reset();
+    freeSlots   .reset();
+    validTeams  .reset();
 
-    maxTime	.reset();
-    maxPlayers	.reset();
-    maxTeamScore	.reset();
+    maxTime .reset();
+    maxPlayers  .reset();
+    maxTeamScore    .reset();
     maxPlayerScore.reset();
-    shakeWins	.reset();
-    shakeTime	.reset();
+    shakeWins   .reset();
+    shakeTime   .reset();
 
-    rogueCount	.reset();
-    redCount	.reset();
-    greenCount	.reset();
-    blueCount	.reset();
-    purpleCount	.reset();
-    observerCount	.reset();
+    rogueCount  .reset();
+    redCount    .reset();
+    greenCount  .reset();
+    blueCount   .reset();
+    purpleCount .reset();
+    observerCount   .reset();
 
-    rogueMax	.reset();
-    redMax	.reset();
-    greenMax	.reset();
-    blueMax	.reset();
-    purpleMax	.reset();
-    observerMax	.reset();
+    rogueMax    .reset();
+    redMax  .reset();
+    greenMax    .reset();
+    blueMax .reset();
+    purpleMax   .reset();
+    observerMax .reset();
 
-    rogueFree	.reset();
-    redFree	.reset();
-    greenFree	.reset();
-    blueFree	.reset();
-    purpleFree	.reset();
-    observerFree	.reset();
+    rogueFree   .reset();
+    redFree .reset();
+    greenFree   .reset();
+    blueFree    .reset();
+    purpleFree  .reset();
+    observerFree    .reset();
 }
 
 
@@ -158,9 +158,7 @@ static int countFreeSlots(const ServerItem& item)
     const int totalPlayers = countPlayers(item) + ping.observerCount;
     const int totalFreeSlots = ping.maxPlayers - totalPlayers;
     if (freeSlots > totalFreeSlots)
-    {
         freeSlots = totalFreeSlots;
-    }
 
     return freeSlots;
 }
@@ -171,25 +169,15 @@ static int countValidTeams(const ServerItem& item)
     const PingPacket& ping = item.ping;
     int count = 0;
     if (ping.rogueMax  > 0)
-    {
         count++;
-    }
     if (ping.redMax    > 0)
-    {
         count++;
-    }
     if (ping.greenMax  > 0)
-    {
         count++;
-    }
     if (ping.blueMax   > 0)
-    {
         count++;
-    }
     if (ping.purpleMax > 0)
-    {
         count++;
-    }
     return count;
 }
 
@@ -207,198 +195,112 @@ bool ServerListFilter::check(const ServerItem& item) const
 {
     // OR clauses
     if (orFilter && orFilter->check(item))
-    {
         return true;
-    }
 
     // pattern filters
     std::string addr, desc;
     item.splitAddrTitle(addr, desc);
     if (!addrPat.check(addr))
-    {
         return false;
-    }
     if (!descPat.check(desc))
-    {
         return false;
-    }
     if (!addrDescPat.check(addr) &&
             !addrDescPat.check(desc))
-    {
         return false;
-    }
 
     const PingPacket& p = item.ping;
 
     // boolean filters
     const uint16_t type = p.gameType;
-    if (!ffa		.check(type == TeamFFA))
-    {
+    if (!ffa        .check(type == TeamFFA))
         return false;
-    }
-    if (!offa		.check(type == OpenFFA))
-    {
+    if (!offa       .check(type == OpenFFA))
         return false;
-    }
-    if (!ctf		.check(type == ClassicCTF))
-    {
+    if (!ctf        .check(type == ClassicCTF))
         return false;
-    }
-    if (!rabbit		.check(type == RabbitChase))
-    {
+    if (!rabbit     .check(type == RabbitChase))
         return false;
-    }
 
     const uint16_t options = p.gameOptions;
-    if (!jump	.check((options & JumpingGameStyle)!=0))
-    {
+    if (!jump   .check((options & JumpingGameStyle)!=0))
         return false;
-    }
-    if (!rico	.check((options & RicochetGameStyle)!=0))
-    {
+    if (!rico   .check((options & RicochetGameStyle)!=0))
         return false;
-    }
-    if (!handi	.check((options & HandicapGameStyle)!=0))
-    {
+    if (!handi  .check((options & HandicapGameStyle)!=0))
         return false;
-    }
-    if (!inertia	.check((options & InertiaGameStyle)!=0))
-    {
+    if (!inertia    .check((options & InertiaGameStyle)!=0))
         return false;
-    }
-    if (!antidote	.check((options & AntidoteGameStyle)!=0))
-    {
+    if (!antidote   .check((options & AntidoteGameStyle)!=0))
         return false;
-    }
 
-    if (!replay		.check(isReplay(item)))
-    {
+    if (!replay     .check(isReplay(item)))
         return false;
-    }
-    if (!favorite		.check(item.favorite))
-    {
+    if (!favorite       .check(item.favorite))
         return false;
-    }
 
     // range filters
-    if (!shots		.check(p.maxShots))
-    {
+    if (!shots      .check(p.maxShots))
         return false;
-    }
-    if (!players		.check(countPlayers(item)))
-    {
+    if (!players        .check(countPlayers(item)))
         return false;
-    }
-    if (!freeSlots	.check(countFreeSlots(item)))
-    {
+    if (!freeSlots  .check(countFreeSlots(item)))
         return false;
-    }
-    if (!validTeams	.check(countValidTeams(item)))
-    {
+    if (!validTeams .check(countValidTeams(item)))
         return false;
-    }
 
-    if (!maxTime		.check(p.maxTime))
-    {
+    if (!maxTime        .check(p.maxTime))
         return false;
-    }
-    if (!maxPlayers	.check(p.maxPlayers))
-    {
+    if (!maxPlayers .check(p.maxPlayers))
         return false;
-    }
-    if (!maxTeamScore	.check(p.maxTeamScore))
-    {
+    if (!maxTeamScore   .check(p.maxTeamScore))
         return false;
-    }
-    if (!maxPlayerScore	.check(p.maxPlayerScore))
-    {
+    if (!maxPlayerScore .check(p.maxPlayerScore))
         return false;
-    }
-    if (!shakeWins	.check(p.shakeWins))
-    {
+    if (!shakeWins  .check(p.shakeWins))
         return false;
-    }
-    if (!shakeTime	.check(p.shakeTimeout))
-    {
+    if (!shakeTime  .check(p.shakeTimeout))
         return false;
-    }
 
-    if (!rogueCount	.check(p.rogueCount))
-    {
+    if (!rogueCount .check(p.rogueCount))
         return false;
-    }
-    if (!redCount		.check(p.redCount))
-    {
+    if (!redCount       .check(p.redCount))
         return false;
-    }
-    if (!greenCount	.check(p.greenCount))
-    {
+    if (!greenCount .check(p.greenCount))
         return false;
-    }
-    if (!blueCount	.check(p.blueCount))
-    {
+    if (!blueCount  .check(p.blueCount))
         return false;
-    }
-    if (!purpleCount	.check(p.purpleCount))
-    {
+    if (!purpleCount    .check(p.purpleCount))
         return false;
-    }
-    if (!observerCount	.check(p.observerCount))
-    {
+    if (!observerCount  .check(p.observerCount))
         return false;
-    }
 
-    if (!rogueMax		.check(p.rogueMax))
-    {
+    if (!rogueMax       .check(p.rogueMax))
         return false;
-    }
-    if (!redMax		.check(p.redMax))
-    {
+    if (!redMax     .check(p.redMax))
         return false;
-    }
-    if (!greenMax		.check(p.greenMax))
-    {
+    if (!greenMax       .check(p.greenMax))
         return false;
-    }
-    if (!blueMax		.check(p.blueMax))
-    {
+    if (!blueMax        .check(p.blueMax))
         return false;
-    }
-    if (!purpleMax	.check(p.purpleMax))
-    {
+    if (!purpleMax  .check(p.purpleMax))
         return false;
-    }
-    if (!observerMax	.check(p.observerMax))
-    {
+    if (!observerMax    .check(p.observerMax))
         return false;
-    }
 
     const int totalFree = p.maxPlayers - (countPlayers(item) + p.observerCount);
 #define FREE_SLOTS(T) std::min(totalFree, p.T ## Max - p.T ## Count)
-    if (!rogueFree	.check(FREE_SLOTS(rogue)))
-    {
+    if (!rogueFree  .check(FREE_SLOTS(rogue)))
         return false;
-    }
-    if (!redFree		.check(FREE_SLOTS(red)))
-    {
+    if (!redFree        .check(FREE_SLOTS(red)))
         return false;
-    }
-    if (!greenFree	.check(FREE_SLOTS(green)))
-    {
+    if (!greenFree  .check(FREE_SLOTS(green)))
         return false;
-    }
-    if (!blueFree		.check(FREE_SLOTS(blue)))
-    {
+    if (!blueFree       .check(FREE_SLOTS(blue)))
         return false;
-    }
-    if (!purpleFree	.check(FREE_SLOTS(purple)))
-    {
+    if (!purpleFree .check(FREE_SLOTS(purple)))
         return false;
-    }
-    if (!observerFree	.check(FREE_SLOTS(observer)))
-    {
+    if (!observerFree   .check(FREE_SLOTS(observer)))
         return false;
-    }
 #undef FREE_SLOTS
 
     return true;
@@ -410,14 +312,10 @@ bool ServerListFilter::check(const ServerItem& item) const
 static std::string stripLeadingWhite(const std::string& s)
 {
     if (s.empty())
-    {
         return s;
-    }
     const std::string::size_type pos = s.find_first_not_of(" \t");
     if (pos == std::string::npos)
-    {
         return s;
-    }
     return s.substr(pos);
 }
 
@@ -436,9 +334,7 @@ bool ServerListFilter::parse(const std::string& filter)
     std::string filterStr;
     const std::string::size_type optPos = source.find_first_of('/');
     if (optPos == std::string::npos)
-    {
         adGlobStr = source;
-    }
     else
     {
         adGlobStr = source.substr(0, optPos);
@@ -453,15 +349,11 @@ bool ServerListFilter::parse(const std::string& filter)
     }
 
     if (!adGlobStr.empty())
-    {
         addrDescPat.setupGlob(adGlobStr, true);
-    }
 
     const std::vector<std::string> filters = TextUtils::tokenize(filterStr, ",");
     for (size_t i = 0; i < filters.size(); i++)
-    {
         parseFilter(filters[i]);
-    }
 
     return true;
 }
@@ -521,9 +413,7 @@ char ServerListFilter::parseFilterType(const std::string& _f, char& op,
     const char* s = f.c_str();
     const char* c = s;
     while ((*c != 0) && (isalnum(*c) || (*c == '_')))
-    {
         c++;
-    }
 
     switch (*c)
     {
@@ -691,84 +581,78 @@ bool ServerListFilter::parsePatternFilter(const std::string& label, char op,
 void ServerListFilter::setupBoolMap()
 {
     if (!boolMap.empty())
-    {
         return;
-    }
 
     std::map<std::string, size_t>& m = boolMap;
 
-    m["F"] = m["ffa"]		= OFFSETOF(ffa);
-    m["O"] = m["offa"]		= OFFSETOF(offa);
-    m["C"] = m["ctf"]		= OFFSETOF(ctf);
-    m["R"] = m["rabbit"]		= OFFSETOF(rabbit);
+    m["F"] = m["ffa"]       = OFFSETOF(ffa);
+    m["O"] = m["offa"]      = OFFSETOF(offa);
+    m["C"] = m["ctf"]       = OFFSETOF(ctf);
+    m["R"] = m["rabbit"]        = OFFSETOF(rabbit);
 
-    m["j"] = m["jump"]		= OFFSETOF(jump);
-    m["r"] = m["rico"]		= OFFSETOF(rico);
-    m["h"] = m["handicap"]	= OFFSETOF(handi);
-    m["P"] = m["replay"]		= OFFSETOF(replay);
-    m["i"] = m["inertia"]		= OFFSETOF(inertia);
-    m["a"] = m["antidote"]	= OFFSETOF(antidote);
-    m["F"] = m["favorite"]	= OFFSETOF(favorite);
+    m["j"] = m["jump"]      = OFFSETOF(jump);
+    m["r"] = m["rico"]      = OFFSETOF(rico);
+    m["h"] = m["handicap"]  = OFFSETOF(handi);
+    m["P"] = m["replay"]        = OFFSETOF(replay);
+    m["i"] = m["inertia"]       = OFFSETOF(inertia);
+    m["a"] = m["antidote"]  = OFFSETOF(antidote);
+    m["F"] = m["favorite"]  = OFFSETOF(favorite);
 }
 
 
 void ServerListFilter::setupRangeMap()
 {
     if (!rangeMap.empty())
-    {
         return;
-    }
 
     std::map<std::string, size_t>& m = rangeMap;
 
-    m["s"]   = m["shots"]		= OFFSETOF(shots);
-    m["p"]   = m["players"]	= OFFSETOF(players);
-    m["f"]   = m["freeSlots"]	= OFFSETOF(freeSlots);
-    m["vt"]  = m["validTeams"]	= OFFSETOF(validTeams);
+    m["s"]   = m["shots"]       = OFFSETOF(shots);
+    m["p"]   = m["players"] = OFFSETOF(players);
+    m["f"]   = m["freeSlots"]   = OFFSETOF(freeSlots);
+    m["vt"]  = m["validTeams"]  = OFFSETOF(validTeams);
 
-    m["mt"]  = m["maxTime"]	= OFFSETOF(maxTime);
-    m["mp"]  = m["maxPlayers"]	= OFFSETOF(maxPlayers);
-    m["mts"] = m["maxTeamScore"]	= OFFSETOF(maxTeamScore);
+    m["mt"]  = m["maxTime"] = OFFSETOF(maxTime);
+    m["mp"]  = m["maxPlayers"]  = OFFSETOF(maxPlayers);
+    m["mts"] = m["maxTeamScore"]    = OFFSETOF(maxTeamScore);
     m["mps"] = m["maxPlayerScore"] = OFFSETOF(maxPlayerScore);
 
-    m["sw"]  = m["shakeWins"]	= OFFSETOF(shakeWins);
-    m["st"]  = m["shakeTime"]	= OFFSETOF(shakeTime);
+    m["sw"]  = m["shakeWins"]   = OFFSETOF(shakeWins);
+    m["st"]  = m["shakeTime"]   = OFFSETOF(shakeTime);
 
-    m["Rm"]  = m["rogueMax"]	= OFFSETOF(rogueMax);
-    m["rm"]  = m["redMax"]	= OFFSETOF(redMax);
-    m["gm"]  = m["greenMax"]	= OFFSETOF(greenMax);
-    m["bm"]  = m["blueMax"]	= OFFSETOF(blueMax);
-    m["pm"]  = m["purpleMax"]	= OFFSETOF(purpleMax);
-    m["om"]  = m["observerMax"]	= OFFSETOF(observerMax);
+    m["Rm"]  = m["rogueMax"]    = OFFSETOF(rogueMax);
+    m["rm"]  = m["redMax"]  = OFFSETOF(redMax);
+    m["gm"]  = m["greenMax"]    = OFFSETOF(greenMax);
+    m["bm"]  = m["blueMax"] = OFFSETOF(blueMax);
+    m["pm"]  = m["purpleMax"]   = OFFSETOF(purpleMax);
+    m["om"]  = m["observerMax"] = OFFSETOF(observerMax);
 
-    m["Rp"]  = m["roguePlayers"]	= OFFSETOF(rogueCount);
-    m["rp"]  = m["redPlayers"]	= OFFSETOF(redCount);
-    m["gp"]  = m["greenPlayers"]	= OFFSETOF(greenCount);
-    m["bp"]  = m["bluePlayers"]	= OFFSETOF(blueCount);
-    m["pp"]  = m["purplePlayers"]	= OFFSETOF(purpleCount);
+    m["Rp"]  = m["roguePlayers"]    = OFFSETOF(rogueCount);
+    m["rp"]  = m["redPlayers"]  = OFFSETOF(redCount);
+    m["gp"]  = m["greenPlayers"]    = OFFSETOF(greenCount);
+    m["bp"]  = m["bluePlayers"] = OFFSETOF(blueCount);
+    m["pp"]  = m["purplePlayers"]   = OFFSETOF(purpleCount);
     m["op"]  = m["observerPlayers"] = OFFSETOF(observerCount);
 
-    m["Rf"]  = m["rogueFree"]	= OFFSETOF(rogueFree);
-    m["rf"]  = m["redFree"]	= OFFSETOF(redFree);
-    m["gf"]  = m["greenFree"]	= OFFSETOF(greenFree);
-    m["bf"]  = m["blueFree"]	= OFFSETOF(blueFree);
-    m["pf"]  = m["purpleFree"]	= OFFSETOF(purpleFree);
-    m["of"]  = m["observerFree"]	= OFFSETOF(observerFree);
+    m["Rf"]  = m["rogueFree"]   = OFFSETOF(rogueFree);
+    m["rf"]  = m["redFree"] = OFFSETOF(redFree);
+    m["gf"]  = m["greenFree"]   = OFFSETOF(greenFree);
+    m["bf"]  = m["blueFree"]    = OFFSETOF(blueFree);
+    m["pf"]  = m["purpleFree"]  = OFFSETOF(purpleFree);
+    m["of"]  = m["observerFree"]    = OFFSETOF(observerFree);
 }
 
 
 void ServerListFilter::setupPatternMap()
 {
     if (!patternMap.empty())
-    {
         return;
-    }
 
     std::map<std::string, size_t>& m = patternMap;
 
-    m["a"] = m["addr"] = m["address"]	= OFFSETOF(addrPat);
-    m["d"] = m["desc"] = m["description"]	= OFFSETOF(descPat);
-    m["ad"] = m["addrdesc"]		= OFFSETOF(addrDescPat);
+    m["a"] = m["addr"] = m["address"]   = OFFSETOF(addrPat);
+    m["d"] = m["desc"] = m["description"]   = OFFSETOF(descPat);
+    m["ad"] = m["addrdesc"]     = OFFSETOF(addrDescPat);
 }
 
 
@@ -799,63 +683,61 @@ void ServerListFilter::print(const std::string& origIndent) const
     const std::string indent = origIndent + "  ";
 
     // pattern filters
-    addrPat	.print("addrPat",	indent);
-    descPat	.print("descPat",	indent);
-    addrDescPat	.print("addrDescPat",	indent);
+    addrPat .print("addrPat",   indent);
+    descPat .print("descPat",   indent);
+    addrDescPat .print("addrDescPat",   indent);
 
     // boolean filters
-    ffa		.print("ffa",		indent);
-    offa		.print("offa",		indent);
-    ctf		.print("ctf",		indent);
-    rabbit	.print("rabbit",	indent);
+    ffa     .print("ffa",       indent);
+    offa        .print("offa",      indent);
+    ctf     .print("ctf",       indent);
+    rabbit  .print("rabbit",    indent);
 
-    jump		.print("jump",		indent);
-    rico		.print("rico",		indent);
-    handi		.print("handi",		indent);
-    replay	.print("replay",	indent);
-    inertia	.print("inertia",	indent);
-    antidote	.print("antidote",	indent);
-    favorite	.print("favorite",	indent);
+    jump        .print("jump",      indent);
+    rico        .print("rico",      indent);
+    handi       .print("handi",     indent);
+    replay  .print("replay",    indent);
+    inertia .print("inertia",   indent);
+    antidote    .print("antidote",  indent);
+    favorite    .print("favorite",  indent);
 
     // range filters
-    shots		.print("shots",		indent);
-    players	.print("players",	indent);
-    freeSlots	.print("freeSlots",	indent);
-    validTeams	.print("validTeams",	indent);
+    shots       .print("shots",     indent);
+    players .print("players",   indent);
+    freeSlots   .print("freeSlots", indent);
+    validTeams  .print("validTeams",    indent);
 
-    maxTime	.print("maxTime",	indent);
-    maxPlayers	.print("maxPlayers",	indent);
-    maxTeamScore	.print("maxTeamScore",	indent);
+    maxTime .print("maxTime",   indent);
+    maxPlayers  .print("maxPlayers",    indent);
+    maxTeamScore    .print("maxTeamScore",  indent);
     maxPlayerScore.print("maxPlayerScore",indent);
-    shakeWins	.print("shakeWins",	indent);
-    shakeTime	.print("shakeTime",	indent);
+    shakeWins   .print("shakeWins", indent);
+    shakeTime   .print("shakeTime", indent);
 
-    rogueCount	.print("rogueCount",	indent);
-    redCount	.print("redCount",	indent);
-    greenCount	.print("greenCount",	indent);
-    blueCount	.print("blueCount",	indent);
-    purpleCount	.print("purpleCount",	indent);
-    observerCount	.print("observerCount",	indent);
+    rogueCount  .print("rogueCount",    indent);
+    redCount    .print("redCount",  indent);
+    greenCount  .print("greenCount",    indent);
+    blueCount   .print("blueCount", indent);
+    purpleCount .print("purpleCount",   indent);
+    observerCount   .print("observerCount", indent);
 
-    rogueMax	.print("rogueMax",	indent);
-    redMax	.print("redMax",	indent);
-    greenMax	.print("greenMax",	indent);
-    blueMax	.print("blueMax",	indent);
-    purpleMax	.print("purpleMax",	indent);
-    observerMax	.print("observerMax",	indent);
+    rogueMax    .print("rogueMax",  indent);
+    redMax  .print("redMax",    indent);
+    greenMax    .print("greenMax",  indent);
+    blueMax .print("blueMax",   indent);
+    purpleMax   .print("purpleMax", indent);
+    observerMax .print("observerMax",   indent);
 
-    rogueFree	.print("rogueFree",	indent);
-    redFree	.print("redFree",	indent);
-    greenFree	.print("greenFree",	indent);
-    blueFree	.print("blueFree",	indent);
-    purpleFree	.print("purpleFree",	indent);
-    observerFree	.print("observerFree",	indent);
+    rogueFree   .print("rogueFree", indent);
+    redFree .print("redFree",   indent);
+    greenFree   .print("greenFree", indent);
+    blueFree    .print("blueFree",  indent);
+    purpleFree  .print("purpleFree",    indent);
+    observerFree    .print("observerFree",  indent);
 
     // OR clauses
     if (orFilter)
-    {
         orFilter->print(indent);
-    }
 }
 
 
@@ -893,15 +775,11 @@ bool ServerListFilter::PatternFilter::setupGlob(const std::string& _pattern,
     }
 
     if (noCase)
-    {
         pattern = TextUtils::tolower(pattern);
-    }
 
     if ((pattern.find("*") == std::string::npos) &&
             (pattern.find("?") == std::string::npos))
-    {
         pattern = "*" + pattern + "*";
-    }
 
     type = GlobPattern;
 
@@ -919,9 +797,7 @@ bool ServerListFilter::PatternFilter::setupRegex(const std::string& _pattern,
 
     int opts = REG_EXTENDED | REG_NOSUB;
     if (noCase)
-    {
         opts |= REG_ICASE;
-    }
 
     re = new regex_t;
 
@@ -957,13 +833,9 @@ bool ServerListFilter::PatternFilter::check(const std::string& s) const
     case GlobPattern:
     {
         if (noCase)
-        {
             return glob_match(pattern, TextUtils::tolower(s));
-        }
         else
-        {
             return glob_match(pattern, s);
-        }
     }
     }
     return true;
@@ -990,9 +862,7 @@ void ServerListFilter::RangeFilter::print(const std::string& name,
         const std::string& indent) const
 {
     if (!minActive && !maxActive)
-    {
         return;
-    }
     else if (minActive && maxActive)
     {
         printf("%s%.3g < %s < %.3g\n", indent.c_str(),
@@ -1015,9 +885,7 @@ void ServerListFilter::PatternFilter::print(const std::string& name,
         const std::string& indent) const
 {
     if (type == NoPattern)
-    {
         return;
-    }
     const char* typeStr = (type == GlobPattern) ? "glob" : "regex";
     const char* caseStr = noCase ? "nocase" : "case";
     printf("%s%s = '%s' <%s|%s>\n", indent.c_str(),
@@ -1069,13 +937,9 @@ std::string ServerListFilter::colorizeSearch(const std::string& in)
         case 'p':
         {
             if (ServerListFilter::isPatternLabel(lbl))
-            {
                 out += (op == ')') ? globColor : regexColor;
-            }
             else
-            {
                 out += unknownColor;
-            }
             break;
         }
         case 'b':
@@ -1111,6 +975,6 @@ std::string ServerListFilter::colorizeSearch(const std::string& in)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

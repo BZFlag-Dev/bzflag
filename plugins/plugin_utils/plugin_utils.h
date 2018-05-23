@@ -43,7 +43,8 @@ inline std::string makeupper(const char *s)
 }
 
 std::string format(const char* fmt, ...)_ATTRIBUTE12;
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens, const bool useQuotes, size_t offset = 0);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens,
+                                  const bool useQuotes, size_t offset = 0);
 std::string replace_all(const std::string& in, const std::string& replaceMe, const std::string& withMe);
 std::string url_encode(const std::string &text);
 std::string url_decode(const std::string &text);
@@ -67,9 +68,7 @@ inline int compare_nocase(const std::string& s1,
     if ((s1.size() < maxlength) || (s2.size() < maxlength))
     {
         if (s1.size() != s2.size())
-        {
             return (s1.size() < s2.size()) ? -1 : +1;
-        }
         maxlength = s1.size(); // clamp the maxlength
     }
 
@@ -79,9 +78,7 @@ inline int compare_nocase(const std::string& s1,
         const std::string::value_type lower1 = ::tolower(s1[i]);
         const std::string::value_type lower2 = ::tolower(s2[i]);
         if (lower1 != lower2)
-        {
             return (lower1 < lower2) ? -1 : +1;
-        }
     }
 
     return 0;
@@ -92,9 +89,7 @@ inline int compare_nocase(const char* s1,
                           const char* s2, size_t maxlength = 4096)
 {
     if (!s1 || !s2)
-    {
         return -1;
-    }
     return compare_nocase(std::string(s1), std::string(s2), maxlength);
 }
 
@@ -102,18 +97,14 @@ inline bool isAlphabetic(const char c)
 {
     if (( c > 64 && c < 91) ||
             ( c > 96 && c < 123))
-    {
         return true;
-    }
     return false;
 }
 
 inline bool isNumeric(const char c)
 {
     if (( c > 47 && c < 58))
-    {
         return true;
-    }
     return false;
 }
 
@@ -121,9 +112,7 @@ inline bool isWhitespace(const char c)
 {
     if ((( c >= 9 ) && ( c <= 13 )) ||
             (c == 32))
-    {
         return true;
-    }
     return false;
 }
 
@@ -133,36 +122,28 @@ inline bool isPunctuation(const char c)
             ( c > 57 && c < 65) ||
             ( c > 90 && c < 97) ||
             ( c > 122 && c < 127))
-    {
         return true;
-    }
     return false;
 }
 
 inline bool isAlphanumeric(const char c)
 {
     if (isAlphabetic(c) || isNumeric(c))
-    {
         return true;
-    }
     return false;
 }
 
 inline bool isVisible(const char c)
 {
     if (isAlphanumeric(c) || isPunctuation(c))
-    {
         return true;
-    }
     return false;
 }
 
 inline bool isPrintable(const char c)
 {
     if (isVisible(c) || isWhitespace(c))
-    {
         return true;
-    }
     return false;
 }
 
@@ -179,6 +160,6 @@ const std::vector<std::string> bzu_standardPerms (void);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

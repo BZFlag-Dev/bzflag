@@ -87,7 +87,8 @@ StringVector TextChunk::parse()
 
     // warn about long lines
     if (long_lines_encountered)
-        strings.push_back(TextUtils::format("WARNING: truncated %d long line%s from %s (limit of %d characters)", long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxLineLength));
+        strings.push_back(TextUtils::format("WARNING: truncated %d long line%s from %s (limit of %d characters)",
+                                            long_lines_encountered, long_lines_encountered == 1? "" : "s", fileName.c_str(), maxLineLength));
 
     return strings;
 }
@@ -97,9 +98,7 @@ bool TextChunk::reload()
 {
     StringVector newVec = parse();
     if (newVec.size() > 0)
-    {
         theVector = newVec;
-    }
     return (theVector.size() > 0);
 }
 
@@ -126,15 +125,11 @@ bool TextChunkManager::parseFile(const std::string &fileName,
     TextChunk textChunk(fileName, maxLines, maxLineLength);
 
     if (textChunk.size() <= 0)
-    {
         return false;
-    }
 
     // add a new chunk name if it isn't already listed
     if (theChunks.find(chunkName) == theChunks.end())
-    {
         chunkNames.push_back(chunkName);
-    }
 
     // add or replace the chunk
     theChunks[chunkName] = textChunk;
@@ -148,13 +143,9 @@ const StringVector* TextChunkManager::getTextChunk(const std::string &chunkName)
     TextChunkMap::const_iterator it;
     it = theChunks.find(chunkName);
     if (it != theChunks.end())
-    {
         return &it->second.getVector();
-    }
     else
-    {
         return NULL;
-    }
 }
 
 
@@ -168,9 +159,7 @@ void TextChunkManager::reload()
 {
     TextChunkMap::iterator it;
     for (it = theChunks.begin(); it != theChunks.end(); ++it)
-    {
         it->second.reload();
-    }
     return;
 }
 
@@ -182,6 +171,6 @@ void TextChunkManager::reload()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

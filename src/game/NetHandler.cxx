@@ -110,21 +110,15 @@ void NetHandler::setFd(fd_set *read_set, fd_set *write_set, int &maxFile)
         {
             FD_SET((unsigned int)player->fd, read_set);
             if (player->outmsgSize > 0)
-            {
                 FD_SET((unsigned int)player->fd, write_set);
-            }
             if (player->fd > maxFile)
-            {
                 maxFile = player->fd;
-            }
         }
     }
 
     FD_SET((unsigned int)udpSocket, read_set);
     if (udpSocket > maxFile)
-    {
         maxFile = udpSocket;
-    }
 
     for (int i = 0; i < maxHandlers; i++)
     {
@@ -174,7 +168,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
         // Ping code request
         return -2;
 
-    int id(-1);	  // player index of the matched player
+    int id(-1);   // player index of the matched player
     int pi;
     udpLinkRequest = false;
     for (pi = 0; pi < maxHandlers; pi++)
@@ -228,7 +222,8 @@ than %s:%d\n",
         for (pi = 0; pi < maxHandlers; pi++)
         {
             if (netPlayer[pi] && !netPlayer[pi]->closed)
-                logDebugMessage(4," %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,  inet_ntoa(netPlayer[pi]->uaddr.sin_addr), ntohs(netPlayer[pi]->uaddr.sin_port));
+                logDebugMessage(4," %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
+                                inet_ntoa(netPlayer[pi]->uaddr.sin_addr), ntohs(netPlayer[pi]->uaddr.sin_port));
         }
         logDebugMessage(3,"\n");
     }
@@ -258,9 +253,7 @@ than %s:%d\n",
 bool NetHandler::isUdpFdSet(fd_set *read_set)
 {
     if (FD_ISSET(udpSocket, read_set))
-    {
         return true;
-    }
     return false;
 }
 
@@ -380,9 +373,7 @@ NetHandler::~NetHandler()
 bool NetHandler::isFdSet(fd_set *set)
 {
     if (FD_ISSET(fd, set))
-    {
         return true;
-    }
     return false;
 }
 
@@ -398,9 +389,7 @@ int NetHandler::send(const void *buffer, size_t length)
 
     // if socket is closed then give up
     if (err == ECONNRESET || err == EPIPE)
-    {
         return -1;
-    }
 
     // just try again later if it's one of these errors
     if (err != EAGAIN && err != EINTR)
@@ -428,9 +417,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
     {
         const int n = send(outmsg + outmsgOffset, outmsgSize);
         if (n == -1)
-        {
             return -1;
-        }
         if (n > 0)
         {
             outmsgOffset += n;
@@ -442,9 +429,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
     {
         const int n = send(buffer, length);
         if (n == -1)
-        {
             return -1;
-        }
         if (n > 0)
         {
             buffer  = (const void*)(((const char*)buffer) + n);
@@ -485,7 +470,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
 
             // cutover
             delete[] outmsg;
-            outmsg	       = newbuf;
+            outmsg         = newbuf;
             outmsgOffset   = 0;
             outmsgCapacity = newCapacity;
         }
@@ -520,9 +505,7 @@ int NetHandler::pwrite(const void *b, int l)
 {
 
     if (l == 0)
-    {
         return 0;
-    }
 
     if (closed)
         return 0;
@@ -670,14 +653,10 @@ RxStatus NetHandler::receive(size_t length, bool *retry)
             returnValue = ReadReset;
         }
         else
-        {
             returnValue = ReadError;
-        }
     }
     else     // if (size == 0)
-    {
         returnValue = ReadDiscon;
-    }
     return returnValue;
 }
 
@@ -710,9 +689,7 @@ std::string NetHandler::reasonToKick()
 {
     std::string reason;
     if (toBeKicked)
-    {
         reason = toBeKickedReason;
-    }
     toBeKicked = false;
     return reason;
 }
@@ -743,9 +720,7 @@ void NetHandler::countMessage(uint16_t code, int len, int direction)
 
         i->second.count++;
         if (i->second.maxSize < len)
-        {
             i->second.maxSize = len;
-        }
     }
 
     if (info->now - perSecondTime[direction] < 1.0f)
@@ -923,6 +898,6 @@ bool NetHandler::reverseDNSDone()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

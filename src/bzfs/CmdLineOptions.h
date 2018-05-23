@@ -40,9 +40,9 @@ const int MaxShots = 20;
 // rabbit selection algorithms
 enum RabbitSelection
 {
-    ScoreRabbitSelection,		// default method based on score
-    KillerRabbitSelection,	// anoint whoever manages to kill the rabbit
-    RandomRabbitSelection		// pick the new rabbit out of a hat
+    ScoreRabbitSelection,       // default method based on score
+    KillerRabbitSelection,  // anoint whoever manages to kill the rabbit
+    RandomRabbitSelection       // pick the new rabbit out of a hat
 };
 
 typedef std::map<FlagType*, int> FlagNumberMap;
@@ -103,117 +103,117 @@ struct CmdLineOptions
         masterBanListURL.push_back(DefaultMasterBanURL);
     }
 
-    int		wksPort;
-    GameType	gameType;
-    int		gameOptions;
-    int		rabbitSelection;
-    int		msgTimer;
-    int		spamWarnMax;
+    int     wksPort;
+    GameType    gameType;
+    int     gameOptions;
+    int     rabbitSelection;
+    int     msgTimer;
+    int     spamWarnMax;
 
-    std::string	servermsg;
-    std::string	advertisemsg;
-    std::string	worldFile;
-    std::string	pingInterface;
-    std::string	password;
+    std::string servermsg;
+    std::string advertisemsg;
+    std::string worldFile;
+    std::string pingInterface;
+    std::string password;
 
-    bool				listServerOverridden;
-    std::vector<std::string>	listServerURL;
+    bool                listServerOverridden;
+    std::vector<std::string>    listServerURL;
 
-    std::string	publicizedTitle;
-    std::string	publicizedAddress;
-    std::string	publicizedKey;
-    std::string	advertiseGroups;
+    std::string publicizedTitle;
+    std::string publicizedAddress;
+    std::string publicizedKey;
+    std::string advertiseGroups;
 
-    bool				suppressMasterBanList;
-    bool				masterBanListOverridden;
-    std::vector<std::string>	masterBanListURL;
+    bool                suppressMasterBanList;
+    bool                masterBanListOverridden;
+    std::vector<std::string>    masterBanListURL;
 
-    uint16_t		maxShots;
-    int			maxTeamScore;
-    int			maxPlayerScore;
-    int			numExtraFlags;
-    int			teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
-    int			numAllowedFlags;
-    uint16_t		shakeWins;
-    uint16_t		shakeTimeout;
-    int			teamFlagTimeout;
-    int			maxlagwarn;
-    int			maxjitterwarn;
-    int			maxpacketlosswarn;
-    int			countdownStarter;
+    uint16_t        maxShots;
+    int         maxTeamScore;
+    int         maxPlayerScore;
+    int         numExtraFlags;
+    int         teamKillerKickRatio; // if players tk*100/wins > teamKillerKickRatio -> kicked
+    int         numAllowedFlags;
+    uint16_t        shakeWins;
+    uint16_t        shakeTimeout;
+    int         teamFlagTimeout;
+    int         maxlagwarn;
+    int         maxjitterwarn;
+    int         maxpacketlosswarn;
+    int         countdownStarter;
 
-    float			adminlagannounce;
-    float			lagannounce;
-    float			lagwarnthresh;
-    float			jitterwarnthresh;
-    float			packetlosswarnthresh;
-    float			idlekickthresh;
-    float			timeLimit;
-    float			timeElapsed;
-    float			addedTime;
-    float			linearAcceleration;
-    float			angularAcceleration;
+    float           adminlagannounce;
+    float           lagannounce;
+    float           lagwarnthresh;
+    float           jitterwarnthresh;
+    float           packetlosswarnthresh;
+    float           idlekickthresh;
+    float           timeLimit;
+    float           timeElapsed;
+    float           addedTime;
+    float           linearAcceleration;
+    float           angularAcceleration;
 
-    bool			useGivenPort;
-    bool			UPnP;
-    bool			randomBoxes;
-    bool			randomCTF;
-    bool			flagsOnBuildings;
-    bool			respawnOnBuildings;
-    bool			oneGameOnly;
-    bool			timeManualStart;
-    bool			randomHeights;
-    bool			useTeleporters;
-    bool			teamKillerDies;
-    bool			printScore;
-    bool			publicizeServer;
-    bool			replayServer;
-    bool			startRecording;
-    bool			timestampLog;
-    bool			timestampMicros;
-    bool			timestampUTC;
-    bool			countdownPaused;
+    bool            useGivenPort;
+    bool            UPnP;
+    bool            randomBoxes;
+    bool            randomCTF;
+    bool            flagsOnBuildings;
+    bool            respawnOnBuildings;
+    bool            oneGameOnly;
+    bool            timeManualStart;
+    bool            randomHeights;
+    bool            useTeleporters;
+    bool            teamKillerDies;
+    bool            printScore;
+    bool            publicizeServer;
+    bool            replayServer;
+    bool            startRecording;
+    bool            timestampLog;
+    bool            timestampMicros;
+    bool            timestampUTC;
+    bool            countdownPaused;
 
-    uint16_t		maxTeam[NumTeams];
-    FlagNumberMap		flagCount;
-    FlagNumberMap		flagLimit; // # shots allowed / flag
-    FlagOptionMap		flagDisallowed;
+    uint16_t        maxTeam[NumTeams];
+    FlagNumberMap       flagCount;
+    FlagNumberMap       flagLimit; // # shots allowed / flag
+    FlagOptionMap       flagDisallowed;
 
-    AccessControlList	acl;
-    TextChunkManager	textChunker;
+    AccessControlList   acl;
+    TextChunkManager    textChunker;
 
     /* inappropriate language filter */
-    std::string		filterFilename;
-    bool			filterCallsigns;
-    bool			filterChat;
-    bool			filterSimple;
-    WordFilter		filter;
+    std::string     filterFilename;
+    bool            filterCallsigns;
+    bool            filterChat;
+    bool            filterSimple;
+    WordFilter      filter;
 
     /* vote poll options */
-    unsigned short int	banTime;
-    unsigned short int	voteTime;
-    unsigned short int	vetoTime;
-    unsigned short int	votesRequired;
-    float			votePercentage;
-    unsigned short int	voteRepeatTime;
+    unsigned short int  banTime;
+    unsigned short int  voteTime;
+    unsigned short int  vetoTime;
+    unsigned short int  votesRequired;
+    float           votePercentage;
+    unsigned short int  voteRepeatTime;
 
-    std::string		reportFile;
-    std::string		reportPipe;
+    std::string     reportFile;
+    std::string     reportPipe;
 
-    std::string		bzdbVars;
+    std::string     bzdbVars;
 
     /* team balancing options */
-    bool			autoTeam;
+    bool            autoTeam;
 
     /* city options */
-    int			citySize;
-    int			numTeamFlags[NumTeams];
+    int         citySize;
+    int         numTeamFlags[NumTeams];
 
-    std::string		cacheURL;
-    std::string		cacheOut;
+    std::string     cacheURL;
+    std::string     cacheOut;
 
-    bool			tkAnnounce;
-    int			wallSides;
+    bool            tkAnnounce;
+    int         wallSides;
 
     // plugins
     typedef struct
@@ -222,7 +222,7 @@ struct CmdLineOptions
         std::string command;
     } pluginDef;
 
-    std::vector<pluginDef>	pluginList;
+    std::vector<pluginDef>  pluginList;
 };
 
 
@@ -238,6 +238,6 @@ struct CmdLineOptions;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

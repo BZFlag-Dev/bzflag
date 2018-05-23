@@ -18,32 +18,32 @@ class WallSceneNode;
 class ObstacleSceneNodeGenerator
 {
 public:
-    virtual		~ObstacleSceneNodeGenerator();
+    virtual     ~ObstacleSceneNodeGenerator();
 
     virtual WallSceneNode* getNextNode(float uRepeats, float vRepeats,
                                        bool lod) = 0;
 
 protected:
     ObstacleSceneNodeGenerator();
-    int			getNodeNumber() const;
-    int			incNodeNumber();
+    int         getNodeNumber() const;
+    int         incNodeNumber();
 
 private:
     // no duplication
     ObstacleSceneNodeGenerator(const
                                ObstacleSceneNodeGenerator&);
-    ObstacleSceneNodeGenerator&	operator=(const ObstacleSceneNodeGenerator&);
+    ObstacleSceneNodeGenerator& operator=(const ObstacleSceneNodeGenerator&);
 
 private:
-    int			node;
+    int         node;
 };
 
-inline int		ObstacleSceneNodeGenerator::getNodeNumber() const
+inline int      ObstacleSceneNodeGenerator::getNodeNumber() const
 {
     return node;
 }
 
-inline int		ObstacleSceneNodeGenerator::incNodeNumber()
+inline int      ObstacleSceneNodeGenerator::incNodeNumber()
 {
     return ++node;
 }
@@ -55,6 +55,6 @@ inline int		ObstacleSceneNodeGenerator::incNodeNumber()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

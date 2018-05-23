@@ -44,9 +44,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
     // the shot flag is normal -- otherwise FiringInfo will have
     // to be changed to add a real bitwise status variable
     if (tank.getFlag() == Flags::PhantomZone && !tank.isFlagActive())
-    {
         flagType = Flags::Null;
-    }
     lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 }
 
@@ -98,29 +96,29 @@ ShotPath::~ShotPath()
     delete strategy;
 }
 
-float			ShotPath::checkHit(const BaseLocalPlayer* player,
+float           ShotPath::checkHit(const BaseLocalPlayer* player,
                                    float position[3]) const
 {
     return strategy->checkHit(player, position);
 }
 
-bool			ShotPath::isStoppedByHit() const
+bool            ShotPath::isStoppedByHit() const
 {
     return strategy->isStoppedByHit();
 }
 
-void			ShotPath::addShot(SceneDatabase* scene,
+void            ShotPath::addShot(SceneDatabase* scene,
                                   bool colorblind)
 {
     strategy->addShot(scene, colorblind);
 }
 
-void			ShotPath::radarRender() const
+void            ShotPath::radarRender() const
 {
     if (!isExpired()) strategy->radarRender();
 }
 
-void			ShotPath::updateShot(float dt)
+void            ShotPath::updateShot(float dt)
 {
     // get new time step and set current time
     currentTime += dt;
@@ -133,38 +131,38 @@ void			ShotPath::updateShot(float dt)
     }
 }
 
-void			ShotPath::setReloadTime(float _reloadTime)
+void            ShotPath::setReloadTime(float _reloadTime)
 {
     reloadTime = _reloadTime;
 }
 
-void			ShotPath::setPosition(const float* p)
+void            ShotPath::setPosition(const float* p)
 {
     firingInfo.shot.pos[0] = p[0];
     firingInfo.shot.pos[1] = p[1];
     firingInfo.shot.pos[2] = p[2];
 }
 
-void			ShotPath::setVelocity(const float* v)
+void            ShotPath::setVelocity(const float* v)
 {
     firingInfo.shot.vel[0] = v[0];
     firingInfo.shot.vel[1] = v[1];
     firingInfo.shot.vel[2] = v[2];
 }
 
-void			ShotPath::setExpiring()
+void            ShotPath::setExpiring()
 {
     expiring = true;
 }
 
-void			ShotPath::setExpired()
+void            ShotPath::setExpired()
 {
     expiring = true;
     expired = true;
     getStrategy()->expire();
 }
 
-void			ShotPath::boostReloadTime(float dt)
+void            ShotPath::boostReloadTime(float dt)
 {
     reloadTime += dt;
 }
@@ -184,7 +182,7 @@ LocalShotPath::~LocalShotPath()
     // do nothing
 }
 
-void			LocalShotPath::update(float dt)
+void            LocalShotPath::update(float dt)
 {
     getFiringInfo().shot.dt += dt;
     updateShot(dt);
@@ -208,13 +206,13 @@ RemoteShotPath::~RemoteShotPath()
     // do nothing
 }
 
-void			RemoteShotPath::update(float dt)
+void            RemoteShotPath::update(float dt)
 {
     // update shot
     updateShot(dt);
 }
 
-void			RemoteShotPath::update(const ShotUpdate& shot,
+void            RemoteShotPath::update(const ShotUpdate& shot,
                                        uint16_t code, const void* msg)
 {
     // update shot info
@@ -228,6 +226,6 @@ void			RemoteShotPath::update(const ShotUpdate& shot,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -68,9 +68,7 @@ BSPSceneDatabase::~BSPSceneDatabase()
 void BSPSceneDatabase::finalizeStatics()
 {
     if (needNoPlaneNodes)
-    {
         insertNoPlaneNodes();
-    }
     return;
 }
 
@@ -92,9 +90,7 @@ bool BSPSceneDatabase::addStaticNode(SceneNode* node, bool dontFree)
         return false; // node would not be freed
     }
     else
-    {
         return insertStatic(1, root, node, dontFree);
-    }
 }
 
 
@@ -108,9 +104,7 @@ void BSPSceneDatabase::addDynamicNode(SceneNode* node)
         setDepth(1);
     }
     else
-    {
         insertDynamic(1, root, node);
-    }
 }
 
 
@@ -141,9 +135,7 @@ void BSPSceneDatabase::removeDynamicNodes()
         root = NULL;
     }
     else
-    {
         removeDynamic(root);
-    }
 }
 
 
@@ -202,13 +194,9 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
 
         // done with split node so get rid of it
         if (dontFree)
-        {
             wouldFree = true;
-        }
         else
-        {
             delete node;
-        }
         break;
     case 1:
         // completely in front
@@ -226,9 +214,7 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
     if (front)
     {
         if (_root->front)
-        {
             wouldFree = insertStatic(level + 1, _root->front, front, dontFreeNext);
-        }
         else
         {
             _root->front = new Node(false, front);
@@ -239,9 +225,7 @@ bool BSPSceneDatabase::insertStatic(int level, Node* _root,
     if (back)
     {
         if (_root->back)
-        {
             wouldFree = insertStatic(level + 1, _root->back, back, dontFreeNext);
-        }
         else
         {
             _root->back = new Node(false, back);
@@ -265,16 +249,12 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
         d = pos[0] * plane[0] + pos[1] * plane[1] + pos[2] * plane[2] + plane[3];
     }
     else
-    {
         d = _root->node->getDistance(eye) - node->getDistance(eye);
-    }
 
     if (d >= 0.0f)
     {
         if (_root->front)
-        {
             insertDynamic(level + 1, _root->front, node);
-        }
         else
         {
             _root->front = new Node(true, node);
@@ -284,9 +264,7 @@ void BSPSceneDatabase::insertDynamic(int level, Node* _root,
     else
     {
         if (_root->back)
-        {
             insertDynamic(level + 1, _root->back, node);
-        }
         else
         {
             _root->back = new Node(true, node);
@@ -318,9 +296,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
     if (d >= 0.0f)
     {
         if (_root->front)
-        {
             insertNoPlane(level + 1, _root->front, node);
-        }
         else
         {
             _root->front = new Node(false, node);
@@ -330,9 +306,7 @@ void BSPSceneDatabase::insertNoPlane(int level, Node* _root,
     else
     {
         if (_root->back)
-        {
             insertNoPlane(level + 1, _root->back, node);
-        }
         else
         {
             _root->back = new Node(false, node);
@@ -358,9 +332,7 @@ void BSPSceneDatabase::insertNoPlaneNodes()
             i++;
         }
         else
-        {
             return;
-        }
     }
 
     for (; i < count; i++)
@@ -385,27 +357,21 @@ void BSPSceneDatabase::removeDynamic(Node* node)
         node->front = NULL;
     }
     else
-    {
         removeDynamic(node->front);
-    }
     if (node->back && node->back->dynamic)
     {
         release(node->back);
         node->back = NULL;
     }
     else
-    {
         removeDynamic(node->back);
-    }
 }
 
 
 void BSPSceneDatabase::setDepth(int newDepth)
 {
     if (newDepth <= depth)
-    {
         return;
-    }
     depth = newDepth;
 }
 
@@ -413,9 +379,7 @@ void BSPSceneDatabase::setDepth(int newDepth)
 void BSPSceneDatabase::updateNodeStyles()
 {
     if (root)
-    {
         setNodeStyle(root);
-    }
     return;
 }
 
@@ -462,13 +426,9 @@ void BSPSceneDatabase::setNodeStyle(Node *node)
     Node* front = node->front;
     // dive into the child BSP nodes
     if (front)
-    {
         setNodeStyle(node->front);
-    }
     if (back)
-    {
         setNodeStyle(node->back);
-    }
     // add this node's style
     node->node->notifyStyleChange();
 
@@ -482,18 +442,12 @@ void BSPSceneDatabase::nodeAddLights(Node* node)
     Node* front = node->front;
     // dive into the child BSP nodes
     if (front)
-    {
         nodeAddLights(node->front);
-    }
     if (back)
-    {
         nodeAddLights(node->back);
-    }
     // add this node's light, if it's dynamic
     if (node->dynamic)
-    {
         node->node->addLight(*renderer);
-    }
     return;
 }
 
@@ -504,13 +458,9 @@ void BSPSceneDatabase::nodeAddShadowNodes(Node* node)
     Node* front = node->front;
     // dive into the child BSP nodes
     if (front)
-    {
         nodeAddShadowNodes(node->front);
-    }
     if (back)
-    {
         nodeAddShadowNodes(node->back);
-    }
     // add this node's shadows
     node->node->addShadowNodes(*renderer);
     return;
@@ -531,50 +481,32 @@ void BSPSceneDatabase::nodeAddRenderNodes(Node* node)
         {
             // eye is in front so render:  back, node, front
             if (back)
-            {
                 nodeAddRenderNodes(back);
-            }
             if (!snode->cull(*frustum))
-            {
                 snode->addRenderNodes(*renderer);
-            }
             if (front)
-            {
                 nodeAddRenderNodes(front);
-            }
         }
         else
         {
             // eye is in back so render:  front, node, back
             if (front)
-            {
                 nodeAddRenderNodes(front);
-            }
             if (!snode->cull(*frustum))
-            {
                 snode->addRenderNodes(*renderer);
-            }
             if (back)
-            {
                 nodeAddRenderNodes(back);
-            }
         }
     }
     else
     {
         // nodes without split planes should be rendered back, node, front
         if (back)
-        {
             nodeAddRenderNodes(back);
-        }
         if (!snode->cull(*frustum))
-        {
             snode->addRenderNodes(*renderer);
-        }
         if (front)
-        {
             nodeAddRenderNodes(front);
-        }
     }
 
     return;
@@ -591,6 +523,6 @@ void BSPSceneDatabase::drawCuller()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

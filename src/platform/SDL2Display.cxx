@@ -38,9 +38,7 @@ SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
 
     int result = SDL_GetCurrentDisplayMode(0, &mode);
     if (result)
-    {
         printf("Could not get current display mode: %s.\n", SDL_GetError());
-    }
     else
     {
         h.push_back(mode.h);
@@ -114,9 +112,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
     SDL_Event event;
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT)
             <= 0)
-    {
         return false;
-    }
 
     return setupEvent(_event, event);
 }
@@ -209,9 +205,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '0';
         }
         else
-        {
             key.button = BzfKeyEvent::Insert;
-        }
         break;
     case SDLK_KP_1:
         if (mod & KMOD_NUM)
@@ -220,9 +214,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '1';
         }
         else
-        {
             key.button = BzfKeyEvent::End;
-        }
         break;
     case SDLK_KP_2:
         if (mod & KMOD_NUM)
@@ -231,9 +223,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '2';
         }
         else
-        {
             key.button = BzfKeyEvent::Down;
-        }
         break;
     case SDLK_KP_3:
         if (mod & KMOD_NUM)
@@ -242,9 +232,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '3';
         }
         else
-        {
             key.button = BzfKeyEvent::PageDown;
-        }
         break;
     case SDLK_KP_4:
         if (mod & KMOD_NUM)
@@ -253,9 +241,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '4';
         }
         else
-        {
             key.button = BzfKeyEvent::Left;
-        }
         break;
     case SDLK_KP_5:
         if (mod & KMOD_NUM)
@@ -276,9 +262,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '6';
         }
         else
-        {
             key.button = BzfKeyEvent::Right;
-        }
         break;
     case SDLK_KP_7:
         if (mod & KMOD_NUM)
@@ -287,9 +271,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '7';
         }
         else
-        {
             key.button = BzfKeyEvent::Home;
-        }
         break;
     case SDLK_KP_8:
         if (mod & KMOD_NUM)
@@ -298,9 +280,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '8';
         }
         else
-        {
             key.button = BzfKeyEvent::Up;
-        }
         break;
     case SDLK_KP_9:
         if (mod & KMOD_NUM)
@@ -309,9 +289,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '9';
         }
         else
-        {
             key.button = BzfKeyEvent::PageUp;
-        }
         break;
     case SDLK_KP_PERIOD:
         if (mod & KMOD_NUM)
@@ -320,9 +298,7 @@ bool SDLDisplay::getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char 
             key.ascii = '.';
         }
         else
-        {
             key.button = BzfKeyEvent::Delete;
-        }
         break;
     case SDLK_KP_DIVIDE:
         key.button = BzfKeyEvent::Kp_Divide;
@@ -411,8 +387,8 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 {
     SDL_Keymod mode = SDL_GetModState();
     shift       = ((mode & KMOD_SHIFT) != 0);
-    ctrl	= ((mode & KMOD_CTRL) != 0);
-    alt	 = ((mode & KMOD_ALT) != 0);
+    ctrl    = ((mode & KMOD_CTRL) != 0);
+    alt  = ((mode & KMOD_ALT) != 0);
 }
 
 
@@ -427,13 +403,13 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     {
 
     case SDL_MOUSEMOTION:
-        _event.type	= BzfEvent::MouseMove;
+        _event.type = BzfEvent::MouseMove;
         _event.mouseMove.x = event.motion.x;
         _event.mouseMove.y = event.motion.y;
         break;
 
     case SDL_MOUSEWHEEL:
-        _event.type	  = BzfEvent::KeyDown;
+        _event.type   = BzfEvent::KeyDown;
         _event.keyDown.ascii = 0;
         _event.keyDown.shift = 0;
         if (shift)
@@ -450,7 +426,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
         break;
 
     case SDL_MOUSEBUTTONDOWN:
-        _event.type	  = BzfEvent::KeyDown;
+        _event.type   = BzfEvent::KeyDown;
         _event.keyDown.ascii = 0;
         _event.keyDown.shift = 0;
         if (shift)
@@ -632,6 +608,6 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

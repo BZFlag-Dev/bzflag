@@ -30,7 +30,7 @@ BoxSceneNodeGenerator::~BoxSceneNodeGenerator()
     // do nothing
 }
 
-WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
+WallSceneNode*      BoxSceneNodeGenerator::getNextNode(
     float uRepeats, float vRepeats, bool lod)
 {
     if (getNodeNumber() == 6) return NULL;
@@ -58,12 +58,12 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
         box->getCorner(0, sCorner);
         box->getCorner(7, tCorner);
         break;
-    case 5:							//This is the top polygon
+    case 5:                         //This is the top polygon
         box->getCorner(4, base);
         box->getCorner(5, sCorner);
         box->getCorner(7, tCorner);
         break;
-    case 6:							//This is the bottom polygon
+    case 6:                         //This is the bottom polygon
         //Don't generate the bottom polygon if on the ground (or lower)
         if (box->getPosition()[2] > 0.0f)
         {
@@ -91,6 +91,6 @@ WallSceneNode*		BoxSceneNodeGenerator::getNextNode(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

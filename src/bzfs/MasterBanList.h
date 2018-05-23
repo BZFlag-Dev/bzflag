@@ -21,7 +21,7 @@ class MasterBanList : cURLManager
 public:
     const std::string &get(const std::string &URL);
 protected:
-    std::string	data;
+    std::string data;
 private:
     void finalization(char *cURLdata, unsigned int length, bool good);
 };
@@ -31,6 +31,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

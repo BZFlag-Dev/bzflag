@@ -31,23 +31,20 @@
 static inline char* eatWhite(char* c)
 {
     while ((*c != '\0') && isspace(*c))
-    {
         c++;
-    }
     return c;
 }
 
 static inline char* eatNonWhite(char* c)
 {
     while ((*c != '\0') && !isspace(*c))
-    {
         c++;
-    }
     return c;
 }
 
 
-AccessList::AccessList(const std::string& _filename, const char* _content) : filename(_filename), content(_content), alwaysAuth(false)
+AccessList::AccessList(const std::string& _filename, const char* _content) : filename(_filename), content(_content),
+    alwaysAuth(false)
 {
 }
 
@@ -75,9 +72,7 @@ bool AccessList::reload()
     {
         // If we do not have default content or we were unable to create the default file, bail out
         if (content == NULL || !makeContent(content))
-        {
             return false;
-        }
         // Otherwise try to open the newly created default file
         else
         {
@@ -100,17 +95,13 @@ bool AccessList::reload()
         while (*tmp != '\0')
         {
             if ((*tmp == '\r') || (*tmp == '\n'))
-            {
                 *tmp = '\0';
-            }
             tmp++;
         }
 
         // skip comments and blank lines
         if ((*c == '\0') || (*c == '#'))
-        {
             continue;
-        }
 
         // get the permission type
         AccessType type = invalid;
@@ -174,17 +165,11 @@ bool AccessList::computeAlwaysAuth() const
     {
         const AccessPattern& p = patterns[i];
         if ((p.type == deny) || (p.type == deny_regex))
-        {
             return false;
-        }
         if ((p.type == allow) && (p.pattern == "*"))
-        {
             return true;
-        }
         if ((p.type == allow_regex) && (p.pattern == ".*"))
-        {
             return true;
-        }
     }
     return true;
 }
@@ -205,13 +190,9 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
                 if (glob_match(upperPattern, upperString))
                 {
                     if (p.type == allow)
-                    {
                         return true;
-                    }
                     else if (p.type == deny)
-                    {
                         return false;
-                    }
                 }
             }
         }
@@ -220,21 +201,15 @@ bool AccessList::authorized(const std::vector<std::string>& strings) const
             // regular expression
             regex_t re;
             if (regcomp(&re, p.pattern.c_str(), REG_EXTENDED | REG_ICASE) != 0)
-            {
                 continue;
-            }
             for (unsigned int s = 0; s < strings.size(); s++)
             {
                 if (regexec(&re, strings[s].c_str(), 0, NULL, 0) == 0)
                 {
                     if (p.type == allow_regex)
-                    {
                         return true;
-                    }
                     else if (p.type == deny_regex)
-                    {
                         return false;
-                    }
                 }
             }
             regfree(&re);
@@ -249,9 +224,7 @@ bool AccessList::makeContent(const char* _content) const
 {
     FILE* file = fopen(getFilePath().c_str(), "w");
     if (file == NULL)
-    {
         return false;
-    }
     fputs(_content, file);
     fclose(file);
     return true;
@@ -262,6 +235,6 @@ bool AccessList::makeContent(const char* _content) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

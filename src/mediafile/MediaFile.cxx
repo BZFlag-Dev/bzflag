@@ -43,65 +43,65 @@ MediaFile::~MediaFile()
     // do nothing
 }
 
-bool		MediaFile::isOkay() const
+bool        MediaFile::isOkay() const
 {
     return (stream != NULL && stream->good());
 }
 
-void		MediaFile::readRaw(void* vbuffer, uint32_t bytes)
+void        MediaFile::readRaw(void* vbuffer, uint32_t bytes)
 {
     char* buffer = reinterpret_cast<char*>(vbuffer);
     stream->read(buffer, bytes);
 }
 
-void		MediaFile::skip(uint32_t bytes)
+void        MediaFile::skip(uint32_t bytes)
 {
     stream->ignore(bytes);
 }
 
-uint16_t	MediaFile::read16LE()
+uint16_t    MediaFile::read16LE()
 {
     uint16_t b;
     stream->read(reinterpret_cast<char*>(&b), sizeof(b));
     return swap16LE(&b);
 }
 
-uint16_t	MediaFile::read16BE()
+uint16_t    MediaFile::read16BE()
 {
     uint16_t b;
     stream->read(reinterpret_cast<char*>(&b), sizeof(b));
     return swap16BE(&b);
 }
 
-uint32_t	MediaFile::read32LE()
+uint32_t    MediaFile::read32LE()
 {
     uint32_t b;
     stream->read(reinterpret_cast<char*>(&b), sizeof(b));
     return swap32LE(&b);
 }
 
-uint32_t	MediaFile::read32BE()
+uint32_t    MediaFile::read32BE()
 {
     uint32_t b;
     stream->read(reinterpret_cast<char*>(&b), sizeof(b));
     return swap32BE(&b);
 }
 
-uint16_t	MediaFile::swap16LE(uint16_t* d)
+uint16_t    MediaFile::swap16LE(uint16_t* d)
 {
     unsigned char* b = reinterpret_cast<unsigned char*>(d);
     *d = static_cast<uint16_t>(b[0]) + (static_cast<uint16_t>(b[1]) << 8);
     return *d;
 }
 
-uint16_t	MediaFile::swap16BE(uint16_t* d)
+uint16_t    MediaFile::swap16BE(uint16_t* d)
 {
     unsigned char* b = reinterpret_cast<unsigned char*>(d);
     *d = static_cast<uint16_t>(b[1]) + (static_cast<uint16_t>(b[0]) << 8);
     return *d;
 }
 
-uint32_t	MediaFile::swap32LE(uint32_t* d)
+uint32_t    MediaFile::swap32LE(uint32_t* d)
 {
     unsigned char* b = reinterpret_cast<unsigned char*>(d);
     *d = static_cast<uint32_t>(b[0]) + (static_cast<uint32_t>(b[1]) << 8) +
@@ -110,7 +110,7 @@ uint32_t	MediaFile::swap32LE(uint32_t* d)
     return *d;
 }
 
-uint32_t	MediaFile::swap32BE(uint32_t* d)
+uint32_t    MediaFile::swap32BE(uint32_t* d)
 {
     unsigned char* b = reinterpret_cast<unsigned char*>(d);
     *d = static_cast<uint32_t>(b[3]) + (static_cast<uint32_t>(b[2]) << 8) +
@@ -127,31 +127,29 @@ uint32_t	MediaFile::swap32BE(uint32_t* d)
 #include "PNGImageFile.h"
 #include "WaveAudioFile.h"
 
-#define OPENMEDIA(_T)					\
-do {							\
-  stream = FILEMGR.createDataInStream(filename, true);	\
-  if (stream == NULL)					\
-    stream = FILEMGR.createDataInStream(filename +	\
-	     _T::getExtension(), true);			\
-  if (stream != NULL) {					\
-    file = new _T(stream, filename);			\
-    if (!file->isOpen()) {				\
-      file = NULL;					\
-      delete stream;					\
-      stream = NULL;					\
-    }							\
-  }							\
+#define OPENMEDIA(_T)                   \
+do {                            \
+  stream = FILEMGR.createDataInStream(filename, true);  \
+  if (stream == NULL)                   \
+    stream = FILEMGR.createDataInStream(filename +  \
+         _T::getExtension(), true);         \
+  if (stream != NULL) {                 \
+    file = new _T(stream, filename);            \
+    if (!file->isOpen()) {              \
+      file = NULL;                  \
+      delete stream;                    \
+      stream = NULL;                    \
+    }                           \
+  }                         \
 } while (0)
 
-unsigned char*		MediaFile::readImage(
+unsigned char*      MediaFile::readImage(
     std::string filename,
     int* width, int* height)
 {
     // get the absolute filename for cache textures
     if (CACHEMGR.isCacheFileType(filename))
-    {
         filename = CACHEMGR.getLocalName(filename);
-    }
 
 #ifdef WIN32
     // cheat and make sure the file is a windows file path
@@ -249,9 +247,9 @@ unsigned char*		MediaFile::readImage(
 }
 
 /*
-float*		MediaFile::readSound(
-			const std::string& filename,
-			int* _numFrames, int* rate)
+float*      MediaFile::readSound(
+            const std::string& filename,
+            int* _numFrames, int* rate)
 {
   // try opening as an audio file
   std::istream* stream;
@@ -263,7 +261,7 @@ float*		MediaFile::readSound(
   float* audio = NULL;
   if (file != NULL) {
     // get the audio info
-    *rate	   = file->getFramesPerSecond();
+    *rate      = file->getFramesPerSecond();
     int numChannels = file->getNumChannels();
     int numFrames   = file->getNumFrames();
     int sampleWidth = file->getSampleWidth();
@@ -286,36 +284,36 @@ float*		MediaFile::readSound(
 
       // convert
       if (numChannels == 1) {
-	if (sampleWidth == 1) {
-	  signed char* src = reinterpret_cast<signed char*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
-	    src += step;
-	  }
-	} else {
-	  int16_t* src = reinterpret_cast<int16_t*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
-	    src += step;
-	  }
-	}
+    if (sampleWidth == 1) {
+      signed char* src = reinterpret_cast<signed char*>(raw);
+      for (int i = 0; i < numFrames; ++i) {
+        audio[2 * i] = audio[2 * i + 1] = 257.0f * static_cast<float>(*src);
+        src += step;
+      }
+    } else {
+      int16_t* src = reinterpret_cast<int16_t*>(raw);
+      for (int i = 0; i < numFrames; ++i) {
+        audio[2 * i] = audio[2 * i + 1] = static_cast<float>(*src);
+        src += step;
+      }
+    }
       } else {
-	step *= 2;
-	if (sampleWidth == 1) {
-	  signed char* src = reinterpret_cast<signed char*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
-	    audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
-	    src += step;
-	  }
-	} else {
-	  int16_t* src = reinterpret_cast<int16_t*>(raw);
-	  for (int i = 0; i < numFrames; ++i) {
-	    audio[2 * i]     = static_cast<float>(src[0]);
-	    audio[2 * i + 1] = static_cast<float>(src[1]);
-	    src += step;
-	  }
-	}
+    step *= 2;
+    if (sampleWidth == 1) {
+      signed char* src = reinterpret_cast<signed char*>(raw);
+      for (int i = 0; i < numFrames; ++i) {
+        audio[2 * i]     = 257.0f * static_cast<float>(src[0]);
+        audio[2 * i + 1] = 257.0f * static_cast<float>(src[1]);
+        src += step;
+      }
+    } else {
+      int16_t* src = reinterpret_cast<int16_t*>(raw);
+      for (int i = 0; i < numFrames; ++i) {
+        audio[2 * i]     = static_cast<float>(src[0]);
+        audio[2 * i + 1] = static_cast<float>(src[1]);
+        src += step;
+      }
+    }
       }
     }
 
@@ -337,6 +335,6 @@ float*		MediaFile::readSound(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

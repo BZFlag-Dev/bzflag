@@ -19,9 +19,9 @@
 // OpenGLMaterial::Rep
 //
 
-OpenGLMaterial::Rep*	OpenGLMaterial::Rep::head = NULL;
+OpenGLMaterial::Rep*    OpenGLMaterial::Rep::head = NULL;
 
-OpenGLMaterial::Rep*	OpenGLMaterial::Rep::getRep(
+OpenGLMaterial::Rep*    OpenGLMaterial::Rep::getRep(
     const GLfloat* specular,
     const GLfloat* emissive,
     GLfloat shininess)
@@ -93,22 +93,20 @@ OpenGLMaterial::Rep::~Rep()
     else head = next;
 }
 
-void			OpenGLMaterial::Rep::ref()
+void            OpenGLMaterial::Rep::ref()
 {
     refCount++;
 }
 
-void			OpenGLMaterial::Rep::unref()
+void            OpenGLMaterial::Rep::unref()
 {
     if (--refCount == 0) delete this;
 }
 
-void			OpenGLMaterial::Rep::execute()
+void            OpenGLMaterial::Rep::execute()
 {
     if (list != INVALID_GL_LIST_ID)
-    {
         glCallList(list);
-    }
     else
     {
         list = glGenLists(1);
@@ -185,7 +183,7 @@ OpenGLMaterial::~OpenGLMaterial()
     if (rep) rep->unref();
 }
 
-OpenGLMaterial&		OpenGLMaterial::operator=(const OpenGLMaterial& m)
+OpenGLMaterial&     OpenGLMaterial::operator=(const OpenGLMaterial& m)
 {
     if (rep != m.rep)
     {
@@ -196,17 +194,17 @@ OpenGLMaterial&		OpenGLMaterial::operator=(const OpenGLMaterial& m)
     return *this;
 }
 
-bool			OpenGLMaterial::operator==(const OpenGLMaterial& m) const
+bool            OpenGLMaterial::operator==(const OpenGLMaterial& m) const
 {
     return rep == m.rep;
 }
 
-bool			OpenGLMaterial::operator!=(const OpenGLMaterial& m) const
+bool            OpenGLMaterial::operator!=(const OpenGLMaterial& m) const
 {
     return rep != m.rep;
 }
 
-bool			OpenGLMaterial::operator<(const OpenGLMaterial& m) const
+bool            OpenGLMaterial::operator<(const OpenGLMaterial& m) const
 {
     if (rep == m.rep) return false;
     if (!m.rep) return false;
@@ -214,12 +212,12 @@ bool			OpenGLMaterial::operator<(const OpenGLMaterial& m) const
     return (rep->list < m.rep->list);
 }
 
-bool			OpenGLMaterial::isValid() const
+bool            OpenGLMaterial::isValid() const
 {
     return (rep != NULL);
 }
 
-void			OpenGLMaterial::execute() const
+void            OpenGLMaterial::execute() const
 {
     if (rep) rep->execute();
 }
@@ -228,6 +226,6 @@ void			OpenGLMaterial::execute() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

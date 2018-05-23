@@ -37,7 +37,7 @@ MainMenu::MainMenu() : HUDDialog(),
 {
 }
 
-void	  MainMenu::createControls()
+void      MainMenu::createControls()
 {
     TextureManager &tm = TextureManager::instance();
     std::vector<HUDuiControl*>& listHUD = getControls();
@@ -81,9 +81,7 @@ void	  MainMenu::createControls()
         listHUD.push_back(leave);
     }
     else
-    {
         leave = NULL;
-    }
 
     quit = createLabel("Quit");
     listHUD.push_back(quit);
@@ -118,18 +116,18 @@ MainMenu::~MainMenu()
     HelpMenu::done();
 }
 
-int			MainMenu::getFontFace()
+int         MainMenu::getFontFace()
 {
     // create font
     return FontManager::instance().getFaceID(BZDB.get("sansSerifFont"));
 }
 
-HUDuiDefaultKey*	MainMenu::getDefaultKey()
+HUDuiDefaultKey*    MainMenu::getDefaultKey()
 {
     return MenuDefaultKey::getInstance();
 }
 
-void			MainMenu::execute()
+void            MainMenu::execute()
 {
     HUDuiControl* _focus = HUDui::getFocus();
     if (_focus == join)
@@ -143,9 +141,7 @@ void			MainMenu::execute()
         HUDDialogStack::get()->push(optionsMenu);
     }
     else if (_focus == help)
-    {
         HUDDialogStack::get()->push(HelpMenu::getHelpMenu());
-    }
     else if (_focus == leave)
     {
         leaveGame();
@@ -168,7 +164,7 @@ void			MainMenu::execute()
     }
 }
 
-void			MainMenu::resize(int _width, int _height)
+void            MainMenu::resize(int _width, int _height)
 {
     HUDDialog::resize(_width, _height);
 
@@ -219,6 +215,6 @@ void			MainMenu::resize(int _width, int _height)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

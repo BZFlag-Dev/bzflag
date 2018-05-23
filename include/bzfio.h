@@ -30,7 +30,7 @@ public:
     virtual void log ( int level, const char* message ) = 0;
 };
 
-extern LoggingCallback	*loggingCallback;
+extern LoggingCallback  *loggingCallback;
 
 /* egcs headers on linux define NULL as (void*)0.  that's a no no in C++. */
 #if defined(NULL)

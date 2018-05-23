@@ -35,29 +35,29 @@ HUDuiList::~HUDuiList()
     // do nothing
 }
 
-int			HUDuiList::getIndex() const
+int         HUDuiList::getIndex() const
 {
     return index;
 }
 
-void			HUDuiList::setIndex(int _index)
+void            HUDuiList::setIndex(int _index)
 {
     if (_index < 0) index = 0;
     else if (_index >= (int)list.size()) index = list.size() - 1;
     else index = _index;
 }
 
-std::vector<std::string>&		HUDuiList::getList()
+std::vector<std::string>&       HUDuiList::getList()
 {
     return list;
 }
 
-void			HUDuiList::update()
+void            HUDuiList::update()
 {
     setIndex(index);
 }
 
-void			HUDuiList::createSlider(const int numValues)
+void            HUDuiList::createSlider(const int numValues)
 {
     // create a slider with numValues options
     /* createSlider(4) does the equivalent of
@@ -80,7 +80,7 @@ void			HUDuiList::createSlider(const int numValues)
     }
 }
 
-bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
+bool            HUDuiList::doKeyPress(const BzfKeyEvent& key)
 {
     if (key.ascii == '\t')
     {
@@ -145,13 +145,13 @@ bool			HUDuiList::doKeyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			HUDuiList::doKeyRelease(const BzfKeyEvent&)
+bool            HUDuiList::doKeyRelease(const BzfKeyEvent&)
 {
     // ignore key releases
     return false;
 }
 
-void			HUDuiList::doRender()
+void            HUDuiList::doRender()
 {
     Bundle *bdl = BundleMgr::getCurrentBundle();
     if (index != -1 && getFontFace() >= 0)
@@ -166,6 +166,6 @@ void			HUDuiList::doRender()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

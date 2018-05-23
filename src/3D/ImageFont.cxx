@@ -25,9 +25,7 @@
 ImageFont::ImageFont()
 {
     for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++)
-    {
         fontMetrics[i].charWidth = -1;
-    }
 
     size = -1;
 
@@ -105,9 +103,7 @@ bool readLetter(OSFile &file, char expected)
     {
         if (int(tmpBuf.size()) >= expsize+4 && tmpBuf[expsize+1]=='"' && tmpBuf[expsize+3]=='"' &&
                 tmpBuf[expsize+2]==expected)
-        {
             return true;
-        }
         else
         {
             logDebugMessage(2,"Unexpected character: %s, in font metrics file %s, line %d (expected \"%c\").\n",
@@ -212,6 +208,6 @@ float ImageFont::getStrLength(float scale, const std::string &str) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

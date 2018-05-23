@@ -256,24 +256,24 @@ public:
     const void *unpack(const void*);
 
 public:
-    enum DrawModes  		  // OpenGL
+    enum DrawModes            // OpenGL
     {
-        DrawPoints	= 0x0000, // 0x0000
-        DrawLines		= 0x0001, // 0x0001
-        DrawLineLoop	= 0x0002, // 0x0002
-        DrawLineStrip	= 0x0003, // 0x0003
-        DrawTriangles	= 0x0004, // 0x0004
-        DrawTriangleStrip	= 0x0005, // 0x0005
-        DrawTriangleFan	= 0x0006, // 0x0006
-        DrawQuads		= 0x0007, // 0x0007
-        DrawQuadStrip	= 0x0008, // 0x0008
-        DrawPolygon	= 0x0009, // 0x0009
+        DrawPoints  = 0x0000, // 0x0000
+        DrawLines       = 0x0001, // 0x0001
+        DrawLineLoop    = 0x0002, // 0x0002
+        DrawLineStrip   = 0x0003, // 0x0003
+        DrawTriangles   = 0x0004, // 0x0004
+        DrawTriangleStrip   = 0x0005, // 0x0005
+        DrawTriangleFan = 0x0006, // 0x0006
+        DrawQuads       = 0x0007, // 0x0007
+        DrawQuadStrip   = 0x0008, // 0x0008
+        DrawPolygon = 0x0009, // 0x0009
         DrawModeCount
     };
     enum DrawIndexType
     {
-        DrawIndexUShort	= 0x1403, // 0x1403
-        DrawIndexUInt	= 0x1405, // 0x1405
+        DrawIndexUShort = 0x1403, // 0x1403
+        DrawIndexUInt   = 0x1405, // 0x1405
         DrawIndexTypeCount
     };
 
@@ -349,6 +349,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

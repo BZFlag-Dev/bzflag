@@ -42,9 +42,9 @@ private:
     enum AccessType
     {
         invalid,
-        allow,		// simple globbing
+        allow,      // simple globbing
         deny,
-        allow_regex,	// regular expressions
+        allow_regex,    // regular expressions
         deny_regex
     };
     typedef struct

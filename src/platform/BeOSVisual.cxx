@@ -27,7 +27,7 @@ BeOSVisual::~BeOSVisual()
 {
 }
 
-void					BeOSVisual::setLevel(int level)
+void                    BeOSVisual::setLevel(int level)
 {
     /*
       if (level < 0) pfd.iLayerType = PFD_UNDERLAY_PLANE;
@@ -36,19 +36,19 @@ void					BeOSVisual::setLevel(int level)
     */
 }
 
-void					BeOSVisual::setDoubleBuffer(bool on)
+void                    BeOSVisual::setDoubleBuffer(bool on)
 {
     doubleBuffer = on;
 }
 
-void					BeOSVisual::setIndex(int minDepth)
+void                    BeOSVisual::setIndex(int minDepth)
 {
 // ?
 //  pfd.iPixelType = PFD_TYPE_COLORINDEX;
 //  pfd.cColorBits = minDepth;
 }
 
-void					BeOSVisual::setRGBA(int minRed, int minGreen,
+void                    BeOSVisual::setRGBA(int minRed, int minGreen,
         int minBlue, int minAlpha)
 {
 // ?
@@ -56,33 +56,33 @@ void					BeOSVisual::setRGBA(int minRed, int minGreen,
 //  pfd.cColorBits = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setDepth(int minDepth)
+void                    BeOSVisual::setDepth(int minDepth)
 {
     depth = minDepth;
 }
 
-void					BeOSVisual::setStencil(int minDepth)
+void                    BeOSVisual::setStencil(int minDepth)
 {
     stencil = minDepth;
 }
 
-void					BeOSVisual::setAccum(int minRed, int minGreen,
+void                    BeOSVisual::setAccum(int minRed, int minGreen,
         int minBlue, int minAlpha)
 {
     accum = minRed + minGreen + minBlue + minAlpha;
 }
 
-void					BeOSVisual::setStereo(bool on)
+void                    BeOSVisual::setStereo(bool on)
 {
     // do nothing
 }
 
-void					BeOSVisual::setMultisample(int)
+void                    BeOSVisual::setMultisample(int)
 {
     // do nothing
 }
 
-bool					BeOSVisual::build()
+bool                    BeOSVisual::build()
 {
     return true;
 }

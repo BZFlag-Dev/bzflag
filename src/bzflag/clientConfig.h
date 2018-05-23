@@ -12,11 +12,11 @@
 
 /*
 * clientConfig.h:
-*	setup and load the client side prefrences
+*   setup and load the client side prefrences
 */
 
-#ifndef	__CLIENT_CONFIG_H__
-#define	__CLIENT_CONFIG_H__
+#ifndef __CLIENT_CONFIG_H__
+#define __CLIENT_CONFIG_H__
 
 // common - 1st
 #include "common.h"
@@ -24,12 +24,12 @@
 #include <vector>
 #include <string>
 
-extern std::vector<std::string>	configQualityValues;
-extern std::vector<std::string>	configViewValues;
+extern std::vector<std::string> configQualityValues;
+extern std::vector<std::string> configViewValues;
 
 void initConfigData ( void );
 
-std::string	getOldConfigFileName(void);
+std::string getOldConfigFileName(void);
 std::string getCurrentConfigFileName(void);
 void findConfigFile(void);
 void updateConfigFile(void);
@@ -40,6 +40,6 @@ void updateConfigFile(void);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

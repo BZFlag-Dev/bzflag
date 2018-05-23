@@ -11,11 +11,11 @@
  */
 
 /* OpenGLGState:
- *	Encapsulates OpenGL rendering state information.
+ *  Encapsulates OpenGL rendering state information.
  */
 
-#ifndef	BZF_OPENGL_GSTATE_H
-#define	BZF_OPENGL_GSTATE_H
+#ifndef BZF_OPENGL_GSTATE_H
+#define BZF_OPENGL_GSTATE_H
 
 #include "common.h"
 #include "bzfgl.h"
@@ -25,7 +25,7 @@ class OpenGLGStateRep;
 class OpenGLGStateState;
 class RenderNode;
 
-typedef void		(*OpenGLContextFunction)(void* userData);
+typedef void        (*OpenGLContextFunction)(void* userData);
 
 class OpenGLGState
 {
@@ -36,26 +36,26 @@ public:
     OpenGLGState(const OpenGLGState&);
     OpenGLGState(const OpenGLGStateState&);
     ~OpenGLGState();
-    OpenGLGState&	operator=(const OpenGLGState& state);
-    void		setState() const;
-    bool		getNeedsSorting() const;
-    bool		isBlended() const;
-    bool		isTextured() const;
-    bool		isTextureMatrix() const;
-    bool		isSphereMap() const;
-    bool		isLighted() const;
-    void		addRenderNode(RenderNode* node) const;
-    static void		resetState();
-    static void		clearLists();
-    static void		renderLists();
-    static void		setStipple(GLfloat alpha);
-    static void		setStippleIndex(int index);
-    static int		getStippleIndex(float alpha);
-    static int		getOpaqueStippleIndex();
-    static int		getMaxSamples();
+    OpenGLGState&   operator=(const OpenGLGState& state);
+    void        setState() const;
+    bool        getNeedsSorting() const;
+    bool        isBlended() const;
+    bool        isTextured() const;
+    bool        isTextureMatrix() const;
+    bool        isSphereMap() const;
+    bool        isLighted() const;
+    void        addRenderNode(RenderNode* node) const;
+    static void     resetState();
+    static void     clearLists();
+    static void     renderLists();
+    static void     setStipple(GLfloat alpha);
+    static void     setStippleIndex(int index);
+    static int      getStippleIndex(float alpha);
+    static int      getOpaqueStippleIndex();
+    static int      getMaxSamples();
 
-    static void		init();
-    static bool		haveGLContext();
+    static void     init();
+    static bool     haveGLContext();
 
     // these are in OpenGLGState for lack of a better place.  register...
     // is for clients to add a function to call when the OpenGL context
@@ -81,25 +81,25 @@ public:
     // most OpenGL drivers to crash unless we destroy the context before
     // the switch and recreate it afterwards.
     //
-    static void		registerContextInitializer(
+    static void     registerContextInitializer(
         OpenGLContextFunction freeFunc,
         OpenGLContextFunction initFunc,
         void* userData);
 
-    static void		unregisterContextInitializer(
+    static void     unregisterContextInitializer(
         OpenGLContextFunction freeFunc,
         OpenGLContextFunction initFunc,
         void* userData);
 
-    static void		initContext();
-    static bool		getExecutingFreeFuncs();
-    static bool		getExecutingInitFuncs();
+    static void     initContext();
+    static bool     getExecutingFreeFuncs();
+    static bool     getExecutingInitFuncs();
 
 private:
-    static void		initGLState();
-    static bool		initGLExtensions();
-    static void		freeStipple(void*);
-    static void		initStipple(void*);
+    static void     initGLState();
+    static bool     initGLExtensions();
+    static void     freeStipple(void*);
+    static void     initStipple(void*);
 
     class ContextInitializer
     {
@@ -129,8 +129,8 @@ private:
     };
 
 private:
-    OpenGLGStateRep*	rep;
-    static GLuint	stipples;
+    OpenGLGStateRep*    rep;
+    static GLuint   stipples;
     static int maxSamples;
 public:
     static bool executingFreeFuncs;
@@ -156,34 +156,34 @@ public:
     ~OpenGLGStateBuilder();
     OpenGLGStateBuilder &operator=(const OpenGLGState&);
 
-    void		reset();
-    void		enableTexture(bool = true);
-    void		enableTextureMatrix(bool = true);
-    void		enableSphereMap(bool = true);
-    void		enableMaterial(bool = true);
-    void		resetBlending();
-    void		resetSmoothing();
-    void		resetAlphaFunc();
-    void		setTexture(const int texture);
-    void		setTextureMatrix(const GLfloat* matrix);
-    void		setTextureEnvMode(GLenum mode = GL_MODULATE);
-    void		setMaterial(const OpenGLMaterial& material);
-    void		setBlending(GLenum sFactor = GL_SRC_ALPHA,
+    void        reset();
+    void        enableTexture(bool = true);
+    void        enableTextureMatrix(bool = true);
+    void        enableSphereMap(bool = true);
+    void        enableMaterial(bool = true);
+    void        resetBlending();
+    void        resetSmoothing();
+    void        resetAlphaFunc();
+    void        setTexture(const int texture);
+    void        setTextureMatrix(const GLfloat* matrix);
+    void        setTextureEnvMode(GLenum mode = GL_MODULATE);
+    void        setMaterial(const OpenGLMaterial& material);
+    void        setBlending(GLenum sFactor = GL_SRC_ALPHA,
                             GLenum dFactor = GL_ONE_MINUS_SRC_ALPHA);
-    void		setStipple(float alpha);
-    void		setSmoothing(bool smooth = true);
-    void		setCulling(GLenum culling);
-    void		setShading(GLenum shading = GL_SMOOTH);
-    void		setAlphaFunc(GLenum func = GL_GEQUAL,
+    void        setStipple(float alpha);
+    void        setSmoothing(bool smooth = true);
+    void        setCulling(GLenum culling);
+    void        setShading(GLenum shading = GL_SMOOTH);
+    void        setAlphaFunc(GLenum func = GL_GEQUAL,
                              GLclampf ref = 0.1f);
-    void		setNeedsSorting(bool);
-    OpenGLGState	getState() const;
+    void        setNeedsSorting(bool);
+    OpenGLGState    getState() const;
 
 private:
-    void		init(const OpenGLGState&);
+    void        init(const OpenGLGState&);
 
 private:
-    OpenGLGStateState*	state;
+    OpenGLGStateState*  state;
 };
 
 
@@ -193,6 +193,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

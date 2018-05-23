@@ -51,21 +51,15 @@ PlayerState::PlayerState()
 static float clampedValue(float input, float max)
 {
     if (input > max)
-    {
         return max;
-    }
     else if (input < -max)
-    {
         return -max;
-    }
     else
-    {
         return input;
-    }
 }
 
 
-void*	PlayerState::pack(void* buf, uint16_t& code)
+void*   PlayerState::pack(void* buf, uint16_t& code)
 {
     order++;
 
@@ -105,13 +99,9 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
         // put the angle between -M_PI and +M_PI
         float angle = fmodf (azimuth, (float)M_PI * 2.0f);
         if (angle > M_PI)
-        {
             angle -= (float)(M_PI * 2.0);
-        }
         else if (angle < -M_PI)
-        {
             angle += (float)(M_PI * 2.0);
-        }
         aziShort = (int16_t) ((angle * smallScale) / M_PI);
         angVelShort = (int16_t) ((angVel * smallScale) / smallMaxAngVel);
 
@@ -132,9 +122,7 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     }
 
     if ((status & OnDriver) != 0)
-    {
         buf = nboPackInt(buf, phydrv);
-    }
 
     if ((status & UserInputs) != 0)
     {
@@ -150,15 +138,13 @@ void*	PlayerState::pack(void* buf, uint16_t& code)
     }
 
     if ((status & PlaySound) != 0)
-    {
         buf = nboPackUByte(buf, sounds);
-    }
 
     return buf;
 }
 
 
-const void*	PlayerState::unpack(const void* buf, uint16_t code)
+const void* PlayerState::unpack(const void* buf, uint16_t code)
 {
     int32_t inOrder;
     int16_t inStatus;
@@ -203,9 +189,7 @@ const void*	PlayerState::unpack(const void* buf, uint16_t code)
         jumpJetsScale = ((float)jumpJetsShort) / smallScale;
     }
     else
-    {
         jumpJetsScale = 0.0f;
-    }
 
     if ((inStatus & OnDriver) != 0)
     {
@@ -214,9 +198,7 @@ const void*	PlayerState::unpack(const void* buf, uint16_t code)
         phydrv = int(inPhyDrv);
     }
     else
-    {
         phydrv = -1;
-    }
 
     if ((inStatus & UserInputs) != 0)
     {
@@ -233,13 +215,9 @@ const void*	PlayerState::unpack(const void* buf, uint16_t code)
     }
 
     if ((inStatus & PlaySound) != 0)
-    {
         buf = nboUnpackUByte(buf, sounds);
-    }
     else
-    {
         sounds = NoSounds;
-    }
 
     return buf;
 }
@@ -249,6 +227,6 @@ const void*	PlayerState::unpack(const void* buf, uint16_t code)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -17,37 +17,37 @@
 // HUDui
 //
 
-HUDuiControl*		HUDui::focus = NULL;
-HUDuiDefaultKey*	HUDui::defaultKey = NULL;
+HUDuiControl*       HUDui::focus = NULL;
+HUDuiDefaultKey*    HUDui::defaultKey = NULL;
 
-HUDuiControl*		HUDui::getFocus()
+HUDuiControl*       HUDui::getFocus()
 {
     return focus;
 }
 
-void			HUDui::setFocus(HUDuiControl* _focus)
+void            HUDui::setFocus(HUDuiControl* _focus)
 {
     focus = _focus;
 }
 
-HUDuiDefaultKey*	HUDui::getDefaultKey()
+HUDuiDefaultKey*    HUDui::getDefaultKey()
 {
     return defaultKey;
 }
 
-void			HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey)
+void            HUDui::setDefaultKey(HUDuiDefaultKey* _defaultKey)
 {
     defaultKey = _defaultKey;
 }
 
-bool			HUDui::keyPress(const BzfKeyEvent& key)
+bool            HUDui::keyPress(const BzfKeyEvent& key)
 {
     if (defaultKey && defaultKey->keyPress(key)) return true;
     if (focus && focus->doKeyPress(key)) return true;
     return false;
 }
 
-bool			HUDui::keyRelease(const BzfKeyEvent& key)
+bool            HUDui::keyRelease(const BzfKeyEvent& key)
 {
     if (defaultKey && defaultKey->keyRelease(key)) return true;
     if (focus && focus->doKeyRelease(key)) return true;
@@ -59,6 +59,6 @@ bool			HUDui::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

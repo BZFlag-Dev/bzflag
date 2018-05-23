@@ -31,7 +31,7 @@
 template <>
 KeyManager* Singleton<KeyManager>::_instance = (KeyManager*)0;
 
-const char*		KeyManager::buttonNames[] =
+const char*     KeyManager::buttonNames[] =
 {
     "???",
     "Pause",
@@ -159,12 +159,12 @@ const char*		KeyManager::buttonNames[] =
     "Joystick Hat 4 Left",
     "LastButton"  // should always be last item listed
 };
-const char*		KeyManager::asciiNames[][2] =
+const char*     KeyManager::asciiNames[][2] =
 {
-    { "Tab",		"\t" },
-    { "Backspace",	"\b" },
-    { "Enter",		"\r" },
-    { "Space",		" "  }
+    { "Tab",        "\t" },
+    { "Backspace",  "\b" },
+    { "Enter",      "\r" },
+    { "Space",      " "  }
 };
 
 KeyManager::KeyManager()
@@ -199,7 +199,7 @@ KeyManager::~KeyManager()
 {
 }
 
-void			KeyManager::bind(const BzfKeyEvent& key,
+void            KeyManager::bind(const BzfKeyEvent& key,
                                  bool press, const std::string& cmd)
 {
     if (press)
@@ -215,7 +215,7 @@ void			KeyManager::bind(const BzfKeyEvent& key,
     notify(key, press, cmd);
 }
 
-void			KeyManager::unbind(const BzfKeyEvent& key,
+void            KeyManager::unbind(const BzfKeyEvent& key,
                                    bool press)
 {
     if (press)
@@ -225,7 +225,7 @@ void			KeyManager::unbind(const BzfKeyEvent& key,
     notify(key, press, "");
 }
 
-void			KeyManager::unbindCommand(const char* command)
+void            KeyManager::unbindCommand(const char* command)
 {
     EventToCommandMap::iterator index;
     EventToCommandMap::iterator deleteme;
@@ -240,9 +240,7 @@ void			KeyManager::unbindCommand(const char* command)
             unbind(deleteme->first, true);
         }
         else
-        {
             ++index;
-        }
     }
 
     index = releaseEventToCommand.begin();
@@ -255,13 +253,11 @@ void			KeyManager::unbindCommand(const char* command)
             unbind(deleteme->first, false);
         }
         else
-        {
             ++index;
-        }
     }
 }
 
-std::string		KeyManager::get(const BzfKeyEvent& key,
+std::string     KeyManager::get(const BzfKeyEvent& key,
                                 bool press) const
 {
     const EventToCommandMap* map = press ? &pressEventToCommand :
@@ -297,9 +293,7 @@ std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, boo
         for (index = pressEventToCommand.begin(); index != pressEventToCommand.end(); ++index)
         {
             if (index->second == command)
-            {
                 keys.push_back(this->keyEventToString(index->first));
-            }
         }
     }
     else
@@ -307,16 +301,14 @@ std::vector<std::string> KeyManager::getKeysFromCommand(std::string command, boo
         for (index = releaseEventToCommand.begin(); index != releaseEventToCommand.end(); ++index)
         {
             if (index->second == command)
-            {
                 keys.push_back(this->keyEventToString(index->first));
-            }
         }
     }
     return keys;
 }
 
 
-std::string		KeyManager::keyEventToString(
+std::string     KeyManager::keyEventToString(
     const BzfKeyEvent& key) const
 {
     std::string name;
@@ -345,7 +337,7 @@ std::string		KeyManager::keyEventToString(
     }
 }
 
-bool			KeyManager::stringToKeyEvent(
+bool            KeyManager::stringToKeyEvent(
     const std::string& name, BzfKeyEvent& key) const
 {
     // find last + in name
@@ -354,9 +346,7 @@ bool			KeyManager::stringToKeyEvent(
     // split name into shift part and key name part
     std::string shiftPart, keyPart;
     if (shiftDelimiter == NULL)
-    {
         keyPart = name;
-    }
     else
     {
         shiftPart  = "+";
@@ -387,7 +377,7 @@ bool			KeyManager::stringToKeyEvent(
     return true;
 }
 
-void			KeyManager::iterate(
+void            KeyManager::iterate(
     IterateCallback callback, void* userData)
 {
     assert(callback != NULL);
@@ -399,19 +389,19 @@ void			KeyManager::iterate(
         (*callback)(keyEventToString(index->first), false, index->second, userData);
 }
 
-void			KeyManager::addCallback(
+void            KeyManager::addCallback(
     ChangeCallback callback, void* userData)
 {
     callbacks.add(callback, userData);
 }
 
-void			KeyManager::removeCallback(
+void            KeyManager::removeCallback(
     ChangeCallback callback, void* userData)
 {
     callbacks.remove(callback, userData);
 }
 
-void			KeyManager::notify(
+void            KeyManager::notify(
     const BzfKeyEvent& key,
     bool press, const std::string& cmd)
 {
@@ -422,7 +412,7 @@ void			KeyManager::notify(
     callbacks.iterate(&onCallback, &info);
 }
 
-bool			KeyManager::onCallback(
+bool            KeyManager::onCallback(
     ChangeCallback callback,
     void* userData,
     void* vinfo)
@@ -432,7 +422,7 @@ bool			KeyManager::onCallback(
     return true;
 }
 
-bool			KeyManager::KeyEventLess::operator() (
+bool            KeyManager::KeyEventLess::operator() (
     const BzfKeyEvent& a,
     const BzfKeyEvent& b) const
 {
@@ -448,13 +438,9 @@ bool			KeyManager::KeyEventLess::operator() (
             return true;
     }
     else if (a.ascii == 0 && b.ascii != 0)
-    {
         return true;
-    }
     else if (a.ascii != 0 && b.ascii == 0)
-    {
         return false;
-    }
     else
     {
         if (toupper(a.ascii) < toupper(b.ascii))
@@ -474,6 +460,6 @@ bool			KeyManager::KeyEventLess::operator() (
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

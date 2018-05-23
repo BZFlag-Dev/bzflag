@@ -104,9 +104,7 @@ static inline bool isDeathLanding(const Obstacle* obs)
         int driver = face->getPhysicsDriver();
         const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
         if ((phydrv != NULL) && (phydrv->getIsDeath()))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -115,20 +113,14 @@ static inline bool isDeathLanding(const Obstacle* obs)
 static inline bool isOpposingTeam(const Obstacle* obs, int team)
 {
     if (team < 0)
-    {
         return false;
-    }
 
     if (obs->getType() != BaseBuilding::getClassName())
-    {
         return false;
-    }
 
     const BaseBuilding* base = (const BaseBuilding*) obs;
     if (base->getTeam() == team)
-    {
         return false;
-    }
 
     return true;
 }
@@ -138,20 +130,14 @@ static inline bool isValidLanding(const Obstacle* obs)
 {
     // must be a flattop buildings
     if (!obs->isFlatTop())
-    {
         return false;
-    }
     // drivethrough buildings are not potential landings
     if (obs->isDriveThrough())
-    {
         return false;
-    }
 
     // death buildings are not potential landings
     if (isDeathLanding(obs))
-    {
         return false;
-    }
 
     return true;
 }
@@ -170,9 +156,7 @@ static bool isValidClearance(const float pos[3], float radius,
         if (zTop > pos[2])
         {
             if (obs->inCylinder(pos, radius, height))
-            {
                 return false;
-            }
         }
         else
         {
@@ -182,9 +166,7 @@ static bool isValidClearance(const float pos[3], float radius,
                 const float fudge = 0.001f; // dig in a little to make sure
                 const float testPos[3] = {pos[0], pos[1], pos[2] - fudge};
                 if (obs->inCylinder(testPos, radius, height + fudge))
-                {
                     return false;
-                }
             }
         }
     }
@@ -200,17 +182,11 @@ static int compareAscending(const void* a, const void* b)
     const float topA = obsA->getExtents().maxs[2];
     const float topB = obsB->getExtents().maxs[2];
     if (topA < topB)
-    {
         return -1;
-    }
     else if (topA > topB)
-    {
         return +1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 
@@ -221,17 +197,11 @@ static int compareDescending(const void* a, const void* b)
     const float topA = obsA->getExtents().maxs[2];
     const float topB = obsB->getExtents().maxs[2];
     if (topA < topB)
-    {
         return +1;
-    }
     else if (topA > topB)
-    {
         return -1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 
@@ -247,20 +217,14 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
     {
         pos[2] = 0.0f;
         if (isValidClearance(pos, radius, height, team))
-        {
             return true;
-        }
         else
-        {
             return false;
-        }
     }
 
     // adjust the position to the minimum level
     if (pos[2] < minZ)
-    {
         pos[2] = minZ;
-    }
 
     // use a downwards ray to hit the onFlatTop() buildings
     const float maxHeight = COLLISIONMGR.getWorldExtents().maxs[2];
@@ -286,22 +250,16 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
             const float zTop = obs->getExtents().maxs[2];
             // make sure that it's within the limits
             if ((zTop > startZ) || (zTop > maxZ))
-            {
                 continue;
-            }
             if (zTop < minZ)
-            {
                 break;
-            }
             pos[2] = zTop;
 
             if (obs->intersect(ray) >= 0.0f)
             {
                 if (isValidLanding(obs) &&
                         isValidClearance(pos, radius, height, team))
-                {
                     return true;
-                }
                 else
                 {
                     // a potential hit surface was tested and failed, unless
@@ -315,9 +273,7 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
         {
             pos[2] = 0.0f;
             if (isValidClearance(pos, radius, height, team))
-            {
                 return true;
-            }
         }
     }
     else
@@ -331,21 +287,15 @@ static bool dropIt(float pos[3], float minZ, float maxZ,
             const float zTop = obs->getExtents().maxs[2];
             // make sure that it's within the limits
             if ((zTop < startZ) || (zTop < minZ))
-            {
                 continue;
-            }
             if (zTop > maxZ)
-            {
                 return false;
-            }
             pos[2] = zTop;
 
             if (isValidLanding(obs) &&
                     (obs->intersect(ray) >= 0.0f) &&
                     isValidClearance(pos, radius, height, team))
-            {
                 return true;
-            }
         }
     }
 
@@ -387,6 +337,6 @@ void HoldingList::copy(const ObsList* olist)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,11 +11,11 @@
  */
 
 /* WinPlatformFactory:
- *	Factory for Windows platform stuff.
+ *  Factory for Windows platform stuff.
  */
 
 #ifndef BZF_WINPLATFORM_FACTORY_H
-#define	BZF_WINPLATFORM_FACTORY_H
+#define BZF_WINPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
@@ -31,23 +31,23 @@ public:
     WinPlatformFactory();
     ~WinPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name,
+    BzfDisplay*     createDisplay(const char* name,
                                   const char* videoFormat);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-    BzfJoystick*	createJoystick();
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
+    BzfJoystick*    createJoystick();
 
 private:
     WinPlatformFactory(const WinPlatformFactory&);
-    WinPlatformFactory&	operator=(const WinPlatformFactory&);
+    WinPlatformFactory& operator=(const WinPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 
 private:
 #ifdef HAVE_SDL
-    static SDLWindow*	sdlWindow;
+    static SDLWindow*   sdlWindow;
 #else
-    static WinWindow*	winWindow;
+    static WinWindow*   winWindow;
 #endif
 };
 
@@ -57,6 +57,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -11,11 +11,11 @@
  */
 
 /* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+ *  Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZF_MESH_FACE_OBSTACLE_H
-#define	BZF_MESH_FACE_OBSTACLE_H
+#ifndef BZF_MESH_FACE_OBSTACLE_H
+#define BZF_MESH_FACE_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -138,8 +138,8 @@ private:
     {
         LinkToFace      = (1 << 0),
         LinkFromFace    = (1 << 1),
-        BaseFace	      = (1 << 2),
-        IcyFace	 = (1 << 3),
+        BaseFace          = (1 << 2),
+        IcyFace  = (1 << 3),
         StickyFace      = (1 << 5),
         DeathFace       = (1 << 6),
         PortalFace      = (1 << 7)
@@ -273,6 +273,6 @@ inline bool MeshFace::isDownPlane() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

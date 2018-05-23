@@ -11,11 +11,11 @@
  */
 
 /* OpenGLLight:
- *	Encapsulates an OpenGL (point or directional) light source.
+ *  Encapsulates an OpenGL (point or directional) light source.
  */
 
-#ifndef	BZF_LINK_MANAGER_H
-#define	BZF_LINK_MANAGER_H
+#ifndef BZF_LINK_MANAGER_H
+#define BZF_LINK_MANAGER_H
 
 // common goes first
 #include "common.h"
@@ -68,8 +68,8 @@ private:
         std::vector<int> dsts;
     } LinkNumberSet;
 
-    std::vector<LinkNameSet>	linkNames;
-    std::vector<LinkNumberSet>	linkNumbers;
+    std::vector<LinkNameSet>    linkNames;
+    std::vector<LinkNumberSet>  linkNumbers;
 };
 
 
@@ -80,6 +80,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

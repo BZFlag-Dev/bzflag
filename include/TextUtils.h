@@ -15,7 +15,7 @@
  */
 
 #ifndef __TEXTUTILS_H__
-#define	__TEXTUTILS_H__
+#define __TEXTUTILS_H__
 
 #include "common.h"
 
@@ -111,7 +111,8 @@ std::string no_whitespace(const std::string &s);
  * escaping is not currently done for any other character.
  * Should not have " as a delimeter if you want to use quotes
  */
-std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0, const bool useQuotes = false);
+std::vector<std::string> tokenize(const std::string& in, const std::string &delims, const int maxTokens = 0,
+                                  const bool useQuotes = false);
 
 /** convert a string representation of some duration into minutes
  *  example: "1d2h16m" -> 1500
@@ -134,13 +135,9 @@ inline int compare_nocase(const std::string& s1, const std::string &s2, int maxl
     while (p1 != s1.end() && p2 != s2.end())
     {
         if (i >= maxlength)
-        {
             return 0;
-        }
         if (::tolower(*p1) != ::tolower(*p2))
-        {
             return (::tolower(*p1) < ::tolower(*p2)) ? -1 : 1;
-        }
         ++p1;
         ++p2;
         ++i;
@@ -157,9 +154,7 @@ inline bool isAlphabetic(const char c)
 {
     if (( c > 64 && c < 91) ||
             ( c > 96 && c < 123))
-    {
         return true;
-    }
     return false;
 }
 
@@ -170,9 +165,7 @@ inline bool isAlphabetic(const char c)
 inline bool isNumeric(const char c)
 {
     if (( c > 47 && c < 58))
-    {
         return true;
-    }
     return false;
 }
 
@@ -186,9 +179,7 @@ inline bool isWhitespace(const char c)
 {
     if ((( c >= 9 ) && ( c <= 13 )) ||
             (c == 32))
-    {
         return true;
-    }
     return false;
 }
 
@@ -202,9 +193,7 @@ inline bool isPunctuation(const char c)
             ( c > 57 && c < 65) ||
             ( c > 90 && c < 97) ||
             ( c > 122 && c < 127))
-    {
         return true;
-    }
     return false;
 }
 
@@ -216,9 +205,7 @@ inline bool isPunctuation(const char c)
 inline bool isAlphanumeric(const char c)
 {
     if (isAlphabetic(c) || isNumeric(c))
-    {
         return true;
-    }
     return false;
 }
 
@@ -231,9 +218,7 @@ inline bool isAlphanumeric(const char c)
 inline bool isVisible(const char c)
 {
     if (isAlphanumeric(c) || isPunctuation(c))
-    {
         return true;
-    }
     return false;
 }
 
@@ -435,6 +420,6 @@ size_t find_first_substr(const std::string &findin, const std::string &findwhat,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

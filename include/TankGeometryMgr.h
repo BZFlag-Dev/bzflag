@@ -11,11 +11,11 @@
  */
 
 /* TankGeometryMgr:
- *	Generates the display lists for TankSceneNodes
+ *  Generates the display lists for TankSceneNodes
  */
 
-#ifndef	BZF_TANK_GEOMETRY_MGR_H
-#define	BZF_TANK_GEOMETRY_MGR_H
+#ifndef BZF_TANK_GEOMETRY_MGR_H
+#define BZF_TANK_GEOMETRY_MGR_H
 
 #include "common.h"
 #include "SceneNode.h"
@@ -163,6 +163,6 @@ int buildHighRWheel (int wheel, float angle, int divs);
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

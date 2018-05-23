@@ -37,7 +37,7 @@ public:
      checked.  if the file cannot be found or isn't readable
      then NULL is returned.
     */
-    std::istream*		createDataInStream(const std::string& filename,
+    std::istream*       createDataInStream(const std::string& filename,
                                            bool binary = false) const;
 
     /** Open an output stream.
@@ -45,20 +45,20 @@ public:
      indicated if filename is an absolute path).  if the file
      can be opened for writing then NULL is returned.
     */
-    std::ostream*		createDataOutStream(const std::string& filename,
+    std::ostream*       createDataOutStream(const std::string& filename,
                                             bool binary = false,
                                             bool truncate = true) const;
 
     /** Check for absolute path.
      returns true if the path is absolute, false if relative
     */
-    bool			isAbsolute(const std::string& path) const;
+    bool            isAbsolute(const std::string& path) const;
 
     /** Concatenate directory names.
      concatenate two pathname components with a directory separator
      between them.
     */
-    std::string		catPath(const std::string& a, const std::string& b) const;
+    std::string     catPath(const std::string& a, const std::string& b) const;
 
     void setDataPath ( const std::string &s )
     {
@@ -78,6 +78,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

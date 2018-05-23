@@ -17,16 +17,14 @@
 // application bundle
 char *GetMacOSXDataPath(void)
 {
-    ::CFBundleRef	appBundle		= NULL;
-    ::CFURLRef	resourceURL		= NULL;
-    char *		string			= NULL;
-    static char	basePath[2048]	= "<undefined resource path>";
+    ::CFBundleRef   appBundle       = NULL;
+    ::CFURLRef  resourceURL     = NULL;
+    char *      string          = NULL;
+    static char basePath[2048]  = "<undefined resource path>";
 
     if ((appBundle = ::CFBundleGetMainBundle()) == NULL
             || (resourceURL = ::CFBundleCopyResourcesDirectoryURL(appBundle)) == NULL)
-    {
         return NULL;
-    }
     if (!::CFURLGetFileSystemRepresentation(resourceURL,
                                             true, reinterpret_cast<UInt8 *>(basePath), sizeof(basePath)))
     {

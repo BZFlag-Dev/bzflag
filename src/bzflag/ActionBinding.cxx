@@ -198,7 +198,7 @@ void ActionBinding::onScanCB(const std::string& name, bool,
 
 void ActionBinding::associate(std::string key,
                               std::string action,
-                              bool	keyBind)
+                              bool  keyBind)
 {
     BindingTable::iterator index, next;
     if (!wayToBindActions.count(action))
@@ -291,6 +291,6 @@ void ActionBinding::unbind(std::string action, std::string key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

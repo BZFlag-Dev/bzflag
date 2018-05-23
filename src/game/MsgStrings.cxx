@@ -204,9 +204,7 @@ void MsgStrings::reset ()
     PlayerList[AdminPlayers] = "ADMIN";
     PlayerList[NoPlayer] = "NOPLAYER";
     for (i = LastRealPlayer + 1 ; i <= FirstTeam; i++)
-    {
         PlayerList[i] = Team::getName (TeamColor(FirstTeam - i));
-    }
 
     // set default DB entries
     for (i = 0; i < numGlobalDBItems; ++i)
@@ -265,14 +263,10 @@ const char * MsgStrings::strMsgCode (uint16_t code)
     for (i = 0; i < PacketListCount; i++)
     {
         if (PacketList[i].code == code)
-        {
             break;
-        }
     }
     if (i < PacketListCount)
-    {
         return PacketList[i].label;
-    }
     else
     {
         static char buf[32];
@@ -292,9 +286,7 @@ MsgStringList MsgStrings::msgFromServer (u16 len, u16 code, const void *data)
     for (i = 0; i < PacketListCount; i++)
     {
         if (PacketList[i].code == code)
-        {
             break;
-        }
     }
     if (i < PacketListCount)
     {
@@ -316,9 +308,7 @@ MsgStringList MsgStrings::msgFromClient (u16 len, u16 code, const void *data)
     for (i = 0; i < PacketListCount; i++)
     {
         if (PacketList[i].code == code)
-        {
             break;
-        }
     }
     if (i < PacketListCount)
     {
@@ -391,9 +381,7 @@ static std::string strFlag (u16 id)
     FlagListType::iterator it = FlagList.find (id);
     std::string name = "Invalid";
     if (it != FlagList.end())
-    {
         name = (*it).second;
-    }
     return TextUtils::format ("%-2s [%i]", name.c_str(), id);
 }
 
@@ -428,13 +416,9 @@ static std::string strPlayer (u16 id)
     PlayerListType::iterator it = PlayerList.find (id);
     std::string name;
     if (it != PlayerList.end())
-    {
         name = (*it).second;
-    }
     else
-    {
         name = "UnTracked";
-    }
     return TextUtils::format ("%s [%i]", name.c_str(), id);
 }
 
@@ -556,9 +540,7 @@ static MsgStringList handleMsgAddPlayer (PacketInfo *pi)
     d = nboUnpackString (d, motto, MottoLen);
 
     if (TrackState)
-    {
         PlayerList[index] = callsign;
-    }
     listPush (list, 1, "player: %s", strPlayer(index).c_str());
     listPush (list, 1, "motto:  %s", motto);
     listPush (list, 1, "team:   %s", strTeam(team).c_str());
@@ -633,9 +615,7 @@ static MsgStringList handleMsgFlagUpdate (PacketInfo *pi)
         d = nboUnpackUShort (d, index);
         d = flag.unpack (d);
         if (TrackState)
-        {
             FlagList[index] = flag.type->flagAbbv;
-        }
         listPush (list, 2, "flag: %s", strFlag (index).c_str());
         listPush (list, 3, "owner:  %s", strPlayer (flag.owner).c_str());
         listPush (list, 3, "pos:    %s", strVector (flag.position).c_str());
@@ -715,26 +695,18 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
     d = nboUnpackShort(d, shot);
     d = FlagType::unpack(d, flagType);
     if (reason == PhysicsDriverDeath)
-    {
         d = nboUnpackInt(d, phydrv);
-    }
     listPush (list, 1, "victim: %s", strPlayer(victim).c_str());
     listPush (list, 1, "killer: %s", strPlayer(killer).c_str());
     listPush (list, 1, "reason: %s", strKillReason(reason).c_str());
     listPush (list, 1, "shotid: %i", shot);
 
     if (flagType != Flags::Null)
-    {
         listPush (list, 1, "flag:   %s", flagType->flagAbbv.c_str());
-    }
     else
-    {
         listPush (list, 1, "flag:   Null");
-    }
     if (reason == PhysicsDriverDeath)
-    {
         listPush (list, 1, "phydrv: %i", phydrv);
-    }
 
     return list;
 }
@@ -817,17 +789,11 @@ static MsgStringList handleMsgPlayerInfo (PacketInfo *pi)
 
         std::string props;
         if (properties & IsRegistered)
-        {
             props += "Registered ";
-        }
         if (properties & IsVerified)
-        {
             props += "Verified ";
-        }
         if (properties & IsAdmin)
-        {
             props += "Admin ";
-        }
 
         listPush (list, 2, "player:     %s", strPlayer(player).c_str());
         listPush (list, 2, "properties: %s(0x%02X)", props.c_str(), properties);
@@ -910,9 +876,7 @@ static MsgStringList handleMsgRemovePlayer (PacketInfo *pi)
     d = nboUnpackUByte (d, index);
     listPush (list, 1, "player: %s", strPlayer(index).c_str());
     if (TrackState)
-    {
         PlayerList.erase (index);
-    }
 
     return list;
 }

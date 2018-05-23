@@ -65,13 +65,9 @@ void LinkManager::makeLinkName(int number, std::string& name)
     name += buffer.str();
     name += ":";
     if ((number % 2) == 0)
-    {
         name += "f";
-    }
     else
-    {
         name += "b";
-    }
     return;
 }
 
@@ -95,18 +91,14 @@ void LinkManager::addLink(const std::string& src, const std::string& dst)
         makeLinkName(number, link.src);
     }
     else
-    {
         link.src = src;
-    }
     if ((dst[0] >= '0') && (dst[0] <= '9'))
     {
         int number = atoi(dst.c_str());
         makeLinkName(number, link.dst);
     }
     else
-    {
         link.dst = dst;
-    }
     linkNames.push_back(link);
     return;
 }
@@ -117,9 +109,7 @@ static bool inIntList(int value, const std::vector<int>& list)
     for (unsigned int i = 0; i < list.size(); i++)
     {
         if (value == list[i])
-        {
             return true;
-        }
     }
     return false;
 }
@@ -134,9 +124,7 @@ void LinkManager::doLinking()
     // findTelesByName() can not return higher then this
     linkNumbers.resize(teles.size() * 2);
     for (i = 0; i < linkNumbers.size(); i++)
-    {
         linkNumbers[i].dsts.clear();
-    }
 
     for (i = 0; i < linkNames.size(); i++)
     {
@@ -158,9 +146,7 @@ void LinkManager::doLinking()
             logDebugMessage(1,"broken link dst: %s\n", link.dst.c_str());
         }
         if (broken)
-        {
             continue;
-        }
 
         for (unsigned s = 0; s < srcNumbers.size(); s++)
         {
@@ -168,9 +154,7 @@ void LinkManager::doLinking()
             {
                 std::vector<int>& dstsList = linkNumbers[srcNumbers[s]].dsts;
                 if (!inIntList(dstNumbers[d], dstsList))   // no duplicates
-                {
                     dstsList.push_back(dstNumbers[d]);
-                }
             }
         }
     }
@@ -224,9 +208,7 @@ void LinkManager::findTelesByName(const std::string& name,
 
     // no chars, no service
     if (glob.size() <= 0)
-    {
         return;
-    }
 
     // a leading ':' might be used to indicate absolute linking if
     // links are ever included in group definintions. strip it here
@@ -239,9 +221,7 @@ void LinkManager::findTelesByName(const std::string& name,
     // make the trailing face specification case-independent
     const unsigned int last = (unsigned int)glob.size() - 1;
     if ((glob[last] == 'F') || (glob[last] == 'B'))
-    {
         glob[last] = tolower(glob[last]);
-    }
 
     // add all teleporters that have matching names
     const ObstacleList& teles = OBSTACLEMGR.getTeles();
@@ -253,16 +233,12 @@ void LinkManager::findTelesByName(const std::string& name,
         std::string front = teleName;
         front += ":f";
         if (glob_match (glob, front))
-        {
             list.push_back((int)(i * 2) + 0);
-        }
 
         std::string back = teleName;
         back += ":b";
         if (glob_match (glob, back))
-        {
             list.push_back((int)(i * 2) + 1);
-        }
     }
 
     return;
@@ -276,9 +252,7 @@ int LinkManager::getTeleportTarget(int source) const
     const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
     if (dstsList.size() == 1)
-    {
         return dstsList[0];
-    }
     else if (dstsList.size() > 1)
     {
         int target = rand() % int(dstsList.size());
@@ -299,9 +273,7 @@ int LinkManager::getTeleportTarget(int source, unsigned int seed) const
     const std::vector<int>& dstsList = linkNumbers[source].dsts;
 
     if (dstsList.size() == 1)
-    {
         return dstsList[0];
-    }
     else if (dstsList.size() > 1)
     {
         seed = (seed * 1103515245 + 12345) >> 8; // from POSIX rand() example
@@ -378,6 +350,6 @@ int LinkManager::packSize() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

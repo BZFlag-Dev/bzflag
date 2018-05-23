@@ -11,7 +11,7 @@
  */
 
 /* EvdevJoystick:
- *	Encapsulates a joystick accessed via a linux event device.
+ *  Encapsulates a joystick accessed via a linux event device.
  *      This is basically equivalent to what SDL does on linux, but we
  *      have the added bonus of supporting force feedback where SDL
  *      does not.
@@ -23,7 +23,7 @@
  */
 
 #ifndef BZF_EVDEV_JOY_H
-#define	BZF_EVDEV_JOY_H
+#define BZF_EVDEV_JOY_H
 
 #include "BzfJoystick.h"
 #include <map>
@@ -67,34 +67,34 @@ public:
     EvdevJoystick();
     ~EvdevJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
-    int	 getNumHats();
-    void	getJoyHat(int hat, float &hatX, float &hatY);
+    void    initJoystick(const char* joystickName);
+    bool    joystick() const;
+    void    getJoy(int& x, int& y);
+    int  getNumHats();
+    void    getJoyHat(int hat, float &hatX, float &hatY);
     unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
+    void    getJoyDevices(std::vector<std::string> &list) const;
 
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string &axis);
-    void	setYAxis(const std::string &axis);
+    void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void    setXAxis(const std::string &axis);
+    void    setYAxis(const std::string &axis);
 
-    bool	ffHasRumble() const;
-    void	ffRumble(int count,
+    bool    ffHasRumble() const;
+    void    ffRumble(int count,
                      float delay, float duration,
                      float strong_motor, float weak_motor=0.0f);
 
-    bool	ffHasDirectional() const;
-    void	ffDirectionalConstant(int count,
+    bool    ffHasDirectional() const;
+    void    ffDirectionalConstant(int count,
                                   float delay, float duration,
                                   float x_direction, float y_direction,
                                   float strength);
-    void	ffDirectionalPeriodic(int count,
+    void    ffDirectionalPeriodic(int count,
                                   float delay, float duration,
                                   float x_direction, float y_direction,
                                   float amplitude, float period,
                                   PeriodicType type);
-    void	ffDirectionalResistance(float time, float coefficient,
+    void    ffDirectionalResistance(float time, float coefficient,
                                     float saturation, ResistanceType type);
 
     /* Test whether this driver should be used without actually
@@ -109,21 +109,21 @@ private:
     static bool collectJoystickBits(int fd, struct EvdevJoystickInfo &info);
     static bool isJoystick(struct EvdevJoystickInfo &info);
 
-    void	poll();
-    void	setButton(int button_num, int state);
-    int	 mapButton(int bit_num);
-    void	ffResetEffect();
-    void	writeJoystick(int count);
+    void    poll();
+    void    setButton(int button_num, int state);
+    int  mapButton(int bit_num);
+    void    ffResetEffect();
+    void    writeJoystick(int count);
 
     std::map<std::string,EvdevJoystickInfo> joysticks;
 
-    int		useaxis[2];
-    EvdevJoystickInfo*	  currentJoystick;
-    int			 joystickfd;
-    int			 buttons;
-    int		  numHats;
+    int     useaxis[2];
+    EvdevJoystickInfo*    currentJoystick;
+    int          joystickfd;
+    int          buttons;
+    int       numHats;
     std::vector<float>   hataxes;
-    struct ff_effect*	   ff_rumble;
+    struct ff_effect*      ff_rumble;
 };
 
 // The drivers don't define a minimum delay that I can tell.  This seems to work.
@@ -135,6 +135,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

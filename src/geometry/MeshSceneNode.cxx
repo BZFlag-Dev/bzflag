@@ -67,21 +67,15 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     xformList = INVALID_GL_LIST_ID;
 
     if (mesh == NULL)
-    {
         return;
-    }
 
     drawInfo = mesh->getDrawInfo();
     if (drawInfo == NULL)
-    {
         return;
-    }
 
     drawMgr = drawInfo->getDrawMgr();
     if (drawMgr == NULL)
-    {
         return;
-    }
 
     // disable the plane
     noPlane = true;
@@ -126,9 +120,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
             {
                 const float scale = (newWidth / oldWidth);
                 if (scale < lengthAdj)
-                {
                     lengthAdj = scale;
-                }
             }
         }
         // adjust the sphere
@@ -214,9 +206,7 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
     for (int i = (lodCount - 1); i > 0; i--)
     {
         if (lengthPerPixel > lodLengths[i])
-        {
             return i;
-        }
     }
     return 0;
 }
@@ -235,9 +225,7 @@ inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
     for (int i = (lodCount - 1); i > 0; i--)
     {
         if (lengthPerPixel > lodLengths[i])
-        {
             return i;
-        }
     }
     return 0;
 }
@@ -248,9 +236,7 @@ inline int MeshSceneNode::calcRadarLod()
     for (int i = (radarCount - 1); i > 0; i--)
     {
         if (radarLengths[i] < RadarLodScale)
-        {
             return i;
-        }
     }
     return 0;
 }
@@ -280,9 +266,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
                 pos[1] = (sin_val * s[0]) + (cos_val * s[1]);
                 pos[2] = s[2];
                 if (xformTool != NULL)
-                {
                     xformTool->modifyVertex(pos);
-                }
                 ((AlphaGroupRenderNode*)set.node)->setPosition(pos);
             }
         }
@@ -292,9 +276,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     {
         SetNode& set = lod.sets[i];
         if (set.meshMat.colorPtr[3] != 0.0f)
-        {
             renderer.addRenderNode(set.node, &set.meshMat.gstate);
-        }
     }
 
     return;
@@ -311,9 +293,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
         SetNode& set = lod.sets[i];
         const MeshMaterial& mat = set.meshMat;
         if (mat.drawShadow && (mat.colorPtr[3] != 0.0f))
-        {
             renderer.addShadowNode(set.node);
-        }
     }
     return;
 }
@@ -327,9 +307,7 @@ void MeshSceneNode::renderRadar()
     {
         SetNode& set = lod.sets[i];
         if (set.meshMat.drawRadar)
-        {
             set.radarNode->renderRadar();
-        }
     }
     return;
 }
@@ -340,15 +318,11 @@ bool MeshSceneNode::cull(const ViewFrustum& frustum) const
     // if the Visibility culler tells us that we're
     // fully visible, then skip the rest of these tests
     if (octreeState == OctreeVisible)
-    {
         return false;
-    }
 
     const Frustum* f = (const Frustum *) &frustum;
     if (testAxisBoxInFrustum(extents, f) == Outside)
-    {
         return true;
-    }
 
     // probably visible
     return false;
@@ -386,17 +360,13 @@ void MeshSceneNode::notifyStyleChange()
             bool normalize = false;
             const MeshTransform::Tool* xformTool = drawInfo->getTransformTool();
             if (xformTool != NULL)
-            {
                 normalize = xformTool->isSkewed();
-            }
 
             // enough elements to warrant disabling lights?
             const Extents* extPtr = &extents;
             if ((drawSet.triangleCount < 100) ||
                     !BZDBCache::lighting || mat.bzmat->getNoLighting())
-            {
                 extPtr = NULL;
-            }
 
             if (!mat.needsSorting)
             {
@@ -411,9 +381,7 @@ void MeshSceneNode::notifyStyleChange()
                 afvec3 setPos;
                 memcpy(setPos, drawSet.sphere, sizeof(afvec3));
                 if (xformTool != NULL)
-                {
                     xformTool->modifyVertex(setPos);
-                }
                 setNode.node =
                     new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
                                              mat.colorPtr, lod, set, extPtr, setPos,
@@ -427,9 +395,7 @@ void MeshSceneNode::notifyStyleChange()
                     mat.animRepos = true;
                 }
                 else
-                {
                     mat.animRepos = false;
-                }
             }
 
             setNode.radarNode =
@@ -446,19 +412,13 @@ const BzMaterial* MeshSceneNode::convertMaterial(const BzMaterial* bzmat)
 {
     const MaterialMap* matMap = drawInfo->getMaterialMap();
     if (matMap == NULL)
-    {
         return bzmat;
-    }
 
     MaterialMap::const_iterator it = matMap->find(bzmat);
     if (it == matMap->end())
-    {
         return bzmat;
-    }
     else
-    {
         return it->second;
-    }
 }
 
 
@@ -468,8 +428,8 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
     // get the references
     const BzMaterial*       bzmat = mat->bzmat;
-    OpenGLGState&	  gstate = mat->gstate;
-    GLfloat*		color = mat->color;
+    OpenGLGState&     gstate = mat->gstate;
+    GLfloat*        color = mat->color;
 
     OpenGLGStateBuilder builder;
     TextureManager &tm = TextureManager::instance();
@@ -491,9 +451,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
             int faceTexture = -1;
             const std::string& texname = bzmat->getTextureLocal(0);
             if (texname.size() > 0)
-            {
                 faceTexture = tm.getTextureID(texname.c_str());
-            }
             if (faceTexture >= 0)
             {
                 useDiffuseColor = bzmat->getUseColorOnTexture(0);
@@ -504,9 +462,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
                 }
             }
             else
-            {
                 faceTexture = tm.getTextureID("mesh", false /* no failure reports */);
-            }
             if (faceTexture >= 0)
             {
                 // texture matrix
@@ -523,9 +479,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
                 }
                 // sphere mapping
                 if (bzmat->getUseSphereMap(0))
-                {
                     builder.enableSphereMap(true);
-                }
             }
             builder.setTexture(faceTexture);
             builder.enableTexture(true);
@@ -542,9 +496,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
         builder.setShading(GL_SMOOTH);
     }
     else
-    {
         builder.setShading(GL_FLAT);
-    }
 
     // color
     if (useDiffuseColor)
@@ -568,9 +520,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
         colorAlpha = dyncol->canHaveAlpha(); // override
     }
     else
-    {
         mat->colorPtr = color;
-    }
 
     // blending
     const bool isAlpha = (colorAlpha || textureAlpha);
@@ -585,20 +535,16 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
         {
             builder.resetBlending();
             if (dyncol != NULL)
-            {
                 builder.setStipple(0.5f);
-            }
             else
-            {
                 builder.setStipple(color[3]);
-            }
         }
     }
 
     // sorting  (do this after using setBlending())
     //
     // NOTE:  getGroupAlpha() isn't used because all MeshSceneNode
-    //	elements are sorted as groups rather then individually
+    //  elements are sorted as groups rather then individually
     //
     mat->needsSorting = (isAlpha && !bzmat->getNoSorting());
     builder.setNeedsSorting(mat->needsSorting);
@@ -606,9 +552,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     // alpha thresholding
     float alphaThreshold = bzmat->getAlphaThreshold();
     if (alphaThreshold != 0.0f)
-    {
         builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
-    }
 
     // radar and shadows
     mat->drawRadar = !bzmat->getNoRadar();
@@ -616,9 +560,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
     // culling
     if (bzmat->getNoCulling())
-    {
         builder.setCulling(GL_NONE);
-    }
 
     // generate the gstate
     gstate = builder.getState();
@@ -639,9 +581,7 @@ void MeshSceneNode::makeXFormList()
         {
             error = glGetError();
             if (error == GL_NO_ERROR)
-            {
                 break;
-            }
             errCount++; // avoid a possible spin-lock?
             if (errCount > 666)
             {
@@ -655,9 +595,7 @@ void MeshSceneNode::makeXFormList()
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
-            {
                 matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
-            }
         }
 
         xformList = glGenLists(1);
@@ -749,6 +687,6 @@ void MeshSceneNode::setRadarLodScale(float lengthPerPixel)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

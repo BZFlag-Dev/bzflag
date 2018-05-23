@@ -16,18 +16,18 @@
 #define __VERSION_H__
 
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION	"2.4"
+#define BZ_CONFIG_DIR_VERSION   "2.4"
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME
-#define BZ_CONFIG_FILE_NAME	"config.cfg"
+#define BZ_CONFIG_FILE_NAME "config.cfg"
 #endif
 
 #ifndef BZ_CONFIG_FILE_VERSION
-#define BZ_CONFIG_FILE_VERSION	5
+#define BZ_CONFIG_FILE_VERSION  5
 #endif
 
-#define BZ_CONNECT_HEADER	"BZFLAG\r\n\r\n"
+#define BZ_CONNECT_HEADER   "BZFLAG\r\n\r\n"
 
 extern const char *bzfcopyright;
 
@@ -44,6 +44,6 @@ extern const char* getAppVersion();
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

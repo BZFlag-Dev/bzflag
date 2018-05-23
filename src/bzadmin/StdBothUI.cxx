@@ -23,7 +23,7 @@
 #  include <sys/types.h>
 #  include <sys/select.h>
 #  ifdef HAVE_STRING_H
-#    include <string.h>	// on Solaris FD_ZERO() is a macro that uses memset()
+#    include <string.h> // on Solaris FD_ZERO() is a macro that uses memset()
 #  endif
 #endif
 
@@ -148,6 +148,6 @@ BZAdminUI* StdBothUI::creator(BZAdminClient& client)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

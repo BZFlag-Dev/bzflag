@@ -35,7 +35,7 @@ typedef __int64 s64;
 // OpenGLTexture::Rep
 //
 
-const GLenum		OpenGLTexture::minifyFilter[] =
+const GLenum        OpenGLTexture::minifyFilter[] =
 {
     GL_NEAREST,
     GL_NEAREST,
@@ -45,7 +45,7 @@ const GLenum		OpenGLTexture::minifyFilter[] =
     GL_NEAREST_MIPMAP_LINEAR,
     GL_LINEAR_MIPMAP_LINEAR
 };
-const GLenum		OpenGLTexture::magnifyFilter[] =
+const GLenum        OpenGLTexture::magnifyFilter[] =
 {
     GL_NEAREST,
     GL_NEAREST,
@@ -55,7 +55,7 @@ const GLenum		OpenGLTexture::magnifyFilter[] =
     GL_NEAREST,
     GL_LINEAR
 };
-const char*		OpenGLTexture::configFilterNames[] =
+const char*     OpenGLTexture::configFilterNames[] =
 {
     "no",
     "nearest",
@@ -163,13 +163,9 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
     scaledWidth = 1;
     scaledHeight = 1;
     while (scaledWidth < width)
-    {
         scaledWidth <<= 1;
-    }
     while (scaledHeight < height)
-    {
         scaledHeight <<= 1;
-    }
 
     // get maximum valid size for texture (boost to 2^m x 2^n)
     GLint maxTextureSize;
@@ -181,24 +177,16 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
     GLint bzMaxTexSize = 1;
     // align the max size to a power of two  (wasteful)
     while (bzMaxTexSize < dbMaxTexSize)
-    {
         bzMaxTexSize <<= 1;
-    }
 
     if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize))
-    {
         maxTextureSize = bzMaxTexSize;
-    }
 
     // clamp to the maximum size
     if (scaledWidth > maxTextureSize)
-    {
         scaledWidth = maxTextureSize;
-    }
     if (scaledHeight > maxTextureSize)
-    {
         scaledHeight = maxTextureSize;
-    }
 
     // NOTE: why these are 4-byte aligned is beyond me...
 
@@ -269,27 +257,19 @@ void OpenGLTexture::setFilter(Filter _filter)
     // linear... as linear.
     if (filterIndex > maxFilter)
     {
-        if ((filterIndex & 1) == 1)	  // nearest...
+        if ((filterIndex & 1) == 1)   // nearest...
         {
             if ((maxFilter & 1) == 1)
-            {
                 filterIndex = maxFilter;
-            }
             else
-            {
                 filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
-            }
         }
         else   // linear...
         {
             if ((maxFilter & 1) == 1)
-            {
                 filterIndex = maxFilter - 1;
-            }
             else
-            {
                 filterIndex = maxFilter;
-            }
         }
     }
     GLint binding;
@@ -326,13 +306,9 @@ void OpenGLTexture::execute()
 const char* OpenGLTexture::getFilterName(OpenGLTexture::Filter filter)
 {
     if ((filter < 0) || (filter > Max))
-    {
         return configFilterNames[Max];
-    }
     else
-    {
         return configFilterNames[filter];
-    }
 }
 
 
@@ -357,9 +333,7 @@ float OpenGLTexture::getAspectRatio() const
 void OpenGLTexture::bind()
 {
     if (list != INVALID_GL_TEXTURE_ID)
-    {
         glBindTexture(GL_TEXTURE_2D, list);
-    }
     else
     {
         glBindTexture(GL_TEXTURE_2D, 0); // heh, it's the same call
@@ -407,9 +381,7 @@ int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
 bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
 {
     if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0))
-    {
         return false;
-    }
 
     factorAlpha = (factorAlpha && alpha);
     const int channelCount = alpha ? 4 : 3;
@@ -427,18 +399,12 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
                 {
                     const GLubyte alphaVal = image[pixelBase + 3];
                     if (c == 3)
-                    {
                         rgbaTally[3] += alphaVal;
-                    }
                     else
-                    {
                         rgbaTally[c] += image[pixelBase + c] * alphaVal;
-                    }
                 }
                 else
-                {
                     rgbaTally[c] += image[pixelBase + c];
-                }
             }
         }
     }
@@ -446,25 +412,17 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
     // calculate the alpha average
     float maxTally = 255.0f * (scaledWidth * scaledHeight);
     if (channelCount == 3)
-    {
         rgba[3] = 1.0f;
-    }
     else
-    {
         rgba[3] = (float)rgbaTally[3] / maxTally;
-    }
 
     // adjust the maxTally for alpha weighting
     if (factorAlpha)
-    {
         maxTally = maxTally * 255.0f;
-    }
 
     // calcualte the color averages
     for (int c = 0; c < 3; c++)
-    {
         rgba[c] = (float)rgbaTally[c] / maxTally;
-    }
 
     return true;
 }
@@ -474,6 +432,6 @@ bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

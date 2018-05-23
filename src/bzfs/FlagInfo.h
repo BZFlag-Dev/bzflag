@@ -65,13 +65,13 @@ public:
 private:
     int flagIndex;
     static std::vector<FlagType*> allowedFlags;
-    static int		    numExtraFlags;
-    static int		    numFlags;
-    static int		    numFlagsInAir;
-    static FlagInfo	      *flagList;
+    static int          numExtraFlags;
+    static int          numFlags;
+    static int          numFlagsInAir;
+    static FlagInfo       *flagList;
 
     // time flag will land
-    TimeKeeper		    dropDone;
+    TimeKeeper          dropDone;
 };
 #else
 class FlagInfo;
@@ -81,6 +81,6 @@ class FlagInfo;
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

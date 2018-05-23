@@ -27,7 +27,7 @@ class MessageOfTheDay : cURLManager
 public:
 
     virtual void finalization(char *data, unsigned int length, bool good);
-    void	 getURL(const std::string &URL);
+    void     getURL(const std::string &URL);
 };
 
 #endif //__MOTD_H__
@@ -36,6 +36,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -36,7 +36,7 @@
 #include <map>
 #include "TimeKeeper.h"
 
-void	_debugLookups(const std::string &name)
+void    _debugLookups(const std::string &name)
 {
     if (!BZDB.getDebug())
         return;
@@ -84,139 +84,139 @@ template <>
 StateDatabase* Singleton<StateDatabase>::_instance = (StateDatabase*)0;
 
 
-const std::string StateDatabase::BZDB_AGILITYADVEL	   = std::string("_agilityAdVel");
-const std::string StateDatabase::BZDB_AGILITYTIMEWINDOW	   = std::string("_agilityTimeWindow");
-const std::string StateDatabase::BZDB_AGILITYVELDELTA	   = std::string("_agilityVelDelta");
-const std::string StateDatabase::BZDB_AMBIENTLIGHT	   = std::string("_ambientLight");
-const std::string StateDatabase::BZDB_ANGLETOLERANCE	   = std::string("_angleTolerance");
-const std::string StateDatabase::BZDB_ANGULARAD		   = std::string("_angularAd");
-const std::string StateDatabase::BZDB_AVENUESIZE	   = std::string("_avenueSize");
-const std::string StateDatabase::BZDB_BASESIZE		   = std::string("_baseSize");
-const std::string StateDatabase::BZDB_BOXBASE		   = std::string("_boxBase");
-const std::string StateDatabase::BZDB_BOXHEIGHT		   = std::string("_boxHeight");
-const std::string StateDatabase::BZDB_BURROWDEPTH	   = std::string("_burrowDepth");
-const std::string StateDatabase::BZDB_BURROWSPEEDAD	   = std::string("_burrowSpeedAd");
-const std::string StateDatabase::BZDB_BURROWANGULARAD	   = std::string("_burrowAngularAd");
-const std::string StateDatabase::BZDB_COLDETDEPTH	   = std::string("_coldetDepth");
-const std::string StateDatabase::BZDB_COLDETELEMENTS	   = std::string("_coldetElements");
-const std::string StateDatabase::BZDB_COUNTDOWNRESDELAY	   = std::string("_countdownResumeDelay");
-const std::string StateDatabase::BZDB_CULLDEPTH		   = std::string("_cullDepth");
-const std::string StateDatabase::BZDB_CULLELEMENTS	   = std::string("_cullElements");
-const std::string StateDatabase::BZDB_CULLOCCLUDERS	   = std::string("_cullOccluders");
-const std::string StateDatabase::BZDB_DISABLEBOTS	   = std::string("_disableBots");
-const std::string StateDatabase::BZDB_DRAWCELESTIAL	   = std::string("_drawCelestial");
-const std::string StateDatabase::BZDB_DRAWCLOUDS	   = std::string("_drawClouds");
-const std::string StateDatabase::BZDB_DRAWGROUND	   = std::string("_drawGround");
-const std::string StateDatabase::BZDB_DRAWGROUNDLIGHTS	   = std::string("_drawGroundLights");
-const std::string StateDatabase::BZDB_DRAWMOUNTAINS	   = std::string("_drawMountains");
-const std::string StateDatabase::BZDB_DRAWSKY		   = std::string("_drawSky");
-const std::string StateDatabase::BZDB_ENDSHOTDETECTION	   = std::string("_endShotDetection");
-const std::string StateDatabase::BZDB_EXPLODETIME	   = std::string("_explodeTime");
-const std::string StateDatabase::BZDB_FLAGALTITUDE	   = std::string("_flagAltitude");
-const std::string StateDatabase::BZDB_FLAGEFFECTTIME	   = std::string("_flagEffectTime");
-const std::string StateDatabase::BZDB_FLAGHEIGHT	   = std::string("_flagHeight");
-const std::string StateDatabase::BZDB_FLAGPOLEWIDTH	   = std::string("_flagPoleWidth");
-const std::string StateDatabase::BZDB_FLAGPOLESIZE	   = std::string("_flagPoleSize");
-const std::string StateDatabase::BZDB_FLAGRADIUS	   = std::string("_flagRadius");
-const std::string StateDatabase::BZDB_FOGMODE		   = std::string("_fogMode");
-const std::string StateDatabase::BZDB_FOGDENSITY	   = std::string("_fogDensity");
-const std::string StateDatabase::BZDB_FOGSTART		   = std::string("_fogStart");
-const std::string StateDatabase::BZDB_FOGEND		   = std::string("_fogEnd");
-const std::string StateDatabase::BZDB_FOGCOLOR		   = std::string("_fogColor");
-const std::string StateDatabase::BZDB_FRICTION		   = std::string("_friction");
-const std::string StateDatabase::BZDB_GMACTIVATIONTIME	   = std::string("_gmActivationTime");
-const std::string StateDatabase::BZDB_GMADLIFE		   = std::string("_gmAdLife");
-const std::string StateDatabase::BZDB_GMSIZE		   = std::string("_gmSize");
-const std::string StateDatabase::BZDB_GMTURNANGLE	   = std::string("_gmTurnAngle");
-const std::string StateDatabase::BZDB_GRAVITY		   = std::string("_gravity");
-const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF	   = std::string("_handicapScoreDiff");
-const std::string StateDatabase::BZDB_HANDICAPVELAD	   = std::string("_handicapVelAd");
-const std::string StateDatabase::BZDB_HANDICAPANGAD	   = std::string("_handicapAngAd");
-const std::string StateDatabase::BZDB_HANDICAPSHOTAD	   = std::string("_handicapShotAd");
-const std::string StateDatabase::BZDB_HIDEFLAGSONRADAR	   = std::string("_hideFlagsOnRadar");
+const std::string StateDatabase::BZDB_AGILITYADVEL     = std::string("_agilityAdVel");
+const std::string StateDatabase::BZDB_AGILITYTIMEWINDOW    = std::string("_agilityTimeWindow");
+const std::string StateDatabase::BZDB_AGILITYVELDELTA      = std::string("_agilityVelDelta");
+const std::string StateDatabase::BZDB_AMBIENTLIGHT     = std::string("_ambientLight");
+const std::string StateDatabase::BZDB_ANGLETOLERANCE       = std::string("_angleTolerance");
+const std::string StateDatabase::BZDB_ANGULARAD        = std::string("_angularAd");
+const std::string StateDatabase::BZDB_AVENUESIZE       = std::string("_avenueSize");
+const std::string StateDatabase::BZDB_BASESIZE         = std::string("_baseSize");
+const std::string StateDatabase::BZDB_BOXBASE          = std::string("_boxBase");
+const std::string StateDatabase::BZDB_BOXHEIGHT        = std::string("_boxHeight");
+const std::string StateDatabase::BZDB_BURROWDEPTH      = std::string("_burrowDepth");
+const std::string StateDatabase::BZDB_BURROWSPEEDAD    = std::string("_burrowSpeedAd");
+const std::string StateDatabase::BZDB_BURROWANGULARAD      = std::string("_burrowAngularAd");
+const std::string StateDatabase::BZDB_COLDETDEPTH      = std::string("_coldetDepth");
+const std::string StateDatabase::BZDB_COLDETELEMENTS       = std::string("_coldetElements");
+const std::string StateDatabase::BZDB_COUNTDOWNRESDELAY    = std::string("_countdownResumeDelay");
+const std::string StateDatabase::BZDB_CULLDEPTH        = std::string("_cullDepth");
+const std::string StateDatabase::BZDB_CULLELEMENTS     = std::string("_cullElements");
+const std::string StateDatabase::BZDB_CULLOCCLUDERS    = std::string("_cullOccluders");
+const std::string StateDatabase::BZDB_DISABLEBOTS      = std::string("_disableBots");
+const std::string StateDatabase::BZDB_DRAWCELESTIAL    = std::string("_drawCelestial");
+const std::string StateDatabase::BZDB_DRAWCLOUDS       = std::string("_drawClouds");
+const std::string StateDatabase::BZDB_DRAWGROUND       = std::string("_drawGround");
+const std::string StateDatabase::BZDB_DRAWGROUNDLIGHTS     = std::string("_drawGroundLights");
+const std::string StateDatabase::BZDB_DRAWMOUNTAINS    = std::string("_drawMountains");
+const std::string StateDatabase::BZDB_DRAWSKY          = std::string("_drawSky");
+const std::string StateDatabase::BZDB_ENDSHOTDETECTION     = std::string("_endShotDetection");
+const std::string StateDatabase::BZDB_EXPLODETIME      = std::string("_explodeTime");
+const std::string StateDatabase::BZDB_FLAGALTITUDE     = std::string("_flagAltitude");
+const std::string StateDatabase::BZDB_FLAGEFFECTTIME       = std::string("_flagEffectTime");
+const std::string StateDatabase::BZDB_FLAGHEIGHT       = std::string("_flagHeight");
+const std::string StateDatabase::BZDB_FLAGPOLEWIDTH    = std::string("_flagPoleWidth");
+const std::string StateDatabase::BZDB_FLAGPOLESIZE     = std::string("_flagPoleSize");
+const std::string StateDatabase::BZDB_FLAGRADIUS       = std::string("_flagRadius");
+const std::string StateDatabase::BZDB_FOGMODE          = std::string("_fogMode");
+const std::string StateDatabase::BZDB_FOGDENSITY       = std::string("_fogDensity");
+const std::string StateDatabase::BZDB_FOGSTART         = std::string("_fogStart");
+const std::string StateDatabase::BZDB_FOGEND           = std::string("_fogEnd");
+const std::string StateDatabase::BZDB_FOGCOLOR         = std::string("_fogColor");
+const std::string StateDatabase::BZDB_FRICTION         = std::string("_friction");
+const std::string StateDatabase::BZDB_GMACTIVATIONTIME     = std::string("_gmActivationTime");
+const std::string StateDatabase::BZDB_GMADLIFE         = std::string("_gmAdLife");
+const std::string StateDatabase::BZDB_GMSIZE           = std::string("_gmSize");
+const std::string StateDatabase::BZDB_GMTURNANGLE      = std::string("_gmTurnAngle");
+const std::string StateDatabase::BZDB_GRAVITY          = std::string("_gravity");
+const std::string StateDatabase::BZDB_HANDICAPSCOREDIFF    = std::string("_handicapScoreDiff");
+const std::string StateDatabase::BZDB_HANDICAPVELAD    = std::string("_handicapVelAd");
+const std::string StateDatabase::BZDB_HANDICAPANGAD    = std::string("_handicapAngAd");
+const std::string StateDatabase::BZDB_HANDICAPSHOTAD       = std::string("_handicapShotAd");
+const std::string StateDatabase::BZDB_HIDEFLAGSONRADAR     = std::string("_hideFlagsOnRadar");
 const std::string StateDatabase::BZDB_HIDETEAMFLAGSONRADAR = std::string("_hideTeamFlagsOnRadar");
-const std::string StateDatabase::BZDB_IDENTIFYRANGE	   = std::string("_identifyRange");
-const std::string StateDatabase::BZDB_JUMPVELOCITY	   = std::string("_jumpVelocity");
-const std::string StateDatabase::BZDB_LASERADVEL	   = std::string("_laserAdVel");
-const std::string StateDatabase::BZDB_LASERADRATE	   = std::string("_laserAdRate");
-const std::string StateDatabase::BZDB_LASERADLIFE	   = std::string("_laserAdLife");
-const std::string StateDatabase::BZDB_LATITUDE		   = std::string("_latitude");
-const std::string StateDatabase::BZDB_LOCKONANGLE	   = std::string("_lockOnAngle");
-const std::string StateDatabase::BZDB_LONGITUDE		   = std::string("_longitude");
-const std::string StateDatabase::BZDB_LRADRATE		   = std::string("_lRAdRate");
-const std::string StateDatabase::BZDB_MAXBUMPHEIGHT	   = std::string("_maxBumpHeight");
-const std::string StateDatabase::BZDB_MAXFLAGGRABS	   = std::string("_maxFlagGrabs");
-const std::string StateDatabase::BZDB_MAXLOD		   = std::string("_maxLOD");
-const std::string StateDatabase::BZDB_MIRROR		   = std::string("_mirror");
-const std::string StateDatabase::BZDB_MOMENTUMLINACC	   = std::string("_momentumLinAcc");
-const std::string StateDatabase::BZDB_MOMENTUMANGACC	   = std::string("_momentumAngAcc");
-const std::string StateDatabase::BZDB_MOMENTUMFRICTION	   = std::string("_momentumFriction");
-const std::string StateDatabase::BZDB_MGUNADVEL		   = std::string("_mGunAdVel");
-const std::string StateDatabase::BZDB_MGUNADRATE	   = std::string("_mGunAdRate");
-const std::string StateDatabase::BZDB_MGUNADLIFE	   = std::string("_mGunAdLife");
-const std::string StateDatabase::BZDB_MUZZLEFRONT	   = std::string("_muzzleFront");
-const std::string StateDatabase::BZDB_MUZZLEHEIGHT	   = std::string("_muzzleHeight");
-const std::string StateDatabase::BZDB_NOCLIMB		   = std::string("_noClimb");
-const std::string StateDatabase::BZDB_NOSHADOWS		   = std::string("_noShadows");
-const std::string StateDatabase::BZDB_NOSMALLPACKETS	   = std::string("_noSmallPackets");
-const std::string StateDatabase::BZDB_NOTRESPONDINGTIME	   = std::string("_notRespondingTime");
-const std::string StateDatabase::BZDB_OBESEFACTOR	   = std::string("_obeseFactor");
-const std::string StateDatabase::BZDB_PAUSEDROPTIME	   = std::string("_pauseDropTime");
-const std::string StateDatabase::BZDB_POSITIONTOLERANCE	   = std::string("_positionTolerance");
-const std::string StateDatabase::BZDB_PYRBASE		   = std::string("_pyrBase");
-const std::string StateDatabase::BZDB_PYRHEIGHT		   = std::string("_pyrHeight");
-const std::string StateDatabase::BZDB_RADARLIMIT	   = std::string("_radarLimit");
-const std::string StateDatabase::BZDB_REJOINTIME	   = std::string("_rejoinTime");
-const std::string StateDatabase::BZDB_RELOADTIME	   = std::string("_reloadTime");
-const std::string StateDatabase::BZDB_RFIREADVEL	   = std::string("_rFireAdVel");
-const std::string StateDatabase::BZDB_RFIREADRATE	   = std::string("_rFireAdRate");
-const std::string StateDatabase::BZDB_RFIREADLIFE	   = std::string("_rFireAdLife");
-const std::string StateDatabase::BZDB_SHIELDFLIGHT	   = std::string("_shieldFlight");
-const std::string StateDatabase::BZDB_SHOCKADLIFE	   = std::string("_shockAdLife");
-const std::string StateDatabase::BZDB_SHOCKINRADIUS	   = std::string("_shockInRadius");
-const std::string StateDatabase::BZDB_SHOCKOUTRADIUS	   = std::string("_shockOutRadius");
-const std::string StateDatabase::BZDB_SHOTRADIUS	   = std::string("_shotRadius");
-const std::string StateDatabase::BZDB_SHOTRANGE		   = std::string("_shotRange");
-const std::string StateDatabase::BZDB_SHOTSPEED		   = std::string("_shotSpeed");
-const std::string StateDatabase::BZDB_SHOTTAILLENGTH	   = std::string("_shotTailLength");
+const std::string StateDatabase::BZDB_IDENTIFYRANGE    = std::string("_identifyRange");
+const std::string StateDatabase::BZDB_JUMPVELOCITY     = std::string("_jumpVelocity");
+const std::string StateDatabase::BZDB_LASERADVEL       = std::string("_laserAdVel");
+const std::string StateDatabase::BZDB_LASERADRATE      = std::string("_laserAdRate");
+const std::string StateDatabase::BZDB_LASERADLIFE      = std::string("_laserAdLife");
+const std::string StateDatabase::BZDB_LATITUDE         = std::string("_latitude");
+const std::string StateDatabase::BZDB_LOCKONANGLE      = std::string("_lockOnAngle");
+const std::string StateDatabase::BZDB_LONGITUDE        = std::string("_longitude");
+const std::string StateDatabase::BZDB_LRADRATE         = std::string("_lRAdRate");
+const std::string StateDatabase::BZDB_MAXBUMPHEIGHT    = std::string("_maxBumpHeight");
+const std::string StateDatabase::BZDB_MAXFLAGGRABS     = std::string("_maxFlagGrabs");
+const std::string StateDatabase::BZDB_MAXLOD           = std::string("_maxLOD");
+const std::string StateDatabase::BZDB_MIRROR           = std::string("_mirror");
+const std::string StateDatabase::BZDB_MOMENTUMLINACC       = std::string("_momentumLinAcc");
+const std::string StateDatabase::BZDB_MOMENTUMANGACC       = std::string("_momentumAngAcc");
+const std::string StateDatabase::BZDB_MOMENTUMFRICTION     = std::string("_momentumFriction");
+const std::string StateDatabase::BZDB_MGUNADVEL        = std::string("_mGunAdVel");
+const std::string StateDatabase::BZDB_MGUNADRATE       = std::string("_mGunAdRate");
+const std::string StateDatabase::BZDB_MGUNADLIFE       = std::string("_mGunAdLife");
+const std::string StateDatabase::BZDB_MUZZLEFRONT      = std::string("_muzzleFront");
+const std::string StateDatabase::BZDB_MUZZLEHEIGHT     = std::string("_muzzleHeight");
+const std::string StateDatabase::BZDB_NOCLIMB          = std::string("_noClimb");
+const std::string StateDatabase::BZDB_NOSHADOWS        = std::string("_noShadows");
+const std::string StateDatabase::BZDB_NOSMALLPACKETS       = std::string("_noSmallPackets");
+const std::string StateDatabase::BZDB_NOTRESPONDINGTIME    = std::string("_notRespondingTime");
+const std::string StateDatabase::BZDB_OBESEFACTOR      = std::string("_obeseFactor");
+const std::string StateDatabase::BZDB_PAUSEDROPTIME    = std::string("_pauseDropTime");
+const std::string StateDatabase::BZDB_POSITIONTOLERANCE    = std::string("_positionTolerance");
+const std::string StateDatabase::BZDB_PYRBASE          = std::string("_pyrBase");
+const std::string StateDatabase::BZDB_PYRHEIGHT        = std::string("_pyrHeight");
+const std::string StateDatabase::BZDB_RADARLIMIT       = std::string("_radarLimit");
+const std::string StateDatabase::BZDB_REJOINTIME       = std::string("_rejoinTime");
+const std::string StateDatabase::BZDB_RELOADTIME       = std::string("_reloadTime");
+const std::string StateDatabase::BZDB_RFIREADVEL       = std::string("_rFireAdVel");
+const std::string StateDatabase::BZDB_RFIREADRATE      = std::string("_rFireAdRate");
+const std::string StateDatabase::BZDB_RFIREADLIFE      = std::string("_rFireAdLife");
+const std::string StateDatabase::BZDB_SHIELDFLIGHT     = std::string("_shieldFlight");
+const std::string StateDatabase::BZDB_SHOCKADLIFE      = std::string("_shockAdLife");
+const std::string StateDatabase::BZDB_SHOCKINRADIUS    = std::string("_shockInRadius");
+const std::string StateDatabase::BZDB_SHOCKOUTRADIUS       = std::string("_shockOutRadius");
+const std::string StateDatabase::BZDB_SHOTRADIUS       = std::string("_shotRadius");
+const std::string StateDatabase::BZDB_SHOTRANGE        = std::string("_shotRange");
+const std::string StateDatabase::BZDB_SHOTSPEED        = std::string("_shotSpeed");
+const std::string StateDatabase::BZDB_SHOTTAILLENGTH       = std::string("_shotTailLength");
 const std::string StateDatabase::BZDB_SHOTSKEEPVERTICALV   = std::string("_shotsKeepVerticalVelocity");
 const std::string StateDatabase::BZDB_SPEEDCHECKSLOGONLY   = std::string("_speedChecksLogOnly");
-const std::string StateDatabase::BZDB_SRRADIUSMULT	   = std::string("_srRadiusMult");
-const std::string StateDatabase::BZDB_SQUISHFACTOR	   = std::string("_squishFactor");
-const std::string StateDatabase::BZDB_SQUISHTIME	   = std::string("_squishTime");
-const std::string StateDatabase::BZDB_SYNCTIME		   = std::string("_syncTime");
-const std::string StateDatabase::BZDB_SYNCLOCATION	   = std::string("_syncLocation");
-const std::string StateDatabase::BZDB_TANKANGVEL	   = std::string("_tankAngVel");
-const std::string StateDatabase::BZDB_TANKEXPLOSIONSIZE	   = std::string("_tankExplosionSize");
-const std::string StateDatabase::BZDB_TANKHEIGHT	   = std::string("_tankHeight");
-const std::string StateDatabase::BZDB_TANKLENGTH	   = std::string("_tankLength");
-const std::string StateDatabase::BZDB_TANKRADIUS	   = std::string("_tankRadius");
-const std::string StateDatabase::BZDB_TANKSPEED		   = std::string("_tankSpeed");
-const std::string StateDatabase::BZDB_TANKWIDTH		   = std::string("_tankWidth");
-const std::string StateDatabase::BZDB_TARGETINGANGLE	   = std::string("_targetingAngle");
-const std::string StateDatabase::BZDB_TARGETINGDISTANCE	   = std::string("_targetingDistance");
-const std::string StateDatabase::BZDB_TELEBREADTH	   = std::string("_teleportBreadth");
-const std::string StateDatabase::BZDB_TELEHEIGHT	   = std::string("_teleportHeight");
-const std::string StateDatabase::BZDB_TELEPORTTIME	   = std::string("_teleportTime");
-const std::string StateDatabase::BZDB_TELEWIDTH		   = std::string("_teleportWidth");
-const std::string StateDatabase::BZDB_THIEFADLIFE	   = std::string("_thiefAdLife");
-const std::string StateDatabase::BZDB_THIEFADRATE	   = std::string("_thiefAdRate");
-const std::string StateDatabase::BZDB_THIEFADSHOTVEL	   = std::string("_thiefAdShotVel");
-const std::string StateDatabase::BZDB_THIEFTINYFACTOR	   = std::string("_thiefTinyFactor");
-const std::string StateDatabase::BZDB_THIEFVELAD	   = std::string("_thiefVelAd");
-const std::string StateDatabase::BZDB_THIEFDROPTIME	   = std::string("_thiefDropTime");
-const std::string StateDatabase::BZDB_TINYFACTOR	   = std::string("_tinyFactor");
-const std::string StateDatabase::BZDB_TRACKFADE		   = std::string("_trackFade");
+const std::string StateDatabase::BZDB_SRRADIUSMULT     = std::string("_srRadiusMult");
+const std::string StateDatabase::BZDB_SQUISHFACTOR     = std::string("_squishFactor");
+const std::string StateDatabase::BZDB_SQUISHTIME       = std::string("_squishTime");
+const std::string StateDatabase::BZDB_SYNCTIME         = std::string("_syncTime");
+const std::string StateDatabase::BZDB_SYNCLOCATION     = std::string("_syncLocation");
+const std::string StateDatabase::BZDB_TANKANGVEL       = std::string("_tankAngVel");
+const std::string StateDatabase::BZDB_TANKEXPLOSIONSIZE    = std::string("_tankExplosionSize");
+const std::string StateDatabase::BZDB_TANKHEIGHT       = std::string("_tankHeight");
+const std::string StateDatabase::BZDB_TANKLENGTH       = std::string("_tankLength");
+const std::string StateDatabase::BZDB_TANKRADIUS       = std::string("_tankRadius");
+const std::string StateDatabase::BZDB_TANKSPEED        = std::string("_tankSpeed");
+const std::string StateDatabase::BZDB_TANKWIDTH        = std::string("_tankWidth");
+const std::string StateDatabase::BZDB_TARGETINGANGLE       = std::string("_targetingAngle");
+const std::string StateDatabase::BZDB_TARGETINGDISTANCE    = std::string("_targetingDistance");
+const std::string StateDatabase::BZDB_TELEBREADTH      = std::string("_teleportBreadth");
+const std::string StateDatabase::BZDB_TELEHEIGHT       = std::string("_teleportHeight");
+const std::string StateDatabase::BZDB_TELEPORTTIME     = std::string("_teleportTime");
+const std::string StateDatabase::BZDB_TELEWIDTH        = std::string("_teleportWidth");
+const std::string StateDatabase::BZDB_THIEFADLIFE      = std::string("_thiefAdLife");
+const std::string StateDatabase::BZDB_THIEFADRATE      = std::string("_thiefAdRate");
+const std::string StateDatabase::BZDB_THIEFADSHOTVEL       = std::string("_thiefAdShotVel");
+const std::string StateDatabase::BZDB_THIEFTINYFACTOR      = std::string("_thiefTinyFactor");
+const std::string StateDatabase::BZDB_THIEFVELAD       = std::string("_thiefVelAd");
+const std::string StateDatabase::BZDB_THIEFDROPTIME    = std::string("_thiefDropTime");
+const std::string StateDatabase::BZDB_TINYFACTOR       = std::string("_tinyFactor");
+const std::string StateDatabase::BZDB_TRACKFADE        = std::string("_trackFade");
 const std::string StateDatabase::BZDB_UPDATETHROTTLERATE   = std::string("_updateThrottleRate");
-const std::string StateDatabase::BZDB_VELOCITYAD	   = std::string("_velocityAd");
-const std::string StateDatabase::BZDB_WALLHEIGHT	   = std::string("_wallHeight");
-const std::string StateDatabase::BZDB_WEAPONS		   = std::string("_weapons");
-const std::string StateDatabase::BZDB_WIDEANGLEANG	   = std::string("_wideAngleAng");
-const std::string StateDatabase::BZDB_WINGSGRAVITY	   = std::string("_wingsGravity");
-const std::string StateDatabase::BZDB_WINGSJUMPCOUNT	   = std::string("_wingsJumpCount");
-const std::string StateDatabase::BZDB_WINGSJUMPVELOCITY	   = std::string("_wingsJumpVelocity");
-const std::string StateDatabase::BZDB_WINGSSLIDETIME	   = std::string("_wingsSlideTime");
-const std::string StateDatabase::BZDB_WORLDSIZE		   = std::string("_worldSize");
+const std::string StateDatabase::BZDB_VELOCITYAD       = std::string("_velocityAd");
+const std::string StateDatabase::BZDB_WALLHEIGHT       = std::string("_wallHeight");
+const std::string StateDatabase::BZDB_WEAPONS          = std::string("_weapons");
+const std::string StateDatabase::BZDB_WIDEANGLEANG     = std::string("_wideAngleAng");
+const std::string StateDatabase::BZDB_WINGSGRAVITY     = std::string("_wingsGravity");
+const std::string StateDatabase::BZDB_WINGSJUMPCOUNT       = std::string("_wingsJumpCount");
+const std::string StateDatabase::BZDB_WINGSJUMPVELOCITY    = std::string("_wingsJumpVelocity");
+const std::string StateDatabase::BZDB_WINGSSLIDETIME       = std::string("_wingsSlideTime");
+const std::string StateDatabase::BZDB_WORLDSIZE        = std::string("_worldSize");
 
 //
 // StateDatabase::Item
@@ -248,7 +248,7 @@ StateDatabase::~StateDatabase()
     // do nothing
 }
 
-void			StateDatabase::set(const std::string& name,
+void            StateDatabase::set(const std::string& name,
                                    const std::string& value,
                                    Permission access)
 {
@@ -270,28 +270,28 @@ void			StateDatabase::set(const std::string& name,
     }
 }
 
-void		     StateDatabase::setInt(const std::string& name,
+void             StateDatabase::setInt(const std::string& name,
                                        const int& value,
                                        Permission access)
 {
     set(name,TextUtils::format("%d",value),access);
 }
 
-void		    StateDatabase::setBool(const std::string& name,
+void            StateDatabase::setBool(const std::string& name,
                                        const bool& value,
                                        Permission access)
 {
     set(name,value ? std::string("1") : std::string("0"),access);
 }
 
-void		   StateDatabase::setFloat(const std::string& name,
+void           StateDatabase::setFloat(const std::string& name,
                                        const float& value,
                                        Permission access)
 {
     set(name,TextUtils::format("%f",value),access);
 }
 
-void			StateDatabase::setPointer(const std::string& name,
+void            StateDatabase::setPointer(const std::string& name,
         const void * value,
         Permission access)
 {
@@ -303,7 +303,7 @@ void			StateDatabase::setPointer(const std::string& name,
 }
 
 
-void			StateDatabase::unset(const std::string& name,
+void            StateDatabase::unset(const std::string& name,
                                      Permission access)
 {
     Map::iterator index = lookup(name);
@@ -316,7 +316,7 @@ void			StateDatabase::unset(const std::string& name,
     }
 }
 
-void			StateDatabase::touch(const std::string& name,
+void            StateDatabase::touch(const std::string& name,
                                      Permission access)
 {
     Map::iterator index = lookup(name);
@@ -324,21 +324,21 @@ void			StateDatabase::touch(const std::string& name,
         notify(index);
 }
 
-void			StateDatabase::setPersistent(
+void            StateDatabase::setPersistent(
     const std::string& name, bool save)
 {
     Map::iterator index = lookup(name);
     index->second.save = save;
 }
 
-void			StateDatabase::setDefault(
+void            StateDatabase::setDefault(
     const std::string& name, const std::string& value)
 {
     Map::iterator index = lookup(name);
     index->second.defValue = value;
 }
 
-void			StateDatabase::setPermission(
+void            StateDatabase::setPermission(
     const std::string& name,
     Permission permission)
 {
@@ -346,7 +346,7 @@ void			StateDatabase::setPermission(
     index->second.permission = permission;
 }
 
-void			StateDatabase::addCallback(
+void            StateDatabase::addCallback(
     const std::string& name,
     Callback callback,
     void* userData)
@@ -355,7 +355,7 @@ void			StateDatabase::addCallback(
     index->second.callbacks.add(callback, userData);
 }
 
-void			StateDatabase::removeCallback(
+void            StateDatabase::removeCallback(
     const std::string& name,
     Callback callback,
     void* userData)
@@ -375,14 +375,14 @@ void StateDatabase::removeGlobalCallback(Callback callback, void* userData)
 }
 
 
-bool			StateDatabase::isSet(const std::string& name) const
+bool            StateDatabase::isSet(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
     return !(index == items.end() || !index->second.isSet);
 }
 
-std::string		StateDatabase::get(const std::string& name) const
+std::string     StateDatabase::get(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
@@ -392,7 +392,7 @@ std::string		StateDatabase::get(const std::string& name) const
         return index->second.value;
 }
 
-int		StateDatabase::getIntClamped(const std::string& name, const int min, const int max) const
+int     StateDatabase::getIntClamped(const std::string& name, const int min, const int max) const
 {
     int val;
     debugLookups(name);
@@ -408,7 +408,7 @@ int		StateDatabase::getIntClamped(const std::string& name, const int min, const 
     return val;
 }
 
-void *		StateDatabase::getPointer(const std::string& name) const
+void *      StateDatabase::getPointer(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
@@ -418,7 +418,7 @@ void *		StateDatabase::getPointer(const std::string& name) const
         return (void *)strtoul(index->second.value.c_str(), NULL, 0);
 }
 
-float			StateDatabase::eval(const std::string& name)
+float           StateDatabase::eval(const std::string& name)
 {
     typedef std::set<std::string> VariableSet;
     debugLookups(name);
@@ -458,12 +458,12 @@ float			StateDatabase::eval(const std::string& name)
     return retn;
 }
 
-int			StateDatabase::evalInt(const std::string& name)
+int         StateDatabase::evalInt(const std::string& name)
 {
     return (int)eval(name);
 }
 
-bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
+bool        StateDatabase::evalTriplet(const std::string& name, float data[4])
 {
     if (!isSet(name) || !data)
         return false;
@@ -472,7 +472,7 @@ bool		StateDatabase::evalTriplet(const std::string& name, float data[4])
     return true;
 }
 
-bool		StateDatabase::evalPair(const std::string& name, float data[2])
+bool        StateDatabase::evalPair(const std::string& name, float data[2])
 {
     if (!isSet(name) || !data)
         return false;
@@ -481,14 +481,14 @@ bool		StateDatabase::evalPair(const std::string& name, float data[2])
     return true;
 }
 
-bool			StateDatabase::isTrue(const std::string& name) const
+bool            StateDatabase::isTrue(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
     return !(index == items.end() || !index->second.isTrue);
 }
 
-bool			StateDatabase::isEmpty(const std::string& name) const
+bool            StateDatabase::isEmpty(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
@@ -496,14 +496,14 @@ bool			StateDatabase::isEmpty(const std::string& name) const
             index->second.value.empty());
 }
 
-bool			StateDatabase::isPersistent(const std::string& name) const
+bool            StateDatabase::isPersistent(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
     return (index != items.end() && index->second.save);
 }
 
-std::string		StateDatabase::getDefault(const std::string& name) const
+std::string     StateDatabase::getDefault(const std::string& name) const
 {
     debugLookups(name);
     Map::const_iterator index = items.find(name);
@@ -535,12 +535,10 @@ StateDatabase::lookup(const std::string& name)
         return items.insert(std::make_pair(name, tmp)).first;
     }
     else
-    {
         return index;
-    }
 }
 
-void			StateDatabase::notify(Map::iterator index)
+void            StateDatabase::notify(Map::iterator index)
 {
     const std::string& name = index->first;
     const Item& item = index->second;
@@ -552,7 +550,7 @@ void			StateDatabase::notify(Map::iterator index)
     item.callbacks.iterate(&onCallback, namePtr);
 }
 
-bool			StateDatabase::onCallback(Callback callback,
+bool            StateDatabase::onCallback(Callback callback,
         void* userData,
         void* iterateData)
 {
@@ -560,38 +558,34 @@ bool			StateDatabase::onCallback(Callback callback,
     return true;
 }
 
-void			StateDatabase::iterate(Callback callback, void* userData) const
+void            StateDatabase::iterate(Callback callback, void* userData) const
 {
     assert(callback != NULL);
 
     for (Map::const_iterator index = items.begin(); index != items.end(); ++index)
     {
         if (index->second.isSet)
-        {
             (*callback)(index->first, userData);
-        }
     }
 }
 
-void			StateDatabase::write(Callback callback, void* userData) const
+void            StateDatabase::write(Callback callback, void* userData) const
 {
     assert(callback != NULL);
 
     for (Map::const_iterator index = items.begin(); index != items.end(); ++index)
     {
         if (index->second.isSet && index->second.save)
-        {
             (*callback)(index->first, userData);
-        }
     }
 }
 
-void		     StateDatabase::setDebug(bool print)
+void             StateDatabase::setDebug(bool print)
 {
     debug = print;
 }
 
-void		     StateDatabase::setSaveDefault(bool save)
+void             StateDatabase::setSaveDefault(bool save)
 {
     saveDefault = save;
 }
@@ -679,7 +673,7 @@ double StateDatabase::ExpressionToken::getNumber() const
     return tokenContents.number;
 }
 
-std::string	StateDatabase::ExpressionToken::getVariable() const
+std::string StateDatabase::ExpressionToken::getVariable() const
 {
     // note that the necessary type check must be done first
     return tokenContents.variable;
@@ -921,9 +915,7 @@ std::string& operator >> (std::string& src, StateDatabase::Expression& dst)
     while (src.length() != 0)
     {
         while (src[0] == ' ' || src[0] == '\t')
-        {
             src = src.substr(1);
-        }
         if (src.length() != 0)
         {
             src >> temp;
@@ -938,9 +930,7 @@ std::ostream& operator << (std::ostream& dst, const StateDatabase::Expression& s
     if (src.size())
     {
         for (unsigned int i = 0; i < src.size() - 1; i++)
-        {
             dst << src[i] << ' ';
-        }
         dst << src[src.size() - 1];
     }
     return dst;
@@ -954,15 +944,11 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
     for (Expression::const_iterator i = infix.begin(); i != infix.end(); ++i)
     {
         if (i->getTokenType() == ExpressionToken::Variable || i->getTokenType() == ExpressionToken::Number)
-        {
             postfix.push_back(*i);
-        }
         else if (i->getTokenType() == ExpressionToken::Oper)
         {
             if (i->getOperator() == ExpressionToken::lparen)
-            {
                 operators.push(*i);
-            }
             else if (i->getOperator() == ExpressionToken::rparen)
             {
                 // unstack operators until a matching ( is found
@@ -977,7 +963,8 @@ StateDatabase::Expression StateDatabase::infixToPrefix(const Expression &infix)
             }
             else
             {
-                while (!operators.empty() && (operators.top().getPrecedence() < i->getPrecedence()) && (operators.top().getOperator() != ExpressionToken::lparen))
+                while (!operators.empty() && (operators.top().getPrecedence() < i->getPrecedence())
+                        && (operators.top().getOperator() != ExpressionToken::lparen))
                 {
                     postfix.push_back(operators.top());
                     operators.pop();
@@ -1086,6 +1073,6 @@ float StateDatabase::evaluate(Expression e) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=2 tabstop=8

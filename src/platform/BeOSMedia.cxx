@@ -97,7 +97,7 @@ BeOSMedia::~BeOSMedia()
     // do nothing
 }
 
-bool					BeOSMedia::openAudio()
+bool                    BeOSMedia::openAudio()
 {
     // don't re-initialize
     if (audioReady)
@@ -271,7 +271,7 @@ void BeOSMedia::audioplay_callback(void *cookie, void *buffer, size_t bufferSize
     //  write(debugWav, buf, 2048);
 }
 
-void					BeOSMedia::closeAudio()
+void                    BeOSMedia::closeAudio()
 {
     if (audioQueuePort > B_OK)
         delete_port(audioQueuePort);
@@ -308,7 +308,7 @@ void					BeOSMedia::closeAudio()
 #endif
 }
 
-bool					BeOSMedia::startAudioThread(
+bool                    BeOSMedia::startAudioThread(
     void (*proc)(void*), void* data)
 {
     // if no audio thread then just call proc and return
@@ -328,7 +328,7 @@ bool					BeOSMedia::startAudioThread(
     return true;
 }
 
-void					BeOSMedia::stopAudioThread()
+void                    BeOSMedia::stopAudioThread()
 {
     if (childThreadID > B_OK)
     {
@@ -339,7 +339,7 @@ void					BeOSMedia::stopAudioThread()
     childThreadID = 0;
 }
 
-bool					BeOSMedia::hasAudioThread() const
+bool                    BeOSMedia::hasAudioThread() const
 {
 #if defined(NO_AUDIO_THREAD)
     return false;
@@ -348,12 +348,12 @@ bool					BeOSMedia::hasAudioThread() const
 #endif
 }
 
-static void				die(int)
+static void             die(int)
 {
     exit_thread(B_OK);
 }
 
-void					BeOSMedia::audioThreadInit(void*)
+void                    BeOSMedia::audioThreadInit(void*)
 {
     // parent will kill me when it wants me to quit.  catch the signal
     // and gracefully exit.  don't use PlatformFactory because that
@@ -361,7 +361,7 @@ void					BeOSMedia::audioThreadInit(void*)
     signal(SIGTERM, die);
 }
 
-void					BeOSMedia::writeSoundCommand(const void* cmd, int len)
+void                    BeOSMedia::writeSoundCommand(const void* cmd, int len)
 {
     DBG(("BeOSMedia::writeSoundCommand(, %d)\n", len));
     if (port_count(audioQueuePort) + 2 < audioQueueMaxCmds)   /* we don't want to block */
@@ -374,7 +374,7 @@ void					BeOSMedia::writeSoundCommand(const void* cmd, int len)
     }
 }
 
-bool					BeOSMedia::readSoundCommand(void* cmd, int len)
+bool                    BeOSMedia::readSoundCommand(void* cmd, int len)
 {
     DBG(("BeOSMedia::readSoundCommand(, %d)\n", len));
     //  MYASSERT((size_t)len < sizeof(cmdBuffer));
@@ -389,22 +389,22 @@ bool					BeOSMedia::readSoundCommand(void* cmd, int len)
     return true;
 }
 
-int						BeOSMedia::getAudioOutputRate() const
+int                     BeOSMedia::getAudioOutputRate() const
 {
     return audioOutputRate;
 }
 
-int						BeOSMedia::getAudioBufferSize() const
+int                     BeOSMedia::getAudioBufferSize() const
 {
     return AUDIO_BLOCK_FRAME_COUNT * AUDIO_BLOCK_COUNT;
 }
 
-int						BeOSMedia::getAudioBufferChunkSize() const
+int                     BeOSMedia::getAudioBufferChunkSize() const
 {
     return AUDIO_BLOCK_FRAME_COUNT;
 }
 
-bool					BeOSMedia::isAudioTooEmpty() const
+bool                    BeOSMedia::isAudioTooEmpty() const
 {
     return true;
     int32 semcnt = 0;
@@ -414,7 +414,7 @@ bool					BeOSMedia::isAudioTooEmpty() const
     return (semcnt < audioLowWaterMark);
 }
 
-void					BeOSMedia::writeAudioFrames(
+void                    BeOSMedia::writeAudioFrames(
     const float* samples, int numFrames)
 {
     status_t err = B_OK;
@@ -540,7 +540,7 @@ void					BeOSMedia::writeAudioFrames(
     }
 }
 
-void					BeOSMedia::audioSleep(
+void                    BeOSMedia::audioSleep(
     bool checkLowWater, double endTime)
 {
     status_t err;
@@ -555,7 +555,7 @@ void					BeOSMedia::audioSleep(
     DBG(("audioSleep error 0x%08lx\n", err));
 }
 
-double					BeOSMedia::stopwatch(bool start)
+double                  BeOSMedia::stopwatch(bool start)
 {
     return BzfMedia::stopwatch(start); // not better
     if (start)

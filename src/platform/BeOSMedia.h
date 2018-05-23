@@ -11,7 +11,7 @@
  */
 
 /* BeOSMedia:
- *	BeOS media stuff.
+ *  BeOS media stuff.
  */
 
 #ifndef BZF_BEOS_MEDIA_H
@@ -28,72 +28,72 @@ public:
     BeOSMedia();
     ~BeOSMedia();
     /*
-      BzfDisplay*			createDisplay(const char* name, const char*videoFormat);
-      BzfVisual*	createVisual(const BzfDisplay*);
-      BzfWindow*	createWindow(const BzfDisplay*, BzfVisual*);
+      BzfDisplay*           createDisplay(const char* name, const char*videoFormat);
+      BzfVisual*    createVisual(const BzfDisplay*);
+      BzfWindow*    createWindow(const BzfDisplay*, BzfVisual*);
     */
-    bool				openAudio();
-    void				closeAudio();
-    bool				startAudioThread(void (*)(void*), void*);
-    void				stopAudioThread();
-    bool				hasAudioThread() const;
-    void				writeSoundCommand(const void*, int);
-    bool				readSoundCommand(void*, int);
-    int					getAudioOutputRate() const;
-    int					getAudioBufferSize() const;
-    int					getAudioBufferChunkSize() const;
-    bool				isAudioTooEmpty() const;
-    void				writeAudioFrames(const float* samples, int numFrames);
-    void				audioSleep(bool checkLowWater, double maxTime);
+    bool                openAudio();
+    void                closeAudio();
+    bool                startAudioThread(void (*)(void*), void*);
+    void                stopAudioThread();
+    bool                hasAudioThread() const;
+    void                writeSoundCommand(const void*, int);
+    bool                readSoundCommand(void*, int);
+    int                 getAudioOutputRate() const;
+    int                 getAudioBufferSize() const;
+    int                 getAudioBufferChunkSize() const;
+    bool                isAudioTooEmpty() const;
+    void                writeAudioFrames(const float* samples, int numFrames);
+    void                audioSleep(bool checkLowWater, double maxTime);
 
     // sleep for given number of seconds
-    double	stopwatch(bool start);
+    double  stopwatch(bool start);
 private:
     BeOSMedia(const BeOSMedia&);
     BeOSMedia& operator=(const BeOSMedia&);
     /*
-      bool				checkForAudioHardware();
-      bool				openAudioHardware();
-      bool				openIoctl(int cmd, void* value, bool req = true);
+      bool              checkForAudioHardware();
+      bool              openAudioHardware();
+      bool              openIoctl(int cmd, void* value, bool req = true);
     */
-    static void			audioThreadInit(void*);
+    static void         audioThreadInit(void*);
     /*
-      void				writeAudioFrames8Bit(
+      void              writeAudioFrames8Bit(
       const float* samples, int numFrames);
-      void				writeAudioFrames16Bit(
+      void              writeAudioFrames16Bit(
       const float* samples, int numFrames);
     */
-    static void			audioplay_callback(void *cookie, void *buffer, size_t bufferSize,
+    static void         audioplay_callback(void *cookie, void *buffer, size_t bufferSize,
                                            const media_raw_audio_format &format);
 
 private:
-    bool				audioReady;
-    int				audioOutputRate;
-    int				audioBufferSize;
-    int				audioLowWaterMark;
+    bool                audioReady;
+    int             audioOutputRate;
+    int             audioBufferSize;
+    int             audioLowWaterMark;
 
-    port_id			audioQueuePort;
-    int				audioQueueMaxCmds;
+    port_id         audioQueuePort;
+    int             audioQueueMaxCmds;
 
-    void*				outputBuffer;
-    thread_id			childThreadID;
-    //  void			*audioThreadCookie;
-    BSoundPlayer			*soundPlayer;
-    bool				audioHasQuit;
-    bool				checkLowWater;
-    sem_id			lowWaterSem;
+    void*               outputBuffer;
+    thread_id           childThreadID;
+    //  void            *audioThreadCookie;
+    BSoundPlayer            *soundPlayer;
+    bool                audioHasQuit;
+    bool                checkLowWater;
+    sem_id          lowWaterSem;
 
     /* ring buffer */
-    sem_id			audioInputSem;
-    int				audioInputIndex;
-    sem_id			audioOutputSem;
-    int				audioOutputIndex;
+    sem_id          audioInputSem;
+    int             audioInputIndex;
+    sem_id          audioOutputSem;
+    int             audioOutputIndex;
 
-    bigtime_t			stopWatchStart;
+    bigtime_t           stopWatchStart;
     /*
-      int				chunksPending;
-      double			chunkTime;
-      double			chunksPerSecond;
+      int               chunksPending;
+      double            chunkTime;
+      double            chunksPerSecond;
     */
 };
 

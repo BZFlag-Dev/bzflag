@@ -26,8 +26,8 @@
 #ifdef USE_TR1
 #include <tr1/memory>
 #include <tr1/functional>
-#define	shared_ptr	tr1::shared_ptr
-#define	function	tr1::function
+#define shared_ptr  tr1::shared_ptr
+#define function    tr1::function
 #else
 #include <memory>
 #include <functional>
@@ -75,29 +75,29 @@ protected:
     uint32_t GUID;
     FlightLogic &Logic;
 
-    double	LifeTime;
+    double  LifeTime;
 
     class MetaDataItem
     {
     public:
         std::string Name;
         std::string DataS;
-        uint32_t	DataI;
+        uint32_t    DataI;
     };
 
     std::map<std::string, MetaDataItem> MetaData;
 
 public:
-    fvec3		StartPosition;
-    fvec3		LastUpdatePosition;
-    double		LastUpdateTime;
-    double		StartTime;
+    fvec3       StartPosition;
+    fvec3       LastUpdatePosition;
+    double      LastUpdateTime;
+    double      StartTime;
 
-    FiringInfo	Info;
+    FiringInfo  Info;
 
-    PlayerId	Target;
+    PlayerId    Target;
 
-    void		*Pimple;
+    void        *Pimple;
 
     Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic);
     virtual ~Shot();
@@ -160,14 +160,14 @@ public:
 
 };
 
-typedef std::shared_ptr<Shot>	ShotRef;
+typedef std::shared_ptr<Shot>   ShotRef;
 typedef std::vector<std::shared_ptr<Shot>> ShotList;
 typedef std::shared_ptr<std::function <void (Shot&)> > ShotEvent;
 
 #ifdef USE_TR1
 // limit the scope of possible side effects of these macro definitions
-#undef	shared_ptr
-#undef	function
+#undef  shared_ptr
+#undef  function
 #endif
 
 #define INVALID_SHOT_GUID 0
@@ -199,24 +199,24 @@ public:
 
     static double DeadShotCacheTime;
 
-    ShotList	LiveShotsForPlayer(PlayerId player);
-    ShotList	DeadShotsForPlayer(PlayerId player);
+    ShotList    LiveShotsForPlayer(PlayerId player);
+    ShotList    DeadShotsForPlayer(PlayerId player);
 
     ShotEvent ShotCreated;
     ShotEvent ShotEnded;
 
 private:
     uint32_t NewGUID();
-    ShotRef	FindByID(uint32_t shotID);
+    ShotRef FindByID(uint32_t shotID);
 
     double Now();
 
-    ShotList	LiveShots;
-    ShotList	RecentlyDeadShots;
+    ShotList    LiveShots;
+    ShotList    RecentlyDeadShots;
 
     FlightLogicMap Logics;
 
-    uint32_t	LastGUID;
+    uint32_t    LastGUID;
 
 };
 
@@ -261,6 +261,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

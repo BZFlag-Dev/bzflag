@@ -32,7 +32,7 @@
 // PingPacket
 //
 
-const int		PingPacket::PacketSize = ServerIdPLen + 52;
+const int       PingPacket::PacketSize = ServerIdPLen + 52;
 
 PingPacket::PingPacket() : gameOptions(0), gameType(TeamFFA),
     maxShots(1),
@@ -63,7 +63,7 @@ PingPacket::~PingPacket()
     // do nothing
 }
 
-bool			PingPacket::read(int fd, struct sockaddr_in* addr)
+bool            PingPacket::read(int fd, struct sockaddr_in* addr)
 {
     char buffer[PacketSize], serverVersion[9];
     uint16_t len, code;
@@ -93,7 +93,7 @@ bool			PingPacket::read(int fd, struct sockaddr_in* addr)
     return (strncmp(serverVersion, getServerVersion(), 8) == 0);
 }
 
-bool			PingPacket::waitForReply(int fd,
+bool            PingPacket::waitForReply(int fd,
         const Address& from,
         int millisecondsToBlock)
 {
@@ -131,7 +131,7 @@ bool			PingPacket::waitForReply(int fd,
     return false;
 }
 
-bool			PingPacket::write(int fd,
+bool            PingPacket::write(int fd,
                                   const struct sockaddr_in* addr) const
 {
     char buffer[PacketSize] = {0};
@@ -142,7 +142,7 @@ bool			PingPacket::write(int fd,
     return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-bool			PingPacket::isRequest(int fd,
+bool            PingPacket::isRequest(int fd,
                                       struct sockaddr_in* addr)
 {
     if (fd < 0) return false;
@@ -156,7 +156,7 @@ bool			PingPacket::isRequest(int fd,
     return code == MsgPingCodeRequest;
 }
 
-bool			PingPacket::sendRequest(int fd,
+bool            PingPacket::sendRequest(int fd,
                                         const struct sockaddr_in* addr)
 {
     if (fd < 0 || !addr) return false;
@@ -168,7 +168,7 @@ bool			PingPacket::sendRequest(int fd,
     return sendBroadcast(fd, buffer, sizeof(buffer), addr) == sizeof(buffer);
 }
 
-const void*		PingPacket::unpack(const void* buf, char* version)
+const void*     PingPacket::unpack(const void* buf, char* version)
 {
     buf = nboUnpackString(buf, version, 8);
     buf = serverId.unpack(buf);
@@ -197,7 +197,7 @@ const void*		PingPacket::unpack(const void* buf, char* version)
     return buf;
 }
 
-void*			PingPacket::pack(void* buf, const char* version) const
+void*           PingPacket::pack(void* buf, const char* version) const
 {
     buf = nboPackString(buf, version, 8);
     buf = serverId.pack(buf);
@@ -206,7 +206,7 @@ void*			PingPacket::pack(void* buf, const char* version) const
     buf = nboPackUShort(buf, gameOptions);
     buf = nboPackUShort(buf, maxShots);
     buf = nboPackUShort(buf, shakeWins);
-    buf = nboPackUShort(buf, shakeTimeout);	// 1/10ths of second
+    buf = nboPackUShort(buf, shakeTimeout); // 1/10ths of second
     buf = nboPackUShort(buf, maxPlayerScore);
     buf = nboPackUShort(buf, maxTeamScore);
     buf = nboPackUShort(buf, maxTime);
@@ -226,7 +226,7 @@ void*			PingPacket::pack(void* buf, const char* version) const
     return buf;
 }
 
-void			PingPacket::packHex(char* buf) const
+void            PingPacket::packHex(char* buf) const
 {
     buf = packHex16(buf, gameType);
     buf = packHex16(buf, gameOptions);
@@ -252,7 +252,7 @@ void			PingPacket::packHex(char* buf) const
     *buf = 0;
 }
 
-void			PingPacket::unpackHex(char* buf)
+void            PingPacket::unpackHex(char* buf)
 {
     buf = unpackHex16(buf, gameType);
     buf = unpackHex16(buf, gameOptions);
@@ -277,7 +277,7 @@ void			PingPacket::unpackHex(char* buf)
     buf = unpackHex8(buf, observerMax);
 }
 
-int			PingPacket::hex2bin(char d)
+int         PingPacket::hex2bin(char d)
 {
     switch (d)
     {
@@ -323,22 +323,22 @@ int			PingPacket::hex2bin(char d)
     return 0;
 }
 
-char			PingPacket::bin2hex(int d)
+char            PingPacket::bin2hex(int d)
 {
     static const char* digit = "0123456789abcdef";
     return digit[d];
 }
 
-char*			PingPacket::packHex16(char* buf, uint16_t v)
+char*           PingPacket::packHex16(char* buf, uint16_t v)
 {
     *buf++ = bin2hex((v >> 12) & 0xf);
     *buf++ = bin2hex((v >>  8) & 0xf);
     *buf++ = bin2hex((v >>  4) & 0xf);
-    *buf++ = bin2hex( v	& 0xf);
+    *buf++ = bin2hex( v & 0xf);
     return buf;
 }
 
-char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
+char*           PingPacket::unpackHex16(char* buf, uint16_t& v)
 {
     uint16_t d = 0;
     d = (d << 4) | hex2bin(*buf++);
@@ -349,14 +349,14 @@ char*			PingPacket::unpackHex16(char* buf, uint16_t& v)
     return buf;
 }
 
-char*			PingPacket::packHex8(char* buf, uint8_t v)
+char*           PingPacket::packHex8(char* buf, uint8_t v)
 {
     *buf++ = bin2hex((v >>  4) & 0xf);
-    *buf++ = bin2hex( v	& 0xf);
+    *buf++ = bin2hex( v & 0xf);
     return buf;
 }
 
-char*			PingPacket::unpackHex8(char* buf, uint8_t& v)
+char*           PingPacket::unpackHex8(char* buf, uint8_t& v)
 {
     uint16_t d = 0;
     d = (d << 4) | hex2bin(*buf++);
@@ -365,7 +365,7 @@ char*			PingPacket::unpackHex8(char* buf, uint8_t& v)
     return buf;
 }
 
-void			 PingPacket::zeroPlayerCounts()
+void             PingPacket::zeroPlayerCounts()
 {
     rogueCount = 0;
     redCount = 0;
@@ -377,7 +377,7 @@ void			 PingPacket::zeroPlayerCounts()
 
 // serialize packet to file -- note lack of error checking
 // must write to a binary file if we use plain "pack"
-void			 PingPacket::writeToFile (std::ostream& out) const
+void             PingPacket::writeToFile (std::ostream& out) const
 {
     if (!out) return;
 
@@ -391,7 +391,7 @@ void			 PingPacket::writeToFile (std::ostream& out) const
 
 // de serialize packet from file
 // must read from a binary file if we use plain "unpack"
-bool			 PingPacket::readFromFile(std::istream& in)
+bool             PingPacket::readFromFile(std::istream& in)
 {
     if (!in) return false;
 
@@ -401,9 +401,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
     // get packet
     in.read(buffer, sizeof(buffer));
     if ((size_t)in.gcount() < sizeof(buffer))
-    {
         return false;
-    }
 
     // decode header
     const void* buf = buffer;
@@ -412,9 +410,7 @@ bool			 PingPacket::readFromFile(std::istream& in)
 
     // make sure we got the rest of the message
     if (len != in.gcount() - 4)
-    {
         return false;
-    }
 
     // unpack body of reply
     buf = unpack(buf, serverVersion);
@@ -427,6 +423,6 @@ bool			 PingPacket::readFromFile(std::istream& in)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

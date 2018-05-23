@@ -14,13 +14,13 @@
  * Functions for time bomb.
  */
 
-#ifndef	BZF_TIME_BOMB_H
-#define	BZF_TIME_BOMB_H
+#ifndef BZF_TIME_BOMB_H
+#define BZF_TIME_BOMB_H
 
 #include "common.h"
 
-bool			timeBombBoom();
-const char*		timeBombString();
+bool            timeBombBoom();
+const char*     timeBombString();
 
 #endif /* BZF_TIME_BOMB_H */
 
@@ -28,6 +28,6 @@ const char*		timeBombString();
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -34,17 +34,17 @@ public:
      read(filename) uses FileManager to open the stream and returns
      false if the file cannot be opened.  they all call parse().
     */
-    bool				read(const std::string& filename);
+    bool                read(const std::string& filename);
     /** Read a configuration file.
      read(filename) uses FileManager to open the stream and returns
      false if the file cannot be opened.  they all call parse().
     */
-    void				read(std::istream&);
+    void                read(std::istream&);
 
     /** Write out a configuration file.
      Writes to a format that the CommandManager can understand
     */
-    bool				write(const std::string& filename);
+    bool                write(const std::string& filename);
 
 
 protected:
@@ -54,7 +54,7 @@ protected:
 
 private:
     // parse a config file
-    bool				parse(std::istream&);
+    bool                parse(std::istream&);
 
 };
 
@@ -64,6 +64,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

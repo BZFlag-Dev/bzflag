@@ -11,11 +11,11 @@
  */
 
 /* TriWallSceneNode:
- *	Encapsulates information for rendering a triangular wall.
+ *  Encapsulates information for rendering a triangular wall.
  */
 
-#ifndef	BZF_TRI_WALL_SCENE_NODE_H
-#define	BZF_TRI_WALL_SCENE_NODE_H
+#ifndef BZF_TRI_WALL_SCENE_NODE_H
+#define BZF_TRI_WALL_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
@@ -31,20 +31,20 @@ public:
                      bool makeLODs = true);
     ~TriWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int         split(const float*, SceneNode*&, SceneNode*&) const;
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		renderRadar();
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
+    void        renderRadar();
 
-    bool		inAxisBox (const Extents& exts) const;
+    bool        inAxisBox (const Extents& exts) const;
 
-    int			getVertexCount () const;
-    const		GLfloat* getVertex (int vertex) const;
+    int         getVertexCount () const;
+    const       GLfloat* getVertex (int vertex) const;
 
-    bool		cull(const ViewFrustum&) const;
+    bool        cull(const ViewFrustum&) const;
 
-    void		getRenderNodes(std::vector<RenderSet>& rnodes);
+    void        getRenderNodes(std::vector<RenderSet>& rnodes);
 
 protected:
     class Geometry : public RenderNode
@@ -58,34 +58,34 @@ protected:
                  const GLfloat* normal,
                  float uRepeats, float vRepeats);
         ~Geometry();
-        void		setStyle(int _style)
+        void        setStyle(int _style)
         {
             style = _style;
         }
-        void		render();
-        void		renderShadow();
+        void        render();
+        void        renderShadow();
         const GLfloat*  getVertex(int i) const;
-        const GLfloat*	getPosition() const
+        const GLfloat*  getPosition() const
         {
             return wall->getSphere();
         }
     private:
-        void		drawV() const;
-        void		drawVT() const;
+        void        drawV() const;
+        void        drawVT() const;
     private:
-        WallSceneNode*	wall;
-        int		style;
-        int		de;
-        const GLfloat*	normal;
+        WallSceneNode*  wall;
+        int     style;
+        int     de;
+        const GLfloat*  normal;
     public:
-        GLfloat3Array	vertex;
-        GLfloat2Array	uv;
-        int	     triangles;
+        GLfloat3Array   vertex;
+        GLfloat2Array   uv;
+        int      triangles;
     };
 
 private:
-    Geometry**		nodes;
-    Geometry*		shadowNode;
+    Geometry**      nodes;
+    Geometry*       shadowNode;
 };
 
 #endif // BZF_TRI_WALL_SCENE_NODE_H
@@ -94,6 +94,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

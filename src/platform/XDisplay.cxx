@@ -38,17 +38,17 @@ XDisplay::Rep::~Rep()
     if (display) XCloseDisplay(display);
 }
 
-void			XDisplay::Rep::ref()
+void            XDisplay::Rep::ref()
 {
     refCount++;
 }
 
-void			XDisplay::Rep::unref()
+void            XDisplay::Rep::unref()
 {
     if (--refCount <= 0) delete this;
 }
 
-Window			XDisplay::Rep::getRootWindow() const
+Window          XDisplay::Rep::getRootWindow() const
 {
     return display ? RootWindow(display, screen) : None;
 }
@@ -97,12 +97,12 @@ XDisplay::~XDisplay()
     rep->unref();
 }
 
-bool			XDisplay::isValid() const
+bool            XDisplay::isValid() const
 {
     return rep->getDisplay() != NULL;
 }
 
-bool			XDisplay::isEventPending() const
+bool            XDisplay::isEventPending() const
 {
     return (XPending(rep->getDisplay()) != 0);
 }
@@ -160,8 +160,8 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
               int width, height;
               event.window->getSize(width, height);
               if (width == xevent.xconfigure.width &&
-        	  height == xevent.xconfigure.height)
-        	return false;
+              height == xevent.xconfigure.height)
+            return false;
         */
         event.type = BzfEvent::Resize;
         event.resize.width = xevent.xconfigure.width;
@@ -253,12 +253,12 @@ bool XDisplay::setupEvent(BzfEvent& event, const XEvent& xevent) const
 }
 
 
-bool			XDisplay::getKey(const XEvent& xevent,
+bool            XDisplay::getKey(const XEvent& xevent,
                                  BzfKeyEvent& key) const
 {
     char buf[3];
     KeySym keysym;
-    XKeyEvent xkey = xevent.xkey;		// non-const copy
+    XKeyEvent xkey = xevent.xkey;       // non-const copy
     if (XLookupString(&xkey, buf, 1, &keysym, NULL) == 1)
     {
         key.ascii = buf[0];
@@ -356,12 +356,12 @@ bool			XDisplay::getKey(const XEvent& xevent,
     return true;
 }
 
-bool			XDisplay::doSetResolution(int _modeIndex)
+bool            XDisplay::doSetResolution(int _modeIndex)
 {
     return mode->set(_modeIndex);
 }
 
-bool			XDisplay::doSetDefaultResolution()
+bool            XDisplay::doSetDefaultResolution()
 {
     return mode->setDefault(getDefaultResolution());
 }
@@ -380,19 +380,19 @@ XDisplayMode::~XDisplayMode()
     // do nothing
 }
 
-XDisplayMode::ResInfo**	XDisplayMode::init(XDisplay*, int&, int&)
+XDisplayMode::ResInfo** XDisplayMode::init(XDisplay*, int&, int&)
 {
     // no switching
     return NULL;
 }
 
-bool			XDisplayMode::set(int)
+bool            XDisplayMode::set(int)
 {
     // no switching
     return false;
 }
 
-bool			XDisplayMode::setDefault(int mode)
+bool            XDisplayMode::setDefault(int mode)
 {
     return set(mode);
 }

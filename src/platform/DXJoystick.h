@@ -11,12 +11,12 @@
  */
 
 /* DXJoystick:
- *	Encapsulates a Windows DirectInput 7+ joystick with
- *	force feedback support
+ *  Encapsulates a Windows DirectInput 7+ joystick with
+ *  force feedback support
  */
 
 #ifndef BZF_DXJOY_H
-#define	BZF_DXJOY_H
+#define BZF_DXJOY_H
 
 #include "BzfJoystick.h"
 
@@ -36,43 +36,43 @@ public:
     DXJoystick();
     ~DXJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void    initJoystick(const char* joystickName);
+    bool    joystick() const;
+    void    getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    int	getNumHats();
-    void	getJoyHat(int hat, float &hatX, float &hatY);
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string &axis);
-    void	setYAxis(const std::string &axis);
-    bool	ffHasRumble() const;
-    void	ffRumble(int count,
+    int getNumHats();
+    void    getJoyHat(int hat, float &hatX, float &hatY);
+    void    getJoyDevices(std::vector<std::string> &list) const;
+    void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void    setXAxis(const std::string &axis);
+    void    setYAxis(const std::string &axis);
+    bool    ffHasRumble() const;
+    void    ffRumble(int count,
                      float delay, float duration,
                      float strong_motor, float weak_motor=0.0f);
-    bool	ffHasDirectional() const;
-    void	ffDirectionalConstant(int count,
+    bool    ffHasDirectional() const;
+    void    ffDirectionalConstant(int count,
                                   float delay, float duration,
                                   float x_direction, float y_direction,
                                   float strength);
-    void	ffDirectionalPeriodic(int count,
+    void    ffDirectionalPeriodic(int count,
                                   float delay, float duration,
                                   float x_direction, float y_direction,
                                   float amplitude, float period,
                                   PeriodicType type);
-    void	ffDirectionalResistance(float time, float coefficient,
+    void    ffDirectionalResistance(float time, float coefficient,
                                     float saturation, ResistanceType type);
 
-    int		numberOfHats;
+    int     numberOfHats;
 private:
-    DIJOYSTATE	pollDevice();
-    void	reaquireDevice();
-    void	enumerateDevices();
-    void	resetFF();
+    DIJOYSTATE  pollDevice();
+    void    reaquireDevice();
+    void    enumerateDevices();
+    void    resetFF();
 
 
 
-    void	DXError(const char* situation, HRESULT problem);
+    void    DXError(const char* situation, HRESULT problem);
 
     std::map<std::string,bool> axes;
     std::string xAxis;
@@ -97,6 +97,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

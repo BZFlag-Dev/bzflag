@@ -50,13 +50,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
             if (HUDui::getFocus())
             {
                 if (!menu->getFind())
-                {
                     menu->setSelected(menu->getSelected() - 1);
-                }
                 else
-                {
                     menu->setFind(false);
-                }
             }
             return true;
         }
@@ -65,13 +61,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
             if (HUDui::getFocus())
             {
                 if (!menu->getFind())
-                {
                     menu->setSelected(menu->getSelected() + 1);
-                }
                 else
-                {
                     menu->setFind(false);
-                }
             }
             return true;
         }
@@ -80,13 +72,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
             if (HUDui::getFocus())
             {
                 if (!menu->getFind())
-                {
                     menu->setSelected(menu->getSelected() - ServerMenu::NumItems);
-                }
                 else
-                {
                     menu->setFind(false);
-                }
             }
             return true;
         }
@@ -95,13 +83,9 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
             if (HUDui::getFocus())
             {
                 if (!menu->getFind())
-                {
                     menu->setSelected(menu->getSelected() + ServerMenu::NumItems);
-                }
                 else
-                {
                     menu->setFind(false);
-                }
             }
             return true;
         }
@@ -110,9 +94,7 @@ bool ServerMenuDefaultKey::keyPress(const BzfKeyEvent& key)
     else if (key.ascii == '\t')
     {
         if (HUDui::getFocus())
-        {
             menu->setSelected(menu->getSelected() + 1);
-        }
         return true;
     }
     else if (key.ascii == '/')
@@ -227,9 +209,7 @@ ServerMenu::ServerMenu()
     , lastHeight(0)
 {
     if (debugLevel > 0)
-    {
         listFilter.print();
-    }
 
     // add controls
     addLabel("Servers", "");
@@ -240,22 +220,22 @@ ServerMenu::ServerMenu()
     addLabel("Blue", "");
     addLabel("Purple", "");
     addLabel("Observers", "");
-    addLabel("", "");			// max shots
-    addLabel("", "");			// capture-the-flag/free-style/rabbit chase
-    addLabel("", "");			// super-flags
-    addLabel("", "");			// antidote-flag
-    addLabel("", "");			// shaking time
-    addLabel("", "");			// shaking wins
-    addLabel("", "");			// jumping
-    addLabel("", "");			// ricochet
-    addLabel("", "");			// inertia
-    addLabel("", "");			// time limit
-    addLabel("", "");			// max team score
-    addLabel("", "");			// max player score
-    addLabel("", "");			// cached status
-    addLabel("", "");			// cached age
-    addLabel("", "");			// search status
-    addLabel("", "");			// page readout
+    addLabel("", "");           // max shots
+    addLabel("", "");           // capture-the-flag/free-style/rabbit chase
+    addLabel("", "");           // super-flags
+    addLabel("", "");           // antidote-flag
+    addLabel("", "");           // shaking time
+    addLabel("", "");           // shaking wins
+    addLabel("", "");           // jumping
+    addLabel("", "");           // ricochet
+    addLabel("", "");           // inertia
+    addLabel("", "");           // time limit
+    addLabel("", "");           // max team score
+    addLabel("", "");           // max player score
+    addLabel("", "");           // cached status
+    addLabel("", "");           // cached age
+    addLabel("", "");           // search status
+    addLabel("", "");           // page readout
     status = (HUDuiLabel*)(getControls()[NumReadouts - 2]);
     pageLabel = (HUDuiLabel*)(getControls()[NumReadouts - 1]);
 
@@ -315,9 +295,7 @@ void ServerMenu::setFind(bool mode, bool clear)
     const std::string oldFilterSource = listFilter.getSource();
 
     if (clear)
-    {
         search->setString("");
-    }
 
     if (mode)   // filter is being typed in
     {
@@ -329,9 +307,7 @@ void ServerMenu::setFind(bool mode, bool clear)
         listFilter.parse(search->getString());
         BZDB.set("listFilter", search->getString());
         if (listFilter.getSource().empty())
-        {
             setFindLabel("Press '/' to search");
-        }
         else
         {
             std::string filter_number;
@@ -350,9 +326,7 @@ void ServerMenu::setFind(bool mode, bool clear)
     }
 
     if (debugLevel > 0)
-    {
         listFilter.print();
-    }
 
     newfilter = (listFilter.getSource() != oldFilterSource);
 }
@@ -367,9 +341,7 @@ void ServerMenu::setFindIndex(int index)
         search->setString(BZDB.get(name));
     }
     else
-    {
         search->setString("");
-    }
 
     setFind(false);
 }
@@ -392,15 +364,13 @@ void ServerMenu::toggleFavView()
 void ServerMenu::setFav(bool fav)
 {
     if (selectedIndex < 0 || (int)serverList.size() <= selectedIndex)
-        return;	// no such entry (server list may be empty)
+        return; // no such entry (server list may be empty)
     const ServerItem& item = serverList.getServers()[selectedIndex];
     std::string addrname = item.getAddrName();
     ServerListCache *cache = ServerListCache::get();
     ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
     if (i != cache->end())
-    {
         i->second.favorite = fav;
-    }
     else
     {
         // FIXME  should not ever come here, but what to do?
@@ -428,9 +398,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 
     // ignore if no change
     if (!forcerefresh && selectedIndex == index)
-    {
         return;
-    }
 
     // update selected index and get old and new page numbers
     const int oldPage = (selectedIndex < 0) ? -1 : (selectedIndex / NumItems);
@@ -474,31 +442,19 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
                     }
                     // jumping?
                     if (gameOptions & JumpingGameStyle)
-                    {
                         fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_MAGENTA "J ";
-                    }
                     else
-                    {
                         fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "J ";
-                    }
                     // superflags ?
                     if (gameOptions & SuperFlagGameStyle)
-                    {
                         fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_BLUE "F ";
-                    }
                     else
-                    {
                         fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "F ";
-                    }
                     // ricochet?
                     if (gameOptions & RicochetGameStyle)
-                    {
                         fullLabel += ANSI_STR_BRIGHT ANSI_STR_FG_GREEN "R";
-                    }
                     else
-                    {
                         fullLabel += ANSI_STR_DIM ANSI_STR_FG_WHITE "R";
-                    }
                     fullLabel += ANSI_STR_RESET "   ";
 
                     // colorize server descriptions by shot counts
@@ -555,9 +511,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
                 label->setDarker(server.cached);
             }
             else
-            {
                 label->setString("");
-            }
         }
 
         // change page label
@@ -588,9 +542,7 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
 void ServerMenu::pick()
 {
     if (serverList.size() == 0)
-    {
         return;
-    }
 
     // get server info
     const ServerItem& item = serverList.getServers()[selectedIndex];
@@ -709,9 +661,7 @@ void ServerMenu::pick()
                                                   &dropArgs);
     }
     else
-    {
         ((HUDuiLabel*)listHUD[12])->setString("");
-    }
 
     if ((ping.gameOptions & ShakableGameStyle) && ping.shakeWins != 0)
     {
@@ -727,45 +677,27 @@ void ServerMenu::pick()
                                                   &dropArgs);
     }
     else
-    {
         ((HUDuiLabel*)listHUD[12])->setString("");
-    }
 
     if (ping.gameOptions & NoTeamKillsGameStyle)
-    {
         ((HUDuiLabel*)listHUD[13])->setString("No Teamkills");
-    }
     else
-    {
         ((HUDuiLabel*)listHUD[13])->setString("");
-    }
 
     if (ping.gameOptions & JumpingGameStyle)
-    {
         ((HUDuiLabel*)listHUD[14])->setString("Jumping");
-    }
     else
-    {
         ((HUDuiLabel*)listHUD[14])->setString("");
-    }
 
     if (ping.gameOptions & RicochetGameStyle)
-    {
         ((HUDuiLabel*)listHUD[15])->setString("Ricochet");
-    }
     else
-    {
         ((HUDuiLabel*)listHUD[15])->setString("");
-    }
 
     if (ping.gameOptions & HandicapGameStyle)
-    {
         ((HUDuiLabel*)listHUD[16])->setString("Handicap");
-    }
     else
-    {
         ((HUDuiLabel*)listHUD[16])->setString("");
-    }
 
     if (ping.maxTime != 0)
     {
@@ -780,9 +712,7 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[17])->setString("Time limit: {1}", &pingArgs);
     }
     else
-    {
         ((HUDuiLabel*)listHUD[17])->setString("");
-    }
 
     if (ping.maxTeamScore != 0)
     {
@@ -792,9 +722,7 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[18])->setString("Max team score: {1}", &scoreArgs);
     }
     else
-    {
         ((HUDuiLabel*)listHUD[18])->setString("");
-    }
 
 
     if (ping.maxPlayerScore != 0)
@@ -805,9 +733,7 @@ void ServerMenu::pick()
         ((HUDuiLabel*)listHUD[19])->setString("Max player score: {1}", &scoreArgs);
     }
     else
-    {
         ((HUDuiLabel*)listHUD[19])->setString("");
-    }
 
     if (item.cached)
     {
@@ -876,9 +802,7 @@ void ServerMenu::execute()
     }
 
     if (selectedIndex < 0 || selectedIndex >= (int)serverList.size())
-    {
         return;
-    }
 
     // update startup info
     StartupInfo* info = getStartupInfo();
@@ -997,9 +921,7 @@ void ServerMenu::resize(int _width, int _height)
             label->setPosition(x - offset, y);
         }
         else
-        {
             label->setPosition(x, y);
-        }
     }
 }
 
@@ -1024,9 +946,7 @@ void ServerMenu::updateStatus()
 
     // don't run unnecessarily
     if (realServersFound == realServerList.size() && !newfilter)
-    {
         return;
-    }
 
     // do filtering and counting
     int playerCount = 0;
@@ -1044,9 +964,7 @@ void ServerMenu::updateStatus()
         observerCount += ping.observerCount;
         // filter is already lower case.  do case insensitive matching.
         if (listFilter.check(item) && (!favView || item.favorite))
-        {
             serverList.addToList(item);
-        }
     }
     newfilter = false;
 
@@ -1062,13 +980,9 @@ void ServerMenu::updateStatus()
     sprintf(buffer, "%d", observerCount);
     args.push_back(buffer);
     if (favView)
-    {
         setStatus("Favorite servers: {1}/{2}  ({3} players, {4} observers)", &args);
-    }
     else
-    {
         setStatus("Servers found: {1}/{2}  ({3} players, {4} observers)", &args);
-    }
     pageLabel->setString("");
     selectedIndex = -1;
     setSelected(0);
@@ -1089,6 +1003,6 @@ void ServerMenu::playingCB(void* _self)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

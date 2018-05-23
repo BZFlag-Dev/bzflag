@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZDBLOCAL_H
-#define	BZDBLOCAL_H
+#ifndef BZDBLOCAL_H
+#define BZDBLOCAL_H
 
 #include "common.h"
 
@@ -300,6 +300,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

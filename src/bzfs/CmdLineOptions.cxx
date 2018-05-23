@@ -325,17 +325,11 @@ static void checkArgc(int count, int& i, int argc, const char* option, const cha
     if ((i+count) >= argc)
     {
         if (count > 1)
-        {
             std::cerr << count << " argument(s) expected for " << option << '\n';
-        }
         else if (type != NULL)
-        {
             std::cerr << type << " argument expected for " << option << '\n';
-        }
         else
-        {
             std::cerr << "argument expected for " << option << '\n';
-        }
         usage("bzfs");
     }
 
@@ -368,9 +362,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
         while (*++scan)
         {
             if (*scan == ',')
-            {
                 commaCount++;
-            }
         }
         if (commaCount != 5)
         {
@@ -381,9 +373,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
         // no team size limit by default for real teams, set it to max players
         int i;
         for (i = 0; i < CtfTeams ; i++)
-        {
             options.maxTeam[i] = maxRealPlayers;
-        }
         // allow 5 Observers by default
         options.maxTeam[ObserverTeam] = 5;
 
@@ -402,9 +392,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
                 // got a number
                 countCount++;
                 if (count < 0)
-                {
                     options.maxTeam[i] = 0;
-                }
                 else
                 {
                     if (count > maxRealPlayers)
@@ -415,9 +403,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
                             options.maxTeam[i] = maxRealPlayers;
                     }
                     else
-                    {
                         options.maxTeam[i] = uint8_t(count);
-                    }
                 }
             } // end if tail != scan
             while (*tail && *tail != ',') tail++;
@@ -429,14 +415,10 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
         for (i = 0; i < CtfTeams; i++)
         {
             if (options.maxTeam[i] != 0)
-            {
                 allZero = false;
-            }
         }
         if (allZero)
-        {
             options.maxTeam[RogueTeam] = MaxPlayers;
-        }
 
         // if all counts explicitly listed then add 'em up and set maxRealPlayers
         // (unless max total players was explicitly set)
@@ -444,9 +426,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
         {
             maxRealPlayers = 0;
             for (i = 0; i < CtfTeams ; i++)
-            {
                 maxRealPlayers += options.maxTeam[i];
-            }
         }
 
     }
@@ -461,19 +441,13 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
             return false;
         }
         if (count < 1)
-        {
             maxRealPlayers = 1;
-        }
         else
         {
             if (count > MaxPlayers)
-            {
                 maxRealPlayers = MaxPlayers;
-            }
             else
-            {
                 maxRealPlayers = uint8_t(count);
-            }
         }
         // limit max team size to max players
         for (int i = 0; i < CtfTeams ; i++)
@@ -485,9 +459,7 @@ static bool parsePlayerCount(const char *argv, CmdLineOptions &options)
 
     maxPlayers = maxRealPlayers + options.maxTeam[ObserverTeam];
     if (maxPlayers > MaxPlayers)
-    {
         maxPlayers = MaxPlayers;
-    }
 
     return true;
 }
@@ -526,9 +498,7 @@ static char **parseConfFile( const char *file, int &ac)
                     endPos = line.find_first_of('"', startPos);
                 }
                 else
-                {
                     endPos = line.find_first_of("\t \r\n", startPos+1);
-                }
                 if (endPos < 0)
                     endPos = line.length();
                 tokens.push_back(line.substr(startPos,endPos-startPos));
@@ -584,9 +554,7 @@ static char **parseWorldOptions (const char *file, int &ac)
             std::string line = buffer;
             int startPos = line.find_first_not_of("\t \r\n");
             if (strncasecmp ("end", line.c_str() + startPos, 3) == 0)
-            {
                 break;
-            }
 
             while ((startPos >= 0) && (line.at(startPos) != '#'))
             {
@@ -597,9 +565,7 @@ static char **parseWorldOptions (const char *file, int &ac)
                     endPos = line.find_first_of('"', startPos);
                 }
                 else
-                {
                     endPos = line.find_first_of("\t \r\n", startPos+1);
-                }
                 if (endPos < 0)
                     endPos = line.length();
                 tokens.push_back(line.substr(startPos,endPos-startPos));
@@ -656,9 +622,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         {
             checkArgc(1, i, argc, argv[i]);
             if ((options.advertisemsg != "") || (strlen (argv[i]) == 0))
-            {
                 options.advertisemsg += "\\n";
-            }
             options.advertisemsg += argv[i];
         }
         else if (strcmp(argv[i], "-advertise") == 0)
@@ -670,9 +634,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                 options.advertiseGroups = argv[i];
         }
         else if (strcmp(argv[i], "-autoTeam") == 0)
-        {
             options.autoTeam = true;
-        }
         else if (strcmp(argv[i], "-b") == 0)
         {
             // random rotation to boxes in capture-the-flag game
@@ -758,9 +720,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                 i++;
             }
             else
-            {
                 checkArgc(1, i, argc, argv[i], "integer");
-            }
         }
         else if (strcmp(argv[i], "-disableBots") == 0)
         {
@@ -774,17 +734,13 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             // option beginning with -d so that -dd, -ddd, etc. work
             const char num = argv[i][2];
             if ((num >= '0') && (num <= '9') && (argv[i][3] == 0))
-            {
                 debugLevel = num - '0';
-            }
             else
             {
                 int count = 0;
                 const char *scan;
                 for (scan = (argv[i] + 1); *scan == 'd'; scan++)
-                {
                     count++;
-                }
                 if (*scan != '\0')
                 {
                     std::cerr << "ERROR: bad argument [" << argv[i] << "]" << std::endl;
@@ -827,9 +783,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             options.filterSimple = true;
         }
         else if (strcmp(argv[i], "-g") == 0)
-        {
             options.oneGameOnly = true;
-        }
         else if (strcmp(argv[i], "-gndtex") == 0)
         {
             checkArgc(1, i, argc, argv[i]);
@@ -846,13 +800,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             logDebugMessage(1,"using group file \"%s\"\n", argv[i]);
         }
         else if (strcmp(argv[i], "-h") == 0)
-        {
             options.randomHeights = true;
-        }
         else if (strcmp(argv[i], "-help") == 0)
-        {
             extraUsage(argv[0]);
-        }
         else if (strcmp(argv[i], "-helpmsg") == 0)
         {
             checkFromWorldFile(argv[i], fromWorldFile);
@@ -913,7 +863,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         {
             checkArgc(1, i, argc, argv[i]);
             std::vector<std::string> a = TextUtils::tokenize(argv[i],std::string(","), 2);
-            CmdLineOptions::pluginDef	pDef;
+            CmdLineOptions::pluginDef   pDef;
             if (a.size() >= 1)
                 pDef.plugin = a[0];
             if (a.size() >= 2)
@@ -985,9 +935,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             options.suppressMasterBanList = true;
         }
         else if (strcmp(argv[i],"-noradar") == 0)
-        {
             BZDB.set(StateDatabase::BZDB_RADARLIMIT, "-1.0");
-        }
         else if (strcmp(argv[i],"-masterBanURL") == 0)
         {
             /* if this is the first master ban url, override the default
@@ -1074,33 +1022,19 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             }
 
             if (compare_nocase(args[0], "bantime") == 0)
-            {
                 options.banTime = (unsigned short int)atoi(args[1].c_str());
-            }
             else if (compare_nocase(args[0], "vetotime") == 0)
-            {
                 options.vetoTime = (unsigned short int)atoi(args[1].c_str());
-            }
             else if (compare_nocase(args[0], "votepercentage") == 0)
-            {
                 options.votePercentage = (float)atof(args[1].c_str());
-            }
             else if (compare_nocase(args[0], "voterepeattime") == 0)
-            {
                 options.voteRepeatTime = (unsigned short int)atoi(args[1].c_str());
-            }
             else if (compare_nocase(args[0], "votesrequired") == 0)
-            {
                 options.votesRequired = (unsigned short int)atoi(args[1].c_str());
-            }
             else if (compare_nocase(args[0], "votetime") == 0)
-            {
                 options.voteTime = (unsigned short int)atoi(args[1].c_str());
-            }
             else
-            {
                 std::cerr << "unknown variable for -poll, skipping";
-            }
 #ifdef PRINTSCORE
         }
         else if (strcmp(argv[i], "-printscore") == 0)
@@ -1235,9 +1169,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             options.reportPipe = argv[i];
         }
         else if (strcmp(argv[i], "-tkannounce") == 0)
-        {
             options.tkAnnounce = true;
-        }
         else if (strcmp(argv[i], "+s") == 0 || strcmp(argv[i], "-s") == 0)
         {
             // with +s all flags are required to exist all the time
@@ -1250,9 +1182,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                     options.numExtraFlags = 16;
             }
             else
-            {
                 options.numExtraFlags = 16;
-            }
         }
         else if (strcmp(argv[i], "-sa") == 0)
         {
@@ -1339,9 +1269,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
         {
             checkArgc(1, i, argc, argv[i]);
             if ((options.servermsg != "") || (strlen (argv[i]) == 0))
-            {
                 options.servermsg += "\\n";
-            }
             options.servermsg += argv[i];
         }
         else if (strcmp(argv[i], "-st") == 0)
@@ -1360,9 +1288,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                 std::cerr << "using maximum shake timeout of " << 0.1f * (float)options.shakeTimeout << std::endl;
             }
             else
-            {
                 options.shakeTimeout = uint16_t(timeout * 10.0f + 0.5f);
-            }
             options.gameOptions |= int(ShakableGameStyle);
         }
         else if (strcmp(argv[i], "-sw") == 0)
@@ -1381,9 +1307,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                 std::cerr << "using maximum ttl of " << options.shakeWins << std::endl;
             }
             else
-            {
                 options.shakeWins = uint16_t(count);
-            }
             options.gameOptions |= int(ShakableGameStyle);
         }
         else if (strcmp(argv[i], "-synctime") == 0)
@@ -1433,9 +1357,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             const std::string timeStr = argv[i];
             // If there is no colon in the time, consider it to be the time limit in seconds
             if (timeStr.find(':') == std::string::npos)
-            {
                 options.timeLimit = (float)atof(timeStr.c_str());
-            }
             // Otherwise treat it as the end time
             else
             {
@@ -1471,9 +1393,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                     options.timeLimit = (float)((86400 - secsToday) + secsTill); //secs left today + till req. time
                 }
                 else
-                {
                     options.timeLimit = (float)(secsTill - secsToday);
-                }
             }
             if (options.timeLimit <= 0.0f)
             {
@@ -1483,9 +1403,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             logDebugMessage(1,"using time limit of %d seconds\n", (int)options.timeLimit);
         }
         else if (strcmp(argv[i], "-timemanual") == 0)
-        {
             options.timeManualStart = true;
-        }
         else if (strcmp(argv[i], "-tk") == 0)
         {
             // team killer does not die
@@ -1590,14 +1508,10 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
     // get player counts.  done after other arguments because we need
     // to ignore counts for rogues if rogues aren't allowed.
     if ((playerCountArg > 0) && !parsePlayerCount(argv[playerCountArg], options))
-    {
         usage(argv[0]);
-    }
     if ((playerCountArg2 > 0)
             && !parsePlayerCount(argv[playerCountArg2], options))
-    {
         usage(argv[0]);
-    }
 
     return;
 }
@@ -1607,9 +1521,7 @@ static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
                                 const std::set<FlagType*>& forbidden)
 {
     if (forbidden.find(flagType) != forbidden.end())
-    {
         return 0;
-    }
     // tally zone team flags
     int count = 0;
     const ZoneList& zl = entryZones.getZoneList();
@@ -1620,9 +1532,7 @@ static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
         for (zfmIt = zfm.begin(); zfmIt != zfm.end(); ++zfmIt)
         {
             if (zfmIt->first == flagType)
-            {
                 count += zfmIt->second;
-            }
         }
     }
     return count;
@@ -1634,9 +1544,7 @@ static int addZoneTeamFlags(int startIndex,
                             const std::set<FlagType*>& forbidden)
 {
     if (forbidden.find(flagType) != forbidden.end())
-    {
         return startIndex;
-    }
     // add zone team flags
     const ZoneList& zl = entryZones.getZoneList();
     for (int z = 0; z < (int)zl.size(); z++)
@@ -1769,13 +1677,9 @@ void finalizeParsing(int UNUSED(argc), char **argv,
                 usage(argv[0]);
             }
             else if (fDesc->flagTeam != NoTeam)
-            {
                 options.numTeamFlags[fDesc->flagTeam] += rptCnt;
-            }
             else
-            {
                 options.flagCount[fDesc] += rptCnt;
-            }
         }
     }
     storedFlagCounts.clear();
@@ -1809,21 +1713,13 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
     // first disallow flags inconsistent with game style
     if (options.gameOptions & JumpingGameStyle)
-    {
         forbidden.insert(Flags::Jumping);
-    }
     else
-    {
         forbidden.insert(Flags::NoJumping);
-    }
     if (options.gameOptions & RicochetGameStyle)
-    {
         forbidden.insert(Flags::Ricochet);
-    }
     if (OBSTACLEMGR.getTeles().size() == 0)
-    {
         forbidden.insert(Flags::PhantomZone);
-    }
     if (!hasTeam)
     {
         forbidden.insert(Flags::Genocide);
@@ -1838,21 +1734,13 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         forbidden.insert(Flags::PurpleTeam);
     }
     if (options.maxTeam[RedTeam] <= 0)
-    {
         forbidden.insert(Flags::RedTeam);
-    }
     if (options.maxTeam[GreenTeam] <= 0)
-    {
         forbidden.insert(Flags::GreenTeam);
-    }
     if (options.maxTeam[BlueTeam] <= 0)
-    {
         forbidden.insert(Flags::BlueTeam);
-    }
     if (options.maxTeam[PurpleTeam] <= 0)
-    {
         forbidden.insert(Flags::PurpleTeam);
-    }
 
     // void the forbidden flags
     std::set<FlagType*>::const_iterator sit;
@@ -1881,9 +1769,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
             if ((options.maxTeam[col] > 0) &&
                     (options.numTeamFlags[col] <= 0) &&
                     (zoneTeamFlagCounts[col] <= 0))
-            {
                 options.numTeamFlags[col] = 1;
-            }
         }
     }
 
@@ -1895,15 +1781,11 @@ void finalizeParsing(int UNUSED(argc), char **argv,
                 it != FlagType::getFlagMap().end(); ++it)
         {
             if (!options.flagDisallowed[it->second])
-            {
                 options.numAllowedFlags++;
-            }
         }
         // if none allowed then no extra flags either
         if (options.numAllowedFlags == 0)
-        {
             options.numExtraFlags = 0;
-        }
         else
         {
             // types of extra flags allowed
@@ -1933,17 +1815,13 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         for (int col = RedTeam; col <= PurpleTeam; col++)
         {
             if (options.maxTeam[col] > 0)
-            {
                 numFlags += options.numTeamFlags[col];
-            }
         }
     }
     // allocate space for normal flags
     for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
             it != FlagType::getFlagMap().end(); ++it)
-    {
         numFlags += options.flagCount[it->second];
-    }
     // allocate space for zone flags (including teams flags)
     for (int z = 0; z < (int)zl.size(); z++)
     {
@@ -1953,9 +1831,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         for (zfmIt = zfm.begin(); zfmIt != zfm.end(); ++zfmIt)
         {
             if (forbidden.find(zfmIt->first) == forbidden.end())
-            {
                 numFlags += zfmIt->second;
-            }
         }
     }
 
@@ -1969,41 +1845,31 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         {
             f = addZoneTeamFlags(f, Flags::RedTeam, entryZones, forbidden);
             for (int n = 0; n < options.numTeamFlags[RedTeam]; n++)
-            {
                 FlagInfo::get(f++)->setRequiredFlag(Flags::RedTeam);
-            }
         }
         if (options.maxTeam[GreenTeam] > 0)
         {
             f = addZoneTeamFlags(f, Flags::GreenTeam, entryZones, forbidden);
             for (int n = 0; n < options.numTeamFlags[GreenTeam]; n++)
-            {
                 FlagInfo::get(f++)->setRequiredFlag(Flags::GreenTeam);
-            }
         }
         if (options.maxTeam[BlueTeam] > 0)
         {
             f = addZoneTeamFlags(f, Flags::BlueTeam, entryZones, forbidden);
             for (int n = 0; n < options.numTeamFlags[BlueTeam]; n++)
-            {
                 FlagInfo::get(f++)->setRequiredFlag(Flags::BlueTeam);
-            }
         }
         if (options.maxTeam[PurpleTeam] > 0)
         {
             f = addZoneTeamFlags(f, Flags::PurpleTeam, entryZones, forbidden);
             for (int n = 0; n < options.numTeamFlags[PurpleTeam]; n++)
-            {
                 FlagInfo::get(f++)->setRequiredFlag(Flags::PurpleTeam);
-            }
         }
     }
 
     // super flags?
     if (f < numFlags)
-    {
         options.gameOptions |= int(SuperFlagGameStyle);
-    }
 
     // shot limits
     std::map<std::string, int>::iterator msiitr;
@@ -2077,9 +1943,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     if (options.gameType & ClassicCTF)
     {
         for (int col = RedTeam; col <= PurpleTeam; col++)
-        {
             options.numTeamFlags[col] += zoneTeamFlagCounts[col];
-        }
     }
 
     // debugging
@@ -2131,6 +1995,6 @@ bool checkCommaList (const char *list, int maxlen)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

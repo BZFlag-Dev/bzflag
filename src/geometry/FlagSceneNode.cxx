@@ -33,16 +33,16 @@
 #include "SceneRenderer.h"
 
 
-static const int	waveLists = 8;		// GL list count
-static int		flagChunks = 8;		// draw flag as 8 quads
-static bool		geoPole = false;	// draw the pole as quads
-static bool		realFlag = false;	// don't use billboarding
-static bool		flagLists = false;	// use display lists
-static int		triCount = 0;		// number of rendered triangles
+static const int    waveLists = 8;      // GL list count
+static int      flagChunks = 8;     // draw flag as 8 quads
+static bool     geoPole = false;    // draw the pole as quads
+static bool     realFlag = false;   // don't use billboarding
+static bool     flagLists = false;  // use display lists
+static int      triCount = 0;       // number of rendered triangles
 
-static const GLfloat	Unit = 0.8f;		// meters
-static const GLfloat	Width = 1.5f * Unit;
-static const GLfloat	Height = Unit;
+static const GLfloat    Unit = 0.8f;        // meters
+static const GLfloat    Width = 1.5f * Unit;
+static const GLfloat    Height = Unit;
 
 
 /******************************************************************************/
@@ -102,13 +102,9 @@ inline void WaveGeometry::executeNoList() const
 inline void WaveGeometry::execute() const
 {
     if (flagLists)
-    {
         glCallList(glList);
-    }
     else
-    {
         executeNoList();
-    }
     return;
 }
 
@@ -125,24 +121,18 @@ void WaveGeometry::waveFlag(float dt)
 {
     int i;
     if (!refCount)
-    {
         return;
-    }
     ripple1 += dt * RippleSpeed1;
     if (ripple1 >= 2.0f * M_PI)
-    {
         ripple1 -= (float)(2.0 * M_PI);
-    }
     ripple2 += dt * RippleSpeed2;
     if (ripple2 >= 2.0f * M_PI)
-    {
         ripple2 -= (float)(2.0 * M_PI);
-    }
     float sinRipple2  = sinf(ripple2);
     float sinRipple2S = sinf((float)(ripple2 + 1.16 * M_PI));
-    float	wave0[maxChunks];
-    float	wave1[maxChunks];
-    float	wave2[maxChunks];
+    float   wave0[maxChunks];
+    float   wave1[maxChunks];
+    float   wave2[maxChunks];
     for (i = 0; i <= flagChunks; i++)
     {
         const float x      = float(i) / float(flagChunks);
@@ -190,9 +180,7 @@ void WaveGeometry::waveFlag(float dt)
         glEndList();
     }
     else
-    {
         glList = INVALID_GL_LIST_ID;
-    }
 
     triCount = flagChunks * 2;
 
@@ -203,9 +191,7 @@ void WaveGeometry::waveFlag(float dt)
 void WaveGeometry::freeFlag()
 {
     if ((refCount > 0) && (glList != INVALID_GL_LIST_ID))
-    {
         glDeleteLists(glList, 1);
-    }
     return;
 }
 
@@ -238,30 +224,26 @@ FlagSceneNode::~FlagSceneNode()
     // do nothing
 }
 
-void			FlagSceneNode::waveFlag(float dt)
+void            FlagSceneNode::waveFlag(float dt)
 {
     flagLists = BZDB.isTrue("flagLists");
     for (int i = 0; i < waveLists; i++)
-    {
         allWaves[i].waveFlag(dt);
-    }
 }
 
-void			FlagSceneNode::freeFlag()
+void            FlagSceneNode::freeFlag()
 {
     for (int i = 0; i < waveLists; i++)
-    {
         allWaves[i].freeFlag();
-    }
 }
 
-void			FlagSceneNode::move(const GLfloat pos[3])
+void            FlagSceneNode::move(const GLfloat pos[3])
 {
     setCenter(pos);
 }
 
 
-void			FlagSceneNode::setAngle(GLfloat _angle)
+void            FlagSceneNode::setAngle(GLfloat _angle)
 {
     angle = (float)(_angle * RAD2DEG);
     tilt = 0.0f;
@@ -269,7 +251,7 @@ void			FlagSceneNode::setAngle(GLfloat _angle)
 }
 
 
-void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
+void            FlagSceneNode::setWind(const GLfloat wind[3], float dt)
 {
     if (!realFlag)
     {
@@ -297,25 +279,21 @@ void			FlagSceneNode::setWind(const GLfloat wind[3], float dt)
 
         const float maxTilt = 1.5f;
         if (tilt > +maxTilt)
-        {
             tilt = +maxTilt;
-        }
         else if (tilt < -maxTilt)
-        {
             tilt = -maxTilt;
-        }
         hscl = 1.0f / sqrtf(1.0f + (tilt * tilt));
     }
     return;
 }
 
 
-void			FlagSceneNode::setBillboard(bool _billboard)
+void            FlagSceneNode::setBillboard(bool _billboard)
 {
     billboard = _billboard;
 }
 
-void			FlagSceneNode::setColor(
+void            FlagSceneNode::setColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     color[0] = r;
@@ -325,7 +303,7 @@ void			FlagSceneNode::setColor(
     transparent = (color[3] != 1.0f);
 }
 
-void			FlagSceneNode::setColor(const GLfloat* rgba)
+void            FlagSceneNode::setColor(const GLfloat* rgba)
 {
     color[0] = rgba[0];
     color[1] = rgba[1];
@@ -334,7 +312,7 @@ void			FlagSceneNode::setColor(const GLfloat* rgba)
     transparent = (color[3] != 1.0f);
 }
 
-void			FlagSceneNode::setTexture(const int texture)
+void            FlagSceneNode::setTexture(const int texture)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setTexture(texture);
@@ -342,7 +320,7 @@ void			FlagSceneNode::setTexture(const int texture)
     gstate = builder.getState();
 }
 
-void			FlagSceneNode::notifyStyleChange()
+void            FlagSceneNode::notifyStyleChange()
 {
     const int quality = RENDERER.useQuality();
     geoPole = (quality >= 1);
@@ -371,30 +349,20 @@ void			FlagSceneNode::notifyStyleChange()
         builder.resetBlending();
         builder.setStipple(1.0f);
         if (texturing)
-        {
             builder.setAlphaFunc(GL_GEQUAL, 0.9f);
-        }
         else
-        {
             builder.resetAlphaFunc();
-        }
     }
 
     if (billboard && !realFlag)
-    {
         builder.setCulling(GL_BACK);
-    }
     else
-    {
         builder.setCulling(GL_NONE);
-    }
     gstate = builder.getState();
 
     flagChunks = BZDBCache::flagChunks;
     if (flagChunks >= maxChunks)
-    {
         flagChunks = maxChunks - 1;
-    }
 }
 
 
@@ -418,9 +386,7 @@ bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
         const float* p = planes[i];
         const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
         if ((d < 0.0f) && ((d * d) > s[3]))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -448,7 +414,7 @@ FlagSceneNode::FlagRenderNode::~FlagRenderNode()
 }
 
 
-void			FlagSceneNode::FlagRenderNode::render()
+void            FlagSceneNode::FlagRenderNode::render()
 {
     float base = BZDBCache::flagPoleSize;
     float poleWidth = BZDBCache::flagPoleWidth;
@@ -461,9 +427,7 @@ void			FlagSceneNode::FlagRenderNode::render()
     myColor4fv(sceneNode->color);
 
     if (!BZDBCache::blend && (is_transparent || doing_texturing))
-    {
         myStipple(sceneNode->color[3]);
-    }
 
     glPushMatrix();
     {
@@ -491,9 +455,7 @@ void			FlagSceneNode::FlagRenderNode::render()
             myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
             if (doing_texturing)
-            {
                 glDisable(GL_TEXTURE_2D);
-            }
 
             // the pole
             const float topHeight = base + Height;
@@ -541,9 +503,7 @@ void			FlagSceneNode::FlagRenderNode::render()
             myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
             if (doing_texturing)
-            {
                 glDisable(GL_TEXTURE_2D);
-            }
 
             if (geoPole)
             {
@@ -572,13 +532,9 @@ void			FlagSceneNode::FlagRenderNode::render()
     glPopMatrix();
 
     if (doing_texturing)
-    {
         glEnable(GL_TEXTURE_2D);
-    }
     if (!BZDBCache::blend && is_transparent)
-    {
         myStipple(0.5f);
-    }
 }
 
 
@@ -586,6 +542,6 @@ void			FlagSceneNode::FlagRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

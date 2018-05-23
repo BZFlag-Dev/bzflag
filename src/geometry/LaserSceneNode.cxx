@@ -28,7 +28,7 @@
 
 #include "vectors.h"
 
-const GLfloat		LaserRadius = 0.1f;
+const GLfloat       LaserRadius = 0.1f;
 
 LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
     texturing(false),
@@ -68,7 +68,7 @@ LaserSceneNode::~LaserSceneNode()
     // do nothing
 }
 
-void			LaserSceneNode::setTexture(const int texture)
+void            LaserSceneNode::setTexture(const int texture)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setTexture(texture);
@@ -76,13 +76,13 @@ void			LaserSceneNode::setTexture(const int texture)
     gstate = builder.getState();
 }
 
-bool			LaserSceneNode::cull(const ViewFrustum&) const
+bool            LaserSceneNode::cull(const ViewFrustum&) const
 {
     // no culling
     return false;
 }
 
-void			LaserSceneNode::notifyStyleChange()
+void            LaserSceneNode::notifyStyleChange()
 {
     texturing = BZDBCache::texture && BZDBCache::blend;
     OpenGLGStateBuilder builder(gstate);
@@ -101,7 +101,7 @@ void			LaserSceneNode::notifyStyleChange()
     gstate = builder.getState();
 }
 
-void			LaserSceneNode::addRenderNodes(
+void            LaserSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     renderer.addRenderNode(&renderNode, &gstate);
@@ -111,7 +111,7 @@ void			LaserSceneNode::addRenderNodes(
 // LaserSceneNode::LaserRenderNode
 //
 
-GLfloat			LaserSceneNode::LaserRenderNode::geom[6][2];
+GLfloat         LaserSceneNode::LaserRenderNode::geom[6][2];
 
 LaserSceneNode::LaserRenderNode::LaserRenderNode(
     const LaserSceneNode* _sceneNode) :
@@ -139,23 +139,15 @@ void LaserSceneNode::LaserRenderNode::render()
 {
     const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
     if (blackFog)
-    {
         glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
-    }
 
     if (RENDERER.useQuality() >= 3)
-    {
         renderGeoLaser();
-    }
     else
-    {
         renderFlatLaser();
-    }
 
     if (blackFog)
-    {
         glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
-    }
 }
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
@@ -301,6 +293,6 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

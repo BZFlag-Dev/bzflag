@@ -32,7 +32,7 @@ HUDuiTextureLabel::~HUDuiTextureLabel()
 {
 }
 
-void			HUDuiTextureLabel::setTexture(const int t)
+void            HUDuiTextureLabel::setTexture(const int t)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setTexture(t);
@@ -41,16 +41,14 @@ void			HUDuiTextureLabel::setTexture(const int t)
     texture = t;
 }
 
-void			HUDuiTextureLabel::doRender()
+void            HUDuiTextureLabel::doRender()
 {
     if (getFontFace() < 0) return;
 
     // render string if texture filter is Off, otherwise draw the texture
     // about the same size and position as the string would be.
     if (OpenGLTexture::getMaxFilter() == OpenGLTexture::Off || !gstate.isTextured() || texture < 0)
-    {
         HUDuiLabel::doRender();
-    }
     else     // why use a font? it's an image, use the image size, let every pixel be seen!!! :)
     {
         const float _height = getFontSize(); //texture.getHeight();//
@@ -80,6 +78,6 @@ void			HUDuiTextureLabel::doRender()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

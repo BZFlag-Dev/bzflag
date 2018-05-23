@@ -38,11 +38,11 @@ namespace MsgStrings
 const char *strMsgCode(uint16_t code);
 
 void init();
-void reset();			// clean up all tracked state
-void useDNS(bool);		// look up hostnames based on IPs?
-void showMotto(bool);		// show player mottos next to names?
-void colorize(bool);		// use ANSI color codes?
-void trackState(bool);	// track game state?
+void reset();           // clean up all tracked state
+void useDNS(bool);      // look up hostnames based on IPs?
+void showMotto(bool);       // show player mottos next to names?
+void colorize(bool);        // use ANSI color codes?
+void trackState(bool);  // track game state?
 
 int knownPacketTypes();
 

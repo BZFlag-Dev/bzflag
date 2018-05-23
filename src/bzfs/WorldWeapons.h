@@ -46,20 +46,21 @@ public:
     int packSize() const;
     void *pack(void *buf) const;
 
-    uint32_t fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
+    uint32_t fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID,
+                      TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
     struct Weapon
     {
-        const FlagType	*type;
-        TeamColor		teamColor;
-        float		origin[3];
-        float		direction;
-        float		tilt;
-        float	initDelay;
+        const FlagType  *type;
+        TeamColor       teamColor;
+        float       origin[3];
+        float       direction;
+        float       tilt;
+        float   initDelay;
         std::vector<float>  delay;
-        TimeKeeper		nextTime;
-        int			nextDelay;
+        TimeKeeper      nextTime;
+        int         nextDelay;
     };
 
     std::vector<Weapon*> weapons;
@@ -80,11 +81,11 @@ public:
     virtual void process ( bz_EventData *eventData );
 
 protected:
-    FlagType	*type;
-    float		origin[3];
-    float		direction;
-    float		tilt;
-    bz_eTeamType	team;
+    FlagType    *type;
+    float       origin[3];
+    float       direction;
+    float       tilt;
+    bz_eTeamType    team;
 };
 
 #endif
@@ -93,6 +94,6 @@ protected:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

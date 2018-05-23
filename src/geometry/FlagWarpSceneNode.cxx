@@ -30,9 +30,9 @@
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
 
-const float		FlagWarpSize =	7.5;		// meters
-const GLfloat		FlagWarpAlpha = 0.5f;
-const GLfloat		FlagWarpSceneNode::color[7][3] =
+const float     FlagWarpSize =  7.5;        // meters
+const GLfloat       FlagWarpAlpha = 0.5f;
+const GLfloat       FlagWarpSceneNode::color[7][3] =
 {
     { 0.25, 1.0, 0.25 },
     { 0.25, 0.25, 1.0 },
@@ -56,17 +56,17 @@ FlagWarpSceneNode::~FlagWarpSceneNode()
     // do nothing
 }
 
-void			FlagWarpSceneNode::setSizeFraction(GLfloat _size)
+void            FlagWarpSceneNode::setSizeFraction(GLfloat _size)
 {
     size = _size;
 }
 
-void			FlagWarpSceneNode::move(const GLfloat pos[3])
+void            FlagWarpSceneNode::move(const GLfloat pos[3])
 {
     setCenter(pos);
 }
 
-GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
+GLfloat         FlagWarpSceneNode::getDistance(const GLfloat* eye) const
 {
     // shift position of warp down a little because a flag and it's warp
     // are at the same position but we want the warp to appear below the
@@ -77,7 +77,7 @@ GLfloat			FlagWarpSceneNode::getDistance(const GLfloat* eye) const
            (eye[2] - mySphere[2] + 0.2f) * (eye[2] - mySphere[2] + 0.2f);
 }
 
-void			FlagWarpSceneNode::notifyStyleChange()
+void            FlagWarpSceneNode::notifyStyleChange()
 {
     OpenGLGStateBuilder builder(gstate);
     if (BZDBCache::blend)
@@ -93,7 +93,7 @@ void			FlagWarpSceneNode::notifyStyleChange()
     gstate = builder.getState();
 }
 
-void			FlagWarpSceneNode::addRenderNodes(
+void            FlagWarpSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {
     renderer.addRenderNode(&renderNode, &gstate);
@@ -115,7 +115,7 @@ FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
     // do nothing
 }
 
-void			FlagWarpSceneNode::FlagWarpRenderNode::render()
+void            FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
     // make a perturbed ring
     GLfloat geom[12][2];
@@ -192,6 +192,6 @@ void			FlagWarpSceneNode::FlagWarpRenderNode::render()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

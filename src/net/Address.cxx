@@ -45,7 +45,7 @@ extern "C" int inet_aton(const char *, struct in_addr *);
 // here provides a substantial margin in case the RFC 1035 limit is
 // raised in the future.
 #ifndef MAXHOSTNAMELEN
-#define	MAXHOSTNAMELEN	511
+#define MAXHOSTNAMELEN  511
 #endif
 
 //
@@ -87,7 +87,7 @@ Address::~Address()
     // do nothing
 }
 
-Address&		Address::operator=(const Address& address)
+Address&        Address::operator=(const Address& address)
 {
     addr.clear();
     addr.push_back(address.addr[0]);
@@ -99,26 +99,26 @@ Address::operator InAddr() const
     return addr[0];
 }
 
-bool			Address::operator==(const Address& address) const
+bool            Address::operator==(const Address& address) const
 {
     return addr[0].s_addr == address.addr[0].s_addr;
 }
 
-bool			Address::operator!=(const Address& address) const
+bool            Address::operator!=(const Address& address) const
 {
     return addr[0].s_addr != address.addr[0].s_addr;
 }
 
-bool			Address::operator<(Address const& address) const
+bool            Address::operator<(Address const& address) const
 {
     return addr[0].s_addr < address.addr[0].s_addr;
 }
-bool			Address::isAny() const
+bool            Address::isAny() const
 {
     return addr[0].s_addr == htonl(INADDR_ANY);
 }
 
-bool			Address::isPrivate() const
+bool            Address::isPrivate() const
 {
     // 127.0.0.0/8
     if ((addr[0].s_addr & htonl(0xff000000u)) == htonl(0x7f000000u))
@@ -135,12 +135,12 @@ bool			Address::isPrivate() const
     return(false);
 }
 
-std::string		Address::getDotNotation() const
+std::string     Address::getDotNotation() const
 {
     return std::string(inet_ntoa(addr[0]));
 }
 
-uint8_t			Address::getIPVersion() const
+uint8_t         Address::getIPVersion() const
 {
     return 4;
 }
@@ -166,7 +166,7 @@ static const struct hostent* bz_gethostbyname(const std::string &name)
     return hent;
 }
 
-Address	Address::getHostAddress(const std::string &hname)
+Address Address::getHostAddress(const std::string &hname)
 {
     Address a;
     InAddr tempAddr;
@@ -195,7 +195,7 @@ Address	Address::getHostAddress(const std::string &hname)
     return a;
 }
 
-std::string		Address::getHostByAddress(InAddr addr)
+std::string     Address::getHostByAddress(InAddr addr)
 {
     int addrLen = sizeof(addr);
     struct hostent* hent = gethostbyaddr((char*)&addr, addrLen, AF_INET);
@@ -212,13 +212,11 @@ const std::string Address::getHostName(const std::string &hostname) // const
 {
     const struct hostent* hent = bz_gethostbyname(hostname);
     if (!hent)
-    {
         return std::string();
-    }
     return std::string(hent->h_name);
 }
 
-void*			Address::pack(void* _buf) const
+void*           Address::pack(void* _buf) const
 {
     unsigned char* buf = (unsigned char*)_buf;
     buf = (unsigned char*)nboPackUByte(_buf, 4);
@@ -229,7 +227,7 @@ void*			Address::pack(void* _buf) const
     return (void*)buf;
 }
 
-const void*		Address::unpack(const void* _buf)
+const void*     Address::unpack(const void* _buf)
 {
     const unsigned char* buf = (const unsigned char*)_buf;
     InAddr tempAddr;
@@ -250,7 +248,7 @@ const void*		Address::unpack(const void* _buf)
 // ServerId
 //
 
-void*			ServerId::pack(void* _buf) const
+void*           ServerId::pack(void* _buf) const
 {
     // everything in ServerId is already in network byte order
     unsigned char* buf = (unsigned char*)_buf;
@@ -264,7 +262,7 @@ void*			ServerId::pack(void* _buf) const
     return (void*)buf;
 }
 
-const void*		ServerId::unpack(const void* _buf)
+const void*     ServerId::unpack(const void* _buf)
 {
     // everything in ServerId should be stored in network byte order
     const unsigned char* buf = (const unsigned char*)_buf;
@@ -279,13 +277,13 @@ const void*		ServerId::unpack(const void* _buf)
     return buf;
 }
 
-bool			ServerId::operator==(const ServerId& id) const
+bool            ServerId::operator==(const ServerId& id) const
 {
     return serverHost.s_addr == id.serverHost.s_addr &&
            port == id.port && number == id.number;
 }
 
-bool			ServerId::operator!=(const ServerId& id) const
+bool            ServerId::operator!=(const ServerId& id) const
 {
     return serverHost.s_addr != id.serverHost.s_addr ||
            port != id.port || number != id.number;
@@ -295,6 +293,6 @@ bool			ServerId::operator!=(const ServerId& id) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -109,7 +109,7 @@ GuidedMissileStrategy::~GuidedMissileStrategy()
 }
 
 // NOTE -- ray is base of shot segment and normalized direction of flight.
-//	distance traveled is ShotSpeed * dt.
+//  distance traveled is ShotSpeed * dt.
 
 void GuidedMissileStrategy::update(float dt)
 {
@@ -166,7 +166,8 @@ void GuidedMissileStrategy::update(float dt)
         }
     }
 
-    if ((target != NULL) && ((target->getFlag() == Flags::Stealth) || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+    if ((target != NULL) && ((target->getFlag() == Flags::Stealth)
+                             || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
     {
         target = NULL;
         lastTarget = NoPlayer;
@@ -316,9 +317,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
     // GM is not active until activation time passes (for any tank)
     const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
     if ((TimeKeeper::getTick() - getPath().getStartTime()) < activationTime)
-    {
         return minTime;
-    }
 
     // get tank radius
     float radius = tank->getRadius();
@@ -540,6 +539,6 @@ void GuidedMissileStrategy::radarRender() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

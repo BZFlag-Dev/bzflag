@@ -27,7 +27,7 @@ BzfWindow::~BzfWindow()
 {
 }
 
-void			BzfWindow::callExposeCallbacks() const
+void            BzfWindow::callExposeCallbacks() const
 {
     const int count = exposeCallbacks.size();
     for (int i = 0; i < count; i++)
@@ -37,7 +37,7 @@ void			BzfWindow::callExposeCallbacks() const
     }
 }
 
-void			BzfWindow::addExposeCallback(
+void            BzfWindow::addExposeCallback(
     void (*_cb)(void*), void* data)
 {
     BzfWindowCB cb;
@@ -46,7 +46,7 @@ void			BzfWindow::addExposeCallback(
     exposeCallbacks.push_back(cb);
 }
 
-void			BzfWindow::removeExposeCallback(
+void            BzfWindow::removeExposeCallback(
     void (*_cb)(void*), void* data)
 {
     std::vector<BzfWindowCB>::iterator it = exposeCallbacks.begin();
@@ -60,7 +60,7 @@ void			BzfWindow::removeExposeCallback(
     }
 }
 
-void			BzfWindow::callResizeCallbacks() const
+void            BzfWindow::callResizeCallbacks() const
 {
     const int count = resizeCallbacks.size();
     for (int i = 0; i < count; i++)
@@ -70,7 +70,7 @@ void			BzfWindow::callResizeCallbacks() const
     }
 }
 
-void			BzfWindow::addResizeCallback(
+void            BzfWindow::addResizeCallback(
     void (*_cb)(void*), void* data)
 {
     BzfWindowCB cb;
@@ -79,7 +79,7 @@ void			BzfWindow::addResizeCallback(
     resizeCallbacks.push_back(cb);
 }
 
-void			BzfWindow::removeResizeCallback(
+void            BzfWindow::removeResizeCallback(
     void (*_cb)(void*), void* data)
 {
     std::vector<BzfWindowCB>::iterator it = resizeCallbacks.begin();
@@ -93,17 +93,17 @@ void			BzfWindow::removeResizeCallback(
     }
 }
 
-void			BzfWindow::yieldCurrent(void)
+void            BzfWindow::yieldCurrent(void)
 {
     // do nothing
 }
 
-void			BzfWindow::releaseCurrent(void)
+void            BzfWindow::releaseCurrent(void)
 {
     // do nothing
 }
 
-void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
+void            BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 {
     // Get current mouse position
     int mouseX, mouseY;
@@ -111,27 +111,19 @@ void			BzfWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 
     // Warp the mouse if it's out of the boundary
     if (mouseX < x1)
-    {
         warpMouse(x1, mouseY);
-    }
     if (mouseX > x2)
-    {
         warpMouse(x2, mouseY);
-    }
     if (mouseY < y1)
-    {
         warpMouse(mouseX, y1);
-    }
     if (mouseY > y2)
-    {
         warpMouse(mouseX, y2);
-    }
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

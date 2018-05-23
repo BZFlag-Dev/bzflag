@@ -11,11 +11,11 @@
  */
 
 /* LinuxPlatformFactory:
- *	Factory for Linux platform stuff.
+ *  Factory for Linux platform stuff.
  */
 
 #ifndef BZF_LINUX_PLATFORM_FACTORY_H
-#define	BZF_LINUX_PLATFORM_FACTORY_H
+#define BZF_LINUX_PLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
@@ -25,16 +25,16 @@ public:
     LinuxPlatformFactory();
     ~LinuxPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-    BzfJoystick*	createJoystick();
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
+    BzfJoystick*    createJoystick();
 
 private:
     LinuxPlatformFactory(const LinuxPlatformFactory&);
     LinuxPlatformFactory& operator=(const LinuxPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_LINUX_PLATFORM_FACTORY_H

@@ -57,14 +57,10 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
 
         const std::string& texName = bzmat->getTextureLocal(0);
         if (texName.size() > 0)
-        {
             texID = tm.getTextureID(texName.c_str());
-        }
 
         if (texID < 0)
-        {
             texID = tm.getTextureID("mesh", false /* no failure reports */);
-        }
         else
         {
             useDiffuseColor = bzmat->getUseColorOnTexture(0);
@@ -79,9 +75,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
         {
             // sphere mapping
             if (bzmat->getUseSphereMap(0))
-            {
                 builder.enableSphereMap(true);
-            }
             // texture matrix
             const int texMatId = bzmat->getTextureMatrix(0);
             const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texMatId);
@@ -133,9 +127,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
         colorAlpha = dyncol->canHaveAlpha(); // override
     }
     else
-    {
         colorPtr = &color;
-    }
 
     // blending
     bool needsSorting   = false;
@@ -156,13 +148,9 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
             {
                 builder.resetBlending();
                 if (dyncol != NULL)
-                {
                     builder.setStipple(0.5f);
-                }
                 else
-                {
                     builder.setStipple(color.a);
-                }
             }
         }
     }
@@ -173,15 +161,11 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     // alpha thresholding
     float alphaThreshold = bzmat->getAlphaThreshold();
     if (alphaThreshold != 0.0f)
-    {
         builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
-    }
 
     // culling
     if (bzmat->getNoCulling())
-    {
         builder.setCulling(GL_NONE);
-    }
 
     // generate the gstate
     gstate = builder.getState();
@@ -210,9 +194,7 @@ static bool parseBlendFactor(const std::string& s, GLenum& factor)
     }
     const std::map<std::string, GLenum>::const_iterator it = factors.find(s);
     if (it == factors.end())
-    {
         return false;
-    }
     factor = it->second;
     return true;
 }
@@ -259,16 +241,12 @@ bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst)
 
     const std::string::size_type pos = s.find('/');
     if (pos == std::string::npos)
-    {
         return false;
-    }
     const std::string srcStr = s.substr(0, pos);
     const std::string dstStr = s.substr(pos + 1);
     if (!parseBlendFactor(srcStr, src) ||
             !parseBlendFactor(dstStr, dst))
-    {
         return false;
-    }
 
     return true;
 }
@@ -306,6 +284,6 @@ void glTranslatefv (const float v[3] )
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

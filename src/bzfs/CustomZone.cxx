@@ -54,9 +54,7 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
     {
         std::string qual = getFlagSafetyQualifier(team);
         if (qual.size() > 0)
-        {
             qualifiers.push_back(qual);
-        }
     }
 
     worldInfo->addZone(this);
@@ -69,13 +67,9 @@ void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
 {
     ZoneFlagMap::iterator it = zoneFlagMap.find(flagType);
     if (it != zoneFlagMap.end())
-    {
         count += it->second;
-    }
     if (count < 0)
-    {
         count = 0;
-    }
     zoneFlagMap[flagType] = count;
     return;
 }
@@ -102,9 +96,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
                     {
                         const std::string& qual = getFlagTypeQualifier(f);
                         if (qual.size() > 0)
-                        {
                             qualifiers.push_back(qual);
-                        }
                     }
                 }
             }
@@ -118,9 +110,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
                     {
                         const std::string& qual = getFlagTypeQualifier(f);
                         if (qual.size() > 0)
-                        {
                             qualifiers.push_back(qual);
-                        }
                     }
                 }
             }
@@ -141,17 +131,13 @@ bool CustomZone::read(const char *cmd, std::istream& input)
                 }
                 const std::string& qual = getFlagTypeQualifier(f);
                 if (qual.size() > 0)
-                {
                     qualifiers.push_back(qual);
-                }
             }
         }
 
         input.putback('\n');
         if (qualifiers.empty())
-        {
             return false;
-        }
     }
     else if (strcmp(cmd, "zoneflag") == 0)
     {
@@ -161,13 +147,9 @@ bool CustomZone::read(const char *cmd, std::istream& input)
         int count;
 
         if (!(parms >> flag))
-        {
             return false;
-        }
         if (!(parms >> count))
-        {
             count = 1;
-        }
 
         if (flag == "good")
         {
@@ -176,9 +158,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             {
                 FlagType *f = *it;
                 if (f->endurance != FlagNormal)   // Null and Team flags
-                {
                     addZoneFlagCount(f, count);
-                }
             }
         }
         else if (flag == "bad")
@@ -188,18 +168,14 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             {
                 FlagType *f = *it;
                 if (f->endurance != FlagNormal)   // Null and Team flags
-                {
                     addZoneFlagCount(f, count);
-                }
             }
         }
         else
         {
             FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
             if (f != Flags::Null)
-            {
                 addZoneFlagCount(f, count);
-            }
             else
             {
                 logDebugMessage(1,"WARNING: bad zoneflag type: %s\n", flag.c_str());
@@ -227,28 +203,18 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             }
             std::string qual;
             if (safety)
-            {
                 qual = getFlagSafetyQualifier(color);
-            }
             else
-            {
                 qual = getPlayerTeamQualifier(color);
-            }
             if (qual.size() > 0)
-            {
                 qualifiers.push_back(qual);
-            }
         }
         input.putback('\n');
         if (qualifiers.empty())
-        {
             return false;
-        }
     }
     else if (!WorldFileLocation::read(cmd, input))
-    {
         return false;
-    }
 
     return true;
 }
@@ -304,9 +270,7 @@ static int checkIntQualifier(char prefix, const std::string& qual)
         char* end;
         int id = strtol(start, &end, 10);
         if (end != start)
-        {
             return id;
-        }
     }
     return -1;
 }
@@ -334,22 +298,16 @@ const std::string& CustomZone::getFlagTypeQualifier(FlagType* flagType)
         qual += flagType->flagAbbv;
     }
     else
-    {
         qual = "";
-    }
     return qual;
 }
 
 FlagType* CustomZone::getFlagTypeFromQualifier(const std::string& qual)
 {
     if (qual[0] == 'f')
-    {
         return Flag::getDescFromAbbreviation(qual.c_str() + 1);
-    }
     else
-    {
         return Flags::Null;
-    }
 }
 
 
@@ -357,13 +315,9 @@ const std::string& CustomZone::getFlagSafetyQualifier(int team)
 {
     static std::string qual;
     if ((team > 0) && (team < CtfTeams))
-    {
         qual = makeIntQualifier('$', team);
-    }
     else
-    {
         qual = "";
-    }
     return qual;
 }
 
@@ -377,13 +331,9 @@ const std::string& CustomZone::getPlayerTeamQualifier(int team)
 {
     static std::string qual;
     if ((team >= 0) && (team < CtfTeams))
-    {
         qual = makeIntQualifier('t', team);
-    }
     else
-    {
         qual = "";
-    }
     return qual;
 }
 
@@ -397,6 +347,6 @@ int CustomZone::getPlayerTeamFromQualifier(const std::string& qual)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

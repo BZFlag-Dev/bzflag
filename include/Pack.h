@@ -19,8 +19,8 @@
  * may be lost.
  */
 
-#ifndef	BZF_PACK_H
-#define	BZF_PACK_H
+#ifndef BZF_PACK_H
+#define BZF_PACK_H
 
 #include "common.h"
 #include <string>
@@ -63,6 +63,6 @@ extern unsigned int nboGetBufferLength();
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

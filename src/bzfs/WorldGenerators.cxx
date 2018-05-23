@@ -617,9 +617,7 @@ WorldInfo *defineTeamWorld()
     for (t = RedTeam; t <= PurpleTeam; t++)
     {
         if (clOptions->maxTeam[t] == 0)
-        {
             bases.erase(t);
-        }
         else
         {
             CustomZone zone;
@@ -679,6 +677,6 @@ WorldInfo *defineTeamWorld()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

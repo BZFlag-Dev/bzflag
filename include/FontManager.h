@@ -69,21 +69,21 @@ protected:
     friend class Singleton<FontManager>;
 
 private:
-    void		getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
-    ImageFont*	getClosestSize(int faceID, float size, bool bigger);
-    ImageFont*	getClosestRealSize(int faceID, float desiredSize, float &actualSize);
-    FontFaceMap	faceNames;
+    void        getPulseColor(const GLfloat* color, GLfloat* pulseColor) const;
+    ImageFont*  getClosestSize(int faceID, float size, bool bigger);
+    ImageFont*  getClosestRealSize(int faceID, float desiredSize, float &actualSize);
+    FontFaceMap faceNames;
     FontFaceList  fontFaces;
 
-    std::string	fontDirectory;
+    std::string fontDirectory;
 
-    float		opacity;
-    float		dimFactor; // ANSI code dimming
-    float		darkness;  // darkening of all colors
+    float       opacity;
+    float       dimFactor; // ANSI code dimming
+    float       darkness;  // darkening of all colors
 
-    static void	callback(const std::string& name, void *);
-    static void	freeContext(void *data);
-    static void	initContext(void *data);
+    static void callback(const std::string& name, void *);
+    static void freeContext(void *data);
+    static void initContext(void *data);
     static GLfloat underlineColor[4];
 };
 
@@ -109,6 +109,6 @@ inline void FontManager::setDarkness(float newDarkness)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

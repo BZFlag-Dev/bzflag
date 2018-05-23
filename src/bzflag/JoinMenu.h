@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__JOINMENU_H__
-#define	__JOINMENU_H__
+#ifndef __JOINMENU_H__
+#define __JOINMENU_H__
 
 #include "common.h"
 
@@ -40,40 +40,40 @@ public:
     JoinMenu();
     ~JoinMenu();
 
-    HUDuiDefaultKey*	getDefaultKey();
+    HUDuiDefaultKey*    getDefaultKey();
 
-    void		show();
-    void		execute();
-    void		dismiss();
-    void		resize(int width, int height);
-    void		updateTeamTexture() const;
-
-private:
-    static void		teamCallback(HUDuiControl*, const void*);
-    TeamColor		getTeam() const;
-    void		setTeam(TeamColor);
-    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
-    void		setFailedMessage(const char* msg);
-    void		centerLabelHorizontally(HUDuiLabel* label);
-    void		loadInfo();
+    void        show();
+    void        execute();
+    void        dismiss();
+    void        resize(int width, int height);
+    void        updateTeamTexture() const;
 
 private:
-    float		center;
-    HUDuiTypeIn*	callsign;
-    HUDuiTypeIn*	password;
-    HUDuiTypeIn*	motto;
-    HUDuiList*		team;
+    static void     teamCallback(HUDuiControl*, const void*);
+    TeamColor       getTeam() const;
+    void        setTeam(TeamColor);
+    void        setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void        setFailedMessage(const char* msg);
+    void        centerLabelHorizontally(HUDuiLabel* label);
+    void        loadInfo();
+
+private:
+    float       center;
+    HUDuiTypeIn*    callsign;
+    HUDuiTypeIn*    password;
+    HUDuiTypeIn*    motto;
+    HUDuiList*      team;
     HUDuiTextureLabel*  teamIcon;
-    HUDuiTypeIn*	server;
-    HUDuiTypeIn*	port;
-    HUDuiLabel*		status;
-    HUDuiLabel*		startServer;
-    HUDuiLabel*		findServer;
-    HUDuiLabel*		connectLabel;
-    HUDuiLabel*		failedMessage;
-    ServerStartMenu*	serverStartMenu;
-    ServerMenu*		serverMenu;
-    static JoinMenu*	activeMenu;
+    HUDuiTypeIn*    server;
+    HUDuiTypeIn*    port;
+    HUDuiLabel*     status;
+    HUDuiLabel*     startServer;
+    HUDuiLabel*     findServer;
+    HUDuiLabel*     connectLabel;
+    HUDuiLabel*     failedMessage;
+    ServerStartMenu*    serverStartMenu;
+    ServerMenu*     serverMenu;
+    static JoinMenu*    activeMenu;
 };
 
 
@@ -83,6 +83,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

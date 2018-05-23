@@ -29,7 +29,7 @@
 #include "ErrorHandler.h"
 
 
-int			openBroadcast(int port, const char* service,
+int         openBroadcast(int port, const char* service,
                           struct sockaddr_in* addr)
 {
 #if defined(_WIN32)
@@ -63,9 +63,7 @@ int			openBroadcast(int port, const char* service,
             }
         }
         else
-        {
             port = sp->s_port;
-        }
     }
     if (port <= 0)
     {
@@ -197,13 +195,13 @@ int			openBroadcast(int port, const char* service,
     return fd;
 }
 
-int			closeBroadcast(int fd)
+int         closeBroadcast(int fd)
 {
     if (fd == -1) return 0;
     return close(fd);
 }
 
-int			sendBroadcast(int fd, const void* buffer,
+int         sendBroadcast(int fd, const void* buffer,
                           int bufferLength,
                           const struct sockaddr_in* addr)
 {
@@ -212,7 +210,7 @@ int			sendBroadcast(int fd, const void* buffer,
 }
 
 #if !defined(AddrLen)
-#define AddrLen		int
+#define AddrLen     int
 #endif
 
 #ifdef WIN32
@@ -228,7 +226,7 @@ int			sendBroadcast(int fd, const void* buffer,
 #endif
 #endif //WIN32
 
-int			recvBroadcast(int fd, void* buffer, int bufferLength,
+int         recvBroadcast(int fd, void* buffer, int bufferLength,
                           struct sockaddr_in* addr)
 {
     struct sockaddr_in from;
@@ -239,9 +237,7 @@ int			recvBroadcast(int fd, void* buffer, int bufferLength,
     if (byteCount < 0)
     {
         if (getErrno() == EWOULDBLOCK)
-        {
             return 0;
-        }
         else
         {
             nerror("recvBroadcast");
@@ -256,6 +252,6 @@ int			recvBroadcast(int fd, void* buffer, int bufferLength,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

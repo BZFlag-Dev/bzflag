@@ -29,14 +29,12 @@ WorldPlayer::~WorldPlayer()
     shots.clear();
 }
 
-void			WorldPlayer::addShot(const FiringInfo& info)
+void            WorldPlayer::addShot(const FiringInfo& info)
 {
     RemoteShotPath* newShot = new RemoteShotPath(info);
     int shotNum = int(newShot->getShotId() & 255);
     if (shotNum >= (int)shots.size())
-    {
         shots.resize(shotNum+1);
-    }
     else
     {
         if (shots[shotNum] != NULL)
@@ -45,13 +43,13 @@ void			WorldPlayer::addShot(const FiringInfo& info)
     shots[shotNum] = newShot;
 }
 
-ShotPath*		WorldPlayer::getShot(int index) const
+ShotPath*       WorldPlayer::getShot(int index) const
 {
     if ((index & 255) >= (int)shots.size()) return NULL;
     return shots[index & 255];
 }
 
-bool			WorldPlayer::doEndShot(
+bool            WorldPlayer::doEndShot(
     int ident, bool isHit, float* pos)
 {
     const int index = ident & 255;
@@ -90,14 +88,14 @@ bool			WorldPlayer::doEndShot(
     return true;
 }
 
-void			WorldPlayer::updateShots(float dt)
+void            WorldPlayer::updateShots(float dt)
 {
     for (int i = 0; i < (int)shots.size(); i++)
         if (shots[i])
             shots[i]->update(dt);
 }
 
-void			WorldPlayer::addShots(SceneDatabase* scene,
+void            WorldPlayer::addShots(SceneDatabase* scene,
                                       bool colorblind) const
 {
     const int count = shots.size();
@@ -114,6 +112,6 @@ void			WorldPlayer::addShots(SceneDatabase* scene,
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

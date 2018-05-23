@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_WORLD_PLAYER_H
-#define	BZF_WORLD_PLAYER_H
+#ifndef BZF_WORLD_PLAYER_H
+#define BZF_WORLD_PLAYER_H
 
 #include "common.h"
 #include "Player.h"
@@ -24,14 +24,14 @@ public:
     WorldPlayer();
     ~WorldPlayer();
 
-    void		addShot(const FiringInfo&);
-    ShotPath*		getShot(int index) const;
-    void		updateShots(float dt);
-    int			getMaxShots() const;
-    void		addShots(SceneDatabase* scene, bool colorblind) const;
+    void        addShot(const FiringInfo&);
+    ShotPath*       getShot(int index) const;
+    void        updateShots(float dt);
+    int         getMaxShots() const;
+    void        addShots(SceneDatabase* scene, bool colorblind) const;
 
 private:
-    bool		doEndShot(int index, bool isHit, float* pos);
+    bool        doEndShot(int index, bool isHit, float* pos);
 
 private:
     std::vector<RemoteShotPath*> shots;
@@ -48,6 +48,6 @@ inline int WorldPlayer::getMaxShots() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

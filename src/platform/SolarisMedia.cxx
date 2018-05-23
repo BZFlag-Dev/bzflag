@@ -13,19 +13,19 @@
 #include "SolarisMedia.h"
 #include "TimeKeeper.h"
 
-#define DEBUG_SOLARIS			0	//(1 = debug, 0 = don't!)
+#define DEBUG_SOLARIS           0   //(1 = debug, 0 = don't!)
 
-#define AUDIO_BUFFER_SIZE		5000
+#define AUDIO_BUFFER_SIZE       5000
 
 #if defined(HALF_RATE_AUDIO)
-static const int defaultAudioRate	= 11025;
+static const int defaultAudioRate   = 11025;
 #else
-static const int defaultAudioRate	= 22050;
+static const int defaultAudioRate   = 22050;
 #endif
 
-static const int defaultChannels	= 2;
-static const int defaultEncoding	= AUDIO_ENCODING_LINEAR;
-static const int defaultPrecision	= 16;
+static const int defaultChannels    = 2;
+static const int defaultEncoding    = AUDIO_ENCODING_LINEAR;
+static const int defaultPrecision   = 16;
 
 short tmp_buf[512];
 
@@ -46,7 +46,7 @@ SolarisMedia::~SolarisMedia()
     // do nothing
 }
 
-double			SolarisMedia::stopwatch(bool start)
+double          SolarisMedia::stopwatch(bool start)
 {
     struct timeval tv;
     gettimeofday(&tv, 0);
@@ -58,9 +58,9 @@ double			SolarisMedia::stopwatch(bool start)
     return (double)tv.tv_sec + 1.0e-6 * (double)tv.tv_usec - stopwatchTime;
 }
 
-static const int	NumChunks = 4;
+static const int    NumChunks = 4;
 
-bool			SolarisMedia::openAudio()
+bool            SolarisMedia::openAudio()
 {
     int fd[2];
 
@@ -121,8 +121,8 @@ bool			SolarisMedia::openAudio()
     a_info.play.encoding    = defaultEncoding;
 
     a_info.play.buffer_size = NumChunks * AUDIO_BUFFER_SIZE;
-    audioBufferSize	  = AUDIO_BUFFER_SIZE;
-    audioLowWaterMark	  = 2;
+    audioBufferSize   = AUDIO_BUFFER_SIZE;
+    audioLowWaterMark     = 2;
 
     if (ioctl(audio_fd, AUDIO_SETINFO, &a_info) == -1)
     {
@@ -164,13 +164,13 @@ bool			SolarisMedia::openAudio()
 }
 
 
-void			SolarisMedia::closeAudio()
+void            SolarisMedia::closeAudio()
 {
     close(audio_fd);
     close(audioctl_fd);
 }
 
-bool			SolarisMedia::startAudioThread(
+bool            SolarisMedia::startAudioThread(
     void (*proc)(void*), void* data)
 {
     // if no audio thread then just call proc and return
@@ -189,21 +189,19 @@ bool			SolarisMedia::startAudioThread(
         return true;
     }
     else if (childProcID < 0)
-    {
         return false;
-    }
     close(queueIn);
     proc(data);
     exit(0);
 }
 
-void			SolarisMedia::stopAudioThread()
+void            SolarisMedia::stopAudioThread()
 {
     if (childProcID != 0) kill(childProcID, SIGTERM);
     childProcID=0;
 }
 
-bool			SolarisMedia::hasAudioThread() const
+bool            SolarisMedia::hasAudioThread() const
 {
     // XXX -- adjust this if the system always uses or never uses a thread
 #if defined(NO_AUDIO_THREAD)
@@ -213,39 +211,39 @@ bool			SolarisMedia::hasAudioThread() const
 #endif
 }
 
-void			SolarisMedia::writeSoundCommand(const void* cmd, int len)
+void            SolarisMedia::writeSoundCommand(const void* cmd, int len)
 {
     if (!audio_ready) return;
     write(queueIn, cmd, len);
 }
 
-bool			SolarisMedia::readSoundCommand(void* cmd, int len)
+bool            SolarisMedia::readSoundCommand(void* cmd, int len)
 {
     return (read(queueOut, cmd, len)==len);
 }
 
-int			SolarisMedia::getAudioOutputRate() const
+int         SolarisMedia::getAudioOutputRate() const
 {
     return defaultAudioRate;
 }
 
-int			SolarisMedia::getAudioBufferSize() const
+int         SolarisMedia::getAudioBufferSize() const
 {
     return NumChunks * (audioBufferSize >> 1);
 }
 
-int			SolarisMedia::getAudioBufferChunkSize() const
+int         SolarisMedia::getAudioBufferChunkSize() const
 {
     return audioBufferSize>>1;
 }
 
-bool			SolarisMedia::isAudioTooEmpty() const
+bool            SolarisMedia::isAudioTooEmpty() const
 {
     ioctl(audioctl_fd, AUDIO_GETINFO, &a_info);
     return ((int)a_info.play.eof >= eof_written - audioLowWaterMark);
 }
 
-void			SolarisMedia::writeAudioFrames(
+void            SolarisMedia::writeAudioFrames(
     const float* samples, int numFrames)
 {
     int numSamples = 2 * numFrames;
@@ -278,7 +276,7 @@ void			SolarisMedia::writeAudioFrames(
     }
 }
 
-void			SolarisMedia::audioSleep(
+void            SolarisMedia::audioSleep(
     bool checkLowWater, double endTime)
 {
     fd_set commandSelectSet;

@@ -181,13 +181,9 @@ void OptionsMenu::resize(int _width, int _height)
         ctl->setFontSize(fontSize);
         ctl->setPosition(x, y);
         if ((i == 6) || (i == 8))
-        {
             y -= 1.75f * h;
-        }
         else
-        {
             y -= 1.0f * h;
-        }
     }
 
     // load current settings
@@ -220,6 +216,6 @@ void OptionsMenu::callback(HUDuiControl* w, const void* data)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

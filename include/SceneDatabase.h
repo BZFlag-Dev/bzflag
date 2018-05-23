@@ -11,11 +11,11 @@
  */
 
 /* SceneDatabase:
- *	Interface for database of geometry to render
+ *  Interface for database of geometry to render
  */
 
-#ifndef	BZF_SCENE_DATABASE_H
-#define	BZF_SCENE_DATABASE_H
+#ifndef BZF_SCENE_DATABASE_H
+#define BZF_SCENE_DATABASE_H
 
 #include "common.h"
 #ifndef BUILDING_BZADMIN
@@ -30,32 +30,32 @@ class Extents;
 
 
 // NOTE -- SceneDatabase owns all static nodes added to it,
-//	dynamic nodes are the responsibility of the client.
+//  dynamic nodes are the responsibility of the client.
 
 class SceneDatabase
 {
 public:
     SceneDatabase();
-    virtual		~SceneDatabase();
+    virtual     ~SceneDatabase();
 
     // returns true if the node would have been deleted
-    virtual bool	addStaticNode(SceneNode*, bool dontFree) = 0;
-    virtual void	addDynamicNode(SceneNode*) = 0;
-    virtual void	addDynamicSphere(SphereSceneNode*) = 0;
-    virtual void	finalizeStatics() = 0;
-    virtual void	removeDynamicNodes() = 0;
-    virtual void	removeAllNodes() = 0;
-    virtual bool	isOrdered() = 0;
+    virtual bool    addStaticNode(SceneNode*, bool dontFree) = 0;
+    virtual void    addDynamicNode(SceneNode*) = 0;
+    virtual void    addDynamicSphere(SphereSceneNode*) = 0;
+    virtual void    finalizeStatics() = 0;
+    virtual void    removeDynamicNodes() = 0;
+    virtual void    removeAllNodes() = 0;
+    virtual bool    isOrdered() = 0;
 
-    virtual void	updateNodeStyles() = 0;
-    virtual void	addLights(SceneRenderer& renderer) = 0;
-    virtual void	addShadowNodes(SceneRenderer &renderer) = 0;
-    virtual void	addRenderNodes(SceneRenderer& renderer) = 0;
-    virtual void	renderRadarNodes(const ViewFrustum&) = 0;
+    virtual void    updateNodeStyles() = 0;
+    virtual void    addLights(SceneRenderer& renderer) = 0;
+    virtual void    addShadowNodes(SceneRenderer &renderer) = 0;
+    virtual void    addRenderNodes(SceneRenderer& renderer) = 0;
+    virtual void    renderRadarNodes(const ViewFrustum&) = 0;
 
-    virtual void	drawCuller() = 0;
+    virtual void    drawCuller() = 0;
 
-    virtual void	setOccluderManager(int);
+    virtual void    setOccluderManager(int);
 
     virtual const Extents* getVisualExtents() const
     {
@@ -64,7 +64,7 @@ public:
 
 private:
     SceneDatabase(const SceneDatabase&);
-    SceneDatabase&	operator=(const SceneDatabase&);
+    SceneDatabase&  operator=(const SceneDatabase&);
 };
 
 
@@ -74,6 +74,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

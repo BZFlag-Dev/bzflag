@@ -80,9 +80,7 @@ void USBJoystick::initJoystick(const char *name)
 
     data_buf_size = hid_report_size(rd, hid_input, &report_id);
     if ((data_buf = (char *)malloc(data_buf_size)) == NULL)
-    {
         hid_dispose_report_desc(rd);
-    }
     data_buf_offset = (report_id != 0);
 
     int is_joystick = 0;
@@ -216,9 +214,7 @@ void USBJoystick::getJoy(int &x, int &y)
         y = (axis[1] * axis_scale[1]) / 10000 + axis_const[1];
     }
     else
-    {
         x = y = 0;
-    }
 }
 
 unsigned long USBJoystick::getJoyButtons()
@@ -229,9 +225,7 @@ unsigned long USBJoystick::getJoyButtons()
         return buttons;
     }
     else
-    {
         return 0;
-    }
 }
 
 void USBJoystick::getJoyDevices(std::vector<std::string> &list) const

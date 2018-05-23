@@ -77,25 +77,25 @@ static void writeBZW  ( CModel &model, std::string file )
                     texName += ".png";
                 }
                 else
-                {
                     texName += ".png";
-                }
                 fprintf (fp,"  texture %s\n", texName.c_str());
             }
             else
-            {
                 fprintf (fp,"  notextures\n");
-            }
             if (useAmbient)
-                fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2], material.ambient[3]);
+                fprintf (fp,"  ambient %f %f %f %f\n", material.ambient[0], material.ambient[1], material.ambient[2],
+                         material.ambient[3]);
             if (useDiffuse)
-                fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2], material.diffuse[3]);
+                fprintf (fp,"  diffuse %f %f %f %f\n", material.diffuse[0], material.diffuse[1], material.diffuse[2],
+                         material.diffuse[3]);
             if (useSpecular)
-                fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2], material.specular[3]);
+                fprintf (fp,"  specular %f %f %f %f\n", material.specular[0], material.specular[1], material.specular[2],
+                         material.specular[3]);
             if (useShininess)
                 fprintf (fp,"  shininess %f\n", material.shine);
             if (useEmission)
-                fprintf (fp,"  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2], material.emission[3]);
+                fprintf (fp,"  emission %f %f %f %f\n", material.emission[0], material.emission[1], material.emission[2],
+                         material.emission[3]);
 
             fprintf (fp,"end\n\n");
 
@@ -105,15 +105,13 @@ static void writeBZW  ( CModel &model, std::string file )
     }
 
     if (groupName.size() > 0)
-    {
         fprintf (fp, "define %s\n", groupName.c_str());
-    }
 
-    tvMeshList::iterator	meshItr = model.meshes.begin();
+    tvMeshList::iterator    meshItr = model.meshes.begin();
 
     while ( meshItr != model.meshes.end() )
     {
-        CMesh	&mesh = *meshItr;
+        CMesh   &mesh = *meshItr;
 
         mesh.reindex();
 
@@ -130,7 +128,8 @@ static void writeBZW  ( CModel &model, std::string file )
         tvVertList::iterator vertItr = mesh.verts.begin();
         while ( vertItr != mesh.verts.end() )
         {
-            fprintf (fp,"  vertex %f %f %f\n", vertItr->x*globalScale+globalShift[0],vertItr->y*globalScale+globalShift[1],vertItr->z*globalScale+globalShift[2]);
+            fprintf (fp,"  vertex %f %f %f\n", vertItr->x*globalScale+globalShift[0],vertItr->y*globalScale+globalShift[1],
+                     vertItr->z*globalScale+globalShift[2]);
             vertItr++;
         }
 
@@ -151,14 +150,14 @@ static void writeBZW  ( CModel &model, std::string file )
         }
 
 
-        tvFaceList::iterator	faceItr = mesh.faces.begin();
+        tvFaceList::iterator    faceItr = mesh.faces.begin();
         while ( faceItr != mesh.faces.end() )
         {
-            CFace	&face = *faceItr;
+            CFace   &face = *faceItr;
 
             fprintf (fp,"  face\n");
 
-            tvIndexList::iterator	indexItr = face.verts.begin();
+            tvIndexList::iterator   indexItr = face.verts.begin();
             fprintf (fp,"    vertices");
             while ( indexItr != face.verts.end() )
                 fprintf(fp," %d",*indexItr++);
@@ -183,14 +182,10 @@ static void writeBZW  ( CModel &model, std::string file )
             }
 
             if (useMaterials && (face.material.size() > 0))
-            {
                 fprintf (fp, "    matref %s\n", face.material.c_str());
-            }
 
             if (useRicoMat && face.material.size() > 0 && strstr(face.material.c_str(),"rico_") != NULL)
-            {
                 fprintf (fp, "    ricochetn");
-            }
 
             fprintf (fp,"  endface\n");
 
@@ -202,9 +197,7 @@ static void writeBZW  ( CModel &model, std::string file )
     }
 
     if (groupName.size() > 0)
-    {
         fprintf (fp, "enddef # %s\n", groupName.c_str());
-    }
 
     // do the custom objects.
 
@@ -271,9 +264,7 @@ int main(int argc, char* argv[])
         extenstion = p+1;
 
     if (!p)
-    {
         output = input + ".bzw";
-    }
     else
     {
         *p = '\0'; // clip the old extension
@@ -286,9 +277,7 @@ int main(int argc, char* argv[])
         command = SimpleTextUtils::tolower(command);
 
         if (command == "-yz")
-        {
             flipYZ = true;
-        }
         else if (command == "-g")
         {
             if ((i + 1) < argc)
@@ -297,9 +286,7 @@ int main(int argc, char* argv[])
                 groupName = argv[i];
             }
             else
-            {
                 printf ("missing -g argument\n");
-            }
         }
         else if (command == "-tx")
         {
@@ -308,51 +295,29 @@ int main(int argc, char* argv[])
                 i++;
                 texdir = argv[i];
                 if (texdir[texdir.size()] != '/')
-                {
                     texdir += '/';
-                }
             }
             else
-            {
                 printf ("missing -tx argument\n");
-            }
         }
         else if (command == "-ricomat")
-        {
             useRicoMat = true;
-        }
         else if (command == "-sm")
-        {
             useSmoothBounce = true;
-        }
         else if (command == "-n")
-        {
             useNormals = false;
-        }
         else if (command == "-t")
-        {
             useTexcoords = false;
-        }
         else if (command == "-m")
-        {
             useMaterials = false;
-        }
         else if (command == "-a")
-        {
             useAmbient = false;
-        }
         else if (command == "-d")
-        {
             useDiffuse = false;
-        }
         else if (command == "-s")
-        {
             useSpecular = false;
-        }
         else if (command == "-sh")
-        {
             useShininess = false;
-        }
         else if (command == "-sf")
         {
             if ((i + 1) < argc)
@@ -361,14 +326,10 @@ int main(int argc, char* argv[])
                 shineFactor = (float)atof(argv[i]);
             }
             else
-            {
                 printf ("missing -sf argument\n");
-            }
         }
         else if (command == "-e")
-        {
             useEmission = false;
-        }
         else if (command == "-gx")
         {
             if ((i + 1) < argc)
@@ -377,9 +338,7 @@ int main(int argc, char* argv[])
                 globalScale = (float)atof(argv[i]);
             }
             else
-            {
                 printf ("missing -gx argument\n");
-            }
         }
         else if (command == "-gsx")
         {
@@ -389,9 +348,7 @@ int main(int argc, char* argv[])
                 globalShift[0] = (float)atof(argv[i]);
             }
             else
-            {
                 printf ("missing -gsx argument\n");
-            }
         }
         else if (command == "-gsy")
         {
@@ -401,9 +358,7 @@ int main(int argc, char* argv[])
                 globalShift[1] = (float)atof(argv[i]);
             }
             else
-            {
                 printf ("missing -gsy argument\n");
-            }
         }
         else if (command == "-gsz")
         {
@@ -413,9 +368,7 @@ int main(int argc, char* argv[])
                 globalShift[2] = (float)atof(argv[i]);
             }
             else
-            {
                 printf ("missing -gsz argument\n");
-            }
         }
         else if (command == "-bspskip")
         {
@@ -425,22 +378,18 @@ int main(int argc, char* argv[])
                 bspMaterialSkips.push_back(std::string(argv[i]));
             }
             else
-            {
                 printf ("missing -bspskip argument\n");
-            }
         }
     }
     // make a model
 
-    CModel	model;
+    CModel  model;
 
     if ( SimpleTextUtils::tolower(extenstion) == "obj" )
-    {
         readOBJ(model,input);
-    }
     else if ( SimpleTextUtils::tolower(extenstion) == "bsp" )
     {
-        Quake3Level	level;
+        Quake3Level level;
         level.loadFromFile(input.c_str());
         level.dumpToModel(model);
     }
@@ -458,9 +407,7 @@ int main(int argc, char* argv[])
         printf("%s file %s converted to BZW as %s\n", extenstion.c_str(),input.c_str(),output.c_str());
     }
     else
-    {
         printf("no valid meshes written from %s\n", input.c_str());
-    }
 
     return 0;
 }
@@ -499,15 +446,15 @@ static int getNewIndex ( CTexCoord &vert, tvTexCoordList &vertList )
 
 void CMesh::reindex ( void )
 {
-    tvVertList		temp_verts;
-    tvVertList		temp_normals;
-    tvTexCoordList	temp_texCoords;
+    tvVertList      temp_verts;
+    tvVertList      temp_normals;
+    tvTexCoordList  temp_texCoords;
 
-    tvFaceList::iterator	faceItr = faces.begin();
+    tvFaceList::iterator    faceItr = faces.begin();
     while ( faceItr != faces.end() )
     {
-        CFace	&face = *faceItr;
-        CFace	newFace;
+        CFace   &face = *faceItr;
+        CFace   newFace;
 
         newFace.material = face.material;
 

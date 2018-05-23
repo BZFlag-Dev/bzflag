@@ -40,22 +40,22 @@ HUDuiTypeIn::~HUDuiTypeIn()
 {
 }
 
-void			HUDuiTypeIn::setObfuscation(bool on)
+void            HUDuiTypeIn::setObfuscation(bool on)
 {
     obfuscate = on;
 }
 
-int			HUDuiTypeIn::getMaxLength() const
+int         HUDuiTypeIn::getMaxLength() const
 {
     return maxLength;
 }
 
-std::string		HUDuiTypeIn::getString() const
+std::string     HUDuiTypeIn::getString() const
 {
     return string;
 }
 
-void			HUDuiTypeIn::setMaxLength(int _maxLength)
+void            HUDuiTypeIn::setMaxLength(int _maxLength)
 {
     maxLength = _maxLength;
     string = string.substr(0, maxLength);
@@ -64,7 +64,7 @@ void			HUDuiTypeIn::setMaxLength(int _maxLength)
     onSetFont();
 }
 
-void			HUDuiTypeIn::setString(const std::string& _string)
+void            HUDuiTypeIn::setString(const std::string& _string)
 {
     string = _string;
     cursorPos = string.length();
@@ -72,14 +72,14 @@ void			HUDuiTypeIn::setString(const std::string& _string)
 }
 
 // allows composing, otherwise not
-void			HUDuiTypeIn::setEditing(bool _allowEdit)
+void            HUDuiTypeIn::setEditing(bool _allowEdit)
 {
     allowEdit = _allowEdit;
 }
 
-bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
+bool            HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
 {
-    static const char backspace = '\b';	// ^H
+    static const char backspace = '\b'; // ^H
     static const char whitespace = ' ';
 
     if (!allowEdit) return false; //or return true ??
@@ -125,9 +125,7 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
                 c = backspace;
             }
             else
-            {
                 return true;
-            }
             break;
 
         default:
@@ -166,16 +164,16 @@ bool			HUDuiTypeIn::doKeyPress(const BzfKeyEvent& key)
     return true;
 }
 
-bool			HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
+bool            HUDuiTypeIn::doKeyRelease(const BzfKeyEvent& key)
 {
-    if (key.ascii == '\t' || !isprint(key.ascii))	// ignore non-printing and tab
+    if (key.ascii == '\t' || !isprint(key.ascii))   // ignore non-printing and tab
         return false;
 
     // slurp up releases
     return true;
 }
 
-void			HUDuiTypeIn::doRender()
+void            HUDuiTypeIn::doRender()
 {
     if (getFontFace() < 0) return;
 
@@ -185,17 +183,11 @@ void			HUDuiTypeIn::doRender()
     FontManager &fm = FontManager::instance();
     std::string renderStr;
     if (obfuscate)
-    {
         renderStr.append(string.size(), '*');
-    }
     else
-    {
         renderStr = string;
-    }
     if (colorFunc)
-    {
         renderStr = colorFunc(renderStr);
-    }
     fm.drawString(getX(), getY(), 0, getFontFace(), getFontSize(), renderStr);
 
     // find the position of where to draw the input cursor
@@ -203,15 +195,13 @@ void			HUDuiTypeIn::doRender()
     float start = fm.getStrLength(getFontFace(), getFontSize(), noAnsi.substr(0, cursorPos));
 
     if (HUDui::getFocus() == this && allowEdit)
-    {
         fm.drawString(getX() + start, getY(), 0, getFontFace(), getFontSize(), "_");
-    }
 }
 
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

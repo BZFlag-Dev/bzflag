@@ -18,7 +18,7 @@
 #include "Intersect.h"
 #include "MeshTransform.h"
 
-const char*		PyramidBuilding::typeName = "PyramidBuilding";
+const char*     PyramidBuilding::typeName = "PyramidBuilding";
 
 PyramidBuilding::PyramidBuilding()
 {
@@ -64,24 +64,24 @@ Obstacle* PyramidBuilding::copyWithTransform(const MeshTransform& xform) const
     return copy;
 }
 
-const char*		PyramidBuilding::getType() const
+const char*     PyramidBuilding::getType() const
 {
     return typeName;
 }
 
-const char*		PyramidBuilding::getClassName() // const
+const char*     PyramidBuilding::getClassName() // const
 {
     return typeName;
 }
 
-float			PyramidBuilding::intersect(const Ray& r) const
+float           PyramidBuilding::intersect(const Ray& r) const
 {
     return timeRayHitsPyramids(r, getPosition(), getRotation(),
                                getWidth(), getBreadth(), getHeight(),
                                getZFlip());
 }
 
-void			PyramidBuilding::getNormal(const float* p,
+void            PyramidBuilding::getNormal(const float* p,
         float* n) const
 {
     // get normal in z = const plane
@@ -127,7 +127,7 @@ void			PyramidBuilding::getNormal(const float* p,
         n[2] *= -1;
 }
 
-void			PyramidBuilding::get3DNormal(const float* p,
+void            PyramidBuilding::get3DNormal(const float* p,
         float* n) const
 {
     const float epsilon = ZERO_TOLERANCE;
@@ -168,13 +168,9 @@ void			PyramidBuilding::get3DNormal(const float* p,
     {
         n[0] = n[1] = 0;
         if (getZFlip())
-        {
             n[2] = 1;
-        }
         else
-        {
             n[2] = -1;
-        }
         return;
     }
 
@@ -186,9 +182,7 @@ void			PyramidBuilding::get3DNormal(const float* p,
     const float normalAngle = atan2f(n[1], n[0]);
     const float rightAngle = fabsf(fmodf(normalAngle - getRotation() + (float)(M_PI/2.0), (float)M_PI));
     if ((rightAngle < 0.1) || (rightAngle > (M_PI - 0.1)))
-    {
         baseLength = getBreadth();
-    }
     const float h = 1.0f / hypotf(getHeight(), baseLength);
     n[0] *= h * getHeight();
     n[1] *= h * getHeight();
@@ -198,7 +192,7 @@ void			PyramidBuilding::get3DNormal(const float* p,
         n[2] *= -1;
 }
 
-bool			PyramidBuilding::inCylinder(const float* p,
+bool            PyramidBuilding::inCylinder(const float* p,
         float radius, float height) const
 {
     // really rough -- doesn't decrease size with height
@@ -207,7 +201,7 @@ bool			PyramidBuilding::inCylinder(const float* p,
            &&     testRectCircle(getPosition(), getRotation(), getWidth(), getBreadth(), p, radius);
 }
 
-bool			PyramidBuilding::inBox(const float* p, float a,
+bool            PyramidBuilding::inBox(const float* p, float a,
                                        float dx, float dy, float height) const
 {
     // Tank is below pyramid ?
@@ -231,7 +225,7 @@ bool PyramidBuilding::inMovingBox(const float*, float,
     return inBox (p, _angle, dx, dy, dz);
 }
 
-bool			PyramidBuilding::isCrossing(const float* p, float a,
+bool            PyramidBuilding::isCrossing(const float* p, float a,
         float dx, float dy, float height, float* plane) const
 {
     // if not inside or contained then not crossing
@@ -274,7 +268,7 @@ bool			PyramidBuilding::isCrossing(const float* p, float a,
     return true;
 }
 
-bool			PyramidBuilding::getHitNormal(
+bool            PyramidBuilding::getHitNormal(
     const float* pos1, float,
     const float* pos2, float,
     float, float, float height,
@@ -336,7 +330,7 @@ bool			PyramidBuilding::getHitNormal(
     return true;
 }
 
-void			PyramidBuilding::getCorner(int index,
+void            PyramidBuilding::getCorner(int index,
         float* _pos) const
 {
     const float* base = getPosition();
@@ -390,7 +384,7 @@ void			PyramidBuilding::getCorner(int index,
     }
 }
 
-float			PyramidBuilding::shrinkFactor(float z,
+float           PyramidBuilding::shrinkFactor(float z,
         float height) const
 {
     float shrink;
@@ -408,9 +402,7 @@ float			PyramidBuilding::shrinkFactor(float z,
     const float *_pos = getPosition();
     z -= _pos[2];
     if (oHeight <= ZERO_TOLERANCE)
-    {
         shrink = 1.0f;
-    }
     else
     {
         // Normalize heights
@@ -425,13 +417,9 @@ float			PyramidBuilding::shrinkFactor(float z,
 
         // shrink is that
         if (flip)
-        {
             shrink = z;
-        }
         else
-        {
             shrink = 1.0f - z;
-        }
     }
 
     // clamp in 0 .. 1
@@ -443,7 +431,7 @@ float			PyramidBuilding::shrinkFactor(float z,
     return shrink;
 }
 
-bool			PyramidBuilding::isFlatTop() const
+bool            PyramidBuilding::isFlatTop() const
 {
     return getZFlip();
 }
@@ -508,29 +496,19 @@ void PyramidBuilding::print(std::ostream& out, const std::string& indent) const
     out << indent << "  rotation " << (getRotation() * RAD2DEGf)
         << std::endl;
     if (getZFlip())
-    {
         out << indent << "  flipz" << std::endl;
-    }
 
     if (isPassable())
-    {
         out << indent << "  passable" << std::endl;
-    }
     else
     {
         if (isDriveThrough())
-        {
             out << indent << "  drivethrough" << std::endl;
-        }
         if (isShootThrough())
-        {
             out << indent << "  shootthrough" << std::endl;
-        }
     }
     if (canRicochet())
-    {
         out << indent << "  ricochet" << std::endl;
-    }
     out << indent << "end" << std::endl;
     return;
 }
@@ -585,13 +563,9 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(inde
     xform.finalize();
     MeshTransform::Tool xtool(xform);
     for (i = 0; i < 5; i++)
-    {
         xtool.modifyVertex(verts[i]);
-    }
     for (i = 0; i < 5; i++)
-    {
         xtool.modifyNormal(norms[i]);
-    }
 
     out << "# OBJ - start pyramid" << std::endl;
     out << "o bzpyr_" << getObjCounter() << std::endl;
@@ -638,6 +612,6 @@ void PyramidBuilding::printOBJ(std::ostream& out, const std::string& UNUSED(inde
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

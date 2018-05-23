@@ -36,11 +36,11 @@ public:
     SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
     ~SegmentedShotStrategy();
 
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
-    TeamColor	team;
+    void        update(float dt);
+    float       checkHit(const BaseLocalPlayer*, float[3]) const;
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        radarRender() const;
+    TeamColor   team;
 
 protected:
     enum ObstacleEffect
@@ -49,25 +49,25 @@ protected:
         Through = 1,
         Reflect = 2
     };
-    void		makeSegments(ObstacleEffect = Stop);
-    const std::vector<ShotPathSegment>&	getSegments() const;
+    void        makeSegments(ObstacleEffect = Stop);
+    const std::vector<ShotPathSegment>& getSegments() const;
 
-    void		setCurrentTime(const TimeKeeper&);
-    const TimeKeeper&	getLastTime() const;
+    void        setCurrentTime(const TimeKeeper&);
+    const TimeKeeper&   getLastTime() const;
 
-    bool		isOverlapping(const float (*bbox1)[3],
+    bool        isOverlapping(const float (*bbox1)[3],
                               const float (*bbox2)[3]) const;
 
-    void		setCurrentSegment(int segment);
+    void        setCurrentSegment(int segment);
 
 private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
-    TimeKeeper		lastTime;
-    int			segment, lastSegment;
-    std::vector<ShotPathSegment>	segments;
-    BoltSceneNode*	boltSceneNode;
-    float		bbox[2][3];
+    TimeKeeper      prevTime;
+    TimeKeeper      currentTime;
+    TimeKeeper      lastTime;
+    int         segment, lastSegment;
+    std::vector<ShotPathSegment>    segments;
+    BoltSceneNode*  boltSceneNode;
+    float       bbox[2][3];
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy
@@ -89,15 +89,15 @@ class ThiefStrategy : public SegmentedShotStrategy
 public:
     ThiefStrategy(ShotPath*);
     ~ThiefStrategy();
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void        update(float dt);
+    bool        isStoppedByHit() const;
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        radarRender() const;
 
 private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	thiefNodes;
+    float       cumTime;
+    float       endTime;
+    LaserSceneNode**    thiefNodes;
 };
 
 class MachineGunStrategy : public SegmentedShotStrategy
@@ -113,15 +113,15 @@ public:
     LaserStrategy(ShotPath*);
     ~LaserStrategy();
 
-    void		update(float dt);
-    bool		isStoppedByHit() const;
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		radarRender() const;
+    void        update(float dt);
+    bool        isStoppedByHit() const;
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        radarRender() const;
 
 private:
-    float		cumTime;
-    float		endTime;
-    LaserSceneNode**	laserNodes;
+    float       cumTime;
+    float       endTime;
+    LaserSceneNode**    laserNodes;
 };
 
 class RicochetStrategy : public SegmentedShotStrategy
@@ -152,6 +152,6 @@ public:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

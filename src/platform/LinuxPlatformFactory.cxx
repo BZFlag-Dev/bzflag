@@ -23,7 +23,7 @@
 #include "EvdevJoystick.h"
 #endif
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory*    PlatformFactory::getInstance()
 {
     if (!instance) instance = new LinuxPlatformFactory;
     return instance;
@@ -39,7 +39,7 @@ LinuxPlatformFactory::~LinuxPlatformFactory()
     // do nothing
 }
 
-BzfDisplay*		LinuxPlatformFactory::createDisplay(
+BzfDisplay*     LinuxPlatformFactory::createDisplay(
     const char* name, const char*)
 {
     XDisplay* display = new XDisplay(name, new LinuxDisplayMode);
@@ -51,19 +51,19 @@ BzfDisplay*		LinuxPlatformFactory::createDisplay(
     return display;
 }
 
-BzfVisual*		LinuxPlatformFactory::createVisual(
+BzfVisual*      LinuxPlatformFactory::createVisual(
     const BzfDisplay* display)
 {
     return new XVisual((const XDisplay*)display);
 }
 
-BzfWindow*		LinuxPlatformFactory::createWindow(
+BzfWindow*      LinuxPlatformFactory::createWindow(
     const BzfDisplay* display, BzfVisual* visual)
 {
     return new XWindow((const XDisplay*)display, (XVisual*)visual);
 }
 
-BzfJoystick*		LinuxPlatformFactory::createJoystick()
+BzfJoystick*        LinuxPlatformFactory::createJoystick()
 {
 #if defined(USBJOYSTICK)
     // only works for USB joysticks under *BSD
@@ -79,7 +79,7 @@ BzfJoystick*		LinuxPlatformFactory::createJoystick()
 #endif
 }
 
-BzfMedia*		LinuxPlatformFactory::createMedia()
+BzfMedia*       LinuxPlatformFactory::createMedia()
 {
     return new LinuxMedia;
 }

@@ -11,7 +11,7 @@
  */
 
 // Jeff Myers 10/13/97 changed direct sound cooperative level to
-//	exclusive for compatibility with NT.
+//  exclusive for compatibility with NT.
 
 #include "WinMedia.h"
 #include "WinWindow.h"
@@ -24,10 +24,10 @@
 #  include "WinWindow.h"
 #endif
 
-static const int	defaultOutputRate = 22050;
-static const int	NumChunks = 4;
-void			(*WinMedia::threadProc)(void*);
-void*			WinMedia::threadData;
+static const int    defaultOutputRate = 22050;
+static const int    NumChunks = 4;
+void            (*WinMedia::threadProc)(void*);
+void*           WinMedia::threadData;
 
 WinMedia::WinMedia() :
     audioReady(false),
@@ -46,7 +46,7 @@ WinMedia::~WinMedia()
 {
 }
 
-bool			WinMedia::openAudio()
+bool            WinMedia::openAudio()
 {
     // don't re-initialize
     if (audioReady) return false;
@@ -173,7 +173,7 @@ bool			WinMedia::openAudio()
     return true;
 }
 
-void			WinMedia::closeAudio()
+void            WinMedia::closeAudio()
 {
     if (!audioReady) return;
 
@@ -205,7 +205,7 @@ void			WinMedia::closeAudio()
     outputBuffer = NULL;
 }
 
-bool			WinMedia::startAudioThread(
+bool            WinMedia::startAudioThread(
     void (*proc)(void*), void* data)
 {
     if (audioThread || !proc) return false;
@@ -218,7 +218,7 @@ bool			WinMedia::startAudioThread(
     return (audioThread != NULL);
 }
 
-void			WinMedia::stopAudioThread()
+void            WinMedia::stopAudioThread()
 {
     if (!audioThread) return;
 
@@ -231,12 +231,12 @@ void			WinMedia::stopAudioThread()
     audioThread = NULL;
 }
 
-bool			WinMedia::hasAudioThread() const
+bool            WinMedia::hasAudioThread() const
 {
     return true;
 }
 
-DWORD WINAPI		WinMedia::audioThreadInit(void*)
+DWORD WINAPI        WinMedia::audioThreadInit(void*)
 {
     // boost the audio thread's priority
     SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_ABOVE_NORMAL);
@@ -246,7 +246,7 @@ DWORD WINAPI		WinMedia::audioThreadInit(void*)
     return 0;
 }
 
-void			WinMedia::writeSoundCommand(const void* msg, int len)
+void            WinMedia::writeSoundCommand(const void* msg, int len)
 {
     if (!audioReady) return;
 
@@ -282,7 +282,7 @@ void			WinMedia::writeSoundCommand(const void* msg, int len)
     ReleaseMutex(audioCommandMutex);
 }
 
-bool			WinMedia::readSoundCommand(void* msg, int len)
+bool            WinMedia::readSoundCommand(void* msg, int len)
 {
     // no event unless signaled non-empty
     if (WaitForSingleObject(audioCommandEvent, 0) != WAIT_OBJECT_0)
@@ -320,7 +320,7 @@ bool			WinMedia::readSoundCommand(void* msg, int len)
     return true;
 }
 
-int			WinMedia::getAudioOutputRate() const
+int         WinMedia::getAudioOutputRate() const
 {
 #if defined(HALF_RATE_AUDIO)
     return defaultOutputRate / 2;
@@ -329,17 +329,17 @@ int			WinMedia::getAudioOutputRate() const
 #endif
 }
 
-int			WinMedia::getAudioBufferSize() const
+int         WinMedia::getAudioBufferSize() const
 {
     return audioBufferSize / audioNumChannels;
 }
 
-int			WinMedia::getAudioBufferChunkSize() const
+int         WinMedia::getAudioBufferChunkSize() const
 {
     return audioBufferChunkSize / audioNumChannels;
 }
 
-bool			WinMedia::isAudioTooEmpty() const
+bool            WinMedia::isAudioTooEmpty() const
 {
     // the write offset returned by GetCurrentPosition() is probably
     // useless.  the documentation certainly is.
@@ -354,7 +354,7 @@ bool			WinMedia::isAudioTooEmpty() const
     return false;
 }
 
-void			WinMedia::writeAudioFrames(
+void            WinMedia::writeAudioFrames(
     const float* samples, int numFrames)
 {
     // ignore empty buffers
@@ -427,7 +427,7 @@ void			WinMedia::writeAudioFrames(
     }
 }
 
-void			WinMedia::audioSleep(
+void            WinMedia::audioSleep(
     bool checkLowWater, double maxTime)
 {
     // wait for a message on the command queue.  do this by waiting
@@ -470,6 +470,6 @@ void			WinMedia::audioSleep(
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

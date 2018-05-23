@@ -66,13 +66,13 @@ WallSceneNode::~WallSceneNode()
     delete[] elementAreas;
 }
 
-void			WallSceneNode::setNumLODs(int num, float* areas)
+void            WallSceneNode::setNumLODs(int num, float* areas)
 {
     numLODs = num;
     elementAreas = areas;
 }
 
-void			WallSceneNode::setPlane(const GLfloat _plane[4])
+void            WallSceneNode::setPlane(const GLfloat _plane[4])
 {
     // get normalization factor
     const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
@@ -86,7 +86,7 @@ void			WallSceneNode::setPlane(const GLfloat _plane[4])
     plane[3] = n * _plane[3];
 }
 
-bool			WallSceneNode::cull(const ViewFrustum& frustum) const
+bool            WallSceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
     const GLfloat* eye = frustum.getEye();
@@ -94,16 +94,12 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
                          (eye[1] * plane[1]) +
                          (eye[2] * plane[2]) + plane[3];
     if (eyedot <= 0.0f)
-    {
         return true;
-    }
 
     // if the Visibility culler tells us that we're
     // fully visible, then skip the rest of these tests
     if (octreeState == OctreeVisible)
-    {
         return false;
-    }
 
     // get signed distance of wall center to each frustum side.
     // if more than radius outside then cull
@@ -122,49 +118,39 @@ bool			WallSceneNode::cull(const ViewFrustum& frustum) const
         {
             d2[i] = d[i] * d[i];
             if (d2[i] > mySphere[3])
-            {
                 return true;
-            }
             inside = false;
         }
     }
 
     // see if center of wall is inside each frustum side
     if (inside)
-    {
         return false;
-    }
 
     // most complicated test:  for sides sphere is behind, see if
     // center is beyond radius times the sine of the angle between
     // the normals, or equivalently:
-    //	distance^2 > radius^2 * (1 - cos^2)
+    //  distance^2 > radius^2 * (1 - cos^2)
     // if so the wall is outside the view frustum
     for (i = 0; i < planeCount; i++)
     {
         if (d[i] >= 0.0f)
-        {
             continue;
-        }
         const GLfloat* norm = frustum.getSide(i);
         const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
         if (d2[i] > mySphere[3] * (1.0f - c*c))
-        {
             return true;
-        }
     }
 
     // probably visible
     return false;
 }
 
-int			WallSceneNode::pickLevelOfDetail(
+int         WallSceneNode::pickLevelOfDetail(
     const SceneRenderer& renderer) const
 {
     if (!BZDBCache::tesselation)
-    {
         return 0;
-    }
 
     int bestLOD = 0;
 
@@ -211,14 +197,14 @@ int			WallSceneNode::pickLevelOfDetail(
     return bestLOD;
 }
 
-GLfloat			WallSceneNode::getDistance(const GLfloat* eye) const
+GLfloat         WallSceneNode::getDistance(const GLfloat* eye) const
 {
     const GLfloat d = plane[0] * eye[0] + plane[1] * eye[1] +
                       plane[2] * eye[2] + plane[3];
     return d * d;
 }
 
-void			WallSceneNode::setColor(
+void            WallSceneNode::setColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     color[0] = r;
@@ -227,25 +213,25 @@ void			WallSceneNode::setColor(
     color[3] = a;
 }
 
-void			WallSceneNode::setDynamicColor(const GLfloat* rgba)
+void            WallSceneNode::setDynamicColor(const GLfloat* rgba)
 {
     dynamicColor = rgba;
     return;
 }
 
-void			WallSceneNode::setBlending(bool blend)
+void            WallSceneNode::setBlending(bool blend)
 {
     wantBlending = blend;
     return;
 }
 
-void			WallSceneNode::setSphereMap(bool sphereMapping)
+void            WallSceneNode::setSphereMap(bool sphereMapping)
 {
     wantSphereMap = sphereMapping;
     return;
 }
 
-void			WallSceneNode::setColor(const GLfloat* rgba)
+void            WallSceneNode::setColor(const GLfloat* rgba)
 {
     color[0] = rgba[0];
     color[1] = rgba[1];
@@ -253,7 +239,7 @@ void			WallSceneNode::setColor(const GLfloat* rgba)
     color[3] = rgba[3];
 }
 
-void			WallSceneNode::setModulateColor(
+void            WallSceneNode::setModulateColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     modulateColor[0] = r;
@@ -262,7 +248,7 @@ void			WallSceneNode::setModulateColor(
     modulateColor[3] = a;
 }
 
-void			WallSceneNode::setModulateColor(const GLfloat* rgba)
+void            WallSceneNode::setModulateColor(const GLfloat* rgba)
 {
     modulateColor[0] = rgba[0];
     modulateColor[1] = rgba[1];
@@ -270,7 +256,7 @@ void			WallSceneNode::setModulateColor(const GLfloat* rgba)
     modulateColor[3] = rgba[3];
 }
 
-void			WallSceneNode::setLightedColor(
+void            WallSceneNode::setLightedColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     lightedColor[0] = r;
@@ -279,7 +265,7 @@ void			WallSceneNode::setLightedColor(
     lightedColor[3] = a;
 }
 
-void			WallSceneNode::setLightedColor(const GLfloat* rgba)
+void            WallSceneNode::setLightedColor(const GLfloat* rgba)
 {
     lightedColor[0] = rgba[0];
     lightedColor[1] = rgba[1];
@@ -287,7 +273,7 @@ void			WallSceneNode::setLightedColor(const GLfloat* rgba)
     lightedColor[3] = rgba[3];
 }
 
-void			WallSceneNode::setLightedModulateColor(
+void            WallSceneNode::setLightedModulateColor(
     GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     lightedModulateColor[0] = r;
@@ -296,7 +282,7 @@ void			WallSceneNode::setLightedModulateColor(
     lightedModulateColor[3] = a;
 }
 
-void			WallSceneNode::setLightedModulateColor(
+void            WallSceneNode::setLightedModulateColor(
     const GLfloat* rgba)
 {
     lightedModulateColor[0] = rgba[0];
@@ -305,43 +291,43 @@ void			WallSceneNode::setLightedModulateColor(
     lightedModulateColor[3] = rgba[3];
 }
 
-void			WallSceneNode::setAlphaThreshold(float thresh)
+void            WallSceneNode::setAlphaThreshold(float thresh)
 {
     alphaThreshold = thresh;
 }
 
-void			WallSceneNode::setNoCulling(bool value)
+void            WallSceneNode::setNoCulling(bool value)
 {
     noCulling = value;
 }
 
-void			WallSceneNode::setNoSorting(bool value)
+void            WallSceneNode::setNoSorting(bool value)
 {
     noSorting = value;
 }
 
-void			WallSceneNode::setMaterial(const OpenGLMaterial& mat)
+void            WallSceneNode::setMaterial(const OpenGLMaterial& mat)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setMaterial(mat);
     gstate = builder.getState();
 }
 
-void			WallSceneNode::setTexture(const int tex)
+void            WallSceneNode::setTexture(const int tex)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setTexture(tex);
     gstate = builder.getState();
 }
 
-void			WallSceneNode::setTextureMatrix(const GLfloat* texmat)
+void            WallSceneNode::setTextureMatrix(const GLfloat* texmat)
 {
     OpenGLGStateBuilder builder(gstate);
     builder.setTextureMatrix(texmat);
     gstate = builder.getState();
 }
 
-void			WallSceneNode::notifyStyleChange()
+void            WallSceneNode::notifyStyleChange()
 {
     float alpha;
     bool lighted = (BZDBCache::lighting && gstate.isLighted());
@@ -353,9 +339,7 @@ void			WallSceneNode::notifyStyleChange()
         builder.setShading();
     }
     else
-    {
         builder.setShading(GL_FLAT);
-    }
     if (BZDBCache::texture && gstate.isTextured())
     {
         style += 2;
@@ -370,13 +354,9 @@ void			WallSceneNode::notifyStyleChange()
         alpha = lighted ? lightedColor[3] : color[3];
     }
     if (BZDB.isTrue("texturereplace"))
-    {
         builder.setTextureEnvMode(GL_REPLACE);
-    }
     else
-    {
         builder.setTextureEnvMode(GL_MODULATE);
-    }
     builder.enableMaterial(lighted);
     if (BZDBCache::blend && (wantBlending || (alpha != 1.0f)))
     {
@@ -390,25 +370,17 @@ void			WallSceneNode::notifyStyleChange()
     }
     isBlended = wantBlending || (alpha != 1.0f);
     if (alphaThreshold != 0.0f)
-    {
         builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
-    }
     if (noCulling)
-    {
         builder.setCulling(GL_NONE);
-    }
     if (noSorting)
-    {
         builder.setNeedsSorting(false);
-    }
     if (wantSphereMap)
-    {
         builder.enableSphereMap(true);
-    }
     gstate = builder.getState();
 }
 
-void			WallSceneNode::copyStyle(WallSceneNode* node)
+void            WallSceneNode::copyStyle(WallSceneNode* node)
 {
     gstate = node->gstate;
     useColorTexture = node->useColorTexture;
@@ -422,16 +394,12 @@ void			WallSceneNode::copyStyle(WallSceneNode* node)
     wantSphereMap = node->wantSphereMap;
 }
 
-void			WallSceneNode::setColor()
+void            WallSceneNode::setColor()
 {
     if (BZDBCache::texture && useColorTexture)
-    {
         myColor4f(1,1,1,1);
-    }
     else if (dynamicColor != NULL)
-    {
         myColor4fv(dynamicColor);
-    }
     else
     {
         switch (style)
@@ -544,16 +512,12 @@ int WallSceneNode::splitWall(const GLfloat* splitPlane,
         if (array[next] & FRONT_SIDE)
         {
             if (!(array[i] & FRONT_SIDE))
-            {
                 firstFront = next;
-            }
         }
         if (array[next] & BACK_SIDE)
         {
             if (!(array[i] & BACK_SIDE))
-            {
                 firstBack = next;
-            }
         }
     }
 
@@ -652,9 +616,7 @@ void WallSceneNode::splitEdge(float d1, float d2,
     // compute fraction along edge where split occurs
     float t1 = (d2 - d1);
     if (t1 != 0.0f)   // shouldn't happen
-    {
         t1 = -(d1 / t1);
-    }
 
     // compute vertex
     p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
@@ -681,6 +643,6 @@ bool WallSceneNode::inAxisBox (const Extents& UNUSED(exts)) const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

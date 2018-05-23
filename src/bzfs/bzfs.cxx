@@ -145,7 +145,7 @@ bool checkShotMismatch = true;
 BasesList bases;
 
 // global keeper of world Events
-WorldEventManager	worldEventManager;
+WorldEventManager   worldEventManager;
 
 // FIXME - define a well-known constant for a null playerid in address.h?
 // might be handy in other players, too.
@@ -160,7 +160,7 @@ static RejoinList rejoinList;
 static TimeKeeper lastWorldParmChange;
 static bool       playerHadWorld = false;
 
-bool		  publiclyDisconnected = false;
+bool          publiclyDisconnected = false;
 
 
 void sendFilteredMessage(int playerIndex, PlayerId dstPlayer, const char *message, MessageType type = ChatMessage);
@@ -290,16 +290,12 @@ void broadcastMessage(uint16_t code, int len, void *msg)
     for (int i = 0; i < curMaxPlayers; i++)
     {
         if (realPlayerWithNet(i))
-        {
             directMessage(i, code, len, msg);
-        }
     }
 
     // record the packet
     if (Record::enabled())
-    {
         Record::addPacket(code, len, msg);
-    }
 
     return;
 }
@@ -353,9 +349,7 @@ static void setNoDelay(int fd)
 #endif
     struct protoent *p = getprotobyname("tcp");
     if (p && setsockopt(fd, p->p_proto, TCP_NODELAY, (SSOType)&on, sizeof(on)) < 0)
-    {
         nerror("enabling TCP_NODELAY");
-    }
 }
 
 void sendFlagUpdate(FlagInfo &flag)
@@ -381,9 +375,7 @@ static float nextGameTime()
             const TimeKeeper& pTime = gkPlayer->getNextGameTime();
             const float pNextTime = (float)(pTime - nowTime);
             if (pNextTime < nextTime)
-            {
                 nextTime = pNextTime;
-            }
         }
     }
     return nextTime;
@@ -399,9 +391,7 @@ static int makeGameTime(void* bufStart, float lag)
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
     if (Replay::enabled())
-    {
         return;
-    }
     if (gkPlayer != NULL)
     {
         void* buf = getDirectMessageBuffer();
@@ -422,9 +412,7 @@ static void sendPendingGameTime()
         if ((gkPlayer != NULL)
                 && gkPlayer->player.isHuman()
                 && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
-        {
             sendGameTime(gkPlayer);
-        }
     }
     return;
 }
@@ -539,9 +527,7 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
         broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
     }
     else
-    {
         directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
-    }
 }
 
 std::string GetPlayerIPAddress( int i)
@@ -674,7 +660,8 @@ void resetTeamScores ( void )
     // reset team scores
     for (int i = RedTeam; i <= PurpleTeam; i++)
     {
-        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
+        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins,
+                team[i].team.getWins(), 0);
         worldEventManager.callEvents(&eventData);
         eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
         worldEventManager.callEvents(&eventData);
@@ -774,7 +761,8 @@ void startCountdown ( int delay, float limit, int playerID )
     const char* callsign = bz_getPlayerCallsign(playerID);
 
     if (callsign != NULL)
-        sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.", callsign).c_str());
+        sendMessage(ServerPlayer, AllPlayers, TextUtils::format("Team scores reset, countdown started by %s.",
+                    callsign).c_str());
     else
         sendMessage(ServerPlayer, AllPlayers, "Team scores reset, countdown started.");
 
@@ -785,9 +773,7 @@ void startCountdown ( int delay, float limit, int playerID )
     long int timeArray[4];
     std::string matchBegins;
     if (countdownDelay == 0)
-    {
         matchBegins = "Match begins now!";
-    }
     else
     {
         TimeKeeper::convertTime(countdownDelay, timeArray);
@@ -837,8 +823,8 @@ PingPacket getTeamCounts()
         // Servers with -timemanual (match servers) or plugins whch handle gameover
         // usually want people to join even when last game has just ended.
         // (FIXME: the countdown/gameover handling really needs a new concept,
-        //	 originally it was not possible to even join a server when gameover
-        //	 was reached, but this was changed for manual countdown (match) servers)
+        //   originally it was not possible to even join a server when gameover
+        //   was reached, but this was changed for manual countdown (match) servers)
     }
     else
     {
@@ -923,7 +909,8 @@ void publicize()
     if (clOptions->publicizeServer)
     {
         // list server initialization
-        for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end(); ++i)
+        for (std::vector<std::string>::const_iterator i = clOptions->listServerURL.begin(); i < clOptions->listServerURL.end();
+                ++i)
         {
             listServerLink = new ListServerLink(i->c_str(),
                                                 clOptions->publicizedAddress, clOptions->publicizedTitle, clOptions->advertiseGroups);
@@ -1028,9 +1015,7 @@ static void serverStop()
 static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint16_t code)
 {
     if (Record::enabled())
-    {
         Record::addPacket(code, len, (const char*)rawbuf + 4);
-    }
 
     // relay packet to all players except origin
     for (int i = 0; i < curMaxPlayers; i++)
@@ -1041,9 +1026,7 @@ static void relayPlayerPacket(int index, uint16_t len, const void *rawbuf, uint1
         PlayerInfo& pi = playerData->player;
 
         if (i != index && pi.isPlaying())
-        {
             pwrite(*playerData, rawbuf, len + 4);
-        }
     }
 }
 
@@ -1092,15 +1075,11 @@ bool defineWorld ( void )
 {
     // clean up old database
     if (world)
-    {
         delete world;
-    }
     if (worldDatabase)
-    {
         delete[] worldDatabase;
-    }
 
-    bz_GetWorldEventData_V1	worldData;
+    bz_GetWorldEventData_V1 worldData;
     worldData.ctf     = (clOptions->gameType == ClassicCTF);
     worldData.rabbit  = (clOptions->gameType == RabbitChase);
     worldData.openFFA = (clOptions->gameType == OpenFFA);
@@ -1168,9 +1147,7 @@ bool defineWorld ( void )
     }
 
     if (world == NULL)
-    {
         return false;
-    }
 
     maxWorldHeight = world->getMaxWorldHeight();
 
@@ -1184,9 +1161,7 @@ bool defineWorld ( void )
     worldDatabase = new char[worldDatabaseSize];
     // this should NOT happen but it does sometimes
     if (!worldDatabase)
-    {
         return false;
-    }
     memset(worldDatabase, 0, worldDatabaseSize);
 
     void *buf = worldDatabase;
@@ -1247,16 +1222,12 @@ bool saveWorldCache( const char* fileName )
     else
         file = fopen (clOptions->cacheOut.c_str(), "wb");
     if (file == NULL)
-    {
         return false;
-    }
     size_t written =
         fwrite (worldDatabase, sizeof(char), worldDatabaseSize, file);
     fclose (file);
     if (written != worldDatabaseSize)
-    {
         return false;
-    }
     return true;
 }
 
@@ -1318,18 +1289,12 @@ TeamColor whoseBase(float x, float y, float z)
 static void dumpScore()
 {
     if (!clOptions->printScore)
-    {
         return;
-    }
     if (clOptions->timeLimit > 0.0f)
-    {
         std::cout << "#time " << clOptions->timeLimit - clOptions->timeElapsed << std::endl;
-    }
     std::cout << "#teams";
     for (int i = int(RedTeam); i < NumTeams; i++)
-    {
         std::cout << ' ' << team[i].team.getWins() << '-' << team[i].team.getLosses() << ' ' << Team::getName(TeamColor(i));
-    }
     GameKeeper::Player::dumpScore();
     std::cout << "#end\n";
 }
@@ -1358,9 +1323,7 @@ static void acceptClient()
     n = setsockopt(fd, SOL_SOCKET, SO_KEEPALIVE,
                    (SSOType)&keepalive, sizeof(int));
     if (n < 0)
-    {
         nerror("couldn't set keepalive");
-    }
 
     // they aren't a player yet till they send us the connection string
     NetConnectedPeer peer;
@@ -1442,9 +1405,7 @@ static bool MakePlayer ( NetHandler *handler )
         GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (gkPlayer != NULL
             && gkPlayer->player.isHuman() )
-    {
         sendGameTime(gkPlayer);
-    }
 
     checkGameOn();
     return true;
@@ -1491,7 +1452,8 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     MessageType type = ChatMessage;
 
     // Check for spoofed /me messages
-    if ((strlen(message) >= 3) && (message[0] == '*') && (message[strlen(message)-2] == '\t') && (message[strlen(message)-1] == '*'))
+    if ((strlen(message) >= 3) && (message[0] == '*') && (message[strlen(message)-2] == '\t')
+            && (message[strlen(message)-1] == '*'))
         return;
 
     // reformat any '/me' action messages
@@ -1614,16 +1576,12 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
         strncpy(filtered, message, MessageLen - 1);
         filtered[MessageLen - 1] = '\0';
         if (clOptions->filterSimple)
-        {
             clOptions->filter.filter(filtered, true);
-        }
         else
-        {
             clOptions->filter.filter(filtered, false);
-        }
-        if (strcmp(message,filtered) != 0)	// the filter did do something so barf a message
+        if (strcmp(message,filtered) != 0)  // the filter did do something so barf a message
         {
-            bz_MessageFilteredEventData_V1	eventData;
+            bz_MessageFilteredEventData_V1  eventData;
 
             eventData.playerID = sendingPlayer;
             eventData.rawMessage = message;
@@ -1644,17 +1602,13 @@ void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char
 
     // if the message is empty, stop.
     if (strlen(msg) == 0)
-    {
         return;
-    }
 
     // check that the player has the talk permission
     GameKeeper::Player *senderData = GameKeeper::Player::getPlayerByIndex(sendingPlayer);
 
     if (!senderData && sendingPlayer != ServerPlayer)
-    {
         return;
-    }
 
     if (senderData)
     {
@@ -1781,9 +1735,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
     }
 
     if (Record::enabled() && !broadcast)   // don't record twice
-    {
         Record::addPacket(MsgMessage, len, bufStart, HiddenPacket);
-    }
 }
 
 static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
@@ -1910,9 +1862,7 @@ static TeamColor teamSelect(TeamColor t, std::vector<TeamSize> teams)
                 totalPlayerScores.erase(totalPlayerScores.begin() + i);
             }
             else
-            {
                 ++i;
-            }
         }
     }
 
@@ -2018,9 +1968,7 @@ static std::string evaluateString(const std::string &raw)
     {
         char current = raw[i];
         if (current != '\\')
-        {
             eval += current;
-        }
         else
         {
             char next = raw[i+1];
@@ -2051,13 +1999,9 @@ static std::string evaluateString(const std::string &raw)
                     const std::string var = raw.substr(start, end - start);
                     i += (end - start) + 2;
                     if (BZDB.isSet(var))
-                    {
                         eval += BZDB.get(var);
-                    }
                     else
-                    {
                         eval += "*BADBZDB*";
-                    }
                 }
                 break;
             }
@@ -2081,9 +2025,7 @@ static std::string evaluateString(const std::string &raw)
                         eval += buffer;
                     }
                     else
-                    {
                         eval += "*BADVAR*";
-                    }
                 }
                 break;
             }
@@ -2117,9 +2059,7 @@ static void recalcHandicap(int playerIndex)
             continue;
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if (p != NULL && realPlayer(i) && !p->player.isObserver())
-        {
             relscore += me->player.howManyTimesKilledBy(i) - p->player.howManyTimesKilledBy(playerIndex);
-        }
     }
 
     bz_ComputeHandicap_V1 data;
@@ -2144,9 +2084,7 @@ void recalcAllHandicaps()
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if (p && realPlayer(i) && !p->player.isObserver())
-        {
             recalcHandicap(i);
-        }
     }
 
     bz_EventData endData = bz_EventData(bz_eEndHandicapRefreshEvent);
@@ -2260,9 +2198,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             rejectionMessage += " remaining";
         }
         else
-        {
             rejectionMessage += "indefinite";
-        }
 
         rejectionMessage += ")";
 
@@ -2283,13 +2219,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
         rejectionMessage = BanRefusalString;
         if (idInfo.reason.size())
-        {
             rejectionMessage += idInfo.reason;
-        }
         else
-        {
             rejectionMessage += "General Ban";
-        }
 
         rejectionMessage += ColorStrings[WhiteColor];
         if (idInfo.bannedBy.size())
@@ -2301,9 +2233,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
         rejectionMessage += ColorStrings[GreenColor];
         if (idInfo.fromMaster)
-        {
             rejectionMessage += " [from the master server]";
-        }
         rejectPlayer(playerIndex, RejectIDBanned, rejectionMessage.c_str());
         return;
     }
@@ -2334,10 +2264,10 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     worldEventManager.callEvents(bz_eGetAutoTeamEvent,&autoTeamData);
 
-    t = (TeamColor)convertTeam((bz_eTeamType)autoTeamData.team);	// team may be modified
+    t = (TeamColor)convertTeam((bz_eTeamType)autoTeamData.team);    // team may be modified
     playerData->player.setTeam(t);
-    playerData->player.endShotCredit = 0;		// reset shotEndCredit
-    playerData->player.endShotShieldCredit = 0;	// endShotCredit for holding the shield flag (0 or 1)
+    playerData->player.endShotCredit = 0;       // reset shotEndCredit
+    playerData->player.endShotShieldCredit = 0; // endShotCredit for holding the shield flag (0 or 1)
 
     // count current number of players and players+observers
     int numplayers = 0;
@@ -2356,7 +2286,8 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         if (waitTime > 0.0f)
         {
             char buffer[MessageLen];
-            logDebugMessage(2,"Player %s [%d] rejoin wait of %.1f seconds\n",playerData->player.getCallSign(), playerIndex, waitTime);
+            logDebugMessage(2,"Player %s [%d] rejoin wait of %.1f seconds\n",playerData->player.getCallSign(), playerIndex,
+                            waitTime);
             snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
             sendMessage(ServerPlayer, playerIndex, buffer);
             //      removePlayer(playerIndex, "rejoining too quickly");
@@ -2598,7 +2529,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     sendPlayerInfo();
 
     // call any on join events
-    bz_PlayerJoinPartEventData_V1	joinEventData;
+    bz_PlayerJoinPartEventData_V1   joinEventData;
     joinEventData.eventType = bz_ePlayerJoinEvent;
     joinEventData.playerID = playerIndex;
     joinEventData.record = bz_getPlayerByIndex(playerIndex);
@@ -2661,14 +2592,10 @@ void resetFlag(FlagInfo &flag)
         const float waterLevel = world->getWaterLevel();
         float minZ = 0.0f;
         if (waterLevel > minZ)
-        {
             minZ = waterLevel;
-        }
         float maxZ = MAXFLOAT;
         if (!clOptions->flagsOnBuildings)
-        {
             maxZ = 0.0f;
-        }
         float worldSize = BZDBCache::worldSize;
         int i;
         for (i = 0; i < 10000; i++)
@@ -2680,14 +2607,10 @@ void resetFlag(FlagInfo &flag)
                 flagPos[2] = world->getMaxWorldHeight() * (float)bzfrand();
             }
             if (DropGeometry::dropFlag(flagPos, minZ, maxZ))
-            {
                 break;
-            }
         }
         if (i == 10000)
-        {
             std::cerr << "Unable to position flags on this world.\n";
-        }
     }
 
     bool teamIsEmpty = true;
@@ -2721,7 +2644,7 @@ void sendDrop(FlagInfo &flag)
     playerData->player.resetFlag();
 
     void *bufStart = getDirectMessageBuffer();
-    void *buf	 = nboPackUByte(bufStart, playerIndex);
+    void *buf    = nboPackUByte(bufStart, playerIndex);
     buf = flag.pack(buf);
     broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
 }
@@ -2790,9 +2713,7 @@ static void anointNewRabbit(int killerId = NoPlayer)
     {
         logDebugMessage(3,"rabbitIndex is set to %d\n", rabbitIndex);
         if (oldRabbitData)
-        {
             oldRabbitData->player.wasARabbit();
-        }
         if (rabbitIndex != NoPlayer)
         {
             GameKeeper::Player *rabbitData
@@ -2836,13 +2757,9 @@ static void pausePlayer(int playerIndex, bool paused = true)
     if (clOptions->gameType == RabbitChase)
     {
         if (paused && (rabbitIndex == playerIndex))
-        {
             anointNewRabbit();
-        }
         else if (!paused && (rabbitIndex == NoPlayer))
-        {
             anointNewRabbit();
-        }
     }
 
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -2850,7 +2767,7 @@ static void pausePlayer(int playerIndex, bool paused = true)
     buf = nboPackUByte(buf, paused);
     broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
 
-    bz_PlayerPausedEventData_V1	pauseEventData;
+    bz_PlayerPausedEventData_V1 pauseEventData;
     pauseEventData.playerID = playerIndex;
     pauseEventData.pause = paused;
 
@@ -2895,13 +2812,9 @@ void zapFlagByPlayer(int playerIndex)
     // do not simply zap team flag
     Flag &carriedflag = flag.flag;
     if (carriedflag.type->flagTeam != ::NoTeam)
-    {
         dropPlayerFlag(*playerData, playerData->lastState.pos);
-    }
     else
-    {
         zapFlag(flag);
-    }
 }
 
 void flushKilledByCounts( int removeID )
@@ -2960,9 +2873,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // if there is an active poll, cancel any vote this player may have made
     static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
     if ((arbiter != NULL) && (arbiter->knowsPoll()))
-    {
         arbiter->retractVote(std::string(playerData->player.getCallSign()));
-    }
 
     // status message
     std::string timeStamp = TimeKeeper::timestamp();
@@ -2984,9 +2895,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         if (!playerData->player.hasNeverSpawned() &&
                 (rejoinList.waitTime (playerIndex) <= 0.0f) &&
                 !playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin))
-        {
             rejoinList.add (playerIndex);
-        }
 
         // tell everyone player has left
         void *buf, *bufStart = getDirectMessageBuffer();
@@ -3146,9 +3055,7 @@ static void sendGameSettings(int playerIndex)
     GameKeeper::Player *playerData;
     playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData == NULL)
-    {
         return;
-    }
 
     pwrite (*playerData, worldSettings, 4 + WorldSettingsSize);
 
@@ -3250,7 +3157,7 @@ void playerAlive(int playerIndex)
         return;
     }
 
-    bz_AllowSpawnData_V2	spawnAllowData;
+    bz_AllowSpawnData_V2    spawnAllowData;
     spawnAllowData.playerID = playerIndex;
     spawnAllowData.team = convertTeam(playerData->player.getTeam());
 
@@ -3283,9 +3190,7 @@ void playerAlive(int playerIndex)
 
         // client won't send another enter so kick em =(
         if (spawnAllowData.kickPlayer)
-        {
             removePlayer(playerIndex, spawnAllowData.kickReason.c_str());
-        }
 
         return;
     }
@@ -3300,7 +3205,7 @@ void playerAlive(int playerIndex)
      clOptions->gameType == ClassicCTF);
 
     // see if there is anyone to handle the spawn event, and if they want to change it.
-    bz_GetPlayerSpawnPosEventData_V1	spawnData;
+    bz_GetPlayerSpawnPosEventData_V1    spawnData;
     spawnData.playerID = playerIndex;
     spawnData.team   = convertTeam(playerData->player.getTeam());
     spawnData.pos[0]   = spawnPosition.getX();
@@ -3322,7 +3227,7 @@ void playerAlive(int playerIndex)
     broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
 
     // call any events for a playerspawn
-    bz_PlayerSpawnEventData_V1	spawnEvent;
+    bz_PlayerSpawnEventData_V1  spawnEvent;
     spawnEvent.playerID = playerIndex;
     spawnEvent.team = convertTeam(playerData->player.getTeam());
 
@@ -3334,9 +3239,7 @@ void playerAlive(int playerIndex)
     {
         playerData->player.wasNotARabbit();
         if (rabbitIndex == NoPlayer)
-        {
             anointNewRabbit();
-        }
     }
 }
 
@@ -3415,13 +3318,9 @@ bool changeTeam(int playerIndex, TeamColor newTeam)
     // Store the new team. For rabbit chase, set immediately. For others, set it
     // for the next spawn. Do the same when changing to/from observer.
     if (clOptions->gameType == RabbitChase || newTeam == ObserverTeam || playerData->player.getTeam() == ObserverTeam)
-    {
         playerData->player.setTeam(newTeam);
-    }
     else
-    {
         playerData->player.setNextTeam(newTeam);
-    }
 
     // Broadcast the team change
     void *buf, *bufStart = getDirectMessageBuffer();
@@ -3495,7 +3394,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     victim->setDead();
 
     // call any events for a playerdeath
-    bz_PlayerDieEventData_V2	dieEvent;
+    bz_PlayerDieEventData_V2    dieEvent;
     dieEvent.playerID = victimIndex;
     dieEvent.team = convertTeam(victim->getTeam());
     dieEvent.killerID = killerIndex;
@@ -3551,9 +3450,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     buf = nboPackShort(buf, shotIndex);
     buf = flagType->pack(buf);
     if (reason == PhysicsDriverDeath)
-    {
         buf = nboPackInt(buf, phydrv);
-    }
     broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
 
     // update tk-score
@@ -3601,9 +3498,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                         killerData->score.killedBy();
                 }
                 else
-                {
                     killerData->score.kill();
-                }
             }
 
             // send killer & victim
@@ -3627,9 +3522,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                 buf = nboPackShort(buf, killerData->score.getHandicap());
             }
             else
-            {
                 buf = nboPackUByte(bufStart, 1);
-            }
             recalcHandicap(victimIndex);
             buf = nboPackUByte(buf, victimIndex);
             buf = nboPackShort(buf, victimData->score.getHandicap());
@@ -3685,7 +3578,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+delta);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+delta);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
+                            old, old+delta);
                     worldEventManager.callEvents(&eventData);
                 }
             }
@@ -3697,14 +3591,16 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
                     int old = team[winningTeam].team.getWins();
                     team[winningTeam].team.setWins(old+1);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old, old+1);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old,
+                            old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (!victim->isTeam(RogueTeam))
                 {
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+1);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+1);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
+                            old, old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (killer)
@@ -3727,9 +3623,7 @@ void doSpawns()
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if (p == NULL)
-        {
             continue;
-        }
         if (p->player.waitingToSpawn() && (p->player.getNextSpawnTime() <= curTime))
         {
             // Let them live!
@@ -3815,7 +3709,8 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
         //last Pos might be lagged by TankSpeed so include in calculation
         const float tankRadius = BZDBCache::tankRadius;
         const float tankSpeed = BZDBCache::tankSpeed;
-        const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius + BZDBCache::flagRadius);
+        const float radius2 = (tankSpeed + tankRadius + BZDBCache::flagRadius) * (tankSpeed + tankRadius +
+                              BZDBCache::flagRadius);
         const float* tpos = playerData->lastState.pos;
         const float delta = (tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
                             (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]);
@@ -3880,9 +3775,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     // us to drop a sticky flag until the requirements are satisfied.
     const int flagIndex = drpFlag.getIndex();
     if (drpFlag.flag.status != FlagOnTank)
-    {
         return;
-    }
     int flagTeam = drpFlag.flag.type->flagTeam;
     bool isTeamFlag = (flagTeam != ::NoTeam);
 
@@ -3894,9 +3787,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     const float waterLevel = world->getWaterLevel();
     float minZ = 0.0f;
     if (waterLevel > minZ)
-    {
         minZ = waterLevel;
-    }
     const float maxZ = MAXFLOAT;
 
     float landing[3] = {pos[0], pos[1], pos[2]};
@@ -3906,22 +3797,16 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     bool vanish;
 
     if (isTeamFlag)
-    {
         vanish = false;
-    }
     else if (--drpFlag.grabs <= 0)
     {
         vanish = true;
         drpFlag.grabs = 0;
     }
     else if (!clOptions->flagsOnBuildings && (landing[2] > 0.0f))
-    {
         vanish = true;
-    }
     else
-    {
         vanish = !safelyDropped;
-    }
 
     // With Team Flag, we should absolutely go for finding a landing
     // position, while, for other flags, we could stay with default, or
@@ -4007,9 +3892,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
 {
     const int flagIndex = playerData.player.getFlag();
     if (flagIndex < 0)
-    {
         return;
-    }
 
     FlagInfo &flag = *FlagInfo::get(flagIndex);
     if (flag.flag.type == Flags::Shield)
@@ -4058,8 +3941,8 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
      * TODO: understand this situation better and change or document it.
      *if (teamIndex != teamCaptured)
      *    logDebugMessage(1,"Player %s [%d] claimed to capture %s flag while carrying %s flag\n",
-     *	playerData->player.getCallSign(), playerIndex,
-     *	Team::getName(teamCaptured), Team::getName(teamIndex));
+     *  playerData->player.getCallSign(), playerIndex,
+     *  Team::getName(teamCaptured), Team::getName(teamIndex));
      */
 
     if (checkCheat)   //cheat checking
@@ -4119,7 +4002,7 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
     broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
 
     // find any events for capturing the flags on the capped team or events for ANY team
-    bz_CTFCaptureEventData_V1	eventData;
+    bz_CTFCaptureEventData_V1   eventData;
     eventData.teamCapped = convertTeam(teamIndex);
     eventData.teamCapping = convertTeam(teamCaptured);
     eventData.playerCapping = playerIndex;
@@ -4133,9 +4016,7 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if ((p == NULL) || (teamIndex != (int)p->player.getTeam()))
-        {
             continue;
-        }
         if (p->player.isAlive())
         {
             p->player.setDead();
@@ -4156,12 +4037,14 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
 
             int old = team[winningTeam].team.getWins();
             team[winningTeam].team.setWins(old+1);
-            bz_TeamScoreChangeEventData_V1 eventData2 = bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam), bz_eWins, old, old+1);
+            bz_TeamScoreChangeEventData_V1 eventData2 = bz_TeamScoreChangeEventData_V1(convertTeam(winningTeam), bz_eWins, old,
+                    old+1);
             worldEventManager.callEvents(&eventData2);
         }
         int old = team[teamIndex].team.getLosses();
         team[teamIndex].team.setLosses(old+1);
-        bz_TeamScoreChangeEventData_V1 eventData3 = bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex), bz_eLosses, old, old+1);
+        bz_TeamScoreChangeEventData_V1 eventData3 = bz_TeamScoreChangeEventData_V1(convertTeam(teamIndex), bz_eLosses, old,
+                old+1);
         worldEventManager.callEvents(&eventData3);
 
         sendTeamUpdate(-1, winningTeam, teamIndex);
@@ -4247,19 +4130,13 @@ static void shotFired(int playerIndex, void *buf, int len)
         std::string fireFlag = "unknown";
         std::string holdFlag = "unknown";
         if (firingInfo.flagType)
-        {
             fireFlag = firingInfo.flagType->flagAbbv;
-        }
         if (fInfo.flag.type)
         {
             if (fInfo.flag.type == Flags::Null)
-            {
                 holdFlag = "none";
-            }
             else
-            {
                 holdFlag = fInfo.flag.type->flagAbbv;
-            }
         }
 
         // probably a cheater using wrong shots.. exception for thief since they steal someone elses
@@ -4286,8 +4163,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
     const float maxTankSpeed  = BZDBCache::tankSpeed;
     const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    float tankSpeed	    = maxTankSpeed;
-    float lifetime	    = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+    float tankSpeed     = maxTankSpeed;
+    float lifetime      = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
     if (handicapAllowed())
     {
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
@@ -4299,29 +4176,20 @@ static void shotFired(int playerIndex, void *buf, int len)
         tankSpeed = 0.0f;
     }
     else if (firingInfo.flagType == Flags::Velocity)
-    {
         tankSpeed *= tankSpeedMult;
-    }
     else if (firingInfo.flagType == Flags::Thief)
-    {
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    }
-    else if ((firingInfo.flagType == Flags::Burrow) && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
-    {
+    else if ((firingInfo.flagType == Flags::Burrow)
+             && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-    }
     else if (firingInfo.flagType == Flags::Agility)
-    {
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-    }
     else
     {
         //If shot is different height than player, can't be sure they didn't drop V in air
         if (playerData->lastState.pos[2]
                 != (shot.pos[2]-BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
-        {
             tankSpeed *= tankSpeedMult;
-        }
     }
 
     // FIXME, we should look at the actual TankSpeed ;-)
@@ -4438,9 +4306,7 @@ static void shotFired(int playerIndex, void *buf, int len)
                     // also handle case where limit was set to 0
                     float lastPos [3];
                     for (int i = 0; i < 3; i ++)
-                    {
                         lastPos[i] = playerData->lastState.pos[i];
-                    }
                     fInfo.grabs = 0; // recycle this flag now
                     dropFlag(fInfo, lastPos);
                 }
@@ -4504,18 +4370,14 @@ static bool invalidPlayerAction(PlayerInfo &p, int t, const char *action)
 {
     const char *state = NULL;
     if (p.isObserver())
-    {
         state = "as an observer";
-    }
     else if (p.isPaused())
     {
-        if (strcmp(action, "die") != 0)	// allow self destruct while paused
+        if (strcmp(action, "die") != 0) // allow self destruct while paused
             state = "while paused";
     }
     else if (p.hasNeverSpawned())
-    {
         state = "before spawning";
-    }
     if (state)
     {
         logDebugMessage(1,"Player %s [%d] tried to %s %s\n", p.getCallSign(), t, action, state);
@@ -4605,13 +4467,9 @@ static void adjustTolerances()
         {
             if (!phydrv->getIsSlide() &&
                     ((v[0] != 0.0f) || (v[1] != 0.0f) || (av != 0.0f)))
-            {
                 disableSpeedChecks = true;
-            }
             if (v[2] > 0.0f)
-            {
                 disableHeightChecks = true;
-            }
         }
         i++;
         phydrv = PHYDRVMGR.getDriver(i);
@@ -4625,9 +4483,7 @@ static void adjustTolerances()
         logDebugMessage(1,"Warning: disabling speed checking due to physics drivers\n");
     }
     if (disableHeightChecks)
-    {
         logDebugMessage(1,"Warning: disabling height checking due to physics drivers\n");
-    }
 
     return;
 }
@@ -4648,14 +4504,10 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
     {
         // Is it a visible character?
         if (TextUtils::isVisible(message[i]))
-        {
             visibleChars++;
-        }
         // Not visible? Then is it something other than a space?
         else if (message[i] != 32)
-        {
             badChars++;
-        }
     }
 
     // Kick the player if any bad characters are found
@@ -4672,9 +4524,7 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
 
     // Ignore message if there are no visible characters
     if (visibleChars == 0)
-    {
         return true;
-    }
 
     // Get last message and last message time
     const std::string &oldMsg = player.getLastMsg();
@@ -4718,7 +4568,8 @@ float squareAndAdd ( float v1, float v2 )
     return v1*v1+v2*v2;
 }
 
-static bool isTeleporterMotion ( GameKeeper::Player &playerData, PlayerState &state, float maxSquaredMovement, float realDist2 )
+static bool isTeleporterMotion ( GameKeeper::Player &playerData, PlayerState &state, float maxSquaredMovement,
+                                 float realDist2 )
 {
     const ObstacleList &teleporterList = OBSTACLEMGR.getTeles();
     unsigned int i;
@@ -4733,7 +4584,8 @@ static bool isTeleporterMotion ( GameKeeper::Player &playerData, PlayerState &st
         Obstacle *currentTele = teleporterList[i];
         const float *telePosition = currentTele->getPosition();
         float deltaInitial2 = squareAndAdd(state.pos[0] - telePosition[0],state.pos[1] - telePosition[1]);
-        float deltaFinal2 = squareAndAdd(playerData.lastState.pos[0] - telePosition[0],playerData.lastState.pos[1] - telePosition[1]);
+        float deltaFinal2 = squareAndAdd(playerData.lastState.pos[0] - telePosition[0],
+                                         playerData.lastState.pos[1] - telePosition[1]);
 
         if (deltaInitial2 < initialDist2)
             initialDist2 = deltaInitial2;
@@ -4772,7 +4624,8 @@ static bool isCheatingMovement(GameKeeper::Player &playerData, PlayerState &stat
     bool kickem = !isTeleporterMotion(playerData, state, maxMovement * maxMovement, realDist2);
 
     if (kickem)
-        logDebugMessage(1,"Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n", playerData.player.getCallSign(),t,sqrt(realDist2),maxMovement);
+        logDebugMessage(1,"Kicking Player %s [%d] too large movement (tank: %f, allowed: %f)\n",
+                        playerData.player.getCallSign(),t,sqrt(realDist2),maxMovement);
     return kickem;
 }
 
@@ -4899,13 +4752,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                         playerData->player.getToken());
 
         if (!clOptions->publicizeServer)
-        {
             playerData->_LSAState = GameKeeper::Player::notRequired;
-        }
         else if (strlen(playerData->player.getCallSign()))
-        {
             playerData->_LSAState = GameKeeper::Player::required;
-        }
         playerData->hadEnter = true;
         dontWait = true;
         break;
@@ -5033,9 +4882,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         // player moved before countdown started
         if (clOptions->timeLimit>0.0f && !countdownActive)
-        {
             playerData->player.setPlayedEarly();
-        }
         playerData->player.queueSpawn();
         break;
     }
@@ -5138,9 +4985,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         {
             FlagInfo &flag = *FlagInfo::get(pFlag);
             if (flag.flag.type == Flags::Shield)
-            {
                 playerData->player.endShotShieldCredit = 1;
-            }
         }
 
         const int endShotLimit =  (int) BZDB.eval(StateDatabase::BZDB_ENDSHOTDETECTION);
@@ -5185,9 +5030,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         unsigned int maxTele = teleporterList.size();
 
         if (from < maxTele * 2 && to < maxTele * 2)
-        {
             sendTeleport(t, from, to);
-        }
         else
         {
             logDebugMessage(2,"Player %s [%d] tried to send invalid teleport (from %u to %u)\n",
@@ -5408,7 +5251,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     case MsgLagPing:
     {
         bool warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn;
-        playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn, lagannouncewarn);
+        playerData->lagInfo.updatePingLag(buf, warn, kick, jittwarn, jittkick, plosswarn, plosskick, alagannouncewarn,
+                                          lagannouncewarn);
         if (warn)
         {
             char message[MessageLen];
@@ -5498,9 +5342,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         // silently drop old packet
         if (state.order <= playerData->lastState.order)
-        {
             break;
-        }
 
         // Don't kick players up to 10 seconds after a world parm has changed,
         TimeKeeper now = TimeKeeper::getCurrent();
@@ -5615,9 +5457,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                             ||  (fabs(playerData->lastState.velocity[2]-state.velocity[2])> smallTol)
                             ||  ((state.status & PlayerState::Alive) == 0)
                             ||  (playerData->player.isPaused()))
-                    {
                         logOnly = true;
-                    }
 
                     // allow a 10% tolerance level for speed if -speedtol is not sane
                     if (doSpeedChecks)
@@ -5677,9 +5517,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         // do not propogate
         if (!playerData->player.isAlive() &&
                 (state.status & short(PlayerState::Alive)))
-        {
             break;
-        }
 
         // observer shouldn't send bulk messages anymore, they used to
         // when it was a server-only hack; but the check does not hurt,
@@ -5714,9 +5552,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
     if (e != ReadAll)
     {
         if (e == ReadReset)
-        {
             removePlayer(i, "ECONNRESET/EPIPE", false);
-        }
         else if (e == ReadError)
         {
             // dump other errors and remove the player
@@ -5729,9 +5565,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
             removePlayer(i, "Disconnected", false);
         }
         else if (e == ReadHuge)
-        {
             removePlayer(i, "large packet recvd", false);
-        }
         return;
     }
 
@@ -5774,9 +5608,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
         // Should check also if bot and player are related
     }
     else
-    {
         playerData = GameKeeper::Player::getPlayerByIndex(t);
-    }
 
     // simple ruleset, if player sends a MsgShotBegin over TCP he/she
     // must not be using the UDP link
@@ -5834,9 +5666,7 @@ static std::string cmdSet(const std::string&, const CommandManager::ArgList& arg
         }
     case 1:
         if (BZDB.isSet(args[0]))
-        {
             return args[0] + " is " + BZDB.get(args[0]);
-        }
         else
         {
             if (worked) *worked = false;
@@ -5852,9 +5682,7 @@ static void resetAllCallback(const std::string &name, void*)
 {
     StateDatabase::Permission permission = BZDB.getPermission(name);
     if ((permission == StateDatabase::ReadWrite) || (permission == StateDatabase::Locked))
-    {
         BZDB.set(name, BZDB.getDefault(name), StateDatabase::Server);
-    }
 }
 
 static std::string cmdReset(const std::string&, const CommandManager::ArgList& args, bool* cmdError)
@@ -5881,14 +5709,10 @@ static std::string cmdReset(const std::string&, const CommandManager::ArgList& a
             return "variable " + args[0] + " is not writeable";
         }
         else
-        {
             return "variable " + args[0] + " does not exist";
-        }
     }
     else
-    {
         return "usage: reset <name>";
-    }
 }
 
 static bool requestAuthentication;
@@ -5921,9 +5745,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     }
     else if (playerData.netHandler && playerData.netHandler->reverseDNSDone())
     {
-        if ((playerData._LSAState == GameKeeper::Player::verified)	||
-                (playerData._LSAState == GameKeeper::Player::timedOut)	||
-                (playerData._LSAState == GameKeeper::Player::failed)	||
+        if ((playerData._LSAState == GameKeeper::Player::verified)  ||
+                (playerData._LSAState == GameKeeper::Player::timedOut)  ||
+                (playerData._LSAState == GameKeeper::Player::failed)    ||
                 (playerData._LSAState == GameKeeper::Player::notRequired))
         {
             bz_ServerAddPlayerData_V1 eventData;
@@ -5950,10 +5774,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     if (playerData.netHandler)
     {
         // Check for hung player connections that never entered the game completely
-        if (!playerData.player.isCompletelyAdded() && TimeKeeper::getCurrent() - playerData.netHandler->getTimeAccepted() > 300.0f)
-        {
+        if (!playerData.player.isCompletelyAdded()
+                && TimeKeeper::getCurrent() - playerData.netHandler->getTimeAccepted() > 300.0f)
             rejectPlayer(p, RejectBadRequest, "Failed to connect within reasonable timeframe");
-        }
 
         // Check host bans
         const char *hostname = playerData.netHandler->getHostname();
@@ -5984,9 +5807,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
                         reason += " remaining";
                     }
                     else
-                    {
                         reason += "indefinite";
-                    }
 
                     reason += ")";
                     reason += ColorStrings[GreenColor];
@@ -6080,14 +5901,10 @@ void loadBadwordsList ()
                 logDebugMessage(1,"Loaded %u words\n", count);
             }
             else
-            {
                 clOptions->filter.loadFromFile(clOptions->filterFilename, false);
-            }
         }
         else
-        {
             logDebugMessage(1,"Bad word filter specified without -filterChat or -filterCallsigns\n");
-        }
     }
 }
 
@@ -6371,7 +6188,8 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
     {
         if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
         {
-            logDebugMessage(2,"Peer %s connection timeout with data \"%s\"\n",peer.netHandler->getTargetIP(),TextUtils::escape_nonprintable(peer.bufferedInput,'"').c_str());	// FIXME: sanitize data
+            logDebugMessage(2,"Peer %s connection timeout with data \"%s\"\n",peer.netHandler->getTargetIP(),
+                            TextUtils::escape_nonprintable(peer.bufferedInput,'"').c_str());   // FIXME: sanitize data
             std::string discoBuffer = getServerVersion();
             discoBuffer += "\r\n\r\n";
             peer.sendChunks.push_back(discoBuffer);
@@ -6460,10 +6278,10 @@ private:
     struct UPNPUrls urls;
     struct IGDdatas data;
 #endif
-    char	lanaddr[128];
-    bool	IGD_Found;
-    std::string	remotePort;
-    char	localPort[16];
+    char    lanaddr[128];
+    bool    IGD_Found;
+    std::string remotePort;
+    char    localPort[16];
 };
 
 UPnP bzUPnP;
@@ -6493,9 +6311,7 @@ void UPnP::setIGD()
     int i = UPNP_GetValidIGD(devlist, &urls, &data, lanaddr, sizeof(lanaddr));
     freeUPNPDevlist(devlist);
     if (!i)
-    {
         std::cerr << "No recognized device" << std::endl;
-    }
     else if (i != 1)
     {
         switch (i)
@@ -6514,9 +6330,7 @@ void UPnP::setIGD()
         FreeUPNPUrls(&urls);
     }
     else
-    {
         IGD_Found = true;
-    }
 #endif
 }
 
@@ -6843,13 +6657,9 @@ int main(int argc, char **argv)
         logDebugMessage(1,"Loading variables from %s\n", clOptions->bzdbVars.c_str());
         bool success = CFGMGR.read(clOptions->bzdbVars);
         if (success)
-        {
             logDebugMessage(1,"Successfully loaded variable(s)\n");
-        }
         else
-        {
             logDebugMessage(1,"WARNING: unable to load the variable file\n");
-        }
     }
 
     if (clOptions->publicizeServer && clOptions->publicizedKey.empty())
@@ -6869,7 +6679,7 @@ int main(int argc, char **argv)
     // see if we are going to load any plugins
     initPlugins();
     // check for python by default
-    //	loadPlugin(std::string("python"),std::string(""));
+    //  loadPlugin(std::string("python"),std::string(""));
     for (unsigned int plugin = 0; plugin < clOptions->pluginList.size(); plugin++)
     {
         if (!loadPlugin(clOptions->pluginList[plugin].plugin,
@@ -7008,18 +6818,14 @@ int main(int argc, char **argv)
     {
         struct servent *service = getservbyname("bzfs", "tcp");
         if (service)
-        {
             clOptions->wksPort = ntohs(service->s_port);
-        }
     }
 
     if (clOptions->UPnP)
         bzUPnP.start();
 
     if (clOptions->pingInterface != "")
-    {
         serverAddress = Address::getHostAddress(clOptions->pingInterface);
-    }
 
     // my address to publish.  allow arguments to override (useful for
     // firewalls).  use my official hostname if it appears to be
@@ -7048,9 +6854,7 @@ int main(int argc, char **argv)
         logDebugMessage(1,"\tpublic address is %s\n", clOptions->publicizedAddress.c_str());
     }
     else
-    {
         logDebugMessage(1,"Running a private server with the following settings:\n");
-    }
 
     // get the master ban list
     if (clOptions->publicizeServer && !clOptions->suppressMasterBanList)
@@ -7102,9 +6906,7 @@ int main(int argc, char **argv)
 
     // no original world weapons in replay mode
     if (Replay::enabled())
-    {
         world->getWorldWeapons().clear();
-    }
 
     TimeKeeper nextSuperFlagInsertion = TimeKeeper::getCurrent();
     const float flagExp = -logf(0.5f) / FlagHalfLife;
@@ -7115,15 +6917,11 @@ int main(int argc, char **argv)
         PlayerAccessInfo::readPermsFile(userDatabaseFile);
 
     if (clOptions->startRecording)
-    {
         Record::start(ServerPlayer);
-    }
 
     // trap some signals
     if (bzSignal(SIGINT, SIG_IGN) != SIG_IGN)
-    {
         bzSignal(SIGINT, SIG_PF(terminateServer));
-    }
     bzSignal(SIGTERM, SIG_PF(terminateServer));
 
     // start the server
@@ -7167,9 +6965,7 @@ int main(int argc, char **argv)
         // always listen for connections
         FD_SET((unsigned int)wksSocket, &read_set);
         if (wksSocket > maxFileDescriptor)
-        {
             maxFileDescriptor = wksSocket;
-        }
 
         // Check for cURL needed activity
         int cURLmaxFile = cURLManager::fdset(read_set, write_set);
@@ -7187,9 +6983,7 @@ int main(int argc, char **argv)
             waitTime = 0.5f;
         }
         else if (countdownActive && clOptions->timeLimit > 0.0f)
-        {
             waitTime = 1.0f;
-        }
 
         // get time for next flag drop
         float dropTime;
@@ -7204,20 +6998,14 @@ int main(int argc, char **argv)
                 if (flag->landing(tm))
                 {
                     if (flag->flag.status == FlagOnGround)
-                    {
                         sendFlagUpdate(*flag);
-                    }
                     else
-                    {
                         resetFlag(*flag);
-                    }
                 }
             }
         }
         if (dropTime < waitTime)
-        {
             waitTime = dropTime;
-        }
 
         // get time for next Player internal action
         GameKeeper::Player::updateLatency(waitTime);
@@ -7227,9 +7015,7 @@ int main(int argc, char **argv)
         {
             float nextTime = world->getWorldWeapons().nextTime ();
             if (nextTime < waitTime)
-            {
                 waitTime = nextTime;
-            }
         }
 
         // get time for the next replay packet (if active)
@@ -7237,31 +7023,23 @@ int main(int argc, char **argv)
         {
             float nextTime = Replay::nextTime ();
             if (nextTime < waitTime)
-            {
                 waitTime = nextTime;
-            }
         }
         else
         {
             // game time updates
             const float nextGT = nextGameTime();
             if (nextGT < waitTime)
-            {
                 waitTime = nextGT;
-            }
         }
 
         // minmal waitTime
         if (waitTime < 0.0f)
-        {
             waitTime = 0.0f;
-        }
 
         // if there are buffered UDP, no wait at all
         if (NetHandler::anyUDPPending())
-        {
             waitTime = 0.0f;
-        }
 
         // see if we are within the plug requested max wait time
 #ifdef BZ_PLUGINS
@@ -7306,7 +7084,7 @@ int main(int argc, char **argv)
         timeout.tv_usec = long(1.0e+6f * (waitTime - floorf(waitTime)));
         nfound = select(maxFileDescriptor+1, (fd_set*)&read_set, (fd_set*)&write_set, 0, &timeout);
         //if (nfound)
-        //	logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
+        //  logDebugMessage(1,"nfound,read,write %i,%08lx,%08lx\n", nfound, read_set, write_set);
 
         // send replay packets
         // (this check and response should follow immediately after the select() call)
@@ -7395,7 +7173,7 @@ int main(int argc, char **argv)
                     resetPlayerScores();
 
                     // fire off a game start event
-                    bz_GameStartEndEventData_V2	gameData;
+                    bz_GameStartEndEventData_V2 gameData;
                     gameData.eventType = bz_eGameStartEvent;
                     gameData.duration = clOptions->timeLimit;
                     gameData.playerID = clOptions->countdownStarter;
@@ -7455,7 +7233,7 @@ int main(int argc, char **argv)
                 clOptions->countdownPaused = false;
 
                 // fire off a game end event
-                bz_GameStartEndEventData_V2	gameData;
+                bz_GameStartEndEventData_V2 gameData;
                 gameData.eventType = bz_eGameEndEvent;
                 gameData.duration = clOptions->timeLimit;
                 worldEventManager.callEvents(bz_eGameEndEvent,&gameData);
@@ -7484,7 +7262,8 @@ int main(int argc, char **argv)
                 broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
             }
 
-            if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f) && !clOptions->countdownPaused && (countdownResumeDelay < 0))
+            if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f)
+                    && !clOptions->countdownPaused && (countdownResumeDelay < 0))
             {
                 // send update every 30 seconds, when the game is over, or when time adjusted
                 if (clOptions->addedTime != 0.0f)
@@ -7493,7 +7272,8 @@ int main(int argc, char **argv)
                     if (timeLeft > 0.0f)
                         timeLeft += clOptions->addedTime;
                     // inform visitors about the change
-                    sendMessage(ServerPlayer, AdminPlayers,TextUtils::format("Adjusting the countdown by %f seconds",clOptions->addedTime).c_str());
+                    sendMessage(ServerPlayer, AdminPlayers,TextUtils::format("Adjusting the countdown by %f seconds",
+                                clOptions->addedTime).c_str());
                     clOptions->addedTime = 0.0f; //reset
                 }
 
@@ -7548,7 +7328,8 @@ int main(int argc, char **argv)
                 if (!announcedOpening)
                 {
                     voteTime = votingarbiter->getVoteTime();
-                    snprintf(message, MessageLen, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(), target.c_str(), voteTime);
+                    snprintf(message, MessageLen, "A poll to %s %s has begun.  Players have up to %d seconds to vote.", action.c_str(),
+                             target.c_str(), voteTime);
                     sendMessage(ServerPlayer, AllPlayers, message);
                     announcedOpening = true;
                 }
@@ -7560,7 +7341,8 @@ int main(int argc, char **argv)
                         ((int)(tm - lastAnnounce) != 0) &&
                         (votingarbiter->timeRemaining() > 0))
                 {
-                    snprintf(message, MessageLen, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(), target.c_str());
+                    snprintf(message, MessageLen, "%d seconds remain in the poll to %s %s.", votingarbiter->timeRemaining(), action.c_str(),
+                             target.c_str());
                     sendMessage(ServerPlayer, AllPlayers, message);
                     lastAnnounce = tm;
                 }
@@ -7582,13 +7364,15 @@ int main(int argc, char **argv)
 
                     if (!calledCustomHandler && customPollTypes.find(votingarbiter->getPollAction()) != customPollTypes.end())
                     {
-                        customPollTypes[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction().c_str(), votingarbiter->getPollTarget().c_str(), votingarbiter->isPollSuccessful());
+                        customPollTypes[votingarbiter->getPollAction()].pollHandler->PollClose(votingarbiter->getPollAction().c_str(),
+                                votingarbiter->getPollTarget().c_str(), votingarbiter->isPollSuccessful());
                         calledCustomHandler = true;
                     }
 
                     if (!announcedResults)
                     {
-                        snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(), votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
+                        snprintf(message, MessageLen, "Poll Results: %ld in favor, %ld oppose, %ld abstain", votingarbiter->getYesCount(),
+                                 votingarbiter->getNoCount(), votingarbiter->getAbstentionCount());
                         sendMessage(ServerPlayer, AllPlayers, message);
                         announcedResults = true;
                     }
@@ -7608,9 +7392,11 @@ int main(int argc, char **argv)
                                 pollAction = action;
                             // a poll that exists and is closed has ended successfully
                             if (action != "flagreset")
-                                snprintf(message, MessageLen, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(), pollAction.c_str());
+                                snprintf(message, MessageLen, "The poll is now closed and was successful.  %s is scheduled to be %s.", target.c_str(),
+                                         pollAction.c_str());
                             else
-                                snprintf(message, MessageLen, "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
+                                snprintf(message, MessageLen,
+                                         "The poll is now closed and was successful.  Currently unused flags are scheduled to be reset.");
                             sendMessage(ServerPlayer, AllPlayers, message);
                             announcedClosure = true;
                         }
@@ -7647,9 +7433,7 @@ int main(int argc, char **argv)
                                 int hours = 0;
                                 int minutes = clOptions->banTime % 60;
                                 if (clOptions->banTime > 60)
-                                {
                                     hours = clOptions->banTime / 60;
-                                }
                                 pollAction = std::string("banned for ");
                                 if (hours > 0)
                                 {
@@ -7667,17 +7451,11 @@ int main(int argc, char **argv)
                                 pollAction += ".";
                             }
                             else if (action == "kick")
-                            {
                                 pollAction = std::string("kicked.");
-                            }
                             else if (action == "kill")
-                            {
                                 pollAction = std::string("killed.");
-                            }
                             else
-                            {
                                 pollAction = action;
-                            }
                             if (action != "flagreset")
                                 snprintf(message, MessageLen, "%s has been %s", target.c_str(), pollAction.c_str());
                             else
@@ -7724,7 +7502,8 @@ int main(int argc, char **argv)
                                 if (foundPlayer)
                                 {
                                     // notify the player
-                                    snprintf(message, MessageLen, "You have been %s due to sufficient votes to have you removed", action == "ban" ? "temporarily banned" : "kicked");
+                                    snprintf(message, MessageLen, "You have been %s due to sufficient votes to have you removed",
+                                             action == "ban" ? "temporarily banned" : "kicked");
                                     sendMessage(ServerPlayer, v, message);
                                     snprintf(message,  MessageLen, "/poll %s", action.c_str());
                                     removePlayer(v, message);
@@ -7759,7 +7538,8 @@ int main(int argc, char **argv)
                             {
                                 std::vector<std::string> args = TextUtils::tokenize(target.c_str(), " ", 2, true);
                                 if ( args.size() < 2 )
-                                    logDebugMessage(1,"Poll set taking action: no action taken, not enough parameters (%s).\n", (!args.empty() ? args[0].c_str() : "No parameters."));
+                                    logDebugMessage(1,"Poll set taking action: no action taken, not enough parameters (%s).\n",
+                                                    (!args.empty() ? args[0].c_str() : "No parameters."));
                                 else
                                 {
                                     StateDatabase::Permission permission = BZDB.getPermission(args[0]);
@@ -7940,9 +7720,7 @@ int main(int argc, char **argv)
                     int id = NetHandler::udpReceive((char *) ubuf, &uaddr,
                                                     udpLinkRequest);
                     if (id == -1)
-                    {
                         break;
-                    }
                     else if (id == -2)
                     {
                         // if I'm ignoring pings
@@ -8094,7 +7872,7 @@ int main(int argc, char **argv)
         pendingChatMessages.clear();
 
         // fire off a tick event
-        bz_TickEventData_V1	tickData;
+        bz_TickEventData_V1 tickData;
         worldEventManager.callEvents(bz_eTickEvent,&tickData);
 
         ApiTick();
@@ -8109,9 +7887,7 @@ int main(int argc, char **argv)
         {
             playerHadWorld = false;
             if ((clOptions->worldFile == "") && !Replay::enabled())
-            {
                 defineWorld();
-            }
         }
 
         // cURLperform should be called in any case as we could incur in timeout
@@ -8237,6 +8013,6 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

@@ -124,13 +124,9 @@ void RadarRenderer::setTankColor(const Player* player)
 
         const float *color;
         if (myTank->getFlag() == Flags::Colorblindness)
-        {
             color = Team::getRadarColor(RogueTeam);
-        }
         else
-        {
             color = Team::getRadarColor(player->getTeam());
-        }
 
         float dimmedcolor[3];
         dimmedcolor[0] = color[0] * dimfactor;
@@ -174,17 +170,11 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     float minSize = 1.5f + (ps * BZDBCache::radarTankPixels);
     GLfloat size;
     if (tankRadius < minSize)
-    {
         size = minSize;
-    }
     else
-    {
         size = tankRadius;
-    }
     if (pos[2] < 0.0f)
-    {
         size = 0.5f;
-    }
 
     // NOTE: myTank was checked in render()
     const float myAngle = LocalPlayer::getMyTank()->getAngle();
@@ -242,9 +232,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
 void RadarRenderer::drawFancyTank(const Player* player)
 {
     if (smooth)
-    {
         glDisable(GL_BLEND);
-    }
 
     // we use the depth buffer so that the treads look ok
     if (BZDBCache::zbuffer)
@@ -264,9 +252,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
     OpenGLGState::resetState();
 
     if (BZDBCache::zbuffer)
-    {
         glDisable(GL_DEPTH_TEST);
-    }
 
     if (smooth)
     {
@@ -345,7 +331,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     const float bottom = float(oy + y + h) + 0.5f;
 
     float outlineOpacity = RENDERER.getRadarOpacity();
-    float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;	// bzdb cache this maybe?
+    float fudgeFactor = BZDBCache::hudGUIBorderOpacityFactor;   // bzdb cache this maybe?
     if ( outlineOpacity < 1.0f )
         outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 
@@ -427,14 +413,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     renderFrame(renderer);
 
     if (blank)
-    {
         return;
-    }
 
     if (!world)
-    {
         return;
-    }
 
     smooth = BZDBCache::smooth;
     const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
@@ -447,9 +429,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // when burrowed, limit radar range
     if (myTank && (myTank->getFlag() == Flags::Burrow) &&
             (myTank->getPosition()[2] < 0.0f))
-    {
         maxRange = radarLimit / 4.0f;
-    }
     if (radarRange > maxRange)
     {
         radarRange = maxRange;
@@ -457,9 +437,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         // greater then 1. otherwise, we may be resetting it due
         // to burrow radar limiting.
         if (BZDB.eval("displayRadarRange") > 1.0f)
-        {
             BZDB.set("displayRadarRange", "1.0");
-        }
     }
 
     // prepare projection matrix
@@ -476,9 +454,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     double maxHeight = 0.0;
     const Extents* visExts = renderer.getVisualExtents();
     if (visExts)
-    {
         maxHeight = (double)visExts->maxs[2];
-    }
     glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
             -yCenter * yUnit, (ySize - yCenter) * yUnit,
             -(maxHeight + 10.0), (maxHeight + 10.0));
@@ -587,21 +563,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         const float testMin = 8.0f * ps;
         // maintain the aspect ratio if it isn't square
         if ((tankWidth > testMin) &&  (tankLength > testMin))
-        {
             useTankDimensions = true;
-        }
         else
-        {
             useTankDimensions = false;
-        }
         if (useTankDimensions && (renderer.useQuality() >= 2))
-        {
             useTankModels = true;
-        }
         else
-        {
             useTankModels = false;
-        }
 
         // relative to my tank
         const float* myPos = myTank->getPosition();
@@ -685,19 +653,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         {
             RemotePlayer* player = world->getPlayer(i);
             if (!player)
-            {
                 continue;
-            }
             if (!player->isAlive() &&
                     (!useTankModels || !observer || !player->isExploding()))
-            {
                 continue;
-            }
             if ((player->getFlag() == Flags::Stealth) &&
                     (myTank->getFlag() != Flags::Seer))
-            {
                 continue;
-            }
 
             const float* position = player->getPosition();
 
@@ -708,13 +670,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             }
 
             if (!observer)
-            {
                 drawTank(position, player, true);
-            }
             else
-            {
                 drawTank(position, player, false);
-            }
         }
 
         bool coloredShot = BZDB.isTrue("coloredradarshots");
@@ -741,9 +699,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
                         glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
                     }
                     else
-                    {
                         glColor3f(1.0f, 1.0f, 1.0f);
-                    }
                     shot->radarRender();
                 }
             }
@@ -766,16 +722,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             if (BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR))
             {
                 if (flag.type->flagTeam != ::NoTeam)
-                {
                     continue;
-                }
             }
             if (BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR))
             {
                 if (flag.type)
-                {
                     continue;
-                }
             }
             // Flags change color by height
             const float cs = colorScale(flag.position[2], muzzleHeight);
@@ -839,9 +791,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         if (dimming > 0.0f)
         {
             if (!smooth)
-            {
                 glEnable(GL_BLEND);
-            }
             // darken the entire radar if we're dimmed
             // we're drawing positively, so dimming is actually an opacity
             glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
@@ -881,9 +831,7 @@ float RadarRenderer::colorScale(const float z, const float h)
             scaleColor = 0.35f;
     }
     else
-    {
         scaleColor = 1.0f;
-    }
 
     return scaleColor;
 }
@@ -923,13 +871,9 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
 
     // draw the boxes, pyramids, and meshes
     if (!fastRadar)
-    {
         renderBoxPyrMesh();
-    }
     else
-    {
         renderBoxPyrMeshFast(_range);
-    }
 
     // draw the team bases and teleporters
     renderBasesAndTeles();
@@ -969,21 +913,21 @@ void RadarRenderer::renderWalls()
 void RadarRenderer::renderBoxPyrMeshFast(float _range)
 {
     // FIXME - This is hack code at the moment, but even when
-    //	 rendering the full world, it draws the aztec map
-    //	 3X faster (the culling algo is actually slows us
-    //	 down in that case)
-    //	   - need a better default gradient texture
-    //	     (better colors, and tied in to show max jump height?)
-    //	   - build a procedural texture if default is missing
-    //	   - use a GL_TEXTURE_1D
-    //	   - setup the octree to return Z sorted elements (partially done)
-    //	   - add a renderClass() member to SceneNode (also for coloring)
-    //	   - also add a renderShadow() member (they don't need sorting,
-    //	     and if you don't have double-buffering, you shouldn't be
-    //	     using shadows)
-    //	   - vertex shaders would be faster
-    //	   - it would probably be a better approach to attach a radar
-    //	     rendering object to each obstacle... no time
+    //   rendering the full world, it draws the aztec map
+    //   3X faster (the culling algo is actually slows us
+    //   down in that case)
+    //     - need a better default gradient texture
+    //       (better colors, and tied in to show max jump height?)
+    //     - build a procedural texture if default is missing
+    //     - use a GL_TEXTURE_1D
+    //     - setup the octree to return Z sorted elements (partially done)
+    //     - add a renderClass() member to SceneNode (also for coloring)
+    //     - also add a renderShadow() member (they don't need sorting,
+    //       and if you don't have double-buffering, you shouldn't be
+    //       using shadows)
+    //     - vertex shaders would be faster
+    //     - it would probably be a better approach to attach a radar
+    //       rendering object to each obstacle... no time
 
     // get the texture
     int gradientTexId = -1;
@@ -1015,9 +959,7 @@ void RadarRenderer::renderBoxPyrMeshFast(float _range)
 
     // do this after the GState setting
     if (smooth)
-    {
         glEnable(GL_POLYGON_SMOOTH);
-    }
 
     // setup the texturing mapping
     const float hf = 128.0f; // height factor, goes from 0.0 to 1.0 in texcoords
@@ -1135,13 +1077,9 @@ void RadarRenderer::renderBoxPyrMesh()
 
     // draw mesh obstacles
     if (smooth)
-    {
         glEnable(GL_POLYGON_SMOOTH);
-    }
     if (!enhanced)
-    {
         glDisable(GL_CULL_FACE);
-    }
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     count = meshes.size();
     for (i = 0; i < count; i++)
@@ -1155,14 +1093,10 @@ void RadarRenderer::renderBoxPyrMesh()
             if (enhanced)
             {
                 if (face->getPlane()[2] <= 0.0f)
-                {
                     continue;
-                }
                 const BzMaterial* bzmat = face->getMaterial();
                 if ((bzmat != NULL) && bzmat->getNoRadar())
-                {
                     continue;
-                }
             }
             float z = face->getPosition()[2];
             float bh = face->getSize()[2];
@@ -1177,13 +1111,9 @@ void RadarRenderer::renderBoxPyrMesh()
             // draw death faces with a soupcon of red
             const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
             if ((phydrv != NULL) && phydrv->getIsDeath())
-            {
                 glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
-            }
             else
-            {
                 glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
-            }
             // draw the face as a triangle fan
             int vertexCount = face->getVertexCount();
             glBegin(GL_TRIANGLE_FAN);
@@ -1196,19 +1126,13 @@ void RadarRenderer::renderBoxPyrMesh()
         }
     }
     if (!enhanced)
-    {
         glEnable(GL_CULL_FACE);
-    }
     if (smooth)
-    {
         glDisable(GL_POLYGON_SMOOTH);
-    }
 
     // NOTE: revert from the enhanced setting
     if (enhanced && !smooth)
-    {
         glDisable(GL_BLEND);
-    }
 
     // now draw antialiased outlines around the polygons
     if (smooth)
@@ -1365,6 +1289,6 @@ int RadarRenderer::getFrameTriangleCount() const
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

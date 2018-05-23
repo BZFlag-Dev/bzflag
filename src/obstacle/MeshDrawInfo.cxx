@@ -50,7 +50,7 @@ static DrawCmdLabel drawLabels[] =
     {"points",    DrawCmd::DrawPoints},
     {"lines",     DrawCmd::DrawLines},
     {"lineloop",  DrawCmd::DrawLineLoop},
-    {"linestrip",	DrawCmd::DrawLineStrip},
+    {"linestrip",   DrawCmd::DrawLineStrip},
     {"tris",      DrawCmd::DrawTriangles},
     {"tristrip",  DrawCmd::DrawTriangleStrip},
     {"trifan",    DrawCmd::DrawTriangleFan},
@@ -148,14 +148,10 @@ void MeshDrawInfo::clear()
         delete[] texcoords;
         int i;
         for (i = 0; i < lodCount; i++)
-        {
             lods[i].clear();
-        }
         delete[] lods;
         for (i = 0; i < radarCount; i++)
-        {
             radarLods[i].clear();
-        }
         delete[] radarLods;
         delete animInfo;
     }
@@ -304,17 +300,11 @@ static int compareLengthPerPixel(const void* a, const void* b)
     const float lenB = lodB->lengthPerPixel;
     // higher resolution meshes for smaller lengths per pixel
     if (lenA < lenB)
-    {
         return -1;
-    }
     else if (lenA > lenB)
-    {
         return +1;
-    }
     else
-    {
         return 0;
-    }
 }
 
 
@@ -322,9 +312,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
 {
     valid = validate(mesh);
     if (!valid)
-    {
         return false;
-    }
 
     int vCount;
     const afvec3* verts;
@@ -358,9 +346,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
         {
             // no animation, use the raw vertices
             for (int v = 0; v < vCount; v++)
-            {
                 tmpExts.expandToPoint(verts[v]);
-            }
         }
         else
         {
@@ -372,18 +358,12 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
             {
                 const afvec3& p = verts[v];
                 if (p[2] < minZ)
-                {
                     minZ = p[2];
-                }
                 if (p[2] > maxZ)
-                {
                     maxZ = p[2];
-                }
                 const float distSqr = (p[0] * p[0]) + (p[1] * p[1]);
                 if (distSqr > maxDistSqr)
-                {
                     maxDistSqr = distSqr;
-                }
             }
             const float dist = sqrtf(maxDistSqr);
             tmpExts.mins[0] = -dist;
@@ -395,9 +375,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
         }
         // set the extents
         if (calcExtents)
-        {
             extents = tmpExts;
-        }
     }
 
     // calculate the sphere params?
@@ -485,9 +463,7 @@ bool MeshDrawInfo::clientSetup(const MeshObstacle* mesh)
 
     valid = validate(mesh);
     if (!valid)
-    {
         return false;
-    }
 
     const afvec3* verts;
     const afvec3* norms;
@@ -589,13 +565,9 @@ void MeshDrawInfo::setName(const std::string& _name)
 MeshDrawMgr* MeshDrawInfo::getDrawMgr() const
 {
     if (!isCopy())
-    {
         return drawMgr;
-    }
     else
-    {
         return source->getDrawMgr();
-    }
 }
 
 
@@ -624,9 +596,7 @@ bool MeshDrawInfo::isInvisible() const
             DrawSet& set = lod.sets[j];
             const BzMaterial* mat = set.material;
             if (mat->getDiffuse()[3] != 0.0f)
-            {
                 return false;
-            }
         }
     }
     return true;
@@ -661,22 +631,22 @@ bool MeshDrawInfo::convertEnums(const UintMap& drawMap, const UintMap& typeMap)
     for (mat = 0; mat < materialCount; mat++) {
       DrawSet& set = sets[(lod * materialCount) + mat];
       for (cmd = 0; cmd < set.count; cmd++) {
-	std::map<unsigned int, unsigned int>::const_iterator it;
-	DrawCmd& command = set.cmds[cmd];
-	// draw type
-	it = drawMap.find(command.drawMode);
-	if (it == drawMap.end()) {
-	  status = false;
-	} else {
-	  command.drawMode = it->second;
-	}
-	// index type
-	it = typeMap.find(command.indexType);
-	if (it == typeMap.end()) {
-	  status = false;
-	} else {
-	  command.indexType = it->second;
-	}
+    std::map<unsigned int, unsigned int>::const_iterator it;
+    DrawCmd& command = set.cmds[cmd];
+    // draw type
+    it = drawMap.find(command.drawMode);
+    if (it == drawMap.end()) {
+      status = false;
+    } else {
+      command.drawMode = it->second;
+    }
+    // index type
+    it = typeMap.find(command.indexType);
+    if (it == typeMap.end()) {
+      status = false;
+    } else {
+      command.indexType = it->second;
+    }
       }
     }
   }
@@ -689,16 +659,16 @@ bool MeshDrawInfo::convertEnums(const UintMap& drawMap, const UintMap& typeMap)
       // draw type
       it = drawMap.find(command.drawMode);
       if (it == drawMap.end()) {
-	status = false;
+    status = false;
       } else {
-	command.drawMode = it->second;
+    command.drawMode = it->second;
       }
       // index type
       it = typeMap.find(command.indexType);
       if (it == typeMap.end()) {
-	status = false;
+    status = false;
       } else {
-	command.indexType = it->second;
+    command.indexType = it->second;
       }
     }
   }
@@ -767,15 +737,11 @@ static bool parseDrawCmd(std::istream& input, const std::string& mode,
     std::vector<int> list;
     int index;
     while (input >> index)
-    {
         list.push_back(index);
-    }
     cmd.count = list.size();
     unsigned int* array = new unsigned int[cmd.count];
     for (int i = 0; i < cmd.count; i++)
-    {
         array[i] = list[i];
-    }
     cmd.indices = array;
     cmd.finalize(); // setup the index type
 
@@ -796,22 +762,14 @@ static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
 
         std::istringstream parms(line);
         if (!(parms >> label))
-        {
             continue;
-        }
 
         if (label[0] == '#')
-        {
             continue;
-        }
         else if (strcasecmp(label.c_str(), "end") == 0)
-        {
             break;
-        }
         else if (strcasecmp(label.c_str(),"dlist") == 0)
-        {
             set.wantList = true;
-        }
         else if (strcasecmp(label.c_str(), "center") == 0)
         {
             if (!(parms >> set.sphere[0]) || !(parms >> set.sphere[1]) ||
@@ -834,9 +792,7 @@ static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
         {
             DrawCmd cmd;
             if (parseDrawCmd(parms, label, cmd))
-            {
                 pCmds.push_back(cmd);
-            }
             else
             {
                 success = false;
@@ -849,9 +805,7 @@ static bool parseDrawSet(std::istream& input, DrawSet& set, int& lines)
     set.count = pCmds.size();
     set.cmds = new DrawCmd[set.count];
     for (int i = 0; i < set.count; i++)
-    {
         set.cmds[i] = pCmds[i];
-    }
 
     return success;
 }
@@ -870,26 +824,18 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod, int& lines)
 
         std::istringstream parms(line);
         if (!(parms >> cmd))
-        {
             continue;
-        }
 
         if (cmd[0] == '#')
-        {
             continue;
-        }
         else if (strcasecmp(cmd.c_str(), "end") == 0)
-        {
             break;
-        }
         else if ((strcasecmp(cmd.c_str(), "length") == 0) ||
                  (strcasecmp(cmd.c_str(), "lengthPerPixel") == 0))
         {
             float lengthPerPixel;
             if (parms >> lengthPerPixel)
-            {
                 lod.lengthPerPixel = lengthPerPixel;
-            }
             else
             {
                 success = false;
@@ -904,9 +850,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod, int& lines)
                 DrawSet set;
                 set.material = MATERIALMGR.findMaterial(matName);
                 if (parseDrawSet(input, set, lines))
-                {
                     pSets.push_back(set);
-                }
                 else
                 {
                     success = false;
@@ -925,9 +869,7 @@ static bool parseDrawLod(std::istream& input, DrawLod& lod, int& lines)
     lod.count = pSets.size();
     lod.sets = new DrawSet[lod.count];
     for (int i = 0; i < lod.count; i++)
-    {
         lod.sets[i] = pSets[i];
-    }
 
     return success;
 }
@@ -961,22 +903,14 @@ bool MeshDrawInfo::parse(std::istream& input)
 
         std::istringstream parms(line);
         if (!(parms >> cmd))
-        {
             continue;
-        }
 
         if (cmd[0] == '#')
-        {
             continue;
-        }
         else if (strcasecmp(cmd.c_str(), "end") == 0)
-        {
             break;
-        }
         else if (strcasecmp(cmd.c_str(), "dlist") == 0)
-        {
             allDList = true;
-        }
         else if (strcasecmp(cmd.c_str(), "angvel") == 0)
         {
             if (animInfo != NULL)
@@ -1028,18 +962,14 @@ bool MeshDrawInfo::parse(std::istream& input)
         {
             const char* c = line.c_str();
             while ((*c != '\0') && isspace(*c))
-            {
                 c++;
-            }
             lodOptions.push_back(c);
         }
         else if (strcasecmp(cmd.c_str(), "corner") == 0)
         {
             Corner corner;
             if (parseCorner(parms, corner))
-            {
                 pCorners.push_back(corner);
-            }
             else
             {
                 success = false;
@@ -1050,9 +980,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         {
             cfvec3 v;
             if ((parms >> v[0]) && (parms >> v[1]) && (parms >> v[2]))
-            {
                 pVerts.push_back(v);
-            }
             else
             {
                 success = false;
@@ -1063,9 +991,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         {
             cfvec3 n;
             if ((parms >> n[0]) && (parms >> n[1]) && (parms >> n[2]))
-            {
                 pNorms.push_back(n);
-            }
             else
             {
                 success = false;
@@ -1076,9 +1002,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         {
             cfvec2 t;
             if ((parms >> t[0]) && (parms >> t[1]))
-            {
                 pTxcds.push_back(t);
-            }
             else
             {
                 success = false;
@@ -1088,9 +1012,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         else if (strcasecmp(cmd.c_str(), "lod") == 0)
         {
             if (parseDrawLod(input, lod, lines))
-            {
                 pLods.push_back(lod);
-            }
             else
             {
                 success = false;
@@ -1100,9 +1022,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         else if (strcasecmp(cmd.c_str(), "radarlod") == 0)
         {
             if (parseDrawLod(input, lod, lines))
-            {
                 pRadarLods.push_back(lod);
-            }
             else
             {
                 success = false;
@@ -1117,25 +1037,19 @@ bool MeshDrawInfo::parse(std::istream& input)
     cornerCount = pCorners.size();
     corners = new Corner[cornerCount];
     for (i = 0; i < cornerCount; i++)
-    {
         corners[i] = pCorners[i];
-    }
 
     // make lods
     lodCount = pLods.size();
     lods = new DrawLod[lodCount];
     for (i = 0; i < lodCount; i++)
-    {
         lods[i] = pLods[i];
-    }
 
     // make radar lods
     radarCount = pRadarLods.size();
     radarLods = new DrawLod[radarCount];
     for (i = 0; i < radarCount; i++)
-    {
         radarLods[i] = pRadarLods[i];
-    }
 
     // make raw verts
     if (!pVerts.empty())
@@ -1143,9 +1057,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawVertCount = pVerts.size();
         rawVerts = new afvec3[rawVertCount];
         for (i = 0; i < rawVertCount; i++)
-        {
             memcpy(rawVerts[i], pVerts[i].data, sizeof(afvec3));
-        }
     }
     // make raw norms
     if (!pNorms.empty())
@@ -1153,9 +1065,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawNormCount = pNorms.size();
         rawNorms = new afvec3[rawNormCount];
         for (i = 0; i < rawNormCount; i++)
-        {
             memcpy(rawNorms[i], pNorms[i].data, sizeof(afvec3));
-        }
     }
     // make raw texcoords
     if (!pTxcds.empty())
@@ -1163,9 +1073,7 @@ bool MeshDrawInfo::parse(std::istream& input)
         rawTxcdCount = pTxcds.size();
         rawTxcds = new afvec2[rawTxcdCount];
         for (i = 0; i < rawTxcdCount; i++)
-        {
             memcpy(rawTxcds[i], pTxcds[i].data, sizeof(afvec2));
-        }
     }
 
     // ask for all display lists
@@ -1212,9 +1120,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
 
     // options
     for (i = 0; i < (int)lodOptions.size(); i++)
-    {
         out << indent << "  " << lodOptions[i] << std::endl;
-    }
 
     out << indent << "  extents " << extents.mins[0] << " "
         << extents.mins[1] << " "
@@ -1231,9 +1137,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
     {
         const float angvel = animInfo->angvel;
         if (angvel != 0.0f)
-        {
             out << indent << "  angvel " << angvel << std::endl;
-        }
     }
 
     // raw vertices
@@ -1279,9 +1183,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
             MATERIALMGR.printReference(out, set.material);
             out << std::endl;
             if (set.wantList)
-            {
                 out << indent << "      dlist" << std::endl;
-            }
             out << indent << "      sphere " << set.sphere[0] << " "
                 << set.sphere[1] << " "
                 << set.sphere[2] << " "
@@ -1330,9 +1232,7 @@ void MeshDrawInfo::print(std::ostream& out, const std::string& indent) const
             MATERIALMGR.printReference(out, set.material);
             out << std::endl;
             if (set.wantList)
-            {
                 out << indent << "      dlist" << std::endl;
-            }
             const int cmdCount = set.count;
             for (int k = 0; k < cmdCount; k++)
             {
@@ -1383,25 +1283,19 @@ int MeshDrawInfo::packSize() const
     // options
     fullSize += sizeof(int32_t); // count
     for (i = 0; i < (int)lodOptions.size(); i++)
-    {
         fullSize += nboStdStringPackSize(lodOptions[i]);
-    }
 
     // state bits
     fullSize += sizeof(uint32_t);
 
     // animation information
     if (animInfo != NULL)
-    {
         fullSize += animInfo->packSize();
-    }
 
     // corners
     fullSize += sizeof(int32_t); // count
     for (i = 0; i < cornerCount; i++)
-    {
         fullSize += corners[i].packSize();
-    }
 
     // raw vertices
     fullSize += sizeof(int32_t); // count
@@ -1416,16 +1310,12 @@ int MeshDrawInfo::packSize() const
     // lods
     fullSize += sizeof(int32_t); // count
     for (i = 0; i < lodCount; i++)
-    {
         fullSize += lods[i].packSize();
-    }
 
     // radar lods
     fullSize += sizeof(int32_t); // count
     for (i = 0; i < radarCount; i++)
-    {
         fullSize += radarLods[i].packSize();
-    }
 
     // sphere and extents
     fullSize += (4 + 6) * sizeof(float);
@@ -1444,9 +1334,7 @@ void* MeshDrawInfo::pack(void* buf) const
     // options
     buf = nboPackInt(buf, lodOptions.size());
     for (i = 0; i < (int)lodOptions.size(); i++)
-    {
         buf = nboPackStdString(buf, lodOptions[i]);
-    }
 
     // state bits
     const bool haveAnim = (animInfo != NULL);
@@ -1456,29 +1344,21 @@ void* MeshDrawInfo::pack(void* buf) const
 
     // animation information
     if (haveAnim)
-    {
         buf = animInfo->pack(buf);
-    }
 
     // corners
     buf = nboPackInt (buf, cornerCount);
     for (i = 0; i < cornerCount; i++)
-    {
         buf = corners[i].pack(buf);
-    }
 
     // raw vertices
     buf = nboPackInt (buf, rawVertCount);
     for (i = 0; i < rawVertCount; i++)
-    {
         buf = nboPackVector(buf, rawVerts[i]);
-    }
     // raw normals
     buf = nboPackInt (buf, rawNormCount);
     for (i = 0; i < rawNormCount; i++)
-    {
         buf = nboPackVector(buf, rawNorms[i]);
-    }
     // raw texcoords
     buf = nboPackInt (buf, rawTxcdCount);
     for (i = 0; i < rawTxcdCount; i++)
@@ -1490,16 +1370,12 @@ void* MeshDrawInfo::pack(void* buf) const
     // lods
     buf = nboPackInt (buf, lodCount);
     for (i = 0; i < lodCount; i++)
-    {
         buf = lods[i].pack(buf);
-    }
 
     // radar lods
     buf = nboPackInt (buf, radarCount);
     for (i = 0; i < radarCount; i++)
-    {
         buf = radarLods[i].pack(buf);
-    }
 
     // sphere and extents
     buf = nboPackVector(buf, sphere);
@@ -1547,26 +1423,20 @@ const void* MeshDrawInfo::unpack(const void* buf)
     cornerCount = s32;
     corners = new Corner[cornerCount];
     for (i = 0; i < cornerCount; i++)
-    {
         buf = corners[i].unpack(buf);
-    }
 
     // raw vertices
     buf = nboUnpackInt (buf, s32);
     rawVertCount = s32;
     rawVerts = new afvec3[rawVertCount];
     for (i = 0; i < rawVertCount; i++)
-    {
         buf = nboUnpackVector(buf, rawVerts[i]);
-    }
     // raw normals
     buf = nboUnpackInt (buf, s32);
     rawNormCount = s32;
     rawNorms = new afvec3[rawNormCount];
     for (i = 0; i < rawNormCount; i++)
-    {
         buf = nboUnpackVector(buf, rawNorms[i]);
-    }
     // raw texcoords
     buf = nboUnpackInt (buf, s32);
     rawTxcdCount = s32;
@@ -1582,18 +1452,14 @@ const void* MeshDrawInfo::unpack(const void* buf)
     lodCount = s32;
     lods = new DrawLod[lodCount];
     for (i = 0; i < lodCount; i++)
-    {
         buf = lods[i].unpack(buf);
-    }
 
     // radar lods
     buf = nboUnpackInt (buf, s32);
     radarCount = s32;
     radarLods = new DrawLod[radarCount];
     for (i = 0; i < radarCount; i++)
-    {
         buf = radarLods[i].unpack(buf);
-    }
 
     // sphere and extents
     buf = nboUnpackVector(buf, sphere);
@@ -1625,13 +1491,9 @@ int Corner::packSize() const
     if ((vertex > MaxUShort) || (vertex < 0) ||
             (normal > MaxUShort) || (normal < 0) ||
             (texcoord > MaxUShort) || (texcoord < 0))
-    {
         return sizeof(uint8_t) + (3 * sizeof(int32_t));
-    }
     else
-    {
         return sizeof(uint8_t) + (3 * sizeof(int16_t));
-    }
 }
 
 
@@ -1714,13 +1576,9 @@ void DrawCmd::finalize()
     {
         const unsigned int value = tmp[i];
         if (value < minIndex)
-        {
             minIndex = value;
-        }
         if (value > maxIndex)
-        {
             maxIndex = value;
-        }
     }
 
     // check if they can be convert to unsigned shorts
@@ -1735,9 +1593,7 @@ void DrawCmd::finalize()
     // convert to unsigned shorts
     unsigned short* shortArray = new unsigned short[count];
     for (i = 0; i < count; i++)
-    {
         shortArray[i] = tmp[i];
-    }
     indexType = DrawIndexUShort;
     delete[] (unsigned int*)indices;
     indices = shortArray;
@@ -1749,13 +1605,9 @@ void DrawCmd::finalize()
 void DrawCmd::clear()
 {
     if (indexType == DrawIndexUInt)
-    {
         delete[] (unsigned int*)indices;
-    }
     else
-    {
         delete[] (unsigned short*)indices;
-    }
     return;
 }
 
@@ -1767,13 +1619,9 @@ int DrawCmd::packSize() const
     fullSize += sizeof(int32_t); // count
     fullSize += sizeof(uint32_t); // index type
     if (indexType == DrawIndexUShort)
-    {
         fullSize += count * sizeof(uint16_t);
-    }
     else
-    {
         fullSize += count * sizeof(uint32_t);
-    }
     return fullSize;
 }
 
@@ -1853,9 +1701,7 @@ DrawSet::DrawSet()
 void DrawSet::clear()
 {
     for (int i = 0; i < count; i++)
-    {
         cmds[i].clear();
-    }
     delete[] cmds;
     return;
 }
@@ -1866,9 +1712,7 @@ int DrawSet::packSize() const
     int fullSize = 0;
     fullSize += sizeof(uint32_t); // count
     for (int i = 0; i < count; i++)
-    {
         fullSize += cmds[i].packSize();
-    }
     fullSize += sizeof(int32_t); // material
     fullSize += sizeof(float[4]); // sphere
     fullSize += sizeof(uint8_t); // state bits
@@ -1881,9 +1725,7 @@ void* DrawSet::pack(void* buf) const
 {
     buf = nboPackInt(buf, count);
     for (int i = 0; i < count; i++)
-    {
         buf = cmds[i].pack(buf);
-    }
 
     // material
     int matindex = MATERIALMGR.getIndex(material);
@@ -1909,9 +1751,7 @@ const void* DrawSet::unpack(const void* buf)
     count = s32;
     cmds = new DrawCmd[count];
     for (int i = 0; i < count; i++)
-    {
         buf = cmds[i].unpack(buf);
-    }
 
     // material
     buf = nboUnpackInt(buf, s32);
@@ -1944,9 +1784,7 @@ DrawLod::DrawLod()
 void DrawLod::clear()
 {
     for (int i = 0; i < count; i++)
-    {
         sets[i].clear();
-    }
     delete[] sets;
     return;
 }
@@ -1957,9 +1795,7 @@ int DrawLod::packSize() const
     int fullSize = 0;
     fullSize += sizeof(uint32_t); // count
     for (int i = 0; i < count; i++)
-    {
         fullSize += sets[i].packSize();
-    }
     fullSize += sizeof(float); // lengthPerPixel
     return fullSize;
 }
@@ -1969,9 +1805,7 @@ void* DrawLod::pack(void* buf) const
 {
     buf = nboPackInt(buf, count);
     for (int i = 0; i < count; i++)
-    {
         buf = sets[i].pack(buf);
-    }
     buf = nboPackFloat(buf, lengthPerPixel);
     return buf;
 }
@@ -1984,9 +1818,7 @@ const void* DrawLod::unpack(const void* buf)
     count = s32;
     sets = new DrawSet[count];
     for (int i = 0; i < count; i++)
-    {
         buf = sets[i].unpack(buf);
-    }
     buf = nboUnpackFloat(buf, lengthPerPixel);
 
     return buf;
@@ -2035,6 +1867,6 @@ const void* AnimationInfo::unpack(const void* buf)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

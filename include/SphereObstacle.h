@@ -11,11 +11,11 @@
  */
 
 /* SphereObstacle:
- *	Encapsulates a cone in the game environment.
+ *  Encapsulates a cone in the game environment.
  */
 
-#ifndef	BZF_SPHERE_OBSTACLE_H
-#define	BZF_SPHERE_OBSTACLE_H
+#ifndef BZF_SPHERE_OBSTACLE_H
+#define BZF_SPHERE_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -101,6 +101,6 @@ private:
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

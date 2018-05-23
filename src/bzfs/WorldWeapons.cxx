@@ -29,12 +29,11 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor, PlayerId targetPlayerID)
+uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID,
+                                TeamColor teamColor, PlayerId targetPlayerID)
 {
     if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
-    {
         return INVALID_SHOT_GUID;
-    }
 
     void *buf, *bufStart = getDirectMessageBuffer();
 
@@ -59,13 +58,9 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
         firingInfo.shot.id = *shotID;
     }
     else if (shotID == nullptr)
-    {
         firingInfo.shot.id = getNewWorldShotID();
-    }
     else
-    {
         firingInfo.shot.id = *shotID;
-    }
 
     bz_AllowServerShotFiredEventData_V1 allowEvent;
     allowEvent.flagType = type->flagAbbv;
@@ -80,9 +75,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
     worldEventManager.callEvents(bz_eAllowServerShotFiredEvent, &allowEvent);
 
     if (!allowEvent.allow)
-    {
         return INVALID_SHOT_GUID;
-    }
 
     if (allowEvent.changed)
     {
@@ -162,9 +155,7 @@ float WorldWeapons::nextTime ()
     {
         Weapon *w = *it;
         if (w->nextTime <= nextShot)
-        {
             nextShot = w->nextTime;
-        }
     }
     return (float)(nextShot - TimeKeeper::getCurrent());
 }
@@ -180,7 +171,7 @@ void WorldWeapons::fire()
         Weapon *w = *it;
         if (w->nextTime <= nowTime)
         {
-            FlagType type = *(w->type);	// non-const copy
+            FlagType type = *(w->type); // non-const copy
 
             float vec[3] = { 0,0,0 };
             bz_vectorFromRotations(w->tilt, w->direction, vec);
@@ -192,9 +183,7 @@ void WorldWeapons::fire()
                 w->nextTime += w->delay[w->nextDelay];
                 w->nextDelay++;
                 if (w->nextDelay == (int)w->delay.size())
-                {
                     w->nextDelay = 0;
-                }
             }
         }
     }
@@ -241,9 +230,7 @@ void * WorldWeapons::pack(void *buf) const
         buf = nboPackFloat(buf, w->initDelay);
         buf = nboPackUShort(buf, (uint16_t)w->delay.size());
         for (unsigned int j = 0; j < w->delay.size(); j++)
-        {
             buf = nboPackFloat(buf, w->delay[j]);
-        }
     }
     return buf;
 }
@@ -264,9 +251,7 @@ int WorldWeapons::packSize(void) const
         fullSize += sizeof(float);    // init delay
         fullSize += sizeof(uint16_t); // delay count
         for (unsigned int j = 0; j < w->delay.size(); j++)
-        {
             fullSize += sizeof(float);
-        }
     }
 
     return fullSize;
@@ -276,9 +261,7 @@ int WorldWeapons::packSize(void) const
 int WorldWeapons::getNewWorldShotID(void)
 {
     if (worldShotId > _MAX_WORLD_SHOTS)
-    {
         worldShotId = 0;
-    }
     return worldShotId++;
 }
 
@@ -336,6 +319,6 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

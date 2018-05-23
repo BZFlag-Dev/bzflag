@@ -63,9 +63,7 @@ bool WordFilter::simpleFilter(char *input) const
 
             /* fill with random filter chars */
             if (filterCharacters(input, startPosition, endPosition-startPosition, true) > 0)
-            {
                 filtered=true;
-            }
         }
         startPosition = line.find_first_of(alphabet, endPosition);
     }
@@ -123,9 +121,7 @@ bool WordFilter::aggressiveFilter(char *input) const
 
                 std::string puncChars = alphabeticSetFromCharacter(c);
                 for (unsigned int cnt = 0; cnt < puncChars.size(); cnt++)
-                {
                     appendUniqueChar(wordIndices, tolower(puncChars[cnt]));
-                }
             }
 
             // add the character itself if not previously added
@@ -147,9 +143,7 @@ bool WordFilter::aggressiveFilter(char *input) const
             {
                 /* do not forget to make sure this is a true prefix */
                 if ( (match[0].rm_so > 0) && isalpha(sInput[match[0].rm_so - 1]) )
-                {
                     continue;
-                }
 
                 /* we found a prefix -- add the letter that follows */
                 appendUniqueChar(wordIndices, tolower(sInput[match[0].rm_eo]));
@@ -292,16 +286,12 @@ bool WordFilter::aggressiveFilter(char *input) const
                             }
                         }
                         if (!foundAlpha)
-                        {
                             continue;
-                        }
                     }
 
                     // add a few more slots if necessary (this should be rare/never)
                     if (matchCount * 2 + 1 >= matchPair.size())
-                    {
                         matchPair.resize(matchCount * 2 + 201);
-                    }
 
                     matchPair[matchCount * 2] = startOffset; /* position */
                     matchPair[(matchCount * 2) + 1] = matchLength; /* length */
@@ -545,13 +535,9 @@ std::string WordFilter::expressionFromString(const std::string &word) const
         {
             /* ensure we don't capture non-printables after end of word */
             if (i != length - 1)
-            {
                 expression.append("[fp]+[^[:alpha:]]*h?[^[:alpha:]]*");
-            }
             else
-            {
                 expression.append("[fp]+h?");
-            }
         }
         else
         {
@@ -579,13 +565,9 @@ std::string WordFilter::expressionFromString(const std::string &word) const
              * not get appended to the special "f" case.
              */
             if (i != length - 1)
-            {
                 expression.append("+[^[:alpha:]]*");
-            }
             else
-            {
                 expression.append("+");
-            }
 
         } // end test for multi-letter expansions
 
@@ -696,9 +678,7 @@ WordFilter::WordFilter(const WordFilter& _filter)
       prefixes(_filter.prefixes)
 {
     for (int i=0; i < MAX_FILTER_SETS; i++)
-    {
         filters[i] = _filter.filters[i];
-    }
 }
 
 
@@ -784,9 +764,7 @@ bool WordFilter::addToFilter(const std::string &word, const std::string &express
             return false;
         }
         else
-        {
             filters[firstchar].insert(newFilter);
-        }
         return true;
     }
 } // end addToFilter
@@ -802,9 +780,7 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
     if (!filterStream)
     {
         if (verbose)
-        {
             std::cerr << "Warning: '" << fileName << "' bad word filter file not found" << std::endl;
-        }
         return 0;
     }
 
@@ -818,17 +794,13 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 
         // trim leading whitespace
         if (position > 0)
-        {
             filterWord = filterWord.substr(position);
-        }
 
         position = filterWord.find_first_of("#\r\n");
 
         // trim trailing comments
         if ((position >= 0) && (position < (int)filterWord.length()))
-        {
             filterWord = filterWord.substr(0, position);
-        }
 
         position = filterWord.find_last_not_of(" \t\n\r");
         // first whitespace is at next character position
@@ -836,18 +808,14 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 
         // trim trailing whitespace
         if ((position >=0) && (position < (int)filterWord.length()))
-        {
             filterWord = filterWord.substr(0, position);
-        }
 
         /* make sure the word isn't empty (e.g. comment lines) */
         if (filterWord.length() == 0)
-        {
             continue;
-        }
 
         /*
-          std::cout << "[[[" <<	 filterWord << "]]]" << std::endl;
+          std::cout << "[[[" <<  filterWord << "]]]" << std::endl;
         */
 
         if (verbose)
@@ -866,19 +834,13 @@ unsigned int WordFilter::loadFromFile(const std::string &fileName, bool verbose)
 
         bool added = addToFilter(filterWord, std::string(""));
         if ((!added) && (verbose))
-        {
             std::cout << std::endl << "Word is already added: " << filterWord << std::endl;
-        }
         else
-        {
             totalAdded++;
-        }
 
     } // end iteration over input file
     if (verbose)
-    {
         std::cout << std::endl;
-    }
 
     return totalAdded;
 } // end loadFromFile
@@ -894,13 +856,9 @@ bool WordFilter::filter(char *input, const bool simple) const
 #endif
     bool filtered;
     if (simple)
-    {
         filtered = simpleFilter(input);
-    }
     else
-    {
         filtered = aggressiveFilter(input);
-    }
 #ifdef DEBUG
     TimeKeeper after = TimeKeeper::getCurrent();
     std::cout << "Time elapsed: " << after - before << " seconds" << std::endl;
@@ -924,15 +882,11 @@ bool WordFilter::filter(std::string &input, const bool simple) const
         input2[511] = '\0';
         bool filteredChunk = filter(input2, simple);
         if (filteredChunk)
-        {
             filtered = true;
-        }
         resultString += input2;
     }
     if (filtered)
-    {
         input = resultString;
-    }
     return filtered;
 }
 
@@ -954,16 +908,14 @@ void WordFilter::outputFilter(void) const
 }
 void WordFilter::outputWords(void) const
 {
-    //		std::cout << "size of compiled set is " << () << std::endl;
+    //      std::cout << "size of compiled set is " << () << std::endl;
     for (int i=0; i < MAX_FILTER_SETS; ++i)
     {
         int count=0;
         for (ExpCompareSet::const_iterator j = filters[i].begin(); \
                 j != filters[i].end(); \
                 ++j)
-        {
             std::cout << "[" << i << "] " << count++ << ": " << j->word << std::endl;
-        }
     }
 
 }
@@ -975,9 +927,7 @@ unsigned long int WordFilter::wordCount(void) const
         for (ExpCompareSet::const_iterator j = filters[i].begin(); \
                 j != filters[i].end(); \
                 ++j)
-        {
             count += 1;
-        }
     }
     return count;
 }
@@ -995,6 +945,6 @@ void WordFilter::clear(void)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

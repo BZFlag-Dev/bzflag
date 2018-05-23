@@ -131,9 +131,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
 {
     SDL_Event event;
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0)
-    {
         return false;
-    }
 
     return setupEvent(_event, event);
 }
@@ -150,8 +148,8 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     {
 
     case SDL_MOUSEMOTION:
-        _event.type	= BzfEvent::MouseMove;
-        mx		 = event.motion.x;
+        _event.type = BzfEvent::MouseMove;
+        mx       = event.motion.x;
 #ifdef __APPLE__
         static const SDL_version *sdlver = SDL_Linked_Version();
         /* deal with a SDL bug when in windowed mode related to
@@ -161,22 +159,18 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
                 (sdlver->major > 1) ||
                 (sdlver->minor > 2) ||
                 (sdlver->patch > 6) )
-        {
             my = event.motion.y;
-        }
         else
-        {
             my = base_height - 1 - event.motion.y;
-        }
 #else
-        my		 = event.motion.y;
+        my       = event.motion.y;
 #endif
         _event.mouseMove.x = mx;
         _event.mouseMove.y = my;
         break;
 
     case SDL_MOUSEBUTTONDOWN:
-        _event.type	  = BzfEvent::KeyDown;
+        _event.type   = BzfEvent::KeyDown;
         _event.keyDown.ascii = 0;
         _event.keyDown.shift = 0;
         if (shift)
@@ -300,13 +294,9 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     case SDL_ACTIVEEVENT:
         if (event.active.state & SDL_APPACTIVE)
             if (event.active.gain == 0)
-            {
                 _event.type = BzfEvent::Unmap;
-            }
             else
-            {
                 _event.type = BzfEvent::Map;
-            }
         else
             return false;
         break;
@@ -322,8 +312,8 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 {
     SDLMod mode = SDL_GetModState();
     shift       = ((mode & KMOD_SHIFT) != 0);
-    ctrl	= ((mode & KMOD_CTRL) != 0);
-    alt	 = ((mode & KMOD_ALT) != 0);
+    ctrl    = ((mode & KMOD_CTRL) != 0);
+    alt  = ((mode & KMOD_ALT) != 0);
 }
 
 
@@ -535,13 +525,9 @@ bool SDLDisplay::createWindow()
     // getting width, height & flags for SetVideoMode
     getWindowSize(width, height);
     if (fullScreen)
-    {
         flags |= SDL_FULLSCREEN;
-    }
     else
-    {
         flags |= SDL_RESIZABLE;
-    }
     // if they are the same, don't bother building a new window
     if ((width == oldWidth) && (height == oldHeight)
             && (fullScreen == oldFullScreen))
@@ -766,9 +752,7 @@ static float CalculateGammaFromRamp(Uint16 ramp[256])
         }
     }
     if ( count && sum )
-    {
         gamma = 1.0f / (sum / count);
-    }
     return gamma;
 }
 
@@ -780,9 +764,7 @@ float SDLWindow::getGamma() const
     float gamma = 1.0;
     int result = SDL_GetGammaRamp(redRamp, greenRamp, blueRamp);
     if (result == -1)
-    {
         printf("Could not get Gamma: %s.\n", SDL_GetError());
-    }
     else
     {
         float red   = CalculateGammaFromRamp(redRamp);
@@ -806,9 +788,7 @@ void SDLWindow::swapBuffers()
 bool SDLWindow::create(void)
 {
     if (!const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->createWindow())
-    {
         return false;
-    }
     return true;
 }
 

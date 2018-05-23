@@ -37,12 +37,12 @@ bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
     switch (key.ascii)
     {
-    case 27:	// escape
+    case 27:    // escape
         playLocalSound(SFX_DROP_FLAG);
         HUDDialogStack::get()->pop();
         return true;
 
-    case 13:	// return
+    case 13:    // return
         playLocalSound(SFX_GRAB_FLAG);
         HUDDialogStack::get()->top()->execute();
         return true;
@@ -61,8 +61,8 @@ bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 {
     switch (key.ascii)
     {
-    case 27:	// escape
-    case 13:	// return
+    case 27:    // escape
+    case 13:    // return
         return true;
     }
     return false;
@@ -73,6 +73,6 @@ bool MenuDefaultKey::keyRelease(const BzfKeyEvent& key)
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

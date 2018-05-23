@@ -147,15 +147,11 @@ void Octree::addNodes (SceneNode** list, int listSize, int depth, int elements)
     int i;
 
     if (root)
-    {
         clear();
-    }
 
     // just in case
     for (i = 0; i < listSize; i++)
-    {
         list[i]->octreeState = SceneNode::OctreeCulled;
-    }
 
     maxDepth = depth;
     minElements = elements;
@@ -196,9 +192,7 @@ int Octree::getFrustumList (SceneNode** list, int listSize,
                             const Frustum* frustum) const
 {
     if (!root)
-    {
         return 0;
-    }
     F2BSORT = BZDB.isTrue("f2bsort");
 
     if (listSize > CullListSize)
@@ -232,9 +226,7 @@ int Octree::getRadarList (SceneNode** list, int listSize,
     // was done to try and speed-up this low level code.
 
     if (!root)
-    {
         return 0;
-    }
 
     if (listSize > CullListSize)
     {
@@ -257,9 +249,7 @@ int Octree::getShadowList (SceneNode** list, int listSize,
                            int planeCount, const float (*planes)[4]) const
 {
     if (!root)
-    {
         return 0;
-    }
 
     if (listSize > CullListSize)
     {
@@ -304,9 +294,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
     {
         float axisWidth = tmpExts.getWidth(i);
         if (axisWidth > width)
-        {
             width = axisWidth;
-        }
     }
 
     extents = tmpExts;
@@ -331,9 +319,7 @@ void Octree::getExtents (SceneNode** list, int listSize)
 void Octree::draw () const
 {
     if (!root)
-    {
         return;
-    }
 
     GLboolean usingTextures;
     glGetBooleanv(GL_TEXTURE_2D, &usingTextures);
@@ -347,9 +333,7 @@ void Octree::draw () const
     OcclMgr->draw();
 
     if (usingTextures)
-    {
         glEnable (GL_TEXTURE_2D);
-    }
 
     return;
 }
@@ -446,9 +430,7 @@ void OctreeNode::makeChildren ()
 
     // setup the center point
     for (int i = 0; i < 3; i++)
-    {
         center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
-    }
 
     childCount = 0;
     const float* extentSet[3] = { extents.mins, center, extents.maxs };
@@ -477,9 +459,7 @@ void OctreeNode::makeChildren ()
                     squeezed[kid] = NULL;
                 }
                 else
-                {
                     childCount++;
-                }
                 children[kid] = squeezed[kid];
             }
         }
@@ -516,9 +496,7 @@ void OctreeNode::resizeCell()
 OctreeNode::~OctreeNode()
 {
     for (int i = 0; i < 8; i++)
-    {
         delete squeezed[i];
-    }
     free (list);
     return;
 }
@@ -529,20 +507,14 @@ void OctreeNode::getFrustumList () const
     IntersectLevel level = testAxisBoxInFrustum (extents, CullFrustum);
 
     if (level == Outside)
-    {
         return;
-    }
 
     IntersectLevel occLevel = OcclMgr->occlude (extents, count);
     if (occLevel == Contained)
-    {
         return;
-    }
 
     if ((level == Contained) && (occLevel == Outside))
-    {
         getFullyVisible ();
-    }
 
     // this cell is only partially contained within
     // the frustum and is not being fully occluded
@@ -561,53 +533,53 @@ void OctreeNode::getFrustumList () const
             if (dir[2] < 0.0f) dirbits |= (1 << 2);
             const OctreeNode* onode;
 
-#define GET_NODE(x)		\
-    onode = children[(x)];	\
-    if (onode != NULL) {	\
-      onode->getFrustumList ();	\
+#define GET_NODE(x)     \
+    onode = children[(x)];  \
+    if (onode != NULL) {    \
+      onode->getFrustumList (); \
     }
 
-#define GET_FULL_NODE(x)		\
-    onode = children[(x)];		\
-    if (onode != NULL) {		\
-      onode->getFullyVisibleOcclude ();	\
+#define GET_FULL_NODE(x)        \
+    onode = children[(x)];      \
+    if (onode != NULL) {        \
+      onode->getFullyVisibleOcclude (); \
     }
 
             if (occLevel == Outside)
             {
-                GET_NODE(dirbits);				// 0:  0,0,0
+                GET_NODE(dirbits);              // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                GET_NODE(dirbits);				// 1:  1,0,0
+                GET_NODE(dirbits);              // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                GET_NODE(dirbits);				// 2:  0,1,0
+                GET_NODE(dirbits);              // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                GET_NODE(dirbits);				// 3:  0,0,1
+                GET_NODE(dirbits);              // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                GET_NODE(dirbits);				// 4:  1,1,0
+                GET_NODE(dirbits);              // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                GET_NODE(dirbits);				// 5:  1,0,1
+                GET_NODE(dirbits);              // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                GET_NODE(dirbits);				// 6:  0,1,1
+                GET_NODE(dirbits);              // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                GET_NODE(dirbits);				// 7:  1,1,1
+                GET_NODE(dirbits);              // 7:  1,1,1
             }
             else
             {
-                GET_FULL_NODE(dirbits);				// 0:  0,0,0
+                GET_FULL_NODE(dirbits);             // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                GET_FULL_NODE(dirbits);				// 1:  1,0,0
+                GET_FULL_NODE(dirbits);             // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                GET_FULL_NODE(dirbits);				// 2:  0,1,0
+                GET_FULL_NODE(dirbits);             // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                GET_FULL_NODE(dirbits);				// 3:  0,0,1
+                GET_FULL_NODE(dirbits);             // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                GET_FULL_NODE(dirbits);				// 4:  1,1,0
+                GET_FULL_NODE(dirbits);             // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                GET_FULL_NODE(dirbits);				// 5:  1,0,1
+                GET_FULL_NODE(dirbits);             // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                GET_FULL_NODE(dirbits);				// 6:  0,1,1
+                GET_FULL_NODE(dirbits);             // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                GET_FULL_NODE(dirbits);				// 7:  1,1,1
+                GET_FULL_NODE(dirbits);             // 7:  1,1,1
             }
         }
         else
@@ -615,16 +587,12 @@ void OctreeNode::getFrustumList () const
             if (occLevel == Outside)
             {
                 for (int i = 0; i < childCount; i++)
-                {
                     squeezed[i]->getFrustumList ();
-                }
             }
             else
             {
                 for (int i = 0; i < childCount; i++)
-                {
                     squeezed[i]->getFullyVisibleOcclude ();
-                }
             }
         }
     }
@@ -669,12 +637,12 @@ void OctreeNode::getFrustumList () const
     } else {
       static int i;
       for (i = 0; i < working->getListSize(); i++) {
-	static SceneNode* node;
-	node = working->getList()[i];
-	if (node->octreeState == SceneNode::OctreeCulled) {
-	  addCullListNode (node);
-	}
-	node->octreeState = SceneNode::OctreeVisible;
+    static SceneNode* node;
+    node = working->getList()[i];
+    if (node->octreeState == SceneNode::OctreeCulled) {
+      addCullListNode (node);
+    }
+    node->octreeState = SceneNode::OctreeVisible;
       }
       level--;
       working = nodeStack[level].node;
@@ -688,9 +656,7 @@ void OctreeNode::getRadarList () const
     IntersectLevel level = testAxisBoxInFrustum (extents, CullFrustum);
 
     if (level == Outside)
-    {
         return;
-    }
 
     if (level == Contained)
     {
@@ -704,9 +670,7 @@ void OctreeNode::getRadarList () const
     if (childCount > 0)
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->getRadarList ();
-        }
     }
     else
     {
@@ -730,9 +694,7 @@ void OctreeNode::getFullyVisible () const
     if ((childCount > 0) && (listSize == 0))
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->getFullyVisible ();
-        }
     }
     else
     {
@@ -741,9 +703,7 @@ void OctreeNode::getFullyVisible () const
             SceneNode* node = list[i];
             SceneNode::CullState& state = node->octreeState;
             if (state == SceneNode::OctreeCulled)
-            {
                 addCullListNode (node);
-            }
             state = SceneNode::OctreeVisible;
         }
     }
@@ -755,14 +715,10 @@ void OctreeNode::getFullyVisibleOcclude () const
 {
     IntersectLevel occLevel = OcclMgr->occlude (extents, count);
     if (occLevel == Contained)
-    {
         return;
-    }
 
     if (occLevel == Outside)
-    {
         getFullyVisible ();
-    }
 
     // this cell is only partially contained within
     // the frustum and is not being fully occluded
@@ -770,9 +726,7 @@ void OctreeNode::getFullyVisibleOcclude () const
     if (childCount > 0)
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->getFullyVisibleOcclude ();
-        }
     }
     else
     {
@@ -796,9 +750,7 @@ void OctreeNode::getShadowList () const
     IntersectLevel level = testAxisBoxOcclusion (extents,
                            ShadowPlanes, ShadowCount);
     if (level == Outside)
-    {
         return;
-    }
 
     if (level == Contained)
     {
@@ -812,9 +764,7 @@ void OctreeNode::getShadowList () const
     if (childCount > 0)
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->getShadowList ();
-        }
     }
     else
     {
@@ -838,9 +788,7 @@ void OctreeNode::getFullyShadow () const
     if ((childCount > 0) && (listSize == 0))
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->getFullyShadow ();
-        }
     }
     else
     {
@@ -849,9 +797,7 @@ void OctreeNode::getFullyShadow () const
             SceneNode* node = list[i];
             SceneNode::CullState& state = node->octreeState;
             if (state == SceneNode::OctreeCulled)
-            {
                 addCullListNode (node);
-            }
             state = SceneNode::OctreeVisible;
         }
     }
@@ -873,14 +819,10 @@ void OctreeNode::tallyStats()
     if (childCount > 0)
     {
         for (int i = 0; i < childCount; i++)
-        {
             squeezed[i]->tallyStats();
-        }
     }
     else
-    {
         leafNodes++;
-    }
 
     return;
 }
@@ -913,23 +855,15 @@ void OctreeNode::draw ()
         break;
     case Partial:
         if (!occludeCull)
-        {
             color = blue;
-        }
         else
-        {
             color = green;
-        }
         break;
     case Contained:
         if (!occludeCull)
-        {
             color = red;
-        }
         else
-        {
             color = yellow;
-        }
         break;
     }
     glColor4fv (color);
@@ -950,9 +884,7 @@ void OctreeNode::draw ()
         memcpy (points[4], points[0], sizeof (points[4]));
         glBegin (GL_LINE_STRIP);
         for (int i = 0; i < 5; i++)
-        {
             glVertex3fv (points[i]);
-        }
         glEnd ();
     }
 
@@ -975,9 +907,7 @@ void OctreeNode::draw ()
 
     // draw the kids
     for (c = 0; c < childCount; c++)
-    {
         squeezed[c]->draw ();
-    }
 
     return;
 }
@@ -987,6 +917,6 @@ void OctreeNode::draw ()
 // mode: C++ ***
 // tab-width: 4 ***
 // c-basic-offset: 4 ***
-// indent-tabs-mode: s ***
+// indent-tabs-mode: nill ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4

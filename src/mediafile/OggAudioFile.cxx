@@ -31,9 +31,7 @@ OggAudioFile::OggAudioFile(std::istream* in) : AudioFile(in)
     in->seekg(0, std::ios::beg);
 
     if (ov_open_callbacks(bundle, &file, NULL, 0, cb) < 0)
-    {
         std::cout << "OggAudioFile() failed: call to ov_open_callbacks failed\n";
-    }
     else
     {
         info = ov_info(&file, -1);
@@ -47,12 +45,12 @@ OggAudioFile::~OggAudioFile()
     ov_clear(&file);
 }
 
-std::string	OggAudioFile::getExtension()
+std::string OggAudioFile::getExtension()
 {
     return ".ogg";
 }
 
-bool		OggAudioFile::read(void* buffer, int frameCount)
+bool        OggAudioFile::read(void* buffer, int frameCount)
 {
     int result;
     long bytestotal = frameCount * info->channels * 2;
@@ -81,16 +79,14 @@ bool		OggAudioFile::read(void* buffer, int frameCount)
     return true;
 }
 
-size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
+size_t  OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
 {
     OAFInputBundle* bundle = (OAFInputBundle*) datasource;
     std::streamoff pos1 = std::streamoff(bundle->input->tellg());
     std::streamsize read = size * nmemb;
 
     if (pos1 + read > bundle->length)
-    {
         read = bundle->length - pos1;
-    }
     if (pos1 == bundle->length)
         // EOF
         return 0;
@@ -99,7 +95,7 @@ size_t	OAFRead(void* ptr, size_t size, size_t nmemb, void* datasource)
     return read;
 }
 
-int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
+int     OAFSeek(void* datasource, ogg_int64_t offset, int whence)
 {
     OAFInputBundle* bundle = (OAFInputBundle*) datasource;
     switch (whence)
@@ -117,7 +113,7 @@ int		OAFSeek(void* datasource, ogg_int64_t offset, int whence)
     return 0;
 }
 
-int		OAFClose(void* datasource)
+int     OAFClose(void* datasource)
 {
     // technically we should close here, but this is handled outside
     OAFInputBundle* bundle = (OAFInputBundle*) datasource;
@@ -125,7 +121,7 @@ int		OAFClose(void* datasource)
     return 0;
 }
 
-long		OAFTell(void* datasource)
+long        OAFTell(void* datasource)
 {
     OAFInputBundle* bundle = (OAFInputBundle*) datasource;
     return bundle->input->tellg();
