@@ -11,41 +11,46 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a pyramid building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a pyramid building.
  */
 
-#ifndef	BZF_EIGHTHD_PYR_SCENE_NODE_H
-#define	BZF_EIGHTHD_PYR_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_PYR_SCENE_NODE_H
+#define BZF_EIGHTHD_PYR_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
-class EighthDPyrSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDPyrSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDPyrSceneNode();
+class EighthDPyrSceneNode : public EighthDimSceneNode
+{
+public:
+    EighthDPyrSceneNode(const float pos[3],
+                        const float size[3], float rotation);
+    ~EighthDPyrSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
-  protected:
-    class EighthDPyrRenderNode : public RenderNode {
-      public:
-			EighthDPyrRenderNode(const EighthDPyrSceneNode*,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDPyrRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDPyrSceneNode* sceneNode;
-	GLfloat		corner[5][3];
+protected:
+    class EighthDPyrRenderNode : public RenderNode
+    {
+    public:
+        EighthDPyrRenderNode(const EighthDPyrSceneNode*,
+                             const float pos[3],
+                             const float size[3], float rotation);
+        ~EighthDPyrRenderNode();
+        void        render();
+        const GLfloat*  getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDPyrSceneNode* sceneNode;
+        GLfloat     corner[5][3];
     };
 
-  private:
-    OpenGLGState	 gstate;
+private:
+    OpenGLGState     gstate;
     EighthDPyrRenderNode renderNode;
 };
 
@@ -53,8 +58,8 @@ class EighthDPyrSceneNode : public EighthDimSceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

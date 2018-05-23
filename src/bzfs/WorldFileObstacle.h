@@ -19,23 +19,24 @@
 #include "WorldFileLocation.h"
 
 
-class WorldFileObstacle : public WorldFileLocation {
+class WorldFileObstacle : public WorldFileLocation
+{
 public:
-  WorldFileObstacle();
-  virtual bool read(const char *cmd, std::istream&);
+    WorldFileObstacle();
+    virtual bool read(const char *cmd, std::istream&);
 
 protected:
-  bool driveThrough;
-  bool shootThrough;
-  bool ricochet;
+    bool driveThrough;
+    bool shootThrough;
+    bool ricochet;
 };
 
 #endif /* __WORLDFILEOBSTACLE_H__ */
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

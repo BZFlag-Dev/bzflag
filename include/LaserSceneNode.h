@@ -11,64 +11,72 @@
  */
 
 /* LaserSceneNode:
- *	Encapsulates information for rendering a laser beam.
+ *  Encapsulates information for rendering a laser beam.
  */
 
-#ifndef	BZF_LASER_SCENE_NODE_H
-#define	BZF_LASER_SCENE_NODE_H
+#ifndef BZF_LASER_SCENE_NODE_H
+#define BZF_LASER_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
 
-class LaserSceneNode : public SceneNode {
-  public:
-			LaserSceneNode(const GLfloat pos[3],
-					const GLfloat forward[3]);
-			~LaserSceneNode();
+class LaserSceneNode : public SceneNode
+{
+public:
+    LaserSceneNode(const GLfloat pos[3],
+                   const GLfloat forward[3]);
+    ~LaserSceneNode();
 
-    void		setTexture(const int);
+    void        setTexture(const int);
 
-    bool		cull(const ViewFrustum&) const;
+    bool        cull(const ViewFrustum&) const;
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
-    void		setColor ( float r, float g, float b );
-    void		setCenterColor ( float r, float g, float b );
-    void		setFirst ( void ) { first = true; }
+    void        setColor ( float r, float g, float b );
+    void        setCenterColor ( float r, float g, float b );
+    void        setFirst ( void )
+    {
+        first = true;
+    }
 
-  protected:
-    class LaserRenderNode : public RenderNode {
-      public:
-			LaserRenderNode(const LaserSceneNode*);
-			~LaserRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	void renderFlatLaser();
-	void renderGeoLaser();
-	const LaserSceneNode* sceneNode;
-	static GLfloat	geom[6][2];
+protected:
+    class LaserRenderNode : public RenderNode
+    {
+    public:
+        LaserRenderNode(const LaserSceneNode*);
+        ~LaserRenderNode();
+        void        render();
+        const GLfloat*  getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        void renderFlatLaser();
+        void renderGeoLaser();
+        const LaserSceneNode* sceneNode;
+        static GLfloat  geom[6][2];
     };
-	fvec4 color;
-	fvec4 centerColor;
-	bool first;
+    fvec4 color;
+    fvec4 centerColor;
+    bool first;
     friend class LaserRenderNode;
 
-  private:
-    GLfloat		azimuth, elevation;
-    GLfloat		length;
-    bool		texturing;
-    OpenGLGState	gstate;
-    LaserRenderNode	renderNode;
+private:
+    GLfloat     azimuth, elevation;
+    GLfloat     length;
+    bool        texturing;
+    OpenGLGState    gstate;
+    LaserRenderNode renderNode;
 };
 
 #endif // BZF_LASER_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

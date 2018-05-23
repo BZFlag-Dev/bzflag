@@ -15,8 +15,9 @@
 #include "Intersect.h"
 #include "Extents.h"
 
-class Occluder {
-  public:
+class Occluder
+{
+public:
     Occluder(const SceneNode *node);
     ~Occluder();
     bool makePlanes(const Frustum* frustum);
@@ -29,7 +30,7 @@ class Occluder {
     void draw() const;
     void print(const char* string) const; // for debugging
 
-  private:
+private:
     const SceneNode* sceneNode;
     unsigned int cullScore;
     int planeCount;  // one more then the vertex count
@@ -43,9 +44,10 @@ class Occluder {
 
 #define MAX_OCCLUDERS 64
 
-class OccluderManager {
+class OccluderManager
+{
 
-  public:
+public:
     OccluderManager();
     ~OccluderManager();
 
@@ -60,7 +62,7 @@ class OccluderManager {
 
     void draw() const;
 
-  private:
+private:
     void setMaxOccluders(int size);
     void sort();
     int activeOccluders;
@@ -71,43 +73,42 @@ class OccluderManager {
 
 inline void Occluder::addScore(unsigned int score)
 {
-  unsigned int tmp = cullScore + score;
-  if (tmp > cullScore) {
-    cullScore = tmp;
-  }
-  return;
+    unsigned int tmp = cullScore + score;
+    if (tmp > cullScore)
+        cullScore = tmp;
+    return;
 }
 
 inline void Occluder::divScore()
 {
-  cullScore = cullScore >> 1;
-  return;
+    cullScore = cullScore >> 1;
+    return;
 }
 
 inline int Occluder::getScore() const
 {
-  return cullScore;
+    return cullScore;
 }
 
 inline const SceneNode* Occluder::getSceneNode()const
 {
-  return sceneNode;
+    return sceneNode;
 }
 
 inline int Occluder::getVertexCount() const
 {
-  return vertexCount;
+    return vertexCount;
 }
 
 inline int OccluderManager::getOccluderCount () const
 {
-  return activeOccluders;
+    return activeOccluders;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -12,11 +12,11 @@
 
 /*
  * HUDuiTypeIn:
- *	User interface class for the heads-up display's editable input control.
+ *  User interface class for the heads-up display's editable input control.
  */
 
-#ifndef	__HUDUITYPEIN_H__
-#define	__HUDUITYPEIN_H__
+#ifndef __HUDUITYPEIN_H__
+#define __HUDUITYPEIN_H__
 
 #include "common.h"
 
@@ -31,40 +31,44 @@
 typedef std::string (*TypeInColorFunc)(const std::string&);
 
 
-class HUDuiTypeIn : public HUDuiControl {
-  public:
-			HUDuiTypeIn();
-			~HUDuiTypeIn();
+class HUDuiTypeIn : public HUDuiControl
+{
+public:
+    HUDuiTypeIn();
+    ~HUDuiTypeIn();
 
-    void		setObfuscation(bool on);
-    int			getMaxLength() const;
-    std::string		getString() const;
+    void        setObfuscation(bool on);
+    int         getMaxLength() const;
+    std::string     getString() const;
 
-    void		setMaxLength(int);
-    void		setString(const std::string&);
-    void		setEditing(bool _allowEdit);
-    void		setColorFunc(TypeInColorFunc func) { colorFunc = func; }
+    void        setMaxLength(int);
+    void        setString(const std::string&);
+    void        setEditing(bool _allowEdit);
+    void        setColorFunc(TypeInColorFunc func)
+    {
+        colorFunc = func;
+    }
 
-  protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
+protected:
+    bool        doKeyPress(const BzfKeyEvent&);
+    bool        doKeyRelease(const BzfKeyEvent&);
+    void        doRender();
 
-  private:
-    int			maxLength;
-    std::string		string;
-    int			cursorPos;
-    bool		allowEdit;
-    bool		obfuscate;
-    TypeInColorFunc	colorFunc;
+private:
+    int         maxLength;
+    std::string     string;
+    int         cursorPos;
+    bool        allowEdit;
+    bool        obfuscate;
+    TypeInColorFunc colorFunc;
 };
 
 #endif // __HUDUITYPEIN_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

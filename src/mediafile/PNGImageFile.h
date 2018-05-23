@@ -19,36 +19,37 @@
 
 /** This class represents a PNG image file. It implements the read() function
     from ImageFile. */
-class PNGImageFile : public ImageFile {
+class PNGImageFile : public ImageFile
+{
 public:
-  PNGImageFile(std::istream* input, std::string filename);
-  virtual ~PNGImageFile();
+    PNGImageFile(std::istream* input, std::string filename);
+    virtual ~PNGImageFile();
 
-  /** This function returns the default extension of PNG image files. */
-  static std::string	getExtension();
+    /** This function returns the default extension of PNG image files. */
+    static std::string  getExtension();
 
-  /** Read image data from a PNG file. */
-  virtual bool		read(void* buffer);
+    /** Read image data from a PNG file. */
+    virtual bool        read(void* buffer);
 private:
-  png_structp				png;
-  png_infop				pnginfo;
+    png_structp             png;
+    png_infop               pnginfo;
 
-  // Storage for reading the image
-  png_bytep*				rowPtrs;
+    // Storage for reading the image
+    png_bytep*              rowPtrs;
 
-  png_uint_32				bitDepth;
-  png_uint_32				colorType;
-  png_uint_32				compressionMethod;
-  png_uint_32				filterMethod;
-  png_uint_32				interlaceMethod;
+    png_uint_32             bitDepth;
+    png_uint_32             colorType;
+    png_uint_32             compressionMethod;
+    png_uint_32             filterMethod;
+    png_uint_32             interlaceMethod;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

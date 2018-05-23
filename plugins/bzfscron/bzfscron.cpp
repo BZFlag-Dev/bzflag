@@ -263,8 +263,8 @@ void CronPlayer::sendCommand(std::string message) {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8 expandtab
+// ex: shiftwidth=4 tabstop=4 expandtab

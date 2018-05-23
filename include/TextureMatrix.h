@@ -21,8 +21,9 @@
 #include <iostream>
 
 
-class TextureMatrix {
-  public:
+class TextureMatrix
+{
+public:
     TextureMatrix();
     ~TextureMatrix();
 
@@ -41,7 +42,7 @@ class TextureMatrix {
     void setDynamicSpin (float freq);
     void setDynamicShift (float uFreq, float vFreq);
     void setDynamicScale (float uFreq, float vFreq,
-			  float uSize, float vSize);
+                          float uSize, float vSize);
     void setDynamicCenter (float u, float v);
 
     void update(double time);
@@ -53,7 +54,7 @@ class TextureMatrix {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::string name;
     // time invariant
     bool useStatic;
@@ -75,12 +76,13 @@ class TextureMatrix {
 
 inline const float* TextureMatrix::getMatrix() const
 {
-  return (const float*) matrix;
+    return (const float*) matrix;
 }
 
 
-class TextureMatrixManager {
-  public:
+class TextureMatrixManager
+{
+public:
     TextureMatrixManager();
     ~TextureMatrixManager();
     void update();
@@ -95,7 +97,7 @@ class TextureMatrixManager {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::vector<TextureMatrix*> matrices;
 };
 

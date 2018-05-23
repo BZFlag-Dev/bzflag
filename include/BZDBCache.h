@@ -18,23 +18,31 @@
 
 class BZDBCache
 {
-  public:
+public:
     static void init();
 
     // prohibit external write access
     template <class T>
-    class ReadOnly {
-      friend class BZDBCache;
-      public:
-	inline operator T() const { return data; }
-      private:
-	ReadOnly() {}
-	ReadOnly& operator=(const T& value) { data = value; return *this; }
-      private:
-	ReadOnly(const ReadOnly&);
-	ReadOnly& operator=(const ReadOnly&);
-      private:
-	T data;
+    class ReadOnly
+    {
+        friend class BZDBCache;
+    public:
+        inline operator T() const
+        {
+            return data;
+        }
+    private:
+        ReadOnly() {}
+        ReadOnly& operator=(const T& value)
+        {
+            data = value;
+            return *this;
+        }
+    private:
+        ReadOnly(const ReadOnly&);
+        ReadOnly& operator=(const ReadOnly&);
+    private:
+        T data;
     };
 
     // our basics types
@@ -93,14 +101,14 @@ class BZDBCache
     static Float hudGUIBorderOpacityFactor;
     static Float shotBrightness;
 
-  public:
+public:
     /** public method to update cached variable
-	has to be called at best opportunity
-	(e.g. at beginnig of main loop)
+    has to be called at best opportunity
+    (e.g. at beginnig of main loop)
     */
     static void update();
 
-  private:
+private:
     static void clientCallback(const std::string &name, void *);
     static void serverCallback(const std::string &name, void *);
 };
@@ -109,8 +117,8 @@ class BZDBCache
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

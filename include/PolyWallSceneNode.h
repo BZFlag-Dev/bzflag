@@ -11,64 +11,72 @@
  */
 
 /* PolyWallSceneNode:
- *	Encapsulates information for rendering a planar
- *	polygonal wall.  Does not support level of detail.
+ *  Encapsulates information for rendering a planar
+ *  polygonal wall.  Does not support level of detail.
  */
 
-#ifndef	BZF_POLY_WALL_SCENE_NODE_H
-#define	BZF_POLY_WALL_SCENE_NODE_H
+#ifndef BZF_POLY_WALL_SCENE_NODE_H
+#define BZF_POLY_WALL_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
 
-class PolyWallSceneNode : public WallSceneNode {
-  public:
-			PolyWallSceneNode(const GLfloat3Array& vertices,
-					const GLfloat2Array& uvs);
-			~PolyWallSceneNode();
+class PolyWallSceneNode : public WallSceneNode
+{
+public:
+    PolyWallSceneNode(const GLfloat3Array& vertices,
+                      const GLfloat2Array& uvs);
+    ~PolyWallSceneNode();
 
-    int			split(const float*, SceneNode*&, SceneNode*&) const;
+    int         split(const float*, SceneNode*&, SceneNode*&) const;
 
-    void		addRenderNodes(SceneRenderer&);
-    void		addShadowNodes(SceneRenderer&);
-    void		renderRadar();
+    void        addRenderNodes(SceneRenderer&);
+    void        addShadowNodes(SceneRenderer&);
+    void        renderRadar();
 
-    void		getRenderNodes(std::vector<RenderSet>& rnodes);
+    void        getRenderNodes(std::vector<RenderSet>& rnodes);
 
-  protected:
-    class Geometry : public RenderNode {
-      public:
-			Geometry(PolyWallSceneNode*,
-				const GLfloat3Array& vertices,
-				const GLfloat2Array& uvs,
-				const GLfloat* normal);
-			~Geometry();
-	void		setStyle(int _style) { style = _style; }
-	void		render();
-	const GLfloat*	getPosition() const { return wall->getSphere(); }
-      private:
-	void		drawV() const;
-	void		drawVT() const;
-      private:
-	PolyWallSceneNode* wall;
-	int		style;
-	const GLfloat*	normal;
-      public:
-	GLfloat3Array	vertex;
-	GLfloat2Array	uv;
+protected:
+    class Geometry : public RenderNode
+    {
+    public:
+        Geometry(PolyWallSceneNode*,
+                 const GLfloat3Array& vertices,
+                 const GLfloat2Array& uvs,
+                 const GLfloat* normal);
+        ~Geometry();
+        void        setStyle(int _style)
+        {
+            style = _style;
+        }
+        void        render();
+        const GLfloat*  getPosition() const
+        {
+            return wall->getSphere();
+        }
+    private:
+        void        drawV() const;
+        void        drawVT() const;
+    private:
+        PolyWallSceneNode* wall;
+        int     style;
+        const GLfloat*  normal;
+    public:
+        GLfloat3Array   vertex;
+        GLfloat2Array   uv;
     };
 
-  private:
-    Geometry*		node;
-    Geometry*		shadowNode;
+private:
+    Geometry*       node;
+    Geometry*       shadowNode;
 };
 
 #endif // BZF_POLY_WALL_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

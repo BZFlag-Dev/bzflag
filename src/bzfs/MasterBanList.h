@@ -16,20 +16,21 @@
 // common implementation headers
 #include "cURLManager.h"
 
-class MasterBanList : cURLManager {
+class MasterBanList : cURLManager
+{
 public:
-const std::string &get(const std::string &URL);
+    const std::string &get(const std::string &URL);
 protected:
-	std::string	data;
- private:
-	void finalization(char *cURLdata, unsigned int length, bool good);
+    std::string data;
+private:
+    void finalization(char *cURLdata, unsigned int length, bool good);
 };
 #endif //__MASTER_BAN_LIST_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -14,9 +14,9 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildHighRCasing ( void )
 {
-  int tris = 0;
-  glShadeModel(GL_FLAT);
-  glBegin(GL_TRIANGLE_STRIP);
+    int tris = 0;
+    glShadeModel(GL_FLAT);
+    glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.984696f, 0.000000f, 0.174282f);
     doTexCoord2f(-0.295f, 0.041f);
     doVertex3f(3.000f, -1.400f, 0.770f);
@@ -91,10 +91,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(3.000f, -1.400f, 0.770f);
     doTexCoord2f(0.045f, -0.208f);
     doVertex3f(3.000f, -0.875f, 0.770f);
-  glEnd(); // 30 verts -> 28 tris
-  tris += 28;
+    glEnd(); // 30 verts -> 28 tris
+    tris += 28;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(0.165f, 0.896f);
     doVertex3f(-2.740f, -1.400f, 0.528f);
@@ -106,10 +106,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(-1.460f, -1.400f, 1.400f);
     doTexCoord2f(0.419f, 0.757f);
     doVertex3f(-2.970f, -1.400f, 1.410f);
-  glEnd(); // 5 verts -> 3 tris
-  tris += 3;
+    glEnd(); // 5 verts -> 3 tris
+    tris += 3;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(-0.383f, 0.314f);
     doVertex3f(1.990f, -1.400f, 0.000f);
@@ -127,10 +127,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(-1.020f, -1.400f, 1.320f);
     doTexCoord2f(-0.026f, 0.803f);
     doVertex3f(-1.620f, -1.400f, 0.000f);
-  glEnd(); // 8 verts -> 6 tris
-  tris += 6;
+    glEnd(); // 8 verts -> 6 tris
+    tris += 6;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(-0.296f, 0.070f);
     doVertex3f(2.860f, -1.400f, 0.739f);
@@ -142,10 +142,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(2.860f, -1.400f, 0.956f);
     doTexCoord2f(-0.179f, 0.008f);
     doVertex3f(2.750f, -1.400f, 1.080f);
-  glEnd(); // 5 verts -> 3 tris
-  tris += 3;
+    glEnd(); // 5 verts -> 3 tris
+    tris += 3;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(0.720f, 0.489f);
     doVertex3f(-2.740f, -0.875f, 0.528f);
@@ -157,10 +157,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(-1.020f, -0.875f, 1.320f);
     doTexCoord2f(0.690f, 0.279f);
     doVertex3f(-1.620f, -0.875f, 0.000f);
-  glEnd(); // 5 verts -> 3 tris
-  tris += 3;
+    glEnd(); // 5 verts -> 3 tris
+    tris += 3;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(0.332f, -0.209f);
     doVertex3f(1.990f, -0.875f, 0.000f);
@@ -178,10 +178,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(2.860f, -0.875f, 0.739f);
     doTexCoord2f(0.206f, -0.283f);
     doVertex3f(2.790f, -0.875f, 0.408f);
-  glEnd(); // 8 verts -> 6 tris
-  tris += 6;
+    glEnd(); // 8 verts -> 6 tris
+    tris += 6;
 
-  glBegin(GL_TRIANGLE_FAN);
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(0.073f, -0.200f);
     doVertex3f(2.860f, -0.875f, 0.739f);
@@ -193,10 +193,10 @@ int TankGeometryUtils::buildHighRCasing ( void )
     doVertex3f(2.980f, -0.875f, 0.883f);
     doTexCoord2f(0.045f, -0.208f);
     doVertex3f(3.000f, -0.875f, 0.770f);
-  glEnd(); // 5 verts -> 3 tris
-  tris += 3;
+    glEnd(); // 5 verts -> 3 tris
+    tris += 3;
 
-  return tris;
+    return tris;
 }
 /*
  * Local Variables: ***

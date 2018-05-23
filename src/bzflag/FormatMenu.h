@@ -25,50 +25,55 @@
 
 class FormatMenu;
 
-class FormatMenuDefaultKey : public MenuDefaultKey {
+class FormatMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  FormatMenuDefaultKey(FormatMenu* _menu) :
-    menu(_menu) {}
-  ~FormatMenuDefaultKey() {}
+    FormatMenuDefaultKey(FormatMenu* _menu) :
+        menu(_menu) {}
+    ~FormatMenuDefaultKey() {}
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
 private:
-  FormatMenu* menu;
+    FormatMenu* menu;
 };
 
-class FormatMenu : public HUDDialog {
+class FormatMenu : public HUDDialog
+{
 public:
-  FormatMenu();
-  ~FormatMenu();
+    FormatMenu();
+    ~FormatMenu();
 
-  HUDuiDefaultKey*	getDefaultKey() { return &defaultKey; }
-  int			getSelected() const;
-  void			setSelected(int);
-  void			show();
-  void			execute();
-  void			resize(int width, int height);
+    HUDuiDefaultKey*    getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    int         getSelected() const;
+    void            setSelected(int);
+    void            show();
+    void            execute();
+    void            resize(int width, int height);
 
-  void			setFormat(bool test);
+    void            setFormat(bool test);
 
 public:
-  static const int	NumItems;
+    static const int    NumItems;
 
 private:
-  void			addLabel(const char* msg, const char* _label);
+    void            addLabel(const char* msg, const char* _label);
 
 private:
-  FormatMenuDefaultKey	defaultKey;
-  int			numFormats;
+    FormatMenuDefaultKey    defaultKey;
+    int         numFormats;
 
-  HUDuiLabel*		currentLabel;
-  HUDuiLabel*		pageLabel;
-  int			selectedIndex;
-  bool*			badFormats;
+    HUDuiLabel*     currentLabel;
+    HUDuiLabel*     pageLabel;
+    int         selectedIndex;
+    bool*           badFormats;
 
-  static const int	NumColumns;
-  static const int	NumReadouts;
+    static const int    NumColumns;
+    static const int    NumReadouts;
 };
 
 
@@ -76,8 +81,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

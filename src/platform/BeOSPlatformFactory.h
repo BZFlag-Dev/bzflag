@@ -11,7 +11,7 @@
  */
 
 /* BeOSPlatformFactory:
- *	Factory for Irix platform stuff.
+ *  Factory for Irix platform stuff.
  */
 
 #ifndef BZF_BEOS_PLATFORM_FACTORY_H
@@ -19,20 +19,21 @@
 
 #include "PlatformFactory.h"
 
-class BeOSPlatformFactory : public PlatformFactory {
+class BeOSPlatformFactory : public PlatformFactory
+{
 public:
-  BeOSPlatformFactory();
-  ~BeOSPlatformFactory();
+    BeOSPlatformFactory();
+    ~BeOSPlatformFactory();
 
-  BzfDisplay*		createDisplay(const char* name, const char*);
-  BzfVisual*		createVisual(const BzfDisplay*);
-  BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
 
 private:
-  BeOSPlatformFactory(const BeOSPlatformFactory&);
-  BeOSPlatformFactory& operator=(const BeOSPlatformFactory&);
+    BeOSPlatformFactory(const BeOSPlatformFactory&);
+    BeOSPlatformFactory& operator=(const BeOSPlatformFactory&);
 
-  BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_UNIX_PLATFORM_FACTORY_H

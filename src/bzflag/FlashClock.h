@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__FLASHCLOCK_H__
-#define	__FLASHCLOCK_H__
+#ifndef __FLASHCLOCK_H__
+#define __FLASHCLOCK_H__
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -19,23 +19,24 @@
 
 /**
  * FlashClock
- *	keeps track of time for something that flashes
+ *  keeps track of time for something that flashes
  */
-class FlashClock {
-  public:
-			FlashClock();
-			~FlashClock();
+class FlashClock
+{
+public:
+    FlashClock();
+    ~FlashClock();
 
-    void		setClock(float time);
-    void		setClock(float time, float onTime, float offTime);
+    void        setClock(float time);
+    void        setClock(float time, float onTime, float offTime);
 
-    bool		isOn();
+    bool        isOn();
 
-  private:
-    TimeKeeper		startTime;
-    float		duration;
-    float		onDuration;
-    float		flashDuration;
+private:
+    TimeKeeper      startTime;
+    float       duration;
+    float       onDuration;
+    float       flashDuration;
 };
 
 
@@ -43,8 +44,8 @@ class FlashClock {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

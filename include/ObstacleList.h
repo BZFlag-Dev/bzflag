@@ -10,16 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_LIST_H
-#define	BZF_OBSTACLE_LIST_H
+#ifndef BZF_OBSTACLE_LIST_H
+#define BZF_OBSTACLE_LIST_H
 
 #include "common.h"
 
 
 class Obstacle;
 
-class ObstacleList {
-  public:
+class ObstacleList
+{
+public:
     ObstacleList();
     ~ObstacleList();
 
@@ -32,7 +33,7 @@ class ObstacleList {
     unsigned int size() const;
     Obstacle* operator[](int index) const;
 
-  private:
+private:
     unsigned int listSize;
     unsigned int listCount;
     Obstacle** list;
@@ -40,19 +41,20 @@ class ObstacleList {
 
 inline unsigned int ObstacleList::size() const
 {
-  return listCount;
+    return listCount;
 }
 inline Obstacle* ObstacleList::operator[](int index) const
 {
-  return list[index];
+    return list[index];
 }
 inline void ObstacleList::remove(unsigned int index)
 {
-  if ((index < listCount) && (listCount > 0)) {
-    listCount--;
-    list[index] = list[listCount]; // order is not preserved
-  }
-  return;
+    if ((index < listCount) && (listCount > 0))
+    {
+        listCount--;
+        list[index] = list[listCount]; // order is not preserved
+    }
+    return;
 }
 
 #endif // BZF_OBSTACLE_LIST_H
@@ -60,8 +62,8 @@ inline void ObstacleList::remove(unsigned int index)
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

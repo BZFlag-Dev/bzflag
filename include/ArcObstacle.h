@@ -11,11 +11,11 @@
  */
 
 /* ArcObstacle:
- *	Encapsulates an arc in the game environment.
+ *  Encapsulates an arc in the game environment.
  */
 
-#ifndef	BZF_ARC_OBSTACLE_H
-#define	BZF_ARC_OBSTACLE_H
+#ifndef BZF_ARC_OBSTACLE_H
+#define BZF_ARC_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -25,26 +25,28 @@
 #include "BzMaterial.h"
 
 
-class ArcObstacle : public Obstacle {
-  public:
+class ArcObstacle : public Obstacle
+{
+public:
 
-    enum {
-      Top,
-      Bottom,
-      Inside,
-      Outside,
-      StartFace,
-      EndFace,
-      MaterialCount
+    enum
+    {
+        Top,
+        Bottom,
+        Inside,
+        Outside,
+        StartFace,
+        EndFace,
+        MaterialCount
     };
 
     ArcObstacle();
     ArcObstacle(const MeshTransform& transform,
-		const float* _pos, const float* _size,
-		float _rotation, float _angle, float _ratio,
-		const float _texsize[4], bool _useNormals,
-		int _divisions, const BzMaterial* mats[MaterialCount],
-		int physics, bool bounce, bool drive, bool shoot, bool ricochet);
+                const float* _pos, const float* _size,
+                float _rotation, float _angle, float _ratio,
+                const float _texsize[4], bool _useNormals,
+                int _divisions, const BzMaterial* mats[MaterialCount],
+                int physics, bool bounce, bool drive, bool shoot, bool ricochet);
     ~ArcObstacle();
 
     Obstacle* copyWithTransform(const MeshTransform&) const;
@@ -62,18 +64,18 @@ class ArcObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
+                     const float *newP, float newAngle,
+                     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+                    float halfWidth, float halfBreadth, float height,
+                    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+                      const float* pos2, float azimuth2,
+                      float halfWidth, float halfBreadth,
+                      float height, float* normal) const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -81,14 +83,14 @@ class ArcObstacle : public Obstacle {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     void finalize();
     MeshObstacle* makePie(bool isCircle, float a, float r, float h,
-			  float radius, float squish, float texsz[4]);
+                          float radius, float squish, float texsz[4]);
     MeshObstacle* makeRing(bool isCircle, float a, float r, float h,
-			   float inrad, float outrad, float squish,
-			   float texsz[4]);
-  private:
+                           float inrad, float outrad, float squish,
+                           float texsz[4]);
+private:
     static const char* typeName;
 
     MeshTransform transform;
@@ -107,8 +109,8 @@ class ArcObstacle : public Obstacle {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -11,11 +11,11 @@
  */
 
 /* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+ *  Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZF_MESH_OBSTACLE_H
-#define	BZF_MESH_OBSTACLE_H
+#ifndef BZF_MESH_OBSTACLE_H
+#define BZF_MESH_OBSTACLE_H
 
 #include "common.h"
 #include <string>
@@ -29,24 +29,25 @@
 
 class MeshDrawInfo;
 
-class MeshObstacle : public Obstacle {
-  public:
+class MeshObstacle : public Obstacle
+{
+public:
     MeshObstacle();
     MeshObstacle(const MeshTransform& transform,
-		 const std::vector<char>& checkTypes,
-		 const std::vector<cfvec3>& checkPoints,
-		 const std::vector<cfvec3>& vertices,
-		 const std::vector<cfvec3>& normals,
-		 const std::vector<cfvec2>& texcoords,
-		 int faceCount, bool noclusters,
-		 bool bounce, bool drive, bool shoot, bool ricochet);
+                 const std::vector<char>& checkTypes,
+                 const std::vector<cfvec3>& checkPoints,
+                 const std::vector<cfvec3>& vertices,
+                 const std::vector<cfvec3>& normals,
+                 const std::vector<cfvec2>& texcoords,
+                 int faceCount, bool noclusters,
+                 bool bounce, bool drive, bool shoot, bool ricochet);
 
     bool addFace (const std::vector<int>& vertices,
-		  const std::vector<int>& normals,
-		  const std::vector<int>& texcoords,
-		  const BzMaterial* bzMaterial, int physics,
-		  bool noclusters, bool bounce, bool drive, bool shoot,
-		  bool ricochet, bool triangulate);
+                  const std::vector<int>& normals,
+                  const std::vector<int>& texcoords,
+                  const BzMaterial* bzMaterial, int physics,
+                  bool noclusters, bool bounce, bool drive, bool shoot,
+                  bool ricochet, bool triangulate);
 
     ~MeshObstacle();
 
@@ -56,13 +57,14 @@ class MeshObstacle : public Obstacle {
     void copyFace(int face, MeshObstacle* mesh) const;
 
     void setName(const std::string& name);
-    const std::string&	getName() const;
+    const std::string&  getName() const;
 
-    enum CheckType {
-      CheckInside =  0,
-      CheckOutside = 1,
-      InsideParity = 2,
-      OutsidePartiy = 3
+    enum CheckType
+    {
+        CheckInside =  0,
+        CheckOutside = 1,
+        InsideParity = 2,
+        OutsidePartiy = 3
     };
 
     const char* getType() const;
@@ -75,18 +77,18 @@ class MeshObstacle : public Obstacle {
 
     bool inCylinder(const float* p, float radius, float height) const;
     bool inBox(const float* p, float angle,
-	       float halfWidth, float halfBreadth, float height) const;
+               float halfWidth, float halfBreadth, float height) const;
     bool inMovingBox(const float* oldP, float oldAngle,
-		     const float *newP, float newAngle,
-		     float halfWidth, float halfBreadth, float height) const;
+                     const float *newP, float newAngle,
+                     float halfWidth, float halfBreadth, float height) const;
     bool isCrossing(const float* p, float angle,
-		    float halfWidth, float halfBreadth, float height,
-		    float* plane) const;
+                    float halfWidth, float halfBreadth, float height,
+                    float* plane) const;
 
     bool getHitNormal(const float* pos1, float azimuth1,
-		      const float* pos2, float azimuth2,
-		      float halfWidth, float halfBreadth,
-		      float height, float* normal) const;
+                      const float* pos2, float azimuth2,
+                      float halfWidth, float halfBreadth,
+                      float height, float* normal) const;
 
     bool containsPoint(const float point[3]) const;
     bool containsPointNoOctree(const float point[3]) const;
@@ -117,13 +119,13 @@ class MeshObstacle : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     void makeFacePointers(const std::vector<int>& _vertices,
-			  const std::vector<int>& _normals,
-			  const std::vector<int>& _texcoords,
-			  float**& v, float**& n, float**& t);
+                          const std::vector<int>& _normals,
+                          const std::vector<int>& _texcoords,
+                          float**& v, float**& n, float**& t);
 
-  private:
+private:
     static const char* typeName;
 
     std::string name;
@@ -142,109 +144,109 @@ class MeshObstacle : public Obstacle {
     bool smoothBounce;
     bool noclusters;
     bool inverted; // used during building. can be ditched if
-		   // edge tables are setup with bi-directional
-		   // ray-vs-face tests and parity counts.
+    // edge tables are setup with bi-directional
+    // ray-vs-face tests and parity counts.
 
     MeshDrawInfo* drawInfo; // hidden data stored in extra texcoords
 };
 
 inline const char *MeshObstacle::getCheckTypes() const
 {
-  return checkTypes;
+    return checkTypes;
 }
 
 inline const afvec3 *MeshObstacle::getCheckPoints() const
 {
-  return checkPoints;
+    return checkPoints;
 }
 
 inline afvec3 *MeshObstacle::getVertices() const
 {
-  return vertices;
+    return vertices;
 }
 
 inline afvec3 *MeshObstacle::getNormals() const
 {
-  return normals;
+    return normals;
 }
 
 inline afvec2 *MeshObstacle::getTexcoords() const
 {
-  return texcoords;
+    return texcoords;
 }
 
 inline int MeshObstacle::getCheckCount() const
 {
-  return checkCount;
+    return checkCount;
 }
 
 inline int MeshObstacle::getVertexCount() const
 {
-  return vertexCount;
+    return vertexCount;
 }
 
 inline int MeshObstacle::getNormalCount() const
 {
-  return normalCount;
+    return normalCount;
 }
 
 inline int MeshObstacle::getTexcoordCount() const
 {
-  return texcoordCount;
+    return texcoordCount;
 }
 
 inline int MeshObstacle::getFaceCount() const
 {
-  return faceCount;
+    return faceCount;
 }
 
 inline MeshFace* MeshObstacle::getFace(int face) const
 {
-  return faces[face];
+    return faces[face];
 }
 
 inline const float* MeshObstacle::getPosition() const
 {
-  return pos;
+    return pos;
 }
 
 inline const float* MeshObstacle::getSize() const
 {
-  return size;
+    return size;
 }
 
 inline bool MeshObstacle::useSmoothBounce() const
 {
-  return smoothBounce;
+    return smoothBounce;
 }
 
 inline bool MeshObstacle::noClusters() const
 {
-  return noclusters;
+    return noclusters;
 }
 
 inline MeshDrawInfo* MeshObstacle::getDrawInfo() const
 {
-  return drawInfo;
+    return drawInfo;
 }
 
 inline const std::string& MeshObstacle::getName() const
 {
-  return name;
+    return name;
 }
 
 inline void MeshObstacle::setName(const std::string& str)
 {
-  name = str;
-  return;
+    name = str;
+    return;
 }
 
 #endif // BZF_MESH_OBSTACLE_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

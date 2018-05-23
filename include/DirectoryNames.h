@@ -25,12 +25,12 @@ const char DirectorySeparator = '/';
 const char DirectorySeparator = '\\';
 #endif
 
-extern std::string		getConfigDirName( const char* versionName = NULL );
-extern std::string		getCacheDirName();
-extern std::string		getRecordDirName();
-extern std::string		getScreenShotDirName();
-extern std::string		getTempDirName();
-extern std::string		getWorldDirName();
+extern std::string      getConfigDirName( const char* versionName = NULL );
+extern std::string      getCacheDirName();
+extern std::string      getRecordDirName();
+extern std::string      getScreenShotDirName();
+extern std::string      getTempDirName();
+extern std::string      getWorldDirName();
 
 extern void setCustomConfigDir ( const char *dir );
 #endif // __DIRECTORY_NAMES_H__
@@ -38,8 +38,8 @@ extern void setCustomConfigDir ( const char *dir );
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

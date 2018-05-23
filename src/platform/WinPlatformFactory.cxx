@@ -23,83 +23,84 @@
 #include "WinMedia.h"
 #include "StateDatabase.h"
 
-PlatformFactory*	PlatformFactory::getInstance()
+PlatformFactory*    PlatformFactory::getInstance()
 {
-  if (!instance) instance = new WinPlatformFactory;
-  return instance;
+    if (!instance) instance = new WinPlatformFactory;
+    return instance;
 }
 
 #ifdef HAVE_SDL
-SDLWindow*		WinPlatformFactory::sdlWindow = NULL;
+SDLWindow*      WinPlatformFactory::sdlWindow = NULL;
 #else
-WinWindow*		WinPlatformFactory::winWindow = NULL;
+WinWindow*      WinPlatformFactory::winWindow = NULL;
 #endif
 
 
 WinPlatformFactory::WinPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 WinPlatformFactory::~WinPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 BzfDisplay *WinPlatformFactory::createDisplay(const char* name,
-					      const char* videoFormat)
+        const char* videoFormat)
 {
-  BzfDisplay *display;
+    BzfDisplay *display;
 #ifdef HAVE_SDL
-  SDLDisplay* sdlDisplay = new SDLDisplay();
-  display		= sdlDisplay;
+    SDLDisplay* sdlDisplay = new SDLDisplay();
+    display     = sdlDisplay;
 #else
-  WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
-  display		= winDisplay;
+    WinDisplay* winDisplay = new WinDisplay(name, videoFormat);
+    display     = winDisplay;
 #endif
-  if (!display || !display->isValid()) {
-    delete display;
-    display = NULL;
-  }
-  return display;
+    if (!display || !display->isValid())
+    {
+        delete display;
+        display = NULL;
+    }
+    return display;
 }
 
-BzfVisual*		WinPlatformFactory::createVisual(
-				const BzfDisplay* display)
+BzfVisual*      WinPlatformFactory::createVisual(
+    const BzfDisplay* display)
 {
 #ifdef HAVE_SDL
-  return new SDLVisual((const SDLDisplay*)display);
+    return new SDLVisual((const SDLDisplay*)display);
 #else
-  return new WinVisual((const WinDisplay*)display);
-#endif
-}
-
-BzfWindow*		WinPlatformFactory::createWindow(
-				const BzfDisplay* display, BzfVisual* visual)
-{
-#ifdef HAVE_SDL
-  sdlWindow = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
-  return sdlWindow;
-#else
-  winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
-  return winWindow;
+    return new WinVisual((const WinDisplay*)display);
 #endif
 }
 
-BzfMedia*		WinPlatformFactory::createMedia()
+BzfWindow*      WinPlatformFactory::createWindow(
+    const BzfDisplay* display, BzfVisual* visual)
 {
-  return new WinMedia();
+#ifdef HAVE_SDL
+    sdlWindow = new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
+    return sdlWindow;
+#else
+    winWindow = new WinWindow((const WinDisplay*)display, (WinVisual*)visual);
+    return winWindow;
+#endif
 }
 
-BzfJoystick*		WinPlatformFactory::createJoystick()
+BzfMedia*       WinPlatformFactory::createMedia()
 {
-  return new DXJoystick();
+    return new WinMedia();
+}
+
+BzfJoystick*        WinPlatformFactory::createJoystick()
+{
+    return new DXJoystick();
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

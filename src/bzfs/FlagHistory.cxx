@@ -19,38 +19,44 @@
 
 #define MAX_FLAG_HISTORY (10)
 
-void FlagHistory::clear() {
-  flagHistory.clear();
+void FlagHistory::clear()
+{
+    flagHistory.clear();
 }
 
-std::string FlagHistory::getStr() {
-  std::string flagList;
-  std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
+std::string FlagHistory::getStr()
+{
+    std::string flagList;
+    std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
 
-  while (fhIt != flagHistory.end()) {
-    flagList += " (";
-    FlagType * fDesc = (FlagType*)(*fhIt);
-    if (fDesc->endurance == FlagNormal) {
-      flagList += '*';
-      flagList += fDesc->flagName.c_str()[0];
-    } else
-      flagList += fDesc->flagAbbv;
-    flagList += ")";
-    ++fhIt;
-  }
-  return flagList;
+    while (fhIt != flagHistory.end())
+    {
+        flagList += " (";
+        FlagType * fDesc = (FlagType*)(*fhIt);
+        if (fDesc->endurance == FlagNormal)
+        {
+            flagList += '*';
+            flagList += fDesc->flagName.c_str()[0];
+        }
+        else
+            flagList += fDesc->flagAbbv;
+        flagList += ")";
+        ++fhIt;
+    }
+    return flagList;
 }
 
-void FlagHistory::add(FlagType* type) {
-  if (flagHistory.size() >= MAX_FLAG_HISTORY)
-    flagHistory.erase(flagHistory.begin());
-  flagHistory.push_back(type);
+void FlagHistory::add(FlagType* type)
+{
+    if (flagHistory.size() >= MAX_FLAG_HISTORY)
+        flagHistory.erase(flagHistory.begin());
+    flagHistory.push_back(type);
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

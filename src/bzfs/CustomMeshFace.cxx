@@ -27,120 +27,121 @@
 
 
 CustomMeshFace::CustomMeshFace(const BzMaterial& _material, int physics,
-			       bool _noclusters,
-			       bool bounce, bool drive, bool shoot)
+                               bool _noclusters,
+                               bool bounce, bool drive, bool shoot)
 {
-  phydrv = physics;
-  noclusters = _noclusters;
-  smoothBounce = bounce;
-  shootThrough = shoot;
-  driveThrough = drive;
-  material = _material;
-  ricochet = false;
-  return;
+    phydrv = physics;
+    noclusters = _noclusters;
+    smoothBounce = bounce;
+    shootThrough = shoot;
+    driveThrough = drive;
+    material = _material;
+    ricochet = false;
+    return;
 }
 
 
 static void getIntList (std::istream& input, std::vector<int>& list)
 {
-  std::string args;
-  int value;
+    std::string args;
+    int value;
 
-  list.clear();
-  std::getline(input, args);
-  std::istringstream parms(args);
-  input.putback('\n');
+    list.clear();
+    std::getline(input, args);
+    std::istringstream parms(args);
+    input.putback('\n');
 
-  while (parms >> value) {
-    list.push_back(value);
-  }
+    while (parms >> value)
+        list.push_back(value);
 
-  return;
+    return;
 }
 
 
 bool CustomMeshFace::read(const char *cmd, std::istream& input)
 {
-  bool materror;
+    bool materror;
 
-  if (strcasecmp(cmd, "vertices") == 0) {
-    getIntList (input, vertices);
-    if (vertices.size() < 3) {
-      std::cout << "mesh faces need at least 3 vertices" << std::endl;
-      return false;
+    if (strcasecmp(cmd, "vertices") == 0)
+    {
+        getIntList (input, vertices);
+        if (vertices.size() < 3)
+        {
+            std::cout << "mesh faces need at least 3 vertices" << std::endl;
+            return false;
+        }
     }
-  }
-  else if (strcasecmp(cmd, "normals") == 0) {
-    getIntList (input, normals);
-    if (normals.size() < 3) {
-      std::cout << "mesh faces need at least 3 normals" << std::endl;
-      return false;
+    else if (strcasecmp(cmd, "normals") == 0)
+    {
+        getIntList (input, normals);
+        if (normals.size() < 3)
+        {
+            std::cout << "mesh faces need at least 3 normals" << std::endl;
+            return false;
+        }
     }
-  }
-  else if (strcasecmp(cmd, "texcoords") == 0) {
-    getIntList (input, texcoords);
-    if (texcoords.size() < 3) {
-      std::cout << "mesh faces need at least 3 texcoords" << std::endl;
-      return false;
+    else if (strcasecmp(cmd, "texcoords") == 0)
+    {
+        getIntList (input, texcoords);
+        if (texcoords.size() < 3)
+        {
+            std::cout << "mesh faces need at least 3 texcoords" << std::endl;
+            return false;
+        }
     }
-  }
-  else if (strcasecmp(cmd, "phydrv") == 0) {
-    std::string drvname;
-    if (!(input >> drvname)) {
-      std::cout << "missing Physics Driver parameter" << std::endl;
-      return false;
+    else if (strcasecmp(cmd, "phydrv") == 0)
+    {
+        std::string drvname;
+        if (!(input >> drvname))
+        {
+            std::cout << "missing Physics Driver parameter" << std::endl;
+            return false;
+        }
+        phydrv = PHYDRVMGR.findDriver(drvname);
+        if ((phydrv == -1) && (drvname != "-1"))
+            std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
     }
-    phydrv = PHYDRVMGR.findDriver(drvname);
-    if ((phydrv == -1) && (drvname != "-1")) {
-      std::cout << "couldn't find PhysicsDriver: " << drvname << std::endl;
+    else if (strcasecmp(cmd, "smoothbounce") == 0)
+        smoothBounce = true;
+    else if (strcasecmp(cmd, "noclusters") == 0)
+        noclusters = true;
+    else if (strcasecmp(cmd, "drivethrough") == 0)
+        driveThrough = true;
+    else if (strcasecmp(cmd, "shootthrough") == 0)
+        shootThrough = true;
+    else if (strcasecmp(cmd, "passable") == 0)
+        driveThrough = shootThrough = true;
+    else if (strcasecmp(cmd, "ricochet") == 0)
+        ricochet = true;
+    else if (parseMaterials(cmd, input, &material, 1, materror))
+    {
+        if (materror)
+            return false;
     }
-  }
-  else if (strcasecmp(cmd, "smoothbounce") == 0) {
-    smoothBounce = true;
-  }
-  else if (strcasecmp(cmd, "noclusters") == 0) {
-    noclusters = true;
-  }
-  else if (strcasecmp(cmd, "drivethrough") == 0) {
-    driveThrough = true;
-  }
-  else if (strcasecmp(cmd, "shootthrough") == 0) {
-    shootThrough = true;
-  }
-  else if (strcasecmp(cmd, "passable") == 0) {
-    driveThrough = shootThrough = true;
-  }
-  else if (strcasecmp(cmd, "ricochet") == 0) {
-    ricochet = true;
-  }
-  else if (parseMaterials(cmd, input, &material, 1, materror)) {
-    if (materror) {
-      return false;
+    else
+    {
+        std::cout << "unknown mesh face property: " << cmd << std::endl;
+        return false;
     }
-  }
-  else {
-    std::cout << "unknown mesh face property: " << cmd << std::endl;
-    return false;
-  }
 
-  return true;
+    return true;
 }
 
 
 void CustomMeshFace::write(MeshObstacle *mesh) const
 {
-  const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
-  mesh->addFace(vertices, normals, texcoords, matref, phydrv,
-		noclusters, smoothBounce, driveThrough, shootThrough, ricochet,
-		true /* triangulate if required */);
-  return;
+    const BzMaterial* matref = MATERIALMGR.addMaterial(&material);
+    mesh->addFace(vertices, normals, texcoords, matref, phydrv,
+                  noclusters, smoothBounce, driveThrough, shootThrough, ricochet,
+                  true /* triangulate if required */);
+    return;
 }
 
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

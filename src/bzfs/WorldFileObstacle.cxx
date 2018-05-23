@@ -18,32 +18,31 @@
 
 WorldFileObstacle::WorldFileObstacle()
 {
-  driveThrough = false;
-  shootThrough = false;
-  ricochet     = false;
+    driveThrough = false;
+    shootThrough = false;
+    ricochet     = false;
 }
 
 
 bool WorldFileObstacle::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "drivethrough") == 0) {
-    driveThrough = true;
-  } else if (strcasecmp(cmd, "shootthrough") == 0) {
-    shootThrough = true;
-  } else if (strcasecmp(cmd, "passable") == 0) {
-    driveThrough = shootThrough = true;
-  } else if (strcasecmp(cmd, "ricochet") == 0) {
-    ricochet = true;
-  } else {
-    return WorldFileLocation::read(cmd, input);
-  }
-  return true;
+    if (strcasecmp(cmd, "drivethrough") == 0)
+        driveThrough = true;
+    else if (strcasecmp(cmd, "shootthrough") == 0)
+        shootThrough = true;
+    else if (strcasecmp(cmd, "passable") == 0)
+        driveThrough = shootThrough = true;
+    else if (strcasecmp(cmd, "ricochet") == 0)
+        ricochet = true;
+    else
+        return WorldFileLocation::read(cmd, input);
+    return true;
 }
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

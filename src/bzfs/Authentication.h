@@ -16,22 +16,29 @@
 /* bzflag special common - 1st one */
 #include "common.h"
 
-class Authentication {
- public:
-  Authentication();
+class Authentication
+{
+public:
+    Authentication();
 
-  bool isGlobal(void) const {return globallyAuthenticated;};
-  void global(bool set) {globallyAuthenticated = set;}
+    bool isGlobal(void) const
+    {
+        return globallyAuthenticated;
+    };
+    void global(bool set)
+    {
+        globallyAuthenticated = set;
+    }
 private:
-  bool		   globallyAuthenticated;
+    bool           globallyAuthenticated;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
+// tab-width: 4 ***
 // c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

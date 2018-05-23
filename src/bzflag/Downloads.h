@@ -19,13 +19,14 @@
 #include <string>
 
 
-namespace Downloads {
-  void startDownloads(bool doDownloads,
-		      bool updateDownloads,
-		      bool referencing);
-  void finalizeDownloads();
-  void removeTextures(); // free the downloaded GL textures
-  bool requestFinalized();
+namespace Downloads
+{
+void startDownloads(bool doDownloads,
+                    bool updateDownloads,
+                    bool referencing);
+void finalizeDownloads();
+void removeTextures(); // free the downloaded GL textures
+bool requestFinalized();
 }
 
 bool authorizedServer(const std::string& hostname);
@@ -36,8 +37,8 @@ bool parseHostname(const std::string& url, std::string& hostname);
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

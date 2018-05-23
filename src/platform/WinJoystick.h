@@ -11,40 +11,42 @@
  */
 
 /* WinJoystick:
- *	Encapsulates a Windows MultiMedia (non-DirectInput) joystick
+ *  Encapsulates a Windows MultiMedia (non-DirectInput) joystick
  */
 
 #ifndef BZF_WINJOY_H
-#define	BZF_WINJOY_H
+#define BZF_WINJOY_H
 
 #include "BzfJoystick.h"
 #include <vector>
 #include <string>
 
-class WinJoystick : public BzfJoystick {
-  public:
-		WinJoystick();
-		~WinJoystick();
+class WinJoystick : public BzfJoystick
+{
+public:
+    WinJoystick();
+    ~WinJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void    initJoystick(const char* joystickName);
+    bool    joystick() const;
+    void    getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string &axis);
-    void	setYAxis(const std::string &axis);
+    void    getJoyDevices(std::vector<std::string> &list) const;
+    void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void    setXAxis(const std::string &axis);
+    void    setYAxis(const std::string &axis);
 
-  private:
+private:
     unsigned int JoystickID;
-    bool	inited;
+    bool    inited;
 
-    struct AxisInfo {
-      std::string name;
-      bool exists;
-      DWORD requestFlag;
-      float min;
-      float max;
+    struct AxisInfo
+    {
+        std::string name;
+        bool exists;
+        DWORD requestFlag;
+        float min;
+        float max;
     };
 
     std::vector<AxisInfo> axes;
@@ -58,8 +60,8 @@ class WinJoystick : public BzfJoystick {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

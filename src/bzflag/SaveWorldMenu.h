@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SAVEWORLDMENU_H__
-#define	__SAVEWORLDMENU_H__
+#ifndef __SAVEWORLDMENU_H__
+#define __SAVEWORLDMENU_H__
 
 // common - 1st
 #include "common.h"
@@ -23,19 +23,20 @@
 #include "HUDuiLabel.h"
 
 
-class SaveWorldMenu : public HUDDialog {
+class SaveWorldMenu : public HUDDialog
+{
 public:
-  SaveWorldMenu();
-  ~SaveWorldMenu();
+    SaveWorldMenu();
+    ~SaveWorldMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void execute();
-  void resize(int width, int height);
+    void execute();
+    void resize(int width, int height);
 
 private:
-  HUDuiTypeIn* filename;
-  HUDuiLabel* status;
+    HUDuiTypeIn* filename;
+    HUDuiLabel* status;
 };
 
 
@@ -43,8 +44,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

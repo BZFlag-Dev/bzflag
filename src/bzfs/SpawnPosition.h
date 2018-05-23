@@ -25,43 +25,44 @@
  *  the logic for selecting that new position based on the map, world
  *  configuration settings, and current game activity.
  */
-class SpawnPosition {
+class SpawnPosition
+{
 
 public:
-  SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
-  ~SpawnPosition();
+    SpawnPosition(int playerId, bool onGroundOnly, bool notNearEdges);
+    ~SpawnPosition();
 
-  /** used to override the default spawn policy.  call this before
-   *  creating SpawnPosition objects.
-   */
-  static void setSpawnPolicy(SpawnPolicy* policy);
+    /** used to override the default spawn policy.  call this before
+     *  creating SpawnPosition objects.
+     */
+    static void setSpawnPolicy(SpawnPolicy* policy);
 
-  float getX() const;
-  float getY() const;
-  float getZ() const;
-  float getAzimuth() const;
+    float getX() const;
+    float getY() const;
+    float getZ() const;
+    float getAzimuth() const;
 
 private:
-  float	      azimuth;
-  float       pos[3];
+    float         azimuth;
+    float       pos[3];
 
-  /* class data - determines how the pos and azimuth are determined */
-  static SpawnPolicy *policy;
+    /* class data - determines how the pos and azimuth are determined */
+    static SpawnPolicy *policy;
 };
 
 inline float SpawnPosition::getX() const
 {
-  return pos[0];
+    return pos[0];
 }
 
 inline float SpawnPosition::getY() const
 {
-  return pos[1];
+    return pos[1];
 }
 
 inline float SpawnPosition::getZ() const
 {
-  return pos[2];
+    return pos[2];
 }
 
 /** returns the rotational orientation of this spawn position, from
@@ -69,7 +70,7 @@ inline float SpawnPosition::getZ() const
  */
 inline float SpawnPosition::getAzimuth() const
 {
-  return azimuth;
+    return azimuth;
 }
 
 #else
@@ -78,8 +79,8 @@ class SpawnPosition;
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

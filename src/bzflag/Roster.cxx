@@ -28,102 +28,103 @@ int numRobots = 0;
 
 Player* lookupPlayer(PlayerId id)
 {
-  // check my tank first
+    // check my tank first
 
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank && myTank->getId() == id)
-    return myTank;
+    LocalPlayer *myTank = LocalPlayer::getMyTank();
+    if (myTank && myTank->getId() == id)
+        return myTank;
 
-  if (id == ServerPlayer) {
-    World* world = World::getWorld();
-    if (world)
-      return world->getWorldWeapons();
-    else
-      return NULL;
-  }
+    if (id == ServerPlayer)
+    {
+        World* world = World::getWorld();
+        if (world)
+            return world->getWorldWeapons();
+        else
+            return NULL;
+    }
 
-  if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
-    return remotePlayers[id];
+    if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
+        return remotePlayers[id];
 
-  // it's nobody we know about
-  return NULL;
+    // it's nobody we know about
+    return NULL;
 }
 
 int lookupPlayerIndex(PlayerId id)
 {
-  // check my tank first
+    // check my tank first
 
-  if (LocalPlayer::getMyTank()->getId() == id)
-    return -2;
+    if (LocalPlayer::getMyTank()->getId() == id)
+        return -2;
 
-  if (id == ServerPlayer)
-    return ServerPlayer;
+    if (id == ServerPlayer)
+        return ServerPlayer;
 
-  if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
-    return id;
+    if (id < curMaxPlayers && remotePlayers[id] && remotePlayers[id]->getId() == id)
+        return id;
 
-  // it's nobody we know about
-  return -1;
+    // it's nobody we know about
+    return -1;
 }
 
 Player* getPlayerByIndex(int index)
 {
-  if (index == -2)
-    return LocalPlayer::getMyTank();
-  if (index == ServerPlayer)
-    return World::getWorld()->getWorldWeapons();
-  if (index == -1 || index >= curMaxPlayers)
-    return NULL;
-  return remotePlayers[index];
+    if (index == -2)
+        return LocalPlayer::getMyTank();
+    if (index == ServerPlayer)
+        return World::getWorld()->getWorldWeapons();
+    if (index == -1 || index >= curMaxPlayers)
+        return NULL;
+    return remotePlayers[index];
 }
 
 Player* getPlayerByName(const char* name)
 {
-  for (int i = 0; i < curMaxPlayers; i++)
-    if (remotePlayers[i] && strcmp( remotePlayers[i]->getCallSign(), name ) == 0)
-      return remotePlayers[i];
-  World *world = World::getWorld();
-  if (!world)
+    for (int i = 0; i < curMaxPlayers; i++)
+        if (remotePlayers[i] && strcmp( remotePlayers[i]->getCallSign(), name ) == 0)
+            return remotePlayers[i];
+    World *world = World::getWorld();
+    if (!world)
+        return NULL;
+    WorldPlayer *worldWeapons = world->getWorldWeapons();
+    if (strcmp(worldWeapons->getCallSign(), name) == 0)
+        return worldWeapons;
     return NULL;
-  WorldPlayer *worldWeapons = world->getWorldWeapons();
-  if (strcmp(worldWeapons->getCallSign(), name) == 0)
-    return worldWeapons;
-  return NULL;
 }
 
 BaseLocalPlayer* getLocalPlayer(PlayerId id)
 {
-  LocalPlayer *myTank = LocalPlayer::getMyTank();
-  if (myTank->getId() == id) return myTank;
+    LocalPlayer *myTank = LocalPlayer::getMyTank();
+    if (myTank->getId() == id) return myTank;
 #ifdef ROBOT
-  for (int i = 0; i < numRobots; i++)
-    if (robots[i] && robots[i]->getId() == id)
-      return robots[i];
+    for (int i = 0; i < numRobots; i++)
+        if (robots[i] && robots[i]->getId() == id)
+            return robots[i];
 #endif
-  return NULL;
+    return NULL;
 }
 
 TeamColor PlayerIdToTeam(PlayerId id)
 {
-  if (LastRealPlayer < id && id <= FirstTeam)
-    return TeamColor(FirstTeam - id);
-  else
-    return NoTeam;
+    if (LastRealPlayer < id && id <= FirstTeam)
+        return TeamColor(FirstTeam - id);
+    else
+        return NoTeam;
 }
 
 PlayerId TeamToPlayerId(TeamColor team)
 {
-  if (team == NoTeam)
-    return NoPlayer;
-  else
-    return FirstTeam - team;
+    if (team == NoTeam)
+        return NoPlayer;
+    else
+        return FirstTeam - team;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

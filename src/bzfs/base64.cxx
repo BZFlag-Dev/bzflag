@@ -20,8 +20,10 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-namespace base64 {
-  const char _to_table[64] =  {
+namespace base64
+{
+const char _to_table[64] =
+{
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
     'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
     'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
@@ -30,11 +32,12 @@ namespace base64 {
     'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
     'w', 'x', 'y', 'z', '0', '1', '2', '3',
     '4', '5', '6', '7', '8', '9', '+', '/'
-  };
-  const char* to_table = _to_table;
-  const char* to_table_end = _to_table + sizeof(_to_table);
+};
+const char* to_table = _to_table;
+const char* to_table_end = _to_table + sizeof(_to_table);
 
-  const signed char _from_table[128] = {
+const signed char _from_table[128] =
+{
     -1, -1, -1, -1, -1, -1, -1, -1, // 0
     -1, -1, -1, -1, -1, -1, -1, -1, // 8
     -1, -1, -1, -1, -1, -1, -1, -1, // 16
@@ -44,21 +47,21 @@ namespace base64 {
     52, 53, 54, 55, 56, 57, 58, 59, // 48
     60, 61, -1, -1, -1,  0, -1, -1, // 56
     -1,  0,  1,  2,  3,  4,  5,  6, // 64
-     7,  8,  9, 10, 11, 12, 13, 14, // 72
+    7,  8,  9, 10, 11, 12, 13, 14, // 72
     15, 16, 17, 18, 19, 20, 21, 22, // 80
     23, 24, 25, -1, -1, -1, -1, -1, // 88
     -1, 26, 27, 28, 29, 30, 31, 32, // 96
     33, 34, 35, 36, 37, 38, 39, 40, // 104
     41, 42, 43, 44, 45, 46, 47, 48, // 112
     49, 50, 51, -1, -1, -1, -1, -1  // 120
-  };
-  const signed char* from_table = _from_table;
+};
+const signed char* from_table = _from_table;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

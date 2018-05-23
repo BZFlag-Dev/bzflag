@@ -23,44 +23,45 @@
 
 WorldFileObject::WorldFileObject()
 {
-  name = "";
-  lines = 0;
+    name = "";
+    lines = 0;
 }
 
 
 bool WorldFileObject::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "name") == 0) {
-    input >> name;
-    return true;
-  }
-  return false;
+    if (strcasecmp(cmd, "name") == 0)
+    {
+        input >> name;
+        return true;
+    }
+    return false;
 }
 
 
 void WorldFileObject::writeToWorld(WorldInfo*) const
 {
-  std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
-  return;
+    std::cout << "ERROR: writeToWorld() called improperly" << std::endl;
+    return;
 }
 
 
 void WorldFileObject::writeToManager() const
 {
-  std::cout << "ERROR: writeToManager() called improperly" << std::endl;
-  return;
+    std::cout << "ERROR: writeToManager() called improperly" << std::endl;
+    return;
 }
 
 
 void WorldFileObject::writeToGroupDef(GroupDefinition*) const
 {
-  std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
-  return;
+    std::cout << "ERROR: writeToGroupDef() called improperly" << std::endl;
+    return;
 }
 
 int WorldFileObject::getLineCount() const
 {
-  return lines;
+    return lines;
 }
 
 
@@ -69,18 +70,17 @@ int WorldFileObject::getLineCount() const
 
 void emptyWorldFileObjectList(std::vector<WorldFileObject*>& wlist)
 {
-  const int n = wlist.size();
-  for (int i = 0; i < n; ++i) {
-    delete wlist[i];
-  }
-  wlist.clear();
+    const int n = wlist.size();
+    for (int i = 0; i < n; ++i)
+        delete wlist[i];
+    wlist.clear();
 }
 
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

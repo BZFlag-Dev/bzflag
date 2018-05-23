@@ -29,36 +29,37 @@
 #include "ShotPathSegment.h"
 
 
-class GuidedMissileStrategy : public ShotStrategy {
-  public:
-			GuidedMissileStrategy(ShotPath*);
-			~GuidedMissileStrategy();
+class GuidedMissileStrategy : public ShotStrategy
+{
+public:
+    GuidedMissileStrategy(ShotPath*);
+    ~GuidedMissileStrategy();
 
-    void		update(float dt);
-    float		checkHit(const BaseLocalPlayer*, float[3]) const;
-    void		sendUpdate(const FiringInfo&) const;
-    void		readUpdate(uint16_t, const void*);
-    void		addShot(SceneDatabase*, bool colorblind);
-    void		expire();
-    void		radarRender() const;
+    void        update(float dt);
+    float       checkHit(const BaseLocalPlayer*, float[3]) const;
+    void        sendUpdate(const FiringInfo&) const;
+    void        readUpdate(uint16_t, const void*);
+    void        addShot(SceneDatabase*, bool colorblind);
+    void        expire();
+    void        radarRender() const;
 
-  private:
-    float		checkBuildings(const Ray& ray);
+private:
+    float       checkBuildings(const Ray& ray);
 
-  private:
-    TimeKeeper		prevTime;
-    TimeKeeper		currentTime;
-    std::vector<ShotPathSegment>	segments;
-    int			renderTimes;
-    float		azimuth;
-    float		elevation;
-    float		nextPos[3];
-    BoltSceneNode*	ptSceneNode;
+private:
+    TimeKeeper      prevTime;
+    TimeKeeper      currentTime;
+    std::vector<ShotPathSegment>    segments;
+    int         renderTimes;
+    float       azimuth;
+    float       elevation;
+    float       nextPos[3];
+    BoltSceneNode*  ptSceneNode;
 
-		float	puffTime,rootPuff;
-		TimeKeeper lastPuff;
-    mutable bool	needUpdate;
-    PlayerId		lastTarget;
+    float   puffTime,rootPuff;
+    TimeKeeper lastPuff;
+    mutable bool    needUpdate;
+    PlayerId        lastTarget;
 };
 
 
@@ -66,8 +67,8 @@ class GuidedMissileStrategy : public ShotStrategy {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

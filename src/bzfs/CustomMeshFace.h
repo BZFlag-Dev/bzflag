@@ -23,14 +23,15 @@
 #include <vector>
 
 
-class CustomMeshFace {
-  public:
+class CustomMeshFace
+{
+public:
     CustomMeshFace(const BzMaterial& material, int phydrv, bool noclusters,
-		   bool smoothBounce, bool driveThrough, bool shootThrough);
+                   bool smoothBounce, bool driveThrough, bool shootThrough);
     bool read(const char *cmd, std::istream& input);
     void write(MeshObstacle* mesh) const;
 
-  private:
+private:
     BzMaterial material;
 
     std::vector<int> vertices;
@@ -50,8 +51,8 @@ class CustomMeshFace {
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

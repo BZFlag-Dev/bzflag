@@ -11,71 +11,72 @@
  */
 
 /* WinMedia:
- *	Media I/O on MS Windows.
+ *  Media I/O on MS Windows.
  */
 
 #ifndef BZF_WINMEDIA_H
-#define	BZF_WINMEDIA_H
+#define BZF_WINMEDIA_H
 
 #include "BzfMedia.h"
 #include <dsound.h>
 
 class WinWindow;
 
-class WinMedia : public BzfMedia {
-  public:
-			WinMedia();
-			~WinMedia();
+class WinMedia : public BzfMedia
+{
+public:
+    WinMedia();
+    ~WinMedia();
 
-    bool		openAudio();
-    void		closeAudio();
-    bool		startAudioThread(void (*)(void*), void*);
-    void		stopAudioThread();
-    bool		hasAudioThread() const;
-    void		writeSoundCommand(const void*, int);
-    bool		readSoundCommand(void*, int);
-    int			getAudioOutputRate() const;
-    int			getAudioBufferSize() const;
-    int			getAudioBufferChunkSize() const;
-    bool		isAudioTooEmpty() const;
-    void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(bool checkLowWater, double maxTime);
+    bool        openAudio();
+    void        closeAudio();
+    bool        startAudioThread(void (*)(void*), void*);
+    void        stopAudioThread();
+    bool        hasAudioThread() const;
+    void        writeSoundCommand(const void*, int);
+    bool        readSoundCommand(void*, int);
+    int         getAudioOutputRate() const;
+    int         getAudioBufferSize() const;
+    int         getAudioBufferChunkSize() const;
+    bool        isAudioTooEmpty() const;
+    void        writeAudioFrames(const float* samples, int numFrames);
+    void        audioSleep(bool checkLowWater, double maxTime);
 
-  private:
-    static DWORD WINAPI	audioThreadInit(void*);
+private:
+    static DWORD WINAPI audioThreadInit(void*);
 
-  private:
-    bool		audioReady;
-    bool		audioPlaying;
-    IDirectSound*	audioInterface;
-    IDirectSoundBuffer*	audioPrimaryPort;
-    IDirectSoundBuffer*	audioPort;
-    int			audioNumChannels;
-    int			audioOutputRate;
-    int			audioBufferSize;
-    int			audioBufferChunkSize;
-    int			audioLowWaterMark;
-    int			audioBytesPerSample;
-    int			audioBytesPerFrame;
-    int			audioWritePtr;
-    short*		outputBuffer;
-    unsigned char*	audioCommandBuffer;
-    int			audioCommandBufferLen;
-    int			audioCommandBufferHead;
-    int			audioCommandBufferTail;
-    HANDLE		audioCommandEvent;
-    HANDLE		audioCommandMutex;
-    HANDLE		audioThread;
-    static void		(*threadProc)(void*);
-    static void*	threadData;
+private:
+    bool        audioReady;
+    bool        audioPlaying;
+    IDirectSound*   audioInterface;
+    IDirectSoundBuffer* audioPrimaryPort;
+    IDirectSoundBuffer* audioPort;
+    int         audioNumChannels;
+    int         audioOutputRate;
+    int         audioBufferSize;
+    int         audioBufferChunkSize;
+    int         audioLowWaterMark;
+    int         audioBytesPerSample;
+    int         audioBytesPerFrame;
+    int         audioWritePtr;
+    short*      outputBuffer;
+    unsigned char*  audioCommandBuffer;
+    int         audioCommandBufferLen;
+    int         audioCommandBufferHead;
+    int         audioCommandBufferTail;
+    HANDLE      audioCommandEvent;
+    HANDLE      audioCommandMutex;
+    HANDLE      audioThread;
+    static void     (*threadProc)(void*);
+    static void*    threadData;
 };
 
 #endif // BZF_WINMEDIA_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

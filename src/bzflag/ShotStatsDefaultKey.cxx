@@ -29,47 +29,50 @@ ShotStatsDefaultKey::~ShotStatsDefaultKey() {}
 
 ShotStatsDefaultKey* ShotStatsDefaultKey::getInstance()
 {
-  return &instance;
+    return &instance;
 }
 
 bool ShotStatsDefaultKey::keyPress(const BzfKeyEvent& key)
 {
-  // special keys to get out
-  switch (key.ascii) {
-    case 27:	// escape
-      HUDDialogStack::get()->pop();
-      return true;
-    case 13:	// return
-      HUDDialogStack::get()->top()->execute();
-      return true;
-  }
-  if (key.button == BzfKeyEvent::Home) {
+    // special keys to get out
+    switch (key.ascii)
+    {
+    case 27:    // escape
+        HUDDialogStack::get()->pop();
+        return true;
+    case 13:    // return
+        HUDDialogStack::get()->top()->execute();
+        return true;
+    }
+    if (key.button == BzfKeyEvent::Home)
+    {
+        HUDDialogStack::get()->pop();
+        return true;
+    }
+
+    // allow all commands to run
+    std::string keyCommand = KEYMGR.get(key, true);
+    if (keyCommand != "")
+    {
+        CMDMGR.run(keyCommand);
+        return true;
+    }
+
+    // all other keys return
     HUDDialogStack::get()->pop();
     return true;
-  }
-
-  // allow all commands to run
-  std::string keyCommand = KEYMGR.get(key, true);
-  if (keyCommand != "") {
-    CMDMGR.run(keyCommand);
-    return true;
-  }
-
-  // all other keys return
-  HUDDialogStack::get()->pop();
-  return true;
 }
 
 bool ShotStatsDefaultKey::keyRelease(const BzfKeyEvent& UNUSED(key))
 {
-  return true;
+    return true;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

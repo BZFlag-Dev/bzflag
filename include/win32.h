@@ -15,7 +15,7 @@
  */
 
 #ifndef __WIN32_H__
-#define	__WIN32_H__
+#define __WIN32_H__
 
 #define _WINSOCKAPI_
 
@@ -25,7 +25,7 @@
 
 // missing constants
 #ifndef MAXFLOAT
-#define	MAXFLOAT	FLT_MAX
+#define MAXFLOAT    FLT_MAX
 #endif
 
 // Define this so that the math.h defines M_PI, M_SQRT2, and similar
@@ -34,19 +34,19 @@
 // missing types
 
 #ifndef int16_t
-typedef signed short	int16_t;
+typedef signed short    int16_t;
 #endif
 
 #ifndef uint16_t
-typedef unsigned short	uint16_t;
+typedef unsigned short  uint16_t;
 #endif
 
 #ifndef int32_t
-typedef signed int	int32_t;
+typedef signed int  int32_t;
 #endif
 
 #ifndef uint32_t
-typedef unsigned int	uint32_t;
+typedef unsigned int    uint32_t;
 #endif
 
 /* stuff specific to visual studio */
@@ -56,7 +56,7 @@ typedef unsigned int	uint32_t;
 
 // missing functions
 #ifndef snprintf
-#  define snprintf	_snprintf
+#  define snprintf  _snprintf
 #endif
 
 #endif // _MSC_VER
@@ -64,8 +64,8 @@ typedef unsigned int	uint32_t;
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

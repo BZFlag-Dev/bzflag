@@ -24,39 +24,40 @@
 #include "Ping.h"
 
 
-class ServerItem {
+class ServerItem
+{
 
 public:
-  ServerItem();
-  void		writeToFile(std::ostream& out) const; // serialize out
-  bool		readFromFile(std::istream& in, int subrevision); // serialize in
-  void		setUpdateTime(); // set last updated to now
-  int		getPlayerCount() const;
-  void		splitAddrTitle(std::string& addr, std::string& title) const;
-  std::string	getAddrName() const;
-  time_t	getAgeMinutes() const;
-  time_t	getAgeSeconds() const;
-  std::string	getAgeString() const; // nifty formated age string
-  time_t	getNow() const; // current time
-  bool		operator<(const ServerItem &right);
+    ServerItem();
+    void        writeToFile(std::ostream& out) const; // serialize out
+    bool        readFromFile(std::istream& in, int subrevision); // serialize in
+    void        setUpdateTime(); // set last updated to now
+    int     getPlayerCount() const;
+    void        splitAddrTitle(std::string& addr, std::string& title) const;
+    std::string getAddrName() const;
+    time_t  getAgeMinutes() const;
+    time_t  getAgeSeconds() const;
+    std::string getAgeString() const; // nifty formated age string
+    time_t  getNow() const; // current time
+    bool        operator<(const ServerItem &right);
 private:
-  unsigned int	getSortFactor() const;
-  int		randomSortWeight;
+    unsigned int    getSortFactor() const;
+    int     randomSortWeight;
 public:
-  std::string	name;
-  std::string	description;
-  PingPacket	ping;
-  time_t	updateTime; // last time I was updated
-  bool		cached;     // was I cached ?
-  bool		favorite;   // favorite server, user selection
+    std::string name;
+    std::string description;
+    PingPacket  ping;
+    time_t  updateTime; // last time I was updated
+    bool        cached;     // was I cached ?
+    bool        favorite;   // favorite server, user selection
 };
 
 #endif /* __SERVERITEM_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -15,24 +15,24 @@
 
 const std::string &MasterBanList::get(const std::string &URL)
 {
-  data = "";
-  // get all up on the internet and go get the thing
-  setURL(URL);
-  performWait();
-  return data;
+    data = "";
+    // get all up on the internet and go get the thing
+    setURL(URL);
+    performWait();
+    return data;
 }
 
 void MasterBanList::finalization(char *cURLdata, unsigned int length,
-				 bool good)
+                                 bool good)
 {
-  if (good)
-    data = std::string(cURLdata, length);
+    if (good)
+        data = std::string(cURLdata, length);
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

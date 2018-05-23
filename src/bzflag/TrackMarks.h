@@ -18,33 +18,35 @@
 
 class SceneDatabase;
 
-namespace TrackMarks {
+namespace TrackMarks
+{
 
-  void init();
-  void kill();
-  void clear();
-  void update(float dt);
-  void addSceneNodes(SceneDatabase* scene);
-  void notifyStyleChange();
-  void renderGroundTracks();   // zbuffer is not used
-  void renderObstacleTracks(); // zbuffer is used
+void init();
+void kill();
+void clear();
+void update(float dt);
+void addSceneNodes(SceneDatabase* scene);
+void notifyStyleChange();
+void renderGroundTracks();   // zbuffer is not used
+void renderObstacleTracks(); // zbuffer is used
 
-  bool addMark(const float pos[3], float scale, float angle, int phydrv);
+bool addMark(const float pos[3], float scale, float angle, int phydrv);
 
-  void setUserFade(float);
-  float getUserFade();
+void setUserFade(float);
+float getUserFade();
 
-  enum AirCullStyle {
+enum AirCullStyle
+{
     NoAirCull     = 0,
     InitAirCull   = (1 << 0), // cull for initial air mark conditions
     PhyDrvAirCull = (1 << 1), // cull for physics driver effects
     FullAirCull   = (InitAirCull | PhyDrvAirCull)
-  };
+};
 
-  void setAirCulling(AirCullStyle style);
-  AirCullStyle getAirCulling();
+void setAirCulling(AirCullStyle style);
+AirCullStyle getAirCulling();
 
-  const float updateTime = (1.0f / 20.0f);
+const float updateTime = (1.0f / 20.0f);
 }
 
 
@@ -53,8 +55,8 @@ namespace TrackMarks {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

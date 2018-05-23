@@ -26,21 +26,22 @@
 
 /** this class provides options for setting the gui
  */
-class CacheMenu : public HUDDialog {
-  public:
+class CacheMenu : public HUDDialog
+{
+public:
     CacheMenu();
     ~CacheMenu();
 
     HUDuiDefaultKey* getDefaultKey()
     {
-      return MenuDefaultKey::getInstance();
+        return MenuDefaultKey::getInstance();
     }
     void execute();
     void resize(int width, int height);
     void setFailedMessage(const char* msg);
     static void callback(HUDuiControl* w, const void* data);
 
-  private:
+private:
     float center;
     HUDuiLabel* failedMessage;
     HUDuiTypeIn* cacheSize;
@@ -54,8 +55,8 @@ class CacheMenu : public HUDDialog {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

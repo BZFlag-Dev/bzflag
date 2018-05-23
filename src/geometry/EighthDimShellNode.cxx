@@ -27,78 +27,75 @@
 
 EighthDimShellNode::EighthDimShellNode(SceneNode* node, bool _ownTheNode)
 {
-  sceneNode = node;
-  ownTheNode = _ownTheNode;
+    sceneNode = node;
+    ownTheNode = _ownTheNode;
 
-  makeNodes();
+    makeNodes();
 
-  return;
+    return;
 }
 
 
 EighthDimShellNode::~EighthDimShellNode()
 {
-  if (ownTheNode) {
-    delete sceneNode;
-  }
-  killNodes();
-  return;
+    if (ownTheNode)
+        delete sceneNode;
+    killNodes();
+    return;
 }
 
 void EighthDimShellNode::makeNodes()
 {
-  std::vector<RenderSet> rnodes;
-  sceneNode->getRenderNodes(rnodes);
+    std::vector<RenderSet> rnodes;
+    sceneNode->getRenderNodes(rnodes);
 
-  shellNodeCount = (int)rnodes.size();
-  if (shellNodeCount <= 0) {
-    shellNodeCount = 0;
-    shellNodes = NULL;
+    shellNodeCount = (int)rnodes.size();
+    if (shellNodeCount <= 0)
+    {
+        shellNodeCount = 0;
+        shellNodes = NULL;
+        return;
+    }
+
+    shellNodes = new ShellRenderNode*[shellNodeCount];
+    for (int i = 0; i < shellNodeCount; i++)
+        shellNodes[i] = new ShellRenderNode(rnodes[i].node, rnodes[i].gstate);
+
     return;
-  }
-
-  shellNodes = new ShellRenderNode*[shellNodeCount];
-  for (int i = 0; i < shellNodeCount; i++) {
-    shellNodes[i] = new ShellRenderNode(rnodes[i].node, rnodes[i].gstate);
-  }
-
-  return;
 }
 
 
 void EighthDimShellNode::killNodes()
 {
-  for (int i = 0; i < shellNodeCount; i++) {
-    delete shellNodes[i];
-  }
-  delete[] shellNodes;
-  shellNodes = NULL;
-  shellNodeCount = 0;
-  return;
+    for (int i = 0; i < shellNodeCount; i++)
+        delete shellNodes[i];
+    delete[] shellNodes;
+    shellNodes = NULL;
+    shellNodeCount = 0;
+    return;
 }
 
 
 void EighthDimShellNode::notifyStyleChange()
 {
-  killNodes();
-  makeNodes();
-  return;
+    killNodes();
+    makeNodes();
+    return;
 }
 
 
 bool EighthDimShellNode::cull(const ViewFrustum&) const
 {
-  // no culling
-  return false;
+    // no culling
+    return false;
 }
 
 
 void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 {
-  for (int i = 0; i < shellNodeCount; i++) {
-    renderer.addRenderNode(shellNodes[i], shellNodes[i]->getGState());
-  }
-  return;
+    for (int i = 0; i < shellNodeCount; i++)
+        renderer.addRenderNode(shellNodes[i], shellNodes[i]->getGState());
+    return;
 }
 
 
@@ -107,33 +104,32 @@ void EighthDimShellNode::addRenderNodes(SceneRenderer& renderer)
 //
 
 EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
-						     const OpenGLGState* gs)
+        const OpenGLGState* gs)
 
 {
-  renderNode = node;
+    renderNode = node;
 
-  OpenGLGStateBuilder gb = *gs;
-  if (BZDBCache::blend && (RENDERER.useQuality() >= 2)) {
-    gb.setBlending(GL_ONE, GL_ONE);
-  } else {
-    gb.resetBlending();
-  }
-  gb.setCulling(GL_FRONT); // invert the culling
-  gstate = gb.getState(); // get the modified gstate
+    OpenGLGStateBuilder gb = *gs;
+    if (BZDBCache::blend && (RENDERER.useQuality() >= 2))
+        gb.setBlending(GL_ONE, GL_ONE);
+    else
+        gb.resetBlending();
+    gb.setCulling(GL_FRONT); // invert the culling
+    gstate = gb.getState(); // get the modified gstate
 
-  return;
+    return;
 }
 
 
 EighthDimShellNode::ShellRenderNode::~ShellRenderNode()
 {
-  return;
+    return;
 }
 
 
 const OpenGLGState* EighthDimShellNode::ShellRenderNode::getGState() const
 {
-  return &gstate;
+    return &gstate;
 }
 
 
@@ -143,29 +139,28 @@ void EighthDimShellNode::ShellRenderNode::render()
 //  glEnable(GL_COLOR_LOGIC_OP);
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
-  if (BZDBCache::blend && RENDERER.useQuality() >= 2) {
+    if (BZDBCache::blend && RENDERER.useQuality() >= 2)
+        renderNode->render();
+
+    glPolygonMode(GL_BACK, GL_LINE);
+    glLineWidth(3.0f);
+
     renderNode->render();
-  }
 
-  glPolygonMode(GL_BACK, GL_LINE);
-  glLineWidth(3.0f);
-
-  renderNode->render();
-
-  glLineWidth(1.0f);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glLineWidth(1.0f);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 //  glDisable(GL_COLOR_LOGIC_OP);
 
-  return;
+    return;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

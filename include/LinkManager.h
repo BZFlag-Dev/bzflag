@@ -11,11 +11,11 @@
  */
 
 /* OpenGLLight:
- *	Encapsulates an OpenGL (point or directional) light source.
+ *  Encapsulates an OpenGL (point or directional) light source.
  */
 
-#ifndef	BZF_LINK_MANAGER_H
-#define	BZF_LINK_MANAGER_H
+#ifndef BZF_LINK_MANAGER_H
+#define BZF_LINK_MANAGER_H
 
 // common goes first
 #include "common.h"
@@ -25,9 +25,10 @@
 #include <vector>
 #include <iostream>
 
-class LinkManager {
+class LinkManager
+{
 
-  public:
+public:
 
     LinkManager();
     ~LinkManager();
@@ -48,25 +49,27 @@ class LinkManager {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
 
     void makeLinkName(int number, std::string& name);
     void findTelesByName(const std::string& name,
-			 std::vector<int>& list) const;
+                         std::vector<int>& list) const;
 
-  private:
+private:
 
-    typedef struct {
-      std::string src;
-      std::string dst;
+    typedef struct
+    {
+        std::string src;
+        std::string dst;
     } LinkNameSet;
 
-    typedef struct {
-      std::vector<int> dsts;
+    typedef struct
+    {
+        std::vector<int> dsts;
     } LinkNumberSet;
 
-    std::vector<LinkNameSet>	linkNames;
-    std::vector<LinkNumberSet>	linkNumbers;
+    std::vector<LinkNameSet>    linkNames;
+    std::vector<LinkNumberSet>  linkNumbers;
 };
 
 
@@ -75,8 +78,8 @@ class LinkManager {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

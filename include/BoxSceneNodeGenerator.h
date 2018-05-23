@@ -16,26 +16,27 @@
 #include "ObstacleSceneNodeGenerator.h"
 #include "BoxBuilding.h"
 
-class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator {
-  friend class SceneDatabaseBuilder;
-  public:
-			~BoxSceneNodeGenerator();
+class BoxSceneNodeGenerator : public ObstacleSceneNodeGenerator
+{
+    friend class SceneDatabaseBuilder;
+public:
+    ~BoxSceneNodeGenerator();
 
-    WallSceneNode*	getNextNode(float, float, bool);
+    WallSceneNode*  getNextNode(float, float, bool);
 
-  protected:
-			BoxSceneNodeGenerator(const BoxBuilding*);
+protected:
+    BoxSceneNodeGenerator(const BoxBuilding*);
 
-  private:
-    const BoxBuilding*	box;
+private:
+    const BoxBuilding*  box;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

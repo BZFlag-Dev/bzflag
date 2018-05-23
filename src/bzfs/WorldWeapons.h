@@ -33,66 +33,67 @@
 class WorldWeapons
 {
 public:
-  WorldWeapons();
-  ~WorldWeapons();
-  void fire();
-  void add(const FlagType *type, const float *origin,
-	   float direction, float tilt, TeamColor teamColor,
-	   float initdelay, const std::vector<float> &delay,
-	   TimeKeeper &sync);
-  float nextTime();
-  void clear();
-  unsigned int count(); // returns the number of world weapons
-  int packSize() const;
-  void *pack(void *buf) const;
+    WorldWeapons();
+    ~WorldWeapons();
+    void fire();
+    void add(const FlagType *type, const float *origin,
+             float direction, float tilt, TeamColor teamColor,
+             float initdelay, const std::vector<float> &delay,
+             TimeKeeper &sync);
+    float nextTime();
+    void clear();
+    unsigned int count(); // returns the number of world weapons
+    int packSize() const;
+    void *pack(void *buf) const;
 
-  uint32_t fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID, TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
+    uint32_t fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID,
+                      TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
-  struct Weapon
-  {
-    const FlagType	*type;
-    TeamColor		teamColor;
-    float		origin[3];
-    float		direction;
-    float		tilt;
-    float	initDelay;
-    std::vector<float>  delay;
-    TimeKeeper		nextTime;
-    int			nextDelay;
-  };
+    struct Weapon
+    {
+        const FlagType  *type;
+        TeamColor       teamColor;
+        float       origin[3];
+        float       direction;
+        float       tilt;
+        float   initDelay;
+        std::vector<float>  delay;
+        TimeKeeper      nextTime;
+        int         nextDelay;
+    };
 
-  std::vector<Weapon*> weapons;
-  int worldShotId;
+    std::vector<Weapon*> weapons;
+    int worldShotId;
 
-  int getNewWorldShotID(void);
+    int getNewWorldShotID(void);
 
-  WorldWeapons( const WorldWeapons &w);
-  WorldWeapons& operator=(const WorldWeapons &w) const;
+    WorldWeapons( const WorldWeapons &w);
+    WorldWeapons& operator=(const WorldWeapons &w) const;
 };
 
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-	WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
-	virtual ~WorldWeaponGlobalEventHandler();
+    WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
+    virtual ~WorldWeaponGlobalEventHandler();
 
-	virtual void process ( bz_EventData *eventData );
+    virtual void process ( bz_EventData *eventData );
 
 protected:
-	FlagType	*type;
-	float		origin[3];
-	float		direction;
-	float		tilt;
-	bz_eTeamType	team;
+    FlagType    *type;
+    float       origin[3];
+    float       direction;
+    float       tilt;
+    bz_eTeamType    team;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nill ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
