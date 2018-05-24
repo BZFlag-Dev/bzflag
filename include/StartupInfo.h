@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__STARTUPINFO_H__
-#define	__STARTUPINFO_H__
+#ifndef __STARTUPINFO_H__
+#define __STARTUPINFO_H__
 
 #include "common.h"
 
@@ -25,23 +25,23 @@
 class StartupInfo
 {
 public:
-  StartupInfo();
-  ~StartupInfo();
+    StartupInfo();
+    ~StartupInfo();
 
-  bool hasConfiguration;
-  bool autoConnect;
-  char serverName[80];
-  int serverPort;
-  bool useUDPconnection;
-  TeamColor team;
-  char callsign[CallSignLen];
-  char password[PasswordLen];
-  char token[TokenLen];
-  char motto[MottoLen];
-  std::string listServerURL;
-  int listServerPort;
-  bool joystick;
-  std::string joystickName;
+    bool hasConfiguration;
+    bool autoConnect;
+    char serverName[80];
+    int serverPort;
+    bool useUDPconnection;
+    TeamColor team;
+    char callsign[CallSignLen];
+    char password[PasswordLen];
+    char token[TokenLen];
+    char motto[MottoLen];
+    std::string listServerURL;
+    int listServerPort;
+    bool joystick;
+    std::string joystickName;
 };
 
 
@@ -49,8 +49,8 @@ public:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

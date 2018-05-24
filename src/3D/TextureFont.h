@@ -17,34 +17,38 @@
 #include "ImageFont.h"
 #include "OpenGLGState.h"
 
-class TextureFont : public ImageFont {
+class TextureFont : public ImageFont
+{
 public:
-  TextureFont();
-  virtual ~TextureFont();
+    TextureFont();
+    virtual ~TextureFont();
 
-  virtual void build();
-  virtual bool isBuilt() const {return textureID != -1;}
+    virtual void build();
+    virtual bool isBuilt() const
+    {
+        return textureID != -1;
+    }
 
-  virtual void filter(bool dofilter);
-  virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
+    virtual void filter(bool dofilter);
+    virtual void drawString(float scale, GLfloat color[4], const char *str, int len);
 
-  virtual void free();
+    virtual void free();
 
 private:
-  void preLoadLists();
+    void preLoadLists();
 
-  unsigned int	listIDs[MAX_TEXTURE_FONT_CHARS];
+    unsigned int  listIDs[MAX_TEXTURE_FONT_CHARS];
 
-  int	      textureID;
-  OpenGLGState gstate;
+    int         textureID;
+    OpenGLGState gstate;
 };
 
 #endif //_TEXTURE_FONT_H_
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

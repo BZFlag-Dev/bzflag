@@ -19,14 +19,14 @@
 
 /* BZFlag System Environment */
 #if defined __llvm__ && defined __x86_64__
-  #define BZ_BUILD_ARCH_STR "64"
+#define BZ_BUILD_ARCH_STR "64"
 #elif defined __llvm__ && defined __i386__
-  #define BZ_BUILD_ARCH_STR "32"
+#define BZ_BUILD_ARCH_STR "32"
 #endif
 #ifdef DEBUG
-  #define BZ_BUILD_DEBUG_STR "dbg"
+#define BZ_BUILD_DEBUG_STR "dbg"
 #else
-  #define BZ_BUILD_DEBUG_STR ""
+#define BZ_BUILD_DEBUG_STR ""
 #endif
 #define BZ_BUILD_OS "mac" BZ_BUILD_ARCH_STR "xc" XCODE_VERSION BZ_BUILD_DEBUG_STR
 

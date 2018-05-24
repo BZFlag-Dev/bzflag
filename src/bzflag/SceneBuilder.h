@@ -12,11 +12,11 @@
 
 /*
  * SceneDatabaseBuilder:
- *	Encapsulates creation of display database
+ *  Encapsulates creation of display database
  */
 
-#ifndef	BZF_SCENE_BUILDER_H
-#define	BZF_SCENE_BUILDER_H
+#ifndef BZF_SCENE_BUILDER_H
+#define BZF_SCENE_BUILDER_H
 
 #include "common.h"
 #include "OpenGLMaterial.h"
@@ -31,45 +31,46 @@ class BaseBuilding;
 class Teleporter;
 class World;
 
-class SceneDatabaseBuilder {
-  public:
-			SceneDatabaseBuilder(const SceneRenderer*);
-			~SceneDatabaseBuilder();
+class SceneDatabaseBuilder
+{
+public:
+    SceneDatabaseBuilder(const SceneRenderer*);
+    ~SceneDatabaseBuilder();
 
-    SceneDatabase*	make(const World*);
+    SceneDatabase*  make(const World*);
 
-  protected:
-    void		addWall(SceneDatabase*, const WallObstacle&);
-    void		addMesh(SceneDatabase*, MeshObstacle*);
-    void		addBox(SceneDatabase*, BoxBuilding&);
-    void		addPyramid(SceneDatabase*, PyramidBuilding&);
-    void		addBase(SceneDatabase*, BaseBuilding&);
-    void		addTeleporter(SceneDatabase*, const Teleporter&, const World*);
-    void		addWaterLevel(SceneDatabase*, const World*);
+protected:
+    void        addWall(SceneDatabase*, const WallObstacle&);
+    void        addMesh(SceneDatabase*, MeshObstacle*);
+    void        addBox(SceneDatabase*, BoxBuilding&);
+    void        addPyramid(SceneDatabase*, PyramidBuilding&);
+    void        addBase(SceneDatabase*, BaseBuilding&);
+    void        addTeleporter(SceneDatabase*, const Teleporter&, const World*);
+    void        addWaterLevel(SceneDatabase*, const World*);
 
-  private:
+private:
     // disallow duplication
-			SceneDatabaseBuilder(const SceneDatabaseBuilder&);
+    SceneDatabaseBuilder(const SceneDatabaseBuilder&);
     SceneDatabaseBuilder& operator=(const SceneDatabaseBuilder&);
 
-  private:
-    const SceneRenderer	*renderer;
+private:
+    const SceneRenderer *renderer;
 
-    OpenGLMaterial	wallMaterial;
-    float		wallTexWidth, wallTexHeight;
-    bool		wallLOD;
+    OpenGLMaterial  wallMaterial;
+    float       wallTexWidth, wallTexHeight;
+    bool        wallLOD;
 
-    OpenGLMaterial	boxMaterial;
-    float		boxTexWidth, boxTexHeight;
-    bool		boxLOD;
+    OpenGLMaterial  boxMaterial;
+    float       boxTexWidth, boxTexHeight;
+    bool        boxLOD;
 
-    OpenGLMaterial	pyramidMaterial;
-    bool		pyramidLOD;
+    OpenGLMaterial  pyramidMaterial;
+    bool        pyramidLOD;
 
-    bool		baseLOD;
+    bool        baseLOD;
 
-    OpenGLMaterial	teleporterMaterial;
-    bool		teleporterLOD;
+    OpenGLMaterial  teleporterMaterial;
+    bool        teleporterLOD;
 
     static const GLfloat wallColors[4][4];
     static const GLfloat wallModulateColors[4][4];
@@ -93,8 +94,8 @@ class SceneDatabaseBuilder {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MAINMENU_H__
-#define	__MAINMENU_H__
+#ifndef __MAINMENU_H__
+#define __MAINMENU_H__
 
 #include "common.h"
 
@@ -25,32 +25,33 @@ class QuitMenu;
 
 /** MainMenu is the main menu
  */
-class MainMenu : public HUDDialog {
+class MainMenu : public HUDDialog
+{
 public:
-  MainMenu();
-  ~MainMenu();
+    MainMenu();
+    ~MainMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
-  void execute();
-  void resize(int width, int height);
-  void createControls();
+    HUDuiDefaultKey* getDefaultKey();
+    void execute();
+    void resize(int width, int height);
+    void createControls();
 
-  static int getFontFace();
+    static int getFontFace();
 
 private:
 
-  HUDuiControl* createLabel(const char* string);
+    HUDuiControl* createLabel(const char* string);
 
-  HUDuiControl*	join;
-  HUDuiControl*	options;
-  HUDuiControl*	help;
-  HUDuiControl*	leave;
-  HUDuiControl*	save;
-  HUDuiControl*	quit;
+    HUDuiControl* join;
+    HUDuiControl* options;
+    HUDuiControl* help;
+    HUDuiControl* leave;
+    HUDuiControl* save;
+    HUDuiControl* quit;
 
-  JoinMenu*	joinMenu;
-  OptionsMenu*	optionsMenu;
-  QuitMenu*	quitMenu;
+    JoinMenu* joinMenu;
+    OptionsMenu*  optionsMenu;
+    QuitMenu* quitMenu;
 };
 
 
@@ -58,8 +59,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

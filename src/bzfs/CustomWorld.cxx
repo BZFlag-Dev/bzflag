@@ -24,29 +24,32 @@
 
 CustomWorld::CustomWorld()
 {
-  // initialize with database defaults
-  _size = BZDBCache::worldSize;
-  _fHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
+    // initialize with database defaults
+    _size = BZDBCache::worldSize;
+    _fHeight = BZDB.eval(StateDatabase::BZDB_FLAGHEIGHT);
 }
 
 
 bool CustomWorld::read(const char *cmd, std::istream& input)
 {
-  if (strcasecmp(cmd, "size") == 0) {
-    input >> _size;
-    _size *= 2.0;
-    BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", _size));
-  } else if (strcasecmp(cmd, "flagHeight") == 0) {
-    input >> _fHeight;
-    BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, TextUtils::format("%f", _fHeight));
-  } else if (strcasecmp(cmd, "noWalls") == 0) {
-    BZDB.setBool("noWalls", true);
-  } else if (strcasecmp(cmd, "freeCtfSpawns") == 0) {
-    BZDB.setBool("freeCtfSpawns", true);
-  } else {
-    return WorldFileObject::read(cmd, input);
-  }
-  return true;
+    if (strcasecmp(cmd, "size") == 0)
+    {
+        input >> _size;
+        _size *= 2.0;
+        BZDB.set(StateDatabase::BZDB_WORLDSIZE, TextUtils::format("%f", _size));
+    }
+    else if (strcasecmp(cmd, "flagHeight") == 0)
+    {
+        input >> _fHeight;
+        BZDB.set(StateDatabase::BZDB_FLAGHEIGHT, TextUtils::format("%f", _fHeight));
+    }
+    else if (strcasecmp(cmd, "noWalls") == 0)
+        BZDB.setBool("noWalls", true);
+    else if (strcasecmp(cmd, "freeCtfSpawns") == 0)
+        BZDB.setBool("freeCtfSpawns", true);
+    else
+        return WorldFileObject::read(cmd, input);
+    return true;
 }
 
 
@@ -54,27 +57,27 @@ void CustomWorld::writeToWorld(WorldInfo*) const
 {
 }
 
-std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+std::map<std::string,bz_CustomMapObjectHandler*>    customObjectMap;
 
 void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
 {
-	std::string objectName = object;
+    std::string objectName = object;
 
-	customObjectMap[TextUtils::toupper(objectName)] = handler;
+    customObjectMap[TextUtils::toupper(objectName)] = handler;
 }
 
 void removeCustomMapObject ( const char* object )
 {
-	std::string objectName = object;
+    std::string objectName = object;
 
-	if ( customObjectMap.find(TextUtils::toupper(objectName)) != customObjectMap.end() )
-		customObjectMap.erase(customObjectMap.find(TextUtils::toupper(objectName)));
+    if ( customObjectMap.find(TextUtils::toupper(objectName)) != customObjectMap.end() )
+        customObjectMap.erase(customObjectMap.find(TextUtils::toupper(objectName)));
 }
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

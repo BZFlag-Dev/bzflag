@@ -31,15 +31,15 @@
 // PNGImageFile
 //
 
-unsigned char		PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
+unsigned char       PNGImageFile::PNGHEADER[8] = { 137, 80, 78, 71, 13, 10, 26, 10 };
 
-const unsigned char	PNGImageFile::MAX_COMPONENTS = 8;
+const unsigned char PNGImageFile::MAX_COMPONENTS = 8;
 
-const unsigned char	PNGImageFile::FILTER_NONE = 0;
-const unsigned char	PNGImageFile::FILTER_SUB = 1;
-const unsigned char	PNGImageFile::FILTER_UP = 2;
-const unsigned char	PNGImageFile::FILTER_AVERAGE = 3;
-const unsigned char	PNGImageFile::FILTER_PAETH = 4;
+const unsigned char PNGImageFile::FILTER_NONE = 0;
+const unsigned char PNGImageFile::FILTER_SUB = 1;
+const unsigned char PNGImageFile::FILTER_UP = 2;
+const unsigned char PNGImageFile::FILTER_AVERAGE = 3;
+const unsigned char PNGImageFile::FILTER_PAETH = 4;
 
 /*
 PNGImageFile::PNGImageFile(std::istream* stream)
@@ -49,84 +49,85 @@ PNGImageFile::PNGImageFile(std::istream* stream)
 
 PNGImageFile::PNGImageFile(std::istream* input) : ImageFile(input), palette(NULL)
 {
-  lineBuffers[0] = NULL;
-  lineBuffers[1] = NULL;
+    lineBuffers[0] = NULL;
+    lineBuffers[1] = NULL;
 
-  char buffer[8];
-  input->read(buffer, 8);
-  if (strncmp((char*)PNGHEADER, buffer, 8) != 0) {
-    return;
-  }
+    char buffer[8];
+    input->read(buffer, 8);
+    if (strncmp((char*)PNGHEADER, buffer, 8) != 0)
+        return;
 
-  PNGChunk *c = PNGChunk::readChunk(input);
-  if (c->getType() != PNGChunk::IHDR) {
+    PNGChunk *c = PNGChunk::readChunk(input);
+    if (c->getType() != PNGChunk::IHDR)
+    {
+        delete c;
+        return;
+    }
+
+    const void* data = c->getData();
+    int32_t myWidth, myHeight;
+    data = nboUnpackInt(data, myWidth);
+    data = nboUnpackInt(data, myHeight);
+
+    data = nboUnpackUByte(data, bitDepth);
+    data = nboUnpackUByte(data, colorDepth);
+    data = nboUnpackUByte(data, compressionMethod);
+    data = nboUnpackUByte(data, filterMethod);
+    data = nboUnpackUByte(data, interlaceMethod);
+
     delete c;
-    return;
-  }
 
-  const void* data = c->getData();
-  int32_t myWidth, myHeight;
-  data = nboUnpackInt(data, myWidth);
-  data = nboUnpackInt(data, myHeight);
-
-  data = nboUnpackUByte(data, bitDepth);
-  data = nboUnpackUByte(data, colorDepth);
-  data = nboUnpackUByte(data, compressionMethod);
-  data = nboUnpackUByte(data, filterMethod);
-  data = nboUnpackUByte(data, interlaceMethod);
-
-  delete c;
-
-  int channels;
-  switch (colorDepth) {
+    int channels;
+    switch (colorDepth)
+    {
     case 0:
-      lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth+1) : 0)))/8)+1;
-      channels = 1;
-    break;
+        lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth+1) : 0)))/8)+1;
+        channels = 1;
+        break;
 
     case 2:
-      lineBufferSize = (((3 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
-      channels = 3;
-    break;
+        lineBufferSize = (((3 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+        channels = 3;
+        break;
 
     case 3:
-      lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
-      channels = 3; // 1 input channel turns into 3 output.  nasty, probably should have two values.
-    break;
+        lineBufferSize = (((myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+        channels = 3; // 1 input channel turns into 3 output.  nasty, probably should have two values.
+        break;
 
     case 4:
-      lineBufferSize = (((2 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
-      channels = 2;
-    break;
+        lineBufferSize = (((2 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+        channels = 2;
+        break;
 
     case 6:
-      lineBufferSize = (((4 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
-      channels = 4;
-    break;
+        lineBufferSize = (((4 * myWidth * bitDepth + ((bitDepth < 8) ? (bitDepth-1) : 0)))/8)+1;
+        channels = 4;
+        break;
 
     default:
-      return;
-  }
+        return;
+    }
 
-  realBufferSize = channels * myWidth + 1;
-  int allocSize = lineBufferSize + MAX_COMPONENTS;
-  lineBuffers[0] = new unsigned char[allocSize];
-  lineBuffers[1] = new unsigned char[allocSize];
-  memset(lineBuffers[0], 0, MAX_COMPONENTS);
-  memset(lineBuffers[1], 0, allocSize);
-  activeBufferIndex = 0;
+    realBufferSize = channels * myWidth + 1;
+    int allocSize = lineBufferSize + MAX_COMPONENTS;
+    lineBuffers[0] = new unsigned char[allocSize];
+    lineBuffers[1] = new unsigned char[allocSize];
+    memset(lineBuffers[0], 0, MAX_COMPONENTS);
+    memset(lineBuffers[1], 0, allocSize);
+    activeBufferIndex = 0;
 
-  if (filterMethod != 0)
-    return;
-  if (interlaceMethod != 0)
-    return;
+    if (filterMethod != 0)
+        return;
+    if (interlaceMethod != 0)
+        return;
 
 
-  init(channels, myWidth, myHeight);
+    init(channels, myWidth, myHeight);
 
-  logDebugMessage(4,"Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
-	 "Interlace Method %d, Channels %d.\n",
-	 myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
+    logDebugMessage(4,"Read PNG: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
+                    "Interlace Method %d, Channels %d.\n",
+                    myWidth, myHeight, bitDepth, colorDepth, filterMethod, interlaceMethod, channels);
 }
 
 /*
@@ -137,23 +138,23 @@ PNGImageFile::~PNGImageFile()
 
 PNGImageFile::~PNGImageFile()
 {
-  if (palette)
-    delete palette;
-  if (lineBuffers[0] != NULL)
-    delete [] lineBuffers[0];
-  if (lineBuffers[1] != NULL)
-    delete [] lineBuffers[1];
+    if (palette)
+        delete palette;
+    if (lineBuffers[0] != NULL)
+        delete [] lineBuffers[0];
+    if (lineBuffers[1] != NULL)
+        delete [] lineBuffers[1];
 }
 
 /*
-std::string	PNGImageFile::getExtension()
+std::string PNGImageFile::getExtension()
 
   returns the expected file extension of .png for files
 */
 
-std::string				PNGImageFile::getExtension()
+std::string             PNGImageFile::getExtension()
 {
-  return ".png";
+    return ".png";
 }
 
 /*
@@ -163,75 +164,82 @@ bool PNGImageFile::read(void* buffer)
   in 1, 2, 3, or 4 channels
 */
 
-bool					PNGImageFile::read(void* buffer)
+bool                    PNGImageFile::read(void* buffer)
 {
-  PNGChunk *c;
-  int	bufferPos = getWidth() * getNumChannels() * (getHeight() - 1);
+    PNGChunk *c;
+    int   bufferPos = getWidth() * getNumChannels() * (getHeight() - 1);
 
-  c = PNGChunk::readChunk(getStream());
-  while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND)) {
-    if (c->getType() == PNGChunk::PLTE)
-      palette = readPalette(c);
-    delete c;
     c = PNGChunk::readChunk(getStream());
-  }
-
-  unsigned char *line = getLineBuffer();
-
-  int err;
-  z_stream zStream;
-  zStream.next_out = line;
-  zStream.avail_out = lineBufferSize;
-  zStream.zalloc = (alloc_func)NULL;
-  zStream.zfree = (free_func)NULL;
-
-  err = inflateInit(&zStream);
-  if (err != Z_OK) {
-    logDebugMessage(3,"PNGImageFile: inflateInit() error\n");
-    delete c;
-    return false;
-  }
-
-  while (c->getType() == PNGChunk::IDAT) {
-    zStream.next_in = c->getData();
-    zStream.avail_in = c->getLength();
-
-    err = inflate(&zStream, Z_SYNC_FLUSH);
-    while (((err == Z_OK) || err == Z_STREAM_END)  && (zStream.avail_out == 0)) {
-
-      if (!filter()) {
-	delete c;
-	return false;
-      }
-
-      if (!expand((unsigned char*)buffer+bufferPos)) {
-	delete c;
-	return false;
-      }
-      bufferPos -= realBufferSize-1;
-
-      switchLineBuffers();
-      line = getLineBuffer();
-
-      zStream.next_out = line;
-      zStream.avail_out = lineBufferSize;
-      err = inflate(&zStream, Z_SYNC_FLUSH);
+    while ((c->getType() != PNGChunk::IDAT) && (c->getType() != PNGChunk::IEND))
+    {
+        if (c->getType() == PNGChunk::PLTE)
+            palette = readPalette(c);
+        delete c;
+        c = PNGChunk::readChunk(getStream());
     }
 
-    if ((err != Z_STREAM_END) && (err != Z_OK) && (zStream.avail_in != 0)) {
-      logDebugMessage(3,"PNGImageFile: Z_STREAM error: %d\n", err);
-      delete c;
-      return false;
+    unsigned char *line = getLineBuffer();
+
+    int err;
+    z_stream zStream;
+    zStream.next_out = line;
+    zStream.avail_out = lineBufferSize;
+    zStream.zalloc = (alloc_func)NULL;
+    zStream.zfree = (free_func)NULL;
+
+    err = inflateInit(&zStream);
+    if (err != Z_OK)
+    {
+        logDebugMessage(3,"PNGImageFile: inflateInit() error\n");
+        delete c;
+        return false;
     }
 
+    while (c->getType() == PNGChunk::IDAT)
+    {
+        zStream.next_in = c->getData();
+        zStream.avail_in = c->getLength();
+
+        err = inflate(&zStream, Z_SYNC_FLUSH);
+        while (((err == Z_OK) || err == Z_STREAM_END)  && (zStream.avail_out == 0))
+        {
+
+            if (!filter())
+            {
+                delete c;
+                return false;
+            }
+
+            if (!expand((unsigned char*)buffer+bufferPos))
+            {
+                delete c;
+                return false;
+            }
+            bufferPos -= realBufferSize-1;
+
+            switchLineBuffers();
+            line = getLineBuffer();
+
+            zStream.next_out = line;
+            zStream.avail_out = lineBufferSize;
+            err = inflate(&zStream, Z_SYNC_FLUSH);
+        }
+
+        if ((err != Z_STREAM_END) && (err != Z_OK) && (zStream.avail_in != 0))
+        {
+            logDebugMessage(3,"PNGImageFile: Z_STREAM error: %d\n", err);
+            delete c;
+            return false;
+        }
+
+        delete c;
+        c = PNGChunk::readChunk(getStream());
+    }
+
+    inflateEnd(&zStream);
+
     delete c;
-    c = PNGChunk::readChunk(getStream());
-  }
-
-  inflateEnd(&zStream);
-
-  delete c;
-  return true;
+    return true;
 }
 
 /*
@@ -242,18 +250,19 @@ PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 
 PNGPalette* PNGImageFile::readPalette(PNGChunk *c)
 {
-  int numColors = c->getLength() / sizeof(PNGRGB);
-  PNGPalette *p = new PNGPalette(numColors);
-  PNGRGB rgb;
+    int numColors = c->getLength() / sizeof(PNGRGB);
+    PNGPalette *p = new PNGPalette(numColors);
+    PNGRGB rgb;
 
-  const void *pData = c->getData();
-  for (int i = 0; i < numColors; i++) {
-    pData = nboUnpackUByte(pData, rgb.red);
-    pData = nboUnpackUByte(pData, rgb.green);
-    pData = nboUnpackUByte(pData, rgb.blue);
-    p->add(rgb);
-  }
-  return p;
+    const void *pData = c->getData();
+    for (int i = 0; i < numColors; i++)
+    {
+        pData = nboUnpackUByte(pData, rgb.red);
+        pData = nboUnpackUByte(pData, rgb.green);
+        pData = nboUnpackUByte(pData, rgb.blue);
+        p->add(rgb);
+    }
+    return p;
 }
 
 /*
@@ -265,7 +274,7 @@ unsigned char *PNGImageFile::getLineBuffer(bool active)
 
 unsigned char *PNGImageFile::getLineBuffer(bool active)
 {
-  return MAX_COMPONENTS + lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
+    return MAX_COMPONENTS + lineBuffers[active ? activeBufferIndex : (1 - activeBufferIndex)];
 }
 
 /*
@@ -277,7 +286,7 @@ void PNGImageFile::switchLineBuffers()
 
 void PNGImageFile::switchLineBuffers()
 {
-  activeBufferIndex = 1 - activeBufferIndex;
+    activeBufferIndex = 1 - activeBufferIndex;
 }
 
 /*
@@ -288,97 +297,107 @@ bool PNGImageFile::expand()
 
 bool PNGImageFile::expand(unsigned char* destination)
 {
-  // all indexed color modes require a palette
-  if (colorDepth == 3 && palette == NULL)
-    return false;
+    // all indexed color modes require a palette
+    if (colorDepth == 3 && palette == NULL)
+        return false;
 
-  // don't write to this
-  const unsigned char * const pData = getLineBuffer();
+    // don't write to this
+    const unsigned char * const pData = getLineBuffer();
 
-  int myWidth = getWidth();
-  int channels = getNumChannels();
-  switch (bitDepth)  {
+    int myWidth = getWidth();
+    int channels = getNumChannels();
+    switch (bitDepth)
+    {
     case 1:
     {
-      for (int i = myWidth-1; i >= 0; i--) {
-	int byteOffset = i/8 + 1;
-	int bit = 7 - i%8;
-	if (colorDepth != 3) {
-	  *(destination + i) = ((*(pData+byteOffset) >> bit) & 0x01) ? 0xFF : 0x00;
-	} else {
-	  PNGRGB &rgb = palette->get(((*(pData+byteOffset) >> bit) & 0x01));
-	  *(destination + i*3) = rgb.red;
-	  *(destination + i*3 + 1) = rgb.green;
-	  *(destination + i*3 + 2) = rgb.blue;
-	}
-      }
+        for (int i = myWidth-1; i >= 0; i--)
+        {
+            int byteOffset = i/8 + 1;
+            int bit = 7 - i%8;
+            if (colorDepth != 3)
+                *(destination + i) = ((*(pData+byteOffset) >> bit) & 0x01) ? 0xFF : 0x00;
+            else
+            {
+                PNGRGB &rgb = palette->get(((*(pData+byteOffset) >> bit) & 0x01));
+                *(destination + i*3) = rgb.red;
+                *(destination + i*3 + 1) = rgb.green;
+                *(destination + i*3 + 2) = rgb.blue;
+            }
+        }
     }
     break;
 
     case 2:
     {
-      for (int i = myWidth-1; i >= 0; i--) {
-	int byteOffset = i/4 + 1;
-	int bitShift = 6-2*(i%4);
-	if (colorDepth != 3) {
-	  *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
-	} else {
-	  PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x03);
-	  *(destination + i*3) = rgb.red;
-	  *(destination + i*3 + 1) = rgb.green;
-	  *(destination + i*3 + 2) = rgb.blue;
-	}
-      }
+        for (int i = myWidth-1; i >= 0; i--)
+        {
+            int byteOffset = i/4 + 1;
+            int bitShift = 6-2*(i%4);
+            if (colorDepth != 3)
+                *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x03) << 6;
+            else
+            {
+                PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x03);
+                *(destination + i*3) = rgb.red;
+                *(destination + i*3 + 1) = rgb.green;
+                *(destination + i*3 + 2) = rgb.blue;
+            }
+        }
     }
     break;
 
     case 4:
     {
-      for (int i = myWidth-1; i >= 0; i--) {
-	int byteOffset = i/2+1;
-	int bitShift = 4-4*(i%2);
-	if (colorDepth != 3) {
-	  *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
-	} else {
-	  PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x0F);
-	  *(destination + i*3) = rgb.red;
-	  *(destination + i*3 + 1) = rgb.green;
-	  *(destination + i*3 + 2) = rgb.blue;
-	}
-      }
+        for (int i = myWidth-1; i >= 0; i--)
+        {
+            int byteOffset = i/2+1;
+            int bitShift = 4-4*(i%2);
+            if (colorDepth != 3)
+                *(destination + i) = (((*(pData+byteOffset)) >> bitShift) & 0x0F) << 4;
+            else
+            {
+                PNGRGB &rgb = palette->get(((*(pData+byteOffset)) >> bitShift) & 0x0F);
+                *(destination + i*3) = rgb.red;
+                *(destination + i*3 + 1) = rgb.green;
+                *(destination + i*3 + 2) = rgb.blue;
+            }
+        }
     }
     break;
 
     case 8:
     {
-      if (colorDepth == 3) {
-	// colormapped
-	for (int i = myWidth-1; i >= 0; i--) {
-	  PNGRGB &rgb = palette->get(*(pData+i+1));
-	  *(destination + i*3) = rgb.red;
-	  *(destination + i*3 + 1) = rgb.green;
-	  *(destination + i*3 + 2) = rgb.blue;
-	}
-      } else {
-	// already in native color
-	memcpy(destination, pData+1, realBufferSize-1);
-      }
+        if (colorDepth == 3)
+        {
+            // colormapped
+            for (int i = myWidth-1; i >= 0; i--)
+            {
+                PNGRGB &rgb = palette->get(*(pData+i+1));
+                *(destination + i*3) = rgb.red;
+                *(destination + i*3 + 1) = rgb.green;
+                *(destination + i*3 + 2) = rgb.blue;
+            }
+        }
+        else
+        {
+            // already in native color
+            memcpy(destination, pData+1, realBufferSize-1);
+        }
     }
     break;
 
     case 16:
     {
-      for (int i = 0; i < myWidth*channels; i++) {
-	*(destination+i) = (*(pData + 2*i + 1));
-      }
+        for (int i = 0; i < myWidth*channels; i++)
+            *(destination+i) = (*(pData + 2*i + 1));
     }
     break;
 
     default:
-      return false;
-  }
+        return false;
+    }
 
-  return true;
+    return true;
 }
 
 /*
@@ -389,85 +408,89 @@ bool PNGImageFile::filter()
 
 bool PNGImageFile::filter()
 {
-  //int	len = lineBufferSize;
-  unsigned char *pData = getLineBuffer();
+    //int len = lineBufferSize;
+    unsigned char *pData = getLineBuffer();
 
-  unsigned char filterType = *pData;
-  *(pData++) = 0;
+    unsigned char filterType = *pData;
+    *(pData++) = 0;
 
-  // images are filtered by "corresponding bytes in the pixel"
-  // this implies:
-  //   <8-bit-per-sample are filtered by whole byte
-  //    8-bit-per-sample are filtered by sample
-  //   >8-bit-per-sample are filtered by semi-sample
-  // indexed are always filtered by byte
-  //  (only 1 real input channel)
-  int filterUnitsPerPixel = getNumChannels();
-  if ((colorDepth & 0x1) || (bitDepth < 8))
-    filterUnitsPerPixel = 1;
-  if (bitDepth > 8)
-    filterUnitsPerPixel *= (bitDepth / 8);
+    // images are filtered by "corresponding bytes in the pixel"
+    // this implies:
+    //   <8-bit-per-sample are filtered by whole byte
+    //    8-bit-per-sample are filtered by sample
+    //   >8-bit-per-sample are filtered by semi-sample
+    // indexed are always filtered by byte
+    //  (only 1 real input channel)
+    int filterUnitsPerPixel = getNumChannels();
+    if ((colorDepth & 0x1) || (bitDepth < 8))
+        filterUnitsPerPixel = 1;
+    if (bitDepth > 8)
+        filterUnitsPerPixel *= (bitDepth / 8);
 
-  switch (filterType) {
+    switch (filterType)
+    {
     case FILTER_NONE:
-      return true;
+        return true;
 
     case FILTER_SUB:
     {
-      for (int i = 1; i < lineBufferSize; i++, pData++)
-	*pData += *(pData-filterUnitsPerPixel);
-      return true;
-      break;
+        for (int i = 1; i < lineBufferSize; i++, pData++)
+            *pData += *(pData-filterUnitsPerPixel);
+        return true;
+        break;
     }
 
     case FILTER_UP:
     {
-      unsigned char *pUp = getLineBuffer(false)+1;
-      for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
-	*pData += *pUp;
-      return true;
-      break;
+        unsigned char *pUp = getLineBuffer(false)+1;
+        for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
+            *pData += *pUp;
+        return true;
+        break;
     }
 
     case FILTER_AVERAGE:
     {
-      unsigned char *pUp = getLineBuffer(false)+1;
-      for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-	int last = *(pData-filterUnitsPerPixel);
-	int up = *pUp;
+        unsigned char *pUp = getLineBuffer(false)+1;
+        for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
+        {
+            int last = *(pData-filterUnitsPerPixel);
+            int up = *pUp;
 
-	*pData += (last + up)/2;
-      }
-      return true;
-      break;
+            *pData += (last + up)/2;
+        }
+        return true;
+        break;
     }
 
     case FILTER_PAETH:
     {
-      unsigned char *pUp = getLineBuffer(false)+1;
-      for (int i = 1; i < lineBufferSize; i++, pData++, pUp++) {
-	int a = *(pData-filterUnitsPerPixel);
-	int b = *pUp;
-	int c = *(pUp-filterUnitsPerPixel);
+        unsigned char *pUp = getLineBuffer(false)+1;
+        for (int i = 1; i < lineBufferSize; i++, pData++, pUp++)
+        {
+            int a = *(pData-filterUnitsPerPixel);
+            int b = *pUp;
+            int c = *(pUp-filterUnitsPerPixel);
 
-	int p = b - c;
-	int pc = a - c;
-	int pa = abs(p);
-	int pb = abs(pc);
-	pc = abs(p + pc);
+            int p = b - c;
+            int pc = a - c;
+            int pa = abs(p);
+            int pb = abs(pc);
+            pc = abs(p + pc);
 
-	*pData += (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
-      }
-      return true;
-      break;
+            *pData += (pa <= pb && pa <= pc) ? a : (pb <= pc) ? b : c;
+        }
+        return true;
+        break;
     }
 
-    default: {
-      logDebugMessage(3,"PNGImageFile: unknown filter type (%s)\n", filterType);
-      return false;
+    default:
+    {
+        logDebugMessage(3,"PNGImageFile: unknown filter type (%s)\n", filterType);
+        return false;
     }
-  }
-  return false;
+    }
+    return false;
 }
 
 
@@ -479,9 +502,9 @@ PNGRGB::PNGRGB()
 
 PNGRGB::PNGRGB()
 {
-  red = 0;
-  green = 0;
-  blue = 0;
+    red = 0;
+    green = 0;
+    blue = 0;
 }
 
 /*
@@ -492,9 +515,9 @@ PNGRGB::PNGRGB()
 
 PNGRGB::PNGRGB(unsigned char r, unsigned char g, unsigned char b)
 {
-  red = r;
-  green = g;
-  blue = b;
+    red = r;
+    green = g;
+    blue = b;
 }
 
 
@@ -508,9 +531,9 @@ PNGPalette::PNGPalette(int nc)
 
 PNGPalette::PNGPalette(int nc)
 {
-  curColor = 0;
-  numColors = nc;
-  colors = new PNGRGB[nc];
+    curColor = 0;
+    numColors = nc;
+    colors = new PNGRGB[nc];
 }
 
 /*
@@ -521,7 +544,7 @@ PNGPalette::~PNGPalette()
 
 PNGPalette::~PNGPalette()
 {
-  delete [] colors;
+    delete [] colors;
 }
 
 /*
@@ -532,7 +555,7 @@ void PNGPalette::add(PNGRGB& color)
 
 void PNGPalette::add(PNGRGB& color)
 {
-  colors[curColor++] = color;
+    colors[curColor++] = color;
 }
 
 /*
@@ -543,18 +566,18 @@ PNGRGB& PNGPalette::get(int index)
 
 PNGRGB& PNGPalette::get(int index)
 {
-  static PNGRGB unknown(0,0,0);
+    static PNGRGB unknown(0,0,0);
 
-  if ((index >= 0) && (index < numColors))
-    return colors[index];
+    if ((index >= 0) && (index < numColors))
+        return colors[index];
 
-  return unknown;
+    return unknown;
 }
 
 #define PNGTAG(t_) ((((int)t_[0]) << 24) | \
-		   (((int)t_[1]) << 16) | \
-		   (((int)t_[2]) <<  8) | \
-		   (int)t_[3])
+           (((int)t_[1]) << 16) | \
+           (((int)t_[2]) <<  8) | \
+           (int)t_[3])
 int PNGChunk::IHDR = PNGTAG("IHDR");
 int PNGChunk::PLTE = PNGTAG("PLTE");
 int PNGChunk::IDAT = PNGTAG("IDAT");
@@ -568,18 +591,19 @@ PNGChunk *PNGChunk::readChunk(std::istream *stream)
 
 PNGChunk *PNGChunk::readChunk(std::istream *input)
 {
-  PNGChunk *c = new PNGChunk();
-  input->read((char *) &c->length, 4);
-  c->length = ntohl(c->length);
-  input->read((char *) &c->type, 4);
-  c->type = ntohl(c->type);
-  if (c->length > 0) {
-    c->data = new unsigned char[c->length];
-    input->read((char*) c->data, c->length);
-  }
-  input->read((char *) &c->crc, 4);
-  c->crc = ntohl(c->crc);
-  return c;
+    PNGChunk *c = new PNGChunk();
+    input->read((char *) &c->length, 4);
+    c->length = ntohl(c->length);
+    input->read((char *) &c->type, 4);
+    c->type = ntohl(c->type);
+    if (c->length > 0)
+    {
+        c->data = new unsigned char[c->length];
+        input->read((char*) c->data, c->length);
+    }
+    input->read((char *) &c->crc, 4);
+    c->crc = ntohl(c->crc);
+    return c;
 }
 
 /*
@@ -589,7 +613,7 @@ PNGChunk::PNGChunk()
 */
 
 PNGChunk::PNGChunk()
-: length(0), type(0), data(NULL), crc(0)
+    : length(0), type(0), data(NULL), crc(0)
 {
 }
 
@@ -601,8 +625,8 @@ PNGChunk::~PNGChunk()
 
 PNGChunk::~PNGChunk()
 {
-  if (data != NULL)
-    delete[] data;
+    if (data != NULL)
+        delete[] data;
 }
 
 /*
@@ -613,7 +637,7 @@ int PNGChunk::getLength()
 
 int PNGChunk::getLength()
 {
-  return length;
+    return length;
 }
 
 /*
@@ -624,7 +648,7 @@ int PNGChunk::getType()
 
 int PNGChunk::getType()
 {
-  return type;
+    return type;
 }
 
 /*
@@ -635,13 +659,13 @@ unsigned char *PNGChunk::getData()
 
 unsigned char *PNGChunk::getData()
 {
-  return data;
+    return data;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -22,39 +22,41 @@
 class WallSceneNode;
 class MeshPolySceneNode;
 
-class MeshSceneNodeGenerator {
+class MeshSceneNodeGenerator
+{
 
-  friend class SceneDatabaseBuilder;
+    friend class SceneDatabaseBuilder;
 
-  public:
+public:
     ~MeshSceneNodeGenerator();
 
     WallSceneNode* getNextNode(bool lod);
 
     static void setupNodeMaterial(WallSceneNode* node,
-				  const BzMaterial* mat);
+                                  const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
 
     static bool makeTexcoords(const float* plane,
-			      const GLfloat3Array& vertices,
-			      GLfloat2Array& texcoords);
+                              const GLfloat3Array& vertices,
+                              GLfloat2Array& texcoords);
 
-  protected:
+protected:
     MeshSceneNodeGenerator(const MeshObstacle*);
 
-  private:
+private:
     void setupOccluders();
     void setupFacesAndFrags();
 
-  private:
+private:
     int currentNode;
     bool useDrawInfo;
     bool returnOccluders;
     const MeshObstacle* mesh;
 
-    typedef struct {
-      bool isFace;
-      std::vector<const MeshFace*> faces;
+    typedef struct
+    {
+        bool isFace;
+        std::vector<const MeshFace*> faces;
     } MeshNode;
     std::vector<MeshNode> nodes;
     std::vector<SceneNode*> occluders;
@@ -64,8 +66,8 @@ class MeshSceneNodeGenerator {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

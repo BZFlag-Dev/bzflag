@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__REMOTEPLAYER_H__
-#define	__REMOTEPLAYER_H__
+#ifndef __REMOTEPLAYER_H__
+#define __REMOTEPLAYER_H__
 
 #include "common.h"
 
@@ -26,23 +26,24 @@
 #include "ShotPath.h"
 
 
-class RemotePlayer : public Player {
+class RemotePlayer : public Player
+{
 public:
-  RemotePlayer(const PlayerId&, TeamColor team,
-	       const char* name, const char* motto,
-	       const PlayerType);
-  ~RemotePlayer();
+    RemotePlayer(const PlayerId&, TeamColor team,
+                 const char* name, const char* motto,
+                 const PlayerType);
+    ~RemotePlayer();
 
-  void addShot(const FiringInfo&);
-  ShotPath* getShot(int index) const;
-  void updateShots(float dt);
-
-private:
-  bool doEndShot(int index, bool isHit, float* pos);
+    void addShot(const FiringInfo&);
+    ShotPath* getShot(int index) const;
+    void updateShots(float dt);
 
 private:
-  int numShots;
-  RemoteShotPath** shots;
+    bool doEndShot(int index, bool isHit, float* pos);
+
+private:
+    int numShots;
+    RemoteShotPath** shots;
 };
 
 
@@ -50,8 +51,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

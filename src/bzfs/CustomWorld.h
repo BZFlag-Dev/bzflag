@@ -25,20 +25,24 @@
 #include "WorldInfo.h"
 
 
-class CustomWorld : public WorldFileObject {
-  public:
+class CustomWorld : public WorldFileObject
+{
+public:
     CustomWorld();
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual bool usesGroupDef()
+    {
+        return false;
+    }
 
-  protected:
+protected:
     double _size;
     double _fHeight;
 };
 
 
-extern std::map<std::string,bz_CustomMapObjectHandler*>	customObjectMap;
+extern std::map<std::string,bz_CustomMapObjectHandler*> customObjectMap;
 
 void registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler );
 void removeCustomMapObject ( const char* object );
@@ -46,8 +50,8 @@ void removeCustomMapObject ( const char* object );
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -25,31 +25,32 @@
 #include "ShotPath.h"
 
 
-class BaseLocalPlayer : public Player {
- public:
-  BaseLocalPlayer(const PlayerId&, const char* name, const char* motto);
-  ~BaseLocalPlayer();
+class BaseLocalPlayer : public Player
+{
+public:
+    BaseLocalPlayer(const PlayerId&, const char* name, const char* motto);
+    ~BaseLocalPlayer();
 
-  void update(float inputDT = -1.0f);
-  Ray getLastMotion() const;
-  const float (*getLastMotionBBox() const)[3];
+    void update(float inputDT = -1.0f);
+    Ray getLastMotion() const;
+    const float (*getLastMotionBBox() const)[3];
 
-  virtual void explodeTank() = 0;
-  virtual bool checkHit(const Player* source,
-			const ShotPath*& hit, float& minTime) const = 0;
- protected:
-  int getSalt();
-  virtual void doUpdate(float dt) = 0;
-  virtual void doUpdateMotion(float dt) = 0;
+    virtual void explodeTank() = 0;
+    virtual bool checkHit(const Player* source,
+                          const ShotPath*& hit, float& minTime) const = 0;
+protected:
+    int getSalt();
+    virtual void doUpdate(float dt) = 0;
+    virtual void doUpdateMotion(float dt) = 0;
 
- protected:
-  TimeKeeper lastTime;
-  float lastPosition[3];
-  // bbox of last motion
-  float bbox[2][3];
+protected:
+    TimeKeeper lastTime;
+    float lastPosition[3];
+    // bbox of last motion
+    float bbox[2][3];
 
- private:
-  int salt;
+private:
+    int salt;
 };
 
 
@@ -57,8 +58,8 @@ class BaseLocalPlayer : public Player {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

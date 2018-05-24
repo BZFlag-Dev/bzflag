@@ -21,20 +21,20 @@
 #include "BzMaterial.h"
 
 extern bool parseMaterials(const char* cmd, std::istream& input,
-			   BzMaterial* materials, int materialCount,
-			   bool& error);
+                           BzMaterial* materials, int materialCount,
+                           bool& error);
 
 extern bool parseMaterialsByName(const char* cmd, std::istream& input,
-				 BzMaterial* materials, const char** names,
-				 int materialCount, bool& error);
+                                 BzMaterial* materials, const char** names,
+                                 int materialCount, bool& error);
 
 #endif  /* __PARSE_MATERIAL_H__ */
 
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

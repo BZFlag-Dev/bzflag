@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__OPTIONSMENU_H__
-#define	__OPTIONSMENU_H__
+#ifndef __OPTIONSMENU_H__
+#define __OPTIONSMENU_H__
 
 #include "common.h"
 
@@ -28,35 +28,36 @@
 #include "AudioMenu.h"
 #include "DisplayMenu.h"
 
-class OptionsMenu : public HUDDialog {
+class OptionsMenu : public HUDDialog
+{
 public:
-  OptionsMenu();
-  ~OptionsMenu();
+    OptionsMenu();
+    ~OptionsMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void		execute();
-  void		resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void      execute();
+    void      resize(int width, int height);
 
-  static void	callback(HUDuiControl* w, const void* data);
+    static void   callback(HUDuiControl* w, const void* data);
 
 private:
-  HUDuiControl*	guiOptions;
-  HUDuiControl*	effectsOptions;
-  HUDuiControl*	cacheOptions;
-  HUDuiControl*	saveWorld;
-  HUDuiControl*	inputSetting;
-  HUDuiControl*	audioSetting;
-  HUDuiControl*	displaySetting;
-  GUIOptionsMenu*	guiOptionsMenu;
-  EffectsMenu*		effectsMenu;
-  CacheMenu*		cacheMenu;
-  SaveWorldMenu*	saveWorldMenu;
-  InputMenu*		inputMenu;
-  AudioMenu*		audioMenu;
-  DisplayMenu*		displayMenu;
+    HUDuiControl* guiOptions;
+    HUDuiControl* effectsOptions;
+    HUDuiControl* cacheOptions;
+    HUDuiControl* saveWorld;
+    HUDuiControl* inputSetting;
+    HUDuiControl* audioSetting;
+    HUDuiControl* displaySetting;
+    GUIOptionsMenu*   guiOptionsMenu;
+    EffectsMenu*      effectsMenu;
+    CacheMenu*        cacheMenu;
+    SaveWorldMenu*    saveWorldMenu;
+    InputMenu*        inputMenu;
+    AudioMenu*        audioMenu;
+    DisplayMenu*      displayMenu;
 };
 
 
@@ -64,8 +65,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

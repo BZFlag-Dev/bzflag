@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__MENUDEFAULTKEY_H__
-#define	__MENUDEFAULTKEY_H__
+#ifndef __MENUDEFAULTKEY_H__
+#define __MENUDEFAULTKEY_H__
 
 /* common interface headers */
 #include "BzfEvent.h"
@@ -19,18 +19,19 @@
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
 
-class MenuDefaultKey : public HUDuiDefaultKey {
+class MenuDefaultKey : public HUDuiDefaultKey
+{
 public:
-  MenuDefaultKey();
-  ~MenuDefaultKey();
+    MenuDefaultKey();
+    ~MenuDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
-  static MenuDefaultKey* getInstance();
+    static MenuDefaultKey* getInstance();
 
 private:
-  static MenuDefaultKey instance;
+    static MenuDefaultKey instance;
 };
 
 
@@ -38,8 +39,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

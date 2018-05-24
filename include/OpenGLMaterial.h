@@ -11,7 +11,7 @@
  */
 
 /* OpenGLMaterial:
- *	Encapsulates an OpenGL material.
+ *  Encapsulates an OpenGL material.
  *
  * All materials are for front and back faces.
  * OpenGLMaterial reference counts so copying or assigning a
@@ -27,87 +27,89 @@
  * <, <=, >, >= define an arbitrary ordering of materials.
  */
 
-#ifndef	BZF_OPENGL_MATERIAL_H
-#define	BZF_OPENGL_MATERIAL_H
+#ifndef BZF_OPENGL_MATERIAL_H
+#define BZF_OPENGL_MATERIAL_H
 
 #include "common.h"
 #include "bzfgl.h"
 
-class OpenGLMaterial {
-  public:
-			OpenGLMaterial();
-			OpenGLMaterial(const GLfloat* specularRGB,
-					const GLfloat* emissiveRGB,
-					GLfloat shininess = 0.0f);
-			OpenGLMaterial(const OpenGLMaterial&);
-			~OpenGLMaterial();
-    OpenGLMaterial&	operator=(const OpenGLMaterial&);
+class OpenGLMaterial
+{
+public:
+    OpenGLMaterial();
+    OpenGLMaterial(const GLfloat* specularRGB,
+                   const GLfloat* emissiveRGB,
+                   GLfloat shininess = 0.0f);
+    OpenGLMaterial(const OpenGLMaterial&);
+    ~OpenGLMaterial();
+    OpenGLMaterial& operator=(const OpenGLMaterial&);
 
-    bool		operator==(const OpenGLMaterial&) const;
-    bool		operator!=(const OpenGLMaterial&) const;
-    bool		operator<(const OpenGLMaterial&) const;
+    bool        operator==(const OpenGLMaterial&) const;
+    bool        operator!=(const OpenGLMaterial&) const;
+    bool        operator<(const OpenGLMaterial&) const;
 
-    const GLfloat*	getSpecularColor() const;
-    const GLfloat*	getEmissiveColor() const;
-    GLfloat		getShininess() const;
+    const GLfloat*  getSpecularColor() const;
+    const GLfloat*  getEmissiveColor() const;
+    GLfloat     getShininess() const;
 
-    bool		isValid() const;
-    void		execute() const;
+    bool        isValid() const;
+    void        execute() const;
 
-  private:
-    class Rep {
-      public:
-			~Rep();
-	void		ref();
-	void		unref();
-	void		execute();
-	static Rep*	getRep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
-      private:
-			Rep(const GLfloat* specular,
-				const GLfloat* emissive,
-				GLfloat shininess);
-	static void	freeContext(void*);
-	static void	initContext(void*);
-      public:
-	int		refCount;
-	Rep*		prev;
-	Rep*		next;
-	GLuint		list;
-	GLfloat		specular[4];
-	GLfloat		emissive[4];
-	GLfloat		shininess;
-	static Rep*	head;
+private:
+    class Rep
+    {
+    public:
+        ~Rep();
+        void        ref();
+        void        unref();
+        void        execute();
+        static Rep* getRep(const GLfloat* specular,
+                           const GLfloat* emissive,
+                           GLfloat shininess);
+    private:
+        Rep(const GLfloat* specular,
+            const GLfloat* emissive,
+            GLfloat shininess);
+        static void freeContext(void*);
+        static void initContext(void*);
+    public:
+        int     refCount;
+        Rep*        prev;
+        Rep*        next;
+        GLuint      list;
+        GLfloat     specular[4];
+        GLfloat     emissive[4];
+        GLfloat     shininess;
+        static Rep* head;
     };
-    Rep*		rep;
+    Rep*        rep;
 };
 
 //
 // OpenGLMaterial
 //
 
-inline const GLfloat*	OpenGLMaterial::getSpecularColor() const
+inline const GLfloat*   OpenGLMaterial::getSpecularColor() const
 {
-  return rep->specular;
+    return rep->specular;
 }
 
-inline const GLfloat*	OpenGLMaterial::getEmissiveColor() const
+inline const GLfloat*   OpenGLMaterial::getEmissiveColor() const
 {
-  return rep->emissive;
+    return rep->emissive;
 }
 
-inline GLfloat		OpenGLMaterial::getShininess() const
+inline GLfloat      OpenGLMaterial::getShininess() const
 {
-  return rep->shininess;
+    return rep->shininess;
 }
 
 #endif // BZF_OPENGL_MATERIAL_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

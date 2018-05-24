@@ -29,27 +29,27 @@ class SpawnPolicy
 {
 
 public:
-  SpawnPolicy();
-  virtual ~SpawnPolicy();
+    SpawnPolicy();
+    virtual ~SpawnPolicy();
 
-  virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
-  virtual void getAzimuth(float &azimuth);
+    virtual void getPosition(float pos[3], int playerId, bool onGroundOnly, bool notNearEdges);
+    virtual void getAzimuth(float &azimuth);
 
 protected:
-  virtual bool isImminentlyDangerous() const;
+    virtual bool isImminentlyDangerous() const;
 
 private:
-  float enemyProximityCheck(float &enemyAngle) const;
-  float distanceFrom(const float *farPos) const;
-  bool  isFacing(const float *enemyPos, const float enemyAzimuth, const float deviation) const;
+    float enemyProximityCheck(float &enemyAngle) const;
+    float distanceFrom(const float *farPos) const;
+    bool  isFacing(const float *enemyPos, const float enemyAzimuth, const float deviation) const;
 
-  /* temp, internal use */
-  TeamColor   team;
-  float       testPos[3];
+    /* temp, internal use */
+    TeamColor   team;
+    float       testPos[3];
 
-  float safeSWRadius;
-  float safeSRRadius;
-  float safeDistance;
+    float safeSWRadius;
+    float safeSRRadius;
+    float safeDistance;
 };
 
 #endif  /*__SPAWNPOLICY_H__ */

@@ -29,91 +29,92 @@ BzfJoystick::~BzfJoystick()
 {
 }
 
-void			BzfJoystick::initJoystick(const char* joystickName)
+void            BzfJoystick::initJoystick(const char* joystickName)
 {
-  if (strcmp(joystickName, "off") && strcmp(joystickName, "")) {
-    std::vector<std::string> args;
-    args.push_back(joystickName);
-    printError("Joystick '{1}' not supported...", &args);
-  }
+    if (strcmp(joystickName, "off") && strcmp(joystickName, ""))
+    {
+        std::vector<std::string> args;
+        args.push_back(joystickName);
+        printError("Joystick '{1}' not supported...", &args);
+    }
 }
 
-int		     BzfJoystick::getNumHats()
+int          BzfJoystick::getNumHats()
 {
-  return 0;
+    return 0;
 }
 
-void		    BzfJoystick::getJoyHat(int UNUSED(hat), float &hatX, float &hatY)
+void            BzfJoystick::getJoyHat(int UNUSED(hat), float &hatX, float &hatY)
 {
-  hatX = hatY = 0;
+    hatX = hatY = 0;
 }
 
-unsigned long		BzfJoystick::getJoyButtons()
+unsigned long       BzfJoystick::getJoyButtons()
 {
-  return 0;
+    return 0;
 }
 
-bool			BzfJoystick::joystick() const
+bool            BzfJoystick::joystick() const
 {
-  return false;
+    return false;
 }
 
-void			BzfJoystick::getJoy(int& x, int& y)
+void            BzfJoystick::getJoy(int& x, int& y)
 {
-  x = y = 0;
+    x = y = 0;
 }
 
-void		    BzfJoystick::getJoyDevices(std::vector<std::string>
-						 &list) const
+void            BzfJoystick::getJoyDevices(std::vector<std::string>
+        &list) const
 {
-  list.clear();
+    list.clear();
 }
 
-void		    BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
-						  &list) const
+void            BzfJoystick::getJoyDeviceAxes(std::vector<std::string>
+        &list) const
 {
-  list.clear();
-  list.push_back("default");
+    list.clear();
+    list.push_back("default");
 }
 
-bool		    BzfJoystick::ffHasRumble() const
+bool            BzfJoystick::ffHasRumble() const
 {
-  return false;
+    return false;
 }
 
-void		    BzfJoystick::ffRumble(int, float, float, float, float)
-{
-}
-
-bool		    BzfJoystick::ffHasDirectional() const
-{
-  return false;
-}
-
-void		    BzfJoystick::ffDirectionalConstant(int, float, float, float, float, float)
+void            BzfJoystick::ffRumble(int, float, float, float, float)
 {
 }
 
-void		    BzfJoystick::ffDirectionalPeriodic(int, float, float, float, float, float, float, PeriodicType)
+bool            BzfJoystick::ffHasDirectional() const
+{
+    return false;
+}
+
+void            BzfJoystick::ffDirectionalConstant(int, float, float, float, float, float)
 {
 }
 
-void		    BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
+void            BzfJoystick::ffDirectionalPeriodic(int, float, float, float, float, float, float, PeriodicType)
 {
 }
 
-void		    BzfJoystick::setXAxis(const std::string &)
+void            BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
 {
 }
 
-void		    BzfJoystick::setYAxis(const std::string &)
+void            BzfJoystick::setXAxis(const std::string &)
+{
+}
+
+void            BzfJoystick::setYAxis(const std::string &)
 {
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

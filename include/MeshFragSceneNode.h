@@ -11,13 +11,13 @@
  */
 
 /* MeshFragSceneNode:
- *	Encapsulates information for rendering a mesh fragment
+ *  Encapsulates information for rendering a mesh fragment
  *      (a collection of faces with the same material properties).
- *	Does not support level of detail.
+ *  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_FRAG_SCENE_NODE_H
-#define	BZF_MESH_FRAG_SCENE_NODE_H
+#ifndef BZF_MESH_FRAG_SCENE_NODE_H
+#define BZF_MESH_FRAG_SCENE_NODE_H
 
 #include "common.h"
 #include "WallSceneNode.h"
@@ -34,9 +34,10 @@
 
 class MeshFace;
 
-class MeshFragSceneNode : public WallSceneNode {
+class MeshFragSceneNode : public WallSceneNode
+{
 
-  public:
+public:
     MeshFragSceneNode(int faceCount, const MeshFace** faces);
     ~MeshFragSceneNode();
 
@@ -51,37 +52,44 @@ class MeshFragSceneNode : public WallSceneNode {
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
-  protected:
-    class Geometry : public RenderNode {
-      public:
-	Geometry(MeshFragSceneNode* node);
-	~Geometry();
+protected:
+    class Geometry : public RenderNode
+    {
+    public:
+        Geometry(MeshFragSceneNode* node);
+        ~Geometry();
 
-	void init();
-	void setStyle(int _style) { style = _style; }
-	void render();
-	void renderRadar();
-	void renderShadow();
-	const GLfloat* getPosition() const { return sceneNode->getSphere(); }
+        void init();
+        void setStyle(int _style)
+        {
+            style = _style;
+        }
+        void render();
+        void renderRadar();
+        void renderShadow();
+        const GLfloat* getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
 
-      private:
-	void drawV() const; // draw with just vertices
-	void drawVT() const; // draw with texcoords
-	void drawVN() const; // draw with normals
-	void drawVTN() const; // draw with texcoords and normals
+    private:
+        void drawV() const; // draw with just vertices
+        void drawVT() const; // draw with texcoords
+        void drawVN() const; // draw with normals
+        void drawVTN() const; // draw with texcoords and normals
 
-	void initDisplayList();
-	void freeDisplayList();
-	static void initContext(void *data);
-	static void freeContext(void *data);
+        void initDisplayList();
+        void freeDisplayList();
+        static void initContext(void *data);
+        static void freeContext(void *data);
 
-      private:
-	int style;
-	GLuint list;
-	MeshFragSceneNode* sceneNode;
+    private:
+        int style;
+        GLuint list;
+        MeshFragSceneNode* sceneNode;
     };
 
-  private:
+private:
     Geometry renderNode;
 
     GLint faceCount;
@@ -94,7 +102,7 @@ class MeshFragSceneNode : public WallSceneNode {
     GLfloat* normals;
     GLfloat* texcoords;
 
-  friend class MeshFragSceneNode::Geometry;
+    friend class MeshFragSceneNode::Geometry;
 };
 
 
@@ -102,8 +110,8 @@ class MeshFragSceneNode : public WallSceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

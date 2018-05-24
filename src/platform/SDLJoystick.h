@@ -11,45 +11,46 @@
  */
 
 /* SDLJoystick:
- *	Encapsulates an SDL joystick
+ *  Encapsulates an SDL joystick
  */
 
 #ifndef BZF_SDLJOY_H
-#define	BZF_SDLJOY_H
+#define BZF_SDLJOY_H
 
 #include "BzfJoystick.h"
 #include "bzfSDL.h"
 
-class SDLJoystick : public BzfJoystick {
-  public:
-		SDLJoystick();
-		~SDLJoystick();
+class SDLJoystick : public BzfJoystick
+{
+public:
+    SDLJoystick();
+    ~SDLJoystick();
 
-    void	initJoystick(const char* joystickName);
-    bool	joystick() const;
-    void	getJoy(int& x, int& y);
+    void    initJoystick(const char* joystickName);
+    bool    joystick() const;
+    void    getJoy(int& x, int& y);
     unsigned long getJoyButtons();
-    int		getNumHats();
-    void	getJoyHat(int hat, float &hatX, float &hatY);
-    void	getJoyDevices(std::vector<std::string> &list) const;
-    void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    void	setXAxis(const std::string &axis);
-    void	setYAxis(const std::string &axis);
+    int     getNumHats();
+    void    getJoyHat(int hat, float &hatX, float &hatY);
+    void    getJoyDevices(std::vector<std::string> &list) const;
+    void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    void    setXAxis(const std::string &axis);
+    void    setYAxis(const std::string &axis);
 
-  private:
+private:
     SDL_Joystick *joystickID;
-    int		joystickButtons;
-    int		numHats;
-    int		xAxis;
-    int		yAxis;
+    int     joystickButtons;
+    int     numHats;
+    int     xAxis;
+    int     yAxis;
 };
 
 #endif // BZF_SDLJOY_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -19,16 +19,16 @@
 
 /* system headers */
 #ifdef _WIN32
-  #define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
-  #include <windows.h>
-  #include <io.h>
-  #include <direct.h>
+#define WIN32_LEAN_AND_MEAN    // Exclude rarely-used stuff from Windows headers
+#include <windows.h>
+#include <io.h>
+#include <direct.h>
 #else
-  #include <sys/types.h>
-  #include <sys/stat.h>
-  #include <unistd.h>
-  #include <dirent.h>
-  #include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <dirent.h>
+#include <ctype.h>
 #endif
 
 #include <string>
@@ -38,9 +38,9 @@
 
 typedef enum
 {
-  eFileStart,
-  eCurentPos,
-  eFileEnd
+    eFileStart,
+    eCurentPos,
+    eFileEnd
 } teFilePos;
 
 void setOSFileBaseDir(const std::string &dir);
@@ -49,89 +49,89 @@ void OSFileOSToStdDir(std::string &dir);
 class OSFile
 {
 public:
-  OSFile();
-  OSFile(const OSFile &r);
-  OSFile& operator=(const OSFile &r);
+    OSFile();
+    OSFile(const OSFile &r);
+    OSFile& operator=(const OSFile &r);
 
-  OSFile(const std::string &szName);
-  OSFile(const char *szName);
+    OSFile(const std::string &szName);
+    OSFile(const char *szName);
 
-  OSFile(const std::string &szName, const char *szMode);
-  ~OSFile();
+    OSFile(const std::string &szName, const char *szMode);
+    ~OSFile();
 
-  bool open(const std::string &szName, const char *szMode);
-  bool open(const char *szMode);
-  bool close();
+    bool open(const std::string &szName, const char *szMode);
+    bool open(const char *szMode);
+    bool close();
 
-  void stdName(const std::string &szName);
-  void osName(const std::string &szName);
+    void stdName(const std::string &szName);
+    void osName(const std::string &szName);
 
-  FILE* getFile();
+    FILE* getFile();
 
-  std::string getStdName();
-  std::string getOSName();
+    std::string getStdName();
+    std::string getOSName();
 
-  std::string getFileName();
+    std::string getFileName();
 
-  std::string getExtension();
+    std::string getExtension();
 
-  std::string getFullOSPath();
+    std::string getFullOSPath();
 
-  std::string getOSFileDir();
+    std::string getOSFileDir();
 
-  bool isOpen();
+    bool isOpen();
 
-  int read(void* data, int size, int count = 1);
-  unsigned char readChar();
-  int scanChar(unsigned char *pChar);
-  const char* scanStr();
-  std::string readLine();
-  int write(const void* data, int size);
-  void flush();
+    int read(void* data, int size, int count = 1);
+    unsigned char readChar();
+    int scanChar(unsigned char *pChar);
+    const char* scanStr();
+    std::string readLine();
+    int write(const void* data, int size);
+    void flush();
 
-  int seek(teFilePos ePos, int iOffset);
-  unsigned int size();
-  unsigned int tell();
+    int seek(teFilePos ePos, int iOffset);
+    unsigned int size();
+    unsigned int tell();
 
-  void setUseGlobalPath(bool use = false);
+    void setUseGlobalPath(bool use = false);
 protected:
-  class OSFileInfo;
-  OSFileInfo    *info;
+    class OSFileInfo;
+    OSFileInfo    *info;
 };
 
 
 class OSDir
 {
 public:
-  OSDir();
-  OSDir(const OSDir &r);
-  OSDir& operator=(const OSDir &r);
-  OSDir(const std::string &DirName);
-  ~OSDir();
+    OSDir();
+    OSDir(const OSDir &r);
+    OSDir& operator=(const OSDir &r);
+    OSDir(const std::string &DirName);
+    ~OSDir();
 
-  void setStdDir(const std::string &DirName);
-  void setOSDir(const std::string &DirName);
+    void setStdDir(const std::string &DirName);
+    void setOSDir(const std::string &DirName);
 
-  void makeStdDir(const std::string &DirName);
-  void makeOSDir(const std::string &DirName);
+    void makeStdDir(const std::string &DirName);
+    void makeOSDir(const std::string &DirName);
 
-  bool getNextFile(OSFile &oFile, bool bRecursive);
-  bool getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive);
+    bool getNextFile(OSFile &oFile, bool bRecursive);
+    bool getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive);
 
-  int getFileScanCount();
+    int getFileScanCount();
 
-  std::string getStdName();
-  std::string getOSName();
-  std::string getFullOSPath();
+    std::string getStdName();
+    std::string getOSName();
+    std::string getFullOSPath();
 
-  std::string getOSFileDir();
+    std::string getOSFileDir();
 
 protected:
-  class OSDirInfo;
-  OSDirInfo    *info;
+    class OSDirInfo;
+    OSDirInfo    *info;
 
-  bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
-  bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
+    bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
+    bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
 };
 
 
@@ -139,8 +139,8 @@ protected:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

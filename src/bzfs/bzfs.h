@@ -21,7 +21,7 @@
 #include "common.h"
 
 // must be before network.h because that defines a close() macro which
-// messes up fstreams.	luckily, we don't need to call the close() method
+// messes up fstreams.  luckily, we don't need to call the close() method
 // on any fstream.
 #include <fstream>
 
@@ -46,69 +46,69 @@
 class PendingChatMessages
 {
 public:
-  int to;
-  int from;
-  std::string text;
-  MessageType type;
+    int to;
+    int from;
+    std::string text;
+    MessageType type;
 
-  PendingChatMessages ( int t, int f, const std::string &m, MessageType y )
-  {
-    to = t;
-    from = f;
-    text = m;
-    type = y;
-  }
+    PendingChatMessages ( int t, int f, const std::string &m, MessageType y )
+    {
+        to = t;
+        from = f;
+        text = m;
+        type = y;
+    }
 
-  PendingChatMessages ( int t, int f, const char* m, MessageType y )
-  {
-    to = t;
-    from = f;
-    if (m)
-      text = m;
-    type = y;
-  }
+    PendingChatMessages ( int t, int f, const char* m, MessageType y )
+    {
+        to = t;
+        from = f;
+        if (m)
+            text = m;
+        type = y;
+    }
 
-  PendingChatMessages ( const PendingChatMessages &m )
-  {
-    to = m.to;
-    from = m.from;
-    text = m.text;
-    type = m.type;
-  }
+    PendingChatMessages ( const PendingChatMessages &m )
+    {
+        to = m.to;
+        from = m.from;
+        text = m.text;
+        type = m.type;
+    }
 };
 
 extern std::list<PendingChatMessages> pendingChatMessages;
 
-extern void sendMessage(int		playerIndex,
-			PlayerId	dstPlayer,
-			const char	*message,
-			MessageType	type = ChatMessage);
-extern void removePlayer(int		playerIndex,
-			 const char	*reason,
-			 bool		notify = true);
-extern void playerKilled(int		victimIndex,
-			 int		killerIndex,
-			 int		reason,
-			 int16_t	shotIndex,
-			 const FlagType	*flagType,
-			 int		phydrv,
-			 bool		respawnOnBase = false);
+extern void sendMessage(int     playerIndex,
+                        PlayerId    dstPlayer,
+                        const char  *message,
+                        MessageType type = ChatMessage);
+extern void removePlayer(int        playerIndex,
+                         const char *reason,
+                         bool       notify = true);
+extern void playerKilled(int        victimIndex,
+                         int        killerIndex,
+                         int        reason,
+                         int16_t    shotIndex,
+                         const FlagType *flagType,
+                         int        phydrv,
+                         bool       respawnOnBase = false);
 extern void doSpawns();
 extern void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos = true);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
-			      PlayerId dstPlayer,
-			      const char *message);
+                              PlayerId dstPlayer,
+                              const char *message);
 extern char *getDirectMessageBuffer();
 extern void  broadcastMessage(uint16_t code, int len, void *msg);
 extern void  sendTeamUpdate(int playerIndex = -1,
-			    int teamIndex1 = -1,
-			    int teamIndex2 = -1);
+                            int teamIndex1 = -1,
+                            int teamIndex2 = -1);
 extern void  sendFlagUpdate(FlagInfo &flag);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 extern void  directMessage(int playerIndex, uint16_t code,
-			   int len, void *msg);
+                           int len, void *msg);
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();
@@ -131,36 +131,36 @@ void rescanForBans(bool isOperator = false, const char* callsign = NULL, int pla
 // initialize permission groups
 extern void initGroups();
 
-extern BasesList	bases;
-extern CmdLineOptions	*clOptions;
-extern uint16_t		curMaxPlayers;
-extern bool		done;
-extern bool		gameOver;
-extern TeamInfo		team[NumTeams];
-extern int		numFlags;
-extern TimeKeeper	gameStartTime;
-extern bool		countdownActive;
-extern int		countdownDelay;
-extern TimeKeeper	countdownPauseStart;
-extern int		countdownResumeDelay;
-extern std::string	hexDigest;
-extern WorldInfo	*world;
-extern char		*worldDatabase;
-extern uint32_t		worldDatabaseSize;
-extern char		worldSettings[4 + WorldSettingsSize];
-extern uint8_t		rabbitIndex;
-extern float		speedTolerance;
-extern bool		handlePings;
-extern uint16_t		maxPlayers;
-extern uint16_t		maxRealPlayers;
-extern float		pluginWorldSize;
-extern float		pluginWorldHeight;
-extern bool		checkShotMismatch;
-extern bool		publiclyDisconnected;
+extern BasesList    bases;
+extern CmdLineOptions   *clOptions;
+extern uint16_t     curMaxPlayers;
+extern bool     done;
+extern bool     gameOver;
+extern TeamInfo     team[NumTeams];
+extern int      numFlags;
+extern TimeKeeper   gameStartTime;
+extern bool     countdownActive;
+extern int      countdownDelay;
+extern TimeKeeper   countdownPauseStart;
+extern int      countdownResumeDelay;
+extern std::string  hexDigest;
+extern WorldInfo    *world;
+extern char     *worldDatabase;
+extern uint32_t     worldDatabaseSize;
+extern char     worldSettings[4 + WorldSettingsSize];
+extern uint8_t      rabbitIndex;
+extern float        speedTolerance;
+extern bool     handlePings;
+extern uint16_t     maxPlayers;
+extern uint16_t     maxRealPlayers;
+extern float        pluginWorldSize;
+extern float        pluginWorldHeight;
+extern bool     checkShotMismatch;
+extern bool     publiclyDisconnected;
 
-extern Shots::Manager	ShotManager;
+extern Shots::Manager   ShotManager;
 
-extern VotingArbiter	*votingarbiter;
+extern VotingArbiter    *votingarbiter;
 
 bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped = NoTeam, bool checkCheat = true);
 
@@ -185,26 +185,27 @@ void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3]);
 void ApiTick(void);
 
 // peer list
-struct NetConnectedPeer {
-  int socket;
-  int player;
+struct NetConnectedPeer
+{
+    int socket;
+    int player;
 
-  NetHandler* netHandler;
-  bz_NonPlayerConnectionHandler* apiHandler;
+    NetHandler* netHandler;
+    bz_NonPlayerConnectionHandler* apiHandler;
 
-  std::list<std::string> sendChunks;
-  std::string bufferedInput;
+    std::list<std::string> sendChunks;
+    std::string bufferedInput;
 
-  TimeKeeper startTime;
-  TimeKeeper lastActivity;
+    TimeKeeper startTime;
+    TimeKeeper lastActivity;
 
-  TimeKeeper lastSend;
-  double minSendTime;
+    TimeKeeper lastSend;
+    double minSendTime;
 
-  double inactivityTimeout;
-  bool   sent;
-  bool   deleteMe;
-  bool   deleteWhenDoneSending;
+    double inactivityTimeout;
+    bool   sent;
+    bool   deleteMe;
+    bool   deleteWhenDoneSending;
 };
 
 extern std::map<int, NetConnectedPeer> netConnectedPeers;
@@ -225,8 +226,8 @@ void broadcastHandicaps(int toPlayer = -1);
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

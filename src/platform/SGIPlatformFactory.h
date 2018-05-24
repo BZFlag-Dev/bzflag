@@ -11,28 +11,29 @@
  */
 
 /* SGIPlatformFactory:
- *	Factory for SGI Irix platform stuff.
+ *  Factory for SGI Irix platform stuff.
  */
 
 #ifndef BZF_SGIPLATFORM_FACTORY_H
-#define	BZF_SGIPLATFORM_FACTORY_H
+#define BZF_SGIPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
-class SGIPlatformFactory : public PlatformFactory {
-  public:
-			SGIPlatformFactory();
-			~SGIPlatformFactory();
+class SGIPlatformFactory : public PlatformFactory
+{
+public:
+    SGIPlatformFactory();
+    ~SGIPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
 
-  private:
-			SGIPlatformFactory(const SGIPlatformFactory&);
-    SGIPlatformFactory&	operator=(const SGIPlatformFactory&);
+private:
+    SGIPlatformFactory(const SGIPlatformFactory&);
+    SGIPlatformFactory& operator=(const SGIPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_SGIPLATFORM_FACTORY_H

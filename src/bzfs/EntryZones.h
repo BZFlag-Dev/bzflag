@@ -30,7 +30,7 @@ typedef std::map<std::string, QPairList> QualifierMap;
 
 class EntryZones
 {
-  public:
+public:
     EntryZones();
 
     void addZone( const CustomZone *zone );
@@ -40,33 +40,33 @@ class EntryZones
 
     bool getZonePoint(const std::string &qualifier, float *pt) const;
     bool getSafetyPoint(const std::string &qualifier,
-			const float *pos, float *pt) const;
+                        const float *pos, float *pt) const;
 
     bool getRandomPoint(const std::string &qual, float *pt) const;
     bool getClosePoint(const std::string &qual, const float pos[3],
-		       float *pt) const;
+                       float *pt) const;
 
     const ZoneList& getZoneList() const;
 
     int packSize() const;
     void *pack(void *buf) const;
 
-  private:
+private:
     ZoneList zones;
     QualifierMap qmap;
 
     void makeSplitLists (int zone,
-			 std::vector<FlagType*> &flags,
-			 std::vector<TeamColor> &teams,
-			 std::vector<TeamColor> &safety) const;
+                         std::vector<FlagType*> &flags,
+                         std::vector<TeamColor> &teams,
+                         std::vector<TeamColor> &safety) const;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

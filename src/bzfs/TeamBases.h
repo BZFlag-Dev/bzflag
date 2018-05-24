@@ -22,35 +22,37 @@
 
 
 class TeamBase
-{ // This class represents one base
+{
+    // This class represents one base
 public:
-  TeamBase(): position(), size(), rotation(0.0) {}
-  TeamBase(const float *pos, const float *siz, float rot);
-  void getRandomPosition( float &x, float &y, float &z ) const;
-  float position[3];
-  float size[3];
-  float rotation;
+    TeamBase(): position(), size(), rotation(0.0) {}
+    TeamBase(const float *pos, const float *siz, float rot);
+    void getRandomPosition( float &x, float &y, float &z ) const;
+    float position[3];
+    float size[3];
+    float rotation;
 };
 
 
 class TeamBases
-{ // This class represents all the bases for one team
+{
+    // This class represents all the bases for one team
 public:
 
-  TeamBases();
-  TeamBases(TeamColor team, bool initDefault = false);
-  void addBase( const float *position, const float *size, float rotation );
-  int size() const;
-  TeamColor getTeam() const;
-  const float *getBasePosition( int base ) const;
-  float findBaseZ( float x, float y, float z ) const;
-  const TeamBase& getRandomBase( int id );
+    TeamBases();
+    TeamBases(TeamColor team, bool initDefault = false);
+    void addBase( const float *position, const float *size, float rotation );
+    int size() const;
+    TeamColor getTeam() const;
+    const float *getBasePosition( int base ) const;
+    float findBaseZ( float x, float y, float z ) const;
+    const TeamBase& getRandomBase( int id );
 
 private:
-  typedef std::vector<TeamBase> TeamBaseList;
+    typedef std::vector<TeamBase> TeamBaseList;
 
-  TeamBaseList teamBases;
-  TeamColor    color;
+    TeamBaseList teamBases;
+    TeamColor    color;
 };
 
 typedef std::map<int, TeamBases> BasesList;
@@ -60,8 +62,8 @@ typedef std::map<int, TeamBases> BasesList;
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_BZFLAG_H
-#define	BZF_BZFLAG_H
+#ifndef BZF_BZFLAG_H
+#define BZF_BZFLAG_H
 
 #include "common.h"
 

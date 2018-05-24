@@ -30,607 +30,613 @@
 
 GUIOptionsMenu::GUIOptionsMenu()
 {
-  // add controls
-  std::vector<HUDuiControl*>& listHUD = getControls();
+    // add controls
+    std::vector<HUDuiControl*>& listHUD = getControls();
 
-  // cache font face ID
-  int fontFace = MainMenu::getFontFace();
+    // cache font face ID
+    int fontFace = MainMenu::getFontFace();
 
-  HUDuiLabel* label = new HUDuiLabel;
-  label->setFontFace(fontFace);
-  label->setString("GUI Settings");
-  listHUD.push_back(label);
+    HUDuiLabel* label = new HUDuiLabel;
+    label->setFontFace(fontFace);
+    label->setString("GUI Settings");
+    listHUD.push_back(label);
 
-  HUDuiList* option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Style:");
-  option->setCallback(callback, "e");
-  std::vector<std::string>* options = &option->getList();
-  options->push_back(std::string("Normal"));
-  options->push_back(std::string("Fast"));
-  options->push_back(std::string("Fast Sorted"));
-  options->push_back(std::string("Enhanced"));
-  option->update();
-  listHUD.push_back(option);
+    HUDuiList* option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Style:");
+    option->setCallback(callback, "e");
+    std::vector<std::string>* options = &option->getList();
+    options->push_back(std::string("Normal"));
+    options->push_back(std::string("Fast"));
+    options->push_back(std::string("Fast Sorted"));
+    options->push_back(std::string("Enhanced"));
+    option->update();
+    listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Scoreboard Sort:");
-  option->setCallback(callback, "p");
-  options = &option->getList();
-  const char **sortLabels = ScoreboardRenderer::getSortLabels();
-  while ( *sortLabels != NULL)
-    options->push_back(std::string(*sortLabels++));
-  option->update();
-  listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Scoreboard Sort:");
+    option->setCallback(callback, "p");
+    options = &option->getList();
+    const char **sortLabels = ScoreboardRenderer::getSortLabels();
+    while ( *sortLabels != NULL)
+        options->push_back(std::string(*sortLabels++));
+    option->update();
+    listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Always Show Team Scores:");
-  option->setCallback(callback, "q");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Always Show Team Scores:");
+    option->setCallback(callback, "q");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Scoreboard Font Size:");
-  option->setCallback(callback, "S");
-  options = &option->getList();
-  options->push_back(std::string("Auto"));
-  option->createSlider(4);
-  option->update();
-  listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Scoreboard Font Size:");
+    option->setCallback(callback, "S");
+    options = &option->getList();
+    options->push_back(std::string("Auto"));
+    option->createSlider(4);
+    option->update();
+    listHUD.push_back(option);
 
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("ControlPanel Font Size:");
-  option->setCallback(callback, "C");
-  options = &option->getList();
-  options->push_back(std::string("Auto"));
-  option->createSlider(4);
-  option->update();
-  listHUD.push_back(option);
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("ControlPanel Font Size:");
+    option->setCallback(callback, "C");
+    options = &option->getList();
+    options->push_back(std::string("Auto"));
+    option->createSlider(4);
+    option->update();
+    listHUD.push_back(option);
 
-  // set observer info
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Extended Observer Info:");
-  option->setCallback(callback, "O");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  options->push_back(std::string("On With Apparent Speeds"));
-  options->push_back(std::string("Full"));
-  option->update();
-  listHUD.push_back(option);
+    // set observer info
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Extended Observer Info:");
+    option->setCallback(callback, "O");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    options->push_back(std::string("On With Apparent Speeds"));
+    options->push_back(std::string("Full"));
+    option->update();
+    listHUD.push_back(option);
 
-  // set Panel Translucency
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Panel Opacity:");
-  option->setCallback(callback, "y");
-  option->createSlider(11);
-  option->update();
-  listHUD.push_back(option);
+    // set Panel Translucency
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Panel Opacity:");
+    option->setCallback(callback, "y");
+    option->createSlider(11);
+    option->update();
+    listHUD.push_back(option);
 
-  // set Radar Translucency
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Opacity:");
-  option->setCallback(callback, "Y");
-  option->createSlider(11);
-  option->update();
-  listHUD.push_back(option);
+    // set Radar Translucency
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Opacity:");
+    option->setCallback(callback, "Y");
+    option->createSlider(11);
+    option->update();
+    listHUD.push_back(option);
 
-  // toggle coloring of shots on radar
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Colored shots on radar:");
-  option->setCallback(callback, "z");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
+    // toggle coloring of shots on radar
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Colored shots on radar:");
+    option->setCallback(callback, "z");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
 
-  // set radar shot length
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Length:");
-  option->setCallback(callback, "l");
-  option->createSlider(11);
-  option->update();
-  listHUD.push_back(option);
+    // set radar shot length
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Shot Length:");
+    option->setCallback(callback, "l");
+    option->createSlider(11);
+    option->update();
+    listHUD.push_back(option);
 
-  // set radar shot size
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Size:");
-  option->setCallback(callback, "s");
-  option->createSlider(11);
-  option->update();
-  listHUD.push_back(option);
+    // set radar shot size
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Shot Size:");
+    option->setCallback(callback, "s");
+    option->createSlider(11);
+    option->update();
+    listHUD.push_back(option);
 
-  // radar shot leading line
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Shot Line:");
-  option->setCallback(callback, "F");
-  options = &option->getList();
-  options->push_back(std::string("Lagging"));
-  options->push_back(std::string("Leading"));
-  options->push_back(std::string("Leading & Lagging"));
-  option->update();
-  listHUD.push_back(option);
+    // radar shot leading line
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Shot Line:");
+    option->setCallback(callback, "F");
+    options = &option->getList();
+    options->push_back(std::string("Lagging"));
+    options->push_back(std::string("Leading"));
+    options->push_back(std::string("Leading & Lagging"));
+    option->update();
+    listHUD.push_back(option);
 
-  // set radar position
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Position:");
-  option->setCallback(callback, "P");
-  options = &option->getList();
-  options->push_back(std::string("Left"));
-  options->push_back(std::string("Right"));
-  option->update();
-  listHUD.push_back(option);
+    // set radar position
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Position:");
+    option->setCallback(callback, "P");
+    options = &option->getList();
+    options->push_back(std::string("Left"));
+    options->push_back(std::string("Right"));
+    option->update();
+    listHUD.push_back(option);
 
-  // set radar size
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Radar Size:");
-  option->setCallback(callback, "R");
-  option->createSlider(maxRadarSize+1);
-  option->update();
-  listHUD.push_back(option);
+    // set radar size
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Radar Size:");
+    option->setCallback(callback, "R");
+    option->createSlider(maxRadarSize+1);
+    option->update();
+    listHUD.push_back(option);
 
-  // set panel size
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Panel Height:");
-  option->setCallback(callback, "a");
-  option->createSlider(maxRadarSize+1);
-  option->update();
-  listHUD.push_back(option);
+    // set panel size
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Panel Height:");
+    option->setCallback(callback, "a");
+    option->createSlider(maxRadarSize+1);
+    option->update();
+    listHUD.push_back(option);
 
-  // set maxmotion size
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Mouse Box Size:");
-  option->setCallback(callback, "M");
-  option->createSlider(22);
-  option->update();
-  listHUD.push_back(option);
+    // set maxmotion size
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Mouse Box Size:");
+    option->setCallback(callback, "M");
+    option->createSlider(22);
+    option->update();
+    listHUD.push_back(option);
 
-  // set locale
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Locale:");
-  option->setCallback(callback, "L");
-  options = &option->getList();
-  std::vector<std::string> locales;
-  if (BundleMgr::getLocaleList(&locales) == true) {
-    options->push_back(std::string("Default"));
-    for (int i = 0; i < (int)locales.size(); i++) {
-      options->push_back(locales[i]);
+    // set locale
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Locale:");
+    option->setCallback(callback, "L");
+    options = &option->getList();
+    std::vector<std::string> locales;
+    if (BundleMgr::getLocaleList(&locales) == true)
+    {
+        options->push_back(std::string("Default"));
+        for (int i = 0; i < (int)locales.size(); i++)
+            options->push_back(locales[i]);
+        locales.erase(locales.begin(), locales.end());
     }
-    locales.erase(locales.begin(), locales.end());
-  }
-  else {
-    // Something failed when trying to compile a list
-    // of all the locales.
-    options->push_back(std::string("Default"));
-  }
-
-  for (int i = 0; i < (int)options->size(); i++) {
-    if ((*options)[i].compare(World::getLocale()) == 0) {
-      option->setIndex(i);
-      break;
+    else
+    {
+        // Something failed when trying to compile a list
+        // of all the locales.
+        options->push_back(std::string("Default"));
     }
-  }
-  option->update();
-  listHUD.push_back(option);
 
-  // Tabs
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Control panel tabs:");
-  option->setCallback(callback, "t");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("Left"));
-  options->push_back(std::string("Right"));
-  option->update();
-  listHUD.push_back(option);
-  // Automatic pausing of the console
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Automatically pause the control panel:");
-  option->setCallback(callback, "o");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
-  // GUI coloring
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Control panel coloring:");
-  option->setCallback(callback, "c");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
-  // Underline color
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Underline color:");
-  option->setCallback(callback, "u");
-  options = &option->getList();
-  options->push_back(std::string("Cyan"));
-  options->push_back(std::string("Grey"));
-  options->push_back(std::string("Text"));
-  option->update();
-  listHUD.push_back(option);
-  // Killer Highlight
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Killer Highlight:");
-  option->setCallback(callback, "k");
-  options = &option->getList();
-  options->push_back(std::string("None"));
-  options->push_back(std::string("Pulsating"));
-  options->push_back(std::string("Underline"));
-  option->update();
-  listHUD.push_back(option);
-  // Pulsate Rate
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Pulsation Rate:");
-  option->setCallback(callback, "r");
-  option->createSlider(9);
-  option->update();
-  listHUD.push_back(option);
-  // Pulsate Depth
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Pulsation Depth:");
-  option->setCallback(callback, "d");
-  option->createSlider(9);
-  option->update();
-  listHUD.push_back(option);
-  // Time/date display settings
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Time / Date Display:");
-  option->setCallback(callback, "h");
-  options = &option->getList();
-  options->push_back(std::string("Time"));
-  options->push_back(std::string("Date"));
-  options->push_back(std::string("Date and Time"));
-  option->update();
-  listHUD.push_back(option);
+    for (int i = 0; i < (int)options->size(); i++)
+    {
+        if ((*options)[i].compare(World::getLocale()) == 0)
+        {
+            option->setIndex(i);
+            break;
+        }
+    }
+    option->update();
+    listHUD.push_back(option);
 
-  // Time/date display settings
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Timestamps in console:");
-  option->setCallback(callback, "Z");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("Time"));
-  options->push_back(std::string("Date and Time"));
-  option->update();
-  listHUD.push_back(option);
+    // Tabs
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Control panel tabs:");
+    option->setCallback(callback, "t");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("Left"));
+    options->push_back(std::string("Right"));
+    option->update();
+    listHUD.push_back(option);
+    // Automatic pausing of the console
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Automatically pause the control panel:");
+    option->setCallback(callback, "o");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
+    // GUI coloring
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Control panel coloring:");
+    option->setCallback(callback, "c");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
+    // Underline color
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Underline color:");
+    option->setCallback(callback, "u");
+    options = &option->getList();
+    options->push_back(std::string("Cyan"));
+    options->push_back(std::string("Grey"));
+    options->push_back(std::string("Text"));
+    option->update();
+    listHUD.push_back(option);
+    // Killer Highlight
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Killer Highlight:");
+    option->setCallback(callback, "k");
+    options = &option->getList();
+    options->push_back(std::string("None"));
+    options->push_back(std::string("Pulsating"));
+    options->push_back(std::string("Underline"));
+    option->update();
+    listHUD.push_back(option);
+    // Pulsate Rate
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Pulsation Rate:");
+    option->setCallback(callback, "r");
+    option->createSlider(9);
+    option->update();
+    listHUD.push_back(option);
+    // Pulsate Depth
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Pulsation Depth:");
+    option->setCallback(callback, "d");
+    option->createSlider(9);
+    option->update();
+    listHUD.push_back(option);
+    // Time/date display settings
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Time / Date Display:");
+    option->setCallback(callback, "h");
+    options = &option->getList();
+    options->push_back(std::string("Time"));
+    options->push_back(std::string("Date"));
+    options->push_back(std::string("Date and Time"));
+    option->update();
+    listHUD.push_back(option);
 
-  // HUD Reload timer
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Reload timer on HUD:");
-  option->setCallback(callback, "T");
-  options = &option->getList();
-  options->push_back(std::string("Off"));
-  options->push_back(std::string("On"));
-  option->update();
-  listHUD.push_back(option);
+    // Time/date display settings
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Timestamps in console:");
+    option->setCallback(callback, "Z");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("Time"));
+    options->push_back(std::string("Date and Time"));
+    option->update();
+    listHUD.push_back(option);
 
-  // set motto display length
-  option = new HUDuiList;
-  option->setFontFace(fontFace);
-  option->setLabel("Motto Display Length:");
-  option->setCallback(callback, "E");
-  option->createSlider(32+1);
-  option->update();
-  listHUD.push_back(option);
+    // HUD Reload timer
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Reload timer on HUD:");
+    option->setCallback(callback, "T");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
 
-  initNavigation(listHUD, 1, listHUD.size()-1);
+    // set motto display length
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Motto Display Length:");
+    option->setCallback(callback, "E");
+    option->createSlider(32+1);
+    option->update();
+    listHUD.push_back(option);
+
+    initNavigation(listHUD, 1, listHUD.size()-1);
 }
 
 GUIOptionsMenu::~GUIOptionsMenu()
 {
 }
 
-void			GUIOptionsMenu::execute()
+void            GUIOptionsMenu::execute()
 {
 }
 
-void			GUIOptionsMenu::resize(int _width, int _height)
+void            GUIOptionsMenu::resize(int _width, int _height)
 {
-  HUDDialog::resize(_width, _height);
+    HUDDialog::resize(_width, _height);
 
-  // use a big font for title, smaller font for the rest
-  const float titleFontSize = (float)_height / 15.0f;
-  const float fontSize = (float)_height / 65.0f;
-  FontManager &fm = FontManager::instance();
+    // use a big font for title, smaller font for the rest
+    const float titleFontSize = (float)_height / 15.0f;
+    const float fontSize = (float)_height / 65.0f;
+    FontManager &fm = FontManager::instance();
 
-  // reposition title
-  std::vector<HUDuiControl*>& listHUD = getControls();
-  HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
-  title->setFontSize(titleFontSize);
-  const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
-  const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
-  float x = 0.5f * ((float)_width - titleWidth);
-  float y = (float)_height - titleHeight;
-  title->setPosition(x, y);
+    // reposition title
+    std::vector<HUDuiControl*>& listHUD = getControls();
+    HUDuiLabel* title = (HUDuiLabel*)listHUD[0];
+    title->setFontSize(titleFontSize);
+    const float titleWidth = fm.getStrLength(MainMenu::getFontFace(), titleFontSize, title->getString());
+    const float titleHeight = fm.getStrHeight(MainMenu::getFontFace(), titleFontSize, " ");
+    float x = 0.5f * ((float)_width - titleWidth);
+    float y = (float)_height - titleHeight;
+    title->setPosition(x, y);
 
-  // reposition options
-  x = 0.54f * (float)_width;
-  y -= 0.6f * titleHeight;
-  const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
-  const int count = listHUD.size();
-  for (int i = 1; i < count; i++) {
-    listHUD[i]->setFontSize(fontSize);
-    listHUD[i]->setPosition(x, y);
-    y -= 1.0f * h;
-  }
+    // reposition options
+    x = 0.54f * (float)_width;
+    y -= 0.6f * titleHeight;
+    const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
+    const int count = listHUD.size();
+    for (int i = 1; i < count; i++)
+    {
+        listHUD[i]->setFontSize(fontSize);
+        listHUD[i]->setPosition(x, y);
+        y -= 1.0f * h;
+    }
 
-  // load current settings
-  SceneRenderer* renderer = getSceneRenderer();
-  if (renderer) {
-    int i = 1;
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
-    ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
-    ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("scorefontsize")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("cpanelfontsize")));
-	((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-		("showVelocities")));
-   ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
-					       ->getPanelOpacity() + 0.5));
-   ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
-						  ->getRadarOpacity() + 0.5));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
-					 : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("linedradarshots")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("sizedradarshots")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("leadingShotLine")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("radarPosition")));
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getPanelHeight());
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
-    i++; // locale
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("showtabs")));
-	((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("pauseConsole") ? 1 : 0);
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
+    // load current settings
+    SceneRenderer* renderer = getSceneRenderer();
+    if (renderer)
+    {
+        int i = 1;
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
+        ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
+        ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+                                             ("scorefontsize")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+                                             ("cpanelfontsize")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+                                             ("showVelocities")));
+        ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
+                                             ->getPanelOpacity() + 0.5));
+        ((HUDuiList*)listHUD[i++])->setIndex((int)(10.0f * renderer
+                                             ->getRadarOpacity() + 0.5));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("coloredradarshots") ? 1
+                                             : 0);
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+                                             (BZDB.eval("linedradarshots")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+                                             (BZDB.eval("sizedradarshots")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("leadingShotLine")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval("radarPosition")));
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->getRadarSize());
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->getPanelHeight());
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
+        i++; // locale
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+                                             ("showtabs")));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("pauseConsole") ? 1 : 0);
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("colorful") ? 1 : 0);
 
-    // underline color - find index of mode string in options
-    const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
-    std::string uColor = BZDB.get("underlineColor");
-    ((HUDuiList*)listHUD[i++])->setIndex(std::find(opts.begin(), opts.end(), uColor) -
-					 opts.begin());
+        // underline color - find index of mode string in options
+        const std::vector<std::string> &opts = ((HUDuiList*)listHUD[i])->getList();
+        std::string uColor = BZDB.get("underlineColor");
+        ((HUDuiList*)listHUD[i++])->setIndex(std::find(opts.begin(), opts.end(), uColor) -
+                                             opts.begin());
 
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("killerhighlight")));
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("pulseRate") * 5) - 1);
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
-					 (BZDB.eval("pulseDepth") * 10) - 1);
-    ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
-							  ("timedate")));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("controlPanelTimestamp"));
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
-					 : 0);
-    if (BZDB.isTrue("hideMottos"))
-      ((HUDuiList*)listHUD[i++])->setIndex(0);
-    else
-      ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("mottoDispLen") / 4);
-  }
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+                                             (BZDB.eval("killerhighlight")));
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+                                             (BZDB.eval("pulseRate") * 5) - 1);
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>
+                                             (BZDB.eval("pulseDepth") * 10) - 1);
+        ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
+                                             ("timedate")));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("controlPanelTimestamp"));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("displayReloadTimer") ? 1
+                                             : 0);
+        if (BZDB.isTrue("hideMottos"))
+            ((HUDuiList*)listHUD[i++])->setIndex(0);
+        else
+            ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("mottoDispLen") / 4);
+    }
 }
 
-void			GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
+void            GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 {
-  HUDuiList* list = (HUDuiList*)w;
+    HUDuiList* list = (HUDuiList*)w;
 
-  SceneRenderer* sceneRenderer = getSceneRenderer();
-  switch (((const char*)data)[0]) {
+    SceneRenderer* sceneRenderer = getSceneRenderer();
+    switch (((const char*)data)[0])
+    {
     case 'e':
-      BZDB.setInt("radarStyle", list->getIndex());
-      break;
+        BZDB.setInt("radarStyle", list->getIndex());
+        break;
 
     case 'C':
-      {
-	BZDB.setInt("cpanelfontsize", list->getIndex());
-	getMainWindow()->getWindow()->callResizeCallbacks();
-	break;
-      }
+    {
+        BZDB.setInt("cpanelfontsize", list->getIndex());
+        getMainWindow()->getWindow()->callResizeCallbacks();
+        break;
+    }
 
     case 'h':
-      {
-	BZDB.setInt("timedate", list->getIndex());
-	break;
-      }
+    {
+        BZDB.setInt("timedate", list->getIndex());
+        break;
+    }
 
     case 'Z':
-      {
-	BZDB.setInt("controlPanelTimestamp", list->getIndex());
-	break;
-      }
+    {
+        BZDB.setInt("controlPanelTimestamp", list->getIndex());
+        break;
+    }
 
     case 'S':
-      {
-	BZDB.setInt("scorefontsize", list->getIndex());
-	getMainWindow()->getWindow()->callResizeCallbacks();
-	break;
-      }
+    {
+        BZDB.setInt("scorefontsize", list->getIndex());
+        getMainWindow()->getWindow()->callResizeCallbacks();
+        break;
+    }
 
-	case 'O':
-	{
-		BZDB.setInt("showVelocities", list->getIndex());
-		getMainWindow()->getWindow()->callResizeCallbacks();
-		break;
-	}
+    case 'O':
+    {
+        BZDB.setInt("showVelocities", list->getIndex());
+        getMainWindow()->getWindow()->callResizeCallbacks();
+        break;
+    }
 
     case 'y':
-      {
-	const float newOpacity = (float)list->getIndex() / 10.0f;
-	if (newOpacity == 1.0f || sceneRenderer->getRadarOpacity() == 1.0f)
-	  sceneRenderer->setRadarOpacity(newOpacity);
-	sceneRenderer->setPanelOpacity(newOpacity);
-	break;
-      }
+    {
+        const float newOpacity = (float)list->getIndex() / 10.0f;
+        if (newOpacity == 1.0f || sceneRenderer->getRadarOpacity() == 1.0f)
+            sceneRenderer->setRadarOpacity(newOpacity);
+        sceneRenderer->setPanelOpacity(newOpacity);
+        break;
+    }
 
     case 'Y':
-      {
-	const float newOpacity = (float)list->getIndex() / 10.0f;
-	sceneRenderer->setRadarOpacity(newOpacity);
-	if (newOpacity == 1.0f || sceneRenderer->getPanelOpacity() == 1.0f)
-	  sceneRenderer->setPanelOpacity(newOpacity);
-	break;
-      }
+    {
+        const float newOpacity = (float)list->getIndex() / 10.0f;
+        sceneRenderer->setRadarOpacity(newOpacity);
+        if (newOpacity == 1.0f || sceneRenderer->getPanelOpacity() == 1.0f)
+            sceneRenderer->setPanelOpacity(newOpacity);
+        break;
+    }
 
     case 'z':
-      BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
-      break;
+        BZDB.set("coloredradarshots", list->getIndex() ? "1" : "0");
+        break;
 
     case 'l':
-      BZDB.set("linedradarshots", TextUtils::format("%d", list->getIndex()));
-      break;
+        BZDB.set("linedradarshots", TextUtils::format("%d", list->getIndex()));
+        break;
 
     case 's':
-      BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
-      break;
+        BZDB.set("sizedradarshots", TextUtils::format("%d", list->getIndex()));
+        break;
 
     case 'F':
-      BZDB.setInt("leadingShotLine", list->getIndex());
-      break;
+        BZDB.setInt("leadingShotLine", list->getIndex());
+        break;
 
     case 'P':
-      BZDB.setInt("radarPosition", list->getIndex());
-      controlPanel->resize();
-      break;
+        BZDB.setInt("radarPosition", list->getIndex());
+        controlPanel->resize();
+        break;
 
     case 'R':
-      {
-	sceneRenderer->setRadarSize(list->getIndex());
-	break;
-      }
+    {
+        sceneRenderer->setRadarSize(list->getIndex());
+        break;
+    }
 
     case 'a':
-      {
-	sceneRenderer->setPanelHeight(list->getIndex());
-	break;
-      }
+    {
+        sceneRenderer->setPanelHeight(list->getIndex());
+        break;
+    }
 
     case 'M':
-      {
-	sceneRenderer->setMaxMotionFactor(list->getIndex() - 11);
-	break;
-      }
+    {
+        sceneRenderer->setMaxMotionFactor(list->getIndex() - 11);
+        break;
+    }
 
     case 'o':
-      {
-	BZDB.set("pauseConsole", list->getIndex() ? "1" : "0");
-	break;
-      }
+    {
+        BZDB.set("pauseConsole", list->getIndex() ? "1" : "0");
+        break;
+    }
 
     case 'c':
-      {
-	BZDB.set("colorful", list->getIndex() ? "1" : "0");
-	break;
-      }
+    {
+        BZDB.set("colorful", list->getIndex() ? "1" : "0");
+        break;
+    }
 
     case 't':
-      {
-	BZDB.set("showtabs", TextUtils::format("%d", list->getIndex()));
-	break;
-      }
+    {
+        BZDB.set("showtabs", TextUtils::format("%d", list->getIndex()));
+        break;
+    }
 
     case 'u':
-      {
-	std::vector<std::string>* options = &list->getList();
-	std::string color = (*options)[list->getIndex()];
-	BZDB.set("underlineColor", color);
-	break;
-      }
+    {
+        std::vector<std::string>* options = &list->getList();
+        std::string color = (*options)[list->getIndex()];
+        BZDB.set("underlineColor", color);
+        break;
+    }
 
     case 'k':
-      {
-	BZDB.set("killerhighlight", TextUtils::format("%d", list->getIndex()));
-	break;
-      }
+    {
+        BZDB.set("killerhighlight", TextUtils::format("%d", list->getIndex()));
+        break;
+    }
 
     case 'L':
-      {
-	std::vector<std::string>* options = &list->getList();
-	std::string locale = (*options)[list->getIndex()];
+    {
+        std::vector<std::string>* options = &list->getList();
+        std::string locale = (*options)[list->getIndex()];
 
-	World::setLocale(locale);
-	BZDB.set("locale", locale);
-	World::getBundleMgr()->getBundle(locale, true);
+        World::setLocale(locale);
+        BZDB.set("locale", locale);
+        World::getBundleMgr()->getBundle(locale, true);
 
-	GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
-	if (menu)
-	  menu->resize(menu->getWidth(), menu->getHeight());
-	break;
-      }
+        GUIOptionsMenu *menu = (GUIOptionsMenu *) HUDDialogStack::get()->top();
+        if (menu)
+            menu->resize(menu->getWidth(), menu->getHeight());
+        break;
+    }
 
     case 'r':
-      {
-	BZDB.set("pulseRate", TextUtils::format("%f", (float)(list->getIndex() + 1) / 5.0f));
-	break;
-      }
+    {
+        BZDB.set("pulseRate", TextUtils::format("%f", (float)(list->getIndex() + 1) / 5.0f));
+        break;
+    }
 
     case 'd':
-      {
-	BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
-	break;
-      }
+    {
+        BZDB.set("pulseDepth", TextUtils::format("%f", (float)(list->getIndex() + 1) / 10.0f));
+        break;
+    }
 
     case 'T':
-      {
-	BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
-	break;
-      }
+    {
+        BZDB.set("displayReloadTimer", list->getIndex() ? "1" : "0");
+        break;
+    }
 
     case 'p':
-      ScoreboardRenderer::setSort(list->getIndex());
-      break;
+        ScoreboardRenderer::setSort(list->getIndex());
+        break;
 
     case 'q':
-      ScoreboardRenderer::setAlwaysTeamScore(list->getIndex() ? true : false);
-      break;
+        ScoreboardRenderer::setAlwaysTeamScore(list->getIndex() ? true : false);
+        break;
 
     case 'E':
-      BZDB.set("mottoDispLen",  TextUtils::format("%d", list->getIndex() * 4));
-      BZDB.set("hideMottos", list->getIndex() ? "0" : "1");
-      break;
+        BZDB.set("mottoDispLen",  TextUtils::format("%d", list->getIndex() * 4));
+        BZDB.set("hideMottos", list->getIndex() ? "0" : "1");
+        break;
 
-  }
+    }
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
