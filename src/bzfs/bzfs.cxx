@@ -2044,6 +2044,21 @@ static bool handicapAllowed( void )
     return (clOptions->gameOptions & short(HandicapGameStyle)) != 0;
 }
 
+bool allShotsRicochet()
+{
+    return (clOptions->gameOptions & short(RicochetGameStyle)) != 0;
+}
+
+bool allowSuperFlags()
+{
+    return (clOptions->gameOptions & short(SuperFlagGameStyle)) != 0;
+}
+
+bool allowJumping()
+{
+    return (clOptions->gameOptions & short(JumpingGameStyle)) != 0;
+}
+
 // calculate handicap value for playerIndex and store in score object
 static void recalcHandicap(int playerIndex)
 {
