@@ -157,9 +157,12 @@ Formatting
 Everybody has their own style and has things they don't like about any
 other style.  Well, we can't have a zillion styles in the code, so
 follow the BZFlag style if you want your contribution included. 
-BZFlag is formated using the Allman Style, and this is envforced
-with the artistic styler, astyle, using the command line options.
-astyle --style=allman 
+BZFlag is formated using the Allman Style, and this is enforced
+with the artistic styler, astyle, using these command line options:
+
+astyle --style=allman -xjz1 --convert-tabs --max-code-length=120 \
+  --recursive /path/to/code/*.cxx,*.h,*.c
+
 The source code serves for examples of the following rules.
 
   1)  Indents are 4 characters.  Tabs are 4 characters.  There are vi
@@ -196,7 +199,7 @@ The source code serves for examples of the following rules.
 	  }
 	}
 
-  3)  An else clause goes on next line just like the openint brace:
+  3)  An else clause goes on next line just like the opening brace:
 
 	if (expr)
 	{
