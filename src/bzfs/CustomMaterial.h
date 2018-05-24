@@ -19,15 +19,19 @@
 /* common headers */
 #include "BzMaterial.h"
 
-class CustomMaterial : public WorldFileObject {
-  public:
+class CustomMaterial : public WorldFileObject
+{
+public:
     CustomMaterial();
     ~CustomMaterial();
     virtual bool read(const char *cmd, std::istream& input);
     virtual void writeToManager() const;
-    bool usesManager() { return true; }
+    bool usesManager()
+    {
+        return true;
+    }
 
-  private:
+private:
     mutable BzMaterial material;
 };
 
@@ -35,8 +39,8 @@ class CustomMaterial : public WorldFileObject {
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

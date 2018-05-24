@@ -21,21 +21,22 @@
 
 /** This struct stores information about a player that is relevant to
     bzadmin. */
-struct PlayerInfo {
-  PlayerInfo(): wins(), losses(), tks(),
-    isRegistered(), isVerified(), isAdmin() {}
-  PlayerInfo(const std::string& n) : name(n),
-    wins(), losses(), tks(), isRegistered(),
-    isVerified(), isAdmin() {}
-  std::string name;
-  std::string ip;
-  TeamColor team;
-  int wins;
-  int losses;
-  int tks;
-  bool isRegistered;
-  bool isVerified;
-  bool isAdmin;
+struct PlayerInfo
+{
+    PlayerInfo(): wins(), losses(), tks(),
+        isRegistered(), isVerified(), isAdmin() {}
+    PlayerInfo(const std::string& n) : name(n),
+        wins(), losses(), tks(), isRegistered(),
+        isVerified(), isAdmin() {}
+    std::string name;
+    std::string ip;
+    TeamColor team;
+    int wins;
+    int losses;
+    int tks;
+    bool isRegistered;
+    bool isVerified;
+    bool isAdmin;
 };
 
 

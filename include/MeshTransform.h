@@ -18,23 +18,26 @@
 #include <vector>
 #include <iostream>
 
-enum TransformType {
-  ShiftTransform = 0,
-  ScaleTransform = 1,
-  ShearTransform = 2,
-  SpinTransform  = 3,
-  IndexTransform = 4,
-  LastTransform
+enum TransformType
+{
+    ShiftTransform = 0,
+    ScaleTransform = 1,
+    ShearTransform = 2,
+    SpinTransform  = 3,
+    IndexTransform = 4,
+    LastTransform
 };
 
-typedef struct {
-  TransformType type;
-  int index;
-  float data[4];
+typedef struct
+{
+    TransformType type;
+    int index;
+    float data[4];
 } TransformData;
 
-class MeshTransform {
-  public:
+class MeshTransform
+{
+public:
     MeshTransform();
     ~MeshTransform();
 
@@ -49,7 +52,10 @@ class MeshTransform {
     void addSpin(const float degrees, const float normal[3]);
     void addReference(int transform);
 
-    bool isEmpty() const { return (transforms.size() <= 0); }
+    bool isEmpty() const
+    {
+        return (transforms.size() <= 0);
+    }
 
     bool isValid();
     void finalize();
@@ -63,56 +69,58 @@ class MeshTransform {
     void print(std::ostream& out, const std::string& indent) const;
     void printTransforms(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
 
     std::string name;
     std::vector<TransformData> transforms;
 
-  public:
-    class Tool {
-      public:
-	Tool(const MeshTransform& transform);
-	~Tool();
+public:
+    class Tool
+    {
+    public:
+        Tool(const MeshTransform& transform);
+        ~Tool();
 
-	bool isInverted() const;
-	bool isSkewed() const; // scaled or sheared
-	void modifyVertex(float vertex[3]) const;
-	void modifyNormal(float normal[3]) const;
-	void modifyOldStyle(float pos[3], float size[3],
-			    float& angle, bool& flipz) const;
-	const float* getMatrix() const;
+        bool isInverted() const;
+        bool isSkewed() const; // scaled or sheared
+        void modifyVertex(float vertex[3]) const;
+        void modifyNormal(float normal[3]) const;
+        void modifyOldStyle(float pos[3], float size[3],
+                            float& angle, bool& flipz) const;
+        const float* getMatrix() const;
 
-      private:
-	void processTransforms(const std::vector<TransformData>& tforms);
+    private:
+        void processTransforms(const std::vector<TransformData>& tforms);
 
-	bool empty;
-	bool inverted;
-	bool skewed;
-	float vertexMatrix[4][4];
-	float normalMatrix[3][3];
+        bool empty;
+        bool inverted;
+        bool skewed;
+        float vertexMatrix[4][4];
+        float normalMatrix[3][3];
     };
 
-  friend class MeshTransform::Tool;
+    friend class MeshTransform::Tool;
 };
 
 inline bool MeshTransform::Tool::isInverted() const
 {
-  return inverted;
+    return inverted;
 }
 
 inline bool MeshTransform::Tool::isSkewed() const
 {
-  return skewed;
+    return skewed;
 }
 
 inline const float* MeshTransform::Tool::getMatrix() const
 {
-  return (const float*)vertexMatrix;
+    return (const float*)vertexMatrix;
 }
 
 
-class MeshTransformManager {
-  public:
+class MeshTransformManager
+{
+public:
     MeshTransformManager();
     ~MeshTransformManager();
     void update();
@@ -127,17 +135,16 @@ class MeshTransformManager {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::vector<MeshTransform*> transforms;
 };
 
 inline const MeshTransform* MeshTransformManager::getTransform(int id) const
 {
-  if ((id >= 0) && (id < (int)transforms.size())) {
-    return transforms[id];
-  } else {
-    return NULL;
-  }
+    if ((id >= 0) && (id < (int)transforms.size()))
+        return transforms[id];
+    else
+        return NULL;
 }
 
 

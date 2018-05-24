@@ -25,35 +25,38 @@ typedef std::vector<std::string> StringVector;
 
 
 // holds a vector of strings loaded from a file
-class TextChunk {
+class TextChunk
+{
 public:
-  TextChunk();
-  TextChunk(const TextChunk& tc);
-  TextChunk(const std::string& fileName, const int _maxLines = -1, const int _maxLineLength = -1);
+    TextChunk();
+    TextChunk(const TextChunk& tc);
+    TextChunk(const std::string& fileName, const int _maxLines = -1, const int _maxLineLength = -1);
 
-  size_t size() const;
-  const StringVector& getVector() const;
-  bool reload();
-
-private:
-  StringVector parse();
+    size_t size() const;
+    const StringVector& getVector() const;
+    bool reload();
 
 private:
-  std::string fileName;
-  int maxLines;
-  int maxLineLength;
-  StringVector theVector;
+    StringVector parse();
+
+private:
+    std::string fileName;
+    int maxLines;
+    int maxLineLength;
+    StringVector theVector;
 };
 
 // maintains a list of lists of strings, more or less a bunch
 // of files that can be read into and managed by this class.
 // chunkname is the name that is used to index into this list.
 // note that there is no delete function as of yet.
-class TextChunkManager {
-  public:
+class TextChunkManager
+{
+public:
     // load the file fileName into the chunk specified by chunkname
     // if the chunkname is already taken it will *not* be replaced
-    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1, const int maxLineLength = -1);
+    bool parseFile(const std::string &fileName, const std::string &chunkName, const int maxLines = -1,
+                   const int maxLineLength = -1);
 
     // get a chunk given a name of the chunk returns null if it can't find it
     const StringVector* getTextChunk(const std::string &chunkName) const;
@@ -65,7 +68,7 @@ class TextChunkManager {
     // (if a file's reload fails, we keep the old data)
     void reload();
 
-  private:
+private:
     typedef std::map<std::string, TextChunk> TextChunkMap;
     TextChunkMap theChunks; // a mapping of names of chunks to chunks
     StringVector chunkNames; // vector of all the names of the chunks
@@ -75,8 +78,8 @@ class TextChunkManager {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

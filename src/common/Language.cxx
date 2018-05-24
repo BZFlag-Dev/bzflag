@@ -23,11 +23,11 @@
 /* protected */
 
 Language::Language(int numberCode, std::string iso2Code, std::string iso3Code, std::string english, std::string french)
-  : _number(numberCode),
-    _iso2(iso2Code),
-    _iso3(iso3Code),
-    _english(english),
-    _french(french)
+    : _number(numberCode),
+      _iso2(iso2Code),
+      _iso3(iso3Code),
+      _english(english),
+      _french(french)
 {
 }
 Language::~Language()
@@ -37,7 +37,7 @@ Language::~Language()
 bool Language::addLanguage(Language&)
 {
 
-  return false;
+    return false;
 }
 
 
@@ -45,150 +45,143 @@ bool Language::addLanguage(Language&)
 
 unsigned int Language::loadFromFile(std::string filename, bool verbose)
 {
-  unsigned int totalAdded = 0;
-  char buffer[2048];
-  std::istream* stream = FILEMGR.createDataInStream(filename);
-  if (stream == NULL) {
-    if (verbose) {
-      std::cerr << "Warning: '" << filename << "' language file not found" << std::endl;
+    unsigned int totalAdded = 0;
+    char buffer[2048];
+    std::istream* stream = FILEMGR.createDataInStream(filename);
+    if (stream == NULL)
+    {
+        if (verbose)
+            std::cerr << "Warning: '" << filename << "' language file not found" << std::endl;
+        return 0;
     }
-    return 0;
-  }
-  std::cout << "loading from " << filename << std::endl;
-  while (!stream->eof()) {
-    stream->getline(buffer, 2048);
-    std::string languageLine = buffer;
+    std::cout << "loading from " << filename << std::endl;
+    while (!stream->eof())
+    {
+        stream->getline(buffer, 2048);
+        std::string languageLine = buffer;
 
-    int position = languageLine.find_first_not_of("\r\n\t ");
+        int position = languageLine.find_first_not_of("\r\n\t ");
 
-    // trim leading whitespace
-    if (position > 0) {
-      languageLine = languageLine.substr(position);
-    }
+        // trim leading whitespace
+        if (position > 0)
+            languageLine = languageLine.substr(position);
 
-    position = languageLine.find_first_of("#\r\n");
+        position = languageLine.find_first_of("#\r\n");
 
-    // trim trailing comments
-    if ((position >=0) && (position < (int)languageLine.length())) {
-      languageLine = languageLine.substr(0, position);
-    }
+        // trim trailing comments
+        if ((position >=0) && (position < (int)languageLine.length()))
+            languageLine = languageLine.substr(0, position);
 
-    position = languageLine.find_last_not_of("\r\n\t ");
-    position += 1;
+        position = languageLine.find_last_not_of("\r\n\t ");
+        position += 1;
 
-    // trim trailing whitespace
-    if ((position >= 0) && (position < (int)languageLine.length())) {
-      languageLine = languageLine.substr(0, position);
-    }
+        // trim trailing whitespace
+        if ((position >= 0) && (position < (int)languageLine.length()))
+            languageLine = languageLine.substr(0, position);
 
-    // make sure there is something left to add
-    if (languageLine.length() == 0) {
-      continue;
-    }
+        // make sure there is something left to add
+        if (languageLine.length() == 0)
+            continue;
 
-    if (verbose) {
-      std::cout << ".";
-    }
+        if (verbose)
+            std::cout << ".";
 
-    // parse out the keywords
-    int num = -1;
-    std::string iso2 = "";
-    std::string iso3 = "";
-    std::string english = "";
-    std::string french = "";
+        // parse out the keywords
+        int num = -1;
+        std::string iso2 = "";
+        std::string iso3 = "";
+        std::string english = "";
+        std::string french = "";
 
-    // need at least the number and the iso2
-    if ((num == -1) || (iso2.length() == 0)) {
-      continue;
-    }
+        // need at least the number and the iso2
+        if ((num == -1) || (iso2.length() == 0))
+            continue;
 
-    Language lang = Language(num, iso2, iso3, english, french);
+        Language lang = Language(num, iso2, iso3, english, french);
 
-    if (addLanguage(lang) && verbose) {
-      std::cout << std::endl << "Language is already added: " << iso2;
-    } else {
-      totalAdded++;
-    }
+        if (addLanguage(lang) && verbose)
+            std::cout << std::endl << "Language is already added: " << iso2;
+        else
+            totalAdded++;
 
-  } // end iteration over lines in input file
+    } // end iteration over lines in input file
 
-  if (verbose) {
-    std::cout << std::endl;
-  }
+    if (verbose)
+        std::cout << std::endl;
 
-  return totalAdded;
+    return totalAdded;
 } // end loadFromFile
 
 
 int Language::number() const
 {
-  return _number;
+    return _number;
 }
 std::string Language::iso2() const
 {
-  return _iso2;
+    return _iso2;
 }
 std::string Language::iso3() const
 {
-  return _iso3;
+    return _iso3;
 }
 std::string Language::englishName() const
 {
-  return _english;
+    return _english;
 }
 std::string Language::frenchName() const
 {
-  return _french;
+    return _french;
 }
 
 
 int Language::number(int country)
 {
-  // XXX - validate number
-  return country;
+    // XXX - validate number
+    return country;
 }
 int Language::number(std::string)
 {
-  return 0;
+    return 0;
 }
 std::string Language::iso2(int)
 {
-  return "";
+    return "";
 }
 std::string Language::iso2(std::string)
 {
-  return "";
+    return "";
 }
 std::string Language::iso3(int)
 {
-  return "";
+    return "";
 }
 std::string Language::iso3(std::string)
 {
-  return "";
+    return "";
 }
 std::string Language::englishName(int)
 {
-  return "";
+    return "";
 }
 std::string Language::englishName(std::string)
 {
-  return "";
+    return "";
 }
 std::string Language::frenchName(int)
 {
-  return "";
+    return "";
 }
 std::string Language::frenchName(std::string)
 {
-  return "";
+    return "";
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

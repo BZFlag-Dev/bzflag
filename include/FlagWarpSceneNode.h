@@ -11,45 +11,50 @@
  */
 
 /* FlagWarpSceneNode:
- *	Encapsulates information for rendering the little cloud
- *	that appears when a flag is coming or going.
+ *  Encapsulates information for rendering the little cloud
+ *  that appears when a flag is coming or going.
  */
 
-#ifndef	BZF_FLAG_WARP_SCENE_NODE_H
-#define	BZF_FLAG_WARP_SCENE_NODE_H
+#ifndef BZF_FLAG_WARP_SCENE_NODE_H
+#define BZF_FLAG_WARP_SCENE_NODE_H
 
 #include "common.h"
 #include "SceneNode.h"
 
-class FlagWarpSceneNode : public SceneNode {
-  public:
-			FlagWarpSceneNode(const GLfloat pos[3]);
-			~FlagWarpSceneNode();
+class FlagWarpSceneNode : public SceneNode
+{
+public:
+    FlagWarpSceneNode(const GLfloat pos[3]);
+    ~FlagWarpSceneNode();
 
-    void		setSizeFraction(GLfloat);
+    void        setSizeFraction(GLfloat);
 
-    GLfloat		getDistance(const GLfloat*) const;
-    void		move(const GLfloat pos[3]);
+    GLfloat     getDistance(const GLfloat*) const;
+    void        move(const GLfloat pos[3]);
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
-  protected:
-    class FlagWarpRenderNode : public RenderNode {
-      public:
-			FlagWarpRenderNode(const FlagWarpSceneNode*);
-			~FlagWarpRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const FlagWarpSceneNode* sceneNode;
+protected:
+    class FlagWarpRenderNode : public RenderNode
+    {
+    public:
+        FlagWarpRenderNode(const FlagWarpSceneNode*);
+        ~FlagWarpRenderNode();
+        void        render();
+        const GLfloat*  getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const FlagWarpSceneNode* sceneNode;
     };
     friend class FlagWarpRenderNode;
 
-  private:
-    GLfloat		size;
-    OpenGLGState	gstate;
-    FlagWarpRenderNode	renderNode;
+private:
+    GLfloat     size;
+    OpenGLGState    gstate;
+    FlagWarpRenderNode  renderNode;
     static const GLfloat color[7][3];
 };
 
@@ -57,8 +62,8 @@ class FlagWarpSceneNode : public SceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

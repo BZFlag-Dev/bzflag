@@ -38,405 +38,441 @@
 
 
 ServerList::ServerList() :
-	addedCacheToList(false),
-	phase(-1),
-	serverCache(ServerListCache::get()),
-	pingBcastSocket(-1)
+    addedCacheToList(false),
+    phase(-1),
+    serverCache(ServerListCache::get()),
+    pingBcastSocket(-1)
 {
 }
 
-ServerList::~ServerList() {
-  _shutDown();
+ServerList::~ServerList()
+{
+    _shutDown();
 }
 
-void ServerList::startServerPings(StartupInfo *info) {
+void ServerList::startServerPings(StartupInfo *info)
+{
 
-  // schedule lookup of server list url.  dereference URL chain every
-  // time instead of only first time just in case one of the pointers
-  // has changed.
-  if (phase > -1 && phase < 4)
-    return;
-  if (info->listServerURL.size() == 0)
-    phase = -1;
-  else
-    phase = 0;
+    // schedule lookup of server list url.  dereference URL chain every
+    // time instead of only first time just in case one of the pointers
+    // has changed.
+    if (phase > -1 && phase < 4)
+        return;
+    if (info->listServerURL.size() == 0)
+        phase = -1;
+    else
+        phase = 0;
 
-  // also try broadcast
-  pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
-  if (pingBcastSocket != -1)
-    PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
+    // also try broadcast
+    pingBcastSocket = openBroadcast(BroadcastPort, NULL, &pingBcastAddr);
+    if (pingBcastSocket != -1)
+        PingPacket::sendRequest(pingBcastSocket, &pingBcastAddr);
 }
 
 void ServerList::readServerList()
 {
-  char *base = (char *)theData;
-  char *endS = base + theLen;
-  const char tokenIdentifier[]   = "TOKEN: ";
-  const char noTokenIdentifier[] = "NOTOK: ";
-  const char errorIdentifier[]   = "ERROR: ";
-  const char noticeIdentifier[]  = "NOTICE: ";
-  // walks entire reply including HTTP headers
-  while (base < endS) {
-    // find next newline
-    char* scan = base;
-    while (scan < endS && *scan != '\n')
-      scan++;
+    char *base = (char *)theData;
+    char *endS = base + theLen;
+    const char tokenIdentifier[]   = "TOKEN: ";
+    const char noTokenIdentifier[] = "NOTOK: ";
+    const char errorIdentifier[]   = "ERROR: ";
+    const char noticeIdentifier[]  = "NOTICE: ";
+    // walks entire reply including HTTP headers
+    while (base < endS)
+    {
+        // find next newline
+        char* scan = base;
+        while (scan < endS && *scan != '\n')
+            scan++;
 
-    // if no newline then no more complete replies
-    if (scan >= endS)
-      break;
-    *scan++ = '\0';
+        // if no newline then no more complete replies
+        if (scan >= endS)
+            break;
+        *scan++ = '\0';
 
-    // look for TOKEN: and save token if found also look for NOTOK:
-    // and record "badtoken" into the token string and print an
-    // error
-    if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0) {
-      strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
-	      TokenLen - 1);
-      startupInfo->token[TokenLen - 1] = '\0';
+        // look for TOKEN: and save token if found also look for NOTOK:
+        // and record "badtoken" into the token string and print an
+        // error
+        if (strncmp(base, tokenIdentifier, strlen(tokenIdentifier)) == 0)
+        {
+            strncpy(startupInfo->token, (char *)(base + strlen(tokenIdentifier)),
+                    TokenLen - 1);
+            startupInfo->token[TokenLen - 1] = '\0';
 #ifdef DEBUG
-      printError("got token:");
-      printError(startupInfo->token);
+            printError("got token:");
+            printError(startupInfo->token);
 #endif
-      base = scan;
-      continue;
-    } else if (!strncmp(base, noTokenIdentifier,
-			strlen(noTokenIdentifier))) {
-      printError("ERROR: did not get token:");
-      printError(base);
-      strcpy(startupInfo->token, "badtoken\0");
-      base = scan;
-      continue;
-    } else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier))) {
-      printError(base);
-      strcpy(startupInfo->token, "badtoken\0");
-      base = scan;
-      continue;
-    } else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier))) {
-      printError(base);
-      base = scan;
-      continue;
+            base = scan;
+            continue;
+        }
+        else if (!strncmp(base, noTokenIdentifier,
+                          strlen(noTokenIdentifier)))
+        {
+            printError("ERROR: did not get token:");
+            printError(base);
+            strcpy(startupInfo->token, "badtoken\0");
+            base = scan;
+            continue;
+        }
+        else if (!strncmp(base, errorIdentifier, strlen(errorIdentifier)))
+        {
+            printError(base);
+            strcpy(startupInfo->token, "badtoken\0");
+            base = scan;
+            continue;
+        }
+        else if (!strncmp(base, noticeIdentifier, strlen(noticeIdentifier)))
+        {
+            printError(base);
+            base = scan;
+            continue;
+        }
+        // parse server info
+        char *scan2, *name, *version, *infoServer, *address, *title;
+        name = base;
+        version = name;
+        while (*version && !isspace(*version))  version++;
+        while (*version &&  isspace(*version)) *version++ = 0;
+        infoServer = version;
+        while (*infoServer && !isspace(*infoServer))  infoServer++;
+        while (*infoServer &&  isspace(*infoServer)) *infoServer++ = 0;
+        address = infoServer;
+        while (*address && !isspace(*address))  address++;
+        while (*address &&  isspace(*address)) *address++ = 0;
+        title = address;
+        while (*title && !isspace(*title))  title++;
+        while (*title &&  isspace(*title)) *title++ = 0;
+
+        // extract port number from address
+        int port = ServerPort;
+        scan2 = strchr(name, ':');
+        if (scan2)
+        {
+            port = atoi(scan2 + 1);
+            *scan2 = 0;
+        }
+
+        // check info
+        if (strcmp(version, getServerVersion()) == 0 &&
+                (int)strlen(infoServer) == PingPacketHexPackedSize &&
+                port >= 1 && port <= 65535)
+        {
+            // store info
+            ServerItem serverInfo;
+            serverInfo.ping.unpackHex(infoServer);
+            int dot[4] = {127,0,0,1};
+            if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4)
+            {
+                if (dot[0] >= 0 && dot[0] <= 255 &&
+                        dot[1] >= 0 && dot[1] <= 255 &&
+                        dot[2] >= 0 && dot[2] <= 255 &&
+                        dot[3] >= 0 && dot[3] <= 255)
+                {
+                    InAddr addr;
+                    unsigned char* paddr = (unsigned char*)&addr.s_addr;
+                    paddr[0] = (unsigned char)dot[0];
+                    paddr[1] = (unsigned char)dot[1];
+                    paddr[2] = (unsigned char)dot[2];
+                    paddr[3] = (unsigned char)dot[3];
+                    serverInfo.ping.serverId.serverHost = addr;
+                }
+            }
+            serverInfo.ping.serverId.port = htons((int16_t)port);
+            serverInfo.name = name;
+
+            // construct description
+            serverInfo.description = serverInfo.name;
+            if (port != ServerPort)
+            {
+                char portBuf[20];
+                sprintf(portBuf, "%d", port);
+                serverInfo.description += ":";
+                serverInfo.description += portBuf;
+            }
+            if (strlen(title) > 0)
+            {
+                serverInfo.description += "; ";
+                serverInfo.description += title;
+            }
+
+            serverInfo.cached = false;
+            // add to list & add it to the server cache
+            addToList(serverInfo, true);
+        }
+
+        // next reply
+        base = scan;
     }
-    // parse server info
-    char *scan2, *name, *version, *infoServer, *address, *title;
-    name = base;
-    version = name;
-    while (*version && !isspace(*version))  version++;
-    while (*version &&  isspace(*version)) *version++ = 0;
-    infoServer = version;
-    while (*infoServer && !isspace(*infoServer))  infoServer++;
-    while (*infoServer &&  isspace(*infoServer)) *infoServer++ = 0;
-    address = infoServer;
-    while (*address && !isspace(*address))  address++;
-    while (*address &&  isspace(*address)) *address++ = 0;
-    title = address;
-    while (*title && !isspace(*title))  title++;
-    while (*title &&  isspace(*title)) *title++ = 0;
 
-    // extract port number from address
-    int port = ServerPort;
-    scan2 = strchr(name, ':');
-    if (scan2) {
-      port = atoi(scan2 + 1);
-      *scan2 = 0;
-    }
-
-    // check info
-    if (strcmp(version, getServerVersion()) == 0 &&
-	(int)strlen(infoServer) == PingPacketHexPackedSize &&
-	port >= 1 && port <= 65535) {
-      // store info
-      ServerItem serverInfo;
-      serverInfo.ping.unpackHex(infoServer);
-      int dot[4] = {127,0,0,1};
-      if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4) {
-	if (dot[0] >= 0 && dot[0] <= 255 &&
-	    dot[1] >= 0 && dot[1] <= 255 &&
-	    dot[2] >= 0 && dot[2] <= 255 &&
-	    dot[3] >= 0 && dot[3] <= 255) {
-	  InAddr addr;
-	  unsigned char* paddr = (unsigned char*)&addr.s_addr;
-	  paddr[0] = (unsigned char)dot[0];
-	  paddr[1] = (unsigned char)dot[1];
-	  paddr[2] = (unsigned char)dot[2];
-	  paddr[3] = (unsigned char)dot[3];
-	  serverInfo.ping.serverId.serverHost = addr;
-	}
-      }
-      serverInfo.ping.serverId.port = htons((int16_t)port);
-      serverInfo.name = name;
-
-      // construct description
-      serverInfo.description = serverInfo.name;
-      if (port != ServerPort) {
-	char portBuf[20];
-	sprintf(portBuf, "%d", port);
-	serverInfo.description += ":";
-	serverInfo.description += portBuf;
-      }
-      if (strlen(title) > 0) {
-	serverInfo.description += "; ";
-	serverInfo.description += title;
-      }
-
-      serverInfo.cached = false;
-      // add to list & add it to the server cache
-      addToList(serverInfo, true);
-    }
-
-    // next reply
-    base = scan;
-  }
-
-  // remove parsed replies
-  theLen -= int(base - (char *)theData);
-  memmove(theData, base, theLen);
+    // remove parsed replies
+    theLen -= int(base - (char *)theData);
+    memmove(theData, base, theLen);
 }
 
 void ServerList::addToList(ServerItem info, bool doCache)
 {
-  // update if we already have it
-  int i;
+    // update if we already have it
+    int i;
 
-  // search and delete entry for this item if it exists
-  // (updating info in place may "unsort" the list)
-  for (i = 0; i < (int)servers.size(); i++) {
-    ServerItem& server = servers[i];
-    if (server.ping.serverId.serverHost.s_addr
-	== info.ping.serverId.serverHost.s_addr
-	&& server.ping.serverId.port == info.ping.serverId.port) {
-      servers.erase(servers.begin() + i); // erase this item
-      break;
+    // search and delete entry for this item if it exists
+    // (updating info in place may "unsort" the list)
+    for (i = 0; i < (int)servers.size(); i++)
+    {
+        ServerItem& server = servers[i];
+        if (server.ping.serverId.serverHost.s_addr
+                == info.ping.serverId.serverHost.s_addr
+                && server.ping.serverId.port == info.ping.serverId.port)
+        {
+            servers.erase(servers.begin() + i); // erase this item
+            break;
+        }
     }
-  }
 
-  // find point to insert new player at
-  int insertPoint = -1; // point to insert server into
+    // find point to insert new player at
+    int insertPoint = -1; // point to insert server into
 
-  // insert new item before the first serveritem with is deemed to be less
-  // in value than the item to be inserted -- cached items are less than
-  // non-cached, items that have more players are more, etc..
-  for (i = 0; i < (int)servers.size(); i++) {
-    ServerItem& server = servers[i];
-    if (server < info) {
-      insertPoint = i;
-      break;
+    // insert new item before the first serveritem with is deemed to be less
+    // in value than the item to be inserted -- cached items are less than
+    // non-cached, items that have more players are more, etc..
+    for (i = 0; i < (int)servers.size(); i++)
+    {
+        ServerItem& server = servers[i];
+        if (server < info)
+        {
+            insertPoint = i;
+            break;
+        }
     }
-  }
 
-  // mark server in current list if it is a favorite server
-  std::string serverAddress = info.getAddrName();
-  if (serverCache->isFavorite(serverAddress))
-    info.favorite = true;
+    // mark server in current list if it is a favorite server
+    std::string serverAddress = info.getAddrName();
+    if (serverCache->isFavorite(serverAddress))
+        info.favorite = true;
 
-  if (insertPoint == -1) { // no spot to insert it into -- goes on back
-    servers.push_back(info);
-  } else {  // found a spot to insert it into
-    servers.insert(servers.begin() + insertPoint, info);
-  }
+    if (insertPoint == -1)   // no spot to insert it into -- goes on back
+        servers.push_back(info);
+    else    // found a spot to insert it into
+        servers.insert(servers.begin() + insertPoint, info);
 
-  // update display
-  /*
-  char buffer [80];
-  std::vector<std::string> args;
-  sprintf(buffer, "%d", (int)servers.size());
-  args.push_back(buffer);
-  setStatus("Servers found: {1}", &args);
-  */
+    // update display
+    /*
+    char buffer [80];
+    std::vector<std::string> args;
+    sprintf(buffer, "%d", (int)servers.size());
+    args.push_back(buffer);
+    setStatus("Servers found: {1}", &args);
+    */
 
-  // force update
-  /*
-  const int oldSelectedIndex = selectedIndex;
-  selectedIndex = -1;
-  setSelected(oldSelectedIndex);
-  */
+    // force update
+    /*
+    const int oldSelectedIndex = selectedIndex;
+    selectedIndex = -1;
+    setSelected(oldSelectedIndex);
+    */
 
-  if (doCache) {
-    info.cached = true; // values in cache are "cached"
-    // update the last updated time to now
-    info.setUpdateTime();
+    if (doCache)
+    {
+        info.cached = true; // values in cache are "cached"
+        // update the last updated time to now
+        info.setUpdateTime();
 
-    ServerListCache::SRV_STR_MAP::iterator iter;
-    iter = serverCache->find(serverAddress);  // find entry to allow update
-    if (iter != serverCache->end()) { // if we find it, update it
-      iter->second = info;
-    } else {
-      // insert into cache -- wasn't found
-      serverCache->insert(serverAddress, info);
+        ServerListCache::SRV_STR_MAP::iterator iter;
+        iter = serverCache->find(serverAddress);  // find entry to allow update
+        if (iter != serverCache->end())   // if we find it, update it
+            iter->second = info;
+        else
+        {
+            // insert into cache -- wasn't found
+            serverCache->insert(serverAddress, info);
+        }
     }
-  }
 }
 
 // mark server identified by host:port string as favorite
-void		    ServerList::markFav(const std::string &serverAddress, bool fav)
+void            ServerList::markFav(const std::string &serverAddress, bool fav)
 {
-  for (int i = 0; i < (int)servers.size(); i++) {
-    if (serverAddress == servers[i].getAddrName()) {
-      servers[i].favorite = fav;
-      break;
+    for (int i = 0; i < (int)servers.size(); i++)
+    {
+        if (serverAddress == servers[i].getAddrName())
+        {
+            servers[i].favorite = fav;
+            break;
+        }
     }
-  }
 }
 
-void			ServerList::checkEchos(StartupInfo *info)
+void            ServerList::checkEchos(StartupInfo *info)
 {
-  startupInfo = info;
+    startupInfo = info;
 
-  // *** NOTE *** searching spinner update was here
-
-  // lookup server list in phase 0
-  if (phase == 0) {
-
-    std::string url = info->listServerURL;
-
-    std::string msg = "action=LIST&version=";
-    msg	    += getServerVersion();
-    msg	    += "&callsign=";
-    msg	    += TextUtils::url_encode(info->callsign);
-    msg	    += "&password=";
-    msg	    += TextUtils::url_encode(info->password);
-    setPostMode(msg);
-    setURLwithNonce(url);
-    addHandle();
-
-    // do phase 1 only if we found a valid list server url
-    phase = 1;
-  }
-
-  // get echo messages
-  while (true) {
     // *** NOTE *** searching spinner update was here
 
-    struct timeval timeout;
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 250;
+    // lookup server list in phase 0
+    if (phase == 0)
+    {
 
-    fd_set read_set, write_set;
-    FD_ZERO(&read_set);
-    FD_ZERO(&write_set);
-    if (pingBcastSocket != -1) {
-      FD_SET((unsigned int)pingBcastSocket, &read_set);
+        std::string url = info->listServerURL;
+
+        std::string msg = "action=LIST&version=";
+        msg     += getServerVersion();
+        msg     += "&callsign=";
+        msg     += TextUtils::url_encode(info->callsign);
+        msg     += "&password=";
+        msg     += TextUtils::url_encode(info->password);
+        setPostMode(msg);
+        setURLwithNonce(url);
+        addHandle();
+
+        // do phase 1 only if we found a valid list server url
+        phase = 1;
     }
-    int fdMax = pingBcastSocket;
 
-    const int nfound = select(fdMax+1, (fd_set*)&read_set,
-					(fd_set*)&write_set, 0, &timeout);
-    if (nfound <= 0)
-      break;
+    // get echo messages
+    while (true)
+    {
+        // *** NOTE *** searching spinner update was here
 
-    // check broadcast sockets
-    ServerItem serverInfo;
-    sockaddr_in addr;
+        struct timeval timeout;
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 250;
 
-    if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set)) {
-      if (serverInfo.ping.read(pingBcastSocket, &addr)) {
-	serverInfo.ping.serverId.serverHost = addr.sin_addr;
-	serverInfo.cached = false;
-	addToListWithLookup(serverInfo);
-      }
-    }
-  } // end loop waiting for input/output on any list server
+        fd_set read_set, write_set;
+        FD_ZERO(&read_set);
+        FD_ZERO(&write_set);
+        if (pingBcastSocket != -1)
+            FD_SET((unsigned int)pingBcastSocket, &read_set);
+        int fdMax = pingBcastSocket;
+
+        const int nfound = select(fdMax+1, (fd_set*)&read_set,
+                                  (fd_set*)&write_set, 0, &timeout);
+        if (nfound <= 0)
+            break;
+
+        // check broadcast sockets
+        ServerItem serverInfo;
+        sockaddr_in addr;
+
+        if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
+        {
+            if (serverInfo.ping.read(pingBcastSocket, &addr))
+            {
+                serverInfo.ping.serverId.serverHost = addr.sin_addr;
+                serverInfo.cached = false;
+                addToListWithLookup(serverInfo);
+            }
+        }
+    } // end loop waiting for input/output on any list server
 }
 
-void			ServerList::addToListWithLookup(ServerItem& info)
+void            ServerList::addToListWithLookup(ServerItem& info)
 {
-  info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
+    info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
 
-  // tack on port number to description if not default
-  info.description = info.name;
-  const int port = (int)ntohs((unsigned short)info.ping.serverId.port);
-  if (port != ServerPort) {
-    char portBuf[20];
-    sprintf(portBuf, "%d", port);
-    info.description += ":";
-    info.description += portBuf;
-  }
+    // tack on port number to description if not default
+    info.description = info.name;
+    const int port = (int)ntohs((unsigned short)info.ping.serverId.port);
+    if (port != ServerPort)
+    {
+        char portBuf[20];
+        sprintf(portBuf, "%d", port);
+        info.description += ":";
+        info.description += portBuf;
+    }
 
-  addToList(info); // do not cache network lan - etc. servers
+    addToList(info); // do not cache network lan - etc. servers
 }
 
 // add the entire cache to the server list
-void			ServerList::addCacheToList()
+void            ServerList::addCacheToList()
 {
-  if (addedCacheToList)
-    return;
-  addedCacheToList = true;
-  for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
-       iter != serverCache->end(); ++iter) {
-    addToList(iter->second);
-  }
+    if (addedCacheToList)
+        return;
+    addedCacheToList = true;
+    for (ServerListCache::SRV_STR_MAP::iterator iter = serverCache->begin();
+            iter != serverCache->end(); ++iter)
+        addToList(iter->second);
 }
 
 void ServerList::collectData(char *ptr, int len)
 {
-  phase = 2;
+    phase = 2;
 
-  cURLManager::collectData(ptr, len);
+    cURLManager::collectData(ptr, len);
 
-  readServerList();
+    readServerList();
 }
 
 void ServerList::finalization(char *, unsigned int, bool good)
 {
-  if (!good) {
-    printError("Can't talk with list server");
-    addCacheToList();
-    phase = -1;
-  } else {
-    phase = 4;
-  }
-}
-
-const std::vector<ServerItem>& ServerList::getServers() {
-  return servers;
-}
-
-std::vector<ServerItem>::size_type ServerList::size() {
-  return servers.size();
-}
-
-void ServerList::clear() {
-  servers.clear();
-}
-
-int ServerList::updateFromCache() {
-  // clear server list
-  clear();
-
-  int numItemsAdded = 0;
-
-  for (ServerListCache::SRV_STR_MAP::const_iterator iter = serverCache->begin();
-       iter != serverCache->end(); ++iter) {
-    // if maxCacheAge is 0 we add nothing
-    // if the item is young enough we add it
-    if (serverCache->getMaxCacheAge() != 0
-	&& iter->second.getAgeMinutes() < serverCache->getMaxCacheAge()) {
-      addToList(iter->second);
-      numItemsAdded ++;
+    if (!good)
+    {
+        printError("Can't talk with list server");
+        addCacheToList();
+        phase = -1;
     }
-  }
-
-  return numItemsAdded;
+    else
+        phase = 4;
 }
 
-bool ServerList::searchActive() const {
-  return (phase < 4) ? true : false;
+const std::vector<ServerItem>& ServerList::getServers()
+{
+    return servers;
 }
 
-bool ServerList::serverFound() const {
-  return (phase >= 2) ? true : false;
+std::vector<ServerItem>::size_type ServerList::size()
+{
+    return servers.size();
 }
 
-void ServerList::_shutDown() {
-  // close broadcast socket
-  closeBroadcast(pingBcastSocket);
-  pingBcastSocket = -1;
+void ServerList::clear()
+{
+    servers.clear();
+}
+
+int ServerList::updateFromCache()
+{
+    // clear server list
+    clear();
+
+    int numItemsAdded = 0;
+
+    for (ServerListCache::SRV_STR_MAP::const_iterator iter = serverCache->begin();
+            iter != serverCache->end(); ++iter)
+    {
+        // if maxCacheAge is 0 we add nothing
+        // if the item is young enough we add it
+        if (serverCache->getMaxCacheAge() != 0
+                && iter->second.getAgeMinutes() < serverCache->getMaxCacheAge())
+        {
+            addToList(iter->second);
+            numItemsAdded ++;
+        }
+    }
+
+    return numItemsAdded;
+}
+
+bool ServerList::searchActive() const
+{
+    return (phase < 4) ? true : false;
+}
+
+bool ServerList::serverFound() const
+{
+    return (phase >= 2) ? true : false;
+}
+
+void ServerList::_shutDown()
+{
+    // close broadcast socket
+    closeBroadcast(pingBcastSocket);
+    pingBcastSocket = -1;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

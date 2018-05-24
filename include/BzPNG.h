@@ -20,37 +20,39 @@
 #include <vector>
 
 
-namespace BzPNG {
+namespace BzPNG
+{
 
-  struct Chunk {
+struct Chunk
+{
     Chunk() {}
     Chunk(const std::string& t, const std::string& d) : type(t), data(d) {}
     Chunk(const std::string& t, // for tEXt chunks
-	  const std::string& keyword,
-	  const std::string& text)
-	  : type(t)
-	  , data(keyword + std::string(1, 0) + text)
-	  {}
+          const std::string& keyword,
+          const std::string& text)
+        : type(t)
+        , data(keyword + std::string(1, 0) + text)
+    {}
     std::string type; // must be 4 bytes
     std::string data;
-  };
+};
 
-  /** Create a PNG image, string starts with "ERROR" if there's an error */
-  std::string create(const std::vector<Chunk>& extraChunks,
-		     size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
+/** Create a PNG image, string starts with "ERROR" if there's an error */
+std::string create(const std::vector<Chunk>& extraChunks,
+                   size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
 
-  /** Save a PNG image */
-  bool save(const std::string& filename,
-	    const std::vector<Chunk>& extraChunks,
-	    size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
+/** Save a PNG image */
+bool save(const std::string& filename,
+          const std::vector<Chunk>& extraChunks,
+          size_t sx, size_t sy, size_t channels, const unsigned char* pixels);
 }
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTSTATISTICS_H__
-#define	__SHOTSTATISTICS_H__
+#ifndef __SHOTSTATISTICS_H__
+#define __SHOTSTATISTICS_H__
 
 #include "common.h"
 
@@ -24,70 +24,81 @@
 // FIXME - this looks bad, make the FlagType an enum
 typedef std::map<FlagType*, int> FlagMap;
 
-class ShotStatistics {
+class ShotStatistics
+{
 public:
 
-  ShotStatistics();
-  ~ShotStatistics();
+    ShotStatistics();
+    ~ShotStatistics();
 
-  // raw stats returns
-  int	 getFired(FlagType* flag) const;
-  int	 getHit(FlagType* flag) const;
+    // raw stats returns
+    int    getFired(FlagType* flag) const;
+    int    getHit(FlagType* flag) const;
 
-  // stats processing
-  int	 getTotalFired() const;
-  int	 getTotalHit() const;
-  int	 getTotalPerc() const;
-  FlagType*   getFavoriteFlag() const;
-  FlagType*   getBestFlag() const;
+    // stats processing
+    int    getTotalFired() const;
+    int    getTotalHit() const;
+    int    getTotalPerc() const;
+    FlagType*   getFavoriteFlag() const;
+    FlagType*   getBestFlag() const;
 
-  // tally functions
-  void	      recordFire(FlagType* flag, const float *pVec, const float *shotVec);
-  void	      recordHit(FlagType* flag);
+    // tally functions
+    void        recordFire(FlagType* flag, const float *pVec, const float *shotVec);
+    void        recordHit(FlagType* flag);
 
-  double getLastShotTimeDelta ( void ) const {return lastShotTimeDelta;}
-  double getLastShotDeviation ( void ) const {return lastShotDeviation;}
+    double getLastShotTimeDelta ( void ) const
+    {
+        return lastShotTimeDelta;
+    }
+    double getLastShotDeviation ( void ) const
+    {
+        return lastShotDeviation;
+    }
 
 private:
-  FlagMap     fired;
-  FlagMap     hit;
+    FlagMap     fired;
+    FlagMap     hit;
 
-  int	      totalFired;
-  int	      totalHit;
+    int         totalFired;
+    int         totalHit;
 
-  double	  lastShotTimeDelta;
-  double	  lastShotTime;
+    double      lastShotTimeDelta;
+    double      lastShotTime;
 
-  float		  lastShotDeviation;
+    float       lastShotDeviation;
 };
 
 
-inline int ShotStatistics::getFired(FlagType* flag) const {
-  if (fired.find(flag) != fired.end())
-	return fired.at(flag);
-  return 0;
+inline int ShotStatistics::getFired(FlagType* flag) const
+{
+    if (fired.find(flag) != fired.end())
+        return fired.at(flag);
+    return 0;
 }
 
-inline int ShotStatistics::getHit(FlagType* flag) const {
-  if (hit.find(flag) != hit.end())
-	return hit.at(flag);
-  return 0;
+inline int ShotStatistics::getHit(FlagType* flag) const
+{
+    if (hit.find(flag) != hit.end())
+        return hit.at(flag);
+    return 0;
 }
 
-inline int ShotStatistics::getTotalFired() const {
-  return totalFired;
+inline int ShotStatistics::getTotalFired() const
+{
+    return totalFired;
 }
 
-inline int ShotStatistics::getTotalHit() const {
-  return totalHit;
+inline int ShotStatistics::getTotalHit() const
+{
+    return totalHit;
 }
 
 #endif // __SHOTSTATISTICS_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

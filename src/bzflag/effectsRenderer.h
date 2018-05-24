@@ -12,12 +12,12 @@
 
 /*
 * EffectsRenderer:
-*	Encapsulates rendering of effects ( spawn flashes, sparks, explosions, etc...)
+*   Encapsulates rendering of effects ( spawn flashes, sparks, explosions, etc...)
 *
 */
 
-#ifndef	BZF_EFFECTS_RENDERER_H
-#define	BZF_EFFECTS_RENDERER_H
+#ifndef BZF_EFFECTS_RENDERER_H
+#define BZF_EFFECTS_RENDERER_H
 
 #include "common.h"
 
@@ -41,114 +41,130 @@
 class BasicEffect
 {
 public:
-	BasicEffect();
-	virtual ~BasicEffect() {};
+    BasicEffect();
+    virtual ~BasicEffect() {};
 
-	virtual void setPos ( const float *pos, const float *rot );
-	virtual void setVel ( const float *vel );
-	virtual void setColor( const float *rgb );
-	virtual void setStartTime ( float time );
+    virtual void setPos ( const float *pos, const float *rot );
+    virtual void setVel ( const float *vel );
+    virtual void setColor( const float *rgb );
+    virtual void setStartTime ( float time );
 
-	virtual void freeContext(void) {};
-	virtual void rebuildContext(void) {};
+    virtual void freeContext(void) {};
+    virtual void rebuildContext(void) {};
 
-	virtual bool update ( float time );
-	virtual void draw(const SceneRenderer &) {};
+    virtual bool update ( float time );
+    virtual void draw(const SceneRenderer &) {};
 
 protected:
 
-	float	position[3];
-	float	rotation[3];
-	float velocity[3];
-	float	color[3];
-	float	startTime;
-	float	lifetime;
-	float	lastTime;
-	float	deltaTime;
-	float	age;
-	float	lifeParam;
+    float   position[3];
+    float   rotation[3];
+    float velocity[3];
+    float   color[3];
+    float   startTime;
+    float   lifetime;
+    float   lastTime;
+    float   deltaTime;
+    float   age;
+    float   lifeParam;
 };
 
 class DeathEffect : public BasicEffect, public TankDeathOverride
 {
 public:
-	DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
-	virtual ~DeathEffect() {/*if (player)player->setDeathEffect(NULL)*/;}
+    DeathEffect() : BasicEffect(),TankDeathOverride(),player(NULL) {};
+    virtual ~DeathEffect()
+    {
+        /*if (player)player->setDeathEffect(NULL)*/;
+    }
 
-	virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) ) {return false;}
-	virtual bool ShowExplosion ( void ) {return true;}
-	virtual bool GetDeathVector ( fvec3 &UNUSED(vel) ) {return false;}
+    virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &UNUSED(params) )
+    {
+        return false;
+    }
+    virtual bool ShowExplosion ( void )
+    {
+        return true;
+    }
+    virtual bool GetDeathVector ( fvec3 &UNUSED(vel) )
+    {
+        return false;
+    }
 
-	void setPlayer ( Player* p) {player=p;}
+    void setPlayer ( Player* p)
+    {
+        player=p;
+    }
 protected:
-	Player *player;
+    Player *player;
 };
 
-typedef std::vector<BasicEffect*>	tvEffectsList;
+typedef std::vector<BasicEffect*>   tvEffectsList;
 
 class EffectsRenderer : public Singleton<EffectsRenderer>
 {
 public:
-	// called once to setup the effects system
-	void init(void);
+    // called once to setup the effects system
+    void init(void);
 
-	// called to update the various effects
-	void update(void);
+    // called to update the various effects
+    void update(void);
 
-	// called to draw all the current effects
-	void draw(const SceneRenderer& sr);
+    // called to draw all the current effects
+    void draw(const SceneRenderer& sr);
 
-	// called when the GL lists need to be deleted
-	void freeContext(void);
+    // called when the GL lists need to be deleted
+    void freeContext(void);
 
-	// called when the GL lists need to be remade
-	void rebuildContext(void);
+    // called when the GL lists need to be remade
+    void rebuildContext(void);
 
-	// spawn flashes
-	void addSpawnEffect ( const float* rgb, const float* pos );
-	std::vector<std::string> getSpawnEffectTypes ( void );
+    // spawn flashes
+    void addSpawnEffect ( const float* rgb, const float* pos );
+    std::vector<std::string> getSpawnEffectTypes ( void );
 
-	// shot flashes
-	void addShotEffect ( const float* rgb, const float* pos, float rot, const float* vel = NULL, int _type = -1 );
-	std::vector<std::string> getShotEffectTypes ( void );
+    // shot flashes
+    void addShotEffect ( const float* rgb, const float* pos, float rot, const float* vel = NULL, int _type = -1 );
+    std::vector<std::string> getShotEffectTypes ( void );
 
-	// gm puffs
-	void addGMPuffEffect ( const float* pos, float rot[2], const float* vel = NULL );
-	std::vector<std::string> getGMPuffEffectTypes ( void );
+    // gm puffs
+    void addGMPuffEffect ( const float* pos, float rot[2], const float* vel = NULL );
+    std::vector<std::string> getGMPuffEffectTypes ( void );
 
-	// death effects
-	DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player, FlagType* flag = NULL );
-	std::vector<std::string> getDeathEffectTypes ( void );
+    // death effects
+    DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player,
+                                  FlagType* flag = NULL );
+    std::vector<std::string> getDeathEffectTypes ( void );
 
-	// landing effects
-	void addLandEffect ( const float* rgb, const float* pos, float rot );
-	std::vector<std::string> getLandEffectTypes ( void );
+    // landing effects
+    void addLandEffect ( const float* rgb, const float* pos, float rot );
+    std::vector<std::string> getLandEffectTypes ( void );
 
-	// rico effect
-	void addRicoEffect ( const float* pos, float rot[2], const float* vel = NULL );
-	std::vector<std::string> getRicoEffectTypes ( void );
+    // rico effect
+    void addRicoEffect ( const float* pos, float rot[2], const float* vel = NULL );
+    std::vector<std::string> getRicoEffectTypes ( void );
 
-	// shot teleport effect
-	void addShotTeleportEffect ( const float* pos, float rot[2], const float* vel = NULL );
-	std::vector<std::string> getShotTeleportEffectTypes ( void );
+    // shot teleport effect
+    void addShotTeleportEffect ( const float* pos, float rot[2], const float* vel = NULL );
+    std::vector<std::string> getShotTeleportEffectTypes ( void );
 
-
-protected:
-	friend class Singleton<EffectsRenderer>;
 
 protected:
-	EffectsRenderer();
-	~EffectsRenderer();
+    friend class Singleton<EffectsRenderer>;
 
-	tvEffectsList	effectsList;
+protected:
+    EffectsRenderer();
+    ~EffectsRenderer();
+
+    tvEffectsList   effectsList;
 };
 
 #endif // BZF_EFFECTS_RENDERER_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

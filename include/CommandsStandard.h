@@ -17,23 +17,25 @@
 #include "CommandManager.h"
 
 
-struct CommandsItem {
+struct CommandsItem
+{
 public:
-  const char* name;
-  CommandManager::CommandFunction func;
-  const char* help;
+    const char* name;
+    CommandManager::CommandFunction func;
+    const char* help;
 };
 extern const struct CommandsItem commands[];
 
 
 /** standard commands
  */
-class CommandsStandard {
+class CommandsStandard
+{
 public:
-  static void		add();
-  static void		remove();
-  static void		quit();
-  static bool		isQuit();
+    static void       add();
+    static void       remove();
+    static void       quit();
+    static bool       isQuit();
 };
 
 
@@ -41,8 +43,8 @@ public:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

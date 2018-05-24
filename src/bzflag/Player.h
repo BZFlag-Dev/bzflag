@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__PLAYER_H__
-#define	__PLAYER_H__
+#ifndef __PLAYER_H__
+#define __PLAYER_H__
 
 #include "common.h"
 
@@ -41,313 +41,320 @@ class TankDeathOverride;
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
-  sizeof(float)		+ // timestamp
-  PlayerIdPLen		+ // player id
-  sizeof(int32_t)	+ // order
-  sizeof(int16_t)	+ // status
-  sizeof(float) * 3	+ // position			(or int16_t * 3)
-  sizeof(float) * 3	+ // velocity			(or int16_t * 3)
-  sizeof(float)		+ // angle			(or int16_t)
-  sizeof(float)		+ // angular velocity		(or int16_t)
-  sizeof(int16_t)	+ // jump jets			(conditional)
-  sizeof(int32_t)	+ // physics driver		(conditional)
-  sizeof(int16_t)	+ // user speed			(conditional)
-  sizeof(int16_t)	+ // user angular velocity	(conditional)
-  sizeof(uint8_t);	  // sounds			(conditional)
+    sizeof(float)     + // timestamp
+    PlayerIdPLen      + // player id
+    sizeof(int32_t)   + // order
+    sizeof(int16_t)   + // status
+    sizeof(float) * 3 + // position           (or int16_t * 3)
+    sizeof(float) * 3 + // velocity           (or int16_t * 3)
+    sizeof(float)     + // angle          (or int16_t)
+    sizeof(float)     + // angular velocity       (or int16_t)
+    sizeof(int16_t)   + // jump jets          (conditional)
+    sizeof(int32_t)   + // physics driver     (conditional)
+    sizeof(int16_t)   + // user speed         (conditional)
+    sizeof(int16_t)   + // user angular velocity  (conditional)
+    sizeof(uint8_t);    // sounds         (conditional)
 
 
-class Player {
+class Player
+{
 public:
-  Player(const PlayerId&, TeamColor,
-	 const char* callsign, const char* motto,
-	 const PlayerType);
-  virtual	~Player();
+    Player(const PlayerId&, TeamColor,
+           const char* callsign, const char* motto,
+           const PlayerType);
+    virtual   ~Player();
 
-  PlayerId	getId() const;
-  TeamColor	getTeam() const;
-  void		setTeam(TeamColor);
-  void		updateTank(float dt, bool local);
-  const char*	getCallSign() const;
-  const char*	getMotto() const;
-  void		setMotto(const char* _motto);
-  PlayerType	getPlayerType() const;
-  FlagType*	getFlag() const;
-  long		getOrder() const;
-  short		getStatus() const;
-  const float*	getPosition() const;
-  float		getAngle() const;
-  const float*	getForward() const;
-  const float*	getVelocity() const;
+    PlayerId  getId() const;
+    TeamColor getTeam() const;
+    void      setTeam(TeamColor);
+    void      updateTank(float dt, bool local);
+    const char*   getCallSign() const;
+    const char*   getMotto() const;
+    void      setMotto(const char* _motto);
+    PlayerType    getPlayerType() const;
+    FlagType* getFlag() const;
+    long      getOrder() const;
+    short     getStatus() const;
+    const float*  getPosition() const;
+    float     getAngle() const;
+    const float*  getForward() const;
+    const float*  getVelocity() const;
 
-  float		getAngularVelocity() const;
-  int		getPhysicsDriver() const;
-  int		getDeathPhysicsDriver() const;
-  float		getRadius() const;
-  void		getMuzzle(float*) const;
-  float		getMuzzleHeight() const;
-  short		getWins() const;
-  short		getLosses() const;
-  short		getTeamKills() const;
-  float		getTKRatio() const;
-  float		getNormalizedScore() const;
-  float		getLocalNormalizedScore() const;
-  short		getScore() const;
-  const float*	getDimensions() const;
+    float     getAngularVelocity() const;
+    int       getPhysicsDriver() const;
+    int       getDeathPhysicsDriver() const;
+    float     getRadius() const;
+    void      getMuzzle(float*) const;
+    float     getMuzzleHeight() const;
+    short     getWins() const;
+    short     getLosses() const;
+    short     getTeamKills() const;
+    float     getTKRatio() const;
+    float     getNormalizedScore() const;
+    float     getLocalNormalizedScore() const;
+    short     getScore() const;
+    const float*  getDimensions() const;
 
-  const float*	getApparentVelocity() const;
+    const float*  getApparentVelocity() const;
 
 #ifndef BUILDING_BZADMIN
-  inline const float*	getColor() const
-  {
-	  return color;
-  }
+    inline const float*   getColor() const
+    {
+        return color;
+    }
 #endif
-  short		getRabbitScore() const;
-  short		getSelfKills() const;
-  short		getLocalWins() const;
-  short		getLocalLosses() const;
-  short		getLocalTeamKills() const;
-  const TimeKeeper&	getExplodeTime() const;
-  const TimeKeeper&	getTeleportTime() const;
-  short		getFromTeleporter() const;
-  short		getToTeleporter() const;
-  float		getTeleporterProximity() const;
-  virtual int		getMaxShots() const;
-  virtual ShotPath*	getShot(int index) const = 0;
+    short     getRabbitScore() const;
+    short     getSelfKills() const;
+    short     getLocalWins() const;
+    short     getLocalLosses() const;
+    short     getLocalTeamKills() const;
+    const TimeKeeper& getExplodeTime() const;
+    const TimeKeeper& getTeleportTime() const;
+    short     getFromTeleporter() const;
+    short     getToTeleporter() const;
+    float     getTeleporterProximity() const;
+    virtual int       getMaxShots() const;
+    virtual ShotPath* getShot(int index) const = 0;
 
-  const ShotStatistics*	getShotStatistics() const;
+    const ShotStatistics* getShotStatistics() const;
 
-  void		addToScene(SceneDatabase*, TeamColor effectiveTeam,
-			   bool inCockpit, bool seerView,
-			   bool showTreads, bool showIDL);
+    void      addToScene(SceneDatabase*, TeamColor effectiveTeam,
+                         bool inCockpit, bool seerView,
+                         bool showTreads, bool showIDL);
 
-  bool		getIpAddress(Address&);
-  void		setIpAddress(const Address& addr);
+    bool      getIpAddress(Address&);
+    void      setIpAddress(const Address& addr);
 
-  virtual void	addShots(SceneDatabase*, bool colorblind) const;
-  void		setLandingSpeed(float velocity);
-  void		spawnEffect();
-  void		fireJumpJets();
+    virtual void  addShots(SceneDatabase*, bool colorblind) const;
+    void      setLandingSpeed(float velocity);
+    void      spawnEffect();
+    void      fireJumpJets();
 
-  bool		isAlive() const;
-  bool		isPaused() const;
-  bool		isFalling() const;
-  bool		isFlagActive() const;
-  bool		isTeleporting() const;
-  bool		isExploding() const;
-  bool		isPhantomZoned() const;
-  bool		isCrossingWall() const;
-  bool		isNotResponding() const;
-  void		resetNotResponding();
-  bool		isHunted() const;
-  void		setHunted(bool _hunted);
-  bool		isAutoPilot() const;
-  void		setAutoPilot(bool = true);
-  bool		isAdmin() const;
-  void		setAdmin(bool = true);
-  bool		isRegistered() const;
-  void		setRegistered(bool = true);
-  bool		isVerified() const;
-  void		setVerified(bool = true);
-  bool		hasPlayerList() const;
-  void		setPlayerList(bool = true);
+    bool      isAlive() const;
+    bool      isPaused() const;
+    bool      isFalling() const;
+    bool      isFlagActive() const;
+    bool      isTeleporting() const;
+    bool      isExploding() const;
+    bool      isPhantomZoned() const;
+    bool      isCrossingWall() const;
+    bool      isNotResponding() const;
+    void      resetNotResponding();
+    bool      isHunted() const;
+    void      setHunted(bool _hunted);
+    bool      isAutoPilot() const;
+    void      setAutoPilot(bool = true);
+    bool      isAdmin() const;
+    void      setAdmin(bool = true);
+    bool      isRegistered() const;
+    void      setRegistered(bool = true);
+    bool      isVerified() const;
+    void      setVerified(bool = true);
+    bool      hasPlayerList() const;
+    void      setPlayerList(bool = true);
 
-  bool		getPausedMessageState ( void ) const;
-  void		setPausedMessageState ( bool set ) { pauseMessageState = set;}
+    bool      getPausedMessageState ( void ) const;
+    void      setPausedMessageState ( bool set )
+    {
+        pauseMessageState = set;
+    }
 
-  bool		validTeamTarget(const Player *possibleTarget) const;
+    bool      validTeamTarget(const Player *possibleTarget) const;
 
-  // returns true iff dead reckoning is too different from the
-  // current tank state.
-  bool		isDeadReckoningWrong() const;
+    // returns true iff dead reckoning is too different from the
+    // current tank state.
+    bool      isDeadReckoningWrong() const;
 
-  // update state based on dead reckoning
-  void		doDeadReckoning();
+    // update state based on dead reckoning
+    void      doDeadReckoning();
 
-  // called to update state according to incoming packets
-  void		move(const float* pos, float azimuth);
-  void		setVelocity(const float* velocity);
-  void		setAngularVelocity(float);
-  void		setPhysicsDriver(int);
-  void		setRelativeMotion();
-  void		setUserSpeed(float speed);
-  void		setUserAngVel(float angvel);
-  void		changeTeam(TeamColor);
-  virtual void	setFlag(FlagType*);
-  virtual void	changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
-  void		changeSelfKills(short delta);
-  void		changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
-  void		setHandicap(float handicap);
-  void		setStatus(short);
-  void		setExplode(const TimeKeeper&);
-  void		setTeleport(const TimeKeeper&, short from, short to);
-  void		endShot(int index, bool isHit = false,
-			bool showExplosion = false);
-  void		addHitToStats(FlagType* flag);
+    // called to update state according to incoming packets
+    void      move(const float* pos, float azimuth);
+    void      setVelocity(const float* velocity);
+    void      setAngularVelocity(float);
+    void      setPhysicsDriver(int);
+    void      setRelativeMotion();
+    void      setUserSpeed(float speed);
+    void      setUserAngVel(float angvel);
+    void      changeTeam(TeamColor);
+    virtual void  setFlag(FlagType*);
+    virtual void  changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void      changeSelfKills(short delta);
+    void      changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void      setHandicap(float handicap);
+    void      setStatus(short);
+    void      setExplode(const TimeKeeper&);
+    void      setTeleport(const TimeKeeper&, short from, short to);
+    void      endShot(int index, bool isHit = false,
+                      bool showExplosion = false);
+    void      addHitToStats(FlagType* flag);
 
-  void*		pack(void*, uint16_t& code);
-  const void*	unpack(const void*, uint16_t code);
+    void*     pack(void*, uint16_t& code);
+    const void*   unpack(const void*, uint16_t code);
 
-  void		setDeadReckoning();
-  void		setDeadReckoning(float timestamp);
+    void      setDeadReckoning();
+    void      setDeadReckoning(float timestamp);
 
-  void		setUserTexture ( const char *tex ) { if (tex) userTexture = tex;}
+    void      setUserTexture ( const char *tex )
+    {
+        if (tex) userTexture = tex;
+    }
 
-  void		renderRadar() const;
+    void      renderRadar() const;
 
-  void		setExplodePos( const float * p);
+    void      setExplodePos( const float * p);
 
-  void setZpos (float z);
+    void setZpos (float z);
 
-  float getMaxSpeed ( void ) const;
+    float getMaxSpeed ( void ) const;
 
-  void forceReload(float time);
+    void forceReload(float time);
 
-  void setDeathEffect ( TankDeathOverride *e );
-  TankDeathOverride* getDeathEffect ( void );
+    void setDeathEffect ( TankDeathOverride *e );
+    TankDeathOverride* getDeathEffect ( void );
 
-  int reportedHits;
-  int computedHits;
-  std::map<int,bool>	hitMap;
+    int reportedHits;
+    int computedHits;
+    std::map<int,bool>    hitMap;
 protected:
-  void	  clearRemoteSounds();
-  void	  addRemoteSound(int sound);
+    void    clearRemoteSounds();
+    void    addRemoteSound(int sound);
 
 protected:
-  // shot statistics
-  ShotStatistics	shotStatistics;
-  const Obstacle* lastObstacle; // last obstacle touched
-  TimeKeeper	jamTime;
+    // shot statistics
+    ShotStatistics    shotStatistics;
+    const Obstacle* lastObstacle; // last obstacle touched
+    TimeKeeper    jamTime;
 
-  // pause message
-  bool pauseMessageState;
+    // pause message
+    bool pauseMessageState;
 
-  std::vector<ShotPath*> shots;
-  float		  handicap;
+    std::vector<ShotPath*> shots;
+    float       handicap;
 
 private:
-  // return true if the shot had to be terminated or false if it
-  // was already terminated.  position must be set to the shot's
-  // position if you return true (it's okay to return false if
-  // there's no meaningful shot position).
-  virtual bool	doEndShot(int index, bool isHit, float* position) = 0;
-  void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-			float* predictedVel, float time) const;
-  void calcRelativeMotion(float vel[2], float& speed, float& angvel);
-  void setVisualTeam (TeamColor team );
-  void updateFlagEffect(FlagType* flag);
-  void updateTranslucency(float dt);
-  void updateDimensions(float dt, bool local);
-  void updateTreads(float dt);
-  void updateJumpJets(float dt);
-  void updateTrackMarks();
-  bool hitObstacleResizing();
+    // return true if the shot had to be terminated or false if it
+    // was already terminated.  position must be set to the shot's
+    // position if you return true (it's okay to return false if
+    // there's no meaningful shot position).
+    virtual bool  doEndShot(int index, bool isHit, float* position) = 0;
+    void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
+                          float* predictedVel, float time) const;
+    void calcRelativeMotion(float vel[2], float& speed, float& angvel);
+    void setVisualTeam (TeamColor team );
+    void updateFlagEffect(FlagType* flag);
+    void updateTranslucency(float dt);
+    void updateDimensions(float dt, bool local);
+    void updateTreads(float dt);
+    void updateJumpJets(float dt);
+    void updateTrackMarks();
+    bool hitObstacleResizing();
 
 private:
-  // data not communicated with other players
-  bool			notResponding;
-  bool			hunted;
+    // data not communicated with other players
+    bool          notResponding;
+    bool          hunted;
 
-  // credentials
-  PlayerId		id;
-  bool			admin;
-  bool			registered;
-  bool			verified;
-  bool			playerList;
-  Address		ipAddr;
-  bool			haveIpAddr;
+    // credentials
+    PlayerId      id;
+    bool          admin;
+    bool          registered;
+    bool          verified;
+    bool          playerList;
+    Address       ipAddr;
+    bool          haveIpAddr;
 
-  // data use for drawing
-  TankSceneNode*	tankNode;
-  TankIDLSceneNode*	tankIDLNode;
-  SphereSceneNode*	pausedSphere;
+    // data use for drawing
+    TankSceneNode*    tankNode;
+    TankIDLSceneNode* tankIDLNode;
+    SphereSceneNode*  pausedSphere;
 #ifndef BUILDING_BZADMIN
-  GLfloat		color[4];
-  GLfloat		teleAlpha;
+    GLfloat       color[4];
+    GLfloat       teleAlpha;
 #endif
-  std::string		userTexture;
-  static int		tankTexture;
-  static int		tankOverideTexture;
-  TeamColor		lastVisualTeam;
-  TimeKeeper		lastTrackDraw;
+    std::string       userTexture;
+    static int        tankTexture;
+    static int        tankOverideTexture;
+    TeamColor     lastVisualTeam;
+    TimeKeeper        lastTrackDraw;
 
-  // permanent data
-  TeamColor		team;			// my team
+    // permanent data
+    TeamColor     team;           // my team
 
-  char			callSign[CallSignLen];	// my pseudonym
-  char			motto[MottoLen];	// my motto
-  PlayerType		type;			// Human/Computer
+    char          callSign[CallSignLen];  // my pseudonym
+    char          motto[MottoLen];    // my motto
+    PlayerType        type;           // Human/Computer
 
-  // relatively stable data
-  FlagType*		flagType;		// flag type I'm holding
-  float			dimensions[3];		// current tank dimensions
-  float			dimensionsScale[3];	// use to scale the dimensions
-  float			dimensionsRate[3];	 // relative to scale
-  float			dimensionsTarget[3];	// relative to scale
-  bool			useDimensions;		// use the varying dimensions for gfx
-  float			alpha;			// current tank translucency
-  float			alphaRate;		// current tank translucency
-  float			alphaTarget;		// current tank translucency
-  TimeKeeper		spawnTime;		// time I started spawning
-  TimeKeeper		explodeTime;		// time I started exploding
-  TimeKeeper		teleportTime;		// time I started teleporting
-  short			fromTeleporter;		// teleporter I entered
-  short			toTeleporter;		// teleporter I exited
-  float			teleporterProximity;	// how close to a teleporter
-  short			wins;			// number of kills
-  short			losses;			// number of deaths
-  short			tks;			// number of teamkills
-  short			selfKills;			// number of self-destructions
+    // relatively stable data
+    FlagType*     flagType;       // flag type I'm holding
+    float         dimensions[3];      // current tank dimensions
+    float         dimensionsScale[3]; // use to scale the dimensions
+    float         dimensionsRate[3];   // relative to scale
+    float         dimensionsTarget[3];    // relative to scale
+    bool          useDimensions;      // use the varying dimensions for gfx
+    float         alpha;          // current tank translucency
+    float         alphaRate;      // current tank translucency
+    float         alphaTarget;        // current tank translucency
+    TimeKeeper        spawnTime;      // time I started spawning
+    TimeKeeper        explodeTime;        // time I started exploding
+    TimeKeeper        teleportTime;       // time I started teleporting
+    short         fromTeleporter;     // teleporter I entered
+    short         toTeleporter;       // teleporter I exited
+    float         teleporterProximity;    // how close to a teleporter
+    short         wins;           // number of kills
+    short         losses;         // number of deaths
+    short         tks;            // number of teamkills
+    short         selfKills;          // number of self-destructions
 
-  // score of local player against this player
-  short			localWins;		// local player won this many
-  short			localLosses;		// local player lost this many
-  short			localTks;		// local player team killed this many
+    // score of local player against this player
+    short         localWins;      // local player won this many
+    short         localLosses;        // local player lost this many
+    short         localTks;       // local player team killed this many
 
-  // highly dynamic data
-  PlayerState		state;
+    // highly dynamic data
+    PlayerState       state;
 
-  // additional state
-  bool			autoPilot;
+    // additional state
+    bool          autoPilot;
 
-  // computable highly dynamic data
-  float			forward[3];		// forward unit vector
+    // computable highly dynamic data
+    float         forward[3];     // forward unit vector
 
-  // relative motion information
-  float			relativeSpeed;		// relative speed
-  float			relativeAngVel;		// relative angular velocity
+    // relative motion information
+    float         relativeSpeed;      // relative speed
+    float         relativeAngVel;     // relative angular velocity
 
-  float			apparentVelocity[3];	// velocity of tank as derived from it's last positional update
+    float         apparentVelocity[3];    // velocity of tank as derived from it's last positional update
 
-  // dead reckoning stuff
-  TimeKeeper inputTime;		// time of input
-  float inputTimestamp;	 // input timestamp of sender
-  int	inputStatus;		// tank status
-  float	inputPos[3];		// tank position
-  float	inputVel[3];		// tank velocity
-  float	inputAzimuth;		// direction tank is pointing
-  float	inputAngVel;		// tank turn rate
-  bool	inputTurning;		// tank is turning
-  float inputRelVel[2];		// relative velocity
-  float	inputRelSpeed;		// relative speed
-  float	inputRelAngVel;		// relative angular velocity
-  float	inputTurnCenter[2];	// tank turn center
-  float	inputTurnVector[2];	// tank turn vector
-  int	inputPhyDrv;		// physics driver
+    // dead reckoning stuff
+    TimeKeeper inputTime;     // time of input
+    float inputTimestamp;  // input timestamp of sender
+    int   inputStatus;        // tank status
+    float inputPos[3];        // tank position
+    float inputVel[3];        // tank velocity
+    float inputAzimuth;       // direction tank is pointing
+    float inputAngVel;        // tank turn rate
+    bool  inputTurning;       // tank is turning
+    float inputRelVel[2];     // relative velocity
+    float inputRelSpeed;      // relative speed
+    float inputRelAngVel;     // relative angular velocity
+    float inputTurnCenter[2]; // tank turn center
+    float inputTurnVector[2]; // tank turn vector
+    int   inputPhyDrv;        // physics driver
 
-  // average difference between time source and time destination
-  float			deltaTime;
+    // average difference between time source and time destination
+    float         deltaTime;
 
-  // time offset on last measurement
-  float			offset;
+    // time offset on last measurement
+    float         offset;
 
-  // 0 -> not received any sample
-  // 1 -> 1 sample rx
-  // 2 -> 2 or more sample rx
-  int			deadReckoningState;
+    // 0 -> not received any sample
+    // 1 -> 1 sample rx
+    // 2 -> 2 or more sample rx
+    int           deadReckoningState;
 
-  int			oldStatus;		// old tank status bits
-  float			oldZSpeed;		// old tank vertical speed
+    int           oldStatus;      // old tank status bits
+    float         oldZSpeed;      // old tank vertical speed
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.
@@ -356,298 +363,298 @@ private:
 // Player
 //
 
-inline PlayerId		Player::getId() const
+inline PlayerId     Player::getId() const
 {
-  return id;
+    return id;
 }
 
-inline TeamColor	Player::getTeam() const
+inline TeamColor    Player::getTeam() const
 {
-  return team;
+    return team;
 }
 
-inline void		Player::setTeam(TeamColor _team)
+inline void     Player::setTeam(TeamColor _team)
 {
-  team = _team;
+    team = _team;
 }
 
-inline const char*	Player::getCallSign() const
+inline const char*  Player::getCallSign() const
 {
-  return callSign;
+    return callSign;
 }
 
-inline const char*	Player::getMotto() const
+inline const char*  Player::getMotto() const
 {
-  return motto;
+    return motto;
 }
 
-inline PlayerType	Player::getPlayerType() const
+inline PlayerType   Player::getPlayerType() const
 {
-  return type;
+    return type;
 }
 
-inline FlagType*	Player::getFlag() const
+inline FlagType*    Player::getFlag() const
 {
-  return flagType;
+    return flagType;
 }
 
-inline long		Player::getOrder() const
+inline long     Player::getOrder() const
 {
-  return state.order;
+    return state.order;
 }
 
-inline short		Player::getStatus() const
+inline short        Player::getStatus() const
 {
-  return state.status;
+    return state.status;
 }
 
-inline const float*	Player::getPosition() const
+inline const float* Player::getPosition() const
 {
-  return state.pos;
+    return state.pos;
 }
 
-inline float		Player::getAngle() const
+inline float        Player::getAngle() const
 {
-  return state.azimuth;
+    return state.azimuth;
 }
 
-inline const float*	Player::getDimensions() const
+inline const float* Player::getDimensions() const
 {
-  return dimensions;
+    return dimensions;
 }
 
-inline const float*	Player::getForward() const
+inline const float* Player::getForward() const
 {
-  return forward;
+    return forward;
 }
 
-inline const float*	Player::getVelocity() const
+inline const float* Player::getVelocity() const
 {
-  return state.velocity;
+    return state.velocity;
 }
 
-inline const float*	Player::getApparentVelocity() const
+inline const float* Player::getApparentVelocity() const
 {
-  return apparentVelocity;
+    return apparentVelocity;
 }
 
-inline float		Player::getAngularVelocity() const
+inline float        Player::getAngularVelocity() const
 {
-  return state.angVel;
+    return state.angVel;
 }
 
-inline int		Player::getPhysicsDriver() const
+inline int      Player::getPhysicsDriver() const
 {
-  return state.phydrv;
+    return state.phydrv;
 }
 
-inline short		Player::getWins() const
+inline short        Player::getWins() const
 {
-  return wins;
+    return wins;
 }
 
-inline short		Player::getLosses() const
+inline short        Player::getLosses() const
 {
-  return losses;
+    return losses;
 }
 
-inline short		Player::getTeamKills() const
+inline short        Player::getTeamKills() const
 {
-  return tks;
+    return tks;
 }
 
-inline short		Player::getSelfKills() const
+inline short        Player::getSelfKills() const
 {
-  return selfKills;
+    return selfKills;
 }
 
-inline short		Player::getLocalWins() const
+inline short        Player::getLocalWins() const
 {
-  return localWins;
+    return localWins;
 }
 
-inline short		Player::getLocalLosses() const
+inline short        Player::getLocalLosses() const
 {
-  return localLosses;
+    return localLosses;
 }
 
-inline short		Player::getLocalTeamKills() const
+inline short        Player::getLocalTeamKills() const
 {
-  return localTks;
+    return localTks;
 }
 
-inline short		Player::getScore() const
+inline short        Player::getScore() const
 {
-  return wins - losses;
+    return wins - losses;
 }
 
-inline const TimeKeeper	&Player::getExplodeTime() const
+inline const TimeKeeper &Player::getExplodeTime() const
 {
-  return explodeTime;
+    return explodeTime;
 }
 
-inline const TimeKeeper	&Player::getTeleportTime() const
+inline const TimeKeeper &Player::getTeleportTime() const
 {
-  return teleportTime;
+    return teleportTime;
 }
 
-inline short		Player::getFromTeleporter() const
+inline short        Player::getFromTeleporter() const
 {
-  return fromTeleporter;
+    return fromTeleporter;
 }
 
-inline short		Player::getToTeleporter() const
+inline short        Player::getToTeleporter() const
 {
-  return toTeleporter;
+    return toTeleporter;
 }
 
-inline float		Player::getTeleporterProximity() const
+inline float        Player::getTeleporterProximity() const
 {
-  return teleporterProximity;
+    return teleporterProximity;
 }
 
 inline const ShotStatistics*  Player::getShotStatistics() const
 {
-  return &shotStatistics;
+    return &shotStatistics;
 }
 
-inline bool		Player::isAlive() const
+inline bool     Player::isAlive() const
 {
-  return (state.status & short(PlayerState::Alive)) != 0;
+    return (state.status & short(PlayerState::Alive)) != 0;
 }
 
-inline bool		Player::isPaused() const
+inline bool     Player::isPaused() const
 {
-  return (state.status & short(PlayerState::Paused)) != 0;
+    return (state.status & short(PlayerState::Paused)) != 0;
 }
 
 inline bool Player::getPausedMessageState ( void ) const
 {
-	return pauseMessageState;
+    return pauseMessageState;
 }
 
-inline bool		Player::isAutoPilot() const
+inline bool     Player::isAutoPilot() const
 {
-  return autoPilot;
+    return autoPilot;
 }
 
-inline void		Player::setAutoPilot(bool autopilot)
+inline void     Player::setAutoPilot(bool autopilot)
 {
-  autoPilot = autopilot;
+    autoPilot = autopilot;
 }
 
-inline bool		Player::isFalling() const
+inline bool     Player::isFalling() const
 {
-  return (state.status & short(PlayerState::Falling)) != 0;
+    return (state.status & short(PlayerState::Falling)) != 0;
 }
 
-inline bool		Player::isFlagActive() const
+inline bool     Player::isFlagActive() const
 {
-  return (state.status & short(PlayerState::FlagActive)) != 0;
+    return (state.status & short(PlayerState::FlagActive)) != 0;
 }
 
-inline bool		Player::isTeleporting() const
+inline bool     Player::isTeleporting() const
 {
-  return (state.status & short(PlayerState::Teleporting)) != 0;
+    return (state.status & short(PlayerState::Teleporting)) != 0;
 }
 
-inline bool		Player::isExploding() const
+inline bool     Player::isExploding() const
 {
-  return (state.status & short(PlayerState::Exploding)) != 0;
+    return (state.status & short(PlayerState::Exploding)) != 0;
 }
 
-inline bool		Player::isPhantomZoned() const
+inline bool     Player::isPhantomZoned() const
 {
-  return (isFlagActive() && (getFlag() == Flags::PhantomZone));
+    return (isFlagActive() && (getFlag() == Flags::PhantomZone));
 }
 
-inline bool		Player::isCrossingWall() const
+inline bool     Player::isCrossingWall() const
 {
-  return (state.status & short(PlayerState::CrossingWall)) != 0;
+    return (state.status & short(PlayerState::CrossingWall)) != 0;
 }
 
-inline bool		Player::isNotResponding() const
+inline bool     Player::isNotResponding() const
 {
-  return notResponding;
+    return notResponding;
 }
 
-inline void		Player::resetNotResponding()
+inline void     Player::resetNotResponding()
 {
-  notResponding = false;
+    notResponding = false;
 }
 
-inline bool		Player::isHunted() const
+inline bool     Player::isHunted() const
 {
-  return hunted;
+    return hunted;
 }
 
-inline void		Player::setHunted(bool _hunted)
+inline void     Player::setHunted(bool _hunted)
 {
-  hunted = _hunted;
+    hunted = _hunted;
 }
 
-inline bool		Player::isAdmin() const
+inline bool     Player::isAdmin() const
 {
-  return admin;
+    return admin;
 }
 
-inline void		Player::setAdmin(bool _admin)
+inline void     Player::setAdmin(bool _admin)
 {
-  admin = _admin;
+    admin = _admin;
 }
 
-inline bool		Player::isRegistered() const
+inline bool     Player::isRegistered() const
 {
-  return registered;
+    return registered;
 }
 
-inline void		Player::setRegistered(bool _registered)
+inline void     Player::setRegistered(bool _registered)
 {
-  registered = _registered;
+    registered = _registered;
 }
 
-inline bool		Player::isVerified() const
+inline bool     Player::isVerified() const
 {
-  return verified;
+    return verified;
 }
 
-inline void		Player::setVerified(bool _verified)
+inline void     Player::setVerified(bool _verified)
 {
-  verified = _verified;
+    verified = _verified;
 }
 
-inline bool		Player::hasPlayerList() const
+inline bool     Player::hasPlayerList() const
 {
-  return playerList;
+    return playerList;
 }
 
-inline void		Player::setPlayerList(bool _playerList)
+inline void     Player::setPlayerList(bool _playerList)
 {
-  playerList = _playerList;
+    playerList = _playerList;
 }
 
-inline void		Player::addHitToStats(FlagType* flag)
+inline void     Player::addHitToStats(FlagType* flag)
 {
-  shotStatistics.recordHit(flag);
+    shotStatistics.recordHit(flag);
 }
 
-inline void*		Player::pack(void* buf, uint16_t& code)
+inline void*        Player::pack(void* buf, uint16_t& code)
 {
-  setDeadReckoning();
-  return state.pack(buf, code);
+    setDeadReckoning();
+    return state.pack(buf, code);
 }
 
 inline void Player::setZpos (float z)
 {
-  state.pos[2] = z;
+    state.pos[2] = z;
 }
 
 #endif /* __PLAYER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

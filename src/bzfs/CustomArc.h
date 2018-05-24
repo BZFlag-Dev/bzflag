@@ -23,28 +23,30 @@
 #include "BzMaterial.h"
 
 
-class CustomArc : public WorldFileObstacle {
-  public:
+class CustomArc : public WorldFileObstacle
+{
+public:
     CustomArc(bool boxStyle);
     ~CustomArc();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
+private:
     void makePie(bool isCircle, float angle, float rot, float height,
-		 float radius, float squish, float texsz[4],
-		 WorldInfo* world) const;
+                 float radius, float squish, float texsz[4],
+                 WorldInfo* world) const;
     void makeRing(bool isCircle, float angle, float rot, float height,
-		  float inrad, float outrad, float squish, float texsz[4],
-		  WorldInfo* world) const;
-    enum {
-      Top,
-      Bottom,
-      Inside,
-      Outside,
-      StartFace,
-      EndFace,
-      MaterialCount
+                  float inrad, float outrad, float squish, float texsz[4],
+                  WorldInfo* world) const;
+    enum
+    {
+        Top,
+        Bottom,
+        Inside,
+        Outside,
+        StartFace,
+        EndFace,
+        MaterialCount
     };
     static const char* sideNames[MaterialCount];
 
@@ -64,8 +66,8 @@ class CustomArc : public WorldFileObstacle {
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

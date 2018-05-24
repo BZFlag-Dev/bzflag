@@ -18,31 +18,32 @@
 
 /** This class represents a SGI image file. It implements read() from
     ImageFile. */
-class SGIImageFile : public ImageFile {
+class SGIImageFile : public ImageFile
+{
 public:
-  SGIImageFile(std::istream*);
-  virtual ~SGIImageFile();
+    SGIImageFile(std::istream*);
+    virtual ~SGIImageFile();
 
-  /** This function returns the default extension of SGI image files. */
-  static std::string	getExtension();
+    /** This function returns the default extension of SGI image files. */
+    static std::string    getExtension();
 
-  /** This function reads image data from a SGI image file. */
-  virtual bool		read(void* buffer);
+    /** This function reads image data from a SGI image file. */
+    virtual bool      read(void* buffer);
 
 protected:
-  bool			readVerbatim(void* buffer);
-  bool			readRLE(void* buffer);
+    bool          readVerbatim(void* buffer);
+    bool          readRLE(void* buffer);
 
 private:
-  bool			isVerbatim;
+    bool          isVerbatim;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

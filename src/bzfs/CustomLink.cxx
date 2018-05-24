@@ -20,35 +20,32 @@
 
 CustomLink::CustomLink()
 {
-  from = "";
-  to = "";
+    from = "";
+    to = "";
 }
 
 
 bool CustomLink::read(const char *cmd, std::istream& input)
 {
-  if (strcmp(cmd, "from") == 0) {
-    input >> from;
-  }
-  else if (strcmp(cmd, "to") == 0) {
-    input >> to;
-  }
-  else {
-    return WorldFileObject::read(cmd, input);
-  }
-  return true;
+    if (strcmp(cmd, "from") == 0)
+        input >> from;
+    else if (strcmp(cmd, "to") == 0)
+        input >> to;
+    else
+        return WorldFileObject::read(cmd, input);
+    return true;
 }
 
 
 void CustomLink::writeToWorld(WorldInfo *world) const
 {
-  world->addLink(from, to);
+    world->addLink(from, to);
 }
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

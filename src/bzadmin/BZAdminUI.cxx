@@ -14,16 +14,17 @@
 #include "BZAdminUI.h"
 
 
-void BZAdminUI::handleNewPacket(uint16_t) {
-  if (client.getLastMessage().first.size() > 0)
-    outputMessage(client.getLastMessage().first,
-		  client.getLastMessage().second);
+void BZAdminUI::handleNewPacket(uint16_t)
+{
+    if (client.getLastMessage().first.size() > 0)
+        outputMessage(client.getLastMessage().first,
+                      client.getLastMessage().second);
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

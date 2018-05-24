@@ -24,65 +24,66 @@
 
 PlatformFactory* PlatformFactory::getInstance()
 {
-  if (!instance)
-    instance = new SdlPlatformFactory;
-  return instance;
+    if (!instance)
+        instance = new SdlPlatformFactory;
+    return instance;
 }
 
 SdlPlatformFactory::SdlPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 SdlPlatformFactory::~SdlPlatformFactory()
 {
-  // do nothing
+    // do nothing
 }
 
 BzfDisplay* SdlPlatformFactory::createDisplay(const char*, const char*)
 {
-  SDLDisplay* display = new SDLDisplay();
-  if (!display || !display->isValid()) {
-    delete display;
-    return NULL;
-  }
-  return display;
+    SDLDisplay* display = new SDLDisplay();
+    if (!display || !display->isValid())
+    {
+        delete display;
+        return NULL;
+    }
+    return display;
 }
 
 BzfVisual* SdlPlatformFactory::createVisual(const BzfDisplay* display)
 {
-  return new SDLVisual((const SDLDisplay*)display);
+    return new SDLVisual((const SDLDisplay*)display);
 }
 
 BzfWindow* SdlPlatformFactory::createWindow(const BzfDisplay* display,
-					    BzfVisual* visual)
+        BzfVisual* visual)
 {
-  return new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
+    return new SDLWindow((const SDLDisplay*)display, (SDLVisual*)visual);
 }
 
 BzfMedia* SdlPlatformFactory::createMedia()
 {
-  return new SDLMedia;
+    return new SDLMedia;
 }
 
 BzfJoystick* SdlPlatformFactory::createJoystick()
 {
-  /* Use EvdevJoystick instead of SDLJoystick if we can.
-   * It has minor improvements in axis mapping and joystick
-   * enumeration, but the big selling point so far is that it
-   * supports force feedback.
-   */
+    /* Use EvdevJoystick instead of SDLJoystick if we can.
+     * It has minor improvements in axis mapping and joystick
+     * enumeration, but the big selling point so far is that it
+     * supports force feedback.
+     */
 #ifdef HAVE_LINUX_INPUT_H
-  if (EvdevJoystick::isEvdevAvailable())
-    return new EvdevJoystick;
+    if (EvdevJoystick::isEvdevAvailable())
+        return new EvdevJoystick;
 #endif
 
-  return new SDLJoystick;
+    return new SDLJoystick;
 }
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
