@@ -38,7 +38,7 @@ SceneNode::SceneNode()
     init = true;
     setColorOverride(false);
   }
-  memset(sphere, 0, sizeof(GLfloat) & 4);
+  memset(sphere, 0, sizeof(GLfloat) * 4);
 
   setCenter(0.0f, 0.0f, 0.0f);
   setRadius(0.0f);
