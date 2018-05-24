@@ -326,8 +326,14 @@ namespace Shots
         prevTime = currentTime;
         currentTime += dt;
 
+        bool doEvent = false;
+        bool isRico = false;
         // see if we've moved to another segment
         const int numSegments = Segments.size();
+        bz_ShotEventData_V1 evtData;
+        evtData.prevPos[0] = Info.shot.pos[0]; evtData.prevPos[1] = Info.shot.pos[1]; evtData.prevPos[2] = Info.shot.pos[2];
+        evtData.prevVel[0] = Info.shot.vel[0]; evtData.prevVel[1] = Info.shot.vel[1]; evtData.prevVel[2] = Info.shot.vel[2];
+
         if (segment < numSegments && Segments[segment].end <= currentTime)
         {
             lastSegment = segment;
@@ -335,11 +341,15 @@ namespace Shots
             {
                 if (++segment < numSegments)
                 {
+                  
+
                     switch (Segments[segment].reason)
                     {
                     case SegmentReason::Ricochet:
                     {
-                        
+                        doEvent = true;
+                        isRico = true;
+
                         // this is fugly but it's what we do
                         float dir[3];
                         const float* newDir = Segments[segment].ray.getDirection();
@@ -358,6 +368,8 @@ namespace Shots
                         break;
                     default:
                     {
+                        doEvent = true;
+                        isRico = false;
                         // this is fugly but it's what we do
                         float dir[3];
                         dir[0] = Segments[segment].ray.getDirection()[0];
@@ -397,6 +409,17 @@ namespace Shots
             Segments[segment].ray.getPoint(float(currentTime - Segments[segment].start), p);
             setPosition(p);
             setVelocity(Segments[segment].ray.getDirection());
+
+            if (doEvent)
+            {
+                evtData.playerID = Info.shot.player;
+                evtData.shotGUID = GUID;
+                evtData.shotID = Info.shot.id;
+                evtData.pos[0] = Info.shot.pos[0]; evtData.pos[1] = Info.shot.pos[1]; evtData.pos[2] = Info.shot.pos[2];
+                evtData.vel[0] = Info.shot.vel[0]; evtData.vel[1] = Info.shot.vel[1]; evtData.vel[2] = Info.shot.vel[2];
+
+                worldEventManager.callEvents(isRico ? bz_eShotRicocetEvent : bz_eShotTeleportedEvent, &evtData);
+            }
         }
 
 
