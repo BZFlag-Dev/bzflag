@@ -104,6 +104,9 @@ private:
     int count;  // number of nodes in this and subnodes
     int listSize;
     SceneNode** list;
+
+    const OctreeNode* getNode(unsigned char x) const;
+    const OctreeNode* getFullNode(unsigned char x) const;
 };
 
 
