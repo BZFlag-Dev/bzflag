@@ -660,7 +660,7 @@ void            WinWindow::makeColormap(
 
     // make and initialize a logical palette with room for all colors
     LOGPALETTE* logicalPalette = (LOGPALETTE*)(void*)new char[
-                                     sizeof(LOGPALETTE) + n * sizeof(PALETTEENTRY)];
+                                  sizeof(LOGPALETTE) + n * sizeof(PALETTEENTRY)];
     logicalPalette->palVersion = 0x300;
     logicalPalette->palNumEntries = (WORD)n;
 

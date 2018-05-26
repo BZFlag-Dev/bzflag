@@ -54,10 +54,10 @@ int main(int argc, char** argv)
             return 1;
         }
         if (LOBYTE(wsaData.wVersion) != major ||
-        HIBYTE(wsaData.wVersion) != minor)
+                HIBYTE(wsaData.wVersion) != minor)
         {
             std::cerr << "Invalid WinSock version (got " << (int) LOBYTE(wsaData.wVersion) <<
-            '.' << (int) HIBYTE(wsaData.wVersion) << ", expected" << major << '.' << minor << ')';
+                      '.' << (int) HIBYTE(wsaData.wVersion) << ", expected" << major << '.' << minor << ')';
             WSACleanup();
             return 1;
         }

@@ -29,7 +29,7 @@
 static bool F2BSORT = true;//FIXME
 
 
-                           // FIXME - do something about occluders vs. gridding
+// FIXME - do something about occluders vs. gridding
 
 
 static const int fullListBreak = 3; // FIXME
@@ -175,7 +175,7 @@ void Octree::addNodes(SceneNode** list, int listSize, int depth, int elements)
 
 
 int Octree::getFrustumList(SceneNode** list, int listSize,
-    const Frustum* frustum) const
+                           const Frustum* frustum) const
 {
     if (!root)
         return 0;
@@ -206,7 +206,7 @@ int Octree::getFrustumList(SceneNode** list, int listSize,
 
 
 int Octree::getRadarList(SceneNode** list, int listSize,
-    const Frustum* frustum) const
+                         const Frustum* frustum) const
 {
     // This is basically the same as Octree::getFrustumList(),
     // except that it doesn't use the occluders. This duplication
@@ -233,7 +233,7 @@ int Octree::getRadarList(SceneNode** list, int listSize,
 
 
 int Octree::getShadowList(SceneNode** list, int listSize,
-    int planeCount, const float(*planes)[4]) const
+                          int planeCount, const float(*planes)[4]) const
 {
     if (!root)
         return 0;
@@ -281,9 +281,7 @@ void Octree::getExtents(SceneNode** list, int listSize)
     {
         float axisWidth = tmpExts.getWidth(i);
         if (axisWidth > width)
-        {
             width = axisWidth;
-        }
     }
 
     extents = tmpExts;
@@ -335,7 +333,7 @@ void Octree::draw() const
 
 
 OctreeNode::OctreeNode(unsigned char _depth, const Extents& exts,
-    SceneNode** _list, int _listSize)
+                       SceneNode** _list, int _listSize)
 {
     int i;
 
@@ -448,9 +446,7 @@ void OctreeNode::makeChildren()
                     squeezed[kid] = NULL;
                 }
                 else
-                {
                     childCount++;
-                }
                 children[kid] = squeezed[kid];
             }
         }
@@ -543,39 +539,39 @@ void OctreeNode::getFrustumList() const
 
             if (occLevel == Outside)
             {
-                onode = getNode(dirbits);				// 0:  0,0,0
+                onode = getNode(dirbits);               // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                onode = getNode(dirbits);				// 1:  1,0,0
+                onode = getNode(dirbits);               // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getNode(dirbits);				// 2:  0,1,0
+                onode = getNode(dirbits);               // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);				// 3:  0,0,1
+                onode = getNode(dirbits);               // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);				// 4:  1,1,0
+                onode = getNode(dirbits);               // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);				// 5:  1,0,1
+                onode = getNode(dirbits);               // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getNode(dirbits);				// 6:  0,1,1
+                onode = getNode(dirbits);               // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                onode = getNode(dirbits);			    // 7:  1,1,1
+                onode = getNode(dirbits);               // 7:  1,1,1
             }
             else
             {
-                onode = getFullNode(dirbits);				// 0:  0,0,0
+                onode = getFullNode(dirbits);               // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                onode = getFullNode(dirbits);				// 1:  1,0,0
+                onode = getFullNode(dirbits);               // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getFullNode(dirbits);				// 2:  0,1,0
+                onode = getFullNode(dirbits);               // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);				// 3:  0,0,1
+                onode = getFullNode(dirbits);               // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);				// 4:  1,1,0
+                onode = getFullNode(dirbits);               // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);				// 5:  1,0,1
+                onode = getFullNode(dirbits);               // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getFullNode(dirbits);				// 6:  0,1,1
+                onode = getFullNode(dirbits);               // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                onode = getFullNode(dirbits);				// 7:  1,1,1
+                onode = getFullNode(dirbits);               // 7:  1,1,1
             }
         }
         else
@@ -821,9 +817,7 @@ void OctreeNode::tallyStats()
             squeezed[i]->tallyStats();
     }
     else
-    {
         leafNodes++;
-    }
 
     return;
 }

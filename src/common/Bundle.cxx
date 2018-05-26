@@ -164,34 +164,6 @@ const char utf8bytes[256] =
     3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3, 4,4,4,4,4,4,4,4,5,5,5,5,6,6,6,6
 };
 
-#if 0
-// TODO: find the utf-8 values for these
-switch (c)
-{
-case '':
-case '':
-    msg[i] = 'a';
-    break;
-case '':
-case '':
-    msg[i] = 'A';
-    break;
-case '':
-    msg[i] = 'i';
-    break;
-case '':
-    msg[i] = 'o';
-    break;
-case '
-':
-    msg[i] = 'O';
-    break;
-case '':
-    msg[i] = 'Y';
-    break;
-}
-#endif
-
 // TODO: sort this and bsearch it. perhaps divided by utf8 length
 const char *translationTable[][2] =
 {

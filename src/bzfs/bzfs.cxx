@@ -5190,7 +5190,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         autopilotPlayer(t, autoPilotData.enabled);
 
-        worldEventManager.callEvents(bz_eAutoPilotEvent ,&autoPilotData);
+        worldEventManager.callEvents(bz_eAutoPilotEvent,&autoPilotData);
         break;
     }
 

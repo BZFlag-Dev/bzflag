@@ -36,6 +36,7 @@ const char _to_table[64] =
 const char* to_table = _to_table;
 const char* to_table_end = _to_table + sizeof(_to_table);
 
+// *INDENT-OFF*
 const signed char _from_table[128] =
 {
     -1, -1, -1, -1, -1, -1, -1, -1, // 0
@@ -55,6 +56,8 @@ const signed char _from_table[128] =
     41, 42, 43, 44, 45, 46, 47, 48, // 112
     49, 50, 51, -1, -1, -1, -1, -1  // 120
 };
+// *INDENT-ON*
+
 const signed char* from_table = _from_table;
 }
 

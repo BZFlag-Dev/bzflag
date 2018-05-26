@@ -522,7 +522,7 @@ class BZF_API bz_PlayerDieEventData_V1 : public bz_EventData
 public:
     bz_PlayerDieEventData_V1() : bz_EventData(bz_ePlayerDieEvent)
         , playerID(-1), team(eNoTeam), killerID(-1), killerTeam(eNoTeam)
-        , shotID(-1) , driverID(-1), state()
+        , shotID(-1), driverID(-1), state()
     {
     }
 
