@@ -606,7 +606,7 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***

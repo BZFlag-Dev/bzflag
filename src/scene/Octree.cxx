@@ -546,39 +546,39 @@ void OctreeNode::getFrustumList () const
 
             if (occLevel == Outside)
             {
-                onode = getNode(dirbits);       // 0:  0,0,0
+                onode = getNode(dirbits);               // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                onode = getNode(dirbits);       // 1:  1,0,0
+                onode = getNode(dirbits);               // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getNode(dirbits);       // 2:  0,1,0
+                onode = getNode(dirbits);               // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);       // 3:  0,0,1
+                onode = getNode(dirbits);               // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);       // 4:  1,1,0
+                onode = getNode(dirbits);               // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getNode(dirbits);       // 5:  1,0,1
+                onode = getNode(dirbits);               // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getNode(dirbits);       // 6:  0,1,1
+                onode = getNode(dirbits);               // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                onode = getNode(dirbits);       // 7:  1,1,1
+                onode = getNode(dirbits);               // 7:  1,1,1
             }
             else
             {
-                onode = getFullNode(dirbits);       // 0:  0,0,0
+                onode = getFullNode(dirbits);               // 0:  0,0,0
                 dirbits ^= (1 << 0);
-                onode = getFullNode(dirbits);       // 1:  1,0,0
+                onode = getFullNode(dirbits);               // 1:  1,0,0
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getFullNode(dirbits);       // 2:  0,1,0
+                onode = getFullNode(dirbits);               // 2:  0,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);       // 3:  0,0,1
+                onode = getFullNode(dirbits);               // 3:  0,0,1
                 dirbits ^= (1 << 0) | (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);       // 4:  1,1,0
+                onode = getFullNode(dirbits);               // 4:  1,1,0
                 dirbits ^= (1 << 1) | (1 << 2);
-                onode = getFullNode(dirbits);       // 5:  1,0,1
+                onode = getFullNode(dirbits);               // 5:  1,0,1
                 dirbits ^= (1 << 0) | (1 << 1);
-                onode = getFullNode(dirbits);       // 6:  0,1,1
+                onode = getFullNode(dirbits);               // 6:  0,1,1
                 dirbits ^= (1 << 0);
-                onode = getFullNode(dirbits);       // 7:  1,1,1
+                onode = getFullNode(dirbits);               // 7:  1,1,1
             }
         }
         else

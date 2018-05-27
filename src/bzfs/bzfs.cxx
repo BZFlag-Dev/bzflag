@@ -5244,7 +5244,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         autopilotPlayer(t, autoPilotData.enabled);
 
-        worldEventManager.callEvents(bz_eAutoPilotEvent ,&autoPilotData);
+        worldEventManager.callEvents(bz_eAutoPilotEvent,&autoPilotData);
         break;
     }
 
@@ -8011,7 +8011,7 @@ void APIStateToplayerState(PlayerState &playerState, const bz_PlayerUpdateState 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***
