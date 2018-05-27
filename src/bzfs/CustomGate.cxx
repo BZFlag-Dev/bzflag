@@ -24,47 +24,47 @@
 
 CustomGate::CustomGate(const char* _telename)
 {
-  telename = _telename;
-  size[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
-  size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
-  size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
-  border = size[0] * 2.0f;
-  horizontal = false;
+    telename = _telename;
+    size[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TELEWIDTH);
+    size[1] = BZDB.eval(StateDatabase::BZDB_TELEBREADTH);
+    size[2] = 2.0f * BZDB.eval(StateDatabase::BZDB_TELEHEIGHT);
+    border = size[0] * 2.0f;
+    horizontal = false;
 }
 
 
 bool CustomGate::read(const char *cmd, std::istream& input)
 {
-  if (strcmp(cmd, "border") == 0)
-    input >> border;
-  else if (strcmp(cmd, "horizontal") == 0)
-    horizontal = true;
-  else
-    return WorldFileObstacle::read(cmd, input);
-  return true;
+    if (strcmp(cmd, "border") == 0)
+        input >> border;
+    else if (strcmp(cmd, "horizontal") == 0)
+        horizontal = true;
+    else
+        return WorldFileObstacle::read(cmd, input);
+    return true;
 }
 
 
 void CustomGate::writeToGroupDef(GroupDefinition *groupdef) const
 {
-  Teleporter* tele =
-    new Teleporter(pos, rotation,
-		   fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
-		   border, horizontal, driveThrough, shootThrough, ricochet);
+    Teleporter* tele =
+        new Teleporter(pos, rotation,
+                       fabsf(size[0]), fabsf(size[1]), fabsf(size[2]),
+                       border, horizontal, driveThrough, shootThrough, ricochet);
 
-  if (!telename.size() && name.size())
-    tele->setName(name);
-  else
-    tele->setName(telename);
+    if (!telename.size() && name.size())
+        tele->setName(name);
+    else
+        tele->setName(telename);
 
-  groupdef->addObstacle(tele);
+    groupdef->addObstacle(tele);
 }
 
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

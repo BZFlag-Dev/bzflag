@@ -11,8 +11,8 @@
  */
 
 /* EighthDBaseSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a base building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a base building.
  */
 
 #ifndef BZF_EIGHTHD_BASE_SCENE_NODE_H
@@ -21,28 +21,33 @@
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
-class EighthDBaseSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDBaseSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDBaseSceneNode();
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
-  protected:
-    class EighthDBaseRenderNode : public RenderNode {
-      public:
-			EighthDBaseRenderNode(const EighthDBaseSceneNode *,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDBaseRenderNode();
-	void		render();
-	const GLfloat *	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDBaseSceneNode *sceneNode;
-	GLfloat corner[8][3];
+class EighthDBaseSceneNode : public EighthDimSceneNode
+{
+public:
+    EighthDBaseSceneNode(const float pos[3],
+                         const float size[3], float rotation);
+    ~EighthDBaseSceneNode();
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
+protected:
+    class EighthDBaseRenderNode : public RenderNode
+    {
+    public:
+        EighthDBaseRenderNode(const EighthDBaseSceneNode *,
+                              const float pos[3],
+                              const float size[3], float rotation);
+        ~EighthDBaseRenderNode();
+        void        render();
+        const GLfloat * getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDBaseSceneNode *sceneNode;
+        GLfloat corner[8][3];
     };
-  private:
-    OpenGLGState	  gstate;
+private:
+    OpenGLGState      gstate;
     EighthDBaseRenderNode renderNode;
 };
 
@@ -50,8 +55,8 @@ class EighthDBaseSceneNode : public EighthDimSceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

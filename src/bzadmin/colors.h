@@ -13,15 +13,16 @@
 #ifndef COLORS_H
 #define COLORS_H
 
-enum ColorCode {
-  Default = 0,
-  White,
-  Red,
-  Green,
-  Blue,
-  Purple,
-  Yellow,
-  Cyan
+enum ColorCode
+{
+    Default = 0,
+    White,
+    Red,
+    Green,
+    Blue,
+    Purple,
+    Yellow,
+    Cyan
 };
 
 #endif

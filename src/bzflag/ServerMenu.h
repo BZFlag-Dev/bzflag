@@ -39,77 +39,82 @@ class ServerListFilterHelpMenu;
 class ServerMenu;
 
 
-class ServerMenuDefaultKey : public MenuDefaultKey {
+class ServerMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  ServerMenuDefaultKey(ServerMenu* _menu) :
-    menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) {}
-  ~ServerMenuDefaultKey();
+    ServerMenuDefaultKey(ServerMenu* _menu) :
+        menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) {}
+    ~ServerMenuDefaultKey();
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
 private:
-  ServerMenu* menu;
-  ServerListFilterMenu*	serverListFilterMenu;
-  ServerListFilterHelpMenu*	serverListFilterHelpMenu;
+    ServerMenu* menu;
+    ServerListFilterMenu* serverListFilterMenu;
+    ServerListFilterHelpMenu* serverListFilterHelpMenu;
 };
 
-class ServerMenu : public HUDDialog {
+class ServerMenu : public HUDDialog
+{
 public:
-  ServerMenu();
-  ~ServerMenu() {}
+    ServerMenu();
+    ~ServerMenu() {}
 
-  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  int getSelected() const;
-  void setSelected(int, bool forcerefresh=false);
-  void show();
-  void execute();
-  void dismiss();
-  void resize(int width, int height);
-  void updateStatus();
-  void setFindLabel(const std::string& label);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    int getSelected() const;
+    void setSelected(int, bool forcerefresh=false);
+    void show();
+    void execute();
+    void dismiss();
+    void resize(int width, int height);
+    void updateStatus();
+    void setFindLabel(const std::string& label);
 
-  bool getFind() const;
-  void setFind(bool mode, bool clear = false);
-  void setFindIndex(int index);
+    bool getFind() const;
+    void setFind(bool mode, bool clear = false);
+    void setFindIndex(int index);
 
-  void toggleFavView();
-  void setFav(bool);
+    void toggleFavView();
+    void setFav(bool);
 
-  static void playingCB(void*);
+    static void playingCB(void*);
 
-  static const int NumItems;
-
-private:
-  void addLabel(const char* str, const char* label);
-  void setStatus(const char*, const std::vector<std::string> *parms = NULL);
-  void pick();
-
-  ServerItem& serversAt(int index);
+    static const int NumItems;
 
 private:
-  ServerList realServerList;
-  ServerList serverList;
-  ServerMenuDefaultKey	defaultKey;
-  HUDuiLabel* status;
-  HUDuiLabel* help1;
-  HUDuiLabel* help2;
+    void addLabel(const char* str, const char* label);
+    void setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void pick();
 
-  HUDuiLabel* pageLabel;
-  int selectedIndex;
-  unsigned int serversFound;
-  unsigned int realServersFound;
+    ServerItem& serversAt(int index);
 
-  HUDuiTypeIn* search;
-  bool findMode;
-  bool favView;
-  bool newfilter;
+private:
+    ServerList realServerList;
+    ServerList serverList;
+    ServerMenuDefaultKey  defaultKey;
+    HUDuiLabel* status;
+    HUDuiLabel* help1;
+    HUDuiLabel* help2;
 
-  ServerListFilter listFilter;
+    HUDuiLabel* pageLabel;
+    int selectedIndex;
+    unsigned int serversFound;
+    unsigned int realServersFound;
 
-  int lastWidth, lastHeight;
+    HUDuiTypeIn* search;
+    bool findMode;
+    bool favView;
+    bool newfilter;
 
-  static const int NumReadouts;
+    ServerListFilter listFilter;
+
+    int lastWidth, lastHeight;
+
+    static const int NumReadouts;
 };
 
 
@@ -117,8 +122,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

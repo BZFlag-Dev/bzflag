@@ -32,7 +32,7 @@ PFNGLGENRENDERBUFFERSPROC glGenRenderbuffers = NULL;
 
 PFNGLRENDERBUFFERSTORAGEPROC glRenderbufferStorage = NULL;
 PFNGLRENDERBUFFERSTORAGEMULTISAMPLEPROC glRenderbufferStorageMultisample =
-  NULL;
+    NULL;
 
 PFNGLGETRENDERBUFFERPARAMETERIVPROC glGetRenderbufferParameteriv = NULL;
 
@@ -51,95 +51,102 @@ PFNGLFRAMEBUFFERTEXTURELAYERPROC glFramebufferTextureLayer = NULL;
 PFNGLFRAMEBUFFERRENDERBUFFERPROC glFramebufferRenderbuffer = NULL;
 
 PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVPROC
-  glGetFramebufferAttachmentParameteriv = NULL;
+glGetFramebufferAttachmentParameteriv = NULL;
 
 PFNGLBLITFRAMEBUFFERPROC glBlitFramebuffer = NULL;
 
 PFNGLGENERATEMIPMAPPROC glGenerateMipmap = NULL;
 #endif // __APPLE__
 
-void OpenGLFramebuffer::initFramebuffer() {
-  glGenFramebuffers(1, &framebuffer);
-  glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+void OpenGLFramebuffer::initFramebuffer()
+{
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
 
-  glGenRenderbuffers(1, &renderbuffer);
-  glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
-  glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel, GL_RGB,
-				   width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			    GL_RENDERBUFFER, renderbuffer);
+    glGenRenderbuffers(1, &renderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, renderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel, GL_RGB,
+                                     width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                              GL_RENDERBUFFER, renderbuffer);
 
-  glGenRenderbuffers(1, &depthRenderbuffer);
-  glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
-  glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel,
-				   GL_DEPTH24_STENCIL8,
-				   width, height);
-  glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-			    GL_RENDERBUFFER, depthRenderbuffer);
+    glGenRenderbuffers(1, &depthRenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthRenderbuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, msaaLevel,
+                                     GL_DEPTH24_STENCIL8,
+                                     width, height);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                              GL_RENDERBUFFER, depthRenderbuffer);
 
-  if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    printf("Multisample framebuffer incomplete.\n");
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        printf("Multisample framebuffer incomplete.\n");
 
-  glBindFramebuffer(GL_FRAMEBUFFER, 0); // break the binding
+    glBindFramebuffer(GL_FRAMEBUFFER, 0); // break the binding
 }
 
-void OpenGLFramebuffer::destroyFramebuffer() {
-  glDeleteRenderbuffers(1, &renderbuffer);
-  glDeleteRenderbuffers(1, &depthRenderbuffer);
-  glDeleteFramebuffers(1, &framebuffer);
+void OpenGLFramebuffer::destroyFramebuffer()
+{
+    glDeleteRenderbuffers(1, &renderbuffer);
+    glDeleteRenderbuffers(1, &depthRenderbuffer);
+    glDeleteFramebuffers(1, &framebuffer);
 }
 
 OpenGLFramebuffer::OpenGLFramebuffer() : contextActive(false), msaaLevel(1),
-                                         width(1), height(1),
-                                         renderbuffer(0), depthRenderbuffer(0),
-					 framebuffer(0) {
-  OpenGLGState::registerContextInitializer(freeContext, initContext,
-					   (void*)this);
+    width(1), height(1),
+    renderbuffer(0), depthRenderbuffer(0),
+    framebuffer(0)
+{
+    OpenGLGState::registerContextInitializer(freeContext, initContext,
+            (void*)this);
 }
 
-OpenGLFramebuffer::~OpenGLFramebuffer() {
-  OpenGLGState::unregisterContextInitializer(freeContext, initContext,
-					     (void*)this);
+OpenGLFramebuffer::~OpenGLFramebuffer()
+{
+    OpenGLGState::unregisterContextInitializer(freeContext, initContext,
+            (void*)this);
 }
 
 void OpenGLFramebuffer::checkState(int newWidth, int newHeight,
-				   int newMSAALevel) {
-  if(width != newWidth || height != newHeight || msaaLevel != newMSAALevel) {
-    width = newWidth;
-    height = newHeight;
-    msaaLevel = newMSAALevel;
+                                   int newMSAALevel)
+{
+    if(width != newWidth || height != newHeight || msaaLevel != newMSAALevel)
+    {
+        width = newWidth;
+        height = newHeight;
+        msaaLevel = newMSAALevel;
 
-    if(contextActive) {
-      destroyFramebuffer();
-      initFramebuffer();
+        if(contextActive)
+        {
+            destroyFramebuffer();
+            initFramebuffer();
+        }
     }
-  }
 }
 
 
 void OpenGLFramebuffer::freeContext(void* self)
 {
-  if(OpenGLGState::getMaxSamples() == 1)
-    return;
+    if(OpenGLGState::getMaxSamples() == 1)
+        return;
 
-  if(! ((OpenGLFramebuffer*)self)->contextActive)
-    return;
+    if(! ((OpenGLFramebuffer*)self)->contextActive)
+        return;
 
-  ((OpenGLFramebuffer*)self)->destroyFramebuffer();
-  ((OpenGLFramebuffer*)self)->contextActive = false;
+    ((OpenGLFramebuffer*)self)->destroyFramebuffer();
+    ((OpenGLFramebuffer*)self)->contextActive = false;
 }
 
 
 void OpenGLFramebuffer::initContext(void* self)
 {
-  if(OpenGLGState::getMaxSamples() == 1)
-    return;
+    if(OpenGLGState::getMaxSamples() == 1)
+        return;
 
-  if(((OpenGLFramebuffer*)self)->contextActive)
-    freeContext(self);
+    if(((OpenGLFramebuffer*)self)->contextActive)
+        freeContext(self);
 
-  ((OpenGLFramebuffer*)self)->initFramebuffer();
-  ((OpenGLFramebuffer*)self)->contextActive = true;
+    ((OpenGLFramebuffer*)self)->initFramebuffer();
+    ((OpenGLFramebuffer*)self)->contextActive = true;
 }
 
 

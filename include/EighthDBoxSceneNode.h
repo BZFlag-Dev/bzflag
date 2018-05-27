@@ -11,41 +11,46 @@
  */
 
 /* EighthDBoxSceneNode:
- *	Encapsulates information for rendering the eighth dimension
- *	of a box building.
+ *  Encapsulates information for rendering the eighth dimension
+ *  of a box building.
  */
 
-#ifndef	BZF_EIGHTHD_BOX_SCENE_NODE_H
-#define	BZF_EIGHTHD_BOX_SCENE_NODE_H
+#ifndef BZF_EIGHTHD_BOX_SCENE_NODE_H
+#define BZF_EIGHTHD_BOX_SCENE_NODE_H
 
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
-class EighthDBoxSceneNode : public EighthDimSceneNode {
-  public:
-			EighthDBoxSceneNode(const float pos[3],
-					const float size[3], float rotation);
-			~EighthDBoxSceneNode();
+class EighthDBoxSceneNode : public EighthDimSceneNode
+{
+public:
+    EighthDBoxSceneNode(const float pos[3],
+                        const float size[3], float rotation);
+    ~EighthDBoxSceneNode();
 
-    void		notifyStyleChange();
-    void		addRenderNodes(SceneRenderer&);
+    void        notifyStyleChange();
+    void        addRenderNodes(SceneRenderer&);
 
-  protected:
-    class EighthDBoxRenderNode : public RenderNode {
-      public:
-			EighthDBoxRenderNode(const EighthDBoxSceneNode*,
-				const float pos[3],
-				const float size[3], float rotation);
-			~EighthDBoxRenderNode();
-	void		render();
-	const GLfloat*	getPosition() const { return sceneNode->getSphere(); }
-      private:
-	const EighthDBoxSceneNode* sceneNode;
-	GLfloat		corner[8][3];
+protected:
+    class EighthDBoxRenderNode : public RenderNode
+    {
+    public:
+        EighthDBoxRenderNode(const EighthDBoxSceneNode*,
+                             const float pos[3],
+                             const float size[3], float rotation);
+        ~EighthDBoxRenderNode();
+        void        render();
+        const GLfloat*  getPosition() const
+        {
+            return sceneNode->getSphere();
+        }
+    private:
+        const EighthDBoxSceneNode* sceneNode;
+        GLfloat     corner[8][3];
     };
 
-  private:
-    OpenGLGState	 gstate;
+private:
+    OpenGLGState     gstate;
     EighthDBoxRenderNode renderNode;
 };
 
@@ -53,8 +58,8 @@ class EighthDBoxSceneNode : public EighthDimSceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

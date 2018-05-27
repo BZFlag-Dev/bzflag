@@ -15,7 +15,7 @@
  */
 
 #ifndef BZF_COMMON_H
-#define	BZF_COMMON_H
+#define BZF_COMMON_H
 
 /* this should always be the very FIRST header */
 
@@ -76,20 +76,20 @@ extern int debugLevel;
  */
 #ifndef UNUSED
 #  if GCC_PREREQ(2, 5)
-     /* GCC-style */
+/* GCC-style */
 #    define UNUSED(parameter) (parameter) __attribute__((unused))
 #  else
-     /* MSVC/C++ */
+/* MSVC/C++ */
 #    ifdef __cplusplus
 #      if defined(NDEBUG)
-#	define UNUSED(parameter) /* parameter */
+#   define UNUSED(parameter) /* parameter */
 #      else /* some of them are asserted */
-#	 define UNUSED(parameter) (parameter)
+#    define UNUSED(parameter) (parameter)
 #      endif
 #    else
 #      if defined(_MSC_VER)
-	 /* disable reporting an "unreferenced formal parameter" */
-#	pragma warning( disable : 4100 )
+/* disable reporting an "unreferenced formal parameter" */
+#   pragma warning( disable : 4100 )
 #      endif
 #      define UNUSED(parameter) (parameter)
 #    endif
@@ -141,55 +141,55 @@ extern int debugLevel;
 
 /* some platforms don't have float versions of the math library */
 #ifndef HAVE_ASINF
-#  define	asinf		(float)asin
+#  define   asinf       (float)asin
 #endif
 #ifndef HAVE_ATAN2F
-#  define	atan2f		(float)atan2
+#  define   atan2f      (float)atan2
 #endif
 #ifndef HAVE_ATANF
-#  define	atanf		(float)atan
+#  define   atanf       (float)atan
 #endif
 #ifndef HAVE_COSF
-#  define	cosf		(float)cos
+#  define   cosf        (float)cos
 #endif
 #ifndef HAVE_EXPF
-#  define	expf		(float)exp
+#  define   expf        (float)exp
 #endif
 #ifndef HAVE_FABSF
-#  define	fabsf		(float)fabs
+#  define   fabsf       (float)fabs
 #endif
 #ifndef HAVE_FLOORF
-#  define	floorf		(float)floor
+#  define   floorf      (float)floor
 #endif
 #ifndef HAVE_FMODF
-#  define	fmodf		(float)fmod
+#  define   fmodf       (float)fmod
 #endif
 #ifndef HAVE_HYPOTF
-#  define	hypotf		(float)hypot
+#  define   hypotf      (float)hypot
 #endif
 #ifndef HAVE_LOGF
-#  define	logf		(float)log
+#  define   logf        (float)log
 #endif
 #ifndef HAVE_LOG10F
-#  define	log10f		(float)log10
+#  define   log10f      (float)log10
 #endif
 #ifndef HAVE_POWF
-#  define	powf		(float)pow
+#  define   powf        (float)pow
 #endif
 #ifndef HAVE_SINF
-#  define	sinf		(float)sin
+#  define   sinf        (float)sin
 #endif
 #ifndef HAVE_SQRTF
-#  define	sqrtf		(float)sqrt
+#  define   sqrtf       (float)sqrt
 #endif
 #ifndef HAVE_TANF
-#  define	tanf		(float)tan
+#  define   tanf        (float)tan
 #endif
 
 
 /* random number stuff */
-#define bzfrand()	((double)rand() / ((double)RAND_MAX + 1.0))
-#define bzfsrand(_s)	srand(_s)
+#define bzfrand()   ((double)rand() / ((double)RAND_MAX + 1.0))
+#define bzfsrand(_s)    srand(_s)
 
 #ifndef __BEOS__
 #  ifdef HAVE_VALUES_H
@@ -219,31 +219,31 @@ extern int debugLevel;
 #  include <stdint.h>
 #else
 #  if defined(__linux) || (defined(__sgi) && !defined(__INTTYPES_MAJOR))
-typedef u_int16_t	uint16_t;
-typedef u_int32_t	uint32_t;
+typedef u_int16_t   uint16_t;
+typedef u_int32_t   uint32_t;
 #  endif
 #  if defined(sun)
-typedef signed short	int16_t;
-typedef ushort_t	uint16_t;
-typedef signed int	int32_t;
-typedef uint_t		uint32_t;
+typedef signed short    int16_t;
+typedef ushort_t    uint16_t;
+typedef signed int  int32_t;
+typedef uint_t      uint32_t;
 #  endif
-typedef unsigned char	uint8_t;
+typedef unsigned char   uint8_t;
 #endif
 
 
 /* missing constants */
 
 #ifndef MAXFLOAT
-#  define	MAXFLOAT	3.402823466e+38f
+#  define   MAXFLOAT    3.402823466e+38f
 #endif
 
 #ifndef M_PI
-#  define	M_PI		3.14159265358979323846f
+#  define   M_PI        3.14159265358979323846f
 #endif
 
 #ifndef M_SQRT1_2
-#  define	M_SQRT1_2	0.70710678118654752440f
+#  define   M_SQRT1_2   0.70710678118654752440f
 #endif
 
 
@@ -276,13 +276,13 @@ typedef unsigned char	uint8_t;
 #  ifndef HAVE_ISNAN
 #    ifdef __cplusplus
 #      ifdef isnan
-#	undef isnan
+#   undef isnan
 #      endif
-       template<typename Tp>
-       inline int isnan(Tp f)
-       {
-	 return (f!=f);
-       }
+template<typename Tp>
+inline int isnan(Tp f)
+{
+    return (f!=f);
+}
 #    else
 #      define isnan(f) ((f) != (f))
 #    endif /* __cplusplus */
@@ -295,14 +295,14 @@ typedef unsigned char	uint8_t;
 #    ifdef max
 #      undef max
 #    endif
-     namespace std
-     {
-       template<typename comparable>
-       inline const comparable& max(const comparable& a, const comparable& b)
-       {
-	 return  a < b ? b : a;
-       }
-     }
+namespace std
+{
+template<typename comparable>
+inline const comparable& max(const comparable& a, const comparable& b)
+{
+    return  a < b ? b : a;
+}
+}
 #  else
 #    ifdef max
 #      undef max
@@ -316,14 +316,14 @@ typedef unsigned char	uint8_t;
 #    ifdef min
 #      undef min
 #    endif
-     namespace std
-     {
-       template<typename comparable>
-       inline const comparable& min(const comparable& a, const comparable& b)
-       {
-	 return b < a ? b : a;
-       }
-     }
+namespace std
+{
+template<typename comparable>
+inline const comparable& min(const comparable& a, const comparable& b)
+{
+    return b < a ? b : a;
+}
+}
 #  else
 #    ifdef min
 #      undef min

@@ -18,20 +18,21 @@
 #include <vector>
 
 
-typedef struct {
-  int indices[3];
+typedef struct
+{
+    int indices[3];
 } TriIndices;
 
 extern void triangulateFace(int count, const float* const* verts,
-			    std::vector<TriIndices>& tris);
+                            std::vector<TriIndices>& tris);
 
 
 #endif  /* __TRIANGULATE_H__ */
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

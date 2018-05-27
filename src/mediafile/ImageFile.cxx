@@ -17,49 +17,49 @@
 //
 
 ImageFile::ImageFile(std::istream* _stream) : MediaFile(_stream), open(false),
-  numChannels(), width(), height()
+    numChannels(), width(), height()
 {
-  // do nothing
+    // do nothing
 }
 
 ImageFile::~ImageFile()
 {
-  // do nothing
+    // do nothing
 }
 
-void			ImageFile::init(unsigned int _numChannels,
-                                        unsigned int _width, unsigned int _height)
+void            ImageFile::init(unsigned int _numChannels,
+                                unsigned int _width, unsigned int _height)
 {
-  open	= true;
-  numChannels = _numChannels;
-  width       = _width;
-  height      = _height;
+    open  = true;
+    numChannels = _numChannels;
+    width       = _width;
+    height      = _height;
 }
 
-bool			ImageFile::isOpen() const
+bool            ImageFile::isOpen() const
 {
-  return open;
+    return open;
 }
 
-unsigned int		ImageFile::getNumChannels() const
+unsigned int        ImageFile::getNumChannels() const
 {
-  return numChannels;
+    return numChannels;
 }
 
-unsigned int		ImageFile::getWidth() const
+unsigned int        ImageFile::getWidth() const
 {
-  return width;
+    return width;
 }
 
-unsigned int		ImageFile::getHeight() const
+unsigned int        ImageFile::getHeight() const
 {
-  return height;
+    return height;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

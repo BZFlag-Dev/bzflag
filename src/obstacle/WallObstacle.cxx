@@ -17,173 +17,173 @@
 #include "WallObstacle.h"
 #include "Intersect.h"
 
-const char*		WallObstacle::typeName = "WallObstacle";
+const char*     WallObstacle::typeName = "WallObstacle";
 
 WallObstacle::WallObstacle()
 {
-  // do nothing
+    // do nothing
 }
 
 WallObstacle::WallObstacle(const float* p, float a, float b, float h, bool rico) :
-				Obstacle(p, a, 0.0, b, h, false, false, rico)
+    Obstacle(p, a, 0.0, b, h, false, false, rico)
 {
-  finalize();
+    finalize();
 }
 
 void WallObstacle::finalize()
 {
-  // compute normal
-  const float* p = getPosition();
-  const float a = getRotation();
-  plane[0] = cosf(a);
-  plane[1] = sinf(a);
-  plane[2] = 0.0;
-  plane[3] = -(p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2]);
+    // compute normal
+    const float* p = getPosition();
+    const float a = getRotation();
+    plane[0] = cosf(a);
+    plane[1] = sinf(a);
+    plane[2] = 0.0;
+    plane[3] = -(p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2]);
 
-  return;
+    return;
 }
 
 WallObstacle::~WallObstacle()
 {
-  // do nothing
+    // do nothing
 }
 
-const char*		WallObstacle::getType() const
+const char*     WallObstacle::getType() const
 {
-  return typeName;
+    return typeName;
 }
 
-const char*		WallObstacle::getClassName() // const
+const char*     WallObstacle::getClassName() // const
 {
-  return typeName;
+    return typeName;
 }
 
-float			WallObstacle::intersect(const Ray& r) const
+float           WallObstacle::intersect(const Ray& r) const
 {
-  const float* o = r.getOrigin();
-  const float* d = r.getDirection();
-  const float dot = -(d[0] * plane[0] + d[1] * plane[1] + d[2] * plane[2]);
-  if (dot == 0.0f) return -1.0f;
-  float t = (o[0] * plane[0] + o[1] * plane[1] + o[2] * plane[2] +
-							plane[3]) / dot;
-  return t;
+    const float* o = r.getOrigin();
+    const float* d = r.getDirection();
+    const float dot = -(d[0] * plane[0] + d[1] * plane[1] + d[2] * plane[2]);
+    if (dot == 0.0f) return -1.0f;
+    float t = (o[0] * plane[0] + o[1] * plane[1] + o[2] * plane[2] +
+               plane[3]) / dot;
+    return t;
 }
 
-void			WallObstacle::getNormal(const float*, float* n) const
+void            WallObstacle::getNormal(const float*, float* n) const
 {
-  n[0] = plane[0];
-  n[1] = plane[1];
-  n[2] = plane[2];
+    n[0] = plane[0];
+    n[1] = plane[1];
+    n[2] = plane[2];
 }
 
-bool			WallObstacle::inCylinder(const float* p, float r, float UNUSED( height )) const
+bool            WallObstacle::inCylinder(const float* p, float r, float UNUSED( height )) const
 {
-  return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
+    return p[0] * plane[0] + p[1] * plane[1] + p[2] * plane[2] + plane[3] < r;
 }
 
-bool			WallObstacle::inBox(const float* p, float _angle,
-					    float halfWidth, float halfBreadth,
-					    float UNUSED( height )) const
+bool            WallObstacle::inBox(const float* p, float _angle,
+                                    float halfWidth, float halfBreadth,
+                                    float UNUSED( height )) const
 {
-  const float xWidth = cosf(_angle);
-  const float yWidth = sinf(_angle);
-  const float xBreadth = -yWidth;
-  const float yBreadth = xWidth;
-  float corner[3];
-  corner[2] = p[2];
+    const float xWidth = cosf(_angle);
+    const float yWidth = sinf(_angle);
+    const float xBreadth = -yWidth;
+    const float yBreadth = xWidth;
+    float corner[3];
+    corner[2] = p[2];
 
-  // check to see if any corner is inside negative half-space
-  corner[0] = p[0] - xWidth * halfWidth - xBreadth * halfBreadth;
-  corner[1] = p[1] - yWidth * halfWidth - yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] + xWidth * halfWidth - xBreadth * halfBreadth;
-  corner[1] = p[1] + yWidth * halfWidth - yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] - xWidth * halfWidth + xBreadth * halfBreadth;
-  corner[1] = p[1] - yWidth * halfWidth + yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
-  corner[0] = p[0] + xWidth * halfWidth + xBreadth * halfBreadth;
-  corner[1] = p[1] + yWidth * halfWidth + yBreadth * halfBreadth;
-  if (inCylinder(corner, 0.0f, 0.0f)) return true;
+    // check to see if any corner is inside negative half-space
+    corner[0] = p[0] - xWidth * halfWidth - xBreadth * halfBreadth;
+    corner[1] = p[1] - yWidth * halfWidth - yBreadth * halfBreadth;
+    if (inCylinder(corner, 0.0f, 0.0f)) return true;
+    corner[0] = p[0] + xWidth * halfWidth - xBreadth * halfBreadth;
+    corner[1] = p[1] + yWidth * halfWidth - yBreadth * halfBreadth;
+    if (inCylinder(corner, 0.0f, 0.0f)) return true;
+    corner[0] = p[0] - xWidth * halfWidth + xBreadth * halfBreadth;
+    corner[1] = p[1] - yWidth * halfWidth + yBreadth * halfBreadth;
+    if (inCylinder(corner, 0.0f, 0.0f)) return true;
+    corner[0] = p[0] + xWidth * halfWidth + xBreadth * halfBreadth;
+    corner[1] = p[1] + yWidth * halfWidth + yBreadth * halfBreadth;
+    if (inCylinder(corner, 0.0f, 0.0f)) return true;
 
-  return false;
+    return false;
 }
 
-bool			WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldAngle ),
-				       const float* p, float _angle,
-				       float halfWidth, float halfBreadth, float height) const
+bool            WallObstacle::inMovingBox(const float* UNUSED( oldP ), float UNUSED( oldAngle ),
+        const float* p, float _angle,
+        float halfWidth, float halfBreadth, float height) const
 
 {
-  return inBox (p, _angle, halfWidth, halfBreadth, height);
+    return inBox (p, _angle, halfWidth, halfBreadth, height);
 }
 
-bool			WallObstacle::getHitNormal(
-				const float*, float,
-				const float*, float,
-				float, float, float,
-				float* normal) const
+bool            WallObstacle::getHitNormal(
+    const float*, float,
+    const float*, float,
+    float, float, float,
+    float* normal) const
 {
-  getNormal(NULL, normal);
-  return true;
+    getNormal(NULL, normal);
+    return true;
 }
 
 
 
 void* WallObstacle::pack(void* buf) const
 {
-  buf = nboPackVector(buf, pos);
-  buf = nboPackFloat(buf, angle);
-  buf = nboPackFloat(buf, size[1]);
-  buf = nboPackFloat(buf, size[2]);
+    buf = nboPackVector(buf, pos);
+    buf = nboPackFloat(buf, angle);
+    buf = nboPackFloat(buf, size[1]);
+    buf = nboPackFloat(buf, size[2]);
 
-  unsigned char stateByte = 0;
-  stateByte |= canRicochet() ? _RICOCHET : 0;
-  buf = nboPackUByte(buf,stateByte);
+    unsigned char stateByte = 0;
+    stateByte |= canRicochet() ? _RICOCHET : 0;
+    buf = nboPackUByte(buf,stateByte);
 
-  return buf;
+    return buf;
 }
 
 
 const void* WallObstacle::unpack(const void* buf)
 {
-  buf = nboUnpackVector(buf, pos);
-  buf = nboUnpackFloat(buf, angle);
-  buf = nboUnpackFloat(buf, size[1]);
-  buf = nboUnpackFloat(buf, size[2]);
+    buf = nboUnpackVector(buf, pos);
+    buf = nboUnpackFloat(buf, angle);
+    buf = nboUnpackFloat(buf, size[1]);
+    buf = nboUnpackFloat(buf, size[2]);
 
-  unsigned char stateByte;
-  buf = nboUnpackUByte(buf,stateByte);
-  ricochet = (stateByte & _RICOCHET) != 0;
+    unsigned char stateByte;
+    buf = nboUnpackUByte(buf,stateByte);
+    ricochet = (stateByte & _RICOCHET) != 0;
 
-  finalize();
+    finalize();
 
-  return buf;
+    return buf;
 }
 
 
 int WallObstacle::packSize() const
 {
-  int fullSize = 0;
-  fullSize += sizeof(float[3]); // pos
-  fullSize += sizeof(float);    // rotation
-  fullSize += sizeof(float);	// breadth
-  fullSize += sizeof(float);	// height
-  fullSize += sizeof(uint8_t);
-  return fullSize;
+    int fullSize = 0;
+    fullSize += sizeof(float[3]); // pos
+    fullSize += sizeof(float);    // rotation
+    fullSize += sizeof(float);    // breadth
+    fullSize += sizeof(float);    // height
+    fullSize += sizeof(uint8_t);
+    return fullSize;
 }
 
 
 void WallObstacle::print(std::ostream& UNUSED(out),
-			 const std::string& UNUSED(indent)) const
+                         const std::string& UNUSED(indent)) const
 {
-  return;
+    return;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

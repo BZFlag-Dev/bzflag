@@ -30,13 +30,17 @@ typedef std::vector<std::string> QualifierList;
 typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
 
 
-class CustomZone : public WorldFileLocation {
-  public:
+class CustomZone : public WorldFileLocation
+{
+public:
     CustomZone();
 
     virtual bool read(const char *cmd, std::istream&);
     virtual void writeToWorld(WorldInfo*) const;
-    virtual bool usesGroupDef() { return false; }
+    virtual bool usesGroupDef()
+    {
+        return false;
+    }
 
     // make a safety zone for all team flags (on the ground)
     void addFlagSafety(float x, float y, WorldInfo* worldInfo);
@@ -48,7 +52,7 @@ class CustomZone : public WorldFileLocation {
     void getRandomPoint(float *pt) const;
     float getDistToPoint (const float *pos) const;
 
-  public:
+public:
     static const std::string& getFlagIdQualifier(int flagId);
     static int getFlagIdFromQualifier(const std::string&);
 
@@ -61,10 +65,10 @@ class CustomZone : public WorldFileLocation {
     static const std::string& getPlayerTeamQualifier(int team);
     static int getPlayerTeamFromQualifier(const std::string&);
 
-  private:
+private:
     void addZoneFlagCount(FlagType* flagType, int count);
 
-  private:
+private:
     ZoneFlagMap zoneFlagMap;
     QualifierList qualifiers;
 };
@@ -72,22 +76,22 @@ class CustomZone : public WorldFileLocation {
 
 inline const QualifierList& CustomZone::getQualifiers() const
 {
-  return qualifiers;
+    return qualifiers;
 }
 
 
 inline const ZoneFlagMap& CustomZone::getZoneFlagMap() const
 {
-  return zoneFlagMap;
+    return zoneFlagMap;
 }
 
 
 inline float CustomZone::getArea() const
 {
-  float x = (size[0] >= 1.0f) ? size[0] : 1.0f;
-  float y = (size[1] >= 1.0f) ? size[1] : 1.0f;
-  float z = (size[2] >= 1.0f) ? size[2] : 1.0f;
-  return (x * y * z);
+    float x = (size[0] >= 1.0f) ? size[0] : 1.0f;
+    float y = (size[1] >= 1.0f) ? size[1] : 1.0f;
+    float z = (size[2] >= 1.0f) ? size[2] : 1.0f;
+    return (x * y * z);
 }
 
 
@@ -95,8 +99,8 @@ inline float CustomZone::getArea() const
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

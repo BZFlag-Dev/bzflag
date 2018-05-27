@@ -32,41 +32,48 @@ class BZAdminClient;
     be done before the main() function is called (i.e. when global variables
     and static member variables are initialized). This can be done using
     UIAdder. */
-class BZAdminUI {
+class BZAdminUI
+{
 public:
 
-  /** This constructor just sets the BZAdminClient reference. */
-  BZAdminUI(BZAdminClient& c) : client(c) {}
+    /** This constructor just sets the BZAdminClient reference. */
+    BZAdminUI(BZAdminClient& c) : client(c) {}
 
-  /** Need a virtual destructor so subclasses get to do their cleanups. */
-  virtual ~BZAdminUI() {}
+    /** Need a virtual destructor so subclasses get to do their cleanups. */
+    virtual ~BZAdminUI() {}
 
-  /** This function prints the message. */
-  virtual void outputMessage(const std::string&, ColorCode) {}
-  /** This function is called by the client when a new packet has arrived. */
-  virtual void handleNewPacket(uint16_t);
-  /** See if the user has entered a command, if it has, store it in str and
-      return true. */
-  virtual bool checkCommand(std::string&) { return false; }
-  /** Tell the UI that a player has been added. */
-  virtual void addedPlayer(PlayerId) {}
-  /** Warn the UI that a player will be removed. */
-  virtual void removingPlayer(PlayerId) {}
-  /** Get the current target (the player that messages should be sent to,
-      or 0 for public messages). */
-  virtual PlayerId getTarget() const { return AllPlayers; }
+    /** This function prints the message. */
+    virtual void outputMessage(const std::string&, ColorCode) {}
+    /** This function is called by the client when a new packet has arrived. */
+    virtual void handleNewPacket(uint16_t);
+    /** See if the user has entered a command, if it has, store it in str and
+        return true. */
+    virtual bool checkCommand(std::string&)
+    {
+        return false;
+    }
+    /** Tell the UI that a player has been added. */
+    virtual void addedPlayer(PlayerId) {}
+    /** Warn the UI that a player will be removed. */
+    virtual void removingPlayer(PlayerId) {}
+    /** Get the current target (the player that messages should be sent to,
+        or 0 for public messages). */
+    virtual PlayerId getTarget() const
+    {
+        return AllPlayers;
+    }
 
 protected:
 
-  BZAdminClient& client;
+    BZAdminClient& client;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

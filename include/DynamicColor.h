@@ -21,40 +21,45 @@
 #include <iostream>
 
 
-typedef struct sequenceList {
-  float period;
-  float offset;
-  signed char* list;
-  unsigned int count;
+typedef struct sequenceList
+{
+    float period;
+    float offset;
+    signed char* list;
+    unsigned int count;
 } sequenceParams;
 
-typedef struct {
-  float period;
-  float offset;
-  float weight;
+typedef struct
+{
+    float period;
+    float offset;
+    float weight;
 } sinusoidParams;
 
-typedef struct {
-  float period;
-  float offset;
-  float width;
+typedef struct
+{
+    float period;
+    float offset;
+    float width;
 } clampParams;
 
-class DynamicColor {
-  public:
+class DynamicColor
+{
+public:
     DynamicColor();
     ~DynamicColor();
 
-    enum SequenceState {
-      colorMin = 0,
-      colorMid = 1,
-      colorMax = 2
+    enum SequenceState
+    {
+        colorMin = 0,
+        colorMid = 1,
+        colorMax = 2
     };
 
     bool setName(const std::string& name);
     void setLimits(int channel, float min, float max);
     void setSequence(int channel, float period, float offset,
-		     std::vector<char>& list);
+                     std::vector<char>& list);
     void addSinusoid(int channel, const float sinusoid[3]);
     void addClampUp(int channel, const float clampUp[3]);
     void addClampDown(int channel, const float clampDown[3]);
@@ -72,19 +77,20 @@ class DynamicColor {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     static const float minPeriod;
 
     std::string name;
     float color[4];
 
-    typedef struct {
-      float minValue, maxValue;
-      float totalWeight; // tally of sinusoid weights
-      sequenceParams sequence;
-      std::vector<sinusoidParams> sinusoids;
-      std::vector<clampParams> clampUps;
-      std::vector<clampParams> clampDowns;
+    typedef struct
+    {
+        float minValue, maxValue;
+        float totalWeight; // tally of sinusoid weights
+        sequenceParams sequence;
+        std::vector<sinusoidParams> sinusoids;
+        std::vector<clampParams> clampUps;
+        std::vector<clampParams> clampDowns;
     } ChannelParams;
 
     ChannelParams channels[4];
@@ -94,16 +100,18 @@ class DynamicColor {
 
 inline bool DynamicColor::canHaveAlpha() const
 {
-  return possibleAlpha;
+    return possibleAlpha;
 }
 
-inline const float* DynamicColor::getColor() const {
-  return color;
+inline const float* DynamicColor::getColor() const
+{
+    return color;
 }
 
 
-class DynamicColorManager {
-  public:
+class DynamicColorManager
+{
+public:
     DynamicColorManager();
     ~DynamicColorManager();
     void update();
@@ -118,7 +126,7 @@ class DynamicColorManager {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     std::vector<DynamicColor*> colors;
 };
 
