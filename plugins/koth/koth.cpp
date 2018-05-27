@@ -787,7 +787,7 @@ bool KOTHCommands::SlashCommand ( int playerID, bz_ApiString _command, bz_ApiStr
 }
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***

@@ -1403,7 +1403,7 @@ int SceneRenderer::getFrameTriangleCount() const
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***

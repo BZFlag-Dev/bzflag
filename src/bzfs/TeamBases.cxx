@@ -140,7 +140,7 @@ void TeamBase::getRandomPosition( float &x, float &y, float &z ) const
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 4***
+// tab-width: 4 ***
 // c-basic-offset: 4 ***
 // indent-tabs-mode: nil ***
 // End: ***
