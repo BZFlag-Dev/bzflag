@@ -3222,32 +3222,38 @@ void playerAlive(int playerIndex)
 
     worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
-    // update last position immediately
-    playerData->player.setRestartOnBase(false);
-    playerData->setPlayerState(spawnData.pos, spawnData.rot);
 
-    // send MsgAlive
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackVector(buf, playerData->lastState.pos);
-    buf = nboPackFloat(buf, playerData->lastState.azimuth);
-    broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+  SpawnPlayer(playerData, spawnData.pos, spawnData.rot);
 
-    // call any events for a playerspawn
-    bz_PlayerSpawnEventData_V1    spawnEvent;
-    spawnEvent.playerID = playerIndex;
-    spawnEvent.team = convertTeam(playerData->player.getTeam());
-
-    playerStateToAPIState(spawnEvent.state, playerData->lastState);
-
-    worldEventManager.callEvents(bz_ePlayerSpawnEvent,&spawnEvent);
-
-    if (clOptions->gameType == RabbitChase)
+  if (clOptions->gameType == RabbitChase)
+  {
+    playerData->player.wasNotARabbit();
+    if (rabbitIndex == NoPlayer)
     {
-        playerData->player.wasNotARabbit();
-        if (rabbitIndex == NoPlayer)
-            anointNewRabbit();
+      anointNewRabbit();
     }
+  }
+}
+
+void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth)
+{
+  // update last position immediately
+  playerData->player.setRestartOnBase(false);
+  playerData->setPlayerState(pos, aziumuth);
+
+  // send MsgAlive
+  void *buf, *bufStart = getDirectMessageBuffer();
+  buf = nboPackUByte(bufStart, playerData->getIndex());
+  buf = nboPackVector(buf, playerData->lastState.pos);
+  buf = nboPackFloat(buf, playerData->lastState.azimuth);
+  broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+
+  // call any events for a playerspawn
+  bz_PlayerSpawnEventData_V1	spawnEvent;
+  spawnEvent.playerID = playerData->getIndex();
+  spawnEvent.team = convertTeam(playerData->player.getTeam());
+  playerStateToAPIState(spawnEvent.state, playerData->lastState);
+  worldEventManager.callEvents(bz_ePlayerSpawnEvent, &spawnEvent);
 }
 
 // TODO: In a later major release, we should just handle the kills fully from the server
