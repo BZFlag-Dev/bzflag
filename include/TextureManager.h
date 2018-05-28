@@ -17,6 +17,7 @@
 
 #include "OpenGLTexture.h"
 #include "Singleton.h"
+#include "OSFile.h"
 
 
 struct FileTextureInit
@@ -89,6 +90,8 @@ private:
 
     int addTexture( const char*, OpenGLTexture *texture );
     OpenGLTexture* loadTexture( FileTextureInit &init, bool reportFail = true );
+
+    int tryLoadTexture(OSFile &osFilename, const char* name, bool reportFail);
 
     typedef std::map<std::string, ImageInfo> TextureNameMap;
     typedef std::map<int, ImageInfo*> TextureIDMap;

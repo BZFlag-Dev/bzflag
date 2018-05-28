@@ -72,6 +72,21 @@ TextureManager::~TextureManager()
     textureIDs.clear();
 }
 
+int TextureManager::tryLoadTexture(OSFile &osFilename, const char* name, bool reportFail)
+{
+    const std::string filename = osFilename.getOSName();
+
+    FileTextureInit texInfo;
+    texInfo.name = filename;
+    texInfo.filter = OpenGLTexture::LinearMipmapLinear;
+
+    OpenGLTexture *image = loadTexture(texInfo, reportFail);
+    if (image)
+        return addTexture(name, image);
+
+    return -1;
+}
+
 int TextureManager::getTextureID( const char* name, bool reportFail )
 {
     if (!name)
@@ -86,21 +101,21 @@ int TextureManager::getTextureID( const char* name, bool reportFail )
         return it->second.id;
     else   // we don't have it so try and load it
     {
+        if (BZDB.isSet("texturePrefix"))    // if there is a texture prefix, try that first.
+        {
+            int id = tryLoadTexture(OSFile(BZDB.get("texturePrefix") + "/" + name),name,false); // convert to native format
 
-        OSFile osFilename(name); // convert to native format
-        const std::string filename = osFilename.getOSName();
+            if (id > 0)
+                return id;
+        }
 
-        FileTextureInit texInfo;
-        texInfo.name = filename;
-        texInfo.filter = OpenGLTexture::LinearMipmapLinear;
-
-        OpenGLTexture *image = loadTexture(texInfo, reportFail);
-        if (!image)
+        int id = tryLoadTexture(OSFile(name),name,reportFail); // convert to native format
+        if (id < 0)
         {
             logDebugMessage(2,"Image not found or unloadable: %s\n", name);
             return -1;
         }
-        return addTexture(name, image);
+        return id;
     }
     return -1;
 }
