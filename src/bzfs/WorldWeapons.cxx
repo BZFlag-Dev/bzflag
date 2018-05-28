@@ -265,7 +265,7 @@ int WorldWeapons::getNewWorldShotID(void)
     return worldShotId++;
 }
 
-bool shotUsedInList(int shotID, Shots::ShotList& list)
+bool shotUsedInList(int shotID, Shots::Shot::Vec& list)
 {
     for (size_t s = 0; s < list.size(); s++)
     {

@@ -111,6 +111,9 @@ public:
     void finishWorld();
     int packDatabase();
 
+    int getTeleportTarget(int source) const;
+    int getTeleportTarget(int source, unsigned int seed) const;
+
     bool isFinisihed()
     {
         return finished;

@@ -1853,7 +1853,7 @@ BZF_API bool bz_vectorFromRotations(const float tilt, const float rotation, floa
 // shot meta data
 BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, uint32_t value)
 {
-    Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+    Shots::Shot::Ptr shot = ShotManager.FindShot(shotGUID);
     if (shot == nullptr || name == nullptr)
         return;
 
@@ -1862,7 +1862,7 @@ BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, uint3
 
 BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const char* value)
 {
-    Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+    Shots::Shot::Ptr shot = ShotManager.FindShot(shotGUID);
     if (shot == nullptr || name == nullptr)
         return;
 
@@ -1875,7 +1875,7 @@ BZF_API void bz_setShotMetaData(const uint32_t shotGUID, const char* name, const
 
 BZF_API bool bz_shotHasMetaData(const uint32_t shotGUID, const char* name)
 {
-    Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+    Shots::Shot::Ptr shot = ShotManager.FindShot(shotGUID);
     if (shot == nullptr || name == nullptr)
         return false;
 
@@ -1884,7 +1884,7 @@ BZF_API bool bz_shotHasMetaData(const uint32_t shotGUID, const char* name)
 
 BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name)
 {
-    Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+    Shots::Shot::Ptr shot = ShotManager.FindShot(shotGUID);
     if (shot == nullptr || name == nullptr)
         return 0;
 
@@ -1893,7 +1893,7 @@ BZF_API uint32_t bz_getShotMetaDataI(const uint32_t shotGUID, const char* name)
 
 BZF_API const char* bz_getShotMetaDataS(const uint32_t shotGUID, const char* name)
 {
-    Shots::ShotRef shot = ShotManager.FindShot(shotGUID);
+    Shots::Shot::Ptr shot = ShotManager.FindShot(shotGUID);
     if (shot == nullptr || name == nullptr)
         return nullptr;
 

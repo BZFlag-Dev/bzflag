@@ -576,6 +576,18 @@ int WorldInfo::getUncompressedSize() const
     return uncompressedSize;
 }
 
+int WorldInfo::getTeleportTarget(int source) const
+{
+    return links.getTeleportTarget(source);
+}
+
+
+int WorldInfo::getTeleportTarget(int source, unsigned int seed) const
+{
+    return links.getTeleportTarget(source, seed);
+}
+
+
 
 // Local Variables: ***
 // mode: C++ ***

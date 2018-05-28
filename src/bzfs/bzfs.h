@@ -223,7 +223,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData);
 void recalcAllHandicaps();
 void broadcastHandicaps(int toPlayer = -1);
 
-void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth);
+void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth);bool allShotsRicochet();
+bool allowSuperFlags();
+bool allowJumping();
 
 #endif
 
