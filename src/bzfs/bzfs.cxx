@@ -2269,6 +2269,13 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     playerData->player.endShotCredit = 0;     // reset shotEndCredit
     playerData->player.endShotShieldCredit = 0;   // endShotCredit for holding the shield flag (0 or 1)
 
+    // pick a skin
+    bz_GetAutoSkinEventData_V1 autoSkinData;
+    autoSkinData.playerID = playerIndex;
+    autoSkinData.skinIndex = playerData->player.getSkinIndex();
+    worldEventManager.callEvents(bz_eGetAutoSkinEvent, &autoSkinData);
+    playerData->player.setSkinIndex(autoSkinData.skinIndex);
+
     // count current number of players and players+observers
     int numplayers = 0;
     for (int i = 0; i < int(ObserverTeam); i++)

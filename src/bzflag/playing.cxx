@@ -1410,11 +1410,12 @@ void            notifyBzfKeyMapChanged()
 //
 static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
 {
-    uint16_t team, type, wins, losses, tks;
+    uint16_t team, type, wins, losses, tks, skinIndex;
     char callsign[CallSignLen];
     char motto[MottoLen];
     msg = nboUnpackUShort (msg, type);
     msg = nboUnpackUShort (msg, team);
+    msg = nboUnpackUShort(msg, skinIndex);
     msg = nboUnpackUShort (msg, wins);
     msg = nboUnpackUShort (msg, losses);
     msg = nboUnpackUShort (msg, tks);
@@ -1456,8 +1457,7 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
     // add player
     if (PlayerType (type) == TankPlayer || PlayerType (type) == ComputerPlayer)
     {
-        remotePlayers[i] = new RemotePlayer (id, TeamColor (team), callsign, motto,
-                                             PlayerType (type));
+        remotePlayers[i] = new RemotePlayer (id, TeamColor (team), skinIndex, callsign, motto, PlayerType (type));
         remotePlayers[i]->changeScore (short (wins), short (losses), short (tks));
     }
 
@@ -4933,12 +4933,9 @@ static void     addRobots()
         else
         {
             snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), j);
-            robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
-                                        robotServer[j], myTank->getMotto());
+            robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
-            robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(),
-                                      robots[j]->getCallSign(),
-                                      robots[j]->getMotto(), "", "default");
+            robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(), 0, robots[j]->getCallSign(), robots[j]->getMotto(), "", "default");
         }
         j++;
     }
@@ -5007,11 +5004,12 @@ static void enteringServer(const void *buf)
 {
     // the server sends back the team the player was joined to
     const void *tmpbuf = buf;
-    uint16_t team, type, wins, losses, tks;
+    uint16_t team, type, wins, losses, tks, skinIndex;
     char callsign[CallSignLen];
     char motto[MottoLen];
     tmpbuf = nboUnpackUShort(tmpbuf, type);
     tmpbuf = nboUnpackUShort(tmpbuf, team);
+    tmpbuf = nboUnpackUShort(tmpbuf, skinIndex);
     tmpbuf = nboUnpackUShort(tmpbuf, wins);           // not used
     tmpbuf = nboUnpackUShort(tmpbuf, losses);         // not used
     tmpbuf = nboUnpackUShort(tmpbuf, tks);            // not used
@@ -5046,13 +5044,16 @@ static void enteringServer(const void *buf)
                                             Team::getName((TeamColor)team));
         }
     }
+
+    myTank->setSkinIndex(skinIndex);
     if (myTank->getTeam() != (TeamColor)team)
     {
-        myTank->setTeam((TeamColor)team);
+        
         hud->setAlert(1, teamMsg.c_str(), 8.0f,
                       (TeamColor)team==ObserverTeam?true:false);
         addMessage(NULL, teamMsg.c_str(), 3, true);
     }
+    myTank->setTeam((TeamColor)team);
 
     // observer colors are actually cyan, make them black
     const bool observer = (myTank->getTeam() == ObserverTeam);
@@ -5624,8 +5625,8 @@ static void joinInternetGame2()
     controlPanel->resize();
 
     // make local player
-    myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,
-                             startupInfo.motto);
+    myTank = new LocalPlayer(serverLink->getId(), startupInfo.callsign,  startupInfo.motto);
+    myTank->setSkinIndex(startupInfo.skinIndex);
     myTank->setTeam(startupInfo.team);
     LocalPlayer::setMyTank(myTank);
 
@@ -5633,7 +5634,7 @@ static void joinInternetGame2()
         myTank->setTeam(HunterTeam);
 
     // tell server we want to join
-    serverLink->sendEnter(TankPlayer, myTank->getTeam(),
+    serverLink->sendEnter(TankPlayer, myTank->getTeam(), myTank->getSkinIndex(),
                           myTank->getCallSign(),
                           myTank->getMotto(),
                           startupInfo.token,

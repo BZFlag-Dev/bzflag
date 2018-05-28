@@ -13,8 +13,7 @@
 // interface header
 #include "WorldPlayer.h"
 
-WorldPlayer::WorldPlayer() :
-    Player(ServerPlayer, RogueTeam, "world weapon", "", ComputerPlayer)
+WorldPlayer::WorldPlayer() : Player(ServerPlayer, RogueTeam, 0, "world weapon", "", ComputerPlayer)
 {
 }
 

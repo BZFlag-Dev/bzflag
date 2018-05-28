@@ -50,29 +50,33 @@ public:
 
 private:
     static void     teamCallback(HUDuiControl*, const void*);
+    static void     skinCallback(HUDuiControl*, const void*);
     TeamColor       getTeam() const;
-    void        setTeam(TeamColor);
-    void        setStatus(const char*, const std::vector<std::string> *parms = NULL);
-    void        setFailedMessage(const char* msg);
-    void        centerLabelHorizontally(HUDuiLabel* label);
-    void        loadInfo();
+    void            setTeam(TeamColor);
+    int             getSkinIndex() const;
+    void            setSkinIndex(int index);
+    void            setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void            setFailedMessage(const char* msg);
+    void            centerLabelHorizontally(HUDuiLabel* label);
+    void            loadInfo();
 
 private:
-    float       center;
-    HUDuiTypeIn*    callsign;
-    HUDuiTypeIn*    password;
-    HUDuiTypeIn*    motto;
-    HUDuiList*      team;
+    float               center;
+    HUDuiTypeIn*        callsign;
+    HUDuiTypeIn*        password;
+    HUDuiTypeIn*        motto;
+    HUDuiList*          team;
+    HUDuiList*          skin;
     HUDuiTextureLabel*  teamIcon;
-    HUDuiTypeIn*    server;
-    HUDuiTypeIn*    port;
-    HUDuiLabel*     status;
-    HUDuiLabel*     startServer;
-    HUDuiLabel*     findServer;
-    HUDuiLabel*     connectLabel;
-    HUDuiLabel*     failedMessage;
+    HUDuiTypeIn*        server;
+    HUDuiTypeIn*        port;
+    HUDuiLabel*         status;
+    HUDuiLabel*         startServer;
+    HUDuiLabel*         findServer;
+    HUDuiLabel*         connectLabel;
+    HUDuiLabel*         failedMessage;
     ServerStartMenu*    serverStartMenu;
-    ServerMenu*     serverMenu;
+    ServerMenu*         serverMenu;
     static JoinMenu*    activeMenu;
 };
 

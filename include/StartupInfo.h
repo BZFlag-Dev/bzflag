@@ -34,6 +34,7 @@ public:
     int serverPort;
     bool useUDPconnection;
     TeamColor team;
+    int       skinIndex;
     char callsign[CallSignLen];
     char password[PasswordLen];
     char token[TokenLen];

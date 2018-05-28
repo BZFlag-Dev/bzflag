@@ -642,12 +642,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     return 1;
 }
 
-void            ServerLink::sendEnter(PlayerType type,
-                                      TeamColor team,
-                                      const char* name,
-                                      const char* motto,
-                                      const char* token,
-                                      const char* locale)
+void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto, const char* token, const char* locale)
 {
     if (state != Okay) return;
     char msg[PlayerIdPLen + 4 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];
@@ -655,6 +650,7 @@ void            ServerLink::sendEnter(PlayerType type,
     void* buf = msg;
     buf = nboPackUShort(buf, uint16_t(type));
     buf = nboPackUShort(buf, uint16_t(team));
+    buf = nboPackUShort(buf, uint16_t(skinIndex));
     ::memcpy(buf, name, ::strlen(name));
     buf = (void*)((char*)buf + CallSignLen);
     ::memcpy(buf, motto, ::strlen(motto));

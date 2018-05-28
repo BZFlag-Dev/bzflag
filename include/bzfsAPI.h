@@ -337,6 +337,7 @@ typedef enum
     bz_eServerShotFiredEvent,
     bz_ePermissionModificationEvent,
     bz_eAllowServerShotFiredEvent,
+    bz_eGetAutoSkinEvent,
     bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
@@ -718,6 +719,18 @@ public:
     bz_eTeamType team;
 
     bool handled;
+};
+
+class BZF_API bz_GetAutoSkinEventData_V1 : public bz_EventData
+{
+public:
+    bz_GetAutoSkinEventData_V1() : bz_EventData(bz_eGetAutoSkinEvent)
+        , playerID(-1), skinIndex(0)
+    {
+    }
+
+    int playerID;
+    int skinIndex;
 };
 
 class BZF_API bz_AllowSpawnData_V1 : public bz_EventData

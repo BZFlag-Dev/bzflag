@@ -29,6 +29,7 @@ DefaultDBItem defaultDBItems[] =
     { "timedate",         "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "motto",            "",         true,   StateDatabase::ReadWrite,   NULL },
     { "team",         "Rogue",        true,   StateDatabase::ReadWrite,   NULL },
+    { "skinIndex",     "0",           true,   StateDatabase::ReadWrite,   NULL },
     { "list",         DefaultListServerURL,   true,   StateDatabase::ReadWrite,   NULL },
     { "motdServer",       DefaultMOTDServer,  true,   StateDatabase::ReadWrite,   NULL },
     { "volume",           "10",           true,   StateDatabase::ReadWrite,   NULL },
@@ -104,7 +105,7 @@ DefaultDBItem defaultDBItems[] =
     { "roamSmoothTime",       "0.5",          true,   StateDatabase::ReadWrite,   NULL },
     { "roamView",         "fps",          true,   StateDatabase::ReadWrite,   NULL },
     { "listIcons",        "1",            true,   StateDatabase::ReadWrite,   NULL },
-    { "maxTextureSize",       "1024",         true,   StateDatabase::ReadWrite,   NULL },
+    { "maxTextureSize",       "2048",         true,   StateDatabase::ReadWrite,   NULL },
     { "lodScale",         "1.0",          true,   StateDatabase::ReadWrite,   NULL },
     { "radarLodScale",        "1.0",          true,   StateDatabase::ReadWrite,   NULL },
     { "stencilShadows",       "0",            true,   StateDatabase::ReadWrite,   NULL },
@@ -144,7 +145,6 @@ DefaultDBItem defaultDBItems[] =
     { "sansSerifFont",        "DejaVuSansCondensedBold",true, StateDatabase::ReadWrite,   NULL },
 
     // team based object sufixes
-    { "tankTexture",      "tank",         true,   StateDatabase::ReadWrite,   NULL },
     { "boltTexture",      "bolt",         true,   StateDatabase::ReadWrite,   NULL },
     { "laserTexture",     "laser",        true,   StateDatabase::ReadWrite,   NULL },
     { "baseTopTexture",       "basetop",      true,   StateDatabase::ReadWrite,   NULL },

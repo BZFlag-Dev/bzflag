@@ -43,11 +43,11 @@ static const float  MaxUpdateTime = 1.0f;       // seconds
 
 int     Player::tankTexture = -1;
 
-Player::Player(const PlayerId& _id, TeamColor _team,
-               const char* name, const char* _motto, const PlayerType _type) :
+Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* name, const char* _motto, const PlayerType _type) :
     lastObstacle(NULL),
     pauseMessageState(false),
     handicap(0.0f),
+    skinIndex(_skinIndex),
     notResponding(false),
     hunted(false),
     id(_id),
@@ -818,18 +818,34 @@ void Player::setVisualTeam (TeamColor visualTeam)
 
     TextureManager &tm = TextureManager::instance();
     std::string texName;
-    texName = Team::getImagePrefix(visualTeam);
+    texName = Team::getImagePrefix(visualTeam) + "tank";
 
-    texName += BZDB.get("tankTexture");
+    switch (skinIndex)
+    {
+    case 0:
+        break;
+    case 1:
+        texName += "_hex";
+        break;
+    case  2:
+        texName += "_digital";
+        break;
 
-    // now after we did all that, see if they have a user texture
-    tankTexture = -1;
-    if (userTexture.size())
-        tankTexture = tm.getTextureID(userTexture.c_str(),false);
+    case  3:
+        texName += "_facet";
+        break;
 
-    // if the user load failed try our calculated texture
-    if (tankTexture < 0)
-        tankTexture = tm.getTextureID(texName.c_str(),false);
+    case  4:
+        texName += "_solid";
+        break;
+
+    default:
+        // lookup texture name from skin ID map sent by server
+        break;
+    }
+
+    tankTexture = tm.getTextureID(texName.c_str(), false);
+
 
     const float* _color = Team::getTankColor(visualTeam);
     color[0] = _color[0];

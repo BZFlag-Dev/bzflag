@@ -68,7 +68,7 @@ public:
     int         read(uint16_t& code, uint16_t& len, void* msg,
                      int millisecondsToBlock = 0);
 
-    void        sendEnter(PlayerType, TeamColor,
+    void        sendEnter(PlayerType, TeamColor, int,
                           const char* name, const char* motto, const char* token, const char* locale);
     bool        readEnter(std::string& reason,
                           uint16_t& code, uint16_t& rejcode);

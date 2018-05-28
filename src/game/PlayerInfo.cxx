@@ -119,6 +119,7 @@ void *PlayerInfo::packUpdate(void *buf)
 {
     buf = nboPackUShort(buf, uint16_t(type));
     buf = nboPackUShort(buf, uint16_t(team));
+    buf = nboPackUShort(buf, uint16_t(skinIndex));
     return buf;
 }
 
@@ -134,10 +135,18 @@ bool PlayerInfo::unpackEnter(const void *buf, uint16_t &rejectCode, char *reject
     // data: type, team, name, motto
     uint16_t _type;
     int16_t _team;
+    int16_t _skinIndex = 0;
     buf = nboUnpackUShort(buf, _type);
     buf = nboUnpackShort(buf, _team);
+    buf = nboUnpackShort(buf, _skinIndex);
     type = PlayerType(_type);
     team = TeamColor(_team);
+
+    if (_skinIndex > 4)
+        _skinIndex = 0; // TODO, check server defined list;
+
+    skinIndex = _skinIndex;
+
     buf = nboUnpackString(buf, callSign, CallSignLen);
     buf = nboUnpackString(buf, motto, MottoLen);
     buf = nboUnpackString(buf, token, TokenLen);
