@@ -21,42 +21,42 @@
 
 
 StartupInfo::StartupInfo() : hasConfiguration(false),
-			     autoConnect(false),
-			     serverPort(ServerPort),
-			     team(AutomaticTeam),
-			     listServerURL(DefaultListServerURL),
-			     listServerPort(ServerPort + 1)
+    autoConnect(false),
+    serverPort(ServerPort),
+    team(AutomaticTeam),
+    listServerURL(DefaultListServerURL),
+    listServerPort(ServerPort + 1)
 {
-  strcpy(serverName, "");
-  strcpy(callsign, "");
-  strcpy(password, "");
-  strcpy(motto, "default");
-  joystickName = "joystick";
-  joystick = false;
+    strcpy(serverName, "");
+    strcpy(callsign, "");
+    strcpy(password, "");
+    strcpy(motto, "default");
+    joystickName = "joystick";
+    joystick = false;
 }
 
 StartupInfo::~StartupInfo()
 {
-  hasConfiguration = false;
-  autoConnect = false;
-  memset(serverName, 0, 80);
-  serverPort = -1;
-  useUDPconnection = false;
-  team = NoTeam;
-  memset(callsign, 0, CallSignLen);
-  memset(password, 0, PasswordLen);
-  memset(token, 0, TokenLen);
-  memset(motto, 0, MottoLen);
-  listServerURL = "";
-  listServerPort = 0;
-  joystick = false;
-  joystickName = "";
+    hasConfiguration = false;
+    autoConnect = false;
+    memset(serverName, 0, 80);
+    serverPort = -1;
+    useUDPconnection = false;
+    team = NoTeam;
+    memset(callsign, 0, CallSignLen);
+    memset(password, 0, PasswordLen);
+    memset(token, 0, TokenLen);
+    memset(motto, 0, MottoLen);
+    listServerURL = "";
+    listServerPort = 0;
+    joystick = false;
+    joystickName = "";
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

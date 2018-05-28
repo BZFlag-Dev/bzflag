@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__JOINMENU_H__
-#define	__JOINMENU_H__
+#ifndef __JOINMENU_H__
+#define __JOINMENU_H__
 
 #include "common.h"
 
@@ -34,45 +34,50 @@
 class ServerStartMenu;
 class ServerMenu;
 
-class JoinMenu : public HUDDialog {
-  public:
-			JoinMenu();
-			~JoinMenu();
+class JoinMenu : public HUDDialog
+{
+public:
+    JoinMenu();
+    ~JoinMenu();
 
-    HUDuiDefaultKey*	getDefaultKey();
+    HUDuiDefaultKey*    getDefaultKey();
 
-    void		show();
-    void		execute();
-    void		dismiss();
-    void		resize(int width, int height);
-    void		updateTeamTexture() const;
+    void        show();
+    void        execute();
+    void        dismiss();
+    void        resize(int width, int height);
+    void        updateTeamTexture() const;
 
-  private:
-    static void		teamCallback(HUDuiControl*, const void*);
-    TeamColor		getTeam() const;
-    void		setTeam(TeamColor);
-    void		setStatus(const char*, const std::vector<std::string> *parms = NULL);
-    void		setFailedMessage(const char* msg);
-    void		centerLabelHorizontally(HUDuiLabel* label);
-    void		loadInfo();
+private:
+    static void     teamCallback(HUDuiControl*, const void*);
+    static void     skinCallback(HUDuiControl*, const void*);
+    TeamColor       getTeam() const;
+    void            setTeam(TeamColor);
+    int             getSkinIndex() const;
+    void            setSkinIndex(int index);
+    void            setStatus(const char*, const std::vector<std::string> *parms = NULL);
+    void            setFailedMessage(const char* msg);
+    void            centerLabelHorizontally(HUDuiLabel* label);
+    void            loadInfo();
 
-  private:
-    float		center;
-    HUDuiTypeIn*	callsign;
-    HUDuiTypeIn*	password;
-    HUDuiTypeIn*	motto;
-    HUDuiList*		team;
+private:
+    float               center;
+    HUDuiTypeIn*        callsign;
+    HUDuiTypeIn*        password;
+    HUDuiTypeIn*        motto;
+    HUDuiList*          team;
+    HUDuiList*          skin;
     HUDuiTextureLabel*  teamIcon;
-    HUDuiTypeIn*	server;
-    HUDuiTypeIn*	port;
-    HUDuiLabel*		status;
-    HUDuiLabel*		startServer;
-    HUDuiLabel*		findServer;
-    HUDuiLabel*		connectLabel;
-    HUDuiLabel*		failedMessage;
-    ServerStartMenu*	serverStartMenu;
-    ServerMenu*		serverMenu;
-    static JoinMenu*	activeMenu;
+    HUDuiTypeIn*        server;
+    HUDuiTypeIn*        port;
+    HUDuiLabel*         status;
+    HUDuiLabel*         startServer;
+    HUDuiLabel*         findServer;
+    HUDuiLabel*         connectLabel;
+    HUDuiLabel*         failedMessage;
+    ServerStartMenu*    serverStartMenu;
+    ServerMenu*         serverMenu;
+    static JoinMenu*    activeMenu;
 };
 
 
@@ -80,8 +85,8 @@ class JoinMenu : public HUDDialog {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

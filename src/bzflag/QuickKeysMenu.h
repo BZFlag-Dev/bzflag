@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__QUICKKEYSMENU_H__
+#ifndef __QUICKKEYSMENU_H__
 #define __QUICKKEYSMENU_H__
 
 // common - 1st one
@@ -25,23 +25,24 @@
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 
-class QuickKeysMenu : public HUDDialog {
+class QuickKeysMenu : public HUDDialog
+{
 public:
-  QuickKeysMenu();
-  ~QuickKeysMenu();
+    QuickKeysMenu();
+    ~QuickKeysMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void show();
-  void dismiss();
-  void execute() {}
-  void resize(int width, int height);
+    void show();
+    void dismiss();
+    void execute() {}
+    void resize(int width, int height);
 
 private:
-  HUDuiLabel* createLabel(const std::string &);
-  HUDuiTypeIn* createInput(const std::string &);
+    HUDuiLabel* createLabel(const std::string &);
+    HUDuiTypeIn* createInput(const std::string &);
 private:
-  int firstKeyControl;
+    int firstKeyControl;
 };
 
 
@@ -49,8 +50,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -13,34 +13,39 @@
 // Own include
 #include "SDL2Visual.h"
 
-void SDLVisual::setDoubleBuffer(bool on) {
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
+void SDLVisual::setDoubleBuffer(bool on)
+{
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, on ? 1 : 0);
 }
 
 void SDLVisual::setRGBA(int minRed, int minGreen,
-			int minBlue, int minAlpha) {
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   minRed);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, minGreen);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, minAlpha);
+                        int minBlue, int minAlpha)
+{
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE,   minRed);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, minGreen);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE,  minBlue);
+    SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, minAlpha);
 }
 
-void SDLVisual::setDepth(int minDepth) {
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
+void SDLVisual::setDepth(int minDepth)
+{
+    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, minDepth);
 }
 
-void SDLVisual::setStencil(int minDepth) {
-  SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, minDepth);
+void SDLVisual::setStencil(int minDepth)
+{
+    SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, minDepth);
 }
 
-void SDLVisual::setStereo(bool on) {
-  SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
+void SDLVisual::setStereo(bool on)
+{
+    SDL_GL_SetAttribute(SDL_GL_STEREO, on ? 1 : 0);
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

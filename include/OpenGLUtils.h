@@ -33,7 +33,7 @@ class OpenGLGState;
 
 
 extern void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
-			 fvec4& color, const fvec4*& colorPtr);
+                         fvec4& color, const fvec4*& colorPtr);
 
 extern bool parseBlendFactors(const std::string& s, GLenum& src, GLenum& dst);
 
@@ -42,16 +42,17 @@ extern void setColor(float dstColor[3], int r, int g, int b);
 extern void glSetColor(const float c[3], float alpha = 1.0f);
 extern void glTranslatefv(const float v[3]);
 
-typedef enum {
-  eCenter,
-  eLowerLeft,
-  eLowerRight,
-  eUpperLeft,
-  eUpperRight,
-  eCenterLeft,
-  eCenterRight,
-  eCenterTop,
-  eCenterBottom
+typedef enum
+{
+    eCenter,
+    eLowerLeft,
+    eLowerRight,
+    eUpperLeft,
+    eUpperRight,
+    eCenterLeft,
+    eCenterRight,
+    eCenterTop,
+    eCenterBottom
 } eAlignment;
 
 
@@ -60,8 +61,8 @@ typedef enum {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

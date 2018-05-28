@@ -11,45 +11,49 @@
  */
 
 /* BzfVisual:
- *	Abstract base for visuals (pixel format) suitable
- *	for OpenGL contexts and windows.
+ *  Abstract base for visuals (pixel format) suitable
+ *  for OpenGL contexts and windows.
  */
 
 #ifndef BZF_VISUAL_H
-#define	BZF_VISUAL_H
+#define BZF_VISUAL_H
 
 #include "common.h"
 
-class BzfVisual {
-  public:
-			BzfVisual();
-    virtual		~BzfVisual();
+class BzfVisual
+{
+public:
+    BzfVisual();
+    virtual     ~BzfVisual();
 
-    virtual void	setLevel(int level) = 0;
-    virtual void	setDoubleBuffer(bool) = 0;
-    virtual void	setIndex(int minDepth) = 0;
-    virtual void	setRGBA(int minRed, int minGreen,
-				int minBlue, int minAlpha) = 0;
-    virtual void	setDepth(int minDepth) = 0;
-    virtual void	setStencil(int minDepth) = 0;
-    virtual void	setAccum(int minRed, int minGreen,
-				int minBlue, int minAlpha) = 0;
-    virtual void	setStereo(bool) = 0;
-    virtual void	setVerticalSync(bool) {;}
+    virtual void    setLevel(int level) = 0;
+    virtual void    setDoubleBuffer(bool) = 0;
+    virtual void    setIndex(int minDepth) = 0;
+    virtual void    setRGBA(int minRed, int minGreen,
+                            int minBlue, int minAlpha) = 0;
+    virtual void    setDepth(int minDepth) = 0;
+    virtual void    setStencil(int minDepth) = 0;
+    virtual void    setAccum(int minRed, int minGreen,
+                             int minBlue, int minAlpha) = 0;
+    virtual void    setStereo(bool) = 0;
+    virtual void    setVerticalSync(bool)
+    {
+        ;
+    }
 
-    virtual bool	build() = 0;
+    virtual bool    build() = 0;
 
-  private:
-			BzfVisual(const BzfVisual&);
-    BzfVisual&		operator=(const BzfVisual&);
+private:
+    BzfVisual(const BzfVisual&);
+    BzfVisual&      operator=(const BzfVisual&);
 };
 
 #endif // BZF_VISUAL_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

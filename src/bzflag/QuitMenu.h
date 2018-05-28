@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__QUITMENU_H__
+#ifndef __QUITMENU_H__
 #define __QUITMENU_H__
 
 /* system interface headers */
@@ -25,28 +25,36 @@
 #include "HUDuiDefaultKey.h"
 
 
-class QuitMenuDefaultKey : public MenuDefaultKey {
+class QuitMenuDefaultKey : public MenuDefaultKey
+{
 public:
-  QuitMenuDefaultKey() {}
-  ~QuitMenuDefaultKey() {}
+    QuitMenuDefaultKey() {}
+    ~QuitMenuDefaultKey() {}
 
-  bool keyPress(const BzfKeyEvent&);
-  bool keyRelease(const BzfKeyEvent&);
+    bool keyPress(const BzfKeyEvent&);
+    bool keyRelease(const BzfKeyEvent&);
 
 };
 
 
-class QuitMenu : public HUDDialog {
+class QuitMenu : public HUDDialog
+{
 public:
-  QuitMenu();
-  ~QuitMenu();
+    QuitMenu();
+    ~QuitMenu();
 
-  HUDuiDefaultKey* getDefaultKey() { return &defaultKey; }
-  void execute() { CommandsStandard::quit(); }
-  void resize(int width, int height);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return &defaultKey;
+    }
+    void execute()
+    {
+        CommandsStandard::quit();
+    }
+    void resize(int width, int height);
 
 private:
-  QuitMenuDefaultKey defaultKey;
+    QuitMenuDefaultKey defaultKey;
 
 };
 
@@ -55,8 +63,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

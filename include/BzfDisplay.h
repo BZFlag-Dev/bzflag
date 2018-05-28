@@ -11,85 +11,94 @@
  */
 
 /* BzfDisplay:
- *	Encapsulates a display -- input and output devices.
+ *  Encapsulates a display -- input and output devices.
  */
 
 #ifndef BZF_DISPLAY_H
-#define	BZF_DISPLAY_H
+#define BZF_DISPLAY_H
 
 #include "common.h"
 
 class BzfEvent;
 
-class BzfDisplay {
-  public:
-			BzfDisplay();
-    virtual		~BzfDisplay();
+class BzfDisplay
+{
+public:
+    BzfDisplay();
+    virtual     ~BzfDisplay();
 
-    virtual bool	isValid() const = 0;
-    virtual bool	isEventPending() const = 0;
-    virtual bool	getEvent(BzfEvent&) const = 0;
-    virtual bool	peekEvent(BzfEvent&) const = 0;
+    virtual bool    isValid() const = 0;
+    virtual bool    isEventPending() const = 0;
+    virtual bool    getEvent(BzfEvent&) const = 0;
+    virtual bool    peekEvent(BzfEvent&) const = 0;
 
-    virtual bool	hasGetKeyMode() { return false; };
-    virtual void	getModState(bool &shift, bool &control, bool &alt) {
-      shift = false; control = false; alt = false; };
-
-    int			getWidth() const;
-    int			getHeight() const;
-    void		setFullScreenFormat(int);
-
-    void		setPassthroughSize(int w, int h);
-    int			getPassthroughWidth() const;
-    int			getPassthroughHeight() const;
-
-  public:
-    class ResInfo {
-      public:
-			ResInfo(const char* name, int w, int h, int r);
-			~ResInfo();
-      public:
-	char*		name;
-	int		width;
-	int		height;
-	int		refresh;
+    virtual bool    hasGetKeyMode()
+    {
+        return false;
+    };
+    virtual void    getModState(bool &shift, bool &control, bool &alt)
+    {
+        shift = false;
+        control = false;
+        alt = false;
     };
 
-    int			getNumResolutions() const;
-    const ResInfo*	getResolution(int index) const;
-    int			getResolution() const;
-    int			getDefaultResolution() const;
-    bool		setResolution(int index);
-    bool		setDefaultResolution();
-    int			findResolution(const char* name) const;
-    bool		isValidResolution(int index) const;
+    int         getWidth() const;
+    int         getHeight() const;
+    void        setFullScreenFormat(int);
 
-  protected:
-    void		initResolutions(ResInfo**, int num, int current);
+    void        setPassthroughSize(int w, int h);
+    int         getPassthroughWidth() const;
+    int         getPassthroughHeight() const;
 
-  private:
-			BzfDisplay(const BzfDisplay&);
-    BzfDisplay&		operator=(const BzfDisplay&);
+public:
+    class ResInfo
+    {
+    public:
+        ResInfo(const char* name, int w, int h, int r);
+        ~ResInfo();
+    public:
+        char*       name;
+        int     width;
+        int     height;
+        int     refresh;
+    };
 
-    virtual bool	doSetResolution(int) = 0;
-    virtual bool	doSetDefaultResolution();
+    int         getNumResolutions() const;
+    const ResInfo*  getResolution(int index) const;
+    int         getResolution() const;
+    int         getDefaultResolution() const;
+    bool        setResolution(int index);
+    bool        setDefaultResolution();
+    int         findResolution(const char* name) const;
+    bool        isValidResolution(int index) const;
 
-  private:
-    int			passWidth, passHeight;
-    int			numResolutions;
-    int			defaultResolution;
-    int			currentResolution;
-    ResInfo**		resolutions;
-  protected:
-    int			modeIndex;
+protected:
+    void        initResolutions(ResInfo**, int num, int current);
+
+private:
+    BzfDisplay(const BzfDisplay&);
+    BzfDisplay&     operator=(const BzfDisplay&);
+
+    virtual bool    doSetResolution(int) = 0;
+    virtual bool    doSetDefaultResolution();
+
+private:
+    int         passWidth, passHeight;
+    int         numResolutions;
+    int         defaultResolution;
+    int         currentResolution;
+    ResInfo**       resolutions;
+protected:
+    int         modeIndex;
 };
 
 #endif // BZF_DISPLAY_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

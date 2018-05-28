@@ -21,47 +21,47 @@ LocalCommand::MapOfCommands *LocalCommand::mapOfCommands = NULL;
 
 
 LocalCommand::LocalCommand(std::string _commandName)
-  : commandName(_commandName)
+    : commandName(_commandName)
 {
-  if (!mapOfCommands)
-    mapOfCommands = new MapOfCommands;
-  (*mapOfCommands)[commandName] = this;
+    if (!mapOfCommands)
+        mapOfCommands = new MapOfCommands;
+    (*mapOfCommands)[commandName] = this;
 }
 
 
 LocalCommand::~LocalCommand()
 {
-  (*mapOfCommands).erase(commandName);
+    (*mapOfCommands).erase(commandName);
 }
 
 
 bool LocalCommand::execute(const char *commandLine)
 {
-  if (!mapOfCommands)
-    return false;
-  int i;
-  for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
-    ;
-  std::string commandToken(commandLine, i);
+    if (!mapOfCommands)
+        return false;
+    int i;
+    for (i = 0; commandLine[i] && !isspace(commandLine[i]); i++)
+        ;
+    std::string commandToken(commandLine, i);
 
-  std::map<std::string, LocalCommand *>::iterator it
-    = (*mapOfCommands).find(commandToken);
-  if (it == (*mapOfCommands).end())
-    return false;
-  return (*(it->second))(commandLine);
+    std::map<std::string, LocalCommand *>::iterator it
+        = (*mapOfCommands).find(commandToken);
+    if (it == (*mapOfCommands).end())
+        return false;
+    return (*(it->second))(commandLine);
 }
 
 
 bool LocalCommand::operator() (const char *)
 {
-  return true;
+    return true;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

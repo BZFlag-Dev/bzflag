@@ -14,8 +14,8 @@
 * Communication protocol constants
 */
 
-#ifndef	BZF_MESSAGES_H
-#define	BZF_MESSAGES_H
+#ifndef BZF_MESSAGES_H
+#define BZF_MESSAGES_H
 
 #include "common.h"
 
@@ -23,37 +23,37 @@
 #include <string>
 
 
-#define _CallSignLen		32		// including terminating NUL
-#define _PasswordLen		32		// including terminating NUL
-#define _MottoLen				128		// including terminating NUL
-#define _TokenLen				22		// opaque string (now int(10)) and terminating NUL
-#define _VersionLen			60		// including terminating NUL
-#define _MessageLen			128		// including terminating NUL
+#define _CallSignLen        32      // including terminating NUL
+#define _PasswordLen        32      // including terminating NUL
+#define _MottoLen               128     // including terminating NUL
+#define _TokenLen               22      // opaque string (now int(10)) and terminating NUL
+#define _VersionLen         60      // including terminating NUL
+#define _MessageLen         128     // including terminating NUL
 
 class PlayerAddMessage
 {
 public:
-	PlayerAddMessage();
+    PlayerAddMessage();
 
-	bool unpack ( const void* buf );
-	void* pack ( void* buf );
+    bool unpack ( const void* buf );
+    void* pack ( void* buf );
 
-	int playerID;
-	int team;
-	int type;
-	int wins;
-	int losses;
-	int	tks;
-	std::string callsign;
-	std::string motto;
+    int playerID;
+    int team;
+    int type;
+    int wins;
+    int losses;
+    int tks;
+    std::string callsign;
+    std::string motto;
 };
 
 #endif // BZF_MESSAGES_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

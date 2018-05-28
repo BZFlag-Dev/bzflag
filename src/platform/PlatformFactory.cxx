@@ -16,46 +16,47 @@
 #include "BzfMedia.h"
 #include "BzfJoystick.h"
 
-PlatformFactory*	PlatformFactory::instance = 0;
-BzfMedia*		PlatformFactory::media = 0;
+PlatformFactory*    PlatformFactory::instance = 0;
+BzfMedia*       PlatformFactory::media = 0;
 
 PlatformFactory::PlatformFactory()
 {
 #ifdef HAVE_SDL
-  Uint32 flags = 0;
-  if (SDL_Init(flags) < 0) {
-    printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
-    exit(-1);
-  };
+    Uint32 flags = 0;
+    if (SDL_Init(flags) < 0)
+    {
+        printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
+        exit(-1);
+    };
 #endif
 }
 
 PlatformFactory::~PlatformFactory()
 {
 #ifdef HAVE_SDL
-  if (media)
-    media->closeAudio();
-  SDL_Quit();
+    if (media)
+        media->closeAudio();
+    SDL_Quit();
 #endif
-  delete media;
+    delete media;
 }
 
-BzfJoystick*		PlatformFactory::createJoystick()
+BzfJoystick*        PlatformFactory::createJoystick()
 {
-  // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
-  return new BzfJoystick();
+    // if a platform doesn't have a native joystick impl., bzfjoystick provides defaults.
+    return new BzfJoystick();
 }
 
-BzfMedia*		PlatformFactory::getMedia()
+BzfMedia*       PlatformFactory::getMedia()
 {
-  if (!media) media = getInstance()->createMedia();
-  return media;
+    if (!media) media = getInstance()->createMedia();
+    return media;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

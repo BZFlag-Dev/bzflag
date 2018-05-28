@@ -11,35 +11,36 @@
  */
 
 /* BzfJoystick:
- *	Abstract, platform independent base for Joysticks.
+ *  Abstract, platform independent base for Joysticks.
  */
 
 #ifndef BZF_JOYSTICK_H
-#define	BZF_JOYSTICK_H
+#define BZF_JOYSTICK_H
 
 #include "common.h"
 #include <string>
 #include <vector>
 
-class BzfJoystick {
-  public:
-			BzfJoystick();
-    virtual		~BzfJoystick();
+class BzfJoystick
+{
+public:
+    BzfJoystick();
+    virtual     ~BzfJoystick();
 
-    virtual void	initJoystick(const char* joystickName);
-    virtual bool	joystick() const;
-    virtual void	getJoy(int& x, int& y);
-    virtual int	 getNumHats();
-    virtual void	getJoyHat(int hat, float &hatX, float &hatY);
+    virtual void    initJoystick(const char* joystickName);
+    virtual bool    joystick() const;
+    virtual void    getJoy(int& x, int& y);
+    virtual int  getNumHats();
+    virtual void    getJoyHat(int hat, float &hatX, float &hatY);
     virtual unsigned long getJoyButtons();
-    virtual void	getJoyDevices(std::vector<std::string> &list) const;
+    virtual void    getJoyDevices(std::vector<std::string> &list) const;
 
     /** Return a list of axes belonging to the joystick.  The first and second
      ** are assumed to be default X and Y axes, respectively.
      **/
-    virtual void	getJoyDeviceAxes(std::vector<std::string> &list) const;
-    virtual void	setXAxis(const std::string &axis);
-    virtual void	setYAxis(const std::string &axis);
+    virtual void    getJoyDeviceAxes(std::vector<std::string> &list) const;
+    virtual void    setXAxis(const std::string &axis);
+    virtual void    setYAxis(const std::string &axis);
 
     /* Rumble force feedback support - a motor in the controller vibrates it,
      * as tactile feedback for explosions, collisions, engines starting, death,
@@ -61,10 +62,10 @@ class BzfJoystick {
      * one effect is supported at a time, so using a count of zero will cancel
      * any rumble that may be in progress.
      */
-    virtual bool	ffHasRumble() const;
-    virtual void	ffRumble(int count,
-				 float delay, float duration,
-				 float strong_motor, float weak_motor=0.0f);
+    virtual bool    ffHasRumble() const;
+    virtual void    ffRumble(int count,
+                             float delay, float duration,
+                             float strong_motor, float weak_motor=0.0f);
 
     /* Directional force feedback support - the controller pulls or pushes in
      * a certain direction with a certain amount of force.
@@ -73,38 +74,40 @@ class BzfJoystick {
      * periodic effects, resistance forces, and constant forces.  Compound effects,
      * ramped forces, and enveloped effects are not supported at this time.
      */
-    enum PeriodicType {
-      FF_Sine = 0,
-      FF_Square,
-      FF_Triangle,
-      FF_SawtoothUp,
-      FF_SawtoothDown
+    enum PeriodicType
+    {
+        FF_Sine = 0,
+        FF_Square,
+        FF_Triangle,
+        FF_SawtoothUp,
+        FF_SawtoothDown
     };
-    enum ResistanceType {
-      FF_Position = 0,
-      FF_Velocity,
-      FF_Acceleration
+    enum ResistanceType
+    {
+        FF_Position = 0,
+        FF_Velocity,
+        FF_Acceleration
     };
-    virtual bool	ffHasDirectional() const;
-    virtual void	ffDirectionalConstant(int count,
-					      float delay, float duration,
-					      float x_direction, float y_direction,
-					      float strength);
-    virtual void	ffDirectionalPeriodic(int count,
-					      float delay, float duration,
-					      float x_direction, float y_direction,
-					      float amplitude, float period,
-					      PeriodicType type);
-    virtual void	ffDirectionalResistance(float time, float coefficient,
-						float saturation, ResistanceType type);
+    virtual bool    ffHasDirectional() const;
+    virtual void    ffDirectionalConstant(int count,
+                                          float delay, float duration,
+                                          float x_direction, float y_direction,
+                                          float strength);
+    virtual void    ffDirectionalPeriodic(int count,
+                                          float delay, float duration,
+                                          float x_direction, float y_direction,
+                                          float amplitude, float period,
+                                          PeriodicType type);
+    virtual void    ffDirectionalResistance(float time, float coefficient,
+                                            float saturation, ResistanceType type);
 };
 
 #endif // BZF_JOYSTICK_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

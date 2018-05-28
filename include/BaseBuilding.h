@@ -11,7 +11,7 @@
  */
 
 /* BaseBuilding:
- *	Encapsulates a base in the game environment
+ *  Encapsulates a base in the game environment
  */
 
 #ifndef BZF_BASE_BUILDING_H
@@ -21,44 +21,45 @@
 #include <string>
 #include "Obstacle.h"
 
-class BaseBuilding : public Obstacle {
+class BaseBuilding : public Obstacle
+{
 
-  friend class ObstacleModifier;
+    friend class ObstacleModifier;
 
-  public:
-			BaseBuilding();
-			BaseBuilding(const float *pos, float rotation,
-				     const float *size, int _team, bool ricochet);
-			~BaseBuilding();
+public:
+    BaseBuilding();
+    BaseBuilding(const float *pos, float rotation,
+                 const float *size, int _team, bool ricochet);
+    ~BaseBuilding();
 
-    Obstacle*	copyWithTransform(const MeshTransform&) const;
+    Obstacle*   copyWithTransform(const MeshTransform&) const;
 
-    const char*		getType() const;
-    static const char*	getClassName(); // const
+    const char*     getType() const;
+    static const char*  getClassName(); // const
 
-    bool		isFlatTop() const;
+    bool        isFlatTop() const;
 
-    float		intersect(const Ray &) const;
-    void		getNormal(const float *p, float *n) const;
-    void		get3DNormal(const float* p, float* n) const;
+    float       intersect(const Ray &) const;
+    void        getNormal(const float *p, float *n) const;
+    void        get3DNormal(const float* p, float* n) const;
 
-    bool		inCylinder(const float* p, float radius, float height) const;
-    bool		inBox(const float* p, float angle,
-			      float halfWidth, float halfBreadth, float height) const;
-    bool		inMovingBox(const float* oldP, float oldAngle,
-				    const float *newP, float newAngle,
-				    float halfWidth, float halfBreadth, float height) const;
-    bool		isCrossing(const float* p, float angle,
-				   float halfWidth, float halfBreadth, float height,
-				   float* plane) const;
+    bool        inCylinder(const float* p, float radius, float height) const;
+    bool        inBox(const float* p, float angle,
+                      float halfWidth, float halfBreadth, float height) const;
+    bool        inMovingBox(const float* oldP, float oldAngle,
+                            const float *newP, float newAngle,
+                            float halfWidth, float halfBreadth, float height) const;
+    bool        isCrossing(const float* p, float angle,
+                           float halfWidth, float halfBreadth, float height,
+                           float* plane) const;
 
-    bool		getHitNormal(const float *pos1, float azimuth1,
-				const float *pos2, float azimuth2,
-				float halfWidth, float halfBreadth,
-				float height,
-				float *normal) const;
-    void		getCorner(int index, float *pos) const;
-    int			getTeam() const;
+    bool        getHitNormal(const float *pos1, float azimuth1,
+                             const float *pos2, float azimuth2,
+                             float halfWidth, float halfBreadth,
+                             float height,
+                             float *normal) const;
+    void        getCorner(int index, float *pos) const;
+    int         getTeam() const;
 
     int packSize() const;
     void *pack(void*) const;
@@ -67,13 +68,13 @@ class BaseBuilding : public Obstacle {
     void print(std::ostream& out, const std::string& indent) const;
     void printOBJ(std::ostream& out, const std::string& indent) const;
 
-    std::string		userTextures[2];
+    std::string     userTextures[2];
 
-  private:
+private:
     void finalize();
 
-  private:
-    static const char*	typeName;
+private:
+    static const char*  typeName;
     int team;
 };
 
@@ -81,8 +82,8 @@ class BaseBuilding : public Obstacle {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

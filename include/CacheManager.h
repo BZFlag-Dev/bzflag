@@ -17,18 +17,20 @@
 #include <string>
 #include <vector>
 
-class CacheManager {
-  public:
+class CacheManager
+{
+public:
     CacheManager();
     ~CacheManager();
 
-    typedef struct {
-      std::string url;
-      time_t usedDate;
-      std::string name;
-      int size;
-      time_t date;
-      std::string key;
+    typedef struct
+    {
+        std::string url;
+        time_t usedDate;
+        std::string name;
+        int size;
+        time_t date;
+        std::string key;
     } CacheRecord;
 
     bool isCacheFileType(const std::string &name) const;
@@ -44,10 +46,10 @@ class CacheManager {
 
     void limitCacheSize();
 
-  private:
+private:
     int findRecord(const std::string& url);
 
-  private:
+private:
     std::string indexName;
     std::string getIndexPath();
     std::vector<CacheRecord> records;

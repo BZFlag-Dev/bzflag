@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__COLLISION_GRID__
-#define	__COLLISION_GRID__
+#ifndef __COLLISION_GRID__
+#define __COLLISION_GRID__
 
 #include "common.h"
 
@@ -30,37 +30,42 @@ class BaseBuilding;
 class Teleporter;
 
 
-typedef struct {
-  int count;
-  Obstacle** list;
+typedef struct
+{
+    int count;
+    Obstacle** list;
 } ObsList;
 
-typedef union {
-  ObsList array[6];
-  struct {
-    ObsList boxes;
-    ObsList bases;
-    ObsList pyrs;
-    ObsList teles;
-    ObsList faces;
-    ObsList meshes;
-  } named;
+typedef union
+{
+    ObsList array[6];
+    struct
+    {
+        ObsList boxes;
+        ObsList bases;
+        ObsList pyrs;
+        ObsList teles;
+        ObsList faces;
+        ObsList meshes;
+    } named;
 } SplitObsList;
 
-typedef struct {
-  int count;
-  const class ColDetNode** list;
+typedef struct
+{
+    int count;
+    const class ColDetNode** list;
 } ColDetNodeList;
 
 
 // well you know my name is Simon, and I like to do drawings
 typedef void (*DrawLinesFunc)
-  (int pointCount, float (*points)[3], int color);
+(int pointCount, float (*points)[3], int color);
 
 
-class CollisionManager {
+class CollisionManager
+{
 
-  public:
+public:
 
     CollisionManager();
     ~CollisionManager();
@@ -69,7 +74,7 @@ class CollisionManager {
     void clear ();
 
     // some basics
-    bool needReload() const;	 // octree parameter has changed
+    bool needReload() const;     // octree parameter has changed
     int getObstacleCount() const;    // total number of obstacles
     const Extents& getWorldExtents() const;
 
@@ -79,14 +84,14 @@ class CollisionManager {
 
     // test against a cylinder
     const ObsList* cylinderTest (const float *pos,
-				 float radius, float height) const;
+                                 float radius, float height) const;
     // test against a box
     const ObsList* boxTest (const float* pos, float angle,
-			    float dx, float dy, float dz) const;
+                            float dx, float dy, float dz) const;
     // test against a moving box
     const ObsList* movingBoxTest (const float* oldPos, float oldAngle,
-				  const float* pos, float angle,
-				  float dx, float dy, float dz) const;
+                                  const float* pos, float angle,
+                                  float dx, float dy, float dz) const;
     // test against a Ray
     const ObsList* rayTest (const Ray* ray, float timeLeft) const;
 
@@ -95,12 +100,12 @@ class CollisionManager {
 
     // test against a box and return a split list
     //const SplitObsList *boxTestSplit (const float* pos, float angle,
-    //				  float dx, float dy, float dz) const;
+    //                float dx, float dy, float dz) const;
 
     // drawing function
     void draw (DrawLinesFunc drawLinesFunc);
 
-  private:
+private:
 
     void setExtents(ObsList* list); // gather the extents
 
@@ -114,8 +119,9 @@ class CollisionManager {
 extern CollisionManager COLLISIONMGR;
 
 
-class ColDetNode {
-  public:
+class ColDetNode
+{
+public:
     ColDetNode(unsigned char depth, const Extents& exts, ObsList *fullList);
     ~ColDetNode();
 
@@ -138,7 +144,7 @@ class ColDetNode {
     void tallyStats();
     void draw(DrawLinesFunc drawLinesFunc);
 
-  private:
+private:
     void makeChildren ();
     void resizeCell ();
 
@@ -154,42 +160,41 @@ class ColDetNode {
 
 inline int ColDetNode::getCount() const
 {
-  return count;
+    return count;
 }
 
 inline const ObsList* ColDetNode::getList() const
 {
-  return &fullList;
+    return &fullList;
 }
 
 inline const Extents& ColDetNode::getExtents() const
 {
-  return extents;
+    return extents;
 }
 
 inline float ColDetNode::getInTime() const
 {
-  return inTime;
+    return inTime;
 }
 
 inline float ColDetNode::getOutTime() const
 {
-  return outTime;
+    return outTime;
 }
 
 
 inline int CollisionManager::getObstacleCount() const
 {
-  if (root == NULL) {
-    return 0;
-  } else {
-    return root->getCount();
-  }
+    if (root == NULL)
+        return 0;
+    else
+        return root->getCount();
 }
 
 inline const Extents& CollisionManager::getWorldExtents() const
 {
-  return worldExtents;
+    return worldExtents;
 }
 
 
@@ -197,8 +202,8 @@ inline const Extents& CollisionManager::getWorldExtents() const
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -11,36 +11,37 @@
  */
 
 /* SolarisPlatformFactory:
- *	Factory for Sun Sparc/Solaris platform stuff.
+ *  Factory for Sun Sparc/Solaris platform stuff.
  */
 
 #ifndef BZF_SOLARISPLATFORM_FACTORY_H
-#define	BZF_SOLARISPLATFORM_FACTORY_H
+#define BZF_SOLARISPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
-class SolarisPlatformFactory : public PlatformFactory {
-  public:
-			SolarisPlatformFactory();
-			~SolarisPlatformFactory();
+class SolarisPlatformFactory : public PlatformFactory
+{
+public:
+    SolarisPlatformFactory();
+    ~SolarisPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
 
-  private:
-			SolarisPlatformFactory(const SolarisPlatformFactory&);
-    SolarisPlatformFactory&	operator=(const SolarisPlatformFactory&);
+private:
+    SolarisPlatformFactory(const SolarisPlatformFactory&);
+    SolarisPlatformFactory& operator=(const SolarisPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_SOLARISPLATFORM_FACTORY_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

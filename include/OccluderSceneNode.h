@@ -11,12 +11,12 @@
  */
 
 /* OccluderSceneNode:
- *	Encapsulates information for an occluder
+ *  Encapsulates information for an occluder
  *      plane. Occluders are never rendered.
  */
 
-#ifndef	BZF_OCCLUDER_SCENE_NODE_H
-#define	BZF_OCCLUDER_SCENE_NODE_H
+#ifndef BZF_OCCLUDER_SCENE_NODE_H
+#define BZF_OCCLUDER_SCENE_NODE_H
 
 #include "common.h"
 
@@ -24,25 +24,39 @@
 #include "SceneNode.h"
 #include "MeshFace.h"
 
-class OccluderSceneNode : public SceneNode {
+class OccluderSceneNode : public SceneNode
+{
 
-  public:
+public:
     OccluderSceneNode(const MeshFace* face);
     ~OccluderSceneNode();
 
     // virtual functions from SceneNode
     bool cull(const ViewFrustum&) const;
     bool inAxisBox(const Extents& exts) const;
-    void addShadowNodes(SceneRenderer&) { return; }
-    void addRenderNodes(SceneRenderer&) { return; }
-    void renderRadar() { return; }
+    void addShadowNodes(SceneRenderer&)
+    {
+        return;
+    }
+    void addRenderNodes(SceneRenderer&)
+    {
+        return;
+    }
+    void renderRadar()
+    {
+        return;
+    }
 
     int getVertexCount () const
-      { return vertexCount; }
+    {
+        return vertexCount;
+    }
     const GLfloat* getVertex (int vertex) const
-      { return vertices[vertex]; }
+    {
+        return vertices[vertex];
+    }
 
-  private:
+private:
     int vertexCount;
     GLfloat3* vertices;
 };
@@ -52,8 +66,8 @@ class OccluderSceneNode : public SceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

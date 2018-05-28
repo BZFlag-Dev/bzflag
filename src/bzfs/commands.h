@@ -24,26 +24,28 @@
 
 
 // command classes used by the API
-class ShutdownCommand : ServerCommand {
+class ShutdownCommand : ServerCommand
+{
 public:
-	ShutdownCommand();
+    ShutdownCommand();
 
-	virtual bool operator() (const char	 *commandLine,
-		GameKeeper::Player *playerData);
+    virtual bool operator() (const char  *commandLine,
+                             GameKeeper::Player *playerData);
 };
 
-class SuperkillCommand : ServerCommand {
+class SuperkillCommand : ServerCommand
+{
 public:
-	SuperkillCommand();
+    SuperkillCommand();
 
-	virtual bool operator() (const char	 *commandLine,
-		GameKeeper::Player *playerData);
+    virtual bool operator() (const char  *commandLine,
+                             GameKeeper::Player *playerData);
 };
 
 // parser for the server commands
 void parseServerCommand(const char *message, int dstPlayerId, int sourceChannel);
 
-typedef std::map<std::string, bz_CustomSlashCommandHandlerV2*>	tmCustomSlashCommandMap;
+typedef std::map<std::string, bz_CustomSlashCommandHandlerV2*>  tmCustomSlashCommandMap;
 
 void registerCustomSlashCommand ( std::string command, bz_CustomSlashCommandHandlerV2* handler );
 void removeCustomSlashCommand ( std::string command );
@@ -55,8 +57,8 @@ extern SuperkillCommand superkillCommand;
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

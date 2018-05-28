@@ -11,11 +11,11 @@
  */
 
 /* SolarisMedia:
- *	Media I/O on Solaris
+ *  Media I/O on Solaris
  */
 
 #ifndef BZF_SOLARISMEDIA_H
-#define	BZF_SOLARISMEDIA_H
+#define BZF_SOLARISMEDIA_H
 
 #include <math.h>
 #include <fcntl.h>
@@ -31,41 +31,42 @@
 
 #include "BzfMedia.h"
 
-class SolarisMedia : public BzfMedia {
-  public:
-			SolarisMedia();
-			~SolarisMedia();
+class SolarisMedia : public BzfMedia
+{
+public:
+    SolarisMedia();
+    ~SolarisMedia();
 
-    double		stopwatch(bool);
-    bool		openAudio();
-    void		closeAudio();
-    bool		startAudioThread(void (*)(void*), void*);
-    void		stopAudioThread();
-    bool		hasAudioThread() const;
-    void		writeSoundCommand(const void*, int);
-    bool		readSoundCommand(void*, int);
-    int			getAudioOutputRate() const;
-    int			getAudioBufferSize() const;
-    int			getAudioBufferChunkSize() const;
-    bool		isAudioTooEmpty() const;
-    void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(bool checkLowWater, double maxTime);
+    double      stopwatch(bool);
+    bool        openAudio();
+    void        closeAudio();
+    bool        startAudioThread(void (*)(void*), void*);
+    void        stopAudioThread();
+    bool        hasAudioThread() const;
+    void        writeSoundCommand(const void*, int);
+    bool        readSoundCommand(void*, int);
+    int         getAudioOutputRate() const;
+    int         getAudioBufferSize() const;
+    int         getAudioBufferChunkSize() const;
+    bool        isAudioTooEmpty() const;
+    void        writeAudioFrames(const float* samples, int numFrames);
+    void        audioSleep(bool checkLowWater, double maxTime);
 
 private:
 
-    int			maxFd;
-    int			audio_fd;
-    int			audioctl_fd;
-    int			audio_ready;
-    int			audioBufferSize;
-    int			audioLowWaterMark;
-    int			queueIn, queueOut;
-    int			written, eof_written, eof_counter;
-    pid_t		childProcID;
-    double		stopwatchTime;
-    audio_info_t	a_info;
-    audio_device_t	a_dev;
-    struct audio_info	info;
+    int         maxFd;
+    int         audio_fd;
+    int         audioctl_fd;
+    int         audio_ready;
+    int         audioBufferSize;
+    int         audioLowWaterMark;
+    int         queueIn, queueOut;
+    int         written, eof_written, eof_counter;
+    pid_t       childProcID;
+    double      stopwatchTime;
+    audio_info_t    a_info;
+    audio_device_t  a_dev;
+    struct audio_info   info;
 
 };
 
@@ -73,8 +74,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

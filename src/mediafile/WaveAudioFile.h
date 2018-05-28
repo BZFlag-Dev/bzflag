@@ -17,20 +17,21 @@
 
 /** This class represents a WAVE file. It implements the read() function from
     AudioFile. */
-class WaveAudioFile : public AudioFile {
+class WaveAudioFile : public AudioFile
+{
 public:
-  WaveAudioFile(std::istream*);
-  virtual ~WaveAudioFile();
+    WaveAudioFile(std::istream*);
+    virtual ~WaveAudioFile();
 
-  /** This function returns the default extension of WAVE audio files. */
-  static std::string	getExtension();
+    /** This function returns the default extension of WAVE audio files. */
+    static std::string    getExtension();
 
-  /** This function reads data from a WAVE file. */
-  virtual bool		read(void* buffer, int numFrames);
+    /** This function reads data from a WAVE file. */
+    virtual bool      read(void* buffer, int numFrames);
 
 protected:
-  bool			readHeader(char* tag, uint32_t* length);
-  bool			findChunk(const char* tag, uint32_t* length);
+    bool          readHeader(char* tag, uint32_t* length);
+    bool          findChunk(const char* tag, uint32_t* length);
 };
 
 #endif
@@ -38,8 +39,8 @@ protected:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

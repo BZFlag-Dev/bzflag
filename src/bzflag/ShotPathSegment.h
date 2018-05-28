@@ -10,33 +10,34 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SHOTPATHSEGMENT_H__
-#define	__SHOTPATHSEGMENT_H__
+#ifndef __SHOTPATHSEGMENT_H__
+#define __SHOTPATHSEGMENT_H__
 
 /* common interface headers */
 #include "TimeKeeper.h"
 #include "Ray.h"
 
 
-class ShotPathSegment {
-  public:
-    enum Reason		{ Initial, Through, Ricochet, Teleport, Boundary };
+class ShotPathSegment
+{
+public:
+    enum Reason     { Initial, Through, Ricochet, Teleport, Boundary };
 
-			ShotPathSegment();
-			ShotPathSegment(const TimeKeeper& start,
-					const TimeKeeper& end,
-					const Ray& r,
-					Reason = Initial);
-			ShotPathSegment(const ShotPathSegment&);
-			~ShotPathSegment();
-    ShotPathSegment&	operator=(const ShotPathSegment&);
+    ShotPathSegment();
+    ShotPathSegment(const TimeKeeper& start,
+                    const TimeKeeper& end,
+                    const Ray& r,
+                    Reason = Initial);
+    ShotPathSegment(const ShotPathSegment&);
+    ~ShotPathSegment();
+    ShotPathSegment&    operator=(const ShotPathSegment&);
 
-  public:
-    TimeKeeper		start;
-    TimeKeeper		end;
-    Ray			ray;
-    Reason		reason;
-    float		bbox[2][3];
+public:
+    TimeKeeper      start;
+    TimeKeeper      end;
+    Ray         ray;
+    Reason      reason;
+    float       bbox[2][3];
 };
 
 
@@ -44,8 +45,8 @@ class ShotPathSegment {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

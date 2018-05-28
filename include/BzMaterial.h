@@ -11,11 +11,11 @@
  */
 
 /* TetraBuilding:
- *	Encapsulates a tetrahederon in the game environment.
+ *  Encapsulates a tetrahederon in the game environment.
  */
 
-#ifndef	BZ_MATERIAL_H
-#define	BZ_MATERIAL_H
+#ifndef BZ_MATERIAL_H
+#define BZ_MATERIAL_H
 
 #include "common.h"
 #include <string>
@@ -29,12 +29,13 @@
 class BzMaterial;
 typedef std::set<const BzMaterial*> MaterialSet;
 typedef std::map<const BzMaterial*,
-		 const BzMaterial*> MaterialMap;
+        const BzMaterial*> MaterialMap;
 
 
-class BzMaterial {
+class BzMaterial
+{
 
-  public:
+public:
     BzMaterial();
     BzMaterial(const BzMaterial& material);
     ~BzMaterial();
@@ -44,7 +45,7 @@ class BzMaterial {
 
     void reset();
 
-    void setReference() const;	// const exploits mutable "referenced" variable below
+    void setReference() const;  // const exploits mutable "referenced" variable below
     bool getReference() const;
 
     //
@@ -136,7 +137,7 @@ class BzMaterial {
     static const BzMaterial* getDefault();
 
     // data
-  private:
+private:
     std::string name;
     std::vector<std::string> aliases;
 
@@ -158,56 +159,60 @@ class BzMaterial {
     bool noLighting;
     float alphaThreshold;
 
-    enum CombineModes {
-      replace = 0,
-      modulate,
-      decal,
-      blend,
-      add,
-      combine
+    enum CombineModes
+    {
+        replace = 0,
+        modulate,
+        decal,
+        blend,
+        add,
+        combine
     };
     int textureCount;
-    typedef struct {
-      std::string name;
-      std::string localname;
-      int matrix;
-      int combineMode;
-      bool useAlpha;
-      bool useColor;
-      bool useSphereMap;
+    typedef struct
+    {
+        std::string name;
+        std::string localname;
+        int matrix;
+        int combineMode;
+        bool useAlpha;
+        bool useColor;
+        bool useSphereMap;
     } TextureInfo;
     TextureInfo* textures;
 
     int shaderCount;
-    typedef struct {
-      std::string name;
+    typedef struct
+    {
+        std::string name;
     } ShaderInfo;
     ShaderInfo* shaders;
 
-  private:
+private:
     static std::string nullString;
     static BzMaterial defaultMaterial;
 };
 
 inline const BzMaterial* BzMaterial::getDefault()
 {
-  return &defaultMaterial;
+    return &defaultMaterial;
 }
 
 inline void BzMaterial::setReference() const
 {
-  referenced = true;
-  return;
+    referenced = true;
+    return;
 }
 
 inline bool BzMaterial::getReference() const
 {
-  return referenced;
+    return referenced;
 }
 
 
-class BzMaterialManager {
-  public:
+class BzMaterialManager
+{
+public:
     BzMaterialManager();
     ~BzMaterialManager();
     void update();
@@ -229,7 +234,7 @@ class BzMaterialManager {
     void printMTL(std::ostream& out, const std::string& indent) const;
     void printReference(std::ostream& out, const BzMaterial* mat) const;
 
-  private:
+private:
     std::vector<BzMaterial*> materials;
 };
 
@@ -242,8 +247,8 @@ extern BzMaterialManager MATERIALMGR;
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

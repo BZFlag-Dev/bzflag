@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_OBSTACLE_MODIFIER_H
-#define	BZF_OBSTACLE_MODIFIER_H
+#ifndef BZF_OBSTACLE_MODIFIER_H
+#define BZF_OBSTACLE_MODIFIER_H
 
 // common headers
 #include "BzMaterial.h"
@@ -20,11 +20,12 @@ class Obstacle;
 class GroupInstance;
 
 
-class ObstacleModifier {
-  public:
+class ObstacleModifier
+{
+public:
     ObstacleModifier();
     ObstacleModifier(const ObstacleModifier& obsMod,
-		     const GroupInstance& grpinst);
+                     const GroupInstance& grpinst);
     ~ObstacleModifier();
     void init();
 
@@ -32,7 +33,7 @@ class ObstacleModifier {
 
     void getMaterialMap(const MaterialSet& matSet, MaterialMap& matMap) const;
 
-  private:
+private:
     bool modifyTeam; // only for bases
     int team;
     bool modifyColor; // modify by tinting
@@ -53,8 +54,8 @@ class ObstacleModifier {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -11,7 +11,7 @@
  */
 
 /* OpenGLFramebuffer:
- *	Encapsulates an OpenGL framebuffer object for multisampled rendering.
+ *  Encapsulates an OpenGL framebuffer object for multisampled rendering.
  */
 
 #ifndef OPENGLFRAMEBUFFER_H
@@ -22,25 +22,29 @@
 // common headers
 #include "bzfgl.h"
 
-class OpenGLFramebuffer {
+class OpenGLFramebuffer
+{
 private:
-  bool contextActive;
-  int msaaLevel, width, height;
-  GLuint renderbuffer, depthRenderbuffer, framebuffer;
+    bool contextActive;
+    int msaaLevel, width, height;
+    GLuint renderbuffer, depthRenderbuffer, framebuffer;
 
-  void initFramebuffer();
-  void destroyFramebuffer();
+    void initFramebuffer();
+    void destroyFramebuffer();
 
 public:
-  OpenGLFramebuffer();
-  ~OpenGLFramebuffer();
+    OpenGLFramebuffer();
+    ~OpenGLFramebuffer();
 
-  void checkState(int, int, int);
+    void checkState(int, int, int);
 
-  GLint getFramebuffer() { return framebuffer; }
+    GLint getFramebuffer()
+    {
+        return framebuffer;
+    }
 
-  static void freeContext(void*);
-  static void initContext(void*);
+    static void freeContext(void*);
+    static void initContext(void*);
 };
 
 #endif // OPENGLFRAMEBUFFER_H

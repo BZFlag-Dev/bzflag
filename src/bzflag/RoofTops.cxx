@@ -28,62 +28,62 @@
 // FIXME - this should use a pregenerated list of 3D polygons
 //       - use something like a split quadtree  (16 divs top layer, etc...)
 //       - splitting polygons is only helpful if they break into diff cells
-//	 - return the isFlatTop() state?  (for making puddles)
-//	 - return the plane normal?  (also for making puddles)
+//   - return the isFlatTop() state?  (for making puddles)
+//   - return the plane normal?  (also for making puddles)
 //       - check the hit position for under-the-wall leaks?
 
 void RoofTops::load()
 {
-  return;
+    return;
 }
 
 
 void RoofTops::clear()
 {
-  return;
+    return;
 }
 
 
 float RoofTops::getTopHeight(float x, float y, float maxHeight)
 {
-  const float zSpeed = -1.0f;
+    const float zSpeed = -1.0f;
 
-  // setup the test ray
-  const float dir[3] = { 0.0f, 0.0f, zSpeed };
-  const float org[3] = { x, y, maxHeight };
-  Ray ray(org, dir);
+    // setup the test ray
+    const float dir[3] = { 0.0f, 0.0f, zSpeed };
+    const float org[3] = { x, y, maxHeight };
+    Ray ray(org, dir);
 
-  // get the obstacle list
-  const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
+    // get the obstacle list
+    const ObsList* olist = COLLISIONMGR.rayTest (&ray, MAXFLOAT);
 
-  float minTime = MAXFLOAT;
+    float minTime = MAXFLOAT;
 
-  for (int i = 0; i < olist->count; i++) {
-    const Obstacle* obs = olist->list[i];
-    const float t = obs->intersect(ray);
-    if (obs->getType() == Teleporter::getClassName()) {
-      // the physics for teles is whacked, imho
-      continue;
+    for (int i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        const float t = obs->intersect(ray);
+        if (obs->getType() == Teleporter::getClassName())
+        {
+            // the physics for teles is whacked, imho
+            continue;
+        }
+        else if ((t > 0.0f) && (t < minTime))
+            minTime = t;
     }
-    else if ((t > 0.0f) && (t < minTime)) {
-      minTime = t;
-    }
-  }
 
-  float height = maxHeight + (minTime * zSpeed);
+    float height = maxHeight + (minTime * zSpeed);
 
-  if (height < 0.0f) {
-    height = 0.0f;
-  }
+    if (height < 0.0f)
+        height = 0.0f;
 
-  return height;
+    return height;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

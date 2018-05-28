@@ -11,13 +11,13 @@
  */
 
 /* MeshSceneNode:
- *	Encapsulates information for rendering a mesh fragment
+ *  Encapsulates information for rendering a mesh fragment
  *      (a collection of faces with the same material properties).
- *	Does not support level of detail.
+ *  Does not support level of detail.
  */
 
-#ifndef	BZF_MESH_SCENE_NODE_H
-#define	BZF_MESH_SCENE_NODE_H
+#ifndef BZF_MESH_SCENE_NODE_H
+#define BZF_MESH_SCENE_NODE_H
 
 #include "common.h"
 #include "bzfgl.h"
@@ -42,8 +42,9 @@ class ViewFrustum;
 class RenderNode;
 
 
-class MeshSceneNode : public SceneNode {
-  public:
+class MeshSceneNode : public SceneNode
+{
+public:
     MeshSceneNode(const MeshObstacle* mesh);
     ~MeshSceneNode();
 
@@ -66,10 +67,10 @@ class MeshSceneNode : public SceneNode {
     static void freeContext(void* data);
 
     static void setLodScale(int pixelsX, float fovx,
-			    int pixelsY, float fovy);
+                            int pixelsY, float fovy);
     static void setRadarLodScale(float lengthPerPixel);
 
-  private:
+private:
     const MeshObstacle* mesh;
 
     MeshDrawMgr* drawMgr;
@@ -80,28 +81,31 @@ class MeshSceneNode : public SceneNode {
     // transform display list
     GLuint xformList;
 
-    struct MeshMaterial {
-      const BzMaterial* bzmat;
-      OpenGLGState gstate;
-      GLfloat color[4];
-      const GLfloat* colorPtr;
-      bool drawRadar;
-      bool drawShadow;
-      bool needsSorting;
-      bool animRepos;
+    struct MeshMaterial
+    {
+        const BzMaterial* bzmat;
+        OpenGLGState gstate;
+        GLfloat color[4];
+        const GLfloat* colorPtr;
+        bool drawRadar;
+        bool drawShadow;
+        bool needsSorting;
+        bool animRepos;
     };
 
-    struct SetNode {
-      int set;
-      MeshMaterial meshMat;
-      // basic render nodes
-      RenderNode* node;
-      RenderNode* radarNode;
+    struct SetNode
+    {
+        int set;
+        MeshMaterial meshMat;
+        // basic render nodes
+        RenderNode* node;
+        RenderNode* radarNode;
     };
 
-    struct LodNode {
-      int count;
-      SetNode* sets;
+    struct LodNode
+    {
+        int count;
+        SetNode* sets;
     };
 
     // Level Of Detail (LOD) information
@@ -117,14 +121,14 @@ class MeshSceneNode : public SceneNode {
     static float LodScale;
     static float RadarLodScale;
 
-  private:
+private:
     void updateMaterial(MeshMaterial* mat);
     const BzMaterial* convertMaterial(const BzMaterial* bzmat);
     int calcNormalLod(const ViewFrustum&);
     int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();
 
-  friend class MeshSceneNodeMgr;
+    friend class MeshSceneNodeMgr;
 };
 
 
@@ -132,8 +136,8 @@ class MeshSceneNode : public SceneNode {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

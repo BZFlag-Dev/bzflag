@@ -16,13 +16,14 @@
 // common header
 #include "common.h"
 
-namespace RoofTops {
+namespace RoofTops
+{
 
-  void load();
-  void clear();
+void load();
+void clear();
 
-  // returns 0.0f if there are no buildings
-  float getTopHeight(float x, float y, float maxHeight);
+// returns 0.0f if there are no buildings
+float getTopHeight(float x, float y, float maxHeight);
 }
 
 
@@ -31,8 +32,8 @@ namespace RoofTops {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

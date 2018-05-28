@@ -26,29 +26,30 @@ class BZAdminClient;
     requires polling of the stdin file descriptor, which isn't defined in
     standard C or C++, which means that this might not work well on all
     systems. It should work on most UNIX-like systems though. */
-class StdBothUI : public BZAdminUI {
+class StdBothUI : public BZAdminUI
+{
 public:
-  StdBothUI(BZAdminClient& c);
-  virtual void outputMessage(const std::string& msg, ColorCode color);
-  virtual bool checkCommand(std::string& str);
+    StdBothUI(BZAdminClient& c);
+    virtual void outputMessage(const std::string& msg, ColorCode color);
+    virtual bool checkCommand(std::string& str);
 
-  /** This function returns a pointer to a dynamically allocated
-      StdBothUI object. */
-  static BZAdminUI* creator(BZAdminClient&);
+    /** This function returns a pointer to a dynamically allocated
+        StdBothUI object. */
+    static BZAdminUI* creator(BZAdminClient&);
 
- protected:
+protected:
 
-  static UIAdder uiAdder;
+    static UIAdder uiAdder;
 
-  bool atEOF;
+    bool atEOF;
 
 #ifdef _WIN32
- public:
-  HANDLE console;
-  HANDLE readEvent, processedEvent;
-  HANDLE thread;
-  char buffer[MessageLen + 1];
-  int pos;
+public:
+    HANDLE console;
+    HANDLE readEvent, processedEvent;
+    HANDLE thread;
+    char buffer[MessageLen + 1];
+    int pos;
 #endif
 };
 
@@ -56,8 +57,8 @@ public:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -15,53 +15,66 @@
  *   Encapsulates information about a team
  */
 
-#ifndef	BZF_TEAM_H
-#define	BZF_TEAM_H
+#ifndef BZF_TEAM_H
+#define BZF_TEAM_H
 
 #include "common.h"
 #include "global.h"
 #include <string>
 
-const int		TeamPLen = 10;
+const int       TeamPLen = 10;
 
-struct Team {
-  public:
+struct Team
+{
+public:
     Team();
 
-    void*		pack(void*) const;
-    const void*		unpack(const void*);
+    void*       pack(void*) const;
+    const void*     unpack(const void*);
 
-    static const std::string	getImagePrefix(TeamColor); // const
-    static const char*		getName(TeamColor); // const
-    static TeamColor		getTeam(const std::string &name); // const
-    static const float*		getTankColor(TeamColor); // const
-    static const float*		getRadarColor(TeamColor team); // const
-    static const float*		getShotColor(TeamColor team); // const
-    static const std::string	getAnsiCode(TeamColor team); // const
-    static bool			isColorTeam(TeamColor); // const
+    static const std::string    getImagePrefix(TeamColor); // const
+    static const char*      getName(TeamColor); // const
+    static TeamColor        getTeam(const std::string &name); // const
+    static const float*     getTankColor(TeamColor); // const
+    static const float*     getRadarColor(TeamColor team); // const
+    static const float*     getShotColor(TeamColor team); // const
+    static const std::string    getAnsiCode(TeamColor team); // const
+    static bool         isColorTeam(TeamColor); // const
 
-    static void		setColors(TeamColor,
-				  const float* tank,
-				  const float* radar);
-    static void		updateShotColors();
+    static void     setColors(TeamColor,
+                              const float* tank,
+                              const float* radar);
+    static void     updateShotColors();
 
-  public:
-    unsigned short	size;			// num players on team
+public:
+    unsigned short  size;           // num players on team
 
-    short		getWins() const { return won; }
-    short		getLosses() const { return lost; }
-    void		setWins(short v) { won = v; }
-    void		setLosses(short v) { lost = v; }
+    short       getWins() const
+    {
+        return won;
+    }
+    short       getLosses() const
+    {
+        return lost;
+    }
+    void        setWins(short v)
+    {
+        won = v;
+    }
+    void        setLosses(short v)
+    {
+        lost = v;
+    }
 
-    static float	tankColor[NumTeams][3];
-    static float	radarColor[NumTeams][3];
-    static float	shotColor[NumTeams][3];
+    static float    tankColor[NumTeams][3];
+    static float    radarColor[NumTeams][3];
+    static float    shotColor[NumTeams][3];
 
-  private:
-    unsigned short	won;			// wins by team members
-    unsigned short	lost;			// losses by team members
+private:
+    unsigned short  won;            // wins by team members
+    unsigned short  lost;           // losses by team members
 
-    static float	addBrightness(const float color); // const
+    static float    addBrightness(const float color); // const
 
 };
 
@@ -70,8 +83,8 @@ struct Team {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

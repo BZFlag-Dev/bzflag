@@ -39,38 +39,38 @@
 // it is not meant to be fast or secure
 //
 // usage: 1) feed it blocks of uchars with update()
-//	2) finalize()
-//	3) get hexdigest() string
+//  2) finalize()
+//  3) get hexdigest() string
 //      or
-//	MD5(std::string).hexdigest()
+//  MD5(std::string).hexdigest()
 //
 // assumes that char is 8 bit and int is 32 bit
 class MD5
 {
 public:
-  uint8_t digest[16];
-  MD5();
-  MD5(const std::string& text);
-  void update(const unsigned char *buf, uint32_t length);
-  void finalize();
-  std::string hexdigest() const;
-  friend std::ostream& operator<<(std::ostream&, MD5 md5);
+    uint8_t digest[16];
+    MD5();
+    MD5(const std::string& text);
+    void update(const unsigned char *buf, uint32_t length);
+    void finalize();
+    std::string hexdigest() const;
+    friend std::ostream& operator<<(std::ostream&, MD5 md5);
 
 private:
-  uint32_t buf[4];
-  uint32_t bytes[2];
-  uint32_t in[16];
-  bool finalized;
-  void init(void);
-  void transform(void);
+    uint32_t buf[4];
+    uint32_t bytes[2];
+    uint32_t in[16];
+    bool finalized;
+    void init(void);
+    void transform(void);
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
