@@ -1,0 +1,9 @@
+Files origonaly from Yughues https://yughues.deviantart.com/
+used under CC-0 public domain license.
+basetop
+basewall
+boxwall
+wall
+roof
+std_ground
+pyrwall
