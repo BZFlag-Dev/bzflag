@@ -188,7 +188,7 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
 
     // make styles -- first the outer wall
     int wallTexture = tm.getTextureID( "wall" );
-    wallTexWidth = wallTexHeight = 10.0f;
+    wallTexWidth = wallTexHeight = 2.0f;
     if (wallTexture>=0)
         wallTexWidth = tm.GetAspectRatio(wallTexture) * wallTexHeight;
 
@@ -399,14 +399,16 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     if (renderer->useQuality() >= 2)
         texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
+    float roofTextureFactor = texutureFactor * 4;
+
     while ((node = ((part < 4) ? nodeGen->getNextNode(
                         -texutureFactor*boxTexWidth,
                         -texutureFactor*boxTexWidth, boxLOD) :
                     // I'm using boxTexHeight for roof since textures are same
                     // size and this number is available
                     nodeGen->getNextNode(
-                        -boxTexHeight,
-                        -boxTexHeight, boxLOD))))
+                        -roofTextureFactor * boxTexHeight,
+                        -roofTextureFactor * boxTexHeight, boxLOD))))
     {
         node->setColor(boxColors[part]);
         node->setModulateColor(boxModulateColors[part]);
