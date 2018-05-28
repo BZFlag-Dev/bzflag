@@ -225,7 +225,9 @@ void broadcastHandicaps(int toPlayer = -1);
 
 void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth);bool allShotsRicochet();
 bool allowSuperFlags();
-bool allowJumping();#endif
+bool allowJumping();
+
+#endif
 
 // Local Variables: ***
 // mode: C++ ***
