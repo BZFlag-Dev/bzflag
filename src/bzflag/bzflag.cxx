@@ -605,6 +605,7 @@ void dumpResources()
         BZDB.set("password", "");
 
     BZDB.set("team", Team::getName(startupInfo.team));
+    BZDB.set("skinIndex", TextUtils::format("%d", startupInfo.skinIndex));
     BZDB.set("server", startupInfo.serverName);
     if (startupInfo.serverPort != ServerPort)
         BZDB.set("port", TextUtils::format("%d", startupInfo.serverPort));
@@ -845,6 +846,13 @@ int         main(int argc, char** argv)
             std::string value = BZDB.get("team");
             startupInfo.team = Team::getTeam(value);
         }
+
+        if (BZDB.isSet("skinIndex"))
+            startupInfo.skinIndex = atoi(BZDB.get("skinIndex").c_str());
+        else
+            startupInfo.skinIndex = 0;
+
+
         if (BZDB.isSet("server"))
         {
             // Flawfinder: ignore

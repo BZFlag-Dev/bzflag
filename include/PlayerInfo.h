@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993-2018 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 #ifndef __PLAYERINFO_H__
 #define __PLAYERINFO_H__
@@ -64,7 +64,7 @@ class PlayerInfo
 public:
     PlayerInfo(int _playerIndex);
 
-    int   getPlayerIndex( void ) const
+    int   getPlayerIndex(void) const
     {
         return playerIndex;
     }
@@ -88,7 +88,7 @@ public:
     void  *packUpdate(void *buf);
     void  *packId(void *buf);
     bool  unpackEnter(const void *buf, uint16_t &rejectCode, char *rejectMsg);
-    bool  processEnter ( uint16_t &rejectCode, char *rejectMsg );
+    bool  processEnter(uint16_t &rejectCode, char *rejectMsg);
     const char    *getCallSign() const;
     void      setCallSign(const char * c);
     const char    *getMotto() const;
@@ -102,8 +102,10 @@ public:
     bool  isTeam(TeamColor team) const;
     bool  isObserver() const;
     TeamColor getTeam() const;
-    void      setNextTeam (TeamColor nextTeam);
-    void      setTeam (TeamColor team);
+    void      setNextTeam(TeamColor nextTeam);
+    void      setTeam(TeamColor team);
+    inline int getSkinIndex() const { return skinIndex; }
+    inline void setSkinIndex(int skin) { skinIndex = skin; }
     void  wasARabbit();
     void  wasNotARabbit();
     bool  isARabbitKill(PlayerInfo &victim) const;
@@ -149,8 +151,8 @@ public:
     PlayerReplayState getReplayState();
     static void   setCurrentTime(TimeKeeper tm);
     static void   setFilterParameters(bool    callSignFiltering,
-                                      WordFilter  &filterData,
-                                      bool    simpleFiltering);
+        WordFilter  &filterData,
+        bool    simpleFiltering);
 
     void  setTrackerID(unsigned short int t);
     unsigned short int    trackerID();
@@ -158,11 +160,11 @@ public:
     int   endShotCredit;
     int   endShotShieldCredit;
 
-    PlayerType    getType( void )
+    PlayerType    getType(void)
     {
         return type;
     }
-    void      setType( PlayerType t )
+    void      setType(PlayerType t)
     {
         type = t;
     }
@@ -173,7 +175,7 @@ public:
     int   howManyTimesKilledBy(PlayerId killer);
 
 private:
-    std::map<int,int> deathCountMap;
+    std::map<int, int> deathCountMap;
 
     void  cleanMotto();
     bool  isCallSignReadable();
@@ -206,6 +208,7 @@ private:
     // player's team
     TeamColor nextTeam;
     TeamColor team;
+    int       skinIndex = 0;
     // true for dead rabbit until respawn
     bool  wasRabbit;
     // flag index player has

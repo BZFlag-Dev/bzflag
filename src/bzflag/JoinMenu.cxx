@@ -96,6 +96,21 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     updateTeamTexture();
     listHUD.push_back(teamIcon);
 
+    skin = new HUDuiList;
+    skin->setFontFace(fontFace);
+    skin->setLabel("Skin:");
+    skin->setCallback(skinCallback, this);
+    std::vector<std::string>& skins = skin->getList();
+    // these do not need to be in enum order, but must match getTeam() & setTeam()
+    skins.push_back("Standard");
+    skins.push_back("Hex");
+    skins.push_back("Digital");
+    skins.push_back("Facet");
+    skins.push_back("Solid");
+    skin->update();
+    setSkinIndex(info->skinIndex);
+    listHUD.push_back(skin);
+
     server = new HUDuiTypeIn;
     server->setFontFace(fontFace);
     server->setLabel("Server:");
@@ -137,8 +152,8 @@ JoinMenu::JoinMenu() : serverStartMenu(NULL), serverMenu(NULL)
     initNavigation(listHUD, 1, listHUD.size() - 3);
 
     // cut teamIcon out of the nav loop
-    team->setNext(server);
-    server->setPrev(team);
+    team->setNext(skin);
+    skin->setPrev(team);
 }
 
 JoinMenu::~JoinMenu()
@@ -162,6 +177,7 @@ void JoinMenu::show()
     callsign->setString(info->callsign);
     password->setString(info->password);
     setTeam(info->team);
+    setSkinIndex(info->skinIndex);
 
     server->setString(info->serverName);
     char buffer[10];
@@ -194,6 +210,7 @@ void JoinMenu::loadInfo()
         info->token[0] = '\0';
     }
     info->team = getTeam();
+    info->skinIndex = getSkinIndex();
     strcpy(info->serverName, server->getString().c_str());
     info->serverPort = atoi(port->getString().c_str());
     strcpy(info->motto, motto->getString().c_str());
@@ -281,6 +298,17 @@ void JoinMenu::setTeam(TeamColor teamcol)
     team->setIndex(teamcol == AutomaticTeam ? 0 : int(teamcol) + 1);
 }
 
+int JoinMenu::getSkinIndex() const
+{
+    return skin->getIndex();
+}
+
+void JoinMenu::setSkinIndex(int index)
+{
+    skin->setIndex(index);
+}
+
+
 void JoinMenu::setStatus(const char* msg, const std::vector<std::string> *)
 {
     status->setString(msg);
@@ -291,6 +319,11 @@ void JoinMenu::teamCallback(HUDuiControl*, const void* source)
 {
     ((const JoinMenu*)source)->updateTeamTexture();
 }
+
+void JoinMenu::skinCallback(HUDuiControl*, const void* source)
+{
+}
+
 
 void JoinMenu::updateTeamTexture() const
 {

@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993-2018 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 #ifndef __PLAYER_H__
 #define __PLAYER_H__
@@ -41,27 +41,25 @@ class TankDeathOverride;
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
-    sizeof(float)     + // timestamp
-    PlayerIdPLen      + // player id
-    sizeof(int32_t)   + // order
-    sizeof(int16_t)   + // status
-    sizeof(float) * 3 + // position           (or int16_t * 3)
-    sizeof(float) * 3 + // velocity           (or int16_t * 3)
-    sizeof(float)     + // angle          (or int16_t)
-    sizeof(float)     + // angular velocity       (or int16_t)
-    sizeof(int16_t)   + // jump jets          (conditional)
-    sizeof(int32_t)   + // physics driver     (conditional)
-    sizeof(int16_t)   + // user speed         (conditional)
-    sizeof(int16_t)   + // user angular velocity  (conditional)
-    sizeof(uint8_t);    // sounds         (conditional)
+sizeof(float) + // timestamp
+PlayerIdPLen + // player id
+sizeof(int32_t) + // order
+sizeof(int16_t) + // status
+sizeof(float) * 3 + // position           (or int16_t * 3)
+sizeof(float) * 3 + // velocity           (or int16_t * 3)
+sizeof(float) + // angle          (or int16_t)
+sizeof(float) + // angular velocity       (or int16_t)
+sizeof(int16_t) + // jump jets          (conditional)
+sizeof(int32_t) + // physics driver     (conditional)
+sizeof(int16_t) + // user speed         (conditional)
+sizeof(int16_t) + // user angular velocity  (conditional)
+sizeof(uint8_t);    // sounds         (conditional)
 
 
 class Player
 {
 public:
-    Player(const PlayerId&, TeamColor,
-           const char* callsign, const char* motto,
-           const PlayerType);
+    Player(const PlayerId&, TeamColor, int skinIndex, const char* callsign, const char* motto, const PlayerType);
     virtual   ~Player();
 
     PlayerId  getId() const;
@@ -69,6 +67,7 @@ public:
     void      setNextTeam(TeamColor);
     TeamColor getTeam() const;
     void      setTeam(TeamColor);
+    int       getSkinIndex() const { return skinIndex; }
     void      updateTank(float dt, bool local);
     const char*   getCallSign() const;
     const char*   getMotto() const;
@@ -121,8 +120,8 @@ public:
     const ShotStatistics* getShotStatistics() const;
 
     void      addToScene(SceneDatabase*, TeamColor effectiveTeam,
-                         bool inCockpit, bool seerView,
-                         bool showTreads, bool showIDL);
+        bool inCockpit, bool seerView,
+        bool showTreads, bool showIDL);
 
     bool      getIpAddress(Address&);
     void      setIpAddress(const Address& addr);
@@ -155,8 +154,8 @@ public:
     bool      hasPlayerList() const;
     void      setPlayerList(bool = true);
 
-    bool      getPausedMessageState ( void ) const;
-    void      setPausedMessageState ( bool set )
+    bool      getPausedMessageState(void) const;
+    void      setPausedMessageState(bool set)
     {
         pauseMessageState = set;
     }
@@ -188,7 +187,7 @@ public:
     void      setExplode(const TimeKeeper&);
     void      setTeleport(const TimeKeeper&, short from, short to);
     void      endShot(int index, bool isHit = false,
-                      bool showExplosion = false);
+        bool showExplosion = false);
     void      addHitToStats(FlagType* flag);
 
     void*     pack(void*, uint16_t& code);
@@ -197,27 +196,24 @@ public:
     void      setDeadReckoning();
     void      setDeadReckoning(float timestamp);
 
-    void      setUserTexture ( const char *tex )
-    {
-        if (tex) userTexture = tex;
-    }
-
     void      renderRadar() const;
 
-    void      setExplodePos( const float * p);
+    void      setExplodePos(const float * p);
 
-    void setZpos (float z);
+    void setZpos(float z);
 
-    float getMaxSpeed ( void ) const;
+    float getMaxSpeed(void) const;
 
     void forceReload(float time);
 
-    void setDeathEffect ( TankDeathOverride *e );
-    TankDeathOverride* getDeathEffect ( void );
+    void setDeathEffect(TankDeathOverride *e);
+    TankDeathOverride* getDeathEffect(void);
 
     int reportedHits;
     int computedHits;
-    std::map<int,bool>    hitMap;
+    std::map<int, bool>    hitMap;
+
+    inline void setSkinIndex(int id) { skinIndex = id; }
 protected:
     void    clearRemoteSounds();
     void    addRemoteSound(int sound);
@@ -233,6 +229,7 @@ protected:
 
     std::vector<ShotPath*> shots;
     float       handicap;
+    int             skinIndex = 0;
 
 private:
     // return true if the shot had to be terminated or false if it
@@ -241,9 +238,9 @@ private:
     // there's no meaningful shot position).
     virtual bool  doEndShot(int index, bool isHit, float* position) = 0;
     void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-                          float* predictedVel, float time) const;
+        float* predictedVel, float time) const;
     void calcRelativeMotion(float vel[2], float& speed, float& angvel);
-    void setVisualTeam (TeamColor team );
+    void setVisualTeam(TeamColor team);
     void updateFlagEffect(FlagType* flag);
     void updateTranslucency(float dt);
     void updateDimensions(float dt, bool local);
@@ -274,11 +271,9 @@ private:
     GLfloat       color[4];
     GLfloat       teleAlpha;
 #endif
-    std::string       userTexture;
-    static int        tankTexture;
-    static int        tankOverideTexture;
-    TeamColor     lastVisualTeam;
-    TimeKeeper        lastTrackDraw;
+    static int      tankTexture;
+    TeamColor       lastVisualTeam;
+    TimeKeeper      lastTrackDraw;
 
     // permanent data
     TeamColor     nextTeam;       // team after next spawn
@@ -288,7 +283,7 @@ private:
     char          motto[MottoLen];    // my motto
     PlayerType        type;           // Human/Computer
 
-    // relatively stable data
+                                      // relatively stable data
     FlagType*     flagType;       // flag type I'm holding
     float         dimensions[3];      // current tank dimensions
     float         dimensionsScale[3]; // use to scale the dimensions
@@ -309,12 +304,12 @@ private:
     short         tks;            // number of teamkills
     short         selfKills;          // number of self-destructions
 
-    // score of local player against this player
+                                      // score of local player against this player
     short         localWins;      // local player won this many
     short         localLosses;        // local player lost this many
     short         localTks;       // local player team killed this many
 
-    // highly dynamic data
+                                  // highly dynamic data
     PlayerState       state;
 
     // additional state
@@ -323,13 +318,13 @@ private:
     // computable highly dynamic data
     float         forward[3];     // forward unit vector
 
-    // relative motion information
+                                  // relative motion information
     float         relativeSpeed;      // relative speed
     float         relativeAngVel;     // relative angular velocity
 
     float         apparentVelocity[3];    // velocity of tank as derived from it's last positional update
 
-    // dead reckoning stuff
+                                          // dead reckoning stuff
     TimeKeeper inputTime;     // time of input
     float inputTimestamp;  // input timestamp of sender
     int   inputStatus;        // tank status
@@ -345,7 +340,7 @@ private:
     float inputTurnVector[2]; // tank turn vector
     int   inputPhyDrv;        // physics driver
 
-    // average difference between time source and time destination
+                              // average difference between time source and time destination
     float         deltaTime;
 
     // time offset on last measurement
@@ -542,7 +537,7 @@ inline bool     Player::isPaused() const
     return (state.status & short(PlayerState::Paused)) != 0;
 }
 
-inline bool Player::getPausedMessageState ( void ) const
+inline bool Player::getPausedMessageState(void) const
 {
     return pauseMessageState;
 }
@@ -658,7 +653,7 @@ inline void*        Player::pack(void* buf, uint16_t& code)
     return state.pack(buf, code);
 }
 
-inline void Player::setZpos (float z)
+inline void Player::setZpos(float z)
 {
     state.pos[2] = z;
 }

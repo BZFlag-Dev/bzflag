@@ -82,7 +82,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
         // won't really output anything, just gets token
         outputServerList();
     }
-    sLink.sendEnter(TankPlayer, myTeam, startupInfo.callsign, "bzadmin", startupInfo.token, "default");
+    sLink.sendEnter(TankPlayer, myTeam, 0, startupInfo.callsign, "bzadmin", startupInfo.token, "default");
     if (sLink.getState() != ServerLink::Okay)
     {
         std::cerr << "Rejected." << std::endl;
