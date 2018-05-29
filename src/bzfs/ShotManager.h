@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993-2018 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 #ifndef __SHOTMANAGER_H__
 #define __SHOTMANAGER_H__
@@ -19,6 +19,7 @@
 #include "global.h"  /* for TeamColor */
 #include "ShotUpdate.h"
 #include "vectors.h"
+#include "TimeKeeper.h"
 
 #include <string>
 #include <vector>
@@ -26,199 +27,398 @@
 #ifdef USE_TR1
 #include <tr1/memory>
 #include <tr1/functional>
-#define	shared_ptr	tr1::shared_ptr
-#define	function	tr1::function
+#define shared_ptr  tr1::shared_ptr
+#define function    tr1::function
 #else
 #include <memory>
 #include <functional>
 #endif
 
+#include "Ray.h"
+
 /** a ShotManager is used track shots fired by players and the server
- */
+*/
 
 namespace Shots
 {
-class Shot;
+    class Shot
+    {
+    protected:
+        uint32_t GUID;
 
-class FlightLogic
-{
-public:
-	virtual ~FlightLogic() {}
+        double  LifeTime;
 
-	virtual void Setup(Shot& UNUSED(shot) ) {}
-	virtual bool Update ( Shot& UNUSED(shot) ); // call the base class for lifetime expire
-	virtual void End ( Shot& UNUSED(shot) ) {}
-	virtual void Retarget ( Shot& UNUSED(shot), PlayerId UNUSED(newTarget) ) {};
+        class MetaDataItem
+        {
+        public:
+            std::string Name;
+            std::string DataS;
+            uint32_t    DataI;
+        };
 
-	virtual bool CollideBox ( Shot& UNUSED(shot), fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation) ) {return false;}
-	virtual bool CollideSphere ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(radius) ) {return false;}
-	virtual bool CollideCylinder ( Shot& UNUSED(shot), fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius) ) {return false;}
+        std::map<std::string, MetaDataItem> MetaData;
 
-protected:
-	virtual fvec3 ProjectShotLocation( Shot& shot, double deltaT );
-};
+        virtual fvec3 ProjectShotLocation(double deltaT);
 
-typedef std::map<std::string, FlightLogic*> FlightLogicMap;
+    public:
+        typedef std::shared_ptr <Shot> Ptr;
+        typedef std::vector<std::shared_ptr<Shot>> Vec;
+        typedef std::shared_ptr<std::function <void(Shot&)> > Event;
 
-class Shot
-{
-protected:
-	uint32_t GUID;
-	FlightLogic &Logic;
+        fvec3       StartPosition;
+        fvec3       LastUpdatePosition;
+        double      LastUpdateTime;
+        double      StartTime;
 
-	double	LifeTime;
+        FiringInfo  Info;
 
-	class MetaDataItem
-	{
-	public:
-		std::string Name;
-		std::string DataS;
-		uint32_t	DataI;
-	};
+        PlayerId    Target;
 
-	std::map<std::string, MetaDataItem> MetaData;
+        void        *Pimple;
 
-public:
-	fvec3		StartPosition;
-	fvec3		LastUpdatePosition;
-	double		LastUpdateTime;
-	double		StartTime;
+        Shot(uint32_t guid, const FiringInfo &info);
+        virtual ~Shot();
 
-	FiringInfo	Info;
+        uint32_t GetGUID()
+        {
+            return GUID;
+        }
+        uint16_t GetLocalShotID()
+        {
+            return Info.shot.player;
+        }
 
-	PlayerId	Target;
+        PlayerId GetPlayerID()
+        {
+            return Info.shot.player;
+        }
 
-	void		*Pimple;
+        double GetLastUpdateTime()
+        {
+            return LastUpdateTime;
+        }
 
-	Shot(uint32_t guid, const FiringInfo &info, FlightLogic& logic);
-	virtual ~Shot();
+        double GetStartTime()
+        {
 
-	bool Update();
-	void End();
-	void Retarget(PlayerId target);
+            return StartTime;
+        }
+        double GetLifeTime()
+        {
+            return LifeTime;
+        }
 
-	uint32_t GetGUID() {return GUID;}
-	uint16_t GetLocalShotID() {return Info.shot.player;}
+        double GetLifeParam()
+        {
+            return (LastUpdateTime - StartTime) / LifeTime;
+        }
 
-	PlayerId GetPlayerID() {return Info.shot.player;}
+        void setPosition(const float* p)
+        {
+            Info.shot.pos[0] = p[0];
+            Info.shot.pos[1] = p[1];
+            Info.shot.pos[2] = p[2];
+        }
 
-	double GetLastUpdateTime() {return LastUpdateTime;}
-	double GetStartTime() {return StartTime;}
-	double GetLifeTime() {return LifeTime;}
+        void setVelocity(const float* v)
+        {
+            Info.shot.vel[0] = v[0];
+            Info.shot.vel[1] = v[1];
+            Info.shot.vel[2] = v[2];
+        }
 
-	double GetLifeParam() {return (LastUpdateTime-StartTime)/LifeTime;}
 
-	bool CollideBox ( fvec3 &center, fvec3 size, float rotation ) {return Logic.CollideBox(*this,center,size,rotation);}
-	bool CollideSphere ( fvec3 &center, float radius ) {return Logic.CollideSphere(*this,center,radius);}
-	bool CollideCylinder ( fvec3 &center, float height, float radius) {return Logic.CollideCylinder(*this,center,height,radius);}
+        virtual void Setup() {}
+        virtual bool Update(float dt); // call the base class for lifetime expire
+        virtual void End();
+        virtual void Retarget(PlayerId UNUSED(newTarget));
 
-	// meta data API
-	void SetMetaData(const std::string& name, const char* data);
-	void SetMetaData(const std::string& name, uint32_t data);
-	bool HasMetaData(const std::string& name);
-	const char * GetMetaDataS(const std::string& name);
-	uint32_t GetMetaDataI(const std::string& name);
+        virtual bool CollideBox(fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation))
+        {
+            return false;
+        }
+        virtual bool CollideSphere(fvec3& UNUSED(center), float UNUSED(radius))
+        {
+            return false;
+        }
+        virtual bool CollideCylinder(fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius))
+        {
+            return false;
+        }
 
-};
 
-typedef std::shared_ptr<Shot>	ShotRef;
-typedef std::vector<std::shared_ptr<Shot>> ShotList;
-typedef std::shared_ptr<std::function <void (Shot&)> > ShotEvent;
+        // meta data API
+        void SetMetaData(const std::string& name, const char* data);
+        void SetMetaData(const std::string& name, uint32_t data);
+        bool HasMetaData(const std::string& name);
+        const char * GetMetaDataS(const std::string& name);
+        uint32_t GetMetaDataI(const std::string& name);
+    };
 
-#ifdef USE_TR1
-// limit the scope of possible side effects of these macro definitions
-#undef	shared_ptr
-#undef	function
-#endif
+    class ShotFactory
+    {
+    public:
+        virtual ~ShotFactory() {}
+        virtual  Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return nullptr; }
+
+        typedef std::shared_ptr <ShotFactory> Ptr;
+        typedef std::map<std::string, Ptr > Map;
+    };
 
 #define INVALID_SHOT_GUID 0
 
-class Manager
-{
-public:
-  Manager();
-  virtual ~Manager();
+    class Manager
+    {
+    public:
+        Manager();
+        virtual ~Manager();
 
-  void Init();
+        void Init();
 
-  void SetFlightLogic(const char* flagCode, FlightLogic* logic);
+        void SetShotFactory(const char* flagCode, std::shared_ptr<ShotFactory> factory);
 
-  uint32_t AddShot (const FiringInfo &info, PlayerId shooter);
-  void RemoveShot (uint32_t shotID);
+        uint32_t AddShot(const FiringInfo &info, PlayerId shooter);
+        void RemoveShot(uint32_t shotID);
 
-  void RemovePlayer (PlayerId player);
+        void RemovePlayer(PlayerId player);
 
-  void SetShotTarget( uint32_t shot, PlayerId target );
+        void SetShotTarget(uint32_t shot, PlayerId target);
 
-  uint32_t FindShotGUID (PlayerId shooter, uint16_t localShotID);
-  ShotRef FindShot(uint32_t shotID) { return FindByID(shotID);}
+        uint32_t FindShotGUID(PlayerId shooter, uint16_t localShotID);
+        Shot::Ptr FindShot(uint32_t shotID)
+        {
+            return FindByID(shotID);
+        }
 
-  void Update();
+        void Update();
 
-  static double DeadShotCacheTime;
+        static double DeadShotCacheTime;
 
-  ShotList	LiveShotsForPlayer(PlayerId player);
-  ShotList	DeadShotsForPlayer(PlayerId player);
+        Shot::Vec    LiveShotsForPlayer(PlayerId player);
+        Shot::Vec    DeadShotsForPlayer(PlayerId player);
 
-  ShotEvent ShotCreated;
-  ShotEvent ShotEnded;
+        Shot::Event ShotCreated;
+        Shot::Event ShotEnded;
 
-private:
-	uint32_t NewGUID();
-	ShotRef	FindByID(uint32_t shotID);
+    private:
+        uint32_t NewGUID();
+        Shot::Ptr FindByID(uint32_t shotID);
 
-	double Now();
+        double Now();
 
-	ShotList	LiveShots;
-	ShotList	RecentlyDeadShots;
+        Shot::Vec    LiveShots;
+        Shot::Vec    RecentlyDeadShots;
 
-	FlightLogicMap Logics;
+        ShotFactory::Map Factories;
 
-	uint32_t	LastGUID;
+        uint32_t    LastGUID;
 
-};
+    };
 
-class ProjectileShotLogic: public FlightLogic
-{
-public:
-	virtual ~ProjectileShotLogic() {}
+    enum  class SegmentReason { Initial, Through, Ricochet, Teleport, Boundary };
 
-	virtual bool Update ( Shot& shot );
-};
+    class FlightSegment
+    {
+    public:
 
-class GuidedMissileLogic: public ProjectileShotLogic
-{
-public:
-	virtual ~GuidedMissileLogic() {}
+        FlightSegment();
+        FlightSegment(const double start, const double end, const Ray& r, SegmentReason = SegmentReason::Initial);
+        FlightSegment(const FlightSegment&);
+        ~FlightSegment();
+        FlightSegment&    operator=(const FlightSegment&);
 
-	virtual void End ( Shot& UNUSED(shot) );
-};
+    public:
+        double      start;
+        double      end;
+        Ray             ray;
+        SegmentReason   reason;
+        float           bbox[2][3];
+    };
 
-class SuperBulletLogic: public ProjectileShotLogic
-{
-public:
-};
+    class ProjectileShot : public Shot
+    {
+    public:
+        ProjectileShot(uint32_t guid, const FiringInfo &info) : Shot(guid, info) {}
 
-class ShockwaveLogic: public FlightLogic
-{
-public:
-	virtual void Setup(Shot& shot );
-	virtual bool Update ( Shot& shot );
+        virtual ~ProjectileShot() {}
 
-	virtual bool CollideBox ( Shot& shot, fvec3& ecnter, fvec3& size, float rotation );
-	virtual bool CollideSphere ( Shot& shot, fvec3& center, float radius );
-	virtual bool CollideCylinder ( Shot& shot, fvec3& center, float height, float radius );
+        virtual void Setup();
+        virtual bool Update(float dt);
 
-protected:
-	bool PointInSphere ( fvec3& point, Shot& shot );
-};
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ProjectileShot>(guid, info); }
+        };
+
+        enum class ObstacleEffect
+        {
+            Stop = 0,
+            Through = 1,
+            Reflect = 2
+        };
+
+    protected:
+        std::vector<FlightSegment> Segments;
+
+        double      prevTime;
+        double      currentTime;
+        double      lastTime;
+        int         segment, lastSegment;
+        float       bbox[2][3];
+
+        void makeSegments(ObstacleEffect e);
+
+        virtual bool ForceShotRico();
+    };
+
+    class RicoShot : public ProjectileShot
+    {
+    public:
+        RicoShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~RicoShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<RicoShot>(guid, info); }
+        };
+    };
+
+    class RapidFireShot : public ProjectileShot
+    {
+    public:
+        RapidFireShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~RapidFireShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<RapidFireShot>(guid, info); }
+        };
+    };
+
+    class ThiefShot : public ProjectileShot
+    {
+    public:
+        ThiefShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~ThiefShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ThiefShot>(guid, info); }
+        };
+    };
+
+    class MachineGunShot : public ProjectileShot
+    {
+    public:
+        MachineGunShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~MachineGunShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<MachineGunShot>(guid, info); }
+        };
+    };
+
+    class LaserShot : public ProjectileShot
+    {
+    public:
+        LaserShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~LaserShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<LaserShot>(guid, info); }
+        };
+    };
+
+    class PhantomShot : public ProjectileShot
+    {
+    public:
+        PhantomShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+        virtual ~PhantomShot() {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<PhantomShot>(guid, info); }
+        };
+    };
+
+
+    class GuidedMissileShot : public Shot
+    {
+    public:
+        GuidedMissileShot(uint32_t guid, const FiringInfo &info) : Shot(guid, info) {}
+        virtual ~GuidedMissileShot() {}
+
+        virtual void End();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<GuidedMissileShot>(guid, info); }
+        };
+    };
+
+    class SuperBulletShot : public ProjectileShot
+    {
+    public:
+        SuperBulletShot(uint32_t guid, const FiringInfo &info) : ProjectileShot(guid, info) {}
+
+        virtual void Setup();
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<SuperBulletShot>(guid, info); }
+        };
+    };
+
+    class ShockwaveShot : public Shot
+    {
+    public:
+        ShockwaveShot(uint32_t guid, const FiringInfo &info) : Shot(guid, info) {}
+        virtual void Setup();
+        virtual bool Update(float dt);
+
+        virtual bool CollideBox(fvec3& ecnter, fvec3& size, float rotation);
+        virtual bool CollideSphere(fvec3& center, float radius);
+        virtual bool CollideCylinder(fvec3& center, float height, float radius);
+
+        class Factory : public ShotFactory
+        {
+        public:
+            virtual  Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ShockwaveShot>(guid, info); }
+        };
+
+    protected:
+        bool PointInSphere(fvec3& point);
+    };
 }
-#endif  /*__SPAWNPOLICY_H__ */
+#endif  /*__SHOTMANAGER_H__ */
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

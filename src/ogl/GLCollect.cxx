@@ -16,20 +16,20 @@ int GLCollect::count = 0;
 
 GLCollect::GLCollect( GLenum en )
 {
-  if (count++ == 0)
-    glBegin( en );
+    if (count++ == 0)
+        glBegin( en );
 }
 
 GLCollect::~GLCollect()
 {
-  if (--count == 0)
-    glEnd();
+    if (--count == 0)
+        glEnd();
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

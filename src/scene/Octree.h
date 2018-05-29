@@ -21,9 +21,10 @@
 class OctreeNode;
 
 
-class Octree {
+class Octree
+{
 
-  public:
+public:
 
     Octree();
     ~Octree();
@@ -33,11 +34,11 @@ class Octree {
     void addNodes (SceneNode** list, int listSize, int depth, int elements);
 
     int getFrustumList (SceneNode** list, int listSize,
-			const Frustum* frustum) const;
+                        const Frustum* frustum) const;
     int getShadowList (SceneNode** list, int listSize,
-		       int planeCount, const float (*planes)[4]) const;
+                       int planeCount, const float (*planes)[4]) const;
     int getRadarList (SceneNode** list, int listSize,
-		      const Frustum* frustum) const;
+                      const Frustum* frustum) const;
 
     void setOccluderManager(int);
 
@@ -46,10 +47,10 @@ class Octree {
     const Extents* getVisualExtents() const;
 
 
-  private: // methods
+private: // methods
     void getExtents(SceneNode** list, int listSize);
 
-  private: // data
+private: // data
     OctreeNode* root;
     Extents extents;
     Extents visualExtents;
@@ -57,12 +58,13 @@ class Octree {
 
 
 
-class OctreeNode {
+class OctreeNode
+{
 
-  public:
+public:
 
     OctreeNode(unsigned char depth, const Extents& exts,
-	       SceneNode** list, int listSize);
+               SceneNode** list, int listSize);
     ~OctreeNode();
 
     void getFrustumList () const;
@@ -82,15 +84,16 @@ class OctreeNode {
     void tallyStats();
     void draw ();
 
-  private:
+private:
 
     void makeChildren ();
     void resizeCell ();
 
-    enum CullLevel {
-      NoCull,
-      PartialCull,
-      FullCull
+    enum CullLevel
+    {
+        NoCull,
+        PartialCull,
+        FullCull
     };
 
     unsigned char depth;
@@ -101,37 +104,40 @@ class OctreeNode {
     int count;  // number of nodes in this and subnodes
     int listSize;
     SceneNode** list;
+
+    const OctreeNode* getNode(unsigned char x) const;
+    const OctreeNode* getFullNode(unsigned char x) const;
 };
 
 
 inline int OctreeNode::getCount() const
 {
-  return count;
+    return count;
 }
 
 inline SceneNode** OctreeNode::getList() const
 {
-  return list;
+    return list;
 }
 
 inline int OctreeNode::getListSize() const
 {
-  return listSize;
+    return listSize;
 }
 
 inline int OctreeNode::getChildren() const
 {
-  return childCount;
+    return childCount;
 }
 
 inline OctreeNode* OctreeNode::getChild (int child)
 {
-  return children[child];
+    return children[child];
 }
 
 inline const Extents* Octree::getVisualExtents() const
 {
-  return &visualExtents;
+    return &visualExtents;
 }
 
 
@@ -139,8 +145,8 @@ inline const Extents* Octree::getVisualExtents() const
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

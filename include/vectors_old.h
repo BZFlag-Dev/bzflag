@@ -21,45 +21,72 @@ typedef float afvec3[3];
 typedef float afvec4[4];
 
 // vectors implemented as simple classes
-class cfvec2 {
-  public:
-    cfvec2() { memset(data,0,sizeof(float)*2); }
-    cfvec2(const float values[2]) {
-      memcpy (data, values, sizeof(float[2]));
+class cfvec2
+{
+public:
+    cfvec2()
+    {
+        memset(data,0,sizeof(float)*2);
     }
-    cfvec2& operator=(const float values[2]) {
-      memcpy (data, values, sizeof(float[2]));
-      return *this;
+    cfvec2(const float values[2])
+    {
+        memcpy (data, values, sizeof(float[2]));
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    cfvec2& operator=(const float values[2])
+    {
+        memcpy (data, values, sizeof(float[2]));
+        return *this;
+    }
+    inline float& operator[](int pos)
+    {
+        return data[pos];
+    }
     float data[2];
 };
 
-class cfvec3 {
-  public:
-    cfvec3() { memset(data,0,sizeof(float)*3); }
-    cfvec3(const float values[3]) {
-      memcpy (data, values, sizeof(float[3]));
+class cfvec3
+{
+public:
+    cfvec3()
+    {
+        memset(data,0,sizeof(float)*3);
     }
-    cfvec3& operator=(const float values[3]) {
-      memcpy (data, values, sizeof(float[3]));
-      return *this;
+    cfvec3(const float values[3])
+    {
+        memcpy (data, values, sizeof(float[3]));
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    cfvec3& operator=(const float values[3])
+    {
+        memcpy (data, values, sizeof(float[3]));
+        return *this;
+    }
+    inline float& operator[](int pos)
+    {
+        return data[pos];
+    }
     float data[3];
 };
 
-class cfvec4 {
-  public:
-    cfvec4() { memset(data,0,sizeof(float)*4); }
-    cfvec4(const float values[4]) {
-      memcpy (data, values, sizeof(float[4]));
+class cfvec4
+{
+public:
+    cfvec4()
+    {
+        memset(data,0,sizeof(float)*4);
     }
-    cfvec4& operator=(const float values[4]) {
-      memcpy (data, values, sizeof(float[4]));
-      return *this;
+    cfvec4(const float values[4])
+    {
+        memcpy (data, values, sizeof(float[4]));
     }
-    inline float& operator[](int pos) { return data[pos]; }
+    cfvec4& operator=(const float values[4])
+    {
+        memcpy (data, values, sizeof(float[4]));
+        return *this;
+    }
+    inline float& operator[](int pos)
+    {
+        return data[pos];
+    }
     float data[4];
 };
 
@@ -69,28 +96,28 @@ class cfvec4 {
 
 static inline void vec3add (float *result, const float* v1, const float* v2)
 {
-  result[0] = v1[0] + v2[0];
-  result[1] = v1[1] + v2[1];
-  result[2] = v1[2] + v2[2];
-  return;
+    result[0] = v1[0] + v2[0];
+    result[1] = v1[1] + v2[1];
+    result[2] = v1[2] + v2[2];
+    return;
 }
 static inline void vec3sub (float *result, const float* v1, const float* v2)
 {
-  result[0] = v1[0] - v2[0];
-  result[1] = v1[1] - v2[1];
-  result[2] = v1[2] - v2[2];
-  return;
+    result[0] = v1[0] - v2[0];
+    result[1] = v1[1] - v2[1];
+    result[2] = v1[2] - v2[2];
+    return;
 }
 static inline float vec3dot (const float* v1, const float* v2)
 {
-  return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
+    return (v1[0] * v2[0]) + (v1[1] * v2[1]) + (v1[2] * v2[2]);
 }
 static inline void vec3cross (float* result, const float* v1, const float* v2)
 {
-  result[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
-  result[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
-  result[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
-  return;
+    result[0] = (v1[1] * v2[2]) - (v1[2] * v2[1]);
+    result[1] = (v1[2] * v2[0]) - (v1[0] * v2[2]);
+    result[2] = (v1[0] * v2[1]) - (v1[1] * v2[0]);
+    return;
 }
 
 #endif // __VECTOR_MATH_H__

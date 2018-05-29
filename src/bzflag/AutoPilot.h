@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	BZF_AUTOPILOT_H
-#define	BZF_AUTOPILOT_H
+#ifndef BZF_AUTOPILOT_H
+#define BZF_AUTOPILOT_H
 
 #include "common.h"
 
@@ -25,8 +25,8 @@ void teachAutoPilot(FlagType *, int);
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

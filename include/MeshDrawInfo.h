@@ -34,8 +34,9 @@ class AnimationInfo;
 typedef std::map<unsigned int, unsigned int> UintMap;
 
 
-class MeshDrawInfo {
-  public:
+class MeshDrawInfo
+{
+public:
     // server side generation
     MeshDrawInfo(const std::vector<std::string>& options);
 
@@ -46,8 +47,8 @@ class MeshDrawInfo {
     // - the vertex data belongs to the source
     // - the BzMaterials are regenerated from the map
     MeshDrawInfo(const MeshDrawInfo* drawInfo,
-		 const MeshTransform& xform,
-		 const std::map<const BzMaterial*, const BzMaterial*>&);
+                 const MeshTransform& xform,
+                 const std::map<const BzMaterial*, const BzMaterial*>&);
 
     ~MeshDrawInfo();
 
@@ -100,12 +101,12 @@ class MeshDrawInfo {
 
     void print(std::ostream& out, const std::string& indent) const;
 
-  private:
+private:
     void init();
     void clear();
     bool validate(const MeshObstacle* mesh) const;
 
-  private:
+private:
     const MeshDrawInfo* source; // copy source, or NULL
     int lines;
 
@@ -149,99 +150,101 @@ class MeshDrawInfo {
 
 inline bool MeshDrawInfo::isValid() const
 {
-  return valid;
+    return valid;
 }
 inline bool MeshDrawInfo::isServerSide() const
 {
-  return serverSide;
+    return serverSide;
 }
 
 inline bool MeshDrawInfo::isCopy() const
 {
-  return (source != NULL);
+    return (source != NULL);
 }
 inline void MeshDrawInfo::setDrawMgr(MeshDrawMgr* mgr)
 {
-  drawMgr = mgr;
+    drawMgr = mgr;
 }
 inline const MeshDrawInfo* MeshDrawInfo::getSource() const
 {
-  return source;
+    return source;
 }
 inline const std::string& MeshDrawInfo::getName() const
 {
-  return name;
+    return name;
 }
 inline const float* MeshDrawInfo::getSphere() const
 {
-  return sphere;
+    return sphere;
 }
 inline const Extents& MeshDrawInfo::getExtents() const
 {
-  return extents;
+    return extents;
 }
 inline int MeshDrawInfo::getLodCount() const
 {
-  return lodCount;
+    return lodCount;
 }
 inline const DrawLod* MeshDrawInfo::getDrawLods() const
 {
-  return lods;
+    return lods;
 }
 inline const afvec3* MeshDrawInfo::getVertices() const
 {
-  return vertices;
+    return vertices;
 }
 inline const afvec3* MeshDrawInfo::getNormals() const
 {
-  return normals;
+    return normals;
 }
 inline const afvec2* MeshDrawInfo::getTexcoords() const
 {
-  return texcoords;
+    return texcoords;
 }
 inline int MeshDrawInfo::getRadarCount() const
 {
-  return radarCount;
+    return radarCount;
 }
 inline const DrawLod* MeshDrawInfo::getRadarLods() const
 {
-  return radarLods;
+    return radarLods;
 }
 inline int MeshDrawInfo::getLineCount() const
 {
-  return lines;
+    return lines;
 }
 inline const MeshTransform::Tool*  MeshDrawInfo::getTransformTool() const
 {
-  return xformTool;
+    return xformTool;
 }
 inline const MaterialMap* MeshDrawInfo::getMaterialMap() const
 {
-  return matMap;
+    return matMap;
 }
 inline const AnimationInfo* MeshDrawInfo::getAnimationInfo() const
 {
-  return animInfo;
+    return animInfo;
 }
 
 
-class Corner {
-  public:
+class Corner
+{
+public:
     Corner();
     ~Corner();
     int packSize() const;
     void *pack(void*) const;
     const void *unpack(const void*);
-  public:
+public:
     int vertex;
     int normal;
     int texcoord;
 };
 
 
-class DrawCmd {
-  public:
+class DrawCmd
+{
+public:
     DrawCmd();
 
     void clear();
@@ -252,27 +255,29 @@ class DrawCmd {
     void *pack(void*) const;
     const void *unpack(const void*);
 
-  public:
-    enum DrawModes {		  // OpenGL
-      DrawPoints	= 0x0000, // 0x0000
-      DrawLines		= 0x0001, // 0x0001
-      DrawLineLoop	= 0x0002, // 0x0002
-      DrawLineStrip	= 0x0003, // 0x0003
-      DrawTriangles	= 0x0004, // 0x0004
-      DrawTriangleStrip	= 0x0005, // 0x0005
-      DrawTriangleFan	= 0x0006, // 0x0006
-      DrawQuads		= 0x0007, // 0x0007
-      DrawQuadStrip	= 0x0008, // 0x0008
-      DrawPolygon	= 0x0009, // 0x0009
-      DrawModeCount
+public:
+    enum DrawModes            // OpenGL
+    {
+        DrawPoints    = 0x0000, // 0x0000
+        DrawLines     = 0x0001, // 0x0001
+        DrawLineLoop  = 0x0002, // 0x0002
+        DrawLineStrip = 0x0003, // 0x0003
+        DrawTriangles = 0x0004, // 0x0004
+        DrawTriangleStrip = 0x0005, // 0x0005
+        DrawTriangleFan   = 0x0006, // 0x0006
+        DrawQuads     = 0x0007, // 0x0007
+        DrawQuadStrip = 0x0008, // 0x0008
+        DrawPolygon   = 0x0009, // 0x0009
+        DrawModeCount
     };
-    enum DrawIndexType {
-      DrawIndexUShort	= 0x1403, // 0x1403
-      DrawIndexUInt	= 0x1405, // 0x1405
-      DrawIndexTypeCount
+    enum DrawIndexType
+    {
+        DrawIndexUShort   = 0x1403, // 0x1403
+        DrawIndexUInt = 0x1405, // 0x1405
+        DrawIndexTypeCount
     };
 
-  public:
+public:
     unsigned int drawMode;
     int count;
     void* indices;
@@ -282,8 +287,9 @@ class DrawCmd {
 };
 
 
-class DrawSet {
-  public:
+class DrawSet
+{
+public:
     DrawSet();
 
     void clear();
@@ -292,7 +298,7 @@ class DrawSet {
     void *pack(void*) const;
     const void *unpack(const void*);
 
-  public:
+public:
     int count;
     DrawCmd* cmds;
     const BzMaterial* material;
@@ -302,8 +308,9 @@ class DrawSet {
 };
 
 
-class DrawLod {
-  public:
+class DrawLod
+{
+public:
     DrawLod();
 
     void clear();
@@ -312,7 +319,7 @@ class DrawLod {
     void *pack(void*) const;
     const void *unpack(const void*);
 
-  public:
+public:
     int count;
     DrawSet* sets;
     float lengthPerPixel;
@@ -320,13 +327,14 @@ class DrawLod {
 };
 
 
-class AnimationInfo {
-  public:
+class AnimationInfo
+{
+public:
     AnimationInfo();
     int packSize() const;
     void *pack(void*) const;
     const void *unpack(const void*);
-  public:
+public:
     float angvel;
     std::string dummy;
     float angle;
@@ -339,8 +347,8 @@ class AnimationInfo {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

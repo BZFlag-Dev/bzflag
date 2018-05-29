@@ -28,27 +28,28 @@
 
 /** this class provides options for setting the gui
  */
-class InputMenu : public HUDDialog {
+class InputMenu : public HUDDialog
+{
 public:
-  InputMenu();
-  ~InputMenu();
+    InputMenu();
+    ~InputMenu();
 
-  HUDuiDefaultKey* getDefaultKey()
-  {
-    return MenuDefaultKey::getInstance();
-  }
-  void execute();
-  void resize(int width, int height);
-  static void callback(HUDuiControl* w, const void* data);
+    HUDuiDefaultKey* getDefaultKey()
+    {
+        return MenuDefaultKey::getInstance();
+    }
+    void execute();
+    void resize(int width, int height);
+    static void callback(HUDuiControl* w, const void* data);
 
-  void fillJSOptions();
+    void fillJSOptions();
 
 private:
-  HUDuiControl*	   keyMapping;
-  HUDuiList*	   activeInput;
-  HUDuiList*	   jsx;
-  HUDuiList*	   jsy;
-  KeyboardMapMenu* keyboardMapMenu;
+    HUDuiControl*    keyMapping;
+    HUDuiList*       activeInput;
+    HUDuiList*       jsx;
+    HUDuiList*       jsy;
+    KeyboardMapMenu* keyboardMapMenu;
 };
 
 
@@ -56,8 +57,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

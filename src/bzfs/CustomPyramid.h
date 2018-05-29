@@ -23,21 +23,23 @@
 #include "BzMaterial.h"
 
 
-class CustomPyramid : public WorldFileObstacle {
-  public:
+class CustomPyramid : public WorldFileObstacle
+{
+public:
     CustomPyramid();
     ~CustomPyramid();
     virtual bool read(const char* cmd, std::istream& input);
     virtual void writeToGroupDef(GroupDefinition*) const;
 
-  private:
-    enum {
-      XP = 0,
-      XN,
-      YP,
-      YN,
-      ZN,
-      FaceCount
+private:
+    enum
+    {
+        XP = 0,
+        XN,
+        YP,
+        YN,
+        ZN,
+        FaceCount
     };
 
     bool isOldPyramid;
@@ -60,8 +62,8 @@ class CustomPyramid : public WorldFileObstacle {
 
 // Local variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

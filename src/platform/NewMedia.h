@@ -11,41 +11,42 @@
  */
 
 /* NewMedia:
- *	Media I/O template
+ *  Media I/O template
  */
 
 #ifndef BZF_NEWMEDIA_H
-#define	BZF_NEWMEDIA_H
+#define BZF_NEWMEDIA_H
 
 #include "BzfMedia.h"
 
-class NewMedia : public BzfMedia {
-  public:
-			NewMedia();
-			~NewMedia();
+class NewMedia : public BzfMedia
+{
+public:
+    NewMedia();
+    ~NewMedia();
 
-    double		stopwatch(bool);
-    bool		openAudio();
-    void		closeAudio();
-    bool		startAudioThread(void (*)(void*), void*);
-    void		stopAudioThread();
-    bool		hasAudioThread() const;
-    void		writeSoundCommand(const void*, int);
-    bool		readSoundCommand(void*, int);
-    int			getAudioOutputRate() const;
-    int			getAudioBufferSize() const;
-    int			getAudioBufferChunkSize() const;
-    bool		isAudioTooEmpty() const;
-    void		writeAudioFrames(const float* samples, int numFrames);
-    void		audioSleep(bool checkLowWater, double maxTime);
+    double      stopwatch(bool);
+    bool        openAudio();
+    void        closeAudio();
+    bool        startAudioThread(void (*)(void*), void*);
+    void        stopAudioThread();
+    bool        hasAudioThread() const;
+    void        writeSoundCommand(const void*, int);
+    bool        readSoundCommand(void*, int);
+    int         getAudioOutputRate() const;
+    int         getAudioBufferSize() const;
+    int         getAudioBufferChunkSize() const;
+    bool        isAudioTooEmpty() const;
+    void        writeAudioFrames(const float* samples, int numFrames);
+    void        audioSleep(bool checkLowWater, double maxTime);
 };
 
 #endif // BZF_NEWMEDIA_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

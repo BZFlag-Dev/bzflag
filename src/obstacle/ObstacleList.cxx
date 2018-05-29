@@ -25,69 +25,69 @@ static const unsigned int minListSize = 1;
 
 ObstacleList::ObstacleList()
 {
-  list = NULL;
-  clear();
-  return;
+    list = NULL;
+    clear();
+    return;
 }
 
 
 ObstacleList::~ObstacleList()
 {
-  delete[] list;
-  return;
+    delete[] list;
+    return;
 }
 
 
 void ObstacleList::clear()
 {
-  delete[] list;
-  listCount = 0;
-  listSize = minListSize;
-  list = new Obstacle*[listSize];
-  return;
+    delete[] list;
+    listCount = 0;
+    listSize = minListSize;
+    list = new Obstacle*[listSize];
+    return;
 }
 
 
 void ObstacleList::push_back(Obstacle* obs)
 {
-  listCount++;
-  if (listCount > listSize) {
-    listSize = 2 * listSize;
-    Obstacle** tmpList = new Obstacle*[listSize];
-    memcpy (tmpList, list, (listCount - 1) * sizeof(Obstacle*));
-    delete[] list;
-    list = tmpList;
-  }
-  list[listCount - 1] = obs;
-  return;
+    listCount++;
+    if (listCount > listSize)
+    {
+        listSize = 2 * listSize;
+        Obstacle** tmpList = new Obstacle*[listSize];
+        memcpy (tmpList, list, (listCount - 1) * sizeof(Obstacle*));
+        delete[] list;
+        list = tmpList;
+    }
+    list[listCount - 1] = obs;
+    return;
 }
 
 
 void ObstacleList::tighten()
 {
-  if ((listSize == listCount) || (listCount < minListSize)) {
+    if ((listSize == listCount) || (listCount < minListSize))
+        return;
+    listSize = listCount;
+    Obstacle** tmpList = new Obstacle*[listSize];
+    memcpy (tmpList, list, listCount * sizeof(Obstacle*));
+    delete[] list;
+    list = tmpList;
     return;
-  }
-  listSize = listCount;
-  Obstacle** tmpList = new Obstacle*[listSize];
-  memcpy (tmpList, list, listCount * sizeof(Obstacle*));
-  delete[] list;
-  list = tmpList;
-  return;
 }
 
 
 void ObstacleList::sort(int (*compare)(const void* a, const void* b))
 {
-  qsort(list, listCount, sizeof(Obstacle*), compare);
-  return;
+    qsort(list, listCount, sizeof(Obstacle*), compare);
+    return;
 }
 
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -22,33 +22,35 @@
 #include <vector>
 #include <map>
 
-typedef struct {
-  int level;
-  std::string text;
-  std::string color;
+typedef struct
+{
+    int level;
+    std::string text;
+    std::string color;
 } MsgString;
 
 typedef std::vector<MsgString> MsgStringList;
 
-namespace MsgStrings {
+namespace MsgStrings
+{
 
-  // returns the name of the code  (doesn't need init())
-  const char *strMsgCode(uint16_t code);
+// returns the name of the code  (doesn't need init())
+const char *strMsgCode(uint16_t code);
 
-  void init();
-  void reset();			// clean up all tracked state
-  void useDNS(bool);		// look up hostnames based on IPs?
-  void showMotto(bool);		// show player mottos next to names?
-  void colorize(bool);		// use ANSI color codes?
-  void trackState(bool);	// track game state?
+void init();
+void reset();         // clean up all tracked state
+void useDNS(bool);        // look up hostnames based on IPs?
+void showMotto(bool);     // show player mottos next to names?
+void colorize(bool);      // use ANSI color codes?
+void trackState(bool);    // track game state?
 
-  int knownPacketTypes();
+int knownPacketTypes();
 
-  // Messages from the server to the client
-  MsgStringList msgFromServer(uint16_t len, uint16_t code, const void *data);
+// Messages from the server to the client
+MsgStringList msgFromServer(uint16_t len, uint16_t code, const void *data);
 
-  // Messages from the client to the server  (currently unimplemented)
-  MsgStringList msgFromClient(uint16_t len, uint16_t code, const void *data);
+// Messages from the client to the server  (currently unimplemented)
+MsgStringList msgFromClient(uint16_t len, uint16_t code, const void *data);
 }
 
 #endif // __MSG_STRINGS_H__
@@ -56,8 +58,8 @@ namespace MsgStrings {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

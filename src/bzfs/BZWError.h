@@ -19,36 +19,43 @@
 #include <string>
 
 
-class BZWError {
+class BZWError
+{
 
 public:
-  BZWError(std::string _location);
-  ~BZWError();
+    BZWError(std::string _location);
+    ~BZWError();
 
-  /* return false if error reporting failed, true otherwise */
-  bool fatalError(std::string errorMsg, int line);
-  bool warning(std::string warningMsg, int line);
+    /* return false if error reporting failed, true otherwise */
+    bool fatalError(std::string errorMsg, int line);
+    bool warning(std::string warningMsg, int line);
 
-  /* status */
-  bool hasHadError() const {return hadError;};
-  bool hasHadWarning() const {return hadWarning;};
+    /* status */
+    bool hasHadError() const
+    {
+        return hadError;
+    };
+    bool hasHadWarning() const
+    {
+        return hadWarning;
+    };
 
 private:
-  /* data */
-  bool hadError;
-  bool hadWarning;
-  std::string location;
+    /* data */
+    bool hadError;
+    bool hadWarning;
+    std::string location;
 
-  /* no public default constructor */
-  BZWError();
+    /* no public default constructor */
+    BZWError();
 };
 
 #endif //__BZWERROR_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

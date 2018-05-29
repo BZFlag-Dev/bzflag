@@ -11,37 +11,38 @@
  */
 
 /* LinuxPlatformFactory:
- *	Factory for Linux platform stuff.
+ *  Factory for Linux platform stuff.
  */
 
 #ifndef BZF_LINUX_PLATFORM_FACTORY_H
-#define	BZF_LINUX_PLATFORM_FACTORY_H
+#define BZF_LINUX_PLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
-class LinuxPlatformFactory : public PlatformFactory {
-  public:
-			LinuxPlatformFactory();
-			~LinuxPlatformFactory();
+class LinuxPlatformFactory : public PlatformFactory
+{
+public:
+    LinuxPlatformFactory();
+    ~LinuxPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name, const char*);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-    BzfJoystick*	createJoystick();
+    BzfDisplay*     createDisplay(const char* name, const char*);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
+    BzfJoystick*    createJoystick();
 
-  private:
-			LinuxPlatformFactory(const LinuxPlatformFactory&);
+private:
+    LinuxPlatformFactory(const LinuxPlatformFactory&);
     LinuxPlatformFactory& operator=(const LinuxPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 };
 
 #endif // BZF_LINUX_PLATFORM_FACTORY_H
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

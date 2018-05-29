@@ -18,7 +18,7 @@
 #include <iostream>
 
 BZWError::BZWError(std::string _location) :
-	  hadError(false), hadWarning(false), location(_location)
+    hadError(false), hadWarning(false), location(_location)
 {
 }
 
@@ -28,47 +28,47 @@ BZWError::~BZWError()
 
 bool BZWError::fatalError(std::string errorMsg, int line)
 {
-  // toggle flag
-  hadError = true;
+    // toggle flag
+    hadError = true;
 
-  // sanity
-  if (line < 0)
-    return false;
-  if (errorMsg == "")
-    errorMsg = "unspecified error";
+    // sanity
+    if (line < 0)
+        return false;
+    if (errorMsg == "")
+        errorMsg = "unspecified error";
 
-  // report error
-  std::cerr << location << ": error";
-  if (line != 0)
-    std::cerr << " (line " << line << ")" ;
-  std::cerr << ": " << errorMsg << std::endl << std::flush;
-  return true;
+    // report error
+    std::cerr << location << ": error";
+    if (line != 0)
+        std::cerr << " (line " << line << ")" ;
+    std::cerr << ": " << errorMsg << std::endl << std::flush;
+    return true;
 }
 
 bool BZWError::warning(std::string warningMsg, int line)
 {
-  // toggle flag
-  hadWarning = true;
+    // toggle flag
+    hadWarning = true;
 
-  // sanity
-  if (line < 0)
-    return false;
-  if (warningMsg == "")
-    warningMsg = "unspecified warning";
+    // sanity
+    if (line < 0)
+        return false;
+    if (warningMsg == "")
+        warningMsg = "unspecified warning";
 
-  // report warning
-  std::cerr << location << ": warning";
-  if (line != 0)
-    std::cerr << " (line " << line << ")" ;
-  std::cerr << ": " << warningMsg << std::endl << std::flush;
+    // report warning
+    std::cerr << location << ": warning";
+    if (line != 0)
+        std::cerr << " (line " << line << ")" ;
+    std::cerr << ": " << warningMsg << std::endl << std::flush;
 
-  return true;
+    return true;
 }
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

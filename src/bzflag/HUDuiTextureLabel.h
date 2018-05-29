@@ -12,42 +12,44 @@
 
 /*
  * HUDuiTextureLabel:
- *	User interface classes and functions for the heads-up display's textured
+ *  User interface classes and functions for the heads-up display's textured
  *  label controls.
  */
 
-#ifndef	__HUDUITEXTURELABEL_H__
-#define	__HUDUITEXTURELABEL_H__
+#ifndef __HUDUITEXTURELABEL_H__
+#define __HUDUITEXTURELABEL_H__
 
 #include "HUDuiLabel.h"
 #include "OpenGLGState.h"
 
-class HUDuiTextureLabel : public HUDuiLabel {
-  public:
-			HUDuiTextureLabel();
-			~HUDuiTextureLabel();
+class HUDuiTextureLabel : public HUDuiLabel
+{
+public:
+    HUDuiTextureLabel();
+    ~HUDuiTextureLabel();
 
-    void		setTexture(const int);
-    int			getTexture() const;
+    void        setTexture(const int);
+    int         getTexture() const;
 
-  protected:
-    void		doRender();
+protected:
+    void        doRender();
 
-  private:
-    OpenGLGState	gstate;
-    int		texture;
+private:
+    OpenGLGState    gstate;
+    int     texture;
 };
 
-inline int HUDuiTextureLabel::getTexture() const {
-  return texture;
+inline int HUDuiTextureLabel::getTexture() const
+{
+    return texture;
 }
 
 #endif // __HUDUITEXTURELABEL_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

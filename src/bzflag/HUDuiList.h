@@ -12,12 +12,12 @@
 
 /*
  * HUDuiList:
- *	User interface class for the heads-up display's list (value selection from
+ *  User interface class for the heads-up display's list (value selection from
  *  a set) control.
  */
 
-#ifndef	__HUDUILIST_H__
-#define	__HUDUILIST_H__
+#ifndef __HUDUILIST_H__
+#define __HUDUILIST_H__
 
 // ancestor class
 #include "HUDuiControl.h"
@@ -27,35 +27,36 @@
 
 #include "BzfEvent.h"
 
-class HUDuiList : public HUDuiControl {
-  public:
-			HUDuiList();
-			~HUDuiList();
+class HUDuiList : public HUDuiControl
+{
+public:
+    HUDuiList();
+    ~HUDuiList();
 
-    int			getIndex() const;
-    void		setIndex(int);
+    int         getIndex() const;
+    void        setIndex(int);
 
-    void		createSlider(const int);
+    void        createSlider(const int);
 
-    std::vector<std::string>&	getList();
-    void		update();
+    std::vector<std::string>&   getList();
+    void        update();
 
-  protected:
-    bool		doKeyPress(const BzfKeyEvent&);
-    bool		doKeyRelease(const BzfKeyEvent&);
-    void		doRender();
+protected:
+    bool        doKeyPress(const BzfKeyEvent&);
+    bool        doKeyRelease(const BzfKeyEvent&);
+    void        doRender();
 
-  private:
-    int			index;
-    std::vector<std::string>	list;
+private:
+    int         index;
+    std::vector<std::string>    list;
 };
 
 #endif // __HUDUILIST_H__
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

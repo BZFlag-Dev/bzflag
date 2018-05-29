@@ -11,11 +11,11 @@
  */
 
 /* WinPlatformFactory:
- *	Factory for Windows platform stuff.
+ *  Factory for Windows platform stuff.
  */
 
 #ifndef BZF_WINPLATFORM_FACTORY_H
-#define	BZF_WINPLATFORM_FACTORY_H
+#define BZF_WINPLATFORM_FACTORY_H
 
 #include "PlatformFactory.h"
 
@@ -25,28 +25,29 @@ class SDLWindow;
 class WinWindow;
 #endif
 
-class WinPlatformFactory : public PlatformFactory {
-  public:
-			WinPlatformFactory();
-			~WinPlatformFactory();
+class WinPlatformFactory : public PlatformFactory
+{
+public:
+    WinPlatformFactory();
+    ~WinPlatformFactory();
 
-    BzfDisplay*		createDisplay(const char* name,
-				const char* videoFormat);
-    BzfVisual*		createVisual(const BzfDisplay*);
-    BzfWindow*		createWindow(const BzfDisplay*, BzfVisual*);
-    BzfJoystick*	createJoystick();
+    BzfDisplay*     createDisplay(const char* name,
+                                  const char* videoFormat);
+    BzfVisual*      createVisual(const BzfDisplay*);
+    BzfWindow*      createWindow(const BzfDisplay*, BzfVisual*);
+    BzfJoystick*    createJoystick();
 
-  private:
-			WinPlatformFactory(const WinPlatformFactory&);
-    WinPlatformFactory&	operator=(const WinPlatformFactory&);
+private:
+    WinPlatformFactory(const WinPlatformFactory&);
+    WinPlatformFactory& operator=(const WinPlatformFactory&);
 
-    BzfMedia*		createMedia();
+    BzfMedia*       createMedia();
 
-  private:
+private:
 #ifdef HAVE_SDL
-    static SDLWindow*	sdlWindow;
+    static SDLWindow*   sdlWindow;
 #else
-    static WinWindow*	winWindow;
+    static WinWindow*   winWindow;
 #endif
 };
 
@@ -54,8 +55,8 @@ class WinPlatformFactory : public PlatformFactory {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

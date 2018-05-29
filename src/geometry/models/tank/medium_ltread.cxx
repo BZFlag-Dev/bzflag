@@ -14,8 +14,8 @@ using namespace TankGeometryUtils;
 
 int TankGeometryUtils::buildMedLCasing ( void )
 {
-  glShadeModel(GL_FLAT);
-  glBegin(GL_TRIANGLE_STRIP);
+    glShadeModel(GL_FLAT);
+    glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.998233f, 0.000000f, 0.059419f);
     doTexCoord2f(-0.246f, 0.896f);
     doVertex3f(2.790f, 0.877f, 0.408f);
@@ -55,8 +55,8 @@ int TankGeometryUtils::buildMedLCasing ( void )
     doVertex3f(2.790f, 0.877f, 0.408f);
     doTexCoord2f(0.123f, 0.220f);
     doVertex3f(2.790f, 1.400f, 0.408f);
-  glEnd(); // 14 tris
-  glBegin(GL_TRIANGLE_FAN);
+    glEnd(); // 14 tris
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(0.033f, 0.684f);
     doVertex3f(1.940f, 0.877f, 1.310f);
@@ -72,8 +72,8 @@ int TankGeometryUtils::buildMedLCasing ( void )
     doVertex3f(2.790f, 0.877f, 0.408f);
     doTexCoord2f(-0.102f, 0.647f);
     doVertex3f(2.750f, 0.877f, 1.080f);
-  glEnd(); // 5 tris
-  glBegin(GL_TRIANGLE_FAN);
+    glEnd(); // 5 tris
+    glBegin(GL_TRIANGLE_FAN);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(0.095f, 0.570f);
     doVertex3f(1.940f, 1.400f, 1.310f);
@@ -89,9 +89,9 @@ int TankGeometryUtils::buildMedLCasing ( void )
     doVertex3f(-2.740f, 1.400f, 0.528f);
     doTexCoord2f(0.813f, 0.970f);
     doVertex3f(-2.970f, 1.400f, 1.410f);
-  glEnd(); // 5 tris
+    glEnd(); // 5 tris
 
-  return 24;
+    return 24;
 }
 
 /*

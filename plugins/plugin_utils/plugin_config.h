@@ -47,29 +47,29 @@
 class PluginConfig
 {
 public:
-  PluginConfig();
-  PluginConfig(const std::string &filename);
-  ~PluginConfig() {};
+    PluginConfig();
+    PluginConfig(const std::string &filename);
+    ~PluginConfig() {};
 
-  void read(const char* filename);
-  void read(const std::string &filename);
+    void read(const char* filename);
+    void read(const std::string &filename);
 
-  std::string item(const char *section, const  char *key);
-  std::string item(const std::string &section, const std::string &key);
-  unsigned int errors;
+    std::string item(const char *section, const  char *key);
+    std::string item(const std::string &section, const std::string &key);
+    unsigned int errors;
 private:
-  std::string whitespace;
-  void parse(void);
-  std::map<std::string, std::map<std::string, std::string> > sections;
-  std::string configFilename;
+    std::string whitespace;
+    void parse(void);
+    std::map<std::string, std::map<std::string, std::string> > sections;
+    std::string configFilename;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

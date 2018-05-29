@@ -30,40 +30,41 @@
 class WorldFileObject;
 class WorldInfo;
 
-class BZWReader : cURLManager {
+class BZWReader : cURLManager
+{
 public:
-  BZWReader(std::string filename);
-  ~BZWReader();
+    BZWReader(std::string filename);
+    ~BZWReader();
 
-  // external interface
-  WorldInfo *defineWorldFromFile();
+    // external interface
+    WorldInfo *defineWorldFromFile();
 
 private:
-  // functions for internal use
-  void readToken(char *buffer, int n);
-  bool readWorldStream(std::vector<WorldFileObject*>& wlist,
-		       class GroupDefinition* groupDef);
-  void finalization(char *data, unsigned int length, bool good);
+    // functions for internal use
+    void readToken(char *buffer, int n);
+    bool readWorldStream(std::vector<WorldFileObject*>& wlist,
+                         class GroupDefinition* groupDef);
+    void finalization(char *data, unsigned int length, bool good);
 
-  // stream to open
-  std::string location;
-  std::istream *input;
+    // stream to open
+    std::string location;
+    std::istream *input;
 
-  // data/dependent objects
-  BZWError *errorHandler;
+    // data/dependent objects
+    BZWError *errorHandler;
 
-  // no default constructor
-  BZWReader();
+    // no default constructor
+    BZWReader();
 
-  std::string httpData;
+    std::string httpData;
 };
 
 #endif
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

@@ -16,8 +16,8 @@
  * unfortunately this can include far more than necessary
  */
 
-#ifndef	BZF_NETWORK_H
-#define	BZF_NETWORK_H
+#ifndef BZF_NETWORK_H
+#define BZF_NETWORK_H
 
 #include "common.h"
 
@@ -58,28 +58,28 @@
 #endif
 
 #if defined(BSD) || defined(__sun__) || defined(__GLIBC__)
-#  define AddrLen		socklen_t
+#  define AddrLen       socklen_t
 #elif defined (__APPLE__)
 #  include <AvailabilityMacros.h>
 #  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-#    define AddrLen		socklen_t
+#    define AddrLen     socklen_t
 #  endif
 #endif
 
 #if defined(sun)
 /* setsockopt prototypes the 4th arg as const char*. */
-#  define SSOType		const char*
+#  define SSOType       const char*
 /* connect prototypes the 2nd arg without const */
-#  define CNCTType	struct sockaddr
+#  define CNCTType  struct sockaddr
 #endif
 
 extern "C" {
 
-#define herror(_x)	bzfherror(_x)
+#define herror(_x)  bzfherror(_x)
 
-  void			nerror(const char* msg);
-  void			bzfherror(const char* msg);
-  int			getErrno();
+    void          nerror(const char* msg);
+    void          bzfherror(const char* msg);
+    int           getErrno();
 
 }
 
@@ -91,66 +91,70 @@ extern "C" {
 #else /* !defined(_WIN32) */
 
 #ifndef EINPROGRESS
-#define EINPROGRESS	WSAEWOULDBLOCK
+#define EINPROGRESS WSAEWOULDBLOCK
 #endif
 
 #ifndef EWOULDBLOCK
-#define	EWOULDBLOCK	WSAEWOULDBLOCK
+#define EWOULDBLOCK WSAEWOULDBLOCK
 #endif
 
 #ifndef ECONNRESET
-#define	ECONNRESET	WSAECONNRESET
+#define ECONNRESET  WSAECONNRESET
 #endif
 
 #ifndef EBADMSG
-#define	EBADMSG		WSAECONNRESET	/* not defined by windows */
+#define EBADMSG     WSAECONNRESET   /* not defined by windows */
 #endif
 
 
 /* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType		const char*
+#define SSOType     const char*
 
-inline int close(SOCKET s) { return closesocket(s); }
-#define	ioctl(__fd, __req, __arg) \
-			ioctlsocket(__fd, __req, (u_long*)__arg)
-#define	gethostbyaddr(__addr, __len, __type) \
-			gethostbyaddr((const char*)__addr, __len, __type)
+inline int close(SOCKET s)
+{
+    return closesocket(s);
+}
+#define ioctl(__fd, __req, __arg) \
+            ioctlsocket(__fd, __req, (u_long*)__arg)
+#define gethostbyaddr(__addr, __len, __type) \
+            gethostbyaddr((const char*)__addr, __len, __type)
 
 extern "C" {
 
-  int			inet_aton(const char* cp, struct in_addr* pin);
-  void			nerror(const char* msg);
-  void			herror(const char* msg);
-  int			getErrno();
+    int           inet_aton(const char* cp, struct in_addr* pin);
+    void          nerror(const char* msg);
+    void          herror(const char* msg);
+    int           getErrno();
 
 }
 
 #endif /* !defined(_WIN32) */
 
 #if !defined(AddrLen)
-#  define AddrLen		int
+#  define AddrLen       int
 #endif
 
 #if !defined(SSOType)
-#  define SSOType		const void*
+#  define SSOType       const void*
 #endif
 #if !defined(CNCTType)
-#  define CNCTType	const struct sockaddr
+#  define CNCTType  const struct sockaddr
 #endif
 
 #if !defined(INADDR_NONE)
-#  define INADDR_NONE	((in_addr_t)0xffffffff)
+#  define INADDR_NONE   ((in_addr_t)0xffffffff)
 #endif
 
-class BzfNetwork {
+class BzfNetwork
+{
 public:
-  static int		setNonBlocking(int fd);
-  static int		setBlocking(int fd);
-  static bool	parseURL(const std::string& url,
-			 std::string& protocol,
-			 std::string& hostname,
-			 int& port,
-			 std::string& pathname);
+    static int        setNonBlocking(int fd);
+    static int        setBlocking(int fd);
+    static bool   parseURL(const std::string& url,
+                           std::string& protocol,
+                           std::string& hostname,
+                           int& port,
+                           std::string& pathname);
 };
 
 #endif // BZF_NETWORK_H
@@ -158,8 +162,8 @@ public:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

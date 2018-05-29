@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__SERVERLISTFILTERMENU_H__
+#ifndef __SERVERLISTFILTERMENU_H__
 #define __SERVERLISTFILTERMENU_H__
 
 // common - 1st one
@@ -25,26 +25,27 @@
 #include "HUDuiLabel.h"
 #include "HUDuiTypeIn.h"
 
-class ServerListFilterMenu : public HUDDialog {
+class ServerListFilterMenu : public HUDDialog
+{
 public:
-  ServerListFilterMenu();
-  ~ServerListFilterMenu();
+    ServerListFilterMenu();
+    ~ServerListFilterMenu();
 
-  HUDuiDefaultKey* getDefaultKey();
+    HUDuiDefaultKey* getDefaultKey();
 
-  void show();
-  void dismiss();
-  void execute();
-  void resize(int width, int height);
+    void show();
+    void dismiss();
+    void execute();
+    void resize(int width, int height);
 
 private:
-  HUDuiLabel* createLabel(const std::string &);
-  HUDuiTypeIn* createInput(const std::string &);
-  HUDuiLabel* resetPresets;
-  HUDuiLabel* help;
+    HUDuiLabel* createLabel(const std::string &);
+    HUDuiTypeIn* createInput(const std::string &);
+    HUDuiLabel* resetPresets;
+    HUDuiLabel* help;
 private:
-  int firstKeyControl;
-  int lastKeyControl;
+    int firstKeyControl;
+    int lastKeyControl;
 };
 
 
@@ -52,8 +53,8 @@ private:
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4

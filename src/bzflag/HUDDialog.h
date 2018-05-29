@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef	__HUDDIALOG_H__
-#define	__HUDDIALOG_H__
+#ifndef __HUDDIALOG_H__
+#define __HUDDIALOG_H__
 
 /* common */
 #include "common.h"
@@ -25,42 +25,58 @@ class HUDuiDefaultKey;
 
 /**
  * HUDDialog:
- *	A dialog of HUDuiControls.
+ *  A dialog of HUDuiControls.
  */
-class HUDDialog {
-  public:
-			HUDDialog();
-    virtual		~HUDDialog();
+class HUDDialog
+{
+public:
+    HUDDialog();
+    virtual     ~HUDDialog();
 
-    void			render();
+    void            render();
 
-    virtual HUDuiDefaultKey*	getDefaultKey() = 0;
-    virtual void		show() {}
-    virtual void		execute() = 0;
-    virtual void		dismiss() {}
-    virtual void		resize(int _width, int _height);
-    virtual void		setFailedMessage(const char *) {;};
+    virtual HUDuiDefaultKey*    getDefaultKey() = 0;
+    virtual void        show() {}
+    virtual void        execute() = 0;
+    virtual void        dismiss() {}
+    virtual void        resize(int _width, int _height);
+    virtual void        setFailedMessage(const char *)
+    {
+        ;
+    };
 
-    HUDuiControl*		getFocus() const;
-    void			setFocus(HUDuiControl*);
+    HUDuiControl*       getFocus() const;
+    void            setFocus(HUDuiControl*);
 
-    void			initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
+    void            initNavigation(std::vector<HUDuiControl*> &list, int start, int end);
 
 
 
-  protected:
-    const std::vector<HUDuiControl*>&	getControls() const { return list; }
-    std::vector<HUDuiControl*>&		getControls() { return list; }
+protected:
+    const std::vector<HUDuiControl*>&   getControls() const
+    {
+        return list;
+    }
+    std::vector<HUDuiControl*>&     getControls()
+    {
+        return list;
+    }
 
-    int				getHeight() const { return height; }
-    int				getWidth() const { return width; }
+    int             getHeight() const
+    {
+        return height;
+    }
+    int             getWidth() const
+    {
+        return width;
+    }
 
-  protected:
-    int				height, width;
+protected:
+    int             height, width;
 
-  private:
-    std::vector<HUDuiControl*>	list;
-    HUDuiControl*		focus;
+private:
+    std::vector<HUDuiControl*>  list;
+    HUDuiControl*       focus;
 };
 
 
@@ -68,8 +84,8 @@ class HUDDialog {
 
 // Local Variables: ***
 // mode: C++ ***
-// tab-width: 8 ***
-// c-basic-offset: 2 ***
-// indent-tabs-mode: t ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
 // End: ***
-// ex: shiftwidth=2 tabstop=8
+// ex: shiftwidth=4 tabstop=4
