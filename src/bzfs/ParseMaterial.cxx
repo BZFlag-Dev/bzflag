@@ -195,6 +195,34 @@ bool parseMaterials(const char* cmd, std::istream& input,
                 materials[i].setTexture(name);
         }
     }
+    else if (strcasecmp(cmd, "normalmap") == 0)
+    {
+        std::string name;
+        if (!(input >> name))
+        {
+            std::cout << "missing " << cmd << " parameters" << std::endl;
+            error = true;
+        }
+        else
+        {
+            for (i = 0; i < materialCount; i++)
+                materials[i].setNormalMap(name);
+        }
+    }
+    else if (strcasecmp(cmd, "specularmap") == 0)
+    {
+        std::string name;
+        if (!(input >> name))
+        {
+            std::cout << "missing " << cmd << " parameters" << std::endl;
+            error = true;
+        }
+        else
+        {
+            for (i = 0; i < materialCount; i++)
+                materials[i].setSpecularMap(name);
+        }
+    }
     else if (strcasecmp(cmd, "notextures") == 0)
     {
         for (i = 0; i < materialCount; i++)
