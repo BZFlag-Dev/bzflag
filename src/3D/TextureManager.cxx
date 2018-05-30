@@ -314,6 +314,7 @@ const ImageInfo& TextureManager::getInfo ( int id )
 
     return *(it->second);
 }
+
 const ImageInfo& TextureManager::getInfo ( const char* name )
 {
     static ImageInfo crapInfo;

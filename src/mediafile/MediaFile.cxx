@@ -127,25 +127,28 @@ uint32_t    MediaFile::swap32BE(uint32_t* d)
 #include "PNGImageFile.h"
 #include "WaveAudioFile.h"
 
-#define OPENMEDIA(_T)                   \
-do {                            \
-  stream = FILEMGR.createDataInStream(filename, true);  \
-  if (stream == NULL)                   \
-    stream = FILEMGR.createDataInStream(filename +  \
-         _T::getExtension(), true);         \
-  if (stream != NULL) {                 \
-    file = new _T(stream, filename);            \
-    if (!file->isOpen()) {              \
-      file = NULL;                  \
-      delete stream;                    \
-      stream = NULL;                    \
-    }                           \
-  }                         \
-} while (0)
 
-unsigned char*      MediaFile::readImage(
-    std::string filename,
-    int* width, int* height)
+std::istream*  OpenPNG(const std::string filename, ImageFile** file)
+{
+    std::istream* stream = FILEMGR.createDataInStream(filename, true);
+    if (stream == nullptr)
+        stream = FILEMGR.createDataInStream(filename + PNGImageFile::getExtension(), true);
+
+    if (stream != NULL)
+    {
+        *file = new PNGImageFile(stream, filename);
+        if (!(*file)->isOpen())
+        {
+           *file = nullptr;
+            delete stream;
+            stream = nullptr;
+        }
+    }
+
+    return stream;
+}
+
+unsigned char*      MediaFile::readImage( std::string filename, int* width, int* height)
 {
     // get the absolute filename for cache textures
     if (CACHEMGR.isCacheFileType(filename))
@@ -157,10 +160,10 @@ unsigned char*      MediaFile::readImage(
 #endif //WIN32
 
     // try opening file as an image
-    std::istream* stream;
-    ImageFile* file = NULL;
-    if (file == NULL)
-        OPENMEDIA(PNGImageFile);
+    std::istream* stream = nullptr;
+    ImageFile* file = nullptr;
+    if (file == nullptr)
+        stream = OpenPNG(filename, &file);
 
     // read the image
     unsigned char* image = NULL;
