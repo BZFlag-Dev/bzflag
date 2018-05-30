@@ -75,6 +75,10 @@ public:
     void addTexture(const std::string&);
     void setTexture(const std::string&);
     void setTextureLocal(int texid, const std::string& localname);
+    void setNormalMap(const std::string&);
+    void setNormalMapLocal(const std::string& localname);
+    void setSpecularMap(const std::string&);
+    void setSpecularMapLocal(const std::string& localname);
     void setTextureMatrix(int);
     void setCombineMode(int);
     void setUseTextureAlpha(bool);
@@ -112,6 +116,16 @@ public:
     int getTextureCount() const;
     const std::string& getTexture(int) const;
     const std::string& getTextureLocal(int) const;
+
+    inline const bool hasNormalMap() const { return normalMap != nullptr; }
+    const std::string& getNormalMap() const;
+    const std::string& getNormalMapLocal() const;
+
+    inline const bool hasSpecularMap() const { return specularMap != nullptr; }
+    const std::string& getSpecularMap() const;
+    const std::string& getSpecularMapLocal() const;
+
+
     int getTextureMatrix(int) const;
     int getCombineMode(int) const;
     bool getUseTextureAlpha(int) const;
@@ -180,6 +194,9 @@ private:
         bool useSphereMap;
     } TextureInfo;
     TextureInfo* textures;
+
+    TextureInfo* normalMap = nullptr;
+    TextureInfo* specularMap = nullptr;
 
     int shaderCount;
     typedef struct
