@@ -707,6 +707,37 @@ static void createCacheSignature ()
     return;
 }
 
+void LoadTeamColors()
+{
+    int colorID = TextureManager::instance().getTextureID("team_ui_colors", false);
+    if (colorID < 0)
+        return;
+
+    auto& info = TextureManager::instance().getInfo(colorID);
+
+    for (int i = RogueTeam; i < HunterTeam; i++)
+    {
+        unsigned char colorPixel[4] = { 0,0,0,0 };
+        unsigned char radarPixel[4] = { 0,0,0,0 };
+
+        int offset = i * 4;
+
+        if (info.texture->getPixelValue(offset, 4, colorPixel) && info.texture->getPixelValue(offset, 0, radarPixel))
+        {
+            float teamColor[3] = { 0,0,0};
+            float radarColor[3] = { 0,0,0};
+
+            for (int c = 0; c < 3; c++)
+            {
+                teamColor[c] = (float)(colorPixel[c] / 255.0f);
+                radarColor[c] = (float)(radarPixel[c] / 255.0f);
+            }
+
+            Team::setColors((TeamColor)i, teamColor, radarColor);
+        }
+    }
+}
+
 
 //
 // main()
@@ -976,9 +1007,6 @@ int         main(int argc, char** argv)
     //Flawfinder: ignore
     strcpy(startupInfo.motto, motto.c_str());
 
-    // load the default values for shot colors
-    Team::updateShotColors();
-
     // make platform factory
     PlatformFactory* platformFactory = PlatformFactory::getInstance();
 
@@ -1075,6 +1103,12 @@ int         main(int argc, char** argv)
         }
 #endif
     }
+
+    // load team colors
+    LoadTeamColors();
+
+    // load the default values for shot colors
+    Team::updateShotColors();
 
     // initialize font system
     FontManager &fm = FontManager::instance();

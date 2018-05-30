@@ -75,6 +75,8 @@ public:
     int         getWidth() const;
     int         getHeight() const;
 
+    bool        getPixelValue(int x, int y, unsigned char pixel[4]);
+
     Filter      getFilter();
     void        setFilter(Filter);
 

@@ -156,6 +156,20 @@ void OpenGLTexture::initContext()
     return;
 }
 
+bool OpenGLTexture::getPixelValue(int x, int y, unsigned char pixel[4])
+{
+    if (image == nullptr || x < 0 || x >= width || y < 0 || y >= height)
+        return false;
+
+    int offset = (y * width + x) * 4;
+
+    pixel[0] = image[offset];
+    pixel[1] = image[offset + 1];
+    pixel[2] = image[offset + 2];
+    pixel[3] = alpha ? image[offset + 3] : 255;
+    return true;
+}
+
 
 bool OpenGLTexture::setupImage(const GLubyte* pixels)
 {
