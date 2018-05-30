@@ -28,14 +28,12 @@ BzMaterialManager MATERIALMGR;
 
 BzMaterialManager::BzMaterialManager()
 {
-    return;
 }
 
 
 BzMaterialManager::~BzMaterialManager()
 {
     clear();
-    return;
 }
 
 
@@ -44,7 +42,6 @@ void BzMaterialManager::clear()
     for (unsigned int i = 0; i < materials.size(); i++)
         delete materials[i];
     materials.clear();
-    return;
 }
 
 
@@ -61,7 +58,7 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
         }
     }
     BzMaterial* newMat = new BzMaterial(*material);
-    if (findMaterial(newMat->getName()) != NULL)
+    if (findMaterial(newMat->getName()) != nullptr)
         newMat->setName("");
     materials.push_back(newMat);
     return newMat;
@@ -71,12 +68,12 @@ const BzMaterial* BzMaterialManager::addMaterial(const BzMaterial* material)
 const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) const
 {
     if (target.size() <= 0)
-        return NULL;
+        return nullptr;
     else if ((target[0] >= '0') && (target[0] <= '9'))
     {
         int index = atoi (target.c_str());
         if ((index < 0) || (index >= (int)materials.size()))
-            return NULL;
+            return nullptr;
         else
             return materials[index];
     }
@@ -96,7 +93,7 @@ const BzMaterial* BzMaterialManager::findMaterial(const std::string& target) con
                     return mat;
             }
         }
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -166,33 +163,29 @@ void BzMaterialManager::printMTL(std::ostream& out, const std::string& indent) c
 {
     for (unsigned int i = 0; i < materials.size(); i++)
         materials[i]->printMTL(out, indent);
-    return;
 }
 
 
-void BzMaterialManager::printReference(std::ostream& out,
-                                       const BzMaterial* mat) const
+void BzMaterialManager::printReference(std::ostream& out, const BzMaterial* mat) const
 {
-    if (mat == NULL)
+    if (mat == nullptr)
     {
         out << "-1";
         return;
     }
+
     int index = getIndex(mat);
     if (index == -1)
     {
         out << "-1";
-        return;
     }
-    if (mat->getName().size() > 0)
+    else if (mat->getName().size() > 0)
     {
         out << mat->getName();
-        return;
     }
     else
     {
         out << index;
-        return;
     }
 }
 
@@ -208,8 +201,13 @@ void BzMaterialManager::makeTextureList(TextureSet& set, bool referenced) const
             if (mat->getReference() || !referenced)
                 set.insert(mat->getTexture(j));
         }
+
+        if (mat->hasNormalMap())
+            set.insert(mat->getNormalMap());
+
+        if (mat->hasSpecularMap())
+            set.insert(mat->getSpecularMap());
     }
-    return;
 }
 
 
@@ -225,7 +223,6 @@ void BzMaterialManager::setTextureLocal(const std::string& url,
                 mat->setTextureLocal(j, local);
         }
     }
-    return;
 }
 
 
@@ -245,10 +242,12 @@ void BzMaterial::reset()
     const float defDiffuse[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     const float defSpecular[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     const float defEmission[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
     memcpy (ambient, defAmbient, sizeof(ambient));
     memcpy (diffuse, defDiffuse, sizeof(diffuse));
     memcpy (specular, defSpecular, sizeof(specular));
     memcpy (emission, defEmission, sizeof(emission));
+
     shininess = 0.0f;
     alphaThreshold = 0.0f;
     occluder = false;
@@ -260,25 +259,22 @@ void BzMaterial::reset()
     noLighting = false;
 
     delete[] textures;
-    textures = NULL;
+    textures = nullptr;
     textureCount = 0;
 
     delete[] shaders;
-    shaders = NULL;
+    shaders = nullptr;
     shaderCount = 0;
 
     referenced = false;
-
-    return;
 }
 
 
 BzMaterial::BzMaterial()
 {
-    textures = NULL;
-    shaders = NULL;
+    textures = nullptr;
+    shaders = nullptr;
     reset();
-    return;
 }
 
 
@@ -286,16 +282,17 @@ BzMaterial::~BzMaterial()
 {
     delete[] textures;
     delete[] shaders;
-    return;
+
+    delete (normalMap);
+    delete (specularMap);
 }
 
 
 BzMaterial::BzMaterial(const BzMaterial& m)
 {
-    textures = NULL;
-    shaders = NULL;
+    textures = nullptr;
+    shaders = nullptr;
     *this = m;
-    return;
 }
 
 
@@ -328,7 +325,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
     if (textureCount > 0)
         textures = new TextureInfo[textureCount];
     else
-        textures = NULL;
+        textures = nullptr;
     for (i = 0; i < textureCount; i++)
         textures[i] = m.textures[i];
 
@@ -337,7 +334,7 @@ BzMaterial& BzMaterial::operator=(const BzMaterial& m)
     if (shaderCount > 0)
         shaders = new ShaderInfo[shaderCount];
     else
-        shaders = NULL;
+        shaders = nullptr;
     for (i = 0; i < shaderCount; i++)
         shaders[i] = m.shaders[i];
 
@@ -450,6 +447,16 @@ void* BzMaterial::pack(void* buf) const
     for (i = 0; i < shaderCount; i++)
         buf = nboPackStdString(buf, shaders[i].name);
 
+    if (normalMap != nullptr)
+        buf = nboPackStdString(buf, normalMap->name);
+    else
+        buf = nboPackStdString(buf, std::string(""));
+
+    if (specularMap != nullptr)
+        buf = nboPackStdString(buf, specularMap->name);
+    else
+        buf = nboPackStdString(buf, std::string(""));
+
     return buf;
 }
 
@@ -513,6 +520,28 @@ const void* BzMaterial::unpack(const void* buf)
     for (i = 0; i < shaderCount; i++)
         buf = nboUnpackStdString(buf, shaders[i].name);
 
+    std::string normalName;
+    buf = nboUnpackStdString(buf, normalName);
+
+    std::string specularName;
+    buf = nboUnpackStdString(buf, specularName);
+
+    delete (normalMap);
+    normalMap = nullptr;
+    if (normalName != "")
+    {
+        normalMap = new TextureInfo();
+        normalMap->localname = normalMap->name = normalName;;
+    }
+
+    delete (specularMap);
+    specularMap = nullptr;
+    if (specularName != "")
+    {
+        specularMap = new TextureInfo();
+        specularMap->localname = specularMap->name = specularName;;
+    }
+
     return buf;
 }
 
@@ -539,7 +568,18 @@ int BzMaterial::packSize() const
     for (i = 0; i < shaderCount; i++)
         shaderSize += nboStdStringPackSize(shaders[i].name);
 
-    return nboStdStringPackSize(name) + modeSize + colorSize + textureSize + shaderSize;
+    int mapsSize = 0;
+    if (normalMap != nullptr)
+        mapsSize += nboStdStringPackSize(normalMap->name);
+    else
+        mapsSize += nboStdStringPackSize(std::string(""));
+
+    if (specularMap != nullptr)
+        mapsSize += nboStdStringPackSize(specularMap->name);
+    else
+        mapsSize += nboStdStringPackSize(std::string(""));
+
+    return nboStdStringPackSize(name) + modeSize + colorSize + textureSize + shaderSize + mapsSize;
 }
 
 
@@ -551,7 +591,6 @@ static void printColor(std::ostream& out, const char *name,
         out << name << color[0] << " " << color[1] << " "
             << color[2] << " " << color[3] << std::endl;
     }
-    return;
 }
 
 
@@ -568,16 +607,18 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
     {
         out << indent << "  dyncol ";
         const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
-        if ((dyncol != NULL) && (dyncol->getName().size() > 0))
+        if ((dyncol != nullptr) && (dyncol->getName().size() > 0))
             out << dyncol->getName();
         else
             out << dynamicColor;
+
         out << std::endl;
     }
     printColor(out, "  ambient ",  ambient,  defaultMaterial.ambient);
     printColor(out, "  diffuse ",  diffuse,  defaultMaterial.diffuse);
     printColor(out, "  specular ", specular, defaultMaterial.specular);
     printColor(out, "  emission ", emission, defaultMaterial.emission);
+
     if (shininess != defaultMaterial.shininess)
         out << indent << "  shininess " << shininess << std::endl;
     if (alphaThreshold != defaultMaterial.alphaThreshold)
@@ -605,7 +646,7 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
         {
             out << indent << "    texmat ";
             const TextureMatrix* texmat = TEXMATRIXMGR.getMatrix(texinfo->matrix);
-            if ((texmat != NULL) && (texmat->getName().size() > 0))
+            if ((texmat != nullptr) && (texmat->getName().size() > 0))
                 out << texmat->getName();
             else
                 out << texinfo->matrix;
@@ -628,7 +669,6 @@ void BzMaterial::print(std::ostream& out, const std::string& indent) const
 
     out << indent << "end" << std::endl << std::endl;
 
-    return;
 }
 
 
@@ -643,8 +683,11 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& UNUSED(indent)) 
         out << "illum 0" << std::endl;
     else
         out << "illum 2" << std::endl;
+
     out << "d " << diffuse[3] << std::endl;
+
     const float* c;
+
     c = ambient; // not really used
     out << "#Ka " << c[0] << " " << c[1] << " " << c[2] << std::endl;
     c = diffuse;
@@ -668,7 +711,6 @@ void BzMaterial::printMTL(std::ostream& out, const std::string& UNUSED(indent)) 
         }
     }
     out << std::endl;
-    return;
 }
 
 
@@ -721,85 +763,71 @@ bool BzMaterial::addAlias(const std::string& alias)
 void BzMaterial::setDynamicColor(int dyncol)
 {
     dynamicColor = dyncol;
-    return;
 }
 
 void BzMaterial::setAmbient(const float color[4])
 {
     memcpy (ambient, color, sizeof(float[4]));
-    return;
 }
 
 void BzMaterial::setDiffuse(const float color[4])
 {
     memcpy (diffuse, color, sizeof(float[4]));
-    return;
 }
 
 void BzMaterial::setSpecular(const float color[4])
 {
     memcpy (specular, color, sizeof(float[4]));
-    return;
 }
 
 void BzMaterial::setEmission(const float color[4])
 {
     memcpy (emission, color, sizeof(float[4]));
-    return;
 }
 
 void BzMaterial::setShininess(const float shine)
 {
     shininess = shine;
-    return;
 }
 
 void BzMaterial::setAlphaThreshold(const float thresh)
 {
     alphaThreshold = thresh;
-    return;
 }
 
 void BzMaterial::setOccluder(bool value)
 {
     occluder = value;
-    return;
 }
 
 void BzMaterial::setGroupAlpha(bool value)
 {
     groupAlpha = value;
-    return;
 }
 
 void BzMaterial::setNoRadar(bool value)
 {
     noRadar = value;
-    return;
 }
 
 void BzMaterial::setNoShadow(bool value)
 {
     noShadow = value;
-    return;
 }
 
 void BzMaterial::setNoCulling(bool value)
 {
     noCulling = value;
-    return;
 }
 
 void BzMaterial::setNoSorting(bool value)
 {
     noSorting = value;
-    return;
 }
 
 void BzMaterial::setNoLighting(bool value)
 {
     noLighting = value;
-    return;
 }
 
 
@@ -820,8 +848,6 @@ void BzMaterial::addTexture(const std::string& texname)
     texinfo->useAlpha = true;
     texinfo->useColor = true;
     texinfo->useSphereMap = false;
-
-    return;
 }
 
 void BzMaterial::setTexture(const std::string& texname)
@@ -830,16 +856,60 @@ void BzMaterial::setTexture(const std::string& texname)
         addTexture(texname);
     else
         textures[textureCount - 1].name = texname;
-
-    return;
 }
 
 void BzMaterial::setTextureLocal(int texid, const std::string& localname)
 {
     if ((texid >= 0) && (texid < textureCount))
         textures[texid].localname = localname;
-    return;
 }
+
+void BzMaterial::setNormalMap(const std::string& texname)
+{
+    if (normalMap != nullptr)
+        delete (normalMap);
+
+    normalMap = new TextureInfo();
+    normalMap->name = texname;
+    normalMap->localname = texname;
+    normalMap->matrix = -1;
+    normalMap->combineMode = decal;
+    normalMap->useAlpha = true;
+    normalMap->useColor = true;
+    normalMap->useSphereMap = false;
+}
+
+void BzMaterial::setNormalMapLocal(const std::string& localname)
+{
+    if (normalMap == nullptr)
+        setNormalMap(localname);
+
+    normalMap->localname = localname;
+}
+
+void BzMaterial::setSpecularMap(const std::string& texname)
+{
+    if (specularMap != nullptr)
+        delete (specularMap);
+
+    specularMap = new TextureInfo();
+    specularMap->name = texname;
+    specularMap->localname = texname;
+    specularMap->matrix = -1;
+    specularMap->combineMode = decal;
+    specularMap->useAlpha = true;
+    specularMap->useColor = true;
+    specularMap->useSphereMap = false;
+}
+
+void BzMaterial::setSpecularMapLocal(const std::string& localname)
+{
+    if (normalMap == nullptr)
+        setSpecularMap(localname);
+
+    specularMap->localname = localname;
+}
+
 
 void BzMaterial::setTextureMatrix(int matrix)
 {
@@ -859,30 +929,32 @@ void BzMaterial::setUseTextureAlpha(bool value)
 {
     if (textureCount > 0)
         textures[textureCount - 1].useAlpha = value;
-    return;
 }
 
 void BzMaterial::setUseColorOnTexture(bool value)
 {
     if (textureCount > 0)
         textures[textureCount - 1].useColor = value;
-    return;
 }
 
 void BzMaterial::setUseSphereMap(bool value)
 {
     if (textureCount > 0)
         textures[textureCount - 1].useSphereMap = value;
-    return;
 }
 
 
 void BzMaterial::clearTextures()
 {
     delete[] textures;
-    textures = NULL;
+    textures = nullptr;
     textureCount = 0;
-    return;
+
+    delete (specularMap);
+    delete (normalMap);
+
+    specularMap = nullptr;
+    normalMap = nullptr;
 }
 
 
@@ -893,7 +965,6 @@ void BzMaterial::setShader(const std::string& shadername)
     else
         shaders[shaderCount - 1].name = shadername;
 
-    return;
 }
 
 void BzMaterial::addShader(const std::string& shaderName)
@@ -905,16 +976,14 @@ void BzMaterial::addShader(const std::string& shaderName)
     delete[] shaders;
     shaders = tmpinfo;
     shaders[shaderCount - 1].name = shaderName;
-    return;
 }
 
 
 void BzMaterial::clearShaders()
 {
     delete[] shaders;
-    shaders = NULL;
+    shaders = nullptr;
     shaderCount = 0;
-    return;
 }
 
 
@@ -1025,6 +1094,38 @@ const std::string& BzMaterial::getTextureLocal(int texid) const
         return nullString;
 }
 
+const std::string& BzMaterial::getNormalMap() const
+{
+    if (normalMap == nullptr)
+        return nullString;
+
+    return normalMap->name;
+}
+
+const std::string& BzMaterial::getSpecularMap() const
+{
+    if (specularMap == nullptr)
+        return nullString;
+
+    return specularMap->name;
+}
+
+const std::string& BzMaterial::getNormalMapLocal() const
+{
+    if (normalMap == nullptr)
+        return nullString;
+
+    return normalMap->localname;
+}
+
+const std::string& BzMaterial::getSpecularMapLocal() const
+{
+    if (specularMap == nullptr)
+        return nullString;
+
+    return specularMap->localname;
+}
+
 int BzMaterial::getTextureMatrix(int texid) const
 {
     if ((texid >= 0) && (texid < textureCount))
@@ -1083,7 +1184,7 @@ const std::string& BzMaterial::getShader(int shdid) const
 bool BzMaterial::isInvisible() const
 {
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(dynamicColor);
-    if ((diffuse[3] == 0.0f) && (dyncol == NULL) &&
+    if ((diffuse[3] == 0.0f) && (dyncol == nullptr) &&
             !((textureCount > 0) && !textures[0].useColor))
         return true;
     return false;
