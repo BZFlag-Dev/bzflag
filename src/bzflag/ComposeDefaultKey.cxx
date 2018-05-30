@@ -104,7 +104,7 @@ bool            ComposeDefaultKey::keyPress(const BzfKeyEvent& key)
                 messageBuffer[MessageLen - 1] = '\0';
                 nboPackString(messageMessage + PlayerIdPLen, messageBuffer,
                               MessageLen);
-                serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+                serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
             }
 
             // record message in history

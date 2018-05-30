@@ -104,7 +104,8 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     showMessageType(MsgAddPlayer);
     showMessageType(MsgAdminInfo);
     showMessageType(MsgKilled);
-    showMessageType(MsgMessage);
+    showMessageType(MsgSendChat);
+    showMessageType(MsgReceiveChat);
     showMessageType(MsgNewRabbit);
     showMessageType(MsgPause);
     showMessageType(MsgRemovePlayer);
@@ -122,7 +123,8 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     // initialise the msg type map
     // FIXME MsgPlayerInfo
     msgTypeMap["bzdb"] = MsgSetVar;
-    msgTypeMap["chat"] = MsgMessage;
+    msgTypeMap["chat"] = MsgSendChat;
+    msgTypeMap["message"] = MsgReceiveChat;
     msgTypeMap["admin"] = MsgAdminInfo;
     msgTypeMap["join"] = MsgAddPlayer;
     msgTypeMap["kill"] = MsgKilled;
@@ -424,7 +426,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             }
             break;
 
-        case MsgMessage:
+        case MsgReceiveChat:
 
             // unpack the message header
             PlayerId src;
@@ -442,7 +444,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             // format the message depending on src and dst
             TeamColor dstTeam = (LastRealPlayer < dst && dst <= FirstTeam ?
                                  TeamColor(FirstTeam - dst) : NoTeam);
-            if (messageMask[MsgMessage])
+            if (messageMask[MsgReceiveChat])
             {
                 lastMessage.first = formatMessage((const char*)vbuf, MessageType(mtype),
                                                   src, dst, dstTeam, me);
@@ -614,7 +616,7 @@ void BZAdminClient::sendMessage(const std::string& msg,
     strncpy(buffer, msg.c_str(), MessageLen - 1);
     buffer[MessageLen - 1] = '\0';
     nboPackString(buffer2 + 1, buffer, MessageLen);
-    sLink.send(MsgMessage, sizeof(buffer2), buffer2);
+    sLink.send(MsgSendChat, sizeof(buffer2), buffer2);
 }
 
 
@@ -686,8 +688,8 @@ void BZAdminClient::waitForServer()
     // we need to know that the server has processed all our messages
     // send a private message to ourself and wait for it to come back
     // this assumes that the order of messages isn't changed along the way
-    bool tmp = messageMask[MsgMessage];
-    messageMask[MsgMessage] = true;
+    bool tmp = messageMask[MsgReceiveChat];
+    messageMask[MsgReceiveChat] = true;
     PlayerId me = sLink.getId();
     if (sLink.getState() == ServerLink::Okay)
     {
@@ -704,7 +706,7 @@ void BZAdminClient::waitForServer()
         while (lastMessage.first != expected && lastMessage.first != noTalk);
         ui = tmpUI;
     }
-    messageMask[MsgMessage] = tmp;
+    messageMask[MsgReceiveChat] = tmp;
 }
 
 

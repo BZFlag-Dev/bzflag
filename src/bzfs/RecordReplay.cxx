@@ -2601,14 +2601,17 @@ static const char *msgString(u16 code)
         STRING_CASE (MsgAutoPilot);
         STRING_CASE (MsgCaptureFlag);
         STRING_CASE (MsgDropFlag);
+        STRING_CASE (MsgFlagDropped);
         STRING_CASE (MsgEnter);
         STRING_CASE (MsgExit);
         STRING_CASE (MsgFlagUpdate);
-        STRING_CASE (MsgGrabFlag);
+        STRING_CASE (MsgGrantFlag);
+        STRING_CASE (MsgRequestFlag);
         STRING_CASE (MsgGMUpdate);
         STRING_CASE (MsgGetWorld);
         STRING_CASE (MsgKilled);
-        STRING_CASE (MsgMessage);
+        STRING_CASE (MsgSendChat);
+        STRING_CASE (MsgReceiveChat);
         STRING_CASE (MsgNewRabbit);
         STRING_CASE (MsgNegotiateFlags);
         STRING_CASE (MsgPause);
@@ -2628,6 +2631,7 @@ static const char *msgString(u16 code)
         STRING_CASE (MsgSetVar);
         STRING_CASE (MsgTimeUpdate);
         STRING_CASE (MsgTeleport);
+        STRING_CASE (MsgStealFlag);
         STRING_CASE (MsgTransferFlag);
         STRING_CASE (MsgTeamUpdate);
         STRING_CASE (MsgWantWHash);

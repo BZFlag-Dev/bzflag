@@ -62,47 +62,51 @@ enum PlayerAttribute
 const uint16_t      MsgNull = 0x0000;
 
 // server message codes
-const uint16_t      MsgAccept = 0x6163;         // 'ac'
+const uint16_t      MsgAccept = 0x6163;             // 'ac'
 const uint16_t      MsgAdminInfo = 0x6169;          // 'ai'
-const uint16_t      MsgAlive = 0x616c;          // 'al'
+const uint16_t      MsgAlive = 0x616c;              // 'al'
 const uint16_t      MsgAddPlayer = 0x6170;          // 'ap'
 const uint16_t      MsgAutoPilot = 0x6175;          // 'au'
 const uint16_t      MsgCaptureFlag = 0x6366;        // 'cf'
 const uint16_t      MsgCustomSound = 0x6373;        // 'cs'
 const uint16_t      MsgCacheURL = 0x6375;           // 'cu'
 const uint16_t      MsgDropFlag = 0x6466;           // 'df'
-const uint16_t      MsgEnter = 0x656e;          // 'en'
-const uint16_t      MsgExit = 0x6578;           // 'ex'
+const uint16_t      MsgFlagDropped = 0x6664;        // 'fd'
+const uint16_t      MsgEnter = 0x656e;              // 'en'
+const uint16_t      MsgExit = 0x6578;               // 'ex'
 const uint16_t      MsgFlagType = 0x6674;           // 'ft'
 const uint16_t      MsgFlagUpdate = 0x6675;         // 'fu'
 const uint16_t      MsgFetchResources = 0x6672;     // 'fr'
-const uint16_t      MsgGrabFlag = 0x6766;           // 'gf'
+const uint16_t      MsgRequestFlag = 0x7266;        // 'rf'
+const uint16_t      MsgGrantFlag = 0x6766;          // 'gf'
 const uint16_t      MsgGMUpdate = 0x676d;           // 'gm'
 const uint16_t      MsgGetWorld = 0x6777;           // 'gw'
 const uint16_t      MsgGameSettings = 0x6773;       // 'gs'
 const uint16_t      MsgGameTime = 0x6774;           // 'gt'
 const uint16_t      MsgHandicap = 0x6863;           // 'hc'
-const uint16_t      MsgKilled = 0x6b6c;         // 'kl'
+const uint16_t      MsgKilled = 0x6b6c;             // 'kl'
 const uint16_t      MsgLagState = 0x6c73;           // 'ls'
-const uint16_t      MsgMessage = 0x6d67;            // 'mg'
+const uint16_t      MsgSendChat = 0x7343;           // 'sC'
+const uint16_t      MsgReceiveChat = 0x7243;        // 'rC'
 const uint16_t      MsgNearFlag = 0x4e66;           // 'Nf'
 const uint16_t      MsgNewRabbit = 0x6e52;          // 'nR'
 const uint16_t      MsgNegotiateFlags = 0x6e66;     // 'nf'
-const uint16_t      MsgPause = 0x7061;          // 'pa'
+const uint16_t      MsgPause = 0x7061;              // 'pa'
 const uint16_t      MsgPlayerInfo = 0x7062;         // 'pb'
 const uint16_t      MsgPlayerUpdate = 0x7075;       // 'pu'
-const uint16_t      MsgPlayerUpdateSmall = 0x7073;      // 'ps'
+const uint16_t      MsgPlayerUpdateSmall = 0x7073;  // 'ps'
 const uint16_t      MsgQueryGame = 0x7167;          // 'qg'
 const uint16_t      MsgQueryPlayers = 0x7170;       // 'qp'
-const uint16_t      MsgReject = 0x726a;         // 'rj'
+const uint16_t      MsgReject = 0x726a;             // 'rj'
 const uint16_t      MsgRemovePlayer = 0x7270;       // 'rp'
 const uint16_t      MsgReplayReset = 0x7272;        // 'rr'
 const uint16_t      MsgShotBegin = 0x7362;          // 'sb'
-const uint16_t      MsgScore = 0x7363;          // 'sc'
+const uint16_t      MsgScore = 0x7363;              // 'sc'
 const uint16_t      MsgScoreOver = 0x736f;          // 'so'
 const uint16_t      MsgShotEnd = 0x7365;            // 'se'
 const uint16_t      MsgSuperKill = 0x736b;          // 'sk'
-const uint16_t      MsgSetVar = 0x7376;         // 'sv'
+const uint16_t      MsgSetVar = 0x7376;             // 'sv'
+const uint16_t      MsgStealFlag = 0x7366;          // 'sf'
 const uint16_t      MsgTimeUpdate = 0x746f;         // 'to'
 const uint16_t      MsgTeleport = 0x7470;           // 'tp'
 const uint16_t      MsgTransferFlag = 0x7466;       // 'tf'
@@ -126,13 +130,13 @@ const uint16_t      WorldCodeArc = 0x6172;          // 'ar'
 const uint16_t      WorldCodeCone = 0x636e;         // 'cn'
 const uint16_t      WorldCodeSphere = 0x7370;       // 'sp'
 const uint16_t      WorldCodeTetra = 0x7468;        // 'th'
-const uint16_t      WorldCodeTeleporter = 0x7465;       // 'te'
+const uint16_t      WorldCodeTeleporter = 0x7465;   // 'te'
 const uint16_t      WorldCodeWall = 0x776c;         // 'wl'
 const uint16_t      WorldCodeWeapon = 0x7765;       // 'we'
 const uint16_t      WorldCodeZone = 0x7A6e;         // 'zn'
 const uint16_t      WorldCodeGroup = 0x6772;        // 'gr'
-const uint16_t      WorldCodeGroupDefStart = 0x6473;    // 'ds'
-const uint16_t      WorldCodeGroupDefEnd = 0x6465;      // 'de'
+const uint16_t      WorldCodeGroupDefStart = 0x6473;// 'ds'
+const uint16_t      WorldCodeGroupDefEnd = 0x6465;  // 'de'
 
 // world database sizes
 const uint16_t      WorldSettingsSize = 30;
@@ -220,12 +224,12 @@ player to server messages:
             --> /id,/ killer-id, reason, killer-shot-id
             <== MsgKilled
   MsgNewRabbit      player is relinquishing rabbitship
-  MsgGrabFlag       player wants to grab flag
+  MsgRequestFlag       player wants to grab flag
             --> /id,/ flag
-            <== MsgGrabFlag
+            <== MsgGrantFlag
   MsgDropFlag       player wants to drop flag
             --> /id,/ position
-            <== MsgDropFlag
+            <== MsgFlagDropped
             <== MsgFlagUpdate
   MsgCaptureFlag    player captured flag
             --> /id,/ team (team flag was taken to)
@@ -241,9 +245,9 @@ player to server messages:
   MsgTeleport       player has teleported
             --> /id,/ from-teleporter, to-teleporter
             <== MsgTeleport
-  MsgMessage        player is sending a message
+  MsgSendChat        player is sending a message
             --> /id,/ target-id/team-id, message string
-            <== MsgMessage
+            <== MsgReceiveChat
   MsgWantWHash      (player wants md5 of world file
             -->
   MsgNegotiateFlags -->flagCount/[flagabbv]
@@ -279,9 +283,9 @@ server to player messages:
             <== id, position, forward-vector
   MsgKilled     player is dead
             <== id (victim id), killer-id, reason, killer-shot-id
-  MsgGrabFlag       notification that flag is grabbed
+  MsgGantFlag       notification that flag is grabbed
             <== id (grabber), flag, flag-info
-  MsgDropFlag       notification that flag is in air
+  MsgFlagDropped       notification that flag is in air
             <== id (dropper), flag, flag-info
   MsgCaptureFlag    notification that flag has been captured
             <== id (capturer), flag, team
@@ -293,7 +297,7 @@ server to player messages:
             <== num-scores [id (player id), wins, losses, tks]*n
   MsgTeleport       player has teleported
             <== id, from-teleporter, to-teleporter
-  MsgMessage        message to players
+  MsgReceiveChat        message to players
             <== from-id, to-id/team-id, message string
   MsgQueryGame      game status
   MsgQueryPlayers   list of players

@@ -264,7 +264,7 @@ bool CommandList::operator() (const char * UNUSED(cmdLine))
     const int msgLen = strlen(msg) + 1;
     cptr = (char*) nboPackUByte(buffer, ServerPlayer);
     nboPackString(cptr, msg, msgLen);
-    serverLink->send(MsgMessage, PlayerIdPLen + msgLen, buffer);
+    serverLink->send(MsgSendChat, PlayerIdPLen + msgLen, buffer);
 
     return true;
 }
@@ -418,7 +418,7 @@ bool ClientQueryCommand::operator() (const char *commandLine)
     char messageBuffer[MessageLen];
     strncpy(messageBuffer, "/clientquery", MessageLen);
     nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+    serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
 
     return true;
 }
@@ -663,7 +663,7 @@ bool QuitCommand::operator() (const char *commandLine)
     char messageBuffer[MessageLen]; // send message
     strncpy(messageBuffer, commandLine, MessageLen);
     nboPackString(messageMessage + PlayerIdPLen, messageBuffer, MessageLen);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+    serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
     CommandsStandard::quit(); // kill client
     return true;
 }

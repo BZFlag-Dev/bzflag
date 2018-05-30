@@ -703,7 +703,7 @@ bool ServerLink::readEnter(std::string& reason,
             return false;
         }
         // ignore other codes so that bzadmin doesn't choke
-        // on the MsgMessage's that the server can send before
+        // on the MsgReceiveChat's that the server can send before
         // the MsgAccept (authorization holdoff, etc...)
     }
 
@@ -717,11 +717,11 @@ void            ServerLink::sendCaptureFlag(TeamColor team)
     send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
-void            ServerLink::sendGrabFlag(int flagIndex)
+void            ServerLink::sendRequestFlag(int flagIndex)
 {
     char msg[2];
     nboPackUShort(msg, uint16_t(flagIndex));
-    send(MsgGrabFlag, sizeof(msg), msg);
+    send(MsgRequestFlag, sizeof(msg), msg);
 }
 
 void            ServerLink::sendDropFlag(const float* position)
@@ -805,13 +805,13 @@ void            ServerLink::sendTeleport(int from, int to)
     send(MsgTeleport, sizeof(msg), msg);
 }
 
-void            ServerLink::sendTransferFlag(const PlayerId& from, const PlayerId& to)
+void            ServerLink::sendStealFlag(const PlayerId& from, const PlayerId& to)
 {
     char msg[PlayerIdPLen*2];
     void* buf = msg;
     buf = nboPackUByte(buf, from);
     buf = nboPackUByte(buf, to);
-    send(MsgTransferFlag, sizeof(msg), msg);
+    send(MsgStealFlag, sizeof(msg), msg);
 }
 
 void            ServerLink::sendNewRabbit()

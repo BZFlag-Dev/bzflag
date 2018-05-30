@@ -74,7 +74,7 @@ public:
                           uint16_t& code, uint16_t& rejcode);
 
     void        sendCaptureFlag(TeamColor);
-    void        sendGrabFlag(int flagIndex);
+    void        sendRequestFlag(int flagIndex);
     void        sendDropFlag(const float* position);
     void        sendKilled(const PlayerId&, int reason,
                            int shotId, const FlagType* flag, int phydrv);
@@ -85,7 +85,7 @@ public:
     void        sendEndShot(const PlayerId&, int shotId, int reason);
     void        sendAlive();
     void        sendTeleport(int from, int to);
-    void        sendTransferFlag(const PlayerId&, const PlayerId&);
+    void        sendStealFlag(const PlayerId&, const PlayerId&);
     void        sendNewRabbit();
     void        sendPaused(bool paused);
     void        sendAutoPilot(bool autopilot);
