@@ -812,7 +812,7 @@ static void doKeyPlaying(const BzfKeyEvent& key, bool pressed, bool haveBinding)
                         MessageLen - 1);
                 messageBuffer[MessageLen - 1] = '\0';
                 nboPackString(buf, messageBuffer, MessageLen);
-                serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+                serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
             }
         }
     }
@@ -1892,7 +1892,7 @@ static void sendMeaCulpa(PlayerId victim)
     buf = messageMessage;
     buf = (char*)nboPackUByte(buf, victim);
     nboPackString(buf, meaculpa, MessageLen-1);
-    serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+    serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
 }
 
 static void handleNearFlag (const void *msg, uint16_t)
@@ -2691,7 +2691,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         break;
     }
 
-    case MsgGrabFlag:
+    case MsgGrantFlag:
     {
         // ROBOT -- FIXME -- robots don't grab flag at the moment
         PlayerId id;
@@ -2743,7 +2743,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         break;
     }
 
-    case MsgDropFlag:
+    case MsgFlagDropped:
     {
         PlayerId id;
         uint16_t flagIndex;
@@ -3106,7 +3106,7 @@ static void     handleServerMessage(bool human, uint16_t code,
     }
 
 
-    case MsgMessage:
+    case MsgReceiveChat:
     {
         PlayerId src;
         PlayerId dst;
@@ -4127,7 +4127,7 @@ static void     checkEnvironment()
                 if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
                         (tpos[1] - fpos[1]) * (tpos[1] - fpos[1]) < radius2))
                 {
-                    serverLink->sendGrabFlag(i);
+                    serverLink->sendRequestFlag(i);
                     lastGrabSent=TimeKeeper::getTick();
                 }
             }
@@ -4165,7 +4165,7 @@ static void     checkEnvironment()
         if (killerFlag == Flags::Thief)
         {
             if (myTank->getFlag() != Flags::Null)
-                serverLink->sendTransferFlag(myTank->getId(), hit->getPlayer());
+                serverLink->sendStealFlag(myTank->getId(), hit->getPlayer());
             stopShot = true;
         }
         else
@@ -4820,7 +4820,7 @@ static void     checkEnvironment(RobotPlayer* tank)
         if (killerFlag == Flags::Thief)
         {
             if (tank->getFlag() != Flags::Null)
-                serverLink->sendTransferFlag(tank->getId(), hit->getPlayer());
+                serverLink->sendStealFlag(tank->getId(), hit->getPlayer());
             stopShot = true;
         }
         else

@@ -1707,12 +1707,12 @@ bool FlagCommand::operator() (const char     *message,
                     void *bufStart = getDirectMessageBuffer();
                     void *buf = nboPackUByte(bufStart, fi->player);
                     buf = fi->pack(buf);
-                    broadcastMessage(MsgDropFlag, (char*)buf - (char*)bufStart, bufStart);
+                    broadcastMessage(MsgFlagDropped, (char*)buf - (char*)bufStart, bufStart);
                     fPlayer->player.setFlag(-1);
                 }
             }
 
-            grabFlag(gkPlayer->getIndex(), *fi, false);
+            grantFlag(gkPlayer->getIndex(), *fi, false);
 
             // send the annoucement
             char buffer[MessageLen];

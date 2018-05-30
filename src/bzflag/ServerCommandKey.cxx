@@ -499,7 +499,7 @@ bool            ServerCommandKey::keyPress(const BzfKeyEvent& key)
             strncpy(messageBuffer, sendMsg.c_str(), MessageLen - 1);
             messageBuffer[MessageLen - 1] = '\0';
             buf = nboPackString(buf, messageBuffer, MessageLen);
-            serverLink->send(MsgMessage, sizeof(messageMessage), messageMessage);
+            serverLink->send(MsgSendChat, sizeof(messageMessage), messageMessage);
         }
     }
 

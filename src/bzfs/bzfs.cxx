@@ -1505,7 +1505,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
             buf = nboPackUByte(buf, dstPlayer);
             buf = nboPackUByte(buf, type);
             buf = nboPackString(buf, message, strlen(message) + 1);
-            Record::addPacket(MsgMessage, (char*)buf - (char*)bufStart, bufStart,
+            Record::addPacket(MsgReceiveChat, (char*)buf - (char*)bufStart, bufStart,
                               HiddenPacket);
         }
         parseServerCommand(message, srcPlayer, dstPlayer);
@@ -1681,9 +1681,9 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
 
     if (dstPlayer <= LastRealPlayer)
     {
-        directMessage(dstPlayer, MsgMessage, len, bufStart);
+        directMessage(dstPlayer, MsgReceiveChat, len, bufStart);
         if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
-            directMessage(playerIndex, MsgMessage, len, bufStart);
+            directMessage(playerIndex, MsgReceiveChat, len, bufStart);
     }
     // FIXME this teamcolor <-> player id conversion is in several files now
     else if (LastRealPlayer < dstPlayer && dstPlayer <= FirstTeam)
@@ -1695,7 +1695,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
             if ((playerData = GameKeeper::Player::getPlayerByIndex(i))
                     && playerData->player.isPlaying()
                     && playerData->player.isTeam(_team))
-                directMessage(i, MsgMessage, len, bufStart);
+                directMessage(i, MsgReceiveChat, len, bufStart);
     }
     else if (dstPlayer == AdminPlayers)
     {
@@ -1714,7 +1714,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
         std::vector<int> admins
             = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
         for (unsigned int i = 0; i < admins.size(); ++i)
-            directMessage(admins[i], MsgMessage, len, bufStart);
+            directMessage(admins[i], MsgReceiveChat, len, bufStart);
 
     }
     else
@@ -1730,12 +1730,12 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
             worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
         }
 
-        broadcastMessage(MsgMessage, len, bufStart);
+        broadcastMessage(MsgReceiveChat, len, bufStart);
         broadcast = true;
     }
 
     if (Record::enabled() && !broadcast)   // don't record twice
-        Record::addPacket(MsgMessage, len, bufStart, HiddenPacket);
+        Record::addPacket(MsgReceiveChat, len, bufStart, HiddenPacket);
 }
 
 static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
@@ -2668,7 +2668,7 @@ void sendDrop(FlagInfo &flag)
     void *bufStart = getDirectMessageBuffer();
     void *buf  = nboPackUByte(bufStart, playerIndex);
     buf = flag.pack(buf);
-    broadcastMessage(MsgDropFlag, (char*)buf-(char*)bufStart, bufStart);
+    broadcastMessage(MsgFlagDropped, (char*)buf-(char*)bufStart, bufStart);
 }
 
 void zapFlag(FlagInfo &flag)
@@ -3718,7 +3718,7 @@ static void searchFlag(GameKeeper::Player &playerData)
 }
 
 
-void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
+void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos)
 {
     GameKeeper::Player *playerData
         = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -3770,12 +3770,12 @@ void grabFlag(int playerIndex, FlagInfo &flag, bool checkPos)
 
     playerData->lastHeldFlagID = flag.getIndex();
 
-    // send MsgGrabFlag
+    // send MsgGantFlag
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
     buf = flag.pack(buf);
 
-    broadcastMessage(MsgGrabFlag, (char*)buf-(char*)bufStart, bufStart);
+    broadcastMessage(MsgGrantFlag, (char*)buf-(char*)bufStart, bufStart);
 
     playerData->flagHistory.add(flag.flag.type);
 
@@ -4714,7 +4714,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         case MsgAutoPilot:
             break;
 
-        case MsgMessage:
+        case MsgSendChat:
         case MsgPlayerUpdateSmall:
             // FIXME: this is a workaround for a protocol problem
             logDebugMessage(4,"Ignoring premature message 0x%4hx from host %s\n",code,handler->getTargetIP());
@@ -4734,7 +4734,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         case MsgExit:
         case MsgAlive:
         case MsgAutoPilot:
-        case MsgMessage:
+        case MsgSendChat:
         case MsgPlayerUpdateSmall:
             logDebugMessage(1, "Host %s tried to send invalid message before Enter; 0x%4hx\n", handler->getTargetIP(), code);
             rejectPlayer(t, RejectBadRequest, "invalid request");
@@ -4950,7 +4950,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
 
     // player requesting to grab flag
-    case MsgGrabFlag:
+    case MsgRequestFlag:
     {
         // data: flag index
         uint16_t flag;
@@ -4961,7 +4961,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         buf = nboUnpackUShort(buf, flag);
         // Sanity check
         if (flag < numFlags)
-            grabFlag(t, *FlagInfo::get(flag), true);
+            grantFlag(t, *FlagInfo::get(flag), true);
         break;
     }
 
@@ -5068,7 +5068,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
 
     // player sending a message
-    case MsgMessage:
+    case MsgSendChat:
     {
         // data: target player/team, message string
         PlayerId dstPlayer;
@@ -5134,7 +5134,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
 
     // player has transferred flag to another tank
-    case MsgTransferFlag:
+    case MsgStealFlag:
     {
         PlayerId from, to;
 

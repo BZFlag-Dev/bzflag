@@ -697,7 +697,7 @@ bool ServerLink::readEnter(std::string& reason,
             return false;
         }
         // ignore other codes so that bzadmin doesn't choke
-        // on the MsgMessage's that the server can send before
+        // on the MsgReceiveChat's that the server can send before
         // the MsgAccept (authorization holdoff, etc...)
     }
 
