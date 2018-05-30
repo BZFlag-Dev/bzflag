@@ -131,37 +131,9 @@ DefaultDBItem defaultDBItems[] =
     { "lightLists",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "noMeshClusters",       "0",            true,   StateDatabase::ReadWrite,   NULL },
 
-    // default texture names
-    { "stdGroundTexture",     "std_ground",       true,   StateDatabase::ReadWrite,   NULL },
-    { "zoneGroundTexture",    "zone_ground",      true,   StateDatabase::ReadWrite,   NULL },
-    { "boxWallTexture",       "boxwall",      true,   StateDatabase::ReadWrite,   NULL },
-    { "boxTopTexture",        "roof",         true,   StateDatabase::ReadWrite,   NULL },
-    { "pyrWallTexture",       "pyrwall",      true,   StateDatabase::ReadWrite,   NULL },
-    { "cautionTexture",       "caution",      true,   StateDatabase::ReadWrite,   NULL },
-    { "waterTexture",     "water",        true,   StateDatabase::ReadWrite,   NULL },
-
     // default fonts
     { "consoleFont",      "DejaVuSansMonoBold",   true,   StateDatabase::ReadWrite,   NULL },
     { "sansSerifFont",        "DejaVuSansCondensedBold",true, StateDatabase::ReadWrite,   NULL },
-
-    // team based object sufixes
-    { "boltTexture",      "bolt",         true,   StateDatabase::ReadWrite,   NULL },
-    { "laserTexture",     "laser",        true,   StateDatabase::ReadWrite,   NULL },
-    { "baseTopTexture",       "basetop",      true,   StateDatabase::ReadWrite,   NULL },
-    { "baseWallTexture",      "basewall",     true,   StateDatabase::ReadWrite,   NULL },
-
-    // team prefixes
-    { "redTeamPrefix",        "red_",         true,   StateDatabase::ReadWrite,   NULL },
-    { "greenTeamPrefix",      "green_",       true,   StateDatabase::ReadWrite,   NULL },
-    { "blueTeamPrefix",       "blue_",        true,   StateDatabase::ReadWrite,   NULL },
-    { "purpleTeamPrefix",     "purple_",      true,   StateDatabase::ReadWrite,   NULL },
-    { "rabbitTeamPrefix",     "rabbit_",      true,   StateDatabase::ReadWrite,   NULL },
-    { "hunterTeamPrefix",     "hunter_",      true,   StateDatabase::ReadWrite,   NULL },
-    { "rogueTeamPrefix",      "rogue_",       true,   StateDatabase::ReadWrite,   NULL },
-    { "observerTeamPrefix",   "observer_",        true,   StateDatabase::ReadWrite,   NULL },
-
-    // type prefixes
-    { "superPrefix",      "super_",       true,   StateDatabase::ReadWrite,   NULL },
 
     // effects options
     { "useFancyEffects",      "1",            true,   StateDatabase::ReadWrite,   NULL },

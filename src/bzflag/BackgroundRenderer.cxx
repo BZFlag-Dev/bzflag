@@ -282,7 +282,7 @@ void BackgroundRenderer::setupGroundMaterials()
     {
         // default ground material
         memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-        groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+        groundTextureID = tm.getTextureID("std_ground", true);
     }
     else
     {
@@ -297,7 +297,7 @@ void BackgroundRenderer::setupGroundMaterials()
             {
                 // use the default as a backup (default color too)
                 memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
-                groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
+                groundTextureID = tm.getTextureID("std_ground", true);
             }
             else
             {
@@ -336,7 +336,7 @@ void BackgroundRenderer::setupGroundMaterials()
     int groundInvTextureID = -1;
     memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
     if (groundInvTextureID < 0)
-        groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
+        groundInvTextureID = tm.getTextureID("zone_ground", false);
 
     // inverted ground gstates
     gb.reset();

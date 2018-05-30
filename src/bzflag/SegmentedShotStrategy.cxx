@@ -68,8 +68,8 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(team);
     if (useSuperTexture)
-        imageName += BZDB.get("superPrefix");
-    imageName += BZDB.get("boltTexture");
+        imageName += "super_";
+    imageName += "bolt";
 
     int texture = tm.getTextureID(imageName.c_str());
     if (texture >= 0)
@@ -843,7 +843,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
 
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(tmpTeam);
-    imageName += BZDB.get("laserTexture");
+    imageName += "laser";
     int texture = tm.getTextureID(imageName.c_str());
 
     for (int i = 0; i < numSegments; i++)

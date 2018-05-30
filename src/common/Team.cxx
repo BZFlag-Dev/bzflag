@@ -73,21 +73,21 @@ const std::string  Team::getImagePrefix(TeamColor team)
     switch (team)
     {
     case RedTeam:
-        return BZDB.get("redTeamPrefix");
+        return "red_";
     case GreenTeam:
-        return BZDB.get("greenTeamPrefix");
+        return "green_";
     case BlueTeam:
-        return BZDB.get("blueTeamPrefix");
+        return "blue_";
     case PurpleTeam:
-        return BZDB.get("purpleTeamPrefix");
+        return "purple_";
     case RabbitTeam:
-        return BZDB.get("rabbitTeamPrefix");
+        return "rabbit_";
     case HunterTeam:
-        return BZDB.get("hunterTeamPrefix");
+        return "hunter_";
     case ObserverTeam:
-        return BZDB.get("observerTeamPrefix");
+        return "observer_";
     default:
-        return BZDB.get("rogueTeamPrefix");
+        return "rogue_";
     }
 }
 
