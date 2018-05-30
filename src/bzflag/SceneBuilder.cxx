@@ -382,7 +382,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     if (o.userTextures[0].size())
         boxTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
     if (boxTexture < 0)
-        boxTexture = tm.getTextureID(BZDB.get("boxWallTexture").c_str(),true);
+        boxTexture = tm.getTextureID("boxwall",true);
 
     useColorTexture[0] = boxTexture >= 0;
 
@@ -391,7 +391,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
     if (o.userTextures[1].size())
         boxTopTexture = tm.getTextureID(o.userTextures[1].c_str(),false);
     if (boxTopTexture < 0)
-        boxTopTexture = tm.getTextureID(BZDB.get("boxTopTexture").c_str(),true);
+        boxTopTexture = tm.getTextureID("roof",true);
 
     useColorTexture[1] = boxTopTexture >= 0;
 
@@ -467,7 +467,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     if (o.userTextures[0].size())
         pyramidTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
     if (pyramidTexture < 0)
-        pyramidTexture = tm.getTextureID(BZDB.get("pyrWallTexture").c_str(),false);
+        pyramidTexture = tm.getTextureID("pyrwall",false);
 
     useColorTexture = pyramidTexture >= 0;
 
@@ -530,11 +530,11 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     if (boxTexture < 0)
     {
         std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-        teamBase += BZDB.get("baseWallTexture");
+        teamBase += "basewall";
         boxTexture = tm.getTextureID(teamBase.c_str(),false);
     }
     if (boxTexture < 0)
-        boxTexture = tm.getTextureID( BZDB.get("boxWallTexture").c_str() );
+        boxTexture = tm.getTextureID("boxwall");
 
     useColorTexture[0] = boxTexture >= 0;
 
@@ -545,7 +545,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     if (baseTopTexture < 0)
     {
         std::string teamBase = Team::getImagePrefix((TeamColor)o.getTeam());
-        teamBase += BZDB.get("baseTopTexture").c_str();
+        teamBase += "basetop";
         baseTopTexture = tm.getTextureID(teamBase.c_str(),false);
     }
     if (baseTopTexture < 0)
@@ -609,9 +609,7 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
     delete nodeGen;
 }
 
-void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
-        const Teleporter& o,
-        const World* world)
+void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db, const Teleporter& o, const World* world)
 {
     // this assumes teleporters have fourteen parts:  12 border sides, 2 faces
     int part = 0;
@@ -627,7 +625,7 @@ void SceneDatabaseBuilder::addTeleporter(SceneDatabase* db,
     if (o.userTextures[0].size())
         teleporterTexture = tm.getTextureID(o.userTextures[0].c_str(),false);
     if (teleporterTexture < 0)
-        teleporterTexture = tm.getTextureID(BZDB.get("cautionTexture").c_str(),true);
+        teleporterTexture = tm.getTextureID("caution");
 
     useColorTexture = teleporterTexture >= 0;
 
