@@ -1855,6 +1855,12 @@ bool endMapChunks()
         return false;
     }
 
+    if (DownloadedSize != WorldSize)
+    {
+        HUDDialogStack::get()->setFailedMessage("Error: Map completed but not correct size, data is missing");
+        drawFrame(0.0f);
+    }
+
     for (auto i : WorldChunks)
     {
         if (cacheOut)
