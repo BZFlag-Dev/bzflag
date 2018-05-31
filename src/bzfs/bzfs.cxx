@@ -138,6 +138,8 @@ WorldInfo *world = NULL;
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
 
+bool activeMapDownloaders = false;
+
 std::vector<std::pair<char*, size_t> > worldChunks;
 
 char worldSettings[4 + WorldSettingsSize];
@@ -3028,15 +3030,14 @@ bool areFoes(TeamColor team1, TeamColor team2)
     return team1!=team2 || (team1==RogueTeam);
 }
 
-
 void SendNChunksToPlayer(int playerIndex)
 {
     auto playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
 
     int toSend = playerData->chunksLeft.size();
 
-    if (toSend > 20)
-        toSend = 20;
+    if (toSend > 100)
+        toSend = 100;
 
     void *buf = nullptr, *bufStart = nullptr;
     for (int c = 0; c < toSend; c++)
@@ -3060,14 +3061,18 @@ void SendNChunksToPlayer(int playerIndex)
 
 void checkMapUpdates()
 {
+    activeMapDownloaders = false;
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
         if (p == nullptr || !p->isTransferingWorld)
             continue;
 
-        if (p->netHandler->TcpOutboundSize() < (10 * 1024))
+        if (p->netHandler->TcpOutboundSize() < (100 * 1024))
             SendNChunksToPlayer(i);
+
+        if (p->isTransferingWorld)
+            activeMapDownloaders = true;
     }
 }
 
@@ -3076,6 +3081,9 @@ static void sendWorld(int playerIndex, std::vector<int> & chunkList)
     playerHadWorld = true;
 
     auto playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+
+    activeMapDownloaders = true;
 
     playerData->isTransferingWorld = true;
     playerData->chunksLeft.clear();
@@ -7115,8 +7123,8 @@ int main(int argc, char **argv)
         if (waitTime < 0.0f)
             waitTime = 0.0f;
 
-        // if there are buffered UDP, no wait at all
-        if (NetHandler::anyUDPPending())
+        // if there are buffered UDP or maps to send, no wait at all
+        if (NetHandler::anyUDPPending() || activeMapDownloaders)
             waitTime = 0.0f;
 
         // see if we are within the plug requested max wait time
