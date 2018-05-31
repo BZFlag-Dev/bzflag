@@ -282,7 +282,7 @@ namespace Shots
         return itr == MetaData.end() ? 0 : itr->second.DataI;
     }
 
-    bool Shot::Update(float dt)
+    bool Shot::Update(float /*dt*/)
     {
         return GetLastUpdateTime() - GetStartTime() >= GetLifeTime();
     }
@@ -358,10 +358,10 @@ namespace Shots
                         dir[1] = newDir[1] - oldDir[1];
                         dir[2] = newDir[2] - oldDir[2];
 
-                        float rots[2];
-                        const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
-                        rots[0] = atan2f(dir[1], dir[0]);
-                        rots[1] = atan2f(dir[2], horiz);
+//                         float rots[2];
+//                         const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
+//                         rots[0] = atan2f(dir[1], dir[0]);
+//                         rots[1] = atan2f(dir[2], horiz);
                         break;
                     }
                     case SegmentReason::Boundary:
@@ -376,12 +376,12 @@ namespace Shots
                         dir[1] = Segments[segment].ray.getDirection()[1];
                         dir[2] = Segments[segment].ray.getDirection()[2];
 
-                        float rots[2];
-                        const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
-                        rots[0] = atan2f(dir[1], dir[0]);
-                        rots[1] = atan2f(dir[2], horiz);
+//                         float rots[2];
+//                         const float horiz = sqrtf((dir[0] * dir[0]) + (dir[1] * dir[1]));
+//                         rots[0] = atan2f(dir[1], dir[0]);
+//                         rots[1] = atan2f(dir[2], horiz);
 
-                        const float* pos = Segments[segment].ray.getOrigin();
+//                         const float* pos = Segments[segment].ray.getOrigin();
                     }
                     break;
                     }

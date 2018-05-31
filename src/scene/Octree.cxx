@@ -542,7 +542,7 @@ void OctreeNode::getFrustumList () const
             if (dir[0] < 0.0f) dirbits |= (1 << 0);
             if (dir[1] < 0.0f) dirbits |= (1 << 1);
             if (dir[2] < 0.0f) dirbits |= (1 << 2);
-            const OctreeNode* onode;
+            const OctreeNode* onode = nullptr;
 
             if (occLevel == Outside)
             {

@@ -213,7 +213,7 @@ public:
     int computedHits;
     std::map<int, bool>    hitMap;
 
-    inline void setSkinIndex(int id) { skinIndex = id; }
+    inline void setSkinIndex(int inxex) { skinIndex = inxex; }
 protected:
     void    clearRemoteSounds();
     void    addRemoteSound(int sound);

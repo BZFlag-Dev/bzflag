@@ -1790,7 +1790,7 @@ static void dumpMissingFlag(const char *buf, uint16_t len)
                        &args).c_str());
 }
 
-std::map<int, std::pair<size_t, void*> > WorldChunks;
+std::map<int, std::pair<size_t, char*> > WorldChunks;
 int WorldChunkCount = 0;
 size_t WorldSize = 0;
 size_t DownloadedSize = 0;
@@ -1812,7 +1812,7 @@ static void startMapChunks(int chunks, size_t mapSize)
 
 static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
 {
-    void* p = new char[len];
+    char* p = new char[len];
     ::memcpy(p, buf, len);
 
     if (WorldChunks.find(chunkID) != WorldChunks.end())
@@ -1833,7 +1833,7 @@ static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
 
 bool endMapChunks()
 {
-    if (WorldChunks.size() != WorldChunkCount)
+    if ((int)WorldChunks.size() != WorldChunkCount)
     {
         std::vector<int> missingChunks;
 
