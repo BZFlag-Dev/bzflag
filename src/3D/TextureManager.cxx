@@ -72,7 +72,7 @@ TextureManager::~TextureManager()
     textureIDs.clear();
 }
 
-int TextureManager::tryLoadTexture(OSFile &osFilename, const char* name, bool reportFail)
+int TextureManager::tryLoadTexture(OSFile osFilename, const char* name, bool reportFail)
 {
     const std::string filename = osFilename.getOSName();
 
