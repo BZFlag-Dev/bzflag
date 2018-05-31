@@ -345,15 +345,13 @@
     <ClInclude Include="..\..\src\bzfs\Score.h">
       <Filter>Header Files\Player Info</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\bzfs\ShotManager.h">
-      <Filter>Headers\Server</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\TextChunkManager.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\VotingArbiter.h">
       <Filter>Header Files\Server</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\ShotManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
