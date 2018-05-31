@@ -78,12 +78,13 @@ static MsgStringList handleMsgEnter(PacketInfo *pi);
 static MsgStringList handleMsgExit(PacketInfo *pi);
 static MsgStringList handleMsgFlagUpdate(PacketInfo *pi);
 static MsgStringList handleMsgGameTime(PacketInfo *pi);
-static MsgStringList handleMsgGrabFlag(PacketInfo *pi);
+static MsgStringList handleMsgGrantFlag(PacketInfo *pi);
+static MsgStringList handleMsgRequestFlag(PacketInfo *pi);
 static MsgStringList handleMsgGMUpdate(PacketInfo *pi);
 static MsgStringList handleMsgGetWorld(PacketInfo *pi);
 static MsgStringList handleMsgGameSettings(PacketInfo *pi);
 static MsgStringList handleMsgKilled(PacketInfo *pi);
-static MsgStringList handleMsgMessage(PacketInfo *pi);
+static MsgStringList handleMsgSendChat(PacketInfo *pi);
 static MsgStringList handleMsgNearFlag(PacketInfo *pi);
 static MsgStringList handleMsgNewRabbit(PacketInfo *pi);
 static MsgStringList handleMsgNegotiateFlags(PacketInfo *pi);
@@ -106,7 +107,6 @@ static MsgStringList handleMsgTimeUpdate(PacketInfo *pi);
 static MsgStringList handleMsgTeleport(PacketInfo *pi);
 static MsgStringList handleMsgTransferFlag(PacketInfo *pi);
 static MsgStringList handleMsgTeamUpdate(PacketInfo *pi);
-static MsgStringList handleMsgWantWHash(PacketInfo *pi);
 static MsgStringList handleMsgWantSettings(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkRequest(PacketInfo *pi);
 static MsgStringList handleMsgUDPLinkEstablished(PacketInfo *pi);
@@ -144,8 +144,8 @@ static PacketListEntry PacketList[] =
     PACKET_LIST_ENTRY (MsgGameSettings),
     PACKET_LIST_ENTRY (MsgKilled),
     PACKET_LIST_ENTRY (MsgSendChat),
-    PACKET_LIST_ENTRY (MsgReceiveChat),
     PACKET_LIST_ENTRY (MsgNearFlag),
+    PACKET_LIST_ENTRY (MsgSendChat),
     PACKET_LIST_ENTRY (MsgNewRabbit),
     PACKET_LIST_ENTRY (MsgNegotiateFlags),
     PACKET_LIST_ENTRY (MsgPause),
@@ -167,7 +167,6 @@ static PacketListEntry PacketList[] =
     PACKET_LIST_ENTRY (MsgTeleport),
     PACKET_LIST_ENTRY (MsgTransferFlag),
     PACKET_LIST_ENTRY (MsgTeamUpdate),
-    PACKET_LIST_ENTRY (MsgAcceptWorld),
     PACKET_LIST_ENTRY (MsgWantSettings),
     PACKET_LIST_ENTRY (MsgUDPLinkRequest),
     PACKET_LIST_ENTRY (MsgUDPLinkEstablished),
@@ -628,7 +627,7 @@ static MsgStringList handleMsgFlagUpdate (PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgGrabFlag (PacketInfo *pi)
+static MsgStringList handleMsgGrantFlag(PacketInfo *pi)
 {
     MsgStringList list = listMsgBasics (pi);
 
@@ -642,6 +641,12 @@ static MsgStringList handleMsgGrabFlag (PacketInfo *pi)
     listPush (list, 1, "player: %s", strPlayer(player).c_str());
     listPush (list, 1, "flag: %s", strFlag (flagid).c_str());
 
+    return list;
+}
+
+static MsgStringList handleMsgRequestFlag(PacketInfo *pi)
+{
+    MsgStringList list = listMsgBasics(pi);
     return list;
 }
 
@@ -714,7 +719,7 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
 }
 
 
-static MsgStringList handleMsgMessage (PacketInfo *pi)
+static MsgStringList handleMsgSendChat (PacketInfo *pi)
 {
     MsgStringList list = listMsgBasics (pi);
 
@@ -1074,14 +1079,6 @@ static MsgStringList handleMsgTeamUpdate (PacketInfo *pi)
         listPush (list, 3, "size = %i, won = %i, lost = %i", size, won, lost);
     }
 
-    return list;
-}
-
-
-static MsgStringList handleMsgWantWHash (PacketInfo *pi)
-{
-    // not recorded
-    MsgStringList list = listMsgBasics (pi);
     return list;
 }
 
