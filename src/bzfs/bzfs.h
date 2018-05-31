@@ -118,7 +118,6 @@ extern void  dropFlag(FlagInfo& flag, const float dropPos[3]);
 extern void  publicize();
 extern TeamColor whoseBase(float x, float y, float z);
 bool defineWorld(void);
-bool saveWorldCache(const char* file = NULL);
 float getMaxWorldHeight(void);
 
 bool allowTeams ( void );

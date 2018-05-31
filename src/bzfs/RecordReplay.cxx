@@ -2634,8 +2634,11 @@ static const char *msgString(u16 code)
         STRING_CASE (MsgStealFlag);
         STRING_CASE (MsgTransferFlag);
         STRING_CASE (MsgTeamUpdate);
-        STRING_CASE (MsgWantWHash);
-
+        STRING_CASE (MsgAcceptWorld);
+        STRING_CASE (MsgSetWorld);
+        STRING_CASE (MsgStartWorld);
+        STRING_CASE (MsgEndWorld);
+        STRING_CASE (MsgWorldChunk);
         STRING_CASE (MsgUDPLinkRequest);
         STRING_CASE (MsgUDPLinkEstablished);
         STRING_CASE (MsgLagPing);

@@ -2966,9 +2966,7 @@ BZF_API bool bz_setWorldSize(float size, float wallHeight)
 
 BZF_API void bz_setClientWorldDownloadURL(const char *URL)
 {
-    clOptions->cacheURL.clear();
-    if (URL)
-        clOptions->cacheURL = URL;
+
 }
 
 //-------------------------------------------------------------------------
@@ -2976,8 +2974,6 @@ BZF_API void bz_setClientWorldDownloadURL(const char *URL)
 BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
 {
     bz_ApiString URL;
-    if (clOptions->cacheURL.size())
-        URL = clOptions->cacheURL;
     return URL;
 }
 
@@ -2985,9 +2981,7 @@ BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
 
 BZF_API bool bz_saveWorldCacheFile(const char *file)
 {
-    if (!file)
-        return false;
-    return saveWorldCache(file);
+    return false;
 }
 
 BZF_API unsigned int bz_getWorldCacheSize ( void )

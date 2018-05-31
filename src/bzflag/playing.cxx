@@ -213,7 +213,7 @@ static WorldBuilder *worldBuilder = NULL;
 static std::string  worldUrl;
 static std::string  worldCachePath;
 static std::string  md5Digest;
-static uint32_t     worldPtr = 0;
+
 static char     *worldDatabase = NULL;
 static bool     isCacheTemp;
 static std::ostream *cacheOut = NULL;
@@ -1598,7 +1598,7 @@ static bool removePlayer (PlayerId id)
 }
 
 
-static bool isCached(char *hexDigest)
+static bool isCached(const std::string &hexDigest)
 {
     std::istream *cachedWorld;
     bool cached    = false;
@@ -1764,83 +1764,6 @@ static void loadCachedWorld()
     downloadingInitialTexture  = true;
 }
 
-class WorldDownLoader : cURLManager
-{
-public:
-    void start(char * hexDigest);
-private:
-    void askToBZFS();
-    virtual void finalization(char *data, unsigned int length, bool good);
-};
-
-void WorldDownLoader::start(char * hexDigest)
-{
-    if (isCached(hexDigest))
-        loadCachedWorld();
-    else if (worldUrl.size())
-    {
-        HUDDialogStack::get()->setFailedMessage
-        (("Loading world from " + worldUrl).c_str());
-        setProgressFunction(curlProgressFunc, worldUrl.c_str());
-        setURL(worldUrl);
-        addHandle();
-        worldUrl = ""; // clear the state
-    }
-    else
-        askToBZFS();
-}
-
-void WorldDownLoader::finalization(char *data, unsigned int length, bool good)
-{
-    if (good)
-    {
-        worldDatabase = data;
-        theData       = NULL;
-        MD5 md5;
-        md5.update((unsigned char *)worldDatabase, length);
-        md5.finalize();
-        std::string digest = md5.hexdigest();
-        if (digest != md5Digest)
-        {
-            HUDDialogStack::get()->setFailedMessage("Download from URL failed");
-            askToBZFS();
-        }
-        else
-        {
-            std::ostream* cache =
-                FILEMGR.createDataOutStream(worldCachePath, true, true);
-            if (cache != NULL)
-            {
-                cache->write(worldDatabase, length);
-                delete cache;
-                loadCachedWorld();
-            }
-            else
-            {
-                HUDDialogStack::get()->setFailedMessage("Problem writing cache");
-                askToBZFS();
-            }
-        }
-    }
-    else
-        askToBZFS();
-}
-
-void WorldDownLoader::askToBZFS()
-{
-    HUDDialogStack::get()->setFailedMessage("Downloading World...");
-    char message[MaxPacketLen];
-    // ask for world
-    nboPackUInt(message, 0);
-    serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-    worldPtr = 0;
-    if (cacheOut)
-        delete cacheOut;
-    cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
-}
-
-static WorldDownLoader *worldDownLoader;
-
 static void dumpMissingFlag(const char *buf, uint16_t len)
 {
     int i;
@@ -1867,17 +1790,82 @@ static void dumpMissingFlag(const char *buf, uint16_t len)
                        &args).c_str());
 }
 
-static bool processWorldChunk(const void *buf, uint16_t len, int bytesLeft)
+std::map<int, std::pair<size_t, void*> > WorldChunks;
+int WorldChunkCount = 0;
+size_t WorldSize = 0;
+size_t DownloadedSize = 0;
+
+static void startMapChunks(int chunks, size_t mapSize)
 {
-    int totalSize = worldPtr + len + bytesLeft;
-    int doneSize  = worldPtr + len;
-    if (cacheOut)
-        cacheOut->write((const char *)buf, len);
-    HUDDialogStack::get()->setFailedMessage
-    (TextUtils::format
-     ("Downloading World (%2d%% complete/%d kb remaining)...",
-      (100 * doneSize / totalSize), bytesLeft / 1024).c_str());
-    return bytesLeft == 0;
+    WorldChunkCount = chunks;
+    WorldSize = mapSize;
+    DownloadedSize = 0;
+
+    for (auto i : WorldChunks)
+    {
+        if (i.second.second != nullptr)
+            delete(i.second.second);
+    }
+
+    WorldChunks.clear();
+}
+
+static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
+{
+    void* p = new char[len];
+    ::memcpy(p, buf, len);
+
+    if (WorldChunks.find(chunkID) != WorldChunks.end())
+    {
+        delete[](WorldChunks[chunkID].second);
+        WorldChunks.erase(chunkID);
+    }
+
+    WorldChunks[chunkID] = std::pair<int, void*>(len, p);
+
+    DownloadedSize += len;
+
+    int bytesLeft = WorldSize - DownloadedSize;
+
+    HUDDialogStack::get()->setFailedMessage (TextUtils::format ("Downloading World (%2d%% complete/%d kb remaining)...", (100 * DownloadedSize / WorldSize), bytesLeft / 1024).c_str());
+    return chunkID == (WorldChunkCount - 1);
+}
+
+bool endMapChunks()
+{
+    if (WorldChunks.size() != WorldChunkCount)
+    {
+        std::vector<int> missingChunks;
+
+        for (int i = 0; i < WorldChunkCount; i++)
+        {
+            if (WorldChunks.find(i) == WorldChunks.end())
+                missingChunks.push_back(i);
+        }
+
+        // we are missing some, so we are not done
+        char message[MaxPacketLen];
+        nboPackUInt(message, missingChunks.size());
+        for (auto m : missingChunks)
+            nboPackUInt(message, m);
+        serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+
+        return false;
+    }
+
+    for (auto i : WorldChunks)
+    {
+        if (cacheOut)
+            cacheOut->write((const char *)i.second.second, i.second.first);
+
+        if (i.second.second != nullptr)
+            delete(i.second.second);
+    }
+
+    WorldChunks.clear();
+    WorldChunkCount = 0;
+
+    return true;
 }
 
 static void sendMeaCulpa(PlayerId victim)
@@ -2045,55 +2033,68 @@ static void     handleServerMessage(bool human, uint16_t code,
             delete worldBuilder;
         worldBuilder = new WorldBuilder;
         worldBuilder->unpackGameSettings(msg);
-        serverLink->send(MsgWantWHash, 0, NULL);
-        HUDDialogStack::get()->setFailedMessage("Requesting World Hash...");
+        serverLink->send(MsgAcceptWorld, 0, NULL);
+        HUDDialogStack::get()->setFailedMessage("Requesting World Data...");
         break;
     }
 
-    case MsgCacheURL:
+    case MsgSetWorld:
     {
-        char *cacheURL = new char[len];
-        nboUnpackString(msg, cacheURL, len);
-        worldUrl = cacheURL;
-        delete [] cacheURL;
-        break;
-    }
-
-    case MsgWantWHash:
-    {
-        char *hexDigest = new char[len];
-        nboUnpackString(msg, hexDigest, len);
+        std::string hexDigest;
+        nboUnpackStdString(msg, hexDigest);
         isCacheTemp = hexDigest[0] == 't';
         md5Digest = &hexDigest[1];
 
-        worldDownLoader->start(hexDigest);
-        delete [] hexDigest;
+        if (isCached(hexDigest))
+            loadCachedWorld();
+        else
+        {
+            HUDDialogStack::get()->setFailedMessage("Downloading World...");
+            char message[MaxPacketLen];
+            // ask for world
+            nboPackUInt(message, 0);
+            serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
+            if (cacheOut)
+                delete cacheOut;
+            cacheOut = FILEMGR.createDataOutStream(worldCachePath, true, true);
+        }
         break;
     }
 
-    case MsgGetWorld:
+    case MsgStartWorld:
     {
-        // create world
-        uint32_t bytesLeft;
-        const void *buf = nboUnpackUInt(msg, bytesLeft);
-        bool last = processWorldChunk(buf, len - 4, bytesLeft);
-        if (!last)
-        {
-            char message[MaxPacketLen];
-            // ask for next chunk
-            worldPtr += len - 4;
-            nboPackUInt(message, worldPtr);
-            serverLink->send(MsgGetWorld, sizeof(uint32_t), message);
-            break;
-        }
-        if (cacheOut)
-            delete cacheOut;
-        cacheOut = NULL;
-        loadCachedWorld();
-        if (isCacheTemp)
-            markOld(worldCachePath);
+        uint32_t chunks;
+        uint32_t size;
+        const void *buf = nboUnpackUInt(msg, chunks);
+        buf = nboUnpackUInt(buf, size);
+        startMapChunks(chunks, size);
         break;
     }
+
+    case MsgWorldChunk:
+    {
+        // create world
+        uint32_t chunkID;
+        const void *buf = nboUnpackUInt(msg, chunkID);
+        processWorldChunk(buf, len - 4, chunkID);
+        break;
+    }
+
+    case MsgEndWorld:
+        if (endMapChunks())
+        {
+            if (cacheOut)
+            {
+                cacheOut->flush();
+                delete cacheOut;
+                cacheOut = nullptr;
+            }
+
+            loadCachedWorld();
+            if (isCacheTemp)
+                markOld(worldCachePath);
+        }
+        break;
 
     case MsgGameTime:
     {
@@ -8084,12 +8085,8 @@ void            startPlaying(BzfDisplay* _display,
     TimeKeeper::setTick();
     updateDaylight(epochOffset, *sceneRenderer);
 
-    worldDownLoader = new WorldDownLoader;
-
     // start game loop
     playingLoop();
-
-    delete worldDownLoader;
 
     // restore the sound.  if we don't do this then we'll save the
     // wrong volume when we dump out the configuration file if the
