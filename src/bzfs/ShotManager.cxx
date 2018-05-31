@@ -652,13 +652,12 @@ namespace Shots
                 int source = getTeleporter(teleporter, face);
                 int target = world->getTeleportTarget(source, seed);
 
-                int outFace;
+                int outFace = -1;
                 const Teleporter* outTeleporter = getTeleporter(target, outFace);
                 o[0] += t * d[0];
                 o[1] += t * d[1];
                 o[2] += t * d[2];
-                teleporter->getPointWRT(*outTeleporter, face, outFace,
-                    o, d, 0.0f, o, d, NULL);
+                teleporter->getPointWRT(*outTeleporter, face, outFace,  o, d, 0.0f, o, d, NULL);
                 reason = SegmentReason::Teleport;
             }
             else if (building)
