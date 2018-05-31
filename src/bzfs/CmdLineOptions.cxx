@@ -673,18 +673,6 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             }
             options.gameType = ClassicCTF;
         }
-        else if (strcmp(argv[i], "-cache") == 0)
-        {
-            checkFromWorldFile(argv[i], fromWorldFile);
-            checkArgc(1, i, argc, argv[i]);
-            options.cacheURL = argv[i];
-        }
-        else if (strcmp(argv[i], "-cacheout") == 0)
-        {
-            checkFromWorldFile(argv[i], fromWorldFile);
-            checkArgc(1, i, argc, argv[i]);
-            options.cacheOut = argv[i];
-        }
         else if (strcmp(argv[i], "-conf") == 0)
         {
             checkFromWorldFile(argv[i], fromWorldFile);

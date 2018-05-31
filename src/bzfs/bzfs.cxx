@@ -137,6 +137,9 @@ WorldInfo *world = NULL;
 // FIXME: should be static, but needed by RecordReplay
 char *worldDatabase = NULL;
 uint32_t worldDatabaseSize = 0;
+
+std::vector<std::pair<char*, size_t> > worldChunks;
+
 char worldSettings[4 + WorldSettingsSize];
 float pluginWorldSize = -1;
 float pluginWorldHeight = -1;
@@ -1211,23 +1214,27 @@ bool defineWorld ( void )
     }
     bz_EventData eventData = bz_EventData(bz_eWorldFinalized);
     worldEventManager.callEvents(&eventData);
-    return true;
-}
 
-bool saveWorldCache( const char* fileName )
-{
-    FILE* file;
-    if (fileName)
-        file = fopen (fileName, "wb");
-    else
-        file = fopen (clOptions->cacheOut.c_str(), "wb");
-    if (file == NULL)
-        return false;
-    size_t written =
-        fwrite (worldDatabase, sizeof(char), worldDatabaseSize, file);
-    fclose (file);
-    if (written != worldDatabaseSize)
-        return false;
+    // build up a cache of world chunks
+
+    size_t dataLeft = worldDatabaseSize;
+    char* p = worldDatabase;
+
+    worldChunks.clear();
+
+    while (dataLeft > 0)
+    {
+        size_t len = dataLeft;
+        if (len > 1000)
+            len = 1000;
+
+        std::pair<char*, size_t> chunk(p, len);
+        p += len;
+        dataLeft -= len;
+
+        worldChunks.push_back(chunk);
+    }
+
     return true;
 }
 
@@ -3022,27 +3029,39 @@ bool areFoes(TeamColor team1, TeamColor team2)
 }
 
 
-static void sendWorld(int playerIndex, uint32_t ptr)
+static void sendWorld(int playerIndex, std::vector<int> & chunkList)
 {
     playerHadWorld = true;
-    // send another small chunk of the world database
-    assert((world != NULL) && (worldDatabase != NULL));
-    void *buf, *bufStart = getDirectMessageBuffer();
-    uint32_t size = MaxPacketLen - 2*sizeof(uint16_t) - sizeof(uint32_t);
-    uint32_t left = worldDatabaseSize - ptr;
-    if (ptr >= worldDatabaseSize)
+
+    void *buf = nullptr, *bufStart = nullptr;
+    if (chunkList.size() == 0)
     {
-        size = 0;
-        left = 0;
+        void *buf, *bufStart = getDirectMessageBuffer();
+        buf = nboPackUInt(bufStart, (uint32_t)worldChunks.size());
+        buf = nboPackUInt(buf, worldDatabaseSize);
+        directMessage(playerIndex, MsgStartWorld, (char*)buf - (char*)bufStart, bufStart);
+
+        for (size_t i = 0; i < worldChunks.size(); i++)
+        {
+            bufStart = getDirectMessageBuffer();
+            buf = nboPackUInt(bufStart, i);
+
+            ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
+            directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second+4, bufStart);
+        }
     }
-    else if (ptr + size >= worldDatabaseSize)
+    else
     {
-        size = worldDatabaseSize - ptr;
-        left = 0;
+        for (auto i : chunkList)
+        {
+            bufStart = getDirectMessageBuffer();
+            buf = nboPackUInt(bufStart, i);
+
+            ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
+            directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second, bufStart);
+        }
     }
-    buf = nboPackUInt(bufStart, uint32_t(left));
-    buf = nboPackString(buf, (char*)worldDatabase + ptr, size);
-    directMessage(playerIndex, MsgGetWorld, (char*)buf - (char*)bufStart, bufStart);
+    directMessage(playerIndex, MsgEndWorld, 0, getDirectMessageBuffer());
 }
 
 
@@ -4703,7 +4722,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         case MsgEnter:
         case MsgQueryGame:
         case MsgQueryPlayers:
-        case MsgWantWHash:
+        case MsgAcceptWorld:
         case MsgNegotiateFlags:
         case MsgGetWorld:
         case MsgUDPLinkRequest:
@@ -4853,13 +4872,23 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
 
 
-    // player wants more of world database
+    // player wants some parts of the world database
     case MsgGetWorld:
     {
-        // data: count (bytes read so far)
-        uint32_t ptr;
-        buf = nboUnpackUInt(buf, ptr);
-        sendWorld(t, ptr);
+        // data: chunks that are needed
+        // data: list of chunk IDS
+        uint32_t chunkCount  = 0;
+        buf = nboUnpackUInt(buf, chunkCount);
+
+        std::vector<int> chunkList;
+        for (uint32_t i = 0; i < chunkCount; i++)
+        {
+            uint32_t chunk = 0;
+            buf = nboUnpackUInt(buf, chunk);
+            chunkList.push_back(chunk);
+        }
+
+        sendWorld(t, chunkList);
         break;
     }
 
@@ -4869,17 +4898,11 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         break;
     }
 
-    case MsgWantWHash:
+    case MsgAcceptWorld:
     {
         void *obuf, *obufStart = getDirectMessageBuffer();
-        if (clOptions->cacheURL.size() > 0)
-        {
-            obuf = nboPackString(obufStart, clOptions->cacheURL.c_str(),
-                                 clOptions->cacheURL.size() + 1);
-            directMessage(t, MsgCacheURL, (char*)obuf-(char*)obufStart, obufStart);
-        }
-        obuf = nboPackString(obufStart, hexDigest.c_str(), hexDigest.size() + 1);
-        directMessage(t, MsgWantWHash, (char*)obuf-(char*)obufStart, obufStart);
+        obuf = nboPackStdString(obufStart, hexDigest);
+        directMessage(t, MsgSetWorld, (char*)obuf-(char*)obufStart, obufStart);
         break;
     }
 
@@ -6732,15 +6755,6 @@ int main(int argc, char **argv)
         std::cerr << "ERROR: A world was not specified" << std::endl;
         return 1;
     }
-    else if (clOptions->cacheOut != "")
-    {
-        if (!saveWorldCache())
-        {
-            std::cerr << "ERROR: could not save world cache file: "
-                      << clOptions->cacheOut << std::endl;
-        }
-        done = true;
-    }
 
     // make flags, check sanity, etc...
     // (do this after the world has been loaded)
@@ -7947,6 +7961,9 @@ int main(int argc, char **argv)
     world = NULL;
     delete[] worldDatabase;
     worldDatabase = NULL;
+
+    worldChunks.clear();
+
     delete votingarbiter;
     votingarbiter = NULL;
 

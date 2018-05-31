@@ -82,7 +82,7 @@ struct CmdLineOptions
           filterFilename(""), filterCallsigns(false), filterChat(false), filterSimple(false),
           banTime(300), voteTime(60), vetoTime(2), votesRequired(2),
           votePercentage(50.1f), voteRepeatTime(300),
-          autoTeam(false), citySize(5), cacheURL(""), cacheOut(""), tkAnnounce(false), wallSides(4)
+          autoTeam(false), citySize(5), tkAnnounce(false), wallSides(4)
     {
         int i;
         for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
@@ -208,9 +208,6 @@ struct CmdLineOptions
     /* city options */
     int           citySize;
     int           numTeamFlags[NumTeams];
-
-    std::string       cacheURL;
-    std::string       cacheOut;
 
     bool          tkAnnounce;
     int           wallSides;
