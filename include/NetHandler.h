@@ -163,6 +163,11 @@ public:
         return outmsgSize > 0;
     }
 
+    int      TcpOutboundSize()
+    {
+        return outmsgSize;
+    }
+
     void      setPlayer ( PlayerInfo* p, int index );
 
     int       getPlayerID ( void )

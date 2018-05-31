@@ -1666,13 +1666,13 @@ int curlProgressFunc(void* UNUSED(clientp),
     return 0;
 }
 
-static void loadCachedWorld()
+static bool loadCachedWorld()
 {
     // can't get a cache from nothing
     if (worldCachePath == std::string(""))
     {
         joiningGame = false;
-        return;
+        return true;
     }
 
     // lookup the cached world
@@ -1683,7 +1683,7 @@ static void loadCachedWorld()
         drawFrame(0.0f);
         remove(worldCachePath.c_str());
         joiningGame = false;
-        return;
+        return true;
     }
 
     // status update
@@ -1703,8 +1703,7 @@ static void loadCachedWorld()
         HUDDialogStack::get()->setFailedMessage("Error loading cached world.  Join canceled");
         drawFrame(0.0f);
         remove(worldCachePath.c_str());
-        joiningGame = false;
-        return;
+        return false;
     }
     cachedWorld->read(localWorldDatabase, charSize);
     delete cachedWorld;
@@ -1724,8 +1723,7 @@ static void loadCachedWorld()
         delete[] localWorldDatabase;
         HUDDialogStack::get()->setFailedMessage("Error on md5. Removing offending file.");
         remove(worldCachePath.c_str());
-        joiningGame = false;
-        return;
+        return false;
     }
 
     // make world
@@ -1746,7 +1744,7 @@ static void loadCachedWorld()
         HUDDialogStack::get()->setFailedMessage("Error unpacking world database. Join canceled.");
         remove(worldCachePath.c_str());
         joiningGame = false;
-        return;
+        return true;
     }
     delete[] localWorldDatabase;
 
@@ -1762,6 +1760,8 @@ static void loadCachedWorld()
     const bool updateDownloads =  BZDB.isTrue("updateDownloads");
     Downloads::startDownloads(doDownloads, updateDownloads, false);
     downloadingInitialTexture  = true;
+
+    return true;
 }
 
 static void dumpMissingFlag(const char *buf, uint16_t len)
@@ -2045,9 +2045,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         isCacheTemp = hexDigest[0] == 't';
         md5Digest = &hexDigest[1];
 
-        if (isCached(hexDigest))
-            loadCachedWorld();
-        else
+        if (!isCached(hexDigest) || !loadCachedWorld())
         {
             HUDDialogStack::get()->setFailedMessage("Downloading World...");
             char message[MaxPacketLen];
@@ -2090,7 +2088,9 @@ static void     handleServerMessage(bool human, uint16_t code,
                 cacheOut = nullptr;
             }
 
-            loadCachedWorld();
+            if (!loadCachedWorld())
+                joiningGame = false;
+
             if (isCacheTemp)
                 markOld(worldCachePath);
         }

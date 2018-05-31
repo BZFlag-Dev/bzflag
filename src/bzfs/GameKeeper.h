@@ -175,6 +175,9 @@ public:
 
         int lastHeldFlagID;
 
+        bool isTransferingWorld = false;
+        std::list<int> chunksLeft;
+
     private:
         static Player*    playerList[PlayerSlot];
         int           playerIndex;

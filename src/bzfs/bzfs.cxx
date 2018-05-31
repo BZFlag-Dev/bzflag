@@ -3029,9 +3029,56 @@ bool areFoes(TeamColor team1, TeamColor team2)
 }
 
 
+void SendNChunksToPlayer(int playerIndex)
+{
+    auto playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+    int toSend = playerData->chunksLeft.size();
+
+    if (toSend > 20)
+        toSend = 20;
+
+    void *buf = nullptr, *bufStart = nullptr;
+    for (int c = 0; c < toSend; c++)
+    {
+        int i = *playerData->chunksLeft.begin();
+        playerData->chunksLeft.pop_front();
+
+        bufStart = getDirectMessageBuffer();
+        buf = nboPackUInt(bufStart, i);
+
+        ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
+        directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second, bufStart);
+    }
+
+    if (playerData->chunksLeft.size() == 0)
+    {
+        playerData->isTransferingWorld = false;
+        directMessage(playerIndex, MsgEndWorld, 0, getDirectMessageBuffer());
+    }
+}
+
+void checkMapUpdates()
+{
+    for (int i = 0; i < curMaxPlayers; i++)
+    {
+        GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
+        if (p == nullptr || !p->isTransferingWorld)
+            continue;
+
+        if (p->netHandler->TcpOutboundSize() < (10 * 1024))
+            SendNChunksToPlayer(i);
+    }
+}
+
 static void sendWorld(int playerIndex, std::vector<int> & chunkList)
 {
     playerHadWorld = true;
+
+    auto playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
+    playerData->isTransferingWorld = true;
+    playerData->chunksLeft.clear();
 
     void *buf = nullptr, *bufStart = nullptr;
     if (chunkList.size() == 0)
@@ -3042,26 +3089,15 @@ static void sendWorld(int playerIndex, std::vector<int> & chunkList)
         directMessage(playerIndex, MsgStartWorld, (char*)buf - (char*)bufStart, bufStart);
 
         for (size_t i = 0; i < worldChunks.size(); i++)
-        {
-            bufStart = getDirectMessageBuffer();
-            buf = nboPackUInt(bufStart, i);
-
-            ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
-            directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second+4, bufStart);
-        }
+            playerData->chunksLeft.push_back(i);
     }
     else
     {
-        for (auto i : chunkList)
-        {
-            bufStart = getDirectMessageBuffer();
-            buf = nboPackUInt(bufStart, i);
-
-            ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
-            directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second, bufStart);
-        }
+        for(auto i : chunkList)
+            playerData->chunksLeft.push_back(i);
     }
-    directMessage(playerIndex, MsgEndWorld, 0, getDirectMessageBuffer());
+
+    SendNChunksToPlayer(playerIndex);
 }
 
 
@@ -7912,6 +7948,8 @@ int main(int argc, char **argv)
             ++itr;
         }
         pendingChatMessages.clear();
+
+        checkMapUpdates();
 
         // fire off a tick event
         bz_TickEventData_V1 tickData;
