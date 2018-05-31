@@ -1821,7 +1821,7 @@ static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
         WorldChunks.erase(chunkID);
     }
 
-    WorldChunks[chunkID] = std::pair<int, void*>(len, p);
+    WorldChunks[chunkID] = std::pair<int, char*>(len, p);
 
     DownloadedSize += len;
 
