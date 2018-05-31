@@ -3036,7 +3036,7 @@ static void sendWorld(int playerIndex, std::vector<int> & chunkList)
     void *buf = nullptr, *bufStart = nullptr;
     if (chunkList.size() == 0)
     {
-        void *buf, *bufStart = getDirectMessageBuffer();
+        bufStart = getDirectMessageBuffer();
         buf = nboPackUInt(bufStart, (uint32_t)worldChunks.size());
         buf = nboPackUInt(buf, worldDatabaseSize);
         directMessage(playerIndex, MsgStartWorld, (char*)buf - (char*)bufStart, bufStart);

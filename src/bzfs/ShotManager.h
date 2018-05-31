@@ -159,7 +159,7 @@ namespace Shots
     {
     public:
         virtual ~ShotFactory() {}
-        virtual  Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return nullptr; }
+        virtual  Shot::Ptr GetShot(uint32_t /*guid*/, const FiringInfo &/*info*/) { return nullptr; }
 
         typedef std::shared_ptr <ShotFactory> Ptr;
         typedef std::map<std::string, Ptr > Map;

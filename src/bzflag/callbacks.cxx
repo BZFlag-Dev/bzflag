@@ -31,7 +31,7 @@ void setFlagHelp(const std::string& name, void*)
         hud->setFlagHelp(Flags::Null, 0.0);
 }
 
-void setShptBrightness(const std::string& name, void*)
+void setShptBrightness(const std::string&, void*)
 {
     Team::updateShotColors();
 }

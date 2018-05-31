@@ -320,7 +320,7 @@ void JoinMenu::teamCallback(HUDuiControl*, const void* source)
     ((const JoinMenu*)source)->updateTeamTexture();
 }
 
-void JoinMenu::skinCallback(HUDuiControl*, const void* source)
+void JoinMenu::skinCallback(HUDuiControl*, const void* /*source*/)
 {
 }
 
