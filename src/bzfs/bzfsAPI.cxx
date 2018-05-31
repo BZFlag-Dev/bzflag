@@ -2979,7 +2979,7 @@ BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
 
 //-------------------------------------------------------------------------
 
-BZF_API bool bz_saveWorldCacheFile(const char *file)
+BZF_API bool bz_saveWorldCacheFile(const char *)
 {
     return false;
 }
