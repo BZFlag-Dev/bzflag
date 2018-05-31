@@ -3048,7 +3048,7 @@ void SendNChunksToPlayer(int playerIndex)
         buf = nboPackUInt(bufStart, i);
 
         ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
-        directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second, bufStart);
+        directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second + 4, bufStart);
     }
 
     if (playerData->chunksLeft.size() == 0)

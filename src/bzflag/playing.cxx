@@ -1828,6 +1828,8 @@ static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
     int bytesLeft = WorldSize - DownloadedSize;
 
     HUDDialogStack::get()->setFailedMessage (TextUtils::format ("Downloading World (%2d%% complete/%d kb remaining)...", (100 * DownloadedSize / WorldSize), bytesLeft / 1024).c_str());
+    drawFrame(0.0f);
+
     return chunkID == (WorldChunkCount - 1);
 }
 
