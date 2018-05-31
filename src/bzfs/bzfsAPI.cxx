@@ -2964,7 +2964,7 @@ BZF_API bool bz_setWorldSize(float size, float wallHeight)
 
 //-------------------------------------------------------------------------
 
-BZF_API void bz_setClientWorldDownloadURL(const char *URL)
+BZF_API void bz_setClientWorldDownloadURL(const char *)
 {
 
 }
