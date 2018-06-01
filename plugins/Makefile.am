@@ -10,7 +10,6 @@ SUBDIRS = \
 	customPollTypeSample \
 	CustomZoneSample \
 	fairCTF \
-	fastmap \
 	flagStay \
 	HoldTheFlag \
 	keepaway \

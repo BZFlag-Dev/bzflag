@@ -331,7 +331,6 @@
 		038DA4EE1BB649A90009F369 /* README.customflagsample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4ED1BB649A90009F369 /* README.customflagsample.txt */; };
 		038DA4F01BB649B90009F369 /* README.CustomZoneSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */; };
 		038DA4F21BB64A1D0009F369 /* README.fairCTF.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */; };
-		038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F31BB64A380009F369 /* README.fastmap.txt */; };
 		038DA4F61BB64A5A0009F369 /* README.flagStay.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F51BB64A5A0009F369 /* README.flagStay.txt */; };
 		038DA4FA1BB64A9E0009F369 /* README.HoldTheFlag.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */; };
 		038DA4FE1BB64BC30009F369 /* help_keepaway_admin.txt in Resources */ = {isa = PBXBuildFile; fileRef = 038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */; };
@@ -438,7 +437,6 @@
 		0394E7F9167B1A2F007F4035 /* chathistory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6E7167B1024007F4035 /* chathistory.cpp */; };
 		0394E804167B1E94007F4035 /* customflagsample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6ED167B1024007F4035 /* customflagsample.cpp */; };
 		0394E80F167B1EF8007F4035 /* fairCTF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6F4167B1024007F4035 /* fairCTF.cpp */; };
-		0394E81A167B1FAF007F4035 /* fastmap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E6FB167B1024007F4035 /* fastmap.cpp */; };
 		0394E825167B2052007F4035 /* flagStay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E702167B1025007F4035 /* flagStay.cpp */; };
 		0394E83B167B2180007F4035 /* HoldTheFlag.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E710167B1025007F4035 /* HoldTheFlag.cpp */; };
 		0394E846167B2250007F4035 /* keepaway.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0394E717167B1025007F4035 /* keepaway.cpp */; };
@@ -473,7 +471,6 @@
 		0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7F3167B1A17007F4035 /* chathistory.dylib */; };
 		0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E7FE167B1E66007F4035 /* customflagsample.dylib */; };
 		0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E809167B1ECE007F4035 /* fairCTF.dylib */; };
-		0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E814167B1F76007F4035 /* fastmap.dylib */; };
 		0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E81F167B1FFD007F4035 /* flagstay.dylib */; };
 		0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E835167B2132007F4035 /* HoldTheFlag.dylib */; };
 		0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E840167B2225007F4035 /* keepaway.dylib */; };
@@ -705,13 +702,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 0394E808167B1ECE007F4035;
 			remoteInfo = fairCTF;
-		};
-		0394E818167B1F8D007F4035 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 03BFC301166C637600836142 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0394E813167B1F76007F4035;
-			remoteInfo = fastmap;
 		};
 		0394E823167B200B007F4035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -967,7 +957,6 @@
 				0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */,
 				0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */,
 				0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */,
-				0394E94D167B2D00007F4035 /* fastmap.dylib in CopyFiles */,
 				0394E94E167B2D00007F4035 /* flagstay.dylib in CopyFiles */,
 				0394E950167B2D00007F4035 /* HoldTheFlag.dylib in CopyFiles */,
 				0394E951167B2D00007F4035 /* keepaway.dylib in CopyFiles */,
@@ -1699,7 +1688,6 @@
 		038DA4ED1BB649A90009F369 /* README.customflagsample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.customflagsample.txt; sourceTree = "<group>"; };
 		038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.CustomZoneSample.txt; sourceTree = "<group>"; };
 		038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fairCTF.txt; sourceTree = "<group>"; };
-		038DA4F31BB64A380009F369 /* README.fastmap.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.fastmap.txt; sourceTree = "<group>"; };
 		038DA4F51BB64A5A0009F369 /* README.flagStay.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.flagStay.txt; sourceTree = "<group>"; };
 		038DA4F91BB64A9E0009F369 /* README.HoldTheFlag.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.HoldTheFlag.txt; sourceTree = "<group>"; };
 		038DA4FB1BB64BC30009F369 /* help_keepaway_admin.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = help_keepaway_admin.txt; sourceTree = "<group>"; };
@@ -1745,7 +1733,6 @@
 		0394E6E7167B1024007F4035 /* chathistory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = chathistory.cpp; sourceTree = "<group>"; };
 		0394E6ED167B1024007F4035 /* customflagsample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = customflagsample.cpp; sourceTree = "<group>"; };
 		0394E6F4167B1024007F4035 /* fairCTF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fairCTF.cpp; sourceTree = "<group>"; };
-		0394E6FB167B1024007F4035 /* fastmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fastmap.cpp; sourceTree = "<group>"; };
 		0394E702167B1025007F4035 /* flagStay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = flagStay.cpp; sourceTree = "<group>"; };
 		0394E710167B1025007F4035 /* HoldTheFlag.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoldTheFlag.cpp; sourceTree = "<group>"; };
 		0394E717167B1025007F4035 /* keepaway.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = keepaway.cpp; sourceTree = "<group>"; };
@@ -1780,7 +1767,6 @@
 		0394E7F3167B1A17007F4035 /* chathistory.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = chathistory.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E7FE167B1E66007F4035 /* customflagsample.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = customflagsample.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E809167B1ECE007F4035 /* fairCTF.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fairCTF.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0394E814167B1F76007F4035 /* fastmap.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = fastmap.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E81F167B1FFD007F4035 /* flagstay.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = flagstay.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E835167B2132007F4035 /* HoldTheFlag.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = HoldTheFlag.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E840167B2225007F4035 /* keepaway.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = keepaway.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3114,7 +3100,6 @@
 				C333EFCD1E2B9F5500B4B182 /* customPollTypeSample */,
 				C353B1DF1AE23C8100C5AED5 /* CustomZoneSample */,
 				0394E6F3167B1024007F4035 /* fairCTF */,
-				0394E6FA167B1024007F4035 /* fastmap */,
 				0394E701167B1025007F4035 /* flagStay */,
 				0394E70E167B1025007F4035 /* HoldTheFlag */,
 				0394E716167B1025007F4035 /* keepaway */,
@@ -3188,15 +3173,6 @@
 				038DA4F11BB64A1D0009F369 /* README.fairCTF.txt */,
 			);
 			path = fairCTF;
-			sourceTree = "<group>";
-		};
-		0394E6FA167B1024007F4035 /* fastmap */ = {
-			isa = PBXGroup;
-			children = (
-				0394E6FB167B1024007F4035 /* fastmap.cpp */,
-				038DA4F31BB64A380009F369 /* README.fastmap.txt */,
-			);
-			path = fastmap;
 			sourceTree = "<group>";
 		};
 		0394E701167B1025007F4035 /* flagStay */ = {
@@ -3451,7 +3427,6 @@
 				C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */,
 				C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */,
 				0394E809167B1ECE007F4035 /* fairCTF.dylib */,
-				0394E814167B1F76007F4035 /* fastmap.dylib */,
 				0394E81F167B1FFD007F4035 /* flagstay.dylib */,
 				0394E835167B2132007F4035 /* HoldTheFlag.dylib */,
 				0394E840167B2225007F4035 /* keepaway.dylib */,
@@ -4260,23 +4235,6 @@
 			productReference = 0394E809167B1ECE007F4035 /* fairCTF.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
-		0394E813167B1F76007F4035 /* fastmap */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0394E815167B1F76007F4035 /* Build configuration list for PBXNativeTarget "fastmap" */;
-			buildPhases = (
-				0394E810167B1F76007F4035 /* Sources */,
-				0394E811167B1F76007F4035 /* Frameworks */,
-				0394E812167B1F76007F4035 /* Headers */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = fastmap;
-			productName = fastmap;
-			productReference = 0394E814167B1F76007F4035 /* fastmap.dylib */;
-			productType = "com.apple.product-type.library.dynamic";
-		};
 		0394E81E167B1FFD007F4035 /* flagstay */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0394E820167B1FFD007F4035 /* Build configuration list for PBXNativeTarget "flagstay" */;
@@ -4855,7 +4813,6 @@
 				C333EFC81E2B9F0800B4B182 /* customPollTypeSample */,
 				C353B1D61AE239CC00C5AED5 /* CustomZoneSample */,
 				0394E808167B1ECE007F4035 /* fairCTF */,
-				0394E813167B1F76007F4035 /* fastmap */,
 				0394E81E167B1FFD007F4035 /* flagstay */,
 				0394E834167B2132007F4035 /* HoldTheFlag */,
 				0394E83F167B2225007F4035 /* keepaway */,
@@ -4918,7 +4875,6 @@
 				038DA4EC1BB6498D0009F369 /* README.chathistory.txt in Resources */,
 				038DA4F01BB649B90009F369 /* README.CustomZoneSample.txt in Resources */,
 				038DA5061BB64C9A0009F369 /* help_koth_admin.txt in Resources */,
-				038DA4F41BB64A380009F369 /* README.fastmap.txt in Resources */,
 				038DA5081BB64C9A0009F369 /* README.koth.txt in Resources */,
 				038DA51E1BB64E180009F369 /* README.regFlag.txt in Resources */,
 				038DA50A1BB64CCB0009F369 /* README.logDetail.txt in Resources */,
@@ -5370,14 +5326,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0394E810167B1F76007F4035 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0394E81A167B1FAF007F4035 /* fastmap.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		0394E81B167B1FFD007F4035 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5760,11 +5708,6 @@
 			isa = PBXTargetDependency;
 			target = 0394E808167B1ECE007F4035 /* fairCTF */;
 			targetProxy = 0394E80D167B1EDC007F4035 /* PBXContainerItemProxy */;
-		};
-		0394E819167B1F8D007F4035 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0394E813167B1F76007F4035 /* fastmap */;
-			targetProxy = 0394E818167B1F8D007F4035 /* PBXContainerItemProxy */;
 		};
 		0394E824167B200B007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -7803,15 +7746,6 @@
 			buildConfigurations = (
 				0394E80B167B1ECE007F4035 /* Debug */,
 				0394E80C167B1ECE007F4035 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0394E815167B1F76007F4035 /* Build configuration list for PBXNativeTarget "fastmap" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0394E816167B1F76007F4035 /* Debug */,
-				0394E817167B1F76007F4035 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

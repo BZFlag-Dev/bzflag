@@ -86,8 +86,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "wwzones", "..\plugins\wwzon
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "customflagsample", "..\plugins\customflagsample\customflagsample.vcxproj", "{1F43077E-8AF6-486F-AEDF-6B350A6CE141}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fastmap", "..\plugins\fastmap\fastmap.vcxproj", "{F081A46D-3992-492A-BF68-05C18957A326}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fairCTF", "..\plugins\fairCTF\fairCTF.vcxproj", "{A109E817-5A7C-4274-87A3-7281A8C20AE4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "autoFlagReset", "..\plugins\autoFlagReset\autoFlagReset.vcxproj", "{AD285E14-AAA4-4D71-962D-4E7EDE796B58}"
