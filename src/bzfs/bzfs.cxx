@@ -3036,8 +3036,8 @@ void SendNChunksToPlayer(int playerIndex)
 
     int toSend = playerData->chunksLeft.size();
 
-    if (toSend > 100)
-        toSend = 100;
+    if (toSend > 500)
+        toSend = 500;
 
     void *buf = nullptr, *bufStart = nullptr;
     for (int c = 0; c < toSend; c++)

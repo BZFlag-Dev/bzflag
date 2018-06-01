@@ -449,8 +449,12 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
 
             // if the buffer is getting too big then drop the player.  chances
             // are the network is down or too unreliable to that player.
-            // FIXME -- is 20kB too big?  too small?
-            if (newCapacity >= 512 * 1024)
+
+            int max = 512 * 1024;
+            if (max < ((int)bz_getWorldCacheSize() + 2048))
+                max = (int)bz_getWorldCacheSize() + 2048;
+
+            if (newCapacity >= max)
             {
                 if (info != NULL && playerIndex >= 0)
                 {
