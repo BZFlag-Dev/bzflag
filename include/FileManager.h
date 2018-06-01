@@ -17,6 +17,7 @@
 #include <string>
 #include "bzfio.h"
 #include "Singleton.h"
+#include "OSFile.h"
 
 #define FILEMGR (FileManager::instance())
 
@@ -60,9 +61,14 @@ public:
     */
     std::string       catPath(const std::string& a, const std::string& b) const;
 
-    void setDataPath ( const std::string &s )
+    inline void setDataPath ( const std::string &s )
     {
         dataPath = s;
+    }
+
+    inline const std::string& getDataPath()
+    {
+        return dataPath;
     }
 protected:
     friend class Singleton<FileManager>;

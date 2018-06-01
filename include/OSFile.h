@@ -118,6 +118,8 @@ public:
     bool getNextFile(OSFile &oFile, bool bRecursive);
     bool getNextFile(OSFile &oFile, const char* fileMask, bool bRecursive);
 
+    bool getNextDir(OSDir &oDir, bool bRecursive);
+
     int getFileScanCount();
 
     std::string getStdName();
@@ -130,8 +132,8 @@ protected:
     class OSDirInfo;
     OSDirInfo    *info;
 
-    bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
-    bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive);
+    bool windowsAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly = false);
+    bool linuxAddFileStack(std::string pathName, std::string fileMask, bool bRecursive, bool bDirsOnly = false);
 };
 
 
