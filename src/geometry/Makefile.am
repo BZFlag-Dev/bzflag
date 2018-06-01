@@ -30,6 +30,8 @@ libGeometry_la_SOURCES  =		\
 	MeshRenderNode.cxx		\
 	MeshRenderNode.h		\
 	MeshSceneNode.cxx		\
+	Model.h		\
+	ModelRender.cxx		\
 	OccluderSceneNode.cxx		\
 	PolyWallSceneNode.cxx		\
 	QuadWallSceneNode.cxx		\
@@ -39,6 +41,8 @@ libGeometry_la_SOURCES  =		\
 	TankSceneNode.cxx		\
 	TriWallSceneNode.cxx		\
 	ViewFrustum.cxx			\
+	WavefrontOBJ.h			\
+	WavefrontOBJ.cxx			\
 	WallSceneNode.cxx
 
 libGeometry_la_LIBADD =	\
