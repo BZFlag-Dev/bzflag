@@ -29,7 +29,6 @@ bzfs_SOURCES =				\
 	base64.cxx			\
 	base64.h			\
 	bzfsAPI.cxx			\
-	bzfsHTTPAPI.cxx			\
 	BZWError.cxx			\
 	BZWError.h			\
 	BZWReader.cxx			\

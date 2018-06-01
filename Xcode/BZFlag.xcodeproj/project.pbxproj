@@ -373,7 +373,6 @@
 		0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D0166C846F008806E9 /* BanCommands.cxx */; };
 		0394E68B167B0B71007F4035 /* base64.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D1166C846F008806E9 /* base64.cxx */; };
 		0394E68C167B0B71007F4035 /* bzfsAPI.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D5166C846F008806E9 /* bzfsAPI.cxx */; };
-		0394E68D167B0B71007F4035 /* bzfsHTTPAPI.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D6166C846F008806E9 /* bzfsHTTPAPI.cxx */; };
 		0394E68E167B0B71007F4035 /* bzfsPlugins.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D7166C846F008806E9 /* bzfsPlugins.cxx */; };
 		0394E68F167B0B71007F4035 /* BZWError.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D9166C846F008806E9 /* BZWError.cxx */; };
 		0394E690167B0B71007F4035 /* BZWReader.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543DB166C846F008806E9 /* BZWReader.cxx */; };
@@ -1034,7 +1033,6 @@
 		0305D57A166C9DAE00557FC4 /* BzfMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BzfMedia.h; sourceTree = "<group>"; };
 		0305D57B166C9DAE00557FC4 /* bzfsAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzfsAPI.h; sourceTree = "<group>"; };
 		0305D57C166C9DAE00557FC4 /* bzfSDL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzfSDL.h; sourceTree = "<group>"; };
-		0305D57D166C9DAE00557FC4 /* bzfsHTTPAPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzfsHTTPAPI.h; sourceTree = "<group>"; };
 		0305D57E166C9DAE00557FC4 /* BzfVisual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BzfVisual.h; sourceTree = "<group>"; };
 		0305D57F166C9DAE00557FC4 /* BzfWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BzfWindow.h; sourceTree = "<group>"; };
 		0305D580166C9DAE00557FC4 /* bzglob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzglob.h; sourceTree = "<group>"; };
@@ -1382,7 +1380,6 @@
 		035543D3166C846F008806E9 /* bzfs.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfs.cxx; sourceTree = "<group>"; };
 		035543D4166C846F008806E9 /* bzfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bzfs.h; sourceTree = "<group>"; };
 		035543D5166C846F008806E9 /* bzfsAPI.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPI.cxx; sourceTree = "<group>"; };
-		035543D6166C846F008806E9 /* bzfsHTTPAPI.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsHTTPAPI.cxx; sourceTree = "<group>"; };
 		035543D7166C846F008806E9 /* bzfsPlugins.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsPlugins.cxx; sourceTree = "<group>"; };
 		035543D8166C846F008806E9 /* bzfsPlugins.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bzfsPlugins.h; sourceTree = "<group>"; };
 		035543D9166C846F008806E9 /* BZWError.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BZWError.cxx; sourceTree = "<group>"; };
@@ -2276,7 +2273,6 @@
 				0305D57A166C9DAE00557FC4 /* BzfMedia.h */,
 				0305D57B166C9DAE00557FC4 /* bzfsAPI.h */,
 				0305D57C166C9DAE00557FC4 /* bzfSDL.h */,
-				0305D57D166C9DAE00557FC4 /* bzfsHTTPAPI.h */,
 				0305D57E166C9DAE00557FC4 /* BzfVisual.h */,
 				0305D57F166C9DAE00557FC4 /* BzfWindow.h */,
 				0305D580166C9DAE00557FC4 /* bzglob.h */,
@@ -2695,7 +2691,6 @@
 				035543D3166C846F008806E9 /* bzfs.cxx */,
 				035543D4166C846F008806E9 /* bzfs.h */,
 				035543D5166C846F008806E9 /* bzfsAPI.cxx */,
-				035543D6166C846F008806E9 /* bzfsHTTPAPI.cxx */,
 				035543D7166C846F008806E9 /* bzfsPlugins.cxx */,
 				035543D8166C846F008806E9 /* bzfsPlugins.h */,
 				035543D9166C846F008806E9 /* BZWError.cxx */,
@@ -5277,7 +5272,6 @@
 				0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */,
 				0394E68B167B0B71007F4035 /* base64.cxx in Sources */,
 				0394E68C167B0B71007F4035 /* bzfsAPI.cxx in Sources */,
-				0394E68D167B0B71007F4035 /* bzfsHTTPAPI.cxx in Sources */,
 				0394E68E167B0B71007F4035 /* bzfsPlugins.cxx in Sources */,
 				0394E68F167B0B71007F4035 /* BZWError.cxx in Sources */,
 				0394E690167B0B71007F4035 /* BZWReader.cxx in Sources */,

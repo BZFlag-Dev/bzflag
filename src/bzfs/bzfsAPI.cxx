@@ -755,169 +755,6 @@ BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, v
     return p->GeneralCallback(name,data);
 }
 
-//-------------------------------------------------------------------------
-//
-// utility
-//
-
-static inline NetConnectedPeer* getNonPlayerPeer(int connID)
-{
-    std::map<int, NetConnectedPeer>::iterator it = netConnectedPeers.find(connID);
-    if (it == netConnectedPeers.end())
-        return NULL;
-    NetConnectedPeer* peer = &(it->second);
-    if (peer->player != -1)
-        return NULL;
-    return peer;
-}
-
-
-BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler)
-{
-    if (!handler)
-        return false;
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if ((peer == NULL) || (peer->apiHandler != NULL))
-        return false;
-    peer->apiHandler = handler;
-    return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler *handler)
-{
-    if (!handler)
-        return false;
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if ((peer == NULL) || (peer->apiHandler != handler))
-        return false;
-    peer->apiHandler = NULL;
-    return true;
-}
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_setNonPlayerDisconnectOnSend(int connectionID, bool bSet)
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return false;
-
-    peer->deleteWhenDoneSending = bSet;
-    return true;
-}
-
-BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time)
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return false;
-
-    peer->minSendTime = time;
-    return true;
-}
-
-BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time)
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return false;
-
-    peer->inactivityTimeout = time;
-    return true;
-}
-
-BZF_API bool bz_sendNonPlayerData(int connID, const void *data, unsigned int size)
-{
-    if (!data || !size)
-        return false;
-
-    NetConnectedPeer* peer = getNonPlayerPeer(connID);
-    if (peer == NULL)
-        return false;
-
-    const bool sendOneNow = false; //peer->sendChunks.empty();
-
-    unsigned int chunkSize = 0;
-
-    for (unsigned int pos = 0; pos < size; pos += chunkSize)
-    {
-        const unsigned int left = (size - pos);
-
-        chunkSize = (left < maxNonPlayerDataChunk) ? left : maxNonPlayerDataChunk;
-
-        peer->sendChunks.push_back(std::string((const char*)data + pos, chunkSize));
-    }
-
-    // send off at least one now if it was empty
-    if (sendOneNow)
-        sendBufferedNetDataForPeer(*peer);
-
-    return true;
-}
-
-
-BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connectionID)
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return 0;
-    return peer->sendChunks.size();
-}
-
-
-BZF_API const char* bz_getNonPlayerConnectionIP ( int connectionID )
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return NULL;
-
-    unsigned int address = (unsigned int)peer->netHandler->getIPAddress().s_addr;
-    unsigned char* a = (unsigned char*)&address;
-
-    static std::string strRet;
-
-    strRet = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
-
-    return strRet.c_str();
-}
-
-
-BZF_API const char* bz_getNonPlayerConnectionHost ( int connectionID )
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return NULL;
-    return peer->netHandler->getHostname();
-}
-
-
-//-------------------------------------------------------------------------
-
-BZF_API bool bz_disconnectNonPlayerConnection(int connectionID)
-{
-    NetConnectedPeer* peer = getNonPlayerPeer(connectionID);
-    if (peer == NULL)
-        return false;
-
-    // flush out the rest of it's sends
-    while (!peer->sendChunks.empty())
-        sendBufferedNetDataForPeer(*peer);
-
-    if (peer->apiHandler)
-        peer->apiHandler->disconnect(connectionID);
-
-    peer->netHandler->flushData();
-    delete(peer->netHandler);
-    peer->netHandler = NULL;
-    peer->apiHandler = NULL;
-    peer->sendChunks.clear();
-    peer->deleteMe = true;
-
-    return true;
-}
-
 BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
 {
     if (!playerRecord)
@@ -2977,8 +2814,6 @@ BZF_API const bz_ApiString bz_getClientWorldDownloadURL(void)
     return URL;
 }
 
-//-------------------------------------------------------------------------
-
 BZF_API bool bz_saveWorldCacheFile(const char *)
 {
     return false;
@@ -2997,7 +2832,6 @@ BZF_API unsigned int bz_getWorldCacheData ( unsigned char *data )
     memcpy(data,worldDatabase,worldDatabaseSize);
     return worldDatabaseSize;
 }
-
 
 BZF_API bool bz_addWorldBox ( float *pos, float rot, float* scale, bz_WorldObjectOptions options )
 {

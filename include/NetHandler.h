@@ -50,6 +50,8 @@ void removeNetworkLogCallback(NetworkDataLogCallback * cb );
 
 const int maxHandlers = LastRealPlayer;
 
+extern int BigMessageSize;
+
 #ifdef DEBUG
 #define NETWORK_STATS
 #endif

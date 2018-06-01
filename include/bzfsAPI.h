@@ -310,7 +310,7 @@ typedef enum
     bz_eFlagDroppedEvent,
     bz_eAllowCTFCaptureEvent,
     bz_eMsgDebugEvent,
-    bz_eNewNonPlayerConnection,
+    bz_eDEADEVENT_ONE_DO_NOT_USE,
     bz_ePluginLoaded,
     bz_ePluginUnloaded,
     bz_ePlayerScoreChanged,
@@ -1279,21 +1279,6 @@ public:
     int playerID;
 };
 
-class BZF_API bz_NewNonPlayerConnectionEventData_V1 : public bz_EventData
-{
-public:
-
-    bz_NewNonPlayerConnectionEventData_V1() : bz_EventData(bz_eNewNonPlayerConnection)
-        , connectionID(-1)
-        , data(0), size(0)
-    {
-    }
-
-    int connectionID;
-    void* data;
-    unsigned int size;
-};
-
 class BZF_API bz_PluginLoadUnloadEventData_V1 : public bz_EventData
 {
 public:
@@ -1537,31 +1522,6 @@ BZF_API bool bz_pluginExists(const char* name);
 BZF_API bz_Plugin* bz_getPlugin(const char* name);
 
 BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data );
-
-// non player data handlers
-class bz_NonPlayerConnectionHandler
-{
-public:
-    virtual ~bz_NonPlayerConnectionHandler() {}
-    virtual void pending(int connectionID, void *data, unsigned int size) = 0;
-    virtual void disconnect(int connectionID)
-    {
-        if (connectionID) return;
-    }
-};
-
-BZF_API bool bz_registerNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
-BZF_API bool bz_removeNonPlayerConnectionHandler(int connectionID, bz_NonPlayerConnectionHandler* handler);
-BZF_API bool bz_setNonPlayerInactivityTimeout(int connectionID, double time);
-BZF_API bool bz_setNonPlayerDataThrottle(int connectionID, double time);
-BZF_API bool bz_setNonPlayerDisconnectOnSend(int connectionID, bool bSet);
-BZF_API bool bz_sendNonPlayerData(int connectionID, const void *data, unsigned int size);
-BZF_API bool bz_disconnectNonPlayerConnection(int connectionID);
-BZF_API unsigned int bz_getNonPlayerConnectionOutboundPacketCount(int connectionID);
-
-BZF_API const char* bz_getNonPlayerConnectionIP(int connectionID);
-BZF_API const char* bz_getNonPlayerConnectionHost(int connectionID);
-
 
 // player listing
 BZF_API bz_APIIntList* bz_getPlayerIndexList(void);

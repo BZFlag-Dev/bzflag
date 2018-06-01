@@ -191,7 +191,6 @@ struct NetConnectedPeer
     int player;
 
     NetHandler* netHandler;
-    bz_NonPlayerConnectionHandler* apiHandler;
 
     std::list<std::string> sendChunks;
     std::string bufferedInput;

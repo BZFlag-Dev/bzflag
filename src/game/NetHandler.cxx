@@ -12,18 +12,18 @@
 
 /* interface header */
 #include "NetHandler.h"
-// #include "MsgStrings.h"
+#include "bzfsAPI.h"
 
 // system headers
 #include <errno.h>
-
-#include "bzfsAPI.h"
 
 #ifndef SHUT_RDWR
 #define SHUT_RDWR -2
 #endif
 
 const int udpBufSize = 128000;
+
+extern int BigMessageSize = 512 * 1024;
 
 std::vector<NetworkDataLogCallback*> logCallbacks;
 
@@ -455,8 +455,8 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
             // are the network is down or too unreliable to that player.
 
             int max = 512 * 1024;
-            if (max < ((int)bz_getWorldCacheSize() + 2048))
-                max = (int)bz_getWorldCacheSize() + 2048;
+            if (max < (BigMessageSize + 2048))
+                max = BigMessageSize + 2048;
 
             if ((outmsgSize + (int)length) >= max)
             {

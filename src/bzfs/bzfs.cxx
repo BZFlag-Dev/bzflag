@@ -69,7 +69,6 @@
 
 Shots::Manager ShotManager;
 
-unsigned int maxNonPlayerDataChunk = 2048;
 std::map<int, NetConnectedPeer> netConnectedPeers;
 
 VotingArbiter *votingarbiter = NULL;
@@ -1219,6 +1218,7 @@ bool defineWorld ( void )
 
     // build up a cache of world chunks
 
+    BigMessageSize = (int)worldDatabaseSize;
     size_t dataLeft = worldDatabaseSize;
     char* p = worldDatabase;
 
@@ -1337,7 +1337,6 @@ static void acceptClient()
     // they aren't a player yet till they send us the connection string
     NetConnectedPeer peer;
     peer.netHandler = new NetHandler(clientAddr, fd);
-    peer.apiHandler = NULL;
     peer.player = -1;
     peer.socket = fd;
     peer.deleteMe = false;
@@ -6155,7 +6154,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
     const size_t headerLen = strlen(BZ_CONNECT_HEADER);
     size_t readLen = headerLen;
 
-    if (peer.apiHandler == NULL && peer.player == -1)
+    if (peer.player == -1)
     {
         // they arn't anything yet, see if they have any data
 
@@ -6263,23 +6262,13 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
                         peer.deleteMe = true;
                     }
 
-                    // call an event to let people know we got a new connect
-                    bz_NewNonPlayerConnectionEventData_V1 eventData;
-
-                    eventData.data = strdup(peer.bufferedInput.c_str());
-                    eventData.size = peer.bufferedInput.size();
-                    eventData.connectionID = sockFD;
-
-                    worldEventManager.callEvents(bz_eNewNonPlayerConnection, &eventData);
-                    free(eventData.data);
-
-                    // if someone wanted him they'd have set his handler and he'll never get here again
+                    // if they don't send the right data, they will be purged after the timeout.
                 }
             }
         }
     }
 
-    if (peer.apiHandler == NULL && peer.player == -1)
+    if (peer.player == -1)
     {
         if (TimeKeeper::getCurrent().getSeconds() > peer.startTime.getSeconds() + connectionTimeout)
         {
@@ -6291,57 +6280,6 @@ static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& rea
             peer.deleteMe = true; // nobody loves him
         }
     }
-
-    // we like them see if they have gotten new data
-    if (peer.apiHandler && peer.player < 0 && netHandler->isFdSet(&read_set))
-    {
-        in_addr IP = netHandler->getIPAddress();
-        BanInfo info(IP);
-        if (!clOptions->acl.validate(IP, &info))
-        {
-            logDebugMessage(2,"API peer %s banned\n", netHandler->getTargetIP());
-            std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
-            peer.sendChunks.push_back(banMsg);
-            peer.deleteMe = true;
-        }
-
-        if (!peer.deleteMe)
-        {
-            bool retry = false;
-
-            RxStatus e = netHandler->receive(1024,&retry);
-            if (retry) // try one more time, just in case it was blocked
-            {
-                int retries = 1;
-                if (BZDB.isSet("_maxConnectionRetries"))
-                    retries = (int) BZDB.eval("_maxConnectionRetries");
-
-                retry = false;
-                for ( int t = 0; t < retries; t++)
-                {
-                    e = netHandler->receive(1024,&retry);
-                    if (!retry)
-                        break;
-                }
-            }
-
-            if (e == ReadPart || e == ReadAll )
-            {
-                peer.lastActivity = TimeKeeper::getCurrent();
-                peer.apiHandler->pending(peer.socket,netHandler->getTcpBuffer(),netHandler->getTcpReadSize());
-                netHandler->flushData();
-            }
-            else
-            {
-                // they done disconnected
-                peer.apiHandler->disconnect(peer.socket);
-                peer.deleteMe = true;
-            }
-        }
-    }
-
-    if (peer.player < 0) // only send data if he's not a player, there may be disco data
-        sendBufferedNetDataForPeer(peer);
 }
 
 //

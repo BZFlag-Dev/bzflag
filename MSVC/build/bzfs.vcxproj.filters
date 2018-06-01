@@ -115,9 +115,6 @@
     <ClCompile Include="..\..\src\bzfs\bzfsAPI.cxx">
       <Filter>Source Files\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzfs\bzfsHTTPAPI.cxx">
-      <Filter>Source Files\API</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\bzfs\BZWReader.cxx">
       <Filter>Source Files\World</Filter>
     </ClCompile>
@@ -277,9 +274,6 @@
       <Filter>Header Files\Server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\bzfsAPI.h">
-      <Filter>Header Files\API</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\bzfsHTTPAPI.h">
       <Filter>Header Files\API</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\bzfsPlugins.h">

@@ -30,10 +30,6 @@
 
 #include "TextUtils.h"
 
-// for HTTP
-void InitHTTP();
-void KillHTTP();
-
 #if defined(_WIN32)
 std::string extension = ".dll";
 std::string globalPluginDir = ".\\plugins\\";
@@ -422,8 +418,6 @@ bool unloadPlugin ( std::string plugin )
 
 void unloadPlugins ( void )
 {
-    KillHTTP();
-
     for (unsigned int i = 0; i < vPluginList.size(); i++)
         unload1Plugin(i);
     vPluginList.clear();
@@ -442,20 +436,6 @@ std::vector<std::string> getPluginList ( void )
     return plugins;
 }
 
-int pendingHTTPAuths = 0;
-
-void PushPendingHTTPWait ()
-{
-    pendingHTTPAuths++;
-}
-
-void PopPendingHTTPWait ()
-{
-    pendingHTTPAuths--;
-    if (pendingHTTPAuths < 0)
-        pendingHTTPAuths = 0;
-}
-
 float getPluginMinWaitTime ( void )
 {
     float maxTime = 1000.0;
@@ -466,8 +446,6 @@ float getPluginMinWaitTime ( void )
                 && (vPluginList[i].plugin->MaxWaitTime < maxTime))
             maxTime = vPluginList[i].plugin->MaxWaitTime;
     }
-    if (pendingHTTPAuths > 0)
-        return 0;
 
     return maxTime;
 }
@@ -588,8 +566,6 @@ void initPlugins ( void )
     registerCustomSlashCommand("loadplugin",&command);
     registerCustomSlashCommand("unloadplugin",&command);
     registerCustomSlashCommand("listplugins",&command);
-
-    InitHTTP();
 }
 
 bool registerCustomPluginHandler ( std::string exte, bz_APIPluginHandler *handler )
