@@ -1181,136 +1181,72 @@ LOCAL.OPERATOR: BANLIST
 
 The available permissions are as follows:
 
-.\" Use one tab between permission and description
-.ta 2i T .5i
-
+.TS
+l l.
 ACTIONMESSAGE	/me
-.br
 ADMINMESSAGERECEIVE	player receives messages sent to admin channel
-.br
 ADMINMESSAGESEND	player may send messages on the admin channel
-.br
 ALL	\fBall\fR permissions available
-.br
 ANTIBAN	player is immune to /ban
-.br
 ANTIKICK	player is immune to /kick
-.br
 ANTIKILL	player is immune to /kill
-.br
 ANTIPOLL	player is immune to /poll
-.br
 ANTIPOLLBAN	player is immune to /poll ban
-.br
 ANTIPOLLKICK	player is immune to /poll kick
-.br
 ANTIPOLLKILL	player is immune to /poll kill
-.br
 BAN	/ban /hostban
-.br
 BANLIST	/banlist /hostbanlist
-.br
 CLIENTQUERY	/clientquery
-.br
 COUNTDOWN	/countdown
-.br
 ENDGAME	/gameover
-.br
 FLAGHISTORY	/flaghistory
-.br
 FLAGMASTER	/flag
-.br
 FLAGMOD	/flag reset /flag show /flag history
-.br
 HIDEADMIN	player doesn't show the @ sign
-.br
 IDLESTATS	/idlestats
-.br
 INFO	not implemented
-.br
 JITTERWARN	/jitterwarn /jitterdrop
-.br
 KICK	/kick
-.br
 LAGSTATS	/lagstats
-.br
 LAGWARN	/lagwarn /lagdrop
-.br
 LISTPERMS	not implemented
-.br
 LISTPLUGINS	/listplugins
-.br
 MASTERBAN	/masterban
-.br
 MODCOUNT	/modcount
-.br
 MUTE	/mute
-.br
 PACKETLOSSWARN	/packetlosswarn /packetlossdrop
-.br
 PLAYERLIST	/playerlist
-.br
 PLUGINS	/listplugins /loadplugin /unloadplugin
-.br
 POLL	/poll
-.br
 POLLBAN	/poll ban
-.br
 POLLFLAGRESET	/poll flagreset
-.br
 POLLKICK	/poll kick
-.br
 POLLSET	/poll set
-.br
 PRIVATEMESSAGE	/msg
-.br
 RECORD	/record
-.br
 REJOIN	allows instant rejoin, regardless of _rejoinTime
-.br
 REMOVEPERMS	/removegroup
-.br
 REPLAY	/replay
-.br
 REPORT	/report
-.br
 REQUIREIDENTIFY	user must use global registration
-.br
 SAY	/say
-.br
 SENDHELP	/sendhelp
-.br
 SETALL	use of all set/remove commands
-.br
 SETPERMS	/setgroup
-.br
 SETPASSWORD	not implemented
-.br
 SETVAR	/set /reset
-.br
 SHORTBAN	/ban (with a limited duration)
-.br
 SHOWADMIN	player shows an @ regardless of having 'shortban' perm
-.br
-SHOWMOTTO	player is allowed to display their motto on the scoreboard
-.br
 SHOWOTHERS	/showgroup /showperms (on others)
-.br
 SHUTDOWNSERVER	/shutdownserver
-.br
 SPAWN	join game as a player. observers don't need this flag.
-.br
 SUPERKILL	/superkill
-.br
 TALK	allows all players to send messages
-.br
 UNBAN	/unban /hostunban
-.br
 UNMUTE	/unmute
-.br
 VETO	/veto
-.br
 VOTE	/vote
+.TE
 
 .TP
 .B /grouplist
