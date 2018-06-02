@@ -31,12 +31,15 @@
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
 #include "WeatherRenderer.h"
+#include "VBO_Handler.h"
 
-class BackgroundRenderer
+class BackgroundRenderer : public VBOclient
 {
 public:
     BackgroundRenderer(const SceneRenderer&);
-    ~BackgroundRenderer();
+    virtual ~BackgroundRenderer();
+
+    virtual void initVBO();
 
     void        setupGroundMaterials();
     void        setupSkybox();
@@ -55,8 +58,7 @@ public:
     void        setBlank(bool blank = true);
     void        setInvert(bool invert = true);
     void        setSimpleGround(bool simple = true);
-    void        setCelestial(const SceneRenderer&,
-                             const float sunDirection[3],
+    void        setCelestial(const float sunDirection[3],
                              const float moonDirection[3]);
     void        addCloudDrift(GLfloat uDrift, GLfloat vDrift);
     void        notifyStyleChange();
@@ -82,11 +84,14 @@ private:
     BackgroundRenderer& operator=(const BackgroundRenderer&);
 
     void        resizeSky();
+    void        setSkyVBO();
+    void        setCloudVBO();
+    void        setMountainsVBO();
 
     void        doFreeDisplayLists();
     void        doInitDisplayLists();
     void        setSkyColors();
-    void        makeCelestialLists(const SceneRenderer&);
+    void        makeCelestialLists();
     static void     freeContext(void*);
     static void     initContext(void*);
     static void     bzdbCallback(const std::string&, void*);
@@ -97,7 +102,6 @@ private:
     bool        invert;
     bool        simpleGround;
     int         style;
-    int         styleIndex;
 
     // stuff for ground
     OpenGLGState    groundGState;
@@ -119,14 +123,14 @@ private:
     int         numMountainTextures;
     int         mountainsMinWidth;
     OpenGLGState*   mountainsGState;
-    GLuint*     mountainsList;
+    int        *mountainsVBOIndex;
 
     // stuff for clouds
     GLfloat     cloudDriftU, cloudDriftV;
     bool        cloudsAvailable;
     bool        cloudsVisible;
     OpenGLGState    cloudsGState;
-    GLuint      cloudsList;
+    int         cloudVBOIndex;
 
     // weather
     WeatherRenderer weather;
@@ -155,11 +159,10 @@ private:
     OpenGLGState    sunGState;
     OpenGLGState    moonGState[2];
     OpenGLGState    starGState[2];
-    GLuint      sunList;
-    GLuint      sunXFormList;
-    GLuint      moonList;
-    GLuint      starList;
-    GLuint      starXFormList;
+    int         sunVBOIndex;
+    int         moonVBOIndex;
+    int         starVBOIndex;
+    int         moonSegements;
 
     static glm::vec3        skyPyramid[5];
     static const GLfloat    cloudRepeats;

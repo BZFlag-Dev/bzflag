@@ -31,6 +31,7 @@
 #include "BZDBCache.h"
 #include "MeshSceneNode.h"
 #include "OpenGLCommon.h"
+#include "VBO_Drawing.h"
 
 /* FIXME - local implementation dependancies */
 #include "BackgroundRenderer.h"
@@ -584,7 +585,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
     if (background)
-        background->setCelestial(*this, sunDir, moonDir);
+        background->setCelestial(sunDir, moonDir);
 }
 
 
@@ -751,13 +752,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
-                glColor4fv(mirrorColor);
-                glBegin(GL_TRIANGLE_STRIP);
-                glVertex2f(-1.0f, -1.0f);
-                glVertex2f(+1.0f, -1.0f);
-                glVertex2f(-1.0f, +1.0f);
-                glVertex2f(+1.0f, +1.0f);
-                glEnd();
+                glColor4f(mirrorColor[0], mirrorColor[1], mirrorColor[2], mirrorColor[3]);
+                DRAWER.simmetricRect();
                 glDisable(GL_BLEND);
             }
         }
@@ -771,13 +767,9 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
-                glColor4fv(mirrorColor);
-                glBegin(GL_TRIANGLE_STRIP);
-                glVertex2f(-extent, -extent);
-                glVertex2f(+extent, -extent);
-                glVertex2f(-extent, +extent);
-                glVertex2f(+extent, +extent);
-                glEnd();
+                glColor4f(mirrorColor[0], mirrorColor[1], mirrorColor[2], mirrorColor[3]);
+                glScalef(extent, extent, 0.0f);
+                DRAWER.simmetricRect();
                 glDisable(GL_BLEND);
             }
             glMatrixMode(GL_PROJECTION);
@@ -1099,12 +1091,7 @@ void SceneRenderer::renderDimming()
 
         {
             glEnable(GL_BLEND);
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2f(-1.0f, -1.0f);
-            glVertex2f(+1.0f, -1.0f);
-            glVertex2f(-1.0f, +1.0f);
-            glVertex2f(+1.0f, +1.0f);
-            glEnd();
+            DRAWER.simmetricRect();
             glDisable(GL_BLEND);
         }
     }
@@ -1134,13 +1121,9 @@ void SceneRenderer::renderDepthComplexity()
     for (int i = 0; i < numColors; i++)
     {
         glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
-        glColor3fv(depthColors[i]);
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f(-1.0f, -1.0f);
-        glVertex2f(+1.0f, -1.0f);
-        glVertex2f(-1.0f, +1.0f);
-        glVertex2f(+1.0f, +1.0f);
-        glEnd();
+        const GLfloat *c = depthColors[i];
+        glColor4f(c[0], c[1], c[2], 1.0f);
+        DRAWER.simmetricRect();
     }
     glDisable(GL_STENCIL_TEST);
 
