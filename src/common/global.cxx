@@ -184,7 +184,7 @@ const struct GlobalDBItem globalDBItems[] =
     { "_worldSize",       "800.0",            false, StateDatabase::Locked}
 
 };
-const unsigned int  numGlobalDBItems = countof(globalDBItems);
+const unsigned int  numGlobalDBItems = bzcountof(globalDBItems);
 
 // Local Variables: ***
 // mode: C++ ***

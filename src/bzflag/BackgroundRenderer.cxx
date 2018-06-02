@@ -1671,7 +1671,7 @@ void BackgroundRenderer::doFreeDisplayLists()
         &cloudsList, &sunList, &sunXFormList,
         &moonList, &starList, &starXFormList
     };
-    const int count = countof(lists);
+    const int count = bzcountof(lists);
     for (i = 0; i < count; i++)
     {
         if (*lists[i] != INVALID_GL_LIST_ID)

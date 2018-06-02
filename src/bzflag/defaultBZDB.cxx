@@ -180,7 +180,7 @@ DefaultDBItem defaultDBItems[] =
 
 void loadBZDBDefaults ( void )
 {
-    for (int i = 0; i < (int)countof(defaultDBItems); ++i)
+    for (int i = 0; i < (int)bzcountof(defaultDBItems); ++i)
     {
         assert(defaultDBItems[i].name != NULL);
 

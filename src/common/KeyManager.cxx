@@ -181,7 +181,7 @@ KeyManager::KeyManager()
         stringToEvent.insert(std::make_pair(std::string(buttonNames[i]), key));
     }
     key.button = BzfKeyEvent::NoButton;
-    for (i = 0; i < countof(asciiNames); ++i)
+    for (i = 0; i < bzcountof(asciiNames); ++i)
     {
         key.ascii = asciiNames[i][1][0];
         stringToEvent.insert(std::make_pair(std::string(asciiNames[i][0]), key));

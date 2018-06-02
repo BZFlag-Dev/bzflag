@@ -7173,7 +7173,7 @@ static void     playingLoop()
             };
 
             static unsigned long old_buttons = 0;
-            const int button_count = countof(button_map);
+            const int button_count = bzcountof(button_map);
             unsigned long new_buttons = mainWindow->getJoyButtonSet();
             if (old_buttons != new_buttons)
                 for (int j = 0; j < button_count; j++)
@@ -7231,7 +7231,8 @@ static void     playingLoop()
             // -1 0 1 //  8 0 2 // 270   ?  90 //  180   0   0 // 7 -1  3 //
             //    1   // 12 4 6 // 225 180 135 //  135  90  45 // 6  5  4 //
 
-            const int max_hats = 4, num_buttons = countof(hat_map) / max_hats; // 8
+            const int max_hats = 4;
+            const int num_buttons = bzcountof(hat_map) / max_hats; // 8
             int num_hats = mainWindow->getNumHats();
             if (num_hats > max_hats) num_hats = max_hats; // num_hats min= max_hats;
             static std::vector<int> hats(max_hats, -1);
@@ -7764,7 +7765,7 @@ void            startPlaying(BzfDisplay* _display,
     lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
 
     // register some commands
-    for (unsigned int c = 0; c < countof(commandList); ++c)
+    for (unsigned int c = 0; c < bzcountof(commandList); ++c)
         CMDMGR.add(commandList[c].name, commandList[c].func, commandList[c].help);
 
     // initialize the tank display lists

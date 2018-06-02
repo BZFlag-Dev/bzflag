@@ -765,7 +765,7 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glRotatef(azimuth, 0.0f, 0.0f, 1.0f);
 
     glBegin(GL_QUADS);
-    const int numFaces = countof(idlFaces);
+    const int numFaces = bzcountof(idlFaces);
     for (int i = 0; i < numFaces; i++)
     {
         // get distances from tankPlane

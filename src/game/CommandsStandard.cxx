@@ -366,14 +366,14 @@ const struct CommandsItem commands[] =
 void                CommandsStandard::add()
 {
     unsigned int i;
-    for (i = 0; i < countof(commands); ++i)
+    for (i = 0; i < bzcountof(commands); ++i)
         CMDMGR.add(commands[i].name, commands[i].func, commands[i].help);
 }
 
 void                CommandsStandard::remove()
 {
     unsigned int i;
-    for (i = 0; i < countof(commands); ++i)
+    for (i = 0; i < bzcountof(commands); ++i)
         CMDMGR.remove(commands[i].name);
 }
 
