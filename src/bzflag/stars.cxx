@@ -415,7 +415,7 @@ const float stars[][6] =
     { 0.37f, 0.37f, 0.37f, 0.19701055f, -0.56322998f, 0.80247045f },
     { 0.37f, 0.37f, 0.37f, 0.17973220f, -0.12412395f, -0.97585326f }
 };
-const unsigned int NumStars = countof(stars);
+const unsigned int NumStars = bzcountof(stars);
 
 // Local Variables: ***
 // mode: C++ ***

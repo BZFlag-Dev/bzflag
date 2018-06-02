@@ -256,10 +256,7 @@ typedef unsigned char   uint8_t;
 #  endif
 #endif /* __BEOS__ */
 
-#ifdef countof
-#  undef countof
-#endif
-#define countof(__x)   (sizeof(__x) / sizeof(__x[0]))
+#define bzcountof(__x)   (sizeof(__x) / sizeof(__x[0]))
 
 
 #ifdef HAVE_STD__ISNAN

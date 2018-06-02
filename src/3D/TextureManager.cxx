@@ -50,7 +50,7 @@ TextureManager::TextureManager()
     lastBoundID = -1;
 
     int i, numTextures;
-    numTextures = countof(procLoader);
+    numTextures = bzcountof(procLoader);
 
     for (i = 0; i < numTextures; i++)
     {
@@ -272,7 +272,7 @@ void TextureManager::updateTextureFilters()
     }
 
     // rebuild proc textures
-    for (int i = 0; i < (int)countof(procLoader); i++)
+    for (int i = 0; i < (int)bzcountof(procLoader); i++)
     {
         procLoader[i].manager = this;
         procLoader[i].proc(procLoader[i]);

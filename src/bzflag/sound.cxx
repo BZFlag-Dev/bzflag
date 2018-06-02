@@ -237,7 +237,9 @@ static const char*  soundFiles[] =
     "flap",
     "bounce"
 };
-#define STD_SFX_COUNT   ((int)(countof(soundFiles)))    // the number of "Standard" sounds
+
+// the number of "Standard" sounds
+#define STD_SFX_COUNT   ((int)(bzcountof(soundFiles)))
 
 /*
  * producer/consumer shared arena
