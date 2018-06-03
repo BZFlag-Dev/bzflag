@@ -316,6 +316,7 @@
 		0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A4691B0C8FBA00FEC9F7 /* modeltool.cxx */; };
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
+      037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 037D645520A1EB25000E5586 /* libGLEW.a */; };
 		038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 038D05E41DB5A59300A00C9E /* COPYING.LGPL */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
@@ -1675,7 +1676,8 @@
 		0370A46D1B0C8FBA00FEC9F7 /* wavefrontOBJ.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wavefrontOBJ.h; path = ../tools/modeltool/wavefrontOBJ.h; sourceTree = "<group>"; };
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
-		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		037D645520A1EB25000E5586 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/lib/libGLEW.a; sourceTree = "<absolute>"; };
+      03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		038DA4DC1BB645D80009F369 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
@@ -2188,6 +2190,7 @@
 				03C8EF11167AC52800BB07A5 /* libcommon.a in Frameworks */,
 				0394E7E3167B18CF007F4035 /* libnet.a in Frameworks */,
 				03C8EF13167AC53000BB07A5 /* libgame.a in Frameworks */,
+            037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */,
 				03C8EF1E167AC59A00BB07A5 /* libtank.a in Frameworks */,
 				03C8EF14167AC53400BB07A5 /* libgeometry.a in Frameworks */,
 				03C8EF15167AC53700BB07A5 /* libobstacle.a in Frameworks */,
@@ -3509,6 +3512,7 @@
 				038DA4DC1BB645D80009F369 /* libcurl.tbd */,
 				038DA4DA1BB645CA0009F369 /* libz.tbd */,
 				03DBE9AC1B30D2ED00711E71 /* libcares.a */,
+            037D645520A1EB25000E5586 /* libGLEW.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";

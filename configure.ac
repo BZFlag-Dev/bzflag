@@ -540,7 +540,6 @@ AC_CHECK_TYPES([std::shared_ptr<int>],
 	[#include <memory>])
 
 ac_cv_search_glBegin=no
-ac_cv_search_gluScaleImage=no
 ac_func_search_save_LIBS=$LIBS
 
 case $host_os in
@@ -603,23 +602,9 @@ if test "$ac_cv_search_glBegin" != no; then
     if test "$ac_cv_search_glBegin" = -lGL2; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
-
-    AC_MSG_CHECKING([for glu.h])
-    LIBS="-framework OpenGL $ac_func_search_save_LIBS"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/glu.h>]],
-		   [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
-		    [ac_cv_search_gluScaleImage="-framework OpenGL"],[])
-    for ac_lib in glu32 GL GLU; do
-	LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-	AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/glu.h>]],
-		       [[gluScaleImage(GL_RED,0,0,GL_INT,0,0,0,GL_INT,0)]])],
-		        [ac_cv_search_gluScaleImage="-l$ac_lib"
-		         break],[])
-    done
-    if test "$ac_cv_search_gluScaleImage" != no; then
-	GLIBS="$ac_cv_search_gluScaleImage $GLIBS"
-    fi
 fi
+have_gl=yes
+PKG_CHECK_MODULES([GLEW], glew, , [have_gl=no])
 
 LIBS=$ac_func_search_save_LIBS
 AC_SUBST(GLIBS)
@@ -954,15 +939,13 @@ AC_MSG_RESULT([$ac_ff_effect_directional])
 
 # if the client was enabled, make sure we have GL and libpng
 if test x$enable_client != xno; then
-    have_gl=no
     have_libpng=no
-    if test "$ac_cv_search_gluScaleImage" = no; then
+    if test "$have_gl" = no; then
 	AC_MSG_WARN(
 	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
     else
-	have_gl=yes
 	if test "x$LIBPNG" = "x"; then
 	    AC_MSG_WARN(
 	    [Client build is enabled, but libpng does not seem to be available ... disabling BZFlag client])
