@@ -6,7 +6,7 @@
 #ifndef _WAVEFRONT_OBJ_H_
 #define _WAVEFRONT_OBJ_H_
 
-#include "model.h"
+#include "Model.h"
 #include <string>
 
 bool readOBJ ( CModel &model, std::string file );

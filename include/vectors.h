@@ -20,7 +20,7 @@
 #include <iostream>
 #include <new>
 
-
+#include "common.h"
 #include "vectors_old.h" // FIXME -- the crappy old-style vectors
 
 //============================================================================//

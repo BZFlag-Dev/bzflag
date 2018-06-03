@@ -13,7 +13,7 @@
 #include <map>
 
 /* common headers */
-#include "wavefrontOBJ.h"
+#include "WavefrontOBJ.h"
 #include "TextUtils.h"
 
 static void underscoreBeforeNumbers(std::string& name)
