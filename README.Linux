@@ -30,23 +30,25 @@ BZFlag.  Known build requirements include:
 
     apt-get install automake autoconf g++ libtool make libc-ares-dev \
     libcurl3-dev libgl1-mesa-dev libglu1-mesa-dev libncurses-dev libpng-dev \
-    libsdl2-dev zlib1g-dev
+    libsdl2-dev zlib1g-dev libglew-dev
 
   Older Debian & Ubuntu with SDL 1.2.10 or higher:
 
     apt-get install automake autoconf g++ libtool make libc-ares-dev \
     libcurl3-dev libgl1-mesa-dev libglu1-mesa-dev libncurses-dev libpng-dev \
-    libsdl1.2-dev libsdl-sound1.2-dev zlib1g-dev
+    libsdl1.2-dev libsdl-sound1.2-dev zlib1g-dev  libglew-dev
 
   Fedora:
 
     dnf install gcc-c++ libtool c-ares-devel libcurl-devel libpng-devel \
-    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL2-devel zlib-devel
+    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL2-devel zlib-devel \
+    glew-devel
 
   CentOS:
 
     yum install gcc-c++ libtool c-ares-devel libcurl-devel libpng-devel \
-    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL-devel zlib-devel
+    mesa-libGL-devel mesa-libGLU-devel ncurses-devel SDL-devel zlib-devel \
+    glew-devel
 
 After any development packages are installed, execute the following
 commands from the top-level BZFlag source directory:
