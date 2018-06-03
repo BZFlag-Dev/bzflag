@@ -30,12 +30,12 @@ BZFlag.  Known build requirements include:
 
     apt-get install g++ libtool automake autoconf libgl1-mesa-dev \
     libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev \
-    libc-ares-dev zlib1g-dev libncurses-dev make
+    libc-ares-dev zlib1g-dev libncurses-dev libglew-dev make
 
   Fedora:
 
     yum install SDL-devel c-ares-devel libSM-devel libcurl-devel \
-    gcc-c++ libidn-devel libtool ncurses-devel zlib-devel
+    gcc-c++ libidn-devel libtool ncurses-devel zlib-devel glew-devel
 
 After any development packages are installed, execute the following
 commands from the top-level BZFlag source directory:
