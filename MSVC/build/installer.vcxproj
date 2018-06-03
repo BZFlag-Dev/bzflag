@@ -148,9 +148,6 @@
     <ProjectReference Include="..\..\plugins\fairCTF\fairCTF.vcxproj">
       <Project>{a109e817-5a7c-4274-87a3-7281a8c20ae4}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\plugins\fastmap\fastmap.vcxproj">
-      <Project>{f081a46d-3992-492a-bf68-05c18957a326}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\plugins\flagStay\flagStay.vcxproj">
       <Project>{1ff80896-dd88-4992-8db1-7070924091bf}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>

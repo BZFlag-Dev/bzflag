@@ -1038,7 +1038,6 @@ AC_CONFIG_FILES([
 	plugins/customPollTypeSample/Makefile
 	plugins/CustomZoneSample/Makefile
 	plugins/fairCTF/Makefile
-	plugins/fastmap/Makefile
 	plugins/flagStay/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
