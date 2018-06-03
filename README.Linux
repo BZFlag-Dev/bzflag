@@ -36,7 +36,7 @@ BZFlag.  Known build requirements include:
 
     apt-get install automake autoconf g++ libtool make libc-ares-dev \
     libcurl3-dev libgl1-mesa-dev libglu1-mesa-dev libncurses-dev libpng-dev \
-    libsdl1.2-dev libsdl-sound1.2-dev zlib1g-dev  libglew-dev
+    libsdl1.2-dev libsdl-sound1.2-dev zlib1g-dev libglew-dev
 
   Fedora:
 
