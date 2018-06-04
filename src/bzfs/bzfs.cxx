@@ -6140,7 +6140,7 @@ std::string getIPFromHandler (NetHandler* netHandler)
     return strRet;
 }
 
-static void processConnectedPeer(NetConnectedPeer& peer, int sockFD, fd_set& read_set, fd_set& UNUSED(write_set))
+static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_set& UNUSED(read_set), fd_set& UNUSED(write_set))
 {
     const double connectionTimeout = 2.5; // timeout in seconds
 

@@ -677,7 +677,7 @@ bool OSDir::windowsAddFileStack(std::string pathName, std::string fileMask, bool
     return true;
 #else
     // quell warnings
-    if (!bRecursive)
+    if (!bRecursive || !bDirsOnly)
     {
         fileMask.size();
         pathName.size();

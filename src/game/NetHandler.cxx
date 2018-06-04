@@ -23,7 +23,7 @@
 
 const int udpBufSize = 128000;
 
-extern int BigMessageSize = 512 * 1024;
+int BigMessageSize = 512 * 1024;
 
 std::vector<NetworkDataLogCallback*> logCallbacks;
 
@@ -439,7 +439,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
     // write leftover data to the buffer
     if (length > 0)
     {
-        printf("did not send %d bytes\r\n", length);
+        printf("did not send %lu bytes\r\n", length);
 
         // is there enough room in buffer?
         if (outmsgCapacity < outmsgSize + (int)length)
