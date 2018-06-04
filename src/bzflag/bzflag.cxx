@@ -1104,12 +1104,6 @@ int         main(int argc, char** argv)
 #endif
     }
 
-    // load team colors
-    LoadTeamColors();
-
-    // load the default values for shot colors
-    Team::updateShotColors();
-
     // initialize font system
     FontManager &fm = FontManager::instance();
     // load fonts from data directory
@@ -1320,6 +1314,12 @@ int         main(int argc, char** argv)
         exit(1);
 
     }
+
+    // load team colors
+    LoadTeamColors();
+
+    // load the default values for shot colors
+    Team::updateShotColors();
 
     // add the zbuffer callback here, after the OpenGL context is initialized
     BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
