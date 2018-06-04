@@ -16,6 +16,10 @@
 #include "WavefrontOBJ.h"
 #include "TextUtils.h"
 
+bool flipYZ = false;
+float maxShineExponent = 128.0f;
+float shineFactor = 1.0f;
+
 static void underscoreBeforeNumbers(std::string& name)
 {
     const char first = name[0];
