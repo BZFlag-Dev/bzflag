@@ -222,6 +222,9 @@
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
 		0371E7B220C46B0700DEAD45 /* libpng16.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0371E7B120C46B0700DEAD45 /* libpng16.a */; };
 		037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 037D645520A1EB25000E5586 /* libGLEW.a */; };
+		03864A5620C4E76700490CFC /* changeTeam.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 03864A4F20C4E70C00490CFC /* changeTeam.dylib */; };
+		03864A5720C4E7E000490CFC /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
+		03864A5E20C4E82100490CFC /* changeTeam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03864A5920C4E82100490CFC /* changeTeam.cpp */; };
 		038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 038D05E41DB5A59300A00C9E /* COPYING.LGPL */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
@@ -566,6 +569,13 @@
 			remoteGlobalIDString = 0355E7B8174264D7006E2991;
 			remoteInfo = "Pre-Build Script";
 		};
+		03864A5320C4E73600490CFC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03BFC301166C637600836142 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 03864A4E20C4E70C00490CFC;
+			remoteInfo = changeTeam;
+		};
 		0394E6C3167B0C04007F4035 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 03BFC301166C637600836142 /* Project object */;
@@ -859,6 +869,7 @@
 				0394E948167B2D00007F4035 /* airspawn.dylib in CopyFiles */,
 				0394E949167B2D00007F4035 /* autoFlagReset.dylib in CopyFiles */,
 				0315BEBA1B821D9900FC7CE0 /* bzfscron.dylib in CopyFiles */,
+				03864A5620C4E76700490CFC /* changeTeam.dylib in CopyFiles */,
 				0394E94A167B2D00007F4035 /* chathistory.dylib in CopyFiles */,
 				0394E94B167B2D00007F4035 /* customflagsample.dylib in CopyFiles */,
 				0394E94C167B2D00007F4035 /* fairCTF.dylib in CopyFiles */,
@@ -1582,6 +1593,9 @@
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		037D645520A1EB25000E5586 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/lib/libGLEW.a; sourceTree = "<absolute>"; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		03864A4F20C4E70C00490CFC /* changeTeam.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = changeTeam.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		03864A5920C4E82100490CFC /* changeTeam.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = changeTeam.cpp; sourceTree = "<group>"; };
+		03864A5D20C4E82100490CFC /* README.changeTeam.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.changeTeam.txt; sourceTree = "<group>"; };
 		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		038DA4DC1BB645D80009F369 /* libcurl.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libcurl.tbd; path = usr/lib/libcurl.tbd; sourceTree = SDKROOT; };
@@ -1854,6 +1868,14 @@
 			files = (
 				034E30771B0C93EF00E7DDE2 /* libcommon.a in Frameworks */,
 				0342A7041DD79CCB00D04E4C /* libcurl.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03864A4C20C4E70C00490CFC /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03864A5720C4E7E000490CFC /* libplugin_utils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2988,6 +3010,15 @@
 			name = tools;
 			sourceTree = "<group>";
 		};
+		03864A5820C4E82100490CFC /* changeTeam */ = {
+			isa = PBXGroup;
+			children = (
+				03864A5920C4E82100490CFC /* changeTeam.cpp */,
+				03864A5D20C4E82100490CFC /* README.changeTeam.txt */,
+			);
+			path = changeTeam;
+			sourceTree = "<group>";
+		};
 		0394E6D7167B1024007F4035 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
@@ -2995,6 +3026,7 @@
 				0394E6DE167B1024007F4035 /* api_notes */,
 				0394E6DF167B1024007F4035 /* autoFlagReset */,
 				0315BEAF1B821C0700FC7CE0 /* bzfscron */,
+				03864A5820C4E82100490CFC /* changeTeam */,
 				0394E6E6167B1024007F4035 /* chathistory */,
 				0394E6EC167B1024007F4035 /* customflagsample */,
 				C333EFCD1E2B9F5500B4B182 /* customPollTypeSample */,
@@ -3322,6 +3354,7 @@
 				0394E6D3167B0F74007F4035 /* airspawn.dylib */,
 				0394E7E8167B196F007F4035 /* autoFlagReset.dylib */,
 				0315BEAB1B821BFF00FC7CE0 /* bzfscron.dylib */,
+				03864A4F20C4E70C00490CFC /* changeTeam.dylib */,
 				0394E7F3167B1A17007F4035 /* chathistory.dylib */,
 				0394E7FE167B1E66007F4035 /* customflagsample.dylib */,
 				C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */,
@@ -3535,6 +3568,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0357A8D31670B9930056C938 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03864A4D20C4E70C00490CFC /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4027,6 +4067,23 @@
 			productName = modeltool;
 			productReference = 0370A4861B0C921A00FEC9F7 /* modeltool */;
 			productType = "com.apple.product-type.tool";
+		};
+		03864A4E20C4E70C00490CFC /* changeTeam */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03864A5020C4E70C00490CFC /* Build configuration list for PBXNativeTarget "changeTeam" */;
+			buildPhases = (
+				03864A4B20C4E70C00490CFC /* Sources */,
+				03864A4C20C4E70C00490CFC /* Frameworks */,
+				03864A4D20C4E70C00490CFC /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = changeTeam;
+			productName = changeTeam;
+			productReference = 03864A4F20C4E70C00490CFC /* changeTeam.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		0394E67C167B0AA3007F4035 /* bzfs */ = {
 			isa = PBXNativeTarget;
@@ -4559,6 +4616,7 @@
 				0394E7E2167B14BE007F4035 /* PBXTargetDependency */,
 				0394E7EE167B198F007F4035 /* PBXTargetDependency */,
 				0315BEB91B821D6E00FC7CE0 /* PBXTargetDependency */,
+				03864A5420C4E73600490CFC /* PBXTargetDependency */,
 				0394E7F8167B1A22007F4035 /* PBXTargetDependency */,
 				0394E803167B1E79007F4035 /* PBXTargetDependency */,
 				C39F69391E3D3EA300132C55 /* PBXTargetDependency */,
@@ -4660,6 +4718,9 @@
 					0370A4851B0C921A00FEC9F7 = {
 						CreatedOnToolsVersion = 6.3.1;
 					};
+					03864A4E20C4E70C00490CFC = {
+						CreatedOnToolsVersion = 7.2.1;
+					};
 					C333EFC81E2B9F0800B4B182 = {
 						CreatedOnToolsVersion = 8.2.1;
 						ProvisioningStyle = Automatic;
@@ -4702,6 +4763,7 @@
 				0394E6D2167B0F74007F4035 /* airspawn */,
 				0394E7E7167B196F007F4035 /* autoFlagReset */,
 				0315BEAA1B821BFF00FC7CE0 /* bzfscron */,
+				03864A4E20C4E70C00490CFC /* changeTeam */,
 				0394E7F2167B1A17007F4035 /* chathistory */,
 				0394E7FD167B1E66007F4035 /* customflagsample */,
 				C333EFC81E2B9F0800B4B182 /* customPollTypeSample */,
@@ -5108,6 +5170,14 @@
 				0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */,
 				0370A48D1B0C924B00FEC9F7 /* modeltool.cxx in Sources */,
 				0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		03864A4B20C4E70C00490CFC /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03864A5E20C4E82100490CFC /* changeTeam.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5571,6 +5641,11 @@
 			isa = PBXTargetDependency;
 			target = 0355E7B8174264D7006E2991 /* Pre-Build Script */;
 			targetProxy = 037E3F61187686DE00DDE68C /* PBXContainerItemProxy */;
+		};
+		03864A5420C4E73600490CFC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 03864A4E20C4E70C00490CFC /* changeTeam */;
+			targetProxy = 03864A5320C4E73600490CFC /* PBXContainerItemProxy */;
 		};
 		0394E6C4167B0C04007F4035 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -6209,6 +6284,79 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		03864A5120C4E70C00490CFC /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		03864A5220C4E70C00490CFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
@@ -7558,6 +7706,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		03864A5020C4E70C00490CFC /* Build configuration list for PBXNativeTarget "changeTeam" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				03864A5120C4E70C00490CFC /* Debug */,
+				03864A5220C4E70C00490CFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 		0394E686167B0AA4007F4035 /* Build configuration list for PBXNativeTarget "bzfs" */ = {
 			isa = XCConfigurationList;
