@@ -65,6 +65,41 @@ std::string PluginConfig::item(const std::string &section, const std::string &ke
   return sections[s][k];
 }
 
+std::vector<std::string> PluginConfig::getSections()
+{
+    std::vector<std::string> secNames;
+
+    for (auto itr = sections.begin(); itr != sections.end(); itr++)
+    {
+        secNames.push_back(itr->first);
+    }
+
+    return secNames;
+}
+
+std::vector<std::pair<std::string, std::string>> PluginConfig::getSectionItems(const char* section)
+{
+    return getSectionItems(std::string(section));
+}
+
+std::vector<std::pair<std::string, std::string>> PluginConfig::getSectionItems(const std::string &section)
+{
+    std::vector<std::pair<std::string, std::string>> vec;
+
+    std::string s = section;
+    makelower(s);
+
+    if (sections.find(s) != sections.end())
+    {
+        for (auto itr = sections[s].begin(); itr != sections[s].end(); itr++)
+        {
+            vec.push_back(std::pair<std::string, std::string>(itr->first, itr->second));
+        }
+    }
+
+    return vec;
+}
+
 void PluginConfig::parse(void)
 {
   std::string line;

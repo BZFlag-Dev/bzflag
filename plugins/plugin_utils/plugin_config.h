@@ -56,6 +56,12 @@ public:
 
     std::string item(const char *section, const  char *key);
     std::string item(const std::string &section, const std::string &key);
+
+    std::vector<std::string> getSections();
+
+    std::vector<std::pair<std::string, std::string>> getSectionItems(const char* section);
+    std::vector<std::pair<std::string, std::string>> getSectionItems(const std::string &section);
+
     unsigned int errors;
 private:
     std::string whitespace;
