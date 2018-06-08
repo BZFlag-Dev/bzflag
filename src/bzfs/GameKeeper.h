@@ -161,6 +161,8 @@ public:
         // Authentication
         Authentication    authentication;
 
+        std::map<std::string, std::string> extraData;
+
         // flag to let us know the player is on it's way out
         bool  isParting;
 
