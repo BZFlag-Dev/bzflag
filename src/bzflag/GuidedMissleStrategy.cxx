@@ -31,7 +31,7 @@ static float limitAngle(float a)
     return a;
 }
 
-GuidedMissileStrategy::GuidedMissileStrategy(ShotPath* _path) :
+GuidedMissileStrategy::GuidedMissileStrategy(ShotPath::Ptr _path) :
     ShotStrategy(_path),
     renderTimes(0),
     needUpdate(true)

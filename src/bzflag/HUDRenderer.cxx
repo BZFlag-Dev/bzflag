@@ -2031,7 +2031,11 @@ static int      compare_float(const void* a, const void* b)
 void            HUDRenderer::renderShots(const Player* target)
 {
     // get the target tank
-    if (!target) return;
+    if (!target)
+        return;
+
+
+    const ShotSlot::Vec& slotList = target->getShotSlots();
 
     // get view metrics
     const int width = window.getWidth();
@@ -2044,33 +2048,20 @@ void            HUDRenderer::renderShots(const Player* target)
     const int indicatorHeight = height / 80;
     const int indicatorSpace = indicatorHeight / 10 + 2;
     const int indicatorLeft = centerx + maxMotionSize + indicatorWidth + 16;
-    const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * target->getMaxShots());
+    const int indicatorTop = centery - (int)(0.5f * (indicatorHeight + indicatorSpace) * slotList.size());
 
-    const int maxShots = target->getMaxShots();
-
-    float* factors = new float[maxShots];
+    std::vector<float> factors;
 
     // tally the reload values
-    for (int i = 0; i < maxShots; ++i)
-    {
-        const ShotPath* shot = target->getShot(i);
-        factors[i] = 1.0f;
-        if (shot)
-        {
-            const TimeKeeper currentTime = shot->getCurrentTime();
-            const TimeKeeper startTime = shot->getStartTime();
-            const float reloadTime = shot->getReloadTime();
-            factors[i] = float(1 - ((reloadTime - (currentTime - startTime)) / reloadTime));
-            if (factors[i] > 1.0f) factors[i] = 1.0f;
-        }
-    }
+    for (const auto& slot : slotList)
+        factors.push_back(slot.ReloadFactor());
 
     // sort the reload values
-    qsort(factors, maxShots, sizeof(float), compare_float);
+    std::sort(factors.begin(), factors.end(), compare_float);
 
     // draw the reload values
     glEnable(GL_BLEND);
-    for (int i = 0; i < maxShots; ++i)
+    for (size_t i = 0; i < factors.size(); i++)
     {
         const int myWidth = int(indicatorWidth * factors[i]);
         const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
@@ -2089,8 +2080,6 @@ void            HUDRenderer::renderShots(const Player* target)
         }
     }
     glDisable(GL_BLEND);
-
-    delete[] factors;
 }
 
 

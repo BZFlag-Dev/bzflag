@@ -97,7 +97,7 @@ void RadarRenderer::setDimming(float newDimming)
 }
 
 
-void RadarRenderer::drawShot(const ShotPath* shot)
+void RadarRenderer::drawShot(const ShotPath::Ptr shot)
 {
     glBegin(GL_POINTS);
     glVertex2fv(shot->getPosition());
@@ -618,10 +618,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         int maxShots = world->getMaxShots();
         int i;
         float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-        for (i = 0; i < maxShots; i++)
+        for (auto shot : myTank->getShots())
         {
-            const ShotPath* shot = myTank->getShot(i);
-            if (shot)
+            if (shot != nullptr)
             {
                 const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
                 glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
@@ -631,11 +630,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
         //draw world weapon shots
         WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
-        maxShots = worldWeapons->getMaxShots();
-        for (i = 0; i < maxShots; i++)
+        for (auto shot : myTank->getShots())
         {
-            const ShotPath* shot = worldWeapons->getShot(i);
-            if (shot)
+            if (shot != nullptr)
             {
                 const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
                 glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
@@ -678,14 +675,15 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         bool coloredShot = BZDB.isTrue("coloredradarshots");
         // draw other tanks' shells
         bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
-        maxShots = World::getWorld()->getMaxShots();
+
         for (i = 0; i < curMaxPlayers; i++)
         {
             RemotePlayer* player = world->getPlayer(i);
-            if (!player) continue;
-            for (int j = 0; j < maxShots; j++)
+            if (player == nullptr)
+                continue;
+
+            for (auto shot : player->getShots())
             {
-                const ShotPath* shot = player->getShot(j);
                 if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll))
                 {
                     const float *shotcolor;

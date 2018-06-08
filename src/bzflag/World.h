@@ -30,6 +30,8 @@
 #include "WorldPlayer.h"
 #include "Weapon.h"
 #include "EntryZone.h"
+#include "BzMaterial.h"
+#include "Teleporter.h"
 
 class FlagSceneNode;
 class MeshDrawInfo;

@@ -82,11 +82,11 @@ static bool isFlagUseful(FlagType *type)
     return ((float)flagValue) >= avg;
 }
 
-static ShotPath *findWorstBullet(float &minDistance)
+static ShotPath::Ptr findWorstBullet(float &minDistance)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     const float *pos = myTank->getPosition();
-    ShotPath *minPath = NULL;
+    ShotPath::Ptr minPath;
 
     minDistance = Infinity;
     for (int t = 0; t < curMaxPlayers; t++)
@@ -94,11 +94,9 @@ static ShotPath *findWorstBullet(float &minDistance)
         if (t == myTank->getId() || !remotePlayers[t])
             continue;
 
-        const int maxShots = remotePlayers[t]->getMaxShots();
-        for (int s = 0; s < maxShots; s++)
+        for (auto shot : remotePlayers[t]->getShots())
         {
-            ShotPath* shot = remotePlayers[t]->getShot(s);
-            if (!shot || shot->isExpired())
+            if (shot == nullptr || shot->isExpired())
                 continue;
 
             if ((shot->getFlag() == Flags::InvisibleBullet) &&
@@ -133,12 +131,13 @@ static ShotPath *findWorstBullet(float &minDistance)
             }
         }
     }
+
     float oldDistance = minDistance;
     WorldPlayer *wp = World::getWorld()->getWorldWeapons();
-    for (int w = 0; w < wp->getMaxShots(); w++)
+
+    for (auto shot : wp->getShots())
     {
-        ShotPath* shot = wp->getShot(w);
-        if (!shot || shot->isExpired())
+        if (shot == nullptr|| shot->isExpired())
             continue;
 
         if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
@@ -215,7 +214,7 @@ static bool avoidBullet(float &rotation, float &speed)
         return false; // take our chances
 
     float minDistance;
-    ShotPath *shot = findWorstBullet(minDistance);
+    ShotPath::Ptr shot = findWorstBullet(minDistance);
 
     if ((shot == NULL) || (minDistance > 100.0f))
         return false;

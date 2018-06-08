@@ -1032,8 +1032,6 @@ namespace Shots
         }
         return *this;
     }
-
-
 }
 
 // Local Variables: ***

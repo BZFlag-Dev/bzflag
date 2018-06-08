@@ -17,9 +17,6 @@
  *  terminate early because of a hit).  Some paths need
  *  to be updated continuously during flight.
  *
- * RemoteShotPath:
- *  A ShotPath acting as a proxy for a remote ShotPath.
- *  Created by a LocalPlayer on behalf of a RemotePlayer.
  */
 
 #ifndef __SHOTPATH_H__
@@ -33,80 +30,61 @@
 #include "ShotUpdate.h"
 
 /* local interface headers */
-#include "BaseLocalPlayer.h"
-#include "ShotStrategy.h"
 #include "SceneDatabase.h"
 
-class ShotStrategy;
+#include <vector>
+#include <list>
 
 class ShotPath
 {
 public:
+    typedef std::shared_ptr<ShotPath> Ptr;
+    typedef std::vector<Ptr> Vec;
+    typedef std::list<Ptr> List;
+
+    static ShotPath::Ptr Create(const FiringInfo&);
+
     virtual     ~ShotPath();
 
-    bool        isExpiring() const;
-    bool        isExpired() const;
-    bool        isReloaded() const;
-    const PlayerId& getPlayer() const;
-    uint16_t        getShotId() const;
-    FlagType*       getFlag() const;
-    float       getLifetime() const;
-    float       getReloadTime() const;
+    bool                isExpiring() const;
+    bool                isExpired() const;
+    const PlayerId&     getPlayer() const;
+    uint16_t            getShotId() const;
+    FlagType*           getFlag() const;
+    float               getLifetime() const;
     const TimeKeeper&   getStartTime() const;
     const TimeKeeper&   getCurrentTime() const;
-    const float*    getPosition() const;
-    const float*    getVelocity() const;
+    const float*        getPosition() const;
+    const float*        getVelocity() const;
 
-    float       checkHit(const BaseLocalPlayer*, float position[3]) const;
-    void        setExpiring();
-    void        setExpired();
-    bool        isStoppedByHit() const;
-    void        boostReloadTime(float dt);
+    float               checkHit(const BaseLocalPlayer*, float position[3]) const;
+    void                setExpiring();
+    void                setExpired();
+    bool                isStoppedByHit() const;
 
-    void        addShot(SceneDatabase*, bool colorblind);
+    void                addShot(SceneDatabase*, bool colorblind);
 
-    void        radarRender() const;
-    FiringInfo&     getFiringInfo();
-    TeamColor       getTeam() const;
+    void                radarRender() const;
+    FiringInfo&         getFiringInfo();
+    TeamColor           getTeam() const;
+
+    virtual void        update(float dt);
+    virtual void        update(const ShotUpdate& shot, uint16_t code, const void* msg);
+
+    bool                sendUpdates = false;
+
 protected:
     ShotPath(const FiringInfo&);
-    void        updateShot(float dt);
-    const ShotStrategy* getStrategy() const;
-    ShotStrategy*   getStrategy();
+    void                updateShot(float dt);
 
-    friend class ShotStrategy;
-    void        setReloadTime(float);
-    void        setPosition(const float*);
-    void        setVelocity(const float*);
+    void                setPosition(const float*);
+    void                setVelocity(const float*);
 
-private:
-    ShotStrategy*   strategy;       // strategy for moving shell
     FiringInfo      firingInfo;     // shell information
-    float       reloadTime;     // time to reload
     TimeKeeper      startTime;      // time of firing
-    TimeKeeper      currentTime;        // current time
-    bool        expiring;       // shot has almost terminated
-    bool        expired;        // shot has terminated
-};
-
-class LocalShotPath : public ShotPath
-{
-public:
-    LocalShotPath(const FiringInfo&);
-    ~LocalShotPath();
-
-    void        update(float dt);
-};
-
-class RemoteShotPath : public ShotPath
-{
-public:
-    RemoteShotPath(const FiringInfo&);
-    ~RemoteShotPath();
-
-    void        update(float dt);
-    void        update(const ShotUpdate& shot,
-                       uint16_t code, const void* msg);
+    TimeKeeper      currentTime;    // current time
+    bool            expiring;       // shot has almost terminated
+    bool            expired;        // shot has terminated
 };
 
 //
@@ -121,11 +99,6 @@ inline bool     ShotPath::isExpiring() const
 inline bool     ShotPath::isExpired() const
 {
     return expired;
-}
-
-inline bool     ShotPath::isReloaded() const
-{
-    return (currentTime - startTime >= reloadTime);
 }
 
 inline const PlayerId&  ShotPath::getPlayer() const
@@ -146,11 +119,6 @@ inline FlagType*    ShotPath::getFlag() const
 inline float        ShotPath::getLifetime() const
 {
     return firingInfo.lifetime;
-}
-
-inline float        ShotPath::getReloadTime() const
-{
-    return reloadTime;
 }
 
 inline const TimeKeeper &ShotPath::getStartTime() const
@@ -183,15 +151,6 @@ inline  TeamColor   ShotPath::getTeam() const
     return firingInfo.shot.team;
 }
 
-inline const ShotStrategy*  ShotPath::getStrategy() const
-{
-    return strategy;
-}
-
-inline ShotStrategy*    ShotPath::getStrategy()
-{
-    return strategy;
-}
 
 #endif /* __SHOTPATH_H__ */
 

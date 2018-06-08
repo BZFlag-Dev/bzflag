@@ -172,7 +172,7 @@ bool Plan::avoidBullet(float &rotation, float &speed)
         return false; // take our chances
 
     float minDistance;
-    ShotPath *shot = findWorstBullet(minDistance);
+    ShotPath::Ptr   shot = findWorstBullet(minDistance);
 
     if ((shot == NULL) || (minDistance > 100.0f))
         return false;
@@ -229,11 +229,11 @@ bool Plan::avoidBullet(float &rotation, float &speed)
     return false;
 }
 
-ShotPath *Plan::findWorstBullet(float &minDistance)
+ShotPath::Ptr   Plan::findWorstBullet(float &minDistance)
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     const float *pos = myTank->getPosition();
-    ShotPath *minPath = NULL;
+    ShotPath::Ptr minPath = NULL;
 
     minDistance = Infinity;
     for (int t = 0; t < curMaxPlayers; t++)
@@ -241,10 +241,8 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
         if (t == myTank->getId() || !remotePlayers[t])
             continue;
 
-        const int maxShots = remotePlayers[t]->getMaxShots();
-        for (int s = 0; s < maxShots; s++)
+        for (auto shot : remotePlayers[t]->getShots())
         {
-            ShotPath* shot = remotePlayers[t]->getShot(s);
             if (!shot || shot->isExpired())
                 continue;
 
@@ -283,9 +281,8 @@ ShotPath *Plan::findWorstBullet(float &minDistance)
 
     float oldDistance = minDistance;
     WorldPlayer *wp = World::getWorld()->getWorldWeapons();
-    for (int w = 0; w < wp->getMaxShots(); w++)
+    for (auto shot : wp->getShots())
     {
-        ShotPath* shot = wp->getShot(w);
         if (!shot || shot->isExpired())
             continue;
 

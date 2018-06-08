@@ -234,11 +234,9 @@ void            RobotPlayer::doUpdateMotion(float dt)
                 p = LocalPlayer::getMyTank();
             if (!p || p->getId() == getId())
                 continue;
-            const int maxShots = p->getMaxShots();
-            for (int s = 0; s < maxShots; s++)
+            for (auto shot : p->getShots())
             {
-                ShotPath* shot = p->getShot(s);
-                if (!shot || shot->isExpired())
+                if (shot == nullptr || shot->isExpired())
                     continue;
                 // ignore invisible bullets completely for now (even when visible)
                 if (shot->getFlag() == Flags::InvisibleBullet)
