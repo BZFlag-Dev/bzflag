@@ -18,8 +18,7 @@
 
 #include <stack>
 #include "TimeKeeper.h"
-
-class ShotPath;
+#include "ShotPath.h"
 
 /**
  * Roger will follow a plan. These plans are stored on a plan stack
@@ -82,7 +81,7 @@ public:
     static bool avoidBullet(float &rotation, float &speed);
 
 private:
-    static ShotPath *findWorstBullet(float &minDistance);
+    static ShotPath::Ptr findWorstBullet(float &minDistance);
     TimeKeeper planExpiration;
     TimeKeeper lastShot;
 };

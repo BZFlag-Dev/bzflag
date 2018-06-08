@@ -28,6 +28,7 @@
 #include "Flag.h"
 #include "PlayerState.h"
 #include "ShotStatistics.h"
+#include "ShotList.h"
 
 
 /* local interface headers */
@@ -71,7 +72,7 @@ public:
     void      updateTank(float dt, bool local);
     const char*   getCallSign() const;
     const char*   getMotto() const;
-    void      setMotto(const char* _motto);
+    void    setMotto(const char* _motto);
     PlayerType    getPlayerType() const;
     FlagType* getFlag() const;
     long      getOrder() const;
@@ -80,6 +81,14 @@ public:
     float     getAngle() const;
     const float*  getForward() const;
     const float*  getVelocity() const;
+    virtual ShotPath::Vec getShots() const = 0;
+
+    void        setupShotSlots();
+    bool        hasFreeShotSlot();
+    int         getNextShotSlot();
+    virtual void fireShot (ShotPath::Ptr shot);
+
+    const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
 
     float     getAngularVelocity() const;
     int       getPhysicsDriver() const;
@@ -114,19 +123,14 @@ public:
     short     getFromTeleporter() const;
     short     getToTeleporter() const;
     float     getTeleporterProximity() const;
-    virtual int       getMaxShots() const;
-    virtual ShotPath* getShot(int index) const = 0;
 
     const ShotStatistics* getShotStatistics() const;
 
-    void      addToScene(SceneDatabase*, TeamColor effectiveTeam,
-        bool inCockpit, bool seerView,
-        bool showTreads, bool showIDL);
+    void      addToScene(SceneDatabase*, TeamColor effectiveTeam, bool inCockpit, bool seerView, bool showTreads, bool showIDL);
 
     bool      getIpAddress(Address&);
     void      setIpAddress(const Address& addr);
 
-    virtual void  addShots(SceneDatabase*, bool colorblind) const;
     void      setLandingSpeed(float velocity);
     void      spawnEffect();
     void      fireJumpJets();
@@ -159,6 +163,8 @@ public:
     {
         pauseMessageState = set;
     }
+
+    float           getReloadTime() const;
 
     bool      validTeamTarget(const Player *possibleTarget) const;
 
@@ -218,7 +224,13 @@ protected:
     void    clearRemoteSounds();
     void    addRemoteSound(int sound);
 
-protected:
+    float getFlagReload(FlagType* flag) const;
+
+    float      reloadOffset;
+
+    void UpdateShotSlots(float dt);
+    ShotSlot::Vec ShotSlots;
+
     // shot statistics
     ShotStatistics    shotStatistics;
     const Obstacle* lastObstacle; // last obstacle touched
@@ -227,8 +239,7 @@ protected:
     // pause message
     bool pauseMessageState;
 
-    std::vector<ShotPath*> shots;
-    float       handicap;
+    float           handicap;
     int             skinIndex = 0;
 
 private:

@@ -33,16 +33,13 @@ public:
     ~RemotePlayer();
 
     void addShot(const FiringInfo&);
-    ShotPath* getShot(int index) const;
+    virtual ShotPath::Vec getShots() const;
     void purgeShots() const;
-    void updateShots(float dt);
 
 private:
     bool doEndShot(int index, bool isHit, float* pos);
 
 private:
-    int numShots;
-    RemoteShotPath** shots;
 };
 
 

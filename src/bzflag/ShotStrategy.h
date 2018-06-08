@@ -32,12 +32,11 @@
 #include "BaseLocalPlayer.h"
 #include "ShotPath.h"
 
-class ShotPath;
-
-class ShotStrategy
+class ShotStrategy : public ShotPath
 {
 public:
-    ShotStrategy(ShotPath*);
+    ShotStrategy(FiringInfo& _info) : ShotPath(_info) {}
+
     virtual     ~ShotStrategy();
 
     virtual void    update(float dt) = 0;
@@ -59,27 +58,11 @@ public:
     static void     reflect(float* v, const float* n); // const
 
 protected:
-    const ShotPath& getPath() const;
-    FiringInfo&     getFiringInfo(ShotPath*) const;
-    void        setReloadTime(float) const;
-    void        setPosition(const float*) const;
-    void        setVelocity(const float*) const;
-    void        setExpiring() const;
-    void        setExpired() const;
 
     const Teleporter*   getFirstTeleporter(const Ray&, float min,
                                            float& t, int& f) const;
     bool        getGround(const Ray&, float min, float &t) const;
-
-private:
-    ShotPath*       path;
 };
-
-inline const ShotPath&  ShotStrategy::getPath() const
-{
-    return *path;
-}
-
 
 #endif /* __SHOTSTRATEGY_H__ */
 

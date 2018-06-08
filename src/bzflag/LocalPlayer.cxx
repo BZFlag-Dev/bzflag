@@ -29,6 +29,8 @@
 #include "ForceFeedback.h"
 #include "effectsRenderer.h"
 
+#include "ShotList.h";
+
 /* system implementation headers */
 #include <algorithm>
 
@@ -64,11 +66,6 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
     jumpPressed(false),
     deathPhyDrv(-1)
 {
-    // initialize shots array to no shots fired
-    numShots = World::getWorld()->getMaxShots();
-    shots = new LocalShotPath*[numShots];
-    for (int i = 0; i < numShots; i++)
-        shots[i] = NULL;
     // set input method
     if (BZDB.isTrue("allowInputChange"))
         inputMethod = Mouse;
@@ -78,11 +75,8 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
 
 LocalPlayer::~LocalPlayer()
 {
-    // free shots
-    for (int i = 0; i < numShots; i++)
-        if (shots[i])
-            delete shots[i];
-    delete[] shots;
+    ShotList::ClearPlayerShots(getId());
+    localShots.clear();
 
     // free antidote flag
     delete antidoteFlag;
@@ -99,17 +93,9 @@ void            LocalPlayer::doUpdate(float dt)
     static TimeKeeper pauseTime = TimeKeeper::getNullTime();
     static bool wasPaused = false;
 
-    // if paused then boost the reload times by dt (so that, effectively,
-    // reloading isn't performed)
     int i;
     if (isPaused())
     {
-        for (i = 0; i < numShots; i++)
-        {
-            if (shots[i])
-                shots[i]->boostReloadTime(dt);
-        }
-
         // if we've been paused for a long time, drop our flag
         if (!wasPaused)
         {
@@ -130,24 +116,13 @@ void            LocalPlayer::doUpdate(float dt)
         wasPaused = false;
     }
 
-    // reap dead (reloaded) shots
-    for (i = 0; i < numShots; i++)
-        if (shots[i] && shots[i]->isReloaded())
-        {
-            if (!shots[i]->isExpired())
-                shots[i]->setExpired();
-            delete shots[i];
-            shots[i] = NULL;
-        }
+    if (!isPaused())    // we don't reload while paused
+        UpdateShotSlots(dt);
 
-    // update shots
-    anyShotActive = false;
-    for (i = 0; i < numShots; i++)
-        if (shots[i])
-        {
-            shots[i]->update(dt);
-            if (!shots[i]->isExpired()) anyShotActive = true;
-        }
+    for (auto lShot : localShots)
+        lShot->update(dt);
+
+    anyShotActive = getShots().size() > 0;
 
     // if no shots now out (but there had been) then reset target
     if (!anyShotActive && hadShotActive)
@@ -1045,12 +1020,13 @@ const GLfloat*      LocalPlayer::getAntidoteLocation() const
     return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
 }
 
-ShotPath*       LocalPlayer::getShot(int index) const
+ShotPath::Vec      LocalPlayer::getShots() const
 {
-    index &= 0x00FF;
-    if ((index < 0) || (index >= numShots))
-        return NULL;
-    return shots[index];
+    ShotPath::Vec shots = ShotList::GetShotsForPlayer(getId());
+
+    for (auto shot : localShots)
+        shots.push_back(shot);
+    return shots;
 }
 
 void            LocalPlayer::restart(const float* pos, float _azimuth)
@@ -1064,14 +1040,9 @@ void            LocalPlayer::restart(const float* pos, float _azimuth)
       setFlag(Flags::Null);
 
       // get rid of existing shots
-      for (int i = 0; i < numShots; i++)
-      {
-          if (shots[i])
-          {
-              delete shots[i];
-              shots[i] = NULL;
-          }
-      }
+      localShots.clear();
+      ShotList::ClearPlayerShots(getId());
+
       anyShotActive = false;
 
       // no target
@@ -1223,25 +1194,25 @@ void            LocalPlayer::activateAutoPilot(bool autopilot)
         setTarget(NULL);
 }
 
+
+
 bool            LocalPlayer::fireShot()
 {
     if (! (firingStatus == Ready || firingStatus == Zoned))
         return false;
-
-    // find an empty slot
-    int i;
-    for (i = 0; i < numShots; i++)
-        if (!shots[i])
-            break;
-    if (i == numShots) return false;
 
     // make sure we're allowed to shoot
     if (!isAlive() || isPaused() ||
             ((location == InBuilding) && !isPhantomZoned()))
         return false;
 
+    if (!HasFreeShotSlot())
+        return;
+
+    int localShotID = GetNextShotSlot();
+
     // prepare shot
-    FiringInfo firingInfo(*this, i + getSalt());
+    FiringInfo firingInfo(*this, localShotID);
     // FIXME team coloring of shot is never used; it was meant to be used
     // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
@@ -1276,7 +1247,10 @@ bool            LocalPlayer::fireShot()
     }
 
     // make shot and put it in the table
-    shots[i] = new LocalShotPath(firingInfo);
+    ShotPath::Ptr shot = ShotPath::Create(firingInfo);
+    shot->sendUpdates = true;
+    localShots.push_back(shot);
+    fireShot(shot); // track the reload in the slot
 
     // Insert timestamp, useful for dead reckoning jitter fixing
     // TODO should maybe use getTick() instead? must double check
@@ -1331,91 +1305,15 @@ bool            LocalPlayer::fireShot()
     return true;
 }
 
-void            LocalPlayer::purgeShots() const
+void            LocalPlayer::purgeShots()
 {
-    for (int i = 0; i < numShots; i++)
-    {
-        if (shots[i] != NULL)
-        {
-            delete shots[i];
-            shots[i] = NULL;
-        }
-    }
-}
-
-float           LocalPlayer::getReloadTime() const
-{
-    if (numShots <= 0)
-        return 0.0f;
-
-    float time = float(jamTime - TimeKeeper::getTick());
-    if (time > 0.0f)
-        return time;
-
-    // look for an empty slot
-    int i;
-    for (i = 0; i < numShots; i++)
-    {
-        if (!shots[i])
-            return 0.0f;
-    }
-
-    // look for the shot fired least recently
-    float minTime = float(shots[0]->getReloadTime() -
-                          (shots[0]->getCurrentTime() - shots[0]->getStartTime()));
-    for (i = 1; i < numShots; i++)
-    {
-        const float t = float(shots[i]->getReloadTime() -
-                              (shots[i]->getCurrentTime() - shots[i]->getStartTime()));
-        if (t < minTime)
-            minTime = t;
-    }
-
-    if (minTime < 0.0f)
-        minTime = 0.0f;
-
-    return minTime;
+    localShots.clear();
+    ShotList::ClearPlayerShots(getId());
 }
 
 bool LocalPlayer::doEndShot(int ident, bool isHit, float* pos)
 {
-    const int index = ident & 255;
-    const int slt   = (ident >> 8) & 127;
-
-    // special id used in some messages (and really shouldn't be sent here)
-    if (ident == -1)
-        return false;
-
-    // ignore bogus shots (those with a bad index or for shots that don't exist)
-    if (index < 0 || index >= numShots || !shots[index])
-        return false;
-
-    // ignore shots that already ending
-    if (shots[index]->isExpired() || shots[index]->isExpiring())
-        return false;
-
-    // ignore shots that have the wrong salt.  since we reuse shot indices
-    // it's possible for an old MsgShotEnd to arrive after we've started a
-    // new shot.  that's where the salt comes in.  it changes for each shot
-    // so we can identify an old shot from a new one.
-    if (slt != ((shots[index]->getShotId() >> 8) & 127))
-        return false;
-
-    // keep shot statistics
-    shotStatistics.recordHit(shots[index]->getFlag());
-
-    // don't stop if it's because were hitting something and we don't stop
-    // when we hit something.
-    if (isHit && !shots[index]->isStoppedByHit())
-        return false;
-
-    // end it
-    const float* shotPos = shots[index]->getPosition();
-    pos[0] = shotPos[0];
-    pos[1] = shotPos[1];
-    pos[2] = shotPos[2];
-    shots[index]->setExpired();
-    return true;
+    return ShotList::HandleEndShot(ident, isHit, pos);
 }
 
 void            LocalPlayer::setJump()
@@ -1622,19 +1520,15 @@ void            LocalPlayer::doForces(float UNUSED(dt),
 }
 
 // NOTE -- minTime should be initialized to Infinity by the caller
-bool            LocalPlayer::checkHit(const Player* source,
-                                      const ShotPath*& hit, float& minTime) const
+bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit, float& minTime) const
 {
     bool goodHit = false;
 
     // if firing tank is paused then it doesn't count
     if (source->isPaused()) return goodHit;
 
-    const int maxShots = source->getMaxShots();
-    for (int i = 0; i < maxShots; i++)
+    for (auto shot : source->getShots())
     {
-        // get shot
-        const ShotPath* shot = source->getShot(i);
         if (!shot || shot->isExpired()) continue;
 
         // my own shock wave cannot kill me
