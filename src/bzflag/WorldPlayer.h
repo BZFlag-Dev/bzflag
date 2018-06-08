@@ -25,8 +25,7 @@ public:
     ~WorldPlayer();
 
     void                addShot(const FiringInfo&);
-    virtual ShotPath::Vec       getShots() const;
-    void                addShots(SceneDatabase* scene, bool colorblind) const;
+    virtual void        addShots(SceneDatabase* scene, bool colorblind) const;
 
 private:
     bool                doEndShot(int index, bool isHit, float* pos);

@@ -36,7 +36,7 @@ public:
     const float (*getLastMotionBBox() const)[3];
 
     virtual void explodeTank() = 0;
-    virtual bool checkHit(const Player* source,  const ShotPath::Ptr &hit, float& minTime) const = 0;
+    virtual bool checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const = 0;
 
 
     ShotPath::Ptr   popShot(int localID);

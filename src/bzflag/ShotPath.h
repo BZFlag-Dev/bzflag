@@ -57,19 +57,24 @@ public:
     const float*        getPosition() const;
     const float*        getVelocity() const;
 
-    float               checkHit(const BaseLocalPlayer*, float position[3]) const;
+    virtual float       checkHit(const BaseLocalPlayer*, float position[3]) const = 0;
     void                setExpiring();
     void                setExpired();
-    bool                isStoppedByHit() const;
+    virtual bool        isStoppedByHit() const = 0;
 
-    void                addShot(SceneDatabase*, bool colorblind);
+    virtual void        addShot(SceneDatabase*, bool colorblind) = 0;
 
-    void                radarRender() const;
+    virtual void        radarRender() const = 0;
     FiringInfo&         getFiringInfo();
     TeamColor           getTeam() const;
 
     virtual void        update(float dt);
     virtual void        update(const ShotUpdate& shot, uint16_t code, const void* msg);
+
+    virtual void        sendUpdate(const FiringInfo&) const = 0;
+    virtual void        readUpdate(uint16_t code, const void* msg) = 0;
+
+    virtual void        expire() = 0;
 
     bool                sendUpdates = false;
 

@@ -30,12 +30,12 @@ public:
 
     bool Available() const
     {
-        return activeShot && Reloaded();
+        return activeShot == nullptr && Reloaded();
     }
 
     bool Reloaded() const
     {
-        return reloadTime >= 0;
+        return reloadTime <= 0;
     }
 
     float ReloadFactor() const
@@ -61,6 +61,7 @@ namespace ShotList
     void ClearPlayerShots(PlayerId playerID);
 
     void UpdateShots(float dt);
+    void UpdateShotsForPlayer(PlayerId id, float dt);
 
     bool HandleEndShot(int shotID, bool isHit, float* pos);
 

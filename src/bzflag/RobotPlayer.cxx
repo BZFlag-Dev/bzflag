@@ -24,6 +24,7 @@
 #include "World.h"
 #include "Intersect.h"
 #include "TargetingUtils.h"
+#include "ShotStrategy.h"
 
 std::vector<BzfRegion*>* RobotPlayer::obstacleList = NULL;
 

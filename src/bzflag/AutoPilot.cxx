@@ -24,7 +24,7 @@
 #include "WorldPlayer.h"
 #include "playing.h"
 #include "Plan.h"
-#include <algorithm>
+#include "ShotStrategy.h"
 
 /* system implementation headers */
 #include <algorithm>

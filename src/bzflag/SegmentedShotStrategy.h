@@ -33,7 +33,7 @@
 class SegmentedShotStrategy : public ShotStrategy
 {
 public:
-    SegmentedShotStrategy(FiringInfo& , bool useSuperTexture, bool faint = false);
+    SegmentedShotStrategy(const FiringInfo& , bool useSuperTexture, bool faint = false);
     ~SegmentedShotStrategy();
 
     void        update(float dt);
@@ -73,21 +73,21 @@ private:
 class NormalShotStrategy : public SegmentedShotStrategy
 {
 public:
-    NormalShotStrategy(FiringInfo&);
+    NormalShotStrategy(const FiringInfo&);
     ~NormalShotStrategy();
 };
 
 class RapidFireStrategy : public SegmentedShotStrategy
 {
 public:
-    RapidFireStrategy(FiringInfo&);
+    RapidFireStrategy(const FiringInfo&);
     ~RapidFireStrategy();
 };
 
 class ThiefStrategy : public SegmentedShotStrategy
 {
 public:
-    ThiefStrategy(FiringInfo&);
+    ThiefStrategy(const FiringInfo&);
     ~ThiefStrategy();
     void        update(float dt);
     bool        isStoppedByHit() const;
@@ -103,14 +103,14 @@ private:
 class MachineGunStrategy : public SegmentedShotStrategy
 {
 public:
-    MachineGunStrategy(FiringInfo&);
+    MachineGunStrategy(const FiringInfo&);
     ~MachineGunStrategy();
 };
 
 class LaserStrategy : public SegmentedShotStrategy
 {
 public:
-    LaserStrategy(FiringInfo&);
+    LaserStrategy(const FiringInfo&);
     ~LaserStrategy();
 
     void        update(float dt);
@@ -127,21 +127,21 @@ private:
 class RicochetStrategy : public SegmentedShotStrategy
 {
 public:
-    RicochetStrategy(FiringInfo&);
+    RicochetStrategy(const FiringInfo&);
     ~RicochetStrategy();
 };
 
 class SuperBulletStrategy : public SegmentedShotStrategy
 {
 public:
-    SuperBulletStrategy(FiringInfo&);
+    SuperBulletStrategy(const FiringInfo&);
     ~SuperBulletStrategy();
 };
 
 class PhantomBulletStrategy : public SegmentedShotStrategy
 {
 public:
-    PhantomBulletStrategy(FiringInfo&);
+    PhantomBulletStrategy(const FiringInfo&);
     ~PhantomBulletStrategy();
 };
 

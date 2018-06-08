@@ -31,12 +31,12 @@ static float limitAngle(float a)
     return a;
 }
 
-GuidedMissileStrategy::GuidedMissileStrategy(ShotPath::Ptr _path) :
-    ShotStrategy(_path),
+GuidedMissileStrategy::GuidedMissileStrategy(const FiringInfo& info) :
+    ShotStrategy(info),
     renderTimes(0),
     needUpdate(true)
 {
-    ptSceneNode = new BoltSceneNode(_path->getPosition(),_path->getVelocity(),false);
+    ptSceneNode = new BoltSceneNode(getPosition(),getVelocity(),false);
     TextureManager &tm = TextureManager::instance();
     int texture = tm.getTextureID("missile");
 
@@ -45,14 +45,13 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath::Ptr _path) :
         ptSceneNode->setTexture(texture);
         ptSceneNode->setTextureAnimation(4, 4);
         ptSceneNode->setColor(1.0f, 0.2f, 0.0f);
-        ptSceneNode->setTeamColor(Team::getShotColor(_path->getTeam()));
+        ptSceneNode->setTeamColor(Team::getShotColor(getTeam()));
         ptSceneNode->setFlares(true);
     }
 
     // get initial shot info
-    FiringInfo& f = getFiringInfo(_path);
-    f.lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
-    const float* vel = getPath().getVelocity();
+    getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE);
+    const float* vel =getVelocity();
     const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
     float dir[3];
     dir[0] = vel[0] * d;
@@ -62,8 +61,8 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath::Ptr _path) :
     elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
 
     // initialize segments
-    currentTime = getPath().getStartTime();
-    Ray ray = Ray(f.shot.pos, dir);
+    currentTime =getStartTime();
+    Ray ray = Ray(info.shot.pos, dir);
     ShotPathSegment segment(currentTime, currentTime, ray);
     segments.push_back(segment);
     segments.push_back(segment);
@@ -72,21 +71,21 @@ GuidedMissileStrategy::GuidedMissileStrategy(ShotPath::Ptr _path) :
 
     // setup shot
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
-    f.shot.vel[0] = shotSpeed * dir[0];
-    f.shot.vel[1] = shotSpeed * dir[1];
-    f.shot.vel[2] = shotSpeed * dir[2];
+    getFiringInfo().shot.vel[0] = shotSpeed * dir[0];
+    getFiringInfo().shot.vel[1] = shotSpeed * dir[1];
+    getFiringInfo().shot.vel[2] = shotSpeed * dir[2];
 
     // set next position to starting position
-    nextPos[0] = f.shot.pos[0];
-    nextPos[1] = f.shot.pos[1];
-    nextPos[2] = f.shot.pos[2];
+    nextPos[0] = info.shot.pos[0];
+    nextPos[1] = info.shot.pos[1];
+    nextPos[2] = info.shot.pos[2];
 
     // check that first segment doesn't start inside a building
     float startPos[3];
     float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
-    startPos[0] = f.shot.pos[0] - muzzleFront * dir[0];
-    startPos[1] = f.shot.pos[1] - muzzleFront * dir[1];
-    startPos[2] = f.shot.pos[2] - muzzleFront * dir[2];
+    startPos[0] = info.shot.pos[0] - muzzleFront * dir[0];
+    startPos[1] = info.shot.pos[1] - muzzleFront * dir[1];
+    startPos[2] = info.shot.pos[2] - muzzleFront * dir[2];
     Ray firstRay = Ray(startPos, dir);
     prevTime = currentTime;
     prevTime += -muzzleFront / BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
@@ -113,8 +112,7 @@ GuidedMissileStrategy::~GuidedMissileStrategy()
 
 void GuidedMissileStrategy::update(float dt)
 {
-    const bool isRemote = (getPath().getPlayer() !=
-                           LocalPlayer::getMyTank()->getId());
+    const bool isRemote = (getPlayer() !=  LocalPlayer::getMyTank()->getId());
 
     // ignore packets that arrive out of order
     if (isRemote && dt < 0.0f) return;
@@ -126,7 +124,7 @@ void GuidedMissileStrategy::update(float dt)
     // if shot life ran out then send notification and expire shot.
     // only local shots are expired.
     if (!isRemote &&
-            currentTime - getPath().getStartTime() >= getPath().getLifetime())
+            currentTime - getStartTime() >= getLifetime())
     {
         /* NOTE -- comment out to not explode when shot expires */
         addShotExplosion(nextPos);
@@ -166,8 +164,7 @@ void GuidedMissileStrategy::update(float dt)
         }
     }
 
-    if ((target != NULL) && ((target->getFlag() == Flags::Stealth)
-                             || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+    if ((target != NULL) && ((target->getFlag() == Flags::Stealth)  || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
     {
         target = NULL;
         lastTarget = NoPlayer;
@@ -286,7 +283,7 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
     if (teleporter)
     {
         // entered teleporter -- teleport it
-        unsigned int seed = getPath().getShotId();
+        unsigned int seed = getShotId();
         int source = World::getWorld()->getTeleporter(teleporter, face);
         int target = World::getWorld()->getTeleportTarget(source, seed);
 
@@ -312,11 +309,11 @@ float GuidedMissileStrategy::checkBuildings(const Ray& ray)
 float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float position[3]) const
 {
     float minTime = Infinity;
-    if (getPath().isExpired()) return minTime;
+    if (isExpired()) return minTime;
 
     // GM is not active until activation time passes (for any tank)
     const float activationTime = BZDB.eval(StateDatabase::BZDB_GMACTIVATIONTIME);
-    if ((TimeKeeper::getTick() - getPath().getStartTime()) < activationTime)
+    if ((TimeKeeper::getTick() - getStartTime()) < activationTime)
         return minTime;
 
     // get tank radius
@@ -339,7 +336,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
     const int numSegments = segments.size();
     int i = 0;
     // only test most recent segment if shot is from my tank
-    if (numSegments > 1 && tank->getId() == getPath().getPlayer())
+    if (numSegments > 1 && tank->getId() == getPlayer())
         i = numSegments - 1;
     for (; i < numSegments; i++)
     {
@@ -432,7 +429,7 @@ void GuidedMissileStrategy::readUpdate(uint16_t code, const void* msg)
     nboUnpackUByte(msg, lastTarget);
 
     // fix up dependent variables
-    const float* vel = getPath().getVelocity();
+    const float* vel = getVelocity();
     const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
     float dir[3];
     dir[0] = vel[0] * d;
@@ -440,7 +437,7 @@ void GuidedMissileStrategy::readUpdate(uint16_t code, const void* msg)
     dir[2] = vel[2] * d;
     azimuth = limitAngle(atan2f(dir[1], dir[0]));
     elevation = limitAngle(atan2f(dir[2], hypotf(dir[1], dir[0])));
-    const float* pos = getPath().getPosition();
+    const float* pos = getPosition();
     nextPos[0] = pos[0];
     nextPos[1] = pos[1];
     nextPos[2] = pos[2];
@@ -451,23 +448,22 @@ void GuidedMissileStrategy::readUpdate(uint16_t code, const void* msg)
 
 void GuidedMissileStrategy::addShot(SceneDatabase* scene, bool)
 {
-    ptSceneNode->move(getPath().getPosition(), getPath().getVelocity());
+    ptSceneNode->move(getPosition(), getVelocity());
     scene->addDynamicNode(ptSceneNode);
 }
 
 void GuidedMissileStrategy::expire()
 {
-    if (getPath().getPlayer() == LocalPlayer::getMyTank()->getId())
+    if (getPlayer() == LocalPlayer::getMyTank()->getId())
     {
-        const ShotPath& shot = getPath();
         /* NOTE -- change 0 to 1 to not explode when shot expires (I think) */
-        ServerLink::getServer()->sendEndShot(shot.getPlayer(), shot.getShotId(), 0);
+        ServerLink::getServer()->sendEndShot(getPlayer(), getShotId(), 0);
     }
 }
 
 void GuidedMissileStrategy::radarRender() const
 {
-    const float *orig = getPath().getPosition();
+    const float *orig = getPosition();
     const int length = (int)BZDBCache::linedRadarShots;
     const int size   = (int)BZDBCache::sizedRadarShots;
 
@@ -475,7 +471,7 @@ void GuidedMissileStrategy::radarRender() const
     // Display leading lines
     if (length > 0)
     {
-        const float* vel = getPath().getVelocity();
+        const float* vel = getVelocity();
         const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
         float dir[3];
         dir[0] = vel[0] * d * shotTailLength * length;

@@ -29,7 +29,7 @@
 #include "ForceFeedback.h"
 #include "effectsRenderer.h"
 
-#include "ShotList.h";
+#include "ShotList.h"
 
 /* system implementation headers */
 #include <algorithm>
@@ -93,7 +93,6 @@ void            LocalPlayer::doUpdate(float dt)
     static TimeKeeper pauseTime = TimeKeeper::getNullTime();
     static bool wasPaused = false;
 
-    int i;
     if (isPaused())
     {
         // if we've been paused for a long time, drop our flag
@@ -1182,7 +1181,7 @@ void            LocalPlayer::setPause(bool pause)
     }
 }
 
-void            LocalPlayer::activateAutoPilot(bool autopilot)
+void LocalPlayer::activateAutoPilot(bool autopilot)
 {
     // If desired and actual state is the same, ignore the request
     if (autopilot == isAutoPilot())
@@ -1196,23 +1195,23 @@ void            LocalPlayer::activateAutoPilot(bool autopilot)
 
 
 
-bool            LocalPlayer::fireShot()
+bool LocalPlayer::fireShot()
 {
     if (! (firingStatus == Ready || firingStatus == Zoned))
         return false;
 
     // make sure we're allowed to shoot
-    if (!isAlive() || isPaused() ||
-            ((location == InBuilding) && !isPhantomZoned()))
+    if (!isAlive() || isPaused() || ((location == InBuilding) && !isPhantomZoned()))
         return false;
 
-    if (!HasFreeShotSlot())
-        return;
+    if (!hasFreeShotSlot())
+        return false;
 
-    int localShotID = GetNextShotSlot();
+    int localShotID = getNextShotSlot();
 
     // prepare shot
     FiringInfo firingInfo(*this, localShotID);
+    firingInfo.shot.id = 0xFFFF; // always set the GUID to invalid, server will set it on return
     // FIXME team coloring of shot is never used; it was meant to be used
     // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
@@ -1250,7 +1249,7 @@ bool            LocalPlayer::fireShot()
     ShotPath::Ptr shot = ShotPath::Create(firingInfo);
     shot->sendUpdates = true;
     localShots.push_back(shot);
-    fireShot(shot); // track the reload in the slot
+    addShotToSlot(shot); // track the reload in the slot
 
     // Insert timestamp, useful for dead reckoning jitter fixing
     // TODO should maybe use getTick() instead? must double check

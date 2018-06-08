@@ -21,11 +21,11 @@
 #include "common.h"
 #include "bzfgl.h"
 #include "Obstacle.h"
+#include "ShotPath.h"
 
 
 class SceneRenderer;
 class World;
-class ShotPath;
 
 class RadarRenderer
 {

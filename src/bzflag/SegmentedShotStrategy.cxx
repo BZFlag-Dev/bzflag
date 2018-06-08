@@ -30,7 +30,7 @@
 #include "Roster.h"
 #include "playing.h"
 
-SegmentedShotStrategy::SegmentedShotStrategy(FiringInfo& _info, bool useSuperTexture, bool faint) :
+SegmentedShotStrategy::SegmentedShotStrategy(const FiringInfo & _info, bool useSuperTexture, bool faint) :
     ShotStrategy(_info), bbox()
 {
     // initialize times
@@ -43,7 +43,7 @@ SegmentedShotStrategy::SegmentedShotStrategy(FiringInfo& _info, bool useSuperTex
     // get team
     if (getPlayer() == ServerPlayer)
     {
-        TeamColor tmpTeam = >getFiringInfo().shot.team;
+        TeamColor tmpTeam = getFiringInfo().shot.team;
         team = (tmpTeam < RogueTeam) ? RogueTeam :
                (tmpTeam > HunterTeam) ? RogueTeam : tmpTeam;
     }
@@ -594,7 +594,7 @@ const std::vector<ShotPathSegment>& SegmentedShotStrategy::getSegments() const
 // NormalShotStrategy
 //
 
-NormalShotStrategy::NormalShotStrategy(FiringInfo& _info) :
+NormalShotStrategy::NormalShotStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false)
 {
     // make segments
@@ -610,15 +610,15 @@ NormalShotStrategy::~NormalShotStrategy()
 // RapidFireStrategy
 //
 
-RapidFireStrategy::RapidFireStrategy(FiringInfo& _info) :
+RapidFireStrategy::RapidFireStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false)
 {
     // speed up shell and decrease lifetime
-    _info.lifetime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
+    getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
     float fireAdVel = BZDB.eval(StateDatabase::BZDB_RFIREADVEL);
-    _info.shot.vel[0] *= fireAdVel;
-    _info.shot.vel[1] *= fireAdVel;
-    _info.shot.vel[2] *= fireAdVel;
+    getFiringInfo().shot.vel[0] *= fireAdVel;
+    getFiringInfo().shot.vel[1] *= fireAdVel;
+    getFiringInfo().shot.vel[2] *= fireAdVel;
 
     // make segments
     makeSegments(Stop);
@@ -633,15 +633,15 @@ RapidFireStrategy::~RapidFireStrategy()
 // ThiefStrategy
 //
 
-ThiefStrategy::ThiefStrategy(FiringInfo& _info) :
+ThiefStrategy::ThiefStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false), cumTime(0.0f)
 {
     // speed up shell and decrease lifetime
-    _info.lifetime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
+    getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
     float thiefAdVel = BZDB.eval(StateDatabase::BZDB_THIEFADSHOTVEL);
-    _info.shot.vel[0] *= thiefAdVel;
-    _info.shot.vel[1] *= thiefAdVel;
-    _info.shot.vel[2] *= thiefAdVel;
+    getFiringInfo().shot.vel[0] *= thiefAdVel;
+    getFiringInfo().shot.vel[1] *= thiefAdVel;
+    getFiringInfo().shot.vel[2] *= thiefAdVel;
 
     // make segments
     makeSegments(Stop);
@@ -728,15 +728,16 @@ bool  ThiefStrategy::isStoppedByHit() const
 // MachineGunStrategy
 //
 
-MachineGunStrategy::MachineGunStrategy(FiringInfo& _info) :
+MachineGunStrategy::MachineGunStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false)
 {
+    FiringInfo& f = getFiringInfo();
     // speed up shell and decrease lifetime
-    _info.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
+    f.lifetime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
     float mgunAdVel = BZDB.eval(StateDatabase::BZDB_MGUNADVEL);
-    _info.shot.vel[0] *= mgunAdVel;
-    _info.shot.vel[1] *= mgunAdVel;
-    _info.shot.vel[2] *= mgunAdVel;
+    f.shot.vel[0] *= mgunAdVel;
+    f.shot.vel[1] *= mgunAdVel;
+    f.shot.vel[2] *= mgunAdVel;
 
     // make segments
     makeSegments(Stop);
@@ -751,7 +752,7 @@ MachineGunStrategy::~MachineGunStrategy()
 // RicochetStrategy
 //
 
-RicochetStrategy::RicochetStrategy(FiringInfo &_info) :
+RicochetStrategy::RicochetStrategy(const FiringInfo &_info) :
     SegmentedShotStrategy(_info, false)
 {
     // make segments that bounce
@@ -767,7 +768,7 @@ RicochetStrategy::~RicochetStrategy()
 // SuperBulletStrategy
 //
 
-SuperBulletStrategy::SuperBulletStrategy(FiringInfo &_info) :
+SuperBulletStrategy::SuperBulletStrategy(const FiringInfo &_info) :
     SegmentedShotStrategy(_info, true)
 {
     // make segments that go through buildings
@@ -780,7 +781,7 @@ SuperBulletStrategy::~SuperBulletStrategy()
 }
 
 
-PhantomBulletStrategy::PhantomBulletStrategy(FiringInfo& _info) :
+PhantomBulletStrategy::PhantomBulletStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false, true)
 {
     // make segments that go through buildings
@@ -796,15 +797,15 @@ PhantomBulletStrategy::~PhantomBulletStrategy()
 // LaserStrategy
 //
 
-LaserStrategy::LaserStrategy(FiringInfo& _info) :
+LaserStrategy::LaserStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false), cumTime(0.0f)
 {
     // speed up shell and decrease lifetime
-    _info.lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+    getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
     float laserAdVel = BZDB.eval(StateDatabase::BZDB_LASERADVEL);
-    _info.shot.vel[0] *= laserAdVel;
-    _info.shot.vel[1] *= laserAdVel;
-    _info.shot.vel[2] *= laserAdVel;
+    getFiringInfo().shot.vel[0] *= laserAdVel;
+    getFiringInfo().shot.vel[1] *= laserAdVel;
+    getFiringInfo().shot.vel[2] *= laserAdVel;
 
     // make segments
     makeSegments(Stop);

@@ -537,7 +537,7 @@ int NetHandler::pwrite(const void *b, int l)
         // only send bulk messages by UDP
         switch (code)
         {
-        case MsgShotBegin:
+        case MsgFireShot:
         case MsgShotEnd:
         case MsgPlayerUpdate:
         case MsgPlayerUpdateSmall:

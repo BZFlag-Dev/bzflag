@@ -104,6 +104,7 @@ void BaseLocalPlayer::update(float inputDT)
 
         // do remaining update stuff
         doUpdate(dt);
+        UpdateShotSlots(dt);
 
         // subtract another chunk
         doneDT -= dtLimit;

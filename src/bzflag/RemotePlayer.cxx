@@ -34,8 +34,8 @@ void            RemotePlayer::addShot(const FiringInfo& info)
 {
     float newpos[3];
     const float *f = getForward();
-    ShotPath::Ptr newShot = ShotPath::Create(firingInfo);
-    fireShot(newShot); // take up the shot slot
+    ShotPath::Ptr newShot = ShotPath::Create(info);
+    addShotToSlot(newShot); // take up the shot slot
 
     ShotList::AddShot(newShot);
 

@@ -2016,18 +2016,6 @@ void            HUDRenderer::renderRoaming(SceneRenderer& renderer)
     glPopMatrix();
 }
 
-
-
-static int      compare_float(const void* a, const void* b)
-{
-    const float fa = *((const float*)a);
-    const float fb = *((const float*)b);
-    if (fa > fb)
-        return 1;
-    else
-        return -1;
-}
-
 void            HUDRenderer::renderShots(const Player* target)
 {
     // get the target tank
@@ -2057,7 +2045,7 @@ void            HUDRenderer::renderShots(const Player* target)
         factors.push_back(slot.ReloadFactor());
 
     // sort the reload values
-    std::sort(factors.begin(), factors.end(), compare_float);
+    std::sort(factors.begin(), factors.end(), std::greater<float>());
 
     // draw the reload values
     glEnable(GL_BLEND);

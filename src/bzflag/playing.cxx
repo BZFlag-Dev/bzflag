@@ -198,7 +198,7 @@ static const char*  blowedUpMessage[] =
 static bool     gotBlowedUp(BaseLocalPlayer* tank,
                             BlowedUpReason reason,
                             PlayerId killer,
-                            const ShotPath::Ptr hit,
+                            const ShotPath::Ptr hit = nullptr,
                             int physicsDriver = -1);
 
 #ifdef ROBOT
@@ -2993,10 +2993,10 @@ static void     handleServerMessage(bool human, uint16_t code,
     case MsgShotEnd:
     {
         PlayerId id;
-        int16_t shotId;
+        uint16_t shotId;
         uint16_t reason;
         msg = nboUnpackUByte(msg, id);
-        msg = nboUnpackShort(msg, shotId);
+        msg = nboUnpackUShort(msg, shotId);
         msg = nboUnpackUShort(msg, reason);
         BaseLocalPlayer* localPlayer = getLocalPlayer(id);
 
@@ -3895,7 +3895,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
 
     int shotId = -1;
     FlagType* flagType = Flags::Null;
-    if (hit)
+    if (hit != nullptr)
     {
         shotId = hit->getShotId();
         flagType = hit->getFlag();
@@ -4017,7 +4017,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
 
                     // matching the team-display style of other kill messages
                     TeamColor team = killerPlayer->getTeam();
-                    if (hit)
+                    if (hit != nullptr)
                         team = hit->getTeam();
                     if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam))
                     {
@@ -5810,17 +5810,17 @@ static bool trackPlayerShot(Player* target, float* eyePoint, float* targetPoint)
     // follow the first shot
     if (BZDB.isTrue("trackShots"))
     {
-        const ShotPath::Ptr sp;
+        ShotPath::Ptr sp;
         // look for the oldest active shot
         float remaining = +MAXFLOAT;
-        for (auto spTmp : target->getShots())
+        for (auto spTmp : target->getShotSlots())
         {
-            if (spTmp != nullptr)
+            if (!spTmp.Available())
             {
-                const float t = float(spTmp->getReloadTime() - (spTmp->getCurrentTime() - spTmp->getStartTime()));
+                const float t = spTmp.reloadTime;
                 if ((t > 0.0f) && (t < remaining))
                 {
-                    sp = spTmp;
+                    sp = spTmp.activeShot;
                     remaining = t;
                 }
             }
@@ -7318,13 +7318,13 @@ static void     playingLoop()
         for (i = 0; i < curMaxPlayers; i++)
         {
             if (remotePlayers[i])
-                remotePlayers[i]->updateShots(dt);
+                ShotList::UpdateShotsForPlayer(remotePlayers[i]->getId(), dt);
         }
 
         // update servers shots
         const World *_world = World::getWorld();
         if (_world)
-            _world->getWorldWeapons()->updateShots(dt);
+            ShotList::UpdateShotsForPlayer(_world->getWorldWeapons()->getId(), dt);
 
         // update track marks  (before any tanks are moved)
         TrackMarks::update(dt);

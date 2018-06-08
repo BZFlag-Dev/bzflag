@@ -26,6 +26,7 @@
 #include "Protocol.h"
 #include "ShotPath.h"
 #include "Flag.h"
+#include "Player.h"
 
 class ServerLink
 {

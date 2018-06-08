@@ -57,8 +57,7 @@ public:
         Joystick
     };
 
-    LocalPlayer(const PlayerId&,
-                const char* name, const char* motto);
+    LocalPlayer(const PlayerId&, const char* name, const char* motto);
     ~LocalPlayer();
 
     Location  getLocation() const;
@@ -91,16 +90,16 @@ public:
     void            setRecipient(const Player*);
     const Player*   getRecipient() const;
 
-    void      restart(const float* pos, float azimuth);
-    bool      checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const;
-    void      setFlag(FlagType*);
-    void      changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void            restart(const float* pos, float azimuth);
+    bool            checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const;
+    void            setFlag(FlagType*);
+    void            changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
-    void      addAntidote(SceneDatabase*);
+    void            addAntidote(SceneDatabase*);
 
-    InputMethod   getInputMethod() const;
-    void      setInputMethod(InputMethod newInput);
-    void      setInputMethod(std::string newInput);
+    InputMethod     getInputMethod() const;
+    void            setInputMethod(InputMethod newInput);
+    void            setInputMethod(std::string newInput);
     static std::string    getInputMethodName(InputMethod whatInput);
     bool      queryInputChange();
     void      setKey(int button, bool pressed);

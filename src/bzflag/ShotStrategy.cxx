@@ -20,7 +20,8 @@
 #include "WallObstacle.h"
 #include "ObstacleMgr.h"
 
-#include "ShotPath.h"
+/* local interface headers */
+#include "BaseLocalPlayer.h"
 
 
 ShotStrategy::~ShotStrategy()

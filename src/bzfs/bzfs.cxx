@@ -4150,8 +4150,7 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
 
 static void shotUpdate(int playerIndex, void *buf, int len)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -4159,23 +4158,25 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     if (!shooter.isAlive() || shooter.isObserver())
         return;
 
-    ShotUpdate shot;
+    ShotUpdate update;
     PlayerId targetId;
-    nboUnpackUByte(shot.unpack(buf), targetId);
+    nboUnpackUByte(update.unpack(buf), targetId);
 
     // verify playerId
-    if (shot.player != playerIndex)
+    if (update.player != playerIndex)
     {
-        logDebugMessage(2,"Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(),
-                        playerIndex);
+        logDebugMessage(2,"Player %s [%d] shot playerid mismatch\n", shooter.getCallSign(), playerIndex);
         return;
     }
 
-    if (!playerData->updateShot(shot.id & 0xff, shot.id >> 8))
+    Shot::Ptr shot = ShotManager.FindShot(update.id);
+    if (shot == nullptr || shot->Info.shot.player != playerIndex)
+    {
+        logDebugMessage(2, "Player %s [%d] attempt to update invalid shot\n", shooter.getCallSign(), playerIndex);
         return;
+    }
 
-    uint32_t shotGUID = ShotManager.FindShotGUID(playerIndex,shot.id & 0xff);
-    ShotManager.SetShotTarget(shotGUID,targetId);
+    ShotManager.SetShotTarget(shot->GetGUID(),targetId);
 
     // TODO, Remove this and let the GM update logic send the updates,
     broadcastMessage(MsgGMUpdate, len, buf);
@@ -4183,15 +4184,14 @@ static void shotUpdate(int playerIndex, void *buf, int len)
 
 static void shotFired(int playerIndex, void *buf, int len)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
-    bool repack = false;
     const PlayerInfo &shooter = playerData->player;
     if (!shooter.isAlive() || shooter.isObserver())
         return;
+
     FiringInfo firingInfo;
     firingInfo.unpack(buf);
     const ShotUpdate &shot = firingInfo.shot;
@@ -4204,18 +4204,24 @@ static void shotFired(int playerIndex, void *buf, int len)
         return;
     }
 
+    // verify shot slot
+    if (firingInfo.localID >= clOptions->maxShots) // only the server can create non slot shots
+    {
+        // bye bye supposed cheater
+        logDebugMessage(1, "Kicking Player %s [%d] Player using invalid shot slots\n", shooter.getCallSign(), playerIndex);
+        sendMessage(ServerPlayer, playerIndex, "Autokick: You can't shoot more shots then you have.");
+        removePlayer(playerIndex, "Player shot id out of range");
+        return;
+    }
+
     // make sure the shooter flag is a valid index to prevent segfaulting later
     if (!shooter.haveFlag())
-    {
         firingInfo.flagType = Flags::Null;
-        repack = true;
-    }
 
     float shotSpeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED);
     FlagInfo &fInfo = *FlagInfo::get(shooter.getFlag());
     // verify player flag
-    if ((firingInfo.flagType != Flags::Null)
-            && (firingInfo.flagType != fInfo.flag.type))
+    if ((firingInfo.flagType != Flags::Null)  && (firingInfo.flagType != fInfo.flag.type))
     {
         std::string fireFlag = "unknown";
         std::string holdFlag = "unknown";
@@ -4238,8 +4244,7 @@ static void shotFired(int playerIndex, void *buf, int len)
             removePlayer(playerIndex, "Player shot mismatch");
         }
 
-        logDebugMessage(2,"Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(),
-                        playerIndex, fireFlag.c_str(), holdFlag.c_str());
+        logDebugMessage(2,"Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(), playerIndex, fireFlag.c_str(), holdFlag.c_str());
         return;
     }
 
@@ -4248,8 +4253,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     else
         firingInfo.flagType = Flags::Null;
 
-    if (!playerData->addShot(shot.id & 0xff, shot.id >> 8, firingInfo))
-        return;
+    if (!playerData->isValidShotToShoot(firingInfo))
+        return; // it's a dupe shot
 
     const float maxTankSpeed  = BZDBCache::tankSpeed;
     const float tankSpeedMult = BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -4269,8 +4274,7 @@ static void shotFired(int playerIndex, void *buf, int len)
         tankSpeed *= tankSpeedMult;
     else if (firingInfo.flagType == Flags::Thief)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if ((firingInfo.flagType == Flags::Burrow)
-             && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
+    else if ((firingInfo.flagType == Flags::Burrow)  && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
     else if (firingInfo.flagType == Flags::Agility)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
@@ -4288,9 +4292,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     // verify lifetime
     if (fabs(firingInfo.lifetime - lifetime) > Epsilon)
     {
-        logDebugMessage(2,"Player %s [%d] shot lifetime mismatch %f %f\n",
-                        shooter.getCallSign(),
-                        playerIndex, firingInfo.lifetime, lifetime);
+        logDebugMessage(2,"Player %s [%d] shot lifetime mismatch %f %f\n", shooter.getCallSign(),  playerIndex, firingInfo.lifetime, lifetime);
         return;
     }
 
@@ -4299,9 +4301,7 @@ static void shotFired(int playerIndex, void *buf, int len)
         // verify velocity
         if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f)
         {
-            logDebugMessage(2,"Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(),
-                            playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])),
-                            shotSpeed);
+            logDebugMessage(2,"Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(), playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])), shotSpeed);
             return;
         }
 
@@ -4352,16 +4352,17 @@ static void shotFired(int playerIndex, void *buf, int len)
         if (shotEvent.type == "DELETE")
             return;
         firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
-        repack = true;
     }
 
-    // repack if changed
-    if (repack)
-    {
-        void *bufStart = getDirectMessageBuffer();
-        firingInfo.pack(bufStart);
-        buf = bufStart;
-    }
+
+    // add the shot to the global list to get it's GUID
+    int guid = ShotManager.AddShot(firingInfo, playerData->getIndex());
+    firingInfo.shot.id = (uint16_t)guid;
+
+    // repack for ID
+    void *bufStart = getDirectMessageBuffer();
+    firingInfo.pack(bufStart);
+    buf = bufStart;
 
 
     // if shooter has a flag
@@ -4369,7 +4370,6 @@ static void shotFired(int playerIndex, void *buf, int len)
     char message[MessageLen];
     if (shooter.haveFlag())
     {
-
         fInfo.numShots++; // increase the # shots fired
 
         int limit = clOptions->flagLimit[fInfo.flag.type];
@@ -4411,34 +4411,36 @@ static void shotFired(int playerIndex, void *buf, int len)
     if (firingInfo.flagType == Flags::GuidedMissile)
         playerData->player.endShotCredit--;
 
-    ShotManager.AddShot(firingInfo,playerData->getIndex());
-
     broadcastMessage(MsgShotBegin, len, buf);
-
 }
 
-static void shotEnded(const PlayerId& id, int16_t shotIndex, uint16_t reason)
+static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
 {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(id);
 
     if (!playerData && id != ServerPlayer)
         return;
 
-    if (id != ServerPlayer)
-        playerData->removeShot(shotIndex & 0xff, shotIndex >> 8);
+    Shot::Ptr shot = ShotManager.FindShot(shotid);
 
-    ShotManager.RemoveShot(ShotManager.FindShotGUID(id,shotIndex & 0xff));
+    if (shot->Info.shot.player != id)
+        return; // you can't end someone else's shot
+
+    if (id != ServerPlayer)
+        playerData->removeShot(shotid);
+
+    ShotManager.RemoveShot(shot->GetGUID());
 
     // shot has ended prematurely -- send MsgShotEnd
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, id);
-    buf = nboPackShort(buf, shotIndex);
+    buf = nboPackUShort(buf, shotid);
     buf = nboPackUShort(buf, reason);
     broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 
     bz_ShotEndedEventData_V1 shotEvent;
     shotEvent.playerID = (int)id;
-    shotEvent.shotID = shotIndex;
+    shotEvent.shotID = shotid;
     shotEvent.explode = reason == 0;
     worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 }
@@ -4742,7 +4744,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     {
         switch (code)
         {
-        case MsgShotBegin:
+        case MsgFireShot:
         case MsgShotEnd:
         case MsgPlayerUpdate:
         case MsgPlayerUpdateSmall:
@@ -5056,7 +5058,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     }
 
     // shot fired
-    case MsgShotBegin:
+    case MsgFireShot:
         if (invalidPlayerAction(playerData->player, t, "shoot"))
             break;
 
@@ -5098,10 +5100,10 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         // data: shooter id, shot number, reason
         PlayerId sourcePlayer;
-        int16_t shot;
+        uint16_t shot;
         uint16_t reason;
         buf = nboUnpackUByte(buf, sourcePlayer);
-        buf = nboUnpackShort(buf, shot);
+        buf = nboUnpackUShort(buf, shot);
         buf = nboUnpackUShort(buf, reason);
         shotEnded(sourcePlayer, shot, reason);
 
@@ -5673,7 +5675,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
     PlayerId t = i;
     switch (code)
     {
-    case MsgShotBegin:
+    case MsgFireShot:
     {
         nboUnpackUByte(buf, t);
         break;
@@ -5708,7 +5710,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e)
     // must not be using the UDP link
     if (true && playerData != NULL && !playerData->player.isBot())
     {
-        if (code == MsgShotBegin)
+        if (code == MsgFireShot)
         {
             char message[MessageLen];
             snprintf(message, MessageLen, "Your end is not using UDP.");
@@ -5864,6 +5866,8 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
         if (delta > BZDB.eval("_maxPlayerAddDelay"))
             AddPlayer(p, &playerData);
     }
+
+    playerData.update();
 
     if (playerData.netHandler)
     {

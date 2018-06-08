@@ -123,4 +123,23 @@ namespace ShotList
         for (auto deadShots : toKill)
             GlobalShotList.erase(deadShots);
     }
+
+
+    void UpdateShotsForPlayer(PlayerId id, float dt)
+    {
+        std::vector<ShotPath::List::iterator> toKill;
+        for (ShotPath::List::iterator shot = GlobalShotList.begin(); shot != GlobalShotList.end(); shot++)
+        {
+            if ((*shot)->getPlayer() != id)
+                continue;
+
+            (*shot)->update(dt);
+
+            if ((*shot)->isExpired())
+                toKill.push_back(shot);
+        }
+
+        for (auto deadShots : toKill)
+            GlobalShotList.erase(deadShots);
+    }
 }

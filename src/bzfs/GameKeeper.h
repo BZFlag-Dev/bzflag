@@ -38,20 +38,20 @@
 #include "bzfsAPI.h"
 #include "FlagInfo.h"
 #include "ShotUpdate.h"
+#include "ShotManager.h"
 
-class ShotInfo
+using namespace Shots;
+
+class ShotSlotInfo
 {
 public:
-    ShotInfo() : salt(0), expireTime(0.0), present(false), running(false) {};
+    ShotSlotInfo() {};
 
-    FiringInfo firingInfo;
-    int   salt;
-    float      expireTime;
-    bool       present;
-    bool       running;
+    int         slotID = -1;
+    Shot::Ptr   activeShot = nullptr;
+    double      expireTime = -1.0f;
+    bool        reloading = false;
 };
-
-
 
 const int PlayerSlot = MaxPlayers + ReplayObservers;
 
@@ -67,13 +67,12 @@ public:
     class Player
     {
     public:
-        Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd,
-               tcpCallback _clientCallback);
+        Player(int _playerIndex, const struct sockaddr_in &clientAddr, int fd, tcpCallback _clientCallback);
         Player(int _playerIndex, NetHandler *handler, tcpCallback _clientCallback);
         Player(int _playerIndex, bz_ServerSidePlayerHandler *handler);
         ~Player();
 
-        int        getIndex();
+        int             getIndex();
         static int     getFreeIndex(int min, int max);
         static Player* getPlayerByIndex(int _playerIndex);
         static int     count();
@@ -85,45 +84,47 @@ public:
         static int     getPlayerIDByName(const std::string &name);
         static void    reloadAccessDatabase();
 
-        bool       loadEnterData(uint16_t& rejectCode,
-                                 char* rejectMsg);
-        void*      packAdminInfo(void* buf);
-        void*      packPlayerInfo(void* buf);
-        void*      packPlayerUpdate(void* buf);
+        bool            loadEnterData(uint16_t& rejectCode, char* rejectMsg);
+        void*           packAdminInfo(void* buf);
+        void*           packPlayerInfo(void* buf);
+        void*           packPlayerUpdate(void* buf);
 
-        void       setPlayerAddMessage ( PlayerAddMessage &msg );
+        void            setPlayerAddMessage(PlayerAddMessage &msg);
 
-        void       signingOn(bool ctf);
-        void       close();
-        static bool    clean();
-        void       handleTcpPacket(fd_set *set);
+        void            signingOn(bool ctf);
+        void            close();
+        static bool     clean();
+        void            handleTcpPacket(fd_set *set);
 
         // For hostban checking, to avoid check and check again
-        static void    setAllNeedHostbanChecked(bool set);
-        void       setNeedThisHostbanChecked(bool set);
-        bool       needsHostbanChecked();
+        static void     setAllNeedHostbanChecked(bool set);
+        void            setNeedThisHostbanChecked(bool set);
+        bool            needsHostbanChecked();
 
         // To handle player State
-        void       setPlayerState(float pos[3], float azimuth);
-        void       getPlayerState(float pos[3], float &azimuth);
-        void       setPlayerState(PlayerState state, float timestamp);
+        void            setPlayerState(float pos[3], float azimuth);
+        void            getPlayerState(float pos[3], float &azimuth);
+        void            setPlayerState(PlayerState state, float timestamp);
 
-        void       setBzIdentifier(const std::string& id);
+        void            setBzIdentifier(const std::string& id);
         const std::string& getBzIdentifier() const;
 
         // When is the player's next GameTime?
         const TimeKeeper&   getNextGameTime() const;
-        void        updateNextGameTime();
+        void                updateNextGameTime();
 
         // To handle Identify
-        void       setLastIdFlag(int _idFlag);
-        int     getLastIdFlag();
+        void            setLastIdFlag(int _idFlag);
+        int             getLastIdFlag();
 
         // To handle shot
-        static void    setMaxShots(int _maxShots);
-        bool       addShot(int id, int salt, FiringInfo &firingInfo);
-        bool       removeShot(int id, int salt);
-        bool       updateShot(int id, int salt);
+        static void     setMaxShots(int _maxShots);
+        bool            isValidShotToShoot(FiringInfo &firingInfo);
+        bool            addShot(Shot::Ptr);
+        bool            removeShot(int gid);
+        void            updateShotSlots();
+
+        void            update();
 
 
         enum LSAState
@@ -162,6 +163,13 @@ public:
         Authentication    authentication;
 
         std::map<std::string, std::string> extraData;
+        class AttributeModifiers
+        {
+        public:
+            float reloadMultiplyer = 1.0f;
+        };
+
+        AttributeModifiers Attributes;
 
         // flag to let us know the player is on it's way out
         bool  isParting;
@@ -181,20 +189,21 @@ public:
         std::list<int> chunksLeft;
 
     private:
-        static Player*    playerList[PlayerSlot];
-        int           playerIndex;
-        bool          closed;
-        tcpCallback       clientCallback;
-        std::string       bzIdentifier;
-        bool          needThisHostbanChecked;
+        static Player*      playerList[PlayerSlot];
+        int                 playerIndex;
+        bool                closed;
+        tcpCallback         clientCallback;
+        std::string         bzIdentifier;
+        bool                needThisHostbanChecked;
         // In case you want recheck all condition on all players
-        static bool       allNeedHostbanChecked;
+        static bool         allNeedHostbanChecked;
 
-        static int       maxShots;
-        std::vector<ShotInfo> shotsInfo;
+        static int          maxShots;
+        std::vector<ShotSlotInfo> shotSlots;
 
-        int        idFlag;
+        int                 idFlag;
 
+        double              lastShotUpdateTime = -1;
     };
 
     class Flag

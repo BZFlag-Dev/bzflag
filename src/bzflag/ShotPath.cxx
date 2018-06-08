@@ -26,11 +26,11 @@
 // FiringInfo (with BaseLocalPlayer)
 //
 
-FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int localID)
+FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
 {
     shot.player = tank.getId();
     shot.id = 0xFFFF;    // local players always send in 0xFFFF for the global ID since it's assigned by the server
-    localID = localID;
+    localID = _localID;
     tank.getMuzzle(shot.pos);
     const float* dir = tank.getForward();
     const float* tankVel = tank.getVelocity();
@@ -102,28 +102,6 @@ ShotPath::~ShotPath()
 {
 }
 
-float           ShotPath::checkHit(const BaseLocalPlayer* player,
-                                   float position[3]) const
-{
-    return strategy->checkHit(player, position);
-}
-
-bool            ShotPath::isStoppedByHit() const
-{
-    return strategy->isStoppedByHit();
-}
-
-void            ShotPath::addShot(SceneDatabase* scene,
-                                  bool colorblind)
-{
-    strategy->addShot(scene, colorblind);
-}
-
-void            ShotPath::radarRender() const
-{
-    if (!isExpired()) strategy->radarRender();
-}
-
 void            ShotPath::updateShot(float dt)
 {
     getFiringInfo().shot.dt += dt;
@@ -135,11 +113,11 @@ void            ShotPath::updateShot(float dt)
     if (!expired)
     {
         if (expiring) setExpired();
-        else getStrategy()->update(dt);
+        else update(dt);
     }
 
     if (sendUpdates)
-        getStrategy()->sendUpdate(getFiringInfo());
+        sendUpdate(getFiringInfo());
 }
 
 void            ShotPath::setPosition(const float* p)
@@ -165,12 +143,7 @@ void            ShotPath::setExpired()
 {
     expiring = true;
     expired = true;
-    getStrategy()->expire();
-}
-
-void            ShotPath::boostReloadTime(float dt)
-{
-    reloadTime += dt;
+    expire();
 }
 
 void            ShotPath::update(float dt)
@@ -186,7 +159,7 @@ void            ShotPath::update(const ShotUpdate& shot,
     getFiringInfo().shot = shot;
 
     // let the strategy see the message
-    getStrategy()->readUpdate(code, msg);
+    readUpdate(code, msg);
 }
 
 // Local Variables: ***

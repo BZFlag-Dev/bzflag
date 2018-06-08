@@ -81,12 +81,12 @@ public:
     float     getAngle() const;
     const float*  getForward() const;
     const float*  getVelocity() const;
-    virtual ShotPath::Vec getShots() const = 0;
+    virtual ShotPath::Vec getShots() const;
 
     void        setupShotSlots();
     bool        hasFreeShotSlot();
     int         getNextShotSlot();
-    virtual void fireShot (ShotPath::Ptr shot);
+    virtual void addShotToSlot(ShotPath::Ptr shot);
 
     const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
 
@@ -192,8 +192,8 @@ public:
     void      setStatus(short);
     void      setExplode(const TimeKeeper&);
     void      setTeleport(const TimeKeeper&, short from, short to);
-    void      endShot(int index, bool isHit = false,
-        bool showExplosion = false);
+    void      endShot(int index, bool isHit = false,  bool showExplosion = false);
+    virtual void  addShots(SceneDatabase* scene, bool colorblind) const;
     void      addHitToStats(FlagType* flag);
 
     void*     pack(void*, uint16_t& code);

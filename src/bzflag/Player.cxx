@@ -162,6 +162,9 @@ void Player::setupShotSlots()
 {
     ShotSlots.clear();
 
+    if (World::getWorld() == nullptr)
+        return;
+
     for (int i = 0; i < World::getWorld()->getMaxShots(); i++)
     {
         ShotSlot slot;
@@ -190,7 +193,7 @@ int Player::getNextShotSlot()
     return -1;
 }
 
-void Player::fireShot(ShotPath::Ptr shot)
+void Player::addShotToSlot(ShotPath::Ptr shot)
 {
     int slotIndex = shot->getFiringInfo().localID;
     if (slotIndex > World::getWorld()->getMaxShots())
@@ -504,7 +507,7 @@ void Player::updateJumpJets(float dt)
 
 void Player::UpdateShotSlots(float dt)
 {
-    for (auto slot : ShotSlots)
+    for (auto& slot : ShotSlots)
     {
         if (slot.activeShot != nullptr)
         {
@@ -1150,14 +1153,20 @@ void Player::spawnEffect()
     return;
 }
 
-// void Player::addShots(SceneDatabase* scene, bool colorblind) const
-// {
-//     for (auto shot : getShots())
-//     {
-//         if (shot != nullptr && !shot->isExpiring() && !shot->isExpired())
-//             shot->addShot(scene, colorblind);
-//     }
-// }
+void Player::addShots(SceneDatabase* scene, bool colorblind) const
+{
+    for (auto shot : getShots())
+    {
+        if (shot != nullptr && !shot->isExpiring() && !shot->isExpired())
+            shot->addShot(scene, colorblind);
+    }
+}
+
+
+ShotPath::Vec Player::getShots() const
+{
+    return ShotList::GetShotsForPlayer(getId());
+}
 
 float Player::getFlagReload(FlagType* flag) const
 {
@@ -1188,7 +1197,7 @@ float Player::getReloadTime() const
         return time;
 
 
-    float minTime = getFlagReload() + reloadOffset;
+    float minTime = getFlagReload(getFlag()) + reloadOffset;
 
     if (minTime < 0.0f)
         minTime = 0.0f;

@@ -32,7 +32,7 @@
 class GuidedMissileStrategy : public ShotStrategy
 {
 public:
-    GuidedMissileStrategy(ShotPath::Ptr);
+    GuidedMissileStrategy(const FiringInfo &info);
     ~GuidedMissileStrategy();
 
     void        update(float dt);

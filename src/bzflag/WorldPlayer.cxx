@@ -32,11 +32,6 @@ void WorldPlayer::addShot(const FiringInfo& info)
     ShotList::AddShot(newShot);
 }
 
-ShotPath::Vec WorldPlayer::getShots() const
-{
-    return ShotList::GetShotsForPlayer(getId());
-}
-
 bool WorldPlayer::doEndShot( int ident, bool isHit, float* pos)
 {
     return ShotList::HandleEndShot(ident, isHit, pos);

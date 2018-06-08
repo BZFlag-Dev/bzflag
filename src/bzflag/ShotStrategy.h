@@ -22,29 +22,25 @@
 
 #include "common.h"
 
+#include "ShotPath.h"
+
 /* common interface headers */
 #include "Ray.h"
 #include "Obstacle.h"
 #include "Teleporter.h"
 #include "SceneDatabase.h"
 
-/* local interface headers */
-#include "BaseLocalPlayer.h"
-#include "ShotPath.h"
+class BaseLocalPlayer;
 
 class ShotStrategy : public ShotPath
 {
 public:
-    ShotStrategy(FiringInfo& _info) : ShotPath(_info) {}
+    ShotStrategy(const FiringInfo& _info) : ShotPath(_info) {}
 
     virtual     ~ShotStrategy();
 
-    virtual void    update(float dt) = 0;
-    virtual float   checkHit(const BaseLocalPlayer*, float pos[3]) const = 0;
     virtual bool    isStoppedByHit() const;
-    virtual void    addShot(SceneDatabase*, bool colorblind) = 0;
     virtual void    expire();
-    virtual void    radarRender() const = 0;
 
     // first part of message must be the
     // ShotUpdate portion of FiringInfo.

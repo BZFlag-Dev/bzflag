@@ -28,7 +28,7 @@
 class ShockWaveStrategy : public ShotStrategy
 {
 public:
-    ShockWaveStrategy(ShotPath::Ptr);
+    ShockWaveStrategy(const FiringInfo& info);
     ~ShockWaveStrategy();
 
     void        update(float dt);
