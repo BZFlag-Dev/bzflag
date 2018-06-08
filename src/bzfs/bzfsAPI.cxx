@@ -816,6 +816,35 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
     return true;
 }
 
+const char *bz_BasePlayerRecord::getCustomData(const char* key)
+{
+    GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == nullptr || key == nullptr)
+        return nullptr;
+
+    std::string keyStr = key;
+    if (player->extraData.find(keyStr) == player->extraData.end())
+        return nullptr;
+
+    return player->extraData[keyStr].c_str();
+}
+
+bool bz_BasePlayerRecord::setCustomData(const char* key, const char* data)
+{
+    GameKeeper::Player* player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == nullptr || key == nullptr)
+        return false;
+
+    std::string keyStr = key;
+    std::string dataStr;
+    if (data != nullptr)
+        dataStr = dataStr;
+
+    player->extraData[keyStr] = data;
+
+    return true;
+}
+
 BZF_API bool bz_hasPerm ( int playerID, const char* perm )
 {
     if (!perm)
