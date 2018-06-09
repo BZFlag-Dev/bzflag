@@ -16,7 +16,7 @@
  *  hosts. Can be packed for transmission on the net.
  *
  * FiringInfo:
- *  Encapsulates info needed to create RemoteShotPath.
+ *  Encapsulates info needed to create ShotPath.
  *  Can be packed for transmission on the net.
  */
 
@@ -32,22 +32,22 @@
 #include "Flag.h"
 
 const int       ShotUpdatePLen = PlayerIdPLen + 32;
-const int       FiringInfoPLen = ShotUpdatePLen + 10;
+const int       FiringInfoPLen = ShotUpdatePLen + 12;
 
 class BaseLocalPlayer;
 
 struct ShotUpdate
 {
 public:
-    void*       pack(void*) const;
+    void*           pack(void*) const;
     const void*     unpack(const void*);
 
 public:
     PlayerId        player;         // who's shot
-    uint16_t        id;         // shot id unique to player
-    float       pos[3];         // shot position
-    float       vel[3];         // shot velocity
-    float       dt;         // time shot has existed
+    uint16_t        id;             // shot id unique to world
+    float           pos[3];         // shot position
+    float           vel[3];         // shot velocity
+    float           dt;             // time shot has existed
     TeamColor       team;
 };
 
@@ -55,16 +55,17 @@ struct FiringInfo
 {
 public:
     FiringInfo();
-    FiringInfo(const BaseLocalPlayer&, int id);
+    FiringInfo(const BaseLocalPlayer&, int localID);
 
-    void*       pack(void*) const;
+    void*           pack(void*) const;
     const void*     unpack(const void*);
 
 public:
-    float          timeSent;
+    float           timeSent;
+    uint16_t         localID;        // ID local to the player
     ShotUpdate      shot;
-    FlagType*       flagType;           // flag when fired
-    float       lifetime;       // lifetime of shot (s)
+    FlagType*       flagType;       // flag when fired
+    float           lifetime;       // lifetime of shot (s)
 };
 
 #endif // BZF_SHOT_UPDATE_H

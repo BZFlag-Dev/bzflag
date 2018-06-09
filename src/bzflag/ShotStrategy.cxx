@@ -20,11 +20,9 @@
 #include "WallObstacle.h"
 #include "ObstacleMgr.h"
 
-ShotStrategy::ShotStrategy(ShotPath* _path) :
-    path(_path)
-{
-    // do nothing
-}
+/* local interface headers */
+#include "BaseLocalPlayer.h"
+
 
 ShotStrategy::~ShotStrategy()
 {
@@ -49,36 +47,6 @@ void ShotStrategy::readUpdate(uint16_t, const void*)
 void ShotStrategy::expire()
 {
     // do nothing by default
-}
-
-void ShotStrategy::setReloadTime(float t) const
-{
-    path->setReloadTime(t);
-}
-
-void ShotStrategy::setPosition(const float* p) const
-{
-    path->setPosition(p);
-}
-
-void ShotStrategy::setVelocity(const float* v) const
-{
-    path->setVelocity(v);
-}
-
-void ShotStrategy::setExpiring() const
-{
-    path->setExpiring();
-}
-
-void ShotStrategy::setExpired() const
-{
-    path->setExpired();
-}
-
-FiringInfo& ShotStrategy::getFiringInfo(ShotPath* p) const
-{
-    return p->getFiringInfo();
 }
 
 const Obstacle* ShotStrategy::getFirstBuilding(const Ray& ray,

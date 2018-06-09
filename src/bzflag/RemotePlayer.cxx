@@ -16,34 +16,29 @@
 /* common implementation headers */
 #include "World.h"
 
+#include "ShotList.h"
+
 
 RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* _name, const char* _motto, const PlayerType _type) :
     Player(_id, _team, _skinIndex, _name, _motto, _type)
 {
-    numShots = World::getWorld()->getMaxShots();
-    shots = new RemoteShotPath*[numShots];
-    for (int i = 0; i < numShots; i++)
-        shots[i] = NULL;
 }
 
 RemotePlayer::~RemotePlayer()
 {
-    for (int i = 0; i < numShots; i++)
-        delete shots[i];
-    delete[] shots;
+    ShotList::ClearPlayerShots(getId());
+
 }
 
 void            RemotePlayer::addShot(const FiringInfo& info)
 {
     float newpos[3];
     const float *f = getForward();
-    RemoteShotPath* newShot = new RemoteShotPath(info);
-    int shotNum = int(newShot->getShotId() & 255);
+    ShotPath::Ptr newShot = ShotPath::Create(info);
+    addShotToSlot(newShot); // take up the shot slot
 
-    if (shotNum >= numShots)
-        return;
-    if (shots[shotNum]) delete shots[shotNum];
-    shots[shotNum] = newShot;
+    ShotList::AddShot(newShot);
+
     // Update tanks position and set dead reckoning for better lag handling
     // shot origin is center of tank for shockwave
     if (info.flagType == Flags::ShockWave)
@@ -74,73 +69,19 @@ void            RemotePlayer::addShot(const FiringInfo& info)
     setDeadReckoning(-1.0f);
 }
 
-ShotPath*       RemotePlayer::getShot(int index) const
+ShotPath::Vec       RemotePlayer::getShots() const
 {
-    index &= 0x00FF;
-    if ((index < 0) || (index >= World::getWorld()->getMaxShots()))
-        return NULL;
-    return shots[index];
+    return ShotList::GetShotsForPlayer(getId());
 }
 
 void            RemotePlayer::purgeShots() const
 {
-    for (int i = 0; i < numShots; i++)
-    {
-        if (shots[i] != NULL)
-        {
-            delete shots[i];
-            shots[i] = NULL;
-        }
-    }
+    ShotList::ClearPlayerShots(getId());
 }
 
-bool            RemotePlayer::doEndShot(
-    int ident, bool isHit, float* pos)
+bool            RemotePlayer::doEndShot( int ident, bool isHit, float* pos)
 {
-    const int index = ident & 255;
-    const int salt = (ident >> 8) & 127;
-
-    // special id used in some messages (and really shouldn't be sent here)
-    if (ident == -1)
-        return false;
-
-    // ignore bogus shots (those with a bad index or for shots that don't exist)
-    if (index < 0 || index >= World::getWorld()->getMaxShots() || !shots[index])
-        return false;
-
-    // ignore shots that already ending
-    if (shots[index]->isExpired() || shots[index]->isExpiring())
-        return false;
-
-    // ignore shots that have the wrong salt.  since we reuse shot indices
-    // it's possible for an old MsgShotEnd to arrive after we've started a
-    // new shot.  that's where the salt comes in.  it changes for each shot
-    // so we can identify an old shot from a new one.
-    if (salt != ((shots[index]->getShotId() >> 8) & 127))
-        return false;
-
-    // keep statistics
-    shotStatistics.recordHit(shots[index]->getFlag());
-
-    // don't stop if it's because were hitting something and we don't stop
-    // when we hit something.
-    if (isHit && !shots[index]->isStoppedByHit())
-        return false;
-
-    // end it
-    const float* shotPos = shots[index]->getPosition();
-    pos[0] = shotPos[0];
-    pos[1] = shotPos[1];
-    pos[2] = shotPos[2];
-    shots[index]->setExpired();
-    return true;
-}
-
-void            RemotePlayer::updateShots(float dt)
-{
-    for (int i = 0; i < numShots; i++)
-        if (shots[i])
-            shots[i]->update(dt);
+    return ShotList::HandleEndShot(ident, isHit, pos);
 }
 
 // Local Variables: ***

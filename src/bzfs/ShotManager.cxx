@@ -67,14 +67,14 @@ namespace Shots
         Factories[code] = factory;
     }
 
-    uint32_t Manager::AddShot(const FiringInfo &info, PlayerId UNUSED(shooter))
+    uint16_t Manager::AddShot(const FiringInfo &info, PlayerId UNUSED(shooter))
     {
         ShotFactory::Ptr factory = nullptr;
         if (Factories.find(info.flagType->flagAbbv) != Factories.end())
             factory = Factories[info.flagType->flagAbbv];
 
         if (factory == nullptr)
-            factory = Factories[""];
+            factory = Factories[std::string("")];
 
         Shot::Ptr shot = factory->GetShot(NewGUID(), info);
 
@@ -90,7 +90,7 @@ namespace Shots
         return shot->GetGUID();
     }
 
-    void Manager::RemoveShot(uint32_t shotID)
+    void Manager::RemoveShot(uint16_t shotID)
     {
         Shot::Vec::iterator itr = LiveShots.begin();
         while (itr != LiveShots.end())
@@ -124,14 +124,21 @@ namespace Shots
         }
     }
 
-    void Manager::SetShotTarget(uint32_t shotID, PlayerId target)
+    void Manager::UpdateShot(uint16_t shotID, ShotUpdate& update)
     {
         Shot::Ptr shot = FindByID(shotID);
-        if (shot)
+        if (shot != nullptr)
+            shot->ProcessUpdate(update);
+    }
+
+    void Manager::SetShotTarget(uint16_t shotID, PlayerId target)
+    {
+        Shot::Ptr shot = FindByID(shotID);
+        if (shot != nullptr)
             shot->Retarget(target);
     }
 
-    uint32_t Manager::FindShotGUID(PlayerId shooter, uint16_t localShotID)
+    uint16_t Manager::FindShotGUID(PlayerId shooter, uint16_t localShotID)
     {
         for (Shot::Vec::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
         {
@@ -148,17 +155,17 @@ namespace Shots
         return 0;
     }
 
-    uint32_t Manager::NewGUID()
+    uint16_t Manager::NewGUID()
     {
         LastGUID++;
 
-        if (LastGUID == INVALID_SHOT_GUID) // handle the rollover
-            LastGUID = INVALID_SHOT_GUID + 1;
+        if (LastGUID == MAX_SHOT_GUID) // handle the rollover
+            LastGUID = 1 ;
 
         return LastGUID;
     }
 
-    Shot::Ptr Manager::FindByID(uint32_t shotID)
+    Shot::Ptr Manager::FindByID(uint16_t shotID)
     {
         for (Shot::Vec::iterator itr = LiveShots.begin(); itr != LiveShots.end(); itr++)
         {
@@ -239,7 +246,7 @@ namespace Shots
 
     //----------------Shot
 
-    Shot::Shot(uint32_t guid, const FiringInfo &info) : GUID(guid), LastUpdateTime(-1.0),
+    Shot::Shot(uint16_t guid, const FiringInfo &info) : GUID(guid), LastUpdateTime(-1.0),
         Info(info), Pimple(NULL)
     {
         StartTime = -1;
@@ -758,6 +765,11 @@ namespace Shots
         Shot::End();
     }
 
+    void GuidedMissileShot::ProcessUpdate(ShotUpdate& update)
+    {
+        Info.shot = update;
+        Info.shot.id = this->GetGUID();
+    }
 
     //----------------RicoShot
     void RicoShot::Setup()
@@ -1032,8 +1044,6 @@ namespace Shots
         }
         return *this;
     }
-
-
 }
 
 // Local Variables: ***

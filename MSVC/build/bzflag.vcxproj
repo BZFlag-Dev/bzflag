@@ -430,6 +430,7 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Include="..\..\src\bzflag\ServerListFilter.cxx" />
+    <ClCompile Include="..\..\src\bzflag\ShotList.cxx" />
     <ClCompile Include="..\..\src\bzflag\ShotStatistics.cxx" />
     <ClCompile Include="..\..\src\bzflag\ShotStats.cxx" />
     <ClCompile Include="..\..\src\bzflag\ShotStatsDefaultKey.cxx" />
@@ -983,6 +984,7 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
     <ClInclude Include="..\..\src\bzflag\ServerMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ServerStartMenu.h" />
     <ClInclude Include="..\..\src\bzflag\ShockWaveStrategy.h" />
+    <ClInclude Include="..\..\src\bzflag\ShotList.h" />
     <ClInclude Include="..\..\src\bzflag\ShotPath.h" />
     <ClInclude Include="..\..\src\bzflag\ShotStatistics.h" />
     <ClInclude Include="..\..\src\bzflag\ShotStats.h" />

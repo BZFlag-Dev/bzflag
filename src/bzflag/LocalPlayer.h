@@ -57,8 +57,7 @@ public:
         Joystick
     };
 
-    LocalPlayer(const PlayerId&,
-                const char* name, const char* motto);
+    LocalPlayer(const PlayerId&, const char* name, const char* motto);
     ~LocalPlayer();
 
     Location  getLocation() const;
@@ -66,44 +65,41 @@ public:
     float     getFlagShakingTime() const;
     int       getFlagShakingWins() const;
     const float*  getAntidoteLocation() const;
-    ShotPath* getShot(int index) const;
+    virtual ShotPath::Vec getShots() const;
     const Player* getTarget() const;
     int       getDeathPhysicsDriver() const;
     const std::vector<const Obstacle*>& getInsideBuildings() const;
 
-    void      setTeam(TeamColor);
-    void      setDesiredSpeed(float fracOfMaxSpeed);
-    void      setDesiredAngVel(float fracOfMaxAngVel);
-    void      setPause(bool = true);
-    void      activateAutoPilot(bool = true);
-    bool      fireShot();
-    void      purgeShots() const;
-    void      explodeTank();
-    void      doJump();
-    void      setJump();
-    void      setJumpPressed(bool value);
-    void      setTarget(const Player*);
+    void            setTeam(TeamColor);
+    void            setDesiredSpeed(float fracOfMaxSpeed);
+    void            setDesiredAngVel(float fracOfMaxAngVel);
+    void            setPause(bool = true);
+    void            activateAutoPilot(bool = true);
+    bool            fireShot();
 
-    float     getReloadTime() const;
+    void            purgeShots();
+    void            explodeTank();
+    void            doJump();
+    void            setJump();
+    void            setJumpPressed(bool value);
+    void            setTarget(const Player*);
 
+    void            setNemesis(const Player*);
+    const Player*   getNemesis() const;
 
-    void      setNemesis(const Player*);
-    const Player* getNemesis() const;
+    void            setRecipient(const Player*);
+    const Player*   getRecipient() const;
 
-    void      setRecipient(const Player*);
-    const Player* getRecipient() const;
+    void            restart(const float* pos, float azimuth);
+    bool            checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const;
+    void            setFlag(FlagType*);
+    void            changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
-    void      restart(const float* pos, float azimuth);
-    bool      checkHit(const Player* source, const ShotPath*& hit,
-                       float& minTime) const;
-    void      setFlag(FlagType*);
-    void      changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
+    void            addAntidote(SceneDatabase*);
 
-    void      addAntidote(SceneDatabase*);
-
-    InputMethod   getInputMethod() const;
-    void      setInputMethod(InputMethod newInput);
-    void      setInputMethod(std::string newInput);
+    InputMethod     getInputMethod() const;
+    void            setInputMethod(InputMethod newInput);
+    void            setInputMethod(std::string newInput);
     static std::string    getInputMethodName(InputMethod whatInput);
     bool      queryInputChange();
     void      setKey(int button, bool pressed);
@@ -127,13 +123,14 @@ public:
                            float* normal) const;
 
 protected:
-    bool      doEndShot(int index, bool isHit, float* pos);
-    void      doUpdate(float dt);
-    void      doUpdateMotion(float dt);
-    void      doMomentum(float dt, float& speed, float& angVel);
-    void      doFriction(float dt, const float *oldVelocity, float *newVelocity);
-    void      doForces(float dt, float* velocity, float& angVel);
-    LocalShotPath**   shots;
+    bool doEndShot(int index, bool isHit, float* pos);
+    void doUpdate(float dt);
+    void doUpdateMotion(float dt);
+    void doMomentum(float dt, float& speed, float& angVel);
+    void doFriction(float dt, const float *oldVelocity, float *newVelocity);
+    void doForces(float dt, float* velocity, float& angVel);
+
+
     bool    gettingSound;
     ServerLink*   server;
 
@@ -142,6 +139,7 @@ private:
                             float newAngVel, float* newVelocity);
     float     getNewAngVel(float old, float desired);
     void      collectInsideBuildings();
+
 
 private:
     int       numShots;

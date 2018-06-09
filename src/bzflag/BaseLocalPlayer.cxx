@@ -16,6 +16,7 @@
 /* common implementation headers */
 #include "BZDBCache.h"
 #include "playing.h"
+#include "ShotList.h"
 
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
@@ -35,12 +36,6 @@ BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
 BaseLocalPlayer::~BaseLocalPlayer()
 {
     // do nothing
-}
-
-int BaseLocalPlayer::getSalt()
-{
-    salt = (salt + 1) & 127;
-    return salt << 8;
 }
 
 void BaseLocalPlayer::update(float inputDT)
@@ -110,6 +105,7 @@ void BaseLocalPlayer::update(float inputDT)
 
         // do remaining update stuff
         doUpdate(dt);
+        UpdateShotSlots(dt);
 
         // subtract another chunk
         doneDT -= dtLimit;
@@ -128,6 +124,47 @@ Ray BaseLocalPlayer::getLastMotion() const
 const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
 {
     return bbox;
+}
+
+void  BaseLocalPlayer::expireLocalShot(ShotPath::Ptr shot)
+{
+    if (shot->getFiringInfo().shot.player != getId())
+        return; // we don't want to expire shots that are not ours.
+
+    for (auto& slot : ShotSlots)
+    {
+        if (slot.activeShot == shot)
+            slot.activeShot = nullptr;
+    }
+
+    for (auto& local : localShots)
+    {
+        if (local == shot)
+        {
+            localShots.remove(local);
+            return;
+        }
+    }
+
+    ShotList::RemoveShot(shot->getFiringInfo().shot.id);
+}
+
+ShotPath::Ptr    BaseLocalPlayer::popShot(int localID)
+{
+    for (ShotPath::List::iterator itr = localShots.begin(); itr != localShots.end(); itr++)
+    {
+        ShotPath::Ptr p = *itr;
+        if (p != nullptr)
+        {
+            if (p->getFiringInfo().localID == localID)
+            {
+                localShots.erase(itr);
+                return p;
+            }
+        }
+    }
+
+    return nullptr;
 }
 
 

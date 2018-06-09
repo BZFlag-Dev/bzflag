@@ -21,11 +21,11 @@
 #include "common.h"
 #include "bzfgl.h"
 #include "Obstacle.h"
+#include "ShotPath.h"
 
 
 class SceneRenderer;
 class World;
-class ShotPath;
 
 class RadarRenderer
 {
@@ -62,7 +62,7 @@ private:
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&  operator=(const RadarRenderer&);
 
-    void        drawShot(const ShotPath*);
+    void        drawShot(const ShotPath::Ptr);
     void        setTankColor(const class Player* player);
     void        drawTank(const float pos[3],
                          const class Player* player,

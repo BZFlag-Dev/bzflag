@@ -33,6 +33,7 @@
 #include "sound.h"
 #include "effectsRenderer.h"
 #include "Roaming.h"
+#include "ShotList.h"
 
 // for dead reckoning
 static const float  MaxUpdateTime = 1.0f;       // seconds
@@ -140,6 +141,8 @@ Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char*
 
     spawnTime = TimeKeeper::getTick();
 
+    setupShotSlots();
+
     return;
 }
 
@@ -151,6 +154,53 @@ Player::~Player()
         delete tankNode;
         delete pausedSphere;
     }
+
+    ShotSlots.clear();
+}
+
+void Player::setupShotSlots()
+{
+    ShotSlots.clear();
+
+    if (World::getWorld() == nullptr)
+        return;
+
+    for (int i = 0; i < World::getWorld()->getMaxShots(); i++)
+    {
+        ShotSlot slot;
+        slot.slot = i;
+        ShotSlots.push_back(slot);
+    }
+}
+
+bool Player::hasFreeShotSlot()
+{
+    for (auto slot : ShotSlots)
+    {
+        if (slot.Available())
+            return true;
+    }
+    return false;
+}
+
+int Player::getNextShotSlot()
+{
+    for (auto slot : ShotSlots)
+    {
+        if (slot.Available())
+            return slot.slot;
+    }
+    return -1;
+}
+
+void Player::addShotToSlot(ShotPath::Ptr shot)
+{
+    int slotIndex = shot->getFiringInfo().localID;
+    if (slotIndex > World::getWorld()->getMaxShots())
+        return; // it's not a slot based shot
+
+    ShotSlots[slotIndex].activeShot = shot;
+    ShotSlots[slotIndex].reloadTime = ShotSlots[slotIndex].totalReload = getFlagReload(shot->getFiringInfo().flagType);
 }
 
 // Take into account the quality of player wins/(wins+loss)
@@ -453,6 +503,25 @@ void Player::updateJumpJets(float dt)
         state.status &= ~PlayerState::JumpJets;
     }
     return;
+}
+
+void Player::UpdateShotSlots(float dt)
+{
+    for (auto& slot : ShotSlots)
+    {
+        if (slot.activeShot != nullptr)
+        {
+            slot.reloadTime -= dt;
+            if (slot.reloadTime < 0)
+                slot.reloadTime = 0;
+
+            if (slot.Reloaded())
+            {
+                slot.activeShot = nullptr;
+                slot.totalReload = 0;
+            }
+        }
+    }
 }
 
 
@@ -1084,24 +1153,57 @@ void Player::spawnEffect()
     return;
 }
 
-
-int Player::getMaxShots() const
-{
-    return World::getWorld()->getMaxShots();
-}
-
-
 void Player::addShots(SceneDatabase* scene, bool colorblind) const
 {
-    const int count = getMaxShots();
-    for (int i = 0; i < count; i++)
+    for (auto shot : getShots())
     {
-        ShotPath* shot = getShot(i);
-        if (shot && !shot->isExpiring() && !shot->isExpired())
+        if (shot != nullptr && !shot->isExpiring() && !shot->isExpired())
             shot->addShot(scene, colorblind);
     }
 }
 
+
+ShotPath::Vec Player::getShots() const
+{
+    return ShotList::GetShotsForPlayer(getId());
+}
+
+float Player::getFlagReload(FlagType* flag) const
+{
+    float baseReload = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
+
+    if (flag != nullptr)
+    {
+        if (flag == Flags::RapidFire)
+            baseReload /= BZDB.eval(StateDatabase::BZDB_RFIREADRATE);
+        else if (flag == Flags::MachineGun)
+            baseReload /= BZDB.eval(StateDatabase::BZDB_MGUNADRATE);
+        else if (flag == Flags::Laser)
+            baseReload /= BZDB.eval(StateDatabase::BZDB_LASERADRATE);
+        else if (flag == Flags::Thief)
+            baseReload /= BZDB.eval(StateDatabase::BZDB_THIEFADRATE);
+    }
+
+    // TODO, use per tank atrtribute factors to modify base value
+
+    return baseReload;
+}
+
+float Player::getReloadTime() const
+{
+
+    float time = float(jamTime - TimeKeeper::getTick());
+    if (time > 0.0f)
+        return time;
+
+
+    float minTime = getFlagReload(getFlag()) + reloadOffset;
+
+    if (minTime < 0.0f)
+        minTime = 0.0f;
+
+    return minTime;
+}
 
 const void* Player::unpack(const void* buf, uint16_t code)
 {

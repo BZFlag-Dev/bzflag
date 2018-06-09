@@ -77,6 +77,7 @@ const uint16_t      MsgFlagType = 0x6674;           // 'ft'
 const uint16_t      MsgFlagUpdate = 0x6675;         // 'fu'
 const uint16_t      MsgFetchResources = 0x6672;     // 'fr'
 const uint16_t      MsgRequestFlag = 0x7266;        // 'rf'
+const uint16_t      MsgFireShot = 0x6673;           // 'fs'
 const uint16_t      MsgGrantFlag = 0x6766;          // 'gf'
 const uint16_t      MsgGMUpdate = 0x676d;           // 'gm'
 const uint16_t      MsgGameSettings = 0x6773;       // 'gs'
@@ -241,7 +242,7 @@ player to server messages:
             <== MsgCaptureFlag
             <== MsgFlagUpdate
   MsgSetVar     <== count/[name/value]*
-  MsgShotBegin      player has fired a shot
+  MsgFireShot      player has fired a shot
             --> FiringInfo
             <== MsgShotBegin
   MsgShotEnd        shot has terminated

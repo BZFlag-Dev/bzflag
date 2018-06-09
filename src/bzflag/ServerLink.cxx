@@ -434,7 +434,7 @@ void            ServerLink::send(uint16_t code, uint16_t len,
     {
         switch (code)
         {
-        case MsgShotBegin:
+        case MsgFireShot:
         case MsgShotEnd:
         case MsgPlayerUpdate:
         case MsgPlayerUpdateSmall:
@@ -777,7 +777,8 @@ void            ServerLink::sendBeginShot(const FiringInfo& info)
     char msg[FiringInfoPLen];
     void* buf = msg;
     buf = info.pack(buf);
-    send(MsgShotBegin, sizeof(msg), msg);
+    size_t packSize = (size_t)buf - (size_t)msg;
+    send(MsgFireShot, sizeof(msg), msg);
 }
 
 void            ServerLink::sendEndShot(const PlayerId& source,
@@ -786,7 +787,7 @@ void            ServerLink::sendEndShot(const PlayerId& source,
     char msg[PlayerIdPLen + 4];
     void* buf = msg;
     buf = nboPackUByte(buf, source);
-    buf = nboPackShort(buf, int16_t(shotId));
+    buf = nboPackUShort(buf, uint16_t(shotId));
     buf = nboPackUShort(buf, uint16_t(reason));
     send(MsgShotEnd, sizeof(msg), msg);
 }

@@ -26,10 +26,11 @@
 // FiringInfo (with BaseLocalPlayer)
 //
 
-FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
+FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
 {
     shot.player = tank.getId();
-    shot.id = uint16_t(id);
+    shot.id = 0xFFFF;    // local players always send in 0xFFFF for the global ID since it's assigned by the server
+    localID = _localID;
     tank.getMuzzle(shot.pos);
     const float* dir = tank.getForward();
     const float* tankVel = tank.getVelocity();
@@ -52,74 +53,59 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int id)
 // ShotPath
 //
 
+
+ ShotPath::Ptr ShotPath::Create(const FiringInfo& info)
+{
+     // eek!  a giant switch statement, how un-object-oriented!
+     // each flag should be a flyweight object derived from a
+     // base Flag class with a virtual makeShotStrategy() member.
+     // just remember -- it's only a game.
+     if (info.flagType->flagShot == NormalShot)
+         return std::make_shared<NormalShotStrategy>(info);
+     else
+     {
+         if (info.flagType == Flags::RapidFire)
+             return std::make_shared<RapidFireStrategy>(info);
+         else if (info.flagType == Flags::MachineGun)
+             return std::make_shared< MachineGunStrategy>(info);
+         else if (info.flagType == Flags::GuidedMissile)
+             return std::make_shared<GuidedMissileStrategy>(info);
+         else if (info.flagType == Flags::Laser)
+             return std::make_shared<LaserStrategy>(info);
+         else if (info.flagType == Flags::Ricochet)
+             return std::make_shared<RicochetStrategy>(info);
+         else if (info.flagType == Flags::SuperBullet)
+             return std::make_shared<SuperBulletStrategy>(info);
+         else if (info.flagType == Flags::ShockWave)
+             return std::make_shared<ShockWaveStrategy>(info);
+         else if (info.flagType == Flags::Thief)
+             return std::make_shared<ThiefStrategy>(info);
+         else if (info.flagType == Flags::PhantomZone)
+             return std::make_shared<PhantomBulletStrategy>(info);
+         else
+             assert(0);    // shouldn't happen
+     }
+     return nullptr;
+}
+
 ShotPath::ShotPath(const FiringInfo& info) :
     firingInfo(info),
-    reloadTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME)),
     startTime(TimeKeeper::getTick()),
     currentTime(TimeKeeper::getTick()),
     expiring(false),
     expired(false)
 {
-    // eek!  a giant switch statement, how un-object-oriented!
-    // each flag should be a flyweight object derived from a
-    // base Flag class with a virtual makeShotStrategy() member.
-    // just remember -- it's only a game.
-    if (firingInfo.flagType->flagShot == NormalShot)
-        strategy = new NormalShotStrategy(this);
-    else
-    {
-        if (firingInfo.flagType == Flags::RapidFire)
-            strategy = new RapidFireStrategy(this);
-        else if (firingInfo.flagType == Flags::MachineGun)
-            strategy = new MachineGunStrategy(this);
-        else if (firingInfo.flagType == Flags::GuidedMissile)
-            strategy = new GuidedMissileStrategy(this);
-        else if (firingInfo.flagType == Flags::Laser)
-            strategy = new LaserStrategy(this);
-        else if (firingInfo.flagType == Flags::Ricochet)
-            strategy = new RicochetStrategy(this);
-        else if (firingInfo.flagType == Flags::SuperBullet)
-            strategy = new SuperBulletStrategy(this);
-        else if (firingInfo.flagType == Flags::ShockWave)
-            strategy = new ShockWaveStrategy(this);
-        else if (firingInfo.flagType == Flags::Thief)
-            strategy = new ThiefStrategy(this);
-        else if (firingInfo.flagType == Flags::PhantomZone)
-            strategy = new PhantomBulletStrategy(this);
-        else
-            assert(0);    // shouldn't happen
-    }
+    
 }
 
 ShotPath::~ShotPath()
 {
-    delete strategy;
-}
-
-float           ShotPath::checkHit(const BaseLocalPlayer* player,
-                                   float position[3]) const
-{
-    return strategy->checkHit(player, position);
-}
-
-bool            ShotPath::isStoppedByHit() const
-{
-    return strategy->isStoppedByHit();
-}
-
-void            ShotPath::addShot(SceneDatabase* scene,
-                                  bool colorblind)
-{
-    strategy->addShot(scene, colorblind);
-}
-
-void            ShotPath::radarRender() const
-{
-    if (!isExpired()) strategy->radarRender();
 }
 
 void            ShotPath::updateShot(float dt)
 {
+    getFiringInfo().shot.dt += dt;
+
     // get new time step and set current time
     currentTime += dt;
 
@@ -127,13 +113,11 @@ void            ShotPath::updateShot(float dt)
     if (!expired)
     {
         if (expiring) setExpired();
-        else getStrategy()->update(dt);
+        else update(dt);
     }
-}
 
-void            ShotPath::setReloadTime(float _reloadTime)
-{
-    reloadTime = _reloadTime;
+    if (sendUpdates)
+        sendUpdate(getFiringInfo());
 }
 
 void            ShotPath::setPosition(const float* p)
@@ -159,67 +143,23 @@ void            ShotPath::setExpired()
 {
     expiring = true;
     expired = true;
-    getStrategy()->expire();
+    expire();
 }
 
-void            ShotPath::boostReloadTime(float dt)
-{
-    reloadTime += dt;
-}
-
-//
-// LocalShotPath
-//
-
-LocalShotPath::LocalShotPath(const FiringInfo& info) :
-    ShotPath(info)
-{
-    // do nothing
-}
-
-LocalShotPath::~LocalShotPath()
-{
-    // do nothing
-}
-
-void            LocalShotPath::update(float dt)
-{
-    getFiringInfo().shot.dt += dt;
-    updateShot(dt);
-
-    // send updates if necessary
-    getStrategy()->sendUpdate(getFiringInfo());
-}
-
-//
-// RemoteShotPath
-//
-
-RemoteShotPath::RemoteShotPath(const FiringInfo& info) :
-    ShotPath(info)
-{
-    // do nothing
-}
-
-RemoteShotPath::~RemoteShotPath()
-{
-    // do nothing
-}
-
-void            RemoteShotPath::update(float dt)
+void            ShotPath::update(float dt)
 {
     // update shot
     updateShot(dt);
 }
 
-void            RemoteShotPath::update(const ShotUpdate& shot,
+void            ShotPath::update(const ShotUpdate& shot,
                                        uint16_t code, const void* msg)
 {
     // update shot info
     getFiringInfo().shot = shot;
 
     // let the strategy see the message
-    getStrategy()->readUpdate(code, msg);
+    readUpdate(code, msg);
 }
 
 // Local Variables: ***

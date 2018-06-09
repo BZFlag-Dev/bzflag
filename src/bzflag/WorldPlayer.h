@@ -24,24 +24,13 @@ public:
     WorldPlayer();
     ~WorldPlayer();
 
-    void        addShot(const FiringInfo&);
-    ShotPath*       getShot(int index) const;
-    void        updateShots(float dt);
-    int         getMaxShots() const;
-    void        addShots(SceneDatabase* scene, bool colorblind) const;
+    void                addShot(const FiringInfo&);
+    virtual void        addShots(SceneDatabase* scene, bool colorblind) const;
 
 private:
-    bool        doEndShot(int index, bool isHit, float* pos);
+    bool                doEndShot(int index, bool isHit, float* pos);
 
-private:
-    std::vector<RemoteShotPath*> shots;
 };
-
-inline int WorldPlayer::getMaxShots() const
-{
-    return shots.size();
-}
-
 #endif // BZF_WORLD_PLAYER_H
 
 // Local Variables: ***

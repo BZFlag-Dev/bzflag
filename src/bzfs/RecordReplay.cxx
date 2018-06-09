@@ -2624,6 +2624,7 @@ static const char *msgString(u16 code)
         STRING_CASE (MsgReplayReset);
         STRING_CASE (MsgRemovePlayer);
         STRING_CASE (MsgShotBegin);
+        STRING_CASE (MsgFireShot);
         STRING_CASE (MsgScore);
         STRING_CASE (MsgScoreOver);
         STRING_CASE (MsgShotEnd);

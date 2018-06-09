@@ -44,7 +44,7 @@ namespace Shots
     class Shot
     {
     protected:
-        uint32_t GUID;
+        uint16_t GUID;
 
         double  LifeTime;
 
@@ -76,10 +76,10 @@ namespace Shots
 
         void        *Pimple;
 
-        Shot(uint32_t guid, const FiringInfo &info);
+        Shot(uint16_t guid, const FiringInfo &info);
         virtual ~Shot();
 
-        uint32_t GetGUID()
+        uint16_t GetGUID()
         {
             return GUID;
         }
@@ -133,6 +133,8 @@ namespace Shots
         virtual void End();
         virtual void Retarget(PlayerId UNUSED(newTarget));
 
+        virtual void ProcessUpdate(ShotUpdate& UNUSED(referece)) {}
+
         virtual bool CollideBox(fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation))
         {
             return false;
@@ -159,13 +161,14 @@ namespace Shots
     {
     public:
         virtual ~ShotFactory() {}
-        virtual  Shot::Ptr GetShot(uint32_t /*guid*/, const FiringInfo &/*info*/) { return nullptr; }
+        virtual  Shot::Ptr GetShot(uint16_t /*guid*/, const FiringInfo &/*info*/) = 0;
 
         typedef std::shared_ptr <ShotFactory> Ptr;
         typedef std::map<std::string, Ptr > Map;
     };
 
 #define INVALID_SHOT_GUID 0
+#define MAX_SHOT_GUID 0xFFFF
 
     class Manager
     {
@@ -177,15 +180,16 @@ namespace Shots
 
         void SetShotFactory(const char* flagCode, std::shared_ptr<ShotFactory> factory);
 
-        uint32_t AddShot(const FiringInfo &info, PlayerId shooter);
-        void RemoveShot(uint32_t shotID);
+        uint16_t AddShot(const FiringInfo &info, PlayerId shooter);
+        void RemoveShot(uint16_t shotID);
 
         void RemovePlayer(PlayerId player);
 
-        void SetShotTarget(uint32_t shot, PlayerId target);
+        void UpdateShot(uint16_t shotID, ShotUpdate& update);
+        void SetShotTarget(uint16_t shotID, PlayerId target);
 
-        uint32_t FindShotGUID(PlayerId shooter, uint16_t localShotID);
-        Shot::Ptr FindShot(uint32_t shotID)
+        uint16_t FindShotGUID(PlayerId shooter, uint16_t localShotID);
+        Shot::Ptr FindShot(uint16_t shotID)
         {
             return FindByID(shotID);
         }
@@ -201,8 +205,8 @@ namespace Shots
         Shot::Event ShotEnded;
 
     private:
-        uint32_t NewGUID();
-        Shot::Ptr FindByID(uint32_t shotID);
+        uint16_t NewGUID();
+        Shot::Ptr FindByID(uint16_t shotID);
 
         double Now();
 
@@ -211,7 +215,7 @@ namespace Shots
 
         ShotFactory::Map Factories;
 
-        uint32_t    LastGUID;
+        uint16_t    LastGUID;
 
     };
 
@@ -248,7 +252,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ProjectileShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<ProjectileShot>(guid, info); }
         };
 
         enum class ObstacleEffect
@@ -283,7 +288,7 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<RicoShot>(guid, info); }
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<RicoShot>(guid, info); }
         };
     };
 
@@ -298,7 +303,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<RapidFireShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<RapidFireShot>(guid, info); }
         };
     };
 
@@ -313,7 +319,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ThiefShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<ThiefShot>(guid, info); }
         };
     };
 
@@ -328,7 +335,7 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<MachineGunShot>(guid, info); }
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<MachineGunShot>(guid, info); }
         };
     };
 
@@ -343,7 +350,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<LaserShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<LaserShot>(guid, info); }
         };
     };
 
@@ -358,7 +366,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<PhantomShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<PhantomShot>(guid, info); }
         };
     };
 
@@ -370,11 +379,13 @@ namespace Shots
         virtual ~GuidedMissileShot() {}
 
         virtual void End();
+        virtual void ProcessUpdate(ShotUpdate& update);
 
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<GuidedMissileShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<GuidedMissileShot>(guid, info); }
         };
     };
 
@@ -388,7 +399,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<SuperBulletShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<SuperBulletShot>(guid, info); }
         };
     };
 
@@ -406,7 +418,8 @@ namespace Shots
         class Factory : public ShotFactory
         {
         public:
-            virtual  Shot::Ptr GetShot(uint32_t guid, const FiringInfo &info) { return std::make_shared<ShockwaveShot>(guid, info); }
+            virtual ~Factory() {}
+            virtual  Shot::Ptr GetShot(uint16_t guid, const FiringInfo &info) { return std::make_shared<ShockwaveShot>(guid, info); }
         };
 
     protected:

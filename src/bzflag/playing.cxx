@@ -62,6 +62,7 @@
 #include "version.h"
 #include "WordFilter.h"
 #include "ZSceneDatabase.h"
+#include "ShotList.h"
 
 // local implementation headers
 #include "AutoPilot.h"
@@ -197,7 +198,7 @@ static const char*  blowedUpMessage[] =
 static bool     gotBlowedUp(BaseLocalPlayer* tank,
                             BlowedUpReason reason,
                             PlayerId killer,
-                            const ShotPath *hit = NULL,
+                            const ShotPath::Ptr hit = nullptr,
                             int physicsDriver = -1);
 
 #ifdef ROBOT
@@ -2556,8 +2557,8 @@ static void     handleServerMessage(bool human, uint16_t code,
                     {
                         if (killerPlayer)
                         {
-                            const ShotPath* shot = killerPlayer->getShot(int(shotId));
-                            if (shot != NULL)
+                            ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
+                            if (shot != nullptr && shot->getPlayer() == killerPlayer->getId())
                                 teachAutoPilot(shot->getFlag(), 1);
                         }
                     }
@@ -2566,8 +2567,8 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else if (killerPlayer)
         {
-            const ShotPath* shot = killerPlayer->getShot(int(shotId));
-            if (shot && !shot->isStoppedByHit())
+            ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
+            if (shot != nullptr && !shot->isStoppedByHit() && shot->getPlayer() == killerPlayer->getId())
                 killerPlayer->addHitToStats(shot->getFlag());
         }
 
@@ -2676,8 +2677,8 @@ static void     handleServerMessage(bool human, uint16_t code,
                     (myTank->getTeam() != RogueTeam) && shotId >= 0)
             {
                 // now see if shot was fired with a GenocideFlag
-                const ShotPath* shot = killerPlayer->getShot(int(shotId));
-                if (shot && shot->getFlag() == Flags::Genocide)
+                ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
+                if (shot != nullptr && shot->getFlag() == Flags::Genocide)
                     gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
             }
 
@@ -2685,8 +2686,8 @@ static void     handleServerMessage(bool human, uint16_t code,
             // blow up robots on victim's team if shot was genocide
             if (killerPlayer && victimPlayer && shotId >= 0)
             {
-                const ShotPath* shot = killerPlayer->getShot(int(shotId));
-                if (shot && shot->getFlag() == Flags::Genocide)
+                ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
+                if (shot != nullptr && shot->getFlag() == Flags::Genocide)
                     for (int i = 0; i < numRobots; i++)
                         if (robots[i] && victimPlayer != robots[i] &&
                                 victimPlayer->getTeam() == robots[i]->getTeam() &&
@@ -2924,54 +2925,67 @@ static void     handleServerMessage(bool human, uint16_t code,
         msg = firingInfo.unpack(msg);
 
         const int shooterid = firingInfo.shot.player;
-        RemotePlayer* shooter = remotePlayers[shooterid];
 
-        if (shooterid != ServerPlayer)
+        BaseLocalPlayer* localPlayer = getLocalPlayer(shooterid);
+
+        if (localPlayer != nullptr)
         {
-            if (shooter && remotePlayers[shooterid]->getId() == shooterid)
+            // it's my shot, it got a new ID, so we need to move it to the global shot list
+            ShotPath::Ptr shot = localPlayer->popShot(firingInfo.localID);
+            shot->getFiringInfo().shot.id = firingInfo.shot.id;
+            ShotList::AddShot(shot);
+        }
+        else
+        {
+            RemotePlayer* shooter = remotePlayers[shooterid];
+
+            if (shooterid != ServerPlayer)
             {
-                shooter->addShot(firingInfo);
-
-                if (SceneRenderer::instance().useQuality() >= 2)
+                if (shooter && remotePlayers[shooterid]->getId() == shooterid)
                 {
-                    float shotPos[3];
-                    shooter->getMuzzle(shotPos);
+                    shooter->addShot(firingInfo);
 
-                    // if you are driving with a tank in observer mode
-                    // and do not want local shot effects,
-                    // disable shot effects for that specific tank
-                    if ((ROAM.getMode() != Roaming::roamViewFP)
+                    if (SceneRenderer::instance().useQuality() >= 2)
+                    {
+                        float shotPos[3];
+                        shooter->getMuzzle(shotPos);
+
+                        // if you are driving with a tank in observer mode
+                        // and do not want local shot effects,
+                        // disable shot effects for that specific tank
+                        if ((ROAM.getMode() != Roaming::roamViewFP)
                             || (!ROAM.getTargetTank())
                             || (shooterid != ROAM.getTargetTank()->getId())
                             || BZDB.isTrue("enableLocalShotEffect"))
-                    {
-                        EFFECTS.addShotEffect(shooter->getColor(), shotPos,
-                                              shooter->getAngle(),
-                                              shooter->getVelocity());
+                        {
+                            EFFECTS.addShotEffect(shooter->getColor(), shotPos,
+                                shooter->getAngle(),
+                                shooter->getVelocity());
+                        }
                     }
                 }
+                else
+                    break;
             }
             else
-                break;
-        }
-        else
-            World::getWorld()->getWorldWeapons()->addShot(firingInfo);
+                World::getWorld()->getWorldWeapons()->addShot(firingInfo);
 
-        if (human)
-        {
-            const float* pos = firingInfo.shot.pos;
-            const bool importance = false;
-            const bool localSound = isViewTank(shooter);
-            if (firingInfo.flagType == Flags::ShockWave)
-                playSound(SFX_SHOCK, pos, importance, localSound);
-            else if (firingInfo.flagType == Flags::Laser)
-                playSound(SFX_LASER, pos, importance, localSound);
-            else if (firingInfo.flagType == Flags::GuidedMissile)
-                playSound(SFX_MISSILE, pos, importance, localSound);
-            else if (firingInfo.flagType == Flags::Thief)
-                playSound(SFX_THIEF, pos, importance, localSound);
-            else
-                playSound(SFX_FIRE, pos, importance, localSound);
+            if (human)
+            {
+                const float* pos = firingInfo.shot.pos;
+                const bool importance = false;
+                const bool localSound = isViewTank(shooter);
+                if (firingInfo.flagType == Flags::ShockWave)
+                    playSound(SFX_SHOCK, pos, importance, localSound);
+                else if (firingInfo.flagType == Flags::Laser)
+                    playSound(SFX_LASER, pos, importance, localSound);
+                else if (firingInfo.flagType == Flags::GuidedMissile)
+                    playSound(SFX_MISSILE, pos, importance, localSound);
+                else if (firingInfo.flagType == Flags::Thief)
+                    playSound(SFX_THIEF, pos, importance, localSound);
+                else
+                    playSound(SFX_FIRE, pos, importance, localSound);
+            }
         }
         break;
     }
@@ -2979,10 +2993,10 @@ static void     handleServerMessage(bool human, uint16_t code,
     case MsgShotEnd:
     {
         PlayerId id;
-        int16_t shotId;
+        uint16_t shotId;
         uint16_t reason;
         msg = nboUnpackUByte(msg, id);
-        msg = nboUnpackShort(msg, shotId);
+        msg = nboUnpackUShort(msg, shotId);
         msg = nboUnpackUShort(msg, reason);
         BaseLocalPlayer* localPlayer = getLocalPlayer(id);
 
@@ -3526,9 +3540,9 @@ static void     handlePlayerMessage(uint16_t code, uint16_t,
         Player* tank = lookupPlayer(shot.player);
         if (!tank || tank == myTank) break;
         RemotePlayer* remoteTank = (RemotePlayer*)tank;
-        RemoteShotPath* shotPath =
-            (RemoteShotPath*)remoteTank->getShot(shot.id);
-        if (shotPath) shotPath->update(shot, code, msg);
+
+        ShotList::HandleShotUpdate(shot.id, shot, code, msg);
+
         PlayerId targetId;
         msg = nboUnpackUByte(msg, targetId);
         Player* targetTank = lookupPlayer(targetId);
@@ -3874,14 +3888,14 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
 static bool     gotBlowedUp(BaseLocalPlayer* tank,
                             BlowedUpReason reason,
                             PlayerId killer,
-                            const ShotPath* hit, int phydrv)
+                            const ShotPath::Ptr hit, int phydrv)
 {
     if (tank && (tank->getTeam() == ObserverTeam || !tank->isAlive()))
         return false;
 
     int shotId = -1;
     FlagType* flagType = Flags::Null;
-    if (hit)
+    if (hit != nullptr)
     {
         shotId = hit->getShotId();
         flagType = hit->getFlag();
@@ -4003,7 +4017,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
 
                     // matching the team-display style of other kill messages
                     TeamColor team = killerPlayer->getTeam();
-                    if (hit)
+                    if (hit != nullptr)
                         team = hit->getTeam();
                     if (World::getWorld()->allowTeams() && (myTank->getTeam() == team) && (team != RogueTeam) && (team != ObserverTeam))
                     {
@@ -4047,7 +4061,7 @@ static void     checkEnvironment()
 
         // Check for an observed tanks hit.
         Player *target = ROAM.getTargetTank();
-        const ShotPath* hit = NULL;
+       ShotPath::Ptr hit;
         FlagType* flagd;
         float minTime = Infinity;
         int i;
@@ -4074,7 +4088,7 @@ static void     checkEnvironment()
             if (remotePlayers[i])
                 myTank->checkHit(remotePlayers[i], hit, minTime);
 
-        if (!hit)
+        if (hit == nullptr)
             return;
 
         Player* hitter = lookupPlayer(hit->getPlayer());
@@ -4144,7 +4158,7 @@ static void     checkEnvironment()
     }
 
     // see if i've been shot
-    const ShotPath* hit = NULL;
+    ShotPath::Ptr hit;
     float minTime = Infinity;
 
     myTank->checkHit(myTank, hit, minTime);
@@ -4377,11 +4391,9 @@ void setLookAtMarker(void)
 
 static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
 {
-    const int maxShots = tank->getMaxShots();
-    for (int i = 0; i < maxShots; i++)
+    for (auto sp : tank->getShots())
     {
-        const ShotPath* sp = tank->getShot(i);
-        if ((sp != NULL) && (sp->getFlag() == ft))
+        if ((sp != nullptr) && (sp->getFlag() == ft))
             return true;
     }
     return false;
@@ -4799,7 +4811,7 @@ static void     checkEnvironment(RobotPlayer* tank)
     if (!tank->isAlive() || tank->isPaused()) return;
 
     // see if i've been shot
-    const ShotPath* hit = NULL;
+    ShotPath::Ptr hit;
     float minTime = Infinity;
     tank->checkHit(myTank, hit, minTime);
     int i;
@@ -5793,31 +5805,27 @@ static void drawUI()
 // stuff to draw a frame
 //
 
-static bool trackPlayerShot(Player* target,
-                            float* eyePoint, float* targetPoint)
+static bool trackPlayerShot(Player* target, float* eyePoint, float* targetPoint)
 {
     // follow the first shot
     if (BZDB.isTrue("trackShots"))
     {
-        const int maxShots = target->getMaxShots();
-        const ShotPath* sp = NULL;
+        ShotPath::Ptr sp;
         // look for the oldest active shot
         float remaining = +MAXFLOAT;
-        for (int s = 0; s < maxShots; s++)
+        for (auto spTmp : target->getShotSlots())
         {
-            const ShotPath* spTmp = target->getShot(s);
-            if (spTmp != NULL)
+            if (!spTmp.Available())
             {
-                const float t = float(spTmp->getReloadTime() -
-                                      (spTmp->getCurrentTime() - spTmp->getStartTime()));
+                const float t = spTmp.reloadTime;
                 if ((t > 0.0f) && (t < remaining))
                 {
-                    sp = spTmp;
+                    sp = spTmp.activeShot;
                     remaining = t;
                 }
             }
         }
-        if (sp != NULL)
+        if (sp != nullptr)
         {
             const float* pos = sp->getPosition();
             const float* vel = sp->getVelocity();
@@ -7310,13 +7318,13 @@ static void     playingLoop()
         for (i = 0; i < curMaxPlayers; i++)
         {
             if (remotePlayers[i])
-                remotePlayers[i]->updateShots(dt);
+                ShotList::UpdateShotsForPlayer(remotePlayers[i]->getId(), dt);
         }
 
         // update servers shots
         const World *_world = World::getWorld();
         if (_world)
-            _world->getWorldWeapons()->updateShots(dt);
+            ShotList::UpdateShotsForPlayer(_world->getWorldWeapons()->getId(), dt);
 
         // update track marks  (before any tanks are moved)
         TrackMarks::update(dt);
