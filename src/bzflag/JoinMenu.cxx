@@ -384,7 +384,7 @@ void JoinMenu::resize(int _width, int _height)
         listHUD[i]->setPosition(x, y);
         if (i != 5)
             y -= 1.0f * h;
-        if (i <= 2 || i == 9) y -= 0.5f * h;
+        if (i <= 2 || i == 10) y -= 0.5f * h;
     }
 
     // these should be centered
