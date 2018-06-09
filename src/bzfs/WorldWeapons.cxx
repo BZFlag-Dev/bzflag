@@ -29,8 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], int *shotID,
-                                TeamColor teamColor, PlayerId targetPlayerID)
+int WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], TeamColor teamColor, PlayerId targetPlayerID)
 {
     if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
         return INVALID_SHOT_GUID;
@@ -51,16 +50,6 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
 
     firingInfo.shot.dt = 0;
     firingInfo.shot.team = teamColor;
-
-    if (shotID != nullptr && shotID == 0)
-    {
-        *shotID = getNewWorldShotID();
-        firingInfo.shot.id = *shotID;
-    }
-    else if (shotID == nullptr)
-        firingInfo.shot.id = getNewWorldShotID();
-    else
-        firingInfo.shot.id = *shotID;
 
     bz_AllowServerShotFiredEventData_V1 allowEvent;
     allowEvent.flagType = type->flagAbbv;
@@ -88,16 +77,15 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
         firingInfo.flagType = flag;
     }
 
+    firingInfo.localID = 0xFF;
+    firingInfo.shot.id = ShotManager.AddShot(firingInfo, ServerPlayer);
     buf = firingInfo.pack(bufStart);
 
     broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
-
-    uint32_t shotGUID = ShotManager.AddShot(firingInfo, ServerPlayer);
-
     // Target the gm, construct it, and send packet
     if (type->flagAbbv == "GM")
     {
-        ShotManager.SetShotTarget(shotGUID, targetPlayerID);
+        ShotManager.SetShotTarget(firingInfo.shot.id, targetPlayerID);
 
         char packet[ShotUpdatePLen + PlayerIdPLen];
         buf = (void*)packet;
@@ -108,7 +96,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
     }
 
     bz_ServerShotFiredEventData_V1 event;
-    event.guid = shotGUID;
+    event.guid = firingInfo.shot.id;
     event.flagType = allowEvent.flagType;
     event.speed = shotSpeed;
     for (int i = 0; i < 3; i++)
@@ -120,7 +108,7 @@ uint32_t WorldWeapons::fireShot(FlagType* type, const float origin[3], const flo
 
     worldEventManager.callEvents(bz_eServerShotFiredEvent, &event);
 
-    return shotGUID;
+    return  firingInfo.shot.id;
 }
 
 WorldWeapons::WorldWeapons()
@@ -175,7 +163,7 @@ void WorldWeapons::fire()
 
             float vec[3] = { 0,0,0 };
             bz_vectorFromRotations(w->tilt, w->direction, vec);
-            fireShot(&type, w->origin, vec, nullptr, w->teamColor);
+            fireShot(&type, w->origin, vec, w->teamColor);
 
             //Set up timer for next shot, and eat any shots that have been missed
             while (w->nextTime <= nowTime)
@@ -312,7 +300,7 @@ void WorldWeaponGlobalEventHandler::process (bz_EventData *eventData)
     float vec[3] = { 0,0,0 };
     bz_vectorFromRotations(tilt, direction, vec);
 
-    world->getWorldWeapons().fireShot(type, origin, vec, NULL);
+    world->getWorldWeapons().fireShot(type, origin, vec);
 }
 
 // Local Variables: ***
