@@ -16,6 +16,7 @@
 /* common implementation headers */
 #include "BZDBCache.h"
 #include "playing.h"
+#include "ShotList.h"
 
 
 BaseLocalPlayer::BaseLocalPlayer(const PlayerId& _id,
@@ -123,6 +124,29 @@ Ray BaseLocalPlayer::getLastMotion() const
 const float (*BaseLocalPlayer::getLastMotionBBox() const)[3]
 {
     return bbox;
+}
+
+void  BaseLocalPlayer::expireLocalShot(ShotPath::Ptr shot)
+{
+    if (shot->getFiringInfo().shot.player != getId())
+        return; // we don't want to expire shots that are not ours.
+
+    for (auto& slot : ShotSlots)
+    {
+        if (slot.activeShot == shot)
+            slot.activeShot = nullptr;
+    }
+
+    for (auto& local : localShots)
+    {
+        if (local == shot)
+        {
+            localShots.remove(local);
+            return;
+        }
+    }
+
+    ShotList::RemoveShot(shot->getFiringInfo().shot.id);
 }
 
 ShotPath::Ptr    BaseLocalPlayer::popShot(int localID)

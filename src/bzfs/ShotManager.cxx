@@ -124,10 +124,17 @@ namespace Shots
         }
     }
 
+    void Manager::UpdateShot(uint16_t shotID, ShotUpdate& update)
+    {
+        Shot::Ptr shot = FindByID(shotID);
+        if (shot != nullptr)
+            shot->ProcessUpdate(update);
+    }
+
     void Manager::SetShotTarget(uint16_t shotID, PlayerId target)
     {
         Shot::Ptr shot = FindByID(shotID);
-        if (shot)
+        if (shot != nullptr)
             shot->Retarget(target);
     }
 
@@ -758,6 +765,11 @@ namespace Shots
         Shot::End();
     }
 
+    void GuidedMissileShot::ProcessUpdate(ShotUpdate& update)
+    {
+        Info.shot = update;
+        Info.shot.id = this->GetGUID();
+    }
 
     //----------------RicoShot
     void RicoShot::Setup()

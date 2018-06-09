@@ -4175,7 +4175,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
         logDebugMessage(2, "Player %s [%d] attempt to update invalid shot\n", shooter.getCallSign(), playerIndex);
         return;
     }
-
+    ShotManager.UpdateShot(shot->GetGUID(), update);
     ShotManager.SetShotTarget(shot->GetGUID(),targetId);
 
     // TODO, Remove this and let the GM update logic send the updates,

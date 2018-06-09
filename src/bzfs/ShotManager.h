@@ -133,6 +133,8 @@ namespace Shots
         virtual void End();
         virtual void Retarget(PlayerId UNUSED(newTarget));
 
+        virtual void ProcessUpdate(ShotUpdate& UNUSED(referece)) {}
+
         virtual bool CollideBox(fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation))
         {
             return false;
@@ -183,7 +185,8 @@ namespace Shots
 
         void RemovePlayer(PlayerId player);
 
-        void SetShotTarget(uint16_t shot, PlayerId target);
+        void UpdateShot(uint16_t shotID, ShotUpdate& update);
+        void SetShotTarget(uint16_t shotID, PlayerId target);
 
         uint16_t FindShotGUID(PlayerId shooter, uint16_t localShotID);
         Shot::Ptr FindShot(uint16_t shotID)
@@ -200,8 +203,6 @@ namespace Shots
 
         Shot::Event ShotCreated;
         Shot::Event ShotEnded;
-
-    
 
     private:
         uint16_t NewGUID();
@@ -378,6 +379,7 @@ namespace Shots
         virtual ~GuidedMissileShot() {}
 
         virtual void End();
+        virtual void ProcessUpdate(ShotUpdate& update);
 
         class Factory : public ShotFactory
         {

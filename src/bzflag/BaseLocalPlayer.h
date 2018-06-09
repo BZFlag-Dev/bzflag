@@ -38,7 +38,7 @@ public:
     virtual void explodeTank() = 0;
     virtual bool checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const = 0;
 
-
+    virtual void expireLocalShot(ShotPath::Ptr shot);
     ShotPath::Ptr   popShot(int localID);
 
 protected:

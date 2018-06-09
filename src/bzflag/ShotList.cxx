@@ -60,7 +60,7 @@ namespace ShotList
 
     void ClearPlayerShots(PlayerId player)
     {
-        std::remove_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot) { return shot->getPlayer() == player; });
+        std::remove_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot) { return shot != nullptr ? shot->getPlayer() == player : false; });
     }
 
     void HandleShotUpdate(int shotID, const ShotUpdate& update, uint16_t code, const void* msg)
@@ -69,7 +69,7 @@ namespace ShotList
         if (shotID == -1)
             return;
 
-        auto itr = std::find_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot) { return shot->getFiringInfo().shot.id == shotID; });
+        auto itr = std::find_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot) { return shot != nullptr ? shot->getFiringInfo().shot.id == shotID : false; });
         if (itr != GlobalShotList.end() && *itr == nullptr)      // ignore bogus shots (those with a bad index or for shots that don't exist)
             return ;
 

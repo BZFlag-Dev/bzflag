@@ -107,7 +107,6 @@ void            LocalPlayer::doUpdate(float dt)
             setStatus(getStatus() & ~PlayerState::FlagActive);
             pauseTime = TimeKeeper::getSunExplodeTime();
         }
-
     }
     else
     {
@@ -118,8 +117,19 @@ void            LocalPlayer::doUpdate(float dt)
     if (!isPaused())    // we don't reload while paused
         UpdateShotSlots(dt);
 
-    for (auto lShot : localShots)
+    for (auto lShot : getShots())
+    {
+        if (lShot->isExpiring())
+        {
+            lShot->setExpired();
+            expireLocalShot(lShot);
+        }
+    }
+
+    for (auto lShot : getShots())
+    {
         lShot->update(dt);
+    }
 
     anyShotActive = getShots().size() > 0;
 
@@ -235,14 +245,11 @@ void            LocalPlayer::doUpdateMotion(float dt)
     clearRemoteSounds();
 
     // if was teleporting and exceeded teleport time then not teleporting anymore
-    if (isTeleporting() &&
-            ((lastTime - getTeleportTime()) >= BZDB.eval(StateDatabase::BZDB_TELEPORTTIME)))
+    if (isTeleporting() && ((lastTime - getTeleportTime()) >= BZDB.eval(StateDatabase::BZDB_TELEPORTTIME)))
         setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
     // phased means we can pass through buildings
-    const bool phased = ((location == Dead) || (location == Exploding) ||
-                         (getFlag() == Flags::OscillationOverthruster) ||
-                         isPhantomZoned());
+    const bool phased = ((location == Dead) || (location == Exploding) || (getFlag() == Flags::OscillationOverthruster) || isPhantomZoned());
 
     float groundLimit = 0.0f;
     if (getFlag() == Flags::Burrow)
@@ -463,9 +470,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
         }
     }
 
-    float nominalPlanarSpeed2
-        = newVelocity[0] * newVelocity[0]
-          + newVelocity[1] * newVelocity[1];
+    float nominalPlanarSpeed2 = newVelocity[0] * newVelocity[0] + newVelocity[1] * newVelocity[1];
 
     for (int numSteps = 0; numSteps < MaxSteps; numSteps++)
     {
@@ -495,15 +500,12 @@ void            LocalPlayer::doUpdateMotion(float dt)
         }
 
         // see if we hit anything.  if not then we're done.
-        obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth,
-                                  phased, expelled);
+        obstacle = getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased, expelled);
 
         if (!obstacle || !expelled) break;
 
         float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-        if ((oldLocation != InAir) && obstacle->isFlatTop() &&
-                (obstacleTop != tmpPos[2]) &&
-                (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
+        if ((oldLocation != InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2]) && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
         {
             newPos[0] = oldPosition[0];
             newPos[1] = oldPosition[1];
