@@ -494,6 +494,22 @@ void GameKeeper::Player::updateShotSlots()
     lastShotUpdateTime = now;
 }
 
+std::vector<float> GameKeeper::Player::getSlotReloads()
+{
+    double now = TimeKeeper::getCurrent().getSeconds();
+
+    std::vector<float> reloads(shotSlots.size());
+    for (auto slot : shotSlots)
+    {
+        if (slot.reloading)
+            reloads.push_back((float)(slot.expireTime - now));
+        else
+            reloads.push_back(0);
+    }
+
+    return reloads;
+}
+
 void GameKeeper::Player::update()
 {
     updateShotSlots();
