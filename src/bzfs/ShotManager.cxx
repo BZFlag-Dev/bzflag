@@ -82,6 +82,7 @@ namespace Shots
         shot->Setup();
         shot->Update(0); // to get the initial position
         shot->StartPosition = shot->LastUpdatePosition;
+        shot->LastUpdateVector = fvec3(shot->Info.shot.vel[0], shot->Info.shot.vel[1], shot->Info.shot.vel[2]);
 
         LiveShots.push_back(shot);
 
@@ -185,6 +186,30 @@ namespace Shots
     double Manager::Now()
     {
         return TimeKeeper::getCurrent().getSeconds();
+    }
+
+    std::vector<int> Manager::AllLiveShotIDs()
+    {
+        std::vector<int> ids(LiveShots.size());
+        for (auto shot : LiveShots)
+            ids.push_back(shot->GetGUID());
+
+        return ids;
+    }
+
+    std::vector<int>  Manager::ShotIDsInRadius(float pos[3], float radius)
+    {
+        fvec3 p(pos[0],pos[1],pos[2]);
+        float radSq = radius * radius;
+
+        std::vector<int> ids(LiveShots.size());
+        for (auto shot : LiveShots)
+        {
+            if ((p - shot->LastUpdatePosition).lengthSq() <= radSq)
+                ids.push_back(shot->GetGUID());
+        }
+
+        return ids;
     }
 
     void Manager::Update()
@@ -381,14 +406,16 @@ namespace Shots
                 segm.ray.getPoint(float(segm.end - segm.start - 1.0 / speed), pos);
             }
         }
-
-        // otherwise update position and velocity
-        else
+        else// otherwise update position and velocity
         {
             float p[3];
             Segments[segment].ray.getPoint(float(currentTime - Segments[segment].start), p);
             setPosition(p);
             setVelocity(Segments[segment].ray.getDirection());
+
+            LastUpdateVector.x = Info.shot.vel[0];
+            LastUpdateVector.x = Info.shot.vel[1];
+            LastUpdateVector.x = Info.shot.vel[2];
 
             if (doEvent)
             {

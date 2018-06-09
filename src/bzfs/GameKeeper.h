@@ -118,13 +118,13 @@ public:
         int             getLastIdFlag();
 
         // To handle shot
-        static void     setMaxShots(int _maxShots);
-        bool            isValidShotToShoot(FiringInfo &firingInfo);
-        bool            addShot(Shot::Ptr);
-        bool            removeShot(int gid);
-        void            updateShotSlots();
-
-        void            update();
+        static void         setMaxShots(int _maxShots);
+        bool                isValidShotToShoot(FiringInfo &firingInfo);
+        bool                addShot(Shot::Ptr);
+        bool                removeShot(int gid);
+        void                updateShotSlots();
+        std::vector<float>  getSlotReloads();
+        void                update();
 
 
         enum LSAState

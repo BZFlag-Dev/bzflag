@@ -67,6 +67,7 @@ namespace Shots
 
         fvec3       StartPosition;
         fvec3       LastUpdatePosition;
+        fvec3       LastUpdateVector;
         double      LastUpdateTime;
         double      StartTime;
 
@@ -200,6 +201,9 @@ namespace Shots
 
         Shot::Vec    LiveShotsForPlayer(PlayerId player);
         Shot::Vec    DeadShotsForPlayer(PlayerId player);
+
+        std::vector<int> AllLiveShotIDs();
+        std::vector<int> ShotIDsInRadius( float pos[3], float radius);
 
         Shot::Event ShotCreated;
         Shot::Event ShotEnded;
