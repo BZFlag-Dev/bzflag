@@ -123,7 +123,7 @@ void bz_ServerSidePlayerHandler::playerStateUpdate(int, bz_PlayerUpdateState *, 
 
 void bz_ServerSidePlayerHandler::shotFired(int, unsigned short ) {}
 
-void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, unsigned short) {}
+void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, bool) {}
 
 void bz_ServerSidePlayerHandler::playerTeleported( int, bz_PlayerUpdateState *, bz_PlayerUpdateState * ) {}
 
@@ -499,8 +499,7 @@ class BotEventHandler : public bz_EventHandler
             case bz_ePlayerDieEvent:
             {
                 bz_PlayerDieEventData_V1* die = (bz_PlayerDieEventData_V1*)eventData;
-                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(),
-                                      die->driverID);
+                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(), die->driverID);
             }
             break;
 
@@ -513,8 +512,8 @@ class BotEventHandler : public bz_EventHandler
 
             case bz_eShotEndedEvent:
             {
-                bz_ShotEndedEventData_V1* ended = (bz_ShotEndedEventData_V1*)eventData;
-                handler->shotEnded(ended->playerID,ended->shotID,ended->explode? 1 : 0);
+                bz_ShotEndedEventData_V2* ended = (bz_ShotEndedEventData_V2*)eventData;
+                handler->shotEnded(ended->playerID,ended->shotID, ended->expired);
             }
             break;
 

@@ -82,6 +82,7 @@ public:
     const float*  getForward() const;
     const float*  getVelocity() const;
     virtual ShotPath::Vec getShots() const;
+    virtual void addShot(const FiringInfo& info);
 
     void        setupShotSlots();
     bool        hasFreeShotSlot();

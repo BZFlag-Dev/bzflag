@@ -224,6 +224,17 @@ namespace Shots
             if ((*itr)->Update(dt))
             {
                 Shot::Ptr shot = *itr;
+                bz_ShotEndedEventData_V2 shotEvent;
+                shotEvent.playerID = shot->Info.shot.player;
+                shotEvent.shotID = shot->GetGUID();
+                shotEvent.explode = true;
+                shotEvent.expired = true;
+
+                for(int i = 0; i < 3; i++)
+                    shotEvent.position[i] = shot->LastUpdatePosition[i];
+
+                worldEventManager.callEvents(bz_eShotEndedEvent, &shotEvent);
+
                 itr = LiveShots.erase(itr);
                 shot->End();
                 RecentlyDeadShots.push_back(shot);

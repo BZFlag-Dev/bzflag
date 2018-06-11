@@ -32,7 +32,7 @@ public:
     RemotePlayer(const PlayerId&, TeamColor team, int skinIndex, const char* name, const char* motto, const PlayerType);
     ~RemotePlayer();
 
-    void addShot(const FiringInfo&);
+    virtual void addShot(const FiringInfo&);
     virtual ShotPath::Vec getShots() const;
     void purgeShots() const;
 
