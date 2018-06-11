@@ -42,18 +42,18 @@ class TankDeathOverride;
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
-sizeof(float) + // timestamp
-PlayerIdPLen + // player id
-sizeof(int32_t) + // order
-sizeof(int16_t) + // status
-sizeof(float) * 3 + // position           (or int16_t * 3)
-sizeof(float) * 3 + // velocity           (or int16_t * 3)
-sizeof(float) + // angle          (or int16_t)
-sizeof(float) + // angular velocity       (or int16_t)
-sizeof(int16_t) + // jump jets          (conditional)
-sizeof(int32_t) + // physics driver     (conditional)
-sizeof(int16_t) + // user speed         (conditional)
-sizeof(int16_t) + // user angular velocity  (conditional)
+sizeof(float) +     // timestamp
+PlayerIdPLen +      // player id
+sizeof(int32_t) +   // order
+sizeof(int16_t) +   // status
+sizeof(float) * 3 + // position             (or int16_t * 3)
+sizeof(float) * 3 + // velocity             (or int16_t * 3)
+sizeof(float) +     // angle                (or int16_t)
+sizeof(float) +     // angular velocity     (or int16_t)
+sizeof(int16_t) +   // jump jets          (conditional)
+sizeof(int32_t) +   // physics driver     (conditional)
+sizeof(int16_t) +   // user speed         (conditional)
+sizeof(int16_t) +   // user angular velocity  (conditional)
 sizeof(uint8_t);    // sounds         (conditional)
 
 
@@ -63,31 +63,32 @@ public:
     Player(const PlayerId&, TeamColor, int skinIndex, const char* callsign, const char* motto, const PlayerType);
     virtual   ~Player();
 
-    PlayerId  getId() const;
-    TeamColor getNextTeam() const;
-    void      setNextTeam(TeamColor);
-    TeamColor getTeam() const;
-    void      setTeam(TeamColor);
-    int       getSkinIndex() const { return skinIndex; }
-    void      updateTank(float dt, bool local);
-    const char*   getCallSign() const;
-    const char*   getMotto() const;
-    void    setMotto(const char* _motto);
-    PlayerType    getPlayerType() const;
-    FlagType* getFlag() const;
-    long      getOrder() const;
-    short     getStatus() const;
-    const float*  getPosition() const;
-    float     getAngle() const;
-    const float*  getForward() const;
-    const float*  getVelocity() const;
-    virtual ShotPath::Vec getShots() const;
-    virtual void addShot(const FiringInfo& info);
+    PlayerId        getId() const;
+    TeamColor       getNextTeam() const;
+    void            setNextTeam(TeamColor);
+    TeamColor       getTeam() const;
+    void            setTeam(TeamColor);
+    int             getSkinIndex() const { return skinIndex; }
+    void            updateTank(float dt, bool local);
+    const char*     getCallSign() const;
+    const char*     getMotto() const;
+    void            setMotto(const char* _motto);
+    PlayerType      getPlayerType() const;
+    FlagType*       getFlag() const;
+    long            getOrder() const;
+    short           getStatus() const;
+    const float*    getPosition() const;
+    float           getAngle() const;
+    const float*    getForward() const;
+    const float*    getVelocity() const;
 
-    void        setupShotSlots();
-    bool        hasFreeShotSlot();
-    int         getNextShotSlot();
-    virtual void addShotToSlot(ShotPath::Ptr shot);
+    virtual ShotPath::Vec   getShots() const;
+    virtual void            addShot(const FiringInfo& info);
+
+    void            setupShotSlots();
+    bool            hasFreeShotSlot();
+    int             getNextShotSlot();
+    virtual void    addShotToSlot(ShotPath::Ptr shot);
 
     const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
 
@@ -165,9 +166,9 @@ public:
         pauseMessageState = set;
     }
 
-    float           getReloadTime() const;
+    float   getReloadTime() const;
 
-    bool      validTeamTarget(const Player *possibleTarget) const;
+    bool    validTeamTarget(const Player *possibleTarget) const;
 
     // returns true iff dead reckoning is too different from the
     // current tank state.
@@ -185,7 +186,7 @@ public:
     void      setUserSpeed(float speed);
     void      setUserAngVel(float angvel);
     void      changeTeam(TeamColor);
-    virtual void  setFlag(FlagType*);
+    virtual void  setFlag(FlagType*, int);
     virtual void  changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void      changeSelfKills(short delta);
     void      changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
@@ -234,7 +235,7 @@ protected:
 
     // shot statistics
     ShotStatistics    shotStatistics;
-    const Obstacle* lastObstacle; // last obstacle touched
+    const Obstacle* lastObstacle;           // last obstacle touched
     TimeKeeper    jamTime;
 
     // pause message
@@ -242,6 +243,7 @@ protected:
 
     float           handicap;
     int             skinIndex = 0;
+    int             flagLimit = -1;        // the number of shots left on the flag I think I'm holding
 
 private:
     // return true if the shot had to be terminated or false if it
@@ -288,71 +290,71 @@ private:
     TimeKeeper      lastTrackDraw;
 
     // permanent data
-    TeamColor     nextTeam;       // team after next spawn
-    TeamColor     team;           // my team
+    TeamColor     nextTeam;             // team after next spawn
+    TeamColor     team;                 // my team
 
-    char          callSign[CallSignLen];  // my pseudonym
-    char          motto[MottoLen];    // my motto
-    PlayerType        type;           // Human/Computer
+    char          callSign[CallSignLen];// my pseudonym
+    char          motto[MottoLen];      // my motto
+    PlayerType        type;             // Human/Computer
 
-                                      // relatively stable data
-    FlagType*     flagType;       // flag type I'm holding
-    float         dimensions[3];      // current tank dimensions
-    float         dimensionsScale[3]; // use to scale the dimensions
-    float         dimensionsRate[3];   // relative to scale
-    float         dimensionsTarget[3];    // relative to scale
-    bool          useDimensions;      // use the varying dimensions for gfx
-    float         alpha;          // current tank translucency
-    float         alphaRate;      // current tank translucency
-    float         alphaTarget;        // current tank translucency
-    TimeKeeper        spawnTime;      // time I started spawning
-    TimeKeeper        explodeTime;        // time I started exploding
-    TimeKeeper        teleportTime;       // time I started teleporting
-    short         fromTeleporter;     // teleporter I entered
-    short         toTeleporter;       // teleporter I exited
-    float         teleporterProximity;    // how close to a teleporter
-    short         wins;           // number of kills
-    short         losses;         // number of deaths
-    short         tks;            // number of teamkills
-    short         selfKills;          // number of self-destructions
+    // relatively stable data
+    FlagType*     flagType;             // flag type I'm holding
+    float         dimensions[3];        // current tank dimensions
+    float         dimensionsScale[3];   // use to scale the dimensions
+    float         dimensionsRate[3];    // relative to scale
+    float         dimensionsTarget[3];  // relative to scale
+    bool          useDimensions;        // use the varying dimensions for gfx
+    float         alpha;                // current tank translucency
+    float         alphaRate;            // current tank translucency
+    float         alphaTarget;          // current tank translucency
+    TimeKeeper        spawnTime;        // time I started spawning
+    TimeKeeper        explodeTime;      // time I started exploding
+    TimeKeeper        teleportTime;     // time I started teleporting
+    short         fromTeleporter;       // teleporter I entered
+    short         toTeleporter;         // teleporter I exited
+    float         teleporterProximity;  // how close to a teleporter
+    short         wins;                 // number of kills
+    short         losses;               // number of deaths
+    short         tks;                  // number of teamkills
+    short         selfKills;            // number of self-destructions
 
-                                      // score of local player against this player
-    short         localWins;      // local player won this many
-    short         localLosses;        // local player lost this many
-    short         localTks;       // local player team killed this many
+                                        // score of local player against this player
+    short         localWins;            // local player won this many
+    short         localLosses;          // local player lost this many
+    short         localTks;             // local player team killed this many
 
-                                  // highly dynamic data
+    // highly dynamic data
     PlayerState       state;
 
     // additional state
     bool          autoPilot;
 
     // computable highly dynamic data
-    float         forward[3];     // forward unit vector
+    float         forward[3];           // forward unit vector
 
-                                  // relative motion information
-    float         relativeSpeed;      // relative speed
-    float         relativeAngVel;     // relative angular velocity
+                                        // relative motion information
+    float         relativeSpeed;        // relative speed
+    float         relativeAngVel;       // relative angular velocity
 
-    float         apparentVelocity[3];    // velocity of tank as derived from it's last positional update
+    float         apparentVelocity[3];  // velocity of tank as derived from it's last positional update
 
-                                          // dead reckoning stuff
-    TimeKeeper inputTime;     // time of input
-    float inputTimestamp;  // input timestamp of sender
-    int   inputStatus;        // tank status
-    float inputPos[3];        // tank position
-    float inputVel[3];        // tank velocity
-    float inputAzimuth;       // direction tank is pointing
-    float inputAngVel;        // tank turn rate
-    bool  inputTurning;       // tank is turning
-    float inputRelVel[2];     // relative velocity
-    float inputRelSpeed;      // relative speed
-    float inputRelAngVel;     // relative angular velocity
-    float inputTurnCenter[2]; // tank turn center
-    float inputTurnVector[2]; // tank turn vector
-    int   inputPhyDrv;        // physics driver
+    // dead reckoning stuff
+    TimeKeeper inputTime;               // time of input
+    float inputTimestamp;                // input timestamp of sender
+    int   inputStatus;                  // tank status
+    float inputPos[3];                  // tank position
+    float inputVel[3];                  // tank velocity
+    float inputAzimuth;                 // direction tank is pointing
+    float inputAngVel;                  // tank turn rate
+    bool  inputTurning;                 // tank is turning
+    float inputRelVel[2];               // relative velocity
+    float inputRelSpeed;                // relative speed
+    float inputRelAngVel;               // relative angular velocity
+    float inputTurnCenter[2];           // tank turn center
+    float inputTurnVector[2];           // tank turn vector
+    int   inputPhyDrv;                  // physics driver
 
-                              // average difference between time source and time destination
+    // average difference between time source and time destination
     float         deltaTime;
 
     // time offset on last measurement
@@ -363,8 +365,8 @@ private:
     // 2 -> 2 or more sample rx
     int           deadReckoningState;
 
-    int           oldStatus;      // old tank status bits
-    float         oldZSpeed;      // old tank vertical speed
+    int           oldStatus;            // old tank status bits
+    float         oldZSpeed;            // old tank vertical speed
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

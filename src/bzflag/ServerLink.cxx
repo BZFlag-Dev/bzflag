@@ -772,7 +772,7 @@ void            ServerLink::sendPlayerUpdate(Player* player)
     send(code, len, msg);
 }
 
-void            ServerLink::sendBeginShot(const FiringInfo& info)
+void            ServerLink::sendMsgFireShot(const FiringInfo& info)
 {
     char msg[FiringInfoPLen];
     void* buf = msg;

@@ -54,8 +54,9 @@ typedef std::map<FlagType*,bool> FlagOptionMap;
 /** CmdLineOptions is a container for any of the bzfs options that may
  * be provided via the command line.
  */
-struct CmdLineOptions
+class CmdLineOptions
 {
+public:
     CmdLineOptions()
         : wksPort(ServerPort), gameType(TeamFFA), gameOptions(0),
           rabbitSelection(ScoreRabbitSelection), msgTimer(0), spamWarnMax(5),
@@ -174,7 +175,7 @@ struct CmdLineOptions
     bool          timestampUTC;
     bool          countdownPaused;
 
-    uint16_t      maxTeam[NumTeams];
+    uint16_t          maxTeam[NumTeams];
     FlagNumberMap     flagCount;
     FlagNumberMap     flagLimit; // # shots allowed / flag
     FlagOptionMap     flagDisallowed;
@@ -220,6 +221,14 @@ struct CmdLineOptions
     } pluginDef;
 
     std::vector<pluginDef>    pluginList;
+
+    uint16_t getFlagLimit(FlagType* flag)
+    {
+        if (flag == nullptr || flagLimit.find(flag) == flagLimit.end())
+            return -1;
+
+        return (int)flagLimit[flag];
+    }
 };
 
 
@@ -228,7 +237,7 @@ void finalizeParsing(int argc, char **argv, CmdLineOptions &options, EntryZones&
 bool checkCommaList (const char *list, int maxlen);
 
 #else
-struct CmdLineOptions;
+class CmdLineOptions;
 #endif
 
 // Local Variables: ***

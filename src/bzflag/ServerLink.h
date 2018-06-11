@@ -82,7 +82,7 @@ public:
     // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
     //      It should be changed to something cleaner.
     void        sendPlayerUpdate(Player*);
-    void        sendBeginShot(const FiringInfo&);
+    void        sendMsgFireShot(const FiringInfo&);
     void        sendEndShot(const PlayerId&, int shotId, int reason);
     void        sendAlive();
     void        sendTeleport(int from, int to);

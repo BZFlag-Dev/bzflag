@@ -22,6 +22,8 @@
 #include "BzfEvent.h"
 #include "WallObstacle.h"
 #include "MeshObstacle.h"
+#include "TextUtils.h"
+#include "playing.h"
 
 /* local implementation headers */
 #include "World.h"
@@ -1038,7 +1040,7 @@ void            LocalPlayer::restart(const float* pos, float _azimuth)
       setStatus(short(PlayerState::DeadStatus));
 
       // can't have a flag
-      setFlag(Flags::Null);
+      setFlag(Flags::Null, -1);
 
       // get rid of existing shots
       localShots.clear();
@@ -1199,7 +1201,7 @@ void LocalPlayer::activateAutoPilot(bool autopilot)
 
 bool LocalPlayer::fireShot()
 {
-    if (! (firingStatus == Ready || firingStatus == Zoned))
+    if (! (firingStatus == Ready || firingStatus == Zoned) || flagLimit == 0)
         return false;
 
     // make sure we're allowed to shoot
@@ -1262,10 +1264,35 @@ bool LocalPlayer::fireShot()
     // shot start. They should generally travel on the same frame, when
     // flushing the output queues.
     server->sendPlayerUpdate(this);
-    server->sendBeginShot(firingInfo);
+    server->sendMsgFireShot(firingInfo);
 
     if (BZDB.isTrue("enableLocalShotEffect") && SceneRenderer::instance().useQuality() >= 2)
         EFFECTS.addShotEffect(getColor(), firingInfo.shot.pos, getAngle(), getVelocity());
+
+    if (flagLimit > 0)
+    {
+        flagLimit--;
+
+        if (flagLimit == 0)
+        {
+            // the server is going to drop it for us now....
+        }
+        else
+        {
+            if (flagLimit % 5 == 0 || flagLimit <= 3)
+            {
+                std::string limitMessage;
+                if (flagLimit > 1)
+                    limitMessage = TextUtils::format("%d shots left", flagLimit);
+                else if (flagLimit == 1)
+                    limitMessage = "1 shot left";
+                else 
+                    limitMessage = "The flag is empty and can not be fired anymore";
+
+                addMessage(nullptr, limitMessage, 0);
+            }
+        }
+    }
 
     if (gettingSound)
     {
@@ -1582,9 +1609,9 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
     return goodHit;
 }
 
-void            LocalPlayer::setFlag(FlagType* flag)
+void            LocalPlayer::setFlag(FlagType* flag, int limit)
 {
-    Player::setFlag(flag);
+    Player::setFlag(flag, limit);
 
     float worldSize = BZDBCache::worldSize;
     // if it's bad then reset countdowns and set antidote flag
