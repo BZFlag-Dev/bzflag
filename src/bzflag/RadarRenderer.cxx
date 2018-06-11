@@ -630,7 +630,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
         //draw world weapon shots
         WorldPlayer *worldWeapons = World::getWorld()->getWorldWeapons();
-        for (auto shot : myTank->getShots())
+        for (auto shot : worldWeapons->getShots())
         {
             if (shot != nullptr)
             {
