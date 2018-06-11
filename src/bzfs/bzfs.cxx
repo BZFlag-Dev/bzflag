@@ -4155,12 +4155,23 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
 
 static void shotUpdate(int playerIndex, void *buf, int len)
 {
+    FlagInfo *flag = nullptr;
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
     if (!playerData)
         return;
 
     const PlayerInfo &shooter = playerData->player;
-    if (!shooter.isAlive() || shooter.isObserver())
+ 
+    int flagIndex = playerData->player.getFlag();
+    if (flagIndex >= 0)
+        flag = FlagInfo::get(flagIndex);
+
+    bool canUpdate = false;
+    if (flag != nullptr)
+        canUpdate = flag->flag.type == Flags::GuidedMissile;
+
+    if (!shooter.isAlive() || shooter.isObserver() || !canUpdate)
         return;
 
     ShotUpdate update;

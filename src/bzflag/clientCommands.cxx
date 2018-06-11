@@ -371,9 +371,10 @@ static std::string cmdIdentify(const std::string&,
     if (args.size() != 0)
         return "usage: identify";
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    if (myTank != NULL)
-        if (myTank->isAlive() && !myTank->isPaused())
-            setTarget();
+
+    if (myTank != nullptr && myTank->isAlive() && !myTank->isPaused() && myTank->getFlag() == Flags::GuidedMissile)  // per specification from Blast007, GM locks can only be initizated by people with the GM flag
+        setTarget();
+
     return std::string();
 }
 
