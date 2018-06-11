@@ -857,7 +857,7 @@ void BackgroundRenderer::drawSkybox()
         tm.bind(skyboxTexID[5]); // bottom
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         {
             glTexCoord2fv(txcds[0]);
             glColor3fv(color[2]);
@@ -865,12 +865,12 @@ void BackgroundRenderer::drawSkybox()
             glTexCoord2fv(txcds[1]);
             glColor3fv(color[3]);
             glVertex3fv(verts[3]);
-            glTexCoord2fv(txcds[2]);
-            glColor3fv(color[0]);
-            glVertex3fv(verts[0]);
             glTexCoord2fv(txcds[3]);
             glColor3fv(color[1]);
             glVertex3fv(verts[1]);
+            glTexCoord2fv(txcds[2]);
+            glColor3fv(color[0]);
+            glVertex3fv(verts[0]);
         }
         glEnd();
     }
@@ -878,7 +878,7 @@ void BackgroundRenderer::drawSkybox()
     tm.bind(skyboxTexID[4]); // top
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     {
         glTexCoord2fv(txcds[0]);
         glColor3fv(color[5]);
@@ -886,19 +886,19 @@ void BackgroundRenderer::drawSkybox()
         glTexCoord2fv(txcds[1]);
         glColor3fv(color[4]);
         glVertex3fv(verts[4]);
-        glTexCoord2fv(txcds[2]);
-        glColor3fv(color[7]);
-        glVertex3fv(verts[7]);
         glTexCoord2fv(txcds[3]);
         glColor3fv(color[6]);
         glVertex3fv(verts[6]);
+        glTexCoord2fv(txcds[2]);
+        glColor3fv(color[7]);
+        glVertex3fv(verts[7]);
     }
     glEnd();
 
     tm.bind(skyboxTexID[0]); // left
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     {
         glTexCoord2fv(txcds[0]);
         glColor3fv(color[0]);
@@ -906,19 +906,19 @@ void BackgroundRenderer::drawSkybox()
         glTexCoord2fv(txcds[1]);
         glColor3fv(color[3]);
         glVertex3fv(verts[3]);
-        glTexCoord2fv(txcds[2]);
-        glColor3fv(color[7]);
-        glVertex3fv(verts[7]);
         glTexCoord2fv(txcds[3]);
         glColor3fv(color[4]);
         glVertex3fv(verts[4]);
+        glTexCoord2fv(txcds[2]);
+        glColor3fv(color[7]);
+        glVertex3fv(verts[7]);
     }
     glEnd();
 
     tm.bind(skyboxTexID[1]); // front
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     {
         glTexCoord2fv(txcds[0]);
         glColor3fv(color[1]);
@@ -926,19 +926,19 @@ void BackgroundRenderer::drawSkybox()
         glTexCoord2fv(txcds[1]);
         glColor3fv(color[0]);
         glVertex3fv(verts[0]);
-        glTexCoord2fv(txcds[2]);
-        glColor3fv(color[4]);
-        glVertex3fv(verts[4]);
         glTexCoord2fv(txcds[3]);
         glColor3fv(color[5]);
         glVertex3fv(verts[5]);
+        glTexCoord2fv(txcds[2]);
+        glColor3fv(color[4]);
+        glVertex3fv(verts[4]);
     }
     glEnd();
 
     tm.bind(skyboxTexID[2]); // right
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     {
         glTexCoord2fv(txcds[0]);
         glColor3fv(color[2]);
@@ -946,19 +946,19 @@ void BackgroundRenderer::drawSkybox()
         glTexCoord2fv(txcds[1]);
         glColor3fv(color[1]);
         glVertex3fv(verts[1]);
-        glTexCoord2fv(txcds[2]);
-        glColor3fv(color[5]);
-        glVertex3fv(verts[5]);
         glTexCoord2fv(txcds[3]);
         glColor3fv(color[6]);
         glVertex3fv(verts[6]);
+        glTexCoord2fv(txcds[2]);
+        glColor3fv(color[5]);
+        glVertex3fv(verts[5]);
     }
     glEnd();
 
     tm.bind(skyboxTexID[3]); // back
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, skyboxWrapMode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, skyboxWrapMode);
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     {
         glTexCoord2fv(txcds[0]);
         glColor3fv(color[3]);
@@ -966,12 +966,12 @@ void BackgroundRenderer::drawSkybox()
         glTexCoord2fv(txcds[1]);
         glColor3fv(color[2]);
         glVertex3fv(verts[2]);
-        glTexCoord2fv(txcds[2]);
-        glColor3fv(color[6]);
-        glVertex3fv(verts[6]);
         glTexCoord2fv(txcds[3]);
         glColor3fv(color[7]);
         glVertex3fv(verts[7]);
+        glTexCoord2fv(txcds[2]);
+        glColor3fv(color[6]);
+        glVertex3fv(verts[6]);
     }
     glEnd();
 
@@ -1173,18 +1173,18 @@ void BackgroundRenderer::drawGroundCentered()
     const float repeat = BZDB.eval("groundHighResTexRepeat");
     const int indices[5][4] =
     {
-        { 4, 5, 6, 7 },
-        { 0, 1, 5, 4 },
-        { 1, 2, 6, 5 },
-        { 2, 3, 7, 6 },
-        { 3, 0, 4, 7 },
+        { 4, 5, 7, 6 },
+        { 0, 1, 4, 5 },
+        { 1, 2, 5, 6 },
+        { 2, 3, 6, 7 },
+        { 3, 0, 7, 4 },
     };
 
     glNormal3f(0.0f, 0.0f, 1.0f);
-    glBegin(GL_QUADS);
     {
         for (int q = 0; q < 5; q++)
         {
+            glBegin(GL_TRIANGLE_STRIP);
             for (int c = 0; c < 4; c++)
             {
                 const int index = indices[q][c];
@@ -1192,9 +1192,9 @@ void BackgroundRenderer::drawGroundCentered()
                              vertices[index][1] * repeat);
                 glVertex2fv(vertices[index]);
             }
+            glEnd();
         }
     }
-    glEnd();
 
     return;
 }
@@ -1860,7 +1860,7 @@ void BackgroundRenderer::doInitDisplayLists()
         {
             glNormal3f(0.0f, 0.0f, 1.0f);
             // inner clouds -- full opacity
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
             glTexCoord2f(uvScale * cloudRepeats * squareShape[3][0],
                          uvScale * cloudRepeats * squareShape[3][1]);
@@ -1868,12 +1868,12 @@ void BackgroundRenderer::doInitDisplayLists()
             glTexCoord2f(uvScale * cloudRepeats * squareShape[2][0],
                          uvScale * cloudRepeats * squareShape[2][1]);
             glVertex3fv(cloudsInner[2]);
-            glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
-                         uvScale * cloudRepeats * squareShape[1][1]);
-            glVertex3fv(cloudsInner[1]);
             glTexCoord2f(uvScale * cloudRepeats * squareShape[0][0],
                          uvScale * cloudRepeats * squareShape[0][1]);
             glVertex3fv(cloudsInner[0]);
+            glTexCoord2f(uvScale * cloudRepeats * squareShape[1][0],
+                         uvScale * cloudRepeats * squareShape[1][1]);
+            glVertex3fv(cloudsInner[1]);
             glEnd();
 
             // outer clouds -- fade to zero opacity at outer edge

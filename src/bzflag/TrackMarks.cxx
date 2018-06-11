@@ -689,16 +689,16 @@ static void drawPuddle(const TrackEntry& te)
         glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
         glTranslatef(0.0f, +offset, 0.0f);
         glScalef(scale, scale, 1.0f);
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         {
             glTexCoord2f(0.0f, 0.0f);
             glVertex3f(-1.0f, -1.0f, 0.0f);
             glTexCoord2f(1.0f, 0.0f);
             glVertex3f(+1.0f, -1.0f, 0.0f);
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(+1.0f, +1.0f, 0.0f);
             glTexCoord2f(0.0f, 1.0f);
             glVertex3f(-1.0f, +1.0f, 0.0f);
+            glTexCoord2f(1.0f, 1.0f);
+            glVertex3f(+1.0f, +1.0f, 0.0f);
         }
         glEnd();
     }
@@ -714,16 +714,16 @@ static void drawPuddle(const TrackEntry& te)
             glTranslatef(0.0f, -offset, 0.0f);
             glScalef(scale, scale, 1.0f);
 
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             {
                 glTexCoord2f(0.0f, 0.0f);
                 glVertex3f(-1.0f, -1.0f, 0.0f);
                 glTexCoord2f(1.0f, 0.0f);
                 glVertex3f(+1.0f, -1.0f, 0.0f);
-                glTexCoord2f(1.0f, 1.0f);
-                glVertex3f(+1.0f, +1.0f, 0.0f);
                 glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(-1.0f, +1.0f, 0.0f);
+                glTexCoord2f(1.0f, 1.0f);
+                glVertex3f(+1.0f, +1.0f, 0.0f);
             }
             glEnd();
         }

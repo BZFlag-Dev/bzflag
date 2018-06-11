@@ -378,15 +378,15 @@ void            BillboardSceneNode::BillboardRenderNode::render()
 
         // draw billboard
         myColor4fv(sceneNode->color);
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(   u,    v);
         glVertex2f  (-sceneNode->width, -sceneNode->height);
         glTexCoord2f(du+u,    v);
         glVertex2f  ( sceneNode->width, -sceneNode->height);
-        glTexCoord2f(du+u, dv+v);
-        glVertex2f  ( sceneNode->width,  sceneNode->height);
         glTexCoord2f(   u, dv+v);
         glVertex2f  (-sceneNode->width,  sceneNode->height);
+        glTexCoord2f(du+u, dv+v);
+        glVertex2f  ( sceneNode->width,  sceneNode->height);
         glEnd();
     }
     glPopMatrix();

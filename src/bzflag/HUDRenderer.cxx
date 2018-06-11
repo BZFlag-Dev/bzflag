@@ -1607,11 +1607,11 @@ void            HUDRenderer::renderBox(SceneRenderer&)
                 // on the visible part of tape
                 GLfloat mx = maxMotionSize / headingOffset *
                              ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
-                glBegin(GL_QUADS);
+                glBegin(GL_TRIANGLE_STRIP);
                 glVertex2f(mx, 0.0f);
                 glVertex2f(mx + 4.0f, 4.0f);
-                glVertex2f(mx, 8.0f);
                 glVertex2f(mx - 4.0f, 4.0f);
+                glVertex2f(mx, 8.0f);
                 glEnd();
             }
             else if (relAngle <= 180.0)

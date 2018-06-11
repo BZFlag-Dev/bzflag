@@ -240,15 +240,15 @@ void            HUDuiControl::renderFocus()
         float imageXShift = 0.5f;
         float imageYShift = -fh2 * 0.2f;
         float outputSize = fh2;
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(u, v);
         glVertex2f(x + imageXShift - outputSize, y + imageYShift);
         glTexCoord2f(u + du, v);
         glVertex2f(x + imageXShift, y + imageYShift);
-        glTexCoord2f(u + du, v + dv);
-        glVertex2f(x + imageXShift, y + outputSize + imageYShift);
         glTexCoord2f(u, v + dv);
         glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
+        glTexCoord2f(u + du, v + dv);
+        glVertex2f(x + imageXShift, y + outputSize + imageYShift);
         glEnd();
 
         TimeKeeper nowTime = TimeKeeper::getCurrent();

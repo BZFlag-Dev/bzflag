@@ -92,7 +92,7 @@ void TextureFont::preLoadLists()
             float fFontY = (float)(fontMetrics[i].endY - fontMetrics[i].startY);
             float fFontX = (float)(fontMetrics[i].endX - fontMetrics[i].startX);
 
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             glNormal3f(0.0f, 0.0f, 1.0f);
             glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
                          1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
@@ -103,12 +103,12 @@ void TextureFont::preLoadLists()
             glVertex3f(0.0f, 0.0f, 0.0f);
 
             glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-            glVertex3f(fFontX, 0.0f, 0.0f);
-
-            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
                          1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
             glVertex3f(fFontX, fFontY, 0.0f);
+
+            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
+                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
+            glVertex3f(fFontX, 0.0f, 0.0f);
             glEnd();
 
             // this plus the initial 'initialDist' equal 'fullWidth'
