@@ -4331,7 +4331,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
     // ask the API if it wants to modify this shot
-    bz_ShotFiredEventData_V1 shotEvent;
+    bz_ShotFiredEventData_V2 shotEvent;
 
     shotEvent.pos[0] = shot.pos[0];
     shotEvent.pos[1] = shot.pos[1];
@@ -4344,6 +4344,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     shotEvent.playerID = shooter.getPlayerIndex();
 
     shotEvent.type = firingInfo.flagType->flagAbbv;
+    shotEvent.fromPlayer = true;
+    shotEvent.shotSlot = firingInfo.localID;
 
     worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
 
@@ -4438,10 +4440,12 @@ static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
     buf = nboPackUShort(buf, reason);
     broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
 
-    bz_ShotEndedEventData_V1 shotEvent;
+    bz_ShotEndedEventData_V2 shotEvent;
     shotEvent.playerID = (int)id;
     shotEvent.shotID = shotid;
     shotEvent.explode = reason == 0;
+    shotEvent.expired = false;
+
     worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 }
 

@@ -1656,7 +1656,7 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
     firingInfo.shot.team = player->player.getTeam();
 
     // ask the API if it wants to modify this shot
-    bz_ShotFiredEventData_V1 shotEvent;
+    bz_ShotFiredEventData_V2 shotEvent;
 
     shotEvent.pos[0] = firingInfo.shot.pos[0];
     shotEvent.pos[1] = firingInfo.shot.pos[1];
@@ -1669,6 +1669,9 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
     shotEvent.playerID = playerID;
 
     shotEvent.type = firingInfo.flagType->flagAbbv;
+
+    shotEvent.fromPlayer = false;
+    shotEvent.shotSlot = -1;
 
     worldEventManager.callEvents(bz_eShotFiredEvent, &shotEvent);
 
