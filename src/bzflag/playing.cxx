@@ -3539,7 +3539,6 @@ static void     handlePlayerMessage(uint16_t code, uint16_t,
         msg = shot.unpack(msg);
         Player* tank = lookupPlayer(shot.player);
         if (!tank || tank == myTank) break;
-        RemotePlayer* remoteTank = (RemotePlayer*)tank;
 
         ShotList::HandleShotUpdate(shot.id, shot, code, msg);
 

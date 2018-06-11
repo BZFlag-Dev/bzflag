@@ -395,7 +395,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
     // compute segments of shot until total length of segments exceeds the
     // lifetime of the shot.
     const float    *v = getVelocity();
-    TimeKeeper      startTime = getStartTime();
+    TimeKeeper      start = getStartTime();
     float timeLeft = getLifetime();
     float    minTime = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) / hypotf(v[0], hypotf(v[1], v[2]));
 
@@ -452,14 +452,14 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
             ignoreHit = true;
 
         // construct next shot segment and add it to list
-        TimeKeeper endTime(startTime);
+        TimeKeeper endTime(start);
         if (t < 0.0f)
             endTime += Epsilon;
         else
             endTime += t;
-        ShotPathSegment segm(startTime, endTime, rs, reason);
+        ShotPathSegment segm(start, endTime, rs, reason);
         segments.push_back(segm);
-        startTime = endTime;
+        start = endTime;
 
         // used up this much time in segment
         if (t < 0.0f)
@@ -553,7 +553,7 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
             }
         }
     }
-    lastTime = startTime;
+    lastTime = start;
 
     // make bounding box for entire path
     const int numSegments = segments.size();

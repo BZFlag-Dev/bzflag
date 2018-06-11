@@ -400,7 +400,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
     return minTime;
 }
 
-void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
+void GuidedMissileStrategy::sendUpdate(const FiringInfo& fInfo) const
 {
     // only send an update when needed
     if (!needUpdate) return;
@@ -409,7 +409,7 @@ void GuidedMissileStrategy::sendUpdate(const FiringInfo& firingInfo) const
     // construct and send packet
     char packet[ShotUpdatePLen + PlayerIdPLen];
     void *buf = (void*)packet;
-    buf = firingInfo.shot.pack(buf);
+    buf = fInfo.shot.pack(buf);
     buf = nboPackUByte(buf, lastTarget);
     ServerLink::getServer()->send(MsgGMUpdate, sizeof(packet), packet);
 }

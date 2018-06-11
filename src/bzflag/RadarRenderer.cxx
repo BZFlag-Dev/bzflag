@@ -615,7 +615,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         }
 
         // draw my shots
-        int maxShots = world->getMaxShots();
         int i;
         float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
         for (auto shot : myTank->getShots())

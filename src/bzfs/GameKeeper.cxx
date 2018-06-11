@@ -151,7 +151,7 @@ void GameKeeper::Player::dumpScore()
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
     float topRatio(   -100000.0f);
-    int   rabbitIndex( NoPlayer);
+    int   newRabbit( NoPlayer);
 
     Player* playerData(0);
     bool    goodRabbitSelected(false);
@@ -184,11 +184,11 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
             if (select)
             {
                 topRatio = ratio;
-                rabbitIndex = i;
+                newRabbit = i;
             }
         }
     }
-    return rabbitIndex;
+    return newRabbit;
 }
 
 void GameKeeper::Player::updateNextGameTime()
@@ -397,9 +397,9 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
     player.setAlive();
 }
 
-int GameKeeper::Player::maxShots(0);
+unsigned int GameKeeper::Player::maxShots(0);
 
-void GameKeeper::Player::setMaxShots(int _maxShots)
+void GameKeeper::Player::setMaxShots(unsigned int _maxShots)
 {
     maxShots = _maxShots;
 }
@@ -480,7 +480,6 @@ bool GameKeeper::Player::removeShot(int guid)
 void GameKeeper::Player::updateShotSlots()
 {
     double now = TimeKeeper::getCurrent().getSeconds();
-    float dt = (float)(now - lastShotUpdateTime);
 
     for (auto slot : shotSlots)
     {

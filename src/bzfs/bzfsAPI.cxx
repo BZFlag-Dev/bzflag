@@ -1743,8 +1743,6 @@ BZF_API bz_APIFloatList* bz_getPlayerReloadTimes(int playerID)
 
 BZF_API float           bz_getPlayerNextShotDelay(int playerID)
 {
-    float smallest = 9999999;
-
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player || player->player.getTeam() == ObserverTeam)

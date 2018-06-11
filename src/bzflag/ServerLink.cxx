@@ -777,7 +777,6 @@ void            ServerLink::sendBeginShot(const FiringInfo& info)
     char msg[FiringInfoPLen];
     void* buf = msg;
     buf = info.pack(buf);
-    size_t packSize = (size_t)buf - (size_t)msg;
     send(MsgFireShot, sizeof(msg), msg);
 }
 

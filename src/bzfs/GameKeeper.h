@@ -118,7 +118,7 @@ public:
         int             getLastIdFlag();
 
         // To handle shot
-        static void         setMaxShots(int _maxShots);
+        static void         setMaxShots(unsigned int _maxShots);
         bool                isValidShotToShoot(FiringInfo &firingInfo);
         bool                addShot(Shot::Ptr);
         bool                removeShot(int gid);
@@ -198,7 +198,7 @@ public:
         // In case you want recheck all condition on all players
         static bool         allNeedHostbanChecked;
 
-        static int          maxShots;
+        static unsigned int       maxShots;
         std::vector<ShotSlotInfo> shotSlots;
 
         int                 idFlag;
