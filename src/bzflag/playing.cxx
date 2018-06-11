@@ -2932,8 +2932,13 @@ static void     handleServerMessage(bool human, uint16_t code,
         {
             // it's my shot, it got a new ID, so we need to move it to the global shot list
             ShotPath::Ptr shot = localPlayer->popShot(firingInfo.localID);
-            shot->getFiringInfo().shot.id = firingInfo.shot.id;
-            ShotList::AddShot(shot);
+            if (shot != nullptr)
+            {
+                shot->getFiringInfo().shot.id = firingInfo.shot.id;
+                ShotList::AddShot(shot);
+            }
+            else
+                localPlayer->addShot(firingInfo);
         }
         else
         {

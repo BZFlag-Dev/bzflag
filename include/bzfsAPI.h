@@ -567,7 +567,9 @@ class BZF_API bz_PlayerDieEventData_V2 : public bz_PlayerDieEventData_V1
 public:
     bz_PlayerDieEventData_V2() : bz_PlayerDieEventData_V1()
         , flagHeldWhenKilled(-1)
-    {}
+    {
+        version = 2;
+    }
 
     int flagHeldWhenKilled;
 };
@@ -605,6 +607,7 @@ public:
     bz_ChatEventData_V2() : bz_ChatEventData_V1()
         , messageType(eChatMessage)
     {
+        version = 2;
     }
 
     bz_eMessageType messageType;
@@ -782,6 +785,7 @@ public:
         , kickPlayer(true), kickReason("Not allowed to spawn")
         , message("You are not allowed to spawn. Please contact an administrator.")
     {
+        version = 2;
     }
 
     bool kickPlayer;
@@ -902,6 +906,7 @@ public:
     bz_GamePauseResumeEventData_V2() : bz_GamePauseResumeEventData_V1()
         , playerID(253)
     {
+        version = 2;
     }
 
     int playerID;
@@ -924,6 +929,7 @@ public:
     bz_GameStartEndEventData_V2() : bz_GameStartEndEventData_V1()
         , playerID(253), gameOver(false)
     {
+        version = 2;
     }
 
     int playerID;
@@ -948,6 +954,7 @@ class BZF_API bz_SlashCommandEventData_V2 : public bz_SlashCommandEventData_V1
 public:
     bz_SlashCommandEventData_V2() : bz_SlashCommandEventData_V1(), sourceChannel(-1)
     {
+        version = 2;
     }
 
     int sourceChannel;
@@ -1071,6 +1078,19 @@ public:
     int shotID;
 };
 
+
+class BZF_API bz_ShotFiredEventData_V2 : public bz_ShotFiredEventData_V1
+{
+public:
+    bz_ShotFiredEventData_V2() : bz_ShotFiredEventData_V1()
+    {
+        version = 2;
+    }
+
+    bool fromPlayer = false;
+    int shotSlot = -1;
+};
+
 class BZF_API bz_AllowServerShotFiredEventData_V1 : public bz_EventData
 {
 public:
@@ -1181,6 +1201,19 @@ public:
     int playerID;
     int shotID;
     bool explode;
+};
+
+class BZF_API bz_ShotEndedEventData_V2 : public bz_ShotEndedEventData_V1
+{
+public:
+
+    bz_ShotEndedEventData_V2() : bz_ShotEndedEventData_V1()
+    {
+        version = 2;
+    }
+
+    bool expired = false;
+    float position[3] = { 0,0,0 };
 };
 
 class BZF_API bz_FlagTransferredEventData_V1 : public bz_EventData
@@ -1367,6 +1400,7 @@ public:
     bz_GetPlayerMottoData_V2(const char* m)
         : bz_GetPlayerMottoData_V1(m)
     {
+        version = 2;
     }
 
     ~bz_GetPlayerMottoData_V2()
@@ -2098,7 +2132,6 @@ class bz_URLHandler_V2 : public bz_BaseURLHandler
 public:
     bz_URLHandler_V2() : bz_BaseURLHandler()
     {
-        version = 2;
         token = NULL;
     }
     void* token;
@@ -2293,7 +2326,7 @@ public:
                                    double timestamp); // implement when server side scoring is in
 // virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs); // implement when server side scoring is in
     virtual void shotFired(int player, unsigned short shotID);
-    virtual void shotEnded(int player, unsigned short shotID, unsigned short reason);
+    virtual void shotEnded(int player, unsigned short shotID,  bool expired);
     virtual void playerTeleported(int player, bz_PlayerUpdateState *currentState, bz_PlayerUpdateState *lastState);
 
     // higher level functions for events that happen to the bot
