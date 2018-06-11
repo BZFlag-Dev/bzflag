@@ -487,15 +487,15 @@ void            FlagSceneNode::FlagRenderNode::render()
             {
                 glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
                 glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-                glBegin(GL_QUADS);
+                glBegin(GL_TRIANGLE_STRIP);
                 glTexCoord2f(0.0f, 0.0f);
                 glVertex3f(0.0f, base, 0.0f);
                 glTexCoord2f(1.0f, 0.0f);
                 glVertex3f(Width, base, 0.0f);
-                glTexCoord2f(1.0f, 1.0f);
-                glVertex3f(Width, base + Height, 0.0f);
                 glTexCoord2f(0.0f, 1.0f);
                 glVertex3f(0.0f, base + Height, 0.0f);
+                glTexCoord2f(1.0f, 1.0f);
+                glVertex3f(Width, base + Height, 0.0f);
                 glEnd();
                 addTriangleCount(2);
             }
@@ -507,12 +507,12 @@ void            FlagSceneNode::FlagRenderNode::render()
 
             if (geoPole)
             {
-                glBegin(GL_QUADS);
+                glBegin(GL_TRIANGLE_STRIP);
                 {
                     glVertex3f(-poleWidth, 0.0f, 0.0f);
                     glVertex3f(+poleWidth, 0.0f, 0.0f);
-                    glVertex3f(+poleWidth, base + Height, 0.0f);
                     glVertex3f(-poleWidth, base + Height, 0.0f);
+                    glVertex3f(+poleWidth, base + Height, 0.0f);
                 }
                 glEnd();
                 addTriangleCount(2);

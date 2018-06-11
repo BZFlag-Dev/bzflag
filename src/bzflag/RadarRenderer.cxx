@@ -502,16 +502,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             glEnable(GL_TEXTURE_2D);
             tm.bind(noiseTexture);
 
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             {
                 glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
                 glVertex2f(-radarRange,-radarRange);
                 glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
                 glVertex2f( radarRange,-radarRange);
-                glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
-                glVertex2f( radarRange, radarRange);
                 glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
                 glVertex2f(-radarRange, radarRange);
+                glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
+                glVertex2f( radarRange, radarRange);
             }
             glEnd();
 
@@ -524,16 +524,16 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             glEnable(GL_TEXTURE_2D);
             tm.bind(noiseTexture);
 
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             {
                 glTexCoord2f(0,0);
                 glVertex2f(-radarRange,-radarRange);
                 glTexCoord2f(1,0);
                 glVertex2f( radarRange,-radarRange);
-                glTexCoord2f(1,1);
-                glVertex2f( radarRange, radarRange);
                 glTexCoord2f(0,1);
                 glVertex2f(-radarRange, radarRange);
+                glTexCoord2f(1,1);
+                glVertex2f( radarRange, radarRange);
             }
             glEnd();
 
@@ -1030,7 +1030,6 @@ void RadarRenderer::renderBoxPyrMesh()
     // draw box buildings.
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
     int count = boxes.size();
-    glBegin(GL_QUADS);
     for (i = 0; i < count; i++)
     {
         const BoxBuilding& box = *((const BoxBuilding*) boxes[i]);
@@ -1045,17 +1044,17 @@ void RadarRenderer::renderBoxPyrMesh()
         const float wx = c * box.getWidth(), wy = s * box.getWidth();
         const float hx = -s * box.getBreadth(), hy = c * box.getBreadth();
         const float* pos = box.getPosition();
+        glBegin(GL_TRIANGLE_STRIP);
         glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
         glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
         glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+        glEnd();
     }
-    glEnd();
 
     // draw pyramid buildings
     const ObstacleList& pyramids = OBSTACLEMGR.getPyrs();
     count = pyramids.size();
-    glBegin(GL_QUADS);
     for (i = 0; i < count; i++)
     {
         const PyramidBuilding& pyr = *((const PyramidBuilding*) pyramids[i]);
@@ -1068,12 +1067,13 @@ void RadarRenderer::renderBoxPyrMesh()
         const float wx = c * pyr.getWidth(), wy = s * pyr.getWidth();
         const float hx = -s * pyr.getBreadth(), hy = c * pyr.getBreadth();
         const float* pos = pyr.getPosition();
+        glBegin(GL_TRIANGLE_STRIP);
         glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
         glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
         glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
+        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
+        glEnd();
     }
-    glEnd();
 
     // draw mesh obstacles
     if (smooth)

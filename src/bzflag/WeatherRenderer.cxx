@@ -639,67 +639,67 @@ void WeatherRenderer::buildDropList(bool _draw)
 
     if (doBillBoards)
     {
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0, 0);
         glVertex3f(-rainSize[0], -rainSize[1], 0);
 
         glTexCoord2f(1, 0);
         glVertex3f(rainSize[0], -rainSize[1], 0);
 
-        glTexCoord2f(1, 1);
-        glVertex3f(rainSize[0], rainSize[1], 0);
-
         glTexCoord2f(0, 1);
         glVertex3f(-rainSize[0], rainSize[1], 0);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(rainSize[0], rainSize[1], 0);
         glEnd();
     }
     else
     {
         glPushMatrix();
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0, 0);
         glVertex3f(-rainSize[0], 0, -rainSize[1]);
 
         glTexCoord2f(1, 0);
         glVertex3f(rainSize[0], 0, -rainSize[1]);
 
-        glTexCoord2f(1, 1);
-        glVertex3f(rainSize[0], 0, rainSize[1]);
-
         glTexCoord2f(0, 1);
         glVertex3f(-rainSize[0], 0, rainSize[1]);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(rainSize[0], 0, rainSize[1]);
         glEnd();
 
         glRotatef(120, 0, 0, 1);
 
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0, 0);
         glVertex3f(-rainSize[0], 0, -rainSize[1]);
 
         glTexCoord2f (1, 0);
         glVertex3f(rainSize[0], 0, -rainSize[1]);
 
-        glTexCoord2f (1, 1);
-        glVertex3f(rainSize[0], 0, rainSize[1]);
-
         glTexCoord2f (0, 1);
         glVertex3f(-rainSize[0], 0, rainSize[1]);
+
+        glTexCoord2f (1, 1);
+        glVertex3f(rainSize[0], 0, rainSize[1]);
         glEnd();
 
         glRotatef(120, 0, 0, 1);
 
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0, 0);
         glVertex3f(-rainSize[0], 0, -rainSize[1]);
 
         glTexCoord2f(1, 0);
         glVertex3f(rainSize[0], 0, -rainSize[1]);
 
-        glTexCoord2f(1, 1);
-        glVertex3f(rainSize[0], 0, rainSize[1]);
-
         glTexCoord2f(0, 1);
         glVertex3f(-rainSize[0], 0, rainSize[1]);
+
+        glTexCoord2f(1, 1);
+        glVertex3f(rainSize[0], 0, rainSize[1]);
         glEnd();
         glPopMatrix();
     }
@@ -723,18 +723,18 @@ void WeatherRenderer::buildPuddleList(bool _draw)
         glNewList(puddleList, GL_COMPILE);
     }
 
-    glBegin(GL_QUADS);
+    glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2f(0, 0);
     glVertex3f(-scale, -scale, 0);
 
     glTexCoord2f(1, 0);
     glVertex3f(scale, -scale, 0);
 
-    glTexCoord2f(1, 1);
-    glVertex3f(scale, scale, 0);
-
     glTexCoord2f(0, 1);
     glVertex3f(-scale, scale, 0);
+
+    glTexCoord2f(1, 1);
+    glVertex3f(scale, scale, 0);
     glEnd();
 
     if (!_draw)

@@ -304,19 +304,20 @@ void            BoltSceneNode::BoltRenderNode::setColor(
 
 void drawFin ( float maxRad, float finRadius, float boosterLen, float finForeDelta, float finCapSize)
 {
-    glBegin(GL_QUADS);
-
+    glBegin(GL_TRIANGLE_STRIP);
     glNormal3f(1,0,0);
     glVertex3f(0,maxRad,0);
     glVertex3f(0,maxRad,boosterLen);
-    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
     glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
+    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
+    glEnd();
 
+    glBegin(GL_TRIANGLE_STRIP);
     glNormal3f(-1,0,0);
     glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
     glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
-    glVertex3f(0,maxRad,boosterLen);
     glVertex3f(0,maxRad,0);
+    glVertex3f(0,maxRad,boosterLen);
     glEnd();
 }
 
@@ -625,7 +626,6 @@ void            BoltSceneNode::BoltRenderNode::render()
             if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
             myColor4fv(flareColor);
             if (!BZDBCache::blend) myStipple(flareColor[3]);
-            glBegin(GL_QUADS);
             for (int i = 0; i < numFlares; i++)
             {
                 // pick random direction in 3-space.  picking a random theta with
@@ -638,12 +638,13 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float s = FlareSize * sinf(phi[i]);
                 const float ti = theta[i];
                 const float fs = FlareSpread;
+                glBegin(GL_TRIANGLE_STRIP);
                 glVertex3fv(core[0]);
                 glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
-                glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
                 glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
+                glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
+                glEnd();
             }
-            glEnd();
             if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
 
             addTriangleCount(numFlares * 2);
@@ -657,15 +658,15 @@ void            BoltSceneNode::BoltRenderNode::render()
             const float u1 = u0 + du;
             const float v1 = v0 + dv;
             myColor4fv(textureColor); // 1.0f all
-            glBegin(GL_QUADS);
+            glBegin(GL_TRIANGLE_STRIP);
             glTexCoord2f(u0, v0);
             glVertex2f(-1.0f, -1.0f);
             glTexCoord2f(u1, v0);
             glVertex2f(+1.0f, -1.0f);
-            glTexCoord2f(u1, v1);
-            glVertex2f(+1.0f, +1.0f);
             glTexCoord2f(u0, v1);
             glVertex2f(-1.0f, +1.0f);
+            glTexCoord2f(u1, v1);
+            glVertex2f(+1.0f, +1.0f);
             glEnd();
             addTriangleCount(2);
 
@@ -724,15 +725,15 @@ void            BoltSceneNode::BoltRenderNode::render()
                     RENDERER.getViewFrustum().executeBillboard();
                     glScalef(s, s, s);
 
-                    glBegin(GL_QUADS);
+                    glBegin(GL_TRIANGLE_STRIP);
                     glTexCoord2f(U0, V0);
                     glVertex2f(-1.0f, -1.0f);
                     glTexCoord2f(U1, V0);
                     glVertex2f(+1.0f, -1.0f);
-                    glTexCoord2f(U1, V1);
-                    glVertex2f(+1.0f, +1.0f);
                     glTexCoord2f(U0, V1);
                     glVertex2f(-1.0f, +1.0f);
+                    glTexCoord2f(U1, V1);
+                    glVertex2f(+1.0f, +1.0f);
                     glEnd();
                 }
 

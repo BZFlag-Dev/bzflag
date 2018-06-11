@@ -121,30 +121,32 @@ static int buildCasing(float Yoffset)
         const float tx = (2.0f * ty) * (xc / (zt - zb));
 
         // the left and right quad surface
-        glBegin(GL_QUADS);
         {
             // the right side
+            glBegin(GL_TRIANGLE_STRIP);
             doNormal3f(0.0f, -1.0f, 0.0f);
             doTexCoord2f(-tx, -ty);
             doVertex3f(-xc, yRight, zb);
             doTexCoord2f(+tx, -ty);
             doVertex3f(+xc, yRight, zb);
-            doTexCoord2f(+tx, +ty);
-            doVertex3f(+xc, yRight, zt);
             doTexCoord2f(-tx, +ty);
             doVertex3f(-xc, yRight, zt);
+            doTexCoord2f(+tx, +ty);
+            doVertex3f(+xc, yRight, zt);
+            glEnd();
             // the left side
+            glBegin(GL_TRIANGLE_STRIP);
             doNormal3f(0.0f, +1.0f, 0.0f);
             doTexCoord2f(-tx, -ty);
             doVertex3f(+xc, yLeft, zb);
             doTexCoord2f(+tx, -ty);
             doVertex3f(-xc, yLeft, zb);
-            doTexCoord2f(+tx, +ty);
-            doVertex3f(-xc, yLeft, zt);
             doTexCoord2f(-tx, +ty);
             doVertex3f(+xc, yLeft, zt);
+            doTexCoord2f(+tx, +ty);
+            doVertex3f(-xc, yLeft, zt);
+            glEnd();
         }
-        glEnd();
     }
     glShadeModel(GL_SMOOTH);
 

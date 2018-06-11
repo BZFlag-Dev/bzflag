@@ -227,24 +227,26 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
         glVertex3f(  0.0f,  0.0f,  1.0f);
         glEnd(); // 6 verts -> 4 tris
 
-        glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0.0f,  0.0f);
         glVertex3f(  0.0f,  0.0f,  1.0f);
         glTexCoord2f(0.0f,  1.0f);
         glVertex3f(   len,  0.0f,  1.0f);
-        glTexCoord2f(1.0f,  1.0f);
-        glVertex3f(   len,  0.0f, -1.0f);
         glTexCoord2f(1.0f,  0.0f);
         glVertex3f(  0.0f,  0.0f, -1.0f);
+        glTexCoord2f(1.0f,  1.0f);
+        glVertex3f(   len,  0.0f, -1.0f);
+        glEnd();
 
+        glBegin(GL_TRIANGLE_STRIP);
         glTexCoord2f(0.0f,  0.0f);
         glVertex3f(  0.0f,  1.0f,  0.0f);
         glTexCoord2f(0.0f,  1.0f);
         glVertex3f(   len,  1.0f,  0.0f);
-        glTexCoord2f(1.0f,  1.0f);
-        glVertex3f(   len, -1.0f,  0.0f);
         glTexCoord2f(1.0f,  0.0f);
         glVertex3f(  0.0f, -1.0f,  0.0f);
+        glTexCoord2f(1.0f,  1.0f);
+        glVertex3f(   len, -1.0f,  0.0f);
         glEnd(); // 8 verts -> 4 tris
 
         addTriangleCount(8);

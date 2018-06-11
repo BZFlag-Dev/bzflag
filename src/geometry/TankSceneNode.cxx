@@ -765,7 +765,6 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glRotatef(azimuth, 0.0f, 0.0f, 1.0f);
 
-    glBegin(GL_QUADS);
     const int numFaces = bzcountof(idlFaces);
     for (int i = 0; i < numFaces; i++)
     {
@@ -812,14 +811,15 @@ void TankIDLSceneNode::IDLRenderNode::render()
         project[1][2] = origin[2] + dist * (cross[1][2] - origin[2]);
 
         // draw it
+        glBegin(GL_TRIANGLE_STRIP);
         myColor4fv(innerColor);
         glVertex3fv(cross[0]);
         glVertex3fv(cross[1]);
         myColor4fv(outerColor);
-        glVertex3fv(project[1]);
         glVertex3fv(project[0]);
+        glVertex3fv(project[1]);
+        glEnd();
     }
-    glEnd();
 
     glPopMatrix();
     return;
