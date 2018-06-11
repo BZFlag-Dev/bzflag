@@ -814,10 +814,11 @@ void Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 }
 
 
-void Player::setFlag(FlagType* _flag)
+void Player::setFlag(FlagType* _flag, int _limit)
 {
     // set the type
     flagType = _flag;
+    flagLimit = _limit;
     updateFlagEffect(flagType);
     return;
 }

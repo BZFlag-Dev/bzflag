@@ -85,7 +85,7 @@ namespace ShotList
             return false;
 
         auto itr = std::find_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot) { return shot->getFiringInfo().shot.id == shotiD; });
-        if (itr != GlobalShotList.end() && *itr == nullptr)      // ignore bogus shots (those with a bad index or for shots that don't exist)
+        if (itr == GlobalShotList.end() || *itr == nullptr)      // ignore bogus shots (those with a bad index or for shots that don't exist)
             return false;
 
         ShotPath::Ptr& shot = *itr;

@@ -3835,6 +3835,12 @@ void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos)
     // send MsgGantFlag
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
+
+    int limit = clOptions->getFlagLimit(flag.flag.type);
+    if (limit >= 0)
+        limit -= flag.numShots;
+    buf = nboPackInt(buf, limit);
+
     buf = flag.pack(buf);
 
     broadcastMessage(MsgGrantFlag, (char*)buf-(char*)bufStart, bufStart);
@@ -3881,8 +3887,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     const float maxZ = MAXFLOAT;
 
     float landing[3] = {pos[0], pos[1], pos[2]};
-    bool safelyDropped =
-        DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
+    bool safelyDropped =  DropGeometry::dropTeamFlag(landing, minZ, maxZ, flagTeam);
 
     bool vanish;
 
@@ -4319,8 +4324,7 @@ static void shotFired(int playerIndex, void *buf, int len)
         if (last.status & PlayerState::Falling)
             dz = 0.0f;
         float delta = dx*dx + dy*dy + dz*dz;
-        if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) *
-                (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront))
+        if (delta > (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront) * (maxTankSpeed * tankSpeedMult + 2.0f * muzzleFront))
         {
             logDebugMessage(2,"Player %s [%d] shot origination %f %f %f too far from tank %f %f %f: distance=%f\n",
                             shooter.getCallSign(), playerIndex,
@@ -4369,28 +4373,15 @@ static void shotFired(int playerIndex, void *buf, int len)
 
     // if shooter has a flag
 
-    char message[MessageLen];
     if (shooter.haveFlag())
     {
         fInfo.numShots++; // increase the # shots fired
 
-        int limit = clOptions->flagLimit[fInfo.flag.type];
+        int limit = clOptions->getFlagLimit(fInfo.flag.type);
         if (limit != -1)   // if there is a limit for players flag
         {
             int shotsLeft = limit -  fInfo.numShots;
-            if (shotsLeft > 0)   //still have some shots left
-            {
-                // give message each shot below 5, each 5th shot & at start
-                if (shotsLeft % 5 == 0 || shotsLeft <= 3 || shotsLeft == limit-1)
-                {
-                    if (shotsLeft > 1)
-                        snprintf(message, MessageLen, "%d shots left",shotsLeft);
-                    else
-                        strcpy(message,"1 shot left");
-                    sendMessage(ServerPlayer, playerIndex, message);
-                }
-            }
-            else     // no shots left
+            if (shotsLeft <= 0)  // no shots left
             {
                 if (shotsLeft == 0 || (limit == 0 && shotsLeft < 0))
                 {
@@ -4402,9 +4393,12 @@ static void shotFired(int playerIndex, void *buf, int len)
                     fInfo.grabs = 0; // recycle this flag now
                     dropFlag(fInfo, lastPos);
                 }
-                else     // more shots fired than allowed
+                else 
                 {
-                    // do nothing for now -- could return and not allow shot
+                    // bye bye supposed cheater,     more shots fired than allowed
+                    logDebugMessage(1, "Kicking Player %s [%d] Player fired more shots than limit\n", shooter.getCallSign(), playerIndex);
+                    sendMessage(ServerPlayer, playerIndex, "Autokick: You can't have more than you are given");
+                    removePlayer(playerIndex, "Player fired extra shots");
                 }
             } // end no shots left
         } // end is limit
@@ -4425,8 +4419,8 @@ static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
 
     Shot::Ptr shot = ShotManager.FindShot(shotid);
 
-    if (shot->Info.shot.player != id)
-        return; // you can't end someone else's shot
+    if (shot == nullptr || shot->Info.shot.player != id)
+        return; // you can't end someone else's shot or a shot that doesn't exist
 
     if (id != ServerPlayer)
         playerData->removeShot(shotid);
@@ -5240,8 +5234,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         if (flagIndex == -1)
             return;
 
-        GameKeeper::Player *toData
-            = GameKeeper::Player::getPlayerByIndex(to);
+        GameKeeper::Player *toData  = GameKeeper::Player::getPlayerByIndex(to);
         if (!toData)
             return;
 
@@ -5280,6 +5273,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         worldEventManager.callEvents(bz_eFlagTransferredEvent,&ftEventData);
 
+        FlagInfo &flag = *FlagInfo::get(flagIndex);
+
         if (ftEventData.action != ftEventData.CancelSteal)
         {
             int oFlagIndex = toData->player.getFlag();
@@ -5292,15 +5287,21 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             void *obufStart = getDirectMessageBuffer();
             void *obuf = nboPackUByte(obufStart, from);
             obuf = nboPackUByte(obuf, to);
-            FlagInfo &flag = *FlagInfo::get(flagIndex);
+
+            int limit = clOptions->getFlagLimit(flag.flag.type);
+            if (limit >= 0)
+            {
+                limit -= flag.numShots;
+            }
+            obuf = nboPackInt(obuf, limit);
+          
             flag.flag.owner = to;
             flag.player = to;
             toData->player.resetFlag();
             toData->player.setFlag(flagIndex);
             fromData->player.resetFlag();
             obuf = flag.pack(obuf);
-            broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart,
-                             obufStart);
+            broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart, obufStart);
         }
         break;
     }

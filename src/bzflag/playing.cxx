@@ -158,7 +158,7 @@ static void     setHuntTarget();
 static void     setTankFlags();
 static const void   *handleMsgSetVars(const void *msg);
 static void     handlePlayerMessage(uint16_t, uint16_t, const void*);
-static void     handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex);
+static void     handleFlagTransferred(Player* fromTank, Player* toTank, int flagIndex, int limit);
 static void     enteringServer(const void *buf);
 static void     joinInternetGame2();
 static void     cleanWorldCache();
@@ -195,11 +195,7 @@ static const char*  blowedUpMessage[] =
     "Tank Self Destructed",
     "Tank Rusted"
 };
-static bool     gotBlowedUp(BaseLocalPlayer* tank,
-                            BlowedUpReason reason,
-                            PlayerId killer,
-                            const ShotPath::Ptr hit = nullptr,
-                            int physicsDriver = -1);
+static bool     gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason,  PlayerId killer,  const ShotPath::Ptr hit = nullptr, int physicsDriver = -1);
 
 #ifdef ROBOT
 static void     handleMyTankKilled(int reason);
@@ -221,15 +217,18 @@ static std::ostream *cacheOut = NULL;
 static bool     downloadingInitialTexture = false;
 
 static AresHandler* ares = NULL;
+
 void initGlobalAres()
 {
     ares = new AresHandler(0);
 }
+
 void killGlobalAres()
 {
     delete ares;
     ares = NULL;
 }
+
 static Address serverNetworkAddress = Address();
 
 OpenGLFramebuffer glFramebuffer;
@@ -2705,21 +2704,37 @@ static void     handleServerMessage(bool human, uint16_t code,
     {
         // ROBOT -- FIXME -- robots don't grab flag at the moment
         PlayerId id;
-        uint16_t flagIndex;
+        uint16_t flagIndex = 0;
+        int flagLimit = 0;
+
         msg = nboUnpackUByte(msg, id);
+        msg = nboUnpackInt(msg, flagLimit);
         msg = nboUnpackUShort(msg, flagIndex);
         msg = world->getFlag(int(flagIndex)).unpack(msg);
         Player* tank = lookupPlayer(id);
         if (!tank) break;
 
         // player now has flag
-        tank->setFlag(world->getFlag(flagIndex).type);
+        tank->setFlag(world->getFlag(flagIndex).type, flagLimit);
         if (tank == myTank)
         {
             // grabbed flag
-            playLocalSound(myTank->getFlag()->endurance != FlagSticky ?
-                           SFX_GRAB_FLAG : SFX_GRAB_BAD);
+            playLocalSound(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
             updateFlag(myTank->getFlag());
+
+            if (flagLimit >= 0)
+            {
+                std::string limitMessage;
+
+                if (flagLimit > 1)
+                    limitMessage = TextUtils::format("This flag is limited to %d shots", flagLimit);
+                   else if (flagLimit == 1)
+                       limitMessage = "This flag is limited to 1 shot";
+                   else
+                       limitMessage = "This flag is empty and can not be shot";
+
+                addMessage(nullptr, limitMessage, 0);
+            }
         }
         else if (isViewTank(tank))
         {
@@ -2784,7 +2799,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         // player no longer has flag
         if (capturer)
         {
-            capturer->setFlag(Flags::Null);
+            capturer->setFlag(Flags::Null, -1);
             if (capturer == myTank)
                 updateFlag(Flags::Null);
 
@@ -3122,14 +3137,16 @@ static void     handleServerMessage(bool human, uint16_t code,
     case MsgTransferFlag:
     {
         PlayerId fromId, toId;
+        int limit;
         unsigned short flagIndex;
         msg = nboUnpackUByte(msg, fromId);
         msg = nboUnpackUByte(msg, toId);
+        msg = nboUnpackInt(msg, limit);
         msg = nboUnpackUShort(msg, flagIndex);
         msg = world->getFlag(int(flagIndex)).unpack(msg);
         Player* fromTank = lookupPlayer(fromId);
         Player* toTank = lookupPlayer(toId);
-        handleFlagTransferred( fromTank, toTank, flagIndex);
+        handleFlagTransferred( fromTank, toTank, flagIndex, limit);
         break;
     }
 
@@ -3857,18 +3874,34 @@ void handleFlagDropped(Player* tank)
     addMessage(tank, message);
 
     // player no longer has flag
-    tank->setFlag(Flags::Null);
+    tank->setFlag(Flags::Null, -1);
 }
 
-static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex)
+static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex, int limit)
 {
     Flag f = world->getFlag(flagIndex);
 
-    fromTank->setFlag(Flags::Null);
-    toTank->setFlag(f.type);
+    fromTank->setFlag(Flags::Null,-1);
+    toTank->setFlag(f.type, limit);
 
     if ((fromTank == myTank) || (toTank == myTank))
+    {
         updateFlag(myTank->getFlag());
+
+        if ((toTank == myTank) && limit >= 0)
+        {
+            std::string limitMessage;
+
+            if (limit > 1)
+                limitMessage = TextUtils::format("The stolen flag is limited to %d shots", limit);
+            else if (limit == 1)
+                limitMessage = "The stolen flag is limited to 1 shot";
+            else if (limit == 0)
+                limitMessage = "The stolen flag is is empty";
+            addMessage(nullptr, limitMessage, 0);
+        }
+    }
+        
 
     const float *pos = toTank->getPosition();
     if (f.type->flagTeam != ::NoTeam)
@@ -5016,7 +5049,7 @@ static void setTankFlags()
             {
                 if (remotePlayers[j] && remotePlayers[j]->getId() == flag.owner)
                 {
-                    remotePlayers[j]->setFlag(flag.type);
+                    remotePlayers[j]->setFlag(flag.type, -1);
                     break;
                 }
             }
