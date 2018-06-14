@@ -23,6 +23,7 @@
 /* common interface headers */
 #include "Obstacle.h"
 #include "TimeKeeper.h"
+#include "sound.h"
 
 /* local interface headers */
 #include "Player.h"
@@ -174,6 +175,7 @@ private:
     bool      jumpPressed;
     int       deathPhyDrv;    // physics driver that caused death
     std::vector<const Obstacle*> insideBuildings;
+    SoundManager* sm;
 };
 
 

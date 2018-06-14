@@ -105,11 +105,12 @@ void  SegmentedShotStrategy::update(float dt)
                     const PlayerId myTankId = LocalPlayer::getMyTank()->getId();
                     const bool important = getPlayer() == myTankId;
                     const float* pos = segments[segment].ray.getOrigin();
-                    playWorldSound(SFX_RICOCHET, pos, important);
+		    const float* newDir = segments[segment].ray.getDirection();
+                    SoundManager::getInstance().playWorldSound(SFX_RICOCHET, pos, newDir, important?SM_PRI_HIGH:SM_PRI_NORMAL);
 
                     // this is fugly but it's what we do
                     float dir[3];
-                    const float* newDir = segments[segment].ray.getDirection();
+
                     const float* oldDir = segments[segment - 1].ray.getDirection();
                     dir[0] = newDir[0] - oldDir[0];
                     dir[1] = newDir[1] - oldDir[1];

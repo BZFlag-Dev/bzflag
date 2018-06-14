@@ -73,6 +73,8 @@ LocalPlayer::LocalPlayer(const PlayerId& _id,
         inputMethod = Mouse;
     else
         setInputMethod(BZDB.get("activeInputDevice"));
+
+    sm = &SoundManager::getInstance();
 }
 
 LocalPlayer::~LocalPlayer()
@@ -704,7 +706,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
             // change zoned state
             setStatus(getStatus() ^ PlayerState::FlagActive);
             if (gettingSound)
-                playLocalSound(SFX_PHANTOM);
+                sm->playLocalSound(SFX_PHANTOM);
         }
         else
         {
@@ -736,7 +738,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
                 setTeleport(lastTime, source, targetTele);
                 server->sendTeleport(source, targetTele);
                 if (gettingSound)
-                    playLocalSound(SFX_TELEPORT);
+                    sm->playLocalSound(SFX_TELEPORT);
             }
         }
     }
@@ -778,14 +780,14 @@ void            LocalPlayer::doUpdateMotion(float dt)
         const PhysicsDriver* phydriver = PHYDRVMGR.getDriver(getPhysicsDriver());
         if ((phydriver != NULL) && (phydriver->getLinearVel()[2] > 0.0f))
         {
-            playLocalSound(SFX_BOUNCE);
+            sm->playLocalSound(SFX_BOUNCE);
             addRemoteSound(PlayerState::BounceSound);
         }
         else if (justLanded && !entryDrop)
-            playLocalSound(SFX_LAND);
+            sm->playLocalSound(SFX_LAND);
         else if ((location == OnGround) &&
                  (oldPosition[2] == 0.0f) && (newPos[2] < 0.f))
-            playLocalSound(SFX_BURROW);
+            sm->playLocalSound(SFX_BURROW);
     }
 
     // set falling status
@@ -871,17 +873,21 @@ void            LocalPlayer::doUpdateMotion(float dt)
         if (oldPosition[0] != newPos[0] || oldPosition[1] != newPos[1] ||
                 oldPosition[2] != newPos[2] || oldAzimuth != newAzimuth)
         {
-            moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
-                              NEAR_ZERO(dt, ZERO_TOLERANCE) ||
-                              ((teleporter != NULL) && (getFlag()->flagEffect != FlagEffect::PhantomZone)));
+            sm->moveSoundReceiver(newPos, newAzimuth,
+                                  NEAR_ZERO(dt, ZERO_TOLERANCE) ||
+                                  ((teleporter != NULL) && (getFlag()->flagEffect != FlagEffect::PhantomZone)));
         }
         if (NEAR_ZERO(dt, ZERO_TOLERANCE))
-            speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
+            sm->speedSoundReceiver(newVelocity);
         else
         {
-            speedSoundReceiver((newPos[0] - oldPosition[0]) / dt,
-                               (newPos[1] - oldPosition[1]) / dt,
-                               (newPos[2] - oldPosition[2]) / dt);
+            float someOtherVelocity[3] =
+            {
+                (newPos[0] - oldPosition[0]) / dt,
+                (newPos[1] - oldPosition[1]) / dt,
+                (newPos[2] - oldPosition[2]) / dt
+            };
+            sm->speedSoundReceiver(someOtherVelocity);
         }
     }
 }
@@ -1311,27 +1317,27 @@ bool LocalPlayer::fireShot()
     {
         if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
         {
-            playLocalSound(SFX_SHOCK);
+            sm->playLocalSound(SFX_SHOCK);
             ForceFeedback::shockwaveFired();
         }
         else if (firingInfo.flagType->flagEffect == FlagEffect::Laser)
         {
-            playLocalSound(SFX_LASER);
+            sm->playLocalSound(SFX_LASER);
             ForceFeedback::laserFired();
         }
         else if (firingInfo.flagType->flagEffect == FlagEffect::GuidedMissile)
         {
-            playLocalSound(SFX_MISSILE);
+            sm->playLocalSound(SFX_MISSILE);
             ForceFeedback::shotFired();
         }
         else if (firingInfo.flagType->flagEffect == FlagEffect::Thief)
         {
-            playLocalSound(SFX_THIEF);
+            sm->playLocalSound(SFX_THIEF);
             ForceFeedback::shotFired();
         }
         else
         {
-            playLocalSound(SFX_FIRE);
+            sm->playLocalSound(SFX_FIRE);
             ForceFeedback::shotFired();
         }
     }
@@ -1430,12 +1436,12 @@ void            LocalPlayer::doJump()
     {
         if (flag->flagEffect == FlagEffect::Wings)
         {
-            playLocalSound(SFX_FLAP);
+            sm->playLocalSound(SFX_FLAP);
             addRemoteSound(PlayerState::WingsSound);
         }
         else
         {
-            playLocalSound(SFX_JUMP);
+            sm->playLocalSound(SFX_JUMP);
             addRemoteSound(PlayerState::JumpSound);
         }
     }

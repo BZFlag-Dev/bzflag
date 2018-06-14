@@ -22,6 +22,7 @@
 #include "global.h"
 #ifndef BUILDING_BZADMIN
 #include "bzfgl.h"
+#include "sound.h"
 #endif
 #include "TimeKeeper.h"
 #include "Address.h"
@@ -362,6 +363,10 @@ private:
 
     int           oldStatus;            // old tank status bits
     float         oldZSpeed;            // old tank vertical speed
+
+#ifndef BUILDING_BZADMIN
+    SoundManager* sm;
+#endif
 };
 
 // shot data goes in LocalPlayer or RemotePlayer so shot type isn't lost.

@@ -16,13 +16,7 @@ libMediaFile_la_SOURCES =	\
 	ImageFile.h		\
 	MediaFile.cxx		\
 	PNGImageFile.cxx	\
-	PNGImageFile.h		\
-	AudioFile.cxx		\
-	AudioFile.h		\
-	WaveAudioFile.h		\
-	WaveAudioFile.cxx
+	PNGImageFile.h
 
 EXTRA_DIST = \
-	OggAudioFile.cxx	\
-	OggAudioFile.h		\
 	README

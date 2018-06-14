@@ -443,7 +443,7 @@ static std::string cmdPause(const std::string&,
             // restore the sound
             if (savedVolume != -1)
             {
-                setSoundVolume(savedVolume);
+                SoundManager::getInstance().setVolume(savedVolume);
                 savedVolume = -1;
             }
 

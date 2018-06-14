@@ -35,15 +35,18 @@ MenuDefaultKey* MenuDefaultKey::getInstance()
 
 bool MenuDefaultKey::keyPress(const BzfKeyEvent& key)
 {
+    if (sm == nullptr)
+        sm = &SoundManager::getInstance();
+
     switch (key.ascii)
     {
     case 27:    // escape
-        playLocalSound(SFX_DROP_FLAG);
+        sm->playLocalSound(SFX_DROP_FLAG, SM_PRI_HIGHEST);
         HUDDialogStack::get()->pop();
         return true;
 
     case 13:    // return
-        playLocalSound(SFX_GRAB_FLAG);
+        sm->playLocalSound(SFX_GRAB_FLAG, SM_PRI_HIGHEST);
         HUDDialogStack::get()->top()->execute();
         return true;
     }

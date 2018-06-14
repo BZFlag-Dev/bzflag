@@ -30,7 +30,6 @@
 #include "playing.h"
 #include "World.h"
 #include "TrackMarks.h"
-#include "sound.h"
 #include "effectsRenderer.h"
 #include "Roaming.h"
 #include "ShotList.h"
@@ -143,6 +142,10 @@ Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char*
     spawnTime = TimeKeeper::getTick();
 
     setupShotSlots();
+
+#ifndef BUILDING_BZADMIN
+    sm = &SoundManager::getInstance();
+#endif
 
     return;
 }
@@ -1478,6 +1481,7 @@ void Player::doDeadReckoning()
         inputVel[2] = 0.0f;
     }
 
+#ifndef BUILDING_BZADMIN
     // setup remote players' landing sounds and graphics, and jumping sounds
     if (isAlive())
     {
@@ -1501,11 +1505,11 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((getFlag()->flagEffect != FlagEffect::Burrow) || (predictedPos[2] > 0.0f))
-                    playSound(SFX_LAND, state.pos, soundImportance, localSound);
+                    sm->playSound(SFX_LAND, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 else
                 {
                     // probably never gets played
-                    playSound(SFX_BURROW, state.pos, soundImportance, localSound);
+                    sm->playSound(SFX_BURROW, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 }
             }
         }
@@ -1516,15 +1520,16 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((state.sounds & PlayerState::JumpSound) != 0)
-                    playSound(SFX_JUMP, state.pos, soundImportance, localSound);
+                    sm->playSound(SFX_JUMP, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 if ((state.sounds & PlayerState::WingsSound) != 0)
-                    playSound(SFX_FLAP, state.pos, soundImportance, localSound);
+                    sm->playSound(SFX_FLAP, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 if ((state.sounds & PlayerState::BounceSound) != 0)
-                    playSound(SFX_BOUNCE, state.pos, soundImportance, localSound);
+                    sm->playSound(SFX_BOUNCE, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
             }
             state.sounds = PlayerState::NoSounds;
         }
     }
+#endif
 
     // copy some old state
     oldZSpeed = state.velocity[2];

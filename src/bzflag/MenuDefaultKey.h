@@ -15,6 +15,7 @@
 
 /* common interface headers */
 #include "BzfEvent.h"
+#include "sound.h"
 
 /* local interface headers */
 #include "HUDuiDefaultKey.h"
@@ -32,6 +33,7 @@ public:
 
 private:
     static MenuDefaultKey instance;
+    SoundManager* sm;
 };
 
 

@@ -18,57 +18,12 @@
 #define BZF_WINMEDIA_H
 
 #include "BzfMedia.h"
-#include <dsound.h>
-
-class WinWindow;
 
 class WinMedia : public BzfMedia
 {
 public:
     WinMedia();
     ~WinMedia();
-
-    bool        openAudio();
-    void        closeAudio();
-    bool        startAudioThread(void (*)(void*), void*);
-    void        stopAudioThread();
-    bool        hasAudioThread() const;
-    void        writeSoundCommand(const void*, int);
-    bool        readSoundCommand(void*, int);
-    int         getAudioOutputRate() const;
-    int         getAudioBufferSize() const;
-    int         getAudioBufferChunkSize() const;
-    bool        isAudioTooEmpty() const;
-    void        writeAudioFrames(const float* samples, int numFrames);
-    void        audioSleep(bool checkLowWater, double maxTime);
-
-private:
-    static DWORD WINAPI audioThreadInit(void*);
-
-private:
-    bool        audioReady;
-    bool        audioPlaying;
-    IDirectSound*   audioInterface;
-    IDirectSoundBuffer* audioPrimaryPort;
-    IDirectSoundBuffer* audioPort;
-    int         audioNumChannels;
-    int         audioOutputRate;
-    int         audioBufferSize;
-    int         audioBufferChunkSize;
-    int         audioLowWaterMark;
-    int         audioBytesPerSample;
-    int         audioBytesPerFrame;
-    int         audioWritePtr;
-    short*      outputBuffer;
-    unsigned char*  audioCommandBuffer;
-    int         audioCommandBufferLen;
-    int         audioCommandBufferHead;
-    int         audioCommandBufferTail;
-    HANDLE      audioCommandEvent;
-    HANDLE      audioCommandMutex;
-    HANDLE      audioThread;
-    static void     (*threadProc)(void*);
-    static void*    threadData;
 };
 
 #endif // BZF_WINMEDIA_H

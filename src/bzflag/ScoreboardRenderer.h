@@ -142,6 +142,8 @@ private:
     static std::string playerLabel;
     static std::string teamCountSpacingLabel;
     int numHunted;
+
+    SoundManager* sm;
 };
 
 

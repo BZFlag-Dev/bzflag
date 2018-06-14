@@ -34,8 +34,6 @@ PlatformFactory::PlatformFactory()
 PlatformFactory::~PlatformFactory()
 {
 #ifdef HAVE_SDL
-    if (media)
-        media->closeAudio();
     SDL_Quit();
 #endif
     delete media;

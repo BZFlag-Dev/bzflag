@@ -98,6 +98,7 @@ int         debugLevel = 0;
 
 static BzfDisplay*  display = NULL;
 
+static SoundManager* sm = nullptr;
 
 
 #ifdef ROBOT
@@ -612,8 +613,8 @@ void dumpResources()
     else
         BZDB.unset("port");
     BZDB.set("list", startupInfo.listServerURL);
-    if (isSoundOpen())
-        BZDB.set("volume", TextUtils::format("%d", getSoundVolume()));
+    if (sm->isSoundOpen())
+        BZDB.set("volume", TextUtils::format("%d", sm->getVolume()));
 
     if (RENDERER.getWindow().getWindow()->hasGammaControl())
     {
@@ -1033,13 +1034,6 @@ int         main(int argc, char** argv)
     // create the joystick
     BzfJoystick* joystick = platformFactory->createJoystick();
 
-    // Change audio driver if requested
-    if (BZDB.isSet("audioDriver"))
-        PlatformFactory::getMedia()->setDriver(BZDB.get("audioDriver"));
-    // Change audio device if requested
-    if (BZDB.isSet("audioDevice"))
-        PlatformFactory::getMedia()->setDevice(BZDB.get("audioDevice"));
-
     // set data directory if user specified
     if (BZDB.isSet("directory"))
     {
@@ -1210,11 +1204,11 @@ int         main(int argc, char** argv)
 
     // get sound files.  must do this after creating the window because
     // DirectSound is a bonehead API.
+    sm = &SoundManager::getInstance(!noAudio);
     if (!noAudio)
     {
-        openSound("bzflag");
         if (startupInfo.hasConfiguration && BZDB.isSet("volume"))
-            setSoundVolume(static_cast<int>(BZDB.eval("volume")));
+            sm->setVolume(static_cast<int>(BZDB.eval("volume")));
     }
 
     // Initialize the joystick
@@ -1488,7 +1482,7 @@ int         main(int argc, char** argv)
     delete joystick;
     delete window;
     delete visual;
-    closeSound();
+    SoundManager::destroyInstance();
     delete display;
     delete platformFactory;
     delete bm;

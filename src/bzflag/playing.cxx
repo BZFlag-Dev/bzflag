@@ -98,12 +98,14 @@
 //#include "messages.h"
 
 static const float  FlagHelpDuration = 60.0f;
+static const float zero[3] = { 0.0f, 0.0f, 0.0f };
 StartupInfo     startupInfo;
 static MainMenu     *mainMenu;
 ServerLink      *serverLink = NULL;
 static World        *world = NULL;
 static LocalPlayer  *myTank = NULL;
 static BzfDisplay   *display = NULL;
+static SoundManager *sm = nullptr;
 MainWindow      *mainWindow = NULL;
 static SceneRenderer    *sceneRenderer = NULL;
 ControlPanel        *controlPanel = NULL;
@@ -1128,7 +1130,7 @@ static void     doEvent(BzfDisplay *disply)
         // restore the sound
         if (savedVolume != -1)
         {
-            setSoundVolume(savedVolume);
+            sm->setVolume(savedVolume);
             savedVolume = -1;
         }
 
@@ -1171,8 +1173,8 @@ static void     doEvent(BzfDisplay *disply)
         // turn off the sound
         if (savedVolume == -1)
         {
-            savedVolume = getSoundVolume();
-            setSoundVolume(0);
+            savedVolume = sm->getVolume();
+            sm->setVolume(0);
         }
 
         unmapped = true;
@@ -1988,7 +1990,7 @@ static void     handleServerMessage(bool human, uint16_t code,
             soundName = buffer;
 
             if (soundType == LocalCustomSound)
-                playLocalSound (soundName);
+                sm->playLocalSound (soundName);
         }
         break;
 
@@ -2265,7 +2267,6 @@ static void     handleServerMessage(bool human, uint16_t code,
 
         if ((playerIndex >= 0) || (playerIndex == -2))
         {
-            static const float zero[3] = { 0.0f, 0.0f, 0.0f };
             Player* tank = getPlayerByIndex(playerIndex);
 
             // If this tank is switching to a new team, do so now
@@ -2323,7 +2324,7 @@ static void     handleServerMessage(bool human, uint16_t code,
             tank->spawnEffect();
             if (tank == myTank)
                 myTank->setSpawning(false);
-            playSound(SFX_POP, pos, true, isViewTank(tank));
+            sm->playSound(SFX_POP, pos, zero, SM_PRI_HIGH, isViewTank(tank));
         }
 
         break;
@@ -2387,7 +2388,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                 {
                     wasRabbit = true;
                     hud->setAlert(0, "You are now the rabbit", 10.0f, false);
-                    playLocalSound(SFX_HUNT_SELECT);
+                    sm->playLocalSound(SFX_HUNT_SELECT);
                     scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
                 }
                 // TODO: Verify this is handled correctly since we can now change
@@ -2510,9 +2511,9 @@ static void     handleServerMessage(bool human, uint16_t code,
             const float* pos = victimPlayer->getPosition();
             const bool localView = isViewTank(victimPlayer);
             if (reason == GotRunOver)
-                playSound(SFX_RUNOVER, pos, killerLocal == myTank, localView);
+                sm->playSound(SFX_RUNOVER, pos, zero, (killerLocal == myTank)?SM_PRI_HIGH:SM_PRI_LOW, localView);
             else
-                playSound(SFX_EXPLOSION, pos, killerLocal == myTank, localView);
+                sm->playSound(SFX_EXPLOSION, pos, zero, (killerLocal == myTank)?SM_PRI_HIGH:SM_PRI_LOW, localView);
             float explodePos[3];
             explodePos[0] = pos[0];
             explodePos[1] = pos[1];
@@ -2546,7 +2547,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                     if (killerPlayer == myTank)
                     {
                         hud->setAlert(1, "Don't kill teammates!!!", 3.0f, true);
-                        playLocalSound(SFX_KILL_TEAM);
+                        sm->playLocalSound(SFX_KILL_TEAM);
                         sendMeaCulpa(victimPlayer->getId());
                     }
                 }
@@ -2691,7 +2692,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         if (tank == myTank)
         {
             // grabbed flag
-            playLocalSound(myTank->getFlag()->endurance != FlagEndurance::Sticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
+            sm->playLocalSound(myTank->getFlag()->endurance != FlagEndurance::Sticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
             updateFlag(myTank->getFlag());
 
             if (flagLimit >= 0)
@@ -2710,15 +2711,15 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else if (isViewTank(tank))
         {
-            playLocalSound(tank->getFlag()->endurance != FlagEndurance::Sticky ?
-                           SFX_GRAB_FLAG : SFX_GRAB_BAD);
+            sm->playLocalSound(tank->getFlag()->endurance != FlagEndurance::Sticky ?
+                               SFX_GRAB_FLAG : SFX_GRAB_BAD);
         }
         else if (myTank->getTeam() != RabbitTeam && tank &&
                  tank->getTeam() != myTank->getTeam() &&
                  world->getFlag(flagIndex).type->flagTeam == myTank->getTeam())
         {
             hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-            playLocalSound(SFX_ALERT);
+            sm->playLocalSound(SFX_ALERT);
         }
         else
         {
@@ -2730,7 +2731,7 @@ static void     handleServerMessage(bool human, uint16_t code,
             {
                 hud->setAlert(1, "Team Grab!!!", 3.0f, false);
                 const float* pos = tank->getPosition();
-                playWorldSound(SFX_TEAMGRAB, pos, false);
+                sm->playWorldSound(SFX_TEAMGRAB, pos, zero);
             }
         }
         std::string message("grabbed ");
@@ -2785,7 +2786,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                 if (capturer == myTank)
                 {
                     hud->setAlert(1, "Don't capture your own flag!!!", 3.0f, true);
-                    playLocalSound( SFX_KILL_TEAM );
+                    sm->playLocalSound( SFX_KILL_TEAM );
                     sendMeaCulpa(TeamToPlayerId(myTank->getTeam()));
                 }
             }
@@ -2801,9 +2802,9 @@ static void     handleServerMessage(bool human, uint16_t code,
         // play sound -- if my team is same as captured flag then my team lost,
         // but if I'm on the same team as the capturer then my team won.
         if (capturedTeam == int(myTank->getTeam()))
-            playLocalSound(SFX_LOSE);
+            sm->playLocalSound(SFX_LOSE);
         else if (capturer && capturer->getTeam() == myTank->getTeam())
-            playLocalSound(SFX_CAPTURE);
+            sm->playLocalSound(SFX_CAPTURE);
 
 
         // blow up if my team flag captured
@@ -2829,7 +2830,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                     remotePlayers[i]->getTeam() == capturedTeam)
             {
                 const float* pos = remotePlayers[i]->getPosition();
-                playWorldSound(SFX_EXPLOSION, pos, false);
+                sm->playWorldSound(SFX_EXPLOSION, pos, zero);
                 float explodePos[3];
                 explodePos[0] = pos[0];
                 explodePos[1] = pos[1];
@@ -2877,7 +2878,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                 else
                 {
                     hud->setAlert(0, "You are now the rabbit.", 10.0f, false);
-                    playLocalSound(SFX_HUNT_SELECT);
+                    sm->playLocalSound(SFX_HUNT_SELECT);
                 }
                 scoreboard->setHuntState(ScoreboardRenderer::HUNT_NONE);
             }
@@ -2965,18 +2966,18 @@ static void     handleServerMessage(bool human, uint16_t code,
             if (human)
             {
                 const float* pos = firingInfo.shot.pos;
-                const bool importance = false;
+            const auto priority = SM_PRI_NORMAL;
                 const bool localSound = isViewTank(shooter);
                 if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
-                    playSound(SFX_SHOCK, pos, importance, localSound);
+                sm->playSound(SFX_SHOCK, pos, zero, priority, localSound);
                 else if (firingInfo.flagType->flagEffect == FlagEffect::Laser)
-                    playSound(SFX_LASER, pos, importance, localSound);
+                sm->playSound(SFX_LASER, pos, zero, priority, localSound);
                 else if (firingInfo.flagType->flagEffect == FlagEffect::GuidedMissile)
-                    playSound(SFX_MISSILE, pos, importance, localSound);
+                sm->playSound(SFX_MISSILE, pos, zero, priority, localSound);
                 else if (firingInfo.flagType->flagEffect == FlagEffect::Thief)
-                    playSound(SFX_THIEF, pos, importance, localSound);
+                sm->playSound(SFX_THIEF, pos, zero, priority, localSound);
                 else
-                    playSound(SFX_FIRE, pos, importance, localSound);
+                sm->playSound(SFX_FIRE, pos, zero, priority, localSound);
             }
         }
         break;
@@ -3099,7 +3100,7 @@ static void     handleServerMessage(bool human, uint16_t code,
             {
                 const float* pos = teleporter->getPosition();
                 tank->setTeleport(TimeKeeper::getTick(), short(from), short(to));
-                playWorldSound(SFX_TELEPORT, pos);
+                sm->playWorldSound(SFX_TELEPORT, pos, zero);
             }
         }
         break;
@@ -3277,7 +3278,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                         {
                             static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
                             if (TimeKeeper::getTick() - lastMsg > 2.0f)
-                                playLocalSound( SFX_MESSAGE_PRIVATE );
+                                sm->playLocalSound( SFX_MESSAGE_PRIVATE );
                             lastMsg = TimeKeeper::getTick();
                         }
                     }
@@ -3294,7 +3295,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                     {
                         static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
                         if (TimeKeeper::getTick() - lastMsg > 2.0f)
-                            playLocalSound( SFX_MESSAGE_ADMIN );
+                            sm->playLocalSound( SFX_MESSAGE_ADMIN );
                         lastMsg = TimeKeeper::getTick();
                     }
 
@@ -3316,7 +3317,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                     {
                         static TimeKeeper lastMsg = TimeKeeper::getSunGenesisTime();
                         if (TimeKeeper::getTick() - lastMsg > 2.0f)
-                            playLocalSound(SFX_MESSAGE_TEAM);
+                            sm->playLocalSound(SFX_MESSAGE_TEAM);
                         lastMsg = TimeKeeper::getTick();
                     }
                 }
@@ -3543,7 +3544,7 @@ static void     handlePlayerMessage(uint16_t code, uint16_t,
             static TimeKeeper lastLockMsg;
             if (TimeKeeper::getTick() - lastLockMsg > 0.75)
             {
-                playWorldSound(SFX_LOCK, shot.pos);
+                sm->playWorldSound(SFX_LOCK, shot.pos, zero);
                 lastLockMsg=TimeKeeper::getTick();
                 addMessage(tank, "locked on me");
             }
@@ -3696,7 +3697,7 @@ void            addShotExplosion(const float* pos)
 {
     // only play explosion sound if you see an explosion
     if (addExplosion(pos, 1.2f * BZDBCache::tankLength, 0.8f, false))
-        playWorldSound(SFX_SHOT_BOOM, pos);
+        sm->playWorldSound(SFX_SHOT_BOOM, pos, zero);
 }
 
 void            addShotPuff(const float* pos, float azimuth, float elevation)
@@ -3767,16 +3768,16 @@ static void     handleMyTankKilled(int reason)
     // restore the sound, this happens when paused tank dies
     if (savedVolume != -1)
     {
-        setSoundVolume(savedVolume);
+        sm->setVolume(savedVolume);
         savedVolume = -1;
     }
 
     // blow me up
     myTank->explodeTank();
     if (reason == GotRunOver)
-        playLocalSound(SFX_RUNOVER);
+        sm->playLocalSound(SFX_RUNOVER);
     else
-        playLocalSound(SFX_DIE);
+        sm->playLocalSound(SFX_DIE);
 }
 #endif
 
@@ -3832,11 +3833,11 @@ void handleFlagDropped(Player* tank)
             myTank->setStatus(short(PlayerState::Alive));
 
         // update display and play sound effects
-        playLocalSound(SFX_DROP_FLAG);
+        sm->playLocalSound(SFX_DROP_FLAG);
         updateFlag(Flags::Null);
     }
     else if (isViewTank(tank))
-        playLocalSound(SFX_DROP_FLAG);
+        sm->playLocalSound(SFX_DROP_FLAG);
 
     // add message
     std::string message("dropped ");
@@ -3878,11 +3879,11 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
     if (f.type->flagTeam != ::NoTeam)
     {
         if ((toTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam != myTank->getTeam()))
-            playWorldSound(SFX_TEAMGRAB, pos);
+            sm->playWorldSound(SFX_TEAMGRAB, pos, zero);
         else if ((fromTank->getTeam() == myTank->getTeam()) && (f.type->flagTeam == myTank->getTeam()))
         {
             hud->setAlert(1, "Flag Alert!!!", 3.0f, true);
-            playLocalSound(SFX_ALERT);
+            sm->playLocalSound(SFX_ALERT);
         }
     }
 
@@ -3927,7 +3928,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
     // (genocide or team flag captured)
     if (savedVolume != -1)
     {
-        setSoundVolume(savedVolume);
+        sm->setVolume(savedVolume);
         savedVolume = -1;
     }
 
@@ -3952,9 +3953,9 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
         if (isViewTank(tank))
         {
             if (reason == GotRunOver)
-                playLocalSound(SFX_RUNOVER);
+                sm->playLocalSound(SFX_RUNOVER);
             else
-                playLocalSound(SFX_DIE);
+                sm->playLocalSound(SFX_DIE);
             ForceFeedback::death();
         }
         else
@@ -3962,13 +3963,13 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
             const float* pos = tank->getPosition();
             if (reason == GotRunOver)
             {
-                playWorldSound(SFX_RUNOVER, pos,
-                               getLocalPlayer(killer) == myTank);
+                sm->playWorldSound(SFX_RUNOVER, pos, zero,
+                                   (getLocalPlayer(killer) == myTank)?SM_PRI_HIGH:SM_PRI_NORMAL);
             }
             else
             {
-                playWorldSound(SFX_EXPLOSION, pos,
-                               getLocalPlayer(killer) == myTank);
+                sm->playWorldSound(SFX_EXPLOSION, pos, zero,
+                                   (getLocalPlayer(killer) == myTank)?SM_PRI_HIGH:SM_PRI_NORMAL);
             }
         }
 
@@ -4603,7 +4604,7 @@ static void setHuntTarget()
         if (!pulse.isOn())
         {
             const float* bestTargetPosition = bestTarget->getPosition();
-            playWorldSound(SFX_HUNT, bestTargetPosition);
+            sm->playWorldSound(SFX_HUNT, bestTargetPosition, zero);
             pulse.setClock(1.0f);
         }
     }
@@ -5140,7 +5141,7 @@ static void enteringServer(const void *buf)
     // restore the sound
     if (savedVolume != -1)
     {
-        setSoundVolume(savedVolume);
+        sm->setVolume(savedVolume);
         savedVolume = -1;
     }
 
@@ -6135,7 +6136,7 @@ void drawFrame(const float dt)
                     myTank->move(virtPos, roamViewAngle * DEG2RADf);
             }
             fov = roam->zoom * DEG2RADf;
-            moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+            sm->moveSoundReceiver(eyePoint, 0.0, 0);
         }
 
         // only use a close plane for drawing in the
@@ -6952,8 +6953,8 @@ static void     updatePauseCountdown(float dt)
                 // turn off the sound
                 if (savedVolume == -1)
                 {
-                    savedVolume = getSoundVolume();
-                    setSoundVolume(0);
+                    savedVolume = sm->getVolume();
+                    sm->setVolume(0);
                 }
 
                 // ungrab mouse
@@ -7429,9 +7430,6 @@ static void     playingLoop()
         // draw the frame
         drawFrame(dt);
 
-        // play the sounds
-        updateSound();
-
 
         bool sendUpdate = myTank && myTank->isDeadReckoningWrong();
         if (myTank && myTank->getTeam() == ObserverTeam)
@@ -7734,6 +7732,8 @@ void            startPlaying(BzfDisplay* _display,
     sceneRenderer = &renderer;
     mainWindow = &sceneRenderer->getWindow();
 
+    sm = &SoundManager::getInstance();
+
     lastObserverUpdateTime = TimeKeeper::getTick().getSeconds();
 
     // register some commands
@@ -7938,7 +7938,7 @@ void            startPlaying(BzfDisplay* _display,
         dumpResources();
     }
 
-    static const GLfloat  zero[3] = { 0.0f, 0.0f, 0.0f };
+    static const GLfloat  gzero[3] = { 0.0f, 0.0f, 0.0f };
 
     TextureManager &tm = TextureManager::instance();
 
@@ -7956,7 +7956,7 @@ void            startPlaying(BzfDisplay* _display,
         else
         {
             // make explosion scene node
-            BillboardSceneNode* explosion = new BillboardSceneNode(zero);
+            BillboardSceneNode* explosion = new BillboardSceneNode(gzero);
             explosion->setTexture(tex);
             explosion->setTextureAnimation(8, 8);
 
@@ -8049,15 +8049,6 @@ void            startPlaying(BzfDisplay* _display,
         tmpString = ColorStrings[CyanColor];
         tmpString += "Maintainer: Tim Riker <Tim@Rikers.org>";
         controlPanel->addMessage(tmpString);
-        // print audio driver
-        std::string audioStr;
-        PlatformFactory::getMedia()->audioDriver(audioStr);
-        if (tmpString != "")
-        {
-            tmpString = ColorStrings[BlueColor];
-            tmpString += "Audio Driver: " + audioStr;
-            controlPanel->addMessage(tmpString);
-        }
         // print GL renderer
         tmpString = ColorStrings[PurpleColor];
         tmpString += "OpenGL Driver: ";
@@ -8119,7 +8110,7 @@ void            startPlaying(BzfDisplay* _display,
     // app exits when the game is paused.
     if (savedVolume != -1)
     {
-        setSoundVolume(savedVolume);
+        sm->setVolume(savedVolume);
         savedVolume = -1;
     }
 

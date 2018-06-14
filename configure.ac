@@ -295,6 +295,14 @@ dnl detect a usable system libpng library
 AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', LIBPNG='')
 AC_SUBST(LIBPNG)
 
+dnl detect a usable system libpng library
+AC_CHECK_LIB(openal, alDistanceModel, LIBOPENAL='-lopenal', LIBOPENAL='')
+AC_SUBST(LIBOPENAL)
+
+dnl detect a usable system libpng library
+AC_CHECK_LIB(alure, alureInitDevice, LIBALURE='-lalure', LIBALURE='')
+AC_SUBST(LIBALURE)
+
 dnl detect a usable system c-ares lookup library
 AC_CHECK_LIB(cares, ares_init, LIBCARES="-lcares", AC_MSG_ERROR([working c-ares was not found]))
 AC_SUBST(LIBCARES)
@@ -712,7 +720,6 @@ BZ_CONFIGURE_STAGE([compiler], [6 of 9])
 FLAGS="-Wall -Wextra -Wcast-qual -Wredundant-decls -Wshadow -Wundef -pedantic"
 case $host_os in
      linux*)
-	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
@@ -741,13 +748,11 @@ case $host_os in
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";;
 	esac;;
      cygwin)
-	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	FLAGS="-Wall -W -mcpu=$host_cpu"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
      mingw32*)
-	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	FLAGS="-Wall -W"
 	if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
 	  FLAGS="$FLAGS -mtune=$host_cpu"
@@ -935,24 +940,41 @@ if test x$ac_ff_effect_directional = xyes; then
 fi
 AC_MSG_RESULT([$ac_ff_effect_directional])
 
-# if the client was enabled, make sure we have GL and libpng
+# if the client was enabled, make sure we have GL, libpng, OpenAL, and alure
 if test x$enable_client != xno; then
-    have_libpng=no
+    have_libpng=yes
+    have_libopenal=yes
+    have_libalure=yes
     if test "$have_gl" = no; then
 	AC_MSG_WARN(
 	[Client build is enabled, but OpenGL does not seem to be fully available ... disabling BZFlag client])
 	AM_CONDITIONAL(CLIENT_INCLUDED, false)
 	enable_client=no
-    else
-	if test "x$LIBPNG" = "x"; then
-	    AC_MSG_WARN(
-	    [Client build is enabled, but libpng does not seem to be available ... disabling BZFlag client])
-	    AM_CONDITIONAL(CLIENT_INCLUDED, false)
-	    enable_client=no
-	else
-	    AM_CONDITIONAL(CLIENT_INCLUDED, true)
-	    have_libpng=yes
-	fi
+    fi
+    if test "x$LIBPNG" = "x"; then
+	AC_MSG_WARN(
+	[Client build is enabled, but libpng does not seem to be available ... disabling BZFlag client])
+	AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	enable_client=no
+	have_libpng=no
+    fi
+    if test "x$LIBOPENAL" = "x"; then
+	AC_MSG_WARN(
+	[Client build is enabled, but OpenAL does not seem to be available ... disabling BZFlag client])
+	AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	enable_client=no
+	have_libopenal=no
+    fi
+    if test "x$LIBALURE" = "x"; then
+	AC_MSG_WARN(
+	[Client build is enabled, but alure does not seem to be available ... disabling BZFlag client])
+	AM_CONDITIONAL(CLIENT_INCLUDED, false)
+	enable_client=no
+	have_libalure=no
+    fi
+
+    if test x$enable_client != xno; then
+	AM_CONDITIONAL(CLIENT_INCLUDED, true)
     fi
 else
     AM_CONDITIONAL(CLIENT_INCLUDED, false)
@@ -1117,7 +1139,15 @@ if test "x$enable_client" = "xno"; then
         if test "x$have_libpng" = "xno" ; then
             build_bzflag="no bzflag client binary! (need libpng)"
         else
-            build_bzflag="no bzflag client binary!"
+	    if test "x$have_libopenal" = "xno" ; then
+		build_bzflag="no bzflag client binary! (need OpenAL)"
+	    else
+		if test "x$have_libalure" = "xno" ; then
+		    build_bzflag="no bzflag client binary! (need alure)"
+		else
+		    build_bzflag="no bzflag client binary!"
+		fi
+	    fi
         fi
     fi
 else

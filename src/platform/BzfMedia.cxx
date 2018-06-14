@@ -19,6 +19,7 @@
 #include <string.h>
 #include <string>
 #include <stdio.h>
+#include <fstream>
 
 BzfMedia::BzfMedia() : mediaDir(DEFAULT_MEDIA_DIR) {}
 BzfMedia::~BzfMedia() {}
@@ -127,86 +128,43 @@ unsigned char*      BzfMedia::readImage(const std::string& filename,
     return NULL;
 }
 
-float*          BzfMedia::readSound(const std::string& filename,
-                                    int& numFrames, int& rate) const
+std::string          BzfMedia::findSound(const std::string name, const std::string extension) const
 {
-    // try mediaDir/filename
-    std::string name = makePath(mediaDir, filename);
-    float* sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
+    std::string filename = name + "." + extension;
 
-    // try filename as is
-    sound = doReadSound(filename, numFrames, rate);
-    if (sound) return sound;
+    // try mediaDir/filename
+    std::string path = makePath(mediaDir, filename);
+    std::ifstream infile(path);
+    if (infile.good())
+        return path;
 
 #if defined(INSTALL_DATA_DIR)
-    // try standard-mediaDir/filename
-    name = makePath(INSTALL_DATA_DIR, filename);
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
+    // Try the installed data directory on *nix platforms
+    path = makePath(INSTALL_DATA_DIR, filename);
+    infile.close();
+    infile.clear();
+    infile.open(path);
+    if (infile.good())
+        return path;
 #endif
 
-    // try mediaDir/filename with replaced extension
-    name = replaceExtension(makePath(mediaDir, filename), getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try filename with replaced extension
-    name = replaceExtension(filename, getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-#if defined(INSTALL_DATA_DIR)
-    // try mediaDir/filename with replaced extension
-    name = makePath(INSTALL_DATA_DIR, filename);
-    name = replaceExtension(name, getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
+#ifdef _WIN32
+    // try ../defaultMediaDir/filename
+    path = "../";
+    path += DEFAULT_MEDIA_DIR;
+    path = makePath(name, filename);
+    infile.close();
+    infile.clear();
+    infile.open(path);
+    if (infile.good())
+        return path;
 #endif
-
-    // try mediaDir/filename
-    name = makePath(DEFAULT_MEDIA_DIR, filename);
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try mediaDir/filename with replaced extension
-    name = replaceExtension(makePath(DEFAULT_MEDIA_DIR, filename), getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try mediaDir/filename
-    name = "../";
-    name += DEFAULT_MEDIA_DIR;
-    name = makePath(name, filename);
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try mediaDir/filename with replaced extension
-    name = "../";
-    name += DEFAULT_MEDIA_DIR;
-    name = replaceExtension(makePath(name, filename), getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try mediaDir/filename
-    name = "../../";
-    name += DEFAULT_MEDIA_DIR;
-    name = makePath(name, filename);
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
-
-    // try mediaDir/filename with replaced extension
-    name = "../../";
-    name += DEFAULT_MEDIA_DIR;
-    name = replaceExtension(makePath(name, filename), getSoundExtension());
-    sound = doReadSound(name, numFrames, rate);
-    if (sound) return sound;
 
 #ifndef DEBUG
     std::cout << "Unable to locate [" << filename << "] audio file (media dir is set to " << mediaDir << ")" << std::endl;
 #endif
 
-    return NULL;
+    return std::string("");
 }
 
 std::string     BzfMedia::makePath(const std::string& dir,
@@ -257,258 +215,6 @@ unsigned char*      BzfMedia::doReadImage(const std::string& filename,
         int& dx, int& dy, int&) const
 {
     return MediaFile::readImage( filename, &dx, &dy );
-}
-
-int16_t         BzfMedia::getShort(const void* ptr)
-{
-    const unsigned char* data = (const unsigned char*)ptr;
-    return ((int16_t)data[0] << 8) + (int16_t)data[1];
-}
-
-uint16_t        BzfMedia::getUShort(const void* ptr)
-{
-    const unsigned char* data = (const unsigned char*)ptr;
-    return ((uint16_t)data[0] << 8) + (uint16_t)data[1];
-}
-
-int32_t         BzfMedia::getLong(const void* ptr)
-{
-    const unsigned char* data = (const unsigned char*)ptr;
-    return ((int32_t)data[0] << 24) + ((int32_t)data[1] << 16) +
-           ((int32_t)data[2] << 8) + (int32_t)data[3];
-}
-
-bool            BzfMedia::doReadVerbatim(FILE* file,
-        int dx, int dy, int dz,
-        unsigned char* image)
-{
-    // zero image data
-    memset(image, 0, 4 * dx * dy);
-
-    // how many channels to read?
-    if (dz > 4)
-        dz = 4;
-
-    // read each channel one after the other
-    unsigned char row[4096];
-    for (int k = 0; k < dz; ++k)
-    {
-        unsigned char* dst = image + k;
-        for (int j = 0; j < dy; ++j)
-        {
-            // read raw data
-            if (fread(row, dx, 1, file) != 1)
-                return false;
-
-            // reformat
-            for (int i = 0; i < dx; ++i)
-            {
-                *dst = row[i];
-                dst += 4;
-            }
-        }
-    }
-    return true;
-}
-
-bool            BzfMedia::doReadRLE(FILE* file,
-                                    int dx, int dy, int dz,
-                                    unsigned char* image)
-{
-    // zero image data
-    memset(image, 0, 4 * dx * dy);
-
-    // how many channels to read?
-    if (dz > 4)
-        dz = 4;
-
-    // read offset tables
-    const int tableSize = dy * dz;
-    int32_t* startTable  = new int32_t[tableSize];
-    if (fread(startTable, 4 * tableSize, 1, file) != 1)
-    {
-        delete[] startTable;
-        return false;
-    }
-    int32_t* lengthTable = new int32_t[tableSize];
-    if (fread(lengthTable, 4 * tableSize, 1, file) != 1)
-    {
-        delete[] startTable;
-        delete[] lengthTable;
-        return false;
-    }
-
-    // convert offset tables to proper endianness
-    for (int n = 0; n < tableSize; ++n)
-    {
-        startTable[n]  = getLong(startTable + n);
-        lengthTable[n] = getLong(lengthTable + n);
-    }
-
-    // read each channel one after the other
-    unsigned char row[4096];
-    for (int k = 0; k < dz; ++k)
-    {
-        unsigned char* dst = image + k;
-        for (int j = 0; j < dy; ++j)
-        {
-            // read raw data
-            const int32_t length = lengthTable[j + k * dy];
-            if (fseek(file, startTable[j + k * dy], SEEK_SET) < 0 ||
-                    fread(row, length, 1, file) != 1)
-            {
-                delete[] startTable;
-                delete[] lengthTable;
-                return false;
-            }
-
-            // decode
-            unsigned char* src = row;
-            while (1)
-            {
-                // check for error in image
-                if (src - row >= length)
-                {
-                    delete[] startTable;
-                    delete[] lengthTable;
-                    return false;
-                }
-
-                // get next code
-                const unsigned char type = *src++;
-                int count = (int)(type & 0x7f);
-
-                // zero code means end of row
-                if (count == 0)
-                    break;
-
-                if (type & 0x80)
-                {
-                    // copy count pixels
-                    while (count--)
-                    {
-                        *dst = *src++;
-                        dst += 4;
-                    }
-                }
-                else
-                {
-                    // repeat pixel count times
-                    const unsigned char pixel = *src++;
-                    while (count--)
-                    {
-                        *dst = pixel;
-                        dst += 4;
-                    }
-                }
-            }
-        }
-    }
-
-    delete[] startTable;
-    delete[] lengthTable;
-    return true;
-}
-
-#if defined(HAVE_SDL) && !defined(_WIN32)
-float*          BzfMedia::doReadSound(const std::string&, int&, int&) const
-{
-    return NULL;
-}
-#else
-float*          BzfMedia::doReadSound(const std::string& filename,
-                                      int& numFrames, int& rate) const
-{
-    short format, channels, width;
-    long speed;
-    FILE* file;
-    char *rawdata, *rawpos;
-    int i;
-    float *data;
-
-    file = openWavFile(filename.c_str(), &format, &speed, &numFrames, &channels, &width);
-    if (!file) return 0;
-    rate=speed;
-    rawdata=new char[numFrames*width*channels];
-    if (readWavData(file, rawdata, numFrames*channels, width))
-    {
-        fprintf(stderr, "Failed to read the wav data\n");
-        delete [] rawdata;
-        closeWavFile(file);
-        return 0;
-    }
-    closeWavFile(file);
-
-#ifdef HALF_RATE_AUDIO
-    numFrames/=2;
-    rate/=2;
-#endif
-    data = new float[2*numFrames];
-    rawpos=rawdata;
-    for (i=0; i<numFrames; i++)
-    {
-        if (channels==1)
-        {
-            if (width==1)
-            {
-                data[i*2]=data[i*2+1] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-#ifdef HALF_RATE_AUDIO
-                rawpos++;
-#endif
-            }
-            else
-            {
-                data[i*2]=data[i*2+1] = *(short*)rawpos;
-                rawpos+=2;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=2;
-#endif
-            }
-        }
-        else
-        {
-            if (width==1)
-            {
-                data[i*2] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-                data[i*2+1] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=2;
-#endif
-            }
-            else
-            {
-                data[i*2] = *(short*)rawpos;
-                rawpos+=2;
-                data[i*2+1] = *(short*)rawpos;
-                rawpos+=2;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=4;
-#endif
-
-            }
-        }
-    }
-    delete [] rawdata;
-    return data;
-}
-#endif
-
-// Setting Audio Driver
-void    BzfMedia::setDriver(std::string)
-{
-}
-
-// Setting Audio Device
-void    BzfMedia::setDevice(std::string)
-{
-}
-
-void BzfMedia::audioDriver(std::string& driverName)
-{
-    driverName = "";
 }
 
 // Local Variables: ***
