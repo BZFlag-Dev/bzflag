@@ -228,8 +228,6 @@ protected:
 
     float getFlagReload(FlagType* flag) const;
 
-    float      reloadOffset;
-
     void UpdateShotSlots(float dt);
     ShotSlot::Vec ShotSlots;
 

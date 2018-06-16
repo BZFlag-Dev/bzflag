@@ -1199,16 +1199,19 @@ float Player::getFlagReload(FlagType* flag) const
 
 float Player::getReloadTime() const
 {
-
     float time = float(jamTime - TimeKeeper::getTick());
     if (time > 0.0f)
         return time;
 
+    float minTime = 999999;
+    for (auto & slot : ShotSlots)
+    {
+        if (slot.Reloaded())
+            return 0.0f;
 
-    float minTime = getFlagReload(getFlag()) + reloadOffset;
-
-    if (minTime < 0.0f)
-        minTime = 0.0f;
+        if (slot.reloadTime < minTime)
+            minTime = slot.reloadTime;
+    }
 
     return minTime;
 }
