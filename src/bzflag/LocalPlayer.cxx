@@ -116,9 +116,6 @@ void            LocalPlayer::doUpdate(float dt)
         wasPaused = false;
     }
 
-    if (!isPaused())    // we don't reload while paused
-        UpdateShotSlots(dt);
-
     for (auto lShot : getShots())
     {
         if (lShot->isExpiring())
