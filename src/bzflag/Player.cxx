@@ -519,17 +519,14 @@ void Player::UpdateShotSlots(float dt)
 {
     for (auto& slot : ShotSlots)
     {
-        if (slot.activeShot != nullptr)
-        {
-            slot.reloadTime -= dt;
-            if (slot.reloadTime < 0)
-                slot.reloadTime = 0;
+        slot.reloadTime -= dt;
+        if (slot.reloadTime < 0)
+            slot.reloadTime = 0;
 
-            if (slot.Reloaded())
-            {
-                slot.activeShot = nullptr;
-                slot.totalReload = 0;
-            }
+        if (slot.Reloaded())
+        {
+            slot.activeShot = nullptr;
+            slot.totalReload = 0;
         }
     }
 }
