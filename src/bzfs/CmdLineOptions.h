@@ -222,7 +222,7 @@ public:
 
     std::vector<pluginDef>    pluginList;
 
-    uint16_t getFlagLimit(FlagType* flag)
+    int getFlagLimit(FlagType* flag)
     {
         if (flag == nullptr || flagLimit.find(flag) == flagLimit.end())
             return -1;

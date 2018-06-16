@@ -116,8 +116,11 @@ namespace ShotList
         {
             (*shot)->update(dt);
 
-            if ((*shot)->isExpired())
+            if ((*shot)->isExpiring())
+            {
+                (*shot)->setExpired();
                 toKill.push_back(shot);
+            }    
         }
 
         for (auto deadShots : toKill)
@@ -135,8 +138,11 @@ namespace ShotList
 
             (*shot)->update(dt);
 
-            if ((*shot)->isExpired())
+            if ((*shot)->isExpiring())
+            {
+                (*shot)->setExpired();
                 toKill.push_back(shot);
+            }
         }
 
         for (auto deadShots : toKill)
