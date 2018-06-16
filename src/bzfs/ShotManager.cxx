@@ -156,6 +156,11 @@ namespace Shots
         return 0;
     }
 
+    bool Manager::IsValidShotID(uint16_t shotID)
+    {
+        return FindByID(shotID) != nullptr;
+    }
+
     uint16_t Manager::NewGUID()
     {
         LastGUID++;

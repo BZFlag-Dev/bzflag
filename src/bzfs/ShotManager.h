@@ -195,6 +195,8 @@ namespace Shots
             return FindByID(shotID);
         }
 
+        bool IsValidShotID(uint16_t shotID);
+
         void Update();
 
         static double DeadShotCacheTime;

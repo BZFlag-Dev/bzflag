@@ -742,7 +742,7 @@ void            ServerLink::sendKilled(const PlayerId& killer,
 
     buf = nboPackUByte(buf, killer);
     buf = nboPackUShort(buf, int16_t(reason));
-    buf = nboPackShort(buf, int16_t(shotId));
+    buf = nboPackUShort(buf, uint16_t(shotId));
     buf = flagType->pack(buf);
 
     if (reason == PhysicsDriverDeath)

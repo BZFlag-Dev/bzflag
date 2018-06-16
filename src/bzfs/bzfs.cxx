@@ -3477,7 +3477,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                 *victim = &victimData->player;
 
     // victim was already dead. keep score.
-    if (!victim->isAlive()) return;
+    if (!victim->isAlive())
+        return;
 
     victim->setRestartOnBase(respawnOnBase);
     victim->setSpawnDelay((double)BZDB.eval(StateDatabase::BZDB_EXPLODETIME));
@@ -4997,14 +4998,16 @@ static void handleCommand(int t, void *rawbuf, bool udp)
     {
         if (invalidPlayerAction(playerData->player, t, "die"))
             break;
+
         // data: id of killer, shot id of killer
         PlayerId killer;
-        FlagType* flagType;
-        int16_t shot, reason;
+        FlagType* flagType = nullptr;
+        uint16_t shot = INVALID_SHOT_GUID;
+        int16_t reason = -1;
         int phydrv = -1;
         buf = nboUnpackUByte(buf, killer);
         buf = nboUnpackShort(buf, reason);
-        buf = nboUnpackShort(buf, shot);
+        buf = nboUnpackUShort(buf, shot);
         buf = FlagType::unpack(buf, flagType);
         if (reason == PhysicsDriverDeath)
         {
@@ -5013,13 +5016,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             phydrv = int(inPhyDrv);
         }
 
-        // Sanity check on shot: Here we have the killer
-        if (killer != ServerPlayer)
-        {
-            int si = (shot == -1 ? -1 : shot & 0x00FF);
-            if ((si < -1) || (si >= clOptions->maxShots))
-                break;
-        }
+        if (!ShotManager.IsValidShotID(shot))
+            break;
+
         playerData->player.endShotCredit--;
         playerKilled(t, lookupPlayer(killer), reason, shot, flagType, phydrv);
 
