@@ -439,18 +439,13 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
     // write leftover data to the buffer
     if (length > 0)
     {
-        printf("did not send %lu bytes\r\n", length);
-
         // is there enough room in buffer?
         if (outmsgCapacity < outmsgSize + (int)length)
         {
-            printf("current buffer cap %d bytes\r\n", outmsgCapacity);
             // double capacity until it's big enough
             int newCapacity = (outmsgCapacity == 0) ? 512 : outmsgCapacity;
             while (newCapacity < outmsgSize + (int)length)
                 newCapacity <<= 1;
-
-            printf("new buffer cap %d bytes\r\n", newCapacity);
             // if the buffer is getting too big then drop the player.  chances
             // are the network is down or too unreliable to that player.
 
@@ -460,7 +455,6 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
 
             if ((outmsgSize + (int)length) >= max)
             {
-                printf("new buffer too big, over %d bytes\r\n", max);
                 if (info != NULL && playerIndex >= 0)
                 {
                     logDebugMessage(2,"Player %s [%d] drop, unresponsive with %d bytes queued\n",
