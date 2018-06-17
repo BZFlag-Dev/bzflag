@@ -572,7 +572,7 @@ static MsgStringList handleMsgDropFlag (PacketInfo *pi)
     MsgStringList list = listMsgBasics (pi);
 
     const void *d = pi->data;
-    Flag flag;
+    FlagInstance flag;
     u8 player;
     u16 flagid;
     d = nboUnpackUByte (d, player);
@@ -612,7 +612,7 @@ static MsgStringList handleMsgFlagUpdate (PacketInfo *pi)
     listPush (list, 1, "count: %i", count);
     for (i = 0; i < (int) count; i++)
     {
-        Flag flag;
+        FlagInstance flag;
         d = nboUnpackUShort (d, index);
         d = flag.unpack (d);
         if (TrackState)
@@ -632,7 +632,7 @@ static MsgStringList handleMsgGrantFlag(PacketInfo *pi)
     MsgStringList list = listMsgBasics (pi);
 
     const void *d = pi->data;
-    Flag flag;
+    FlagInstance flag;
     u8 player;
     u16 flagid;
     d = nboUnpackUByte (d, player);
@@ -1047,7 +1047,7 @@ static MsgStringList handleMsgTransferFlag (PacketInfo *pi)
     const void *d = pi->data;
     u8 to, from;
     u16 flagid;
-    Flag flag;
+    FlagInstance flag;
     d = nboUnpackUByte(d, from);
     d = nboUnpackUByte(d, to);
     d = nboUnpackUShort(d, flagid);
