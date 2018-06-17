@@ -254,7 +254,6 @@ namespace Flags
    extern FlagType::Ptr Steamroller;
    extern FlagType::Ptr ShockWave;
    extern FlagType::Ptr PhantomZone;
-   extern FlagType::Ptr Genocide;
    extern FlagType::Ptr Jumping;
    extern FlagType::Ptr Identify;
    extern FlagType::Ptr Cloaking;

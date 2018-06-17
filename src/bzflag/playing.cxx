@@ -2667,35 +2667,6 @@ static void     handleServerMessage(bool human, uint16_t code,
             }
         }
 
-        if (World::getWorld()->allowTeams())  // geno only works in team games :)
-        {
-            // blow up if killer has genocide flag and i'm on same team as victim
-            // (and we're not rogues, unless in rabbit mode)
-            if (human && killerPlayer && victimPlayer && victimPlayer != myTank &&
-                    (victimPlayer->getTeam() == myTank->getTeam()) &&
-                    (myTank->getTeam() != RogueTeam) && shotId >= 0)
-            {
-                // now see if shot was fired with a GenocideFlag
-                ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
-                if (shot != nullptr && shot->getFlag() == Flags::Genocide)
-                    gotBlowedUp(myTank, GenocideEffect, killerPlayer->getId());
-            }
-
-#ifdef ROBOT
-            // blow up robots on victim's team if shot was genocide
-            if (killerPlayer && victimPlayer && shotId >= 0)
-            {
-                ShotPath::Ptr shot = ShotList::GetShot(int(shotId));
-                if (shot != nullptr && shot->getFlag() == Flags::Genocide)
-                    for (int i = 0; i < numRobots; i++)
-                        if (robots[i] && victimPlayer != robots[i] &&
-                                victimPlayer->getTeam() == robots[i]->getTeam() &&
-                                robots[i]->getTeam() != RogueTeam)
-                            gotBlowedUp(robots[i], GenocideEffect, killerPlayer->getId());
-            }
-#endif
-        }
-
         checkScores = true;
         break;
     }

@@ -772,7 +772,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
         if (BZDBCache::colorful)
         {
             if ((flagd == Flags::ShockWave)
-                    ||  (flagd == Flags::Genocide)
+                    ||  (flagd->flagAbbv == "G")
                     ||  (flagd == Flags::Laser)
                     ||  (flagd == Flags::GuidedMissile))
                 playerInfo += ColorStrings[WhiteColor];

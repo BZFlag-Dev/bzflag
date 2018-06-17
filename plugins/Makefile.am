@@ -11,6 +11,7 @@ SUBDIRS = \
 	CustomZoneSample \
 	fairCTF \
 	flagStay \
+	genocide \
 	HoldTheFlag \
 	keepaway \
 	killall \
