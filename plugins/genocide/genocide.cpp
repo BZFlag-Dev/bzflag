@@ -52,19 +52,19 @@ void genocide::Event(bz_EventData *eventData)
 
       case bz_eFlagTransferredEvent:
       {
-          bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;
+        /*  bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;*/
           break;
       }
 
       case bz_eFlagGrabbedEvent:
       {
-          bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;
+       /*   bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;*/
           break;
       }
 
       case bz_eFlagDroppedEvent:
       {
-          bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;
+         /* bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;*/
           break;
       }
 
@@ -84,7 +84,6 @@ void genocide::Event(bz_EventData *eventData)
       {
           bz_PlayerDieEventData_V1* deed = (bz_PlayerDieEventData_V1*)eventData;
           bz_ApiString& flag = deed->flagKilledWith;
-
 
           if (flag == "G")
           {
