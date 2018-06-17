@@ -3458,8 +3458,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
                   int16_t shotIndex, const FlagType::Ptr flagType, int phydrv, bool respawnOnBase )
 {
     GameKeeper::Player *killerData = NULL;
-    GameKeeper::Player *victimData
-        = GameKeeper::Player::getPlayerByIndex(victimIndex);
+    GameKeeper::Player *victimData  = GameKeeper::Player::getPlayerByIndex(victimIndex);
 
     if (!victimData || !victimData->player.isPlaying())
         return;
@@ -3473,8 +3472,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
     // aliases for convenience
     // Warning: killer should not be used when killerIndex == InvalidPlayer or ServerPlayer
-    PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0,
-                *victim = &victimData->player;
+    PlayerInfo *killer = realPlayer(killerIndex) ? &killerData->player : 0,  *victim = &victimData->player;
 
     // victim was already dead. keep score.
     if (!victim->isAlive())
@@ -5016,7 +5014,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             phydrv = int(inPhyDrv);
         }
 
-        if (!ShotManager.IsValidShotID(shot))
+        if (killer != t && !ShotManager.IsValidShotID(shot)) // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
             break;
 
         playerData->player.endShotCredit--;
