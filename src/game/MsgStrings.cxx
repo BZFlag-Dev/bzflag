@@ -393,13 +393,13 @@ static std::string strFlagStatus (FlagStatus status)
 #define STRING_CASE(x)  case (x): str = #x; break
     switch (status)
     {
-        STRING_CASE (FlagNoExist);
-        STRING_CASE (FlagOnGround);
-        STRING_CASE (FlagOnTank);
-        STRING_CASE (FlagInAir);
-        STRING_CASE (FlagComing);
-        STRING_CASE (FlagGoing);
-    default:
+        STRING_CASE (FlagStatus::NoExist);
+        STRING_CASE (FlagStatus::OnGround);
+        STRING_CASE (FlagStatus::OnTank);
+        STRING_CASE (FlagStatus::InAir);
+        STRING_CASE (FlagStatus::Coming);
+        STRING_CASE (FlagStatus::Going);
+    default:             
         str = TextUtils::format ("UNKNOWN: 0x04%X", status);
         break;
     }
