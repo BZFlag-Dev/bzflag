@@ -729,7 +729,7 @@ void bz_Plugin::Flush ()
 BZF_API bool bz_pluginExists(const char* name)
 {
 #ifdef BZ_PLUGINS
-    return getPlugin(name) != NULL;
+    return getPlugin(name) != nullptr;
 #else
     (void)name;
     return false;
@@ -742,14 +742,14 @@ BZF_API bz_Plugin* bz_getPlugin(const char* name)
     return getPlugin(name);
 #else
     (void)name;
-    return NULL;
+    return nullptr;
 #endif
 }
 
 BZF_API int bz_callPluginGenericCallback(const char* plugin, const char* name, void* data )
 {
     bz_Plugin *p = bz_getPlugin(plugin);
-    if (p == NULL)
+    if (p == nullptr)
         return 0;
 
     return p->GeneralCallback(name,data);
@@ -948,7 +948,7 @@ BZF_API bool bz_getPlayerIndexList ( bz_APIIntList *playerList )
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-        if (p == NULL)
+        if (p == nullptr)
             continue;
 
         playerList->push_back(i);
@@ -961,12 +961,12 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(index);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     bz_PlayerRecordV3 *playerRecord = new bz_PlayerRecordV3;
 
     if (!playerRecord)
-        return NULL;
+        return nullptr;
 
     playerRecord->callsign = player->player.getCallSign();
     playerRecord->playerID = index;
@@ -1024,11 +1024,11 @@ BZF_API const char* bz_getPlayerFlag( int playerID )
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     FlagInfo* flagInfo = FlagInfo::get(player->player.getFlag());
     if (!flagInfo)
-        return NULL;
+        return nullptr;
 
     return FlagInfo::get(player->player.getFlag())->flag.type->flagAbbv.c_str();
 }
@@ -1088,7 +1088,7 @@ BZF_API const char* bz_getPlayerCallsign( int playerID )
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     return player->player.getCallSign();
 }
@@ -1098,7 +1098,7 @@ BZF_API const char* bz_getPlayerMotto(int playerID)
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     return player->player.getMotto();
 }
@@ -1108,7 +1108,7 @@ BZF_API const char* bz_getPlayerIPAddress( int playerID )
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     return player->netHandler->getTargetIP();
 }
@@ -1118,7 +1118,7 @@ BZF_API const char* bz_getPlayerLocale( int playerID )
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (!player)
-        return NULL;
+        return nullptr;
 
     return player->player.getLocale();
 }
@@ -2236,7 +2236,7 @@ BZF_API void bz_resetBZDBVar( const char* variable )
 
 BZF_API void bz_resetALLBZDBVars( void )
 {
-    bz_resetBZDBVar(NULL);
+    bz_resetBZDBVar(nullptr);
 }
 
 
@@ -2393,7 +2393,7 @@ BZF_API unsigned int bz_getBanListSize( bz_eBanListType listType )
 BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item )
 {
     if (item > bz_getBanListSize(listType))
-        return NULL;
+        return nullptr;
 
     static std::string API_BAN_ITEM;
 
@@ -2417,13 +2417,13 @@ BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item 
 
     if (API_BAN_ITEM.size())
         return API_BAN_ITEM.c_str();
-    return NULL;
+    return nullptr;
 }
 
 BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int item )
 {
     if (item > bz_getBanListSize(listType))
-        return NULL;
+        return nullptr;
 
     switch (listType)
     {
@@ -2438,13 +2438,13 @@ BZF_API const char* bz_getBanItemReason ( bz_eBanListType listType, unsigned int
         return clOptions->acl.idBanList[item].reason.c_str();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int item )
 {
     if (item > bz_getBanListSize(listType))
-        return NULL;
+        return nullptr;
 
     switch (listType)
     {
@@ -2459,7 +2459,7 @@ BZF_API const char* bz_getBanItemSource ( bz_eBanListType listType, unsigned int
         return clOptions->acl.idBanList[item].bannedBy.c_str();
     }
 
-    return NULL;
+    return nullptr;
 }
 
 BZF_API double bz_getBanItemDuration ( bz_eBanListType listType, unsigned int item )
@@ -2591,7 +2591,7 @@ BZF_API bool bz_pollActive( void )
     static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
     /* make sure there is an unexpired poll */
-    return ((arbiter != NULL) && arbiter->knowsPoll());
+    return ((arbiter != nullptr) && arbiter->knowsPoll());
 }
 
 BZF_API bool bz_pollVeto( void )
@@ -2604,7 +2604,7 @@ BZF_API bool bz_pollVeto( void )
     static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
 
     /* make sure there is an unexpired poll */
-    if ((arbiter == NULL) || !arbiter->knowsPoll())
+    if ((arbiter == nullptr) || !arbiter->knowsPoll())
         return false;
     /* poof */
     arbiter->forgetPoll();
@@ -2728,7 +2728,7 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const
         killerID = ServerPlayer;
 
     FlagType::Ptr flag = nullptr;
-    if ( flagType )
+    if (flagType != nullptr)
     {
         FlagType::TypeMap &flagMap = FlagType::getFlagMap();
         if (flagMap.find(std::string(flagType)) == flagMap.end())
@@ -2742,6 +2742,33 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const
     return true;
 }
 
+BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID, const char* flagType)
+{
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (!player)
+        return false;
+
+    if (!player->player.isAlive())
+        return false;
+
+    if (killerID == -1)
+        killerID = ServerPlayer;
+
+    FlagType::Ptr flag = nullptr;
+    if (flagType != nullptr)
+    {
+        FlagType::TypeMap &flagMap = FlagType::getFlagMap();
+        if (flagMap.find(std::string(flagType)) == flagMap.end())
+            return false;
+
+        flag = flagMap.find(std::string(flagType))->second;
+    }
+
+    playerKilled(playerID, killerID, reason, -1, flag ? flag : Flags::Null, -1, spawnOnBase);
+
+    return true;
+}
+
 BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID)
 {
     return changeTeam(playerID, (TeamColor)convertTeam(teamID));
@@ -2749,21 +2776,21 @@ BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID)
 
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force )
 {
-    FlagInfo* fi = NULL;
+    FlagInfo* fi = nullptr;
     GameKeeper::Player* gkPlayer = GameKeeper::Player::getPlayerByIndex(playerID);
 
-    if (gkPlayer != NULL)
+    if (gkPlayer != nullptr)
     {
         FlagType::Ptr ft = Flag::getDescFromAbbreviation(flagType);
         if (ft != Flags::Null)
         {
             // find unused and forced candidates
-            FlagInfo* unused = NULL;
-            FlagInfo* forced = NULL;
+            FlagInfo* unused = nullptr;
+            FlagInfo* forced = nullptr;
             for (int i = 0; i < numFlags; i++)
             {
                 FlagInfo* fi2 = FlagInfo::get(i);
-                if ((fi2 != NULL) && (fi2->flag.type == ft))
+                if ((fi2 != nullptr) && (fi2->flag.type == ft))
                 {
                     forced = fi2;
                     if (fi2->player < 0)
@@ -2775,9 +2802,9 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
             }
 
             // see if we need to force it
-            if (unused != NULL)
+            if (unused != nullptr)
                 fi = unused;
-            else if (forced != NULL)
+            else if (forced != nullptr)
             {
                 if (force)
                     fi = forced;
@@ -3051,7 +3078,7 @@ BZF_API bool bz_addWorldWaterLevel( float level, bz_MaterialInfo *material )
 
     if (!material)
     {
-        world->addWaterLevel(level,NULL);
+        world->addWaterLevel(level,nullptr);
         return true;
     }
 
@@ -3485,7 +3512,7 @@ BZF_API int bz_getTeamCount ( bz_eTeamType _team )
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(i);
-        if (p == NULL)
+        if (p == nullptr)
             continue;
 
         if (p->player.getTeam() == teamIndex)
@@ -3666,8 +3693,8 @@ public:
 
     URLFetchHandler()
     {
-        curlHandle = NULL;
-        currentJob = NULL;
+        curlHandle = nullptr;
+        currentJob = nullptr;
         LastJob = 1;
         HTTPTimeout = 60;
     }
@@ -3732,7 +3759,7 @@ public:
 
             if (task.headers)
             {
-                struct curl_slist *chunk = NULL;
+                struct curl_slist *chunk = nullptr;
 
                 for (unsigned int i = 0; i < task.headers->size(); i++)
                     chunk = curl_slist_append(chunk, task.headers->get(i).c_str());
@@ -3840,7 +3867,7 @@ private:
         {
             curl_multi_remove_handle(curlHandle, currentJob);
             curl_easy_cleanup(currentJob);
-            currentJob = NULL;
+            currentJob = nullptr;
         }
 
         if (!Tasks.empty())
@@ -3861,12 +3888,12 @@ BZF_API bool bz_addURLJob(const char *URL, bz_BaseURLHandler *handler, const cha
     if (!URL)
         return false;
 
-    return (urlFetchHandler.addJob(URL, handler, postData, NULL, NULL) != 0);
+    return (urlFetchHandler.addJob(URL, handler, postData, nullptr, nullptr) != 0);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData)
 {
-    return bz_addURLJob(URL, handler, token, postData, NULL);
+    return bz_addURLJob(URL, handler, token, postData, nullptr);
 }
 
 BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData,
@@ -3887,7 +3914,7 @@ BZF_API size_t bz_addURLJobForID(const char *URL,
     if (!URL)
         return false;
 
-    return urlFetchHandler.addJob(URL, handler, postData, NULL, NULL);
+    return urlFetchHandler.addJob(URL, handler, postData, nullptr, nullptr);
 }
 
 //-------------------------------------------------------------------------
@@ -3932,7 +3959,7 @@ BZF_API bool bz_clipFieldExists ( const char *_name )
 BZF_API const char* bz_getclipFieldString ( const char *_name )
 {
     if (!bz_clipFieldExists(_name))
-        return NULL;
+        return nullptr;
 
     std::string name = _name;
 
@@ -4122,7 +4149,7 @@ BZF_API const char *bz_toupper(const char* val )
 {
     static std::string temp;
     if (!val)
-        return NULL;
+        return nullptr;
 
     temp   =  TextUtils::toupper(std::string(val));
     return temp.c_str();
@@ -4132,7 +4159,7 @@ BZF_API const char *bz_tolower(const char* val )
 {
     static std::string temp;
     if (!val)
-        return NULL;
+        return nullptr;
 
     temp   =  TextUtils::tolower(std::string(val));
     return temp.c_str();
@@ -4141,7 +4168,7 @@ BZF_API const char *bz_tolower(const char* val )
 BZF_API const char* bz_ltrim(const char* val, const char* trim)
 {
     if (!val)
-        return NULL;
+        return nullptr;
 
     return TextUtils::ltrim(std::string(val), trim).c_str();
 }
@@ -4149,7 +4176,7 @@ BZF_API const char* bz_ltrim(const char* val, const char* trim)
 BZF_API const char* bz_rtrim(const char* val, const char* trim)
 {
     if (!val)
-        return NULL;
+        return nullptr;
 
     return TextUtils::rtrim(std::string(val), trim).c_str();
 }
@@ -4157,7 +4184,7 @@ BZF_API const char* bz_rtrim(const char* val, const char* trim)
 BZF_API const char* bz_trim(const char* val, const char* trim)
 {
     if (!val)
-        return NULL;
+        return nullptr;
 
     return TextUtils::trim(std::string(val), trim).c_str();
 }
@@ -4165,7 +4192,7 @@ BZF_API const char* bz_trim(const char* val, const char* trim)
 BZF_API const char* bz_join(bz_APIStringList* list, const char* delimiter)
 {
     if (!list)
-        return NULL;
+        return nullptr;
 
     if (!delimiter)
         delimiter = "";
@@ -4188,7 +4215,7 @@ BZF_API const char *bz_urlEncode(const char* val )
 {
     static std::string temp;
     if (!val)
-        return NULL;
+        return nullptr;
 
     temp   =  TextUtils::url_encode(std::string(val));
     return temp.c_str();
@@ -4213,7 +4240,7 @@ BZF_API bool bz_isAutoTeamEnabled ( void )
 
 BZF_API void bz_shutdown ( void )
 {
-    shutdownCommand(NULL,NULL);
+    shutdownCommand(nullptr,nullptr);
 }
 
 BZF_API bool bz_restart ( void )
@@ -4227,9 +4254,9 @@ BZF_API bool bz_restart ( void )
         removePlayer(i,"Server Reset");
 
     delete world;
-    world = NULL;
+    world = nullptr;
     delete[] worldDatabase;
-    worldDatabase = NULL;
+    worldDatabase = nullptr;
 
     gameOver = false;
 
@@ -4245,7 +4272,7 @@ BZF_API bool bz_restart ( void )
     // start up all new and stuff
     if (!defineWorld())
     {
-        shutdownCommand(NULL,NULL);
+        shutdownCommand(nullptr,nullptr);
         return false;
     }
 
@@ -4311,7 +4338,7 @@ BZF_API void bz_reloadBadwords()
 
 BZF_API void bz_superkill()
 {
-    superkillCommand(NULL,NULL);
+    superkillCommand(nullptr,nullptr);
 }
 
 BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
@@ -4440,7 +4467,7 @@ BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eT
 BZF_API const char* bz_MD5 ( const char * str )
 {
     if (!str)
-        return NULL;
+        return nullptr;
     return bz_MD5(str,strlen(str));
 }
 
@@ -4552,7 +4579,7 @@ BZF_API void bz_AddFilterItem(const char* word, const char* expression)
     clOptions->filterChat = true;
     std::string filterWord = word;
     std::string filterExpression = "";
-    if (expression != NULL)
+    if (expression != nullptr)
         filterExpression = expression;
 
     std::transform (filterWord.begin(),filterWord.end(), filterWord.begin(), tolower);

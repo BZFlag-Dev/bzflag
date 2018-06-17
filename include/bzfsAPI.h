@@ -696,7 +696,7 @@ public:
         , ctf(false)
         , rabbit(false)
         , openFFA(false)
-        , worldBlob(NULL)
+        , worldBlob(nullptr)
     {
     }
 
@@ -1162,7 +1162,7 @@ class BZF_API bz_NetTransferEventData_V1 : public bz_EventData
 public:
     bz_NetTransferEventData_V1() : bz_EventData(bz_eNetDataReceiveEvent)
         , send(false), udp(false), iSize(0), playerID(-1)
-        , data(NULL)
+        , data(nullptr)
     {
     }
 
@@ -1227,7 +1227,7 @@ public:
     };
 
     bz_FlagTransferredEventData_V1() : bz_EventData(bz_eFlagTransferredEvent)
-        , fromPlayerID(0), toPlayerID(0), flagType(NULL), action(ContinueSteal)
+        , fromPlayerID(0), toPlayerID(0), flagType(nullptr), action(ContinueSteal)
     {
     }
 
@@ -1243,7 +1243,7 @@ public:
 
     bz_FlagGrabbedEventData_V1() : bz_EventData(bz_eFlagGrabbedEvent)
         , playerID(-1), flagID(-1)
-        , flagType(NULL)
+        , flagType(nullptr)
     {
         pos[0] = pos[1] = pos[2] = 0;
     }
@@ -1260,7 +1260,7 @@ class BZF_API bz_FlagDroppedEventData_V1 : public bz_EventData
 public:
 
     bz_FlagDroppedEventData_V1() : bz_EventData(bz_eFlagDroppedEvent)
-        , playerID(-1), flagID(-1), flagType(NULL)
+        , playerID(-1), flagID(-1), flagType(nullptr)
     {
         pos[0] = pos[1] = pos[2] = 0;
     }
@@ -1317,7 +1317,7 @@ class BZF_API bz_PluginLoadUnloadEventData_V1 : public bz_EventData
 public:
 
     bz_PluginLoadUnloadEventData_V1() : bz_EventData(bz_ePluginLoaded)
-        , plugin(NULL)
+        , plugin(nullptr)
     {
     }
 
@@ -1929,7 +1929,20 @@ BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID);
 
 // dying
-BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = NULL );
+typedef enum
+{
+    eGotKilled,
+    eGotShot,
+    eGotRunOver,
+    eGotCaptured,
+    eGenocideEffect,
+    eSelfDestruct,
+    eWaterDeath,
+    ePhysicsDriverDeath
+} bz_ePlayerDeathReason;
+
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = nullptr );
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID = -1, const char* flagID = nullptr );
 
 // flags
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force );
@@ -2132,20 +2145,20 @@ class bz_URLHandler_V2 : public bz_BaseURLHandler
 public:
     bz_URLHandler_V2() : bz_BaseURLHandler()
     {
-        token = NULL;
+        token = nullptr;
     }
     void* token;
 };
 
 
-BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = NULL, const char* postData = NULL);
-BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL);
-BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = NULL,
-                          bz_APIStringList *headers = NULL);
+BZF_API bool bz_addURLJob(const char* URL, bz_BaseURLHandler* handler = nullptr, const char* postData = nullptr);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = nullptr);
+BZF_API bool bz_addURLJob(const char* URL, bz_URLHandler_V2* handler, void* token, const char* postData = nullptr,
+                          bz_APIStringList *headers = nullptr);
 BZF_API bool bz_removeURLJob(const char* URL);
 BZF_API size_t bz_addURLJobForID(const char* URL,
-                                 bz_BaseURLHandler* handler = NULL,
-                                 const char* postData = NULL);
+                                 bz_BaseURLHandler* handler = nullptr,
+                                 const char* postData = nullptr);
 BZF_API bool bz_removeURLJobByID(size_t id);
 
 // inter plugin communication
@@ -2279,18 +2292,6 @@ typedef struct
     int player;
     int handicap;
 } bz_HandicapUpdateRecord;
-
-typedef enum
-{
-    eGotKilled,
-    eGotShot,
-    eGotRunOver,
-    eGotCaptured,
-    eGenocideEffect,
-    eSelfDestruct,
-    eWaterDeath,
-    ePhysicsDriverDeath
-} bz_ePlayerDeathReason;
 
 class BZF_API bz_ServerSidePlayerHandler
 {
@@ -2466,7 +2467,7 @@ BZF_API bool bz_CallsignsFiltered(void);
 
 BZF_API void bz_SetFiltering(bool chat, bool callsigns);
 BZF_API void bz_LoadFilterDefFile(const char* fileName);
-BZF_API void bz_AddFilterItem(const char* word, const char* expression = NULL);
+BZF_API void bz_AddFilterItem(const char* word, const char* expression = nullptr);
 BZF_API void bz_ClearFilter(void);
 
 #endif //_BZFS_API_H_

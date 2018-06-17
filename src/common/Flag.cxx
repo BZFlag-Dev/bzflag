@@ -56,7 +56,6 @@ namespace Flags
     FlagType::Ptr Steamroller;
     FlagType::Ptr ShockWave;
     FlagType::Ptr PhantomZone;
-    FlagType::Ptr Genocide;
     FlagType::Ptr Jumping;
     FlagType::Ptr Identify;
     FlagType::Ptr Cloaking;
@@ -147,8 +146,6 @@ namespace Flags
                                     "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."));
         PhantomZone = AddStdFlag(std::make_shared<FlagType>( "Phantom Zone", "PZ", FlagUnstable, SpecialShot, FlagGood, NoTeam,
                                     "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."));
-        Genocide    = AddStdFlag(std::make_shared<FlagType>( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                    "Killing one tank kills that tank's whole team."));
         Jumping = AddStdFlag(std::make_shared<FlagType>( "Jumping", "JP", FlagUnstable, NormalShot, FlagGood, NoTeam,
                                 "Tank can jump.  Use Tab key.  Can't steer in the air."));
         Identify    = AddStdFlag(std::make_shared<FlagType>( "Identify", "ID", FlagUnstable, NormalShot, FlagGood, NoTeam,
@@ -224,7 +221,6 @@ namespace Flags
         Steamroller = nullptr;
         ShockWave = nullptr;
         PhantomZone = nullptr;
-        Genocide = nullptr;
         Jumping = nullptr;
         Identify = nullptr;
         Cloaking = nullptr;

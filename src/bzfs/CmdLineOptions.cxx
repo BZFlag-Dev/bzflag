@@ -1695,7 +1695,6 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         forbidden.insert(Flags::PhantomZone);
     if (!hasTeam)
     {
-        forbidden.insert(Flags::Genocide);
         forbidden.insert(Flags::Colorblindness);
         forbidden.insert(Flags::Masquerade);
     }
