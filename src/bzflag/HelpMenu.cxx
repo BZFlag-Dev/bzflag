@@ -418,11 +418,11 @@ Help5Menu::Help5Menu() : HelpMenu("Good Flags")
     std::vector<HUDuiControl*>& listHUD = getControls();
     listHUD.push_back(createLabel("", "Good Flags:"));
 
-    FlagType::Set fs = Flag::getGoodFlags();
+    FlagType::Set fs = FlagType::getGoodFlags();
     for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
     {
 
-        if (((*it)->flagQuality != FlagGood) ||
+        if (((*it)->flagQuality != FlagQuality::Good) ||
                 ((*it)->flagTeam != NoTeam) ||
                 (strcmp((*it)->flagName.c_str(),"") == 0))
             continue;
@@ -455,11 +455,11 @@ Help6Menu::Help6Menu() : HelpMenu("Bad Flags")
     std::vector<HUDuiControl*>& listHUD = getControls();
     listHUD.push_back(createLabel("", "Bad Flags:"));
 
-    FlagType::Set fs = Flag::getBadFlags();
+    FlagType::Set fs = FlagType::getBadFlags();
     for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
     {
 
-        if (((*it)->flagQuality != FlagBad) ||
+        if (((*it)->flagQuality != FlagQuality::Bad) ||
                 ((*it)->flagTeam != NoTeam) ||
                 (strcmp((*it)->flagName.c_str(),"") == 0))
             continue;

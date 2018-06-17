@@ -138,7 +138,7 @@ void            LocalPlayer::doUpdate(float dt)
 
     // drop bad flag if timeout has expired
     if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-            getFlag() != Flags::Null && getFlag()->endurance == FlagSticky &&
+            getFlag() != Flags::Null && getFlag()->endurance == FlagEndurance::Sticky &&
             flagShakingTime > 0.0f)
     {
         flagShakingTime -= dt;
@@ -1620,7 +1620,7 @@ void            LocalPlayer::setFlag(FlagType::Ptr flag, int limit)
 
     float worldSize = BZDBCache::worldSize;
     // if it's bad then reset countdowns and set antidote flag
-    if (getFlag() != Flags::Null && getFlag()->endurance == FlagSticky)
+    if (getFlag() != Flags::Null && getFlag()->endurance == FlagEndurance::Sticky)
     {
         if (World::getWorld()->allowShakeTimeout())
             flagShakingTime = World::getWorld()->getFlagShakeTimeout();

@@ -59,49 +59,49 @@
 
 
 /** This enum says where a flag is. */
-enum FlagStatus
+enum class FlagStatus
 {
     /// the flag is not present in the world
-    FlagNoExist = 0,
+    NoExist = 0,
     /// the flag is sitting on the ground and can be picked up
-    FlagOnGround,
+    OnGround,
     /// the flag is being carried by a tank
-    FlagOnTank,
+    OnTank,
     /// the flag is falling through the air
-    FlagInAir,
+    InAir,
     /// the flag is entering the world
-    FlagComing,
+    Coming,
     /// the flag is leaving the world
-    FlagGoing
+    Going
 };
 
 /** This enum tells us if the flag type is droppable, and what happens to it
     when it's droppped. */
-enum FlagEndurance
+enum class FlagEndurance
 {
     /// permanent flag
-    FlagNormal = 0,
+    Normal = 0,
     /// disappears after use
-    FlagUnstable = 1,
+    Unstable = 1,
     /// can't be dropped normally
-    FlagSticky = 2
+    Sticky = 2
 };
 
 /** This enum tells the "quality" of the flag type, i.e. whether it's good
     or bad */
-enum FlagQuality
+enum class FlagQuality
 {
-    FlagGood = 0,
-    FlagBad = 1,
-    NumQualities
+    Good = 0,
+    Bad = 1,
+    Last
 };
 
 /** This enum says if the flag type gives the carrier a special shooting
     ability. */
 enum ShotType
 {
-    NormalShot = 0,
-    SpecialShot = 1
+    Normal = 0,
+    Special = 1
 };
 
 const int       FlagPLen = 55;
@@ -173,15 +173,36 @@ public:
     static std::vector<Set> Sets;
     static Set customFlags;
     static const int packSize;
+
+    /** This function returns a set of all good flagtypes that are available in
+    the game.
+    @see FlagType
+    @see FlagQuality
+    */
+    static FlagType::Set& getGoodFlags();
+
+    /** This function returns a set of all bad flagtypes that are available in
+    the game.
+    @see FlagType
+    @see FlagQuality
+    */
+    static FlagType::Set& getBadFlags();
+
+    /** This function returns a pointer to the FlagType object that is associated
+    with the given abbreviation. If there is no such FlagType object, NULL
+    is returned. */
+    static FlagType::Ptr getDescFromAbbreviation(const char* abbreviation);
 };
 
 
 /** This class represents an actual flag. It has functions for serialization
     and deserialization as well as static functions that returns sets of
     all good or bad flags, and maps flag abbreviations to FlagType objects. */
-class Flag
+class FlagInstance
 {
 public:
+    typedef std::shared_ptr<FlagInstance> Ptr;
+
     /** This function serializes this object into a @c void* buffer for network
         transfer. */
     void* pack(void*) const;
@@ -191,25 +212,6 @@ public:
     /** This function uses the given serialization to set the member variables
         of this object. This really hide the type of flag */
     const void* unpack(const void*);
-
-    /** This function returns a set of all good flagtypes that are available in
-        the game.
-        @see FlagType
-        @see FlagQuality
-    */
-    static FlagType::Set& getGoodFlags();
-
-    /** This function returns a set of all bad flagtypes that are available in
-        the game.
-        @see FlagType
-        @see FlagQuality
-    */
-    static FlagType::Set& getBadFlags();
-
-    /** This function returns a pointer to the FlagType object that is associated
-        with the given abbreviation. If there is no such FlagType object, NULL
-        is returned. */
-    static FlagType::Ptr getDescFromAbbreviation(const char* abbreviation);
 
     FlagType::Ptr type;
     FlagStatus status;

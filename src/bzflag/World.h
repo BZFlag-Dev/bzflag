@@ -81,7 +81,7 @@ public:
     RemotePlayer*&  getPlayer(int index) const;
     RemotePlayer*   getCurrentRabbit() const;
     WorldPlayer*    getWorldWeapons() const;
-    Flag&       getFlag(int index) const;
+    FlagInstance&       getFlag(int index) const;
     const float*    getBase(int, int=0) const;
     const Teleporter*   getTeleporter(int source, int& face) const;
     int         getTeleporter(const Teleporter*, int face) const;
@@ -179,7 +179,7 @@ private:
 
     RemotePlayer**  players;
     WorldPlayer*    worldWeapons;
-    Flag*       flags;
+    FlagInstance*       flags;
     FlagSceneNode** flagNodes;
     FlagWarpSceneNode** flagWarpNodes;
 
@@ -370,7 +370,7 @@ inline WorldPlayer* World::getWorldWeapons() const
     return worldWeapons;
 }
 
-inline Flag&        World::getFlag(int index) const
+inline FlagInstance&        World::getFlag(int index) const
 {
     return flags[index];
 }

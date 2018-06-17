@@ -52,7 +52,7 @@ public:
     static void  setNoFlagInAir();
 
     // flag info
-    Flag flag;
+    FlagInstance flag;
     // player index who has flag
     int player;
     // how many grabs before removed

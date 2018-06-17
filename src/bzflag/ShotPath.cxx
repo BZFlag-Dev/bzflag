@@ -60,7 +60,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
      // each flag should be a flyweight object derived from a
      // base Flag class with a virtual makeShotStrategy() member.
      // just remember -- it's only a game.
-     if (info.flagType->flagShot == NormalShot)
+     if (info.flagType->flagShot == ShotType::Normal)
          return std::make_shared<NormalShotStrategy>(info);
      else
      {

@@ -784,7 +784,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
             coloredFlag = true;
         }
         playerInfo += "/";
-        playerInfo += (flagd->endurance == FlagNormal ? flagd->flagName : flagd->flagAbbv);
+        playerInfo += (flagd->endurance == FlagEndurance::Normal ? flagd->flagName : flagd->flagAbbv);
         // back to original color
         if (coloredFlag)
             playerInfo += teamColor;

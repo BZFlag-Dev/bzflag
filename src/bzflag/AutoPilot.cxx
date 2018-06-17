@@ -514,7 +514,7 @@ static bool lookForFlag(float &rotation, float &speed)
     for (int i = 0; i < numFlags; i++)
     {
         if ((world->getFlag(i).type == Flags::Null)
-                || (world->getFlag(i).status != FlagOnGround))
+                || (world->getFlag(i).status != FlagStatus::OnGround))
             continue;
 
         if (world->getFlag(i).type->flagTeam != NoTeam)

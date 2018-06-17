@@ -74,7 +74,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
     {
         std::string abbv;
         input >> abbv;
-        type = Flag::getDescFromAbbreviation(abbv.c_str());
+        type = FlagType::getDescFromAbbreviation(abbv.c_str());
         if (type == NULL)
             return false;
     }

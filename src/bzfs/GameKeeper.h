@@ -205,10 +205,6 @@ public:
 
         double              lastShotUpdateTime = -1;
     };
-
-    class Flag
-    {
-    };
 };
 
 inline int GameKeeper::Player::getIndex()

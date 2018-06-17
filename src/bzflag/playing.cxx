@@ -1346,7 +1346,7 @@ static void     updateFlag(FlagType::Ptr flag)
     {
         const float* color = flag->getColor();
         hud->setColor(color[0], color[1], color[2]);
-        hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagSticky);
+        hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagEndurance::Sticky);
     }
 
     if (BZDB.isTrue("displayFlagHelp"))
@@ -2690,7 +2690,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         if (tank == myTank)
         {
             // grabbed flag
-            playLocalSound(myTank->getFlag()->endurance != FlagSticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
+            playLocalSound(myTank->getFlag()->endurance != FlagEndurance::Sticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
             updateFlag(myTank->getFlag());
 
             if (flagLimit >= 0)
@@ -2709,7 +2709,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else if (isViewTank(tank))
         {
-            playLocalSound(tank->getFlag()->endurance != FlagSticky ?
+            playLocalSound(tank->getFlag()->endurance != FlagEndurance::Sticky ?
                            SFX_GRAB_FLAG : SFX_GRAB_BAD);
         }
         else if (myTank->getTeam() != RabbitTeam && tank &&
@@ -2762,7 +2762,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         Player* capturer = lookupPlayer(id);
         if (flagIndex >= world->getMaxFlags())
             break;
-        Flag capturedFlag = world->getFlag(int(flagIndex));
+        FlagInstance capturedFlag = world->getFlag(int(flagIndex));
         if (capturedFlag.type == Flags::Null)
             break;
         int capturedTeam = world->getFlag(int(flagIndex)).type->flagTeam;
@@ -3363,9 +3363,9 @@ static void     handleServerMessage(bool human, uint16_t code,
         // remove all of the flags
         for (i=0 ; i<numFlags; i++)
         {
-            Flag& flag = world->getFlag(i);
+            FlagInstance& flag = world->getFlag(i);
             flag.owner = (PlayerId) -1;
-            flag.status = FlagNoExist;
+            flag.status = FlagStatus::NoExist;
             world->initFlag (i);
         }
         break;
@@ -3596,8 +3596,8 @@ static void     updateFlags(float dt)
 {
     for (int i = 0; i < numFlags; i++)
     {
-        Flag& flag = world->getFlag(i);
-        if (flag.status == FlagOnTank)
+        FlagInstance& flag = world->getFlag(i);
+        if (flag.status == FlagStatus::OnTank)
         {
             // position flag on top of tank
             Player* tank = lookupPlayer(flag.owner);
@@ -3850,7 +3850,7 @@ void handleFlagDropped(Player* tank)
 
 static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagIndex, int limit)
 {
-    Flag f = world->getFlag(flagIndex);
+    FlagInstance f = world->getFlag(flagIndex);
 
     fromTank->setFlag(Flags::Null,-1);
     toTank->setFlag(f.type, limit);
@@ -4152,7 +4152,7 @@ static void     checkEnvironment()
             const float radius2 = (radius + BZDBCache::flagRadius) * (radius + BZDBCache::flagRadius);
             for (int i = 0; i < numFlags; i++)
             {
-                if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagOnGround)
+                if (world->getFlag(i).type == Flags::Null || world->getFlag(i).status != FlagStatus::OnGround)
                     continue;
                 const float* fpos = world->getFlag(i).position;
                 if ((fabs(tpos[2] - fpos[2]) < 0.1f) && ((tpos[0] - fpos[0]) * (tpos[0] - fpos[0]) +
@@ -5013,8 +5013,8 @@ static void setTankFlags()
     const int maxFlags = world->getMaxFlags();
     for (int i = 0; i < maxFlags; i++)
     {
-        const Flag& flag = world->getFlag(i);
-        if (flag.status == FlagOnTank)
+        const FlagInstance& flag = world->getFlag(i);
+        if (flag.status == FlagStatus::OnTank)
         {
             for (int j = 0; j < curMaxPlayers; j++)
             {
@@ -6094,14 +6094,14 @@ void drawFrame(const float dt)
                 // track team flag
                 else if (ROAM.getMode() == Roaming::roamViewFlag)
                 {
-                    Flag* targetFlag = ROAM.getTargetFlag();
+                    FlagInstance* targetFlag = ROAM.getTargetFlag();
                     eyePoint[0] = roam->pos[0];
                     eyePoint[1] = roam->pos[1];
                     eyePoint[2] = roam->pos[2];
                     targetPoint[0] = targetFlag->position[0];
                     targetPoint[1] = targetFlag->position[1];
                     targetPoint[2] = targetFlag->position[2];
-                    if (targetFlag->status != FlagOnTank)
+                    if (targetFlag->status != FlagStatus::OnTank)
                         targetPoint[2] += muzzleHeight;
                     else
                     {
@@ -6856,9 +6856,9 @@ static void     prepareTheHUD()
             // markers for my team flag
             for (int i = 0; i < numFlags; i++)
             {
-                Flag& flag = world->getFlag(i);
+                FlagInstance& flag = world->getFlag(i);
                 if ((flag.type->flagTeam == myTank->getTeam())
-                        && ((flag.status != FlagOnTank) ||
+                        && ((flag.status != FlagStatus::OnTank) ||
                             (flag.owner != myTank->getId())))
                 {
                     const float* flagPos = flag.position;

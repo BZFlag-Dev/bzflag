@@ -1602,19 +1602,19 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     {
         if (strcmp(vsitr->c_str(), "bad") == 0)
         {
-            FlagType::Set badFlags = Flag::getBadFlags();
+            FlagType::Set badFlags = FlagType::getBadFlags();
             for (FlagType::Set::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
                 options.flagDisallowed[*it] = true;
         }
         else if (strcmp(vsitr->c_str(), "good") == 0)
         {
-            FlagType::Set goodFlags = Flag::getGoodFlags();
+            FlagType::Set goodFlags = FlagType::getGoodFlags();
             for (FlagType::Set::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
                 options.flagDisallowed[*it] = true;
         }
         else
         {
-            FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+            FlagType::Ptr fDesc = FlagType::getDescFromAbbreviation(vsitr->c_str());
             if (fDesc == Flags::Null)
             {
                 std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
@@ -1639,13 +1639,13 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
         if (strcmp(vsitr->c_str(), "good") == 0)
         {
-            FlagType::Set goodFlags = Flag::getGoodFlags();
+            FlagType::Set goodFlags = FlagType::getGoodFlags();
             for (FlagType::Set::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
                 options.flagCount[*it] += rptCnt;
         }
         else if (strcmp(vsitr->c_str(), "bad") == 0)
         {
-            FlagType::Set badFlags = Flag::getBadFlags();
+            FlagType::Set badFlags = FlagType::getBadFlags();
             for (FlagType::Set::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
                 options.flagCount[*it] += rptCnt;
         }
@@ -1656,7 +1656,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
         else
         {
-            FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+            FlagType::Ptr fDesc = FlagType::getDescFromAbbreviation(vsitr->c_str());
             if (fDesc == Flags::Null)
             {
                 std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
@@ -1847,7 +1847,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     std::map<std::string, int>::iterator msiitr;
     for (msiitr = storedFlagLimits.begin(); msiitr != storedFlagLimits.end(); ++msiitr)
     {
-        FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(msiitr->first.c_str());
+        FlagType::Ptr fDesc = FlagType::getDescFromAbbreviation(msiitr->first.c_str());
         if (fDesc == Flags::Null)
         {
             std::cerr << "ERROR: invalid flag [" << msiitr->first << "]" << std::endl;

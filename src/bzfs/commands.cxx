@@ -1429,7 +1429,7 @@ bool FlagCommand::operator() (const char     *message,
             FlagInfo &flag = *FlagInfo::get(i);
             if (flag.flag.type->flagTeam == ::NoTeam)
             {
-                if (flag.flag.status == FlagOnTank)
+                if (flag.flag.status == FlagStatus::OnTank)
                 {
                     int player = flag.player;
 
@@ -1444,7 +1444,7 @@ bool FlagCommand::operator() (const char     *message,
 
                     worldEventManager.callEvents(bz_eFlagDroppedEvent,&data);
                 }
-                flag.flag.status = FlagGoing;
+                flag.flag.status = FlagStatus::Going;
                 if (!flag.required)
                     flag.flag.type = Flags::Null;
                 sendFlagUpdate(flag);
@@ -1476,7 +1476,7 @@ bool FlagCommand::operator() (const char     *message,
         const bool keepTeamFlags = ((argv.size() > 1) &&
                                     strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
 
-        FlagType::Ptr ft = Flag::getDescFromAbbreviation(command);
+        FlagType::Ptr ft = FlagType::getDescFromAbbreviation(command);
 
         if (strncasecmp(command, "all", 3) == 0)
             bz_resetFlags(false, keepTeamFlags);
@@ -1614,7 +1614,7 @@ bool FlagCommand::operator() (const char     *message,
             }
             else
             {
-                FlagType::Ptr ft = Flag::getDescFromAbbreviation(argv[1].c_str());
+                FlagType::Ptr ft = FlagType::getDescFromAbbreviation(argv[1].c_str());
                 if (ft != Flags::Null)
                 {
                     // find unused and forced candidates

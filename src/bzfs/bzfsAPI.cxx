@@ -1680,7 +1680,7 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
         if (shotEvent.type == "DELETE")
             return INVALID_SHOT_GUID;
 
-        firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
+        firingInfo.flagType = FlagType::getDescFromAbbreviation(shotEvent.type.c_str());
     }
 
     firingInfo.shot.id = ShotManager.AddShot(firingInfo, playerID);
@@ -2781,7 +2781,7 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
 
     if (gkPlayer != nullptr)
     {
-        FlagType::Ptr ft = Flag::getDescFromAbbreviation(flagType);
+        FlagType::Ptr ft = FlagType::getDescFromAbbreviation(flagType);
         if (ft != Flags::Null)
         {
             // find unused and forced candidates
@@ -4504,17 +4504,17 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
         return false;
 
     // don't register an existing flag (i.e. can't override builtins)
-    if (Flag::getDescFromAbbreviation(abbr) != Flags::Null)
+    if (FlagType::getDescFromAbbreviation(abbr) != Flags::Null)
         return false;
 
-    FlagEndurance e = FlagUnstable;
+    FlagEndurance e = FlagEndurance::Unstable;
     switch (quality)
     {
     case eGoodFlag:
-        e = FlagUnstable;
+        e = FlagEndurance::Unstable;
         break;
     case eBadFlag:
-        e = FlagSticky;
+        e = FlagEndurance::Sticky;
         break;
     default:
         return false; // shouldn't happen

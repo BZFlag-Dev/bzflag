@@ -2580,7 +2580,7 @@ void resetFlag(FlagInfo &flag)
     assert(world != NULL);
 
     // first drop the flag if someone has it
-    if (flag.flag.status == FlagOnTank)
+    if (flag.flag.status == FlagStatus::OnTank)
     {
         int player = flag.player;
 
@@ -2700,7 +2700,7 @@ void zapFlag(FlagInfo &flag)
     // if flag was flying then it flies no more
     flag.landing(TimeKeeper::getSunExplodeTime());
 
-    flag.flag.status = FlagNoExist;
+    flag.flag.status = FlagStatus::NoExist;
 
     // reset flag status
     resetFlag(flag);
@@ -2716,7 +2716,7 @@ static void dropAssignedFlag(int playerIndex)
         FlagInfo *flag = FlagInfo::get(flagIndex);
         if (!flag)
             continue;
-        if (flag->flag.status == FlagOnTank && flag->flag.owner == playerIndex)
+        if (flag->flag.status == FlagStatus::OnTank && flag->flag.owner == playerIndex)
             resetFlag(*flag);
     }
 } // dropAssignedFlag
@@ -2828,8 +2828,7 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
 
 void zapFlagByPlayer(int playerIndex)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -2840,7 +2839,7 @@ void zapFlagByPlayer(int playerIndex)
     FlagInfo &flag = *FlagInfo::get(flagid);
     flag.player = playerIndex;
     // do not simply zap team flag
-    Flag &carriedflag = flag.flag;
+    FlagInstance &carriedflag = flag.flag;
     if (carriedflag.type->flagTeam != ::NoTeam)
         dropPlayerFlag(*playerData, playerData->lastState.pos);
     else
@@ -2870,8 +2869,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     // clear any shots they had flying around
     ShotManager.RemovePlayer(playerIndex);
 
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData  = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -2907,9 +2905,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // status message
     std::string timeStamp = TimeKeeper::timestamp();
-    logDebugMessage(1,"Player %s [%d] removed at %s: %s\n",
-                    playerData->player.getCallSign(),
-                    playerIndex, timeStamp.c_str(), reason);
+    logDebugMessage(1,"Player %s [%d] removed at %s: %s\n", playerData->player.getCallSign(), playerIndex, timeStamp.c_str(), reason);
+
     bool wasPlaying = playerData->player.isPlaying();
     playerData->netHandler->closing();
 
@@ -2922,9 +2919,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     {
         // make them wait from the time they left, but only if they
         // have spawned at least once and are not already waiting
-        if (!playerData->player.hasNeverSpawned() &&
-                (rejoinList.waitTime (playerIndex) <= 0.0f) &&
-                !playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin))
+        if (!playerData->player.hasNeverSpawned() && (rejoinList.waitTime (playerIndex) <= 0.0f) && !playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin))
             rejoinList.add (playerIndex);
 
         // tell everyone player has left
@@ -2946,9 +2941,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
         // if last active player on team then remove team's flag if no one
         // is carrying it
-        if (Team::isColorTeam((TeamColor)teamNum)
-                && team[teamNum].team.size == 0 &&
-                (clOptions->gameType == ClassicCTF))
+        if (Team::isColorTeam((TeamColor)teamNum) && team[teamNum].team.size == 0 && (clOptions->gameType == ClassicCTF))
         {
             int flagid = FlagInfo::lookupFirstTeamFlag(teamNum);
             if (flagid >= 0)
@@ -2989,8 +2982,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         while (true)
         {
             curMaxPlayers--;
-            if (curMaxPlayers <= 0
-                    || GameKeeper::Player::getPlayerByIndex(curMaxPlayers - 1))
+            if (curMaxPlayers <= 0 || GameKeeper::Player::getPlayerByIndex(curMaxPlayers - 1))
                 break;
         }
 
@@ -3507,7 +3499,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     {
         auto f = FlagInfo::get(victimData->lastHeldFlagID);
 
-        if (f->flag.status != FlagOnGround) // if the last held flag was just a moment ago, they probably died with this.
+        if (f->flag.status != FlagStatus::OnGround) // if the last held flag was just a moment ago, they probably died with this.
             dieEvent.flagHeldWhenKilled = victimData->lastHeldFlagID;
     }
 
@@ -3749,7 +3741,7 @@ static void searchFlag(GameKeeper::Player &playerData)
         FlagInfo &flag = *FlagInfo::get(i);
         if (!flag.exist())
             continue;
-        if (flag.flag.status != FlagOnGround)
+        if (flag.flag.status != FlagStatus::OnGround)
             continue;
 
         const float *fpos = flag.flag.position;
@@ -3789,7 +3781,7 @@ void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos)
             playerData->player.isObserver() ||
             !playerData->player.isAlive() ||
             playerData->player.haveFlag() ||
-            (checkPos && flag.flag.status != FlagOnGround))
+            (checkPos && flag.flag.status != FlagStatus::OnGround))
         return;
 
     const float* fpos = flag.flag.position;
@@ -3869,7 +3861,7 @@ void dropFlag(FlagInfo& drpFlag, const float dropPos[3])
     // player wants to drop flag.  we trust that the client won't tell
     // us to drop a sticky flag until the requirements are satisfied.
     const int flagIndex = drpFlag.getIndex();
-    if (drpFlag.flag.status != FlagOnTank)
+    if (drpFlag.flag.status != FlagStatus::OnTank)
         return;
     int flagTeam = drpFlag.flag.type->flagTeam;
     bool isTeamFlag = (flagTeam != ::NoTeam);
@@ -4367,7 +4359,7 @@ static void shotFired(int playerIndex, void *buf, int len)
     {
         if (shotEvent.type == "DELETE")
             return;
-        firingInfo.flagType = Flag::getDescFromAbbreviation(shotEvent.type.c_str());
+        firingInfo.flagType = FlagType::getDescFromAbbreviation(shotEvent.type.c_str());
     }
 
 
@@ -7038,7 +7030,7 @@ int main(int argc, char **argv)
                     continue;
                 if (flag->landing(tm))
                 {
-                    if (flag->flag.status == FlagOnGround)
+                    if (flag->flag.status == FlagStatus::OnGround)
                         sendFlagUpdate(*flag);
                     else
                         resetFlag(*flag);

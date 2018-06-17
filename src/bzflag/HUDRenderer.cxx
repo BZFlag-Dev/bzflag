@@ -857,7 +857,7 @@ void            HUDRenderer::renderStatus(void)
     {
         const std::string flagname = bdl->getLocalString(flag->flagName);
         x = (float)window.getWidth() - 0.25f * h - fm.getStrLength(majorFontFace, majorFontSize, flagname);
-        if (flag->endurance == FlagSticky)
+        if (flag->endurance == FlagEndurance::Sticky)
             hudColor3fv(warningColor);
         else
             hudColor3fv(messageColor);
@@ -1029,7 +1029,7 @@ void            HUDRenderer::renderStatus(void)
             break;
 
         case LocalPlayer::Ready:
-            if (flag != Flags::Null && flag->endurance == FlagSticky &&
+            if (flag != Flags::Null && flag->endurance == FlagEndurance::Sticky &&
                     World::getWorld()->allowShakeTimeout())
             {
                 /* have a bad flag -- show time left 'til we shake it */
@@ -1114,7 +1114,7 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
                 if (flag != Flags::Null)
                 {
                     std::string flagStr = "(";
-                    flagStr += flag->endurance == FlagNormal ? flag->flagName : flag->flagAbbv;
+                    flagStr += flag->endurance == FlagEndurance::Normal ? flag->flagName : flag->flagAbbv;
                     flagStr += ")";
                     fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, flagStr) / 2.0f,
                                   float(y) + offset -

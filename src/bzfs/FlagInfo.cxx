@@ -37,25 +37,25 @@ int         FlagInfo::numFlagsInAir;
 FlagInfo::FlagInfo(): numShots(0), flagIndex(0)
 {
     // prep flag
-    flag.type       = Flags::Null;
-    flag.status         = FlagNoExist;
-    flag.endurance      = FlagNormal;
-    flag.owner          = NoPlayer;
-    flag.position[0]    = 0.0f;
-    flag.position[1]    = 0.0f;
-    flag.position[2]    = 0.0f;
+    flag.type               = Flags::Null;
+    flag.status             = FlagStatus::NoExist;
+    flag.endurance          = FlagEndurance::Normal;
+    flag.owner              = NoPlayer;
+    flag.position[0]        = 0.0f;
+    flag.position[1]        = 0.0f;
+    flag.position[2]        = 0.0f;
     flag.launchPosition[0]  = 0.0f;
     flag.launchPosition[1]  = 0.0f;
     flag.launchPosition[2]  = 0.0f;
     flag.landingPosition[0] = 0.0f;
     flag.landingPosition[1] = 0.0f;
     flag.landingPosition[2] = 0.0f;
-    flag.flightTime     = 0.0f;
-    flag.flightEnd      = 0.0f;
+    flag.flightTime         = 0.0f;
+    flag.flightEnd          = 0.0f;
     flag.initialVelocity    = 0.0f;
-    player          = -1;
-    grabs           = 0;
-    required        = false;
+    player = -1;
+    grabs = 0;
+    required = false;
 }
 
 void FlagInfo::setSize(int _numFlags)
@@ -110,7 +110,7 @@ void FlagInfo::addFlag()
 
     // flag is now entering game
     numFlagsInAir++;
-    flag.status     = FlagComing;
+    flag.status     = FlagStatus::Coming;
 
     // compute drop time
     const float flightTime = 2.0f * sqrtf(-2.0f * flagAltitude / gravity);
@@ -125,13 +125,13 @@ void FlagInfo::addFlag()
         flag.type = allowedFlags[(int)(allowedFlags.size() * (float)bzfrand())];
 
     // decide how sticky the flag will be
-    if (flag.type->flagQuality == FlagBad)
-        flag.endurance = FlagSticky;
+    if (flag.type->flagQuality == FlagQuality::Bad)
+        flag.endurance = FlagEndurance::Sticky;
     else
-        flag.endurance = FlagUnstable;
+        flag.endurance = FlagEndurance::Unstable;
 
     // how times will it stick around
-    if ((flag.endurance == FlagSticky) || (flag.type == Flags::Thief))
+    if ((flag.endurance == FlagEndurance::Sticky) || (flag.type == Flags::Thief))
         grabs = 1;
     else
         grabs = BZDB.evalInt(StateDatabase::BZDB_MAXFLAGGRABS);
@@ -154,7 +154,7 @@ void *FlagInfo::pack(void *buf, bool hide)
 void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
 {
     numFlagsInAir++;
-    flag.status        = vanish ? FlagGoing : FlagInAir;
+    flag.status        = vanish ? FlagStatus::Going : FlagStatus::InAir;
 
     flag.landingPosition[0] = landingPos[0];
     flag.landingPosition[1] = landingPos[1];
@@ -204,17 +204,17 @@ void FlagInfo::resetFlag(float position[3], bool teamIsEmpty)
             // flag in now entering game
             addFlag();
         else if (teamIsEmpty)
-            flag.status = FlagNoExist;
+            flag.status = FlagStatus::NoExist;
         else
-            flag.status = FlagOnGround;
+            flag.status = FlagStatus::OnGround;
     }
     else
-        flag.status = FlagNoExist;
+        flag.status = FlagStatus::NoExist;
 }
 
 void FlagInfo::grab(int playerIndex)
 {
-    flag.status = FlagOnTank;
+    flag.status = FlagStatus::OnTank;
     flag.owner  = playerIndex;
     player      = playerIndex;
     numShots    = 0;
@@ -239,9 +239,9 @@ float FlagInfo::getNextDrop(TimeKeeper &tm)
         for (int i = 0; i < numFlags; i++)
         {
             FlagInfo &flag = flagList[i];
-            if (flag.flag.status != FlagNoExist &&
-                    flag.flag.status != FlagOnTank &&
-                    flag.flag.status != FlagOnGround &&
+            if (flag.flag.status != FlagStatus::NoExist &&
+                    flag.flag.status != FlagStatus::OnTank &&
+                    flag.flag.status != FlagStatus::OnGround &&
                     flag.dropDone - tm < waitTime)
                 waitTime = float(flag.dropDone - tm);
         }
@@ -255,20 +255,20 @@ bool FlagInfo::landing(const TimeKeeper &tm)
         return false;
 
     bool land = false;
-    if (flag.status == FlagInAir || flag.status == FlagComing)
+    if (flag.status == FlagStatus::InAir || flag.status == FlagStatus::Coming)
     {
         if (dropDone - tm <= 0.0f)
         {
-            flag.status = FlagOnGround;
+            flag.status = FlagStatus::OnGround;
             numFlagsInAir--;
             land  = true;
         }
     }
-    else if (flag.status == FlagGoing)
+    else if (flag.status == FlagStatus::Going)
     {
         if (dropDone - tm <= 0.0f)
         {
-            flag.status = FlagNoExist;
+            flag.status = FlagStatus::NoExist;
             numFlagsInAir--;
             land  = true;
         }
@@ -292,7 +292,7 @@ void FlagInfo::getTextualInfo(char *message)
 
 bool FlagInfo::exist()
 {
-    return flag.status != FlagNoExist;
+    return flag.status != FlagStatus::NoExist;
 }
 
 FlagInfo *FlagInfo::get(int index)

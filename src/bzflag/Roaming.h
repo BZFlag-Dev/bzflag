@@ -61,7 +61,7 @@ public:
        they return the index of the object that you're
        tracking/following/driving with */
     Player* getTargetTank(void) const;
-    Flag*   getTargetFlag(void) const;
+    FlagInstance*   getTargetFlag(void) const;
 
     void buildRoamingLabel(void);
     std::string getRoamingLabel(void) const;
@@ -132,7 +132,7 @@ inline Player* Roaming::getTargetTank() const
         return NULL;
 }
 
-inline Flag* Roaming::getTargetFlag() const
+inline FlagInstance* Roaming::getTargetFlag() const
 {
     World* world = World::getWorld();
     if (!world)

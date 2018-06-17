@@ -352,7 +352,7 @@ static std::string cmdDrop(const std::string&,
     {
         FlagType::Ptr flag = myTank->getFlag();
         if ((flag != Flags::Null) && !myTank->isPaused() &&
-                (flag->endurance != FlagSticky) && !myTank->isPhantomZoned() &&
+                (flag->endurance != FlagEndurance::Sticky) && !myTank->isPhantomZoned() &&
                 !(flag == Flags::OscillationOverthruster &&
                   myTank->getLocation() == LocalPlayer::InBuilding))
         {

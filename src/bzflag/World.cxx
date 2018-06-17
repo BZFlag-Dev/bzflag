@@ -689,8 +689,8 @@ void            World::initFlag(int index)
     flagNodes[index]->setColor(color[0], color[1], color[2]);
 
     // if coming or going then position warp
-    Flag& flag = flags[index];
-    if (flag.status == FlagComing || flag.status == FlagGoing)
+    FlagInstance& flag = flags[index];
+    if (flag.status == FlagStatus::Coming || flag.status == FlagStatus::Going)
     {
         GLfloat pos[3];
         pos[0] = flag.position[0];
@@ -729,7 +729,7 @@ void            World::updateFlag(int index, float dt)
     if (!flagNodes) return;
     const GLfloat* color = flagNodes[index]->getColor();
     GLfloat alpha = color[3];
-    Flag& flag = flags[index];
+    FlagInstance& flag = flags[index];
 
     switch (flag.status)
     {
@@ -738,12 +738,12 @@ void            World::updateFlag(int index, float dt)
         // don't know the position to move it to)
         break;
 
-    case FlagInAir:
+    case FlagStatus::InAir:
         flag.flightTime += dt;
         if (flag.flightTime >= flag.flightEnd)
         {
             // touchdown
-            flag.status = FlagOnGround;
+            flag.status = FlagStatus::OnGround;
             flag.position[0] = flag.landingPosition[0];
             flag.position[1] = flag.landingPosition[1];
             flag.position[2] = flag.landingPosition[2];
@@ -763,12 +763,12 @@ void            World::updateFlag(int index, float dt)
         }
         break;
 
-    case FlagComing:
+    case FlagStatus::Coming:
         flag.flightTime += dt;
         if (flag.flightTime >= flag.flightEnd)
         {
             // touchdown
-            flag.status = FlagOnGround;
+            flag.status = FlagStatus::OnGround;
             flag.position[2] = 0.0f;
             alpha = 1.0f;
         }
@@ -807,12 +807,12 @@ void            World::updateFlag(int index, float dt)
         }
         break;
 
-    case FlagGoing:
+    case FlagStatus::Going:
         flag.flightTime += dt;
         if (flag.flightTime >= flag.flightEnd)
         {
             // all gone
-            flag.status = FlagNoExist;
+            flag.status = FlagStatus::NoExist;
         }
         else if (flag.flightTime < 0.5f * flag.flightEnd)
         {
@@ -859,7 +859,7 @@ void            World::updateFlag(int index, float dt)
     flagNodes[index]->move(flags[index].position);
 
     // setup the flag angle
-    if (flag.status != FlagOnTank)
+    if (flag.status != FlagStatus::OnTank)
     {
         flagNodes[index]->setWind(wind, dt);
         flagNodes[index]->setBillboard(true);
@@ -909,14 +909,14 @@ void            World::addFlags(SceneDatabase* scene, bool seerView)
     if (!flagNodes) return;
     for (int i = 0; i < maxFlags; i++)
     {
-        // if not showing flags, only allow FlagOnTank through
-        if (flags[i].status != FlagOnTank && !BZDBCache::displayMainFlags)
+        // if not showing flags, only allow FlagStatus::OnTank through
+        if (flags[i].status != FlagStatus::OnTank && !BZDBCache::displayMainFlags)
             continue;
 
-        if (flags[i].status == FlagNoExist) continue;
+        if (flags[i].status == FlagStatus::NoExist) continue;
         // skip flag on a tank that isn't alive. also skip
         // Cloaking flag on a tank if we don't have a Seer flag.
-        if (flags[i].status == FlagOnTank)
+        if (flags[i].status == FlagStatus::OnTank)
         {
             if ((flags[i].type == Flags::Cloaking) && !seerView)
                 continue;
@@ -932,9 +932,9 @@ void            World::addFlags(SceneDatabase* scene, bool seerView)
         scene->addDynamicNode(flagNodes[i]);
 
         // add warp if coming/going and hovering
-        if ((flags[i].status == FlagComing &&
+        if ((flags[i].status == FlagStatus::Coming &&
                 flags[i].flightTime < 0.5 * flags[i].flightEnd) ||
-                (flags[i].status == FlagGoing &&
+                (flags[i].status == FlagStatus::Going &&
                  flags[i].flightTime >= 0.5 * flags[i].flightEnd))
             scene->addDynamicNode(flagWarpNodes[i]);
     }

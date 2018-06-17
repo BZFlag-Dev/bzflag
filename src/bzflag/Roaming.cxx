@@ -189,7 +189,7 @@ void Roaming::changeTarget(Roaming::RoamingTarget target, int explicitIndex)
                     j = (targetFlag + i) % maxFlags;
                 else
                     j = (targetFlag - i + maxFlags) % maxFlags;
-                const Flag& flag = world->getFlag(j);
+                const FlagInstance& flag = world->getFlag(j);
                 if (flag.type->flagTeam != NoTeam)
                 {
                     targetFlag = j;
@@ -290,7 +290,7 @@ void Roaming::buildRoamingLabel(void)
             }
             else
                 playerString += " / ";
-            if (flag->endurance == FlagNormal)
+            if (flag->endurance == FlagEndurance::Normal)
                 playerString += flag->flagName;
             else
                 playerString += flag->flagAbbv;
@@ -359,7 +359,7 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt)
     {
         if ((world != NULL) && (targetFlag < world->getMaxFlags()))
         {
-            Flag &flag = world->getFlag(targetFlag);
+            FlagInstance &flag = world->getFlag(targetFlag);
             trackPos = flag.position;
             tracking = true;
         }

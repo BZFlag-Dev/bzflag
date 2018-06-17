@@ -33,7 +33,7 @@ std::string FlagHistory::getStr()
     {
         flagList += " (";
         FlagType::Ptr fDesc = (FlagType::Ptr)(*fhIt);
-        if (fDesc->endurance == FlagNormal)
+        if (fDesc->endurance == FlagEndurance::Normal)
         {
             flagList += '*';
             flagList += fDesc->flagName.c_str()[0];

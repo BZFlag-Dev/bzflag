@@ -709,9 +709,9 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
         for (i = (maxFlags - 1); i >= 0; i--)
         {
-            const Flag& flag = world->getFlag(i);
+            const FlagInstance& flag = world->getFlag(i);
             // don't draw flags that don't exist or are on a tank
-            if (flag.status == FlagNoExist || flag.status == FlagOnTank)
+            if (flag.status == FlagStatus::NoExist || flag.status == FlagStatus::OnTank)
                 continue;
             // don't draw normal flags if we aren't supposed to
             if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
