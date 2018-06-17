@@ -694,7 +694,7 @@ static MsgStringList handleMsgKilled (PacketInfo *pi)
     const void *d = pi->data;
     u8 victim, killer;
     int16_t reason, shot;
-    FlagType* flagType;
+    FlagType::Ptr flagType;
     int32_t phydrv;
     d = nboUnpackUByte(d, victim);
     d = nboUnpackUByte(d, killer);
