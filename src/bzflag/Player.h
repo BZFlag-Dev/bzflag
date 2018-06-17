@@ -236,6 +236,8 @@ protected:
     const Obstacle* lastObstacle;           // last obstacle touched
     TimeKeeper    jamTime;
 
+    TimeKeeper      lastShotTime;
+
     // pause message
     bool pauseMessageState;
 

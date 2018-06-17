@@ -1205,8 +1205,16 @@ bool LocalPlayer::fireShot()
     if (!isAlive() || isPaused() || ((location == InBuilding) && !isPhantomZoned()))
         return false;
 
+    if (getFlag() == Flags::MachineGun) // MG would fire every frame, so limit it to a sane frame rate.
+    {
+        if (TimeKeeper::getCurrent() - lastShotTime < (1.0f / 20.0f))
+            return false;
+    }
+
     if (!hasFreeShotSlot())
         return false;
+
+    lastShotTime = TimeKeeper::getCurrent();
 
     int localShotID = getNextShotSlot();
 
