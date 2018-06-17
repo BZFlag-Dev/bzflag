@@ -25,7 +25,7 @@
 
 MenuDefaultKey MenuDefaultKey::instance;
 
-MenuDefaultKey::MenuDefaultKey() {}
+MenuDefaultKey::MenuDefaultKey() : sm(nullptr) {}
 MenuDefaultKey::~MenuDefaultKey() {}
 
 MenuDefaultKey* MenuDefaultKey::getInstance()
