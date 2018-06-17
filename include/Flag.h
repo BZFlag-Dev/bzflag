@@ -170,7 +170,7 @@ public:
     TeamColor flagTeam;
     bool custom;
 
-    static std::vector<Set> FlagType::Sets;
+    static std::vector<Set> Sets;
     static Set customFlags;
     static const int packSize;
 };
