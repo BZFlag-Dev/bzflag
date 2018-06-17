@@ -50,6 +50,8 @@
 #include <set>
 #include <map>
 #include <string>
+#include <vector>
+#include <memory>
 
 /* common interface headers */
 #include "global.h"
@@ -104,16 +106,16 @@ enum ShotType
 
 const int       FlagPLen = 55;
 
-class FlagType;
-typedef std::map<std::string, FlagType*> FlagTypeMap;
-typedef std::set<FlagType*> FlagSet;
-
 #define FlagPackSize 2
 
 /** This class represents a flagtype, like "GM" or "CL". */
 class FlagType
 {
 public:
+    typedef std::shared_ptr<FlagType> Ptr;
+    typedef std::map<std::string, FlagType::Ptr> TypeMap;
+    typedef std::set<FlagType::Ptr> Set;
+
     FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
               ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
               bool _custom = false ) :
@@ -126,18 +128,6 @@ public:
         flagQuality = quality;
         flagTeam = team;
         custom = _custom;
-
-        /* allocate flagset array on first use to work around mipspro
-         * std::set compiler bug of making flagSets a fixed array.
-         */
-        if (flagSets == NULL)
-            flagSets = new FlagSet[NumQualities];
-
-        if (custom)
-            customFlags.insert(this);
-
-        flagSets[flagQuality].insert(this);
-        getFlagMap()[flagAbbv] = this;
     }
 
     /** returns a label of flag name and abbreviation with the flag name
@@ -163,13 +153,13 @@ public:
     void* packCustom(void* buf) const;
 
     /** network deserialization */
-    static const void* unpack(const void* buf, FlagType* &desc);
-    static const void* unpackCustom(const void* buf, FlagType* &desc);
+    static const void* unpack(const void* buf, FlagType::Ptr &desc);
+    static const void* unpackCustom(const void* buf, FlagType::Ptr &desc);
 
     /** Static wrapper function that makes sure that the flag map is
      * initialized before it's used.
      */
-    static FlagTypeMap& getFlagMap();
+    static TypeMap& getFlagMap();
 
     const std::string flagName;
     const std::string flagAbbv;
@@ -180,8 +170,8 @@ public:
     TeamColor flagTeam;
     bool custom;
 
-    static FlagSet *flagSets;
-    static FlagSet customFlags;
+    static std::vector<Set> FlagType::Sets;
+    static Set customFlags;
     static const int packSize;
 };
 
@@ -207,21 +197,21 @@ public:
         @see FlagType
         @see FlagQuality
     */
-    static FlagSet& getGoodFlags();
+    static FlagType::Set& getGoodFlags();
 
     /** This function returns a set of all bad flagtypes that are available in
         the game.
         @see FlagType
         @see FlagQuality
     */
-    static FlagSet& getBadFlags();
+    static FlagType::Set& getBadFlags();
 
     /** This function returns a pointer to the FlagType object that is associated
         with the given abbreviation. If there is no such FlagType object, NULL
         is returned. */
-    static FlagType* getDescFromAbbreviation(const char* abbreviation);
+    static FlagType::Ptr getDescFromAbbreviation(const char* abbreviation);
 
-    FlagType* type;
+    FlagType::Ptr type;
     FlagStatus status;
     FlagEndurance endurance;
     PlayerId owner;       // who has flag
@@ -242,25 +232,63 @@ public:
 */
 namespace Flags
 {
-extern FlagType
-*Null,
-*RedTeam, *GreenTeam, *BlueTeam, *PurpleTeam, *Velocity, *QuickTurn,
-*OscillationOverthruster, *RapidFire, *MachineGun, *GuidedMissile, *Laser,
-*Ricochet, *SuperBullet, *InvisibleBullet, *Stealth, *Tiny, *Narrow,
-*Shield, *Steamroller, *ShockWave, *PhantomZone, *Genocide, *Jumping,
-*Identify, *Cloaking, *Useless, *Masquerade, *Seer, *Thief, *Burrow,
-*Wings, *ReverseControls, *Agility,
-*Colorblindness, *Obesity, *LeftTurnOnly, *RightTurnOnly, *Momentum,
-*Blindness, *Jamming, *WideAngle, *NoJumping, *TriggerHappy,
-*ReverseOnly, *ForwardOnly, *Bouncy;
+   extern FlagType::Ptr Null;
+   extern FlagType::Ptr RedTeam;
+   extern FlagType::Ptr GreenTeam;
+   extern FlagType::Ptr BlueTeam;
+   extern FlagType::Ptr PurpleTeam;
+   extern FlagType::Ptr Velocity;
+   extern FlagType::Ptr QuickTurn;
+   extern FlagType::Ptr OscillationOverthruster;
+   extern FlagType::Ptr RapidFire;
+   extern FlagType::Ptr MachineGun;
+   extern FlagType::Ptr GuidedMissile;
+   extern FlagType::Ptr Laser;
+   extern FlagType::Ptr Ricochet;
+   extern FlagType::Ptr SuperBullet;
+   extern FlagType::Ptr InvisibleBullet;
+   extern FlagType::Ptr Stealth;
+   extern FlagType::Ptr Tiny;
+   extern FlagType::Ptr Narrow;
+   extern FlagType::Ptr Shield;
+   extern FlagType::Ptr Steamroller;
+   extern FlagType::Ptr ShockWave;
+   extern FlagType::Ptr PhantomZone;
+   extern FlagType::Ptr Genocide;
+   extern FlagType::Ptr Jumping;
+   extern FlagType::Ptr Identify;
+   extern FlagType::Ptr Cloaking;
+   extern FlagType::Ptr Useless;
+   extern FlagType::Ptr Masquerade;
+   extern FlagType::Ptr Seer;
+   extern FlagType::Ptr Thief;
+   extern FlagType::Ptr Burrow;
+   extern FlagType::Ptr Wings;
+   extern FlagType::Ptr Agility;
+   extern FlagType::Ptr Colorblindness;
+   extern FlagType::Ptr Obesity;
+   extern FlagType::Ptr LeftTurnOnly;
+   extern FlagType::Ptr RightTurnOnly;
+   extern FlagType::Ptr ForwardOnly;
+   extern FlagType::Ptr ReverseOnly;
+   extern FlagType::Ptr Momentum;
+   extern FlagType::Ptr Blindness;
+   extern FlagType::Ptr Jamming;
+   extern FlagType::Ptr WideAngle;
+   extern FlagType::Ptr NoJumping;
+   extern FlagType::Ptr TriggerHappy;
+   extern FlagType::Ptr ReverseControls;
+   extern FlagType::Ptr Bouncy;
 
-/** This function initializes all the FlagType objects in the Flags
-    namespace. */
-void init();
-void kill();
+    /** This function initializes all the FlagType objects in the Flags
+        namespace. */
+    void init();
+    void kill();
 
-/** Clear all the custom flags (i.e. when switching servers) */
-void clearCustomFlags();
+    /** Clear all the custom flags (i.e. when switching servers) */
+    void clearCustomFlags();
+
+    FlagType::Ptr AddCustomFlag(FlagType::Ptr ptr);
 }
 
 #endif // BZF_FLAG_H

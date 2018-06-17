@@ -277,7 +277,7 @@ void Roaming::buildRoamingLabel(void)
         }
         playerString += tracked->getCallSign();
 
-        const FlagType* flag = tracked->getFlag();
+        const FlagType::Ptr flag = tracked->getFlag();
         if (flag != Flags::Null)
         {
             if (BZDBCache::colorful)

@@ -406,7 +406,7 @@ void ScoreboardRenderer::renderCtfFlags ()
     {
         if ((player = World::getWorld()->getPlayer(i)))
         {
-            FlagType* flagd = player->getFlag();
+            FlagType::Ptr flagd = player->getFlag();
             TeamColor teamIndex = player->getTeam();
             if (flagd!=Flags::Null && flagd->flagTeam != NoTeam)      // if player has team flag ...
             {
@@ -765,7 +765,7 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
     }
     // carried flag
     bool coloredFlag = false;
-    FlagType* flagd = player->getFlag();
+    FlagType::Ptr flagd = player->getFlag();
     if (flagd != Flags::Null)
     {
         // color special flags

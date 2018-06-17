@@ -92,7 +92,7 @@ public:
 
     void            restart(const float* pos, float azimuth);
     bool            checkHit(const Player* source, ShotPath::Ptr &hit, float& minTime) const;
-    void            setFlag(FlagType*, int limit);
+    void            setFlag(FlagType::Ptr, int limit);
     void            changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
 
     void            addAntidote(SceneDatabase*);

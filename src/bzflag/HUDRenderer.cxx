@@ -458,7 +458,7 @@ void            HUDRenderer::setComposing(const std::string &prompt,
         HUDui::setFocus(NULL);
 }
 
-void            HUDRenderer::setFlagHelp(FlagType* desc, float duration)
+void            HUDRenderer::setFlagHelp(FlagType::Ptr desc, float duration)
 {
     flagHelpClock.setClock(duration);
 
@@ -842,7 +842,7 @@ void            HUDRenderer::renderStatus(void)
     float x = 0.25f * h;
     float y = (float)window.getViewHeight() - h;
     TeamColor teamIndex = myTank->getTeam();
-    FlagType* flag = myTank->getFlag();
+    FlagType::Ptr flag = myTank->getFlag();
 
     // print player name and score in upper left corner in team (tank) color
     if (!roaming && (!playerHasHighScore || scoreClock.isOn()))
@@ -1110,7 +1110,7 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
                 fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
                               float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, name),
                               0, labelsFontFace, labelsFontSize, name);
-                FlagType* flag = pl->getFlag();
+                FlagType::Ptr flag = pl->getFlag();
                 if (flag != Flags::Null)
                 {
                     std::string flagStr = "(";

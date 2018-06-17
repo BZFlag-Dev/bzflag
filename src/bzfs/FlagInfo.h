@@ -31,7 +31,7 @@ public:
 
     FlagInfo();
 
-    void setRequiredFlag(FlagType *desc);
+    void setRequiredFlag(FlagType::Ptr desc);
     void addFlag();
     void *pack(void *buf, bool hide = false);
     void dropFlag(float pos[3], float landingPos[3], bool vanish);
@@ -45,7 +45,7 @@ public:
 
     static FlagInfo *get(int index);
     static void setSize(int _numFlags);
-    static void setAllowed(std::vector<FlagType*> allowed);
+    static void setAllowed(std::vector<FlagType::Ptr> allowed);
     static void setExtra(int extra);
     static int  lookupFirstTeamFlag(int teamindex);
     static float getNextDrop(TimeKeeper &tm);
@@ -64,7 +64,7 @@ public:
 
 private:
     int flagIndex;
-    static std::vector<FlagType*> allowedFlags;
+    static std::vector<FlagType::Ptr> allowedFlags;
     static int            numExtraFlags;
     static int            numFlags;
     static int            numFlagsInAir;

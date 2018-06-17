@@ -507,7 +507,7 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
         directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
 }
 
-void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3] )
+void sendClosestFlagMessage(int playerIndex,FlagType::Ptr type, float pos[3] )
 {
     if (!type)
         return;
@@ -3455,7 +3455,7 @@ bool allowTeams ( void )
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
 void playerKilled(int victimIndex, int killerIndex, int reason,
-                  int16_t shotIndex, const FlagType* flagType, int phydrv, bool respawnOnBase )
+                  int16_t shotIndex, const FlagType::Ptr flagType, int phydrv, bool respawnOnBase )
 {
     GameKeeper::Player *killerData = NULL;
     GameKeeper::Player *victimData
@@ -4870,16 +4870,16 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     case MsgNegotiateFlags:
     {
-        FlagTypeMap::iterator it;
-        FlagSet::iterator m_it;
+        FlagType::TypeMap::iterator it;
+        FlagType::Set::iterator m_it;
         FlagOptionMap hasFlag;
-        FlagSet missingFlags;
+        FlagType::Set missingFlags;
         unsigned short numClientFlags = len/2;
 
         /* Unpack incoming message containing the list of flags our client supports */
         for (int i = 0; i < numClientFlags; i++)
         {
-            FlagType *fDesc;
+            FlagType::Ptr fDesc;
             buf = FlagType::unpack(buf, fDesc);
             if (fDesc != Flags::Null)
                 hasFlag[fDesc] = true;
@@ -5001,7 +5001,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         // data: id of killer, shot id of killer
         PlayerId killer;
-        FlagType* flagType = nullptr;
+        FlagType::Ptr flagType = nullptr;
         uint16_t shot = INVALID_SHOT_GUID;
         int16_t reason = -1;
         int phydrv = -1;

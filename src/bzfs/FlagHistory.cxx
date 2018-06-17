@@ -27,12 +27,12 @@ void FlagHistory::clear()
 std::string FlagHistory::getStr()
 {
     std::string flagList;
-    std::vector<FlagType*>::iterator fhIt = flagHistory.begin();
+    std::vector<FlagType::Ptr>::iterator fhIt = flagHistory.begin();
 
     while (fhIt != flagHistory.end())
     {
         flagList += " (";
-        FlagType * fDesc = (FlagType*)(*fhIt);
+        FlagType::Ptr fDesc = (FlagType::Ptr)(*fhIt);
         if (fDesc->endurance == FlagNormal)
         {
             flagList += '*';
@@ -46,7 +46,7 @@ std::string FlagHistory::getStr()
     return flagList;
 }
 
-void FlagHistory::add(FlagType* type)
+void FlagHistory::add(FlagType::Ptr type)
 {
     if (flagHistory.size() >= MAX_FLAG_HISTORY)
         flagHistory.erase(flagHistory.begin());

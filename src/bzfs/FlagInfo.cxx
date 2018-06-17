@@ -29,7 +29,7 @@
 
 // flags list
 FlagInfo          *FlagInfo::flagList      = NULL;
-std::vector<FlagType*> FlagInfo::allowedFlags;
+std::vector<FlagType::Ptr> FlagInfo::allowedFlags;
 int         FlagInfo::numExtraFlags = 0;
 int         FlagInfo::numFlags      = 0;
 int         FlagInfo::numFlagsInAir;
@@ -77,7 +77,7 @@ void FlagInfo::setSize(int _numFlags)
         flagList[i].flagIndex = i;
 }
 
-void FlagInfo::setAllowed(std::vector<FlagType*> allowed)
+void FlagInfo::setAllowed(std::vector<FlagType::Ptr> allowed)
 {
     allowedFlags = allowed;
 }
@@ -97,7 +97,7 @@ int FlagInfo::lookupFirstTeamFlag(int teamindex)
     return -1;
 }
 
-void FlagInfo::setRequiredFlag(FlagType *desc)
+void FlagInfo::setRequiredFlag(FlagType::Ptr desc)
 {
     required = true;
     flag.type = desc;

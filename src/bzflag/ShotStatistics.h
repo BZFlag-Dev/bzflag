@@ -22,7 +22,7 @@
  */
 
 // FIXME - this looks bad, make the FlagType an enum
-typedef std::map<FlagType*, int> FlagMap;
+typedef std::map<FlagType::Ptr, int> FlagMap;
 
 class ShotStatistics
 {
@@ -32,19 +32,19 @@ public:
     ~ShotStatistics();
 
     // raw stats returns
-    int    getFired(FlagType* flag) const;
-    int    getHit(FlagType* flag) const;
+    int    getFired(FlagType::Ptr flag) const;
+    int    getHit(FlagType::Ptr flag) const;
 
     // stats processing
     int    getTotalFired() const;
     int    getTotalHit() const;
     int    getTotalPerc() const;
-    FlagType*   getFavoriteFlag() const;
-    FlagType*   getBestFlag() const;
+    FlagType::Ptr   getFavoriteFlag() const;
+    FlagType::Ptr   getBestFlag() const;
 
     // tally functions
-    void        recordFire(FlagType* flag, const float *pVec, const float *shotVec);
-    void        recordHit(FlagType* flag);
+    void        recordFire(FlagType::Ptr flag, const float *pVec, const float *shotVec);
+    void        recordHit(FlagType::Ptr flag);
 
     double getLastShotTimeDelta ( void ) const
     {
@@ -69,14 +69,14 @@ private:
 };
 
 
-inline int ShotStatistics::getFired(FlagType* flag) const
+inline int ShotStatistics::getFired(FlagType::Ptr flag) const
 {
     if (fired.find(flag) != fired.end())
         return fired.at(flag);
     return 0;
 }
 
-inline int ShotStatistics::getHit(FlagType* flag) const
+inline int ShotStatistics::getHit(FlagType::Ptr flag) const
 {
     if (hit.find(flag) != hit.end())
         return hit.at(flag);

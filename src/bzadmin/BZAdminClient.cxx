@@ -368,7 +368,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             if (messageMask[MsgKilled])
             {
                 PlayerId victim, killer;
-                FlagType* flagType;
+                FlagType::Ptr flagType;
                 int16_t shotId, reason;
                 vbuf = nboUnpackUByte(vbuf, victim);
                 vbuf = nboUnpackUByte(vbuf, killer);

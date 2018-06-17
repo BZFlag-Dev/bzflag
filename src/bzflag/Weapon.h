@@ -26,7 +26,7 @@ public:
     const void* unpack(const void*);
 
 public:
-    FlagType *type;
+    FlagType::Ptr type;
     float pos[3];
     float dir;
     float initDelay;

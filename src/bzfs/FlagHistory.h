@@ -28,13 +28,13 @@ class FlagHistory
 public:
     void clear();
     std::string getStr();
-    void add(FlagType* type);
-    std::vector<FlagType*> getVec()
+    void add(FlagType::Ptr type);
+    std::vector<FlagType::Ptr> getVec()
     {
         return flagHistory;
     }
 private:
-    std::vector<FlagType*> flagHistory;
+    std::vector<FlagType::Ptr> flagHistory;
 };
 
 #endif /* __FLAGHISTORY_H__ */

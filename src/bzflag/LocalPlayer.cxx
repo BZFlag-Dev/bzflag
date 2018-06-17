@@ -1080,7 +1080,7 @@ void            LocalPlayer::setTeam(TeamColor _team)
 
 void            LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 {
-    FlagType* flag = getFlag();
+    FlagType::Ptr flag = getFlag();
     // can't go faster forward than at top speed, and backward at half speed
     if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
     else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
@@ -1136,7 +1136,7 @@ void            LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
 void            LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
 {
-    FlagType* flag = getFlag();
+    FlagType::Ptr flag = getFlag();
 
     // limit turn speed to maximum
     if (fracOfMaxAngVel > 1.0f) fracOfMaxAngVel = 1.0f;
@@ -1353,7 +1353,7 @@ void            LocalPlayer::setJumpPressed(bool value)
 
 void            LocalPlayer::doJump()
 {
-    FlagType* flag = getFlag();
+    FlagType::Ptr flag = getFlag();
 
     // can't jump while burrowed
     if (getPosition()[2] < 0.0f)
@@ -1571,7 +1571,7 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
 
         // short circuit test if shot can't possibly hit.
         // only superbullet or shockwave can kill zoned dude
-        const FlagType* shotFlag = shot->getFlag();
+        const FlagType::Ptr shotFlag = shot->getFlag();
         if (isPhantomZoned() &&
                 (shotFlag != Flags::ShockWave) &&
                 (shotFlag != Flags::SuperBullet) &&
@@ -1606,7 +1606,7 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
     return goodHit;
 }
 
-void            LocalPlayer::setFlag(FlagType* flag, int limit)
+void            LocalPlayer::setFlag(FlagType::Ptr flag, int limit)
 {
     Player::setFlag(flag, limit);
 

@@ -34,7 +34,7 @@ int ShotStatistics::getTotalPerc() const
     return (int)(100 * ((float)getTotalHit() / (float)getTotalFired()));
 }
 
-void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *shotVec )
+void ShotStatistics::recordFire(FlagType::Ptr flag, const float *pVec, const float *shotVec )
 {
     fired[flag]++;
     totalFired++;
@@ -66,7 +66,7 @@ void ShotStatistics::recordFire(FlagType* flag, const float *pVec, const float *
         getShotStats()->refresh();
 }
 
-void ShotStatistics::recordHit(FlagType* flag)
+void ShotStatistics::recordHit(FlagType::Ptr flag)
 {
     hit[flag]++;
     totalHit++;
@@ -75,12 +75,12 @@ void ShotStatistics::recordHit(FlagType* flag)
         getShotStats()->refresh();
 }
 
-typedef std::pair<FlagType*, float> FlagStat;
+typedef std::pair<FlagType::Ptr, float> FlagStat;
 
-FlagType* ShotStatistics::getFavoriteFlag() const
+FlagType::Ptr ShotStatistics::getFavoriteFlag() const
 {
     /* return the flag the player fired most */
-    FlagType* greatest = Flags::Null;
+    FlagType::Ptr greatest = Flags::Null;
 
     // we don't deal with the case where there are two "equally favorite"
     // flags; doesn't really matter
@@ -94,10 +94,10 @@ FlagType* ShotStatistics::getFavoriteFlag() const
     return greatest;
 }
 
-FlagType* ShotStatistics::getBestFlag() const
+FlagType::Ptr ShotStatistics::getBestFlag() const
 {
     /* return the flag with the best hits/fired ratio */
-    FlagType* greatest = Flags::Null;
+    FlagType::Ptr greatest = Flags::Null;
     float greatestRatio = getHit(greatest)/float(getFired(greatest));
 
     // we don't deal with the case where there are two "equally best"

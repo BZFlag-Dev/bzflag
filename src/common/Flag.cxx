@@ -27,234 +27,253 @@
 #include "TextUtils.h"
 
 
-FlagSet *FlagType::flagSets = NULL;
+std::vector<FlagType::Set> FlagType::FlagType::Sets;
 const int FlagType::packSize = FlagPackSize;
-FlagSet FlagType::customFlags;
+FlagType::Set FlagType::customFlags;
 
 // Initialize flag description singletons in our Flags namespace
 namespace Flags
 {
-FlagType *Null;
-FlagType *RedTeam;
-FlagType *GreenTeam;
-FlagType *BlueTeam;
-FlagType *PurpleTeam;
-FlagType *Velocity;
-FlagType *QuickTurn;
-FlagType *OscillationOverthruster;
-FlagType *RapidFire;
-FlagType *MachineGun;
-FlagType *GuidedMissile;
-FlagType *Laser;
-FlagType *Ricochet;
-FlagType *SuperBullet;
-FlagType *InvisibleBullet;
-FlagType *Stealth;
-FlagType *Tiny;
-FlagType *Narrow;
-FlagType *Shield;
-FlagType *Steamroller;
-FlagType *ShockWave;
-FlagType *PhantomZone;
-FlagType *Genocide;
-FlagType *Jumping;
-FlagType *Identify;
-FlagType *Cloaking;
-FlagType *Useless;
-FlagType *Masquerade;
-FlagType *Seer;
-FlagType *Thief;
-FlagType *Burrow;
-FlagType *Wings;
-FlagType *Agility;
-FlagType *Colorblindness;
-FlagType *Obesity;
-FlagType *LeftTurnOnly;
-FlagType *RightTurnOnly;
-FlagType *ForwardOnly;
-FlagType *ReverseOnly;
-FlagType *Momentum;
-FlagType *Blindness;
-FlagType *Jamming;
-FlagType *WideAngle;
-FlagType *NoJumping;
-FlagType *TriggerHappy;
-FlagType *ReverseControls;
-FlagType *Bouncy;
+    FlagType::Ptr Null;
+    FlagType::Ptr RedTeam;
+    FlagType::Ptr GreenTeam;
+    FlagType::Ptr BlueTeam;
+    FlagType::Ptr PurpleTeam;
+    FlagType::Ptr Velocity;
+    FlagType::Ptr QuickTurn;
+    FlagType::Ptr OscillationOverthruster;
+    FlagType::Ptr RapidFire;
+    FlagType::Ptr MachineGun;
+    FlagType::Ptr GuidedMissile;
+    FlagType::Ptr Laser;
+    FlagType::Ptr Ricochet;
+    FlagType::Ptr SuperBullet;
+    FlagType::Ptr InvisibleBullet;
+    FlagType::Ptr Stealth;
+    FlagType::Ptr Tiny;
+    FlagType::Ptr Narrow;
+    FlagType::Ptr Shield;
+    FlagType::Ptr Steamroller;
+    FlagType::Ptr ShockWave;
+    FlagType::Ptr PhantomZone;
+    FlagType::Ptr Genocide;
+    FlagType::Ptr Jumping;
+    FlagType::Ptr Identify;
+    FlagType::Ptr Cloaking;
+    FlagType::Ptr Useless;
+    FlagType::Ptr Masquerade;
+    FlagType::Ptr Seer;
+    FlagType::Ptr Thief;
+    FlagType::Ptr Burrow;
+    FlagType::Ptr Wings;
+    FlagType::Ptr Agility;
+    FlagType::Ptr Colorblindness;
+    FlagType::Ptr Obesity;
+    FlagType::Ptr LeftTurnOnly;
+    FlagType::Ptr RightTurnOnly;
+    FlagType::Ptr ForwardOnly;
+    FlagType::Ptr ReverseOnly;
+    FlagType::Ptr Momentum;
+    FlagType::Ptr Blindness;
+    FlagType::Ptr Jamming;
+    FlagType::Ptr WideAngle;
+    FlagType::Ptr NoJumping;
+    FlagType::Ptr TriggerHappy;
+    FlagType::Ptr ReverseControls;
+    FlagType::Ptr Bouncy;
 
-void init()
-{
-    Null    = new FlagType( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, "" );
-
-    RedTeam = new FlagType( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
-                            "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-    GreenTeam   = new FlagType( "Green Team", "G*", FlagNormal, NormalShot, FlagGood, ::GreenTeam,
-                                "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-    BlueTeam    = new FlagType( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood, ::BlueTeam,
-                                "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-    PurpleTeam  = new FlagType( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, ::PurpleTeam,
-                                "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" );
-    Velocity    = new FlagType( "High Speed", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Tank moves faster.  Outrun bad guys." );
-    QuickTurn   = new FlagType( "Quick Turn", "QT", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Tank turns faster.  Good for dodging." );
-    OscillationOverthruster = new FlagType( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                            "Can drive through buildings.  Can't back up or shoot while inside." );
-    RapidFire   = new FlagType( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Shoots more often.  Shells go faster but not as far." );
-    MachineGun  = new FlagType( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Very fast reload and very short range." );
-    GuidedMissile   = new FlagType( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                    "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." );
-    Laser   = new FlagType( "Laser", "L", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                            "Shoots a laser.  Infinite speed and range but long reload time.");
-    Ricochet    = new FlagType( "Ricochet", "R", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Shots bounce off walls.  Don't shoot yourself!" );
-    SuperBullet = new FlagType( "Super Bullet", "SB", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Shoots through buildings.  Can kill Phantom Zone." );
-    InvisibleBullet = new FlagType( "Invisible Bullet", "IB", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                    "Your shots don't appear on other radars.  Can still see them out window.");
-    Stealth = new FlagType( "Stealth", "ST", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!");
-    Tiny    = new FlagType( "Tiny", "T", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank is small and can get through small openings.  Very hard to hit." );
-    Narrow  = new FlagType( "Narrow", "N", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings.");
-    Shield  = new FlagType( "Shield", "SH", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Getting hit only drops flag.  Flag flies an extra-long time.");
-    Steamroller = new FlagType( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Destroys tanks you touch but you have to get really close.");
-    ShockWave   = new FlagType( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings.");
-    PhantomZone = new FlagType( "Phantom Zone", "PZ", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                                "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks).");
-    Genocide    = new FlagType( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Killing one tank kills that tank's whole team.");
-    Jumping = new FlagType( "Jumping", "JP", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank can jump.  Use Tab key.  Can't steer in the air.");
-    Identify    = new FlagType( "Identify", "ID", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Identifies type of nearest flag.");
-    Cloaking    = new FlagType( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "Makes your tank invisible out-the-window.  Still visible on radar.");
-    Useless = new FlagType( "Useless", "US", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "You have found the useless flag. Use it wisely.");
-    Masquerade  = new FlagType( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                                "In opponent's hud, you appear as a teammate.");
-    Seer    = new FlagType( "Seer", "SE", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "See stealthed, cloaked and masquerading tanks as normal.");
-    Thief   = new FlagType( "Thief", "TH", FlagUnstable, SpecialShot, FlagGood, NoTeam,
-                            "Steal flags.  Small and fast but can't kill.");
-    Burrow  = new FlagType( "Burrow", "BU", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!");
-    Wings   = new FlagType( "Wings", "WG", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank can drive in air.");
-    Agility = new FlagType( "Agility", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
-                            "Tank is quick and nimble making it easier to dodge.");
-    ReverseControls = new FlagType( "ReverseControls", "RC", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                    "Tank driving controls are reversed.");
-    Colorblindness  = new FlagType( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                    "Can't tell team colors.  Don't shoot teammates!");
-    Obesity = new FlagType( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,
-                            "Tank becomes very large.  Can't fit through teleporters.");
-    LeftTurnOnly    = new FlagType( "Left Turn Only", "LT", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                    "Can't turn right.");
-    RightTurnOnly   = new FlagType( "Right Turn Only", "RT", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                    "Can't turn left.");
-    ForwardOnly = new FlagType( "Forward Only", "FO", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Can't drive in reverse.");
-    ReverseOnly = new FlagType( "ReverseOnly", "RO", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Can't drive forward.");
-    Momentum    = new FlagType( "Momentum", "M", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Tank has inertia.  Acceleration is limited.");
-    Blindness   = new FlagType( "Blindness", "B", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Can't see out window.  Radar still works.");
-    Jamming = new FlagType( "Jamming", "JM", FlagSticky, NormalShot, FlagBad, NoTeam,
-                            "Radar doesn't work.  Can still see.");
-    WideAngle   = new FlagType( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Fish-eye lens distorts view.");
-    NoJumping   = new FlagType( "No Jumping", "NJ", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                "Tank can't jump.");
-    TriggerHappy    = new FlagType( "Trigger Happy", "TR", FlagSticky, NormalShot, FlagBad, NoTeam,
-                                    "Tank can't stop firing.");
-    Bouncy  = new FlagType( "Bouncy", "BY", FlagSticky, NormalShot, FlagBad, NoTeam,
-                            "Tank can't stop bouncing.");
-}
-
-void kill()
-{
-    clearCustomFlags();
-
-    delete RedTeam;
-    delete GreenTeam;
-    delete BlueTeam;
-    delete PurpleTeam;
-    delete Velocity;
-    delete QuickTurn;
-    delete OscillationOverthruster;
-    delete RapidFire;
-    delete MachineGun;
-    delete GuidedMissile;
-    delete Laser;
-    delete Ricochet;
-    delete SuperBullet;
-    delete InvisibleBullet;
-    delete Stealth;
-    delete Tiny;
-    delete Narrow;
-    delete Shield;
-    delete Steamroller;
-    delete ShockWave;
-    delete PhantomZone;
-    delete Genocide;
-    delete Jumping;
-    delete Identify;
-    delete Cloaking;
-    delete Useless;
-    delete Masquerade;
-    delete Seer;
-    delete Thief;
-    delete Burrow;
-    delete Wings;
-    delete Agility;
-    delete ReverseControls;
-    delete Colorblindness;
-    delete Obesity;
-    delete LeftTurnOnly;
-    delete RightTurnOnly;
-    delete ForwardOnly;
-    delete ReverseOnly;
-    delete Momentum;
-    delete Blindness;
-    delete Jamming;
-    delete WideAngle;
-    delete NoJumping;
-    delete TriggerHappy;
-    delete Bouncy;
-
-    delete[] FlagType::flagSets;
-}
-
-void clearCustomFlags()
-{
-    FlagSet::iterator itr, nitr;
-    for (int q = 0; q < (int)NumQualities; ++q)
+    FlagType::Ptr AddStdFlag(FlagType::Ptr ptr)
     {
-        for (itr = FlagType::flagSets[q].begin(); itr != FlagType::flagSets[q].end(); ++itr)
+        if (FlagType::FlagType::Sets.size() == 0)
+            FlagType::FlagType::Sets = std::vector<FlagType::Set>(NumQualities);
+
+        if (ptr->custom)
+            FlagType::customFlags.insert(ptr);
+
+        FlagType::FlagType::Sets[ptr->flagQuality].insert(ptr);
+        FlagType::getFlagMap()[ptr->flagAbbv] = ptr;
+
+        return ptr;
+    }
+
+    FlagType::Ptr AddCustomFlag(FlagType::Ptr ptr)
+    {
+        return AddStdFlag(ptr);
+    }
+
+    void init()
+    {
+        Null    = AddStdFlag(std::make_shared<FlagType>( "", "", FlagNormal, NormalShot, FlagGood, NoTeam, "" ));
+
+        RedTeam = AddStdFlag(std::make_shared<FlagType>( "Red Team", "R*", FlagNormal, NormalShot, FlagGood, ::RedTeam,
+                                "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ));
+        GreenTeam   = AddStdFlag(std::make_shared<FlagType>( "Green Team", "G*", FlagNormal, NormalShot, FlagGood, ::GreenTeam,
+                                    "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ));
+        BlueTeam    = AddStdFlag(std::make_shared<FlagType>( "Blue Team", "B*", FlagNormal, NormalShot, FlagGood, ::BlueTeam,
+                                    "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ));
+        PurpleTeam  = AddStdFlag(std::make_shared<FlagType>( "Purple Team", "P*", FlagNormal, NormalShot, FlagGood, ::PurpleTeam,
+                                    "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ));
+        Velocity    = AddStdFlag(std::make_shared<FlagType>( "High Speed", "V", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Tank moves faster.  Outrun bad guys." ));
+        QuickTurn   = AddStdFlag(std::make_shared<FlagType>( "Quick Turn", "QT", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Tank turns faster.  Good for dodging." ));
+        OscillationOverthruster = AddStdFlag(std::make_shared<FlagType>( "Oscillation Overthruster", "OO", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                                "Can drive through buildings.  Can't back up or shoot while inside." ));
+        RapidFire   = AddStdFlag(std::make_shared<FlagType>( "Rapid Fire", "F", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Shoots more often.  Shells go faster but not as far." ));
+        MachineGun  = AddStdFlag(std::make_shared<FlagType>( "Machine Gun", "MG", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Very fast reload and very short range." ));
+        GuidedMissile   = AddStdFlag(std::make_shared<FlagType>( "Guided Missile", "GM", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                        "Shots track a target.  Lock on with right button.  Can lock on or retarget after firing." ));
+        Laser   = AddStdFlag(std::make_shared<FlagType>( "Laser", "L", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                "Shoots a laser.  Infinite speed and range but long reload time."));
+        Ricochet    = AddStdFlag(std::make_shared<FlagType>( "Ricochet", "R", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Shots bounce off walls.  Don't shoot yourself!" ));
+        SuperBullet = AddStdFlag(std::make_shared<FlagType>( "Super Bullet", "SB", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Shoots through buildings.  Can kill Phantom Zone." ));
+        InvisibleBullet = AddStdFlag(std::make_shared<FlagType>( "Invisible Bullet", "IB", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                        "Your shots don't appear on other radars.  Can still see them out window."));
+        Stealth = AddStdFlag(std::make_shared<FlagType>( "Stealth", "ST", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank is invisible on radar.  Shots are still visible.  Sneak up behind enemies!"));
+        Tiny    = AddStdFlag(std::make_shared<FlagType>( "Tiny", "T", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank is small and can get through small openings.  Very hard to hit." ));
+        Narrow  = AddStdFlag(std::make_shared<FlagType>( "Narrow", "N", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank is super thin.  Very hard to hit from front but is normal size from side.  Can get through small openings."));
+        Shield  = AddStdFlag(std::make_shared<FlagType>( "Shield", "SH", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Getting hit only drops flag.  Flag flies an extra-long time."));
+        Steamroller = AddStdFlag(std::make_shared<FlagType>( "Steamroller", "SR", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Destroys tanks you touch but you have to get really close."));
+        ShockWave   = AddStdFlag(std::make_shared<FlagType>( "Shock Wave", "SW", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Firing destroys all tanks nearby.  Don't kill teammates!  Can kill tanks on/in buildings."));
+        PhantomZone = AddStdFlag(std::make_shared<FlagType>( "Phantom Zone", "PZ", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                    "Teleporting toggles Zoned effect.  Zoned tank can drive through buildings.  Zoned tank shoots Zoned bullets and can't be shot (except by superbullet, shock wave, and other Zoned tanks)."));
+        Genocide    = AddStdFlag(std::make_shared<FlagType>( "Genocide", "G", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Killing one tank kills that tank's whole team."));
+        Jumping = AddStdFlag(std::make_shared<FlagType>( "Jumping", "JP", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank can jump.  Use Tab key.  Can't steer in the air."));
+        Identify    = AddStdFlag(std::make_shared<FlagType>( "Identify", "ID", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Identifies type of nearest flag."));
+        Cloaking    = AddStdFlag(std::make_shared<FlagType>( "Cloaking", "CL", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "Makes your tank invisible out-the-window.  Still visible on radar."));
+        Useless = AddStdFlag(std::make_shared<FlagType>( "Useless", "US", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "You have found the useless flag. Use it wisely."));
+        Masquerade  = AddStdFlag(std::make_shared<FlagType>( "Masquerade", "MQ", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                    "In opponent's hud, you appear as a teammate."));
+        Seer    = AddStdFlag(std::make_shared<FlagType>( "Seer", "SE", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "See stealthed, cloaked and masquerading tanks as normal."));
+        Thief   = AddStdFlag(std::make_shared<FlagType>( "Thief", "TH", FlagUnstable, SpecialShot, FlagGood, NoTeam,
+                                "Steal flags.  Small and fast but can't kill."));
+        Burrow  = AddStdFlag(std::make_shared<FlagType>( "Burrow", "BU", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank burrows underground, impervious to normal shots, but can be steamrolled by anyone!"));
+        Wings   = AddStdFlag(std::make_shared<FlagType>( "Wings", "WG", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank can drive in air."));
+        Agility = AddStdFlag(std::make_shared<FlagType>( "Agility", "A", FlagUnstable, NormalShot, FlagGood, NoTeam,
+                                "Tank is quick and nimble making it easier to dodge."));
+        ReverseControls = AddStdFlag(std::make_shared<FlagType>( "ReverseControls", "RC", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                        "Tank driving controls are reversed."));
+        Colorblindness  = AddStdFlag(std::make_shared<FlagType>( "Colorblindness", "CB", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                        "Can't tell team colors.  Don't shoot teammates!"));
+        Obesity = AddStdFlag(std::make_shared<FlagType>( "Obesity", "O", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                "Tank becomes very large.  Can't fit through teleporters."));
+        LeftTurnOnly    = AddStdFlag(std::make_shared<FlagType>( "Left Turn Only", "LT", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                        "Can't turn right."));
+        RightTurnOnly   = AddStdFlag(std::make_shared<FlagType>( "Right Turn Only", "RT", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                        "Can't turn left."));
+        ForwardOnly = AddStdFlag(std::make_shared<FlagType>( "Forward Only", "FO", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Can't drive in reverse."));
+        ReverseOnly = AddStdFlag(std::make_shared<FlagType>( "ReverseOnly", "RO", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Can't drive forward."));
+        Momentum    = AddStdFlag(std::make_shared<FlagType>( "Momentum", "M", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Tank has inertia.  Acceleration is limited."));
+        Blindness   = AddStdFlag(std::make_shared<FlagType>( "Blindness", "B", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Can't see out window.  Radar still works."));
+        Jamming = AddStdFlag(std::make_shared<FlagType>( "Jamming", "JM", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                "Radar doesn't work.  Can still see."));
+        WideAngle   = AddStdFlag(std::make_shared<FlagType>( "Wide Angle", "WA", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Fish-eye lens distorts view."));
+        NoJumping   = AddStdFlag(std::make_shared<FlagType>( "No Jumping", "NJ", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                    "Tank can't jump."));
+        TriggerHappy    = AddStdFlag(std::make_shared<FlagType>( "Trigger Happy", "TR", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                        "Tank can't stop firing."));
+        Bouncy  = AddStdFlag(std::make_shared<FlagType>( "Bouncy", "BY", FlagSticky, NormalShot, FlagBad, NoTeam,
+                                "Tank can't stop bouncing."));
+    }
+
+    void kill()
+    {
+        clearCustomFlags();
+
+        RedTeam = nullptr;
+        GreenTeam = nullptr;
+        BlueTeam = nullptr;
+        PurpleTeam = nullptr;
+        Velocity = nullptr;
+        QuickTurn = nullptr;
+        OscillationOverthruster = nullptr;
+        RapidFire = nullptr;
+        MachineGun = nullptr;
+        GuidedMissile = nullptr;
+        Laser = nullptr;
+        Ricochet = nullptr;
+        SuperBullet = nullptr;
+        InvisibleBullet = nullptr;
+        Stealth = nullptr;
+        Tiny = nullptr;
+        Narrow = nullptr;
+        Shield = nullptr;
+        Steamroller = nullptr;
+        ShockWave = nullptr;
+        PhantomZone = nullptr;
+        Genocide = nullptr;
+        Jumping = nullptr;
+        Identify = nullptr;
+        Cloaking = nullptr;
+        Useless = nullptr;
+        Masquerade = nullptr;
+        Seer = nullptr;
+        Thief = nullptr;
+        Burrow = nullptr;
+        Wings = nullptr;
+        Agility = nullptr;
+        ReverseControls = nullptr;
+        Colorblindness = nullptr;
+        Obesity = nullptr;
+        LeftTurnOnly = nullptr;
+        RightTurnOnly = nullptr;
+        ForwardOnly = nullptr;
+        ReverseOnly = nullptr;
+        Momentum = nullptr;
+        Blindness = nullptr;
+        Jamming = nullptr;
+        WideAngle = nullptr;
+        NoJumping = nullptr;
+        TriggerHappy = nullptr;
+        Bouncy = nullptr;
+
+        FlagType::FlagType::Sets.clear();
+        FlagType::customFlags.clear();
+    }
+
+    void clearCustomFlags()
+    {
+        FlagType::Set::iterator itr, nitr;
+        for (int q = 0; q < (int)NumQualities; ++q)
         {
-            if ((*itr)->custom)
+            for (itr = FlagType::FlagType::Sets[q].begin(); itr != FlagType::FlagType::Sets[q].end(); ++itr)
             {
-                FlagType::getFlagMap().erase((*itr)->flagAbbv);
-                nitr = itr;
-                ++nitr;
-                delete (*itr);
-                FlagType::flagSets[q].erase(itr);
-                itr = nitr;
-                if (itr == FlagType::flagSets[q].end()) break;
+                if ((*itr)->custom)
+                {
+                    FlagType::getFlagMap().erase((*itr)->flagAbbv);
+                    nitr = itr;
+                    ++nitr;
+                    FlagType::FlagType::Sets[q].erase(itr);
+                    itr = nitr;
+                    if (itr == FlagType::FlagType::Sets[q].end()) break;
+                }
             }
         }
+        FlagType::customFlags.clear();
     }
-    FlagType::customFlags.clear();
-}
 }
 
 void* FlagType::pack(void* buf) const
@@ -271,7 +290,7 @@ void* FlagType::fakePack(void* buf) const
     return buf;
 }
 
-const void* FlagType::unpack(const void* buf, FlagType* &type)
+const void* FlagType::unpack(const void* buf, FlagType::Ptr &type)
 {
     unsigned char abbv[3] = {0, 0, 0};
     buf = nboUnpackUByte(buf, abbv[0]);
@@ -290,7 +309,7 @@ void* FlagType::packCustom(void* buf) const
     return buf;
 }
 
-const void* FlagType::unpackCustom(const void* buf, FlagType* &type)
+const void* FlagType::unpackCustom(const void* buf, FlagType::Ptr &type)
 {
     uint8_t *abbv = new uint8_t[3];
     abbv[0]=abbv[1]=abbv[2]=0;
@@ -319,14 +338,14 @@ const void* FlagType::unpackCustom(const void* buf, FlagType* &type)
         assert(false); // shouldn't happen
     }
 
-    type = new FlagType(sName, reinterpret_cast<const char*>(&abbv[0]),
-                        e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true);
+    type = Flags::AddCustomFlag(std::make_shared<FlagType>(sName, reinterpret_cast<const char*>(&abbv[0]),
+                        e, (ShotType)shot, (FlagQuality)quality, NoTeam, sHelp, true));
     return buf;
 }
 
-FlagTypeMap& FlagType::getFlagMap()
+static FlagType::TypeMap flagMap;
+FlagType::TypeMap& FlagType::getFlagMap()
 {
-    static FlagTypeMap flagMap;
     return flagMap;
 }
 
@@ -379,9 +398,9 @@ const void* Flag::unpack(const void* buf)
     return buf;
 }
 
-FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)
+FlagType::Ptr Flag::getDescFromAbbreviation(const char* abbreviation)
 {
-    FlagTypeMap::iterator i;
+    FlagType::TypeMap::iterator i;
     std::string abbvString;
 
     /* Uppercase the abbreviation */
@@ -399,14 +418,14 @@ FlagType* Flag::getDescFromAbbreviation(const char* abbreviation)
         return i->second;
 }
 
-FlagSet& Flag::getGoodFlags()
+FlagType::Set& Flag::getGoodFlags()
 {
-    return FlagType::flagSets[FlagGood];
+    return FlagType::FlagType::Sets[FlagGood];
 }
 
-FlagSet& Flag::getBadFlags()
+FlagType::Set& Flag::getBadFlags()
 {
-    return FlagType::flagSets[FlagBad];
+    return FlagType::FlagType::Sets[FlagBad];
 }
 
 const float* FlagType::getColor() const

@@ -99,7 +99,7 @@ public:
     void      setFrameRadarTriangleCount(int rtpf);
     void      setAlert(int num, const char* string, float duration,
                        bool warning = false);
-    void      setFlagHelp(FlagType* desc, float duration);
+    void      setFlagHelp(FlagType::Ptr desc, float duration);
     void      initCracks();
     void      setCracks(bool showCracks);
     void      addMarker(float heading, const float *color);

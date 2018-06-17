@@ -78,7 +78,7 @@ public:
     void        sendRequestFlag(int flagIndex);
     void        sendDropFlag(const float* position);
     void        sendKilled(const PlayerId&, int reason,
-                           int shotId, const FlagType* flag, int phydrv);
+                           int shotId, const FlagType::Ptr flag, int phydrv);
     // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
     //      It should be changed to something cleaner.
     void        sendPlayerUpdate(Player*);

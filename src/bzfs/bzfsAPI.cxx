@@ -775,7 +775,7 @@ BZF_API bool bz_updatePlayerData ( bz_BasePlayerRecord *playerRecord )
         label = flagInfo->flag.type->label();
     playerRecord->currentFlag = label;
 
-    std::vector < FlagType* > flagHistoryList = player->flagHistory.getVec();
+    std::vector < FlagType::Ptr > flagHistoryList = player->flagHistory.getVec();
 
     playerRecord->flagHistory.clear();
     for (unsigned int i = 0; i < flagHistoryList.size(); i++)
@@ -1612,12 +1612,12 @@ BZF_API int bz_fireServerShot(const char* shotType, float origin[3], float vecto
         return INVALID_SHOT_GUID;
 
     std::string flagType = shotType;
-    FlagTypeMap &flagMap = FlagType::getFlagMap();
+    FlagType::TypeMap &flagMap = FlagType::getFlagMap();
 
     if (flagMap.find(flagType) == flagMap.end())
         return INVALID_SHOT_GUID;
 
-    FlagType *flag = flagMap.find(flagType)->second;
+    FlagType::Ptr flag = flagMap.find(flagType)->second;
 
     return world->getWorldWeapons().fireShot(flag, origin, vector, (TeamColor)convertTeam(color), targetPlayerId);
 }
@@ -1630,12 +1630,12 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
         return INVALID_SHOT_GUID;
 
     std::string flagType = flagName;
-    FlagTypeMap &flagMap = FlagType::getFlagMap();
+    FlagType::TypeMap &flagMap = FlagType::getFlagMap();
 
     if (flagMap.find(flagType) == flagMap.end())
         return INVALID_SHOT_GUID;
 
-    FlagType *flag = flagMap.find(flagType)->second;
+    FlagType::Ptr flag = flagMap.find(flagType)->second;
 
     void *buf, *bufStart = getDirectMessageBuffer();
 
@@ -2727,10 +2727,10 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const
     if (killerID == -1)
         killerID = ServerPlayer;
 
-    FlagType *flag = NULL;
+    FlagType::Ptr flag = nullptr;
     if ( flagType )
     {
-        FlagTypeMap &flagMap = FlagType::getFlagMap();
+        FlagType::TypeMap &flagMap = FlagType::getFlagMap();
         if (flagMap.find(std::string(flagType)) == flagMap.end())
             return false;
 
@@ -2754,7 +2754,7 @@ BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force 
 
     if (gkPlayer != NULL)
     {
-        FlagType* ft = Flag::getDescFromAbbreviation(flagType);
+        FlagType::Ptr ft = Flag::getDescFromAbbreviation(flagType);
         if (ft != Flags::Null)
         {
             // find unused and forced candidates
@@ -3069,11 +3069,11 @@ BZF_API bool bz_addWorldWeapon( const char* _flagType, float *pos, float rot, fl
 
     std::string flagType = _flagType;
 
-    FlagTypeMap &flagMap = FlagType::getFlagMap();
+    FlagType::TypeMap &flagMap = FlagType::getFlagMap();
     if (flagMap.find(std::string(flagType)) == flagMap.end())
         return false;
 
-    FlagType *flag = flagMap.find(std::string(flagType))->second;
+    FlagType::Ptr flag = flagMap.find(std::string(flagType))->second;
 
     std::vector<float> realDelays;
 
@@ -4496,7 +4496,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
     /* let this pointer dangle.  the constructor has taken care of all
      * the real work on the server side.
      */
-    FlagType* tmp = new FlagType(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, help, true);
+    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, help, true));
 
     /* default the shot limit.  note that -sl will still take effect, if
      * this plugin is loaded from the command line or config file, since

@@ -133,7 +133,7 @@ public:
 
     // death effects
     DeathEffect* addDeathEffect ( const float* rgb, const float* pos, float rot, int reason, Player *player,
-                                  FlagType* flag = NULL );
+                                  FlagType::Ptr flag = NULL );
     std::vector<std::string> getDeathEffectTypes ( void );
 
     // landing effects

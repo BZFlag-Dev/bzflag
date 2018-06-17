@@ -39,7 +39,7 @@ const void* EntryZone::unpack(const void* buf)
     int i;
     for (i = 0; i < flagCount; i++)
     {
-        FlagType *type;
+        FlagType::Ptr type;
         buf = FlagType::unpack (buf, type);
         flags.push_back(type);
     }

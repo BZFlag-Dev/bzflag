@@ -404,7 +404,7 @@ void GameKeeper::Player::setMaxShots(unsigned int _maxShots)
     maxShots = _maxShots;
 }
 
-float GetShotLifetime(FlagType* flagType)
+float GetShotLifetime(FlagType::Ptr flagType)
 {
     float lifeTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME));
     if (flagType == Flags::RapidFire)

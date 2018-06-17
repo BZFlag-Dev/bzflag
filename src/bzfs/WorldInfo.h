@@ -77,7 +77,7 @@ public:
     void addLink(const std::string& from, const std::string& to);
 
     void addZone(const CustomZone *zone);
-    void addWeapon(const FlagType *type, const float *origin,
+    void addWeapon(const FlagType::Ptr type, const float *origin,
                    float direction, float tilt, TeamColor teamColor,
                    float initdelay, const std::vector<float> &delay, TimeKeeper &sync);
     void addWaterLevel (float level, const BzMaterial* matref);

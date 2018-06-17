@@ -222,7 +222,7 @@ bool EntryZones::getSafetyPoint( const std::string &qualifier,
 
 
 void EntryZones::makeSplitLists (int zone,
-                                 std::vector<FlagType*> &flags,
+                                 std::vector<FlagType::Ptr> &flags,
                                  std::vector<TeamColor> &teams,
                                  std::vector<TeamColor> &safety) const
 {
@@ -243,7 +243,7 @@ void EntryZones::makeSplitLists (int zone,
             {
                 const std::string& qual = mit->first;
                 int team;
-                FlagType *type;
+                FlagType::Ptr type;
                 if ((type = CustomZone::getFlagTypeFromQualifier(qual)) != Flags::Null)
                     flags.push_back(type);
                 else if ((team = CustomZone::getPlayerTeamFromQualifier(qual)) >= 0)
@@ -267,7 +267,7 @@ void * EntryZones::pack(void *buf) const
     for (unsigned int i = 0; i < zones.size(); i++)
     {
         const WorldFileLocation& z = (const WorldFileLocation) zones[i];
-        std::vector<FlagType*> flags;
+        std::vector<FlagType::Ptr> flags;
         std::vector<TeamColor> teams;
         std::vector<TeamColor> safety;
         makeSplitLists (i, flags, teams, safety);
@@ -295,7 +295,7 @@ int EntryZones::packSize() const
 
     for (unsigned int i = 0; i < zones.size(); i++)
     {
-        std::vector<FlagType*> flags;
+        std::vector<FlagType::Ptr> flags;
         std::vector<TeamColor> teams;
         std::vector<TeamColor> safety;
         makeSplitLists (i, flags, teams, safety);

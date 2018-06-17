@@ -33,7 +33,7 @@ public:
     float pos[3];
     float size[3];
     float rot;
-    std::vector<FlagType*> flags;
+    std::vector<FlagType::Ptr> flags;
     std::vector<TeamColor> teams;
     std::vector<TeamColor> safety;
 };

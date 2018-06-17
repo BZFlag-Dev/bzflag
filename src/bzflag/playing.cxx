@@ -1335,7 +1335,7 @@ static void     updateHighScores()
         hud->setTeamHasHighScore(false);
 }
 
-static void     updateFlag(FlagType* flag)
+static void     updateFlag(FlagType::Ptr flag)
 {
     if (flag == Flags::Null)
     {
@@ -2465,7 +2465,7 @@ static void     handleServerMessage(bool human, uint16_t code,
     case MsgKilled:
     {
         PlayerId victim, killer;
-        FlagType* flagType;
+        FlagType::Ptr flagType;
         int16_t shotId, reason;
         int phydrv = -1;
         msg = nboUnpackUByte(msg, victim);
@@ -2750,7 +2750,7 @@ static void     handleServerMessage(bool human, uint16_t code,
         }
         else
         {
-            FlagType* fd = world->getFlag(flagIndex).type;
+            FlagType::Ptr fd = world->getFlag(flagIndex).type;
             if ( fd->flagTeam != NoTeam
                     && fd->flagTeam != tank->getTeam()
                     && ((tank && (tank->getTeam() == myTank->getTeam())))
@@ -3472,7 +3472,7 @@ static void     handleServerMessage(bool human, uint16_t code,
 
     case MsgFlagType:
     {
-        FlagType* typ = NULL;
+        FlagType::Ptr typ = NULL;
         FlagType::unpackCustom(msg, typ);
         logDebugMessage(1, "Got custom flag type from server: %s\n", typ->information().c_str());
         break;
@@ -3931,7 +3931,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
         return false;
 
     int shotId = -1;
-    FlagType* flagType = Flags::Null;
+    FlagType::Ptr flagType = Flags::Null;
     if (hit != nullptr)
     {
         shotId = hit->getShotId();
@@ -3939,7 +3939,7 @@ static bool     gotBlowedUp(BaseLocalPlayer* tank,
     }
 
     // you can't take it with you
-    const FlagType* flag = tank->getFlag();
+    const FlagType::Ptr flag = tank->getFlag();
     if (flag != Flags::Null)
     {
         if (myTank->isAutoPilot())
@@ -4099,7 +4099,7 @@ static void     checkEnvironment()
         // Check for an observed tanks hit.
         Player *target = ROAM.getTargetTank();
        ShotPath::Ptr hit;
-        FlagType* flagd;
+        FlagType::Ptr flagd;
         float minTime = Infinity;
         int i;
 
@@ -4157,7 +4157,7 @@ static void     checkEnvironment()
     // skip this if i'm dead or paused
     if (!myTank->isAlive() || myTank->isPaused()) return;
 
-    FlagType* flagd = myTank->getFlag();
+    FlagType::Ptr flagd = myTank->getFlag();
     if (flagd->flagTeam != NoTeam)
     {
         // have I captured a flag?
@@ -4219,7 +4219,7 @@ static void     checkEnvironment()
         if (hit->isStoppedByHit())
             serverLink->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
 
-        FlagType* killerFlag = hit->getFlag();
+        FlagType::Ptr killerFlag = hit->getFlag();
         bool stopShot;
 
         if (killerFlag == Flags::Thief)
@@ -4426,7 +4426,7 @@ void setLookAtMarker(void)
                                 label, isFriendly(bestTarget), 2.0f);
 }
 
-static inline bool tankHasShotType(const Player* tank, const FlagType* ft)
+static inline bool tankHasShotType(const Player* tank, const FlagType::Ptr ft)
 {
     for (auto sp : tank->getShots())
     {
@@ -4872,7 +4872,7 @@ static void     checkEnvironment(RobotPlayer* tank)
         if (hit->isStoppedByHit())
             lookupServer(tank)->sendEndShot(hit->getPlayer(), hit->getShotId(), 1);
 
-        FlagType* killerFlag = hit->getFlag();
+        FlagType::Ptr killerFlag = hit->getFlag();
         bool stopShot;
 
         if (killerFlag == Flags::Thief)
@@ -5318,7 +5318,7 @@ static void markOld(std::string &fileName)
 static void sendFlagNegotiation()
 {
     char msg[MaxPacketLen];
-    FlagTypeMap::iterator i;
+    FlagType::TypeMap::iterator i;
     char *buf = msg;
 
     /* Send MsgNegotiateFlags to the server with
@@ -6965,7 +6965,7 @@ static void     updatePauseCountdown(float dt)
             else
             {
                 // okay, now we pause.  first drop any team flag we may have.
-                const FlagType* flagd = myTank->getFlag();
+                const FlagType::Ptr flagd = myTank->getFlag();
                 if (flagd->flagTeam != NoTeam)
                     serverLink->sendDropFlag(myTank->getPosition());
 

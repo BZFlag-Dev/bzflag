@@ -734,7 +734,7 @@ void            ServerLink::sendDropFlag(const float* position)
 
 void            ServerLink::sendKilled(const PlayerId& killer,
                                        int reason, int shotId,
-                                       const FlagType* flagType,
+                                       const FlagType::Ptr flagType,
                                        int phydrv)
 {
     char msg[PlayerIdPLen + 2 + 2 + FlagPackSize + 4];

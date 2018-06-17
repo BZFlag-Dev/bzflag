@@ -273,7 +273,7 @@ float Player::getRadius() const
 float Player::getMaxSpeed ( void ) const
 {
     // BURROW and AGILITY will not be taken into account
-    const FlagType* flag = getFlag();
+    const FlagType::Ptr flag = getFlag();
     float maxSpeed = BZDBCache::tankSpeed;
     if (flag == Flags::Velocity)
         maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
@@ -790,7 +790,7 @@ void Player::changeLocalScore(short dWins, short dLosses, short dTeamKills)
 }
 
 
-void Player::setFlag(FlagType* _flag, int _limit)
+void Player::setFlag(FlagType::Ptr _flag, int _limit)
 {
     // set the type
     flagType = _flag;
@@ -800,7 +800,7 @@ void Player::setFlag(FlagType* _flag, int _limit)
 }
 
 
-void Player::updateFlagEffect(FlagType* effectFlag)
+void Player::updateFlagEffect(FlagType::Ptr effectFlag)
 {
     float FlagEffectTime = BZDB.eval(StateDatabase::BZDB_FLAGEFFECTTIME);
     if (FlagEffectTime <= 0.0f)
@@ -1176,7 +1176,7 @@ ShotPath::Vec Player::getShots() const
     return ShotList::GetShotsForPlayer(getId());
 }
 
-float Player::getFlagReload(FlagType* flag) const
+float Player::getFlagReload(FlagType::Ptr flag) const
 {
     float baseReload = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 

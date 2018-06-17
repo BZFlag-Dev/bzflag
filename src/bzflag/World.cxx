@@ -1215,7 +1215,7 @@ bool World::writeWorld(const std::string& filename, std::string& fullname)
             if (!zone.flags.empty())
             {
                 out << indent << "  flag";
-                std::vector<FlagType*>::iterator fit;
+                std::vector<FlagType::Ptr>::iterator fit;
                 for (fit = zone.flags.begin(); fit != zone.flags.end(); ++fit)
                     out << " " << (*fit)->flagAbbv;
                 out << std::endl;

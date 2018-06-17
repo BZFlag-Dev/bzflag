@@ -19,7 +19,7 @@
 #include "Flag.h"
 
 void doAutoPilot(float &rotation, float &speed);
-void teachAutoPilot(FlagType *, int);
+void teachAutoPilot(FlagType::Ptr, int);
 
 #endif // BZF_AUTOPILOT_H
 

@@ -29,7 +29,7 @@
 /* system implementation headers */
 #include <algorithm>
 
-typedef std::map<FlagType*, std::pair<int,int> > FlagSuccessMap;
+typedef std::map<FlagType::Ptr, std::pair<int,int> > FlagSuccessMap;
 
 static FlagSuccessMap   flagSuccess;
 static int      totalSum = 0;
@@ -38,7 +38,7 @@ static bool     wantJump = false;
 
 static PlanStack planStack;
 
-void teachAutoPilot(FlagType *type, int adjust)
+void teachAutoPilot(FlagType::Ptr type, int adjust)
 {
     if (type == Flags::Null)
         return;
@@ -56,7 +56,7 @@ void teachAutoPilot(FlagType *type, int adjust)
     totalCnt++;
 }
 
-static bool isFlagUseful(FlagType *type)
+static bool isFlagUseful(FlagType::Ptr type)
 {
     if (type == Flags::Null)
         return false;
@@ -762,7 +762,7 @@ static bool fireAtTank()
 static void dropHardFlags()
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    FlagType *type = myTank->getFlag();
+    FlagType::Ptr type = myTank->getFlag();
     if ((type == Flags::Useless)
             ||  (type == Flags::MachineGun)
             ||  (type == Flags::Identify)

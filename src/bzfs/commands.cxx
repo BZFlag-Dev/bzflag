@@ -1476,7 +1476,7 @@ bool FlagCommand::operator() (const char     *message,
         const bool keepTeamFlags = ((argv.size() > 1) &&
                                     strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
 
-        FlagType* ft = Flag::getDescFromAbbreviation(command);
+        FlagType::Ptr ft = Flag::getDescFromAbbreviation(command);
 
         if (strncasecmp(command, "all", 3) == 0)
             bz_resetFlags(false, keepTeamFlags);
@@ -1614,7 +1614,7 @@ bool FlagCommand::operator() (const char     *message,
             }
             else
             {
-                FlagType* ft = Flag::getDescFromAbbreviation(argv[1].c_str());
+                FlagType::Ptr ft = Flag::getDescFromAbbreviation(argv[1].c_str());
                 if (ft != Flags::Null)
                 {
                     // find unused and forced candidates

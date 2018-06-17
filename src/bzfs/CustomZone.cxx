@@ -63,7 +63,7 @@ void CustomZone::addFlagSafety(float x, float y, WorldInfo* worldInfo)
 }
 
 
-void CustomZone::addZoneFlagCount(FlagType* flagType, int count)
+void CustomZone::addZoneFlagCount(FlagType::Ptr flagType, int count)
 {
     ZoneFlagMap::iterator it = zoneFlagMap.find(flagType);
     if (it != zoneFlagMap.end())
@@ -88,10 +88,10 @@ bool CustomZone::read(const char *cmd, std::istream& input)
         {
             if (flag == "good")
             {
-                FlagSet &fs = Flag::getGoodFlags();
-                for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it)
+                FlagType::Set &fs = Flag::getGoodFlags();
+                for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
                 {
-                    FlagType *f = *it;
+                    FlagType::Ptr f = *it;
                     if (f->endurance != FlagNormal)   // Null and Team flags
                     {
                         const std::string& qual = getFlagTypeQualifier(f);
@@ -102,10 +102,10 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             }
             else if (flag == "bad")
             {
-                FlagSet &fs = Flag::getBadFlags();
-                for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it)
+                FlagType::Set &fs = Flag::getBadFlags();
+                for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
                 {
-                    FlagType *f = *it;
+                    FlagType::Ptr f = *it;
                     if (f->endurance != FlagNormal)   // Null and Team flags
                     {
                         const std::string& qual = getFlagTypeQualifier(f);
@@ -116,7 +116,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             }
             else
             {
-                FlagType* f = Flag::getDescFromAbbreviation(flag.c_str());
+                FlagType::Ptr f = Flag::getDescFromAbbreviation(flag.c_str());
                 if (f == Flags::Null)
                 {
                     logDebugMessage(1,"WARNING: bad flag type: %s\n", flag.c_str());
@@ -153,27 +153,27 @@ bool CustomZone::read(const char *cmd, std::istream& input)
 
         if (flag == "good")
         {
-            FlagSet &fs = Flag::getGoodFlags();
-            for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it)
+            FlagType::Set &fs = Flag::getGoodFlags();
+            for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
             {
-                FlagType *f = *it;
+                FlagType::Ptr f = *it;
                 if (f->endurance != FlagNormal)   // Null and Team flags
                     addZoneFlagCount(f, count);
             }
         }
         else if (flag == "bad")
         {
-            FlagSet &fs = Flag::getBadFlags();
-            for (FlagSet::iterator it = fs.begin(); it != fs.end(); ++it)
+            FlagType::Set &fs = Flag::getBadFlags();
+            for (FlagType::Set::iterator it = fs.begin(); it != fs.end(); ++it)
             {
-                FlagType *f = *it;
+                FlagType::Ptr f = *it;
                 if (f->endurance != FlagNormal)   // Null and Team flags
                     addZoneFlagCount(f, count);
             }
         }
         else
         {
-            FlagType *f = Flag::getDescFromAbbreviation(flag.c_str());
+            FlagType::Ptr f = Flag::getDescFromAbbreviation(flag.c_str());
             if (f != Flags::Null)
                 addZoneFlagCount(f, count);
             else
@@ -289,7 +289,7 @@ int CustomZone::getFlagIdFromQualifier(const std::string& qual)
 }
 
 
-const std::string& CustomZone::getFlagTypeQualifier(FlagType* flagType)
+const std::string& CustomZone::getFlagTypeQualifier(FlagType::Ptr flagType)
 {
     static std::string qual;
     if (flagType != NULL)
@@ -302,7 +302,7 @@ const std::string& CustomZone::getFlagTypeQualifier(FlagType* flagType)
     return qual;
 }
 
-FlagType* CustomZone::getFlagTypeFromQualifier(const std::string& qual)
+FlagType::Ptr CustomZone::getFlagTypeFromQualifier(const std::string& qual)
 {
     if (qual[0] == 'f')
         return Flag::getDescFromAbbreviation(qual.c_str() + 1);

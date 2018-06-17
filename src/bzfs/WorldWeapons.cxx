@@ -29,7 +29,7 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-int WorldWeapons::fireShot(FlagType* type, const float origin[3], const float vector[3], TeamColor teamColor, PlayerId targetPlayerID)
+int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor, PlayerId targetPlayerID)
 {
     if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
         return INVALID_SHOT_GUID;
@@ -68,12 +68,12 @@ int WorldWeapons::fireShot(FlagType* type, const float origin[3], const float ve
 
     if (allowEvent.changed)
     {
-        FlagTypeMap &flagMap = FlagType::getFlagMap();
+        FlagType::TypeMap &flagMap = FlagType::getFlagMap();
 
         if (flagMap.find(allowEvent.flagType) == flagMap.end())
             return INVALID_SHOT_GUID;
 
-        FlagType *flag = flagMap.find(allowEvent.flagType)->second;
+        FlagType::Ptr flag = flagMap.find(allowEvent.flagType)->second;
         firingInfo.flagType = flag;
     }
 
@@ -125,12 +125,6 @@ WorldWeapons::~WorldWeapons()
 
 void WorldWeapons::clear(void)
 {
-    for (std::vector<Weapon*>::iterator it = weapons.begin();
-            it != weapons.end(); ++it)
-    {
-        Weapon *w = *it;
-        delete w;
-    }
     weapons.clear();
 }
 
@@ -138,10 +132,8 @@ void WorldWeapons::clear(void)
 float WorldWeapons::nextTime ()
 {
     TimeKeeper nextShot = TimeKeeper::getSunExplodeTime();
-    for (std::vector<Weapon*>::iterator it = weapons.begin();
-            it != weapons.end(); ++it)
+    for (auto & w : weapons)
     {
-        Weapon *w = *it;
         if (w->nextTime <= nextShot)
             nextShot = w->nextTime;
     }
@@ -153,17 +145,15 @@ void WorldWeapons::fire()
 {
     TimeKeeper nowTime = TimeKeeper::getCurrent();
 
-    for (std::vector<Weapon*>::iterator it = weapons.begin();
-            it != weapons.end(); ++it)
+    for (auto & w : weapons)
     {
-        Weapon *w = *it;
         if (w->nextTime <= nowTime)
         {
-            FlagType type = *(w->type);   // non-const copy
+            FlagType::Ptr  type = (w->type);   // non-const copy
 
             float vec[3] = { 0,0,0 };
             bz_vectorFromRotations(w->tilt, w->direction, vec);
-            fireShot(&type, w->origin, vec, w->teamColor);
+            fireShot(type, w->origin, vec, w->teamColor);
 
             //Set up timer for next shot, and eat any shots that have been missed
             while (w->nextTime <= nowTime)
@@ -178,12 +168,12 @@ void WorldWeapons::fire()
 }
 
 
-void WorldWeapons::add(const FlagType *type, const float *origin,
+void WorldWeapons::add(FlagType::Ptr type, const float *origin,
                        float direction, float tilt, TeamColor teamColor,
                        float initdelay, const std::vector<float> &delay,
                        TimeKeeper &sync)
 {
-    Weapon *w = new Weapon();
+    Weapon::Ptr w = std::make_shared<Weapon>();
     w->type = type;
     w->teamColor = teamColor;
     memmove(&w->origin, origin, 3*sizeof(float));
@@ -211,7 +201,7 @@ void * WorldWeapons::pack(void *buf) const
 
     for (unsigned int i=0 ; i < weapons.size(); i++)
     {
-        const Weapon *w = (const Weapon *) weapons[i];
+        const Weapon::Ptr w = weapons[i];
         buf = w->type->pack (buf);
         buf = nboPackVector(buf, w->origin);
         buf = nboPackFloat(buf, w->direction);
@@ -232,7 +222,7 @@ int WorldWeapons::packSize(void) const
 
     for (unsigned int i=0 ; i < weapons.size(); i++)
     {
-        const Weapon *w = (const Weapon *) weapons[i];
+        const Weapon::Ptr w = weapons[i];
         fullSize += FlagType::packSize; // flag type
         fullSize += sizeof(float[3]); // pos
         fullSize += sizeof(float);    // direction
@@ -266,7 +256,7 @@ bool shotUsedInList(int shotID, Shots::Shot::Vec& list)
 //----------WorldWeaponGlobalEventHandler---------------------
 // where we do the world weapon handling for event based shots since they are not really done by the "world"
 
-WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType *_type,
+WorldWeaponGlobalEventHandler::WorldWeaponGlobalEventHandler(FlagType::Ptr _type,
         const float *_origin,
         float _direction,
         float _tilt,

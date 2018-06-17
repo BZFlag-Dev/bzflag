@@ -44,7 +44,7 @@ public:
 
 protected:
 
-    FlagType *type;
+    FlagType::Ptr type;
 
     float initdelay;
     std::vector<float> delay;

@@ -103,7 +103,7 @@ void WorldInfo::addZone(const CustomZone *zone)
     entryZones.addZone( zone );
 }
 
-void WorldInfo::addWeapon(const FlagType *type, const float *origin,
+void WorldInfo::addWeapon(const FlagType::Ptr type, const float *origin,
                           float direction, float tilt, TeamColor teamColor,
                           float initdelay, const std::vector<float> &delay,
                           TimeKeeper &sync)
@@ -393,7 +393,7 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
 bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
                                  float* pt) const
 {
-    FlagType* flagType = fi->flag.type;
+    FlagType::Ptr flagType = fi->flag.type;
     const int team = (int)flagType->flagTeam;
     const bool teamFlag = (team != NoTeam);
 
@@ -421,7 +421,7 @@ bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
 
 bool WorldInfo::getFlagSpawnPoint(const FlagInfo* fi, float* pt) const
 {
-    FlagType* flagType = fi->flag.type;
+    FlagType::Ptr flagType = fi->flag.type;
     const int team = (int)flagType->flagTeam;
     const bool teamFlag = (team != NoTeam);
 

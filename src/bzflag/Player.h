@@ -74,7 +74,7 @@ public:
     const char*     getMotto() const;
     void            setMotto(const char* _motto);
     PlayerType      getPlayerType() const;
-    FlagType*       getFlag() const;
+    FlagType::Ptr       getFlag() const;
     long            getOrder() const;
     short           getStatus() const;
     const float*    getPosition() const;
@@ -186,7 +186,7 @@ public:
     void      setUserSpeed(float speed);
     void      setUserAngVel(float angvel);
     void      changeTeam(TeamColor);
-    virtual void  setFlag(FlagType*, int);
+    virtual void  setFlag(FlagType::Ptr, int);
     virtual void  changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void      changeSelfKills(short delta);
     void      changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);
@@ -196,7 +196,7 @@ public:
     void      setTeleport(const TimeKeeper&, short from, short to);
     void      endShot(int index, bool isHit = false,  bool showExplosion = false);
     virtual void  addShots(SceneDatabase* scene, bool colorblind) const;
-    void      addHitToStats(FlagType* flag);
+    void      addHitToStats(FlagType::Ptr flag);
 
     void*     pack(void*, uint16_t& code);
     const void*   unpack(const void*, uint16_t code);
@@ -226,7 +226,7 @@ protected:
     void    clearRemoteSounds();
     void    addRemoteSound(int sound);
 
-    float getFlagReload(FlagType* flag) const;
+    float getFlagReload(FlagType::Ptr flag) const;
 
     void UpdateShotSlots(float dt);
     ShotSlot::Vec ShotSlots;
@@ -253,7 +253,7 @@ private:
         float* predictedVel, float time) const;
     void calcRelativeMotion(float vel[2], float& speed, float& angvel);
     void setVisualTeam(TeamColor team);
-    void updateFlagEffect(FlagType* flag);
+    void updateFlagEffect(FlagType::Ptr flag);
     void updateTranslucency(float dt);
     void updateDimensions(float dt, bool local);
     void updateTreads(float dt);
@@ -296,7 +296,7 @@ private:
     PlayerType        type;             // Human/Computer
 
     // relatively stable data
-    FlagType*     flagType;             // flag type I'm holding
+    FlagType::Ptr     flagType;             // flag type I'm holding
     float         dimensions[3];        // current tank dimensions
     float         dimensionsScale[3];   // use to scale the dimensions
     float         dimensionsRate[3];    // relative to scale
@@ -414,7 +414,7 @@ inline PlayerType   Player::getPlayerType() const
     return type;
 }
 
-inline FlagType*    Player::getFlag() const
+inline FlagType::Ptr    Player::getFlag() const
 {
     return flagType;
 }
@@ -654,7 +654,7 @@ inline void     Player::setPlayerList(bool _playerList)
     playerList = _playerList;
 }
 
-inline void     Player::addHitToStats(FlagType* flag)
+inline void     Player::addHitToStats(FlagType::Ptr flag)
 {
     shotStatistics.recordHit(flag);
 }

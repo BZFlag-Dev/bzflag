@@ -159,7 +159,7 @@ static bool loadFileTime(RRtime *filetime, FILE *f);
 static bool replaceFlagTypes(ReplayHeader *h);
 static bool replaceSettings(ReplayHeader *h);
 static bool replaceWorldDatabase(ReplayHeader *h);
-static bool flagIsActive(FlagType *type);
+static bool flagIsActive(FlagType::Ptr type);
 static bool packFlagTypes(char *flags, u32 *flagsSize);
 
 static bool getFileList(int playerIndex, std::vector<FileEntry>& entries);
@@ -2258,12 +2258,12 @@ static bool replaceFlagTypes(ReplayHeader *h)
     bool replace = false;
     const void *buf = h->flags;
     FlagOptionMap headerFlag;
-    FlagTypeMap::iterator it;
+    FlagType::TypeMap::iterator it;
 
     // Unpack the stored list of flags from the header
     while (buf < (h->flags + h->flagsSize))
     {
-        FlagType *type;
+        FlagType::Ptr type;
         buf = FlagType::unpack(buf, type);
         headerFlag[type] = false;
         if (type != Flags::Null)
@@ -2277,7 +2277,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
     for (it = FlagType::getFlagMap().begin();
             it != FlagType::getFlagMap().end(); ++it)
     {
-        FlagType* &type = it->second;
+        FlagType::Ptr &type = it->second;
         if ((type != Flags::Null) &&
                 (headerFlag[type]) && !flagIsActive(type))
         {
@@ -2293,7 +2293,7 @@ static bool replaceFlagTypes(ReplayHeader *h)
         for (it = FlagType::getFlagMap().begin();
                 it != FlagType::getFlagMap().end(); ++it)
         {
-            FlagType* &type = it->second;
+            FlagType::Ptr &type = it->second;
             if (headerFlag[type])
                 clOptions->flagCount[type] = 1;
             clOptions->flagDisallowed[type] = false;
@@ -2360,7 +2360,7 @@ static bool replaceWorldDatabase(ReplayHeader *h)
 }
 
 
-static bool flagIsActive(FlagType *type)
+static bool flagIsActive(FlagType::Ptr type)
 {
     // Please see the MsgNegotiateFlags code in [bzfs.cxx]
     // to see what it is that we are trying to fake.
@@ -2376,12 +2376,12 @@ static bool flagIsActive(FlagType *type)
 static bool packFlagTypes(char *flags, u32 *flagsSize)
 {
     void *buf = flags;
-    FlagTypeMap::iterator it;
+    FlagType::TypeMap::iterator it;
 
     for (it = FlagType::getFlagMap().begin();
             it != FlagType::getFlagMap().end(); ++it)
     {
-        FlagType* &type = it->second;
+        FlagType::Ptr &type = it->second;
         if ((type != Flags::Null) && flagIsActive(type))
             buf = type->pack(buf);
     }

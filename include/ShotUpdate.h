@@ -64,7 +64,7 @@ public:
     float           timeSent;
     uint16_t         localID;        // ID local to the player
     ShotUpdate      shot;
-    FlagType*       flagType;       // flag when fired
+    FlagType::Ptr       flagType;       // flag when fired
     float           lifetime;       // lifetime of shot (s)
 };
 

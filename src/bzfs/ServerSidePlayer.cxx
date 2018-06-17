@@ -355,7 +355,7 @@ float bz_ServerSidePlayerHandler::getFacing ( void )
 }
 
 
-float computeMaxLinVelocity(FlagType *flag, float z)
+float computeMaxLinVelocity(FlagType::Ptr flag, float z)
 {
     float speed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
 
@@ -373,7 +373,7 @@ float computeMaxLinVelocity(FlagType *flag, float z)
 }
 
 
-float computeMaxAngleVelocity(FlagType *flag, float z)
+float computeMaxAngleVelocity(FlagType::Ptr flag, float z)
 {
     float angvel = BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
 
@@ -391,7 +391,7 @@ float computeMaxAngleVelocity(FlagType *flag, float z)
 
 float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 {
-    FlagType *flag = NULL;
+    FlagType::Ptr flag = nullptr;
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (player && player->player.haveFlag())
@@ -402,7 +402,7 @@ float bz_ServerSidePlayerHandler::getMaxLinSpeed ( void )
 
 float bz_ServerSidePlayerHandler::getMaxRotSpeed ( void )
 {
-    FlagType *flag = NULL;
+    FlagType::Ptr flag = nullptr;
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
     if (player && player->player.haveFlag())

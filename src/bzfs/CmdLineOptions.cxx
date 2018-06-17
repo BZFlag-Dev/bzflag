@@ -312,7 +312,7 @@ static void extraUsage(const char *pname)
     printVersion();
     std::cout << "\nUsage: " << pname << ' ' << usageString << std::endl;
     std::cout << std::endl << extraUsageString << std::endl << "Flag codes:\n";
-    for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
+    for (FlagType::TypeMap::iterator it = FlagType::getFlagMap().begin(); it != FlagType::getFlagMap().end(); ++it)
     {
         snprintf(buffer, 64, "\t%2.2s %s\n", (*it->second).flagAbbv.c_str(), (*it->second).flagName.c_str());
         std::cout << buffer;
@@ -1505,8 +1505,8 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
 }
 
 
-static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
-                                const std::set<FlagType*>& forbidden)
+static int getZoneTeamFlagCount(FlagType::Ptr flagType, EntryZones& entryZones,
+                                const std::set<FlagType::Ptr>& forbidden)
 {
     if (forbidden.find(flagType) != forbidden.end())
         return 0;
@@ -1528,8 +1528,8 @@ static int getZoneTeamFlagCount(FlagType* flagType, EntryZones& entryZones,
 
 
 static int addZoneTeamFlags(int startIndex,
-                            FlagType* flagType, EntryZones& entryZones,
-                            const std::set<FlagType*>& forbidden)
+                            FlagType::Ptr flagType, EntryZones& entryZones,
+                            const std::set<FlagType::Ptr>& forbidden)
 {
     if (forbidden.find(flagType) != forbidden.end())
         return startIndex;
@@ -1604,19 +1604,19 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     {
         if (strcmp(vsitr->c_str(), "bad") == 0)
         {
-            FlagSet badFlags = Flag::getBadFlags();
-            for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
+            FlagType::Set badFlags = Flag::getBadFlags();
+            for (FlagType::Set::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
                 options.flagDisallowed[*it] = true;
         }
         else if (strcmp(vsitr->c_str(), "good") == 0)
         {
-            FlagSet goodFlags = Flag::getGoodFlags();
-            for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
+            FlagType::Set goodFlags = Flag::getGoodFlags();
+            for (FlagType::Set::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
                 options.flagDisallowed[*it] = true;
         }
         else
         {
-            FlagType* fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+            FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
             if (fDesc == Flags::Null)
             {
                 std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
@@ -1641,14 +1641,14 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
         if (strcmp(vsitr->c_str(), "good") == 0)
         {
-            FlagSet goodFlags = Flag::getGoodFlags();
-            for (FlagSet::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
+            FlagType::Set goodFlags = Flag::getGoodFlags();
+            for (FlagType::Set::iterator it = goodFlags.begin(); it != goodFlags.end(); ++it)
                 options.flagCount[*it] += rptCnt;
         }
         else if (strcmp(vsitr->c_str(), "bad") == 0)
         {
-            FlagSet badFlags = Flag::getBadFlags();
-            for (FlagSet::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
+            FlagType::Set badFlags = Flag::getBadFlags();
+            for (FlagType::Set::iterator it = badFlags.begin(); it != badFlags.end(); ++it)
                 options.flagCount[*it] += rptCnt;
         }
         else if (strcmp(vsitr->c_str(), "team") == 0)
@@ -1658,7 +1658,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
         else
         {
-            FlagType *fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
+            FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(vsitr->c_str());
             if (fDesc == Flags::Null)
             {
                 std::cerr << "ERROR: invalid flag [" << (*vsitr) << "]" << std::endl;
@@ -1696,7 +1696,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
     }
 
-    std::set<FlagType*> forbidden;
+    std::set<FlagType::Ptr> forbidden;
     forbidden.insert(Flags::Null);
 
     // first disallow flags inconsistent with game style
@@ -1731,10 +1731,10 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         forbidden.insert(Flags::PurpleTeam);
 
     // void the forbidden flags
-    std::set<FlagType*>::const_iterator sit;
+    std::set<FlagType::Ptr>::const_iterator sit;
     for (sit = forbidden.begin(); sit != forbidden.end(); ++sit)
     {
-        FlagType* ft = *sit;
+        FlagType::Ptr ft = *sit;
         options.flagCount[ft] = 0;
         options.flagDisallowed[ft] = true;
     }
@@ -1765,7 +1765,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     if (options.numExtraFlags > 0)
     {
         // now count how many aren't disallowed
-        for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
+        for (FlagType::TypeMap::iterator it = FlagType::getFlagMap().begin();
                 it != FlagType::getFlagMap().end(); ++it)
         {
             if (!options.flagDisallowed[it->second])
@@ -1777,12 +1777,12 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         else
         {
             // types of extra flags allowed
-            std::vector<FlagType*> allowedFlags;
+            std::vector<FlagType::Ptr> allowedFlags;
             allowedFlags.clear();
-            for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
+            for (FlagType::TypeMap::iterator it = FlagType::getFlagMap().begin();
                     it != FlagType::getFlagMap().end(); ++it)
             {
-                FlagType *fDesc = it->second;
+                FlagType::Ptr fDesc = it->second;
                 if ((fDesc == Flags::Null) || (fDesc->flagTeam != ::NoTeam))
                     continue;
                 if (!options.flagDisallowed[it->second])
@@ -1807,7 +1807,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         }
     }
     // allocate space for normal flags
-    for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
+    for (FlagType::TypeMap::iterator it = FlagType::getFlagMap().begin();
             it != FlagType::getFlagMap().end(); ++it)
         numFlags += options.flagCount[it->second];
     // allocate space for zone flags (including teams flags)
@@ -1863,7 +1863,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     std::map<std::string, int>::iterator msiitr;
     for (msiitr = storedFlagLimits.begin(); msiitr != storedFlagLimits.end(); ++msiitr)
     {
-        FlagType *fDesc = Flag::getDescFromAbbreviation(msiitr->first.c_str());
+        FlagType::Ptr fDesc = Flag::getDescFromAbbreviation(msiitr->first.c_str());
         if (fDesc == Flags::Null)
         {
             std::cerr << "ERROR: invalid flag [" << msiitr->first << "]" << std::endl;
@@ -1878,10 +1878,10 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     storedFlagLimits.clear();
 
     // add normal flags
-    for (FlagTypeMap::iterator it2 = FlagType::getFlagMap().begin();
+    for (FlagType::TypeMap::iterator it2 = FlagType::getFlagMap().begin();
             it2 != FlagType::getFlagMap().end(); ++it2)
     {
-        FlagType *fDesc = it2->second;
+        FlagType::Ptr fDesc = it2->second;
 
         if ((fDesc != Flags::Null) && (fDesc->flagTeam == NoTeam))
         {
@@ -1902,7 +1902,7 @@ void finalizeParsing(int UNUSED(argc), char **argv,
         ZoneFlagMap::const_iterator zfmIt;
         for (zfmIt = zfm.begin(); zfmIt != zfm.end(); ++zfmIt)
         {
-            FlagType* ft = zfmIt->first;
+            FlagType::Ptr ft = zfmIt->first;
             if ((ft->flagTeam == ::NoTeam) && // no team flags here
                     (forbidden.find(ft) == forbidden.end()))
             {

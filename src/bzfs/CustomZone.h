@@ -14,6 +14,7 @@
 
 /* interface header */
 #include "WorldFileLocation.h"
+#include "Flag.h"
 
 /* system headers */
 #include <vector>
@@ -23,11 +24,10 @@
 /* local implementation headers */
 //#include "WorldInfo.h"
 class WorldInfo;
-class FlagType;
 
 
 typedef std::vector<std::string> QualifierList;
-typedef std::map<FlagType*, int> ZoneFlagMap; // type, count
+typedef std::map<FlagType::Ptr, int> ZoneFlagMap; // type, count
 
 
 class CustomZone : public WorldFileLocation
@@ -56,8 +56,8 @@ public:
     static const std::string& getFlagIdQualifier(int flagId);
     static int getFlagIdFromQualifier(const std::string&);
 
-    static const std::string& getFlagTypeQualifier(FlagType* flagType);
-    static FlagType* getFlagTypeFromQualifier(const std::string&);
+    static const std::string& getFlagTypeQualifier(FlagType::Ptr flagType);
+    static FlagType::Ptr getFlagTypeFromQualifier(const std::string&);
 
     static const std::string& getFlagSafetyQualifier(int team);
     static int getFlagSafetyFromQualifier(const std::string&);
@@ -66,7 +66,7 @@ public:
     static int getPlayerTeamFromQualifier(const std::string&);
 
 private:
-    void addZoneFlagCount(FlagType* flagType, int count);
+    void addZoneFlagCount(FlagType::Ptr flagType, int count);
 
 private:
     ZoneFlagMap zoneFlagMap;

@@ -51,7 +51,7 @@ public:
     bool                isExpired() const;
     const PlayerId&     getPlayer() const;
     uint16_t            getShotId() const;
-    FlagType*           getFlag() const;
+    FlagType::Ptr           getFlag() const;
     float               getLifetime() const;
     const TimeKeeper&   getStartTime() const;
     const TimeKeeper&   getCurrentTime() const;
@@ -117,7 +117,7 @@ inline uint16_t     ShotPath::getShotId() const
     return firingInfo.shot.id;
 }
 
-inline FlagType*    ShotPath::getFlag() const
+inline FlagType::Ptr    ShotPath::getFlag() const
 {
     return firingInfo.flagType;
 }

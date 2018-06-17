@@ -90,7 +90,7 @@ extern void playerKilled(int        victimIndex,
                          int        killerIndex,
                          int        reason,
                          int16_t    shotIndex,
-                         const FlagType *flagType,
+                         const FlagType::Ptr flagType,
                          int        phydrv,
                          bool       respawnOnBase = false);
 extern void doSpawns();
@@ -180,7 +180,7 @@ PlayerId getNewPlayerID();
 void checkGameOn();
 void cleanupGameOver();
 void checkTeamScore(int playerIndex, int teamIndex);
-void sendClosestFlagMessage(int playerIndex,FlagType *type, float pos[3]);
+void sendClosestFlagMessage(int playerIndex,FlagType::Ptr type, float pos[3]);
 
 void ApiTick(void);
 

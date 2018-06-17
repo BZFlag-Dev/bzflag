@@ -18,6 +18,7 @@
 
 /* system headers */
 #include <vector>
+#include <memory>
 
 /* common interface headers */
 #include "Flag.h"
@@ -36,7 +37,7 @@ public:
     WorldWeapons();
     ~WorldWeapons();
     void fire();
-    void add(const FlagType *type, const float *origin,
+    void add(const FlagType::Ptr type, const float *origin,
              float direction, float tilt, TeamColor teamColor,
              float initdelay, const std::vector<float> &delay,
              TimeKeeper &sync);
@@ -46,23 +47,26 @@ public:
     int packSize() const;
     void *pack(void *buf) const;
 
-    int fireShot(FlagType* type, const float origin[3], const float vector[3], TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
+    int fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
 
 private:
-    struct Weapon
+    class Weapon
     {
-        const FlagType  *type;
-        TeamColor       teamColor;
-        float       origin[3];
-        float       direction;
-        float       tilt;
-        float   initDelay;
+    public:
+        typedef std::shared_ptr<Weapon> Ptr;
+
+        FlagType::Ptr       type;
+        TeamColor           teamColor;
+        float               origin[3];
+        float               direction;
+        float               tilt;
+        float               initDelay;
         std::vector<float>  delay;
-        TimeKeeper      nextTime;
-        int         nextDelay;
+        TimeKeeper          nextTime;
+        int                 nextDelay;
     };
 
-    std::vector<Weapon*> weapons;
+    std::vector<Weapon::Ptr> weapons;
     int worldShotId;
 
     int getNewWorldShotID(void);
@@ -74,16 +78,16 @@ private:
 class WorldWeaponGlobalEventHandler : public bz_EventHandler
 {
 public:
-    WorldWeaponGlobalEventHandler(FlagType *type, const float *origin,float direction, float tilt,TeamColor teamColor );
+    WorldWeaponGlobalEventHandler(FlagType::Ptr type, const float *origin,float direction, float tilt,TeamColor teamColor );
     virtual ~WorldWeaponGlobalEventHandler();
 
     virtual void process ( bz_EventData *eventData );
 
 protected:
-    FlagType    *type;
-    float       origin[3];
-    float       direction;
-    float       tilt;
+    FlagType::Ptr   type;
+    float           origin[3];
+    float           direction;
+    float           tilt;
     bz_eTeamType    team;
 };
 

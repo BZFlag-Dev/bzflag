@@ -45,8 +45,8 @@ enum RabbitSelection
     RandomRabbitSelection     // pick the new rabbit out of a hat
 };
 
-typedef std::map<FlagType*, int> FlagNumberMap;
-typedef std::map<FlagType*,bool> FlagOptionMap;
+typedef std::map<FlagType::Ptr, int> FlagNumberMap;
+typedef std::map<FlagType::Ptr,bool> FlagOptionMap;
 
 #define _DEFAULT_LIN_ACCEL 0.0f
 #define _DEFAULT_ANGLE_ACCELL 0.0f
@@ -86,7 +86,7 @@ public:
           autoTeam(false), citySize(5), tkAnnounce(false), wallSides(4)
     {
         int i;
-        for (FlagTypeMap::iterator it = FlagType::getFlagMap().begin();
+        for (FlagType::TypeMap::iterator it = FlagType::getFlagMap().begin();
                 it != FlagType::getFlagMap().end(); ++it)
         {
             flagCount[it->second] = 0;
@@ -222,7 +222,7 @@ public:
 
     std::vector<pluginDef>    pluginList;
 
-    int getFlagLimit(FlagType* flag)
+    int getFlagLimit(FlagType::Ptr flag)
     {
         if (flag == nullptr || flagLimit.find(flag) == flagLimit.end())
             return -1;

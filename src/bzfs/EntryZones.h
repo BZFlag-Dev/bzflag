@@ -56,7 +56,7 @@ private:
     QualifierMap qmap;
 
     void makeSplitLists (int zone,
-                         std::vector<FlagType*> &flags,
+                         std::vector<FlagType::Ptr> &flags,
                          std::vector<TeamColor> &teams,
                          std::vector<TeamColor> &safety) const;
 };
