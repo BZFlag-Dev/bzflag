@@ -646,7 +646,7 @@ ThiefStrategy::ThiefStrategy(const FiringInfo& _info) :
     // make segments
     makeSegments(Stop);
     setCurrentTime(getLastTime());
-    endTime = _info.lifetime;
+    endTime = getFiringInfo().lifetime;
 
     // make thief scene nodes
     const int numSegments = getSegments().size();
@@ -801,7 +801,11 @@ LaserStrategy::LaserStrategy(const FiringInfo& _info) :
     SegmentedShotStrategy(_info, false), cumTime(0.0f)
 {
     // speed up shell and decrease lifetime
-    getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+    float addLifeFactor = BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
+    float life = _info.lifetime;
+
+    getFiringInfo().lifetime = life * addLifeFactor;
+
     float laserAdVel = BZDB.eval(StateDatabase::BZDB_LASERADVEL);
     getFiringInfo().shot.vel[0] *= laserAdVel;
     getFiringInfo().shot.vel[1] *= laserAdVel;
@@ -810,7 +814,7 @@ LaserStrategy::LaserStrategy(const FiringInfo& _info) :
     // make segments
     makeSegments(Stop);
     setCurrentTime(getLastTime());
-    endTime = _info.lifetime;
+    endTime = getFiringInfo().lifetime;
 
     // make laser scene nodes
     const int numSegments = getSegments().size();
