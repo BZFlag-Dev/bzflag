@@ -280,6 +280,7 @@ namespace Flags
    extern FlagType::Ptr TriggerHappy;
    extern FlagType::Ptr ReverseControls;
    extern FlagType::Ptr Bouncy;
+   extern FlagType::Ptr Unknown;
 
     /** This function initializes all the FlagType objects in the Flags
         namespace. */
