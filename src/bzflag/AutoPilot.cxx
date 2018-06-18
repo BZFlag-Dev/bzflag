@@ -99,18 +99,15 @@ static ShotPath::Ptr findWorstBullet(float &minDistance)
             if (shot == nullptr || shot->isExpired())
                 continue;
 
-            if ((shot->getFlag() == Flags::InvisibleBullet) &&
-                    (myTank->getFlag() != Flags::Seer))
+            if ((shot->getFlag()->flagEffect == FlagEffect::InvisibleBullet) && (myTank->getFlag()->flagEffect != FlagEffect::Seer))
                 continue; //Theoretically Roger could triangulate the sound
             if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned())
                 continue;
-            if ((shot->getFlag() == Flags::Laser) &&
-                    (myTank->getFlag() == Flags::Cloaking))
+            if ((shot->getFlag()->flagEffect == FlagEffect::Laser) && (myTank->getFlag()->flagEffect == FlagEffect::Cloaking))
                 continue; //cloaked tanks can't die from lasers
 
             const float* shotPos = shot->getPosition();
-            if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) &&
-                    (shot->getFlag() != Flags::GuidedMissile))
+            if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
                 continue;
 
             const float dist = TargetingUtils::getTargetDistance(pos, shotPos);
@@ -140,13 +137,13 @@ static ShotPath::Ptr findWorstBullet(float &minDistance)
         if (shot == nullptr|| shot->isExpired())
             continue;
 
-        if (shot->getFlag() == Flags::InvisibleBullet && myTank->getFlag() != Flags::Seer)
+        if (shot->getFlag()->flagEffect == FlagEffect::InvisibleBullet && myTank->getFlag()->flagEffect != FlagEffect::Seer)
             continue; //Theoretically Roger could triangulate the sound
-        if (shot->getFlag() == Flags::Laser && myTank->getFlag() == Flags::Cloaking)
+        if (shot->getFlag()->flagEffect == FlagEffect::Laser && myTank->getFlag()->flagEffect == FlagEffect::Cloaking)
             continue; //cloaked tanks can't die from lasers
 
         const float* shotPos = shot->getPosition();
-        if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+        if ((fabs(shotPos[2] - pos[2]) > BZDBCache::tankHeight) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
             continue;
 
         const float dist = TargetingUtils::getTargetDistance( pos, shotPos );
@@ -210,7 +207,7 @@ static bool avoidBullet(float &rotation, float &speed)
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     const float *pos = myTank->getPosition();
 
-    if ((myTank->getFlag() == Flags::Narrow) || (myTank->getFlag() == Flags::Burrow))
+    if ((myTank->getFlag()->flagEffect == FlagEffect::Narrow) || (myTank->getFlag()->flagEffect == FlagEffect::Burrow))
         return false; // take our chances
 
     float minDistance;
@@ -227,13 +224,13 @@ static bool avoidBullet(float &rotation, float &speed)
     float trueVec[2] = {(pos[0]-shotPos[0])/minDistance,(pos[1]-shotPos[1])/minDistance};
     float dotProd = trueVec[0]*shotUnitVec[0]+trueVec[1]*shotUnitVec[1];
 
-    if (((World::getWorld()->allowJumping() || (myTank->getFlag()) == Flags::Jumping
-            || (myTank->getFlag()) == Flags::Wings))
+    if (((World::getWorld()->allowJumping() || myTank->getFlag()->flagEffect == FlagEffect::Jumping
+            || (myTank->getFlag())->flagEffect == FlagEffect::Wings))
             && (minDistance < ( std::max(dotProd, 0.5f) * BZDBCache::tankLength * 2.25f))
-            && (myTank->getFlag() != Flags::NoJumping))
+            && (myTank->getFlag()->flagEffect != FlagEffect::NoJumping))
     {
         wantJump = true;
-        return (myTank->getFlag() != Flags::Wings);
+        return (myTank->getFlag()->flagEffect != FlagEffect::Wings);
     }
     else if (dotProd > 0.96f)
     {
@@ -293,7 +290,7 @@ static bool stuckOnWall(float &rotation, float &speed)
     const float *pos = myTank->getPosition();
     float myAzimuth = myTank->getAngle();
 
-    const bool phased = (myTank->getFlag() == Flags::OscillationOverthruster)
+    const bool phased = (myTank->getFlag()->flagEffect == FlagEffect::OscillationOverthruster)
                         || myTank->isPhantomZoned();
 
     if (!phased && (TargetingUtils::getOpenDistance(pos, myAzimuth) < 5.0f))
@@ -341,20 +338,20 @@ static RemotePlayer *findBestTarget()
         {
 
             if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-                    && (myTank->getFlag() != Flags::ShockWave)
-                    && (myTank->getFlag() != Flags::SuperBullet))
+                    && (myTank->getFlag()->flagEffect != FlagEffect::ShockWave)
+                    && (myTank->getFlag()->flagEffect != FlagEffect::SuperBullet))
                 continue;
 
-            if ((remotePlayers[t]->getFlag() == Flags::Cloaking) &&
-                    (myTank->getFlag() == Flags::Laser))
+            if ((remotePlayers[t]->getFlag()->flagEffect == FlagEffect::Cloaking) &&
+                    (myTank->getFlag()->flagEffect == FlagEffect::Laser))
                 continue;
 
             //perform a draft that has us chase the proposed opponent if they have our flag
             if (World::getWorld()->allowTeamFlags() &&
-                    (((myTank->getTeam() == RedTeam) && (remotePlayers[t]->getFlag() == Flags::RedTeam)) ||
-                     ((myTank->getTeam() == GreenTeam) && (remotePlayers[t]->getFlag() == Flags::GreenTeam)) ||
-                     ((myTank->getTeam() == BlueTeam) && (remotePlayers[t]->getFlag() == Flags::BlueTeam)) ||
-                     ((myTank->getTeam() == PurpleTeam) && (remotePlayers[t]->getFlag() == Flags::PurpleTeam))))
+                    (((myTank->getTeam() == RedTeam) && (remotePlayers[t]->getFlag()->flagTeam == RedTeam)) ||
+                     ((myTank->getTeam() == GreenTeam) && (remotePlayers[t]->getFlag()->flagTeam == GreenTeam)) ||
+                     ((myTank->getTeam() == BlueTeam) && (remotePlayers[t]->getFlag()->flagTeam == BlueTeam)) ||
+                     ((myTank->getTeam() == PurpleTeam) && (remotePlayers[t]->getFlag()->flagTeam == PurpleTeam))))
             {
                 target = remotePlayers[t];
                 break;
@@ -367,8 +364,8 @@ static RemotePlayer *findBestTarget()
 
             if (d < distance)
             {
-                if ((remotePlayers[t]->getFlag() != Flags::Stealth)
-                        ||  (myTank->getFlag() == Flags::Seer)
+                if ((remotePlayers[t]->getFlag()->flagEffect != FlagEffect::Stealth)
+                        ||  (myTank->getFlag()->flagEffect == FlagEffect::Seer)
                         ||  ((!isObscured) &&
                              (TargetingUtils::getTargetAngleDifference(pos, myAzimuth, remotePlayers[t]->getPosition()) <= 30.0f)))
                 {
@@ -424,7 +421,7 @@ static bool chasePlayer(float &rotation, float &speed)
 
         building = ShotStrategy::getFirstBuilding(tankRay, -0.5f, d);
         if (building && !myTank->isPhantomZoned() &&
-                (myTank->getFlag() != Flags::OscillationOverthruster))
+                (myTank->getFlag()->flagEffect != FlagEffect::OscillationOverthruster))
         {
             //If roger can drive around it, just do that
 
@@ -485,7 +482,7 @@ static bool chasePlayer(float &rotation, float &speed)
             speed = 1.0;
         }
     }
-    else if (target->getFlag() != Flags::Burrow)
+    else if (target->getFlag()->flagEffect != FlagEffect::Burrow)
     {
         speed = -0.5f;
         rotation *= (float)(M_PI / (2.0 * fabs(rotation)));
@@ -626,7 +623,7 @@ static bool navigate(float &rotation, float &speed)
     else
         speed = 1.0f;
     if (myTank->getLocation() == LocalPlayer::InAir
-            && myTank->getFlag() == Flags::Wings)
+            && myTank->getFlag()->flagEffect == FlagEffect::Wings)
         wantJump = true;
 
     navRot = rotation;
@@ -650,7 +647,7 @@ static bool fireAtTank()
     Ray tankRay(pos, dir);
     pos[2] -= myTank->getMuzzleHeight();
 
-    if (myTank->getFlag() == Flags::ShockWave)
+    if (myTank->getFlag()->flagEffect == FlagEffect::ShockWave)
     {
         TimeKeeper now = TimeKeeper::getTick();
         if (now - lastShot >= (1.0f / World::getWorld()->getMaxShots()))
@@ -712,8 +709,8 @@ static bool fireAtTank()
                 {
 
                     if (remotePlayers[t]->isPhantomZoned() && !myTank->isPhantomZoned()
-                            && (myTank->getFlag() != Flags::SuperBullet)
-                            && (myTank->getFlag() != Flags::ShockWave))
+                            && (myTank->getFlag()->flagEffect != FlagEffect::SuperBullet)
+                            && (myTank->getFlag()->flagEffect != FlagEffect::ShockWave))
                         continue;
 
                     const float *tp = remotePlayers[t]->getPosition();
@@ -729,7 +726,7 @@ static bool fireAtTank()
 
                     float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
 
-                    if ((myTank->getFlag() == Flags::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight))
+                    if ((myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight))
                     {
 
                         float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );
@@ -737,7 +734,7 @@ static bool fireAtTank()
                                 ||  ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit)))
                         {
                             bool isTargetObscured;
-                            if (myTank->getFlag() != Flags::SuperBullet)
+                            if (myTank->getFlag()->flagEffect != FlagEffect::SuperBullet)
                                 isTargetObscured = TargetingUtils::isLocationObscured( pos, enemyPos );
                             else
                                 isTargetObscured = false;
@@ -763,10 +760,10 @@ static void dropHardFlags()
 {
     LocalPlayer *myTank = LocalPlayer::getMyTank();
     FlagType::Ptr type = myTank->getFlag();
-    if ((type == Flags::Useless)
-            ||  (type == Flags::MachineGun)
-            ||  (type == Flags::Identify)
-            ||  ((type == Flags::PhantomZone) && !myTank->isFlagActive()))
+    if ((type->flagEffect == FlagEffect::Useless)
+            ||  (type->flagEffect == FlagEffect::MachineGun)
+            ||  (type->flagEffect == FlagEffect::Identify)
+            ||  ((type->flagEffect == FlagEffect::PhantomZone) && !myTank->isFlagActive()))
     {
         serverLink->sendDropFlag(myTank->getPosition());
         handleFlagDropped(myTank);

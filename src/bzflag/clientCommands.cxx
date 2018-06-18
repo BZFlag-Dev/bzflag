@@ -353,7 +353,7 @@ static std::string cmdDrop(const std::string&,
         FlagType::Ptr flag = myTank->getFlag();
         if ((flag != Flags::Null) && !myTank->isPaused() &&
                 (flag->endurance != FlagEndurance::Sticky) && !myTank->isPhantomZoned() &&
-                !(flag == Flags::OscillationOverthruster &&
+                !(flag->flagEffect == FlagEffect::OscillationOverthruster &&
                   myTank->getLocation() == LocalPlayer::InBuilding))
         {
             serverLink->sendDropFlag(myTank->getPosition());
@@ -372,7 +372,7 @@ static std::string cmdIdentify(const std::string&,
         return "usage: identify";
     LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-    if (myTank != nullptr && myTank->isAlive() && !myTank->isPaused() && myTank->getFlag() == Flags::GuidedMissile)  // per specification from Blast007, GM locks can only be initizated by people with the GM flag
+    if (myTank != nullptr && myTank->isAlive() && !myTank->isPaused() && myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile)  // per specification from Blast007, GM locks can only be initizated by people with the GM flag
         setTarget();
 
     return std::string();

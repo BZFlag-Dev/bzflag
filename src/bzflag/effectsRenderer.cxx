@@ -486,9 +486,9 @@ DeathEffect* EffectsRenderer::addDeathEffect (const float *rgb, const float *pos
 
     // if (reason == GotKilledMsg)
     //   effect = new FadeToHeaven();
-    // else if (reason == GotRunOver || flag == Flags::Steamroller)
+    // else if (reason == GotRunOver || flag->flagEffect == FlagEffect::Steamroller)
     //   effect = new SquishDeathEffect;
-    // else if (flag == Flags::GuidedMissile)
+    // else if (flag->flagEffect == FlagEffect::GuidedMissile)
     //   effect = new SpikesDeathEffect;
     // else
     effect = new RingsDeathEffect;

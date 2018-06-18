@@ -248,10 +248,10 @@ void            LocalPlayer::doUpdateMotion(float dt)
         setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
     // phased means we can pass through buildings
-    const bool phased = ((location == Dead) || (location == Exploding) || (getFlag() == Flags::OscillationOverthruster) || isPhantomZoned());
+    const bool phased = ((location == Dead) || (location == Exploding) || (getFlag()->flagEffect == FlagEffect::OscillationOverthruster) || isPhantomZoned());
 
     float groundLimit = 0.0f;
-    if (getFlag() == Flags::Burrow)
+    if (getFlag()->flagEffect == FlagEffect::Burrow)
         groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
 
     // get linear and angular speed at start of time step
@@ -304,10 +304,10 @@ void            LocalPlayer::doUpdateMotion(float dt)
             doFriction(dt, oldVelocity, newVelocity);
 
             // reset our flap count if we have wings
-            if (getFlag() == Flags::Wings)
+            if (getFlag()->flagEffect == FlagEffect::Wings)
                 wingsFlapCount = (int) BZDB.eval(StateDatabase::BZDB_WINGSJUMPCOUNT);
 
-            if ((oldPosition[2] < 0.0f) && (getFlag() == Flags::Burrow))
+            if ((oldPosition[2] < 0.0f) && (getFlag()->flagEffect == FlagEffect::Burrow))
                 newVelocity[2] += 4 * BZDBCache::gravity * dt;
             else if (oldPosition[2] > groundLimit)
                 newVelocity[2] += BZDBCache::gravity * dt;
@@ -318,7 +318,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
         else
         {
             // can't control motion in air unless have wings
-            if (getFlag() == Flags::Wings)
+            if (getFlag()->flagEffect == FlagEffect::Wings)
             {
                 float speed = desiredSpeed;
 
@@ -454,8 +454,8 @@ void            LocalPlayer::doUpdateMotion(float dt)
 
             newVelocity[0] = movementMax * normalStuck[0];
             newVelocity[1] = movementMax * normalStuck[1];
-            if ((World::getWorld()->allowJumping() || (getFlag() == Flags::Jumping) || (getFlag() == Flags::Wings)) &&
-                    (getFlag() != Flags::NoJumping))
+            if ((World::getWorld()->allowJumping() || (getFlag()->flagEffect == FlagEffect::Jumping) || (getFlag()->flagEffect == FlagEffect::Wings)) &&
+                    (getFlag()->flagEffect != FlagEffect::NoJumping))
                 newVelocity[2] = movementMax * normalStuck[2];
             else
                 newVelocity[2] = 0.0f;
@@ -648,7 +648,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
     }
 
     // see if we're crossing a wall
-    if (location == InBuilding && getFlag() == Flags::OscillationOverthruster)
+    if (location == InBuilding && getFlag()->flagEffect == FlagEffect::OscillationOverthruster)
     {
         if (obstacle->isCrossing(newPos, newAzimuth,
                                  0.5f * BZDBCache::tankLength,
@@ -696,7 +696,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
 
     if (teleporter)
     {
-        if (getFlag() == Flags::PhantomZone)
+        if (getFlag()->flagEffect == FlagEffect::PhantomZone)
         {
             // change zoned state
             setStatus(getStatus() ^ PlayerState::FlagActive);
@@ -795,7 +795,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
     // set UserInput status (determines how animated treads are drawn)
     const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(getPhysicsDriver());
     if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||
-            ((getFlag() == Flags::Wings) && (location == InAir) &&
+            ((getFlag()->flagEffect == FlagEffect::Wings) && (location == InAir) &&
              (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f)))
         setStatus(getStatus() | short(PlayerState::UserInputs));
     else
@@ -809,12 +809,12 @@ void            LocalPlayer::doUpdateMotion(float dt)
         firingStatus = Deceased;
         break;
     case InBuilding:
-        firingStatus = (getFlag() == Flags::PhantomZone) ? Zoned : Sealed;
+        firingStatus = (getFlag()->flagEffect == FlagEffect::PhantomZone) ? Zoned : Sealed;
         break;
     default:
         if (isPhantomZoned())
             firingStatus = Zoned;
-        else if ((getReloadTime() > 0.0f) && (getFlag() != Flags::TriggerHappy))
+        else if ((getReloadTime() > 0.0f) && (getFlag()->flagEffect != FlagEffect::TriggerHappy))
             firingStatus = Loading;
         else
             firingStatus = Ready;
@@ -849,7 +849,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
             server->sendDropFlag(getPosition());
     }
 
-    if ((getFlag() == Flags::Bouncy) && ((location == OnGround) || (location == OnBuilding)))
+    if ((getFlag()->flagEffect == FlagEffect::Bouncy) && ((location == OnGround) || (location == OnBuilding)))
     {
         if (oldLocation != InAir)
         {
@@ -870,7 +870,7 @@ void            LocalPlayer::doUpdateMotion(float dt)
         {
             moveSoundReceiver(newPos[0], newPos[1], newPos[2], newAzimuth,
                               NEAR_ZERO(dt, ZERO_TOLERANCE) ||
-                              ((teleporter != NULL) && (getFlag() != Flags::PhantomZone)));
+                              ((teleporter != NULL) && (getFlag()->flagEffect != FlagEffect::PhantomZone)));
         }
         if (NEAR_ZERO(dt, ZERO_TOLERANCE))
             speedSoundReceiver(newVelocity[0], newVelocity[1], newVelocity[2]);
@@ -895,7 +895,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* p, float a,
     if (expelled && phased)
         expelled = (obstacle->getType() == WallObstacle::getClassName() ||
                     obstacle->getType() == Teleporter::getClassName() ||
-                    (getFlag() == Flags::OscillationOverthruster && desiredSpeed < 0.0f &&
+                    (getFlag()->flagEffect == FlagEffect::OscillationOverthruster && desiredSpeed < 0.0f &&
                      p[2] == 0.0f));
     return obstacle;
 }
@@ -905,7 +905,7 @@ const Obstacle* LocalPlayer::getHitBuilding(const float* oldP, float oldA,
         const float* p, float a,
         bool phased, bool& expelled)
 {
-    const bool hasOOflag = getFlag() == Flags::OscillationOverthruster;
+    const bool hasOOflag = getFlag()->flagEffect == FlagEffect::OscillationOverthruster;
     const float* dims = getDimensions();
     const Obstacle* obstacle = World::getWorld()->
                                hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
@@ -1087,21 +1087,21 @@ void            LocalPlayer::setDesiredSpeed(float fracOfMaxSpeed)
 
     // oscillation overthruster tank in building can't back up
     if (fracOfMaxSpeed < 0.0f && getLocation() == InBuilding &&
-            flag == Flags::OscillationOverthruster)
+            flag->flagEffect == FlagEffect::OscillationOverthruster)
         fracOfMaxSpeed = 0.0f;
 
     // boost speed for certain flags
-    if (flag == Flags::Velocity)
+    if (flag->flagEffect == FlagEffect::Velocity)
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    else if (flag == Flags::Thief)
+    else if (flag->flagEffect == FlagEffect::Thief)
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    else if ((flag->flagEffect == FlagEffect::Burrow) && (getPosition()[2] < 0.0f))
         fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-    else if ((flag == Flags::ForwardOnly) && (fracOfMaxSpeed < 0.0))
+    else if ((flag->flagEffect == FlagEffect::ForwardOnly) && (fracOfMaxSpeed < 0.0))
         fracOfMaxSpeed = 0.0f;
-    else if ((flag == Flags::ReverseOnly) && (fracOfMaxSpeed > 0.0))
+    else if ((flag->flagEffect == FlagEffect::ReverseOnly) && (fracOfMaxSpeed > 0.0))
         fracOfMaxSpeed = 0.0f;
-    else if (flag == Flags::Agility)
+    else if (flag->flagEffect == FlagEffect::Agility)
     {
         if ((TimeKeeper::getTick() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
             fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
@@ -1143,15 +1143,15 @@ void            LocalPlayer::setDesiredAngVel(float fracOfMaxAngVel)
     else if (fracOfMaxAngVel < -1.0f) fracOfMaxAngVel = -1.0f;
 
     // further limit turn speed for certain flags
-    if (fracOfMaxAngVel < 0.0f && getFlag() == Flags::LeftTurnOnly)
+    if (fracOfMaxAngVel < 0.0f && getFlag()->flagEffect == FlagEffect::LeftTurnOnly)
         fracOfMaxAngVel = 0.0f;
-    else if (fracOfMaxAngVel > 0.0f && getFlag() == Flags::RightTurnOnly)
+    else if (fracOfMaxAngVel > 0.0f && getFlag()->flagEffect == FlagEffect::RightTurnOnly)
         fracOfMaxAngVel = 0.0f;
 
     // boost turn speed for other flags
-    if (flag == Flags::QuickTurn)
+    if (flag->flagEffect == FlagEffect::QuickTurn)
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-    else if ((flag == Flags::Burrow) && (getPosition()[2] < 0.0f))
+    else if ((flag->flagEffect == FlagEffect::Burrow) && (getPosition()[2] < 0.0f))
         fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
 
     // apply handicap advantage to tank speed
@@ -1205,7 +1205,7 @@ bool LocalPlayer::fireShot()
     if (!isAlive() || isPaused() || ((location == InBuilding) && !isPhantomZoned()))
         return false;
 
-    if (getFlag() == Flags::MachineGun) // MG would fire every frame, so limit it to a sane frame rate.
+    if (getFlag()->flagEffect == FlagEffect::MachineGun) // MG would fire every frame, so limit it to a sane frame rate.
     {
         if (TimeKeeper::getCurrent() - lastShotTime < (1.0f / 20.0f))
             return false;
@@ -1224,7 +1224,7 @@ bool LocalPlayer::fireShot()
     // FIXME team coloring of shot is never used; it was meant to be used
     // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
-    if (firingInfo.flagType == Flags::ShockWave)
+    if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
     {
         // move shot origin under tank and make it stationary
         const float* pos = getPosition();
@@ -1301,22 +1301,22 @@ bool LocalPlayer::fireShot()
 
     if (gettingSound)
     {
-        if (firingInfo.flagType == Flags::ShockWave)
+        if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
         {
             playLocalSound(SFX_SHOCK);
             ForceFeedback::shockwaveFired();
         }
-        else if (firingInfo.flagType == Flags::Laser)
+        else if (firingInfo.flagType->flagEffect == FlagEffect::Laser)
         {
             playLocalSound(SFX_LASER);
             ForceFeedback::laserFired();
         }
-        else if (firingInfo.flagType == Flags::GuidedMissile)
+        else if (firingInfo.flagType->flagEffect == FlagEffect::GuidedMissile)
         {
             playLocalSound(SFX_MISSILE);
             ForceFeedback::shotFired();
         }
-        else if (firingInfo.flagType == Flags::Thief)
+        else if (firingInfo.flagType->flagEffect == FlagEffect::Thief)
         {
             playLocalSound(SFX_THIEF);
             ForceFeedback::shotFired();
@@ -1330,7 +1330,7 @@ bool LocalPlayer::fireShot()
 
     shotStatistics.recordFire(firingInfo.flagType,getForward(),firingInfo.shot.vel);
 
-    if (getFlag() == Flags::TriggerHappy)
+    if (getFlag()->flagEffect == FlagEffect::TriggerHappy)
     {
         // make sure all the shots don't go off at once
         forceReload(BZDB.eval(StateDatabase::BZDB_RELOADTIME) / numShots);
@@ -1367,7 +1367,7 @@ void            LocalPlayer::doJump()
     if (getPosition()[2] < 0.0f)
         return;
 
-    if (flag == Flags::Wings)
+    if (flag->flagEffect == FlagEffect::Wings)
     {
         if (wingsFlapCount <= 0)
             return;
@@ -1376,15 +1376,15 @@ void            LocalPlayer::doJump()
     else if ((location != OnGround) && (location != OnBuilding))
     {
         // can't jump unless on the ground or a building
-        if (flag != Flags::Wings)
+        if (flag->flagEffect != FlagEffect::Wings)
             return;
         if (wingsFlapCount <= 0)
             return;
         wingsFlapCount--;
     }
-    else if ((flag != Flags::Bouncy) &&
-             ((flag != Flags::Jumping && !World::getWorld()->allowJumping()) ||
-              (flag == Flags::NoJumping)))
+    else if ((flag->flagEffect != FlagEffect::Bouncy) &&
+             ((flag->flagEffect != FlagEffect::Jumping && !World::getWorld()->allowJumping()) ||
+              (flag->flagEffect == FlagEffect::NoJumping)))
         return;
 
     // jump velocity
@@ -1392,7 +1392,7 @@ void            LocalPlayer::doJump()
     float newVelocity[3];
     newVelocity[0] = oldVelocity[0];
     newVelocity[1] = oldVelocity[1];
-    if (flag == Flags::Wings)
+    if (flag->flagEffect == FlagEffect::Wings)
     {
         newVelocity[2] = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
         // if you're falling, wings will just slow you down
@@ -1404,7 +1404,7 @@ void            LocalPlayer::doJump()
         else if (oldVelocity[2] > newVelocity[2])
             newVelocity[2] = oldVelocity[2];
     }
-    else if (flag == Flags::Bouncy)
+    else if (flag->flagEffect == FlagEffect::Bouncy)
     {
         const float factor = 0.25f + ((float)bzfrand() * 0.75f);
         newVelocity[2] = factor * BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
@@ -1420,7 +1420,7 @@ void            LocalPlayer::doJump()
     // setup the sound
     if (gettingSound)
     {
-        if (flag == Flags::Wings)
+        if (flag->flagEffect == FlagEffect::Wings)
         {
             playLocalSound(SFX_FLAP);
             addRemoteSound(PlayerState::WingsSound);
@@ -1498,9 +1498,9 @@ void            LocalPlayer::doMomentum(float dt,
                                         float& speed, float& angVel)
 {
     // get maximum linear and angular accelerations
-    float linearAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
+    float linearAcc = (getFlag()->flagEffect == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
                       World::getWorld()->getLinearAcceleration();
-    float angularAcc = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
+    float angularAcc = (getFlag()->flagEffect == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
                        World::getWorld()->getAngularAcceleration();
 
     // limit linear acceleration
@@ -1524,7 +1524,7 @@ void            LocalPlayer::doMomentum(float dt,
 void            LocalPlayer::doFriction(float dt,
                                         const float *oldVelocity, float *newVelocity)
 {
-    const float friction = (getFlag() == Flags::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
+    const float friction = (getFlag()->flagEffect == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
                            BZDB.eval(StateDatabase::BZDB_FRICTION);
 
     if (friction > 0.0f)
@@ -1565,7 +1565,7 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
         if (!shot || shot->isExpired()) continue;
 
         // my own shock wave cannot kill me
-        if (source == this && ((shot->getFlag() == Flags::ShockWave) || (shot->getFlag() == Flags::Thief))) continue;
+        if (source == this && ((shot->getFlag()->flagEffect == FlagEffect::ShockWave) || (shot->getFlag()->flagEffect == FlagEffect::Thief))) continue;
 
         // I can't shoot me
         if (!World::getWorld()->allowSelfKills() && source == this)
@@ -1574,24 +1574,24 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
         // if no team kills, shots of my team cannot kill me. Thief can still take
         // a teammate's flag.
         if (getTeam() != RogueTeam && !World::getWorld()->allowTeamKills() &&
-                shot->getFlag() != Flags::Thief && shot->getTeam() == getTeam() &&
+                shot->getFlag()->flagEffect != FlagEffect::Thief && shot->getTeam() == getTeam() &&
                 source != this) continue;
 
         // short circuit test if shot can't possibly hit.
         // only superbullet or shockwave can kill zoned dude
         const FlagType::Ptr shotFlag = shot->getFlag();
         if (isPhantomZoned() &&
-                (shotFlag != Flags::ShockWave) &&
-                (shotFlag != Flags::SuperBullet) &&
-                (shotFlag != Flags::PhantomZone))
+                (shotFlag->flagEffect != FlagEffect::ShockWave) &&
+                (shotFlag->flagEffect != FlagEffect::SuperBullet) &&
+                (shotFlag->flagEffect != FlagEffect::PhantomZone))
             continue;
 
         // laser can't hit a cloaked tank
-        if ((getFlag() == Flags::Cloaking) && (shotFlag == Flags::Laser))
+        if ((getFlag()->flagEffect == FlagEffect::Cloaking) && (shotFlag->flagEffect == FlagEffect::Laser))
             continue;
 
         // zoned shots only kill zoned tanks
-        if ((shotFlag == Flags::PhantomZone) && !isPhantomZoned())
+        if ((shotFlag->flagEffect == FlagEffect::PhantomZone) && !isPhantomZoned())
             continue;
 
         // test myself against shot

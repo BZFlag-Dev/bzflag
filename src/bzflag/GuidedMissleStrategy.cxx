@@ -164,7 +164,7 @@ void GuidedMissileStrategy::update(float dt)
         }
     }
 
-    if ((target != NULL) && ((target->getFlag() == Flags::Stealth)  || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+    if ((target != NULL) && ((target->getFlag()->flagEffect == FlagEffect::Stealth)  || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
     {
         target = NULL;
         lastTarget = NoPlayer;
@@ -357,7 +357,7 @@ float GuidedMissileStrategy::checkHit(const BaseLocalPlayer* tank, float positio
 
         // get closest approach time
         float t;
-        if (tank->getFlag() == Flags::Narrow)
+        if (tank->getFlag()->flagEffect == FlagEffect::Narrow)
         {
             // find closest approach to narrow box around tank.  width of box
             // is shell radius so you can actually hit narrow tank head on.

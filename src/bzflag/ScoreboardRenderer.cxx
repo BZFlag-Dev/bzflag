@@ -771,10 +771,10 @@ void ScoreboardRenderer::drawPlayerScore(const Player* player,
         // color special flags
         if (BZDBCache::colorful)
         {
-            if ((flagd == Flags::ShockWave)
+            if ((flagd->flagEffect == FlagEffect::ShockWave)
                     ||  (flagd->flagAbbv == "G")
-                    ||  (flagd == Flags::Laser)
-                    ||  (flagd == Flags::GuidedMissile))
+                    ||  (flagd->flagEffect == FlagEffect::Laser)
+                    ||  (flagd->flagEffect == FlagEffect::GuidedMissile))
                 playerInfo += ColorStrings[WhiteColor];
             else if (flagd->flagTeam != NoTeam)
             {

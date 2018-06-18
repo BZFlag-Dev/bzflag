@@ -588,7 +588,7 @@ inline bool     Player::isExploding() const
 
 inline bool     Player::isPhantomZoned() const
 {
-    return (isFlagActive() && (getFlag() == Flags::PhantomZone));
+    return (isFlagActive() && (getFlag()->flagEffect == FlagEffect::PhantomZone));
 }
 
 inline bool     Player::isCrossingWall() const

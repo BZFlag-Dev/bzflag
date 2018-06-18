@@ -44,7 +44,7 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
     // wee bit o hack -- if phantom flag but not phantomized
     // the shot flag is normal -- otherwise FiringInfo will have
     // to be changed to add a real bitwise status variable
-    if (tank.getFlag() == Flags::PhantomZone && !tank.isFlagActive())
+    if (tank.getFlag()->flagEffect == FlagEffect::PhantomZone && !tank.isFlagActive())
         flagType = Flags::Null;
     lifetime = BZDB.eval(StateDatabase::BZDB_RELOADTIME);
 }
@@ -64,23 +64,23 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
          return std::make_shared<NormalShotStrategy>(info);
      else
      {
-         if (info.flagType == Flags::RapidFire)
+         if (info.flagType->flagEffect == FlagEffect::RapidFire)
              return std::make_shared<RapidFireStrategy>(info);
-         else if (info.flagType == Flags::MachineGun)
+         else if (info.flagType->flagEffect == FlagEffect::MachineGun)
              return std::make_shared< MachineGunStrategy>(info);
-         else if (info.flagType == Flags::GuidedMissile)
+         else if (info.flagType->flagEffect == FlagEffect::GuidedMissile)
              return std::make_shared<GuidedMissileStrategy>(info);
-         else if (info.flagType == Flags::Laser)
+         else if (info.flagType->flagEffect == FlagEffect::Laser)
              return std::make_shared<LaserStrategy>(info);
-         else if (info.flagType == Flags::Ricochet)
+         else if (info.flagType->flagEffect == FlagEffect::Ricochet)
              return std::make_shared<RicochetStrategy>(info);
-         else if (info.flagType == Flags::SuperBullet)
+         else if (info.flagType->flagEffect == FlagEffect::SuperBullet)
              return std::make_shared<SuperBulletStrategy>(info);
-         else if (info.flagType == Flags::ShockWave)
+         else if (info.flagType->flagEffect == FlagEffect::ShockWave)
              return std::make_shared<ShockWaveStrategy>(info);
-         else if (info.flagType == Flags::Thief)
+         else if (info.flagType->flagEffect == FlagEffect::Thief)
              return std::make_shared<ThiefStrategy>(info);
-         else if (info.flagType == Flags::PhantomZone)
+         else if (info.flagType->flagEffect == FlagEffect::PhantomZone)
              return std::make_shared<PhantomBulletStrategy>(info);
          else
              assert(0);    // shouldn't happen

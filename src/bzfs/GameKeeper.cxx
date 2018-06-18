@@ -407,17 +407,17 @@ void GameKeeper::Player::setMaxShots(unsigned int _maxShots)
 float GetShotLifetime(FlagType::Ptr flagType)
 {
     float lifeTime(BZDB.eval(StateDatabase::BZDB_RELOADTIME));
-    if (flagType == Flags::RapidFire)
+    if (flagType->flagEffect == FlagEffect::RapidFire)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_RFIREADLIFE);
-    else if (flagType == Flags::MachineGun)
+    else if (flagType->flagEffect == FlagEffect::MachineGun)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_MGUNADLIFE);
-    else if (flagType == Flags::GuidedMissile)
+    else if (flagType->flagEffect == FlagEffect::GuidedMissile)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_GMADLIFE) + .01f;
-    else if (flagType == Flags::Laser)
+    else if (flagType->flagEffect == FlagEffect::Laser)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_LASERADLIFE);
-    else if (flagType == Flags::ShockWave)
+    else if (flagType->flagEffect == FlagEffect::ShockWave)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
-    else if (flagType == Flags::Thief)
+    else if (flagType->flagEffect == FlagEffect::Thief)
         lifeTime *= BZDB.eval(StateDatabase::BZDB_THIEFADLIFE);
 
     return lifeTime;

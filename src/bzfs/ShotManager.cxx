@@ -32,7 +32,7 @@ namespace Shots
 
     Manager::Manager()
     {
-        Factories[std::string("")] = std::make_shared<ProjectileShot::Factory>();
+        Factories[FlagEffect::Normal] = std::make_shared<ProjectileShot::Factory>();
         LastGUID = INVALID_SHOT_GUID;
     }
 
@@ -47,34 +47,30 @@ namespace Shots
 
     void Manager::Init()
     {
-        Factories[Flags::GuidedMissile->flagAbbv] = std::make_shared<GuidedMissileShot::Factory>();
-        Factories[Flags::SuperBullet->flagAbbv] = std::make_shared< SuperBulletShot::Factory>();
-        Factories[Flags::ShockWave->flagAbbv] = std::make_shared<ShockwaveShot::Factory>();
-        Factories[Flags::Ricochet->flagAbbv] = std::make_shared<RicoShot::Factory>();
-        Factories[Flags::RapidFire->flagAbbv] = std::make_shared<RapidFireShot::Factory>();
-        Factories[Flags::MachineGun->flagAbbv] = std::make_shared<MachineGunShot::Factory>();
-        Factories[Flags::Laser->flagAbbv] = std::make_shared<LaserShot::Factory>();
-        Factories[Flags::Thief->flagAbbv] = std::make_shared<ThiefShot::Factory>();
-        Factories[Flags::PhantomZone->flagAbbv] = std::make_shared<PhantomShot::Factory>();
+        Factories[FlagEffect::GuidedMissile] = std::make_shared<GuidedMissileShot::Factory>();
+        Factories[FlagEffect::SuperBullet] = std::make_shared< SuperBulletShot::Factory>();
+        Factories[FlagEffect::ShockWave] = std::make_shared<ShockwaveShot::Factory>();
+        Factories[FlagEffect::Ricochet] = std::make_shared<RicoShot::Factory>();
+        Factories[FlagEffect::RapidFire] = std::make_shared<RapidFireShot::Factory>();
+        Factories[FlagEffect::MachineGun] = std::make_shared<MachineGunShot::Factory>();
+        Factories[FlagEffect::Laser] = std::make_shared<LaserShot::Factory>();
+        Factories[FlagEffect::Thief] = std::make_shared<ThiefShot::Factory>();
+        Factories[FlagEffect::PhantomZone] = std::make_shared<PhantomShot::Factory>();
     }
 
-    void Manager::SetShotFactory(const char* flagCode, std::shared_ptr<ShotFactory> factory)
+    void Manager::SetShotFactory(FlagEffect effect, std::shared_ptr<ShotFactory> factory)
     {
-        std::string code;
-        if (flagCode)
-            code = flagCode;
-
-        Factories[code] = factory;
+        Factories[effect] = factory;
     }
 
     uint16_t Manager::AddShot(const FiringInfo &info, PlayerId UNUSED(shooter))
     {
         ShotFactory::Ptr factory = nullptr;
-        if (Factories.find(info.flagType->flagAbbv) != Factories.end())
-            factory = Factories[info.flagType->flagAbbv];
+        if (Factories.find(info.flagType->flagEffect) != Factories.end())
+            factory = Factories[info.flagType->flagEffect];
 
         if (factory == nullptr)
-            factory = Factories[std::string("")];
+            factory = Factories[FlagEffect::Normal];
 
         Shot::Ptr shot = factory->GetShot(NewGUID(), info);
 

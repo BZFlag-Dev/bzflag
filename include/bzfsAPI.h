@@ -104,13 +104,6 @@ inline To force_cast(From const & f)
 #  endif
 #endif
 
-typedef enum
-{
-    eGoodFlag = 0,
-    eBadFlag,
-    eLastFlagQuality
-} bz_eFlagQuality;
-
 //utility classes
 class BZF_API bz_ApiString
 {
@@ -2445,15 +2438,65 @@ BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler);
 BZF_API bool bz_removeServerSidePlayer(int playerID,
                                        bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
 
-// no ShotType support in 2.4 (yet?).  still accept the ShotType parameter for compatibility.
-typedef int bz_eShotType;
-
 // Note: there is NO bz_UnregisterCustomFlag, 'cause that would jack up connected clients.
 // If you really need to unregister a flag, shut down the server.
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
-                                   const char* helpString, bz_eShotType shotType,
-                                   bz_eFlagQuality quality);
+/*DEPRECATED*/ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, int shotType, uint8_t quality);
 
+enum class bz_eFlagQuality
+{
+    Good = 0,
+    Bad,
+    Last
+};
+
+enum class bz_FlagEffect
+{
+    Normal,
+    Velocity,
+    QuickTurn,
+    OscillationOverthruster,
+    RapidFire,
+    MachineGun,
+    GuidedMissile,
+    Laser,
+    Ricochet,
+    SuperBullet,
+    InvisibleBullet,
+    Stealth,
+    Tiny,
+    Narrow,
+    Shield,
+    Steamroller,
+    ShockWave,
+    PhantomZone,
+    Jumping,
+    Identify,
+    Cloaking,
+    Useless,
+    Masquerade,
+    Seer,
+    Thief,
+    Burrow,
+    Wings,
+    Agility,
+    Colorblindness,
+    Obesity,
+    LeftTurnOnly,
+    RightTurnOnly,
+    ForwardOnly,
+    ReverseOnly,
+    Momentum,
+    Blindness,
+    Jamming,
+    WideAngle,
+    NoJumping,
+    TriggerHappy,
+    ReverseControls,
+    Bouncy,
+    NoShot,
+};
+
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, char* helpString, bz_eFlagQuality quality = bz_eFlagQuality::Good, bz_FlagEffect effect = bz_FlagEffect::Normal, bz_eTeamType teamColor = eNoTeam);
 
 // utility
 BZF_API const char* bz_MD5(const char * str);

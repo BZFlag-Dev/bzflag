@@ -94,9 +94,9 @@ void BaseLocalPlayer::update(float inputDT)
 
         // expand bounding box to include entire tank
         float size = BZDBCache::tankRadius;
-        if (getFlag() == Flags::Obesity) size *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
-        else if (getFlag() == Flags::Tiny) size *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
-        else if (getFlag() == Flags::Thief) size *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+        if (getFlag()->flagEffect == FlagEffect::Obesity) size *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+        else if (getFlag()->flagEffect == FlagEffect::Tiny) size *= BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+        else if (getFlag()->flagEffect == FlagEffect::Thief) size *= BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
         bbox[0][0] -= size;
         bbox[1][0] += size;
         bbox[0][1] -= size;
