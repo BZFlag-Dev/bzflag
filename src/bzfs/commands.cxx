@@ -1465,7 +1465,7 @@ bool FlagCommand::operator() (const char     *message,
         msg += 5;
 
         std::vector<std::string> argv = TextUtils::tokenize(msg, " \t", 0, true);
-        if (argv.size() < 1)
+        if (argv.size() < 1 || argv[0] == "--")
         {
             flagCommandHelp(t);
             return true;
@@ -1473,8 +1473,7 @@ bool FlagCommand::operator() (const char     *message,
 
         const char* command = argv[0].c_str();
 
-        const bool keepTeamFlags = ((argv.size() > 1) &&
-                                    strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
+        const bool keepTeamFlags = ((argv.size() > 1) && strncasecmp(argv[1].c_str(), "noteam", 6) == 0);
 
         FlagType::Ptr ft = FlagType::getDescFromAbbreviation(command);
 
@@ -1612,7 +1611,7 @@ bool FlagCommand::operator() (const char     *message,
                 if ((fi != NULL) && ((fi->player >= 0) && !force))
                     fi = NULL;
             }
-            else
+            else if (argv[1] != "--")
             {
                 FlagType::Ptr ft = FlagType::getDescFromAbbreviation(argv[1].c_str());
                 if (ft != Flags::Null)

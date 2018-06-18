@@ -75,7 +75,7 @@ bool CustomWeapon::read(const char *cmd, std::istream& input)
         std::string abbv;
         input >> abbv;
         type = FlagType::getDescFromAbbreviation(abbv.c_str());
-        if (type == NULL)
+        if (type == nullptr || type == Flags::Null || type == Flags::Unknown)
             return false;
     }
     else if (strcmp(cmd, "color") == 0)

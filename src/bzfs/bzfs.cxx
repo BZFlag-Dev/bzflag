@@ -4359,7 +4359,8 @@ static void shotFired(int playerIndex, void *buf, int len)
     {
         if (shotEvent.type == "DELETE")
             return;
-        firingInfo.flagType = FlagType::getDescFromAbbreviation(shotEvent.type.c_str());
+        if (shotEvent.type != "--")
+            firingInfo.flagType = FlagType::getDescFromAbbreviation(shotEvent.type.c_str());
     }
 
 

@@ -117,7 +117,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
             else
             {
                 FlagType::Ptr f = FlagType::getDescFromAbbreviation(flag.c_str());
-                if (f == Flags::Null)
+                if (f == Flags::Null || f == Flags::Unknown)
                 {
                     logDebugMessage(1,"WARNING: bad flag type: %s\n", flag.c_str());
                     input.putback('\n');
@@ -174,7 +174,7 @@ bool CustomZone::read(const char *cmd, std::istream& input)
         else
         {
             FlagType::Ptr f = FlagType::getDescFromAbbreviation(flag.c_str());
-            if (f != Flags::Null)
+            if (f != Flags::Null && f != Flags::Unknown)
                 addZoneFlagCount(f, count);
             else
             {
@@ -304,7 +304,7 @@ const std::string& CustomZone::getFlagTypeQualifier(FlagType::Ptr flagType)
 
 FlagType::Ptr CustomZone::getFlagTypeFromQualifier(const std::string& qual)
 {
-    if (qual[0] == 'f')
+    if (qual[0] == 'f' && qual != "f--")
         return FlagType::getDescFromAbbreviation(qual.c_str() + 1);
     else
         return Flags::Null;

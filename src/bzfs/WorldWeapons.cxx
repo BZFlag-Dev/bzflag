@@ -74,6 +74,10 @@ int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const floa
             return INVALID_SHOT_GUID;
 
         FlagType::Ptr flag = flagMap.find(allowEvent.flagType)->second;
+
+        if (flag == Flags::Null || flag == Flags::Unknown)
+            return INVALID_SHOT_GUID;
+
         firingInfo.flagType = flag;
     }
 

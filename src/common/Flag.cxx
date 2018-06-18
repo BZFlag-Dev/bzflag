@@ -105,7 +105,7 @@ namespace Flags
     {
         Null    = AddStdFlag(std::make_shared<FlagType>( "", "", FlagEndurance::Normal, ShotType::Normal, FlagQuality::Good, NoTeam, "" ));
 
-        Unknown = AddStdFlag(std::make_shared<FlagType>("--", "Uknown", FlagEndurance::Normal, ShotType::Normal, FlagQuality::Good, NoTeam,
+        Unknown = AddStdFlag(std::make_shared<FlagType>("Unknown", "--", FlagEndurance::Normal, ShotType::Normal, FlagQuality::Good, NoTeam,
                                     "A flag of an unknown type, pick it up and see what it is."));
         RedTeam = AddStdFlag(std::make_shared<FlagType>( "Red Team", "R*", FlagEndurance::Normal, ShotType::Normal, FlagQuality::Good, ::RedTeam,
                                     "If it's yours, prevent other teams from taking it.  If it's not take it to your base to capture it!" ));

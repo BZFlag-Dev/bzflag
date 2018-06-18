@@ -5295,9 +5295,7 @@ static void sendFlagNegotiation()
     /* Send MsgNegotiateFlags to the server with
      * the abbreviations for all the flags we support.
      */
-    for (i = FlagType::getFlagMap().begin();
-            i != FlagType::getFlagMap().end();
-            ++i)
+    for (i = FlagType::getFlagMap().begin(); i != FlagType::getFlagMap().end(); ++i)
         buf = (char*) i->second->pack(buf);
     serverLink->send(MsgNegotiateFlags, buf - msg, msg);
 }
