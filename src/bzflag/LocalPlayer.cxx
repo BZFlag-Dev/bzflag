@@ -1221,8 +1221,8 @@ bool LocalPlayer::fireShot()
     // prepare shot
     FiringInfo firingInfo(*this, localShotID);
     firingInfo.shot.id = 0xFFFF; // always set the GUID to invalid, server will set it on return
-    // FIXME team coloring of shot is never used; it was meant to be used
-    // for rabbit mode to correctly calculate team kills when rabbit changes
+                                 // FIXME team coloring of shot is never used; it was meant to be used
+                                 // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
     if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
     {
@@ -1254,11 +1254,16 @@ bool LocalPlayer::fireShot()
         if (!BZDB.isTrue(StateDatabase::BZDB_SHOTSKEEPVERTICALV)) firingInfo.shot.vel[2] = 0.0f;
     }
 
-    // make shot and put it in the table
-    ShotPath::Ptr shot = ShotPath::Create(firingInfo);
-    shot->sendUpdates = true;
-    localShots.push_back(shot);
-    addShotToSlot(shot); // track the reload in the slot
+    if (getFlag()->flagEffect != FlagEffect::NoShot)
+    {
+        // make shot and put it in the table
+        ShotPath::Ptr shot = ShotPath::Create(firingInfo);
+        shot->sendUpdates = true;
+        localShots.push_back(shot);
+        addShotToSlot(shot); // track the reload in the slot
+    }
+    else
+        addEmptyShotToSlot(localShotID); // make the reload timer do what the reload timer would normal do
 
     // Insert timestamp, useful for dead reckoning jitter fixing
     // TODO should maybe use getTick() instead? must double check

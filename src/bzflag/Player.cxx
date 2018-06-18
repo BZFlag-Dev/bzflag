@@ -203,6 +203,15 @@ void Player::addShotToSlot(ShotPath::Ptr shot)
     ShotSlots[slotIndex].reloadTime = ShotSlots[slotIndex].totalReload = getFlagReload(shot->getFiringInfo().flagType);
 }
 
+void  Player::addEmptyShotToSlot(int slotIndex)
+{
+    if (slotIndex > World::getWorld()->getMaxShots())
+        return; // it's not a slot based shot
+
+    ShotSlots[slotIndex].activeShot = nullptr;
+    ShotSlots[slotIndex].reloadTime = ShotSlots[slotIndex].totalReload = getFlagReload(getFlag());
+}
+
 void Player::addShot(const FiringInfo& info)
 {
     const float *f = getForward();
@@ -1192,7 +1201,7 @@ float Player::getFlagReload(FlagType::Ptr flag) const
             baseReload /= BZDB.eval(StateDatabase::BZDB_THIEFADRATE);
     }
 
-    // TODO, use per tank atrtribute factors to modify base value
+    // TODO, use per tank attribute factors to modify base value
 
     return baseReload;
 }

@@ -4545,7 +4545,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
     return true;
 }
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, char* helpString, bz_eFlagQuality quality, bz_FlagEffect effect , bz_eTeamType teamColor)
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality, bz_FlagEffect effect , bz_eTeamType teamColor)
 {
     // require defined fields
     if (abbr == nullptr || name == nullptr || helpString == nullptr)

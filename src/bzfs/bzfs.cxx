@@ -4364,15 +4364,12 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
 
-    // add the shot to the global list to get it's GUID
-    int guid = ShotManager.AddShot(firingInfo, playerData->getIndex());
-    firingInfo.shot.id = (uint16_t)guid;
-
-    // repack for ID
-    void *bufStart = getDirectMessageBuffer();
-    firingInfo.pack(bufStart);
-    buf = bufStart;
-
+    if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
+    {
+        // add the shot to the global list to get it's GUID
+        int guid = ShotManager.AddShot(firingInfo, playerData->getIndex());
+        firingInfo.shot.id = (uint16_t)guid;
+    }
 
     // if shooter has a flag
 
@@ -4410,7 +4407,14 @@ static void shotFired(int playerIndex, void *buf, int len)
     if (firingInfo.flagType->flagEffect == FlagEffect::GuidedMissile)
         playerData->player.endShotCredit--;
 
-    broadcastMessage(MsgShotBegin, len, buf);
+    if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
+    {
+        // repack for ID
+        void *bufStart = getDirectMessageBuffer();
+        firingInfo.pack(bufStart);
+        buf = bufStart;
+        broadcastMessage(MsgShotBegin, len, buf);
+    }
 }
 
 static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
