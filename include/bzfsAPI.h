@@ -2496,7 +2496,7 @@ enum class bz_FlagEffect
     NoShot,
 };
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, char* helpString, bz_eFlagQuality quality = bz_eFlagQuality::Good, bz_FlagEffect effect = bz_FlagEffect::Normal, bz_eTeamType teamColor = eNoTeam);
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality = bz_eFlagQuality::Good, bz_FlagEffect effect = bz_FlagEffect::Normal, bz_eTeamType teamColor = eNoTeam);
 
 // utility
 BZF_API const char* bz_MD5(const char * str);

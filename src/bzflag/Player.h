@@ -89,6 +89,7 @@ public:
     bool            hasFreeShotSlot();
     int             getNextShotSlot();
     virtual void    addShotToSlot(ShotPath::Ptr shot);
+    virtual void    addEmptyShotToSlot(int slotID);
 
     const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
 
