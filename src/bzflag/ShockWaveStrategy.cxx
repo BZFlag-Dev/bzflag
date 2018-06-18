@@ -78,7 +78,7 @@ void ShockWaveStrategy::update(float dt)
     // team color
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
     TeamColor currentTeam;
-    if ((myTank->getFlag() == Flags::Colorblindness) &&
+    if ((myTank->getFlag()->flagEffect == FlagEffect::Colorblindness) &&
             (getPlayer() != ServerPlayer))
         currentTeam = RogueTeam;
     else

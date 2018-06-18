@@ -227,21 +227,21 @@ bool SpawnPolicy::isImminentlyDangerous() const
                 const FlagInfo *finfo = FlagInfo::get(playerData->player.getFlag());
                 const FlagType::Ptr ftype = finfo->flag.type;
                 // FIXME: any more?
-                if (ftype == Flags::Laser)    // don't spawn in the line of sight of an L
+                if (ftype->flagEffect == FlagEffect::Laser)    // don't spawn in the line of sight of an L
                 {
                     if (isFacing(enemyPos, enemyAngle, twentyDegrees))   // he's looking within 20 degrees of spawn point
                     {
                         return true;    // eek, don't spawn here
                     }
                 }
-                else if (ftype == Flags::ShockWave)      // don't spawn next to a SW
+                else if (ftype->flagEffect == FlagEffect::ShockWave)      // don't spawn next to a SW
                 {
                     if (distanceFrom(enemyPos) < safeSWRadius)   // too close to SW
                     {
                         return true;    // eek, don't spawn here
                     }
                 }
-                else if (ftype == Flags::Steamroller || ftype == Flags::Burrow)     // don't spawn if you'll squish or be squished
+                else if (ftype->flagEffect == FlagEffect::Steamroller || ftype->flagEffect == FlagEffect::Burrow)     // don't spawn if you'll squish or be squished
                 {
                     if (distanceFrom(enemyPos) < safeSRRadius)   // too close to SR or BU
                     {

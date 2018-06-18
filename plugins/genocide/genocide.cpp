@@ -21,7 +21,7 @@ void genocide::Init ( const char* /*commandLine*/ )
   bz_debugMessage(4, "genocide plugin loaded");
 
   // register our special custom flag
-  bz_RegisterCustomFlag("G", "Genocide", "Killing one tank kills that tank's whole team.", /*eSuperShot*/0, eGoodFlag);
+  bz_RegisterCustomFlag("G", "Genocide", "Killing one tank kills that tank's whole team.");
 
   // register events for pick up, drop, transfer, and fire
   Register(bz_eFlagTransferredEvent);

@@ -123,7 +123,7 @@ void RadarRenderer::setTankColor(const Player* player)
         const float dimfactor = 0.4f;
 
         const float *color;
-        if (myTank->getFlag() == Flags::Colorblindness)
+        if (myTank->getFlag()->flagEffect == FlagEffect::Colorblindness)
             color = Team::getRadarColor(RogueTeam);
         else
             color = Team::getRadarColor(player->getTeam());
@@ -136,11 +136,10 @@ void RadarRenderer::setTankColor(const Player* player)
     }
     else
     {
-        glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-                                       Flags::Colorblindness ? RogueTeam : player->getTeam()));
+        glColor3fv(Team::getRadarColor(myTank->getFlag()->flagEffect == FlagEffect ::Colorblindness ? RogueTeam : player->getTeam()));
     }
     // If this tank is hunted flash it on the radar
-    if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness)
+    if (player->isHunted() && myTank->getFlag()->flagEffect != FlagEffect::Colorblindness)
     {
         if (flashTank.isOn())
         {
@@ -427,7 +426,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     float radarRange = BZDB.eval("displayRadarRange") * radarLimit;
     float maxRange = radarLimit;
     // when burrowed, limit radar range
-    if (myTank && (myTank->getFlag() == Flags::Burrow) &&
+    if (myTank && (myTank->getFlag()->flagEffect == FlagEffect::Burrow) &&
             (myTank->getPosition()[2] < 0.0f))
         maxRange = radarLimit / 4.0f;
     if (radarRange > maxRange)
@@ -653,8 +652,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             if (!player->isAlive() &&
                     (!useTankModels || !observer || !player->isExploding()))
                 continue;
-            if ((player->getFlag() == Flags::Stealth) &&
-                    (myTank->getFlag() != Flags::Seer))
+            if ((player->getFlag()->flagEffect == FlagEffect::Stealth) &&
+                    (myTank->getFlag()->flagEffect != FlagEffect::Seer))
                 continue;
 
             const float* position = player->getPosition();
@@ -673,7 +672,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
         bool coloredShot = BZDB.isTrue("coloredradarshots");
         // draw other tanks' shells
-        bool iSeeAll = myTank && (myTank->getFlag() == Flags::Seer);
+        bool iSeeAll = myTank && (myTank->getFlag()->flagEffect == FlagEffect::Seer);
 
         for (i = 0; i < curMaxPlayers; i++)
         {
@@ -683,12 +682,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             for (auto shot : player->getShots())
             {
-                if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll))
+                if (shot && (shot->getFlag()->flagEffect != FlagEffect::InvisibleBullet || iSeeAll))
                 {
                     const float *shotcolor;
                     if (coloredShot)
                     {
-                        if (myTank->getFlag() == Flags::Colorblindness)
+                        if (myTank->getFlag()->flagEffect == FlagEffect::Colorblindness)
                             shotcolor = Team::getRadarColor(RogueTeam);
                         else
                             shotcolor = Team::getRadarColor(player->getTeam());

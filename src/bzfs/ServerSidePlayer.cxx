@@ -361,11 +361,11 @@ float computeMaxLinVelocity(FlagType::Ptr flag, float z)
 
     if (flag)
     {
-        if (flag == Flags::Velocity)
+        if (flag->flagEffect == FlagEffect::Velocity)
             return speed * BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-        else if (flag == Flags::Thief)
+        else if (flag->flagEffect == FlagEffect::Thief)
             return speed * BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-        else if (flag == Flags::Burrow && z < 0.0f)
+        else if (flag->flagEffect == FlagEffect::Burrow && z < 0.0f)
             return speed * BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
     }
 
@@ -379,9 +379,9 @@ float computeMaxAngleVelocity(FlagType::Ptr flag, float z)
 
     if (flag)
     {
-        if (flag == Flags::QuickTurn)
+        if (flag->flagEffect == FlagEffect::QuickTurn)
             return angvel * BZDB.eval(StateDatabase::BZDB_ANGULARAD);
-        else if (flag == Flags::QuickTurn && z < 0.0f)
+        else if (flag->flagEffect == FlagEffect::QuickTurn && z < 0.0f)
             return angvel * BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
     }
 

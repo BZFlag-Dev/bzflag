@@ -21,7 +21,7 @@ void CustomFlagSample::Init ( const char* /*commandLine*/ )
   bz_debugMessage(4, "customflagsample plugin loaded");
 
   // register our special custom flag
-  bz_RegisterCustomFlag("CF", "Custom Flag", "A simple sample custom flag from the customflagsample plugin", /*eSuperShot*/0, eGoodFlag);
+  bz_RegisterCustomFlag("CF", "Custom Flag", "A simple sample custom flag from the customflagsample plugin");
 
   // register events for pick up, drop, transfer, and fire
   Register(bz_eFlagTransferredEvent);

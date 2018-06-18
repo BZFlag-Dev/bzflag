@@ -95,9 +95,9 @@ void RobotPlayer::getProjectedPosition(const Player *targ, float *projpos) const
     double distance = hypotf(deltax,deltay) - BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT) - BZDBCache::tankRadius;
     if (distance <= 0) distance = 0;
     double shotspeed = BZDB.eval(StateDatabase::BZDB_SHOTSPEED)*
-                       (getFlag() == Flags::Laser ? BZDB.eval(StateDatabase::BZDB_LASERADVEL) :
-                        getFlag() == Flags::RapidFire ? BZDB.eval(StateDatabase::BZDB_RFIREADVEL) :
-                        getFlag() == Flags::MachineGun ? BZDB.eval(StateDatabase::BZDB_MGUNADVEL) : 1) +
+                       (getFlag()->flagEffect == FlagEffect::Laser ? BZDB.eval(StateDatabase::BZDB_LASERADVEL) :
+                        getFlag()->flagEffect == FlagEffect::RapidFire ? BZDB.eval(StateDatabase::BZDB_RFIREADVEL) :
+                        getFlag()->flagEffect == FlagEffect::MachineGun ? BZDB.eval(StateDatabase::BZDB_MGUNADVEL) : 1) +
                        hypotf(getVelocity()[0], getVelocity()[1]);
 
     double errdistance = 1.0;
@@ -240,11 +240,11 @@ void            RobotPlayer::doUpdateMotion(float dt)
                 if (shot == nullptr || shot->isExpired())
                     continue;
                 // ignore invisible bullets completely for now (even when visible)
-                if (shot->getFlag() == Flags::InvisibleBullet)
+                if (shot->getFlag()->flagEffect == FlagEffect::InvisibleBullet)
                     continue;
 
                 const float* shotPos = shot->getPosition();
-                if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag() != Flags::GuidedMissile))
+                if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
                     continue;
                 const float dist = TargetingUtils::getTargetDistance(position, shotPos);
                 if (dist < 150.0f)

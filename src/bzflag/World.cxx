@@ -878,7 +878,7 @@ void            World::updateFlag(int index, float dt)
         }
         if (flagPlayer != NULL)
         {
-            if (flag.type == Flags::Narrow)
+            if (flag.type->flagEffect == FlagEffect::Narrow)
             {
                 flagNodes[index]->setAngle(flagPlayer->getAngle());
                 flagNodes[index]->setBillboard(false);
@@ -918,7 +918,7 @@ void            World::addFlags(SceneDatabase* scene, bool seerView)
         // Cloaking flag on a tank if we don't have a Seer flag.
         if (flags[i].status == FlagStatus::OnTank)
         {
-            if ((flags[i].type == Flags::Cloaking) && !seerView)
+            if ((flags[i].type->flagEffect == FlagEffect::Cloaking) && !seerView)
                 continue;
             int j;
             for (j = 0; j < curMaxPlayers; j++)

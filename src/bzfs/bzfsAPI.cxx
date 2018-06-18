@@ -4493,9 +4493,7 @@ BZF_API const char* bz_getProtocolVersion ( void )
     return getProtocolVersion();
 }
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
-                                   const char* help, bz_eShotType shotType,
-                                   bz_eFlagQuality quality)
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* help, int shotType, uint8_t quality)
 {
     // require defined fields
     if (!abbr || !name || !help)
@@ -4511,12 +4509,12 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
         return false;
 
     FlagEndurance e = FlagEndurance::Unstable;
-    switch (quality)
+    switch ((bz_eFlagQuality)quality)
     {
-    case eGoodFlag:
+    case bz_eFlagQuality::Good:
         e = FlagEndurance::Unstable;
         break;
-    case eBadFlag:
+    case bz_eFlagQuality::Bad:
         e = FlagEndurance::Sticky;
         break;
     default:
@@ -4526,7 +4524,7 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
     /* let this pointer dangle.  the constructor has taken care of all
      * the real work on the server side.
      */
-    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, help, true));
+    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, FlagEffect::Normal, help, true));
 
     /* default the shot limit.  note that -sl will still take effect, if
      * this plugin is loaded from the command line or config file, since
@@ -4543,6 +4541,89 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name,
     char* bufStart = buf;
     buf = (char*)tmp->packCustom(buf);
     broadcastMessage(MsgFlagType, buf-bufStart, bufStart);
+
+    return true;
+}
+
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality, bz_FlagEffect effect , bz_eTeamType teamColor)
+{
+    // require defined fields
+    if (abbr == nullptr || name == nullptr || helpString == nullptr)
+        return false;
+
+    // length limits
+    if ((strlen(abbr) > 2) || (strlen(name) > 32) || (strlen(helpString) > 128))
+        return false;
+
+    // don't register an existing flag (i.e. can't override builtins)
+    auto flagType = FlagType::getDescFromAbbreviation(abbr);
+    if (flagType != Flags::Null)
+        return false;
+
+    FlagEndurance e = FlagEndurance::Unstable;
+    switch (quality)
+    {
+    case bz_eFlagQuality::Good:
+        e = FlagEndurance::Unstable;
+        break;
+    case bz_eFlagQuality::Bad:
+        e = FlagEndurance::Sticky;
+        break;
+    default:
+        return false; // shouldn't happen
+    }
+
+    if (teamColor > ePurpleTeam || teamColor == eRogueTeam)
+        teamColor = eNoTeam;
+
+    if (teamColor != eNoTeam)
+    {
+        e = FlagEndurance::Unstable;
+        quality = bz_eFlagQuality::Good;
+    }
+
+    ShotType shotType = ShotType::Normal;
+
+    switch (effect)
+    {
+        case bz_FlagEffect::RapidFire:
+        case bz_FlagEffect::MachineGun:
+        case bz_FlagEffect::GuidedMissile:
+        case bz_FlagEffect::Laser:
+        case bz_FlagEffect::Ricochet:
+        case bz_FlagEffect::SuperBullet:
+        case bz_FlagEffect::InvisibleBullet:
+        case bz_FlagEffect::Steamroller:
+        case bz_FlagEffect::ShockWave:
+        case bz_FlagEffect::PhantomZone:
+        case bz_FlagEffect::Thief:
+            shotType = ShotType::Special;
+            break;
+    
+        default:
+            break;
+    }
+
+    /* let this pointer dangle.  the constructor has taken care of all
+    * the real work on the server side.
+    */
+    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, shotType, (FlagQuality)quality, (TeamColor)convertTeam(teamColor), (FlagEffect)effect, helpString, true));
+
+    /* default the shot limit.  note that -sl will still take effect, if
+    * this plugin is loaded from the command line or config file, since
+    * it's processed in finalization
+    */
+    clOptions->flagLimit[tmp] = -1;
+
+    /* notify existing players (if any) about the new flag type.  this
+    * behavior is a bit questionable, but seems to be the Right
+    * Thing(tm) to do.  new clients will get the notification during
+    * flag negotiation, which is better.
+    */
+    char* buf = getDirectMessageBuffer();
+    char* bufStart = buf;
+    buf = (char*)tmp->packCustom(buf);
+    broadcastMessage(MsgFlagType, buf - bufStart, bufStart);
 
     return true;
 }

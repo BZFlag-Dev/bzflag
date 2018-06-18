@@ -3725,7 +3725,7 @@ static void searchFlag(GameKeeper::Player &playerData)
         return;
 
     FlagInfo &playerFlag = *FlagInfo::get(flagId);
-    if (playerFlag.flag.type != Flags::Identify)
+    if (playerFlag.flag.type->flagEffect != FlagEffect::Identify)
         return;
 
     float radius = BZDB.eval(StateDatabase::BZDB_IDENTIFYRANGE);
@@ -3981,7 +3981,7 @@ void dropPlayerFlag(GameKeeper::Player &playerData, const float dropPos[3])
         return;
 
     FlagInfo &flag = *FlagInfo::get(flagIndex);
-    if (flag.flag.type == Flags::Shield)
+    if (flag.flag.type->flagEffect == FlagEffect::Shield)
     {
         playerData.player.endShotCredit -= playerData.player.endShotShieldCredit;
         playerData.player.endShotShieldCredit = 0;
@@ -4160,7 +4160,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
 
     bool canUpdate = false;
     if (flag != nullptr)
-        canUpdate = flag->flag.type == Flags::GuidedMissile;
+        canUpdate = flag->flag.type->flagEffect == FlagEffect::GuidedMissile;
 
     if (!shooter.isAlive() || shooter.isObserver() || !canUpdate)
         return;
@@ -4243,7 +4243,7 @@ static void shotFired(int playerIndex, void *buf, int len)
         }
 
         // probably a cheater using wrong shots.. exception for thief since they steal someone elses
-        if (firingInfo.flagType != Flags::Thief && checkShotMismatch)
+        if (firingInfo.flagType->flagEffect != FlagEffect::Thief && checkShotMismatch)
         {
             // bye bye supposed cheater
             logDebugMessage(1,"Kicking Player %s [%d] Player using wrong shots\n", shooter.getCallSign(), playerIndex);
@@ -4272,18 +4272,18 @@ static void shotFired(int playerIndex, void *buf, int len)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD);
         shotSpeed *= BZDB.eval(StateDatabase::BZDB_HANDICAPSHOTAD);
     }
-    if (firingInfo.flagType == Flags::ShockWave)
+    if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
     {
         shotSpeed = 0.0f;
         tankSpeed = 0.0f;
     }
-    else if (firingInfo.flagType == Flags::Velocity)
+    else if (firingInfo.flagType->flagEffect == FlagEffect::Velocity)
         tankSpeed *= tankSpeedMult;
-    else if (firingInfo.flagType == Flags::Thief)
+    else if (firingInfo.flagType->flagEffect == FlagEffect::Thief)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if ((firingInfo.flagType == Flags::Burrow)  && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
+    else if ((firingInfo.flagType->flagEffect == FlagEffect::Burrow)  && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
-    else if (firingInfo.flagType == Flags::Agility)
+    else if (firingInfo.flagType->flagEffect == FlagEffect::Agility)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
     else
     {
@@ -4315,7 +4315,7 @@ static void shotFired(int playerIndex, void *buf, int len)
         // verify position
         float muzzleFront = BZDB.eval(StateDatabase::BZDB_MUZZLEFRONT);
         float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-        if (firingInfo.flagType == Flags::Obesity)
+        if (firingInfo.flagType->flagEffect == FlagEffect::Obesity)
             muzzleFront *= BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
         const PlayerState &last = playerData->lastState;
         float dx = last.pos[0] - shot.pos[0];
@@ -4364,15 +4364,12 @@ static void shotFired(int playerIndex, void *buf, int len)
     }
 
 
-    // add the shot to the global list to get it's GUID
-    int guid = ShotManager.AddShot(firingInfo, playerData->getIndex());
-    firingInfo.shot.id = (uint16_t)guid;
-
-    // repack for ID
-    void *bufStart = getDirectMessageBuffer();
-    firingInfo.pack(bufStart);
-    buf = bufStart;
-
+    if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
+    {
+        // add the shot to the global list to get it's GUID
+        int guid = ShotManager.AddShot(firingInfo, playerData->getIndex());
+        firingInfo.shot.id = (uint16_t)guid;
+    }
 
     // if shooter has a flag
 
@@ -4407,10 +4404,17 @@ static void shotFired(int playerIndex, void *buf, int len)
         } // end is limit
     } // end of player has flag
 
-    if (firingInfo.flagType == Flags::GuidedMissile)
+    if (firingInfo.flagType->flagEffect == FlagEffect::GuidedMissile)
         playerData->player.endShotCredit--;
 
-    broadcastMessage(MsgShotBegin, len, buf);
+    if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
+    {
+        // repack for ID
+        void *bufStart = getDirectMessageBuffer();
+        firingInfo.pack(bufStart);
+        buf = bufStart;
+        broadcastMessage(MsgShotBegin, len, buf);
+    }
 }
 
 static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
@@ -5079,7 +5083,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         if (pFlag >= 0)
         {
             FlagInfo &flag = *FlagInfo::get(pFlag);
-            if (flag.flag.type == Flags::Shield)
+            if (flag.flag.type->flagEffect == FlagEffect::Shield)
                 playerData->player.endShotShieldCredit = 1;
         }
 
@@ -5247,7 +5251,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         FlagInfo *toFlag = FlagInfo::get(toPlayersFlag);
         // without flag or with a non thief flag? Then is probably cheating
-        if (!toFlag || toFlag->flag.type != Flags::Thief)
+        if (!toFlag || toFlag->flag.type->flagEffect != FlagEffect::Thief)
             cheater = true;
 
         // TODO, check thief radius here
@@ -5533,13 +5537,13 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                     if (pFlag >= 0)
                     {
                         FlagInfo &flag = *FlagInfo::get(pFlag);
-                        if (flag.flag.type == Flags::Velocity)
+                        if (flag.flag.type->flagEffect == FlagEffect::Velocity)
                             maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-                        else if (flag.flag.type == Flags::Thief)
+                        else if (flag.flag.type->flagEffect == FlagEffect::Thief)
                             maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-                        else if (flag.flag.type == Flags::Agility)
+                        else if (flag.flag.type->flagEffect == FlagEffect::Agility)
                             maxPlanarSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
-                        else if ((flag.flag.type == Flags::Burrow) &&
+                        else if ((flag.flag.type->flagEffect == FlagEffect::Burrow) &&
                                  (playerData->lastState.pos[2] == state.pos[2]) &&
                                  (playerData->lastState.velocity[2] == state.velocity[2]) &&
                                  (state.pos[2] <= BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)))

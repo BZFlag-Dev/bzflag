@@ -234,7 +234,7 @@ float  SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank, float positi
     for (int i = lastSegment; i <= segment && i < numSegments; i++)
     {
         // can never hit your own first laser segment
-        if (i == 0 && getFlag() == Flags::Laser &&
+        if (i == 0 && getFlag()->flagEffect == FlagEffect::Laser &&
                 getPlayer() == tank->getId())
             continue;
 
@@ -254,7 +254,7 @@ float  SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank, float positi
 
         // get hit time
         float t;
-        if (tank->getFlag() == Flags::Narrow)
+        if (tank->getFlag()->flagEffect == FlagEffect::Narrow)
         {
             // find closest approach to narrow box around tank.  width of box
             // is shell radius so you can actually hit narrow tank head on.
@@ -820,7 +820,7 @@ LaserStrategy::LaserStrategy(const FiringInfo& _info) :
     const int numSegments = getSegments().size();
     laserNodes = new LaserSceneNode*[numSegments];
     const LocalPlayer* myTank = LocalPlayer::getMyTank();
-    TeamColor tmpTeam = (myTank->getFlag() == Flags::Colorblindness) ? RogueTeam : team;
+    TeamColor tmpTeam = (myTank->getFlag()->flagEffect == FlagEffect::Colorblindness) ? RogueTeam : team;
 
     TextureManager &tm = TextureManager::instance();
     std::string imageName = Team::getImagePrefix(tmpTeam);

@@ -57,6 +57,52 @@
 #include "global.h"
 #include "Address.h"
 
+enum class FlagEffect
+{
+    Normal,
+    Velocity,
+    QuickTurn,
+    OscillationOverthruster,
+    RapidFire,
+    MachineGun,
+    GuidedMissile,
+    Laser,
+    Ricochet,
+    SuperBullet,
+    InvisibleBullet,
+    Stealth,
+    Tiny,
+    Narrow,
+    Shield,
+    Steamroller,
+    ShockWave,
+    PhantomZone,
+    Jumping,
+    Identify,
+    Cloaking,
+    Useless,
+    Masquerade,
+    Seer,
+    Thief,
+    Burrow,
+    Wings,
+    Agility,
+    Colorblindness,
+    Obesity,
+    LeftTurnOnly,
+    RightTurnOnly,
+    ForwardOnly,
+    ReverseOnly,
+    Momentum,
+    Blindness,
+    Jamming,
+    WideAngle,
+    NoJumping,
+    TriggerHappy,
+    ReverseControls,
+    Bouncy,
+    NoShot,
+};
 
 /** This enum says where a flag is. */
 enum class FlagStatus
@@ -117,7 +163,7 @@ public:
     typedef std::set<FlagType::Ptr> Set;
 
     FlagType( const std::string& name, const std::string& abbv, FlagEndurance _endurance,
-              ShotType sType, FlagQuality quality, TeamColor team, const std::string& help,
+              ShotType sType, FlagQuality quality, TeamColor team, FlagEffect effect, const std::string& help,
               bool _custom = false ) :
         flagName(name),
         flagAbbv(abbv),
@@ -127,6 +173,7 @@ public:
         flagShot = sType;
         flagQuality = quality;
         flagTeam = team;
+        flagEffect = effect;
         custom = _custom;
     }
 
@@ -168,6 +215,7 @@ public:
     FlagQuality flagQuality;
     ShotType flagShot;
     TeamColor flagTeam;
+    FlagEffect flagEffect = FlagEffect::Normal;
     bool custom;
 
     static std::vector<Set> Sets;

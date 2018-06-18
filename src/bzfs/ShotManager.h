@@ -165,7 +165,7 @@ namespace Shots
         virtual  Shot::Ptr GetShot(uint16_t /*guid*/, const FiringInfo &/*info*/) = 0;
 
         typedef std::shared_ptr <ShotFactory> Ptr;
-        typedef std::map<std::string, Ptr > Map;
+        typedef std::map<FlagEffect, Ptr > Map;
     };
 
 #define INVALID_SHOT_GUID 0
@@ -179,7 +179,7 @@ namespace Shots
 
         void Init();
 
-        void SetShotFactory(const char* flagCode, std::shared_ptr<ShotFactory> factory);
+        void SetShotFactory(FlagEffect effect, std::shared_ptr<ShotFactory> factory);
 
         uint16_t AddShot(const FiringInfo &info, PlayerId shooter);
         void RemoveShot(uint16_t shotID);

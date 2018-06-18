@@ -89,6 +89,7 @@ public:
     bool            hasFreeShotSlot();
     int             getNextShotSlot();
     virtual void    addShotToSlot(ShotPath::Ptr shot);
+    virtual void    addEmptyShotToSlot(int slotID);
 
     const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
 
@@ -588,7 +589,7 @@ inline bool     Player::isExploding() const
 
 inline bool     Player::isPhantomZoned() const
 {
-    return (isFlagActive() && (getFlag() == Flags::PhantomZone));
+    return (isFlagActive() && (getFlag()->flagEffect == FlagEffect::PhantomZone));
 }
 
 inline bool     Player::isCrossingWall() const

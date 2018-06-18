@@ -203,6 +203,15 @@ void Player::addShotToSlot(ShotPath::Ptr shot)
     ShotSlots[slotIndex].reloadTime = ShotSlots[slotIndex].totalReload = getFlagReload(shot->getFiringInfo().flagType);
 }
 
+void  Player::addEmptyShotToSlot(int slotIndex)
+{
+    if (slotIndex > World::getWorld()->getMaxShots())
+        return; // it's not a slot based shot
+
+    ShotSlots[slotIndex].activeShot = nullptr;
+    ShotSlots[slotIndex].reloadTime = ShotSlots[slotIndex].totalReload = getFlagReload(getFlag());
+}
+
 void Player::addShot(const FiringInfo& info)
 {
     const float *f = getForward();
@@ -275,9 +284,9 @@ float Player::getMaxSpeed ( void ) const
     // BURROW and AGILITY will not be taken into account
     const FlagType::Ptr flag = getFlag();
     float maxSpeed = BZDBCache::tankSpeed;
-    if (flag == Flags::Velocity)
+    if (flag->flagEffect == FlagEffect::Velocity)
         maxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
-    else if (flag == Flags::Thief)
+    else if (flag->flagEffect == FlagEffect::Thief)
         maxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
     return maxSpeed;
 }
@@ -371,7 +380,7 @@ void Player::setPhysicsDriver(int driver)
 void Player::setRelativeMotion()
 {
     bool falling = (state.status & short(PlayerState::Falling)) != 0;
-    if (falling && (getFlag() != Flags::Wings))
+    if (falling && (getFlag()->flagEffect != FlagEffect::Wings))
     {
         // no adjustments while falling
         return;
@@ -501,7 +510,7 @@ void Player::updateTank(float dt, bool local)
 void Player::updateJumpJets(float dt)
 {
     float jumpVel;
-    if (getFlag() == Flags::Wings)
+    if (getFlag()->flagEffect == FlagEffect::Wings)
         jumpVel = BZDB.eval(StateDatabase::BZDB_WINGSJUMPVELOCITY);
     else
         jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
@@ -812,25 +821,25 @@ void Player::updateFlagEffect(FlagType::Ptr effectFlag)
     dimensionsTarget[0] = 1.0f;
     dimensionsTarget[1] = 1.0f;
     dimensionsTarget[2] = 1.0f;
-    if (effectFlag == Flags::Obesity)
+    if (effectFlag->flagEffect == FlagEffect::Obesity)
     {
         const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
         dimensionsTarget[0] = factor;
         dimensionsTarget[1] = factor;
     }
-    else if (effectFlag == Flags::Tiny)
+    else if (effectFlag->flagEffect == FlagEffect::Tiny)
     {
         const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
         dimensionsTarget[0] = factor;
         dimensionsTarget[1] = factor;
     }
-    else if (effectFlag == Flags::Thief)
+    else if (effectFlag->flagEffect == FlagEffect::Thief)
     {
         const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
         dimensionsTarget[0] = factor;
         dimensionsTarget[1] = factor;
     }
-    else if (effectFlag == Flags::Narrow)
+    else if (effectFlag->flagEffect == FlagEffect::Narrow)
         dimensionsTarget[1] = 0.001f;
 
     // set the dimension rates
@@ -844,7 +853,7 @@ void Player::updateFlagEffect(FlagType::Ptr effectFlag)
     }
 
     // set the alpha target
-    if (effectFlag == Flags::Cloaking)
+    if (effectFlag->flagEffect == FlagEffect::Cloaking)
         alphaTarget = 0.0f;
     else
         alphaTarget = 1.0f;
@@ -982,15 +991,15 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
         tankNode->setDimensions(dimensionsScale);
     else
     {
-        if (flagType == Flags::Obesity) tankNode->setObese();
-        else if (flagType == Flags::Tiny) tankNode->setTiny();
-        else if (flagType == Flags::Narrow) tankNode->setNarrow();
-        else if (flagType == Flags::Thief) tankNode->setThief();
+        if (flagType->flagEffect == FlagEffect::Obesity) tankNode->setObese();
+        else if (flagType->flagEffect == FlagEffect::Tiny) tankNode->setTiny();
+        else if (flagType->flagEffect == FlagEffect::Narrow) tankNode->setNarrow();
+        else if (flagType->flagEffect == FlagEffect::Thief) tankNode->setThief();
         else tankNode->setNormal();
     }
 
     // is this tank fully cloaked?
-    const bool cloaked = (flagType == Flags::Cloaking) && (color[3] == 0.0f);
+    const bool cloaked = (flagType->flagEffect == FlagEffect::Cloaking) && (color[3] == 0.0f);
 
     if (cloaked && !seerView)
     {
@@ -1127,7 +1136,7 @@ void Player::setLandingSpeed(float velocity)
     //
     float k = 0.1f / (2.0f * gravity * gravity);
     k = k * squishiness;
-    if (flagType == Flags::Bouncy)
+    if (flagType->flagEffect == FlagEffect::Bouncy)
         k = k * 4.0f;
     const float newZscale = 1.0f / (1.0f + (k * (velocity * velocity)));
 
@@ -1182,17 +1191,17 @@ float Player::getFlagReload(FlagType::Ptr flag) const
 
     if (flag != nullptr)
     {
-        if (flag == Flags::RapidFire)
+        if (flag->flagEffect == FlagEffect::RapidFire)
             baseReload /= BZDB.eval(StateDatabase::BZDB_RFIREADRATE);
-        else if (flag == Flags::MachineGun)
+        else if (flag->flagEffect == FlagEffect::MachineGun)
             baseReload /= BZDB.eval(StateDatabase::BZDB_MGUNADRATE);
-        else if (flag == Flags::Laser)
+        else if (flag->flagEffect == FlagEffect::Laser)
             baseReload /= BZDB.eval(StateDatabase::BZDB_LASERADRATE);
-        else if (flag == Flags::Thief)
+        else if (flag->flagEffect == FlagEffect::Thief)
             baseReload /= BZDB.eval(StateDatabase::BZDB_THIEFADRATE);
     }
 
-    // TODO, use per tank atrtribute factors to modify base value
+    // TODO, use per tank attribute factors to modify base value
 
     return baseReload;
 }
@@ -1386,7 +1395,7 @@ bool Player::isDeadReckoningWrong() const
 
     // always send a new packet on reckoned touchdown
     float groundLimit = 0.0f;
-    if (getFlag() == Flags::Burrow)
+    if (getFlag()->flagEffect == FlagEffect::Burrow)
         groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
     if (predictedPos[2] < groundLimit)
         return true;
@@ -1457,7 +1466,7 @@ void Player::doDeadReckoning()
 
     // if hit ground then update input state (we don't want to fall anymore)
     float groundLimit = 0.0f;
-    if (getFlag() == Flags::Burrow)
+    if (getFlag()->flagEffect == FlagEffect::Burrow)
         groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
     // the velocity check is for when a Burrow flag is dropped
     if ((predictedPos[2] < groundLimit) && (predictedVel[2] <= 0.0f))
@@ -1490,7 +1499,7 @@ void Player::doDeadReckoning()
             // setup the sound
             if (BZDB.isTrue("remoteSounds"))
             {
-                if ((getFlag() != Flags::Burrow) || (predictedPos[2] > 0.0f))
+                if ((getFlag()->flagEffect != FlagEffect::Burrow) || (predictedPos[2] > 0.0f))
                     playSound(SFX_LAND, state.pos, soundImportance, localSound);
                 else
                 {

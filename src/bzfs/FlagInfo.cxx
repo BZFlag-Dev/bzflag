@@ -131,7 +131,7 @@ void FlagInfo::addFlag()
         flag.endurance = FlagEndurance::Unstable;
 
     // how times will it stick around
-    if ((flag.endurance == FlagEndurance::Sticky) || (flag.type == Flags::Thief))
+    if ((flag.endurance == FlagEndurance::Sticky) || (flag.type->flagEffect == FlagEffect::Thief))
         grabs = 1;
     else
         grabs = BZDB.evalInt(StateDatabase::BZDB_MAXFLAGGRABS);
@@ -171,7 +171,7 @@ void FlagInfo::dropFlag(float pos[3], float landingPos[3], bool vanish)
     // altitudes and desired height above start altitude
     const float gravity   = BZDBCache::gravity;
     const float flagAltitude   = BZDB.eval(StateDatabase::BZDB_FLAGALTITUDE);
-    const float thrownAltitude = (flag.type == Flags::Shield) ?
+    const float thrownAltitude = (flag.type->flagEffect == FlagEffect::Shield) ?
                                  BZDB.eval(StateDatabase::BZDB_SHIELDFLIGHT) * flagAltitude : flagAltitude;
     const float maxAltitude    = pos[2] + thrownAltitude;
     const float upTime     = sqrtf(-2.0f * thrownAltitude / gravity);
