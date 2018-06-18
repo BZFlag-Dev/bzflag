@@ -43,6 +43,8 @@ public:
     void getTextualInfo(char *message);
     bool exist();
 
+    const char* getStatusName();
+
     static FlagInfo *get(int index);
     static void setSize(int _numFlags);
     static void setAllowed(std::vector<FlagType::Ptr> allowed);
