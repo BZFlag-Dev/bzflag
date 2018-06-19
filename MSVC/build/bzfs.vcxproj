@@ -409,6 +409,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     </ClCompile>
     <ClCompile Include="..\..\src\bzfs\RecordReplay.cxx" />
     <ClCompile Include="..\..\src\bzfs\RejoinList.cxx" />
+    <ClCompile Include="..\..\src\bzfs\RobotUtils.cxx" />
     <ClCompile Include="..\..\src\bzfs\Score.cxx" />
     <ClCompile Include="..\..\src\bzfs\ServerCommand.cxx" />
     <ClCompile Include="..\..\src\bzfs\ShotManager.cxx" />
@@ -647,6 +648,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClCompile Include="..\..\src\bzfs\ServerSidePlayer.cxx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\bzfsAPIServerSidePlayers.h" />
     <ClInclude Include="..\..\src\bzfs\AccessControlList.h" />
     <ClInclude Include="..\..\src\bzfs\Authentication.h" />
     <ClInclude Include="..\..\src\bzfs\bzfs.h" />
@@ -687,6 +689,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClInclude Include="..\..\include\PlayerInfo.h" />
     <ClInclude Include="..\..\src\bzfs\RecordReplay.h" />
     <ClInclude Include="..\..\src\bzfs\RejoinList.h" />
+    <ClInclude Include="..\..\src\bzfs\RobotUtils.h" />
     <ClInclude Include="..\..\src\bzfs\Score.h" />
     <ClInclude Include="..\..\src\bzfs\ServerCommand.h" />
     <ClInclude Include="..\..\src\bzfs\ShotManager.h" />

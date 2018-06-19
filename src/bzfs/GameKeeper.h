@@ -39,6 +39,7 @@
 #include "FlagInfo.h"
 #include "ShotUpdate.h"
 #include "ShotManager.h"
+#include "bzfsAPIServerSidePlayers.h"
 
 using namespace Shots;
 

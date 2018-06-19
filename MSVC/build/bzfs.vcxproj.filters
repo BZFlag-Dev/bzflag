@@ -175,6 +175,9 @@
     <ClCompile Include="..\..\src\bzfs\VotingArbiter.cxx">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\RobotUtils.cxx">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzfs\CustomArc.h">
@@ -346,6 +349,12 @@
       <Filter>Header Files\Server</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzfs\ShotManager.h" />
+    <ClInclude Include="..\..\include\bzfsAPIServerSidePlayers.h">
+      <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\RobotUtils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">

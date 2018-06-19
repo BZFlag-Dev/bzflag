@@ -459,8 +459,7 @@ namespace Shots
         return false;
     }
 
-    const Obstacle* getFirstBuilding(const Ray& ray,
-        float min, float& t)
+    const Obstacle* getFirstBuilding(const Ray& ray, float min, float& t)
     {
         const Obstacle* closestObstacle = NULL;
         unsigned int i = 0;
