@@ -2068,6 +2068,110 @@ BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObject
 BZF_API bool bz_removeCustomMapObject ( const char* object );
 
 
+// map object API
+enum class bz_eWorldObjectType
+{
+    NullObject,
+    SolidObject,
+    TeleporterField,
+    WorldWeapon
+};
+
+class BZF_API bz_APIBaseWorldObject
+{
+public:
+    bz_APIBaseWorldObject() { type = bz_eWorldObjectType::NullObject; }
+    virtual ~bz_APIBaseWorldObject() {}
+    bz_eWorldObjectType type;
+    bz_ApiString name;
+    unsigned int id;
+};
+
+enum class bz_eSolidWorldObjectType
+{
+    Wall,
+    Box,
+    Base,
+    Pyramid,
+    Mesh,
+    Arc,
+    Cone,
+    Sphere,
+    Teleporter,
+    Unknown
+};
+
+class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
+{
+public:
+    bz_APISolidWorldObject_V1();
+    virtual ~bz_APISolidWorldObject_V1();
+
+    bz_eSolidWorldObjectType  solidType;
+    int         subID;
+
+    float center[3];
+    float maxAABBox[3];
+    float minAABBox[3];
+    float rotation[3];
+    float maxBBox[3];
+    float minBBox[3];
+
+    virtual bool collide(float pos[3], float rad, float* hit);
+};
+
+class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
+{
+public:
+    bz_CTFBaseWorldObject_V1();
+    virtual ~bz_CTFBaseWorldObject_V1();
+
+    bz_eTeamType team;
+};
+
+class BZF_API bz_APITeleporterField_V1 : public bz_APISolidWorldObject_V1
+{
+public:
+    bz_APITeleporterField_V1() {}
+    virtual ~bz_APITeleporterField_V1() {}
+
+    bz_ApiString name;
+    bz_APIStringList targets[2];
+};
+
+class BZF_API bz_APIWorldObjectList
+{
+public:
+    bz_APIWorldObjectList();
+    bz_APIWorldObjectList(const bz_APIWorldObjectList& r);
+    ~bz_APIWorldObjectList();
+
+    void push_back(bz_APIBaseWorldObject* value);
+    bz_APIBaseWorldObject* get(unsigned int i);
+    const bz_APIBaseWorldObject* operator[](unsigned int i) const;
+    bz_APIWorldObjectList& operator = (const bz_APIWorldObjectList& r);
+    unsigned int size(void);
+    void clear(void);
+
+protected:
+    class dataBlob;
+    dataBlob* data;
+};
+
+BZF_API unsigned int bz_getWorldObjectCount(void);
+
+BZF_API bz_APIWorldObjectList* bz_getWorldObjectList(void);
+BZF_API bz_APIWorldObjectList* bz_getWorldBases(void);
+BZF_API bz_APIWorldObjectList* bz_getWorldBases(bz_eTeamType team);
+BZF_API bz_APIWorldObjectList* bz_getWorldCustomObjects(const char* name);
+
+BZF_API void bz_releaseWorldObjectList(bz_APIWorldObjectList* list);
+
+BZF_API unsigned int bz_findWorldObject(const char* name);
+
+BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID(unsigned int id);
+
+
 // public server info
 BZF_API bool bz_getPublic( void );
 BZF_API bz_ApiString bz_getPublicAddr( void );
@@ -2231,212 +2335,6 @@ int convertTeam( bz_eTeamType team );
 // game type info
 BZF_API bz_eGameType bz_getGameType ( void );
 BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eTeamType teamCapped);
-
-
-typedef struct
-{
-    int index;
-    char type[2];
-    int status;
-    int endurance;
-    int owner;
-    float position[3];
-    float launchPosition[3];
-    float landingPosition[3];
-    float flightTime;
-    float flightEnd;
-    float initialVelocity;
-} bz_FlagUpdateRecord;
-
-typedef struct
-{
-    float rank;
-    int wins;
-    int losses;
-    int tks;
-} bz_ScoreRecord;
-
-typedef struct
-{
-    int id;
-    int size;
-    int wins;
-    int losses;
-} bz_TeamInfoRecord;
-
-typedef enum
-{
-    eRejectBadRequest,
-    eRejectBadTeam,
-    eRejectBadType,
-    eRejectUNUSED,
-    eRejectTeamFull,
-    eRejectServerFull,
-    eRejectBadCallsign,
-    eRejectRepeatCallsign,
-    eRejectRejoinWaitTime,
-    eRejectIPBanned,
-    eRejectHostBanned,
-    eRejectIDBanned
-} bz_eRejectCodes;
-
-typedef struct
-{
-    int player;
-    int handicap;
-} bz_HandicapUpdateRecord;
-
-class BZF_API bz_ServerSidePlayerHandler
-{
-public:
-    bz_ServerSidePlayerHandler();
-    virtual ~bz_ServerSidePlayerHandler() {}
-
-    int getPlayerID ( void )
-    {
-        return playerID;
-    }
-
-    void update ( void );
-
-    // you must call setPlayerData when this is called.
-    virtual void added(int player) = 0; // it is required that the bot provide this method
-
-    // lower level events for various things that happen in the game
-    virtual void removed(void) {}
-
-    virtual void playerAdded(int player);
-    virtual void playerRemoved(int player);
-
-    virtual void playerSpawned(int player, const float pos[3], float rot);
-
-    virtual void textMessage(int dest, int source, const char *text);
-    virtual void playerKilled(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex,
-                              const char *flagType, int phydrv);
-    virtual void scoreLimitReached(int player, bz_eTeamType team);
-    virtual void flagCaptured(int player, bz_eTeamType team);
-
-    virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
-                                   double timestamp); // implement when server side scoring is in
-// virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs); // implement when server side scoring is in
-    virtual void shotFired(int player, unsigned short shotID);
-    virtual void shotEnded(int player, unsigned short shotID,  bool expired);
-    virtual void playerTeleported(int player, bz_PlayerUpdateState *currentState, bz_PlayerUpdateState *lastState);
-
-    // higher level functions for events that happen to the bot
-    typedef enum
-    {
-        eWorldDeath,
-        eServerDeath,
-        eCaptureDeath,
-        eOtherDeath
-    } SmiteReason;
-
-    void rejected ( bz_eRejectCodes, const char* /*reason*/) {}; // the bot was rejectd for some reason
-    virtual void spawned(void); // the bot has spawned
-    virtual void died ( int killer ); // the bot has died from gameplay
-    virtual void smote ( SmiteReason reason = eOtherDeath ); // the bot has died from some other manner
-// virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ) {} // the bot ran into an object
-
-    // give the bot time to do it's processing
-    virtual bool think(void); // return true to kill and delete the bot;
-
-    void setPlayerID ( int id )
-    {
-        playerID = id;
-    }
-
-    // actions to make
-    void setPlayerData(const char *callsign,
-                       const char *token, const char *clientVersion,
-                       bz_eTeamType team);
-
-    void joinGame(void);
-
-    void respawn(void);
-    void getCurrentState(bz_PlayerUpdateState *state);
-
-    void sendServerCommand(const char* text);
-    void sendChatMessage(const char* text, int targetPlayer = BZ_ALLUSERS, bz_eMessageType type = eChatMessage);
-    void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam, bz_eMessageType type = eChatMessage);
-
-    void dropFlag( void );
-    void setMovement(float forward, float turn);
-    bool fireShot(void);
-    bool jump(void);
-
-    // state info
-    bool canJump(void);
-    bool canShoot(void);
-    bool canMove(void);
-    bool falling (void);
-
-    void getPosition ( float *p );
-    void getVelocity ( float *v );
-    float getFacing ( void );
-
-    float getMaxLinSpeed ( void );
-    float getMaxRotSpeed ( void );
-
-    // state actions
-    void setAutoSpawn ( bool s = true )
-    {
-        autoSpawn = s;
-    }
-
-    int playerID;
-
-private:
-    float input[2];
-    bool wantToJump;
-
-    bool autoSpawn;
-
-public:
-    class BZF_API UpdateInfo
-    {
-    public:
-        float pos[3];
-        float vec[3];  // FIXME -- vel for velocity?
-        float rot;     // FIXME -- radians or degrees?
-        float rotVel;
-        double time;
-
-        UpdateInfo()
-            : rot(0), rotVel(0), time(0)
-        {
-            for (int i = 0; i < 3; i++)
-                pos[i] = vec[0] =0;
-        }
-
-        UpdateInfo& operator=( const UpdateInfo& u )
-        {
-            memcpy(pos,u.pos,sizeof(float)*3);
-            memcpy(vec,u.vec,sizeof(float)*3);
-            rot = u.rot;
-            rotVel = u.rotVel;
-            time = u.time;
-
-            return *this;
-        }
-        float getDelta( const UpdateInfo & state);
-    };
-
-private:
-    UpdateInfo lastUpdate;
-    UpdateInfo currentState;
-
-    int flaps;
-
-    bool alive;
-};
-
-// *** NOTE *** support for server side players in incomplete.
-//  there WILL be crashes if you add one.
-// this message will be removed when the code is complete.
-BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler);
-BZF_API bool bz_removeServerSidePlayer(int playerID,
-                                       bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
 
 // Note: there is NO bz_UnregisterCustomFlag, 'cause that would jack up connected clients.
 // If you really need to unregister a flag, shut down the server.

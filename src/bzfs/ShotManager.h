@@ -21,6 +21,8 @@
 #include "vectors.h"
 #include "TimeKeeper.h"
 
+#include "Obstacle.h"
+
 #include <string>
 #include <vector>
 #include <map>
@@ -167,6 +169,8 @@ namespace Shots
         typedef std::shared_ptr <ShotFactory> Ptr;
         typedef std::map<FlagEffect, Ptr > Map;
     };
+
+    const Obstacle* getFirstBuilding(const Ray& ray, float min, float& t);
 
 #define INVALID_SHOT_GUID 0
 #define MAX_SHOT_GUID 0xFFFF

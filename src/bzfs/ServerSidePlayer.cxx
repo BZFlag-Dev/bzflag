@@ -14,9 +14,9 @@
 #include "common.h"
 
 #include "bzfsAPI.h"
+#include "bzfsAPIServerSidePlayers.h"
 #include "bzfs.h"
 #include "StateDatabase.h"
-
 
 // server side bot API
 
