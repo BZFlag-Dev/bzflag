@@ -21,6 +21,18 @@
 // PNGImageFile
 //
 
+void user_error_fn(png_structp UNUSED(png_ptr), png_const_charp error_msg)
+{
+    std::string* filename = (std::string*)png_get_error_ptr(png_ptr);
+    std::cerr << "libpng error (" << *filename << "): " << error_msg << std::endl;
+}
+
+void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
+{
+    std::string* filename = (std::string*)png_get_error_ptr(png_ptr);
+    std::cerr << "libpng warning (" << *filename << "): " << warning_msg << std::endl;
+}
+
 /*
 PNGImageFile::PNGImageFile(std::istream* stream)
 
@@ -43,7 +55,7 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFil
         return;
 
     // Create the read structure
-    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&filename, user_error_fn, user_warning_fn);
     if (!png)
         return;
 

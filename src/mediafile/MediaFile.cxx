@@ -130,13 +130,17 @@ uint32_t    MediaFile::swap32BE(uint32_t* d)
 
 std::istream*  OpenPNG(const std::string filename, ImageFile** file)
 {
+    std::string extension = "";
     std::istream* stream = FILEMGR.createDataInStream(filename, true);
     if (stream == nullptr)
-        stream = FILEMGR.createDataInStream(filename + PNGImageFile::getExtension(), true);
+    {
+        extension = PNGImageFile::getExtension();
+        stream = FILEMGR.createDataInStream(filename + extension, true);
+    }
 
     if (stream != NULL)
     {
-        *file = new PNGImageFile(stream, filename);
+        *file = new PNGImageFile(stream, filename + extension);
         if (!(*file)->isOpen())
         {
            *file = nullptr;
