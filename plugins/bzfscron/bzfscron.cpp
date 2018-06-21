@@ -14,6 +14,7 @@
 // see ReadMe.txt for usage notes.
 
 #include "bzfsAPI.h"
+#include "bzfsAPIServerSidePlayers.h"
 #include "plugin_utils.h"
 #include "CronJob.h"
 #include <fstream>

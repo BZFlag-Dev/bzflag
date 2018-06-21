@@ -14,6 +14,7 @@
 #define _PLAYER_HANDLER_H_
 
 #include "bzfsAPI.h"
+#include "bzfsAPIServerSidePlayers.h"
 
 class PlayerHandler: public bz_ServerSidePlayerHandler
 {
