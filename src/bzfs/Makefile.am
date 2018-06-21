@@ -29,6 +29,8 @@ bzfs_SOURCES =				\
 	base64.cxx			\
 	base64.h			\
 	bzfsAPI.cxx			\
+	bzfsAPIServerSidePlayers.cxx	\
+	bzfsAPIWorld.cxx	\
 	BZWError.cxx			\
 	BZWError.h			\
 	BZWReader.cxx			\
@@ -102,6 +104,8 @@ bzfs_SOURCES =				\
 	RecordReplay.h			\
 	RejoinList.cxx			\
 	RejoinList.h			\
+	RobotUtils.h				\
+	RobotUtils.cxx			\
 	Score.h				\
 	Score.cxx			\
 	ServerCommand.cxx		\
