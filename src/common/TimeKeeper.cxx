@@ -28,11 +28,11 @@
 #  include <sys/types.h>
 static struct timeval   lastTime = { 0, 0 };
 #else /* !defined(_WIN32) */
-#  include <mmsystem.h>
-static unsigned long int    lastTime = 0;
-static LARGE_INTEGER    qpcLastTime;
-static LONGLONG     qpcFrequency = 0;
-static LONGLONG  qpcLastCalibration;
+#  include <SDL2/SDL.h>
+static Uint64    lastTime = 0;
+static Uint64    qpcLastTime;
+static Uint64     qpcFrequency = 0;
+static Uint64  qpcLastCalibration;
 static DWORD        timeLastCalibration;
 #endif /* !defined(_WIN32) */
 
@@ -67,36 +67,35 @@ const TimeKeeper&   TimeKeeper::getCurrent(void)
     {
 
         // main timer is qpc
-        LARGE_INTEGER now;
-        QueryPerformanceCounter(&now);
+        Uint64 now = SDL_GetPerformanceCounter();
 
-        LONGLONG diff     = now.QuadPart - qpcLastTime.QuadPart;
-        LONGLONG clkSpent = now.QuadPart - qpcLastCalibration;
+        Uint64 diff     = now - qpcLastTime;
+        Uint64 clkSpent = now - qpcLastCalibration;
+        Uint64 thisFeq = SDL_GetPerformanceFrequency();
 
-        if (clkSpent > qpcFrequency)
-        {
-            // Recalibrate Frequency
-            DWORD tgt    = timeGetTime();
-            DWORD deltaTgt      = tgt - timeLastCalibration;
-            timeLastCalibration = tgt;
-            qpcLastCalibration  = now.QuadPart;
-            if (deltaTgt > 0)
-            {
-                LONGLONG oldqpcfreq = qpcFrequency;
-                qpcFrequency    = (clkSpent * 1000) / deltaTgt;
-                if (qpcFrequency != oldqpcfreq)
-                    logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",
-                                    (double)oldqpcfreq, (double)qpcFrequency);
-            }
-        }
+         if (thisFeq != qpcFrequency)
+         {
+             // Recalibrate Frequency
+             DWORD tgt    = timeGetTime();
+             DWORD deltaTgt      = tgt - timeLastCalibration;
+             timeLastCalibration = tgt;
+             qpcLastCalibration  = now;
+             if (deltaTgt > 0)
+             {
+                 LONGLONG oldqpcfreq = qpcFrequency;
+                 qpcFrequency = thisFeq;
+                 if (qpcFrequency != oldqpcfreq)
+                     logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",  (double)oldqpcfreq, (double)qpcFrequency);
+             }
+         }
 
         currentTime += (double) diff / (double) qpcFrequency;
         qpcLastTime = now;
     }
     else if (lastTime != 0)
     {
-        unsigned long int now = (unsigned long int)timeGetTime();
-        unsigned long int diff;
+        Uint64 now = (Uint64)timeGetTime();
+        Uint64 diff;
         if (now <= lastTime)
         {
             // eh, how'd we go back in time?
@@ -116,13 +115,14 @@ const TimeKeeper&   TimeKeeper::getCurrent(void)
             logDebugMessage(1,"Sanity check failure in TimeKeeper::getCurrent()\n");
         sane = false;
 
-        LARGE_INTEGER freq;
-        if (QueryPerformanceFrequency(&freq))
+        Uint64 freq = SDL_GetPerformanceFrequency();
+
+        if (true)
         {
-            QueryPerformanceCounter(&qpcLastTime);
-            qpcFrequency  = freq.QuadPart;
+            qpcLastTime = SDL_GetPerformanceCounter();
+            qpcFrequency  = freq;
             logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
-            qpcLastCalibration  = qpcLastTime.QuadPart;
+            qpcLastCalibration  = qpcLastTime;
             timeLastCalibration = timeGetTime();
         }
         else
@@ -132,7 +132,7 @@ const TimeKeeper&   TimeKeeper::getCurrent(void)
             // make sure we're at our best timer resolution possible
             timeBeginPeriod(1);
 
-            lastTime = (unsigned long int)timeGetTime();
+            lastTime = (Uint64)timeGetTime();
         }
     }
 #endif /* !defined(_WIN32) */
