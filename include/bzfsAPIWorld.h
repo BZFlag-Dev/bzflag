@@ -65,8 +65,6 @@ public:
     float rotation[3];
     float maxBBox[3];
     float minBBox[3];
-
-    virtual bool collide(float pos[3], float rad, float* hit);
 };
 
 class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
@@ -111,8 +109,6 @@ BZF_API unsigned int bz_getWorldObjectCount(void);
 
 BZF_API bz_APIWorldObjectList* bz_getWorldObjectList(void);
 BZF_API bz_APIWorldObjectList* bz_getWorldBases(void);
-BZF_API bz_APIWorldObjectList* bz_getWorldBases(bz_eTeamType team);
-BZF_API bz_APIWorldObjectList* bz_getWorldCustomObjects(const char* name);
 
 BZF_API void bz_releaseWorldObjectList(bz_APIWorldObjectList* list);
 

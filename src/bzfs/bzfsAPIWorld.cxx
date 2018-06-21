@@ -23,15 +23,15 @@
 
 BZF_API unsigned int bz_getWorldObjectCount(void)
 {
-    return (unsigned int)(OBSTACLEMGR.getWalls().size() +
-        OBSTACLEMGR.getBoxes().size() +
-        OBSTACLEMGR.getPyrs().size() +
-        OBSTACLEMGR.getBases().size() +
-        OBSTACLEMGR.getMeshes().size() +
-        OBSTACLEMGR.getArcs().size() +
-        OBSTACLEMGR.getCones().size() +
-        OBSTACLEMGR.getSpheres().size());
-}
+    return (unsigned int)  (OBSTACLEMGR.getWalls().size() +
+                            OBSTACLEMGR.getBoxes().size() +
+                            OBSTACLEMGR.getPyrs().size() +
+                            OBSTACLEMGR.getBases().size() +
+                            OBSTACLEMGR.getMeshes().size() +
+                            OBSTACLEMGR.getArcs().size() +
+                            OBSTACLEMGR.getCones().size() +
+                            OBSTACLEMGR.getSpheres().size());
+                    }
 
 void setSolidObjectFromObstacle(bz_APISolidWorldObject_V1* object, const Obstacle* obstacle, bz_eSolidWorldObjectType objecType)
 {
@@ -132,12 +132,6 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1(void* objPtr) : bz_APIBaseW
     memset(minBBox, 0, sizeof(float) * 3);
 }
 
-bool bz_APISolidWorldObject_V1::collide(float /*pos*/[3], float /*rad*/, float* /*hit*/)
-{
-    return false;
-}
-
-
 bz_CTFBaseWorldObject_V1::bz_CTFBaseWorldObject_V1(void* objPtr) : bz_APISolidWorldObject_V1(objPtr)
 {
 }
@@ -195,17 +189,9 @@ BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID(int id)
 
 BZF_API bz_APIWorldObjectList* bz_getWorldBases(void)
 {
-    return new bz_APIWorldObjectList();
-}
-
-BZF_API bz_APIWorldObjectList* bz_getWorldBases(bz_eTeamType team)
-{
-    return new bz_APIWorldObjectList();
-}
-
-BZF_API bz_APIWorldObjectList* bz_getWorldCustomObjects(const char* name)
-{
-    return new bz_APIWorldObjectList();
+    bz_APIWorldObjectList* worldList = new bz_APIWorldObjectList;
+    addCTFBasesToListsFromObstacleList(worldList, OBSTACLEMGR.getBases(), bz_eSolidWorldObjectType::Base);
+    return worldList;
 }
 
 BZF_API void bz_releaseWorldObjectList(bz_APIWorldObjectList* list)
