@@ -51,71 +51,64 @@ public:
         HasMessageLink = 8
     };
 
-    ServerLink(const Address& serverAddress,
-               int port = ServerPort);
+    ServerLink(const Address& serverAddress, int port = ServerPort);
     ~ServerLink();
 
-    State       getState() const;
-    const std::string&  getRejectionMessage()
-    {
-        return rejectionMessage;
-    }
-    int         getSocket() const;  // file descriptor actually
-    const PlayerId& getId() const;
-    const char*     getVersion() const;
+    State                       getState() const;
+    inline const std::string&   getRejectionMessage(){ return rejectionMessage;}
 
-    void        send(uint16_t code, uint16_t len, const void* msg);
-    // if millisecondsToBlock < 0 then block forever
-    int         read(uint16_t& code, uint16_t& len, void* msg,
-                     int millisecondsToBlock = 0);
+    int                 getSocket() const;  // file descriptor actually
+    const PlayerId&     getId() const;
+    const char*         getVersion() const;
 
-    void        sendEnter(PlayerType, TeamColor, int,
-                          const char* name, const char* motto, const char* token, const char* locale);
-    bool        readEnter(std::string& reason,
-                          uint16_t& code, uint16_t& rejcode);
+    void                send(uint16_t code, uint16_t len, const void* msg);
+    int                 read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0); // if millisecondsToBlock < 0 then block forever
 
-    void        sendCaptureFlag(TeamColor);
-    void        sendRequestFlag(int flagIndex);
-    void        sendDropFlag(const float* position);
-    void        sendKilled(const PlayerId&, int reason,
-                           int shotId, const FlagType::Ptr flag, int phydrv);
+    void                sendEnter(PlayerType, TeamColor, int, const char* name, const char* motto, const char* token, const char* locale);
+    bool                readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
+
+    void                sendCaptureFlag(TeamColor);
+    void                sendRequestFlag(int flagIndex);
+    void                sendDropFlag(const float* position);
+    void                sendKilled(const PlayerId&, int reason, int shotId, const FlagType::Ptr flag, int phydrv);
+
     // FIXME -- This is very ugly, but required to build bzadmin with gcc 2.9.5.
     //      It should be changed to something cleaner.
-    void        sendPlayerUpdate(Player*);
-    void        sendMsgFireShot(const FiringInfo&);
-    void        sendEndShot(const PlayerId&, int shotId, int reason);
-    void        sendAlive();
-    void        sendTeleport(int from, int to);
-    void        sendStealFlag(const PlayerId&, const PlayerId&);
-    void        sendNewRabbit();
-    void        sendPaused(bool paused);
-    void        sendAutoPilot(bool autopilot);
-    void        sendUDPlinkRequest();
+    void                sendPlayerUpdate(Player*);
+    void                sendMsgFireShot(const FiringInfo&);
+    void                sendEndShot(const PlayerId&, int shotId, int reason);
+    void                sendAlive();
+    void                sendTeleport(int from, int to);
+    void                sendStealFlag(const PlayerId&, const PlayerId&);
+    void                sendNewRabbit();
+    void                sendPaused(bool paused);
+    void                sendAutoPilot(bool autopilot);
+    void                sendUDPlinkRequest();
 
     static ServerLink*  getServer(); // const
-    static void     setServer(ServerLink*);
-    void        enableOutboundUDP();
-    void        confirmIncomingUDP();
+    static void         setServer(ServerLink*);
+    void                enableOutboundUDP();
+    void                confirmIncomingUDP();
 
 private:
-    State       state;
-    int         fd;
+    State               state = SocketError;
+    int                 fd = -1;
 
-    struct sockaddr usendaddr;
-    int         urecvfd;
-    struct sockaddr urecvaddr; // the clients udp listen address
-    bool        ulinkup;
+    struct sockaddr     usendaddr;
+    int                 urecvfd;
+    struct sockaddr     urecvaddr; // the clients udp listen address
+    bool                ulinkup;
 
-    PlayerId        id;
-    char        version[9];
+    PlayerId            id;
+    char                version[9] = { 0 };
     static ServerLink*  server;
-    int         server_abilities;
+    int                 server_abilities;
 
-    std::string     rejectionMessage;
+    std::string         rejectionMessage;
 
-    int         udpLength;
-    const char*     udpBufferPtr;
-    char        ubuf[MaxPacketLen];
+    int                 udpLength = 0;
+    const char*         udpBufferPtr = nullptr;
+    char                ubuf[MaxPacketLen] = { 0 };
 };
 
 #define SEND 1

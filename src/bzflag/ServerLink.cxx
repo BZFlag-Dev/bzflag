@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993-2018 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 // interface header
 #include "ServerLink.h"
@@ -86,12 +86,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*     ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port) :
-    state(SocketError), // assume failure
-    fd(-1),         // assume failure
-    udpLength(0),
-    udpBufferPtr(),
-    ubuf()
+ServerLink::ServerLink(const Address& serverAddress, int port) 
 {
     int i;
 
@@ -127,7 +122,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)&addr, sizeof(addr));
 
     bool okay = true;
     int fdMax = query;
@@ -164,7 +159,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         int       connectError;
         socklen_t errorLen = sizeof(int);
         if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
-                < 0)
+            < 0)
         {
             close(query);
             return;
@@ -204,9 +199,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     // send out the connect header
     // this will let the server know we are BZFS protocol.
     // after the server gets this it will send back a version for us to check
-    int sendRepply = ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
+    int sendRepply = ::send(query, BZ_CONNECT_HEADER, (int)strlen(BZ_CONNECT_HEADER), 0);
 
-    logDebugMessage(2,"CONNECT:send in connect returned %d\n",sendRepply);
+    logDebugMessage(2, "CONNECT:send in connect returned %d\n", sendRepply);
 
     // wait to get data back. we are still blocking so these
     // calls should be sync.
@@ -223,7 +218,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     double thisStartTime = TimeKeeper::getCurrent().getSeconds();
     double connectTimeout = 30.0;
     if (BZDB.isSet("connectionTimeout"))
-        connectTimeout = BZDB.eval("connectionTimeout")  ;
+        connectTimeout = BZDB.eval("connectionTimeout");
 
     bool gotNetData = false;
 
@@ -238,7 +233,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         // there has to be at least one socket active, or we are screwed
         if (nfound <= 0)
         {
-            logDebugMessage(1,"CONNECT:select in connect failed, nfound = %d\n",nfound);
+            logDebugMessage(1, "CONNECT:select in connect failed, nfound = %d\n", nfound);
             close(query);
             return;
         }
@@ -249,8 +244,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         // if we got some, then we are done
         if (i > 0)
         {
-            logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
-            logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
+            logDebugMessage(2, "CONNECT:got net data in connect, bytes read = %d\n", i);
+            logDebugMessage(2, "CONNECT:Time To Connect = %f\n", (TimeKeeper::getCurrent().getSeconds() - thisStartTime));
             gotNetData = true;
         }
         else
@@ -258,8 +253,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
             // if we have waited too long, then bail
             if ((TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout)
             {
-                logDebugMessage(1,"CONNECT:connect time out failed\n");
-                logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+                logDebugMessage(1, "CONNECT:connect time out failed\n");
+                logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
                 close(query);
                 return;
             }
@@ -268,7 +263,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         }
     }
 
-    logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+    logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
 
     // if we got back less than the expected connect response (BZFSXXXX)
     // then something went bad, and we are done.
@@ -325,7 +320,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         return;
     }
 #endif // !defined(_WIN32)
-    i = recv(query, (char *) &id, sizeof(id), 0);
+    i = recv(query, (char *)&id, sizeof(id), 0);
     if (i < (int) sizeof(id))
         return;
     if (id == 0xff)
@@ -394,43 +389,42 @@ ServerLink::~ServerLink()
 
 #if defined(NETWORK_STATS)
     const float dt = float(TimeKeeper::getCurrent() - startTime);
-    logDebugMessage(1,"Server network statistics:\n");
-    logDebugMessage(1,"  elapsed time    : %f\n", dt);
-    logDebugMessage(1,"  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-    logDebugMessage(1,"  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+    logDebugMessage(1, "Server network statistics:\n");
+    logDebugMessage(1, "  elapsed time    : %f\n", dt);
+    logDebugMessage(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+    logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
     if (packetsSent != 0)
-        logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-    logDebugMessage(1,"  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-    logDebugMessage(1,"  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+    logDebugMessage(1, "  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+    logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
     if (packetsReceived != 0)
-        logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 
-ServerLink*     ServerLink::getServer() // const
+ServerLink* ServerLink::getServer() // const
 {
     return server;
 }
 
-void            ServerLink::setServer(ServerLink* _server)
+void ServerLink::setServer(ServerLink* _server)
 {
     server = _server;
 }
 
-void            ServerLink::send(uint16_t code, uint16_t len,
-                                 const void* msg)
+void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 {
-    bool needForSpeed=false;
+    bool needForSpeed = false;
     if (state != Okay) return;
-//  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
-//    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
+    //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
+    //    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
     char msgbuf[MaxPacketLen];
     void* buf = msgbuf;
     buf = nboPackUShort(buf, len);
     buf = nboPackUShort(buf, code);
     if (msg && len != 0) buf = nboPackString(buf, msg, len);
 
-    if ((urecvfd>=0) && ulinkup )
+    if ((urecvfd >= 0) && ulinkup)
     {
         switch (code)
         {
@@ -441,18 +435,18 @@ void            ServerLink::send(uint16_t code, uint16_t len,
         case MsgGMUpdate:
         case MsgUDPLinkRequest:
         case MsgUDPLinkEstablished:
-            needForSpeed=true;
+            needForSpeed = true;
             break;
         }
     }
     // MsgUDPLinkRequest always goes udp
     if (code == MsgUDPLinkRequest)
-        needForSpeed=true;
+        needForSpeed = true;
 
     if (needForSpeed)
     {
 #ifdef TESTLINK
-        if ((random()%TESTQUALTIY) != 0)
+        if ((random() % TESTQUALTIY) != 0)
 #endif
             sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
         // we don't care about errors yet
@@ -466,7 +460,7 @@ void            ServerLink::send(uint16_t code, uint16_t len,
     {
         const int e = WSAGetLastError();
         if (e == WSAENETRESET || e == WSAECONNABORTED ||
-                e == WSAECONNRESET || e == WSAETIMEDOUT)
+            e == WSAECONNRESET || e == WSAETIMEDOUT)
             state = Hungup;
         r = 0;
     }
@@ -480,19 +474,18 @@ void            ServerLink::send(uint16_t code, uint16_t len,
 
 #ifdef WIN32
 /* This is a really really fugly hack to get around winsock sillyness
- * The newer versions of winsock have a socken_t typedef, and there
- * doesn't seem to be any way to tell the versions apart. However,
- * VC++ helps us out here by treating typedef as #define
- * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
- * avoid #define'ing it in common.h */
+* The newer versions of winsock have a socken_t typedef, and there
+* doesn't seem to be any way to tell the versions apart. However,
+* VC++ helps us out here by treating typedef as #define
+* If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
+* avoid #define'ing it in common.h */
 
 #ifndef socklen_t
 #define socklen_t int
 #endif
 #endif //WIN32
 
-int         ServerLink::read(uint16_t& code, uint16_t& len,
-                             void* msg, int blockTime)
+int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 {
 
     code = MsgNull;
@@ -507,10 +500,10 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                             &urecvaddr, (socklen_t*) &recvlen);
+                &urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
-                udpLength    = n;
+                udpLength = n;
                 udpBufferPtr = ubuf;
             }
         }
@@ -525,9 +518,9 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
             }
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, len);
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
-//      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
-//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-            UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+            //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
+            //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+            UDEBUG("<** UDP Packet Code %x Len %x\n", code, len);
             if (len > udpLength)
             {
                 udpLength = 0;
@@ -535,7 +528,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
             }
             memcpy((char *)msg, udpBufferPtr, len);
             udpBufferPtr += len;
-            udpLength    -= len;
+            udpLength -= len;
             return 1;
         }
         if (UDEBUGMSG) printError("Fallback to normal TCP receive");
@@ -554,8 +547,8 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     fd_set read_set;
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
-    int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
-                        (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+    int nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL,
+        (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
     if (nfound == 0) return 0;
     if (nfound < 0) return -1;
 
@@ -578,7 +571,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         printError("ServerLink::read() loop");
         FD_ZERO(&read_set);
         FD_SET((unsigned int)fd, &read_set);
-        nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
+        nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL, NULL);
         if (nfound == 0) continue;
         if (nfound < 0) return -1;
         rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
@@ -595,7 +588,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
-//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+    //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
     if (len > MaxPacketLen - 4)
         return -1;
     if (len > 0)
@@ -613,7 +606,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         {
             FD_ZERO(&read_set);
             FD_SET((unsigned int)fd, &read_set);
-            nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
+            nfound = select(fd + 1, (fd_set*)&read_set, 0, 0, NULL);
             if (nfound == 0) continue;
             if (nfound < 0) return -1;
             rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
@@ -642,13 +635,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     return 1;
 }
 
-void            ServerLink::sendEnter(PlayerType type,
-                                      TeamColor team,
-                                      int skinIndex,
-                                      const char* name,
-                                      const char* motto,
-                                      const char* token,
-                                      const char* locale)
+void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto, const char* token, const char* locale)
 {
     if (state != Okay) return;
     char msg[PlayerIdPLen + 4 + 4 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];
@@ -671,7 +658,7 @@ void            ServerLink::sendEnter(PlayerType type,
 }
 
 bool ServerLink::readEnter(std::string& reason,
-                           uint16_t& code, uint16_t& rejcode)
+    uint16_t& code, uint16_t& rejcode)
 {
     // wait for response
     uint16_t len;
@@ -696,8 +683,8 @@ bool ServerLink::readEnter(std::string& reason,
         {
             const void *buf;
             char buffer[MessageLen];
-            buf = nboUnpackUShort (msg, rejcode); // filler for now
-            buf = nboUnpackString (buf, buffer, MessageLen);
+            buf = nboUnpackUShort(msg, rejcode); // filler for now
+            buf = nboUnpackString(buf, buffer, MessageLen);
             buffer[MessageLen - 1] = '\0';
             reason = buffer;
             return false;
@@ -710,21 +697,21 @@ bool ServerLink::readEnter(std::string& reason,
     return true;
 }
 
-void            ServerLink::sendCaptureFlag(TeamColor team)
+void ServerLink::sendCaptureFlag(TeamColor team)
 {
     char msg[2];
     nboPackUShort(msg, uint16_t(team));
     send(MsgCaptureFlag, sizeof(msg), msg);
 }
 
-void            ServerLink::sendRequestFlag(int flagIndex)
+void ServerLink::sendRequestFlag(int flagIndex)
 {
     char msg[2];
     nboPackUShort(msg, uint16_t(flagIndex));
     send(MsgRequestFlag, sizeof(msg), msg);
 }
 
-void            ServerLink::sendDropFlag(const float* position)
+void ServerLink::sendDropFlag(const float* position)
 {
     char msg[12];
     void* buf = msg;
@@ -732,10 +719,7 @@ void            ServerLink::sendDropFlag(const float* position)
     send(MsgDropFlag, sizeof(msg), msg);
 }
 
-void            ServerLink::sendKilled(const PlayerId& killer,
-                                       int reason, int shotId,
-                                       const FlagType::Ptr flagType,
-                                       int phydrv)
+void  ServerLink::sendKilled(const PlayerId& killer, int reason, int shotId, const FlagType::Ptr flagType, int phydrv)
 {
     char msg[PlayerIdPLen + 2 + 2 + FlagPackSize + 4];
     void* buf = msg;
@@ -752,7 +736,7 @@ void            ServerLink::sendKilled(const PlayerId& killer,
 }
 
 
-void            ServerLink::sendPlayerUpdate(Player* player)
+void   ServerLink::sendPlayerUpdate(Player* player)
 {
     char msg[PlayerUpdatePLenMax];
     // Send the time frozen at each start of scene iteration, as all
@@ -772,7 +756,7 @@ void            ServerLink::sendPlayerUpdate(Player* player)
     send(code, len, msg);
 }
 
-void            ServerLink::sendMsgFireShot(const FiringInfo& info)
+void  ServerLink::sendMsgFireShot(const FiringInfo& info)
 {
     char msg[FiringInfoPLen];
     void* buf = msg;
@@ -780,8 +764,8 @@ void            ServerLink::sendMsgFireShot(const FiringInfo& info)
     send(MsgFireShot, sizeof(msg), msg);
 }
 
-void            ServerLink::sendEndShot(const PlayerId& source,
-                                        int shotId, int reason)
+void ServerLink::sendEndShot(const PlayerId& source,
+    int shotId, int reason)
 {
     char msg[PlayerIdPLen + 4];
     void* buf = msg;
@@ -791,12 +775,12 @@ void            ServerLink::sendEndShot(const PlayerId& source,
     send(MsgShotEnd, sizeof(msg), msg);
 }
 
-void            ServerLink::sendAlive()
+void ServerLink::sendAlive()
 {
     send(MsgAlive, 0, NULL);
 }
 
-void            ServerLink::sendTeleport(int from, int to)
+void ServerLink::sendTeleport(int from, int to)
 {
     char msg[4];
     void* buf = msg;
@@ -805,33 +789,33 @@ void            ServerLink::sendTeleport(int from, int to)
     send(MsgTeleport, sizeof(msg), msg);
 }
 
-void            ServerLink::sendStealFlag(const PlayerId& from, const PlayerId& to)
+void ServerLink::sendStealFlag(const PlayerId& from, const PlayerId& to)
 {
-    char msg[PlayerIdPLen*2];
+    char msg[PlayerIdPLen * 2];
     void* buf = msg;
     buf = nboPackUByte(buf, from);
     buf = nboPackUByte(buf, to);
     send(MsgStealFlag, sizeof(msg), msg);
 }
 
-void            ServerLink::sendNewRabbit()
+void ServerLink::sendNewRabbit()
 {
     send(MsgNewRabbit, 0, NULL);
 }
 
-void            ServerLink::sendPaused(bool paused)
+void ServerLink::sendPaused(bool paused)
 {
     uint8_t p = paused;
     send(MsgPause, 1, &p);
 }
 
-void            ServerLink::sendAutoPilot(bool autopilot)
+void ServerLink::sendAutoPilot(bool autopilot)
 {
     uint8_t p = autopilot;
     send(MsgAutoPilot, 1, &p);
 }
 
-void            ServerLink::sendUDPlinkRequest()
+void ServerLink::sendUDPlinkRequest()
 {
     if ((server_abilities & CanDoUDP) != CanDoUDP)
         return; // server does not support udp (future list server test)
@@ -848,7 +832,7 @@ void            ServerLink::sendUDPlinkRequest()
     }
 #if 1
     AddrLen addr_len = sizeof(serv_addr);
-    if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*) &addr_len) < 0)
+    if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*)&addr_len) < 0)
     {
         printError("Error: getsockname() failed, cannot get TCP port?");
         return;
@@ -861,7 +845,7 @@ void            ServerLink::sendUDPlinkRequest()
 
 #else
     // TODO if nobody complains kill this old port 17200 code
-    for (int port=17200; port < 65000; port++)
+    for (int port = 17200; port < 65000; port++)
     {
         ::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
         serv_addr.sin_family = AF_INET;
@@ -872,7 +856,7 @@ void            ServerLink::sendUDPlinkRequest()
     }
 #endif
     localPort = ntohs(serv_addr.sin_port);
-    memcpy((char *)&urecvaddr,(char *)&serv_addr, sizeof(serv_addr));
+    memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
 
     if (debugLevel >= 1)
     {
@@ -892,14 +876,14 @@ void            ServerLink::sendUDPlinkRequest()
 }
 
 // heard back from server that we can send udp
-void            ServerLink::enableOutboundUDP()
+void ServerLink::enableOutboundUDP()
 {
     ulinkup = true;
     if (debugLevel >= 1)
         printError("Server got our UDP, using UDP to server");
 }
 // confirm that server can send us UDP
-void            ServerLink::confirmIncomingUDP()
+void ServerLink::confirmIncomingUDP()
 {
     // This is really a hack. enableOutboundUDP will be setting this
     // but frequently the udp handshake will finish first so might as
