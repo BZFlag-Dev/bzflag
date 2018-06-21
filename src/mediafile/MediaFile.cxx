@@ -140,7 +140,8 @@ std::istream*  OpenPNG(const std::string filename, ImageFile** file)
 
     if (stream != NULL)
     {
-        *file = new PNGImageFile(stream, filename + extension);
+        std::string tmp = filename + extension;
+        *file = new PNGImageFile(stream, &tmp);
         if (!(*file)->isOpen())
         {
            *file = nullptr;

@@ -39,9 +39,9 @@ PNGImageFile::PNGImageFile(std::istream* stream)
   validates that the file is in fact a png file and initializes the size information for it
 */
 
-PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFile(input)
+PNGImageFile::PNGImageFile(std::istream* input, std::string* filename) : ImageFile(input)
 {
-    logDebugMessage(4, "PNGImageFile starting to read %s\n", filename.c_str());
+    logDebugMessage(4, "PNGImageFile starting to read %s\n", filename->c_str());
 
     // Try to read the signature
     png_byte signature[8];
@@ -153,7 +153,7 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string filename) : ImageFil
     logDebugMessage(4,
                     "PNGImageFile finishing reading headers for %s: Width %d, Height %d, Bit depth %d, Color type %d, Filter Method %d, "
                     "Interlace Method %d, Channels %d.\n",
-                    filename.c_str(), myWidth, myHeight, bitDepth, colorType, filterMethod, interlaceMethod, channels);
+                    filename->c_str(), myWidth, myHeight, bitDepth, colorType, filterMethod, interlaceMethod, channels);
 
 }
 

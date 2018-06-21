@@ -22,7 +22,7 @@
 class PNGImageFile : public ImageFile
 {
 public:
-    PNGImageFile(std::istream* input, std::string filename);
+    PNGImageFile(std::istream* input, std::string* filename);
     virtual ~PNGImageFile();
 
     /** This function returns the default extension of PNG image files. */
