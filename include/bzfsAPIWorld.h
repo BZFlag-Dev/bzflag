@@ -25,7 +25,7 @@ enum class bz_eWorldObjectType
 class BZF_API bz_APIBaseWorldObject
 {
 public:
-    bz_APIBaseWorldObject(void* objPtr);
+    bz_APIBaseWorldObject(const void* objPtr);
     virtual ~bz_APIBaseWorldObject();
     bz_eWorldObjectType type;
     bz_ApiString name;
@@ -53,7 +53,7 @@ enum class bz_eSolidWorldObjectType
 class BZF_API bz_APISolidWorldObject_V1 : public bz_APIBaseWorldObject
 {
 public:
-    bz_APISolidWorldObject_V1(void* objPtr);
+    bz_APISolidWorldObject_V1(const void* objPtr);
     virtual ~bz_APISolidWorldObject_V1() {};
 
     bz_eSolidWorldObjectType  solidType;
@@ -70,7 +70,7 @@ public:
 class BZF_API bz_CTFBaseWorldObject_V1 : public bz_APISolidWorldObject_V1
 {
 public:
-    bz_CTFBaseWorldObject_V1(void* objPtr);
+    bz_CTFBaseWorldObject_V1(const void* objPtr);
     virtual ~bz_CTFBaseWorldObject_V1();
 
     bz_eTeamType team;
@@ -79,7 +79,7 @@ public:
 class BZF_API bz_APITeleporterField_V1 : public bz_APISolidWorldObject_V1
 {
 public:
-    bz_APITeleporterField_V1(void* objPtr) : bz_APISolidWorldObject_V1(objPtr){}
+    bz_APITeleporterField_V1(const void* objPtr) : bz_APISolidWorldObject_V1(objPtr){}
     virtual ~bz_APITeleporterField_V1() {}
 
     bz_ApiString name;

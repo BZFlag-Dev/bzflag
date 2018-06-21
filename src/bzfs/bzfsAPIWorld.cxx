@@ -76,7 +76,7 @@ void addCTFBasesToListsFromObstacleList(bz_APIWorldObjectList* solidList, const 
 
 bz_APISolidWorldObject_V1* createAPIObstacle(const Obstacle* obstacle, bz_eSolidWorldObjectType objecType)
 {
-    bz_APISolidWorldObject_V1* obj = new bz_APISolidWorldObject_V1((void*)obstacle);
+    bz_APISolidWorldObject_V1* obj = new bz_APISolidWorldObject_V1((const void*) obstacle);
     setSolidObjectFromObstacle(obj, obstacle, objecType);
     return obj;
 
@@ -101,15 +101,15 @@ BZF_API bz_APIWorldObjectList* bz_getWorldObjectList(void)
 class bz_APIBaseWorldObject::Imple
 {
 public:
-    Obstacle * RootObject = nullptr;
+    const Obstacle *RootObject = nullptr;
 };
 
-bz_APIBaseWorldObject::bz_APIBaseWorldObject(void *ptr)
+bz_APIBaseWorldObject::bz_APIBaseWorldObject(const void *ptr)
 {
     pImpl = new Imple();
     type = bz_eWorldObjectType::NullObject;
 
-    pImpl->RootObject = (Obstacle *)ptr;
+    pImpl->RootObject = (const Obstacle *)ptr;
 }
 
 bz_APIBaseWorldObject::~bz_APIBaseWorldObject()
@@ -120,7 +120,7 @@ bz_APIBaseWorldObject::~bz_APIBaseWorldObject()
 //-----------------------bz_APISolidWorldObject-----------------
 
 
-bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1(void* objPtr) : bz_APIBaseWorldObject(objPtr)
+bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1(const void* objPtr) : bz_APIBaseWorldObject(objPtr)
 {
     type = bz_eWorldObjectType::SolidObject;
 
@@ -132,7 +132,7 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1(void* objPtr) : bz_APIBaseW
     memset(minBBox, 0, sizeof(float) * 3);
 }
 
-bz_CTFBaseWorldObject_V1::bz_CTFBaseWorldObject_V1(void* objPtr) : bz_APISolidWorldObject_V1(objPtr)
+bz_CTFBaseWorldObject_V1::bz_CTFBaseWorldObject_V1(const void* objPtr) : bz_APISolidWorldObject_V1(objPtr)
 {
 }
 
