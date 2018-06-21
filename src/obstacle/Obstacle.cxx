@@ -25,6 +25,20 @@ const float Obstacle::maxExtent = 1.0e30f;
 // for counting OBJ file objects
 int Obstacle::objCounter = 0;
 
+int lastGUID = 0;
+
+int Obstacle::NewGUID()
+{
+    lastGUID++;
+    return lastGUID;
+}
+
+void Obstacle::ResetGUIDs()
+{
+    lastGUID = 0;
+}
+
+
 
 Obstacle::Obstacle()
 {
@@ -39,6 +53,7 @@ Obstacle::Obstacle()
 
     insideNodeCount = 0;
     insideNodes = NULL;
+    GUID = NewGUID();
 }
 
 Obstacle::Obstacle(const float* _pos, float _angle,
@@ -61,6 +76,7 @@ Obstacle::Obstacle(const float* _pos, float _angle,
 
     insideNodeCount = 0;
     insideNodes = NULL;
+    GUID = NewGUID();
 }
 
 Obstacle::~Obstacle()

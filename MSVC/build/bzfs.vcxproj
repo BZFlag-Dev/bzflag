@@ -321,6 +321,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\bzfsAPIWorld.cxx" />
     <ClCompile Include="..\..\src\bzfs\CmdLineOptions.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -649,6 +650,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\bzfsAPIServerSidePlayers.h" />
+    <ClInclude Include="..\..\include\bzfsAPIWorld.h" />
     <ClInclude Include="..\..\src\bzfs\AccessControlList.h" />
     <ClInclude Include="..\..\src\bzfs\Authentication.h" />
     <ClInclude Include="..\..\src\bzfs\bzfs.h" />
