@@ -49,6 +49,9 @@ class Obstacle
 
 public:
 
+    static int NewGUID();
+    static void ResetGUIDs();
+
     /** The default constructor. It sets all values to 0
         and is not very useful. */
     Obstacle();
@@ -72,6 +75,8 @@ public:
 
     /** A virtual destructor is needed to let subclasses do their cleanup. */
     virtual ~Obstacle();
+
+    inline int GetGUID() const { return GUID; }
 
     /** This function returns a string describing what kind of obstacle this is.
      */
@@ -289,6 +294,7 @@ protected:
     char source;
 
 private:
+    int GUID = -1;
     int insideNodeCount;
     SceneNode** insideNodes;
 

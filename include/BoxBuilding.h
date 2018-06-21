@@ -53,12 +53,7 @@ public:
                            float halfWidth, float halfBreadth, float height,
                            float* plane) const;
 
-    bool        getHitNormal(
-        const float* pos1, float azimuth1,
-        const float* pos2, float azimuth2,
-        float halfWidth, float halfBreadth,
-        float height,
-        float* normal) const;
+    bool        getHitNormal(const float* pos1, float azimuth1, const float* pos2, float azimuth2, float halfWidth, float halfBreadth, float height, float* normal) const;
 
     void        getCorner(int index, float* pos) const;
 
