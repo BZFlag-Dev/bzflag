@@ -795,7 +795,7 @@ static void* writeScreenshot(void* data)
 
     std::ostream* output = FILEMGR.createDataOutStream(filename.c_str(), true, true);
 
-    if (output != NULL)
+    if (output != nullptr)
     {
         const std::string& renderer = ssdata->renderer;
         unsigned char* pixels       = ssdata->pixels;
@@ -828,27 +828,33 @@ static void* writeScreenshot(void* data)
 
         // Create write structure
         png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-        if (png == NULL)
+        if (png == nullptr)
         {
             ControlPanel::addMutexMessage("Failed to create libpng write structure.");
-            return NULL;
+            return nullptr;
         }
 
         // Create info structure
         pnginfo = png_create_info_struct(png);
-        if (pnginfo == NULL)
+        if (pnginfo == nullptr)
         {
             ControlPanel::addMutexMessage("Failed to create libpng info structure.");
             png_destroy_write_struct(&png, (png_infopp)0);
-            return NULL;
+            return nullptr;
         }
 
         // Basic error handling
         if (setjmp(png_jmpbuf(png)))
         {
             ControlPanel::addMutexMessage("Error writing screenshot.");
-            png_destroy_write_struct(&png, &pnginfo);
-            return NULL;
+            if (png != nullptr) {
+                if (pnginfo != nullptr)
+                    png_destroy_write_struct(&png, &pnginfo);
+                else
+                    png_destroy_write_struct(&png, (png_infopp)0);
+            }
+
+            return nullptr;
         }
 
         // Register function to send writes to the output stream
@@ -866,7 +872,7 @@ static void* writeScreenshot(void* data)
                 png_error(_png, "Error writing screenshot.");
             }
         },
-        NULL
+        nullptr
                         );
 
         // Use RLE compression
@@ -923,7 +929,7 @@ static void* writeScreenshot(void* data)
     delete[] ssdata->pixels;
     delete ssdata;
 
-    return NULL;
+    return nullptr;
 }
 
 static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args, bool*)
