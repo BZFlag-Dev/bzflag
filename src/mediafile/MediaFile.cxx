@@ -128,7 +128,7 @@ uint32_t    MediaFile::swap32BE(uint32_t* d)
 #include "WaveAudioFile.h"
 
 
-std::istream*  OpenPNG(const std::string filename, ImageFile** file)
+std::istream*  OpenPNG(const std::string filename, ImageFile** file, void(*error_callback)(std::string, bool))
 {
     std::string extension = "";
     std::istream* stream = FILEMGR.createDataInStream(filename, true);
@@ -138,10 +138,10 @@ std::istream*  OpenPNG(const std::string filename, ImageFile** file)
         stream = FILEMGR.createDataInStream(filename + extension, true);
     }
 
-    if (stream != NULL)
+    if (stream != nullptr)
     {
         std::string tmp = filename + extension;
-        *file = new PNGImageFile(stream, &tmp);
+        *file = new PNGImageFile(stream, &tmp, error_callback);
         if (!(*file)->isOpen())
         {
            *file = nullptr;
@@ -153,7 +153,7 @@ std::istream*  OpenPNG(const std::string filename, ImageFile** file)
     return stream;
 }
 
-unsigned char*      MediaFile::readImage( std::string filename, int* width, int* height)
+unsigned char*      MediaFile::readImage( std::string filename, int* width, int* height, void(*error_callback)(std::string, bool))
 {
     // get the absolute filename for cache textures
     if (CACHEMGR.isCacheFileType(filename))
@@ -168,7 +168,7 @@ unsigned char*      MediaFile::readImage( std::string filename, int* width, int*
     std::istream* stream = nullptr;
     ImageFile* file = nullptr;
     if (file == nullptr)
-        stream = OpenPNG(filename, &file);
+        stream = OpenPNG(filename, &file, error_callback);
 
     // read the image
     unsigned char* image = NULL;

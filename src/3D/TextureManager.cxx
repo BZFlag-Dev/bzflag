@@ -372,10 +372,21 @@ int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
     return info.id;
 }
 
+#ifdef DEBUG
+void showError(std::string message, bool UNUSED(isError))
+{
+#else
+void showError(std::string message, bool isError)
+{
+    if (debugLevel > 0 || isError)
+#endif
+        printError(message);
+}
+
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)
 {
     int width, height;
-    unsigned char* image = MediaFile::readImage(init.name, &width, &height);
+    unsigned char* image = MediaFile::readImage(init.name, &width, &height, showError);
 
     if (!image)
     {

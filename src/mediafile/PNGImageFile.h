@@ -15,6 +15,7 @@
 
 #include "ImageFile.h"
 #include <png.h>
+#include <utility>
 
 
 /** This class represents a PNG image file. It implements the read() function
@@ -22,7 +23,7 @@
 class PNGImageFile : public ImageFile
 {
 public:
-    PNGImageFile(std::istream* input, std::string* filename);
+    PNGImageFile(std::istream* input, std::string* filename, void(*callback)(std::string, bool) = nullptr);
     virtual ~PNGImageFile();
 
     /** This function returns the default extension of PNG image files. */
@@ -42,6 +43,8 @@ private:
     png_uint_32               compressionMethod;
     png_uint_32               filterMethod;
     png_uint_32               interlaceMethod;
+
+    std::pair<std::string, void(*)(std::string, bool)> callback_pair;
 };
 
 #endif

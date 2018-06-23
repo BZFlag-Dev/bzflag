@@ -13,6 +13,7 @@
 #include "common.h"
 #include "PNGImageFile.h"
 #include <iostream>
+#include <memory>
 #include <string.h>
 #include "bzfio.h"
 #include <png.h>
@@ -21,16 +22,35 @@
 // PNGImageFile
 //
 
-void user_error_fn(png_structp UNUSED(png_ptr), png_const_charp error_msg)
+void user_error_fn(png_structp png_ptr, png_const_charp error_msg)
 {
-    std::string* filename = (std::string*)png_get_error_ptr(png_ptr);
-    std::cerr << "libpng error (" << *filename << "): " << error_msg << std::endl;
+    // Pull our callback pair out of the structure
+    auto callback_pair = (std::pair<std::string, void(*)(std::string, bool)>*)png_get_error_ptr(png_ptr);
+    // Generate the error message and either pass it to a custom callback function or write it to stderr
+    std::string message = "libpng error (" + callback_pair->first + "): " + std::string(error_msg);
+    if (callback_pair->second != nullptr)
+        (callback_pair->second)(message, true);
+    else
+        std::cerr << message << std::endl;
+
+    // Jump back to our setjmp, since errors are fatal, and we want to stop processing the image.
+    // This also prevents the default error handler from running.
+    png_longjmp(png_ptr, 1);
 }
 
 void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg)
 {
-    std::string* filename = (std::string*)png_get_error_ptr(png_ptr);
-    std::cerr << "libpng warning (" << *filename << "): " << warning_msg << std::endl;
+    // Pull our callback pair out of the structure
+    auto callback_pair = (std::pair<std::string, void(*)(std::string, bool)>*)png_get_error_ptr(png_ptr);
+    // Generate the warning message and either pass it to a custom callback function or write it to stderr
+    std::string message = "libpng warning (" + callback_pair->first + "): " + std::string(warning_msg);
+    if (callback_pair->second != nullptr)
+        (callback_pair->second)(message, false);
+    else
+        std::cerr << message << std::endl;
+
+    // Warnings are not fatal, so we want to keep processing the image. Libpng also won't run the default
+    // warning handler if we have a custom handler set.
 }
 
 /*
@@ -39,7 +59,7 @@ PNGImageFile::PNGImageFile(std::istream* stream)
   validates that the file is in fact a png file and initializes the size information for it
 */
 
-PNGImageFile::PNGImageFile(std::istream* input, std::string* filename) : ImageFile(input)
+PNGImageFile::PNGImageFile(std::istream* input, std::string* filename, void(*error_callback)(std::string, bool)) : ImageFile(input)
 {
     logDebugMessage(4, "PNGImageFile starting to read %s\n", filename->c_str());
 
@@ -54,8 +74,11 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string* filename) : ImageFi
     if (png_sig_cmp(signature, 0, 8) != 0)
         return;
 
+    // Initialize the callback pair
+    callback_pair = std::pair<std::string, void(*)(std::string, bool)>(*filename, error_callback);
+
     // Create the read structure
-    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&filename, user_error_fn, user_warning_fn);
+    png = png_create_read_struct(PNG_LIBPNG_VER_STRING, (png_voidp)&callback_pair, user_error_fn, user_warning_fn);
     if (!png)
         return;
 
@@ -67,12 +90,20 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string* filename) : ImageFi
         return;
     }
 
-    rowPtrs = NULL;
+    rowPtrs = nullptr;
 
+    // In the event of a png_error() while in our constructor, jump back to this point and clean up
     if (setjmp(png_jmpbuf(png)))
     {
-        png_destroy_read_struct(&png, &pnginfo, (png_infopp)0);
-        if (rowPtrs != NULL)
+        if (png != nullptr)
+        {
+            if (pnginfo != nullptr)
+                png_destroy_read_struct(&png, &pnginfo, (png_infopp)0);
+            else
+                png_destroy_read_struct(&png, (png_infopp)0, (png_infopp)0);
+        }
+
+        if (rowPtrs != nullptr)
             delete[] (png_bytep)rowPtrs;
         return;
     }
@@ -165,15 +196,24 @@ PNGImageFile::~PNGImageFile()
 
 PNGImageFile::~PNGImageFile()
 {
-    if (png != NULL)
+    if (png != nullptr)
     {
-        if (pnginfo != NULL)
+        // Some of the comments in the libpng source say that png_free(), which is called from
+        // png_destroy_read_struct(), may call png_error(). Perhaps this is only if we have user
+        // memory functions assigned and we call png_error() within those, but just in case, set
+        // the jump return point here.
+        if (setjmp(png_jmpbuf(png)))
+        {
+            return;
+        }
+
+        if (pnginfo != nullptr)
             png_destroy_read_struct(&png, &pnginfo, (png_infopp)0);
         else
             png_destroy_read_struct(&png, (png_infopp)0, (png_infopp)0);
     }
 
-    if (rowPtrs != NULL)
+    if (rowPtrs != nullptr)
         delete[] (png_bytep)rowPtrs;
 }
 
@@ -212,7 +252,16 @@ bool                    PNGImageFile::read(void* buffer)
         rowPtrs[i] = (png_bytep)buffer + q;
     }
 
+    // png_read_image() and possibly png_read_end() can trigger a png_error(),
+    // so make sure we jump to somewhere within this function.
+    if (setjmp(png_jmpbuf(png)))
+    {
+        return false;
+    }
+
     png_read_image(png, rowPtrs);
+
+    png_read_end(png, nullptr);
 
     return true;
 }

@@ -40,7 +40,7 @@ public:
         image.  Returns NULL on failure.  Images are stored RGBA,
         left to right, bottom to top. */
     static unsigned char* readImage(std::string filename,
-                                    int* width, int* height);
+                                    int* width, int* height, void(*error_callback)(std::string, bool) = nullptr);
 
     // read a sound file.  use delete[] to release the returned
     // audio.  returns NULL on failure.  sounds are stored
