@@ -81,15 +81,6 @@ std::string findPlugin ( std::string pluginName )
         return name;
     }
 
-    // check the local users plugins dir
-    name = getConfigDirName(BZ_CONFIG_DIR_VERSION) + pluginName + extension;
-    fp = fopen(name.c_str(),"rb");
-    if (fp)
-    {
-        fclose(fp);
-        return name;
-    }
-
     // check the global plugins dir
     name = globalPluginDir + pluginName + extension;
     fp = fopen(name.c_str(),"rb");
