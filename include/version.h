@@ -16,7 +16,7 @@
 #define __VERSION_H__
 
 #ifndef BZ_CONFIG_DIR_VERSION
-#define BZ_CONFIG_DIR_VERSION   "2.4"
+#define BZ_CONFIG_DIR_VERSION   "2.5"
 #endif
 
 #ifndef BZ_CONFIG_FILE_NAME

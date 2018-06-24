@@ -54,49 +54,8 @@ void initConfigData(void)
 
 std::string getOldConfigFileName(void)
 {
-#if !defined(_WIN32)
-
-    std::string name = getConfigDirName("2.0");
-    name += "config.cfg";
-
-    return name;
-
-#elif defined(_WIN32) /* !defined(_WIN32) */
-
-    std::string name("C:");
-    char dir[MAX_PATH];
-    ITEMIDLIST* idl;
-    if (SUCCEEDED(SHGetSpecialFolderLocation(NULL, CSIDL_PERSONAL, &idl)))
-    {
-        if (SHGetPathFromIDList(idl, dir))
-        {
-            struct stat statbuf;
-            if (stat(dir, &statbuf) == 0 && (statbuf.st_mode & _S_IFDIR) != 0)
-                name = dir;
-        }
-
-        IMalloc* shalloc;
-        if (SUCCEEDED(SHGetMalloc(&shalloc)))
-        {
-            shalloc->Free(idl);
-            shalloc->Release();
-        }
-    }
-
-    name += "\\My BZFlag Files\\2.0\\config.cfg";
-    return name;
-
-#endif /* !defined(_WIN32) */
+    return getConfigDirName("2.4") + BZ_CONFIG_FILE_NAME;
 }
-
-#if !defined(_WIN32)        // who uses this sucker any more?
-static std::string  getReallyOldConfigFileName()
-{
-    std::string name = getConfigDirName();
-    name += "config";
-    return name;
-}
-#endif
 
 std::string getCurrentConfigFileName(void)
 {
@@ -128,7 +87,7 @@ static void copyConfigFile(const char *oldConfigName, std::string configName)
     unsigned char *temp = (unsigned char *)malloc(len);
     if (temp == NULL)
     {
-        printError("Unsufficient Memory");
+        printError("Insufficient Memory");
         fclose(fp);
         fclose(newFile);
         return;
@@ -181,14 +140,6 @@ void findConfigFile(void)
     }
 #else   // the other OSs should do what they need to do
     copyConfigFile(oldConfigName.c_str(), configName);
-#endif
-
-    // try and find the REALLY old file
-    // who uses this sucker any more?
-#if !defined(_WIN32)
-    std::string realyOldConfigName = getReallyOldConfigFileName();
-    // apparently only linux needs this so do the magic
-    copyConfigFile(realyOldConfigName.c_str(), configName);
 #endif
 }
 
