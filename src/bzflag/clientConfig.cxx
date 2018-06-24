@@ -149,97 +149,11 @@ void updateConfigFile(void)
     if (BZDB.isSet("config_version"))
         configVersion = BZDB.evalInt("config_version");
 
-    BzfKeyEvent key;
-    if (configVersion == 0)
+    if (configVersion < 4 || configVersion > BZ_CONFIG_FILE_VERSION)    // hm, we don't know about this one...
     {
-        // update from old unversioned config
-        // roaming fixes - remove keys bound to "roam translate *" and "roam rotate *"
-        KEYMGR.unbindCommand("roam translate left");
-        KEYMGR.unbindCommand("roam translate right");
-        KEYMGR.unbindCommand("roam translate up");
-        KEYMGR.unbindCommand("roam translate down");
-        KEYMGR.unbindCommand("roam translate forward");
-        KEYMGR.unbindCommand("roam translate backward");
-        KEYMGR.unbindCommand("roam rotate left");
-        KEYMGR.unbindCommand("roam rotate right");
-        KEYMGR.unbindCommand("roam rotate up");
-        KEYMGR.unbindCommand("roam rotate down");
-        KEYMGR.unbindCommand("roam rotate stop");
-
-        // add new default keybindings if there's no conflict
-
-        // iconify
-
-        if (KEYMGR.stringToKeyEvent("F4", key) && (KEYMGR.get(key, true) == ""))
-            KEYMGR.bind(key, true, "iconify");
-        // toggle console & radar
-        if (KEYMGR.stringToKeyEvent("Q", key) && (KEYMGR.get(key, true) == ""))
-            KEYMGR.bind(key, true, "toggleRadar");
-        if (KEYMGR.stringToKeyEvent("W", key) && (KEYMGR.get(key, true) == ""))
-            KEYMGR.bind(key, true, "toggleConsole");
-        // controlpanel tabs - all or nothing
-        if (KEYMGR.stringToKeyEvent("Shift+F1", key)
-                && (KEYMGR.get(key, true) == "")
-                && KEYMGR.stringToKeyEvent("Shift+F2", key)
-                && (KEYMGR.get(key, true) == "")
-                && KEYMGR.stringToKeyEvent("Shift+F3", key)
-                && (KEYMGR.get(key, true) == "")
-                && KEYMGR.stringToKeyEvent("Shift+F4", key)
-                && (KEYMGR.get(key, true) == ""))
-        {
-            KEYMGR.stringToKeyEvent("Shift+F1", key);
-            KEYMGR.bind(key, true, "messagepanel all");
-            KEYMGR.stringToKeyEvent("Shift+F2", key);
-            KEYMGR.bind(key, true, "messagepanel chat");
-            KEYMGR.stringToKeyEvent("Shift+F3", key);
-            KEYMGR.bind(key, true, "messagepanel server");
-            KEYMGR.stringToKeyEvent("Shift+F4", key);
-            KEYMGR.bind(key, true, "messagepanel misc");
-        }// TODO - any other breaking changes from 1.10 to 2.0
-    }
-
-    if (configVersion <= 1)
-    {
-        if (KEYMGR.stringToKeyEvent("Tab", key)
-                && (KEYMGR.get(key, false) == ""))
-            KEYMGR.bind(key, false, "jump");
-    }
-
-    if (configVersion <= 2)
-    {
-        if (KEYMGR.stringToKeyEvent("7", key)
-                && (KEYMGR.get(key, true) == ""))
-            KEYMGR.bind(key, true, "addhunt");
-    }
-
-    if (configVersion <= 3)     // Upgrade from 2.0.x to 2.4.0
-    {
-        if (BZDB.isSet("email"))    // Convert from email to motto
-        {
-            std::string email = BZDB.get("email");    // If the email is set, see if we should convert it
-            // If the email is set and does not contain an @ sign, move it to motto
-            if (!email.empty() && email.find('@') == std::string::npos)
-                BZDB.set("motto", email);
-            BZDB.unset("email");  // discard email string from before version 2.4
-        }
-        if (BZDB.isSet("emailDispLen"))
-        {
-            BZDB.set("mottoDispLen", BZDB.get("emailDispLen"));
-            BZDB.unset("emailDispLen");   // discard setting from before version 2.4
-        }
-
-        if (BZDB.isSet("hideEmails"))
-        {
-            BZDB.setBool("hideMottos", BZDB.isTrue("hideEmails"));
-            BZDB.unset("hideEmails"); // discard setting from before version 2.4
-        }
-
-        // Get rid of geometry and lastScreenshot settings
-        BZDB.unset("geometry");
-        BZDB.unset("lastScreenshot");
-
-        // Turn off dithering (since none of our automatic performance checks turn it on anymore)
-        BZDB.setBool("dither", false);
+        printError(TextUtils::format("Config file is tagged version \"%d\", "
+                                     "which was not expected (too new/old perhaps). "
+                                     "Trying to load anyhow.", configVersion));
     }
 
     if (configVersion <= 4)   // Upgrade 2.4.0 (or 2.4.2, since the config file version was not incremented) to 2.4.4
@@ -256,12 +170,7 @@ void updateConfigFile(void)
     {
     }
 
-    if (configVersion < 0 || configVersion > 5)    // hm, we don't know about this one...
-    {
-        printError(TextUtils::format("Config file is tagged version \"%d\", "
-                                     "which was not expected (too new perhaps). "
-                                     "Trying to load anyhow.", configVersion));
-    }
+
 
     // set us as the updated version
     configVersion = BZ_CONFIG_FILE_VERSION;
