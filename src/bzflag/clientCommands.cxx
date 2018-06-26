@@ -737,11 +737,8 @@ struct ScreenshotData
     unsigned int height;
 };
 
-#ifdef _WIN32
-static DWORD WINAPI writeScreenshot(void* data)
-#else
+
 static void* writeScreenshot(void* data)
-#endif
 {
     ScreenshotData* ssdata = (ScreenshotData*)data;
 
@@ -932,6 +929,13 @@ static void* writeScreenshot(void* data)
     return nullptr;
 }
 
+#ifdef _WIN32
+static DWORD WINAPI writeWinScreenshot(void* data)
+{
+    return writeScreenshot(data) == nullptr ? 0 : 1;
+}
+#endif
+
 static std::string cmdScreenshot(const std::string&, const CommandManager::ArgList& args, bool*)
 {
     if (args.size() != 0)
@@ -964,7 +968,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     CreateThread(
         NULL, // Security attributes
         0, // Stack size (0 -> default)
-        writeScreenshot,
+        writeWinScreenshot,
         ssdata,
         0, // creation flags (0 -> run immediately)
         NULL); // thread id return value (NULL -> don't care)
