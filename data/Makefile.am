@@ -1,6 +1,7 @@
 SUBDIRS = l10n fonts
 
 dist_pkgdata_DATA =		\
+	assets.txt		\
 	automatic_icon.png	\
 	blue_basetop.png	\
 	blue_basewall.png	\
@@ -9,6 +10,10 @@ dist_pkgdata_DATA =		\
 	blue_laser.png		\
 	blue_super_bolt.png	\
 	blue_tank.png		\
+	blue_tank_digital.png	\
+	blue_tank_facet.png	\
+	blue_tank_hex.png	\
+	blue_tank_solid.png	\
 	blend_flash.png		\
 	boom.wav		\
 	bounce.wav		\
@@ -41,12 +46,20 @@ dist_pkgdata_DATA =		\
 	green_laser.png		\
 	green_super_bolt.png	\
 	green_tank.png		\
+	green_tank_digital.png	\
+	green_tank_facet.png	\
+	green_tank_hex.png	\
+	green_tank_solid.png	\
 	hunt.wav		\
 	hunt_select.wav		\
 	hunter_bolt.png		\
 	hunter_laser.png	\
 	hunter_super_bolt.png	\
 	hunter_tank.png		\
+	hunter_tank_digital.png	\
+	hunter_tank_facet.png	\
+	hunter_tank_hex.png	\
+	hunter_tank_solid.png	\
 	jump.wav		\
 	jumpjets.png		\
 	killteam.wav		\
@@ -72,17 +85,27 @@ dist_pkgdata_DATA =		\
 	puddle.png		\
 	puffs.png		\
 	purple_basetop.png	\
+	purple_basetop_normal.png	\
+	purple_basetop_specular.png	\
 	purple_basewall.png	\
 	purple_bolt.png		\
 	purple_icon.png		\
 	purple_laser.png	\
 	purple_super_bolt.png	\
 	purple_tank.png		\
+	purple_tank_digital.png	\
+	purple_tank_facet.png	\
+	purple_tank_hex.png	\
+	purple_tank_solid.png	\
 	pyrwall.png		\
 	rabbit_bolt.png		\
 	rabbit_laser.png	\
 	rabbit_super_bolt.png	\
 	rabbit_tank.png		\
+	rabbit_tank_digital.png	\
+	rabbit_tank_facet.png	\
+	rabbit_tank_hex.png	\
+	rabbit_tank_solid.png	\
 	radar.png		\
 	raindrop.png		\
 	red_basetop.png		\
@@ -92,6 +115,10 @@ dist_pkgdata_DATA =		\
 	red_laser.png		\
 	red_super_bolt.png	\
 	red_tank.png		\
+	red_tank_digital.png	\
+	red_tank_facet.png	\
+	red_tank_hex.png	\
+	red_tank_solid.png	\
 	ricochet.wav		\
 	roof.png		\
 	rogue_bolt.png		\
@@ -99,6 +126,10 @@ dist_pkgdata_DATA =		\
 	rogue_laser.png		\
 	rogue_super_bolt.png	\
 	rogue_tank.png		\
+	rogue_tank_digital.png	\
+	rogue_tank_facet.png	\
+	rogue_tank_hex.png	\
+	rogue_tank_solid.png	\
 	shock.wav		\
 	shot_tail.png		\
 	snowflake.png		\
@@ -108,6 +139,7 @@ dist_pkgdata_DATA =		\
 	spree4.wav		\
 	std_ground.png		\
 	steamroller.wav		\
+	team_ui_colors.png	\
 	teamgrab.wav		\
 	telelink.png		\
 	teleport.wav		\

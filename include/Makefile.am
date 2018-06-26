@@ -103,6 +103,7 @@ noinst_HEADERS =			\
 	SceneDatabase.h			\
 	SceneNode.h			\
 	SceneRenderer.h			\
+	SegmentedShotStrategy.h		\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\

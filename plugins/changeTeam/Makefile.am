@@ -12,8 +12,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.changeTeam.txt \
 	changeTeam.sln \
-	changeTeam.vcxproj	\
-	changeTeam.vcxproj.filters
+	changeTeam.vcxproj
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
