@@ -70,7 +70,7 @@ class BZF_API bz_ServerSidePlayerHandler
 {
 public:
     bz_ServerSidePlayerHandler();
-    virtual ~bz_ServerSidePlayerHandler() {}
+    virtual ~bz_ServerSidePlayerHandler();
 
     int getPlayerID(void)
     {
@@ -184,6 +184,8 @@ private:
     bool wantToJump;
 
     bool autoSpawn;
+    class Impl;
+    Impl* pImpl = nullptr;
 
 public:
     class BZF_API UpdateInfo

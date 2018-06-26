@@ -22,9 +22,18 @@
 
 // server side bot API
 
+class bz_ServerSidePlayerHandler::Impl
+{
+public:
+    TimeKeeper lastStuckTime;
+    float stuckRot = 0.0f;
+    float stuckSpeed = 0.0f;
+};
+
 bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJump(false), autoSpawn(true), flaps(0),
     alive(false)
 {
+    pImpl = new Impl();
     input[0] = input[1] = 0;
     lastUpdate.rotVel = 0;
     lastUpdate.vec[0] = 0;
@@ -33,6 +42,11 @@ bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), wantToJ
     lastUpdate.rot = 0;
     lastUpdate.pos[0] = lastUpdate.pos[1] = lastUpdate.pos[2] = 0;
     currentState = lastUpdate;
+}
+
+bz_ServerSidePlayerHandler::~bz_ServerSidePlayerHandler()
+{
+    delete(pImpl);
 }
 
 // higher level logic API
@@ -528,6 +542,51 @@ bool bz_ServerSidePlayerHandler::chasePlayer(float &rotation, float &speed)
 
 bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
 {
+    float stuckPeriod = float(TimeKeeper::getTick() - pImpl->lastStuckTime);
+    if (stuckPeriod < 0.5f)
+    {
+        rotation = pImpl->stuckRot;
+        speed = pImpl->stuckSpeed;
+        return true;
+    }
+    else if (stuckPeriod < 1.0f)
+    {
+        rotation = pImpl->stuckRot;
+        speed = 1.0;
+        return true;
+    }
+
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == nullptr)
+        return false;
+
+    FlagType::Ptr type = FlagInfo::get(player->player.getFlag())->flag.type;
+
+    const bool phased = (type->flagEffect == FlagEffect::OscillationOverthruster) || player->isPhantomZoned();
+
+    if (!phased && (BotUtils::getOpenDistance(lastUpdate.pos, lastUpdate.rot) < 5.0f))
+    {
+        pImpl->lastStuckTime = TimeKeeper::getTick();
+        if (bzfrand() > 0.8f)
+        {
+            // Every once in a while, do something nuts
+            speed = (float)(bzfrand() * 1.5f - 0.5f);
+            rotation = (float)(bzfrand() * 2.0f - 1.0f);
+        }
+        else
+        {
+            float leftDistance = BotUtils::getOpenDistance(lastUpdate.pos, (float)(lastUpdate.rot + (M_PI / 4.0)));
+            float rightDistance = BotUtils::getOpenDistance(lastUpdate.pos, (float)(lastUpdate.rot - (M_PI / 4.0)));
+            if (leftDistance > rightDistance)
+                rotation = 1.0f;
+            else
+                rotation = -1.0f;
+            speed = -0.5f;
+        }
+        pImpl->stuckRot = rotation;
+        pImpl->stuckSpeed = speed;
+        return true;
+    }
     return false;
 }
 
