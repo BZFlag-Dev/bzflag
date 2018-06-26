@@ -1047,6 +1047,7 @@ AC_CONFIG_FILES([
 	plugins/nagware/Makefile
 	plugins/playHistoryTracker/Makefile
 	plugins/plugin_utils/Makefile
+	plugins/R2/Makefile
 	plugins/rabbitTimer/Makefile
 	plugins/rabidRabbit/Makefile
 	plugins/recordmatch/Makefile

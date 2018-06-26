@@ -17,6 +17,8 @@
 #include "bzfsAPIServerSidePlayers.h"
 #include "bzfs.h"
 #include "StateDatabase.h"
+#include "RejoinList.h"
+#include "RobotUtils.h"
 
 // server side bot API
 
@@ -40,6 +42,13 @@ void bz_ServerSidePlayerHandler::spawned(void)
 
 bool bz_ServerSidePlayerHandler::think(void)
 {
+    float forward = 0;
+    float rot = lastUpdate.rot;
+
+    doAutoPilot(rot, forward);
+
+    setMovement(forward, rot);
+
     return false;
 }
 
@@ -279,6 +288,33 @@ void bz_ServerSidePlayerHandler::setMovement(float forward, float turn)
         input[1]=-1.0f;
 }
 
+extern RejoinList rejoinList;
+
+void bz_ServerSidePlayerHandler::respawn()
+{
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (!player)
+        return;
+
+    if (isAlive() || player->player.getTeam() == ObserverTeam)
+        return;
+
+    // player is on the waiting list
+    float waitTime = rejoinList.waitTime(playerID);
+    if (waitTime > 0.0f)
+    {
+        // Make them wait for trying to rejoin quickly
+        player->player.setSpawnDelay((double)waitTime);
+        player->player.queueSpawn();
+        return;
+    }
+
+    // player moved before countdown started
+    if (clOptions->timeLimit > 0.0f && !countdownActive)
+        player->player.setPlayedEarly();
+    player->player.queueSpawn();
+}
+
 //-------------------------------------------------------------------------
 
 bool bz_ServerSidePlayerHandler::fireShot(void)
@@ -295,6 +331,11 @@ bool bz_ServerSidePlayerHandler::jump(void)
     return wantToJump;
 }
 
+bool bz_ServerSidePlayerHandler::isAlive()
+{
+    return alive;
+}
+
 //-------------------------------------------------------------------------
 
 bool bz_ServerSidePlayerHandler::canJump(void)
@@ -306,7 +347,11 @@ bool bz_ServerSidePlayerHandler::canJump(void)
 
 bool bz_ServerSidePlayerHandler::canShoot(void)
 {
-    return false;
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (!player)
+        return false;
+
+    return alive && player->canShoot();
 }
 
 //-------------------------------------------------------------------------
@@ -430,6 +475,194 @@ float bz_ServerSidePlayerHandler::UpdateInfo::getDelta( const UpdateInfo & state
     // return the distance between where our projection is, and where state is
     return sqrt(dx*dx+dy*dy+dz*dz);
 }
+
+void bz_ServerSidePlayerHandler::doAutoPilot(float &rotation, float &speed)
+{
+    wantToJump = false;
+
+    dropHardFlags(); //Perhaps we should remove this and let learning do it's work
+    if (!avoidBullet(rotation, speed))
+    {
+        if (!stuckOnWall(rotation, speed))
+        {
+            if (!chasePlayer(rotation, speed))
+            {
+                if (!lookForFlag(rotation, speed))
+                    navigate(rotation, speed);
+            }
+        }
+    }
+
+    avoidDeathFall(rotation, speed);
+
+    if (wantToJump)
+        jump();
+
+    fireAtTank();
+}
+
+bool bz_ServerSidePlayerHandler::fireAtTank()
+{
+    return false;
+}
+
+bool bz_ServerSidePlayerHandler::avoidDeathFall(float & UNUSED(rotation), float &speed)
+{
+    return false;
+}
+
+bool bz_ServerSidePlayerHandler::navigate(float &rotation, float &speed)
+{
+    return false;
+}
+
+bool bz_ServerSidePlayerHandler::lookForFlag(float &rotation, float &speed)
+{
+    return false;
+}
+
+bool bz_ServerSidePlayerHandler::chasePlayer(float &rotation, float &speed)
+{
+    return false;
+}
+
+bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
+{
+    return false;
+}
+
+ void bz_ServerSidePlayerHandler::dropHardFlags()
+{
+     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+     if (player == nullptr || !player->player.haveFlag())
+         return;
+
+    FlagType::Ptr type = FlagInfo::get(player->player.getFlag())->flag.type;
+    if ((type->flagEffect == FlagEffect::Useless) || (type->flagEffect == FlagEffect::MachineGun) || (type->flagEffect == FlagEffect::Identify) || ((type->flagEffect == FlagEffect::PhantomZone)))
+        dropFlag();
+}
+
+ Shot::Ptr findWorstBullet(float &minDistance, int playerID, float pos[3])
+ {
+     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+     if (player == nullptr)
+         return nullptr;
+
+     FlagType::Ptr myFlag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+     Shot::Ptr minPath;
+
+     minDistance = Infinity;
+     for (auto shot : ShotManager.AllLiveShots())
+     {
+         GameKeeper::Player *opponent = GameKeeper::Player::getPlayerByIndex(shot->GetPlayerID());
+
+         if (opponent == nullptr || opponent == player )
+             continue;
+
+        if ((shot->getFlag()->flagEffect == FlagEffect::InvisibleBullet) && (myFlag->flagEffect != FlagEffect::Seer))
+            continue; //Theoretically Roger could triangulate the sound
+
+        if (opponent->isPhantomZoned() && !player->isPhantomZoned())
+            continue;
+
+        if ((shot->getFlag()->flagEffect == FlagEffect::Laser) && myFlag->flagEffect == FlagEffect::Cloaking)
+            continue; //cloaked tanks can't die from lasers
+
+        auto shotPos = shot->LastUpdatePosition;
+        if (fabs(shotPos.z - pos[2]) > BZDB.eval(StateDatabase::BZDB_TANKHEIGHT) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
+            continue;
+
+        const float dist = BotUtils::getTargetDistance(pos, shotPos);
+        if (dist < minDistance)
+        {
+            auto shotVel = shot->LastUpdateVector;
+            float shotAngle = atan2f(shotVel[1], shotVel[0]);
+            float shotUnitVec[2] = { cosf(shotAngle), sinf(shotAngle) };
+
+            float trueVec[2] = { (pos[0] - shotPos[0]) / dist, (pos[1] - shotPos[1]) / dist };
+            float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+
+            if (dotProd <= 0.1f) //pretty wide angle, evasive actions prolly aren't gonna work
+                continue;
+
+            minDistance = dist;
+            minPath = shot;
+        }
+     }
+     return minPath;
+ }
+
+ bool bz_ServerSidePlayerHandler::avoidBullet(float &rotation, float &speed)
+ {
+     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+     if (player == nullptr || !isAlive())
+         return false;
+
+     const float *pos = lastUpdate.pos;
+
+     auto flag = FlagInfo::get(player->player.getFlag())->flag.type;
+
+     if (flag->flagEffect == FlagEffect::Narrow || flag->flagEffect == FlagEffect::Burrow)
+         return false; // take our chances
+
+     float minDistance = 9999999.0f;
+
+     Shot::Ptr shot = findWorstBullet(minDistance, playerID, lastUpdate.pos);
+
+     if ((shot == nullptr) || (minDistance > 100.0f))
+         return false;
+
+     auto shotPos = shot->LastUpdatePosition;
+     auto shotVel = shot->LastUpdateVector;
+
+     float shotAngle = atan2f(shotVel[1], shotVel[0]);
+     float shotUnitVec[2] = { cosf(shotAngle), sinf(shotAngle) };
+
+     float trueVec[2] = { (pos[0] - shotPos[0]) / minDistance,(pos[1] - shotPos[1]) / minDistance };
+     float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+
+     float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+
+     if (((canJump() || flag->flagEffect == FlagEffect::Jumping || flag->flagEffect == FlagEffect::Wings)) && (minDistance < (std::max(dotProd, 0.5f) * tankLength * 2.25f)) && (flag->flagEffect != FlagEffect::NoJumping))
+     {
+         wantToJump = true;
+         return (flag->flagEffect != FlagEffect::Wings);
+     }
+     else if (dotProd > 0.96f)
+     {
+         speed = 1.0;
+         float myAzimuth = lastUpdate.rot;
+         float rotation1 = BotUtils::normalizeAngle((float)((shotAngle + M_PI / 2.0) - myAzimuth));
+
+         float rotation2 = BotUtils::normalizeAngle((float)((shotAngle - M_PI / 2.0) - myAzimuth));
+
+         float zCross = shotUnitVec[0] * trueVec[1] - shotUnitVec[1] * trueVec[0];
+
+         if (zCross > 0.0f)   //if i am to the left of the shot from shooter pov
+         {
+             rotation = rotation1;
+             if (fabs(rotation1) < fabs(rotation2))
+                 speed = 1.0f;
+             else if (dotProd > 0.98f)
+                 speed = -0.5f;
+             else
+                 speed = 0.5f;
+         }
+         else
+         {
+             rotation = rotation2;
+             if (fabs(rotation2) < fabs(rotation1))
+                 speed = 1.0f;
+             else if (dotProd > 0.98f)
+                 speed = -0.5f;
+             else
+                 speed = 0.5f;
+         }
+         return true;
+     }
+     return false;
+ }
 
 
 std::vector<bz_ServerSidePlayerHandler*> serverSidePlayer;

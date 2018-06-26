@@ -25,6 +25,7 @@ SUBDIRS = \
 	recordmatch \
 	regFlag \
 	RogueGenocide \
+	R2 \
 	SAMPLE_PLUGIN \
 	serverControl \
 	serverSidePlayerSample \

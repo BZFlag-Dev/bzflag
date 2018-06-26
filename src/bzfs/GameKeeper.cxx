@@ -423,6 +423,28 @@ float GetShotLifetime(FlagType::Ptr flagType)
     return lifeTime;
 }
 
+bool GameKeeper::Player::canShoot()
+{
+    if (shotSlots.size() != maxShots)
+    {
+        shotSlots.resize(maxShots);
+
+        for (int i = 0; i < (int)shotSlots.size(); i++)
+            shotSlots[i].slotID = i;
+    }
+
+    float now((float)TimeKeeper::getCurrent().getSeconds());
+
+    // find a slot
+    for (auto slot : shotSlots)
+    {
+        if (!slot.reloading && now >= slot.expireTime)
+            return true;
+    }
+
+    return false;
+}
+
 bool GameKeeper::Player::isValidShotToShoot(FiringInfo &firingInfo)
 {
     if (shotSlots.size() != maxShots)

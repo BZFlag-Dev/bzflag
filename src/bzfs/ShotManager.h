@@ -79,6 +79,11 @@ namespace Shots
 
         void        *Pimple;
 
+        inline FlagType::Ptr getFlag()
+        {
+            return Info.flagType;
+        }
+
         Shot(uint16_t guid, const FiringInfo &info);
         virtual ~Shot();
 
@@ -210,6 +215,8 @@ namespace Shots
 
         std::vector<int> AllLiveShotIDs();
         std::vector<int> ShotIDsInRadius( float pos[3], float radius);
+
+        const Shot::Vec&    AllLiveShots() { return LiveShots; }
 
         Shot::Event ShotCreated;
         Shot::Event ShotEnded;

@@ -121,6 +121,7 @@ public:
         // To handle shot
         static void         setMaxShots(unsigned int _maxShots);
         bool                isValidShotToShoot(FiringInfo &firingInfo);
+        bool                canShoot();
         bool                addShot(Shot::Ptr);
         bool                removeShot(int gid);
         void                updateShotSlots();
@@ -188,6 +189,27 @@ public:
 
         bool isTransferingWorld = false;
         std::list<int> chunksLeft;
+
+        inline bool isFlagActive() const
+        {
+            return (lastState.status & short(PlayerState::FlagActive)) != 0;
+        }
+
+        inline bool isTeleporting() const
+        {
+            return (lastState.status & short(PlayerState::Teleporting)) != 0;
+        }
+
+        inline bool isExploding() const
+        {
+            return (lastState.status & short(PlayerState::Exploding)) != 0;
+        }
+
+        bool isPhantomZoned() const
+        {
+            auto flag =  FlagInfo::get(player.getFlag())->flag.type;
+            return (isFlagActive() && (flag->flagEffect == FlagEffect::PhantomZone));
+        }
 
     private:
         static Player*      playerList[PlayerSlot];

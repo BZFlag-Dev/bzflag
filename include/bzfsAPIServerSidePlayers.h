@@ -91,14 +91,15 @@ public:
     virtual void playerSpawned(int player, const float pos[3], float rot);
 
     virtual void textMessage(int dest, int source, const char *text);
-    virtual void playerKilled(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex,
-        const char *flagType, int phydrv);
+    virtual void playerKilled(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv);
     virtual void scoreLimitReached(int player, bz_eTeamType team);
     virtual void flagCaptured(int player, bz_eTeamType team);
 
-    virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState,
-        double timestamp); // implement when server side scoring is in
-                           // virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs); // implement when server side scoring is in
+    virtual void playerStateUpdate(int player, bz_PlayerUpdateState *playerState, double timestamp);
+
+    // implement when server side scoring is in
+    // virtual void playerScoreUpdate(int player, float rank, int wins, int losses, int TKs); // implement when server side scoring is in
+
     virtual void shotFired(int player, unsigned short shotID);
     virtual void shotEnded(int player, unsigned short shotID, bool expired);
     virtual void playerTeleported(int player, bz_PlayerUpdateState *currentState, bz_PlayerUpdateState *lastState);
@@ -116,9 +117,10 @@ public:
     virtual void spawned(void); // the bot has spawned
     virtual void died(int killer); // the bot has died from gameplay
     virtual void smote(SmiteReason reason = eOtherDeath); // the bot has died from some other manner
-                                                          // virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ) {} // the bot ran into an object
 
-                                                          // give the bot time to do it's processing
+    // virtual void collide ( bz_APISolidWorldObject_V1* /*object*/, float* /*pos*/ ) {} // the bot ran into an object
+
+    // give the bot time to do it's processing
     virtual bool think(void); // return true to kill and delete the bot;
 
     void setPlayerID(int id)
@@ -127,9 +129,7 @@ public:
     }
 
     // actions to make
-    void setPlayerData(const char *callsign,
-        const char *token, const char *clientVersion,
-        bz_eTeamType team);
+    void setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType team);
 
     void joinGame(void);
 
@@ -146,17 +146,18 @@ public:
     bool jump(void);
 
     // state info
-    bool canJump(void);
-    bool canShoot(void);
-    bool canMove(void);
-    bool falling(void);
+    bool isAlive();
+    bool canJump();
+    bool canShoot();
+    bool canMove();
+    bool falling();
 
     void getPosition(float *p);
     void getVelocity(float *v);
-    float getFacing(void);
+    float getFacing();
 
-    float getMaxLinSpeed(void);
-    float getMaxRotSpeed(void);
+    float getMaxLinSpeed();
+    float getMaxRotSpeed();
 
     // state actions
     void setAutoSpawn(bool s = true)
@@ -167,8 +168,17 @@ public:
     int playerID;
 
 protected:
-    // driving controlls
-
+    // default autopilot based logic
+   virtual  void    doAutoPilot(float &rotation, float &speed);
+   void             dropHardFlags();
+   virtual bool     avoidBullet(float &rotation, float &speed);
+   bool             stuckOnWall(float &rotation, float &speed);
+   virtual bool     chasePlayer(float &rotation, float &speed);
+   virtual bool     lookForFlag(float &rotation, float &speed);
+   virtual bool     navigate(float &rotation, float &speed);
+   bool             avoidDeathFall(float &rotation, float &speed);
+   virtual bool     fireAtTank();
+  
 private:
     float input[2];
     bool wantToJump;

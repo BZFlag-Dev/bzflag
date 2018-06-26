@@ -102,6 +102,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "customPollTypeSample", "..\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "genocide", "..\plugins\genocide\genocide.vcxproj", "{C3C9E373-D8FB-420C-A8A7-4D8BBFCC0D69}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "R2", "..\plugins\R2\R2.vcxproj", "{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -502,6 +504,14 @@ Global
 		{C3C9E373-D8FB-420C-A8A7-4D8BBFCC0D69}.Release|Win32.Build.0 = Release|Win32
 		{C3C9E373-D8FB-420C-A8A7-4D8BBFCC0D69}.Release|x64.ActiveCfg = Release|x64
 		{C3C9E373-D8FB-420C-A8A7-4D8BBFCC0D69}.Release|x64.Build.0 = Release|x64
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Debug|Win32.Build.0 = Debug|Win32
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Debug|x64.ActiveCfg = Debug|x64
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Debug|x64.Build.0 = Debug|x64
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Release|Win32.ActiveCfg = Release|Win32
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Release|Win32.Build.0 = Release|Win32
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Release|x64.ActiveCfg = Release|x64
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -538,6 +548,7 @@ Global
 		{FC234DE3-C0A0-4B78-A552-5117AF3B5EC6} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{67C6DE16-7FD6-4890-9675-4C51E15FCB2F} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 		{C3C9E373-D8FB-420C-A8A7-4D8BBFCC0D69} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
+		{BFEBDDB5-A3A9-4B98-ABD4-10815144A3E6} = {57FFDC0F-E8B8-478D-8E12-474EDD2B381C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DD10A440-C416-4B74-A2D0-E7CD3A4B3A69}

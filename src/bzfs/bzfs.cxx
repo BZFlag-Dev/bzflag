@@ -159,7 +159,7 @@ WorldEventManager   worldEventManager;
 // FIXME: should be static, but needed by RecordReplay
 uint8_t rabbitIndex = NoPlayer;
 
-static RejoinList rejoinList;
+RejoinList rejoinList;
 
 static TimeKeeper lastWorldParmChange;
 static bool       playerHadWorld = false;

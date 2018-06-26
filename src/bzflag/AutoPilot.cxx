@@ -53,6 +53,7 @@ void teachAutoPilot(FlagType::Ptr type, int adjust)
     else
         flagSuccess[type] = std::pair<int,int>(adjust,1);
     totalSum += adjust;
+    totalSum += adjust;
     totalCnt++;
 }
 
