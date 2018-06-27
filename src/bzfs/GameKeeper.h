@@ -128,6 +128,12 @@ public:
         std::vector<float>  getSlotReloads();
         void                update();
 
+        inline float        getMuzzleHeight() const 
+        {
+            return/* dimensionsScale[2] * */BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+        }
+
+        bool validTeamTarget(const Player *possibleTarget) const;
 
         enum LSAState
         {

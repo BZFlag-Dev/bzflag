@@ -531,6 +531,22 @@ std::vector<float> GameKeeper::Player::getSlotReloads()
     return reloads;
 }
 
+bool GameKeeper::Player::validTeamTarget(const GameKeeper::Player *possibleTarget) const
+{
+    if (possibleTarget == nullptr)
+        return false;
+
+    TeamColor myTeam = player.getTeam();
+    TeamColor targetTeam = possibleTarget->player.getTeam();
+    if (myTeam != targetTeam || !allowTeams())
+        return true;
+
+    if (myTeam != RogueTeam)
+        return false;
+
+    return clOptions->gameType != RabbitChase;
+}
+
 void GameKeeper::Player::update()
 {
     updateShotSlots();

@@ -60,6 +60,16 @@ typedef enum
     eRejectIDBanned
 } bz_eRejectCodes;
 
+enum class bz_eTankStatus
+{
+    Dead,           // dead, explosion over
+    Exploding,      // dead and exploding
+    OnGround,       // playing on ground
+    InBuilding,     // playing in building
+    OnBuilding,     // playing on building
+    InAir           // playing in air
+};
+
 typedef struct
 {
     int player;
@@ -143,7 +153,7 @@ public:
     void dropFlag(void);
     void setMovement(float forward, float turn);
     bool fireShot(void);
-    bool jump(void);
+    void jump(void);
 
     // state info
     bool isAlive();
@@ -178,10 +188,11 @@ protected:
    virtual bool     navigate(float &rotation, float &speed);
    bool             avoidDeathFall(float &rotation, float &speed);
    virtual bool     fireAtTank();
+
+   virtual bool     isFlagUseful(const char* type);
   
 private:
     float input[2];
-    bool wantToJump;
 
     bool autoSpawn;
     class Impl;
@@ -196,6 +207,8 @@ public:
         float rot;     // FIXME -- radians or degrees?
         float rotVel;
         double time;
+
+        bz_eTankStatus Status = bz_eTankStatus::Dead;
 
         UpdateInfo()
             : rot(0), rotVel(0), time(0)
@@ -222,8 +235,6 @@ private:
     UpdateInfo currentState;
 
     int flaps;
-
-    bool alive;
 };
 
 // *** NOTE *** support for server side players in incomplete.
