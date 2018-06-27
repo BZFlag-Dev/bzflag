@@ -701,13 +701,13 @@ bool bz_ServerSidePlayerHandler::avoidDeathFall(float & UNUSED(rotation), float 
     return false;
 }
 
-const float* GetBasePostion(TeamColor team)
+const float* GetBasePostion(TeamColor _team)
 {
-    auto bases = OBSTACLEMGR.getBases();
-    for (size_t i = 0; i < bases.size(); i++)
+    auto baseList = OBSTACLEMGR.getBases();
+    for (size_t i = 0; i < baseList.size(); i++)
     {
-        const BaseBuilding* base = (const BaseBuilding*)bases[i];
-        if (base == nullptr || base->getTeam() != team)
+        const BaseBuilding* base = (const BaseBuilding*)baseList[i];
+        if (base == nullptr || base->getTeam() != _team)
             continue;
 
         return base->getPosition();
@@ -911,7 +911,6 @@ GameKeeper::Player *findBestTarget(GameKeeper::Player* myTank, float* pos, float
                 continue;
 
             FlagType::Ptr thereType = FlagInfo::get(myTank->player.getFlag())->flag.type;
-            TeamColor thereTeam = opponent->player.getTeam();
 
             if ((thereType->flagEffect == FlagEffect::Cloaking) &&
                 (type->flagEffect == FlagEffect::Laser))

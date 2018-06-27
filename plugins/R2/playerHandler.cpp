@@ -35,7 +35,7 @@ void PlayerHandler::added(int playerIndex)
     joinGame();
 }
 
-void PlayerHandler::textMessage(int dest, int source, const char *text)
+void PlayerHandler::textMessage(int dest, int source, const char */*text*/)
 {
     if (dest == getPlayerID())
     {
@@ -43,12 +43,12 @@ void PlayerHandler::textMessage(int dest, int source, const char *text)
     }
 }
 
-void PlayerHandler::playerSpawned(int player, const float pos[3], float rot)
+void PlayerHandler::playerSpawned(int, const float[3], float)
 {
 
 }
 
-void PlayerHandler::shotFired(int player, unsigned short shotID)
+void PlayerHandler::shotFired(int, unsigned short)
 {
 }
 

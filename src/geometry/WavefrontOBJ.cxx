@@ -54,10 +54,13 @@ static void readMTL ( CModel &model, std::string file )
     fseek(fp,0,SEEK_SET);
 
     char* pData = (char*)malloc(size+1);
-    fread(pData,size,1,fp);
+    size_t read = fread(pData,size,1,fp);
     pData[size] = 0;
 
     fclose(fp);
+
+    if ((int)read != size)
+        return;
 
     std::string lineTerminator = "\n";
 
@@ -181,10 +184,13 @@ bool readOBJ ( CModel &model, std::string file )
     fseek(fp,0,SEEK_SET);
 
     char* pData = (char*)malloc(size+1);
-    fread(pData,size,1,fp);
+    size_t read = fread(pData,size,1,fp);
     pData[size] = 0;
 
     fclose(fp);
+
+    if ((int)read != size)
+        return false;
 
     // figure out the base path
     std::string baseFilePath;
