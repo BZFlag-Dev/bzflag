@@ -237,7 +237,7 @@ bool            WinDisplay::isValid() const
 bool            WinDisplay::isEventPending() const
 {
     MSG msg;
-    return (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
+    return pendingUpEvents.size() > 0 || (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE) != 0);
 }
 
 bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
@@ -373,15 +373,39 @@ bool WinDisplay::windowsEventToBZFEvent ( MSG &msg, BzfEvent& event ) const
     return true;
 }
 
-bool            WinDisplay::peekEvent(BzfEvent& event) const
+bool            WinDisplay::peekEvent(BzfEvent& event)
 {
+    if (pendingUpEvents.size() > 0)
+    {
+        event.type = BzfEvent::KeyUp;
+        event.keyUp.ascii = 0;
+        event.keyUp.shift = 0;
+        event.keyUp.button = 0;
+        BzfKeyEvent::Button btn = pendingUpEvents.front();
+        event.keyUp.button = btn;
+        return true;
+    }
+
     MSG msg;
     if (PeekMessage(&msg, NULL, 0, 0,0) == -1) return false;
     return windowsEventToBZFEvent(msg,event);
 }
 
-bool            WinDisplay::getEvent(BzfEvent& event) const
+bool            WinDisplay::getEvent(BzfEvent& event)
 {
+
+    if (pendingUpEvents.size() > 0)
+    {
+        event.type = BzfEvent::KeyUp;
+        event.keyUp.ascii = 0;
+        event.keyUp.shift = 0;
+        event.keyUp.button = 0;
+        BzfKeyEvent::Button btn = pendingUpEvents.front();
+        event.keyUp.button = btn;
+        pendingUpEvents.pop_front();
+        return true;
+    }
+
     MSG msg;
     if (GetMessage(&msg, NULL, 0, 0) == -1) return false;
     return windowsEventToBZFEvent(msg,event);

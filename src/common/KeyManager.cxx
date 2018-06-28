@@ -199,8 +199,7 @@ KeyManager::~KeyManager()
 {
 }
 
-void            KeyManager::bind(const BzfKeyEvent& key,
-                                 bool press, const std::string& cmd)
+void            KeyManager::bind(const BzfKeyEvent& key, bool press, const std::string& cmd)
 {
     if (press)
     {
@@ -260,8 +259,7 @@ void            KeyManager::unbindCommand(const char* command)
 std::string     KeyManager::get(const BzfKeyEvent& key,
                                 bool press) const
 {
-    const EventToCommandMap* map = press ? &pressEventToCommand :
-                                   &releaseEventToCommand;
+    const EventToCommandMap* map = press ? &pressEventToCommand : &releaseEventToCommand;
     // If this key has both a button and an ascii value, search the hard way
     if (key.ascii != '\0' && key.button != BzfKeyEvent::NoButton)
     {
