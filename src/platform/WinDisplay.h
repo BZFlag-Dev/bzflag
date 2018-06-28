@@ -18,7 +18,9 @@
 #define BZF_WINDISPLAY_H
 #include "common.h"
 #include "BzfDisplay.h"
+#include "BzfEvent.h"
 #include "bzfgl.h"
+#include <deque>
 
 class BzfKeyEvent;
 class Resolution;
@@ -32,7 +34,7 @@ public:
 
     virtual bool    isValid() const;
     bool        isEventPending() const;
-    bool        getEvent(BzfEvent&) const;
+    bool        getEvent(BzfEvent&);
     bool        hasGetKeyMode()
     {
         return true;
@@ -45,7 +47,7 @@ public:
     int         getFullWidth() const;
     int         getFullHeight() const;
 
-    bool        peekEvent(BzfEvent& event) const;
+    bool        peekEvent(BzfEvent& event);
 
 
     // for other Windows stuff
@@ -101,6 +103,8 @@ private:
     static const int    asciiMap[];
     static const int    asciiShiftMap[];
     static const int    buttonMap[];
+
+    std::deque<int> pendingUpEvents;
 };
 
 #endif // BZF_WINDISPLAY_H
