@@ -74,8 +74,9 @@ void PlayerInfo::resetPlayer(bool ctf)
 {
     wasRabbit = false;
 
-    lastupdate = now;
-    lastmsg    = now;
+    lastupdate              = now;
+    lastmsg                 = now;
+    lastRespondingUpdate    = now;
 
     replayState = ReplayNone;
 
@@ -572,7 +573,7 @@ bool PlayerInfo::hasStartedToNotRespond()
     if (state > PlayerInLimbo)
     {
         bool oldnr = notResponding;
-        notResponding = (now - lastupdate) > notRespondingTime;
+        notResponding = (now - lastRespondingUpdate) > notRespondingTime;
         if (!oldnr && notResponding)
             startingToNotRespond = true;
     }
@@ -598,8 +599,12 @@ void PlayerInfo::setPlayedEarly(bool early)
 
 void PlayerInfo::updateIdleTime()
 {
-    if (!paused && (state != PlayerDead))
-        lastupdate = now;
+    if (!paused)
+    {
+        lastRespondingUpdate = now;
+        if (!paused)
+            lastupdate = now;
+    }
 }
 
 void    PlayerInfo::setReplayState(PlayerReplayState _state)

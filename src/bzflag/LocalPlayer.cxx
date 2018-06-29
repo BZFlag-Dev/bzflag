@@ -97,13 +97,15 @@ void            LocalPlayer::doUpdate(float dt)
 
     if (isPaused())
     {
-        // if we've been paused for a long time, drop our flag
+        // if we've been paused for a long time, drop our flag if it's not bad
+        const FlagType::Ptr flag = getFlag();
+
         if (!wasPaused)
         {
             pauseTime = TimeKeeper::getTick();
             wasPaused = true;
         }
-        if (TimeKeeper::getTick() -  pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME))
+        if (flag->endurance != FlagEndurance::Sticky && TimeKeeper::getTick() - pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME))
         {
             server->sendDropFlag(getPosition());
             setStatus(getStatus() & ~PlayerState::FlagActive);
