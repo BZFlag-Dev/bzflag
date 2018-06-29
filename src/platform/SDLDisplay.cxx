@@ -113,12 +113,24 @@ SDLDisplay::~SDLDisplay()
 
 bool SDLDisplay::isEventPending() const
 {
-    return (SDL_PollEvent(NULL) == 1);
+    return pendingUpEvents.size() > 0 || (SDL_PollEvent(NULL) == 1);
 }
 
 
-bool SDLDisplay::getEvent(BzfEvent& _event) const
+bool SDLDisplay::getEvent(BzfEvent& _event)
 {
+	if (pendingUpEvents.size() > 0)
+    {
+        _event.type = BzfEvent::KeyUp;
+        _event.keyUp.ascii = 0;
+        _event.keyUp.shift = 0;
+        _event.keyUp.button = 0;
+        int btn = pendingUpEvents.front();
+        _event.keyUp.button = btn;
+        pendingUpEvents.pop_front();
+        return true;
+    }
+	
     SDL_Event event;
     if (SDL_PollEvent(&event) == 0)
         return false;
@@ -127,8 +139,19 @@ bool SDLDisplay::getEvent(BzfEvent& _event) const
 }
 
 
-bool SDLDisplay::peekEvent(BzfEvent& _event) const
+bool SDLDisplay::peekEvent(BzfEvent& _event)
 {
+	if (pendingUpEvents.size() > 0)
+    {
+        _event.type = BzfEvent::KeyUp;
+        _event.keyUp.ascii = 0;
+        _event.keyUp.shift = 0;
+        _event.keyUp.button = 0;
+        int btn = pendingUpEvents.front();
+        _event.keyUp.button = btn;
+        return true;
+    }
+	
     SDL_Event event;
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0)
         return false;
@@ -137,7 +160,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
 }
 
 
-bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
+bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event)
 {
     SDLMod mode = SDL_GetModState();
     bool shift  = ((mode & KMOD_SHIFT) != 0);
@@ -193,9 +216,11 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
             break;
         case SDL_BUTTON_WHEELUP:
             _event.keyDown.button = BzfKeyEvent::WheelUp;
+			 pendingUpEvents.push_back(_event.keyDown.button);
             break;
         case SDL_BUTTON_WHEELDOWN:
             _event.keyDown.button = BzfKeyEvent::WheelDown;
+			 pendingUpEvents.push_back(_event.keyDown.button);
             break;
         case 6:
             _event.keyDown.button = BzfKeyEvent::MouseButton6;

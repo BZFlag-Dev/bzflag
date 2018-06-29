@@ -22,6 +22,7 @@
 #include "BzfVisual.h"
 #include "BzfWindow.h"
 #include "BzfEvent.h"
+#include <deque>
 
 class SDLDisplay : public BzfDisplay
 {
@@ -34,8 +35,8 @@ public:
         return true;
     };
     bool isEventPending() const;
-    bool getEvent(BzfEvent&) const;
-    bool peekEvent(BzfEvent&) const;
+    bool getEvent(BzfEvent&);
+    bool peekEvent(BzfEvent&);
     bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key) const;
     void setFullscreen(bool);
     void setWindowSize(int width, int height);
@@ -48,7 +49,7 @@ public:
     };
     void getModState(bool &shift, bool &control, bool &alt);
 private:
-    bool setupEvent(BzfEvent&, const SDL_Event&) const;
+    bool setupEvent(BzfEvent&, const SDL_Event&);
     bool fullScreen;
     bool doSetResolution(int)
     {
@@ -65,6 +66,8 @@ private:
     bool oldFullScreen;
     int  oldWidth;
     int  oldHeight;
+	
+	std::deque<int> pendingUpEvents;
 };
 
 class SDLVisual : public BzfVisual
