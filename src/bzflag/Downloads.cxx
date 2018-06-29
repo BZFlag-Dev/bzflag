@@ -341,14 +341,30 @@ bool authorizedServer(const std::string& hostname)
 
 bool parseHostname(const std::string& url, std::string& hostname)
 {
-    std::string protocol, path;
-    int port;
-    if (BzfNetwork::parseURL(url, protocol, hostname, port, path))
-    {
-        if ((protocol == "http") || (protocol == "ftp"))
-            return true;
-    }
-    return false;
+    // Find the colon and slashes
+    auto colonpos = url.find("://");
+    if (colonpos == std::string::npos)
+        return false;
+
+    // Extract the protocol
+    auto protocol = url.substr(0, colonpos + 3);
+
+    // Verify it's a protocol we support
+    if (protocol != "http://" && protocol != "https://")
+        return false;
+
+    // Store away the URL without the protocol prefix
+    auto mungedurl = url.substr(colonpos + 3);
+
+    // Find the first slash
+    auto firstslashpos = mungedurl.find("/");
+    if (firstslashpos == std::string::npos)
+        return false;
+
+    // Set the hostname
+    hostname = mungedurl.substr(0, firstslashpos);
+
+    return true;
 }
 
 

@@ -59,14 +59,12 @@ BZWReader::BZWReader(std::string filename) : cURLManager(), location(filename),
     input(NULL)
 {
     static const std::string httpProtocol("http://");
-    static const std::string ftpProtocol("ftp://");
-    static const std::string fileProtocol("file:/");
+    static const std::string httpsProtocol("https://");
 
     errorHandler = new BZWError(location);
 
     if ((filename.substr(0, httpProtocol.size()) == httpProtocol)
-            || (filename.substr(0, ftpProtocol.size()) == ftpProtocol)
-            || (filename.substr(0, fileProtocol.size()) == fileProtocol))
+            || (filename.substr(0, httpsProtocol.size()) == httpsProtocol))
     {
         setURL(location);
         performWait();

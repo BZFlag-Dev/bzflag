@@ -1956,8 +1956,7 @@ static void     handleServerMessage(bool human, uint16_t code,
                 item.filePath += item.fileName;
 
                 std::string hostname;
-                parseHostname (item.URL, hostname);
-                if (authorizedServer (hostname))
+                if (parseHostname (item.URL, hostname) && authorizedServer (hostname))
                 {
                     if (!resourceDownloader)
                         resourceDownloader = new ResourceGetter;

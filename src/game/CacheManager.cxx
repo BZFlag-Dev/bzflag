@@ -71,7 +71,7 @@ bool CacheManager::isCacheFileType(const std::string &name) const
 {
     if (strncasecmp(name.c_str(), "http://", 7) == 0)
         return true;
-    if (strncasecmp(name.c_str(), "ftp://", 6) == 0)
+    if (strncasecmp(name.c_str(), "https://", 8) == 0)
         return true;
     return false;
 }
@@ -85,10 +85,10 @@ std::string CacheManager::getLocalName(const std::string &name) const
         local = getCacheDirName() + "http/";
         local += partialEncoding(name.substr(7));
     }
-    else if (strncasecmp(name.c_str(), "ftp://", 6) == 0)
+    else if (strncasecmp(name.c_str(), "https://", 8) == 0)
     {
-        local = getCacheDirName() + "ftp/";
-        local += partialEncoding(name.substr(6));
+        local = getCacheDirName() + "https/";
+        local += partialEncoding(name.substr(8));
     }
 #ifdef _WIN32
     std::replace(local.begin(), local.end(), '/', '\\');
