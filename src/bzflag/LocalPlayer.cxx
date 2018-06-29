@@ -139,9 +139,7 @@ void            LocalPlayer::doUpdate(float dt)
         target = NULL;
 
     // drop bad flag if timeout has expired
-    if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&
-            getFlag() != Flags::Null && getFlag()->endurance == FlagEndurance::Sticky &&
-            flagShakingTime > 0.0f)
+    if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&  getFlag() != Flags::Null && getFlag()->endurance == FlagEndurance::Sticky &&  flagShakingTime > 0.0f)
     {
         flagShakingTime -= dt;
         if (flagShakingTime <= 0.0f)
