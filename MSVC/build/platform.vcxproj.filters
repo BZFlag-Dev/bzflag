@@ -37,18 +37,6 @@
     <ClCompile Include="..\..\src\platform\wave.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform\WinWindow.cxx">
-      <Filter>Source Files\Unused Platform Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform\WinVisual.cxx">
-      <Filter>Source Files\Unused Platform Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform\WinJoystick.cxx">
-      <Filter>Source Files\Unused Platform Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\platform\WinDisplay.cxx">
-      <Filter>Source Files\Unused Platform Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\platform\SDLPlatformFactory.cxx">
       <Filter>Source Files\Unused Platform Files</Filter>
     </ClCompile>
@@ -60,6 +48,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\platform\EvdevJoystick.cxx">
       <Filter>Source Files\Unused Platform Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\platform\WinPlatformFactory.cxx">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -133,18 +124,6 @@
       <Filter>Header Files\Unused Platform Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\platform\SDLPlatformFactory.h">
-      <Filter>Header Files\Unused Platform Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\platform\WinDisplay.h">
-      <Filter>Header Files\Unused Platform Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\platform\WinJoystick.h">
-      <Filter>Header Files\Unused Platform Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\platform\WinVisual.h">
-      <Filter>Header Files\Unused Platform Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\platform\WinWindow.h">
       <Filter>Header Files\Unused Platform Files</Filter>
     </ClInclude>
   </ItemGroup>
