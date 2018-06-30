@@ -110,26 +110,18 @@ libPlatform_la_SOURCES =			\
 	BzfVisual.cxx				\
 	BzfWindow.cxx				\
 	BzfMedia.cxx				\
-	SDLDisplay.h				\
-	SDLDisplay.cxx				\
-	SDLJoystick.h				\
-	SDLJoystick.cxx				\
-	SDLMedia.cxx				\
-	SDLMedia.h				\
+	SDL2Display.h				\
+	SDL2Display.cxx				\
+	SDL2Visual.h				\
+	SDL2Visual.cxx				\
+	SDL2Window.h				\
+	SDL2Window.cxx				\
 	wave.cxx				\
 	wave.h					\
 	WinPlatformFactory.cxx			\
 	WinPlatformFactory.h			\
-	WinDisplay.cxx				\
-	WinDisplay.h				\
 	DXJoystick.cxx				\
 	DXJoystick.h				\
-	WinJoystick.cxx				\
-	WinJoystick.h				\
-	WinVisual.cxx				\
-	WinVisual.h				\
-	WinWindow.cxx				\
-	WinWindow.h				\
 	WinMedia.cxx				\
 	WinMedia.h
 endif
@@ -210,14 +202,6 @@ EXTRA_libPlatform_la_SOURCES =		\
 	USBJoystick.h			\
 	WinPlatformFactory.cxx		\
 	WinPlatformFactory.h		\
-	WinDisplay.cxx			\
-	WinDisplay.h			\
-	WinJoystick.cxx			\
-	WinJoystick.h			\
-	WinVisual.cxx			\
-	WinVisual.h			\
-	WinWindow.cxx			\
-	WinWindow.h			\
 	WinMedia.cxx			\
 	WinMedia.h			\
 	XDisplay.cxx			\
