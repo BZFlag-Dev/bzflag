@@ -133,11 +133,11 @@ public:
         FlagType::Ptr       getFlagType() const;
         FlagEffect          getFlagEffect() const;
 
-        const Obstacle*  GameKeeper::Player::getHitBuilding(const float* p, float a, bool phased, bool& expelled) const;
-        const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled);
+        const Obstacle*  getHitBuilding(const float* p, float a, bool phased, bool& expelled) const;
+        const Obstacle*  getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled);
         bool             getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2, float* normal) const;
 
-        inline const float* Player::getDimensions() const
+        inline const float* getDimensions() const
         {
             return current_dimensions;
         }
@@ -274,8 +274,8 @@ public:
             float pos[3];
             float vec[3];       // forwad vector * speed
             float forward[3];   // direction the tank if facing
-            float rot;          // radians like azimuth
-            double time;
+            float rot = 0;          // radians like azimuth
+            double time = 0;
 
             float speed = 0;
             float angVel = 0;
@@ -287,7 +287,6 @@ public:
             short pStatus = PlayerState::DeadStatus;
 
             UpdateInfo()
-                : rot(0), angVel(0), time(0)
             {
                 for (int i = 0; i < 3; i++)
                     pos[i] = vec[0] = 0;
