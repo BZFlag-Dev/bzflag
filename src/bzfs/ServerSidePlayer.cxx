@@ -142,12 +142,9 @@ void bz_ServerSidePlayerHandler::processUpdate(float dt)
     // save last position
     const float* oldPosition = pImpl->myTank->currentState.pos;
 
-    float lastPosition[3] = { 0 };
-
     pImpl->lastPosition[0] = oldPosition[0];
     pImpl->lastPosition[1] = oldPosition[1];
     pImpl->lastPosition[2] = oldPosition[2];
-
 
     doUpdateMotion(dt);
 
@@ -842,7 +839,7 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
             pImpl->myTank->setPhysicsDriver(driverIdent);
     }
 
-    const bool justLanded = (oldStatus == bz_eTankStatus::InAir) && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding));
+  //  const bool justLanded = (oldStatus == bz_eTankStatus::InAir) && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding));
   
     // set falling status
     if (pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround || pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding ||  (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && newPos[2] == 0.0f))
