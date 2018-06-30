@@ -86,8 +86,6 @@ protected:
 
     void processPending();
 
-    bool callignEvents;
-
     tvEventList pendingAdds;
     tvEventList pendingRemovals;
 };

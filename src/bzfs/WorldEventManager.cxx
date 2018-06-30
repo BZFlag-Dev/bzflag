@@ -15,16 +15,18 @@
 
 #include <iostream>
 #include <string>
-
+#include <list>
 #include "WorldEventManager.h"
 
 std::map<bz_Plugin*,bz_EventHandler*> HandlerMap;
+
+std::list<bz_eEventType> callingEventStack;
 
 
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
-    callignEvents = false;
+    callingEventStack.clear();
 }
 
 WorldEventManager::~WorldEventManager()
@@ -43,7 +45,7 @@ void WorldEventManager::addEvent ( bz_eEventType eventType, bz_EventHandler* the
 
     theEvent->AddEvent(eventType);
 
-    if (callignEvents)
+    if (callingEventStack.size() > 0 && callingEventStack.back() == eventType)
         pendingAdds.push_back(theEvent);
     else
     {
@@ -62,7 +64,7 @@ void WorldEventManager::removeEvent ( bz_eEventType eventType, bz_EventHandler* 
 
 bool WorldEventManager::removeHandler(bz_EventHandler* theEvent)
 {
-    if (callignEvents)
+    if (callingEventStack.size() > 0)
     {
         pendingRemovals.push_back(theEvent);
         return std::find(eventList.begin(),eventList.end(),theEvent) != eventList.end();
@@ -82,8 +84,7 @@ void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eve
 {
     if (!eventData)
         return;
-    bool callState = callignEvents;
-    callignEvents = true;
+    callingEventStack.push_back(eventType);
     eventData->eventType = eventType;
 
 //  tvEventList::iterator itr = eventList.begin();
@@ -94,9 +95,8 @@ void WorldEventManager::callEvents ( bz_eEventType eventType, bz_EventData  *eve
             eventList[i]->process(eventData);
     }
 
-    callignEvents = callState;
-    if (!callState)
-        processPending();
+    callingEventStack.pop_back();
+    processPending();
 }
 
 void WorldEventManager::callEvents (  bz_EventData  *eventData )
