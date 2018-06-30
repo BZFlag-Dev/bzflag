@@ -182,6 +182,8 @@ void cleanupGameOver();
 void checkTeamScore(int playerIndex, int teamIndex);
 void sendClosestFlagMessage(int playerIndex,FlagType::Ptr type, float pos[3]);
 
+void sendTeleport(int playerIndex, uint16_t from, uint16_t to);
+
 void ApiTick(void);
 
 // peer list

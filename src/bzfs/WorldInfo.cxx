@@ -389,6 +389,261 @@ InBuildingType WorldInfo::classifyHit (const Obstacle* obstacle) const
     }
 }
 
+const Obstacle*     WorldInfo::hitBuilding(const float* pos, float angle, float dx, float dy, float dz) const
+{
+    // check walls
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (unsigned int w = 0; w < walls.size(); w++)
+    {
+        const WallObstacle* wall = (const WallObstacle*)walls[w];
+        if (wall->inBox(pos, angle, dx, dy, dz))
+            return wall;
+    }
+
+    // check everything else
+    const ObsList* olist = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
+
+    for (int i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (!obs->isDriveThrough() && obs->inBox(pos, angle, dx, dy, dz))
+            return obs;
+    }
+
+    return NULL;
+}
+
+bool WorldInfo::crossingTeleporter(const float* pos, float angle, float dx, float dy, float dz,  float* plane) const
+{
+    const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+    for (unsigned int i = 0; i < teleporters.size(); i++)
+    {
+        const Teleporter* teleporter = (const Teleporter*)teleporters[i];
+        if (teleporter->isCrossing(pos, angle, dx, dy, dz, plane))
+            return true;
+    }
+    return false;
+}
+
+const Teleporter* WorldInfo::crossesTeleporter(const float* oldPos, const float* newPos, int& face) const
+{
+    // check teleporters
+    const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+    for (unsigned int i = 0; i < teleporters.size(); i++)
+    {
+        const Teleporter* teleporter = (const Teleporter*)teleporters[i];
+        if (teleporter->hasCrossed(oldPos, newPos, face))
+            return teleporter;
+    }
+
+    // didn't cross
+    return NULL;
+}
+
+const Teleporter* WorldInfo::crossesTeleporter(const Ray& r, int& face) const
+{
+    // check teleporters
+    const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+    for (unsigned int i = 0; i < teleporters.size(); i++)
+    {
+        const Teleporter* teleporter = (const Teleporter*)teleporters[i];
+        if (teleporter->isTeleported(r, face) > Epsilon)
+            return teleporter;
+    }
+
+    // didn't cross
+    return NULL;
+}
+
+static inline int compareHeights(const Obstacle*& obsA, const Obstacle* obsB)
+{
+    const Extents& eA = obsA->getExtents();
+    const Extents& eB = obsB->getExtents();
+    if (eA.maxs[2] > eB.maxs[2])
+        return -1;
+    else
+        return +1;
+}
+
+static int compareObstacles(const void* a, const void* b)
+{
+    // - normal object come first (from lowest to highest)
+    // - then come the mesh face (highest to lowest)
+    // - and finally, the mesh objects (checkpoints really)
+    const Obstacle* obsA = *((const Obstacle* const *)a);
+    const Obstacle* obsB = *((const Obstacle* const *)b);
+    const char* typeA = obsA->getType();
+    const char* typeB = obsB->getType();
+
+    bool isMeshA = (typeA == MeshObstacle::getClassName());
+    bool isMeshB = (typeB == MeshObstacle::getClassName());
+
+    if (isMeshA)
+    {
+        if (!isMeshB)
+            return +1;
+        else
+            return compareHeights(obsA, obsB);
+    }
+
+    if (isMeshB)
+    {
+        if (!isMeshA)
+            return -1;
+        else
+            return compareHeights(obsA, obsB);
+    }
+
+    bool isFaceA = (typeA == MeshFace::getClassName());
+    bool isFaceB = (typeB == MeshFace::getClassName());
+
+    if (isFaceA)
+    {
+        if (!isFaceB)
+            return +1;
+        else
+            return compareHeights(obsA, obsB);
+    }
+
+    if (isFaceB)
+    {
+        if (!isFaceA)
+            return -1;
+        else
+            return compareHeights(obsA, obsB);
+    }
+
+    return compareHeights(obsB, obsA); // reversed
+}
+
+static int compareHitNormal(const void* a, const void* b)
+{
+    const MeshFace* faceA = *((const MeshFace* const *)a);
+    const MeshFace* faceB = *((const MeshFace* const *)b);
+
+    // Up Planes come first
+    if (faceA->isUpPlane() && !faceB->isUpPlane())
+        return -1;
+    if (faceB->isUpPlane() && !faceA->isUpPlane())
+        return +1;
+
+    // highest Up Plane comes first
+    if (faceA->isUpPlane() && faceB->isUpPlane())
+    {
+        if (faceA->getPosition()[2] > faceB->getPosition()[2])
+            return -1;
+        else
+            return +1;
+    }
+
+    // compare the dot products
+    if (faceA->scratchPad < faceB->scratchPad)
+        return -1;
+    else
+        return +1;
+}
+
+const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float dx, float dy, float dz,  bool directional) const
+{
+    // check walls
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (unsigned int w = 0; w < walls.size(); w++)
+    {
+        const WallObstacle* wall = (const WallObstacle*)walls[w];
+        if (wall->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+            return wall;
+    }
+
+    // get the list of potential hits from the collision manager
+    const ObsList* olist =
+        COLLISIONMGR.movingBoxTest(oldPos, oldAngle, pos, angle, dx, dy, dz);
+
+    // sort the list by type and height
+    qsort(olist->list, olist->count, sizeof(Obstacle*), compareObstacles);
+
+
+    int i;
+
+    // check non-mesh obstacles
+    for (i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        const char* type = obs->getType();
+        if ((type == MeshFace::getClassName()) ||
+            (type == MeshObstacle::getClassName()))
+            break;
+        if (!obs->isDriveThrough() &&
+            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+            return obs;
+    }
+    if (i == olist->count)
+    {
+        return NULL; // no more obstacles, we are done
+    }
+
+    // do some prep work for mesh faces
+    int hitCount = 0;
+    float vel[3];
+    vel[0] = pos[0] - oldPos[0];
+    vel[1] = pos[1] - oldPos[1];
+    vel[2] = pos[2] - oldPos[2];
+    bool goingDown = (vel[2] <= 0.0f);
+
+    // check mesh faces
+    for (/* do nothing */; i < olist->count; i++)
+    {
+        Obstacle* obs = olist->list[i];
+        const char* type = obs->getType();
+        if (type == MeshObstacle::getClassName())
+            break;
+        if (!obs->isDriveThrough() &&
+            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+        {
+            const MeshFace* face = (const MeshFace*)obs;
+            const float facePos2 = face->getPosition()[2];
+            if (face->isUpPlane() &&
+                (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
+                continue;
+            else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
+                continue;
+            else
+            {
+                // add the face to the hitlist
+                olist->list[hitCount] = obs;
+                hitCount++;
+                // compute its dot product and stick it in the scratchPad
+                const float* p = face->getPlane();
+                const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+                face->scratchPad = dot;
+            }
+        }
+    }
+    // sort the list by dot product (this sort will be replaced with a running tab
+    qsort(olist->list, hitCount, sizeof(Obstacle*), compareHitNormal);
+
+    // see if there as a valid meshface hit
+    if (hitCount > 0)
+    {
+        const MeshFace* face = (const MeshFace*)olist->list[0];
+        if (face->isUpPlane() || (face->scratchPad < 0.0f) || !directional)
+            return face;
+    }
+    if (i == olist->count)
+    {
+        return NULL; // no more obstacles, we are done
+    }
+
+    // check mesh obstacles
+    for (/* do nothing */; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (!obs->isDriveThrough() &&
+            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+            return obs;
+    }
+
+    return NULL; // no more obstacles, we are done
+}
 
 bool WorldInfo::getFlagDropPoint(const FlagInfo* fi, const float* pos,
                                  float* pt) const
@@ -450,6 +705,35 @@ bool WorldInfo::getPlayerSpawnPoint(const PlayerInfo* pi, float* pt) const
     return false;
 }
 
+
+const Obstacle*     WorldInfo::inBuilding(const float* pos, float radius, float height) const
+{
+    // check everything but walls
+    const ObsList* olist = COLLISIONMGR.cylinderTest(pos, radius, height);
+    for (int i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (obs->inCylinder(pos, radius, height))
+            return obs;
+    }
+
+    return NULL;
+}
+
+const Obstacle*     WorldInfo::inBuilding(const float* pos, float angle, float dx, float dy, float dz) const
+{
+    // check everything but the walls
+    const ObsList* olist = COLLISIONMGR.boxTest(pos, angle, dx, dy, dz);
+
+    for (int i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (obs->inBox(pos, angle, dx, dy, dz))
+            return obs;
+    }
+
+    return NULL;
+}
 
 void WorldInfo::finishWorld()
 {
@@ -585,6 +869,124 @@ int WorldInfo::getTeleportTarget(int source) const
 int WorldInfo::getTeleportTarget(int source, unsigned int seed) const
 {
     return links.getTeleportTarget(source, seed);
+}
+
+
+bool WorldInfo::getGround(const Ray& r, float min, float &t)
+{
+    if (r.getDirection()[2] >= 0.0f)
+        return false;
+
+    float groundT = r.getOrigin()[2] / -r.getDirection()[2];
+    if ((groundT > min) && (groundT < t))
+    {
+        t = groundT;
+        return true;
+    }
+    return false;
+}
+
+const Obstacle* WorldInfo::getFirstBuilding(const Ray& ray, float min, float& t)
+{
+    const Obstacle* closestObstacle = NULL;
+    unsigned int i = 0;
+
+    // check walls
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    for (i = 0; i < walls.size(); i++)
+    {
+        const WallObstacle* wall = (const WallObstacle*)walls[i];
+        if (!wall->isShootThrough())
+        {
+            const float wallt = wall->intersect(ray);
+            if (wallt > min && wallt < t)
+            {
+                t = wallt;
+                closestObstacle = wall;
+            }
+        }
+    }
+
+    //check everything else
+    const ObsList* olist = COLLISIONMGR.rayTest(&ray, t);
+
+    for (i = 0; i < (unsigned int)olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (!obs->isShootThrough())
+        {
+            const float timet = obs->intersect(ray);
+            if (obs->getType() == Teleporter::getClassName())
+            {
+                const Teleporter* tele = (const Teleporter*)obs;
+                int face;
+                if ((timet > min) && (timet < t) &&
+                    (tele->isTeleported(ray, face) < 0.0f))
+                {
+                    t = timet;
+                    closestObstacle = obs;
+                }
+            }
+            else
+            {
+                if ((timet > min) && (timet < t))
+                {
+                    t = timet;
+                    closestObstacle = obs;
+                }
+            }
+        }
+    }
+
+    return closestObstacle;
+}
+
+const Teleporter* WorldInfo::getFirstTeleporter(const Ray& ray, float min, float& t, int& f)
+{
+    const Teleporter* closestTeleporter = NULL;
+    int face;
+
+    const ObstacleList& teles = OBSTACLEMGR.getTeles();
+
+    for (unsigned int i = 0; i < teles.size(); i++)
+    {
+        const Teleporter& tele = *((const Teleporter*)teles[i]);
+        const float telet = tele.isTeleported(ray, face);
+        if (telet > min && telet < t)
+        {
+            t = telet;
+            f = face;
+            closestTeleporter = &tele;
+        }
+    }
+
+    return closestTeleporter;
+}
+
+int WorldInfo::getTeleporter(const Teleporter* teleporter, int face)
+{
+    // search for teleporter
+    const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+    const int count = teleporters.size();
+    for (int i = 0; i < count; i++)
+    {
+        if (teleporter == (const Teleporter*)teleporters[i])
+            return ((2 * i) + face);
+    }
+
+    return 0;
+}
+
+
+const Teleporter* WorldInfo::getTeleporter(int source, int& face)
+{
+    const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
+    if (source >= 0 && source < (int)(2 * teleporters.size()))
+    {
+        face = (source & 1);
+        return ((const Teleporter*)teleporters[source / 2]);
+    }
+    return nullptr;
 }
 
 

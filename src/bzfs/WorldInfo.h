@@ -24,6 +24,7 @@
 #include "WorldWeapons.h"
 #include "TeamBases.h"
 #include "LinkManager.h"
+#include "Teleporter.h"
 
 /* common implementation headers */
 
@@ -119,6 +120,17 @@ public:
         return finished;
     }
 
+
+    bool getGround(const Ray& r, float min, float &t);
+    const Obstacle* getFirstBuilding(const Ray& ray, float min, float& t);
+    const Teleporter* getFirstTeleporter(const Ray& ray, float min, float& t, int& f);
+    int getTeleporter(const Teleporter* teleporter, int face);
+    const Teleporter* getTeleporter(int source, int& face);
+
+    const Obstacle* inBuilding(const float* pos, float radius, float tankHeight) const;
+    const Obstacle* inBuilding(const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight) const;
+   
+
 private:
 
     bool finished;
@@ -172,8 +184,15 @@ public:
      */
     void checkCollisionManager();
 
-    bool inRect(const float *p1, float angle, const float *size,
-                float x, float y, float r) const;
+    bool inRect(const float *p1, float angle, const float *size,float x, float y, float r) const;
+
+    const Obstacle* hitBuilding(const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight) const;
+    const Obstacle* hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight, bool directional) const;
+
+    bool crossingTeleporter(const float* pos, float angle, float dx, float dy, float dz, float* plane) const;
+
+    const Teleporter*   crossesTeleporter(const float* oldPos, const float* newPos, int& face) const;
+    const Teleporter*  crossesTeleporter(const Ray& r, int& face) const;
 
 private:
 

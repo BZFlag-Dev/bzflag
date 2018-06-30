@@ -40,6 +40,7 @@
 #include "ShotUpdate.h"
 #include "ShotManager.h"
 #include "bzfsAPIServerSidePlayers.h"
+#include "Obstacle.h"
 
 using namespace Shots;
 
@@ -74,16 +75,15 @@ public:
         ~Player();
 
         int             getIndex();
-        static int     getFreeIndex(int min, int max);
-        static Player* getPlayerByIndex(int _playerIndex);
-        static int     count();
-        static void    updateLatency(float &waitTime);
-        static void    dumpScore();
-        static int     anointRabbit(int oldRabbit);
-        static std::vector<int> allowed(PlayerAccessInfo::AccessPerm right,
-                                        int targetPlayer = -1);
-        static int     getPlayerIDByName(const std::string &name);
-        static void    reloadAccessDatabase();
+        static int      getFreeIndex(int min, int max);
+        static Player*  getPlayerByIndex(int _playerIndex);
+        static int      count();
+        static void     updateLatency(float &waitTime);
+        static void     dumpScore();
+        static int      anointRabbit(int oldRabbit);
+        static std::vector<int> allowed(PlayerAccessInfo::AccessPerm right, int targetPlayer = -1);
+        static int      getPlayerIDByName(const std::string &name);
+        static void     reloadAccessDatabase();
 
         bool            loadEnterData(uint16_t& rejectCode, char* rejectMsg);
         void*           packAdminInfo(void* buf);
@@ -127,6 +127,29 @@ public:
         void                updateShotSlots();
         std::vector<float>  getSlotReloads();
         void                update();
+
+        void grantFlag(int _flag);
+
+        FlagType::Ptr       getFlagType() const;
+        FlagEffect          getFlagEffect() const;
+
+        const Obstacle*  GameKeeper::Player::getHitBuilding(const float* p, float a, bool phased, bool& expelled) const;
+        const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled);
+        bool             getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2, float* normal) const;
+
+        inline const float* Player::getDimensions() const
+        {
+            return current_dimensions;
+        }
+
+        inline float getRadius() const
+        {
+            // NOTE: this encompasses everything but Narrow
+            //       the Obese, Tiny, and Thief flags adjust
+            //       the radius, but Narrow does not.
+            return current_dimensions[0] * BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+        }
+
 
         inline float        getMuzzleHeight() const 
         {
@@ -217,6 +240,107 @@ public:
             return (isFlagActive() && (flag->flagEffect == FlagEffect::PhantomZone));
         }
 
+
+        // data use for server side physics
+        float           desiredSpeed = 0;
+        float           desiredAngVel = 0;
+        int             deathPhyDrv;    // physics driver that caused death
+
+        TimeKeeper      agilityTime;
+        TimeKeeper      bounceTime;
+        TimeKeeper      teleportTime;     // time I started teleporting
+        short           fromTeleporter;       // teleporter I entered
+        short           toTeleporter;         // teleporter I exited
+        float           flagShakingTime;
+        int             flagShakingWins;
+        float           flagAntidotePos[3];
+        bool            hasAntidoteFlag = false;
+
+        void            setDesiredSpeed(float fracOfMaxSpeed);
+        void            setDesiredAngVel(float fracOfMaxAngVel);
+
+        void            setTeleport(const TimeKeeper& t, short from, short to);
+
+        float           getHandicapFactor();
+
+        void            setPhysicsDriver(int driver);
+
+        void            move(const float* _pos, float _azimuth);
+        void            collectInsideBuildings();
+
+        class UpdateInfo
+        {
+        public:
+            float pos[3];
+            float vec[3];       // forwad vector * speed
+            float forward[3];   // direction the tank if facing
+            float rot;          // radians like azimuth
+            double time;
+
+            float speed = 0;
+            float angVel = 0;
+
+            int phydrv = -1;
+
+            bz_eTankStatus Status = bz_eTankStatus::Dead;
+
+            short pStatus = PlayerState::DeadStatus;
+
+            UpdateInfo()
+                : rot(0), angVel(0), time(0)
+            {
+                for (int i = 0; i < 3; i++)
+                    pos[i] = vec[0] = 0;
+            }
+
+            UpdateInfo& operator=(const UpdateInfo& u)
+            {
+                memcpy(pos, u.pos, sizeof(float) * 3);
+                memcpy(vec, u.vec, sizeof(float) * 3);
+                rot = u.rot;
+                angVel = u.angVel;
+                time = u.time;
+
+                return *this;
+            }
+
+            inline short getPStatus() const
+            {
+                return pStatus;
+            }
+
+            inline void setPStatus(short _status)
+            {
+                pStatus = _status;
+            }
+
+            float getDelta(const UpdateInfo & state)
+            {
+                // plot where we think we are now based on the current time
+                double dt = state.time - time;
+
+                float newPos[3];
+                newPos[0] = pos[0] + (float)(vec[0] * dt);
+                newPos[1] = pos[1] + (float)(vec[1] * dt);
+                newPos[2] = pos[2] + (float)(vec[2] * dt);
+
+                // that's where we thing we'll be based on movement
+
+                float dx = newPos[0] - state.pos[0];
+                float dy = newPos[1] - state.pos[1];
+                float dz = newPos[1] - state.pos[2];
+
+                // return the distance between where our projection is, and where state is
+                return sqrt(dx*dx + dy * dy + dz * dz);
+            }
+
+        };
+
+        UpdateInfo lastUpdate;
+        UpdateInfo currentState;
+
+        std::vector<const Obstacle*> insideBuildings;
+
     private:
         static Player*      playerList[PlayerSlot];
         int                 playerIndex;
@@ -233,6 +357,12 @@ public:
         int                 idFlag;
 
         double              lastShotUpdateTime = -1;
+
+        float               base_dimensions[3];     // unmodified tank dimenstions    
+        float               current_dimensions[3];  // current tank dimensions
+
+        void setupPhysicsData();
+        void updateDimensions();
     };
 };
 

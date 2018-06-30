@@ -21,6 +21,12 @@
 #include "GameTime.h"
 
 #include "bzfs.h"
+#include "WallObstacle.h"
+#include "Teleporter.h"
+#include "PhysicsDriver.h"
+#include "Obstacle.h"
+#include "MeshObstacle.h"
+#include "CollisionManager.h"
 
 GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = {0}; // this is suspect...
 bool GameKeeper::Player::allNeedHostbanChecked = false;
@@ -53,6 +59,7 @@ GameKeeper::Player::Player(int _playerIndex,
     lastHeldFlagID = -1;
 
     lastShotUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    setupPhysicsData();
 }
 
 
@@ -78,6 +85,7 @@ GameKeeper::Player::Player(int _playerIndex,
     netHandler->setPlayer(&player, _playerIndex);
     lastHeldFlagID = -1;
     lastShotUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    setupPhysicsData();
 }
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
@@ -98,12 +106,59 @@ GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler
     score.playerID = _playerIndex;
     lastHeldFlagID = -1;
     lastShotUpdateTime = TimeKeeper::getCurrent().getSeconds();
+    setupPhysicsData();
 }
 
 GameKeeper::Player::~Player()
 {
     flagHistory.clear();
     playerList[playerIndex] = 0;
+}
+
+void GameKeeper::Player::setupPhysicsData()
+{
+    // setup the dimension properties
+    base_dimensions[0] = 0.5f * BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+    base_dimensions[1] = 0.5f *  BZDB.eval(StateDatabase::BZDB_TANKWIDTH);
+    base_dimensions[2] = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+
+    updateDimensions();
+}
+
+void GameKeeper::Player::updateDimensions()
+{
+    float dimensionsTarget[3];
+
+    dimensionsTarget[0] = 1.0f;
+    dimensionsTarget[1] = 1.0f;
+    dimensionsTarget[2] = 1.0f;
+
+    if (player.haveFlag())
+    {
+        if (getFlagEffect() == FlagEffect::Obesity)
+        {
+            const float factor = BZDB.eval(StateDatabase::BZDB_OBESEFACTOR);
+            dimensionsTarget[0] = factor;
+            dimensionsTarget[1] = factor;
+        }
+        else if (getFlagEffect() == FlagEffect::Tiny)
+        {
+            const float factor = BZDB.eval(StateDatabase::BZDB_TINYFACTOR);
+            dimensionsTarget[0] = factor;
+            dimensionsTarget[1] = factor;
+        }
+        else if (getFlagEffect() == FlagEffect::Thief)
+        {
+            const float factor = BZDB.eval(StateDatabase::BZDB_THIEFTINYFACTOR);
+            dimensionsTarget[0] = factor;
+            dimensionsTarget[1] = factor;
+        }
+        else if (getFlagEffect() == FlagEffect::Narrow)
+            dimensionsTarget[1] = 0.001f;
+    }
+
+    for(int i = 0; i < 3; i++)
+        current_dimensions[i] = base_dimensions[i] * dimensionsTarget[i];
 }
 
 int GameKeeper::Player::count()
@@ -547,6 +602,246 @@ bool GameKeeper::Player::validTeamTarget(const GameKeeper::Player *possibleTarge
     return clOptions->gameType != RabbitChase;
 }
 
+const Obstacle*  GameKeeper::Player::getHitBuilding(const float* p, float a, bool phased, bool& expelled) const
+{
+    const float* dims = getDimensions();
+    const Obstacle* obstacle = world->hitBuilding(p, a, dims[0], dims[1], dims[2]);
+
+    expelled = (obstacle != NULL);
+    if (expelled && phased)
+        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName() || (getFlagEffect() == FlagEffect::OscillationOverthruster && desiredSpeed < 0.0f && p[2] == 0.0f));
+    return obstacle;
+}
+
+const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled)
+{
+    const bool hasOOflag = getFlagEffect() == FlagEffect::OscillationOverthruster;
+    const float* dims = getDimensions();
+    const Obstacle* obstacle = world->hitBuilding(oldP, oldA, p, a, dims[0], dims[1], dims[2], !hasOOflag);
+
+    expelled = (obstacle != NULL);
+    if (expelled && phased)
+        expelled = (obstacle->getType() == WallObstacle::getClassName() ||  obstacle->getType() == Teleporter::getClassName() ||  (hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
+
+    if (obstacle != NULL)
+    {
+        if (obstacle->getType() == MeshFace::getClassName())
+        {
+            const MeshFace* face = (const MeshFace*)obstacle;
+            const int driver = face->getPhysicsDriver();
+            const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+            if ((phydrv != NULL) && phydrv->getIsDeath())
+                deathPhyDrv = driver;
+        }
+    }
+
+    return obstacle;
+}
+
+bool GameKeeper::Player::getHitNormal(const Obstacle* o,  const float* pos1, float azimuth1,  const float* pos2, float azimuth2, float* normal) const
+{
+    const float* dims = getDimensions();
+    return o->getHitNormal(pos1, azimuth1, pos2, azimuth2, dims[0], dims[1], dims[2], normal);
+}
+
+float GameKeeper::Player::getHandicapFactor()
+{
+    float normalizedHandicap = float(score.getHandicap()) / std::max(1.0f, BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));
+
+    /* limit how much of a handicap is afforded, and only provide
+    * handicap advantages instead of disadvantages.
+    */
+    if (normalizedHandicap > 1.0f)
+        // advantage
+        normalizedHandicap = 1.0f;
+    else if (normalizedHandicap < 0.0f)
+        // disadvantage
+        normalizedHandicap = 0.0f;
+
+   return normalizedHandicap;
+}
+
+void  GameKeeper::Player::setDesiredSpeed(float fracOfMaxSpeed)
+{
+    FlagType::Ptr flag = getFlagType();
+    // can't go faster forward than at top speed, and backward at half speed
+    if (fracOfMaxSpeed > 1.0f) fracOfMaxSpeed = 1.0f;
+    else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
+
+    // oscillation overthruster tank in building can't back up
+    if (fracOfMaxSpeed < 0.0f && currentState.Status == bz_eTankStatus::InBuilding &&  flag->flagEffect == FlagEffect::OscillationOverthruster)
+        fracOfMaxSpeed = 0.0f;
+
+    float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
+
+    // boost speed for certain flags
+    if (flag->flagEffect == FlagEffect::Velocity)
+        fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_VELOCITYAD);
+    else if (flag->flagEffect == FlagEffect::Thief)
+        fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
+    else if ((flag->flagEffect == FlagEffect::Burrow) && (currentState.pos[2] < 0.0f))
+        fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
+    else if ((flag->flagEffect == FlagEffect::ForwardOnly) && (fracOfMaxSpeed < 0.0))
+        fracOfMaxSpeed = 0.0f;
+    else if ((flag->flagEffect == FlagEffect::ReverseOnly) && (fracOfMaxSpeed > 0.0))
+        fracOfMaxSpeed = 0.0f;
+    else if (flag->flagEffect == FlagEffect::Agility)
+    {
+        if ((TimeKeeper::getTick() - agilityTime) < BZDB.eval(StateDatabase::BZDB_AGILITYTIMEWINDOW))
+            fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+        else
+        {
+            float oldFrac = desiredSpeed / tankSpeed;
+            if (oldFrac > 1.0f)
+                oldFrac = 1.0f;
+            else if (oldFrac < -0.5f)
+                oldFrac = -0.5f;
+            float limit = BZDB.eval(StateDatabase::BZDB_AGILITYVELDELTA);
+            if (fracOfMaxSpeed < 0.0f)
+                limit /= 2.0f;
+            if (fabs(fracOfMaxSpeed - oldFrac) > limit)
+            {
+                fracOfMaxSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
+                agilityTime = TimeKeeper::getTick();
+            }
+        }
+    }
+
+    // apply handicap advantage to tank speed
+    fracOfMaxSpeed *= (1.0f + (getHandicapFactor() * (BZDB.eval(StateDatabase::BZDB_HANDICAPVELAD) - 1.0f)));
+
+    // set desired speed
+    desiredSpeed = tankSpeed * fracOfMaxSpeed;
+    currentState.speed = desiredSpeed;
+}
+
+
+void GameKeeper::Player::setTeleport(const TimeKeeper& t, short from, short to)
+{
+    if (!player.isAlive()) return;
+    teleportTime = t;
+    fromTeleporter = from;
+    toTeleporter = to;
+    currentState.setPStatus(currentState.getPStatus() | short(PlayerState::Teleporting));
+}
+
+void GameKeeper::Player::setPhysicsDriver(int driver)
+{
+    currentState.phydrv = driver;
+
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+    if (phydrv != NULL)
+        currentState.setPStatus(currentState.getPStatus() | short(PlayerState::OnDriver));
+    else
+        currentState.setPStatus(currentState.getPStatus() & ~short(PlayerState::OnDriver));
+}
+
+void  GameKeeper::Player::setDesiredAngVel(float fracOfMaxAngVel)
+{
+    FlagType::Ptr flag = getFlagType();
+
+    // limit turn speed to maximum
+    if (fracOfMaxAngVel > 1.0f) fracOfMaxAngVel = 1.0f;
+    else if (fracOfMaxAngVel < -1.0f) fracOfMaxAngVel = -1.0f;
+
+    // further limit turn speed for certain flags
+    if (fracOfMaxAngVel < 0.0f && flag->flagEffect == FlagEffect::LeftTurnOnly)
+        fracOfMaxAngVel = 0.0f;
+    else if (fracOfMaxAngVel > 0.0f && flag->flagEffect == FlagEffect::RightTurnOnly)
+        fracOfMaxAngVel = 0.0f;
+
+    // boost turn speed for other flags
+    if (flag->flagEffect == FlagEffect::QuickTurn)
+        fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_ANGULARAD);
+    else if ((flag->flagEffect == FlagEffect::Burrow) && (currentState.pos[2] < 0.0f))
+        fracOfMaxAngVel *= BZDB.eval(StateDatabase::BZDB_BURROWANGULARAD);
+
+    // apply handicap advantage to tank speed
+    fracOfMaxAngVel *= (1.0f + (getHandicapFactor()  * (BZDB.eval(StateDatabase::BZDB_HANDICAPANGAD) - 1.0f)));
+
+    // set desired turn speed
+    desiredAngVel = fracOfMaxAngVel * BZDB.eval(StateDatabase::BZDB_TANKANGVEL);
+    currentState.angVel = desiredAngVel;
+}
+
+
+bool notInObstacleList(const Obstacle* obs, const std::vector<const Obstacle*>& list)
+{
+    for (unsigned int i = 0; i < list.size(); i++)
+    {
+        if (obs == list[i])
+            return false;
+    }
+    return true;
+}
+
+
+void GameKeeper::Player::collectInsideBuildings()
+{
+    const float* pos = currentState.pos;
+    const float angle = currentState.rot;
+    const float* dims = getDimensions();
+
+    // get the list of possible inside buildings
+    const ObsList* olist = COLLISIONMGR.boxTest(pos, angle, dims[0], dims[1], dims[2]);
+
+    for (int i = 0; i < olist->count; i++)
+    {
+        const Obstacle* obs = olist->list[i];
+        if (obs->inBox(pos, angle, dims[0], dims[1], dims[2]))
+        {
+            if (obs->getType() == MeshFace::getClassName())
+            {
+                const MeshFace* face = (const MeshFace*)obs;
+                const MeshObstacle* mesh = (const MeshObstacle*)face->getMesh();
+                // check it for the death touch
+                if (deathPhyDrv < 0)
+                {
+                    const int driver = face->getPhysicsDriver();
+                    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(driver);
+                    if ((phydrv != NULL) && (phydrv->getIsDeath()))
+                        deathPhyDrv = driver;
+                }
+                // add the mesh if not already present
+                if (!obs->isDriveThrough() &&
+                    notInObstacleList(mesh, insideBuildings))
+                    insideBuildings.push_back(mesh);
+            }
+            else if (!obs->isDriveThrough())
+            {
+                if (obs->getType() == MeshObstacle::getClassName())
+                {
+                    // add the mesh if not already present
+                    if (notInObstacleList(obs, insideBuildings))
+                        insideBuildings.push_back(obs);
+                }
+                else
+                    insideBuildings.push_back(obs);
+            }
+        }
+    }
+}
+
+void GameKeeper::Player::move(const float* _pos, float _azimuth)
+{
+    // assumes _forward is normalized
+    currentState.pos[0] = _pos[0];
+    currentState.pos[1] = _pos[1];
+    currentState.pos[2] = _pos[2];
+    currentState.rot = _azimuth;
+
+    // limit angle
+    if (currentState.rot < 0.0f)
+        currentState.rot = (float)((2.0 * M_PI) - fmodf(-currentState.rot, (float)(2.0 * M_PI)));
+    else if (currentState.rot >= (2.0f * M_PI))
+        currentState.rot = fmodf(currentState.rot, (float)(2.0 * M_PI));
+
+    // update forward vector (always in horizontal plane)
+    currentState.forward[0] = cosf(currentState.rot);
+    currentState.forward[1] = sinf(currentState.rot);
+    currentState.forward[2] = 0.0f;
+}
+
 void GameKeeper::Player::update()
 {
     updateShotSlots();
@@ -575,6 +870,74 @@ void GameKeeper::Player::setLastIdFlag(int _idFlag)
 int GameKeeper::Player::getLastIdFlag()
 {
     return idFlag;
+}
+
+FlagType::Ptr GameKeeper::Player::getFlagType() const
+{
+    return FlagInfo::get(player.getFlag())->flag.type;
+}
+
+FlagEffect GameKeeper::Player::getFlagEffect() const
+{
+    return getFlagType()->flagEffect;
+}
+
+void GameKeeper::Player::grantFlag(int _flag)
+{
+    player.setFlag(_flag);
+    updateDimensions();
+
+    FlagType::Ptr f = getFlagType();
+
+    float worldSize = BZDB.eval(StateDatabase::BZDB_WORLDSIZE);
+
+    // if it's bad then reset countdowns and set antidote flag
+    if (f != Flags::Null && f->endurance == FlagEndurance::Sticky)
+    {
+        if (clOptions->gameOptions & ShakableGameStyle)
+        {
+            flagShakingTime = clOptions->shakeTimeout;
+            flagShakingWins = clOptions->shakeWins;
+        }
+
+        if (clOptions->gameOptions & AntidoteGameStyle)
+        {
+            float tankRadius = BZDB.eval(StateDatabase::BZDB_TANKRADIUS);
+            float tankHeight = BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
+            float baseSize = BZDB.eval(StateDatabase::BZDB_BASESIZE);
+            int tryCount = 0;
+            do
+            {
+                tryCount++;
+                if (tryCount > 100) // if it takes this long, just screw it.
+                    break;
+
+                if (clOptions->gameType == ClassicCTF)
+                {
+                    flagAntidotePos[0] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
+                    flagAntidotePos[1] = 0.5f * worldSize * ((float)bzfrand() - 0.5f);
+                    flagAntidotePos[2] = 0.0f;
+                }
+                else
+                {
+                    flagAntidotePos[0] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+                    flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
+                    flagAntidotePos[2] = 0.0f;
+                }
+            } while (world->inBuilding(flagAntidotePos, tankRadius, tankHeight));
+            hasAntidoteFlag = true;
+
+            // TODO, send this over the wire to remote clients so they don't compute it themselves, then we can check for the drop on the server
+        }
+        else
+            hasAntidoteFlag = false;
+    }
+    else
+    {
+        hasAntidoteFlag = false;
+        flagShakingTime = 0.0f;
+        flagShakingWins = 0;
+    }
 }
 
 // Local Variables: ***

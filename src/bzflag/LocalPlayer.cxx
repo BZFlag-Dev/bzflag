@@ -1655,8 +1655,7 @@ void            LocalPlayer::setFlag(FlagType::Ptr flag, int limit)
                     flagAntidotePos[2] = 0.0f;
                 }
             }
-            while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius,
-                                                 BZDBCache::tankHeight));
+            while (World::getWorld()->inBuilding(flagAntidotePos, tankRadius, BZDBCache::tankHeight));
             antidoteFlag = new FlagSceneNode(flagAntidotePos);
             antidoteFlag->setColor(1.0f, 1.0f, 0.0f);
             World::setFlagTexture(antidoteFlag);

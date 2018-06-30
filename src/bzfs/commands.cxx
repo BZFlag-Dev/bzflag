@@ -1707,7 +1707,7 @@ bool FlagCommand::operator() (const char     *message,
                     void *buf = nboPackUByte(bufStart, fi->player);
                     buf = fi->pack(buf);
                     broadcastMessage(MsgFlagDropped, (char*)buf - (char*)bufStart, bufStart);
-                    fPlayer->player.setFlag(-1);
+                    fPlayer->grantFlag(-1);
                 }
             }
 

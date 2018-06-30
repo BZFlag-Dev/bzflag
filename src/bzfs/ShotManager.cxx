@@ -445,122 +445,6 @@ namespace Shots
         return Shot::Update(dt);
     }
 
-    bool getGround(const Ray& r, float min, float &t)
-    {
-        if (r.getDirection()[2] >= 0.0f)
-            return false;
-
-        float groundT = r.getOrigin()[2] / -r.getDirection()[2];
-        if ((groundT > min) && (groundT < t))
-        {
-            t = groundT;
-            return true;
-        }
-        return false;
-    }
-
-    const Obstacle* getFirstBuilding(const Ray& ray, float min, float& t)
-    {
-        const Obstacle* closestObstacle = NULL;
-        unsigned int i = 0;
-
-        // check walls
-        const ObstacleList& walls = OBSTACLEMGR.getWalls();
-        for (i = 0; i < walls.size(); i++)
-        {
-            const WallObstacle* wall = (const WallObstacle*)walls[i];
-            if (!wall->isShootThrough())
-            {
-                const float wallt = wall->intersect(ray);
-                if (wallt > min && wallt < t)
-                {
-                    t = wallt;
-                    closestObstacle = wall;
-                }
-            }
-        }
-
-        //check everything else
-        const ObsList* olist = COLLISIONMGR.rayTest(&ray, t);
-
-        for (i = 0; i < (unsigned int)olist->count; i++)
-        {
-            const Obstacle* obs = olist->list[i];
-            if (!obs->isShootThrough())
-            {
-                const float timet = obs->intersect(ray);
-                if (obs->getType() == Teleporter::getClassName())
-                {
-                    const Teleporter* tele = (const Teleporter*)obs;
-                    int face;
-                    if ((timet > min) && (timet < t) &&
-                        (tele->isTeleported(ray, face) < 0.0f))
-                    {
-                        t = timet;
-                        closestObstacle = obs;
-                    }
-                }
-                else
-                {
-                    if ((timet > min) && (timet < t))
-                    {
-                        t = timet;
-                        closestObstacle = obs;
-                    }
-                }
-            }
-        }
-
-        return closestObstacle;
-    }
-
-    const Teleporter* getFirstTeleporter(const Ray& ray, float min, float& t, int& f)
-    {
-        const Teleporter* closestTeleporter = NULL;
-        int face;
-
-        const ObstacleList& teles = OBSTACLEMGR.getTeles();
-
-        for (unsigned int i = 0; i < teles.size(); i++)
-        {
-            const Teleporter& tele = *((const Teleporter*)teles[i]);
-            const float telet = tele.isTeleported(ray, face);
-            if (telet > min && telet < t)
-            {
-                t = telet;
-                f = face;
-                closestTeleporter = &tele;
-            }
-        }
-
-        return closestTeleporter;
-    }
-
-    int getTeleporter(const Teleporter* teleporter, int face)
-    {
-        // search for teleporter
-        const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-        const int count = teleporters.size();
-        for (int i = 0; i < count; i++)
-        {
-            if (teleporter == (const Teleporter*)teleporters[i])
-                return ((2 * i) + face);
-        }
-
-        return 0;
-    }
-
-
-    const Teleporter* getTeleporter(int source, int& face)
-    {
-        const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
-        if (source >= 0 && source < (int)(2 * teleporters.size()))
-        {
-            face = (source & 1);
-            return ((const Teleporter*)teleporters[source / 2]);
-        }
-        return nullptr;
-    }
 
 
     void reflect(float* v, const float* n)
@@ -649,9 +533,9 @@ namespace Shots
             Ray rs(o, d);
             float t = timeLeft + minTime;
             int face;
-            bool hitGround = getGround(r, Epsilon, t);
-            const Obstacle* building = ((e == ObstacleEffect::Through) ? nullptr : getFirstBuilding(r, Epsilon, t));
-            const Teleporter* teleporter = getFirstTeleporter(r, Epsilon, t, face);
+            bool hitGround = world->getGround(r, Epsilon, t);
+            const Obstacle* building = ((e == ObstacleEffect::Through) ? nullptr : world->getFirstBuilding(r, Epsilon, t));
+            const Teleporter* teleporter = world->getFirstTeleporter(r, Epsilon, t, face);
             t -= minTime;
             minTime = 0.0f;
             bool ignoreHit = false;
@@ -694,11 +578,11 @@ namespace Shots
             {
                 // entered teleporter -- teleport it
                 unsigned int seed = Info.shot.id + i;
-                int source = getTeleporter(teleporter, face);
+                int source = world->getTeleporter(teleporter, face);
                 int target = world->getTeleportTarget(source, seed);
 
                 int outFace = -1;
-                const Teleporter* outTeleporter = getTeleporter(target, outFace);
+                const Teleporter* outTeleporter = world->getTeleporter(target, outFace);
                 o[0] += t * d[0];
                 o[1] += t * d[1];
                 o[2] += t * d[2];

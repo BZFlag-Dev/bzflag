@@ -151,7 +151,7 @@ public:
     void sendTeamChatMessage(const char *text, bz_eTeamType targetTeam, bz_eMessageType type = eChatMessage);
 
     void dropFlag(void);
-    void setMovement(float forward, float turn);
+    void setMovement(float speed, float turn);
     bool fireShot(void);
     void jump(void);
 
@@ -192,47 +192,19 @@ protected:
    virtual bool     isFlagUseful(const char* type);
   
 private:
-    float input[2];
-
     bool autoSpawn;
     class Impl;
     Impl* pImpl = nullptr;
 
-public:
-    class BZF_API UpdateInfo
-    {
-    public:
-        float pos[3];
-        float vec[3];  // FIXME -- vel for velocity?
-        float rot;     // FIXME -- radians or degrees?
-        float rotVel;
-        double time;
+    // implementation of physics pulled from the client
+    void processUpdate(float dt);
+    void doUpdateMotion(float dt);
+    void doMomentum(float dt, float& speed, float& angVel);
+    void doFriction(float dt, const float *oldVelocity, float *newVelocity);
+    void doSlideMotion(float dt, float slideTime, float newAngVel, float* newVelocity);
+    void doJump();
 
-        bz_eTankStatus Status = bz_eTankStatus::Dead;
-
-        UpdateInfo()
-            : rot(0), rotVel(0), time(0)
-        {
-            for (int i = 0; i < 3; i++)
-                pos[i] = vec[0] = 0;
-        }
-
-        UpdateInfo& operator=(const UpdateInfo& u)
-        {
-            memcpy(pos, u.pos, sizeof(float) * 3);
-            memcpy(vec, u.vec, sizeof(float) * 3);
-            rot = u.rot;
-            rotVel = u.rotVel;
-            time = u.time;
-
-            return *this;
-        }
-        float getDelta(const UpdateInfo & state);
-    };
-
-private:
-    UpdateInfo lastUpdate;
-    UpdateInfo currentState;
+    void setVelocity(float newVel[3]);
 
     int flaps;
 };

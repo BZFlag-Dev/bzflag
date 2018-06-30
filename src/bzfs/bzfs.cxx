@@ -3819,7 +3819,7 @@ void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos)
 
     // okay, player can have it
     flag.grab(playerIndex);
-    playerData->player.setFlag(flag.getIndex());
+    playerData->grantFlag(flag.getIndex());
 
     playerData->lastHeldFlagID = flag.getIndex();
 
@@ -4450,7 +4450,7 @@ static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
     worldEventManager.callEvents(bz_eShotEndedEvent,&shotEvent);
 }
 
-static void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
+void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUByte(bufStart, playerIndex);
@@ -5303,7 +5303,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             flag.flag.owner = to;
             flag.player = to;
             toData->player.resetFlag();
-            toData->player.setFlag(flagIndex);
+            toData->grantFlag(flagIndex);
             fromData->player.resetFlag();
             obuf = flag.pack(obuf);
             broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart, obufStart);

@@ -175,8 +175,6 @@ namespace Shots
         typedef std::map<FlagEffect, Ptr > Map;
     };
 
-    const Obstacle* getFirstBuilding(const Ray& ray, float min, float& t);
-
 #define INVALID_SHOT_GUID 0
 #define MAX_SHOT_GUID 0xFFFF
 

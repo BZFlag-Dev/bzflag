@@ -20,6 +20,9 @@
 #include "Ray.h"
 #include "Obstacle.h"
 #include "ShotManager.h"
+#include "WorldInfo.h"
+
+extern WorldInfo    *world;
 
 
 namespace BotUtils
@@ -114,7 +117,7 @@ namespace BotUtils
 
         Ray tankRay(src, dir);
         float targetDistance = getTargetDistance(src, target);
-        const Obstacle *building = Shots::getFirstBuilding(tankRay, -0.5f, targetDistance);
+        const Obstacle *building = world->getFirstBuilding(tankRay, -0.5f, targetDistance);
         return building != NULL;
     }
 
@@ -125,7 +128,7 @@ namespace BotUtils
         float dir[3] = { cosf(azimuth), sinf(azimuth), 0.0f };
         const float pos[3] = { src[0], src[1], src[2] + 0.1f };   // Don't hit building because you're sitting on one.
         Ray tankRay(pos, dir);
-        Shots::getFirstBuilding(tankRay, -0.5f, t);
+        world->getFirstBuilding(tankRay, -0.5f, t);
         return t;
     }
 
@@ -136,7 +139,7 @@ namespace BotUtils
         get3DUnitVector(src, target, dir);
 
         Ray tankRay(src, dir);
-        const Obstacle *building = Shots::getFirstBuilding(tankRay, 0.0f, t);
+        const Obstacle *building = world->getFirstBuilding(tankRay, 0.0f, t);
         if (building == NULL)
             return false;
 
