@@ -3175,8 +3175,7 @@ static void sendQueryGame(int playerIndex)
 
 static void sendQueryPlayers(int playerIndex)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -3187,16 +3186,14 @@ static void sendQueryPlayers(int playerIndex)
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUShort(bufStart, NumTeams);
     buf = nboPackUShort(buf, numPlayers);
-    int result = directMessage(*playerData, MsgQueryPlayers,
-                               (char*)buf-(char*)bufStart, bufStart);
+    int result = directMessage(*playerData, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
     if (result == -1)
         return;
 
     // now send the teams and players
     sendTeamUpdate(playerIndex);
     GameKeeper::Player *otherData;
-    for (int i = 0; i < curMaxPlayers
-            && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
+    for (int i = 0; i < curMaxPlayers && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
     {
         if (i == playerIndex)
             continue;
@@ -3208,8 +3205,7 @@ static void sendQueryPlayers(int playerIndex)
 
 void playerAlive(int playerIndex)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -3294,8 +3290,7 @@ void playerAlive(int playerIndex)
 
     worldEventManager.callEvents(bz_eGetPlayerSpawnPosEvent,&spawnData);
 
-
-  SpawnPlayer(playerData, spawnData.pos, spawnData.rot);
+    SpawnPlayer(playerData, spawnData.pos, spawnData.rot);
 
   if (clOptions->gameType == RabbitChase)
   {
