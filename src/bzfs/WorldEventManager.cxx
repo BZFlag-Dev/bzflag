@@ -26,7 +26,8 @@ std::list<bz_eEventType> callingEventStack;
 //-------------------WorldEventManager--------------------
 WorldEventManager::WorldEventManager()
 {
-    callingEventStack.clear();
+    if (callingEventStack.size() > 0)
+        callingEventStack.clear();
 }
 
 WorldEventManager::~WorldEventManager()
