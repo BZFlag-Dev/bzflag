@@ -14,15 +14,10 @@
 //  exclusive for compatibility with NT.
 
 #include "WinMedia.h"
-#include "WinWindow.h"
 #include "TimeKeeper.h"
 #include "Pack.h"
 #include <stdio.h>
-#ifdef HAVE_SDL
-#  include "SDL2Window.h"
-#else
-#  include "WinWindow.h"
-#endif
+#include "SDL2Window.h"
 
 static const int    defaultOutputRate = 22050;
 static const int    NumChunks = 4;
