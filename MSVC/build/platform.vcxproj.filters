@@ -31,9 +31,6 @@
     <ClCompile Include="..\..\src\platform\SDL2Window.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\platform\WinPlatformFactory.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\platform\WinMedia.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
