@@ -361,7 +361,7 @@ properties:
 .br
   # \- non-interlaced PNG
 .br
-  # \- http:// or ftp:// hyperlinks can be used  (no spaces)
+  # \- http:// or https:// hyperlinks can be used  (no spaces)
 .br
   # \- BZFlag default texture names can be used  (.png not required)
 .br
