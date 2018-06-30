@@ -1189,7 +1189,7 @@ void            HUDRenderer::renderTimes(void)
         hudColor3f(1.0f, 1.0f, 1.0f);
         fm.drawString((float)(centerx - maxMotionSize), (float)centery + (float)maxMotionSize +
                       3.0f * fm.getStrHeight(headingFontFace, headingFontSize, "0"), 0,
-                      headingFontFace, headingFontSize, TextUtils::format("FPS: %d", int(fps)));
+                      headingFontFace, headingFontSize, TextUtils::format("FPS: %d", int(fps + 0.5f))); // make it round up
     }
     float triCountYOffset = 4.5f;
     if (radarTriangleCount > 0)
