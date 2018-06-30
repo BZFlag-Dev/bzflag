@@ -4,7 +4,7 @@
     <ClCompile Include="playerHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="serverSidePlayerSample.cpp">
+    <ClCompile Include="R2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -17,7 +17,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="README.serverSidePlayerSample.txt" />
+    <None Include="README.R2.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
