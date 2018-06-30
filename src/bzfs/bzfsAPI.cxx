@@ -978,7 +978,8 @@ BZF_API bz_BasePlayerRecord * bz_getPlayerByIndex ( int index )
     playerRecord->verified = player->accessInfo.isVerified();
     playerRecord->globalUser = player->authentication.isGlobal();
 
-    playerRecord->ipAddress = player->netHandler->getTargetIP();
+    if (player->netHandler != nullptr)
+        playerRecord->ipAddress = player->netHandler->getTargetIP();
 
     playerRecord->lag = player->lagInfo.getLag();
     playerRecord->update();

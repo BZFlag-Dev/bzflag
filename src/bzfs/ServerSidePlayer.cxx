@@ -996,6 +996,7 @@ void bz_ServerSidePlayerHandler::joinGame(void)
     player->player.signingOn();
     playerAlive(playerID);
     player->player.setAlive();
+    pImpl->myTank = player;
     pImpl->myTank->currentState.Status = bz_eTankStatus::InAir; // maybe? next update will take care of placing us.
 }
 

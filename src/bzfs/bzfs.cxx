@@ -2894,9 +2894,9 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         void *buf  = sMsgBuf;
         buf = nboPackUShort(buf, 0);
         buf = nboPackUShort(buf, MsgSuperKill);
-        playerData->netHandler->pwrite(sMsgBuf, 4);
+        if (playerData->netHandler != nullptr)
+            playerData->netHandler->pwrite(sMsgBuf, 4);
     }
-
 
     // if there is an active poll, cancel any vote this player may have made
     static VotingArbiter *arbiter = (VotingArbiter *)BZDB.getPointer("poll");
@@ -3253,22 +3253,25 @@ void playerAlive(int playerIndex)
     }
 
     // check for any spawn allow events
-    worldEventManager.callEvents(bz_eAllowSpawn, &spawnAllowData);
-
-    if (!spawnAllowData.allow)
+    if (playerData->netHandler != nullptr)  // plugins can only affect meat based players
     {
-        // check if the player has been notified that they may not spawn
-        if (!playerData->player.notifiedOfSpawnable())
+        worldEventManager.callEvents(bz_eAllowSpawn, &spawnAllowData);
+
+        if (!spawnAllowData.allow)
         {
-            sendMessage(ServerPlayer, playerIndex, spawnAllowData.message.c_str());
-            playerData->player.setNotifiedOfSpawnable(true);
+            // check if the player has been notified that they may not spawn
+            if (!playerData->player.notifiedOfSpawnable())
+            {
+                sendMessage(ServerPlayer, playerIndex, spawnAllowData.message.c_str());
+                playerData->player.setNotifiedOfSpawnable(true);
+            }
+
+            // client won't send another enter so kick em =(
+            if (spawnAllowData.kickPlayer)
+                removePlayer(playerIndex, spawnAllowData.kickReason.c_str());
+
+            return;
         }
-
-        // client won't send another enter so kick em =(
-        if (spawnAllowData.kickPlayer)
-            removePlayer(playerIndex, spawnAllowData.kickReason.c_str());
-
-        return;
     }
 
     // player is coming alive.

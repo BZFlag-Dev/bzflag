@@ -236,6 +236,9 @@ public:
 
         bool isPhantomZoned() const
         {
+            if (!player.haveFlag())
+                return false;
+
             auto flag =  FlagInfo::get(player.getFlag())->flag.type;
             return (isFlagActive() && (flag->flagEffect == FlagEffect::PhantomZone));
         }

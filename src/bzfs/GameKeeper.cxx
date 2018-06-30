@@ -874,11 +874,17 @@ int GameKeeper::Player::getLastIdFlag()
 
 FlagType::Ptr GameKeeper::Player::getFlagType() const
 {
+    if (!player.haveFlag())
+        return Flags::Null;
+
     return FlagInfo::get(player.getFlag())->flag.type;
 }
 
 FlagEffect GameKeeper::Player::getFlagEffect() const
 {
+    if (!player.haveFlag())
+        return Flags::Null->flagEffect;
+
     return getFlagType()->flagEffect;
 }
 
