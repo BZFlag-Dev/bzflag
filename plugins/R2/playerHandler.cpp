@@ -43,11 +43,6 @@ void PlayerHandler::textMessage(int dest, int source, const char */*text*/)
     }
 }
 
-void PlayerHandler::playerSpawned(int, const float[3], float)
-{
-
-}
-
 void PlayerHandler::shotFired(int, unsigned short)
 {
 }

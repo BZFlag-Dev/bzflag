@@ -197,6 +197,26 @@ const uint16_t      MsgUDPLinkEstablished = 0x6f67;     // 'og'
 // lag ping sent by server to client and reply from client
 const uint16_t      MsgLagPing = 0x7069;            // 'pi'
 
+typedef uint8_t     PlayerId;
+const int       PlayerIdPLen = sizeof(PlayerId);
+const int       ServerIdPLen = 8;
+
+                                                    // 54 bytes
+const int PlayerUpdatePLenMax =
+sizeof(float) +     // timestamp
+PlayerIdPLen +      // player id
+sizeof(int32_t) +   // order
+sizeof(int16_t) +   // status
+sizeof(float) * 3 + // position             (or int16_t * 3)
+sizeof(float) * 3 + // velocity             (or int16_t * 3)
+sizeof(float) +     // angle                (or int16_t)
+sizeof(float) +     // angular velocity     (or int16_t)
+sizeof(int16_t) +   // jump jets          (conditional)
+sizeof(int32_t) +   // physics driver     (conditional)
+sizeof(int16_t) +   // user speed         (conditional)
+sizeof(int16_t) +   // user angular velocity  (conditional)
+sizeof(uint8_t);    // sounds         (conditional)
+
 /* server communication protocol:
   --> incoming messages (to server)
   <-- outgoing messages to single player

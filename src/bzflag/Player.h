@@ -29,6 +29,7 @@
 #include "PlayerState.h"
 #include "ShotStatistics.h"
 #include "ShotList.h"
+#include "Protocol.h"
 
 
 /* local interface headers */
@@ -39,22 +40,6 @@ class TankIDLSceneNode;
 class SphereSceneNode;
 class Obstacle;
 class TankDeathOverride;
-
-// 54 bytes
-const int PlayerUpdatePLenMax =
-sizeof(float) +     // timestamp
-PlayerIdPLen +      // player id
-sizeof(int32_t) +   // order
-sizeof(int16_t) +   // status
-sizeof(float) * 3 + // position             (or int16_t * 3)
-sizeof(float) * 3 + // velocity             (or int16_t * 3)
-sizeof(float) +     // angle                (or int16_t)
-sizeof(float) +     // angular velocity     (or int16_t)
-sizeof(int16_t) +   // jump jets          (conditional)
-sizeof(int32_t) +   // physics driver     (conditional)
-sizeof(int16_t) +   // user speed         (conditional)
-sizeof(int16_t) +   // user angular velocity  (conditional)
-sizeof(uint8_t);    // sounds         (conditional)
 
 
 class Player
@@ -252,8 +237,7 @@ private:
     // position if you return true (it's okay to return false if
     // there's no meaningful shot position).
     virtual bool  doEndShot(int index, bool isHit, float* position) = 0;
-    void getDeadReckoning(float* predictedPos, float* predictedAzimuth,
-        float* predictedVel, float time) const;
+    void getDeadReckoning(float* predictedPos, float* predictedAzimuth, float* predictedVel, float time) const;
     void calcRelativeMotion(float vel[2], float& speed, float& angvel);
     void setVisualTeam(TeamColor team);
     void updateFlagEffect(FlagType::Ptr flag);

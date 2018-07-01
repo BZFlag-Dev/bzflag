@@ -548,6 +548,31 @@ std::string GetPlayerIPAddress( int i)
     return tmp;
 }
 
+void sendPlayerUpdate(GameKeeper::Player* player)
+{
+    void* msg = getDirectMessageBuffer();
+    // Send the time frozen at each start of scene iteration, as all
+    // dead reckoning use that
+    const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
+    void* buf = msg;
+    uint16_t code;
+    buf = nboPackFloat(buf, timeStamp);
+    buf = nboPackUByte(buf, player->getIndex());
+
+    // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
+    buf = player->lastState.pack(buf, code);
+
+    bz_PlayerUpdateEventData_V1 puEventData;
+    playerStateToAPIState(puEventData.lastState, player->lastState);
+    puEventData.stateTime = TimeKeeper::getCurrent().getSeconds();
+    puEventData.playerID = player->getIndex();
+    worldEventManager.callEvents(bz_ePlayerUpdateEvent, &puEventData);
+
+   // variable length
+    const int len = (char*)buf - (char*)msg;
+    broadcastMessage(code, len, msg);
+}
+
 void sendPlayerInfo()
 {
     void *buf, *bufStart = getDirectMessageBuffer();

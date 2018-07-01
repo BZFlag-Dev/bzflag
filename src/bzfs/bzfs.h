@@ -104,6 +104,7 @@ extern void  sendTeamUpdate(int playerIndex = -1,
                             int teamIndex1 = -1,
                             int teamIndex2 = -1);
 extern void  sendFlagUpdate(FlagInfo &flag);
+extern void  sendPlayerUpdate(GameKeeper::Player* player);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);

@@ -31,6 +31,7 @@
 #include "global.h"
 #include "network.h"
 #include "Pack.h"
+#include "Protocol.h"
 
 typedef struct in_addr  InAddr;         // shorthand
 
@@ -64,10 +65,6 @@ public:
 private:
     std::vector <InAddr> addr;
 };
-
-typedef uint8_t     PlayerId;
-const int       PlayerIdPLen = sizeof(PlayerId);
-const int       ServerIdPLen = 8;
 
 // FIXME - enum maybe? put into namespace or class cage?
 const PlayerId      NoPlayer = 255;

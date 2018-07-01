@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
- *
- * This package is free software;  you can redistribute it and/or
- * modify it under the terms of the license found in the file
- * named COPYING that should have accompanied this file.
- *
- * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
- */
+* Copyright (c) 1993-2018 Tim Riker
+*
+* This package is free software;  you can redistribute it and/or
+* modify it under the terms of the license found in the file
+* named COPYING that should have accompanied this file.
+*
+* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+*/
 
 /* interface header */
 #include "GameKeeper.h"
@@ -28,10 +28,10 @@
 #include "MeshObstacle.h"
 #include "CollisionManager.h"
 
-GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = {0}; // this is suspect...
+GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = { 0 }; // this is suspect...
 bool GameKeeper::Player::allNeedHostbanChecked = false;
 
-void* PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
+void* PackPlayerInfo(void *buf, int playerIndex, uint8_t properties)
 {
     buf = nboPackUByte(buf, playerIndex);
     buf = nboPackUByte(buf, properties);
@@ -39,22 +39,22 @@ void* PackPlayerInfo(void *buf, int playerIndex, uint8_t properties )
 }
 
 GameKeeper::Player::Player(int _playerIndex,
-                           const struct sockaddr_in &clientAddr, int fd,
-                           tcpCallback _clientCallback)
+    const struct sockaddr_in &clientAddr, int fd,
+    tcpCallback _clientCallback)
     : _LSAState(start),
-      player(_playerIndex), netHandler(new NetHandler(&player, clientAddr, _playerIndex, fd)),
-      lagInfo(&player),
-      stateTimeStamp(0.0f), serverTimeStamp(0.0),
-      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-      isParting(false), hasEntered(false),
-      playerHandler(0),
-      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-      playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-      needThisHostbanChecked(false), idFlag(-1)
+    player(_playerIndex), netHandler(new NetHandler(&player, clientAddr, _playerIndex, fd)),
+    lagInfo(&player),
+    stateTimeStamp(0.0f), serverTimeStamp(0.0),
+    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+    isParting(false), hasEntered(false),
+    playerHandler(0),
+    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+    playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+    needThisHostbanChecked(false), idFlag(-1)
 {
     playerList[playerIndex] = this;
 
-    lastState.order  = 0;
+    lastState.order = 0;
     score.playerID = _playerIndex;
     lastHeldFlagID = -1;
 
@@ -64,22 +64,22 @@ GameKeeper::Player::Player(int _playerIndex,
 
 
 GameKeeper::Player::Player(int _playerIndex,
-                           NetHandler* handler,
-                           tcpCallback _clientCallback)
+    NetHandler* handler,
+    tcpCallback _clientCallback)
     : _LSAState(start),
-      player(_playerIndex), netHandler(handler),
-      lagInfo(&player),
-      stateTimeStamp(0.0f), serverTimeStamp(0.0),
-      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-      isParting(false), hasEntered(false),
-      playerHandler(0),
-      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-      playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-      needThisHostbanChecked(false), idFlag(-1)
+    player(_playerIndex), netHandler(handler),
+    lagInfo(&player),
+    stateTimeStamp(0.0f), serverTimeStamp(0.0),
+    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+    isParting(false), hasEntered(false),
+    playerHandler(0),
+    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+    playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+    needThisHostbanChecked(false), idFlag(-1)
 {
     playerList[playerIndex] = this;
 
-    lastState.order  = 0;
+    lastState.order = 0;
     score.playerID = _playerIndex;
 
     netHandler->setPlayer(&player, _playerIndex);
@@ -90,19 +90,19 @@ GameKeeper::Player::Player(int _playerIndex,
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
     : _LSAState(start),
-      player(_playerIndex), netHandler(0),
-      lagInfo(&player),
-      stateTimeStamp(0.0f), serverTimeStamp(0.0),
-      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-      isParting(false), hasEntered(false),
-      playerHandler(handler),
-      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-      playerIndex(_playerIndex), closed(false), clientCallback(0),
-      needThisHostbanChecked(false), idFlag(0)
+    player(_playerIndex), netHandler(0),
+    lagInfo(&player),
+    stateTimeStamp(0.0f), serverTimeStamp(0.0),
+    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+    isParting(false), hasEntered(false),
+    playerHandler(handler),
+    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+    playerIndex(_playerIndex), closed(false), clientCallback(0),
+    needThisHostbanChecked(false), idFlag(0)
 {
     playerList[playerIndex] = this;
 
-    lastState.order  = 0;
+    lastState.order = 0;
     score.playerID = _playerIndex;
     lastHeldFlagID = -1;
     lastShotUpdateTime = TimeKeeper::getCurrent().getSeconds();
@@ -157,7 +157,7 @@ void GameKeeper::Player::updateDimensions()
             dimensionsTarget[1] = 0.001f;
     }
 
-    for(int i = 0; i < 3; i++)
+    for (int i = 0; i < 3; i++)
         current_dimensions[i] = base_dimensions[i] * dimensionsTarget[i];
 }
 
@@ -168,7 +168,7 @@ int GameKeeper::Player::count()
 
     for (int i = 0; i < PlayerSlot; i++)
         if ((playerData = playerList[i]) && !playerData->closed
-                && playerData->player.isPlaying())
+            && playerData->player.isPlaying())
             count++;
     return count;
 }
@@ -195,7 +195,7 @@ void GameKeeper::Player::dumpScore()
     for (int p = 0; p < PlayerSlot; ++p)
     {
         if ((playerData = playerList[p]) && !playerData->closed
-                && playerData->player.isPlaying())
+            && playerData->player.isPlaying())
         {
             playerData->score.dump();
             std::cout << ' ' << playerData->player.getCallSign() << std::endl;
@@ -205,8 +205,8 @@ void GameKeeper::Player::dumpScore()
 
 int GameKeeper::Player::anointRabbit(int oldRabbit)
 {
-    float topRatio(   -100000.0f);
-    int   newRabbit( NoPlayer);
+    float topRatio(-100000.0f);
+    int   newRabbit(NoPlayer);
 
     Player* playerData(0);
     bool    goodRabbitSelected(false);
@@ -214,11 +214,11 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
     for (int i = 0; i < PlayerSlot; ++i)
     {
         if ((playerData = playerList[i]) && !playerData->closed
-                && playerData->player.canBeRabbit(true))
+            && playerData->player.canBeRabbit(true))
         {
             bool  goodRabbit(i != oldRabbit && playerData->player.isAlive());
-            float ratio(     playerData->score.ranking());
-            bool  select(    false);
+            float ratio(playerData->score.ranking());
+            bool  select(false);
             if (goodRabbitSelected)
             {
                 if (goodRabbit && (ratio > topRatio))
@@ -228,7 +228,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
             {
                 if (goodRabbit)
                 {
-                    select         = true;
+                    select = true;
                     goodRabbitSelected = true;
                 }
                 else
@@ -294,7 +294,7 @@ void* GameKeeper::Player::packPlayerUpdate(void* buf)
     return buf;
 }
 
-void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage& msg )
+void GameKeeper::Player::setPlayerAddMessage(PlayerAddMessage& msg)
 {
     msg.playerID = playerIndex;
     msg.team = player.getTeam();
@@ -302,13 +302,13 @@ void GameKeeper::Player::setPlayerAddMessage ( PlayerAddMessage& msg )
     msg.wins = score.getWins();
     msg.losses = score.getLosses();
     msg.tks = score.getTKs();
-    msg.callsign =  player.getCallSign();
-    msg.motto =  player.getMotto();
+    msg.callsign = player.getCallSign();
+    msg.motto = player.getMotto();
 }
 
 
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
-        int targetPlayer)
+    int targetPlayer)
 {
     std::vector<int> receivers;
     Player* playerData(0);
@@ -316,7 +316,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
     if (targetPlayer != -1)
     {
         if ((playerData = playerList[targetPlayer]) && !playerData->closed
-                && playerData->accessInfo.hasPerm(right))
+            && playerData->accessInfo.hasPerm(right))
             receivers.push_back(targetPlayer);
     }
     else
@@ -324,7 +324,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
         for (int i = 0; i < PlayerSlot; ++i)
         {
             if ((playerData = playerList[i]) && !playerData->closed
-                    && playerData->accessInfo.hasPerm(right))
+                && playerData->accessInfo.hasPerm(right))
                 receivers.push_back(i);
         }
     }
@@ -333,7 +333,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 }
 
 bool GameKeeper::Player::loadEnterData(uint16_t& rejectCode,
-                                       char* rejectMsg)
+    char* rejectMsg)
 {
     // look if there is as name clash, we won't allow this
     for (int i = 0; i < PlayerSlot; i++)
@@ -344,7 +344,7 @@ bool GameKeeper::Player::loadEnterData(uint16_t& rejectCode,
         if (otherData->closed) continue;
         if (!strcasecmp(otherData->player.getCallSign(), player.getCallSign()))
         {
-            rejectCode   = RejectRepeatCallsign;
+            rejectCode = RejectRepeatCallsign;
             strcpy(rejectMsg, "The callsign specified is already in use.");
             return false;
         }
@@ -367,9 +367,9 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
     Player* playerData(0);
     int slot(-1); // invalid
 
-    if (sscanf (name.c_str(), "#%d", &slot) == 1)
+    if (sscanf(name.c_str(), "#%d", &slot) == 1)
     {
-        if ( ! GameKeeper::Player::getPlayerByIndex(slot) ) return -1;
+        if (!GameKeeper::Player::getPlayerByIndex(slot)) return -1;
         return slot;
     }
     else
@@ -377,7 +377,7 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
         for (int i = 0; i < PlayerSlot; ++i)
         {
             if ((playerData = playerList[i]) && !playerData->closed
-                    && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
+                && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
                 return i;
         }
     }
@@ -446,7 +446,7 @@ void GameKeeper::Player::setPlayerState(float pos[3], float azimuth)
     // Set Speeds to 0 too
     memset(lastState.velocity, 0, sizeof(float) * 3);
     lastState.angVel = 0.0f;
-    stateTimeStamp   = 0.0f;
+    stateTimeStamp = 0.0f;
 
     // player is alive.
     player.setAlive();
@@ -509,7 +509,7 @@ bool GameKeeper::Player::isValidShotToShoot(FiringInfo &firingInfo)
         for (int i = 0; i < (int)shotSlots.size(); i++)
             shotSlots[i].slotID = i;
     }
-        
+
     if (firingInfo.localID == 0xFF)
         return true; // it's a non slot shot accept it, the server generated it.
 
@@ -540,7 +540,7 @@ bool GameKeeper::Player::addShot(Shot::Ptr shot)
 
     shotSlots[slotID].activeShot = shot;
     shotSlots[slotID].reloading = true;
-    shotSlots[slotID].expireTime  = now + lifeTime; // this is now when the SLOT reloads not the shot expires.
+    shotSlots[slotID].expireTime = now + lifeTime; // this is now when the SLOT reloads not the shot expires.
     return true;
 }
 
@@ -621,7 +621,7 @@ const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float old
 
     expelled = (obstacle != NULL);
     if (expelled && phased)
-        expelled = (obstacle->getType() == WallObstacle::getClassName() ||  obstacle->getType() == Teleporter::getClassName() ||  (hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
+        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName() || (hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
 
     if (obstacle != NULL)
     {
@@ -638,7 +638,7 @@ const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float old
     return obstacle;
 }
 
-bool GameKeeper::Player::getHitNormal(const Obstacle* o,  const float* pos1, float azimuth1,  const float* pos2, float azimuth2, float* normal) const
+bool GameKeeper::Player::getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2, float* normal) const
 {
     const float* dims = getDimensions();
     return o->getHitNormal(pos1, azimuth1, pos2, azimuth2, dims[0], dims[1], dims[2], normal);
@@ -658,7 +658,7 @@ float GameKeeper::Player::getHandicapFactor()
         // disadvantage
         normalizedHandicap = 0.0f;
 
-   return normalizedHandicap;
+    return normalizedHandicap;
 }
 
 void  GameKeeper::Player::setDesiredSpeed(float fracOfMaxSpeed)
@@ -851,7 +851,7 @@ void GameKeeper::Player::setPlayerState(PlayerState state, float timestamp)
 {
     lagInfo.updateLag(timestamp, state.order - lastState.order > 1);
     player.updateIdleTime();
-    lastState      = state;
+    lastState = state;
     stateTimeStamp = timestamp;
     serverTimeStamp = (float)TimeKeeper::getCurrent().getSeconds();
 }
@@ -861,6 +861,220 @@ void GameKeeper::Player::getPlayerState(float pos[3], float &azimuth)
     memcpy(pos, lastState.pos, sizeof(float) * 3);
     azimuth = lastState.azimuth;
 }
+
+
+void GameKeeper::Player::calcRelativeMotion(float vel[2], float& speed, float& angVel) const
+{
+    vel[0] = currentState.vec[0];
+    vel[1] = currentState.vec[1];
+
+    angVel = lastUpdate.angVel;
+
+    const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(lastUpdate.phydrv);
+    if (phydrv != NULL)
+    {
+        const float* v = phydrv->getLinearVel();
+        const float av = phydrv->getAngularVel();
+        const float* ap = phydrv->getAngularPos();
+
+        // adjust for driver velocity
+        vel[0] -= v[0];
+        vel[1] -= v[1];
+
+        // adjust for driver angular velocity
+        if (av != 0.0f)
+        {
+            const float dx = lastUpdate.pos[0] - ap[0];
+            const float dy = lastUpdate.pos[1] - ap[1];
+            vel[0] += av * dy;
+            vel[1] -= av * dx;
+            angVel = lastUpdate.angVel - av;
+        }
+    }
+
+    // speed relative to the tank's direction
+    // (could use forward[] instead of re-doing the trig, but this is
+    //  used in the setDeadReckoning(), when forward[] is not yet set)
+    speed = (vel[0] * cosf(lastUpdate.rot)) + (vel[1] * sinf(lastUpdate.rot));
+}
+
+void GameKeeper::Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth, float* predictedVel, float dt) const
+{
+    float inputRelVel[2];               // relative velocity
+    float inputRelSpeed;                // relative speed
+    float inputRelAngVel;               // relative angular velocity
+
+    *predictedAzimuth = lastUpdate.rot;
+
+    calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
+
+    bool inputTurning = false;
+    float inputTurnVector[2];
+    float inputTurnCenter[2];
+
+    if (fabsf(inputRelAngVel) > 0.001f)
+    {
+        inputTurning = true;
+        const float radius = (inputRelSpeed / inputRelAngVel);
+        inputTurnVector[0] = +sinf(lastUpdate.rot) * radius;
+        inputTurnVector[1] = -cosf(lastUpdate.rot) * radius;
+        inputTurnCenter[0] = lastUpdate.pos[0] - inputTurnVector[0];
+        inputTurnCenter[1] = lastUpdate.pos[1] - inputTurnVector[1];
+    }
+
+    float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
+
+    if (currentState.pStatus & PlayerState::Falling)
+    {
+        // no control when falling
+        predictedVel[0] = lastUpdate.vec[0];
+        predictedVel[1] = lastUpdate.vec[1];
+        predictedPos[0] = lastUpdate.pos[0] + (dt * lastUpdate.vec[0]);
+        predictedPos[1] = lastUpdate.pos[1] + (dt * lastUpdate.vec[1]);
+
+        // only turn if alive
+        if (currentState.pStatus & PlayerState::Alive)
+            *predictedAzimuth += (dt * lastUpdate.angVel);
+
+        // following the parabola
+        predictedVel[2] = lastUpdate.vec[2] + (gravity * dt);
+        predictedPos[2] = lastUpdate.pos[2] + (lastUpdate.vec[2] * dt) + (0.5f * gravity * dt * dt);
+    }
+    else
+    {
+        // velocity[2] is zero when not falling, except for Burrow flag
+        predictedVel[2] = lastUpdate.vec[2];
+        predictedPos[2] = lastUpdate.pos[2] + (lastUpdate.vec[2] * dt);
+
+        // different algorithms for tanks moving in
+        // a straight line vs. turning in a circle
+        if (abs(lastUpdate.angVel) > 0.001)
+        {
+            // move straight
+            predictedVel[0] = inputRelVel[0];
+            predictedVel[1] = inputRelVel[1];
+            predictedPos[0] = lastUpdate.pos[0] + (dt * inputRelVel[0]);
+            predictedPos[1] = lastUpdate.pos[1] + (dt * inputRelVel[1]);
+        }
+        else
+        {
+            // make a sweeping arc
+            const float angle = (dt * inputRelAngVel);
+            *predictedAzimuth += angle;
+            const float cos_val = cosf(angle);
+            const float sin_val = sinf(angle);
+            const float* tc = inputTurnCenter;
+            const float* tv = inputTurnVector;
+            predictedPos[0] = tc[0] + ((tv[0] * cos_val) - (tv[1] * sin_val));
+            predictedPos[1] = tc[1] + ((tv[1] * cos_val) + (tv[0] * sin_val));
+            const float* rv = inputRelVel;
+            predictedVel[0] = (rv[0] * cos_val) - (rv[1] * sin_val);
+            predictedVel[1] = (rv[1] * cos_val) + (rv[0] * sin_val);
+        }
+
+        // make the physics driver adjustments
+        const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(lastUpdate.phydrv);
+        if (phydrv != NULL)
+        {
+            if (phydrv->getIsSlide())
+            {
+                predictedVel[0] = inputRelVel[0];
+                predictedVel[1] = inputRelVel[1];
+                predictedPos[0] = lastUpdate.pos[0] + (dt * inputRelVel[0]);
+                predictedPos[1] = lastUpdate.pos[1] + (dt * inputRelVel[1]);
+            }
+            else
+            {
+                // angular velocity adjustment
+                const float pdAngVel = phydrv->getAngularVel();
+                if (pdAngVel != 0.0f)
+                {
+                    const float angle = (dt * pdAngVel);
+                    *predictedAzimuth += angle;
+                    const float* pdAngPos = phydrv->getAngularPos();
+                    const float dx = predictedPos[0] - pdAngPos[0];
+                    const float dy = predictedPos[1] - pdAngPos[1];
+                    const float cos_val = cosf(angle);
+                    const float sin_val = sinf(angle);
+                    predictedPos[0] = pdAngPos[0] + ((dx * cos_val) - (dy * sin_val));
+                    predictedPos[1] = pdAngPos[1] + ((dy * cos_val) + (dx * sin_val));
+                    predictedVel[0] += (-dy * pdAngVel);
+                    predictedVel[1] += (+dx * pdAngVel);
+                }
+                // linear velocity adjustment
+                const float* pdVel = phydrv->getLinearVel();
+                predictedPos[0] += (dt * pdVel[0]);
+                predictedPos[1] += (dt * pdVel[1]);
+                predictedVel[0] += pdVel[0];
+                predictedVel[1] += pdVel[1];
+            }
+        }
+    }
+
+    return;
+}
+
+// for dead reckoning
+static const float  MaxUpdateTime = 1.0f;       // seconds
+
+bool GameKeeper::Player::isDeadReckoningWrong() const
+{
+    const uint16_t checkStates = (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+    // always send a new packet when some kinds of status change
+    if ((currentState.pStatus != lastUpdate.pStatus))
+        return true;
+
+    // never send a packet when dead
+    if ((currentState.pStatus & PlayerState::Alive) == 0)
+        return false;
+
+//     //  send a packet if we've made some noise
+//     if (currentState.pStatus != PlayerState::NoSounds)
+//         return true;
+
+    //  send a packet if we've crossed a physics driver boundary
+    if (currentState.phydrv != lastState.phydrv)
+        return true;
+
+    // time since setdeadreckoning
+    const float dt = float(TimeKeeper::getCurrent() - lastUpdateSent);
+
+    // otherwise always send at least one packet per second
+    if (dt >= MaxUpdateTime)
+        return true;
+
+    // get predicted state
+    float predictedPos[3];
+    float predictedVel[3];
+    float predictedAzimuth;
+    getDeadReckoning(predictedPos, &predictedAzimuth, predictedVel, dt);
+
+    // always send a new packet on reckoned touchdown
+    float groundLimit = 0.0f;
+    if (getFlagEffect() == FlagEffect::Burrow)
+        groundLimit = BZDB.eval(StateDatabase::BZDB_BURROWDEPTH);
+    if (predictedPos[2] < groundLimit)
+        return true;
+
+    // client side throttling
+    const int throttleRate = int(BZDB.eval(StateDatabase::BZDB_UPDATETHROTTLERATE));
+    const float minUpdateTime = (throttleRate > 0) ? (1.0f / throttleRate) : 0.0f;
+    if (dt < minUpdateTime)
+        return false;
+
+    // see if position and azimuth are close enough
+    float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
+    if ((fabsf(currentState.pos[0] - predictedPos[0]) > positionTolerance) || (fabsf(currentState.pos[1] - predictedPos[1]) > positionTolerance) || fabsf(currentState.pos[2] - predictedPos[2]) > positionTolerance)
+        return true;
+
+    float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
+    if (fabsf(currentState.rot - predictedAzimuth) > angleTolerance)
+        return true;
+
+    // prediction is good enoughFisad
+    return false;
+}
+
 
 void GameKeeper::Player::setLastIdFlag(int _idFlag)
 {

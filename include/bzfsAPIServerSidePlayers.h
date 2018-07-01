@@ -141,7 +141,7 @@ public:
     // actions to make
     void setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType team);
 
-    void joinGame(void);
+    void joinGame(bool spawn = true);
 
     void respawn(void);
     void getCurrentState(bz_PlayerUpdateState *state);
@@ -175,6 +175,9 @@ public:
         autoSpawn = s;
     }
 
+    // called by the event system to handle basic player funcitons
+    void checkForSpawn(int player, const float pos[3], float rot);
+
     int playerID;
 
 protected:
@@ -205,6 +208,8 @@ private:
     void doJump();
 
     void setVelocity(float newVel[3]);
+
+   
 
     int flaps;
 };

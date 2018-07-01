@@ -249,6 +249,7 @@ public:
         float           desiredAngVel = 0;
         int             deathPhyDrv;    // physics driver that caused death
 
+        TimeKeeper      lastUpdateSent;
         TimeKeeper      agilityTime;
         TimeKeeper      bounceTime;
         TimeKeeper      teleportTime;     // time I started teleporting
@@ -270,6 +271,8 @@ public:
 
         void            move(const float* _pos, float _azimuth);
         void            collectInsideBuildings();
+
+        bool            isDeadReckoningWrong() const;
 
         class UpdateInfo
         {
@@ -302,6 +305,10 @@ public:
                 rot = u.rot;
                 angVel = u.angVel;
                 time = u.time;
+                pStatus = u.pStatus;
+                Status = u.Status;
+                speed = u.speed;
+                phydrv = u.phydrv;
 
                 return *this;
             }
@@ -365,6 +372,8 @@ public:
 
         void setupPhysicsData();
         void updateDimensions();
+        void getDeadReckoning(float* predictedPos, float* predictedAzimuth, float* predictedVel, float time) const;
+        void calcRelativeMotion(float vel[2], float& speed, float& angVel) const;
     };
 };
 

@@ -114,6 +114,7 @@ void bz_ServerSidePlayerHandler::died ( int UNUSED(killer) )
     pImpl->timeOfLastBlowedUp = TimeKeeper::getCurrent();
 
     pImpl->myTank->currentState.Status = bz_eTankStatus::Dead;
+    pImpl->myTank->currentState.setPStatus(PlayerState::DeadStatus);
     pImpl->currentTarget = -1;
 }
 
@@ -122,6 +123,7 @@ void bz_ServerSidePlayerHandler::smote ( SmiteReason UNUSED(reason) )
     pImpl->timeOfLastBlowedUp = TimeKeeper::getCurrent();
 
     pImpl->myTank->currentState.Status = bz_eTankStatus::Dead;
+    pImpl->myTank->currentState.setPStatus(PlayerState::DeadStatus);
     pImpl->currentTarget = -1;
 }
 
@@ -186,6 +188,33 @@ void bz_ServerSidePlayerHandler::processUpdate(float dt)
             pImpl->myTank->flagShakingTime = 0.0f;
             dropFlag();
         }
+    }
+
+    if (pImpl->myTank->isDeadReckoningWrong())
+    {
+        // send update
+
+        pImpl->myTank->lastState.order++;
+
+        pImpl->myTank->lastState.status = pImpl->myTank->currentState.pStatus;
+        for (int i = 0; i < 3; i++)
+        {
+            pImpl->myTank->lastState.pos[i] = pImpl->myTank->currentState.pos[i];
+            pImpl->myTank->lastState.velocity[i] = pImpl->myTank->currentState.vec[i];
+        }
+
+        pImpl->myTank->lastState.azimuth = pImpl->myTank->currentState.rot;
+        pImpl->myTank->lastState.angVel = pImpl->myTank->currentState.angVel;
+        pImpl->myTank->lastState.phydrv = pImpl->myTank->currentState.phydrv;
+
+        pImpl->myTank->lastState.userSpeed = pImpl->myTank->currentState.speed;
+        pImpl->myTank->lastState.userAngVel = pImpl->myTank->currentState.angVel;
+        pImpl->myTank->lastState.jumpJetsScale = 0;
+
+        pImpl->myTank->lastUpdate = pImpl->myTank->currentState;
+
+        sendPlayerUpdate(pImpl->myTank);
+        pImpl->myTank->lastUpdateSent = TimeKeeper::getCurrent();
     }
 }
 
@@ -611,176 +640,179 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
     // see if we hit anything.  if not then we're done.
     obstacle = pImpl->myTank->getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased, expelled);
 
-    float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-    if ((oldStatus != bz_eTankStatus::InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2]) && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
+    if (obstacle != nullptr)
     {
-        newPos[0] = oldPosition[0];
-        newPos[1] = oldPosition[1];
-        newPos[2] = obstacleTop;
-
-        // drive over bumps
-        const Obstacle* bumpObstacle = pImpl->myTank->getHitBuilding(newPos, tmpAzimuth,
-            newPos, newAzimuth,
-            phased, expelled);
-        if (bumpObstacle == NULL)
+        float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
+        if ((oldStatus != bz_eTankStatus::InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2]) && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
         {
-            pImpl->myTank->move(newPos, pImpl->myTank->currentState.rot);
-            newPos[0] += newVelocity[0] * (dt * 0.5f);
-            newPos[1] += newVelocity[1] * (dt * 0.5f);
-        }
-    }
+            newPos[0] = oldPosition[0];
+            newPos[1] = oldPosition[1];
+            newPos[2] = obstacleTop;
 
-    // record position when hitting
-    float hitPos[3], hitAzimuth;
-    hitAzimuth = newAzimuth;
-    hitPos[0] = newPos[0];
-    hitPos[1] = newPos[1];
-    hitPos[2] = newPos[2];
-
-    // find the latest time before the collision
-    float searchTime = 0.0f, searchStep = 0.5f * timeStep;
-    for (int i = 0; searchStep > pImpl->MinSearchStep && i < pImpl->MaxSearchSteps; searchStep *= 0.5f, i++)
-    {
-        // get intermediate position
-        const float t = searchTime + searchStep;
-        newAzimuth = tmpAzimuth + (t * newAngVel);
-        newPos[0] = tmpPos[0] + (t * newVelocity[0]);
-        newPos[1] = tmpPos[1] + (t * newVelocity[1]);
-        newPos[2] = tmpPos[2] + (t * newVelocity[2]);
-        if ((newPos[2] < groundLimit) && (newVelocity[2] < 0))
-            newPos[2] = groundLimit;
-
-        // see if we hit anything
-        bool searchExpelled;
-        const Obstacle* searchObstacle = pImpl->myTank->getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased, searchExpelled);
-
-        if (!searchObstacle || !searchExpelled)
-        {
-            // if no hit then search latter half of time step
-            searchTime = t;
-        }
-        else if (searchObstacle)
-        {
-            // if we hit a building then record which one and where
-            obstacle = searchObstacle;
-
-            expelled = searchExpelled;
-            hitAzimuth = newAzimuth;
-            hitPos[0] = newPos[0];
-            hitPos[1] = newPos[1];
-            hitPos[2] = newPos[2];
-        }
-    }
-
-    // get position just before impact
-    newAzimuth = tmpAzimuth + (searchTime * newAngVel);
-    newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
-    newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
-    newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
-    if (oldPosition[2] < groundLimit)
-        newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
-
-
-    // record how much time is left in time step
-    timeStep -= searchTime;
-
-    // get normal at intersection.  sometimes fancy test says there's
-    // no intersection but we're expecting one so, in that case, fall
-    // back to simple normal calculation.
-    float normal[3];
-    if (!pImpl->myTank->getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal))
-        obstacle->getNormal(newPos, normal);
-
-    // check for being on a building
-    if ((newPos[2] > 0.0f) && (normal[2] > 0.001f))
-    {
-        if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding && expelled)
-        {
-            pImpl->myTank->currentState.Status = bz_eTankStatus::OnBuilding;
-            pImpl->lastObstacle = obstacle;
-        }
-        newVelocity[2] = 0.0f;
-    }
-    else
-    {
-        // get component of velocity in normal direction (in horizontal plane)
-        float mag = (normal[0] * newVelocity[0]) +
-            (normal[1] * newVelocity[1]);
-
-        // handle upward normal component to prevent an upward force
-        if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE))
-        {
-            // if going down then stop falling
-            if (newVelocity[2] < 0.0f && newVelocity[2] -
-                (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
-                newVelocity[2] = 0.0f;
-
-            // normalize force magnitude in horizontal plane
-            float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
-            if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE))
-                mag /= horNormal;
+            // drive over bumps
+            const Obstacle* bumpObstacle = pImpl->myTank->getHitBuilding(newPos, tmpAzimuth,
+                newPos, newAzimuth,
+                phased, expelled);
+            if (bumpObstacle == NULL)
+            {
+                pImpl->myTank->move(newPos, pImpl->myTank->currentState.rot);
+                newPos[0] += newVelocity[0] * (dt * 0.5f);
+                newPos[1] += newVelocity[1] * (dt * 0.5f);
+            }
         }
 
-        // cancel out component in normal direction (if velocity and
-        // normal point in opposite directions).  also back off a tiny
-        // amount to prevent a spurious collision against the same
-        // obstacle.
-        if (mag < 0.0f)
+        // record position when hitting
+        float hitPos[3], hitAzimuth;
+        hitAzimuth = newAzimuth;
+        hitPos[0] = newPos[0];
+        hitPos[1] = newPos[1];
+        hitPos[2] = newPos[2];
+
+        // find the latest time before the collision
+        float searchTime = 0.0f, searchStep = 0.5f * timeStep;
+        for (int i = 0; searchStep > pImpl->MinSearchStep && i < pImpl->MaxSearchSteps; searchStep *= 0.5f, i++)
         {
-            newVelocity[0] -= mag * normal[0];
-            newVelocity[1] -= mag * normal[1];
+            // get intermediate position
+            const float t = searchTime + searchStep;
+            newAzimuth = tmpAzimuth + (t * newAngVel);
+            newPos[0] = tmpPos[0] + (t * newVelocity[0]);
+            newPos[1] = tmpPos[1] + (t * newVelocity[1]);
+            newPos[2] = tmpPos[2] + (t * newVelocity[2]);
+            if ((newPos[2] < groundLimit) && (newVelocity[2] < 0))
+                newPos[2] = groundLimit;
 
-            newPos[0] -= pImpl->TinyDistance * mag * normal[0];
-            newPos[1] -= pImpl->TinyDistance * mag * normal[1];
+            // see if we hit anything
+            bool searchExpelled;
+            const Obstacle* searchObstacle = pImpl->myTank->getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased, searchExpelled);
+
+            if (!searchObstacle || !searchExpelled)
+            {
+                // if no hit then search latter half of time step
+                searchTime = t;
+            }
+            else if (searchObstacle)
+            {
+                // if we hit a building then record which one and where
+                obstacle = searchObstacle;
+
+                expelled = searchExpelled;
+                hitAzimuth = newAzimuth;
+                hitPos[0] = newPos[0];
+                hitPos[1] = newPos[1];
+                hitPos[2] = newPos[2];
+            }
         }
-        if (mag > -0.01f)
+
+        // get position just before impact
+        newAzimuth = tmpAzimuth + (searchTime * newAngVel);
+        newPos[0] = tmpPos[0] + (searchTime * newVelocity[0]);
+        newPos[1] = tmpPos[1] + (searchTime * newVelocity[1]);
+        newPos[2] = tmpPos[2] + (searchTime * newVelocity[2]);
+        if (oldPosition[2] < groundLimit)
+            newVelocity[2] = std::max(newVelocity[2], -oldPosition[2] / 2.0f + 0.5f);
+
+
+        // record how much time is left in time step
+        timeStep -= searchTime;
+
+        // get normal at intersection.  sometimes fancy test says there's
+        // no intersection but we're expecting one so, in that case, fall
+        // back to simple normal calculation.
+        float normal[3];
+        if (!pImpl->myTank->getHitNormal(obstacle, newPos, newAzimuth, hitPos, hitAzimuth, normal))
+            obstacle->getNormal(newPos, normal);
+
+        // check for being on a building
+        if ((newPos[2] > 0.0f) && (normal[2] > 0.001f))
         {
-            // assume we're not allowed to turn anymore if there's no
-            // significant velocity component to cancel out.
-            newAngVel = 0.0f;
+            if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding && expelled)
+            {
+                pImpl->myTank->currentState.Status = bz_eTankStatus::OnBuilding;
+                pImpl->lastObstacle = obstacle;
+            }
+            newVelocity[2] = 0.0f;
         }
-    }
-    
+        else
+        {
+            // get component of velocity in normal direction (in horizontal plane)
+            float mag = (normal[0] * newVelocity[0]) +
+                (normal[1] * newVelocity[1]);
 
-    // pick new location if we haven't already done so
-    if (pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround)
-    {
-        if (obstacle && (!expelled || stuck))
-            pImpl->myTank->currentState.Status = bz_eTankStatus::InBuilding;
-        else if (newPos[2] > 0.0f)
-            pImpl->myTank->currentState.Status = bz_eTankStatus::InAir;
-    }
+            // handle upward normal component to prevent an upward force
+            if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE))
+            {
+                // if going down then stop falling
+                if (newVelocity[2] < 0.0f && newVelocity[2] -
+                    (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
+                    newVelocity[2] = 0.0f;
 
-    // see if we're crossing a wall
-    if (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster)
-    {
-        if (obstacle->isCrossing(newPos, newAzimuth,0.5f * tankLength, 0.5f * tankWidth,tankHeight, NULL))
+                // normalize force magnitude in horizontal plane
+                float horNormal = normal[0] * normal[0] + normal[1] * normal[1];
+                if (!NEAR_ZERO(horNormal, ZERO_TOLERANCE))
+                    mag /= horNormal;
+            }
+
+            // cancel out component in normal direction (if velocity and
+            // normal point in opposite directions).  also back off a tiny
+            // amount to prevent a spurious collision against the same
+            // obstacle.
+            if (mag < 0.0f)
+            {
+                newVelocity[0] -= mag * normal[0];
+                newVelocity[1] -= mag * normal[1];
+
+                newPos[0] -= pImpl->TinyDistance * mag * normal[0];
+                newPos[1] -= pImpl->TinyDistance * mag * normal[1];
+            }
+            if (mag > -0.01f)
+            {
+                // assume we're not allowed to turn anymore if there's no
+                // significant velocity component to cancel out.
+                newAngVel = 0.0f;
+            }
+        }
+
+
+        // pick new location if we haven't already done so
+        if (pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround)
+        {
+            if (obstacle && (!expelled || stuck))
+                pImpl->myTank->currentState.Status = bz_eTankStatus::InBuilding;
+            else if (newPos[2] > 0.0f)
+                pImpl->myTank->currentState.Status = bz_eTankStatus::InAir;
+        }
+
+        // see if we're crossing a wall
+        if (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster)
+        {
+            if (obstacle->isCrossing(newPos, newAzimuth, 0.5f * tankLength, 0.5f * tankWidth, tankHeight, NULL))
+                pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::CrossingWall));
+            else
+                pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & int(PlayerState::CrossingWall));
+        }
+        else if (world->crossingTeleporter(newPos, newAzimuth, 0.5f * tankLength, 0.5f * tankWidth, tankHeight, pImpl->crossingPlane))
             pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::CrossingWall));
         else
             pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & int(PlayerState::CrossingWall));
-    }
-    else if (world->crossingTeleporter(newPos, newAzimuth,  0.5f * tankLength,  0.5f * tankWidth, tankHeight, pImpl->crossingPlane))
-        pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::CrossingWall));
-    else
-        pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & int(PlayerState::CrossingWall));
 
-    // compute actual velocities.  do this before teleportation.
-    if (!NEAR_ZERO(dt, ZERO_TOLERANCE))
-    {
-        const float oodt = 1.0f / dt;
-        newAngVel = (newAzimuth - oldAzimuth) * oodt;
-        newVelocity[0] = (newPos[0] - oldPosition[0]) * oodt;
-        newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
-        newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
-
-        float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
-            + newVelocity[1] * newVelocity[1];
-        float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
-        if (scaling > 1.0f)
+        // compute actual velocities.  do this before teleportation.
+        if (!NEAR_ZERO(dt, ZERO_TOLERANCE))
         {
-            scaling = sqrtf(scaling);
-            newVelocity[0] /= scaling;
-            newVelocity[1] /= scaling;
+            const float oodt = 1.0f / dt;
+            newAngVel = (newAzimuth - oldAzimuth) * oodt;
+            newVelocity[0] = (newPos[0] - oldPosition[0]) * oodt;
+            newVelocity[1] = (newPos[1] - oldPosition[1]) * oodt;
+            newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
+
+            float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
+                + newVelocity[1] * newVelocity[1];
+            float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
+            if (scaling > 1.0f)
+            {
+                scaling = sqrtf(scaling);
+                newVelocity[0] /= scaling;
+                newVelocity[1] /= scaling;
+            }
         }
     }
 
@@ -893,8 +925,10 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
 // lower level message API
 void bz_ServerSidePlayerHandler::playerAdded(int) {}
 void bz_ServerSidePlayerHandler::playerRemoved(int) {}
+void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], float _rot) {}
 
-void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], float _rot)
+
+void bz_ServerSidePlayerHandler::checkForSpawn(int id, const float _pos[3], float _rot)
 {
     if (id==playerID)
     {
@@ -903,16 +937,17 @@ void bz_ServerSidePlayerHandler::playerSpawned(int id, const float _pos[3], floa
             pImpl->myTank->currentState.Status = bz_eTankStatus::InAir; // maybe? next update will take care of placing us.
 
         // update the current state
-        pImpl->myTank->lastUpdate.time = bz_getCurrentTime();
+        pImpl->myTank->currentState.time = bz_getCurrentTime();
         // get where I am;
-        memcpy(pImpl->myTank->lastUpdate.pos, _pos, sizeof(float) *3);
-        pImpl->myTank->lastUpdate.angVel = 0;
-        pImpl->myTank->lastUpdate.vec[0] = 0;
-        pImpl->myTank->lastUpdate.vec[1] = 0;
-        pImpl->myTank->lastUpdate.vec[2] = 0;
-        pImpl->myTank->lastUpdate.rot = _rot;
+        memcpy(pImpl->myTank->currentState.pos, _pos, sizeof(float) *3);
+        pImpl->myTank->currentState.angVel = 0;
+        pImpl->myTank->currentState.vec[0] = 0;
+        pImpl->myTank->currentState.vec[1] = 0;
+        pImpl->myTank->currentState.vec[2] = 0;
+        pImpl->myTank->currentState.rot = _rot;
 
-        pImpl->myTank->currentState = pImpl->myTank->lastUpdate;
+        pImpl->myTank->lastUpdate.setPStatus(0);
+        pImpl->myTank->currentState.setPStatus(PlayerState::Alive);
 
         pImpl->myTank->desiredSpeed = 0;
         pImpl->myTank->desiredAngVel = 0;
@@ -981,7 +1016,7 @@ void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char 
 
 //-------------------------------------------------------------------------
 
-void bz_ServerSidePlayerHandler::joinGame(void)
+void bz_ServerSidePlayerHandler::joinGame(bool spawn)
 {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
     if (!player)
@@ -990,14 +1025,20 @@ void bz_ServerSidePlayerHandler::joinGame(void)
     if (player->player.isAlive() || player->player.isPlaying())
         return ;
 
+    pImpl->myTank = player;
+
     player->lastState.order = 0;
 
     // set our state to signing on so we can join
     player->player.signingOn();
-    playerAlive(playerID);
-    player->player.setAlive();
-    pImpl->myTank = player;
-    pImpl->myTank->currentState.Status = bz_eTankStatus::InAir; // maybe? next update will take care of placing us.
+    pImpl->myTank->currentState.Status = bz_eTankStatus::Dead; // maybe? next update will take care of placing us.
+    pImpl->myTank->currentState.setPStatus(PlayerState::DeadStatus);
+    if (spawn)
+    {
+        playerAlive(playerID);
+        player->player.setAlive();
+        pImpl->myTank->currentState.setPStatus(PlayerState::Alive);
+    }
 }
 
 //-------------------------------------------------------------------------
@@ -1119,27 +1160,31 @@ extern RejoinList rejoinList;
 
 void bz_ServerSidePlayerHandler::respawn()
 {
-    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-    if (!player)
+    if (isAlive() || pImpl->myTank->player.getTeam() == ObserverTeam)
         return;
 
-    if (isAlive() || player->player.getTeam() == ObserverTeam)
+    if (pImpl->myTank->player.hasNeverSpawned())
+    {
+        pImpl->myTank->player.setAlive();
+        playerAlive(playerID);
+      
         return;
+    }
 
     // player is on the waiting list
     float waitTime = rejoinList.waitTime(playerID);
     if (waitTime > 0.0f)
     {
         // Make them wait for trying to rejoin quickly
-        player->player.setSpawnDelay((double)waitTime);
-        player->player.queueSpawn();
+        pImpl->myTank->player.setSpawnDelay((double)waitTime);
+        pImpl->myTank->player.queueSpawn();
         return;
     }
 
     // player moved before countdown started
     if (clOptions->timeLimit > 0.0f && !countdownActive)
-        player->player.setPlayedEarly();
-    player->player.queueSpawn();
+        pImpl->myTank->player.setPlayedEarly();
+    pImpl->myTank->player.queueSpawn();
 }
 
 //-------------------------------------------------------------------------
@@ -2059,6 +2104,7 @@ class BotEventHandler : public bz_EventHandler
             case bz_ePlayerSpawnEvent:
             {
                 bz_PlayerSpawnEventData_V1* spawnData = (bz_PlayerSpawnEventData_V1*)eventData;
+                handler->checkForSpawn(spawnData->playerID, spawnData->state.pos, spawnData->state.rotation);
                 handler->playerSpawned(spawnData->playerID,spawnData->state.pos,spawnData->state.rotation);
             }
             break;
@@ -2150,10 +2196,9 @@ BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
     player->_LSAState = GameKeeper::Player::notRequired;
 
     handler->setPlayerID(playerIndex);
+    serverSidePlayer.push_back(handler);
 
     handler->added(playerIndex);
-
-    serverSidePlayer.push_back(handler);
     return playerIndex;
 }
 

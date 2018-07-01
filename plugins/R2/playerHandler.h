@@ -26,7 +26,6 @@ public:
 
     virtual void textMessage(int dest, int source, const char *text);
 
-    virtual void playerSpawned(int player, const float pos[3], float rot);
     virtual void shotFired(int player, unsigned short shotID);
 
     void startPlay();
