@@ -1919,7 +1919,7 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 
 // change team
-BZF_API bool bz_changeTeam(int playerID, bz_eTeamType teamID);
+BZF_API bool bz_setPlayerTeam(int playerID, bz_eTeamType teamID);
 
 // dying
 typedef enum
