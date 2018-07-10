@@ -17,6 +17,7 @@
 #include "common.h"
 #include "global.h"
 #include "Protocol.h"
+#include "MessageBuffers.h"
 
 const int ReplayObservers = 16;
 
@@ -49,8 +50,8 @@ extern bool enabled ();
 extern bool getAllowFileRecs();
 extern void setAllowFileRecs(bool value);
 
-extern bool addPacket (uint16_t code, int len, const void * data,
-                       uint16_t mode = RealPacket);
+extern bool addPacket (uint16_t code, int len, const void * data, uint16_t mode = RealPacket);
+extern bool addPacket(uint16_t code, MessageBuffer::Ptr message, uint16_t mode = RealPacket);
 
 extern void sendHelp (int playerIndex);
 }
