@@ -41,6 +41,7 @@
 #include "WorldInfo.h"
 #include "VotingArbiter.h"
 #include "ShotManager.h"
+#include "MessageBuffers.h"
 
 #include <list>
 class PendingChatMessages
@@ -98,8 +99,7 @@ extern void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos = true);
 extern void sendPlayerMessage(GameKeeper::Player *playerData,
                               PlayerId dstPlayer,
                               const char *message);
-extern char *getDirectMessageBuffer();
-extern void  broadcastMessage(uint16_t code, int len, void *msg);
+
 extern void  sendTeamUpdate(int playerIndex = -1,
                             int teamIndex1 = -1,
                             int teamIndex2 = -1);
@@ -108,8 +108,14 @@ extern void  sendPlayerUpdate(GameKeeper::Player* player);
 extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
-extern void  directMessage(int playerIndex, uint16_t code,
-                           int len, void *msg);
+
+extern char *getDirectMessageBuffer();
+extern void  directMessage(int playerIndex, uint16_t code, int len, void *msg);
+extern void  broadcastMessage(uint16_t code, int len, void *msg);
+
+extern void sendPacket(int playerIndex, uint16_t code, MessageBuffer::Ptr message, bool release = true);
+extern void broadcastPacket(uint16_t code, MessageBuffer::Ptr message);
+
 extern int   getCurMaxPlayers();
 extern bool  areFoes(TeamColor team1, TeamColor team2);
 extern PingPacket getTeamCounts();

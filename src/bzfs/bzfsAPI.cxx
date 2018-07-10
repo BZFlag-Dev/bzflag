@@ -199,12 +199,13 @@ void broadcastPlayerScoreUpdate ( int playerID )
     if (!player)
         return;
 
-    void *buf, *bufStart;
-    bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, 1);
-    buf = nboPackUByte(buf, playerID);
-    buf = player->score.pack(buf);
-    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+    auto message = GetMessageBuffer();
+
+    message->packUByte(1);
+    message->packUByte(playerID);
+    player->score.pack(message);
+
+    broadcastPacket(MsgScore, message);
 }
 
 //******************************Versioning********************************************
@@ -1592,17 +1593,17 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
     if (ext == "wav")
         resType = eSound;
 
+    auto  message = GetMessageBuffer();
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort (bufStart, 1);    // the count
-    buf = nboPackUShort(buf, (short)resType);
-    buf = nboPackUShort(buf, (unsigned short)strlen(URL));
-    buf = nboPackString(buf, URL,strlen(URL));
-
+    message->packUShort( 1);    // the count
+    message->packUShort((short)resType);
+    message->packUShort((unsigned short)strlen(URL));
+    message->packString(URL, strlen(URL));
+   
     if (playerID == BZ_ALLUSERS)
-        broadcastMessage(MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+        broadcastPacket(MsgFetchResources, message);
     else
-        directMessage(playerID,MsgFetchResources, (char*)buf - (char*)bufStart, bufStart);
+        sendPacket(playerID,MsgFetchResources, message);
 
     return true;
 }
@@ -1639,7 +1640,7 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
 
     FlagType::Ptr flag = flagMap.find(flagType)->second;
 
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto  message = GetMessageBuffer();
 
     FiringInfo firingInfo;
     firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
@@ -1689,9 +1690,8 @@ BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3]
 
     firingInfo.shot.id = ShotManager.AddShot(firingInfo, playerID);
 
-    buf = firingInfo.pack(bufStart);
-
-    broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
+    Shots::PackFirningInfo(firingInfo, message);
+    broadcastPacket(MsgShotBegin, message);
 
     return firingInfo.shot.id;
 }
@@ -4349,11 +4349,11 @@ BZF_API void bz_superkill()
 
 BZF_API void bz_gameOver(int playerID, bz_eTeamType _team )
 {
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto message = GetMessageBuffer();
 
-    buf = nboPackUByte(bufStart, playerID);
-    buf = nboPackUShort(buf, uint16_t( convertTeam(_team) == -1 ? NoTeam : convertTeam(_team) ));
-    broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+    message->packUByte(playerID);
+    message->packUShort(uint16_t( convertTeam(_team) == -1 ? NoTeam : convertTeam(_team) ));
+    broadcastPacket(MsgScoreOver, message);
 
     gameOver = true;
 
@@ -4541,10 +4541,9 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
      * Thing(tm) to do.  new clients will get the notification during
      * flag negotiation, which is better.
      */
-    char* buf = getDirectMessageBuffer();
-    char* bufStart = buf;
-    buf = (char*)tmp->packCustom(buf);
-    broadcastMessage(MsgFlagType, buf-bufStart, bufStart);
+    auto msg = GetMessageBuffer();
+    Shots::PackCustomFlagType(tmp, msg);
+    broadcastPacket(MsgFlagType, msg);
 
     return true;
 }
@@ -4624,10 +4623,9 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
     * Thing(tm) to do.  new clients will get the notification during
     * flag negotiation, which is better.
     */
-    char* buf = getDirectMessageBuffer();
-    char* bufStart = buf;
-    buf = (char*)tmp->packCustom(buf);
-    broadcastMessage(MsgFlagType, buf - bufStart, bufStart);
+    auto msg = GetMessageBuffer();
+    Shots::PackCustomFlagType(tmp, msg);
+    broadcastPacket(MsgFlagType, msg);
 
     return true;
 }

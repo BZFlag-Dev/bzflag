@@ -264,8 +264,7 @@ char *getDirectMessageBuffer()
 // FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
 // usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
 // for MsgShotBegin the receiving buffer gets used directly
-static int directMessage(GameKeeper::Player &playerData,
-                         uint16_t code, int len, void *msg)
+static int directMessage(GameKeeper::Player &playerData,  uint16_t code, int len, void *msg)
 {
     if (playerData.isParting)
         return -1;
@@ -280,13 +279,37 @@ static int directMessage(GameKeeper::Player &playerData,
 
 void directMessage(int playerIndex, uint16_t code, int len, void *msg)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
     directMessage(*playerData, code, len, msg);
 }
+
+static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message, bool release = true)
+{
+    if (playerData.isParting)
+        return -1;
+
+    // send message to one player
+    void *bufStart = message->buffer();
+
+    void *buf = bufStart;
+    buf = nboPackUShort(buf, uint16_t(message->size()));
+    buf = nboPackUShort(buf, code);
+    int ret = pwrite(playerData, bufStart, message->size() + 4);
+    ReleaseMessageBuffer(message);
+}
+
+void sendPacket(int playerIndex, uint16_t code, MessageBuffer::Ptr message, bool release)
+{
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    if (!playerData)
+        return;
+
+    sendPacket(*playerData, code, message, release);
+}
+
 
 void broadcastMessage(uint16_t code, int len, void *msg)
 {
@@ -304,6 +327,23 @@ void broadcastMessage(uint16_t code, int len, void *msg)
     return;
 }
 
+void broadcastPacket(uint16_t code, MessageBuffer::Ptr message)
+{
+    // send message to everyone
+    for (int i = 0; i < curMaxPlayers; i++)
+    {
+        if (realPlayerWithNet(i))
+            sendPacket(i, code, message, false);
+    }
+    ReleaseMessageBuffer(message);
+
+    // record the packet
+    if (Record::enabled())
+        Record::addPacket(code, message);
+
+    return;
+}
+
 
 //
 // global variable callback
@@ -314,22 +354,23 @@ static void onGlobalChanged(const std::string& name, void*)
     // well, the /set and /reset commands are blocked.
 
     std::string value = BZDB.get(name);
-    void *bufStart = getDirectMessageBuffer();
-    void *buf = nboPackUShort(bufStart, 1);
-    buf = nboPackUByte(buf, (uint8_t)name.length());
-    buf = nboPackString(buf, name.c_str(), name.length());
-    buf = nboPackUByte(buf, (uint8_t)value.length());
-    buf = nboPackString(buf, value.c_str(), value.length());
-    broadcastMessage(MsgSetVar, (char*)buf - (char*)bufStart, bufStart);
+
+    auto msg = GetMessageBuffer();
+    msg->packUShort(1);
+    msg->packUByte((uint8_t)name.length());
+    msg->packString(name.c_str(), name.length());
+    msg->packUByte((uint8_t)value.length());
+    msg->packString(value.c_str(), value.length());
+    broadcastPacket(MsgSetVar, msg);
 }
 
 
 static void sendUDPupdate(int playerIndex)
 {
     // confirm inbound UDP with a TCP message
-    directMessage(playerIndex, MsgUDPLinkEstablished, 0, getDirectMessageBuffer());
+    sendPacket(playerIndex, MsgUDPLinkEstablished, GetMessageBuffer());
     // request/test outbound UDP with a UDP back to where we got client's packet
-    directMessage(playerIndex, MsgUDPLinkRequest, 0, getDirectMessageBuffer());
+    sendPacket(playerIndex, MsgUDPLinkRequest, GetMessageBuffer());
 }
 
 static int lookupPlayer(const PlayerId& id)
@@ -360,11 +401,13 @@ void sendFlagUpdate(FlagInfo &flag)
 {
     void *buf, *bufStart = getDirectMessageBuffer();
     buf = nboPackUShort(bufStart,1);
-    bool hide
-        = (flag.flag.type->flagTeam == ::NoTeam)
-          && (flag.player == -1);
+    bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
     buf = flag.pack(buf, hide);
-    broadcastMessage(MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+
+    auto msg = GetMessageBuffer();
+    msg->packUShort(1);
+    Shots::PackFlag(flag, hide, msg);
+    broadcastPacket(MsgFlagUpdate, msg);
 }
 
 static float nextGameTime()

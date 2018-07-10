@@ -552,6 +552,11 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
         return routePacket(code, len, data, mode);
 }
 
+bool Record::addPacket(uint16_t code, MessageBuffer::Ptr message, uint16_t mode = RealPacket)
+{
+    addPacket(code, message->size(), ((unsigned char*)message->buffer() + 4), mode);
+}
+
 
 static bool routePacket(u16 code, int len, const void * data, u16 mode)
 {
