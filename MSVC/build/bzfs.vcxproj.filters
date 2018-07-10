@@ -181,6 +181,9 @@
     <ClCompile Include="..\..\src\bzfs\bzfsAPIWorld.cxx">
       <Filter>Source Files\API</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzfs\MessagBuffers.cxx">
+      <Filter>Source Files\Server</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzfs\CustomArc.h">
@@ -360,6 +363,9 @@
     </ClInclude>
     <ClInclude Include="..\..\include\bzfsAPIWorld.h">
       <Filter>Header Files\API</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzfs\MessageBuffers.h">
+      <Filter>Header Files\Server</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

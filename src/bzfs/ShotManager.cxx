@@ -26,6 +26,65 @@
 
 namespace Shots
 {
+    void PackShotUpdate(ShotUpdate &info, MessageBuffer::Ptr msg)
+    {
+        msg->packUByte(info.player);
+        msg->packUShort(info.id);
+        msg->packVector(info.pos);
+        msg->packVector(info.vel);
+        msg->packFloat(info.dt);
+        msg->packShort(info.team);
+    }
+
+    void PackFlagType(FlagType::Ptr info, MessageBuffer::Ptr msg)
+    {
+        msg->packUByte((info->flagAbbv.size() > 0) ? info->flagAbbv[0] : 0);
+        msg->packUByte((info->flagAbbv.size() > 1) ? info->flagAbbv[1] : 0);
+    }
+
+    void PackFirningInfo(FiringInfo &info, MessageBuffer::Ptr msg)
+    {
+        msg->packFloat(info.timeSent);
+        msg->packUShort((uint16_t)info.localID);
+        PackShotUpdate(info.shot,msg);
+        PackFlagType(info.flagType, msg);
+        msg->packFloat(info.lifetime);
+    }
+
+    void PackCustomFlagType(FlagType::Ptr info, MessageBuffer::Ptr msg)
+    {
+        PackFlagType(info, msg);
+        msg->packUByte(uint8_t(info->flagQuality));
+        msg->packUByte(uint8_t(info->flagShot));
+        msg->packUByte(uint8_t(info->flagEffect));
+        msg->packStdString(info->flagName);
+        msg->packStdString(info->flagHelp);
+    }
+
+    void PackFlag(FlagInfo& flag, bool hide, MessageBuffer::Ptr msg)
+    {
+        if (flag.flag.type->flagTeam != ::NoTeam)
+            hide = false;
+        if (flag.player != -1)
+            hide = false;
+        msg->packUShort(flag.getIndex());
+
+        if (hide)
+            PackFlagType(Flags::Unknown, msg);
+        else
+            PackFlagType(flag.flag.type, msg);
+
+        msg->packUShort(uint16_t(flag.flag.status));
+        msg->packUShort(uint16_t(flag.flag.endurance));
+        msg->packUByte(flag.flag.owner);
+        msg->packVector(flag.flag.position);
+        msg->packVector(flag.flag.launchPosition);
+        msg->packVector(flag.flag.landingPosition);
+        msg->packFloat(flag.flag.flightTime);
+        msg->packFloat(flag.flag.flightEnd);
+        msg->packFloat(flag.flag.initialVelocity);
+    }
+
     //----------------Manager
 
     double Manager::DeadShotCacheTime = 10.0;
