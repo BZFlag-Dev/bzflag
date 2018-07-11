@@ -2773,7 +2773,7 @@ BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, bz_ePlayerDeathReason
     return true;
 }
 
-BZF_API bool bz_setPlayerTeam(int playerID, bz_eTeamType teamID)
+BZF_API bool bz_changePlayerTeam(int playerID, bz_eTeamType teamID)
 {
     return changeTeam(playerID, (TeamColor)convertTeam(teamID));
 }
