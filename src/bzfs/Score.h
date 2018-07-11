@@ -36,6 +36,7 @@ public:
     void  kill();
     void  reset();
     void  pack(MessageBuffer::Ptr message);
+    void*  pack(void* buf);
     bool  reached() const;
     int   getWins() const
     {

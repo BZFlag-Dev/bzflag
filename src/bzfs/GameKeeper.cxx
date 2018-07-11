@@ -31,11 +31,10 @@
 GameKeeper::Player* GameKeeper::Player::playerList[PlayerSlot] = { 0 }; // this is suspect...
 bool GameKeeper::Player::allNeedHostbanChecked = false;
 
-void* PackPlayerInfo(void *buf, int playerIndex, uint8_t properties)
+void PackPlayerInfo(MessageBuffer::Ptr msg, int playerIndex, uint8_t properties)
 {
-    buf = nboPackUByte(buf, playerIndex);
-    buf = nboPackUByte(buf, properties);
-    return buf;
+    msg->packUByte(playerIndex);
+    msg->packUByte(properties);
 }
 
 GameKeeper::Player::Player(int _playerIndex,
@@ -259,39 +258,36 @@ void GameKeeper::Player::updateNextGameTime()
     return;
 }
 
-void* GameKeeper::Player::packAdminInfo(void* buf)
+void GameKeeper::Player::packAdminInfo(MessageBuffer::Ptr msg)
 {
     if (netHandler == 0)
     {
-        buf = nboPackUByte(buf, 5);
-        buf = nboPackUByte(buf, playerIndex);
-        buf = nboPackUByte(buf, 127);
-        buf = nboPackUByte(buf, 0);
-        buf = nboPackUByte(buf, 0);
-        buf = nboPackUByte(buf, 1);
+        msg->packUByte(5);
+        msg->packUByte(playerIndex);
+        msg->packUByte(127);
+        msg->packUByte(0);
+        msg->packUByte(0);
+        msg->packUByte(1);
     }
     else
     {
-        buf = nboPackUByte(buf, netHandler->sizeOfIP());
-        buf = nboPackUByte(buf, playerIndex);
-        buf = netHandler->packAdminInfo(buf);
+        msg->packUByte(netHandler->sizeOfIP());
+        msg->packUByte(playerIndex);
+        msg->legacyPack(netHandler->packAdminInfo(msg->current_buffer()));
     }
-    return buf;
 }
 
-void* GameKeeper::Player::packPlayerInfo(void* buf)
+void GameKeeper::Player::packPlayerInfo(MessageBuffer::Ptr msg)
 {
-    buf = PackPlayerInfo(buf, playerIndex, accessInfo.getPlayerProperties());
-    return buf;
+    PackPlayerInfo(msg, playerIndex, accessInfo.getPlayerProperties());
 }
 
-void* GameKeeper::Player::packPlayerUpdate(void* buf)
+void GameKeeper::Player::packPlayerUpdate(MessageBuffer::Ptr msg)
 {
-    buf = nboPackUByte(buf, playerIndex);
-    buf = player.packUpdate(buf);
-    buf = score.pack(buf);
-    buf = player.packId(buf);
-    return buf;
+    msg->packUByte(playerIndex);
+    msg->legacyPack(player.packUpdate(msg->current_buffer()));
+    score.pack(msg);
+    msg->legacyPack(player.packId(msg->current_buffer()));
 }
 
 void GameKeeper::Player::setPlayerAddMessage(PlayerAddMessage& msg)

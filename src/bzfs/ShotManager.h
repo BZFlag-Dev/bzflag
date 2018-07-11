@@ -22,6 +22,7 @@
 #include "TimeKeeper.h"
 #include "FlagInfo.h"
 #include "Obstacle.h"
+#include "MessageBuffers.h"
 
 #include <string>
 #include <vector>

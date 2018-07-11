@@ -428,26 +428,25 @@ static float nextGameTime()
     return nextTime;
 }
 
-static int makeGameTime(void* bufStart, float lag)
+static size_t makeGameTime(MessageBuffer::Ptr msg, float lag)
 {
-    void *buf = bufStart;
-    buf = GameTime::pack(buf, lag);
-    return ((char*)buf - (char*)bufStart);
+    msg->legacyPack(GameTime::pack(msg->current_buffer(), lag));
+    return msg->size();
 }
 
 static void sendGameTime(GameKeeper::Player* gkPlayer)
 {
     if (Replay::enabled())
         return;
+
     if (gkPlayer != NULL)
     {
-        void* buf = getDirectMessageBuffer();
+        auto msg = GetMessageBuffer();
         const float lag = gkPlayer->lagInfo.getLagAvg();
-        const int length = makeGameTime(buf, lag);
-        directMessage(*gkPlayer, MsgGameTime, length, buf);
+        makeGameTime(msg, lag);
+        sendPacket(*gkPlayer, MsgGameTime, msg);
         gkPlayer->updateNextGameTime();
     }
-    return;
 }
 
 static void sendPendingGameTime()
@@ -456,59 +455,52 @@ static void sendPendingGameTime()
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
-        if ((gkPlayer != NULL)
-                && gkPlayer->player.isHuman()
-                && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
+        if ((gkPlayer != NULL) && gkPlayer->player.isHuman()  && (gkPlayer->getNextGameTime() - nowTime) < 0.0f)
             sendGameTime(gkPlayer);
     }
-    return;
 }
 
 
 // Update the player "playerIndex" with all the flags status
 static void sendFlagUpdate(int playerIndex)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
-    int result;
 
-    void *buf, *bufStart = getDirectMessageBuffer();
+    int maxFlags = MaxPacketLen / 55; // flags pack down to 55 bytes
+    if (maxFlags > 1)
+        maxFlags--;
 
-    buf = nboPackUShort(bufStart,0); //placeholder
-    int cnt = 0;
-    int length = sizeof(uint16_t);
+    std::vector<std::vector<int> > flagsToSend;
+
+    // get the list of flags to send, broken up into groups that fit in one packet
     for (int flagIndex = 0; flagIndex < numFlags; flagIndex++)
     {
         FlagInfo *flag = FlagInfo::get(flagIndex);
-        if (!flag)
+        if (!flag || !flag->exist())
             continue;
-        if (flag->exist())
-        {
-            if ((length + sizeof(uint16_t) + FlagPLen) > MaxPacketLen - 2*sizeof(uint16_t))
-            {
-                nboPackUShort(bufStart, cnt);
-                result = directMessage(*playerData, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
-                if (result == -1)
-                    return;
-                cnt = 0;
-                length = sizeof(uint16_t);
-                buf = nboPackUShort(bufStart,0); //placeholder
-            }
 
-            bool hide = (flag->flag.type->flagTeam == ::NoTeam) &&
-                        (flag->player == -1);
-            buf = flag->pack(buf, hide);
-            length += sizeof(uint16_t)+FlagPLen;
-            cnt++;
-        }
+        if (flagsToSend[flagsToSend.size() - 1].size() == maxFlags - 1)
+            flagsToSend.push_back(std::vector<int>());
+
+        flagsToSend[flagsToSend.size() - 1].push_back(flagIndex);
     }
 
-    if (cnt > 0)
+    // send out the flag packets
+    for (auto& group : flagsToSend)
     {
-        nboPackUShort(bufStart, cnt);
-        directMessage(*playerData, MsgFlagUpdate, (char*)buf - (char*)bufStart, bufStart);
+        auto message = GetMessageBuffer();
+        message->packUShort((uint16_t)group.size());
+
+        for (auto flagIndex : group)
+        {
+            FlagInfo *flag = FlagInfo::get(flagIndex);
+
+            bool hide = (flag->flag.type->flagTeam == ::NoTeam) && (flag->player == -1);
+            Shots::PackFlag(*flag, hide, message);
+        }
+        sendPacket(*playerData, MsgFlagUpdate, message);
     }
 }
 
@@ -519,45 +511,45 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
     // If teamIndex2 is -1, just send teamIndex1 team
     // else send both teamIndex1 and teamIndex2 teams
 
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto message = GetMessageBuffer();
     if (teamIndex1 == -1)
     {
-        buf = nboPackUByte(bufStart, CtfTeams);
+        message->packUByte(CtfTeams);
         for (int t = 0; t < CtfTeams; t++)
         {
-            buf = nboPackUShort(buf, t);
-            buf = team[t].team.pack(buf);
+            message->packUShort(t);
+            message->legacyPack(team[t].team.pack(message->buffer()));
         }
     }
     else if (teamIndex2 == -1)
     {
-        buf = nboPackUByte(bufStart, 1);
-        buf = nboPackUShort(buf, teamIndex1);
-        buf = team[teamIndex1].team.pack(buf);
+        message->packUByte(1);
+        message->packUShort(teamIndex1);
+        message->legacyPack(team[teamIndex1].team.pack(message->buffer()));
     }
     else
     {
-        buf = nboPackUByte(bufStart, 2);
-        buf = nboPackUShort(buf, teamIndex1);
-        buf = team[teamIndex1].team.pack(buf);
-        buf = nboPackUShort(buf, teamIndex2);
-        buf = team[teamIndex2].team.pack(buf);
+        message->packUByte(2);
+        message->packUShort(teamIndex1);
+        message->legacyPack(team[teamIndex1].team.pack(message->buffer()));
+        message->packUShort(teamIndex2);
+        message->legacyPack(team[teamIndex2].team.pack(message->buffer()));
     }
 
     if (playerIndex == -1)
-        broadcastMessage(MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
+        broadcastPacket(MsgTeamUpdate, message);
     else
-        directMessage(playerIndex, MsgTeamUpdate, (char*)buf - (char*)bufStart, bufStart);
+        sendPacket(playerIndex, MsgTeamUpdate, message);
 }
 
 void sendClosestFlagMessage(int playerIndex,FlagType::Ptr type, float pos[3] )
 {
     if (!type)
         return;
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackVector(bufStart, pos);
-    buf = nboPackStdString(buf, std::string(type->flagName));
-    directMessage(playerIndex, MsgNearFlag,(char*)buf - (char*)bufStart, bufStart);
+    auto message = GetMessageBuffer();
+    message->packVector(pos);
+    message->packStdString(std::string(type->flagName));
+    sendPacket(playerIndex, MsgNearFlag, message);
 }
 
 static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
@@ -565,16 +557,16 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
     if (!playerData->player.isPlaying())
         return;
 
-    void *bufStart = getDirectMessageBuffer();
-    void *buf      = playerData->packPlayerUpdate(bufStart);
+    auto msg = GetMessageBuffer();
+    playerData->packPlayerUpdate(msg);
 
     if (playerData->getIndex() == index)
     {
         // send all players info about player[playerIndex]
-        broadcastMessage(MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+        broadcastPacket(MsgAddPlayer, msg);
     }
     else
-        directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
+        sendPacket(index, MsgAddPlayer, msg);
 }
 
 std::string GetPlayerIPAddress( int i)
@@ -593,17 +585,17 @@ std::string GetPlayerIPAddress( int i)
 
 void sendPlayerUpdate(GameKeeper::Player* player)
 {
-    void* msg = getDirectMessageBuffer();
+    auto msg = GetMessageBuffer();
     // Send the time frozen at each start of scene iteration, as all
     // dead reckoning use that
     const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
-    void* buf = msg;
+ 
     uint16_t code;
-    buf = nboPackFloat(buf, timeStamp);
-    buf = nboPackUByte(buf, player->getIndex());
+    msg->packFloat(timeStamp);
+    msg->packUByte(player->getIndex());
 
     // code will be MsgPlayerUpdate or MsgPlayerUpdateSmall
-    buf = player->lastState.pack(buf, code);
+    msg->legacyPack(player->lastState.pack(msg->current_buffer(), code));
 
     bz_PlayerUpdateEventData_V1 puEventData;
     playerStateToAPIState(puEventData.lastState, player->lastState);
@@ -612,17 +604,17 @@ void sendPlayerUpdate(GameKeeper::Player* player)
     worldEventManager.callEvents(bz_ePlayerUpdateEvent, &puEventData);
 
    // variable length
-    const int len = (char*)buf - (char*)msg;
-    broadcastMessage(code, len, msg);
+    broadcastPacket(code, msg);
 }
 
 void sendPlayerInfo()
 {
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto msg = GetMessageBuffer();
+
     int i, numPlayers = 0;
     for (i = 0; i < int(NumTeams); i++)
         numPlayers += team[i].team.size;
-    buf = nboPackUByte(bufStart, numPlayers);
+    msg->packUByte(numPlayers);
     for (i = 0; i < curMaxPlayers; ++i)
     {
         GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -643,28 +635,27 @@ void sendPlayerInfo()
 
             worldEventManager.callEvents(bz_eGetPlayerInfoEvent,&playerInfoData);
 
-            buf = PackPlayerInfo(buf,i,GetPlayerProperties(playerInfoData.registered,playerInfoData.verified,playerInfoData.admin));
+            PackPlayerInfo(msg,i,GetPlayerProperties(playerInfoData.registered,playerInfoData.verified,playerInfoData.admin));
         }
     }
-    broadcastMessage(MsgPlayerInfo, (char*)buf - (char*)bufStart, bufStart);
+    broadcastPacket(MsgPlayerInfo, msg);
 }
 
 // Send score updates to players
 void sendPlayerScores(GameKeeper::Player ** players, int nPlayers)
 {
-    void *buf, *bufStart;
-    bufStart = getDirectMessageBuffer();
+    MessageBuffer::Ptr msg = GetMessageBuffer();
 
-    buf = nboPackUByte(bufStart, nPlayers);
+    msg->packUByte(nPlayers);
 
     for (int i = 0; i < nPlayers; i++)
     {
         GameKeeper::Player *player = players[i];
 
-        buf = nboPackUByte(buf, player->getIndex());
-        buf = player->score.pack(buf);
+        msg->packUByte(player->getIndex());
+        player->score.pack(msg);
     }
-    broadcastMessage(MsgScore, (char*)buf-(char*)bufStart, bufStart);
+    broadcastPacket(MsgScore, msg);
 }
 
 void sendIPUpdate(int targetPlayer, int playerIndex)
@@ -680,31 +671,30 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
     }
 
     // send to who?
-    std::vector<int> receivers
-        = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
+    std::vector<int> receivers = GameKeeper::Player::allowed(PlayerAccessInfo::playerList, targetPlayer);
 
     // pack and send the message(s)
-    void *buf, *bufStart = getDirectMessageBuffer();
+    MessageBuffer::Ptr msg = GetMessageBuffer();
     if (playerIndex >= 0)
     {
-        buf = nboPackUByte(bufStart, 1);
-        buf = playerData->packAdminInfo(buf);
+        msg->packUByte(1);
+        playerData->packAdminInfo(msg);
         for (unsigned int i = 0; i < receivers.size(); ++i)
         {
-            directMessage(receivers[i], MsgAdminInfo,
-                          (char*)buf - (char*)bufStart, bufStart);
+            sendPacket(receivers[i], MsgAdminInfo, msg, false);
         }
         if (Record::enabled())
         {
-            Record::addPacket(MsgAdminInfo,
-                              (char*)buf - (char*)bufStart, bufStart, HiddenPacket);
+            Record::addPacket(MsgAdminInfo, msg, HiddenPacket);
         }
+
+        ReleaseMessageBuffer(msg);
     }
     else
     {
         int ipsPerPackage = (MaxPacketLen - 3) / (PlayerIdPLen + 7);
         int i, c = 0;
-        buf = nboPackUByte(bufStart, 0); // will be overwritten later
+        msg->packUByte(0); // will be overwritten later
         for (i = 0; i < curMaxPlayers; ++i)
         {
             playerData = GameKeeper::Player::getPlayerByIndex(i);
@@ -712,16 +702,20 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
                 continue;
             if (playerData->player.isPlaying())
             {
-                buf = playerData->packAdminInfo(buf);
+                playerData->packAdminInfo(msg);
                 ++c;
             }
             if (c == ipsPerPackage || ((i + 1 == curMaxPlayers) && c))
             {
-                int size = (char*)buf - (char*)bufStart;
-                buf = nboPackUByte(bufStart, c);
+                msg->push_repack(0);
+                msg->packUByte(c);
+                msg->pop_offset();
                 c = 0;
                 for (unsigned int j = 0; j < receivers.size(); ++j)
-                    directMessage(receivers[j], MsgAdminInfo, size, bufStart);
+                    sendPacket(receivers[j], MsgAdminInfo, msg);
+
+                msg = GetMessageBuffer();
+                msg->packUByte(0); // will be overwritten later
             }
         }
     }
@@ -732,8 +726,7 @@ void resetTeamScores ( void )
     // reset team scores
     for (int i = RedTeam; i <= PurpleTeam; i++)
     {
-        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins,
-                team[i].team.getWins(), 0);
+        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
         worldEventManager.callEvents(&eventData);
         eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
         worldEventManager.callEvents(&eventData);

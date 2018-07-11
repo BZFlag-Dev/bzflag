@@ -43,6 +43,29 @@ void* MessageBuffer::buffer()
     return raw_buffer;
 }
 
+void* MessageBuffer::current_buffer()
+{
+    return write_ptr;
+}
+
+void MessageBuffer::push_repack(size_t offset)
+{
+    saved_ptr = write_ptr;
+    write_ptr = ((unsigned char*)raw_buffer) + offset + 4;
+}
+
+void MessageBuffer::pop_offset()
+{
+    write_ptr = saved_ptr;
+    saved_ptr = nullptr;
+}
+
+
+void MessageBuffer::legacyPack(void* newEndPtr)
+{
+    write_ptr = newEndPtr;
+}
+
 void MessageBuffer::packUByte(uint8_t val)
 {
     write_ptr = nboPackUByte(write_ptr, val);

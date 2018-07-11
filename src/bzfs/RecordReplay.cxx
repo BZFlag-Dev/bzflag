@@ -552,7 +552,7 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
         return routePacket(code, len, data, mode);
 }
 
-bool Record::addPacket(uint16_t code, MessageBuffer::Ptr message, uint16_t mode = RealPacket)
+bool Record::addPacket(uint16_t code, MessageBuffer::Ptr message, uint16_t mode)
 {
     addPacket(code, message->size(), ((unsigned char*)message->buffer() + 4), mode);
 }
@@ -1661,14 +1661,14 @@ static bool saveRabbitState()
 static bool savePlayersState()
 {
     int i, count = 0;
-    char bufStart[MaxPacketLen];
-    char infoBuf[MaxPacketLen];
-    char adminBuf[MaxPacketLen];
+    MessageBuffer bufStart;
+    MessageBuffer infoBuf;
+    MessageBuffer adminBuf;
     void *buf, *infoPtr, *adminPtr;
 
     // placeholders for the player counts
-    infoPtr = infoBuf + sizeof(unsigned char);
-    adminPtr = adminBuf + sizeof(unsigned char);
+    infoBuf.packUByte(0);
+    adminBuf.packUByte(0);
 
     for (i = 0; i < curMaxPlayers; i++)
     {
@@ -1679,16 +1679,15 @@ static bool savePlayersState()
         if (pi->isPlaying())
         {
             // Complete MsgAddPlayer
-            buf = nboPackUByte(bufStart, i);
-            buf = pi->packUpdate(buf);
-            buf = gkPlayer->score.pack(buf);
-            buf = pi->packId(buf);
-            routePacket(MsgAddPlayer,
-                        (char*)buf - (char*)bufStart, bufStart, StatePacket);
+            bufStart.packUByte(i);
+            bufStart.legacyPack(pi->packUpdate(bufStart.current_buffer()));
+            bufStart.legacyPack(gkPlayer->score.pack(bufStart.current_buffer()));
+            bufStart.legacyPack(pi->packId(bufStart.current_buffer()));
+            routePacket(MsgAddPlayer, bufStart.size(), (char*)bufStart.buffer() + 4, StatePacket);
             // Part of MsgPlayerInfo
-            infoPtr = gkPlayer->packPlayerInfo(infoPtr);
+            gkPlayer->packPlayerInfo(infoBuf);
             // Part of MsgAdminInfo
-            adminPtr = gkPlayer->packAdminInfo(adminPtr);
+            gkPlayer->packAdminInfo(adminBuf);
 
             count++;
         }
