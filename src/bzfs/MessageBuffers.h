@@ -33,16 +33,24 @@ public:
     void packString(const void* val, int len);
     void packStdString(const std::string& str);
 
+    void legacyPack(void* newEndPtr);
+
     void reset();
 
     size_t size();
     void* buffer();
 
+    void* current_buffer();
+
+    void push_repack(size_t offset);
+    void pop_offset();
+
     bool locked = false;
 
 protected:
     unsigned char*   raw_buffer = nullptr;
-    void*   write_ptr;
+    void*   write_ptr = nullptr;
+    void*   saved_ptr = nullptr;
 };
 
 MessageBuffer::Ptr GetMessageBuffer();

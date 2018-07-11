@@ -55,7 +55,7 @@ FiringInfo::FiringInfo()
     // do nothing -- must be prepared before use by unpack() or assignment
 }
 
-void           FiringInfo::pack(MessageBuffer::Ptr msg) const
+void* FiringInfo::pack(void* buf) const
 {
     buf = nboPackFloat(buf, timeSent);
     buf = nboPackUShort(buf, (uint16_t)localID);

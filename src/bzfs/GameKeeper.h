@@ -86,9 +86,9 @@ public:
         static void     reloadAccessDatabase();
 
         bool            loadEnterData(uint16_t& rejectCode, char* rejectMsg);
-        void*           packAdminInfo(void* buf);
-        void*           packPlayerInfo(void* buf);
-        void*           packPlayerUpdate(void* buf);
+        void            packAdminInfo(MessageBuffer::Ptr msg);
+        void            packPlayerInfo(MessageBuffer::Ptr msg);
+        void            packPlayerUpdate(MessageBuffer::Ptr msg);
 
         void            setPlayerAddMessage(PlayerAddMessage &msg);
 
@@ -394,7 +394,7 @@ inline GameKeeper::Player* GameKeeper::Player::getPlayerByIndex(int
     return playerList[_playerIndex];
 }
 
-void* PackPlayerInfo(void* buf, int playerIndex, uint8_t properties );
+void PackPlayerInfo(MessageBuffer::Ptr msg, int playerIndex, uint8_t properties );
 
 // For hostban checking, to avoid check and check again
 inline void GameKeeper::Player::setAllNeedHostbanChecked(bool set)
