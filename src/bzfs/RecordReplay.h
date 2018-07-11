@@ -150,7 +150,7 @@ static const unsigned int ReplayHeaderSize =
 // Some notes:
 //
 // - Any packets that get broadcast are buffered. Look for the
-//   Record::addPacket() hook in broadcastMessage(). For now,
+//   Record::addPacket() hook in broadcastPacket(). For now,
 //   it will not be mainting any information with regards to the
 //   state of the game during replay. It'll just be firing the
 //   packets back out the way that they came.

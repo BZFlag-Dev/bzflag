@@ -109,10 +109,6 @@ extern void  sendDrop(FlagInfo &flag);
 extern void  sendIPUpdate(int targetPlayer = -1, int playerIndex = -1);
 extern void  sendPlayerInfo(void);
 
-extern char *getDirectMessageBuffer();
-extern void  directMessage(int playerIndex, uint16_t code, int len, void *msg);
-extern void  broadcastMessage(uint16_t code, int len, void *msg);
-
 extern void sendPacket(int playerIndex, uint16_t code, MessageBuffer::Ptr message, bool release = true);
 extern void broadcastPacket(uint16_t code, MessageBuffer::Ptr message);
 

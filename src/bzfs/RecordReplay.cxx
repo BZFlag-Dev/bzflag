@@ -554,9 +554,8 @@ bool Record::addPacket(u16 code, int len, const void * data, u16 mode)
 
 bool Record::addPacket(uint16_t code, MessageBuffer::Ptr message, uint16_t mode)
 {
-    addPacket(code, message->size(), ((unsigned char*)message->buffer() + 4), mode);
+    return addPacket(code, message->size(), ((unsigned char*)message->buffer() + 4), mode);
 }
-
 
 static bool routePacket(u16 code, int len, const void * data, u16 mode)
 {
@@ -568,14 +567,12 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
         RRpacket *p = newPacket(mode, code, len, data);
         p->timestamp = getRRtime();
         addHeadPacket(&RecordBuf, p);
-        logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-                        (int)p->mode, p->len, msgString(p->code), p->data);
+        logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p->mode, p->len, msgString(p->code), p->data);
 
         if (RecordBuf.byteCount > RecordMaxBytes)
         {
             logDebugMessage(4,"routePacket: deleting until State Update\n");
-            while (((p = delTailPacket(&RecordBuf)) != NULL) &&
-                    (p->mode != UpdatePacket))
+            while (((p = delTailPacket(&RecordBuf)) != NULL) && (p->mode != UpdatePacket))
             {
                 delete[] p->data;
                 delete p;
@@ -588,8 +585,7 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
         p.timestamp = getRRtime();
         initPacket(mode, code, len, data, &p);
         savePacket(&p, RecordFile);
-        logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n",
-                        (int)p.mode, p.len, msgString(p.code), p.data);
+        logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p.mode, p.len, msgString(p.code), p.data);
     }
 
     return true;
@@ -741,8 +737,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     {
         if (badFilename(filename))
         {
-            sendMessage(ServerPlayer, playerIndex,
-                        "Files must be in the recordings directory");
+            sendMessage(ServerPlayer, playerIndex, "Files must be in the recordings directory");
             return false;
         }
     }
@@ -806,8 +801,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
     if (!preloadVariables())
     {
-        snprintf(buffer, MessageLen, "Could not preload variables: %s",
-                 name.c_str());
+        snprintf(buffer, MessageLen, "Could not preload variables: %s", name.c_str());
         sendMessage(ServerPlayer, playerIndex, buffer);
         replayReset();
         return false;
@@ -817,23 +811,24 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
     snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
-    snprintf(buffer, MessageLen, "  author:     %s",
-             header.callSign);
+
+    snprintf(buffer, MessageLen, "  author:     %s", header.callSign);
     sendMessage(ServerPlayer, playerIndex, buffer);
+
     snprintf(buffer, MessageLen, "  protocol:   %.8s", header.ServerVersion);
     sendMessage(ServerPlayer, playerIndex, buffer);
+
     snprintf(buffer, MessageLen, "  server:     %s", header.appVersion);
     sendMessage(ServerPlayer, playerIndex, buffer);
-    snprintf(buffer, MessageLen, "  seconds:    %.1f",
-             (float)header.filetime/1000000.0f);
+
+    snprintf(buffer, MessageLen, "  seconds:    %.1f", (float)header.filetime/1000000.0f);
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     time_t startTime = (time_t)(ReplayPos->timestamp / 1000000);
     snprintf(buffer, MessageLen, "  start:      %s", ctime(&startTime));
     sendMessage(ServerPlayer, playerIndex, buffer);
 
-    time_t endTime =
-        (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
+    time_t endTime = (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
     snprintf(buffer, MessageLen, "  end:	%s", ctime(&endTime));
     sendMessage(ServerPlayer, playerIndex, buffer);
 
@@ -1042,13 +1037,11 @@ bool Replay::sendFileList(int playerIndex, const char* options)
         if (glob_match(pattern, entry.file))
         {
             entriesSent++;
-            snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",
-                     entry.entryNum + 1, entry.file.c_str(), entry.time);
+            snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",  entry.entryNum + 1, entry.file.c_str(), entry.time);
             sendMessage(ServerPlayer, playerIndex, buffer);
             if (entriesSent >= MaxListOutput)
             {
-                snprintf(buffer, MessageLen, "Not listing more then %i entries, "
-                         "try using pattern matching.", MaxListOutput);
+                snprintf(buffer, MessageLen, "Not listing more then %i entries, try using pattern matching.", MaxListOutput);
                 sendMessage(ServerPlayer, playerIndex, buffer);
                 break;
             }
@@ -1300,9 +1293,9 @@ bool Replay::sendPackets()
                             ((p->mode == RealPacket) && (state == ReplayStateful)))
                     {
                         // the 4 bytes before p->data need to be allocated
-                        void *buf = getDirectMessageBuffer();
-                        memcpy(buf, p->data, p->len);
-                        directMessage(i, p->code, p->len, buf);
+                        auto buf = GetMessageBuffer();
+                        buf->packBuffer(p->data, p->len);
+                        sendPacket(i, p->code, buf);
                     }
                 }
 
@@ -1661,14 +1654,13 @@ static bool saveRabbitState()
 static bool savePlayersState()
 {
     int i, count = 0;
-    MessageBuffer bufStart;
-    MessageBuffer infoBuf;
-    MessageBuffer adminBuf;
-    void *buf, *infoPtr, *adminPtr;
+    MessageBuffer::Ptr bufStart = std::make_shared<MessageBuffer>();
+    MessageBuffer::Ptr infoBuf = std::make_shared<MessageBuffer>();
+    MessageBuffer::Ptr adminBuf = std::make_shared<MessageBuffer>();
 
     // placeholders for the player counts
-    infoBuf.packUByte(0);
-    adminBuf.packUByte(0);
+    infoBuf->packUByte(0);
+    adminBuf->packUByte(0);
 
     for (i = 0; i < curMaxPlayers; i++)
     {
@@ -1679,11 +1671,11 @@ static bool savePlayersState()
         if (pi->isPlaying())
         {
             // Complete MsgAddPlayer
-            bufStart.packUByte(i);
-            bufStart.legacyPack(pi->packUpdate(bufStart.current_buffer()));
-            bufStart.legacyPack(gkPlayer->score.pack(bufStart.current_buffer()));
-            bufStart.legacyPack(pi->packId(bufStart.current_buffer()));
-            routePacket(MsgAddPlayer, bufStart.size(), (char*)bufStart.buffer() + 4, StatePacket);
+            bufStart->packUByte(i);
+            bufStart->legacyPack(pi->packUpdate(bufStart->current_buffer()));
+            bufStart->legacyPack(gkPlayer->score.pack(bufStart->current_buffer()));
+            bufStart->legacyPack(pi->packId(bufStart->current_buffer()));
+            routePacket(MsgAddPlayer, bufStart->size(), (char*)bufStart->buffer() + 4, StatePacket);
             // Part of MsgPlayerInfo
             gkPlayer->packPlayerInfo(infoBuf);
             // Part of MsgAdminInfo
@@ -1697,17 +1689,20 @@ static bool savePlayersState()
     // first joins, we also resend the player and admin info during state
     // updates. This way, the scoreboard is current for players that joined
     // before an initializing state update.
-    if (infoPtr != (infoBuf + sizeof(unsigned char)))
+    if (infoBuf->size() > 1)
     {
-        nboPackUByte(infoBuf, count);
-        routePacket(MsgPlayerInfo,
-                    (char*)infoPtr - (char*)infoBuf, infoBuf, StatePacket);
+        infoBuf->push_repack(0);
+        infoBuf->packUByte(count);
+        infoBuf->pop_offset();
+
+        routePacket(MsgPlayerInfo, infoBuf->size(), (char*)infoBuf->buffer() + 4, StatePacket);
     }
-    if (adminPtr != (adminBuf + sizeof(unsigned char)))
+    if (adminBuf->size() > 1)
     {
-        nboPackUByte(adminBuf, count);
-        routePacket(MsgAdminInfo,
-                    (char*)adminPtr - (char*)adminBuf, adminBuf, HiddenPacket);
+        adminBuf->push_repack(0);
+        adminBuf->packUByte(count);
+        adminBuf->pop_offset();
+        routePacket(MsgAdminInfo, adminBuf->size(), (char*)adminBuf->buffer() + 4, HiddenPacket);
         // use a hidden packet for the IPs
     }
 
@@ -1720,12 +1715,13 @@ static bool savePlayersState()
         if (pi->isAlive())
         {
             float pos[3] = {0.0f, 0.0f, 0.0f};
-            // Complete MsgAlive
-            buf = nboPackUByte(bufStart, i);
-            buf = nboPackVector(buf, pos);
-            buf = nboPackFloat(buf, pos[0]); // azimuth
-            routePacket(MsgAlive,
-                        (char*)buf - (char*)bufStart, bufStart, StatePacket);
+
+            bufStart->push_repack(0);
+            bufStart->packUByte(i);
+            bufStart->packVector(pos);
+            bufStart->packFloat(pos[0]);
+            bufStart->pop_offset();
+            routePacket(MsgAlive, bufStart->size(), (char*)bufStart->buffer() + 4, StatePacket);
         }
     }
 
@@ -1807,14 +1803,14 @@ static bool saveGameTimeState()
 static bool resetStates()
 {
     int i;
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto buf = GetMessageBuffer();
 
     // reset team scores
-    buf = nboPackUByte(bufStart, CtfTeams);
+    buf->packUByte(CtfTeams);
     for (i = 0; i < CtfTeams; i++)
     {
-        buf = nboPackUShort(buf, i);
-        buf = team[i].team.pack(buf);
+        buf->packUShort(i);
+        buf->legacyPack(team[i].team.pack(buf->current_buffer()));
     }
     for (i = MaxPlayers; i < curMaxPlayers; i++)
     {
@@ -1822,19 +1818,22 @@ static bool resetStates()
         if (gkPlayer == NULL)
             continue;
         if (gkPlayer->player.isPlaying())
-            directMessage(i, MsgTeamUpdate, (char*)buf-(char*)bufStart, bufStart);
+            sendPacket(i, MsgTeamUpdate, buf, false);
     }
 
     // reset players and flags using MsgReplayReset
-    buf = nboPackUByte(bufStart, MaxPlayers); // the last player to remove
+    buf->push_repack(0);
+    buf->packUByte(MaxPlayers); // the last player to remove
     for (i = MaxPlayers; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *gkPlayer = GameKeeper::Player::getPlayerByIndex(i);
         if (gkPlayer == NULL)
             continue;
         if (gkPlayer->player.isPlaying())
-            directMessage(i, MsgReplayReset, (char*)buf-(char*)bufStart, bufStart);
+            sendPacket(i, MsgReplayReset, buf, false);
     }
+
+    ReleaseMessageBuffer(buf);
 
     // reset the local view of the players' state
     for (i = MaxPlayers; i < curMaxPlayers; i++)
