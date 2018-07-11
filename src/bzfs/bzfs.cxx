@@ -243,7 +243,6 @@ static bool realPlayerWithNet(const PlayerId& id)
     return playerData && playerData->netHandler && playerData->player.isPlaying() && !playerData->isParting;
 }
 
-
 static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 {
     if (!playerData.netHandler)
@@ -253,37 +252,6 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
     if (result == -1)
         removePlayer(playerData.getIndex(), "ECONNRESET/EPIPE", false);
     return result;
-}
-
-static char sMsgBuf[MaxPacketLen];
-char *getDirectMessageBuffer()
-{
-    return &sMsgBuf[2*sizeof(uint16_t)];
-}
-
-// FIXME? 4 bytes before msg must be valid memory, will get filled in with len+code
-// usually, the caller gets a buffer via getDirectMessageBuffer(), but for example
-// for MsgShotBegin the receiving buffer gets used directly
-static int directMessage(GameKeeper::Player &playerData,  uint16_t code, int len, void *msg)
-{
-    if (playerData.isParting)
-        return -1;
-    // send message to one player
-    void *bufStart = (char *)msg - 2*sizeof(uint16_t);
-
-    void *buf = bufStart;
-    buf = nboPackUShort(buf, uint16_t(len));
-    buf = nboPackUShort(buf, code);
-    return pwrite(playerData, bufStart, len + 4);
-}
-
-void directMessage(int playerIndex, uint16_t code, int len, void *msg)
-{
-    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
-    if (!playerData)
-        return;
-
-    directMessage(*playerData, code, len, msg);
 }
 
 static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message, bool release = true)
@@ -299,6 +267,8 @@ static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuff
     buf = nboPackUShort(buf, code);
     int ret = pwrite(playerData, bufStart, message->size() + 4);
     ReleaseMessageBuffer(message);
+
+    return ret;
 }
 
 void sendPacket(int playerIndex, uint16_t code, MessageBuffer::Ptr message, bool release)
@@ -308,23 +278,6 @@ void sendPacket(int playerIndex, uint16_t code, MessageBuffer::Ptr message, bool
         return;
 
     sendPacket(*playerData, code, message, release);
-}
-
-
-void broadcastMessage(uint16_t code, int len, void *msg)
-{
-    // send message to everyone
-    for (int i = 0; i < curMaxPlayers; i++)
-    {
-        if (realPlayerWithNet(i))
-            directMessage(i, code, len, msg);
-    }
-
-    // record the packet
-    if (Record::enabled())
-        Record::addPacket(code, len, msg);
-
-    return;
 }
 
 void broadcastPacket(uint16_t code, MessageBuffer::Ptr message)
@@ -399,10 +352,7 @@ static void setNoDelay(int fd)
 
 void sendFlagUpdate(FlagInfo &flag)
 {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart,1);
-    bool hide = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
-    buf = flag.pack(buf, hide);
+    bool hide  = (flag.flag.type->flagTeam == ::NoTeam) && (flag.player == -1);
 
     auto msg = GetMessageBuffer();
     msg->packUShort(1);
@@ -1070,7 +1020,7 @@ static void serverStop()
 
     // tell players to quit
     for (int i = 0; i < curMaxPlayers; i++)
-        directMessage(i, MsgSuperKill, 0, getDirectMessageBuffer());
+        sendPacket(i, MsgSuperKill, GetMessageBuffer());
 
     // close connections
     NetHandler::destroyHandlers();
@@ -1569,21 +1519,19 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
         // record server commands
         if (Record::enabled())
         {
-            void *buf, *bufStart = getDirectMessageBuffer();
-            buf = nboPackUByte(bufStart, srcPlayer);
-            buf = nboPackUByte(buf, dstPlayer);
-            buf = nboPackUByte(buf, type);
-            buf = nboPackString(buf, message, strlen(message) + 1);
-            Record::addPacket(MsgReceiveChat, (char*)buf - (char*)bufStart, bufStart,
-                              HiddenPacket);
+            auto msg = GetMessageBuffer();
+            msg->packUByte(srcPlayer);
+            msg->packUByte(dstPlayer);
+            msg->packUByte(type);
+            msg->packString(message, strlen(message) + 1);
+            Record::addPacket(MsgReceiveChat, msg->size(), (char*)msg->buffer() + 4, HiddenPacket);
         }
         parseServerCommand(message, srcPlayer, dstPlayer);
         return; // bail out
     }
 
     // check if the player has permission to use the admin channel
-    if ((dstPlayer == AdminPlayers) &&
-            !playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend))
+    if ((dstPlayer == AdminPlayers) && !playerData->accessInfo.hasPerm(PlayerAccessInfo::adminMessageSend))
     {
         sendMessage(ServerPlayer, srcPlayer,
                     "You do not have permission to speak on the admin channel.");
@@ -1593,8 +1541,7 @@ void sendPlayerMessage(GameKeeper::Player *playerData, PlayerId dstPlayer,
     // check for bogus targets
     if ((dstPlayer < LastRealPlayer) && !realPlayer(dstPlayer))
     {
-        sendMessage(ServerPlayer, srcPlayer,
-                    "The player you tried to talk to does not exist!");
+        sendMessage(ServerPlayer, srcPlayer,  "The player you tried to talk to does not exist!");
         return; // bail out
     }
 
@@ -1737,22 +1684,21 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
         msglen = MessageLen;
     }
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUByte(buf, dstPlayer);
-    buf = nboPackUByte(buf, type);
-    buf = nboPackString(buf, msg, msglen);
+    auto buf = GetMessageBuffer();
 
-    ((char*)bufStart)[MessageLen - 1 + 3] = '\0'; // always terminate
+    buf->packUByte(playerIndex);
+    buf->packUByte(dstPlayer);
+    buf->packUByte(type);
+    buf->packString(msg, msglen);
+    buf->packUByte(0);
 
-    int len = 3 + msglen;
     bool broadcast = false;
 
     if (dstPlayer <= LastRealPlayer)
     {
-        directMessage(dstPlayer, MsgReceiveChat, len, bufStart);
+        sendPacket(dstPlayer, MsgReceiveChat, buf, false);
         if (playerIndex <= LastRealPlayer && dstPlayer != playerIndex)
-            directMessage(playerIndex, MsgReceiveChat, len, bufStart);
+            sendPacket(playerIndex, MsgReceiveChat, buf, false);
     }
     // FIXME this teamcolor <-> player id conversion is in several files now
     else if (LastRealPlayer < dstPlayer && dstPlayer <= FirstTeam)
@@ -1761,10 +1707,10 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
         // send message to all team members only
         GameKeeper::Player *playerData;
         for (int i = 0; i < curMaxPlayers; i++)
-            if ((playerData = GameKeeper::Player::getPlayerByIndex(i))
-                    && playerData->player.isPlaying()
-                    && playerData->player.isTeam(_team))
-                directMessage(i, MsgReceiveChat, len, bufStart);
+        {
+            if ((playerData = GameKeeper::Player::getPlayerByIndex(i))  && playerData->player.isPlaying() && playerData->player.isTeam(_team))
+                sendPacket(i, MsgReceiveChat, buf, false);
+        }
     }
     else if (dstPlayer == AdminPlayers)
     {
@@ -1780,11 +1726,9 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
             worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
         }
 
-        std::vector<int> admins
-            = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
+        std::vector<int> admins = GameKeeper::Player::allowed(PlayerAccessInfo::adminMessageReceive);
         for (unsigned int i = 0; i < admins.size(); ++i)
-            directMessage(admins[i], MsgReceiveChat, len, bufStart);
-
+            sendPacket(admins[i], MsgReceiveChat, buf, false);
     }
     else
     {
@@ -1799,20 +1743,23 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
             worldEventManager.callEvents(bz_eServerMsgEvent, &serverMsgData);
         }
 
-        broadcastMessage(MsgReceiveChat, len, bufStart);
+        broadcastPacket(MsgReceiveChat, buf);
         broadcast = true;
     }
 
     if (Record::enabled() && !broadcast)   // don't record twice
-        Record::addPacket(MsgReceiveChat, len, bufStart, HiddenPacket);
+    {
+        Record::addPacket(MsgReceiveChat, buf->size(), buf->record_buffer(), HiddenPacket);
+        ReleaseMessageBuffer(buf);
+    }
 }
 
 static void rejectPlayer(int playerIndex, uint16_t code, const char *reason)
 {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, code);
-    buf = nboPackString(buf, reason, strlen(reason) + 1);
-    directMessage(playerIndex, MsgReject, sizeof (uint16_t) + MessageLen, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUShort(code);
+    buf->packString(reason, strlen(reason) + 1);
+    sendPacket(playerIndex, MsgReject, buf);
     // Fixing security hole, because a client can ignore the reject message
     // then he can avoid a ban, hostban...
     const std::string msg = "/rejected: " + stripAnsiCodes(reason);
@@ -1826,6 +1773,7 @@ static void fixTeamCount()
     int playerIndex, teamNum;
     for (teamNum = RogueTeam; teamNum < NumTeams; teamNum++)
         team[teamNum].team.size = 0;
+
     for (playerIndex = 0; playerIndex < curMaxPlayers; playerIndex++)
     {
         GameKeeper::Player *p = GameKeeper::Player::getPlayerByIndex(playerIndex);
@@ -2183,8 +2131,8 @@ void broadcastHandicaps(int toPlayer)
 
     int numHandicaps = 0;
 
-    void *bufStart = getDirectMessageBuffer();
-    void *buf = nboPackUByte(bufStart, numHandicaps);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(numHandicaps);
     for (int i = 0; i < curMaxPlayers; i++)
     {
         if (i == toPlayer)
@@ -2193,15 +2141,16 @@ void broadcastHandicaps(int toPlayer)
         if (p && realPlayer(i) && !p->player.isObserver())
         {
             numHandicaps++;
-            buf = nboPackUByte(buf, i);
-            buf = nboPackShort(buf, p->score.getHandicap());
+            buf->packUByte(i);
+            buf->packShort(p->score.getHandicap());
         }
     }
-    nboPackUByte(bufStart, numHandicaps);
+    buf->packUByte(numHandicaps);
+
     if (toPlayer >= 0)
-        directMessage(toPlayer, MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+        sendPacket(toPlayer, MsgHandicap, buf);
     else
-        broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+        broadcastPacket(MsgHandicap, buf);
 }
 
 
@@ -2233,8 +2182,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             // don't kick _us_, kick the other guy
             if (playerIndex == i)
                 continue;
-            GameKeeper::Player *otherPlayer
-                = GameKeeper::Player::getPlayerByIndex(i);
+            GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
             if (!otherPlayer)
                 continue;
 
@@ -2251,8 +2199,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         }
     }
 
-    const bool playerIsAntiBanned =
-        playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
+    const bool playerIsAntiBanned =  playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
 
     // check against the ip ban list
     in_addr playerIP = playerData->netHandler->getIPAddress();
@@ -2390,46 +2337,41 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     // or if the team is full or if the server is full
     if (!playerData->player.isHuman() && !playerData->player.isBot())
     {
-        rejectPlayer(playerIndex, RejectBadType,
-                     "Communication error joining game [Rejected].");
+        rejectPlayer(playerIndex, RejectBadType,  "Communication error joining game [Rejected].");
         return;
     }
     else if (t == NoTeam)
     {
-        rejectPlayer(playerIndex, RejectBadTeam,
-                     "Communication error joining game [Rejected].");
+        rejectPlayer(playerIndex, RejectBadTeam,  "Communication error joining game [Rejected].");
         return;
     }
     else if (t == ObserverTeam && playerData->player.isBot())
     {
-        rejectPlayer(playerIndex, RejectServerFull,
-                     "This game is full.  Try again later.");
+        rejectPlayer(playerIndex, RejectServerFull, "This game is full.  Try again later.");
         return;
     }
     else if (numplayersobs == maxPlayers)
     {
         // server is full
-        rejectPlayer(playerIndex, RejectServerFull,
-                     "This game is full.  Try again later.");
+        rejectPlayer(playerIndex, RejectServerFull,  "This game is full.  Try again later.");
         return;
     }
     else if (team[int(t)].team.size >= clOptions->maxTeam[int(t)])
     {
-        rejectPlayer(playerIndex, RejectTeamFull,
-                     "This team is full.  Try another team.");
+        rejectPlayer(playerIndex, RejectTeamFull,  "This team is full.  Try another team.");
         return ;
     }
     // accept player
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    int result = directMessage(*playerData, MsgAccept,
-                               (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    int result = sendPacket(*playerData, MsgAccept, buf);
     if (result == -1)
         return;
 
     //send SetVars
     {
         // scoping is mandatory
+        char bufStart[1024];    // use a temp buffer here
         PackVars pv(bufStart, playerIndex);
         BZDB.iterate(PackVars::packIt, &pv);
     }
@@ -2444,8 +2386,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     // update team state and if first player on team, reset it's score
     int teamIndex = int(playerData->player.getTeam());
     team[teamIndex].team.size++;
-    if (team[teamIndex].team.size == 1
-            && Team::isColorTeam((TeamColor)teamIndex))
+    if (team[teamIndex].team.size == 1  && Team::isColorTeam((TeamColor)teamIndex))
     {
         team[teamIndex].team.setWins(0);
         team[teamIndex].team.setLosses(0);
@@ -2459,8 +2400,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         sendTeamUpdate(playerIndex);
         sendFlagUpdate(playerIndex);
         GameKeeper::Player *otherData;
-        for (int i = 0; i < curMaxPlayers
-                && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
+        for (int i = 0; i < curMaxPlayers  && GameKeeper::Player::getPlayerByIndex(playerIndex); i++)
             if (i != playerIndex)
             {
                 otherData = GameKeeper::Player::getPlayerByIndex(i);
@@ -2502,9 +2442,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     // send rabbit information
     if (clOptions->gameType == RabbitChase)
     {
-        bufStart = getDirectMessageBuffer();
-        buf = nboPackUByte(bufStart, rabbitIndex);
-        directMessage(playerIndex, MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+        buf = GetMessageBuffer();
+        buf->packUByte(rabbitIndex);
+        sendPacket(playerIndex, MsgNewRabbit, buf);
     }
 
     // again check if player was disconnected
@@ -2512,8 +2452,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         return;
 
     // send time update to new player if we're counting down
-    if (countdownActive && clOptions->timeLimit > 0.0f
-            && !playerData->player.isBot())
+    if (countdownActive && clOptions->timeLimit > 0.0f  && !playerData->player.isBot())
     {
         float timeLeft;
 
@@ -2532,17 +2471,15 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             }
         }
 
-        bufStart = getDirectMessageBuffer();
-        buf = nboPackInt(bufStart, (int32_t)timeLeft);
-        result = directMessage(*playerData, MsgTimeUpdate,
-                               (char*)buf-(char*)bufStart, bufStart);
+        buf = GetMessageBuffer();
+        buf->packInt((int32_t)timeLeft);
+        result = sendPacket(*playerData, MsgTimeUpdate, buf);
         if (result == -1)
             return;
     }
 
     // if first player on team add team's flag
-    if (team[teamIndex].team.size == 1
-            && Team::isColorTeam((TeamColor)teamIndex))
+    if (team[teamIndex].team.size == 1  && Team::isColorTeam((TeamColor)teamIndex))
     {
         if (clOptions->gameType == ClassicCTF)
         {
@@ -2605,14 +2542,10 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
-    if (GameKeeper::Player::getPlayerByIndex(playerIndex)
-            && playerData->accessInfo.isRegistered()
-            && playerData->_LSAState != GameKeeper::Player::verified)
+    if (GameKeeper::Player::getPlayerByIndex(playerIndex)  && playerData->accessInfo.isRegistered() && playerData->_LSAState != GameKeeper::Player::verified)
     {
         // If the name is registered but not authenticated, tell them to identify
-        sendMessage(ServerPlayer, playerIndex,
-                    "This callsign is registered.  "
-                    "You must use global authentication.");
+        sendMessage(ServerPlayer, playerIndex,  "This callsign is registered. You must use global authentication.");
     }
 
     dropAssignedFlag(playerIndex);
@@ -2663,8 +2596,7 @@ void resetFlag(FlagInfo &flag)
     float flagPos[3] = {0.0f, 0.0f, 0.0f};
 
     TeamColor teamIndex = flag.teamIndex();
-    if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)
-            && (bases.find(teamIndex) != bases.end()))
+    if ((teamIndex >= ::RedTeam) &&  (teamIndex <= ::PurpleTeam)  && (bases.find(teamIndex) != bases.end()))
     {
         if (!world->getFlagSpawnPoint(&flag, flagPos))
         {
@@ -2726,18 +2658,17 @@ void sendDrop(FlagInfo &flag)
     // see if someone had grabbed flag.  tell 'em to drop it.
     const int playerIndex = flag.player;
 
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
-    flag.player      = -1;
+    flag.player = -1;
     playerData->player.resetFlag();
 
-    void *bufStart = getDirectMessageBuffer();
-    void *buf  = nboPackUByte(bufStart, playerIndex);
-    buf = flag.pack(buf);
-    broadcastMessage(MsgFlagDropped, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->legacyPack(flag.pack(buf->current_buffer()));
+    broadcastPacket(MsgFlagDropped, buf);
 }
 
 void zapFlag(FlagInfo &flag)
@@ -2784,10 +2715,9 @@ static void dropAssignedFlag(int playerIndex)
 
 static void anointNewRabbit(int killerId = NoPlayer)
 {
-    GameKeeper::Player *killerData
-        = GameKeeper::Player::getPlayerByIndex(killerId);
-    GameKeeper::Player *oldRabbitData
-        = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
+    GameKeeper::Player *killerData = GameKeeper::Player::getPlayerByIndex(killerId);
+    GameKeeper::Player *oldRabbitData = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
+
     int oldRabbit = rabbitIndex;
     rabbitIndex = NoPlayer;
 
@@ -2807,39 +2737,34 @@ static void anointNewRabbit(int killerId = NoPlayer)
             oldRabbitData->player.wasARabbit();
         if (rabbitIndex != NoPlayer)
         {
-            GameKeeper::Player *rabbitData
-                = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
+            GameKeeper::Player *rabbitData = GameKeeper::Player::getPlayerByIndex(rabbitIndex);
             rabbitData->player.setTeam(RabbitTeam);
-            void *buf, *bufStart = getDirectMessageBuffer();
-            buf = nboPackUByte(bufStart, rabbitIndex);
-            broadcastMessage(MsgNewRabbit, (char*)buf-(char*)bufStart, bufStart);
+
+            auto buf = GetMessageBuffer();
+            buf->packUByte(rabbitIndex);
+            broadcastPacket(MsgNewRabbit, buf);
         }
     }
     else
-    {
-        logDebugMessage(3,"no other than old rabbit to choose from, rabbitIndex is %d\n",
-                        rabbitIndex);
-    }
+        logDebugMessage(3,"no other than old rabbit to choose from, rabbitIndex is %d\n", rabbitIndex);
 }
 
 
 static void pausePlayer(int playerIndex, bool paused = true)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
+
     if (!playerData)
         return;
 
     if (!playerData->player.isAlive())
     {
-        logDebugMessage(2,"Player %s [%d] %spause while not alive\n",
-                        playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+        logDebugMessage(2,"Player %s [%d] %spause while not alive\n", playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
         return;
     }
     if (playerData->player.isPaused() == paused)
     {
-        logDebugMessage(2,"Player %s [%d] duplicate %spause\n",
-                        playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+        logDebugMessage(2,"Player %s [%d] duplicate %spause\n",  playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
         return;
     }
     // TODO: enforce 5-second delay from one pause to the next
@@ -2853,10 +2778,10 @@ static void pausePlayer(int playerIndex, bool paused = true)
             anointNewRabbit();
     }
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUByte(buf, paused);
-    broadcastMessage(MsgPause, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->packUByte(paused);
+    broadcastPacket(MsgPause, buf);
 
     bz_PlayerPausedEventData_V1   pauseEventData;
     pauseEventData.playerID = playerIndex;
@@ -2867,8 +2792,7 @@ static void pausePlayer(int playerIndex, bool paused = true)
 
 static void autopilotPlayer(int playerIndex, bool autopilot)
 {
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData  = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
         return;
 
@@ -2881,10 +2805,10 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
 
     playerData->player.setAutoPilot(autopilot);
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUByte(buf, autopilot);
-    broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->packUByte(autopilot);
+    broadcastPacket(MsgAutoPilot, buf);
 }
 
 void zapFlagByPlayer(int playerIndex)
@@ -2952,11 +2876,11 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         // send a super kill to be polite
         // send message to one player
         // do not use directMessage as he can remove player
-        void *buf  = sMsgBuf;
-        buf = nboPackUShort(buf, 0);
+        char temp[4];
+        void* buf = nboPackUShort(temp, 0);
         buf = nboPackUShort(buf, MsgSuperKill);
         if (playerData->netHandler != nullptr)
-            playerData->netHandler->pwrite(sMsgBuf, 4);
+            playerData->netHandler->pwrite(temp, 4);
     }
 
     // if there is an active poll, cancel any vote this player may have made
@@ -2984,9 +2908,10 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
             rejoinList.add (playerIndex);
 
         // tell everyone player has left
-        void *buf, *bufStart = getDirectMessageBuffer();
-        buf = nboPackUByte(bufStart, playerIndex);
-        broadcastMessage(MsgRemovePlayer, (char*)buf-(char*)bufStart, bufStart);
+
+        auto buf = GetMessageBuffer();
+        buf->packUByte(playerIndex);
+        broadcastPacket(MsgRemovePlayer, buf);
 
         for (int i = 0; i < curMaxPlayers; i++)
         {
@@ -3091,23 +3016,21 @@ void SendNChunksToPlayer(int playerIndex)
     if (toSend > 500)
         toSend = 500;
 
-    void *buf = nullptr, *bufStart = nullptr;
     for (int c = 0; c < toSend; c++)
     {
         int i = *playerData->chunksLeft.begin();
         playerData->chunksLeft.pop_front();
 
-        bufStart = getDirectMessageBuffer();
-        buf = nboPackUInt(bufStart, i);
-
-        ::memcpy(buf, worldChunks[i].first, worldChunks[i].second);
-        directMessage(playerIndex, MsgWorldChunk, worldChunks[i].second + 4, bufStart);
+        auto buf = GetMessageBuffer();
+        buf->packUInt(i);
+        buf->packBuffer(worldChunks[i].first, worldChunks[i].second);
+        sendPacket(playerIndex, MsgWorldChunk, buf);
     }
 
     if (playerData->chunksLeft.size() == 0)
     {
         playerData->isTransferingWorld = false;
-        directMessage(playerIndex, MsgEndWorld, 0, getDirectMessageBuffer());
+        sendPacket(playerIndex, MsgEndWorld, GetMessageBuffer());
     }
 }
 
@@ -3140,13 +3063,12 @@ static void sendWorld(int playerIndex, std::vector<int> & chunkList)
     playerData->isTransferingWorld = true;
     playerData->chunksLeft.clear();
 
-    void *buf = nullptr, *bufStart = nullptr;
     if (chunkList.size() == 0)
     {
-        bufStart = getDirectMessageBuffer();
-        buf = nboPackUInt(bufStart, (uint32_t)worldChunks.size());
-        buf = nboPackUInt(buf, worldDatabaseSize);
-        directMessage(playerIndex, MsgStartWorld, (char*)buf - (char*)bufStart, bufStart);
+        auto buf = GetMessageBuffer();
+        buf->packUInt((uint32_t)worldChunks.size());
+        buf->packUInt(worldDatabaseSize);
+        sendPacket(playerIndex, MsgStartWorld, buf);
 
         for (size_t i = 0; i < worldChunks.size(); i++)
             playerData->chunksLeft.push_back(i);
@@ -3205,33 +3127,34 @@ static void sendQueryGame(int playerIndex)
     // much like a ping packet but leave out useless stuff (like
     // the server address, which must already be known, and the
     // server version, which was already sent).
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, pingReply.gameType);
-    buf = nboPackUShort(buf, pingReply.gameOptions);
-    buf = nboPackUShort(buf, pingReply.maxPlayers);
-    buf = nboPackUShort(buf, pingReply.maxShots);
-    buf = nboPackUShort(buf, team[0].team.size);
-    buf = nboPackUShort(buf, team[1].team.size);
-    buf = nboPackUShort(buf, team[2].team.size);
-    buf = nboPackUShort(buf, team[3].team.size);
-    buf = nboPackUShort(buf, team[4].team.size);
-    buf = nboPackUShort(buf, team[5].team.size);
-    buf = nboPackUShort(buf, pingReply.rogueMax);
-    buf = nboPackUShort(buf, pingReply.redMax);
-    buf = nboPackUShort(buf, pingReply.greenMax);
-    buf = nboPackUShort(buf, pingReply.blueMax);
-    buf = nboPackUShort(buf, pingReply.purpleMax);
-    buf = nboPackUShort(buf, pingReply.observerMax);
-    buf = nboPackUShort(buf, pingReply.shakeWins);
+    auto buf = GetMessageBuffer();
+
+    buf->packUShort(pingReply.gameType);
+    buf->packUShort(pingReply.gameOptions);
+    buf->packUShort(pingReply.maxPlayers);
+    buf->packUShort(pingReply.maxShots);
+    buf->packUShort(team[0].team.size);
+    buf->packUShort(team[1].team.size);
+    buf->packUShort(team[2].team.size);
+    buf->packUShort(team[3].team.size);
+    buf->packUShort(team[4].team.size);
+    buf->packUShort(team[5].team.size);
+    buf->packUShort(pingReply.rogueMax);
+    buf->packUShort(pingReply.redMax);
+    buf->packUShort(pingReply.greenMax);
+    buf->packUShort(pingReply.blueMax);
+    buf->packUShort(pingReply.purpleMax);
+    buf->packUShort(pingReply.observerMax);
+    buf->packUShort(pingReply.shakeWins);
     // 1/10ths of second
-    buf = nboPackUShort(buf, pingReply.shakeTimeout);
-    buf = nboPackUShort(buf, pingReply.maxPlayerScore);
-    buf = nboPackUShort(buf, pingReply.maxTeamScore);
-    buf = nboPackUShort(buf, pingReply.maxTime);
-    buf = nboPackUShort(buf, (uint16_t)clOptions->timeElapsed);
+    buf->packUShort(pingReply.shakeTimeout);
+    buf->packUShort(pingReply.maxPlayerScore);
+    buf->packUShort(pingReply.maxTeamScore);
+    buf->packUShort(pingReply.maxTime);
+    buf->packUShort((uint16_t)clOptions->timeElapsed);
 
     // send it
-    directMessage(playerIndex, MsgQueryGame, (char*)buf-(char*)bufStart, bufStart);
+    sendPacket(playerIndex, MsgQueryGame, buf);
 }
 
 static void sendQueryPlayers(int playerIndex)
@@ -3244,10 +3167,10 @@ static void sendQueryPlayers(int playerIndex)
     int numPlayers = GameKeeper::Player::count();
 
     // first send number of teams and players being sent
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUShort(bufStart, NumTeams);
-    buf = nboPackUShort(buf, numPlayers);
-    int result = directMessage(*playerData, MsgQueryPlayers, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUShort(NumTeams);
+    buf->packUShort(numPlayers);
+    int result = sendPacket(*playerData, MsgQueryPlayers, buf);
     if (result == -1)
         return;
 
@@ -3370,11 +3293,11 @@ void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth)
   playerData->setPlayerState(pos, aziumuth);
 
   // send MsgAlive
-  void *buf, *bufStart = getDirectMessageBuffer();
-  buf = nboPackUByte(bufStart, playerData->getIndex());
-  buf = nboPackVector(buf, playerData->lastState.pos);
-  buf = nboPackFloat(buf, playerData->lastState.azimuth);
-  broadcastMessage(MsgAlive, (char*)buf - (char*)bufStart, bufStart);
+  auto buf = GetMessageBuffer();
+  buf->packUByte(playerData->getIndex());
+  buf->packVector(playerData->lastState.pos);
+  buf->packFloat(playerData->lastState.azimuth);
+  broadcastPacket(MsgAlive, buf);
 
   // call any events for a playerspawn
   bz_PlayerSpawnEventData_V1	spawnEvent;
@@ -3409,8 +3332,7 @@ void cleanupGameOver()
 bool changeTeam(int playerIndex, TeamColor newTeam)
 {
     // Get the player information
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData  = GameKeeper::Player::getPlayerByIndex(playerIndex);
     // Ensure we have a valid player
     if (!playerData)
         return false;
@@ -3464,10 +3386,10 @@ bool changeTeam(int playerIndex, TeamColor newTeam)
         playerData->player.setNextTeam(newTeam);
 
     // Broadcast the team change
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUShort(buf, newTeam);
-    broadcastMessage(MsgSetTeam, (char*)buf - (char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->packUShort(newTeam);
+    broadcastPacket(MsgSetTeam, buf);
 
     return true;
 }
@@ -3475,13 +3397,15 @@ bool changeTeam(int playerIndex, TeamColor newTeam)
 
 void checkTeamScore(int playerIndex, int teamIndex)
 {
-    if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex))) return;
+    if (clOptions->maxTeamScore == 0 || !Team::isColorTeam(TeamColor(teamIndex)))
+        return;
+
     if (team[teamIndex].team.getWins() - team[teamIndex].team.getLosses() >= clOptions->maxTeamScore)
     {
-        void *buf, *bufStart = getDirectMessageBuffer();
-        buf = nboPackUByte(bufStart, playerIndex);
-        buf = nboPackUShort(buf, uint16_t(teamIndex));
-        broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+        auto buf = GetMessageBuffer();
+        buf->packUByte(playerIndex);
+        buf->packUShort(uint16_t(teamIndex));
+        broadcastPacket(MsgScoreOver, buf);
 
         cleanupGameOver();
 
@@ -3505,8 +3429,7 @@ bool allowTeams ( void )
 //   It is taken as the index of the udp table when called by incoming message
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-void playerKilled(int victimIndex, int killerIndex, int reason,
-                  int16_t shotIndex, const FlagType::Ptr flagType, int phydrv, bool respawnOnBase )
+void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType::Ptr flagType, int phydrv, bool respawnOnBase )
 {
     GameKeeper::Player *killerData = NULL;
     GameKeeper::Player *victimData  = GameKeeper::Player::getPlayerByIndex(victimIndex);
@@ -3583,15 +3506,17 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     }
 
     // send MsgKilled
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, victimIndex);
-    buf = nboPackUByte(buf, killerIndex);
-    buf = nboPackShort(buf, reason);
-    buf = nboPackShort(buf, shotIndex);
-    buf = flagType->pack(buf);
+
+    auto buf = GetMessageBuffer();
+    buf->packUByte(victimIndex);
+    buf->packUByte(killerIndex);
+    buf->packShort(reason);
+    buf->packShort(shotIndex);
+    buf->legacyPack(flagType->pack(buf->current_buffer()));
     if (reason == PhysicsDriverDeath)
-        buf = nboPackInt(buf, phydrv);
-    broadcastMessage(MsgKilled, (char*)buf-(char*)bufStart, bufStart);
+        buf->packInt(phydrv);
+
+    broadcastPacket(MsgKilled,buf);
 
     // update tk-score
     if ((victimIndex != killerIndex) && teamkill)
@@ -3600,8 +3525,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
         char message[MessageLen];
         if (clOptions->tkAnnounce)
         {
-            snprintf(message, MessageLen, "Team kill: %s killed %s",
-                     killerData->player.getCallSign(), victimData->player.getCallSign());
+            snprintf(message, MessageLen, "Team kill: %s killed %s", killerData->player.getCallSign(), victimData->player.getCallSign());
             sendMessage(ServerPlayer, AdminPlayers, message);
         }
         if (killerData->score.isTK())
@@ -3624,7 +3548,6 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
     if (victimData != NULL)
     {
         // change the player score
-        bufStart = getDirectMessageBuffer();
         victimData->score.killedBy();
         if (killer)
         {
@@ -3653,32 +3576,29 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
         if (handicapAllowed())
         {
-            bufStart = getDirectMessageBuffer();
+            buf = GetMessageBuffer();
             if (killer)
             {
                 recalcHandicap(killerIndex);
-                buf = nboPackUByte(bufStart, 2);
-                buf = nboPackUByte(buf, killerIndex);
-                buf = nboPackShort(buf, killerData->score.getHandicap());
+                buf->packUByte(2);
+                buf->packUByte(killerIndex);
+                buf->packShort(killerData->score.getHandicap());
             }
             else
-                buf = nboPackUByte(bufStart, 1);
+                buf->packUByte(1);
             recalcHandicap(victimIndex);
-            buf = nboPackUByte(buf, victimIndex);
-            buf = nboPackShort(buf, victimData->score.getHandicap());
-            broadcastMessage(MsgHandicap, (char*)buf-(char*)bufStart, bufStart);
+            buf->packUByte(victimIndex);
+            buf->packShort(victimData->score.getHandicap());
+            broadcastPacket(MsgHandicap, buf);
         }
 
         // see if the player reached the score limit
-        if (clOptions->maxPlayerScore != 0
-                && killerIndex != InvalidPlayer
-                && killerIndex != ServerPlayer
-                && killerData->score.reached())
+        if (clOptions->maxPlayerScore != 0  && killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killerData->score.reached())
         {
-            bufStart = getDirectMessageBuffer();
-            buf = nboPackUByte(bufStart, killerIndex);
-            buf = nboPackUShort(buf, uint16_t(NoTeam));
-            broadcastMessage(MsgScoreOver, (char*)buf-(char*)bufStart, bufStart);
+            buf = GetMessageBuffer();
+            buf->packUByte(killerIndex);
+            buf->packUShort(uint16_t(NoTeam));
+            broadcastPacket(MsgScoreOver, buf);
 
             cleanupGameOver();
 
@@ -3718,8 +3638,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+delta);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
-                            old, old+delta);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+delta);
                     worldEventManager.callEvents(&eventData);
                 }
             }
@@ -3731,8 +3650,7 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
 
                     int old = team[winningTeam].team.getWins();
                     team[winningTeam].team.setWins(old+1);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old,
-                            old+1);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old, old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (!victim->isTeam(RogueTeam))
@@ -3883,17 +3801,17 @@ void grantFlag(int playerIndex, FlagInfo &flag, bool checkPos)
     playerData->lastHeldFlagID = flag.getIndex();
 
     // send MsgGantFlag
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
 
     int limit = clOptions->getFlagLimit(flag.flag.type);
     if (limit >= 0)
         limit -= flag.numShots;
-    buf = nboPackInt(buf, limit);
+    buf->packInt(limit);
 
-    buf = flag.pack(buf);
+    buf->legacyPack(flag.pack(buf->current_buffer()));
 
-    broadcastMessage(MsgGrantFlag, (char*)buf-(char*)bufStart, bufStart);
+    broadcastPacket(MsgGrantFlag, buf);
 
     playerData->flagHistory.add(flag.flag.type);
 
@@ -4140,11 +4058,11 @@ bool captureFlag(int playerIndex, TeamColor teamCaptured, TeamColor teamCapped, 
     resetFlag(flag);
 
     // send MsgCaptureFlag
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUShort(buf, uint16_t(flagIndex));
-    buf = nboPackUShort(buf, uint16_t(teamCaptured));
-    broadcastMessage(MsgCaptureFlag, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->packUShort(uint16_t(flagIndex));
+    buf->packUShort(uint16_t(teamCaptured));
+    broadcastPacket(MsgCaptureFlag, buf);
 
     // find any events for capturing the flags on the capped team or events for ANY team
     bz_CTFCaptureEventData_V1 eventData;
@@ -4244,8 +4162,11 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     ShotManager.UpdateShot(shot->GetGUID(), update);
     ShotManager.SetShotTarget(shot->GetGUID(),targetId);
 
+    auto newShot = GetMessageBuffer();
+    newShot->packBuffer(buf, len);
+
     // TODO, Remove this and let the GM update logic send the updates,
-    broadcastMessage(MsgGMUpdate, len, buf);
+    broadcastPacket(MsgGMUpdate, newShot);
 }
 
 static void shotFired(int playerIndex, void *buf, int len)
@@ -4469,10 +4390,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
     {
         // repack for ID
-        void *bufStart = getDirectMessageBuffer();
-        firingInfo.pack(bufStart);
-        buf = bufStart;
-        broadcastMessage(MsgShotBegin, len, buf);
+        auto buf = GetMessageBuffer();
+        buf->legacyPack(firingInfo.pack(buf->current_buffer()));
+        broadcastPacket(MsgShotBegin, buf);
     }
 }
 
@@ -4494,11 +4414,11 @@ static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
     ShotManager.RemoveShot(shot->GetGUID());
 
     // shot has ended prematurely -- send MsgShotEnd
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, id);
-    buf = nboPackUShort(buf, shotid);
-    buf = nboPackUShort(buf, reason);
-    broadcastMessage(MsgShotEnd, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(id);
+    buf->packUShort(shotid);
+    buf->packUShort(reason);
+    broadcastPacket(MsgShotEnd, buf);
 
     bz_ShotEndedEventData_V2 shotEvent;
     shotEvent.playerID = (int)id;
@@ -4511,11 +4431,11 @@ static void shotEnded(const PlayerId& id, uint16_t shotid, uint16_t reason)
 
 void sendTeleport(int playerIndex, uint16_t from, uint16_t to)
 {
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUShort(buf, from);
-    buf = nboPackUShort(buf, to);
-    broadcastMessage(MsgTeleport, (char*)buf-(char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerIndex);
+    buf->packUShort(from);
+    buf->packUShort(to);
+    broadcastPacket(MsgTeleport, buf);
 }
 
 
@@ -4571,13 +4491,11 @@ static void jitterKick(int playerIndex)
              "You have been kicked due to excessive jitter"
              " (you have been warned %d times).",
              clOptions->maxjitterwarn);
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData != NULL)
     {
         sendMessage(ServerPlayer, playerIndex, message);
-        snprintf(message, MessageLen,"Jitterkick: %s",
-                 playerData->player.getCallSign());
+        snprintf(message, MessageLen,"Jitterkick: %s",  playerData->player.getCallSign());
         sendMessage(ServerPlayer, AdminPlayers, message);
         removePlayer(playerIndex, "jitter", true);
     }
@@ -4586,16 +4504,12 @@ static void jitterKick(int playerIndex)
 void packetLossKick(int playerIndex)
 {
     char message[MessageLen];
-    snprintf(message, MessageLen,
-             "You have been kicked due to excessive packetloss (you have been warned %d times).",
-             clOptions->maxpacketlosswarn);
-    GameKeeper::Player *playerData
-        = GameKeeper::Player::getPlayerByIndex(playerIndex);
+    snprintf(message, MessageLen, "You have been kicked due to excessive packetloss (you have been warned %d times).", clOptions->maxpacketlosswarn);
+    GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData != NULL)
     {
         sendMessage(ServerPlayer, playerIndex, message);
-        snprintf(message, MessageLen,"Packetlosskick: %s",
-                 playerData->player.getCallSign());
+        snprintf(message, MessageLen,"Packetlosskick: %s", playerData->player.getCallSign());
         sendMessage(ServerPlayer, AdminPlayers, message);
         removePlayer(playerIndex, "packetloss", true);
     }
@@ -4670,8 +4584,7 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
     if (badChars > 0)
     {
         sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-        logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",
-                        player.getCallSign(), t, badChars);
+        logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",  player.getCallSign(), t, badChars);
         removePlayer(t, "garbage");
 
         // Ignore garbage message
@@ -4953,8 +4866,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         }
 
         /* Pack a message with the list of missing flags */
-        char *bufStart = getDirectMessageBuffer();
-        void *tmpbuf = bufStart;
+        auto tmpbuf = GetMessageBuffer();
         for (m_it = missingFlags.begin(); m_it != missingFlags.end(); ++m_it)
         {
             if ((*m_it) != Flags::Null)
@@ -4962,20 +4874,18 @@ static void handleCommand(int t, void *rawbuf, bool udp)
                 if ((*m_it)->custom)
                 {
                     // custom flag, tell the client about it
-                    static char cfbuffer[MaxPacketLen];
-                    char *cfbufStart = &cfbuffer[0] + 2 * sizeof(uint16_t);
-                    char *cfbuf = cfbufStart;
-                    cfbuf = (char*)(*m_it)->packCustom(cfbuf);
-                    directMessage(t, MsgFlagType, cfbuf-cfbufStart, cfbufStart);
+                    auto cfbuffer = GetMessageBuffer();
+                    cfbuffer->legacyPack((*m_it)->packCustom(cfbuffer->current_buffer()));
+                    sendPacket(t, MsgFlagType, cfbuffer);
                 }
                 else
                 {
                     // they should already know about this one, dump it back to them
-                    tmpbuf = (*m_it)->pack(tmpbuf);
+                    tmpbuf->legacyPack((*m_it)->pack(tmpbuf->current_buffer()));
                 }
             }
         }
-        directMessage(t, MsgNegotiateFlags, (char*)tmpbuf-bufStart, bufStart);
+        sendPacket(t, MsgNegotiateFlags, tmpbuf);
         break;
     }
 
@@ -5009,9 +4919,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
     case MsgAcceptWorld:
     {
-        void *obuf, *obufStart = getDirectMessageBuffer();
-        obuf = nboPackStdString(obufStart, hexDigest);
-        directMessage(t, MsgSetWorld, (char*)obuf-(char*)obufStart, obufStart);
+        auto obuf = GetMessageBuffer();
+        obuf->packStdString(hexDigest);
+        sendPacket(t, MsgSetWorld, obuf);
         break;
     }
 
@@ -5348,24 +5258,24 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
         if (ftEventData.action == ftEventData.ContinueSteal)
         {
-            void *obufStart = getDirectMessageBuffer();
-            void *obuf = nboPackUByte(obufStart, from);
-            obuf = nboPackUByte(obuf, to);
+            auto obuf = GetMessageBuffer();
+            obuf->packUByte(from);
+            obuf->packUByte(to);
 
             int limit = clOptions->getFlagLimit(flag.flag.type);
             if (limit >= 0)
             {
                 limit -= flag.numShots;
             }
-            obuf = nboPackInt(obuf, limit);
+            obuf->packInt(limit);
           
             flag.flag.owner = to;
             flag.player = to;
             toData->player.resetFlag();
             toData->grantFlag(flagIndex);
             fromData->player.resetFlag();
-            obuf = flag.pack(obuf);
-            broadcastMessage(MsgTransferFlag, (char*)obuf - (char*)obufStart, obufStart);
+            obuf->legacyPack(flag.pack(obuf->current_buffer()));
+            broadcastPacket(MsgTransferFlag, obuf);
         }
         break;
     }
@@ -6020,10 +5930,9 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     int nextPingSeqno = playerData.lagInfo.getNextPingSeqno(warn, kick);
     if (nextPingSeqno > 0)
     {
-        void *buf, *bufStart = getDirectMessageBuffer();
-        buf = nboPackUShort(bufStart, nextPingSeqno);
-        int result = directMessage(playerData, MsgLagPing,
-                                   (char*)buf - (char*)bufStart, bufStart);
+        auto buf = GetMessageBuffer();
+        buf->packUShort( nextPingSeqno);
+        int result = sendPacket(playerData, MsgLagPing, buf);
         if (result == -1)
             return;
         if (warn)
@@ -7221,9 +7130,9 @@ int main(int argc, char **argv)
                     clOptions->timeElapsed = 0.0f;
 
                     // start client's clock
-                    void *msg = getDirectMessageBuffer();
-                    nboPackInt(msg, (int32_t)(int)clOptions->timeLimit);
-                    broadcastMessage(MsgTimeUpdate, sizeof(int32_t), msg);
+                    auto msg = GetMessageBuffer();
+                    msg->packInt((int32_t)(int)clOptions->timeLimit);
+                    broadcastPacket(MsgTimeUpdate, msg);
 
                     // kill any players that are playing already
                     GameKeeper::Player *player;
@@ -7231,7 +7140,7 @@ int main(int argc, char **argv)
                     {
                         for (int j = 0; j < curMaxPlayers; j++)
                         {
-                            void *buf, *bufStart = getDirectMessageBuffer();
+                            auto buf = GetMessageBuffer();
                             player = GameKeeper::Player::getPlayerByIndex(j);
                             if (!player || player->player.isObserver() || !player->player.isPlaying())
                                 continue;
@@ -7243,10 +7152,10 @@ int main(int argc, char **argv)
                             // be a safe cast
                             TeamColor vteam = player->player.getTeam();
 
-                            buf = nboPackUByte(bufStart, (uint8_t)curMaxPlayers);
-                            buf = nboPackUShort(buf, uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
-                            buf = nboPackUShort(buf, uint16_t(1 + (int(vteam) % 4)));
-                            directMessage(j, MsgCaptureFlag, (char*)buf - (char*)bufStart, bufStart);
+                            buf->packUByte((uint8_t)curMaxPlayers);
+                            buf->packUShort(uint16_t(FlagInfo::lookupFirstTeamFlag(vteam)));
+                            buf->packUShort(uint16_t(1 + (int(vteam) % 4)));
+                            sendPacket(j, MsgCaptureFlag, buf);
 
                             // kick 'em while they're down
                             playerKilled(j, curMaxPlayers, 0, -1, Flags::Null, -1, true);
@@ -7342,9 +7251,9 @@ int main(int argc, char **argv)
             {
                 // we have a new pause
                 countdownPauseStart = tm;
-                void *buf, *bufStart = getDirectMessageBuffer ();
-                buf = nboPackInt (bufStart, -1);
-                broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+                auto buf = GetMessageBuffer();
+                buf->packInt((int32_t)-1);
+                broadcastPacket(MsgTimeUpdate, buf);
             }
 
             if (countdownActive && !clOptions->countdownPaused && (countdownResumeDelay < 0) && countdownPauseStart)
@@ -7354,9 +7263,10 @@ int main(int argc, char **argv)
                 countdownPauseStart = TimeKeeper::getNullTime ();
                 newTimeElapsed = (float)(tm - gameStartTime);
                 timeLeft = clOptions->timeLimit - newTimeElapsed;
-                void *buf, *bufStart = getDirectMessageBuffer ();
-                buf = nboPackInt (bufStart, (int32_t) timeLeft);
-                broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+
+                auto buf = GetMessageBuffer();
+                buf->packInt((int32_t)timeLeft);
+                broadcastPacket(MsgTimeUpdate, buf);
             }
 
             if ((timeLeft == 0.0f || newTimeElapsed - clOptions->timeElapsed >= 30.0f || clOptions->addedTime != 0.0f)
@@ -7374,9 +7284,10 @@ int main(int argc, char **argv)
                     clOptions->addedTime = 0.0f; //reset
                 }
 
-                void *buf, *bufStart = getDirectMessageBuffer ();
-                buf = nboPackInt (bufStart, (int32_t) timeLeft);
-                broadcastMessage (MsgTimeUpdate, (char *) buf - (char *) bufStart, bufStart);
+                auto buf = GetMessageBuffer();
+                buf->packInt ((int32_t) timeLeft);
+                broadcastPacket (MsgTimeUpdate, buf);
+
                 clOptions->timeElapsed = newTimeElapsed;
                 if (clOptions->oneGameOnly && timeLeft == 0.0f)
                 {

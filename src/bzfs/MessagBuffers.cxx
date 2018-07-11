@@ -48,6 +48,12 @@ void* MessageBuffer::current_buffer()
     return write_ptr;
 }
 
+void* MessageBuffer::record_buffer()
+{
+    return (char*)raw_buffer + 4;;
+}
+
+
 void MessageBuffer::push_repack(size_t offset)
 {
     saved_ptr = write_ptr;
@@ -64,6 +70,12 @@ void MessageBuffer::pop_offset()
 void MessageBuffer::legacyPack(void* newEndPtr)
 {
     write_ptr = newEndPtr;
+}
+
+void MessageBuffer::packBuffer(const void* data, size_t len)
+{
+    memcpy(write_ptr, data, len);
+    write_ptr = (char*)write_ptr + len;
 }
 
 void MessageBuffer::packUByte(uint8_t val)

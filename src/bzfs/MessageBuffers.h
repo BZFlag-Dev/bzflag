@@ -34,6 +34,7 @@ public:
     void packStdString(const std::string& str);
 
     void legacyPack(void* newEndPtr);
+    void packBuffer(const void* data, size_t len);
 
     void reset();
 
@@ -41,6 +42,7 @@ public:
     void* buffer();
 
     void* current_buffer();
+    void* record_buffer();
 
     void push_repack(size_t offset);
     void pop_offset();

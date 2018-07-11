@@ -34,7 +34,7 @@ int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const floa
     if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
         return INVALID_SHOT_GUID;
 
-    void *buf, *bufStart = getDirectMessageBuffer();
+    auto buf = GetMessageBuffer();
 
     FiringInfo firingInfo;
     firingInfo.timeSent = (float)TimeKeeper::getCurrent().getSeconds();
@@ -83,20 +83,19 @@ int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const floa
 
     firingInfo.localID = 0xFF;
     firingInfo.shot.id = ShotManager.AddShot(firingInfo, ServerPlayer);
-    buf = firingInfo.pack(bufStart);
+    buf->legacyPack(firingInfo.pack(buf->current_buffer()));
 
-    broadcastMessage(MsgShotBegin, (char*)buf - (char*)bufStart, bufStart);
+    broadcastPacket(MsgShotBegin, buf);
     // Target the gm, construct it, and send packet
     if (type->flagAbbv == "GM")
     {
         ShotManager.SetShotTarget(firingInfo.shot.id, targetPlayerID);
 
-        char packet[ShotUpdatePLen + PlayerIdPLen];
-        buf = (void*)packet;
-        buf = firingInfo.shot.pack(buf);
-        buf = nboPackUByte(buf, targetPlayerID);
+        buf = GetMessageBuffer();
+        buf->legacyPack(firingInfo.shot.pack(buf->current_buffer()));
+        buf->packUByte(targetPlayerID);
 
-        broadcastMessage(MsgGMUpdate, sizeof(packet), packet);
+        broadcastPacket(MsgGMUpdate, buf);
     }
 
     bz_ServerShotFiredEventData_V1 event;
