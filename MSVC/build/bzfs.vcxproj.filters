@@ -181,7 +181,7 @@
     <ClCompile Include="..\..\src\bzfs\bzfsAPIWorld.cxx">
       <Filter>Source Files\API</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzfs\MessagBuffers.cxx">
+    <ClCompile Include="..\..\src\bzfs\MessageBuffers.cxx">
       <Filter>Source Files\Server</Filter>
     </ClCompile>
   </ItemGroup>

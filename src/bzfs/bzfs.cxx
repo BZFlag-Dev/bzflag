@@ -254,7 +254,7 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
     return result;
 }
 
-static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message, bool release = true)
+static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message, bool UNUSED(release) = true)
 {
     if (playerData.isParting)
         return -1;
@@ -418,7 +418,7 @@ static void sendFlagUpdate(int playerIndex)
     if (!playerData)
         return;
 
-    int maxFlags = MaxPacketLen / 55; // flags pack down to 55 bytes
+    unsigned int maxFlags = MaxPacketLen / 55; // flags pack down to 55 bytes
     if (maxFlags > 1)
         maxFlags--;
 
@@ -431,7 +431,7 @@ static void sendFlagUpdate(int playerIndex)
         if (!flag || !flag->exist())
             continue;
 
-        if (flagsToSend[flagsToSend.size() - 1].size() == maxFlags - 1)
+        if (flagsToSend.empty() || flagsToSend[flagsToSend.size() - 1].size() == maxFlags - 1)
             flagsToSend.push_back(std::vector<int>());
 
         flagsToSend[flagsToSend.size() - 1].push_back(flagIndex);
@@ -4169,7 +4169,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
     broadcastPacket(MsgGMUpdate, newShot);
 }
 
-static void shotFired(int playerIndex, void *buf, int len)
+static void shotFired(int playerIndex, void *buf, int UNUSED(len))
 {
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (!playerData)
@@ -4390,9 +4390,9 @@ static void shotFired(int playerIndex, void *buf, int len)
     if (firingInfo.flagType->flagEffect != FlagEffect::NoShot)
     {
         // repack for ID
-        auto buf = GetMessageBuffer();
-        buf->legacyPack(firingInfo.pack(buf->current_buffer()));
-        broadcastPacket(MsgShotBegin, buf);
+        auto buf2 = GetMessageBuffer();
+        buf2->legacyPack(firingInfo.pack(buf2->current_buffer()));
+        broadcastPacket(MsgShotBegin, buf2);
     }
 }
 

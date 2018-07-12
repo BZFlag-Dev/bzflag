@@ -12,8 +12,9 @@
 
 #include "MessageBuffers.h"
 #include "Protocol.h"
-#include "pack.h"
+#include "Pack.h"
 
+#include <string.h>
 #include <vector>
 
 MessageBuffer::MessageBuffer()

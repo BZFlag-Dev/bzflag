@@ -904,13 +904,13 @@ void GameKeeper::Player::getDeadReckoning(float* predictedPos, float* predictedA
 
     calcRelativeMotion(inputRelVel, inputRelSpeed, inputRelAngVel);
 
-    bool inputTurning = false;
+    //bool inputTurning = false;
     float inputTurnVector[2];
     float inputTurnCenter[2];
 
     if (fabsf(inputRelAngVel) > 0.001f)
     {
-        inputTurning = true;
+        //inputTurning = true;
         const float radius = (inputRelSpeed / inputRelAngVel);
         inputTurnVector[0] = +sinf(lastUpdate.rot) * radius;
         inputTurnVector[1] = -cosf(lastUpdate.rot) * radius;
@@ -1015,7 +1015,8 @@ static const float  MaxUpdateTime = 1.0f;       // seconds
 
 bool GameKeeper::Player::isDeadReckoningWrong() const
 {
-    const uint16_t checkStates = (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+    //const uint16_t checkStates = (PlayerState::Alive | PlayerState::Paused | PlayerState::Falling);
+
     // always send a new packet when some kinds of status change
     if ((currentState.pStatus != lastUpdate.pStatus))
         return true;
