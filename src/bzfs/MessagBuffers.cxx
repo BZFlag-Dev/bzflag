@@ -35,7 +35,7 @@ void MessageBuffer::reset()
 
 size_t MessageBuffer::size()
 {
-    return (size_t)((unsigned char*)write_ptr - raw_buffer - (2 * sizeof(uint16_t)));
+    return (size_t)(((unsigned char*)write_ptr - raw_buffer) - (2 * sizeof(uint16_t)));
 }
 
 void* MessageBuffer::buffer()
@@ -159,5 +159,9 @@ MessageBuffer::Ptr GetMessageBuffer()
 void ReleaseMessageBuffer(MessageBuffer::Ptr buffer)
 {
     if (buffer != nullptr)
+    {
+        buffer->reset();
         buffer->locked = false;
-}
+    }
+ }
+        
