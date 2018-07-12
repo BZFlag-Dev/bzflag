@@ -97,7 +97,14 @@ void Score::reset()
     changeScoreElement(bz_eTKs, &tks, 0);
 }
 
-void *Score::pack(void *buf)
+void Score::pack(MessageBuffer::Ptr message)
+{
+    message->packUShort(wins);
+    message->packUShort(losses);
+    message->packUShort(tks);
+}
+
+void*  Score::pack(void* buf)
 {
     buf = nboPackUShort(buf, wins);
     buf = nboPackUShort(buf, losses);

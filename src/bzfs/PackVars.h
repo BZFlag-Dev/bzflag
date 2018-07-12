@@ -39,7 +39,9 @@ public:
         if (len > sizeof(uint16_t))
         {
             nboPackUShort(bufStart, count);
-            directMessage(playerId, MsgSetVar, len, bufStart);
+            auto b = GetMessageBuffer();
+            b->packBuffer(bufStart, len);
+            sendPacket(playerId, MsgSetVar,b);
         }
     }
 
@@ -57,7 +59,11 @@ public:
         {
             nboPackUShort(bufStart, count);
             count = 0;
-            directMessage(playerId, MsgSetVar, len, bufStart);
+
+            auto b = GetMessageBuffer();
+            b->packBuffer(bufStart, len);
+            sendPacket(playerId, MsgSetVar, b);
+
             buf = nboPackUShort(bufStart, 0); //placeholder
             len = sizeof(uint16_t);
         }

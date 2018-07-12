@@ -51,7 +51,7 @@
 #include "Permissions.h"
 #include "RecordReplay.h"
 #include "bzfs.h"
-#include "PackVars.h"   // uses directMessage() from bzfs.h
+#include "PackVars.h"   // uses sendPacket() from bzfs.h
 
 
 #if defined(_WIN32)
@@ -1225,10 +1225,11 @@ bool GameOverCommand::operator() (const char     *,
         return true;
     }
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, t);
-    buf = nboPackUShort(buf, uint16_t(NoTeam));
-    broadcastMessage(MsgScoreOver, (char*)buf - (char*)bufStart, bufStart);
+    auto buf = GetMessageBuffer();
+    buf->packUByte(t);
+    buf->packUShort(uint16_t(NoTeam));
+    broadcastPacket(MsgScoreOver, buf);
+
     gameOver = true;
     if (clOptions->timeManualStart)
     {
@@ -1703,10 +1704,10 @@ bool FlagCommand::operator() (const char     *message,
                 GameKeeper::Player* fPlayer = GameKeeper::Player::getPlayerByIndex(fi->player);
                 if (fPlayer)
                 {
-                    void *bufStart = getDirectMessageBuffer();
-                    void *buf = nboPackUByte(bufStart, fi->player);
-                    buf = fi->pack(buf);
-                    broadcastMessage(MsgFlagDropped, (char*)buf - (char*)bufStart, bufStart);
+                    auto buf = GetMessageBuffer();
+                    buf->packUByte(fi->player);
+                    buf->legacyPack(fi->pack(buf->current_buffer()));
+                    broadcastPacket(MsgFlagDropped, buf);
                     fPlayer->grantFlag(-1);
                 }
             }

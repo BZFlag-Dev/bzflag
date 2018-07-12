@@ -20,8 +20,9 @@
 #include "ShotUpdate.h"
 #include "vectors.h"
 #include "TimeKeeper.h"
-
+#include "FlagInfo.h"
 #include "Obstacle.h"
+#include "MessageBuffers.h"
 
 #include <string>
 #include <vector>
@@ -43,6 +44,12 @@
 
 namespace Shots
 {
+    void PackFirningInfo(FiringInfo &info, MessageBuffer::Ptr msg);
+    void PackShotUpdate(ShotUpdate &info, MessageBuffer::Ptr msg);
+    void PackFlagType(FlagType::Ptr info, MessageBuffer::Ptr msg);
+    void PackCustomFlagType(FlagType::Ptr info, MessageBuffer::Ptr msg);
+    void PackFlag(FlagInfo& flag, bool hide, MessageBuffer::Ptr msg);
+
     class Shot
     {
     protected:

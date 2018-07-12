@@ -17,6 +17,7 @@
 #include "global.h"
 
 #include "bzfsAPI.h"
+#include "MessageBuffers.h"
 
 class Score
 {
@@ -34,7 +35,8 @@ public:
     void  killedBy();
     void  kill();
     void  reset();
-    void *pack(void *buf);
+    void  pack(MessageBuffer::Ptr message);
+    void*  pack(void* buf);
     bool  reached() const;
     int   getWins() const
     {

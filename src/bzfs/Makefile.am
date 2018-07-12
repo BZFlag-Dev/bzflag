@@ -93,6 +93,8 @@ bzfs_SOURCES =				\
 	ListServerConnection.h		\
 	MasterBanList.cxx		\
 	MasterBanList.h			\
+	MessagBuffers.h			\
+	MessagBuffers.cxx			\
 	PackVars.h			\
 	ParseMaterial.cxx		\
 	ParseMaterial.h			\

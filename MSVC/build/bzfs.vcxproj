@@ -391,6 +391,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClCompile Include="..\..\src\bzfs\GameKeeper.cxx" />
     <ClCompile Include="..\..\src\bzfs\ListServerConnection.cxx" />
     <ClCompile Include="..\..\src\bzfs\MasterBanList.cxx" />
+    <ClCompile Include="..\..\src\bzfs\MessagBuffers.cxx" />
     <ClCompile Include="..\..\src\bzfs\ParseMaterial.cxx" />
     <ClCompile Include="..\..\src\bzfs\Permissions.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -685,6 +686,7 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClInclude Include="..\..\src\bzfs\GameKeeper.h" />
     <ClInclude Include="..\..\src\bzfs\ListServerConnection.h" />
     <ClInclude Include="..\..\src\bzfs\MasterBanList.h" />
+    <ClInclude Include="..\..\src\bzfs\MessageBuffers.h" />
     <ClInclude Include="..\..\src\bzfs\PackVars.h" />
     <ClInclude Include="..\..\src\bzfs\ParseMaterial.h" />
     <ClInclude Include="..\..\src\bzfs\Permissions.h" />

@@ -350,16 +350,16 @@ FlagType::TypeMap& FlagType::getFlagMap()
 
 void* FlagInstance::pack(void* buf) const
 {
-    buf = type->pack(buf);
-    buf = nboPackUShort(buf, uint16_t(status));
-    buf = nboPackUShort(buf, uint16_t(endurance));
-    buf = nboPackUByte(buf, owner);
-    buf = nboPackVector(buf, position);
-    buf = nboPackVector(buf, launchPosition);
-    buf = nboPackVector(buf, landingPosition);
-    buf = nboPackFloat(buf, flightTime);
-    buf = nboPackFloat(buf, flightEnd);
-    buf = nboPackFloat(buf, initialVelocity);
+    buf = type->pack(buf);                          //  2
+    buf = nboPackUShort(buf, uint16_t(status));     //  4
+    buf = nboPackUShort(buf, uint16_t(endurance));  //  6
+    buf = nboPackUByte(buf, owner);                 //  7
+    buf = nboPackVector(buf, position);             //  19
+    buf = nboPackVector(buf, launchPosition);       //  31
+    buf = nboPackVector(buf, landingPosition);      //  43
+    buf = nboPackFloat(buf, flightTime);            //  47
+    buf = nboPackFloat(buf, flightEnd);             //  51
+    buf = nboPackFloat(buf, initialVelocity);       //  55
     return buf;
 }
 
