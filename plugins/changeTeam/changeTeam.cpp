@@ -76,7 +76,7 @@ public:
     }
 
     if (newTeam != eNoTeam)
-      bz_changeTeam(playerID, newTeam);
+      bz_changePlayerTeam(playerID, newTeam);
 
     return true;
   }
