@@ -15,6 +15,7 @@
 
 // system headers
 #include <time.h>
+#include <functional>
 
 /* common implementation headers */
 #include "BundleMgr.h"
