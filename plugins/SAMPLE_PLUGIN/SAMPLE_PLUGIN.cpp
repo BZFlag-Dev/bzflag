@@ -37,19 +37,25 @@ either expressed or implied, of the FreeBSD Project.
 class SAMPLE_PLUGIN : public bz_Plugin
 {
 public:
-  virtual const char* Name () {return "SAMPLE PLUGIN";}
-  virtual void Init ( const char* config );
+    virtual const char* Name ()
+    {
+        return "SAMPLE PLUGIN";
+    }
+    virtual void Init ( const char* config );
 
-  virtual void Event ( bz_EventData * /* eventData */ ) {return;}
+    virtual void Event ( bz_EventData * /* eventData */ )
+    {
+        return;
+    }
 };
 
 BZ_PLUGIN(SAMPLE_PLUGIN)
 
 void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
+    bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
 
-  // init events here with Register();
+    // init events here with Register();
 }
 // Local Variables: ***
 // mode: C++ ***

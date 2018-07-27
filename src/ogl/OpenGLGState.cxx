@@ -1317,7 +1317,8 @@ void OpenGLGState::initContext()
     }
 
     GLenum err = glewInit();
-    if (GLEW_OK != err) {
+    if (GLEW_OK != err)
+    {
         printf("Error: %s\n", glewGetErrorString(err));
         return;
     }
