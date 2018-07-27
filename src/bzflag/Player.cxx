@@ -808,10 +808,6 @@ void Player::setFlag(FlagType::Ptr _flag, int _limit)
     return;
 }
 
-int Player::getFlagLimit()
-{
-    return flagLimit;
-}
 
 void Player::updateFlagEffect(FlagType::Ptr effectFlag)
 {

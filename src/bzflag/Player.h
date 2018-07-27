@@ -77,6 +77,7 @@ public:
     virtual void    addEmptyShotToSlot(int slotID);
 
     const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
+    const  int& getFlagLimit() const { return flagLimit; }
 
     float     getAngularVelocity() const;
     int       getPhysicsDriver() const;
@@ -173,7 +174,6 @@ public:
     void      setUserAngVel(float angvel);
     void      changeTeam(TeamColor);
     virtual void  setFlag(FlagType::Ptr, int);
-    int getFlagLimit();
     virtual void  changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void      changeSelfKills(short delta);
     void      changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);

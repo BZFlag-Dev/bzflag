@@ -863,17 +863,6 @@ void            HUDRenderer::renderStatus(void)
         else
             hudColor3fv(messageColor);
         fm.drawString(x, y, 0, majorFontFace, majorFontSize, flagname);
-
-        int flagLimit = myTank->getFlagLimit();
-        std::string flagLimitStr = std::to_string(flagLimit);
-        if (flagLimit >= 0)
-        {
-            x = (float)window.getWidth() / 2.0f + (float)window.getWidth() / 25.0f +
-                maxMotionSize + 16.0f + fm.getStrLength(minorFontFace, minorFontSize, flagLimitStr);
-            float y2 = (float)window.getHeight() / 2.0f - fm.getStrHeight(minorFontFace, minorFontSize, flagLimitStr) / 2.0f;
-
-            fm.drawString(x, y2, 0, minorFontFace, minorFontSize, flagLimitStr);
-        }
     }
     else
     {
@@ -2034,6 +2023,7 @@ void            HUDRenderer::renderShots(const Player* target)
     if (!target)
         return;
 
+    FontManager &fm = FontManager::instance();
 
     const ShotSlot::Vec& slotList = target->getShotSlots();
 
@@ -2080,6 +2070,15 @@ void            HUDRenderer::renderShots(const Player* target)
         }
     }
     glDisable(GL_BLEND);
+
+    // draw the number of shots left
+    hudColor4f(1.0f, 1.0f, 1.0f, 0.75f); // 75%-solid white
+    const int& flagLimit = target->getFlagLimit();
+    if (flagLimit >= 0)
+    {
+        float y = (float)indicatorTop + factors.size() * (indicatorHeight + indicatorSpace);
+        fm.drawString((float)indicatorLeft, y, 0, minorFontFace, minorFontSize, std::to_string(flagLimit));
+    }
 }
 
 
