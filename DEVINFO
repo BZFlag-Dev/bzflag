@@ -160,7 +160,7 @@ follow the BZFlag style if you want your contribution included.
 BZFlag is formated using the Allman Style, and this is enforced
 with the artistic styler, astyle, using these command line options:
 
-astyle --style=allman -nxj --convert-tabs --max-code-length=120 \
+astyle --style=allman -nxjQ --convert-tabs --max-code-length=120 \
   --recursive './*.cxx' './*.cpp' './*.h'
 
 The source code serves for examples of the following rules.
