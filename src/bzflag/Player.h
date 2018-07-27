@@ -173,6 +173,7 @@ public:
     void      setUserAngVel(float angvel);
     void      changeTeam(TeamColor);
     virtual void  setFlag(FlagType::Ptr, int);
+    int getFlagLimit();
     virtual void  changeScore(short deltaWins, short deltaLosses, short deltaTeamKills);
     void      changeSelfKills(short delta);
     void      changeLocalScore(short deltaWins, short deltaLosses, short deltaTeamKills);

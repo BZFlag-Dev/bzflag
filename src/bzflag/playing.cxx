@@ -2691,20 +2691,6 @@ static void     handleServerMessage(bool human, uint16_t code,
             // grabbed flag
             playLocalSound(myTank->getFlag()->endurance != FlagEndurance::Sticky ? SFX_GRAB_FLAG : SFX_GRAB_BAD);
             updateFlag(myTank->getFlag());
-
-            if (flagLimit >= 0)
-            {
-                std::string limitMessage;
-
-                if (flagLimit > 1)
-                    limitMessage = TextUtils::format("This flag is limited to %d shots", flagLimit);
-                   else if (flagLimit == 1)
-                       limitMessage = "This flag is limited to 1 shot";
-                   else
-                       limitMessage = "This flag is empty and can not be shot";
-
-                addMessage(nullptr, limitMessage, 0);
-            }
         }
         else if (isViewTank(tank))
         {

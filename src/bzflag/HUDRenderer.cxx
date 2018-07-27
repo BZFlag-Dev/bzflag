@@ -863,6 +863,17 @@ void            HUDRenderer::renderStatus(void)
         else
             hudColor3fv(messageColor);
         fm.drawString(x, y, 0, majorFontFace, majorFontSize, flagname);
+
+        int flagLimit = myTank->getFlagLimit();
+        std::string flagLimitStr = std::to_string(flagLimit);
+        if (flagLimit >= 0)
+        {
+            x = (float)window.getWidth() / 2.0f + (float)window.getWidth() / 25.0f +
+                maxMotionSize + 16.0f + fm.getStrLength(minorFontFace, minorFontSize, flagLimitStr);
+            float y2 = (float)window.getHeight() / 2.0f - fm.getStrHeight(minorFontFace, minorFontSize, flagLimitStr) / 2.0f;
+
+            fm.drawString(x, y2, 0, minorFontFace, minorFontSize, flagLimitStr);
+        }
     }
     else
     {
