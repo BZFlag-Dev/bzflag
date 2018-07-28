@@ -44,7 +44,8 @@ static const float  MaxUpdateTime = 1.0f;       // seconds
 
 int     Player::tankTexture = -1;
 
-Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* name, const char* _motto, const PlayerType _type) :
+Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* name, const char* _motto,
+               const PlayerType _type) :
     lastObstacle(NULL),
     pauseMessageState(false),
     handicap(0.0f),

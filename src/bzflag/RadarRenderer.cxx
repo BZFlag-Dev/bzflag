@@ -135,9 +135,8 @@ void RadarRenderer::setTankColor(const Player* player)
         glColor3fv(dimmedcolor);
     }
     else
-    {
-        glColor3fv(Team::getRadarColor(myTank->getFlag()->flagEffect == FlagEffect ::Colorblindness ? RogueTeam : player->getTeam()));
-    }
+        glColor3fv(Team::getRadarColor(myTank->getFlag()->flagEffect == FlagEffect ::Colorblindness ? RogueTeam :
+                                       player->getTeam()));
     // If this tank is hunted flash it on the radar
     if (player->isHunted() && myTank->getFlag()->flagEffect != FlagEffect::Colorblindness)
     {

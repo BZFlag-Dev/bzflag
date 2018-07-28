@@ -31,7 +31,7 @@ void DrawMeshGeometry(const CMesh& mesh, bool isShadow)
             }
             glVertex3f(mesh.verts[face.verts[f]].x, mesh.verts[face.verts[f]].y, mesh.verts[face.verts[f]].z);
         }
-      
+
     }
     glEnd();
 }

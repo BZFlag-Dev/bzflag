@@ -47,7 +47,8 @@ public:
     int packSize() const;
     void *pack(void *buf) const;
 
-    int fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor = RogueTeam, PlayerId targetPlayerID = -1);
+    int fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor = RogueTeam,
+                 PlayerId targetPlayerID = -1);
 
 private:
     class Weapon

@@ -448,7 +448,8 @@ void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
 
         // if hit outer wall with ricochet and hit is above top of wall
         // then ignore hit.
-        if (!teleporter && building && (e == Reflect) && (building->getType() == WallObstacle::getClassName()) && ((o[2] + t * d[2]) > building->getHeight()))
+        if (!teleporter && building && (e == Reflect) && (building->getType() == WallObstacle::getClassName())
+                && ((o[2] + t * d[2]) > building->getHeight()))
             ignoreHit = true;
 
         // construct next shot segment and add it to list

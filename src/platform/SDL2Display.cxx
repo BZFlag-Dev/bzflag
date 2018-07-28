@@ -413,7 +413,7 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 }
 
 
-bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) 
+bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event)
 {
     SDL_Keymod mode = SDL_GetModState();
     bool shift  = ((mode & KMOD_SHIFT) != 0);

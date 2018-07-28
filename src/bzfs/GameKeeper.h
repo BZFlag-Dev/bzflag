@@ -135,7 +135,8 @@ public:
 
         const Obstacle*  getHitBuilding(const float* p, float a, bool phased, bool& expelled) const;
         const Obstacle*  getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled);
-        bool             getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2, float* normal) const;
+        bool             getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2,
+                                      float* normal) const;
 
         inline const float* getDimensions() const
         {
@@ -151,7 +152,7 @@ public:
         }
 
 
-        inline float        getMuzzleHeight() const 
+        inline float        getMuzzleHeight() const
         {
             return/* dimensionsScale[2] * */BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
         }
@@ -367,7 +368,7 @@ public:
 
         double              lastShotUpdateTime = -1;
 
-        float               base_dimensions[3];     // unmodified tank dimenstions    
+        float               base_dimensions[3];     // unmodified tank dimenstions
         float               current_dimensions[3];  // current tank dimensions
 
         void setupPhysicsData();

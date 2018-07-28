@@ -1743,7 +1743,8 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL );
 // shot API
 BZF_API int bz_getShotGUID(int /*fromPlayer*/, int shotID);     // shot IDs are now GUID, so player is unused
 
-BZF_API int bz_fireServerShot(const char* shotType, float origin[3], float vector[3],  bz_eTeamType color = eRogueTeam, int targetPlayerId = -1);
+BZF_API int bz_fireServerShot(const char* shotType, float origin[3], float vector[3],  bz_eTeamType color = eRogueTeam,
+                              int targetPlayerId = -1);
 BZF_API int bz_addPlayerShot(int playerID, const char* flagName, float origin[3], float vector[3]);
 
 // shot metadata
@@ -1919,7 +1920,7 @@ BZF_API bool bz_removeCustomSlashCommand ( const char* command );
 BZF_API bool bz_getStandardSpawn ( int playerID, float pos[3], float *rot );
 
 // change team
-BZF_API bool bz_changePlayerTeam(int playerID, bz_eTeamType teamID);	// takes effect at next spawn
+BZF_API bool bz_changePlayerTeam(int playerID, bz_eTeamType teamID);    // takes effect at next spawn
 
 // dying
 typedef enum
@@ -1935,7 +1936,8 @@ typedef enum
 } bz_ePlayerDeathReason;
 
 BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID = -1, const char* flagID = nullptr );
-BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID = -1, const char* flagID = nullptr );
+BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID = -1,
+                             const char* flagID = nullptr );
 
 // flags
 BZF_API bool bz_givePlayerFlag ( int playerID, const char* flagType, bool force );
@@ -2234,7 +2236,8 @@ BZF_API bool bz_triggerFlagCapture(int playerID, bz_eTeamType teamCapping, bz_eT
 
 // Note: there is NO bz_UnregisterCustomFlag, 'cause that would jack up connected clients.
 // If you really need to unregister a flag, shut down the server.
-/*DEPRECATED*/ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, int shotType, uint8_t quality);
+/*DEPRECATED*/ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString,
+        int shotType, uint8_t quality);
 
 enum class bz_eFlagQuality
 {
@@ -2290,7 +2293,9 @@ enum class bz_FlagEffect
     NoShot,
 };
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality = bz_eFlagQuality::Good, bz_FlagEffect effect = bz_FlagEffect::Normal, bz_eTeamType teamColor = eNoTeam);
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString,
+                                   bz_eFlagQuality quality = bz_eFlagQuality::Good, bz_FlagEffect effect = bz_FlagEffect::Normal,
+                                   bz_eTeamType teamColor = eNoTeam);
 
 // utility
 BZF_API const char* bz_MD5(const char * str);

@@ -372,7 +372,9 @@ static std::string cmdIdentify(const std::string&,
         return "usage: identify";
     LocalPlayer *myTank = LocalPlayer::getMyTank();
 
-    if (myTank != nullptr && myTank->isAlive() && !myTank->isPaused() && myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile)  // per specification from Blast007, GM locks can only be initizated by people with the GM flag
+    // per specification from blast007, GM locks can only be initizated by people with the GM flag
+    if (myTank != nullptr && myTank->isAlive() && !myTank->isPaused()
+            && myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile)
         setTarget();
 
     return std::string();
@@ -844,7 +846,8 @@ static void* writeScreenshot(void* data)
         if (setjmp(png_jmpbuf(png)))
         {
             ControlPanel::addMutexMessage("Error writing screenshot.");
-            if (png != nullptr) {
+            if (png != nullptr)
+            {
                 if (pnginfo != nullptr)
                     png_destroy_write_struct(&png, &pnginfo);
                 else

@@ -1244,13 +1244,13 @@ BZF_API void bz_setPlayerSpawnAtBase ( int playerId, bool base )
 
 BZF_API bool bz_forceSpawnPlayer(int playerId, float pos[3], float rot)
 {
-  GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerId);
 
-  if (!player)
-    return false;
+    if (!player)
+        return false;
 
-  SpawnPlayer(player, pos, rot);
-  return true;
+    SpawnPlayer(player, pos, rot);
+    return true;
 }
 
 BZF_API bool bz_getPlayerSpawnAtBase ( int playerId )
@@ -1599,7 +1599,7 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
     message->packUShort((short)resType);
     message->packUShort((unsigned short)strlen(URL));
     message->packString(URL, strlen(URL));
-   
+
     if (playerID == BZ_ALLUSERS)
         broadcastPacket(MsgFetchResources, message);
     else
@@ -1609,7 +1609,8 @@ BZF_API bool bz_sentFetchResMessage ( int playerID,  const char* URL )
 }
 
 // new API, much cleaner
-BZF_API int bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color, int targetPlayerId)
+BZF_API int bz_fireServerShot(const char* shotType, float origin[3], float vector[3], bz_eTeamType color,
+                              int targetPlayerId)
 {
     if (!shotType || !origin)
         return INVALID_SHOT_GUID;
@@ -2746,7 +2747,8 @@ BZF_API bool bz_killPlayer ( int playerID, bool spawnOnBase, int killerID, const
     return true;
 }
 
-BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID, const char* flagType)
+BZF_API bool bz_killPlayer(int playerID, bool spawnOnBase, bz_ePlayerDeathReason reason, int killerID,
+                           const char* flagType)
 {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
     if (!player)
@@ -4515,7 +4517,8 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
     /* let this pointer dangle.  the constructor has taken care of all
      * the real work on the server side.
      */
-    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, (ShotType)shotType, (FlagQuality)quality, NoTeam, FlagEffect::Normal, help, true));
+    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, (ShotType)shotType,
+                        (FlagQuality)quality, NoTeam, FlagEffect::Normal, help, true));
 
     /* default the shot limit.  note that -sl will still take effect, if
      * this plugin is loaded from the command line or config file, since
@@ -4535,7 +4538,8 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
     return true;
 }
 
-BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality, bz_FlagEffect effect , bz_eTeamType teamColor)
+BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const char* helpString, bz_eFlagQuality quality,
+                                   bz_FlagEffect effect, bz_eTeamType teamColor)
 {
     // require defined fields
     if (abbr == nullptr || name == nullptr || helpString == nullptr)
@@ -4576,28 +4580,29 @@ BZF_API bool bz_RegisterCustomFlag(const char* abbr, const char* name, const cha
 
     switch (effect)
     {
-        case bz_FlagEffect::RapidFire:
-        case bz_FlagEffect::MachineGun:
-        case bz_FlagEffect::GuidedMissile:
-        case bz_FlagEffect::Laser:
-        case bz_FlagEffect::Ricochet:
-        case bz_FlagEffect::SuperBullet:
-        case bz_FlagEffect::InvisibleBullet:
-        case bz_FlagEffect::Steamroller:
-        case bz_FlagEffect::ShockWave:
-        case bz_FlagEffect::PhantomZone:
-        case bz_FlagEffect::Thief:
-            shotType = ShotType::Special;
-            break;
-    
-        default:
-            break;
+    case bz_FlagEffect::RapidFire:
+    case bz_FlagEffect::MachineGun:
+    case bz_FlagEffect::GuidedMissile:
+    case bz_FlagEffect::Laser:
+    case bz_FlagEffect::Ricochet:
+    case bz_FlagEffect::SuperBullet:
+    case bz_FlagEffect::InvisibleBullet:
+    case bz_FlagEffect::Steamroller:
+    case bz_FlagEffect::ShockWave:
+    case bz_FlagEffect::PhantomZone:
+    case bz_FlagEffect::Thief:
+        shotType = ShotType::Special;
+        break;
+
+    default:
+        break;
     }
 
     /* let this pointer dangle.  the constructor has taken care of all
     * the real work on the server side.
     */
-    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, shotType, (FlagQuality)quality, (TeamColor)convertTeam(teamColor), (FlagEffect)effect, helpString, true));
+    FlagType::Ptr tmp = Flags::AddCustomFlag(std::make_shared<FlagType>(name, abbr, e, shotType, (FlagQuality)quality,
+                        (TeamColor)convertTeam(teamColor), (FlagEffect)effect, helpString, true));
 
     /* default the shot limit.  note that -sl will still take effect, if
     * this plugin is loaded from the command line or config file, since

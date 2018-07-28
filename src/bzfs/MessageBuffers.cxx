@@ -164,8 +164,8 @@ void ReleaseMessageBuffer(MessageBuffer::Ptr buffer)
         buffer->reset();
         buffer->locked = false;
     }
- }
-        
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

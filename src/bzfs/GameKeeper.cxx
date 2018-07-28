@@ -38,18 +38,18 @@ void PackPlayerInfo(MessageBuffer::Ptr msg, int playerIndex, uint8_t properties)
 }
 
 GameKeeper::Player::Player(int _playerIndex,
-    const struct sockaddr_in &clientAddr, int fd,
-    tcpCallback _clientCallback)
+                           const struct sockaddr_in &clientAddr, int fd,
+                           tcpCallback _clientCallback)
     : _LSAState(start),
-    player(_playerIndex), netHandler(new NetHandler(&player, clientAddr, _playerIndex, fd)),
-    lagInfo(&player),
-    stateTimeStamp(0.0f), serverTimeStamp(0.0),
-    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-    isParting(false), hasEntered(false),
-    playerHandler(0),
-    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-    playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-    needThisHostbanChecked(false), idFlag(-1)
+      player(_playerIndex), netHandler(new NetHandler(&player, clientAddr, _playerIndex, fd)),
+      lagInfo(&player),
+      stateTimeStamp(0.0f), serverTimeStamp(0.0),
+      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+      isParting(false), hasEntered(false),
+      playerHandler(0),
+      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+      playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+      needThisHostbanChecked(false), idFlag(-1)
 {
     playerList[playerIndex] = this;
 
@@ -63,18 +63,18 @@ GameKeeper::Player::Player(int _playerIndex,
 
 
 GameKeeper::Player::Player(int _playerIndex,
-    NetHandler* handler,
-    tcpCallback _clientCallback)
+                           NetHandler* handler,
+                           tcpCallback _clientCallback)
     : _LSAState(start),
-    player(_playerIndex), netHandler(handler),
-    lagInfo(&player),
-    stateTimeStamp(0.0f), serverTimeStamp(0.0),
-    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-    isParting(false), hasEntered(false),
-    playerHandler(0),
-    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-    playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
-    needThisHostbanChecked(false), idFlag(-1)
+      player(_playerIndex), netHandler(handler),
+      lagInfo(&player),
+      stateTimeStamp(0.0f), serverTimeStamp(0.0),
+      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+      isParting(false), hasEntered(false),
+      playerHandler(0),
+      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+      playerIndex(_playerIndex), closed(false), clientCallback(_clientCallback),
+      needThisHostbanChecked(false), idFlag(-1)
 {
     playerList[playerIndex] = this;
 
@@ -89,15 +89,15 @@ GameKeeper::Player::Player(int _playerIndex,
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
     : _LSAState(start),
-    player(_playerIndex), netHandler(0),
-    lagInfo(&player),
-    stateTimeStamp(0.0f), serverTimeStamp(0.0),
-    gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
-    isParting(false), hasEntered(false),
-    playerHandler(handler),
-    addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
-    playerIndex(_playerIndex), closed(false), clientCallback(0),
-    needThisHostbanChecked(false), idFlag(0)
+      player(_playerIndex), netHandler(0),
+      lagInfo(&player),
+      stateTimeStamp(0.0f), serverTimeStamp(0.0),
+      gameTimeRate(GameTime::startRate), gameTimeNext(TimeKeeper::getCurrent()),
+      isParting(false), hasEntered(false),
+      playerHandler(handler),
+      addWasDelayed(false), hadEnter(false), addDelayStartTime(0.0),
+      playerIndex(_playerIndex), closed(false), clientCallback(0),
+      needThisHostbanChecked(false), idFlag(0)
 {
     playerList[playerIndex] = this;
 
@@ -167,7 +167,7 @@ int GameKeeper::Player::count()
 
     for (int i = 0; i < PlayerSlot; i++)
         if ((playerData = playerList[i]) && !playerData->closed
-            && playerData->player.isPlaying())
+                && playerData->player.isPlaying())
             count++;
     return count;
 }
@@ -194,7 +194,7 @@ void GameKeeper::Player::dumpScore()
     for (int p = 0; p < PlayerSlot; ++p)
     {
         if ((playerData = playerList[p]) && !playerData->closed
-            && playerData->player.isPlaying())
+                && playerData->player.isPlaying())
         {
             playerData->score.dump();
             std::cout << ' ' << playerData->player.getCallSign() << std::endl;
@@ -213,7 +213,7 @@ int GameKeeper::Player::anointRabbit(int oldRabbit)
     for (int i = 0; i < PlayerSlot; ++i)
     {
         if ((playerData = playerList[i]) && !playerData->closed
-            && playerData->player.canBeRabbit(true))
+                && playerData->player.canBeRabbit(true))
         {
             bool  goodRabbit(i != oldRabbit && playerData->player.isAlive());
             float ratio(playerData->score.ranking());
@@ -304,7 +304,7 @@ void GameKeeper::Player::setPlayerAddMessage(PlayerAddMessage& msg)
 
 
 std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
-    int targetPlayer)
+        int targetPlayer)
 {
     std::vector<int> receivers;
     Player* playerData(0);
@@ -312,7 +312,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
     if (targetPlayer != -1)
     {
         if ((playerData = playerList[targetPlayer]) && !playerData->closed
-            && playerData->accessInfo.hasPerm(right))
+                && playerData->accessInfo.hasPerm(right))
             receivers.push_back(targetPlayer);
     }
     else
@@ -320,7 +320,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
         for (int i = 0; i < PlayerSlot; ++i)
         {
             if ((playerData = playerList[i]) && !playerData->closed
-                && playerData->accessInfo.hasPerm(right))
+                    && playerData->accessInfo.hasPerm(right))
                 receivers.push_back(i);
         }
     }
@@ -329,7 +329,7 @@ std::vector<int> GameKeeper::Player::allowed(PlayerAccessInfo::AccessPerm right,
 }
 
 bool GameKeeper::Player::loadEnterData(uint16_t& rejectCode,
-    char* rejectMsg)
+                                       char* rejectMsg)
 {
     // look if there is as name clash, we won't allow this
     for (int i = 0; i < PlayerSlot; i++)
@@ -373,7 +373,7 @@ int GameKeeper::Player::getPlayerIDByName(const std::string &name)
         for (int i = 0; i < PlayerSlot; ++i)
         {
             if ((playerData = playerList[i]) && !playerData->closed
-                && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
+                    && (TextUtils::compare_nocase(playerData->player.getCallSign(), name) == 0))
                 return i;
         }
     }
@@ -515,9 +515,7 @@ bool GameKeeper::Player::isValidShotToShoot(FiringInfo &firingInfo)
     for (auto slot : shotSlots)
     {
         if (slot.slotID == firingInfo.localID)
-        {
             return !slot.reloading && now >= slot.expireTime;
-        }
     }
 
     return false;
@@ -605,11 +603,13 @@ const Obstacle*  GameKeeper::Player::getHitBuilding(const float* p, float a, boo
 
     expelled = (obstacle != NULL);
     if (expelled && phased)
-        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName() || (getFlagEffect() == FlagEffect::OscillationOverthruster && desiredSpeed < 0.0f && p[2] == 0.0f));
+        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName()
+                    || (getFlagEffect() == FlagEffect::OscillationOverthruster && desiredSpeed < 0.0f && p[2] == 0.0f));
     return obstacle;
 }
 
-const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased, bool& expelled)
+const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float oldA, const float* p, float a, bool phased,
+        bool& expelled)
 {
     const bool hasOOflag = getFlagEffect() == FlagEffect::OscillationOverthruster;
     const float* dims = getDimensions();
@@ -617,7 +617,8 @@ const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float old
 
     expelled = (obstacle != NULL);
     if (expelled && phased)
-        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName() || (hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
+        expelled = (obstacle->getType() == WallObstacle::getClassName() || obstacle->getType() == Teleporter::getClassName()
+                    || (hasOOflag && desiredSpeed < 0.0f && p[2] == 0.0f));
 
     if (obstacle != NULL)
     {
@@ -634,7 +635,8 @@ const Obstacle*  GameKeeper::Player::getHitBuilding(const float* oldP, float old
     return obstacle;
 }
 
-bool GameKeeper::Player::getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2, float azimuth2, float* normal) const
+bool GameKeeper::Player::getHitNormal(const Obstacle* o, const float* pos1, float azimuth1, const float* pos2,
+                                      float azimuth2, float* normal) const
 {
     const float* dims = getDimensions();
     return o->getHitNormal(pos1, azimuth1, pos2, azimuth2, dims[0], dims[1], dims[2], normal);
@@ -642,7 +644,8 @@ bool GameKeeper::Player::getHitNormal(const Obstacle* o, const float* pos1, floa
 
 float GameKeeper::Player::getHandicapFactor()
 {
-    float normalizedHandicap = float(score.getHandicap()) / std::max(1.0f, BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));
+    float normalizedHandicap = float(score.getHandicap()) / std::max(1.0f,
+                               BZDB.eval(StateDatabase::BZDB_HANDICAPSCOREDIFF));
 
     /* limit how much of a handicap is afforded, and only provide
     * handicap advantages instead of disadvantages.
@@ -665,7 +668,8 @@ void  GameKeeper::Player::setDesiredSpeed(float fracOfMaxSpeed)
     else if (fracOfMaxSpeed < -0.5f) fracOfMaxSpeed = -0.5f;
 
     // oscillation overthruster tank in building can't back up
-    if (fracOfMaxSpeed < 0.0f && currentState.Status == bz_eTankStatus::InBuilding &&  flag->flagEffect == FlagEffect::OscillationOverthruster)
+    if (fracOfMaxSpeed < 0.0f && currentState.Status == bz_eTankStatus::InBuilding
+            &&  flag->flagEffect == FlagEffect::OscillationOverthruster)
         fracOfMaxSpeed = 0.0f;
 
     float tankSpeed = BZDB.eval(StateDatabase::BZDB_TANKSPEED);
@@ -800,7 +804,7 @@ void GameKeeper::Player::collectInsideBuildings()
                 }
                 // add the mesh if not already present
                 if (!obs->isDriveThrough() &&
-                    notInObstacleList(mesh, insideBuildings))
+                        notInObstacleList(mesh, insideBuildings))
                     insideBuildings.push_back(mesh);
             }
             else if (!obs->isDriveThrough())
@@ -894,7 +898,8 @@ void GameKeeper::Player::calcRelativeMotion(float vel[2], float& speed, float& a
     speed = (vel[0] * cosf(lastUpdate.rot)) + (vel[1] * sinf(lastUpdate.rot));
 }
 
-void GameKeeper::Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth, float* predictedVel, float dt) const
+void GameKeeper::Player::getDeadReckoning(float* predictedPos, float* predictedAzimuth, float* predictedVel,
+        float dt) const
 {
     float inputRelVel[2];               // relative velocity
     float inputRelSpeed;                // relative speed
@@ -1061,7 +1066,9 @@ bool GameKeeper::Player::isDeadReckoningWrong() const
 
     // see if position and azimuth are close enough
     float positionTolerance = BZDB.eval(StateDatabase::BZDB_POSITIONTOLERANCE);
-    if ((fabsf(currentState.pos[0] - predictedPos[0]) > positionTolerance) || (fabsf(currentState.pos[1] - predictedPos[1]) > positionTolerance) || fabsf(currentState.pos[2] - predictedPos[2]) > positionTolerance)
+    if ((fabsf(currentState.pos[0] - predictedPos[0]) > positionTolerance)
+            || (fabsf(currentState.pos[1] - predictedPos[1]) > positionTolerance)
+            || fabsf(currentState.pos[2] - predictedPos[2]) > positionTolerance)
         return true;
 
     float angleTolerance = BZDB.eval(StateDatabase::BZDB_ANGLETOLERANCE);
@@ -1141,7 +1148,8 @@ void GameKeeper::Player::grantFlag(int _flag)
                     flagAntidotePos[1] = (worldSize - baseSize) * ((float)bzfrand() - 0.5f);
                     flagAntidotePos[2] = 0.0f;
                 }
-            } while (world->inBuilding(flagAntidotePos, tankRadius, tankHeight));
+            }
+            while (world->inBuilding(flagAntidotePos, tankRadius, tankHeight));
             hasAntidoteFlag = true;
 
             // TODO, send this over the wire to remote clients so they don't compute it themselves, then we can check for the drop on the server

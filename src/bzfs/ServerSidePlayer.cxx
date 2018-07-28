@@ -76,7 +76,7 @@ public:
 bz_ServerSidePlayerHandler::bz_ServerSidePlayerHandler() : playerID(-1), autoSpawn(true), flaps(0)
 {
     pImpl = new Impl();
- 
+
     pImpl->lastPosition[0] = 0.0f;
     pImpl->lastPosition[1] = 0.0f;
     pImpl->lastPosition[2] = 0.0f;
@@ -180,7 +180,9 @@ void bz_ServerSidePlayerHandler::processUpdate(float dt)
     pImpl->bbox[1][2] += BZDB.eval(StateDatabase::BZDB_TANKHEIGHT);
 
     // drop bad flag if timeout has expired
-    if (dt > 0.0f && (clOptions->gameOptions & ShakableGameStyle && clOptions->shakeTimeout > 0) && pImpl->myTank->getFlagType() != Flags::Null && pImpl->myTank->getFlagType()->endurance == FlagEndurance::Sticky &&  pImpl->myTank->flagShakingTime > 0.0f)
+    if (dt > 0.0f && (clOptions->gameOptions & ShakableGameStyle && clOptions->shakeTimeout > 0)
+            && pImpl->myTank->getFlagType() != Flags::Null && pImpl->myTank->getFlagType()->endurance == FlagEndurance::Sticky
+            &&  pImpl->myTank->flagShakingTime > 0.0f)
     {
         pImpl->myTank->flagShakingTime -= dt;
         if (pImpl->myTank->flagShakingTime <= 0.0f)
@@ -222,10 +224,12 @@ void bz_ServerSidePlayerHandler::processUpdate(float dt)
 void  bz_ServerSidePlayerHandler::doMomentum(float dt, float& speed, float& angVel)
 {
     // get maximum linear and angular accelerations
-    float linearAcc = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMLINACC) :
-        clOptions->linearAcceleration;
-    float angularAcc = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMANGACC) :
-        clOptions->angularAcceleration;
+    float linearAcc = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(
+                          StateDatabase::BZDB_MOMENTUMLINACC) :
+                      clOptions->linearAcceleration;
+    float angularAcc = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(
+                           StateDatabase::BZDB_MOMENTUMANGACC) :
+                       clOptions->angularAcceleration;
 
     // limit linear acceleration
     if (linearAcc > 0.0f)
@@ -247,7 +251,8 @@ void  bz_ServerSidePlayerHandler::doMomentum(float dt, float& speed, float& angV
 
 void bz_ServerSidePlayerHandler::doFriction(float dt, const float *oldVelocity, float *newVelocity)
 {
-    const float friction = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :  BZDB.eval(StateDatabase::BZDB_FRICTION);
+    const float friction = (pImpl->myTank->getFlagEffect() == FlagEffect::Momentum) ? BZDB.eval(
+                               StateDatabase::BZDB_MOMENTUMFRICTION) :  BZDB.eval(StateDatabase::BZDB_FRICTION);
 
     if (friction > 0.0f)
     {
@@ -334,7 +339,8 @@ void bz_ServerSidePlayerHandler::doJump()
             return;
         flaps--;
     }
-    else if ((pImpl->myTank->currentState.Status != bz_eTankStatus::OnGround) && (pImpl->myTank->currentState.Status != bz_eTankStatus::OnBuilding))
+    else if ((pImpl->myTank->currentState.Status != bz_eTankStatus::OnGround)
+             && (pImpl->myTank->currentState.Status != bz_eTankStatus::OnBuilding))
     {
         // can't jump unless on the ground or a building
         if (pImpl->myTank->getFlagEffect() != FlagEffect::Wings)
@@ -344,7 +350,8 @@ void bz_ServerSidePlayerHandler::doJump()
         flaps--;
     }
     else if ((pImpl->myTank->getFlagEffect() != FlagEffect::Bouncy) &&
-        ((pImpl->myTank->getFlagEffect() != FlagEffect::Jumping && !allowJumping()) || (pImpl->myTank->getFlagEffect() == FlagEffect::NoJumping)))
+             ((pImpl->myTank->getFlagEffect() != FlagEffect::Jumping && !allowJumping())
+              || (pImpl->myTank->getFlagEffect() == FlagEffect::NoJumping)))
         return;
 
     // jump velocity
@@ -395,7 +402,9 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
     float newAngVel = 0.0f;
 
     // phased means we can pass through buildings
-    const bool phased = ((pImpl->myTank->currentState.Status == bz_eTankStatus::Dead) || (pImpl->myTank->currentState.Status == bz_eTankStatus::Exploding) || (pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster) || pImpl->myTank->isPhantomZoned());
+    const bool phased = ((pImpl->myTank->currentState.Status == bz_eTankStatus::Dead)
+                         || (pImpl->myTank->currentState.Status == bz_eTankStatus::Exploding)
+                         || (pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster) || pImpl->myTank->isPhantomZoned());
 
     float groundLimit = 0.0f;
     if (pImpl->myTank->getFlagEffect() == FlagEffect::Burrow)
@@ -431,7 +440,9 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
             newVelocity[2] += BZDB.eval(StateDatabase::BZDB_GRAVITY) * dt;
             newAngVel = 0.0f; // or oldAngVel to spin while exploding
         }
-        else if ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding) || (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && oldPosition[2] == groundLimit))
+        else if ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround)
+                 || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding)
+                 || (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && oldPosition[2] == groundLimit))
         {
             // full control
             float speed = pImpl->myTank->desiredSpeed;
@@ -565,7 +576,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
     const Obstacle* obstacle;
     float timeStep = dt;
     int stuck = false;
-    if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding)
+    if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead
+            && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding)
     {
         pImpl->myTank->currentState.Status = bz_eTankStatus::OnGround;
 
@@ -643,7 +655,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
     if (obstacle != nullptr)
     {
         float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-        if ((oldStatus != bz_eTankStatus::InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2]) && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
+        if ((oldStatus != bz_eTankStatus::InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2])
+                && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
         {
             newPos[0] = oldPosition[0];
             newPos[1] = oldPosition[1];
@@ -651,8 +664,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
 
             // drive over bumps
             const Obstacle* bumpObstacle = pImpl->myTank->getHitBuilding(newPos, tmpAzimuth,
-                newPos, newAzimuth,
-                phased, expelled);
+                                           newPos, newAzimuth,
+                                           phased, expelled);
             if (bumpObstacle == NULL)
             {
                 pImpl->myTank->move(newPos, pImpl->myTank->currentState.rot);
@@ -683,7 +696,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
 
             // see if we hit anything
             bool searchExpelled;
-            const Obstacle* searchObstacle = pImpl->myTank->getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased, searchExpelled);
+            const Obstacle* searchObstacle = pImpl->myTank->getHitBuilding(tmpPos, tmpAzimuth, newPos, newAzimuth, phased,
+                                             searchExpelled);
 
             if (!searchObstacle || !searchExpelled)
             {
@@ -725,7 +739,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
         // check for being on a building
         if ((newPos[2] > 0.0f) && (normal[2] > 0.001f))
         {
-            if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding && expelled)
+            if (pImpl->myTank->currentState.Status != bz_eTankStatus::Dead
+                    && pImpl->myTank->currentState.Status != bz_eTankStatus::Exploding && expelled)
             {
                 pImpl->myTank->currentState.Status = bz_eTankStatus::OnBuilding;
                 pImpl->lastObstacle = obstacle;
@@ -736,14 +751,14 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
         {
             // get component of velocity in normal direction (in horizontal plane)
             float mag = (normal[0] * newVelocity[0]) +
-                (normal[1] * newVelocity[1]);
+                        (normal[1] * newVelocity[1]);
 
             // handle upward normal component to prevent an upward force
             if (!NEAR_ZERO(normal[2], ZERO_TOLERANCE))
             {
                 // if going down then stop falling
                 if (newVelocity[2] < 0.0f && newVelocity[2] -
-                    (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
+                        (mag + normal[2] * newVelocity[2]) * normal[2] > 0.0f)
                     newVelocity[2] = 0.0f;
 
                 // normalize force magnitude in horizontal plane
@@ -783,14 +798,16 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
         }
 
         // see if we're crossing a wall
-        if (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster)
+        if (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding
+                && pImpl->myTank->getFlagEffect() == FlagEffect::OscillationOverthruster)
         {
             if (obstacle->isCrossing(newPos, newAzimuth, 0.5f * tankLength, 0.5f * tankWidth, tankHeight, NULL))
                 pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::CrossingWall));
             else
                 pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & int(PlayerState::CrossingWall));
         }
-        else if (world->crossingTeleporter(newPos, newAzimuth, 0.5f * tankLength, 0.5f * tankWidth, tankHeight, pImpl->crossingPlane))
+        else if (world->crossingTeleporter(newPos, newAzimuth, 0.5f * tankLength, 0.5f * tankWidth, tankHeight,
+                                           pImpl->crossingPlane))
             pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::CrossingWall));
         else
             pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & int(PlayerState::CrossingWall));
@@ -805,7 +822,7 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
             newVelocity[2] = (newPos[2] - oldPosition[2]) * oodt;
 
             float newPlanarSpeed2 = newVelocity[0] * newVelocity[0]
-                + newVelocity[1] * newVelocity[1];
+                                    + newVelocity[1] * newVelocity[1];
             float scaling = newPlanarSpeed2 / nominalPlanarSpeed2;
             if (scaling > 1.0f)
             {
@@ -855,7 +872,7 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
             {
                 // save teleport info
                 pImpl->myTank->setTeleport(pImpl->lastUpdate, source, targetTele);
-                sendTeleport(playerID ,source, targetTele);
+                sendTeleport(playerID,source, targetTele);
             }
         }
     }
@@ -871,17 +888,22 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
             pImpl->myTank->setPhysicsDriver(driverIdent);
     }
 
-  //  const bool justLanded = (oldStatus == bz_eTankStatus::InAir) && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding));
-  
+    //  const bool justLanded = (oldStatus == bz_eTankStatus::InAir) && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding));
+
     // set falling status
-    if (pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround || pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding ||  (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && newPos[2] == 0.0f))
+    if (pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround
+            || pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding
+            ||  (pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding && newPos[2] == 0.0f))
         pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & ~int(PlayerState::Falling));
-    else if (pImpl->myTank->currentState.Status == bz_eTankStatus::InAir || pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding)
+    else if (pImpl->myTank->currentState.Status == bz_eTankStatus::InAir
+             || pImpl->myTank->currentState.Status == bz_eTankStatus::InBuilding)
         pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::Falling));
 
     // set UserInput status (determines how animated treads are drawn)
     const PhysicsDriver* phydrv2 = PHYDRVMGR.getDriver(pImpl->myTank->currentState.phydrv);
-    if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||  ((pImpl->myTank->getFlagEffect() == FlagEffect::Wings) && (pImpl->myTank->currentState.Status == bz_eTankStatus::InAir) &&  (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f)))
+    if (((phydrv2 != NULL) && phydrv2->getIsSlide()) ||  ((pImpl->myTank->getFlagEffect() == FlagEffect::Wings)
+            && (pImpl->myTank->currentState.Status == bz_eTankStatus::InAir)
+            &&  (BZDB.eval(StateDatabase::BZDB_WINGSSLIDETIME) > 0.0f)))
         pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() | int(PlayerState::UserInputs));
     else
         pImpl->myTank->currentState.setPStatus(pImpl->myTank->currentState.getPStatus() & ~int(PlayerState::UserInputs));
@@ -897,16 +919,19 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
     pImpl->myTank->currentState.angVel = newAngVel;
     newAzimuth = pImpl->myTank->currentState.rot; // pickup the limited angle range from move()
 
-                             // see if I'm over my antidote
+    // see if I'm over my antidote
     if (pImpl->myTank->hasAntidoteFlag && pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround)
     {
-        float dist =  ((pImpl->myTank->flagAntidotePos[0] - newPos[0]) * (pImpl->myTank->flagAntidotePos[0] - newPos[0])) + ((pImpl->myTank->flagAntidotePos[1] - newPos[1]) * (pImpl->myTank->flagAntidotePos[1] - newPos[1]));
+        float dist =  ((pImpl->myTank->flagAntidotePos[0] - newPos[0]) * (pImpl->myTank->flagAntidotePos[0] - newPos[0])) + ((
+                          pImpl->myTank->flagAntidotePos[1] - newPos[1]) * (pImpl->myTank->flagAntidotePos[1] - newPos[1]));
         const float twoRads = pImpl->myTank->getRadius() + BZDB.eval(StateDatabase::BZDB_FLAGRADIUS);
         if (dist < (twoRads * twoRads))
             dropFlag();
     }
 
-    if ((pImpl->myTank->getFlagEffect() == FlagEffect::Bouncy) && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround) || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding)))
+    if ((pImpl->myTank->getFlagEffect() == FlagEffect::Bouncy)
+            && ((pImpl->myTank->currentState.Status == bz_eTankStatus::OnGround)
+                || (pImpl->myTank->currentState.Status == bz_eTankStatus::OnBuilding)))
     {
         if (oldStatus != bz_eTankStatus::InAir)
         {
@@ -995,7 +1020,8 @@ void bz_ServerSidePlayerHandler::shotEnded(int, unsigned short, bool) {}
 
 void bz_ServerSidePlayerHandler::playerTeleported( int, bz_PlayerUpdateState *, bz_PlayerUpdateState * ) {}
 
-void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion, bz_eTeamType _team)
+void bz_ServerSidePlayerHandler::setPlayerData(const char *callsign, const char *token, const char *clientVersion,
+        bz_eTeamType _team)
 {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
 
@@ -1167,7 +1193,7 @@ void bz_ServerSidePlayerHandler::respawn()
     {
         pImpl->myTank->player.setAlive();
         playerAlive(playerID);
-      
+
         return;
     }
 
@@ -1217,7 +1243,8 @@ bool bz_ServerSidePlayerHandler::canJump(void)
     if (player == nullptr)
         return false;
 
-    return canMove() && (allowJumping() || player->getFlagEffect() == FlagEffect::Jumping || player->getFlagEffect() == FlagEffect::Wings);
+    return canMove() && (allowJumping() || player->getFlagEffect() == FlagEffect::Jumping
+                         || player->getFlagEffect() == FlagEffect::Wings);
 }
 
 //-------------------------------------------------------------------------
@@ -1432,7 +1459,9 @@ bool bz_ServerSidePlayerHandler::fireAtTank()
 
                 if (opponent->player.isAlive() && !opponent->player.isPaused() && pImpl->myTank->validTeamTarget(opponent))
                 {
-                    if (opponent->isPhantomZoned() && !pImpl->myTank->isPhantomZoned() && (pImpl->myTank->getFlagEffect() != FlagEffect::SuperBullet)  && (pImpl->myTank->getFlagEffect() != FlagEffect::ShockWave))
+                    if (opponent->isPhantomZoned() && !pImpl->myTank->isPhantomZoned()
+                            && (pImpl->myTank->getFlagEffect() != FlagEffect::SuperBullet)
+                            && (pImpl->myTank->getFlagEffect() != FlagEffect::ShockWave))
                         continue;
 
                     const float *tp = opponent->lastState.pos;
@@ -1451,7 +1480,8 @@ bool bz_ServerSidePlayerHandler::fireAtTank()
                     if ((pImpl->myTank->getFlagEffect() == FlagEffect::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * tankHeight))
                     {
                         float targetDiff = BotUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos);
-                        if ((targetDiff < errorLimit) || ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED))) && (targetDiff < closeErrorLimit)))
+                        if ((targetDiff < errorLimit) || ((dist < (2.0f * BZDB.eval(StateDatabase::BZDB_SHOTSPEED)))
+                                                          && (targetDiff < closeErrorLimit)))
                         {
                             bool isTargetObscured;
                             if (pImpl->myTank->getFlagEffect() != FlagEffect::SuperBullet)
@@ -1569,15 +1599,12 @@ bool bz_ServerSidePlayerHandler::navigate(float &rotation, float &speed)
     {
         const float *temp = GetBasePostion(player->player.getTeam());
         if (temp == nullptr)
-        {
             dropFlag();
-        }
         else
         {
-            if ((((int) *(temp) + 2 >= (int) *(pos)) || (temp[0] == pos[0] && temp[1] == pos[1])) && type->flagTeam == player->player.getTeam())
-            {
+            if ((((int) *(temp) + 2 >= (int) *(pos)) || (temp[0] == pos[0] && temp[1] == pos[1]))
+                    && type->flagTeam == player->player.getTeam())
                 dropFlag();
-            }
             else
             {
                 float baseAzimuth = BotUtils::getTargetAzimuth(pos, temp);
@@ -1646,7 +1673,7 @@ bool bz_ServerSidePlayerHandler::lookForFlag(float &rotation, float &speed)
 
     float minDist = Infinity;
     int teamFlag = -1;
-  
+
     for (int i = 0; i < numFlags; i++)
     {
         FlagInfo *flag = FlagInfo::get(i);
@@ -1681,9 +1708,7 @@ bool bz_ServerSidePlayerHandler::lookForFlag(float &rotation, float &speed)
         if (minDist < 10.0f)
         {
             if (type != Flags::Null)
-            {
                 dropFlag();
-            }
         }
 
         FlagInfo *flag = FlagInfo::get(closestFlag);
@@ -1717,21 +1742,22 @@ GameKeeper::Player *findBestTarget(GameKeeper::Player* myTank, float* pos, float
 
         if ((opponent->player.isAlive())  && (!opponent->player.isPaused()) && (myTank->validTeamTarget(opponent)))
         {
-            if (opponent->isPhantomZoned() && !myTank->isPhantomZoned() && (type->flagEffect != FlagEffect::ShockWave) && (type->flagEffect != FlagEffect::SuperBullet))
+            if (opponent->isPhantomZoned() && !myTank->isPhantomZoned() && (type->flagEffect != FlagEffect::ShockWave)
+                    && (type->flagEffect != FlagEffect::SuperBullet))
                 continue;
 
             FlagType::Ptr thereType = opponent->getFlagType();;
 
             if ((thereType->flagEffect == FlagEffect::Cloaking) &&
-                (type->flagEffect == FlagEffect::Laser))
+                    (type->flagEffect == FlagEffect::Laser))
                 continue;
 
             //perform a draft that has us chase the proposed opponent if they have our flag
             if (clOptions->gameType == ClassicCTF &&
-                (((myTeam == RedTeam) && (thereType->flagTeam == RedTeam)) ||
-                ((myTeam == GreenTeam) && (thereType->flagTeam == GreenTeam)) ||
-                    ((myTeam == BlueTeam) && (thereType->flagTeam == BlueTeam)) ||
-                    ((myTeam == PurpleTeam) && (thereType->flagTeam == PurpleTeam))))
+                    (((myTeam == RedTeam) && (thereType->flagTeam == RedTeam)) ||
+                     ((myTeam == GreenTeam) && (thereType->flagTeam == GreenTeam)) ||
+                     ((myTeam == BlueTeam) && (thereType->flagTeam == BlueTeam)) ||
+                     ((myTeam == PurpleTeam) && (thereType->flagTeam == PurpleTeam))))
             {
                 target = opponent;
                 break;
@@ -1745,9 +1771,9 @@ GameKeeper::Player *findBestTarget(GameKeeper::Player* myTank, float* pos, float
             if (d < distance)
             {
                 if ((thereType->flagEffect != FlagEffect::Stealth)
-                    || (type->flagEffect == FlagEffect::Seer)
-                    || ((!isObscured) &&
-                    (BotUtils::getTargetAngleDifference(pos, myAzimuth, opponent->lastState.pos) <= 30.0f)))
+                        || (type->flagEffect == FlagEffect::Seer)
+                        || ((!isObscured) &&
+                            (BotUtils::getTargetAngleDifference(pos, myAzimuth, opponent->lastState.pos) <= 30.0f)))
                 {
                     target = opponent;
                     distance = d;
@@ -1804,7 +1830,7 @@ bool bz_ServerSidePlayerHandler::chasePlayer(float &rotation, float &speed)
 
         building = world->getFirstBuilding(tankRay, -0.5f, d);
         if (building && !player->isPhantomZoned() &&
-            (type->flagEffect != FlagEffect::OscillationOverthruster))
+                (type->flagEffect != FlagEffect::OscillationOverthruster))
         {
             //If roger can drive around it, just do that
 
@@ -1826,7 +1852,7 @@ bool bz_ServerSidePlayerHandler::chasePlayer(float &rotation, float &speed)
             //Never did good in math, he should really see if he can reach the building
             //based on jumpvel and gravity, but settles for assuming 20-50 is a good range
             if ((d > 20.0f) && (d < 50.0f) &&
-                (building->getType() == BoxBuilding::getClassName()))
+                    (building->getType() == BoxBuilding::getClassName()))
             {
                 float jumpVel = BZDB.eval(StateDatabase::BZDB_JUMPVELOCITY);
                 float maxJump = (jumpVel * jumpVel) / (2 * -BZDB.eval(StateDatabase::BZDB_GRAVITY));
@@ -1913,8 +1939,10 @@ bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
         }
         else
         {
-            float leftDistance = BotUtils::getOpenDistance(pImpl->myTank->currentState.pos, (float)(pImpl->myTank->currentState.rot + (M_PI / 4.0)));
-            float rightDistance = BotUtils::getOpenDistance(pImpl->myTank->currentState.pos, (float)(pImpl->myTank->currentState.rot - (M_PI / 4.0)));
+            float leftDistance = BotUtils::getOpenDistance(pImpl->myTank->currentState.pos,
+                                 (float)(pImpl->myTank->currentState.rot + (M_PI / 4.0)));
+            float rightDistance = BotUtils::getOpenDistance(pImpl->myTank->currentState.pos,
+                                  (float)(pImpl->myTank->currentState.rot - (M_PI / 4.0)));
             if (leftDistance > rightDistance)
                 rotation = 1.0f;
             else
@@ -1928,34 +1956,35 @@ bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
     return false;
 }
 
- void bz_ServerSidePlayerHandler::dropHardFlags()
+void bz_ServerSidePlayerHandler::dropHardFlags()
 {
-     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-     if (player == nullptr || !player->player.haveFlag())
-         return;
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == nullptr || !player->player.haveFlag())
+        return;
 
     FlagType::Ptr type = player->getFlagType();
-    if ((type->flagEffect == FlagEffect::Useless) || (type->flagEffect == FlagEffect::MachineGun) || (type->flagEffect == FlagEffect::Identify) || ((type->flagEffect == FlagEffect::PhantomZone)))
+    if ((type->flagEffect == FlagEffect::Useless) || (type->flagEffect == FlagEffect::MachineGun)
+            || (type->flagEffect == FlagEffect::Identify) || ((type->flagEffect == FlagEffect::PhantomZone)))
         dropFlag();
 }
 
- Shot::Ptr findWorstBullet(float &minDistance, int playerID, float pos[3])
- {
-     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
-     if (player == nullptr)
-         return nullptr;
+Shot::Ptr findWorstBullet(float &minDistance, int playerID, float pos[3])
+{
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+    if (player == nullptr)
+        return nullptr;
 
-     FlagType::Ptr myFlag = player->getFlagType();
+    FlagType::Ptr myFlag = player->getFlagType();
 
-     Shot::Ptr minPath;
+    Shot::Ptr minPath;
 
-     minDistance = Infinity;
-     for (auto shot : ShotManager.AllLiveShots())
-     {
-         GameKeeper::Player *opponent = GameKeeper::Player::getPlayerByIndex(shot->GetPlayerID());
+    minDistance = Infinity;
+    for (auto shot : ShotManager.AllLiveShots())
+    {
+        GameKeeper::Player *opponent = GameKeeper::Player::getPlayerByIndex(shot->GetPlayerID());
 
-         if (opponent == nullptr || opponent == player )
-             continue;
+        if (opponent == nullptr || opponent == player )
+            continue;
 
         if ((shot->getFlag()->flagEffect == FlagEffect::InvisibleBullet) && (myFlag->flagEffect != FlagEffect::Seer))
             continue; //Theoretically Roger could triangulate the sound
@@ -1967,7 +1996,8 @@ bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
             continue; //cloaked tanks can't die from lasers
 
         auto shotPos = shot->LastUpdatePosition;
-        if (fabs(shotPos.z - pos[2]) > BZDB.eval(StateDatabase::BZDB_TANKHEIGHT) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
+        if (fabs(shotPos.z - pos[2]) > BZDB.eval(StateDatabase::BZDB_TANKHEIGHT)
+                && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
             continue;
 
         const float dist = BotUtils::getTargetDistance(pos, shotPos);
@@ -1986,76 +2016,77 @@ bool bz_ServerSidePlayerHandler::stuckOnWall(float &rotation, float &speed)
             minDistance = dist;
             minPath = shot;
         }
-     }
-     return minPath;
- }
+    }
+    return minPath;
+}
 
- bool bz_ServerSidePlayerHandler::avoidBullet(float &rotation, float &speed)
- {
-     const float *pos = pImpl->myTank->currentState.pos;
+bool bz_ServerSidePlayerHandler::avoidBullet(float &rotation, float &speed)
+{
+    const float *pos = pImpl->myTank->currentState.pos;
 
-     auto flag = pImpl->myTank->getFlagType();
+    auto flag = pImpl->myTank->getFlagType();
 
-     if (flag->flagEffect == FlagEffect::Narrow || flag->flagEffect == FlagEffect::Burrow)
-         return false; // take our chances
+    if (flag->flagEffect == FlagEffect::Narrow || flag->flagEffect == FlagEffect::Burrow)
+        return false; // take our chances
 
-     float minDistance = 9999999.0f;
+    float minDistance = 9999999.0f;
 
-     Shot::Ptr shot = findWorstBullet(minDistance, playerID, pImpl->myTank->currentState.pos);
+    Shot::Ptr shot = findWorstBullet(minDistance, playerID, pImpl->myTank->currentState.pos);
 
-     if ((shot == nullptr) || (minDistance > 100.0f))
-         return false;
+    if ((shot == nullptr) || (minDistance > 100.0f))
+        return false;
 
-     auto shotPos = shot->LastUpdatePosition;
-     auto shotVel = shot->LastUpdateVector;
+    auto shotPos = shot->LastUpdatePosition;
+    auto shotVel = shot->LastUpdateVector;
 
-     float shotAngle = atan2f(shotVel[1], shotVel[0]);
-     float shotUnitVec[2] = { cosf(shotAngle), sinf(shotAngle) };
+    float shotAngle = atan2f(shotVel[1], shotVel[0]);
+    float shotUnitVec[2] = { cosf(shotAngle), sinf(shotAngle) };
 
-     float trueVec[2] = { (pos[0] - shotPos[0]) / minDistance,(pos[1] - shotPos[1]) / minDistance };
-     float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
+    float trueVec[2] = { (pos[0] - shotPos[0]) / minDistance,(pos[1] - shotPos[1]) / minDistance };
+    float dotProd = trueVec[0] * shotUnitVec[0] + trueVec[1] * shotUnitVec[1];
 
-     float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
+    float tankLength = BZDB.eval(StateDatabase::BZDB_TANKLENGTH);
 
-     if (((canJump() || flag->flagEffect == FlagEffect::Jumping || flag->flagEffect == FlagEffect::Wings)) && (minDistance < (std::max(dotProd, 0.5f) * tankLength * 2.25f)) && (flag->flagEffect != FlagEffect::NoJumping))
-     {
-         jump();
-         return (flag->flagEffect != FlagEffect::Wings);
-     }
-     else if (dotProd > 0.96f)
-     {
-         speed = 1.0;
-         float myAzimuth = pImpl->myTank->currentState.rot;
-         float rotation1 = BotUtils::normalizeAngle((float)((shotAngle + M_PI / 2.0) - myAzimuth));
+    if (((canJump() || flag->flagEffect == FlagEffect::Jumping || flag->flagEffect == FlagEffect::Wings))
+            && (minDistance < (std::max(dotProd, 0.5f) * tankLength * 2.25f)) && (flag->flagEffect != FlagEffect::NoJumping))
+    {
+        jump();
+        return (flag->flagEffect != FlagEffect::Wings);
+    }
+    else if (dotProd > 0.96f)
+    {
+        speed = 1.0;
+        float myAzimuth = pImpl->myTank->currentState.rot;
+        float rotation1 = BotUtils::normalizeAngle((float)((shotAngle + M_PI / 2.0) - myAzimuth));
 
-         float rotation2 = BotUtils::normalizeAngle((float)((shotAngle - M_PI / 2.0) - myAzimuth));
+        float rotation2 = BotUtils::normalizeAngle((float)((shotAngle - M_PI / 2.0) - myAzimuth));
 
-         float zCross = shotUnitVec[0] * trueVec[1] - shotUnitVec[1] * trueVec[0];
+        float zCross = shotUnitVec[0] * trueVec[1] - shotUnitVec[1] * trueVec[0];
 
-         if (zCross > 0.0f)   //if i am to the left of the shot from shooter pov
-         {
-             rotation = rotation1;
-             if (fabs(rotation1) < fabs(rotation2))
-                 speed = 1.0f;
-             else if (dotProd > 0.98f)
-                 speed = -0.5f;
-             else
-                 speed = 0.5f;
-         }
-         else
-         {
-             rotation = rotation2;
-             if (fabs(rotation2) < fabs(rotation1))
-                 speed = 1.0f;
-             else if (dotProd > 0.98f)
-                 speed = -0.5f;
-             else
-                 speed = 0.5f;
-         }
-         return true;
-     }
-     return false;
- }
+        if (zCross > 0.0f)   //if i am to the left of the shot from shooter pov
+        {
+            rotation = rotation1;
+            if (fabs(rotation1) < fabs(rotation2))
+                speed = 1.0f;
+            else if (dotProd > 0.98f)
+                speed = -0.5f;
+            else
+                speed = 0.5f;
+        }
+        else
+        {
+            rotation = rotation2;
+            if (fabs(rotation2) < fabs(rotation1))
+                speed = 1.0f;
+            else if (dotProd > 0.98f)
+                speed = -0.5f;
+            else
+                speed = 0.5f;
+        }
+        return true;
+    }
+    return false;
+}
 
 
 std::vector<bz_ServerSidePlayerHandler*> serverSidePlayer;
@@ -2126,7 +2157,8 @@ class BotEventHandler : public bz_EventHandler
             case bz_ePlayerDieEvent:
             {
                 bz_PlayerDieEventData_V1* die = (bz_PlayerDieEventData_V1*)eventData;
-                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(), die->driverID);
+                handler->playerKilled(die->playerID, die->killerID, getDeathReason(die), die->shotID, die->flagKilledWith.c_str(),
+                                      die->driverID);
             }
             break;
 

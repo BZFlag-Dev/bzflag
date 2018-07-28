@@ -119,7 +119,7 @@ bool SDLDisplay::isEventPending() const
 
 bool SDLDisplay::getEvent(BzfEvent& _event)
 {
-	if (pendingUpEvents.size() > 0)
+    if (pendingUpEvents.size() > 0)
     {
         _event.type = BzfEvent::KeyUp;
         _event.keyUp.ascii = 0;
@@ -130,7 +130,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event)
         pendingUpEvents.pop_front();
         return true;
     }
-	
+
     SDL_Event event;
     if (SDL_PollEvent(&event) == 0)
         return false;
@@ -141,7 +141,7 @@ bool SDLDisplay::getEvent(BzfEvent& _event)
 
 bool SDLDisplay::peekEvent(BzfEvent& _event)
 {
-	if (pendingUpEvents.size() > 0)
+    if (pendingUpEvents.size() > 0)
     {
         _event.type = BzfEvent::KeyUp;
         _event.keyUp.ascii = 0;
@@ -151,7 +151,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event)
         _event.keyUp.button = btn;
         return true;
     }
-	
+
     SDL_Event event;
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_ALLEVENTS) <= 0)
         return false;
@@ -216,11 +216,11 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event)
             break;
         case SDL_BUTTON_WHEELUP:
             _event.keyDown.button = BzfKeyEvent::WheelUp;
-			 pendingUpEvents.push_back(_event.keyDown.button);
+            pendingUpEvents.push_back(_event.keyDown.button);
             break;
         case SDL_BUTTON_WHEELDOWN:
             _event.keyDown.button = BzfKeyEvent::WheelDown;
-			 pendingUpEvents.push_back(_event.keyDown.button);
+            pendingUpEvents.push_back(_event.keyDown.button);
             break;
         case 6:
             _event.keyDown.button = BzfKeyEvent::MouseButton6;

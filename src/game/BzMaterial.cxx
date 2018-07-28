@@ -176,17 +176,11 @@ void BzMaterialManager::printReference(std::ostream& out, const BzMaterial* mat)
 
     int index = getIndex(mat);
     if (index == -1)
-    {
         out << "-1";
-    }
     else if (mat->getName().size() > 0)
-    {
         out << mat->getName();
-    }
     else
-    {
         out << index;
-    }
 }
 
 

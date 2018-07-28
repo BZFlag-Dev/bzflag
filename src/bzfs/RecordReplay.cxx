@@ -567,7 +567,8 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
         RRpacket *p = newPacket(mode, code, len, data);
         p->timestamp = getRRtime();
         addHeadPacket(&RecordBuf, p);
-        logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p->mode, p->len, msgString(p->code), p->data);
+        logDebugMessage(4,"routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p->mode, p->len,
+                        msgString(p->code), p->data);
 
         if (RecordBuf.byteCount > RecordMaxBytes)
         {
@@ -585,7 +586,8 @@ static bool routePacket(u16 code, int len, const void * data, u16 mode)
         p.timestamp = getRRtime();
         initPacket(mode, code, len, data, &p);
         savePacket(&p, RecordFile);
-        logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p.mode, p.len, msgString(p.code), p.data);
+        logDebugMessage(4, "routeRRpacket(): mode = %i, len = %4i, code = %s, data = %p\n", (int)p.mode, p.len,
+                        msgString(p.code), p.data);
     }
 
     return true;

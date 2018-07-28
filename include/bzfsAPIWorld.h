@@ -79,7 +79,7 @@ public:
 class BZF_API bz_APITeleporterField_V1 : public bz_APISolidWorldObject_V1
 {
 public:
-    bz_APITeleporterField_V1(const void* objPtr) : bz_APISolidWorldObject_V1(objPtr){}
+    bz_APITeleporterField_V1(const void* objPtr) : bz_APISolidWorldObject_V1(objPtr) {}
     virtual ~bz_APITeleporterField_V1() {}
 
     bz_ApiString name;

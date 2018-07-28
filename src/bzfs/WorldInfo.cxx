@@ -543,7 +543,8 @@ static int compareHitNormal(const void* a, const void* b)
         return +1;
 }
 
-const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float dx, float dy, float dz,  bool directional) const
+const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float dx,
+                                       float dy, float dz,  bool directional) const
 {
     // check walls
     const ObstacleList& walls = OBSTACLEMGR.getWalls();
@@ -570,10 +571,10 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, cons
         const Obstacle* obs = olist->list[i];
         const char* type = obs->getType();
         if ((type == MeshFace::getClassName()) ||
-            (type == MeshObstacle::getClassName()))
+                (type == MeshObstacle::getClassName()))
             break;
         if (!obs->isDriveThrough() &&
-            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+                obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
             return obs;
     }
     if (i == olist->count)
@@ -597,12 +598,12 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, cons
         if (type == MeshObstacle::getClassName())
             break;
         if (!obs->isDriveThrough() &&
-            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+                obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
         {
             const MeshFace* face = (const MeshFace*)obs;
             const float facePos2 = face->getPosition()[2];
             if (face->isUpPlane() &&
-                (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
+                    (!goingDown || (oldPos[2] < (facePos2 - 1.0e-3f))))
                 continue;
             else if (face->isDownPlane() && ((oldPos[2] >= facePos2) || goingDown))
                 continue;
@@ -638,7 +639,7 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, cons
     {
         const Obstacle* obs = olist->list[i];
         if (!obs->isDriveThrough() &&
-            obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
+                obs->inMovingBox(oldPos, oldAngle, pos, angle, dx, dy, dz))
             return obs;
     }
 
@@ -921,7 +922,7 @@ const Obstacle* WorldInfo::getFirstBuilding(const Ray& ray, float min, float& t)
                 const Teleporter* tele = (const Teleporter*)obs;
                 int face;
                 if ((timet > min) && (timet < t) &&
-                    (tele->isTeleported(ray, face) < 0.0f))
+                        (tele->isTeleported(ray, face) < 0.0f))
                 {
                     t = timet;
                     closestObstacle = obs;

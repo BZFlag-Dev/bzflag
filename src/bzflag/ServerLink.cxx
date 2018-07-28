@@ -86,7 +86,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*     ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port) 
+ServerLink::ServerLink(const Address& serverAddress, int port)
 {
     int i;
 
@@ -159,7 +159,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
         int       connectError;
         socklen_t errorLen = sizeof(int);
         if (getsockopt(query, SOL_SOCKET, SO_ERROR, &connectError, &errorLen)
-            < 0)
+                < 0)
         {
             close(query);
             return;
@@ -460,7 +460,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
     {
         const int e = WSAGetLastError();
         if (e == WSAENETRESET || e == WSAECONNABORTED ||
-            e == WSAECONNRESET || e == WSAETIMEDOUT)
+                e == WSAECONNRESET || e == WSAETIMEDOUT)
             state = Hungup;
         r = 0;
     }
@@ -500,7 +500,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                &urecvaddr, (socklen_t*)&recvlen);
+                             &urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
                 udpLength = n;
@@ -548,7 +548,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
     int nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL,
-        (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
+                        (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
     if (nfound == 0) return 0;
     if (nfound < 0) return -1;
 
@@ -635,7 +635,8 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
     return 1;
 }
 
-void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto, const char* token, const char* locale)
+void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto,
+                           const char* token, const char* locale)
 {
     if (state != Okay) return;
     char msg[PlayerIdPLen + 4 + 4 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];
@@ -658,7 +659,7 @@ void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const
 }
 
 bool ServerLink::readEnter(std::string& reason,
-    uint16_t& code, uint16_t& rejcode)
+                           uint16_t& code, uint16_t& rejcode)
 {
     // wait for response
     uint16_t len;
@@ -765,7 +766,7 @@ void  ServerLink::sendMsgFireShot(const FiringInfo& info)
 }
 
 void ServerLink::sendEndShot(const PlayerId& source,
-    int shotId, int reason)
+                             int shotId, int reason)
 {
     char msg[PlayerIdPLen + 4];
     void* buf = msg;

@@ -365,10 +365,10 @@ bool readOBJ ( CModel &model, std::string file )
                     const int tSize = (int)face.texCoords.size();
                     if ((nSize != 0) && (nSize != vSize))
                         valid = false;
-       
+
                     if ((tSize != 0) && (tSize != vSize))
                         valid = false;
-               
+
                     if (valid)
                         mesh.faces.push_back(face);
                 }

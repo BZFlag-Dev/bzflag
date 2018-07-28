@@ -244,7 +244,8 @@ void            RobotPlayer::doUpdateMotion(float dt)
                     continue;
 
                 const float* shotPos = shot->getPosition();
-                if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight) && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
+                if ((fabs(shotPos[2] - position[2]) > BZDBCache::tankHeight)
+                        && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
                     continue;
                 const float dist = TargetingUtils::getTargetDistance(position, shotPos);
                 if (dist < 150.0f)

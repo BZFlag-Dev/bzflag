@@ -52,7 +52,8 @@ WorldInfo *defineRandomWorld()
     // make boxes
     int i;
     float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
-    float heightJitter = BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT) * 0.45f; // jiggle the heights by less than the max bump, to help z fighting and allow textures to be alligned
+    float heightJitter = BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT) *
+                         0.45f; // jiggle the heights by less than the max bump, to help z fighting and allow textures to be alligned
     float h = boxHeight;
     const int numBoxes = int((0.5f + 0.7f * bzfrand()) * actCitySize * actCitySize);
     for (i = 0; i < numBoxes; i++)

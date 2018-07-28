@@ -53,7 +53,10 @@ public:
     void            setNextTeam(TeamColor);
     TeamColor       getTeam() const;
     void            setTeam(TeamColor);
-    int             getSkinIndex() const { return skinIndex; }
+    int             getSkinIndex() const
+    {
+        return skinIndex;
+    }
     void            updateTank(float dt, bool local);
     const char*     getCallSign() const;
     const char*     getMotto() const;
@@ -76,7 +79,10 @@ public:
     virtual void    addShotToSlot(ShotPath::Ptr shot);
     virtual void    addEmptyShotToSlot(int slotID);
 
-    const  ShotSlot::Vec& getShotSlots() const { return ShotSlots; }
+    const  ShotSlot::Vec& getShotSlots() const
+    {
+        return ShotSlots;
+    }
 
     float     getAngularVelocity() const;
     int       getPhysicsDriver() const;
@@ -114,7 +120,8 @@ public:
 
     const ShotStatistics* getShotStatistics() const;
 
-    void      addToScene(SceneDatabase*, TeamColor effectiveTeam, bool inCockpit, bool seerView, bool showTreads, bool showIDL);
+    void      addToScene(SceneDatabase*, TeamColor effectiveTeam, bool inCockpit, bool seerView, bool showTreads,
+                         bool showIDL);
 
     bool      getIpAddress(Address&);
     void      setIpAddress(const Address& addr);
@@ -207,7 +214,10 @@ public:
     int computedHits;
     std::map<int, bool>    hitMap;
 
-    inline void setSkinIndex(int inxex) { skinIndex = inxex; }
+    inline void setSkinIndex(int inxex)
+    {
+        skinIndex = inxex;
+    }
 protected:
     void    clearRemoteSounds();
     void    addRemoteSound(int sound);
@@ -303,7 +313,7 @@ private:
     short         tks;                  // number of teamkills
     short         selfKills;            // number of self-destructions
 
-                                        // score of local player against this player
+    // score of local player against this player
     short         localWins;            // local player won this many
     short         localLosses;          // local player lost this many
     short         localTks;             // local player team killed this many
@@ -317,7 +327,7 @@ private:
     // computable highly dynamic data
     float         forward[3];           // forward unit vector
 
-                                        // relative motion information
+    // relative motion information
     float         relativeSpeed;        // relative speed
     float         relativeAngVel;       // relative angular velocity
 

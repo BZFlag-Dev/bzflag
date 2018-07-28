@@ -29,7 +29,8 @@
 #include "bzfs.h"
 #include "ShotManager.h"
 
-int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor, PlayerId targetPlayerID)
+int WorldWeapons::fireShot(FlagType::Ptr type, const float origin[3], const float vector[3], TeamColor teamColor,
+                           PlayerId targetPlayerID)
 {
     if (!BZDB.isTrue(StateDatabase::BZDB_WEAPONS))
         return INVALID_SHOT_GUID;

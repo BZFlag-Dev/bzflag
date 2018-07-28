@@ -49,23 +49,23 @@ public:
 
 namespace ShotList
 {
-    void Clear();
+void Clear();
 
-    void AddShot(ShotPath::Ptr shot);
-    void RemoveShot(int shotiD);
+void AddShot(ShotPath::Ptr shot);
+void RemoveShot(int shotiD);
 
-    const ShotPath::List& GetActiveShots();
-    ShotPath::Ptr GetShot(int shotID);
+const ShotPath::List& GetActiveShots();
+ShotPath::Ptr GetShot(int shotID);
 
-    ShotPath::Vec GetShotsForPlayer(PlayerId playerID);
-    void ClearPlayerShots(PlayerId playerID);
+ShotPath::Vec GetShotsForPlayer(PlayerId playerID);
+void ClearPlayerShots(PlayerId playerID);
 
-    void UpdateShots(float dt);
-    void UpdateShotsForPlayer(PlayerId id, float dt);
+void UpdateShots(float dt);
+void UpdateShotsForPlayer(PlayerId id, float dt);
 
-    bool HandleEndShot(int shotID, bool isHit, float* pos);
+bool HandleEndShot(int shotID, bool isHit, float* pos);
 
-    void HandleShotUpdate(int shotID, const ShotUpdate& shot, uint16_t code, const void* msg);
+void HandleShotUpdate(int shotID, const ShotUpdate& shot, uint16_t code, const void* msg);
 }
 
 

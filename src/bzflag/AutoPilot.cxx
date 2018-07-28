@@ -727,7 +727,8 @@ static bool fireAtTank()
 
                     float dist = TargetingUtils::getTargetDistance( pos, enemyPos );
 
-                    if ((myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile) || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight))
+                    if ((myTank->getFlag()->flagEffect == FlagEffect::GuidedMissile)
+                            || (fabs(pos[2] - enemyPos[2]) < 2.0f * BZDBCache::tankHeight))
                     {
 
                         float targetDiff = TargetingUtils::getTargetAngleDifference(pos, myAzimuth, enemyPos );

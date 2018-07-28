@@ -59,7 +59,8 @@ PNGImageFile::PNGImageFile(std::istream* stream)
   validates that the file is in fact a png file and initializes the size information for it
 */
 
-PNGImageFile::PNGImageFile(std::istream* input, std::string* filename, void(*error_callback)(std::string, bool)) : ImageFile(input)
+PNGImageFile::PNGImageFile(std::istream* input, std::string* filename, void(*error_callback)(std::string,
+                           bool)) : ImageFile(input)
 {
     logDebugMessage(4, "PNGImageFile starting to read %s\n", filename->c_str());
 
@@ -203,9 +204,7 @@ PNGImageFile::~PNGImageFile()
         // memory functions assigned and we call png_error() within those, but just in case, set
         // the jump return point here.
         if (setjmp(png_jmpbuf(png)))
-        {
             return;
-        }
 
         if (pnginfo != nullptr)
             png_destroy_read_struct(&png, &pnginfo, (png_infopp)0);
@@ -255,9 +254,7 @@ bool                    PNGImageFile::read(void* buffer)
     // png_read_image() and possibly png_read_end() can trigger a png_error(),
     // so make sure we jump to somewhere within this function.
     if (setjmp(png_jmpbuf(png)))
-    {
         return false;
-    }
 
     png_read_image(png, rowPtrs);
 

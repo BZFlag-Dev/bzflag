@@ -272,7 +272,7 @@ protected:
         return count;
     }
 
-   int getNewIndex(CTexCoord &coord, CTexCoord::Vec &coordList)
+    int getNewIndex(CTexCoord &coord, CTexCoord::Vec &coordList)
     {
         CTexCoord::Vec::iterator itr = coordList.begin();
 

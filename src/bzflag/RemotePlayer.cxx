@@ -19,7 +19,8 @@
 #include "ShotList.h"
 
 
-RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* _name, const char* _motto, const PlayerType _type) :
+RemotePlayer::RemotePlayer(const PlayerId& _id, TeamColor _team, int _skinIndex, const char* _name, const char* _motto,
+                           const PlayerType _type) :
     Player(_id, _team, _skinIndex, _name, _motto, _type)
 {
 }

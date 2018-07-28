@@ -244,7 +244,7 @@ bool CronManager::connect()
 }
 
 bool CronManager::SlashCommand(int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/,
-                                bz_APIStringList* params)
+                               bz_APIStringList* params)
 {
     if (!bz_hasPerm(playerID, "BZFSCRON"))
     {

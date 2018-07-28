@@ -55,16 +55,21 @@ public:
     ~ServerLink();
 
     State                       getState() const;
-    inline const std::string&   getRejectionMessage(){ return rejectionMessage;}
+    inline const std::string&   getRejectionMessage()
+    {
+        return rejectionMessage;
+    }
 
     int                 getSocket() const;  // file descriptor actually
     const PlayerId&     getId() const;
     const char*         getVersion() const;
 
     void                send(uint16_t code, uint16_t len, const void* msg);
-    int                 read(uint16_t& code, uint16_t& len, void* msg, int millisecondsToBlock = 0); // if millisecondsToBlock < 0 then block forever
+    int                 read(uint16_t& code, uint16_t& len, void* msg,
+                             int millisecondsToBlock = 0); // if millisecondsToBlock < 0 then block forever
 
-    void                sendEnter(PlayerType, TeamColor, int, const char* name, const char* motto, const char* token, const char* locale);
+    void                sendEnter(PlayerType, TeamColor, int, const char* name, const char* motto, const char* token,
+                                  const char* locale);
     bool                readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
 
     void                sendCaptureFlag(TeamColor);

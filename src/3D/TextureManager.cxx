@@ -380,7 +380,7 @@ void showError(std::string message, bool isError)
 {
     if (debugLevel > 0 || isError)
 #endif
-        printError(message);
+    printError(message);
 }
 
 OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFail)

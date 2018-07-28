@@ -241,7 +241,8 @@ bool SpawnPolicy::isImminentlyDangerous() const
                         return true;    // eek, don't spawn here
                     }
                 }
-                else if (ftype->flagEffect == FlagEffect::Steamroller || ftype->flagEffect == FlagEffect::Burrow)     // don't spawn if you'll squish or be squished
+                else if (ftype->flagEffect == FlagEffect::Steamroller
+                         || ftype->flagEffect == FlagEffect::Burrow)     // don't spawn if you'll squish or be squished
                 {
                     if (distanceFrom(enemyPos) < safeSRRadius)   // too close to SR or BU
                     {
