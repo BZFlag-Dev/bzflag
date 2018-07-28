@@ -77,7 +77,7 @@ public:
         std::string teamString = "";
         if (params->size() > 0)
         {
-            params->get(0);
+            teamString = params->get(0);
             if (teamString == "observer")
                 team = eObservers;
             else if (bz_getGameType() == eRabbitGame)
