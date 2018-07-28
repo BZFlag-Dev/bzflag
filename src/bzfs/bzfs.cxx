@@ -4994,8 +4994,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             phydrv = int(inPhyDrv);
         }
 
-        if (killer != t
-                && !ShotManager.IsValidShotID(shot)) // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
+        // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
+        if (killer != t && !ShotManager.IsValidShotID(shot))
             break;
 
         playerData->player.endShotCredit--;
