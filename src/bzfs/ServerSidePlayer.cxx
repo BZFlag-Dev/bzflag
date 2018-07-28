@@ -925,7 +925,7 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
 // lower level message API
 void bz_ServerSidePlayerHandler::playerAdded(int) {}
 void bz_ServerSidePlayerHandler::playerRemoved(int) {}
-void bz_ServerSidePlayerHandler::playerSpawned(int UNUSED(id), const float UNUSED(_pos)[3], float UNUSED(_rot)) {}
+void bz_ServerSidePlayerHandler::playerSpawned(int UNUSED(id), const float UNUSED(_pos[3]), float UNUSED(_rot)) {}
 
 
 void bz_ServerSidePlayerHandler::checkForSpawn(int id, const float _pos[3], float _rot)
