@@ -759,8 +759,7 @@ int         main(int argc, char** argv)
         printFatalError("Failed to initialize winsock.  Terminating.\n");
         return 1;
     }
-    if (LOBYTE(wsaData.wVersion) != major ||
-            HIBYTE(wsaData.wVersion) != minor)
+    if (LOBYTE(wsaData.wVersion) != major || HIBYTE(wsaData.wVersion) != minor)
     {
         printFatalError("Version mismatch in winsock;"
                         "  got %d.%d, expected %d.%d.  Terminating.\n",
