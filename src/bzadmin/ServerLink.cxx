@@ -642,7 +642,8 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     return 1;
 }
 
-void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto, const char* token, const char* locale)
+void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const char* name, const char* motto,
+                           const char* token, const char* locale)
 {
     if (state != Okay) return;
     char msg[PlayerIdPLen + 4 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];

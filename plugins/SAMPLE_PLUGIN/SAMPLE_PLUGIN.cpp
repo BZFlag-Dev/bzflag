@@ -37,55 +37,26 @@ either expressed or implied, of the FreeBSD Project.
 class SAMPLE_PLUGIN : public bz_Plugin
 {
 public:
-  virtual const char* Name () {return "SAMPLE PLUGIN";}
-  virtual void Init ( const char* config );
-  virtual void Cleanup() { Flush(); }
-  virtual void Event(bz_EventData * /* eventData */);
+    virtual const char* Name ()
+    {
+        return "SAMPLE PLUGIN";
+    }
+    virtual void Init ( const char* config );
+
+    virtual void Event ( bz_EventData * /* eventData */ )
+    {
+        return;
+    }
 };
 
 BZ_PLUGIN(SAMPLE_PLUGIN)
 
 void SAMPLE_PLUGIN::Init ( const char* /*commandLine*/ )
 {
-  bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
+    bz_debugMessage(4,"SAMPLE_PLUGIN plugin loaded");
 
-  Register(bz_eShotFiredEvent);
-  // init events here with Register();
+    // init events here with Register();
 }
-
-void SAMPLE_PLUGIN::Event(bz_EventData * eventData)
-{
-    switch (eventData->eventType)
-    {
-    case bz_eShotFiredEvent:
-    {
-        bz_ShotFiredEventData_V2* firedData = dynamic_cast<bz_ShotFiredEventData_V2*>(eventData);
-
-        if (!firedData->fromPlayer)
-            return;
-
-        float newPos[3];
-        float newVec[3];
-
-        newVec[0] = 1;
-        newVec[1] = 1;
-        newVec[2] = 1;
-
-        newPos[0] = 0;
-        newPos[1] = 0;
-        newPos[2] = 0;
-
-        bz_addPlayerShot(firedData->playerID, firedData->type.c_str(), newPos, newVec);
-    }
-    break;
-
-    default:
-        break;
-    }
-}
-
-
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
@@ -93,3 +64,4 @@ void SAMPLE_PLUGIN::Event(bz_EventData * eventData)
 // indent-tabs-mode: nil ***
 // End: ***
 // ex: shiftwidth=4 tabstop=4
+

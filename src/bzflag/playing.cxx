@@ -195,7 +195,8 @@ static const char*  blowedUpMessage[] =
     "Tank Self Destructed",
     "Tank Rusted"
 };
-static bool     gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason,  PlayerId killer,  const ShotPath::Ptr hit = nullptr, int physicsDriver = -1);
+static bool     gotBlowedUp(BaseLocalPlayer* tank, BlowedUpReason reason,  PlayerId killer,
+                            const ShotPath::Ptr hit = nullptr, int physicsDriver = -1);
 
 #ifdef ROBOT
 static void     handleMyTankKilled(int reason);
@@ -1827,7 +1828,8 @@ static bool processWorldChunk(const void *buf, uint16_t len, int chunkID)
 
     int bytesLeft = WorldSize - DownloadedSize;
 
-    HUDDialogStack::get()->setFailedMessage (TextUtils::format ("Downloading World (%2d%% complete/%d kb remaining)...", (100 * DownloadedSize / WorldSize), bytesLeft / 1024).c_str());
+    HUDDialogStack::get()->setFailedMessage (TextUtils::format ("Downloading World (%2d%% complete/%d kb remaining)...",
+            (100 * DownloadedSize / WorldSize), bytesLeft / 1024).c_str());
     drawFrame(0.0f);
 
     return chunkID == (WorldChunkCount - 1);
@@ -2930,13 +2932,13 @@ static void     handleServerMessage(bool human, uint16_t code,
                         // and do not want local shot effects,
                         // disable shot effects for that specific tank
                         if ((ROAM.getMode() != Roaming::roamViewFP)
-                            || (!ROAM.getTargetTank())
-                            || (shooterid != ROAM.getTargetTank()->getId())
-                            || BZDB.isTrue("enableLocalShotEffect"))
+                                || (!ROAM.getTargetTank())
+                                || (shooterid != ROAM.getTargetTank()->getId())
+                                || BZDB.isTrue("enableLocalShotEffect"))
                         {
                             EFFECTS.addShotEffect(shooter->getColor(), shotPos,
-                                shooter->getAngle(),
-                                shooter->getVelocity());
+                                                  shooter->getAngle(),
+                                                  shooter->getVelocity());
                         }
                     }
                 }
@@ -3856,7 +3858,7 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
             addMessage(nullptr, limitMessage, 0);
         }
     }
-        
+
 
     const float *pos = toTank->getPosition();
     if (f.type->flagTeam != ::NoTeam)
@@ -4053,7 +4055,7 @@ static void     checkEnvironment()
 
         // Check for an observed tanks hit.
         Player *target = ROAM.getTargetTank();
-       ShotPath::Ptr hit;
+        ShotPath::Ptr hit;
         FlagType::Ptr flagd;
         float minTime = Infinity;
         int i;
@@ -4435,7 +4437,8 @@ void setTarget()
             lockedOn = true;
         }
         else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&               // about 17 degrees
-                 ((remotePlayers[i]->getFlag()->flagEffect != FlagEffect::Stealth) || (myTank->getFlag()->flagEffect == FlagEffect::Seer))
+                 ((remotePlayers[i]->getFlag()->flagEffect != FlagEffect::Stealth)
+                  || (myTank->getFlag()->flagEffect == FlagEffect::Seer))
                  && // can't "see" stealth unless have seer
                  d < bestDistance && !lockedOn)         // is it better?
         {
@@ -4552,7 +4555,8 @@ static void setHuntTarget()
             lockedOn = true;
         }
         else if (a < BZDB.eval(StateDatabase::BZDB_TARGETINGANGLE) &&               // about 17 degrees
-                 ((remotePlayers[i]->getFlag()->flagEffect != FlagEffect::Stealth) || (myTank->getFlag()->flagEffect == FlagEffect::Seer))
+                 ((remotePlayers[i]->getFlag()->flagEffect != FlagEffect::Stealth)
+                  || (myTank->getFlag()->flagEffect == FlagEffect::Seer))
                  && // can't "see" stealth unless have seer
                  d < bestDistance && !lockedOn)         // is it better?
         {
@@ -4948,7 +4952,8 @@ static void     addRobots()
             snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), j);
             robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
-            robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(), 0, robots[j]->getCallSign(), robots[j]->getMotto(), "", "default");
+            robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(), 0, robots[j]->getCallSign(), robots[j]->getMotto(), "",
+                                      "default");
         }
         j++;
     }
@@ -5061,7 +5066,7 @@ static void enteringServer(const void *buf)
     myTank->setSkinIndex(skinIndex);
     if (myTank->getTeam() != (TeamColor)team)
     {
-        
+
         hud->setAlert(1, teamMsg.c_str(), 8.0f,
                       (TeamColor)team==ObserverTeam?true:false);
         addMessage(NULL, teamMsg.c_str(), 3, true);

@@ -644,7 +644,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzfs\base64.cxx" />
     <ClCompile Include="..\..\src\bzfs\bzfsAPI.cxx" />
     <ClCompile Include="..\..\src\bzfs\bzfsPlugins.cxx" />
     <ClCompile Include="..\..\src\bzfs\ServerSidePlayer.cxx" />
@@ -708,7 +707,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
     <ClInclude Include="..\..\src\bzfs\WorldGenerators.h" />
     <ClInclude Include="..\..\src\bzfs\WorldInfo.h" />
     <ClInclude Include="..\..\src\bzfs\WorldWeapons.h" />
-    <ClInclude Include="..\..\src\bzfs\base64.h" />
     <ClInclude Include="..\..\include\bzfsAPI.h" />
     <ClInclude Include="..\..\src\bzfs\bzfsPlugins.h" />
   </ItemGroup>

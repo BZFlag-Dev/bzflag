@@ -254,7 +254,8 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
     return result;
 }
 
-static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message, bool UNUSED(release) = true)
+static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message,
+                      bool UNUSED(release) = true)
 {
     if (playerData.isParting)
         return -1;
@@ -539,7 +540,7 @@ void sendPlayerUpdate(GameKeeper::Player* player)
     // Send the time frozen at each start of scene iteration, as all
     // dead reckoning use that
     const float timeStamp = float(TimeKeeper::getTick() - TimeKeeper::getNullTime());
- 
+
     uint16_t code;
     msg->packFloat(timeStamp);
     msg->packUByte(player->getIndex());
@@ -553,7 +554,7 @@ void sendPlayerUpdate(GameKeeper::Player* player)
     puEventData.playerID = player->getIndex();
     worldEventManager.callEvents(bz_ePlayerUpdateEvent, &puEventData);
 
-   // variable length
+    // variable length
     broadcastPacket(code, msg);
 }
 
@@ -630,13 +631,9 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
         msg->packUByte(1);
         playerData->packAdminInfo(msg);
         for (unsigned int i = 0; i < receivers.size(); ++i)
-        {
             sendPacket(receivers[i], MsgAdminInfo, msg, false);
-        }
         if (Record::enabled())
-        {
             Record::addPacket(MsgAdminInfo, msg, HiddenPacket);
-        }
 
         ReleaseMessageBuffer(msg);
     }
@@ -676,7 +673,8 @@ void resetTeamScores ( void )
     // reset team scores
     for (int i = RedTeam; i <= PurpleTeam; i++)
     {
-        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getWins(), 0);
+        bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins,
+                team[i].team.getWins(), 0);
         worldEventManager.callEvents(&eventData);
         eventData = bz_TeamScoreChangeEventData_V1(convertTeam(i), bz_eWins, team[i].team.getLosses(), 0);
         worldEventManager.callEvents(&eventData);
@@ -1708,7 +1706,8 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
         GameKeeper::Player *playerData;
         for (int i = 0; i < curMaxPlayers; i++)
         {
-            if ((playerData = GameKeeper::Player::getPlayerByIndex(i))  && playerData->player.isPlaying() && playerData->player.isTeam(_team))
+            if ((playerData = GameKeeper::Player::getPlayerByIndex(i))  && playerData->player.isPlaying()
+                    && playerData->player.isTeam(_team))
                 sendPacket(i, MsgReceiveChat, buf, false);
         }
     }
@@ -2542,7 +2541,8 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
 #endif
 
-    if (GameKeeper::Player::getPlayerByIndex(playerIndex)  && playerData->accessInfo.isRegistered() && playerData->_LSAState != GameKeeper::Player::verified)
+    if (GameKeeper::Player::getPlayerByIndex(playerIndex)  && playerData->accessInfo.isRegistered()
+            && playerData->_LSAState != GameKeeper::Player::verified)
     {
         // If the name is registered but not authenticated, tell them to identify
         sendMessage(ServerPlayer, playerIndex,  "This callsign is registered. You must use global authentication.");
@@ -2759,12 +2759,14 @@ static void pausePlayer(int playerIndex, bool paused = true)
 
     if (!playerData->player.isAlive())
     {
-        logDebugMessage(2,"Player %s [%d] %spause while not alive\n", playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+        logDebugMessage(2,"Player %s [%d] %spause while not alive\n", playerData->player.getCallSign(), playerIndex,
+                        paused ? "" : "un");
         return;
     }
     if (playerData->player.isPaused() == paused)
     {
-        logDebugMessage(2,"Player %s [%d] duplicate %spause\n",  playerData->player.getCallSign(), playerIndex, paused ? "" : "un");
+        logDebugMessage(2,"Player %s [%d] duplicate %spause\n",  playerData->player.getCallSign(), playerIndex,
+                        paused ? "" : "un");
         return;
     }
     // TODO: enforce 5-second delay from one pause to the next
@@ -2890,7 +2892,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
 
     // status message
     std::string timeStamp = TimeKeeper::timestamp();
-    logDebugMessage(1,"Player %s [%d] removed at %s: %s\n", playerData->player.getCallSign(), playerIndex, timeStamp.c_str(), reason);
+    logDebugMessage(1,"Player %s [%d] removed at %s: %s\n", playerData->player.getCallSign(), playerIndex,
+                    timeStamp.c_str(), reason);
 
     bool wasPlaying = playerData->player.isPlaying();
     playerData->netHandler->closing();
@@ -2904,7 +2907,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     {
         // make them wait from the time they left, but only if they
         // have spawned at least once and are not already waiting
-        if (!playerData->player.hasNeverSpawned() && (rejoinList.waitTime (playerIndex) <= 0.0f) && !playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin))
+        if (!playerData->player.hasNeverSpawned() && (rejoinList.waitTime (playerIndex) <= 0.0f)
+                && !playerData->accessInfo.hasPerm(PlayerAccessInfo::rejoin))
             rejoinList.add (playerIndex);
 
         // tell everyone player has left
@@ -3276,35 +3280,33 @@ void playerAlive(int playerIndex)
 
     SpawnPlayer(playerData, spawnData.pos, spawnData.rot);
 
-  if (clOptions->gameType == RabbitChase)
-  {
-    playerData->player.wasNotARabbit();
-    if (rabbitIndex == NoPlayer)
+    if (clOptions->gameType == RabbitChase)
     {
-      anointNewRabbit();
+        playerData->player.wasNotARabbit();
+        if (rabbitIndex == NoPlayer)
+            anointNewRabbit();
     }
-  }
 }
 
 void SpawnPlayer(GameKeeper::Player *playerData, float pos[3], float aziumuth)
 {
-  // update last position immediately
-  playerData->player.setRestartOnBase(false);
-  playerData->setPlayerState(pos, aziumuth);
+    // update last position immediately
+    playerData->player.setRestartOnBase(false);
+    playerData->setPlayerState(pos, aziumuth);
 
-  // send MsgAlive
-  auto buf = GetMessageBuffer();
-  buf->packUByte(playerData->getIndex());
-  buf->packVector(playerData->lastState.pos);
-  buf->packFloat(playerData->lastState.azimuth);
-  broadcastPacket(MsgAlive, buf);
+    // send MsgAlive
+    auto buf = GetMessageBuffer();
+    buf->packUByte(playerData->getIndex());
+    buf->packVector(playerData->lastState.pos);
+    buf->packFloat(playerData->lastState.azimuth);
+    broadcastPacket(MsgAlive, buf);
 
-  // call any events for a playerspawn
-  bz_PlayerSpawnEventData_V1	spawnEvent;
-  spawnEvent.playerID = playerData->getIndex();
-  spawnEvent.team = convertTeam(playerData->player.getTeam());
-  playerStateToAPIState(spawnEvent.state, playerData->lastState);
-  worldEventManager.callEvents(bz_ePlayerSpawnEvent, &spawnEvent);
+    // call any events for a playerspawn
+    bz_PlayerSpawnEventData_V1    spawnEvent;
+    spawnEvent.playerID = playerData->getIndex();
+    spawnEvent.team = convertTeam(playerData->player.getTeam());
+    playerStateToAPIState(spawnEvent.state, playerData->lastState);
+    worldEventManager.callEvents(bz_ePlayerSpawnEvent, &spawnEvent);
 }
 
 // TODO: In a later major release, we should just handle the kills fully from the server
@@ -3429,7 +3431,8 @@ bool allowTeams ( void )
 //   It is taken as the index of the udp table when called by incoming message
 //   It is taken by killerIndex when autocalled, but only if != -1
 // killer could be InvalidPlayer or a number within [0 curMaxPlayer)
-void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType::Ptr flagType, int phydrv, bool respawnOnBase )
+void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotIndex, const FlagType::Ptr flagType,
+                  int phydrv, bool respawnOnBase )
 {
     GameKeeper::Player *killerData = NULL;
     GameKeeper::Player *victimData  = GameKeeper::Player::getPlayerByIndex(victimIndex);
@@ -3481,7 +3484,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotInde
     {
         auto f = FlagInfo::get(victimData->lastHeldFlagID);
 
-        if (f->flag.status != FlagStatus::OnGround) // if the last held flag was just a moment ago, they probably died with this.
+        if (f->flag.status !=
+                FlagStatus::OnGround) // if the last held flag was just a moment ago, they probably died with this.
             dieEvent.flagHeldWhenKilled = victimData->lastHeldFlagID;
     }
 
@@ -3525,7 +3529,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotInde
         char message[MessageLen];
         if (clOptions->tkAnnounce)
         {
-            snprintf(message, MessageLen, "Team kill: %s killed %s", killerData->player.getCallSign(), victimData->player.getCallSign());
+            snprintf(message, MessageLen, "Team kill: %s killed %s", killerData->player.getCallSign(),
+                     victimData->player.getCallSign());
             sendMessage(ServerPlayer, AdminPlayers, message);
         }
         if (killerData->score.isTK())
@@ -3593,7 +3598,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotInde
         }
 
         // see if the player reached the score limit
-        if (clOptions->maxPlayerScore != 0  && killerIndex != InvalidPlayer && killerIndex != ServerPlayer && killerData->score.reached())
+        if (clOptions->maxPlayerScore != 0  && killerIndex != InvalidPlayer && killerIndex != ServerPlayer
+                && killerData->score.reached())
         {
             buf = GetMessageBuffer();
             buf->packUByte(killerIndex);
@@ -3638,7 +3644,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotInde
 
                     int old = team[int(victim->getTeam())].team.getLosses();
                     team[int(victim->getTeam())].team.setLosses(old+delta);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses, old, old+delta);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(victim->getTeam()), bz_eLosses,
+                            old, old+delta);
                     worldEventManager.callEvents(&eventData);
                 }
             }
@@ -3650,7 +3657,8 @@ void playerKilled(int victimIndex, int killerIndex, int reason, int16_t shotInde
 
                     int old = team[winningTeam].team.getWins();
                     team[winningTeam].team.setWins(old+1);
-                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old, old+1);
+                    bz_TeamScoreChangeEventData_V1 eventData = bz_TeamScoreChangeEventData_V1(convertTeam(killer->getTeam()), bz_eWins, old,
+                            old+1);
                     worldEventManager.callEvents(&eventData);
                 }
                 if (!victim->isTeam(RogueTeam))
@@ -4130,7 +4138,7 @@ static void shotUpdate(int playerIndex, void *buf, int len)
         return;
 
     const PlayerInfo &shooter = playerData->player;
- 
+
     int flagIndex = playerData->player.getFlag();
     if (flagIndex >= 0)
         flag = FlagInfo::get(flagIndex);
@@ -4231,7 +4239,8 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
             removePlayer(playerIndex, "Player shot mismatch");
         }
 
-        logDebugMessage(2,"Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(), playerIndex, fireFlag.c_str(), holdFlag.c_str());
+        logDebugMessage(2,"Player %s [%d] shot flag mismatch %s %s\n", shooter.getCallSign(), playerIndex, fireFlag.c_str(),
+                        holdFlag.c_str());
         return;
     }
 
@@ -4261,7 +4270,8 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
         tankSpeed *= tankSpeedMult;
     else if (firingInfo.flagType->flagEffect == FlagEffect::Thief)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_THIEFVELAD);
-    else if ((firingInfo.flagType->flagEffect == FlagEffect::Burrow)  && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
+    else if ((firingInfo.flagType->flagEffect == FlagEffect::Burrow)
+             && (firingInfo.shot.pos[2] < BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)))
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_BURROWSPEEDAD);
     else if (firingInfo.flagType->flagEffect == FlagEffect::Agility)
         tankSpeed *= BZDB.eval(StateDatabase::BZDB_AGILITYADVEL);
@@ -4279,7 +4289,8 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
     // verify lifetime
     if (fabs(firingInfo.lifetime - lifetime) > Epsilon)
     {
-        logDebugMessage(2,"Player %s [%d] shot lifetime mismatch %f %f\n", shooter.getCallSign(),  playerIndex, firingInfo.lifetime, lifetime);
+        logDebugMessage(2,"Player %s [%d] shot lifetime mismatch %f %f\n", shooter.getCallSign(),  playerIndex,
+                        firingInfo.lifetime, lifetime);
         return;
     }
 
@@ -4288,7 +4299,8 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
         // verify velocity
         if (hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])) > shotSpeed * 1.01f)
         {
-            logDebugMessage(2,"Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(), playerIndex, hypotf(shot.vel[0], hypotf(shot.vel[1], shot.vel[2])), shotSpeed);
+            logDebugMessage(2,"Player %s [%d] shot over speed %f %f\n", shooter.getCallSign(), playerIndex, hypotf(shot.vel[0],
+                            hypotf(shot.vel[1], shot.vel[2])), shotSpeed);
             return;
         }
 
@@ -4373,7 +4385,7 @@ static void shotFired(int playerIndex, void *buf, int UNUSED(len))
                     fInfo.grabs = 0; // recycle this flag now
                     dropFlag(fInfo, lastPos);
                 }
-                else 
+                else
                 {
                     // bye bye supposed cheater,     more shots fired than allowed
                     logDebugMessage(1, "Kicking Player %s [%d] Player fired more shots than limit\n", shooter.getCallSign(), playerIndex);
@@ -4504,7 +4516,8 @@ static void jitterKick(int playerIndex)
 void packetLossKick(int playerIndex)
 {
     char message[MessageLen];
-    snprintf(message, MessageLen, "You have been kicked due to excessive packetloss (you have been warned %d times).", clOptions->maxpacketlosswarn);
+    snprintf(message, MessageLen, "You have been kicked due to excessive packetloss (you have been warned %d times).",
+             clOptions->maxpacketlosswarn);
     GameKeeper::Player *playerData = GameKeeper::Player::getPlayerByIndex(playerIndex);
     if (playerData != NULL)
     {
@@ -4584,7 +4597,8 @@ bool isSpamOrGarbage(char* message, GameKeeper::Player* playerData, int t)
     if (badChars > 0)
     {
         sendMessage(ServerPlayer, t, "You were kicked because of a garbage message.");
-        logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",  player.getCallSign(), t, badChars);
+        logDebugMessage(2,"Kicking player %s [%d] for sending a garbage message: %d disallowed chars\n",  player.getCallSign(),
+                        t, badChars);
         removePlayer(t, "garbage");
 
         // Ignore garbage message
@@ -4980,7 +4994,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             phydrv = int(inPhyDrv);
         }
 
-        if (killer != t && !ShotManager.IsValidShotID(shot)) // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
+        if (killer != t
+                && !ShotManager.IsValidShotID(shot)) // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
             break;
 
         playerData->player.endShotCredit--;
@@ -5264,11 +5279,9 @@ static void handleCommand(int t, void *rawbuf, bool udp)
 
             int limit = clOptions->getFlagLimit(flag.flag.type);
             if (limit >= 0)
-            {
                 limit -= flag.numShots;
-            }
             obuf->packInt(limit);
-          
+
             flag.flag.owner = to;
             flag.player = to;
             toData->player.resetFlag();
@@ -6122,7 +6135,8 @@ std::string getIPFromHandler (NetHandler* netHandler)
     return strRet;
 }
 
-static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_set& UNUSED(read_set), fd_set& UNUSED(write_set))
+static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_set& UNUSED(read_set),
+                                 fd_set& UNUSED(write_set))
 {
     const double connectionTimeout = 2.5; // timeout in seconds
 
@@ -6608,8 +6622,7 @@ int main(int argc, char **argv)
             logDebugMessage(2,"Failed to initialize Winsock.  Terminating.\n");
             return 1;
         }
-        if (LOBYTE(wsaData.wVersion) != major ||
-                HIBYTE(wsaData.wVersion) != minor)
+        if (LOBYTE(wsaData.wVersion) != major || HIBYTE(wsaData.wVersion) != minor)
         {
             logDebugMessage(2,"Version mismatch in Winsock;"
                             "  got %d.%d, expected %d.%d.  Terminating.\n",

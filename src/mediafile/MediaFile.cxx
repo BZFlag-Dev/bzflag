@@ -144,7 +144,7 @@ std::istream*  OpenPNG(const std::string filename, ImageFile** file, void(*error
         *file = new PNGImageFile(stream, &tmp, error_callback);
         if (!(*file)->isOpen())
         {
-           *file = nullptr;
+            *file = nullptr;
             delete stream;
             stream = nullptr;
         }
@@ -153,7 +153,8 @@ std::istream*  OpenPNG(const std::string filename, ImageFile** file, void(*error
     return stream;
 }
 
-unsigned char*      MediaFile::readImage( std::string filename, int* width, int* height, void(*error_callback)(std::string, bool))
+unsigned char*      MediaFile::readImage( std::string filename, int* width, int* height,
+        void(*error_callback)(std::string, bool))
 {
     // get the absolute filename for cache textures
     if (CACHEMGR.isCacheFileType(filename))

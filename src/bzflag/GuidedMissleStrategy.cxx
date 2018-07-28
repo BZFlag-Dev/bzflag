@@ -164,7 +164,8 @@ void GuidedMissileStrategy::update(float dt)
         }
     }
 
-    if ((target != NULL) && ((target->getFlag()->flagEffect == FlagEffect::Stealth)  || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
+    if ((target != NULL) && ((target->getFlag()->flagEffect == FlagEffect::Stealth)
+                             || ((target->getStatus() & short(PlayerState::Alive)) == 0)))
     {
         target = NULL;
         lastTarget = NoPlayer;

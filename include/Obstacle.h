@@ -76,7 +76,10 @@ public:
     /** A virtual destructor is needed to let subclasses do their cleanup. */
     virtual ~Obstacle();
 
-    inline int GetGUID() const { return GUID; }
+    inline int GetGUID() const
+    {
+        return GUID;
+    }
 
     /** This function returns a string describing what kind of obstacle this is.
      */

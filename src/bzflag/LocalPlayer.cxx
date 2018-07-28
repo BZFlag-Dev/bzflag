@@ -105,7 +105,8 @@ void            LocalPlayer::doUpdate(float dt)
             pauseTime = TimeKeeper::getTick();
             wasPaused = true;
         }
-        if (flag->endurance != FlagEndurance::Sticky && TimeKeeper::getTick() - pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME))
+        if (flag->endurance != FlagEndurance::Sticky
+                && TimeKeeper::getTick() - pauseTime > BZDB.eval(StateDatabase::BZDB_PAUSEDROPTIME))
         {
             server->sendDropFlag(getPosition());
             setStatus(getStatus() & ~PlayerState::FlagActive);
@@ -128,9 +129,7 @@ void            LocalPlayer::doUpdate(float dt)
     }
 
     for (auto lShot : getShots())
-    {
         lShot->update(dt);
-    }
 
     anyShotActive = getShots().size() > 0;
 
@@ -139,7 +138,8 @@ void            LocalPlayer::doUpdate(float dt)
         target = NULL;
 
     // drop bad flag if timeout has expired
-    if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&  getFlag() != Flags::Null && getFlag()->endurance == FlagEndurance::Sticky &&  flagShakingTime > 0.0f)
+    if (!isPaused() && dt > 0.0f && World::getWorld()->allowShakeTimeout() &&  getFlag() != Flags::Null
+            && getFlag()->endurance == FlagEndurance::Sticky &&  flagShakingTime > 0.0f)
     {
         flagShakingTime -= dt;
         if (flagShakingTime <= 0.0f)
@@ -248,7 +248,8 @@ void            LocalPlayer::doUpdateMotion(float dt)
         setStatus(getStatus() & ~short(PlayerState::Teleporting));
 
     // phased means we can pass through buildings
-    const bool phased = ((location == Dead) || (location == Exploding) || (getFlag()->flagEffect == FlagEffect::OscillationOverthruster) || isPhantomZoned());
+    const bool phased = ((location == Dead) || (location == Exploding)
+                         || (getFlag()->flagEffect == FlagEffect::OscillationOverthruster) || isPhantomZoned());
 
     float groundLimit = 0.0f;
     if (getFlag()->flagEffect == FlagEffect::Burrow)
@@ -454,7 +455,8 @@ void            LocalPlayer::doUpdateMotion(float dt)
 
             newVelocity[0] = movementMax * normalStuck[0];
             newVelocity[1] = movementMax * normalStuck[1];
-            if ((World::getWorld()->allowJumping() || (getFlag()->flagEffect == FlagEffect::Jumping) || (getFlag()->flagEffect == FlagEffect::Wings)) &&
+            if ((World::getWorld()->allowJumping() || (getFlag()->flagEffect == FlagEffect::Jumping)
+                    || (getFlag()->flagEffect == FlagEffect::Wings)) &&
                     (getFlag()->flagEffect != FlagEffect::NoJumping))
                 newVelocity[2] = movementMax * normalStuck[2];
             else
@@ -504,7 +506,8 @@ void            LocalPlayer::doUpdateMotion(float dt)
         if (!obstacle || !expelled) break;
 
         float obstacleTop = obstacle->getPosition()[2] + obstacle->getHeight();
-        if ((oldLocation != InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2]) && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
+        if ((oldLocation != InAir) && obstacle->isFlatTop() && (obstacleTop != tmpPos[2])
+                && (obstacleTop < (tmpPos[2] + BZDB.eval(StateDatabase::BZDB_MAXBUMPHEIGHT))))
         {
             newPos[0] = oldPosition[0];
             newPos[1] = oldPosition[1];
@@ -1031,25 +1034,25 @@ ShotPath::Vec      LocalPlayer::getShots() const
 
 void            LocalPlayer::restart(const float* pos, float _azimuth)
 {
-  if ((getStatus() & short(PlayerState::Alive)) == 0) // alive player who gets a spawn means they were forced
-  { 
-      // put me in limbo
-      setStatus(short(PlayerState::DeadStatus));
+    if ((getStatus() & short(PlayerState::Alive)) == 0) // alive player who gets a spawn means they were forced
+    {
+        // put me in limbo
+        setStatus(short(PlayerState::DeadStatus));
 
-      // can't have a flag
-      setFlag(Flags::Null, -1);
+        // can't have a flag
+        setFlag(Flags::Null, -1);
 
-      // get rid of existing shots
-      localShots.clear();
-      ShotList::ClearPlayerShots(getId());
+        // get rid of existing shots
+        localShots.clear();
+        ShotList::ClearPlayerShots(getId());
 
-      anyShotActive = false;
+        anyShotActive = false;
 
-      // no target
-      target = NULL;
+        // no target
+        target = NULL;
 
-      // no death
-      deathPhyDrv = -1;
+        // no death
+        deathPhyDrv = -1;
     }
     // initialize position/speed state
     static const float zero[3] = { 0.0f, 0.0f, 0.0f };
@@ -1221,8 +1224,8 @@ bool LocalPlayer::fireShot()
     // prepare shot
     FiringInfo firingInfo(*this, localShotID);
     firingInfo.shot.id = 0xFFFF; // always set the GUID to invalid, server will set it on return
-                                 // FIXME team coloring of shot is never used; it was meant to be used
-                                 // for rabbit mode to correctly calculate team kills when rabbit changes
+    // FIXME team coloring of shot is never used; it was meant to be used
+    // for rabbit mode to correctly calculate team kills when rabbit changes
     firingInfo.shot.team = getTeam();
     if (firingInfo.flagType->flagEffect == FlagEffect::ShockWave)
     {
@@ -1514,7 +1517,8 @@ void            LocalPlayer::doMomentum(float dt,
 void            LocalPlayer::doFriction(float dt,
                                         const float *oldVelocity, float *newVelocity)
 {
-    const float friction = (getFlag()->flagEffect == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION) :
+    const float friction = (getFlag()->flagEffect == FlagEffect::Momentum) ? BZDB.eval(StateDatabase::BZDB_MOMENTUMFRICTION)
+                           :
                            BZDB.eval(StateDatabase::BZDB_FRICTION);
 
     if (friction > 0.0f)
@@ -1555,7 +1559,8 @@ bool            LocalPlayer::checkHit(const Player* source, ShotPath::Ptr  &hit,
         if (!shot || shot->isExpired()) continue;
 
         // my own shock wave cannot kill me
-        if (source == this && ((shot->getFlag()->flagEffect == FlagEffect::ShockWave) || (shot->getFlag()->flagEffect == FlagEffect::Thief))) continue;
+        if (source == this && ((shot->getFlag()->flagEffect == FlagEffect::ShockWave)
+                               || (shot->getFlag()->flagEffect == FlagEffect::Thief))) continue;
 
         // I can't shoot me
         if (!World::getWorld()->allowSelfKills() && source == this)

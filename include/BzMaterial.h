@@ -117,11 +117,17 @@ public:
     const std::string& getTexture(int) const;
     const std::string& getTextureLocal(int) const;
 
-    inline bool hasNormalMap() const { return normalMap != nullptr; }
+    inline bool hasNormalMap() const
+    {
+        return normalMap != nullptr;
+    }
     const std::string& getNormalMap() const;
     const std::string& getNormalMapLocal() const;
 
-    inline bool hasSpecularMap() const { return specularMap != nullptr; }
+    inline bool hasSpecularMap() const
+    {
+        return specularMap != nullptr;
+    }
     const std::string& getSpecularMap() const;
     const std::string& getSpecularMapLocal() const;
 

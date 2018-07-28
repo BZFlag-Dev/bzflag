@@ -69,7 +69,8 @@ ShockWaveStrategy::~ShockWaveStrategy()
 
 void ShockWaveStrategy::update(float dt)
 {
-    radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) / getLifetime();
+    radius += dt * (BZDB.eval(StateDatabase::BZDB_SHOCKOUTRADIUS) - BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)) /
+              getLifetime();
     radius2 = radius * radius;
 
     // update shock wave scene node

@@ -272,7 +272,7 @@ protected:
         return count;
     }
 
-   int getNewIndex(CTexCoord &coord, CTexCoord::Vec &coordList)
+    int getNewIndex(CTexCoord &coord, CTexCoord::Vec &coordList)
     {
         CTexCoord::Vec::iterator itr = coordList.begin();
 
@@ -327,3 +327,11 @@ void DrawModelGeometry(const CModel& model, bool isShadow = false);
 
 #endif // _MODEL_H_
 
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

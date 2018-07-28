@@ -129,7 +129,7 @@ public:
 
     const Obstacle* inBuilding(const float* pos, float radius, float tankHeight) const;
     const Obstacle* inBuilding(const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight) const;
-   
+
 
 private:
 
@@ -187,7 +187,8 @@ public:
     bool inRect(const float *p1, float angle, const float *size,float x, float y, float r) const;
 
     const Obstacle* hitBuilding(const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight) const;
-    const Obstacle* hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float tankWidth, float tankBreadth, float tankHeight, bool directional) const;
+    const Obstacle* hitBuilding(const float* oldPos, float oldAngle, const float* pos, float angle, float tankWidth,
+                                float tankBreadth, float tankHeight, bool directional) const;
 
     bool crossingTeleporter(const float* pos, float angle, float dx, float dy, float dz, float* plane) const;
 

@@ -66,8 +66,8 @@ private:
     bool oldFullScreen;
     int  oldWidth;
     int  oldHeight;
-	
-	std::deque<int> pendingUpEvents;
+
+    std::deque<int> pendingUpEvents;
 };
 
 class SDLVisual : public BzfVisual

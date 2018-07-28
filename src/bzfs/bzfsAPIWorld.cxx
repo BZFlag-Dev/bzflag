@@ -31,9 +31,10 @@ BZF_API unsigned int bz_getWorldObjectCount(void)
                             OBSTACLEMGR.getArcs().size() +
                             OBSTACLEMGR.getCones().size() +
                             OBSTACLEMGR.getSpheres().size());
-                    }
+}
 
-void setSolidObjectFromObstacle(bz_APISolidWorldObject_V1* object, const Obstacle* obstacle, bz_eSolidWorldObjectType objecType)
+void setSolidObjectFromObstacle(bz_APISolidWorldObject_V1* object, const Obstacle* obstacle,
+                                bz_eSolidWorldObjectType objecType)
 {
     object->solidType = objecType;
     object->id = obstacle->GetGUID();
@@ -51,7 +52,8 @@ void setSolidObjectFromObstacle(bz_APISolidWorldObject_V1* object, const Obstacl
 
 //-------------------------------------------------------------------------
 
-void addObjectsToListsFromObstacleList(bz_APIWorldObjectList* solidList, const ObstacleList& list, bz_eSolidWorldObjectType objecType)
+void addObjectsToListsFromObstacleList(bz_APIWorldObjectList* solidList, const ObstacleList& list,
+                                       bz_eSolidWorldObjectType objecType)
 {
     for (unsigned int i = 0; i < list.size(); i++)
     {
@@ -61,7 +63,8 @@ void addObjectsToListsFromObstacleList(bz_APIWorldObjectList* solidList, const O
     }
 }
 
-void addCTFBasesToListsFromObstacleList(bz_APIWorldObjectList* solidList, const ObstacleList& list, bz_eSolidWorldObjectType objecType)
+void addCTFBasesToListsFromObstacleList(bz_APIWorldObjectList* solidList, const ObstacleList& list,
+                                        bz_eSolidWorldObjectType objecType)
 {
     for (unsigned int i = 0; i < list.size(); i++)
     {
@@ -268,8 +271,10 @@ void bz_APIWorldObjectList::clear(void)
 }
 
 
-
-
-
-
-
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

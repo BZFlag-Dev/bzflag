@@ -37,49 +37,54 @@ either expressed or implied, of the FreeBSD Project.
 class changeTeam : public bz_Plugin, bz_CustomSlashCommandHandler
 {
 public:
-  virtual const char* Name () {return "Change Team";}
-  virtual void Init ( const char* /*config*/ )
-  {
-    bz_debugMessage(4,"changeTeam plugin loaded");
-    bz_registerCustomSlashCommand("team", this);
-  }
-
-  virtual void Cleanup ( void )
-  {
-    bz_removeCustomSlashCommand("team");
-  }
-
-  virtual bool SlashCommand ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* params) {
-    /*bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
-    if (!player)
-      return true;*/
-
-    if (bz_getPlayerTeam(playerID) == eNoTeam)
-      return true;
-
-    bz_eTeamType newTeam = eNoTeam;
-
-    std::string newTeamString = params->get(0);
-    if (newTeamString ==  "observer") {
-      newTeam = eObservers;
+    virtual const char* Name ()
+    {
+        return "Change Team";
     }
-    else if (bz_getGameType() == eRabbitGame) {
-      if (newTeamString ==  "hunter") newTeam = eHunterTeam;
-      else if (newTeamString ==  "rabbit") newTeam = eRabbitTeam;
-    }
-    else {
-      if (newTeamString == "rogue") newTeam = eRogueTeam;
-      else if (newTeamString ==  "red") newTeam = eRedTeam;
-      else if (newTeamString ==  "green") newTeam = eGreenTeam;
-      else if (newTeamString ==  "blue") newTeam = eBlueTeam;
-      else if (newTeamString ==  "purple") newTeam = ePurpleTeam;
+    virtual void Init ( const char* /*config*/ )
+    {
+        bz_debugMessage(4,"changeTeam plugin loaded");
+        bz_registerCustomSlashCommand("team", this);
     }
 
-    if (newTeam != eNoTeam)
-      bz_changePlayerTeam(playerID, newTeam);
+    virtual void Cleanup ( void )
+    {
+        bz_removeCustomSlashCommand("team");
+    }
 
-    return true;
-  }
+    virtual bool SlashCommand ( int playerID, bz_ApiString /*command*/, bz_ApiString /*message*/, bz_APIStringList* params)
+    {
+        /*bz_BasePlayerRecord *player = bz_getPlayerByIndex(playerID);
+        if (!player)
+          return true;*/
+
+        if (bz_getPlayerTeam(playerID) == eNoTeam)
+            return true;
+
+        bz_eTeamType newTeam = eNoTeam;
+
+        std::string newTeamString = params->get(0);
+        if (newTeamString ==  "observer")
+            newTeam = eObservers;
+        else if (bz_getGameType() == eRabbitGame)
+        {
+            if (newTeamString ==  "hunter") newTeam = eHunterTeam;
+            else if (newTeamString ==  "rabbit") newTeam = eRabbitTeam;
+        }
+        else
+        {
+            if (newTeamString == "rogue") newTeam = eRogueTeam;
+            else if (newTeamString ==  "red") newTeam = eRedTeam;
+            else if (newTeamString ==  "green") newTeam = eGreenTeam;
+            else if (newTeamString ==  "blue") newTeam = eBlueTeam;
+            else if (newTeamString ==  "purple") newTeam = ePurpleTeam;
+        }
+
+        if (newTeam != eNoTeam)
+            bz_changePlayerTeam(playerID, newTeam);
+
+        return true;
+    }
 };
 
 BZ_PLUGIN(changeTeam)

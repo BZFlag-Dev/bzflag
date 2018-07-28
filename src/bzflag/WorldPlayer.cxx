@@ -35,7 +35,7 @@ void WorldPlayer::addShot(const FiringInfo& info)
 bool WorldPlayer::doEndShot( int ident, bool isHit, float* pos)
 {
     return ShotList::HandleEndShot(ident, isHit, pos);
-    
+
 }
 
 void WorldPlayer::addShots(SceneDatabase* scene, bool colorblind) const

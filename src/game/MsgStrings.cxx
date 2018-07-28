@@ -399,7 +399,7 @@ static std::string strFlagStatus (FlagStatus status)
         STRING_CASE (FlagStatus::InAir);
         STRING_CASE (FlagStatus::Coming);
         STRING_CASE (FlagStatus::Going);
-    default:             
+    default:
         str = TextUtils::format ("UNKNOWN: 0x04%X", status);
         break;
     }

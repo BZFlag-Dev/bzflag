@@ -33,7 +33,7 @@
 class SegmentedShotStrategy : public ShotStrategy
 {
 public:
-    SegmentedShotStrategy(const FiringInfo& , bool useSuperTexture, bool faint = false);
+    SegmentedShotStrategy(const FiringInfo&, bool useSuperTexture, bool faint = false);
     ~SegmentedShotStrategy();
 
     void        update(float dt);

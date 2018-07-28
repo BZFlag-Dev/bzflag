@@ -7,64 +7,67 @@
 class GameStartEndHandler : public bz_Plugin
 {
 public:
-  virtual const char* Name () {return "Record Match";}
-  virtual void Init ( const char* config );
-  virtual void Event ( bz_EventData *eventData );
+    virtual const char* Name ()
+    {
+        return "Record Match";
+    }
+    virtual void Init ( const char* config );
+    virtual void Event ( bz_EventData *eventData );
 
-  bool started;
-  std::string filename;
+    bool started;
+    std::string filename;
 };
 
 BZ_PLUGIN(GameStartEndHandler)
 
 void GameStartEndHandler::Init( const char* /*commandLine*/ )
 {
-  Register(bz_eGameStartEvent);
-  Register(bz_eGameEndEvent);
+    Register(bz_eGameStartEvent);
+    Register(bz_eGameEndEvent);
 
-  started = false;
+    started = false;
 }
 
 void GameStartEndHandler::Event( bz_EventData *eventData )
 {
-  switch (eventData->eventType)
-  {
+    switch (eventData->eventType)
+    {
     case bz_eGameStartEvent:
     {
-      started = bz_startRecBuf();
+        started = bz_startRecBuf();
 
-      bz_Time time;
+        bz_Time time;
 
-      bz_getLocaltime(&time);
+        bz_getLocaltime(&time);
 
-      char temp[512];
-      sprintf(temp,"match-%d%02d%02d-%02d%02d%02d.rec",
-	time.year,time.month,time.day,
-	time.hour,time.minute,time.second);
+        char temp[512];
+        sprintf(temp,"match-%d%02d%02d-%02d%02d%02d.rec",
+                time.year,time.month,time.day,
+                time.hour,time.minute,time.second);
 
-      filename = temp;
+        filename = temp;
     }
     break;
 
     case bz_eGameEndEvent:
     {
-      if (!started)
-	break;
+        if (!started)
+            break;
 
-      bz_saveRecBuf(filename.c_str(),0);
-      bz_stopRecBuf();
+        bz_saveRecBuf(filename.c_str(),0);
+        bz_stopRecBuf();
 
-      started = false;
-      bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS,
-	"Match saved in file %s", filename.c_str());
+        started = false;
+        bz_sendTextMessagef (BZ_SERVER, BZ_ALLUSERS,
+                             "Match saved in file %s", filename.c_str());
     }
     break;
 
     default:
     {
-      // do nothing
+        // do nothing
     }
-  }
+    }
 }
 
 // Local Variables: ***

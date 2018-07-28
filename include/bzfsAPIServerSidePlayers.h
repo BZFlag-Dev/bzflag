@@ -92,7 +92,7 @@ public:
     // you must call setPlayerData when this is called.
     virtual void added(int player) = 0; // it is required that the bot provide this method
 
-                                        // lower level events for various things that happen in the game
+    // lower level events for various things that happen in the game
     virtual void removed(void) {}
 
     virtual void playerAdded(int player);
@@ -101,7 +101,8 @@ public:
     virtual void playerSpawned(int player, const float pos[3], float rot);
 
     virtual void textMessage(int dest, int source, const char *text);
-    virtual void playerKilled(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex, const char *flagType, int phydrv);
+    virtual void playerKilled(int victimIndex, int killerIndex, bz_ePlayerDeathReason reason, int shotIndex,
+                              const char *flagType, int phydrv);
     virtual void scoreLimitReached(int player, bz_eTeamType team);
     virtual void flagCaptured(int player, bz_eTeamType team);
 
@@ -182,18 +183,18 @@ public:
 
 protected:
     // default autopilot based logic
-   virtual  void    doAutoPilot(float &rotation, float &speed);
-   void             dropHardFlags();
-   virtual bool     avoidBullet(float &rotation, float &speed);
-   bool             stuckOnWall(float &rotation, float &speed);
-   virtual bool     chasePlayer(float &rotation, float &speed);
-   virtual bool     lookForFlag(float &rotation, float &speed);
-   virtual bool     navigate(float &rotation, float &speed);
-   bool             avoidDeathFall(float &rotation, float &speed);
-   virtual bool     fireAtTank();
+    virtual  void    doAutoPilot(float &rotation, float &speed);
+    void             dropHardFlags();
+    virtual bool     avoidBullet(float &rotation, float &speed);
+    bool             stuckOnWall(float &rotation, float &speed);
+    virtual bool     chasePlayer(float &rotation, float &speed);
+    virtual bool     lookForFlag(float &rotation, float &speed);
+    virtual bool     navigate(float &rotation, float &speed);
+    bool             avoidDeathFall(float &rotation, float &speed);
+    virtual bool     fireAtTank();
 
-   virtual bool     isFlagUseful(const char* type);
-  
+    virtual bool     isFlagUseful(const char* type);
+
 private:
     bool autoSpawn;
     class Impl;
@@ -209,7 +210,7 @@ private:
 
     void setVelocity(float newVel[3]);
 
-   
+
 
     int flaps;
 };
@@ -218,4 +219,14 @@ private:
 //  there WILL be crashes if you add one.
 // this message will be removed when the code is complete.
 BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler);
-BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
+BZF_API bool bz_removeServerSidePlayer(int playerID,
+                                       bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

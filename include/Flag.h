@@ -282,63 +282,63 @@ public:
 */
 namespace Flags
 {
-   extern FlagType::Ptr Null;
-   extern FlagType::Ptr RedTeam;
-   extern FlagType::Ptr GreenTeam;
-   extern FlagType::Ptr BlueTeam;
-   extern FlagType::Ptr PurpleTeam;
-   extern FlagType::Ptr Velocity;
-   extern FlagType::Ptr QuickTurn;
-   extern FlagType::Ptr OscillationOverthruster;
-   extern FlagType::Ptr RapidFire;
-   extern FlagType::Ptr MachineGun;
-   extern FlagType::Ptr GuidedMissile;
-   extern FlagType::Ptr Laser;
-   extern FlagType::Ptr Ricochet;
-   extern FlagType::Ptr SuperBullet;
-   extern FlagType::Ptr InvisibleBullet;
-   extern FlagType::Ptr Stealth;
-   extern FlagType::Ptr Tiny;
-   extern FlagType::Ptr Narrow;
-   extern FlagType::Ptr Shield;
-   extern FlagType::Ptr Steamroller;
-   extern FlagType::Ptr ShockWave;
-   extern FlagType::Ptr PhantomZone;
-   extern FlagType::Ptr Jumping;
-   extern FlagType::Ptr Identify;
-   extern FlagType::Ptr Cloaking;
-   extern FlagType::Ptr Useless;
-   extern FlagType::Ptr Masquerade;
-   extern FlagType::Ptr Seer;
-   extern FlagType::Ptr Thief;
-   extern FlagType::Ptr Burrow;
-   extern FlagType::Ptr Wings;
-   extern FlagType::Ptr Agility;
-   extern FlagType::Ptr Colorblindness;
-   extern FlagType::Ptr Obesity;
-   extern FlagType::Ptr LeftTurnOnly;
-   extern FlagType::Ptr RightTurnOnly;
-   extern FlagType::Ptr ForwardOnly;
-   extern FlagType::Ptr ReverseOnly;
-   extern FlagType::Ptr Momentum;
-   extern FlagType::Ptr Blindness;
-   extern FlagType::Ptr Jamming;
-   extern FlagType::Ptr WideAngle;
-   extern FlagType::Ptr NoJumping;
-   extern FlagType::Ptr TriggerHappy;
-   extern FlagType::Ptr ReverseControls;
-   extern FlagType::Ptr Bouncy;
-   extern FlagType::Ptr Unknown;
+extern FlagType::Ptr Null;
+extern FlagType::Ptr RedTeam;
+extern FlagType::Ptr GreenTeam;
+extern FlagType::Ptr BlueTeam;
+extern FlagType::Ptr PurpleTeam;
+extern FlagType::Ptr Velocity;
+extern FlagType::Ptr QuickTurn;
+extern FlagType::Ptr OscillationOverthruster;
+extern FlagType::Ptr RapidFire;
+extern FlagType::Ptr MachineGun;
+extern FlagType::Ptr GuidedMissile;
+extern FlagType::Ptr Laser;
+extern FlagType::Ptr Ricochet;
+extern FlagType::Ptr SuperBullet;
+extern FlagType::Ptr InvisibleBullet;
+extern FlagType::Ptr Stealth;
+extern FlagType::Ptr Tiny;
+extern FlagType::Ptr Narrow;
+extern FlagType::Ptr Shield;
+extern FlagType::Ptr Steamroller;
+extern FlagType::Ptr ShockWave;
+extern FlagType::Ptr PhantomZone;
+extern FlagType::Ptr Jumping;
+extern FlagType::Ptr Identify;
+extern FlagType::Ptr Cloaking;
+extern FlagType::Ptr Useless;
+extern FlagType::Ptr Masquerade;
+extern FlagType::Ptr Seer;
+extern FlagType::Ptr Thief;
+extern FlagType::Ptr Burrow;
+extern FlagType::Ptr Wings;
+extern FlagType::Ptr Agility;
+extern FlagType::Ptr Colorblindness;
+extern FlagType::Ptr Obesity;
+extern FlagType::Ptr LeftTurnOnly;
+extern FlagType::Ptr RightTurnOnly;
+extern FlagType::Ptr ForwardOnly;
+extern FlagType::Ptr ReverseOnly;
+extern FlagType::Ptr Momentum;
+extern FlagType::Ptr Blindness;
+extern FlagType::Ptr Jamming;
+extern FlagType::Ptr WideAngle;
+extern FlagType::Ptr NoJumping;
+extern FlagType::Ptr TriggerHappy;
+extern FlagType::Ptr ReverseControls;
+extern FlagType::Ptr Bouncy;
+extern FlagType::Ptr Unknown;
 
-    /** This function initializes all the FlagType objects in the Flags
-        namespace. */
-    void init();
-    void kill();
+/** This function initializes all the FlagType objects in the Flags
+    namespace. */
+void init();
+void kill();
 
-    /** Clear all the custom flags (i.e. when switching servers) */
-    void clearCustomFlags();
+/** Clear all the custom flags (i.e. when switching servers) */
+void clearCustomFlags();
 
-    FlagType::Ptr AddCustomFlag(FlagType::Ptr ptr);
+FlagType::Ptr AddCustomFlag(FlagType::Ptr ptr);
 }
 
 #endif // BZF_FLAG_H

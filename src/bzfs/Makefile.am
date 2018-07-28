@@ -26,8 +26,6 @@ bzfs_SOURCES =				\
 	Authentication.cxx		\
 	Authentication.h		\
 	BanCommands.cxx			\
-	base64.cxx			\
-	base64.h			\
 	bzfsAPI.cxx			\
 	bzfsAPIServerSidePlayers.cxx	\
 	bzfsAPIWorld.cxx	\

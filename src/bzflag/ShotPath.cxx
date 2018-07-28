@@ -54,38 +54,38 @@ FiringInfo::FiringInfo(const BaseLocalPlayer& tank, int _localID)
 //
 
 
- ShotPath::Ptr ShotPath::Create(const FiringInfo& info)
+ShotPath::Ptr ShotPath::Create(const FiringInfo& info)
 {
-     // eek!  a giant switch statement, how un-object-oriented!
-     // each flag should be a flyweight object derived from a
-     // base Flag class with a virtual makeShotStrategy() member.
-     // just remember -- it's only a game.
-     if (info.flagType->flagShot == ShotType::Normal)
-         return std::make_shared<NormalShotStrategy>(info);
-     else
-     {
-         if (info.flagType->flagEffect == FlagEffect::RapidFire)
-             return std::make_shared<RapidFireStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::MachineGun)
-             return std::make_shared< MachineGunStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::GuidedMissile)
-             return std::make_shared<GuidedMissileStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::Laser)
-             return std::make_shared<LaserStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::Ricochet)
-             return std::make_shared<RicochetStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::SuperBullet)
-             return std::make_shared<SuperBulletStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::ShockWave)
-             return std::make_shared<ShockWaveStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::Thief)
-             return std::make_shared<ThiefStrategy>(info);
-         else if (info.flagType->flagEffect == FlagEffect::PhantomZone)
-             return std::make_shared<PhantomBulletStrategy>(info);
-         else
-             assert(0);    // shouldn't happen
-     }
-     return nullptr;
+    // eek!  a giant switch statement, how un-object-oriented!
+    // each flag should be a flyweight object derived from a
+    // base Flag class with a virtual makeShotStrategy() member.
+    // just remember -- it's only a game.
+    if (info.flagType->flagShot == ShotType::Normal)
+        return std::make_shared<NormalShotStrategy>(info);
+    else
+    {
+        if (info.flagType->flagEffect == FlagEffect::RapidFire)
+            return std::make_shared<RapidFireStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::MachineGun)
+            return std::make_shared< MachineGunStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::GuidedMissile)
+            return std::make_shared<GuidedMissileStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::Laser)
+            return std::make_shared<LaserStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::Ricochet)
+            return std::make_shared<RicochetStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::SuperBullet)
+            return std::make_shared<SuperBulletStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::ShockWave)
+            return std::make_shared<ShockWaveStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::Thief)
+            return std::make_shared<ThiefStrategy>(info);
+        else if (info.flagType->flagEffect == FlagEffect::PhantomZone)
+            return std::make_shared<PhantomBulletStrategy>(info);
+        else
+            assert(0);    // shouldn't happen
+    }
+    return nullptr;
 }
 
 ShotPath::ShotPath(const FiringInfo& info) :
@@ -95,7 +95,7 @@ ShotPath::ShotPath(const FiringInfo& info) :
     expiring(false),
     expired(false)
 {
-    
+
 }
 
 ShotPath::~ShotPath()
@@ -153,7 +153,7 @@ void            ShotPath::update(float dt)
 }
 
 void            ShotPath::update(const ShotUpdate& shot,
-                                       uint16_t code, const void* msg)
+                                 uint16_t code, const void* msg)
 {
     // update shot info
     getFiringInfo().shot = shot;

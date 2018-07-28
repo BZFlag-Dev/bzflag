@@ -38,9 +38,7 @@ void PlayerHandler::added(int playerIndex)
 void PlayerHandler::textMessage(int dest, int source, const char */*text*/)
 {
     if (dest == getPlayerID())
-    {
         sendChatMessage("WHAHAHAAHAHAHAHAAAAA?A?A?A?!?!", source);
-    }
 }
 
 void PlayerHandler::shotFired(int, unsigned short)

@@ -104,8 +104,14 @@ public:
     TeamColor getTeam() const;
     void      setNextTeam(TeamColor nextTeam);
     void      setTeam(TeamColor team);
-    inline int getSkinIndex() const { return skinIndex; }
-    inline void setSkinIndex(int skin) { skinIndex = skin; }
+    inline int getSkinIndex() const
+    {
+        return skinIndex;
+    }
+    inline void setSkinIndex(int skin)
+    {
+        skinIndex = skin;
+    }
     void  wasARabbit();
     void  wasNotARabbit();
     bool  isARabbitKill(PlayerInfo &victim) const;
@@ -151,8 +157,8 @@ public:
     PlayerReplayState getReplayState();
     static void   setCurrentTime(TimeKeeper tm);
     static void   setFilterParameters(bool    callSignFiltering,
-        WordFilter  &filterData,
-        bool    simpleFiltering);
+                                      WordFilter  &filterData,
+                                      bool    simpleFiltering);
 
     void  setTrackerID(unsigned short int t);
     unsigned short int    trackerID();
@@ -246,7 +252,7 @@ private:
     // idle kick
     TimeKeeper      lastmsg;
     TimeKeeper      lastupdate;
-    TimeKeeper	    lastRespondingUpdate;
+    TimeKeeper      lastRespondingUpdate;
 
     // player played before countdown started
     bool  playedEarly;

@@ -365,10 +365,10 @@ bool readOBJ ( CModel &model, std::string file )
                     const int tSize = (int)face.texCoords.size();
                     if ((nSize != 0) && (nSize != vSize))
                         valid = false;
-       
+
                     if ((tSize != 0) && (tSize != vSize))
                         valid = false;
-               
+
                     if (valid)
                         mesh.faces.push_back(face);
                 }
@@ -386,3 +386,12 @@ bool readOBJ ( CModel &model, std::string file )
     }
     return  model.meshes.size() > 0;
 }
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

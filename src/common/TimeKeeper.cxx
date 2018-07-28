@@ -73,21 +73,21 @@ const TimeKeeper&   TimeKeeper::getCurrent(void)
         Uint64 clkSpent = now - qpcLastCalibration;
         Uint64 thisFeq = SDL_GetPerformanceFrequency();
 
-         if (thisFeq != qpcFrequency)
-         {
-             // Recalibrate Frequency
-             DWORD tgt    = timeGetTime();
-             DWORD deltaTgt      = tgt - timeLastCalibration;
-             timeLastCalibration = tgt;
-             qpcLastCalibration  = now;
-             if (deltaTgt > 0)
-             {
-                 LONGLONG oldqpcfreq = qpcFrequency;
-                 qpcFrequency = thisFeq;
-                 if (qpcFrequency != oldqpcfreq)
-                     logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",  (double)oldqpcfreq, (double)qpcFrequency);
-             }
-         }
+        if (thisFeq != qpcFrequency)
+        {
+            // Recalibrate Frequency
+            DWORD tgt    = timeGetTime();
+            DWORD deltaTgt      = tgt - timeLastCalibration;
+            timeLastCalibration = tgt;
+            qpcLastCalibration  = now;
+            if (deltaTgt > 0)
+            {
+                LONGLONG oldqpcfreq = qpcFrequency;
+                qpcFrequency = thisFeq;
+                if (qpcFrequency != oldqpcfreq)
+                    logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",  (double)oldqpcfreq, (double)qpcFrequency);
+            }
+        }
 
         currentTime += (double) diff / (double) qpcFrequency;
         qpcLastTime = now;

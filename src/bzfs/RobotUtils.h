@@ -16,16 +16,16 @@
 
 namespace BotUtils
 {
-    float normalizeAngle(float ang);
-    void getUnitVector(const float *src, const float *target, float unitVector[3]);
-    void get3DUnitVector(const float *src, const float *target, float unitVector[3]);
-    float getTargetDistance(const float *src, const float *target);
-    float getTargetAzimuth(const float *src, const float *target);
-    float getTargetRotation(const float startAzimuth, float targetAzimuth);
-    float getTargetAngleDifference(const float *src, float srcAzimuth, const float *target);
-    bool isLocationObscured(const float *src, const float *target);
-    float getOpenDistance(const float *src, const float azimuth);
-    bool getFirstCollisionPoint(const float *src, const float *target, float *collisionPt);
+float normalizeAngle(float ang);
+void getUnitVector(const float *src, const float *target, float unitVector[3]);
+void get3DUnitVector(const float *src, const float *target, float unitVector[3]);
+float getTargetDistance(const float *src, const float *target);
+float getTargetAzimuth(const float *src, const float *target);
+float getTargetRotation(const float startAzimuth, float targetAzimuth);
+float getTargetAngleDifference(const float *src, float srcAzimuth, const float *target);
+bool isLocationObscured(const float *src, const float *target);
+float getOpenDistance(const float *src, const float azimuth);
+bool getFirstCollisionPoint(const float *src, const float *target, float *collisionPt);
 }
 
 #endif
