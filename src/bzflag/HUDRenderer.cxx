@@ -2072,12 +2072,38 @@ void            HUDRenderer::renderShots(const Player* target)
     glDisable(GL_BLEND);
 
     // draw the number of shots left
-    hudColor4f(1.0f, 1.0f, 1.0f, 0.75f); // 75%-solid white
     const int& flagLimit = target->getFlagLimit();
     if (flagLimit >= 0)
     {
+        if (!flagLimitShown)
+        {
+            flagLimitStartTime = TimeKeeper::getTick();
+            flagLimitShown = true;
+            flagLimitInfo = true;
+        }
+
+        hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // 50%-solid white
+
+        std::string flagLimitStr = std::to_string(flagLimit);
         float y = (float)indicatorTop + factors.size() * (indicatorHeight + indicatorSpace);
-        fm.drawString((float)indicatorLeft, y, 0, minorFontFace, minorFontSize, std::to_string(flagLimit));
+        fm.drawString((float)indicatorLeft, y, 0, minorFontFace, minorFontSize, flagLimitStr);
+
+        if (TimeKeeper::getTick() - flagLimitStartTime >= 5.0)
+            flagLimitInfo = false;
+
+        if (flagLimitInfo)
+        {
+            float alpha = float(TimeKeeper::getTick() - flagLimitStartTime);
+            if (alpha <= 1.0f)
+                hudColor4f(1.0f, 1.0f, 1.0f, alpha / 2.0f); // white
+            else if (alpha >= 4.0f)
+                hudColor4f(1.0f, 1.0f, 1.0f, -(alpha - 5.0f) / 2.0f); // white
+            fm.drawString((float)indicatorLeft + fm.getStrLength(minorFontFace, minorFontSize, flagLimitStr + " "), y, 0, minorFontFace, minorFontSize, (flagLimit == 1) ? "shot left" : "shots left");
+        }
+    }
+    else
+    {
+        flagLimitShown = false;
     }
 }
 
