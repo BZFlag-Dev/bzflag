@@ -279,7 +279,6 @@
 		0394E688167B0B71007F4035 /* AccessControlList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CC166C846F008806E9 /* AccessControlList.cxx */; };
 		0394E689167B0B71007F4035 /* Authentication.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543CE166C846F008806E9 /* Authentication.cxx */; };
 		0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D0166C846F008806E9 /* BanCommands.cxx */; };
-		0394E68B167B0B71007F4035 /* base64.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D1166C846F008806E9 /* base64.cxx */; };
 		0394E68C167B0B71007F4035 /* bzfsAPI.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D5166C846F008806E9 /* bzfsAPI.cxx */; };
 		0394E68E167B0B71007F4035 /* bzfsPlugins.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D7166C846F008806E9 /* bzfsPlugins.cxx */; };
 		0394E68F167B0B71007F4035 /* BZWError.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035543D9166C846F008806E9 /* BZWError.cxx */; };
@@ -1279,8 +1278,6 @@
 		035543CE166C846F008806E9 /* Authentication.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Authentication.cxx; sourceTree = "<group>"; };
 		035543CF166C846F008806E9 /* Authentication.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Authentication.h; sourceTree = "<group>"; };
 		035543D0166C846F008806E9 /* BanCommands.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BanCommands.cxx; sourceTree = "<group>"; };
-		035543D1166C846F008806E9 /* base64.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base64.cxx; sourceTree = "<group>"; };
-		035543D2166C846F008806E9 /* base64.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
 		035543D3166C846F008806E9 /* bzfs.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfs.cxx; sourceTree = "<group>"; };
 		035543D4166C846F008806E9 /* bzfs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = bzfs.h; sourceTree = "<group>"; };
 		035543D5166C846F008806E9 /* bzfsAPI.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPI.cxx; sourceTree = "<group>"; };
@@ -2595,8 +2592,6 @@
 				035543CE166C846F008806E9 /* Authentication.cxx */,
 				035543CF166C846F008806E9 /* Authentication.h */,
 				035543D0166C846F008806E9 /* BanCommands.cxx */,
-				035543D1166C846F008806E9 /* base64.cxx */,
-				035543D2166C846F008806E9 /* base64.h */,
 				035543D3166C846F008806E9 /* bzfs.cxx */,
 				035543D4166C846F008806E9 /* bzfs.h */,
 				035543D5166C846F008806E9 /* bzfsAPI.cxx */,
@@ -5188,7 +5183,6 @@
 				0394E688167B0B71007F4035 /* AccessControlList.cxx in Sources */,
 				0394E689167B0B71007F4035 /* Authentication.cxx in Sources */,
 				0394E68A167B0B71007F4035 /* BanCommands.cxx in Sources */,
-				0394E68B167B0B71007F4035 /* base64.cxx in Sources */,
 				0394E68C167B0B71007F4035 /* bzfsAPI.cxx in Sources */,
 				0394E68E167B0B71007F4035 /* bzfsPlugins.cxx in Sources */,
 				0394E68F167B0B71007F4035 /* BZWError.cxx in Sources */,
