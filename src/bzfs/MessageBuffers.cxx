@@ -166,3 +166,11 @@ void ReleaseMessageBuffer(MessageBuffer::Ptr buffer)
     }
  }
         
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

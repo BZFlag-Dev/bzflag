@@ -115,3 +115,12 @@ BZF_API void bz_releaseWorldObjectList(bz_APIWorldObjectList* list);
 BZF_API bz_APIBaseWorldObject* bz_getWorldObjectByID(int id);
 
 BZF_API void bz_releaseWorldObject(bz_APIBaseWorldObject* object);
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4

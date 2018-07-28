@@ -219,3 +219,12 @@ private:
 // this message will be removed when the code is complete.
 BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler);
 BZF_API bool bz_removeServerSidePlayer(int playerID, bz_ServerSidePlayerHandler *handler); // you have to pass in the handler to ensure you "own" the player
+
+
+// Local Variables: ***
+// mode: C++ ***
+// tab-width: 4 ***
+// c-basic-offset: 4 ***
+// indent-tabs-mode: nil ***
+// End: ***
+// ex: shiftwidth=4 tabstop=4
