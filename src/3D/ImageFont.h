@@ -36,7 +36,6 @@ public:
 
     bool load(OSFile &file);
 
-    virtual void build() = 0;
     virtual bool isBuilt() const = 0;
 
     virtual void filter(bool dofilter) = 0;

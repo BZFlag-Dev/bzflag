@@ -25,33 +25,60 @@
 #include "bzfgl.h"
 #include "bzfio.h"
 #include "OpenGLGState.h"
+#include "VBO_Handler.h"
 
 // Local implementation headers
 #include "TextureManager.h"
 
-TextureFont::TextureFont()
+TextureFont::TextureFont() : vboID(-1), textureID(-1)
 {
-    for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++)
-        listIDs[i] = INVALID_GL_LIST_ID;
-
-    textureID = -1;
+    vboManager.registerClient(this);
 }
 
 TextureFont::~TextureFont()
 {
-    for (int i = 0; i < MAX_TEXTURE_FONT_CHARS; i++)
-    {
-        if (listIDs[i] != INVALID_GL_LIST_ID)
-        {
-            glDeleteLists(listIDs[i], 1);
-            listIDs[i] = INVALID_GL_LIST_ID;
-        }
-    }
+    vboVT.vboFree(vboID);
+    vboManager.unregisterClient(this);
 }
 
-void TextureFont::build(void)
+void TextureFont::initVBO()
 {
-    preLoadLists();
+    vboID = -1;
+}
+
+void TextureFont::reloadVBO()
+{
+    glm::vec2 textur[1024];
+    glm::vec3 vertex[1024];
+
+    vboID = vboVT.vboAlloc(4 * numberOfCharacters);
+
+    glm::vec2 *texPtr = textur;
+    glm::vec3 *verPtr = vertex;
+
+    FontMetrics *fontSym = fontMetrics;
+    for (int i = numberOfCharacters; i > 0; i--, fontSym++)
+    {
+        float deltaX = (float)fontSym->initialDist;
+        float fFontY = (float)(fontSym->endY - fontSym->startY);
+        float fFontX = (float)(fontSym->endX - fontSym->startX);
+        float startX = (float)fontSym->startX / (float)textureXSize;
+        float endX   = (float)fontSym->endX   / (float)textureXSize;
+        float startY = (float)(textureYSize - fontSym->startY) / (float)textureYSize;
+        float endY   = (float)(textureYSize - fontSym->endY)   / (float)textureYSize;
+
+        *texPtr++ = glm::vec2(startX, startY);
+        *texPtr++ = glm::vec2(startX, endY);
+        *texPtr++ = glm::vec2(endX, startY);
+        *texPtr++ = glm::vec2(endX, endY);
+
+        *verPtr++ = glm::vec3(deltaX,          fFontY, 0.0f);
+        *verPtr++ = glm::vec3(deltaX,          0.0f,   0.0f);
+        *verPtr++ = glm::vec3(deltaX + fFontX, fFontY, 0.0f);
+        *verPtr++ = glm::vec3(deltaX + fFontX, 0.0f,   0.0f);
+    }
+    vboVT.vertexData(vboID,  4 * numberOfCharacters, vertex);
+    vboVT.textureData(vboID, 4 * numberOfCharacters, textur);
 }
 
 void TextureFont::preLoadLists()
@@ -76,49 +103,6 @@ void TextureFont::preLoadLists()
 
     // fonts are usually pixel aligned
     tm.setTextureFilter(textureID, OpenGLTexture::Nearest);
-
-    for (int i = 0; i < numberOfCharacters; i++)
-    {
-        if (listIDs[i] != INVALID_GL_LIST_ID)
-        {
-            glDeleteLists(listIDs[i], 1);
-            listIDs[i] = INVALID_GL_LIST_ID; // make it a habit
-        }
-        listIDs[i] = glGenLists(1);
-        glNewList(listIDs[i], GL_COMPILE);
-        {
-            glTranslatef((float)fontMetrics[i].initialDist, 0, 0);
-
-            float fFontY = (float)(fontMetrics[i].endY - fontMetrics[i].startY);
-            float fFontX = (float)(fontMetrics[i].endX - fontMetrics[i].startX);
-
-            glBegin(GL_TRIANGLE_STRIP);
-            glNormal3f(0.0f, 0.0f, 1.0f);
-            glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-            glVertex3f(0.0f, fFontY, 0.0f);
-
-            glTexCoord2f((float)fontMetrics[i].startX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-            glVertex3f(0.0f, 0.0f, 0.0f);
-
-            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].startY / (float)textureYSize);
-            glVertex3f(fFontX, fFontY, 0.0f);
-
-            glTexCoord2f((float)fontMetrics[i].endX / (float)textureXSize,
-                         1.0f - (float)fontMetrics[i].endY / (float)textureYSize);
-            glVertex3f(fFontX, 0.0f, 0.0f);
-            glEnd();
-
-            // this plus the initial 'initialDist' equal 'fullWidth'
-            float fFontPostX = (float)(fontMetrics[i].charWidth +
-                                       fontMetrics[i].whiteSpaceDist);
-
-            glTranslatef(fFontPostX, 0.0f, 0.0f);
-        }
-        glEndList();
-    }
 
     // create GState
     OpenGLGStateBuilder builder(gstate);
@@ -157,6 +141,9 @@ void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
     if (textureID == -1)
         return;
 
+    if (vboID < 0)
+        reloadVBO();
+
     gstate.setState();
 
     TextureManager &tm = TextureManager::instance();
@@ -164,31 +151,26 @@ void TextureFont::drawString(float scale, GLfloat color[4], const char *str,
         return;
 
     if (color[0] >= 0)
-        glColor4fv(color);
+        glColor4f(color[0], color[1], color[2], color[3]);
 
     glPushMatrix();
     glScalef(scale, scale, 1);
 
-    glPushMatrix();
+    vboVT.enableArrays();
     int charToUse = 0;
+    glNormal3f(0.0f, 0.0f, 1.0f);
     for (int i = 0; i < len; i++)
     {
-        const char space = ' '; // decimal 32
-        if (str[i] < space)
-            charToUse = space;
-        else if (str[i] > (numberOfCharacters + space))
-            charToUse = space;
-        else
-            charToUse = str[i];
+        charToUse = str[i] - ' ';
+        if (charToUse < 0)
+            charToUse = 0;
+        else if (charToUse > numberOfCharacters)
+            charToUse = 0;
 
-        charToUse -= space;
-
-        if (charToUse == 0)
-            glTranslatef((float)(fontMetrics[charToUse].fullWidth), 0.0f, 0.0f);
-        else
-            glCallList(listIDs[charToUse]);
+        if (charToUse)
+            glDrawArrays(GL_TRIANGLE_STRIP, vboID + 4 * charToUse, 4);
+        glTranslatef((float)(fontMetrics[charToUse].fullWidth), 0.0f, 0.0f);
     }
-    glPopMatrix();
     if (color[0] >= 0)
         glColor4f(1, 1, 1, 1);
     glPopMatrix();

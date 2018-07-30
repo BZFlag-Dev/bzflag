@@ -13,17 +13,19 @@
 #ifndef _TEXTURE_FONT_H_
 #define _TEXTURE_FONT_H_
 
+/* common interface headers */
+#include "VBO_Handler.h"
 #include "bzfgl.h"
 #include "ImageFont.h"
 #include "OpenGLGState.h"
 
-class TextureFont : public ImageFont
+class TextureFont : public ImageFont, VBOclient
 {
 public:
     TextureFont();
     virtual ~TextureFont();
 
-    virtual void build();
+    virtual void initVBO();
     virtual bool isBuilt() const
     {
         return textureID != -1;
@@ -35,9 +37,10 @@ public:
     virtual void free();
 
 private:
+    void reloadVBO();
     void preLoadLists();
 
-    unsigned int  listIDs[MAX_TEXTURE_FONT_CHARS];
+    int         vboID;
 
     int         textureID;
     OpenGLGState gstate;
