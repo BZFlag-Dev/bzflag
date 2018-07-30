@@ -24,18 +24,8 @@
 
 
 // initialize the singleton
-template <>
-CommandManager* Singleton<CommandManager>::_instance = (CommandManager*)0;
-
-CommandManager::CommandManager()
-{
-  // do nothing
-}
-
-CommandManager::~CommandManager()
-{
-  // do nothing
-}
+// template <>
+// CommandManager* Singleton<CommandManager>::_instance = (CommandManager*)0;
 
 void				CommandManager::add(const std::string& name,
 						    CommandFunction func,

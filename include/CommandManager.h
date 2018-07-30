@@ -10,8 +10,9 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __COMMANDMANAGER_H__
-#define __COMMANDMANAGER_H__
+#pragma once
+#ifndef CommandManager_h__
+#define CommandManager_h__
 
 #include "common.h"
 
@@ -31,8 +32,7 @@ class CommandManager : public Singleton<CommandManager> {
 
 public:
 
-  CommandManager();
-  ~CommandManager();
+  CommandManager() = default;
 
   // type of function that implements command.  function should return
   // a string with the output of the command (or the empty string if
@@ -78,7 +78,7 @@ private:
 };
 
 
-#endif /* __COMMANDMANAGER_H__ */
+#endif /* CommandManager_h__ */
 
 // Local Variables: ***
 // mode: C++ ***

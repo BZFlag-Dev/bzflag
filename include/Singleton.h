@@ -65,48 +65,52 @@ protected:
   // protection from instantiating a non-singleton Singleton
   Singleton() {}
   Singleton(T* instancePointer) { _instance = instancePointer; }
-  Singleton(const Singleton &) {} // do not use
-  Singleton& operator=(const Singleton&) { return *this; } // do not use
-  ~Singleton() { _instance = 0; } // do not delete
+  Singleton(const Singleton &) = delete;
+  Singleton& operator=(const Singleton&) = delete;
+  ~Singleton() = delete;
 
-  static void destroy() {
-    if ( _instance != 0 ) {
-      delete(_instance);
-      _instance = 0;
-    }
-  }
+  static void destroy();
 
 public:
 
   /** returns a singleton
    */
-  inline static T& instance() {
-    if ( _instance == 0 ) {
-      _instance = new T;
-      // destroy the singleton when the application terminates
-#ifdef HAVE_ATEXIT
-      atexit(Singleton::destroy);
-#endif
-    }
-    return *Singleton::_instance;
-  }
+  static T& instance();
 
   /** returns a singleton pointer
    */
-  inline static T* pInstance() {
-    if (_instance == 0) {
-      _instance = new T;
-#ifdef HAVE_ATEXIT
-      atexit(Singleton::destroy);
-#endif
-    }
-    return Singleton::_instance;
-  }
+  static T* pInstance();
 
   /** returns a const singleton reference
    */
   inline static const T& constInstance() { return *instance(); }
 };
+
+template <typename T>
+T* Singleton<T>::_instance = nullptr;
+
+template <typename T>
+void Singleton<T>::destroy() {
+  delete _instance;
+  _instance = nullptr;
+}
+
+template <typename T>
+T& Singleton<T>::instance() {
+  return *pInstance();
+}
+
+template <typename T>
+T* Singleton<T>::pInstance() {
+  if (_instance == nullptr) {
+    _instance = new T;
+#ifdef HAVE_ATEXIT
+    atexit(Singleton::destroy);
+#endif
+  }
+  return Singleton::_instance;
+}
+
 
 #endif /* __SINGLETON_H__ */
 
