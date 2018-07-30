@@ -1,4 +1,7 @@
 SUBDIRS = nsis
 
+EXTRA_DIST =	\
+	README.win32.html
+
 MAINTAINERCLEANFILES = \
 	Makefile.in
