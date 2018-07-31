@@ -521,6 +521,10 @@
 		C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */; };
 		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; };
 		C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */; };
+		C363D0E92110272B0077D945 /* bzfsAPIServerSidePlayers.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */; };
+		C363D0EA2110272B0077D945 /* bzfsAPIWorld.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */; };
+		C363D0EB2110272B0077D945 /* MessageBuffers.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E62110272A0077D945 /* MessageBuffers.cxx */; };
+		C363D0EC2110272B0077D945 /* RobotUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E82110272B0077D945 /* RobotUtils.cxx */; };
 		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
@@ -1745,6 +1749,12 @@
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
 		C353B1E91AE2490D00C5AED5 /* flagStay.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flagStay.bzw; sourceTree = "<group>"; };
+		C363D0E3211027280077D945 /* RobotUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RobotUtils.h; sourceTree = "<group>"; };
+		C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPIServerSidePlayers.cxx; sourceTree = "<group>"; };
+		C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPIWorld.cxx; sourceTree = "<group>"; };
+		C363D0E62110272A0077D945 /* MessageBuffers.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageBuffers.cxx; sourceTree = "<group>"; };
+		C363D0E72110272A0077D945 /* MessageBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBuffers.h; sourceTree = "<group>"; };
+		C363D0E82110272B0077D945 /* RobotUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobotUtils.cxx; sourceTree = "<group>"; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
 		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
 		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
@@ -2585,8 +2595,6 @@
 		035543CB166C846F008806E9 /* bzfs */ = {
 			isa = PBXGroup;
 			children = (
-				DF28982916B4F5AE006C78AC /* ShotManager.cxx */,
-				DF28982A16B4F5AE006C78AC /* ShotManager.h */,
 				035543CC166C846F008806E9 /* AccessControlList.cxx */,
 				035543CD166C846F008806E9 /* AccessControlList.h */,
 				035543CE166C846F008806E9 /* Authentication.cxx */,
@@ -2595,6 +2603,8 @@
 				035543D3166C846F008806E9 /* bzfs.cxx */,
 				035543D4166C846F008806E9 /* bzfs.h */,
 				035543D5166C846F008806E9 /* bzfsAPI.cxx */,
+				C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */,
+				C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */,
 				035543D7166C846F008806E9 /* bzfsPlugins.cxx */,
 				035543D8166C846F008806E9 /* bzfsPlugins.h */,
 				035543D9166C846F008806E9 /* BZWError.cxx */,
@@ -2661,6 +2671,8 @@
 				03554418166C846F008806E9 /* ListServerConnection.h */,
 				0355441A166C846F008806E9 /* MasterBanList.cxx */,
 				0355441B166C846F008806E9 /* MasterBanList.h */,
+				C363D0E62110272A0077D945 /* MessageBuffers.cxx */,
+				C363D0E72110272A0077D945 /* MessageBuffers.h */,
 				0355441C166C846F008806E9 /* PackVars.h */,
 				0355441D166C846F008806E9 /* ParseMaterial.cxx */,
 				0355441E166C846F008806E9 /* ParseMaterial.h */,
@@ -2672,11 +2684,15 @@
 				03554424166C846F008806E9 /* RecordReplay.h */,
 				03554425166C846F008806E9 /* RejoinList.cxx */,
 				03554426166C846F008806E9 /* RejoinList.h */,
+				C363D0E82110272B0077D945 /* RobotUtils.cxx */,
+				C363D0E3211027280077D945 /* RobotUtils.h */,
 				03554427166C846F008806E9 /* Score.cxx */,
 				03554428166C846F008806E9 /* Score.h */,
 				03554429166C846F008806E9 /* ServerCommand.cxx */,
 				0355442A166C846F008806E9 /* ServerCommand.h */,
 				0355442B166C846F008806E9 /* ServerSidePlayer.cxx */,
+				DF28982916B4F5AE006C78AC /* ShotManager.cxx */,
+				DF28982A16B4F5AE006C78AC /* ShotManager.h */,
 				0355442C166C846F008806E9 /* SpawnPolicy.cxx */,
 				0355442D166C846F008806E9 /* SpawnPolicy.h */,
 				0355442E166C846F008806E9 /* SpawnPosition.cxx */,
@@ -5200,10 +5216,12 @@
 				0394E69B167B0B71007F4035 /* CustomMesh.cxx in Sources */,
 				0394E69C167B0B71007F4035 /* CustomMeshFace.cxx in Sources */,
 				0394E69D167B0B71007F4035 /* CustomMeshTransform.cxx in Sources */,
+				C363D0EC2110272B0077D945 /* RobotUtils.cxx in Sources */,
 				0394E69E167B0B71007F4035 /* CustomPhysicsDriver.cxx in Sources */,
 				0394E69F167B0B71007F4035 /* CustomPyramid.cxx in Sources */,
 				0394E6A0167B0B71007F4035 /* CustomSphere.cxx in Sources */,
 				0394E6A1167B0B71007F4035 /* CustomTetra.cxx in Sources */,
+				C363D0EA2110272B0077D945 /* bzfsAPIWorld.cxx in Sources */,
 				0394E6A2167B0B71007F4035 /* CustomTextureMatrix.cxx in Sources */,
 				0394E6A3167B0B71007F4035 /* CustomWaterLevel.cxx in Sources */,
 				0394E6A4167B0B71007F4035 /* CustomWeapon.cxx in Sources */,
@@ -5219,10 +5237,12 @@
 				0394E6AE167B0BE0007F4035 /* bzfs.cxx in Sources */,
 				0394E6AF167B0BE0007F4035 /* commands.cxx in Sources */,
 				0394E6B0167B0BE0007F4035 /* MasterBanList.cxx in Sources */,
+				C363D0E92110272B0077D945 /* bzfsAPIServerSidePlayers.cxx in Sources */,
 				0394E6B1167B0BE0007F4035 /* ParseMaterial.cxx in Sources */,
 				0394E6B2167B0BE0007F4035 /* Permissions.cxx in Sources */,
 				0394E6B3167B0BE0007F4035 /* RandomSpawnPolicy.cxx in Sources */,
 				0394E6B4167B0BE0007F4035 /* RecordReplay.cxx in Sources */,
+				C363D0EB2110272B0077D945 /* MessageBuffers.cxx in Sources */,
 				0394E6B5167B0BE0007F4035 /* RejoinList.cxx in Sources */,
 				0394E6B6167B0BE0007F4035 /* Score.cxx in Sources */,
 				0394E6B7167B0BE0007F4035 /* ServerCommand.cxx in Sources */,
