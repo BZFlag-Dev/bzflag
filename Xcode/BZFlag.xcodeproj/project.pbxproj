@@ -3396,10 +3396,10 @@
 				0394E6D7167B1024007F4035 /* plugins */,
 				03E42D121B321DF2006EE763 /* data */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 8;
-			usesTabs = 1;
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		03CDB24216A0BA81001DA037 /* superUser */ = {
 			isa = PBXGroup;
