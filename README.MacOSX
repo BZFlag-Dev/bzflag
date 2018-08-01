@@ -52,6 +52,14 @@ framework as detailed below.
 
 BZFlag has three external dependencies: SDL 2, GLEW, and c-ares.
 
+An alternative to building yourself is to use the "homebrew" package
+manager. If you have homebrew installed, you can install the necessary
+dependencies with:
+
+$ brew install sdl2 c-ares glew
+
+If not, follow these instructions:
+
 Download the latest version of the SDL 2 framework from
 https://www.libsdl.org/download-2.0.php. Version 2.0.3 or later is required,
 but version 2.0.4 or later is highly recommended because it includes a new
