@@ -527,6 +527,7 @@
 		C363D0EC2110272B0077D945 /* RobotUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E82110272B0077D945 /* RobotUtils.cxx */; };
 		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
+		ECD699C32111858B00F259E5 /* ShotList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = ECD699C12111858900F259E5 /* ShotList.cxx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -1760,6 +1761,8 @@
 		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
 		DF8950DE16E42CF800BA9DD5 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = playerHandler.h; path = ../plugins/serverSidePlayerSample/playerHandler.h; sourceTree = "<group>"; };
 		DF8950DF16E42CF800BA9DD5 /* serverSidePlayerSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = serverSidePlayerSample.cpp; path = ../plugins/serverSidePlayerSample/serverSidePlayerSample.cpp; sourceTree = "<group>"; };
+		ECD699C12111858900F259E5 /* ShotList.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ShotList.cxx; path = ../src/bzflag/ShotList.cxx; sourceTree = "<group>"; };
+		ECD699C22111858A00F259E5 /* ShotList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ShotList.h; path = ../src/bzflag/ShotList.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -3346,6 +3349,8 @@
 			isa = PBXGroup;
 			children = (
 				03C8EE25167ABE2300BB07A5 /* BZFlag.app */,
+				ECD699C12111858900F259E5 /* ShotList.cxx */,
+				ECD699C22111858A00F259E5 /* ShotList.h */,
 				03C5E7BC1670A3DA005A26C4 /* lib3D.a */,
 				0357A7BC1670AF8E0056C938 /* libcommon.a */,
 				0357A7EB1670B11A0056C938 /* libnet.a */,
@@ -5539,6 +5544,7 @@
 				03C8EE9E167AC26A00BB07A5 /* HUDuiDefaultKey.cxx in Sources */,
 				03C8EEA0167AC26A00BB07A5 /* HUDuiLabel.cxx in Sources */,
 				03C8EEA2167AC26A00BB07A5 /* HUDuiList.cxx in Sources */,
+				ECD699C32111858B00F259E5 /* ShotList.cxx in Sources */,
 				03C8EEA4167AC26A00BB07A5 /* HUDuiTextureLabel.cxx in Sources */,
 				03C8EEA6167AC26A00BB07A5 /* HUDuiTypeIn.cxx in Sources */,
 				03C8EEA8167AC26A00BB07A5 /* InputMenu.cxx in Sources */,
@@ -7728,6 +7734,7 @@
 				03864A5220C4E70C00490CFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0394E686167B0AA4007F4035 /* Build configuration list for PBXNativeTarget "bzfs" */ = {
 			isa = XCConfigurationList;
