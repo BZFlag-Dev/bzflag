@@ -794,13 +794,13 @@ void startCountdown ( int delay, float limit, int playerID )
         matchBegins = "Match begins now!";
     else
     {
-        TimeKeeper::convertTime(countdownDelay, timeArray);
+        TimeKeeper::convertTime(TimeKeeper::Seconds_t(countdownDelay), timeArray);
         std::string countdowntime = TimeKeeper::printTime(timeArray);
         matchBegins = TextUtils::format("Match begins in about %s", countdowntime.c_str());
     }
     sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
 
-    TimeKeeper::convertTime(clOptions->timeLimit, timeArray);
+    TimeKeeper::convertTime(TimeKeeper::Seconds_t(clOptions->timeLimit), timeArray);
     std::string timelimit = TimeKeeper::printTime(timeArray);
     matchBegins = TextUtils::format("Match duration is %s", timelimit.c_str());
     sendMessage(ServerPlayer, AllPlayers, matchBegins.c_str());
@@ -2227,7 +2227,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         if (duration < 365.0f * 24 * 3600)
         {
             long int timeArray[4];
-            TimeKeeper::convertTime(duration, timeArray);
+            TimeKeeper::convertTime(TimeKeeper::Seconds_t(duration), timeArray);
             std::string bantime = TimeKeeper::printTime(timeArray);
             rejectionMessage += bantime;
             rejectionMessage += " remaining";
@@ -5909,7 +5909,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
                     if (duration < 365.0f * 24 * 3600)
                     {
                         long int timeArray[4];
-                        TimeKeeper::convertTime(duration, timeArray);
+                        TimeKeeper::convertTime(TimeKeeper::Seconds_t(duration), timeArray);
                         std::string bantime = TimeKeeper::printTime(timeArray);
                         reason += bantime;
                         reason += " remaining";
