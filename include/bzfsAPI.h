@@ -330,8 +330,12 @@ typedef enum
     bz_eServerShotFiredEvent,
     bz_ePermissionModificationEvent,
     bz_eAllowServerShotFiredEvent,
-    bz_eGetAutoSkinEvent,    bz_eShotRicocetEvent,
-    bz_eShotTeleportedEvent,    bz_eLastEvent    //this is never used as an event, just show it's the last one
+    bz_eGetAutoSkinEvent,
+    bz_eShotRicocetEvent,
+    bz_eShotTeleportedEvent,
+    bz_eAllowFlagResetEvent,
+    bz_eFlagResetEvent,
+    bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 
 // permision #defines
@@ -1506,6 +1510,37 @@ public:
     const char* perm;
     bool granted;
     bool customPerm;
+};
+
+class BZF_API bz_AllowFlagResetData_V1 : public bz_EventData
+{
+public:
+    bz_AllowFlagResetData_V1() : bz_EventData(bz_eAllowFlagResetEvent)
+        , flagID(-1)
+        , flagType("")
+        , allow(true)
+    {}
+
+    int flagID;
+    const char* flagType;
+    bool allow;
+};
+
+class BZF_API bz_FlagResetEventData_V1 : public bz_EventData
+{
+public:
+    bz_FlagResetEventData_V1() : bz_EventData(bz_eFlagResetEvent)
+        , flagID(-1)
+        , flagType("")
+        , teamIsEmpty(false)
+    {
+        targetPos[0] = targetPos[1] = targetPos[2] = 0.0f;
+    }
+
+    int flagID;
+    const char* flagType;
+    bool teamIsEmpty;
+    float targetPos[3];
 };
 
 // logging

@@ -2573,6 +2573,17 @@ void resetFlag(FlagInfo &flag)
     // NOTE -- must not be called until world is defined
     assert(world != NULL);
 
+    bz_AllowFlagResetData_V1 allowEvent;
+    allowEvent.flagID = flag.getIndex();
+    allowEvent.flagType = flag.flag.type->flagAbbv.c_str();
+
+    worldEventManager.callEvents(bz_eAllowFlagResetEvent, &allowEvent);
+
+    if (!allowEvent.allow)
+    {
+        return;
+    }
+
     // first drop the flag if someone has it
     if (flag.flag.status == FlagStatus::OnTank)
     {
@@ -2640,11 +2651,13 @@ void resetFlag(FlagInfo &flag)
     if (teamIndex != ::NoTeam)
         teamIsEmpty = (team[teamIndex].team.size == 0);
 
-//   bz_FlagResetEventData_V1 eventData;
-//   memcpy(eventData.pos,flagPos,sizeof(float)*3);
-//   eventData.teamIsEmpty = teamIsEmpty;
-//   eventData.flagID = flag.getIndex();
-//   eventData.flagType = flag.flag.type->label().c_str();
+    bz_FlagResetEventData_V1 eventData;
+    memcpy(eventData.targetPos, flagPos, sizeof(float)*3);
+    eventData.teamIsEmpty = teamIsEmpty;
+    eventData.flagID = flag.getIndex();
+    eventData.flagType = flag.flag.type->flagAbbv.c_str();
+
+    worldEventManager.callEvents(bz_eFlagResetEvent, &eventData);
 
     // reset a flag's info
     flag.resetFlag(flagPos, teamIsEmpty);
@@ -4994,8 +5007,8 @@ static void handleCommand(int t, void *rawbuf, bool udp)
             phydrv = int(inPhyDrv);
         }
 
-        if (killer != t
-                && !ShotManager.IsValidShotID(shot)) // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
+        // you can kill yourself with an invalid shot, it may not have been sent up the pipe already
+        if (killer != t && !ShotManager.IsValidShotID(shot))
             break;
 
         playerData->player.endShotCredit--;

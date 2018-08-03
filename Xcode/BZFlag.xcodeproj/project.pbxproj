@@ -521,6 +521,20 @@
 		C333EFD41E2B9F5500B4B182 /* customPollTypeSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C333EFCE1E2B9F5500B4B182 /* customPollTypeSample.cpp */; };
 		C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */; };
 		C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */; };
+		C363D0E92110272B0077D945 /* bzfsAPIServerSidePlayers.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */; };
+		C363D0EA2110272B0077D945 /* bzfsAPIWorld.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */; };
+		C363D0EB2110272B0077D945 /* MessageBuffers.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E62110272A0077D945 /* MessageBuffers.cxx */; };
+		C363D0EC2110272B0077D945 /* RobotUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D0E82110272B0077D945 /* RobotUtils.cxx */; };
+		C363D102211189000077D945 /* genocide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C363D0FC211189000077D945 /* genocide.cpp */; };
+		C363D103211189000077D945 /* genocide.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C363D0FC211189000077D945 /* genocide.cpp */; };
+		C363D116211189B40077D945 /* playerHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C363D10E211189B40077D945 /* playerHandler.cpp */; };
+		C363D119211189B40077D945 /* R2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C363D110211189B40077D945 /* R2.cpp */; };
+		C363D11A21118A0F0077D945 /* genocide.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C363D0F6211188BF0077D945 /* genocide.dylib */; };
+		C363D11B21118A1B0077D945 /* R2.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C363D108211189890077D945 /* R2.dylib */; };
+		C363D11C21118B5F0077D945 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
+		C363D11F21118C370077D945 /* ShotList.cxx in Sources */ = {isa = PBXBuildFile; fileRef = C363D11D21118C360077D945 /* ShotList.cxx */; };
+		C363D12121118D300077D945 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
+		C363D12221118D8C0077D945 /* plugin_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0394E757167B1025007F4035 /* plugin_utils.h */; };
 		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
@@ -861,6 +875,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				C363D11B21118A1B0077D945 /* R2.dylib in CopyFiles */,
+				C363D11A21118A0F0077D945 /* genocide.dylib in CopyFiles */,
 				C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */,
 				C353B1DB1AE23A0C00C5AED5 /* CustomZoneSample.dylib in CopyFiles */,
 				03FA74341742606400573D2D /* serverSidePlayerSample.dylib in CopyFiles */,
@@ -1745,6 +1761,24 @@
 		C353B1E01AE23C8100C5AED5 /* CustomZoneSample.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CustomZoneSample.cpp; sourceTree = "<group>"; };
 		C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CustomZoneSample.bzw; sourceTree = "<group>"; };
 		C353B1E91AE2490D00C5AED5 /* flagStay.bzw */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = flagStay.bzw; sourceTree = "<group>"; };
+		C363D0E3211027280077D945 /* RobotUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RobotUtils.h; sourceTree = "<group>"; };
+		C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPIServerSidePlayers.cxx; sourceTree = "<group>"; };
+		C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = bzfsAPIWorld.cxx; sourceTree = "<group>"; };
+		C363D0E62110272A0077D945 /* MessageBuffers.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessageBuffers.cxx; sourceTree = "<group>"; };
+		C363D0E72110272A0077D945 /* MessageBuffers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageBuffers.h; sourceTree = "<group>"; };
+		C363D0E82110272B0077D945 /* RobotUtils.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RobotUtils.cxx; sourceTree = "<group>"; };
+		C363D0F0211188380077D945 /* bzfsAPIServerSidePlayers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzfsAPIServerSidePlayers.h; sourceTree = "<group>"; };
+		C363D0F1211188380077D945 /* bzfsAPIWorld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bzfsAPIWorld.h; sourceTree = "<group>"; };
+		C363D0F6211188BF0077D945 /* genocide.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = genocide.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C363D0FC211189000077D945 /* genocide.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = genocide.cpp; sourceTree = "<group>"; };
+		C363D101211189000077D945 /* README.genocide.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.genocide.txt; sourceTree = "<group>"; };
+		C363D108211189890077D945 /* R2.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = R2.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		C363D10E211189B40077D945 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = playerHandler.cpp; sourceTree = "<group>"; };
+		C363D10F211189B40077D945 /* playerHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playerHandler.h; sourceTree = "<group>"; };
+		C363D110211189B40077D945 /* R2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = R2.cpp; sourceTree = "<group>"; };
+		C363D114211189B40077D945 /* README.R2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.R2.txt; sourceTree = "<group>"; };
+		C363D11D21118C360077D945 /* ShotList.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotList.cxx; sourceTree = "<group>"; };
+		C363D11E21118C360077D945 /* ShotList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotList.h; sourceTree = "<group>"; };
 		DF28982916B4F5AE006C78AC /* ShotManager.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShotManager.cxx; sourceTree = "<group>"; };
 		DF28982A16B4F5AE006C78AC /* ShotManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotManager.h; sourceTree = "<group>"; };
 		DF8950DD16E42CF800BA9DD5 /* playerHandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = playerHandler.cpp; path = ../plugins/serverSidePlayerSample/playerHandler.cpp; sourceTree = "<group>"; };
@@ -2129,6 +2163,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C363D12121118D300077D945 /* libplugin_utils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2143,6 +2178,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D0F3211188BF0077D945 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D105211189890077D945 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C363D11C21118B5F0077D945 /* libplugin_utils.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2178,6 +2228,8 @@
 				0305D579166C9DAE00557FC4 /* BzfJoystick.h */,
 				0305D57A166C9DAE00557FC4 /* BzfMedia.h */,
 				0305D57B166C9DAE00557FC4 /* bzfsAPI.h */,
+				C363D0F0211188380077D945 /* bzfsAPIServerSidePlayers.h */,
+				C363D0F1211188380077D945 /* bzfsAPIWorld.h */,
 				0305D57C166C9DAE00557FC4 /* bzfSDL.h */,
 				0305D57E166C9DAE00557FC4 /* BzfVisual.h */,
 				0305D57F166C9DAE00557FC4 /* BzfWindow.h */,
@@ -2546,6 +2598,8 @@
 				035543A8166C846F008806E9 /* ServerStartMenu.h */,
 				035543A9166C846F008806E9 /* ShockWaveStrategy.cxx */,
 				035543AA166C846F008806E9 /* ShockWaveStrategy.h */,
+				C363D11D21118C360077D945 /* ShotList.cxx */,
+				C363D11E21118C360077D945 /* ShotList.h */,
 				035543AB166C846F008806E9 /* ShotPath.cxx */,
 				035543AC166C846F008806E9 /* ShotPath.h */,
 				035543AD166C846F008806E9 /* ShotPathSegment.cxx */,
@@ -2585,8 +2639,6 @@
 		035543CB166C846F008806E9 /* bzfs */ = {
 			isa = PBXGroup;
 			children = (
-				DF28982916B4F5AE006C78AC /* ShotManager.cxx */,
-				DF28982A16B4F5AE006C78AC /* ShotManager.h */,
 				035543CC166C846F008806E9 /* AccessControlList.cxx */,
 				035543CD166C846F008806E9 /* AccessControlList.h */,
 				035543CE166C846F008806E9 /* Authentication.cxx */,
@@ -2595,6 +2647,8 @@
 				035543D3166C846F008806E9 /* bzfs.cxx */,
 				035543D4166C846F008806E9 /* bzfs.h */,
 				035543D5166C846F008806E9 /* bzfsAPI.cxx */,
+				C363D0E4211027280077D945 /* bzfsAPIServerSidePlayers.cxx */,
+				C363D0E5211027290077D945 /* bzfsAPIWorld.cxx */,
 				035543D7166C846F008806E9 /* bzfsPlugins.cxx */,
 				035543D8166C846F008806E9 /* bzfsPlugins.h */,
 				035543D9166C846F008806E9 /* BZWError.cxx */,
@@ -2661,6 +2715,8 @@
 				03554418166C846F008806E9 /* ListServerConnection.h */,
 				0355441A166C846F008806E9 /* MasterBanList.cxx */,
 				0355441B166C846F008806E9 /* MasterBanList.h */,
+				C363D0E62110272A0077D945 /* MessageBuffers.cxx */,
+				C363D0E72110272A0077D945 /* MessageBuffers.h */,
 				0355441C166C846F008806E9 /* PackVars.h */,
 				0355441D166C846F008806E9 /* ParseMaterial.cxx */,
 				0355441E166C846F008806E9 /* ParseMaterial.h */,
@@ -2672,11 +2728,15 @@
 				03554424166C846F008806E9 /* RecordReplay.h */,
 				03554425166C846F008806E9 /* RejoinList.cxx */,
 				03554426166C846F008806E9 /* RejoinList.h */,
+				C363D0E82110272B0077D945 /* RobotUtils.cxx */,
+				C363D0E3211027280077D945 /* RobotUtils.h */,
 				03554427166C846F008806E9 /* Score.cxx */,
 				03554428166C846F008806E9 /* Score.h */,
 				03554429166C846F008806E9 /* ServerCommand.cxx */,
 				0355442A166C846F008806E9 /* ServerCommand.h */,
 				0355442B166C846F008806E9 /* ServerSidePlayer.cxx */,
+				DF28982916B4F5AE006C78AC /* ShotManager.cxx */,
+				DF28982A16B4F5AE006C78AC /* ShotManager.h */,
 				0355442C166C846F008806E9 /* SpawnPolicy.cxx */,
 				0355442D166C846F008806E9 /* SpawnPolicy.h */,
 				0355442E166C846F008806E9 /* SpawnPosition.cxx */,
@@ -3028,6 +3088,7 @@
 				C353B1DF1AE23C8100C5AED5 /* CustomZoneSample */,
 				0394E6F3167B1024007F4035 /* fairCTF */,
 				0394E701167B1025007F4035 /* flagStay */,
+				C363D0FB211189000077D945 /* genocide */,
 				0394E70E167B1025007F4035 /* HoldTheFlag */,
 				0394E716167B1025007F4035 /* keepaway */,
 				0394E71F167B1025007F4035 /* killall */,
@@ -3037,6 +3098,7 @@
 				0394E741167B1025007F4035 /* Phoenix */,
 				0394E748167B1025007F4035 /* playHistoryTracker */,
 				0394E74E167B1025007F4035 /* plugin_utils */,
+				C363D10C211189B40077D945 /* R2 */,
 				0394E761167B1025007F4035 /* rabbitTimer */,
 				0394E768167B1025007F4035 /* rabidRabbit */,
 				0394E770167B1025007F4035 /* recordmatch */,
@@ -3356,6 +3418,7 @@
 				C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */,
 				0394E809167B1ECE007F4035 /* fairCTF.dylib */,
 				0394E81F167B1FFD007F4035 /* flagstay.dylib */,
+                C363D0F6211188BF0077D945 /* genocide.dylib */,
 				0394E835167B2132007F4035 /* HoldTheFlag.dylib */,
 				0394E840167B2225007F4035 /* keepaway.dylib */,
 				0394E84B167B228D007F4035 /* killall.dylib */,
@@ -3364,6 +3427,7 @@
 				0394E874167B23B4007F4035 /* nagware.dylib */,
 				0394E87F167B2447007F4035 /* Phoenix.dylib */,
 				0394E88A167B2494007F4035 /* playHistoryTracker.dylib */,
+                C363D108211189890077D945 /* R2.dylib */,
 				0394E8AE167B25E9007F4035 /* rabbitTimer.dylib */,
 				0394E8B9167B2647007F4035 /* rabidRabbit.dylib */,
 				0394E8C4167B26B2007F4035 /* recordmatch.dylib */,
@@ -3396,10 +3460,10 @@
 				0394E6D7167B1024007F4035 /* plugins */,
 				03E42D121B321DF2006EE763 /* data */,
 			);
-			indentWidth = 2;
+			indentWidth = 4;
 			sourceTree = "<group>";
-			tabWidth = 8;
-			usesTabs = 1;
+			tabWidth = 4;
+			usesTabs = 0;
 		};
 		03CDB24216A0BA81001DA037 /* superUser */ = {
 			isa = PBXGroup;
@@ -3460,6 +3524,26 @@
 				038DA4EF1BB649B90009F369 /* README.CustomZoneSample.txt */,
 			);
 			path = CustomZoneSample;
+			sourceTree = "<group>";
+		};
+		C363D0FB211189000077D945 /* genocide */ = {
+			isa = PBXGroup;
+			children = (
+				C363D0FC211189000077D945 /* genocide.cpp */,
+				C363D101211189000077D945 /* README.genocide.txt */,
+			);
+			path = genocide;
+			sourceTree = "<group>";
+		};
+		C363D10C211189B40077D945 /* R2 */ = {
+			isa = PBXGroup;
+			children = (
+				C363D10E211189B40077D945 /* playerHandler.cpp */,
+				C363D10F211189B40077D945 /* playerHandler.h */,
+				C363D110211189B40077D945 /* R2.cpp */,
+				C363D114211189B40077D945 /* README.R2.txt */,
+			);
+			path = R2;
 			sourceTree = "<group>";
 		};
 		DF8950E316E42D0300BA9DD5 /* serverSidePlayerSample */ = {
@@ -3783,6 +3867,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C363D12221118D8C0077D945 /* plugin_utils.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3794,6 +3879,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C353B1D51AE239CC00C5AED5 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D0F4211188BF0077D945 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D106211189890077D945 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4698,6 +4797,40 @@
 			productReference = C353B1D71AE239CC00C5AED5 /* CustomZoneSample.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		C363D0F5211188BF0077D945 /* genocide */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C363D0F7211188BF0077D945 /* Build configuration list for PBXNativeTarget "genocide" */;
+			buildPhases = (
+				C363D0F2211188BF0077D945 /* Sources */,
+				C363D0F3211188BF0077D945 /* Frameworks */,
+				C363D0F4211188BF0077D945 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = genocide;
+			productName = genocide;
+			productReference = C363D0F6211188BF0077D945 /* genocide.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
+		C363D107211189890077D945 /* R2 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C363D1092111898A0077D945 /* Build configuration list for PBXNativeTarget "R2" */;
+			buildPhases = (
+				C363D104211189890077D945 /* Sources */,
+				C363D105211189890077D945 /* Frameworks */,
+				C363D106211189890077D945 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = R2;
+			productName = R2;
+			productReference = C363D108211189890077D945 /* R2.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -4722,6 +4855,14 @@
 					};
 					C353B1D61AE239CC00C5AED5 = {
 						CreatedOnToolsVersion = 6.3;
+					};
+					C363D0F5211188BF0077D945 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
+					};
+					C363D107211189890077D945 = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -4788,6 +4929,8 @@
 				0394E91B167B293E007F4035 /* timedctf */,
 				0394E926167B29CC007F4035 /* TimeLimit */,
 				0394E93C167B2A9E007F4035 /* wwzones */,
+				C363D0F5211188BF0077D945 /* genocide */,
+				C363D107211189890077D945 /* R2 */,
 			);
 		};
 /* End PBXProject section */
@@ -5200,10 +5343,12 @@
 				0394E69B167B0B71007F4035 /* CustomMesh.cxx in Sources */,
 				0394E69C167B0B71007F4035 /* CustomMeshFace.cxx in Sources */,
 				0394E69D167B0B71007F4035 /* CustomMeshTransform.cxx in Sources */,
+				C363D0EC2110272B0077D945 /* RobotUtils.cxx in Sources */,
 				0394E69E167B0B71007F4035 /* CustomPhysicsDriver.cxx in Sources */,
 				0394E69F167B0B71007F4035 /* CustomPyramid.cxx in Sources */,
 				0394E6A0167B0B71007F4035 /* CustomSphere.cxx in Sources */,
 				0394E6A1167B0B71007F4035 /* CustomTetra.cxx in Sources */,
+				C363D0EA2110272B0077D945 /* bzfsAPIWorld.cxx in Sources */,
 				0394E6A2167B0B71007F4035 /* CustomTextureMatrix.cxx in Sources */,
 				0394E6A3167B0B71007F4035 /* CustomWaterLevel.cxx in Sources */,
 				0394E6A4167B0B71007F4035 /* CustomWeapon.cxx in Sources */,
@@ -5211,6 +5356,7 @@
 				0394E6A6167B0B71007F4035 /* CustomZone.cxx in Sources */,
 				0394E6A7167B0B71007F4035 /* DropGeometry.cxx in Sources */,
 				0394E6A8167B0B71007F4035 /* EntryZones.cxx in Sources */,
+				C363D102211189000077D945 /* genocide.cpp in Sources */,
 				0394E6AA167B0B71007F4035 /* FlagHistory.cxx in Sources */,
 				0394E6AB167B0B71007F4035 /* FlagInfo.cxx in Sources */,
 				0394E6AC167B0B71007F4035 /* GameKeeper.cxx in Sources */,
@@ -5219,10 +5365,12 @@
 				0394E6AE167B0BE0007F4035 /* bzfs.cxx in Sources */,
 				0394E6AF167B0BE0007F4035 /* commands.cxx in Sources */,
 				0394E6B0167B0BE0007F4035 /* MasterBanList.cxx in Sources */,
+				C363D0E92110272B0077D945 /* bzfsAPIServerSidePlayers.cxx in Sources */,
 				0394E6B1167B0BE0007F4035 /* ParseMaterial.cxx in Sources */,
 				0394E6B2167B0BE0007F4035 /* Permissions.cxx in Sources */,
 				0394E6B3167B0BE0007F4035 /* RandomSpawnPolicy.cxx in Sources */,
 				0394E6B4167B0BE0007F4035 /* RecordReplay.cxx in Sources */,
+				C363D0EB2110272B0077D945 /* MessageBuffers.cxx in Sources */,
 				0394E6B5167B0BE0007F4035 /* RejoinList.cxx in Sources */,
 				0394E6B6167B0BE0007F4035 /* Score.cxx in Sources */,
 				0394E6B7167B0BE0007F4035 /* ServerCommand.cxx in Sources */,
@@ -5519,6 +5667,7 @@
 				03C8EE9E167AC26A00BB07A5 /* HUDuiDefaultKey.cxx in Sources */,
 				03C8EEA0167AC26A00BB07A5 /* HUDuiLabel.cxx in Sources */,
 				03C8EEA2167AC26A00BB07A5 /* HUDuiList.cxx in Sources */,
+				C363D11F21118C370077D945 /* ShotList.cxx in Sources */,
 				03C8EEA4167AC26A00BB07A5 /* HUDuiTextureLabel.cxx in Sources */,
 				03C8EEA6167AC26A00BB07A5 /* HUDuiTypeIn.cxx in Sources */,
 				03C8EEA8167AC26A00BB07A5 /* InputMenu.cxx in Sources */,
@@ -5600,6 +5749,23 @@
 			buildActionMask = 2147483647;
 			files = (
 				C353B1E71AE23CA900C5AED5 /* CustomZoneSample.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D0F2211188BF0077D945 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C363D103211189000077D945 /* genocide.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C363D104211189890077D945 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C363D116211189B40077D945 /* playerHandler.cpp in Sources */,
+				C363D119211189B40077D945 /* R2.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7554,6 +7720,228 @@
 			};
 			name = Release;
 		};
+		C363D0F8211188BF0077D945 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C363D0F9211188BF0077D945 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		C363D10A2111898A0077D945 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		C363D10B2111898A0077D945 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				EXECUTABLE_PREFIX = "";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = (
+					"-undefined",
+					dynamic_lookup,
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -7708,6 +8096,7 @@
 				03864A5220C4E70C00490CFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0394E686167B0AA4007F4035 /* Build configuration list for PBXNativeTarget "bzfs" */ = {
 			isa = XCConfigurationList;
@@ -8020,6 +8409,24 @@
 			buildConfigurations = (
 				C353B1D81AE239CC00C5AED5 /* Debug */,
 				C353B1D91AE239CC00C5AED5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C363D0F7211188BF0077D945 /* Build configuration list for PBXNativeTarget "genocide" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C363D0F8211188BF0077D945 /* Debug */,
+				C363D0F9211188BF0077D945 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C363D1092111898A0077D945 /* Build configuration list for PBXNativeTarget "R2" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C363D10A2111898A0077D945 /* Debug */,
+				C363D10B2111898A0077D945 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
