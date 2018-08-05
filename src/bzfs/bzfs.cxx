@@ -508,7 +508,7 @@ void sendClosestFlagMessage(int playerIndex,FlagType::Ptr type, float pos[3] )
     sendPacket(playerIndex, MsgNearFlag, message);
 }
 
-static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
+static void sendAddPlayer(GameKeeper::Player *playerData, int index)
 {
     if (!playerData->player.isPlaying())
         return;
@@ -2409,7 +2409,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             {
                 otherData = GameKeeper::Player::getPlayerByIndex(i);
                 if (otherData)
-                    sendPlayerUpdate(otherData, playerIndex);
+                    sendAddPlayer(otherData, playerIndex);
             }
 
         broadcastHandicaps(playerIndex);
@@ -2434,7 +2434,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
 
     // send MsgAddPlayer to everybody -- this concludes MsgEnter response
     // to joining player
-    sendPlayerUpdate(playerData, playerIndex);
+    sendAddPlayer(playerData, playerIndex);
 
     // send update of info for team just joined
     sendTeamUpdate(-1, teamIndex);
@@ -3205,7 +3205,7 @@ static void sendQueryPlayers(int playerIndex)
             continue;
         otherData = GameKeeper::Player::getPlayerByIndex(i);
         if (otherData)
-            sendPlayerUpdate(otherData, playerIndex);
+            sendAddPlayer(otherData, playerIndex);
     }
 }
 
