@@ -255,7 +255,7 @@ static int pwrite(GameKeeper::Player &playerData, const void *b, int l)
 }
 
 static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuffer::Ptr message,
-                      bool UNUSED(release) = true)
+                      bool release = true)
 {
     if (playerData.isParting)
         return -1;
@@ -267,7 +267,10 @@ static int sendPacket(GameKeeper::Player &playerData, uint16_t code, MessageBuff
     buf = nboPackUShort(buf, uint16_t(message->size()));
     buf = nboPackUShort(buf, code);
     int ret = pwrite(playerData, bufStart, message->size() + 4);
-    ReleaseMessageBuffer(message);
+
+    // Should we release the buffer?
+    if (release)
+        ReleaseMessageBuffer(message);
 
     return ret;
 }
@@ -289,11 +292,13 @@ void broadcastPacket(uint16_t code, MessageBuffer::Ptr message)
         if (realPlayerWithNet(i))
             sendPacket(i, code, message, false);
     }
-    ReleaseMessageBuffer(message);
 
     // record the packet
     if (Record::enabled())
         Record::addPacket(code, message);
+
+    // We're done with this now, so release it
+    ReleaseMessageBuffer(message);
 
     return;
 }
