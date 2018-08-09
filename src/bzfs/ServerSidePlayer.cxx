@@ -2226,6 +2226,7 @@ BZF_API int bz_addServerSidePlayer(bz_ServerSidePlayerHandler *handler)
     GameKeeper::Player *player = new GameKeeper::Player(playerIndex, handler);
     checkGameOn();
     player->_LSAState = GameKeeper::Player::notRequired;
+    player->_JoinState = GameKeeper::Player::readyToAdd;
 
     handler->setPlayerID(playerIndex);
     serverSidePlayer.push_back(handler);
