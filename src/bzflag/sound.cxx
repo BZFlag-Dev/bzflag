@@ -78,32 +78,32 @@ void SoundManager::destroyInstance()
         delete instance;
 }
 
-bool SoundManager::playSound(sm_SFX id, const float pos[3], const float vel[3], sm_Priority priority, bool localSound)
+bool SoundManager::playSound(sm_SFX id, const float pos[3], sm_Priority priority, bool localSound)
 {
     if (localSound)
         return playLocalSound(id, priority);
     else
-        return playWorldSound(id, pos, vel, priority);
+        return playWorldSound(id, pos, priority);
 }
 
-bool SoundManager::playSound(std::string filename, const float pos[3], const float vel[3], sm_Priority priority,
+bool SoundManager::playSound(std::string filename, const float pos[3], sm_Priority priority,
                              bool localSound)
 {
     if (localSound)
         return playLocalSound(filename, priority);
     else
-        return playWorldSound(filename, pos, vel, priority);
+        return playWorldSound(filename, pos, priority);
 }
 
-bool SoundManager::playWorldSound(sm_SFX id, const float pos[3], const float vel[3], sm_Priority priority)
+bool SoundManager::playWorldSound(sm_SFX id, const float pos[3], sm_Priority priority)
 {
     if (soundFiles[id] == nullptr)
         return false;
 
-    return playWorldSound(soundFiles[id], pos, vel, priority);
+    return playWorldSound(soundFiles[id], pos, priority);
 }
 
-bool SoundManager::playWorldSound(std::string filename, const float pos[3], const float vel[3], sm_Priority priority)
+bool SoundManager::playWorldSound(std::string filename, const float pos[3], sm_Priority priority)
 {
     if (!isSoundOpen())
         return false;
@@ -150,11 +150,6 @@ bool SoundManager::playWorldSound(std::string filename, const float pos[3], cons
 
     // Set the location and velocity of the sound source
     alSourcefv(source[src], AL_POSITION, pos);
-    error = alGetError();
-    if (error != AL_NO_ERROR)
-        return false;
-
-    alSourcefv(source[src], AL_VELOCITY, vel);
     error = alGetError();
     if (error != AL_NO_ERROR)
         return false;

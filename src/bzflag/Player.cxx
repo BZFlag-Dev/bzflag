@@ -1505,11 +1505,11 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((getFlag()->flagEffect != FlagEffect::Burrow) || (predictedPos[2] > 0.0f))
-                    sm->playSound(SFX_LAND, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
+                    sm->playSound(SFX_LAND, state.pos, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 else
                 {
                     // probably never gets played
-                    sm->playSound(SFX_BURROW, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
+                    sm->playSound(SFX_BURROW, state.pos, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 }
             }
         }
@@ -1520,11 +1520,11 @@ void Player::doDeadReckoning()
             if (BZDB.isTrue("remoteSounds"))
             {
                 if ((state.sounds & PlayerState::JumpSound) != 0)
-                    sm->playSound(SFX_JUMP, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
+                    sm->playSound(SFX_JUMP, state.pos, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 if ((state.sounds & PlayerState::WingsSound) != 0)
-                    sm->playSound(SFX_FLAP, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
+                    sm->playSound(SFX_FLAP, state.pos, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
                 if ((state.sounds & PlayerState::BounceSound) != 0)
-                    sm->playSound(SFX_BOUNCE, state.pos, state.velocity, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
+                    sm->playSound(SFX_BOUNCE, state.pos, soundImportance?SM_PRI_HIGH:SM_PRI_LOW, localSound);
             }
             state.sounds = PlayerState::NoSounds;
         }

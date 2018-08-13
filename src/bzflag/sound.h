@@ -103,11 +103,11 @@ public:
     int getVolume();
     bool setVolume(int volume);
 
-    bool playSound(sm_SFX id, const float pos[3], const float vel[3], sm_Priority priority, bool localSound);
-    bool playSound(std::string filename, const float pos[3], const float vel[3], sm_Priority priority, bool localSound);
+    bool playSound(sm_SFX id, const float pos[3], sm_Priority priority, bool localSound);
+    bool playSound(std::string filename, const float pos[3], sm_Priority priority, bool localSound);
 
-    bool playWorldSound(sm_SFX id, const float pos[3], const float vel[3], sm_Priority priority = SM_PRI_NORMAL);
-    bool playWorldSound(std::string filename, const float pos[3], const float vel[3], sm_Priority priority = SM_PRI_NORMAL);
+    bool playWorldSound(sm_SFX id, const float pos[3], sm_Priority priority = SM_PRI_NORMAL);
+    bool playWorldSound(std::string filename, const float pos[3], sm_Priority priority = SM_PRI_NORMAL);
 
     bool playLocalSound(sm_SFX id, sm_Priority priority = SM_PRI_NORMAL);
     bool playLocalSound(std::string filename, sm_Priority priority = SM_PRI_NORMAL);
