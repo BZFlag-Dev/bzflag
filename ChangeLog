@@ -4,6 +4,9 @@
 BZFlag 2.4.15
 -------------
 
+* Revert a80ab87 (truncation warning fix) as that generated broken replay file
+    headers. Detect and work around that bad header. - Scott Wichser
+
 
 BZFlag 2.4.14  "Hello Motto" (2018-05-02)
 -----------------------------------------
