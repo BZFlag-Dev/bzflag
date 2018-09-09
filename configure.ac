@@ -42,7 +42,7 @@ dnl
 
 dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
-AC_PREREQ([2.58])
+AC_PREREQ([2.69])
 
 AC_INIT([BZFlag],[2.4.15],[http://BZFlag.org/],[bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
@@ -539,8 +539,8 @@ AC_CHECK_TYPES([std::shared_ptr<int>],
 		[[#include <tr1/memory>]])],
 	[#include <memory>])
 
-ac_cv_search_glBegin=no
-ac_func_search_save_LIBS=$LIBS
+have_gl=yes
+savedLIBS=$LIBS
 
 case $host_os in
     solaris*)
@@ -559,6 +559,9 @@ case $host_os in
 	GLIBS=" -lmedia -lgame $GLIBS"
 	LIBS="-lbe"
 	;;
+    darwin*)
+        GLIBS="-framework OpenGL $GLIBS"
+        ;;
     *)
 	;;
 esac
@@ -588,28 +591,27 @@ case $host_os in
 	;;
 esac
 
-AC_MSG_CHECKING([for gl.h])
-LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
-	       [[glBegin(GL_POINTS)]])],
-		[ac_cv_search_glBegin="-framework OpenGL"],[])
-for ac_lib in opengl32 GL GL2; do
-    LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
-				    [[glBegin(GL_POINTS)]])],
-		   [ac_cv_search_glBegin="-l$ac_lib"
-		    break],[])
-done
-if test "$ac_cv_search_glBegin" != no; then
-    GLIBS="$ac_cv_search_glBegin $GLIBS"
+case $host_os in
+    darwin*)
+        AC_CHECK_HEADER([OpenGL/gl.h], AC_SEARCH_LIBS(glBegin, [], [test $ac_cv_search_glBegin = "none required" || GLIBS="$ac_cv_search_glBegin $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glBegin=no], $GLIBS)
+        AC_CHECK_HEADER([OpenGL/glu.h], AC_SEARCH_LIBS(gluScaleImage, [], [test $ac_cv_search_gluScaleImage = "none required" || GLIBS="$ac_cv_search_gluScaleImage $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_gluScaleImage=no], $GLIBS)
+        AC_CHECK_HEADER([OpenGL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glewInit=no], $GLIBS)
+
+        ;;
+    *)
+        AC_CHECK_HEADER([GL/gl.h], AC_SEARCH_LIBS(glBegin, [opengl32 GL GL2], [test $ac_cv_search_glBegin = "none required" || GLIBS="$ac_cv_search_glBegin $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glBegin=no])
+        AC_CHECK_HEADER([GL/glu.h], AC_SEARCH_LIBS(gluScaleImage, [glu32 GL GLU], [test $ac_cv_search_gluScaleImage = "none required" || GLIBS="$ac_cv_search_gluScaleImage $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_gluScaleImage=no])
+        AC_CHECK_HEADER([GL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glewInit=no])
+        ;;
+esac
+
+if test "$have_gl" != no; then
     if test "$ac_cv_search_glBegin" = -lGL2; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
 fi
-have_gl=yes
-PKG_CHECK_MODULES([GLEW], glew, , [have_gl=no])
 
-LIBS=$ac_func_search_save_LIBS
+LIBS=$savedLIBS
 AC_SUBST(GLIBS)
 
 # try out pthreads if it's enabled, disable it if we don't have it
@@ -1134,7 +1136,19 @@ dnl **********************
 
 if test "x$enable_client" = "xno"; then
     if test "x$have_gl" = "xno" ; then
-	build_bzflag="no bzflag client binary! (need OpenGL)"
+	build_bzflag="no bzflag client binary!"
+
+        if test "x$ac_cv_search_glBegin" = xno ; then
+            build_bzflag="$build_bzflag (missing OpenGL)"
+        else
+            if test "x$ac_cv_search_gluScaleImage" = xno ; then
+                build_bzflag="$build_bzflag (missing GLU)"
+            fi
+
+            if test "x$ac_cv_search_glewInit" = xno ; then
+                build_bzflag="$build_bzflag (missing GLEW)"
+            fi
+        fi
     else
 	build_bzflag="no bzflag client binary!"
     fi
@@ -1204,6 +1218,7 @@ AC_MSG_RESULT([CPPFLAGS      = ${CPPFLAGS}])
 AC_MSG_RESULT([CONF_CPPFLAGS = ${CONF_CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS       = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS          = ${LIBS}])
+AC_MSG_RESULT([GLIBS         = ${GLIBS}])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
