@@ -1174,13 +1174,12 @@ else
 fi
 
 if test "x$enable_bzadmin" = "xno"; then
-    if test "x$CURSES_LIB" = x; then
-	build_bzadmin="no bzadmin binary! (need Curses)"
-    else
-	build_bzadmin="no bzadmin binary!"
-    fi
+    build_bzadmin="no bzadmin binary!"
 else
     build_bzadmin="yes"
+    if test "x$CURSES_LIB" != x; then
+	build_bzadmin="$build_bzadmin (with curses)"
+    fi
 fi
 
 dnl
