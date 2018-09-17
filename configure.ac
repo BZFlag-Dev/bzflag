@@ -593,9 +593,9 @@ esac
 
 case $host_os in
     darwin*)
-        AC_CHECK_HEADER([OpenGL/gl.h], AC_SEARCH_LIBS(glBegin, [], [test $ac_cv_search_glBegin = "none required" || GLIBS="$ac_cv_search_glBegin $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glBegin=no], $GLIBS)
-        AC_CHECK_HEADER([OpenGL/glu.h], AC_SEARCH_LIBS(gluScaleImage, [], [test $ac_cv_search_gluScaleImage = "none required" || GLIBS="$ac_cv_search_gluScaleImage $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_gluScaleImage=no], $GLIBS)
-        AC_CHECK_HEADER([OpenGL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glewInit=no], $GLIBS)
+        AC_CHECK_HEADER([OpenGL/gl.h], AC_SEARCH_LIBS(glBegin, [], [test $ac_cv_search_glBegin = "none required" || GLIBS="$ac_cv_search_glBegin $GLIBS"], [have_gl=no], $GLIBS), [have_gl=no ; ac_cv_search_glBegin=no])
+        AC_CHECK_HEADER([OpenGL/glu.h], AC_SEARCH_LIBS(gluScaleImage, [], [test $ac_cv_search_gluScaleImage = "none required" || GLIBS="$ac_cv_search_gluScaleImage $GLIBS"], [have_gl=no], $GLIBS), [have_gl=no ; ac_cv_search_gluScaleImage=no])
+        AC_CHECK_HEADER([OpenGL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no], $GLIBS), [have_gl=no ; ac_cv_search_glewInit=no])
 
         ;;
     *)
