@@ -42,7 +42,7 @@ dnl
 
 dnl Minimum version of autoconf required.  Should coincide with the
 dnl setting in the autogen.sh script.
-AC_PREREQ([2.58])
+AC_PREREQ([2.68])
 
 AC_INIT([BZFlag],[2.4.15],[http://BZFlag.org/],[bzflag])
 AC_CONFIG_SRCDIR(src/bzflag/bzflag.cxx)
@@ -125,11 +125,7 @@ dnl ***********************
 BZ_CONFIGURE_STAGE([arguments], [1 of 9])
 
 # provide a with-curses option, test for curses
-PKG_CHECK_MODULES(ncurses, ncurses,
-  [CURSES_LIB="$ncurses_LIBS"]
-  AC_DEFINE(HAVE_NCURSES_H, , [Use the header file ncurses.h]),
-  AC_MSG_ERROR([Could not find ncurses]))
-AC_SUBST(CURSES_LIB)
+MP_WITH_CURSES
 
 # check for SDL option (enabled by default now)
 AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
@@ -543,8 +539,8 @@ AC_CHECK_TYPES([std::shared_ptr<int>],
 		[[#include <tr1/memory>]])],
 	[#include <memory>])
 
-ac_cv_search_glBegin=no
-ac_func_search_save_LIBS=$LIBS
+have_gl=yes
+savedLIBS=$LIBS
 
 case $host_os in
     solaris*)
@@ -563,6 +559,9 @@ case $host_os in
 	GLIBS=" -lmedia -lgame $GLIBS"
 	LIBS="-lbe"
 	;;
+    darwin*)
+        GLIBS="-framework OpenGL $GLIBS"
+        ;;
     *)
 	;;
 esac
@@ -592,28 +591,27 @@ case $host_os in
 	;;
 esac
 
-AC_MSG_CHECKING([for gl.h])
-LIBS="-framework OpenGL $GLIBS $ac_func_search_save_LIBS"
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <OpenGL/gl.h>]],
-	       [[glBegin(GL_POINTS)]])],
-		[ac_cv_search_glBegin="-framework OpenGL"],[])
-for ac_lib in opengl32 GL GL2; do
-    LIBS="-l$ac_lib $GLIBS $ac_func_search_save_LIBS"
-    AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <GL/gl.h>]],
-				    [[glBegin(GL_POINTS)]])],
-		   [ac_cv_search_glBegin="-l$ac_lib"
-		    break],[])
-done
-if test "$ac_cv_search_glBegin" != no; then
-    GLIBS="$ac_cv_search_glBegin $GLIBS"
+case $host_os in
+    darwin*)
+        AC_CHECK_HEADER([OpenGL/gl.h], [ac_cv_search_glBegin="none required"], [have_gl=no ; ac_cv_search_glBegin=no])
+        AC_CHECK_HEADER([OpenGL/glu.h], [ac_cv_search_gluScaleImage="none required"], [have_gl=no ; ac_cv_search_gluScaleImage=no])
+        AC_CHECK_HEADER([GL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no], $GLIBS), [have_gl=no ; ac_cv_search_glewInit=no])
+
+        ;;
+    *)
+        AC_CHECK_HEADER([GL/gl.h], AC_SEARCH_LIBS(glBegin, [opengl32 GL GL2], [test $ac_cv_search_glBegin = "none required" || GLIBS="$ac_cv_search_glBegin $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glBegin=no])
+        AC_CHECK_HEADER([GL/glu.h], AC_SEARCH_LIBS(gluScaleImage, [glu32 GL GLU], [test $ac_cv_search_gluScaleImage = "none required" || GLIBS="$ac_cv_search_gluScaleImage $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_gluScaleImage=no])
+        AC_CHECK_HEADER([GL/glew.h], AC_SEARCH_LIBS(glewInit, [GLEW], [test $ac_cv_search_glewInit = "none required" || GLIBS="$ac_cv_search_glewInit $GLIBS"], [have_gl=no]), [have_gl=no ; ac_cv_search_glewInit=no])
+        ;;
+esac
+
+if test "$have_gl" != no; then
     if test "$ac_cv_search_glBegin" = -lGL2; then
 	AC_DEFINE(BEOS_USE_GL2, 1, [Use new GL Kit for BeOS])
     fi
 fi
-have_gl=yes
-PKG_CHECK_MODULES([GLEW], glew, , [have_gl=no])
 
-LIBS=$ac_func_search_save_LIBS
+LIBS=$savedLIBS
 AC_SUBST(GLIBS)
 
 # try out pthreads if it's enabled, disable it if we don't have it
@@ -1138,7 +1136,19 @@ dnl **********************
 
 if test "x$enable_client" = "xno"; then
     if test "x$have_gl" = "xno" ; then
-	build_bzflag="no bzflag client binary! (need OpenGL)"
+	build_bzflag="no bzflag client binary!"
+
+        if test "x$ac_cv_search_glBegin" = xno ; then
+            build_bzflag="$build_bzflag (missing OpenGL)"
+        else
+            if test "x$ac_cv_search_gluScaleImage" = xno ; then
+                build_bzflag="$build_bzflag (missing GLU)"
+            fi
+
+            if test "x$ac_cv_search_glewInit" = xno ; then
+                build_bzflag="$build_bzflag (missing GLEW)"
+            fi
+        fi
     else
 	build_bzflag="no bzflag client binary!"
     fi
@@ -1164,13 +1174,12 @@ else
 fi
 
 if test "x$enable_bzadmin" = "xno"; then
-    if test "x$CURSES_LIB" = x; then
-	build_bzadmin="no bzadmin binary! (need Curses)"
-    else
-	build_bzadmin="no bzadmin binary!"
-    fi
+    build_bzadmin="no bzadmin binary!"
 else
     build_bzadmin="yes"
+    if test "x$CURSES_LIB" != x; then
+	build_bzadmin="$build_bzadmin (with curses)"
+    fi
 fi
 
 dnl
@@ -1208,6 +1217,7 @@ AC_MSG_RESULT([CPPFLAGS      = ${CPPFLAGS}])
 AC_MSG_RESULT([CONF_CPPFLAGS = ${CONF_CPPFLAGS}])
 AC_MSG_RESULT([LDFLAGS       = ${LDFLAGS}])
 AC_MSG_RESULT([LIBS          = ${LIBS}])
+AC_MSG_RESULT([GLIBS         = ${GLIBS}])
 AC_MSG_RESULT([])
 AC_MSG_RESULT([BZFlag client .....: $build_bzflag])
 AC_MSG_RESULT([BZFlag server .....: $build_bzfs])
