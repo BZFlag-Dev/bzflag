@@ -4,8 +4,14 @@
 BZFlag 2.4.15
 -------------
 
+* Send MsgFlagGrab before API event is called - Jeff Myers, Vladimir Jimenez
+* Fix muted when paused and killed by server - Alfredo Tupone
+* Format codebase to allman style - Jeff Myers, Scott Wichser
+* Use GLEW for obtaining OpenGL entry points and checking for extensions
+    - Alfredo Tupone
 * Revert a80ab87 (truncation warning fix) as that generated broken replay file
-    headers. Detect and work around that bad header. - Scott Wichser
+    headers. Detect and work around that bad header.
+    - Joshua Bodine, Vladimir Jimenez, Scott Wichser
 * Use pkg-config, if available, to detect ncurses
     - Scott Wichser, Joshua Bodine, Alfredo Tupone
 
