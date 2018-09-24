@@ -1,11 +1,11 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.15
--------------
+BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
+---------------------------------------------------
 
 * Send MsgFlagGrab before API event is called - Jeff Myers, Vladimir Jimenez
-* Fix muted when paused and killed by server - Alfredo Tupone
+* Correctly unmuted when paused and killed by server - Alfredo Tupone
 * Format codebase to allman style - Jeff Myers, Scott Wichser
 * Use GLEW for obtaining OpenGL entry points and checking for extensions
     - Alfredo Tupone
