@@ -134,7 +134,7 @@ typedef struct
     char callSign[CallSignLen];   // player's callsign
     char motto[MottoLen];     // player's motto
     char ServerVersion[8];    // BZFS protocol version
-    char appVersion[MessageLen - 14]; // BZFS application version
+    char appVersion[MessageLen]; // BZFS application version
     char realHash[64];        // hash of worldDatabase
     char worldSettings[4 + WorldSettingsSize]; // the game settings
     char *flags;          // a list of the flags types
