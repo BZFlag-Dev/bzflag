@@ -2589,9 +2589,7 @@ void resetFlag(FlagInfo &flag)
     worldEventManager.callEvents(bz_eAllowFlagResetEvent, &allowEvent);
 
     if (!allowEvent.allow)
-    {
         return;
-    }
 
     // first drop the flag if someone has it
     if (flag.flag.status == FlagStatus::OnTank)

@@ -172,7 +172,8 @@ public:
             done
         } _LSAState;
 
-        enum JoinState {
+        enum JoinState
+        {
             waitingForAuthentication,
             readyToAdd,
             added
