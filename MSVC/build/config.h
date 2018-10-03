@@ -71,19 +71,36 @@
 // define our OS
 
 #ifndef BZ_BUILD_OS
+#ifndef BZ_MSVC_VER
+#if (_MSC_VER >= 1400 && _MSC_VER < 1500)
+#define BZ_MSVC_VER "VC8"
+#elif (_MSC_VER >= 1500 && _MSC_VER < 1600)
+#define BZ_MSVC_VER "VC9"
+#elif (_MSC_VER >= 1600 && _MSC_VER < 1700)
+#define BZ_MSVC_VER "VC10"
+#elif (_MSC_VER >= 1700 && _MSC_VER < 1800)
+#define BZ_MSVC_VER "VC11"
+#elif (_MSC_VER >= 1800 && _MSC_VER < 1900)
+#define BZ_MSVC_VER "VC12"
+#elif (_MSC_VER >= 1900 && _MSC_VER <= 1915)
+#define BZ_MSVC_VER "VC14"
+#else
+#error MSVC version out of range. Please update MSVC/build/config.h.
+#endif
+#endif // BZ_MSVC_VER
 #ifdef _DEBUG
 #define DEBUG
 #define DEBUG_RENDERING
 #ifdef _M_X64
-#define BZ_BUILD_OS         "Win64VC14Dbg"
+#define BZ_BUILD_OS         "Win64" BZ_MSVC_VER "Dbg"
 #else
-#define BZ_BUILD_OS         "Win32VC14Dbg"
+#define BZ_BUILD_OS         "Win32" BZ_MSVC_VER "Dbg"
 #endif
 #else
 #ifdef _M_X64
-#define BZ_BUILD_OS         "Win64VC14"
+#define BZ_BUILD_OS         "Win64" BZ_MSVC_VER
 #else
-#define BZ_BUILD_OS         "Win32VC14"
+#define BZ_BUILD_OS         "Win32" BZ_MSVC_VER
 #endif
 #endif //_DEBUG
 #endif //BZ_BUILD_OS
