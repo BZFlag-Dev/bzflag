@@ -4,6 +4,9 @@
 BZFlag 2.4.17
 -------------
 
+* Fix DirectSound initialization order so that sound on Windows works again
+    - Scott Wichser
+
 
 BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
 ---------------------------------------------------
