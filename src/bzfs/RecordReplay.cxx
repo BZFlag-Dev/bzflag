@@ -813,14 +813,13 @@ bool Replay::loadFile(int playerIndex, const char *filename)
 
     snprintf(buffer, MessageLen, "Loaded file:  %s", name.c_str());
     sendMessage(ServerPlayer, playerIndex, buffer);
-
-    snprintf(buffer, MessageLen, "  author:     %s", header.callSign);
+    snprintf(buffer, MessageLen, "  author:     %s (%.79s)",
+             header.callSign, header.motto);
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     snprintf(buffer, MessageLen, "  protocol:   %.8s", header.ServerVersion);
     sendMessage(ServerPlayer, playerIndex, buffer);
-
-    snprintf(buffer, MessageLen, "  server:     %s", header.appVersion);
+    snprintf(buffer, MessageLen, "  server:     %.113s", header.appVersion);
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     snprintf(buffer, MessageLen, "  seconds:    %.1f", (float)header.filetime/1000000.0f);
@@ -831,7 +830,7 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     time_t endTime = (time_t)((header.filetime + ReplayPos->timestamp) / 1000000);
-    snprintf(buffer, MessageLen, "  end:	%s", ctime(&endTime));
+    snprintf(buffer, MessageLen, "  end:        %s", ctime(&endTime));
     sendMessage(ServerPlayer, playerIndex, buffer);
 
     return true;
@@ -2130,7 +2129,13 @@ static bool loadHeader(ReplayHeader *h, FILE *f)
     buf = nboUnpackString(buf, h->callSign, sizeof(h->callSign));
     buf = nboUnpackString(buf, h->motto, sizeof(h->motto));
     buf = nboUnpackString(buf, h->ServerVersion, sizeof(h->ServerVersion));
-    buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
+
+    // A change (a80ab87) added between 2.4.12 and 2.4.14 resulted in the header being packed wrong.
+    // Detect if this has occurred and work around the issue.
+    if (buffer[313] == '\0' && (buffer[314] == 't' || buffer[314] == 'p'))
+        buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion) - 14);
+    else
+        buf = nboUnpackString(buf, h->appVersion, sizeof(h->appVersion));
     buf = nboUnpackString(buf, h->realHash, sizeof(h->realHash));
     buf = nboUnpackString(buf, h->worldSettings, sizeof(h->worldSettings));
 

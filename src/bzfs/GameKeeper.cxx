@@ -41,6 +41,7 @@ GameKeeper::Player::Player(int _playerIndex,
                            const struct sockaddr_in &clientAddr, int fd,
                            tcpCallback _clientCallback)
     : _LSAState(start),
+      _JoinState(waitingForAuthentication),
       player(_playerIndex), netHandler(new NetHandler(&player, clientAddr, _playerIndex, fd)),
       lagInfo(&player),
       stateTimeStamp(0.0f), serverTimeStamp(0.0),
@@ -66,6 +67,7 @@ GameKeeper::Player::Player(int _playerIndex,
                            NetHandler* handler,
                            tcpCallback _clientCallback)
     : _LSAState(start),
+      _JoinState(waitingForAuthentication),
       player(_playerIndex), netHandler(handler),
       lagInfo(&player),
       stateTimeStamp(0.0f), serverTimeStamp(0.0),
@@ -89,6 +91,7 @@ GameKeeper::Player::Player(int _playerIndex,
 
 GameKeeper::Player::Player(int _playerIndex, bz_ServerSidePlayerHandler* handler)
     : _LSAState(start),
+      _JoinState(waitingForAuthentication),
       player(_playerIndex), netHandler(0),
       lagInfo(&player),
       stateTimeStamp(0.0f), serverTimeStamp(0.0),

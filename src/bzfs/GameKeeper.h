@@ -172,6 +172,13 @@ public:
             done
         } _LSAState;
 
+        enum JoinState
+        {
+            waitingForAuthentication,
+            readyToAdd,
+            added
+        } _JoinState;
+
         // players
         PlayerInfo        player;
         // Net Handler
