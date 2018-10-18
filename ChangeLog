@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.17
--------------
+BZFlag 2.4.18  "Do You Hear What I Hear?" (2018-10-18)
+------------------------------------------------------
 
 * Fix DirectSound initialization order so that sound on Windows works again
     - Scott Wichser
