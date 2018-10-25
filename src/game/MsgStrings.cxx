@@ -558,8 +558,12 @@ static MsgStringList handleMsgCaptureFlag (PacketInfo *pi)
     MsgStringList list = listMsgBasics (pi);
 
     const void *d = pi->data;
-    u16 team;
+    PlayerId id;
+    u16 flag, team;
+    d = nboUnpackUByte(d, id);
+    d = nboUnpackUShort (d, flag);
     d = nboUnpackUShort (d, team);
+    listPush (list, 1, "player: %s", strPlayer(id).c_str());
     listPush (list, 1, "team: %s", strTeam (team).c_str());
 
     return list;
