@@ -188,6 +188,12 @@ bool load1Plugin ( std::string plugin, std::string config )
 
     std::string realPluginName = findPlugin(plugin);
 
+    if (realPluginName.empty())
+    {
+        logDebugMessage(1, "Plugin: %s is an invalid path or could not be found in known directories\n", plugin.c_str());
+        return false;
+    }
+
     HINSTANCE hLib = LoadLibrary(realPluginName.c_str());
     if (hLib)
     {
@@ -293,6 +299,12 @@ bool load1Plugin ( std::string plugin, std::string config )
     bz_Plugin* (*lpProc)();
 
     std::string realPluginName = findPlugin(plugin);
+
+    if (realPluginName.empty())
+    {
+        logDebugMessage(1, "Plugin: %s is an invalid path or could not be found in known directories\n", plugin.c_str());
+        return false;
+    }
 
     void *hLib = dlopen(realPluginName.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     if (hLib)
