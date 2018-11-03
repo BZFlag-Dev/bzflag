@@ -387,12 +387,6 @@ void ServerStartMenu::execute()
         int arg = 0;
         args[arg++] = serverApp;
 
-#if defined(_WIN32)
-        // always try a fallback port if default port is busy
-        // (unix-like OSes will instead try to kill off the old process)
-        args[arg++] = "-pf";
-#endif
-
         // load the world map first, so that later arguments can
         // override any that are present in a map's "options" block
         if (((HUDuiList*)listHUD[15])->getIndex() != 0)   // not random
