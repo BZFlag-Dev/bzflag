@@ -4,6 +4,7 @@
 BZFlag 2.4.19
 -------------
 
+* Output correct error when loading a nonexistent bzfs plugin - Vladimir Jimenez
 * Remove obsolete bzfs option from Start Server menu on Windows - Scott Wichser
 
 
