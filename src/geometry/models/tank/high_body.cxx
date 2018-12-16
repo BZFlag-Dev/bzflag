@@ -25,8 +25,6 @@ float sideVerts[][3] = {  {2.800000f, 0.878000f, 0.829000f},
     {1.810000f, 0.877000f, 0.250000f},
     {-1.620000f, 0.877000f, 0.25000f},
     {1.760000f, 0.877000f, 1.130000f},
-    {1.760000f, 0.877000f, 1.130000f},
-    {1.760000f, 0.877000f, 1.130000f},
     {2.800000f, -0.876000f, 0.829000f},
     {2.680000f, -0.877000f, 0.684000f},
     {2.820000f, -0.877000f, 0.716000f},
@@ -58,7 +56,6 @@ float sideUVs[][2] = {{0.996503f, 0.331452f},
 float sideNormals[][3] = {{-0.006338f, 0.999979f, -0.001652f},
     {-0.003169f, 0.999995f, -0.000826f},
     {0.000000f, 1.000000f, 0.000000f},
-    {0.000000f, 0.000000f, 0.000000f},
     {0.001933f, -0.999984f, 0.005297f},
     {0.000966f, -0.999996f, 0.002648f},
     {-0.001944f, -0.999962f, 0.008505f},
@@ -98,26 +95,22 @@ static int DrawTankSides (void)
     DrawOBJIndexFace( 10,10,3, 11,11,3, 4,4,3);
     DrawOBJIndexFace( 8,8,3, 10,10,3, 4,4,3);
     DrawOBJIndexFace( 12,12,3, 8,8,3, 4,4,3);
-    DrawOBJIndexFace( 13,12,4, 12,12,3, 4,4,3);
-    DrawOBJIndexFace( 14,12,4, 13,12,4, 4,4,3);
-    DrawOBJIndexFace( 15,1,5, 16,3,6, 17,2,7);
-    DrawOBJIndexFace( 18,5,8, 19,4,8, 20,6,8);
-    DrawOBJIndexFace( 16,3,6, 15,1,5, 21,7,9);
-    DrawOBJIndexFace( 16,3,6, 21,7,9, 22,8,8);
-    DrawOBJIndexFace( 23,9,8, 16,3,6, 22,8,8);
-    DrawOBJIndexFace( 24,10,8, 23,9,8, 22,8,8);
-    DrawOBJIndexFace( 18,5,8, 25,11,8, 19,4,8);
-    DrawOBJIndexFace( 24,10,8, 22,8,8, 26,12,8);
-    DrawOBJIndexFace( 24,10,8, 26,12,8, 19,4,8);
-    DrawOBJIndexFace( 25,11,8, 24,10,8, 19,4,8);
+    DrawOBJIndexFace( 13,1,4, 14,3,5, 15,2,6);
+    DrawOBJIndexFace( 16,5,7, 17,4,7, 18,6,7);
+    DrawOBJIndexFace( 14,3,5, 13,1,4, 19,7,8);
+    DrawOBJIndexFace( 14,3,5, 19,7,8, 20,8,7);
+    DrawOBJIndexFace( 21,9,7, 14,3,5, 20,8,7);
+    DrawOBJIndexFace( 22,10,7, 21,9,7, 20,8,7);
+    DrawOBJIndexFace( 16,5,7, 23,11,7, 17,4,7);
+    DrawOBJIndexFace( 22,10,7, 20,8,7, 24,12,7);
+    DrawOBJIndexFace( 22,10,7, 24,12,7, 17,4,7);
+    DrawOBJIndexFace( 23,11,7, 22,10,7, 17,4,7);
     glEnd();
-    return 22;
+    return 20;
 }
 
 static int DrawCentralBody(void)
 {
-    glShadeModel(GL_FLAT);
-    DrawTankSides();
     // draw the outer loop
     glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.984696f, 0.000000f, 0.174282f);
@@ -283,6 +276,8 @@ static int DrawLeftRearExaust ( void )
 int TankGeometryUtils::buildHighBody (void)
 {
     int tris = 0;
+    glShadeModel(GL_FLAT);
+    tris += DrawTankSides();
     tris += DrawCentralBody();
     tris += DrawRightRearExaust();
     tris += DrawLeftRearExaust();
