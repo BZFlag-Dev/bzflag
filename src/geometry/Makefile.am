@@ -52,7 +52,6 @@ libGeometry_la_LIBADD =	\
 	models/tank/low_ltread.lo	\
 	models/tank/low_rtread.lo	\
 	models/tank/low_turret.lo	\
-	models/tank/medium_barrel.lo	\
 	models/tank/medium_body.lo	\
 	models/tank/medium_ltread.lo	\
 	models/tank/medium_rtread.lo	\

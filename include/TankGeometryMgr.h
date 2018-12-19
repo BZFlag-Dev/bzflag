@@ -137,7 +137,7 @@ int buildMedBody (void);
 int buildMedTurret (void);
 int buildMedLCasing (void);
 int buildMedRCasing (void);
-int buildMedBarrel (void);
+//int buildMedBarrel (void); // Same as buildLowBarrel
 
 // hightank geometry builder
 int buildHighBody (void);
