@@ -236,7 +236,7 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
   File vcredist_${RUNTIME_PLATFORM}.exe  
-  ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /q"         
+  ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /quiet /norestart"         
   DetailPrint "Cleaning up"         
   Delete $TEMP\vcredist_${RUNTIME_PLATFORM}.exe
 
