@@ -16,7 +16,7 @@
   ;!define TYPE "RC"
 
   !define TYPE_REVISION "0"
-  
+
   ;Allow manually specifying a date for the installer. This only works if the
   ;minor or revision version numbers are odd. Uses YYYYMMDD format. Uncomment
   ;to use. Don't commit changes to this into Git.
@@ -33,7 +33,7 @@
 
 ;--------------------------------
 ;Automatically generated version variables
-  
+
   ; Include the date for alpha/beta/RC builds
   !if ${TYPE} != "release"
 	!if ${TYPE} != "devel"
@@ -49,7 +49,7 @@
   !else
     !define VERSION "${VER_MAJOR}.${VER_MINOR}.${VER_REVISION}"
   !endif
-  
+
   !ifdef BUILD_64
     !define PLATFORM x64
     !define RUNTIME_PLATFORM x64
@@ -59,7 +59,7 @@
     !define RUNTIME_PLATFORM x86
     !define BITNESS 32Bit
   !endif
-  
+
 ;--------------------------------
 ;Compression options
 
@@ -87,7 +87,7 @@
 
   ; Make it look pretty in XP
   XPStyle on
-  
+
   ; The installer needs administrative rights
   RequestExecutionLevel admin
 
@@ -149,7 +149,7 @@
 
   ;Finished page configuration
   !define MUI_FINISHPAGE_NOAUTOCLOSE
-  
+
   !define MUI_FINISHPAGE_RUN
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
@@ -163,17 +163,17 @@
   !define MUI_FINISHPAGE_LINK_LOCATION "https://www.bzflag.org"
 
   !insertmacro MUI_PAGE_FINISH
-  
+
   !insertmacro MUI_UNPAGE_WELCOME
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
 
   !define MUI_UNFINISHPAGE_NOAUTOCLOSE
   !insertmacro MUI_UNPAGE_FINISH
-  
+
 ;--------------------------------
 ;Languages
- 
+
   !insertmacro MUI_LANGUAGE "English"
 
 ;--------------------------------
@@ -187,7 +187,7 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR
   ; Put file there
   File ..\..\..\bin_Release_${PLATFORM}\bzflag.exe
-  
+
   ; make the data dir
   SetOutPath $INSTDIR\data
   File ..\..\..\data\*.png
@@ -215,7 +215,7 @@ Section "!BZFlag (Required)" BZFlag
   SetOutPath $INSTDIR\documentation
   File /oname=Authors.txt ..\..\..\AUTHORS
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzflag.html
-  
+
   ; make the licenses dir
   SetOutPath $INSTDIR\licenses
   File /oname=BZFlag.txt ..\..\..\COPYING
@@ -234,10 +234,10 @@ Section "!BZFlag (Required)" BZFlag
   ; found in a location such as:
   ; C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810
   SetOutPath $TEMP
-  DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"         
-  File vcredist_${RUNTIME_PLATFORM}.exe  
-  ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /quiet /norestart"         
-  DetailPrint "Cleaning up"         
+  DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"
+  File vcredist_${RUNTIME_PLATFORM}.exe
+  ExecWait "$TEMP\vcredist_${RUNTIME_PLATFORM}.exe /quiet /norestart"
+  DetailPrint "Cleaning up"
   Delete $TEMP\vcredist_${RUNTIME_PLATFORM}.exe
 
   ; Write the installation path into the registry
@@ -251,7 +251,7 @@ Section "!BZFlag (Required)" BZFlag
     !define UNINSTALL_REG_ROOT "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION}"
     WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayName" "BZFlag ${VERSION}"
   !endif
-  
+
   WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayIcon" "$INSTDIR\bzflag.exe"
   ; We're roughly 30MB installed
   WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "EstimatedSize" 30720
@@ -260,7 +260,7 @@ Section "!BZFlag (Required)" BZFlag
   WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoRepair" 1
   WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoModify" 1
   WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "UninstallString" '"$INSTDIR\uninstall.exe"'
-  
+
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -268,7 +268,7 @@ Section "!BZFlag (Required)" BZFlag
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ;Create for all users
     SetShellVarContext all
-    
+
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -286,7 +286,7 @@ Section "!BZFlag (Required)" BZFlag
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\BZFlag [game] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzflag.html" "" "" 0
 	CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\Credits.lnk" "$INSTDIR\documentation\Authors.txt" "" "" 0
-  
+
   !insertmacro MUI_STARTMENU_WRITE_END
 
 SectionEnd
@@ -296,16 +296,16 @@ Section "BZAdmin" BZAdmin
   SetOutPath $INSTDIR
   ; Put file there
   File ..\..\..\bin_Release_${PLATFORM}\bzadmin.exe
-  
+
   ; Add to the documentation dir
   SetOutPath $INSTDIR\documentation
   File ..\..\..\bin_Release_${PLATFORM}\docs\bzadmin.html
 
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-  
+
     ;Create for all users
     SetShellVarContext all
-    
+
     ;Main start menu shortcuts
     SetOutPath $INSTDIR
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
@@ -314,7 +314,7 @@ Section "BZAdmin" BZAdmin
     SetOutPath $INSTDIR\documentation
     CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
     CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzadmin [admin] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzadmin.html" "" "" 0
-  
+
   !insertmacro MUI_STARTMENU_WRITE_END
 SectionEnd
 
@@ -338,10 +338,10 @@ SectionGroup "BZFlag Server" BZFlagServer
     File ..\..\..\bin_Release_${PLATFORM}\docs\bzw.html
 
     !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
-    
+
       ;Create for all users
       SetShellVarContext all
-    
+
       ;Main start menu shortcuts
       SetOutPath $INSTDIR
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Server"
@@ -354,7 +354,7 @@ SectionGroup "BZFlag Server" BZFlagServer
       CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation"
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzfs [server] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzfs.html" "" "" 0
       CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Documentation\bzw [maps] Manual Pages (HTML).lnk" "$INSTDIR\documentation\bzw.html" "" "" 0
-  
+
     !insertmacro MUI_STARTMENU_WRITE_END
   SectionEnd
 
@@ -379,7 +379,7 @@ SectionGroupEnd
 Section "Desktop Icon" Desktop
   ; Install for all users
   SetShellVarContext all
-  
+
   ;shortcut on the "desktop"
   SetOutPath $INSTDIR
   !ifdef BUILD_64
@@ -418,7 +418,7 @@ SectionEnd
 Section "Uninstall"
   ;Remove for all users
   SetShellVarContext all
-  
+
   ; remove files
   Delete $INSTDIR\*.*
   Delete $INSTDIR\documentation\*.*
@@ -441,36 +441,36 @@ Section "Uninstall"
   RMDir "$INSTDIR\documentation"
   RMDir /r "$INSTDIR\licenses"
   RMDir "$INSTDIR"
-  
+
   !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
 
-  ;remove shortcuts, if any.    
+  ;remove shortcuts, if any.
   Delete "$SMPROGRAMS\$MUI_TEMP\*.*"
   Delete "$SMPROGRAMS\$MUI_TEMP\Server\*.*"
   Delete "$SMPROGRAMS\$MUI_TEMP\Documentation\*.*"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Server"
   RMDir "$SMPROGRAMS\$MUI_TEMP\Documentation"
   RMDir "$SMPROGRAMS\$MUI_TEMP"
-  
+
   ;Delete empty start menu parent diretories
   StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
- 
+
   startMenuDeleteLoop:
     RMDir $MUI_TEMP
     GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
-    
+
     IfErrors startMenuDeleteLoopDone
-  
+
     StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
   startMenuDeleteLoopDone:
-  
+
   ; Remove desktop shortcut
   !ifdef BUILD_64
     Delete "$DESKTOP\BZFlag ${VERSION} ${BITNESS}.lnk"
   !else
     Delete "$DESKTOP\BZFlag ${VERSION}.lnk"
   !endif
-  
+
   ;remove registry keys
   !ifdef BUILD_64
     DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\BZFlag ${VERSION} ${BITNESS}"
