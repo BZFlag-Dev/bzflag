@@ -6610,14 +6610,8 @@ int main(int argc, char **argv)
     if (clOptions->publicizeServer && clOptions->publicizedKey.empty())
     {
         logDebugMessage(0,
-                        "\n"
-                        "WARNING:\n"
-                        "  Publicly listed bzfs servers must register using the '-publickey <key>'\n"
-                        "  option. A web page describing list-server policies and procedures can\n"
-                        "  be found at the following location:\n"
-                        "\n"
-                        "    https://wiki.bzflag.org/ServerAuthentication\n"
-                        "\n");
+                        "\nWARNING: Publicly listed bzfs servers must register"
+                        " using the '-publickey <key>'option.\n\n");
     }
 
 #ifdef BZ_PLUGINS
