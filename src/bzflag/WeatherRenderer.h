@@ -31,8 +31,9 @@
 #include "bzfgl.h"
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
+#include "VBO_Handler.h"
 
-class WeatherRenderer
+class WeatherRenderer: public VBOclient
 {
 public:
     WeatherRenderer();
@@ -49,6 +50,9 @@ public:
 
     // called to draw the rain for the current frame
     void draw(const SceneRenderer& sr);
+
+    // called when VBO has to be rebuilt
+    void initVBO();
 
     // called when the GL lists need to be deleted
     void freeContext(void);
@@ -79,8 +83,6 @@ protected:
     float                   maxPuddleTime;
     float                   puddleSpeed;
     float                   puddleColor[4];
-    GLuint                  dropList;
-    GLuint                  puddleList;
 
 public:
     typedef struct
@@ -104,13 +106,13 @@ protected:
 
     float           lastRainTime;
 
-    void buildDropList(bool draw = false);
-    void buildPuddleList(bool draw = false);
+    void buildDropList();
 
     bool updateDrop(std::vector<rain>::iterator &drop, float frameTime, std::vector<rain> &toAdd);
     bool updatePuddle(std::vector<puddle>::iterator &splash, float frameTime);
 
     void drawDrop(rain &drop, const SceneRenderer& sr);
+    void drawLineDrop(rain &drop);
     void drawPuddle(puddle &splash);
 
     // some kinda culling
@@ -120,6 +122,8 @@ protected:
 
     float           gridSize;
     float           keyFactor;
+    std::vector<glm::vec3> dropVertices;
+    std::vector<glm::vec4> dropColors;
 
 public:
     typedef struct
@@ -143,6 +147,9 @@ protected:
 
     int rainCount;
     int cellCount;
+
+private:
+    int dropIndex;
 };
 
 #endif // BZF_WEATHER_RENDERER_H
