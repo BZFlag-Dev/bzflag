@@ -356,16 +356,33 @@ void            HUDRenderer::setFPS(float _fps)
 
 void            HUDRenderer::setDrawTime(float drawTimeInseconds)
 {
+    const int maxCnt = 10000;
+    if (drawTimeInseconds < 0) {
+        drawTime = drawTimeInseconds;
+        return;
+    }
     if (drawTime < 0.)
+    {
+        drawTimeCnt = maxCnt;
+    }
+    if (drawTimeCnt == maxCnt)
     {
         minDrawTime = drawTimeInseconds;
         maxDrawTime = drawTimeInseconds;
+        drawTimeTmp = 0;
+        drawTimeCnt = 0;
     }
-    drawTime = drawTimeInseconds;
-    if (drawTime < minDrawTime)
+    else if (drawTime < minDrawTime)
+    {
         minDrawTime = drawTime;
+    }
     else if (drawTime > maxDrawTime)
+    {
         maxDrawTime = drawTime;
+    }
+    drawTimeTmp += drawTimeInseconds;
+    drawTimeCnt++;
+    drawTime = drawTimeTmp / drawTimeCnt;
 }
 
 void            HUDRenderer::setFrameTriangleCount(int tpf)
