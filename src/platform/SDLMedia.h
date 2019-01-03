@@ -73,7 +73,11 @@ private:
 
     bool        outputBufferEmpty;
 
+#ifdef HAVE_SDL2
+    Uint64      stopwatchTime;
+#else
     Uint32      stopwatchTime;
+#endif
 
     char        cmdQueue[2048]; // space to save temporary command
     int      cmdFill;   // from 0 to cmdFill
