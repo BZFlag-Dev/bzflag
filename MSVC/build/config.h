@@ -82,7 +82,7 @@
 #define BZ_MSVC_VER "VC11"
 #elif (_MSC_VER >= 1800 && _MSC_VER < 1900)
 #define BZ_MSVC_VER "VC12"
-#elif (_MSC_VER >= 1900 && _MSC_VER <= 1915)
+#elif (_MSC_VER >= 1900 && _MSC_VER <= 1916)
 #define BZ_MSVC_VER "VC14"
 #else
 #error MSVC version out of range. Please update MSVC/build/config.h.
