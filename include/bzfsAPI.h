@@ -337,6 +337,7 @@ typedef enum
     bz_eServerShotFiredEvent,
     bz_ePermissionModificationEvent,
     bz_eAllowServerShotFiredEvent,
+    bz_ePlayerDeathFinalizedEvent,
     bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 

@@ -3379,6 +3379,9 @@ void playerKilled(int victimIndex, int killerIndex, int reason,
         killer = realPlayer(killerIndex) ? &killerData->player : 0;
     }
 
+    // Call a new event when all the plugins have finished reassigning any kills
+    worldEventManager.callEvents(bz_ePlayerDeathFinalizedEvent, &dieEvent);
+
     // killing rabbit or killing anything when I am a dead ex-rabbit is allowed
     bool teamkill = false;
     if (killer)
