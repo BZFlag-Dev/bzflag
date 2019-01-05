@@ -22,8 +22,6 @@
 // affected functions may be removed in the future.
 #define _CRT_NONSTDC_NO_DEPRECATE 1
 
-#include <stdio.h>
-
 /* Building regex */
 #define HAVE_REGEX_H 1
 
@@ -132,17 +130,3 @@
 #define HAVE_STD__MAX 1
 
 #define HAVE_ARES_LIBRARY_INIT 1
-
-#ifndef DEBUG_TRACE
-#define DEBUG_TRACE
-inline void W32_DEBUG_TRACE (const char* buffer )
-{
-    printf("%s",buffer);
-}
-#endif
-
-#ifndef in_addr_t
-#define in_addr_t unsigned long
-#endif
-
-#pragma warning( disable : 4351 )
