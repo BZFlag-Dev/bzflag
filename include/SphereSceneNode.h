@@ -79,8 +79,6 @@ public:
 
     static void init();
     static void kill();
-    static void initContext(void*);
-    static void freeContext(void*);
 
 protected:
     class SphereLodRenderNode : public RenderNode
@@ -107,9 +105,6 @@ private:
     bool inside;
 
     static bool initialized;
-    static GLuint lodLists[sphereLods];
-    static float lodPixelsSqr[sphereLods];
-    static int listTriangleCount[sphereLods];
 
     friend class SphereLodSceneNode::SphereLodRenderNode;
 };
