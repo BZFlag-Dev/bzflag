@@ -56,7 +56,7 @@ An alternative to building yourself is to use the "homebrew" package
 manager. If you have homebrew installed, you can install the necessary
 dependencies with:
 
-$ brew install sdl2 c-ares glew
+$ brew install sdl2 c-ares glew libpng
 
 If not, follow these instructions:
 
