@@ -2981,7 +2981,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         fixTeamCount();
 
         // tell the list server the new number of players
-        listServerLink->queueMessage(ListServerLink::ADD);
+        if (listServerLink)
+            listServerLink->queueMessage(ListServerLink::ADD);
     }
 
     if (clOptions->gameType == RabbitChase)
