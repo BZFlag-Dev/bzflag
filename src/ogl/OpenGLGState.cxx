@@ -1488,35 +1488,6 @@ static void contextInitError(const char* message)
 }
 
 
-#undef glNewList
-void bzNewList(GLuint list, GLenum mode)
-{
-    glNewList(list, mode);
-    return;
-}
-
-#undef glGenLists
-GLuint bzGenLists(GLsizei count)
-{
-    if (OpenGLGState::getExecutingFreeFuncs())
-        contextFreeError ("bzGenLists() is having issues");
-    GLuint base = glGenLists(count);
-    //logDebugMessage(4,"genList = %i (%i)\n", (int)base, (int)count);
-    return base;
-}
-
-#undef glDeleteLists
-void bzDeleteLists(GLuint base, GLsizei count)
-{
-    if (OpenGLGState::getExecutingInitFuncs())
-        contextInitError ("bzDeleteLists() is having issues");
-    if (OpenGLGState::haveGLContext())
-        glDeleteLists(base, count);
-    else
-        logDebugMessage(4,"bzDeleteLists(), no context\n");
-    return;
-}
-
 #undef glGenTextures
 void bzGenTextures(GLsizei count, GLuint *textures)
 {
