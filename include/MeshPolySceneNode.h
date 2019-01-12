@@ -23,6 +23,9 @@
 
 #include <glm/vec3.hpp>
 
+// Common include
+#include "VBO_Handler.h"
+
 class MeshPolySceneNode : public WallSceneNode
 {
 public:
@@ -48,7 +51,7 @@ public:
 
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry : public RenderNode, public VBOclient
     {
     public:
         Geometry(MeshPolySceneNode*,
@@ -57,6 +60,9 @@ protected:
                  const GLfloat2Array& texcoords,
                  const glm::vec3 normal);
         ~Geometry();
+
+        void initVBO();
+
         void setStyle(int _style)
         {
             style = _style;
@@ -83,6 +89,7 @@ protected:
         bool drawRadar;
         bool draw;
         const glm::vec3 normal;
+        int vboIndex;
     public:
         GLfloat3Array vertices;
         GLfloat3Array normals;

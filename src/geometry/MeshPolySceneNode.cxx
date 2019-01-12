@@ -41,23 +41,24 @@ MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
 {
     sceneNode = _node;
     style = 0;
+    vboIndex = -1;
+    vboManager.registerClient(this);
     return;
 }
 
 
 MeshPolySceneNode::Geometry::~Geometry()
 {
-    // do nothing
+    vboVTN.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
     return;
 }
 
 inline void MeshPolySceneNode::Geometry::drawV() const
 {
     const int count = vertices.getSize();
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-        glVertex3fv(vertices[i]);
-    glEnd();
+    vboVTN.enableArrays(false, false, false);
+    glDrawArrays(GL_TRIANGLE_FAN, vboIndex, count);
     return;
 }
 
@@ -65,13 +66,8 @@ inline void MeshPolySceneNode::Geometry::drawV() const
 inline void MeshPolySceneNode::Geometry::drawVT() const
 {
     const int count = vertices.getSize();
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-    {
-        glTexCoord2fv(texcoords[i]);
-        glVertex3fv(vertices[i]);
-    }
-    glEnd();
+    vboVTN.enableArrays(true, false, false);
+    glDrawArrays(GL_TRIANGLE_FAN, vboIndex, count);
     return;
 }
 
@@ -79,13 +75,8 @@ inline void MeshPolySceneNode::Geometry::drawVT() const
 inline void MeshPolySceneNode::Geometry::drawVN() const
 {
     const int count = vertices.getSize();
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-    {
-        glNormal3fv(normals[i]);
-        glVertex3fv(vertices[i]);
-    }
-    glEnd();
+    vboVTN.enableArrays(false, true, false);
+    glDrawArrays(GL_TRIANGLE_FAN, vboIndex, count);
     return;
 }
 
@@ -93,17 +84,21 @@ inline void MeshPolySceneNode::Geometry::drawVN() const
 inline void MeshPolySceneNode::Geometry::drawVTN() const
 {
     const int count = vertices.getSize();
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-    {
-        glTexCoord2fv(texcoords[i]);
-        glNormal3fv(normals[i]);
-        glVertex3fv(vertices[i]);
-    }
-    glEnd();
+    vboVTN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_FAN, vboIndex, count);
     return;
 }
 
+
+void MeshPolySceneNode::Geometry::initVBO()
+{
+    const int count = vertices.getSize();
+    vboIndex = vboVTN.vboAlloc(count);
+    vboVTN.textureData(vboIndex, count, (const GLfloat (*)[2])texcoords[0]);
+    if (normals.getSize())
+        vboVTN.normalData(vboIndex, count, (const GLfloat (*)[3])normals[0]);
+    vboVTN.vertexData(vboIndex, count, (const GLfloat (*)[3])vertices[0]);
+}
 
 void MeshPolySceneNode::Geometry::render()
 {
