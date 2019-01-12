@@ -23,6 +23,7 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "VBO_Handler.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -112,72 +113,77 @@ FlagWarpSceneNode::FlagWarpRenderNode::~FlagWarpRenderNode()
 void            FlagWarpSceneNode::FlagWarpRenderNode::render()
 {
     // make a perturbed ring
-    GLfloat geom[12][2];
+    glm::vec3 geom[12];
     for (int i = 0; i < 12; i++)
     {
         const GLfloat r = FlagWarpSize * (0.9f + 0.2f * (float)bzfrand());
-        geom[i][0] = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
-        geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        geom[i].x = r * cosf((float)(2.0 * M_PI * double(i) / 12.0));
+        geom[i].y = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
+        geom[i].z = 0.0f;
     }
 
     const GLfloat* sphere = sceneNode->getSphere();
     glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 
-    if (sphere[2] > RENDERER.getViewFrustum().getEye()[2])
+    glm::vec3 vertex[14];
+    bool up = sphere[2] > RENDERER.getViewFrustum().getEye()[2];
+
+    vertex[0]  = glm::vec3(0.0f, 0.0f, 0.0f);
+    vertex[1]  = geom[0];
+    if (up)
     {
-        for (int i = 0; i < 7; i++)
-        {
-            GLfloat s = sceneNode->size - 0.05f * float(i);
-            if (s < 0.0f) break;
-            myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
-            glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(s * geom[0][0], s * geom[0][1]);
-            glVertex2f(s * geom[11][0], s * geom[11][1]);
-            glVertex2f(s * geom[10][0], s * geom[10][1]);
-            glVertex2f(s * geom[9][0], s * geom[9][1]);
-            glVertex2f(s * geom[8][0], s * geom[8][1]);
-            glVertex2f(s * geom[7][0], s * geom[7][1]);
-            glVertex2f(s * geom[6][0], s * geom[6][1]);
-            glVertex2f(s * geom[5][0], s * geom[5][1]);
-            glVertex2f(s * geom[4][0], s * geom[4][1]);
-            glVertex2f(s * geom[3][0], s * geom[3][1]);
-            glVertex2f(s * geom[2][0], s * geom[2][1]);
-            glVertex2f(s * geom[1][0], s * geom[1][1]);
-            glVertex2f(s * geom[0][0], s * geom[0][1]);
-            glEnd(); // 14 verts -> 12 tris
-            addTriangleCount(12);
-            glTranslatef(0.0f, 0.0f, -0.01f);
-        }
+        vertex[2]  = geom[11];
+        vertex[3]  = geom[10];
+        vertex[4]  = geom[9];
+        vertex[5]  = geom[8];
+        vertex[6]  = geom[7];
+        vertex[7]  = geom[6];
+        vertex[8]  = geom[5];
+        vertex[9]  = geom[4];
+        vertex[10] = geom[3];
+        vertex[11] = geom[2];
+        vertex[12] = geom[1];
     }
     else
     {
-        for (int i = 0; i < 7; i++)
-        {
-            GLfloat s = sceneNode->size - 0.05f * float(i);
-            if (s < 0.0f) break;
-            myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
-            glBegin(GL_TRIANGLE_FAN);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(s * geom[0][0], s * geom[0][1]);
-            glVertex2f(s * geom[1][0], s * geom[1][1]);
-            glVertex2f(s * geom[2][0], s * geom[2][1]);
-            glVertex2f(s * geom[3][0], s * geom[3][1]);
-            glVertex2f(s * geom[4][0], s * geom[4][1]);
-            glVertex2f(s * geom[5][0], s * geom[5][1]);
-            glVertex2f(s * geom[6][0], s * geom[6][1]);
-            glVertex2f(s * geom[7][0], s * geom[7][1]);
-            glVertex2f(s * geom[8][0], s * geom[8][1]);
-            glVertex2f(s * geom[9][0], s * geom[9][1]);
-            glVertex2f(s * geom[10][0], s * geom[10][1]);
-            glVertex2f(s * geom[11][0], s * geom[11][1]);
-            glVertex2f(s * geom[0][0], s * geom[0][1]);
-            glEnd(); // 14 verts -> 12 tris
-            addTriangleCount(12);
-            glTranslatef(0.0f, 0.0f, 0.01f);
-        }
+        vertex[2]  = geom[1];
+        vertex[3]  = geom[2];
+        vertex[4]  = geom[3];
+        vertex[5]  = geom[4];
+        vertex[6]  = geom[5];
+        vertex[7]  = geom[6];
+        vertex[8]  = geom[7];
+        vertex[9]  = geom[8];
+        vertex[10] = geom[9];
+        vertex[11] = geom[10];
+        vertex[12] = geom[11];
     }
+    vertex[13] = geom[0];
+
+    int vboIndex = vboV.vboAlloc(14);
+    vboV.vertexData(vboIndex, 14, vertex);
+    vboV.enableArrays();
+    for (int i = 0; i < 7; i++)
+    {
+        GLfloat s = sceneNode->size - 0.05f * float(i);
+        if (s < 0.0f) break;
+        myColor4f(color[i][0], color[i][1], color[i][2], FlagWarpAlpha);
+        glPushMatrix();
+        glScalef(s, s, 0);
+        if (up)
+            glDrawArrays(GL_TRIANGLE_FAN, vboIndex, 14);
+        else
+            glDrawArrays(GL_TRIANGLE_FAN, vboIndex, 14);
+        glPopMatrix();
+        // 14 verts -> 12 tris
+        addTriangleCount(12);
+        if (up)
+            glTranslatef(0.0f, 0.0f, -0.01f);
+        else
+            glTranslatef(0.0f, 0.0f, 0.01f);
+    }
+    vboV.vboFree(vboIndex);
 
     glPopMatrix();
 }
