@@ -23,6 +23,9 @@
 
 #include <glm/vec3.hpp>
 
+// Common include
+#include "VBO_Handler.h"
+
 class PolyWallSceneNode : public WallSceneNode
 {
 public:
@@ -38,7 +41,7 @@ public:
     void        getRenderNodes(std::vector<RenderSet>& rnodes);
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry : public RenderNode, public VBOclient
     {
     public:
         Geometry(PolyWallSceneNode*,
@@ -46,6 +49,8 @@ protected:
                  const GLfloat2Array& uvs,
                  const glm::vec3 normal);
         ~Geometry();
+
+        void initVBO();
         void        setStyle(int _style)
         {
             style = _style;
@@ -56,15 +61,14 @@ protected:
             return wall->getSphere();
         }
     private:
-        void        drawV() const;
-        void        drawVT() const;
-    private:
         PolyWallSceneNode* wall;
         int     style;
         const glm::vec3 normal;
     public:
         GLfloat3Array   vertex;
         GLfloat2Array   uv;
+    private:
+        int vboIndex;
     };
 
 private:

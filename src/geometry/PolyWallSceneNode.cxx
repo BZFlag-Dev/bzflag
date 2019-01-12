@@ -37,12 +37,14 @@ PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
     vertex(_vertex),
     uv(_uv)
 {
-    // do nothing
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 PolyWallSceneNode::Geometry::~Geometry()
 {
-    // do nothing
+    vboVT.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
 }
 
 void            PolyWallSceneNode::Geometry::render()
@@ -50,32 +52,32 @@ void            PolyWallSceneNode::Geometry::render()
     wall->setColor();
     glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
-        drawVT();
+        vboVT.enableArrays();
     else
-        drawV();
+        vboVT.enableArrays(false, false, false);
+    glDrawArrays(GL_TRIANGLE_FAN, vboIndex, vertex.getSize());
     addTriangleCount(vertex.getSize() - 2);
     return;
 }
 
-void            PolyWallSceneNode::Geometry::drawV() const
+void PolyWallSceneNode::Geometry::initVBO()
 {
-    const int count = vertex.getSize();
-    glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-        glVertex3fv(vertex[i]);
-    glEnd();
-}
+    std::vector<glm::vec2> textur;
+    std::vector<glm::vec3> myVertex;
 
-void            PolyWallSceneNode::Geometry::drawVT() const
-{
     const int count = vertex.getSize();
-    glBegin(GL_TRIANGLE_FAN);
+    textur.reserve(count);
+    myVertex.reserve(count);
+
     for (int i = 0; i < count; i++)
     {
-        glTexCoord2fv(uv[i]);
-        glVertex3fv(vertex[i]);
+        textur.push_back(glm::make_vec2(uv[i]));
+        myVertex.push_back(glm::make_vec3(vertex[i]));
     }
-    glEnd();
+
+    vboIndex = vboVT.vboAlloc(count);
+    vboVT.textureData(vboIndex, textur);
+    vboVT.vertexData(vboIndex, myVertex);
 }
 
 //
