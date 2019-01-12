@@ -24,6 +24,9 @@
 // System headers
 #include <glm/vec3.hpp>
 
+// Common headers
+#include "VBO_Handler.h"
+
 class EighthDBaseSceneNode : public EighthDimSceneNode
 {
 public:
@@ -33,13 +36,16 @@ public:
     void        notifyStyleChange();
     void        addRenderNodes(SceneRenderer&);
 protected:
-    class EighthDBaseRenderNode : public RenderNode
+    class EighthDBaseRenderNode : public RenderNode, VBOclient
     {
     public:
         EighthDBaseRenderNode(const EighthDBaseSceneNode *,
                               const glm::vec3 pos,
                               const float size[3], float rotation);
         ~EighthDBaseRenderNode();
+
+        void initVBO();
+
         void        render();
         const GLfloat * getPosition() const
         {
@@ -48,6 +54,7 @@ protected:
     private:
         const EighthDBaseSceneNode *sceneNode;
         glm::vec3 corner[8];
+        int vboIndex;
     };
 private:
     OpenGLGState      gstate;

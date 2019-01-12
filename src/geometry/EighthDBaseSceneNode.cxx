@@ -129,38 +129,49 @@ EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
     for (i = 0; i < 8; i++)
         corner[i] += pos;
 
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode()
 {
-    // do nothing
+    vboV.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
+}
+
+void EighthDBaseSceneNode::EighthDBaseRenderNode::initVBO()
+{
+    glm::vec3 vertex[16];
+    vertex[0]  = corner[0];
+    vertex[1]  = corner[1];
+    vertex[2]  = corner[2];
+    vertex[3]  = corner[3];
+
+    vertex[4]  = corner[4];
+    vertex[5]  = corner[5];
+    vertex[6]  = corner[6];
+    vertex[7]  = corner[7];
+
+    vertex[8]  = corner[0];
+    vertex[9]  = corner[4];
+    vertex[10] = corner[1];
+    vertex[11] = corner[5];
+    vertex[12] = corner[2];
+    vertex[13] = corner[6];
+    vertex[14] = corner[3];
+    vertex[15] = corner[7];
+
+    vboIndex = vboV.vboAlloc(16);
+    vboV.vertexData(vboIndex, 16, vertex);
 }
 
 void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_LINE_LOOP);
-    glVertex3fv(glm::value_ptr(corner[0]));
-    glVertex3fv(glm::value_ptr(corner[1]));
-    glVertex3fv(glm::value_ptr(corner[2]));
-    glVertex3fv(glm::value_ptr(corner[3]));
-    glEnd();
-    glBegin(GL_LINE_LOOP);
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glVertex3fv(glm::value_ptr(corner[5]));
-    glVertex3fv(glm::value_ptr(corner[6]));
-    glVertex3fv(glm::value_ptr(corner[7]));
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(glm::value_ptr(corner[0]));
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glVertex3fv(glm::value_ptr(corner[1]));
-    glVertex3fv(glm::value_ptr(corner[5]));
-    glVertex3fv(glm::value_ptr(corner[2]));
-    glVertex3fv(glm::value_ptr(corner[6]));
-    glVertex3fv(glm::value_ptr(corner[3]));
-    glVertex3fv(glm::value_ptr(corner[7]));
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_LOOP, vboIndex,     4);
+    glDrawArrays(GL_LINE_LOOP, vboIndex + 4, 4);
+    glDrawArrays(GL_LINES,     vboIndex + 8, 8);
 }
 
 // Local Variables: ***
