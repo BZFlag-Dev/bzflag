@@ -20,7 +20,12 @@
 #include "common.h"
 #include "WallSceneNode.h"
 
+// System includes
+#include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
+
+// Common include
+#include "VBO_Handler.h"
 
 class QuadWallSceneNode : public WallSceneNode
 {
@@ -66,7 +71,7 @@ private:
                      bool makeLODs, bool fixedUVs);
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry : public RenderNode, public VBOclient
     {
     public:
         Geometry(QuadWallSceneNode*,
@@ -79,6 +84,8 @@ protected:
                  float uRepeats, float vRepeats,
                  bool fixedUVs);
         ~Geometry();
+        void initVBO();
+
         void        setStyle(int _style)
         {
             style = _style;
@@ -91,17 +98,18 @@ protected:
             return wall->getSphere();
         }
     private:
-        void        drawV() const;
-        void        drawVT() const;
-    private:
         WallSceneNode*  wall;
         int     style;
         int     ds, dt;
-        int     dsq, dsr;
         const glm::vec3 normal;
+        std::vector<glm::vec3> myVertex;
+        std::vector<glm::vec2> myTextur;
+        glm::vec3 myVertexS[4];
+        int vboIndex;
+        int vboIndexS;
     public:
-        GLfloat3Array   vertex;
-        GLfloat2Array   uv;
+        std::vector<glm::vec3> vertex;
+        std::vector<glm::vec2> uv;
         int      triangles;
     };
 
