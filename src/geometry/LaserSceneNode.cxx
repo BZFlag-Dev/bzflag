@@ -19,6 +19,8 @@
 // common implementation headers
 #include "StateDatabase.h"
 #include "BZDBCache.h"
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
@@ -149,39 +151,50 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
     glDisable(GL_TEXTURE_2D);
 
-    GLUquadric *q = gluNewQuadric();
-
     glm::vec4 coreColor = sceneNode->centerColor;
     coreColor.a     = 0.85f;
     glm::vec4 mainColor = sceneNode->color;
     mainColor.a     = 0.125f;
 
     myColor4f(coreColor.r, coreColor.g, coreColor.b, coreColor.a);
-    gluCylinder(q, 0.0625f, 0.0625f, len, 10, 1);
+    glPushMatrix();
+    glScalef(0.0625f, 0.0625f, len);
+    DRAWER.cylinder10();
+    glPopMatrix();
     addTriangleCount(20);
 
     myColor4f(mainColor.r, mainColor.g, mainColor.b, mainColor.a);
-    gluCylinder(q, 0.1f, 0.1f, len, 16, 1);
+    glPushMatrix();
+    glScalef(0.1f, 0.1f, len);
+    DRAWER.cylinder16();
+    glPopMatrix();
     addTriangleCount(32);
 
-    gluCylinder(q, 0.2f, 0.2f, len, 24, 1);
+    glPushMatrix();
+    glScalef(0.2f, 0.2f, len);
+    DRAWER.cylinder24();
+    glPopMatrix();
     addTriangleCount(48);
 
-    gluCylinder(q, 0.4f, 0.4f, len, 32, 1);
+    glPushMatrix();
+    glScalef(0.4f, 0.4f, len);
+    DRAWER.cylinder32();
+    glPopMatrix();
     addTriangleCount(64);
 
+    glPushMatrix();
+    glScalef(0.5f, 0.5f, 0.5f);
     if (sceneNode->first)
     {
-        gluSphere(q, 0.5f, 32, 32);
+        DRAWER.sphere32();
         addTriangleCount(32 * 32 * 2);
     }
     else
     {
-        gluSphere(q, 0.5f, 12, 12);
+        DRAWER.sphere12();
         addTriangleCount(12 * 12 * 2);
     }
-
-    gluDeleteQuadric(q);
+    glPopMatrix();
 
     glEnable(GL_TEXTURE_2D);
     glPopMatrix();
@@ -198,39 +211,49 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
     {
+        int vboIndex = vboVT.vboAlloc(14);
+        glm::vec2 textur[14];
+        glm::vec3 vertex[14];
+
         myColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_TRIANGLE_FAN);
-        glTexCoord2f(0.5f,  0.5f);
-        glVertex3f(  0.0f,  0.0f,  0.0f);
-        glTexCoord2f(0.0f,  0.0f);
-        glVertex3f(  0.0f,  0.0f,  1.0f);
-        glVertex3f(  0.0f,  1.0f,  0.0f);
-        glVertex3f(  0.0f,  0.0f, -1.0f);
-        glVertex3f(  0.0f, -1.0f,  0.0f);
-        glVertex3f(  0.0f,  0.0f,  1.0f);
-        glEnd(); // 6 verts -> 4 tris
+        textur[0] = glm::vec2(0.5f,  0.5f);
+        vertex[0] = glm::vec3(0.0f,  0.0f,  0.0f);
+        textur[1] = glm::vec2(0.0f,  0.0f);
+        vertex[1] = glm::vec3(0.0f,  0.0f,  1.0f);
+        textur[2] = glm::vec2(0.0f,  0.0f);
+        vertex[2] = glm::vec3(0.0f,  1.0f,  0.0f);
+        textur[3] = glm::vec2(0.0f,  0.0f);
+        vertex[3] = glm::vec3(0.0f,  0.0f, -1.0f);
+        textur[4] = glm::vec2(0.0f,  0.0f);
+        vertex[4] = glm::vec3(0.0f, -1.0f,  0.0f);
+        textur[5] = glm::vec2(0.0f,  0.0f);
+        vertex[5] = glm::vec3(0.0f,  0.0f,  1.0f);
 
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(0.0f,  0.0f);
-        glVertex3f(  0.0f,  0.0f,  1.0f);
-        glTexCoord2f(0.0f,  1.0f);
-        glVertex3f(   len,  0.0f,  1.0f);
-        glTexCoord2f(1.0f,  0.0f);
-        glVertex3f(  0.0f,  0.0f, -1.0f);
-        glTexCoord2f(1.0f,  1.0f);
-        glVertex3f(   len,  0.0f, -1.0f);
-        glEnd();
+        textur[6] = glm::vec2(0.0f,  0.0f);
+        vertex[6] = glm::vec3(0.0f,  0.0f,  1.0f);
+        textur[7] = glm::vec2(0.0f,  1.0f);
+        vertex[7] = glm::vec3(len,  0.0f,  1.0f);
+        textur[8] = glm::vec2(1.0f,  0.0f);
+        vertex[8] = glm::vec3(0.0f,  0.0f, -1.0f);
+        textur[9] = glm::vec2(1.0f,  1.0f);
+        vertex[9] = glm::vec3(len,  0.0f, -1.0f);
 
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(0.0f,  0.0f);
-        glVertex3f(  0.0f,  1.0f,  0.0f);
-        glTexCoord2f(0.0f,  1.0f);
-        glVertex3f(   len,  1.0f,  0.0f);
-        glTexCoord2f(1.0f,  0.0f);
-        glVertex3f(  0.0f, -1.0f,  0.0f);
-        glTexCoord2f(1.0f,  1.0f);
-        glVertex3f(   len, -1.0f,  0.0f);
-        glEnd(); // 8 verts -> 4 tris
+        textur[10] = glm::vec2(0.0f,  0.0f);
+        vertex[10] = glm::vec3(  0.0f,  1.0f,  0.0f);
+        textur[11] = glm::vec2(0.0f,  1.0f);
+        vertex[11] = glm::vec3(   len,  1.0f,  0.0f);
+        textur[12] = glm::vec2(1.0f,  0.0f);
+        vertex[12] = glm::vec3(  0.0f, -1.0f,  0.0f);
+        textur[13] = glm::vec2(1.0f,  1.0f);
+        vertex[13] = glm::vec3(   len, -1.0f,  0.0f);
+
+        vboVT.textureData(vboIndex, 14, textur);
+        vboVT.vertexData(vboIndex,  14, vertex);
+        vboVT.enableArrays();
+        glDrawArrays(GL_TRIANGLE_FAN,   vboIndex,      6);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex +  6, 4);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex + 10, 4);
+        vboVT.vboFree(vboIndex);
 
         addTriangleCount(8);
     }
