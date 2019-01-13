@@ -135,32 +135,41 @@ EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
     corner[4][0] = pos[0];
     corner[4][1] = pos[1];
     corner[4][2] = pos[2] + size[2];
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::~EighthDPyrRenderNode()
 {
-    // do nothing
+    vboV.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
+}
+
+void EighthDPyrSceneNode::EighthDPyrRenderNode::initVBO()
+{
+    vboIndex = vboV.vboAlloc(12);
+    glm::vec3 vertex[12];
+    vertex[0]  = corner[0];
+    vertex[1]  = corner[1];
+    vertex[2]  = corner[2];
+    vertex[3]  = corner[3];
+    vertex[4]  = corner[0];
+    vertex[5]  = corner[4];
+    vertex[6]  = corner[1];
+    vertex[7]  = corner[4];
+    vertex[8]  = corner[2];
+    vertex[9]  = corner[4];
+    vertex[10] = corner[3];
+    vertex[11] = corner[4];
+    vboV.vertexData(vboIndex, 12, vertex);
 }
 
 void            EighthDPyrSceneNode::EighthDPyrRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_LINE_LOOP);
-    glVertex3fv(glm::value_ptr(corner[0]));
-    glVertex3fv(glm::value_ptr(corner[1]));
-    glVertex3fv(glm::value_ptr(corner[2]));
-    glVertex3fv(glm::value_ptr(corner[3]));
-    glEnd();
-    glBegin(GL_LINES);
-    glVertex3fv(glm::value_ptr(corner[0]));
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glVertex3fv(glm::value_ptr(corner[1]));
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glVertex3fv(glm::value_ptr(corner[2]));
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glVertex3fv(glm::value_ptr(corner[3]));
-    glVertex3fv(glm::value_ptr(corner[4]));
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_LOOP, vboIndex,     4);
+    glDrawArrays(GL_LINES,     vboIndex + 4, 8);
 }
 
 // Local Variables: ***

@@ -24,6 +24,9 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 
+// Common headers
+#include "VBO_Handler.h"
+
 class EighthDimSceneNode : public SceneNode
 {
 public:
@@ -39,13 +42,16 @@ protected:
     void        setPolygon(int index, const GLfloat[3][3]);
 
 protected:
-    class EighthDimRenderNode : public RenderNode
+    class EighthDimRenderNode : public RenderNode, VBOclient
     {
     public:
         EighthDimRenderNode(
             const EighthDimSceneNode*,
             int numPolygons);
         ~EighthDimRenderNode();
+
+        void initVBO();
+
         void        render();
         void        setPolygon(int index, const GLfloat[3][3]);
         const GLfloat*  getPosition() const
@@ -53,8 +59,10 @@ protected:
             return sceneNode->getSphere();
         }
     private:
+        void fillVBO();
         const EighthDimSceneNode* sceneNode;
         int     numPolygons;
+        int     vboIndex;
         glm::vec4   *color;
         glm::vec3   (*poly)[3];
     };

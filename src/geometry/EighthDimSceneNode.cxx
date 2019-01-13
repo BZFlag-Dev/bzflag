@@ -86,32 +86,61 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
         color[i][2] = 0.2f + 0.8f * (float)bzfrand();
         color[i][3] = 0.2f + 0.6f * (float)bzfrand();
     }
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
 {
+    vboVC.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
     delete[] color;
     delete[] poly;
+}
+
+void EighthDimSceneNode::EighthDimRenderNode::initVBO()
+{
+    vboIndex = vboVC.vboAlloc(numPolygons * 3);
+    fillVBO();
+}
+
+void EighthDimSceneNode::EighthDimRenderNode::fillVBO()
+{
+    std::vector<glm::vec4> col;
+    std::vector<glm::vec3> vertex;
+
+    col.reserve(numPolygons * 3);
+    vertex.reserve(numPolygons * 3);
+
+    for (int i = 0; i < numPolygons; i++)
+    {
+        for (int j = 3; j > 0; j--)
+            col.push_back(color[i]);
+        vertex.push_back(poly[i][0]);
+        vertex.push_back(poly[i][2]);
+        vertex.push_back(poly[i][1]);
+    }
+
+    vboVC.colorData(vboIndex, col);
+    vboVC.vertexData(vboIndex, vertex);
 }
 
 void            EighthDimSceneNode::EighthDimRenderNode::render()
 {
     // draw polygons
-    glBegin(GL_TRIANGLES);
-    for (int i = 0; i < numPolygons; i++)
-    {
-        myColor4fv(glm::value_ptr(color[i]));
-        glVertex3fv(glm::value_ptr(poly[i][0]));
-        glVertex3fv(glm::value_ptr(poly[i][2]));
-        glVertex3fv(glm::value_ptr(poly[i][1]));
-    }
-    glEnd();
+    if (!colorOverride)
+        vboVC.enableArrays();
+    else
+        vboVC.enableArrays(false, false, false);
+    glDrawArrays(GL_TRIANGLES, vboIndex, numPolygons * 3);
 }
 
 void            EighthDimSceneNode::EighthDimRenderNode::setPolygon(
     int index, const GLfloat vertex[3][3])
 {
     ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
+    if (index + 1 >= numPolygons)
+        fillVBO();
 }
 
 // Local Variables: ***
