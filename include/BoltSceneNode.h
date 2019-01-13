@@ -79,9 +79,10 @@ protected:
 
         void        renderGeoBolt();
         void        renderGeoGMBolt();
-        void        renderGeoPill( float radius, float len, int segments, float endRad = -1);
 
     private:
+        void        renderGeoPill( float radius, float len, int segments);
+
         const BoltSceneNode* sceneNode;
         int     u, v, cu, cv;
         GLfloat     du, dv;

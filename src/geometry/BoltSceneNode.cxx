@@ -24,6 +24,8 @@
 #include "StateDatabase.h"
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "VBO_Drawing.h"
+#include "Singleton.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -32,6 +34,302 @@
 #include "SceneRenderer.h"
 
 #include "TimeKeeper.h"
+
+const float maxRad = 0.16f;
+const float boosterLen = 0.2f;
+const float finRadius = 0.16f;
+const float finCapSize = 0.15f;
+const float finForeDelta = 0.02f;
+const float noseRad = 0.086f;
+const float noseLen = 0.1f;
+const float bevelLen = 0.02f;
+const float waistRad = 0.125f;
+const float engineLen = 0.08f;
+
+#define BOLTDRAWER (BoltDrawer::instance())
+
+class BoltDrawer: public Singleton<BoltDrawer>, VBOclient
+{
+public:
+    void initVBO();
+
+    void finalStage();
+    void nosecone();
+    void body();
+    void booster1();
+    void booster2();
+    void engine();
+    void hemisphere1(int slices);
+    void hemisphere2(int slices);
+    void shaft(int slices);
+protected:
+    friend class Singleton<BoltDrawer>;
+private:
+    BoltDrawer();
+    virtual ~BoltDrawer();
+
+    int segment2Pos(int segment);
+    int drawCylinder(float baseRadius, float topRadius, float height, int slices, int &vboIndex);
+    const int segments[4] = {16, 25, 32, 48};
+
+    int         vboFinIndex;
+    int         noseconeIndex;
+    int         noseconeCount;
+    int         bodyIndex;
+    int         bodyCount;
+    int         booster1Index;
+    int         booster1Count;
+    int         booster2Index;
+    int         booster2Count;
+    int         engineIndex;
+    int         engineCount;
+    int         hemy1Index1[4];
+    int         hemy1Count1[4];
+    int         hemy1Index2[4];
+    int         hemy1Count2[4];
+    int         hemy1Index3[4];
+    int         hemy1Count3[4];
+    int         hemy1Index4[4];
+    int         hemy1Count4[4];
+    int         hemy2Index1[4];
+    int         hemy2Count1[4];
+    int         hemy2Index2[4];
+    int         hemy2Count2[4];
+    int         hemy2Index3[4];
+    int         hemy2Count3[4];
+    int         hemy2Index4[4];
+    int         hemy2Count4[4];
+    int         shaftCount[4];
+    int         shaftIndex[4];
+
+    // parametrics
+    const float engineRad = 0.1f;
+};
+
+/* initialize the singleton */
+template <>
+BoltDrawer *Singleton<BoltDrawer>::_instance = (BoltDrawer*)0;
+
+BoltDrawer::BoltDrawer()
+{
+    vboFinIndex   = -1;
+    noseconeIndex = -1;
+    bodyIndex     = -1;
+    booster1Index = -1;
+    booster2Index = -1;
+    engineIndex   = -1;
+    for (int i = 0; i < 4; i++)
+    {
+        hemy1Index1[i] = -1;
+        hemy1Index2[i] = -1;
+        hemy1Index3[i] = -1;
+        hemy1Index4[i] = -1;
+        hemy2Index1[i] = -1;
+        hemy2Index2[i] = -1;
+        hemy2Index3[i] = -1;
+        hemy2Index4[i] = -1;
+        shaftIndex[i]  = -1;
+    }
+    vboManager.registerClient(this);
+}
+
+BoltDrawer::~BoltDrawer()
+{
+    vboV.vboFree(vboFinIndex);
+    vboVN.vboFree(noseconeIndex);
+    vboVN.vboFree(bodyIndex);
+    vboVN.vboFree(booster1Index);
+    vboVN.vboFree(booster2Index);
+    vboVN.vboFree(engineIndex);
+    for (int i = 0; i < 4; i++)
+    {
+        vboVN.vboFree(hemy1Index1[i]);
+        vboVN.vboFree(hemy1Index2[i]);
+        vboVN.vboFree(hemy1Index3[i]);
+        vboVN.vboFree(hemy1Index4[i]);
+        vboVN.vboFree(hemy2Index1[i]);
+        vboVN.vboFree(hemy2Index2[i]);
+        vboVN.vboFree(hemy2Index3[i]);
+        vboVN.vboFree(hemy2Index4[i]);
+        vboVN.vboFree(shaftIndex[i]);
+    }
+    vboManager.unregisterClient(this);
+}
+
+void BoltDrawer::initVBO()
+{
+    glm::vec3 vertex[8];
+
+    vertex[0] = glm::vec3(0,maxRad,0);
+    vertex[1] = glm::vec3(0,maxRad,boosterLen);
+    vertex[2] = glm::vec3(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
+    vertex[3] = glm::vec3(0,maxRad+finRadius,boosterLen-finForeDelta);
+
+    vertex[4] = glm::vec3(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
+    vertex[5] = glm::vec3(0,maxRad+finRadius,boosterLen-finForeDelta);
+    vertex[6] = glm::vec3(0,maxRad,0);
+    vertex[7] = glm::vec3(0,maxRad,boosterLen);
+
+    vboFinIndex = vboV.vboAlloc(8);
+    vboV.vertexData(vboFinIndex, 8, vertex);
+
+    int slices = 8;
+    noseconeCount = drawCylinder(maxRad, noseRad, noseLen, slices, noseconeIndex);
+    bodyCount     = drawCylinder(waistRad, maxRad, bevelLen, slices, bodyIndex);
+    booster1Count = drawCylinder(maxRad, waistRad, bevelLen, slices, booster1Index);
+    booster2Count = drawCylinder(waistRad, maxRad, bevelLen, slices, booster2Index);
+    engineCount   = drawCylinder(engineRad, waistRad, engineLen, slices, engineIndex);
+    for (int i = 0; i < 4; i++)
+    {
+        hemy1Count1[i] = drawCylinder(0.0f,     0.43589f, 0.1f,  segments[i], hemy1Index1[i]);
+        hemy1Count2[i] = drawCylinder(0.43589f, 0.66144f, 0.15f, segments[i], hemy1Index2[i]);
+        hemy1Count3[i] = drawCylinder(0.66144f, 0.86603f, 0.25f, segments[i], hemy1Index3[i]);
+        hemy1Count4[i] = drawCylinder(0.86603f, 1.0f,     0.5f,  segments[i], hemy1Index4[i]);
+        hemy2Count1[i] = drawCylinder(1.0f,     0.86603f, 0.5f,  segments[i], hemy2Index1[i]);
+        hemy2Count2[i] = drawCylinder(0.86603f, 0.66144f, 0.25f, segments[i], hemy2Index2[i]);
+        hemy2Count3[i] = drawCylinder(0.66144f, 0.43589f, 0.15f, segments[i], hemy2Index3[i]);
+        hemy2Count4[i] = drawCylinder(0.43589f, 0.0f,     0.1f,  segments[i], hemy2Index4[i]);
+        shaftCount[i]  = drawCylinder(1.0f,     1.0f,     1.0f,  segments[i], shaftIndex[i]);
+    }
+}
+
+int BoltDrawer::drawCylinder(float baseRadius, float topRadius, float height, int slices, int &vboIndex)
+{
+    const int maxSlices = 48;
+    const int maxDim    = 2 * (maxSlices + 1);
+    const int dim       = 2 * (slices + 1);
+
+    glm::vec3 vertex[maxDim];
+    glm::vec3 normal[maxDim];
+    glm::vec3 *vertexP = vertex;;
+    glm::vec3 *normalP = normal;
+
+    /* Compute length (needed for normal calculations) */
+    float deltaRadius = baseRadius - topRadius;
+    float length = sqrt(deltaRadius * deltaRadius + height * height);
+
+    float zNormal  = deltaRadius / length;
+    float xyNormalRatio = height / length;
+
+    *normalP++ = glm::vec3(0.0f, xyNormalRatio, zNormal);
+    *normalP++ = glm::vec3(0.0f, xyNormalRatio, zNormal);
+    *vertexP++ = glm::vec3(0.0f, baseRadius,    0.0f);
+    *vertexP++ = glm::vec3(0.0f, topRadius,     height);
+    for (int i = 1; i < slices; i++)
+    {
+        float angle = (float)(2 * M_PI * i / slices);
+        float sinCache = sin(angle);
+        float cosCache = cos(angle);
+
+        *normalP++ = glm::vec3(xyNormalRatio * sinCache, xyNormalRatio * cosCache, zNormal);
+        *normalP++ = glm::vec3(xyNormalRatio * sinCache, xyNormalRatio * cosCache, zNormal);
+        *vertexP++ = glm::vec3(baseRadius    * sinCache, baseRadius    * cosCache, 0.0f);
+        *vertexP++ = glm::vec3(topRadius     * sinCache, topRadius     * cosCache, height);
+    }
+    *normalP++ = glm::vec3(0.0f, xyNormalRatio, zNormal);
+    *normalP++ = glm::vec3(0.0f, xyNormalRatio, zNormal);
+    *vertexP++ = glm::vec3(0.0f, baseRadius,    0.0f);
+    *vertexP++ = glm::vec3(0.0f, topRadius,     height);
+    vboIndex = vboVN.vboAlloc(dim);
+    vboVN.normalData(vboIndex, dim, normal);
+    vboVN.vertexData(vboIndex, dim, vertex);
+    return dim;
+}
+
+void BoltDrawer::finalStage()
+{
+    vboV.enableArrays();
+    glNormal3f(1,0,0);
+    glDrawArrays(GL_TRIANGLE_STRIP, vboFinIndex,     4);
+    glNormal3f(-1,0,0);
+    glDrawArrays(GL_TRIANGLE_STRIP, vboFinIndex + 4, 4);
+}
+
+void BoltDrawer::nosecone()
+{
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, noseconeIndex, noseconeCount);
+}
+
+void BoltDrawer::body()
+{
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, bodyIndex, bodyCount);
+}
+
+void BoltDrawer::booster1()
+{
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, booster1Index, booster1Count);
+}
+
+void BoltDrawer::booster2()
+{
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, booster2Index, booster2Count);
+}
+
+void BoltDrawer::engine()
+{
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, engineIndex, engineCount);
+}
+
+int BoltDrawer::segment2Pos(int slices)
+{
+    int i;
+    if (slices == 16)
+        i = 0;
+    else if (slices == 25)
+        i = 1;
+    else if (slices == 32)
+        i = 2;
+    else if (slices == 48)
+        i = 3;
+    else
+        abort();
+    return i;
+}
+
+void BoltDrawer::hemisphere1(int slices)
+{
+    int i = segment2Pos(slices);;
+
+    // 4 parts of the first hemisphere
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy1Index1[i], hemy1Count1[i]);
+    glTranslatef(0.0f, 0.0f, 0.1f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy1Index2[i], hemy1Count2[i]);
+    glTranslatef(0.0f, 0.0f, 0.15f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy1Index3[i], hemy1Count3[i]);
+    glTranslatef(0.0f, 0.0f, 0.25f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy1Index4[i], hemy1Count4[i]);
+    glTranslatef(0.0f, 0.0f, 0.5f);
+}
+
+void BoltDrawer::hemisphere2(int slices)
+{
+    int i = segment2Pos(slices);;
+
+    // 4 parts of the last hemisphere
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy2Index1[i], hemy2Count1[i]);
+    glTranslatef(0.0f, 0.0f, 0.5f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy2Index2[i], hemy2Count2[i]);
+    glTranslatef(0.0f, 0.0f, 0.25f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy2Index3[i], hemy2Count3[i]);
+    glTranslatef(0.0f, 0.0f, 0.15f);
+    glDrawArrays(GL_TRIANGLE_STRIP, hemy2Index4[i], hemy2Count4[i]);
+    glTranslatef(0.0f, 0.0f, 0.1f);
+}
+
+void BoltDrawer::shaft(int slices)
+{
+    int i = segment2Pos(slices);;
+
+    vboVN.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, shaftIndex[i], shaftCount[i]);
+}
 
 BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool super) :
     isSuper(super),
@@ -257,46 +555,14 @@ void            BoltSceneNode::BoltRenderNode::setColor(
     flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
 }
 
-void drawFin ( float maxRad, float finRadius, float boosterLen, float finForeDelta, float finCapSize)
-{
-    glBegin(GL_TRIANGLE_STRIP);
-    glNormal3f(1,0,0);
-    glVertex3f(0,maxRad,0);
-    glVertex3f(0,maxRad,boosterLen);
-    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
-    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
-    glEnd();
-
-    glBegin(GL_TRIANGLE_STRIP);
-    glNormal3f(-1,0,0);
-    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta-finCapSize);
-    glVertex3f(0,maxRad+finRadius,boosterLen-finForeDelta);
-    glVertex3f(0,maxRad,0);
-    glVertex3f(0,maxRad,boosterLen);
-    glEnd();
-}
-
 void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
 {
     // bzdb these 2? they control the shot size
     float gmMissleSize = BZDBCache::gmSize;
 
     // parametrics
-    float maxRad = gmMissleSize * 0.16f;
-    float noseRad = gmMissleSize * 0.086f;
-    float waistRad = gmMissleSize * 0.125f;
-    float engineRad = gmMissleSize * 0.1f;
-
-    float noseLen = gmMissleSize * 0.1f;
-    float bodyLen = gmMissleSize * 0.44f;
-    float bevelLen = gmMissleSize * 0.02f;
-    float waistLen = gmMissleSize * 0.16f;
-    float boosterLen = gmMissleSize * 0.2f;
-    float engineLen = gmMissleSize * 0.08f;
-
-    float finRadius = gmMissleSize * 0.16f;
-    float finCapSize = gmMissleSize * 0.15f;
-    float finForeDelta = gmMissleSize * 0.02f;
+    float bodyLen = 0.44f;
+    float waistLen = 0.16f;
 
     int slices = 8;
 
@@ -316,54 +582,64 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     glm::vec4 coneColor(0.125f,0.125f,0.125f,1);
     glm::vec4 bodyColor(1,1,1,1);
 
-    glPushMatrix();
-
-    GLUquadric *q = gluNewQuadric();
+    glScalef(gmMissleSize, gmMissleSize, gmMissleSize);
 
     glColor4f(noseColor.r,noseColor.g,noseColor.b,1.0f);
-    glTranslatef(0, 0, gmMissleSize);
+    glTranslatef(0, 0, 1);
     glRotatef((float)TimeKeeper::getCurrent().getSeconds() * rotSpeed,0,0,1);
 
     // nosecone
-    gluDisk(q,0,noseRad,slices,1);
-    glTranslatef(0, 0, -noseLen);
-    gluCylinder(q,maxRad,noseRad,noseLen,slices,1);
+    glPushMatrix();
+    glScalef(noseRad, noseRad, 0.0f);
+    DRAWER.disk8();
+    glPopMatrix();
+    glTranslatef(0.0f, 0.0f, -noseLen);
+    BOLTDRAWER.nosecone();
     addTriangleCount(slices * 2);
 
     // body
     myColor4f(bodyColor.r, bodyColor.g, bodyColor.b, bodyColor.a);
     glTranslatef(0, 0, -bodyLen);
-    gluCylinder(q,maxRad,maxRad,bodyLen,slices,1);
+    glPushMatrix();
+    glScalef(maxRad, maxRad, bodyLen);
+    DRAWER.cylinder8();
+    glPopMatrix();
     addTriangleCount(slices);
 
     glTranslatef(0, 0, -bevelLen);
-    gluCylinder(q,waistRad,maxRad,bevelLen,slices,1);
+    BOLTDRAWER.body();
     addTriangleCount(slices);
 
     // waist
     myColor4f(coneColor.r, coneColor.g, coneColor.b, coneColor.a);
     glTranslatef(0, 0, -waistLen);
-    gluCylinder(q,waistRad,waistRad,waistLen,slices,1);
+    glPushMatrix();
+    glScalef(waistRad, waistRad, waistLen);
+    DRAWER.cylinder8();
+    glPopMatrix();
     addTriangleCount(slices);
 
     // booster
     myColor4f(bodyColor.r, bodyColor.g, bodyColor.b, 1.0f);
     glTranslatef(0, 0, -bevelLen);
-    gluCylinder(q,maxRad,waistRad,bevelLen,slices,1);
+    BOLTDRAWER.booster1();
     addTriangleCount(slices);
 
     glTranslatef(0, 0, -boosterLen);
-    gluCylinder(q,maxRad,maxRad,boosterLen,slices,1);
+    glPushMatrix();
+    glScalef(maxRad, maxRad, boosterLen);
+    DRAWER.cylinder8();
+    glPopMatrix();
     addTriangleCount(slices);
 
     glTranslatef(0, 0, -bevelLen);
-    gluCylinder(q,waistRad,maxRad,bevelLen,slices,1);
+    BOLTDRAWER.booster2();
     addTriangleCount(slices);
 
     // engine
     myColor4f(coneColor.r, coneColor.g, coneColor.b, 1.0f);
     glTranslatef(0, 0, -engineLen);
-    gluCylinder(q,engineRad,waistRad,engineLen,slices,1);
+    BOLTDRAWER.engine();
     addTriangleCount(slices);
 
     // fins
@@ -373,12 +649,8 @@ void BoltSceneNode::BoltRenderNode::renderGeoGMBolt()
     for ( int i = 0; i < 4; i++)
     {
         glRotatef(i*90.0f,0,0,1);
-        drawFin ( maxRad, finRadius, boosterLen, finForeDelta, finCapSize);
+        BOLTDRAWER.finalStage();
     }
-
-    glPopMatrix();
-
-    gluDeleteQuadric(q);
 
     glEnable(GL_TEXTURE_2D);
     // glDisable(GL_LIGHTING);
@@ -459,67 +731,32 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
 }
 
 
-void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float len,
-        int segments, float endRad)
+void BoltSceneNode::BoltRenderNode::renderGeoPill(float radius, float len, int segments)
 {
     glPushMatrix();
+    glScalef(radius, radius, radius);
 
-    float assRadius = radius;
-    if (endRad >= 0)
-        assRadius = endRad;
-
-    float lenMinusRads = len - (radius+assRadius);
-
-    GLUquadric *q = gluNewQuadric();
-    if (assRadius > 0)
-    {
-        // 4 parts of the first hemisphere
-        gluCylinder(q,0,assRadius*0.43589,assRadius*0.1f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,assRadius*0.1f);
-
-        gluCylinder(q,assRadius*0.43589,assRadius*0.66144,assRadius*0.15f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,assRadius*0.15f);
-
-        gluCylinder(q,assRadius*0.66144f,assRadius*0.86603f,assRadius*0.25f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,assRadius*0.25f);
-
-        gluCylinder(q,assRadius*0.86603,assRadius,assRadius*0.5f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,assRadius*0.5f);
-    }
+    // 4 parts of the first hemisphere
+    BOLTDRAWER.hemisphere1(segments);
+    addTriangleCount(4 * segments);
 
     // the "shaft"
-    if (lenMinusRads > 0)
+    if (len > 2.0f * radius)
     {
-        gluCylinder(q,assRadius,radius,lenMinusRads,segments,1);
+        float lenMinusRads = len / radius - 2.0f;
+
+        glPushMatrix();
+        glScalef(1.0f, 1.0f, lenMinusRads);
+        BOLTDRAWER.shaft(segments);
+        glPopMatrix();
         addTriangleCount(segments);
-        glTranslatef(0,0,lenMinusRads);
+        glTranslatef(0.0f, 0.0f, lenMinusRads);
     }
 
-    if (radius > 0)
-    {
-        // 4 parts of the last hemisphere
-        gluCylinder(q,radius,radius*0.86603,radius*0.5f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,radius*0.5f);
+    // 4 parts of the last hemisphere
+    BOLTDRAWER.hemisphere2(segments);
+    addTriangleCount(4 * segments);
 
-        gluCylinder(q,radius*0.86603f,radius*0.66144f,radius*0.25f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,radius*0.25f);
-
-        gluCylinder(q,radius*0.66144,radius*0.43589,radius*0.15f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,radius*0.15f);
-
-        gluCylinder(q,radius*0.43589,0,radius*0.1f,segments,1);
-        addTriangleCount(segments);
-        glTranslatef(0,0,radius*0.1f);
-    }
-
-    gluDeleteQuadric(q);
     glPopMatrix();
 }
 
@@ -580,6 +817,9 @@ void            BoltSceneNode::BoltRenderNode::render()
 
             glDisable(GL_TEXTURE_2D);
             myColor4fv(flareColor);
+            int vboIndex = vboV.vboAlloc(4);
+            glm::vec3 vertex[4];
+            vboV.enableArrays();
             for (int i = 0; i < numFlares; i++)
             {
                 // pick random direction in 3-space.  picking a random theta with
@@ -592,13 +832,14 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float s = FlareSize * sinf(phi[i]);
                 const float ti = theta[i];
                 const float fs = FlareSpread;
-                glBegin(GL_TRIANGLE_STRIP);
-                glVertex3f(0.0f, 0.0f, CoreFraction);
-                glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
-                glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
-                glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
-                glEnd();
+                vertex[0] = glm::vec3(0.0f, 0.0f, CoreFraction);
+                vertex[1] = glm::vec3(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
+                vertex[2] = glm::vec3(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
+                vertex[3] = glm::vec3(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
+                vboV.vertexData(vboIndex, 4, vertex);
+                glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
             }
+            vboV.vboFree(vboIndex);
             glEnable(GL_TEXTURE_2D);
 
             addTriangleCount(numFlares * 2);
@@ -611,16 +852,21 @@ void            BoltSceneNode::BoltRenderNode::render()
             const float u1 = u0 + du;
             const float v1 = v0 + dv;
             myColor4fv(textureColor); // 1.0f all
-            glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2f(u0, v0);
-            glVertex2f(-1.0f, -1.0f);
-            glTexCoord2f(u1, v0);
-            glVertex2f(+1.0f, -1.0f);
-            glTexCoord2f(u0, v1);
-            glVertex2f(-1.0f, +1.0f);
-            glTexCoord2f(u1, v1);
-            glVertex2f(+1.0f, +1.0f);
-            glEnd();
+            int vboIndex = vboVT.vboAlloc(4);
+            glm::vec2 texture[4];
+            glm::vec3 vertex[4];
+            texture[0] = glm::vec2(u0, v0);
+            texture[1] = glm::vec2(u1, v0);
+            texture[2] = glm::vec2(u0, v1);
+            texture[3] = glm::vec2(u1, v1);
+            vboVT.textureData(vboIndex, 4, texture);
+            vertex[0]  = glm::vec3(-1.0f, -1.0f, 0.0f);
+            vertex[1]  = glm::vec3(+1.0f, -1.0f, 0.0f);
+            vertex[2]  = glm::vec3(-1.0f, +1.0f, 0.0f);
+            vertex[3]  = glm::vec3(+1.0f, +1.0f, 0.0f);
+            vboVT.vertexData(vboIndex, 4, vertex);
+            vboVT.enableArrays();
+            glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
             addTriangleCount(2);
 
             // draw shot trail  (more billboarded quads)
@@ -678,22 +924,19 @@ void            BoltSceneNode::BoltRenderNode::render()
                     RENDERER.getViewFrustum().executeBillboard();
                     glScalef(s, s, s);
 
-                    glBegin(GL_TRIANGLE_STRIP);
-                    glTexCoord2f(U0, V0);
-                    glVertex2f(-1.0f, -1.0f);
-                    glTexCoord2f(U1, V0);
-                    glVertex2f(+1.0f, -1.0f);
-                    glTexCoord2f(U0, V1);
-                    glVertex2f(-1.0f, +1.0f);
-                    glTexCoord2f(U1, V1);
-                    glVertex2f(+1.0f, +1.0f);
-                    glEnd();
+                    texture[0] = glm::vec2(U0, V0);
+                    texture[1] = glm::vec2(U1, V0);
+                    texture[2] = glm::vec2(U0, V1);
+                    texture[3] = glm::vec2(U1, V1);
+                    vboVT.textureData(vboIndex, 4, (const GLfloat (*)[2])texture);
+                    glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
                 }
 
                 addTriangleCount(shotLength * 2);
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 glPopAttrib(); // revert the texture
             }
+            vboVT.vboFree(vboIndex);
         }
     }
 
