@@ -90,29 +90,50 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
     }
 
     triangles = (eCount * eCount);
+    vboIndex  = -1;
+    vboIndexS = -1;
+    vboManager.registerClient(this);
 }
 
 
 TriWallSceneNode::Geometry::~Geometry()
 {
-    // do nothing
+    vboVT.vboFree(vboIndex);
+    vboV.vboFree(vboIndexS);
+    vboManager.unregisterClient(this);
 }
 
+void TriWallSceneNode::Geometry::initVBO()
+{
+    std::vector<glm::vec3> vert;
+    std::vector<glm::vec2> text;
+    int k = 0;
+    for (int t = 0; t < de; t++)
+    {
+        int e = de - t;
+        for (int s = 0; s < e; s++)
+        {
+            text.push_back(glm::make_vec2(uv[k+e+1]));
+            text.push_back(glm::make_vec2(uv[k]));
+            vert.push_back(glm::make_vec3(vertex[k+e+1]));
+            vert.push_back(glm::make_vec3(vertex[k]));
+            k++;
+        }
+        text.push_back(glm::make_vec2(uv[k]));
+        vert.push_back(glm::make_vec3(vertex[k]));
+        k++;
+    }
+    vboIndex  = vboVT.vboAlloc(vert.size());
+    vboVT.textureData(vboIndex, text);
+    vboVT.vertexData(vboIndex, vert);
 
-#define RENDER(_e)                          \
-  for (int k = 0, t = 0; t < de; t++) {                 \
-    int e = de - t;                         \
-    glBegin(GL_TRIANGLE_STRIP);                     \
-    for (int s = 0; s < e; k++, s++) {                  \
-      _e(k+e+1);                            \
-      _e(k);                                \
-    }                                   \
-    _e(k);                              \
-    glEnd();                                \
-    k++;                                \
-  }
-#define EMITV(_i)   glVertex3fv(vertex[_i])
-#define EMITVT(_i)  glTexCoord2fv(uv[_i]); glVertex3fv(vertex[_i])
+    vboIndexS = vboV.vboAlloc(3);
+    glm::vec3 ver[3];
+    ver[0] = glm::make_vec3(vertex[(de + 1) * (de + 2) / 2 - 1]);
+    ver[1] = glm::make_vec3(vertex[0]);
+    ver[2] = glm::make_vec3(vertex[de]);
+    vboV.vertexData(vboIndexS, 3, ver);
+}
 
 void            TriWallSceneNode::Geometry::render()
 {
@@ -128,24 +149,35 @@ void            TriWallSceneNode::Geometry::render()
 
 void            TriWallSceneNode::Geometry::renderShadow()
 {
-    glBegin(GL_TRIANGLE_STRIP);
-    glVertex3fv(vertex[(de + 1) * (de + 2) / 2 - 1]);
-    glVertex3fv(vertex[0]);
-    glVertex3fv(vertex[de]);
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, vboIndexS, 3);
     addTriangleCount(1);
 }
 
 
 void            TriWallSceneNode::Geometry::drawV() const
 {
-    RENDER(EMITV)
+    int start = 0;
+    vboVT.enableArrays(false, false, false);
+    for (int t = 0; t < de; t++)
+    {
+        int count = 2 * (de - t) + 1;
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex + start, count);
+        start += count;
+    }
 }
 
 
 void            TriWallSceneNode::Geometry::drawVT() const
 {
-    RENDER(EMITVT)
+    int start = 0;
+    vboVT.enableArrays();
+    for (int t = 0; t < de; t++)
+    {
+        int count = 2 * (de - t) + 1;
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex + start, count);
+        start += count;
+    }
 }
 
 

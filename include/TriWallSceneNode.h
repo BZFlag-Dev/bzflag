@@ -22,6 +22,9 @@
 
 #include <glm/vec3.hpp>
 
+// Common include
+#include "VBO_Handler.h"
+
 class TriWallSceneNode : public WallSceneNode
 {
 public:
@@ -48,7 +51,7 @@ public:
     void        getRenderNodes(std::vector<RenderSet>& rnodes);
 
 protected:
-    class Geometry : public RenderNode
+    class Geometry : public RenderNode, public VBOclient
     {
     public:
         Geometry(TriWallSceneNode*,
@@ -59,6 +62,9 @@ protected:
                  const glm::vec3 normal,
                  float uRepeats, float vRepeats);
         ~Geometry();
+
+        void initVBO();
+
         void        setStyle(int _style)
         {
             style = _style;
@@ -78,6 +84,8 @@ protected:
         int     style;
         int     de;
         const glm::vec3 normal;
+        int vboIndex;
+        int vboIndexS;
     public:
         GLfloat3Array   vertex;
         GLfloat2Array   uv;
