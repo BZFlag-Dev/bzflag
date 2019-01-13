@@ -23,6 +23,8 @@
 // common implementation headers
 #include "BZDBCache.h"
 #include "TextureManager.h"
+#include "OpenGLCommon.h"
+#include "VBO_Handler.h"
 
 // local implementation headers
 #include "ViewFrustum.h"
@@ -373,16 +375,22 @@ void            BillboardSceneNode::BillboardRenderNode::render()
 
         // draw billboard
         myColor4fv(sceneNode->color);
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(   u,    v);
-        glVertex2f  (-sceneNode->width, -sceneNode->height);
-        glTexCoord2f(du+u,    v);
-        glVertex2f  ( sceneNode->width, -sceneNode->height);
-        glTexCoord2f(   u, dv+v);
-        glVertex2f  (-sceneNode->width,  sceneNode->height);
-        glTexCoord2f(du+u, dv+v);
-        glVertex2f  ( sceneNode->width,  sceneNode->height);
-        glEnd();
+        int vboIndex = vboVT.vboAlloc(4);
+        glm::vec2 texture[4];
+        glm::vec3 vertex[4];
+        texture[0] = glm::vec2(u,    v);
+        vertex[0]  = glm::vec3(-sceneNode->width, -sceneNode->height, 0.0f);
+        texture[1] = glm::vec2(du+u,    v);
+        vertex[1]  = glm::vec3(sceneNode->width, -sceneNode->height, 0.0f);
+        texture[2] = glm::vec2(u, dv+v);
+        vertex[2]  = glm::vec3(-sceneNode->width,  sceneNode->height, 0.0f);
+        texture[3] = glm::vec2(du+u, dv+v);
+        vertex[3]  = glm::vec3(sceneNode->width,  sceneNode->height, 0.0f);
+        vboVT.textureData(vboIndex, 4, texture);
+        vboVT.vertexData(vboIndex, 4, vertex);
+        vboVT.enableArrays();
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
+        vboVT.vboFree(vboIndex);
     }
     glPopMatrix();
 
