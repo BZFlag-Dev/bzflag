@@ -22,9 +22,6 @@
 #include "bzfio.h" // for DEBUGx()
 
 
-GLuint MeshDrawMgr::unloadList = INVALID_GL_LIST_ID;
-
-
 void MeshDrawMgr::init()
 {
 }
@@ -169,25 +166,6 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
 }
 
 
-inline void MeshDrawMgr::rawDisableArrays()
-{
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    return;
-}
-
-
-void MeshDrawMgr::disableArrays()
-{
-    if (unloadList == INVALID_GL_LIST_ID)
-        rawDisableArrays();
-    else
-        glCallList(unloadList);
-    return;
-}
-
-
 void MeshDrawMgr::makeLists()
 {
     GLenum error;
@@ -205,22 +183,6 @@ void MeshDrawMgr::makeLists()
             return; // don't make the lists, something is borked
         }
     };
-
-    if (unloadList == INVALID_GL_LIST_ID)
-    {
-        unloadList = glGenLists(1);
-        glNewList(unloadList, GL_COMPILE);
-        {
-            disableArrays();
-        }
-        glEndList();
-        error = glGetError();
-        if (error != GL_NO_ERROR)
-        {
-            logDebugMessage(1,"MeshDrawMgr::makeLists() unloadList: %i\n", error);
-            unloadList = INVALID_GL_LIST_ID;
-        }
-    }
 
     glVertexPointer(3, GL_FLOAT, 0, vertices);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -265,12 +227,6 @@ void MeshDrawMgr::makeLists()
 
 void MeshDrawMgr::freeLists()
 {
-    if (unloadList != INVALID_GL_LIST_ID)
-    {
-        glDeleteLists(unloadList, 1);
-        unloadList = INVALID_GL_LIST_ID;
-    }
-
     for (int lod = 0; lod < lodCount; lod++)
     {
         for (int set = 0; set < lodLists[lod].count; set++)
