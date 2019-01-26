@@ -68,7 +68,7 @@ int         openBroadcast(int port, const char* service,
     if (port <= 0)
     {
         std::vector<std::string> args;
-        char buf[10];
+        char buf[12];
         sprintf(buf,"%d", port);
         args.push_back(buf);
         printError("openBroadcast: Invalid port {1}", &args);
