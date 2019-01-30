@@ -59,9 +59,6 @@ typedef unsigned int    uint32_t;
 #  define snprintf  _snprintf
 #endif
 
-// formerly in MSVC/build/config.h
-#include <stdio.h>
-
 #ifndef DEBUG_TRACE
 #define DEBUG_TRACE
 inline void W32_DEBUG_TRACE(const char* buffer)
