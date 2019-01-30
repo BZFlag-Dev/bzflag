@@ -91,14 +91,28 @@ FontManager::FontManager() : Singleton<FontManager>(),
     BZDB.touch("underlineColor");
     OpenGLGState::registerContextInitializer(freeContext, initContext,
             (void*)this);
+    underlineVBOindex = -1;
+    vboManager.registerClient(this);
 }
 
 FontManager::~FontManager()
 {
+    vboV.vboFree(underlineVBOindex);
+    vboManager.unregisterClient(this);
     clear();
     OpenGLGState::unregisterContextInitializer(freeContext, initContext,
             (void*)this);
     return;
+}
+
+
+void FontManager::initVBO()
+{
+    underlineVBOindex = vboV.vboAlloc(2);
+    glm::vec3 line[2];
+    line[0] = glm::vec3(0.0f, 0.0f, 0.0f);
+    line[1] = glm::vec3(1.0f, 0.0f, 0.0f);
+    vboV.vertexData(underlineVBOindex, 2, line);
 }
 
 
@@ -362,17 +376,25 @@ void FontManager::drawString(float x, float y, float z, int faceID, float size,
                 glDisable(GL_TEXTURE_2D);
                 glEnable(GL_BLEND);
                 if (bright && underlineColor[0] >= 0)
-                    glColor4fv(underlineColor);
+                    glColor4f(underlineColor[0],
+                              underlineColor[1],
+                              underlineColor[2],
+                              underlineColor[3]);
                 else if (underlineColor[0] >= 0)
-                    glColor4fv(dimUnderlineColor);
+                    glColor4f(dimUnderlineColor[0],
+                              dimUnderlineColor[1],
+                              dimUnderlineColor[2],
+                              dimUnderlineColor[3]);
                 else if (color[0] >= 0)
-                    glColor4fv(color);
+                    glColor4f(color[0],
+                              color[1],
+                              color[2],
+                              color[3]);
                 // still have a translated matrix, these coordinates are
                 // with respect to the string just drawn
-                glBegin(GL_LINES);
-                glVertex2f(0.0f, 0.0f);
-                glVertex2f(width, 0.0f);
-                glEnd();
+                vboV.enableArrays();
+                glScalef(width, 0.0f, 0.0f);
+                glDrawArrays(GL_LINES, underlineVBOindex, 2);
                 glEnable(GL_TEXTURE_2D);
             }
             glDepthMask(depthMask);

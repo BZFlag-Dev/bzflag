@@ -17,6 +17,8 @@
 #include <string>
 #include <vector>
 
+// Common include
+#include "VBO_Handler.h"
 #include "Singleton.h"
 #include "bzfgl.h"
 #include "AnsiCodes.h"
@@ -27,11 +29,13 @@ typedef std::map<int, ImageFont*> FontSizeMap;
 typedef std::vector<FontSizeMap>    FontFaceList;
 typedef std::map<std::string, int>  FontFaceMap;
 
-class FontManager : public Singleton<FontManager>
+class FontManager : public Singleton<FontManager>, VBOclient
 {
 public:
     FontManager();
-    ~FontManager();
+    virtual ~FontManager();
+
+    void initVBO();
 
     void loadAll(std::string dir);
 
@@ -85,6 +89,8 @@ private:
     static void   freeContext(void *data);
     static void   initContext(void *data);
     static GLfloat underlineColor[4];
+
+    int           underlineVBOindex;
 };
 
 inline void FontManager::setDimFactor(float newDimFactor)
