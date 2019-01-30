@@ -96,7 +96,7 @@ double          SDLMedia::stopwatch(bool start)
     if (currentTick >= stopwatchTime)
 #ifdef HAVE_SDL2
         return (double) (currentTick - stopwatchTime) /
-            SDL_GetPerformanceFrequency(); // sec
+               SDL_GetPerformanceFrequency(); // sec
 #else
         return (double) (currentTick - stopwatchTime) * 0.001; // sec
 #endif
