@@ -53,7 +53,6 @@ noinst_HEADERS =			\
 	FlagWarpSceneNode.h		\
 	Frustum.h			\
 	GameTime.h			\
-	GLCollect.h			\
 	Intersect.h			\
 	KeyManager.h			\
 	LagInfo.h			\
