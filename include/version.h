@@ -10,12 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#ifndef __VERSION_H__
+#define __VERSION_H__
+
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif // HAVE_CONFIG_H
-
-#ifndef __VERSION_H__
-#define __VERSION_H__
 
 #ifndef BZ_CONFIG_DIR_VERSION
 #define BZ_CONFIG_DIR_VERSION   "2.5"

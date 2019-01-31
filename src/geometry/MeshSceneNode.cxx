@@ -64,8 +64,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     lodCount = 0;
     lods = NULL;
 
-    xformList = INVALID_GL_LIST_ID;
-
     if (mesh == NULL)
         return;
 
@@ -188,7 +186,6 @@ MeshSceneNode::~MeshSceneNode()
     delete[] lods;
 
     OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
-    freeXFormList();
 
     return;
 }
@@ -371,7 +368,7 @@ void MeshSceneNode::notifyStyleChange()
             if (!mat.needsSorting)
             {
                 setNode.node =
-                    new OpaqueRenderNode(drawMgr, &xformList, normalize,
+                    new OpaqueRenderNode(drawMgr, xformMatrix, normalize,
                                          mat.colorPtr, lod, set, extPtr,
                                          drawSet.triangleCount);
                 mat.animRepos = false;
@@ -383,7 +380,7 @@ void MeshSceneNode::notifyStyleChange()
                 if (xformTool != NULL)
                     xformTool->modifyVertex(setPos);
                 setNode.node =
-                    new AlphaGroupRenderNode(drawMgr, &xformList, normalize,
+                    new AlphaGroupRenderNode(drawMgr, xformMatrix, normalize,
                                              mat.colorPtr, lod, set, extPtr, setPos,
                                              drawSet.triangleCount);
                 if ((fabsf(drawSet.sphere[0]) > 0.001f) &&
@@ -399,7 +396,7 @@ void MeshSceneNode::notifyStyleChange()
             }
 
             setNode.radarNode =
-                new OpaqueRenderNode(drawMgr, &xformList, normalize,
+                new OpaqueRenderNode(drawMgr, xformMatrix, normalize,
                                      mat.colorPtr, lod, set, extPtr,
                                      drawSet.triangleCount);
         }
@@ -591,37 +588,11 @@ void MeshSceneNode::makeXFormList()
         };
 
         // oops, transpose
-        GLfloat matrix[16];
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
-                matrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
+                xformMatrix[(i*4)+j] = xformTool->getMatrix()[(j*4)+i];
         }
-
-        xformList = glGenLists(1);
-        glNewList(xformList, GL_COMPILE);
-        {
-            glMultMatrixf(matrix);
-        }
-        glEndList();
-
-        error = glGetError();
-        if (error != GL_NO_ERROR)
-        {
-            logDebugMessage(0,"ERROR: MeshSceneNode::makeXFormList() failed: %i\n", error);
-            xformList = INVALID_GL_LIST_ID;
-        }
-    }
-    return;
-}
-
-
-void MeshSceneNode::freeXFormList()
-{
-    if (xformList != INVALID_GL_LIST_ID)
-    {
-        glDeleteLists(xformList, 1);
-        xformList = INVALID_GL_LIST_ID;
     }
     return;
 }
@@ -634,10 +605,8 @@ void MeshSceneNode::initContext(void* data)
 }
 
 
-void MeshSceneNode::freeContext(void* data)
+void MeshSceneNode::freeContext(void*)
 {
-    ((MeshSceneNode*)data)->freeXFormList();
-    return;
 }
 
 

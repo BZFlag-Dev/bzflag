@@ -335,6 +335,7 @@ typedef enum
     bz_eShotTeleportedEvent,
     bz_eAllowFlagResetEvent,
     bz_eFlagResetEvent,
+    bz_ePlayerDeathFinalizedEvent,
     bz_eLastEvent    //this is never used as an event, just show it's the last one
 } bz_eEventType;
 

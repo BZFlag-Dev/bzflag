@@ -1208,6 +1208,16 @@ int         main(int argc, char** argv)
     else
         window->create();
 
+    // set main window's minimum size (arbitrary but should be big enough
+    // to see stuff in control panel)
+    pmainWindow->setMinSize(256, 192);
+
+    // enable vsync if needed
+    pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
+
+    // Make sure the window is created
+    pmainWindow->getWindow()->callResizeCallbacks();
+
     // get sound files.  must do this after creating the window because
     // DirectSound is a bonehead API.
     if (!noAudio)
@@ -1222,15 +1232,6 @@ int         main(int argc, char** argv)
     joystick->setXAxis(BZDB.get("jsXAxis"));
     joystick->setYAxis(BZDB.get("jsYAxis"));
 
-    // set main window's minimum size (arbitrary but should be big enough
-    // to see stuff in control panel)
-    pmainWindow->setMinSize(256, 192);
-
-    // enable vsync if needed
-    pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
-
-    // Make sure the window is created
-    pmainWindow->getWindow()->callResizeCallbacks();
     // initialize graphics state
     pmainWindow->getWindow()->makeCurrent();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);

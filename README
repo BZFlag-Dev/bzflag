@@ -28,7 +28,6 @@ Table of Contents
     Communication
 	Internet Relay Chat
 	Forums
-	Wiki
     Bug Reports and Support
     Providing Contributions
     Source Tree Organization
@@ -221,7 +220,7 @@ Communication
 
 The BZFlag project has several resources set up for communicating both
 with other developers and with the community.  There is an IRC
-channel, forums, and a wiki.
+channel and forums.
 
 Internet Relay Chat
 -------------------
@@ -243,17 +242,7 @@ https://forums.bzflag.org
 
 Registering an account on the forums presently also registers your callsign
 for use inside of BZFlag.  Some servers require registration in order to
-play.  See the board FAQ and wiki getting Started pages for new users.
-
-Wiki
-----
-The main BZFlag website contains a wiki that may be edited by the
-community available at: https://wiki.bzflag.org
-
-The wiki does require a simple registration in order to make
-modifications as a means to minimize abuse, but serves as a
-communication forum and ongoing discussion arena for the game's
-development.
+play.  See the Getting Started page on our site for more about registration.
 
 
 Bug Reports and Support

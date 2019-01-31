@@ -267,11 +267,11 @@ void TimeKeeper::convertTime(double raw, long int convertedTimes[])
 const std::string TimeKeeper::printTime(long int timeValue[])
 {
     std::string valueNames;
-    char temp[20];
+    char temp[25];
 
     if (timeValue[0] > 0)
     {
-        snprintf(temp, 20, "%ld day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
+        snprintf(temp, 25, "%ld day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
         valueNames.append(temp);
     }
     if (timeValue[1] > 0)

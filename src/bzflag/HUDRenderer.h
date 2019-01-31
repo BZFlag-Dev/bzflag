@@ -210,7 +210,9 @@ private:
     float     fps;
     float     minDrawTime;
     float     drawTime;
+    float     drawTimeTmp;
     float     maxDrawTime;
+    int       drawTimeCnt;
     float     headingMarkSpacing;
     float     headingLabelWidth[36];
     float     altitudeMarkSpacing;

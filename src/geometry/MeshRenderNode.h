@@ -27,7 +27,7 @@ class OpaqueRenderNode : public RenderNode
 {
 public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
-                     GLuint* xformList, bool normalize,
+                     GLfloat *xformMatrix, bool normalize,
                      const GLfloat* color, int lod, int set,
                      const Extents* exts, int triangles);
     void render();
@@ -44,7 +44,7 @@ private:
     void drawVTN() const;
 private:
     MeshDrawMgr* drawMgr;
-    GLuint* xformList;
+    GLfloat* xformMatrix;
     bool normalize;
     int lod, set;
     const GLfloat* color;
@@ -57,7 +57,7 @@ class AlphaGroupRenderNode : public OpaqueRenderNode
 {
 public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
-                         GLuint* xformList, bool normalize,
+                         GLfloat *xformMatrix, bool normalize,
                          const GLfloat* color, int lod, int set,
                          const Extents* exts, const float pos[3],
                          int triangles);

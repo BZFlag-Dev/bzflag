@@ -357,16 +357,28 @@ void            HUDRenderer::setFPS(float _fps)
 
 void            HUDRenderer::setDrawTime(float drawTimeInseconds)
 {
+    const int maxCnt = 10000;
+    if (drawTimeInseconds < 0)
+    {
+        drawTime = drawTimeInseconds;
+        return;
+    }
     if (drawTime < 0.)
+        drawTimeCnt = maxCnt;
+    if (drawTimeCnt == maxCnt)
     {
         minDrawTime = drawTimeInseconds;
         maxDrawTime = drawTimeInseconds;
+        drawTimeTmp = 0;
+        drawTimeCnt = 0;
     }
-    drawTime = drawTimeInseconds;
-    if (drawTime < minDrawTime)
+    else if (drawTime < minDrawTime)
         minDrawTime = drawTime;
     else if (drawTime > maxDrawTime)
         maxDrawTime = drawTime;
+    drawTimeTmp += drawTimeInseconds;
+    drawTimeCnt++;
+    drawTime = drawTimeTmp / drawTimeCnt;
 }
 
 void            HUDRenderer::setFrameTriangleCount(int tpf)
@@ -1210,10 +1222,10 @@ void            HUDRenderer::renderTimes(void)
     }
     if (drawTime > 0.0f)
     {
-        const std::string buf = TextUtils::format("time: %d/%d/%dms",
-                                int(minDrawTime * 1000.0f),
-                                int(drawTime * 1000.0f),
-                                int(maxDrawTime * 1000.0f));
+        const std::string buf = TextUtils::format("time: %.2f/%.2f/%.2f ms",
+                                minDrawTime * 1000.0f,
+                                drawTime * 1000.0f,
+                                maxDrawTime * 1000.0f);
         hudColor3f(1.0f, 1.0f, 1.0f);
         fm.drawString((float)(centerx + maxMotionSize) - fm.getStrLength(headingFontFace, headingFontSize, buf),
                       (float)centery + (float)maxMotionSize +

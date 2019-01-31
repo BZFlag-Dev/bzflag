@@ -7,6 +7,21 @@ BZFlag 2.5.x
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
+BZFlag 2.4.19
+-------------
+
+* Add new bz_ePlayerDeathFinalizedEvent API event - Vladimir Jimenez
+* Output correct error when loading a nonexistent bzfs plugin - Vladimir Jimenez
+* Remove obsolete bzfs option from Start Server menu on Windows - Scott Wichser
+
+
+BZFlag 2.4.18  "Do You Hear What I Hear?" (2018-10-18)
+------------------------------------------------------
+
+* Fix DirectSound initialization order so that sound on Windows works again
+    - Scott Wichser
+
+
 BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
 ---------------------------------------------------
 

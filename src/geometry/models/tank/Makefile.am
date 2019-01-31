@@ -21,7 +21,6 @@ libTank_la_SOURCES =	\
 	low_ltread.cxx		\
 	low_rtread.cxx		\
 	low_turret.cxx		\
-	medium_barrel.cxx	\
 	medium_body.cxx		\
 	medium_ltread.cxx	\
 	medium_rtread.cxx	\

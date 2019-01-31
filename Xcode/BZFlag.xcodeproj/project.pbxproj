@@ -112,7 +112,6 @@
 		0357A8281670B2B70056C938 /* low_ltread.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A1166C846F008806E9 /* low_ltread.cxx */; };
 		0357A8291670B2B70056C938 /* low_rtread.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A2166C846F008806E9 /* low_rtread.cxx */; };
 		0357A82A1670B2B70056C938 /* low_turret.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A3166C846F008806E9 /* low_turret.cxx */; };
-		0357A82B1670B2B70056C938 /* medium_barrel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A5166C846F008806E9 /* medium_barrel.cxx */; };
 		0357A82C1670B2B70056C938 /* medium_body.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A6166C846F008806E9 /* medium_body.cxx */; };
 		0357A82D1670B2B70056C938 /* medium_ltread.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A7166C846F008806E9 /* medium_ltread.cxx */; };
 		0357A82E1670B2B70056C938 /* medium_rtread.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544A8166C846F008806E9 /* medium_rtread.cxx */; };
@@ -536,6 +535,7 @@
 		C363D12121118D300077D945 /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		C363D12221118D8C0077D945 /* plugin_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 0394E757167B1025007F4035 /* plugin_utils.h */; };
 		C39F69371E3D3E8100132C55 /* customPollTypeSample.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = C333EFC91E2B9F0800B4B182 /* customPollTypeSample.dylib */; };
+		C3DE232E21E2FBDD0081B64E /* libplugin_utils.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0394E895167B2513007F4035 /* libplugin_utils.a */; };
 		DF28982B16B4F5AE006C78AC /* ShotManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = DF28982916B4F5AE006C78AC /* ShotManager.cxx */; };
 /* End PBXBuildFile section */
 
@@ -1485,7 +1485,6 @@
 		035544A1166C846F008806E9 /* low_ltread.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = low_ltread.cxx; sourceTree = "<group>"; };
 		035544A2166C846F008806E9 /* low_rtread.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = low_rtread.cxx; sourceTree = "<group>"; };
 		035544A3166C846F008806E9 /* low_turret.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = low_turret.cxx; sourceTree = "<group>"; };
-		035544A5166C846F008806E9 /* medium_barrel.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = medium_barrel.cxx; sourceTree = "<group>"; };
 		035544A6166C846F008806E9 /* medium_body.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = medium_body.cxx; sourceTree = "<group>"; };
 		035544A7166C846F008806E9 /* medium_ltread.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = medium_ltread.cxx; sourceTree = "<group>"; };
 		035544A8166C846F008806E9 /* medium_rtread.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = medium_rtread.cxx; sourceTree = "<group>"; };
@@ -2904,7 +2903,6 @@
 				035544A1166C846F008806E9 /* low_ltread.cxx */,
 				035544A2166C846F008806E9 /* low_rtread.cxx */,
 				035544A3166C846F008806E9 /* low_turret.cxx */,
-				035544A5166C846F008806E9 /* medium_barrel.cxx */,
 				035544A6166C846F008806E9 /* medium_body.cxx */,
 				035544A7166C846F008806E9 /* medium_ltread.cxx */,
 				035544A8166C846F008806E9 /* medium_rtread.cxx */,
@@ -5143,7 +5141,6 @@
 				0357A8281670B2B70056C938 /* low_ltread.cxx in Sources */,
 				0357A8291670B2B70056C938 /* low_rtread.cxx in Sources */,
 				0357A82A1670B2B70056C938 /* low_turret.cxx in Sources */,
-				0357A82B1670B2B70056C938 /* medium_barrel.cxx in Sources */,
 				0357A82C1670B2B70056C938 /* medium_body.cxx in Sources */,
 				0357A82D1670B2B70056C938 /* medium_ltread.cxx in Sources */,
 				0357A82E1670B2B70056C938 /* medium_rtread.cxx in Sources */,
