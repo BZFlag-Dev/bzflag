@@ -35,7 +35,7 @@ void PlayerHandler::added(int playerIndex)
     joinGame();
 }
 
-void PlayerHandler::textMessage(int dest, int source, const char */*text*/)
+void PlayerHandler::textMessage(int dest, int source, const char* /*text*/)
 {
     if (dest == getPlayerID())
         sendChatMessage("WHAHAHAAHAHAHAHAAAAA?A?A?A?!?!", source);
