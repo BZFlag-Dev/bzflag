@@ -10,10 +10,10 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "config.h"
-
 #ifndef __VERSION_H__
 #define __VERSION_H__
+
+#include "config.h"
 
 #ifndef BZ_CONFIG_DIR_VERSION
 #define BZ_CONFIG_DIR_VERSION   "2.4"
