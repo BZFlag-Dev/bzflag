@@ -90,7 +90,8 @@
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -108,11 +109,10 @@
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
-copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -129,6 +129,7 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <AdditionalDependencies>bzfs.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -146,11 +147,10 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
-copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -180,11 +180,10 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
-copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -217,11 +216,10 @@ copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\
       <TargetMachine>MachineX64</TargetMachine>
     </Link>
     <PostBuildEvent>
-      <Command>mkdir $(ProjectDir)..\..\bin_$(Platform)
-mkdir $(ProjectDir)..\..\bin_$(Platform)\plugins
-copy $(OutDir)*.dll $(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\
-copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
-</Command>
+      <Command>mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)"
+mkdir "$(ProjectDir)..\..\bin_$(Configuration)_$(Platform)\plugins"
+copy "$(OutDir)*.dll" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"
+copy "$(ProjectDir)*.txt" "$(ProjectDir)\..\..\bin_$(Configuration)_$(Platform)\plugins\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
