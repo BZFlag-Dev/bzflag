@@ -126,5 +126,3 @@ inline void W32_DEBUG_TRACE (const char* buffer )
 #ifndef in_addr_t
 #define in_addr_t unsigned long
 #endif
-
-#pragma warning( disable : 4351 )

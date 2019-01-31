@@ -82,10 +82,6 @@ extern int debugLevel;
 #    define UNUSED(parameter) (parameter)
 #      endif
 #    else
-#      if defined(_MSC_VER)
-/* disable reporting an "unreferenced formal parameter" */
-#   pragma warning( disable : 4100 )
-#      endif
 #      define UNUSED(parameter) (parameter)
 #    endif
 #  endif

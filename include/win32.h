@@ -51,15 +51,12 @@ typedef unsigned int    uint32_t;
 
 /* stuff specific to visual studio */
 #if (_MSC_VER)
-#  pragma warning(disable: 4503)
-#  pragma warning(disable: 4355)
-
 // missing functions
 #ifndef snprintf
 #  define snprintf  _snprintf
 #endif
-
 #endif // _MSC_VER
+
 #endif // __WIN32_H__
 
 // Local Variables: ***

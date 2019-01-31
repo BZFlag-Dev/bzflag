@@ -10,10 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#if defined(_MSC_VER)
-#pragma warning(4:4503)
-#endif
-
 // interface header
 #include "KeyManager.h"
 
