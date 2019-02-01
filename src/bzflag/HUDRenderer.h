@@ -25,6 +25,8 @@
 #include "TimeKeeper.h"
 #include "HUDuiTypeIn.h"
 #include "Flag.h"
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 /* local interface headers */
 #include "FlashClock.h"
@@ -76,11 +78,13 @@ typedef std::vector<EnhancedHUDMarker> EnhancedMarkerList;
  * HUDRenderer:
  *  Encapsulates information about rendering the heads-up display.
  */
-class HUDRenderer
+class HUDRenderer: public VBOclient
 {
 public:
     HUDRenderer(const BzfDisplay*, const SceneRenderer&);
     ~HUDRenderer();
+
+    void initVBO();
 
     void drawGeometry();
 
@@ -142,6 +146,7 @@ protected:
     void      renderOptions(SceneRenderer&);
     void      renderCompose(SceneRenderer&);
     void      renderBox(SceneRenderer&);
+    void      renderBoxPrepare();
     void      renderTankLabels(SceneRenderer&);
     void      renderPlaying(SceneRenderer&);
     void      renderNotPlaying(SceneRenderer&);
@@ -272,6 +277,10 @@ private:
     unsigned int      lastTimeChange;
     int           triangleCount;
     int           radarTriangleCount;
+    int renderBoxIndex;
+    int geometryVBOIndex;
+    int wayPointVBOIndex;
+    int lockOnVBOIndex;
 };
 
 

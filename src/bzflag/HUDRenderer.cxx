@@ -115,10 +115,20 @@ HUDRenderer::HUDRenderer(const BzfDisplay* _display,
 
     // initialize fonts
     resize(true);
+
+    geometryVBOIndex = -1;
+    wayPointVBOIndex = -1;
+    lockOnVBOIndex = -1;
+    vboManager.registerClient(this);
 }
 
 HUDRenderer::~HUDRenderer()
 {
+    vboV.vboFree(wayPointVBOIndex);
+    vboV.vboFree(geometryVBOIndex);
+    vboV.vboFree(lockOnVBOIndex);
+    vboManager.unregisterClient(this);
+
     // don't notify me anymore (cos you can't wake the dead!)
     window.getWindow()->removeResizeCallback(resizeCallback, this);
 
@@ -126,6 +136,56 @@ HUDRenderer::~HUDRenderer()
     delete composeTypeIn;
 }
 
+void  HUDRenderer::initVBO()
+{
+    float lockonSize = 40;
+    float lockonInset = 15;
+    float lockonDeclination = 15;
+
+    float segmentation = 360.0f/32.0f;
+    float rad = lockonSize * 0.25f;
+    glm::vec3 vertex[66];
+
+    vertex[0] = glm::vec3(-rad, rad, 0.03f);
+    vertex[1] = glm::vec3(rad, -rad, 0.02f);
+
+    int k = 2;
+
+    for (int i = 0; i < 32; i++)
+    {
+        const float tRads = i * DEG2RADf * segmentation;
+        const float sRads = (i - 1) * DEG2RADf * segmentation;
+        vertex[k++] = glm::vec3(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
+        vertex[k++] = glm::vec3(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
+    }
+
+    geometryVBOIndex = vboV.vboAlloc(66);
+    vboV.vertexData(geometryVBOIndex, 66, vertex);
+
+    vertex[0] = glm::vec3( 0.0f, 0.0f, 0.0f);
+    vertex[1] = glm::vec3( 1.0f, 1.0f, 0.0f);
+    vertex[2] = glm::vec3(-1.0f, 1.0f, 0.0f);
+
+    vertex[3] = glm::vec3( 0.0f, 0.0f, 0.01f);
+    vertex[4] = glm::vec3( 1.0f, 1.0f, 0.01f);
+    vertex[5] = glm::vec3(-1.0f, 1.0f, 0.01f);
+
+    wayPointVBOIndex = vboV.vboAlloc(6);
+    vboV.vertexData(wayPointVBOIndex, 6, vertex);
+
+    vertex[0] = glm::vec3(-lockonInset,lockonSize-lockonDeclination, 0);
+    vertex[1] = glm::vec3(-lockonSize,lockonSize, 0);
+    vertex[2] = glm::vec3(-lockonSize,-lockonSize, 0);
+    vertex[3] = glm::vec3(-lockonInset,-lockonSize+lockonDeclination, 0);
+
+    vertex[4] = glm::vec3(lockonInset,lockonSize-lockonDeclination, 0);
+    vertex[5] = glm::vec3(lockonSize,lockonSize, 0);
+    vertex[6] = glm::vec3(lockonSize,-lockonSize, 0);
+    vertex[7] = glm::vec3(lockonInset,-lockonSize+lockonDeclination, 0);
+
+    lockOnVBOIndex = vboV.vboAlloc(8);
+    vboV.vertexData(lockOnVBOIndex, 8, vertex);
+}
 
 ScoreboardRenderer *HUDRenderer::getScoreboard ()
 {
@@ -661,9 +721,9 @@ static const float dimFactor = 0.2f;
 void            HUDRenderer::hudColor3f(GLfloat r, GLfloat g, GLfloat b)
 {
     if (dim)
-        glColor3f(dimFactor * r, dimFactor * g, dimFactor * b);
+        glColor4f(dimFactor * r, dimFactor * g, dimFactor * b, 10.0f);
     else
-        glColor3f(r, g, b);
+        glColor4f(r, g, b, 10.0f);
 }
 
 void            HUDRenderer::hudColor4f(
@@ -678,9 +738,9 @@ void            HUDRenderer::hudColor4f(
 void            HUDRenderer::hudColor3fv(const GLfloat* c)
 {
     if (dim)
-        glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
+        glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], 10.0f);
     else
-        glColor3fv(c);
+        glColor4f(c[0], c[1], c[2], 1.0f);
 }
 
 void HUDRenderer::hudColor3Afv(const float * c, const float a)
@@ -694,9 +754,9 @@ void HUDRenderer::hudColor3Afv(const float * c, const float a)
 void            HUDRenderer::hudSColor3fv(const GLfloat* c)
 {
     if (dim)
-        glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
+        glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], 1.0f);
     else
-        glColor3fv(c);
+        glColor4f(c[0], c[1], c[2], 1.0f);
 }
 
 void            HUDRenderer::hudColor4fv(const GLfloat* c)
@@ -704,58 +764,22 @@ void            HUDRenderer::hudColor4fv(const GLfloat* c)
     if (dim)
         glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], c[3]);
     else
-        glColor4fv(c);
+        glColor4f(c[0], c[1], c[2], 1.0f);
 }
 
 
 void            HUDRenderer::drawGeometry()
 {
-    float lockonSize = 40;
-
-    float segmentation = 360.0f/32.0f;
-    float rad = lockonSize * 0.25f;
-
     // white outline
     hudColor4f( 1,1,1, 0.85f );
     glLineWidth(4.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-rad,rad,0.03f);
-    glVertex3f(rad,-rad,0.02f);
-    // glVertex3f(-lockonSize*xFactor,lockonSize,0.02f);
-    // glVertex3f(lockonSize*xFactor,0,0.02f);
-    glEnd();
-
-    glBegin(GL_LINES);
-    for (float t = 0; t < 360; t += segmentation)
-    {
-        const float s = (t - segmentation);
-        const float tRads = t * DEG2RADf;
-        const float sRads = s * DEG2RADf;
-        glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
-        glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
-    }
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, geometryVBOIndex, 66);
 
     // red X
     hudColor4f( 1,0,0, 0.85f );
     glLineWidth(2.0f);
-    glBegin(GL_LINES);
-    glVertex3f(-rad,rad,0.03f);
-    glVertex3f(rad,-rad,0.02f);
-    // glVertex3f(-lockonSize*xFactor,lockonSize,0.03f);
-    //  glVertex3f(lockonSize*xFactor,0,0.02f);
-    glEnd();
-
-    glBegin(GL_LINES);
-    for (float t = 0; t < 360; t += segmentation)
-    {
-        const float s = (t - segmentation);
-        const float tRads = t * DEG2RADf;
-        const float sRads = s * DEG2RADf;
-        glVertex3f(sinf(sRads) * rad, cosf(sRads) * rad, 0.02f);
-        glVertex3f(sinf(tRads) * rad, cosf(tRads) * rad, 0.02f);
-    }
-    glEnd();
+    glDrawArrays(GL_LINES, geometryVBOIndex, 66);
 
     glLineWidth(2.0f);
 }
@@ -1152,24 +1176,28 @@ void            HUDRenderer::renderCracks()
                  GLfloat(window.getViewHeight() >> 1), 0.0f);
     glLineWidth(3.0);
     hudColor3f(1.0f, 1.0f, 1.0f);
-    glBegin(GL_LINES);
+    std::vector<glm::vec3> vertex;
     for (int i = 0; i < HUDNumCracks; i++)
     {
-        glVertex2fv(glm::value_ptr(cracks[i][0]));
-        glVertex2fv(glm::value_ptr(cracks[i][1]));
+        vertex.push_back(glm::vec3(cracks[i][0], 0.0f));
+        vertex.push_back(glm::vec3(cracks[i][1], 0.0f));
         for (int j = 0; j < maxLevels-1; j++)
         {
             const int num = 1 << j;
             for (int k = 0; k < num; k++)
             {
-                glVertex2fv(glm::value_ptr(cracks[i][num + k]));
-                glVertex2fv(glm::value_ptr(cracks[i][2 * (num + k)]));
-                glVertex2fv(glm::value_ptr(cracks[i][num + k]));
-                glVertex2fv(glm::value_ptr(cracks[i][2 * (num + k) + 1]));
+                vertex.push_back(glm::vec3(cracks[i][num + k], 0.0f));
+                vertex.push_back(glm::vec3(cracks[i][2 * (num + k)], 0.0f));
+                vertex.push_back(glm::vec3(cracks[i][num + k], 0.0f));
+                vertex.push_back(glm::vec3(cracks[i][2 * (num + k) + 1], 0.0f));
             }
         }
     }
-    glEnd();
+    int vboIndex = vboV.vboAlloc(vertex.size());
+    vboV.vertexData(vboIndex, vertex);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, vboIndex, vertex.size());
+    vboV.vboFree(vboIndex);
     glLineWidth(1.0);
     glPopMatrix();
 }
@@ -1308,17 +1336,12 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
     if (map[0] == -halfWidth && map[1] == halfHeight) // upper left
         glRotatef(180+45,0,0,1);
 
-    glBegin(GL_TRIANGLES);
-    glVertex2f(0,0);
-    glVertex2f(triangleSize,triangleSize);
-    glVertex2f(-triangleSize,triangleSize);
-    glEnd();
-
-    glBegin(GL_LINE_STRIP);
-    glVertex3f(0,0,0.01f);
-    glVertex3f(triangleSize,triangleSize,0.01f);
-    glVertex3f(-triangleSize,triangleSize,0.01f);
-    glEnd();
+    glPushMatrix();
+    glScalef(triangleSize, triangleSize, 0.0f);
+    vboV.enableArrays();
+    glDrawArrays(GL_TRIANGLES,  wayPointVBOIndex,     3);
+    glDrawArrays(GL_LINE_STRIP, wayPointVBOIndex + 3, 3);
+    glPopMatrix();
 
     if (friendly)
         drawGeometry();
@@ -1399,25 +1422,13 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
     glTranslatef((float)map[0],(float)map[1],0);
     glPushMatrix();
 
-    float lockonSize = 40;
-    float lockonInset = 15;
-    float lockonDeclination = 15;
-
     glLineWidth(3.0f);
 
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-lockonInset,lockonSize-lockonDeclination);
-    glVertex2f(-lockonSize,lockonSize);
-    glVertex2f(-lockonSize,-lockonSize);
-    glVertex2f(-lockonInset,-lockonSize+lockonDeclination);
-    glEnd();
+    float lockonSize = 40;
 
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(lockonInset,lockonSize-lockonDeclination);
-    glVertex2f(lockonSize,lockonSize);
-    glVertex2f(lockonSize,-lockonSize);
-    glVertex2f(lockonInset,-lockonSize+lockonDeclination);
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_STRIP, lockOnVBOIndex,     4);
+    glDrawArrays(GL_LINE_STRIP, lockOnVBOIndex + 4, 4);
 
     if (friendly)
         drawGeometry();
@@ -1442,6 +1453,9 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
 
 void            HUDRenderer::renderBox(SceneRenderer&)
 {
+    renderBoxPrepare();
+    int k = renderBoxIndex;
+
     // get view metrics
     const int width = window.getWidth();
     const int height = window.getHeight();
@@ -1460,22 +1474,11 @@ void            HUDRenderer::renderBox(SceneRenderer&)
 
     // draw targeting box
     hudColor3fv(hudColor);
-    glBegin(GL_LINE_LOOP);
-    {
-        glVertex2i(centerx - noMotionSize, centery - noMotionSize);
-        glVertex2i(centerx + noMotionSize, centery - noMotionSize);
-        glVertex2i(centerx + noMotionSize, centery + noMotionSize);
-        glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-    }
-    glEnd();
-    glBegin(GL_LINE_LOOP);
-    {
-        glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
-        glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
-        glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
-        glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-    }
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_LOOP, k, 4);
+    k += 4;
+    glDrawArrays(GL_LINE_LOOP, k, 4);
+    k += 4;
 
     // draw heading strip
     if (true /* always draw heading strip */)
@@ -1485,10 +1488,9 @@ void            HUDRenderer::renderBox(SceneRenderer&)
                   2 * maxMotionSize, 25 + (int)(headingFontSize + 0.5f));
 
         // draw heading mark
-        glBegin(GL_LINES);
-        glVertex2i(centerx, centery + maxMotionSize);
-        glVertex2i(centerx, centery + maxMotionSize - 5);
-        glEnd();
+        vboV.enableArrays();
+        glDrawArrays(GL_LINES, k, 2);
+        k += 2;
 
         // figure out which marker is closest to center
         int baseMark = int(heading) / 10;
@@ -1508,18 +1510,9 @@ void            HUDRenderer::renderBox(SceneRenderer&)
                         headingOffset;
         if (!smooth) basex = floorf(basex);
         glTranslatef((float)centerx - basex, (float)(centery + maxMotionSize), 0.0f);
-        x = smooth ? 0.0f : -0.5f;
-        glBegin(GL_LINES);
-        for (i = minMark; i <= maxMark; i++)
-        {
-            glVertex2i((int)x, 0);
-            glVertex2i((int)x, 8);
-            x += headingMarkSpacing;
-            glVertex2i((int)x, 0);
-            glVertex2i((int)x, 4);
-            x += headingMarkSpacing;
-        }
-        glEnd();
+        vboV.enableArrays();
+        glDrawArrays(GL_LINES, k, (maxMark - minMark + 1) * 4);
+        k += (maxMark - minMark + 1) * 4;
 
         // back to our regular rendering mode
         if (smooth)
@@ -1570,32 +1563,16 @@ void            HUDRenderer::renderBox(SceneRenderer&)
             if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset)
             {
                 // on the visible part of tape
-                GLfloat mx = maxMotionSize / headingOffset *
-                             ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
-                glBegin(GL_TRIANGLE_STRIP);
-                glVertex2f(mx, 0.0f);
-                glVertex2f(mx + 4.0f, 4.0f);
-                glVertex2f(mx - 4.0f, 4.0f);
-                glVertex2f(mx, 8.0f);
-                glEnd();
-            }
-            else if (relAngle <= 180.0)
-            {
-                // off to the right
-                glBegin(GL_TRIANGLES);
-                glVertex2f((float)maxMotionSize, 0.0f);
-                glVertex2f((float)maxMotionSize + 4.0f, 4.0f);
-                glVertex2f((float)maxMotionSize, 8.0f);
-                glEnd();
+                vboV.enableArrays();
+                glDrawArrays(GL_TRIANGLE_STRIP, k, 4);
+                k += 4;
             }
             else
             {
-                // off to the left
-                glBegin(GL_TRIANGLES);
-                glVertex2f(-(float)maxMotionSize, 0.0f);
-                glVertex2f(-(float)maxMotionSize, 8.0f);
-                glVertex2f(-(float)maxMotionSize - 4.0f, 4.0f);
-                glEnd();
+                // off to the right or left
+                vboV.enableArrays();
+                glDrawArrays(GL_TRIANGLES, k, 3);
+                k += 3;
             }
         }
         markers.clear();
@@ -1611,10 +1588,9 @@ void            HUDRenderer::renderBox(SceneRenderer&)
 
         // draw altitude mark
         hudColor3fv(hudColor);
-        glBegin(GL_LINES);
-        glVertex2i(centerx + maxMotionSize, centery);
-        glVertex2i(centerx + maxMotionSize - 5, centery);
-        glEnd();
+        vboV.enableArrays();
+        glDrawArrays(GL_LINES, k, 2);
+        k += 2;
 
         // figure out which marker is closest to center
         int baseMark = int(altitude) / 5;
@@ -1639,15 +1615,9 @@ void            HUDRenderer::renderBox(SceneRenderer&)
         if (!smooth) basey = floorf(basey);
         glTranslatef((float)(centerx + maxMotionSize),
                      (float)centery - basey, 0.0f);
-        y = smooth ? 0.0f : -0.5f;
-        glBegin(GL_LINES);
-        for (i = minMark; i <= maxMark; i++)
-        {
-            glVertex2i(0, (int)y);
-            glVertex2i(8, (int)y);
-            y += altitudeMarkSpacing;
-        }
-        glEnd();
+        vboV.enableArrays();
+        glDrawArrays(GL_LINES, k, (maxMark - minMark + 1) * 2);
+        k += (maxMark - minMark + 1) * 2;
 
         // back to our regular rendering mode
         if (smooth)
@@ -1683,6 +1653,117 @@ void            HUDRenderer::renderBox(SceneRenderer&)
             }
         }
     }
+    vboV.vboFree(renderBoxIndex);
+}
+
+void            HUDRenderer::renderBoxPrepare()
+{
+    std::vector<glm::vec3> vertex;
+
+    // get view metrics
+    const int width = window.getWidth();
+    const int viewHeight = window.getViewHeight();
+    const int centerx = width >> 1;
+    const int centery = viewHeight >> 1;
+    int i;
+    float x, y;
+
+    const bool smooth = BZDBCache::smooth;
+
+    // draw targeting box
+    vertex.push_back(glm::vec3(centerx - noMotionSize, centery - noMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx + noMotionSize, centery - noMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx + noMotionSize, centery + noMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx - noMotionSize, centery + noMotionSize, 0));
+
+    vertex.push_back(glm::vec3(centerx - maxMotionSize, centery - maxMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx + maxMotionSize, centery - maxMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx + maxMotionSize, centery + maxMotionSize, 0));
+    vertex.push_back(glm::vec3(centerx - maxMotionSize, centery + maxMotionSize, 0));
+
+    // draw heading strip
+    {
+        // draw heading mark
+        vertex.push_back(glm::vec3(centerx, centery + maxMotionSize,     0));
+        vertex.push_back(glm::vec3(centerx, centery + maxMotionSize - 5, 0));
+
+        // figure out which marker is closest to center
+        int baseMark = int(heading) / 10;
+        // get minimum and maximum visible marks (leave some leeway)
+        int minMark = baseMark - int(headingOffset / 10.0f) - 1;
+        int maxMark = baseMark + int(headingOffset / 10.0f) + 1;
+
+        // draw tick marks
+        x = smooth ? 0.0f : -0.5f;
+        for (i = minMark; i <= maxMark; i++)
+        {
+            vertex.push_back(glm::vec3((int)x, 0, 0));
+            vertex.push_back(glm::vec3((int)x, 8, 0));
+            x += headingMarkSpacing;
+            vertex.push_back(glm::vec3((int)x, 0, 0));
+            vertex.push_back(glm::vec3((int)x, 4, 0));
+            x += headingMarkSpacing;
+        }
+
+        // draw markers (give 'em a little more space on the sides)
+        for (MarkerList::const_iterator it = markers.begin(); it != markers.end(); ++it)
+        {
+            const HUDMarker &m = *it;
+            const float relAngle = fmodf(360.0f + m.heading - heading, 360.0f);
+            if (relAngle <= headingOffset || relAngle >= 360.0f - headingOffset)
+            {
+                // on the visible part of tape
+                GLfloat mx = maxMotionSize / headingOffset *
+                             ((relAngle < 180.0f) ? relAngle : relAngle - 360.0f);
+                vertex.push_back(glm::vec3(mx, 0.0f, 0));
+                vertex.push_back(glm::vec3(mx + 4.0f, 4.0f, 0));
+                vertex.push_back(glm::vec3(mx - 4.0f, 4.0f, 0));
+                vertex.push_back(glm::vec3(mx, 8.0f, 0));
+            }
+            else if (relAngle <= 180.0)
+            {
+                // off to the right
+                vertex.push_back(glm::vec3((float)maxMotionSize, 0.0f, 0));
+                vertex.push_back(glm::vec3((float)maxMotionSize + 4.0f, 4.0f, 0));
+                vertex.push_back(glm::vec3((float)maxMotionSize, 8.0f, 0));
+            }
+            else
+            {
+                // off to the left
+                vertex.push_back(glm::vec3(-(float)maxMotionSize, 0.0f, 0));
+                vertex.push_back(glm::vec3(-(float)maxMotionSize, 8.0f, 0));
+                vertex.push_back(glm::vec3(-(float)maxMotionSize - 4.0f, 4.0f, 0));
+            }
+        }
+    }
+
+    // draw altitude strip
+    if (altitudeTape)
+    {
+        // draw altitude mark
+        vertex.push_back(glm::vec3(centerx + maxMotionSize,     centery, 0));
+        vertex.push_back(glm::vec3(centerx + maxMotionSize - 5, centery, 0));
+
+        // figure out which marker is closest to center
+        int baseMark = int(altitude) / 5;
+
+        // get minimum and maximum visible marks (leave some leeway)
+        int minMark = baseMark - int(altitudeOffset / 5.0f) - 1;
+        if (minMark < 0) minMark = 0;
+
+        int maxMark = baseMark + int(altitudeOffset / 5.0f) + 1;
+
+        // draw tick marks
+        y = smooth ? 0.0f : -0.5f;
+        for (i = minMark; i <= maxMark; i++)
+        {
+            vertex.push_back(glm::vec3(0, (int)y, 0));
+            vertex.push_back(glm::vec3(8, (int)y, 0));
+            y += altitudeMarkSpacing;
+        }
+    }
+    renderBoxIndex = vboV.vboAlloc(vertex.size());
+    vboV.vertexData(renderBoxIndex, vertex);
 }
 
 void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
@@ -1750,12 +1831,10 @@ void HUDRenderer::prepareScreen()
         glColor4f(0.02f, 0.01f, 0.01f, 1.0);
         GLfloat x2 = (float)width;
         GLfloat y2 = z / (BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - 0.1f) * (float)viewHeight / 2.0f;
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f(0.0f, 0.0f);
-        glVertex2f(x2,   0.0f);
-        glVertex2f(0.0f, y2);
-        glVertex2f(x2,   y2);
-        glEnd();
+        glPushMatrix();
+        glScalef(x2, y2, 0);
+        DRAWER.asimmetricRect();
+        glPopMatrix();
     }
 }
 
@@ -2039,32 +2118,30 @@ void            HUDRenderer::renderShots(const Player* target)
         const int myWidth = int(indicatorWidth * factors[i]);
         const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
         const int y2    = myTop + indicatorHeight;
+        vboV.enableArrays();
         if (factors[i] < 1.0f)
         {
             hudColor4f(0.0f, 1.0f, 0.0f, 0.5f); // green
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2i(indicatorLeft,           myTop);
-            glVertex2i(indicatorLeft + myWidth, myTop);
-            glVertex2i(indicatorLeft,           y2);
-            glVertex2i(indicatorLeft + myWidth, y2);
-            glEnd();
+            glPushMatrix();
+            glTranslatef((float)indicatorLeft, (float)myTop, 0.0f);
+            glScalef((float)myWidth, (float)(y2 - myTop), 0.0f);
+            DRAWER.asimmetricRect();
+            glPopMatrix();
             hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2i(indicatorLeft + myWidth + 1,    myTop);
-            glVertex2i(indicatorLeft + indicatorWidth, myTop);
-            glVertex2i(indicatorLeft + myWidth + 1,    y2);
-            glVertex2i(indicatorLeft + indicatorWidth, y2);
-            glEnd();
+            glPushMatrix();
+            glTranslatef((float)(indicatorLeft + myWidth + 1), (float)myTop, 0.0f);
+            glScalef((float)(indicatorWidth - myWidth - 1), (float)(y2 - myTop), 0.0f);
+            DRAWER.asimmetricRect();
+            glPopMatrix();
         }
         else
         {
             hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // white
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2i(indicatorLeft,                  myTop);
-            glVertex2i(indicatorLeft + indicatorWidth, myTop);
-            glVertex2i(indicatorLeft,                  y2);
-            glVertex2i(indicatorLeft + indicatorWidth, y2);
-            glEnd();
+            glPushMatrix();
+            glTranslatef((float)indicatorLeft, (float)myTop, 0.0f);
+            glScalef((float)myWidth, (float)(y2 - myTop), 0.0f);
+            DRAWER.asimmetricRect();
+            glPopMatrix();
         }
     }
     glDisable(GL_BLEND);
