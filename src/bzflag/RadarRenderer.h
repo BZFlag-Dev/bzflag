@@ -22,15 +22,26 @@
 #include "bzfgl.h"
 #include "Obstacle.h"
 
+// System includes
+#include <vector>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
+// Common include
+#include "VBO_Handler.h"
 
 class SceneRenderer;
 class World;
 class ShotPath;
 
-class RadarRenderer
+class RadarRenderer: public VBOclient
 {
 public:
     RadarRenderer(const SceneRenderer&, World* _world);
+    ~RadarRenderer();
+
+    void initVBO();
+
     void        setWorld(World* _world);
 
     void        setControlColor(const GLfloat *color = NULL);
@@ -52,9 +63,6 @@ public:
     void        renderObstacles();
     void        renderWalls();
     void        renderBoxPyrMesh();
-    void        renderBoxPyrMeshFast(float range);
-    void        renderBasesAndTeles();
-
     int         getFrameTriangleCount() const;
 
 private:
@@ -62,8 +70,11 @@ private:
     RadarRenderer(const RadarRenderer&);
     RadarRenderer&  operator=(const RadarRenderer&);
 
-    void        drawShot(const ShotPath*);
-    void        setTankColor(const class Player* player);
+    void        renderBasesAndTeles();
+    void        renderWallsPrepare();
+    void        renderBoxPyrMeshPrepare();
+    void        renderBasesAndTelesPrepare();
+    glm::vec3   getTankColor(const class Player* player);
     void        drawTank(const float pos[3],
                          const class Player* player,
                          bool useSquares);
@@ -88,6 +99,17 @@ private:
     bool        useTankModels;
     int         triangleCount;
     static const float  colorFactor;
+    int         boxPyrCount;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec4> colors;
+    int         curVBOIndex;
+    int         baseCount;
+    int         teleportLineCount;
+    int         frameVBOindex;
+    int         markersVBOindex;
+    int         tankVBOindex;
+    int         flagVBOindex;
+    int         wallVBOindex;
 };
 
 //

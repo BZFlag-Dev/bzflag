@@ -13,6 +13,9 @@
 // interface header
 #include "RadarRenderer.h"
 
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
 // common implementation headers
 #include "SceneRenderer.h"
 #include "MainWindow.h"
@@ -27,6 +30,7 @@
 #include "BoxBuilding.h"
 #include "PyramidBuilding.h"
 #include "MeshObstacle.h"
+#include "VBO_Drawing.h"
 
 // local implementation headers
 #include "LocalPlayer.h"
@@ -57,11 +61,87 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
 {
 
     setControlColor();
+    frameVBOindex   = -1;
+    markersVBOindex = -1;
+    tankVBOindex    = -1;
+    flagVBOindex    = -1;
+    wallVBOindex    = -1;
+    vboManager.registerClient(this);
+}
+
+RadarRenderer::~RadarRenderer()
+{
+    vboV.vboFree(frameVBOindex);
+    vboV.vboFree(markersVBOindex);
+    vboV.vboFree(tankVBOindex);
+    vboV.vboFree(flagVBOindex);
+    vboV.vboFree(wallVBOindex);
+    vboManager.unregisterClient(this);
+}
+
+void RadarRenderer::initVBO()
+{
+    frameVBOindex   = vboV.vboAlloc(4);
+    markersVBOindex = vboV.vboAlloc(9);
+    tankVBOindex    = vboV.vboAlloc(5);
+    flagVBOindex    = vboV.vboAlloc(8);
+
+    glm::vec3 vertex[9];
+
+    // view frustum edges
+    vertex[0] = glm::vec3(-1.0f, 1.0f, 0.0f);
+    vertex[1] = glm::vec3( 0.0f, 0.0f, 0.0f);
+    vertex[2] = glm::vec3(+1.0f, 1.0f, 0.0f);
+
+    // north marker
+    vertex[3] = glm::vec3(-1.0f, -1.0f, 0.0f);
+    vertex[4] = glm::vec3(-1.0f, +1.0f, 0.0f);
+    vertex[5] = glm::vec3(+1.0f, -1.0f, 0.0f);
+    vertex[6] = glm::vec3(+1.0f, +1.0f, 0.0f);
+
+    // forward tick
+    vertex[7] = glm::vec3(0.0f, 1.0f, 0.0f);
+    vertex[8] = glm::vec3(0.0f, 4.0f, 0.0f);
+
+    vboV.vertexData(markersVBOindex, 9, vertex);
+
+    vertex[0] = glm::vec3(0.0f, 1.0f, 0.0f);
+    vertex[1] = glm::vec3(1.0f, 1.0f, 0.0f);
+    vertex[2] = glm::vec3(1.0f, 0.0f, 0.0f);
+    vertex[3] = glm::vec3(0.0f, 0.0f, 0.0f);
+    vboV.vertexData(frameVBOindex, 4, vertex);
+
+    // draw the height box
+    vertex[0] = glm::vec3(-1.0f,  0.0f, 0.0f);
+    vertex[1] = glm::vec3( 0.0f, -1.0f, 0.0f);
+    vertex[2] = glm::vec3(+1.0f,  0.0f, 0.0f);
+    vertex[3] = glm::vec3( 0.0f, +1.0f, 0.0f);
+    vertex[4] = glm::vec3(-1.0f,  0.0f, 0.0f);
+    vboV.vertexData(tankVBOindex, 5, vertex);
+
+    vertex[0] = glm::vec3(-1, 0, 0);
+    vertex[1] = glm::vec3(+1, 0, 0);
+    vertex[2] = glm::vec3(+1, 0, 0);
+    vertex[3] = glm::vec3(-1, 0, 0);
+    vertex[4] = glm::vec3(0, -1, 0);
+    vertex[5] = glm::vec3(0, +1, 0);
+    vertex[6] = glm::vec3(0, +1, 0);
+    vertex[7] = glm::vec3(0, -1, 0);
+    vboV.vertexData(flagVBOindex, 8, vertex);
+
+    // prepare the walls
+    wallVBOindex = -1;
+    renderWallsPrepare();
 }
 
 void RadarRenderer::setWorld(World* _world)
 {
     world = _world;
+
+    // prepare the walls
+    vboV.vboFree(wallVBOindex);
+    wallVBOindex = -1;
+    renderWallsPrepare();
 }
 
 
@@ -96,14 +176,7 @@ void RadarRenderer::setDimming(float newDimming)
 }
 
 
-void RadarRenderer::drawShot(const ShotPath* shot)
-{
-    glBegin(GL_POINTS);
-    glVertex2fv(shot->getPosition());
-    glEnd();
-}
-
-void RadarRenderer::setTankColor(const Player* player)
+glm::vec3 RadarRenderer::getTankColor(const Player* player)
 {
     //The height box also uses the tank color
 
@@ -111,11 +184,9 @@ void RadarRenderer::setTankColor(const Player* player)
 
     //my tank
     if (player->getId() == myTank->getId() )
-    {
-        glColor3f(1.0f, 1.0f, 1.0f);
-        return;
-    }
+        return glm::vec3(1.0f);
 
+    glm::vec3 tankColor;
     //remote player
     if (player->isPaused() || player->isNotResponding())
     {
@@ -127,16 +198,13 @@ void RadarRenderer::setTankColor(const Player* player)
         else
             color = Team::getRadarColor(player->getTeam());
 
-        float dimmedcolor[3];
-        dimmedcolor[0] = color[0] * dimfactor;
-        dimmedcolor[1] = color[1] * dimfactor;
-        dimmedcolor[2] = color[2] * dimfactor;
-        glColor3fv(dimmedcolor);
+        tankColor = glm::make_vec3(color) * dimfactor;
     }
     else
     {
-        glColor3fv(Team::getRadarColor(myTank->getFlag() ==
-                                       Flags::Colorblindness ? RogueTeam : player->getTeam()));
+        const GLfloat *col = Team::getRadarColor(myTank->getFlag() ==
+                             Flags::Colorblindness ? RogueTeam : player->getTeam());
+        tankColor = glm::make_vec3(col);
     }
     // If this tank is hunted flash it on the radar
     if (player->isHunted() && myTank->getFlag() != Flags::Colorblindness)
@@ -144,13 +212,7 @@ void RadarRenderer::setTankColor(const Player* player)
         if (flashTank.isOn())
         {
             if (!toggleTank)
-            {
-                float flashcolor[3];
-                flashcolor[0] = 0.0f;
-                flashcolor[1] = 0.8f;
-                flashcolor[2] = 0.9f;
-                glColor3fv(flashcolor);
-            }
+                tankColor = glm::vec3(0.0f, 0.8f, 0.9f);
         }
         else
         {
@@ -158,6 +220,7 @@ void RadarRenderer::setTankColor(const Player* player)
             flashTank.setClock(0.2f);
         }
     }
+    return tankColor;
 }
 
 void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useSquares)
@@ -181,18 +244,18 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     // transform to the tanks location
     glTranslatef(pos[0], pos[1], 0.0f);
 
+    glm::vec3 tankColor(getTankColor(player));
+
     // draw the tank
     if (useSquares || !useTankModels)
     {
-        setTankColor(player);
+        glColor4f(tankColor.r, tankColor.g, tankColor.b, 1.0f);
         // align to the screen axes
         glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f(-size, -size);
-        glVertex2f(+size, -size);
-        glVertex2f(-size, +size);
-        glVertex2f(+size, +size);
-        glEnd();
+        glPushMatrix();
+        glScalef(size, size, 0.0f);
+        DRAWER.simmetricRect();
+        glPopMatrix();
     }
     else
     {
@@ -200,7 +263,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
         glPushMatrix();
         glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
         drawFancyTank(player);
-        setTankColor(player);
+        glColor4f(tankColor.r, tankColor.g, tankColor.b, 1.0f);
         glPopMatrix();
 
         // align to the screen axes
@@ -211,14 +274,10 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     const float boxHeight = BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
     size = size * (1.0f + (0.5f * (pos[2] / boxHeight)));
 
+    glScalef(size, size, size);
     // draw the height box
-    glBegin(GL_LINE_STRIP);
-    glVertex2f(-size, 0.0f);
-    glVertex2f(0.0f, -size);
-    glVertex2f(+size, 0.0f);
-    glVertex2f(0.0f, +size);
-    glVertex2f(-size, 0.0f);
-    glEnd();
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_STRIP, tankVBOindex, 5);
 
     glPopMatrix();
 }
@@ -261,16 +320,12 @@ void RadarRenderer::drawFancyTank(const Player* player)
 void RadarRenderer::drawFlag(const float pos[3])
 {
     GLfloat s = BZDBCache::flagRadius > 3.0f * ps ? BZDBCache::flagRadius : 3.0f * ps;
-    glBegin(GL_LINES);
-    glVertex2f(pos[0] - s, pos[1]);
-    glVertex2f(pos[0] + s, pos[1]);
-    glVertex2f(pos[0] + s, pos[1]);
-    glVertex2f(pos[0] - s, pos[1]);
-    glVertex2f(pos[0], pos[1] - s);
-    glVertex2f(pos[0], pos[1] + s);
-    glVertex2f(pos[0], pos[1] + s);
-    glVertex2f(pos[0], pos[1] - s);
-    glEnd();
+    glPushMatrix();
+    glTranslatef(pos[0], pos[1], 0);
+    glScalef(s, s, 0);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, flagVBOindex, 8);
+    glPopMatrix();
 }
 
 void RadarRenderer::drawFlagOnTank(const float pos[3])
@@ -284,16 +339,9 @@ void RadarRenderer::drawFlagOnTank(const float pos[3])
 
     float tankRadius = BZDBCache::tankRadius;
     GLfloat s = 2.5f * tankRadius > 4.0f * ps ? 2.5f * tankRadius : 4.0f * ps;
-    glBegin(GL_LINES);
-    glVertex2f(-s, 0.0f);
-    glVertex2f(+s, 0.0f);
-    glVertex2f(+s, 0.0f);
-    glVertex2f(-s, 0.0f);
-    glVertex2f(0.0f, -s);
-    glVertex2f(0.0f, +s);
-    glVertex2f(0.0f, +s);
-    glVertex2f(0.0f, -s);
-    glEnd();
+    glScalef(s, s, 0);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, flagVBOindex, 8);
 
     glPopMatrix();
 }
@@ -332,14 +380,12 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
     glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
 
-    glBegin(GL_LINE_LOOP);
-    {
-        glVertex2f(left, top);
-        glVertex2f(right, top);
-        glVertex2f(right, bottom);
-        glVertex2f(left, bottom);
-    }
-    glEnd();
+    glPushMatrix();
+    glTranslatef(left, bottom, 0);
+    glScalef(right - left, top - bottom, 0);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_LOOP, frameVBOindex, 4);
+    glPopMatrix();
 
     glDisable(GL_BLEND);
 
@@ -353,12 +399,11 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
         if (opacity < 1.0f)
             glEnable(GL_BLEND);
         glColor4f(0.0f, 0.0f, 0.0f, opacity);
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f((float)x,       (float)y);
-        glVertex2f((float)(x + w), (float)y);
-        glVertex2f((float)x,       (float)(y + h));
-        glVertex2f((float)(x + w), (float)(y + h));
-        glEnd();
+        glPushMatrix();
+        glTranslatef((float)x, (float)y, 0.0f);
+        glScalef((float)w, (float)h, 0.0f);
+        DRAWER.asimmetricRect();
+        glPopMatrix();
         if (opacity < 1.0f)
             glDisable(GL_BLEND);
     }
@@ -443,11 +488,18 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     {
         glPushMatrix();
         glLoadIdentity();
+        glm::vec3 vertex[4];
+        glm::vec2 textur[4];
+
+        vertex[0] = glm::vec3(-radarRange,-radarRange, 0);
+        vertex[1] = glm::vec3( radarRange,-radarRange, 0);
+        vertex[2] = glm::vec3(-radarRange, radarRange, 0);
+        vertex[3] = glm::vec3( radarRange, radarRange, 0);
 
         TextureManager &tm = TextureManager::instance();
         int noiseTexture = tm.getTextureID( "noise" );
 
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         if (noiseTexture >= 0)
         {
@@ -472,21 +524,21 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             int noisePattern = 4 * int(floor(sequences * bzfrand()));
 
+            textur[0] = glm::vec2(np[noisePattern+0],np[noisePattern+1]);
+            textur[1] = glm::vec2(np[noisePattern+2],np[noisePattern+1]);
+            textur[2] = glm::vec2(np[noisePattern+0],np[noisePattern+3]);
+            textur[3] = glm::vec2(np[noisePattern+2],np[noisePattern+3]);
+
+            int vboIndex = vboVT.vboAlloc(4);
+            vboVT.textureData(vboIndex, 4, textur);
+            vboVT.vertexData(vboIndex, 4, vertex);
+
             glEnable(GL_TEXTURE_2D);
             tm.bind(noiseTexture);
 
-            glBegin(GL_TRIANGLE_STRIP);
-            {
-                glTexCoord2f(np[noisePattern+0],np[noisePattern+1]);
-                glVertex2f(-radarRange,-radarRange);
-                glTexCoord2f(np[noisePattern+2],np[noisePattern+1]);
-                glVertex2f( radarRange,-radarRange);
-                glTexCoord2f(np[noisePattern+0],np[noisePattern+3]);
-                glVertex2f(-radarRange, radarRange);
-                glTexCoord2f(np[noisePattern+2],np[noisePattern+3]);
-                glVertex2f( radarRange, radarRange);
-            }
-            glEnd();
+            vboVT.enableArrays();
+            glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
+            vboVT.vboFree(vboIndex);
 
             glDisable(GL_TEXTURE_2D);
         }
@@ -530,14 +582,14 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         // view frustum edges
         if (!BZDB.isTrue("hideRadarViewLines"))
         {
-            glColor3f(1.0f, 0.625f, 0.125f);
+            glColor4f(1.0f, 0.625f, 0.125f, 1.0f);
             const float fovx = renderer.getViewFrustum().getFOVx();
             const float viewWidth = radarRange * tanf(0.5f * fovx);
-            glBegin(GL_LINE_STRIP);
-            glVertex2f(-viewWidth, radarRange);
-            glVertex2f(0.0f, 0.0f);
-            glVertex2f(viewWidth, radarRange);
-            glEnd();
+            vboV.enableArrays();
+            glPushMatrix();
+            glScalef(viewWidth, radarRange, 0.0f);
+            glDrawArrays(GL_LINE_STRIP, markersVBOindex, 3);
+            glPopMatrix();
         }
 
         // transform to the observer's viewpoint
@@ -575,7 +627,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             if (shot)
             {
                 const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-                glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+                glColor4f(1.0f * cs, 1.0f * cs, 1.0f * cs, 1.0f);
                 shot->radarRender();
             }
         }
@@ -589,7 +641,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             if (shot)
             {
                 const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
-                glColor3f(1.0f * cs, 1.0f * cs, 1.0f * cs);
+                glColor4f(1.0f * cs, 1.0f * cs, 1.0f * cs, 1.0f);
                 shot->radarRender();
             }
         }
@@ -616,7 +668,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             if (player->getFlag() != Flags::Null)
             {
-                glColor3fv(player->getFlag()->getRadarColor());
+                const GLfloat *c = player->getFlag()->getRadarColor();
+                glColor4f(c[0], c[1], c[2], 1.0f);
                 drawFlagOnTank(position);
             }
 
@@ -647,10 +700,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
                             shotcolor = Team::getRadarColor(RogueTeam);
                         else
                             shotcolor = Team::getRadarColor(player->getTeam());
-                        glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
+                        glColor4f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs, 1.0f);
                     }
                     else
-                        glColor3f(cs, cs, cs);
+                        glColor4f(cs, cs, cs, 1.0f);
                     shot->radarRender();
                 }
             }
@@ -685,7 +738,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // Flags change color by height
             const float cs = colorScale(flag.position[2], muzzleHeight);
             const float *flagcolor = flag.type->getRadarColor();
-            glColor3f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs);
+            glColor4f(flagcolor[0] * cs, flagcolor[1] * cs, flagcolor[2] * cs, 1.0f);
             drawFlag(flag.position);
         }
         // draw antidote flag
@@ -693,7 +746,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             LocalPlayer::getMyTank()->getAntidoteLocation();
         if (antidotePos)
         {
-            glColor3f(1.0f, 1.0f, 0.0f);
+            glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
             drawFlag(antidotePos);
         }
 
@@ -702,22 +755,21 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
         // north marker
         GLfloat ns = 0.05f * radarRange, ny = 0.9f * radarRange;
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_LINE_STRIP);
-        glVertex2f(-ns, ny - ns);
-        glVertex2f(-ns, ny + ns);
-        glVertex2f(ns, ny - ns);
-        glVertex2f(ns, ny + ns);
-        glEnd();
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        vboV.enableArrays();
+        glTranslatef(0.0f, ny, 0.0f);
+        glScalef(ns, ns, 0);
+        glDrawArrays(GL_LINE_STRIP, markersVBOindex + 3, 4);
 
         // always up
         glPopMatrix();
 
         // forward tick
-        glBegin(GL_LINES);
-        glVertex2f(0.0f, radarRange - ps);
-        glVertex2f(0.0f, radarRange - 4.0f * ps);
-        glEnd();
+        glPushMatrix();
+        glTranslatef(0.0f, radarRange, 0.0f);
+        glScalef(0.0f, -ps, 0.0f);
+        glDrawArrays(GL_LINES, markersVBOindex + 7, 2);
+        glPopMatrix();
 
         if (!observer)
         {
@@ -728,7 +780,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // my flag
             if (myTank->getFlag() != Flags::Null)
             {
-                glColor3fv(myTank->getFlag()->getRadarColor());
+                const GLfloat *c = myTank->getFlag()->getRadarColor();
+                glColor4f(c[0], c[1], c[2], 1.0f);
                 drawFlagOnTank(myPos);
             }
 
@@ -749,12 +802,10 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // darken the entire radar if we're dimmed
             // we're drawing positively, so dimming is actually an opacity
             glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2f(-radarRange, -radarRange);
-            glVertex2f(+radarRange, -radarRange);
-            glVertex2f(-radarRange, +radarRange);
-            glVertex2f(+radarRange, +radarRange);
-            glEnd();
+            glPushMatrix();
+            glScalef(radarRange, radarRange, 0.0f);
+            DRAWER.simmetricRect();
+            glPopMatrix();
         }
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);
@@ -813,6 +864,21 @@ float RadarRenderer::transScale(const float z, const float h)
 
 void RadarRenderer::renderObstacles()
 {
+    vertices.clear();
+    colors.clear();
+
+    // prepare the boxes, pyramids, and meshes
+    renderBoxPyrMeshPrepare();
+    // prepare the team bases and teleporters
+    renderBasesAndTelesPrepare();
+
+    int vboIndexVC = vboVC.vboAlloc(vertices.size());
+    vboVC.vertexData(vboIndexVC, vertices);
+    vboVC.colorData(vboIndexVC, colors);
+
+
+    curVBOIndex = vboIndexVC;
+
     if (smooth)
     {
         glEnable(GL_BLEND);
@@ -828,6 +894,8 @@ void RadarRenderer::renderObstacles()
     // draw the team bases and teleporters
     renderBasesAndTeles();
 
+    vboVC.vboFree(vboIndexVC);
+
     if (smooth)
     {
         glDisable(GL_BLEND);
@@ -842,8 +910,26 @@ void RadarRenderer::renderWalls()
 {
     const ObstacleList& walls = OBSTACLEMGR.getWalls();
     int count = walls.size();
-    glColor3f(0.25f, 0.5f, 0.5f);
-    glBegin(GL_LINES);
+    if (!count)
+        return;
+
+    glColor4f(0.25f, 0.5f, 0.5f, 1.0f);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, wallVBOindex, count * 2);
+
+    return;
+}
+
+
+void RadarRenderer::renderWallsPrepare()
+{
+    const ObstacleList& walls = OBSTACLEMGR.getWalls();
+    int count = walls.size();
+    std::vector<glm::vec3> vertex;
+
+    if (!count)
+        return;
+
     for (int i = 0; i < count; i++)
     {
         const WallObstacle& wall = *((const WallObstacle*) walls[i]);
@@ -851,10 +937,12 @@ void RadarRenderer::renderWalls()
         const float c   = wid * cosf(wall.getRotation());
         const float s   = wid * sinf(wall.getRotation());
         const float* pos = wall.getPosition();
-        glVertex2f(pos[0] - s, pos[1] + c);
-        glVertex2f(pos[0] + s, pos[1] - c);
+        vertex.push_back(glm::vec3(pos[0] - s, pos[1] + c, 0));
+        vertex.push_back(glm::vec3(pos[0] + s, pos[1] - c, 0));
     }
-    glEnd();
+
+    wallVBOindex = vboV.vboAlloc(vertex.size());
+    vboV.vertexData(wallVBOindex, vertex);
 
     return;
 }
@@ -871,6 +959,69 @@ void RadarRenderer::renderBoxPyrMesh()
         // smoothing has blending enabled
         glDisable(GL_BLEND);
 
+    vboVC.enableArrays();
+    // draw box buildings.
+    // draw pyramid buildings
+    for (i = 0; i < boxPyrCount; i++)
+    {
+        glDrawArrays(GL_TRIANGLE_STRIP, curVBOIndex, 4);
+        curVBOIndex += 4;
+    }
+
+    // draw mesh obstacles
+    const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
+    int count = meshes.size();
+    if (smooth)
+        glEnable(GL_POLYGON_SMOOTH);
+    for (i = 0; i < count; i++)
+    {
+        const MeshObstacle* mesh = (const MeshObstacle*) meshes[i];
+        int faces = mesh->getFaceCount();
+
+        for (int f = 0; f < faces; f++)
+        {
+            const MeshFace* face = mesh->getFace(f);
+            {
+                if (face->getPlane()[2] <= 0.0f)
+                    continue;
+                const BzMaterial* bzmat = face->getMaterial();
+                if ((bzmat != NULL) && bzmat->getNoRadar())
+                    continue;
+            }
+            // draw the face as a triangle fan
+            int vertexCount = face->getVertexCount();
+            glDrawArrays(GL_TRIANGLE_FAN, curVBOIndex, vertexCount);
+            curVBOIndex += vertexCount;
+        }
+    }
+    if (smooth)
+        glDisable(GL_POLYGON_SMOOTH);
+
+    if (!smooth)
+        glDisable(GL_BLEND);
+
+    // now draw antialiased outlines around the polygons
+    if (smooth)
+    {
+        glEnable(GL_BLEND);
+
+        for (i = 0; i < boxPyrCount; i++)
+        {
+            glDrawArrays(GL_LINE_LOOP, curVBOIndex, 4);
+            curVBOIndex += 4;
+        }
+    }
+
+    return;
+}
+
+
+void RadarRenderer::renderBoxPyrMeshPrepare()
+{
+    int i;
+
+    boxPyrCount = 0;
+
     // draw box buildings.
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
     int count = boxes.size();
@@ -882,18 +1033,19 @@ void RadarRenderer::renderBoxPyrMesh()
         const float z = box.getPosition()[2];
         const float bh = box.getHeight();
         const float cs = colorScale(z, bh);
-        glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+        glm::vec4 color(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
         const float c = cosf(box.getRotation());
         const float s = sinf(box.getRotation());
         const float wx = c * box.getWidth(), wy = s * box.getWidth();
         const float hx = -s * box.getBreadth(), hy = c * box.getBreadth();
         const float* pos = box.getPosition();
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-        glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-        glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-        glEnd();
+        vertices.push_back(glm::vec3(pos[0] - wx - hx, pos[1] - wy - hy, 0));
+        vertices.push_back(glm::vec3(pos[0] + wx - hx, pos[1] + wy - hy, 0));
+        vertices.push_back(glm::vec3(pos[0] - wx + hx, pos[1] - wy + hy, 0));
+        vertices.push_back(glm::vec3(pos[0] + wx + hx, pos[1] + wy + hy, 0));
+        for (int j = 4; j > 0; j--)
+            colors.push_back(color);
+        boxPyrCount++;
     }
 
     // draw pyramid buildings
@@ -905,23 +1057,22 @@ void RadarRenderer::renderBoxPyrMesh()
         const float z = pyr.getPosition()[2];
         const float bh = pyr.getHeight();
         const float cs = colorScale(z, bh);
-        glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+        glm::vec4 color(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
         const float c = cosf(pyr.getRotation());
         const float s = sinf(pyr.getRotation());
         const float wx = c * pyr.getWidth(), wy = s * pyr.getWidth();
         const float hx = -s * pyr.getBreadth(), hy = c * pyr.getBreadth();
         const float* pos = pyr.getPosition();
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-        glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-        glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-        glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-        glEnd();
+        vertices.push_back(glm::vec3(pos[0] - wx - hx, pos[1] - wy - hy, 0));
+        vertices.push_back(glm::vec3(pos[0] + wx - hx, pos[1] + wy - hy, 0));
+        vertices.push_back(glm::vec3(pos[0] - wx + hx, pos[1] - wy + hy, 0));
+        vertices.push_back(glm::vec3(pos[0] + wx + hx, pos[1] + wy + hy, 0));
+        for (int j = 4; j > 0; j--)
+            colors.push_back(color);
+        boxPyrCount++;
     }
 
     // draw mesh obstacles
-    if (smooth)
-        glEnable(GL_POLYGON_SMOOTH);
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     count = meshes.size();
     for (i = 0; i < count; i++)
@@ -939,6 +1090,9 @@ void RadarRenderer::renderBoxPyrMesh()
                 if ((bzmat != NULL) && bzmat->getNoRadar())
                     continue;
             }
+
+            glm::vec4 color;
+
             float z = face->getPosition()[2];
             float bh = face->getSize()[2];
 
@@ -952,31 +1106,24 @@ void RadarRenderer::renderBoxPyrMesh()
             // draw death faces with a soupcon of red
             const PhysicsDriver* phydrv = PHYDRVMGR.getDriver(face->getPhysicsDriver());
             if ((phydrv != NULL) && phydrv->getIsDeath())
-                glColor4f(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
+                color = glm::vec4(0.75f * cs, 0.25f * cs, 0.25f * cs, transScale(z, bh));
             else
-                glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+                color = glm::vec4(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+
             // draw the face as a triangle fan
             int vertexCount = face->getVertexCount();
-            glBegin(GL_TRIANGLE_FAN);
             for (int v = 0; v < vertexCount; v++)
             {
                 const float* pos = face->getVertex(v);
-                glVertex2f(pos[0], pos[1]);
+                vertices.push_back(glm::vec3(pos[0], pos[1], 0));
+                colors.push_back(color);
             }
-            glEnd();
         }
     }
-    if (smooth)
-        glDisable(GL_POLYGON_SMOOTH);
-
-    // NOTE: revert from the enhanced setting
-    if (!smooth)
-        glDisable(GL_BLEND);
 
     // now draw antialiased outlines around the polygons
     if (smooth)
     {
-        glEnable(GL_BLEND); // NOTE: revert from the enhanced setting
         count = boxes.size();
         for (i = 0; i < count; i++)
         {
@@ -986,18 +1133,19 @@ void RadarRenderer::renderBoxPyrMesh()
             const float z = box.getPosition()[2];
             const float bh = box.getHeight();
             const float cs = colorScale(z, bh);
-            glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+            glm::vec4 color(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
             const float c = cosf(box.getRotation());
             const float s = sinf(box.getRotation());
             const float wx = c * box.getWidth(), wy = s * box.getWidth();
             const float hx = -s * box.getBreadth(), hy = c * box.getBreadth();
             const float* pos = box.getPosition();
-            glBegin(GL_LINE_LOOP);
-            glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-            glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-            glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-            glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-            glEnd();
+
+            vertices.push_back(glm::vec3(pos[0] - wx - hx, pos[1] - wy - hy, 0));
+            vertices.push_back(glm::vec3(pos[0] + wx - hx, pos[1] + wy - hy, 0));
+            vertices.push_back(glm::vec3(pos[0] + wx + hx, pos[1] + wy + hy, 0));
+            vertices.push_back(glm::vec3(pos[0] - wx + hx, pos[1] - wy + hy, 0));
+            for (int j = 4; j > 0; j--)
+                colors.push_back(color);
         }
 
         count = pyramids.size();
@@ -1007,18 +1155,19 @@ void RadarRenderer::renderBoxPyrMesh()
             const float z = pyr.getPosition()[2];
             const float bh = pyr.getHeight();
             const float cs = colorScale(z, bh);
-            glColor4f(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
+            glm::vec4 color(0.25f * cs, 0.5f * cs, 0.5f * cs, transScale(z, bh));
             const float c = cosf(pyr.getRotation());
             const float s = sinf(pyr.getRotation());
             const float wx = c * pyr.getWidth(), wy = s * pyr.getWidth();
             const float hx = -s * pyr.getBreadth(), hy = c * pyr.getBreadth();
             const float* pos = pyr.getPosition();
-            glBegin(GL_LINE_LOOP);
-            glVertex2f(pos[0] - wx - hx, pos[1] - wy - hy);
-            glVertex2f(pos[0] + wx - hx, pos[1] + wy - hy);
-            glVertex2f(pos[0] + wx + hx, pos[1] + wy + hy);
-            glVertex2f(pos[0] - wx + hx, pos[1] - wy + hy);
-            glEnd();
+
+            vertices.push_back(glm::vec3(pos[0] - wx - hx, pos[1] - wy - hy, 0));
+            vertices.push_back(glm::vec3(pos[0] + wx - hx, pos[1] + wy - hy, 0));
+            vertices.push_back(glm::vec3(pos[0] + wx + hx, pos[1] + wy + hy, 0));
+            vertices.push_back(glm::vec3(pos[0] - wx + hx, pos[1] - wy + hy, 0));
+            for (int j = 4; j > 0; j--)
+                colors.push_back(color);
         }
     }
 
@@ -1028,7 +1177,26 @@ void RadarRenderer::renderBoxPyrMesh()
 
 void RadarRenderer::renderBasesAndTeles()
 {
+    vboVC.enableArrays();
+    // draw team bases
+    for (int i = baseCount; i > 0; i--)
+    {
+        glDrawArrays(GL_LINE_LOOP, curVBOIndex, 4);
+        curVBOIndex += 4;
+    }
+    // draw teleporters.
+    glDrawArrays(GL_LINES, curVBOIndex, teleportLineCount);
+    curVBOIndex += teleportLineCount;
+
+    return;
+}
+
+
+void RadarRenderer::renderBasesAndTelesPrepare()
+{
     int i;
+    baseCount = 0;
+    teleportLineCount = 0;
 
     // draw team bases
     if (world->allowTeamFlags())
@@ -1040,19 +1208,20 @@ void RadarRenderer::renderBasesAndTeles()
                 const float *base = world->getBase(i, j);
                 if (base == NULL)
                     break;
-                glColor3fv(Team::getRadarColor(TeamColor(i)));
-                glBegin(GL_LINE_LOOP);
+                glm::vec4 color = glm::vec4(glm::make_vec3(Team::getRadarColor(TeamColor(i))), 1.0f);
                 const float beta = atan2f(base[5], base[4]);
                 const float r = hypotf(base[4], base[5]);
-                glVertex2f(base[0] + r * cosf(base[3] + beta),
-                           base[1] + r * sinf(base[3] + beta));
-                glVertex2f(base[0] + r * cosf((float)(base[3] - beta + M_PI)),
-                           base[1] + r * sinf((float)(base[3] - beta + M_PI)));
-                glVertex2f(base[0] + r * cosf((float)(base[3] + beta + M_PI)),
-                           base[1] + r * sinf((float)(base[3] + beta + M_PI)));
-                glVertex2f(base[0] + r * cosf(base[3] - beta),
-                           base[1] + r * sinf(base[3] - beta));
-                glEnd();
+                vertices.push_back(glm::vec3(base[0] + r * cosf(base[3] + beta),
+                                             base[1] + r * sinf(base[3] + beta), 0));
+                vertices.push_back(glm::vec3(base[0] + r * cosf((float)(base[3] - beta + M_PI)),
+                                             base[1] + r * sinf((float)(base[3] - beta + M_PI)), 0));
+                vertices.push_back(glm::vec3(base[0] + r * cosf((float)(base[3] + beta + M_PI)),
+                                             base[1] + r * sinf((float)(base[3] + beta + M_PI)), 0));
+                vertices.push_back(glm::vec3(base[0] + r * cosf(base[3] - beta),
+                                             base[1] + r * sinf(base[3] - beta), 0));
+                for (int k = 4; k > 0; k--)
+                    colors.push_back(color);
+                baseCount++;
             }
         }
     }
@@ -1065,8 +1234,6 @@ void RadarRenderer::renderBasesAndTeles()
     // is one system that doesn't do correct filtering.
     const ObstacleList& teleporters = OBSTACLEMGR.getTeles();
     int count = teleporters.size();
-    glColor3f(1.0f, 1.0f, 0.25f);
-    glBegin(GL_LINES);
     for (i = 0; i < count; i++)
     {
         const Teleporter & tele = *((const Teleporter *) teleporters[i]);
@@ -1075,44 +1242,49 @@ void RadarRenderer::renderBasesAndTeles()
             const float z = tele.getPosition ()[2];
             const float bh = tele.getHeight ();
             const float cs = colorScale (z, bh);
-            glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
+            glm::vec4 color(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
             const float c = cosf (tele.getRotation ());
             const float s = sinf (tele.getRotation ());
             const float wx = c * tele.getWidth (), wy = s * tele.getWidth ();
             const float hx = -s * tele.getBreadth (), hy = c * tele.getBreadth ();
             const float *pos = tele.getPosition ();
-            glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
-            glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
+            vertices.push_back(glm::vec3 (pos[0] - wx - hx, pos[1] - wy - hy, 0));
+            vertices.push_back(glm::vec3 (pos[0] + wx - hx, pos[1] + wy - hy, 0));
 
-            glVertex2f (pos[0] + wx - hx, pos[1] + wy - hy);
-            glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
+            vertices.push_back(glm::vec3 (pos[0] + wx - hx, pos[1] + wy - hy, 0));
+            vertices.push_back(glm::vec3 (pos[0] + wx + hx, pos[1] + wy + hy, 0));
 
-            glVertex2f (pos[0] + wx + hx, pos[1] + wy + hy);
-            glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
+            vertices.push_back(glm::vec3 (pos[0] + wx + hx, pos[1] + wy + hy, 0));
+            vertices.push_back(glm::vec3 (pos[0] - wx + hx, pos[1] - wy + hy, 0));
 
-            glVertex2f (pos[0] - wx + hx, pos[1] - wy + hy);
-            glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+            vertices.push_back(glm::vec3 (pos[0] - wx + hx, pos[1] - wy + hy, 0));
+            vertices.push_back(glm::vec3 (pos[0] - wx - hx, pos[1] - wy - hy, 0));
 
-            glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
-            glVertex2f (pos[0] - wx - hx, pos[1] - wy - hy);
+            vertices.push_back(glm::vec3 (pos[0] - wx - hx, pos[1] - wy - hy, 0));
+            vertices.push_back(glm::vec3 (pos[0] - wx - hx, pos[1] - wy - hy, 0));
+            for (int j = 10; j > 0; j--)
+                colors.push_back(color);
+            teleportLineCount += 10;
         }
         else
         {
             const float z = tele.getPosition ()[2];
             const float bh = tele.getHeight ();
             const float cs = colorScale (z, bh);
-            glColor4f (1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
+            glm::vec4 color(1.0f * cs, 1.0f * cs, 0.25f * cs, transScale (z, bh));
             const float tw = tele.getBreadth ();
             const float c = tw * cosf (tele.getRotation ());
             const float s = tw * sinf (tele.getRotation ());
             const float *pos = tele.getPosition ();
-            glVertex2f (pos[0] - s, pos[1] + c);
-            glVertex2f (pos[0] + s, pos[1] - c);
-            glVertex2f (pos[0] + s, pos[1] - c);
-            glVertex2f (pos[0] - s, pos[1] + c);
+            vertices.push_back(glm::vec3 (pos[0] - s, pos[1] + c, 0));
+            vertices.push_back(glm::vec3 (pos[0] + s, pos[1] - c, 0));
+            vertices.push_back(glm::vec3 (pos[0] + s, pos[1] - c, 0));
+            vertices.push_back(glm::vec3 (pos[0] - s, pos[1] + c, 0));
+            for (int j = 4; j > 0; j--)
+                colors.push_back(color);
+            teleportLineCount += 4;
         }
     }
-    glEnd();
 
     return;
 }
