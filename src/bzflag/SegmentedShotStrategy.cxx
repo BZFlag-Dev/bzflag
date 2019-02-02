@@ -15,6 +15,8 @@
 
 /* system implementation headers */
 #include <assert.h>
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 /* common implementation headers */
 #include "TextureManager.h"
@@ -74,12 +76,20 @@ SegmentedShotStrategy::SegmentedShotStrategy(ShotPath* _path, bool useSuperTextu
     int texture = tm.getTextureID(imageName.c_str());
     if (texture >= 0)
         boltSceneNode->setTexture(texture);
+    shotLineVBOIndex = -1;
 }
 
 SegmentedShotStrategy::~SegmentedShotStrategy()
 {
+    vboV.vboFree(shotLineVBOIndex);
+    vboManager.unregisterClient(this);
     // free scene nodes
     delete boltSceneNode;
+}
+
+void SegmentedShotStrategy::initVBO()
+{
+    shotLineVBOIndex = vboV.vboAlloc(4);
 }
 
 void  SegmentedShotStrategy::update(float dt)
@@ -325,75 +335,56 @@ void  SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
 
 void  SegmentedShotStrategy::radarRender() const
 {
+    glm::vec3 vertex[4];
     const float *orig = getPath().getPosition();
     const int length = (int)BZDBCache::linedRadarShots;
     const int size = (int)BZDBCache::sizedRadarShots;
 
     float shotTailLength = BZDB.eval(StateDatabase::BZDB_SHOTTAILLENGTH);
 
+    vertex[0] = glm::vec3(orig[0], orig[1], 0.0f);
+
+    vboV.enableArrays();
+
     // Display leading lines
     if (length > 0)
     {
-        const float* vel = getPath().getVelocity();
-        const float d = 1.0f / hypotf(vel[0], hypotf(vel[1], vel[2]));
-        float dir[3];
-        dir[0] = vel[0] * d * shotTailLength * length;
-        dir[1] = vel[1] * d * shotTailLength * length;
-        dir[2] = vel[2] * d * shotTailLength * length;
-        glBegin(GL_LINES);
-        glVertex2fv(orig);
+        glm::vec3 vel = glm::make_vec3(getPath().getVelocity());
+        glm::vec3 dir = glm::normalize(vel) * shotTailLength * float(length);
+        vertex[1] = glm::vec3(orig[0] + dir.x, orig[1] + dir.y, 0.0f);
+        vertex[2] = glm::vec3(orig[0],         orig[1],         0.0f);
+        vertex[3] = glm::vec3(orig[0] - dir.x, orig[1] - dir.y, 0.0f);
+        vboV.vertexData(shotLineVBOIndex, 4, vertex);
         if (BZDB.eval("leadingShotLine") == 0)   //lagging
-        {
-            glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
-            glEnd();
-        }
+            glDrawArrays(GL_LINES, shotLineVBOIndex + 2, 2);
         else if (BZDB.eval("leadingShotLine") == 2)     //both
-        {
-            glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-            glEnd();
-            glBegin(GL_LINES);
-            glVertex2fv(orig);
-            glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
-            glEnd();
-        }
+            glDrawArrays(GL_LINES, shotLineVBOIndex, 4);
         else     //leading
-        {
-            glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
-            glEnd();
-        }
+            glDrawArrays(GL_LINES, shotLineVBOIndex, 2);
 
         // draw a "bright" bullet tip
         if (size > 0)
         {
-            glColor3f(0.75, 0.75, 0.75);
+            glColor4f(0.75, 0.75, 0.75, 1.0f);
             glPointSize((float)size);
-            glBegin(GL_POINTS);
-            glVertex2f(orig[0], orig[1]);
-            glEnd();
+            glDrawArrays(GL_POINTS, shotLineVBOIndex, 1);
             glPointSize(1.0f);
         }
+    }
+    else if (size > 0)
+    {
+        // draw a sized bullet
+        glPointSize((float)size);
+        vboV.vertexData(shotLineVBOIndex, 1, vertex);
+        glDrawArrays(GL_POINTS, shotLineVBOIndex, 1);
+        glPointSize(1.0f);
     }
     else
     {
-        if (size > 0)
-        {
-            // draw a sized bullet
-            glPointSize((float)size);
-            glBegin(GL_POINTS);
-            glVertex2fv(orig);
-            glEnd();
-            glPointSize(1.0f);
-
-        }
-        else
-        {
-            // draw the tiny little bullet
-            glBegin(GL_POINTS);
-            glVertex2fv(orig);
-            glEnd();
-        }
+        // draw the tiny little bullet
+        vboV.vertexData(shotLineVBOIndex, 1, vertex);
+        glDrawArrays(GL_POINTS, shotLineVBOIndex, 1);
     }
-
 }
 
 void  SegmentedShotStrategy::makeSegments(ObstacleEffect e)
@@ -611,6 +602,7 @@ NormalShotStrategy::NormalShotStrategy(ShotPath* _path) :
 {
     // make segments
     makeSegments(Stop);
+    vboManager.registerClient(this);
 }
 
 NormalShotStrategy::~NormalShotStrategy()
@@ -637,6 +629,7 @@ RapidFireStrategy::RapidFireStrategy(ShotPath* _path) :
 
     // make segments
     makeSegments(Stop);
+    vboManager.registerClient(this);
 }
 
 RapidFireStrategy::~RapidFireStrategy()
@@ -694,14 +687,44 @@ ThiefStrategy::ThiefStrategy(ShotPath *_path) :
         thiefNodes[i]->setCenterColor(0, 0, 0);
     }
     setCurrentSegment(numSegments - 1);
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 ThiefStrategy::~ThiefStrategy()
 {
+    vboV.vboFree(vboIndex);
     const int numSegments = getSegments().size();
     for (int i = 0; i < numSegments; i++)
         delete thiefNodes[i];
     delete[] thiefNodes;
+}
+
+void ThiefStrategy::initVBO()
+{
+    // draw all segments
+    const std::vector<ShotPathSegment>& segmts = getSegments();
+    const int numSegments = segmts.size();
+    vboIndex = vboV.vboAlloc(2 * numSegments);
+
+    std::vector<glm::vec3> vertices;
+
+    for (int i = 0; i < numSegments; i++)
+    {
+        const ShotPathSegment& segm = segmts[i];
+        const float* origin = segm.ray.getOrigin();
+        const float* direction = segm.ray.getDirection();
+        const float dt = float(segm.end - segm.start);
+
+        glm::vec3 myOrig = glm::make_vec3(origin);
+        glm::vec3 myDir  = glm::make_vec3(direction);
+        myOrig[2] = 0;
+        myDir[2]  = 0;
+
+        vertices.push_back(myOrig);
+        vertices.push_back(myOrig + dt * myDir);
+    }
+    vboV.vertexData(vboIndex, vertices);
 }
 
 void  ThiefStrategy::update(float dt)
@@ -723,17 +746,9 @@ void  ThiefStrategy::radarRender() const
     // draw all segments
     const std::vector<ShotPathSegment>& segmts = getSegments();
     const int numSegments = segmts.size();
-    glBegin(GL_LINES);
-    for (int i = 0; i < numSegments; i++)
-    {
-        const ShotPathSegment& segm = segmts[i];
-        const float* origin = segm.ray.getOrigin();
-        const float* direction = segm.ray.getDirection();
-        const float dt = float(segm.end - segm.start);
-        glVertex2fv(origin);
-        glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-    }
-    glEnd();
+
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, vboIndex, 2 * numSegments);
 }
 
 bool  ThiefStrategy::isStoppedByHit() const
@@ -761,6 +776,7 @@ MachineGunStrategy::MachineGunStrategy(ShotPath* _path) :
 
     // make segments
     makeSegments(Stop);
+    vboManager.registerClient(this);
 }
 
 MachineGunStrategy::~MachineGunStrategy()
@@ -777,6 +793,7 @@ RicochetStrategy::RicochetStrategy(ShotPath* _path) :
 {
     // make segments that bounce
     makeSegments(Reflect);
+    vboManager.registerClient(this);
 }
 
 RicochetStrategy::~RicochetStrategy()
@@ -793,6 +810,7 @@ SuperBulletStrategy::SuperBulletStrategy(ShotPath* _path) :
 {
     // make segments that go through buildings
     makeSegments(Through);
+    vboManager.registerClient(this);
 }
 
 SuperBulletStrategy::~SuperBulletStrategy()
@@ -806,6 +824,7 @@ PhantomBulletStrategy::PhantomBulletStrategy(ShotPath* _path) :
 {
     // make segments that go through buildings
     makeSegments(Through);
+    vboManager.registerClient(this);
 }
 
 PhantomBulletStrategy::~PhantomBulletStrategy()
@@ -867,6 +886,7 @@ LaserStrategy::LaserStrategy(ShotPath* _path) :
             laserNodes[i]->setFirst();
     }
     setCurrentSegment(numSegments - 1);
+    vboManager.registerClient(this);
 }
 
 LaserStrategy::~LaserStrategy()
@@ -875,6 +895,32 @@ LaserStrategy::~LaserStrategy()
     for (int i = 0; i < numSegments; i++)
         delete laserNodes[i];
     delete[] laserNodes;
+}
+
+void LaserStrategy::initVBO()
+{
+    const std::vector<ShotPathSegment>& segmts = getSegments();
+    const int numSegments = segmts.size();
+    std::vector<glm::vec3> vertices;
+
+    vboIndex = vboV.vboAlloc(2 * numSegments);
+
+    for (int i = 0; i < numSegments; i++)
+    {
+        const ShotPathSegment& segm = segmts[i];
+        const float* origin = segm.ray.getOrigin();
+        const float* direction = segm.ray.getDirection();
+        const float dt = float(segm.end - segm.start);
+
+        glm::vec3 myOrig = glm::make_vec3(origin);
+        glm::vec3 myDir  = glm::make_vec3(direction);
+        myOrig[2] = 0;
+        myDir[2]  = 0;
+
+        vertices.push_back(myOrig);
+        vertices.push_back(myOrig + dt * myDir);
+    }
+    vboV.vertexData(vboIndex, vertices);
 }
 
 void  LaserStrategy::update(float dt)
@@ -896,17 +942,9 @@ void  LaserStrategy::radarRender() const
     // draw all segments
     const std::vector<ShotPathSegment>& segmts = getSegments();
     const int numSegments = segmts.size();
-    glBegin(GL_LINES);
-    for (int i = 0; i < numSegments; i++)
-    {
-        const ShotPathSegment& segm = segmts[i];
-        const float* origin = segm.ray.getOrigin();
-        const float* direction = segm.ray.getDirection();
-        const float dt = float(segm.end - segm.start);
-        glVertex2fv(origin);
-        glVertex2f(origin[0] + dt * direction[0], origin[1] + dt * direction[1]);
-    }
-    glEnd();
+
+    vboV.enableArrays();
+    glDrawArrays(GL_LINES, vboIndex, 2 * numSegments);
 }
 
 bool  LaserStrategy::isStoppedByHit() const

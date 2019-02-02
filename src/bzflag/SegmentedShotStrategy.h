@@ -23,6 +23,7 @@
 #include "SceneDatabase.h"
 #include "TimeKeeper.h"
 #include "LaserSceneNode.h"
+#include "VBO_Handler.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
@@ -30,11 +31,13 @@
 #include "BoltSceneNode.h"
 
 
-class SegmentedShotStrategy : public ShotStrategy
+class SegmentedShotStrategy : public ShotStrategy, public VBOclient
 {
 public:
     SegmentedShotStrategy(ShotPath*, bool useSuperTexture, bool faint = false);
     ~SegmentedShotStrategy();
+
+    virtual void initVBO();
 
     void        update(float dt);
     float       checkHit(const BaseLocalPlayer*, float[3]) const;
@@ -68,6 +71,7 @@ private:
     std::vector<ShotPathSegment>    segments;
     BoltSceneNode*  boltSceneNode;
     float       bbox[2][3];
+    int         shotLineVBOIndex;
 };
 
 class NormalShotStrategy : public SegmentedShotStrategy
@@ -89,6 +93,9 @@ class ThiefStrategy : public SegmentedShotStrategy
 public:
     ThiefStrategy(ShotPath*);
     ~ThiefStrategy();
+
+    virtual void initVBO();
+
     void        update(float dt);
     bool        isStoppedByHit() const;
     void        addShot(SceneDatabase*, bool colorblind);
@@ -98,6 +105,7 @@ private:
     float       cumTime;
     float       endTime;
     LaserSceneNode**    thiefNodes;
+    int         vboIndex;
 };
 
 class MachineGunStrategy : public SegmentedShotStrategy
@@ -113,6 +121,8 @@ public:
     LaserStrategy(ShotPath*);
     ~LaserStrategy();
 
+    void        initVBO();
+
     void        update(float dt);
     bool        isStoppedByHit() const;
     void        addShot(SceneDatabase*, bool colorblind);
@@ -122,6 +132,7 @@ private:
     float       cumTime;
     float       endTime;
     LaserSceneNode**    laserNodes;
+    int         vboIndex;
 };
 
 class RicochetStrategy : public SegmentedShotStrategy

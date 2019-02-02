@@ -15,6 +15,8 @@
 
 /* common implementation headers */
 #include "SceneRenderer.h"
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -124,16 +126,12 @@ void ShockWaveStrategy::addShot(SceneDatabase* scene, bool)
 void ShockWaveStrategy::radarRender() const
 {
     // draw circle of current radius
-    static const int sides = 20;
     const float* shotPos = getPath().getPosition();
-    glBegin(GL_LINE_LOOP);
-    for (int i = 0; i < sides; i++)
-    {
-        const float angle = (float)(2.0 * M_PI * double(i) / double(sides));
-        glVertex2f(shotPos[0] + radius * cosf(angle),
-                   shotPos[1] + radius * sinf(angle));
-    }
-    glEnd();
+    glPushMatrix();
+    glTranslatef(shotPos[0], shotPos[1], 0);
+    glScalef(radius, radius, 0.0f);
+    DRAWER.outlinedCircle20();
+    glPopMatrix();
 }
 
 

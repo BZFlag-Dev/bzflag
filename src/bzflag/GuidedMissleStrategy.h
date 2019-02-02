@@ -23,17 +23,20 @@
 #include "SceneDatabase.h"
 #include "TimeKeeper.h"
 #include "BoltSceneNode.h"
+#include "VBO_Handler.h"
 
 /* local interface headers */
 #include "BaseLocalPlayer.h"
 #include "ShotPathSegment.h"
 
 
-class GuidedMissileStrategy : public ShotStrategy
+class GuidedMissileStrategy : public ShotStrategy, VBOclient
 {
 public:
     GuidedMissileStrategy(ShotPath*);
     ~GuidedMissileStrategy();
+
+    virtual void initVBO();
 
     void        update(float dt);
     float       checkHit(const BaseLocalPlayer*, float[3]) const;
@@ -61,6 +64,7 @@ private:
     mutable bool    needUpdate;
     PlayerId        lastTarget;
     glm::vec3       currentDirection;
+    int             shotLineVBOIndex;
 };
 
 
