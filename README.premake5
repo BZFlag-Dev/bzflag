@@ -1,0 +1,79 @@
+BZFlag README for premake5
+==========================
+
+
+Dependencies Setup
+==================
+
+
+Building
+========
+
+Building with gmake (Linux and macOS)
+-------------------------------------
+
+Building with Visual Studio (Windows)
+-------------------------------------
+
+Building with Xcode (macOS)
+---------------------------
+
+
+Development
+===========
+
+Over time as the BZFlag project evolves, additions and modifications to the
+premake scripts may be necessary. When adding projects to the configuration
+or modifying existing ones, please use the following order of options in the
+premake scripts to the greatest extent possible in order to maintain
+consistency:
+
+  kind
+  language
+  targetprefix
+  include
+  files
+  vpaths
+  defines
+  includedirs
+  sysincludedirs
+  buildoptions
+  libdirs
+  frameworkdirs
+  linkoptions
+  links
+  dependson
+  <various other settings>
+  prebuildcommands
+  postbuildcommands
+
+Generic (unfiltered) options should be specified first, followed by any
+configuration-specific, system-specific, or otherwise filtered options.
+Arguments to these options should be given in alphabetical order whenever
+possible. For links, try to list local libraries alphabetically followed
+by system libraries alphabetically, but because the order of libraries
+matters to some linkers, some deviations may be necessary.
+
+
+To-Do
+=====
+
+`premake5 clean` is failing the first time, saying the directory is not empty (Windows)
+
+copy licenses in Xcode project (macOS)
+implement configuration option to specify a framework search directory to use SDL on macOS instead of the static library
+
+make newplug.sh work (macOS or Linux)
+fix man/plist/gmake installation paths so they're consistent (macOS or Linux)
+add premake5 configuration files to automake system (macOS or Linux)
+enable search for dependencies directory, with fallback to system dependencies if not found (macOS and Linux)
+
+finish updating this file, and point README.macOS to this file (Any)
+check formatting (replace tabs with 8 spaces in all?) and column width (Any)
+
+set up dependency finder, with selection of package or system, and error on Windows (All)
+set up options to add to header directories and library directories (All)
+test all configuration options (All)
+
+consider outputting configuration information on run
+check support for solaris and bsd, perhaps just under SDL 1.2/2
