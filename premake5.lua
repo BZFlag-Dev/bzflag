@@ -117,13 +117,8 @@ elseif _ACTION == "install" or _ACTION == "uninstall" then
   end
 end
 
--- set up workspace
-if _ACTION and string.find(_ACTION, "vs", 0) then
-  workspace "fullbuild" -- Windows needs separate solutions for debugging
-else
-  workspace "BZFlag"
-end
-
+-- set up main workspace
+workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   -- set up command line options
   newoption {
     ["trigger"] = "disable-client",
@@ -283,13 +278,13 @@ end
   language "C++"
   cppdialect "C++11"
   warnings "Default"
-  if _ACTION then
-    location("premake5/".._ACTION)
-  end
+  location("premake5/"..iif(_ACTION, _ACTION, ""))
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
   elseif not _OPTIONS["disable-server"] then
     startproject "bzfs"
+  elseif not _OPTIONS["disable-bzadmin"] then
+    startproject "bzadmin"
   end
 
   -- set up workspace build settings
@@ -501,7 +496,7 @@ end
 
   -- generate BZFlag-Info.plist
   if _ACTION and string.find(_ACTION, "xcode", 0) then
-    io.writefile("premake5/BZFlag-Info.plist",
+    io.writefile("premake5/".._ACTION.."/BZFlag-Info.plist",
                  "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"..
                  "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">"..
                  "<plist version=\"1.0\">"..
@@ -519,38 +514,37 @@ end
                  "<key>LSApplicationCategoryType</key><string>public.app-category.arcade-games</string>"..
                  "<key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>"..
                  "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2018 Tim Riker</string>"..
-                 "</dict>");
-    print("Generated premake5/BZFlag-Info.plist...")
+                 "</dict>"..
+                 "</plist>");
+    print("Generated premake5/".._ACTION.."/BZFlag-Info.plist...")
   end
 
-  -- set up the build (build order/dependencies are honored notwithstanding the
-  -- listed order here; this order is how we want the projects to show up in
-  -- the IDEs since the startproject option isn't fully supported)
+  -- set up the projects
+  if not _OPTIONS["disable-client"] then include "src/3D" end
+  if not _OPTIONS["disable-bzadmin"] then include "src/bzadmin" end
   if not _OPTIONS["disable-client"] then include "src/bzflag" end
   if not _OPTIONS["disable-server"] then include "src/bzfs" end
-  if not _OPTIONS["disable-bzadmin"] then include "src/bzadmin" end
-  if not _OPTIONS["disable-client"] then include "src/3D" end
   include "src/common"
   include "src/date"
   include "src/game"
   if not _OPTIONS["disable-client"] then include "src/geometry" end
-  if not _OPTIONS["disable-client"] then include "src/mediafile" end
-  include "src/net"
-  include "src/obstacle"
-  if not _OPTIONS["disable-client"] then include "src/ogl" end
-  if not _OPTIONS["disable-client"] then include "src/platform" end
-  if not _OPTIONS["disable-client"] then include "src/scene" end
-  if not _OPTIONS["disable-plugins"] and not _OPTIONS["disable-server"] then include "plugins" end
   if _TARGET_OS == "windows" and
      not _OPTIONS["disable-client"] and
      not _OPTIONS["disable-server"] and
      not _OPTIONS["disable-bzadmin"] and
      not _OPTIONS["disable-plugins"] and
      not _OPTIONS["disable-installer"] then
-    include "package/win32/nsis" -- for man2html, makehtml, and installer
+    include "package/win32/nsis" -- for installer, makehtml, and man2html
   end
+  if not _OPTIONS["disable-client"] then include "src/mediafile" end
+  include "src/net"
+  include "src/obstacle"
+  if not _OPTIONS["disable-client"] then include "src/ogl" end
+  if not _OPTIONS["disable-client"] then include "src/platform" end
+  if not _OPTIONS["disable-plugins"] and not _OPTIONS["disable-server"] then include "plugins" end
+  if not _OPTIONS["disable-client"] then include "src/scene" end
 
--- set up the rest of the Visual Studio solution files
+-- set up secondary workspaces for Visual Studio (this creates the extra .sln files)
 if _ACTION and string.find(_ACTION, "vs", 0) then
   if not _OPTIONS["disable-client"] then
     workspace "bzflag"

@@ -58,22 +58,43 @@ matters to some linkers, some deviations may be necessary.
 To-Do
 =====
 
-`premake5 clean` is failing the first time, saying the directory is not empty (Windows)
+General
+-------
+set up check for dependencies directory
+  error out on xcode and vs* actions if not found
+  optional on gmake action
+set up options for additional header and library search paths
+  these added after dependencies directory, if used
+set up main premake5.lua script to print out formatted configuration summary
 
-copy licenses in Xcode project (macOS)
-implement configuration option to specify a framework search directory to use SDL on macOS instead of the static library
+macOS
+-----
+copy licenses in BZFlag Xcode project
+make newplug.sh copy premake5.lua and adjust contents (or Linux)
+check man/plist/gmake installation paths for proper depth and consistency (or Linux)
+move any pertinent info in README.MacOSX, rename README.MacOSX to README.macOS, and make file refer to this file
+remove old Xcode project and associated files
+(idea) add option for using an SDL framework instead of system libraries
+  error out on other operating systems, or if --with-sdl=no, or if dependencies directory is found
+  if not implemented, in main premake5.lua, adjust LD_RUNPATH_SEARCH_PATHS Xcode option
 
-make newplug.sh work (macOS or Linux)
-fix man/plist/gmake installation paths so they're consistent (macOS or Linux)
-add premake5 configuration files to automake system (macOS or Linux)
-enable search for dependencies directory, with fallback to system dependencies if not found (macOS and Linux)
+Windows
+-------
+`premake5 clean` is failing the first time, complaining that the directory is not empty
 
-finish updating this file, and point README.macOS to this file (Any)
-check formatting (replace tabs with 8 spaces in all?) and column width (Any)
+Linux
+-----
 
-set up dependency finder, with selection of package or system, and error on Windows (All)
-set up options to add to header directories and library directories (All)
-test all configuration options (All)
-
-consider outputting configuration information on run
-check support for solaris and bsd, perhaps just under SDL 1.2/2
+Wrap-Up
+-------
+finish updating this README file
+check formatting
+  replace tabs with 8 spaces in all
+    there ARE examples of tabs where spaces should be in src/bzflag/premake5.lua
+  figure out good column width and enforce
+add premake5 configuration files to automake system
+consider removing the '5' from this filename and title, and the directory project files go into
+test all configuration options
+run all standard make system checks to see if there are any warnings
+read over all scripts slowly for review
+figure out what do do about support for solaris and bsd, perhaps just under SDL 1.2/2

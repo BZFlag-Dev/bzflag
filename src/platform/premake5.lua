@@ -79,7 +79,7 @@ project "platform"
 
   -- macOS
   filter "system:macosx"
-    files { "MacDataPath.cxx", "MacGL.h", "MacGL.mm" }
+    files "MacDataPath.cxx"
   filter { "system:macosx", "options:with-sdl=1" }
     files { "SDLMain.h", "SDLMain.m" }
 

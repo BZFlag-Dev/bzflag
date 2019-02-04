@@ -28,7 +28,7 @@ project "bzflag"
     ["Resource Files"] = {
       "../../MSVC/bzflag.ico",
       "../../Xcode/BZFlag.icns",
-      "../../premake5/BZFlag-Info.plist",
+      "../../premake5/"..iif(_ACTION, _ACTION, "").."/BZFlag-Info.plist",
       "../../MSVC/bzflag.rc",
       "../../MSVC/Version.rc"
     },
@@ -98,31 +98,31 @@ project "bzflag"
     end
     files {
       "../../Xcode/BZFlag.icns",
-      "../../premake5/BZFlag-Info.plist"
+      "../../premake5/"..iif(_ACTION, _ACTION, "").."/BZFlag-Info.plist"
     }
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-      "cp ../data/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../data/*.wav ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../data/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../data/*.wav ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts",
-      "cp ../data/fonts/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../data/fonts/*.fmt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../data/fonts/*.License ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../data/fonts/README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../../data/fonts/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../../data/fonts/*.fmt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../../data/fonts/*.License ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
+      "cp ../../data/fonts/README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
       "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n",
-      "cp ../data/l10n/*.po ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
-      "cp ../data/l10n/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
-      "cp ../AUTHORS ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../COPYING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../COPYING.LGPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../COPYING.MPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../ChangeLog ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../DEVINFO ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../data/l10n/*.po ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
+      "cp ../../data/l10n/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
+      "cp ../../AUTHORS ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../COPYING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../COPYING.LGPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../COPYING.MPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../ChangeLog ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../DEVINFO ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+      "cp ../../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
     }
   filter { "system:macosx",
@@ -155,9 +155,9 @@ project "bzflag"
         dependson(pluginName)
         postbuildcommands {
           "cp ${CONFIGURATION_BUILD_DIR}/"..pluginName..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginName..".dylib",
-          "cp ../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-          "cp ../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-          "cp ../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+          "cp ../../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+          "cp ../../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
+          "cp ../../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
         }
       end
     end
