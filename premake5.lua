@@ -342,7 +342,6 @@ end
       "HAVE__VSNPRINTF",
       "_WINSOCK_DEPRECATED_NO_WARNINGS"
     }
-    includedirs "MSVC/build"
     sysincludedirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/include"
     libdirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/lib"
     characterset "MBCS"
