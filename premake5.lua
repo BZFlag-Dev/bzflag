@@ -283,7 +283,9 @@ end
   language "C++"
   cppdialect "C++11"
   warnings "Default"
-  location("premake5/".._ACTION)
+  if _ACTION then
+    location("premake5/".._ACTION)
+  end
   if not _OPTIONS["disable-client"] then
     startproject "bzflag"
   elseif not _OPTIONS["disable-server"] then
