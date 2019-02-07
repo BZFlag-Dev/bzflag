@@ -5592,12 +5592,19 @@ static void renderRoamMouse()
     static const glm::vec4 color1 = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     glLineWidth(1.49f);
-    glBegin(GL_LINES);
-    glColor4fv(glm::value_ptr(color0));
-    glVertex2i(xc, yc);
-    glColor4fv(glm::value_ptr(color1));
-    glVertex2i(mx, my);
-    glEnd();
+    glm::vec3 vertices[2];
+    glm::vec4 colors[2];
+
+    colors[0] = color0;
+    vertices[0] = glm::vec3(xc, yc, 0);
+    colors[1] = color1;
+    vertices[1] = glm::vec3(mx, my, 0);
+    int vboIndex = vboVC.vboAlloc(2);
+    vboVC.vertexData(vboIndex, 2, vertices);
+    vboVC.colorData(vboIndex, 2, colors);
+    vboVC.enableArrays();
+    glDrawArrays(GL_LINES, vboIndex, 2);
+    vboVC.vboFree(vboIndex);
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
@@ -6331,14 +6338,18 @@ void drawFrame(const float dt)
             // drawn, but increment the value in the stencil buffer.
             glStencilFunc(GL_NEVER, 0x0, 0x0);
             glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-            glColor3f(1.0f, 1.0f, 1.0f);
+            glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+            std::vector<glm::vec3> vertices;
             for (int y=0; y<=height; y+=2)
             {
-                glBegin(GL_LINES);
-                glVertex2i(0, y);
-                glVertex2i(width, y);
-                glEnd();
+                vertices.push_back(glm::vec3(0, y, 0));
+                vertices.push_back(glm::vec3(width, y, 0));
             }
+            int vboIndex = vboV.vboAlloc(vertices.size());
+            vboV.vertexData(vboIndex, vertices);
+            vboV.enableArrays();
+            glDrawArrays(GL_LINES, vboIndex, vertices.size());
+            vboV.vboFree(vboIndex);
 
             // draw except where the stencil pattern is 0x1
             // do not change the stencil buffer
