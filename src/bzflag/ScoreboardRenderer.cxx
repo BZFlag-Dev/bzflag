@@ -25,6 +25,7 @@
 #include "OpenGLGState.h"
 #include "TextUtils.h"
 #include "TimeKeeper.h"
+#include "VBO_Handler.h"
 
 /* local implementation headers */
 #include "LocalPlayer.h"
@@ -208,9 +209,9 @@ static const float dimFactor = 0.2f;
 void ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 {
     if (dim)
-        glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
+        glColor4f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2], 1.0f);
     else
-        glColor3fv(c);
+        glColor4f(c[0], c[1], c[2], 1.0f);
 }
 
 
@@ -641,14 +642,27 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
     glDisable(GL_BLEND);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glBegin(GL_LINES);
-    glColor4fv(glm::value_ptr(c0));
-    glVertex2f(x0, y1);
-    glVertex2f(x1, y1);
-    glColor4fv(glm::value_ptr(c1));
-    glVertex2f(x0, y0);
-    glVertex2f(x1, y0);
-    glEnd();
+
+    glm::vec4 colors[4];
+    glm::vec3 vertices[4];
+
+    colors[0] = c0;
+    colors[1] = c0;
+    colors[2] = c1;
+    colors[3] = c1;
+
+    vertices[0] = glm::vec3(x0, y1, 0);
+    vertices[1] = glm::vec3(x1, y1, 0);
+    vertices[2] = glm::vec3(x0, y0, 0);
+    vertices[3] = glm::vec3(x1, y0, 0);
+
+    int vboIndex = vboVC.vboAlloc(4);
+    vboVC.colorData(vboIndex, 4, colors);
+    vboVC.vertexData(vboIndex, 4, vertices);
+    vboVC.enableArrays();
+    glDrawArrays(GL_LINES, vboIndex, 4);
+    vboVC.vboFree(vboIndex);
+
     glPopAttrib();
 }
 
