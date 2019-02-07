@@ -23,6 +23,7 @@
 
 //common headers
 #include "bzfgl.h"
+#include "VBO_Handler.h"
 
 // local headers
 #include "MainWindow.h"
@@ -49,11 +50,13 @@ private:
     int year, month, day, hour, min, sec;
 };
 
-class ControlPanel
+class ControlPanel: public VBOclient
 {
 public:
     ControlPanel(MainWindow&, SceneRenderer&);
     ~ControlPanel();
+
+    void initVBO();
 
     void        setControlColor(const GLfloat *color = NULL);
     void        render(SceneRenderer&);
@@ -129,7 +132,9 @@ private:
     float       lineHeight;
     bool        unRead[MessageModeCount];
     bool        paused;
-
+    int         vboIndex;
+    int         vboCount;
+    glm::vec3   lastVertices[17];
 };
 
 inline void ControlPanel::setDimming(float newDimming)

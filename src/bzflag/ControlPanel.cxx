@@ -33,6 +33,7 @@
 #ifdef _WIN32
 #  include <DirectoryNames.h>
 #endif
+#include "VBO_Drawing.h"
 
 /* local implementation headers */
 #include "SceneRenderer.h"
@@ -260,10 +261,14 @@ ControlPanel::ControlPanel(MainWindow& _mainWindow, SceneRenderer& _renderer) :
 #endif
 
     resize(); // need resize to set up font and window dimensions
+    vboIndex = -1;
+    vboManager.registerClient(this);
 }
 
 ControlPanel::~ControlPanel()
 {
+    vboV.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
     // don't notify me anymore (cos you can't wake the dead!)
     window.getWindow()->removeResizeCallback(resizeCallback, this);
     window.getWindow()->removeExposeCallback(exposeCallback, this);
@@ -286,6 +291,12 @@ ControlPanel::~ControlPanel()
         tabTextWidth.clear();
         totalTabWidth=0;
     }
+}
+
+void ControlPanel::initVBO()
+{
+    vboIndex = vboV.vboAlloc(17);
+    vboCount = 0;
 }
 
 void ControlPanel::bzdbCallback(const std::string& UNUSED(name), void* data)
@@ -361,27 +372,23 @@ void            ControlPanel::render(SceneRenderer& _renderer)
             glEnable(GL_BLEND);
 
         GLint x1 = messageAreaPixels[0];
-        GLint x2 = x1 + messageAreaPixels[2];
         GLint y1 = messageAreaPixels[1];
-        GLint y2 = y1 + messageAreaPixels[3];
         // clear the background
         glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
         // clear an extra pixel column to simplify fuzzy float stuff later
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2i(x1 - 1, y1);
-        glVertex2i(x2, y1);
-        glVertex2i(x1 - 1, y2);
-        glVertex2i(x2, y2);
-        glEnd();
+        glPushMatrix();
+        glTranslatef((float)(x1 - 1), (float)y1, 0.0f);
+        glScalef((float)(messageAreaPixels[2] + 1), (float)messageAreaPixels[3], 0.0f);
+        DRAWER.asimmetricRect();
+        glPopMatrix();
 
         // display tabs for chat sections
         if (showTabs)
         {
             // draw the tabs on the right side
             if (tabsOnRight)
-                x1 = x2 - totalTabWidth;
-            y2 += ay;
-            y1 = y2 - int(lineHeight + 4);
+                x1 += messageAreaPixels[2] - totalTabWidth;
+            y1 += messageAreaPixels[3] + ay - int(lineHeight + 4);
 
             for (unsigned int tab = 0; tab < tabs->size(); tab++)
             {
@@ -392,14 +399,12 @@ void            ControlPanel::render(SceneRenderer& _renderer)
                 else
                     glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
 
-                x2 = x1 + int(tabTextWidth[tab]);
-                glBegin(GL_TRIANGLE_STRIP);
-                glVertex2i(x1, y1);
-                glVertex2i(x2, y1);
-                glVertex2i(x1, y2);
-                glVertex2i(x2, y2);
-                glEnd();
-                x1 = x2;
+                glPushMatrix();
+                glTranslatef((float)x1, (float)y1, 0.0f);
+                glScalef(tabTextWidth[tab], lineHeight + 4, 0.0f);
+                DRAWER.asimmetricRect();
+                glPopMatrix();
+                x1 += int(tabTextWidth[tab]);
             } // end iteration over tabs
         }
 
@@ -421,13 +426,12 @@ void            ControlPanel::render(SceneRenderer& _renderer)
             int top = bottom + (int)(size * (float)messageAreaPixels[3]);
             if (top > maxTop)
                 top = maxTop;
-            glColor3f(0.7f, 0.7f, 0.7f);
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2i(messageAreaPixels[0],     bottom);
-            glVertex2i(messageAreaPixels[0] + 2, bottom);
-            glVertex2i(messageAreaPixels[0],     top);
-            glVertex2i(messageAreaPixels[0] + 2, top);
-            glEnd();
+            glColor4f(0.7f, 0.7f, 0.7f, 1.0f);
+            glPushMatrix();
+            glTranslatef((float)messageAreaPixels[0], (float)bottom, 0.0f);
+            glScalef(2.0f, (float)(top - bottom), 0.0f);
+            DRAWER.asimmetricRect();
+            glPopMatrix();
         }
     }
 
@@ -531,8 +535,7 @@ void            ControlPanel::render(SceneRenderer& _renderer)
         }
 
         // default to drawing text in white
-        GLfloat whiteColor[4] = {1.0f, 1.0f, 1.0f, dimming};
-        glColor4fv(whiteColor);
+        glColor4f(1.0f, 1.0f, 1.0f, dimming);
 
         bool isTab = false;
 
@@ -598,7 +601,10 @@ void            ControlPanel::render(SceneRenderer& _renderer)
 
     // nice border
     glColor4f(teamColor[0], teamColor[1], teamColor[2],outlineOpacity );
-    glBegin(GL_LINE_LOOP);
+
+    int k = 0;
+
+    glm::vec3 vertices[17];
     {
         long xpos;
         long ypos;
@@ -606,21 +612,21 @@ void            ControlPanel::render(SceneRenderer& _renderer)
         // bottom left
         xpos = x + messageAreaPixels[0] - 1;
         ypos = y + messageAreaPixels[1] - 1;
-        glVertex2f((float) xpos, (float) ypos);
+        vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
 
         // bottom right
         xpos += messageAreaPixels[2] + 1;
-        glVertex2f((float) xpos, (float) ypos);
+        vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
 
         // top right
         ypos += messageAreaPixels[3] + 1;
-        glVertex2f((float) xpos, (float) ypos);
+        vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
 
         // over to panel on left
         if (!tabsOnRight)
         {
             xpos = x + messageAreaPixels[0] + totalTabWidth;
-            glVertex2f((float) xpos, (float) ypos);
+            vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
         }
 
         // across the top from right to left
@@ -630,29 +636,40 @@ void            ControlPanel::render(SceneRenderer& _renderer)
             if (messageMode == MessageModes(tab))
             {
                 ypos += ay;
-                glVertex2f((float) xpos, (float) ypos);
+                vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
 
                 xpos -= long(tabTextWidth[tab]) + 1;
-                glVertex2f((float) xpos, (float) ypos);
+                vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
 
                 ypos -= ay;
-                glVertex2f((float) xpos, (float) ypos);
+                vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
             }
             else
             {
                 xpos -= long(tabTextWidth[tab]);
-                glVertex2f((float) xpos, (float) ypos);
+                vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
             }
         }
 
         // over from panel on right
-        //    if (tabsOnRight) {
         xpos = x + messageAreaPixels[0] - 1;
-        glVertex2f((float) xpos, (float) ypos);
-        //    }
-
+        vertices[k++] = glm::vec3((float) xpos, (float) ypos, 0);
     }
-    glEnd();
+
+    if (k != vboCount)
+    {
+        vboCount = k;
+        memcpy(&lastVertices[0].x, &vertices[0].x, sizeof(GLfloat[3]) * vboCount);
+        vboV.vertexData(vboIndex, vboCount, vertices);
+    }
+    else if (memcmp(&vertices[0].x, &lastVertices[0].x, sizeof(GLfloat[3]) * vboCount))
+    {
+        memcpy(&lastVertices[0].x, &vertices[0].x, sizeof(GLfloat[3]) * vboCount);
+        vboV.vertexData(vboIndex, vboCount, vertices);
+    }
+
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_LOOP, vboIndex, k);
 
     glDisable(GL_BLEND);
 
