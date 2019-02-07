@@ -25,7 +25,8 @@
 #include "SceneDatabase.h"
 #include "SceneRenderer.h"
 #include "SceneNode.h"
-
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 using namespace TrackMarks;
 
@@ -686,18 +687,7 @@ static void drawPuddle(const TrackEntry& te)
         glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
         glTranslatef(0.0f, +offset, 0.0f);
         glScalef(scale, scale, 1.0f);
-        glBegin(GL_TRIANGLE_STRIP);
-        {
-            glTexCoord2f(0.0f, 0.0f);
-            glVertex3f(-1.0f, -1.0f, 0.0f);
-            glTexCoord2f(1.0f, 0.0f);
-            glVertex3f(+1.0f, -1.0f, 0.0f);
-            glTexCoord2f(0.0f, 1.0f);
-            glVertex3f(-1.0f, +1.0f, 0.0f);
-            glTexCoord2f(1.0f, 1.0f);
-            glVertex3f(+1.0f, +1.0f, 0.0f);
-        }
-        glEnd();
+        DRAWER.simmetricTexturedRect();
     }
     glPopMatrix();
 
@@ -710,19 +700,7 @@ static void drawPuddle(const TrackEntry& te)
             glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
             glTranslatef(0.0f, -offset, 0.0f);
             glScalef(scale, scale, 1.0f);
-
-            glBegin(GL_TRIANGLE_STRIP);
-            {
-                glTexCoord2f(0.0f, 0.0f);
-                glVertex3f(-1.0f, -1.0f, 0.0f);
-                glTexCoord2f(1.0f, 0.0f);
-                glVertex3f(+1.0f, -1.0f, 0.0f);
-                glTexCoord2f(0.0f, 1.0f);
-                glVertex3f(-1.0f, +1.0f, 0.0f);
-                glTexCoord2f(1.0f, 1.0f);
-                glVertex3f(+1.0f, +1.0f, 0.0f);
-            }
-            glEnd();
+            DRAWER.simmetricTexturedRect();
         }
         glPopMatrix();
     }
@@ -747,21 +725,19 @@ static void drawSmokeandTreads(const TrackEntry& te)
 
         if ((te.sides & LeftTread) != 0)
         {
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2f(-halfWidth, +TreadInside);
-            glVertex2f(+halfWidth, +TreadInside);
-            glVertex2f(-halfWidth, +TreadOutside);
-            glVertex2f(+halfWidth, +TreadOutside);
-            glEnd();
+            glPushMatrix();
+            glTranslatef(0, (TreadInside + TreadOutside) / 2.0f, 0.0f);
+            glScalef(halfWidth, (TreadOutside - TreadInside) / 2.0f, 0.0f);
+            DRAWER.simmetricRect();
+            glPopMatrix();
         }
         if ((te.sides & RightTread) != 0)
         {
-            glBegin(GL_TRIANGLE_STRIP);
-            glVertex2f(-halfWidth, -TreadOutside);
-            glVertex2f(+halfWidth, -TreadOutside);
-            glVertex2f(-halfWidth, -TreadInside);
-            glVertex2f(+halfWidth, -TreadInside);
-            glEnd();
+            glPushMatrix();
+            glTranslatef(0, -(TreadInside + TreadOutside) / 2.0f, 0.0f);
+            glScalef(halfWidth, (TreadOutside - TreadInside) / 2.0f, 0.0f);
+            DRAWER.simmetricRect();
+            glPopMatrix();
         }
     }
     glPopMatrix();
