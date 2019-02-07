@@ -21,6 +21,7 @@
 #include "Bundle.h"
 #include "TextureManager.h"
 #include "FontManager.h"
+#include "VBO_Handler.h"
 
 // local implementation headers
 #include "HUDui.h"
@@ -235,20 +236,28 @@ void            HUDuiControl::renderFocus()
         float v = (float)(arrowFrame / uFrames) / (float)vFrames;
         fh2 = floorf(1.5f * fontHeight) - 1.0f; // this really should not scale the image based on the font,
         gstate->setState();             // best would be to load an image for each size
-        glColor3f(1.0f, 1.0f, 1.0f);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         float imageXShift = 0.5f;
         float imageYShift = -fh2 * 0.2f;
         float outputSize = fh2;
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(u, v);
-        glVertex2f(x + imageXShift - outputSize, y + imageYShift);
-        glTexCoord2f(u + du, v);
-        glVertex2f(x + imageXShift, y + imageYShift);
-        glTexCoord2f(u, v + dv);
-        glVertex2f(x + imageXShift - outputSize, y + outputSize + imageYShift);
-        glTexCoord2f(u + du, v + dv);
-        glVertex2f(x + imageXShift, y + outputSize + imageYShift);
-        glEnd();
+        glm::vec2 textures[4];
+        glm::vec3 vertices[4];
+
+        textures[0] = glm::vec2(u, v);
+        textures[1] = glm::vec2(u + du, v);
+        textures[2] = glm::vec2(u, v + dv);
+        textures[3] = glm::vec2(u + du, v + dv);
+        vertices[0] = glm::vec3(x + imageXShift - outputSize, y + imageYShift, 0);
+        vertices[1] = glm::vec3(x + imageXShift, y + imageYShift, 0);
+        vertices[2] = glm::vec3(x + imageXShift - outputSize, y + outputSize + imageYShift, 0);
+        vertices[3] = glm::vec3(x + imageXShift, y + outputSize + imageYShift, 0);
+
+        int vboIndex = vboVT.vboAlloc(4);
+        vboVT.textureData(vboIndex, 4, textures);
+        vboVT.vertexData(vboIndex, 4, vertices);
+        vboVT.enableArrays();
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
+        vboVT.vboFree(vboIndex);
 
         TimeKeeper nowTime = TimeKeeper::getCurrent();
         if (nowTime - lastTime > 0.07f)
@@ -261,19 +270,22 @@ void            HUDuiControl::renderFocus()
     {
         fh2 = floorf(0.5f * fontHeight);
         gstate->setState();
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_TRIANGLES);
-        glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-        glVertex2f(x - fh2 - fontHeight, y);
-        glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-        glEnd();
+        glm::vec3 vertices[6];
+        vertices[0] = glm::vec3(x - fh2 - fontHeight, y + fontHeight - 1.0f, 0);
+        vertices[1] = glm::vec3(x - fh2 - fontHeight, y, 0);
+        vertices[2] = glm::vec3(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f), 0);
+        vertices[3] = glm::vec3(x - fh2 - fontHeight, y + fontHeight - 1.0f, 0);
+        vertices[4] = glm::vec3(x - fh2 - fontHeight, y, 0);
+        vertices[5] = glm::vec3(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f), 0);
+        int vboIndex = vboV.vboAlloc(6);
+        vboV.vertexData(vboIndex, 6, vertices);
 
-        glColor3f(0.0f, 0.0f, 0.0f);
-        glBegin(GL_LINE_LOOP);
-        glVertex2f(x - fh2 - fontHeight, y + fontHeight - 1.0f);
-        glVertex2f(x - fh2 - fontHeight, y);
-        glVertex2f(x - fh2 - 1.0f, y + 0.5f * (fontHeight - 1.0f));
-        glEnd();
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glDrawArrays(GL_TRIANGLES, vboIndex, 3);
+
+        glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+        glDrawArrays(GL_LINE_LOOP, vboIndex + 3, 3);
+        vboVT.vboFree(vboIndex);
     }
 }
 
@@ -292,7 +304,8 @@ void            HUDuiControl::renderLabel()
 void            HUDuiControl::render()
 {
     if (hasFocus() && showingFocus) renderFocus();
-    glColor3fv(hasFocus() ? textColor : dimTextColor);
+    const GLfloat *col = hasFocus() ? textColor : dimTextColor;
+    glColor4f(col[0], col[1], col[2], 1.0f);
     renderLabel();
     doRender();
 }
