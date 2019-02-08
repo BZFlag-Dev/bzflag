@@ -19,8 +19,8 @@
 #include "TimeKeeper.h"
 #include "Flag.h"
 #include "playing.h"
-
-
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 class StdSpawnEffect : public BasicEffect
 {
@@ -1057,21 +1057,8 @@ void FlashShotEffect::draw(const SceneRenderer &)
     glDepthMask(0);
 
     // draw me here
-    glBegin(GL_TRIANGLE_STRIP);
-
-    glTexCoord2f(0,1);
-    glVertex3f(0,0,radius);
-
-    glTexCoord2f(0,0);
-    glVertex3f(0,length,radius);
-
-    glTexCoord2f(1,1);
-    glVertex3f(0,0,-radius);
-
-    glTexCoord2f(1,0);
-    glVertex3f(0,length,-radius);
-
-    glEnd();
+    glScalef(0.0f, length, radius);
+    DRAWER.verticalTexturedRect();
 
     glColor4f(1,1,1,1);
     glDepthMask(1);
@@ -1537,23 +1524,26 @@ bool SmokeGMPuffEffect::update ( float time )
     return false;
 }
 
-void QuadGuts ( float u0, float v0, float u1, float v1, float h, float v)
-{
-    glTexCoord2f(u0, v0);
-    glVertex2f(-h, -v);
-    glTexCoord2f(u1, v0);
-    glVertex2f(+h, -v);
-    glTexCoord2f(u0, v1);
-    glVertex2f(-h, +v);
-    glTexCoord2f(u1, v1);
-    glVertex2f(+h, +v);
-}
-
 void DrawTextureQuad ( float u0, float v0, float u1, float v1, float h, float v)
 {
-    glBegin(GL_TRIANGLE_STRIP);
-    QuadGuts(u0,v0,u1,v1,h,v);
-    glEnd();
+    glm::vec2 textures[4];
+    glm::vec3 vertices[4];
+
+    textures[0] = glm::vec2(u0, v0);
+    vertices[0] = glm::vec3(-h, -v, 0);
+    textures[1] = glm::vec2(u1, v0);
+    vertices[1] = glm::vec3(+h, -v, 0);
+    textures[2] = glm::vec2(u0, v1);
+    vertices[2] = glm::vec3(-h, +v, 0);
+    textures[3] = glm::vec2(u1, v1);
+    vertices[3] = glm::vec3(+h, +v, 0);
+
+    int vboIndex = vboVT.vboAlloc(4);
+    vboVT.textureData(vboIndex, 4, textures);
+    vboVT.vertexData(vboIndex, 4, vertices);
+    vboVT.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, vboIndex, 4);
+    vboVT.vboFree(vboIndex);
 }
 
 void SmokeGMPuffEffect::draw(const SceneRenderer &)
@@ -1749,6 +1739,24 @@ static void RadialToCartesian(float angle, float rad, float *pos)
 static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
                        float topUV, int segments )
 {
+    glm::vec3 normals[8];
+    glm::vec2 textures[8];
+    glm::vec3 vertices[8];
+
+    textures[0] = glm::vec2(0,bottomUV);
+    textures[1] = glm::vec2(1,bottomUV);
+    textures[2] = glm::vec2(0,topUV);
+    textures[3] = glm::vec2(1,topUV);
+    textures[4] = glm::vec2(0,topUV);
+    textures[5] = glm::vec2(1,topUV);
+    textures[6] = glm::vec2(0,bottomUV);
+    textures[7] = glm::vec2(1,bottomUV);
+
+    int vboIndex = vboVTN.vboAlloc(8);
+
+    vboVTN.textureData(vboIndex, 8, textures);
+    vboVTN.enableArrays();
+
     for ( int i = 0; i < segments; i ++)
     {
         float thisAng = 360.0f/segments * i;
@@ -1774,48 +1782,37 @@ static void drawRingXY(float rad, float z, float topsideOffset, float bottomUV,
         RadialToCartesian(nextAng,rad+topsideOffset,nextPos2);
 
         // the "inside"
-        glBegin(GL_TRIANGLE_STRIP);
+        normals[0] = glm::vec3(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
+        vertices[0] = glm::vec3(thispos[0],thispos[1],0);
 
-        glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-        glTexCoord2f(0,bottomUV);
-        glVertex3f(thispos[0],thispos[1],0);
+        normals[1] = glm::vec3(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
+        vertices[1] = glm::vec3(nextPos[0],nextPos[1],0);
 
-        glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-        glTexCoord2f(1,bottomUV);
-        glVertex3f(nextPos[0],nextPos[1],0);
+        normals[2] = glm::vec3(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
+        vertices[2] = glm::vec3(thispos2[0],thispos2[1],z);
 
-        glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-        glTexCoord2f(0,topUV);
-        glVertex3f(thispos2[0],thispos2[1],z);
-
-        glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-        glTexCoord2f(1,topUV);
-        glVertex3f(nextPos2[0],nextPos2[1],z);
-
-        glEnd();
+        normals[3] = glm::vec3(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
+        vertices[3] = glm::vec3(nextPos2[0],nextPos2[1],z);
 
         // the "outside"
-        glBegin(GL_TRIANGLE_STRIP);
+        normals[4] = glm::vec3(thisNormal[0],thisNormal[1],thisNormal[2]);
+        vertices[4] = glm::vec3(thispos2[0],thispos2[1],z);
 
-        glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-        glTexCoord2f(0,topUV);
-        glVertex3f(thispos2[0],thispos2[1],z);
+        normals[5] = glm::vec3(nextNormal[0],nextNormal[1],nextNormal[2]);
+        vertices[5] = glm::vec3(nextPos2[0],nextPos2[1],z);
 
-        glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-        glTexCoord2f(1,topUV);
-        glVertex3f(nextPos2[0],nextPos2[1],z);
+        normals[6] = glm::vec3(thisNormal[0],thisNormal[1],thisNormal[2]);
+        vertices[6] = glm::vec3(thispos[0],thispos[1],0);
 
-        glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-        glTexCoord2f(0,bottomUV);
-        glVertex3f(thispos[0],thispos[1],0);
+        normals[7] = glm::vec3(nextNormal[0],nextNormal[1],nextNormal[2]);
+        vertices[7] = glm::vec3(nextPos[0],nextPos[1],0);
 
-        glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-        glTexCoord2f(1,bottomUV);
-        glVertex3f(nextPos[0],nextPos[1],0);
-
-        glEnd();
-
+        vboVTN.normalData(vboIndex, 8, normals);
+        vboVTN.vertexData(vboIndex, 8, vertices);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex,     4);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex + 4, 4);
     }
+    vboVTN.vboFree(vboIndex);
 }
 
 static float clampedZ(float z, float offset)
@@ -1828,6 +1825,24 @@ static float clampedZ(float z, float offset)
 static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
                        float ZOffset, float topUV, int segments)
 {
+    glm::vec3 normals[8];
+    glm::vec2 textures[8];
+    glm::vec3 vertices[8];
+
+    textures[0] = glm::vec2(0,bottomUV);
+    textures[1] = glm::vec2(1,bottomUV);
+    textures[2] = glm::vec2(0,topUV);
+    textures[3] = glm::vec2(1,topUV);
+    textures[4] = glm::vec2(0,topUV);
+    textures[5] = glm::vec2(1,topUV);
+    textures[6] = glm::vec2(0,bottomUV);
+    textures[7] = glm::vec2(1,bottomUV);
+
+    int vboIndex = vboVTN.vboAlloc(8);
+
+    vboVTN.textureData(vboIndex, 8, textures);
+    vboVTN.enableArrays();
+
     for ( int i = 0; i < segments; i ++)
     {
         float thisAng = 360.0f/segments * i;
@@ -1853,47 +1868,37 @@ static void drawRingYZ(float rad, float z, float topsideOffset, float bottomUV,
         RadialToCartesian(nextAng,rad+topsideOffset,nextPos2);
 
         // the "inside"
-        glBegin(GL_TRIANGLE_STRIP);
+        normals[0] = glm::vec3(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
+        vertices[0] = glm::vec3(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
-        glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-        glTexCoord2f(0,bottomUV);
-        glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
+        normals[1] = glm::vec3(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
+        vertices[1] = glm::vec3(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
 
-        glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-        glTexCoord2f(1,bottomUV);
-        glVertex3f(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
+        normals[2] = glm::vec3(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
+        vertices[2] = glm::vec3(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
-        glNormal3f(-thisNormal[0],-thisNormal[1],-thisNormal[2]);
-        glTexCoord2f(0,topUV);
-        glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
-
-        glNormal3f(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
-        glTexCoord2f(1,topUV);
-        glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
-
-        glEnd();
+        normals[3] = glm::vec3(-nextNormal[0],-nextNormal[1],-nextNormal[2]);
+        vertices[3] = glm::vec3(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
         // the "outside"
-        glBegin(GL_TRIANGLE_STRIP);
+        normals[4] = glm::vec3(thisNormal[0],thisNormal[1],thisNormal[2]);
+        vertices[4] = glm::vec3(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
 
-        glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-        glTexCoord2f(0,topUV);
-        glVertex3f(z,thispos2[1],clampedZ(thispos2[0],ZOffset));
+        normals[5] = glm::vec3(nextNormal[0],nextNormal[1],nextNormal[2]);
+        vertices[5] = glm::vec3(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
 
-        glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-        glTexCoord2f(1,topUV);
-        glVertex3f(z,nextPos2[1],clampedZ(nextPos2[0],ZOffset));
+        normals[6] = glm::vec3(thisNormal[0],thisNormal[1],thisNormal[2]);
+        vertices[6] = glm::vec3(0,thispos[1],clampedZ(thispos[0],ZOffset));
 
-        glNormal3f(thisNormal[0],thisNormal[1],thisNormal[2]);
-        glTexCoord2f(0,bottomUV);
-        glVertex3f(0,thispos[1],clampedZ(thispos[0],ZOffset));
+        normals[7] = glm::vec3(nextNormal[0],nextNormal[1],nextNormal[2]);
+        vertices[7] = glm::vec3(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
 
-        glNormal3f(nextNormal[0],nextNormal[1],nextNormal[2]);
-        glTexCoord2f(1,bottomUV);
-        glVertex3f(0,nextPos[1],clampedZ(nextPos[0],ZOffset));
-
-        glEnd();
+        vboVTN.normalData(vboIndex, 8, normals);
+        vboVTN.vertexData(vboIndex, 8, vertices);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex,     4);
+        glDrawArrays(GL_TRIANGLE_STRIP, vboIndex + 4, 4);
     }
+    vboVTN.vboFree(vboIndex);
 }
 
 
