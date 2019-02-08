@@ -24,31 +24,6 @@
 #endif
 
 
-/* These will track glBegin/End pairs to make sure that they match */
-#ifdef DEBUG
-#include <assert.h>
-extern int __beginendCount;
-#define glBegin(_value) {\
-  if (__beginendCount==0) { \
-    __beginendCount++;\
-  } else {\
-    std::cerr << "ERROR: glBegin called on " << __FILE__ << ':' << __LINE__ << " without calling glEnd before\n"; \
-    assert(__beginendCount==0 && "glBegin called without glEnd"); \
-  } \
-  glBegin(_value);\
-}
-#define glEnd() {\
-  if (__beginendCount==0) { \
-    std::cerr << "ERROR: glEnd called on " << __FILE__ << ':' << __LINE__ << " without calling glBegin before\n"; \
-    assert(__beginendCount!=0 && "glEnd called without glBegin"); \
-  } else {\
-    __beginendCount--;\
-  } \
-  glEnd();\
-}
-#endif
-
-
 // glGenTextures() should never return 0
 #define INVALID_GL_TEXTURE_ID ((GLuint) 0)
 

@@ -30,12 +30,6 @@
 #include "OpenGLCommon.h"
 
 
-// for tracking glBegin/End pairs; see include/bzfgl.h
-#ifdef DEBUG
-int __beginendCount;
-#endif
-
-
 //
 // OpenGLGStateState
 //
