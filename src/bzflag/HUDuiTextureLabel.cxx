@@ -19,6 +19,8 @@
 // common implementation headers
 #include "TextureManager.h"
 #include "OpenGLTexture.h"
+#include "VBO_Handler.h"
+#include "VBO_Drawing.h"
 
 //
 // HUDuiTextureLabel
@@ -60,17 +62,13 @@ void            HUDuiTextureLabel::doRender()
         const float xx = getX();
         const float yy = getY();
         gstate.setState();
-        glColor3fv(textColor);
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(0.0f, 0.0f);
-        glVertex2f(xx, yy - descent);
-        glTexCoord2f(1.0f, 0.0f);
-        glVertex2f(xx + _width, yy - descent);
-        glTexCoord2f(0.0f, 1.0f);
-        glVertex2f(xx, yy - descent + _height);
-        glTexCoord2f(1.0f, 1.0f);
-        glVertex2f(xx + _width, yy - descent + _height);
-        glEnd();
+        glColor4f(textColor[0], textColor[1], textColor[2], 1.0f);
+
+        glPushMatrix();
+        glTranslatef(xx, yy - descent, 0.0f);
+        glScalef(_width, _height, 0.0f);
+        DRAWER.asimmetricTexturedRect();
+        glPopMatrix();
     }
 }
 
