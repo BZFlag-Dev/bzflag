@@ -17,6 +17,7 @@
 #include <fstream>
 #include <time.h>
 #include <assert.h>
+#include <glm/gtc/type_ptr.hpp>
 
 /* common implementation headers */
 #include "BZDBCache.h"
@@ -1260,12 +1261,17 @@ static void drawLines (int count, float (*vertices)[3], int color)
         color = 0;
     else if (color >= colorCount)
         color = colorCount - 1;
-    glColor4fv (colors[color]);
+    const GLfloat *c = colors[color];
+    glColor4f(c[0], c[1], c[2], c[3]);
 
-    glBegin (GL_LINE_STRIP);
+    std::vector<glm::vec3> vertex;
     for (int i = 0; i < count; i++)
-        glVertex3fv (vertices[i]);
-    glEnd ();
+        vertex.push_back(glm::make_vec3(vertices[i]));
+    int vboIndex = vboV.vboAlloc(count);
+    vboV.vertexData(vboIndex, vertex);
+    vboV.enableArrays();
+    glDrawArrays(GL_LINE_STRIP, vboIndex, count);
+    vboV.vboFree(vboIndex);
 
     return;
 }
@@ -1313,33 +1319,47 @@ static void drawInsideOutsidePoints()
     glLineWidth(1.49f);
     glPointSize(4.49f);
 
-    glBegin(GL_POINTS);
-    {
-        glColor4f(0.0f, 1.0f, 0.0f, 0.8f);
-        for (size_t i = 0; i < insides.size(); i++)
-            glVertex3fv(insides[i]);
-        glColor4f(1.0f, 0.0f, 0.0f, 0.8f);
-        for (size_t i = 0; i < outsides.size(); i++)
-            glVertex3fv(outsides[i]);
-    }
-    glEnd();
+    std::vector<glm::vec4> colors;
+    std::vector<glm::vec3> vertices;
 
-    glBegin(GL_LINES);
+    glm::vec4 color;
+    color = glm::vec4(0.0f, 1.0f, 0.0f, 0.8f);
+    for (size_t i = 0; i < insides.size(); i++)
     {
-        glColor4f(0.0f, 1.0f, 0.0f, 0.2f);
-        for (size_t i = 0; i < insides.size(); i++)
-        {
-            glVertex3f(insides[i][0], insides[i][1], 0.0f);
-            glVertex3fv(insides[i]);
-        }
-        glColor4f(1.0f, 0.0f, 0.0f, 0.2f);
-        for (size_t i = 0; i < outsides.size(); i++)
-        {
-            glVertex3f(outsides[i][0], outsides[i][1], 0.0f);
-            glVertex3fv(outsides[i]);
-        }
+        colors.push_back(color);
+        vertices.push_back(glm::make_vec3(insides[i]));
     }
-    glEnd();
+    color = glm::vec4(1.0f, 0.0f, 0.0f, 0.8f);
+    for (size_t i = 0; i < outsides.size(); i++)
+    {
+        colors.push_back(color);
+        vertices.push_back(glm::make_vec3(outsides[i]));
+    }
+    color = glm::vec4(0.0f, 1.0f, 0.0f, 0.2f);
+    for (size_t i = 0; i < insides.size(); i++)
+    {
+        colors.push_back(color);
+        vertices.push_back(glm::vec3(insides[i][0], insides[i][1], 0.0f));
+        colors.push_back(color);
+        vertices.push_back(glm::make_vec3(insides[i]));
+    }
+    color = glm::vec4(1.0f, 0.0f, 0.0f, 0.2f);
+    for (size_t i = 0; i < outsides.size(); i++)
+    {
+        colors.push_back(color);
+        vertices.push_back(glm::vec3(outsides[i][0], outsides[i][1], 0.0f));
+        colors.push_back(color);
+        vertices.push_back(glm::make_vec3(outsides[i]));
+    }
+
+    int count = insides.size() + outsides.size();
+    int vboIndex = vboVC.vboAlloc(vertices.size());
+    vboVC.colorData(vboIndex, colors);
+    vboVC.vertexData(vboIndex, vertices);
+    vboVC.enableArrays();
+    glDrawArrays(GL_POINTS, vboIndex, count);
+    glDrawArrays(GL_LINES, vboIndex + count, 2 * count);
+    vboVC.vboFree(vboIndex);
 
     glPopAttrib();
 }
