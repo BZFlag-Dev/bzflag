@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// a series of utilitys for bzfs plugins to use.
+// a series of utilities for bzfs plugins to use.
 #ifndef _PLUGIN_UTILS_H_
 #define _PLUGIN_UTILS_H_
 

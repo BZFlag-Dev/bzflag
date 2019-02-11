@@ -69,7 +69,7 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
 
                 if (justDirs && (fileInfo.attrib & _A_SUBDIR))
                 {
-                    // we neever do just dirs recrusively
+                    // we never do just dirs recursively
                     list.push_back(FilePath);
                 }
                 else if (!justDirs)
@@ -81,7 +81,7 @@ bool WindowsAddFileStack(const char *szPathName, const char* fileMask,
                     {
                         if (bRecursive && fileMask)
                         {
-                            // if we are recusive we need to check extension manualy,
+                            // if we are recursive we need to check extension manually,
                             // so we get dirs and stuff
                             if (strrchr(FilePath.c_str(),'.'))
                             {
@@ -241,7 +241,7 @@ bool LinuxAddFileStack(const char *szPathName, const char* fileMask,
 
             if (justDirs && S_ISDIR(statbuf.st_mode))
             {
-                // we never do just dirs recrusively
+                // we never do just dirs recursively
                 list.push_back(FilePath);
             }
             else if (!justDirs)
@@ -330,8 +330,8 @@ std::string getFileDir(const char* file)
 
     char *p = strrchr(f,_DirDelim);
     if (p)
-        // it's ok to go one past, cus even if it's the end, that's the
-        // NUL char so we can set it to NUL again with out worry
+        // it's ok to go one past, because even if it's the end, that's the
+        // NUL char so we can set it to NUL again without worry
         *(p+1) = 0;
 
     std::string ret = f;
@@ -345,8 +345,8 @@ std::string getFileExtension(const char* file)
 
     const char *p = strrchr(f.c_str(),'.');
     if (!p)
-        // it's ok to go one past, cus even if it's the end, that's the
-        // NUL char so we can set it to NUL again with out worry
+        // it's ok to go one past, because even if it's the end, that's the
+        // NUL char so we can set it to NUL again without worry
         return std::string();
 
     return std::string(p+1);
@@ -361,8 +361,8 @@ std::string getFileTitle(const char* file)
 
     char *p = strrchr(f,_DirDelim);
     if (p)
-        // it's ok to go one past, cus even if it's the end, that's the
-        // NUL char so we can set it to NUL again with out worry
+        // it's ok to go one past, because even if it's the end, that's the
+        // NUL char so we can set it to NUL again without worry
         temp = p+1;
 
     char *p2 = strrchr(temp,'.');
