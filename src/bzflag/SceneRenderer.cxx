@@ -43,20 +43,6 @@ static bool mapFog;
 static bool setupMapFog();
 
 
-#ifdef GL_ABGR_EXT
-static int      strrncmp(const char* s1, const char* s2, int num)
-{
-    int len1 = strlen(s1) - 1;
-    int len2 = strlen(s2) - 1;
-    for (; len1 >= 0 && len2 >= 0 && num > 0; len1--, len2--, num--)
-    {
-        const int d = (int)s1[len1] - (int)s2[len2];
-        if (d != 0) return d;
-    }
-    return 0;
-}
-#endif
-
 //
 // FlareLight
 //
@@ -96,7 +82,6 @@ SceneRenderer::SceneRenderer() :
     sunBrightness(1.0f),
     scene(NULL),
     background(NULL),
-    abgr(false),
     useQualityValue(2),
     useDepthComplexityOn(false),
     useWireframeOn(false),
@@ -147,36 +132,6 @@ void SceneRenderer::setWindow(MainWindow* _window)
     glGetIntegerv(GL_STENCIL_BITS, &bits);
     useStencilOn = (bits > 0);
 
-    // see if abgr extention is available and system is known to be
-    // faster with abgr.
-    const char* vendor = (const char*)glGetString(GL_VENDOR);
-    const char* renderer = (const char*)glGetString(GL_RENDERER);
-    const char* version = (const char*)glGetString(GL_VERSION);
-    const char* extensions = (const char*)glGetString(GL_EXTENSIONS);
-    (void)vendor;
-    (void)renderer;
-    (void)version;
-    (void)extensions; // silence g++
-#ifdef GL_ABGR_EXT
-    if ((extensions != NULL && strstr(extensions, "GL_EXT_abgr") != NULL) &&
-            (vendor != NULL && strcmp(vendor, "SGI") == 0))
-    {
-        // old hardware is faster with ABGR.  new hardware isn't.
-        if ((renderer != NULL) &&
-                (strncmp(renderer, "GR1", 3) == 0 ||
-                 strncmp(renderer, "VGX", 3) == 0 ||
-                 strncmp(renderer, "LIGHT", 5) == 0 ||
-                 strrncmp(renderer, "-XS", 3) == 0 ||
-                 strrncmp(renderer, "-XSM", 4) == 0 ||
-                 strrncmp(renderer, "-XS24", 5) == 0 ||
-                 strrncmp(renderer, "-XS24-Z", 7) == 0 ||
-                 strrncmp(renderer, "-XZ", 3) == 0 ||
-                 strrncmp(renderer, "-Elan", 5) == 0 ||
-                 strrncmp(renderer, "-Extreme", 8) == 0))
-            abgr = true;
-    }
-#endif
-
     // can only do hidden line if polygon offset is available
     canUseHiddenLine = true;
 
@@ -204,12 +159,6 @@ SceneRenderer::~SceneRenderer()
 
     // kill the track manager
     TrackMarks::kill();
-}
-
-
-bool SceneRenderer::useABGR() const
-{
-    return abgr;
 }
 
 

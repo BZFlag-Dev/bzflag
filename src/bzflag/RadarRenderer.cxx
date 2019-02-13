@@ -349,18 +349,6 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     }
     glEnd();
 
-    if (0)
-    {
-        glBegin(GL_POINTS);
-        {
-            glVertex2f(left, top);
-            glVertex2f(right, top);
-            glVertex2f(right, bottom);
-            glVertex2f(left, bottom);
-        }
-        glEnd();
-    }
-
     if (BZDBCache::blend)
         glDisable(GL_BLEND);
 
