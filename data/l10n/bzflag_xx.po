@@ -863,9 +863,6 @@ msgstr ""
 msgid "High"
 msgstr ""
 
-msgid "Experimental"
-msgstr ""
-
 msgid "Shadows:"
 msgstr ""
 

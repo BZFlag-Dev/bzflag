@@ -840,9 +840,6 @@ msgstr "Srednee"
 msgid "High"
 msgstr "Vysokoe"
 
-msgid "Experimental"
-msgstr "Eksperemental'nye"
-
 msgid "Shadows:"
 msgstr "Teni:"
 

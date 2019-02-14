@@ -46,7 +46,6 @@ BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
     OpenGLGStateBuilder builder(gstate);
     builder.setBlending();
     builder.setAlphaFunc();
-    //builder.setTextureEnvMode(GL_DECAL);
     gstate = builder.getState();
 
     // prepare light

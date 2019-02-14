@@ -62,7 +62,6 @@ HUDuiControl::HUDuiControl() : showingFocus(true),
         builder.setTexture(arrow);
         builder.setBlending();
 //    builder.setSmoothing();
-        //builder.setTextureEnvMode(GL_REPLACE);
         *gstate = builder.getState();
 
         // get start time for animation

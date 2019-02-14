@@ -306,10 +306,6 @@ msgstr "Stredni"
 msgid "High"
 msgstr "Vysoka"
 
-msgid "Experimental"
-msgstr "Experimentalni"
-
-
 msgid "Shadows:"
 msgstr "Stiny:"
 

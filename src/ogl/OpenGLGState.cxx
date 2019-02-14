@@ -53,7 +53,6 @@ public:
     void        enableMaterial(bool);
     void        setTexture(const int tex);
     void        setTextureMatrix(const GLfloat* matrix);
-    void        setTextureEnvMode(GLenum mode);
     void        setMaterial(const OpenGLMaterial&);
     void        setBlending(GLenum sFactor, GLenum dFactor);
     void        setStipple(float alpha);
@@ -110,7 +109,6 @@ public:
         bool        hasMaterial;
         int     texture;
         const GLfloat*  textureMatrix;
-        GLenum      textureEnvMode;
         OpenGLMaterial  material;
     };
 
@@ -219,7 +217,6 @@ OpenGLGStateState::Sorted::Sorted() :
     hasMaterial(false),
     texture(-1),
     textureMatrix(NULL),
-    textureEnvMode(GL_MODULATE),
     material(OpenGLMaterial())
 {
     // do nothing
@@ -238,7 +235,6 @@ void            OpenGLGStateState::Sorted::reset()
     hasMaterial = false;
     texture = -1;
     textureMatrix = NULL;
-    textureEnvMode = GL_MODULATE;
     material = OpenGLMaterial();
 }
 
@@ -249,8 +245,6 @@ bool            OpenGLGStateState::Sorted::operator==(
         return false;
     if ((hasTextureMatrix != s.hasTextureMatrix) ||
             (textureMatrix != s.textureMatrix))
-        return false;
-    if (textureEnvMode != s.textureEnvMode)
         return false;
     if (hasSphereMap != s.hasSphereMap)
         return false;
@@ -275,9 +269,6 @@ bool            OpenGLGStateState::Sorted::operator<(
             return hasTextureMatrix;
         else if (hasTextureMatrix)
             return (textureMatrix < s.textureMatrix);
-
-        if (textureEnvMode != s.textureEnvMode)
-            return (textureEnvMode < s.textureEnvMode);
 
         if (hasSphereMap != s.hasSphereMap)
             return hasSphereMap;
@@ -385,12 +376,6 @@ void            OpenGLGStateState::setTextureMatrix(
     sorted.textureMatrix = _textureMatrix;
 }
 
-void            OpenGLGStateState::setTextureEnvMode(
-    GLenum mode)
-{
-    sorted.textureEnvMode = mode;
-}
-
 void            OpenGLGStateState::setMaterial(
     const OpenGLMaterial& _material)
 {
@@ -452,8 +437,6 @@ void            OpenGLGStateState::resetOpenGLState() const
 {
     if (sorted.hasTexture)
         glDisable(GL_TEXTURE_2D);
-    if (sorted.textureEnvMode != GL_MODULATE)
-        glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     if (sorted.hasTextureMatrix)
     {
         glMatrixMode(GL_TEXTURE);
@@ -512,24 +495,17 @@ void            OpenGLGStateState::setOpenGLState(
             {
                 if (sorted.texture != oldState->sorted.texture)
                     tm.bind(sorted.texture);
-                if (oldState->sorted.textureEnvMode != sorted.textureEnvMode)
-                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
             }
             else
             {
                 tm.bind(sorted.texture);
                 glEnable(GL_TEXTURE_2D);
-                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
             }
         }
         else
         {
             if (oldState->sorted.hasTexture)
-            {
                 glDisable(GL_TEXTURE_2D);
-                if (oldState->sorted.textureEnvMode != GL_MODULATE)
-                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-            }
         }
 
         // texture transformation matrix
@@ -719,13 +695,9 @@ void            OpenGLGStateState::setOpenGLState(
         {
             tm.bind(sorted.texture);
             glEnable(GL_TEXTURE_2D);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, sorted.textureEnvMode);
         }
         else
-        {
             glDisable(GL_TEXTURE_2D);
-            glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-        }
 
         // texture transformation matrix
         if (sorted.hasTextureMatrix)
@@ -1487,12 +1459,6 @@ void            OpenGLGStateBuilder::setTextureMatrix(
     const GLfloat* textureMatrix)
 {
     state->setTextureMatrix(textureMatrix);
-}
-
-void            OpenGLGStateBuilder::setTextureEnvMode(
-    GLenum mode)
-{
-    state->setTextureEnvMode(mode);
 }
 
 void            OpenGLGStateBuilder::setMaterial(

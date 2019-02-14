@@ -1409,7 +1409,7 @@ StdGMPuffEffect::StdGMPuffEffect() : BasicEffect()
     lifetime = 6.5f;
 
     radius = 0.125f;
-    if (RENDERER.useQuality() >= 3)
+    if (RENDERER.useQuality() >= 1)
         radius = 0.001f;
 
 
@@ -1484,7 +1484,7 @@ SmokeGMPuffEffect::SmokeGMPuffEffect() : BasicEffect()
     lifetime = 3.5f;
 
     radius = 0.125f;
-    if (RENDERER.useQuality() >= 3)
+    if (RENDERER.useQuality() >= 1)
         radius = 0.001f;
 
     OpenGLGStateBuilder gstate;

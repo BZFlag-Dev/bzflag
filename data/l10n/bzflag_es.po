@@ -628,9 +628,6 @@ msgstr "Media"
 msgid "High"
 msgstr "Alta"
 
-msgid "Experimental"
-msgstr "Experimental"
-
 msgid "Shadows:"
 msgstr "Sombras:"
 

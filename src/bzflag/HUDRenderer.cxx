@@ -1788,7 +1788,7 @@ void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
         renderCracks();
 
     // draw the markers, if we should
-    const bool  experimental = (RENDERER.useQuality() >= 3);
+    const bool  experimental = (RENDERER.useQuality() >= 1);
 
     if (!BZDB.isTrue("_forbidMarkers") && experimental)
     {

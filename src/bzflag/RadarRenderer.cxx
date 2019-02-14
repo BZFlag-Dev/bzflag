@@ -53,7 +53,6 @@ RadarRenderer::RadarRenderer(const SceneRenderer&, World* _world)
       smooth(false),
       jammed(false),
       useTankModels(false),
-      useTankDimensions(false),
       triangleCount()
 {
 
@@ -183,7 +182,7 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
     glTranslatef(pos[0], pos[1], 0.0f);
 
     // draw the tank
-    if (useSquares || !useTankDimensions)
+    if (useSquares || !useTankModels)
     {
         setTankColor(player);
         // align to the screen axes
@@ -195,17 +194,8 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
         const float tankAngle = player->getAngle();
         glPushMatrix();
         glRotatef(float(tankAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-        if (useTankModels)
-        {
-            drawFancyTank(player);
-            setTankColor(player);
-        }
-        else
-        {
-            setTankColor(player);
-            const float* dims = player->getDimensions();
-            glRectf(-dims[0], -dims[1], +dims[0], +dims[1]);
-        }
+        drawFancyTank(player);
+        setTankColor(player);
         glPopMatrix();
 
         // align to the screen axes
@@ -453,7 +443,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
         glColor3f(1.0f, 1.0f, 1.0f);
 
-        if ((noiseTexture >= 0) && (renderer.useQuality() > 0))
+        if (noiseTexture >= 0)
         {
 
             const int sequences = 10;
@@ -494,28 +484,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
             glDisable(GL_TEXTURE_2D);
         }
-
-        else if ((noiseTexture >= 0) && BZDBCache::texture &&
-                 (renderer.useQuality() == 0))
-        {
-            glEnable(GL_TEXTURE_2D);
-            tm.bind(noiseTexture);
-
-            glBegin(GL_TRIANGLE_STRIP);
-            {
-                glTexCoord2f(0,0);
-                glVertex2f(-radarRange,-radarRange);
-                glTexCoord2f(1,0);
-                glVertex2f( radarRange,-radarRange);
-                glTexCoord2f(0,1);
-                glVertex2f(-radarRange, radarRange);
-                glTexCoord2f(1,1);
-                glVertex2f( radarRange, radarRange);
-            }
-            glEnd();
-
-            glDisable(GL_TEXTURE_2D);
-        }
         if (decay > 0.015f) decay *= 0.5f;
 
         glPopMatrix();
@@ -544,10 +512,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         const float testMin = 8.0f * ps;
         // maintain the aspect ratio if it isn't square
         if ((tankWidth > testMin) &&  (tankLength > testMin))
-            useTankDimensions = true;
-        else
-            useTankDimensions = false;
-        if (useTankDimensions && (renderer.useQuality() >= 2))
             useTankModels = true;
         else
             useTankModels = false;

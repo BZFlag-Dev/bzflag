@@ -138,9 +138,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->setCallback(callback, "6");
     options = &option->getList();
     options->push_back(std::string("Low"));
-    options->push_back(std::string("Medium"));
     options->push_back(std::string("High"));
-    options->push_back(std::string("Experimental"));
     option->update();
     listHUD.push_back(option);
 
@@ -418,12 +416,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
         BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
         BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
         if (oldLighting != BZDBCache::lighting)
-        {
-            BZDB.set("texturereplace", (!BZDBCache::lighting &&
-                                        sceneRenderer->useQuality() < 2) ? "1" : "0");
-            BZDB.setPersistent("texturereplace", false);
             sceneRenderer->notifyStyleChange();
-        }
         break;
     }
     case '5':
@@ -451,14 +444,11 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     }
     case '6':
         sceneRenderer->setQuality(list->getIndex());
-        if (list->getIndex() >= 3)
+        if (list->getIndex() > 0)
         {
             BZDB.set("zbuffer","1");
             setSceneDatabase();
         }
-        BZDB.set("texturereplace", (!BZDBCache::lighting &&
-                                    sceneRenderer->useQuality() < 2) ? "1" : "0");
-        BZDB.setPersistent("texturereplace", false);
         sceneRenderer->notifyStyleChange();
         break;
     case '7':

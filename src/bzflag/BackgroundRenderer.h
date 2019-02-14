@@ -40,8 +40,8 @@ public:
     void        setupGroundMaterials();
     void        setupSkybox();
 
-    void        renderSky(SceneRenderer&, bool fullWindow, bool mirror);
-    void        renderGround(SceneRenderer&, bool fullWindow);
+    void        renderSky(SceneRenderer&, bool mirror);
+    void        renderGround();
     void        renderGroundEffects(SceneRenderer&, bool drawingMirror);
     void        renderEnvironment(SceneRenderer&, bool update);
 
@@ -101,7 +101,6 @@ private:
     // stuff for ground
     OpenGLGState    groundGState[4];
     OpenGLGState    invGroundGState[4];
-    GLuint      simpleGroundList[4];
     int         groundTextureID;
     const GLfloat*  groundTextureMatrix;
 

@@ -150,8 +150,6 @@ public:
 
     void        renderRadar();
 
-    static void     setMaxLOD(int maxLevel);
-
     void        setDeathOverride( TankDeathOverride* o)
     {
         deathOverride = o;
@@ -173,7 +171,6 @@ protected:
         void        setShadow();
         void        setRadar(bool);
         void        setTreads(bool);
-        void        setTankLOD(TankGeometryEnums::TankLOD);
         void        setTankSize(TankGeometryEnums::TankSize);
         void        sortOrder(bool above, bool towards, bool left);
         void        setNarrowWithDepth(bool narrow);
@@ -246,7 +243,6 @@ private:
     OpenGLLight     jumpJetsGroundLights[4];
     OpenGLGState    jumpJetsGState;
 
-    static int      maxLevel;
     static const int    numLOD;
     static GLfloat  jumpJetsModel[4][3];
 };

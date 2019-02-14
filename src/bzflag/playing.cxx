@@ -2283,7 +2283,6 @@ static void     handleServerMessage(bool human, uint16_t code,
             }
 
             tank->setDeathEffect(NULL);
-            if (SceneRenderer::instance().useQuality() >= 2)
             {
                 if (((tank != myTank)
                         && ((ROAM.getMode() != Roaming::roamViewFP)
@@ -2811,7 +2810,6 @@ static void     handleServerMessage(bool human, uint16_t code,
             {
                 shooter->addShot(firingInfo);
 
-                if (SceneRenderer::instance().useQuality() >= 2)
                 {
                     float shotPos[3];
                     shooter->getMuzzle(shotPos);
@@ -3493,9 +3491,6 @@ bool            addExplosion(const float* _pos,
     // ignore if no prototypes available;
     if (prototypeExplosions.empty())
         return false;
-
-    // don't show explosions if quality is low
-    if (sceneRenderer->useQuality() < 1) return false;
 
     // don't add explosion if blending or texture mapping are off
     if (!BZDBCache::blend || !BZDBCache::texture)
@@ -6179,7 +6174,7 @@ void drawFrame(const float dt)
             viewFrustum.setView(eyePoint, targetPoint);
 
             // draw left channel
-            sceneRenderer->render(false, true, true);
+            sceneRenderer->render(false, true);
 
             // set up for drawing right channel
             mainWindow->setQuadrant(MainWindow::LowerRight);
@@ -6190,7 +6185,7 @@ void drawFrame(const float dt)
             viewFrustum.setView(eyePoint, targetPoint);
 
             // draw right channel
-            sceneRenderer->render(true, true, true);
+            sceneRenderer->render(true, true);
 
 #if defined(DEBUG_RENDERING)
             // set up for drawing rear channel
@@ -6202,7 +6197,7 @@ void drawFrame(const float dt)
             viewFrustum.setView(eyePoint, targetPoint);
 
             // draw rear channel
-            sceneRenderer->render(true, true, true);
+            sceneRenderer->render(true, true);
 #endif
             // back to center channel
             mainWindow->setQuadrant(MainWindow::UpperRight);
@@ -7466,7 +7461,7 @@ void            startPlaying(BzfDisplay* _display,
     if (!startupInfo.hasConfiguration)
     {
         BZDB.set("texture", "1");
-        sceneRenderer->setQuality(3);
+        sceneRenderer->setQuality(1);
         TextureManager::instance().setMaxFilter(OpenGLTexture::Max);
     }
 

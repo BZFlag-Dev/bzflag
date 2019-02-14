@@ -479,15 +479,6 @@
     <ClCompile Include="..\..\src\geometry\models\tank\high_ltread.cxx" />
     <ClCompile Include="..\..\src\geometry\models\tank\high_rtread.cxx" />
     <ClCompile Include="..\..\src\geometry\models\tank\high_turret.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\low_barrel.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\low_body.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\low_ltread.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\low_rtread.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\low_turret.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\medium_body.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\medium_ltread.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\medium_rtread.cxx" />
-    <ClCompile Include="..\..\src\geometry\models\tank\medium_turret.cxx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\BillboardSceneNode.h" />

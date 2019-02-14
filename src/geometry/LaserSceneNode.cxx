@@ -136,7 +136,7 @@ void LaserSceneNode::LaserRenderNode::render()
     if (blackFog)
         glFogfv(GL_FOG_COLOR, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)));
 
-    if (RENDERER.useQuality() >= 3)
+    if (RENDERER.useQuality() >= 1)
         renderGeoLaser();
     else
         renderFlatLaser();

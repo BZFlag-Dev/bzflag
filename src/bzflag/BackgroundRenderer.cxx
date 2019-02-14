@@ -91,10 +91,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     cloudsList = INVALID_GL_LIST_ID;
     sunXFormList = INVALID_GL_LIST_ID;
     starXFormList = INVALID_GL_LIST_ID;
-    simpleGroundList[0] = INVALID_GL_LIST_ID;
-    simpleGroundList[1] = INVALID_GL_LIST_ID;
-    simpleGroundList[2] = INVALID_GL_LIST_ID;
-    simpleGroundList[3] = INVALID_GL_LIST_ID;
 
     // initialize global to class stuff
     if (!init)
@@ -132,12 +128,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.disableCulling();
     sunShadowsGState = gstate.getState();
 
-    /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
-     int moonTexture = -1;
-     if (useMoonTexture) {
-       moonTexture = tm.getTextureID( "moon" );
-       useMoonTexture = moonTexture>= 0;
-     }*/
     // sky stuff
     gstate.reset();
     gstate.setShading();
@@ -556,103 +546,17 @@ void BackgroundRenderer::addCloudDrift(GLfloat uDrift, GLfloat vDrift)
 }
 
 
-void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
-                                   bool mirror)
+void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool mirror)
 {
     if (!BZDBCache::drawSky)
         return;
-    if (renderer.useQuality() > 0)
-        drawSky(renderer, mirror);
-    else
-    {
-        // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
-        // to draw solid color sky and ground.
-        MainWindow& window = renderer.getWindow();
-        const int x = window.getOriginX();
-        const int y = window.getOriginY();
-        const int width = window.getWidth();
-        const int height = window.getHeight();
-        const int viewHeight = window.getViewHeight();
-        const SceneRenderer::ViewType viewType = renderer.getViewType();
-
-        // draw sky
-        glDisable(GL_DITHER);
-        glPushAttrib(GL_SCISSOR_BIT);
-        glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
-        glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // draw ground -- first get the color (assume it's all green)
-        GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-        if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-            glScissor(x, y, width, height >> 1);
-        else if (fullWindow && viewType == SceneRenderer::Stacked)
-            glScissor(x, y, width, height >> 1);
-#ifndef USE_GL_STEREO
-        else if (fullWindow && viewType == SceneRenderer::Stereo)
-            glScissor(x, y, width, height >> 1);
-#endif
-        else
-            glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-        if (invert)
-            glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-        else
-            glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // back to normal
-        glPopAttrib();
-        if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-    }
+    drawSky(renderer, mirror);
 }
 
 
-void BackgroundRenderer::renderGround(SceneRenderer& renderer,
-                                      bool fullWindow)
+void BackgroundRenderer::renderGround()
 {
-    if (renderer.useQuality() > 0)
-        drawGround();
-    else
-    {
-        // low detail -- draw as damn fast as ya can, ie cheat.  use glClear()
-        // to draw solid color sky and ground.
-        MainWindow& window = renderer.getWindow();
-        const int x = window.getOriginX();
-        const int y = window.getOriginY();
-        const int width = window.getWidth();
-        const int height = window.getHeight();
-        const int viewHeight = window.getViewHeight();
-        const SceneRenderer::ViewType viewType = renderer.getViewType();
-
-        // draw sky
-        glDisable(GL_DITHER);
-        glPushAttrib(GL_SCISSOR_BIT);
-        glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
-        glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // draw ground -- first get the color (assume it's all green)
-        GLfloat _groundColor = 0.1f + 0.15f * renderer.getSunColor()[1];
-        if (fullWindow && viewType == SceneRenderer::ThreeChannel)
-            glScissor(x, y, width, height >> 1);
-        else if (fullWindow && viewType == SceneRenderer::Stacked)
-            glScissor(x, y, width, height >> 1);
-#ifndef USE_GL_STEREO
-        else if (fullWindow && viewType == SceneRenderer::Stereo)
-            glScissor(x, y, width, height >> 1);
-#endif
-        else
-            glScissor(x, y + height - viewHeight, width, (viewHeight + 1) >> 1);
-        if (invert)
-            glClearColor(_groundColor, 0.0f, _groundColor, 0.0f);
-        else
-            glClearColor(0.0f, _groundColor, 0.0f, 0.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        // back to normal
-        glPopAttrib();
-        if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
-    }
+    drawGround();
 }
 
 
@@ -664,7 +568,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // drawn after it.  also use projection with very far clipping plane.
 
     // only draw the grid lines if texturing is disabled
-    if (!BZDBCache::texture || (renderer.useQuality() <= 0))
+    if (!BZDBCache::texture)
         drawGroundGrid(renderer);
 
     if (!blank)
@@ -679,7 +583,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
         if (BZDBCache::blend && BZDBCache::lighting &&
                 !drawingMirror && BZDBCache::drawGroundLights)
         {
-            if (BZDBCache::tesselation && (renderer.useQuality() >= 3))
+            if (BZDBCache::tesselation && (renderer.useQuality() >= 1))
             {
 //    (BZDB.get(StateDatabase::BZDB_FOGMODE) == "none")) {
                 // not really tesselation, but it is tied to the "Best" lighting,
@@ -691,7 +595,6 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
                 drawGroundReceivers(renderer);
         }
 
-        if (renderer.useQuality() > 1)
         {
             // light the mountains (so that they get dark when the sun goes down).
             // don't do zbuffer test since they occlude all drawn before them and
@@ -977,7 +880,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
 {
     glPushMatrix();
 
-    const bool doSkybox = haveSkybox && (renderer.useQuality() >= 2);
+    const bool doSkybox = haveSkybox;
 
     if (!doSkybox)
     {
@@ -1121,10 +1024,7 @@ void BackgroundRenderer::drawGround()
             groundGState[styleIndex].setState();
         }
 
-        if (RENDERER.useQuality() >= 2)
-            drawGroundCentered();
-        else
-            glCallList(simpleGroundList[styleIndex]);
+        drawGroundCentered();
     }
 }
 
@@ -1648,14 +1548,9 @@ void BackgroundRenderer::doFreeDisplayLists()
     weather.freeContext();
     EFFECTS.freeContext();
 
-    // simpleGroundList[1] && simpleGroundList[3] are copies of [0] & [2]
-    simpleGroundList[1] = INVALID_GL_LIST_ID;
-    simpleGroundList[3] = INVALID_GL_LIST_ID;
-
     // delete the single lists
     GLuint* const lists[] =
     {
-        &simpleGroundList[0], &simpleGroundList[2],
         &cloudsList, &sunList, &sunXFormList,
         &moonList, &starList, &starXFormList
     };
@@ -1746,83 +1641,6 @@ void BackgroundRenderer::doInitDisplayLists()
         groundPlane[i][1] = groundSize * squareShape[i][1];
         groundPlane[i][2] = 0.0f;
     }
-
-    {
-        GLfloat xmin, xmax;
-        GLfloat ymin, ymax;
-        GLfloat xdist, ydist;
-        GLfloat xtexmin, xtexmax;
-        GLfloat ytexmin, ytexmax;
-        GLfloat xtexdist, ytexdist;
-        float vec[2];
-
-#define GROUND_DIVS (4) //FIXME -- seems to be enough
-
-        xmax = groundPlane[0][0];
-        ymax = groundPlane[0][1];
-        xmin = groundPlane[2][0];
-        ymin = groundPlane[2][1];
-        xdist = (xmax - xmin) / (float)GROUND_DIVS;
-        ydist = (ymax - ymin) / (float)GROUND_DIVS;
-
-        renderer.getGroundUV (groundPlane[0], vec);
-        xtexmax = vec[0];
-        ytexmax = vec[1];
-        renderer.getGroundUV (groundPlane[2], vec);
-        xtexmin = vec[0];
-        ytexmin = vec[1];
-        xtexdist = (xtexmax - xtexmin) / (float)GROUND_DIVS;
-        ytexdist = (ytexmax - ytexmin) / (float)GROUND_DIVS;
-
-        simpleGroundList[2] = glGenLists(1);
-        glNewList(simpleGroundList[2], GL_COMPILE);
-        {
-            for (i = 0; i < GROUND_DIVS; i++)
-            {
-                GLfloat yoff, ytexoff;
-
-                yoff = ymin + ydist * (GLfloat)i;
-                ytexoff = ytexmin + ytexdist * (GLfloat)i;
-
-                glBegin(GL_TRIANGLE_STRIP);
-
-                glTexCoord2f(xtexmin, ytexoff + ytexdist);
-                glVertex2f(xmin, yoff + ydist);
-                glTexCoord2f(xtexmin, ytexoff);
-                glVertex2f(xmin, yoff);
-
-                for (j = 0; j < GROUND_DIVS; j++)
-                {
-                    GLfloat xoff, xtexoff;
-
-                    xoff = xmin + xdist * (GLfloat)(j + 1);
-                    xtexoff = xtexmin + xtexdist * (GLfloat)(j + 1);
-
-                    glTexCoord2f(xtexoff, ytexoff + ytexdist);
-                    glVertex2f(xoff, yoff + ydist);
-                    glTexCoord2f(xtexoff, ytexoff);
-                    glVertex2f(xoff, yoff);
-                }
-                glEnd();
-            }
-        }
-        glEndList();
-    }
-
-    simpleGroundList[0] = glGenLists(1);
-    glNewList(simpleGroundList[0], GL_COMPILE);
-    {
-        glBegin(GL_TRIANGLE_STRIP);
-        glVertex2fv(groundPlane[0]);
-        glVertex2fv(groundPlane[1]);
-        glVertex2fv(groundPlane[3]);
-        glVertex2fv(groundPlane[2]);
-        glEnd();
-    }
-    glEndList();
-
-    simpleGroundList[1] = simpleGroundList[0];
-    simpleGroundList[3] = simpleGroundList[2];
 
     //
     // clouds

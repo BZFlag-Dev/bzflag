@@ -87,13 +87,11 @@ void deleteLists();
 
 GLuint getPartList(TankGeometryEnums::TankShadow shadow,
                    TankGeometryEnums::TankPart part,
-                   TankGeometryEnums::TankSize size,
-                   TankGeometryEnums::TankLOD lod);
+                   TankGeometryEnums::TankSize size);
 
 int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
                          TankGeometryEnums::TankPart part,
-                         TankGeometryEnums::TankSize size,
-                         TankGeometryEnums::TankLOD lod);
+                         TankGeometryEnums::TankSize size);
 
 const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
@@ -124,20 +122,6 @@ void doTexCoord2f(GLfloat x, GLfloat y);
 //
 // NOTE:  these all return their triangle count
 //
-
-// lowtank geometry builder
-int buildLowBody (void);
-int buildLowTurret (void);
-int buildLowLCasing (void);
-int buildLowRCasing (void);
-int buildLowBarrel (void);
-
-// medtank geometry builder
-int buildMedBody (void);
-int buildMedTurret (void);
-int buildMedLCasing (void);
-int buildMedRCasing (void);
-//int buildMedBarrel (void); // Same as buildLowBarrel
 
 // hightank geometry builder
 int buildHighBody (void);

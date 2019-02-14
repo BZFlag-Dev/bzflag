@@ -49,7 +49,6 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool sup
     OpenGLGStateBuilder builder(gstate);
     builder.setBlending();
     builder.setAlphaFunc();
-    //builder.setTextureEnvMode(GL_DECAL);
     gstate = builder.getState();
 
     // prepare light
@@ -171,7 +170,7 @@ void            BoltSceneNode::notifyStyleChange()
             builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         builder.setStipple(1.0f);
         builder.setAlphaFunc();
-        if ((RENDERER.useQuality() >= 3) && drawFlares)
+        if ((RENDERER.useQuality() >= 1) && drawFlares)
         {
             builder.setShading(GL_SMOOTH);
             builder.enableMaterial(false);
@@ -574,7 +573,7 @@ void            BoltSceneNode::BoltRenderNode::render()
         return;
     const float radius = sceneNode->size;
     const int   shotLength = (int)(BZDBCache::shotLength * 3.0f);
-    const bool  experimental = (RENDERER.useQuality() >= 3);
+    const bool  experimental = (RENDERER.useQuality() >= 1);
 
     const bool blackFog = RENDERER.isFogActive() && BZDBCache::blend &&
                           ((shotLength > 0) || experimental);

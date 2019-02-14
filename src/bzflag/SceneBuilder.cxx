@@ -198,11 +198,6 @@ SceneDatabaseBuilder::SceneDatabaseBuilder(const SceneRenderer* _renderer) :
     boxTexWidth = boxTexHeight = 0.2f * BZDB.eval(StateDatabase::BZDB_BOXHEIGHT);
     if (boxTexture>=0)
         boxTexWidth = tm.GetAspectRatio(boxTexture) * boxTexHeight;
-
-
-    // lower maximum tank lod if lowdetail is true
-    if (renderer->useQuality() == 0)
-        TankSceneNode::setMaxLOD(2);
 }
 
 
@@ -395,9 +390,7 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 
     useColorTexture[1] = boxTopTexture >= 0;
 
-    float texutureFactor = BZDB.eval("boxWallTexRepeat");
-    if (renderer->useQuality() >= 2)
-        texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
+    float texutureFactor = BZDB.eval("boxWallHighResTexRepeat");
 
     while ((node = ((part < 4) ? nodeGen->getNextNode(
                         -texutureFactor*boxTexWidth,
@@ -470,9 +463,7 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
     useColorTexture = pyramidTexture >= 0;
 
     // Using boxTexHeight since it's (currently) the same and it's already available
-    float textureFactor = BZDB.eval("pyrWallTexRepeat");
-    if (renderer->useQuality() >= 2)
-        textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
+    float textureFactor = BZDB.eval("pyrWallHighResTexRepeat");
 
     while ((node = nodeGen->getNextNode(-textureFactor * boxTexHeight,
                                         -textureFactor * boxTexHeight,

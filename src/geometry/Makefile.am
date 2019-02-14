@@ -46,16 +46,7 @@ libGeometry_la_LIBADD =	\
 	models/tank/high_body.lo	\
 	models/tank/high_ltread.lo	\
 	models/tank/high_rtread.lo	\
-	models/tank/high_turret.lo	\
-	models/tank/low_barrel.lo	\
-	models/tank/low_body.lo		\
-	models/tank/low_ltread.lo	\
-	models/tank/low_rtread.lo	\
-	models/tank/low_turret.lo	\
-	models/tank/medium_body.lo	\
-	models/tank/medium_ltread.lo	\
-	models/tank/medium_rtread.lo	\
-	models/tank/medium_turret.lo
+	models/tank/high_turret.lo
 
 EXTRA_DIST = \
 	README
