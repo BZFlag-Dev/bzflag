@@ -145,19 +145,9 @@ void OpenGLTexture::initContext()
     // compute next mipmap from current mipmap to save time.
     setFilter(filter);
     glBindTexture(GL_TEXTURE_2D, list);
-    if (GLEW_VERSION_1_4)
-    {
-        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
-                     scaledWidth, scaledHeight,
-                     0, internalFormat, GL_UNSIGNED_BYTE, image);
-    }
-    else
-    {
-        gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-                          scaledWidth, scaledHeight,
-                          internalFormat, GL_UNSIGNED_BYTE, image);
-    }
+    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height,
+                 0, internalFormat, GL_UNSIGNED_BYTE, image);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return;
@@ -180,65 +170,10 @@ bool OpenGLTexture::getPixelValue(int x, int y, unsigned char pixel[4])
 
 void OpenGLTexture::setupImage(const GLubyte* pixels)
 {
-    if (GLEW_ARB_texture_non_power_of_two)
-    {
-        scaledWidth = width;
-        scaledHeight = height;
-        // Remove check of max size. I don't want to use gluScale if GL can handle non POT
-    }
-    else
-    {
-        // align to a 2^N value
-        scaledWidth = 1;
-        scaledHeight = 1;
-        while (scaledWidth < width)
-            scaledWidth <<= 1;
-        while (scaledHeight < height)
-            scaledHeight <<= 1;
-
-        // get maximum valid size for texture (boost to 2^m x 2^n)
-        GLint maxTextureSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-
-        // hard limit, some drivers have problems with sizes greater
-        // then this (espeically if you are using glTexSubImage2D)
-        const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
-        GLint bzMaxTexSize = 1;
-        // align the max size to a power of two  (wasteful)
-        while (bzMaxTexSize < dbMaxTexSize)
-            bzMaxTexSize <<= 1;
-
-        if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize))
-            maxTextureSize = bzMaxTexSize;
-
-        // clamp to the maximum size
-        if (scaledWidth > maxTextureSize)
-            scaledWidth = maxTextureSize;
-        if (scaledHeight > maxTextureSize)
-            scaledHeight = maxTextureSize;
-    }
-
     // copy the data into a 4-byte aligned buffer
     GLubyte* unaligned = new GLubyte[4 * width * height + 4];
     GLubyte* aligned = (GLubyte*)(((unsigned long)unaligned & ~3) + 4);
     ::memcpy(aligned, pixels, 4 * width * height);
-
-    // scale the image if required
-    if ((scaledWidth != width) || (scaledHeight != height))
-    {
-        GLubyte* unalignedScaled = new GLubyte[4 * scaledWidth * scaledHeight + 4];
-        GLubyte* alignedScaled = (GLubyte*)(((unsigned long)unalignedScaled & ~3) + 4);
-
-        // FIXME: 0 is success, return false otherwise...
-        gluScaleImage (GL_RGBA, width, height, GL_UNSIGNED_BYTE, aligned,
-                       scaledWidth, scaledHeight, GL_UNSIGNED_BYTE, alignedScaled);
-
-        delete[] unaligned;
-        unaligned = unalignedScaled;
-        aligned = alignedScaled;
-        logDebugMessage(1,"Scaling texture from %ix%i to %ix%i\n",
-                        width, height, scaledWidth, scaledHeight);
-    }
 
     // set the image
     image = aligned;
@@ -348,7 +283,7 @@ void OpenGLTexture::bind()
 void OpenGLTexture::getBestFormat()
 {
     GLubyte* scan = image;
-    const int size = scaledWidth * scaledHeight;
+    const int size = width * height;
     int i;
     bool useLuminance = true;
     alpha = false;
