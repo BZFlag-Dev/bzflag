@@ -138,7 +138,6 @@ private:
 
     // celestial stuff
     bool        haveSkybox;
-    GLenum      skyboxWrapMode;
     int         skyboxTexID[6];
     GLfloat     skyboxColor[8][4];
     bool        doStars;

@@ -274,21 +274,10 @@ void SceneRenderer::setQuality(int value)
     // highlighting when applied to a dark textured surface.
     // It was mainlined in OpenGL Version 1.2
     // (there's also the GL_EXT_separate_specular_color extension)
-#ifdef GL_LIGHT_MODEL_COLOR_CONTROL
     if (useQualityValue >= 1)
         glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SEPARATE_SPECULAR_COLOR);
     else
         glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL, GL_SINGLE_COLOR);
-#  else // in case someone includes <GL/glext.h> at some point
-#  ifdef GL_LIGHT_MODEL_COLOR_CONTROL_EXT
-    if (useQualityValue >= 1)
-        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-                      GL_SEPARATE_SPECULAR_COLOR_EXT);
-    else
-        glLightModeli(GL_LIGHT_MODEL_COLOR_CONTROL_EXT,
-                      GL_SINGLE_COLOR_EXT);
-#  endif
-#endif
 
     BZDB.set("useQuality", TextUtils::format("%d", value));
 }

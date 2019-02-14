@@ -214,6 +214,12 @@ bool SDLWindow::create(void)
         SDL_DestroyWindow(windowId);
     }
 
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 1);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(
+        SDL_GL_CONTEXT_PROFILE_MASK,
+        SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
+
     // (re)create the window
     const Uint32 flags = SDL_WINDOW_OPENGL |
                          (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |

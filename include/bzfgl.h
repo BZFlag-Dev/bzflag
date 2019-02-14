@@ -19,8 +19,8 @@
 
 #include <GL/glew.h>
 
-#ifndef GL_VERSION_1_1
-# error OpenGL version 1.1 functionality is required
+#ifndef GL_VERSION_1_5
+# error OpenGL version 1.5 functionality is required
 #endif
 
 
