@@ -113,8 +113,6 @@ private:
     bool        alpha;
     const int       width;
     const int       height;
-    GLint       scaledWidth;
-    GLint       scaledHeight;
     GLubyte*        image;
     GLubyte*        imageMemory;
     bool        repeat;
