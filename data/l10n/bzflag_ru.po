@@ -783,9 +783,6 @@ msgstr "Nastrojki displeya"
 msgid "Dithering:"
 msgstr "Razmytie:"
 
-msgid "Blending:"
-msgstr "Smeshivanie:"
-
 msgid "Smoothing:"
 msgstr "Sglazhivanie:"
 

@@ -324,21 +324,15 @@ void            FlagSceneNode::notifyStyleChange()
     const int quality = RENDERER.useQuality();
     realFlag = (quality >= 1);
 
-    texturing = BZDBCache::texture && BZDBCache::blend;
+    texturing = BZDBCache::texture;
     OpenGLGStateBuilder builder(gstate);
     builder.enableTexture(texturing);
 
     if (transparent)
     {
-        if (BZDBCache::blend)
         {
             builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             builder.setStipple(1.0f);
-        }
-        else if (transparent)
-        {
-            builder.resetBlending();
-            builder.setStipple(0.5f);
         }
         builder.resetAlphaFunc();
     }
@@ -418,14 +412,10 @@ void            FlagSceneNode::FlagRenderNode::render()
     float poleWidth = BZDBCache::flagPoleWidth;
     const bool doing_texturing = sceneNode->texturing;
     const bool is_billboard = sceneNode->billboard;
-    const bool is_transparent = sceneNode->transparent;
 
     const GLfloat* sphere = sceneNode->getSphere();
 
     myColor4fv(sceneNode->color);
-
-    if (!BZDBCache::blend && (is_transparent || doing_texturing))
-        myStipple(sceneNode->color[3]);
 
     glPushMatrix();
     {
@@ -520,8 +510,6 @@ void            FlagSceneNode::FlagRenderNode::render()
 
     if (doing_texturing)
         glEnable(GL_TEXTURE_2D);
-    if (!BZDBCache::blend && is_transparent)
-        myStipple(0.5f);
 }
 
 

@@ -57,9 +57,6 @@ msgstr "ghobe'"
 msgid "On"
 msgstr "HIja'"
 
-#msgid "Blending:"
-#msgstr ""
-
 #msgid "Smoothing:"
 #msgstr ""
 

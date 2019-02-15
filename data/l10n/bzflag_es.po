@@ -583,9 +583,6 @@ msgstr "Ajustes de pantalla"
 msgid "Dithering:"
 msgstr "Fusionado:"
 
-msgid "Blending:"
-msgstr "Mezclado:"
-
 msgid "Smoothing:"
 msgstr "Suavizado:"
 

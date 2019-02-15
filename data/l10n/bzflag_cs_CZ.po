@@ -263,9 +263,6 @@ msgstr "Nastaveni"
 msgid "Dithering:"
 msgstr "Rozkladani (Dithering):"
 
-msgid "Blending:"
-msgstr "Smesovani (Blending):"
-
 msgid "Smoothing:"
 msgstr "Vyhlazovani (Smoothing):"
 

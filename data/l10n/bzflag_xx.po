@@ -806,9 +806,6 @@ msgstr ""
 msgid "Dithering:"
 msgstr ""
 
-msgid "Blending:"
-msgstr ""
-
 msgid "Smoothing:"
 msgstr ""
 

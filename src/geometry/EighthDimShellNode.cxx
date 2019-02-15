@@ -110,10 +110,7 @@ EighthDimShellNode::ShellRenderNode::ShellRenderNode(RenderNode *node,
     renderNode = node;
 
     OpenGLGStateBuilder gb = *gs;
-    if (BZDBCache::blend)
-        gb.setBlending(GL_ONE, GL_ONE);
-    else
-        gb.resetBlending();
+    gb.setBlending(GL_ONE, GL_ONE);
     gb.setCulling(GL_FRONT); // invert the culling
     gstate = gb.getState(); // get the modified gstate
 
@@ -139,8 +136,7 @@ void EighthDimShellNode::ShellRenderNode::render()
 //  glEnable(GL_COLOR_LOGIC_OP);
 //  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_FALSE);
 
-    if (BZDBCache::blend)
-        renderNode->render();
+    renderNode->render();
 
     glPolygonMode(GL_BACK, GL_LINE);
     glLineWidth(3.0f);

@@ -48,10 +48,7 @@ void            EighthDimSceneNode::notifyStyleChange()
 {
     OpenGLGStateBuilder builder(gstate);
     builder.disableCulling();
-    if (BZDB.isTrue("blend"))
-        builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    else
-        builder.setStipple(0.75f);
+    builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gstate = builder.getState();
 }
 

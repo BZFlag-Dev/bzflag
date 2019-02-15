@@ -135,19 +135,10 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
         const bool isAlpha = (colorAlpha || textureAlpha);
         if (isAlpha)
         {
-            if (BZDBCache::blend)
             {
                 builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 builder.setStipple(1.0f);
                 needsSorting = true;
-            }
-            else
-            {
-                builder.resetBlending();
-                if (dyncol != NULL)
-                    builder.setStipple(0.5f);
-                else
-                    builder.setStipple(color.a);
             }
         }
     }

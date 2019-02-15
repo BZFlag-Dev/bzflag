@@ -3493,7 +3493,7 @@ bool            addExplosion(const float* _pos,
         return false;
 
     // don't add explosion if blending or texture mapping are off
-    if (!BZDBCache::blend || !BZDBCache::texture)
+    if (!BZDBCache::texture)
         return false;
 
     // pick a random prototype explosion

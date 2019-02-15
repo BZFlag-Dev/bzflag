@@ -354,7 +354,7 @@ void            WallSceneNode::notifyStyleChange()
         alpha = lighted ? lightedColor[3] : color[3];
     }
     builder.enableMaterial(lighted);
-    if (BZDBCache::blend && (wantBlending || (alpha != 1.0f)))
+    if (wantBlending || (alpha != 1.0f))
     {
         builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         builder.setStipple(1.0f);

@@ -364,7 +364,7 @@ void BackgroundRenderer::notifyStyleChange()
     }
 
     // some stuff is drawn only for certain states
-    cloudsVisible = (styleIndex >= 2 && cloudsAvailable && BZDBCache::blend);
+    cloudsVisible = (styleIndex >= 2 && cloudsAvailable);
     mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
     shadowsVisible = BZDB.isTrue("shadows");
     starGStateIndex = BZDB.isTrue("smooth");
@@ -580,7 +580,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
         // the ground gets illuminated).  this is necessary because lighting is
         // performed only at a vertex, and the ground's vertices are a few
         // kilometers away.
-        if (BZDBCache::blend && BZDBCache::lighting &&
+        if (BZDBCache::lighting &&
                 !drawingMirror && BZDBCache::drawGroundLights)
         {
             if (BZDBCache::tesselation && (renderer.useQuality() >= 1))

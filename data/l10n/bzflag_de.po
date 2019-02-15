@@ -58,9 +58,6 @@ msgstr "Aus"
 msgid "On"
 msgstr "An"
 
-#msgid "Blending:"
-#msgstr "Blending:"
-
 msgid "Smoothing:"
 msgstr "Kantenglättung:"
 

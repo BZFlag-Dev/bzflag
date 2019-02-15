@@ -158,10 +158,9 @@ void            BoltSceneNode::addLight(
 
 void            BoltSceneNode::notifyStyleChange()
 {
-    texturing = BZDBCache::texture && BZDBCache::blend;
+    texturing = BZDBCache::texture;
     OpenGLGStateBuilder builder(gstate);
     builder.enableTexture(texturing);
-    if (BZDBCache::blend)
     {
         const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
         if (shotLength > 0 && !drawFlares)
@@ -177,13 +176,6 @@ void            BoltSceneNode::notifyStyleChange()
         }
         else
             builder.setShading(texturing ? GL_FLAT : GL_SMOOTH);
-    }
-    else
-    {
-        builder.resetBlending();
-        builder.resetAlphaFunc();
-        builder.setStipple(0.5f);
-        builder.setShading(GL_FLAT);
     }
     gstate = builder.getState();
 }
@@ -575,7 +567,7 @@ void            BoltSceneNode::BoltRenderNode::render()
     const int   shotLength = (int)(BZDBCache::shotLength * 3.0f);
     const bool  experimental = (RENDERER.useQuality() >= 1);
 
-    const bool blackFog = RENDERER.isFogActive() && BZDBCache::blend &&
+    const bool blackFog = RENDERER.isFogActive() &&
                           ((shotLength > 0) || experimental);
     if (blackFog)
         glFogfv(GL_FOG_COLOR, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)));
@@ -624,7 +616,6 @@ void            BoltSceneNode::BoltRenderNode::render()
 
             if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
             myColor4fv(flareColor);
-            if (!BZDBCache::blend) myStipple(flareColor[3]);
             for (int i = 0; i < numFlares; i++)
             {
                 // pick random direction in 3-space.  picking a random theta with
@@ -741,94 +732,49 @@ void            BoltSceneNode::BoltRenderNode::render()
                 glPopAttrib(); // revert the texture
             }
         }
-        else if (BZDBCache::blend)
-        {
-            // draw corona
-            glBegin(GL_TRIANGLE_STRIP);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[2]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[1]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[3]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[2]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[4]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[3]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[5]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[4]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[6]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[5]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[7]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[6]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[8]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[7]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
-            glEnd(); // 18 verts -> 16 tris
-
-            // draw core
-            glBegin(GL_TRIANGLE_FAN);
-            myColor4fv(innerColor);
-            glVertex2fv(core[0]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            glVertex2fv(core[2]);
-            glVertex2fv(core[3]);
-            glVertex2fv(core[4]);
-            glVertex2fv(core[5]);
-            glVertex2fv(core[6]);
-            glVertex2fv(core[7]);
-            glVertex2fv(core[8]);
-            glVertex2fv(core[1]);
-            glEnd(); // 10 verts -> 8 tris
-
-            addTriangleCount(24);
-        }
         else
         {
             // draw corona
-            myColor4fv(coronaColor);
-            myStipple(coronaColor[3]);
             glBegin(GL_TRIANGLE_STRIP);
+            myColor4fv(mainColor);
             glVertex2fv(core[1]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[0]);
+            myColor4fv(mainColor);
             glVertex2fv(core[2]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[1]);
+            myColor4fv(mainColor);
             glVertex2fv(core[3]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[2]);
+            myColor4fv(mainColor);
             glVertex2fv(core[4]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[3]);
+            myColor4fv(mainColor);
             glVertex2fv(core[5]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[4]);
+            myColor4fv(mainColor);
             glVertex2fv(core[6]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[5]);
+            myColor4fv(mainColor);
             glVertex2fv(core[7]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[6]);
+            myColor4fv(mainColor);
             glVertex2fv(core[8]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[7]);
+            myColor4fv(mainColor);
             glVertex2fv(core[1]);
+            myColor4fv(outerColor);
             glVertex2fv(corona[0]);
             glEnd(); // 18 verts -> 16 tris
 
             // draw core
-            myStipple(1.0f);
             glBegin(GL_TRIANGLE_FAN);
             myColor4fv(innerColor);
             glVertex2fv(core[0]);
@@ -844,11 +790,8 @@ void            BoltSceneNode::BoltRenderNode::render()
             glVertex2fv(core[1]);
             glEnd(); // 10 verts -> 8 tris
 
-            myStipple(0.5f);
-
             addTriangleCount(24);
         }
-
     }
 
     glPopMatrix();

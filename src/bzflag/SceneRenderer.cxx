@@ -748,22 +748,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             // if low quality then use stipple -- it's probably much faster
-            if (BZDBCache::blend)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
                 glColor4fv(mirrorColor);
                 glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
                 glDisable(GL_BLEND);
-            }
-            else
-            {
-                float stipple = mirrorColor[3];
-                glColor3fv(mirrorColor);
-                OpenGLGState::setStipple(stipple);
-                glEnable(GL_POLYGON_STIPPLE);
-                glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-                glDisable(GL_POLYGON_STIPPLE);
             }
         }
         else
@@ -773,22 +763,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
             frustum.executeView();
             frustum.executeProjection();
             const float extent = BZDBCache::worldSize * 10.0f;
-            if (BZDBCache::blend)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
                 glColor4fv(mirrorColor);
                 glRectf(-extent, -extent, +extent, +extent);
                 glDisable(GL_BLEND);
-            }
-            else
-            {
-                float stipple = mirrorColor[3];
-                glColor3fv(mirrorColor);
-                OpenGLGState::setStipple(stipple);
-                glEnable(GL_POLYGON_STIPPLE);
-                glRectf(-extent, -extent, +extent, +extent);
-                glDisable(GL_POLYGON_STIPPLE);
             }
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
@@ -1118,19 +1098,10 @@ void SceneRenderer::renderDimming()
         glMatrixMode(GL_MODELVIEW);
         glColor4f(color[0], color[1], color[2], density);
 
-        // if low quality then use stipple -- it's probably much faster
-        if (BZDBCache::blend)
         {
             glEnable(GL_BLEND);
             glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
             glDisable(GL_BLEND);
-        }
-        else
-        {
-            OpenGLGState::setStipple(density);
-            glEnable(GL_POLYGON_STIPPLE);
-            glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-            glDisable(GL_POLYGON_STIPPLE);
         }
     }
     return;
