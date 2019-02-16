@@ -46,7 +46,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     bool useDiffuseColor = true;
 
     // texturing
-    if (BZDBCache::texture && (bzmat->getTextureCount() > 0))
+    if (bzmat->getTextureCount() > 0)
     {
         TextureManager &tm = TextureManager::instance();
         int texID = -1;

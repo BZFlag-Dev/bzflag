@@ -73,9 +73,7 @@ protected:
         }
 
     private:
-        void drawV() const; // draw with just vertices
         void drawVT() const; // draw with texcoords
-        void drawVN() const; // draw with normals
         void drawVTN() const; // draw with texcoords and normals
 
         void initDisplayList();

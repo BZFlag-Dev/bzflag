@@ -559,7 +559,6 @@ static void setup()
     OpenGLGStateBuilder gb;
 
     int puddleTexId = -1;
-    if (BZDBCache::texture)
     {
         TextureManager &tm = TextureManager::instance();
         puddleTexId = tm.getTextureID(puddleTexture, false);
@@ -574,7 +573,6 @@ static void setup()
     puddleGState = gb.getState();
 
     int smokeTexId = -1;
-    if (BZDBCache::texture)
     {
         TextureManager &tm = TextureManager::instance();
         smokeTexId = tm.getTextureID(smokeTexture, false);

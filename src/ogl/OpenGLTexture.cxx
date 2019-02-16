@@ -38,7 +38,6 @@ typedef __int64 s64;
 const GLenum        OpenGLTexture::minifyFilter[] =
 {
     GL_NEAREST,
-    GL_NEAREST,
     GL_LINEAR,
     GL_NEAREST_MIPMAP_NEAREST,
     GL_LINEAR_MIPMAP_NEAREST,
@@ -48,7 +47,6 @@ const GLenum        OpenGLTexture::minifyFilter[] =
 const GLenum        OpenGLTexture::magnifyFilter[] =
 {
     GL_NEAREST,
-    GL_NEAREST,
     GL_LINEAR,
     GL_NEAREST,
     GL_LINEAR,
@@ -57,7 +55,6 @@ const GLenum        OpenGLTexture::magnifyFilter[] =
 };
 const char*     OpenGLTexture::configFilterNames[] =
 {
-    "no",
     "nearest",
     "linear",
     "nearestmipmapnearest",
@@ -238,16 +235,16 @@ void OpenGLTexture::setFilter(Filter _filter)
     // linear... as linear.
     if (filterIndex > maxFilter)
     {
-        if ((filterIndex & 1) == 1)   // nearest...
+        if ((filterIndex & 1) == 0)   // nearest...
         {
-            if ((maxFilter & 1) == 1)
+            if ((maxFilter & 1) == 0)
                 filterIndex = maxFilter;
             else
                 filterIndex = maxFilter > 0 ? maxFilter - 1 : 0;
         }
         else   // linear...
         {
-            if ((maxFilter & 1) == 1)
+            if ((maxFilter & 1) == 0)
                 filterIndex = maxFilter - 1;
             else
                 filterIndex = maxFilter;

@@ -340,7 +340,7 @@ void            WallSceneNode::notifyStyleChange()
     }
     else
         builder.setShading(GL_FLAT);
-    if (BZDBCache::texture && gstate.isTextured())
+    if (gstate.isTextured())
     {
         style += 2;
         builder.enableTexture(true);
@@ -392,7 +392,7 @@ void            WallSceneNode::copyStyle(WallSceneNode* node)
 
 void            WallSceneNode::setColor()
 {
-    if (BZDBCache::texture && useColorTexture)
+    if (useColorTexture)
         myColor4f(1,1,1,1);
     else if (dynamicColor != NULL)
         myColor4fv(dynamicColor);

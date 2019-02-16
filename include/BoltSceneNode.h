@@ -87,16 +87,12 @@ protected:
         GLfloat     mainColor[4];
         GLfloat     innerColor[4];
         GLfloat     outerColor[4];
-        GLfloat     coronaColor[4];
         GLfloat     flareColor[4];
         GLfloat     textureColor[4];
         int     numFlares;
         float       theta[6];
         float       phi[6];
 
-        static GLfloat  core[9][2];
-        static GLfloat  corona[8][2];
-        static const GLfloat ring[8][2];
         static const GLfloat CoreFraction;
         static const GLfloat FlareSize;
         static const GLfloat FlareSpread;
@@ -106,7 +102,6 @@ protected:
 private:
     bool        invisible;
     bool        drawFlares;
-    bool        texturing;
     bool        colorblind;
     float       size;
     float       velocity[3];

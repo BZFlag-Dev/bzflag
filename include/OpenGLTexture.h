@@ -50,7 +50,6 @@ class OpenGLTexture
 public:
     enum Filter
     {
-        Off,
         Nearest,
         Linear,
         NearestMipmapNearest,

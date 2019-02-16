@@ -79,7 +79,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->setLabel("Texturing:");
     option->setCallback(callback, "5");
     options = &option->getList();
-    options->push_back(std::string("Off"));
     options->push_back(std::string("Nearest"));
     options->push_back(std::string("Linear"));
     options->push_back(std::string("Nearest Mipmap Nearest"));

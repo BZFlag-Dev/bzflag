@@ -254,14 +254,6 @@ SphereLodSceneNode::~SphereLodSceneNode()
 void SphereLodSceneNode::setShockWave(bool value)
 {
     shockWave = value;
-    if (BZDBCache::texture && false)   //FIXME
-    {
-        OpenGLGStateBuilder builder(gstate);
-        TextureManager &tm = TextureManager::instance();
-        int texId = tm.getTextureID("mesh");
-        builder.setTexture(texId);
-        gstate = builder.getState();
-    }
     return;
 }
 

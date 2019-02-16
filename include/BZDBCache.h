@@ -51,7 +51,6 @@ public:
     typedef ReadOnly<float> Float;
 
     static Bool  displayMainFlags;
-    static Bool  texture;
     static Bool  shadows;
     static Bool  stencilShadows;
     static Bool  zbuffer;

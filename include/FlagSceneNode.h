@@ -74,7 +74,6 @@ private:
     GLfloat     hscl;
     GLfloat     color[4];
     bool        transparent;
-    bool        texturing;
     OpenGLGState    gstate;
     FlagRenderNode  renderNode;
 };

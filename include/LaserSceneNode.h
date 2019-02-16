@@ -69,7 +69,6 @@ protected:
 private:
     GLfloat     azimuth, elevation;
     GLfloat     length;
-    bool        texturing;
     OpenGLGState    gstate;
     LaserRenderNode renderNode;
 };

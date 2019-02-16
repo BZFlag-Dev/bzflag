@@ -348,19 +348,11 @@ void BackgroundRenderer::setupGroundMaterials()
 
 void BackgroundRenderer::notifyStyleChange()
 {
-    if (BZDBCache::texture)
     {
         if (BZDBCache::lighting)
             styleIndex = 3;
         else
             styleIndex = 2;
-    }
-    else
-    {
-        if (BZDBCache::lighting)
-            styleIndex = 1;
-        else
-            styleIndex = 0;
     }
 
     // some stuff is drawn only for certain states
@@ -566,10 +558,6 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
     // zbuffer should be disabled.  either everything is coplanar with
     // the ground or is drawn back to front and is occluded by everything
     // drawn after it.  also use projection with very far clipping plane.
-
-    // only draw the grid lines if texturing is disabled
-    if (!BZDBCache::texture)
-        drawGroundGrid(renderer);
 
     if (!blank)
     {
@@ -1373,7 +1361,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             parseColorString(BZDB.get("GroundOverideColor"), overrideColor))
         gndColor = overrideColor;
 
-    const bool useTexture = BZDBCache::texture && (groundTextureID >= 0);
+    const bool useTexture = groundTextureID >= 0;
     OpenGLGState advGState;
     OpenGLGStateBuilder builder;
     builder.setShading(GL_SMOOTH);

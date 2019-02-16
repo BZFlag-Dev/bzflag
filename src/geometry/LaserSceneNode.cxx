@@ -26,7 +26,6 @@
 const GLfloat       LaserRadius = 0.1f;
 
 LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
-    texturing(false),
     renderNode(this)
 {
     // prepare rendering info
@@ -79,9 +78,8 @@ bool            LaserSceneNode::cull(const ViewFrustum&) const
 
 void            LaserSceneNode::notifyStyleChange()
 {
-    texturing = BZDBCache::texture;
     OpenGLGStateBuilder builder(gstate);
-    builder.enableTexture(texturing);
+    builder.enableTexture(true);
     {
         // add in contribution from laser
         builder.setBlending(GL_SRC_ALPHA, GL_ONE);
@@ -199,7 +197,6 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
     glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
 
-    if (sceneNode->texturing)
     {
         myColor3f(1.0f, 1.0f, 1.0f);
         glBegin(GL_TRIANGLE_FAN);
@@ -236,42 +233,6 @@ void LaserSceneNode::LaserRenderNode::renderFlatLaser()
         glEnd(); // 8 verts -> 4 tris
 
         addTriangleCount(8);
-    }
-
-    else
-    {
-        // draw beam
-        myColor4f(1.0f, 0.25f, 0.0f, 0.85f);
-        glBegin(GL_TRIANGLE_STRIP);
-        {
-            glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-            glVertex3f(   len, geom[0][0], geom[0][1]);
-            glVertex3f(  0.0f, geom[1][0], geom[1][1]);
-            glVertex3f(   len, geom[1][0], geom[1][1]);
-            glVertex3f(  0.0f, geom[2][0], geom[2][1]);
-            glVertex3f(   len, geom[2][0], geom[2][1]);
-            glVertex3f(  0.0f, geom[3][0], geom[3][1]);
-            glVertex3f(   len, geom[3][0], geom[3][1]);
-            glVertex3f(  0.0f, geom[4][0], geom[4][1]);
-            glVertex3f(   len, geom[4][0], geom[4][1]);
-            glVertex3f(  0.0f, geom[5][0], geom[5][1]);
-            glVertex3f(   len, geom[5][0], geom[5][1]);
-            glVertex3f(  0.0f, geom[0][0], geom[0][1]);
-            glVertex3f(   len, geom[0][0], geom[0][1]);
-        }
-        glEnd(); // 14 verts -> 12 tris
-
-        // also draw a line down the middle (so the beam is visible even
-        // if very far away).  this will also give the beam an extra bright
-        // center.
-        glBegin(GL_LINES);
-        {
-            glVertex3f(  0.0f, 0.0f, 0.0f);
-            glVertex3f(   len, 0.0f, 0.0f);
-        }
-        glEnd(); // count 1 line as 1 tri
-
-        addTriangleCount(13);
     }
 
     glPopMatrix();

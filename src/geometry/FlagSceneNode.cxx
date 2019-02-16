@@ -210,7 +210,6 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
     tilt(0.0f),
     hscl(1.0f),
     transparent(false),
-    texturing(false),
     renderNode(this)
 {
     setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -324,9 +323,8 @@ void            FlagSceneNode::notifyStyleChange()
     const int quality = RENDERER.useQuality();
     realFlag = (quality >= 1);
 
-    texturing = BZDBCache::texture;
     OpenGLGStateBuilder builder(gstate);
-    builder.enableTexture(texturing);
+    builder.enableTexture(true);
 
     if (transparent)
     {
@@ -340,10 +338,7 @@ void            FlagSceneNode::notifyStyleChange()
     {
         builder.resetBlending();
         builder.setStipple(1.0f);
-        if (texturing)
-            builder.setAlphaFunc(GL_GEQUAL, 0.9f);
-        else
-            builder.resetAlphaFunc();
+        builder.setAlphaFunc(GL_GEQUAL, 0.9f);
     }
 
     if (billboard && !realFlag)
@@ -410,7 +405,6 @@ void            FlagSceneNode::FlagRenderNode::render()
 {
     float base = BZDBCache::flagPoleSize;
     float poleWidth = BZDBCache::flagPoleWidth;
-    const bool doing_texturing = sceneNode->texturing;
     const bool is_billboard = sceneNode->billboard;
 
     const GLfloat* sphere = sceneNode->getSphere();
@@ -442,8 +436,7 @@ void            FlagSceneNode::FlagRenderNode::render()
 
             myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
-            if (doing_texturing)
-                glDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D);
 
             // the pole
             const float topHeight = base + Height;
@@ -490,8 +483,7 @@ void            FlagSceneNode::FlagRenderNode::render()
 
             myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
-            if (doing_texturing)
-                glDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D);
 
             {
                 glBegin(GL_TRIANGLE_STRIP);
@@ -508,8 +500,7 @@ void            FlagSceneNode::FlagRenderNode::render()
     }
     glPopMatrix();
 
-    if (doing_texturing)
-        glEnable(GL_TEXTURE_2D);
+    glEnable(GL_TEXTURE_2D);
 }
 
 

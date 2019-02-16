@@ -104,21 +104,6 @@ void MeshFragSceneNode::Geometry::initContext(void *data)
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawV() const
-{
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-
-    return;
-}
-
-
 inline void MeshFragSceneNode::Geometry::drawVT() const
 {
     glDisableClientState(GL_NORMAL_ARRAY);
@@ -128,20 +113,6 @@ inline void MeshFragSceneNode::Geometry::drawVT() const
     glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
 
     glEnableClientState(GL_NORMAL_ARRAY);
-
-    return;
-}
-
-
-inline void MeshFragSceneNode::Geometry::drawVN() const
-{
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     return;
 }
@@ -174,19 +145,9 @@ void MeshFragSceneNode::Geometry::render()
     else
     {
         if (BZDBCache::lighting)
-        {
-            if (BZDBCache::texture)
-                drawVTN();
-            else
-                drawVN();
-        }
+            drawVTN();
         else
-        {
-            if (BZDBCache::texture)
-                drawVT();
-            else
-                drawV();
-        }
+            drawVT();
     }
 
     if (switchLights)

@@ -99,7 +99,7 @@ inline void MeshDrawMgr::rawExecuteCommands(int lod, int set)
 }
 
 
-void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
+void MeshDrawMgr::executeSet(int lod, int set, bool _normals)
 {
     // FIXME
     const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
@@ -120,17 +120,12 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
             glNormalPointer(GL_FLOAT, 0, normals);
         else
             glDisableClientState(GL_NORMAL_ARRAY);
-        if (_texcoords)
-            glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
-        else
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 
         rawExecuteCommands(lod, set);
 
         if (!_normals)
             glEnableClientState(GL_NORMAL_ARRAY);
-        if (!_texcoords)
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     if (animInfo != NULL)

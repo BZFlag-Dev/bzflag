@@ -439,7 +439,6 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     bool useDiffuseColor = true;
 
     // texturing
-    if (BZDBCache::texture)
     {
         bool userTexture = (bzmat->getTextureCount() > 0);
         if (userTexture)

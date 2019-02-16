@@ -180,7 +180,7 @@ void TankSceneNode::notifyStyleChange()
 {
     sort = !BZDBCache::zbuffer;
     OpenGLGStateBuilder builder(gstate);
-    builder.enableTexture(BZDBCache::texture);
+    builder.enableTexture(true);
     builder.enableMaterial(BZDBCache::lighting);
     builder.setSmoothing(BZDBCache::smooth);
     if (transparent)
@@ -373,7 +373,7 @@ void TankSceneNode::setExplodeFraction(float t)
 void TankSceneNode::setJumpJets(float scale)
 {
     jumpJetsOn = false;
-    if ((scale > 0.0f) && BZDBCache::zbuffer && BZDBCache::texture)
+    if ((scale > 0.0f) && BZDBCache::zbuffer)
     {
         jumpJetsOn = true;
         jumpJetsScale = scale;
@@ -1250,8 +1250,7 @@ void TankSceneNode::TankRenderNode::setupPartColor(TankPart part)
     const GLfloat* clr = color;
 
     // do not use color modulation with tank textures
-    if (BZDBCache::texture)
-        clr = white;
+    clr = white;
 
     switch (part)
     {

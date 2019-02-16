@@ -17,7 +17,6 @@
 #include "BZDBCache.h"
 
 BZDBCache::Bool  BZDBCache::displayMainFlags;
-BZDBCache::Bool  BZDBCache::texture;
 BZDBCache::Bool  BZDBCache::shadows;
 BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::zbuffer;
@@ -99,7 +98,6 @@ void BZDBCache::init()
     BZDB.addCallback("displayMainFlags", clientCallback, NULL);
     BZDB.addCallback("radarStyle", clientCallback, NULL);
     BZDB.addCallback("radarTankPixels", clientCallback, NULL);
-    BZDB.addCallback("texture", clientCallback, NULL);
     BZDB.addCallback("shadows", clientCallback, NULL);
     BZDB.addCallback("stencilShadows", clientCallback, NULL);
     BZDB.addCallback("zbuffer", clientCallback, NULL);
@@ -171,8 +169,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
 {
     if (name == "displayMainFlags")
         displayMainFlags = BZDB.isTrue("displayMainFlags");
-    else if (name == "texture")
-        texture = BZDB.isTrue("texture");
     else if (name == "shadows")
         shadows = BZDB.isTrue("shadows");
     else if (name == "stencilShadows")

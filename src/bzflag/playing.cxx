@@ -3492,10 +3492,6 @@ bool            addExplosion(const float* _pos,
     if (prototypeExplosions.empty())
         return false;
 
-    // don't add explosion if blending or texture mapping are off
-    if (!BZDBCache::texture)
-        return false;
-
     // pick a random prototype explosion
     const int index = (int)(bzfrand() * (float)prototypeExplosions.size());
 
@@ -7460,7 +7456,6 @@ void            startPlaying(BzfDisplay* _display,
     // if no configuration go into a decent setup for a modern machine
     if (!startupInfo.hasConfiguration)
     {
-        BZDB.set("texture", "1");
         sceneRenderer->setQuality(1);
         TextureManager::instance().setMaxFilter(OpenGLTexture::Max);
     }

@@ -63,7 +63,7 @@ void OpaqueRenderNode::render()
         glEnable(GL_NORMALIZE);
 
     // draw the elements
-    drawMgr->executeSet(lod, set, BZDBCache::lighting, BZDBCache::texture);
+    drawMgr->executeSet(lod, set, BZDBCache::lighting);
 
     // undo the transformation
     if (normalize)

@@ -37,7 +37,6 @@ BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool sup
     isSuper(super),
     invisible(false),
     drawFlares(false),
-    texturing(false),
     colorblind(false),
     size(1.0f),
     renderNode(this),
@@ -158,9 +157,8 @@ void            BoltSceneNode::addLight(
 
 void            BoltSceneNode::notifyStyleChange()
 {
-    texturing = BZDBCache::texture;
     OpenGLGStateBuilder builder(gstate);
-    builder.enableTexture(texturing);
+    builder.enableTexture(true);
     {
         const int shotLength = (int)(BZDBCache::shotLength * 3.0f);
         if (shotLength > 0 && !drawFlares)
@@ -175,7 +173,7 @@ void            BoltSceneNode::notifyStyleChange()
             builder.enableMaterial(false);
         }
         else
-            builder.setShading(texturing ? GL_FLAT : GL_SMOOTH);
+            builder.setShading(GL_FLAT);
     }
     gstate = builder.getState();
 }
@@ -193,41 +191,12 @@ void            BoltSceneNode::addRenderNodes(
 const GLfloat       BoltSceneNode::BoltRenderNode::CoreFraction = 0.4f;
 const GLfloat       BoltSceneNode::BoltRenderNode::FlareSize = 1.0f;
 const GLfloat       BoltSceneNode::BoltRenderNode::FlareSpread = 0.08f;
-GLfloat         BoltSceneNode::BoltRenderNode::core[9][2];
-GLfloat         BoltSceneNode::BoltRenderNode::corona[8][2];
-const GLfloat       BoltSceneNode::BoltRenderNode::ring[8][2] =
-{
-    { 1.0f, 0.0f },
-    { (float)M_SQRT1_2, (float)M_SQRT1_2 },
-    { 0.0f, 1.0f },
-    { (float)-M_SQRT1_2, (float)M_SQRT1_2 },
-    { -1.0f, 0.0f },
-    { (float)-M_SQRT1_2, (float)-M_SQRT1_2 },
-    { 0.0f, -1.0f },
-    { (float)M_SQRT1_2, (float)-M_SQRT1_2 }
-};
 
 BoltSceneNode::BoltRenderNode::BoltRenderNode(
     const BoltSceneNode* _sceneNode) :
     sceneNode(_sceneNode),
     numFlares(0)
 {
-    // initialize core and corona if not already done
-    static bool init = false;
-    if (!init)
-    {
-        init = true;
-        core[0][0] = 0.0f;
-        core[0][1] = 0.0f;
-        for (int i = 0; i < 8; i++)
-        {
-            core[i+1][0] = CoreFraction * ring[i][0];
-            core[i+1][1] = CoreFraction * ring[i][1];
-            corona[i][0] = ring[i][0];
-            corona[i][1] = ring[i][1];
-        }
-    }
-
     textureColor[0] = 1.0f;
     textureColor[1] = 1.0f;
     textureColor[2] = 1.0f;
@@ -281,11 +250,6 @@ void            BoltSceneNode::BoltRenderNode::setColor(
     outerColor[1] = mainColor[1];
     outerColor[2] = mainColor[2];
     outerColor[3] = (rgba[3] == 1.0f )? 0.1f: rgba[3];
-
-    coronaColor[0] = mainColor[0];
-    coronaColor[1] = mainColor[1];
-    coronaColor[2] = mainColor[2];
-    coronaColor[3] = (rgba[3] == 1.0f )? 0.5f : rgba[3];
 
     flareColor[0] = mainColor[0];
     flareColor[1] = mainColor[1];
@@ -614,7 +578,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                 }
             }
 
-            if (sceneNode->texturing) glDisable(GL_TEXTURE_2D);
+            glDisable(GL_TEXTURE_2D);
             myColor4fv(flareColor);
             for (int i = 0; i < numFlares; i++)
             {
@@ -629,18 +593,17 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float ti = theta[i];
                 const float fs = FlareSpread;
                 glBegin(GL_TRIANGLE_STRIP);
-                glVertex3fv(core[0]);
+                glVertex3f(0.0f, 0.0f, CoreFraction);
                 glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
                 glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
                 glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
                 glEnd();
             }
-            if (sceneNode->texturing) glEnable(GL_TEXTURE_2D);
+            glEnable(GL_TEXTURE_2D);
 
             addTriangleCount(numFlares * 2);
         }
 
-        if (sceneNode->texturing)
         {
             // draw billboard square
             const float u0 = (float)u * du;
@@ -731,66 +694,6 @@ void            BoltSceneNode::BoltRenderNode::render()
                 glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
                 glPopAttrib(); // revert the texture
             }
-        }
-        else
-        {
-            // draw corona
-            glBegin(GL_TRIANGLE_STRIP);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[2]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[1]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[3]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[2]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[4]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[3]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[5]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[4]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[6]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[5]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[7]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[6]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[8]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[7]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
-            glEnd(); // 18 verts -> 16 tris
-
-            // draw core
-            glBegin(GL_TRIANGLE_FAN);
-            myColor4fv(innerColor);
-            glVertex2fv(core[0]);
-            myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            glVertex2fv(core[2]);
-            glVertex2fv(core[3]);
-            glVertex2fv(core[4]);
-            glVertex2fv(core[5]);
-            glVertex2fv(core[6]);
-            glVertex2fv(core[7]);
-            glVertex2fv(core[8]);
-            glVertex2fv(core[1]);
-            glEnd(); // 10 verts -> 8 tris
-
-            addTriangleCount(24);
         }
     }
 
