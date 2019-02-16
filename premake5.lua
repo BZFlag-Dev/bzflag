@@ -117,6 +117,23 @@ elseif _ACTION == "install" or _ACTION == "uninstall" then
   end
 end
 
+-- check for the dependencies directory (mandatory for Visual Studio and Xcode)
+local depsDir = false
+if os.isdir("dependencies") then
+  if (_ACTION and string.find(_ACTION, "vs", 0) and
+      os.isdir("dependencies/output-windows-release-x86") and
+      os.isdir("dependencies/output-windows-debug-x86") and
+      os.isdir("dependencies/licenses")) then
+    depsDir = true
+  end
+end
+if not depsDir then
+  if (_ACTION and string.find(_ACTION, "vs", 0)) then
+    print "The dependencies package is required by Visual Studio actions, but was not found."
+    os.exit(1)
+  end
+end
+
 -- set up main workspace
 workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   -- set up command line options
