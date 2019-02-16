@@ -175,8 +175,14 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
     ["execute"] =
       function()
         if _TARGET_OS == "windows" then
+          -- work around an issue with RMDIR /S /Q sometimes giving an error
+          -- "The directory is not empty" by running commands twice (allow
+          -- error output on the second invokation in case of another issue)
+          os.execute("IF EXIST premake5 ( RMDIR /S /Q premake5 2>NUL )")
           os.execute("IF EXIST premake5 ( RMDIR /S /Q premake5 )")
+          os.execute("IF EXIST bin_Debug_Win32 ( RMDIR /S /Q bin_Debug_Win32 2>NUL )")
           os.execute("IF EXIST bin_Debug_Win32 ( RMDIR /S /Q bin_Debug_Win32 )")
+          os.execute("IF EXIST bin_Release_Win32 ( RMDIR /S /Q bin_Release_Win32 2>NUL )")
           os.execute("IF EXIST bin_Release_Win32 ( RMDIR /S /Q bin_Release_Win32 )")
         else
           os.execute("rm -rf premake5")

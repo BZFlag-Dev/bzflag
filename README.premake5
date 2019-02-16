@@ -80,7 +80,6 @@ remove old Xcode project and associated files
 
 Windows
 -------
-`premake5 clean` is failing the first time, complaining that the directory is not empty
 
 Linux
 -----
