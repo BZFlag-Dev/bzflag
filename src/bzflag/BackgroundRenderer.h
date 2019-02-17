@@ -99,8 +99,8 @@ private:
     int         styleIndex;
 
     // stuff for ground
-    OpenGLGState    groundGState[4];
-    OpenGLGState    invGroundGState[4];
+    OpenGLGState    groundGState;
+    OpenGLGState    invGroundGState;
     int         groundTextureID;
     const GLfloat*  groundTextureMatrix;
 
@@ -165,10 +165,10 @@ private:
 
     static GLfloat      rcvrGroundColor[4][4];
     static GLfloat      rcvrGroundInvColor[4][4];
-    static GLfloat      groundColor[4][4];
-    static GLfloat      groundColorInv[4][4];
-    static const GLfloat    defaultGroundColor[4][4];
-    static const GLfloat    defaultGroundColorInv[4][4];
+    static GLfloat      groundColor[4];
+    static GLfloat      groundColorInv[4];
+    static const GLfloat    defaultGroundColor[4];
+    static const GLfloat    defaultGroundColorInv[4];
     static const GLfloat    receiverColor[3];
     static const GLfloat    receiverColorInv[3];
 

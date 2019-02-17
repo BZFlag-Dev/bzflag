@@ -472,14 +472,14 @@ void SceneRenderer::enableLight(int index, bool on)
 
 void SceneRenderer::enableSun(bool on)
 {
-    if (BZDBCache::lighting && sunOrMoonUp)
+    if (sunOrMoonUp)
         theSun.enableLight(SunLight, on);
 }
 
 
 void SceneRenderer::setupSun()
 {
-    if (BZDBCache::lighting && sunOrMoonUp)
+    if (sunOrMoonUp)
         theSun.execute(SunLight, BZDB.isTrue("lightLists"));
 }
 
@@ -817,7 +817,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     frustum.executeView();
 
     // turn sunlight on -- the ground needs it
-    if (BZDBCache::lighting && sunOrMoonUp)
+    if (sunOrMoonUp)
     {
         theSun.execute(SunLight, lightLists);
         theSun.enableLight(SunLight, true);
@@ -907,7 +907,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
     // prepare the other lights but don't turn them on yet --
     // we may need to turn them on when drawing the background.
-    if (BZDBCache::lighting)
     {
         for (i = 0; i < dynamicLights; i++)
             lights[i]->execute(i + reservedLights, lightLists);
@@ -920,7 +919,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
     if (!blank)
     {
-        if (BZDBCache::lighting)
         {
             // now turn on the remaining lights
             for (i = 0; i < dynamicLights; i++)
@@ -961,7 +959,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
         OpenGLGState::resetState();
 
         // shut off lights
-        if (BZDBCache::lighting)
         {
             theSun.enableLight(SunLight, false);
             for (i = 0; i < dynamicLights; i++)
@@ -1176,7 +1173,7 @@ void SceneRenderer::getLights()
         lightsCount = 0;
         dynamicLights = 0;
 
-        if (scene && !blank && BZDBCache::lighting)
+        if (scene && !blank)
         {
             // get the potential dynamic lights
             scene->addLights(*this);

@@ -99,7 +99,7 @@ inline void MeshDrawMgr::rawExecuteCommands(int lod, int set)
 }
 
 
-void MeshDrawMgr::executeSet(int lod, int set, bool _normals)
+void MeshDrawMgr::executeSet(int lod, int set)
 {
     // FIXME
     const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
@@ -116,16 +116,10 @@ void MeshDrawMgr::executeSet(int lod, int set, bool _normals)
     {
         glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-        if (_normals)
-            glNormalPointer(GL_FLOAT, 0, normals);
-        else
-            glDisableClientState(GL_NORMAL_ARRAY);
+        glNormalPointer(GL_FLOAT, 0, normals);
         glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
 
         rawExecuteCommands(lod, set);
-
-        if (!_normals)
-            glEnableClientState(GL_NORMAL_ARRAY);
     }
 
     if (animInfo != NULL)

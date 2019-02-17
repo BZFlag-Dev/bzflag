@@ -22,7 +22,6 @@ BZDBCache::Bool  BZDBCache::stencilShadows;
 BZDBCache::Bool  BZDBCache::zbuffer;
 BZDBCache::Bool  BZDBCache::useMeshForRadar;
 BZDBCache::Bool  BZDBCache::tesselation;
-BZDBCache::Bool  BZDBCache::lighting;
 BZDBCache::Bool  BZDBCache::smooth;
 BZDBCache::Bool  BZDBCache::colorful;
 BZDBCache::Bool  BZDBCache::animatedTreads;
@@ -103,7 +102,6 @@ void BZDBCache::init()
     BZDB.addCallback("zbuffer", clientCallback, NULL);
     BZDB.addCallback("useMeshForRadar", clientCallback, NULL);
     BZDB.addCallback("tesselation", clientCallback, NULL);
-    BZDB.addCallback("lighting", clientCallback, NULL);
     BZDB.addCallback("smooth", clientCallback, NULL);
     BZDB.addCallback("colorful", clientCallback, NULL);
     BZDB.addCallback("animatedTreads", clientCallback, NULL);
@@ -179,8 +177,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
         useMeshForRadar = BZDB.isTrue("useMeshForRadar");
     else if (name == "tesselation")
         tesselation = BZDB.isTrue("tesselation");
-    else if (name == "lighting")
-        lighting = BZDB.isTrue("lighting");
     else if (name == "smooth")
         smooth = BZDB.isTrue("smooth");
     else if (name == "colorful")

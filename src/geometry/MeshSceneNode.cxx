@@ -360,8 +360,7 @@ void MeshSceneNode::notifyStyleChange()
 
             // enough elements to warrant disabling lights?
             const Extents* extPtr = &extents;
-            if ((drawSet.triangleCount < 100) ||
-                    !BZDBCache::lighting || mat.bzmat->getNoLighting())
+            if ((drawSet.triangleCount < 100) || mat.bzmat->getNoLighting())
                 extPtr = NULL;
 
             if (!mat.needsSorting)
@@ -482,7 +481,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     }
 
     // lighting
-    if (BZDBCache::lighting && !bzmat->getNoLighting())
+    if (!bzmat->getNoLighting())
     {
         OpenGLMaterial oglMaterial(bzmat->getSpecular(),
                                    bzmat->getEmission(),

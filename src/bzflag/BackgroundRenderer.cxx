@@ -43,22 +43,16 @@ GLfloat         BackgroundRenderer::skyPyramid[5][3];
 const GLfloat       BackgroundRenderer::cloudRepeats = 3.0f;
 static const int    NumMountainFaces = 16;
 
-GLfloat         BackgroundRenderer::groundColor[4][4];
-GLfloat         BackgroundRenderer::groundColorInv[4][4];
+GLfloat         BackgroundRenderer::groundColor[4];
+GLfloat         BackgroundRenderer::groundColorInv[4];
 
-const GLfloat       BackgroundRenderer::defaultGroundColor[4][4] =
+const GLfloat       BackgroundRenderer::defaultGroundColor[4] =
 {
-    { 0.0f, 0.35f, 0.0f, 1.0f },
-    { 0.0f, 0.20f, 0.0f, 1.0f },
-    { 1.0f, 1.00f, 1.0f, 1.0f },
-    { 1.0f, 1.00f, 1.0f, 1.0f }
+    1.0f, 1.00f, 1.0f, 1.0f
 };
-const GLfloat       BackgroundRenderer::defaultGroundColorInv[4][4] =
+const GLfloat       BackgroundRenderer::defaultGroundColorInv[4] =
 {
-    { 0.35f, 0.00f, 0.35f, 1.0f },
-    { 0.20f, 0.00f, 0.20f, 1.0f },
-    { 1.00f, 1.00f, 1.00f, 1.0f },
-    { 1.00f, 1.00f, 1.00f, 1.0f }
+    1.00f, 1.00f, 1.00f, 1.0f
 };
 const GLfloat       BackgroundRenderer::receiverColor[3] =
 { 0.3f, 0.55f, 0.3f };
@@ -271,22 +265,21 @@ void BackgroundRenderer::setupGroundMaterials()
     if (bzmat == NULL)
     {
         // default ground material
-        memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+        memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4]));
         groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
     }
     else
     {
         // map specified material
         bzmat->setReference();
-        for (int i = 0; i < 4; i++)
-            memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
+        memcpy (groundColor, bzmat->getDiffuse(), sizeof(GLfloat[4]));
         if (bzmat->getTextureCount() > 0)
         {
             groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
             if (groundTextureID < 0)
             {
                 // use the default as a backup (default color too)
-                memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+                memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4]));
                 groundTextureID = tm.getTextureID(BZDB.get("stdGroundTexture").c_str(), true);
             }
             else
@@ -307,40 +300,23 @@ void BackgroundRenderer::setupGroundMaterials()
 
     // ground gstates
     gb.reset();
-    groundGState[0] = gb.getState();
-    gb.reset();
-    gb.setMaterial(defaultMaterial);
-    groundGState[1] = gb.getState();
-    gb.reset();
-    gb.setTexture(groundTextureID);
-    gb.setTextureMatrix(groundTextureMatrix);
-    groundGState[2] = gb.getState();
-    gb.reset();
     gb.setMaterial(defaultMaterial);
     gb.setTexture(groundTextureID);
     gb.setTextureMatrix(groundTextureMatrix);
-    groundGState[3] = gb.getState();
+    groundGState = gb.getState();
 
 
     // default inverted ground material
     int groundInvTextureID = -1;
-    memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
+    memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4]));
     if (groundInvTextureID < 0)
         groundInvTextureID = tm.getTextureID(BZDB.get("zoneGroundTexture").c_str(), false);
 
     // inverted ground gstates
     gb.reset();
-    invGroundGState[0] = gb.getState();
-    gb.reset();
-    gb.setMaterial(defaultMaterial);
-    invGroundGState[1] = gb.getState();
-    gb.reset();
-    gb.setTexture(groundInvTextureID);
-    invGroundGState[2] = gb.getState();
-    gb.reset();
     gb.setMaterial(defaultMaterial);
     gb.setTexture(groundInvTextureID);
-    invGroundGState[3] = gb.getState();
+    invGroundGState = gb.getState();
 
     return;
 }
@@ -348,16 +324,9 @@ void BackgroundRenderer::setupGroundMaterials()
 
 void BackgroundRenderer::notifyStyleChange()
 {
-    {
-        if (BZDBCache::lighting)
-            styleIndex = 3;
-        else
-            styleIndex = 2;
-    }
-
     // some stuff is drawn only for certain states
-    cloudsVisible = (styleIndex >= 2 && cloudsAvailable);
-    mountainsVisible = (styleIndex >= 2 && mountainsAvailable);
+    cloudsVisible = cloudsAvailable;
+    mountainsVisible = mountainsAvailable;
     shadowsVisible = BZDB.isTrue("shadows");
     starGStateIndex = BZDB.isTrue("smooth");
 
@@ -568,8 +537,7 @@ void BackgroundRenderer::renderGroundEffects(SceneRenderer& renderer,
         // the ground gets illuminated).  this is necessary because lighting is
         // performed only at a vertex, and the ground's vertices are a few
         // kilometers away.
-        if (BZDBCache::lighting &&
-                !drawingMirror && BZDBCache::drawGroundLights)
+        if (!drawingMirror && BZDBCache::drawGroundLights)
         {
             if (BZDBCache::tesselation && (renderer.useQuality() >= 1))
             {
@@ -998,8 +966,8 @@ void BackgroundRenderer::drawGround()
         glNormal3f(0.0f, 0.0f, 1.0f);
         if (invert)
         {
-            glColor4fv(groundColorInv[styleIndex]);
-            invGroundGState[styleIndex].setState();
+            glColor4fv(groundColorInv);
+            invGroundGState.setState();
         }
         else
         {
@@ -1008,8 +976,8 @@ void BackgroundRenderer::drawGround()
                     parseColorString(BZDB.get("GroundOverideColor"), color))
                 glColor4fv(color);
             else
-                glColor4fv(groundColor[styleIndex]);
-            groundGState[styleIndex].setState();
+                glColor4fv(groundColor);
+            groundGState.setState();
         }
 
         drawGroundCentered();
@@ -1355,7 +1323,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         return;
 
     // setup the ground tint
-    const GLfloat* gndColor = groundColor[styleIndex];
+    const GLfloat* gndColor = groundColor;
     GLfloat overrideColor[4];
     if (BZDB.isSet("GroundOverideColor") &&
             parseColorString(BZDB.get("GroundOverideColor"), overrideColor))

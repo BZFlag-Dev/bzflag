@@ -92,7 +92,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
 
     // lighting
     builder.setShading(GL_FLAT);
-    if (BZDBCache::lighting && !bzmat->getNoLighting())
+    if (!bzmat->getNoLighting())
     {
         OpenGLMaterial oglMaterial(bzmat->getSpecular(),
                                    bzmat->getEmission(),

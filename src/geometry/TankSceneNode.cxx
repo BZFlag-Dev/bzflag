@@ -181,7 +181,7 @@ void TankSceneNode::notifyStyleChange()
     sort = !BZDBCache::zbuffer;
     OpenGLGStateBuilder builder(gstate);
     builder.enableTexture(true);
-    builder.enableMaterial(BZDBCache::lighting);
+    builder.enableMaterial(true);
     builder.setSmoothing(BZDBCache::smooth);
     if (transparent)
     {
@@ -915,7 +915,7 @@ void TankSceneNode::TankRenderNode::render()
     }
 
     // disable the dynamic lights, if it might help
-    const bool switchLights = BZDBCache::lighting && !isShadow;
+    const bool switchLights = !isShadow;
     if (switchLights)
         RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
 

@@ -22,7 +22,7 @@ public:
     MeshDrawMgr(const MeshDrawInfo* drawInfo);
     ~MeshDrawMgr();
 
-    void executeSet(int lod, int set, bool normals);
+    void executeSet(int lod, int set);
     void executeSetGeometry(int lod, int set);
 
     static void init();

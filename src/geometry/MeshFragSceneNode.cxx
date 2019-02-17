@@ -104,20 +104,6 @@ void MeshFragSceneNode::Geometry::initContext(void *data)
 }
 
 
-inline void MeshFragSceneNode::Geometry::drawVT() const
-{
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
-
-    glEnableClientState(GL_NORMAL_ARRAY);
-
-    return;
-}
-
-
 inline void MeshFragSceneNode::Geometry::drawVTN() const
 {
     glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
@@ -132,8 +118,7 @@ inline void MeshFragSceneNode::Geometry::drawVTN() const
 void MeshFragSceneNode::Geometry::render()
 {
     const int triangles = sceneNode->arrayCount;
-    const bool switchLights = (triangles >= minLightDisabling)
-                              && BZDBCache::lighting;
+    const bool switchLights = (triangles >= minLightDisabling);
     if (switchLights)
         RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
 
@@ -143,12 +128,7 @@ void MeshFragSceneNode::Geometry::render()
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
     else
-    {
-        if (BZDBCache::lighting)
-            drawVTN();
-        else
-            drawVT();
-    }
+        drawVTN();
 
     if (switchLights)
         RENDERER.reenableLights();

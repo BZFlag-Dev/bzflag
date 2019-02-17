@@ -68,7 +68,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->setLabel("Lighting:");
     option->setCallback(callback, "4");
     options = &option->getList();
-    options->push_back(std::string("None"));
     options->push_back(std::string("Fast"));
     options->push_back(std::string("Best"));
     option->update();
@@ -312,15 +311,12 @@ void            DisplayMenu::resize(int _width, int _height)
         TextureManager& tm = TextureManager::instance();
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
-        if (BZDBCache::lighting)
         {
             if (BZDB.isTrue("tesselation"))
-                ((HUDuiList*)listHUD[i++])->setIndex(2);
-            else
                 ((HUDuiList*)listHUD[i++])->setIndex(1);
+            else
+                ((HUDuiList*)listHUD[i++])->setIndex(0);
         }
-        else
-            ((HUDuiList*)listHUD[i++])->setIndex(0);
         ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
         if (OpenGLGState::hasAnisotropicFiltering)
@@ -396,11 +392,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
         break;
     case '4':
     {
-        bool oldLighting = BZDBCache::lighting;
-        BZDB.set("lighting", list->getIndex() == 0 ? "0" : "1");
-        BZDB.set("tesselation", list->getIndex() == 2 ? "1" : "0");
-        if (oldLighting != BZDBCache::lighting)
-            sceneRenderer->notifyStyleChange();
+        BZDB.set("tesselation", list->getIndex() == 1 ? "1" : "0");
         break;
     }
     case '5':
