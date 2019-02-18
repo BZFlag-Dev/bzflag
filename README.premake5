@@ -39,7 +39,6 @@ consistency:
   sysincludedirs
   buildoptions
   libdirs
-  frameworkdirs
   linkoptions
   links
   dependson
@@ -60,23 +59,17 @@ To-Do
 
 General
 -------
-set up check for dependencies directory
-  error out on xcode and vs* actions if not found
-  optional on gmake action
 set up options for additional header and library search paths
   these added after dependencies directory, if used
 set up main premake5.lua script to print out formatted configuration summary
 
 macOS
 -----
-copy licenses in BZFlag Xcode project
-make newplug.sh copy premake5.lua and adjust contents (or Linux)
 check man/plist/gmake installation paths for proper depth and consistency (or Linux)
+make dependencies directory work optionally on gmake action (or Linux)
 move any pertinent info in README.MacOSX, rename README.MacOSX to README.macOS, and make file refer to this file
 remove old Xcode project and associated files
-(idea) add option for using an SDL framework instead of system libraries
-  error out on other operating systems, or if --with-sdl=no, or if dependencies directory is found
-  if not implemented, in main premake5.lua, adjust LD_RUNPATH_SEARCH_PATHS Xcode option
+dependencies package doesn't include SDL 1.2... what to do?
 
 Windows
 -------
