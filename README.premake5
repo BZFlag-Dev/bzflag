@@ -59,14 +59,14 @@ To-Do
 
 General
 -------
-set up options for additional header and library search paths
+(1) set up options for additional header and library search paths
   these added after dependencies directory, if used
-set up main premake5.lua script to print out formatted configuration summary
+(3) set up main premake5.lua script to print out formatted configuration summary
 
 macOS
 -----
 check man/plist/gmake installation paths for proper depth and consistency (or Linux)
-make dependencies directory work optionally on gmake action (or Linux)
+(2) make dependencies directory work optionally on gmake action (or Linux)
 move any pertinent info in README.MacOSX, rename README.MacOSX to README.macOS, and make file refer to this file
 remove old Xcode project and associated files
 dependencies package doesn't include SDL 1.2... what to do?
@@ -89,4 +89,5 @@ consider removing the '5' from this filename and title, and the directory projec
 test all configuration options
 run all standard make system checks to see if there are any warnings
 read over all scripts slowly for review
+do comparison with premake_second_try to see if anything missed
 figure out what do do about support for solaris and bsd, perhaps just under SDL 1.2/2

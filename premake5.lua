@@ -82,7 +82,7 @@ local bzInstallFiles = {
   { ["inDir"] = "data/l10n", ["outDir"] = "share/bzflag/l10n",
     ["outDirDelete"] = true, ["file"] = "bzflag_sv.po" },
 
- -- other data files
+  -- other data files
   { ["inDir"] = "data", ["outDir"] = "share/bzflag",
     ["outDirDelete"] = true, ["file"] = "*.png" },
   { ["inDir"] = "data", ["outDir"] = "share/bzflag",
