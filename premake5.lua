@@ -15,7 +15,7 @@
 local bzVersion = {
   ["major"] = 2,
   ["minor"] = 5,
-  ["revision"] = 2,
+  ["revision"] = 3,
   ["buildType"] = "DEVEL" -- DEVEL | RC# | STABLE | MAINT
 }
 
@@ -125,11 +125,19 @@ if os.isdir("dependencies") then
       os.isdir("dependencies/output-windows-debug-x86") and
       os.isdir("dependencies/licenses")) then
     depsDir = true
+  elseif (_ACTION and string.find(_ACTION, "xcode", 0) and
+      os.isdir("dependencies/output-macOS-release-x86_64") and
+      os.isdir("dependencies/output-macOS-debug-x86_64") and
+      os.isdir("dependencies/licenses")) then
+    depsDir = true
   end
 end
 if not depsDir then
   if (_ACTION and string.find(_ACTION, "vs", 0)) then
     print "The dependencies package is required by Visual Studio actions, but was not found."
+    os.exit(1)
+  elseif (_ACTION and string.find(_ACTION, "xcode", 0)) then
+    print "The dependencies package is required by Xcode actions, but was not found."
     os.exit(1)
   end
 end
@@ -371,17 +379,14 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
 
   filter "system:macosx"
     defines "HAVE_CGLGETCURRENTCONTEXT"
-    sysincludedirs "/usr/local/include" -- for c-ares
-    libdirs "/usr/local/lib" -- same
-    frameworkdirs "/Library/Frameworks"
+    sysincludedirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/include"
+    libdirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/lib"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
                          ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
-                         ["LD_RUNPATH_SEARCH_PATHS"] = "@executable_path/../Frameworks @executable_path/../PlugIns" }
+                         ["LD_RUNPATH_SEARCH_PATHS"] =" @executable_path/../PlugIns" }
+
   filter { "system:macosx", "action:xcode*" }
     defines "INSTALL_DATA_DIR=\"\"" -- there's one place that has to have it
-  filter { "system:macosx", "action:gmake" }
-    buildoptions "-F/Library/Frameworks" -- frameworkdirs() isn't passed to gmake
-    linkoptions "-F/Library/Frameworks" -- same
 
   filter "system:linux"
     defines {

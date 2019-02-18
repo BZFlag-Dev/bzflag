@@ -88,7 +88,18 @@ project "bzflag"
 
   filter "system:macosx"
     removelinks { "GL", "GLU" }
-    links { "Cocoa.framework", "OpenGL.framework" }
+    links {
+      "AudioToolbox.framework",
+      "Carbon.framework",
+      "Cocoa.framework",
+      "CoreAudio.framework",
+      "CoreVideo.framework",
+      "ForceFeedback.framework",
+      "iconv",
+      "IOKit.framework",
+      "Metal.framework",
+      "OpenGL.framework"
+    }
   filter "action:xcode*"
     if not _OPTIONS["disable-server"] then
       dependson "bzfs"
@@ -123,28 +134,14 @@ project "bzflag"
       "cp ../../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
       "cp ../../README.MacOSX ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "mkdir -p ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}"
+      "cp -R ../../dependencies/licenses ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
     }
   filter { "system:macosx",
            "options:not with-sdl=no",
            "options:not with-sdl=1" }
-    links "SDL2.framework"
+    links "SDL2"
   filter { "system:macosx", "options:with-sdl=1" }
-    links "SDL.framework"
-  filter { "action:xcode*",
-           "options:not with-sdl=no",
-           "options:not with-sdl=1" }
-    postbuildcommands {
-      "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL2.framework ]] ; then",
-      "cp -R /Library/Frameworks/SDL2.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
-      "fi"
-    }
-  filter { "action:xcode*", "options:with-sdl=1" }
-    postbuildcommands {
-      "if [[ ! -d ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDL.framework ]] ; then",
-      "cp -R /Library/Frameworks/SDL.framework ${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/",
-      "fi"
-    }
+    links "SDL"
   filter { "action:xcode*", "options:not disable-plugins", "options:not disable-server" }
     -- the client needs to have the dependency so the plugins will build
     postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
