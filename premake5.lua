@@ -180,6 +180,16 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
     }
   }
   newoption {
+    ["trigger"] = "extra-include-dirs",
+    ["description"] = "Comma-separated list of additional directories to search for headers",
+    ["value"] = "PATH[,PATH...]"
+  }
+  newoption {
+    ["trigger"] = "extra-lib-dirs",
+    ["description"] = "Comma-separated list of additional directories to search for libraries",
+    ["value"] = "PATH[,PATH...]"
+  }
+  newoption {
     ["trigger"] = "prefix",
     ["value"] = "PATH",
     ["description"] = "Set a prefix for the BZFlag installation path; default is '/usr/local'"
@@ -501,6 +511,25 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
       defines { "BZ_BUILD_OS=\"premake-Unknown\"" }
     filter "configurations:Debug"
       defines { "BZ_BUILD_OS=\"premake-Unknown-dbg\"" }
+  end
+
+  -- add extra include/library directories if specified
+  function split_by_comma(value) -- based on a snippet from https://helloacm.com/split-a-string-in-lua/
+    local result = {}
+    for match in (value..","):gmatch("(.-)"..",") do
+      table.insert(result, match)
+    end
+    return result
+  end
+  if _OPTIONS["extra-include-dirs"] then
+    for _, directory in ipairs(split_by_comma(_OPTIONS["extra-include-dirs"])) do
+      sysincludedirs(directory)
+    end
+  end
+  if _OPTIONS["extra-lib-dirs"] then
+    for _, directory in ipairs(split_by_comma(_OPTIONS["extra-lib-dirs"])) do
+      libdirs(directory)
+    end
   end
 
   -- generate man files

@@ -59,8 +59,6 @@ To-Do
 
 General
 -------
-(1) set up options for additional header and library search paths
-  these added after dependencies directory, if used
 (3) set up main premake5.lua script to print out formatted configuration summary
 
 macOS
