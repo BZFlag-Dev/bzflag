@@ -130,14 +130,6 @@ void MeshPolySceneNode::Geometry::render()
 }
 
 
-void MeshPolySceneNode::Geometry::renderRadar()
-{
-    drawV();
-    addTriangleCount(vertices.getSize() - 2);
-    return;
-}
-
-
 void MeshPolySceneNode::Geometry::renderShadow()
 {
     drawV();
@@ -322,14 +314,6 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
         if ((dyncol == NULL) || (dyncol[3] != 0.0f))
             renderer.addShadowNode(&node);
     }
-    return;
-}
-
-
-void MeshPolySceneNode::renderRadar()
-{
-    if (!noRadar)
-        node.renderRadar();
     return;
 }
 

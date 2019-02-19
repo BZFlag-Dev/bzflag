@@ -43,21 +43,9 @@ GUIOptionsMenu::GUIOptionsMenu()
 
     HUDuiList* option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("Radar Style:");
-    option->setCallback(callback, "e");
-    std::vector<std::string>* options = &option->getList();
-    options->push_back(std::string("Normal"));
-    options->push_back(std::string("Fast"));
-    options->push_back(std::string("Fast Sorted"));
-    options->push_back(std::string("Enhanced"));
-    option->update();
-    listHUD.push_back(option);
-
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
     option->setLabel("Scoreboard Sort:");
     option->setCallback(callback, "p");
-    options = &option->getList();
+    std::vector<std::string>* options = &option->getList();
     const char **sortLabels = ScoreboardRenderer::getSortLabels();
     while ( *sortLabels != NULL)
         options->push_back(std::string(*sortLabels++));
@@ -396,7 +384,6 @@ void            GUIOptionsMenu::resize(int _width, int _height)
     if (renderer)
     {
         int i = 1;
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::radarStyle);
         ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getSort());
         ((HUDuiList*)listHUD[i++])->setIndex(ScoreboardRenderer::getAlwaysTeamScore());
         ((HUDuiList*)listHUD[i++])->setIndex(static_cast<int>(BZDB.eval
@@ -457,10 +444,6 @@ void            GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
     SceneRenderer* sceneRenderer = getSceneRenderer();
     switch (((const char*)data)[0])
     {
-    case 'e':
-        BZDB.setInt("radarStyle", list->getIndex());
-        break;
-
     case 'C':
     {
         BZDB.setInt("cpanelfontsize", list->getIndex());

@@ -36,10 +36,6 @@ public:
     {
         render();
     }
-    virtual void    renderRadar()
-    {
-        renderShadow();
-    }
     virtual const GLfloat* getPosition() const = 0;
 
     static int      getTriangleCount();

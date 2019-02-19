@@ -32,7 +32,6 @@ public:
 
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
-    void        renderRadar();
 
     void        getRenderNodes(std::vector<RenderSet>& rnodes);
 

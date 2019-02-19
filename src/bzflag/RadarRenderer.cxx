@@ -393,8 +393,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         return;
 
     smooth = BZDBCache::smooth;
-    const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
-                            (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
     const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
     // setup the radar range
@@ -548,7 +546,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // draw the buildings
-        renderObstacles(fastRadar, radarRange);
+        renderObstacles();
 
         if (smooth)
         {
@@ -755,7 +753,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 float RadarRenderer::colorScale(const float z, const float h)
 {
     float scaleColor;
-    if (BZDBCache::radarStyle > 0)
     {
         const LocalPlayer* myTank = LocalPlayer::getMyTank();
 
@@ -773,8 +770,6 @@ float RadarRenderer::colorScale(const float z, const float h)
         if (scaleColor < 0.35f)
             scaleColor = 0.35f;
     }
-    else
-        scaleColor = 1.0f;
 
     return scaleColor;
 }
@@ -801,7 +796,7 @@ float RadarRenderer::transScale(const float z, const float h)
 }
 
 
-void RadarRenderer::renderObstacles(bool fastRadar, float _range)
+void RadarRenderer::renderObstacles()
 {
     if (smooth)
     {
@@ -813,10 +808,7 @@ void RadarRenderer::renderObstacles(bool fastRadar, float _range)
     renderWalls();
 
     // draw the boxes, pyramids, and meshes
-    if (!fastRadar)
-        renderBoxPyrMesh();
-    else
-        renderBoxPyrMeshFast(_range);
+    renderBoxPyrMesh();
 
     // draw the team bases and teleporters
     renderBasesAndTeles();
@@ -853,122 +845,16 @@ void RadarRenderer::renderWalls()
 }
 
 
-void RadarRenderer::renderBoxPyrMeshFast(float _range)
-{
-    // FIXME - This is hack code at the moment, but even when
-    //     rendering the full world, it draws the aztec map
-    //     3X faster (the culling algo is actually slows us
-    //     down in that case)
-    //       - need a better default gradient texture
-    //         (better colors, and tied in to show max jump height?)
-    //       - build a procedural texture if default is missing
-    //       - use a GL_TEXTURE_1D
-    //       - setup the octree to return Z sorted elements (partially done)
-    //       - add a renderClass() member to SceneNode (also for coloring)
-    //       - also add a renderShadow() member (they don't need sorting,
-    //         and if you don't have double-buffering, you shouldn't be
-    //         using shadows)
-    //       - vertex shaders would be faster
-    //       - it would probably be a better approach to attach a radar
-    //         rendering object to each obstacle... no time
-
-    // get the texture
-    int gradientTexId = -1;
-    TextureManager &tm = TextureManager::instance();
-    gradientTexId = tm.getTextureID("radar", false);
-
-    // safety: no texture, no service
-    if (gradientTexId < 0)
-    {
-        renderBoxPyrMesh();
-        return;
-    }
-
-    // GL state
-    OpenGLGStateBuilder gb;
-    gb.setTexture(gradientTexId);
-    gb.setShading(GL_FLAT);
-    gb.setCulling(GL_BACK);
-    gb.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    OpenGLGState gs = gb.getState();
-    gs.setState();
-
-    // disable the unused arrays
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    // now that the texture is bound, setup the clamp mode
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-
-    // do this after the GState setting
-    if (smooth)
-        glEnable(GL_POLYGON_SMOOTH);
-
-    // setup the texturing mapping
-    const float hf = 128.0f; // height factor, goes from 0.0 to 1.0 in texcoords
-    const float vfz = RENDERER.getViewFrustum().getEye()[2];
-    const GLfloat plane[4] =
-    { 0.0f, 0.0f, (1.0f / hf), (((hf * 0.5f) - vfz) / hf) };
-    glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-    glTexGenfv(GL_S, GL_EYE_PLANE, plane);
-
-    // setup texture generation
-    glEnable(GL_TEXTURE_GEN_S);
-
-    // set the color
-    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-
-//  if (!BZDB.isTrue("visualRadar")) {
-    ViewFrustum radarClipper;
-    radarClipper.setOrthoPlanes(RENDERER.getViewFrustum(), _range, _range);
-    RENDERER.getSceneDatabase()->renderRadarNodes(radarClipper);
-//  } else {
-//    RENDERER.getSceneDatabase()->renderRadarNodes(RENDERER.getViewFrustum());
-//  }
-
-    // restore texture generation
-    glDisable(GL_TEXTURE_GEN_S);
-
-    OpenGLGState::resetState();
-
-    // re-enable the arrays
-    glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    // do this after the GState setting
-    if (smooth)
-    {
-        glEnable(GL_BLEND);
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_POLYGON_SMOOTH);
-    }
-
-    return;
-}
-
-
 void RadarRenderer::renderBoxPyrMesh()
 {
     int i;
 
-    const bool enhanced = (BZDBCache::radarStyle > 0);
-
     if (!smooth)
-    {
         // smoothing has blending disabled
-        if (enhanced)
-        {
-            glEnable(GL_BLEND); // always blend the polygons if we're enhanced
-        }
-    }
+        glEnable(GL_BLEND);
     else
-    {
         // smoothing has blending enabled
-        if (!enhanced)
-        {
-            glDisable(GL_BLEND); // don't blend the polygons if we're not enhanced
-        }
-    }
+        glDisable(GL_BLEND);
 
     // draw box buildings.
     const ObstacleList& boxes = OBSTACLEMGR.getBoxes();
@@ -1021,8 +907,6 @@ void RadarRenderer::renderBoxPyrMesh()
     // draw mesh obstacles
     if (smooth)
         glEnable(GL_POLYGON_SMOOTH);
-    if (!enhanced)
-        glDisable(GL_CULL_FACE);
     const ObstacleList& meshes = OBSTACLEMGR.getMeshes();
     count = meshes.size();
     for (i = 0; i < count; i++)
@@ -1033,7 +917,6 @@ void RadarRenderer::renderBoxPyrMesh()
         for (int f = 0; f < faces; f++)
         {
             const MeshFace* face = mesh->getFace(f);
-            if (enhanced)
             {
                 if (face->getPlane()[2] <= 0.0f)
                     continue;
@@ -1068,13 +951,11 @@ void RadarRenderer::renderBoxPyrMesh()
             glEnd();
         }
     }
-    if (!enhanced)
-        glEnable(GL_CULL_FACE);
     if (smooth)
         glDisable(GL_POLYGON_SMOOTH);
 
     // NOTE: revert from the enhanced setting
-    if (enhanced && !smooth)
+    if (!smooth)
         glDisable(GL_BLEND);
 
     // now draw antialiased outlines around the polygons

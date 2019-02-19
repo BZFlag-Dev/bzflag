@@ -35,7 +35,6 @@ public:
 
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
-    void        renderRadar();
 
     bool        inAxisBox (const Extents& exts) const;
 

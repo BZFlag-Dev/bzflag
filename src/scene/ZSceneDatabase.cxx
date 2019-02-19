@@ -347,34 +347,6 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void ZSceneDatabase::renderRadarNodes(const ViewFrustum& vf)
-{
-    // see if we need an octree, or if it needs to be rebuilt
-    setupCullList();
-
-    // cull if we're supposed to
-    if (octree)
-    {
-        const Frustum* f = (const Frustum *) &vf;
-        culledCount = octree->getRadarList (culledList, staticCount, f);
-
-        // sort based on heights
-        if (BZDBCache::radarStyle == 2)
-            qsort(culledList, culledCount, sizeof(SceneNode*), compareZExtents);
-    }
-
-    // render through the sceneNodes
-    for (int i = 0; i < culledCount; i++)
-    {
-        SceneNode* snode = culledList[i];
-        snode->renderRadar();
-        snode->octreeState = SceneNode::OctreeCulled; // clear the state
-    }
-
-    return;
-}
-
-
 void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 {
     int i;

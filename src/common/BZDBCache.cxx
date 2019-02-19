@@ -26,7 +26,6 @@ BZDBCache::Bool  BZDBCache::smooth;
 BZDBCache::Bool  BZDBCache::colorful;
 BZDBCache::Bool  BZDBCache::animatedTreads;
 BZDBCache::Int   BZDBCache::leadingShotLine;
-BZDBCache::Int   BZDBCache::radarStyle;
 BZDBCache::Float BZDBCache::radarTankPixels;
 BZDBCache::Float BZDBCache::linedRadarShots;
 BZDBCache::Float BZDBCache::sizedRadarShots;
@@ -95,7 +94,6 @@ void BZDBCache::init()
 {
     // Client-side variables
     BZDB.addCallback("displayMainFlags", clientCallback, NULL);
-    BZDB.addCallback("radarStyle", clientCallback, NULL);
     BZDB.addCallback("radarTankPixels", clientCallback, NULL);
     BZDB.addCallback("shadows", clientCallback, NULL);
     BZDB.addCallback("stencilShadows", clientCallback, NULL);
@@ -181,8 +179,6 @@ void BZDBCache::clientCallback(const std::string& name, void *)
         smooth = BZDB.isTrue("smooth");
     else if (name == "colorful")
         colorful = BZDB.isTrue("colorful");
-    else if (name == "radarStyle")
-        radarStyle = BZDB.evalInt("radarStyle");
     else if (name == "radarTankPixels")
         radarTankPixels = BZDB.eval("radarTankPixels");
     else if (name == "animatedTreads")

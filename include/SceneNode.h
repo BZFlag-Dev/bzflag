@@ -85,7 +85,6 @@ public:
                           SceneNode*& front, SceneNode*& back) const;
     virtual void    addShadowNodes(SceneRenderer&);
     virtual void    addRenderNodes(SceneRenderer&);
-    virtual void    renderRadar();
 
     struct RenderSet
     {

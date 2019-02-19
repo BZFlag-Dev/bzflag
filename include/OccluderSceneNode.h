@@ -42,10 +42,6 @@ public:
     {
         return;
     }
-    void renderRadar()
-    {
-        return;
-    }
 
     int getVertexCount () const
     {

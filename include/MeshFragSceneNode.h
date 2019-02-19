@@ -45,7 +45,6 @@ public:
     bool cull(const ViewFrustum&) const;
     void addShadowNodes(SceneRenderer&);
     void addRenderNodes(SceneRenderer&);
-    void renderRadar();
 
     // virtual functions from WallSceneNode
     bool inAxisBox(const Extents& exts) const;
@@ -65,7 +64,6 @@ protected:
             style = _style;
         }
         void render();
-        void renderRadar();
         void renderShadow();
         const GLfloat* getPosition() const
         {

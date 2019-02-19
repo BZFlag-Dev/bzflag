@@ -49,7 +49,7 @@ public:
 
     void        renderFrame(SceneRenderer&);
 
-    void        renderObstacles(bool fastRadar, float range);
+    void        renderObstacles();
     void        renderWalls();
     void        renderBoxPyrMesh();
     void        renderBoxPyrMeshFast(float range);

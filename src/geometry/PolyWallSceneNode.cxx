@@ -226,14 +226,6 @@ void PolyWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void PolyWallSceneNode::renderRadar()
-{
-    if (plane[2] > 0.0f)
-        node->renderRadar();
-    return;
-}
-
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

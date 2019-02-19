@@ -41,7 +41,6 @@ public:
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
-    void renderRadar();
 
     void getRenderNodes(std::vector<RenderSet>& rnodes);
 
@@ -63,7 +62,6 @@ protected:
         bool getNoRadar() const;
         void setNoRadar();
         void render();
-        void renderRadar();
         void renderShadow();
         const GLfloat* getVertex(int i) const;
         const GLfloat (*getVertices() const)[3];

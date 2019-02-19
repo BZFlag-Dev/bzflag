@@ -40,7 +40,6 @@ public:
     void        addLights(SceneRenderer& renderer);
     void        addShadowNodes(SceneRenderer &renderer);
     void        addRenderNodes(SceneRenderer& renderer);
-    void        renderRadarNodes(const ViewFrustum&);
 
     void        drawCuller();
     void        setOccluderManager(int);

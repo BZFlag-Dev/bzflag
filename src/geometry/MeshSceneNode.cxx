@@ -295,20 +295,6 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-void MeshSceneNode::renderRadar()
-{
-    const int level = (lodCount == 1) ? 0 : calcRadarLod();
-    LodNode& lod = radarLods[level];
-    for (int i = 0; i < lod.count; i++)
-    {
-        SetNode& set = lod.sets[i];
-        if (set.meshMat.drawRadar)
-            set.radarNode->renderRadar();
-    }
-    return;
-}
-
-
 bool MeshSceneNode::cull(const ViewFrustum& frustum) const
 {
     // if the Visibility culler tells us that we're

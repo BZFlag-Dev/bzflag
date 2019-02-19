@@ -347,14 +347,6 @@ void            TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 }
 
 
-void            TriWallSceneNode::renderRadar()
-{
-    if (plane[2] > 0.0f)
-        nodes[0]->renderRadar();
-    return;
-}
-
-
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***
