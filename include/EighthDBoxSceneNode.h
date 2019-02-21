@@ -21,6 +21,9 @@
 #include "common.h"
 #include "EighthDimSceneNode.h"
 
+// System headers
+#include <glm/vec3.hpp>
+
 class EighthDBoxSceneNode : public EighthDimSceneNode
 {
 public:
@@ -46,7 +49,7 @@ protected:
         }
     private:
         const EighthDBoxSceneNode* sceneNode;
-        GLfloat     corner[8][3];
+        glm::vec3 corner[8];
     };
 
 private:

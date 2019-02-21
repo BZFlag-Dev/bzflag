@@ -18,6 +18,8 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+#include <glm/vec2.hpp>
+#include <glm/mat4x4.hpp>
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -153,7 +155,7 @@ protected:
                                  bool friendly);
     void      drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
-    void      makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
+    void      makeCrack(glm::vec2 crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1], int n, int l, float a);
     std::string   makeHelpString(const char* help) const;
 
 private:
@@ -243,15 +245,15 @@ private:
     bool      showOptions;
     bool      showCompose;
 
-    GLfloat       cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
+    glm::vec2 cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1];
     TimeKeeper        crackStartTime;
     bool      showCracks;
 
     HUDuiTypeIn*  composeTypeIn;
 
-    double    modelMatrix[16];
-    double    projMatrix[16];
-    int       viewport[4];
+    glm::mat4  modelMatrix;
+    glm::mat4  projMatrix;
+    glm::ivec4 viewport;
 
     MarkerList        markers;
     EnhancedMarkerList    enhancedMarkers;

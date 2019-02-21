@@ -27,6 +27,8 @@
 #include <utime.h>
 #endif
 #include <cmath>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
 #include "AccessList.h"
@@ -5586,14 +5588,14 @@ static void renderRoamMouse()
     glEnable(GL_LINE_SMOOTH);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    static const float color0[4] = { 0.0f, 0.0f, 0.0f, 0.1f };
-    static const float color1[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const glm::vec4 color0 = { 0.0f, 0.0f, 0.0f, 0.1f };
+    static const glm::vec4 color1 = { 1.0f, 1.0f, 1.0f, 1.0f };
 
     glLineWidth(1.49f);
     glBegin(GL_LINES);
-    glColor4fv(color0);
+    glColor4fv(glm::value_ptr(color0));
     glVertex2i(xc, yc);
-    glColor4fv(color1);
+    glColor4fv(glm::value_ptr(color1));
     glVertex2i(mx, my);
     glEnd();
 

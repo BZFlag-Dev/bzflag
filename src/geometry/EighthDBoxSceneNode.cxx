@@ -19,6 +19,7 @@
 // system headers
 #include <stdlib.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation header
 #include "StateDatabase.h"
@@ -141,26 +142,26 @@ void            EighthDBoxSceneNode::EighthDBoxRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
-    glVertex3fv(corner[0]);
-    glVertex3fv(corner[1]);
-    glVertex3fv(corner[2]);
-    glVertex3fv(corner[3]);
+    glVertex3fv(glm::value_ptr(corner[0]));
+    glVertex3fv(glm::value_ptr(corner[1]));
+    glVertex3fv(glm::value_ptr(corner[2]));
+    glVertex3fv(glm::value_ptr(corner[3]));
     glEnd();
     glBegin(GL_LINE_LOOP);
-    glVertex3fv(corner[4]);
-    glVertex3fv(corner[5]);
-    glVertex3fv(corner[6]);
-    glVertex3fv(corner[7]);
+    glVertex3fv(glm::value_ptr(corner[4]));
+    glVertex3fv(glm::value_ptr(corner[5]));
+    glVertex3fv(glm::value_ptr(corner[6]));
+    glVertex3fv(glm::value_ptr(corner[7]));
     glEnd();
     glBegin(GL_LINES);
-    glVertex3fv(corner[0]);
-    glVertex3fv(corner[4]);
-    glVertex3fv(corner[1]);
-    glVertex3fv(corner[5]);
-    glVertex3fv(corner[2]);
-    glVertex3fv(corner[6]);
-    glVertex3fv(corner[3]);
-    glVertex3fv(corner[7]);
+    glVertex3fv(glm::value_ptr(corner[0]));
+    glVertex3fv(glm::value_ptr(corner[4]));
+    glVertex3fv(glm::value_ptr(corner[1]));
+    glVertex3fv(glm::value_ptr(corner[5]));
+    glVertex3fv(glm::value_ptr(corner[2]));
+    glVertex3fv(glm::value_ptr(corner[6]));
+    glVertex3fv(glm::value_ptr(corner[3]));
+    glVertex3fv(glm::value_ptr(corner[7]));
     glEnd();
 }
 

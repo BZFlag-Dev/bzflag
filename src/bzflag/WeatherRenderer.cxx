@@ -13,6 +13,9 @@
 // interface header
 #include "WeatherRenderer.h"
 
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
 // common impl headers
 #include "TextureManager.h"
 #include "StateDatabase.h"
@@ -873,7 +876,7 @@ void WeatherRenderer::drawDrop(rain& drop, const SceneRenderer& sr)
             alphaVal = 0;
 
         glColor4f(rainColor[0][0], rainColor[0][1], rainColor[0][2], alphaVal);
-        glVertex3fv(drop.pos);
+        glVertex3fv(glm::value_ptr(drop.pos));
 
         alphaVal = rainColor[1][3] - alphaMod;
         if (alphaVal < 0)

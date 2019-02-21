@@ -24,6 +24,7 @@
 
 /* system headers */
 #include <string>
+#include <glm/vec3.hpp>
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -141,10 +142,10 @@ private:
     GLfloat     skyboxColor[8][4];
     bool        doStars;
     bool        doSunset;
-    GLfloat     skyZenithColor[3];
-    GLfloat     skySunDirColor[3];
-    GLfloat     skyAntiSunDirColor[3];
-    GLfloat     skyCrossSunDirColor[3];
+    glm::vec3   skyZenithColor;
+    glm::vec3   skySunDirColor;
+    glm::vec3   skyAntiSunDirColor;
+    glm::vec3   skyCrossSunDirColor;
     float       sunDirection[3];
     float       moonDirection[3];
     float       sunAzimuth;
@@ -160,7 +161,7 @@ private:
     GLuint      starList;
     GLuint      starXFormList;
 
-    static GLfloat      skyPyramid[5][3];
+    static glm::vec3        skyPyramid[5];
     static const GLfloat    cloudRepeats;
 
     static GLfloat      rcvrGroundColor[4][4];

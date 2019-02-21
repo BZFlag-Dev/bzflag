@@ -25,6 +25,7 @@
 
 /* system interface headers */
 #include <vector>
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
@@ -106,7 +107,7 @@ public:
 
     void      clearRadar(float opacity);
 
-    void      getGroundUV(const float p[2], float uv[2]) const;
+    void      getGroundUV(const glm::vec2 p, glm::vec2 uv) const;
 
     bool      getBlank() const;
     bool      getInvert() const;
