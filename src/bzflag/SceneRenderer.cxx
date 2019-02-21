@@ -493,7 +493,7 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 }
 
 
-void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
+void SceneRenderer::getGroundUV(const glm::vec2 p, glm::vec2 uv) const
 {
     float repeat = 0.01f;
     if (BZDB.isSet("groundTexRepeat"))
@@ -502,8 +502,7 @@ void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
     if (useQualityValue >= 3)
         repeat = BZDB.eval("groundHighResTexRepeat");
 
-    uv[0] = repeat * p[0];
-    uv[1] = repeat * p[1];
+    uv = repeat * p;
 }
 
 

@@ -25,6 +25,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <glm/vec3.hpp>
 
 /* common interface headers */
 #include "bzfgl.h"
@@ -84,7 +85,7 @@ protected:
 public:
     typedef struct
     {
-        float       pos[3];
+        glm::vec3   pos;
         float       speed;
         float       roofTop;
         int     texture;

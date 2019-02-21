@@ -15,6 +15,7 @@
 
 // system headers
 #include <string.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
 #include "OpenGLMaterial.h"
@@ -32,14 +33,14 @@
 #include "SceneNode.h"
 #include "effectsRenderer.h"
 
-static const GLfloat    squareShape[4][2] =
+static const glm::vec2 squareShape[4] =
 {
     {  1.0f,  1.0f }, { -1.0f,  1.0f },
     { -1.0f, -1.0f }, {  1.0f, -1.0f }
 };
 
 
-GLfloat         BackgroundRenderer::skyPyramid[5][3];
+glm::vec3           BackgroundRenderer::skyPyramid[5];
 const GLfloat       BackgroundRenderer::cloudRepeats = 3.0f;
 static const int    NumMountainFaces = 16;
 
@@ -823,12 +824,12 @@ void BackgroundRenderer::drawSkybox()
     // sky box must fit inside far clipping plane
     // (adjusted for the deepProjection matrix)
     const float d = 3.0f * BZDBCache::worldSize;
-    const GLfloat verts[8][3] =
+    const glm::vec3 verts[8] =
     {
         {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
         {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
     };
-    const GLfloat txcds[4][2] =
+    const glm::vec2 txcds[4] =
     {
         {1.0f, 0.0f}, {0.0f, 0.0f},
         {0.0f, 1.0f}, {1.0f, 1.0f}
@@ -851,18 +852,18 @@ void BackgroundRenderer::drawSkybox()
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glBegin(GL_TRIANGLE_STRIP);
         {
-            glTexCoord2fv(txcds[0]);
+            glTexCoord2fv(glm::value_ptr(txcds[0]));
             glColor3fv(color[2]);
-            glVertex3fv(verts[2]);
-            glTexCoord2fv(txcds[1]);
+            glVertex3fv(glm::value_ptr(verts[2]));
+            glTexCoord2fv(glm::value_ptr(txcds[1]));
             glColor3fv(color[3]);
-            glVertex3fv(verts[3]);
-            glTexCoord2fv(txcds[3]);
+            glVertex3fv(glm::value_ptr(verts[3]));
+            glTexCoord2fv(glm::value_ptr(txcds[3]));
             glColor3fv(color[1]);
-            glVertex3fv(verts[1]);
-            glTexCoord2fv(txcds[2]);
+            glVertex3fv(glm::value_ptr(verts[1]));
+            glTexCoord2fv(glm::value_ptr(txcds[2]));
             glColor3fv(color[0]);
-            glVertex3fv(verts[0]);
+            glVertex3fv(glm::value_ptr(verts[0]));
         }
         glEnd();
     }
@@ -872,18 +873,18 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBegin(GL_TRIANGLE_STRIP);
     {
-        glTexCoord2fv(txcds[0]);
+        glTexCoord2fv(glm::value_ptr(txcds[0]));
         glColor3fv(color[5]);
-        glVertex3fv(verts[5]);
-        glTexCoord2fv(txcds[1]);
+        glVertex3fv(glm::value_ptr(verts[5]));
+        glTexCoord2fv(glm::value_ptr(txcds[1]));
         glColor3fv(color[4]);
-        glVertex3fv(verts[4]);
-        glTexCoord2fv(txcds[3]);
+        glVertex3fv(glm::value_ptr(verts[4]));
+        glTexCoord2fv(glm::value_ptr(txcds[3]));
         glColor3fv(color[6]);
-        glVertex3fv(verts[6]);
-        glTexCoord2fv(txcds[2]);
+        glVertex3fv(glm::value_ptr(verts[6]));
+        glTexCoord2fv(glm::value_ptr(txcds[2]));
         glColor3fv(color[7]);
-        glVertex3fv(verts[7]);
+        glVertex3fv(glm::value_ptr(verts[7]));
     }
     glEnd();
 
@@ -892,18 +893,18 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBegin(GL_TRIANGLE_STRIP);
     {
-        glTexCoord2fv(txcds[0]);
+        glTexCoord2fv(glm::value_ptr(txcds[0]));
         glColor3fv(color[0]);
-        glVertex3fv(verts[0]);
-        glTexCoord2fv(txcds[1]);
+        glVertex3fv(glm::value_ptr(verts[0]));
+        glTexCoord2fv(glm::value_ptr(txcds[1]));
         glColor3fv(color[3]);
-        glVertex3fv(verts[3]);
-        glTexCoord2fv(txcds[3]);
+        glVertex3fv(glm::value_ptr(verts[3]));
+        glTexCoord2fv(glm::value_ptr(txcds[3]));
         glColor3fv(color[4]);
-        glVertex3fv(verts[4]);
-        glTexCoord2fv(txcds[2]);
+        glVertex3fv(glm::value_ptr(verts[4]));
+        glTexCoord2fv(glm::value_ptr(txcds[2]));
         glColor3fv(color[7]);
-        glVertex3fv(verts[7]);
+        glVertex3fv(glm::value_ptr(verts[7]));
     }
     glEnd();
 
@@ -912,18 +913,18 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBegin(GL_TRIANGLE_STRIP);
     {
-        glTexCoord2fv(txcds[0]);
+        glTexCoord2fv(glm::value_ptr(txcds[0]));
         glColor3fv(color[1]);
-        glVertex3fv(verts[1]);
-        glTexCoord2fv(txcds[1]);
+        glVertex3fv(glm::value_ptr(verts[1]));
+        glTexCoord2fv(glm::value_ptr(txcds[1]));
         glColor3fv(color[0]);
-        glVertex3fv(verts[0]);
-        glTexCoord2fv(txcds[3]);
+        glVertex3fv(glm::value_ptr(verts[0]));
+        glTexCoord2fv(glm::value_ptr(txcds[3]));
         glColor3fv(color[5]);
-        glVertex3fv(verts[5]);
-        glTexCoord2fv(txcds[2]);
+        glVertex3fv(glm::value_ptr(verts[5]));
+        glTexCoord2fv(glm::value_ptr(txcds[2]));
         glColor3fv(color[4]);
-        glVertex3fv(verts[4]);
+        glVertex3fv(glm::value_ptr(verts[4]));
     }
     glEnd();
 
@@ -932,18 +933,18 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBegin(GL_TRIANGLE_STRIP);
     {
-        glTexCoord2fv(txcds[0]);
+        glTexCoord2fv(glm::value_ptr(txcds[0]));
         glColor3fv(color[2]);
-        glVertex3fv(verts[2]);
-        glTexCoord2fv(txcds[1]);
+        glVertex3fv(glm::value_ptr(verts[2]));
+        glTexCoord2fv(glm::value_ptr(txcds[1]));
         glColor3fv(color[1]);
-        glVertex3fv(verts[1]);
-        glTexCoord2fv(txcds[3]);
+        glVertex3fv(glm::value_ptr(verts[1]));
+        glTexCoord2fv(glm::value_ptr(txcds[3]));
         glColor3fv(color[6]);
-        glVertex3fv(verts[6]);
-        glTexCoord2fv(txcds[2]);
+        glVertex3fv(glm::value_ptr(verts[6]));
+        glTexCoord2fv(glm::value_ptr(txcds[2]));
         glColor3fv(color[5]);
-        glVertex3fv(verts[5]);
+        glVertex3fv(glm::value_ptr(verts[5]));
     }
     glEnd();
 
@@ -952,18 +953,18 @@ void BackgroundRenderer::drawSkybox()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glBegin(GL_TRIANGLE_STRIP);
     {
-        glTexCoord2fv(txcds[0]);
+        glTexCoord2fv(glm::value_ptr(txcds[0]));
         glColor3fv(color[3]);
-        glVertex3fv(verts[3]);
-        glTexCoord2fv(txcds[1]);
+        glVertex3fv(glm::value_ptr(verts[3]));
+        glTexCoord2fv(glm::value_ptr(txcds[1]));
         glColor3fv(color[2]);
-        glVertex3fv(verts[2]);
-        glTexCoord2fv(txcds[3]);
+        glVertex3fv(glm::value_ptr(verts[2]));
+        glTexCoord2fv(glm::value_ptr(txcds[3]));
         glColor3fv(color[7]);
-        glVertex3fv(verts[7]);
-        glTexCoord2fv(txcds[2]);
+        glVertex3fv(glm::value_ptr(verts[7]));
+        glTexCoord2fv(glm::value_ptr(txcds[2]));
         glColor3fv(color[6]);
-        glVertex3fv(verts[6]);
+        glVertex3fv(glm::value_ptr(verts[6]));
     }
     glEnd();
 
@@ -992,18 +993,18 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
         {
             // just a pyramid
             glBegin(GL_TRIANGLE_FAN);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(skyPyramid[4]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[0]);
-            glColor3fv(skySunDirColor);
-            glVertex3fv(skyPyramid[3]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[2]);
-            glColor3fv(skyAntiSunDirColor);
-            glVertex3fv(skyPyramid[1]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[0]);
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[4]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[0]));
+            glColor3fv(glm::value_ptr(skySunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[3]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[2]));
+            glColor3fv(glm::value_ptr(skyAntiSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[1]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[0]));
             glEnd();
         }
         else
@@ -1012,43 +1013,43 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
             // triangles each.  the top triangle is all zenith color,
             // the bottom goes from zenith to sun-dir color.
             glBegin(GL_TRIANGLE_FAN);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(skyPyramid[4]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[2]);
-            glColor3fv(skyAntiSunDirColor);
-            glVertex3fv(skyPyramid[1]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[0]);
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[4]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[2]));
+            glColor3fv(glm::value_ptr(skyAntiSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[1]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[0]));
             glEnd();
 
-            GLfloat sunsetTopPoint[3];
+            glm::vec3 sunsetTopPoint;
             sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
             sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
             sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
             glBegin(GL_TRIANGLES);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(skyPyramid[4]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[0]);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(sunsetTopPoint);
-            glVertex3fv(skyPyramid[4]);
-            glVertex3fv(sunsetTopPoint);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[2]);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(sunsetTopPoint);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[0]);
-            glColor3fv(skySunDirColor);
-            glVertex3fv(skyPyramid[3]);
-            glColor3fv(skyCrossSunDirColor);
-            glVertex3fv(skyPyramid[2]);
-            glColor3fv(skyZenithColor);
-            glVertex3fv(sunsetTopPoint);
-            glColor3fv(skySunDirColor);
-            glVertex3fv(skyPyramid[3]);
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[4]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[0]));
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(sunsetTopPoint));
+            glVertex3fv(glm::value_ptr(skyPyramid[4]));
+            glVertex3fv(glm::value_ptr(sunsetTopPoint));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[2]));
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(sunsetTopPoint));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[0]));
+            glColor3fv(glm::value_ptr(skySunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[3]));
+            glColor3fv(glm::value_ptr(skyCrossSunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[2]));
+            glColor3fv(glm::value_ptr(skyZenithColor));
+            glVertex3fv(glm::value_ptr(sunsetTopPoint));
+            glColor3fv(glm::value_ptr(skySunDirColor));
+            glVertex3fv(glm::value_ptr(skyPyramid[3]));
             glEnd();
         }
     }
@@ -1146,7 +1147,7 @@ void BackgroundRenderer::drawGroundCentered()
     if (center[1] > maxDist)
         center[1] = maxDist;
 
-    const float vertices[8][2] =
+    const glm::vec2 vertices[8] =
     {
         { -groundSize, -groundSize },
         { +groundSize, -groundSize },
@@ -1178,7 +1179,7 @@ void BackgroundRenderer::drawGroundCentered()
                 const int index = indices[q][c];
                 glTexCoord2f(vertices[index][0] * repeat,
                              vertices[index][1] * repeat);
-                glVertex2fv(vertices[index]);
+                glVertex2fv(glm::value_ptr(vertices[index]));
             }
             glEnd();
         }
@@ -1313,7 +1314,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     static const int receiverRings = 4;
     static const int receiverSlices = 8;
     static const float receiverRingSize = 1.2f;   // meters
-    static float angle[receiverSlices + 1][2];
+    static glm::vec2 angle[receiverSlices + 1];
 
     static bool init = false;
     if (!init)
@@ -1371,7 +1372,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         glTranslatef(pos[0], pos[1], 0.0f);
 
         // set the main lighting color
-        float color[4];
+        glm::vec4 color;
         color[0] = lightColor[0];
         color[1] = lightColor[1];
         color[2] = lightColor[2];
@@ -1380,7 +1381,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         // draw ground receiver, computing lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
-            glColor4fv(color);
+            glColor4fv(glm::value_ptr(color));
             glVertex2f(0.0f, 0.0f);
 
             // inner ring
@@ -1388,7 +1389,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
             I = B / (atten[0] + d * (atten[1] + d * atten[2]));
             I *= pos[2] / d;
             color[3] = I;
-            glColor4fv(color);
+            glColor4fv(glm::value_ptr(color));
             for (j = 0; j <= receiverSlices; j++)
             {
                 glVertex2f(receiverRingSize * angle[j][0],
@@ -1424,10 +1425,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
                 for (j = 0; j <= receiverSlices; j++)
                 {
                     color[3] = innerAlpha;
-                    glColor4fv(color);
+                    glColor4fv(glm::value_ptr(color));
                     glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
                     color[3] = outerAlpha;
-                    glColor4fv(color);
+                    glColor4fv(glm::value_ptr(color));
                     glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
                 }
             }
@@ -1448,7 +1449,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     const float minLuminance = 0.02f;
     static const int receiverSlices = 32;
     static const float receiverRingSize = 0.5f;   // meters
-    static float angle[receiverSlices + 1][2];
+    static glm::vec2 angle[receiverSlices + 1];
 
     static bool init = false;
     if (!init)
@@ -1548,9 +1549,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         glTranslatef(pos[0], pos[1], 0.0f);
 
         float innerSize;
-        float innerColor[3];
+        glm::vec3 innerColor;
         float outerSize;
-        float outerColor[3];
+        glm::vec3 outerColor;
 
         // draw ground receiver, computing lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
@@ -1559,7 +1560,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             innerColor[0] = I * baseColor[0];
             innerColor[1] = I * baseColor[1];
             innerColor[2] = I * baseColor[2];
-            glColor3fv(innerColor);
+            glColor3fv(glm::value_ptr(innerColor));
             glVertex2f(0.0f, 0.0f);
 
             // inner ring
@@ -1569,7 +1570,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             outerColor[0] = I * baseColor[0];
             outerColor[1] = I * baseColor[1];
             outerColor[2] = I * baseColor[2];
-            glColor3fv(outerColor);
+            glColor3fv(glm::value_ptr(outerColor));
             outerSize = receiverRingSize;
             for (j = 0; j <= receiverSlices; j++)
             {
@@ -1585,7 +1586,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         {
             // inner ring
             innerSize = outerSize;
-            memcpy(innerColor, outerColor, sizeof(float[3]));
+            innerColor = outerColor;
 
             // outer ring
             outerSize = receiverRingSize * GLfloat(i * i);
@@ -1605,9 +1606,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             {
                 for (j = 0; j <= receiverSlices; j++)
                 {
-                    glColor3fv(innerColor);
+                    glColor3fv(glm::value_ptr(innerColor));
                     glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
-                    glColor3fv(outerColor);
+                    glColor3fv(glm::value_ptr(outerColor));
                     glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
                 }
             }
@@ -1739,7 +1740,7 @@ void BackgroundRenderer::doInitDisplayLists()
     //
 
     const GLfloat groundSize = 10.0f * worldSize;
-    GLfloat groundPlane[4][3];
+    glm::vec3 groundPlane[4];
     for (i = 0; i < 4; i++)
     {
         groundPlane[i][0] = groundSize * squareShape[i][0];
@@ -1754,7 +1755,7 @@ void BackgroundRenderer::doInitDisplayLists()
         GLfloat xtexmin, xtexmax;
         GLfloat ytexmin, ytexmax;
         GLfloat xtexdist, ytexdist;
-        float vec[2];
+        glm::vec2 vec;
 
 #define GROUND_DIVS (4) //FIXME -- seems to be enough
 
@@ -1813,10 +1814,10 @@ void BackgroundRenderer::doInitDisplayLists()
     glNewList(simpleGroundList[0], GL_COMPILE);
     {
         glBegin(GL_TRIANGLE_STRIP);
-        glVertex2fv(groundPlane[0]);
-        glVertex2fv(groundPlane[1]);
-        glVertex2fv(groundPlane[3]);
-        glVertex2fv(groundPlane[2]);
+        glVertex2fv(glm::value_ptr(groundPlane[0]));
+        glVertex2fv(glm::value_ptr(groundPlane[1]));
+        glVertex2fv(glm::value_ptr(groundPlane[3]));
+        glVertex2fv(glm::value_ptr(groundPlane[2]));
         glEnd();
     }
     glEndList();

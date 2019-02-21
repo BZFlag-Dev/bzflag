@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation header
 #include "StateDatabase.h"
@@ -74,8 +75,8 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
     sceneNode(_sceneNode),
     numPolygons(numPolys)
 {
-    color = (GLfloat(*)[4])new GLfloat[4 * numPolygons];
-    poly = (GLfloat(*)[3][3])new GLfloat[9 * numPolygons];
+    color = new glm::vec4[numPolygons];
+    poly = (glm::vec3(*)[3])new glm::vec3[3 * numPolygons];
 
     // make random colors
     for (int i = 0; i < numPolygons; i++)
@@ -99,10 +100,10 @@ void            EighthDimSceneNode::EighthDimRenderNode::render()
     glBegin(GL_TRIANGLES);
     for (int i = 0; i < numPolygons; i++)
     {
-        myColor4fv(color[i]);
-        glVertex3fv(poly[i][0]);
-        glVertex3fv(poly[i][2]);
-        glVertex3fv(poly[i][1]);
+        myColor4fv(glm::value_ptr(color[i]));
+        glVertex3fv(glm::value_ptr(poly[i][0]));
+        glVertex3fv(glm::value_ptr(poly[i][2]));
+        glVertex3fv(glm::value_ptr(poly[i][1]));
     }
     glEnd();
 }

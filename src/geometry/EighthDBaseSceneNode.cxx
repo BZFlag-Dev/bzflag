@@ -19,6 +19,7 @@
 // system headers
 #include <stdlib.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation header
 #include "StateDatabase.h"
@@ -31,7 +32,7 @@ const int       BasePolygons = 60;
 EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
         const float size[3], float rotation) :
     EighthDimSceneNode(BasePolygons),
-    renderNode(this, pos, size, rotation)
+    renderNode(this, glm::make_vec3(pos), size, rotation)
 {
     // get rotation stuff
     const float c = cosf(rotation);
@@ -105,7 +106,7 @@ void EighthDBaseSceneNode::addRenderNodes(SceneRenderer& renderer)
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
     const EighthDBaseSceneNode * _sceneNode,
-    const float pos[3],
+    const glm::vec3 pos,
     const float size[3], float rotation) :
     sceneNode(_sceneNode)
 {
@@ -114,16 +115,20 @@ EighthDBaseSceneNode::EighthDBaseRenderNode::EighthDBaseRenderNode(
     const float s = sinf(rotation);
 
     // compute corners
-    corner[0][0] = corner[4][0] = pos[0] + c * size[0] - s * size[1];
-    corner[0][1] = corner[4][1] = pos[1] + s * size[0] + c * size[1];
-    corner[1][0] = corner[5][0] = pos[0] - c * size[0] - s * size[1];
-    corner[1][1] = corner[5][1] = pos[1] - s * size[0] + c * size[1];
-    corner[2][0] = corner[6][0] = pos[0] - c * size[0] + s * size[1];
-    corner[2][1] = corner[6][1] = pos[1] - s * size[0] - c * size[1];
-    corner[3][0] = corner[7][0] = pos[0] + c * size[0] + s * size[1];
-    corner[3][1] = corner[7][1] = pos[1] + s * size[0] - c * size[1];
-    corner[0][2] = corner[1][2] = corner[2][2] = corner[3][2] = pos[2];
-    corner[4][2] = corner[5][2] = corner[6][2] = corner[7][2] = pos[2] + size[2];
+    const float b = size[0];
+    const float w = size[1];
+    corner[0] = glm::vec3(+c * b - s * w, +s * b + c * w, 0.0f);
+    corner[1] = glm::vec3(-c * b - s * w, -s * b + c * w, 0.0f);
+    corner[2] = -corner[0];
+    corner[3] = -corner[1];
+    int i;
+    for (i = 0; i < 4; i++)
+        corner[i + 4] = corner[i];
+    for (i = 4; i < 8; i++)
+        corner[i].z = size[2];
+    for (i = 0; i < 8; i++)
+        corner[i] += pos;
+
 }
 
 EighthDBaseSceneNode::EighthDBaseRenderNode::~EighthDBaseRenderNode()
@@ -135,26 +140,26 @@ void EighthDBaseSceneNode::EighthDBaseRenderNode::render()
 {
     myColor3f(1.0f, 1.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
-    glVertex3fv(corner[0]);
-    glVertex3fv(corner[1]);
-    glVertex3fv(corner[2]);
-    glVertex3fv(corner[3]);
+    glVertex3fv(glm::value_ptr(corner[0]));
+    glVertex3fv(glm::value_ptr(corner[1]));
+    glVertex3fv(glm::value_ptr(corner[2]));
+    glVertex3fv(glm::value_ptr(corner[3]));
     glEnd();
     glBegin(GL_LINE_LOOP);
-    glVertex3fv(corner[4]);
-    glVertex3fv(corner[5]);
-    glVertex3fv(corner[6]);
-    glVertex3fv(corner[7]);
+    glVertex3fv(glm::value_ptr(corner[4]));
+    glVertex3fv(glm::value_ptr(corner[5]));
+    glVertex3fv(glm::value_ptr(corner[6]));
+    glVertex3fv(glm::value_ptr(corner[7]));
     glEnd();
     glBegin(GL_LINES);
-    glVertex3fv(corner[0]);
-    glVertex3fv(corner[4]);
-    glVertex3fv(corner[1]);
-    glVertex3fv(corner[5]);
-    glVertex3fv(corner[2]);
-    glVertex3fv(corner[6]);
-    glVertex3fv(corner[3]);
-    glVertex3fv(corner[7]);
+    glVertex3fv(glm::value_ptr(corner[0]));
+    glVertex3fv(glm::value_ptr(corner[4]));
+    glVertex3fv(glm::value_ptr(corner[1]));
+    glVertex3fv(glm::value_ptr(corner[5]));
+    glVertex3fv(glm::value_ptr(corner[2]));
+    glVertex3fv(glm::value_ptr(corner[6]));
+    glVertex3fv(glm::value_ptr(corner[3]));
+    glVertex3fv(glm::value_ptr(corner[7]));
     glEnd();
 }
 

@@ -19,6 +19,7 @@
 // system headers
 #include <assert.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
@@ -30,7 +31,7 @@
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
                                       const GLfloat3Array& _vertex,
                                       const GLfloat2Array& _uv,
-                                      const GLfloat* _normal) :
+                                      const glm::vec3 _normal) :
     wall(_wall),
     normal(_normal),
     vertex(_vertex),
@@ -47,7 +48,7 @@ PolyWallSceneNode::Geometry::~Geometry()
 void            PolyWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
         drawVT();
     else
@@ -118,13 +119,13 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
 
     // choose axis to ignore (the one with the largest normal component)
     int ignoreAxis;
-    const GLfloat* normal = getPlane();
-    if (fabsf(normal[0]) > fabsf(normal[1]))
-        if (fabsf(normal[0]) > fabsf(normal[2]))
+    const glm::vec3 normal = glm::make_vec3(getPlane());
+    if (fabsf(normal.x) > fabsf(normal.y))
+        if (fabsf(normal.x) > fabsf(normal.z))
             ignoreAxis = 0;
         else
             ignoreAxis = 2;
-    else if (fabsf(normal[1]) > fabsf(normal[2]))
+    else if (fabsf(normal.y) > fabsf(normal.z))
         ignoreAxis = 1;
     else
         ignoreAxis = 2;

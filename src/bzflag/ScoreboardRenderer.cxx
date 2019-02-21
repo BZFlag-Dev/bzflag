@@ -13,6 +13,10 @@
 /* interface header */
 #include "ScoreboardRenderer.h"
 
+// System headers
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 /* common implementation headers */
 #include "Bundle.h"
 #include "Team.h"
@@ -609,22 +613,22 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
     const float x1 = floorf(_x1) + 0.5f;
     const float y1 = y0 + 1.0f;
 
-    const float black[4] =
-    {
+    const glm::vec4 black
+    (
         0.0f * (dim ? dimFactor : 1.0f),
         0.0f * (dim ? dimFactor : 1.0f),
         0.0f * (dim ? dimFactor : 1.0f),
         1.0f
-    };
-    const float white[4] =
-    {
+    );
+    const glm::vec4 white
+    (
         1.0f * (dim ? dimFactor : 1.0f),
         1.0f * (dim ? dimFactor : 1.0f),
         1.0f * (dim ? dimFactor : 1.0f),
         1.0f
-    };
-    const float* c0 = black;
-    const float* c1 = white;
+    );
+    glm::vec4 c0(black);
+    glm::vec4 c1(white);
 
     const double diff = (TimeKeeper::getCurrent() - startTime);
     if (fmod(diff, 0.5) > 0.25)
@@ -638,10 +642,10 @@ void ScoreboardRenderer::drawRoamTarget(float _x0, float _y0,
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
     glBegin(GL_LINES);
-    glColor4fv(c0);
+    glColor4fv(glm::value_ptr(c0));
     glVertex2f(x0, y1);
     glVertex2f(x1, y1);
-    glColor4fv(c1);
+    glColor4fv(glm::value_ptr(c1));
     glVertex2f(x0, y0);
     glVertex2f(x1, y0);
     glEnd();

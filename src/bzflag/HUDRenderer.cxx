@@ -16,6 +16,8 @@
 // system headers
 #include <time.h>
 #include <functional>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 /* common implementation headers */
 #include "BundleMgr.h"
@@ -637,8 +639,8 @@ std::string     HUDRenderer::makeHelpString(const char* help) const
     return msg;
 }
 
-void            HUDRenderer::makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l,
-                                       float a)
+void HUDRenderer::makeCrack(glm::vec2 crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1], int n, int l,
+                            float a)
 {
     if (l >= (1 << (HUDCrackLevels - 1))) return;
     float d = 0.5f * float(maxMotionSize) *
@@ -1092,19 +1094,11 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
     int offset = window.getViewHeight() - window.getHeight();
 
-    GLint view[] = {window.getOriginX(), window.getOriginY(),
-                    window.getWidth(), window.getHeight()
-                   };
+    glm::ivec4 view = {window.getOriginX(), window.getOriginY(),
+                       window.getWidth(), window.getHeight()
+                      };
     const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
     const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
-
-    // convert to doubles
-    GLdouble proj[16], model[16];
-    for (int j = 0; j < 16; j++)
-    {
-        proj[j] = projf[j];
-        model[j] = modelf[j];
-    }
 
     for (int i = 0; i < curMaxPlayers; i++)
     {
@@ -1112,15 +1106,13 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
         if (pl && pl->isAlive())
         {
             const std::string name = pl->getCallSign();
-            double x, y, z;
             hudSColor3fv(Team::getRadarColor(pl->getTeam()));
-            gluProject(pl->getPosition()[0], pl->getPosition()[1],
-                       pl->getPosition()[2]/*+BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT)*3.0f*/, model, proj, view, &x, &y, &z);
-            if (z >= 0.0 && z <= 1.0)
+            glm::vec3 p(glm::project(glm::make_vec3(pl->getPosition()), glm::make_mat4(modelf), glm::make_mat4(projf), view));
+            if (p.z >= 0.0 && p.z <= 1.0)
             {
                 FontManager &fm = FontManager::instance();
-                fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
-                              float(y) + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, name),
+                fm.drawString(p.x - fm.getStrLength(labelsFontFace, labelsFontSize, name) / 2.0f,
+                              p.y + offset - fm.getStrHeight(labelsFontFace, labelsFontSize, name),
                               0, labelsFontFace, labelsFontSize, name);
                 FlagType::Ptr flag = pl->getFlag();
                 if (flag != Flags::Null)
@@ -1128,8 +1120,8 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
                     std::string flagStr = "(";
                     flagStr += flag->endurance == FlagEndurance::Normal ? flag->flagName : flag->flagAbbv;
                     flagStr += ")";
-                    fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, flagStr) / 2.0f,
-                                  float(y) + offset -
+                    fm.drawString(p.x - fm.getStrLength(labelsFontFace, labelsFontSize, flagStr) / 2.0f,
+                                  p.y + offset -
                                   (2.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, flagStr)),
                                   0, labelsFontFace, labelsFontSize, flagStr);
                 }
@@ -1139,8 +1131,8 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
                     float vel[3] = {0};
                     memcpy(vel,pl->getVelocity(),sizeof(float)*3);
                     std::string speedStr = TextUtils::format("[%5.2f]",sqrt(vel[0]*vel[0]+vel[1]*vel[1]));
-                    fm.drawString(float(x) - fm.getStrLength(labelsFontFace, labelsFontSize, speedStr.c_str()) / 2.0f,
-                                  float(y) + offset -
+                    fm.drawString(p.x - fm.getStrLength(labelsFontFace, labelsFontSize, speedStr.c_str()) / 2.0f,
+                                  p.y + offset -
                                   (3.0f * fm.getStrHeight(labelsFontFace, labelsFontSize, speedStr.c_str())),
                                   0, labelsFontFace, labelsFontSize, speedStr.c_str());
                 }
@@ -1164,17 +1156,17 @@ void            HUDRenderer::renderCracks()
     glBegin(GL_LINES);
     for (int i = 0; i < HUDNumCracks; i++)
     {
-        glVertex2fv(cracks[i][0]);
-        glVertex2fv(cracks[i][1]);
+        glVertex2fv(glm::value_ptr(cracks[i][0]));
+        glVertex2fv(glm::value_ptr(cracks[i][1]));
         for (int j = 0; j < maxLevels-1; j++)
         {
             const int num = 1 << j;
             for (int k = 0; k < num; k++)
             {
-                glVertex2fv(cracks[i][num + k]);
-                glVertex2fv(cracks[i][2 * (num + k)]);
-                glVertex2fv(cracks[i][num + k]);
-                glVertex2fv(cracks[i][2 * (num + k) + 1]);
+                glVertex2fv(glm::value_ptr(cracks[i][num + k]));
+                glVertex2fv(glm::value_ptr(cracks[i][2 * (num + k)]));
+                glVertex2fv(glm::value_ptr(cracks[i][num + k]));
+                glVertex2fv(glm::value_ptr(cracks[i][2 * (num + k) + 1]));
             }
         }
     }
@@ -1235,12 +1227,9 @@ void            HUDRenderer::renderTimes(void)
 void HUDRenderer::saveMatrixes(const float *mm, const float *pm )
 {
     // ssave off the stuff before we reset it
-    for (int i = 0; i < 16; i++)
-    {
-        modelMatrix[i] = mm[i];
-        projMatrix[i] = pm[i];
-    }
-    glGetIntegerv(GL_VIEWPORT,(GLint*)viewport);
+    modelMatrix = glm::make_mat4(mm);
+    projMatrix  = glm::make_mat4(pm);
+    glGetIntegerv(GL_VIEWPORT, glm::value_ptr(viewport));
 }
 
 
@@ -1248,18 +1237,10 @@ void HUDRenderer::drawWaypointMarker(float* color, float alpha, float* object,
                                      const float* viewPos, std::string name,
                                      bool friendly)
 {
-    double map[3] = {0,0,0};
-    double o[3];
-    o[0] = object[0];
-    o[1] = object[1];
-    o[2] = object[2];
-
+    glm::vec3 o(glm::make_vec3(object));
     hudColor3Afv( color, alpha );
 
-    glPushMatrix();
-    gluProject(o[0], o[1], o[2], modelMatrix, projMatrix,
-               (GLint*)viewport, &map[0], &map[1], &map[2]);
-    glPopMatrix();
+    glm::vec3 map(glm::project(o, modelMatrix, projMatrix, viewport));
 
     float halfWidth = window.getWidth() * 0.5f;
     float halfHeight = window.getHeight() * 0.5f;
@@ -1368,17 +1349,12 @@ void HUDRenderer::drawLockonMarker(float* color, float alpha, float* object,
                                    const float *viewPos, std::string name,
                                    bool friendly)
 {
-    double map[3] = {0,0,0};
-    double o[3];
-    o[0] = object[0];
-    o[1] = object[1];
-    o[2] = object[2];
+    glm::vec3 o(glm::make_vec3(object));
 
     hudColor3Afv( color, alpha );
 
     glPushMatrix();
-    gluProject(o[0], o[1], o[2], modelMatrix,projMatrix,
-               (GLint*)viewport, &map[0], &map[1], &map[2]);
+    glm::vec3 map(glm::project(o, modelMatrix, projMatrix, viewport));
     glPopMatrix();
 
     float halfWidth = window.getWidth() * 0.5f;

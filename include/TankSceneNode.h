@@ -93,7 +93,7 @@ public:
     private:
         const TankIDLSceneNode* sceneNode;
         static const int    idlFaces[][5];
-        static const GLfloat    idlVertex[][3];
+        static const glm::vec3 idlVertex[];
     };
     friend class IDLRenderNode;
 

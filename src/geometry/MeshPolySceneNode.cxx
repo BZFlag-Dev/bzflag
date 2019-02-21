@@ -19,6 +19,7 @@
 // system headers
 #include <assert.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -35,11 +36,10 @@
 
 MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
                                       const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
-                                      const GLfloat2Array& _texcoords, const GLfloat* _normal) :
-    vertices(_vertices), normals(_normals), texcoords(_texcoords)
+                                      const GLfloat2Array& _texcoords, const glm::vec3 _normal) :
+    normal(_normal), vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
     sceneNode = _node;
-    normal = _normal;
     style = 0;
     return;
 }
@@ -118,7 +118,7 @@ void MeshPolySceneNode::Geometry::render()
     }
     else
     {
-        glNormal3fv(normal);
+        glNormal3f(normal.x, normal.y, normal.z);
         if (style >= 2)
             drawVT();
         else
@@ -155,7 +155,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
                                      const GLfloat3Array& vertices,
                                      const GLfloat3Array& normals,
                                      const GLfloat2Array& texcoords) :
-    node(this, vertices, normals, texcoords, plane)
+    node(this, vertices, normals, texcoords, glm::make_vec3(plane))
 {
     int i, j;
     const int count = vertices.getSize();

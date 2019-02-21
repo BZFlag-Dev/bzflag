@@ -19,8 +19,14 @@
 #include "TankSceneNode.h"
 
 // system headers
+#define GLM_ENABLE_EXPERIMENTAL
 #include <math.h>
 #include <string.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 // common implementation headers
 #include "StateDatabase.h"
@@ -661,7 +667,7 @@ const int TankIDLSceneNode::IDLRenderNode::idlFaces[][5] =
     { 4,  37, 36, 38, 32 }
 };
 
-const GLfloat       TankIDLSceneNode::IDLRenderNode::idlVertex[][3] =
+const glm::vec3 TankIDLSceneNode::IDLRenderNode::idlVertex[] =
 {
     // body
     { 2.430f, 0.877f, 0.000f },
@@ -729,28 +735,22 @@ TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
-    static const GLfloat innerColor[4] = { 1.0f, 1.0f, 1.0f, 0.75f };
-    static const GLfloat outerColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    static const glm::vec4 innerColor = { 1.0f, 1.0f, 1.0f, 0.75f };
+    static const glm::vec4 outerColor = { 1.0f, 1.0f, 1.0f, 0.0f };
 
     // compute plane in tank's space
-    const GLfloat* sphere = sceneNode->tank->getSphere();
-    const GLfloat* _plane = sceneNode->plane;
+    const glm::vec3 sphere = glm::make_vec3(sceneNode->tank->getSphere());
+    const glm::vec4 _plane = glm::make_vec4(sceneNode->plane);
     const GLfloat azimuth = sceneNode->tank->azimuth;
-    const GLfloat ca = cosf(-azimuth * (float)DEG2RAD);
-    const GLfloat sa = sinf(-azimuth * (float)DEG2RAD);
-    GLfloat tankPlane[4];
-    tankPlane[0] = ca * _plane[0] - sa * _plane[1];
-    tankPlane[1] = sa * _plane[0] + ca * _plane[1];
-    tankPlane[2] = _plane[2];
-    tankPlane[3] = (sphere[0] * _plane[0] + sphere[1] * _plane[1] +
-                    sphere[2] * _plane[2] + _plane[3]);
+    glm::vec3 tankPlane;
+    GLfloat   tankDist;
+    tankPlane = glm::rotateZ(glm::vec3(_plane), glm::radians(-azimuth));
+    tankDist = glm::dot(sphere, glm::vec3(_plane)) + _plane[3];
 
     // compute projection point -- one TankLength in from tankPlane
-    const GLfloat pd = -1.0f * BZDBCache::tankLength - tankPlane[3];
-    GLfloat origin[3];
-    origin[0] = pd * tankPlane[0];
-    origin[1] = pd * tankPlane[1];
-    origin[2] = pd * tankPlane[2];
+    const GLfloat pd = -1.0f * BZDBCache::tankLength - tankDist;
+    glm::vec3 origin;
+    origin = pd * tankPlane;
 
     glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
@@ -765,26 +765,18 @@ void TankIDLSceneNode::IDLRenderNode::render()
         GLfloat d[4];
         int j;
         for (j = 0; j < numVertices; j++)
-            d[j] = idlVertex[face[j]][0] * tankPlane[0] +
-                   idlVertex[face[j]][1] * tankPlane[1] +
-                   idlVertex[face[j]][2] * tankPlane[2] +
-                   tankPlane[3];
+            d[j] = glm::dot(idlVertex[face[j]], tankPlane) + tankDist;
 
         // get crossing points
-        GLfloat cross[2][3];
+        glm::vec3 cross[2];
         int crossings = 0, k;
         for (j = 0, k = numVertices-1; j < numVertices; k = j++)
         {
             if ((d[k] < 0.0f && d[j] >= 0.0f) || (d[k] >= 0.0f && d[j] < 0.0f))
             {
                 const GLfloat t = d[k] / (d[k] - d[j]);
-                cross[crossings][0] =  (1.0f - t) * idlVertex[face[k]][0] +
-                                       t * idlVertex[face[j]][0];
-                cross[crossings][1] =  (1.0f - t) * idlVertex[face[k]][1] +
-                                       t * idlVertex[face[j]][1];
-                cross[crossings][2] =  (1.0f - t) * idlVertex[face[k]][2] +
-                                       t * idlVertex[face[j]][2];
-                if (++crossings == 2) break;
+                cross[crossings++] = glm::mix(idlVertex[face[k]], idlVertex[face[j]], t);
+                if (crossings == 2) break;
             }
         }
 
@@ -792,23 +784,19 @@ void TankIDLSceneNode::IDLRenderNode::render()
         if (crossings != 2) continue;
 
         // project points out
-        GLfloat project[2][3];
+        glm::vec3 project[2];
         const GLfloat dist = 2.0f + 0.3f * ((float)bzfrand() - 0.5f);
-        project[0][0] = origin[0] + dist * (cross[0][0] - origin[0]);
-        project[0][1] = origin[1] + dist * (cross[0][1] - origin[1]);
-        project[0][2] = origin[2] + dist * (cross[0][2] - origin[2]);
-        project[1][0] = origin[0] + dist * (cross[1][0] - origin[0]);
-        project[1][1] = origin[1] + dist * (cross[1][1] - origin[1]);
-        project[1][2] = origin[2] + dist * (cross[1][2] - origin[2]);
+        project[0] = glm::mix(origin, cross[0], dist);
+        project[1] = glm::mix(origin, cross[1], dist);
 
         // draw it
         glBegin(GL_TRIANGLE_STRIP);
-        myColor4fv(innerColor);
-        glVertex3fv(cross[0]);
-        glVertex3fv(cross[1]);
-        myColor4fv(outerColor);
-        glVertex3fv(project[0]);
-        glVertex3fv(project[1]);
+        myColor4fv(glm::value_ptr(innerColor));
+        glVertex3fv(glm::value_ptr(cross[0]));
+        glVertex3fv(glm::value_ptr(cross[1]));
+        myColor4fv(glm::value_ptr(outerColor));
+        glVertex3fv(glm::value_ptr(project[0]));
+        glVertex3fv(glm::value_ptr(project[1]));
         glEnd();
     }
 
@@ -1398,11 +1386,17 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 
 void TankSceneNode::TankRenderNode::renderLights()
 {
-    static const GLfloat lights[3][6] =
+    static const glm::vec3 colorLights[3] =
     {
-        { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
-        { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
-        { 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
+        { 1.0f, 1.0f, 1.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f }
+    };
+    static const glm::vec3 positionLights[3] =
+    {
+        { -1.53f,  0.00f, 2.1f },
+        {  0.10f,  0.75f, 2.1f },
+        {  0.10f, -0.75f, 2.1f }
     };
     sceneNode->lightsGState.setState();
     glPointSize(2.0f);
@@ -1411,18 +1405,18 @@ void TankSceneNode::TankRenderNode::renderLights()
     {
         const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
 
-        myColor3fv(lights[0]);
-        glVertex3f(lights[0][3] * scale[0],
-                   lights[0][4] * scale[1],
-                   lights[0][5] * scale[2]);
-        myColor3fv(lights[1]);
-        glVertex3f(lights[1][3] * scale[0],
-                   lights[1][4] * scale[1],
-                   lights[1][5] * scale[2]);
-        myColor3fv(lights[2]);
-        glVertex3f(lights[2][3] * scale[0],
-                   lights[2][4] * scale[1],
-                   lights[2][5] * scale[2]);
+        myColor3fv(&colorLights[0][0]);
+        glVertex3f(positionLights[0][0] * scale[0],
+                   positionLights[0][1] * scale[1],
+                   positionLights[0][2] * scale[2]);
+        myColor3fv(&colorLights[1][0]);
+        glVertex3f(positionLights[1][0] * scale[0],
+                   positionLights[1][1] * scale[1],
+                   positionLights[1][2] * scale[2]);
+        myColor3fv(&colorLights[2][0]);
+        glVertex3f(positionLights[2][0] * scale[0],
+                   positionLights[2][1] * scale[1],
+                   positionLights[2][2] * scale[2]);
     }
     glEnd();
 
@@ -1450,8 +1444,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
     typedef struct
     {
-        GLfloat vertex[3];
-        GLfloat texcoord[2];
+        glm::vec3 vertex;
+        glm::vec2 texcoord;
     } jetVertex;
     static const jetVertex jet[3] =
     {
@@ -1481,8 +1475,8 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
             {
                 for (int v = 0; v < 3; v++)
                 {
-                    glTexCoord2fv(jet[v].texcoord);
-                    glVertex3fv(jet[v].vertex);
+                    glTexCoord2fv(glm::value_ptr(jet[v].texcoord));
+                    glVertex3fv(glm::value_ptr(jet[v].vertex));
                 }
             }
             glEnd();

@@ -21,6 +21,8 @@
 #include "common.h"
 #include "WallSceneNode.h"
 
+#include <glm/vec3.hpp>
+
 class PolyWallSceneNode : public WallSceneNode
 {
 public:
@@ -43,7 +45,7 @@ protected:
         Geometry(PolyWallSceneNode*,
                  const GLfloat3Array& vertices,
                  const GLfloat2Array& uvs,
-                 const GLfloat* normal);
+                 const glm::vec3 normal);
         ~Geometry();
         void        setStyle(int _style)
         {
@@ -60,7 +62,7 @@ protected:
     private:
         PolyWallSceneNode* wall;
         int     style;
-        const GLfloat*  normal;
+        const glm::vec3 normal;
     public:
         GLfloat3Array   vertex;
         GLfloat2Array   uv;

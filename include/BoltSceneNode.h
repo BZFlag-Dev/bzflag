@@ -21,6 +21,7 @@
 #include "ShotSceneNode.h"
 
 // System headers
+#include <glm/vec2.hpp>
 #include <glm/vec4.hpp>
 
 // Common headers
@@ -84,10 +85,10 @@ protected:
         const BoltSceneNode* sceneNode;
         int     u, v, cu, cv;
         GLfloat     du, dv;
-        GLfloat     mainColor[4];
-        GLfloat     innerColor[4];
-        GLfloat     outerColor[4];
-        GLfloat     coronaColor[4];
+        glm::vec4   mainColor;
+        glm::vec4   innerColor;
+        glm::vec4   outerColor;
+        glm::vec4   coronaColor;
         GLfloat     flareColor[4];
         GLfloat     textureColor[4];
         int     numFlares;

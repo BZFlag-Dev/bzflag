@@ -20,6 +20,10 @@
 #include "common.h"
 #include "SceneNode.h"
 
+// System headers
+#include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
+
 class EighthDimSceneNode : public SceneNode
 {
 public:
@@ -51,8 +55,8 @@ protected:
     private:
         const EighthDimSceneNode* sceneNode;
         int     numPolygons;
-        GLfloat     (*color)[4];
-        GLfloat     (*poly)[3][3];
+        glm::vec4   *color;
+        glm::vec3   (*poly)[3];
     };
 
 private:

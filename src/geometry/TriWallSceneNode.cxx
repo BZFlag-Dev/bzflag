@@ -19,6 +19,7 @@
 // system headers
 #include <math.h>
 #include <stdlib.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -33,7 +34,7 @@
 
 TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
                                      const GLfloat base[3], const GLfloat uEdge[3], const GLfloat vEdge[3],
-                                     const GLfloat* _normal, float uRepeats, float vRepeats) :
+                                     const glm::vec3 _normal, float uRepeats, float vRepeats) :
     wall(_wall), style(0), de(eCount), normal(_normal),
     vertex((eCount+1) * (eCount+2) / 2),
     uv((eCount+1) * (eCount+2) / 2)
@@ -63,7 +64,7 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
                                  (vEdge[2] * vEdge[2]));
         const float uScale = 10.0f / floorf(10.0f * uLen / uRepeats);
         const float vScale = 10.0f / floorf(10.0f * vLen / vRepeats);
-        if (fabsf(normal[2]) > 0.999f)
+        if (fabsf(normal.z) > 0.999f)
         {
             // horizontal surface
             for (int i = 0; i < vertex.getSize(); i++)
@@ -75,14 +76,12 @@ TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
         else
         {
             // vertical surface
-            const float nh = sqrtf((normal[0] * normal[0]) + (normal[1] * normal[1]));
-            const float nx = normal[0] / nh;
-            const float ny = normal[1] / nh;
-            const float vs = 1.0f / sqrtf(1.0f - (normal[2] * normal[2]));
+            const glm::vec2 normal2d(glm::normalize(glm::vec2(normal)));
+            const float vs = 1.0f / sqrtf(1.0f - normal.z * normal.z);
             for (int i = 0; i < vertex.getSize(); i++)
             {
                 const float* v = vertex[i];
-                const float uGeoScale = (nx * v[1]) - (ny * v[0]);
+                const float uGeoScale = (normal2d.x * v[1]) - (normal2d.y * v[0]);
                 const float vGeoScale = v[2] * vs;
                 uv[i][0] = uScale * uGeoScale;
                 uv[i][1] = vScale * vGeoScale;
@@ -118,7 +117,7 @@ TriWallSceneNode::Geometry::~Geometry()
 void            TriWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
         drawVT();
     else
@@ -190,6 +189,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     mySphere[2] += base[2];
     setSphere(mySphere);
 
+    const glm::vec3 normal(glm::make_vec3(getPlane()));
     // get length of sides
     const float uLength = sqrtf(uEdge[0] * uEdge[0] +
                                 uEdge[1] * uEdge[1] + uEdge[2] * uEdge[2]);
@@ -229,9 +229,9 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     uElements = 1;
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-                                  getPlane(), uRepeats, vRepeats);
+                                  normal, uRepeats, vRepeats);
     shadowNode = new Geometry(this, uElements, base, uEdge, vEdge,
-                              getPlane(), uRepeats, vRepeats);
+                              normal, uRepeats, vRepeats);
     shadowNode->setStyle(0);
 
     // make remaining levels by doubling elements in each dimension
@@ -241,7 +241,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
         area *= 0.25f;
         areas[level] = area;
         nodes[level++] = new Geometry(this, uElements, base, uEdge, vEdge,
-                                      getPlane(), uRepeats, vRepeats);
+                                      normal, uRepeats, vRepeats);
     }
 
     // record extents info

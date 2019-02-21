@@ -20,6 +20,8 @@
 #include "common.h"
 #include "WallSceneNode.h"
 
+#include <glm/vec3.hpp>
+
 class QuadWallSceneNode : public WallSceneNode
 {
 public:
@@ -73,7 +75,7 @@ protected:
                  const GLfloat base[3],
                  const GLfloat uEdge[3],
                  const GLfloat vEdge[3],
-                 const GLfloat* normal,
+                 const glm::vec3 normal,
                  float uOffset, float vOffset,
                  float uRepeats, float vRepeats,
                  bool fixedUVs);
@@ -97,7 +99,7 @@ protected:
         int     style;
         int     ds, dt;
         int     dsq, dsr;
-        const GLfloat*  normal;
+        const glm::vec3 normal;
     public:
         GLfloat3Array   vertex;
         GLfloat2Array   uv;
