@@ -130,9 +130,9 @@ if os.isdir("dependencies") then
       os.isdir("dependencies/licenses")) then
     depsDir = true
   elseif (_ACTION and string.find(_ACTION, "xcode", 0) and
-      os.isdir("dependencies/output-macOS-release-x86_64") and
-      os.isdir("dependencies/output-macOS-debug-x86_64") and
-      os.isdir("dependencies/licenses")) then
+          os.isdir("dependencies/output-macOS-release-x86_64") and
+          os.isdir("dependencies/output-macOS-debug-x86_64") and
+          os.isdir("dependencies/licenses")) then
     depsDir = true
   end
 end
@@ -398,14 +398,14 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
 
   filter "system:macosx"
     defines "HAVE_CGLGETCURRENTCONTEXT"
-    sysincludedirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/include"
-    libdirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/lib"
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
                          ["MACOSX_DEPLOYMENT_TARGET"] = "10.7",
                          ["LD_RUNPATH_SEARCH_PATHS"] =" @executable_path/../PlugIns" }
 
   filter { "system:macosx", "action:xcode*" }
     defines "INSTALL_DATA_DIR=\"\"" -- there's one place that has to have it
+    sysincludedirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/include"
+    libdirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/lib"
 
   filter "system:linux"
     defines {
@@ -535,9 +535,9 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   -- generate man files
   if _ACTION and _ACTION == "gmake" then
     if _TARGET_OS == "windows" then
-      os.execute("if not exist premake5\\man mkdir premake5\\man")
+      os.execute("if not exist premake5\\gmake\\man mkdir premake5\\gmake\\man")
     else
-      os.execute("mkdir -p premake5/man")
+      os.execute("mkdir -p premake5/gmake/man")
     end
 
     local function substituteVersion(dataIn)
@@ -550,14 +550,14 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
       return dataOut
     end
 
-    io.writefile("premake5/man/bzadmin.6", substituteVersion(io.readfile("man/bzadmin.6.in")))
-    print("Generated premake5/man/bzadmin.6...")
-    io.writefile("premake5/man/bzflag.6", substituteVersion(io.readfile("man/bzflag.6.in")))
-    print("Generated premake5/man/bzflag.6...")
-    io.writefile("premake5/man/bzfs.6", substituteVersion(io.readfile("man/bzfs.6.in")))
-    print("Generated premake5/man/bzfs.6...")
-    io.writefile("premake5/man/bzw.5", substituteVersion(io.readfile("man/bzw.5.in")))
-    print("Generated premake5/man/bzw.5...")
+    io.writefile("premake5/gmake/man/bzadmin.6", substituteVersion(io.readfile("man/bzadmin.6.in")))
+    print("Generated premake5/gmake/man/bzadmin.6...")
+    io.writefile("premake5/gmake/man/bzflag.6", substituteVersion(io.readfile("man/bzflag.6.in")))
+    print("Generated premake5/gmake/man/bzflag.6...")
+    io.writefile("premake5/gmake/man/bzfs.6", substituteVersion(io.readfile("man/bzfs.6.in")))
+    print("Generated premake5/gmake/man/bzfs.6...")
+    io.writefile("premake5/gmake/man/bzw.5", substituteVersion(io.readfile("man/bzw.5.in")))
+    print("Generated premake5/gmake/man/bzw.5...")
   end
 
   -- generate BZFlag-Info.plist
