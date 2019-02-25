@@ -33,13 +33,13 @@ local bzInstallFiles = {
     ["file"] = iif(_TARGET_OS == "macosx", "*.dylib", "*.so") },
 
   -- man files
-  { ["inDir"] = "premake5/man", ["outDir"] = "share/man/man5",
+  { ["inDir"] = "premake5/gmake/man", ["outDir"] = "share/man/man5",
     ["file"] = "bzw.5" },
-  { ["inDir"] = "premake5/man", ["outDir"] = "share/man/man6",
+  { ["inDir"] = "premake5/gmake/man", ["outDir"] = "share/man/man6",
     ["file"] = "bzadmin.6" },
-  { ["inDir"] = "premake5/man", ["outDir"] = "share/man/man6",
+  { ["inDir"] = "premake5/gmake/man", ["outDir"] = "share/man/man6",
     ["file"] = "bzflag.6" },
-  { ["inDir"] = "premake5/man", ["outDir"] = "share/man/man6",
+  { ["inDir"] = "premake5/gmake/man", ["outDir"] = "share/man/man6",
     ["file"] = "bzfs.6" },
 
   -- fonts
@@ -103,10 +103,10 @@ if _ACTION == "gmake" then
       os.exit(1)
     end
     bzInstallPrefix = _OPTIONS["prefix"]
-    print "Generated premake5/installPrefix.txt..."
-    io.writefile("premake5/installPrefix.txt", bzInstallPrefix)
+    print "Generated premake5/gmake/installPrefix.txt..."
+    io.writefile("premake5/gmake/installPrefix.txt", bzInstallPrefix)
   else
-    os.remove("premake5/installPrefix.txt")
+    os.remove("premake5/gmake/installPrefix.txt")
   end
 elseif _ACTION == "install" or _ACTION == "uninstall" then
   -- install/uninstall can't override the prefix, because the paths are
@@ -114,7 +114,7 @@ elseif _ACTION == "install" or _ACTION == "uninstall" then
   if _OPTIONS["destdir"] then
     bzInstallPrefix = _OPTIONS["destdir"]
   else
-    local prefixFromFile = io.readfile("build/installPrefix.txt")
+    local prefixFromFile = io.readfile("premake5/gmake/installPrefix.txt")
     if prefixFromFile then
       bzInstallPrefix = prefixFromFile
     end
@@ -256,12 +256,12 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
         end
 
         for _, installFile in ipairs(bzInstallFiles) do
-          if #os.matchfiles((installFile.inDir or "premake5/bin/Release").."/"..
+          if #os.matchfiles((installFile.inDir or "premake5/gmake/bin/Release").."/"..
                             installFile.file) > 0 then
             print("Installing "..bzInstallPrefix.."/"..installFile.outDir..
                   "/"..installFile.file)
             os.execute("mkdir -p "..bzInstallPrefix.."/"..installFile.outDir)
-            os.execute("cp "..(installFile.inDir or "premake5/bin/Release")..
+            os.execute("cp "..(installFile.inDir or "premake5/gmake/bin/Release")..
                        "/"..installFile.file.." "..bzInstallPrefix.."/"..
                        installFile.outDir.."/")
           end

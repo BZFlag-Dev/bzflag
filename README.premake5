@@ -59,12 +59,9 @@ To-Do
 
 General
 -------
-(3) set up main premake5.lua script to print out formatted configuration summary
 
 macOS
 -----
-check man/plist/gmake installation paths for proper depth and consistency (or Linux)
-(2) make dependencies directory work optionally on gmake action (or Linux)
 move any pertinent info in README.MacOSX, rename README.MacOSX to README.macOS, and make file refer to this file
 remove old Xcode project and associated files
 dependencies package doesn't include SDL 1.2... what to do?
