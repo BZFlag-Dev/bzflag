@@ -431,7 +431,7 @@ SceneRenderer*      getSceneRenderer()
 
 void            setSceneDatabase()
 {
-    SceneDatabase *scene; // FIXME - test the zbuffer here
+    SceneDatabase *scene;
 
     // delete the old database
     sceneRenderer->setSceneDatabase(NULL);
