@@ -32,6 +32,7 @@
 #include "StateDatabase.h"
 #include "SceneRenderer.h"
 #include "BZDBCache.h"
+#include "VBO_Handler.h"
 #include "OpenGLCommon.h"
 
 // local implementation headers
@@ -692,25 +693,42 @@ const glm::vec3 TankIDLSceneNode::IDLRenderNode::idlVertex[] =
 
 TankIDLSceneNode::IDLRenderNode::IDLRenderNode(
     const TankIDLSceneNode* _sceneNode) :
-    sceneNode(_sceneNode)
+    sceneNode(_sceneNode), vboIndex(-1)
 {
-    // do nothing
-    return;
+    vboManager.registerClient(this);
 }
 
 
 TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 {
-    // do nothing
-    return;
+    vboVC.vboFree(vboIndex);
+    vboManager.unregisterClient(this);
+}
+
+
+void TankIDLSceneNode::IDLRenderNode::initVBO()
+{
+    static const glm::vec4 innerColor = { 1.0f, 1.0f, 1.0f, 0.75f };
+    static const glm::vec4 outerColor = { 1.0f, 1.0f, 1.0f, 0.0f };
+
+    const int numFaces = bzcountof(idlFaces);
+    glm::vec4 colors[numFaces * 4];
+    vboIndex = vboVC.vboAlloc(numFaces * 4);
+
+    glm::vec4 *currColor = colors;
+    for (int i = numFaces; i > 0; i--)
+    {
+        *currColor++ = innerColor;
+        *currColor++ = innerColor;
+        *currColor++ = outerColor;
+        *currColor++ = outerColor;
+    }
+    vboVC.colorData(vboIndex, numFaces * 4, colors);
 }
 
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
-    static const glm::vec4 innerColor = { 1.0f, 1.0f, 1.0f, 0.75f };
-    static const glm::vec4 outerColor = { 1.0f, 1.0f, 1.0f, 0.0f };
-
     // compute plane in tank's space
     const glm::vec3 sphere = glm::make_vec3(sceneNode->tank->getSphere());
     const glm::vec4 _plane = glm::make_vec4(sceneNode->plane);
@@ -730,6 +748,10 @@ void TankIDLSceneNode::IDLRenderNode::render()
     glRotatef(azimuth, 0.0f, 0.0f, 1.0f);
 
     const int numFaces = bzcountof(idlFaces);
+    glm::vec3 vertex[numFaces * 4];
+
+    glm::vec3 *currVertex = vertex;
+    int count = 0;
     for (int i = 0; i < numFaces; i++)
     {
         // get distances from tankPlane
@@ -763,14 +785,20 @@ void TankIDLSceneNode::IDLRenderNode::render()
         project[1] = glm::mix(origin, cross[1], dist);
 
         // draw it
-        glBegin(GL_TRIANGLE_STRIP);
-        myColor4fv(glm::value_ptr(innerColor));
-        glVertex3fv(glm::value_ptr(cross[0]));
-        glVertex3fv(glm::value_ptr(cross[1]));
-        myColor4fv(glm::value_ptr(outerColor));
-        glVertex3fv(glm::value_ptr(project[0]));
-        glVertex3fv(glm::value_ptr(project[1]));
-        glEnd();
+        *currVertex++ = cross[0];
+        *currVertex++ = cross[1];
+        *currVertex++ = project[0];
+        *currVertex++ = project[1];
+        count++;
+    }
+    vboVC.vertexData(vboIndex, numFaces * 4, vertex);
+
+    vboVC.enableArrays();
+    int currIndex = vboIndex;
+    for (int i = 0; i < count; i++)
+    {
+        glDrawArrays(GL_TRIANGLE_STRIP, currIndex, 4);
+        currIndex += 4;
     }
 
     glPopMatrix();
@@ -1195,19 +1223,17 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
             myColor4f(params.color.r, params.color.g, params.color.b, params.color.a);
     }
 
-    // get the list
-    GLuint list;
-    TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
-    list = TankGeometryMgr::getPartList(shadow, part, drawSize);
-
     if (!overide || params.draw)
     {
-        // draw the part
-        glCallList(list);
+        TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
 
+        // draw the part
+#ifdef DEBUG_RENDERING
+        int count =
+#endif
+            TankGeometryMgr::drawPart(shadow, part, drawSize);
         // add to the triangle count
-        addTriangleCount(TankGeometryMgr::getPartTriangleCount(
-                             shadow, part, drawSize));
+        addTriangleCount(count);
     }
 
     // draw the lights on the turret
@@ -1349,41 +1375,8 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 
 void TankSceneNode::TankRenderNode::renderLights()
 {
-    static const glm::vec3 colorLights[3] =
-    {
-        { 1.0f, 1.0f, 1.0f },
-        { 1.0f, 0.0f, 0.0f },
-        { 0.0f, 1.0f, 0.0f }
-    };
-    static const glm::vec3 positionLights[3] =
-    {
-        { -1.53f,  0.00f, 2.1f },
-        {  0.10f,  0.75f, 2.1f },
-        {  0.10f, -0.75f, 2.1f }
-    };
     sceneNode->lightsGState.setState();
-    glPointSize(2.0f);
-
-    glBegin(GL_POINTS);
-    {
-        const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
-
-        myColor3fv(&colorLights[0][0]);
-        glVertex3f(positionLights[0][0] * scale[0],
-                   positionLights[0][1] * scale[1],
-                   positionLights[0][2] * scale[2]);
-        myColor3fv(&colorLights[1][0]);
-        glVertex3f(positionLights[1][0] * scale[0],
-                   positionLights[1][1] * scale[1],
-                   positionLights[1][2] * scale[2]);
-        myColor3fv(&colorLights[2][0]);
-        glVertex3f(positionLights[2][0] * scale[0],
-                   positionLights[2][1] * scale[1],
-                   positionLights[2][2] * scale[2]);
-    }
-    glEnd();
-
-    glPointSize(1.0f);
+    TankGeometryMgr::drawLights(colorOverride, sceneNode->tankSize);
     sceneNode->gstate.setState();
 
     addTriangleCount(4);
@@ -1405,18 +1398,6 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     if (!sceneNode->jumpJetsOn)
         return;
 
-    typedef struct
-    {
-        glm::vec3 vertex;
-        glm::vec2 texcoord;
-    } jetVertex;
-    static const jetVertex jet[3] =
-    {
-        {{+0.3f,  0.0f, 0.0f}, {0.0f, 1.0f}},
-        {{-0.3f,  0.0f, 0.0f}, {1.0f, 1.0f}},
-        {{ 0.0f, -1.0f, 0.0f}, {0.5f, 0.0f}}
-    };
-
     myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
     // use a clip plane, because the ground has no depth
@@ -1434,15 +1415,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
 
             RENDERER.getViewFrustum().executeBillboard();
 
-            glBegin(GL_TRIANGLES);
-            {
-                for (int v = 0; v < 3; v++)
-                {
-                    glTexCoord2fv(glm::value_ptr(jet[v].texcoord));
-                    glVertex3fv(glm::value_ptr(jet[v].vertex));
-                }
-            }
-            glEnd();
+            TankGeometryMgr::drawJet();
         }
         glPopMatrix();
     }

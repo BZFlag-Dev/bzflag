@@ -85,13 +85,11 @@ void kill();
 void buildLists();
 void deleteLists();
 
-GLuint getPartList(TankGeometryEnums::TankShadow shadow,
-                   TankGeometryEnums::TankPart part,
-                   TankGeometryEnums::TankSize size);
-
-int getPartTriangleCount(TankGeometryEnums::TankShadow shadow,
-                         TankGeometryEnums::TankPart part,
-                         TankGeometryEnums::TankSize size);
+int drawPart(TankGeometryEnums::TankShadow shadow,
+             TankGeometryEnums::TankPart part,
+             TankGeometryEnums::TankSize size);
+void drawLights(bool colorOverride, TankGeometryEnums::TankSize size);
+void drawJet();
 
 const float* getScaleFactor(TankGeometryEnums::TankSize size);
 }
@@ -124,19 +122,57 @@ void doTexCoord2f(GLfloat x, GLfloat y);
 //
 
 // hightank geometry builder
-int buildHighBody (void);
-int buildHighBarrel (void);
-int buildHighTurret (void);
-int buildHighLCasing (void);
-int buildHighRCasing (void);
+void DrawTankSides();
+void DrawCentralBody();
+void DrawRearExaust2();
+void buildHighBarrelHole();
+void buildHighBarrelGun();
+void buildHighTurret1();
+void buildHighTurret5();
+void buildHighTurret6();
+void buildHighTurret7();
+void buildHighTurret13();
+void buildHighTurret14();
+void buildHighLCasing1();
+void buildHighLCasing2();
+void buildHighLCasing3();
+void buildHighLCasing4();
+void buildHighLCasing5();
+void buildHighLCasing6();
+void buildHighLCasing7();
+void buildHighRCasing1();
+void buildHighRCasing2();
+void buildHighRCasing3();
+void buildHighRCasing4();
+void buildHighRCasing5();
+void buildHighRCasing6();
+void buildHighRCasing7();
 
+void buildLCasingR();
+void buildRCasingR();
+void buildLCasingL();
+void buildRCasingL();
 // animated geometry builder
-int buildHighLCasingAnim (void);
-int buildHighRCasingAnim (void);
-int buildHighLTread (int divs);
-int buildHighRTread (int divs);
-int buildHighLWheel (int wheel, float angle, int divs);
-int buildHighRWheel (int wheel, float angle, int divs);
+void buildHighLCasingAnim1();
+void buildHighLCasingAnim2();
+void buildHighLCasingAnim3();
+void buildHighLCasingAnim4();
+void buildHighLCasingAnim5();
+void buildHighLCasingAnim6();
+void buildHighLCasingAnim7();
+void buildHighRCasingAnim1();
+void buildHighRCasingAnim2();
+void buildHighRCasingAnim3();
+void buildHighRCasingAnim4();
+void buildHighRCasingAnim5();
+void buildHighRCasingAnim6();
+void buildHighRCasingAnim7();
+void buildTread1(bool right);
+void buildTread2(bool right);
+void buildTread3(bool right);
+void buildWheel1(int wheel, bool right);
+void buildWheel2(int wheel, bool right);
+void buildWheel3(int wheel, bool right);
 }
 
 

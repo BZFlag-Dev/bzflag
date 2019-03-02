@@ -82,9 +82,8 @@ static void DrawOBJIndexFace (int v1, int t1, int n1,
 }
 
 
-static int DrawTankSides (void)
+void TankGeometryUtils::DrawTankSides (void)
 {
-    glBegin(GL_TRIANGLES);
     DrawOBJIndexFace( 1,1,1, 2,2,1, 3,3,2);
     DrawOBJIndexFace( 4,4,3, 5,5,3, 6,6,3);
     DrawOBJIndexFace( 1,1,1, 3,3,2, 7,7,2);
@@ -105,115 +104,165 @@ static int DrawTankSides (void)
     DrawOBJIndexFace( 22,10,7, 20,8,7, 24,12,7);
     DrawOBJIndexFace( 22,10,7, 24,12,7, 17,4,7);
     DrawOBJIndexFace( 23,11,7, 22,10,7, 17,4,7);
-    glEnd();
-    return 20;
 }
 
-static int DrawCentralBody(void)
+void TankGeometryUtils::DrawCentralBody(void)
 {
     // draw the outer loop
-    glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.984696f, 0.000000f, 0.174282f);
     doTexCoord2f(1.210f, 2.290f);
     doVertex3f(2.820f, -0.877f, 0.716f);
+    doNormal3f(0.984696f, 0.000000f, 0.174282f);
     doTexCoord2f(0.669f, 2.040f);
     doVertex3f(2.820f, 0.878f, 0.716f);
+    doNormal3f(0.984696f, 0.000000f, 0.174282f);
     doTexCoord2f(1.210f, 2.280f);
     doVertex3f(2.800f, -0.876f, 0.829f);
+    doNormal3f(0.984696f, 0.000000f, 0.174282f);
     doTexCoord2f(0.672f, 2.030f);
     doVertex3f(2.800f, 0.878f, 0.829f);
     doNormal3f(0.573462f, 0.000000f, 0.819232f);
     doTexCoord2f(1.240f, 2.210f);
     doVertex3f(2.570f, -0.877f, 0.990f);
+    doNormal3f(0.573462f, 0.000000f, 0.819232f);
     doTexCoord2f(0.705f, 1.960f);
     doVertex3f(2.570f, 0.877f, 0.990f);
     doNormal3f(0.049938f, 0.000000f, 0.998752f);
     doTexCoord2f(1.300f, 2.090f);
     doVertex3f(2.170f, -0.877f, 1.010f);
+    doNormal3f(0.049938f, 0.000000f, 0.998752f);
     doTexCoord2f(0.763f, 1.840f);
     doVertex3f(2.170f, 0.877f, 1.010f);
     doNormal3f(0.280899f, 0.000000f, 0.959737f);
     doTexCoord2f(1.360f, 1.970f);
     doVertex3f(1.760f, -0.877f, 1.130f);
+    doNormal3f(0.280899f, 0.000000f, 0.959737f);
     doTexCoord2f(0.822f, 1.710f);
     doVertex3f(1.760f, 0.877f, 1.130f);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
     doTexCoord2f(1.820f, 0.981f);
     doVertex3f(-1.460f, -0.877f, 1.130f);
+    doNormal3f(0.000000f, 0.000000f, 1.000000f);
     doTexCoord2f(1.280f, 0.729f);
     doVertex3f(-1.460f, 0.877f, 1.130f);
     doNormal3f(0.076167f, 0.000000f, 0.997095f);
     doTexCoord2f(2.030f, 0.541f);
     doVertex3f(-2.900f, -0.877f, 1.240f);
+    doNormal3f(0.076167f, 0.000000f, 0.997095f);
     doTexCoord2f(1.490f, 0.289f);
     doVertex3f(-2.900f, 0.877f, 1.240f);
     doNormal3f(-0.975668f, 0.000000f, -0.219251f);
     doTexCoord2f(2.000f, 0.590f);
     doVertex3f(-2.740f, -0.877f, 0.528f);
+    doNormal3f(-0.975668f, 0.000000f, -0.219251f);
     doTexCoord2f(1.470f, 0.338f);
     doVertex3f(-2.740f, 0.877f, 0.528f);
     doNormal3f(-0.426419f, 0.000000f, -0.904526f);
     doTexCoord2f(1.840f, 0.932f);
     doVertex3f(-1.620f, -0.877f, 0.250f);
+    doNormal3f(-0.426419f, 0.000000f, -0.904526f);
     doTexCoord2f(1.310f, 0.680f);
     doVertex3f(-1.620f, 0.877f, 0.250f);
     doNormal3f(0.000000f, 0.000000f, -1.000000f);
     doTexCoord2f(1.350f, 1.980f);
     doVertex3f(1.810f, -0.877f, 0.250f);
+    doNormal3f(0.000000f, 0.000000f, -1.000000f);
     doTexCoord2f(0.815f, 1.730f);
     doVertex3f(1.810f, 0.877f, 0.250f);
     doNormal3f(0.454326f, 0.000000f, -0.890835f);
     doTexCoord2f(1.240f, 2.230f);
     doVertex3f(2.610f, -0.877f, 0.408f);
+    doNormal3f(0.454326f, 0.000000f, -0.890835f);
     doTexCoord2f(0.700f, 1.970f);
     doVertex3f(2.610f, 0.877f, 0.408f);
     doNormal3f(0.969310f, 0.000000f, -0.245840f);
     doTexCoord2f(1.230f, 2.250f);
     doVertex3f(2.680f, -0.877f, 0.684f);
+    doNormal3f(0.969310f, 0.000000f, -0.245840f);
     doTexCoord2f(0.690f, 2.000f);
     doVertex3f(2.680f, 0.877f, 0.684f);
     doNormal3f(0.222825f, 0.000000f, -0.974858f);
     doTexCoord2f(1.210f, 2.290f);
     doVertex3f(2.820f, -0.877f, 0.716f);
+    doNormal3f(0.222825f, 0.000000f, -0.974858f);
     doTexCoord2f(0.669f, 2.040f);
     doVertex3f(2.820f, 0.878f, 0.716f);
-    glEnd(); // 26 verts -> 24 tris
+    doNormal3f(0.222825f, 0.000000f, -0.974858f);
+    doTexCoord2f(0.669f, 2.040f);
+    doVertex3f(2.820f, 0.878f, 0.716f);
 
-    return 24;
-}
-
-
-static int DrawRightRearExaust (void)
-{
-    glBegin(GL_TRIANGLE_STRIP);
     doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.070f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
+    doTexCoord2f(1.540f, 0.341f);
+    doVertex3f(-2.820f, 0.686f, 1.070f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.070f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.170f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
     doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.170f);
     doNormal3f(0.000000f, 0.000000f, 1.000000f);
     doTexCoord2f(1.640f, 0.387f);
     doVertex3f(-2.820f, 0.367f, 1.170f);
+    doNormal3f(0.000000f, 0.000000f, 1.000000f);
     doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.170f);
     doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(1.640f, 0.387f);
     doVertex3f(-2.820f, 0.367f, 1.070f);
+    doNormal3f(0.000000f, -1.000000f, 0.000000f);
     doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.070f);
     doNormal3f(0.000000f, 0.000000f, -1.000000f);
     doTexCoord2f(1.540f, 0.341f);
     doVertex3f(-2.820f, 0.686f, 1.070f);
+    doNormal3f(0.000000f, 0.000000f, -1.000000f);
     doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.070f);
-    glEnd(); // 10 verts -> 8 tris
+    doNormal3f(0.000000f, 0.000000f, -1.000000f);
+    doTexCoord2f(1.580f, 0.261f);
+    doVertex3f(-3.080f, 0.686f, 1.070f);
 
-    glBegin(GL_TRIANGLE_STRIP);
-    doNormal3f(-1.000000f, 0.000000f, 0.000000f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
+    doTexCoord2f(1.780f, 0.445f);
+    doVertex3f(-2.840f, -0.084f, 1.070f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
+    doTexCoord2f(1.810f, 0.366f);
+    doVertex3f(-3.100f, -0.084f, 1.070f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
+    doTexCoord2f(1.780f, 0.445f);
+    doVertex3f(-2.840f, -0.084f, 1.170f);
+    doNormal3f(0.000000f, 1.000000f, 0.000000f);
+    doTexCoord2f(1.810f, 0.366f);
+    doVertex3f(-3.100f, -0.084f, 1.170f);
+    doNormal3f(0.000000f, 0.000000f, 1.000000f);
+    doTexCoord2f(2.020f, 0.559f);
+    doVertex3f(-2.840f, -0.877f, 1.170f);
+    doNormal3f(0.000000f, 0.000000f, 1.000000f);
+    doTexCoord2f(2.060f, 0.480f);
+    doVertex3f(-3.100f, -0.877f, 1.170f);
+    doNormal3f(0.000000f, -1.000000f, 0.000000f);
+    doTexCoord2f(2.020f, 0.559f);
+    doVertex3f(-2.840f, -0.877f, 1.070f);
+    doNormal3f(0.000000f, -1.000000f, 0.000000f);
+    doTexCoord2f(2.060f, 0.480f);
+    doVertex3f(-3.100f, -0.877f, 1.070f);
+    doNormal3f(0.000000f, 0.000000f, -1.000000f);
+    doTexCoord2f(1.780f, 0.445f);
+    doVertex3f(-2.840f, -0.084f, 1.070f);
+    doNormal3f(0.000000f, 0.000000f, -1.000000f);
+    doTexCoord2f(1.810f, 0.366f);
+    doVertex3f(-3.100f, -0.084f, 1.070f);
+}
+
+
+void TankGeometryUtils::DrawRearExaust2()
+{
     doTexCoord2f(1.580f, 0.261f);
     doVertex3f(-3.080f, 0.686f, 1.170f);
     doTexCoord2f(1.580f, 0.261f);
@@ -222,43 +271,11 @@ static int DrawRightRearExaust (void)
     doVertex3f(-3.080f, 0.367f, 1.170f);
     doTexCoord2f(1.670f, 0.307f);
     doVertex3f(-3.080f, 0.367f, 1.070f);
-    glEnd(); // 4 verts -> 2 tris
+    doTexCoord2f(1.670f, 0.307f);
+    doVertex3f(-3.080f, 0.367f, 1.070f);
 
-    return 10;
-}
-
-
-static int DrawLeftRearExaust ( void )
-{
-    glBegin(GL_TRIANGLE_STRIP);
-    doNormal3f(0.000000f, 1.000000f, 0.000000f);
-    doTexCoord2f(1.780f, 0.445f);
-    doVertex3f(-2.840f, -0.084f, 1.070f);
-    doTexCoord2f(1.810f, 0.366f);
-    doVertex3f(-3.100f, -0.084f, 1.070f);
-    doTexCoord2f(1.780f, 0.445f);
-    doVertex3f(-2.840f, -0.084f, 1.170f);
     doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.170f);
-    doNormal3f(0.000000f, 0.000000f, 1.000000f);
-    doTexCoord2f(2.020f, 0.559f);
-    doVertex3f(-2.840f, -0.877f, 1.170f);
-    doTexCoord2f(2.060f, 0.480f);
-    doVertex3f(-3.100f, -0.877f, 1.170f);
-    doNormal3f(0.000000f, -1.000000f, 0.000000f);
-    doTexCoord2f(2.020f, 0.559f);
-    doVertex3f(-2.840f, -0.877f, 1.070f);
-    doTexCoord2f(2.060f, 0.480f);
-    doVertex3f(-3.100f, -0.877f, 1.070f);
-    doNormal3f(0.000000f, 0.000000f, -1.000000f);
-    doTexCoord2f(1.780f, 0.445f);
-    doVertex3f(-2.840f, -0.084f, 1.070f);
-    doTexCoord2f(1.810f, 0.366f);
-    doVertex3f(-3.100f, -0.084f, 1.070f);
-    glEnd(); // 10 verts -> 8 tris
-
-    glBegin(GL_TRIANGLE_STRIP);
-    doNormal3f(-1.000000f, 0.000000f, 0.000000f);
     doTexCoord2f(1.810f, 0.366f);
     doVertex3f(-3.100f, -0.084f, 1.170f);
     doTexCoord2f(1.810f, 0.366f);
@@ -267,22 +284,8 @@ static int DrawLeftRearExaust ( void )
     doVertex3f(-3.100f, -0.877f, 1.170f);
     doTexCoord2f(2.060f, 0.480f);
     doVertex3f(-3.100f, -0.877f, 1.070f);
-    glEnd(); // 4 verts -> 2 tris
-
-    return 10;
 }
 
-
-int TankGeometryUtils::buildHighBody (void)
-{
-    int tris = 0;
-    glShadeModel(GL_FLAT);
-    tris += DrawTankSides();
-    tris += DrawCentralBody();
-    tris += DrawRightRearExaust();
-    tris += DrawLeftRearExaust();
-    return tris;
-}
 
 /*
  * Local Variables: ***

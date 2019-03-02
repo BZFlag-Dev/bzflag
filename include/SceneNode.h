@@ -97,7 +97,7 @@ public:
     static void     setColorOverride(bool = true);
     static void     glColor3f(GLfloat r, GLfloat g, GLfloat b)
     {
-        if (!colorOverride) ::glColor3f(r, g, b);
+        if (!colorOverride) ::glColor4f(r, g, b, 1.0f);
     };
 
     static void     glColor4f(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
@@ -107,12 +107,12 @@ public:
 
     static void     glColor3fv(const GLfloat* rgb)
     {
-        if (!colorOverride) ::glColor3fv(rgb);
+        if (!colorOverride) ::glColor4f(rgb[0], rgb[1], rgb[2], 1.0f);
     };
 
     static void     glColor4fv(const GLfloat* rgba)
     {
-        if (!colorOverride) ::glColor4fv(rgba);
+        if (!colorOverride) ::glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
     };
 
     static void     setStipple(GLfloat alpha)
@@ -153,8 +153,9 @@ protected:
     Extents     extents;
 private:
     GLfloat     sphere[4];
-    static bool  colorOverride;
     static void     (*stipple)(GLfloat);
+public:
+    static bool  colorOverride;
 };
 
 inline const GLfloat*   SceneNode::getPlane() const

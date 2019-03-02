@@ -27,6 +27,7 @@
 // Common headers
 #include "OpenGLLight.h"
 #include "TankGeometryMgr.h"
+#include "VBO_Handler.h"
 
 class TankSceneNode;
 
@@ -80,11 +81,13 @@ public:
     //     SphereSceneNode isn't requesting access, it's granting it
 //  protected:
 public:
-    class IDLRenderNode : public RenderNode
+    class IDLRenderNode : public RenderNode, public VBOclient
     {
     public:
         IDLRenderNode(const TankIDLSceneNode*);
         ~IDLRenderNode();
+
+        void initVBO();
         void        render();
         const GLfloat*  getPosition() const
         {
@@ -94,6 +97,7 @@ public:
         const TankIDLSceneNode* sceneNode;
         static const int    idlFaces[][5];
         static const glm::vec3 idlVertex[];
+        int vboIndex;
     };
     friend class IDLRenderNode;
 

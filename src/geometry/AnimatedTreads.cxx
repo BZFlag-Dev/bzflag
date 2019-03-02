@@ -107,24 +107,17 @@ float TankGeometryUtils::getTreadTexLen()
 }
 
 
-static int buildCasing(float Yoffset)
+static void buildCasingR(float Yoffset)
 {
-    const float yLeft = Yoffset + (0.5f * casingWidth);
     const float yRight = Yoffset - (0.5f * casingWidth);
-
-    glShadeModel(GL_FLAT);
     {
         const float xc = wheelSpacing * 1.5f;
         const float zb = treadThickness;
         const float zt = treadHeight - treadThickness;
         const float ty = 0.25f; // effective, the texture scale factor
         const float tx = (2.0f * ty) * (xc / (zt - zb));
-
-        // the left and right quad surface
         {
             // the right side
-            glBegin(GL_TRIANGLE_STRIP);
-            doNormal3f(0.0f, -1.0f, 0.0f);
             doTexCoord2f(-tx, -ty);
             doVertex3f(-xc, yRight, zb);
             doTexCoord2f(+tx, -ty);
@@ -133,10 +126,22 @@ static int buildCasing(float Yoffset)
             doVertex3f(-xc, yRight, zt);
             doTexCoord2f(+tx, +ty);
             doVertex3f(+xc, yRight, zt);
-            glEnd();
+        }
+    }
+}
+
+
+static void buildCasingL(float Yoffset)
+{
+    const float yLeft = Yoffset + (0.5f * casingWidth);
+    {
+        const float xc = wheelSpacing * 1.5f;
+        const float zb = treadThickness;
+        const float zt = treadHeight - treadThickness;
+        const float ty = 0.25f; // effective, the texture scale factor
+        const float tx = (2.0f * ty) * (xc / (zt - zb));
+        {
             // the left side
-            glBegin(GL_TRIANGLE_STRIP);
-            doNormal3f(0.0f, +1.0f, 0.0f);
             doTexCoord2f(-tx, -ty);
             doVertex3f(+xc, yLeft, zb);
             doTexCoord2f(+tx, -ty);
@@ -145,18 +150,18 @@ static int buildCasing(float Yoffset)
             doVertex3f(+xc, yLeft, zt);
             doTexCoord2f(+tx, +ty);
             doVertex3f(-xc, yLeft, zt);
-            glEnd();
         }
     }
-    glShadeModel(GL_SMOOTH);
-
-    return 4;
 }
 
 
-static int buildTread(float Yoffset, int divisions)
+void TankGeometryUtils::buildTread1(bool right)
 {
+    float Yoffset = treadYCenter;
+    if (right)
+        Yoffset = -treadYCenter;
     int i;
+    const int divisions = 32;
     const float divs = (float)((divisions / 2) * 2); // even number
     const float divScale = 2.0f / divs;
     const float astep = (float)((M_PI * 2.0) / divs);
@@ -176,10 +181,8 @@ static int buildTread(float Yoffset, int divisions)
     const float ty1 = tyScale * treadWidth;
     const float ty2 = tyScale * (treadWidth + treadThickness);
     const float ty3 = tyScale * ((2.0f * treadWidth) + treadThickness);
-    const float ty4 = 1.0f;
 
     // the outside of the tread
-    glBegin(GL_TRIANGLE_STRIP);
     {
         // first curve
         for (i = 0; i < ((divisions / 2) + 1); i++)
@@ -193,6 +196,7 @@ static int buildTread(float Yoffset, int divisions)
             x = (cos_val * treadRadius) + (wheelSpacing * 1.5f);
             z = (sin_val * treadRadius) + treadRadius;
             doVertex3f(x, yRight, z);
+            doNormal3f(cos_val, 0.0f, sin_val);
             doTexCoord2f(tx, ty0);
             doVertex3f(x, yLeft, z);
         }
@@ -202,6 +206,7 @@ static int buildTread(float Yoffset, int divisions)
         x = -wheelSpacing * 1.5f;
         z = treadHeight;
         doVertex3f(x, yRight, z);
+        doNormal3f(0.0f, 0.0f, 1.0f);
         doTexCoord2f(tx2, ty0);
         doVertex3f(x, yLeft, z);
         // second curve
@@ -216,6 +221,7 @@ static int buildTread(float Yoffset, int divisions)
             x = (cos_val * treadRadius) - (wheelSpacing * 1.5f);
             z = (sin_val * treadRadius) + treadRadius;
             doVertex3f(x, yRight, z);
+            doNormal3f(cos_val, 0.0f, sin_val);
             doTexCoord2f(tx, ty0);
             doVertex3f(x, yLeft, z);
         }
@@ -225,13 +231,18 @@ static int buildTread(float Yoffset, int divisions)
         x = wheelSpacing * 1.5f;
         z = 0.0f;
         doVertex3f(x, yRight, z);
+        doNormal3f(0.0f, 0.0f, -1.0f);
         doTexCoord2f(tx4, ty0);
         doVertex3f(x, yLeft, z);
     }
-    glEnd();
+    doNormal3f(0.0f, 0.0f, -1.0f);
+    doTexCoord2f(tx4, ty0);
+    doVertex3f(x, yLeft, z);
 
+    doNormal3f(0.0f, 0.0f, 1.0f);
+    doTexCoord2f(tx0, ty3);
+    doVertex3f(wheelSpacing * 1.5f, yLeft, treadThickness);
     // the inside of the tread
-    glBegin(GL_TRIANGLE_STRIP);
     {
         // first curve
         for (i = 0; i < ((divisions / 2) + 1); i++)
@@ -245,6 +256,7 @@ static int buildTread(float Yoffset, int divisions)
             x = (cos_val * (treadRadius - treadThickness)) + (wheelSpacing * 1.5f);
             z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
             doVertex3f(x, yLeft, z);
+            doNormal3f(-cos_val, 0.0f, -sin_val);
             doTexCoord2f(tx, ty2);
             doVertex3f(x, yRight, z);
         }
@@ -254,6 +266,7 @@ static int buildTread(float Yoffset, int divisions)
         x = -wheelSpacing * 1.5f;
         z = treadHeight - treadThickness;
         doVertex3f(x, yLeft, z);
+        doNormal3f(0.0f, 0.0f, -1.0f);
         doTexCoord2f(tx2, ty2);
         doVertex3f(x, yRight, z);
         // second curve
@@ -268,6 +281,7 @@ static int buildTread(float Yoffset, int divisions)
             x = (cos_val * (treadRadius - treadThickness)) - (wheelSpacing * 1.5f);
             z = (sin_val * (treadRadius - treadThickness)) + treadRadius;
             doVertex3f(x, yLeft, z);
+            doNormal3f(-cos_val, 0.0f, -sin_val);
             doTexCoord2f(tx, ty2);
             doVertex3f(x, yRight, z);
         }
@@ -277,16 +291,39 @@ static int buildTread(float Yoffset, int divisions)
         x = wheelSpacing * 1.5f;
         z = treadThickness;
         doVertex3f(x, yLeft, z);
+        doNormal3f(0.0f, 0.0f, 1.0f);
         doTexCoord2f(tx4, ty2);
         doVertex3f(x, yRight, z);
     }
-    glEnd();
+}
 
-    glShadeModel(GL_FLAT);
+
+void TankGeometryUtils::buildTread2(bool right)
+{
+    float Yoffset = treadYCenter;
+    if (right)
+        Yoffset = -treadYCenter;
+    int i;
+    const int divisions = 32;
+    const float divs = (float)((divisions / 2) * 2); // even number
+    const float divScale = 2.0f / divs;
+    const float astep = (float)((M_PI * 2.0) / divs);
+    const float yRight = Yoffset - (0.5f * treadWidth);
+    float x, z;
+    float tx;
+    // setup some basic texture coordinates
+    const float txScale = treadTexCoordLen / treadLength;
+    const float tx0 = 0.0f;
+    const float tx1 = (float)(txScale * (treadRadius * M_PI));
+    const float tx2 = (float)(txScale * ((treadRadius * M_PI) + (fullLength - treadHeight)));
+    const float tx3 = (float)(txScale * ((treadHeight * M_PI) + (fullLength - treadHeight)));
+    const float tx4 = treadTexCoordLen;
+    const float tyScale = 1.0f / (2.0f * (treadWidth + treadThickness));
+    const float ty1 = tyScale * treadWidth;
+    const float ty2 = tyScale * (treadWidth + treadThickness);
+
     {
         // the right edge
-        doNormal3f(0.0f, -1.0f, 0.0f);
-        glBegin(GL_TRIANGLE_STRIP);
         {
             // first outside curve
             for (i = 0; i < ((divisions / 2) + 1); i++)
@@ -337,11 +374,36 @@ static int buildTread(float Yoffset, int divisions)
             z = 0.0f;
             doVertex3f(x, yRight, z);
         }
-        glEnd();
+    }
+}
 
+
+void TankGeometryUtils::buildTread3(bool right)
+{
+    float Yoffset = treadYCenter;
+    if (right)
+        Yoffset = -treadYCenter;
+    int i;
+    const int divisions = 32;
+    const float divs = (float)((divisions / 2) * 2); // even number
+    const float divScale = 2.0f / divs;
+    const float astep = (float)((M_PI * 2.0) / divs);
+    const float yLeft = Yoffset + (0.5f * treadWidth);
+    float x, z;
+    float tx;
+    // setup some basic texture coordinates
+    const float txScale = treadTexCoordLen / treadLength;
+    const float tx0 = 0.0f;
+    const float tx1 = (float)(txScale * (treadRadius * M_PI));
+    const float tx2 = (float)(txScale * ((treadRadius * M_PI) + (fullLength - treadHeight)));
+    const float tx3 = (float)(txScale * ((treadHeight * M_PI) + (fullLength - treadHeight)));
+    const float tx4 = treadTexCoordLen;
+    const float tyScale = 1.0f / (2.0f * (treadWidth + treadThickness));
+    const float ty3 = tyScale * ((2.0f * treadWidth) + treadThickness);
+    const float ty4 = 1.0f;
+
+    {
         // the left edge
-        doNormal3f(0.0f, +1.0f, 0.0f);
-        glBegin(GL_TRIANGLE_STRIP);
         {
             // first outside curve
             for (i = 0; i < ((divisions / 2) + 1); i++)
@@ -392,18 +454,22 @@ static int buildTread(float Yoffset, int divisions)
             z = treadThickness;
             doVertex3f(x, yLeft, z);
         }
-        glEnd();
     }
-    glShadeModel(GL_SMOOTH);
-
-    return (2 * 4 * (divisions + 2));
 }
 
 
-static int buildWheel(const float pos[3], float angle, int divisions)
+void TankGeometryUtils::buildWheel1(int number, bool right)
 {
+    float angle = (float)number * (float)(M_PI / 2.0);
+    float pos[3];
+    pos[0] = wheelSpacing * (-1.5f + (float)number);
+    pos[1] = +treadYCenter;
+    pos[2] = treadRadius;
+    if (right)
+        pos[1] = -treadYCenter;
+
     int i;
-    int tris = 0;
+    int divisions = 16;
     const float divs = (float)divisions;
     const float astep = (float)((M_PI * 2.0) / (double)divs);
     const float yLeft = pos[1] + (0.5f * wheelWidth);
@@ -412,8 +478,6 @@ static int buildWheel(const float pos[3], float angle, int divisions)
     float tx, ty;
 
     // the edge loop
-    doNormal3f(0.0f, +1.0f, 0.0f);
-    glBegin(GL_TRIANGLE_STRIP);
     {
         for (i = 0; i < (divisions + 1); i++)
         {
@@ -433,14 +497,29 @@ static int buildWheel(const float pos[3], float angle, int divisions)
             doVertex3f(x, yLeft, z);
         }
     }
-    glEnd();
-    tris += (2 * divisions);
+}
 
-    glShadeModel(GL_FLAT);
+
+void TankGeometryUtils::buildWheel2(int number, bool right)
+{
+    float angle = (float)number * (float)(M_PI / 2.0);
+    float pos[3];
+    pos[0] = wheelSpacing * (-1.5f + (float)number);
+    pos[1] = +treadYCenter;
+    pos[2] = treadRadius;
+    if (right)
+        pos[1] = -treadYCenter;
+
+    int i;
+    int divisions = 16;
+    const float divs = (float)divisions;
+    const float astep = (float)((M_PI * 2.0) / (double)divs);
+    const float yLeft = pos[1] + (0.5f * wheelWidth);
+    float x, z;
+    float tx, ty;
+
     {
         // the left face
-        doNormal3f(0.0f, +1.0f, 0.0f);
-        glBegin(GL_TRIANGLE_FAN);
         {
             for (i = 0; i < divisions; i++)
             {
@@ -456,12 +535,30 @@ static int buildWheel(const float pos[3], float angle, int divisions)
 
             }
         }
-        glEnd();
-        tris += (divisions - 2);
+    }
+}
 
+
+void TankGeometryUtils::buildWheel3(int number, bool right)
+{
+    float angle = (float)number * (float)(M_PI / 2.0);
+    float pos[3];
+    pos[0] = wheelSpacing * (-1.5f + (float)number);
+    pos[1] = +treadYCenter;
+    pos[2] = treadRadius;
+    if (right)
+        pos[1] = -treadYCenter;
+
+    int i;
+    int divisions = 16;
+    const float divs = (float)divisions;
+    const float astep = (float)((M_PI * 2.0) / (double)divs);
+    const float yRight = pos[1] - (0.5f * wheelWidth);
+    float x, z;
+    float tx, ty;
+
+    {
         // the right face
-        doNormal3f(0.0f, -1.0f, 0.0f);
-        glBegin(GL_TRIANGLE_FAN);
         {
             for (i = 0; i < divisions; i++)
             {
@@ -476,106 +573,132 @@ static int buildWheel(const float pos[3], float angle, int divisions)
                 doVertex3f(x, yRight, z);
             }
         }
-        glEnd();
-        tris += (divisions - 2);
     }
-    glShadeModel(GL_SMOOTH);
-
-    return tris;
 }
 
 
-int TankGeometryUtils::buildHighLCasingAnim()
+void TankGeometryUtils::buildLCasingR()
 {
-    int tris = 0;
+    buildCasingR(+treadYCenter);
+}
 
-    tris += buildCasing(+treadYCenter);
+void TankGeometryUtils::buildLCasingL()
+{
+    buildCasingL(+treadYCenter);
+}
 
-    if (treadStyle == TankGeometryUtils::Covered)
+void TankGeometryUtils::buildRCasingR()
+{
+    buildCasingR(-treadYCenter);
+}
+
+void TankGeometryUtils::buildRCasingL()
+{
+    buildCasingL(-treadYCenter);
+}
+
+void TankGeometryUtils::buildHighLCasingAnim1()
+{
     {
-        glShadeModel(GL_FLAT);
         {
-            //draw the left tread cover
-            glBegin(GL_TRIANGLE_STRIP);
             doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(-0.193f, 0.727f);
             doVertex3f(3.000f, 0.875f, 0.770f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(0.009f, 0.356f);
             doVertex3f(3.000f, 1.400f, 0.770f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(-0.164f, 0.679f);
             doVertex3f(2.980f, 0.875f, 0.883f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(-0.015f, 0.407f);
             doVertex3f(2.980f, 1.400f, 0.883f);
             doNormal3f(0.519720f, 0.000000f, 0.854336f);
             doTexCoord2f(-0.134f, 0.666f);
             doVertex3f(2.860f, 0.875f, 0.956f);
+            doNormal3f(0.519720f, 0.000000f, 0.854336f);
             doTexCoord2f(-0.010f, 0.439f);
             doVertex3f(2.860f, 1.400f, 0.956f);
             doNormal3f(0.748075f, 0.000000f, 0.663614f);
             doTexCoord2f(-0.102f, 0.647f);
             doVertex3f(2.750f, 0.875f, 1.080f);
+            doNormal3f(0.748075f, 0.000000f, 0.663614f);
             doTexCoord2f(-0.009f, 0.477f);
             doVertex3f(2.750f, 1.400f, 1.080f);
             doNormal3f(0.049938f, 0.000000f, 0.998752f);
             doTexCoord2f(-0.041f, 0.675f);
             doVertex3f(2.350f, 0.875f, 1.100f);
+            doNormal3f(0.049938f, 0.000000f, 0.998752f);
             doTexCoord2f(0.048f, 0.512f);
             doVertex3f(2.350f, 1.400f, 1.100f);
             doNormal3f(0.455876f, 0.000000f, 0.890043f);
             doTexCoord2f(0.033f, 0.684f);
             doVertex3f(1.940f, 0.875f, 1.310f);
+            doNormal3f(0.455876f, 0.000000f, 0.890043f);
             doTexCoord2f(0.095f, 0.570f);
             doVertex3f(1.940f, 1.400f, 1.310f);
             doNormal3f(0.003378f, 0.000000f, 0.999994f);
             doTexCoord2f(0.468f, 0.920f);
             doVertex3f(-1.020f, 0.875f, 1.320f);
+            doNormal3f(0.003378f, 0.000000f, 0.999994f);
             doTexCoord2f(0.529f, 0.808f);
             doVertex3f(-1.020f, 1.400f, 1.320f);
             doNormal3f(0.178885f, 0.000000f, 0.983870f);
             doTexCoord2f(0.536f, 0.949f);
             doVertex3f(-1.460f, 0.875f, 1.400f);
+            doNormal3f(0.178885f, 0.000000f, 0.983870f);
             doTexCoord2f(0.591f, 0.849f);
             doVertex3f(-1.460f, 1.400f, 1.400f);
             doNormal3f(0.006622f, 0.000000f, 0.999978f);
             doTexCoord2f(0.759f, 1.070f);
             doVertex3f(-2.970f, 0.875f, 1.410f);
+            doNormal3f(0.006622f, 0.000000f, 0.999978f);
             doTexCoord2f(0.813f, 0.970f);
             doVertex3f(-2.970f, 1.400f, 1.410f);
             doNormal3f(-0.967641f, 0.000000f, -0.252333f);
             doTexCoord2f(0.587f, 1.300f);
             doVertex3f(-2.740f, 0.875f, 0.628f);
+            doNormal3f(-0.967641f, 0.000000f, -0.252333f);
             doTexCoord2f(0.917f, 0.700f);
             doVertex3f(-2.740f, 1.400f, 0.628f);
             doNormal3f(-0.426419f, 0.000000f, -0.904526f);
             doTexCoord2f(0.375f, 1.300f);
             doVertex3f(-1.620f, 0.875f, 0.500f);
+            doNormal3f(-0.426419f, 0.000000f, -0.904526f);
             doTexCoord2f(0.800f, 0.523f);
             doVertex3f(-1.620f, 1.400f, 0.500f);
             doNormal3f(0.000000f, 0.000000f, -1.000000f);
             doTexCoord2f(-0.156f, 1.010f);
             doVertex3f(1.990f, 0.875f, 0.500f);
+            doNormal3f(0.000000f, 0.000000f, -1.000000f);
             doTexCoord2f(0.268f, 0.233f);
             doVertex3f(1.990f, 1.400f, 0.500f);
             doNormal3f(0.454326f, 0.000000f, -0.890835f);
             doTexCoord2f(-0.246f, 0.896f);
             doVertex3f(2.790f, 0.875f,0.608f);
+            doNormal3f(0.454326f, 0.000000f, -0.890835f);
             doTexCoord2f(0.123f, 0.220f);
             doVertex3f(2.790f, 1.400f,0.608f);
             doNormal3f(0.978361f, 0.000000f, -0.206904f);
             doTexCoord2f(-0.182f, 0.754f);
             doVertex3f(2.860f, 0.875f, 0.739f);
+            doNormal3f(0.978361f, 0.000000f, -0.206904f);
             doTexCoord2f(0.038f, 0.352f);
             doVertex3f(2.860f, 1.400f, 0.739f);
             doNormal3f(0.216192f, 0.000000f, -0.976351f);
             doTexCoord2f(-0.193f, 0.727f);
             doVertex3f(3.000f, 0.875f, 0.770f);
+            doNormal3f(0.216192f, 0.000000f, -0.976351f);
             doTexCoord2f(0.009f, 0.356f);
             doVertex3f(3.000f, 1.400f, 0.770f);
-            glEnd(); // 30 verts -> 28 tris
-            tris += 28;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim2()
+{
+    {
+        {
             doTexCoord2f(0.587f, 1.300f);
             doVertex3f(-2.740f, 0.875f, 0.628f);
             doTexCoord2f(0.375f, 1.300f);
@@ -586,11 +709,15 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(-1.460f, 0.875f, 1.400f);
             doTexCoord2f(0.759f, 1.070f);
             doVertex3f(-2.970f, 0.875f, 1.410f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim3()
+{
+    {
+        {
+
             doTexCoord2f(-0.156f, 1.010f);
             doVertex3f(1.990f, 0.875f, 0.500f);
             doTexCoord2f(-0.246f, 0.896f);
@@ -607,11 +734,15 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(-1.020f, 0.875f, 1.320f);
             doTexCoord2f(0.375f, 1.300f);
             doVertex3f(-1.620f, 0.875f, 0.500f);
-            glEnd(); // 8 verts -> 6 tris
-            tris += 6;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim4()
+{
+    {
+        {
+
             doTexCoord2f(-0.182f, 0.754f);
             doVertex3f(2.860f, 0.875f, 0.739f);
             doTexCoord2f(-0.193f, 0.727f);
@@ -622,11 +753,15 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(2.860f, 0.875f, 0.956f);
             doTexCoord2f(-0.102f, 0.647f);
             doVertex3f(2.750f, 0.875f, 1.080f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim5()
+{
+    {
+        {
+
             doTexCoord2f(0.917f, 0.700f);
             doVertex3f(-2.740f, 1.400f, 0.628f);
             doTexCoord2f(0.813f, 0.970f);
@@ -637,11 +772,14 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(-1.020f, 1.400f, 1.320f);
             doTexCoord2f(0.800f, 0.523f);
             doVertex3f(-1.620f, 1.400f, 0.500f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim6()
+{
+    {
+        {
             doTexCoord2f(0.268f, 0.233f);
             doVertex3f(1.990f, 1.400f, 0.500f);
             doTexCoord2f(0.800f, 0.523f);
@@ -658,11 +796,14 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(2.860f, 1.400f, 0.739f);
             doTexCoord2f(0.123f, 0.220f);
             doVertex3f(2.790f, 1.400f,0.608f);
-            glEnd(); // 8 verts -> 6 tris
-            tris += 6;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighLCasingAnim7()
+{
+    {
+        {
             doTexCoord2f(0.038f, 0.352f);
             doVertex3f(2.860f, 1.400f, 0.739f);
             doTexCoord2f(-0.009f, 0.477f);
@@ -673,106 +814,113 @@ int TankGeometryUtils::buildHighLCasingAnim()
             doVertex3f(2.980f, 1.400f, 0.883f);
             doTexCoord2f(0.009f, 0.356f);
             doVertex3f(3.000f, 1.400f, 0.770f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
         }
-        glShadeModel(GL_SMOOTH);
     }
-
-    return tris;
 }
 
-int TankGeometryUtils::buildHighRCasingAnim()
+void TankGeometryUtils::buildHighRCasingAnim1()
 {
-    int tris = 0;
-
-    tris += buildCasing(-treadYCenter);
-
-    if (treadStyle == TankGeometryUtils::Covered)
     {
-        glShadeModel(GL_FLAT);
         {
             //draw the right tread cover
-            glBegin(GL_TRIANGLE_STRIP);
             doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(-0.295f, 0.041f);
             doVertex3f(3.000f, -1.400f, 0.770f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(0.045f, -0.208f);
             doVertex3f(3.000f, -0.875f, 0.770f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(-0.248f, 0.010f);
             doVertex3f(2.980f, -1.400f, 0.883f);
+            doNormal3f(0.984696f, 0.000000f, 0.174282f);
             doTexCoord2f(0.002f, -0.173f);
             doVertex3f(2.980f, -0.875f, 0.883f);
             doNormal3f(0.519720f, 0.000000f, 0.854336f);
             doTexCoord2f(-0.216f, 0.011f);
             doVertex3f(2.860f, -1.400f, 0.956f);
+            doNormal3f(0.519720f, 0.000000f, 0.854336f);
             doTexCoord2f(-0.007f, -0.141f);
             doVertex3f(2.860f, -0.875f, 0.956f);
             doNormal3f(0.748075f, 0.000000f, 0.663614f);
             doTexCoord2f(-0.179f, 0.008f);
             doVertex3f(2.750f, -1.400f, 1.080f);
+            doNormal3f(0.748075f, 0.000000f, 0.663614f);
             doTexCoord2f(-0.022f, -0.107f);
             doVertex3f(2.750f, -0.875f, 1.080f);
             doNormal3f(0.049938f, 0.000000f, 0.998752f);
             doTexCoord2f(-0.136f, 0.059f);
             doVertex3f(2.350f, -1.400f, 1.100f);
+            doNormal3f(0.049938f, 0.000000f, 0.998752f);
             doTexCoord2f(0.014f, -0.050f);
             doVertex3f(2.350f, -0.875f, 1.100f);
             doNormal3f(0.455876f, 0.000000f, 0.890043f);
             doTexCoord2f(-0.072f, 0.099f);
             doVertex3f(1.940f, -1.400f, 1.310f);
+            doNormal3f(0.455876f, 0.000000f, 0.890043f);
             doTexCoord2f(0.032f, 0.022f);
             doVertex3f(1.940f, -0.875f, 1.310f);
             doNormal3f(0.003378f, 0.000000f, 0.999994f);
             doTexCoord2f(0.221f, 0.497f);
             doVertex3f(-1.020f, -1.400f, 1.320f);
+            doNormal3f(0.003378f, 0.000000f, 0.999994f);
             doTexCoord2f(0.324f, 0.422f);
             doVertex3f(-1.020f, -0.875f, 1.320f);
             doNormal3f(0.178885f, 0.000000f, 0.983870f);
             doTexCoord2f(0.270f, 0.553f);
             doVertex3f(-1.460f, -1.400f, 1.400f);
+            doNormal3f(0.178885f, 0.000000f, 0.983870f);
             doTexCoord2f(0.362f, 0.486f);
             doVertex3f(-1.460f, -0.875f, 1.400f);
             doNormal3f(0.006622f, 0.000000f, 0.999978f);
             doTexCoord2f(0.419f, 0.757f);
             doVertex3f(-2.970f, -1.400f, 1.410f);
+            doNormal3f(0.006622f, 0.000000f, 0.999978f);
             doTexCoord2f(0.511f, 0.690f);
             doVertex3f(-2.970f, -0.875f, 1.410f);
             doNormal3f(-0.967641f, 0.000000f, -0.252333f);
             doTexCoord2f(0.165f, 0.896f);
             doVertex3f(-2.740f, -1.400f, 0.628f);
+            doNormal3f(-0.967641f, 0.000000f, -0.252333f);
             doTexCoord2f(0.720f, 0.489f);
             doVertex3f(-2.740f, -0.875f, 0.628f);
             doNormal3f(-0.426419f, 0.000000f, -0.904526f);
             doTexCoord2f(-0.026f, 0.803f);
             doVertex3f(-1.620f, -1.400f, 0.500f);
+            doNormal3f(-0.426419f, 0.000000f, -0.904526f);
             doTexCoord2f(0.690f, 0.279f);
             doVertex3f(-1.620f, -0.875f, 0.500f);
             doNormal3f(0.000000f, 0.000000f, -1.000000f);
             doTexCoord2f(-0.383f, 0.314f);
             doVertex3f(1.990f, -1.400f, 0.500f);
+            doNormal3f(0.000000f, 0.000000f, -1.000000f);
             doTexCoord2f(0.332f, -0.209f);
             doVertex3f(1.990f, -0.875f, 0.500f);
             doNormal3f(0.454326f, 0.000000f, -0.890835f);
             doTexCoord2f(-0.415f, 0.172f);
             doVertex3f(2.790f, -1.400f,0.608f);
+            doNormal3f(0.454326f, 0.000000f, -0.890835f);
             doTexCoord2f(0.206f, -0.283f);
             doVertex3f(2.790f, -0.875f,0.608f);
             doNormal3f(0.978361f, 0.000000f, -0.206904f);
             doTexCoord2f(-0.296f, 0.070f);
             doVertex3f(2.860f, -1.400f, 0.739f);
+            doNormal3f(0.978361f, 0.000000f, -0.206904f);
             doTexCoord2f(0.073f, -0.200f);
             doVertex3f(2.860f, -0.875f, 0.739f);
             doNormal3f(0.216192f, 0.000000f, -0.976351f);
             doTexCoord2f(-0.295f, 0.041f);
             doVertex3f(3.000f, -1.400f, 0.770f);
+            doNormal3f(0.216192f, 0.000000f, -0.976351f);
             doTexCoord2f(0.045f, -0.208f);
             doVertex3f(3.000f, -0.875f, 0.770f);
-            glEnd(); // 30 verts -> 28 tris
-            tris += 28;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim2()
+{
+    {
+        {
             doTexCoord2f(0.165f, 0.896f);
             doVertex3f(-2.740f, -1.400f, 0.628f);
             doTexCoord2f(-0.026f, 0.803f);
@@ -783,11 +931,14 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(-1.460f, -1.400f, 1.400f);
             doTexCoord2f(0.419f, 0.757f);
             doVertex3f(-2.970f, -1.400f, 1.410f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim3()
+{
+    {
+        {
             doTexCoord2f(-0.383f, 0.314f);
             doVertex3f(1.990f, -1.400f, 0.500f);
             doTexCoord2f(-0.415f, 0.172f);
@@ -804,11 +955,14 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(-1.020f, -1.400f, 1.320f);
             doTexCoord2f(-0.026f, 0.803f);
             doVertex3f(-1.620f, -1.400f, 0.500f);
-            glEnd(); // 8 verts -> 6 tris
-            tris += 6;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, -1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim4()
+{
+    {
+        {
             doTexCoord2f(-0.296f, 0.070f);
             doVertex3f(2.860f, -1.400f, 0.739f);
             doTexCoord2f(-0.295f, 0.041f);
@@ -819,11 +973,14 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(2.860f, -1.400f, 0.956f);
             doTexCoord2f(-0.179f, 0.008f);
             doVertex3f(2.750f, -1.400f, 1.080f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim5()
+{
+    {
+        {
             doTexCoord2f(0.720f, 0.489f);
             doVertex3f(-2.740f, -0.875f, 0.628f);
             doTexCoord2f(0.511f, 0.690f);
@@ -834,11 +991,14 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(-1.020f, -0.875f, 1.320f);
             doTexCoord2f(0.690f, 0.279f);
             doVertex3f(-1.620f, -0.875f, 0.500f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim6()
+{
+    {
+        {
             doTexCoord2f(0.332f, -0.209f);
             doVertex3f(1.990f, -0.875f, 0.500f);
             doTexCoord2f(0.690f, 0.279f);
@@ -855,11 +1015,14 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(2.860f, -0.875f, 0.739f);
             doTexCoord2f(0.206f, -0.283f);
             doVertex3f(2.790f, -0.875f,0.608f);
-            glEnd(); // 8 verts -> 6 tris
-            tris += 6;
+        }
+    }
+}
 
-            glBegin(GL_TRIANGLE_FAN);
-            doNormal3f(0.000000f, 1.000000f, 0.000000f);
+void TankGeometryUtils::buildHighRCasingAnim7()
+{
+    {
+        {
             doTexCoord2f(0.073f, -0.200f);
             doVertex3f(2.860f, -0.875f, 0.739f);
             doTexCoord2f(-0.022f, -0.107f);
@@ -870,45 +1033,8 @@ int TankGeometryUtils::buildHighRCasingAnim()
             doVertex3f(2.980f, -0.875f, 0.883f);
             doTexCoord2f(0.045f, -0.208f);
             doVertex3f(3.000f, -0.875f, 0.770f);
-            glEnd(); // 5 verts -> 3 tris
-            tris += 3;
         }
-        glShadeModel(GL_SMOOTH);
     }
-
-    return tris;
-}
-
-
-int TankGeometryUtils::buildHighLTread(int divs)
-{
-    return buildTread(+treadYCenter, divs);
-}
-
-int TankGeometryUtils::buildHighRTread(int divs)
-{
-    return buildTread(-treadYCenter, divs);
-}
-
-
-int TankGeometryUtils::buildHighLWheel(int number, float angle, int divs)
-{
-    assert ((number >= 0) && (number < 4));
-    float pos[3];
-    pos[0] = wheelSpacing * (-1.5f + (float)number);
-    pos[1] = +treadYCenter;
-    pos[2] = treadRadius;
-    return buildWheel(pos, angle, divs);
-}
-
-int TankGeometryUtils::buildHighRWheel(int number, float angle, int divs)
-{
-    assert ((number >= 0) && (number < 4));
-    float pos[3];
-    pos[0] = wheelSpacing * (-1.5f + (float)number);
-    pos[1] = -treadYCenter;
-    pos[2] = treadRadius;
-    return buildWheel(pos, angle, divs);
 }
 
 
