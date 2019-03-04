@@ -1,10 +1,5 @@
-SUBDIRS = \
-	BZFlag.xcodeproj \
-	licenses
-
 EXTRA_DIST =	\
-	BZFlag.icns \
-	config.h
+	BZFlag.icns
 
 MAINTAINERCLEANFILES = \
 	Makefile.in
