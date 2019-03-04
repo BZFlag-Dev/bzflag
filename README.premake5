@@ -5,18 +5,49 @@ BZFlag README for premake5
 Dependencies Setup
 ==================
 
+Pre-built dependencies packages are provided for Visual Studio builds on
+Windows and for Xcode builds on macOS. The dependencies package needs to be
+downloaded, expanded, and placed in the root of the bzflag source directory
+such that the dependency headers and libraries for your system are located in
+<bzflag source>/dependencies/output-<system>-<configuration>-<architecture>.
+To download the applicable package for your system, please visit
+https://github.com/BZFlag-Dev/bzflag-dependencies/releases.
+
+When building using gnu make, the dependencies must be installed at the system
+level. For Linux builds, dependencies should be installed using your package
+manager by following the instructions in README.Linux.
+
+To build using gnu make on macOS, you will need to build and install SDL2,
+c-ares, GLEW, and libPNG at the system level. Make sure that you build the
+dependencies with the macOS deployment target set to 10.7 to match the build
+settings for the game itself. Alternatively, the dependencies may be
+installed on macOS using Homebrew:
+
+  $ brew install sdl2 c-ares glew libpng
 
 Building
 ========
-
-Building with gmake (Linux and macOS)
--------------------------------------
 
 Building with Visual Studio (Windows)
 -------------------------------------
 
 Building with Xcode (macOS)
 ---------------------------
+NOTE: The macOS dependencies package does not include SDL 1.2. If you choose
+to configure the Xcode projects to use SDL 1.2, in addition to setting up the
+dependencies package, you must also build and install SDL 1.2 at the system
+level, and pass the --extra-include-dirs and --extra-lib-dirs options with the
+applicable locations for the SDL 1.2 header files and libraries.
+
+NOTE: You may encounter the error "Unknown option
+-NSDocumentRevisionsDebugMode" due to a deficiency in Xcode that prevents us
+from permanently disabling a certain setting. If you do encounter this error,
+click the "BZFlag" scheme button, click "Edit Scheme..." and under the
+"Options" tab, deselect "Allow debugging when using document Versions
+Browser" before running the client straight from Xcode.
+
+Building with gmake (Linux and macOS)
+-------------------------------------
 
 
 Development
@@ -62,9 +93,7 @@ General
 
 macOS
 -----
-move any pertinent info in README.MacOSX, rename README.MacOSX to README.macOS, and make file refer to this file
 remove old Xcode project and associated files
-dependencies package doesn't include SDL 1.2... what to do?
 
 Windows
 -------
@@ -75,6 +104,7 @@ Linux
 Wrap-Up
 -------
 finish updating this README file
+  make note that a change in --prefix doesn't automatically reset makefiles, so need a `make clean` to take effect
 check formatting
   replace tabs with 8 spaces in all
     there ARE examples of tabs where spaces should be in src/bzflag/premake5.lua

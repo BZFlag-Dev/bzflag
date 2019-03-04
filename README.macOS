@@ -1,0 +1,20 @@
+BZFlag README for macOS
+=======================
+
+BZFlag builds for macOS supporting version 10.7 and later are now done using
+premake. Please refer to the README.premake5 file for build instructions.
+
+Please note that at least through SDL 2.0.8, there are issues building BZFlag
+on recent versions of macOS and Xcode. We have success building on Mac OS X
+10.10 with Xcode 7. Here are known issues with SDL 2 on macOS that are
+affecting us:
+
+  https://bugzilla.libsdl.org/show_bug.cgi?id=4272
+  https://bugzilla.libsdl.org/show_bug.cgi?id=4177
+
+To access the bzadmin text client or the bzflag server bzfs from the BZFlag
+application, right click on the application, click "Show Package Contents,"
+and navigate to Contents/MacOS. Server plugins are located at
+Contents/PlugIns. Note that plugin names are different from Windows and Linux
+("<name>.dylib" instead of "<name>.dll or "<name>.so"). However, bzfs will
+still load the plugins when you specify the full plugin path.
