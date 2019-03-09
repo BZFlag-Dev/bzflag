@@ -85,6 +85,24 @@ private:
 };
 
 
+class FlagVBO : public VBOclient
+{
+public:
+    FlagVBO();
+    virtual ~FlagVBO();
+
+    void initVBO();
+
+    void drawPole();
+    void drawQuadPole();
+    void drawNotBillboard();
+private:
+    int poleIndex;
+    int notBillboardIndex;
+    int quadPoleIndex;
+};
+
+
 const float WaveGeometry::RippleSpeed1 = (float)(2.4 * M_PI);
 const float WaveGeometry::RippleSpeed2 = (float)(1.724 * M_PI);
 
@@ -177,7 +195,9 @@ void WaveGeometry::waveFlag(float dt)
 }
 
 
-WaveGeometry *allWaves;
+WaveGeometry *allWaves = 0;
+FlagVBO      *flagVBO  = 0;
+
 
 
 /******************************************************************************/
@@ -197,6 +217,8 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
     setColor(1.0f, 1.0f, 1.0f, 1.0f);
     setCenter(pos);
     setRadius(6.0f * Unit * Unit);
+    if (!flagVBO)
+        flagVBO = new FlagVBO;
 }
 
 FlagSceneNode::~FlagSceneNode()
@@ -398,10 +420,13 @@ void            FlagSceneNode::FlagRenderNode::render()
     {
         glTranslatef(sphere[0], sphere[1], sphere[2]);
 
-        if (is_billboard && realFlag)
+        if (!is_billboard || realFlag)
         {
             // the pole
             glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
+        }
+        if (is_billboard && realFlag)
+        {
             const float Tilt = sceneNode->tilt;
             const float Hscl = sceneNode->hscl;
             static GLfloat shear[16] = {Hscl, 0.0f, Tilt, 0.0f,
@@ -413,70 +438,43 @@ void            FlagSceneNode::FlagRenderNode::render()
             shear[2] = Tilt; // pulls the flag up or down
             glPushMatrix();
             glMultMatrixf(shear);
+        }
+        if (is_billboard && !realFlag)
+            RENDERER.getViewFrustum().executeBillboard();
+        if (is_billboard)
+        {
             allWaves[waveReference].execute();
             addTriangleCount(triCount);
+            if (realFlag)
+                glPopMatrix();
+        }
+        else
+        {
+            glPushMatrix();
+            glTranslatef(0.0f, 0.0f, base);
+            flagVBO->drawNotBillboard();
             glPopMatrix();
+            addTriangleCount(2);
+        }
+        {
 
             myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
 
             glDisable(GL_TEXTURE_2D);
+        }
 
-            // the pole
-            const float topHeight = base + Height;
-            glBegin(GL_TRIANGLE_STRIP);
-            {
-                glVertex3f(-poleWidth, 0.0f, 0.0f);
-                glVertex3f(-poleWidth, 0.0f, topHeight);
-                glVertex3f(0.0f, -poleWidth, 0.0f);
-                glVertex3f(0.0f, -poleWidth, topHeight);
-                glVertex3f(+poleWidth, 0.0f, 0.0f);
-                glVertex3f(+poleWidth, 0.0f, topHeight);
-                glVertex3f(0.0f, +poleWidth, 0.0f);
-                glVertex3f(0.0f, +poleWidth, topHeight);
-                glVertex3f(-poleWidth, 0.0f, 0.0f);
-                glVertex3f(-poleWidth, 0.0f, topHeight);
-            }
-            glEnd();
+        // the pole
+        const float topHeight = base + Height;
+        glScalef(poleWidth, poleWidth, topHeight);
+        if (is_billboard && realFlag)
+        {
+            flagVBO->drawPole();
             addTriangleCount(8);
         }
         else
         {
-            if (is_billboard)
             {
-                RENDERER.getViewFrustum().executeBillboard();
-                allWaves[waveReference].execute();
-                addTriangleCount(triCount);
-            }
-            else
-            {
-                glRotatef(sceneNode->angle + 180.0f, 0.0f, 0.0f, 1.0f);
-                glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-                glBegin(GL_TRIANGLE_STRIP);
-                glTexCoord2f(0.0f, 0.0f);
-                glVertex3f(0.0f, base, 0.0f);
-                glTexCoord2f(1.0f, 0.0f);
-                glVertex3f(Width, base, 0.0f);
-                glTexCoord2f(0.0f, 1.0f);
-                glVertex3f(0.0f, base + Height, 0.0f);
-                glTexCoord2f(1.0f, 1.0f);
-                glVertex3f(Width, base + Height, 0.0f);
-                glEnd();
-                addTriangleCount(2);
-            }
-
-            myColor4f(0.0f, 0.0f, 0.0f, sceneNode->color[3]);
-
-            glDisable(GL_TEXTURE_2D);
-
-            {
-                glBegin(GL_TRIANGLE_STRIP);
-                {
-                    glVertex3f(-poleWidth, 0.0f, 0.0f);
-                    glVertex3f(+poleWidth, 0.0f, 0.0f);
-                    glVertex3f(-poleWidth, base + Height, 0.0f);
-                    glVertex3f(+poleWidth, base + Height, 0.0f);
-                }
-                glEnd();
+                flagVBO->drawQuadPole();
                 addTriangleCount(2);
             }
         }
@@ -484,6 +482,83 @@ void            FlagSceneNode::FlagRenderNode::render()
     glPopMatrix();
 
     glEnable(GL_TEXTURE_2D);
+}
+
+
+FlagVBO::FlagVBO(): poleIndex(-1), notBillboardIndex(-1), quadPoleIndex(-1)
+{
+    vboManager.registerClient(this);
+}
+
+
+FlagVBO::~FlagVBO()
+{
+    vboV.vboFree(poleIndex);
+    vboV.vboFree(notBillboardIndex);
+    vboV.vboFree(quadPoleIndex);
+    vboManager.unregisterClient(this);
+}
+
+
+void FlagVBO::initVBO()
+{
+    glm::vec3 vertex[10];
+    glm::vec2 textur[4];
+
+    poleIndex         = vboV.vboAlloc(10);
+    notBillboardIndex = vboVT.vboAlloc(4);
+    quadPoleIndex     = vboV.vboAlloc(4);
+
+    vertex[0] = glm::vec3(-1.0f,  0.0f, 0.0f);
+    vertex[1] = glm::vec3(-1.0f,  0.0f, 1.0f);
+    vertex[2] = glm::vec3( 0.0f, -1.0f, 0.0f);
+    vertex[3] = glm::vec3( 0.0f, -1.0f, 1.0f);
+    vertex[4] = glm::vec3( 1.0f,  0.0f, 0.0f);
+    vertex[5] = glm::vec3( 1.0f,  0.0f, 1.0f);
+    vertex[6] = glm::vec3( 0.0f,  1.0f, 0.0f);
+    vertex[7] = glm::vec3( 0.0f,  1.0f, 1.0f);
+    vertex[8] = glm::vec3(-1.0f,  0.0f, 0.0f);
+    vertex[9] = glm::vec3(-1.0f,  0.0f, 1.0f);
+    vboV.vertexData(poleIndex, 10, vertex);
+
+    vertex[0] = glm::vec3(-1.0f, 0.0f, 0.0f);
+    vertex[1] = glm::vec3(+1.0f, 0.0f, 0.0f);
+    vertex[2] = glm::vec3(-1.0f, 0.0f, 1.0f);
+    vertex[3] = glm::vec3(+1.0f, 0.0f, 1.0f);
+    vboV.vertexData(quadPoleIndex, 4, vertex);
+
+    textur[0] = glm::vec2(0.0f, 0.0f);
+    textur[1] = glm::vec2(1.0f, 0.0f);
+    textur[2] = glm::vec2(0.0f, 1.0f);
+    textur[3] = glm::vec2(1.0f, 1.0f);
+    vboVT.textureData(notBillboardIndex, 4, textur);
+
+    vertex[0] = glm::vec3(0.0f,  0.0f, 0.0f);
+    vertex[1] = glm::vec3(Width, 0.0f, 0.0f);
+    vertex[2] = glm::vec3(0.0f,  0.0f, Height);
+    vertex[3] = glm::vec3(Width, 0.0f, Height);
+    vboVT.vertexData(notBillboardIndex, 4, vertex);
+}
+
+
+void FlagVBO::drawPole()
+{
+    vboV.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, poleIndex, 10);
+}
+
+
+void FlagVBO::drawQuadPole()
+{
+    vboV.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, quadPoleIndex, 4);
+}
+
+
+void FlagVBO::drawNotBillboard()
+{
+    vboVT.enableArrays();
+    glDrawArrays(GL_TRIANGLE_STRIP, notBillboardIndex, 4);
 }
 
 
