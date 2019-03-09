@@ -32,7 +32,7 @@
 
 // version numbers - also update as needed:
 //  ChangeLog
-//  MSVC/bzflag.rc
+//  MSVC/Version.rc
 //  README
 //  configure.ac
 //  include/version.h
