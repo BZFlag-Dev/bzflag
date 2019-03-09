@@ -1037,7 +1037,7 @@ AC_CONFIG_FILES([
 	plugins/CustomZoneSample/Makefile
 	plugins/fairCTF/Makefile
 	plugins/flagStay/Makefile
-    plugins/genocide/Makefile
+	plugins/genocide/Makefile
 	plugins/keepaway/Makefile
 	plugins/killall/Makefile
 	plugins/koth/Makefile
