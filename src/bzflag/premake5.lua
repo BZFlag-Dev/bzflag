@@ -49,10 +49,10 @@ project "bzflag"
     "common",
     "cares",
     "curl",
-	"GL",
-	"GLEW",
-	"GLU",
-	"png",
+    "GL",
+    "GLEW",
+    "GLU",
+    "png",
     "z"
   }
 
@@ -63,17 +63,17 @@ project "bzflag"
       "../../MSVC/resource.h",
       "../../MSVC/Version.rc"
     }
-	defines "GLEW_STATIC"
+    defines "GLEW_STATIC"
     libdirs "$(DXSDK_DIR)/lib/$(PlatformShortName)"
     removelinks { "GL", "GLU", "png", "z" }
     links { "dsound", "glu32.lib", "libpng", "opengl32", "regex", "winmm", "ws2_32", "zlib" }
-	dpiawareness "HighPerMonitor"
+    dpiawareness "HighPerMonitor"
     postbuildcommands {
       "if not exist ..\\..\\bin_$(Configuration)_$(Platform) mkdir ..\\..\\bin_$(Configuration)_$(Platform)",
       "copy \"$(OutDir)bzflag.exe\" ..\\..\\bin_$(Configuration)_$(Platform)\\",
       "copy \"..\\..\\dependencies\\output-windows-$(Configuration)-$(PlatformShortName)\\bin\\*.dll\" ..\\..\\bin_$(Configuration)_$(Platform)\\",
-	  "if not exist ..\\..\\bin_$(Configuration)_$(Platform)\\licenses mkdir ..\\..\\bin_$(Configuration)_$(Platform)\\licenses",
-	  "copy \"..\\..\\dependencies\\licenses\\*\" ..\\..\\bin_$(Configuration)_$(Platform)\\licenses\\\""
+      "if not exist ..\\..\\bin_$(Configuration)_$(Platform)\\licenses mkdir ..\\..\\bin_$(Configuration)_$(Platform)\\licenses",
+      "copy \"..\\..\\dependencies\\licenses\\*\" ..\\..\\bin_$(Configuration)_$(Platform)\\licenses\\\""
     }
   filter { "system:windows", "configurations:Release" }
     removelinks { "curl", "GLEW" }
