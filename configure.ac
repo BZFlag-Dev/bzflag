@@ -292,7 +292,7 @@ AC_CHECK_LIB(z, compressBound, LIBZ="-lz", AC_MSG_ERROR([working zlib was not fo
 AC_SUBST(LIBZ)
 
 dnl detect a usable system libpng library
-AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', LIBPNG='')
+AC_CHECK_LIB(png, png_get_io_ptr, LIBPNG='-lpng', LIBPNG='', $LIBZ)
 AC_SUBST(LIBPNG)
 
 dnl detect a usable system c-ares lookup library
