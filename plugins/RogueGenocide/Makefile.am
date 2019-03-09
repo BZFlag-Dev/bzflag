@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.RogueGenocide.txt \
 	RogueGenocide.sln \
 	RogueGenocide.vcxproj	\
-	RogueGenocide.vcxproj.filters
+	RogueGenocide.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -19,4 +19,5 @@ lib3D_la_SOURCES =		\
 	TextureFont.h
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

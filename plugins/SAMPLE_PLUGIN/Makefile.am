@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.SAMPLE_PLUGIN.txt \
 	SAMPLE_PLUGIN.sln \
 	SAMPLE_PLUGIN.vcxproj	\
-	SAMPLE_PLUGIN.vcxproj.filters
+	SAMPLE_PLUGIN.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

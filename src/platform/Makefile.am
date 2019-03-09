@@ -225,6 +225,7 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	NewMedia.cxx \
 	NewMedia.h \
+	premake5.lua \
 	SDLMain.h \
 	SDLMain.m \
 	README

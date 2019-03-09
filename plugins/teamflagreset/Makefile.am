@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	help_teamflagreset_admin.txt \
 	teamflagreset.sln \
 	teamflagreset.vcxproj	\
-	teamflagreset.vcxproj.filters
+	teamflagreset.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

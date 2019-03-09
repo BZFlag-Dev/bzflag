@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.HoldTheFlag.txt \
 	HoldTheFlag.sln \
 	HoldTheFlag.vcxproj	\
-	HoldTheFlag.vcxproj.filters
+	HoldTheFlag.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

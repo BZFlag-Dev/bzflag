@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	help_koth_rules.txt \
 	koth.sln \
 	koth.vcxproj	\
-	koth.vcxproj.filters
+	koth.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

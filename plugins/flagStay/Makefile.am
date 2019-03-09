@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	flagStay.bzw \
 	flagStay.sln \
 	flagStay.vcxproj	\
-	flagStay.vcxproj.filters
+	flagStay.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

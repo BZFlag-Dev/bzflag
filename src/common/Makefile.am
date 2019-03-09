@@ -49,4 +49,5 @@ MAINTAINERCLEANFILES = \
 	Makefile.in
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

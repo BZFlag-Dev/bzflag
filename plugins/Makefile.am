@@ -43,6 +43,7 @@ DIST_SUBDIRS = \
 
 EXTRA_DIST = \
 	api_notes \
+	premake5.lua \
 	pushstats \
 	newplug.sh
 

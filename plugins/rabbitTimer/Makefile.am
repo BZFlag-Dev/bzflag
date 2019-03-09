@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.rabbitTimer.txt \
 	rabbitTimer.sln \
 	rabbitTimer.vcxproj	\
-	rabbitTimer.vcxproj.filters
+	rabbitTimer.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

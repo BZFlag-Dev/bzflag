@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	serverControl.cfg \
 	serverControl.sln \
 	serverControl.vcxproj	\
-	serverControl.vcxproj.filters
+	serverControl.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

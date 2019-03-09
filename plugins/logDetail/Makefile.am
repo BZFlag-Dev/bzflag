@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.logDetail.txt \
 	logDetail.sln \
 	logDetail.vcxproj	\
-	logDetail.vcxproj.filters
+	logDetail.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

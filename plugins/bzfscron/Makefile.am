@@ -17,7 +17,8 @@ EXTRA_DIST = \
 	bzfscron.cfg \
 	bzfscron.sln \
 	bzfscron.vcxproj	\
-	bzfscron.vcxproj.filters
+	bzfscron.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	nagware.cfg	\
 	nagware.sln \
 	nagware.vcxproj	\
-	nagware.vcxproj.filters
+	nagware.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

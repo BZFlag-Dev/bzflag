@@ -4,6 +4,7 @@ EXTRA_DIST =	\
 	EnableCheck.bmp		\
 	copying.rtf		\
 	header.bmp		\
+	premake5.lua		\
 	side.bmp		\
 	uninstall.ico
 

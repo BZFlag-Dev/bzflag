@@ -62,4 +62,5 @@ libObstacle_la_SOURCES =		\
 endif
 
 EXTRA_DIST =	\
+	premake5.lua \
 	README

@@ -151,3 +151,7 @@ LDADD =					\
 	$(LIBDL)			\
 	$(LIBMINIUPNPC)			\
 	../date/libDate.la
+
+EXTRA_DIST = \
+        premake5.lua  
+

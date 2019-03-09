@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.Phoenix.txt \
 	Phoenix.sln \
 	Phoenix.vcxproj	\
-	Phoenix.vcxproj.filters
+	Phoenix.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

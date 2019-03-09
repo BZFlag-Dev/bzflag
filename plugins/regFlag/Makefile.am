@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.regFlag.txt \
 	regFlag.sln \
 	regFlag.vcxproj	\
-	regFlag.vcxproj.filters
+	regFlag.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

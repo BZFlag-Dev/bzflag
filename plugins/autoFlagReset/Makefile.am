@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.autoFlagReset.txt \
 	autoFlagReset.sln \
 	autoFlagReset.vcxproj	\
-	autoFlagReset.vcxproj.filters
+	autoFlagReset.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -16,7 +16,8 @@ EXTRA_DIST = \
 	README.R2.txt \
 	R2.sln \
 	R2.vcxproj	\
-	R2.vcxproj.filters
+	R2.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

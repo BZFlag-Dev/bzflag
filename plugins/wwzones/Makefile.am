@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.wwzones.txt \
 	wwzones.sln \
 	wwzones.vcxproj	\
-	wwzones.vcxproj.filters
+	wwzones.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

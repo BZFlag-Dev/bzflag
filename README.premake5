@@ -159,7 +159,5 @@ final (slow) review of premake scripts
   check formatting (replace tabs with 8 spaces, 80 columns where possible)
     there ARE examples of tabs instead of spaces in src/bzflag/premake5.lua
 test all configuration options
-add premake5 configuration files to automake system
-run all standard make system checks to see if there are any warnings
 
 figure out what to do for solaris and bsd, perhaps just under SDL 1.2/2?

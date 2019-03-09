@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.playHistoryTracker.txt \
 	playHistoryTracker.sln \
 	playHistoryTracker.vcxproj	\
-	playHistoryTracker.vcxproj.filters
+	playHistoryTracker.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

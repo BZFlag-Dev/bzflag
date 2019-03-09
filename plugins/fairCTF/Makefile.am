@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.fairCTF.txt \
 	fairCTF.sln \
 	fairCTF.vcxproj	\
-	fairCTF.vcxproj.filters
+	fairCTF.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

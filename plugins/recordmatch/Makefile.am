@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.recordmatch.txt \
 	recordmatch.sln \
 	recordmatch.vcxproj	\
-	recordmatch.vcxproj.filters
+	recordmatch.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.chathistory.txt \
 	chathistory.sln \
 	chathistory.vcxproj	\
-	chathistory.vcxproj.filters
+	chathistory.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

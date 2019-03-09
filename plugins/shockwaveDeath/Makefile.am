@@ -12,7 +12,8 @@ EXTRA_DIST =			\
 	README.shockwaveDeath.txt		\
 	shockwaveDeath.sln	\
 	shockwaveDeath.vcxproj	\
-	shockwaveDeath.vcxproj.filters
+	shockwaveDeath.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

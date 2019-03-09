@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.customflagsample.txt \
 	customflagsample.sln \
 	customflagsample.vcxproj	\
-	customflagsample.vcxproj.filters
+	customflagsample.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

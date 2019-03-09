@@ -23,4 +23,5 @@ libGLKit_la_SOURCES =			\
 	RenderNode.cxx
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

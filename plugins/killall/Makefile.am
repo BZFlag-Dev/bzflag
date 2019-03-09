@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	killall.sln \
 	killall.vcxproj \
 	killall.vcxproj.filters	\
-	README.killall.txt
+	README.killall.txt \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
