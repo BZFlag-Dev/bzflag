@@ -1,7 +1,7 @@
 #!lua
 
 -- BZFlag
--- Copyright (c) 1993-2018 Tim Riker
+-- Copyright (c) 1993-2019 Tim Riker
 --
 -- This package is free software;  you can redistribute it and/or
 -- modify it under the terms of the license found in the file
@@ -147,7 +147,8 @@ if not depsDir then
 end
 
 -- set up main workspace
-workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
+workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
+              "fullbuild", "BZFlag"))
   -- set up command line options
   newoption {
     ["trigger"] = "disable-client",
@@ -214,7 +215,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
     ["description"] = "Delete generated project and build files",
     ["onStart"] =
       function()
-        print "Cleaning source tree..."
+        print "Cleaning premake files..."
       end,
     ["execute"] =
       function()
@@ -256,12 +257,14 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
         end
 
         for _, installFile in ipairs(bzInstallFiles) do
-          if #os.matchfiles((installFile.inDir or "premake5/gmake/bin/Release").."/"..
+          if #os.matchfiles((installFile.inDir or
+                             "premake5/gmake/bin/Release").."/"..
                             installFile.file) > 0 then
             print("Installing "..bzInstallPrefix.."/"..installFile.outDir..
                   "/"..installFile.file)
             os.execute("mkdir -p "..bzInstallPrefix.."/"..installFile.outDir)
-            os.execute("cp "..(installFile.inDir or "premake5/gmake/bin/Release")..
+            os.execute("cp "..(installFile.inDir or
+                               "premake5/gmake/bin/Release")..
                        "/"..installFile.file.." "..bzInstallPrefix.."/"..
                        installFile.outDir.."/")
           end
@@ -392,7 +395,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
     sysincludedirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/include"
     libdirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/lib"
     characterset "MBCS"
-    systemversion "latest" -- Visual Studio 2017 defaults to the Windows 8.1 SDK
+    systemversion "latest" -- VS2017 defaults to the Windows 8.1 SDK
   filter { "system:windows", "configurations:Release" }
     defines "NDEBUG"
 
@@ -403,7 +406,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
                          ["LD_RUNPATH_SEARCH_PATHS"] =" @executable_path/../PlugIns" }
 
   filter { "system:macosx", "action:xcode*" }
-    defines "INSTALL_DATA_DIR=\"\"" -- there's one place that has to have it
+    defines "INSTALL_DATA_DIR=\"\"" -- there's one place where it's required
     sysincludedirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/include"
     libdirs "dependencies/output-macOS-$CONFIGURATION-$CURRENT_ARCH/lib"
 
@@ -514,7 +517,8 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   end
 
   -- add extra include/library directories if specified
-  function split_by_comma(value) -- based on a snippet from https://helloacm.com/split-a-string-in-lua/
+  function split_by_comma(value)
+    -- based on a snippet from https://helloacm.com/split-a-string-in-lua/
     local result = {}
     for match in (value..","):gmatch("(.-)"..",") do
       table.insert(result, match)
@@ -533,7 +537,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   end
 
   -- generate man files
-  if _ACTION and _ACTION == "gmake" then
+  if _ACTION == "gmake" then
     if _TARGET_OS == "windows" then
       os.execute("if not exist premake5\\gmake\\man mkdir premake5\\gmake\\man")
     else
@@ -545,18 +549,23 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
 
       dataOut = string.gsub(dataOut, "@BUILD_DATE@", bzBuildDate)
       dataOut = string.gsub(dataOut, "@PACKAGE_VERSION@", "BZFlag")
-      dataOut = string.gsub(dataOut, "@INSTALL_DATA_DIR@", bzInstallPrefix.."/share/bzflag")
+      dataOut = string.gsub(dataOut, "@INSTALL_DATA_DIR@", bzInstallPrefix..
+                            "/share/bzflag")
 
       return dataOut
     end
 
-    io.writefile("premake5/gmake/man/bzadmin.6", substituteVersion(io.readfile("man/bzadmin.6.in")))
+    io.writefile("premake5/gmake/man/bzadmin.6",
+                 substituteVersion(io.readfile("man/bzadmin.6.in")))
     print("Generated premake5/gmake/man/bzadmin.6...")
-    io.writefile("premake5/gmake/man/bzflag.6", substituteVersion(io.readfile("man/bzflag.6.in")))
+    io.writefile("premake5/gmake/man/bzflag.6",
+                 substituteVersion(io.readfile("man/bzflag.6.in")))
     print("Generated premake5/gmake/man/bzflag.6...")
-    io.writefile("premake5/gmake/man/bzfs.6", substituteVersion(io.readfile("man/bzfs.6.in")))
+    io.writefile("premake5/gmake/man/bzfs.6",
+                 substituteVersion(io.readfile("man/bzfs.6.in")))
     print("Generated premake5/gmake/man/bzfs.6...")
-    io.writefile("premake5/gmake/man/bzw.5", substituteVersion(io.readfile("man/bzw.5.in")))
+    io.writefile("premake5/gmake/man/bzw.5",
+                 substituteVersion(io.readfile("man/bzw.5.in")))
     print("Generated premake5/gmake/man/bzw.5...")
   end
 
@@ -570,7 +579,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
                  "<key>CFBundleDevelopmentRegion</key><string>en</string>"..
                  "<key>CFBundleExecutable</key><string>${EXECUTABLE_NAME}</string>"..
                  "<key>CFBundleIconFile</key><string>BZFlag</string>"..
-                 "<key>CFBundleIdentifier</key><string>org.BZFlag</string>"..
+                 "<key>CFBundleIdentifier</key><string>org.bzflag.BZFlag</string>"..
                  "<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>"..
                  "<key>CFBundleName</key><string>BZFlag</string>"..
                  "<key>CFBundlePackageType</key><string>APPL</string>"..
@@ -579,7 +588,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
                  "<key>CFBundleVersion</key><string>"..bzVersion.major.."."..bzVersion.minor.."."..bzVersion.revision.."</string>"..
                  "<key>LSApplicationCategoryType</key><string>public.app-category.arcade-games</string>"..
                  "<key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>"..
-                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2018 Tim Riker</string>"..
+                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2019 Tim Riker</string>"..
                  "</dict>"..
                  "</plist>");
     print("Generated premake5/".._ACTION.."/BZFlag-Info.plist...")
@@ -607,10 +616,11 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0), "fullbuild", "BZFlag"))
   include "src/obstacle"
   if not _OPTIONS["disable-client"] then include "src/ogl" end
   if not _OPTIONS["disable-client"] then include "src/platform" end
-  if not _OPTIONS["disable-plugins"] and not _OPTIONS["disable-server"] then include "plugins" end
+  if not _OPTIONS["disable-plugins"] and
+     not _OPTIONS["disable-server"] then include "plugins" end
   if not _OPTIONS["disable-client"] then include "src/scene" end
 
--- set up secondary workspaces for Visual Studio (this creates the extra .sln files)
+-- set up secondary workspaces for Visual Studio (creates other .sln files)
 if _ACTION and string.find(_ACTION, "vs", 0) then
   if not _OPTIONS["disable-client"] then
     workspace "bzflag"

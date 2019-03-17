@@ -123,5 +123,4 @@ project "platform"
 
   -- no support for irix in premake
 
-  -- no support for beos in premake (although there is "haiku"... is that the
-  -- same?)
+  -- no support for beos in premake (is "haiku" the same?)

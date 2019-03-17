@@ -4,8 +4,8 @@ BZFlag README for premake5
 The BZFlag premake system generates project files for Visual Studio (Windows),
 Xcode (macOS), and gnu make (supported on Linux and macOS, and possibly
 other systems where gnu make exists). The premise of the premake system is
-that build system files can be regenerated after minor changes to the project
-layout without requiring any manual changes to the build system. The latest
+that project files for these build systems can be regenerated after minor
+changes to the project layout without requiring any manual changes. The latest
 release version of premake5 (still in alpha status as of the time of writing)
 is recommended.
 
@@ -23,7 +23,7 @@ https://github.com/BZFlag-Dev/bzflag-dependencies/releases.
 
 When building using gnu make, the dependencies must be installed at the system
 level. For Linux builds using gnu make, dependencies should be installed using
-your package manager by following the instructions in README.Linux. To build
+your package manager following the instructions in README.Linux. To build
 using gnu make on macOS, you will need to build and install SDL2 (or SDL 1.2),
 c-ares, GLEW, and libPNG at the system level. Make sure that you build the
 dependencies with the macOS deployment target set to 10.7 to match the build
@@ -44,7 +44,6 @@ your platform and build system.
 
 Building with Visual Studio (Windows)
 -------------------------------------
-
 premake5 supports generating project files for several versions of Visual
 Studio. However, only Visual Studio 2017 is officially tested and supported.
 The dependencies directory must be in place prior to generating Visual Studio
@@ -66,21 +65,22 @@ Xcode project files using the following command:
   $ premake5 xcode4
 
 After generation, project files can be found in the directory premake5/xcode4.
-All project files are consolidated under the file BZFlag.xcworkspace.
+To build all projects, open the Xcode workspace file BZFlag.xcworkspace.
 
 NOTE: The macOS dependencies package does not include SDL 1.2. If you choose
 to configure the Xcode projects to use SDL 1.2, in addition to setting up the
 dependencies package, you must also build and install SDL 1.2 at the system
-level, and pass the --extra-include-dirs and --extra-lib-dirs options with the
-applicable locations for the SDL 1.2 header files and libraries.
+level, and pass the --extra-include-dirs and --extra-lib-dirs options to
+premake with the applicable locations for the SDL 1.2 header files and
+libraries when generating the Xcode project files.
 
-NOTE: When executing the client from the Xcode project, you may encounter the
+NOTE: When running the client from the Xcode project, you may encounter the
 error "Unknown option -NSDocumentRevisionsDebugMode" due to a deficiency in
 Xcode that prevents us from permanently disabling a certain setting. If you do
 encounter this error, click the "BZFlag" scheme button, click "Edit Scheme...",
 and under the "Options" tab, deselect "Allow debugging when using document
-Versions Browser" before running the client straight from Xcode. The client
-should now run from Xcode after a successful build.
+Versions Browser" before running the client from Xcode. The client should now
+run from Xcode after a successful build.
 
 Building with gmake (Linux and macOS)
 -------------------------------------
@@ -110,7 +110,13 @@ are present, changing the value of --prefix does not trigger a rebuild of the
 affected source files, unlike the standard autotools/gnu make scripts do.
 Prior to changing the value of --prefix (or adding the --prefix option where
 it wasn't used previously), execute `make clean` to remove the build products
-that used the old setting, then configure and build with the updated settings.
+that used the old setting, then configure and build using the updated
+settings.
+
+NOTE: There is currently no support for building using gnu make under the
+Solaris and BSD operating systems. If this is a feature you require, please
+feel free to help us implement support for these platforms. A good place to
+start would be by reviewing src/platform/premake5.lua.
 
 
 Development
@@ -150,13 +156,14 @@ matters to some linkers, some deviations may be necessary.
 The premake script files should adhere to a maximum width of eighty columns
 where line breaks make sense (e.g., breaking a table from a single line into
 multiple lines). For long lines that do not make sense to break (e.g.,
-postbuildcommands with long script commands), they should be left as-is.
+postbuildcommands with long script commands), long lines should be left as-is.
 
 
 To-Do
 =====
 final (slow) review of premake scripts
   check formatting (replace tabs with 8 spaces, 80 columns where possible)
+  git diff --check for whitespace
   test all configuration options and restrictions as they are encountered
-
-figure out what to do for solaris and bsd, perhaps just under SDL 1.2/2?
+  test configuring for other operating systems than the one running
+windows Visual Studio projects and dependencies repo need updated path

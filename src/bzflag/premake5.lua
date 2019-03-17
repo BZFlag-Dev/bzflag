@@ -34,7 +34,6 @@ project "bzflag"
     },
     ["Source Files"] = "**.cxx"
   }
-  removefiles { "../../include/GLCollect.h" }
   links {
     "3D",
     "date",
