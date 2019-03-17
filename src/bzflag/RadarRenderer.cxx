@@ -187,7 +187,12 @@ void RadarRenderer::drawTank(const float pos[3], const Player* player, bool useS
         setTankColor(player);
         // align to the screen axes
         glRotatef(float(myAngle * 180.0 / M_PI), 0.0f, 0.0f, 1.0f);
-        glRectf(-size, -size, +size, +size);
+        glBegin(GL_TRIANGLE_STRIP);
+        glVertex2f(-size, -size);
+        glVertex2f(+size, -size);
+        glVertex2f(-size, +size);
+        glVertex2f(+size, +size);
+        glEnd();
     }
     else
     {
@@ -348,7 +353,12 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
         if (opacity < 1.0f)
             glEnable(GL_BLEND);
         glColor4f(0.0f, 0.0f, 0.0f, opacity);
-        glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
+        glBegin(GL_TRIANGLE_STRIP);
+        glVertex2f((float)x,       (float)y);
+        glVertex2f((float)(x + w), (float)y);
+        glVertex2f((float)x,       (float)(y + h));
+        glVertex2f((float)(x + w), (float)(y + h));
+        glEnd();
         if (opacity < 1.0f)
             glDisable(GL_BLEND);
     }
@@ -739,7 +749,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // darken the entire radar if we're dimmed
             // we're drawing positively, so dimming is actually an opacity
             glColor4f(0.0f, 0.0f, 0.0f, 1.0f - dimming);
-            glRectf(-radarRange, -radarRange, +radarRange, +radarRange);
+            glBegin(GL_TRIANGLE_STRIP);
+            glVertex2f(-radarRange, -radarRange);
+            glVertex2f(+radarRange, -radarRange);
+            glVertex2f(-radarRange, +radarRange);
+            glVertex2f(+radarRange, +radarRange);
+            glEnd();
         }
         glDisable(GL_BLEND);
         glDisable(GL_LINE_SMOOTH);

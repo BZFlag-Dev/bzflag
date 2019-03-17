@@ -334,7 +334,12 @@ static inline void drawFullScreenRect()
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+    glBegin(GL_TRIANGLE_STRIP);
+    glVertex2f(-1.0f, -1.0f);
+    glVertex2f(+1.0f, -1.0f);
+    glVertex2f(-1.0f, +1.0f);
+    glVertex2f(+1.0f, +1.0f);
+    glEnd();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
     glMatrixMode(GL_MODELVIEW);

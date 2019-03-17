@@ -360,17 +360,29 @@ void            ControlPanel::render(SceneRenderer& _renderer)
         if (_renderer.getPanelOpacity() < 1.0f)
             glEnable(GL_BLEND);
 
+        GLint x1 = messageAreaPixels[0];
+        GLint x2 = x1 + messageAreaPixels[2];
+        GLint y1 = messageAreaPixels[1];
+        GLint y2 = y1 + messageAreaPixels[3];
         // clear the background
         glColor4f(0.0f, 0.0f, 0.0f, _renderer.getPanelOpacity());
-        glRecti(messageAreaPixels[0] - 1, // clear an extra pixel column to simplify fuzzy float stuff later
-                messageAreaPixels[1],
-                messageAreaPixels[0] + messageAreaPixels[2],
-                messageAreaPixels[1] + messageAreaPixels[3]);
+        // clear an extra pixel column to simplify fuzzy float stuff later
+        glBegin(GL_TRIANGLE_STRIP);
+        glVertex2i(x1 - 1, y1);
+        glVertex2i(x2, y1);
+        glVertex2i(x1 - 1, y2);
+        glVertex2i(x2, y2);
+        glEnd();
 
         // display tabs for chat sections
         if (showTabs)
         {
-            long int drawnTabWidth = 0;
+            // draw the tabs on the right side
+            if (tabsOnRight)
+                x1 = x2 - totalTabWidth;
+            y2 += ay;
+            y1 = y2 - int(lineHeight + 4);
+
             for (unsigned int tab = 0; tab < tabs->size(); tab++)
             {
 
@@ -380,24 +392,14 @@ void            ControlPanel::render(SceneRenderer& _renderer)
                 else
                     glColor4f(0.10f, 0.10f, 0.10f, _renderer.getPanelOpacity());
 
-                if (tabsOnRight)
-                {
-                    // draw the tabs on the right side
-                    glRecti(messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth,
-                            messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-                            messageAreaPixels[0] + messageAreaPixels[2] - totalTabWidth + drawnTabWidth + int(
-                                tabTextWidth[tab]), //+ drawnTabWidth + int(tabTextWidth[tab]),
-                            messageAreaPixels[1] + messageAreaPixels[3] + ay);
-                }
-                else
-                {
-                    // draw the tabs on the left side
-                    glRecti(messageAreaPixels[0] + drawnTabWidth,
-                            messageAreaPixels[1] + messageAreaPixels[3] - int(lineHeight + 4) + ay,
-                            messageAreaPixels[0] + drawnTabWidth + int(tabTextWidth[tab]),
-                            messageAreaPixels[1] + messageAreaPixels[3] + ay);
-                }
-                drawnTabWidth += long(tabTextWidth[tab]);
+                x2 = x1 + int(tabTextWidth[tab]);
+                glBegin(GL_TRIANGLE_STRIP);
+                glVertex2i(x1, y1);
+                glVertex2i(x2, y1);
+                glVertex2i(x1, y2);
+                glVertex2i(x2, y2);
+                glEnd();
+                x1 = x2;
             } // end iteration over tabs
         }
 
@@ -415,14 +417,17 @@ void            ControlPanel::render(SceneRenderer& _renderer)
             const float size = std::max(float(maxLines) / lines, 0.02f);
             const float offset = float(messagesOffset) / lines;
             const int maxTop = messageAreaPixels[1] + messageAreaPixels[3];
-            int top = messageAreaPixels[1] + int((offset + size) * (float)messageAreaPixels[3]);
+            int bottom = messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]);
+            int top = bottom + (int)(size * (float)messageAreaPixels[3]);
             if (top > maxTop)
                 top = maxTop;
             glColor3f(0.7f, 0.7f, 0.7f);
-            glRecti(messageAreaPixels[0],
-                    messageAreaPixels[1] + int(offset * (float)messageAreaPixels[3]),
-                    messageAreaPixels[0] + 2, top);
-
+            glBegin(GL_TRIANGLE_STRIP);
+            glVertex2i(messageAreaPixels[0],     bottom);
+            glVertex2i(messageAreaPixels[0] + 2, bottom);
+            glVertex2i(messageAreaPixels[0],     top);
+            glVertex2i(messageAreaPixels[0] + 2, top);
+            glEnd();
         }
     }
 

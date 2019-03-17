@@ -752,7 +752,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
                 glColor4fv(mirrorColor);
-                glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+                glBegin(GL_TRIANGLE_STRIP);
+                glVertex2f(-1.0f, -1.0f);
+                glVertex2f(+1.0f, -1.0f);
+                glVertex2f(-1.0f, +1.0f);
+                glVertex2f(+1.0f, +1.0f);
+                glEnd();
                 glDisable(GL_BLEND);
             }
         }
@@ -767,7 +772,12 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
                 glColor4fv(mirrorColor);
-                glRectf(-extent, -extent, +extent, +extent);
+                glBegin(GL_TRIANGLE_STRIP);
+                glVertex2f(-extent, -extent);
+                glVertex2f(+extent, -extent);
+                glVertex2f(-extent, +extent);
+                glVertex2f(+extent, +extent);
+                glEnd();
                 glDisable(GL_BLEND);
             }
             glMatrixMode(GL_PROJECTION);
@@ -1093,7 +1103,12 @@ void SceneRenderer::renderDimming()
 
         {
             glEnable(GL_BLEND);
-            glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
+            glBegin(GL_TRIANGLE_STRIP);
+            glVertex2f(-1.0f, -1.0f);
+            glVertex2f(+1.0f, -1.0f);
+            glVertex2f(-1.0f, +1.0f);
+            glVertex2f(+1.0f, +1.0f);
+            glEnd();
             glDisable(GL_BLEND);
         }
     }
@@ -1124,7 +1139,12 @@ void SceneRenderer::renderDepthComplexity()
     {
         glStencilFunc(i == numColors - 1 ? GL_LEQUAL : GL_EQUAL, i, 0xf);
         glColor3fv(depthColors[i]);
-        glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
+        glBegin(GL_TRIANGLE_STRIP);
+        glVertex2f(-1.0f, -1.0f);
+        glVertex2f(+1.0f, -1.0f);
+        glVertex2f(-1.0f, +1.0f);
+        glVertex2f(+1.0f, +1.0f);
+        glEnd();
     }
     glDisable(GL_STENCIL_TEST);
 
