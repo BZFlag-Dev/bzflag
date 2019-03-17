@@ -94,6 +94,10 @@ local bzInstallFiles = {
 }
 
 -- set up the install prefix
+if _OPTIONS["destdir"] and _ACTION ~= "install" and _ACTION ~= "uninstall" then
+  print "Error: --destdir can only be used with the 'install' and 'uninstall' actions."
+  os.exit(1)
+end
 local bzInstallPrefix = "/usr/local"
 if _ACTION == "gmake" then
   if _OPTIONS["prefix"] then
@@ -119,10 +123,6 @@ elseif _ACTION == "install" or _ACTION == "uninstall" then
       bzInstallPrefix = prefixFromFile
     end
   end
-end
-if _OPTIONS["destdir"] and _ACTION ~= "install" and _ACTION ~= "uninstall" then
-  print "Error: --destdir can only be used with the 'install' and 'uninstall' actions."
-  os.exit(1)
 end
 
 -- check for the dependencies directory (mandatory for Visual Studio and Xcode)
