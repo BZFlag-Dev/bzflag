@@ -228,4 +228,4 @@ bzflag.res: $(top_srcdir)/win32/bzflag.rc $(top_srcdir)/win32/bzflag.ico
 	-O coff
 
 EXTRA_DIST = \
-        premake5.lua  
+        premake5.lua
