@@ -89,6 +89,7 @@ project "bzflag"
     removelinks { "GL", "GLU" }
     links {
       "AudioToolbox.framework",
+      "AudioUnit.framework",
       "Carbon.framework",
       "Cocoa.framework",
       "CoreAudio.framework",
@@ -110,6 +111,12 @@ project "bzflag"
       "../../Xcode/BZFlag.icns",
       "../../premake5/"..iif(_ACTION, _ACTION, "").."/BZFlag-Info.plist"
     }
+    if not _OPTIONS["disable-server"] then
+      postbuildcommands "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/"
+    end
+    if not _OPTIONS["disable-bzadmin"] then
+      postbuildcommands "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/"
+    end
     postbuildcommands {
       "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
       "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",

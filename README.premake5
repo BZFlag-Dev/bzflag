@@ -71,8 +71,12 @@ NOTE: The macOS dependencies package does not include SDL 1.2. If you choose
 to configure the Xcode projects to use SDL 1.2, in addition to setting up the
 dependencies package, you must also build and install SDL 1.2 at the system
 level, and pass the --extra-include-dirs and --extra-lib-dirs options to
-premake with the applicable locations for the SDL 1.2 header files and
-libraries when generating the Xcode project files.
+premake with the applicable locations for the SDL 1.2 headers and libraries
+when generating the Xcode project files. For example:
+
+  $ premake5 --with-sdl=1 \
+    --extra-include-dirs=/usr/local/include,/usr/local/include/SDL \
+    --extra-lib-dirs=/usr/local/lib xcode4
 
 NOTE: When running the client from the Xcode project, you may encounter the
 error "Unknown option -NSDocumentRevisionsDebugMode" due to a deficiency in
@@ -162,8 +166,6 @@ postbuildcommands with long script commands), long lines should be left as-is.
 To-Do
 =====
 final (slow) review of premake scripts
-  check formatting (replace tabs with 8 spaces, 80 columns where possible)
-  git diff --check for whitespace
   test all configuration options and restrictions as they are encountered
   test configuring for other operating systems than the one running
 windows Visual Studio projects and dependencies repo need updated path

@@ -519,6 +519,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
     filter "configurations:Debug"
       defines { "BZ_BUILD_OS=\"premake-Unknown-dbg\"" }
   end
+  filter { }
 
   -- add extra include/library directories if specified
   function split_by_comma(value)
