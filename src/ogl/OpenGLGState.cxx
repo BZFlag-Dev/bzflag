@@ -1691,6 +1691,7 @@ void bzMatrixMode(GLenum mode)
 #  include "bzfSDL.h"
 #  define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
 #elif defined(HAVE_CGLGETCURRENTCONTEXT)
+#  include <OpenGL/OpenGL.h>
 #  define GET_CURRENT_CONTEXT CGLGetCurrentContext
 #else
 #  include <GL/glx.h>

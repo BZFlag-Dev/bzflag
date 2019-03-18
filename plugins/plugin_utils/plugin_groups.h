@@ -10,7 +10,7 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// a series of utilitys for bzfs plugins to use with permision groups
+// a series of utilities for bzfs plugins to use with permission groups
 #ifndef _PLUGIN_GROUPS_H_
 #define _PLUGIN_GROUPS_H_
 

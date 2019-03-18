@@ -1494,17 +1494,6 @@ void            HUDRenderer::renderBox(SceneRenderer&)
         glVertex2i(centerx - noMotionSize, centery + noMotionSize);
     }
     glEnd();
-    if (0)
-    {
-        glBegin(GL_POINTS);
-        {
-            glVertex2i(centerx - noMotionSize, centery - noMotionSize);
-            glVertex2i(centerx + noMotionSize, centery - noMotionSize);
-            glVertex2i(centerx + noMotionSize, centery + noMotionSize);
-            glVertex2i(centerx - noMotionSize, centery + noMotionSize);
-        }
-        glEnd();
-    }
     glBegin(GL_LINE_LOOP);
     {
         glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
@@ -1513,17 +1502,6 @@ void            HUDRenderer::renderBox(SceneRenderer&)
         glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
     }
     glEnd();
-    if (0)
-    {
-        glBegin(GL_POINTS);
-        {
-            glVertex2i(centerx - maxMotionSize, centery - maxMotionSize);
-            glVertex2i(centerx + maxMotionSize, centery - maxMotionSize);
-            glVertex2i(centerx + maxMotionSize, centery + maxMotionSize);
-            glVertex2i(centerx - maxMotionSize, centery + maxMotionSize);
-        }
-        glEnd();
-    }
 
     // draw heading strip
     if (true /* always draw heading strip */)

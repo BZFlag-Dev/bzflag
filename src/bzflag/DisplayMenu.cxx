@@ -451,7 +451,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     }
     case '6':
         sceneRenderer->setQuality(list->getIndex());
-        if (list->getIndex() > 3)
+        if (list->getIndex() >= 3)
         {
             BZDB.set("zbuffer","1");
             setSceneDatabase();

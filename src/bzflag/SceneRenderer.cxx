@@ -81,7 +81,6 @@ SceneRenderer::SceneRenderer() :
     sunBrightness(1.0f),
     scene(NULL),
     background(NULL),
-    abgr(false),
     useQualityValue(2),
     useDepthComplexityOn(false),
     useWireframeOn(false),
@@ -159,12 +158,6 @@ SceneRenderer::~SceneRenderer()
 
     // kill the track manager
     TrackMarks::kill();
-}
-
-
-bool SceneRenderer::useABGR() const
-{
-    return abgr;
 }
 
 
