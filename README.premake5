@@ -164,10 +164,3 @@ The premake script files should adhere to a maximum width of eighty columns
 where line breaks make sense (e.g., breaking a table from a single line into
 multiple lines). For long lines that do not make sense to break (e.g.,
 postbuildcommands with long script commands), long lines should be left as-is.
-
-
-To-Do
-=====
-final (slow) review of premake scripts
-  test all configuration options and restrictions as they are encountered
-windows Visual Studio projects and dependencies repo need updated path
