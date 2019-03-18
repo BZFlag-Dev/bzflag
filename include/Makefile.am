@@ -8,7 +8,6 @@ noinst_HEADERS =			\
 	AutoCompleter.h			\
 	BaseSceneNodeGenerator.h	\
 	BoxSceneNodeGenerator.h		\
-	BSPSceneDatabase.h		\
 	BZDBCache.h			\
 	BZDBLocal.h			\
 	BaseBuilding.h			\

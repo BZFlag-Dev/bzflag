@@ -442,10 +442,7 @@ void            setSceneDatabase()
     float elapsed = float(TimeKeeper::getCurrent() - startTime);
 
     // print debugging info
-    if (BZDBCache::zbuffer)
-        logDebugMessage(2,"ZSceneDatabase processed in %.3f seconds.\n", elapsed);
-    else
-        logDebugMessage(2,"BSPSceneDatabase processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2,"ZSceneDatabase processed in %.3f seconds.\n", elapsed);
 
     // set the scene
     sceneRenderer->setSceneDatabase(scene);

@@ -54,7 +54,6 @@ public:
     static Bool  texture;
     static Bool  shadows;
     static Bool  stencilShadows;
-    static Bool  zbuffer;
     static Bool  tesselation;
     static Bool  lighting;
     static Bool  smooth;
