@@ -1286,14 +1286,6 @@ int         main(int argc, char** argv)
     // add the zbuffer callback here, after the OpenGL context is initialized
     BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
-    //add a fake cursor. Let the defaults file override this, though.
-    if (!BZDB.isSet("fakecursor"))
-    {
-        // check that the glrenderer is Mesa Glide
-        if ((glRenderer != NULL) && (strncmp(glRenderer, "Mesa Glide", 10) == 0))
-            BZDB.set("fakecursor", "1");
-    }
-
     // set gamma if set in resources and we have gamma control
     if (BZDB.isSet("gamma"))
     {
