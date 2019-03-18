@@ -42,6 +42,9 @@ premake5/ directory, under a subdirectory corresponding to the premake action
 you selected (e.g., premake5/gmake). See the applicable subsection below for
 your platform and build system.
 
+NOTE: Generating project files for a different operating system than the one
+on which premake is running is unsupported.
+
 Building with Visual Studio (Windows)
 -------------------------------------
 premake5 supports generating project files for several versions of Visual
@@ -167,5 +170,4 @@ To-Do
 =====
 final (slow) review of premake scripts
   test all configuration options and restrictions as they are encountered
-  test configuring for other operating systems than the one running
 windows Visual Studio projects and dependencies repo need updated path
