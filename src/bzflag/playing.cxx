@@ -6555,40 +6555,6 @@ void drawFrame(const float dt)
             hud->setDrawTime((float)media->stopwatch(false));
         }
 
-        // draw a fake cursor if requested.  this is mostly intended for
-        // pass through 3D cards that don't have cursor support.
-        if (BZDB.isTrue("fakecursor"))
-        {
-            int mx, my;
-            const int width = mainWindow->getWidth();
-            const int height = mainWindow->getHeight();
-            const int ox = mainWindow->getOriginX();
-            const int oy = mainWindow->getOriginY();
-            mainWindow->getWindow()->getMouse(mx, my);
-            my = height - my - 1;
-
-            glScissor(ox, oy, width, height);
-            glMatrixMode(GL_PROJECTION);
-            mainWindow->setProjectionPlay();
-            glMatrixMode(GL_MODELVIEW);
-            glPushMatrix();
-            glLoadIdentity();
-
-            glColor3f(0.0f, 0.0f, 0.0f);
-            glRecti(mx - 8, my - 2, mx - 2, my + 2);
-            glRecti(mx + 2, my - 2, mx + 8, my + 2);
-            glRecti(mx - 2, my - 8, mx + 2, my - 2);
-            glRecti(mx - 2, my + 2, mx + 2, my + 8);
-
-            glColor3f(1.0f, 1.0f, 1.0f);
-            glRecti(mx - 7, my - 1, mx - 3, my + 1);
-            glRecti(mx + 3, my - 1, mx + 7, my + 1);
-            glRecti(mx - 1, my - 7, mx + 1, my - 3);
-            glRecti(mx - 1, my + 3, mx + 1, my + 7);
-
-            glPopMatrix();
-        }
-
         mainWindow->getWindow()->swapBuffers();
 
         // remove dynamic nodes from this frame
@@ -7909,9 +7875,6 @@ void            startPlaying(BzfDisplay* _display,
         mainMenu->createControls();
         HUDDialogStack::get()->push(mainMenu);
     }
-
-    if (BZDB.isTrue("fakecursor"))
-        mainWindow->getWindow()->hideMouse();
 
     // start timing
     TimeKeeper::setTick();
