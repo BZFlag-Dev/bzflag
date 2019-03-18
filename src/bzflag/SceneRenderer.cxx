@@ -87,7 +87,6 @@ SceneRenderer::SceneRenderer() :
     panelHeight(4),
     maxMotionFactor(5),
     viewType(Normal),
-    inOrder(false),
     depthRange(0),
     numDepthRanges(1),
     depthRangeSize(1.0),
@@ -123,11 +122,6 @@ void SceneRenderer::setWindow(MainWindow* _window)
     // get visual info
     window->getWindow()->makeCurrent();
     GLint bits;
-    if (!BZDB.isSet("zbuffer"))
-    {
-//  glGetIntegerv(GL_DEPTH_BITS, &bits);
-        BZDB.set("zbuffer", "1");
-    }
     glGetIntegerv(GL_STENCIL_BITS, &bits);
     useStencilOn = (bits > 0);
 
@@ -340,7 +334,7 @@ bool SceneRenderer::useWireframe() const
 
 void SceneRenderer::setHiddenLine(bool on)
 {
-    useHiddenLineOn = on && BZDBCache::zbuffer && canUseHiddenLine;
+    useHiddenLineOn = on && canUseHiddenLine;
     if (!useHiddenLineOn)
     {
         depthRange = 0;
@@ -475,10 +469,6 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
     delete scene;
 
     scene = db;
-    if (scene)
-        inOrder = scene->isOrdered();
-    else
-        inOrder = false;
 
     // update the background materials
     setupBackgroundMaterials();
@@ -724,10 +714,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
         lengthPerPixel = lpp * BZDB.eval("lodScale");
     }
 
-    // get the track mark sceneNodes (only for BSP)
-    if (scene)
-        TrackMarks::addSceneNodes(scene);
-
     // turn on fog for teleporter blindness if close to a teleporter
     teleporterProximity = 0.0f;
     if (!blank && LocalPlayer::getMyTank() &&
@@ -922,26 +908,23 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // prepare z buffer
-    if (BZDBCache::zbuffer)
+    if (sameFrame && ++depthRange == numDepthRanges)
+        depthRange = 0;
+    if (exposed || useHiddenLineOn || --depthRange < 0)
     {
-        if (sameFrame && ++depthRange == numDepthRanges)
-            depthRange = 0;
-        if (exposed || useHiddenLineOn || --depthRange < 0)
+        depthRange = numDepthRanges - 1;
+        if (clearZbuffer)
+            glClear(GL_DEPTH_BUFFER_BIT);
+        exposed = false;
+    }
+    if (!sameFrame && numDepthRanges != 1)
+    {
+        if (useHiddenLineOn)
+            glDepthRange(0.0, 1.0);
+        else
         {
-            depthRange = numDepthRanges - 1;
-            if (clearZbuffer)
-                glClear(GL_DEPTH_BUFFER_BIT);
-            exposed = false;
-        }
-        if (!sameFrame && numDepthRanges != 1)
-        {
-            if (useHiddenLineOn)
-                glDepthRange(0.0, 1.0);
-            else
-            {
-                GLclampd x_near = (GLclampd)depthRange * depthRangeSize;
-                glDepthRange(x_near, x_near + depthRangeSize);
-            }
+            GLclampd x_near = (GLclampd)depthRange * depthRangeSize;
+            glDepthRange(x_near, x_near + depthRangeSize);
         }
     }
 
@@ -994,8 +977,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
         frustum.executeProjection();
 
-        if (BZDBCache::zbuffer)
-            glEnable(GL_DEPTH_TEST);
+        glEnable(GL_DEPTH_TEST);
 
         if (useHiddenLineOn)
             glEnable(GL_POLYGON_OFFSET_FILL);
@@ -1033,8 +1015,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
                 OpenGLLight::enableLight(i + reservedLights, false);
         }
 
-        if (BZDBCache::zbuffer)
-            glDisable(GL_DEPTH_TEST);
+        glDisable(GL_DEPTH_TEST);
 
         // FIXME -- must do post-rendering: flare lights, etc.
         // flare lights are in world coordinates.  trace ray to that world
@@ -1229,8 +1210,7 @@ void SceneRenderer::getRenderNodes()
             scene->addRenderNodes(*this);
 
         // sort ordered list in reverse depth order
-        if (!inOrder)
-            orderedList.sort(frustum.getEye());
+        orderedList.sort(frustum.getEye());
 
         // add the shadow rendering nodes
         if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)

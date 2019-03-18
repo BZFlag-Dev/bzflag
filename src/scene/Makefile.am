@@ -16,8 +16,7 @@ libSceneDB_la_SOURCES =			\
 	Octree.cxx			\
 	Octree.h			\
 	SceneDatabase.cxx		\
-	ZSceneDatabase.cxx		\
-	BSPSceneDatabase.cxx
+	ZSceneDatabase.cxx
 
 EXTRA_DIST = \
 	premake5.lua \

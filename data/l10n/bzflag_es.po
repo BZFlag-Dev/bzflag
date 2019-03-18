@@ -2430,9 +2430,6 @@ msgstr "asocia una tecla para mostrar/ocultar la consola"
 msgid "ZSceneDatabase processed in %.3f seconds.\n"
 msgstr "ZSceneDatabase procesado en %.3f segundos.\n"
 
-msgid "BSPSceneDatabase processed in %.3f seconds.\n"
-msgstr "BSPSceneDatabase procesado en %.3f segundos.\n"
-
 msgid "Download stopped by user action"
 msgstr "Descarga cancelada por usuario"
 

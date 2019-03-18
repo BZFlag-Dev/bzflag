@@ -25,7 +25,6 @@ void init();
 void kill();
 void clear();
 void update(float dt);
-void addSceneNodes(SceneDatabase* scene);
 void notifyStyleChange();
 void renderGroundTracks();   // zbuffer is not used
 void renderObstacleTracks(); // zbuffer is used

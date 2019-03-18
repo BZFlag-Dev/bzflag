@@ -126,15 +126,10 @@ static void     setVisual(BzfVisual* visual)
     visual->setDoubleBuffer(true);
     visual->setRGBA(1, 1, 1, 0);
 
-    // ask for a zbuffer if not disabled.  we might
-    // choose not to use it if we do ask for it.
-    if (!BZDB.isSet("zbuffer") || (BZDB.get("zbuffer") != "disable"))
-    {
-        int depthLevel = 16;
-        if (BZDB.isSet("forceDepthBits"))
-            depthLevel = BZDB.evalInt("forceDepthBits");
-        visual->setDepth(depthLevel);
-    }
+    int depthLevel = 16;
+    if (BZDB.isSet("forceDepthBits"))
+        depthLevel = BZDB.evalInt("forceDepthBits");
+    visual->setDepth(depthLevel);
 
     // optional
     visual->setStencil(4);
@@ -180,7 +175,6 @@ static void     usage()
                     " [-v | -version | --version]"
                     " [-view {normal|stereo|stacked|three|anaglyph|interlaced}]"
                     " [-window <geometry-spec>]"
-                    " [-zbuffer {on|off}]"
                     " [callsign[:password]@]server[:port]\n\nExiting.", argv0);
     if (display != NULL)
     {
@@ -392,19 +386,6 @@ static void     parse(int argc, char** argv)
         {
             checkArgc(i, argc, argv[i]);
             BZDB.set("view", argv[i]);
-        }
-        else if (strcmp(argv[i], "-zbuffer") == 0)
-        {
-            checkArgc(i, argc, argv[i]);
-            if (strcmp(argv[i], "on") == 0)
-                BZDB.set("zbuffer", "1");
-            else if (strcmp(argv[i], "off") == 0)
-                BZDB.set("zbuffer", "disable");
-            else
-            {
-                printFatalError("Invalid argument for %s.", argv[i-1]);
-                usage();
-            }
         }
         else if (strcmp(argv[i], "-eyesep") == 0)
         {
@@ -1318,9 +1299,6 @@ int         main(int argc, char** argv)
 
     // load the default values for shot colors
     Team::updateShotColors();
-
-    // add the zbuffer callback here, after the OpenGL context is initialized
-    BZDB.addCallback("zbuffer", setDepthBuffer, NULL);
 
     // set gamma if set in resources and we have gamma control
     if (BZDB.isSet("gamma"))

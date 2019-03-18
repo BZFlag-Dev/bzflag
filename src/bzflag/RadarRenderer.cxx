@@ -233,11 +233,8 @@ void RadarRenderer::drawFancyTank(const Player* player)
         glDisable(GL_BLEND);
 
     // we use the depth buffer so that the treads look ok
-    if (BZDBCache::zbuffer)
-    {
-        glClear(GL_DEPTH_BUFFER_BIT);
-        glEnable(GL_DEPTH_TEST);
-    }
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glEnable(GL_DEPTH_TEST);
 
     OpenGLGState::resetState();
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
@@ -248,8 +245,7 @@ void RadarRenderer::drawFancyTank(const Player* player)
     RENDERER.enableSun(false);
     OpenGLGState::resetState();
 
-    if (BZDBCache::zbuffer)
-        glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
 
     if (smooth)
     {
@@ -401,8 +397,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         return;
 
     smooth = BZDBCache::smooth;
-    const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
-                            (BZDBCache::radarStyle == 2)) && BZDBCache::zbuffer;
+    const bool fastRadar = (BZDBCache::radarStyle == 1) ||
+                           (BZDBCache::radarStyle == 2);
     const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
     // setup the radar range

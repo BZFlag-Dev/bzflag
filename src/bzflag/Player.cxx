@@ -1106,7 +1106,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     {
         pausedSphere->move(state.pos,
                            1.5f * BZDBCache::tankRadius * dimensionsScale[0]);
-        scene->addDynamicSphere(pausedSphere);
+        scene->addDynamicNode(pausedSphere);
     }
 }
 

@@ -177,7 +177,7 @@ void MeshSceneNodeGenerator::setupFacesAndFrags()
 
     // only using regular MeshFaces?
     const bool noMeshClusters = BZDB.isTrue("noMeshClusters");
-    if (mesh->noClusters() || noMeshClusters || !BZDBCache::zbuffer)
+    if (mesh->noClusters() || noMeshClusters)
     {
         for (int i = 0; i < faceCount; i++)
         {

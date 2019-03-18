@@ -18,7 +18,6 @@
 
 void setFlagHelp(const std::string& name, void*);
 void setShptBrightness(const std::string&, void*);
-void setDepthBuffer(const std::string& name, void*);
 
 
 // Local Variables: ***
