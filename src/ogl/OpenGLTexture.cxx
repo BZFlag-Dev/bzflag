@@ -148,16 +148,19 @@ void OpenGLTexture::initContext()
     // compute next mipmap from current mipmap to save time.
     setFilter(filter);
     glBindTexture(GL_TEXTURE_2D, list);
-#ifdef GL_VERSION_1_4
-    glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-    glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
-                 scaledWidth, scaledHeight,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-#else
-    gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-                      scaledWidth, scaledHeight,
-                      GL_RGBA, GL_UNSIGNED_BYTE, image);
-#endif
+    if (GLEW_VERSION_1_4)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
+                     scaledWidth, scaledHeight,
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    }
+    else
+    {
+        gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
+                          scaledWidth, scaledHeight,
+                          GL_RGBA, GL_UNSIGNED_BYTE, image);
+    }
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return;
