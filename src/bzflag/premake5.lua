@@ -112,35 +112,36 @@ project "bzflag"
       "../../premake5/"..iif(_ACTION, _ACTION, "").."/BZFlag-Info.plist"
     }
     if not _OPTIONS["disable-server"] then
-      postbuildcommands "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/"
+      postbuildcommands "cp \"${CONFIGURATION_BUILD_DIR}/bzfs\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\""
     end
     if not _OPTIONS["disable-bzadmin"] then
-      postbuildcommands "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/"
+      postbuildcommands "cp \"${CONFIGURATION_BUILD_DIR}/bzadmin\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\""
     end
     postbuildcommands {
-      "cp ${CONFIGURATION_BUILD_DIR}/bzfs ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
-      "cp ${CONFIGURATION_BUILD_DIR}/bzadmin ${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/",
-      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
-      "cp ../../data/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../data/*.wav ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts",
-      "cp ../../data/fonts/*.png ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../../data/fonts/*.fmt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../../data/fonts/*.License ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "cp ../../data/fonts/README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/",
-      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n",
-      "cp ../../data/l10n/*.po ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
-      "cp ../../data/l10n/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/",
-      "cp ../../AUTHORS ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../COPYING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../COPYING.LGPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../COPYING.MPL ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../ChangeLog ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../DEVINFO ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../PORTING ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../README ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp ../../README.macOS ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-      "cp -R ../../dependencies/licenses ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+      "cp \"${CONFIGURATION_BUILD_DIR}/bzfs\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\"",
+      "cp \"${CONFIGURATION_BUILD_DIR}/bzadmin\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\"",
+      "mkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"",
+      "cp ../../data/*.png \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../data/*.wav \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "mkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts\"",
+      "cp ../../data/fonts/*.png \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/\"",
+      "cp ../../data/fonts/*.fmt \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/\"",
+      "cp ../../data/fonts/*.License \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/\"",
+      "cp ../../data/fonts/README \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts/\"",
+
+      "mkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n\"",
+      "cp ../../data/l10n/*.po \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/\"",
+      "cp ../../data/l10n/*.txt \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/l10n/\"",
+      "cp ../../AUTHORS \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../COPYING \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../COPYING.LGPL \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../COPYING.MPL \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../ChangeLog \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../DEVINFO \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../PORTING \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../README \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp ../../README.macOS \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+      "cp -R ../../dependencies/licenses \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\""
     }
   filter { "system:macosx",
            "options:not with-sdl=no",
@@ -150,17 +151,17 @@ project "bzflag"
     links "SDL"
   filter { "action:xcode*", "options:not disable-plugins", "options:not disable-server" }
     -- the client needs to have the dependency so the plugins will build
-    postbuildcommands { "mkdir -p ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}" }
+    postbuildcommands { "mkdir -p \"${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}\"" }
     pluginDirNames = os.matchdirs("../../plugins/*")
     for _, pluginDirName in ipairs(pluginDirNames) do
       local pluginName = string.sub(pluginDirName, 15, -1)
       if pluginName ~= "plugin_utils" then
         dependson(pluginName)
         postbuildcommands {
-          "cp ${CONFIGURATION_BUILD_DIR}/"..pluginName..".dylib ${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginName..".dylib",
-          "cp ../../plugins/*/*.txt ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-          "cp ../../plugins/*/*.cfg ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/",
-          "cp ../../plugins/*/*.bzw ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/"
+          "cp \"${CONFIGURATION_BUILD_DIR}/"..pluginName..".dylib\" \"${TARGET_BUILD_DIR}/${PLUGINS_FOLDER_PATH}/"..pluginName..".dylib\"",
+          "cp ../../plugins/*/*.txt \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+          "cp ../../plugins/*/*.cfg \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
+          "cp ../../plugins/*/*.bzw \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\""
         }
       end
     end
