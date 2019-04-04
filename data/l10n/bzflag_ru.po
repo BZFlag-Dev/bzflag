@@ -2489,13 +2489,13 @@ msgstr "Zahvat flaga"
 msgid "Free for All"
 msgstr "Svobodnaya igra"
 
-msgid "Rabbit Hunt (Random Selection)"
+msgid "Rabbit Chase (Random Selection)"
 msgstr "Ohota na krolika (sluchajnij vybor)"
 
-msgid "Rabbit Hunt (Score-based Selection)"
+msgid "Rabbit Chase (Score-based Selection)"
 msgstr "Ohota na krolika (vybor po schyotu)"
 
-msgid "Rabbit Hunt (Killer Selection)"
+msgid "Rabbit Chase (Killer Selection)"
 msgstr "Ohota na krolika (vybor ubijcy)"
 
 msgid "Max Players:"

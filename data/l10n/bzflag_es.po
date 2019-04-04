@@ -2154,13 +2154,13 @@ msgstr "Captura la bandera"
 msgid "Free for All"
 msgstr "Estilo libre"
 
-msgid "Rabbit Hunt (Random Selection)"
+msgid "Rabbit Chase (Random Selection)"
 msgstr "Perseguir al conejo (selección aleatoria)"
 
-msgid "Rabbit Hunt (Score-based Selection)"
+msgid "Rabbit Chase (Score-based Selection)"
 msgstr "Perseguir al conejo (selección por puntuación)"
 
-msgid "Rabbit Hunt (Killer Selection)"
+msgid "Rabbit Chase (Killer Selection)"
 msgstr "Perseguir al conejo (selección por asesino)"
 
 msgid "Max Players:"

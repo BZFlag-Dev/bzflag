@@ -69,9 +69,9 @@ ServerStartMenu::ServerStartMenu()
     items = &listHUD->getList();
     items->push_back("Capture the Flag");
     items->push_back("Free for All");
-    items->push_back("Rabbit Hunt (Random Selection)");
-    items->push_back("Rabbit Hunt (Score-based Selection)");
-    items->push_back("Rabbit Hunt (Killer Selection)");
+    items->push_back("Rabbit Chase (Random Selection)");
+    items->push_back("Rabbit Chase (Score-based Selection)");
+    items->push_back("Rabbit Chase (Killer Selection)");
     listHUD->update();
     controls.push_back(listHUD);
 

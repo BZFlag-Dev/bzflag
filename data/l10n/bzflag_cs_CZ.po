@@ -134,8 +134,8 @@ msgstr "volna-pro-vsechny"
 msgid "Capture the Flag"
 msgstr "ziskani-vlajky"
 
-msgid "Rabbit Hunt"
-msgstr "honba-na-kralika"
+msgid "Rabbit Chase"
+msgstr "Hon na kralika"
 
 
 msgid "Max Players:"
@@ -718,9 +718,6 @@ msgstr "%.1f"
 
 msgid "Ready"
 msgstr "Pripraven"
-
-msgid "Rabbit Chase"
-msgstr "Hon na kralika"
 
 msgid "Reloaded in %.1f"
 msgstr "Nabiti za %.1f"
