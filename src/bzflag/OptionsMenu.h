@@ -25,7 +25,6 @@
 #include "CacheMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
-#include "AudioMenu.h"
 #include "DisplayMenu.h"
 
 class OptionsMenu : public HUDDialog
@@ -49,14 +48,13 @@ private:
     HUDuiControl* cacheOptions;
     HUDuiControl* saveWorld;
     HUDuiControl* inputSetting;
-    HUDuiControl* audioSetting;
     HUDuiControl* displaySetting;
+    HUDuiControl* save;
     GUIOptionsMenu*   guiOptionsMenu;
     EffectsMenu*      effectsMenu;
     CacheMenu*        cacheMenu;
     SaveWorldMenu*    saveWorldMenu;
     InputMenu*        inputMenu;
-    AudioMenu*        audioMenu;
     DisplayMenu*      displayMenu;
 };
 

@@ -25,14 +25,11 @@
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
 #include "HUDuiTextureLabel.h"
-#include "ConfigFileManager.h"
-#include "clientConfig.h"
-#include "bzflag.h"
 #include "playing.h"
 #include "HUDui.h"
 
 MainMenu::MainMenu() : HUDDialog(),
-    join(), options(), help(), leave(), save(), quit(),
+    join(), options(), help(), leave(), quit(),
     joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
 }
@@ -67,9 +64,6 @@ void      MainMenu::createControls()
 
     options = createLabel("Options");
     listHUD.push_back(options);
-
-    save = createLabel("Save Settings");
-    listHUD.push_back(save);
 
     help = createLabel("Help");
     listHUD.push_back(help);
@@ -147,15 +141,6 @@ void            MainMenu::execute()
         leaveGame();
         // myTank should be NULL now, recreate menu
         createControls();
-    }
-    else if (_focus == save)
-    {
-        // save resources
-        dumpResources();
-        if (alternateConfig == "")
-            CFGMGR.write(getCurrentConfigFileName());
-        else
-            CFGMGR.write(alternateConfig);
     }
     else if (_focus == quit)
     {

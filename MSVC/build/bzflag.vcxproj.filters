@@ -4,9 +4,6 @@
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzflag\AudioMenu.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -270,9 +267,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\bzflag\AudioMenu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\bzflag\BackgroundRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>

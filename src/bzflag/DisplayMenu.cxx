@@ -45,6 +45,109 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
+    option->setLabel("Quality:");
+    option->setCallback(callback, "6");
+    options = &option->getList();
+    options->push_back(std::string("Low"));
+    options->push_back(std::string("Medium"));
+    options->push_back(std::string("High"));
+    options->push_back(std::string("Experimental"));
+    option->update();
+    listHUD.push_back(option);
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Texturing:");
+    option->setCallback(callback, "5");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("Nearest"));
+    options->push_back(std::string("Linear"));
+    options->push_back(std::string("Nearest Mipmap Nearest"));
+    options->push_back(std::string("Linear Mipmap Nearest"));
+    options->push_back(std::string("Nearest Mipmap Linear"));
+    options->push_back(std::string("Linear Mipmap Linear"));
+    option->update();
+    listHUD.push_back(option);
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Lighting:");
+    option->setCallback(callback, "4");
+    options = &option->getList();
+    options->push_back(std::string("None"));
+    options->push_back(std::string("Fast"));
+    options->push_back(std::string("Best"));
+    option->update();
+    listHUD.push_back(option);
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Shadows:");
+    option->setCallback(callback, "7");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("Stipple"));
+    options->push_back(std::string("Stencil"));
+    option->update();
+    listHUD.push_back(option);
+
+
+    if (OpenGLGState::getMaxSamples() > 1)
+    {
+        option = new HUDuiList;
+        option->setFontFace(fontFace);
+        option->setLabel("Anti Aliasing:");
+        option->setCallback(callback, "m");
+        options = &option->getList();
+        options->push_back(std::string("Off"));
+        for (int i = 2; i <= OpenGLGState::getMaxSamples(); ++i)
+        {
+            char msaaText[11];
+            snprintf(msaaText, 11, "%i", i);
+            options->push_back(std::string(msaaText) + "x MSAA");
+        }
+        option->update();
+        listHUD.push_back(option);
+    }
+
+    if (OpenGLGState::hasAnisotropicFiltering)
+    {
+        static GLint maxAnisotropy = 1;
+        glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
+        if (maxAnisotropy > 1)
+        {
+            option = new HUDuiList;
+            option->setFontFace(fontFace);
+            option->setLabel("Anisotropic:");
+            option->setCallback(callback, "A");
+            options = &option->getList();
+            options->push_back(std::string("Off"));
+            for (int i = 1; i < maxAnisotropy; i++)
+            {
+                char buffer[16];
+                snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
+                options->push_back(std::string(buffer));
+            }
+            option->update();
+            listHUD.push_back(option);
+        }
+    }
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("AntiFlicker:");
+    option->setCallback(callback, "R");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
+
+
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
     option->setLabel("Dithering:");
     option->setCallback(callback, "1");
     options = &option->getList();
@@ -73,87 +176,37 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->update();
     listHUD.push_back(option);
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Lighting:");
-    option->setCallback(callback, "4");
-    options = &option->getList();
-    options->push_back(std::string("None"));
-    options->push_back(std::string("Fast"));
-    options->push_back(std::string("Best"));
-    option->update();
-    listHUD.push_back(option);
+    
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Texturing:");
-    option->setCallback(callback, "5");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("Nearest"));
-    options->push_back(std::string("Linear"));
-    options->push_back(std::string("Nearest Mipmap Nearest"));
-    options->push_back(std::string("Linear Mipmap Nearest"));
-    options->push_back(std::string("Nearest Mipmap Linear"));
-    options->push_back(std::string("Linear Mipmap Linear"));
-    option->update();
-    listHUD.push_back(option);
-
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("AntiFlicker:");
-    option->setCallback(callback, "R");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    listHUD.push_back(option);
-
-    if (OpenGLGState::hasAnisotropicFiltering)
+    if (((BzfWindow*)getMainWindow()->getWindow())->hasGammaControl())
     {
-        static GLint maxAnisotropy = 1;
-        glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-        if (maxAnisotropy > 1)
-        {
-            option = new HUDuiList;
-            option->setFontFace(fontFace);
-            option->setLabel("Anisotropic:");
-            option->setCallback(callback, "A");
-            options = &option->getList();
-            options->push_back(std::string("Off"));
-            for (int i = 1; i < maxAnisotropy; i++)
-            {
-                char buffer[16];
-                snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
-                options->push_back(std::string(buffer));
-            }
-            option->update();
-            listHUD.push_back(option);
-        }
+        option = new HUDuiList;
+        option->setFontFace(fontFace);
+        option->setLabel("Brightness:");
+        option->setCallback(callback, "g");
+        option->createSlider(15);
+        option->update();
+        listHUD.push_back(option);
     }
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("Quality:");
-    option->setCallback(callback, "6");
+
+#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))  // only SDL 2 can make live changes
+    option->setLabel("(restart required) Energy Saver:");
+#else
+    option->setLabel("Energy Saver:");
+#endif
+    option->setCallback(callback, "s");
     options = &option->getList();
-    options->push_back(std::string("Low"));
-    options->push_back(std::string("Medium"));
-    options->push_back(std::string("High"));
-    options->push_back(std::string("Experimental"));
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("FPS Limit"));
+    if (getMainWindow()->getWindow()->hasVerticalSync())
+        options->push_back(std::string("Vertical Sync"));
     option->update();
     listHUD.push_back(option);
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-    option->setLabel("Shadows:");
-    option->setCallback(callback, "7");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("Stipple"));
-    options->push_back(std::string("Stencil"));
-    option->update();
-    listHUD.push_back(option);
+    
 
 #if defined(DEBUG_RENDERING)
     option = new HUDuiList;
@@ -207,51 +260,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     listHUD.push_back(option);
 #endif
 
-    if (((BzfWindow*) getMainWindow()->getWindow())->hasGammaControl())
-    {
-        option = new HUDuiList;
-        option->setFontFace(fontFace);
-        option->setLabel("Brightness:");
-        option->setCallback(callback, "g");
-        option->createSlider(15);
-        option->update();
-        listHUD.push_back(option);
-    }
 
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
-
-#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))  // only SDL 2 can make live changes
-    option->setLabel("(restart required) Energy Saver:");
-#else
-    option->setLabel("Energy Saver:");
-#endif
-    option->setCallback(callback, "s");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("FPS Limit"));
-    if (getMainWindow()->getWindow()->hasVerticalSync())
-        options->push_back(std::string("Vertical Sync"));
-    option->update();
-    listHUD.push_back(option);
-
-    if (OpenGLGState::getMaxSamples() > 1)
-    {
-        option = new HUDuiList;
-        option->setFontFace(fontFace);
-        option->setLabel("Anti Aliasing:");
-        option->setCallback(callback, "m");
-        options = &option->getList();
-        options->push_back(std::string("Off"));
-        for (int i = 2; i <= OpenGLGState::getMaxSamples(); ++i)
-        {
-            char msaaText[11];
-            snprintf(msaaText, 11, "%i", i);
-            options->push_back(std::string(msaaText) + "x MSAA");
-        }
-        option->update();
-        listHUD.push_back(option);
-    }
 
     BzfDisplay* display = getDisplay();
     int numFormats = display->getNumResolutions();
@@ -314,7 +323,10 @@ void            DisplayMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
-        y -= 1.0f * h;
+        if (i == 4 || i == 7 || i == 10 || i == 11 || i == 12 || i == count - 2)
+            y -= 1.75f * h;
+        else
+            y -= 1.0f * h;
     }
 
     i = 1;
@@ -323,9 +335,14 @@ void            DisplayMenu::resize(int _width, int _height)
     if (renderer)
     {
         TextureManager& tm = TextureManager::instance();
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
+
+        // Quality
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
+
+        // Texturing
+        ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
+
+        // Lighting
         if (BZDBCache::lighting)
         {
             if (BZDB.isTrue("tesselation"))
@@ -335,8 +352,27 @@ void            DisplayMenu::resize(int _width, int _height)
         }
         else
             ((HUDuiList*)listHUD[i++])->setIndex(0);
-        ((HUDuiList*)listHUD[i++])->setIndex(tm.getMaxFilter());
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
+
+        // Shadows
+        int shadowVal = 0;
+        if (BZDBCache::shadows)
+        {
+            shadowVal++;
+            if (BZDBCache::stencilShadows)
+                shadowVal++;
+        }
+        ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
+
+
+
+        // Multi-Samping
+        if (OpenGLGState::getMaxSamples() > 1)
+        {
+            // multisampling
+            ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") - 1);
+        }
+
+        // Anisotropic filtering
         if (OpenGLGState::hasAnisotropicFiltering)
         {
             static GLint maxAnisotropy = 1;
@@ -348,15 +384,28 @@ void            DisplayMenu::resize(int _width, int _height)
                 ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
             }
         }
-        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useQuality());
-        int shadowVal = 0;
-        if (BZDBCache::shadows)
-        {
-            shadowVal++;
-            if (BZDBCache::stencilShadows)
-                shadowVal++;
-        }
-        ((HUDuiList*)listHUD[i++])->setIndex(shadowVal);
+
+        // Anti-Flicker
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remapTexCoords") ? 1 : 0);
+
+
+
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("blend"));
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
+
+
+        // brightness
+        BzfWindow* window = getMainWindow()->getWindow();
+        if (window->hasGammaControl())
+            ((HUDuiList*)listHUD[i++])->setIndex(gammaToIndex(window->getGamma()));
+
+        // energy saver
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
+        
+        
+        
+        
 #if defined(DEBUG_RENDERING)
         ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
@@ -366,20 +415,6 @@ void            DisplayMenu::resize(int _width, int _height)
         ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
                                              : 0);
 #endif
-    }
-
-    // brightness
-    BzfWindow* window = getMainWindow()->getWindow();
-    if (window->hasGammaControl())
-        ((HUDuiList*)listHUD[i++])->setIndex(gammaToIndex(window->getGamma()));
-
-    // energy saver
-    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
-
-    if (OpenGLGState::getMaxSamples() > 1)
-    {
-        // multisampling
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") - 1);
     }
 }
 
