@@ -881,7 +881,6 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
-    <ClCompile Include="..\..\src\bzflag\AudioMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\CacheMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\DisplayMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\EffectsMenu.cxx" />
@@ -916,7 +915,6 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
   <ItemGroup>
     <ClInclude Include="..\..\src\bzflag\defaultBZDB.h" />
     <ClInclude Include="..\..\src\bzflag\clientConfig.h" />
-    <ClInclude Include="..\..\src\bzflag\AudioMenu.h" />
     <ClInclude Include="..\..\src\bzflag\BackgroundRenderer.h" />
     <ClInclude Include="..\..\src\bzflag\BaseLocalPlayer.h" />
     <ClInclude Include="..\..\src\bzflag\CacheMenu.h" />

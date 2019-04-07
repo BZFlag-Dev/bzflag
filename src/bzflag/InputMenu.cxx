@@ -42,10 +42,22 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     keyMapping->setLabel("Change Key Mapping");
     listHUD.push_back(keyMapping);
 
-    HUDuiList* option = new HUDuiList;
+    HUDuiList* option;
+
+    activeInput = new HUDuiList;
+    activeInput->setFontFace(fontFace);
+    activeInput->setLabel("Active input device:");
+    activeInput->setCallback(callback, "A");
+    std::vector<std::string>* options = &activeInput->getList();
+    options->push_back("Auto");
+    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
+    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
+    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
+    activeInput->update();
+    listHUD.push_back(activeInput);
 
     option = new HUDuiList;
-    std::vector<std::string>* options = &option->getList();
+    options = &option->getList();
     // set joystick Device
     option->setFontFace(fontFace);
     option->setLabel("Joystick device:");
@@ -68,18 +80,6 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
     }
     option->update();
     listHUD.push_back(option);
-
-    activeInput = new HUDuiList;
-    activeInput->setFontFace(fontFace);
-    activeInput->setLabel("Active input device:");
-    activeInput->setCallback(callback, "A");
-    options = &activeInput->getList();
-    options->push_back("Auto");
-    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Keyboard));
-    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Mouse));
-    options->push_back(LocalPlayer::getInputMethodName(LocalPlayer::Joystick));
-    activeInput->update();
-    listHUD.push_back(activeInput);
 
     option = new HUDuiList;
     // force feedback
@@ -141,6 +141,15 @@ InputMenu::InputMenu() : keyboardMapMenu(NULL)
         option->setIndex(2);
     else
         option->setIndex(0);
+    option->update();
+    listHUD.push_back(option);
+
+    // set maxmotion size
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Mouse Box Size:");
+    option->setCallback(callback, "M");
+    option->createSlider(22);
     option->update();
     listHUD.push_back(option);
 
@@ -279,12 +288,23 @@ void            InputMenu::callback(HUDuiControl* w, const void* data)
     /* Grab mouse */
     case 'G':
     {
-        const bool grabbing = (selectedOption == "Window");
+        const int index = listHUD->getIndex();
+        // Window
+        const bool grabbing = (index == 1);
         BZDB.set("mousegrab", grabbing ? "1" : "0");
         getMainWindow()->enableGrabMouse(grabbing);
 
-        const bool clamped = (selectedOption == "MotionBox");
+        // Mouse Box
+        const bool clamped = (index == 2);
         BZDB.set("mouseClamp", clamped ? "1" : "0");
+    }
+    break;
+
+
+    case 'M':
+    {
+        SceneRenderer* renderer = getSceneRenderer();
+        renderer->setMaxMotionFactor(listHUD->getIndex() - 11);
     }
     break;
 
@@ -325,7 +345,7 @@ void            InputMenu::resize(int _width, int _height)
     title->setPosition(x, y);
 
     // reposition options
-    x = 0.5f * ((float)_width + 0.5f * titleWidth);
+    x = 0.5f * ((float)_width);
     y -= 0.6f * titleHeight;
     const float h = fm.getStrHeight(MainMenu::getFontFace(), fontSize, " ");
     const int count = listHUD.size();
@@ -333,7 +353,10 @@ void            InputMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
-        y -= 1.0f * h;
+        if (i == 1 || i == 2 || i == 7 || i == 9)
+            y -= 1.75f * h;
+        else
+            y -= 1.0f * h;
     }
 
     // load current settings
@@ -346,6 +369,10 @@ void            InputMenu::resize(int _width, int _height)
     }
     if (BZDB.isTrue("allowInputChange"))
         activeInput->setIndex(0);
+
+    i = 9;
+    SceneRenderer* renderer = getSceneRenderer();
+    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
 }
 
 

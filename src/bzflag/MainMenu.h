@@ -46,7 +46,6 @@ private:
     HUDuiControl* options;
     HUDuiControl* help;
     HUDuiControl* leave;
-    HUDuiControl* save;
     HUDuiControl* quit;
 
     JoinMenu* joinMenu;
