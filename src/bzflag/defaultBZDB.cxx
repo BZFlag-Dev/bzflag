@@ -85,7 +85,7 @@ DefaultDBItem defaultDBItems[] =
     { "userMirror",       "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "showTreads",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "animatedTreads",       "1",            true,   StateDatabase::ReadWrite,   NULL },
-    { "shotLength",       "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "shotLength",       "6",            true,   StateDatabase::ReadWrite,   NULL },
     { "treadStyle",       "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "userTrackFade",        "1.0",          true,   StateDatabase::ReadWrite,   NULL },
     { "trackMarkCulling",     "3",            true,   StateDatabase::ReadWrite,   NULL },
@@ -113,6 +113,14 @@ DefaultDBItem defaultDBItems[] =
     { "pauseConsole",     "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "shotBrightness",       "0.2",          true,   StateDatabase::ReadWrite,   setColor },
     { "multisample",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+
+    { "blend",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "smooth",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "lighting",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "tesselation",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "dither",      "0",            true,   StateDatabase::ReadWrite,   NULL },
+    { "shadows",      "1",            true,   StateDatabase::ReadWrite,   NULL },
+    { "stencilShadows",      "1",            true,   StateDatabase::ReadWrite,   NULL },
 
     // roam smooth follow settings
     { "followDist",       "32.0",         true,   StateDatabase::ReadWrite,   NULL },
