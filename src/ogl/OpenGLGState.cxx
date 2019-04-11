@@ -59,6 +59,7 @@ public:
     void        setStipple(float alpha);
     void        setSmoothing(bool smooth);
     void        setCulling(GLenum culling);
+    void        disableCulling();
     void        setShading(GLenum);
     void        setAlphaFunc(GLenum func, GLclampf ref);
     void        setNeedsSorting(bool value);
@@ -420,8 +421,13 @@ void            OpenGLGStateState::setSmoothing(bool smooth)
 
 void            OpenGLGStateState::setCulling(GLenum _culling)
 {
-    unsorted.hasCulling = (_culling != GL_NONE);
+    unsorted.hasCulling = true;
     unsorted.culling = _culling;
+}
+
+void            OpenGLGStateState::disableCulling()
+{
+    unsorted.hasCulling = false;
 }
 
 void            OpenGLGStateState::setShading(GLenum shading)
@@ -1516,6 +1522,10 @@ void            OpenGLGStateBuilder::setCulling(GLenum culling)
     state->setCulling(culling);
 }
 
+void            OpenGLGStateBuilder::disableCulling()
+{
+    state->disableCulling();
+}
 void            OpenGLGStateBuilder::setShading(GLenum shading)
 {
     state->setShading(shading);

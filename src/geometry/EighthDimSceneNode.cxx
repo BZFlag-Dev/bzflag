@@ -47,7 +47,7 @@ bool            EighthDimSceneNode::cull(const ViewFrustum&) const
 void            EighthDimSceneNode::notifyStyleChange()
 {
     OpenGLGStateBuilder builder(gstate);
-    builder.setCulling(GL_NONE);
+    builder.disableCulling();
     if (BZDB.isTrue("blend"))
         builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     else

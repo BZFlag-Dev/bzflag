@@ -557,7 +557,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
     // culling
     if (bzmat->getNoCulling())
-        builder.setCulling(GL_NONE);
+        builder.disableCulling();
 
     // generate the gstate
     gstate = builder.getState();

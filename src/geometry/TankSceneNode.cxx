@@ -217,7 +217,7 @@ void TankSceneNode::notifyStyleChange()
 
 
     OpenGLGStateBuilder builder3(jumpJetsGState);
-    builder3.setCulling(GL_NONE);
+    builder3.disableCulling();
     builder3.setBlending(GL_SRC_ALPHA, GL_ONE);
     jumpJetsGState = builder3.getState();
 }
@@ -576,7 +576,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
     setRadius(radius);
 
     OpenGLGStateBuilder builder(gstate);
-    builder.setCulling(GL_NONE);
+    builder.disableCulling();
     builder.setShading(GL_SMOOTH);
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gstate = builder.getState();

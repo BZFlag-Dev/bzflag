@@ -129,7 +129,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // sun shadow stuff
     gstate.reset();
     gstate.setStipple(0.5f);
-    gstate.setCulling((GLenum)GL_NONE);
+    gstate.disableCulling();
     sunShadowsGState = gstate.getState();
 
     /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
