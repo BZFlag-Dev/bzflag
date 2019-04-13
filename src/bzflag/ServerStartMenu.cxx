@@ -69,6 +69,7 @@ ServerStartMenu::ServerStartMenu()
     items = &listHUD->getList();
     items->push_back("Capture the Flag");
     items->push_back("Free for All");
+    items->push_back("Open Free For All (Teamless)");
     items->push_back("Rabbit Chase (Random Selection)");
     items->push_back("Rabbit Chase (Score-based Selection)");
     items->push_back("Rabbit Chase (Killer Selection)");
@@ -406,11 +407,16 @@ void ServerStartMenu::execute()
         }
         else if (((HUDuiList*)listHUD[1])->getIndex() == 1)
             args[arg++] = "-h";
+        else if (((HUDuiList*)listHUD[1])->getIndex() == 2)
+        {
+            args[arg++] = "-h";
+            args[arg++] = "-offa";
+        }
         else
         {
             static const char* rabbitStyles[] = { "random", "score", "killer" };
             args[arg++] = "-rabbit";
-            args[arg++] = rabbitStyles[(((HUDuiList*)listHUD[1])->getIndex()) - 2];
+            args[arg++] = rabbitStyles[(((HUDuiList*)listHUD[1])->getIndex()) - 3];
         }
 
         // max players
