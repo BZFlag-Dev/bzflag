@@ -698,6 +698,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         // (which come first), are drawn on top of the normal flags.
         const int maxFlags = world->getMaxFlags();
         const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
+        const bool hideTeamFlagsOnRadar = BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR);
+        const bool hideFlagsOnRadar = BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR);
         for (i = (maxFlags - 1); i >= 0; i--)
         {
             const Flag& flag = world->getFlag(i);
@@ -707,12 +709,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // don't draw normal flags if we aren't supposed to
             if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
                 continue;
-            if (BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR))
+            if (hideTeamFlagsOnRadar)
             {
                 if (flag.type->flagTeam != ::NoTeam)
                     continue;
             }
-            if (BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR))
+            if (hideFlagsOnRadar)
             {
                 if (flag.type)
                     continue;
