@@ -50,6 +50,7 @@ public:
     time_t    updateTime; // last time I was updated
     bool      cached;     // was I cached ?
     bool      favorite;   // favorite server, user selection
+    bool      localDiscovery;     // is this a locally discovered server?
 };
 
 #endif /* __SERVERITEM_H__ */

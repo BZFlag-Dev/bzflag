@@ -358,6 +358,7 @@ void            ServerList::checkEchos(StartupInfo *info)
             {
                 serverInfo.ping.serverId.serverHost = addr.sin_addr;
                 serverInfo.cached = false;
+                serverInfo.localDiscovery = true;
                 addToListWithLookup(serverInfo);
             }
         }
