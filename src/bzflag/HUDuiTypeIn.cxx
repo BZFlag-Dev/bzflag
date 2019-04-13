@@ -178,7 +178,8 @@ void            HUDuiTypeIn::doRender()
     if (getFontFace() < 0) return;
 
     // render string
-    glColor3fv(hasFocus() ? textColor : dimTextColor);
+    const GLfloat *col = hasFocus() ? textColor : dimTextColor;
+    glColor4f(col[0], col[1], col[2], 1.0f);
 
     FontManager &fm = FontManager::instance();
     std::string renderStr;
