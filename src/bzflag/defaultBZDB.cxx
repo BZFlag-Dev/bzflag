@@ -34,7 +34,7 @@ DefaultDBItem defaultDBItems[] =
     { "volume",           "10",           true,   StateDatabase::ReadWrite,   NULL },
     { "latitude",         "37.5",         true,   StateDatabase::ReadWrite,   NULL },
     { "longitude",        "122",          true,   StateDatabase::ReadWrite,   NULL },
-    { "radarStyle",       "2",            true,   StateDatabase::ReadWrite,   NULL },
+    { "radarStyle",       "3",            true,   StateDatabase::ReadWrite,   NULL },
     { "radarTankPixels",      "2.0",          true,   StateDatabase::ReadWrite,   NULL },
     { "coloredradarshots",    "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "linedradarshots",      "5",            true,   StateDatabase::ReadWrite,   NULL },
