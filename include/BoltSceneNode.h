@@ -17,8 +17,13 @@
 #ifndef BZF_BOLT_SCENE_NODE_H
 #define BZF_BOLT_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "ShotSceneNode.h"
+
+// System headers
+#include <glm/vec4.hpp>
+
+// Common headers
 #include "OpenGLLight.h"
 
 class BoltSceneNode : public ShotSceneNode
@@ -106,7 +111,7 @@ private:
     float       size;
     float       velocity[3];
     GLfloat     color[4];
-    fvec4       teamColor;
+    glm::vec4   teamColor;
     OpenGLLight     light;
     OpenGLGState    gstate;
     OpenGLGState    colorblindGState;

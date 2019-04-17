@@ -10,9 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// bzflag common header
-#include "common.h"
-
 // interface header
 #include "LaserSceneNode.h"
 
@@ -25,8 +22,6 @@
 
 // FIXME (SceneRenderer.cxx is in src/bzflag)
 #include "SceneRenderer.h"
-
-#include "vectors.h"
 
 const GLfloat       LaserRadius = 0.1f;
 
@@ -54,13 +49,13 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
 
 void LaserSceneNode::setColor(float r, float g, float b)
 {
-    color = fvec4(r, g, b, 1.0f);
+    color = glm::vec4(r, g, b, 1.0f);
 }
 
 
 void LaserSceneNode::setCenterColor(float r, float g, float b)
 {
-    centerColor = fvec4(r, g, b, 1.0f);
+    centerColor = glm::vec4(r, g, b, 1.0f);
 }
 
 LaserSceneNode::~LaserSceneNode()
@@ -139,7 +134,7 @@ void LaserSceneNode::LaserRenderNode::render()
 {
     const bool blackFog = BZDBCache::blend && RENDERER.isFogActive();
     if (blackFog)
-        glFogfv(GL_FOG_COLOR, fvec4(0.0f, 0.0f, 0.0f, 0.0f));
+        glFogfv(GL_FOG_COLOR, glm::value_ptr(glm::vec4(0.0f, 0.0f, 0.0f, 0.0f)));
 
     if (RENDERER.useQuality() >= 3)
         renderGeoLaser();
@@ -147,7 +142,7 @@ void LaserSceneNode::LaserRenderNode::render()
         renderFlatLaser();
 
     if (blackFog)
-        glFogfv(GL_FOG_COLOR, RENDERER.getFogColor());
+        glFogfv(GL_FOG_COLOR, glm::value_ptr(RENDERER.getFogColor()));
 }
 
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
@@ -164,28 +159,25 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 
     GLUquadric *q = gluNewQuadric();
 
-    fvec4 coreColor = sceneNode->centerColor;
+    glm::vec4 coreColor = sceneNode->centerColor;
     coreColor.a     = 0.85f;
-    fvec4 mainColor = sceneNode->color;
+    glm::vec4 mainColor = sceneNode->color;
     mainColor.a     = 0.125f;
 
-    myColor4fv(coreColor);
+    myColor4f(coreColor.r, coreColor.g, coreColor.b, coreColor.a);
     gluCylinder(q, 0.0625f, 0.0625f, len, 10, 1);
     addTriangleCount(20);
 
-    myColor4fv(mainColor);
+    myColor4f(mainColor.r, mainColor.g, mainColor.b, mainColor.a);
     gluCylinder(q, 0.1f, 0.1f, len, 16, 1);
     addTriangleCount(32);
 
-    myColor4fv(mainColor);
     gluCylinder(q, 0.2f, 0.2f, len, 24, 1);
     addTriangleCount(48);
 
-    myColor4fv(mainColor);
     gluCylinder(q, 0.4f, 0.4f, len, 32, 1);
     addTriangleCount(64);
 
-    myColor4fv(mainColor);
     if (sceneNode->first)
     {
         gluSphere(q, 0.5f, 32, 32);

@@ -436,6 +436,10 @@ AC_CHECK_HEADERS( \
 	cstdio \
 	cstring
 )
+AC_CHECK_HEADERS(
+	[glm/glm.hpp],
+	,
+	[AC_MSG_ERROR([glm (from https://glm.g-truc.net) is needed])])
 AC_LANG(C)
 AC_CHECK_HEADERS( \
 	SDL/SDL.h \

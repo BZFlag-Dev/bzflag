@@ -15,13 +15,17 @@
 
 // System headers
 #include <math.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 // Common headers
 #include "global.h"
 #include "Pack.h"
 #include "Intersect.h"
 #include "MeshTransform.h"
-#include "vectors.h"
 
 const char* Teleporter::typeName = "Teleporter";
 
@@ -458,18 +462,18 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
     const float* s1 = tele1.getSize();
     const float* s2 = tele2.getSize();
 
-    const fvec3  pos1 (p1[0], p1[1], p1[2]);
-    const fvec3 size1 (s1[0], s1[1], s1[2]);
-    const fvec3  pos2 (p2[0], p2[1], p2[2]);
-    const fvec3 size2 (s2[0], s2[1], s2[2]);
+    const glm::vec3  pos1(glm::make_vec3(p1));
+    const glm::vec3 size1(glm::make_vec3(s1));
+    const glm::vec3  pos2(glm::make_vec3(p2));
+    const glm::vec3 size2(glm::make_vec3(s2));
 
     const float bord1 = tele1.getBorder();
     const float bord2 = tele2.getBorder();
 
     // y & z axis scaling factors  (relative active areas)
-    const fvec2 dims1(size1.y - bord1, size1.z - bord1);
-    const fvec2 dims2(size2.y - bord2, size2.z - bord2);
-    const fvec2 dimsScale = (dims2 / dims1);
+    const glm::vec2 dims1(size1.y - bord1, size1.z - bord1);
+    const glm::vec2 dims2(size2.y - bord2, size2.z - bord2);
+    const glm::vec2 dimsScale = (dims2 / dims1);
 
     // adjust the angles for the faces
     // NOTE: if (face1 == face2), there's an extra 180 degrees spin
@@ -478,11 +482,11 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
     const float radians2 = tele2.getRotation() + ((face2 == 1) ? 0.0f : pi);
 
     // intermediate output position
-    fvec3 p(pIn[0], pIn[1], pIn[2]);
+    glm::vec3 p(glm::make_vec3(pIn));
 
     // translate to origin, and revert rotation
     p -= pos1;
-    p = p.rotateZ(-radians1);
+    p = glm::rotateZ(p, -radians1);
 
     // fixed x offset, and scale y & z coordinates
     p.x = -size2.x;
@@ -490,7 +494,7 @@ void Teleporter::getPointWRT(const Teleporter& t2, int face1, int face2,
     p.z *= dimsScale.y;
 
     // apply rotation, translate to new position
-    p = p.rotateZ(+radians2);
+    p = glm::rotateZ(p, +radians2);
     p += pos2;
 
     // final output position

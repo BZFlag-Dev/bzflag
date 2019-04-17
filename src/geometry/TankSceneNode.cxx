@@ -1206,7 +1206,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
     // apply explosion transform
     bool overide = false;
-    TankDeathOverride::DeathParams params(explodeFraction,fvec4(color[0],color[1],color[2],color[3]));
+    TankDeathOverride::DeathParams params(explodeFraction,glm::make_vec4(color));
 
     if (isExploding)
     {
@@ -1254,7 +1254,7 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     {
         setupPartColor(part);
         if (overide)
-            myColor4fv(params.color);
+            myColor4f(params.color.r, params.color.g, params.color.b, params.color.a);
     }
 
     // get the list
