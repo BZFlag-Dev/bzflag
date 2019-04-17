@@ -20,11 +20,6 @@
 #include <iostream>
 #include <new>
 
-
-#include "vectors_old.h" // FIXME -- the crappy old-style vectors
-
-//============================================================================//
-
 template <typename T> T typed_cos(T rads);
 template<> inline float  typed_cos<float> (float  rads)
 {

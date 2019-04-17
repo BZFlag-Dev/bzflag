@@ -10,14 +10,18 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// Interface
+#include "Teleporter.h"
+
+// System headers
 #include <math.h>
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
-#include "Teleporter.h"
 #include "Intersect.h"
 #include "MeshTransform.h"
-
+#include "vectors.h"
 
 const char* Teleporter::typeName = "Teleporter";
 
