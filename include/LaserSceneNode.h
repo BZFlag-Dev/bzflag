@@ -17,8 +17,11 @@
 #ifndef BZF_LASER_SCENE_NODE_H
 #define BZF_LASER_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
+
+// System headers
+#include <glm/vec4.hpp>
 
 class LaserSceneNode : public SceneNode
 {
@@ -58,8 +61,8 @@ protected:
         const LaserSceneNode* sceneNode;
         static GLfloat  geom[6][2];
     };
-    fvec4 color;
-    fvec4 centerColor;
+    glm::vec4 color;
+    glm::vec4 centerColor;
     bool first;
     friend class LaserRenderNode;
 

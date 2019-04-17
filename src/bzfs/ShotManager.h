@@ -18,7 +18,6 @@
 /* common interface headers */
 #include "global.h"  /* for TeamColor */
 #include "ShotUpdate.h"
-#include "vectors.h"
 #include "TimeKeeper.h"
 #include "FlagInfo.h"
 #include "Obstacle.h"
@@ -36,6 +35,7 @@
 #include <memory>
 #include <functional>
 #endif
+#include <glm/vec3.hpp>
 
 #include "Ray.h"
 
@@ -67,16 +67,16 @@ protected:
 
     std::map<std::string, MetaDataItem> MetaData;
 
-    virtual fvec3 ProjectShotLocation(double deltaT);
+    virtual glm::vec3 ProjectShotLocation(double deltaT);
 
 public:
     typedef std::shared_ptr <Shot> Ptr;
     typedef std::vector<std::shared_ptr<Shot>> Vec;
     typedef std::shared_ptr<std::function <void(Shot&)> > Event;
 
-    fvec3       StartPosition;
-    fvec3       LastUpdatePosition;
-    fvec3       LastUpdateVector;
+    glm::vec3   StartPosition;
+    glm::vec3   LastUpdatePosition;
+    glm::vec3   LastUpdateVector;
     double      LastUpdateTime;
     double      StartTime;
 
@@ -150,15 +150,15 @@ public:
 
     virtual void ProcessUpdate(ShotUpdate& UNUSED(referece)) {}
 
-    virtual bool CollideBox(fvec3& UNUSED(center), fvec3& UNUSED(size), float UNUSED(rotation))
+    virtual bool CollideBox(glm::vec3& UNUSED(center), glm::vec3& UNUSED(size), float UNUSED(rotation))
     {
         return false;
     }
-    virtual bool CollideSphere(fvec3& UNUSED(center), float UNUSED(radius))
+    virtual bool CollideSphere(glm::vec3& UNUSED(center), float UNUSED(radius))
     {
         return false;
     }
-    virtual bool CollideCylinder(fvec3& UNUSED(center), float UNUSED(height), float UNUSED(radius))
+    virtual bool CollideCylinder(glm::vec3& UNUSED(center), float UNUSED(height), float UNUSED(radius))
     {
         return false;
     }
@@ -463,9 +463,9 @@ public:
     virtual void Setup();
     virtual bool Update(float dt);
 
-    virtual bool CollideBox(fvec3& ecnter, fvec3& size, float rotation);
-    virtual bool CollideSphere(fvec3& center, float radius);
-    virtual bool CollideCylinder(fvec3& center, float height, float radius);
+    virtual bool CollideBox(glm::vec3& ecnter, glm::vec3& size, float rotation);
+    virtual bool CollideSphere(glm::vec3& center, float radius);
+    virtual bool CollideCylinder(glm::vec3& center, float height, float radius);
 
     class Factory : public ShotFactory
     {
@@ -478,7 +478,7 @@ public:
     };
 
 protected:
-    bool PointInSphere(fvec3& point);
+    bool PointInSphere(glm::vec3& point);
 };
 }
 #endif  /*__SHOTMANAGER_H__ */

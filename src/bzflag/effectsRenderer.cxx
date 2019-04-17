@@ -112,7 +112,7 @@ public:
     virtual bool update ( float time );
     virtual void draw ( const SceneRenderer& sr );
     virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
-    virtual bool GetDeathVector( fvec3 & v );
+    virtual bool GetDeathVector(glm::vec3 &v);
     virtual bool ShowExplosion ( void )
     {
         return false;
@@ -128,7 +128,7 @@ public:
     virtual bool update ( float time );
     virtual void draw ( const SceneRenderer& sr );
     virtual bool SetDeathRenderParams ( TankDeathOverride::DeathParams &params);
-    virtual bool GetDeathVector( fvec3 & v );
+    virtual bool GetDeathVector(glm::vec3 &v);
     virtual bool ShowExplosion ( void )
     {
         return false;
@@ -157,11 +157,11 @@ protected:
     {
     public:
         float size;
-        fvec2 rots;
+        glm::vec2 rots;
         float alphaMod;
     };
     std::vector<Spike> Spikes;
-    std::vector<fvec3> Puffs;
+    std::vector<glm::vec3> Puffs;
 
     float explodeFraction;
 };
@@ -212,7 +212,7 @@ protected:
     OpenGLGState ringState;
 
     float radius;
-    fvec3 jitter;
+    glm::vec3 jitter;
 
     float u,v,du,dv;
 };
@@ -1095,18 +1095,18 @@ void SquishDeathEffect::draw ( const SceneRenderer& UNUSED(sr) )
 
 bool SquishDeathEffect::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
 {
-    params.scale = fvec3(1,1,0);
-    params.pos = fvec3(0,0,0.1f);
+    params.scale = glm::vec3(1,1,0);
+    params.pos = glm::vec3(0,0,0.1f);
     return true;
 }
 
-bool SquishDeathEffect::GetDeathVector( fvec3 & vel )
+bool SquishDeathEffect::GetDeathVector(glm::vec3 &vel)
 {
     if (!player)
         return false;
 
     const float *v = player->getVelocity();
-    vel = fvec3(v[0],v[1],v[2]);
+    vel = glm::vec3(v[0],v[1],v[2]);
     return true;
 }
 
@@ -1141,16 +1141,16 @@ bool FadeToHeaven::SetDeathRenderParams (TankDeathOverride::DeathParams &params)
     done = params.explodeParam  < 0.0001f;
 
     params.color[3] = params.explodeParam;
-    params.pos = fvec3(0,0,vertDist*params.explodeParam);
+    params.pos = glm::vec3(0,0,vertDist*params.explodeParam);
 
     return true;
 }
 
-bool FadeToHeaven::GetDeathVector( fvec3 & vel )
+bool FadeToHeaven::GetDeathVector(glm::vec3 &vel)
 {
     if (!player)
         return false;
-    vel = fvec3(0,0,0);
+    vel = glm::vec3(0,0,0);
     return true;
 }
 
@@ -1268,13 +1268,13 @@ SpikesDeathEffect::SpikesDeathEffect() : DeathEffect()
         Spike s;
         s.alphaMod = ((float)bzfrand() * 0.5f) + 0.5f;
         s.size = ((float)bzfrand() * 1.5f) + 0.5f;
-        s.rots = fvec2((float)bzfrand()* 360.0f,(float)bzfrand() * 180.0f);
+        s.rots = glm::vec2((float)bzfrand()* 360.0f,(float)bzfrand() * 180.0f);
         Spikes.push_back(s);
     }
 
     int puffs = (int)((bzfrand() * 25)) + 10;
     for ( int i = 0; i < puffs; i++)
-        Puffs.push_back(fvec3((float)bzfrand()*4-2,(float)bzfrand()*4-2,(float)bzfrand()*2));
+        Puffs.push_back(glm::vec3((float)bzfrand()*4-2,(float)bzfrand()*4-2,(float)bzfrand()*2));
 }
 
 SpikesDeathEffect::~SpikesDeathEffect()

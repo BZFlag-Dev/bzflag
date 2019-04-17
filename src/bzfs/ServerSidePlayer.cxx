@@ -13,6 +13,8 @@
 // bzflag global header
 #include "common.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "bzfsAPI.h"
 #include "bzfsAPIServerSidePlayers.h"
 #include "bzfs.h"
@@ -2000,7 +2002,7 @@ Shot::Ptr findWorstBullet(float &minDistance, int playerID, float pos[3])
                 && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
             continue;
 
-        const float dist = BotUtils::getTargetDistance(pos, shotPos);
+        const float dist = BotUtils::getTargetDistance(pos, glm::value_ptr(shotPos));
         if (dist < minDistance)
         {
             auto shotVel = shot->LastUpdateVector;
