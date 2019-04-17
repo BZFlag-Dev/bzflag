@@ -22,7 +22,7 @@
 #include <vector>
 
 // common headers
-#include "vectors.h"
+#include "vectors_old.h"
 
 
 // triangulation parameters

@@ -17,16 +17,18 @@
 #ifndef BZF_MESH_FACE_OBSTACLE_H
 #define BZF_MESH_FACE_OBSTACLE_H
 
-#include "common.h"
+// Inherits from
+#include "Obstacle.h"
+
+// System headers
 #include <string>
 #include <iostream>
-#include "vectors.h"
+
+// Common headers
+#include "vectors_old.h"
 #include "Ray.h"
-#include "Obstacle.h"
 #include "global.h"
 #include "BzMaterial.h"
-//#include "PhysicsDrive.h"
-
 
 class MeshFace : public Obstacle
 {
