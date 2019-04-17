@@ -13,6 +13,8 @@
 // bzflag global header
 #include "common.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "bzfsAPI.h"
 #include "bzfsAPIServerSidePlayers.h"
 #include "bzfs.h"
@@ -950,7 +952,8 @@ void bz_ServerSidePlayerHandler::doUpdateMotion(float dt)
 // lower level message API
 void bz_ServerSidePlayerHandler::playerAdded(int) {}
 void bz_ServerSidePlayerHandler::playerRemoved(int) {}
-void bz_ServerSidePlayerHandler::playerSpawned(int UNUSED(id), const float* /* const float UNUSED(_pos[3]) */, float UNUSED(_rot)) {} // UNUSED() doesn't work with an array parameter
+void bz_ServerSidePlayerHandler::playerSpawned(int UNUSED(id), const float* /* const float UNUSED(_pos[3]) */,
+        float UNUSED(_rot)) {} // UNUSED() doesn't work with an array parameter
 
 
 void bz_ServerSidePlayerHandler::checkForSpawn(int id, const float _pos[3], float _rot)
@@ -2000,7 +2003,7 @@ Shot::Ptr findWorstBullet(float &minDistance, int playerID, float pos[3])
                 && (shot->getFlag()->flagEffect != FlagEffect::GuidedMissile))
             continue;
 
-        const float dist = BotUtils::getTargetDistance(pos, shotPos);
+        const float dist = BotUtils::getTargetDistance(pos, glm::value_ptr(shotPos));
         if (dist < minDistance)
         {
             auto shotVel = shot->LastUpdateVector;

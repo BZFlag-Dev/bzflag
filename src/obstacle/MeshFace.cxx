@@ -19,7 +19,6 @@
 // Common headers
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
 #include "MeshObstacle.h"
 #include "PhysicsDriver.h"
 #include "Intersect.h"

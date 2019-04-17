@@ -17,11 +17,13 @@
 #ifndef _MODEL_H_
 #define _MODEL_H_
 
+#include "common.h"
+
 #include <string>
 #include <vector>
 #include <map>
-
-#include "vectors.h"
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 extern std::string texdir;
 extern std::string groupName;
@@ -48,7 +50,7 @@ enum class teModelAxis
     eZAxis
 } ;
 
-class CTexCoord : public fvec2
+class CTexCoord : public glm::vec2
 {
 public:
 
@@ -61,7 +63,7 @@ public:
 };
 
 
-class CVertex : public fvec3
+class CVertex : public glm::vec3
 {
 public:
 

@@ -1489,7 +1489,7 @@ void            LocalPlayer::explodeTank()
     TankDeathOverride* death = getDeathEffect();
     if (death)
     {
-        fvec3 v(newVelocity[0],newVelocity[1],newVelocity[2]);
+        glm::vec3 v(glm::make_vec3(newVelocity));
         if (death->GetDeathVector(v))
         {
             newVelocity[0] = v.x;

@@ -12,8 +12,13 @@
 
 // interface header
 #include "ShotManager.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/geometric.hpp>
+#include <glm/trigonometric.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+
 #include "TimeKeeper.h"
-#include "vectors.h"
 #include "BZDBCache.h"
 #include "bzfs.h"
 #include "Obstacle.h"
@@ -137,7 +142,7 @@ uint16_t Manager::AddShot(const FiringInfo &info, PlayerId UNUSED(shooter))
     shot->Setup();
     shot->Update(0); // to get the initial position
     shot->StartPosition = shot->LastUpdatePosition;
-    shot->LastUpdateVector = fvec3(shot->Info.shot.vel[0], shot->Info.shot.vel[1], shot->Info.shot.vel[2]);
+    shot->LastUpdateVector = glm::vec3(shot->Info.shot.vel[0], shot->Info.shot.vel[1], shot->Info.shot.vel[2]);
 
     LiveShots.push_back(shot);
 
@@ -259,13 +264,13 @@ std::vector<int> Manager::AllLiveShotIDs()
 
 std::vector<int>  Manager::ShotIDsInRadius(float pos[3], float radius)
 {
-    fvec3 p(pos[0],pos[1],pos[2]);
+    glm::vec3 p(pos[0],pos[1],pos[2]);
     float radSq = radius * radius;
 
     std::vector<int> ids(LiveShots.size());
     for (auto shot : LiveShots)
     {
-        if ((p - shot->LastUpdatePosition).lengthSq() <= radSq)
+        if (glm::dot(p - shot->LastUpdatePosition, p - shot->LastUpdatePosition) <= radSq)
             ids.push_back(shot->GetGUID());
     }
 
@@ -400,9 +405,9 @@ void Shot::Retarget(PlayerId target)
     Target = target;
 }
 
-fvec3 Shot::ProjectShotLocation(double deltaT)
+glm::vec3 Shot::ProjectShotLocation(double deltaT)
 {
-    fvec3 vec;
+    glm::vec3 vec;
     vec.x = LastUpdatePosition.x + (Info.shot.vel[0] * (float)deltaT);
     vec.y = LastUpdatePosition.y + (Info.shot.vel[1] * (float)deltaT);
     vec.z = LastUpdatePosition.z + (Info.shot.vel[2] * (float)deltaT);
@@ -896,21 +901,21 @@ bool ShockwaveShot::Update(float dt)
     return Shot::Update(dt);
 }
 
-bool ShockwaveShot::CollideBox(fvec3& center, fvec3& size, float rotation)
+bool ShockwaveShot::CollideBox(glm::vec3& center, glm::vec3& size, float rotation)
 {
     // check the top locations
-    fvec3 xyPlus = size;
-    fvec3 xyNeg(-size.x, -size.y, size.z);
-    fvec3 xPlusYNeg(size.x, -size.y, size.z);
-    fvec3 xNegYPlus(-size.x, size.y, size.z);
+    glm::vec3 xyPlus = size;
+    glm::vec3 xyNeg(-size.x, -size.y, size.z);
+    glm::vec3 xPlusYNeg(size.x, -size.y, size.z);
+    glm::vec3 xNegYPlus(-size.x, size.y, size.z);
 
-    float rotRads = fvec3::toRadians(rotation);
+    float rotRads = glm::radians(rotation);
 
     // rotate them all into orientation
-    xyPlus.rotateZ(rotRads);
-    xyNeg.rotateZ(rotRads);
-    xPlusYNeg.rotateZ(rotRads);
-    xNegYPlus.rotateZ(rotRads);
+    xyPlus = glm::rotateZ(xyPlus, rotRads);
+    xyNeg  = glm::rotateZ(xyNeg, rotRads);
+    xPlusYNeg = glm::rotateZ(xPlusYNeg, rotRads);
+    xNegYPlus = glm::rotateZ(xNegYPlus, rotRads);
 
     // attach them to the center
     xyPlus += center;
@@ -936,13 +941,13 @@ bool ShockwaveShot::CollideBox(fvec3& center, fvec3& size, float rotation)
     return false;
 }
 
-bool ShockwaveShot::CollideSphere(fvec3& center, float radius)
+bool ShockwaveShot::CollideSphere(glm::vec3& center, float radius)
 {
-    fvec3 vecToPoint = center - StartPosition;
+    glm::vec3 vecToPoint = center - StartPosition;
     return vecToPoint.length() <= LastUpdatePosition.x - radius;
 }
 
-bool ShockwaveShot::CollideCylinder(fvec3&center, float height, float radius)
+bool ShockwaveShot::CollideCylinder(glm::vec3&center, float height, float radius)
 {
     if (center.z > StartPosition.z + LastUpdatePosition.x)
         return false; // too high
@@ -950,15 +955,15 @@ bool ShockwaveShot::CollideCylinder(fvec3&center, float height, float radius)
     if (center.z + height < StartPosition.z - LastUpdatePosition.x)
         return false; // too low
 
-    fvec3 vecToPoint = center - StartPosition;
+    glm::vec3 vecToPoint = center - StartPosition;
     vecToPoint.z = 0;
 
     return vecToPoint.length() <= LastUpdatePosition.x - radius;
 }
 
-bool ShockwaveShot::PointInSphere(fvec3& point)
+bool ShockwaveShot::PointInSphere(glm::vec3& point)
 {
-    fvec3 vecToPoint = point - StartPosition;
+    glm::vec3 vecToPoint = point - StartPosition;
     return vecToPoint.length() <= LastUpdatePosition.x;
 }
 

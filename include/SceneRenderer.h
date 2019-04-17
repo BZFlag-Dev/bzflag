@@ -25,12 +25,14 @@
 
 /* system interface headers */
 #include <vector>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <string>
 
 /* common interface headers */
 #include "OpenGLLight.h"
 #include "ViewFrustum.h"
 #include "RenderNode.h"
-#include "vectors.h"
 
 #define RENDERER (SceneRenderer::instance())
 
@@ -161,13 +163,13 @@ public:
         fogActive = b;
     }
 
-    const fvec4&  getFogColor() const
+    const glm::vec4& getFogColor() const
     {
         return fogColor;
     }
     void      setFogColor( float *color)
     {
-        fogColor = color;
+        fogColor = glm::make_vec4(color);
     }
 
 
@@ -258,7 +260,7 @@ private:
     bool      needStyleUpdate;
     bool      rebuildTanks;
     bool      fogActive;
-    fvec4     fogColor;
+    glm::vec4 fogColor;
 
     std::vector<FlareLight>   flareLightList;
     RenderNodeList        shadowList;

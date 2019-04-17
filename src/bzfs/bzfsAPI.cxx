@@ -16,6 +16,8 @@
 // implementation wrappers for all the bzf_ API functions
 #include "bzfsAPI.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "bzfs.h"
 #include "WorldWeapons.h"
 #include "WorldEventManager.h"
@@ -1806,8 +1808,8 @@ BZF_API bool bz_getShotState(int shotID, float pos[3], float vec[3])
     if (shot == nullptr)
         return false;
 
-    memmove(pos, shot->LastUpdatePosition, 3 * sizeof(float));
-    memmove(vec, shot->LastUpdateVector, 3 * sizeof(float));
+    memmove(pos, glm::value_ptr(shot->LastUpdatePosition), 3 * sizeof(float));
+    memmove(vec, glm::value_ptr(shot->LastUpdateVector), 3 * sizeof(float));
 
     return true;
 }
@@ -2986,9 +2988,7 @@ BZF_API bool bz_getNearestFlagSafetyZone(int flag, float *pos)
     bz_getFlagPosition(flag, currPos);
 
     if (_team == NoTeam)
-    {
         return false;
-    }
 
     const std::string &safetyQualifier = CustomZone::getFlagSafetyQualifier(_team);
     return world->getEntryZones().getClosePoint(safetyQualifier, currPos, pos);
