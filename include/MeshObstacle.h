@@ -17,13 +17,17 @@
 #ifndef BZF_MESH_OBSTACLE_H
 #define BZF_MESH_OBSTACLE_H
 
-#include "common.h"
+// Inherits from
+#include "Obstacle.h"
+
+// System headers
 #include <string>
 #include <vector>
 #include <iostream>
-#include "vectors.h"
+
+// Common headers
+#include "vectors_old.h"
 #include "Ray.h"
-#include "Obstacle.h"
 #include "MeshFace.h"
 #include "MeshTransform.h"
 
