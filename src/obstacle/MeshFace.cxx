@@ -10,15 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "MeshFace.h"
+
+// System headers
 #include <math.h>
-#include "common.h"
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
 #include "vectors.h"
-
-#include "MeshFace.h"
 #include "MeshObstacle.h"
-
 #include "PhysicsDriver.h"
 #include "Intersect.h"
 

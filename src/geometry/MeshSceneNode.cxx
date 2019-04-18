@@ -22,7 +22,6 @@
 #include <stdlib.h>
 
 // common implementation headers
-#include "vectors.h"
 #include "Extents.h"
 #include "Intersect.h"
 #include "TimeKeeper.h"

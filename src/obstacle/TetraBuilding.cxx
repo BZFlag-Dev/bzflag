@@ -10,17 +10,19 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface
+#include "TetraBuilding.h"
+
+// System headers
 #include <math.h>
 #include <assert.h>
-#include "common.h"
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
-
-#include "TetraBuilding.h"
-#include "MeshUtils.h"
 #include "MeshTransform.h"
 
+#include "MeshUtils.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 //

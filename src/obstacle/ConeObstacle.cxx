@@ -10,18 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// Interface
+#include "ConeObstacle.h"
+
+// System headers
 #include <math.h>
 #include <assert.h>
+
+// Common headers
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
-
-#include "ConeObstacle.h"
-#include "MeshUtils.h"
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
 
+#include "MeshUtils.h"
 
 const char* ConeObstacle::typeName = "ConeObstacle";
 

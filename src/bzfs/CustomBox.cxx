@@ -26,7 +26,6 @@
 #include "PhysicsDriver.h"
 #include "StateDatabase.h"
 #include "ObstacleMgr.h"
-#include "vectors.h"
 
 /* bzfs implementation headers */
 #include "ParseMaterial.h"
