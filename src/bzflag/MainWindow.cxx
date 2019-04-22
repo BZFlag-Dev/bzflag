@@ -17,6 +17,7 @@
 /* common implementation headers */
 #include "global.h"
 #include "SceneRenderer.h"
+#include "OpenGLCommon.h"
 
 //
 // MainWindow
@@ -249,14 +250,12 @@ void            MainWindow::setQuadrant(Quadrant _quadrant)
 
 void MainWindow::setProjectionHUD() const
 {
-    glLoadIdentity();
-    glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+    OpenGLCommon::Ortho(0.0f, (float)width, (float)(viewHeight - height), (float)viewHeight, -1.0f, 1.0f);
 }
 
 void MainWindow::setProjectionPlay() const
 {
-    glLoadIdentity();
-    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+    OpenGLCommon::Ortho(0.0f, (float)width, 0.0f, (float)height, -1.0f, 1.0f);
 }
 
 void MainWindow::setProjectionRadar(int x, int y, int w, int h, float radarRange, float maxHeight) const
@@ -268,11 +267,9 @@ void MainWindow::setProjectionRadar(int x, int y, int w, int h, float radarRange
     const float xCenter = x + w2;
     const float yCenter = y + h2;
 
-
-    glLoadIdentity();
-    glOrtho(-xCenter * xUnit, (width - xCenter) * xUnit,
-            -yCenter * yUnit, (height - yCenter) * yUnit,
-            -maxHeight, maxHeight);
+    OpenGLCommon::Ortho(-xCenter * xUnit, (width - xCenter) * xUnit,
+                        -yCenter * yUnit, (height - yCenter) * yUnit,
+                        -maxHeight, maxHeight);
 }
 
 void            MainWindow::resize()

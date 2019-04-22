@@ -299,7 +299,7 @@ void OpenGLLight::genLight(GLenum light) const
     glLightfv(light, GL_POSITION, pos);
     glLightfv(light, GL_DIFFUSE, color);
     glLightfv(light, GL_SPECULAR, color);
-    glLighti(light, GL_SPOT_EXPONENT, 0);
+    glLightf(light, GL_SPOT_EXPONENT, 0.0f);
     glLightf(light, GL_CONSTANT_ATTENUATION, atten[0]);
     glLightf(light, GL_LINEAR_ATTENUATION, atten[1]);
     glLightf(light, GL_QUADRATIC_ATTENUATION, atten[2]);

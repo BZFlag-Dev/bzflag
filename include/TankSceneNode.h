@@ -225,7 +225,7 @@ private:
     bool        clip;
     bool        inTheCockpit;
     GLfloat     color[4];
-    GLdouble        clipPlane[4];
+    glm::vec4   clipPlane;
     OpenGLGState    gstate;
     OpenGLGState    treadState;
     OpenGLGState    lightsGState;

@@ -202,9 +202,9 @@ LDADD =	\
 	../net/libNet.la		\
 	../obstacle/libObstacle.la	\
 	../platform/libPlatform.la	\
-	../ogl/libGLKit.la		\
 	../scene/libSceneDB.la		\
 	../geometry/libGeometry.la	\
+	../ogl/libGLKit.la		\
 	../mediafile/libMediaFile.la	\
 	../common/libCommon.la		\
 	$(LIBCARES)			\

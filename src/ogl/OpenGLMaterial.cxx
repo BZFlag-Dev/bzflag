@@ -10,10 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// Interface
 #include "OpenGLMaterial.h"
+
+// Common include
 #include "OpenGLGState.h"
 #include "SceneRenderer.h"
+#include "OpenGLCommon.h"
 
 //
 // OpenGLMaterial::Rep
@@ -121,12 +124,12 @@ void            OpenGLMaterial::Rep::execute()
                         (specular[2] > 0.0f))
                 {
                     // accurate specular highlighting  (more GPU intensive)
-                    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+                    OpenGLCommon::LightModelLocalViewer(true);
                 }
                 else
                 {
                     // speed up the lighting calcs by simplifying
-                    glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_FALSE);
+                    OpenGLCommon::LightModelLocalViewer(false);
                 }
             }
         }

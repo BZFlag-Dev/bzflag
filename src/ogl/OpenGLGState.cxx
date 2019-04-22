@@ -23,11 +23,11 @@
 
 /* common implementation headers */
 #include "bzfio.h" // for logDebugMessage(3,)
-#include "OpenGLGState.h"
 #include "TextureManager.h"
 #include "TextureMatrix.h"
 #include "OpenGLMaterial.h"
 #include "RenderNode.h"
+#include "OpenGLCommon.h"
 
 
 // for tracking glBegin/End pairs; see include/bzfgl.h
@@ -1326,7 +1326,7 @@ void OpenGLGState::initContext()
 
     // and some more state
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
+    OpenGLCommon::ClearDepth();
     glClearStencil(0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
