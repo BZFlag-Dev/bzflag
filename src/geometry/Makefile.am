@@ -62,4 +62,5 @@ libGeometry_la_LIBADD =	\
 	models/tank/medium_turret.lo
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

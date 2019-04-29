@@ -57,3 +57,6 @@ LDADD = \
 	$(LIBCURL)		\
 	$(LIBCARES)		\
 	$(LIBREGEX)
+
+EXTRA_DIST = \
+        premake5.lua

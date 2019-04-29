@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	CustomZoneSample.bzw \
 	CustomZoneSample.sln \
 	CustomZoneSample.vcxproj	\
-	CustomZoneSample.vcxproj.filters
+	CustomZoneSample.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

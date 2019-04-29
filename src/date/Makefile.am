@@ -7,7 +7,9 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 MAINTAINERCLEANFILES = \
 	Makefile.in
 
-EXTRA_DIST = README
+EXTRA_DIST = \
+	premake5.lua \
+	README
 
 libDate_la_LDFLAGS = -static
 libDate_la_SOURCES = \

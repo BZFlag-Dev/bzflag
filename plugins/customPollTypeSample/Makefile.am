@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.customPollTypeSample.txt \
 	customPollTypeSample.sln \
 	customPollTypeSample.vcxproj	\
-	customPollTypeSample.vcxproj.filters
+	customPollTypeSample.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -33,4 +33,5 @@ libGame_la_SOURCES =			\
 
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

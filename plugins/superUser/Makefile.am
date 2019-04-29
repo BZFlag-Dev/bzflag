@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	superUser.cfg \
 	superUser.sln \
 	superUser.vcxproj	\
-	superUser.vcxproj.filters
+	superUser.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

@@ -20,4 +20,5 @@ libSceneDB_la_SOURCES =			\
 	BSPSceneDatabase.cxx
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

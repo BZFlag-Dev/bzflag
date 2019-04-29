@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	help_timedctf_rules.txt \
 	timedctf.sln \
 	timedctf.vcxproj	\
-	timedctf.vcxproj.filters
+	timedctf.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

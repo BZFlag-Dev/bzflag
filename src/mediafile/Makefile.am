@@ -25,4 +25,5 @@ libMediaFile_la_SOURCES =	\
 EXTRA_DIST = \
 	OggAudioFile.cxx	\
 	OggAudioFile.h		\
+	premake5.lua		\
 	README

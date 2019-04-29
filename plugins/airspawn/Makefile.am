@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.airspawn.txt \
 	airspawn.sln \
 	airspawn.vcxproj	\
-	airspawn.vcxproj.filters
+	airspawn.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

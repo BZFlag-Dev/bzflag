@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.thiefControl.txt \
 	thiefControl.sln \
 	thiefControl.vcxproj	\
-	thiefControl.vcxproj.filters
+	thiefControl.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

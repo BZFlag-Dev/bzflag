@@ -16,7 +16,8 @@ EXTRA_DIST = \
 	README.serverSidePlayerSample.txt \
 	serverSidePlayerSample.sln \
 	serverSidePlayerSample.vcxproj	\
-	serverSidePlayerSample.vcxproj.filters
+	serverSidePlayerSample.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

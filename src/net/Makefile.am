@@ -17,4 +17,5 @@ libNet_la_SOURCES =			\
 	network.cxx
 
 EXTRA_DIST = \
+	premake5.lua \
 	README

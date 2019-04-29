@@ -14,7 +14,8 @@ EXTRA_DIST = \
 	help_keepaway_rules.txt \
 	keepaway.sln \
 	keepaway.vcxproj	\
-	keepaway.vcxproj.filters
+	keepaway.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

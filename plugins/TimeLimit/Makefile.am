@@ -12,7 +12,8 @@ EXTRA_DIST = \
 	README.TimeLimit.txt \
 	TimeLimit.sln \
 	TimeLimit.vcxproj	\
-	TimeLimit.vcxproj.filters
+	TimeLimit.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

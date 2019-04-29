@@ -12,7 +12,8 @@ AM_CXXFLAGS = $(CONF_CXXFLAGS)
 EXTRA_DIST = \
 	README.pushstats.txt \
 	pushstats.sln \
-	pushstats.vcxproj
+	pushstats.vcxproj \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

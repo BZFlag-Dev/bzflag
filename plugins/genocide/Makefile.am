@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	README.genocide.txt \
 	genocide.sln \
 	genocide.vcxproj	\
-	genocide.vcxproj.filters
+	genocide.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in

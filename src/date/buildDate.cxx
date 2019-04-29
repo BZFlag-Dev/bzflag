@@ -37,6 +37,7 @@
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
+//  premake5.lua
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION  2
 #endif

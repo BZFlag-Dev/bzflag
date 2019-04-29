@@ -13,7 +13,8 @@ EXTRA_DIST = \
 	help_rabidRabbit.txt \
 	rabidRabbit.sln \
 	rabidRabbit.vcxproj	\
-	rabidRabbit.vcxproj.filters
+	rabidRabbit.vcxproj.filters \
+	premake5.lua
 
 MAINTAINERCLEANFILES =	\
 	Makefile.in
