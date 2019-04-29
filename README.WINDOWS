@@ -15,14 +15,12 @@ our current script. Also, there's no real performance advantage in having a
 64-bit BZFlag client as the game doesn't use much RAM.
 
 **Required Libraries**
-
 Various third-party libraries are needed, which are packaged in our
 bzflag-dependencies repository. Either grab a pre-built binary package from
 the releases section, or build the dependencies from source as described at
-the repository. The BZFlag build expects that an environment variable called
-BZ_DEPS exist and point to dependencies repository directory (the one that
-would contain the one or more output directories and src directory containing
-the third-party libraries)
+the repository. The BZFlag build expects that the dependencies are located at
+the root of the bzflag source directory, such that libraries and headers are in
+<bzflag source>/dependencies/output-<system>-<configuration>-<architecture>.
   https://github.com/BZFlag-Dev/bzflag-dependencies
 
 NSIS 3.03 is needed to build an installer, which is built as part of a release
