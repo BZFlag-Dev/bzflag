@@ -363,8 +363,6 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
     const GLfloat radius = sceneNode->radius;
     const GLfloat* sphere = sceneNode->getSphere();
 
-    static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
-    glClipPlane(GL_CLIP_PLANE0, groundPlane);
     glEnable(GL_CLIP_PLANE0);
 
 #ifdef GL_VERSION_1_2
@@ -617,13 +615,10 @@ setBaseIndex(int _baseIndex)
 
 void            SphereBspSceneNode::SphereBspRenderNode::render()
 {
-    static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
-
     int i, j;
     const GLfloat radius = sceneNode->radius;
     const GLfloat* sphere = sceneNode->getSphere();
 
-    glClipPlane(GL_CLIP_PLANE0, groundPlane);
     glEnable(GL_CLIP_PLANE0);
 
     glPushMatrix();
