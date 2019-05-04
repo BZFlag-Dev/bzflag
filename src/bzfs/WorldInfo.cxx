@@ -613,7 +613,7 @@ const Obstacle* WorldInfo::hitBuilding(const float* oldPos, float oldAngle, cons
                 olist->list[hitCount] = obs;
                 hitCount++;
                 // compute its dot product and stick it in the scratchPad
-                const float* p = face->getPlane();
+                const glm::vec3 p = face->getPlane();
                 const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
                 face->scratchPad = dot;
             }

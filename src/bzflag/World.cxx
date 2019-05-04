@@ -394,7 +394,7 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
 
     // do some prep work for mesh faces
     int hitCount = 0;
-    float vel[3];
+    glm::vec3 vel;
     vel[0] = pos[0] - oldPos[0];
     vel[1] = pos[1] - oldPos[1];
     vel[2] = pos[2] - oldPos[2];
@@ -423,8 +423,8 @@ const Obstacle* World::hitBuilding(const float* oldPos, float oldAngle,
                 olist->list[hitCount] = obs;
                 hitCount++;
                 // compute its dot product and stick it in the scratchPad
-                const float* p = face->getPlane();
-                const float dot = (vel[0] * p[0]) + (vel[1] * p[1]) + (vel[2] * p[2]);
+                const glm::vec3 p(face->getPlane());
+                const float dot = glm::dot(vel, p);
                 face->scratchPad = dot;
             }
         }

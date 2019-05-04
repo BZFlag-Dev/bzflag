@@ -23,9 +23,10 @@
 // System headers
 #include <string>
 #include <iostream>
+#include <glm/vec4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
-#include "vectors_old.h"
 #include "Ray.h"
 #include "global.h"
 #include "BzMaterial.h"
@@ -75,7 +76,7 @@ public:
     const float* getVertex(int index) const;
     const float* getNormal(int index) const;
     const float* getTexcoord(int index) const;
-    const float* getPlane() const;
+    const glm::vec4 getPlane() const;
     const BzMaterial* getMaterial() const;
     int getPhysicsDriver() const;
     bool noClusters() const;
@@ -117,8 +118,8 @@ private:
     bool noclusters;
     int phydrv;
 
-    afvec4 plane;
-    afvec4* edgePlanes;
+    glm::vec4 plane;
+    glm::vec4 *edgePlanes;
 
     MeshFace* edges; // edge 0 is between vertex 0 and 1, etc...
     // not currently used for anything
@@ -183,7 +184,7 @@ inline int MeshFace::getPhysicsDriver() const
     return phydrv;
 }
 
-inline const float* MeshFace::getPlane() const
+inline const glm::vec4 MeshFace::getPlane() const
 {
     return plane;
 }

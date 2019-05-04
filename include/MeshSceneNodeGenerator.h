@@ -36,7 +36,7 @@ public:
                                   const BzMaterial* mat);
     static MeshPolySceneNode* getMeshPolySceneNode(const MeshFace* face);
 
-    static bool makeTexcoords(const float* plane,
+    static bool makeTexcoords(const glm::vec4 &plane,
                               const GLfloat3Array& vertices,
                               GLfloat2Array& texcoords);
 

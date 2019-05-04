@@ -16,6 +16,9 @@
 // System headers
 #include <math.h>
 #include <assert.h>
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "global.h"
@@ -150,12 +153,12 @@ MeshObstacle* SphereObstacle::makeMesh()
 
     // setup the coordinates
     std::vector<char> checkTypes;
-    std::vector<cfvec3> checkPoints;
-    std::vector<cfvec3> vertices;
-    std::vector<cfvec3> normals;
-    std::vector<cfvec2> texcoords;
-    cfvec3 v, n;
-    cfvec2 t;
+    std::vector<glm::vec3> checkPoints;
+    std::vector<glm::vec3> vertices;
+    std::vector<glm::vec3> normals;
+    std::vector<glm::vec2> texcoords;
+    glm::vec3 v, n;
+    glm::vec2 t;
 
     // add the checkpoint (one is sufficient)
     v[0] = pos[0];
@@ -221,10 +224,7 @@ MeshObstacle* SphereObstacle::makeMesh()
                 n[0] = unit[0] / sz[0];
                 n[1] = unit[1] / sz[1];
                 n[2] = unit[2] / sz[2];
-                const float len = 1.0f / sqrtf(vec3dot(n.data, n.data));
-                n[0] = n[0] * len;
-                n[1] = n[1] * len;
-                n[2] = n[2] * len;
+                n = glm::normalize(n);
                 normals.push_back(n);
             }
             // texcoord

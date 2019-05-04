@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <string>
 #include <vector>
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
 #include "Pack.h"
@@ -374,6 +376,17 @@ void MeshTransform::Tool::modifyVertex(float v[3]) const
     t[1] = (v[0] * vm[1][0]) + (v[1] * vm[1][1]) + (v[2] * vm[1][2]) + vm[1][3];
     t[2] = (v[0] * vm[2][0]) + (v[1] * vm[2][1]) + (v[2] * vm[2][2]) + vm[2][3];
     memcpy(v, t, sizeof(float[3]));
+}
+
+
+void MeshTransform::Tool::modifyVertex(glm::vec3 &v) const
+{
+    if (empty)
+        return;
+
+    glm::vec4 t = glm::vec4(v, 1.0f);
+    const glm::mat4 vm(glm::make_mat4(vertexMatrix[0]));
+    v = vm * t;
 }
 
 
