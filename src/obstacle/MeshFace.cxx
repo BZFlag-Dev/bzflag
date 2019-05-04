@@ -15,6 +15,9 @@
 
 // System headers
 #include <math.h>
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "global.h"
@@ -79,29 +82,32 @@ MeshFace::MeshFace(MeshObstacle* _mesh, int _vertexCount,
 void MeshFace::finalize()
 {
     float maxCrossSqr = 0.0f;
-    float bestCross[3] = { 0.0f, 0.0f, 0.0f };
+    glm::vec3 bestCross = { 0.0f, 0.0f, 0.0f };
     int bestSet[3] = { -1, -1, -1 };
 
     // find the best vertices for making the plane
     int i, j, k;
     for (i = 0; i < (vertexCount - 2); i++)
     {
+        glm::vec3 verti(glm::make_vec3(vertices[i]));
         for (j = i; j < (vertexCount - 1); j++)
         {
+            glm::vec3 vertj(glm::make_vec3(vertices[j]));
             for (k = j; k < (vertexCount - 0); k++)
             {
-                float edge1[3], edge2[3], cross[3];
-                vec3sub(edge1, vertices[k], vertices[j]);
-                vec3sub(edge2, vertices[i], vertices[j]);
-                vec3cross(cross, edge1, edge2);
-                const float lenSqr = vec3dot(cross, cross);
+                glm::vec3 vertk(glm::make_vec3(vertices[k]));
+                glm::vec3 edge1, edge2, cross;
+                edge1 = vertk - vertj;
+                edge2 = verti - vertj;
+                cross = glm::cross(edge1, edge2);
+                const float lenSqr = glm::dot(cross, cross);
                 if (lenSqr > maxCrossSqr)
                 {
                     maxCrossSqr = lenSqr;
                     bestSet[0] = i;
                     bestSet[1] = j;
                     bestSet[2] = k;
-                    memcpy (bestCross, cross, sizeof(float[3]));
+                    bestCross = cross;
                 }
             }
         }
@@ -126,21 +132,19 @@ void MeshFace::finalize()
 
     // make the plane
     float scale = 1.0f / sqrtf (maxCrossSqr);
-    const float* vert = vertices[bestSet[1]];
-    plane[0] = bestCross[0] * scale;
-    plane[1] = bestCross[1] * scale;
-    plane[2] = bestCross[2] * scale;
-    plane[3] = -vec3dot(plane, vert);
+    const glm::vec3 vert(glm::make_vec3(vertices[bestSet[1]]));
+    bestCross *= scale;
+    plane = glm::vec4(bestCross, -glm::dot(bestCross, vert));
 
     // see if the whole face is convex
     int v;
     for (v = 0; v < vertexCount; v++)
     {
-        float a[3], b[3], c[3];
-        vec3sub(a, vertices[(v + 1) % vertexCount], vertices[(v + 0) % vertexCount]);
-        vec3sub(b, vertices[(v + 2) % vertexCount], vertices[(v + 1) % vertexCount]);
-        vec3cross(c, a, b);
-        const float d = vec3dot(c, plane);
+        glm::vec3 vert0(glm::make_vec3(vertices[v]));
+        glm::vec3 vert1(glm::make_vec3(vertices[(v + 1) % vertexCount]));
+        glm::vec3 vert2(glm::make_vec3(vertices[(v + 2) % vertexCount]));
+        glm::vec3 c = glm::cross(vert1 - vert0, vert2 - vert1);
+        const float d = glm::dot(c, bestCross);
         if (d <= 0.0f)
         {
 
@@ -162,7 +166,7 @@ void MeshFace::finalize()
     // see if the vertices are coplanar
     for (v = 0; v < vertexCount; v++)
     {
-        const float cross = vec3dot(vertices[v], plane);
+        const float cross = glm::dot(glm::make_vec3(vertices[v]), bestCross);
         if (fabsf(cross + plane[3]) > 1.0e-3)
         {
             logDebugMessage(1,"non-planar mesh face (%f)", cross + plane[3]);
@@ -195,18 +199,16 @@ void MeshFace::finalize()
     ZFlip = false;
 
     // make the edge planes
-    edgePlanes = new afvec4[vertexCount];
+    edgePlanes = new glm::vec4[vertexCount];
+    glm::vec3 verticesC(glm::make_vec3(vertices[0]));
     for (v = 0; v < vertexCount; v++)
     {
-        float edge[3];
         const int next = (v + 1) % vertexCount;
-        vec3sub(edge, vertices[next], vertices[v]);
-        vec3cross(edgePlanes[v], edge, plane);
-        scale = 1.0f / sqrtf(vec3dot(edgePlanes[v], edgePlanes[v]));
-        edgePlanes[v][0] = edgePlanes[v][0] * scale;
-        edgePlanes[v][1] = edgePlanes[v][1] * scale;
-        edgePlanes[v][2] = edgePlanes[v][2] * scale;
-        edgePlanes[v][3] = -vec3dot(vertices[v], edgePlanes[v]);
+        glm::vec3 verticesN(glm::make_vec3(vertices[next]));
+        glm::vec3 edgePlane(glm::cross(verticesN - verticesC, bestCross));
+        edgePlane = glm::normalize(edgePlane);
+        edgePlanes[v] = glm::vec4(edgePlane, -glm::dot(verticesC, edgePlane));
+        verticesC = verticesN;
     }
 
     // set the plane type
@@ -307,39 +309,30 @@ float MeshFace::intersect(const Ray& ray) const
     //
     //  t = - (d + (N dot Lo)) / (N dot L)     { time of impact }
     //
-    const float* dir = ray.getDirection();
-    const float* origin = ray.getOrigin();
+    const glm::vec3 dir = glm::make_vec3(ray.getDirection());
+    const glm::vec3 origin = glm::make_vec3(ray.getOrigin());
     float hitTime;
 
     // get the time until the shot would hit each plane
-    const float linedot = (plane[0] * dir[0]) +
-                          (plane[1] * dir[1]) +
-                          (plane[2] * dir[2]);
+    const float linedot = glm::dot(glm::vec3(plane), dir);
     if (linedot >= -0.001f)
     {
         // shot is either parallel, or going through backwards
         return -1.0f;
     }
-    const float origindot = (plane[0] * origin[0]) +
-                            (plane[1] * origin[1]) +
-                            (plane[2] * origin[2]);
+    const float origindot = glm::dot(glm::vec3(plane), origin);
     // linedot should be safe to divide with now
     hitTime = - (plane[3] + origindot) / linedot;
     if (hitTime < 0.0f)
         return -1.0f;
 
     // get the contact location
-    float point[3];
-    point[0] = (dir[0] * hitTime) + origin[0];
-    point[1] = (dir[1] * hitTime) + origin[1];
-    point[2] = (dir[2] * hitTime) + origin[2];
+    glm::vec4 point(dir * hitTime + origin, 1.0f);
 
     // now test against the edge planes
     for (int q = 0; q < vertexCount; q++)
     {
-        float d = (edgePlanes[q][0] * point[0]) +
-                  (edgePlanes[q][1] * point[1]) +
-                  (edgePlanes[q][2] * point[2]) + edgePlanes[q][3];
+        float d = glm::dot(edgePlanes[q], point);
         if (d > 0.001f)
             return -1.0f;
     }
@@ -353,7 +346,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
     if (!smoothBounce || !useNormals())
     {
         // just use the plain normal
-        memcpy (n, plane, sizeof(float[3]));
+        memcpy (n, glm::value_ptr(plane), sizeof(float[3]));
     }
     else
     {
@@ -365,11 +358,12 @@ void MeshFace::get3DNormal(const float* p, float* n) const
         for (i = 0; i < vertexCount; i++)
         {
             int next = (i + 1) % vertexCount;
-            float ea[3], eb[3], cross[3];
-            vec3sub(ea, p, vertices[i]);
-            vec3sub(eb, vertices[next], vertices[i]);
-            vec3cross(cross, ea, eb);
-            areas[i] = sqrtf(vec3dot(cross, cross));
+            glm::vec3 ea, eb, cross;
+            glm::vec3 verti(glm::make_vec3(vertices[i]));
+            ea = glm::make_vec3(p) - verti;
+            eb = glm::make_vec3(vertices[next]) - verti;
+            cross = glm::cross(ea, eb);
+            areas[i] = glm::length(cross);
         }
         float smallestArea = MAXFLOAT;
         float* twinAreas = new float[vertexCount];
@@ -387,7 +381,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
             if (twinAreas[i] < smallestArea)
                 smallestArea = twinAreas[i];
         }
-        float normal[3] = {0.0f, 0.0f, 0.0f};
+        glm::vec3 normal = {0.0f, 0.0f, 0.0f};
         for (i = 0; i < vertexCount; i++)
         {
             int next = (i + 1) % vertexCount;
@@ -396,10 +390,10 @@ void MeshFace::get3DNormal(const float* p, float* n) const
             normal[1] = normal[1] + (normals[next][1] * factor);
             normal[2] = normal[2] + (normals[next][2] * factor);
         }
-        float len = sqrtf(vec3dot(normal, normal));
+        float len = glm::length(normal);
         if (len < 1.0e-10)
         {
-            memcpy (n, plane, sizeof(float[3]));
+            memcpy (n, glm::value_ptr(plane), sizeof(float[3]));
             delete[] areas;
             delete[] twinAreas;
             return;
@@ -420,7 +414,7 @@ void MeshFace::get3DNormal(const float* p, float* n) const
 void MeshFace::getNormal(const float* UNUSED(p), float* n) const
 {
     if (n)
-        memcpy (n, plane, sizeof(float[3]));
+        memcpy (n, glm::value_ptr(plane), sizeof(float[3]));
     return;
 }
 
@@ -436,7 +430,7 @@ bool MeshFace::getHitNormal(const float* UNUSED(oldPos), float UNUSED(oldAngle),
                             float* normal) const
 {
     if (normal)
-        memcpy (normal, plane, sizeof(float[3]));
+        memcpy (normal, glm::value_ptr(plane), sizeof(float[3]));
     return true;
 }
 
@@ -477,7 +471,7 @@ bool MeshFace::inBox(const float* p, float _angle,
     pln[0] = (cos_val * plane[0]) - (sin_val * plane[1]);
     pln[1] = (cos_val * plane[1]) + (sin_val * plane[0]);
     pln[2] = plane[2];
-    pln[3] = plane[3] + vec3dot(plane, p);
+    pln[3] = plane[3] + glm::dot(glm::vec3(plane), glm::make_vec3(p));
 
     // testPolygonInAxisBox() expects us to have already done all of the
     // separation tests with respect to the box planes. we could not do
@@ -559,7 +553,7 @@ bool MeshFace::isCrossing(const float* UNUSED(p), float UNUSED(_angle),
                           float* _plane) const
 {
     if (_plane != NULL)
-        memcpy(_plane, plane, sizeof(float[4]));
+        memcpy(_plane, glm::value_ptr(plane), sizeof(float[4]));
     return true;
 }
 

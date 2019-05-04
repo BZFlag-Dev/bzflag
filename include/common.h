@@ -326,6 +326,10 @@ inline const comparable& min(const comparable& a, const comparable& b)
 #  define regex_t void
 #endif  /* HAVE_REGEX_H */
 
+// vectors implemented as arrays
+typedef float afvec2[2];
+typedef float afvec3[3];
+
 #endif /* BZF_COMMON_H */
 
 

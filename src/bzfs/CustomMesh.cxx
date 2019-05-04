@@ -100,7 +100,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     }
     else if (strcasecmp(cmd, "inside") == 0)
     {
-        cfvec3 inside;
+        glm::vec3 inside;
         if (!(input >> inside[0] >> inside[1] >> inside[2]))
             return false;
         checkTypes.push_back(MeshObstacle::CheckInside);
@@ -108,7 +108,7 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     }
     else if (strcasecmp(cmd, "outside") == 0)
     {
-        cfvec3 outside;
+        glm::vec3 outside;
         if (!(input >> outside[0] >> outside[1] >> outside[2]))
             return false;
         checkTypes.push_back(MeshObstacle::CheckOutside);
@@ -116,21 +116,21 @@ bool CustomMesh::read(const char *cmd, std::istream& input)
     }
     else if (strcasecmp(cmd, "vertex") == 0)
     {
-        cfvec3 vertex;
+        glm::vec3 vertex;
         if (!(input >> vertex[0] >> vertex[1] >> vertex[2]))
             return false;
         vertices.push_back(vertex);
     }
     else if (strcasecmp(cmd, "normal") == 0)
     {
-        cfvec3 normal;
+        glm::vec3 normal;
         if (!(input >> normal[0] >> normal[1] >> normal[2]))
             return false;
         normals.push_back(normal);
     }
     else if (strcasecmp(cmd, "texcoord") == 0)
     {
-        cfvec2 texcoord;
+        glm::vec2 texcoord;
         if (!(input >> texcoord[0] >> texcoord[1]))
             return false;
         texcoords.push_back(texcoord);
@@ -207,7 +207,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
     bool forcePassable = false;
     if (drawInfo)
     {
-        cfvec3 vert;
+        glm::vec3 vert;
         if (decorative)
         {
             vert[0] = vert[1] = vert[2] = (Obstacle::maxExtent * 2.0f);
@@ -219,7 +219,7 @@ void CustomMesh::writeToGroupDef(GroupDefinition *groupdef) const
         }
         else
             vert[0] = vert[1] = vert[2] = 0.0f;
-        const_cast<std::vector<cfvec3>*>(&vertices)->push_back(vert);
+        const_cast<std::vector<glm::vec3>*>(&vertices)->push_back(vert);
     }
 
     MeshObstacle* mesh =

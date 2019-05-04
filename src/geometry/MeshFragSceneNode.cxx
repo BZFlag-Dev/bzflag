@@ -328,7 +328,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
                 if (face->useNormals())
                     memcpy(&normals[aIndex * 3], face->getNormal(vIndex), sizeof(float[3]));
                 else
-                    memcpy(&normals[aIndex * 3], face->getPlane(), sizeof(float[3]));
+                    memcpy(&normals[aIndex * 3], glm::value_ptr(face->getPlane()), sizeof(float[3]));
 
                 // get the texcoords
                 if (face->useTexcoords())

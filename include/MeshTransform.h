@@ -13,10 +13,11 @@
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
 
-
+// System headers
 #include <string>
 #include <vector>
 #include <iostream>
+#include <glm/vec3.hpp>
 
 enum TransformType
 {
@@ -84,6 +85,7 @@ public:
         bool isInverted() const;
         bool isSkewed() const; // scaled or sheared
         void modifyVertex(float vertex[3]) const;
+        void modifyVertex(glm::vec3& vertex) const;
         void modifyNormal(float normal[3]) const;
         void modifyOldStyle(float pos[3], float size[3],
                             float& angle, bool& flipz) const;

@@ -16,6 +16,9 @@
 
 // System headers
 #include <math.h>
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "MeshObstacle.h"
@@ -130,7 +133,7 @@ static bool translucentMaterial(const BzMaterial* mat)
 
 static bool groundClippedFace(const MeshFace* face)
 {
-    const float* plane = face->getPlane();
+    const glm::vec4 plane = face->getPlane();
     if (plane[2] < -0.9f)
     {
         // plane is facing downwards
@@ -402,7 +405,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
         noShadow = bzmat->getNoShadow();
     }
     MeshPolySceneNode* node =
-        new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
+        new MeshPolySceneNode(glm::value_ptr(face->getPlane()), noRadar, noShadow,
                               vertices, normals, texcoords);
 
     return node;
@@ -499,36 +502,19 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 }
 
 
-bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
+bool MeshSceneNodeGenerator::makeTexcoords(const glm::vec4 &plane,
         const GLfloat3Array& vertices,
         GLfloat2Array& texcoords)
 {
-    float x[3], y[3];
+    glm::vec3 x;
+    glm::vec3 y;
+    glm::vec3 vert0(glm::make_vec3(vertices[0]));
 
-    vec3sub (x, vertices[1], vertices[0]);
-    vec3cross (y, plane, x);
+    x = glm::make_vec3(vertices[1]) - vert0;
+    y = glm::cross(glm::vec3(plane), x);
 
-    float len = vec3dot(x, x);
-    if (len > 0.0f)
-    {
-        len = 1.0f / sqrtf(len);
-        x[0] = x[0] * len;
-        x[1] = x[1] * len;
-        x[2] = x[2] * len;
-    }
-    else
-        return false;
-
-    len = vec3dot(y, y);
-    if (len > 0.0f)
-    {
-        len = 1.0f / sqrtf(len);
-        y[0] = y[0] * len;
-        y[1] = y[1] * len;
-        y[2] = y[2] * len;
-    }
-    else
-        return false;
+    x = glm::normalize(x);
+    y = glm::normalize(y);
 
     const float uvScale = 8.0f;
 
@@ -537,10 +523,10 @@ bool MeshSceneNodeGenerator::makeTexcoords(const float* plane,
     const int count = vertices.getSize();
     for (int i = 1; i < count; i++)
     {
-        float delta[3];
-        vec3sub (delta, vertices[i], vertices[0]);
-        texcoords[i][0] = vec3dot(delta, x) / uvScale;
-        texcoords[i][1] = vec3dot(delta, y) / uvScale;
+        glm::vec3 delta;
+        delta = glm::make_vec3(vertices[i]) - vert0;
+        texcoords[i][0] = glm::dot(delta, x) / uvScale;
+        texcoords[i][1] = glm::dot(delta, y) / uvScale;
     }
 
     return true;
