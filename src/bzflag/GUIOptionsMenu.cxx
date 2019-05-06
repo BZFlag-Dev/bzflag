@@ -535,13 +535,13 @@ void            GUIOptionsMenu::callback(HUDuiControl* w, const void* data)
 
     case 'R':
     {
-        sceneRenderer->setRadarSize(list->getIndex());
+        BZDB.setInt("radarsize", list->getIndex());
         break;
     }
 
     case 'a':
     {
-        sceneRenderer->setPanelHeight(list->getIndex());
+        BZDB.setInt("panelheight", list->getIndex());
         break;
     }
 
