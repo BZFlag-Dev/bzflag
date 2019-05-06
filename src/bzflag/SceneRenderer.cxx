@@ -950,6 +950,10 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
     // draw start of background (no depth testing)
     OpenGLGState::resetState();
+
+    const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+    glClipPlane(GL_CLIP_PLANE0, plane);
+
     if (background)
     {
         background->setBlank(blank);

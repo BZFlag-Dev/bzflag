@@ -1386,9 +1386,6 @@ void OpenGLGState::initGLState()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    // Ser groundPlane clipping
-    static const GLdouble groundPlane[] = { 0.0, 0.0, 1.0, 0.0 };
-    glClipPlane(GL_CLIP_PLANE0, groundPlane);
 }
 
 // utility to check if an OpenGL extension is supported on this system
