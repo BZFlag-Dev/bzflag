@@ -112,6 +112,10 @@ SceneRenderer::SceneRenderer() :
     // init the track mark manager
     TrackMarks::init();
 
+    // add callbacks for radar size and panel height
+    BZDB.addCallback("radarsize", bzdbCallback, NULL);
+    BZDB.addCallback("panelheight", bzdbCallback, NULL);
+
     return;
 }
 
@@ -314,6 +318,15 @@ void SceneRenderer::setDepthComplexity(bool on)
 void SceneRenderer::setRebuildTanks()
 {
     rebuildTanks = true;
+}
+
+
+void SceneRenderer::bzdbCallback(const std::string& name, void *)
+{
+    if(name == "radarsize")
+        RENDERER.setRadarSize(BZDB.evalInt("radarsize"));
+    else if(name == "panelheight")
+        RENDERER.setPanelHeight(BZDB.evalInt("panelheight"));
 }
 
 
