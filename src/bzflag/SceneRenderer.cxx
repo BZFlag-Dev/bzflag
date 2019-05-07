@@ -88,7 +88,7 @@ SceneRenderer::SceneRenderer() :
     useHiddenLineOn(false),
     panelOpacity(0.3f),
     radarOpacity(0.3f),
-    radarSize(4),
+    radarSize(8),
     panelHeight(4),
     maxMotionFactor(5),
     viewType(Normal),

@@ -42,7 +42,7 @@ DefaultDBItem defaultDBItems[] =
     { "panelopacity",     "0.3",          true,   StateDatabase::ReadWrite,   NULL },
     { "radaropacity",     "0.3",          true,   StateDatabase::ReadWrite,   NULL },
     { "panelheight",      "4",            true,   StateDatabase::ReadWrite,   NULL },
-    { "radarsize",        "6",            true,   StateDatabase::ReadWrite,   NULL },
+    { "radarsize",        "8",            true,   StateDatabase::ReadWrite,   NULL },
     { "mouseboxsize",     "5",            true,   StateDatabase::ReadWrite,   NULL },
     { "mouseClamp",       "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "cpanelfontsize",       "0",            true,   StateDatabase::ReadWrite,   NULL },
