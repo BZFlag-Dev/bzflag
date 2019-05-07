@@ -327,14 +327,12 @@ void            ControlPanel::render(SceneRenderer& _renderer)
     int i, j;
     const int x = window.getOriginX();
     const int y = window.getOriginY();
-    const int w = window.getWidth();
     const int tabStyle = BZDB.evalInt("showtabs");
     const bool showTabs = (tabStyle > 0);
     tabsOnRight = (tabStyle == 2);
 
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, (double)w, 0.0, window.getHeight(), -1.0, 1.0);
+    window.setProjectionPlay();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

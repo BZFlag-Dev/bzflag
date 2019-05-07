@@ -311,8 +311,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, window.getWidth(), 0.0, window.getHeight(), -1.0, 1.0);
+    window.setProjectionPlay();
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -430,22 +429,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // prepare projection matrix
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     const MainWindow& window = renderer.getWindow();
-    const int xSize = window.getWidth();
-    const int ySize = window.getHeight();
-    const double xCenter = double(x) + 0.5 * double(w);
-    const double yCenter = double(y) + 0.5 * double(h);
-    const double xUnit = 2.0 * radarRange / double(w);
-    const double yUnit = 2.0 * radarRange / double(h);
     // NOTE: the visual extents include passable objects
     double maxHeight = 0.0;
     const Extents* visExts = renderer.getVisualExtents();
     if (visExts)
         maxHeight = (double)visExts->maxs[2];
-    glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-            -yCenter * yUnit, (ySize - yCenter) * yUnit,
-            -(maxHeight + 10.0), (maxHeight + 10.0));
+    window.setProjectionRadar(x, y, w, h, radarRange, maxHeight + 10.0);
 
     // prepare modelview matrix
     glMatrixMode(GL_MODELVIEW);

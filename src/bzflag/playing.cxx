@@ -5542,8 +5542,7 @@ static void     renderDialog()
         const int oy = mainWindow->getOriginY();
         glScissor(ox, oy, width, height);
         glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+        mainWindow->setProjectionPlay();
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
         glLoadIdentity();
@@ -5588,8 +5587,7 @@ static void renderRoamMouse()
     glScissor(ox, oy, sx, sy);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, sx, 0.0, sy, -1.0, 1.0);
+    mainWindow->setProjectionPlay();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -6428,8 +6426,7 @@ void drawFrame(const float dt)
 
             glScissor(ox, oy, width, height);
             glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+            mainWindow->setProjectionPlay();
             glMatrixMode(GL_MODELVIEW);
             glPushMatrix();
             glLoadIdentity();
