@@ -1,9 +1,9 @@
-PORTING guide for bzflag
+# PORTING guide for BZFlag
 
 Follow these steps to port bzflag to a new platform.  Say the
-new platform is named `foo'.
+new platform is named '`foo`'.
 
-  * in src/platform/:
+  * in `src/platform/`:
     * this step may be skipped if the platform you're porting to
       supports SDL and you do not want to have native graphics/audio,
       as there are preexisiting SDL* platform files.
@@ -16,22 +16,22 @@ new platform is named `foo'.
       * FooVisual
       * FooWindow
     * add the platform dependent files to Makefile.am with appropriate
-      'if' guards.
+      `if` guards.
 
   * try building
     * modify configure.in for your platform - particularly
-      to set the proper CFLAGS/CXXFLAGS and to ensure that needed
+      to set the proper `CFLAGS/CXXFLAGS` and to ensure that needed
       libraries (e.g. OpenGL, curses) can be found.
     * fix errors.  errors are typically caused by missing include
       files and a missing/different BSD sockets API.  make as few
       changes as possible to avoid breaking other platforms.
-      avoid #if/#endif when you can.
+      avoid `#if/#endif` when you can.
     * fix warnings.  (most) warnings are there for a reason.
       listen to what they're saying and fix the code.  bzflag
       should compile cleanly (zero warnings).
 
   * in package:
-    * create a makefile to build a package for your platform.
+    * create a `makefile` to build a package for your platform.
       a package includes all the files necessary for installing
       bzflag on the platform.  some platforms provide a standard
       software management tool (e.g. RPM on RedHat Linux and
@@ -44,9 +44,9 @@ Most of the bzflag code is portable C++, but there are two API's
 that are not encapsulated:  OpenGL and BSD sockets.  The OpenGL
 API should not present a problem, unless you intend to port to
 some other graphics API for some reason, since it's identical
-on all platforms.  GL/gl.h provides a #define to identify the
+on all platforms.  `GL/gl.h` provides a `#define` to identify the
 version of OpenGL.  All OpenGL code that's not version 1.0
-compatible should be #ifdef/#endif guarded and, if possible,
+compatible should be `#ifdef/#endif` guarded and, if possible,
 also implemented with version 1.0 code for platforms that don't
 support the later versions.
 
@@ -54,7 +54,7 @@ The BSD socket API may cause some trouble if you're not porting
 to some flavor of UNIX.  Encapsulating network code is on the
 to do list.
 
-Some platform differences are handled using #ifdef/#endif
+Some platform differences are handled using `#ifdef/#endif`
 directives.  These are to be avoided when possible as they make
 the code harder to read and can lead to platform differences
 when code is updated for some, but not all, platforms.  Please
@@ -62,6 +62,6 @@ make use of autoconf's HAVE_* defines rather than
 platform-specific predefines...code for features, not for
 platforms.
 
-Inherently non-portable code is under src/platform.  It
+Inherently non-portable code is under `src/platform`.  It
 encapsulates windowing and audio subsystems.  (It also includes
 code to read image and audio files, for historical reasons.)

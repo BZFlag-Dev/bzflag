@@ -1,6 +1,7 @@
-			    BZFlag 2.5.x
-			 http://BZFlag.org/
-		Copyright (c) 1993-2018 Tim Riker
+# BZFlag 2.5.x
+
+https://BZFlag.org/
+Copyright (c) 1993-2018 Tim Riker
 
 BZFlag is an Open Source OpenGL multiplayer multiplatform Battle Zone
 capture the Flag game.  At its heart, the game is a 3D first person
@@ -17,30 +18,27 @@ getting involved in BZFlag development, a manifest of the source code
 layout, basic usage expectations, contact information, and more.
 
 
-Table of Contents
-=================
-    Introduction
-    Table of Contents
-    Obtaining BZFlag
-    Compiling and Installation
-	Short Version
-	Long Version
-    Communication
-	Internet Relay Chat
-	Forums
-    Bug Reports and Support
-    Providing Contributions
-    Source Tree Organization
-    Public Internet Servers and the "list server"
-    Notes on "CHEAT" servers and network abuse
-    Project History and Contributions
-    Contact
+# Table of Contents
+
+* [Table of Contents](#table-of-contents)
+* [Obtaining BZFlag](#obtaining-bzflag)
+* [Compiling and Installation](#compiling-and-installation)
+  * [The Longer Version](#the-longer-version)
+* [Communication](#communication)
+  * [Internet Relay Chat](#internet-relay-chat)
+  * [Forums](#forums)
+* [Bug Reports and Support](#bug-reports-and-support)
+* [Providing Contributions](#providing-contributions)
+* [Source Tree Organization](#source-tree-organization)
+* [Public Internet Servers and the list server](#public-internet-servers-and-the-list-server)
+* [Notes on CHEAT servers and network abuse](#notes-on-cheat-servers-and-network-abuse)
+* [Project History and Contributions](#project-history-and-contributions)
+* [Contact](#contact)
 
 
-Obtaining BZFlag
-================
+## Obtaining BZFlag
 
-Main BZFlag Website:  http://BZFlag.org
+Main BZFlag Website:  https://BZFlag.org
 BZFlag Github Site:  https://github.com/BZFlag-Dev/bzflag
 
 The main BZFlag website provides access to most all of the resources
@@ -54,49 +52,48 @@ site for the download links.
 BZFlag is also available directly from GitHub.  To obtain BZFlag from
 git, a bit more familiarity with software development is expected.
 If you're familiar enough, anonymous GIT access is provided from the
-repository:
-
-  https://github.com/BZFlag-Dev/bzflag.git
+repository: `https://github.com/BZFlag-Dev/bzflag.git`
 
 
-Compiling and Installation
-==========================
+## Compiling and Installation
 
 To compile a playable BZFlag, the following steps should get you up
 and running quickly if everything external to BZFlag is properly
 installed:
 
-  ./autogen.sh
-  ./configure
-  make
-  ./src/bzflag/bzflag
+```sh
+./autogen.sh
+./configure
+make
+./src/bzflag/bzflag
+```
 
 If configure detected everything it needed to build the BZFlag client,
-after make the client will be sitting in src/bzflag as 'bzflag'.  The
-game can be run from there, though you will probably want to "sudo
-make install" or otherwise become a privileged user and install the
-game properly for your system.
+after make the client will be sitting in `src/bzflag` as 'bzflag'.  The
+game can be run from there, though you will probably want to
+`sudo make install` or otherwise become a privileged user and
+install the game properly for your system.
 
-If you're building on a platform that has a README.* file, you should
+If you're building on a platform that has a README.*.md file, you should
 consult that file as they usually contain additional instructions or
 details specific for building on that platform.  There are often hints
 for common problems specific to those platforms as well.
 
-The Longer Version:
+### The Longer Version
 
 To build sources directly from a git clone you need to create a
 configure script. You can skip this step if you grab a distribution of
-BZFlag that already has a ./configure script in it, such as from a
+BZFlag that already has a `./configure` script in it, such as from a
 source distribution tarball.  To generate the configure script, you
 need to run the provided autogen.sh script:
 
-  ./autogen.sh
+`./autogen.sh`
 
 The script will report whether sufficient versions of the GNU Build
-System tools (i.e. autoconf, automake, and libtool) that were detected
+System tools (i.e. `autoconf`, `automake`, and `libtool`) that were detected
 and if successful, a configure script will be generated.  If the
 script fails, submit a report to the developers containing the output
-of "sh autogen.sh -v". This will run autogen.sh in verbose mode.  One
+of `sh autogen.sh -v`. This will run autogen.sh in verbose mode.  One
 of the most common failures is having insufficient versions or
 mismatched combinations of the GNU Build System tools, so make sure
 your tools are recent.
@@ -104,13 +101,13 @@ your tools are recent.
 If the previous step was successful you now have a script for
 configuring BZFlag.  This command:
 
-  ./configure --help
+`./configure --help0`
 
 will list the variety of configuration options.  The script adapts
 well to various system configurations, so it may be enough to simply
 run it as:
 
-  ./configure
+`./configure`
 
 You may want to create a 'work' directory and configure from there to
 have all the build products and binary executables get placed in a
@@ -122,54 +119,54 @@ packages were found that it needs in order to build the client and the
 server.  The client is reliant upon the following external
 dependencies that should be installed before running configure:
 
-  OpenGL 1.0+
-  libSDL 1.2+
+* OpenGL 1.0+
+* libSDL 1.2+
 
 If you're on an operating system that uses a packaging system
 (e.g. apt, portage, ports, etc), be sure to install the development
-kit versions of each of those (e.g. xlibmesa-gl-dev package) so that
+kit versions of each of those (e.g. `xlibmesa-gl-dev` package) so that
 headers are made available.  You may also want to manually install
 other dependencies that BZFlag automatically provides if you do not
 have them pre-installed:
 
-  c-ares
-  libCURL
-  libregex (usually provided as part of libc)
-  zlib
+* c-ares
+* libCURL
+* libregex (usually provided as part of libc)
+* zlib
 
-The README.Linux file includes a detailed list of of the packages
+The README.Linux.md file includes a detailed list of of the packages
 needed to compile and run BZFlag on some popular Linux distributions.
 
 The final summary at the end of running configure will report whether
 the client will be built or not.  Once configure has been run, you may
-compile by simply running 'make'.  If you have GNU Make and are on a
-multiprocessor system, you can build in parallel with the -j option:
+compile by simply running `make`.  If you have GNU Make and are on a
+multiprocessor system, you can build in parallel with the `-j` option:
 
-  make -j4
+`make -j4`
 
-If compilation was successful, the client will be in src/bzflag and
-the server will be in src/bzfs as 'bzflag' and 'bzfs' respectively.
+If compilation was successful, the client will be in `src/bzflag` and
+the server will be in `src/bzfs` as 'bzflag' and 'bzfs' respectively.
 You can run the client or the server directly from those locations
 with or without installing:
 
-  src/bzflag/bzflag
+`src/bzflag/bzflag`
 
 BZFlag looks for data files in a path defined during compile, in
-./data/ , or in the previously specified data path only.  As part of
+`./data/` , or in the previously specified data path only.  As part of
 the tarball/git clone, the base data library is located in
-<installed-locale>/bzflag/data.  This means that to test in a working
+`<installed-locale>/bzflag/data`.  This means that to test in a working
 directory you need to tell bzflag where to find these files if there
 is not a 'data' directory in your current directory.  This can be done
 with a symbolic link:
 
-  ln -s ./path/to/bzflag/data
+`ln -s ./path/to/bzflag/data`
 
-After testing you can install BZFlag by running 'make install' with
-sufficient system installation privileges.  Use 'sudo', 'su', or
+After testing you can install BZFlag by running `make install` with
+sufficient system installation privileges.  Use `sudo`, `su`, or
 similar methods to elevate your privileges when installing BZFlag
 system-wide:
 
-  sudo make install
+`sudo make install`
 
 You should now have BZFlag in the system directory ready to run.
 
@@ -177,9 +174,9 @@ If you do not have admin privileges on your platform, you can install
 files in a directory that you own; for this to work, you have to
 append to the configure command the prefix option:
 
-  ./configure --prefix=YourHomeDirectoryHere
+`./configure --prefix=YourHomeDirectoryHere`
 
-You will then be able to perform a "make install" without needing to
+You will then be able to perform a `make install` without needing to
 elevate your privileges, and all bzflag executable files will be
 installed in the subdir bin of the specified path.
 
@@ -190,13 +187,13 @@ appropriate to your system for more information.
 
 You can also build an installable package using:
 
-  make package
+`make package`
 
-The package will be placed in ./dist; the exact form of the package
+The package will be placed in `./dist`; the exact form of the package
 depends on the platform.
 
-There are three cleanup targets: clean, distclean, and
-maintainer-clean.
+There are three cleanup targets: `clean`, `distclean`, and
+`maintainer-clean`.
 
 `make clean' removes intermediate files but leaves bzflag and other
 programs and any man pages.
@@ -211,30 +208,29 @@ the Git repository.
 
 To build BZFlag for an unsupported platform, see PORTING.
 
-The ./configure script has a number of build options that you may find
+The `./configure` script has a number of build options that you may find
 interesting.
 
 
-Communication
-=============
+## Communication
 
 The BZFlag project has several resources set up for communicating both
 with other developers and with the community.  There is an IRC
 channel and forums.
 
-Internet Relay Chat
--------------------
+### Internet Relay Chat
+
 Most of the BZFlag development activity and discussions occur over
-IRC.  Join the #bzflag IRC channel on the Freenode network
-(irc.freenode.net, port 6667) to get involved.
+IRC.  Join the `#bzflag` IRC channel on the Freenode network
+(`irc.freenode.net`, port 6667) to get involved.
 
 See https://webchat.freenode.net for a web based interface for
 first-time users.  Individuals that intend to stay in the channel are
 expected to get a non-web-based IRC client.  See http://irchelp.org or
 search the web for IRC clients for your operating system.
 
-Forums
----------------
+### Forums
+
 There are extensive and active forums used by players, server
 operators, administrators, and others available here:
 
@@ -245,8 +241,7 @@ for use inside of BZFlag.  Some servers require registration in order to
 play.  See the Getting Started page on our site for more about registration.
 
 
-Bug Reports and Support
-=======================
+## Bug Reports and Support
 
 For reporting bugs and unexpected behavior, please go to BZFlag bug
 tracking system at:
@@ -254,13 +249,12 @@ tracking system at:
 https://github.com/BZFlag-Dev/bzflag/issues
 
 If you require assistance with some issue, please visit the BZFlag
-IRC channel at #bzflag at irc.freenode.net
+IRC channel at `#bzflag` at `irc.freenode.net`.
 
 Alternatively, discussion forums are also available for resolving issues.
 
 
-Providing Contributions
-=======================
+## Providing Contributions
 
 Pull Requests should be entered submitted via the GitHub pull system:
 
@@ -272,18 +266,18 @@ the IRC channel is recommended for any changes which will affect
 gameplay.
 
 
-Source Tree Organization
-========================
+## Source Tree Organization
 
 After unpacking a source distribution, you should have at least the
 following files in the new 'bzflag' directory:
 
-  README	- this file
+```
+  README.md	- this file
   README.*	- platform specific details
   AUTHORS	- project contributors
   COPYING	- the license for BZFlag
   ChangeLog	- source code changes since previous release
-  DEVINFO       - information for developers
+  DEVINFO   - information for developers
   NEWS		- history of visible changes for each release
   PORTING	- a guide for porting BZFlag
   autogen.sh	- build system preparation script
@@ -297,34 +291,34 @@ following files in the new 'bzflag' directory:
   plugins/	- bzfs plugins
   src/		- bzflag, bzfs, etc. source code
     3D/		  - 3D code including texture manager
-    bzadmin/      - bzadmin app source code (text admin/chat client)
+    bzadmin/  - bzadmin app source code (text admin/chat client)
     bzflag/	  - bzflag app source code (game client)
     bzfs/	  - bzfs app source code (game server)
     common/	  - general purpose classes
-    date/         - unified version and build date stamping for apps
+    date/     - unified version and build date stamping for apps
     game/	  - game library used by both the server and client(s)
-    geometry/	  - geometry rendering classes
+    geometry/ - geometry rendering classes
     mediafile/	  - classes for reading resources
     net/	  - networking classes and functions
-    obstacle/	  - collision detection stuff
+    obstacle/ - collision detection stuff
     ogl/	  - OpenGL utility classes
-    platform/	  - platform dependent code
+    platform/ - platform dependent code
     scene/	  - high level rendering algorithms
-  tools/	- various helper utilities
-  Xcode	        - Mac OS X Xcode project and associated files
+  tools/	  - various helper utilities
+  Xcode	      - Mac OS X Xcode project and associated files
+```
 
-Note that include/ does not have all the include files.  If a header
+Note that `include/` does not have all the include files.  If a header
 is used entirely within a library (i.e. it doesn't directly provide
 functionality outside the library) then the header is found in the
-library's directory under src/.  An include file goes in include/ only
+library's directory under `src/`.  An include file goes in `include/` only
 if it's required by another library or libraries or executables.
 While this complicates locating a header file (it can be in one of two
 places instead of just one place), you can instantly tell if a header
 file is (can be) used by clients of the library.
 
 
-Public Internet Servers and the "list server"
-=============================================
+## Public Internet Servers and the list server
 
 The bzflag project offers a public server listing service that allows
 players to find servers to play on. This service is run for the
@@ -336,8 +330,7 @@ staff. Authentication keys are automatically generated at
 https://my.bzflag.org/listkeys/
 
 
-Notes on "CHEAT" servers and network abuse
-==========================================
+## Notes on CHEAT servers and network abuse
 
 While the license for BZFlag certainly allows users to run any server
 modification that they wish or to modify the code in any way, we ask
@@ -354,7 +347,7 @@ over unmodified clients and are generally discouraged for widespread
 use.  As such, we ask that anyone wishing to host or otherwise
 participate in a game that involves a modified client or server to
 register under a different network protocol than the current public
-release by modifying BZ_PROTO_VERSION in the src/date/buildDate.cxx
+release by modifying `BZ_PROTO_VERSION` in the `src/date/buildDate.cxx`
 file.  This will let modified games be played and prevent modified
 clients from being used on public unmodified servers.
 
@@ -382,8 +375,7 @@ that all players recognize and respect the time, effort, and resources
 involved and that we're all generally here to have a good time.
 
 
-Project History and Contributions
-=================================
+## Project History and Contributions
 
 BZFlag was primarily originally authored by Chris Schoeneman
 <crs23@bigfoot.com> in the early 1990's.  After several years of
@@ -396,10 +388,9 @@ in from all over the world.  See the AUTHORS file for more details on
 contributions to the project.
 
 
-Contact
-=======
+## Contact
 
-Any of the core developers listed in the AUTHORS file are generally
+Any of the core developers listed in the [AUTHORS](authors.md) file are generally
 receptive to being contacted for most matters relating to the game.
 Internet Relay Chat (IRC) or e-mail is generally the expected method
 of interaction with IRC being generally preferred.  The project

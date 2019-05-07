@@ -1,48 +1,47 @@
-
-
-Information for the BZFlag Developer
-====================================
+# Information for the BZFlag Developer
 
 BZFlag source code lives in the following directories:
 
-applications
-------------
-src/bzadmin	- the BZFlag admin tool and chat client
-src/bzflag	- the BZFlag client
-src/bzfs	- the BZFlag server
-tools/		- various helper tools
+#### applications
 
-game dependent libraries
-------------------------
-plugins/	- optional server plugins
-src/game	- core game logic
+`src/bzadmin`	- the BZFlag admin tool and chat client
+`src/bzflag`	- the BZFlag client
+`src/bzfs`		- the BZFlag server
+`tools/`		- various helper tools
 
-game independent, platform independent libraries
-------------------------------------------------
-src/3D		- 3D geometry  (actually; not much 3D here, fonts and textures)
-src/common	- general utility
-src/geometry	- geometric mathematics
-src/mediafile	- sound and image file support
-src/obstacle	- collision detection
-src/ogl		- wrapper classes for OpenGL
-src/scene	- scene graph
+#### game dependent libraries
 
-game independent, platform dependent libraries
-----------------------------------------------
-src/date	- build dates and versioning
-src/net		- networking
-src/platform	- general platform dependent code
+`plugins/`		- optional server plugins
+`src/game`		- core game logic
 
-"other stuff"
--------------
-Xcode/		- project definitions for Apple XCode
-MSVC/		- project definitions for Microsoft Visual C
-data/		- images, sounds, fonts, translations
-include/	- public headers
-m4/		- configuration macros
-man/		- documentation in manual page format
-misc/		- kitchen sink of anything
-package/	- packaging aids for specific operating systems
+#### game independent, platform independent libraries
+
+`src/3D`		- 3D geometry  (actually; not much 3D here, fonts and textures)
+`src/common`	- general utility
+`src/geometry`	- geometric mathematics
+`src/mediafile`	- sound and image file support
+`src/obstacle`	- collision detection
+`src/ogl`		- wrapper classes for OpenGL
+`src/scene`		- scene graph
+
+#### game independent, platform dependent libraries
+
+`src/date`		- build dates and versioning
+`src/net`		- networking
+`src/platform`	- general platform dependent code
+
+#### "other stuff"
+
+`Xcode/`		- project definitions for Apple XCode
+`MSVC/`			- project definitions for Microsoft Visual C
+`data/`			- images, sounds, fonts, translations
+`include/`		- public headers
+`m4/`			- configuration macros
+`man/`			- documentation in manual page format
+`misc/`			- kitchen sink of anything
+`package/`		- packaging aids for specific operating systems
+
+----------
 
 Note that only a few directories contain code directly related to the
 game BZFlag.  In particular: bzflag, bzadmin, bzfs, plugins, and game.
@@ -53,16 +52,14 @@ above directories (game if it can potentially be used by more than one
 app, otherwise into the appropriate app directory).  If not then put
 it in one of the other directories or add a new directory.
 
-
-Coding conventions
-==================
+## Coding conventions
 
 If you plan on contributing any source code to BZFlag, we would like
 you to follow certain conventions.  Contributions that don't conform are
 likely to be ridiculed and rejected until they do.
 
-Code Organization
------------------
+### Code Organization
+
 Follow the above organization when introducing new files.  Any code
 that would potentially be useful in another game goes outside of the
 app directories and outside the game directory.  Platform dependent
@@ -77,12 +74,12 @@ directory off the top-level.  Header files for classes introduced in
 an application directory should never go into a #include outside of
 that application directory.
 
-C files use the .c extension.  C++ files use the .cxx extension for
-everything except plugins which use the .cpp extension.  Header files
-for both C and C++ use the .h extension.
+C files use the `.c` extension.  C++ files use the `.cxx` extension for
+everything except plugins which use the `.cpp` extension.  Header files
+for both C and C++ use the `.h` extension.
 
-Headers
--------
+### Headers
+
 Don't put interface headers into the common.h header.  Class interface
 headers should include just what is necessary to make the interface
 work.  The source implementation file should include it's interface
@@ -111,84 +108,89 @@ Avoid "extern" in C files.  This prevents the compiler from type
 checking in most cases.  If you need access to something, put it in a
 header.  That's what headers are for.
 
-C++ features
-------------
+### C++ features
+
 Earlier versions of BZFlag avoided certain features of C++ that have
 matured enough to be widely and well supported.  These features are
 now permitted and encouraged including:
 
-  bool			-- the boolean type and True and False are gone
-  standard C++ library	-- use where appropriate (AList is gone)
-  templates		-- use sparingly where appropriate
+  bool				- the boolean type and True and False are gone
+  standard C++ library	- use where appropriate (AList is gone)
+  templates			- use sparingly where appropriate
 
 These should still be avoided:
 
-  exceptions		-- still poorly supported on old lame compilers
-  run-time typing	-- if you find yourself needing RTTI, its often a
-			   sign of bad design.  Try to find another way to
-			   implement your idea.
+  exceptions		- still poorly supported on old lame compilers
+  run-time typing	- if you find yourself needing RTTI, its often a
+									sign of bad design.  Try to find another way to
+									implement your idea.
 
 Multiple inheritance is strongly discouraged unless in the Java style
 of single implementation inheritance and multiple interface
 inheritance.  Multiple inheritance otherwise can quickly lead to very
 hard to understand code.
 
-To prevent ambiguity, do not use the C++ "using" keyword just to avoid
+To prevent ambiguity, do not use the C++ `using` keyword just to avoid
 typing explicit references to the "std" namespace.  Other namespaces,
 especially those defined in BZFlag code, may be introduced with
-"using" when it improves code readability.
+`using` when it improves code readability.
 
 Only use standard C++ language features, at no time should any
 compiler-specific extensions be used (GNU or VisualC++ extensions).
 If an extension can not be avoided then it must be able to be disabled
-or replaced using a #define in config.h.  BZFlag is a cross-platform
+or replaced using a `#define` in `config.h`.  BZFlag is a cross-platform
 application so it is important to remember that not all builds will
 use your specific compiler. This also includes not using features
 in C99 and C1x as the windows compiler only supports C++11 and
 there are some features in the later C versions that were not adopted
-by the C++ standard, namely the 'not' and 'or' keywords instead of ! and ||.
+by the C++ standard, namely the `not` and `or` keywords instead of `!` and `||`.
 Also MSVC seems to be a bit picky about what bits of older standards it
 supports. When the windows compiler supports this, we should stick with
-a consistent method and not mix AND with &&. Use the same type of operators
+a consistent method and not mix `AND` with `&&`. Use the same type of operators
 that are in the existing code.
 
-Formatting
-----------
+### Formatting
+
 Everybody has their own style and has things they don't like about any
 other style.  Well, we can't have a zillion styles in the code, so
 follow the BZFlag style if you want your contribution included. 
 BZFlag is formated using the Allman Style, and this is enforced
 with the artistic styler, astyle, using these command line options:
 
+```
 astyle --style=allman -nxjQ --convert-tabs --max-code-length=120 \
   --recursive './*.cxx' './*.cpp' './*.h'
+```
 
 The source code serves for examples of the following rules.
 
-  1)  Indents are 4 characters.  Tabs are 4 characters.  There are vi
-      and emacs settings in each file to adopt, enforce, remind, and
-      encourage this convention.  Suggestions are welcome here for
-      setting up other environments.  Here are the lines that should
-      be included at the end of source files:
+1. Indents are 4 characters.  Tabs are 4 characters.  There are vi
+   and emacs settings in each file to adopt, enforce, remind, and
+   this convention.  Suggestions are welcome here for
+   up other environments.  Here are the lines that should
+   included at the end of source files:
 
-	// Local Variables: ***
-	// mode: C++ ***
-	// tab-width: 4 ***
-	// c-basic-offset: 4 ***
-	// indent-tabs-mode: nil ***
-	// End: ***
-	// ex: shiftwidth=4 tabstop=4
+   ```
+   // Local Variables: ***
+   // mode: C++ ***
+   // tab-width: 4 ***
+   // c-basic-offset: 4 ***
+   // indent-tabs-mode: nil ***
+   // End: ***
+   // ex: shiftwidth=4 tabstop=4
+   
+     In emacs the the indent-region command (bound to C-M-\ by
+     default) does a good job of making the needed changes to conform
+     to this convention.  Installing exTabSettings in MSVC will make
+     it conform.
+   ```
 
-      In emacs the the indent-region command (bound to C-M-\ by
-      default) does a good job of making the needed changes to conform
-      to this convention.  Installing exTabSettings in MSVC will make
-      it conform.
+2. The opening brace of all blocks goes on the next line following the
+   statement introducing it.  The closing brace is indented
+   like the statement except for functions where it aligns with the
+   open brace.  For example:
 
-  2)  The opening brace of all blocks goes on the next line following the
-      statement introducing it.  The closing brace is indented
-      like the statement except for functions where it aligns with the
-      open brace.  For example:
-
+   ```
 	void foo()
 	{
 	  for (;;) 
@@ -198,62 +200,68 @@ The source code serves for examples of the following rules.
 	    }
 	  }
 	}
+   ```
 
-  3)  An else clause goes on next line just like the opening brace:
+3. An else clause goes on next line just like the opening brace:
 
+   ```
 	if (expr)
 	{
 	} 
 	else 
 	{
 	}
+   ```
 
-  4)  If *either* the if block or else block requires brackets then
-      they both get brackets.  if neither requires brackets then use
-      brackets on both or neither at your discretion.  In case both
-      styles are allowed, don't change the existing code just because
-      it is not coded like you prefer.
+4. If *either* the if block or else block requires brackets then
+   they both get brackets.  if neither requires brackets then use
+   brackets on both or neither at your discretion.  In case both
+   styles are allowed, don't change the existing code just because
+   it is not coded like you prefer.
 
-  5)  When using `delete' or `delete[]' don't bother to test the
-      pointer if it's NULL first.  use new and delete rather than
-      malloc and free.
+5. When using `delete' or `delete[]' don't bother to test the
+   pointer if it's NULL first.  use new and delete rather than
+   malloc and free.
 
-  6)  Data members should be usually private unless making plain old
-      data.  separate methods from data in class definitions with
-      (possibly redundant) access specifiers.  public c'tors/d'tors
-      should be first, followed by public member functions, protected
-      member functions, private member functions, and data members.
+6. Data members should be usually private unless making plain old
+   data.  separate methods from data in class definitions with
+   (possibly redundant) access specifiers.  public c'tors/d'tors
+   should be first, followed by public member functions, protected
+   member functions, private member functions, and data members.
 
-  7)  Macro names are all capitals, class names have the first letter
-      of each word capitalized, all other names have the first letter
-      of each word except the first capitalized.  Only macros may use
-      underscores, except for in the names of method parameters where
-      a leading underscore is allowed to make it different from a
-      member variable.
+7. Macro names are all capitals, class names have the first letter
+   of each word capitalized, all other names have the first letter
+   of each word except the first capitalized.  Only macros may use
+   underscores, except for in the names of method parameters where
+   a leading underscore is allowed to make it different from a
+   member variable.
 
-	#define FOO bar
-	class MyClass 
-	{
-	public:
-	    void addStuff(int addMe, int _y) { y = addMe + _y; }
+   ```
+   #define FOO bar
+   class MyClass 
+   {
+   public:
+       void addStuff(int addMe, int _y) { y = addMe + _y; }
+   
+   private:
+       int y;
+   };
+   ```
 
-	private:
-	    int y;
-	};
-
-  8)  Put spaces after statements followed by expressions and spaces
-      around operators.  For example:
-	if (a == b)
+8. Put spaces after statements followed by expressions and spaces
+   around operators.  For example:
+   
+   `if (a == b)`
       not
-	if(a==b)
+   `if(a==b)`
 
-  9)  Do not leave old commented code hanging around and do not submit
-      patches with "// Added by foo on xx" comments.  This is what
-      version control software is for.
+9. Do not leave old commented code hanging around and do not submit
+   patches with "// Added by foo on xx" comments.  This is what
+   version control software is for.
 
- 10)  Do not code very long lines.  Try to stay within 120 columns if
-      possible, but don't go over 200 if you should raise that limit
-      for some reason.
+10. Do not code very long lines.  Try to stay within 120 columns if
+    possible, but don't go over 200 if you should raise that limit
+    for some reason.
 
 Violations of these rules in the existing code are not excuses to
 follow suit.  Non-conforming code may be fixed.  Patches to
@@ -261,8 +269,7 @@ non-conforming code should follow the non-conforming code's style if
 following the rules would cause an ugly mess.
 
 
-Performance
------------
+### Performance
 
 If the code you are editing is in a performance-critical section of
 BZFlag (that is, if it is called multiple times per frame on the
@@ -271,8 +278,7 @@ proposed changes.  The new code does not necessarily need to be
 faster, but a quantitative analysis is required.
 
 
-Committing Changes
-==================
+## Committing Changes
 
 Make atomic changes in a way that a system will be working, or at least
 will compile successfully, before and after committing a set of changes.
@@ -283,8 +289,7 @@ be broken up into smaller coherent chunks.  This way if a bug or other
 issue with a particular commit is later encountered, the change can be
 more easily isolated and undone or fixed.
 
-Submiting changes
---------------
+### Submiting changes
 
 If you do not have source code commit access and would like to propose
 a change for inclusion, you should create a pull requests. Requests
@@ -299,8 +304,7 @@ said, creating useful changes that have been discussed with the
 existing developers is one of the more immediate means to become a
 developer for BZFlag yourself.
 
-Licensing and Developer Agreement
----------
+### Licensing and Developer Agreement
 
 By committing to a source code repository or submitting a patch/pull request, you
 the developer are assigning copyright of the submission to the project maintainer (Tim Riker),
@@ -321,39 +325,38 @@ existing works in the project are subject to the current project licenses
 Authors that submit works must have the legal right to agree to these terms,
 either as original author or authorized licensee of derived works.
 
-Testing
-=======
+## Testing
 
 If you have rendering problems, you might want to try setting:
 
-LIBGL_ALWAYS_INDIRECT=1
+`LIBGL_ALWAYS_INDIRECT=1`
 
 On many systems this will force software rendering.  It will greatly
 reduce the performance, but may assist in solving rendering issues.
 
 A debug build may be specified via:
 
-./configure --enable-debug
+`./configure --enable-debug`
 
 A profile build is specified via:
 
-./configure --enable-profile
+`./configure --enable-profile`
 
 
-Sounds
-======
+## Sounds
+
 Sounds are stored as uncompressed 22.050KHz WAV files.  We will likely
 move to OGG someday.
 
 
-Images
-======
+## Images
+
 Images are stored as portable network graphics (.png).  Compression is
 okay, but no additional options such as interlacing.
 
 
-BZDB
-====
+## BZDB
+
 BZDB is the generic name:value pair database within bzflag and
 bzfs.  It is useful for data that can be serialized to a string that
 needs to be accessible to many areas of the code.  It also provides
@@ -374,11 +377,11 @@ server), use BZDB.  If you wanted an object broker, use a freakin'
 global.
 
 
-Version numbers
-===============
-The BZFlag versioning info is defined in:   include/version.h
+## Version numbers
 
-There are a number of #defines in that file that define the Major,
+The BZFlag versioning info is defined in `include/version.h`.
+
+There are a number of `#defines` in that file that define the Major,
 Minor, and Revision versions, as well as the build type, build date,
 build user, and network protocol version.
 
@@ -414,7 +417,7 @@ the format:
 
 BuildDate represents the date of the build in the format YYYYMMDD.
 This string is generated during runtime by the compiler's preprocessor
-__DATE__ macro.
+`__DATE__` macro.
 
 BuildType is a string that represents the intended use of the build.
 For development releases, the build type is normally "DEVEL".  For
@@ -430,8 +433,8 @@ generated.
 If a build includes SDL or SDL2, the build string ends in "-SDL" or
 "-SDL2", respectively.
 
-Making a Release
-================
+## Making a Release
+
 In order to make a release, there are handful of steps that need to be
 taken.  If any step fails to be completed successfully, the release
 cannot proceed.  A checklist of items to be completed follows:
@@ -444,22 +447,22 @@ cannot proceed.  A checklist of items to be completed follows:
 - Man files and bzfs.conf files are updated with latest changes.
 
 - Version numbers are updated to the next expected release number.
-  This minimally includes updating README, ChangeLog, configure.ac,
-  buildDate.cxx, Version.rc, premake5.lua, and the title.png image.
-  Version numbers in all other platform-specific README.* files should also
+  This minimally includes updating `README.md`, `ChangeLog.md`, `configure.ac`,
+  `buildDate.cxx`, `Version.rc`, `premake5.lua`, and the `title.png` image.
+  Version numbers in all other platform-specific `README.*.md` files should also
   be verified.
 
-- Edit updateConfigFile in clientConfig.cxx to update any necessary
-  configuration settings, and remove the 'break;' from the latest switch
+- Edit `updateConfigFile` in `clientConfig.cxx` to update any necessary
+  configuration settings, and remove the `break;` from the latest switch
   case so that it will update the config version.
 
-- When BZ_PROTO_VERSION has already changed since the last release,
-  increment it one more time in buildDate.cxx, bzfquery.*, and
-  bzls.lua to distinguish the new release from development versions.
+- When `BZ_PROTO_VERSION` has already changed since the last release,
+  increment it one more time in `buildDate.cxx`, `bzfquery.*`, and
+  `bzls.lua` to distinguish the new release from development versions.
 
-- BZ_BUILD_TYPE is changed to MAINT in buildDate.cxx.
+- `BZ_BUILD_TYPE` is changed to `MAINT` in `buildDate.cxx`.
 
-- Update package/win32/nsis/*.nsi (for windows) with appropriate
+- Update `package/win32/nsis/*.nsi` (for windows) with appropriate
   version numbers.
 
 - Perform a "make distcheck" on multiple (preferably all) platforms.
@@ -471,7 +474,7 @@ cannot proceed.  A checklist of items to be completed follows:
 	e.g. git tag -a v2.6.0 -m 'Version 2.6.0 release'
 	     git push origin v2.6.0
 
-- Perform a "make dist" generate a source release tarball.
+- Perform a `make dist` generate a source release tarball.
 
 - Verify that the source tarball can be expanded, builds, and runs.
 
@@ -486,8 +489,8 @@ cannot proceed.  A checklist of items to be completed follows:
 
 - Increment and commit the version number in configure.ac and other
   files (see above) to the source repository so that later builds are
-  immediately distinguished.  Also, change BZ_BUILD_TYPE back to DEVEL
-  in buildDate.cxx.
+  immediately distinguished.  Also, change `BZ_BUILD_TYPE` back to `DEVEL`
+  in `buildDate.cxx`.
 
 - Update the following:
 https://github.com/BZFlag-Dev/bzflag.org
@@ -497,10 +500,11 @@ https://github.com/BZFlag-Dev/download.bzflag.org
 https://forums.bzflag.org
 https://github.com/BZFlag-Dev/bzflag
 
-Testing the server
-==================
+## Testing the server
 
 An example line to use for bzfs testing is:
 
+```
 src/bzfs/bzfs -c -d -d -d +f good +f bad -fb -j -ms 3 -password \
- password -s 10 -sa -sb -sw 1 -st 15 -world misc/maps/hix.bzw
+  password -s 10 -sa -sb -sw 1 -st 15 -world misc/maps/hix.bzw
+```

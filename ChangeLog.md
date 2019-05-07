@@ -1,29 +1,24 @@
-			     BZFlag Release Notes
-			     ====================
+# BZFlag Release Notes
 
-BZFlag 2.5.x
-------------
+## BZFlag 2.5.x
 
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
-BZFlag 2.4.19
--------------
+## BZFlag 2.4.19
 
 * Add new bz_ePlayerDeathFinalizedEvent API event - Vladimir Jimenez
 * Output correct error when loading a nonexistent bzfs plugin - Vladimir Jimenez
 * Remove obsolete bzfs option from Start Server menu on Windows - Scott Wichser
 
 
-BZFlag 2.4.18  "Do You Hear What I Hear?" (2018-10-18)
-------------------------------------------------------
+## BZFlag 2.4.18  "Do You Hear What I Hear?" (2018-10-18)
 
 * Fix DirectSound initialization order so that sound on Windows works again
     - Scott Wichser
 
 
-BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
----------------------------------------------------
+## BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
 
 * Send MsgFlagGrab before API event is called - Jeff Myers, Vladimir Jimenez
 * Correctly unmuted when paused and killed by server - Alfredo Tupone
@@ -37,8 +32,7 @@ BZFlag 2.4.16  "Reduce, Reuse, Replay" (2018-09-23)
     - Scott Wichser, Joshua Bodine, Alfredo Tupone
 
 
-BZFlag 2.4.14  "Hello Motto" (2018-05-02)
------------------------------------------
+## BZFlag 2.4.14  "Hello Motto" (2018-05-02)
 
 * Add new bz_eAllowServerShotFiredEvent to the API - Vladimir Jimenez
 * Fix antialiasing when starting the client windowed - Joshua Bodine
@@ -67,8 +61,7 @@ BZFlag 2.4.14  "Hello Motto" (2018-05-02)
 * Disallow -helpmsg from world files - Vladimir Jimenez
 
 
-BZFlag 2.4.12  "Silence is Golden" (2017-10-29)
------------------------------------------------
+## BZFlag 2.4.12  "Silence is Golden" (2017-10-29)
 
 * Allow API to trigger CTF capture event - Vladimir Jimenez
 * Allow setting default values for BZDB from API - Vladimir Jimenez
@@ -96,8 +89,7 @@ BZFlag 2.4.12  "Silence is Golden" (2017-10-29)
 * Fix the /silence and /unsilence client commands - Scott Wichser
 
 
-BZFlag 2.4.10  "This is How We Roll" (2017-03-12)
--------------------------------------------------
+## BZFlag 2.4.10  "This is How We Roll" (2017-03-12)
 
 * Fix high DPI handling on Windows (again) - Scott Wichser
 * Custom slash commands respect double quotes when tokenizing - Vladimir Jimenez
@@ -115,8 +107,7 @@ BZFlag 2.4.10  "This is How We Roll" (2017-03-12)
 * Multisampling support under SDL 2 on macOS - Joshua Bodine
 
 
-BZFlag 2.4.8  "Sixteen" (2016-10-10)
-------------------------------------
+## BZFlag 2.4.8  "Sixteen" (2016-10-10)
 
 * Add Russian transliteration - Ruslan Hihin, Aleksandr Lahin
 * Fix a regression in 2.4.6 where the client would not reduce CPU usage when
@@ -134,8 +125,7 @@ BZFlag 2.4.8  "Sixteen" (2016-10-10)
 * Increase the range of the volume slider - Konstantinos Kanavouras
 
 
-BZFlag 2.4.6  "Eight, Our Codebase is Overweight" (2016-06-26)
---------------------------------------------------------------
+## BZFlag 2.4.6  "Eight, Our Codebase is Overweight" (2016-06-26)
 
 * regFlag plugin now uses bz_eAllowFlagGrab event - Scott Wichser
 * RogueGenocide plugin defaults to ignoring rogue self-kills - Scott Wichser
@@ -154,8 +144,7 @@ BZFlag 2.4.6  "Eight, Our Codebase is Overweight" (2016-06-26)
 * Add a cycleRadar and cyclePanel key binding command - Joshua Bodine
 
 
-BZFlag 2.4.4  "Be My Valentank" (2016-02-14)
---------------------------------------------
+## BZFlag 2.4.4  "Be My Valentank" (2016-02-14)
 
 * Correctly exit the game when closing from the Windows 10 taskbar
     - Scott Wichser
@@ -290,8 +279,7 @@ BZFlag 2.4.4  "Be My Valentank" (2016-02-14)
 * Fully integrated Xcode project file - Joshua Bodine
 
 
-BZFlag 2.4.2  "Doomsday Edition" (2012-07-28)
----------------------------------------------
+## BZFlag 2.4.2  "Doomsday Edition" (2012-07-28)
 
 * Added UPnP option to configure server networking - Alfredo Tupone
 * Added an option to have both leading and lagging radar shot lines
@@ -312,8 +300,7 @@ BZFlag 2.4.2  "Doomsday Edition" (2012-07-28)
 * Added Fastmap Plugin - Jeffery Myers
 
 
-BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
-------------------------------------------
+## BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
 
 * Shot messages are synchronized with position - Alfredo Tupone
 * Added /playerlist for everyone - Thomas Stauer
@@ -361,8 +348,7 @@ BZFlag 2.4.0  "Wake the Dead" (2011-07-03)
   the bzfs -public option to -publictitle) - trepan, Jeff Myers
 
 
-BZFlag 2.0.16  "No Foolin'" (2010-04-01)
-----------------------------------------
+## BZFlag 2.0.16  "No Foolin'" (2010-04-01)
 
 * Fix command line options in Windows launcher - Scott Wichser
 * Fix regression in protocol handling by server - Jeff Makey, Scott Wichser
@@ -378,8 +364,7 @@ BZFlag 2.0.16  "No Foolin'" (2010-04-01)
 * Remove broken vocaliser and obsolete torBlock plugins - Jeff Myers
 
 
-BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
--------------------------------------------------------------------------
+## BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
 
 * Add Options -> Display -> AntiFlicker option - trepan
 * Add Options -> Input -> Confine Mouse (MotionBox) - trepan
@@ -407,8 +392,7 @@ BZFlag 2.0.14  "This isn't the release you are looking for." (2010-02-15)
 * Source cleanup - Tim Riker
 
 
-BZFlag 2.0.12  "The release without a name." (2008-06-25)
----------------------------------------------------------
+## BZFlag 2.0.12  "The release without a name." (2008-06-25)
 
 * Fix build with -ffast-math avoiding use of isnan for fog - Alfredo Tupone
 * libGLEW requirement controlled by --with-glew - Alfredo Tupone
@@ -434,8 +418,7 @@ BZFlag 2.0.12  "The release without a name." (2008-06-25)
 * Slot numbers on scoreboard now appear regardless of hideAdmin - Joshua Bodine
 
 
-BZFlag 2.0.10  "Never Say Never" (2007-11-16)
----------------------------------------------
+## BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 
 * Fix for memory leaks - Bernt Hansen
 * Word filtering is case insensitive - Joshua Bodine
@@ -503,8 +486,7 @@ BZFlag 2.0.10  "Never Say Never" (2007-11-16)
 * Authorization is invariant to case - Anonymous
 
 
-BZFlag 2.0.8  "Oops, Happy Mother's Day" (2006-05-13)
------------------------------------------------------
+## BZFlag 2.0.8  "Oops, Happy Mother's Day" (2006-05-13)
 
 * Add a plugin to record matches - Jeff Myers.
 * Add an option to send out a UDP heartbeat message for observers behind flakey
@@ -515,8 +497,7 @@ BZFlag 2.0.8  "Oops, Happy Mother's Day" (2006-05-13)
 * Fixed spawnpoint selection regression - Sean Morrison
 
 
-BZFlag 2.0.6  "Good enough for now" (2006-04-09)
-------------------------------------------------
+## BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 
 * game variables no longer accept invalid values. - Jeff Myers
 * Special Effects use tank (was team) color - Karsten Behrmann, Jeff Myers
@@ -549,8 +530,7 @@ BZFlag 2.0.6  "Good enough for now" (2006-04-09)
 * Added GUI option for email display length - Mark Thomas
 
 
-BZFlag 2.0.4  "Shiny" (2005-09-30)
-----------------------------------
+## BZFlag 2.0.4  "Shiny" (2005-09-30)
 
 * Fixed server join bug when cached worlds disappear - Sean Morrison
 * Prevent phantom zoned players from pausing - Sean Morrison
@@ -623,8 +603,7 @@ BZFlag 2.0.4  "Shiny" (2005-09-30)
 * Support for +,- and ! operators in bzfs' groupdb file - Frank Evers
 
 
-BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
--------------------------------------------
+## BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 
 * Added TALK, MUTE, UNMUTE permissions - Angelina Carlton
 * Added /mute, /unmute commands - Angelina Carlton
@@ -670,8 +649,7 @@ BZFlag 2.0.2  "Queen of Maybe" (2005-03-18)
 * antiban perm actually counters a server ban now - Steve Krenzel
 
 
-BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
----------------------------------------------
+## BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 
 * Added a .desktop file - David Trowbridge
 * Tool for converting obj to bzw - Jeff Myers
@@ -804,16 +782,14 @@ BZFlag 2.0.0  "Falcor's Despair" (2005-01-17)
 * Added Admin Message Queue - Michael Hoffman
 
 
-BZFlag 1.10.8  "lightning strikes back - list server returns" (2004-10-05)
---------------------------------------------------------------------------
+## BZFlag 1.10.8  "lightning strikes back - list server returns" (2004-10-05)
 
 * New list server URL
 * Added admin message sounds - Cameron Mandrake, Sean Morrison
 * Throw away bad or early links in world files - Tim Riker
 
 
-BZFlag 1.10.6  "the little hop" (2004-05-14)
---------------------------------------------
+## BZFlag 1.10.6  "the little hop" (2004-05-14)
 
 * Fixed the little hop on spawn at some sites - Alfredo Tupone
 * Fixed issue of players add/removing others from groups - Alfredo Tupone
@@ -832,8 +808,7 @@ BZFlag 1.10.6  "the little hop" (2004-05-14)
 * Bots aim better, try to evade shots - Frank Thilo
 
 
-BZFlag 1.10.4  "not a smurf" (2004-01-24)
------------------------------------------
+## BZFlag 1.10.4  "not a smurf" (2004-01-24)
 
 * Allow user to define quickMessages via the menu system - Frank Thilo
 * Defaults vars are written to config but commented out - Dave Brosius
@@ -899,8 +874,7 @@ BZFlag 1.10.4  "not a smurf" (2004-01-24)
 * Pull many world textures from pyBZFlag - Jeff Myers
 
 
-BZFlag 1.10.2 (2003-12-23)
---------------------------
+## BZFlag 1.10.2 (2003-12-23)
 
 * improved transparent proxy support for server - Frank Thilo, Alfredo Tupone
 * Stop infinite spawn loop with complex worlds containing big pyramids
@@ -931,8 +905,7 @@ BZFlag 1.10.2 (2003-12-23)
 * mrtg script updated - Tim Riker
 
 
-BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
--------------------------------------------------------
+## BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 
 * control spawn on buildings with -sb - Frank Thilo
 * Initial Docbook documentation - Sean Morrison
@@ -1002,8 +975,7 @@ BZFlag 1.10.0  "Break the world" (2003-12-09 was 1.9.x)
 * Rabbit game style - David Trowbridge, Dave Brosius
 
 
-BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
----------------------------------------------------------
+## BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
 
 * public release now under LGPL v2.1 - Tim Riker
 * change LICENSE to COPYING - Tim Riker
@@ -1046,8 +1018,7 @@ BZFlag 1.7g2  "Steely Eyed Banana" (2003-06-17 was 1.7g1)
 * extend admin command -> /flag reset unused - Dave Brosius
 
 
-BZFlag 1.7g0  "Holy Dancing Monkeys" (2002-12-08 was 1.7e7)
------------------------------------------------------------
+## BZFlag 1.7g0  "Holy Dancing Monkeys" (2002-12-08 was 1.7e7)
 
 * -tkkr auto team killer - Dave Brosius
 * world file caching - Colin Bayer, Dave Brosius, others
@@ -1076,8 +1047,7 @@ BZFlag 1.7g0  "Holy Dancing Monkeys" (2002-12-08 was 1.7e7)
 * gcc 3.1+ patches - David Trowbridge
 
 
-BZFlag 1.7e6  "Armoured Smashing Fist" (2002-06-19 was 1.7e5)
--------------------------------------------------------------
+## BZFlag 1.7e6  "Armoured Smashing Fist" (2002-06-19 was 1.7e5)
 
 * new HUD! - David Trowbridge, Tim Riker, many others
 * added temporary bans (minutes) - Dave Brosius
@@ -1127,8 +1097,7 @@ BZFlag 1.7e6  "Armoured Smashing Fist" (2002-06-19 was 1.7e5)
 * -pr for reconnect port (two port tcp) - Tim Riker
 
 
-BZFlag 1.7e4 (2001-11-27 was 1.7e3)
------------------------------------
+## BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 
 * ::memset() instead of bzero() - Björn Augustsson
 * win32 audio thread fix for win2k - crs
@@ -1167,8 +1136,7 @@ BZFlag 1.7e4 (2001-11-27 was 1.7e3)
 * GM lock alert msg/sound - Tim Riker (prompted by Colin Bayer)
 
 
-BZFlag 1.7e2 (2001-04-17)
--------------------------
+## BZFlag 1.7e2 (2001-04-17)
 
 * bzfs performance fix, wait loop removal - Frank Thilo, Tim Riker
 * limbo flag bugfix - Frank Thilo
@@ -1178,8 +1146,7 @@ BZFlag 1.7e2 (2001-04-17)
 * various bug fixes - many
 
 
-BZFlag 1.7e1 (2001-03-10)
--------------------------
+## BZFlag 1.7e1 (2001-03-10)
 
 * optional UDP unicast networking, back-compatible w/ old TCP method - frank
 * GM now leave smoke trail - frank
@@ -1207,8 +1174,7 @@ BZFlag 1.7e1 (2001-03-10)
 * /kick and /lagstats server messages, -passwd - Frank Thilo
 
 
-BZFlag 1.7e release 000 (2001-01-26)
-------------------------------------
+## BZFlag 1.7e release 000 (2001-01-26)
 
 * Tim Riker <Tim@Rikers.org> now maintainer
 * build now 3 digits so alpha sorts work (until we hit 1.10? ;-)
@@ -1228,16 +1194,14 @@ BZFlag 1.7e release 000 (2001-01-26)
 * phantom player fix - Frank Siegert
 
 
-BZFlag 1.7d release 9 (2000-02-01)
-----------------------------------
+## BZFlag 1.7d release 9 (2000-02-01)
 
 * fixed bug in parsing arguments in bzfls
 * fixed reference counting bug in bzfls
 * improved win32 config file location - Daniel Léonard
 
 
-BZFlag 1.7d release 8
----------------------
+## BZFlag 1.7d release 8
 
 * fixed bug in bzfs that caused the player table to fill up
 * fixed bugs in bzfls that left open sockets and leaked memory
@@ -1249,8 +1213,7 @@ BZFlag 1.7d release 8
 * gave flag help messages more space to avoid overlapping target box
 
 
-BZFlag 1.7d release 7
----------------------
+## BZFlag 1.7d release 7
 
 * added sym link for bzfs in RPM spec file
     can't launch server from client without it
@@ -1268,8 +1231,7 @@ BZFlag 1.7d release 7
 * added -3dfx and -no3dfx bzflag options to set/unset MESA_GLX_FX
 
 
-BZFlag 1.7d release 6
----------------------
+## BZFlag 1.7d release 6
 
 * now allows user to configure a non-optimized build (e.g. make linux-noopt)
 * added tarball make target to gather source tree into a tarball
@@ -1289,8 +1251,7 @@ BZFlag 1.7d release 6
 * added man pages for bzfls and bzfrelay
 
 
-BZFlag 1.7d release 5
----------------------
+## BZFlag 1.7d release 5
 
 * now allows user to configure a debug build (e.g. make linux-i386-debug)
 * cleaned up some compiler warnings
@@ -1319,8 +1280,7 @@ BZFlag 1.7d release 5
 * config file on win32 now saved in a consistent location
 
 
-BZFlag 1.7d release 4
----------------------
+## BZFlag 1.7d release 4
 
 * changed LICENSE to the GNU GPL version 2
 * server can now register itself with multiple list servers
@@ -1331,8 +1291,7 @@ BZFlag 1.7d release 4
 * fixed ref count bug in bzfls
 
 
-BZFlag 1.7d release 3
----------------------
+## BZFlag 1.7d release 3
 
 * fixed truncation of server list reads
 * fixed menuing bug in find servers when no servers found
@@ -1345,16 +1304,14 @@ BZFlag 1.7d release 3
 * re-fixed bzfls query reading-freed-memory bug (regressed somehow)
 
 
-BZFlag 1.7d release 2
----------------------
+## BZFlag 1.7d release 2
 
 * fixed reading-freed-memory bug in client querying of bzfls
 * replaced incorrect use of errno with getErrno()
 * fixed bug in ServerLink::read();  now won't try to recv() zero bytes
 
 
-BZFlag 1.7d release 1
----------------------
+## BZFlag 1.7d release 1
 
 * starting from 1.7c release 2 patch 3
 * preliminary support for bzfls, a server for listing bzfs servers
@@ -1363,8 +1320,7 @@ BZFlag 1.7d release 1
 * fixed badly matched braces that broke multicast code
 
 
-BZFlag 1.7c release 2 patch 3
------------------------------
+## BZFlag 1.7c release 2 patch 3
 
 * fixed byte-order problem in bzfrelay - Tim Riker
 * unix portability fix:  replaced cuserid() with getuid() - Erik Andersen
@@ -1372,14 +1328,12 @@ BZFlag 1.7c release 2 patch 3
 * fixed bug in linux multicast support
 
 
-BZFlag 1.7c release 2 patch 2
------------------------------
+## BZFlag 1.7c release 2 patch 2
 
 * final solaris sound support - Andrew White
 
 
-BZFlag 1.7c release 2 patch 1
------------------------------
+## BZFlag 1.7c release 2 patch 1
 
 * added solaris to configuration list
 * preliminary sound support on Solaris - Andrew White
@@ -1388,8 +1342,7 @@ BZFlag 1.7c release 2 patch 1
 * added stacked stereo patch - Stea Greene
 
 
-BZFlag 1.7c release 2
----------------------
+## BZFlag 1.7c release 2
 
 first official open source release.
 
@@ -1412,7 +1365,6 @@ first official open source release.
 * fixed broadcasting and multicasting on linux
 
 
-BZFlag 1.7c release 1
----------------------
+## BZFlag 1.7c release 1
 
 preliminary open source release.

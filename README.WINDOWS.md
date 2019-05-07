@@ -1,26 +1,25 @@
-README for Windows (32- and 64-bit) platforms
----------------------------------------------
+# README for Windows (32- and 64-bit) platforms
 
-**Compilers**
+## Compilers
 BZFlag uses Microsoft Visual C++ for its prebuilt binary releases and project
 files are provided for it. The current compiler used is Visual C++ 2017 (VC15).
 You can download Visual Studio Community 2017 for free from here:
 https://www.visualstudio.com/downloads/
 
-**Targets**
+## Targets
 There are a total of 4 build targets in the VC projects. There are targets
 for Release and Debug, and each has a 32-bit and 64-bit version. At this time,
 only 32-bit is supported. Our dependencies don't build correctly on 64-bit with
 our current script. Also, there's no real performance advantage in having a
 64-bit BZFlag client as the game doesn't use much RAM.
 
-**Required Libraries**
+## Required Libraries
 
 Various third-party libraries are needed, which are packaged in our
 bzflag-dependencies repository. Either grab a pre-built binary package from
 the releases section, or build the dependencies from source as described at
 the repository. The BZFlag build expects that an environment variable called
-BZ_DEPS exist and point to dependencies repository directory (the one that
+`BZ_DEPS` exist and point to dependencies repository directory (the one that
 would contain the one or more output directories and src directory containing
 the third-party libraries)
   https://github.com/BZFlag-Dev/bzflag-dependencies
@@ -29,14 +28,14 @@ NSIS 3.03 is needed to build an installer, which is built as part of a release
 build.
   http://nsis.sourceforge.net/
 
-**Running and Debugging**
+## Running and Debugging
 By default the compiler will copy the compiled executables to the root level
 of the source drive ( the same place that the data dir is at). From there
 you can simply double click the application to run it. If you wish to debug
 the program, you must set the debug executable path and working directory
 inside VC to use this executable and path.
 
-**Installer**
+## Installer
 If you wish to build the full release package using the fullbuild solution,
 you will need to have NSIS installed. The built installer will be placed in
 the bin_Release folder for the target in the root of the source tree.

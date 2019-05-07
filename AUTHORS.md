@@ -1,6 +1,4 @@
-						 -*- coding: utf-8 -*-
-BZFlag Contributors
-===================
+# BZFlag Contributors
 
 The BZFlag development team would like to thank the many people who
 have contributed to BZFlag over the years.  The game was initially and
@@ -23,8 +21,7 @@ listed in chronological order with the earliest contributors listed
 first.
 
 
-CORE DEVELOPERS
----------------
+## CORE DEVELOPERS
 
 Among all the developers are a core set of individuals that have
 dedicated themselves to the improvement of the game at some point in
@@ -55,8 +52,7 @@ Scott Wichser (blast007) <blast007@users.sourceforge.net>
 Jeff Makey (BulletCatcher) <bullet_catcher@users.sourceforge.net>
 	Active: 2008-Current
 
-DEVELOPERS
-----------
+## DEVELOPERS
 
 The developers of BZFlag are a widely diverse group of individuals
 from all around the world.  These individuals have made multiple
@@ -64,41 +60,40 @@ significant contributions to the game on a sustained basis.  They
 become actively involved in the development discussions, and have
 otherwise actively helped to keep the game evolving and improving.
 
--- 1992 --
+**-- 1992 --**
 Chris Schoeneman <crs23@bigfoot.com>
--- 1997 --
+**-- 1997 --**
 Jeff Myers <JeffM2501@users.sourceforge.net>
--- 1999 --
+**-- 1999 --**
 Tim Riker <Tim@Rikers.org>
--- 2000 --
+**-- 2000 --**
 Colin Bayer <vogon_jeltz@users.sourceforge.net>
--- 2001 --
+**-- 2001 --**
 Jeremiah Moss (CobraA1) <jeremiah_moss@cobraa1.com>
 Frank Thilo (chestal) <thilo@unix-ag.org>
 David Trowbridge (purple_cow) <trowbrds@gmail.com>
 Dave Brosius (MrApathyCream) <dave@mebigfatguy.com>
--- 2003 --
+**-- 2003 --**
 Lars Luthman (larsl)
 Sean Morrison (learner, brlcad) <learner@brlcad.org>
 Alfredo Tupone (c3po) <alfredo@tupone.it>
 Daniel Remenak <dtremenak@users.sourceforge.net>
 Bryan Jennings (bryjen)
--- 2004 --
+**-- 2004 --**
 Ian Agar (lan56)
 Julio Jimenez (Manu, jujibo)
--- 2005 --
+**-- 2005 --**
 Mark Thomas (menotume)
 Bernt Hansen (Thumper, bthansen)
--- 2007 --
+**-- 2007 --**
 Joshua Bodine (Constitution)
--- 2012 --
+**-- 2012 --**
 Konstantinos Kanavouras (alezakos, kongr45gpen)
--- 2013 --
+**-- 2013 --**
 Vladimir Jimenez (allejo)
 
 
-CODE CONTRIBUTORS
------------------
+## CODE CONTRIBUTORS
 
 Code contributors includes individuals that have made useful yet
 limited source code contributions to the game.  The range of
@@ -109,22 +104,22 @@ on-going game development (yet).  They have nonetheless provided some
 valued source code contribution to the game and certainly deserve
 mention and appreciation for their involvement.
 
--- 1993 --
+**-- 1993 --**
 Phillip Ezolt
 Björn Augustsson
 Jed Lengyel
--- 1997 --
+**-- 1997 --**
 David Hoeferlin
 Andrew White
 Tim Olson
 Tom Hubina
--- 1999 --
+**-- 1999 --**
 Stea Greene
 Erik Andersen
--- 2000 --
+**-- 2000 --**
 Daniel Léonard <fork@videotron.ca>
 Daryll Strauss <daryll@daryll.net>
--- 2001 --
+**-- 2001 --**
 Frank Siegert <frank@this.net>
 Eric Anholt
 Kris Verbeeck
@@ -133,7 +128,7 @@ Nick Sayer
 Valery Fouques
 Pier Donini
 Mathias Gumz
--- 2002 --
+**-- 2002 --**
 Sal Gonzalez
 Harry Dodgson
 Janne Hassinen
@@ -142,7 +137,7 @@ Andrew Greig
 Kefin Avila
 Janne Hassinen
 Andrea Mathis
--- 2003 --
+**-- 2003 --**
 Isak Styf
 Michael Hoffman
 David Wollner (jbdigriz)
@@ -152,11 +147,11 @@ François Revol (mmu_man)
 Micah Dowty (scanline)
 Dennis Pedersen (dmp)
 Bernt Hansen (Thumper)
--- 2004 --
+**-- 2004 --**
 Nils McCarthy (shkoo)
 Scott Wichser (blast007)
 Andrew Heyn
--- 2005 --
+**-- 2005 --**
 David Vuorio
 Steve Krenzel (sgk284)
 Simon Richard Grint
@@ -173,7 +168,7 @@ Mike Weisenborn (orange)
 Joshua Rogers
 Daniel Mulford
 Thomas Stauer
--- 2006 --
+**-- 2006 --**
 Andrew McNabb (amcnabb)
 Stephan Hradek (Skeeve)
 Jon Brandvein (Workaphobia)
@@ -186,7 +181,7 @@ Petteri Aimonen (jpa)
 Markus (links_2004)
 Jim Melton (jwmelto/Flash)
 (harry666t)
--- 2007 --
+**-- 2007 --**
 (randomparticle/snick)
 Lou Nigro (LouMan)
 Darek Dawidowski ([darek])
@@ -194,7 +189,7 @@ Phillip (the_vaxorcist)
 Christophe Henry (sbgodin)
 Chris Wible (L4m3r)
 Jørgen Pedersen Tjernø (daxxar)
--- 2008 --
+**-- 2008 --**
 Alexander Boyd (javawizard2539)
 James Lawrence (spldart)
 Istvan Szakats (Wyk3d)
@@ -203,13 +198,13 @@ Steven Mertens (catay)
 Paul Blokus (Paul_PL)
 Eric M. McIntyre (mcintyem)
 Alexander Law
--- 2009 --
+**-- 2009 --
 Mathew Eis (Bulldozer)
 Mayur Bhosle (mayurbhosle)
 Russell Bryant (russellbryant)
--- 2010 --
+-- 2010 --**
 (cobrafast)
--- 2011 --
+**-- 2011 --**
 David Anderson (mdskpr)
 Ben K. (McSpider)
 Tilmann Hentze (Moiree)
@@ -219,32 +214,31 @@ Brad Smith
 (War Pig)
 Karl Goetz
 Américo Monteiro
--- 2012 --
+**-- 2012 --**
 Kyle Mills (khonkhortisan)
 Ian Farr (Quol)
 Ryan Kavanagh (ryanakca)
 Lee Marshall (bizarrefish)
--- 2016 --
+**-- 2016 --**
 Ruslan Hihin
 Aleksandr Lahin
--- 2017 --
+**-- 2017 --**
 Mike Miller (mikeage)
 
 
-GOOGLE SUMMER OF CODE
----------------------
+## GOOGLE SUMMER OF CODE
 
 BZFlag has been proud to take part in the Google Summer of Code
-(http://code.google.com/soc/) in 2007, 2008, and 2009.  The
+(https://code.google.com/soc/) in 2007, 2008, and 2009.  The
 student contributors for each year are listed.
 
--- 2007 --
+**-- 2007 --**
 Chris Wible (L4m3r)
 Kornel Kisielewicz (epyon)
 Jude Nelson (jude)
 Jørgen Pedersen Tjernø (daxxar)
 
--- 2008 --
+**-- 2008 --**
 Luke Rewega (Lukstr)
 David Sanders (KingofCamelot)
 Joshua Bodine (Constitution)
@@ -252,15 +246,14 @@ Harrison Reiser (bugQ)
 Istvan Szakats (Wyk3d)
 Kornel Kisielewicz (epyon)
 
--- 2009 --
+**-- 2009 --**
 Istvan Szakats (Wyk3d)
 Mathew Eis (Bulldozer, KingRobot)
 Quentin Pradet (Cygal)
 William Hahne (Will07c5)
 
 
-SERVERS AND INFRASTRUCTURE
---------------------------
+## SERVERS AND INFRASTRUCTURE
 
 Open Source Technology Group, Inc.
   SourceForge.net project resources
@@ -290,8 +283,7 @@ GitHub
   Project resources
 
 
-CORPORATE AND ORGANIZATION SUPPORT
-----------------------------------
+## CORPORATE AND ORGANIZATION SUPPORT
 
 Below are organizational entities that have provided direct support to
 the game either through direct funding, legal and licensing support,
@@ -319,8 +311,7 @@ Google Inc
   Summer of Code 2007, 2008, 2009
 
 
-SPECIAL THANKS
---------------
+## SPECIAL THANKS
 
 Some people deserve special thanks for their involvement in the game
 that cannot be categorized into the other sections.  This includes
@@ -344,8 +335,7 @@ Kyle Van Essen
 Reid Ellis
 
 
-NOTES
------
+## NOTES
 
 hoeferlin, hubina, myers, olson are people Chris does not know that
 contributed code to 1.7

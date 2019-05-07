@@ -1,10 +1,12 @@
+# README for MINGW64 on Windows
+
 To build bzflag on Windows Intel you can use MinGW and MSYS, both Open Source
-and freely available from http://www.mingw.org
+and freely available from http://www.mingw.org.
 
 There's a troubleshooting section at the end of this file in case you run into
 problems.
 
-*** Part I: Obtain MingW and MSYS
+## Part I: Obtain MinGW and MSYS
 
 MinGW stands for Minimalistic GNU for Windows
   it is a collection of library, header and a collection of GNU tools
@@ -20,15 +22,15 @@ Now, to build bzflag, you have to procure MinGW and MSYS. Get the
 whole MinGW, including the MSYS DTK (Development ToolKit), follow the instruction
 to install it and stay updated.
 
-*** Part II: Obtain necessary platform files
+## Part II: Obtain necessary platform files
 
 If you would like to build BZAdmin in curses mode, you need to download PDCurses
-from http://pdcurses.sourceforge.net/.  Build it according to their instructions
-for MingW, and rename the resulting library from pdcurses.a to libpdcurses.a.
-Then copy libpdcurses.a and curses.h to the appropriate subdirectories of your
+from https://pdcurses.sourceforge.net/.  Build it according to their instructions
+for MinGW, and rename the resulting library from `pdcurses.a` to `libpdcurses.a`.
+Then copy `libpdcurses.a` and `curses.h` to the appropriate subdirectories of your
 MingW32 install (lib and include respectively).
 
-If you want to build using SDL support, you should get SDL at libsdl.org and
+If you want to build using SDL support, you should get SDL at `libsdl.org` and
 follow their instructions to install it under MinGW before configuring bzflag.
 Then move on to Part III.  This is the suggested way of building BZFlag.
 
@@ -43,86 +45,88 @@ installation, just put under src/platform.
 The files in question are dsound.h, dinput.h and ddraw.h.
 
 To get the needed DirectX header files from the Microsoft DirectX SDK:
-    * Go to http://msdn.microsoft.com/downloads/
+    * Go to https://msdn.microsoft.com/downloads/
     * Select the DirectX 9.0 Software Development Kit
     * Click on the Download link on the right
     * This is a 227 MB file!
     * Run the downloaded program
-    * Click Unzip to extract it to the default location (C:\mssdk\temp)
+    * Click Unzip to extract it to the default location (`C:\mssdk\temp`)
     * Click "OK" and "Close" when the program finishes extracting the files
-    * Copy ddraw.h, dinput.h and dsound.h from the SDK's include directory
+    * Copy `ddraw.h`, `dinput.h` and `dsound.h` from the SDK's include directory
 
 Note that we cannot redistribute these files separate of the entire SDK.
 
-*** Part III: Obtain BZFlag
+## Part III: Obtain BZFlag
 
 Make sure that your BZFlag sources have correct line endings.  Use the source
 tarballs rather than zipfiles if you're building from a release.  If you are
 using subversion, the line endings should be correct automatically except for
-src/date/buildDate.cxx, which you will need to convert with dos2unix or a
-similar tool before attempting to run ./configure.
+`src/date/buildDate.cxx`, which you will need to convert with `dos2unix` or a
+similar tool before attempting to run `./configure`.
 
 It's easiest to check out BZFlag into a subdirectory of wherever you installed
-MSYS, such as <MSYS>/bzflag.
+MSYS, such as `<MSYS>/bzflag`.
 
-*** Part IV: Compile and Install BZFlag
+## Part IV: Compile and Install BZFlag
 
 Once you have the files checked out correctly, you should run this command
 
-sh autogen.sh
+`sh autogen.sh`
 
-from the top bzflag directory, from inside the MSYS shell (run msys.bat from
+from the top bzflag directory, from inside the MSYS shell (run `msys.bat` from
 the MSYS directory).
 
-You should have all the automake, autoconf, m4, perl stuff - they
+You should have all the `automake`, `autoconf`, `m4`, `perl` stuff - they
 are in DTK kit.  They may not be up to date; there are sometimes more updated
 versions available if autogen refuses to run.
 
 If you are able to find a bzflag dist kit, just run the configure script,
-looking at the help (configure --help) for options.
+looking at the help (`configure --help`) for options.
 
 Then run
 
-./configure (with any desired arguments, such as --without-sdl)
+```sh
+./configure # (with any desired arguments, such as --without-sdl)
 make
 make install
+```
 
-Compiled executable files are found in src/bzflag (bzflag.exe), src/bzfs/bzfs
-(bzfs.exe), and src/bzadmin (bzadmin.exe).
+Compiled executable files are found in `src/bzflag` (`bzflag.exe`), `src/bzfs/bzfs`
+(`bzfs.exe`), and `src/bzadmin` (`bzadmin.exe`).
 
 When you are confident of the compilation result you can run make install and
 then make a link to the application (e.g. on your Desktop) to run this bejoux.
 
 
---- Troubleshooting:
+## Troubleshooting:
 
-Q. When I run autogen.sh, I get a message like "sh: aclocal: command not found"
+Q. When I run `autogen.sh`, I get a message like "sh: aclocal: command not found"
 A. aclocal and associated programs are part of the GNU autotools package.  This
    is included in the MSYS Developer's Tool Kit (DTK), which can be downloaded
    from http://www.mingw.org.  BZFlag requires the autotools to build.
 
-Q. When I run ./configure, it reports "No C Compiler found" or similar.
+Q. When I run `./configure`, it reports "No C Compiler found" or similar.
 A. Make sure you install MingW32 before MSYS, and when installing MSYS, be sure
    to tell it where MingW32 is.  If this does not work (or you don't want
    to reinstall), copy the MingW32 directory into the MSYS directory as mingw.
-   E.g. if you have MingW installed to c:\MingW32 and MSYS to c:\msys\1.0, copy
-   the MingW32 directory to c:\msys\1.0 and rename it mingw, so you have
-   c:\msys\1.0\mingw with all the MingW files in it.
+   E.g. if you have MingW installed to `c:\MingW32` and MSYS to `c:\msys\1.0`, copy
+   the MingW32 directory to `c:\msys\1.0` and rename it mingw, so you have
+   `c:\msys\1.0\mingw` with all the MingW files in it.
 
-Q. When I run ./configure, sed dumps the contents of version.h, configure
+Q. When I run` ./configure`, sed dumps the contents of `version.h`, configure
    continues normally for a while, and then I get repeated sed errors like
-   "sed: <file>: unterminated `s' command" and others.  Make fails with
+   "sed: <file>: unterminated 's' command" and others.  Make fails with
    "*** No targets.  Stop." or similar.
 A. When checking out the bzflag sources from a git clone, you must check them
    out with UNIX line breaks. If you're using a source package, you need to use
    the tarball (.tar.bz2) not the zip package.  You can extract it from within
-   MSYS with "bunzip2 <file>" and "tar -xvf <file>".
+   MSYS with `bunzip2 <file>` and `tar -xvf <file>`.
 
-Q. When I run make, it reports an error about not being able to find dsound.h.
+Q. When I run make, it reports an error about not being able to find `dsound.h`.
 A. Follow the above directions to get the needed DirectX headers from the MS DX SDK,
    or follow the above instructions for "If you want to build using SDL support"
 
 Q. I get errors not mentioned in this file.
-A. File a support request at http://sourceforge.net/projects/bzflag or jump on
-   #bzflag on irc.freenode.net and ask for help compiling on MingW.  Be sure to
+A. File a support request at https://sourceforge.net/projects/bzflag or jump on
+   `#bzflag` on `irc.freenode.net` and ask for help compiling on MinGW.  Be sure to
    include the first few lines of error if you file a support request.

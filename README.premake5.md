@@ -1,5 +1,4 @@
-BZFlag README for premake5
-==========================
+# BZFlag README for premake5
 
 The BZFlag premake system generates project files for Visual Studio (Windows),
 Xcode (macOS), and gnu make (supported on Linux and macOS, and possibly
@@ -10,76 +9,76 @@ release version of premake5 (still in alpha status as of the time of writing)
 is recommended.
 
 
-Dependencies Setup
-==================
+## Dependencies Setup
 
 Pre-built dependencies packages are provided for Visual Studio on Windows and
 for Xcode on macOS. The dependencies package needs to be downloaded, expanded,
 and placed in the root of the bzflag source directory such that the dependency
 headers and libraries for your system are located in
-<bzflag source>/dependencies/output-<system>-<configuration>-<architecture>.
+`<bzflag source>/dependencies/output-<system>-<configuration>-<architecture>`.
 To download the applicable package for your system, please visit
 https://github.com/BZFlag-Dev/bzflag-dependencies/releases.
 
 When building using gnu make, the dependencies must be installed at the system
 level. For Linux builds using gnu make, dependencies should be installed using
-your package manager following the instructions in README.Linux. To build
+your package manager following the instructions in [README.Linux.md](README.Linux.md). To build
 using gnu make on macOS, you will need to build and install SDL2 (or SDL 1.2),
 c-ares, GLEW, and libPNG at the system level. Make sure that you build the
 dependencies with the macOS deployment target set to 10.7 to match the build
 settings for the game itself. Alternatively, the dependencies may be
 installed on macOS using Homebrew (substitute `sdl` for `sdl2` to use SDL 1.2):
 
-  $ brew install c-ares glew libpng sdl2
+  `$ brew install c-ares glew libpng sdl2`
 
 
-Building
-========
+## Building
 
 To build using the premake system, you will need to generate project files for
 your platform and build system. Generated project files can be found in the
-premake5/ directory, under a subdirectory corresponding to the premake action
-you selected (e.g., premake5/gmake). See the applicable subsection below for
+`premake5/` directory, under a subdirectory corresponding to the premake action
+you selected (e.g., `premake5/gmake`). See the applicable subsection below for
 your platform and build system.
 
 NOTE: Generating project files for a different operating system than the one
 on which premake is running is unsupported.
 
-Building with Visual Studio (Windows)
--------------------------------------
+### Building with Visual Studio (Windows)
+
 premake5 supports generating project files for several versions of Visual
 Studio. However, only Visual Studio 2017 is officially tested and supported.
 The dependencies directory must be in place prior to generating Visual Studio
 project files. To generate Visual Studio 2017 project files, execute the
 following command:
 
-  $ premake5.exe vs2017
+  `$ premake5.exe vs2017`
 
-After generation, project files can be found in the directory premake5/vs2017.
-Solution files for the entire project (fullbuild.sln) as well as for the
-client, text client, and server (bzflag.sln, bzadmin.sln, and bzfs.sln
+After generation, project files can be found in the directory `premake5/vs2017`.
+Solution files for the entire project (`fullbuild.sln`) as well as for the
+client, text client, and server (`bzflag.sln`, `bzadmin.sln`, and `bzfs.sln`
 respectively) are available.
 
-Building with Xcode (macOS)
----------------------------
+### Building with Xcode (macOS)
+
 After ensuring that the dependencies directory is in place, you can generate
 Xcode project files using the following command:
 
-  $ premake5 xcode4
+  `$ premake5 xcode4`
 
-After generation, project files can be found in the directory premake5/xcode4.
-To build all projects, open the Xcode workspace file BZFlag.xcworkspace.
+After generation, project files can be found in the directory `premake5/xcode4`.
+To build all projects, open the Xcode workspace file `BZFlag.xcworkspace`.
 
 NOTE: The macOS dependencies package does not include SDL 1.2. If you choose
 to configure the Xcode projects to use SDL 1.2, in addition to setting up the
 dependencies package, you must also build and install SDL 1.2 at the system
-level, and pass the --extra-include-dirs and --extra-lib-dirs options to
+level, and pass the `--extra-include-dirs` and `--extra-lib-dirs` options to
 premake with the applicable locations for the SDL 1.2 headers and libraries
 when generating the Xcode project files. For example:
 
-  $ premake5 --with-sdl=1 \
-    --extra-include-dirs=/usr/local/include,/usr/local/include/SDL \
-    --extra-lib-dirs=/usr/local/lib xcode4
+```
+$ premake5 --with-sdl=1 \
+  --extra-include-dirs=/usr/local/include,/usr/local/include/SDL \
+  --extra-lib-dirs=/usr/local/lib xcode4
+```
 
 NOTE: When running the client from the Xcode project, you may encounter the
 error "Unknown option -NSDocumentRevisionsDebugMode" due to a deficiency in
@@ -89,33 +88,35 @@ and under the "Options" tab, deselect "Allow debugging when using document
 Versions Browser" before running the client from Xcode. The client should now
 run from Xcode after a successful build.
 
-Building with gmake (Linux and macOS)
--------------------------------------
+### Building with gmake (Linux and macOS)
+
 Unlike the standard autotools/gnu make system in BZFlag, the premake system
 does not have the capability to test your system for the correct dependencies
-during makefile generation. Make sure that you have the necessary dependencies
+during `makefile` generation. Make sure that you have the necessary dependencies
 installed prior to attempting to build with gnu make. Any problems with
 dependencies will have to be determined from the resulting build errors.
 
 To generate makefiles and begin building, use the following commands:
 
-  $ premake5 gmake
-  $ cd premake5/gmake
-  $ make
+```
+$ premake5 gmake
+$ cd premake5/gmake
+$ make
+```
 
 Alternatively, to build using all available CPU cores on Linux, use the
 following command:
 
-  $ make -j`nproc`
+  ``` $ make -j`nproc` ```
 
 To do the same on macOS:
 
-  $ make -j`sysctl -n hw.ncpu`
+  ``` $ make -j`sysctl -n hw.ncpu` ```
 
 NOTE: When generating new makefiles using premake when existing build files
-are present, changing the value of --prefix does not trigger a rebuild of the
+are present, changing the value of `--prefix` does not trigger a rebuild of the
 affected source files, unlike the standard autotools/gnu make scripts do.
-Prior to changing the value of --prefix (or adding the --prefix option where
+Prior to changing the value of `--prefix` (or adding the `--prefix` option where
 it wasn't used previously), execute `make clean` to remove the build products
 that used the old setting, then configure and build using the updated
 settings.
@@ -123,11 +124,10 @@ settings.
 NOTE: There is currently no support for building using gnu make under the
 Solaris and BSD operating systems. If this is a feature you require, please
 feel free to help us implement support for these platforms. A good place to
-start would be by reviewing src/platform/premake5.lua.
+start would be by reviewing `src/platform/premake5.lua`.
 
 
-Development
-===========
+## Development
 
 Over time as the BZFlag project evolves, additions and modifications to the
 premake scripts may be necessary. When adding projects to the configuration
@@ -135,23 +135,25 @@ or modifying existing ones, please use the following order of options in the
 premake scripts to the greatest extent possible in order to maintain
 consistency:
 
-  kind
-  language
-  targetprefix
-  include
-  files
-  vpaths
-  defines
-  includedirs
-  sysincludedirs
-  buildoptions
-  libdirs
-  linkoptions
-  links
-  dependson
-  <various other settings>
-  prebuildcommands
-  postbuildcommands
+```
+kind
+language
+targetprefix
+include
+files
+vpaths
+defines
+includedirs
+sysincludedirs
+buildoptions
+libdirs
+linkoptions
+links
+dependson
+<various other settings>
+prebuildcommands
+postbuildcommands
+```
 
 Generic (unfiltered) options should be specified first, followed by any
 configuration-specific, system-specific, or otherwise filtered options.
