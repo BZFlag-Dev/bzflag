@@ -323,9 +323,9 @@ void SceneRenderer::setRebuildTanks()
 
 void SceneRenderer::bzdbCallback(const std::string& name, void *)
 {
-    if(name == "radarsize")
+    if (name == "radarsize")
         RENDERER.setRadarSize(BZDB.evalInt("radarsize"));
-    else if(name == "panelheight")
+    else if (name == "panelheight")
         RENDERER.setPanelHeight(BZDB.evalInt("panelheight"));
 }
 
