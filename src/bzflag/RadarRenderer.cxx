@@ -435,7 +435,7 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     const Extents* visExts = renderer.getVisualExtents();
     if (visExts)
         maxHeight = (double)visExts->maxs[2];
-    window.setProjectionRadar(x, y, w, h, radarRange, maxHeight + 10.0);
+    window.setProjectionRadar(x, y, w, h, radarRange, (float)(maxHeight + 10.0));
 
     // prepare modelview matrix
     glMatrixMode(GL_MODELVIEW);
