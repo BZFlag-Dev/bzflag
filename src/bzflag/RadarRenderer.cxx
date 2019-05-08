@@ -237,7 +237,6 @@ void RadarRenderer::drawFancyTank(const Player* player)
     // we use the depth buffer so that the treads look ok
     if (BZDBCache::zbuffer)
     {
-        glClearDepth(1.0);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
     }
