@@ -64,8 +64,7 @@ public:
     OpenGLTexture(int width, int height,
                   const GLvoid* pixels,
                   Filter maxFilter = Linear,
-                  bool repeat = true,
-                  int internalFormat = 0);
+                  bool repeat = true);
     ~OpenGLTexture();
     bool        hasAlpha() const;
 
@@ -77,9 +76,6 @@ public:
 
     Filter      getFilter();
     void        setFilter(Filter);
-
-    bool        getColorAverages(float rgbaRaw[4],
-                                 bool factorAlpha) const;
 
     void        freeContext();
     void        initContext();
@@ -99,10 +95,9 @@ private:
     bool        operator==(const OpenGLTexture&) const;
     bool        operator!=(const OpenGLTexture&) const;
     bool        operator<(const OpenGLTexture&) const;
-    int         getBestFormat(int width, int height,
-                              const GLvoid* pixels);
+    int         getBestFormat();
     void        bind();
-    bool        setupImage(const GLubyte* pixels);
+    void        setupImage(const GLubyte* pixels);
 
     void* operator new(size_t s)
     {

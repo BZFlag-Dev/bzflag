@@ -76,21 +76,18 @@ OpenGLTexture::Filter OpenGLTexture::maxFilter = Default;
 
 
 OpenGLTexture::OpenGLTexture(int _width, int _height, const GLvoid* pixels,
-                             Filter _filter, bool _repeat, int _internalFormat) :
+                             Filter _filter, bool _repeat) :
     width(_width), height(_height)
 {
-    alpha = false;
     repeat = _repeat;
-    internalFormat = _internalFormat;
     filter = _filter;
     list = INVALID_GL_TEXTURE_ID;
 
-    // get internal format if not provided
-    if (internalFormat == 0)
-        internalFormat = getBestFormat(width, height, pixels);
-
     // copy/scale the original texture image
     setupImage((const GLubyte*)pixels);
+
+    // get internal format if not provided
+    internalFormat = getBestFormat();
 
     // build and bind the GL texture
     initContext();
@@ -167,7 +164,7 @@ void OpenGLTexture::initContext()
 }
 
 
-bool OpenGLTexture::setupImage(const GLubyte* pixels)
+void OpenGLTexture::setupImage(const GLubyte* pixels)
 {
     if (GLEW_ARB_texture_non_power_of_two)
     {
@@ -232,30 +229,6 @@ bool OpenGLTexture::setupImage(const GLubyte* pixels)
     // set the image
     image = aligned;
     imageMemory = unaligned;
-
-    // note if internal format uses alpha
-    switch (internalFormat)
-    {
-    case GL_LUMINANCE_ALPHA:
-#if defined(GL_LUMINANCE4_ALPHA4)
-    case GL_LUMINANCE4_ALPHA4:
-#elif defined(GL_LUMINANCE4_ALPHA4_EXT)
-    case GL_LUMINANCE4_ALPHA4_EXT:
-#endif
-    case GL_RGBA:
-#if defined(GL_INTENSITY4)
-    case GL_INTENSITY4:
-#elif defined(GL_INTENSITY4_EXT)
-    case GL_INTENSITY4_EXT:
-#endif
-        alpha = true;
-        break;
-    default:
-        alpha = false;
-        break;
-    }
-
-    return true;
 }
 
 
@@ -358,90 +331,46 @@ void OpenGLTexture::bind()
 }
 
 
-int OpenGLTexture::getBestFormat(int _width, int _height, const GLvoid* pixels)
+int OpenGLTexture::getBestFormat()
 {
     // see if all pixels are achromatic
-    const GLubyte* scan = (const GLubyte*)pixels;
-    const int size = _width * _height;
+    const GLubyte* scan = image;
+    const int size = scaledWidth * scaledHeight;
     int i;
     for (i = 0; i < size; scan += 4, i++)
         if (scan[0] != scan[1] || scan[0] != scan[2])
             break;
     const bool useLuminance = (i == size);
 
-    // see if all pixels are opaque
-    scan = (const GLubyte*)pixels;
-    for (i = 0; i < size; scan += 4, i++)
-        if (scan[3] != 0xff)
-            break;
-    const bool useAlpha = (i != size);
-
     bool useIntensity = false;
     if (useLuminance)
     {
-        scan = (const GLubyte*)pixels;
+        scan = (const GLubyte*)image;
         for (i = 0; i < size; scan += 4, i++)
             if (scan[3] != scan[0])
                 break;
         useIntensity = (i == size);
     }
+
+    if (useIntensity)
+        alpha = false;
+    else
+    {
+        // see if all pixels are opaque
+        scan = (const GLubyte*)image;
+        for (i = 0; i < size; scan += 4, i++)
+            if (scan[3] != 0xff)
+                break;
+        alpha = (i != size);
+    }
+
     if (useIntensity)
         return GL_INTENSITY;
 
     // pick internal format
     return (useLuminance ?
-            (useAlpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
-            (useAlpha ? GL_RGBA : GL_RGB));
-}
-
-
-bool OpenGLTexture::getColorAverages(float rgba[4], bool factorAlpha) const
-{
-    if ((image == NULL) || (scaledWidth <= 0) || (scaledHeight <= 0))
-        return false;
-
-    factorAlpha = (factorAlpha && alpha);
-    const int channelCount = alpha ? 4 : 3;
-
-    // tally the values
-    s64 rgbaTally[4] = {0, 0, 0, 0};
-    for (int x = 0; x < scaledWidth; x++)
-    {
-        for (int y = 0; y < scaledHeight; y++)
-        {
-            for (int c = 0; c < channelCount; c++)
-            {
-                const int pixelBase = 4 * (x + (y * scaledWidth));
-                if (factorAlpha)
-                {
-                    const GLubyte alphaVal = image[pixelBase + 3];
-                    if (c == 3)
-                        rgbaTally[3] += alphaVal;
-                    else
-                        rgbaTally[c] += image[pixelBase + c] * alphaVal;
-                }
-                else
-                    rgbaTally[c] += image[pixelBase + c];
-            }
-        }
-    }
-
-    // calculate the alpha average
-    float maxTally = 255.0f * (scaledWidth * scaledHeight);
-    if (channelCount == 3)
-        rgba[3] = 1.0f;
-    else
-        rgba[3] = (float)rgbaTally[3] / maxTally;
-
-    // adjust the maxTally for alpha weighting
-    if (factorAlpha)
-        maxTally = maxTally * 255.0f;
-
-    // calcualte the color averages
-    for (int c = 0; c < 3; c++)
-        rgba[c] = (float)rgbaTally[c] / maxTally;
-
-    return true;
+            (alpha ? GL_LUMINANCE_ALPHA : GL_LUMINANCE) :
+            (alpha ? GL_RGBA : GL_RGB));
 }
 
 
