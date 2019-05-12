@@ -1347,18 +1347,18 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     float fogColor[4];
     setupBlackFog(fogColor);
 
+    glm::vec4 sParam;
+    glm::vec4 tParam;
     // lazy way to get texcoords
     if (useTexture)
     {
         const float repeat = BZDB.eval("groundHighResTexRepeat");
-        const float sPlane[4] = { repeat, 0.0f, 0.0f, 0.0f };
-        const float tPlane[4] = { 0.0f, repeat, 0.0f, 0.0f };
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-        glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
-        glEnable(GL_TEXTURE_GEN_S);
-        glEnable(GL_TEXTURE_GEN_T);
+        const glm::vec4 sPlane = { repeat, 0.0f, 0.0f, 0.0f };
+        const glm::vec4 tPlane = { 0.0f, repeat, 0.0f, 0.0f };
+
+        ViewFrustum &viewFrustum = RENDERER.getViewFrustum();
+        sParam = viewFrustum.eyeLinear(sPlane);
+        tParam = viewFrustum.eyeLinear(tPlane);
     }
 
     glPushMatrix();
@@ -1409,6 +1409,10 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         float outerSize;
         glm::vec3 outerColor;
 
+        glm::vec4 vertex;
+        GLfloat   s;
+        GLfloat   t;
+
         // draw ground receiver, computing lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
@@ -1417,7 +1421,15 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             innerColor[1] = I * baseColor[1];
             innerColor[2] = I * baseColor[2];
             glColor3fv(glm::value_ptr(innerColor));
-            glVertex2f(0.0f, 0.0f);
+
+            vertex = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            if (useTexture)
+            {
+                s = glm::dot(vertex, sParam);
+                t = glm::dot(vertex, tParam);
+                glTexCoord2f(s, t);
+            }
+            glVertex2f(vertex.x, vertex.y);
 
             // inner ring
             d = hypotf(receiverRingSize, pos[2]);
@@ -1430,8 +1442,14 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             outerSize = receiverRingSize;
             for (j = 0; j <= receiverSlices; j++)
             {
-                glVertex2f(outerSize * angle[j][0],
-                           outerSize * angle[j][1]);
+                vertex = glm::vec4(outerSize * angle[j][0], outerSize * angle[j][1], 0.0f, 1.0f);
+                if (useTexture)
+                {
+                    s = glm::dot(vertex, sParam);
+                    t = glm::dot(vertex, tParam);
+                    glTexCoord2f(s, t);
+                }
+                glVertex2f(vertex.x, vertex.y);
             }
         }
         glEnd();
@@ -1463,9 +1481,23 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
                 for (j = 0; j <= receiverSlices; j++)
                 {
                     glColor3fv(glm::value_ptr(innerColor));
-                    glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
+                    vertex = glm::vec4(innerSize * angle[j][0], innerSize * angle[j][1], 0.0f, 1.0f);
+                    if (useTexture)
+                    {
+                        s = glm::dot(vertex, sParam);
+                        t = glm::dot(vertex, tParam);
+                        glTexCoord2f(s, t);
+                    }
+                    glVertex2f(vertex.x, vertex.y);
                     glColor3fv(glm::value_ptr(outerColor));
-                    glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
+                    vertex = glm::vec4(outerSize * angle[j][0], outerSize * angle[j][1], 0.0f, 1.0f);
+                    if (useTexture)
+                    {
+                        s = glm::dot(vertex, sParam);
+                        t = glm::dot(vertex, tParam);
+                        glTexCoord2f(s, t);
+                    }
+                    glVertex2f(vertex.x, vertex.y);
                 }
             }
             glEnd();
@@ -1475,12 +1507,6 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         glTranslatef(-pos[0], -pos[1], 0.0f);
     }
     glPopMatrix();
-
-    if (useTexture)
-    {
-        glDisable(GL_TEXTURE_GEN_S);
-        glDisable(GL_TEXTURE_GEN_T);
-    }
 
     glFogfv(GL_FOG_COLOR, fogColor);
 }

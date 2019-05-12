@@ -17,7 +17,12 @@
 #ifndef BZF_FRUSTUM_H
 #define BZF_FRUSTUM_H
 
+// Before Everything
 #include "common.h"
+
+// System headers
+#include <glm/mat4x4.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 // FIXME -- will need a means for off center projections for
 // looking through teleporters
@@ -58,6 +63,7 @@ public:
     // used for radar culling
     void        setOrthoPlanes(const Frustum& view,
                                float width, float breadth);
+    glm::vec4   eyeLinear(glm::vec4 eyePlane);
 
 protected:
     void        makePlane(const float* v1, const float* v2, int);
@@ -71,7 +77,8 @@ protected:
     float       farCorner[4][3];
     float       tilt;
     float       rotation;
-    float       viewMatrix[16];
+    glm::mat4   viewMatrix;
+    glm::mat4   viewMatrixInv;
     float       billboardMatrix[16];
     float       m_near, m_far;
     float       fovx, fovy;
@@ -151,7 +158,7 @@ inline float        Frustum::getFOVy() const
 
 inline const float* Frustum::getViewMatrix() const
 {
-    return viewMatrix;
+    return glm::value_ptr(viewMatrix);
 }
 
 inline const float* Frustum::getProjectionMatrix() const

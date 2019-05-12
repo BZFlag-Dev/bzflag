@@ -10,27 +10,25 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
-#include <string.h>
+// Interface
 #include "Frustum.h"
 
+// System headers
+#include <math.h>
+#include <string.h>
 
 Frustum::Frustum()
 {
     static float defaultEye[3] = { 0.0, 0.0, 0.0 };
     static float defaultTarget[3] = { 0.0, 1.0, 0.0 };
-    static float identity[16] = { 1.0, 0.0, 0.0, 0.0,
-                                  0.0, 1.0, 0.0, 0.0,
-                                  0.0, 0.0, 1.0, 0.0,
-                                  0.0, 0.0, 0.0, 1.0
-                                };
+    glm::mat4 identity = glm::mat4(1.0f);
 
     // initialize view and projection matrices to identity
-    ::memcpy(viewMatrix, identity, sizeof(viewMatrix));
-    ::memcpy(billboardMatrix, identity, sizeof(billboardMatrix));
-    ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
-    ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
+    viewMatrix    = glm::mat4(1.0f);
+    viewMatrixInv = glm::mat4(1.0f);
+    ::memcpy(billboardMatrix, glm::value_ptr(identity), sizeof(billboardMatrix));
+    ::memcpy(projectionMatrix, glm::value_ptr(identity), sizeof(projectionMatrix));
+    ::memcpy(deepProjectionMatrix, glm::value_ptr(identity), sizeof(deepProjectionMatrix));
 
     setProjection((float)(M_PI/4.0), 1.0f, 100.0f, 1000.0f, 1, 1, 1);
     setView(defaultEye, defaultTarget);
@@ -45,8 +43,8 @@ Frustum::~Frustum()
 
 float Frustum::getEyeDepth(const float* p) const
 {
-    return viewMatrix[2] * p[0] + viewMatrix[6] * p[1] +
-           viewMatrix[10] * p[2] + viewMatrix[14];
+    return viewMatrix[0][2] * p[0] + viewMatrix[1][2] * p[1] +
+           viewMatrix[2][2] * p[2] + viewMatrix[3][2];
 }
 
 
@@ -89,39 +87,35 @@ void Frustum::setView(const float* _eye, const float* _target)
     // build view matrix, including a transformation bringing
     // world up [0 0 1 0]T to eye up [0 1 0 0]T, world north
     // [0 1 0 0]T to eye forward [0 0 -1 0]T.
-    viewMatrix[0] = right[0];
-    viewMatrix[4] = right[1];
-    viewMatrix[8] = 0.0f;
+    viewMatrix[0][0] = right[0];
+    viewMatrix[1][0] = right[1];
+    viewMatrix[2][0] = 0.0f;
 
-    viewMatrix[1] = up[0];
-    viewMatrix[5] = up[1];
-    viewMatrix[9] = up[2];
+    viewMatrix[0][1] = up[0];
+    viewMatrix[1][1] = up[1];
+    viewMatrix[2][1] = up[2];
 
-    viewMatrix[2] =  -plane[0][0];
-    viewMatrix[6] =  -plane[0][1];
-    viewMatrix[10] = -plane[0][2];
+    viewMatrix[0][2] = -plane[0][0];
+    viewMatrix[1][2] = -plane[0][1];
+    viewMatrix[2][2] = -plane[0][2];
 
-    viewMatrix[12] = -(viewMatrix[0] * eye[0] +
-                       viewMatrix[4] * eye[1] +
-                       viewMatrix[8] * eye[2]);
-    viewMatrix[13] = -(viewMatrix[1] * eye[0] +
-                       viewMatrix[5] * eye[1] +
-                       viewMatrix[9] * eye[2]);
-    viewMatrix[14] = -(viewMatrix[2] * eye[0] +
-                       viewMatrix[6] * eye[1] +
-                       viewMatrix[10] * eye[2]);
+    viewMatrix[3][0] = -(viewMatrix[0][0] * eye[0] + viewMatrix[1][0] * eye[1] + viewMatrix[2][0] * eye[2]);
+    viewMatrix[3][1] = -(viewMatrix[0][1] * eye[0] + viewMatrix[1][1] * eye[1] + viewMatrix[2][1] * eye[2]);
+    viewMatrix[3][2] = -(viewMatrix[0][2] * eye[0] + viewMatrix[1][2] * eye[1] + viewMatrix[2][2] * eye[2]);
+
+    viewMatrixInv = glm::inverse(viewMatrix);
 
     // build billboard matrix.  billboard matrix performs rotation
     // so that polygons drawn in the xy plane face the camera.
-    billboardMatrix[0] = viewMatrix[0];
-    billboardMatrix[1] = viewMatrix[4];
-    billboardMatrix[2] = viewMatrix[8];
-    billboardMatrix[4] = viewMatrix[1];
-    billboardMatrix[5] = viewMatrix[5];
-    billboardMatrix[6] = viewMatrix[9];
-    billboardMatrix[8] = viewMatrix[2];
-    billboardMatrix[9] = viewMatrix[6];
-    billboardMatrix[10] = viewMatrix[10];
+    billboardMatrix[0] = viewMatrix[0][0];
+    billboardMatrix[1] = viewMatrix[1][0];
+    billboardMatrix[2] = viewMatrix[2][0];
+    billboardMatrix[4] = viewMatrix[0][1];
+    billboardMatrix[5] = viewMatrix[1][1];
+    billboardMatrix[6] = viewMatrix[2][1];
+    billboardMatrix[8] = viewMatrix[0][2];
+    billboardMatrix[9] = viewMatrix[1][2];
+    billboardMatrix[10] = viewMatrix[2][2];
 
     // compute vectors of frustum edges
     const float xs = fabsf(1.0f / projectionMatrix[0]);
@@ -167,6 +161,11 @@ void Frustum::setView(const float* _eye, const float* _target)
     rotation = (float)((180.0 / M_PI) * atan2((double)dir[1], (double)dir[2]));
 }
 
+
+glm::vec4 Frustum::eyeLinear(glm::vec4 eyePlane)
+{
+    return eyePlane * viewMatrixInv;
+}
 
 void Frustum::setFarPlaneCull(bool useCulling)
 {
