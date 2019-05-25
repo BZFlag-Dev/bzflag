@@ -39,12 +39,6 @@ you can try several things:
 Source Distribution
 -------------------
 
-NOTE: At least through SDL 2.0.8, there are issues building BZFlag on recent
-versions of macOS and Xcode. We have success building on Mac OS X 10.10 with
-Xcode 7. Here are known issues with SDL 2 on macOS that are affecting us:
-https://bugzilla.libsdl.org/show_bug.cgi?id=4272
-https://bugzilla.libsdl.org/show_bug.cgi?id=4177
-
 You can build BZFlag from source using Xcode version 7 and later (You may also
 be able to build with Xcode versions as early as 4.2, but you will need to
 update the locations of libncurses, libcurl, and libz since those changed in
