@@ -60,6 +60,7 @@ private:
     TimeKeeper lastPuff;
     mutable bool    needUpdate;
     PlayerId        lastTarget;
+    glm::vec3       currentDirection;
 };
 
 
