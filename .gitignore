@@ -111,6 +111,9 @@ work
 /src/platform/MacOSX/BZFlag-Info.plist
 /MSVC/ipch
 /MSVC/bzflag.aps
+*.nativecodeanalysis.xml
+vc.nativecodeanalysis.all.xml
+*.lastcodeanalysissucceeded
 
 # OS generated files
 .DS_Store

@@ -795,8 +795,7 @@ void            HUDRenderer::render(SceneRenderer& renderer)
             // use one-to-one pixel projection
             glScissor(ox, oy + height - viewHeight, width, viewHeight);
             glMatrixMode(GL_PROJECTION);
-            glLoadIdentity();
-            glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+            window.setProjectionHUD();
             glMatrixMode(GL_MODELVIEW);
             glPushMatrix();
             glLoadIdentity();
@@ -1767,8 +1766,7 @@ void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
     // use one-to-one pixel projection
     glScissor(ox, oy + height - viewHeight, width, viewHeight);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+    window.setProjectionHUD();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -1873,8 +1871,7 @@ void            HUDRenderer::renderNotPlaying(SceneRenderer& renderer)
     // use one-to-one pixel projection
     glScissor(ox, oy + height - viewHeight, width, viewHeight);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+    window.setProjectionHUD();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
@@ -1949,8 +1946,7 @@ void            HUDRenderer::renderRoaming(SceneRenderer& renderer)
     // use one-to-one pixel projection
     glScissor(ox, oy + height - viewHeight, width, viewHeight);
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+    window.setProjectionHUD();
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();

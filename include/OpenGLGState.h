@@ -173,6 +173,7 @@ public:
     void        setStipple(float alpha);
     void        setSmoothing(bool smooth = true);
     void        setCulling(GLenum culling);
+    void        disableCulling();
     void        setShading(GLenum shading = GL_SMOOTH);
     void        setAlphaFunc(GLenum func = GL_GEQUAL,
                              GLclampf ref = 0.1f);

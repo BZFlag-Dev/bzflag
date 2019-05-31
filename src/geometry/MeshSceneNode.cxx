@@ -22,7 +22,6 @@
 #include <stdlib.h>
 
 // common implementation headers
-#include "vectors.h"
 #include "Extents.h"
 #include "Intersect.h"
 #include "TimeKeeper.h"
@@ -557,7 +556,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
 
     // culling
     if (bzmat->getNoCulling())
-        builder.setCulling(GL_NONE);
+        builder.disableCulling();
 
     // generate the gstate
     gstate = builder.getState();

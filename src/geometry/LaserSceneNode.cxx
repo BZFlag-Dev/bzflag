@@ -44,7 +44,7 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
     setRadius(length * length);
 
     OpenGLGStateBuilder builder(gstate);
-    builder.setCulling(GL_NONE);
+    builder.disableCulling();
     gstate = builder.getState();
 
     first = false;

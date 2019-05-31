@@ -27,7 +27,8 @@
 #include "ServerListCache.h"
 
 
-ServerItem::ServerItem() :  randomSortWeight((int)(bzfrand()*500)), updateTime(0), cached(false), favorite(false)
+ServerItem::ServerItem() :  randomSortWeight((int)(bzfrand()*500)), updateTime(0), cached(false), favorite(false),
+    localDiscovery(false)
 {
 }
 
@@ -231,12 +232,17 @@ unsigned int ServerItem::getSortFactor() const
             ping.blueCount + ping.purpleCount;
     value *= 1000;
 
+    // Ensure that locally discovered servers show up at the top of the list
+    if (localDiscovery)
+        value += 1 + 200 * 1000;
+
     // The constructor sets this to a random value from roughly 0 to 500 (up
     // to half the value of a player). This will be used to randomize the
     // order of servers with the same number of players. No longer will
     // servers starting with an 'a' or a number show higher on the list just
     // because of their hostname.
-    value += randomSortWeight;
+    else
+        value += randomSortWeight;
 
     return value;
 }

@@ -84,6 +84,10 @@ public:
     bool        isGrabEnabled(void) const;
     void        ungrabMouse();
 
+    void        setProjectionHUD() const;
+    void        setProjectionPlay() const;
+    void        setProjectionRadar(int x, int y, int w, int h, float radarRange, float maxHeight) const;
+
     void        resize();
 
     // return true iff there's a joystick available (and it's been initialized)

@@ -2509,13 +2509,13 @@ msgstr ""
 msgid "Free for All"
 msgstr ""
 
-msgid "Rabbit Hunt (Random Selection)"
+msgid "Rabbit Chase (Random Selection)"
 msgstr ""
 
-msgid "Rabbit Hunt (Score-based Selection)"
+msgid "Rabbit Chase (Score-based Selection)"
 msgstr ""
 
-msgid "Rabbit Hunt (Killer Selection)"
+msgid "Rabbit Chase (Killer Selection)"
 msgstr ""
 
 msgid "Max Players:"

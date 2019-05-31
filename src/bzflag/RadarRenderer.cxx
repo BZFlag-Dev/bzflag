@@ -235,7 +235,6 @@ void RadarRenderer::drawFancyTank(const Player* player)
     // we use the depth buffer so that the treads look ok
     if (BZDBCache::zbuffer)
     {
-        glClearDepth(1.0);
         glClear(GL_DEPTH_BUFFER_BIT);
         glEnable(GL_DEPTH_TEST);
     }
@@ -309,8 +308,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0.0, window.getWidth(), 0.0, window.getHeight(), -1.0, 1.0);
+    window.setProjectionPlay();
 
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -428,22 +426,13 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
 
     // prepare projection matrix
     glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     const MainWindow& window = renderer.getWindow();
-    const int xSize = window.getWidth();
-    const int ySize = window.getHeight();
-    const double xCenter = double(x) + 0.5 * double(w);
-    const double yCenter = double(y) + 0.5 * double(h);
-    const double xUnit = 2.0 * radarRange / double(w);
-    const double yUnit = 2.0 * radarRange / double(h);
     // NOTE: the visual extents include passable objects
     double maxHeight = 0.0;
     const Extents* visExts = renderer.getVisualExtents();
     if (visExts)
         maxHeight = (double)visExts->maxs[2];
-    glOrtho(-xCenter * xUnit, (xSize - xCenter) * xUnit,
-            -yCenter * yUnit, (ySize - yCenter) * yUnit,
-            -(maxHeight + 10.0), (maxHeight + 10.0));
+    window.setProjectionRadar(x, y, w, h, radarRange, (float)(maxHeight + 10.0));
 
     // prepare modelview matrix
     glMatrixMode(GL_MODELVIEW);
@@ -693,6 +682,8 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         // (which come first), are drawn on top of the normal flags.
         const int maxFlags = world->getMaxFlags();
         const bool drawNormalFlags = BZDB.isTrue("displayRadarFlags");
+        const bool hideTeamFlagsOnRadar = BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR);
+        const bool hideFlagsOnRadar = BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR);
         for (i = (maxFlags - 1); i >= 0; i--)
         {
             const FlagInstance& flag = world->getFlag(i);
@@ -702,12 +693,12 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
             // don't draw normal flags if we aren't supposed to
             if (flag.type->flagTeam == NoTeam && !drawNormalFlags)
                 continue;
-            if (BZDB.isTrue(StateDatabase::BZDB_HIDETEAMFLAGSONRADAR))
+            if (hideTeamFlagsOnRadar)
             {
                 if (flag.type->flagTeam != ::NoTeam)
                     continue;
             }
-            if (BZDB.isTrue(StateDatabase::BZDB_HIDEFLAGSONRADAR))
+            if (hideFlagsOnRadar)
             {
                 if (flag.type)
                     continue;

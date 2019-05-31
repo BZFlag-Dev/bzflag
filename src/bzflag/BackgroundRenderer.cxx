@@ -129,7 +129,7 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     // sun shadow stuff
     gstate.reset();
     gstate.setStipple(0.5f);
-    gstate.setCulling((GLenum)GL_NONE);
+    gstate.disableCulling();
     sunShadowsGState = gstate.getState();
 
     /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
@@ -1065,11 +1065,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
     const bool useClipPlane = (mirror && (doSkybox || BZDBCache::drawCelestial));
 
     if (useClipPlane)
-    {
         glEnable(GL_CLIP_PLANE0);
-        const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
-        glClipPlane(GL_CLIP_PLANE0, plane);
-    }
 
     if (doSkybox)
         drawSkybox();

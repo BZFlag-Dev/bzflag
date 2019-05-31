@@ -1235,7 +1235,6 @@ int         main(int argc, char** argv)
     // initialize graphics state
     pmainWindow->getWindow()->makeCurrent();
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    glClearDepth(1.0);
     glClearStencil(0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

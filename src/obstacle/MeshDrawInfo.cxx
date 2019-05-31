@@ -10,9 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-// Top Dog, King of the Hill
-#include "common.h"
-
 // implementation header
 #include "MeshDrawInfo.h"
 
@@ -29,7 +26,6 @@
 
 // common implementation headers
 #include "Pack.h"
-#include "vectors.h"
 #include "BzMaterial.h"
 #include "MeshObstacle.h"
 #include "TimeKeeper.h"

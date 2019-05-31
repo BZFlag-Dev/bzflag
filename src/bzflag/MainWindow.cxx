@@ -247,6 +247,34 @@ void            MainWindow::setQuadrant(Quadrant _quadrant)
     glViewport(xOrigin, yOrigin, width, height);
 }
 
+void MainWindow::setProjectionHUD() const
+{
+    glLoadIdentity();
+    glOrtho(0.0, width, viewHeight - height, viewHeight, -1.0, 1.0);
+}
+
+void MainWindow::setProjectionPlay() const
+{
+    glLoadIdentity();
+    glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
+}
+
+void MainWindow::setProjectionRadar(int x, int y, int w, int h, float radarRange, float maxHeight) const
+{
+    const float w2 = w / 2.0f;
+    const float h2 = h / 2.0f;
+    const float xUnit = radarRange / w2;
+    const float yUnit = radarRange / h2;
+    const float xCenter = x + w2;
+    const float yCenter = y + h2;
+
+
+    glLoadIdentity();
+    glOrtho(-xCenter * xUnit, (width - xCenter) * xUnit,
+            -yCenter * yUnit, (height - yCenter) * yUnit,
+            -maxHeight, maxHeight);
+}
+
 void            MainWindow::resize()
 {
     window->getSize(trueWidth, trueHeight);

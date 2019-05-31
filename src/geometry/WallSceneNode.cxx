@@ -372,7 +372,7 @@ void            WallSceneNode::notifyStyleChange()
     if (alphaThreshold != 0.0f)
         builder.setAlphaFunc(GL_GEQUAL, alphaThreshold);
     if (noCulling)
-        builder.setCulling(GL_NONE);
+        builder.disableCulling();
     if (noSorting)
         builder.setNeedsSorting(false);
     if (wantSphereMap)

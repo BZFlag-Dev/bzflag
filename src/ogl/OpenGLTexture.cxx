@@ -148,9 +148,19 @@ void OpenGLTexture::initContext()
     // compute next mipmap from current mipmap to save time.
     setFilter(filter);
     glBindTexture(GL_TEXTURE_2D, list);
-    gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
-                      scaledWidth, scaledHeight,
-                      GL_RGBA, GL_UNSIGNED_BYTE, image);
+    if (GLEW_VERSION_1_4)
+    {
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat,
+                     scaledWidth, scaledHeight,
+                     0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+    }
+    else
+    {
+        gluBuild2DMipmaps(GL_TEXTURE_2D, internalFormat,
+                          scaledWidth, scaledHeight,
+                          GL_RGBA, GL_UNSIGNED_BYTE, image);
+    }
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return;
@@ -173,36 +183,43 @@ bool OpenGLTexture::getPixelValue(int x, int y, unsigned char pixel[4])
 
 bool OpenGLTexture::setupImage(const GLubyte* pixels)
 {
-    // align to a 2^N value
-    scaledWidth = 1;
-    scaledHeight = 1;
-    while (scaledWidth < width)
-        scaledWidth <<= 1;
-    while (scaledHeight < height)
-        scaledHeight <<= 1;
+    if (GLEW_ARB_texture_non_power_of_two)
+    {
+        scaledWidth = width;
+        scaledHeight = height;
+        // Remove check of max size. I don't want to use gluScale if GL can handle non POT
+    }
+    else
+    {
+        // align to a 2^N value
+        scaledWidth = 1;
+        scaledHeight = 1;
+        while (scaledWidth < width)
+            scaledWidth <<= 1;
+        while (scaledHeight < height)
+            scaledHeight <<= 1;
 
-    // get maximum valid size for texture (boost to 2^m x 2^n)
-    GLint maxTextureSize;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        // get maximum valid size for texture (boost to 2^m x 2^n)
+        GLint maxTextureSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
 
-    // hard limit, some drivers have problems with sizes greater
-    // then this (espeically if you are using glTexSubImage2D)
-    const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
-    GLint bzMaxTexSize = 1;
-    // align the max size to a power of two  (wasteful)
-    while (bzMaxTexSize < dbMaxTexSize)
-        bzMaxTexSize <<= 1;
+        // hard limit, some drivers have problems with sizes greater
+        // then this (espeically if you are using glTexSubImage2D)
+        const GLint dbMaxTexSize = BZDB.evalInt("maxTextureSize");
+        GLint bzMaxTexSize = 1;
+        // align the max size to a power of two  (wasteful)
+        while (bzMaxTexSize < dbMaxTexSize)
+            bzMaxTexSize <<= 1;
 
-    if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize))
-        maxTextureSize = bzMaxTexSize;
+        if ((maxTextureSize < 0) || (maxTextureSize > bzMaxTexSize))
+            maxTextureSize = bzMaxTexSize;
 
-    // clamp to the maximum size
-    if (scaledWidth > maxTextureSize)
-        scaledWidth = maxTextureSize;
-    if (scaledHeight > maxTextureSize)
-        scaledHeight = maxTextureSize;
-
-    // NOTE: why these are 4-byte aligned is beyond me...
+        // clamp to the maximum size
+        if (scaledWidth > maxTextureSize)
+            scaledWidth = maxTextureSize;
+        if (scaledHeight > maxTextureSize)
+            scaledHeight = maxTextureSize;
+    }
 
     // copy the data into a 4-byte aligned buffer
     GLubyte* unaligned = new GLubyte[4 * width * height + 4];

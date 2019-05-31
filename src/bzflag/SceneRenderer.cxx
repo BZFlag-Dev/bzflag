@@ -87,7 +87,7 @@ SceneRenderer::SceneRenderer() :
     useHiddenLineOn(false),
     panelOpacity(0.3f),
     radarOpacity(0.3f),
-    radarSize(4),
+    radarSize(8),
     panelHeight(4),
     maxMotionFactor(5),
     viewType(Normal),
@@ -949,6 +949,10 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
 
     // draw start of background (no depth testing)
     OpenGLGState::resetState();
+
+    const GLdouble plane[4] = {0.0, 0.0, +1.0, 0.0};
+    glClipPlane(GL_CLIP_PLANE0, plane);
+
     if (background)
     {
         background->setBlank(blank);

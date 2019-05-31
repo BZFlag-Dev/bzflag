@@ -357,7 +357,7 @@ void            FlagSceneNode::notifyStyleChange()
     if (billboard && !realFlag)
         builder.setCulling(GL_BACK);
     else
-        builder.setCulling(GL_NONE);
+        builder.disableCulling();
     gstate = builder.getState();
 
     flagChunks = BZDBCache::flagChunks;

@@ -10,17 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// Interface
+#include "ArcObstacle.h"
+
+// System interfaces
 #include <math.h>
 #include <assert.h>
+
+//Common interfaces
 #include "global.h"
 #include "Pack.h"
-#include "vectors.h"
-
-#include "ArcObstacle.h"
-#include "MeshUtils.h"
 #include "PhysicsDriver.h"
 #include "MeshTransform.h"
+
+#include "MeshUtils.h"
 
 
 const char* ArcObstacle::typeName = "ArcObstacle";

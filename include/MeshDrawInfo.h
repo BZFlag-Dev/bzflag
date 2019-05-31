@@ -13,10 +13,16 @@
 #ifndef _MESH_DRAW_INFO_H_
 #define _MESH_DRAW_INFO_H_
 
+// Top Dog, King of the Hill
+#include "common.h"
+
+// System headers
 #include <map>
 #include <string>
 #include <vector>
 #include <iostream>
+
+// Common headers
 #include "vectors.h"
 #include "Extents.h"
 #include "BzMaterial.h"

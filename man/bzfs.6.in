@@ -304,7 +304,7 @@ Sets the maximum number of players, total or per team.  A single value sets
 the total number of players allowed.  Five comma separated values set the
 maximum for each team.  If a count is left blank then no limit is set for
 that team, except for the limit on the total number of players.  Both forms
-may be provided.  For rabbit hunt, the "rogue" value sets the total number
+may be provided.  For rabbit chase, the "rogue" value sets the total number
 of non-observer player, and all other values must be zero.
 .TP
 \fB\-mps \fImax\-score\fR
@@ -419,7 +419,7 @@ Makes most shots ricochet.
 Super bullets, shock waves, and guided missiles do not.
 .TP
 \fB\-rabbit\fR [\fIscore\fR | \fIkiller\fR | \fIrandom\fR]
-Enables the rabbit\-hunt style game.  By default, the free\-for\-all
+Enables the rabbit\-chase style game.  By default, the free\-for\-all
 style is used.  You must specify the algorithm used to pick a new
 rabbit when the old one dies.  The \fIscore\fR algorithm uses a modified
 wins/(wins+losses) score and picks the top scoring player to be the new

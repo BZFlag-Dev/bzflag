@@ -216,7 +216,7 @@ void TankSceneNode::notifyStyleChange()
 
 
     OpenGLGStateBuilder builder3(jumpJetsGState);
-    builder3.setCulling(GL_NONE);
+    builder3.disableCulling();
     builder3.setBlending(GL_SRC_ALPHA, GL_ONE);
     jumpJetsGState = builder3.getState();
 }
@@ -575,7 +575,7 @@ TankIDLSceneNode::TankIDLSceneNode(const TankSceneNode* _tank) :
     setRadius(radius);
 
     OpenGLGStateBuilder builder(gstate);
-    builder.setCulling(GL_NONE);
+    builder.disableCulling();
     builder.setShading(GL_SMOOTH);
     builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     gstate = builder.getState();
@@ -939,8 +939,8 @@ void TankSceneNode::TankRenderNode::render()
 
     if (sceneNode->clip && !isShadow)
     {
-        glClipPlane(GL_CLIP_PLANE0, sceneNode->clipPlane);
-        glEnable(GL_CLIP_PLANE0);
+        glClipPlane(GL_CLIP_PLANE1, sceneNode->clipPlane);
+        glEnable(GL_CLIP_PLANE1);
     }
 
     const GLfloat* sphere = sceneNode->getSphere();
@@ -1048,7 +1048,7 @@ void TankSceneNode::TankRenderNode::render()
     if (!BZDBCache::blend && sceneNode->transparent)
         myStipple(0.5f);
     if (sceneNode->clip)
-        glDisable(GL_CLIP_PLANE0);
+        glDisable(GL_CLIP_PLANE1);
 
     return;
 }
@@ -1476,9 +1476,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     myColor4f(1.0f, 1.0f, 1.0f, 0.5f);
 
     // use a clip plane, because the ground has no depth
-    const GLdouble clip_plane[4] = {0.0, 0.0, 1.0, 0.0};
-    glClipPlane(GL_CLIP_PLANE1, clip_plane);
-    glEnable(GL_CLIP_PLANE1);
+    glEnable(GL_CLIP_PLANE0);
 
     sceneNode->jumpJetsGState.setState();
     glDepthMask(GL_FALSE);
@@ -1507,7 +1505,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     glDepthMask(GL_TRUE);
     sceneNode->gstate.setState();
 
-    glDisable(GL_CLIP_PLANE1);
+    glDisable(GL_CLIP_PLANE0);
 
     addTriangleCount(4);
 
