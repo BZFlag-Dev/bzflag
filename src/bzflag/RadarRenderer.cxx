@@ -665,18 +665,18 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
                 const ShotPath* shot = player->getShot(j);
                 if (shot && (shot->getFlag() != Flags::InvisibleBullet || iSeeAll))
                 {
-                    const float *shotcolor;
+                    const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
                     if (coloredShot)
                     {
+                        const float *shotcolor;
                         if (myTank->getFlag() == Flags::Colorblindness)
                             shotcolor = Team::getRadarColor(RogueTeam);
                         else
                             shotcolor = Team::getRadarColor(player->getTeam());
-                        const float cs = colorScale(shot->getPosition()[2], muzzleHeight);
                         glColor3f(shotcolor[0] * cs, shotcolor[1] * cs, shotcolor[2] * cs);
                     }
                     else
-                        glColor3f(1.0f, 1.0f, 1.0f);
+                        glColor3f(cs, cs, cs);
                     shot->radarRender();
                 }
             }
