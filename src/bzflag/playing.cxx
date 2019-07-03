@@ -4963,7 +4963,7 @@ static void     addRobots()
         }
         else
         {
-            snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), j);
+            snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), (unsigned char)j);
             robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
             robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(), 0, robots[j]->getCallSign(), robots[j]->getMotto(), "",
