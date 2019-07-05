@@ -533,6 +533,11 @@ static void     parse(int argc, char** argv)
         }
         else if (strcmp(argv[i], "-debug") == 0)
             debugLevel++;
+#ifdef __APPLE__
+        else if (strcmp(argv[i], "-NSDocumentRevisionsDebugMode") == 0)
+            // ignore this option that is appended when running from inside Xcode
+            checkArgc(i, argc, argv[i]);
+#endif // __APPLE__
         // has to be the last option that starts with -d
         else if (strncmp(argv[i], "-d", 2) == 0)
         {
