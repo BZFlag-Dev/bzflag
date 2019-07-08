@@ -247,9 +247,6 @@ protected:
     float radius;
 };
 
-template <>
-EffectsRenderer* Singleton<EffectsRenderer>::_instance = (EffectsRenderer*)0;
-
 // utils for geo
 static void drawRingYZ(float rad, float z, float topsideOffset = 0,
                        float bottomUV = 0, float ZOffset = 0,

@@ -71,10 +71,6 @@ const float   SceneRenderer::dimDensity = 0.75f;
 const GLfloat SceneRenderer::dimnessColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 const GLfloat SceneRenderer::blindnessColor[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-/* initialize the singleton */
-template <>
-SceneRenderer* Singleton<SceneRenderer>::_instance = (SceneRenderer*)0;
-
 SceneRenderer::SceneRenderer() :
     window(NULL),
     blank(false),

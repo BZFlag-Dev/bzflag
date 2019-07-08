@@ -31,10 +31,6 @@
 
 /*const int NO_VARIANT = (-1); */
 
-// initialize the singleton
-template <>
-TextureManager* Singleton<TextureManager>::_instance = (TextureManager*)0;
-
 static int noiseProc(ProcTextureInit &init);
 
 ProcTextureInit procLoader[1];

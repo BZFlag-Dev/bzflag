@@ -36,11 +36,6 @@
 #include "ImageFont.h"
 #include "TextureFont.h"
 
-// initialize the singleton
-template <>
-FontManager* Singleton<FontManager>::_instance = (FontManager*)0;
-
-
 // ANSI code GLFloat equivalents - these should line up with the enums in AnsiCodes.h
 static GLfloat BrightColors[9][3] =
 {

@@ -31,10 +31,6 @@
 // FileManager
 //
 
-// initialize the singleton
-template <>
-FileManager* Singleton<FileManager>::_instance = (FileManager*)0;
-
 FileManager::FileManager()
 {
     dataPath = "data";
