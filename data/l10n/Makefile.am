@@ -13,6 +13,7 @@ dist_l10n_DATA = \
 	bzflag_nl.po	\
 	bzflag_pt.po	\
 	bzflag_ru.po	\
+	bzflag_sk.po	\
 	bzflag_sv.po
 
 EXTRA_DIST = \

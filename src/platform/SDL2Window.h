@@ -112,6 +112,7 @@ private:
     std::string title;
     bool canGrabMouse;
     bool fullScreen;
+    bool vsync;
     int  base_width;
     int  base_height;
     int  min_width;
