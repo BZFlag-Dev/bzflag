@@ -24,7 +24,7 @@ HWND SDLWindow::hwnd = NULL;
 SDLWindow::SDLWindow(const SDLDisplay* _display, SDLVisual*)
     : BzfWindow(_display), hasGamma(true), origGamma(-1.0f), lastGamma(1.0f),
       windowId(NULL), glContext(NULL), canGrabMouse(true), fullScreen(false),
-      base_width(640), base_height(480), min_width(-1), min_height(-1)
+      vsync(false), base_width(640), base_height(480), min_width(-1), min_height(-1)
 {
 }
 
@@ -191,10 +191,6 @@ bool SDLWindow::create(void)
     SDL_bool windowWasGrabbed = SDL_FALSE;
     if (windowId != NULL)
         windowWasGrabbed = SDL_GetWindowGrab(windowId);
-    int swapInterval = 0;
-    if (windowId != NULL)
-        if (glContext != NULL)
-            swapInterval = SDL_GL_GetSwapInterval() == 1;
 
     // if we have an existing identical window, go no further
     if (windowId != NULL)
@@ -259,7 +255,7 @@ bool SDLWindow::create(void)
     makeContext();
     makeCurrent();
 
-    SDL_GL_SetSwapInterval(swapInterval);
+    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
 
     // init opengl context
     OpenGLGState::initContext();
@@ -333,7 +329,11 @@ void SDLWindow::makeContext()
 
 void SDLWindow::setVerticalSync(bool setting)
 {
-    SDL_GL_SetSwapInterval(setting ? 1 : 0);
+    vsync = setting;
+
+    if (windowId != NULL)
+        if (glContext != NULL)
+            SDL_GL_SetSwapInterval(vsync ? 1 : 0);
 }
 
 void SDLWindow::setMinSize(int width, int height)
