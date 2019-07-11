@@ -81,14 +81,6 @@ when generating the Xcode project files. For example:
     --extra-include-dirs=/usr/local/include,/usr/local/include/SDL \
     --extra-lib-dirs=/usr/local/lib xcode4
 
-NOTE: When running the client from the Xcode project, you may encounter the
-error "Unknown option -NSDocumentRevisionsDebugMode" due to a deficiency in
-Xcode that prevents us from permanently disabling a certain setting. If you do
-encounter this error, click the "BZFlag" scheme button, click "Edit Scheme...",
-and under the "Options" tab, deselect "Allow debugging when using document
-Versions Browser" before running the client from Xcode. The client should now
-run from Xcode after a successful build.
-
 Building with gmake (Linux and macOS)
 -------------------------------------
 Unlike the standard autotools/gnu make system in BZFlag, the premake system
