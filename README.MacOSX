@@ -101,13 +101,6 @@ To build the client, select Build from the Product menu or enter the Command-B
 key sequence. Note that the BZFlag version is no longer automatically
 appended to the build product.
 
-NOTE: You may encounter the error "Unknown option
--NSDocumentRevisionsDebugMode" due to a deficiency in Xcode that prevents us
-from permanently disabling a certain setting. If you do encounter this error,
-click the "BZFlag" scheme button, click "Edit Scheme..." and under the "Options"
-tab, deselect "Allow debugging when using document Versions Browser" before
-running the client straight from Xcode.
-
 If the build was successful, you can run the application from Xcode selecting
 the Product menu and clicking Run or by entering the Command-R key sequence.
 You will also want to locate the application you just built. Make sure the
