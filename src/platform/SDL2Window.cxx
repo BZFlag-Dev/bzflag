@@ -255,7 +255,9 @@ bool SDLWindow::create(void)
     makeContext();
     makeCurrent();
 
-    SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+    if(SDL_GL_SetSwapInterval(vsync ? -1 : 0) == -1 && vsync)
+        // no adaptive vsync; set regular vsync
+        SDL_GL_SetSwapInterval(1);
 
     // init opengl context
     OpenGLGState::initContext();
@@ -333,7 +335,9 @@ void SDLWindow::setVerticalSync(bool setting)
 
     if (windowId != NULL)
         if (glContext != NULL)
-            SDL_GL_SetSwapInterval(vsync ? 1 : 0);
+            if(SDL_GL_SetSwapInterval(vsync ? -1 : 0) == -1 && vsync)
+                // no adaptive vsync; set regular vsync
+                SDL_GL_SetSwapInterval(1);
 }
 
 void SDLWindow::setMinSize(int width, int height)
