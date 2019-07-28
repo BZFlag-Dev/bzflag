@@ -39,8 +39,13 @@
 #define strcasecmp stricmp
 #endif
 #else
+#ifdef __clang__
+#define BZF_API __attribute__((visibility("default")))
+#define BZF_PLUGIN_CALL extern "C" __attribute__((visibility("default")))
+#else
 #define BZF_API
 #define BZF_PLUGIN_CALL extern "C"
+#endif
 #endif
 
 /* Provide a means to deprecate API functions to discourage their use
