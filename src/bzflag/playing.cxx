@@ -58,7 +58,6 @@
 #include "Team.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
-#include "TimeBomb.h"
 #include "version.h"
 #include "WordFilter.h"
 #include "ZSceneDatabase.h"
@@ -7673,15 +7672,6 @@ void            startPlaying(BzfDisplay* _display,
                         info.szCSDVersion);
     }
 #endif
-
-    // print expiration
-    if (timeBombString())
-    {
-        // add message about date of expiration
-        char bombMessage[80];
-        sprintf(bombMessage, "This release will expire on %s", timeBombString());
-        controlPanel->addMessage(bombMessage);
-    }
 
     // send informative header to the console
     {

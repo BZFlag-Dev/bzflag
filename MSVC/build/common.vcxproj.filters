@@ -97,9 +97,6 @@
     <ClCompile Include="..\..\src\common\TextUtils.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\common\TimeBomb.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\common\TimeKeeper.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -190,9 +187,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\TimeKeeper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\TimeBomb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\TextUtils.h">
