@@ -45,24 +45,11 @@ void ThiefControl::Event (bz_EventData * eventData)
     if (data->eventType != bz_eFlagTransferredEvent)
         return;
 
-    bz_BasePlayerRecord *playerFrom = bz_getPlayerByIndex(data->fromPlayerID);
-
-    if (!playerFrom)
-        return;
-
-    bz_BasePlayerRecord *playerTo = bz_getPlayerByIndex(data->toPlayerID);
-
-    if (!playerTo)
-    {
-        bz_freePlayerRecord(playerFrom);
-        return;
-    }
-
     switch (bz_getGameType())
     {
 
     case eFFAGame:
-        if (playerTo->team == playerFrom->team && playerTo->team != eRogueTeam)
+        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID) && bz_getPlayerTeam(data->toPlayerID) != eRogueTeam)
         {
             data->action = data->DropThief;
             bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
@@ -71,7 +58,7 @@ void ThiefControl::Event (bz_EventData * eventData)
 
     case eCTFGame:
     {
-        if (playerTo->team == playerFrom->team && playerTo->team != eRogueTeam)
+        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID) && bz_getPlayerTeam(data->toPlayerID) != eRogueTeam)
         {
             bz_ApiString flagT = bz_ApiString(data->flagType);
 
@@ -88,7 +75,7 @@ void ThiefControl::Event (bz_EventData * eventData)
     break;
 
     case eRabbitGame:
-        if (playerTo->team == playerFrom->team)
+        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID))
         {
 
             data->action = data->DropThief;
@@ -101,8 +88,6 @@ void ThiefControl::Event (bz_EventData * eventData)
 
     }
 
-    bz_freePlayerRecord(playerTo);
-    bz_freePlayerRecord(playerFrom);
 }
 
 // Local Variables: ***
