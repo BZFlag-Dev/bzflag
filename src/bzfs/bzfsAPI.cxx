@@ -2938,6 +2938,23 @@ BZF_API bool bz_getFlagPosition ( int flag, float* pos )
     return true;
 }
 
+BZF_API bool bz_getNearestFlagSafetyZone(int flag, float *pos)
+{
+    FlagInfo *flagInfo = FlagInfo::get(flag);
+    TeamColor team = flagInfo->teamIndex();
+
+    float currPos[3];
+    bz_getFlagPosition(flag, currPos);
+
+    if (team == NoTeam)
+    {
+        return false;
+    }
+
+    const std::string &safetyQualifier = CustomZone::getFlagSafetyQualifier(team);
+    return world->getEntryZones().getClosePoint(safetyQualifier, currPos, pos);
+}
+
 //-------------------------------------------------------------------------
 
 BZF_API float bz_getWorldMaxHeight ( void )

@@ -1896,6 +1896,7 @@ BZF_API bool bz_moveFlag ( int flag, float pos[3] );
 BZF_API int bz_getPlayerFlagID ( int playerID );
 BZF_API int bz_flagPlayer ( int flag );
 BZF_API bool bz_getFlagPosition ( int flag, float* pos );
+BZF_API bool bz_getNearestFlagSafetyZone(int flag, float *pos);
 
 
 // world
