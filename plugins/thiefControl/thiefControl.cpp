@@ -36,20 +36,20 @@ void ThiefControl::Init(const char* /*config*/ )
 
 void ThiefControl::Event (bz_EventData * eventData)
 {
+    if (eventData->eventType != bz_eFlagTransferredEvent)
+      return;
+	
     bz_FlagTransferredEventData_V1 *data = (bz_FlagTransferredEventData_V1 *) eventData;
     const std::string noStealMsg = "Flag dropped. Don't steal from teammates!";
-
-    if (!data)
-        return;
-
-    if (data->eventType != bz_eFlagTransferredEvent)
-        return;
+	
+    bz_eTeamType thiefTeam = bz_getPlayerTeam(data->toPlayerID);
+    bz_eTeamType targetTeam = bz_getPlayerTeam(data->fromPlayerID);
 
     switch (bz_getGameType())
     {
 
     case eFFAGame:
-        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID) && bz_getPlayerTeam(data->toPlayerID) != eRogueTeam)
+        if (thiefTeam == targetTeam && thiefTeam != eRogueTeam)
         {
             data->action = data->DropThief;
             bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
@@ -58,7 +58,7 @@ void ThiefControl::Event (bz_EventData * eventData)
 
     case eCTFGame:
     {
-        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID) && bz_getPlayerTeam(data->toPlayerID) != eRogueTeam)
+        if (thiefTeam == targetTeam && thiefTeam != eRogueTeam)
         {
             bz_ApiString flagT = bz_ApiString(data->flagType);
 
@@ -75,7 +75,7 @@ void ThiefControl::Event (bz_EventData * eventData)
     break;
 
     case eRabbitGame:
-        if (bz_getPlayerTeam(data->toPlayerID) == bz_getPlayerTeam(data->fromPlayerID))
+        if (thiefTeam == targetTeam)
         {
 
             data->action = data->DropThief;
