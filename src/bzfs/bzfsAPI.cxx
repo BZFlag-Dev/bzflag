@@ -4286,10 +4286,29 @@ BZF_API const char* bz_getServerOwner()
     return getPublicOwner().c_str();
 }
 
+BZF_API void bz_reloadAll()
+{
+    bz_ReloadData_V1 event;
+    event.target = "all";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
+    bz_reloadLocalBans();
+    bz_reloadMasterBans();
+    bz_reloadGroups();
+    bz_reloadUsers();
+    bz_reloadHelp();
+    bz_reloadBadwords();
+}
+
 BZF_API void bz_reloadLocalBans()
 {
     // reload the banlist
     logDebugMessage(3,"Reloading bans\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "bans";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
     clOptions->acl.load();
 
     rescanForBans();
@@ -4302,6 +4321,11 @@ BZF_API void bz_reloadMasterBans()
 
     // reload the banlist
     logDebugMessage(3,"Reloading master bans\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "masterbans";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
     clOptions->acl.purgeMasters();
 
     masterBanHandler.start();
@@ -4310,6 +4334,11 @@ BZF_API void bz_reloadMasterBans()
 BZF_API void bz_reloadGroups()
 {
     logDebugMessage(3,"Reloading groups\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "groups";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
     groupAccess.clear();
     initGroups();
 }
@@ -4317,6 +4346,12 @@ BZF_API void bz_reloadGroups()
 BZF_API void bz_reloadUsers()
 {
     logDebugMessage(3,"Reloading users\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "users";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
+
     userDatabase.clear();
 
     if (userDatabaseFile.size())
@@ -4328,12 +4363,23 @@ BZF_API void bz_reloadHelp()
 {
     // reload the text chunks
     logDebugMessage(3,"Reloading helpfiles\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "helpfiles";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
+
     clOptions->textChunker.reload();
 }
 
 BZF_API void bz_reloadBadwords()
 {
     logDebugMessage(3,"Reloading bad words\n");
+
+    bz_ReloadData_V1 event;
+    event.target = "badwords";
+    worldEventManager.callEvents(bz_eReloadEvent, &event);
+
     clOptions->filter.clear();
     loadBadwordsList();
 }
