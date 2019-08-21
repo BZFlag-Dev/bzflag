@@ -21,8 +21,8 @@
  */
 
 #pragma once
-#ifndef	BZF_TIME_KEEPER_H
-#define	BZF_TIME_KEEPER_H
+#ifndef BZF_TIME_KEEPER_H
+#define BZF_TIME_KEEPER_H
 
 #include "common.h"
 
@@ -46,39 +46,39 @@ public:
     explicit TimeKeeper(Seconds_t secs);
 
     operator bool() const;
-  
-    double		operator-(const TimeKeeper&) const;
-    bool			operator<=(const TimeKeeper&) const;
-    TimeKeeper&		operator+=(double);
-    TimeKeeper&		operator+=(const TimeKeeper&);
+
+    double      operator-(const TimeKeeper&) const;
+    bool            operator<=(const TimeKeeper&) const;
+    TimeKeeper&     operator+=(double);
+    TimeKeeper&     operator+=(const TimeKeeper&);
 
     /** returns how many seconds have elapsed since epoch, Jan 1, 1970 */
     double       getSeconds() const;
 
     /** returns a timekeeper representing the current time */
-    static const TimeKeeper&	getCurrent();
+    static const TimeKeeper&    getCurrent();
 
     /** returns a timekeeper representing the time of program execution */
-    static const TimeKeeper&	getStartTime();
+    static const TimeKeeper&    getStartTime();
 
     /** sets the time to the current time (recalculates) */
-    static void			setTick();
+    static void         setTick();
     /** returns a timekeeper that is updated periodically via setTick */
-    static const TimeKeeper&	getTick();
+    static const TimeKeeper&    getTick();
 
     /** returns a timekeeper representing +Inf */
-    static const TimeKeeper&	getSunExplodeTime();
+    static const TimeKeeper&    getSunExplodeTime();
     /** returns a timekeeper representing -Inf */
-    static const TimeKeeper&	getSunGenesisTime();
+    static const TimeKeeper&    getSunGenesisTime();
     /** returns a timekeeper representing an unset timekeeper */
-    static const TimeKeeper&	getNullTime();
+    static const TimeKeeper&    getNullTime();
 
     /** returns the local time */
     static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL,
                           int* sec = NULL, bool* dst = NULL);
 
     /** returns a string of the local time */
-    static const char		*timestamp();
+    static const char       *timestamp();
 
     static void localTime( int &day);
 
@@ -89,11 +89,11 @@ public:
 
     /** converts a time difference into an array of integers
         representing days, hours, minutes, seconds */
-    static void			convertTime(Seconds_t raw, long int convertedTimes[]);
+    static void         convertTime(Seconds_t raw, long int convertedTimes[]);
     /** prints an integer-array time difference in human-readable form */
-    static const std::string	printTime(long int timeValue[]);
+    static const std::string    printTime(long int timeValue[]);
     /** prints an float time difference in human-readable form */
-    static const std::string	printTime(double diff);
+    static const std::string    printTime(double diff);
 
     /** sleep for a given number of floating point seconds */
     static void           sleep(double secs); //const
@@ -101,7 +101,7 @@ public:
 protected:
     // not that we expect to subclass, but prefer separating methods from members
     void now();
-  
+
 private:
     std::chrono::time_point<std::chrono::steady_clock, Seconds_t> lastTime; // floating seconds
 };
@@ -110,7 +110,7 @@ private:
 // TimeKeeper
 //
 
-inline double		TimeKeeper::operator-(const TimeKeeper& t) const
+inline double       TimeKeeper::operator-(const TimeKeeper& t) const
 {
     return (lastTime - t.lastTime).count();
 }
@@ -131,7 +131,7 @@ inline bool     TimeKeeper::operator<=(const TimeKeeper& t) const
     return lastTime <= t.lastTime;
 }
 
-inline double		TimeKeeper::getSeconds() const
+inline double       TimeKeeper::getSeconds() const
 {
     return lastTime.time_since_epoch().count();
 }

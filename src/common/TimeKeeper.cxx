@@ -21,14 +21,15 @@
 #include "bzfio.h"
 
 
-namespace {
-    TimeKeeper currentTime;
-    TimeKeeper startTime = TimeKeeper::getCurrent(); // initialize when we started
-    TimeKeeper tickTime;
+namespace
+{
+TimeKeeper currentTime;
+TimeKeeper startTime = TimeKeeper::getCurrent(); // initialize when we started
+TimeKeeper tickTime;
 
-    TimeKeeper sunExplodeTime{TimeKeeper::Seconds_t::max()};
-    TimeKeeper sunGenesisTime{TimeKeeper::Seconds_t::min()};
-    TimeKeeper nullTime{TimeKeeper::Seconds_t::zero()};
+TimeKeeper sunExplodeTime{TimeKeeper::Seconds_t::max()};
+TimeKeeper sunGenesisTime{TimeKeeper::Seconds_t::min()};
+TimeKeeper nullTime{TimeKeeper::Seconds_t::zero()};
 }
 
 TimeKeeper::TimeKeeper(Seconds_t secs)
@@ -167,7 +168,7 @@ void TimeKeeper::convertTime(Seconds_t raw, long int convertedTimes[])
 
     auto secs = std::chrono::duration_cast<std::chrono::seconds>(raw);
     raw -= secs;
-  
+
     convertedTimes[0] = days.count();
     convertedTimes[1] = hours.count();
     convertedTimes[2] = mins.count();
@@ -183,23 +184,27 @@ const std::string TimeKeeper::printTime(long int timeValue[])
     std::string valueNames;
     char temp[25];
 
-    if (timeValue[0] > 0) {
+    if (timeValue[0] > 0)
+    {
         snprintf(temp, 25, "%ld day%s", timeValue[0], timeValue[0] == 1 ? "" : "s");
         valueNames.append(temp);
     }
-    if (timeValue[1] > 0) {
+    if (timeValue[1] > 0)
+    {
         if (timeValue[0] > 0)
             valueNames.append(", ");
         snprintf(temp, 20, "%ld hour%s", timeValue[1], timeValue[1] == 1 ? "" : "s");
         valueNames.append(temp);
     }
-    if (timeValue[2] > 0) {
+    if (timeValue[2] > 0)
+    {
         if ((timeValue[1] > 0) || (timeValue[0] > 0))
             valueNames.append(", ");
         snprintf(temp, 20, "%ld min%s", timeValue[2], timeValue[2] == 1 ? "" : "s");
         valueNames.append(temp);
     }
-    if (timeValue[3] > 0) {
+    if (timeValue[3] > 0)
+    {
         if ((timeValue[2] > 0) || (timeValue[1] > 0) || (timeValue[0] > 0))
             valueNames.append(", ");
         snprintf(temp, 20, "%ld sec%s", timeValue[3], timeValue[3] == 1 ? "" : "s");
@@ -220,9 +225,8 @@ const std::string TimeKeeper::printTime(double diff)
 
 void TimeKeeper::sleep(double seconds)
 {
-    if (seconds > 0.0) {
+    if (seconds > 0.0)
         std::this_thread::sleep_for(Seconds_t(seconds));
-    }
     return;
 }
 
