@@ -14,6 +14,7 @@
 #include "TimeKeeper.h"
 
 /* system implementation headers */
+#include <cstring>
 #include <thread>
 
 /* common implementation headers */
