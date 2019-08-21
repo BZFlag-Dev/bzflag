@@ -32,8 +32,8 @@ class CommandManager : public Singleton<CommandManager>
 
 public:
 
-    CommandManager();
-    ~CommandManager();
+    CommandManager() = default;
+    ~CommandManager() = default;
 
     // type of function that implements command.  function should return
     // a string with the output of the command (or the empty string if

@@ -41,7 +41,7 @@ class UIMap : public std::map<std::string, UICreator>,
 protected:
     friend class Singleton<UIMap>;
     /** The constructor is hidden, this is a singleton. */
-    UIMap();
+    UIMap() = default;
 
 };
 
