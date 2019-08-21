@@ -72,7 +72,6 @@
 		0357A7DE1670AFE30056C938 /* Team.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554460166C846F008806E9 /* Team.cxx */; };
 		0357A7DF1670AFE30056C938 /* TextChunkManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554461166C846F008806E9 /* TextChunkManager.cxx */; };
 		0357A7E01670AFE30056C938 /* TextUtils.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554462166C846F008806E9 /* TextUtils.cxx */; };
-		0357A7E11670AFE30056C938 /* TimeBomb.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554463166C846F008806E9 /* TimeBomb.cxx */; };
 		0357A7E21670AFE30056C938 /* TimeKeeper.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554464166C846F008806E9 /* TimeKeeper.cxx */; };
 		0357A7E31670AFE30056C938 /* VotingBooth.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554465166C846F008806E9 /* VotingBooth.cxx */; };
 		0357A7E41670AFE30056C938 /* WordFilter.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554466166C846F008806E9 /* WordFilter.cxx */; };
@@ -1104,7 +1103,6 @@
 		0305D5EE166C9DAE00557FC4 /* TextureManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureManager.h; sourceTree = "<group>"; };
 		0305D5EF166C9DAE00557FC4 /* TextureMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureMatrix.h; sourceTree = "<group>"; };
 		0305D5F0166C9DAE00557FC4 /* TextUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextUtils.h; sourceTree = "<group>"; };
-		0305D5F1166C9DAE00557FC4 /* TimeBomb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeBomb.h; sourceTree = "<group>"; };
 		0305D5F2166C9DAE00557FC4 /* TimeKeeper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimeKeeper.h; sourceTree = "<group>"; };
 		0305D5F4166C9DAE00557FC4 /* TriWallSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TriWallSceneNode.h; sourceTree = "<group>"; };
 		0305D5F5166C9DAE00557FC4 /* vectors.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vectors.h; sourceTree = "<group>"; };
@@ -1480,7 +1478,6 @@
 		03554460166C846F008806E9 /* Team.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Team.cxx; sourceTree = "<group>"; };
 		03554461166C846F008806E9 /* TextChunkManager.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextChunkManager.cxx; sourceTree = "<group>"; };
 		03554462166C846F008806E9 /* TextUtils.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TextUtils.cxx; sourceTree = "<group>"; };
-		03554463166C846F008806E9 /* TimeBomb.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeBomb.cxx; sourceTree = "<group>"; };
 		03554464166C846F008806E9 /* TimeKeeper.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TimeKeeper.cxx; sourceTree = "<group>"; };
 		03554465166C846F008806E9 /* VotingBooth.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VotingBooth.cxx; sourceTree = "<group>"; };
 		03554466166C846F008806E9 /* WordFilter.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WordFilter.cxx; sourceTree = "<group>"; };
@@ -2349,7 +2346,6 @@
 				0305D5EE166C9DAE00557FC4 /* TextureManager.h */,
 				0305D5EF166C9DAE00557FC4 /* TextureMatrix.h */,
 				0305D5F0166C9DAE00557FC4 /* TextUtils.h */,
-				0305D5F1166C9DAE00557FC4 /* TimeBomb.h */,
 				0305D5F2166C9DAE00557FC4 /* TimeKeeper.h */,
 				0305D5F4166C9DAE00557FC4 /* TriWallSceneNode.h */,
 				0305D5F5166C9DAE00557FC4 /* vectors.h */,
@@ -2804,7 +2800,6 @@
 				03554460166C846F008806E9 /* Team.cxx */,
 				03554461166C846F008806E9 /* TextChunkManager.cxx */,
 				03554462166C846F008806E9 /* TextUtils.cxx */,
-				03554463166C846F008806E9 /* TimeBomb.cxx */,
 				03554464166C846F008806E9 /* TimeKeeper.cxx */,
 				03554465166C846F008806E9 /* VotingBooth.cxx */,
 				03554466166C846F008806E9 /* WordFilter.cxx */,
@@ -5009,7 +5004,6 @@
 				0357A7DE1670AFE30056C938 /* Team.cxx in Sources */,
 				0357A7DF1670AFE30056C938 /* TextChunkManager.cxx in Sources */,
 				0357A7E01670AFE30056C938 /* TextUtils.cxx in Sources */,
-				0357A7E11670AFE30056C938 /* TimeBomb.cxx in Sources */,
 				0357A7E21670AFE30056C938 /* TimeKeeper.cxx in Sources */,
 				0357A7E31670AFE30056C938 /* VotingBooth.cxx in Sources */,
 				0357A7E41670AFE30056C938 /* WordFilter.cxx in Sources */,
