@@ -636,10 +636,6 @@ void dumpResources()
 
     BZDB.set("radaropacity", TextUtils::format("%f", RENDERER.getRadarOpacity()));
 
-    BZDB.set("radarsize", TextUtils::format("%d", RENDERER.getRadarSize()));
-
-    BZDB.set("panelheight", TextUtils::format("%d", RENDERER.getPanelHeight()));
-
     BZDB.set("mouseboxsize", TextUtils::format("%d", RENDERER.getMaxMotionFactor()));
 
     // don't save these configurations

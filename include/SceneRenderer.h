@@ -192,6 +192,8 @@ private:
     SceneRenderer(const SceneRenderer&);
     SceneRenderer&    operator=(const SceneRenderer&);
 
+    static void bzdbCallback(const std::string& name, void *);
+
     void      setupBackgroundMaterials();
 
     void      getLights();

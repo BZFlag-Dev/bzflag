@@ -1122,6 +1122,9 @@ static std::string cmdHunt(const std::string&,
 {
     if (args.size() != 0)
         return "usage: hunt";
+    LocalPlayer *myTank = LocalPlayer::getMyTank();
+    if (!myTank)
+        return "use only when connected";
     hud->getScoreboard()->huntKeyEvent (false);
     return std::string();
 }
@@ -1131,6 +1134,9 @@ static std::string cmdAddHunt(const std::string&,
 {
     if (args.size() != 0)
         return "usage: addhunt";
+    LocalPlayer *myTank = LocalPlayer::getMyTank();
+    if (!myTank)
+        return "use only when connected";
     hud->getScoreboard()->huntKeyEvent (true);
     return std::string();
 }

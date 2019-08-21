@@ -23,10 +23,6 @@
 // local implementation headers
 #include "BzfEvent.h"
 
-// initialize the singleton
-template <>
-KeyManager* Singleton<KeyManager>::_instance = (KeyManager*)0;
-
 const char*     KeyManager::buttonNames[] =
 {
     "???",

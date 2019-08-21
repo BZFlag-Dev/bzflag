@@ -12,14 +12,6 @@
 
 #include "UIMap.h"
 
-// initialize the singleton
-template <>
-UIMap* Singleton<UIMap>::_instance = (UIMap*)0;
-
-UIMap::UIMap()
-{
-}
-
 UIAdder::UIAdder(const std::string& name, UICreator creator)
 {
     UIMap::instance()[name] = creator;
