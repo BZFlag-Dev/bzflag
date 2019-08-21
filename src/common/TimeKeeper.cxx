@@ -14,165 +14,79 @@
 #include "TimeKeeper.h"
 
 /* system implementation headers */
-#include <time.h>
-#include <string>
-#include <string.h>
-#ifdef HAVE_UNISTD_H
-#  include <unistd.h>
-#endif
-#ifdef __BEOS__
-#  include <OS.h>
-#endif
-#if !defined(_WIN32)
-#  include <sys/time.h>
-#  include <sys/types.h>
-static struct timeval   lastTime = { 0, 0 };
-#else /* !defined(_WIN32) */
-#  include <SDL2/SDL.h>
-static Uint64    lastTime = 0;
-static Uint64    qpcLastTime;
-static Uint64     qpcFrequency = 0;
-static Uint64  qpcLastCalibration;
-static DWORD        timeLastCalibration;
-#endif /* !defined(_WIN32) */
+#include <thread>
 
 /* common implementation headers */
 #include "TextUtils.h"
 #include "bzfio.h"
 
 
-TimeKeeper TimeKeeper::currentTime;
-TimeKeeper TimeKeeper::tickTime;
-TimeKeeper TimeKeeper::sunExplodeTime;
-TimeKeeper TimeKeeper::sunGenesisTime;
-TimeKeeper TimeKeeper::nullTime;
-TimeKeeper TimeKeeper::startTime = TimeKeeper::getCurrent();
-
-const TimeKeeper&   TimeKeeper::getCurrent(void)
+namespace
 {
-    // if not first call then update current time, else use default initial time
-#if !defined(_WIN32)
-    if (lastTime.tv_sec != 0)
-    {
-        struct timeval now;
-        gettimeofday(&now, NULL);
-        currentTime += double(now.tv_sec - lastTime.tv_sec) +
-                       1.0e-6 * double(now.tv_usec - lastTime.tv_usec);
-        lastTime = now;
-    }
-    else
-        gettimeofday(&lastTime, NULL);
-#else /* !defined(_WIN32) */
-    if (qpcFrequency != 0)
-    {
+TimeKeeper currentTime;
+TimeKeeper startTime = TimeKeeper::getCurrent(); // initialize when we started
+TimeKeeper tickTime;
 
-        // main timer is qpc
-        Uint64 now = SDL_GetPerformanceCounter();
+TimeKeeper sunExplodeTime{TimeKeeper::Seconds_t::max()};
+TimeKeeper sunGenesisTime{TimeKeeper::Seconds_t::min()};
+TimeKeeper nullTime{TimeKeeper::Seconds_t::zero()};
+}
 
-        Uint64 diff     = now - qpcLastTime;
-        Uint64 clkSpent = now - qpcLastCalibration;
-        Uint64 thisFeq = SDL_GetPerformanceFrequency();
+TimeKeeper::TimeKeeper(Seconds_t secs)
+    : lastTime(secs)
+{
+}
 
-        if (thisFeq != qpcFrequency)
-        {
-            // Recalibrate Frequency
-            DWORD tgt    = timeGetTime();
-            DWORD deltaTgt      = tgt - timeLastCalibration;
-            timeLastCalibration = tgt;
-            qpcLastCalibration  = now;
-            if (deltaTgt > 0)
-            {
-                LONGLONG oldqpcfreq = qpcFrequency;
-                qpcFrequency = thisFeq;
-                if (qpcFrequency != oldqpcfreq)
-                    logDebugMessage(4,"Recalibrated QPC frequency.  Old: %f ; New: %f\n",  (double)oldqpcfreq, (double)qpcFrequency);
-            }
-        }
+TimeKeeper::operator bool() const
+{
+    return lastTime != nullTime.lastTime;
+}
 
-        currentTime += (double) diff / (double) qpcFrequency;
-        qpcLastTime = now;
-    }
-    else if (lastTime != 0)
-    {
-        Uint64 now = (Uint64)timeGetTime();
-        Uint64 diff;
-        if (now <= lastTime)
-        {
-            // eh, how'd we go back in time?
-            diff = 0;
-        }
-        else
-            diff = now - lastTime;
-        currentTime += 1.0e-3 * (double)diff;
-        lastTime = now;
-    }
-    else
-    {
-        static bool sane = true;
+void TimeKeeper::now()
+{
+    lastTime = std::chrono::steady_clock::now();
+}
 
-        // should only get into here once on app start
-        if (!sane)
-            logDebugMessage(1,"Sanity check failure in TimeKeeper::getCurrent()\n");
-        sane = false;
-
-        Uint64 freq = SDL_GetPerformanceFrequency();
-
-        if (true)
-        {
-            qpcLastTime = SDL_GetPerformanceCounter();
-            qpcFrequency  = freq;
-            logDebugMessage(4,"Actual reported QPC Frequency: %f\n", (double)qpcFrequency);
-            qpcLastCalibration  = qpcLastTime;
-            timeLastCalibration = timeGetTime();
-        }
-        else
-        {
-            logDebugMessage(1,"QueryPerformanceFrequency failed with error %d\n", GetLastError());
-
-            // make sure we're at our best timer resolution possible
-            timeBeginPeriod(1);
-
-            lastTime = (Uint64)timeGetTime();
-        }
-    }
-#endif /* !defined(_WIN32) */
+const TimeKeeper& TimeKeeper::getCurrent()
+{
+    currentTime.now();
     return currentTime;
 }
 
-const TimeKeeper&   TimeKeeper::getStartTime(void) // const
+const TimeKeeper& TimeKeeper::getStartTime()
 {
     return startTime;
 }
 
-const TimeKeeper&   TimeKeeper::getTick(void) // const
+const TimeKeeper& TimeKeeper::getTick()
 {
     return tickTime;
 }
 
-void            TimeKeeper::setTick(void)
+void TimeKeeper::setTick()
 {
     tickTime = getCurrent();
 }
 
-const TimeKeeper& TimeKeeper::getSunExplodeTime(void)
+//static
+const TimeKeeper& TimeKeeper::getSunExplodeTime()
 {
-    sunExplodeTime.seconds = 10000.0 * 365 * 24 * 60 * 60;
     return sunExplodeTime;
 }
 
-const TimeKeeper& TimeKeeper::getSunGenesisTime(void)
+//static
+const TimeKeeper& TimeKeeper::getSunGenesisTime()
 {
-    sunGenesisTime.seconds = -10000.0 * 365 * 24 * 60 * 60;
     return sunGenesisTime;
 }
 
-const TimeKeeper& TimeKeeper::getNullTime(void)
+//static
+const TimeKeeper& TimeKeeper::getNullTime()
 {
-    nullTime.seconds = 0;
     return nullTime;
 }
 
-const char *TimeKeeper::timestamp(void) // const
+const char *TimeKeeper::timestamp() // const
 {
     static char buffer[256]; // static, so that it doesn't vanish
     time_t tnow = time(0);
@@ -240,24 +154,25 @@ void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
 
 // function for converting a float time (e.g. difference of two TimeKeepers)
 // into an array of ints
-void TimeKeeper::convertTime(double raw, long int convertedTimes[])
+void TimeKeeper::convertTime(Seconds_t raw, long int convertedTimes[])
 {
-    long int day, hour, min, sec, remainder;
-    static const int secondsInDay = 86400;
+    // std::chrono::days is C++-20
+    auto days = std::chrono::duration_cast<std::chrono::duration<int32_t, std::ratio<86400>>>(raw);
+    raw -= days;
 
-    sec = (long int)raw;
-    day = sec / secondsInDay;
-    remainder = sec - (day * secondsInDay);
-    hour = remainder / 3600;
-    remainder = sec - ((hour * 3600) + (day * secondsInDay));
-    min = remainder / 60;
-    remainder = sec - ((hour * 3600) + (day * secondsInDay) + (min * 60));
-    sec = remainder;
+    auto hours = std::chrono::duration_cast<std::chrono::hours>(raw);
+    raw -= hours;
 
-    convertedTimes[0] = day;
-    convertedTimes[1] = hour;
-    convertedTimes[2] = min;
-    convertedTimes[3] = sec;
+    auto mins = std::chrono::duration_cast<std::chrono::minutes>(raw);
+    raw -= mins;
+
+    auto secs = std::chrono::duration_cast<std::chrono::seconds>(raw);
+    raw -= secs;
+
+    convertedTimes[0] = days.count();
+    convertedTimes[1] = hours.count();
+    convertedTimes[2] = mins.count();
+    convertedTimes[3] = secs.count();
 
     return;
 }
@@ -303,47 +218,15 @@ const std::string TimeKeeper::printTime(long int timeValue[])
 const std::string TimeKeeper::printTime(double diff)
 {
     long int temp[4];
-    convertTime(diff, temp);
+    convertTime(Seconds_t(diff), temp);
     return printTime(temp);
 }
 
 
 void TimeKeeper::sleep(double seconds)
 {
-    if (seconds <= 0.0)
-        return;
-
-#ifdef HAVE_USLEEP
-    usleep((unsigned int)(1.0e6 * seconds));
-    return;
-#endif
-#if defined(HAVE_SLEEP) && !defined(__APPLE__)
-    // equivalent to _sleep() on win32 (not sleep(3))
-    Sleep((DWORD)(seconds * 1000.0));
-    return;
-#endif
-#ifdef HAVE_SNOOZE
-    snooze((bigtime_t)(1.0e6 * seconds));
-    return;
-#endif
-#ifdef HAVE_SELECT
-    struct timeval tv;
-    tv.tv_sec = (long)seconds;
-    tv.tv_usec = (long)(1.0e6 * (seconds - tv.tv_sec));
-    select(0, NULL, NULL, NULL, &tv);
-    return;
-#endif
-#ifdef HAVE_WAITFORSINGLEOBJECT
-    HANDLE dummyEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-    WaitForSingleObject(dummyEvent, (DWORD)(1000.0 * seconds));
-    CloseHandle(dummyEvent);
-    return;
-#endif
-
-    // fall-back case is fugly manual timekeeping
-    TimeKeeper now = TimeKeeper::getCurrent();
-    while ((TimeKeeper::getCurrent() - now) < seconds)
-        continue;
+    if (seconds > 0.0)
+        std::this_thread::sleep_for(Seconds_t(seconds));
     return;
 }
 
