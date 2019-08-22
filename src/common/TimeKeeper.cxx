@@ -173,7 +173,7 @@ void TimeKeeper::convertTime(Seconds_t raw, long int convertedTimes[])
     convertedTimes[0] = days.count();
     convertedTimes[1] = hours.count();
     convertedTimes[2] = mins.count();
-    convertedTimes[3] = secs.count();
+    convertedTimes[3] = (long)secs.count();
 
     return;
 }
