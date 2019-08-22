@@ -1438,7 +1438,7 @@ bool bz_ServerSidePlayerHandler::fireAtTank()
             if (hasSWTarget)
             {
                 fireShot();
-                pImpl->lastShot = TimeKeeper::getTick();
+                pImpl->lastShot = now;
                 return true;
             }
         }
