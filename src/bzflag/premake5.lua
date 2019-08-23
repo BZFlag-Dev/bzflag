@@ -118,7 +118,7 @@ project "bzflag"
       postbuildcommands "cp \"${CONFIGURATION_BUILD_DIR}/bzadmin\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\""
     end
     postbuildcommands {
-      "mkdir -p ${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}",
+      "mkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}\"",
       "cp ../../data/*.png \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
       "cp ../../data/*.wav \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/\"",
       "mkdir -p \"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/fonts\"",
