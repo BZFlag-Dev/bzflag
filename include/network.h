@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2019 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,126 +24,92 @@
 #ifdef _WIN32
 # include <winsock2.h>
 # include <ws2tcpip.h>
-#endif
 
-/* system headers */
-#include <vector>
-#include <string>
+using AddrLen = int;
 
-#if !defined(_WIN32)
+# ifndef EINPROGRESS
+#  define EINPROGRESS WSAEWOULDBLOCK
+# endif
 
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
-#include <sys/socket.h>
+# ifndef EWOULDBLOCK
+#  define EWOULDBLOCK WSAEWOULDBLOCK
+# endif
 
-#ifndef GUSI_20
-#  include <sys/param.h>
-#endif
+# ifndef ECONNRESET
+#  define ECONNRESET  WSAECONNRESET
+# endif
 
-#include <net/if.h>
-#include <netinet/in.h>
+# ifndef EBADMSG
+#  define EBADMSG     WSAECONNRESET   /* not defined by windows */
+# endif
 
-#if defined(__linux__)
-/* these are defined in both socket.h and tcp.h without ifdef guards. */
-#  undef TCP_NODELAY
-#  undef TCP_MAXSEG
-#endif
 
-#include <netinet/tcp.h>
-#include <arpa/inet.h>
-#include <netdb.h>
-#ifdef HAVE_BSTRING_H
-#  include <bstring.h>
-#endif
-
-#if defined(BSD) || defined(__sun__) || defined(__GLIBC__)
-#  define AddrLen       socklen_t
-#elif defined (__APPLE__)
-#  include <AvailabilityMacros.h>
-#  if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
-#    define AddrLen     socklen_t
-#  endif
-#endif
-
-#if defined(sun)
 /* setsockopt prototypes the 4th arg as const char*. */
-#  define SSOType       const char*
+using SSOType = char const*;
+
+//moved to multicast.cxx
+//inline int close(SOCKET s)
+//{
+//  return closesocket(s);
+//}
+# define ioctl(__fd, __req, __arg) \
+ioctlsocket(__fd, __req, (u_long*)__arg)
+# define gethostbyaddr(__addr, __len, __type) \
+gethostbyaddr((const char*)__addr, __len, __type)
+
+extern "C" {
+  
+  int           inet_aton(const char* cp, struct in_addr* pin);
+  void          herror(const char* msg);
+  
+}
+
+#else   //if !defined(_WIN32)
+
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <netinet/tcp.h>// TCP_NO_DELAY in bzfs.cxx
+# include <arpa/inet.h> // inet_ntoa in AccessControlList.cxx
+# include <netdb.h> // herror, hostent in <ares.h>
+# include <sys/select.h> // select in Ping.cxx
+
+// Posix defines the socket API to use socklen_t
+using AddrLen = socklen_t;
+
+# if defined(sun)
+/* setsockopt prototypes the 4th arg as const char*. */
+using SSOType = char const*;
 /* connect prototypes the 2nd arg without const */
-#  define CNCTType  struct sockaddr
-#endif
+//using CNCTType = sockaddr;
+# else
+using SSOType  = void const*;
+//using CNCTType = sockaddr const;
+# endif
+
+// This is extremely questionable. herror() is defined in netdb.h for Linux
+// and in winsock2.h for Windows. Of course, it's deprecated (at least for Linux)
+// so remapping it like this doesn't sound good. Better to refactor the code that feeds it
+#define herror(x_)  bzfherror(x_)
 
 extern "C" {
-
-#define herror(_x)  bzfherror(_x)
-
-    void          nerror(const char* msg);
-    void          bzfherror(const char* msg);
-    int           getErrno();
-
+  void          bzfherror(const char* msg);
 }
 
-/* BeOS net_server has closesocket(), which _must_ be used in place of close() */
-#if defined(__BEOS__) && (IPPROTO_TCP != 6)
-#  define close(__x) closesocket(__x)
-#endif
+#endif /* defined(_WIN32) */
 
-#else /* !defined(_WIN32) */
-
-#ifndef EINPROGRESS
-#define EINPROGRESS WSAEWOULDBLOCK
-#endif
-
-#ifndef EWOULDBLOCK
-#define EWOULDBLOCK WSAEWOULDBLOCK
-#endif
-
-#ifndef ECONNRESET
-#define ECONNRESET  WSAECONNRESET
-#endif
-
-#ifndef EBADMSG
-#define EBADMSG     WSAECONNRESET   /* not defined by windows */
-#endif
-
-
-/* setsockopt prototypes the 4th arg as const char*. */
-#define SSOType     const char*
-
-inline int close(SOCKET s)
-{
-    return closesocket(s);
-}
-#define ioctl(__fd, __req, __arg) \
-            ioctlsocket(__fd, __req, (u_long*)__arg)
-#define gethostbyaddr(__addr, __len, __type) \
-            gethostbyaddr((const char*)__addr, __len, __type)
-
-extern "C" {
-
-    int           inet_aton(const char* cp, struct in_addr* pin);
-    void          nerror(const char* msg);
-    void          herror(const char* msg);
-    int           getErrno();
-
-}
-
-#endif /* !defined(_WIN32) */
-
-#if !defined(AddrLen)
-#  define AddrLen       int
-#endif
-
-#if !defined(SSOType)
-#  define SSOType       const void*
-#endif
-#if !defined(CNCTType)
-#  define CNCTType  const struct sockaddr
-#endif
-
+// Can this happen?
 #if !defined(INADDR_NONE)
 #  define INADDR_NONE   ((in_addr_t)0xffffffff)
 #endif
+
+// for all platforms
+extern "C" {
+  void          nerror(const char* msg);
+  int           getErrno();
+}
+
+#include <string>
+
 
 class BzfNetwork
 {
