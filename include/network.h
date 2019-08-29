@@ -80,10 +80,10 @@ using AddrLen = socklen_t;
 /* setsockopt prototypes the 4th arg as const char*. */
 using SSOType = char const*;
 /* connect prototypes the 2nd arg without const */
-//using CNCTType = sockaddr;
+using CNCTType = sockaddr; // only appears used in bzadmin
 # else
 using SSOType  = void const*;
-//using CNCTType = sockaddr const;
+using CNCTType = sockaddr const; // only appears used in bzadmin
 # endif
 
 // This is extremely questionable. herror() is defined in netdb.h for Linux

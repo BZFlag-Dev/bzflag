@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2019 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -4817,7 +4817,7 @@ static void     addRobots()
         }
         else
         {
-            snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), j);
+            snprintf(callsign, CallSignLen, "%.29s%2.2x", myTank->getCallSign(), j);
             robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
                                         robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
