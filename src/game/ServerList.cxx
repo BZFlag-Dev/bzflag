@@ -14,6 +14,7 @@
 #include "ServerList.h"
 
 /* system headers */
+#include <cstring>
 
 /* common implementation headers */
 #include "version.h"
