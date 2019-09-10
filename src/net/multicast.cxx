@@ -27,7 +27,8 @@ inline int close(SOCKET s)
 #else
 # include <unistd.h>	// close()
 # include <netdb.h>     // getservbyname
-# include <net/if.h>    // Ubuntu (at least) requires the explicit include
+# include <sys/ioctl.h> // Ubuntu (at least) requires the explicit includes
+# include <net/if.h>    //
 /* BeOS net_server has closesocket(), which _must_ be used in place of close() */
 # if defined(__BEOS__) && (IPPROTO_TCP != 6)
 #  define close(__x) closesocket(__x)
