@@ -46,12 +46,12 @@ using AddrLen = int;
 
 /* setsockopt prototypes the 4th arg as const char*. */
 using SSOType = char const*;
+using CNCTType = sockaddr const; // only appears used in bzadmin
 
-//moved to multicast.cxx
-//inline int close(SOCKET s)
-//{
-//  return closesocket(s);
-//}
+inline int close(SOCKET s)
+{
+  return closesocket(s);
+}
 # define ioctl(__fd, __req, __arg) \
 ioctlsocket(__fd, __req, (u_long*)__arg)
 # define gethostbyaddr(__addr, __len, __type) \
@@ -64,7 +64,20 @@ extern "C" {
   
 }
 
-#else   //if !defined(_WIN32)
+#else   // !defined(_WIN32)
+
+// unistd has close(). It is poor encapsulation the close() is called from
+//    - game/NetHandler.cxx
+//    - bzadmin/ServerLink.cxx
+//    - bzflag/ServerLink.cxx
+//    - bzflag/ServerStartMenu.cxx (this is starting bzfs from the gui ... an abomination)
+//    - bzfs/bzfs.cxx
+//    - net/multicast.cxx
+// yet none of them have the proper include. A proper cross-platform socket encapsulation
+// (which has been written more than once, so we shouldn't do it) would provide all the
+// necessary methods.
+# include <unistd.h>
+# include <sys/ioctl.h>  // Ubuntu (at least) needs this for ioctl (multicast.cxx, network.cxx)
 
 # include <sys/socket.h>
 # include <netinet/in.h>
@@ -84,6 +97,11 @@ using CNCTType = sockaddr; // only appears used in bzadmin
 # else
 using SSOType  = void const*;
 using CNCTType = sockaddr const; // only appears used in bzadmin
+# endif
+
+// BeOS net_server has closesocket(), which _must_ be used in place of close()
+# if defined(__BEOS__) && (IPPROTO_TCP != 6)
+#  define close(__x) closesocket(__x)
 # endif
 
 // This is extremely questionable. herror() is defined in netdb.h for Linux

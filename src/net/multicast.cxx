@@ -19,24 +19,6 @@
 #include <vector>
 #include <string>
 
-#ifdef _WIN32
-inline int close(SOCKET s)
-{
-  return closesocket(s);
-}
-#else
-# include <unistd.h>	// close()
-# include <netdb.h>     // getservbyname
-# include <sys/ioctl.h> // Ubuntu (at least) requires the explicit includes
-# include <net/if.h>    //
-/* BeOS net_server has closesocket(), which _must_ be used in place of close() */
-# if defined(__BEOS__) && (IPPROTO_TCP != 6)
-#  define close(__x) closesocket(__x)
-# endif
-
-
-#endif
-
 /* common implementation headers */
 #include "ErrorHandler.h"
 
