@@ -866,7 +866,7 @@ static void* writeScreenshot(void* data)
             {
                 _output->write((char*)_data, _length);
             }
-            catch (std::ios_base::failure e)
+            catch (std::ios_base::failure &e)
             {
                 logDebugMessage(0, e.what());
                 png_error(_png, "Error writing screenshot.");

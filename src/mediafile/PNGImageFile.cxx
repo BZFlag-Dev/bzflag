@@ -117,7 +117,7 @@ PNGImageFile::PNGImageFile(std::istream* input, std::string* filename, void(*err
         {
             _input->read((char*)_data, _length);
         }
-        catch (std::ios_base::failure e)
+        catch (std::ios_base::failure &e)
         {
             logDebugMessage(0, e.what());
             png_error(_png, "error");
