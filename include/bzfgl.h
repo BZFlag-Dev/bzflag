@@ -17,6 +17,7 @@
 
 #include "common.h"
 
+#include <iostream>
 #include <GL/glew.h>
 
 #ifndef GL_VERSION_1_1
