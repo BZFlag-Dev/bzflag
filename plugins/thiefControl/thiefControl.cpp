@@ -24,6 +24,8 @@ public:
     }
     virtual void Init( const char* config );
     virtual void Event( bz_EventData *eventData );
+private:
+    void dropThief(bz_FlagTransferredEventData_V1 *data);
 };
 
 BZ_PLUGIN(ThiefControl)
@@ -34,31 +36,39 @@ void ThiefControl::Init(const char* /*config*/ )
     Register(bz_eFlagTransferredEvent);
 }
 
+void ThiefControl::dropThief(bz_FlagTransferredEventData_V1* data)
+{
+    const std::string noStealMsg = "Flag dropped. Don't steal from teammates!";
+    data->action = data->DropThief;
+    bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+}
+
 void ThiefControl::Event (bz_EventData * eventData)
 {
-    if (eventData->eventType != bz_eFlagTransferredEvent)
-      return;
-	
     bz_FlagTransferredEventData_V1 *data = (bz_FlagTransferredEventData_V1 *) eventData;
-    const std::string noStealMsg = "Flag dropped. Don't steal from teammates!";
-	
-    bz_eTeamType thiefTeam = bz_getPlayerTeam(data->toPlayerID);
-    bz_eTeamType targetTeam = bz_getPlayerTeam(data->fromPlayerID);
+
+    if (data->eventType != bz_eFlagTransferredEvent)
+        return;
+
+    bz_eTeamType fromTeam = bz_getPlayerTeam(data->fromPlayerID);
+    bz_eTeamType toTeam = bz_getPlayerTeam(data->toPlayerID);
+
+    if (fromTeam == eNoTeam || toTeam == eNoTeam)
+      return;
 
     switch (bz_getGameType())
     {
 
     case eFFAGame:
-        if (thiefTeam == targetTeam && thiefTeam != eRogueTeam)
+        if (toTeam == fromTeam && toTeam != eRogueTeam)
         {
-            data->action = data->DropThief;
-            bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+            dropThief(data);
         }
         break;
 
     case eCTFGame:
     {
-        if (thiefTeam == targetTeam && thiefTeam != eRogueTeam)
+        if (toTeam == fromTeam && toTeam != eRogueTeam)
         {
             bz_ApiString flagT = bz_ApiString(data->flagType);
 
@@ -67,19 +77,16 @@ void ThiefControl::Event (bz_EventData * eventData)
             // to possibly capture it faster.
             if (flagT != "R*" && flagT != "G*" && flagT != "B*" && flagT != "P*")
             {
-                data->action = data->DropThief;
-                bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+                dropThief(data);
             }
         }
     }
     break;
 
     case eRabbitGame:
-        if (thiefTeam == targetTeam)
+        if (toTeam == fromTeam)
         {
-
-            data->action = data->DropThief;
-            bz_sendTextMessage(BZ_SERVER, data->toPlayerID, noStealMsg.c_str());
+            dropThief(data);
         }
         break;
 
