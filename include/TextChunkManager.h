@@ -29,7 +29,6 @@ class TextChunk
 {
 public:
     TextChunk();
-    TextChunk(const TextChunk& tc);
     TextChunk(const std::string& fileName, const int _maxLines = -1, const int _maxLineLength = -1);
 
     size_t size() const;

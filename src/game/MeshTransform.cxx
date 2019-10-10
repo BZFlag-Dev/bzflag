@@ -476,6 +476,13 @@ MeshTransform::MeshTransform()
 }
 
 
+MeshTransform::MeshTransform(const MeshTransform& old)
+{
+    for (unsigned int i = 0; i < old.transforms.size(); i++)
+        transforms.push_back(old.transforms[i]);
+}
+
+
 MeshTransform::~MeshTransform()
 {
     return;
