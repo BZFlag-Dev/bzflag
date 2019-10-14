@@ -1308,6 +1308,7 @@ static void handleTcp(NetHandler &netPlayer, int i, const RxStatus e);
 
 static void acceptClient()
 {
+#if __GLIBC__
     // client (not a player yet) is requesting service.
     // accept incoming connection on our well known port
     struct sockaddr_in clientAddr;
@@ -1344,6 +1345,7 @@ static void acceptClient()
     peer.inactivityTimeout = 30;
 
     netConnectedPeers[fd] = peer;
+#endif
 }
 
 PlayerId getNewPlayerID()
@@ -7649,6 +7651,7 @@ int main(int argc, char **argv)
             if (FD_ISSET(wksSocket, &read_set))
                 acceptClient();
 
+#if __GLIBC__
             // check if we have any UDP packets pending
             if (NetHandler::isUdpFdSet(&read_set))
             {
@@ -7662,7 +7665,7 @@ int main(int argc, char **argv)
                     int id = NetHandler::udpReceive((char *) ubuf, &uaddr,
                                                     udpLinkRequest);
                     if (id == -1)
-                        break;
+                        break;                     
                     else if (id == -2)
                     {
                         // if I'm ignoring pings
@@ -7692,7 +7695,7 @@ int main(int argc, char **argv)
                     }
                 }
             }
-
+#endif   
             // process eventual resolver requests
             NetHandler::checkDNS(&read_set, &write_set);
 
