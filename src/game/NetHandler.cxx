@@ -136,6 +136,7 @@ int NetHandler::getUdpSocket()
     return udpSocket;
 }
 
+#if __GLIBC__
 int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
                            bool &udpLinkRequest)
 {
@@ -146,9 +147,9 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     while (true)
     {
         n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
-                     &recvlen);
+                  &recvlen);
         if ((n < 0) || (n >= 4))
-            break;
+            break;          
     }
     // Error receiving data (or no data)
     if (n < 0 || uaddr->sin_port < 1024)
@@ -161,7 +162,6 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
 
     if (len > MaxUDPPacketLen - 4)
         return -1;
-
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
 //    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
     if (n == 6 && len == 2 && code == MsgPingCodeRequest)
@@ -249,6 +249,7 @@ than %s:%d\n",
     }
     return id;
 }
+#endif  
 
 bool NetHandler::isUdpFdSet(fd_set *read_set)
 {
