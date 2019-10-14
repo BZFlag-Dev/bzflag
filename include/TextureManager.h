@@ -68,8 +68,6 @@ public:
     const ImageInfo& getInfo ( int id );
     const ImageInfo& getInfo ( const char* name );
 
-    bool getColorAverages(int texId, float rgba[4], bool factorAlpha) const;
-
     OpenGLTexture::Filter getMaxFilter ( void );
     std::string getMaxFilterName ( void );
     void setMaxFilter ( OpenGLTexture::Filter filter );
@@ -78,7 +76,7 @@ public:
     float GetAspectRatio ( int id );
 
     int newTexture (const char* name, int x, int y, unsigned char* data,
-                    OpenGLTexture::Filter filter, bool repeat = true, int format = 0);
+                    OpenGLTexture::Filter filter, bool repeat = true);
 protected:
     friend class Singleton<TextureManager>;
 
