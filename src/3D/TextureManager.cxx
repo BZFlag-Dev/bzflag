@@ -309,19 +309,6 @@ const ImageInfo& TextureManager::getInfo ( const char* name )
 }
 
 
-bool TextureManager::getColorAverages(int texId, float rgba[4],
-                                      bool factorAlpha) const
-{
-    TextureIDMap::const_iterator it = textureIDs.find(texId);
-    if (it == textureIDs.end())
-    {
-        logDebugMessage(1,"getColorAverages: Unable to find texture (by id): %d\n", texId);
-        return false;
-    }
-    return it->second->texture->getColorAverages(rgba, factorAlpha);
-}
-
-
 int TextureManager::addTexture( const char* name, OpenGLTexture *texture )
 {
     if (!name || !texture)
@@ -378,9 +365,9 @@ OpenGLTexture* TextureManager::loadTexture(FileTextureInit &init, bool reportFai
 
 
 int TextureManager::newTexture(const char* name, int x, int y, unsigned char* data,
-                               OpenGLTexture::Filter filter, bool repeat, int format)
+                               OpenGLTexture::Filter filter, bool repeat)
 {
-    return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat, format));
+    return addTexture(name, new OpenGLTexture(x, y, data, filter, repeat));
 }
 
 
