@@ -19,6 +19,13 @@
 #include <vector>
 #include <string>
 
+#if defined(__linux__)
+// This is inherently non-portable, as device handling varies from OS to OS
+// Debian requires the explicit include. Apparently Alpine does as well
+#include <sys/ioctl.h>
+#include <net/if.h>
+#endif
+
 /* common implementation headers */
 #include "ErrorHandler.h"
 
