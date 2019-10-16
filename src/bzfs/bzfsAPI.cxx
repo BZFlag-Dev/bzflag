@@ -2947,9 +2947,7 @@ BZF_API bool bz_getNearestFlagSafetyZone(int flag, float *pos)
     bz_getFlagPosition(flag, currPos);
 
     if (myTeam == NoTeam)
-    {
         return false;
-    }
 
     const std::string &safetyQualifier = CustomZone::getFlagSafetyQualifier(myTeam);
     return world->getEntryZones().getClosePoint(safetyQualifier, currPos, pos);
