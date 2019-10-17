@@ -461,7 +461,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\common\TextChunkManager.cxx" />
     <ClCompile Include="..\..\src\common\TextUtils.cxx" />
-    <ClCompile Include="..\..\src\common\TimeBomb.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -565,7 +564,6 @@
     <ClInclude Include="..\..\include\Team.h" />
     <ClInclude Include="..\..\include\TextChunkManager.h" />
     <ClInclude Include="..\..\include\TextUtils.h" />
-    <ClInclude Include="..\..\include\TimeBomb.h" />
     <ClInclude Include="..\..\include\TimeKeeper.h" />
     <ClInclude Include="..\..\include\version.h" />
     <ClInclude Include="..\..\include\VotingBooth.h" />

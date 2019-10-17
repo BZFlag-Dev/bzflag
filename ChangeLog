@@ -4,6 +4,7 @@
 BZFlag 2.4.19
 -------------
 
+* Removal of time bomb logic - Zehra
 * Add new bz_ePlayerDeathFinalizedEvent API event - Vladimir Jimenez
 * Output correct error when loading a nonexistent bzfs plugin - Vladimir Jimenez
 * Remove obsolete bzfs option from Start Server menu on Windows - Scott Wichser

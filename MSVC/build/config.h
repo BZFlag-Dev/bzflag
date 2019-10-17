@@ -27,9 +27,6 @@
 /* Building regex */
 #define HAVE_REGEX_H 1
 
-/* Time Bomb expiration */
-/* #undef TIME_BOMB */
-
 /* Debug Rendering */
 /* #undef DEBUG_RENDERING */
 
