@@ -50,7 +50,7 @@ using CNCTType = sockaddr const; // only appears used in bzadmin
 
 inline int close(SOCKET s)
 {
-  return closesocket(s);
+    return closesocket(s);
 }
 # define ioctl(__fd, __req, __arg) \
 ioctlsocket(__fd, __req, (u_long*)__arg)
@@ -58,10 +58,10 @@ ioctlsocket(__fd, __req, (u_long*)__arg)
 gethostbyaddr((const char*)__addr, __len, __type)
 
 extern "C" {
-  
-  int           inet_aton(const char* cp, struct in_addr* pin);
-  void          herror(const char* msg);
-  
+
+    int           inet_aton(const char* cp, struct in_addr* pin);
+    void          herror(const char* msg);
+
 }
 
 #else   // !defined(_WIN32)
@@ -110,7 +110,7 @@ using CNCTType = sockaddr const; // only appears used in bzadmin
 #define herror(x_)  bzfherror(x_)
 
 extern "C" {
-  void          bzfherror(const char* msg);
+    void          bzfherror(const char* msg);
 }
 
 #endif /* defined(_WIN32) */
@@ -122,8 +122,8 @@ extern "C" {
 
 // for all platforms
 extern "C" {
-  void          nerror(const char* msg);
-  int           getErrno();
+    void          nerror(const char* msg);
+    int           getErrno();
 }
 
 #include <string>
