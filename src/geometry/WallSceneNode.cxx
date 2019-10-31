@@ -358,7 +358,7 @@ void            WallSceneNode::notifyStyleChange()
     else
         builder.setTextureEnvMode(GL_MODULATE);
     builder.enableMaterial(lighted);
-    if (BZDBCache::blend && (wantBlending || (alpha != 1.0f)))
+    if (wantBlending || (alpha != 1.0f))
     {
         builder.setBlending(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         builder.setStipple(1.0f);

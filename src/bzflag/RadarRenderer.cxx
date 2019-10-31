@@ -331,8 +331,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     if ( outlineOpacity < 1.0f )
         outlineOpacity = (outlineOpacity*fudgeFactor) + (1.0f - fudgeFactor);
 
-    if (BZDBCache::blend)
-        glEnable(GL_BLEND);
+    glEnable(GL_BLEND);
 
     glColor4f(teamColor[0],teamColor[1],teamColor[2],outlineOpacity);
 
@@ -345,8 +344,7 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     }
     glEnd();
 
-    if (BZDBCache::blend)
-        glDisable(GL_BLEND);
+    glDisable(GL_BLEND);
 
     glColor4f(teamColor[0],teamColor[1],teamColor[2],1.0f);
 
@@ -355,11 +353,11 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     {
         glScissor(ox + x - 2, oy + y - 2, w + 4, h + 4);
         // draw nice blended background
-        if (BZDBCache::blend && opacity < 1.0f)
+        if (opacity < 1.0f)
             glEnable(GL_BLEND);
         glColor4f(0.0f, 0.0f, 0.0f, opacity);
         glRectf((float) x, (float) y, (float)(x + w), (float)(y + h));
-        if (BZDBCache::blend && opacity < 1.0f)
+        if (opacity < 1.0f)
             glDisable(GL_BLEND);
     }
 

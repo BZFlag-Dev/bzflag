@@ -58,9 +58,6 @@ msgstr "No"
 msgid "On"
 msgstr "Si"
 
-#msgid "Blending:"
-#msgstr "Blending:"
-
 #msgid "Smoothing:"
 #msgstr "Smoothing:"
 

@@ -466,9 +466,6 @@ msgstr "Sons Remotos:"
 msgid "Dithering:"
 msgstr "Tremura:"
 
-msgid "Blending:"
-msgstr "Mistura:"
-
 msgid "Smoothing:"
 msgstr "Suavidez:"
 

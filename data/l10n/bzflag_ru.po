@@ -783,9 +783,6 @@ msgstr "Nastrojki displeya"
 msgid "Dithering:"
 msgstr "Razmytie:"
 
-msgid "Blending:"
-msgstr "Smeshivanie:"
-
 msgid "Smoothing:"
 msgstr "Sglazhivanie:"
 
@@ -3187,9 +3184,6 @@ msgstr "  polnoe kachestvo"
 
 msgid "  Stipple Shadows"
 msgstr "  Punktirnye teni"
-
-msgid "  no Blend"
-msgstr "  bez smeshivaniya"
 
 msgid "  lowest quality"
 msgstr "  nizshee kachestvo"

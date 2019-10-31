@@ -806,9 +806,6 @@ msgstr ""
 msgid "Dithering:"
 msgstr ""
 
-msgid "Blending:"
-msgstr ""
-
 msgid "Smoothing:"
 msgstr ""
 
@@ -3206,9 +3203,6 @@ msgid "  full quality"
 msgstr ""
 
 msgid "  Stipple Shadows"
-msgstr ""
-
-msgid "  no Blend"
 msgstr ""
 
 msgid "  lowest quality"

@@ -778,9 +778,6 @@ msgstr "Nastavenia zobrazovania"
 msgid "Dithering:"
 msgstr "Rozkladanie (dithering):"
 
-msgid "Blending:"
-msgstr "Zmiesavanie (blending):"
-
 msgid "Smoothing:"
 msgstr "Vyhladzovanie (smoothing):"
 
@@ -3143,12 +3140,6 @@ msgstr "okej"
 
 msgid "  full quality"
 msgstr "  plna kvalita"
-
-#msgid "  Stipple Shadows"
-#msgstr ""
-
-msgid "  no Blend"
-msgstr "  bez zmiesavania"
 
 msgid "  lowest quality"
 msgstr "  najnizsia kvalita"

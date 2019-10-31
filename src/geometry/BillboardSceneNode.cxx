@@ -291,8 +291,7 @@ void            BillboardSceneNode::addLight(
 
 void            BillboardSceneNode::notifyStyleChange()
 {
-    show = hasTexture && BZDBCache::texture &&
-           (!hasAlpha || BZDBCache::blend);
+    show = hasTexture && BZDBCache::texture;
     if (show)
     {
         OpenGLGStateBuilder builder(gstate);

@@ -792,7 +792,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
             // if low quality then use stipple -- it's probably much faster
-            if (BZDBCache::blend && (useQualityValue >= 1))
+            if (useQualityValue >= 1)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
@@ -817,7 +817,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
             frustum.executeView();
             frustum.executeProjection();
             const float extent = BZDBCache::worldSize * 10.0f;
-            if (BZDBCache::blend && (useQualityValue >= 1))
+            if (useQualityValue >= 1)
             {
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                 glEnable(GL_BLEND);
@@ -1164,7 +1164,7 @@ void SceneRenderer::renderDimming()
         glColor4f(color[0], color[1], color[2], density);
 
         // if low quality then use stipple -- it's probably much faster
-        if (BZDBCache::blend && (useQualityValue >= 1))
+        if (useQualityValue >= 1)
         {
             glEnable(GL_BLEND);
             glRectf(-1.0f, -1.0f, 1.0f, 1.0f);

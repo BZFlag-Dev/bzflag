@@ -3624,8 +3624,8 @@ bool            addExplosion(const float* _pos,
     // don't show explosions if quality is low
     if (sceneRenderer->useQuality() < 1) return false;
 
-    // don't add explosion if blending or texture mapping are off
-    if (!BZDBCache::blend || !BZDBCache::texture)
+    // don't add explosion if texture mapping are off
+    if (!BZDBCache::texture)
         return false;
 
     // pick a random prototype explosion

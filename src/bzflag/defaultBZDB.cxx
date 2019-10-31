@@ -115,7 +115,6 @@ DefaultDBItem defaultDBItems[] =
     { "shotBrightness",       "0.2",          true,   StateDatabase::ReadWrite,   setShptBrightness },
     { "multisample",      "1",            true,   StateDatabase::ReadWrite,   NULL },
 
-    { "blend",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "smooth",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "lighting",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "tesselation",      "1",            true,   StateDatabase::ReadWrite,   NULL },

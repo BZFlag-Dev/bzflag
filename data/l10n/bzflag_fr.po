@@ -57,9 +57,6 @@ msgstr "Non"
 msgid "On"
 msgstr "Oui"
 
-msgid "Blending:"
-msgstr "Transparence:"
-
 msgid "Smoothing:"
 msgstr "Lissage:"
 

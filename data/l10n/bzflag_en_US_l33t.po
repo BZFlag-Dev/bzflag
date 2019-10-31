@@ -57,9 +57,6 @@ msgstr "0pHph"
 msgid "On"
 msgstr "on"
 
-msgid "Blending:"
-msgstr "8l3NDiN9:"
-
 msgid "Smoothing:"
 msgstr "5MOO+hIN9:"
 

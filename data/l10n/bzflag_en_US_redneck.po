@@ -57,9 +57,6 @@ msgstr "Diferin':"
 #msgid "On"
 #msgstr ""
 
-msgid "Blending:"
-msgstr "Blendin':"
-
 msgid "Smoothing:"
 msgstr "Smoothin':"
 

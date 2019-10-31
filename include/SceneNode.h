@@ -51,7 +51,6 @@
 #define myColor4f(r, g, b, a)   SceneNode::glColor4f(r, g, b, a)
 #define myColor3fv(rgb)     SceneNode::glColor3fv(rgb)
 #define myColor4fv(rgba)    SceneNode::glColor4fv(rgba)
-#define myStipple(alpha)    SceneNode::setStipple(alpha)
 
 class ViewFrustum;
 class SceneRenderer;

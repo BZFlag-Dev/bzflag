@@ -60,9 +60,6 @@ msgstr "Av"
 msgid "On"
 msgstr "På"
 
-msgid "Blending:"
-msgstr "Blandning:"
-
 msgid "Smoothing:"
 msgstr "Utjämning:"
 

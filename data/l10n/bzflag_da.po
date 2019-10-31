@@ -57,9 +57,6 @@ msgstr "Fra"
 msgid "On"
 msgstr "Til"
 
-#msgid "Blending:"
-#msgstr "Blandning:"
-
 #msgid "Smoothing:"
 #msgstr "Udjævning:"
 

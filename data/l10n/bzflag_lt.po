@@ -59,9 +59,6 @@ msgstr "Išjungti"
 msgid "On"
 msgstr "Įjungti"
 
-#msgid "Blending:"
-#msgstr ""
-
 #msgid "Smoothing:"
 #msgstr ""
 
