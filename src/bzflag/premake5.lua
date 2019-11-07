@@ -111,6 +111,7 @@ project "bzflag"
       "../../Xcode/BZFlag.icns",
       "../../premake5/"..iif(_ACTION, _ACTION, "").."/BZFlag-Info.plist"
     }
+    xcodebuildsettings { ["PRODUCT_BUNDLE_IDENTIFIER"] = "org.bzflag.BZFlag" }
     if not _OPTIONS["disable-server"] then
       postbuildcommands "cp \"${CONFIGURATION_BUILD_DIR}/bzfs\" \"${CONFIGURATION_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/\""
     end
