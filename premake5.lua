@@ -102,7 +102,7 @@ local bzInstallPrefix = "/usr/local"
 if _ACTION == "gmake" then
   if _OPTIONS["prefix"] then
     -- the gmake action sets the prefix used by install and uninstall also
-    if string.find(_OPTIONS["prefix"], "~/", 0) then
+    if string.find(_OPTIONS["prefix"], "/") ~= 1 then
       print "Error: please use an absolute path when specifying --prefix."
       os.exit(1)
     end
