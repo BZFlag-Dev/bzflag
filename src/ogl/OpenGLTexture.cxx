@@ -147,7 +147,7 @@ void OpenGLTexture::initContext()
     glBindTexture(GL_TEXTURE_2D, list);
     glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
     glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height,
-                 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+                 0, internalFormat, GL_UNSIGNED_BYTE, image);
     glBindTexture(GL_TEXTURE_2D, 0);
 
     return;
@@ -297,6 +297,27 @@ void OpenGLTexture::getBestFormat()
             alpha = true;
         if (!useLuminance && alpha)
             break;
+    }
+
+    scan = image;
+    GLubyte* scanOut = image;
+    for (i = 0; i < size; i++)
+    {
+        *scanOut++ = *scan++;
+        if (useLuminance)
+        {
+            scan++;
+            scan++;
+        }
+        else
+        {
+            *scanOut++ = *scan++;
+            *scanOut++ = *scan++;
+        }
+        if (alpha)
+            *scanOut++ = *scan++;
+        else
+            scan++;
     }
 
     // pick internal format
