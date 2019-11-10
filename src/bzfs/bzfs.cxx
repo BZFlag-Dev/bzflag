@@ -474,22 +474,22 @@ void sendTeamUpdate(int playerIndex, int teamIndex1, int teamIndex2)
         for (int t = 0; t < CtfTeams; t++)
         {
             message->packUShort(t);
-            message->legacyPack(team[t].team.pack(message->buffer()));
+            message->legacyPack(team[t].team.pack(message->current_buffer()));
         }
     }
     else if (teamIndex2 == -1)
     {
         message->packUByte(1);
         message->packUShort(teamIndex1);
-        message->legacyPack(team[teamIndex1].team.pack(message->buffer()));
+        message->legacyPack(team[teamIndex1].team.pack(message->current_buffer()));
     }
     else
     {
         message->packUByte(2);
         message->packUShort(teamIndex1);
-        message->legacyPack(team[teamIndex1].team.pack(message->buffer()));
+        message->legacyPack(team[teamIndex1].team.pack(message->current_buffer()));
         message->packUShort(teamIndex2);
-        message->legacyPack(team[teamIndex2].team.pack(message->buffer()));
+        message->legacyPack(team[teamIndex2].team.pack(message->current_buffer()));
     }
 
     if (playerIndex == -1)
