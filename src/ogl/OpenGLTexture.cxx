@@ -158,7 +158,11 @@ bool OpenGLTexture::getPixelValue(int x, int y, unsigned char pixel[4])
     if (image == nullptr || x < 0 || x >= width || y < 0 || y >= height)
         return false;
 
-    int offset = (y * width + x) * 4;
+    // Only works with RGB/RGBA
+    if (internalFormat != GL_RGB && internalFormat != GL_RGBA)
+        return false;
+
+    int offset = (y * width + x) * (alpha ? 4 : 3);
 
     pixel[0] = image[offset];
     pixel[1] = image[offset + 1];
