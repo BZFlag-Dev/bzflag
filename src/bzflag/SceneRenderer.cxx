@@ -87,7 +87,6 @@ SceneRenderer::SceneRenderer() :
     panelHeight(4),
     maxMotionFactor(5),
     viewType(Normal),
-    inOrder(false),
     depthRange(0),
     numDepthRanges(1),
     depthRangeSize(1.0),
@@ -470,10 +469,6 @@ void SceneRenderer::setSceneDatabase(SceneDatabase* db)
     delete scene;
 
     scene = db;
-    if (scene)
-        inOrder = scene->isOrdered();
-    else
-        inOrder = false;
 
     // update the background materials
     setupBackgroundMaterials();
@@ -1215,8 +1210,7 @@ void SceneRenderer::getRenderNodes()
             scene->addRenderNodes(*this);
 
         // sort ordered list in reverse depth order
-        if (!inOrder)
-            orderedList.sort(frustum.getEye());
+        orderedList.sort(frustum.getEye());
 
         // add the shadow rendering nodes
         if (scene && BZDBCache::shadows && !BZDB.isTrue(StateDatabase::BZDB_NOSHADOWS)

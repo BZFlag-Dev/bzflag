@@ -248,7 +248,6 @@ private:
     int       maxMotionFactor;
     bool      useStencilOn;
     ViewType  viewType;
-    bool      inOrder;
     int       depthRange;
     int       numDepthRanges;
     double    depthRangeSize;
@@ -370,7 +369,7 @@ inline int          SceneRenderer::useQuality() const
 inline void         SceneRenderer::addRenderNode(RenderNode* node,
         const OpenGLGState* gstate)
 {
-    if (inOrder || gstate->getNeedsSorting())
+    if (gstate->getNeedsSorting())
     {
         // nodes will be drawn in the same order received
         orderedList.append(node, gstate);

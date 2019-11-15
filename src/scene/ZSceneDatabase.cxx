@@ -79,12 +79,6 @@ ZSceneDatabase::~ZSceneDatabase()
 }
 
 
-void ZSceneDatabase::finalizeStatics()
-{
-    return;
-}
-
-
 bool ZSceneDatabase::addStaticNode(SceneNode* object, bool UNUSED(dontFree))
 {
     if (staticCount == staticSize)
@@ -119,13 +113,6 @@ void ZSceneDatabase::addDynamicNode(SceneNode* object)
 }
 
 
-void ZSceneDatabase::addDynamicSphere(SphereSceneNode* n)
-{
-    // just add sphere -- don't need to break it up for hidden surfaces
-    addDynamicNode(n);
-}
-
-
 void ZSceneDatabase::removeDynamicNodes()
 {
     dynamicCount = 0;
@@ -136,12 +123,6 @@ void ZSceneDatabase::removeAllNodes()
 {
     staticCount = 0;
     dynamicCount = 0;
-}
-
-
-bool ZSceneDatabase::isOrdered()
-{
-    return false;
 }
 
 
