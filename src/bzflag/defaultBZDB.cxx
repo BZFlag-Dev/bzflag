@@ -117,7 +117,6 @@ DefaultDBItem defaultDBItems[] =
     { "smooth",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "lighting",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "tesselation",      "1",            true,   StateDatabase::ReadWrite,   NULL },
-    { "dither",      "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "shadows",      "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "stencilShadows",      "1",            true,   StateDatabase::ReadWrite,   NULL },
 

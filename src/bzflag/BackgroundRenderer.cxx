@@ -576,7 +576,6 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
         const SceneRenderer::ViewType viewType = renderer.getViewType();
 
         // draw sky
-        glDisable(GL_DITHER);
         glPushAttrib(GL_SCISSOR_BIT);
         glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
         glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
@@ -602,7 +601,6 @@ void BackgroundRenderer::renderSky(SceneRenderer& renderer, bool fullWindow,
 
         // back to normal
         glPopAttrib();
-        if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
     }
 }
 
@@ -625,7 +623,6 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
         const SceneRenderer::ViewType viewType = renderer.getViewType();
 
         // draw sky
-        glDisable(GL_DITHER);
         glPushAttrib(GL_SCISSOR_BIT);
         glScissor(x, y + height - (viewHeight >> 1), width, (viewHeight >> 1));
         glClearColor(skyZenithColor[0], skyZenithColor[1], skyZenithColor[2], 1.0f);
@@ -651,7 +648,6 @@ void BackgroundRenderer::renderGround(SceneRenderer& renderer,
 
         // back to normal
         glPopAttrib();
-        if (BZDB.isTrue("dither")) glEnable(GL_DITHER);
     }
 }
 

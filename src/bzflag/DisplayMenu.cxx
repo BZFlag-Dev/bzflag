@@ -45,16 +45,6 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("Dithering:");
-    option->setCallback(callback, "1");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    listHUD.push_back(option);
-
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
     option->setLabel("Smoothing:");
     option->setCallback(callback, "3");
     options = &option->getList();
@@ -313,7 +303,6 @@ void            DisplayMenu::resize(int _width, int _height)
     if (renderer)
     {
         TextureManager& tm = TextureManager::instance();
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("dither"));
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("smooth"));
         if (BZDBCache::lighting)
         {
@@ -389,10 +378,6 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     SceneRenderer* sceneRenderer = getSceneRenderer();
     switch (((const char*)data)[0])
     {
-    case '1':
-        BZDB.set("dither", list->getIndex() ? "1" : "0");
-        sceneRenderer->notifyStyleChange();
-        break;
     case '3':
         BZDB.set("smooth", list->getIndex() ? "1" : "0");
         sceneRenderer->notifyStyleChange();
