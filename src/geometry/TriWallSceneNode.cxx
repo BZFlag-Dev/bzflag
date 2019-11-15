@@ -289,14 +289,6 @@ bool            TriWallSceneNode::cull(const ViewFrustum& frustum) const
 }
 
 
-int         TriWallSceneNode::split(const float* _plane,
-                                    SceneNode*& front, SceneNode*& back) const
-{
-    return WallSceneNode::splitWall(_plane, nodes[0]->vertex, nodes[0]->uv,
-                                    front, back);
-}
-
-
 void            TriWallSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {

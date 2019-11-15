@@ -31,8 +31,6 @@ public:
                      bool makeLODs = true);
     ~TriWallSceneNode();
 
-    int         split(const float*, SceneNode*&, SceneNode*&) const;
-
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
     void        renderRadar();

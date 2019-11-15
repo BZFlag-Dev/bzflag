@@ -123,13 +123,6 @@ GLfloat         SceneNode::getDistance(const GLfloat* eye) const
            (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
 }
 
-int         SceneNode::split(const float*,
-                             SceneNode*&, SceneNode*&) const
-{
-    // can't split me
-    return 1;
-}
-
 bool            SceneNode::cull(const ViewFrustum& view) const
 {
     // if center of object is outside view frustum and distance is

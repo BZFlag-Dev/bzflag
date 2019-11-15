@@ -379,25 +379,6 @@ QuadWallSceneNode::~QuadWallSceneNode()
     delete shadowNode;
 }
 
-int         QuadWallSceneNode::split(const float *_plane,
-                                     SceneNode*& front, SceneNode*& back) const
-{
-    // need to reorder vertices into counterclockwise order
-    GLfloat3Array vertex(4);
-    GLfloat2Array uv(4);
-    for (int i = 0; i < 4; i++)
-    {
-        int j = i;
-        if (j == 2 || j == 3) j = 5 - j;
-        vertex[i][0] = nodes[0]->vertex[j][0];
-        vertex[i][1] = nodes[0]->vertex[j][1];
-        vertex[i][2] = nodes[0]->vertex[j][2];
-        uv[i][0] = nodes[0]->uv[j][0];
-        uv[i][1] = nodes[0]->uv[j][1];
-    }
-    return WallSceneNode::splitWall(_plane, vertex, uv, front, back);
-}
-
 void            QuadWallSceneNode::addRenderNodes(
     SceneRenderer& renderer)
 {

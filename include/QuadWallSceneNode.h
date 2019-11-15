@@ -40,8 +40,6 @@ public:
                       bool makeLODs);
     ~QuadWallSceneNode();
 
-    int         split(const float*, SceneNode*&, SceneNode*&) const;
-
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
     void        renderRadar();
