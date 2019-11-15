@@ -39,8 +39,6 @@ public:
         return;
     };
 
-    virtual SceneNode** getParts(int& numParts) = 0;
-
     virtual void addRenderNodes(SceneRenderer&) = 0;
     virtual void addShadowNodes(SceneRenderer&) = 0;
 
@@ -63,12 +61,6 @@ public:
     ~SphereLodSceneNode();
 
     void setShockWave(bool value);
-
-    // this node just won't split
-    SceneNode** getParts(int&)
-    {
-        return NULL;
-    }
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
@@ -116,63 +108,14 @@ private:
 const int       SphereRes = 8;
 const int       SphereLowRes = 6;
 
-class SphereBspSceneNode;
-
-class SphereFragmentSceneNode : public SceneNode
-{
-public:
-    SphereFragmentSceneNode(int theta, int phi,
-                            SphereBspSceneNode* sphere);
-    ~SphereFragmentSceneNode();
-
-    void        move();
-
-    void        addRenderNodes(SceneRenderer&);
-    void        addShadowNodes(SceneRenderer&);
-
-    // Irix 7.2.1 and solaris compilers appear to have a bug.  if the
-    // following declaration isn't public it generates an error when trying
-    // to declare SphereFragmentSceneNode::FragmentRenderNode a friend in
-    // SphereBspSceneNode::SphereBspRenderNode.  i think this is a bug in the
-    // compiler because:
-    //   no other compiler complains
-    //   public/protected/private adjust access not visibility
-    //     SphereBspSceneNode isn't requesting access, it's granting it
-//  protected:
-public:
-    class FragmentRenderNode : public RenderNode
-    {
-    public:
-        FragmentRenderNode(const SphereBspSceneNode*,
-                           int theta, int phi);
-        ~FragmentRenderNode();
-        const GLfloat*  getVertex() const;
-        void        render();
-        const GLfloat*  getPosition() const;
-    private:
-        const SphereBspSceneNode*   sceneNode;
-        int     theta, phi;
-        int     theta2, phi2;
-    };
-    friend class FragmentRenderNode;
-
-private:
-    SphereBspSceneNode* parentSphere;
-    FragmentRenderNode  renderNode;
-};
-
 class SphereBspSceneNode : public SphereSceneNode
 {
-    friend class SphereFragmentSceneNode;
-    friend class SphereFragmentSceneNode::FragmentRenderNode;
 public:
     SphereBspSceneNode(const GLfloat pos[3], GLfloat radius);
     ~SphereBspSceneNode();
 
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
-
-    SceneNode**     getParts(int& numParts);
 
 protected:
     GLfloat     getRadius() const
@@ -187,7 +130,6 @@ protected:
     class SphereBspRenderNode : public RenderNode
     {
         friend class SphereBspSceneNode;
-        friend class SphereFragmentSceneNode::FragmentRenderNode;
     public:
         SphereBspRenderNode(const SphereBspSceneNode*);
         ~SphereBspRenderNode();
@@ -209,7 +151,6 @@ protected:
 
 private:
     SphereBspRenderNode renderNode;
-    SphereFragmentSceneNode** parts;
 };
 
 

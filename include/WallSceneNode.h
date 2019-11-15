@@ -88,11 +88,6 @@ protected:
     }
     const OpenGLGState* getWallGState() const;
 
-    static int      splitWall(const GLfloat* plane,
-                              const GLfloat3Array& vertices,
-                              const GLfloat2Array& uvs,
-                              SceneNode*& front, SceneNode*& back); // const
-
 private:
     static void splitEdge(float d1, float d2,
                           const GLfloat* p1, const GLfloat* p2,

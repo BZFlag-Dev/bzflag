@@ -37,8 +37,6 @@ public:
     const GLfloat* getVertex (int vertex) const;
     const GLfloat (*getVertices() const)[3];
 
-    int split(const float* plane, SceneNode*&, SceneNode*&) const;
-
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
     void renderRadar();
@@ -90,28 +88,6 @@ protected:
     };
 
 private:
-    int splitWallVTN(const GLfloat* plane,
-                     const GLfloat3Array& vertices,
-                     const GLfloat3Array& normals,
-                     const GLfloat2Array& texcoords,
-                     SceneNode*& front, SceneNode*& back) const;
-
-    void splitEdgeVTN(float d1, float d2,
-                      const GLfloat* p1, const GLfloat* p2,
-                      const GLfloat* n1, const GLfloat* n2,
-                      const GLfloat* uv1, const GLfloat* uv2,
-                      GLfloat* p, GLfloat* n, GLfloat* uv) const;
-
-    int splitWallVT(const GLfloat* plane,
-                    const GLfloat3Array& vertices,
-                    const GLfloat2Array& texcoords,
-                    SceneNode*& front, SceneNode*& back) const;
-
-    void splitEdgeVT(float d1, float d2,
-                     const GLfloat* p1, const GLfloat* p2,
-                     const GLfloat* uv1, const GLfloat* uv2,
-                     GLfloat* p, GLfloat* uv) const;
-
     Geometry node;
     bool noRadar;
     bool noShadow;
