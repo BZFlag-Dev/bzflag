@@ -2765,9 +2765,6 @@ msgstr " svyazhite knopku s tumblerom konsoli"
 msgid "ZSceneDatabase processed in %.3f seconds.\n"
 msgstr "ZSceneDatabase vypolnyaetsya za %.3f sekund.\n"
 
-msgid "BSPSceneDatabase processed in %.3f seconds.\n"
-msgstr "BSPSceneDatabase vypolnyaetsya za %.3f sekund.\n"
-
 msgid "Download stopped by user action"
 msgstr "Zagruzka ostanovlena dejstviyami pol'zovatelya"
 

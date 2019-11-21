@@ -219,7 +219,6 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 
     // pick type of database
     SceneDatabase* db = new ZSceneDatabase;
-    // FIXME -- when making BSP tree, try several shuffles for best tree
 
     if (!world)
         return db;
@@ -350,10 +349,6 @@ void SceneDatabaseBuilder::addMesh(SceneDatabase* db, MeshObstacle* mesh)
     {
         // make the inside node
         const bool ownTheNode = db->addStaticNode(node, true);
-        // The BSP can split a MeshPolySceneNode and then delete it, which is
-        // not good for the EighthDimShellNode's referencing scheme. If the
-        // BSP would have split and then deleted this node, ownTheNode will
-        // return true, and the EighthDimShellNode will then own the node.
         EighthDimShellNode* inode = new EighthDimShellNode(node, ownTheNode);
         mesh->addInsideSceneNode(inode);
     }

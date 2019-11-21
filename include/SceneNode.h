@@ -69,7 +69,7 @@ public:
     virtual const GLfloat* getVertex (int vertex) const;
     const GLfloat*      getPlane() const;
     const GLfloat*      getPlaneRaw() const;
-    virtual GLfloat getDistance(const GLfloat* eye) const; // for BSP
+    virtual GLfloat getDistance(const GLfloat* eye) const;
 
     virtual bool    inAxisBox (const Extents& exts) const;
 

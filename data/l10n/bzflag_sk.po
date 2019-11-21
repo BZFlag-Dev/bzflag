@@ -2724,9 +2724,6 @@ msgstr "namapujte klaves na Prepnutie zobrazenia konzoly"
 msgid "ZSceneDatabase processed in %.3f seconds.\n"
 msgstr "ZSceneDatabase spracovana pocas %.3f sekundy.\n"
 
-msgid "BSPSceneDatabase processed in %.3f seconds.\n"
-msgstr "BSPSceneDatabase spracovana pcas %.3f sekundy.\n"
-
 msgid "Download stopped by user action"
 msgstr "Stiahnutie bolo zastavene uzivatelom"
 
