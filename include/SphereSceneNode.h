@@ -112,8 +112,6 @@ private:
 const int       SphereRes = 8;
 const int       SphereLowRes = 6;
 
-class SphereBspSceneNode;
-
 class SphereBspSceneNode : public SphereSceneNode
 {
 public:
