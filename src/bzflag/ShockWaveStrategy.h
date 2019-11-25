@@ -38,7 +38,7 @@ public:
     void        radarRender() const;
 
 private:
-    SphereSceneNode*    shockNode;
+    SphereSceneNode* shockNode;
     float       radius;
     float       radius2;
     TeamColor       team;
