@@ -107,65 +107,6 @@ private:
 };
 
 
-/******************************************************************************/
-
-const int       SphereRes = 8;
-const int       SphereLowRes = 6;
-
-class SphereBspSceneNode : public SphereSceneNode
-{
-public:
-    SphereBspSceneNode(const GLfloat pos[3], GLfloat radius);
-    ~SphereBspSceneNode();
-
-    void        setColor(GLfloat r, GLfloat g,
-                         GLfloat b, GLfloat a = 1.0f);
-    void        setColor(const GLfloat* rgba);
-    void        move(const GLfloat pos[3], GLfloat radius);
-
-    void        addRenderNodes(SceneRenderer&);
-    void        addShadowNodes(SceneRenderer&);
-
-protected:
-    GLfloat     getRadius() const
-    {
-        return radius;
-    }
-
-private:
-    void        freeParts();
-
-protected:
-    class SphereBspRenderNode : public RenderNode
-    {
-        friend class SphereBspSceneNode;
-    public:
-        SphereBspRenderNode(const SphereBspSceneNode*);
-        ~SphereBspRenderNode();
-        void        setHighResolution(bool);
-        void        setBaseIndex(int index);
-        void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
-    private:
-        const SphereBspSceneNode* sceneNode;
-        bool        highResolution;
-        int     baseIndex;
-        static GLfloat  geom[2 * SphereRes * (SphereRes + 1)][3];
-        static GLfloat  lgeom[SphereLowRes * (SphereLowRes + 1)][3];
-    };
-    friend class SphereBspRenderNode;
-
-private:
-    SphereBspRenderNode renderNode;
-};
-
-
-/******************************************************************************/
-
-
 #endif // BZF_FLAG_SCENE_NODE_H
 
 // Local Variables: ***

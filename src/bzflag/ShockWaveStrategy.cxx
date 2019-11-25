@@ -32,13 +32,8 @@ ShockWaveStrategy::ShockWaveStrategy(const FiringInfo& f) :
 
     // make scene node
     const float* pos = getPosition();
-    if (RENDERER.useQuality() >= 2)
-    {
-        shockNode = new SphereLodSceneNode(pos, radius);
-        shockNode->setShockWave(true);
-    }
-    else
-        shockNode = new SphereBspSceneNode(pos, radius);
+    shockNode = new SphereLodSceneNode(pos, radius);
+    shockNode->setShockWave(true);
 
     // get team
     if (getPlayer() == ServerPlayer)
