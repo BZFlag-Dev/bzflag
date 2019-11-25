@@ -60,10 +60,6 @@ public:
     SphereLodSceneNode(const GLfloat pos[3], GLfloat radius);
     ~SphereLodSceneNode();
 
-    void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
-    void setColor(const GLfloat* rgba);
-    void move(const GLfloat pos[3], GLfloat radius);
-
     void setShockWave(bool value);
 
     void addRenderNodes(SceneRenderer&);
