@@ -112,7 +112,7 @@ Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char*
         tankIDLNode = new TankIDLSceneNode(tankNode);
         changeTeam(team);
         const float sphereRad = (1.5f * BZDBCache::tankRadius);
-        pausedSphere = new SphereLodSceneNode(state.pos, sphereRad);
+        pausedSphere = new SphereSceneNode(state.pos, sphereRad);
         pausedSphere->setColor(0.0f, 0.0f, 0.0f, 0.5f);
     }
 

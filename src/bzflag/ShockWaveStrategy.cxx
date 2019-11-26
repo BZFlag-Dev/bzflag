@@ -32,7 +32,7 @@ ShockWaveStrategy::ShockWaveStrategy(const FiringInfo& f) :
 
     // make scene node
     const float* pos = getPosition();
-    shockNode = new SphereLodSceneNode(pos, radius);
+    shockNode = new SphereSceneNode(pos, radius);
     shockNode->setShockWave(true);
 
     // get team

@@ -23,44 +23,19 @@
 
 /******************************************************************************/
 
+const int sphereLods = 5;
+
 class SphereSceneNode : public SceneNode
 {
 public:
     SphereSceneNode(const GLfloat pos[3], GLfloat radius);
-    virtual ~SphereSceneNode();
+
+    void setShockWave(bool value);
 
     void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a = 1.0f);
     void setColor(const GLfloat* rgba);
     void move(const GLfloat pos[3], GLfloat radius);
     void notifyStyleChange();
-
-    virtual void setShockWave(bool)
-    {
-        return;
-    };
-
-    virtual void addRenderNodes(SceneRenderer&) = 0;
-    virtual void addShadowNodes(SceneRenderer&) = 0;
-
-protected:
-    GLfloat     radius;
-    GLfloat     color[4];
-    bool        transparent;
-    OpenGLGState    gstate;
-};
-
-
-/******************************************************************************/
-
-const int sphereLods = 5;
-
-class SphereLodSceneNode : public SphereSceneNode
-{
-public:
-    SphereLodSceneNode(const GLfloat pos[3], GLfloat radius);
-    ~SphereLodSceneNode();
-
-    void setShockWave(bool value);
 
     void addRenderNodes(SceneRenderer&);
     void addShadowNodes(SceneRenderer&);
@@ -75,7 +50,7 @@ protected:
     {
         friend class SphereLodSceneNode;
     public:
-        SphereLodRenderNode(const SphereLodSceneNode*);
+        SphereLodRenderNode(const SphereSceneNode*);
         ~SphereLodRenderNode();
         void setLod(int lod);
         void render();
@@ -85,11 +60,14 @@ protected:
         }
 
     private:
-        const SphereLodSceneNode* sceneNode;
+        const SphereSceneNode* sceneNode;
         int lod;
     };
 
-private:
+    GLfloat     radius;
+    GLfloat     color[4];
+    bool        transparent;
+    OpenGLGState    gstate;
     SphereLodRenderNode renderNode;
     bool shockWave;
     bool inside;
@@ -99,7 +77,7 @@ private:
     static float lodPixelsSqr[sphereLods];
     static int listTriangleCount[sphereLods];
 
-    friend class SphereLodSceneNode::SphereLodRenderNode;
+    friend class SphereSceneNode::SphereLodRenderNode;
 };
 
 

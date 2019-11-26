@@ -30,6 +30,7 @@
 #include "ShotStatistics.h"
 #include "ShotList.h"
 #include "Protocol.h"
+#include "SphereSceneNode.h"
 
 
 /* local interface headers */
@@ -37,7 +38,6 @@ class ShotPath;
 class SceneDatabase;
 class TankSceneNode;
 class TankIDLSceneNode;
-class SphereSceneNode;
 class Obstacle;
 class TankDeathOverride;
 

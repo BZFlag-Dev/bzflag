@@ -36,29 +36,6 @@
 // SphereSceneNode
 //
 
-SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius)
-{
-    transparent = false;
-
-    OpenGLGStateBuilder builder(gstate);
-    builder.disableCulling();
-    gstate = builder.getState();
-
-    setColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // position sphere
-    move(pos, _radius);
-
-    return;
-}
-
-
-SphereSceneNode::~SphereSceneNode()
-{
-    // do nothing
-}
-
-
 void SphereSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
     color[0] = r;
@@ -113,10 +90,10 @@ void SphereSceneNode::notifyStyleChange()
 //
 
 
-bool SphereLodSceneNode::initialized = false;
-GLuint SphereLodSceneNode::lodLists[sphereLods];
-float SphereLodSceneNode::lodPixelsSqr[sphereLods];
-int SphereLodSceneNode::listTriangleCount[sphereLods];
+bool SphereSceneNode::initialized = false;
+GLuint SphereSceneNode::lodLists[sphereLods];
+float SphereSceneNode::lodPixelsSqr[sphereLods];
+int SphereSceneNode::listTriangleCount[sphereLods];
 
 
 static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)
@@ -142,7 +119,7 @@ static GLuint buildSphereList(GLdouble radius, GLint slices, GLint stacks)
 }
 
 
-void SphereLodSceneNode::freeContext(void *)
+void SphereSceneNode::freeContext(void *)
 {
     for (int i = 0; i < sphereLods; i++)
     {
@@ -163,7 +140,7 @@ static int calcTriCount(int slices, int stacks)
     return (trifans + quads);
 }
 
-void SphereLodSceneNode::initContext(void *)
+void SphereSceneNode::initContext(void *)
 {
     initialized = true;
 
@@ -191,7 +168,7 @@ void SphereLodSceneNode::initContext(void *)
 }
 
 
-void SphereLodSceneNode::init()
+void SphereSceneNode::init()
 {
     initialized = false; // no lists yet
     for (int i = 0; i < sphereLods; i++)
@@ -203,7 +180,7 @@ void SphereLodSceneNode::init()
 }
 
 
-void SphereLodSceneNode::kill()
+void SphereSceneNode::kill()
 {
     if (initialized)
     {
@@ -214,10 +191,20 @@ void SphereLodSceneNode::kill()
 }
 
 
-SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
-    SphereSceneNode(pos, _radius),
+SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius) :
     renderNode(this)
 {
+    transparent = false;
+
+    OpenGLGStateBuilder builder(gstate);
+    builder.disableCulling();
+    gstate = builder.getState();
+
+    setColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // position sphere
+    move(pos, _radius);
+
     if (!initialized)
     {
         initialized = true;
@@ -231,7 +218,6 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
     renderNode.setLod(0);
 
     // adjust the gstate for this type of sphere
-    OpenGLGStateBuilder builder(gstate);
     builder.setCulling(GL_BACK);
     builder.setShading(GL_SMOOTH);
     const float spec[4] = {1.0f, 1.0f, 1.0f, 1.0f};
@@ -243,13 +229,7 @@ SphereLodSceneNode::SphereLodSceneNode(const GLfloat pos[3], GLfloat _radius) :
 }
 
 
-SphereLodSceneNode::~SphereLodSceneNode()
-{
-    return;
-}
-
-
-void SphereLodSceneNode::setShockWave(bool value)
+void SphereSceneNode::setShockWave(bool value)
 {
     shockWave = value;
     if (BZDBCache::texture && false)   //FIXME
@@ -264,7 +244,7 @@ void SphereLodSceneNode::setShockWave(bool value)
 }
 
 
-void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
+void SphereSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     const ViewFrustum& view = renderer.getViewFrustum();
     const float* s = getSphere();
@@ -301,7 +281,7 @@ void SphereLodSceneNode::addRenderNodes(SceneRenderer& renderer)
 }
 
 
-void SphereLodSceneNode::addShadowNodes(SceneRenderer&)
+void SphereSceneNode::addShadowNodes(SceneRenderer&)
 {
     return;
 }
@@ -311,21 +291,21 @@ void SphereLodSceneNode::addShadowNodes(SceneRenderer&)
 // SphereLodSceneNode::SphereLodRenderNode
 //
 
-SphereLodSceneNode::SphereLodRenderNode::SphereLodRenderNode(
-    const SphereLodSceneNode* _sceneNode) :
+SphereSceneNode::SphereLodRenderNode::SphereLodRenderNode(
+    const SphereSceneNode* _sceneNode) :
     sceneNode(_sceneNode)
 {
     return;
 }
 
 
-SphereLodSceneNode::SphereLodRenderNode::~SphereLodRenderNode()
+SphereSceneNode::SphereLodRenderNode::~SphereLodRenderNode()
 {
     return;
 }
 
 
-void SphereLodSceneNode::SphereLodRenderNode::setLod(int _lod)
+void SphereSceneNode::SphereLodRenderNode::setLod(int _lod)
 {
     lod = _lod;
     return;
@@ -349,7 +329,7 @@ static inline void drawFullScreenRect()
 }
 
 
-void SphereLodSceneNode::SphereLodRenderNode::render()
+void SphereSceneNode::SphereLodRenderNode::render()
 {
     const GLfloat radius = sceneNode->radius;
     const GLfloat* sphere = sceneNode->getSphere();
@@ -360,7 +340,7 @@ void SphereLodSceneNode::SphereLodRenderNode::render()
 
     const bool transparent = sceneNode->transparent;
 
-    const GLuint list = SphereLodSceneNode::lodLists[lod];
+    const GLuint list = SphereSceneNode::lodLists[lod];
 
     glPushMatrix();
     {
