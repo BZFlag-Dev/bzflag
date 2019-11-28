@@ -204,28 +204,36 @@ bool SDLWindow::create(void)
             return true;
     }
 
-    // destroy the pre-existing window if it exists
-    if (windowId != NULL)
-    {
-        if (glContext)
-            SDL_GL_DeleteContext(glContext);
-        glContext = NULL;
-
-        SDL_DestroyWindow(windowId);
-    }
-
-    // (re)create the window
     const Uint32 flags = SDL_WINDOW_OPENGL |
                          (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
                          (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
-
-    windowId = SDL_CreateWindow(
-                   title.c_str(),
-                   SDL_WINDOWPOS_UNDEFINED,
-                   SDL_WINDOWPOS_UNDEFINED,
-                   targetWidth,
-                   targetHeight,
-                   flags);
+    if (windowId == NULL)
+    {
+        // (re)create the window
+        windowId = SDL_CreateWindow(
+                       title.c_str(),
+                       SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED,
+                       targetWidth,
+                       targetHeight,
+                       flags);
+    }
+    else
+    {
+        if (fullScreen)
+        {
+            SDL_DisplayMode target, closest;
+            target.w = targetWidth;
+            target.h = targetHeight;
+            target.format = 0;  // don't care
+            target.refresh_rate = 0; // don't care
+            target.driverdata   = 0; // initialize to 0
+            SDL_GetClosestDisplayMode(0, &target, &closest);
+            SDL_SetWindowDisplayMode(windowId, &closest);
+        }
+        SDL_SetWindowSize(windowId, targetWidth, targetHeight);
+        SDL_SetWindowFullscreen(windowId, fullScreen ? SDL_WINDOW_FULLSCREEN : 0);
+    }
 
     // Store the gamma immediately after creating the first window
     if (origGamma < 0)
