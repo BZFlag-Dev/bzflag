@@ -33,6 +33,7 @@
 #include "CommandManager.h"
 #include "md5.h"
 #include "version.h"
+#include "DropGeometry.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
 std::list<PendingChatMessages> pendingChatMessages;
@@ -3336,6 +3337,13 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
         randomPos[1] = (obj->radius * y) + pos[1];
         randomPos[2] = pos[2];
     }
+}
+
+BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
+{
+    do {
+        bz_getRandomPoint(obj, randomPos);
+    } while (!DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax));
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
