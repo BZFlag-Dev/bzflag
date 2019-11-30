@@ -3341,8 +3341,24 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
 
 BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
 {
+    TimeKeeper start = TimeKeeper::getCurrent();
+    int tries = 0;
+
     do {
+        if (tries >= 50)
+        {
+            tries = 0;
+
+            if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime"))
+            {
+                randomPos[2] = obj->zMax;
+                logDebugMessage(1, "Warning: bz_getSpawnPointWithin ran out of time, just dropping the sucker in\n");
+                break;
+            }
+        }
+
         bz_getRandomPoint(obj, randomPos);
+        ++tries;
     } while (!DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax));
 }
 
