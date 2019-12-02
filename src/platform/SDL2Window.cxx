@@ -232,9 +232,9 @@ bool SDLWindow::create(void)
             SDL_GetClosestDisplayMode(0, &target, &closest);
             SDL_SetWindowDisplayMode(windowId, &closest);
         }
-        else
-            SDL_SetWindowSize(windowId, targetWidth, targetHeight);
         SDL_SetWindowFullscreen(windowId, fullScreen ? SDL_WINDOW_FULLSCREEN : 0);
+        if (!fullScreen)
+            SDL_SetWindowSize(windowId, targetWidth, targetHeight);
     }
 
     // Store the gamma immediately after creating the first window
