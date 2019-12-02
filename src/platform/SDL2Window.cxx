@@ -205,7 +205,8 @@ bool SDLWindow::create(void)
     }
 
     const Uint32 flags = SDL_WINDOW_OPENGL |
-                         (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
+                         SDL_WINDOW_RESIZABLE |
+                         (fullScreen ? SDL_WINDOW_FULLSCREEN : 0) |
                          (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
     if (windowId == NULL)
     {
@@ -231,7 +232,8 @@ bool SDLWindow::create(void)
             SDL_GetClosestDisplayMode(0, &target, &closest);
             SDL_SetWindowDisplayMode(windowId, &closest);
         }
-        SDL_SetWindowSize(windowId, targetWidth, targetHeight);
+        else
+            SDL_SetWindowSize(windowId, targetWidth, targetHeight);
         SDL_SetWindowFullscreen(windowId, fullScreen ? SDL_WINDOW_FULLSCREEN : 0);
     }
 
