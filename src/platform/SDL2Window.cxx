@@ -188,28 +188,12 @@ bool SDLWindow::create(void)
 {
     int targetWidth, targetHeight;
     getSize(targetWidth, targetHeight);
-    SDL_bool windowWasGrabbed = SDL_FALSE;
-    if (windowId != NULL)
-        windowWasGrabbed = SDL_GetWindowGrab(windowId);
 
-    // if we have an existing identical window, go no further
-    if (windowId != NULL)
-    {
-        int currentWidth, currentHeight;
-        SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
-
-        Uint32 priorWindowFlags = SDL_GetWindowFlags(windowId);
-        if (fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
-                targetWidth == currentWidth && targetHeight == currentHeight)
-            return true;
-    }
-
-    const Uint32 flags = SDL_WINDOW_OPENGL |
-                         SDL_WINDOW_RESIZABLE |
-                         (fullScreen ? SDL_WINDOW_FULLSCREEN : 0) |
-                         (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
     if (windowId == NULL)
     {
+        const Uint32 flags = SDL_WINDOW_OPENGL |
+                             SDL_WINDOW_RESIZABLE |
+                             (fullScreen ? SDL_WINDOW_FULLSCREEN : 0);
         // (re)create the window
         windowId = SDL_CreateWindow(
                        title.c_str(),
@@ -221,6 +205,15 @@ bool SDLWindow::create(void)
     }
     else
     {
+        // if we have an existing identical window, go no further
+        int currentWidth, currentHeight;
+        SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
+
+        Uint32 priorWindowFlags = SDL_GetWindowFlags(windowId);
+        if (fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
+                targetWidth == currentWidth && targetHeight == currentHeight)
+            return true;
+
         if (fullScreen)
         {
             SDL_DisplayMode target, closest;
