@@ -23,8 +23,6 @@
 
 /******************************************************************************/
 
-const int sphereLods = 5;
-
 class SphereSceneNode : public SceneNode
 {
 public:
@@ -73,6 +71,7 @@ protected:
     bool inside;
 
     static bool initialized;
+    static const int sphereLods = 5;
     static GLuint lodLists[sphereLods];
     static float lodPixelsSqr[sphereLods];
     static int listTriangleCount[sphereLods];

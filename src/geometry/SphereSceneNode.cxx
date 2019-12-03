@@ -191,7 +191,7 @@ void SphereSceneNode::kill()
 }
 
 
-SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius) :
+SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat radius_) :
     renderNode(this)
 {
     transparent = false;
@@ -203,7 +203,7 @@ SphereSceneNode::SphereSceneNode(const GLfloat pos[3], GLfloat _radius) :
     setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     // position sphere
-    move(pos, _radius);
+    move(pos, radius_);
 
     if (!initialized)
     {

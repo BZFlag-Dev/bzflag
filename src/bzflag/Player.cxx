@@ -57,6 +57,7 @@ Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char*
     registered(false),
     verified(false),
     playerList(false),
+    pausedSphere(nullptr),
     lastVisualTeam(NoTeam),
     nextTeam(_team),
     team(_team),
