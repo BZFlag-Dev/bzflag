@@ -182,7 +182,7 @@ const char *TimeKeeper::timestamp(void) // const
 
     strncpy(buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
                                       now->tm_year, now->tm_mon, now->tm_mday,
-                                      now->tm_hour, now->tm_min, now->tm_sec).c_str(), 256);
+                                      now->tm_hour, now->tm_min, now->tm_sec).c_str(), 255);
     buffer[255] = '\0'; // safety
 
     return buffer;

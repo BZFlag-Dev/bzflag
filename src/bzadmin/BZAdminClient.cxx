@@ -47,11 +47,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
         {
         case ServerLink::BadVersion:
         {
-            static char versionError[] = "Incompatible server version XXXXXXXX";
-            // Flawfinder: ignore
-            strncpy(versionError + sizeof(versionError) - 8 - 1,
-                    sLink.getVersion(), 8);
-            std::cout << versionError;
+            std::cout << "Incompatible server version " << sLink.getVersion();
             break;
         }
         case ServerLink::Refused:

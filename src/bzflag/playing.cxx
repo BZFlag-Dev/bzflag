@@ -1421,7 +1421,7 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
     msg = nboUnpackString (msg, motto, MottoLen);
 
     // Strip any ANSI color codes
-    strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
+    strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 31);
 
     // id is slot, check if it's empty
     const int i = id;
@@ -4816,7 +4816,7 @@ static void     addRobots()
         }
         else
         {
-            snprintf(callsign, CallSignLen, "%.29s%2.2x", myTank->getCallSign(), j);
+            snprintf(callsign, CallSignLen, "%.29s%2.2x", myTank->getCallSign(), (short int)j);
             robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign,
                                         robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
@@ -5392,9 +5392,8 @@ static void joinInternetGame()
         {
         case ServerLink::BadVersion:
         {
-            static char versionError[] = "Incompatible server version XXXXXXXX";
-            strncpy(versionError + strlen(versionError) - 8,
-                    serverLink->getVersion(), 8);
+            char versionError[37];
+            snprintf(versionError, sizeof(versionError), "Incompatible server version %s", serverLink->getVersion());
             HUDDialogStack::get()->setFailedMessage(versionError);
             break;
         }
