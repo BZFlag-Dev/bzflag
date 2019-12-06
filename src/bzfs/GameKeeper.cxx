@@ -925,6 +925,13 @@ void GameKeeper::Player::getDeadReckoning(float* predictedPos, float* predictedA
         inputTurnCenter[0] = lastUpdate.pos[0] - inputTurnVector[0];
         inputTurnCenter[1] = lastUpdate.pos[1] - inputTurnVector[1];
     }
+    else
+    {
+        inputTurnVector[0] = 0;
+        inputTurnVector[1] = 0;
+        inputTurnCenter[0] = 0;
+        inputTurnCenter[1] = 0;
+    }
 
     float gravity = BZDB.eval(StateDatabase::BZDB_GRAVITY);
 

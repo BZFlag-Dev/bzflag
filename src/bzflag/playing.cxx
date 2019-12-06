@@ -1424,7 +1424,8 @@ static Player*      addPlayer(PlayerId id, const void* msg, int showMessage)
     msg = nboUnpackString (msg, motto, MottoLen);
 
     // Strip any ANSI color codes
-    strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 32);
+    strncpy (callsign, stripAnsiCodes (std::string (callsign)).c_str (), 31);
+    callsign[31] = 0;
 
     // id is slot, check if it's empty
     const int i = id;
@@ -5537,9 +5538,8 @@ static void joinInternetGame()
         {
         case ServerLink::BadVersion:
         {
-            static char versionError[] = "Incompatible server version XXXXXXXX";
-            strncpy(versionError + strlen(versionError) - 8,
-                    serverLink->getVersion(), 8);
+            char versionError[37];
+            snprintf(versionError, sizeof(versionError), "Incompatible server version %s", serverLink->getVersion());
             HUDDialogStack::get()->setFailedMessage(versionError);
             break;
         }

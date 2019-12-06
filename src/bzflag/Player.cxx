@@ -100,7 +100,7 @@ Player::Player(const PlayerId& _id, TeamColor _team, int _skinIndex, const char*
     computedHits = 0;
 
     // set call sign
-    ::strncpy(callSign, name, CallSignLen);
+    ::strncpy(callSign, name, CallSignLen - 1);
     callSign[CallSignLen-1] = '\0';
 
     setMotto(_motto); // will be superseded by the server
@@ -239,7 +239,7 @@ static float rabbitRank (int wins, int losses)
 
 void Player::setMotto(const char* _motto)
 {
-    strncpy(motto, _motto, MottoLen);
+    strncpy(motto, _motto, MottoLen - 1);
     motto[MottoLen - 1] = '\0';   // ensure null termination
 }
 
