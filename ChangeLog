@@ -4,6 +4,7 @@
 BZFlag 2.4.19
 -------------
 
+* Add bz_getSpawnPointWithin to API - Vladimir Jimenez
 * Fix NetHandler compiler errors on Alpine Linux - Jim Melton
 * Significantly improve platform-dependent header imports - Jim Melton
 * Only perform texture conversion to internal format once
