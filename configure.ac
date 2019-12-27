@@ -524,13 +524,6 @@ else
 fi
 
 AC_LANG(C++)
-###AC_CHECK_TYPES([std::shared_ptr<int>],
-###	[# BZFlag expects std::shared_ptr support by default],
-###	[AC_CHECK_TYPES([[std::tr1::shared_ptr<int>]],
-###		AC_DEFINE([USE_TR1], [1], [Define to 1 to use C++0X TR1]),
-###		AC_MSG_ERROR([[The C++11 std::shared_ptr type is required to build BZFlag]]),
-###		[[#include <tr1/memory>]])],
-###	[#include <memory>])
 
 have_gl=yes
 savedLIBS=$LIBS
