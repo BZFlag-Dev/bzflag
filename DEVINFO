@@ -217,18 +217,20 @@ The source code serves for examples of the following rules.
       should be first, followed by public member functions, protected
       member functions, private member functions, and data members.
 
-  7)  Macro names are all capitals, class names have the first letter
-      of each word capitalized, all other names have the first letter
-      of each word except the first capitalized.  Only macros may use
-      underscores, except for in the names of method parameters where
-      a leading underscore is allowed to make it different from a
-      member variable.
+  7)  Macro names are UPPERCASE; class names are TitleCase; all other
+      names are camelCase.  All names that begin with an underscore
+      are reserved to the compiler. The only exception to this is
+      where a name is scoped (as in a class member). However, BZFlag
+      does not use this convention. ALL symbols with two consecutive
+      underscores (FOO__BAR) are reserved to the compiler. Don't use
+      them. Method parameters may use a trailing underscore to make it
+      different from a member variable.
 
 	#define FOO bar
 	class MyClass 
 	{
 	public:
-	    void addStuff(int addMe, int _y) { y = addMe + _y; }
+	    void addStuff(int addMe, int y_) { y = addMe + y_; }
 
 	private:
 	    int y;
