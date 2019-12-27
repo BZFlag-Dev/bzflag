@@ -138,12 +138,13 @@ typing explicit references to the "std" namespace.  Other namespaces,
 especially those defined in BZFlag code, may be introduced with
 "using" when it improves code readability.
 
-Only use standard C++ language features, at no time should any
-compiler-specific extensions be used (GNU or VisualC++ extensions).
-If an extension can not be avoided then it must be able to be disabled
-or replaced using a #define in config.h.  BZFlag is a cross-platform
-application so it is important to remember that not all builds will
-use your specific compiler. 
+Only use standard C++14 language features. Do not use C++17 language
+features at this time. Do not use any compiler-specific extensions be
+used (GNU or VisualC++ extensions).  If an extension can not be
+avoided then it must be able to be disabled or replaced using a
+#define in config.h.  BZFlag is a cross-platform application so it is
+important to remember that not all builds will use your specific
+compiler.
 
 Formatting
 ----------

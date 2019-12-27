@@ -218,10 +218,10 @@ if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
 fi
 
-# C++14 is the minimum standard. C++17 if available
+# C++14 is the minimum standard. C++17 isn't widely available
 #AX_CXX_COMPILE_STDCXX([11], [noext])
 AX_CXX_COMPILE_STDCXX([14], [noext])
-AX_CXX_COMPILE_STDCXX([17], [noext], [optional])
+#AX_CXX_COMPILE_STDCXX([17], [noext], [optional])
 AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
