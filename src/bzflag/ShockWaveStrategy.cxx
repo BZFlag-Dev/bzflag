@@ -24,9 +24,9 @@
 
 ShockWaveStrategy::ShockWaveStrategy(const FiringInfo& f) :
     ShotStrategy(f),
-    shockNode(new SphereSceneNode(getPosition(), radius)),
     radius(BZDB.eval(StateDatabase::BZDB_SHOCKINRADIUS)),
-    radius2(radius * radius)
+    radius2(radius * radius),
+    shockNode(new SphereSceneNode(getPosition(), radius))
 {
     // setup shot
     getFiringInfo().lifetime *= BZDB.eval(StateDatabase::BZDB_SHOCKADLIFE);
