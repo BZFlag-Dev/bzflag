@@ -333,7 +333,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
 
   -- set up overall workspace settings
   language "C++"
-  cppdialect "C++11"
+  cppdialect "C++17"
   warnings "Default"
   location("premake5/"..iif(_ACTION, _ACTION, ""))
   if not _OPTIONS["disable-client"] then

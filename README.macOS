@@ -20,3 +20,55 @@ Building BZFlag from Source
 ---------------------------
 BZFlag builds on macOS are now done using premake5 and Xcode 7 (or later).
 Please refer to the README.premake5 file for build instructions.
+
+
+Known Issues
+------------
+The following warnings can be expected in a MacOS build (for now):
+
+DirectoryNames.cxx:109:13: warning: 'FSFindFolder' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
+DirectoryNames.cxx:113:17: warning: 'FSRefMakePath' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
+
+BoltSceneNode.cxx:356:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+BoltSceneNode.cxx:363:5: warning: 'gluDisk' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+BoltSceneNode.cxx:365:5: warning: 'gluCylinder' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+BoltSceneNode.cxx:416:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+BoltSceneNode.cxx:508:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+
+LaserSceneNode.cxx:152:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+LaserSceneNode.cxx:160:5: warning: 'gluCylinder' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+LaserSceneNode.cxx:175:9: warning: 'gluSphere' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+LaserSceneNode.cxx:184:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+
+SphereSceneNode.cxx:103:27: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:104:5: warning: 'gluQuadricDrawStyle' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:105:5: warning: 'gluQuadricTexture' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:106:5: warning: 'gluQuadricNormals' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:107:5: warning: 'gluQuadricOrientation' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:112:9: warning: 'gluSphere' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+SphereSceneNode.cxx:116:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
+
+ld: warning: text-based stub file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation.tbd and library file /System/Library/Frameworks//CoreFoundation.framework/CoreFoundation are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//ApplicationServices.framework/Versions/A/ApplicationServices.tbd and library file /System/Library/Frameworks//ApplicationServices.framework/Versions/A/ApplicationServices are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox.tbd and library file /System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//CoreGraphics.framework/Versions/A/CoreGraphics.tbd and library file /System/Library/Frameworks//CoreGraphics.framework/Versions/A/CoreGraphics are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//CoreText.framework/Versions/A/CoreText.tbd and library file /System/Library/Frameworks//CoreText.framework/Versions/A/CoreText are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//ImageIO.framework/Versions/A/ImageIO.tbd and library file /System/Library/Frameworks//ImageIO.framework/Versions/A/ImageIO are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS.tbd and library file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//CoreServices.framework/Versions/A/CoreServices.tbd and library file /System/Library/Frameworks//CoreServices.framework/Versions/A/CoreServices are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices.tbd and library file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis.tbd and library file /System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks//CFNetwork.framework/Versions/A/CFNetwork.tbd and library file /System/Library/Frameworks//CFNetwork.framework/Versions/A/CFNetwork are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/FSEvents.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/FSEvents are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices are out of sync. Falling back to library file for linking.
+ld: warning: text-based stub file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SharedFileList.framework/Versions/A/SharedFileList.tbd and library file /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SharedFileList.framework/Versions/A/SharedFileList are out of sync. Falling back to library file for linking.
+
+HUDRenderer.cxx:1117:13: warning: 'gluProject' is deprecated: first deprecated in macOS 10.9 - "Use GLKMathProject" [-Wdeprecated-declarations]
+HUDRenderer.cxx:1260:5: warning: 'gluProject' is deprecated: first deprecated in macOS 10.9 - "Use GLKMathProject" [-Wdeprecated-declarations]
+
+ShockWaveStrategy.cxx:27:50: warning: field 'radius' is uninitialized when used here [-Wuninitialized]
+
