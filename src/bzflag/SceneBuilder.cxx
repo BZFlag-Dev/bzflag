@@ -214,7 +214,7 @@ SceneDatabaseBuilder::~SceneDatabaseBuilder()
 SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 {
     // set LOD flags
-   wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = BZDBCache::lighting;
+    wallLOD = baseLOD = boxLOD = pyramidLOD = teleporterLOD = BZDBCache::lighting;
 
     // pick database
     SceneDatabase* db = new ZSceneDatabase;
