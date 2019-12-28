@@ -18,6 +18,9 @@
 /* system interface headers */
 #include <vector>
 #include <string>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+#include <glm/mat4x4.hpp>
 
 /* common interface headers */
 #include "TimeKeeper.h"
@@ -147,10 +150,10 @@ protected:
     void      renderTimes(void);
     void      renderShots(const Player*);
 
-    void      drawLockonMarker(float* color, float alpha, float* object, const float* viewPos, std::string name,
-                               bool friendly);
-    void      drawWaypointMarker(float* color, float alpha, float* object, const float* viewPos, std::string name,
-                                 bool friendly);
+    void      drawLockonMarker(const EnhancedHUDMarker &marker,
+                               const glm::vec2 &viewPos);
+    void      drawWaypointMarker(const EnhancedHUDMarker &marker,
+                                 const glm::vec2 &viewPos);
     void      drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
     void      makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
@@ -164,6 +167,9 @@ private:
     void      setHeadingFontSize(int width, int height);
     void      setComposeFontSize(int width, int height);
     void      setLabelsFontSize(int width, int height);
+    glm::vec2 getMarkerCoordinate(
+        glm::vec3 const &object,
+        glm::vec2 const &viewPos) const;
 
     void      resize(bool firstTime);
     static void   resizeCallback(void*);
@@ -249,9 +255,9 @@ private:
 
     HUDuiTypeIn*  composeTypeIn;
 
-    double    modelMatrix[16];
-    double    projMatrix[16];
-    int       viewport[4];
+    glm::mat4  modelMatrix;
+    glm::mat4  projMatrix;
+    glm::ivec4 viewport;
 
     MarkerList        markers;
     EnhancedMarkerList    enhancedMarkers;
