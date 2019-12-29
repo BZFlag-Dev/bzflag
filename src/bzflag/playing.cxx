@@ -1092,10 +1092,7 @@ static void     doEvent(BzfDisplay *disply)
 
     case BzfEvent::Resize:
         if (mainWindow->getWidth() != event.resize.width || mainWindow->getHeight() != event.resize.height)
-        {
-            mainWindow->getWindow()->setSize(event.resize.width, event.resize.height);
             mainWindow->getWindow()->callResizeCallbacks();
-        }
         break;
 
     case BzfEvent::Map:

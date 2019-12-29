@@ -125,13 +125,7 @@ void SDLWindow::setSize(int _width, int _height)
 
 void SDLWindow::getSize(int& width, int& height) const
 {
-    if (fullScreen)
-        const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getWindowSize(width, height);
-    else
-    {
-        width  = base_width;
-        height = base_height;
-    }
+    SDL_GL_GetDrawableSize(windowId, &width, &height);
 }
 
 void SDLWindow::setGamma(float gamma)
@@ -187,128 +181,110 @@ void SDLWindow::swapBuffers()
 bool SDLWindow::create(void)
 {
     int targetWidth, targetHeight;
-    getSize(targetWidth, targetHeight);
-    SDL_bool windowWasGrabbed = SDL_FALSE;
-    if (windowId != NULL)
-        windowWasGrabbed = SDL_GetWindowGrab(windowId);
-
-    // if we have an existing identical window, go no further
-    if (windowId != NULL)
+    // If fullscreen, the target size will be that of the selected fullscreen resolution
+    if (fullScreen)
+        const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getWindowSize(targetWidth, targetHeight);
+    // Otherwise, it will be the base size, which controls the windowed size
+    else
     {
-        int currentWidth, currentHeight;
-        SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
-
-        Uint32 priorWindowFlags = SDL_GetWindowFlags(windowId);
-        if (fullScreen == (priorWindowFlags & SDL_WINDOW_FULLSCREEN) &&
-                targetWidth == currentWidth && targetHeight == currentHeight)
-            return true;
+        targetWidth = base_width;
+        targetHeight = base_height;
     }
 
-    // destroy the pre-existing window if it exists
-    if (windowId != NULL)
-    {
-        if (glContext)
-            SDL_GL_DeleteContext(glContext);
-        glContext = NULL;
-
-        SDL_DestroyWindow(windowId);
-    }
-
-    // (re)create the window
-    const Uint32 flags = SDL_WINDOW_OPENGL |
-                         (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
-                         (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
-
-    windowId = SDL_CreateWindow(
-                   title.c_str(),
-                   SDL_WINDOWPOS_UNDEFINED,
-                   SDL_WINDOWPOS_UNDEFINED,
-                   targetWidth,
-                   targetHeight,
-                   flags);
-
-    // Store the gamma immediately after creating the first window
-    if (origGamma < 0)
-        origGamma = getGamma();
-
-    // At least on Windows, recreating the window resets the gamma, so set it
-    setGamma(lastGamma);
-
-#ifdef _WIN32
-    SDL_VERSION(&info.version);
-    if (SDL_GetWindowWMInfo(windowId,&info))
-    {
-        if (info.subsystem == SDL_SYSWM_WINDOWS)
-            hwnd = info.info.win.window;
-    }
-#endif
-
+    // Create the SDL window if it doesn't already exist
     if (!windowId)
     {
-        printf("Could not set Video Mode: %s.\n", SDL_GetError());
-        return false;
-    }
+        const Uint32 flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
+        windowId = SDL_CreateWindow(
+                       title.c_str(),
+                       SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED,
+                       base_width,
+                       base_height,
+                       flags);
 
-    if (min_width >= 0)
+        // If the window could not be created, bail out
+        if (!windowId)
+        {
+            printf("Could not create the window: %s\n", SDL_GetError());
+            return false;
+        }
+
+        // Store the gamma immediately after creating the first window
+        if (origGamma < 0)
+            origGamma = getGamma();
+
+        // Set the minimum window size
         setMinSize(min_width, min_height);
 
-    makeContext();
-    makeCurrent();
+        // Create the OpenGL context and make it current
+        makeContext();
+        makeCurrent();
 
-    if(SDL_GL_SetSwapInterval(vsync ? -1 : 0) == -1 && vsync)
-        // no adaptive vsync; set regular vsync
-        SDL_GL_SetSwapInterval(1);
-
-    // init opengl context
-    OpenGLGState::initContext();
-
-    // workaround for SDL 2 bug on mac where toggling fullscreen will
-    // generate a resize event and mess up the window size/resolution
-    // (TODO: remove this if they ever fix it)
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=3146
-#ifdef __APPLE__
-    if (fullScreen)
-        return true;
-
-    int currentDisplayIndex = SDL_GetWindowDisplayIndex(windowId);
-    if (currentDisplayIndex < 0)
-    {
-        printf("Unable to get current display index: %s\n", SDL_GetError());
-        return true;
-    }
-
-    SDL_DisplayMode desktopDisplayMode;
-    if (SDL_GetDesktopDisplayMode(currentDisplayIndex, &desktopDisplayMode) < 0)
-    {
-        printf("Unable to get desktop display mode: %s\n", SDL_GetError());
-        return true;
-    }
-
-    std::vector<SDL_Event> eventStack;
-    SDL_Event thisEvent;
-
-    // pop off all the events except a resize event
-    while (SDL_PollEvent(&thisEvent))
-    {
-        if (thisEvent.type == SDL_WINDOWEVENT && thisEvent.window.event == SDL_WINDOWEVENT_RESIZED)
+#ifdef _WIN32
+        SDL_VERSION(&info.version);
+        if (SDL_GetWindowWMInfo(windowId,&info))
         {
-            // switching from "native" fullscreen to SDL fullscreen and then going back to
-            // windowed mode will generate a legitimate resize event, so add it back
-            if (thisEvent.window.data1 != desktopDisplayMode.w || thisEvent.window.data2 != desktopDisplayMode.h)
-                eventStack.push_back(thisEvent);
+            if (info.subsystem == SDL_SYSWM_WINDOWS)
+                hwnd = info.info.win.window;
         }
-        else
-            eventStack.push_back(thisEvent);
+#endif
+
+        // Set desired vertical-sync mode
+        setVerticalSync(vsync);
+
+        // init opengl context
+        OpenGLGState::initContext();
     }
 
-    // push them back on in the same order
-    while (eventStack.size() > 0)
+    // Get the current window dimensions
+    int currentWidth, currentHeight;
+    SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
+
+    // Get the current window flags
+    Uint32 currentWindowFlags = SDL_GetWindowFlags(windowId);
+
+    if (targetWidth != currentWidth || targetHeight != currentHeight)
     {
-        SDL_PushEvent(&eventStack[0]);
+        // If we're fullscreen (or switching to fullscreen), find the closest resolution and set the display mode
+        if (fullScreen)
+        {
+            SDL_DisplayMode closest;
+            SDL_DisplayMode target;
+            target.w = targetWidth;
+            target.h = targetHeight;
+            target.format = 0;
+            target.refresh_rate = 0;
+            target.driverdata = nullptr;
 
-        eventStack.erase(eventStack.begin());
+            // Attempt to find a usable resolution close to our target resolution
+            if (SDL_GetClosestDisplayMode(0, &target, &closest) == nullptr)
+            {
+                printf("Unable to find a usable fullscreen resolution: %s\n", SDL_GetError());
+                return false;
+            }
+
+            // Attempt to set the display mode
+            if (SDL_SetWindowDisplayMode(windowId, &closest) < 0)
+            {
+                printf("Unable to set display mode: %s", SDL_GetError());
+                return false;
+            }
+        }
+        // Otherwise just set the window size
+        else
+        {
+            //SDL_SetWindowSize(windowId, targetWidth, targetHeight);
+        }
     }
-#endif //__APPLE__
+
+    // Check if we need to toggle between fullscreen and windowed
+    if (fullScreen != (currentWindowFlags & SDL_WINDOW_FULLSCREEN))
+    {
+        // Adjust the fullscreen/resizable flags
+        SDL_SetWindowFullscreen(windowId, fullScreen?SDL_WINDOW_FULLSCREEN:0);
+        SDL_SetWindowResizable(windowId, fullScreen?SDL_FALSE:SDL_TRUE);
+    }
 
     return true;
 }
