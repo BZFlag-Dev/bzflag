@@ -1267,17 +1267,14 @@ glm::vec2 HUDRenderer::getMarkerCoordinate(
 }
 
 
-void HUDRenderer::drawWaypointMarker(
-    float* color,
-    float alpha,
-    glm::vec3 const &object,
-    glm::vec2 const &viewPos,
-    std::string name,
-    bool friendly)
+void HUDRenderer::drawWaypointMarker(EnhancedHUDMarker &marker,
+                                     glm::vec2 const &viewPos)
 {
-    auto map = getMarkerCoordinate(object, viewPos);
+    float *color = glm::value_ptr(marker.color);
 
-    hudColor3Afv( color, alpha );
+    auto map = getMarkerCoordinate(marker.pos, viewPos);
+
+    hudColor3Afv( color, 0.45 );
 
     glPushMatrix();
     glTranslatef(map.x, map.y, 0);
@@ -1287,7 +1284,7 @@ void HUDRenderer::drawWaypointMarker(
     float halfHeight = window.getHeight() * 0.5f;
 
     float triangleSize = BZDB.eval("hudWayPMarkerSize");
-    if (name.size())
+    if (!marker.name.empty())
         triangleSize *= 0.75f;
 
     if (map[0] == halfWidth && map[1] != -halfHeight && map[1] != halfHeight) // right side
@@ -1323,19 +1320,19 @@ void HUDRenderer::drawWaypointMarker(
     glVertex3f(-triangleSize,triangleSize,0.01f);
     glEnd();
 
-    if (friendly)
+    if (marker.friendly)
         drawGeometry();
 
     glPopMatrix();
 
-    if (name.size())
+    if (!marker.name.empty())
     {
-        hudColor3Afv( color, alpha );
+        hudColor3Afv( color, 0.45 );
         float textOffset = 5.0f;
-        float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, name);
+        float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, marker.name);
         glEnable(GL_TEXTURE_2D);
         FontManager::instance().drawString(-width * 0.5f, textOffset + triangleSize,
-                                           0, headingFontFace, headingFontSize, name);
+                                           0, headingFontFace, headingFontSize, marker.name);
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -1347,17 +1344,14 @@ void HUDRenderer::drawWaypointMarker(
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker(
-    float* color,
-    float alpha,
-    glm::vec3 const &object,
-    glm::vec2 const &viewPos,
-    std::string name,
-    bool friendly)
+void HUDRenderer::drawLockonMarker(EnhancedHUDMarker &marker,
+                                   glm::vec2 const &viewPos)
 {
-    auto map = getMarkerCoordinate(object, viewPos);
+    float *color = glm::value_ptr(marker.color);
 
-    hudColor3Afv( color, alpha );
+    auto map = getMarkerCoordinate(marker.pos, viewPos);
+
+    hudColor3Afv( color, 0.45f );
 
     glPushMatrix();
     glTranslatef(map.x, map.y, 0);
@@ -1383,21 +1377,21 @@ void HUDRenderer::drawLockonMarker(
     glVertex2f(lockonInset,-lockonSize+lockonDeclination);
     glEnd();
 
-    if (friendly)
+    if (marker.friendly)
         drawGeometry();
 
     glLineWidth(1.0f);
 
     glPopMatrix();
 
-    if (name.size())
+    if (!marker.name.empty())
     {
-        hudColor3Afv( color, alpha );
+        hudColor3Afv( color, 0.45f );
         float textOffset = 5.0f;
-        float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, name);
+        float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, marker.name);
         glEnable(GL_TEXTURE_2D);
         FontManager::instance().drawString(-width * 0.5f, textOffset + lockonSize,
-                                           0, headingFontFace, headingFontSize, name);
+                                           0, headingFontFace, headingFontSize, marker.name);
         glDisable(GL_TEXTURE_2D);
     }
 
@@ -1661,18 +1655,14 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         auto viewPos = glm::make_vec2(myTank->getPosition());
 
         // draw any waypoint markers
-        for (int i = 0; i < (int)enhancedMarkers.size(); i++)
-            drawWaypointMarker(glm::value_ptr(enhancedMarkers[i].color), 0.45f,
-                               enhancedMarkers[i].pos, viewPos,
-                               enhancedMarkers[i].name, enhancedMarkers[i].friendly);
+        for (auto enhancedMarker : enhancedMarkers)
+            drawWaypointMarker(enhancedMarker, viewPos);
 
         enhancedMarkers.clear();
 
         // draw any lockon markers
-        for (int i = 0; i < (int)lockOnMarkers.size(); i++)
-            drawLockonMarker(glm::value_ptr(lockOnMarkers[i].color), 0.45f,
-                             lockOnMarkers[i].pos, viewPos,
-                             lockOnMarkers[i].name, lockOnMarkers[i].friendly);
+        for (auto lockOnMarker : lockOnMarkers)
+            drawLockonMarker(lockOnMarker, viewPos);
 
         lockOnMarkers.clear();
 
