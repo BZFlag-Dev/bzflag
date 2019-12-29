@@ -277,10 +277,9 @@ void MainWindow::setProjectionRadar(int x, int y, int w, int h, float radarRange
 
 void            MainWindow::resize()
 {
-    window->getSize(trueWidth, trueHeight);
-    window->makeCurrent();
     if (!window->create())
         faulting = true;
+    window->getSize(trueWidth, trueHeight);
     setQuadrant(quadrant);
 }
 
