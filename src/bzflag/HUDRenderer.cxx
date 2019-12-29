@@ -1093,11 +1093,10 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
 
     int offset = window.getViewHeight() - window.getHeight();
 
-    glm::ivec4 view =
-    {
-        window.getOriginX(), window.getOriginY(),
-        window.getWidth(), window.getHeight()
-    };
+    auto view = glm::ivec4(
+                    window.getOriginX(), window.getOriginY(),
+                    window.getWidth(), window.getHeight()
+                );
     const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
     const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
 
@@ -1108,11 +1107,11 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
         {
             const std::string name = pl->getCallSign();
             hudSColor3fv(Team::getRadarColor(pl->getTeam()));
-            glm::vec3 p(glm::project(
-                            glm::make_vec3(pl->getPosition()),
-                            glm::make_mat4(modelf),
-                            glm::make_mat4(projf),
-                            view));
+            auto p = glm::project(
+                         glm::make_vec3(pl->getPosition()),
+                         glm::make_mat4(modelf),
+                         glm::make_mat4(projf),
+                         view);
             if (p.z >= 0.0 && p.z <= 1.0)
             {
                 FontManager &fm = FontManager::instance();
@@ -1243,11 +1242,16 @@ glm::vec2 HUDRenderer::getMarkerCoordinate(
     glm::vec2 const &viewPos) const
 {
     const float headingRads = glm::radians(heading);
-    const glm::vec2 headingVec(sinf(headingRads), cosf(headingRads));
-    const glm::vec2 toPosVec(glm::vec2(object) - viewPos);
     const glm::vec2 halfScreen(window.getWidth() / 2,
                                window.getHeight() / 2);
-    glm::vec2 map(glm::vec2(glm::project(object, modelMatrix, projMatrix, viewport)));
+    auto const  headingVec  = glm::vec2(sinf(headingRads), cosf(headingRads));
+    auto const  toPosVec    = glm::vec2(glm::vec2(object) - viewPos);
+
+    auto map = glm::vec2(glm::project(
+                             object,
+                             modelMatrix,
+                             projMatrix,
+                             viewport));
 
     if (glm::dot(toPosVec, headingVec) <= 1.0f /*0.866f*/)
     {
@@ -1263,14 +1267,15 @@ glm::vec2 HUDRenderer::getMarkerCoordinate(
 }
 
 
-void HUDRenderer::drawWaypointMarker(float* color,
-                                     float alpha,
-                                     glm::vec3 const &object,
-                                     glm::vec2 const &viewPos,
-                                     std::string name,
-                                     bool friendly)
+void HUDRenderer::drawWaypointMarker(
+    float* color,
+    float alpha,
+    glm::vec3 const &object,
+    glm::vec2 const &viewPos,
+    std::string name,
+    bool friendly)
 {
-    glm::vec2 map(getMarkerCoordinate(object, viewPos));
+    auto map = getMarkerCoordinate(object, viewPos);
 
     hudColor3Afv( color, alpha );
 
@@ -1342,14 +1347,15 @@ void HUDRenderer::drawWaypointMarker(float* color,
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker(float* color,
-                                   float alpha,
-                                   glm::vec3 const &object,
-                                   glm::vec2 const &viewPos,
-                                   std::string name,
-                                   bool friendly)
+void HUDRenderer::drawLockonMarker(
+    float* color,
+    float alpha,
+    glm::vec3 const &object,
+    glm::vec2 const &viewPos,
+    std::string name,
+    bool friendly)
 {
-    glm::vec2 map(getMarkerCoordinate(object, viewPos));
+    auto map = getMarkerCoordinate(object, viewPos);
 
     hudColor3Afv( color, alpha );
 
@@ -1649,30 +1655,24 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
     {
         glPushMatrix();
 
-        hudColor3Afv( hudColor, 0.5f );
-
         glTranslatef((float)centerx,(float)centery,0);
         glLineWidth(2.0f);
 
-        glm::vec2 viewPos(glm::make_vec2(myTank->getPosition()));
+        auto viewPos = glm::make_vec2(myTank->getPosition());
 
         // draw any waypoint markers
         for (int i = 0; i < (int)enhancedMarkers.size(); i++)
-        {
             drawWaypointMarker(glm::value_ptr(enhancedMarkers[i].color), 0.45f,
                                enhancedMarkers[i].pos, viewPos,
                                enhancedMarkers[i].name, enhancedMarkers[i].friendly);
-        }
 
         enhancedMarkers.clear();
 
         // draw any lockon markers
         for (int i = 0; i < (int)lockOnMarkers.size(); i++)
-        {
             drawLockonMarker(glm::value_ptr(lockOnMarkers[i].color), 0.45f,
                              lockOnMarkers[i].pos, viewPos,
                              lockOnMarkers[i].name, lockOnMarkers[i].friendly);
-        }
 
         lockOnMarkers.clear();
 
