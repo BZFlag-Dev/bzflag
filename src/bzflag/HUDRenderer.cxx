@@ -1267,10 +1267,10 @@ glm::vec2 HUDRenderer::getMarkerCoordinate(
 }
 
 
-void HUDRenderer::drawWaypointMarker(EnhancedHUDMarker &marker,
-                                     glm::vec2 const &viewPos)
+void HUDRenderer::drawWaypointMarker(const EnhancedHUDMarker &marker,
+                                     const glm::vec2 &viewPos)
 {
-    float *color = glm::value_ptr(marker.color);
+    const float *color = glm::value_ptr(marker.color);
 
     auto map = getMarkerCoordinate(marker.pos, viewPos);
 
@@ -1344,10 +1344,10 @@ void HUDRenderer::drawWaypointMarker(EnhancedHUDMarker &marker,
 // HUDRenderer::drawLockonMarker
 //-------------------------------------------------------------------------
 
-void HUDRenderer::drawLockonMarker(EnhancedHUDMarker &marker,
-                                   glm::vec2 const &viewPos)
+void HUDRenderer::drawLockonMarker(const EnhancedHUDMarker &marker,
+                                   const glm::vec2 &viewPos)
 {
-    float *color = glm::value_ptr(marker.color);
+    const float *color = glm::value_ptr(marker.color);
 
     auto map = getMarkerCoordinate(marker.pos, viewPos);
 
@@ -1655,13 +1655,13 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
         auto viewPos = glm::make_vec2(myTank->getPosition());
 
         // draw any waypoint markers
-        for (auto enhancedMarker : enhancedMarkers)
+        for (auto const& enhancedMarker : enhancedMarkers)
             drawWaypointMarker(enhancedMarker, viewPos);
 
         enhancedMarkers.clear();
 
         // draw any lockon markers
-        for (auto lockOnMarker : lockOnMarkers)
+        for (auto const& lockOnMarker : lockOnMarkers)
             drawLockonMarker(lockOnMarker, viewPos);
 
         lockOnMarkers.clear();

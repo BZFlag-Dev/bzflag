@@ -150,10 +150,10 @@ protected:
     void      renderTimes(void);
     void      renderShots(const Player*);
 
-    void      drawLockonMarker(EnhancedHUDMarker &marker,
-                               glm::vec2 const &viewPos);
-    void      drawWaypointMarker(EnhancedHUDMarker &marker,
-                                 glm::vec2 const &viewPos);
+    void      drawLockonMarker(const EnhancedHUDMarker &marker,
+                               const glm::vec2 &viewPos);
+    void      drawWaypointMarker(const EnhancedHUDMarker &marker,
+                                 const glm::vec2 &viewPos);
     void      drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
     void      makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
