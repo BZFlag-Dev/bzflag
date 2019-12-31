@@ -30,7 +30,7 @@ dependencies with the macOS deployment target set to 10.7 to match the build
 settings for the game itself. Alternatively, the dependencies may be
 installed on macOS using Homebrew (substitute `sdl` for `sdl2` to use SDL 1.2):
 
-  $ brew install c-ares glew libpng sdl2
+  $ brew install c-ares glew glm libpng sdl2
 
 
 Building
