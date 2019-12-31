@@ -29,25 +29,3 @@ The following warnings can be expected in a MacOS build (for now):
 DirectoryNames.cxx:109:13: warning: 'FSFindFolder' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
 DirectoryNames.cxx:113:17: warning: 'FSRefMakePath' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
 
-BoltSceneNode.cxx:356:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-BoltSceneNode.cxx:363:5: warning: 'gluDisk' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-BoltSceneNode.cxx:365:5: warning: 'gluCylinder' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-BoltSceneNode.cxx:416:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-BoltSceneNode.cxx:508:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-
-LaserSceneNode.cxx:152:21: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-LaserSceneNode.cxx:160:5: warning: 'gluCylinder' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-LaserSceneNode.cxx:175:9: warning: 'gluSphere' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-LaserSceneNode.cxx:184:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-
-SphereSceneNode.cxx:103:27: warning: 'gluNewQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:104:5: warning: 'gluQuadricDrawStyle' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:105:5: warning: 'gluQuadricTexture' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:106:5: warning: 'gluQuadricNormals' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:107:5: warning: 'gluQuadricOrientation' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:112:9: warning: 'gluSphere' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-SphereSceneNode.cxx:116:5: warning: 'gluDeleteQuadric' is deprecated: first deprecated in macOS 10.9 [-Wdeprecated-declarations]
-
-HUDRenderer.cxx:1117:13: warning: 'gluProject' is deprecated: first deprecated in macOS 10.9 - "Use GLKMathProject" [-Wdeprecated-declarations]
-HUDRenderer.cxx:1260:5: warning: 'gluProject' is deprecated: first deprecated in macOS 10.9 - "Use GLKMathProject" [-Wdeprecated-declarations]
-
