@@ -21,11 +21,3 @@ Building BZFlag from Source
 BZFlag builds on macOS are now done using premake5 and Xcode 7 (or later).
 Please refer to the README.premake5 file for build instructions.
 
-
-Known Issues
-------------
-The following warnings can be expected in a MacOS build (for now):
-
-DirectoryNames.cxx:109:13: warning: 'FSFindFolder' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
-DirectoryNames.cxx:113:17: warning: 'FSRefMakePath' is deprecated: first deprecated in macOS 10.8 [-Wdeprecated-declarations]
-
