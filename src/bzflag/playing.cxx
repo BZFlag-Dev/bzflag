@@ -5446,13 +5446,10 @@ void        leaveGame()
     serverNetworkAddress = Address();
 
     // reset viewpoint
-    float eyePoint[3], targetPoint[3];
-    eyePoint[0] = 0.0f;
-    eyePoint[1] = 0.0f;
-    eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-    targetPoint[0] = eyePoint[0] - 1.0f;
-    targetPoint[1] = eyePoint[1] + 0.0f;
-    targetPoint[2] = eyePoint[2] + 0.0f;
+    auto eyePoint = glm::vec3(0);
+    eyePoint.z = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    auto targetPoint = eyePoint;
+    targetPoint.x -= 1.0f;
     sceneRenderer->getViewFrustum().setProjection(60.0f * DEG2RADf,
             NearPlaneNormal,
             FarPlaneDefault,
@@ -5807,7 +5804,7 @@ static void drawUI()
 // stuff to draw a frame
 //
 
-static bool trackPlayerShot(Player* target, float* eyePoint, float* targetPoint)
+static bool trackPlayerShot(Player* target, glm::vec3 &eyePoint, glm::vec3 &targetPoint)
 {
     // follow the first shot
     if (BZDB.isTrue("trackShots"))
@@ -5964,8 +5961,6 @@ void drawFrame(const float dt)
     const float* myTankPos;
     const float* myTankDir;
     GLfloat fov;
-    GLfloat eyePoint[3];
-    GLfloat targetPoint[3];
 
     checkDirtyControlPanel(controlPanel);
 
@@ -6009,12 +6004,11 @@ void drawFrame(const float dt)
         fov *= DEG2RADf;
 
         // set projection and view
-        eyePoint[0] = myTankPos[0];
-        eyePoint[1] = myTankPos[1];
-        eyePoint[2] = myTankPos[2] + muzzleHeight;
-        targetPoint[0] = eyePoint[0] + myTankDir[0];
-        targetPoint[1] = eyePoint[1] + myTankDir[1];
-        targetPoint[2] = eyePoint[2] + myTankDir[2];
+        auto eyePoint = glm::make_vec3(myTankPos);
+        auto targetPoint = eyePoint;
+        targetPoint[0] += myTankDir[0];
+        targetPoint[1] += myTankDir[1];
+        targetPoint[2] += myTankDir[2];
 
         if (devDriving || ROAM.isRoaming())
         {

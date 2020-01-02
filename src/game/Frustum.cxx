@@ -10,16 +10,20 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
-#include <string.h>
+// Interface
 #include "Frustum.h"
 
+// System headers
+#include <math.h>
+#include <string.h>
+#include <glm/gtc/matrix_access.hpp>
 
-Frustum::Frustum()
+
+Frustum::Frustum():
+    viewMatrix(1.0f), billboardMatrix(1.0f)
 {
-    static float defaultEye[3] = { 0.0, 0.0, 0.0 };
-    static float defaultTarget[3] = { 0.0, 1.0, 0.0 };
+    auto defaultEye    = glm::vec3(0);
+    auto defaultTarget = glm::vec3(0, 1, 0);
     static float identity[16] = { 1.0, 0.0, 0.0, 0.0,
                                   0.0, 1.0, 0.0, 0.0,
                                   0.0, 0.0, 1.0, 0.0,
@@ -27,8 +31,6 @@ Frustum::Frustum()
                                 };
 
     // initialize view and projection matrices to identity
-    ::memcpy(viewMatrix, identity, sizeof(viewMatrix));
-    ::memcpy(billboardMatrix, identity, sizeof(billboardMatrix));
     ::memcpy(projectionMatrix, identity, sizeof(projectionMatrix));
     ::memcpy(deepProjectionMatrix, identity, sizeof(deepProjectionMatrix));
 
@@ -43,128 +45,49 @@ Frustum::~Frustum()
 }
 
 
-float Frustum::getEyeDepth(const float* p) const
-{
-    return viewMatrix[2] * p[0] + viewMatrix[6] * p[1] +
-           viewMatrix[10] * p[2] + viewMatrix[14];
-}
-
-
-void Frustum::setView(const float* _eye, const float* _target)
+void Frustum::setView(const glm::vec3 &_eye, const glm::vec3 &_target)
 {
     // set eye and target points
-    eye[0] = _eye[0];
-    eye[1] = _eye[1];
-    eye[2] = _eye[2];
-    target[0] = _target[0];
-    target[1] = _target[1];
-    target[2] = _target[2];
+    eye    = _eye;
+    target = _target;
 
-    // compute forward vector and normalize
-    plane[0][0] = target[0] - eye[0];
-    plane[0][1] = target[1] - eye[1];
-    plane[0][2] = target[2] - eye[2];
-    float d = 1.0f / sqrtf(plane[0][0] * plane[0][0] +
-                           plane[0][1] * plane[0][1] +
-                           plane[0][2] * plane[0][2]);
-    plane[0][0] *= d;
-    plane[0][1] *= d;
-    plane[0][2] *= d;
+    viewMatrix = glm::lookAt(eye, target, glm::vec3(0, 0, 1.0f));
 
-    // compute left vector (by crossing forward with
-    // world-up [0 0 1]T and normalizing)
-    right[0] =  plane[0][1];
-    right[1] = -plane[0][0];
-    d = 1.0f / hypotf(right[0], right[1]);
-    right[0] *= d;
-    right[1] *= d;
-    right[2] = 0.0f;
-
-    // compute local up vector (by crossing right and forward,
-    // normalization unnecessary)
-    up[0] =  right[1] * plane[0][2];
-    up[1] = -right[0] * plane[0][2];
-    up[2] =  right[0] * plane[0][1] - right[1] * plane[0][0];
-
-    // build view matrix, including a transformation bringing
-    // world up [0 0 1 0]T to eye up [0 1 0 0]T, world north
-    // [0 1 0 0]T to eye forward [0 0 -1 0]T.
-    viewMatrix[0] = right[0];
-    viewMatrix[4] = right[1];
-    viewMatrix[8] = 0.0f;
-
-    viewMatrix[1] = up[0];
-    viewMatrix[5] = up[1];
-    viewMatrix[9] = up[2];
-
-    viewMatrix[2] =  -plane[0][0];
-    viewMatrix[6] =  -plane[0][1];
-    viewMatrix[10] = -plane[0][2];
-
-    viewMatrix[12] = -(viewMatrix[0] * eye[0] +
-                       viewMatrix[4] * eye[1] +
-                       viewMatrix[8] * eye[2]);
-    viewMatrix[13] = -(viewMatrix[1] * eye[0] +
-                       viewMatrix[5] * eye[1] +
-                       viewMatrix[9] * eye[2]);
-    viewMatrix[14] = -(viewMatrix[2] * eye[0] +
-                       viewMatrix[6] * eye[1] +
-                       viewMatrix[10] * eye[2]);
 
     // build billboard matrix.  billboard matrix performs rotation
     // so that polygons drawn in the xy plane face the camera.
-    billboardMatrix[0] = viewMatrix[0];
-    billboardMatrix[1] = viewMatrix[4];
-    billboardMatrix[2] = viewMatrix[8];
-    billboardMatrix[4] = viewMatrix[1];
-    billboardMatrix[5] = viewMatrix[5];
-    billboardMatrix[6] = viewMatrix[9];
-    billboardMatrix[8] = viewMatrix[2];
-    billboardMatrix[9] = viewMatrix[6];
-    billboardMatrix[10] = viewMatrix[10];
+    billboardMatrix = glm::transpose(viewMatrix);
+    billboardMatrix[0][3] = 0;
+    billboardMatrix[1][3] = 0;
+    billboardMatrix[2][3] = 0;
+
+    auto right =  glm::vec3(glm::row(viewMatrix, 0));
+    up         =  glm::vec3(glm::row(viewMatrix, 1));
+    auto z     = -glm::vec3(glm::row(viewMatrix, 2));
 
     // compute vectors of frustum edges
     const float xs = fabsf(1.0f / projectionMatrix[0]);
     const float ys = fabsf(1.0f / projectionMatrix[5]);
-    float edge[4][3];
-    edge[0][0] = plane[0][0] - xs * right[0] - ys * up[0];
-    edge[0][1] = plane[0][1] - xs * right[1] - ys * up[1];
-    edge[0][2] = plane[0][2] - xs * right[2] - ys * up[2];
-    edge[1][0] = plane[0][0] + xs * right[0] - ys * up[0];
-    edge[1][1] = plane[0][1] + xs * right[1] - ys * up[1];
-    edge[1][2] = plane[0][2] + xs * right[2] - ys * up[2];
-    edge[2][0] = plane[0][0] + xs * right[0] + ys * up[0];
-    edge[2][1] = plane[0][1] + xs * right[1] + ys * up[1];
-    edge[2][2] = plane[0][2] + xs * right[2] + ys * up[2];
-    edge[3][0] = plane[0][0] - xs * right[0] + ys * up[0];
-    edge[3][1] = plane[0][1] - xs * right[1] + ys * up[1];
-    edge[3][2] = plane[0][2] - xs * right[2] + ys * up[2];
+    glm::vec3 edge[4];
+    edge[0] = z - xs * right - ys * up;
+    edge[1] = z + xs * right - ys * up;
+    edge[2] = z + xs * right + ys * up;
+    edge[3] = z - xs * right + ys * up;
 
     // make frustum planes
-    plane[0][3] = -(eye[0] * plane[0][0] + eye[1] * plane[0][1] +
-                    eye[2] * plane[0][2] + m_near);
+    plane[0] = glm::vec4(z, -glm::dot(eye, z) - m_near);
     makePlane(edge[0], edge[3], 1);
     makePlane(edge[2], edge[1], 2);
     makePlane(edge[1], edge[0], 3);
     makePlane(edge[3], edge[2], 4);
+    plane[5]    = -plane[0];
+    plane[5].w += m_far;
+}
 
-    plane[5][0] = -plane[0][0];
-    plane[5][1] = -plane[0][1];
-    plane[5][2] = -plane[0][2];
-    plane[5][3] = -plane[0][3] + m_far;
 
-    // make far corners
-    for (int i = 0; i < 4; i++)
-    {
-        farCorner[i][0] = eye[0] + m_far * edge[i][0];
-        farCorner[i][1] = eye[1] + m_far * edge[i][1];
-        farCorner[i][2] = eye[2] + m_far * edge[i][2];
-    }
-
-    // setup tilt and angle
-    const float* dir = plane[0];
-    tilt = RAD2DEGf * atan2f(dir[2], 1.0f);
-    rotation = RAD2DEGf * atan2f(dir[1], dir[2]);
+glm::vec4 Frustum::eyeSpace(glm::vec4 eyePlane)
+{
+    return eyePlane * viewMatrixInv;
 }
 
 
@@ -231,19 +154,11 @@ void Frustum::setOffset(float eyeOffset, float focalPlane)
 }
 
 
-void Frustum::makePlane(const float* v1, const float* v2, int index)
+void Frustum::makePlane(const glm::vec3 &v1, const glm::vec3 &v2, int index)
 {
     // get normal by crossing v1 and v2 and normalizing
-    float n[3];
-    n[0] = v1[1] * v2[2] - v1[2] * v2[1];
-    n[1] = v1[2] * v2[0] - v1[0] * v2[2];
-    n[2] = v1[0] * v2[1] - v1[1] * v2[0];
-    float d = 1.0f / sqrtf(n[0] * n[0] + n[1] * n[1] + n[2] * n[2]);
-    plane[index][0] = d * n[0];
-    plane[index][1] = d * n[1];
-    plane[index][2] = d * n[2];
-    plane[index][3] = -(eye[0] * plane[index][0] + eye[1] * plane[index][1] +
-                        eye[2] * plane[index][2]);
+    auto n = glm::normalize(glm::cross(v1, v2));
+    plane[index] = glm::vec4(n, -glm::dot(eye, n));
 }
 
 
@@ -276,7 +191,7 @@ void Frustum::flipHorizontal()
 void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
 {
     // setup the eye, and the clipping planes
-    memcpy(eye, view.getEye(), sizeof(float[3]));
+    eye = glm::make_vec3(view.getEye());
 
     float front[2], left[2];
     const float* dir = view.getDirection();

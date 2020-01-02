@@ -45,18 +45,18 @@ void            ViewFrustum::executeDeepProjection() const
 
 void            ViewFrustum::executeView() const
 {
-    glMultMatrixf(viewMatrix);
+    glMultMatrixf(glm::value_ptr(viewMatrix));
 }
 
 void            ViewFrustum::executeOrientation() const
 {
-    glMultMatrixf(viewMatrix);
+    glMultMatrixf(glm::value_ptr(viewMatrix));
     glTranslatef(eye[0], eye[1], eye[2]);
 }
 
 void            ViewFrustum::executeBillboard() const
 {
-    glMultMatrixf(billboardMatrix);
+    glMultMatrixf(glm::value_ptr(billboardMatrix));
 }
 
 // Local Variables: ***
