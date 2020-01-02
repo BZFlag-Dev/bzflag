@@ -356,7 +356,7 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     // will move in the direction of the view, which isn't necessarily
     // the direction to the billboard from the eye.
     ViewFrustum& frustum = RENDERER.getViewFrustum();
-    const GLfloat* eye = frustum.getEye();
+    const auto eye = frustum.getEye();
     const GLfloat* sphere = sceneNode->getSphere();
     GLfloat dir[3], d;
     dir[0] = eye[0] - sphere[0];

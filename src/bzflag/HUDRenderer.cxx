@@ -1097,8 +1097,8 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
                     window.getOriginX(), window.getOriginY(),
                     window.getWidth(), window.getHeight()
                 );
-    const GLfloat *projf = renderer.getViewFrustum().getProjectionMatrix();
-    const GLfloat *modelf = renderer.getViewFrustum().getViewMatrix();
+    const auto projf  = renderer.getViewFrustum().getProjectionMatrix();
+    const auto modelf = renderer.getViewFrustum().getViewMatrix();
 
     for (int i = 0; i < curMaxPlayers; i++)
     {
@@ -1109,8 +1109,8 @@ void            HUDRenderer::renderTankLabels(SceneRenderer& renderer)
             hudSColor3fv(Team::getRadarColor(pl->getTeam()));
             auto p = glm::project(
                          glm::make_vec3(pl->getPosition()),
-                         glm::make_mat4(modelf),
-                         glm::make_mat4(projf),
+                         modelf,
+                         projf,
                          view);
             if (p.z >= 0.0 && p.z <= 1.0)
             {
@@ -1228,11 +1228,11 @@ void            HUDRenderer::renderTimes(void)
     }
 }
 
-void HUDRenderer::saveMatrixes(const float *mm, const float *pm )
+void HUDRenderer::saveMatrixes(const glm::mat4 &mm, const glm::mat4 &pm)
 {
     // ssave off the stuff before we reset it
-    modelMatrix = glm::make_mat4(mm);
-    projMatrix  = glm::make_mat4(pm);
+    modelMatrix = mm;
+    projMatrix  = pm;
     glGetIntegerv(GL_VIEWPORT,glm::value_ptr(viewport));
 }
 

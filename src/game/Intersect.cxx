@@ -815,7 +815,6 @@ IntersectLevel testAxisBoxInFrustum(const Extents& extents,
     static float i[3]; // inside point  (assuming partial)
     static float o[3]; // outside point (assuming partial)
     static float len;
-    static const float* p; // the plane
     IntersectLevel result = Contained;
 
     // FIXME - 0 is the near clip plane, not that useful really?
@@ -825,8 +824,7 @@ IntersectLevel testAxisBoxInFrustum(const Extents& extents,
 
     for (s = 1 /* NOTE: not 0 */; s < planeCount; s++)
     {
-
-        p = frustum->getSide(s);
+        auto p = frustum->getSide(s); // the plane
 
         // setup the inside/outside corners
         // this can be determined easily based

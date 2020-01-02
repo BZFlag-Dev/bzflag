@@ -136,6 +136,25 @@ static int nodeCompare(const void *a, const void* b)
         return +1;
 }
 
+void RenderNodeGStateList::sort(const glm::vec3 &e)
+{
+    // calculate distances from the eye (squared)
+    for (int i = 0; i < count; i++)
+    {
+        const GLfloat* p = list[i].node->getPosition();
+        const float dx = (p[0] - e[0]);
+        const float dy = (p[1] - e[1]);
+        const float dz = (p[2] - e[2]);
+        list[i].depth = ((dx * dx) + (dy * dy) + (dz * dz));
+    }
+
+    // sort from farthest to closest
+    qsort (list, count, sizeof(Item), nodeCompare);
+
+    return;
+}
+
+
 void RenderNodeGStateList::sort(const GLfloat* e)
 {
     // calculate distances from the eye (squared)

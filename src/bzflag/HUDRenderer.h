@@ -116,7 +116,7 @@ public:
     void      AddLockOnMarker(const glm::vec3 &pos, std::string name,
                               bool friendly = false, float zShift = 0.0f);
 
-    void      saveMatrixes(const float* mm, const float* pm);
+    void      saveMatrixes(const glm::mat4 &mm, const glm::mat4 &pm);
     void      setDim(bool);
 
     bool      getComposing() const;

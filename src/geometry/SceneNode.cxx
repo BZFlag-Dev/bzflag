@@ -116,6 +116,13 @@ void            SceneNode::addLight(SceneRenderer&)
     // do nothing
 }
 
+GLfloat SceneNode::getDistance(const glm::vec3 &eye) const
+{
+    return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
+           (eye[1] - sphere[1]) * (eye[1] - sphere[1]) +
+           (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
+}
+
 GLfloat         SceneNode::getDistance(const GLfloat* eye) const
 {
     return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
@@ -130,7 +137,7 @@ bool            SceneNode::cull(const ViewFrustum& view) const
     const int planeCount = view.getPlaneCount();
     for (int i = 0; i < planeCount; i++)
     {
-        const GLfloat* norm = view.getSide(i);
+        const auto norm = view.getSide(i);
         const GLfloat d = (sphere[0] * norm[0]) +
                           (sphere[1] * norm[1]) +
                           (sphere[2] * norm[2]) + norm[3];

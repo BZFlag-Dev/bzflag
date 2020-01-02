@@ -537,7 +537,7 @@ void OctreeNode::getFrustumList () const
     {
         if (F2BSORT)
         {
-            const float* dir = CullFrustum->getDirection();
+            const auto dir = CullFrustum->getDirection();
             unsigned char dirbits = 0;
             if (dir[0] < 0.0f) dirbits |= (1 << 0);
             if (dir[1] < 0.0f) dirbits |= (1 << 1);

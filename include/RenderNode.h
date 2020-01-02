@@ -21,7 +21,13 @@
 #ifndef BZF_RENDER_NODE_H
 #define BZF_RENDER_NODE_H
 
+// Before everything
 #include "common.h"
+
+// System headers
+#include <glm/vec3.hpp>
+
+// Global headers
 #include "OpenGLGState.h"
 
 
@@ -107,6 +113,7 @@ public:
     void        append(RenderNode*, const OpenGLGState*, float depth);
     void        render() const;
 
+    void        sort(const glm::vec3 &eye);
     void        sort(const GLfloat* eye);
 
     // public for the qsort() comparison function

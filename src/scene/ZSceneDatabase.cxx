@@ -221,7 +221,6 @@ static void setupShadowPlanes(const Frustum* frustum, const float* sunDir,
     // FIXME: As a first cut, we'll assume that
     //        the frustum top points towards Z.
 
-    const float* eye = frustum->getEye();
     if (frustum->getUp()[2] < 0.999f)
     {
         planeCount = 0;
@@ -239,6 +238,7 @@ static void setupShadowPlanes(const Frustum* frustum, const float* sunDir,
     // 3: bottom
     // 4: top
 
+    const auto eye = frustum->getEye();
     planeCount = 2;
     float edge[2];
     // left edge
@@ -360,7 +360,7 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
 {
     int i;
     const ViewFrustum& frustum = renderer.getViewFrustum();
-    const float* eye = frustum.getEye();
+    const auto eye = frustum.getEye();
 
     // see if we need an octree, or if it needs to be rebuilt
     setupCullList();

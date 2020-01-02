@@ -248,7 +248,7 @@ void SphereSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     const ViewFrustum& view = renderer.getViewFrustum();
     const float* s = getSphere();
-    const float* e = view.getEye();
+    const auto e = view.getEye();
     const float dx = e[0] - s[0];
     const float dy = e[1] - s[1];
     const float dz = e[2] - s[2];

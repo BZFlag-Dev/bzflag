@@ -89,7 +89,7 @@ void            WallSceneNode::setPlane(const GLfloat _plane[4])
 bool            WallSceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
-    const GLfloat* eye = frustum.getEye();
+    const auto eye = frustum.getEye();
     const float eyedot = (eye[0] * plane[0]) +
                          (eye[1] * plane[1]) +
                          (eye[2] * plane[2]) + plane[3];
@@ -110,7 +110,7 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
     bool inside = true;
     for (i = 0; i < planeCount; i++)
     {
-        const GLfloat* norm = frustum.getSide(i);
+        const auto norm = frustum.getSide(i);
         d[i] = (mySphere[0] * norm[0]) +
                (mySphere[1] * norm[1]) +
                (mySphere[2] * norm[2]) + norm[3];
@@ -136,7 +136,7 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
     {
         if (d[i] >= 0.0f)
             continue;
-        const GLfloat* norm = frustum.getSide(i);
+        const auto norm = frustum.getSide(i);
         const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
         if (d2[i] > mySphere[3] * (1.0f - c*c))
             return true;
