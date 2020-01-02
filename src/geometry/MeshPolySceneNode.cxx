@@ -262,7 +262,7 @@ MeshPolySceneNode::~MeshPolySceneNode()
 bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
-    const GLfloat* eye = frustum.getEye();
+    const auto eye = frustum.getEye();
     if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
             plane[3]) <= 0.0f)
         return true;

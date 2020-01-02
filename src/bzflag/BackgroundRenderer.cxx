@@ -1187,7 +1187,7 @@ void BackgroundRenderer::drawGroundCentered()
 void BackgroundRenderer::drawGroundGrid(
     SceneRenderer& renderer)
 {
-    const GLfloat* pos = renderer.getViewFrustum().getEye();
+    const auto pos = renderer.getViewFrustum().getEye();
     const GLfloat xhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
     const GLfloat yhalf = gridSpacing * (gridCount + floorf(pos[2] / 4.0f));
     const GLfloat x0 = floorf(pos[0] / gridSpacing) * gridSpacing;

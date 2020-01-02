@@ -353,7 +353,7 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 bool Occluder::makePlanes(const Frustum* frustum)
 {
     // occluders can't have their back towards the camera
-    const float* eye = frustum->getEye();
+    const auto eye = frustum->getEye();
     const float* p = sceneNode->getPlane();
     float tmp = (p[0] * eye[0]) + (p[1] * eye[1]) + (p[2] * eye[2]) + p[3];
     if (tmp < +0.1f)
@@ -371,7 +371,7 @@ bool Occluder::makePlanes(const Frustum* frustum)
     for (int i = 0; i < vertexCount; i++)
     {
         int second = (i + vertexCount - 1) % vertexCount;
-        if (!makePlane (vertices[i], vertices[second], eye, planes[i + 1]))
+        if (!makePlane (vertices[i], vertices[second], glm::value_ptr(eye), planes[i + 1]))
             return false;
     }
 

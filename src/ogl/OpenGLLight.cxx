@@ -209,7 +209,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
 
     // check if the light is in front of the front viewing plane
     bool sphereCull = true;
-    const GLfloat* p = frustum.getDirection();
+    const auto p = frustum.getViewPlane();
     const float fd = (p[0] * pos[0]) +
                      (p[1] * pos[1]) +
                      (p[2] * pos[2]) + p[3];
@@ -221,7 +221,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
         const int planeCount = frustum.getPlaneCount();
         for (int i = 1; i < planeCount; i++)
         {
-            const float* plane = frustum.getSide(i);
+            const auto plane = frustum.getSide(i);
             const float len = (plane[0] * pos[0]) +
                               (plane[1] * pos[1]) +
                               (plane[2] * pos[2]) + plane[3];
@@ -234,7 +234,7 @@ void OpenGLLight::calculateImportance(const ViewFrustum& frustum)
     }
 
     // calculate the distance
-    const GLfloat* eye = frustum.getEye();
+    const auto eye = frustum.getEye();
     const float v[3] =
     {
         (eye[0] - pos[0]),

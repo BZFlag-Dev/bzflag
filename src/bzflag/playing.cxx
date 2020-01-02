@@ -5446,13 +5446,10 @@ void        leaveGame()
     serverNetworkAddress = Address();
 
     // reset viewpoint
-    float eyePoint[3], targetPoint[3];
-    eyePoint[0] = 0.0f;
-    eyePoint[1] = 0.0f;
-    eyePoint[2] = 0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-    targetPoint[0] = eyePoint[0] - 1.0f;
-    targetPoint[1] = eyePoint[1] + 0.0f;
-    targetPoint[2] = eyePoint[2] + 0.0f;
+    auto eyePoint = glm::vec3(0.0f,
+                              0.0f,
+                              0.0f + BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT));
+    auto targetPoint = eyePoint - glm::vec3(1.0f, 0.0f, 0.0f);
     sceneRenderer->getViewFrustum().setProjection(60.0f * DEG2RADf,
             NearPlaneNormal,
             FarPlaneDefault,
@@ -5807,7 +5804,7 @@ static void drawUI()
 // stuff to draw a frame
 //
 
-static bool trackPlayerShot(Player* target, float* eyePoint, float* targetPoint)
+static bool trackPlayerShot(Player* target, glm::vec3 &eyePoint, glm::vec3 &targetPoint)
 {
     // follow the first shot
     if (BZDB.isTrue("trackShots"))
@@ -5964,8 +5961,6 @@ void drawFrame(const float dt)
     const float* myTankPos;
     const float* myTankDir;
     GLfloat fov;
-    GLfloat eyePoint[3];
-    GLfloat targetPoint[3];
 
     checkDirtyControlPanel(controlPanel);
 
@@ -6009,12 +6004,9 @@ void drawFrame(const float dt)
         fov *= DEG2RADf;
 
         // set projection and view
-        eyePoint[0] = myTankPos[0];
-        eyePoint[1] = myTankPos[1];
-        eyePoint[2] = myTankPos[2] + muzzleHeight;
-        targetPoint[0] = eyePoint[0] + myTankDir[0];
-        targetPoint[1] = eyePoint[1] + myTankDir[1];
-        targetPoint[2] = eyePoint[2] + myTankDir[2];
+        auto eyePoint = glm::make_vec3(myTankPos);
+        eyePoint.z += muzzleHeight;
+        auto targetPoint = eyePoint + glm::make_vec3(myTankDir);
 
         if (devDriving || ROAM.isRoaming())
         {
@@ -6239,14 +6231,12 @@ void drawFrame(const float dt)
         if (myTank)
         {
             const float hnp = 0.5f * NearPlane; // half near plane distance
-            const float* eye = viewFrustum.getEye();
-            const float* dir = viewFrustum.getDirection();
-            float clipPos[3];
-            clipPos[0] = eye[0] + (dir[0] * hnp);
-            clipPos[1] = eye[1] + (dir[1] * hnp);
-            clipPos[2] = eye[2];
+            const auto eye = viewFrustum.getEye();
+            auto dir = viewFrustum.getDirection();
+            dir.z = 0;
+            auto clipPos = eye + dir * hnp;
             const Obstacle* obs;
-            obs = world->inBuilding(clipPos, myTank->getAngle(), hnp, 0.0f, 0.0f);
+            obs = world->inBuilding(glm::value_ptr(clipPos), myTank->getAngle(), hnp, 0.0f, 0.0f);
             if (obs != NULL)
                 insideDim = true;
         }

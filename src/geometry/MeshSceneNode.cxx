@@ -192,9 +192,9 @@ MeshSceneNode::~MeshSceneNode()
 
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 {
-    const float* e = vf.getEye();
+    const auto e = vf.getEye();
     const float* s = getSphere();
-    const float* d = vf.getDirection();
+    const auto d = vf.getDirection();
     const float dist = (d[0] * (s[0] - e[0])) +
                        (d[1] * (s[1] - e[1])) +
                        (d[2] * (s[2] - e[2]));
@@ -211,9 +211,9 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
 {
     // FIXME: adjust for ray direction
-    const float* e = vf.getEye();
+    const auto e = vf.getEye();
     const float* s = getSphere();
-    const float* d = vf.getDirection();
+    const auto d = vf.getDirection();
     const float dist = (d[0] * (s[0] - e[0])) +
                        (d[1] * (s[1] - e[1])) +
                        (d[2] * (s[2] - e[2]));

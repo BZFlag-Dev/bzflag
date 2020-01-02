@@ -255,7 +255,7 @@ void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
     // if drawing in sorted order then decide which order
     if (transparent || narrow)
     {
-        const GLfloat* eye = view.getEye();
+        const auto eye = view.getEye();
         GLfloat dx = eye[0] - mySphere[0];
         GLfloat dy = eye[1] - mySphere[1];
         const float radians = (float)(azimuth * DEG2RAD);
