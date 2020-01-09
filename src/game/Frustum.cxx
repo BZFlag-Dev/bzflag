@@ -59,13 +59,13 @@ void Frustum::setView(const glm::vec3 &_eye, const glm::vec3 &_target)
     billboardMatrix[2][3] = 0;
 
     // compute vectors of frustum edges
-    const float xs = fabsf(1.0f / projectionMatrix[0][0]);
-    const float ys = fabsf(1.0f / projectionMatrix[1][1]);
+    auto xs = right / fabsf(projectionMatrix[0][0]);
+    auto ys = up / fabsf(projectionMatrix[1][1]);
     glm::vec3 edge[4];
-    edge[0] = z - xs * right - ys * up;
-    edge[1] = z + xs * right - ys * up;
-    edge[2] = z + xs * right + ys * up;
-    edge[3] = z - xs * right + ys * up;
+    edge[0] = z - xs - ys;
+    edge[1] = z + xs - ys;
+    edge[2] = z + xs + ys;
+    edge[3] = z - xs + ys;
 
     // make frustum planes
     plane[0] = glm::vec4(z, -glm::dot(eye, z) - m_near);
