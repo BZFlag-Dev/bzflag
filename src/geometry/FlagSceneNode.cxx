@@ -506,6 +506,9 @@ void            FlagSceneNode::FlagRenderNode::render()
         }
         else if (geoPole)
         {
+            if (is_billboard)
+                glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+
             glBegin(GL_TRIANGLE_STRIP);
             {
                 glVertex3f(-poleWidth, 0.0f, 0.0f);
@@ -518,6 +521,9 @@ void            FlagSceneNode::FlagRenderNode::render()
         }
         else
         {
+            if (is_billboard)
+                glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+
             glBegin(GL_LINE_STRIP);
             {
                 glVertex3f(0.0f, 0.0f, 0.0f);
