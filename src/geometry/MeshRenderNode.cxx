@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 // implementation header
 #include "MeshRenderNode.h"
 

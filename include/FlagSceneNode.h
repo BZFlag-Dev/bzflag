@@ -17,7 +17,7 @@
 #ifndef BZF_FLAG_SCENE_NODE_H
 #define BZF_FLAG_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
 
 const int maxChunks = 20;

@@ -9,11 +9,6 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
-#define _NO_LIST_ID 0xffffffff
-
-// bzflag common headers
-#include "common.h"
-#include "global.h"
 
 // interface header
 #include "TankSceneNode.h"
@@ -31,6 +26,8 @@
 #include "ViewFrustum.h"
 
 #include "TextureManager.h"
+
+#define _NO_LIST_ID 0xffffffff
 
 using namespace TankGeometryEnums;
 

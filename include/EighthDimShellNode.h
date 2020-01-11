@@ -17,8 +17,10 @@
 #ifndef BZF_EIGHTH_DIM_SHELL_NODE_H
 #define BZF_EIGHTH_DIM_SHELL_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
+
+// Common headers
 #include "OpenGLGState.h"
 
 class EighthDimShellNode : public SceneNode

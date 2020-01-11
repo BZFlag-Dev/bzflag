@@ -13,10 +13,11 @@
 #ifndef _MESH_RENDER_NODE_H
 #define _MESH_RENDER_NODE_H
 
+// Inherits from
+#include "RenderNode.h"
 
 // common implementation headers
 #include "bzfgl.h"
-#include "RenderNode.h"
 
 
 class Extents;

@@ -17,7 +17,7 @@
 #ifndef BZF_EIGHTH_DIM_SCENE_NODE_H
 #define BZF_EIGHTH_DIM_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "SceneNode.h"
 
 class EighthDimSceneNode : public SceneNode
