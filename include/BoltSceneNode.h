@@ -67,10 +67,7 @@ protected:
         void        setColor(const GLfloat* rgba);
         void        setTextureColor(const GLfloat* rgba);
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
         void        setAnimation(int cu, int cv);
 
         void        renderGeoBolt();

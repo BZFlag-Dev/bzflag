@@ -53,6 +53,11 @@ void            PolyWallSceneNode::Geometry::render()
     return;
 }
 
+const glm::vec3 PolyWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getCenter();
+}
+
 void            PolyWallSceneNode::Geometry::drawV() const
 {
     const int count = vertex.getSize();

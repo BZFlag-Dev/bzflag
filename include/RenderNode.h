@@ -46,7 +46,7 @@ public:
     {
         renderShadow();
     }
-    virtual const GLfloat* getPosition() const = 0;
+    virtual const glm::vec3 getPosition() const = 0;
 
     static int      getTriangleCount();
     static void     resetTriangleCount();
@@ -114,7 +114,6 @@ public:
     void        render() const;
 
     void        sort(const glm::vec3 &eye);
-    void        sort(const GLfloat* eye);
 
     // public for the qsort() comparison function
     struct Item

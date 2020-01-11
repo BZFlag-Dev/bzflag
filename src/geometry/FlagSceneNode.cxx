@@ -525,6 +525,12 @@ void            FlagSceneNode::FlagRenderNode::render()
 }
 
 
+const glm::vec3 FlagSceneNode::FlagRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

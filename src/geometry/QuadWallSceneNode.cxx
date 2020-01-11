@@ -186,6 +186,11 @@ const GLfloat*      QuadWallSceneNode::Geometry::getVertex(int i) const
     return vertex[i];
 }
 
+const glm::vec3 QuadWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getCenter();
+}
+
 //
 // QuadWallSceneNode
 //

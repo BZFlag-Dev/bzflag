@@ -63,10 +63,7 @@ protected:
         void        render();
         void        renderShadow();
         const GLfloat*  getVertex(int i) const;
-        const GLfloat*  getPosition() const
-        {
-            return wall->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
     private:
         void        drawV() const;
         void        drawVT() const;

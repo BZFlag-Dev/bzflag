@@ -806,6 +806,12 @@ void            BoltSceneNode::BoltRenderNode::render()
     }
 }
 
+
+const glm::vec3 BoltSceneNode::BoltRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

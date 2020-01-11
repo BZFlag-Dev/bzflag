@@ -57,10 +57,7 @@ protected:
         FlagRenderNode(const FlagSceneNode*);
         ~FlagRenderNode();
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
     private:
         const FlagSceneNode* sceneNode;
         int      waveReference;

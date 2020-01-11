@@ -16,6 +16,9 @@
 // Inherits from
 #include "RenderNode.h"
 
+// System headers
+#include <glm/vec3.hpp>
+
 // common implementation headers
 #include "bzfgl.h"
 
@@ -34,10 +37,7 @@ public:
     void render();
     void renderRadar();
     void renderShadow();
-    virtual const GLfloat* getPosition() const
-    {
-        return NULL;
-    }
+    const glm::vec3 getPosition() const override;
 private:
     void drawV() const;
     void drawVN() const;
@@ -62,13 +62,10 @@ public:
                          const GLfloat* color, int lod, int set,
                          const Extents* exts, const float pos[3],
                          int triangles);
-    const GLfloat* getPosition() const
-    {
-        return pos;
-    }
+    const glm::vec3 getPosition() const override;
     void setPosition(const GLfloat* pos);
 private:
-    float pos[3];
+    glm::vec3 pos;
 };
 
 

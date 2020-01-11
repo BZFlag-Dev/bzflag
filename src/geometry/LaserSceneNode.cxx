@@ -137,6 +137,12 @@ void LaserSceneNode::LaserRenderNode::render()
         glFogfv(GL_FOG_COLOR, glm::value_ptr(RENDERER.getFogColor()));
 }
 
+
+const glm::vec3 LaserSceneNode::LaserRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
     const float len = sceneNode->length;

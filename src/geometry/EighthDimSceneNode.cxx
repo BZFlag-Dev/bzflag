@@ -110,6 +110,11 @@ void            EighthDimSceneNode::EighthDimRenderNode::setPolygon(
     ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
 }
 
+const glm::vec3 EighthDimSceneNode::EighthDimRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

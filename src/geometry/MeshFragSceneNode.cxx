@@ -225,6 +225,12 @@ void MeshFragSceneNode::Geometry::renderShadow()
 }
 
 
+const glm::vec3 MeshFragSceneNode::Geometry::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
+
 //
 // MeshFragSceneNode
 //

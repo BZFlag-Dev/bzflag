@@ -389,6 +389,12 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     glDisable(GL_CLIP_PLANE0);
 }
 
+
+const glm::vec3 BillboardSceneNode::BillboardRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

@@ -40,10 +40,7 @@ protected:
                              const float size[3], float rotation);
         ~EighthDBoxRenderNode();
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
     private:
         const EighthDBoxSceneNode* sceneNode;
         GLfloat     corner[8][3];

@@ -51,10 +51,7 @@ protected:
         LaserRenderNode(const LaserSceneNode*);
         ~LaserRenderNode();
         void        render();
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
     private:
         void renderFlatLaser();
         void renderGeoLaser();

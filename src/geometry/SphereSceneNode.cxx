@@ -405,6 +405,12 @@ void SphereSceneNode::SphereLodRenderNode::render()
 }
 
 
+const glm::vec3 SphereSceneNode::SphereLodRenderNode::getPosition() const
+{
+    return sceneNode->getCenter();
+}
+
+
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

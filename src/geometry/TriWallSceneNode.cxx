@@ -134,6 +134,11 @@ void            TriWallSceneNode::Geometry::renderShadow()
     addTriangleCount(1);
 }
 
+const glm::vec3 TriWallSceneNode::Geometry::getPosition() const
+{
+    return wall->getCenter();
+}
+
 
 void            TriWallSceneNode::Geometry::drawV() const
 {

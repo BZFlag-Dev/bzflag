@@ -69,10 +69,7 @@ protected:
         void render();
         void renderRadar();
         void renderShadow();
-        const GLfloat* getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const glm::vec3 getPosition() const override;
 
     private:
         void drawV() const; // draw with just vertices
