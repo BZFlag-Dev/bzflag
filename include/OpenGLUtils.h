@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <glm/vec4.hpp>
+#include <glm/fwd.hpp>
 
 // common headers
 #include "bzfgl.h"

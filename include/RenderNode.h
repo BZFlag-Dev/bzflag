@@ -25,7 +25,7 @@
 #include "common.h"
 
 // System headers
-#include <glm/vec3.hpp>
+#include <glm/fwd.hpp>
 
 // Global headers
 #include "OpenGLGState.h"

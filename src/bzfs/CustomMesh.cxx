@@ -13,6 +13,10 @@
 /* interface header */
 #include "CustomMesh.h"
 
+// System headers
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
+
 /* bzfs implementation headers */
 #include "CustomMeshFace.h"
 #include "ParseMaterial.h"

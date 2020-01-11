@@ -16,6 +16,8 @@
 // System headers
 #include <math.h>
 #include <string.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/matrix_access.hpp>
 
 Frustum::Frustum(): viewMatrix(1.0f), billboardMatrix(1.0f), projectionMatrix(1.0f), deepProjectionMatrix(1.0f)

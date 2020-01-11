@@ -17,6 +17,8 @@
 #include <fstream>
 #include <time.h>
 #include <assert.h>
+#include <glm/vec3.hpp>
+#include <glm/geometric.hpp>
 
 /* common implementation headers */
 #include "BZDBCache.h"

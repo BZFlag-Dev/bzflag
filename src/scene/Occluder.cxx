@@ -16,6 +16,7 @@
 // System headers
 #include <stdlib.h>
 #include <math.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "SceneNode.h"

@@ -13,6 +13,9 @@
 // interface headers
 #include "ViewFrustum.h"
 
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
 // common implementation headers
 #include "bzfgl.h"
 

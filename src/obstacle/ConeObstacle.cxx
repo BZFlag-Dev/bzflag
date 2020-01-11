@@ -16,6 +16,8 @@
 // System headers
 #include <math.h>
 #include <assert.h>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 // Common headers
 #include "global.h"

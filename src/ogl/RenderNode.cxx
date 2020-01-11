@@ -16,6 +16,7 @@
 // System headers
 #include <stdlib.h>
 #include <string.h>
+#include <glm/vec3.hpp>
 
 //
 // RenderNode

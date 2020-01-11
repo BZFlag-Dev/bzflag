@@ -20,9 +20,6 @@
 // Inherits from
 #include "ShotSceneNode.h"
 
-// System headers
-#include <glm/vec4.hpp>
-
 // Common headers
 #include "OpenGLLight.h"
 

@@ -17,6 +17,7 @@
 // system headers
 #include <math.h>
 #include <string.h>
+#include <glm/gtc/type_ptr.hpp>
 
 // common implementation headers
 #include "MeshFace.h"

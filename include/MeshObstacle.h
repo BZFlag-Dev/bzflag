@@ -24,8 +24,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 // Common headers
 #include "Ray.h"

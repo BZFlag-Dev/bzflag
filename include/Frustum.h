@@ -22,9 +22,7 @@
 
 // System headers
 #include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 // FIXME -- will need a means for off center projections for
 // looking through teleporters

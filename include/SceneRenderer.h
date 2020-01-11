@@ -25,7 +25,6 @@
 
 /* system interface headers */
 #include <vector>
-#include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <string>
 

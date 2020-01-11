@@ -24,7 +24,6 @@
 #include <string>
 #include <iostream>
 #include <glm/vec4.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 // Common headers
 #include "Ray.h"

@@ -31,7 +31,6 @@
 
 // System headers
 #include <vector>
-#include <glm/vec3.hpp>
 
 // Common headers
 #include "bzfgl.h"

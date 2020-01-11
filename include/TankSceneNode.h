@@ -20,10 +20,6 @@
 // Inherits
 #include "SceneNode.h"
 
-// System headers
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-
 // Common headers
 #include "OpenGLLight.h"
 #include "TankGeometryMgr.h"

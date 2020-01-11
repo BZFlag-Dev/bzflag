@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <glm/vec3.hpp>
+#include <glm/fwd.hpp>
 
 enum TransformType
 {
