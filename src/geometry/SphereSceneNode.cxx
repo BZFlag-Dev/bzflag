@@ -10,11 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 // interface header
 #include "SphereSceneNode.h"
 
 // system headers
 #include <math.h>
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "SceneRenderer.h"
@@ -56,7 +59,7 @@ void SphereSceneNode::setColor(const GLfloat* rgba)
 void SphereSceneNode::move(const GLfloat pos[3], GLfloat _radius)
 {
     radius = _radius;
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
     setRadius(radius * radius);
 }
 
@@ -244,13 +247,12 @@ void SphereSceneNode::setShockWave(bool value)
 void SphereSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     const ViewFrustum& view = renderer.getViewFrustum();
-    const float* s = getSphere();
+    const auto &s = getCenter();
     const auto e = view.getEye();
-    const float dx = e[0] - s[0];
-    const float dy = e[1] - s[1];
-    const float dz = e[2] - s[2];
+    const auto d = e - s;
+    const auto r = getRadius2();
 
-    float distSqr = (dx*dx) + (dy*dy) + (dz*dz);
+    float distSqr = glm::length2(d);
     if (distSqr <= 0.0f)
         distSqr = 1.0e-6f;
 
@@ -260,7 +262,7 @@ void SphereSceneNode::addRenderNodes(SceneRenderer& renderer)
         ppl = +MAXFLOAT;
     else
         ppl = 1.0f / lpp;
-    const float pixelsSqr = (s[3] * (ppl * ppl)) / distSqr;
+    const float pixelsSqr = (r * (ppl * ppl)) / distSqr;
 
     int lod;
     for (lod = 0; lod < (sphereLods - 1); lod++)
@@ -270,7 +272,7 @@ void SphereSceneNode::addRenderNodes(SceneRenderer& renderer)
     }
     renderNode.setLod(lod);
 
-    inside = (distSqr < s[3]);
+    inside = (distSqr < r);
 
     renderer.addRenderNode(&renderNode, &gstate);
 
@@ -329,7 +331,7 @@ static inline void drawFullScreenRect()
 void SphereSceneNode::SphereLodRenderNode::render()
 {
     const GLfloat radius = sceneNode->radius;
-    const GLfloat* sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
 
     glEnable(GL_CLIP_PLANE0);
 

@@ -32,14 +32,14 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
                                    GLfloat *_xformMatrix, bool _normalize,
                                    const GLfloat* _color,
                                    int _lod, int _set,
-                                   const Extents* _exts, int tris)
+                                   const Extents* _exts, int tris) :
+    color(glm::make_vec4(_color))
 {
     drawMgr = _drawMgr;
     xformMatrix = _xformMatrix;
     normalize = _normalize;
     lod = _lod;
     set = _set;
-    color = _color;
     exts = _exts;
     triangles = tris;
 }

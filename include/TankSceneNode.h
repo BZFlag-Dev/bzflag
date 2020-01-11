@@ -136,8 +136,7 @@ public:
     void        addRenderNodes(SceneRenderer&);
     void        addShadowNodes(SceneRenderer&);
 
-    bool        cullShadow(int planeCount,
-                           const float (*planes)[4]) const;
+    bool cullShadow(const std::vector<glm::vec4> &planes) const override;
 
     void        addLight(SceneRenderer&);
 

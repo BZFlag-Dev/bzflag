@@ -52,17 +52,14 @@ public:
         return vertexCount;
     }
 
-    const GLfloat* getPlane() const override;
+    const glm::vec4 getPlane() const override;
 
-    const GLfloat* getVertex (int vertex) const
-    {
-        return vertices[vertex];
-    }
+    const glm::vec3 getVertex (int vertex) const override;
 
 private:
     int vertexCount;
     GLfloat3* vertices;
-    GLfloat     plane[4];   // unit normal, distance to origin
+    glm::vec4 plane;   // unit normal, distance to origin
 };
 
 

@@ -304,6 +304,10 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
                                              planeCount, planes);
     }
 
+    std::vector<glm::vec4> vPlanes;
+    for (i = 0; i < planeCount; i++)
+        vPlanes.push_back(glm::make_vec4(planes[i]));
+
     // add the static nodes
     for (i = 0; i < culledCount; i++)
     {
@@ -318,7 +322,7 @@ void ZSceneDatabase::addShadowNodes(SceneRenderer& renderer)
     for (i = 0; i < dynamicCount; i++)
     {
         SceneNode* node = dynamicList[i];
-        if (!node->cullShadow(planeCount, planes))
+        if (!node->cullShadow(vPlanes))
             node->addShadowNodes(renderer);
     }
 
@@ -377,17 +381,14 @@ void ZSceneDatabase::addRenderNodes(SceneRenderer& renderer)
     {
         SceneNode* node = culledList[i];
 
-        const float* plane = node->getPlane();
+        const auto plane = node->getPlane();
+        const auto eye4 = glm::vec4(eye, 1.0f);
 
-        if (plane != NULL)
+        // see if our eye is behind the plane
+        if (glm::dot(eye4, plane) < 0.0f)
         {
-            // see if our eye is behind the plane
-            if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-                    plane[3]) <= 0.0f)
-            {
-                node->octreeState = SceneNode::OctreeCulled;
-                continue;
-            }
+            node->octreeState = SceneNode::OctreeCulled;
+            continue;
         }
 
         // if the Visibility culler tells us that we're

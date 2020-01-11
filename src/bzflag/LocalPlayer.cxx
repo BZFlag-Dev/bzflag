@@ -1020,7 +1020,7 @@ int         LocalPlayer::getFlagShakingWins() const
 
 const GLfloat*      LocalPlayer::getAntidoteLocation() const
 {
-    return (const GLfloat*)(antidoteFlag ? antidoteFlag->getSphere() : NULL);
+    return (const GLfloat*)(antidoteFlag ? glm::value_ptr(antidoteFlag->getCenter()) : NULL);
 }
 
 ShotPath::Vec      LocalPlayer::getShots() const

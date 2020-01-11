@@ -70,7 +70,7 @@ BillboardSceneNode::~BillboardSceneNode()
 
 BillboardSceneNode* BillboardSceneNode::copy() const
 {
-    BillboardSceneNode* e = new BillboardSceneNode(getSphere());
+    BillboardSceneNode* e = new BillboardSceneNode(glm::value_ptr(getCenter()));
     e->show = show;
     e->hasAlpha = hasAlpha;
     e->hasTexture = hasTexture;
@@ -270,7 +270,7 @@ setTextureAnimation(int _cu, int _cv)
 
 void            BillboardSceneNode::move(const GLfloat pos[3])
 {
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
     light.setPosition(pos);
 }
 
@@ -354,18 +354,13 @@ void            BillboardSceneNode::BillboardRenderNode::render()
     // the direction to the billboard from the eye.
     ViewFrustum& frustum = RENDERER.getViewFrustum();
     const auto eye = frustum.getEye();
-    const GLfloat* sphere = sceneNode->getSphere();
-    GLfloat dir[3], d;
-    dir[0] = eye[0] - sphere[0];
-    dir[1] = eye[1] - sphere[1];
-    dir[2] = eye[2] - sphere[2];
-    d = sceneNode->width / hypotf(dir[0], hypotf(dir[1], dir[2]));
+    auto pos = sceneNode->getCenter();
+    auto dir = glm::normalize(eye - pos);
+    pos += sceneNode->width * dir;
 
     glPushMatrix();
     {
-        glTranslatef(sphere[0] + d * dir[0],
-                     sphere[1] + d * dir[1],
-                     sphere[2] + d * dir[2]);
+        glTranslatef(pos.x, pos.y, pos.z);
         frustum.executeBillboard();
         glRotatef(sceneNode->angle, 0.0f, 0.0f, 1.0f);
 

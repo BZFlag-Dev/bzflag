@@ -729,7 +729,7 @@ void            World::updateWind(float UNUSED(dt))
 void            World::updateFlag(int index, float dt)
 {
     if (!flagNodes) return;
-    const GLfloat* color = flagNodes[index]->getColor();
+    const auto &color = flagNodes[index]->getColor();
     GLfloat alpha = color[3];
     FlagInstance& flag = flags[index];
 

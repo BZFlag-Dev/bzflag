@@ -212,7 +212,7 @@ FlagSceneNode::FlagSceneNode(const GLfloat pos[3]) :
     renderNode(this)
 {
     setColor(1.0f, 1.0f, 1.0f, 1.0f);
-    setCenter(pos);
+    move(pos);
     setRadius(6.0f * Unit * Unit);
 }
 
@@ -236,7 +236,7 @@ void            FlagSceneNode::freeFlag()
 
 void            FlagSceneNode::move(const GLfloat pos[3])
 {
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
 }
 
 
@@ -367,14 +367,14 @@ void FlagSceneNode::addShadowNodes(SceneRenderer& renderer)
 }
 
 
-bool FlagSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool FlagSceneNode::cullShadow(const std::vector<glm::vec4> &planes) const
 {
-    const float* s = getSphere();
-    for (int i = 0; i < planeCount; i++)
+    const auto s = glm::vec4(getCenter(), 1.0f);
+    const auto r = getRadius2();
+    for (const auto &p : planes)
     {
-        const float* p = planes[i];
-        const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-        if ((d < 0.0f) && ((d * d) > s[3]))
+        const float d = glm::dot(p, s);
+        if ((d < 0.0f) && ((d * d) > r))
             return true;
     }
     return false;
@@ -410,7 +410,7 @@ void            FlagSceneNode::FlagRenderNode::render()
     const bool doing_texturing = sceneNode->texturing;
     const bool is_billboard = sceneNode->billboard;
 
-    const GLfloat* sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
     const float topHeight = base + Height;
 
     myColor4fv(sceneNode->color);

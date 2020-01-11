@@ -32,7 +32,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
     setOccluder(true);
 
     // record plane info
-    memcpy(plane, glm::value_ptr(face->getPlane()), sizeof(float[4]));
+    plane = face->getPlane();
 
     // record extents info
     extents = face->getExtents();
@@ -44,7 +44,7 @@ OccluderSceneNode::OccluderSceneNode(const MeshFace* face)
         memcpy(vertices[i], face->getVertex(i), sizeof(float[3]));
 
     // record sphere info
-    GLfloat mySphere[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    auto mySphere = glm::vec4(0.0f);
     for (i = 0; i < vertexCount; i++)
     {
         const float* v = vertices[i];
@@ -79,7 +79,7 @@ OccluderSceneNode::~OccluderSceneNode()
 }
 
 
-const GLfloat* OccluderSceneNode::getPlane() const
+const glm::vec4 OccluderSceneNode::getPlane() const
 {
     return plane;
 }
@@ -111,9 +111,14 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     if (!extents.touches(exts))
         return false;
 
-    return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
+    return testPolygonInAxisBox (vertexCount, vertices, glm::value_ptr(plane), exts);
 }
 
+
+const glm::vec3 OccluderSceneNode::getVertex (int vertex) const
+{
+    return glm::make_vec3(vertices[vertex]);
+}
 
 // Local Variables: ***
 // mode: C++ ***

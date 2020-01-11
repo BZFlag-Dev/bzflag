@@ -142,7 +142,7 @@ void TankSceneNode::move(const GLfloat pos[3], const GLfloat forward[3])
 {
     azimuth = RAD2DEGf * atan2f(forward[1], forward[0]);
     elevation = -RAD2DEGf * atan2f(forward[2], hypotf(forward[0], forward[1]));
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
 
     // setup the extents
     const float maxRadius = 0.5f * (BZDBCache::tankLength + MuzzleMaxX);
@@ -221,9 +221,10 @@ void TankSceneNode::notifyStyleChange()
 void TankSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     // pick level of detail
-    const GLfloat* mySphere = getSphere();
+    const auto &mySphere = getCenter();
+    const auto radius = getRadius2();
     const ViewFrustum& view = renderer.getViewFrustum();
-    const float size = mySphere[3] *
+    const float size = radius *
                        (view.getAreaFactor() /getDistance(view.getEye()));
 
     // set the level of detail
@@ -377,7 +378,7 @@ void TankSceneNode::setExplodeFraction(float t)
     explodeFraction = t;
     if (t != 0.0f)
     {
-        const float radius = sqrtf(getSphere()[3]);
+        const float radius = sqrtf(getRadius2());
         const float radinc = t * maxExplosionVel;
         const float newrad = radius + radinc;
         setRadius(newrad * newrad);
@@ -395,8 +396,8 @@ void TankSceneNode::setJumpJets(float scale)
         jumpJetsScale = scale;
 
         // set the real light's position
-        const float* pos = getSphere();
-        jumpJetsRealLight.setPosition(pos);
+        const auto &pos = getCenter();
+        jumpJetsRealLight.setPosition(glm::value_ptr(pos));
 
         // set the jet ground-light and model positions
         for (int i = 0; i < 4; i++)
@@ -498,12 +499,11 @@ void TankSceneNode::rebuildExplosion()
 void TankSceneNode::renderRadar()
 {
     const float angleCopy = azimuth;
-    const float* mySphere = getSphere();
-    float posCopy[3];
-    memcpy(posCopy, mySphere, sizeof(float[3]));
+    const auto &mySphere = getCenter();
+    auto posCopy = mySphere;
 
     // allow negative values for burrowed clipping
-    float tankPos[3];
+    glm::vec3 tankPos;
     tankPos[0] = 0.0f;
     tankPos[1] = 0.0f;
     if (mySphere[2] >= 0.0f)
@@ -535,21 +535,21 @@ void TankSceneNode::renderRadar()
 
     color[3] = oldAlpha;
 
-    setCenter(posCopy);
+    setCenter(posCopy.x, posCopy.y, posCopy.z);
     azimuth = angleCopy;
 
     return;
 }
 
 
-bool TankSceneNode::cullShadow(int planeCount, const float (*planes)[4]) const
+bool TankSceneNode::cullShadow(const std::vector<glm::vec4> &planes) const
 {
-    const float* s = getSphere();
-    for (int i = 0; i < planeCount; i++)
+    const auto s = glm::vec4(getCenter(), 1.0f);
+    const auto r = getRadius2();
+    for (const auto &p : planes)
     {
-        const float* p = planes[i];
-        const float d = (p[0] * s[0]) + (p[1] * s[1]) + (p[2] * s[2]) + p[3];
-        if ((d < 0.0f) && ((d * d) > s[3]))
+        const float d = glm::dot(p, s);
+        if ((d < 0.0f) && ((d * d) > r))
             return true;
     }
     return false;
@@ -594,7 +594,7 @@ void TankIDLSceneNode::move(const GLfloat _plane[4])
     plane[3] = _plane[3];
 
     // compute new sphere
-    const GLfloat* s = tank->getSphere();
+    const auto &s = tank->getCenter();
     setCenter(s[0] + 1.5f * BZDBCache::tankLength * plane[0],
               s[1] + 1.5f * BZDBCache::tankLength * plane[1],
               s[2] + 1.5f * BZDBCache::tankLength * plane[2]);
@@ -725,11 +725,11 @@ TankIDLSceneNode::IDLRenderNode::~IDLRenderNode()
 
 void TankIDLSceneNode::IDLRenderNode::render()
 {
-    static const GLfloat innerColor[4] = { 1.0f, 1.0f, 1.0f, 0.75f };
-    static const GLfloat outerColor[4] = { 1.0f, 1.0f, 1.0f, 0.0f };
+    static const auto innerColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.75f);
+    static const auto outerColor = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
 
     // compute plane in tank's space
-    const GLfloat* sphere = sceneNode->tank->getSphere();
+    const auto &sphere = sceneNode->tank->getCenter();
     const GLfloat* _plane = sceneNode->plane;
     const GLfloat azimuth = sceneNode->tank->azimuth;
     const GLfloat ca = cosf(-azimuth * (float)DEG2RAD);
@@ -938,7 +938,7 @@ void TankSceneNode::TankRenderNode::render()
         glEnable(GL_CLIP_PLANE1);
     }
 
-    const GLfloat* sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
 
     // save the MODELVIEW matrix
     glPushMatrix();
@@ -1404,11 +1404,17 @@ bool TankSceneNode::TankRenderNode::setupTextureMatrix(TankPart part)
 
 void TankSceneNode::TankRenderNode::renderLights()
 {
-    static const GLfloat lights[3][6] =
+    static const glm::vec3 lightsColor[3] =
     {
-        { 1.0f, 1.0f, 1.0f, -1.53f,  0.00f, 2.1f },
-        { 1.0f, 0.0f, 0.0f,  0.10f,  0.75f, 2.1f },
-        { 0.0f, 1.0f, 0.0f,  0.10f, -0.75f, 2.1f }
+        { 1.0f, 1.0f, 1.0f },
+        { 1.0f, 0.0f, 0.0f },
+        { 0.0f, 1.0f, 0.0f }
+    };
+    static const GLfloat lightsPos[3][3] =
+    {
+        { -1.53f,  0.00f, 2.1f },
+        {  0.10f,  0.75f, 2.1f },
+        {  0.10f, -0.75f, 2.1f }
     };
     sceneNode->lightsGState.setState();
     glPointSize(2.0f);
@@ -1417,18 +1423,18 @@ void TankSceneNode::TankRenderNode::renderLights()
     {
         const float* scale = TankGeometryMgr::getScaleFactor(sceneNode->tankSize);
 
-        myColor3fv(lights[0]);
-        glVertex3f(lights[0][3] * scale[0],
-                   lights[0][4] * scale[1],
-                   lights[0][5] * scale[2]);
-        myColor3fv(lights[1]);
-        glVertex3f(lights[1][3] * scale[0],
-                   lights[1][4] * scale[1],
-                   lights[1][5] * scale[2]);
-        myColor3fv(lights[2]);
-        glVertex3f(lights[2][3] * scale[0],
-                   lights[2][4] * scale[1],
-                   lights[2][5] * scale[2]);
+        myColor3fv(lightsColor[0]);
+        glVertex3f(lightsPos[0][0] * scale[0],
+                   lightsPos[0][1] * scale[1],
+                   lightsPos[0][2] * scale[2]);
+        myColor3fv(lightsColor[1]);
+        glVertex3f(lightsPos[1][0] * scale[0],
+                   lightsPos[1][1] * scale[1],
+                   lightsPos[1][2] * scale[2]);
+        myColor3fv(lightsColor[2]);
+        glVertex3f(lightsPos[2][0] * scale[0],
+                   lightsPos[2][1] * scale[1],
+                   lightsPos[2][2] * scale[2]);
     }
     glEnd();
 

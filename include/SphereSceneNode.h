@@ -60,7 +60,7 @@ protected:
     };
 
     GLfloat     radius;
-    GLfloat     color[4];
+    glm::vec4   color;
     bool        transparent;
     OpenGLGState    gstate;
     SphereLodRenderNode renderNode;
@@ -77,7 +77,7 @@ protected:
 };
 
 
-#endif // BZF_FLAG_SCENE_NODE_H
+#endif // BZF_SPHERE_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***

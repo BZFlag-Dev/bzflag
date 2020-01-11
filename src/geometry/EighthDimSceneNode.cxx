@@ -71,7 +71,7 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
     sceneNode(_sceneNode),
     numPolygons(numPolys)
 {
-    color = (GLfloat(*)[4])new GLfloat[4 * numPolygons];
+    color = new glm::vec4[numPolygons];
     poly = (GLfloat(*)[3][3])new GLfloat[9 * numPolygons];
 
     // make random colors

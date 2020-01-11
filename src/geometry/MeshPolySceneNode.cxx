@@ -226,8 +226,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     setNumLODs(1, area);
 
     // compute bounding sphere, put center at average of vertices
-    GLfloat mySphere[4];
-    mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
+    auto mySphere = glm::vec4(0.0f);
     for (i = 0; i < count; i++)
     {
         mySphere[0] += vertices[i][0];
@@ -290,6 +289,12 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
         return false;
 
     return testPolygonInAxisBox (getVertexCount(), getVertices(), plane, exts);
+}
+
+
+const glm::vec3 MeshPolySceneNode::getVertex(int i) const
+{
+    return glm::make_vec3(node.getVertex(i));
 }
 
 

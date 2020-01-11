@@ -63,21 +63,21 @@ public:
 
     virtual void    notifyStyleChange();
 
-    const GLfloat*  getSphere() const;
-    const glm::vec3 getCenter() const
+    const glm::vec3 &getCenter() const
     {
-        return glm::make_vec3(sphere);
+        return center;
     };
+    float           getRadius2() const;
     const Extents&  getExtents() const;
     virtual int     getVertexCount () const;
-    virtual const GLfloat* getVertex (int vertex) const;
-    virtual const GLfloat* getPlane() const;
+    virtual const glm::vec3 getVertex (int vertex) const;
+    virtual const glm::vec4 getPlane() const;
     virtual GLfloat getDistance(const glm::vec3 &eye) const;
 
     virtual bool    inAxisBox (const Extents& exts) const;
 
     virtual bool    cull(const ViewFrustum&) const;
-    virtual bool    cullShadow(int pCount, const float (*planes)[4]) const;
+    virtual bool    cullShadow(const std::vector<glm::vec4> &planes) const;
 
     bool        isOccluder() const;
     void        setOccluder(bool value);
@@ -106,14 +106,14 @@ public:
         if (!colorOverride) ::glColor4f(r, g, b, a);
     };
 
-    static void     glColor3fv(const GLfloat* rgb)
+    static void     glColor3fv(const glm::vec3 &rgb)
     {
-        if (!colorOverride) ::glColor3fv(rgb);
+        if (!colorOverride) ::glColor3f(rgb.r, rgb.g, rgb.b);
     };
 
-    static void     glColor4fv(const GLfloat* rgba)
+    static void     glColor4fv(const glm::vec4 &rgba)
     {
-        if (!colorOverride) ::glColor4fv(rgba);
+        if (!colorOverride) ::glColor4f(rgba.r, rgba.g, rgba.b, rgba.a);
     };
 
     static void     setStipple(GLfloat alpha)
@@ -135,9 +135,9 @@ public:
 
 protected:
     void        setRadius(GLfloat radiusSquared);
-    void        setCenter(const GLfloat center[3]);
+    void        setCenter(const glm::vec3 &center);
     void        setCenter(GLfloat x, GLfloat y, GLfloat z);
-    void        setSphere(const GLfloat sphere[4]);
+    void        setSphere(const glm::vec4 &sphere);
 
 private:
     SceneNode(const SceneNode&);
@@ -151,14 +151,15 @@ protected:
     bool        occluder;
     Extents     extents;
 private:
-    GLfloat     sphere[4];
+    glm::vec3   center;
+    float       radius2;
     static bool  colorOverride;
     static void     (*stipple)(GLfloat);
 };
 
-inline const GLfloat*   SceneNode::getSphere() const
+inline float SceneNode::getRadius2() const
 {
-    return sphere;
+    return radius2;
 }
 
 inline const Extents&   SceneNode::getExtents() const

@@ -10,12 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 // interface header
 #include "SceneNode.h"
 
 // system implementation headers
 #include <string.h>
 #include <math.h>
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "Extents.h"
@@ -27,7 +30,7 @@
 
 void            (*SceneNode::stipple)(GLfloat);
 
-SceneNode::SceneNode()
+SceneNode::SceneNode(): center(0.0f), radius2(0.0f)
 {
     static bool init = false;
 
@@ -36,10 +39,6 @@ SceneNode::SceneNode()
         init = true;
         setColorOverride(false);
     }
-    memset(sphere, 0, sizeof(GLfloat) * 4);
-
-    setCenter(0.0f, 0.0f, 0.0f);
-    setRadius(0.0f);
 
     occluder = false;
     octreeState = OctreeCulled;
@@ -67,29 +66,25 @@ void            SceneNode::setColorOverride(bool on)
 
 void            SceneNode::setRadius(GLfloat radiusSquared)
 {
-    sphere[3] = radiusSquared;
+    radius2 = radiusSquared;
 }
 
-void            SceneNode::setCenter(const GLfloat center[3])
+void SceneNode::setCenter(const glm::vec3 &center_)
 {
-    sphere[0] = center[0];
-    sphere[1] = center[1];
-    sphere[2] = center[2];
+    center = center_;
 }
 
 void            SceneNode::setCenter(GLfloat x, GLfloat y, GLfloat z)
 {
-    sphere[0] = x;
-    sphere[1] = y;
-    sphere[2] = z;
+    center[0] = x;
+    center[1] = y;
+    center[2] = z;
 }
 
-void            SceneNode::setSphere(const GLfloat _sphere[4])
+void SceneNode::setSphere(const glm::vec4 &sphere_)
 {
-    sphere[0] = _sphere[0];
-    sphere[1] = _sphere[1];
-    sphere[2] = _sphere[2];
-    sphere[3] = _sphere[3];
+    center    = glm::vec3(sphere_);
+    radius2   = sphere_[3];
 }
 
 void            SceneNode::notifyStyleChange()
@@ -114,9 +109,7 @@ void            SceneNode::addLight(SceneRenderer&)
 
 GLfloat SceneNode::getDistance(const glm::vec3 &eye) const
 {
-    return (eye[0] - sphere[0]) * (eye[0] - sphere[0]) +
-           (eye[1] - sphere[1]) * (eye[1] - sphere[1]) +
-           (eye[2] - sphere[2]) * (eye[2] - sphere[2]);
+    return glm::distance2(eye, center);
 }
 
 bool            SceneNode::cull(const ViewFrustum& view) const
@@ -124,19 +117,18 @@ bool            SceneNode::cull(const ViewFrustum& view) const
     // if center of object is outside view frustum and distance is
     // greater than radius of object then cull.
     const int planeCount = view.getPlaneCount();
+    const auto center4 = glm::vec4(center, 1.0f);
     for (int i = 0; i < planeCount; i++)
     {
         const auto norm = view.getSide(i);
-        const GLfloat d = (sphere[0] * norm[0]) +
-                          (sphere[1] * norm[1]) +
-                          (sphere[2] * norm[2]) + norm[3];
-        if ((d < 0.0f) && ((d * d) > sphere[3])) return true;
+        const GLfloat d = glm::dot(center4, norm);
+        if ((d < 0.0f) && ((d * d) > radius2)) return true;
     }
     return false;
 }
 
 
-bool SceneNode::cullShadow(int, const float (*)[4]) const
+bool SceneNode::cullShadow(const std::vector<glm::vec4> &) const
 {
     // currently only used for dynamic nodes by ZSceneDatabase
     // we let the octree deal with the static nodes
@@ -156,14 +148,14 @@ int SceneNode::getVertexCount () const
     return 0;
 }
 
-const GLfloat* SceneNode::getVertex (int) const
+const glm::vec3 SceneNode::getVertex (int) const
 {
-    return NULL;
+    return glm::vec3(0.0f);
 }
 
-const GLfloat* SceneNode::getPlane() const
+const glm::vec4 SceneNode::getPlane() const
 {
-    return NULL;
+    return glm::vec4(0.0f);
 }
 
 

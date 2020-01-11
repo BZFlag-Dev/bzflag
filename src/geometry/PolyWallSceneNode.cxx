@@ -173,8 +173,7 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
     setNumLODs(1, area);
 
     // compute bounding sphere, put center at average of vertices
-    GLfloat mySphere[4];
-    mySphere[0] = mySphere[1] = mySphere[2] = mySphere[3] = 0.0f;
+    auto mySphere = glm::vec4(0.0f);
     for (i = 0; i < count; i++)
     {
         mySphere[0] += vertex[i][0];

@@ -78,7 +78,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     if (xformTool == NULL)
     {
         extents = drawInfo->getExtents();
-        setSphere(drawInfo->getSphere());
+        setSphere(glm::make_vec4(drawInfo->getSphere()));
     }
     else
     {
@@ -118,7 +118,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
         memcpy(mySphere, drawInfo->getSphere(), sizeof(float[4]));
         xformTool->modifyVertex(mySphere);
         mySphere[3] *= (lengthAdj * lengthAdj);
-        setSphere(mySphere);
+        setSphere(glm::make_vec4(mySphere));
     }
 
     // setup lod/set nodes
@@ -186,11 +186,9 @@ MeshSceneNode::~MeshSceneNode()
 inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 {
     const auto e = vf.getEye();
-    const float* s = getSphere();
+    const auto &p = getCenter();
     const auto d = vf.getDirection();
-    const float dist = (d[0] * (s[0] - e[0])) +
-                       (d[1] * (s[1] - e[1])) +
-                       (d[2] * (s[2] - e[2]));
+    const float dist = glm::dot(d, p - e);
     const float lengthPerPixel = dist * LodScale;
     for (int i = (lodCount - 1); i > 0; i--)
     {

@@ -78,12 +78,12 @@ protected:
         const BoltSceneNode* sceneNode;
         int     u, v, cu, cv;
         GLfloat     du, dv;
-        GLfloat     mainColor[4];
-        GLfloat     innerColor[4];
-        GLfloat     outerColor[4];
+        glm::vec4   mainColor;
+        glm::vec4   innerColor;
+        glm::vec4   outerColor;
         GLfloat     coronaColor[4];
-        GLfloat     flareColor[4];
-        GLfloat     textureColor[4];
+        glm::vec4   flareColor;
+        glm::vec4   textureColor;
         int     numFlares;
         float       theta[6];
         float       phi[6];

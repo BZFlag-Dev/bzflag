@@ -48,7 +48,7 @@ protected:
     private:
         const EighthDimSceneNode* sceneNode;
         int     numPolygons;
-        GLfloat     (*color)[4];
+        glm::vec4   *color;
         GLfloat     (*poly)[3][3];
     };
 

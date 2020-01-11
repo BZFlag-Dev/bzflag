@@ -18,6 +18,7 @@
 
 // System headers
 #include <glm/vec3.hpp>
+#include <glm/vec4.hpp>
 
 // common implementation headers
 #include "bzfgl.h"
@@ -48,7 +49,7 @@ private:
     GLfloat* xformMatrix;
     bool normalize;
     int lod, set;
-    const GLfloat* color;
+    const glm::vec4 color;
     const Extents* exts;
     int triangles;
 };

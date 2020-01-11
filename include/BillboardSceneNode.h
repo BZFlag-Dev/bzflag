@@ -90,7 +90,7 @@ private:
     bool        lightSource;
     bool        groundLight;
     float       width, height;
-    GLfloat     color[4];
+    glm::vec4   color;
     GLfloat     angle;
     GLfloat     lightColor[3];
     GLfloat     lightScale;

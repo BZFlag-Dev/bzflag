@@ -271,7 +271,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     diffs[0] = extents.maxs[0] - extents.mins[0];
     diffs[1] = extents.maxs[1] - extents.mins[1];
     diffs[2] = extents.maxs[2] - extents.mins[2];
-    float mySphere[4];
+    glm::vec4 mySphere;
     mySphere[0] = 0.5f * (extents.maxs[0] + extents.mins[0]);
     mySphere[1] = 0.5f * (extents.maxs[1] + extents.mins[1]);
     mySphere[2] = 0.5f * (extents.maxs[2] + extents.mins[2]);
@@ -361,9 +361,9 @@ MeshFragSceneNode::~MeshFragSceneNode()
 }
 
 
-const GLfloat* MeshFragSceneNode::getPlane() const
+const glm::vec4 MeshFragSceneNode::getPlane() const
 {
-    return NULL;
+    return glm::vec4(0.0f);
 }
 
 bool MeshFragSceneNode::cull(const ViewFrustum& frustum) const

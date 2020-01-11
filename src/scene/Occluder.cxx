@@ -302,7 +302,7 @@ Occluder::Occluder(const SceneNode* node)
     // counter-clockwise order as viewed from the front face
     for (int i = 0; i < vertexCount; i++)
     {
-        const float* vertex = node->getVertex(i);
+        const auto vertex = node->getVertex(i);
         vertices[i][0] = vertex[0];
         vertices[i][1] = vertex[1];
         vertices[i][2] = vertex[2];
@@ -358,19 +358,18 @@ static bool makePlane (const float* p1, const float* p2, const float* pc,
 bool Occluder::makePlanes(const Frustum* frustum)
 {
     // occluders can't have their back towards the camera
-    const auto eye = frustum->getEye();
-    const float* p = sceneNode->getPlane();
-    float tmp = (p[0] * eye[0]) + (p[1] * eye[1]) + (p[2] * eye[2]) + p[3];
+    const auto eye = glm::vec4(frustum->getEye(), 1.0f);
+    const auto p = sceneNode->getPlane();
+    float tmp = glm::dot(p, eye);
     if (tmp < +0.1f)
         return false;
     // FIXME - store/flag this so we don't have to do it again?
 
     // make the occluder's normal plane
-    const float* plane = sceneNode->getPlane();
-    planes[0][0] = -plane[0];
-    planes[0][1] = -plane[1];
-    planes[0][2] = -plane[2];
-    planes[0][3] = -plane[3];
+    planes[0][0] = -p[0];
+    planes[0][1] = -p[1];
+    planes[0][2] = -p[2];
+    planes[0][3] = -p[3];
 
     // make the edges planes
     for (int i = 0; i < vertexCount; i++)

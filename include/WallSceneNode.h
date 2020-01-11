@@ -33,7 +33,7 @@ public:
     WallSceneNode();
     ~WallSceneNode();
 
-    const GLfloat* getPlane() const override;
+    const glm::vec4 getPlane() const override;
     const GLfloat*  getColor() const;
     const GLfloat*  getDynamicColor() const;
     const GLfloat*  getModulateColor() const;

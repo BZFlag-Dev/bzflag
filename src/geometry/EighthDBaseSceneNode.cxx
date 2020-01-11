@@ -67,7 +67,7 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
     }
 
     // set sphere
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
     setRadius(0.25f * (size[0] * size[0] + size[1] * size[1] + size[2] * size[2]));
 }
 

@@ -60,7 +60,7 @@ void            FlagWarpSceneNode::setSizeFraction(GLfloat _size)
 
 void            FlagWarpSceneNode::move(const GLfloat pos[3])
 {
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
 }
 
 GLfloat         FlagWarpSceneNode::getDistance(const GLfloat* eye) const
@@ -68,7 +68,7 @@ GLfloat         FlagWarpSceneNode::getDistance(const GLfloat* eye) const
     // shift position of warp down a little because a flag and it's warp
     // are at the same position but we want the warp to appear below the
     // flag.
-    const GLfloat* mySphere = getSphere();
+    const auto &mySphere = getCenter();
     return (eye[0] - mySphere[0]) * (eye[0] - mySphere[0]) +
            (eye[1] - mySphere[1]) * (eye[1] - mySphere[1]) +
            (eye[2] - mySphere[2] + 0.2f) * (eye[2] - mySphere[2] + 0.2f);
@@ -115,7 +115,7 @@ void            FlagWarpSceneNode::FlagWarpRenderNode::render()
         geom[i][1] = r * sinf((float)(2.0 * M_PI * double(i) / 12.0));
     }
 
-    const GLfloat* sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
     glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
 

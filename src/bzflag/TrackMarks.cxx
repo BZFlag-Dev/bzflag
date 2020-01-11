@@ -60,7 +60,7 @@ protected:
     TrackEntry* next;
     TrackEntry* prev;
 public:
-    float pos[3];
+    glm::vec3 pos;
     float angle;
     float scale;
     char sides;

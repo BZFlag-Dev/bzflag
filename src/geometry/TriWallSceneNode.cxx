@@ -170,7 +170,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
                                    bool makeLODs)
 {
     // record plane info
-    GLfloat myPlane[4], mySphere[4];
+    GLfloat myPlane[4];
     myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
     myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
     myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
@@ -182,6 +182,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     // and radius of circumscribing sphere but it's late and i'm tired.
     // i'll just calculate something easy.  it hardly matters as it's
     // hard to tightly bound a triangle with a sphere.
+    glm::vec4 mySphere;
     mySphere[0] = 0.5f * (uEdge[0] + vEdge[0]);
     mySphere[1] = 0.5f * (uEdge[1] + vEdge[1]);
     mySphere[2] = 0.5f * (uEdge[2] + vEdge[2]);
@@ -328,9 +329,9 @@ int         TriWallSceneNode::getVertexCount () const
 }
 
 
-const GLfloat*      TriWallSceneNode::getVertex (int vertex) const
+const glm::vec3 TriWallSceneNode::getVertex (int vertex) const
 {
-    return nodes[0]->getVertex(vertex);
+    return glm::make_vec3(nodes[0]->getVertex(vertex));
 }
 
 void            TriWallSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)

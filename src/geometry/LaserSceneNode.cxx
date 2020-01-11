@@ -35,7 +35,7 @@ LaserSceneNode::LaserSceneNode(const GLfloat pos[3], const GLfloat forward[3]) :
     length = hypotf(forward[0], hypotf(forward[1], forward[2]));
 
     // setup sphere
-    setCenter(pos);
+    setCenter(glm::make_vec3(pos));
     setRadius(length * length);
 
     OpenGLGStateBuilder builder(gstate);
@@ -146,7 +146,7 @@ const glm::vec3 LaserSceneNode::LaserRenderNode::getPosition() const
 void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 {
     const float len = sceneNode->length;
-    const GLfloat* sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
     glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
@@ -197,7 +197,7 @@ void LaserSceneNode::LaserRenderNode::renderGeoLaser()
 void LaserSceneNode::LaserRenderNode::renderFlatLaser()
 {
     const float len = sceneNode->length;
-    const GLfloat *sphere = sceneNode->getSphere();
+    const auto &sphere = sceneNode->getCenter();
     glPushMatrix();
     glTranslatef(sphere[0], sphere[1], sphere[2]);
     glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
