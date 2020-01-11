@@ -18,7 +18,7 @@
 #ifndef BZF_EIGHTHD_PYR_SCENE_NODE_H
 #define BZF_EIGHTHD_PYR_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "EighthDimSceneNode.h"
 
 class EighthDPyrSceneNode : public EighthDimSceneNode

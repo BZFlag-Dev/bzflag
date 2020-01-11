@@ -11,9 +11,6 @@
  */
 
 
-// bzflag common header
-#include "common.h"
-
 // interface header
 #include "OccluderSceneNode.h"
 

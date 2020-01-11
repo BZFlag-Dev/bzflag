@@ -19,10 +19,11 @@
 #ifndef BZF_MESH_SCENE_NODE_H
 #define BZF_MESH_SCENE_NODE_H
 
-#include "common.h"
-#include "bzfgl.h"
+// Inherits
 #include "SceneNode.h"
 
+// Common headers
+#include "bzfgl.h"
 //
 // NOTES:
 //

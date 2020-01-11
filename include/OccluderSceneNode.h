@@ -18,10 +18,10 @@
 #ifndef BZF_OCCLUDER_SCENE_NODE_H
 #define BZF_OCCLUDER_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
+#include "SceneNode.h"
 
 // common implementation headers
-#include "SceneNode.h"
 #include "MeshFace.h"
 
 class OccluderSceneNode : public SceneNode

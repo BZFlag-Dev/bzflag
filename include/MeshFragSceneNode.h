@@ -19,8 +19,10 @@
 #ifndef BZF_MESH_FRAG_SCENE_NODE_H
 #define BZF_MESH_FRAG_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "WallSceneNode.h"
+
+// Global headers
 #include "BzMaterial.h"
 
 //

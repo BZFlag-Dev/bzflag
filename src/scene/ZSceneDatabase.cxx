@@ -10,14 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// implementation header
+#include "ZSceneDatabase.h"
 
 // system headers
 #include <string.h>
 #include <stdlib.h>
-
-// implementation header
-#include "ZSceneDatabase.h"
 
 // common headers
 #include "SceneNode.h"

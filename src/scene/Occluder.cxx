@@ -10,10 +10,14 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+// Interface headers
+#include "Occluder.h"
 
+// System headers
 #include <stdlib.h>
 #include <math.h>
-#include "Occluder.h"
+
+// Common headers
 #include "SceneNode.h"
 #include "Frustum.h"
 #include "Intersect.h"

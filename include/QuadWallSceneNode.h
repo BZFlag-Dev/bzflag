@@ -17,7 +17,7 @@
 #ifndef BZF_QUAD_WALL_SCENE_NODE_H
 #define BZF_QUAD_WALL_SCENE_NODE_H
 
-#include "common.h"
+// Inherits from
 #include "WallSceneNode.h"
 
 class QuadWallSceneNode : public WallSceneNode
