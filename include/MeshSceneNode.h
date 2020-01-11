@@ -124,7 +124,6 @@ private:
     void updateMaterial(MeshMaterial* mat);
     const BzMaterial* convertMaterial(const BzMaterial* bzmat);
     int calcNormalLod(const ViewFrustum&);
-    int calcShadowLod(const ViewFrustum&);
     int calcRadarLod();
 
     friend class MeshSceneNodeMgr;

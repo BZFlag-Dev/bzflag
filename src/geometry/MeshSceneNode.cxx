@@ -208,25 +208,6 @@ inline int MeshSceneNode::calcNormalLod(const ViewFrustum& vf)
 }
 
 
-inline int MeshSceneNode::calcShadowLod(const ViewFrustum& vf)
-{
-    // FIXME: adjust for ray direction
-    const auto e = vf.getEye();
-    const float* s = getSphere();
-    const auto d = vf.getDirection();
-    const float dist = (d[0] * (s[0] - e[0])) +
-                       (d[1] * (s[1] - e[1])) +
-                       (d[2] * (s[2] - e[2]));
-    const float lengthPerPixel = dist * LodScale;
-    for (int i = (lodCount - 1); i > 0; i--)
-    {
-        if (lengthPerPixel > lodLengths[i])
-            return i;
-    }
-    return 0;
-}
-
-
 inline int MeshSceneNode::calcRadarLod()
 {
     for (int i = (radarCount - 1); i > 0; i--)
@@ -282,7 +263,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
 void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
     const ViewFrustum& vf = renderer.getViewFrustum();
-    const int level = (lodCount == 1) ? 0 : calcShadowLod(vf);
+    const int level = (lodCount == 1) ? 0 : calcNormalLod(vf);
     LodNode& lod = lods[level];
     for (int i = 0; i < lod.count; i++)
     {
