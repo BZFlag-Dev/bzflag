@@ -68,7 +68,6 @@ public:
     virtual int     getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     const GLfloat*      getPlane() const;
-    virtual GLfloat getDistance(const GLfloat* eye) const;
     virtual GLfloat getDistance(const glm::vec3 &eye) const;
 
     virtual bool    inAxisBox (const Extents& exts) const;
