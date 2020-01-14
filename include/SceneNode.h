@@ -66,7 +66,6 @@ public:
     virtual int     getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
     const GLfloat*      getPlane() const;
-    const GLfloat*      getPlaneRaw() const;
     virtual GLfloat getDistance(const GLfloat* eye) const; // for BSP
 
     virtual bool    inAxisBox (const Extents& exts) const;
@@ -159,11 +158,6 @@ inline const GLfloat*   SceneNode::getPlane() const
 {
     if (noPlane)
         return NULL;
-    return plane;
-}
-
-inline const GLfloat*   SceneNode::getPlaneRaw() const
-{
     return plane;
 }
 
