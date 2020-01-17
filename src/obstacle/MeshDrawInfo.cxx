@@ -343,7 +343,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
         {
             // no animation, use the raw vertices
             for (int v = 0; v < vCount; v++)
-                tmpExts.expandToPoint(verts[v]);
+                tmpExts.expandToPoint(glm::make_vec3(verts[v]));
         }
         else
         {
@@ -414,7 +414,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                         {
                             const unsigned short cIndex = array[idx];
                             const Corner& corner = corners[cIndex];
-                            const float* v = verts[corner.vertex];
+                            const auto v = glm::make_vec3(verts[corner.vertex]);
                             exts.expandToPoint(v);
                         }
                     }
@@ -425,7 +425,7 @@ bool MeshDrawInfo::serverSetup(const MeshObstacle* mesh)
                         {
                             const unsigned int cIndex = array[idx];
                             const Corner& corner = corners[cIndex];
-                            const float* v = verts[corner.vertex];
+                            const auto v = glm::make_vec3(verts[corner.vertex]);
                             exts.expandToPoint(v);
                         }
                     }

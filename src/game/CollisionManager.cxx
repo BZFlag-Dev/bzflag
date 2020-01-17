@@ -273,7 +273,7 @@ const ObsList* CollisionManager::cylinderTest (const float *pos,
     if (root == NULL)
         return &EmptyList;
 
-    float tmpMins[3], tmpMaxs[3];
+    glm::vec3 tmpMins, tmpMaxs;
     tmpMins[0] = pos[0] - radius;
     tmpMins[1] = pos[1] - radius;
     tmpMins[2] = pos[2];
@@ -725,7 +725,7 @@ ColDetNode::~ColDetNode()
 void ColDetNode::makeChildren ()
 {
     int side[3];    // the axis sides  (0 or 1)
-    float center[3];
+    glm::vec3 center;
     Extents exts;
 
     // setup the center point
@@ -733,7 +733,7 @@ void ColDetNode::makeChildren ()
         center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
 
     childCount = 0;
-    const float* extentSet[3] = { extents.mins, center, extents.maxs };
+    const glm::vec3 extentSet[3] = { extents.mins, center, extents.maxs };
 
     for (side[0] = 0; side[0] < 2; side[0]++)
     {
@@ -943,7 +943,7 @@ void ColDetNode::draw(DrawLinesFunc drawLinesFunc)
 {
     int x, y, z, c;
     float points[5][3];
-    const float* exts[2] = { extents.mins, extents.maxs };
+    const glm::vec3 exts[2] = { extents.mins, extents.maxs };
 
     // pick a color
     int hasMeshObs = 0;

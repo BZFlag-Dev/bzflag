@@ -421,14 +421,14 @@ void OctreeNode::makeChildren ()
 {
     int side[3];    // the axis sides  (0 or 1)
     Extents exts;
-    float center[3];
+    glm::vec3 center;
 
     // setup the center point
     for (int i = 0; i < 3; i++)
         center[i] = 0.5f * (extents.maxs[i] + extents.mins[i]);
 
     childCount = 0;
-    const float* extentSet[3] = { extents.mins, center, extents.maxs };
+    const glm::vec3 extentSet[3] = { extents.mins, center, extents.maxs };
 
     for (side[0] = 0; side[0] < 2; side[0]++)
     {
@@ -866,7 +866,7 @@ void OctreeNode::draw ()
     }
     glColor4fv (color);
 
-    const float* exts[2] = { extents.mins, extents.maxs };
+    const glm::vec3 exts[2] = { extents.mins, extents.maxs };
 
     // draw Z-normal squares
     for (z = 0; z < 2; z++)

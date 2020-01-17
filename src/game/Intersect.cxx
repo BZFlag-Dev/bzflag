@@ -927,7 +927,7 @@ bool testRayHitsAxisBox(const Ray* ray, const Extents& exts,
     int a;
     const float* const o = ray->getOrigin();
     const float* const v = ray->getDirection();
-    const float* extents[2] = { exts.mins, exts.maxs };
+    const glm::vec3 extents[2] = { exts.mins, exts.maxs };
     int zone[3];
     bool inside = true;
 

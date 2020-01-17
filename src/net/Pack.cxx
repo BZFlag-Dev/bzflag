@@ -128,6 +128,22 @@ void*           nboPackVector(void* b, const float *v)
     return (void*) (((char*)b)+3*sizeof(uint32_t));
 }
 
+void*           nboPackVector(void* b, const glm::vec3 &v)
+{
+    // hope that float is a 4 byte IEEE 754 standard encoding
+    floatintuni u;
+    uint32_t data[3];
+
+    for (int i=0; i<3; i++)
+    {
+        u.floatval = v[i];
+        data[i] = (uint32_t)htonl(u.intval);
+    }
+
+    ::memcpy( b, data, 3*sizeof(uint32_t));
+    return (void*) (((char*)b)+3*sizeof(uint32_t));
+}
+
 void*           nboPackString(void* b, const void* m, int len)
 {
     if (!m || len == 0) return b;
@@ -272,6 +288,33 @@ const void*     nboUnpackFloat(const void* b, float& v)
 }
 
 const void*     nboUnpackVector(const void* b, float *v)
+{
+    if (ErrorChecking)
+    {
+        if (Length < sizeof(float[3]))
+        {
+            Error = true;
+            v[0] = v[1] = v[2] = 0.0f;
+            return b;
+        }
+        else
+            Length -= sizeof(float[3]);
+    }
+    // hope that float is a 4 byte IEEE 754 standard encoding
+    uint32_t data[3];
+    floatintuni u;
+    ::memcpy( data, b, 3*sizeof(uint32_t));
+
+    for (int i=0; i<3; i++)
+    {
+        u.intval = (uint32_t)ntohl(data[i]);
+        v[i] = u.floatval;
+    }
+
+    return (const char*)b + 3*sizeof(float);
+}
+
+const void* nboUnpackVector(const void* b, glm::vec3 &v)
 {
     if (ErrorChecking)
     {

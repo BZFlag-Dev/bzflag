@@ -1269,7 +1269,7 @@ void SceneRenderer::getLights()
 }
 
 
-void SceneRenderer::disableLights(const float mins[3], const float maxs[3])
+void SceneRenderer::disableLights(const glm::vec3 &mins, const glm::vec3 &maxs)
 {
     // temporarily turn off non-applicable lights for big meshes
     for (int i = 0; i < dynamicLights; i++)

@@ -125,7 +125,7 @@ public:
     void      addFlareLight(const float* pos, const float* color);
 
     // temporarily turn off non-applicable lights for big meshes
-    void      disableLights(const float mins[3], const float maxs[3]);
+    void      disableLights(const glm::vec3 &mins, const glm::vec3 &maxs);
     void      reenableLights();
 
     void      setupSun(); // setup sun lighting params

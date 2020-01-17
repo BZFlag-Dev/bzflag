@@ -16,6 +16,9 @@
 // implementation wrappers for all the bzf_ API functions
 #include "bzfsAPIWorld.h"
 
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Obstacle.h"
 #include "ObstacleMgr.h"
 //-----------------------------
@@ -46,8 +49,8 @@ void setSolidObjectFromObstacle(bz_APISolidWorldObject_V1* object, const Obstacl
 
     const Extents& extents = obstacle->getExtents();
 
-    memcpy(object->maxAABBox, extents.maxs, sizeof(float) * 3);
-    memcpy(object->minAABBox, extents.mins, sizeof(float) * 3);
+    object->maxAABBox = extents.maxs;
+    object->minAABBox = extents.mins;
 }
 
 //-------------------------------------------------------------------------
@@ -128,8 +131,8 @@ bz_APISolidWorldObject_V1::bz_APISolidWorldObject_V1(const void* objPtr) : bz_AP
     type = bz_eWorldObjectType::SolidObject;
 
     memset(center, 0, sizeof(float) * 3);
-    memset(maxAABBox, 0, sizeof(float) * 3);
-    memset(minAABBox, 0, sizeof(float) * 3);
+    maxAABBox = glm::vec3(0.0f);
+    minAABBox = glm::vec3(0.0f);
     memset(rotation, 0, sizeof(float) * 3);
     memset(maxBBox, 0, sizeof(float) * 3);
     memset(minBBox, 0, sizeof(float) * 3);

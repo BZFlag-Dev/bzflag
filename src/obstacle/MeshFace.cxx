@@ -186,7 +186,7 @@ void MeshFace::finalize()
 
     // setup extents
     for (v = 0; v < vertexCount; v++)
-        extents.expandToPoint(vertices[v]);
+        extents.expandToPoint(glm::make_vec3(vertices[v]));
 
     // setup fake obstacle parameters
     pos[0] = (extents.maxs[0] + extents.mins[0]) / 2.0f;

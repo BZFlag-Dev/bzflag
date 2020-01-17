@@ -123,8 +123,8 @@ protected:
 public:
     typedef struct
     {
-        float mins[3];
-        float maxs[3];
+        glm::vec3 mins;
+        glm::vec3 maxs;
     } copyExtents;
 
 protected:

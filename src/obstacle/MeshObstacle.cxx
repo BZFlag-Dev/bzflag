@@ -979,7 +979,7 @@ void MeshObstacle::printOBJ(std::ostream& out, const std::string& UNUSED(indent)
     out << "# normals = " << normalCount << std::endl;
     out << "# texcoords = " << texcoordCount << std::endl;
 
-    const float* tmp;
+    glm::vec3 tmp;
     tmp = extents.mins;
     out << "# mins = " << tmp[0] << " " << tmp[1] << " " << tmp[2] << std::endl;
     tmp = extents.maxs;

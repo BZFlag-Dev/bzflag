@@ -64,7 +64,10 @@ public:
     virtual void    notifyStyleChange();
 
     const GLfloat*  getSphere() const;
-    const glm::vec3 getCenter() const { return glm::make_vec3(sphere); };
+    const glm::vec3 getCenter() const
+    {
+        return glm::make_vec3(sphere);
+    };
     const Extents&  getExtents() const;
     virtual int     getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;

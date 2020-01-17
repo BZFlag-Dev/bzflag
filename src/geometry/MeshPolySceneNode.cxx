@@ -250,7 +250,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
 
     // record extents info
     for (i = 0; i < count; i++)
-        extents.expandToPoint(vertices[i]);
+        extents.expandToPoint(glm::make_vec3(vertices[i]));
 
     return;
 }

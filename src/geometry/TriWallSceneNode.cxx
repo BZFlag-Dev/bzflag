@@ -249,7 +249,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     // record extents info
     for (int i = 0; i < 3; i++)
     {
-        const float* point = getVertex(i);
+        const auto point = glm::make_vec3(getVertex(i));
         extents.expandToPoint(point);
     }
 

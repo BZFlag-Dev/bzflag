@@ -98,7 +98,7 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
         for (int v = 0; v < 8; v++)
         {
             xformTool->modifyVertex(c[v]);
-            extents.expandToPoint(c[v]);
+            extents.expandToPoint(glm::make_vec3(c[v]));
         }
         // lengthPerPixel adjustment
         lengthAdj = +MAXFLOAT;
