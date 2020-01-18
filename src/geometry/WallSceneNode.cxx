@@ -34,7 +34,6 @@ WallSceneNode::WallSceneNode() : numLODs(0),
     elementAreas(NULL),
     style(0)
 {
-    noPlane      = false;
     dynamicColor = NULL;
     color[3] = 1.0f;
     modulateColor[3] = 1.0f;
@@ -61,6 +60,10 @@ WallSceneNode::~WallSceneNode()
 {
     // free element area table
     delete[] elementAreas;
+}
+
+const GLfloat* WallSceneNode::getPlane() const {
+    return plane;
 }
 
 void            WallSceneNode::setNumLODs(int num, float* areas)

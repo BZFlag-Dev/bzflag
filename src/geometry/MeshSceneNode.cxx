@@ -71,10 +71,6 @@ MeshSceneNode::MeshSceneNode(const MeshObstacle* _mesh)
     if (drawMgr == NULL)
         return;
 
-    // disable the plane
-    noPlane = true;
-    plane[0] = plane[1] = plane[2] = plane[3] = 0.0f;
-
     // setup the extents, sphere, and lengthPerPixel adjustment
     float lengthAdj = 1.0f;
     const Extents& diExts = drawInfo->getExtents();
