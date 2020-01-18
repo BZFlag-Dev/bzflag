@@ -41,7 +41,6 @@ SceneNode::SceneNode()
     setCenter(0.0f, 0.0f, 0.0f);
     setRadius(0.0f);
 
-    noPlane = true;
     occluder = false;
     octreeState = OctreeCulled;
 
@@ -165,6 +164,11 @@ int SceneNode::getVertexCount () const
 }
 
 const GLfloat* SceneNode::getVertex (int) const
+{
+    return NULL;
+}
+
+const GLfloat* SceneNode::getPlane() const
 {
     return NULL;
 }

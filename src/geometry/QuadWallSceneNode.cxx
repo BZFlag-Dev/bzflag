@@ -297,11 +297,11 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
     areas[level] = area;
     nodes[level++] = new Geometry(this, uElements, vElements,
                                   base, uEdge, vEdge,
-                                  getPlane(), uOffset, vOffset,
+                                  plane, uOffset, vOffset,
                                   uRepeats, vRepeats, fixedUVs);
     shadowNode = new Geometry(this, uElements, vElements,
                               base, uEdge, vEdge,
-                              getPlane(), uOffset, vOffset,
+                              plane, uOffset, vOffset,
                               uRepeats, vRepeats, fixedUVs);
     shadowNode->setStyle(0);
 
@@ -319,7 +319,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
                 areas[level] = area / (float)uElements;
                 nodes[level++] = new Geometry(this, uElements, vElements,
                                               base, uEdge, vEdge,
-                                              getPlane(), uOffset, vOffset,
+                                              plane, uOffset, vOffset,
                                               uRepeats, vRepeats, fixedUVs);
 
             }
@@ -334,7 +334,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
                 areas[level] = area / (float)vElements;
                 nodes[level++] = new Geometry(this, uElements, vElements,
                                               base, uEdge, vEdge,
-                                              getPlane(), uOffset, vOffset,
+                                              plane, uOffset, vOffset,
                                               uRepeats, vRepeats, fixedUVs);
 
             }
@@ -351,7 +351,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
         areas[level] = area;
         nodes[level++] = new Geometry(this, uElements, vElements,
                                       base, uEdge, vEdge,
-                                      getPlane(), uOffset, vOffset,
+                                      plane, uOffset, vOffset,
                                       uRepeats, vRepeats, fixedUVs);
     }
 
@@ -421,7 +421,7 @@ bool            QuadWallSceneNode::inAxisBox(const Extents& exts) const
     memcpy (vertices[2], nodes[0]->getVertex(2), sizeof(float[3]));
     memcpy (vertices[3], nodes[0]->getVertex(3), sizeof(float[3]));
 
-    return testPolygonInAxisBox (4, vertices, getPlane(), exts);
+    return testPolygonInAxisBox (4, vertices, plane, exts);
 }
 
 int         QuadWallSceneNode::getVertexCount () const

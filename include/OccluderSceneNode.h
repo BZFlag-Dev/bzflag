@@ -51,6 +51,9 @@ public:
     {
         return vertexCount;
     }
+
+    const GLfloat* getPlane() const override;
+
     const GLfloat* getVertex (int vertex) const
     {
         return vertices[vertex];
@@ -59,6 +62,7 @@ public:
 private:
     int vertexCount;
     GLfloat3* vertices;
+    GLfloat     plane[4];   // unit normal, distance to origin
 };
 
 

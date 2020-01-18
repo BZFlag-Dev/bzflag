@@ -65,7 +65,7 @@ public:
     const Extents&  getExtents() const;
     virtual int     getVertexCount () const;
     virtual const GLfloat* getVertex (int vertex) const;
-    const GLfloat*      getPlane() const;
+    virtual const GLfloat* getPlane() const;
     virtual GLfloat getDistance(const GLfloat* eye) const; // for BSP
 
     virtual bool    inAxisBox (const Extents& exts) const;
@@ -144,8 +144,6 @@ private:
     static void         noStipple(GLfloat);
 
 protected:
-    GLfloat     plane[4];   // unit normal, distance to origin
-    bool        noPlane;
     bool        occluder;
     Extents     extents;
 private:
@@ -153,13 +151,6 @@ private:
     static bool  colorOverride;
     static void     (*stipple)(GLfloat);
 };
-
-inline const GLfloat*   SceneNode::getPlane() const
-{
-    if (noPlane)
-        return NULL;
-    return plane;
-}
 
 inline const GLfloat*   SceneNode::getSphere() const
 {
