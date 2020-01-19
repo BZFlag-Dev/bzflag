@@ -162,8 +162,6 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
     area[0] = 0.5f * fabsf(area[0]) / normal[ignoreAxis];
     node = new Geometry(this, vertex, uv, normal);
     shadowNode = new Geometry(this, vertex, uv, normal);
-    node = new Geometry(this, vertex, uv, plane);
-    shadowNode = new Geometry(this, vertex, uv, plane);
     shadowNode->setStyle(0);
 
     // set lod info
