@@ -33,7 +33,7 @@ class OpaqueRenderNode : public RenderNode
 public:
     OpaqueRenderNode(MeshDrawMgr* drawMgr,
                      GLfloat *xformMatrix, bool normalize,
-                     const GLfloat* color, int lod, int set,
+                     const glm::vec4 *color, int lod, int set,
                      const Extents* exts, int triangles);
     void render();
     void renderRadar();
@@ -49,7 +49,7 @@ private:
     GLfloat* xformMatrix;
     bool normalize;
     int lod, set;
-    const GLfloat *color;
+    const glm::vec4 *color;
     const Extents* exts;
     int triangles;
 };
@@ -60,7 +60,7 @@ class AlphaGroupRenderNode : public OpaqueRenderNode
 public:
     AlphaGroupRenderNode(MeshDrawMgr* drawMgr,
                          GLfloat *xformMatrix, bool normalize,
-                         const GLfloat* color, int lod, int set,
+                         const glm::vec4 *color, int lod, int set,
                          const Extents* exts, const float pos[3],
                          int triangles);
     const glm::vec3 getPosition() const override;

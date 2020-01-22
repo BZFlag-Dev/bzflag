@@ -301,8 +301,8 @@ const glm::vec3 MeshPolySceneNode::getVertex(int i) const
 void MeshPolySceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     node.setStyle(getStyle());
-    const GLfloat* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+    const glm::vec4 *dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f))
         renderer.addRenderNode(&node, getWallGState());
     return;
 }
@@ -312,8 +312,8 @@ void MeshPolySceneNode::addShadowNodes(SceneRenderer& renderer)
 {
     if (!noShadow)
     {
-        const GLfloat* dyncol = getDynamicColor();
-        if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+        const glm::vec4 *dyncol = getDynamicColor();
+        if ((dyncol == NULL) || (dyncol->a != 0.0f))
             renderer.addShadowNode(&node);
     }
     return;

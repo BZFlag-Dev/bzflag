@@ -30,7 +30,7 @@
 
 OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
                                    GLfloat *_xformMatrix, bool _normalize,
-                                   const GLfloat* _color,
+                                   const glm::vec4 *_color,
                                    int _lod, int _set,
                                    const Extents* _exts, int tris) :
     color(_color)
@@ -52,7 +52,7 @@ void OpaqueRenderNode::render()
         RENDERER.disableLights(exts->mins, exts->maxs);
 
     // set the color
-    myColor4fv(glm::make_vec4(color));
+    myColor4fv(*color);
 
     // do the transformation
     glPushMatrix();
@@ -114,7 +114,7 @@ const glm::vec3 OpaqueRenderNode::getPosition() const
 AlphaGroupRenderNode::AlphaGroupRenderNode(MeshDrawMgr* _drawMgr,
         GLfloat *_xformMatrix,
         bool _normalize,
-        const GLfloat* _color,
+        const glm::vec4 *_color,
         int _lod, int _set,
         const Extents* _exts,
         const GLfloat _pos[3],

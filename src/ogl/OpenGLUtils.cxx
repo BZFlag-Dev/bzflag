@@ -118,7 +118,7 @@ void bzMat2gstate(const BzMaterial* bzmat, OpenGLGState& gstate,
     const DynamicColor* dyncol = DYNCOLORMGR.getColor(bzmat->getDynamicColor());
     if (dyncol != NULL)
     {
-        const float* c = dyncol->getColor();
+        const glm::vec4 c = *dyncol->getColor();
         // Do we free it ?
         colorPtr = new glm::vec4(c[0],c[1],c[2],c[3]);
         colorAlpha = dyncol->canHaveAlpha(); // override

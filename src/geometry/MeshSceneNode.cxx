@@ -243,7 +243,7 @@ void MeshSceneNode::addRenderNodes(SceneRenderer& renderer)
     for (int i = 0; i < lod.count; i++)
     {
         SetNode& set = lod.sets[i];
-        if (set.meshMat.colorPtr[3] != 0.0f)
+        if (set.meshMat.colorPtr->a != 0.0f)
             renderer.addRenderNode(set.node, &set.meshMat.gstate);
     }
 
@@ -260,7 +260,7 @@ void MeshSceneNode::addShadowNodes(SceneRenderer& renderer)
     {
         SetNode& set = lod.sets[i];
         const MeshMaterial& mat = set.meshMat;
-        if (mat.drawShadow && (mat.colorPtr[3] != 0.0f))
+        if (mat.drawShadow && (mat.colorPtr->a != 0.0f))
             renderer.addShadowNode(set.node);
     }
     return;
@@ -397,7 +397,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     // get the references
     const BzMaterial*       bzmat = mat->bzmat;
     OpenGLGState&   gstate = mat->gstate;
-    GLfloat*      color = mat->color;
+    glm::vec4 *color = &mat->color;
 
     OpenGLGStateBuilder builder;
     TextureManager &tm = TextureManager::instance();
@@ -470,14 +470,14 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     if (useDiffuseColor)
     {
         memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
-        colorAlpha = (color[3] != 1.0f);
+        colorAlpha = (color->a != 1.0f);
     }
     else
     {
         // set it to white, this should only happen when
         // we've gotten a user texture, and there's a
         // request to not use the material's diffuse color.
-        color[0] = color[1] = color[2] = color[3] = 1.0f;
+        *color = glm::vec4(1.0f);
     }
 
     // dynamic color

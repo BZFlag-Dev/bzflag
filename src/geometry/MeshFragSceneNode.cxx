@@ -408,8 +408,8 @@ bool MeshFragSceneNode::inAxisBox (const Extents& exts) const
 void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
 {
     renderNode.setStyle(getStyle());
-    const GLfloat* dyncol = getDynamicColor();
-    if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+    const glm::vec4 *dyncol = getDynamicColor();
+    if ((dyncol == NULL) || (dyncol->a != 0.0f))
         renderer.addRenderNode(&renderNode, getWallGState());
     return;
 }
@@ -419,8 +419,8 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
 {
     if (!noShadow)
     {
-        const GLfloat* dyncol = getDynamicColor();
-        if ((dyncol == NULL) || (dyncol[3] != 0.0f))
+        const glm::vec4 *dyncol = getDynamicColor();
+        if ((dyncol == NULL) || (dyncol->a != 0.0f))
             renderer.addShadowNode(&renderNode);
     }
     return;

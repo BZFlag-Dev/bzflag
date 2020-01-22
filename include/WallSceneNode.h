@@ -35,7 +35,7 @@ public:
 
     const glm::vec4 getPlane() const override;
     const GLfloat*  getColor() const;
-    const GLfloat*  getDynamicColor() const;
+    const glm::vec4 *getDynamicColor() const;
     const GLfloat*  getModulateColor() const;
     const GLfloat*  getLightedColor() const;
     const GLfloat*  getLightedModulateColor() const;
@@ -57,7 +57,7 @@ public:
     void        setMaterial(const OpenGLMaterial&);
     void        setTexture(const int);
     void        setTextureMatrix(const GLfloat* texmat);
-    void        setDynamicColor(const float* color);
+    void        setDynamicColor(const glm::vec4 *color);
     void        setBlending(bool);
     void        setSphereMap(bool);
     void        setNoCulling(bool);
@@ -99,7 +99,7 @@ private:
 private:
     int         numLODs;
     float*      elementAreas;
-    const GLfloat*  dynamicColor;
+    const glm::vec4 *dynamicColor;
     GLfloat     color[4];
     GLfloat     modulateColor[4];
     GLfloat     lightedColor[4];
@@ -128,7 +128,7 @@ inline const GLfloat* WallSceneNode::getColor() const
 {
     return color;
 }
-inline const GLfloat* WallSceneNode::getDynamicColor() const
+inline const glm::vec4 *WallSceneNode::getDynamicColor() const
 {
     return dynamicColor;
 }
