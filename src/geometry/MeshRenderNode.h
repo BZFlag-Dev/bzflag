@@ -49,7 +49,7 @@ private:
     GLfloat* xformMatrix;
     bool normalize;
     int lod, set;
-    const glm::vec4 color;
+    const GLfloat *color;
     const Extents* exts;
     int triangles;
 };

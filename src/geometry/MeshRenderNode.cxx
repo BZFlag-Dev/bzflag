@@ -33,7 +33,7 @@ OpaqueRenderNode::OpaqueRenderNode(MeshDrawMgr* _drawMgr,
                                    const GLfloat* _color,
                                    int _lod, int _set,
                                    const Extents* _exts, int tris) :
-    color(glm::make_vec4(_color))
+    color(_color)
 {
     drawMgr = _drawMgr;
     xformMatrix = _xformMatrix;
@@ -52,7 +52,7 @@ void OpaqueRenderNode::render()
         RENDERER.disableLights(exts->mins, exts->maxs);
 
     // set the color
-    myColor4fv(color);
+    myColor4fv(glm::make_vec4(color));
 
     // do the transformation
     glPushMatrix();
