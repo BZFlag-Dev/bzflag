@@ -3339,7 +3339,7 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
     }
 }
 
-BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
+BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[3] )
 {
     TimeKeeper start = TimeKeeper::getCurrent();
     float maxZ = bz_getWorldMaxHeight();
