@@ -211,20 +211,11 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 #if defined(DEBUG_RENDERING)
     option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("Hidden Line:");
-    option->setCallback(callback, "a");
-    options = &option->getList();
-    options->push_back(std::string("Off"));
-    options->push_back(std::string("On"));
-    option->update();
-    listHUD.push_back(option);
-
-    option = new HUDuiList;
-    option->setFontFace(fontFace);
     option->setLabel("Wireframe:");
     option->setCallback(callback, "b");
     options = &option->getList();
     options->push_back(std::string("Off"));
+    options->push_back(std::string("Hidden Line"));
     options->push_back(std::string("On"));
     option->update();
     listHUD.push_back(option);
@@ -418,8 +409,7 @@ void            DisplayMenu::resize(int _width, int _height)
         
         
 #if defined(DEBUG_RENDERING)
-        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : 0);
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("wireframe") ? 1 : 0);
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : (renderer->useWireframe() ? 2 : 0));
         ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
                                              : 0);
         ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
@@ -515,11 +505,9 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
         sceneRenderer->notifyStyleChange();
         break;
     }
-    case 'a':
-        sceneRenderer->setHiddenLine(list->getIndex() != 0);
-        break;
     case 'b':
-        BZDB.setBool("wireframe", (list->getIndex() != 0));
+        sceneRenderer->setHiddenLine(list->getIndex() == 1);
+        sceneRenderer->setWireframe(list->getIndex() == 2);
         break;
     case 'c':
         sceneRenderer->setDepthComplexity(list->getIndex() != 0);
