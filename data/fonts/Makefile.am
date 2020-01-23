@@ -5,6 +5,8 @@ dist_font_DATA = \
 	DejaVuSansCondensedBold_6.png \
 	DejaVuSansCondensedBold_8.fmt \
 	DejaVuSansCondensedBold_8.png \
+	DejaVuSansCondensedBold_10.fmt \
+	DejaVuSansCondensedBold_10.png \
 	DejaVuSansCondensedBold_12.fmt \
 	DejaVuSansCondensedBold_12.png \
 	DejaVuSansCondensedBold_16.fmt \
