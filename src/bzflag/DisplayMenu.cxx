@@ -300,7 +300,12 @@ void            DisplayMenu::resize(int _width, int _height)
 
     // use a big font for title, smaller font for the rest
     const float titleFontSize = (float)_height / 15.0f;
-    const float fontSize = (float)_height / 45.0f;
+#if defined(DEBUG_RENDERING)
+    const float fontSize = (float)_height / 55.0f;
+#else
+    const float fontSize = (float)_height / 40.0f;
+#endif
+
     FontManager &fm = FontManager::instance();
     int fontFace = MainMenu::getFontFace();
 
