@@ -176,7 +176,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->update();
     listHUD.push_back(option);
 
-    
+
 
     if (((BzfWindow*)getMainWindow()->getWindow())->hasGammaControl())
     {
@@ -206,7 +206,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
     option->update();
     listHUD.push_back(option);
 
-    
+
 
 #if defined(DEBUG_RENDERING)
     option = new HUDuiList;
@@ -404,17 +404,12 @@ void            DisplayMenu::resize(int _width, int _height)
 
         // energy saver
         ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveEnergy"));
-        
-        
-        
-        
+
 #if defined(DEBUG_RENDERING)
         ((HUDuiList*)listHUD[i++])->setIndex(renderer->useHiddenLine() ? 1 : (renderer->useWireframe() ? 2 : 0));
-        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1
-                                             : 0);
+        ((HUDuiList*)listHUD[i++])->setIndex(renderer->useDepthComplexity() ? 1 : 0);
         ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCullingGrid ? 1 : 0);
-        ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1
-                                             : 0);
+        ((HUDuiList*)listHUD[i++])->setIndex(BZDBCache::showCollisionGrid ? 1 : 0);
 #endif
     }
 }
