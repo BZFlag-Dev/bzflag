@@ -3339,9 +3339,11 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
     }
 }
 
-BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
+BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
 {
     TimeKeeper start = TimeKeeper::getCurrent();
+    float maxZ = bz_getWorldMaxHeight();
+    int maxXY = bz_getBZDBInt("_worldSize") / 2;
     int tries = 0;
 
     do {
@@ -3351,15 +3353,21 @@ BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos
 
             if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime"))
             {
-                randomPos[2] = obj->zMax;
-                logDebugMessage(1, "Warning: bz_getSpawnPointWithin ran out of time, just dropping the sucker in\n");
-                break;
+                return false;
             }
         }
 
         bz_getRandomPoint(obj, randomPos);
         ++tries;
-    } while (!DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax));
+    } while (
+        !DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax) ||
+        abs(randomPos[0]) >= maxXY ||
+        abs(randomPos[1]) >= maxXY ||
+        randomPos[2] < 0 ||
+        randomPos[2] >= maxZ
+    );
+
+    return true;
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
