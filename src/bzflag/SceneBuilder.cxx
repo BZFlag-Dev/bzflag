@@ -51,30 +51,30 @@
 
 static const GLfloat    black[3] = { 0.0f, 0.0f, 0.0f };
 
-const GLfloat       SceneDatabaseBuilder::wallColors[4][4] =
+const glm::vec4 SceneDatabaseBuilder::wallColors[4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.4f, 0.4f, 0.4f, 1.0f },
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.6f, 0.6f, 0.6f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::wallModulateColors[4][4] =
+const glm::vec4 SceneDatabaseBuilder::wallModulateColors[4] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.4f, 0.4f, 0.4f, 1.0f },
     { 0.5f, 0.5f, 0.5f, 1.0f },
     { 0.6f, 0.6f, 0.6f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::wallLightedColors[1][4] =
+const glm::vec4 SceneDatabaseBuilder::wallLightedColors[1] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::wallLightedModulateColors[1][4] =
+const glm::vec4 SceneDatabaseBuilder::wallLightedModulateColors[1] =
 {
     { 0.5f, 0.5f, 0.5f, 1.0f }
 };
 
-const GLfloat       SceneDatabaseBuilder::boxColors[6][4] =
+const glm::vec4 SceneDatabaseBuilder::boxColors[6] =
 {
     { 0.75f, 0.25f, 0.25f, 1.0f },
     { 0.63f, 0.25f, 0.25f, 1.0f },
@@ -83,7 +83,7 @@ const GLfloat       SceneDatabaseBuilder::boxColors[6][4] =
     { 0.875f, 0.5f, 0.5f, 1.0f },
     { 0.275f, 0.2f, 0.2f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::boxModulateColors[6][4] =
+const glm::vec4 SceneDatabaseBuilder::boxModulateColors[6] =
 {
     { 0.75f, 0.75f, 0.75f, 1.0f },
     { 0.63f, 0.63f, 0.63f, 1.0f },
@@ -92,7 +92,7 @@ const GLfloat       SceneDatabaseBuilder::boxModulateColors[6][4] =
     { 0.875f, 0.875f, 0.875f, 1.0f },
     { 0.375f, 0.375f, 0.375f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::boxLightedColors[6][4] =
+const glm::vec4 SceneDatabaseBuilder::boxLightedColors[6] =
 {
     { 0.75f, 0.25f, 0.25f, 1.0f },
     { 0.75f, 0.25f, 0.25f, 1.0f },
@@ -101,7 +101,7 @@ const GLfloat       SceneDatabaseBuilder::boxLightedColors[6][4] =
     { 0.875f, 0.5f, 0.5f, 1.0f },
     { 0.875f, 0.5f, 0.5f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::boxLightedModulateColors[6][4] =
+const glm::vec4 SceneDatabaseBuilder::boxLightedModulateColors[6] =
 {
     { 0.75f, 0.75f, 0.75f, 1.0f },
     { 0.75f, 0.75f, 0.75f, 1.0f },
@@ -111,7 +111,7 @@ const GLfloat       SceneDatabaseBuilder::boxLightedModulateColors[6][4] =
     { 0.875f, 0.875f, 0.875f, 1.0f }
 };
 
-const GLfloat       SceneDatabaseBuilder::pyramidColors[5][4] =
+const glm::vec4 SceneDatabaseBuilder::pyramidColors[5] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.13f, 0.13f, 0.51f, 1.0f },
@@ -120,7 +120,7 @@ const GLfloat       SceneDatabaseBuilder::pyramidColors[5][4] =
     { 0.175f, 0.175f, 0.35f, 1.0f }
 };
 
-const GLfloat       SceneDatabaseBuilder::pyramidModulateColors[5][4] =
+const glm::vec4 SceneDatabaseBuilder::pyramidModulateColors[5] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.13f, 0.13f, 0.51f, 1.0f },
@@ -128,7 +128,7 @@ const GLfloat       SceneDatabaseBuilder::pyramidModulateColors[5][4] =
     { 0.375f, 0.375f, 0.75f, 1.0f },
     { 0.175f, 0.175f, 0.35f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::pyramidLightedColors[5][4] =
+const glm::vec4 SceneDatabaseBuilder::pyramidLightedColors[5] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f },
@@ -136,7 +136,7 @@ const GLfloat       SceneDatabaseBuilder::pyramidLightedColors[5][4] =
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f }
 };
-const GLfloat       SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] =
+const glm::vec4 SceneDatabaseBuilder::pyramidLightedModulateColors[5] =
 {
     { 0.25f, 0.25f, 0.63f, 1.0f },
     { 0.25f, 0.25f, 0.63f, 1.0f },
@@ -145,25 +145,25 @@ const GLfloat       SceneDatabaseBuilder::pyramidLightedModulateColors[5][4] =
     { 0.25f, 0.25f, 0.63f, 1.0f }
 };
 
-const GLfloat       SceneDatabaseBuilder::teleporterColors[3][4] =
+const glm::vec4 SceneDatabaseBuilder::teleporterColors[3] =
 {
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 0.9f, 0.8f, 0.0f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat       SceneDatabaseBuilder::teleporterModulateColors[3][4] =
+const glm::vec4 SceneDatabaseBuilder::teleporterModulateColors[3] =
 {
     { 1.0f, 1.0f, 1.0f, 1.0f },
     { 0.9f, 0.9f, 0.9f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat       SceneDatabaseBuilder::teleporterLightedColors[3][4] =
+const glm::vec4 SceneDatabaseBuilder::teleporterLightedColors[3] =
 {
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 1.0f, 0.875f, 0.0f, 1.0f },
     { 0.0f, 0.0f, 0.0f, 0.5f }
 };
-const GLfloat       SceneDatabaseBuilder::teleporterLightedModulateColors[3][4] =
+const glm::vec4 SceneDatabaseBuilder::teleporterLightedModulateColors[3] =
 {
     { 1.0f, 1.0f, 1.0f, 1.0f },
     { 1.0f, 1.0f, 1.0f, 1.0f },

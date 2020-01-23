@@ -1344,7 +1344,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         if (light.getOnlyReal())
             continue;
 
-        const GLfloat* pos = light.getPosition();
+        const auto pos = light.getPosition();
         const GLfloat* lightColor = light.getColor();
         const GLfloat* atten = light.getAttenuation();
 
@@ -1509,7 +1509,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             continue;
 
         // get the light parameters
-        const GLfloat* pos = light.getPosition();
+        const auto pos = light.getPosition();
         const GLfloat* lightColor = light.getColor();
         const GLfloat* atten = light.getAttenuation();
 

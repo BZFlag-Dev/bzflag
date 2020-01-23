@@ -247,7 +247,7 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     faceCount = _faceCount;
 
     // disable the plane
-    static const float fakePlane[4] = {0.0f, 0.0f, 1.0f, 0.0f};
+    static const auto fakePlane = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
     setPlane(fakePlane);
 
     const BzMaterial* bzmat = faces[0]->getMaterial();

@@ -111,7 +111,7 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     if (!extents.touches(exts))
         return false;
 
-    return testPolygonInAxisBox (vertexCount, vertices, glm::value_ptr(plane), exts);
+    return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
 }
 
 

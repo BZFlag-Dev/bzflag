@@ -22,6 +22,7 @@
 
 // system headers
 #include <vector>
+#include <glm/gtc/type_ptr.hpp>
 
 // common headers
 #include "bzfgl.h"
@@ -36,7 +37,7 @@ public:
     ~OpenGLLight();
     OpenGLLight&    operator=(const OpenGLLight&);
 
-    const GLfloat*  getPosition() const;
+    const glm::vec3 getPosition() const;
     const GLfloat*  getColor() const;
     const GLfloat*  getAttenuation() const;
     GLfloat     getMaxDist() const;
@@ -86,9 +87,9 @@ private:
 // OpenGLLight
 //
 
-inline const GLfloat*   OpenGLLight::getPosition() const
+inline const glm::vec3 OpenGLLight::getPosition() const
 {
-    return pos;
+    return glm::make_vec3(pos);
 }
 
 inline const GLfloat*   OpenGLLight::getColor() const

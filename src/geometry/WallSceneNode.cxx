@@ -10,6 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 // interface headers
 #include "WallSceneNode.h"
 #include "PolyWallSceneNode.h"
@@ -19,6 +21,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "StateDatabase.h"
@@ -35,13 +38,6 @@ WallSceneNode::WallSceneNode() : numLODs(0),
     style(0)
 {
     dynamicColor = NULL;
-    color[3] = 1.0f;
-    modulateColor[3] = 1.0f;
-    lightedColor[3] = 1.0f;
-    lightedModulateColor[3] = 1.0f;
-    color[3] = 1.0f;
-    color[3] = 1.0f;
-    color[3] = 1.0f;
     setColor(1.0f, 1.0f, 1.0f);
     setModulateColor(1.0f, 1.0f, 1.0f);
     setLightedColor(1.0f, 1.0f, 1.0f);
@@ -64,7 +60,7 @@ WallSceneNode::~WallSceneNode()
 
 const glm::vec4 WallSceneNode::getPlane() const
 {
-    return glm::make_vec4(plane);
+    return plane;
 }
 
 void            WallSceneNode::setNumLODs(int num, float* areas)
@@ -73,27 +69,24 @@ void            WallSceneNode::setNumLODs(int num, float* areas)
     elementAreas = areas;
 }
 
-void            WallSceneNode::setPlane(const GLfloat _plane[4])
+void WallSceneNode::setPlane(const glm::vec4 &_plane)
 {
     // get normalization factor
-    const float n = 1.0f / sqrtf((_plane[0] * _plane[0]) +
-                                 (_plane[1] * _plane[1]) +
-                                 (_plane[2] * _plane[2]));
+    normal = glm::vec3(_plane);
+
+    const float n = glm::inversesqrt(glm::length2(normal));
+
+    normal /= n;
 
     // store normalized plane equation
-    plane[0] = n * _plane[0];
-    plane[1] = n * _plane[1];
-    plane[2] = n * _plane[2];
-    plane[3] = n * _plane[3];
+    plane = n * _plane;
 }
 
 bool            WallSceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
     const auto eye = frustum.getEye();
-    const float eyedot = (eye[0] * plane[0]) +
-                         (eye[1] * plane[1]) +
-                         (eye[2] * plane[2]) + plane[3];
+    const float eyedot = glm::dot(eye, normal) + plane.w;
     if (eyedot <= 0.0f)
         return true;
 
@@ -107,15 +100,13 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
     const int planeCount = frustum.getPlaneCount();
     int i;
     float d[6], d2[6];
-    const auto &mySphere = getCenter();
+    const auto mySphere = glm::vec4(getCenter(), 1.0f);
     const auto r = getRadius2();
     bool inside = true;
     for (i = 0; i < planeCount; i++)
     {
         const auto norm = frustum.getSide(i);
-        d[i] = (mySphere[0] * norm[0]) +
-               (mySphere[1] * norm[1]) +
-               (mySphere[2] * norm[2]) + norm[3];
+        d[i] = glm::dot(mySphere, norm);
         if (d[i] < 0.0f)
         {
             d2[i] = d[i] * d[i];
@@ -138,8 +129,8 @@ bool            WallSceneNode::cull(const ViewFrustum& frustum) const
     {
         if (d[i] >= 0.0f)
             continue;
-        const auto norm = frustum.getSide(i);
-        const GLfloat c = norm[0]*plane[0] + norm[1]*plane[1] + norm[2]*plane[2];
+        const auto norm = glm::vec3(frustum.getSide(i));
+        const GLfloat c = glm::dot(norm, normal);
         if (d2[i] > r * (1.0f - c*c))
             return true;
     }
@@ -156,24 +147,21 @@ int         WallSceneNode::pickLevelOfDetail(
 
     int bestLOD = 0;
 
-    const auto &mySphere = getCenter();
+    const auto &myCenter = getCenter();
     const auto r = getRadius2();
     const int numLights = renderer.getNumLights();
     for (int i = 0; i < numLights; i++)
     {
-        const GLfloat* pos = renderer.getLight(i).getPosition();
+        const auto pos = renderer.getLight(i).getPosition();
 
         // get signed distance from plane
-        GLfloat pd = pos[0] * plane[0] + pos[1] * plane[1] +
-                     pos[2] * plane[2] + plane[3];
+        GLfloat pd = glm::dot(pos, normal) + plane.w;
 
         // ignore if behind wall
         if (pd < 0.0f) continue;
 
         // get squared distance from center of wall
-        GLfloat ld = (pos[0] - mySphere[0]) * (pos[0] - mySphere[0]) +
-                     (pos[1] - mySphere[1]) * (pos[1] - mySphere[1]) +
-                     (pos[2] - mySphere[2]) * (pos[2] - mySphere[2]);
+        GLfloat ld = glm::distance2(pos, myCenter);
 
         // pick representative distance
         GLfloat d = (ld > 1.5f * r) ? ld : pd * pd;
@@ -200,10 +188,9 @@ int         WallSceneNode::pickLevelOfDetail(
     return bestLOD;
 }
 
-GLfloat         WallSceneNode::getDistance(const GLfloat* eye) const
+GLfloat         WallSceneNode::getDistance(const glm::vec3 &eye) const
 {
-    const GLfloat d = plane[0] * eye[0] + plane[1] * eye[1] +
-                      plane[2] * eye[2] + plane[3];
+    const GLfloat d = glm::dot(eye, normal) + plane.w;
     return d * d;
 }
 
@@ -234,12 +221,9 @@ void            WallSceneNode::setSphereMap(bool sphereMapping)
     return;
 }
 
-void            WallSceneNode::setColor(const GLfloat* rgba)
+void WallSceneNode::setColor(const glm::vec4 &rgba)
 {
-    color[0] = rgba[0];
-    color[1] = rgba[1];
-    color[2] = rgba[2];
-    color[3] = rgba[3];
+    color = rgba;
 }
 
 void            WallSceneNode::setModulateColor(
@@ -251,12 +235,9 @@ void            WallSceneNode::setModulateColor(
     modulateColor[3] = a;
 }
 
-void            WallSceneNode::setModulateColor(const GLfloat* rgba)
+void WallSceneNode::setModulateColor(const glm::vec4 &rgba)
 {
-    modulateColor[0] = rgba[0];
-    modulateColor[1] = rgba[1];
-    modulateColor[2] = rgba[2];
-    modulateColor[3] = rgba[3];
+    modulateColor = rgba;
 }
 
 void            WallSceneNode::setLightedColor(
@@ -268,12 +249,9 @@ void            WallSceneNode::setLightedColor(
     lightedColor[3] = a;
 }
 
-void            WallSceneNode::setLightedColor(const GLfloat* rgba)
+void WallSceneNode::setLightedColor(const glm::vec4 &rgba)
 {
-    lightedColor[0] = rgba[0];
-    lightedColor[1] = rgba[1];
-    lightedColor[2] = rgba[2];
-    lightedColor[3] = rgba[3];
+    lightedColor = rgba;
 }
 
 void            WallSceneNode::setLightedModulateColor(
@@ -285,13 +263,9 @@ void            WallSceneNode::setLightedModulateColor(
     lightedModulateColor[3] = a;
 }
 
-void            WallSceneNode::setLightedModulateColor(
-    const GLfloat* rgba)
+void WallSceneNode::setLightedModulateColor(const glm::vec4 &rgba)
 {
-    lightedModulateColor[0] = rgba[0];
-    lightedModulateColor[1] = rgba[1];
-    lightedModulateColor[2] = rgba[2];
-    lightedModulateColor[3] = rgba[3];
+    lightedModulateColor = rgba;
 }
 
 void            WallSceneNode::setAlphaThreshold(float thresh)
@@ -408,41 +382,20 @@ void            WallSceneNode::setColor()
         switch (style)
         {
         case 0:
-            myColor4fv(glm::make_vec4(color));
+            myColor4fv(color);
             break;
         case 1:
-            myColor4fv(glm::make_vec4(lightedColor));
+            myColor4fv(lightedColor);
             break;
         case 2:
-            myColor4fv(glm::make_vec4(modulateColor));
+            myColor4fv(modulateColor);
             break;
         case 3:
-            myColor4fv(glm::make_vec4(lightedModulateColor));
+            myColor4fv(lightedModulateColor);
             break;
         }
     }
 }
-
-void WallSceneNode::splitEdge(float d1, float d2,
-                              const GLfloat* p1, const GLfloat* p2,
-                              const GLfloat* uv1, const GLfloat* uv2,
-                              GLfloat* p, GLfloat* uv) // const
-{
-    // compute fraction along edge where split occurs
-    float t1 = (d2 - d1);
-    if (t1 != 0.0f)   // shouldn't happen
-        t1 = -(d1 / t1);
-
-    // compute vertex
-    p[0] = p1[0] + (t1 * (p2[0] - p1[0]));
-    p[1] = p1[1] + (t1 * (p2[1] - p1[1]));
-    p[2] = p1[2] + (t1 * (p2[2] - p1[2]));
-
-    // compute texture coordinate
-    uv[0] = uv1[0] + (t1 * (uv2[0] - uv1[0]));
-    uv[1] = uv1[1] + (t1 * (uv2[1] - uv1[1]));
-}
-
 
 bool WallSceneNode::inAxisBox (const Extents& UNUSED(exts)) const
 {

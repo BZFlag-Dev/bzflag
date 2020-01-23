@@ -32,7 +32,7 @@
 
 MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
                                       const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
-                                      const GLfloat2Array& _texcoords, const GLfloat* _normal) :
+                                      const GLfloat2Array& _texcoords, const glm::vec3 *_normal) :
     vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
     sceneNode = _node;
@@ -115,7 +115,7 @@ void MeshPolySceneNode::Geometry::render()
     }
     else
     {
-        glNormal3fv(normal);
+        glNormal3f(normal->x, normal->y, normal->z);
         if (style >= 2)
             drawVT();
         else
@@ -158,21 +158,20 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
                                      const GLfloat3Array& vertices,
                                      const GLfloat3Array& normals,
                                      const GLfloat2Array& texcoords) :
-    node(this, vertices, normals, texcoords, plane)
+    node(this, vertices, normals, texcoords, &normal)
 {
     int i, j;
     const int count = vertices.getSize();
     assert(texcoords.getSize() == count);
     assert((normals.getSize() == 0) || (normals.getSize() == count));
 
-    setPlane(_plane);
+    setPlane(glm::make_vec4(_plane));
 
     noRadar = _noRadar || (plane[2] <= 0.0f); // pre-cull if we can
     noShadow = _noShadow;
 
     // choose axis to ignore (the one with the largest normal component)
     int ignoreAxis;
-    const auto normal = plane;
     if (fabsf(normal[0]) > fabsf(normal[1]))
     {
         if (fabsf(normal[0]) > fabsf(normal[2]))

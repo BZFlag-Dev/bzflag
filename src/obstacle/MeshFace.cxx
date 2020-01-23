@@ -455,7 +455,7 @@ bool MeshFace::inBox(const float* p, float _angle,
     // to move the polygon then the box, tris and quads will
     // probably be the dominant polygon types).
 
-    float pln[4]; // translated plane
+    glm::vec4 pln; // translated plane
     afvec3* v = new afvec3[vertexCount]; // translated vertices
     const float cos_val = cosf(-_angle);
     const float sin_val = sinf(-_angle);

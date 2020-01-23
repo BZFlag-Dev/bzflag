@@ -1274,7 +1274,7 @@ void SceneRenderer::disableLights(const glm::vec3 &mins, const glm::vec3 &maxs)
     // temporarily turn off non-applicable lights for big meshes
     for (int i = 0; i < dynamicLights; i++)
     {
-        const float* pos = lights[i]->getPosition();
+        const auto pos = lights[i]->getPosition();
         const float dist = lights[i]->getMaxDist();
         if ((pos[0] < (mins[0] - dist)) || (pos[0] > (maxs[0] + dist)) ||
                 (pos[1] < (mins[1] - dist)) || (pos[1] > (maxs[1] + dist)) ||

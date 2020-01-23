@@ -30,7 +30,7 @@
 
 TriWallSceneNode::Geometry::Geometry(TriWallSceneNode* _wall, int eCount,
                                      const GLfloat base[3], const GLfloat uEdge[3], const GLfloat vEdge[3],
-                                     const GLfloat* _normal, float uRepeats, float vRepeats) :
+                                     const glm::vec3 &_normal, float uRepeats, float vRepeats) :
     wall(_wall), style(0), de(eCount), normal(_normal),
     vertex((eCount+1) * (eCount+2) / 2),
     uv((eCount+1) * (eCount+2) / 2)
@@ -115,7 +115,7 @@ TriWallSceneNode::Geometry::~Geometry()
 void            TriWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
         drawVT();
     else
@@ -170,7 +170,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
                                    bool makeLODs)
 {
     // record plane info
-    GLfloat myPlane[4];
+    glm::vec4 myPlane;
     myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
     myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
     myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
@@ -250,7 +250,7 @@ TriWallSceneNode::TriWallSceneNode(const GLfloat base[3],
     // record extents info
     for (int i = 0; i < 3; i++)
     {
-        const auto point = glm::make_vec3(getVertex(i));
+        const auto point = getVertex(i);
         extents.expandToPoint(point);
     }
 

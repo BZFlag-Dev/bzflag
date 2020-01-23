@@ -447,10 +447,11 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     if (dyncol != NULL)
         dc = dyncol->getColor();
     node->setDynamicColor(dc);
-    node->setColor(mat->getDiffuse()); // redundant, see below
-    node->setModulateColor(mat->getDiffuse());
-    node->setLightedColor(mat->getDiffuse());
-    node->setLightedModulateColor(mat->getDiffuse());
+    const auto diffuseColor = glm::make_vec4(mat->getDiffuse());
+    node->setColor(diffuseColor); // redundant, see below
+    node->setModulateColor(diffuseColor);
+    node->setLightedColor(diffuseColor);
+    node->setLightedModulateColor(diffuseColor);
     node->setTexture(faceTexture);
     if ((userTexture && mat->getUseColorOnTexture(0)) ||
             !gotSpecifiedTexture)
@@ -486,7 +487,7 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
     // we'll just set it to the middle value.
     if (dyncol)
     {
-        const float color[4] = { 1.0f, 1.0f, 1.0f, 0.5f }; // alpha value != 1.0f
+        const auto color = glm::vec4(1.0f, 1.0f, 1.0f, 0.5f); // alpha value != 1.0f
         if (dyncol->canHaveAlpha())
         {
             node->setColor(color); // trigger transparency check

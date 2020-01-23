@@ -735,7 +735,7 @@ static inline void projectPolygon(const float* dir,
 // return true if polygon touches the axis aligned box
 // *** assumes that an extents test has already been done ***
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
-                          const float* plane, const Extents& extents)
+                          const glm::vec4 &plane, const Extents& extents)
 {
     int t;
     static float i[3]; // inside point  (assuming partial)

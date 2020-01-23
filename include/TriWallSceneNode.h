@@ -53,7 +53,7 @@ protected:
                  const GLfloat base[3],
                  const GLfloat uEdge[3],
                  const GLfloat vEdge[3],
-                 const GLfloat* normal,
+                 const glm::vec3 &normal,
                  float uRepeats, float vRepeats);
         ~Geometry();
         void        setStyle(int _style)
@@ -71,7 +71,7 @@ protected:
         WallSceneNode*  wall;
         int     style;
         int     de;
-        const GLfloat*  normal;
+        const glm::vec3 normal;
     public:
         GLfloat3Array   vertex;
         GLfloat2Array   uv;

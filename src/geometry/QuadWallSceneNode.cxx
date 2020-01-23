@@ -35,7 +35,7 @@ QuadWallSceneNode::Geometry::Geometry(QuadWallSceneNode* _wall,
                                       const GLfloat base[3],
                                       const GLfloat uEdge[3],
                                       const GLfloat vEdge[3],
-                                      const GLfloat* _normal,
+                                      const glm::vec3 &_normal,
                                       float uOffset, float vOffset,
                                       float uRepeats, float vRepeats, bool fixedUVs) :
     wall(_wall),
@@ -150,7 +150,7 @@ QuadWallSceneNode::Geometry::~Geometry()
 void            QuadWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
         drawVT();
     else
@@ -228,7 +228,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
                                         bool fixedUVs)
 {
     // record plane and bounding sphere info
-    GLfloat myPlane[4];
+    glm::vec4 myPlane;
     myPlane[0] = uEdge[1] * vEdge[2] - uEdge[2] * vEdge[1];
     myPlane[1] = uEdge[2] * vEdge[0] - uEdge[0] * vEdge[2];
     myPlane[2] = uEdge[0] * vEdge[1] - uEdge[1] * vEdge[0];
@@ -364,7 +364,7 @@ void            QuadWallSceneNode::init(const GLfloat base[3],
     // record extents info
     for (int i = 0; i < 4; i++)
     {
-        const auto point = glm::make_vec3(getVertex(i));
+        const auto point = getVertex(i);
         extents.expandToPoint(point);
     }
 

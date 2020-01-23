@@ -27,7 +27,7 @@
 PolyWallSceneNode::Geometry::Geometry(PolyWallSceneNode* _wall,
                                       const GLfloat3Array& _vertex,
                                       const GLfloat2Array& _uv,
-                                      const GLfloat* _normal) :
+                                      const glm::vec3 &_normal) :
     wall(_wall),
     normal(_normal),
     vertex(_vertex),
@@ -44,7 +44,7 @@ PolyWallSceneNode::Geometry::~Geometry()
 void            PolyWallSceneNode::Geometry::render()
 {
     wall->setColor();
-    glNormal3fv(normal);
+    glNormal3f(normal.x, normal.y, normal.z);
     if (style >= 2)
         drawVT();
     else
@@ -90,7 +90,8 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
     assert(uv.getSize() == count);
 
     // figure out plane (find non-colinear edges and get cross product)
-    GLfloat uEdge[3], vEdge[3], myPlane[4];
+    GLfloat uEdge[3], vEdge[3];
+    glm::vec4 myPlane;
     GLfloat uLen, vLen, nLen;
     uEdge[0] = vertex[0][0] - vertex[count - 1][0];
     uEdge[1] = vertex[0][1] - vertex[count - 1][1];
@@ -120,7 +121,6 @@ PolyWallSceneNode::PolyWallSceneNode(const GLfloat3Array& vertex,
 
     // choose axis to ignore (the one with the largest normal component)
     int ignoreAxis;
-    const auto normal = plane;
     if (fabsf(normal[0]) > fabsf(normal[1]))
         if (fabsf(normal[0]) > fabsf(normal[2]))
             ignoreAxis = 0;

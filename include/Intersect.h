@@ -93,7 +93,7 @@ float timeAndSideRayHitsRect(const Ray& r,
 
 // return true if polygon touches the axis aligned box
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
-                          const float* plane, const Extents& extents);
+                          const glm::vec4 &plane, const Extents& extents);
 
 // return level of axis box intersection with Frumstum
 // possible values are Outside, Partial, and Contained.
