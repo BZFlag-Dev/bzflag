@@ -170,7 +170,7 @@ void Frustum::flipVertical()
 void Frustum::setOrthoPlanes(const Frustum& view, float width, float breadth)
 {
     // setup the eye, and the clipping planes
-    eye = glm::make_vec3(view.getEye());
+    eye = view.getEye();
 
     const auto dir = view.getDirection();
     auto front = glm::vec3(1, 0, 0);
