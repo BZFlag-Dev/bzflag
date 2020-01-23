@@ -101,7 +101,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
         option->setCallback(callback, "m");
         options = &option->getList();
         options->push_back(std::string("Off"));
-        for (int i = 2; i <= OpenGLGState::getMaxSamples(); ++i)
+        for (int i = 2; i <= OpenGLGState::getMaxSamples(); i=i*2)
         {
             char msaaText[11];
             snprintf(msaaText, 11, "%i", i);
@@ -123,10 +123,10 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
             option->setCallback(callback, "A");
             options = &option->getList();
             options->push_back(std::string("Off"));
-            for (int i = 1; i < maxAnisotropy; i++)
+            for (int i = 2; i <= maxAnisotropy; i=i*2)
             {
                 char buffer[16];
-                snprintf(buffer, 16, "%i/%i", i + 1, maxAnisotropy);
+                snprintf(buffer, 16, "%i/%i", i, maxAnisotropy);
                 options->push_back(std::string(buffer));
             }
             option->update();
@@ -369,7 +369,11 @@ void            DisplayMenu::resize(int _width, int _height)
         if (OpenGLGState::getMaxSamples() > 1)
         {
             // multisampling
-            ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("multisample") - 1);
+            int multisampleLevel = BZDB.evalInt("multisample");
+            int multisampleIndex = 0;
+            while (multisampleLevel > pow(2, multisampleIndex))
+                multisampleIndex++;
+            ((HUDuiList*)listHUD[i++])->setIndex(multisampleIndex);
         }
 
         // Anisotropic filtering
@@ -379,9 +383,11 @@ void            DisplayMenu::resize(int _width, int _height)
             glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
             if (maxAnisotropy > 1)
             {
-                int aniso = BZDB.evalInt("aniso");
-                aniso = (aniso < 1) ? 1 : aniso;
-                ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("aniso") - 1);
+                int anisoLevel = BZDB.evalInt("aniso");
+                int anisoIndex = 0;
+                while (anisoLevel > pow(2, anisoIndex))
+                    anisoIndex++;
+                ((HUDuiList*)listHUD[i++])->setIndex(anisoIndex);
             }
         }
 
@@ -477,8 +483,8 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     }
     case 'A':
     {
-        int aniso = list->getIndex() + 1;
-        BZDB.setInt("aniso", aniso);
+        int aniso = list->getIndex();
+        BZDB.setInt("aniso", (aniso == 0)?0:pow(2, aniso));
         TextureManager& tm = TextureManager::instance();
         tm.setMaxFilter(tm.getMaxFilter());
         sceneRenderer->notifyStyleChange();
@@ -524,8 +530,11 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
         getMainWindow()->getWindow()->setVerticalSync(list->getIndex() == 2);
         break;
     case 'm':
-        BZDB.setInt("multisample", list->getIndex() + 1);
+    {
+        int multi = list->getIndex();
+        BZDB.setInt("multisample", (multi == 0)?0:pow(2, multi));
         break;
+    }
     case 'g':
         BzfWindow* window = getMainWindow()->getWindow();
         if (window->hasGammaControl())
