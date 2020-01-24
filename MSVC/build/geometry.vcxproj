@@ -514,7 +514,6 @@
     <ClInclude Include="..\..\include\RenderNode.h" />
     <ClInclude Include="..\..\include\SceneNode.h" />
     <ClInclude Include="..\..\include\SceneRenderer.h" />
-    <ClInclude Include="..\..\include\ShotSceneNode.h" />
     <ClInclude Include="..\..\include\SphereSceneNode.h" />
     <ClInclude Include="..\..\include\TankGeometryMgr.h" />
     <ClInclude Include="..\..\include\TankSceneNode.h" />
