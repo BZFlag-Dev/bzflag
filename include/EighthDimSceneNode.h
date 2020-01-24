@@ -25,14 +25,14 @@ class EighthDimSceneNode : public SceneNode
 public:
     ~EighthDimSceneNode();
 
-    bool        cull(const ViewFrustum&) const;
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
+    bool cull(const ViewFrustum&) const override;
+    void notifyStyleChange() override;
+    void addRenderNodes(SceneRenderer&) override;
 
 protected:
     EighthDimSceneNode(int numPolys);
 
-    void        setPolygon(int index, const GLfloat[3][3]);
+    void        setPolygon(int index, const glm::vec3 vertex[3]);
 
 protected:
     class EighthDimRenderNode : public RenderNode
@@ -42,14 +42,14 @@ protected:
             const EighthDimSceneNode*,
             int numPolygons);
         ~EighthDimRenderNode();
-        void        render();
-        void        setPolygon(int index, const GLfloat[3][3]);
+        void  render() override;
+        void        setPolygon(int index, const glm::vec3 vertex[3]);
         const glm::vec3 getPosition() const override;
     private:
         const EighthDimSceneNode* sceneNode;
         int     numPolygons;
         glm::vec4   *color;
-        GLfloat     (*poly)[3][3];
+        glm::vec3   (*poly)[3];
     };
 
 private:

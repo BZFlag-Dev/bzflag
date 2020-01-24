@@ -39,10 +39,11 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
     const GLfloat slope = size[2] / size[0];
     for (int i = 0; i < PyrPolygons; i++)
     {
-        GLfloat base[3], vertex[3][3];
+        GLfloat base[3];
         base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
         base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
         base[2] = (size[2] - slope * hypotf(base[0], base[1])) * (float)bzfrand();
+        glm::vec3 vertex[3];
         for (int j = 0; j < 3; j++)
         {
             // pick point around origin

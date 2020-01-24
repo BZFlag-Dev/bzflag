@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <glm/gtc/random.hpp>
 
 // common implementation header
 #include "StateDatabase.h"
@@ -55,8 +56,7 @@ void            EighthDimSceneNode::addRenderNodes(
     renderer.addRenderNode(&renderNode, &gstate);
 }
 
-void            EighthDimSceneNode::setPolygon(int index,
-        const GLfloat vertex[3][3])
+void EighthDimSceneNode::setPolygon(int index, const glm::vec3 vertex[3])
 {
     renderNode.setPolygon(index, vertex);
 }
@@ -72,16 +72,12 @@ EighthDimSceneNode::EighthDimRenderNode::EighthDimRenderNode(
     numPolygons(numPolys)
 {
     color = new glm::vec4[numPolygons];
-    poly = (GLfloat(*)[3][3])new GLfloat[9 * numPolygons];
+    poly = new glm::vec3[numPolygons][3];
 
     // make random colors
     for (int i = 0; i < numPolygons; i++)
-    {
-        color[i][0] = 0.2f + 0.8f * (float)bzfrand();
-        color[i][1] = 0.2f + 0.8f * (float)bzfrand();
-        color[i][2] = 0.2f + 0.8f * (float)bzfrand();
-        color[i][3] = 0.2f + 0.6f * (float)bzfrand();
-    }
+        color[i] = glm::linearRand(glm::vec4(0.2f),
+                                   glm::vec4(1.0f, 1.0f, 1.0f, 0.8f));
 }
 
 EighthDimSceneNode::EighthDimRenderNode::~EighthDimRenderNode()
@@ -97,17 +93,18 @@ void            EighthDimSceneNode::EighthDimRenderNode::render()
     for (int i = 0; i < numPolygons; i++)
     {
         myColor4fv(color[i]);
-        glVertex3fv(poly[i][0]);
-        glVertex3fv(poly[i][2]);
-        glVertex3fv(poly[i][1]);
+        glVertex3f(poly[i][0].x, poly[i][0].y, poly[i][0].z);
+        glVertex3f(poly[i][2].x, poly[i][2].y, poly[i][2].z);
+        glVertex3f(poly[i][1].x, poly[i][1].y, poly[i][1].z);
     }
     glEnd();
 }
 
 void            EighthDimSceneNode::EighthDimRenderNode::setPolygon(
-    int index, const GLfloat vertex[3][3])
+    int index, const glm::vec3 vertex[3])
 {
-    ::memcpy(poly[index], vertex, sizeof(GLfloat[3][3]));
+    for (int i = 0; i < 3; i++)
+        poly[index][i] = vertex[i];
 }
 
 const glm::vec3 EighthDimSceneNode::EighthDimRenderNode::getPosition() const

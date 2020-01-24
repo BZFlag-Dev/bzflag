@@ -38,10 +38,11 @@ EighthDBaseSceneNode::EighthDBaseSceneNode(const float pos[3],
     const GLfloat polySize = size[0] / powf(float(BasePolygons), 0.3333f);
     for (int i = 0; i < BasePolygons; i++)
     {
-        GLfloat base[3], vertex[3][3];
+        GLfloat base[3];
         base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
         base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float) bzfrand() - 1.0f);
         base[2] = (size[2] - 0.5f * polySize) * (float) bzfrand();
+        glm::vec3 vertex[3];
         for (int j = 0; j < 3; j++)
         {
             // pick point around origin
