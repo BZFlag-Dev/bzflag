@@ -105,7 +105,6 @@ noinst_HEADERS =			\
 	ServerItem.h			\
 	ServerList.h			\
 	ServerListCache.h		\
-	ShotSceneNode.h			\
 	ShotUpdate.h			\
 	Singleton.h			\
 	SphereObstacle.h		\
