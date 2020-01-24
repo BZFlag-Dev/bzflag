@@ -409,7 +409,6 @@
 		03C5E82E1670A98C005A26C4 /* TextureManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554304166C846F008806E9 /* TextureManager.cxx */; };
 		03C8EE41167ABE7D00BB07A5 /* BZFlag.icns in Resources */ = {isa = PBXBuildFile; fileRef = 03D926DF166C67EF00DDDBEB /* BZFlag.icns */; };
 		03C8EE61167AC26A00BB07A5 /* ActionBinding.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0355431E166C846F008806E9 /* ActionBinding.cxx */; };
-		03C8EE63167AC26A00BB07A5 /* AudioMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554320166C846F008806E9 /* AudioMenu.cxx */; };
 		03C8EE65167AC26A00BB07A5 /* AutoPilot.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554322166C846F008806E9 /* AutoPilot.cxx */; };
 		03C8EE67167AC26A00BB07A5 /* BackgroundRenderer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554324166C846F008806E9 /* BackgroundRenderer.cxx */; };
 		03C8EE69167AC26A00BB07A5 /* BaseLocalPlayer.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554326166C846F008806E9 /* BaseLocalPlayer.cxx */; };
@@ -1161,8 +1160,6 @@
 		0355431C166C846F008806E9 /* UIMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIMap.h; sourceTree = "<group>"; };
 		0355431E166C846F008806E9 /* ActionBinding.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ActionBinding.cxx; sourceTree = "<group>"; };
 		0355431F166C846F008806E9 /* ActionBinding.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ActionBinding.h; sourceTree = "<group>"; };
-		03554320166C846F008806E9 /* AudioMenu.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AudioMenu.cxx; sourceTree = "<group>"; };
-		03554321166C846F008806E9 /* AudioMenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AudioMenu.h; sourceTree = "<group>"; };
 		03554322166C846F008806E9 /* AutoPilot.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AutoPilot.cxx; sourceTree = "<group>"; };
 		03554323166C846F008806E9 /* AutoPilot.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AutoPilot.h; sourceTree = "<group>"; };
 		03554324166C846F008806E9 /* BackgroundRenderer.cxx */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = BackgroundRenderer.cxx; sourceTree = "<group>"; };
@@ -2461,8 +2458,6 @@
 			children = (
 				0355431E166C846F008806E9 /* ActionBinding.cxx */,
 				0355431F166C846F008806E9 /* ActionBinding.h */,
-				03554320166C846F008806E9 /* AudioMenu.cxx */,
-				03554321166C846F008806E9 /* AudioMenu.h */,
 				03554322166C846F008806E9 /* AutoPilot.cxx */,
 				03554323166C846F008806E9 /* AutoPilot.h */,
 				03554324166C846F008806E9 /* BackgroundRenderer.cxx */,
@@ -5552,7 +5547,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				03C8EE61167AC26A00BB07A5 /* ActionBinding.cxx in Sources */,
-				03C8EE63167AC26A00BB07A5 /* AudioMenu.cxx in Sources */,
 				03C8EE65167AC26A00BB07A5 /* AutoPilot.cxx in Sources */,
 				03C8EE67167AC26A00BB07A5 /* BackgroundRenderer.cxx in Sources */,
 				03C8EE69167AC26A00BB07A5 /* BaseLocalPlayer.cxx in Sources */,
