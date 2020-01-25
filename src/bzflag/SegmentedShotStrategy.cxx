@@ -54,7 +54,9 @@ SegmentedShotStrategy::SegmentedShotStrategy(const FiringInfo & _info, bool useS
     }
 
     // initialize scene nodes
-    boltSceneNode = new BoltSceneNode(getPosition(), getVelocity(), useSuperTexture);
+    boltSceneNode = new BoltSceneNode(glm::make_vec3(getPosition()),
+                                      glm::make_vec3(getVelocity()),
+                                      useSuperTexture);
 
     const float* c = Team::getShotColor(team);
     if (faint)
@@ -298,7 +300,8 @@ float  SegmentedShotStrategy::checkHit(const BaseLocalPlayer* tank, float positi
 
 void  SegmentedShotStrategy::addShot(SceneDatabase* scene, bool colorblind)
 {
-    boltSceneNode->move(getPosition(), getVelocity());
+    boltSceneNode->move(glm::make_vec3(getPosition()),
+                        glm::make_vec3(getVelocity()));
     if (boltSceneNode->getColorblind() != colorblind)
     {
         boltSceneNode->setColorblind(colorblind);

@@ -43,7 +43,7 @@ public:
     GLfloat     getMaxDist() const;
 
     void        setDirection(const GLfloat* xyz);
-    void        setPosition(const GLfloat* xyz);
+    void        setPosition(const glm::vec3 &xyz);
     void        setColor(GLfloat r, GLfloat g, GLfloat b);
     void        setColor(const GLfloat* rgb);
     void        setAttenuation(const GLfloat* clq);

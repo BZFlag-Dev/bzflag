@@ -133,7 +133,7 @@ void OpenGLLight::setDirection(const GLfloat* _pos)
 }
 
 
-void OpenGLLight::setPosition(const GLfloat* _pos)
+void OpenGLLight::setPosition(const glm::vec3 &_pos)
 {
     freeLists();
     pos[0] = _pos[0];

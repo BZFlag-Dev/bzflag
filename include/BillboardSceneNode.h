@@ -53,7 +53,7 @@ public:
     void        setTexture(const int);
     void        setTextureAnimation(int cu, int cv);
 
-    void        move(const GLfloat pos[3]);
+    void        move(const glm::vec3 &pos);
     void        setAngle(GLfloat);
     void        addLight(SceneRenderer&);
 

@@ -54,7 +54,7 @@ BillboardSceneNode::BillboardSceneNode(const GLfloat pos[3]) :
     setGroundLight(false);
 
     // prepare geometry
-    move(pos);
+    move(glm::make_vec3(pos));
     setAngle(0.0f);
     setSize(width, height);
     setColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -268,9 +268,9 @@ setTextureAnimation(int _cu, int _cv)
     setFrame();
 }
 
-void            BillboardSceneNode::move(const GLfloat pos[3])
+void            BillboardSceneNode::move(const glm::vec3 &pos)
 {
-    setCenter(glm::make_vec3(pos));
+    setCenter(pos);
     light.setPosition(pos);
 }
 

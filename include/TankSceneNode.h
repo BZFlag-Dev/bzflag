@@ -230,7 +230,7 @@ private:
     bool        jumpJetsOn;
     GLfloat     jumpJetsScale;
     GLfloat     jumpJetsLengths[4];
-    GLfloat     jumpJetsPositions[4][3];
+    glm::vec3       jumpJetsPositions[4];
     OpenGLLight     jumpJetsRealLight;
     OpenGLLight     jumpJetsGroundLights[4];
     OpenGLGState    jumpJetsGState;

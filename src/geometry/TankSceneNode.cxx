@@ -397,7 +397,7 @@ void TankSceneNode::setJumpJets(float scale)
 
         // set the real light's position
         const auto &pos = getCenter();
-        jumpJetsRealLight.setPosition(glm::value_ptr(pos));
+        jumpJetsRealLight.setPosition(pos);
 
         // set the jet ground-light and model positions
         for (int i = 0; i < 4; i++)
@@ -408,7 +408,7 @@ void TankSceneNode::setJumpJets(float scale)
             const float* scaleFactor = TankGeometryMgr::getScaleFactor(tankSize);
             const float* jm = jumpJetsModel[i];
             const float v[2] = {jm[0] * scaleFactor[0], jm[1] * scaleFactor[1]};
-            float* jetPos = jumpJetsPositions[i];
+            auto jetPos = jumpJetsPositions[i];
             jetPos[0] = pos[0] + ((cos_val * v[0]) - (sin_val * v[1]));
             jetPos[1] = pos[1] + ((cos_val * v[1]) + (sin_val * v[0]));
             jetPos[2] = pos[2] + jm[2];
@@ -1483,7 +1483,7 @@ void TankSceneNode::TankRenderNode::renderJumpJets()
     {
         glPushMatrix();
         {
-            const float* pos = sceneNode->jumpJetsPositions[j];
+            const auto pos = sceneNode->jumpJetsPositions[j];
             glTranslatef(pos[0], pos[1], pos[2]);
             glScalef(1.0f, 1.0f, sceneNode->jumpJetsLengths[j]);
 

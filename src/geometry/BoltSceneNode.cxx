@@ -30,7 +30,7 @@
 
 #include "TimeKeeper.h"
 
-BoltSceneNode::BoltSceneNode(const GLfloat pos[3],const GLfloat vel[3], bool super) :
+BoltSceneNode::BoltSceneNode(const glm::vec3 &pos, const glm::vec3 &vel, bool super) :
     isSuper(super),
     invisible(false),
     drawFlares(false),
@@ -78,33 +78,24 @@ void            BoltSceneNode::setSize(float radius)
 }
 void            BoltSceneNode::setTextureColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-    color[0] = r;
-    color[1] = g;
-    color[2] = b;
-    color[3] = a;
+    color = glm::vec3(r, g, b);
     light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
-    renderNode.setTextureColor(color);
+    renderNode.setTextureColor(glm::vec4(color, a));
 }
 
 void            BoltSceneNode::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-    color[0] = r;
-    color[1] = g;
-    color[2] = b;
-    color[3] = a;
+    color = glm::vec3(r, g, b);
     light.setColor(1.5f * r, 1.5f * g, 1.5f * b);
-    renderNode.setColor(color);
+    renderNode.setColor(glm::vec4(color, a));
 }
 
-void            BoltSceneNode::setTeamColor(const GLfloat *c)
+void            BoltSceneNode::setTeamColor(const glm::vec3 &c)
 {
-    teamColor.r = c[0];
-    teamColor.g = c[1];
-    teamColor.b = c[2];
-    teamColor.w = 1.0f;
+    teamColor = glm::vec4(c, 1.0f);
 }
 
-void            BoltSceneNode::setColor(const GLfloat* rgb)
+void            BoltSceneNode::setColor(const glm::vec3 &rgb)
 {
     setColor(rgb[0], rgb[1], rgb[2]);
 }
@@ -132,17 +123,13 @@ void            BoltSceneNode::setTextureAnimation(int cu, int cv)
     renderNode.setAnimation(cu, cv);
 }
 
-void            BoltSceneNode::move(const GLfloat pos[3],
-                                    const GLfloat vel[3])
+void            BoltSceneNode::move(const glm::vec3 &pos,
+                                    const glm::vec3 &vel)
 {
-    setCenter(glm::make_vec3(pos));
+    setCenter(pos);
     light.setPosition(pos);
-    velocity[0] = vel[0];
-    velocity[1] = vel[1];
-    velocity[2] = vel[2];
-    length = sqrtf((vel[0] * vel[0]) +
-                   (vel[1] * vel[1]) +
-                   (vel[2] * vel[2]));
+    velocity = vel;
+    length = glm::length(vel);
 
     azimuth   = (float)(+RAD2DEG * atan2f(vel[1], vel[0]));
     elevation = (float)(-RAD2DEG * atan2f(vel[2], sqrtf(vel[0]* vel[0] + vel[1] *vel[1])));
@@ -189,9 +176,9 @@ void            BoltSceneNode::addRenderNodes(
 const GLfloat       BoltSceneNode::BoltRenderNode::CoreFraction = 0.4f;
 const GLfloat       BoltSceneNode::BoltRenderNode::FlareSize = 1.0f;
 const GLfloat       BoltSceneNode::BoltRenderNode::FlareSpread = 0.08f;
-GLfloat         BoltSceneNode::BoltRenderNode::core[9][2];
-GLfloat         BoltSceneNode::BoltRenderNode::corona[8][2];
-const GLfloat       BoltSceneNode::BoltRenderNode::ring[8][2] =
+glm::vec2       BoltSceneNode::BoltRenderNode::core[9];
+glm::vec2       BoltSceneNode::BoltRenderNode::corona[8];
+const glm::vec2 BoltSceneNode::BoltRenderNode::ring[8] =
 {
     { 1.0f, 0.0f },
     { (float)M_SQRT1_2, (float)M_SQRT1_2 },
@@ -213,21 +200,15 @@ BoltSceneNode::BoltRenderNode::BoltRenderNode(
     if (!init)
     {
         init = true;
-        core[0][0] = 0.0f;
-        core[0][1] = 0.0f;
+        core[0] = glm::vec2(0.0f);
         for (int i = 0; i < 8; i++)
         {
-            core[i+1][0] = CoreFraction * ring[i][0];
-            core[i+1][1] = CoreFraction * ring[i][1];
-            corona[i][0] = ring[i][0];
-            corona[i][1] = ring[i][1];
+            core[i+1] = CoreFraction * ring[i];
+            corona[i] = ring[i];
         }
     }
 
-    textureColor[0] = 1.0f;
-    textureColor[1] = 1.0f;
-    textureColor[2] = 1.0f;
-    textureColor[3] = 1.0f;
+    textureColor = glm::vec4(1.0f);
 
     setAnimation(1, 1);
 }
@@ -251,42 +232,28 @@ void            BoltSceneNode::BoltRenderNode::setAnimation(
     v = index / cu;
     if (v >= cv) v = 0;
 }
-void            BoltSceneNode::BoltRenderNode::setTextureColor(const GLfloat* rgba)
+void            BoltSceneNode::BoltRenderNode::setTextureColor(const glm::vec4 &rgba)
 {
-    textureColor[0] = rgba[0];
-    textureColor[1] = rgba[1];
-    textureColor[2] = rgba[2];
-    textureColor[3] = rgba[3];
+    textureColor = rgba;
 }
 
 
 void            BoltSceneNode::BoltRenderNode::setColor(
-    const GLfloat* rgba)
+    const glm::vec4 &rgba)
 {
-    mainColor[0] = rgba[0];
-    mainColor[1] = rgba[1];
-    mainColor[2] = rgba[2];
-    mainColor[3] = rgba[3];
+    mainColor   = rgba;
+    innerColor  = 0.5f * (1.0f + mainColor);
+    outerColor  = mainColor;
+    coronaColor = mainColor;
+    flareColor  = mainColor;
 
-    innerColor[0] = mainColor[0] + 0.5f * (1.0f - mainColor[0]);
-    innerColor[1] = mainColor[1] + 0.5f * (1.0f - mainColor[1]);
-    innerColor[2] = mainColor[2] + 0.5f * (1.0f - mainColor[2]);
-    innerColor[3] = rgba[3];
-
-    outerColor[0] = mainColor[0];
-    outerColor[1] = mainColor[1];
-    outerColor[2] = mainColor[2];
-    outerColor[3] = (rgba[3] == 1.0f )? 0.1f: rgba[3];
-
-    coronaColor[0] = mainColor[0];
-    coronaColor[1] = mainColor[1];
-    coronaColor[2] = mainColor[2];
-    coronaColor[3] = (rgba[3] == 1.0f )? 0.5f : rgba[3];
-
-    flareColor[0] = mainColor[0];
-    flareColor[1] = mainColor[1];
-    flareColor[2] = mainColor[2];
-    flareColor[3] = (rgba[3] == 1.0f )? 0.667f : rgba[3];
+    innerColor.a = rgba.a;
+    if (rgba.a == 1.0f)
+    {
+        outerColor.a  = 0.1f;
+        coronaColor.a = 0.5f;
+        flareColor.a  = 0.667f;
+    }
 }
 
 void drawFin ( float maxRad, float finRadius, float boosterLen, float finForeDelta, float finCapSize)
@@ -442,16 +409,8 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
     float coreBleed = 4.5f;
     float minimumChannelVal = 0.45f;
 
-    glm::vec3 coreColor;
-    coreColor.r =  sceneNode->color[0] * coreBleed;
-    coreColor.g =  sceneNode->color[1] * coreBleed;
-    coreColor.b =  sceneNode->color[2] * coreBleed;
-    if (coreColor.r < minimumChannelVal)
-        coreColor.r = minimumChannelVal;
-    if (coreColor.g < minimumChannelVal)
-        coreColor.g = minimumChannelVal;
-    if (coreColor.b < minimumChannelVal)
-        coreColor.b = minimumChannelVal;
+    const auto c = sceneNode->color;
+    auto coreColor = glm::max(c * coreBleed, minimumChannelVal);
 
     myColor4f(coreColor.r, coreColor.g, coreColor.b, 0.85f * alphaMod);
     renderGeoPill(baseRadius,len,16);
@@ -459,29 +418,22 @@ void BoltSceneNode::BoltRenderNode::renderGeoBolt()
     float radInc = 1.5f * baseRadius - baseRadius;
     glPushMatrix();
     glTranslatef(0, 0, -radInc * 0.5f);
-    glm::vec4 c;
-    c.x = sceneNode->color[0];
-    c.y = sceneNode->color[1];
-    c.z = sceneNode->color[2];
-    c.w = 0.5f;
 
-    myColor4f(c.r, c.g, c.b, c.a);
+    myColor4f(c.r, c.g, c.b, 0.5f);
     renderGeoPill(1.5f * baseRadius, len + radInc, 25);
     glPopMatrix();
 
     radInc = 2.7f * baseRadius - baseRadius;
     glPushMatrix();
     glTranslatef(0, 0, -radInc*0.5f);
-    c.w = 0.25f;
-    myColor4f(c.r, c.g, c.b, c.a);
+    myColor4f(c.r, c.g, c.b, 0.25f);
     renderGeoPill(2.7f * baseRadius, len + radInc, 32);
     glPopMatrix();
 
     radInc = 3.8f * baseRadius - baseRadius;
     glPushMatrix();
     glTranslatef(0, 0,-radInc*0.5f);
-    c.w = 0.125f;
-    myColor4f(c.r, c.g, c.b, c.a);
+    myColor4f(c.r, c.g, c.b, 0.125f);
     renderGeoPill(3.8f * baseRadius, len + radInc, 48);
     glPopMatrix();
 
@@ -625,7 +577,7 @@ void            BoltSceneNode::BoltRenderNode::render()
                 const float ti = theta[i];
                 const float fs = FlareSpread;
                 glBegin(GL_TRIANGLE_STRIP);
-                glVertex3fv(core[0]);
+                glVertex3f(0.0f, 0.0f, CoreFraction);
                 glVertex3f(c * cosf(ti - fs),   c * sinf(ti - fs),   s);
                 glVertex3f(c * cosf(ti + fs),   c * sinf(ti + fs),   s);
                 glVertex3f(c * cosf(ti) * 2.0f, c * sinf(ti) * 2.0f, s * 2.0f);
@@ -669,8 +621,8 @@ void            BoltSceneNode::BoltRenderNode::render()
                 if (texInfo.id >= 0)
                     texInfo.texture->execute();
 
-                glm::vec3 vel(glm::make_vec3(sceneNode->velocity));
-                const glm::vec3 dir = vel * (-1.0f / sceneNode->length);
+                auto vel = sceneNode->velocity;
+                const auto dir = vel * (-1.0f / sceneNode->length);
 
                 const float invLenPlusOne = 1.0f / (float)(shotLength + 1);
                 const float shiftScale = 90.0f / (150.0f + (float)shotLength);
@@ -728,57 +680,57 @@ void            BoltSceneNode::BoltRenderNode::render()
             // draw corona
             glBegin(GL_TRIANGLE_STRIP);
             myColor4fv(mainColor);
-            glVertex2fv(core[1]);
+            glVertex2f(core[1].x, core[1].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
+            glVertex2f(corona[0].x, corona[0].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[2]);
+            glVertex2f(core[2].x, core[2].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[1]);
+            glVertex2f(corona[1].x, corona[1].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[3]);
+            glVertex2f(core[3].x, core[3].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[2]);
+            glVertex2f(corona[2].x, corona[2].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[4]);
+            glVertex2f(core[4].x, core[4].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[3]);
+            glVertex2f(corona[3].x, corona[3].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[5]);
+            glVertex2f(core[5].x, core[5].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[4]);
+            glVertex2f(corona[4].x, corona[4].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[6]);
+            glVertex2f(core[6].x, core[6].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[5]);
+            glVertex2f(corona[5].x, corona[5].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[7]);
+            glVertex2f(core[7].x, core[7].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[6]);
+            glVertex2f(corona[6].x, corona[6].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[8]);
+            glVertex2f(core[8].x, core[8].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[7]);
+            glVertex2f(corona[7].x, corona[7].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[1]);
+            glVertex2f(core[1].x, core[1].y);
             myColor4fv(outerColor);
-            glVertex2fv(corona[0]);
+            glVertex2f(corona[0].x, corona[0].y);
             glEnd(); // 18 verts -> 16 tris
 
             // draw core
             glBegin(GL_TRIANGLE_FAN);
             myColor4fv(innerColor);
-            glVertex2fv(core[0]);
+            glVertex2f(core[0].x, core[0].y);
             myColor4fv(mainColor);
-            glVertex2fv(core[1]);
-            glVertex2fv(core[2]);
-            glVertex2fv(core[3]);
-            glVertex2fv(core[4]);
-            glVertex2fv(core[5]);
-            glVertex2fv(core[6]);
-            glVertex2fv(core[7]);
-            glVertex2fv(core[8]);
-            glVertex2fv(core[1]);
+            glVertex2f(core[1].x, core[1].y);
+            glVertex2f(core[2].x, core[2].y);
+            glVertex2f(core[3].x, core[3].y);
+            glVertex2f(core[4].x, core[4].y);
+            glVertex2f(core[5].x, core[5].y);
+            glVertex2f(core[6].x, core[6].y);
+            glVertex2f(core[7].x, core[7].y);
+            glVertex2f(core[8].x, core[8].y);
+            glVertex2f(core[1].x, core[1].y);
             glEnd(); // 10 verts -> 8 tris
 
             addTriangleCount(24);

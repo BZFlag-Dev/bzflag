@@ -3631,10 +3631,7 @@ bool            addExplosion(const float* _pos,
 
     // make a copy and initialize it
     BillboardSceneNode* newExplosion = prototypeExplosions[index]->copy();
-    GLfloat pos[3];
-    pos[0] = _pos[0];
-    pos[1] = _pos[1];
-    pos[2] = _pos[2];
+    auto pos = glm::make_vec3(_pos);
     newExplosion->move(pos);
     newExplosion->setSize(size);
     newExplosion->setDuration(duration);
@@ -3669,7 +3666,7 @@ bool            addExplosion(const float* _pos,
 
         // make a copy and initialize it
         BillboardSceneNode* newExpl = prototypeExplosions[idx]->copy();
-        GLfloat explPos[3];
+        glm::vec3 explPos;
         explPos[0] = _pos[0]+(float)(bzfrand()*12.0 - 6.0);
         explPos[1] = _pos[1]+(float)(bzfrand()*12.0 - 6.0);
         explPos[2] = _pos[2]+(float)(bzfrand()*10.0);
