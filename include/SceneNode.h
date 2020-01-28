@@ -116,6 +116,26 @@ public:
         if (!colorOverride) ::glColor4f(rgba.r, rgba.g, rgba.b, rgba.a);
     };
 
+    static void     glVertex3fv(const GLfloat *pos)
+    {
+        ::glVertex3fv(pos);
+    };
+
+    static void     glVertex3fv(const glm::vec3 &pos)
+    {
+        ::glVertex3f(pos.x, pos.y, pos.z);
+    };
+
+    static void     glTexCoord2fv(const GLfloat *coord)
+    {
+        ::glTexCoord2fv(coord);
+    };
+
+    static void     glTexCoord2fv(const glm::vec2 &coord)
+    {
+        ::glTexCoord2f(coord.s, coord.t);
+    };
+
     static void     setStipple(GLfloat alpha)
     {
         (*stipple)(alpha);

@@ -129,7 +129,7 @@ WallSceneNode*      PyramidSceneNodeGenerator::getNextNode(
     tEdge[2] = tCorner[2] - base[2];
 
     if (isQuad == false)
-        return new TriWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+        return new TriWallSceneNode(glm::make_vec3(base), glm::make_vec3(sEdge), glm::make_vec3(tEdge), uRepeats, vRepeats, lod);
     else
         return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
 

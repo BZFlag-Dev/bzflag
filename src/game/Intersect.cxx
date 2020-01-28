@@ -10,9 +10,17 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-#include <math.h>
+#define GLM_ENABLE_EXPERIMENTAL
+
+// Interface
 #include "Intersect.h"
+
+// System headers
+#include <math.h>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/norm.hpp>
+
+// Common heades
 #include "Extents.h"
 
 
@@ -669,6 +677,45 @@ bool testRectInRect(const float* p1, float angle1, float dx1, float dy1,
 }
 
 
+static inline void projectAxisBox(const glm::vec3 &dir, const Extents& extents,
+                                  float &minDist, float &maxDist)
+{
+    glm::vec3 i;
+    glm::vec3 o;
+
+    // find the extreme corners
+    for (int t = 0; t < 3; t++)
+    {
+        if (dir[t] > 0.0f)
+        {
+            i[t] = extents.maxs[t];
+            o[t] = extents.mins[t];
+        }
+        else
+        {
+            i[t] = extents.mins[t];
+            o[t] = extents.maxs[t];
+        }
+    }
+
+    float idist = glm::dot(i, dir);
+    float odist = glm::dot(o, dir);
+
+    if (idist < odist)
+    {
+        minDist = idist;
+        maxDist = odist;
+    }
+    else
+    {
+        minDist = odist;
+        maxDist = idist;
+    }
+
+    return;
+}
+
+
 static inline void projectAxisBox(const float* dir, const Extents& extents,
                                   float* minDist, float* maxDist)
 {
@@ -708,6 +755,29 @@ static inline void projectAxisBox(const float* dir, const Extents& extents,
 }
 
 
+static inline void projectPolygon(const glm::vec3 &dir,
+                                  const std::vector<glm::vec3> &points,
+                                  float &minDist, float &maxDist)
+{
+    float mind = MAXFLOAT;
+    float maxd = -MAXFLOAT;
+
+    for (auto &p : points)
+    {
+        float dist = glm::dot(p, dir);
+        if (dist < mind)
+            mind = dist;
+        if (dist > maxd)
+            maxd = dist;
+    }
+
+    minDist = mind;
+    maxDist = maxd;
+
+    return;
+}
+
+
 static inline void projectPolygon(const float* dir,
                                   int count, const float (*points)[3],
                                   float* minDist, float* maxDist)
@@ -734,6 +804,64 @@ static inline void projectPolygon(const float* dir,
 
 // return true if polygon touches the axis aligned box
 // *** assumes that an extents test has already been done ***
+bool testPolygonInAxisBox(const std::vector<glm::vec3> &points,
+                          const glm::vec4 &plane, const Extents& extents)
+{
+    int pointCount = (int)points.size();
+    int t;
+    glm::vec3 i; // inside point  (assuming partial)
+    glm::vec3 o; // outside point (assuming partial)
+
+    // test the plane
+    for (t = 0; t < 3; t++)
+    {
+        if (plane[t] > 0.0f)
+        {
+            i[t] = extents.maxs[t];
+            o[t] = extents.mins[t];
+        }
+        else
+        {
+            i[t] = extents.mins[t];
+            o[t] = extents.maxs[t];
+        }
+    }
+    const float icross = glm::dot(glm::vec3(plane), i) + plane[3];
+    const float ocross = glm::dot(glm::vec3(plane), o) + plane[3];
+    if ((icross * ocross) > 0.0f)
+    {
+        // same polarity means that the plane doesn't cut the box
+        return false;
+    }
+
+    // test the edges
+    const glm::vec3 axisNormals[3] =
+    {{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}};
+    for (t = 0; t < pointCount; t++)
+    {
+        int next = (t + 1) % pointCount;
+        auto edge = points[next] - points[t];
+        for (int a = 0; a < 3; a++)
+        {
+            const auto axis = axisNormals[a];
+            auto cross = glm::cross(edge, axis);;
+            const float length = glm::length2(cross);
+            if (length < 0.001f)
+                continue;
+            // find the projected distances
+            float boxMinDist, boxMaxDist;
+            float polyMinDist, polyMaxDist;
+            projectAxisBox(cross, extents, boxMinDist, boxMaxDist);
+            projectPolygon(cross, points, polyMinDist, polyMaxDist);
+            // check if this is a separation axis
+            if ((boxMinDist > polyMaxDist) || (boxMaxDist < polyMinDist))
+                return false;
+        }
+    }
+
+    return true;
+}
+
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
                           const glm::vec4 &plane, const Extents& extents)
 {

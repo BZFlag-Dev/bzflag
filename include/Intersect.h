@@ -17,7 +17,13 @@
 #ifndef BZF_INTERSECT_H
 #define BZF_INTERSECT_H
 
+// 1st
 #include "common.h"
+
+// System headers
+#include <vector>
+
+// Common headers
 #include "Ray.h"
 #include "Frustum.h"
 
@@ -92,6 +98,9 @@ float timeAndSideRayHitsRect(const Ray& r,
                              float dx, float dy, int& side);
 
 // return true if polygon touches the axis aligned box
+bool testPolygonInAxisBox(const std::vector<glm::vec3> &points,
+                          const glm::vec4 &plane, const Extents& extents);
+
 bool testPolygonInAxisBox(int pointCount, const float (*points)[3],
                           const glm::vec4 &plane, const Extents& extents);
 
