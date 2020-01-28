@@ -3374,15 +3374,14 @@ BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
         return false;
     }
 
-    float positionFudge = 10.0f; // linear distance
     float worldSize = bz_getBZDBInt("_worldSize");
 
-    if (abs(pos[1]) >= (worldSize * 0.5f) + positionFudge)
+    if (abs(pos[1]) >= (worldSize * 0.5f))
     {
         return false;
     }
 
-    if (abs(pos[0]) >= (worldSize * 0.5f) + positionFudge)
+    if (abs(pos[0]) >= (worldSize * 0.5f))
     {
         return false;
     }
