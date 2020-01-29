@@ -10,8 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include <math.h>
+// Interface
 #include "WallSceneNodeGenerator.h"
+
+// System headers
+#include <math.h>
+
+// Comon headers
 #include "WallObstacle.h"
 #include "bzfgl.h"
 #include "QuadWallSceneNode.h"
@@ -37,9 +42,9 @@ WallSceneNode*      WallSceneNodeGenerator::getNextNode(
 {
     if (getNodeNumber() == 1) return NULL;
 
-    GLfloat base[3];
-    GLfloat sEdge[3];
-    GLfloat tEdge[3];
+    glm::vec3 base;
+    glm::vec3 sEdge;
+    glm::vec3 tEdge;
     const float* pos = wall->getPosition();
     const float c = cosf(wall->getRotation());
     const float s = sinf(wall->getRotation());

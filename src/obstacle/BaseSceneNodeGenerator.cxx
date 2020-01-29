@@ -112,8 +112,8 @@ WallSceneNode*  BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepea
     }
     color[3] = 1.0;
 
-    GLfloat sEdge[3];
-    GLfloat tEdge[3];
+    glm::vec3 sEdge;
+    glm::vec3 tEdge;
     sEdge[0] = sCorner[0] - bPoint[0];
     sEdge[1] = sCorner[1] - bPoint[1];
     sEdge[2] = sCorner[2] - bPoint[2];
@@ -121,7 +121,7 @@ WallSceneNode*  BaseSceneNodeGenerator::getNextNode(float uRepeats, float vRepea
     tEdge[1] = tCorner[1] - bPoint[1];
     tEdge[2] = tCorner[2] - bPoint[2];
 
-    WallSceneNode *retval = new QuadWallSceneNode(bPoint, sEdge, tEdge, uRepeats, vRepeats, lod, fixedUVs);
+    WallSceneNode *retval = new QuadWallSceneNode(glm::make_vec3(bPoint), sEdge, tEdge, uRepeats, vRepeats, lod, fixedUVs);
     retval->setColor(color);
     return retval;
 }

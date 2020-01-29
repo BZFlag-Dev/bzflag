@@ -119,8 +119,8 @@ WallSceneNode*      PyramidSceneNodeGenerator::getNextNode(
         }
     }
 
-    GLfloat sEdge[3];
-    GLfloat tEdge[3];
+    glm::vec3 sEdge;
+    glm::vec3 tEdge;
     sEdge[0] = sCorner[0] - base[0];
     sEdge[1] = sCorner[1] - base[1];
     sEdge[2] = sCorner[2] - base[2];
@@ -129,9 +129,9 @@ WallSceneNode*      PyramidSceneNodeGenerator::getNextNode(
     tEdge[2] = tCorner[2] - base[2];
 
     if (isQuad == false)
-        return new TriWallSceneNode(glm::make_vec3(base), glm::make_vec3(sEdge), glm::make_vec3(tEdge), uRepeats, vRepeats, lod);
+        return new TriWallSceneNode(glm::make_vec3(base), sEdge, tEdge, uRepeats, vRepeats, lod);
     else
-        return new QuadWallSceneNode(base, sEdge, tEdge, uRepeats, vRepeats, lod);
+        return new QuadWallSceneNode(glm::make_vec3(base), sEdge, tEdge, uRepeats, vRepeats, lod);
 
 }
 
