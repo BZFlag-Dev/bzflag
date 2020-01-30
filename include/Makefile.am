@@ -91,7 +91,6 @@ noinst_HEADERS =			\
 	PlatformFactory.h		\
 	PlayerInfo.h			\
 	PlayerState.h			\
-	PolyWallSceneNode.h		\
 	Protocol.h			\
 	PyramidBuilding.h		\
 	PyramidSceneNodeGenerator.h	\

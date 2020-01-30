@@ -33,7 +33,6 @@ libGeometry_la_SOURCES  =		\
 	Model.h				\
 	ModelRender.cxx			\
 	OccluderSceneNode.cxx		\
-	PolyWallSceneNode.cxx		\
 	QuadWallSceneNode.cxx		\
 	SceneNode.cxx			\
 	SphereSceneNode.cxx		\

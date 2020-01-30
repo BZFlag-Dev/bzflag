@@ -94,9 +94,6 @@
     <ClCompile Include="..\..\src\geometry\OccluderSceneNode.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\geometry\PolyWallSceneNode.cxx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\geometry\QuadWallSceneNode.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -184,9 +181,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\OpenGLTexture.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\PolyWallSceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\QuadWallSceneNode.h">

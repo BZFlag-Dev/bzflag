@@ -14,7 +14,6 @@
 
 // interface headers
 #include "WallSceneNode.h"
-#include "PolyWallSceneNode.h"
 
 // system headers
 #include <stdio.h>
