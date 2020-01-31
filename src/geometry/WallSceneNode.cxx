@@ -75,10 +75,10 @@ void WallSceneNode::setPlane(const glm::vec4 &_plane)
 
     const float n = glm::inversesqrt(glm::length2(normal));
 
-    normal /= n;
+    normal *= n;
 
     // store normalized plane equation
-    plane = n * _plane;
+    plane = glm::vec4(normal, _plane.w * n);
 }
 
 bool            WallSceneNode::cull(const ViewFrustum& frustum) const
