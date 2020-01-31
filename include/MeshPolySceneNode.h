@@ -60,8 +60,6 @@ protected:
         {
             style = _style;
         }
-        bool getNoRadar() const;
-        void setNoRadar();
         void render();
         void renderRadar();
         void renderShadow();
