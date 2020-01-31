@@ -263,7 +263,7 @@ SceneDatabase* SceneDatabaseBuilder::make(const World* world)
 void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
         const World* world)
 {
-    float plane[4] = { 0.0f, 0.0f, 1.0f, 0.0f };
+    glm::vec4 plane = { 0.0f, 0.0f, 1.0f, 0.0f };
     const float level = world->getWaterLevel();
     plane[3] = -level;
 
@@ -273,9 +273,9 @@ void SceneDatabaseBuilder::addWaterLevel(SceneDatabase* db,
 
     // setup the vertex and texture coordinates
     float size = BZDBCache::worldSize;
-    GLfloat3Array v(4);
-    GLfloat3Array n(0);
-    GLfloat2Array t(4);
+    std::vector<glm::vec3> v(4);
+    std::vector<glm::vec3> n(0);
+    std::vector<glm::vec2> t(4);
     v[0][0] = v[0][1] = v[1][1] = v[3][0] = -size/2.0f;
     v[1][0] = v[2][0] = v[2][1] = v[3][1] = +size/2.0f;
     v[0][2] = v[1][2] = v[2][2] = v[3][2] = level;

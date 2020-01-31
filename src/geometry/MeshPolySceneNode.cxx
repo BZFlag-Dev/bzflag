@@ -10,12 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 // interface header
 #include "MeshPolySceneNode.h"
 
 // system headers
-#include <assert.h>
-#include <math.h>
+#include <glm/gtx/norm.hpp>
 
 // common implementation headers
 #include "Intersect.h"
@@ -30,9 +31,12 @@
 // MeshPolySceneNode::Geometry
 //
 
-MeshPolySceneNode::Geometry::Geometry(MeshPolySceneNode* _node,
-                                      const GLfloat3Array& _vertices, const GLfloat3Array& _normals,
-                                      const GLfloat2Array& _texcoords, const glm::vec3 *_normal) :
+MeshPolySceneNode::Geometry::Geometry(
+    MeshPolySceneNode* _node,
+    const std::vector<glm::vec3> &_vertices,
+    const std::vector<glm::vec3> &_normals,
+    const std::vector<glm::vec2> &_texcoords,
+    const glm::vec3 *_normal) :
     vertices(_vertices), normals(_normals), texcoords(_texcoords)
 {
     sceneNode = _node;
@@ -50,10 +54,9 @@ MeshPolySceneNode::Geometry::~Geometry()
 
 inline void MeshPolySceneNode::Geometry::drawV() const
 {
-    const int count = vertices.getSize();
     glBegin(GL_TRIANGLE_FAN);
-    for (int i = 0; i < count; i++)
-        glVertex3fv(vertices[i]);
+    for (const auto &v : vertices)
+        glVertex3fv(v);
     glEnd();
     return;
 }
@@ -61,7 +64,7 @@ inline void MeshPolySceneNode::Geometry::drawV() const
 
 inline void MeshPolySceneNode::Geometry::drawVT() const
 {
-    const int count = vertices.getSize();
+    const int count = vertices.size();
     glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < count; i++)
     {
@@ -75,7 +78,7 @@ inline void MeshPolySceneNode::Geometry::drawVT() const
 
 inline void MeshPolySceneNode::Geometry::drawVN() const
 {
-    const int count = vertices.getSize();
+    const int count = vertices.size();
     glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < count; i++)
     {
@@ -89,7 +92,7 @@ inline void MeshPolySceneNode::Geometry::drawVN() const
 
 inline void MeshPolySceneNode::Geometry::drawVTN() const
 {
-    const int count = vertices.getSize();
+    const int count = vertices.size();
     glBegin(GL_TRIANGLE_FAN);
     for (int i = 0; i < count; i++)
     {
@@ -106,7 +109,7 @@ void MeshPolySceneNode::Geometry::render()
 {
     sceneNode->setColor();
 
-    if (normals.getSize() != 0)
+    if (!normals.empty())
     {
         if (style >= 2)
             drawVTN();
@@ -122,14 +125,6 @@ void MeshPolySceneNode::Geometry::render()
             drawV();
     }
 
-    addTriangleCount(vertices.getSize() - 2);
-    return;
-}
-
-
-void MeshPolySceneNode::Geometry::renderRadar()
-{
-    drawV();
     addTriangleCount(vertices.getSize() - 2);
     return;
 }
@@ -153,19 +148,17 @@ const glm::vec3 MeshPolySceneNode::Geometry::getPosition() const
 // MeshPolySceneNode
 //
 
-MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
+MeshPolySceneNode::MeshPolySceneNode(const glm::vec4 &_plane,
                                      bool _noRadar, bool _noShadow,
-                                     const GLfloat3Array& vertices,
-                                     const GLfloat3Array& normals,
-                                     const GLfloat2Array& texcoords) :
+                                     const std::vector<glm::vec3> &vertices,
+                                     const std::vector<glm::vec3> &normals,
+                                     const std::vector<glm::vec2> &texcoords) :
     node(this, vertices, normals, texcoords, &normal)
 {
     int i, j;
-    const int count = vertices.getSize();
-    assert(texcoords.getSize() == count);
-    assert((normals.getSize() == 0) || (normals.getSize() == count));
+    const int count = vertices.size();
 
-    setPlane(glm::make_vec4(_plane));
+    setPlane(_plane);
 
     noRadar = _noRadar || (plane[2] <= 0.0f); // pre-cull if we can
     noShadow = _noShadow;
@@ -188,7 +181,7 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     }
 
     // project vertices onto plane
-    GLfloat2Array flat(count);
+    std::vector<glm::vec2> flat(count);
     switch (ignoreAxis)
     {
     case 0:
@@ -225,30 +218,25 @@ MeshPolySceneNode::MeshPolySceneNode(const float _plane[4],
     setNumLODs(1, area);
 
     // compute bounding sphere, put center at average of vertices
-    auto mySphere = glm::vec4(0.0f);
-    for (i = 0; i < count; i++)
+    auto myCenter = glm::vec3(0.0f);
+    for (const auto &v : vertices)
+        myCenter += v;
+    myCenter /= (float)count;
+    setCenter(myCenter);
+
+    float myRadius2 = 0.0f;
+    for (const auto &v : vertices)
     {
-        mySphere[0] += vertices[i][0];
-        mySphere[1] += vertices[i][1];
-        mySphere[2] += vertices[i][2];
+        const auto d = myCenter - v;
+        auto r = glm::length2(d);
+        if (r > myRadius2)
+            myRadius2 = r;
     }
-    mySphere[0] /= (float)count;
-    mySphere[1] /= (float)count;
-    mySphere[2] /= (float)count;
-    for (i = 0; i < count; i++)
-    {
-        const float dx = mySphere[0] - vertices[i][0];
-        const float dy = mySphere[1] - vertices[i][1];
-        const float dz = mySphere[2] - vertices[i][2];
-        GLfloat r = ((dx * dx) + (dy * dy) + (dz * dz));
-        if (r > mySphere[3])
-            mySphere[3] = r;
-    }
-    setSphere(mySphere);
+    setRadius(myRadius2);
 
     // record extents info
-    for (i = 0; i < count; i++)
-        extents.expandToPoint(glm::make_vec3(vertices[i]));
+    for (const auto &v : vertices)
+        extents.expandToPoint(v);
 
     return;
 }
@@ -260,12 +248,17 @@ MeshPolySceneNode::~MeshPolySceneNode()
 }
 
 
+int MeshPolySceneNode::getVertexCount () const
+{
+    return node.getVertexCount();
+}
+
+
 bool MeshPolySceneNode::cull(const ViewFrustum& frustum) const
 {
     // cull if eye is behind (or on) plane
     const auto eye = frustum.getEye();
-    if (((eye[0] * plane[0]) + (eye[1] * plane[1]) + (eye[2] * plane[2]) +
-            plane[3]) <= 0.0f)
+    if ((glm::dot(eye, normal) + plane[3]) <= 0.0f)
         return true;
 
     // if the Visibility culler tells us that we're
@@ -287,13 +280,13 @@ bool MeshPolySceneNode::inAxisBox (const Extents& exts) const
     if (!extents.touches(exts))
         return false;
 
-    return testPolygonInAxisBox (getVertexCount(), getVertices(), plane, exts);
+    return testPolygonInAxisBox (node.vertices, plane, exts);
 }
 
 
 const glm::vec3 MeshPolySceneNode::getVertex(int i) const
 {
-    return glm::make_vec3(node.getVertex(i));
+    return node.getVertex(i);
 }
 
 

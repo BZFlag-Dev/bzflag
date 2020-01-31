@@ -24,24 +24,23 @@
 class MeshPolySceneNode : public WallSceneNode
 {
 public:
-    MeshPolySceneNode(const float plane[4],
+    MeshPolySceneNode(const glm::vec4 &plane,
                       bool noRadar, bool noShadow,
-                      const GLfloat3Array& vertices,
-                      const GLfloat3Array& normals,
-                      const GLfloat2Array& texcoords);
+                      const std::vector<glm::vec3> &vertices,
+                      const std::vector<glm::vec3> &normals,
+                      const std::vector<glm::vec2> &texcoords);
     ~MeshPolySceneNode();
 
-    bool cull(const ViewFrustum& frustum) const;
-    bool inAxisBox (const Extents& exts) const;
-    int getVertexCount () const;
+    bool cull(const ViewFrustum& frustum) const override;
+    bool inAxisBox (const Extents& exts) const override;
+    int getVertexCount () const override;
     const glm::vec3 getVertex (int vertex) const override;
-    const GLfloat (*getVertices() const)[3];
 
-    void addRenderNodes(SceneRenderer&);
-    void addShadowNodes(SceneRenderer&);
-    void renderRadar();
+    void addRenderNodes(SceneRenderer&) override;
+    void addShadowNodes(SceneRenderer&) override;
+    void renderRadar() override;
 
-    void getRenderNodes(std::vector<RenderSet>& rnodes);
+    void getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
 
 protected:
@@ -49,22 +48,18 @@ protected:
     {
     public:
         Geometry(MeshPolySceneNode*,
-                 const GLfloat3Array& vertices,
-                 const GLfloat3Array& normals,
-                 const GLfloat2Array& texcoords,
+                 const std::vector<glm::vec3> &vertices,
+                 const std::vector<glm::vec3> &normals,
+                 const std::vector<glm::vec2> &texcoords,
                  const glm::vec3 *normal);
         ~Geometry();
         void setStyle(int _style)
         {
             style = _style;
         }
-        bool getNoRadar() const;
-        void setNoRadar();
-        void render();
-        void renderRadar();
-        void renderShadow();
-        const GLfloat* getVertex(int i) const;
-        const GLfloat (*getVertices() const)[3];
+        void render() override;
+        void renderShadow() override;
+        const glm::vec3 &getVertex(int i) const;
         int getVertexCount() const;
         const glm::vec3 getPosition() const override;
     private:
@@ -79,9 +74,9 @@ protected:
         bool draw;
         const glm::vec3 *normal;
     public:
-        GLfloat3Array vertices;
-        GLfloat3Array normals;
-        GLfloat2Array texcoords;
+        std::vector<glm::vec3> vertices;
+        std::vector<glm::vec3> normals;
+        std::vector<glm::vec2> texcoords;
     };
 
 private:
@@ -92,29 +87,13 @@ private:
 
 inline int MeshPolySceneNode::Geometry::getVertexCount() const
 {
-    return vertices.getSize();
+    return vertices.size();
 }
 
-inline int MeshPolySceneNode::getVertexCount () const
-{
-    return node.getVertexCount();
-}
-
-inline const GLfloat* MeshPolySceneNode::Geometry::getVertex(int i) const
+inline const glm::vec3 &MeshPolySceneNode::Geometry::getVertex(int i) const
 {
     return vertices[i];
 }
-
-inline const GLfloat (*MeshPolySceneNode::Geometry::getVertices() const)[3]
-{
-    return vertices.getArray();
-}
-
-inline const GLfloat (*MeshPolySceneNode::getVertices() const)[3]
-{
-    return node.getVertices();
-}
-
 
 #endif // BZF_MESH_POLY_SCENE_NODE_H
 

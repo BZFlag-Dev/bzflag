@@ -136,6 +136,16 @@ public:
         ::glTexCoord2f(coord.s, coord.t);
     };
 
+    static void     glNormal3fv(const GLfloat *normal)
+    {
+        ::glNormal3fv(normal);
+    };
+
+    static void     glNormal3fv(const glm::vec3 &normal)
+    {
+        ::glNormal3f(normal.x, normal.y, normal.z);
+    };
+
     static void     setStipple(GLfloat alpha)
     {
         (*stipple)(alpha);

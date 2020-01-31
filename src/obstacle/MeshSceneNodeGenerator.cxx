@@ -374,24 +374,24 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
 
     // vertices
     const int vertexCount = face->getVertexCount();
-    GLfloat3Array vertices(vertexCount);
+    std::vector<glm::vec3> vertices(vertexCount);
     for (i = 0; i < vertexCount; i++)
-        memcpy (vertices[i], face->getVertex(i), sizeof(float[3]));
+        vertices[i] = glm::make_vec3(face->getVertex(i));
 
     // normals
     int normalCount = 0;
     if (face->useNormals())
         normalCount = vertexCount;
-    GLfloat3Array normals(normalCount);
+    std::vector<glm::vec3> normals(normalCount);
     for (i = 0; i < normalCount; i++)
-        memcpy (normals[i], face->getNormal(i), sizeof(float[3]));
+        normals[i] = glm::make_vec3(face->getNormal(i));
 
     // texcoords
-    GLfloat2Array texcoords(vertexCount);
+    std::vector<glm::vec2> texcoords(vertexCount);
     if (face->useTexcoords())
     {
         for (i = 0; i < vertexCount; i++)
-            memcpy (texcoords[i], face->getTexcoord(i), sizeof(float[2]));
+            texcoords[i] = glm::make_vec3(face->getTexcoord(i));
     }
     else
         makeTexcoords (face->getPlane(), vertices, texcoords);
@@ -405,7 +405,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
         noShadow = bzmat->getNoShadow();
     }
     MeshPolySceneNode* node =
-        new MeshPolySceneNode(glm::value_ptr(face->getPlane()), noRadar, noShadow,
+        new MeshPolySceneNode(face->getPlane(), noRadar, noShadow,
                               vertices, normals, texcoords);
 
     return node;
@@ -504,14 +504,14 @@ void MeshSceneNodeGenerator::setupNodeMaterial(WallSceneNode* node,
 
 
 bool MeshSceneNodeGenerator::makeTexcoords(const glm::vec4 &plane,
-        const GLfloat3Array& vertices,
-        GLfloat2Array& texcoords)
+        const std::vector<glm::vec3> &vertices,
+        std::vector<glm::vec2> &texcoords)
 {
     glm::vec3 x;
     glm::vec3 y;
-    glm::vec3 vert0(glm::make_vec3(vertices[0]));
+    auto vert0 = vertices[0];
 
-    x = glm::make_vec3(vertices[1]) - vert0;
+    x = vertices[1] - vert0;
     y = glm::cross(glm::vec3(plane), x);
 
     x = glm::normalize(x);
@@ -521,11 +521,11 @@ bool MeshSceneNodeGenerator::makeTexcoords(const glm::vec4 &plane,
 
     texcoords[0][0] = 0.0f;
     texcoords[0][1] = 0.0f;
-    const int count = vertices.getSize();
+    const int count = vertices.size();
     for (int i = 1; i < count; i++)
     {
         glm::vec3 delta;
-        delta = glm::make_vec3(vertices[i]) - vert0;
+        delta = vertices[i] - vert0;
         texcoords[i][0] = glm::dot(delta, x) / uvScale;
         texcoords[i][1] = glm::dot(delta, y) / uvScale;
     }
