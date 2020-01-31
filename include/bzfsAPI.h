@@ -2008,7 +2008,8 @@ private:
 };
 
 BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos );
-BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos );
+BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[3] );
+BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] );
 
 class bz_CustomMapObjectHandler
 {

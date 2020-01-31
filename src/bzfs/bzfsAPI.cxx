@@ -3339,7 +3339,7 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
     }
 }
 
-BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos )
+BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[3] )
 {
     TimeKeeper start = TimeKeeper::getCurrent();
     int tries = 0;
@@ -3351,15 +3351,48 @@ BZF_API void bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float *randomPos
 
             if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime"))
             {
-                randomPos[2] = obj->zMax;
-                logDebugMessage(1, "Warning: bz_getSpawnPointWithin ran out of time, just dropping the sucker in\n");
-                break;
+                return false;
             }
         }
 
         bz_getRandomPoint(obj, randomPos);
         ++tries;
-    } while (!DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax));
+    } while (
+        !DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax) ||
+        !bz_isWithinWorldBoundaries(randomPos)
+    );
+
+    return true;
+}
+
+BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
+{
+    float maxZ = bz_getWorldMaxHeight();
+
+    if (pos[2] > maxZ)
+    {
+        return false;
+    }
+
+    float worldSize = bz_getBZDBInt("_worldSize");
+
+    if (abs(pos[1]) >= (worldSize * 0.5f))
+    {
+        return false;
+    }
+
+    if (abs(pos[0]) >= (worldSize * 0.5f))
+    {
+        return false;
+    }
+
+    float burrowFudge = 1.0f; // linear distance
+    if (pos[2] < bz_getBZDBDouble("_burrowDepth") - burrowFudge)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )
