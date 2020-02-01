@@ -426,12 +426,12 @@ void SceneDatabaseBuilder::addBox(SceneDatabase* db, BoxBuilding& o)
 
 #ifndef SHELL_INSIDE_NODES
     // add the inside node
-    GLfloat obstacleSize[3];
+    glm::vec3 obstacleSize;
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
     SceneNode* inode =
-        new EighthDBoxSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+        new EighthDBoxSceneNode(glm::make_vec3(o.getPosition()), obstacleSize, o.getRotation());
     o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 
@@ -488,12 +488,12 @@ void SceneDatabaseBuilder::addPyramid(SceneDatabase* db, PyramidBuilding& o)
 
 #ifndef SHELL_INSIDE_NODES
     // add the inside node
-    GLfloat obstacleSize[3];
+    glm::vec3 obstacleSize;
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
     SceneNode* inode =
-        new EighthDPyrSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+        new EighthDPyrSceneNode(glm::make_vec3(o.getPosition()), obstacleSize, o.getRotation());
     o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 
@@ -584,12 +584,12 @@ void SceneDatabaseBuilder::addBase(SceneDatabase *db, BaseBuilding &o)
 
 #ifndef SHELL_INSIDE_NODES
     // add the inside node
-    GLfloat obstacleSize[3];
+    glm::vec3 obstacleSize;
     obstacleSize[0] = o.getWidth();
     obstacleSize[1] = o.getBreadth();
     obstacleSize[2] = o.getHeight();
     SceneNode* inode = new
-    EighthDBaseSceneNode(o.getPosition(), obstacleSize, o.getRotation());
+    EighthDBaseSceneNode(glm::make_vec3(o.getPosition()), obstacleSize, o.getRotation());
     o.addInsideSceneNode(inode);
 #endif // SHELL_INSIDE_NODES
 

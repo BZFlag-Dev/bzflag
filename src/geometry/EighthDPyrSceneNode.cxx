@@ -10,12 +10,16 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+#define GLM_ENABLE_EXPERIMENTAL
+
 // interface header
 #include "EighthDPyrSceneNode.h"
 
 // system headers
 #include <stdlib.h>
 #include <math.h>
+#include <glm/gtx/norm.hpp>
+#include <glm/gtc/random.hpp>
 
 // common implementation header
 #include "StateDatabase.h"
@@ -25,8 +29,8 @@
 
 const int       PyrPolygons = 20;
 
-EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
-        const float size[3], float rotation) :
+EighthDPyrSceneNode::EighthDPyrSceneNode(const glm::vec3 &pos,
+        const glm::vec3 &size, float rotation) :
     EighthDimSceneNode(PyrPolygons),
     renderNode(this, pos, size, rotation)
 {
@@ -39,7 +43,7 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
     const GLfloat slope = size[2] / size[0];
     for (int i = 0; i < PyrPolygons; i++)
     {
-        GLfloat base[3];
+        glm::vec3 base;
         base[0] = (size[0] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
         base[1] = (size[1] - 0.5f * polySize) * (2.0f * (float)bzfrand() - 1.0f);
         base[2] = (size[2] - slope * hypotf(base[0], base[1])) * (float)bzfrand();
@@ -47,10 +51,8 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
         for (int j = 0; j < 3; j++)
         {
             // pick point around origin
-            GLfloat p[3];
-            p[0] = base[0] + polySize * ((float)bzfrand() - 0.5f);
-            p[1] = base[1] + polySize * ((float)bzfrand() - 0.5f);
-            p[2] = base[2] + polySize * ((float)bzfrand() - 0.5f);
+            auto p = base + polySize *
+                glm::linearRand(glm::vec3(-0.5f), glm::vec3(0.5f));
 
             // make sure it's inside the box
             if (p[0] < -size[0]) p[0] = -size[0];
@@ -71,8 +73,8 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const float pos[3],
     }
 
     // set sphere
-    setCenter(glm::make_vec3(pos));
-    setRadius(0.25f * (size[0]*size[0] + size[1]*size[1] + size[2]*size[2]));
+    setCenter(pos);
+    setRadius(0.25f * glm::length2(size));
 }
 
 EighthDPyrSceneNode::~EighthDPyrSceneNode()
@@ -111,8 +113,8 @@ void            EighthDPyrSceneNode::addRenderNodes(
 
 EighthDPyrSceneNode::EighthDPyrRenderNode::EighthDPyrRenderNode(
     const EighthDPyrSceneNode* _sceneNode,
-    const float pos[3],
-    const float size[3], float rotation) :
+    const glm::vec3 &pos,
+    const glm::vec3 &size, float rotation) :
     sceneNode(_sceneNode)
 {
     // get rotation stuff
