@@ -1027,7 +1027,7 @@ void Player::addToScene(SceneDatabase* scene, TeamColor effectiveTeam,
     tankNode->setInTheCockpit(inCockpit);
 
     // reset the clipping plane
-    tankNode->setClipPlane(NULL);
+    tankNode->resetClipPlane();
 
     tankNode->setJumpJets(0.0f);
 

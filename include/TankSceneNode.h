@@ -122,7 +122,8 @@ public:
     void        setThief();
     void        setDimensions(const float size[3]);
 
-    void        setClipPlane(const GLfloat* plane);
+    void        setClipPlane(const float plane[4]);
+    void        resetClipPlane();
     void        setExplodeFraction(float t);
     void        setJumpJets(float scale);
 
