@@ -301,9 +301,9 @@ int TankGeometryMgr::getPartTriangleCount(TankGeometryEnums::TankShadow sh,
 }
 
 
-const float* TankGeometryMgr::getScaleFactor(TankSize size)
+const glm::vec3 TankGeometryMgr::getScaleFactor(TankSize size)
 {
-    return scaleFactors[size];
+    return glm::make_vec3(scaleFactors[size]);
 }
 
 
