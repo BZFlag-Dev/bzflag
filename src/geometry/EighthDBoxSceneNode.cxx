@@ -43,7 +43,7 @@ EighthDBoxSceneNode::EighthDBoxSceneNode(const glm::vec3 &pos,
     for (int i = 0; i < BoxPolygons; i++)
     {
         auto base = (size - 0.5f * polySize) *
-            glm::linearRand(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(1.0f));
+                    glm::linearRand(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(1.0f));
         glm::vec3 vertex[3];
         for (int j = 0; j < 3; j++)
         {

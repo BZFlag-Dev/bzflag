@@ -52,7 +52,7 @@ EighthDPyrSceneNode::EighthDPyrSceneNode(const glm::vec3 &pos,
         {
             // pick point around origin
             auto p = base + polySize *
-                glm::linearRand(glm::vec3(-0.5f), glm::vec3(0.5f));
+                     glm::linearRand(glm::vec3(-0.5f), glm::vec3(0.5f));
 
             // make sure it's inside the box
             if (p[0] < -size[0]) p[0] = -size[0];
