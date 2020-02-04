@@ -24,6 +24,7 @@
 #include "TextureMatrix.h"
 #include "ParseColor.h"
 #include "BZDBCache.h"
+#include "OpenGLCommon.h"
 
 // local headers
 #include "daylight.h"
@@ -32,37 +33,37 @@
 #include "SceneNode.h"
 #include "effectsRenderer.h"
 
-static const GLfloat    squareShape[4][2] =
+static const glm::vec2 squareShape[4] =
 {
     {  1.0f,  1.0f }, { -1.0f,  1.0f },
     { -1.0f, -1.0f }, {  1.0f, -1.0f }
 };
 
 
-GLfloat         BackgroundRenderer::skyPyramid[5][3];
+glm::vec3       BackgroundRenderer::skyPyramid[5];
 const GLfloat       BackgroundRenderer::cloudRepeats = 3.0f;
 static const int    NumMountainFaces = 16;
 
-GLfloat         BackgroundRenderer::groundColor[4][4];
-GLfloat         BackgroundRenderer::groundColorInv[4][4];
+glm::vec4       BackgroundRenderer::groundColor[4];
+glm::vec4       BackgroundRenderer::groundColorInv[4];
 
-const GLfloat       BackgroundRenderer::defaultGroundColor[4][4] =
+const glm::vec4     BackgroundRenderer::defaultGroundColor[4] =
 {
     { 0.0f, 0.35f, 0.0f, 1.0f },
     { 0.0f, 0.20f, 0.0f, 1.0f },
     { 1.0f, 1.00f, 1.0f, 1.0f },
     { 1.0f, 1.00f, 1.0f, 1.0f }
 };
-const GLfloat       BackgroundRenderer::defaultGroundColorInv[4][4] =
+const glm::vec4     BackgroundRenderer::defaultGroundColorInv[4] =
 {
     { 0.35f, 0.00f, 0.35f, 1.0f },
     { 0.20f, 0.00f, 0.20f, 1.0f },
     { 1.00f, 1.00f, 1.00f, 1.0f },
     { 1.00f, 1.00f, 1.00f, 1.0f }
 };
-const GLfloat       BackgroundRenderer::receiverColor[3] =
+const glm::vec3     BackgroundRenderer::receiverColor =
 { 0.3f, 0.55f, 0.3f };
-const GLfloat       BackgroundRenderer::receiverColorInv[3] =
+const glm::vec3     BackgroundRenderer::receiverColorInv =
 { 0.55f, 0.3f, 0.55f };
 
 BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
@@ -80,8 +81,8 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
 {
     static bool init = false;
     OpenGLGStateBuilder gstate;
-    static const GLfloat  black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-    static const GLfloat  white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    static const auto black = glm::vec3(0.0f, 0.0f, 0.0f);
+    static const auto white = glm::vec3(1.0f);
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
     OpenGLMaterial rainMaterial(white, white, 0.0f);
 
@@ -104,9 +105,9 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     }
 
     // initialize the celestial vectors
-    static const float up[3] = { 0.0f, 0.0f, 1.0f };
-    memcpy(sunDirection, up, sizeof(float[3]));
-    memcpy(moonDirection, up, sizeof(float[3]));
+    static const auto up = glm::vec3(0.0f, 0.0f, 1.0f);
+    sunDirection = up;
+    moonDirection = up;
 
     // make ground materials
     setupSkybox();
@@ -132,12 +133,6 @@ BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
     gstate.disableCulling();
     sunShadowsGState = gstate.getState();
 
-    /* useMoonTexture = BZDBCache::texture && (BZDB.eval("useQuality")>2);
-     int moonTexture = -1;
-     if (useMoonTexture) {
-       moonTexture = tm.getTextureID( "moon" );
-       useMoonTexture = moonTexture>= 0;
-     }*/
     // sky stuff
     gstate.reset();
     gstate.setShading();
@@ -281,7 +276,8 @@ void BackgroundRenderer::setupGroundMaterials()
     if (bzmat == NULL)
     {
         // default ground material
-        memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+        for (int i = 0; i < 4; i++)
+            groundColor[i] = defaultGroundColor[i];
         groundTextureID = tm.getTextureID("std_ground", true);
     }
     else
@@ -289,14 +285,15 @@ void BackgroundRenderer::setupGroundMaterials()
         // map specified material
         bzmat->setReference();
         for (int i = 0; i < 4; i++)
-            memcpy (groundColor[i], bzmat->getDiffuse(), sizeof(GLfloat[4]));
+            groundColor[i] = bzmat->getDiffuse();
         if (bzmat->getTextureCount() > 0)
         {
             groundTextureID = tm.getTextureID(bzmat->getTextureLocal(0).c_str(), false);
             if (groundTextureID < 0)
             {
                 // use the default as a backup (default color too)
-                memcpy (groundColor, defaultGroundColor, sizeof(GLfloat[4][4]));
+                for (int i = 0; i < 4; i++)
+                    groundColor[i] = defaultGroundColor[i];
                 groundTextureID = tm.getTextureID("std_ground", true);
             }
             else
@@ -310,7 +307,7 @@ void BackgroundRenderer::setupGroundMaterials()
         }
     }
 
-    static const GLfloat  black[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static const auto black = glm::vec3(0.0f, 0.0f, 0.0f);
     OpenGLMaterial defaultMaterial(black, black, 0.0f);
 
     OpenGLGStateBuilder gb;
@@ -334,7 +331,8 @@ void BackgroundRenderer::setupGroundMaterials()
 
     // default inverted ground material
     int groundInvTextureID = -1;
-    memcpy (groundColorInv, defaultGroundColorInv, sizeof(GLfloat[4][4]));
+    for (int i = 0; i < 4; i++)
+        groundColorInv[i] = defaultGroundColorInv[i];
     if (groundInvTextureID < 0)
         groundInvTextureID = tm.getTextureID("zone_ground", false);
 
@@ -400,16 +398,12 @@ void BackgroundRenderer::resize()
 
 
 void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
-                                      const float sunDir[3],
-                                      const float moonDir[3])
+                                      const glm::vec3 &sunDir,
+                                      const glm::vec3 &moonDir)
 {
     // set sun and moon positions
-    sunDirection[0] = sunDir[0];
-    sunDirection[1] = sunDir[1];
-    sunDirection[2] = sunDir[2];
-    moonDirection[0] = moonDir[0];
-    moonDirection[1] = moonDir[1];
-    moonDirection[2] = moonDir[2];
+    sunDirection = sunDir;
+    moonDirection = moonDir;
 
     if (sunXFormList != INVALID_GL_LIST_ID)
     {
@@ -436,21 +430,13 @@ void BackgroundRenderer::setCelestial(const SceneRenderer& renderer,
 void BackgroundRenderer::setSkyColors()
 {
     // change sky colors according to the sun position
-    GLfloat colors[4][3];
+    glm::vec3 colors[4];
     getSkyColor(sunDirection, colors);
 
-    skyZenithColor[0] = colors[0][0];
-    skyZenithColor[1] = colors[0][1];
-    skyZenithColor[2] = colors[0][2];
-    skySunDirColor[0] = colors[1][0];
-    skySunDirColor[1] = colors[1][1];
-    skySunDirColor[2] = colors[1][2];
-    skyAntiSunDirColor[0] = colors[2][0];
-    skyAntiSunDirColor[1] = colors[2][1];
-    skyAntiSunDirColor[2] = colors[2][2];
-    skyCrossSunDirColor[0] = colors[3][0];
-    skyCrossSunDirColor[1] = colors[3][1];
-    skyCrossSunDirColor[2] = colors[3][2];
+    skyZenithColor = colors[0];
+    skySunDirColor = colors[1];
+    skyAntiSunDirColor = colors[2];
+    skyCrossSunDirColor = colors[3];
 
     return;
 }
@@ -479,9 +465,7 @@ void BackgroundRenderer::makeCelestialLists(const SceneRenderer& renderer)
     glEndList();
 
     // compute display list for moon
-    float coverage = (moonDirection[0] * sunDirection[0]) +
-                     (moonDirection[1] * sunDirection[1]) +
-                     (moonDirection[2] * sunDirection[2]);
+    float coverage = glm::dot(moonDirection, sunDirection);
     // hack coverage to lean towards full
     coverage = (coverage < 0.0f) ? -sqrtf(-coverage) : coverage * coverage;
     float worldSize = BZDBCache::worldSize;
@@ -733,14 +717,8 @@ void BackgroundRenderer::resizeSky()
     // (adjusted for the deepProjection matrix)
     const GLfloat skySize = 3.0f * BZDBCache::worldSize;
     for (int i = 0; i < 4; i++)
-    {
-        skyPyramid[i][0] = skySize * squareShape[i][0];
-        skyPyramid[i][1] = skySize * squareShape[i][1];
-        skyPyramid[i][2] = 0.0f;
-    }
-    skyPyramid[4][0] = 0.0f;
-    skyPyramid[4][1] = 0.0f;
-    skyPyramid[4][2] = skySize;
+        skyPyramid[i] = skySize * glm::vec3(squareShape[i], 0.0f);
+    skyPyramid[4] = glm::vec3(0.0f, 0.0f, skySize);
 }
 
 
@@ -814,17 +792,47 @@ void BackgroundRenderer::setupSkybox()
 }
 
 
+static void glVertex2fv(const glm::vec2 &p)
+{
+    ::glVertex2f(p.x, p.y);
+}
+
+
+static void glVertex3fv(const glm::vec3 &p)
+{
+    ::glVertex3f(p.x, p.y, p.z);
+}
+
+
+static void glColor3fv(const glm::vec3 &c)
+{
+    ::glColor3f(c.r, c.g, c.b);
+}
+
+
+static void glColor4fv(const glm::vec4 &c)
+{
+    ::glColor4f(c.r, c.g, c.b, c.a);
+}
+
+
+static void glTexCoord2fv(const glm::vec2 &t)
+{
+    ::glTexCoord2f(t.s, t.t);
+}
+
+
 void BackgroundRenderer::drawSkybox()
 {
     // sky box must fit inside far clipping plane
     // (adjusted for the deepProjection matrix)
     const float d = 3.0f * BZDBCache::worldSize;
-    const GLfloat verts[8][3] =
+    const glm::vec3 verts[8] =
     {
         {-d, -d, -d}, {+d, -d, -d}, {+d, +d, -d}, {-d, +d, -d},
         {-d, -d, +d}, {+d, -d, +d}, {+d, +d, +d}, {-d, +d, +d}
     };
-    const GLfloat txcds[4][2] =
+    const glm::vec2 txcds[4] =
     {
         {1.0f, 0.0f}, {0.0f, 0.0f},
         {0.0f, 1.0f}, {1.0f, 1.0f}
@@ -834,7 +842,7 @@ void BackgroundRenderer::drawSkybox()
 
     OpenGLGState::resetState();
 
-    const GLfloat (*color)[4] = skyboxColor;
+    const glm::vec4 *color = skyboxColor;
 
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_CULL_FACE);
@@ -1018,7 +1026,7 @@ void BackgroundRenderer::drawSky(SceneRenderer& renderer, bool mirror)
             glVertex3fv(skyPyramid[0]);
             glEnd();
 
-            GLfloat sunsetTopPoint[3];
+            glm::vec3 sunsetTopPoint;
             sunsetTopPoint[0] = skyPyramid[3][0] * (1.0f - sunsetTop);
             sunsetTopPoint[1] = skyPyramid[3][1] * (1.0f - sunsetTop);
             sunsetTopPoint[2] = skyPyramid[4][2] * sunsetTop;
@@ -1130,19 +1138,12 @@ void BackgroundRenderer::drawGroundCentered()
     const float centerSize = 128.0f;
 
     const ViewFrustum& frustum = RENDERER.getViewFrustum();
-    float center[2] = { frustum.getEye()[0], frustum.getEye()[1] };
+    auto center = glm::vec2(frustum.getEye());
     const float minDist = -groundSize + centerSize;
     const float maxDist = +groundSize - centerSize;
-    if (center[0] < minDist)
-        center[0] = minDist;
-    if (center[0] > maxDist)
-        center[0] = maxDist;
-    if (center[1] < minDist)
-        center[1] = minDist;
-    if (center[1] > maxDist)
-        center[1] = maxDist;
+    center = glm::clamp(center, minDist, maxDist);
 
-    const float vertices[8][2] =
+    const glm::vec2 vertices[8] =
     {
         { -groundSize, -groundSize },
         { +groundSize, -groundSize },
@@ -1172,8 +1173,7 @@ void BackgroundRenderer::drawGroundCentered()
             for (int c = 0; c < 4; c++)
             {
                 const int index = indices[q][c];
-                glTexCoord2f(vertices[index][0] * repeat,
-                             vertices[index][1] * repeat);
+                glTexCoord2fv(vertices[index] * repeat);
                 glVertex2fv(vertices[index]);
             }
             glEnd();
@@ -1296,11 +1296,11 @@ void BackgroundRenderer::drawGroundShadows(
 }
 
 
-static void setupBlackFog(float fogColor[4])
+static void setupBlackFog(glm::vec4 &fogColor)
 {
-    static const float black[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    glGetFloatv(GL_FOG_COLOR, fogColor);
-    glFogfv(GL_FOG_COLOR, black);
+    static const auto black = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    OpenGLCommon::getFogColor(fogColor);
+    OpenGLCommon::setFogColor(black);
 }
 
 
@@ -1309,7 +1309,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     static const int receiverRings = 4;
     static const int receiverSlices = 8;
     static const float receiverRingSize = 1.2f;   // meters
-    static float angle[receiverSlices + 1][2];
+    static glm::vec2 angle[receiverSlices + 1];
 
     static bool init = false;
     if (!init)
@@ -1333,7 +1333,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     receiverGState.setState();
 
     // setup black fog
-    float fogColor[4];
+    glm::vec4 fogColor;
     setupBlackFog(fogColor);
 
     glPushMatrix();
@@ -1345,7 +1345,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
             continue;
 
         const auto pos = light.getPosition();
-        const GLfloat* lightColor = light.getColor();
+        const auto lightColor = light.getColor();
         const GLfloat* atten = light.getAttenuation();
 
         // point under light
@@ -1367,7 +1367,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
         glTranslatef(pos[0], pos[1], 0.0f);
 
         // set the main lighting color
-        float color[4];
+        glm::vec4 color;
         color[0] = lightColor[0];
         color[1] = lightColor[1];
         color[2] = lightColor[2];
@@ -1386,10 +1386,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
             color[3] = I;
             glColor4fv(color);
             for (j = 0; j <= receiverSlices; j++)
-            {
-                glVertex2f(receiverRingSize * angle[j][0],
-                           receiverRingSize * angle[j][1]);
-            }
+                glVertex2fv(receiverRingSize * angle[j]);
         }
         glEnd();
         triangleCount += receiverSlices;
@@ -1421,10 +1418,10 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
                 {
                     color[3] = innerAlpha;
                     glColor4fv(color);
-                    glVertex2f(angle[j][0] * innerSize, angle[j][1] * innerSize);
+                    glVertex2fv(angle[j] * innerSize);
                     color[3] = outerAlpha;
                     glColor4fv(color);
-                    glVertex2f(angle[j][0] * outerSize, angle[j][1] * outerSize);
+                    glVertex2fv(angle[j] * outerSize);
                 }
             }
             glEnd();
@@ -1435,7 +1432,7 @@ void BackgroundRenderer::drawGroundReceivers(SceneRenderer& renderer)
     }
     glPopMatrix();
 
-    glFogfv(GL_FOG_COLOR, fogColor);
+    OpenGLCommon::setFogColor(fogColor);
 }
 
 
@@ -1444,7 +1441,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     const float minLuminance = 0.02f;
     static const int receiverSlices = 32;
     static const float receiverRingSize = 0.5f;   // meters
-    static float angle[receiverSlices + 1][2];
+    static glm::vec2 angle[receiverSlices + 1];
 
     static bool init = false;
     if (!init)
@@ -1463,8 +1460,8 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         return;
 
     // setup the ground tint
-    const GLfloat* gndColor = groundColor[styleIndex];
-    GLfloat overrideColor[4];
+    auto gndColor = groundColor[styleIndex];
+    glm::vec4 overrideColor;
     if (BZDB.isSet("GroundOverideColor") &&
             parseColorString(BZDB.get("GroundOverideColor"), overrideColor))
         gndColor = overrideColor;
@@ -1483,19 +1480,16 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
     advGState.setState();
 
     // setup black fog
-    float fogColor[4];
+    glm::vec4 fogColor;
     setupBlackFog(fogColor);
 
     // lazy way to get texcoords
     if (useTexture)
     {
         const float repeat = BZDB.eval("groundHighResTexRepeat");
-        const float sPlane[4] = { repeat, 0.0f, 0.0f, 0.0f };
-        const float tPlane[4] = { 0.0f, repeat, 0.0f, 0.0f };
-        glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
-        glTexGenfv(GL_S, GL_EYE_PLANE, sPlane);
-        glTexGenfv(GL_T, GL_EYE_PLANE, tPlane);
+        const auto sPlane = glm::vec4(repeat, 0.0f, 0.0f, 0.0f);
+        const auto tPlane = glm::vec4(0.0f, repeat, 0.0f, 0.0f);
+        OpenGLCommon::setEyePlanes(sPlane, tPlane);
         glEnable(GL_TEXTURE_GEN_S);
         glEnable(GL_TEXTURE_GEN_T);
     }
@@ -1510,7 +1504,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
 
         // get the light parameters
         const auto pos = light.getPosition();
-        const GLfloat* lightColor = light.getColor();
+        const auto lightColor = light.getColor();
         const GLfloat* atten = light.getAttenuation();
 
         // point under light
@@ -1518,16 +1512,9 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         float I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
 
         // set the main lighting color
-        float baseColor[3];
-        baseColor[0] = gndColor[0] * lightColor[0];
-        baseColor[1] = gndColor[1] * lightColor[1];
-        baseColor[2] = gndColor[2] * lightColor[2];
+        auto baseColor = glm::vec3(gndColor) * glm::vec3(lightColor);
         if (invert)   // beats me, should just color logic op the static nodes
-        {
-            baseColor[0] = 1.0f - baseColor[0];
-            baseColor[1] = 1.0f - baseColor[1];
-            baseColor[2] = 1.0f - baseColor[2];
-        }
+            baseColor = 1.0f - baseColor;
 
         // maximum value
         const float maxVal = (baseColor[0] > baseColor[1]) ?
@@ -1544,17 +1531,15 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         glTranslatef(pos[0], pos[1], 0.0f);
 
         float innerSize;
-        float innerColor[3];
+        glm::vec3 innerColor;
         float outerSize;
-        float outerColor[3];
+        glm::vec3 outerColor;
 
         // draw ground receiver, computing lighting at each vertex ourselves
         glBegin(GL_TRIANGLE_FAN);
         {
             // center point
-            innerColor[0] = I * baseColor[0];
-            innerColor[1] = I * baseColor[1];
-            innerColor[2] = I * baseColor[2];
+            innerColor = I * baseColor;
             glColor3fv(innerColor);
             glVertex2f(0.0f, 0.0f);
 
@@ -1562,9 +1547,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
             d = hypotf(receiverRingSize, pos[2]);
             I = 1.0f / (atten[0] + d * (atten[1] + d * atten[2]));
             I *= pos[2] / d; // diffuse angle factor
-            outerColor[0] = I * baseColor[0];
-            outerColor[1] = I * baseColor[1];
-            outerColor[2] = I * baseColor[2];
+            outerColor = I * baseColor;
             glColor3fv(outerColor);
             outerSize = receiverRingSize;
             for (j = 0; j <= receiverSlices; j++)
@@ -1581,7 +1564,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         {
             // inner ring
             innerSize = outerSize;
-            memcpy(innerColor, outerColor, sizeof(float[3]));
+            innerColor = outerColor;
 
             // outer ring
             outerSize = receiverRingSize * GLfloat(i * i);
@@ -1593,9 +1576,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
                 I = 0.0f;
                 moreRings = false; // bail after this ring
             }
-            outerColor[0] = I * baseColor[0];
-            outerColor[1] = I * baseColor[1];
-            outerColor[2] = I * baseColor[2];
+            outerColor = I * baseColor;
 
             glBegin(GL_TRIANGLE_STRIP);
             {
@@ -1621,7 +1602,7 @@ void BackgroundRenderer::drawAdvancedGroundReceivers(SceneRenderer& renderer)
         glDisable(GL_TEXTURE_GEN_T);
     }
 
-    glFogfv(GL_FOG_COLOR, fogColor);
+    OpenGLCommon::setFogColor(fogColor);
 }
 
 
@@ -1735,13 +1716,9 @@ void BackgroundRenderer::doInitDisplayLists()
     //
 
     const GLfloat groundSize = 10.0f * worldSize;
-    GLfloat groundPlane[4][3];
+    glm::vec3 groundPlane[4];
     for (i = 0; i < 4; i++)
-    {
-        groundPlane[i][0] = groundSize * squareShape[i][0];
-        groundPlane[i][1] = groundSize * squareShape[i][1];
-        groundPlane[i][2] = 0.0f;
-    }
+        groundPlane[i] = groundSize * glm::vec3(squareShape[i], 0.0f);
 
     {
         GLfloat xmin, xmax;
@@ -1750,7 +1727,7 @@ void BackgroundRenderer::doInitDisplayLists()
         GLfloat xtexmin, xtexmax;
         GLfloat ytexmin, ytexmax;
         GLfloat xtexdist, ytexdist;
-        float vec[2];
+        glm::vec2 vec;
 
 #define GROUND_DIVS (4) //FIXME -- seems to be enough
 
@@ -1999,12 +1976,9 @@ void BackgroundRenderer::initContext(void* self)
 }
 
 
-const GLfloat*  BackgroundRenderer::getSunDirection() const
+const glm::vec3 &BackgroundRenderer::getSunDirection() const
 {
-    if (areShadowsCast(sunDirection))
-        return sunDirection;
-    else
-        return NULL;
+    return sunDirection;
 }
 
 // Local Variables: ***

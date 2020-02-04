@@ -22,6 +22,9 @@
     <ClCompile Include="..\..\src\ogl\OpenGLFramebuffer.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ogl\OpenGLCommon.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\RenderNode.h">
@@ -49,6 +52,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\OpenGLFramebuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\OpenGLCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

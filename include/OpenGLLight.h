@@ -38,7 +38,7 @@ public:
     OpenGLLight&    operator=(const OpenGLLight&);
 
     const glm::vec3 getPosition() const;
-    const GLfloat*  getColor() const;
+    const glm::vec4 &getColor() const;
     const GLfloat*  getAttenuation() const;
     GLfloat     getMaxDist() const;
 
@@ -73,7 +73,7 @@ private:
 
 private:
     GLfloat     pos[4];
-    GLfloat     color[4];
+    glm::vec4   color;
     GLfloat     atten[3];
     GLfloat     maxDist;
     GLfloat     importance;
@@ -92,7 +92,7 @@ inline const glm::vec3 OpenGLLight::getPosition() const
     return glm::make_vec3(pos);
 }
 
-inline const GLfloat*   OpenGLLight::getColor() const
+inline const glm::vec4 &OpenGLLight::getColor() const
 {
     return color;
 }

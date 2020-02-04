@@ -30,7 +30,13 @@
 #ifndef BZF_OPENGL_MATERIAL_H
 #define BZF_OPENGL_MATERIAL_H
 
+// 1st
 #include "common.h"
+
+// System headers
+#include <glm/fwd.hpp>
+
+// Common headers
 #include "bzfgl.h"
 
 class OpenGLMaterial
@@ -39,6 +45,9 @@ public:
     OpenGLMaterial();
     OpenGLMaterial(const GLfloat* specularRGB,
                    const GLfloat* emissiveRGB,
+                   GLfloat shininess = 0.0f);
+    OpenGLMaterial(const glm::vec3 &specularRGB,
+                   const glm::vec3 &emissiveRGB,
                    GLfloat shininess = 0.0f);
     OpenGLMaterial(const OpenGLMaterial&);
     ~OpenGLMaterial();

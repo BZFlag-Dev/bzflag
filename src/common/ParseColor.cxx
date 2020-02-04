@@ -10,14 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
+// Interface
 #include "ParseColor.h"
 
+// System headers
 #include <ctype.h>
 #include <string.h>
 #include <string>
 #include <stdio.h>
+#include <glm/gtc/type_ptr.hpp>
 
 typedef struct
 {
@@ -798,6 +799,12 @@ bool parseColorStream(std::istream& input, float color[4])
 bool parseColorString(const std::string& str, float color[4])
 {
     return parseColorCString (str.c_str(), color);
+}
+
+
+bool parseColorString(const std::string& str, glm::vec4 &color)
+{
+    return parseColorCString (str.c_str(), glm::value_ptr(color));
 }
 
 

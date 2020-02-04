@@ -77,6 +77,7 @@ noinst_HEADERS =			\
 	ObstacleModifier.h		\
 	ObstacleSceneNodeGenerator.h	\
 	OccluderSceneNode.h		\
+	OpenGLCommon.h		\
 	OpenGLFramebuffer.h		\
 	OpenGLGState.h			\
 	OpenGLLight.h			\

@@ -194,6 +194,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\ogl\OpenGLCommon.cxx" />
     <ClCompile Include="..\..\src\ogl\OpenGLFramebuffer.cxx" />
     <ClCompile Include="..\..\src\ogl\OpenGLGState.cxx">
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Disabled</Optimization>
@@ -280,6 +281,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\bzfgl.h" />
     <ClInclude Include="..\..\include\glext.h" />
+    <ClInclude Include="..\..\include\OpenGLCommon.h" />
     <ClInclude Include="..\..\include\OpenGLFramebuffer.h" />
     <ClInclude Include="..\..\include\OpenGLGState.h" />
     <ClInclude Include="..\..\include\OpenGLLight.h" />

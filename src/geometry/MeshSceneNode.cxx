@@ -469,7 +469,7 @@ void MeshSceneNode::updateMaterial(MeshSceneNode::MeshMaterial* mat)
     // color
     if (useDiffuseColor)
     {
-        memcpy(color, bzmat->getDiffuse(), sizeof(float[4]));
+        *color = bzmat->getDiffuse();
         colorAlpha = (color->a != 1.0f);
     }
     else

@@ -17,12 +17,16 @@
 #ifndef BZ_MATERIAL_H
 #define BZ_MATERIAL_H
 
+// 1st
 #include "common.h"
+
+// System headers
 #include <string>
 #include <vector>
 #include <set>
 #include <map>
 #include <iostream>
+#include <glm/vec4.hpp>
 
 
 
@@ -99,7 +103,7 @@ public:
 
     int getDynamicColor() const;
     const float* getAmbient() const;
-    const float* getDiffuse() const;
+    const glm::vec4 &getDiffuse() const;
     const float* getSpecular() const;
     const float* getEmission() const;
     float getShininess() const;
@@ -165,7 +169,7 @@ private:
 
     int dynamicColor;
     float ambient[4];
-    float diffuse[4];
+    glm::vec4 diffuse;
     float specular[4];
     float emission[4];
     float shininess;

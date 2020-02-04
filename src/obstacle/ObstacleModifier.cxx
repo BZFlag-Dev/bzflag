@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 // implementation header
 #include "ObstacleModifier.h"
 
@@ -160,10 +158,9 @@ static const BzMaterial* getTintedMaterial(const float tint[4],
 {
     BzMaterial tintmat(*mat);
     float newColor[4];
-    const float* oldColor;
+    const auto oldColor = mat->getDiffuse();
 
     // diffuse
-    oldColor = mat->getDiffuse();
     newColor[0] = oldColor[0] * tint[0];
     newColor[1] = oldColor[1] * tint[1];
     newColor[2] = oldColor[2] * tint[2];

@@ -106,7 +106,7 @@ public:
 
     void      clearRadar(float opacity);
 
-    void      getGroundUV(const float p[2], float uv[2]) const;
+    void      getGroundUV(const glm::vec2 &p, glm::vec2 &uv) const;
 
     bool      getBlank() const;
     bool      getInvert() const;

@@ -172,6 +172,13 @@ OpenGLMaterial::OpenGLMaterial(const GLfloat* specular,
     rep = Rep::getRep(specular, emissive, shininess);
 }
 
+OpenGLMaterial::OpenGLMaterial(const glm::vec3 &specular,
+                               const glm::vec3 &emissive,
+                               GLfloat shininess)
+{
+    rep = Rep::getRep(glm::value_ptr(specular), glm::value_ptr(emissive), shininess);
+}
+
 OpenGLMaterial::OpenGLMaterial(const OpenGLMaterial& m)
 {
     rep = m.rep;

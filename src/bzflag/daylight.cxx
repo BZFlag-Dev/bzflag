@@ -13,6 +13,10 @@
 // interface header
 #include "daylight.h"
 
+// System headers
+#include <glm/vec3.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 // common headers
 #include "StateDatabase.h"
 #include "ParseColor.h"
@@ -270,7 +274,7 @@ void            getSunColor(const float sunDir[3], GLfloat color[3],
     }
 }
 
-bool            getSunsetTop(const float sunDir[3], float& topAltitude)
+bool            getSunsetTop(const glm::vec3 &sunDir, float& topAltitude)
 {
     if (sunDir[2] > nightElevation && sunDir[2] < dayElevation)
     {
@@ -280,7 +284,7 @@ bool            getSunsetTop(const float sunDir[3], float& topAltitude)
     return false;
 }
 
-void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
+void            getSkyColor(const glm::vec3 &sunDir, glm::vec3 sky[4])
 {
     static const GLfloat  nightColor[3] = { 0.04f, 0.04f, 0.08f };
     static const GLfloat  zenithColor[3] = { 0.25f, 0.55f, 0.86f };
@@ -313,7 +317,7 @@ void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
         sky[0][0] = nightColor[0];
         sky[0][1] = nightColor[1];
         sky[0][2] = nightColor[2];
-        lerpColor(sky[1], nightColor, sunrise1Color, t);
+        lerpColor(glm::value_ptr(sky[1]), nightColor, sunrise1Color, t);
         sky[2][0] = nightColor[0];
         sky[2][1] = nightColor[1];
         sky[2][2] = nightColor[2];
@@ -329,7 +333,7 @@ void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
         sky[0][0] = nightColor[0];
         sky[0][1] = nightColor[1];
         sky[0][2] = nightColor[2];
-        lerpColor(sky[1], sunrise1Color, sunrise2Color, t);
+        lerpColor(glm::value_ptr(sky[1]), sunrise1Color, sunrise2Color, t);
         sky[2][0] = nightColor[0];
         sky[2][1] = nightColor[1];
         sky[2][2] = nightColor[2];
@@ -342,10 +346,10 @@ void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
         // early morning/late evening
         const float t = (sunDir[2] - dawnElevation) /
                         (dayElevation - dawnElevation);
-        lerpColor(sky[0], nightColor, zenithColor, t);
-        lerpColor(sky[1], sunrise2Color, horizonColor, t);
-        lerpColor(sky[2], nightColor, horizonColor, t);
-        lerpColor(sky[3], nightColor, horizonColor, t);
+        lerpColor(glm::value_ptr(sky[0]), nightColor, zenithColor, t);
+        lerpColor(glm::value_ptr(sky[1]), sunrise2Color, horizonColor, t);
+        lerpColor(glm::value_ptr(sky[2]), nightColor, horizonColor, t);
+        lerpColor(glm::value_ptr(sky[3]), nightColor, horizonColor, t);
     }
     else
     {
@@ -384,12 +388,12 @@ void            getSkyColor(const float sunDir[3], GLfloat sky[4][3])
     }
 }
 
-bool            areShadowsCast(const float sunDir[3])
+bool            areShadowsCast(const glm::vec3 &sunDir)
 {
     return sunDir[2] > 0.5 * dayElevation;
 }
 
-bool            areStarsVisible(const float sunDir[3])
+bool            areStarsVisible(const glm::vec3 &sunDir)
 {
     return sunDir[2] < dawnElevation;
 }

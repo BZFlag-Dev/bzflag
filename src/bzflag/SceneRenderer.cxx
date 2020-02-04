@@ -483,7 +483,7 @@ void SceneRenderer::setBackground(BackgroundRenderer* br)
 }
 
 
-void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
+void SceneRenderer::getGroundUV(const glm::vec2 &p, glm::vec2 &uv) const
 {
     float repeat = 0.01f;
     if (BZDB.isSet("groundTexRepeat"))
@@ -492,8 +492,7 @@ void SceneRenderer::getGroundUV(const float p[2], float uv[2]) const
     if (useQualityValue >= 3)
         repeat = BZDB.eval("groundHighResTexRepeat");
 
-    uv[0] = repeat * p[0];
-    uv[1] = repeat * p[1];
+    uv = repeat * p;
 }
 
 
@@ -617,7 +616,7 @@ void SceneRenderer::setTimeOfDay(double julianDay)
     glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
     if (background)
-        background->setCelestial(*this, sunDir, moonDir);
+        background->setCelestial(*this, glm::make_vec3(sunDir), glm::make_vec3(moonDir));
 }
 
 
@@ -1309,10 +1308,12 @@ const RenderNodeList& SceneRenderer::getShadowList() const
 
 const GLfloat* SceneRenderer::getSunDirection() const
 {
-    if (background)
-        return background->getSunDirection();
-    else
+    if (!background)
         return NULL;
+    static const auto sunDir = background->getSunDirection();
+    if (!areShadowsCast(sunDir))
+        return NULL;
+    return glm::value_ptr(sunDir);
 }
 
 
