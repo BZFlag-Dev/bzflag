@@ -17,6 +17,7 @@
 
 /* system headers */
 #include <string>
+#include <glm/gtc/type_ptr.hpp>
 
 /* common interface headers */
 #include "global.h"
@@ -66,6 +67,7 @@ public:
     long            getOrder() const;
     short           getStatus() const;
     const float*    getPosition() const;
+    const glm::vec3 getPositionVec3() const;
     float           getAngle() const;
     const float*    getForward() const;
     const float*    getVelocity() const;
@@ -429,6 +431,11 @@ inline short        Player::getStatus() const
 inline const float* Player::getPosition() const
 {
     return state.pos;
+}
+
+inline const glm::vec3 Player::getPositionVec3() const
+{
+    return glm::make_vec3(state.pos);
 }
 
 inline float        Player::getAngle() const

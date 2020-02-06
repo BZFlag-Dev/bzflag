@@ -1342,7 +1342,7 @@ static void     updateFlag(FlagType::Ptr flag)
     }
     else
     {
-        const float* color = flag->getColor();
+        const auto color = flag->getColor();
         hud->setColor(color[0], color[1], color[2]);
         hud->setAlert(2, flag->flagName.c_str(), 3.0f, flag->endurance == FlagEndurance::Sticky);
     }
@@ -5089,7 +5089,7 @@ static void enteringServer(const void *buf)
         borderColor = black;
     }
     else
-        borderColor = Team::getRadarColor(myTank->getTeam());
+        borderColor = glm::value_ptr(Team::getRadarColor(myTank->getTeam()));
     controlPanel->setControlColor(borderColor);
     radar->setControlColor(borderColor);
 
@@ -6798,7 +6798,7 @@ static void     prepareTheHUD()
         hud->setAltitude(myPos[2]);
         if (world->allowTeamFlags())
         {
-            const float* myTeamColor = Team::getTankColor(myTank->getTeam());
+            const auto myTeamColor = Team::getTankColor(myTank->getTeam());
             // markers for my team flag
             for (int i = 0; i < numFlags; i++)
             {
@@ -6821,9 +6821,9 @@ static void     prepareTheHUD()
             const GLfloat* antidotePos = myTank->getAntidoteLocation();
             float heading = atan2f(antidotePos[1] - myPos[1],
                                    antidotePos[0] - myPos[0]);
-            const float antidoteColor[] = {1.0f, 1.0f, 0.0f,1.0f};
+            const auto antidoteColor = glm::vec4(1.0f, 1.0f, 0.0f,1.0f);
             hud->addMarker(heading, antidoteColor);
-            hud->AddEnhancedMarker(glm::make_vec3(antidotePos), glm::make_vec4(antidoteColor), false,
+            hud->AddEnhancedMarker(glm::make_vec3(antidotePos), antidoteColor, false,
                                    BZDBCache::flagPoleSize * 2.0f);
         }
     }

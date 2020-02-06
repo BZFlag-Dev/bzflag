@@ -83,6 +83,7 @@ public:
 
 protected:
     void hudColor3fv(const GLfloat*);
+    void hudColor3fv(const glm::vec3 &);
     void renderTeamScores (float y, float x, float dy);
     void renderScoreboard();
     void renderCtfFlags();

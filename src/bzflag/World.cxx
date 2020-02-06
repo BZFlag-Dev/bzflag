@@ -687,7 +687,7 @@ void            World::initFlag(int index)
     if (index >= maxFlags || index < 0)
         return;
     // set color of flag (opaque)
-    const float* color = flags[index].type->getColor();
+    const auto color = flags[index].type->getColor();
     flagNodes[index]->setColor(color[0], color[1], color[2]);
 
     // if coming or going then position warp

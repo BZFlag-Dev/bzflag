@@ -37,6 +37,11 @@ void OpenGLCommon::setEyePlanes(const glm::vec4 &sPlane,
     glTexGenfv(GL_T, GL_EYE_PLANE, glm::value_ptr(tPlane));
 }
 
+void OpenGLCommon::getViewPort(glm::ivec4 &viewport)
+{
+    glGetIntegerv(GL_VIEWPORT, glm::value_ptr(viewport));
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

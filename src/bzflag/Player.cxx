@@ -932,7 +932,7 @@ void Player::setVisualTeam (TeamColor visualTeam)
     tankTexture = tm.getTextureID(texName.c_str(), false);
 
 
-    const float* _color = Team::getTankColor(visualTeam);
+    const auto _color = Team::getTankColor(visualTeam);
     color[0] = _color[0];
     color[1] = _color[1];
     color[2] = _color[2];

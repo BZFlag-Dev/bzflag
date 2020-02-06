@@ -10,8 +10,13 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+// Interface headers
 #include "Team.h"
+
+// System headers
+#include <glm/gtc/type_ptr.hpp>
+
+// Common headers
 #include "AnsiCodes.h"
 #include "BZDBCache.h"
 #include "Pack.h"
@@ -27,7 +32,7 @@ float           Team::tankColor[NumTeams][3] =
     { 0.8f, 0.8f, 0.8f },   // rabbit
     { 1.0f, 0.5f, 0.0f }    // hunter orange
 };
-float           Team::radarColor[NumTeams][3] =
+glm::vec3       Team::radarColor[NumTeams] =
 {
     { 1.0f, 1.0f, 0.0f },   // rogue
     { 1.0f, 0.15f, 0.15f }, // red
@@ -132,14 +137,14 @@ TeamColor   Team::getTeam(const std::string &name) // const
     return NoTeam;
 }
 
-const float*        Team::getTankColor(TeamColor team) // const
+const glm::vec3 Team::getTankColor(TeamColor team) // const
 {
     if (int(team) < 0)
-        return tankColor[0];
-    return tankColor[int(team)];
+        return glm::make_vec3(tankColor[0]);
+    return glm::make_vec3(tankColor[int(team)]);
 }
 
-const float*        Team::getRadarColor(TeamColor team) // const
+const glm::vec3     Team::getRadarColor(TeamColor team) // const
 {
     if (int(team) < 0)
         return radarColor[0];
@@ -155,7 +160,7 @@ const float*        Team::getShotColor(TeamColor team) // const
 
 const std::string   Team::getAnsiCode(TeamColor team) // const
 {
-    return rgbToAnsi(getTankColor(team));
+    return rgbToAnsi(glm::value_ptr(getTankColor(team)));
 }
 
 bool        Team::isColorTeam(TeamColor team) // const

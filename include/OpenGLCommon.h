@@ -21,6 +21,7 @@ public:
     static void getFogColor(glm::vec4 &fogColor);
     static void setFogColor(const glm::vec4 &fogColor);
     static void setEyePlanes(const glm::vec4 &sPlane, const glm::vec4 &tPlane);
+    static void getViewPort(glm::ivec4 &viewport);
 };
 
 // Local Variables: ***

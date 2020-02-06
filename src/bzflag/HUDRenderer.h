@@ -44,7 +44,7 @@ class HUDMarker
 {
 public:
     float     heading;
-    GLfloat       color[3];
+    glm::vec3 color;
 };
 typedef std::vector<HUDMarker> MarkerList;
 
@@ -102,7 +102,7 @@ public:
     void      setFlagHelp(FlagType::Ptr desc, float duration);
     void      initCracks();
     void      setCracks(bool showCracks);
-    void      addMarker(float heading, const float *color);
+    void      addMarker(float heading, const glm::vec3 &color);
     void      setRestartKeyLabel(const std::string&);
     void      setTimeLeft(uint32_t timeLeftInSeconds);
 
@@ -130,10 +130,10 @@ public:
 protected:
     void      hudColor3f(GLfloat, GLfloat, GLfloat);
     void      hudColor4f(GLfloat, GLfloat, GLfloat, GLfloat);
-    void      hudColor3fv(const GLfloat*);
-    void      hudColor4fv(const GLfloat*);
-    void      hudColor3Afv(const float*, const float);
-    void      hudSColor3fv(const GLfloat*);
+    void      hudColor3fv(const glm::vec3 &);
+    void      hudColor4fv(const glm::vec4 &);
+    void      hudColor3Afv(const glm::vec3 &, const float);
+    void      hudSColor3fv(const glm::vec3 &);
     void      renderAlerts(void);
     void      renderStatus(void);
     void      renderCracks();
@@ -153,7 +153,7 @@ protected:
                                  const glm::vec2 &viewPos);
     void      drawMarkersInView(int centerX, int centerY, const LocalPlayer* myTank);
 
-    void      makeCrack(float crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1][2], int n, int l, float a);
+    void      makeCrack(glm::vec2 crackpattern[HUDNumCracks][(1 << HUDCrackLevels) + 1], int n, int l, float a);
     std::string   makeHelpString(const char* help) const;
 
 private:
@@ -178,9 +178,9 @@ private:
     int           noMotionSize;
     int           maxMotionSize;
     float         headingOffset;
-    GLfloat       hudColor[3];
-    GLfloat       messageColor[3];
-    GLfloat       warningColor[3];
+    glm::vec3     hudColor;
+    glm::vec3     messageColor;
+    glm::vec3     warningColor;
 
     int       bigFontFace;
     float     bigFontSize;
@@ -236,7 +236,7 @@ private:
     FlashClock        alertClock[MaxAlerts];
     std::string       alertLabel[MaxAlerts];
     float     alertLabelWidth[MaxAlerts];
-    const GLfloat*    alertColor[MaxAlerts];
+    glm::vec3         alertColor[MaxAlerts];
 
     float     flagHelpY;
     FlashClock        flagHelpClock;
@@ -246,7 +246,7 @@ private:
     bool      showOptions;
     bool      showCompose;
 
-    GLfloat       cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1][2];
+    glm::vec2 cracks[HUDNumCracks][(1 << HUDCrackLevels) + 1];
     TimeKeeper        crackStartTime;
     bool      showCracks;
 
@@ -261,7 +261,7 @@ private:
     EnhancedMarkerList    lockOnMarkers;
 
     static const float    altitudeOffset;
-    static const GLfloat black[3];
+    static const glm::vec3 black;
     static std::string    headingLabel[36];
     static std::string    restartLabelFormat;
     static std::string    resumeLabel;

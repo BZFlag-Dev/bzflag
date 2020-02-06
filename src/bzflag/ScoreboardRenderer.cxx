@@ -201,6 +201,14 @@ void ScoreboardRenderer::setDim(bool _dim)
 
 static const float dimFactor = 0.2f;
 
+void ScoreboardRenderer::hudColor3fv(const glm::vec3 &c)
+{
+    if (dim)
+        glColor3f(dimFactor * c[0], dimFactor * c[1], dimFactor * c[2]);
+    else
+        glColor3f(c.r, c.g, c.b);
+}
+
 void ScoreboardRenderer::hudColor3fv(const GLfloat* c)
 {
     if (dim)
