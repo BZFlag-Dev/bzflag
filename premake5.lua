@@ -406,7 +406,8 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
   filter "system:macosx"
     defines { "HAVE_CGLGETCURRENTCONTEXT",
               "GL_SILENCE_DEPRECATION" }
-    buildoptions "-fvisibility=hidden"
+    buildoptions { "-fvisibility=hidden",
+                   "-Wno-inconsistent-missing-override" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
                          ["MACOSX_DEPLOYMENT_TARGET"] = "10.9",
                          ["LD_RUNPATH_SEARCH_PATHS"] =" @executable_path/../PlugIns" }
