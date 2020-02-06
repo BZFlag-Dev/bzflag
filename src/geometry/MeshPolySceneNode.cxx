@@ -125,7 +125,7 @@ void MeshPolySceneNode::Geometry::render()
             drawV();
     }
 
-    addTriangleCount(vertices.getSize() - 2);
+    addTriangleCount(vertices.size() - 2);
     return;
 }
 
@@ -133,7 +133,7 @@ void MeshPolySceneNode::Geometry::render()
 void MeshPolySceneNode::Geometry::renderShadow()
 {
     drawV();
-    addTriangleCount(vertices.getSize() - 2);
+    addTriangleCount(vertices.size() - 2);
     return;
 }
 
