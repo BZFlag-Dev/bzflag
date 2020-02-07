@@ -304,7 +304,8 @@ void            InputMenu::callback(HUDuiControl* w, const void* data)
     case 'M':
     {
         SceneRenderer* renderer = getSceneRenderer();
-        renderer->setMaxMotionFactor(listHUD->getIndex() - 11);
+        if (renderer != nullptr)
+            renderer->setMaxMotionFactor(listHUD->getIndex() - 11);
     }
     break;
 
@@ -371,9 +372,9 @@ void            InputMenu::resize(int _width, int _height)
     if (BZDB.isTrue("allowInputChange"))
         activeInput->setIndex(0);
 
-    i = 9;
     SceneRenderer* renderer = getSceneRenderer();
-    ((HUDuiList*)listHUD[i++])->setIndex(renderer->getMaxMotionFactor() + 11);
+    if (renderer != nullptr)
+        ((HUDuiList*)listHUD[9])->setIndex(renderer->getMaxMotionFactor() + 11);
 }
 
 
