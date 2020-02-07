@@ -104,7 +104,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
         for (int i = 2; i <= OpenGLGState::getMaxSamples(); i=i*2)
         {
             char msaaText[11];
-            snprintf(msaaText, 11, "%i", i);
+            snprintf(msaaText, sizeof(msaaText), "%i", i);
             options->push_back(std::string(msaaText) + "x MSAA");
         }
         option->update();
@@ -126,7 +126,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
             for (int i = 2; i <= maxAnisotropy; i=i*2)
             {
                 char buffer[16];
-                snprintf(buffer, 16, "%i/%i", i, maxAnisotropy);
+                snprintf(buffer, sizeof(buffer), "%i/%i", i, maxAnisotropy);
                 options->push_back(std::string(buffer));
             }
             option->update();
