@@ -311,6 +311,7 @@ void EffectsMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Fog, Shot Length, Animated Treads, and Track Mark Culling
         if ((i == 3) || (i == 4) || (i == 6) || (i == 8))
             y -= 1.75f * h;
         else

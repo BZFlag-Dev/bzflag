@@ -369,6 +369,7 @@ void            GUIOptionsMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Motto Display Length, Colored shots on radar, and Pulsation Depth
         if (i == 3 || i == 11 || i == 22)
             y -= 1.75f * h;
         else

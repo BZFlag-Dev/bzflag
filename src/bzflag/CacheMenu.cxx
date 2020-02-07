@@ -219,6 +219,7 @@ void CacheMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Clear Server List Cache, Clear Download Cache, and before the download status label
         if ((i == 2) || (i == 4) || (i == 7))
             y -= 1.75f * h;
         else

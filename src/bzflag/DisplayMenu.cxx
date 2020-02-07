@@ -319,6 +319,7 @@ void            DisplayMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Shadows, AntiFlicker, Smoothing, Brightness, Energy Saver and before Change Video Format
         if (i == 4 || i == 7 || i == 10 || i == 11 || i == 12 || i == count - 2)
             y -= 1.75f * h;
         else
