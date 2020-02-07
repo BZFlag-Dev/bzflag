@@ -353,6 +353,7 @@ void            InputMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Change Key Mapping, Active input device, Invert Joystick Axes, and Mouse Box Size
         if (i == 1 || i == 2 || i == 7 || i == 9)
             y -= 1.75f * h;
         else
