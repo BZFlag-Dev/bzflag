@@ -9,6 +9,8 @@
  * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
+#ifndef _OPENGLCOMMON_H
+#define _OPENGLCOMMON_H
 
 #include "common.h"
 
@@ -23,6 +25,8 @@ public:
     static void setEyePlanes(const glm::vec4 &sPlane, const glm::vec4 &tPlane);
     static void getViewPort(glm::ivec4 &viewport);
 };
+
+#endif
 
 // Local Variables: ***
 // mode: C++ ***
