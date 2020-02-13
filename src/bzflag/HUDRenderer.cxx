@@ -1749,7 +1749,7 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 }
 
 
-void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
+void            HUDRenderer::prepareScreen()
 {
     // get view metrics
     const int width = window.getWidth();
@@ -1757,10 +1757,6 @@ void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
     const int viewHeight = window.getViewHeight();
     const int ox = window.getOriginX();
     const int oy = window.getOriginY();
-    const int centerx = width >> 1;
-    const int centery = viewHeight >> 1;
-
-    FontManager &fm = FontManager::instance();
 
     // use one-to-one pixel projection
     glScissor(ox, oy + height - viewHeight, width, viewHeight);
@@ -1772,12 +1768,37 @@ void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
 
     // cover the lower portion of the screen when burrowed
     const LocalPlayer *myTank = LocalPlayer::getMyTank();
-    if (myTank && myTank->getPosition()[2] < 0.0f)
+    if (myTank)
     {
-        glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((
-                    float)viewHeight/2.0f));
+        const float z = myTank->getPosition()[2];
+        if (z < 0.0f)
+        {
+            GLfloat x2 = (float)width;
+            GLfloat y2 = z /
+                         (BZDB.eval(StateDatabase::BZDB_BURROWDEPTH) - 0.1f) *
+                         (float)viewHeight / 2.0f;
+            glColor4f(0.02f, 0.01f, 0.01f, 1.0);
+            glRectf(0.0f, 0.0f, x2, y2);
+        }
     }
+}
+
+
+void            HUDRenderer::renderPlaying(SceneRenderer& renderer)
+{
+    // get view metrics
+    const int width = window.getWidth();
+    const int height = window.getHeight();
+    const int viewHeight = window.getViewHeight();
+    const int centerx = width >> 1;
+    const int centery = viewHeight >> 1;
+
+    FontManager &fm = FontManager::instance();
+
+    prepareScreen();
+
+    // cover the lower portion of the screen when burrowed
+    const LocalPlayer *myTank = LocalPlayer::getMyTank();
 
     // draw shot reload status
     if (BZDB.isTrue("displayReloadTimer"))
@@ -1936,28 +1957,13 @@ void            HUDRenderer::renderRoaming(SceneRenderer& renderer)
     // get view metrics
     const int width = window.getWidth();
     const int height = window.getHeight();
-    const int viewHeight = window.getViewHeight();
-    const int ox = window.getOriginX();
-    const int oy = window.getOriginY();
 
     FontManager &fm = FontManager::instance();
 
-    // use one-to-one pixel projection
-    glScissor(ox, oy + height - viewHeight, width, viewHeight);
-    glMatrixMode(GL_PROJECTION);
-    window.setProjectionHUD();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+    prepareScreen();
 
     // black out the underground if we're driving with a tank with BU
     LocalPlayer *myTank = LocalPlayer::getMyTank();
-    if (myTank && myTank->getPosition()[2] < 0.0f)
-    {
-        glColor4f(0.02f, 0.01f, 0.01f, 1.0);
-        glRectf(0, 0, (float)width, (myTank->getPosition()[2]/(BZDB.eval(StateDatabase::BZDB_BURROWDEPTH)-0.1f)) * ((
-                    float)viewHeight/2.0f));
-    }
 
     // draw shot reload status
     if ((ROAM.getMode() == Roaming::roamViewFP) && BZDB.isTrue("displayReloadTimer"))
@@ -2060,18 +2066,18 @@ void            HUDRenderer::renderShots(const Player* target)
     {
         const int myWidth = int(indicatorWidth * factors[i]);
         const int myTop = indicatorTop + i * (indicatorHeight + indicatorSpace);
+        const int y2    = myTop + indicatorHeight;
         if (factors[i] < 1.0f)
         {
             hudColor4f(0.0f, 1.0f, 0.0f, 0.5f); // green
-            glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+            glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, y2);
             hudColor4f(1.0f, 0.0f, 0.0f, 0.5f); // red
-            glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth,
-                    myTop + indicatorHeight);
+            glRecti(indicatorLeft + myWidth + 1, myTop, indicatorLeft + indicatorWidth, y2);
         }
         else
         {
             hudColor4f(1.0f, 1.0f, 1.0f, 0.5f); // white
-            glRecti(indicatorLeft, myTop, indicatorLeft + myWidth, myTop + indicatorHeight);
+            glRecti(indicatorLeft, myTop, indicatorLeft + indicatorWidth, y2);
         }
     }
     glDisable(GL_BLEND);

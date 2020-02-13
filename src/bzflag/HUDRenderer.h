@@ -164,6 +164,7 @@ private:
     void      setHeadingFontSize(int width, int height);
     void      setComposeFontSize(int width, int height);
     void      setLabelsFontSize(int width, int height);
+    void      prepareScreen();
 
     void      resize(bool firstTime);
     static void   resizeCallback(void*);
