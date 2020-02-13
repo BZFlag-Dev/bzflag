@@ -769,6 +769,7 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
             mirrorColor[3] = 0.2f;
         }
 
+        float extent = 1.0f;
         // darken the reflection
         if (!mapFog)
         {
@@ -776,24 +777,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
             glLoadIdentity();
             glMatrixMode(GL_MODELVIEW);
             glLoadIdentity();
-            // if low quality then use stipple -- it's probably much faster
-            if (useQualityValue >= 1)
-            {
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glEnable(GL_BLEND);
-                glColor4fv(mirrorColor);
-                glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-                glDisable(GL_BLEND);
-            }
-            else
-            {
-                float stipple = mirrorColor[3];
-                glColor3fv(mirrorColor);
-                OpenGLGState::setStipple(stipple);
-                glEnable(GL_POLYGON_STIPPLE);
-                glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
-                glDisable(GL_POLYGON_STIPPLE);
-            }
         }
         else
         {
@@ -801,24 +784,29 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
             // if low quality then use stipple -- it's probably much faster
             frustum.executeView();
             frustum.executeProjection();
-            const float extent = BZDBCache::worldSize * 10.0f;
-            if (useQualityValue >= 1)
-            {
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glEnable(GL_BLEND);
-                glColor4fv(mirrorColor);
-                glRectf(-extent, -extent, +extent, +extent);
-                glDisable(GL_BLEND);
-            }
-            else
-            {
-                float stipple = mirrorColor[3];
-                glColor3fv(mirrorColor);
-                OpenGLGState::setStipple(stipple);
-                glEnable(GL_POLYGON_STIPPLE);
-                glRectf(-extent, -extent, +extent, +extent);
-                glDisable(GL_POLYGON_STIPPLE);
-            }
+            extent = BZDBCache::worldSize * 10.0f;
+        }
+        // if low quality then use stipple -- it's probably much faster
+        if (useQualityValue >= 1)
+        {
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_BLEND);
+            glColor4fv(mirrorColor);
+        }
+        else
+        {
+            float stipple = mirrorColor[3];
+            glColor3fv(mirrorColor);
+            OpenGLGState::setStipple(stipple);
+            glEnable(GL_POLYGON_STIPPLE);
+        }
+        glRectf(-extent, -extent, +extent, +extent);
+        if (useQualityValue >= 1)
+            glDisable(GL_BLEND);
+        else
+            glDisable(GL_POLYGON_STIPPLE);
+        if (mapFog)
+        {
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity();
             glMatrixMode(GL_MODELVIEW);
@@ -1145,18 +1133,17 @@ void SceneRenderer::renderDimming()
 
         // if low quality then use stipple -- it's probably much faster
         if (useQualityValue >= 1)
-        {
             glEnable(GL_BLEND);
-            glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-            glDisable(GL_BLEND);
-        }
         else
         {
             OpenGLGState::setStipple(density);
             glEnable(GL_POLYGON_STIPPLE);
-            glRectf(-1.0f, -1.0f, 1.0f, 1.0f);
-            glDisable(GL_POLYGON_STIPPLE);
         }
+        glRectf(-1.0f, -1.0f, +1.0f, +1.0f);
+        if (useQualityValue >= 1)
+            glDisable(GL_BLEND);
+        else
+            glDisable(GL_POLYGON_STIPPLE);
     }
     return;
 }

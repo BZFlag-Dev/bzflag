@@ -167,6 +167,8 @@ private:
     glm::vec2 getMarkerCoordinate(
         glm::vec3 const &object,
         glm::vec2 const &viewPos) const;
+    void      setOneToOnePrj();
+    void      coverWhenBurrowed(const LocalPlayer &myTank);
 
     void      resize(bool firstTime);
     static void   resizeCallback(void*);

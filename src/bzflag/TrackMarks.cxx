@@ -216,7 +216,6 @@ static const float TextureHeightOffset = 0.0f;
 //
 
 static void setup();
-static void drawSmoke(const TrackEntry& te);
 static void drawPuddle(const TrackEntry& te);
 static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const float pos[3]);
@@ -625,7 +624,7 @@ void TrackMarks::renderObstacleTracks()
     // draw smoke
     smokeGState.setState();
     for (ptr = SmokeList.getStart(); ptr != NULL; ptr = ptr->getNext())
-        drawSmoke(*ptr);
+        drawTreads(*ptr);
 
     // re-enable the zbuffer writing
     glDepthMask(GL_TRUE);
@@ -798,7 +797,7 @@ void TrackRenderNode::render()
     else if (type == PuddleTrack)
         drawPuddle(*te);
     else if (type == SmokeTrack)
-        drawSmoke(*te);
+        drawTreads(*te);
     return;
 }
 
