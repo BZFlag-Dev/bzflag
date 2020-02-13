@@ -219,7 +219,6 @@ static const float TextureHeightOffset = 0.0f;
 //
 
 static void setup();
-static void drawSmoke(const TrackEntry& te);
 static void drawPuddle(const TrackEntry& te);
 static void drawTreads(const TrackEntry& te);
 static bool onBuilding(const float pos[3]);
@@ -666,7 +665,7 @@ void TrackMarks::renderObstacleTracks()
     // draw smoke
     smokeGState.setState();
     for (ptr = SmokeList.getStart(); ptr != NULL; ptr = ptr->getNext())
-        drawSmoke(*ptr);
+        drawTreads(*ptr);
 
     // re-enable the zbuffer writing
     glDepthMask(GL_TRUE);
@@ -735,31 +734,6 @@ static void drawPuddle(const TrackEntry& te)
 
 
 static void drawTreads(const TrackEntry& te)
-{
-    const float ratio = (te.lifeTime / TrackFadeTime);
-
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
-
-    glPushMatrix();
-    {
-        glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
-        glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
-        glScalef(1.0f, te.scale, 1.0f);
-
-        const float halfWidth = 0.5f * TreadMarkWidth;
-
-        if ((te.sides & LeftTread) != 0)
-            glRectf(-halfWidth, +TreadInside, +halfWidth, +TreadOutside);
-        if ((te.sides & RightTread) != 0)
-            glRectf(-halfWidth, -TreadOutside, +halfWidth, -TreadInside);
-    }
-    glPopMatrix();
-
-    return;
-}
-
-
-static void drawSmoke(const TrackEntry& te)
 {
     const float ratio = (te.lifeTime / TrackFadeTime);
 
@@ -872,7 +846,7 @@ void TrackRenderNode::render()
     else if (type == PuddleTrack)
         drawPuddle(*te);
     else if (type == SmokeTrack)
-        drawSmoke(*te);
+        drawTreads(*te);
     return;
 }
 

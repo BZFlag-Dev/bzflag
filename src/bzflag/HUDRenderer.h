@@ -164,6 +164,8 @@ private:
     void      setHeadingFontSize(int width, int height);
     void      setComposeFontSize(int width, int height);
     void      setLabelsFontSize(int width, int height);
+    void      setOneToOnePrj();
+    void      coverWhenBurrowed(const LocalPlayer &myTank);
 
     void      resize(bool firstTime);
     static void   resizeCallback(void*);
