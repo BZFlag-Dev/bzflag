@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,9 +10,15 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef _MESH_DRAW_MGR_H_
-#define _MESH_DRAW_MGR_H_
+#pragma once
 
+// 1st
+#include "common.h"
+
+// System headers
+#include <vector>
+
+// common interface headers
 #include "bzfgl.h"
 #include "MeshDrawInfo.h"
 
@@ -22,11 +28,8 @@ public:
     MeshDrawMgr(const MeshDrawInfo* drawInfo);
     ~MeshDrawMgr();
 
-    void executeSet(int lod, int set, bool normals, bool texcoords);
+    void executeSet(int lod, int set, bool useNormals, bool useTexcoords);
     void executeSetGeometry(int lod, int set);
-
-    static void init();
-    static void kill();
 
 private:
     void rawExecuteCommands(int lod, int set);
@@ -39,22 +42,10 @@ private:
 private:
     const MeshDrawInfo* drawInfo;
 
-    const DrawLod* drawLods;
-    const GLfloat* vertices;
-    const GLfloat* normals;
-    const GLfloat* texcoords;
-
-    struct LodList
-    {
-        int count;
-        GLuint* setLists;
-    };
-
-    int lodCount;
-    LodList* lodLists;
+    using LodList = std::vector<int>;
+    std::vector<LodList> lodLists;
 };
 
-#endif // _MESH_DRAW_MGR_H_
 
 // Local Variables: ***
 // mode: C++ ***

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -18,28 +18,27 @@
  *  Keeps a list of RenderNode* and can render them in order.
  */
 
-#ifndef BZF_RENDER_NODE_H
-#define BZF_RENDER_NODE_H
+#pragma once
 
+// Before everything
 #include "common.h"
+
+// System headers
+#include <vector>
+
+// Global headers
 #include "OpenGLGState.h"
 
 
 class RenderNode
 {
 public:
-    RenderNode() {}
-    virtual     ~RenderNode() {}
+    RenderNode() = default;
+    virtual ~RenderNode() = default;
 
     virtual void    render() = 0;
-    virtual void    renderShadow()
-    {
-        render();
-    }
-    virtual void    renderRadar()
-    {
-        renderShadow();
-    }
+    virtual void    renderShadow();
+    virtual void    renderRadar();
     virtual const GLfloat* getPosition() const = 0;
 
     static int      getTriangleCount();
@@ -56,7 +55,6 @@ private:
 inline void RenderNode::addTriangleCount(int count)
 {
     triangleCount += count;
-    return;
 }
 
 // do not tally unless debugging (for now)
@@ -68,39 +66,24 @@ inline void RenderNode::addTriangleCount(int count)
 class RenderNodeList
 {
 public:
-    RenderNodeList();
-    ~RenderNodeList();
+    RenderNodeList() = default;
+    RenderNodeList(const RenderNodeList&) = delete;
+    RenderNodeList& operator=(const RenderNodeList&) = delete;
 
     void        clear();
     void        append(RenderNode*);
     void        render() const;
 
 private:
-    // no copying (cos that'd be slow)
-    RenderNodeList(const RenderNodeList&);
-    RenderNodeList& operator=(const RenderNodeList&);
-
-    void        grow();
-
-private:
-    int         count;
-    int         size;
-    RenderNode**    list;
+    std::vector<RenderNode*> list;
 };
-
-inline void RenderNodeList::append(RenderNode* node)
-{
-    if (count == size)
-        grow();
-    list[count++] = node;
-}
-
 
 class RenderNodeGStateList
 {
 public:
-    RenderNodeGStateList();
-    ~RenderNodeGStateList();
+    RenderNodeGStateList() = default;
+    RenderNodeGStateList(const RenderNodeGStateList&) = delete;
+    RenderNodeGStateList& operator=(const RenderNodeGStateList&) = delete;
 
     void        clear();
     void        append(RenderNode*, const OpenGLGState*);
@@ -109,41 +92,19 @@ public:
 
     void        sort(const GLfloat* eye);
 
-    // public for the qsort() comparison function
+private:
     struct Item
     {
     public:
-        typedef const OpenGLGState* GStatePtr;
+        using GStatePtr = OpenGLGState const *;
         RenderNode* node;
         GStatePtr   gstate;
         float       depth;
     };
 
-private:
-    // no copying (cos that'd be slow)
-    RenderNodeGStateList(const RenderNodeGStateList&);
-    RenderNodeGStateList& operator=(const RenderNodeGStateList&);
-
-    void        grow();
-
-private:
-    int         count;
-    int         size;
-    Item*       list;
+    std::vector<Item> list;
 };
 
-inline void RenderNodeGStateList::append(RenderNode* node,
-        const OpenGLGState* gstate)
-{
-    if (count == size)
-        grow();
-    list[count].node = node;
-    list[count].gstate = gstate;
-    list[count].depth = 0.0f;
-    count++;
-}
-
-#endif // BZF_RENDER_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***

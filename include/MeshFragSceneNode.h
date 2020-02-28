@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,8 +16,7 @@
  *  Does not support level of detail.
  */
 
-#ifndef BZF_MESH_FRAG_SCENE_NODE_H
-#define BZF_MESH_FRAG_SCENE_NODE_H
+#pragma once
 
 // Inherits from
 #include "WallSceneNode.h"
@@ -53,26 +52,23 @@ public:
     // virtual functions from WallSceneNode
     bool inAxisBox(const Extents& exts) const;
 
-    void getRenderNodes(std::vector<RenderSet>& rnodes);
+    void getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
 protected:
     class Geometry : public RenderNode
     {
     public:
-        Geometry(MeshFragSceneNode* node);
+        Geometry(MeshFragSceneNode &node);
         ~Geometry();
 
         void init();
-        void setStyle(int _style)
-        {
-            style = _style;
-        }
-        void render();
-        void renderRadar();
-        void renderShadow();
+        void setStyle(int style);
+        void render() override;
+        void renderRadar() override;
+        void renderShadow() override;
         const GLfloat* getPosition() const
         {
-            return sceneNode->getSphere();
+            return sceneNode.getSphere();
         }
 
     private:
@@ -89,7 +85,7 @@ protected:
     private:
         int style;
         GLuint list;
-        MeshFragSceneNode* sceneNode;
+        MeshFragSceneNode &sceneNode;
     };
 
 private:
@@ -108,8 +104,6 @@ private:
     friend class MeshFragSceneNode::Geometry;
 };
 
-
-#endif // BZF_MESH_FRAG_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***

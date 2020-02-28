@@ -10,8 +10,6 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
-
 // implementation header
 #include "MeshDrawMgr.h"
 
@@ -22,20 +20,10 @@
 #include "bzfio.h" // for DEBUGx()
 
 
-void MeshDrawMgr::init()
+MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* drawInfo_)
+    : drawInfo(drawInfo_)
 {
-}
-
-
-void MeshDrawMgr::kill()
-{
-}
-
-
-MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
-{
-    drawInfo = _drawInfo;
-    if ((drawInfo == NULL) || !drawInfo->isValid())
+    if ((drawInfo == nullptr) || !drawInfo->isValid())
     {
         printf("MeshDrawMgr: invalid drawInfo\n");
         fflush(stdout);
@@ -47,26 +35,19 @@ MeshDrawMgr::MeshDrawMgr(const MeshDrawInfo* _drawInfo)
         fflush(stdout);
     }
 
-    drawLods = drawInfo->getDrawLods();
-    vertices = (const GLfloat*)drawInfo->getVertices();
-    normals = (const GLfloat*)drawInfo->getNormals();
-    texcoords = (const GLfloat*)drawInfo->getTexcoords();
+    auto lodCount = drawInfo->getLodCount();
+    lodLists.resize(lodCount);
 
-    lodCount = drawInfo->getLodCount();
-    lodLists = new LodList[lodCount];
+    // This pointer is a convience way to iterate over the DrawLod objects known to the MeshDrawInfo. A first-class
+    // iterator would be better
+    auto curDrawLod = drawInfo->getDrawLods();
 
-    for (int i = 0; i < lodCount; i++)
-    {
-        LodList& lodList = lodLists[i];
-        lodList.count = drawLods[i].count;
-        lodList.setLists = new GLuint[lodList.count];
-        for (int j = 0; j < lodList.count; j++)
-            lodList.setLists[j] = INVALID_GL_LIST_ID;
-    }
+    // size each LodList to the corresponding DrawLod
+    for (auto &item : lodLists)
+        item.assign((curDrawLod++)->count, INVALID_GL_LIST_ID);
 
     makeLists();
     OpenGLGState::registerContextInitializer(freeContext, initContext, this);
-    return;
 }
 
 
@@ -77,16 +58,13 @@ MeshDrawMgr::~MeshDrawMgr()
     OpenGLGState::unregisterContextInitializer(freeContext, initContext, this);
     freeLists();
 
-    for (int i = 0; i < lodCount; i++)
-        delete[] lodLists[i].setLists;
-    delete[] lodLists;
-
     return;
 }
 
 
 inline void MeshDrawMgr::rawExecuteCommands(int lod, int set)
 {
+    auto drawLods = drawInfo->getDrawLods();
     const DrawLod& drawLod = drawLods[lod];
     const DrawSet& drawSet = drawLod.sets[set];
     const int cmdCount = drawSet.count;
@@ -99,41 +77,45 @@ inline void MeshDrawMgr::rawExecuteCommands(int lod, int set)
 }
 
 
-void MeshDrawMgr::executeSet(int lod, int set, bool _normals, bool _texcoords)
+void MeshDrawMgr::executeSet(int lod, int set, bool useNormals, bool useTexcoords)
 {
-    // FIXME
+    // FIXME (what is broken?)
     const AnimationInfo* animInfo = drawInfo->getAnimationInfo();
-    if (animInfo != NULL)
+    if (animInfo != nullptr)
     {
         glPushMatrix();
         glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
     }
 
-    const GLuint list = lodLists[lod].setLists[set];
+    const GLuint list = lodLists[lod][set];
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
     else
     {
+        auto vertices  = reinterpret_cast<GLfloat const*>(drawInfo->getVertices());
+        auto normals   = reinterpret_cast<GLfloat const*>(drawInfo->getNormals());
+        auto texcoords = reinterpret_cast<GLfloat const*>(drawInfo->getTexcoords());
+
         glVertexPointer(3, GL_FLOAT, 0, vertices);
 
-        if (_normals)
+        if (useNormals)
             glNormalPointer(GL_FLOAT, 0, normals);
         else
             glDisableClientState(GL_NORMAL_ARRAY);
-        if (_texcoords)
+        if (useTexcoords)
             glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
         else
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
         rawExecuteCommands(lod, set);
 
-        if (!_normals)
+        if (!useNormals)
             glEnableClientState(GL_NORMAL_ARRAY);
-        if (!_texcoords)
+        if (!useTexcoords)
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    if (animInfo != NULL)
+    if (animInfo != nullptr)
         glPopMatrix();
 
     return;
@@ -150,11 +132,13 @@ void MeshDrawMgr::executeSetGeometry(int lod, int set)
         glRotatef(animInfo->angle, 0.0f, 0.0f, 1.0f);
     }
 
-    const GLuint list = lodLists[lod].setLists[set];
+    const GLuint list = lodLists[lod][set];
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
     else
     {
+        auto vertices = reinterpret_cast<GLfloat const *>(drawInfo->getVertices());
+
         glVertexPointer(3, GL_FLOAT, 0, vertices);
         rawExecuteCommands(lod, set);
     }
@@ -184,6 +168,10 @@ void MeshDrawMgr::makeLists()
         }
     };
 
+    auto vertices  = reinterpret_cast<GLfloat const*>(drawInfo->getVertices());
+    auto normals   = reinterpret_cast<GLfloat const*>(drawInfo->getNormals());
+    auto texcoords = reinterpret_cast<GLfloat const*>(drawInfo->getTexcoords());
+
     glVertexPointer(3, GL_FLOAT, 0, vertices);
     glEnableClientState(GL_VERTEX_ARRAY);
     glNormalPointer(GL_FLOAT, 0, normals);
@@ -191,34 +179,37 @@ void MeshDrawMgr::makeLists()
     glTexCoordPointer(2, GL_FLOAT, 0, texcoords);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+    auto lod = 0;
+    auto curDrawLod = drawInfo->getDrawLods();
 
-    for (int lod = 0; lod < lodCount; lod++)
+    for (auto &item : lodLists)
     {
-        const DrawLod& drawLod = drawLods[lod];
-        for (int set = 0; set < drawLod.count; set++)
+        const DrawLod& drawLod = *(curDrawLod++);
+        for (auto set = 0; set < drawLod.count; set++)
         {
             const DrawSet& drawSet = drawLod.sets[set];
-            if (drawSet.wantList)
+            if (!drawSet.wantList)
+                continue;
+
+            item[set] = glGenLists(1);
+
+            glNewList(item[set], GL_COMPILE);
             {
-                lodLists[lod].setLists[set] = glGenLists(1);
-
-                glNewList(lodLists[lod].setLists[set], GL_COMPILE);
-                {
-                    rawExecuteCommands(lod, set);
-                }
-                glEndList();
-
-                error = glGetError();
-                if (error != GL_NO_ERROR)
-                {
-                    logDebugMessage(1,"MeshDrawMgr::makeLists() %i/%i glError: %i\n",
-                                    lod, set, error);
-                    lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
-                }
-                else
-                    logDebugMessage(3,"MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
+                rawExecuteCommands(lod, set);
             }
+            glEndList();
+
+            error = glGetError();
+            if (error != GL_NO_ERROR)
+            {
+                logDebugMessage(1,"MeshDrawMgr::makeLists() %i/%i glError: %i\n",
+                                lod, set, error);
+                item[set] = INVALID_GL_LIST_ID;
+            }
+            else
+                logDebugMessage(3,"MeshDrawMgr::makeLists() %i/%i created\n", lod, set);
         }
+        lod++;
     }
 
     return;
@@ -227,17 +218,13 @@ void MeshDrawMgr::makeLists()
 
 void MeshDrawMgr::freeLists()
 {
-    for (int lod = 0; lod < lodCount; lod++)
-    {
-        for (int set = 0; set < lodLists[lod].count; set++)
-        {
-            if (lodLists[lod].setLists[set] != INVALID_GL_LIST_ID)
+    for (auto &item : lodLists)
+        for (auto &itemSet : item)
+            if (itemSet != INVALID_GL_LIST_ID)
             {
-                glDeleteLists(lodLists[lod].setLists[set], 1);
-                lodLists[lod].setLists[set] = INVALID_GL_LIST_ID;
+                glDeleteLists(itemSet, 1);
+                itemSet = INVALID_GL_LIST_ID;
             }
-        }
-    }
 
     return;
 }
