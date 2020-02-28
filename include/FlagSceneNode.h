@@ -14,13 +14,11 @@
  *  Encapsulates information for rendering a flag.
  */
 
-#ifndef BZF_FLAG_SCENE_NODE_H
-#define BZF_FLAG_SCENE_NODE_H
+#pragma once
 
 // Inherits from
 #include "SceneNode.h"
 
-const int maxChunks = 20;
 class FlagSceneNode : public SceneNode
 {
 public:
@@ -44,9 +42,9 @@ public:
     void        setColor(const GLfloat* rgba);
     void        setTexture(const int);
 
-    void        notifyStyleChange();
-    void        addRenderNodes(SceneRenderer&);
-    void        addShadowNodes(SceneRenderer&);
+    void        notifyStyleChange() override;
+    void        addRenderNodes(SceneRenderer&) override;
+    void        addShadowNodes(SceneRenderer&) override;
 
     bool cullShadow(const std::vector<glm::vec4> &planes) const override;
 protected:
@@ -55,7 +53,7 @@ protected:
     public:
         FlagRenderNode(const FlagSceneNode*);
         ~FlagRenderNode();
-        void        render();
+        void        render() override;
         const glm::vec3 getPosition() const override;
     private:
         const FlagSceneNode* sceneNode;
@@ -75,7 +73,6 @@ private:
     FlagRenderNode  renderNode;
 };
 
-#endif // BZF_FLAG_SCENE_NODE_H
 
 // Local Variables: ***
 // mode: C++ ***

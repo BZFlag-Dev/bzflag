@@ -15,8 +15,8 @@
 
 // system headers
 #include <assert.h>
-#include <math.h>
-#include <string.h>
+#include <cmath>
+#include <cstring>
 
 // common implementation headers
 #include "Intersect.h"
@@ -38,27 +38,24 @@
 // NOTE: this should be based on visual pixel area
 static int minLightDisabling = 100;
 
-MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode* node)
+MeshFragSceneNode::Geometry::Geometry(MeshFragSceneNode &node)
+    : style(0)
+    , sceneNode(node)
 {
-    style = 0;
-    sceneNode = node;
     list = INVALID_GL_LIST_ID;
     OpenGLGState::registerContextInitializer (freeContext, initContext, this);
-    return;
 }
 
 
 MeshFragSceneNode::Geometry::~Geometry()
 {
     OpenGLGState::unregisterContextInitializer (freeContext, initContext, this);
-    return;
 }
 
 
 void MeshFragSceneNode::Geometry::init()
 {
     initDisplayList();
-    return;
 }
 
 
@@ -106,8 +103,8 @@ inline void MeshFragSceneNode::Geometry::drawV() const
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+    glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
+    glDrawArrays(GL_TRIANGLES, 0, sceneNode.arrayCount * 3);
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
@@ -120,9 +117,9 @@ inline void MeshFragSceneNode::Geometry::drawVT() const
 {
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+    glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
+    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode.texcoords);
+    glDrawArrays(GL_TRIANGLES, 0, sceneNode.arrayCount * 3);
 
     glEnableClientState(GL_NORMAL_ARRAY);
 
@@ -134,9 +131,9 @@ inline void MeshFragSceneNode::Geometry::drawVN() const
 {
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+    glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
+    glNormalPointer(GL_FLOAT, 0, sceneNode.normals);
+    glDrawArrays(GL_TRIANGLES, 0, sceneNode.arrayCount * 3);
 
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
@@ -146,10 +143,10 @@ inline void MeshFragSceneNode::Geometry::drawVN() const
 
 inline void MeshFragSceneNode::Geometry::drawVTN() const
 {
-    glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
-    glNormalPointer(GL_FLOAT, 0, sceneNode->normals);
-    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode->texcoords);
-    glDrawArrays(GL_TRIANGLES, 0, sceneNode->arrayCount * 3);
+    glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
+    glNormalPointer(GL_FLOAT, 0, sceneNode.normals);
+    glTexCoordPointer(2, GL_FLOAT, 0, sceneNode.texcoords);
+    glDrawArrays(GL_TRIANGLES, 0, sceneNode.arrayCount * 3);
 
     return;
 }
@@ -157,14 +154,14 @@ inline void MeshFragSceneNode::Geometry::drawVTN() const
 
 void MeshFragSceneNode::Geometry::render()
 {
-    const int triangles = sceneNode->arrayCount;
+    const int triangles = sceneNode.arrayCount;
     const bool switchLights = (triangles >= minLightDisabling)
                               && BZDBCache::lighting;
     if (switchLights)
-        RENDERER.disableLights(sceneNode->extents.mins, sceneNode->extents.maxs);
+        RENDERER.disableLights(sceneNode.extents.mins, sceneNode.extents.maxs);
 
     // set the color
-    sceneNode->setColor();
+    sceneNode.setColor();
 
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
@@ -197,12 +194,12 @@ void MeshFragSceneNode::Geometry::render()
 
 void MeshFragSceneNode::Geometry::renderRadar()
 {
-    const int triangles = sceneNode->arrayCount;
+    const int triangles = sceneNode.arrayCount;
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
     else
     {
-        glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+        glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
         glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
     }
     addTriangleCount(triangles);
@@ -212,22 +209,26 @@ void MeshFragSceneNode::Geometry::renderRadar()
 
 void MeshFragSceneNode::Geometry::renderShadow()
 {
-    const int triangles = sceneNode->arrayCount;
+    const int triangles = sceneNode.arrayCount;
     if (list != INVALID_GL_LIST_ID)
         glCallList(list);
     else
     {
-        glVertexPointer(3, GL_FLOAT, 0, sceneNode->vertices);
+        glVertexPointer(3, GL_FLOAT, 0, sceneNode.vertices);
         glDrawArrays(GL_TRIANGLES, 0, triangles * 3);
     }
     addTriangleCount(triangles);
     return;
 }
 
+void MeshFragSceneNode::Geometry::setStyle(int style_)
+{
+    style = style_;
+}
 
 const glm::vec3 MeshFragSceneNode::Geometry::getPosition() const
 {
-    return sceneNode->getCenter();
+    return sceneNode.getCenter();
 }
 
 
@@ -235,16 +236,17 @@ const glm::vec3 MeshFragSceneNode::Geometry::getPosition() const
 // MeshFragSceneNode
 //
 
-MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
-    : renderNode(this)
+MeshFragSceneNode::MeshFragSceneNode(int faceCount_, const MeshFace** faces_)
+    : renderNode(*this)
+    , faceCount(faceCount_)
+    , faces(faces_)
+    , arrayCount(0)
 {
     int i, j, k;
 
-    assert ((_faceCount > 0) && (_faces != NULL));
-
-    // set the count
-    faces = _faces;
-    faceCount = _faceCount;
+    // This is semi-pointless, as assert is typically compiled out in production code.
+    // If protection is needed, a more/ robust solution should be provided
+    assert ((faceCount > 0) && (faces != NULL));
 
     // disable the plane
     static const auto fakePlane = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
@@ -280,7 +282,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     setSphere(mySphere);
 
     // count the number of actual vertices
-    arrayCount = 0;
     for (i = 0; i < faceCount; i++)
     {
         const MeshFace* face = faces[i];
@@ -346,8 +347,6 @@ MeshFragSceneNode::MeshFragSceneNode(int _faceCount, const MeshFace** _faces)
     assert(arrayIndex == (arrayCount * 3));
 
     renderNode.init(); // setup the display list
-
-    return;
 }
 
 
@@ -357,7 +356,6 @@ MeshFragSceneNode::~MeshFragSceneNode()
     delete[] vertices;
     delete[] normals;
     delete[] texcoords;
-    return;
 }
 
 
@@ -411,7 +409,6 @@ void MeshFragSceneNode::addRenderNodes(SceneRenderer& renderer)
     const glm::vec4 *dyncol = getDynamicColor();
     if ((dyncol == NULL) || (dyncol->a != 0.0f))
         renderer.addRenderNode(&renderNode, getWallGState());
-    return;
 }
 
 
@@ -423,7 +420,6 @@ void MeshFragSceneNode::addShadowNodes(SceneRenderer& renderer)
         if ((dyncol == NULL) || (dyncol->a != 0.0f))
             renderer.addShadowNode(&renderNode);
     }
-    return;
 }
 
 
@@ -439,7 +435,6 @@ void MeshFragSceneNode::getRenderNodes(std::vector<RenderSet>& rnodes)
 {
     RenderSet rs = { &renderNode, getWallGState() };
     rnodes.push_back(rs);
-    return;
 }
 
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -20,6 +20,7 @@
 #include <string.h>
 #include <glm/vec3.hpp>
 #include <glm/gtx/norm.hpp>
+#include <algorithm>
 
 //
 // RenderNode
@@ -27,6 +28,15 @@
 
 int RenderNode::triangleCount = 0;
 
+void RenderNode::renderShadow()
+{
+    render();
+}
+
+void RenderNode::renderRadar()
+{
+    renderShadow();
+}
 
 int RenderNode::getTriangleCount()
 {
@@ -37,7 +47,6 @@ int RenderNode::getTriangleCount()
 void RenderNode::resetTriangleCount()
 {
     triangleCount = 0;
-    return;
 }
 
 
@@ -47,111 +56,70 @@ void RenderNode::resetTriangleCount()
 
 static const int initialSize = 31;
 
-RenderNodeList::RenderNodeList() : count(0), size(0), list(NULL)
-{
-    // do nothing
-}
-
-
-RenderNodeList::~RenderNodeList()
-{
-    delete[] list;
-}
-
-
 void RenderNodeList::clear()
 {
-    count = 0;
+    list.clear();
 }
 
+
+void RenderNodeList::append(RenderNode* node)
+{
+    list.push_back(node);
+}
 
 void RenderNodeList::render() const
 {
-    for (int i = 0; i < count; i++)
-        list[i]->renderShadow();
+    for (auto item : list)
+        item->renderShadow();
 }
-
-
-void RenderNodeList::grow()
-{
-    const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
-    RenderNode** newList = new RenderNode*[newSize];
-    if (list) memcpy(newList, list, count * sizeof(RenderNode*));
-    delete[] list;
-    list = newList;
-    size = newSize;
-}
-
 
 //
 // RenderNodeGStateList
 //
 
-RenderNodeGStateList::RenderNodeGStateList() :
-    count(0), size(0), list(NULL)
-{
-    // do nothing
-}
-
-
-RenderNodeGStateList::~RenderNodeGStateList()
-{
-    delete[] list;
-}
-
-
 void RenderNodeGStateList::clear()
 {
-    count = 0;
+    list.clear();
 }
 
+
+void RenderNodeGStateList::append(RenderNode* node,
+                                  const OpenGLGState* gstate)
+{
+    Item item;
+    item.node   = node;
+    item.gstate = gstate;
+    item.depth  = 0.0f;
+    list.push_back(item);
+}
 
 void RenderNodeGStateList::render() const
 {
-    for (int i = 0; i < count; i++)
+    for (auto &item : list)
     {
-        list[i].gstate->setState();
-        list[i].node->render();
+        item.gstate->setState();
+        item.node->render();
     }
 }
 
-
-void RenderNodeGStateList::grow()
-{
-    const int newSize = (size == 0) ? initialSize : (size << 1) + 1;
-    Item* newList = new Item[newSize];
-    if (list) memcpy(newList, list, count * sizeof(Item));
-    delete[] list;
-    list = newList;
-    size = newSize;
-}
-
-
-static int nodeCompare(const void *a, const void* b)
-{
-    const RenderNodeGStateList::Item* itemA =
-        (const RenderNodeGStateList::Item*) a;
-    const RenderNodeGStateList::Item* itemB =
-        (const RenderNodeGStateList::Item*) b;
-
-    // draw from back to front
-    if (itemA->depth > itemB->depth)
-        return -1;
-    else
-        return +1;
-}
 
 void RenderNodeGStateList::sort(const glm::vec3 &e)
 {
     // calculate distances from the eye (squared)
-    for (int i = 0; i < count; i++)
+    for (auto &item : list)
     {
-        const auto p = list[i].node->getPosition();
-        list[i].depth = glm::distance2(p, e);
+        const auto p = item.node->getPosition();
+        item.depth = glm::distance2(p, e);
     }
 
     // sort from farthest to closest
-    qsort (list, count, sizeof(Item), nodeCompare);
+    // Note: std::sort is guaranteed O(n log n). qsort (std::qsort) has no guarantee
+    std::sort( list.begin(), list.end(),
+               [](auto const& lhs, auto const& rhs)
+    {
+        return lhs.depth > rhs.depth;
+    }
+             );
 
     return;
 }
