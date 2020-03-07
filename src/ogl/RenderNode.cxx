@@ -54,8 +54,6 @@ void RenderNode::resetTriangleCount()
 // RenderNodeList
 //
 
-static const int initialSize = 31;
-
 void RenderNodeList::clear()
 {
     list.clear();
@@ -115,7 +113,7 @@ void RenderNodeGStateList::sort(const glm::vec3 &e)
     // sort from farthest to closest
     // Note: std::sort is guaranteed O(n log n). qsort (std::qsort) has no guarantee
     std::sort( list.begin(), list.end(),
-               [](auto const& lhs, auto const& rhs)
+               [](const Item& lhs, const Item& rhs)
     {
         return lhs.depth > rhs.depth;
     }
