@@ -103,6 +103,15 @@ std::string     getConfigDirName( const char* versionName )
     return name;
 
 #elif defined(__APPLE__)
+    // The macOS functions available in C++ to get the Application Support directory
+    // path are deprecated since 10.8. The options are to use modern Objective-C
+    // equivalents, or use SDL2's SDL_GetPrefPath() in the platform module. It was
+    // decided not to introduce another source code language into our code at this time,
+    // and tying into a platform module function here proves to be quite invasive. Given
+    // that we extensively use APIs considered deprecated on macOS (e.g., OpenGL),
+    // suppress this warning for now until the directory handling can be reworked.
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     std::string name;
     ::FSRef libraryFolder;
     ::OSErr err;
@@ -122,6 +131,7 @@ std::string     getConfigDirName( const char* versionName )
             }
         }
     }
+#pragma clang diagnostic pop
     return name;
 #else
     std::string name;
