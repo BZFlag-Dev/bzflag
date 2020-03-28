@@ -23,6 +23,8 @@ dist_font_DATA = \
 	DejaVuSansMonoBold_6.png \
 	DejaVuSansMonoBold_8.fmt \
 	DejaVuSansMonoBold_8.png \
+	DejaVuSansMonoBold_10.fmt \
+	DejaVuSansMonoBold_10.png \
 	DejaVuSansMonoBold_12.fmt \
 	DejaVuSansMonoBold_12.png \
 	DejaVuSansMonoBold_16.fmt \
