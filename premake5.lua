@@ -404,9 +404,9 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
     defines "NDEBUG"
 
   filter "system:macosx"
-    defines { "HAVE_CGLGETCURRENTCONTEXT",
-              "GL_SILENCE_DEPRECATION" }
+    defines "HAVE_CGLGETCURRENTCONTEXT"
     buildoptions { "-fvisibility=hidden",
+                   "-Wno-deprecated-declarations",
                    "-Wno-inconsistent-missing-override" }
     xcodebuildsettings { ["CLANG_CXX_LIBRARY"] = "libc++",
                          ["MACOSX_DEPLOYMENT_TARGET"] = "10.9",
