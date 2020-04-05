@@ -60,12 +60,8 @@ const GLfloat       BackgroundRenderer::defaultGroundColorInv[4][4] =
     { 1.00f, 1.00f, 1.00f, 1.0f },
     { 1.00f, 1.00f, 1.00f, 1.0f }
 };
-const GLfloat       BackgroundRenderer::receiverColor[3] =
-{ 0.3f, 0.55f, 0.3f };
-const GLfloat       BackgroundRenderer::receiverColorInv[3] =
-{ 0.55f, 0.3f, 0.55f };
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
+BackgroundRenderer::BackgroundRenderer() :
     blank(false),
     invert(false),
     style(0),

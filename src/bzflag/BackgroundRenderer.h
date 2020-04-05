@@ -28,14 +28,17 @@
 /* common interface headers */
 #include "bzfgl.h"
 #include "OpenGLGState.h"
-#include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
+class SceneRenderer;
 class BackgroundRenderer
 {
 public:
-    BackgroundRenderer(const SceneRenderer&);
+    BackgroundRenderer();
     ~BackgroundRenderer();
+
+    BackgroundRenderer(const BackgroundRenderer&) = delete;
+    BackgroundRenderer& operator=(const BackgroundRenderer&) = delete;
 
     void        setupGroundMaterials();
     void        setupSkybox();
@@ -47,13 +50,9 @@ public:
 
     void        resize();
 
-    bool        getBlank() const;
-    bool        getInvert() const;
-    bool        getSimpleGround() const;
     const GLfloat*  getSunDirection() const;
     void        setBlank(bool blank = true);
     void        setInvert(bool invert = true);
-    void        setSimpleGround(bool simple = true);
     void        setCelestial(const SceneRenderer&,
                              const float sunDirection[3],
                              const float moonDirection[3]);
@@ -63,8 +62,7 @@ public:
     int         getTriangleCount() const;
     void        resetTriangleCount();
 
-    std::string     userTextures[2];
-protected:
+private:
     void        drawSky(SceneRenderer&, bool mirror);
     void        drawSkybox();
     void        drawGround(void);
@@ -74,11 +72,6 @@ protected:
     void        drawGroundReceivers(SceneRenderer&);
     void        drawAdvancedGroundReceivers(SceneRenderer&);
     void        drawMountains(void);
-
-
-private:
-    BackgroundRenderer(const BackgroundRenderer&);
-    BackgroundRenderer& operator=(const BackgroundRenderer&);
 
     void        resizeSky();
 
@@ -90,11 +83,9 @@ private:
     static void     initContext(void*);
     static void     bzdbCallback(const std::string&, void*);
 
-private:
     // rendering state
     bool        blank;
     bool        invert;
-    bool        simpleGround;
     int         style;
     int         styleIndex;
 
@@ -149,7 +140,6 @@ private:
     GLfloat     skyCrossSunDirColor[3];
     float       sunDirection[3];
     float       moonDirection[3];
-    float       sunAzimuth;
     float       sunsetTop;
     int         starGStateIndex;
     OpenGLGState    skyGState;
@@ -165,14 +155,10 @@ private:
     static GLfloat      skyPyramid[5][3];
     static const GLfloat    cloudRepeats;
 
-    static GLfloat      rcvrGroundColor[4][4];
-    static GLfloat      rcvrGroundInvColor[4][4];
     static GLfloat      groundColor[4][4];
     static GLfloat      groundColorInv[4][4];
     static const GLfloat    defaultGroundColor[4][4];
     static const GLfloat    defaultGroundColorInv[4][4];
-    static const GLfloat    receiverColor[3];
-    static const GLfloat    receiverColorInv[3];
 
     int         triangleCount;
 };
@@ -181,34 +167,14 @@ private:
 // BackgroundRenderer
 //
 
-inline bool     BackgroundRenderer::getBlank() const
-{
-    return blank;
-}
-
 inline void     BackgroundRenderer::setBlank(bool _blank)
 {
     blank = _blank;
 }
 
-inline bool     BackgroundRenderer::getInvert() const
-{
-    return invert;
-}
-
 inline void     BackgroundRenderer::setInvert(bool _invert)
 {
     invert = _invert;
-}
-
-inline bool     BackgroundRenderer::getSimpleGround() const
-{
-    return simpleGround;
-}
-
-inline void     BackgroundRenderer::setSimpleGround(bool _simple)
-{
-    simpleGround = _simple;
 }
 
 inline int      BackgroundRenderer::getTriangleCount() const

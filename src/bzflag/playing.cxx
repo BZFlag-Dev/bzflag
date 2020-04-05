@@ -7596,7 +7596,7 @@ void            startPlaying(BzfDisplay* _display,
     notifyBzfKeyMapChanged();
 
     // make background renderer
-    BackgroundRenderer background(renderer);
+    BackgroundRenderer background;
     sceneRenderer->setBackground(&background);
 
     static const GLfloat  zero[3] = { 0.0f, 0.0f, 0.0f };
