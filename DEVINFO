@@ -138,19 +138,13 @@ typing explicit references to the "std" namespace.  Other namespaces,
 especially those defined in BZFlag code, may be introduced with
 "using" when it improves code readability.
 
-Only use standard C++ language features, at no time should any
-compiler-specific extensions be used (GNU or VisualC++ extensions).
-If an extension can not be avoided then it must be able to be disabled
-or replaced using a #define in config.h.  BZFlag is a cross-platform
-application so it is important to remember that not all builds will
-use your specific compiler. This also includes not using features
-in C99 and C1x as the windows compiler only supports C++11 and
-there are some features in the later C versions that were not adopted
-by the C++ standard, namely the 'not' and 'or' keywords instead of ! and ||.
-Also MSVC seems to be a bit picky about what bits of older standards it
-supports. When the windows compiler supports this, we should stick with
-a consistent method and not mix AND with &&. Use the same type of operators
-that are in the existing code.
+Only use standard C++14 language features. Do not use C++17 language
+features at this time. Do not use any compiler-specific extensions be
+used (GNU or VisualC++ extensions).  If an extension can not be
+avoided then it must be able to be disabled or replaced using a
+#define in config.h.  BZFlag is a cross-platform application so it is
+important to remember that not all builds will use your specific
+compiler.
 
 Formatting
 ----------
@@ -224,18 +218,20 @@ The source code serves for examples of the following rules.
       should be first, followed by public member functions, protected
       member functions, private member functions, and data members.
 
-  7)  Macro names are all capitals, class names have the first letter
-      of each word capitalized, all other names have the first letter
-      of each word except the first capitalized.  Only macros may use
-      underscores, except for in the names of method parameters where
-      a leading underscore is allowed to make it different from a
-      member variable.
+  7)  Macro names are UPPERCASE; class names are TitleCase; all other
+      names are camelCase.  All names that begin with an underscore
+      are reserved to the compiler. The only exception to this is
+      where a name is scoped (as in a class member). However, BZFlag
+      does not use this convention. ALL symbols with two consecutive
+      underscores (FOO__BAR) are reserved to the compiler. Don't use
+      them. Method parameters may use a trailing underscore to make it
+      different from a member variable.
 
 	#define FOO bar
 	class MyClass 
 	{
 	public:
-	    void addStuff(int addMe, int _y) { y = addMe + _y; }
+	    void addStuff(int addMe, int y_) { y = addMe + y_; }
 
 	private:
 	    int y;

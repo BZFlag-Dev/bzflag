@@ -217,18 +217,11 @@ AC_PROG_CXX
 if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
 fi
-AX_CXX_COMPILE_STDCXX_0X
-if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
-    if test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=c++0x"
-	user_CXXFLAGS="$user_CXXFLAGS -std=c++0x"	# for --enable-debug
-    elif test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=gnu++0x"
-	user_CXXFLAGS="$user_CXXFLAGS -std=gnu++0x"	# for --enable-debug
-    else
-	AC_MSG_ERROR([A c++ compiler with C++0x support is required to build BZFlag])
-    fi
-fi
+
+# C++14 is the minimum standard. C++17 isn't widely available
+#AX_CXX_COMPILE_STDCXX([11], [noext])
+AX_CXX_COMPILE_STDCXX([14], [noext])
+#AX_CXX_COMPILE_STDCXX([17], [noext], [optional])
 AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
@@ -531,13 +524,6 @@ else
 fi
 
 AC_LANG(C++)
-AC_CHECK_TYPES([std::shared_ptr<int>],
-	[# BZFlag expects std::shared_ptr support by default],
-	[AC_CHECK_TYPES([[std::tr1::shared_ptr<int>]],
-		AC_DEFINE([USE_TR1], [1], [Define to 1 to use C++0X TR1]),
-		AC_MSG_ERROR([[The C++11 std::shared_ptr type is required to build BZFlag]]),
-		[[#include <tr1/memory>]])],
-	[#include <memory>])
 
 have_gl=yes
 savedLIBS=$LIBS

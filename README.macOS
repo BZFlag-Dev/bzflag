@@ -20,3 +20,4 @@ Building BZFlag from Source
 ---------------------------
 BZFlag builds on macOS are now done using premake5 and Xcode 7 (or later).
 Please refer to the README.premake5 file for build instructions.
+
