@@ -3369,7 +3369,7 @@ BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
 {
     float maxZ = bz_getWorldMaxHeight();
 
-    if (pos[2] > maxZ)
+    if (maxZ >= 0.0f && pos[2] > maxZ)
     {
         return false;
     }
