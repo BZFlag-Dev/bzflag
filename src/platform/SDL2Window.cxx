@@ -48,26 +48,7 @@ void SDLWindow::setFullscreen(bool on)
 
 void SDLWindow::iconify(void)
 {
-    // workaround for SDL 2 bug on macOS (or just a macOS bug?) where trying to
-    // iconify the window just sends it to the background instead
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=4177
-    // TODO: Remove this workaround when/if SDL2 includes their own workaround.
-#if defined(__APPLE__) && defined(MAC_OS_X_VERSION_10_13) && \
-    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-    if (fullScreen)
-        SDL_SetWindowFullscreen(windowId, 0);
-#endif
-
     SDL_MinimizeWindow(windowId);
-
-    // continuation of above workaround; so far, it seems sufficient to simply
-    // set the window back to fullscreen after minimizing it; this does seem a
-    // bit precarious...
-#if defined(__APPLE__) && defined(MAC_OS_X_VERSION_10_13) && \
-    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-    if (fullScreen)
-        SDL_SetWindowFullscreen(windowId, SDL_WINDOW_FULLSCREEN);
-#endif
 }
 
 
