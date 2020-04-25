@@ -1027,7 +1027,6 @@
 		0305D59D166C9DAE00557FC4 /* FontManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FontManager.h; sourceTree = "<group>"; };
 		0305D59E166C9DAE00557FC4 /* Frustum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Frustum.h; sourceTree = "<group>"; };
 		0305D59F166C9DAE00557FC4 /* GameTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameTime.h; sourceTree = "<group>"; };
-		0305D5A0166C9DAE00557FC4 /* GLCollect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLCollect.h; sourceTree = "<group>"; };
 		0305D5A1166C9DAE00557FC4 /* global.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
 		0305D5A2166C9DAE00557FC4 /* Intersect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Intersect.h; sourceTree = "<group>"; };
 		0305D5A3166C9DAE00557FC4 /* KeyManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyManager.h; sourceTree = "<group>"; };
@@ -1085,7 +1084,6 @@
 		0305D5DC166C9DAE00557FC4 /* ServerItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerItem.h; sourceTree = "<group>"; };
 		0305D5DD166C9DAE00557FC4 /* ServerList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerList.h; sourceTree = "<group>"; };
 		0305D5DE166C9DAE00557FC4 /* ServerListCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServerListCache.h; sourceTree = "<group>"; };
-		0305D5E0166C9DAE00557FC4 /* ShotSceneNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotSceneNode.h; sourceTree = "<group>"; };
 		0305D5E1166C9DAE00557FC4 /* ShotUpdate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShotUpdate.h; sourceTree = "<group>"; };
 		0305D5E2166C9DAE00557FC4 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		0305D5E3166C9DAE00557FC4 /* SphereObstacle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SphereObstacle.h; sourceTree = "<group>"; };
@@ -2267,7 +2265,6 @@
 				0305D59D166C9DAE00557FC4 /* FontManager.h */,
 				0305D59E166C9DAE00557FC4 /* Frustum.h */,
 				0305D59F166C9DAE00557FC4 /* GameTime.h */,
-				0305D5A0166C9DAE00557FC4 /* GLCollect.h */,
 				0305D5A1166C9DAE00557FC4 /* global.h */,
 				0305D5A2166C9DAE00557FC4 /* Intersect.h */,
 				0305D5A3166C9DAE00557FC4 /* KeyManager.h */,
@@ -2326,7 +2323,6 @@
 				0305D5DC166C9DAE00557FC4 /* ServerItem.h */,
 				0305D5DD166C9DAE00557FC4 /* ServerList.h */,
 				0305D5DE166C9DAE00557FC4 /* ServerListCache.h */,
-				0305D5E0166C9DAE00557FC4 /* ShotSceneNode.h */,
 				0305D5E1166C9DAE00557FC4 /* ShotUpdate.h */,
 				0305D5E2166C9DAE00557FC4 /* Singleton.h */,
 				0305D5E3166C9DAE00557FC4 /* SphereObstacle.h */,
