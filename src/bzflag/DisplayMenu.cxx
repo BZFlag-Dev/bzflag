@@ -475,7 +475,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     case 'A':
     {
         int aniso = list->getIndex();
-        BZDB.setInt("aniso", (aniso == 0)?0:pow(2, aniso));
+        BZDB.setInt("aniso", (aniso == 0)?0:(int)pow(2, aniso));
         TextureManager& tm = TextureManager::instance();
         tm.setMaxFilter(tm.getMaxFilter());
         sceneRenderer->notifyStyleChange();
@@ -521,7 +521,7 @@ void            DisplayMenu::callback(HUDuiControl* w, const void* data)
     case 'm':
     {
         int multi = list->getIndex();
-        BZDB.setInt("multisample", (multi == 0)?0:pow(2, multi));
+        BZDB.setInt("multisample", (multi == 0)?0:(int)pow(2, multi));
         break;
     }
     case 'g':

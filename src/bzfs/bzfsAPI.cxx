@@ -3374,7 +3374,7 @@ BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
         return false;
     }
 
-    float worldSize = bz_getBZDBInt("_worldSize");
+    double worldSize = bz_getBZDBDouble("_worldSize");
 
     if (abs(pos[1]) >= (worldSize * 0.5f))
     {
