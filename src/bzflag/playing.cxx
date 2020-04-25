@@ -3739,8 +3739,7 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
         }
     }
 
-    std::string message(toTank->getCallSign());
-    message += " stole ";
+    std::string message("stole ");
     message += fromTank->getCallSign();
     message += "'s flag";
     addMessage(toTank, message);
