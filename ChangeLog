@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.19
--------------
+BZFlag 2.4.20  "Do You See What I See?" (2020-04-24)
+----------------------------------------------------
 
 * Reorganization of the menus to improve usability - Scott Wichser
 * Add bz_isWithinWorldBoundaries to API - Vladimir Jimenez
