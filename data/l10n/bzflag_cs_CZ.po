@@ -4,8 +4,8 @@
 msgid "Not available"
 msgstr "Nedostupny"
 
-msgid "xx"
-msgstr "Zaklad prekladu"
+msgid "cs_CZ"
+msgstr "Czech (Czech Republic)"
 
 msgid "translator"
 msgstr "Pavel Lobodinsky"
