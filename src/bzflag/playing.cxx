@@ -7530,11 +7530,7 @@ void            startPlaying(BzfDisplay* _display,
     {
         videoFormat = BZDB.get("resolution");
         if (videoFormat.length() != 0)
-        {
             format = display->findResolution(videoFormat.c_str());
-            if (format >= 0)
-                mainWindow->getWindow()->callResizeCallbacks();
-        }
     };
     // set the resolution (only if in full screen mode)
     if (!BZDB.isSet("_window") && BZDB.isSet("resolution"))
