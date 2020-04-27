@@ -32,7 +32,6 @@ BZFlag 2.4.20  "Do You See What I See?" (2020-04-24)
 * Fixed SDL 1.2 builds on macOS - Joshua Bodine
 * Force zbuffer for Experimental quality - Alfredo Tupone
 * Use GLEW to detect GL_EXT_texture_edge_clamp - Alfredo Tupone
-* Add new bz_eKillReassignmentEvent to the API - Vladimir Jimenez
 * Add support for storing arbitrary data in API player records - Jeff Myers
 * Fix API string utility functions sometimes losing values - Vladimir Jimenez
 * Add new bz_ePlayerDeathFinalizedEvent API event - Vladimir Jimenez
