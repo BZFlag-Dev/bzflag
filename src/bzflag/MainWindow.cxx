@@ -148,6 +148,7 @@ void            MainWindow::setFullscreen()
 {
     isFullscreen = false;
     toggleFullscreen();
+    window->create();
 }
 
 void            MainWindow::toggleFullscreen()
