@@ -1169,9 +1169,6 @@ int         main(int argc, char** argv)
     // enable vsync if needed
     pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
 
-    // Make sure the window is created
-    pmainWindow->getWindow()->callResizeCallbacks();
-
     // get sound files.  must do this after creating the window because
     // DirectSound is a bonehead API.
     if (!noAudio)
