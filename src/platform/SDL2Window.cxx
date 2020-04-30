@@ -167,6 +167,17 @@ void SDLWindow::swapBuffers()
 
 bool SDLWindow::create(void)
 {
+#ifdef __APPLE__
+    // On macOS, if the window is in maximized windowed state and we switch to native fullscreen mode, when we come
+    // back to windowed mode, SDL tries to create a window with the full maximized resolution. This doesn't fit on
+    // the screen because we're no longer maximized. In this scenario, store the original windowed resolution, and
+    // revert to that setting after toggling from a maximized window to fullscreen and back out.
+    static const int origWindowSizeX = base_width, origWindowSizeY = base_height;
+
+    if(windowId && glContext && fullScreen && SDL_GetWindowFlags(windowId) & SDL_WINDOW_MAXIMIZED)
+        setSize(origWindowSizeX, origWindowSizeY);
+#endif
+
     int targetWidth, targetHeight;
     getSize(targetWidth, targetHeight);
     SDL_bool windowWasGrabbed = SDL_FALSE;
