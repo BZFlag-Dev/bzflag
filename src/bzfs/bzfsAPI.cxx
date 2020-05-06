@@ -3344,20 +3344,20 @@ BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[
     TimeKeeper start = TimeKeeper::getCurrent();
     int tries = 0;
 
-    do {
+    do
+    {
         if (tries >= 50)
         {
             tries = 0;
 
             if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime"))
-            {
                 return false;
-            }
         }
 
         bz_getRandomPoint(obj, randomPos);
         ++tries;
-    } while (
+    }
+    while (
         !DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax) ||
         !bz_isWithinWorldBoundaries(randomPos)
     );
@@ -3370,27 +3370,19 @@ BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
     float maxZ = bz_getWorldMaxHeight();
 
     if (maxZ >= 0.0f && pos[2] > maxZ)
-    {
         return false;
-    }
 
     double worldSize = bz_getBZDBDouble("_worldSize");
 
     if (abs(pos[1]) >= (worldSize * 0.5f))
-    {
         return false;
-    }
 
     if (abs(pos[0]) >= (worldSize * 0.5f))
-    {
         return false;
-    }
 
     float burrowFudge = 1.0f; // linear distance
     if (pos[2] < bz_getBZDBDouble("_burrowDepth") - burrowFudge)
-    {
         return false;
-    }
 
     return true;
 }
