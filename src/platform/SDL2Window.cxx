@@ -107,7 +107,7 @@ void SDLWindow::setSize(int _width, int _height)
 void SDLWindow::getSize(int& width, int& height) const
 {
     if (fullScreen)
-        const_cast<SDLDisplay *>((const SDLDisplay *)getDisplay())->getWindowSize(width, height);
+        const_cast<SDLDisplay *>(static_cast<const SDLDisplay *>(getDisplay()))->getWindowSize(width, height);
     else
     {
         width  = base_width;
@@ -207,17 +207,58 @@ bool SDLWindow::create(void)
     }
 
     // (re)create the window
-    const Uint32 flags = SDL_WINDOW_OPENGL |
-                         (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
-                         (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0);
 
-    windowId = SDL_CreateWindow(
-                   title.c_str(),
-                   SDL_WINDOWPOS_UNDEFINED,
-                   SDL_WINDOWPOS_UNDEFINED,
-                   targetWidth,
-                   targetHeight,
-                   flags);
+    // workaround for an SDL 2 bug on Linux with the GNOME Window List extension enabled, where attempting to create a
+    // fullscreen window on a lower-resolution primary display while a higher-resolution secondary display is plugged in
+    // causes an infinite loop of window creation on the secondary display
+    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=4990
+#ifdef __linux__
+    if(! fullScreen || SDL_GetNumVideoDisplays() < 2) // create the window with the standard logic
+    {
+#endif // __linux__
+        windowId = SDL_CreateWindow(
+                       title.c_str(),
+                       SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED,
+                       targetWidth,
+                       targetHeight,
+                       SDL_WINDOW_OPENGL |
+                       (fullScreen ? SDL_WINDOW_FULLSCREEN : SDL_WINDOW_RESIZABLE) |
+                       (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0));
+
+        // continuation of above workaround
+#ifdef __linux__
+    }
+    else // create the window in windowed mode first and then switch to fullscreen
+    {
+        windowId = SDL_CreateWindow(
+                       title.c_str(),
+                       SDL_WINDOWPOS_UNDEFINED,
+                       SDL_WINDOWPOS_UNDEFINED,
+                       base_width,
+                       base_height,
+                       SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | (windowWasGrabbed ? SDL_WINDOW_INPUT_GRABBED : 0));
+
+        SDL_DisplayMode displayMode;
+        if(SDL_GetDesktopDisplayMode(0, &displayMode) < 0)
+        {
+            printf("Unable to get desktop display mode: %s", SDL_GetError());
+            return false;
+        }
+        displayMode.w = targetWidth;
+        displayMode.h = targetHeight;
+        if(SDL_SetWindowDisplayMode(windowId, &displayMode))
+        {
+            printf("Unable to set display mode: %s", SDL_GetError());
+            return false;
+        }
+        if(SDL_SetWindowFullscreen(windowId, SDL_WINDOW_FULLSCREEN) < 0)
+        {
+            printf("Unable to set window to fullscreen mode: %s", SDL_GetError());
+            return false;
+        }
+    }
+#endif // __linux__
 
     // Store the gamma immediately after creating the first window
     if (origGamma < 0)
