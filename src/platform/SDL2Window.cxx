@@ -148,7 +148,10 @@ void SDLWindow::swapBuffers()
     if (! SDL_GL_GetSwapInterval())
         return;
 
-    const int maxRunawayFPS = 65;
+    int maxRunawayFPS = 65;
+    SDL_DisplayMode desktopDisplayMode;
+    if (SDL_GetDesktopDisplayMode(0, &desktopDisplayMode) == 0)
+        maxRunawayFPS = desktopDisplayMode.refresh_rate + 5;
 
     static TimeKeeper lastFrame = TimeKeeper::getSunGenesisTime();
     const TimeKeeper now = TimeKeeper::getCurrent();
