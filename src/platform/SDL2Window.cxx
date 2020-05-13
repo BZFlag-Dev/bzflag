@@ -168,6 +168,24 @@ void SDLWindow::swapBuffers()
 #endif //__APPLE__
 }
 
+// For some reason, when creating a new fullscreen window on Linux with a different resolution than before, SDL throws
+// a resize event with the old window resolution, which is not what we want. This function is called to filter SDL
+// window resize events right after the resolution change and adjust the resolution to the correct one.
+#ifdef __linux__
+int SDLWindowEventFilter(void *resolution, SDL_Event *event)
+{
+    if(event->type == SDL_WINDOWEVENT && (event->window.event == SDL_WINDOWEVENT_RESIZED ||
+                                          event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED))
+    {
+        // adjust the window resolution to match the values passed to us
+        event->window.data1 = static_cast<int *>(resolution)[0];
+        event->window.data2 = static_cast<int *>(resolution)[1];
+    }
+
+    return 1; // allow the event
+}
+#endif // __linux__
+
 bool SDLWindow::create(void)
 {
 #ifdef __APPLE__
@@ -261,6 +279,13 @@ bool SDLWindow::create(void)
             return false;
         }
     }
+#endif // __linux__
+
+    // Apply filters due to resize event issues on Linux (see the explanation above for SDLWindowEventFilter())
+#ifdef __linux__
+    SDL_PumpEvents();
+    int windowResolution[] = { targetWidth, targetHeight };
+    SDL_FilterEvents(&SDLWindowEventFilter, windowResolution);
 #endif // __linux__
 
     // Store the gamma immediately after creating the first window
