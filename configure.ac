@@ -211,18 +211,7 @@ AC_PROG_CXX
 if test -z "$CXX"; then
     AC_MSG_ERROR([A c++ compiler is required to build BZFlag])
 fi
-AX_CXX_COMPILE_STDCXX_0X
-if test "x$ax_cv_cxx_compile_cxx0x_native" != xyes; then
-    if test "x$ax_cv_cxx_compile_cxx0x_cxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=c++0x"
-	user_CXXFLAGS="$user_CXXFLAGS -std=c++0x"	# for --enable-debug
-    elif test "x$ax_cv_cxx_compile_cxx0x_gxx" = xyes; then
-	CXXFLAGS="$CXXFLAGS -std=gnu++0x"
-	user_CXXFLAGS="$user_CXXFLAGS -std=gnu++0x"	# for --enable-debug
-    else
-	AC_MSG_ERROR([A c++ compiler with C++0x support is required to build BZFlag])
-    fi
-fi
+AX_CXX_COMPILE_STDCXX_11([],[mandatory])
 AC_PROG_CC
 AC_PROG_LN_S
 AC_CHECK_PROG(AR, ar, ar)
@@ -744,21 +733,7 @@ case $host_os in
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS"
 	case $host_vendor in
 	     pc)
-	       if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
-		 FLAGS=-mtune
-	       else
-		 FLAGS=-march
-	       fi
-	       if expr `$CC -dumpversion` \>= "4.2" > /dev/null ; then
-		 FLAGS="$FLAGS=native"
-	       else
-	       # silly hack, should be a proper configure compiler option test
-	       if test x$host_cpu = xx86_64; then
-		 FLAGS="$FLAGS=k8"
-	       else
-		 FLAGS="$FLAGS=$host_cpu"
-	       fi
-	       fi
+               FLAGS=-mtune=native
 	       CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
 	       CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
@@ -776,11 +751,7 @@ case $host_os in
      mingw32*)
 	AC_DEFINE(HALF_RATE_AUDIO, 1, [Half rate Audio])
 	FLAGS="-Wall -W"
-	if expr `$CC -dumpversion` \>= "3.4" > /dev/null ; then
-	  FLAGS="$FLAGS -mtune=$host_cpu"
-	else
-	  FLAGS="$FLAGS -march=$host_cpu"
-	fi
+	FLAGS="$FLAGS -mtune=$host_cpu"
 	CONF_CFLAGS="$CONF_CFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS $FLAGS";
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -fsigned-char";;
@@ -811,7 +782,7 @@ if test x$enable_profiling = xyes ; then
     if test "$GCC" = yes ; then
 	CONF_CFLAGS="$CONF_CFLAGS -pg"
 	CONF_CXXFLAGS="$CONF_CXXFLAGS -pg"
-	if expr `$CC -dumpversion` \>= "6" > /dev/null ; then
+	if expr `$CC -dumpversion | sed 's/\..*//'` \>= "6" > /dev/null ; then
            CONF_CFLAGS="$CONF_CFLAGS -no-pie"
            CONF_CXXFLAGS="$CONF_CXXFLAGS -no-pie"
         fi
