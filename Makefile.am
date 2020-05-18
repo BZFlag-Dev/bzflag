@@ -70,7 +70,7 @@ dist-hook:
 	find $(distdir) -type f \( -name config.log -o -name config.status \) -exec rm -f {} \;
 	find $(distdir) -type d \( -name .deps -o -name autom4te.cache \) -prune -exec rm -rf {} \;
 	missing=0 ; \
-	for file in `git ls-files | grep -v '^\.gitignore'` ; do \
+	for file in `git ls-files | egrep -v '^\.git(hub/|ignore)'` ; do \
 		if test ! -e $(distdir)/$$file ; then \
 			missing=1 ; \
 			echo "MISSING FROM DIST: $$file" ; \
