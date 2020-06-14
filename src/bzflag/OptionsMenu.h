@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,7 +25,6 @@
 #include "CacheMenu.h"
 #include "SaveWorldMenu.h"
 #include "InputMenu.h"
-#include "AudioMenu.h"
 #include "DisplayMenu.h"
 
 class OptionsMenu : public HUDDialog
@@ -49,14 +48,13 @@ private:
     HUDuiControl* cacheOptions;
     HUDuiControl* saveWorld;
     HUDuiControl* inputSetting;
-    HUDuiControl* audioSetting;
     HUDuiControl* displaySetting;
+    HUDuiControl* save;
     GUIOptionsMenu*   guiOptionsMenu;
     EffectsMenu*      effectsMenu;
     CacheMenu*        cacheMenu;
     SaveWorldMenu*    saveWorldMenu;
     InputMenu*        inputMenu;
-    AudioMenu*        audioMenu;
     DisplayMenu*      displayMenu;
 };
 

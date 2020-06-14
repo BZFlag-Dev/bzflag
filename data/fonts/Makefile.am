@@ -5,6 +5,8 @@ dist_font_DATA = \
 	DejaVuSansCondensedBold_6.png \
 	DejaVuSansCondensedBold_8.fmt \
 	DejaVuSansCondensedBold_8.png \
+	DejaVuSansCondensedBold_10.fmt \
+	DejaVuSansCondensedBold_10.png \
 	DejaVuSansCondensedBold_12.fmt \
 	DejaVuSansCondensedBold_12.png \
 	DejaVuSansCondensedBold_16.fmt \
@@ -21,6 +23,8 @@ dist_font_DATA = \
 	DejaVuSansMonoBold_6.png \
 	DejaVuSansMonoBold_8.fmt \
 	DejaVuSansMonoBold_8.png \
+	DejaVuSansMonoBold_10.fmt \
+	DejaVuSansMonoBold_10.png \
 	DejaVuSansMonoBold_12.fmt \
 	DejaVuSansMonoBold_12.png \
 	DejaVuSansMonoBold_16.fmt \

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,7 +21,6 @@
 /* common interface headers */
 #include "Address.h"
 #include "Pack.h"
-#include "multicast.h"
 
 
 // 8 uint16's and 13 uint8's hex encoded
@@ -56,16 +55,16 @@ public:
     static bool sendRequest(int fd, const struct sockaddr_in*);
 
 public:
-    ServerId        serverId;
+    ServerId    serverId;
     Address     sourceAddr;
-    uint16_t        gameOptions;
-    uint16_t        gameType;
-    uint16_t        maxShots;
-    uint16_t        shakeWins;
-    uint16_t        shakeTimeout;       // 1/10ths of second
-    uint16_t        maxPlayerScore;
-    uint16_t        maxTeamScore;
-    uint16_t        maxTime;        // seconds
+    uint16_t    gameOptions;
+    uint16_t    gameType;
+    uint16_t    maxShots;
+    uint16_t    shakeWins;
+    uint16_t    shakeTimeout;       // 1/10ths of second
+    uint16_t    maxPlayerScore;
+    uint16_t    maxTeamScore;
+    uint16_t    maxTime;            // seconds
     uint8_t     maxPlayers;
     uint8_t     rogueCount;
     uint8_t     rogueMax;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -33,7 +33,6 @@
 #include "ShotUpdate.h"
 #include "PhysicsDriver.h"
 #include "CommandManager.h"
-#include "TimeBomb.h"
 #include "ConfigFileManager.h"
 #include "bzsignal.h"
 
@@ -6630,21 +6629,6 @@ int main(int argc, char **argv)
 #endif
 
     Record::init();
-
-    // check time bomb
-    if (timeBombBoom())
-    {
-        std::cerr << "This release expired on " << timeBombString() << ".\n";
-        std::cerr << "Please upgrade to the latest release.\n";
-        exit(0);
-    }
-
-    // print expiration date
-    if (timeBombString())
-    {
-        std::cerr << "This release will expire on " << timeBombString() << ".\n";
-        std::cerr << "Version " << getAppVersion() << std::endl;
-    }
 
     // initialize
 #if defined(_WIN32)

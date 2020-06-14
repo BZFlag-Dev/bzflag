@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -13,18 +13,19 @@
 #include "network.h"
 
 //Includes common to all platforms
-#include "ErrorHandler.h"
-#include "Address.h"
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <vector>
 #include <string>
+
+#include "ErrorHandler.h"
 
 #if !defined(WIN32)
 
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
+#include <netdb.h>
 
 #if defined(sun)
 #define hstrerror(x) "<network error>"

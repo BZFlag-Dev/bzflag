@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,23 +14,14 @@
 #include "ServerList.h"
 
 /* system headers */
-#include <iostream>
-#include <vector>
-#include <string>
-#include <string.h>
-#if !defined(_WIN32)
-#include <errno.h>
-#endif
-#include <ctype.h>
+#include <cstring>
 
 /* common implementation headers */
 #include "version.h"
-#include "bzsignal.h"
-#include "Ping.h"
 #include "Protocol.h"
-#include "TimeKeeper.h"
 #include "TextUtils.h"
 #include "ErrorHandler.h"
+#include "multicast.h"
 
 /* local implementation headers */
 #include "ServerListCache.h"

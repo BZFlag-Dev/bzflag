@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,14 +10,12 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#include "common.h"
+/* interface header */
+#include "ServerItem.h"
 
 /* system headers */
 #include <string>
-#include <string.h>
-
-/* interface header */
-#include "ServerItem.h"
+#include <cstring>
 
 /* common implementation headers */
 #include "TextUtils.h"
@@ -161,16 +159,11 @@ std::string ServerItem::getAgeString() const
     return returnMe;
 }
 
-// get the current time
+// get the current time -- one-line functions add little value ...
+// replace with native std::time()?
 time_t ServerItem::getNow() const
 {
-#if defined(_WIN32)
-    return time(NULL);
-#else
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-    return tv.tv_sec;
-#endif
+    return std::time(nullptr);
 }
 
 bool ServerItem::operator<(const ServerItem &right)

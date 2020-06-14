@@ -14,8 +14,6 @@ MAINTAINERCLEANFILES = \
 bzflag_SOURCES =			\
 	ActionBinding.cxx		\
 	ActionBinding.h			\
-	AudioMenu.cxx			\
-	AudioMenu.h			\
 	AutoPilot.cxx			\
 	AutoPilot.h			\
 	BackgroundRenderer.cxx		\

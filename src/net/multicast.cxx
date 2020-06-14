@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -11,19 +11,20 @@
  */
 
 /* interface header */
-#include "multicast.h"
+#include "multicast.h" // includes network.h
 
-/* system implementation headers */
-#ifdef _WIN32
-#  include <winsock2.h>
-#  include <ws2tcpip.h>
-#endif
-
-#include <stdio.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdio>
+#include <cstring>
+#include <cerrno>
 #include <vector>
 #include <string>
+
+#if defined(__linux__)
+// This is inherently non-portable, as device handling varies from OS to OS
+// Debian requires the explicit include. Apparently Alpine does as well
+#include <sys/ioctl.h>
+#include <net/if.h>
+#endif
 
 /* common implementation headers */
 #include "ErrorHandler.h"

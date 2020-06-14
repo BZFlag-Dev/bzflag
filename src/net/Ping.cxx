@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -14,17 +14,16 @@
 #include "Ping.h"
 
 /* system implementation headers */
-#include <string.h>
-#include <math.h>
-#include <ctype.h>
+#include <cstring>
+#include <cmath>
+#include <cctype>
 
 /* common implementation headers */
-#include "global.h"
 #include "Protocol.h"
 #include "TimeKeeper.h"
-#include "bzfio.h"
+#include "multicast.h"
 
-// incessint rebuilding for current versioning
+// incessant rebuilding for current versioning
 #include "version.h"
 
 

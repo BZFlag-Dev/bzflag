@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -25,14 +25,11 @@
 #include "OptionsMenu.h"
 #include "QuitMenu.h"
 #include "HUDuiTextureLabel.h"
-#include "ConfigFileManager.h"
-#include "clientConfig.h"
-#include "bzflag.h"
 #include "playing.h"
 #include "HUDui.h"
 
 MainMenu::MainMenu() : HUDDialog(),
-    join(), options(), help(), leave(), save(), quit(),
+    join(), options(), help(), leave(), quit(),
     joinMenu(NULL), optionsMenu(NULL), quitMenu(NULL)
 {
 }
@@ -67,9 +64,6 @@ void      MainMenu::createControls()
 
     options = createLabel("Options");
     listHUD.push_back(options);
-
-    save = createLabel("Save Settings");
-    listHUD.push_back(save);
 
     help = createLabel("Help");
     listHUD.push_back(help);
@@ -148,15 +142,6 @@ void            MainMenu::execute()
         // myTank should be NULL now, recreate menu
         createControls();
     }
-    else if (_focus == save)
-    {
-        // save resources
-        dumpResources();
-        if (alternateConfig == "")
-            CFGMGR.write(getCurrentConfigFileName());
-        else
-            CFGMGR.write(alternateConfig);
-    }
     else if (_focus == quit)
     {
         if (!quitMenu) quitMenu = new QuitMenu;
@@ -185,7 +170,7 @@ void            MainMenu::resize(int _width, int _height)
     float texWidth = (float)tm.getInfo(((HUDuiTextureLabel*)title)->getTexture()).x;
     float titleWidth = (texWidth / texHeight) * titleFontSize;
     float x = 0.5f * ((float)_width - titleWidth);
-    float y = (float)_height - titleFontSize * 1.25f;
+    float y = (float)_height - titleFontSize * 1.5f;
     title->setPosition(x, y);
 
     // reposition instructions
@@ -194,7 +179,7 @@ void            MainMenu::resize(int _width, int _height)
     const float hintWidth = fm.getStrLength(fontFace, tinyFontSize, hint->getString());
     y -= 1.25f * fm.getStrHeight(fontFace, tinyFontSize, hint->getString());
     hint->setPosition(0.5f * ((float)_width - hintWidth), y);
-    y -= 1.5f * fm.getStrHeight(fontFace, fontSize, hint->getString());
+    y -= 2.0f * fm.getStrHeight(fontFace, fontSize, hint->getString());
 
     // reposition menu items (first is centered, rest aligned to the first)
     const float firstWidth
@@ -207,7 +192,7 @@ void            MainMenu::resize(int _width, int _height)
         HUDuiLabel* label = (HUDuiLabel*)listHUD[i];
         label->setFontSize(fontSize);
         label->setPosition(x, y);
-        y -= 1.2f * fm.getStrHeight(fontFace, fontSize, label->getString());
+        y -= 1.3f * fm.getStrHeight(fontFace, fontSize, label->getString());
     }
 }
 

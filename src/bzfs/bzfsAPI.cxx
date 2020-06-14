@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -35,6 +35,7 @@
 #include "CommandManager.h"
 #include "md5.h"
 #include "version.h"
+#include "DropGeometry.h"
 #include "ObstacleMgr.h"
 
 TimeKeeper synct = TimeKeeper::getCurrent();
@@ -3368,6 +3369,54 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
         randomPos[1] = (obj->radius * y) + pos[1];
         randomPos[2] = pos[2];
     }
+}
+
+BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[3] )
+{
+    TimeKeeper start = TimeKeeper::getCurrent();
+    int tries = 0;
+
+    do
+    {
+        if (tries >= 50)
+        {
+            tries = 0;
+
+            if (TimeKeeper::getCurrent() - start > BZDB.eval("_spawnMaxCompTime"))
+                return false;
+        }
+
+        bz_getRandomPoint(obj, randomPos);
+        ++tries;
+    }
+    while (
+        !DropGeometry::dropPlayer(randomPos, obj->zMin, obj->zMax) ||
+        !bz_isWithinWorldBoundaries(randomPos)
+    );
+
+    return true;
+}
+
+BZF_API bool bz_isWithinWorldBoundaries ( float pos[3] )
+{
+    float maxZ = bz_getWorldMaxHeight();
+
+    if (maxZ >= 0.0f && pos[2] > maxZ)
+        return false;
+
+    double worldSize = bz_getBZDBDouble("_worldSize");
+
+    if (abs(pos[1]) >= (worldSize * 0.5f))
+        return false;
+
+    if (abs(pos[0]) >= (worldSize * 0.5f))
+        return false;
+
+    float burrowFudge = 1.0f; // linear distance
+    if (pos[2] < bz_getBZDBDouble("_burrowDepth") - burrowFudge)
+        return false;
+
+    return true;
 }
 
 BZF_API bool bz_registerCustomMapObject ( const char* object, bz_CustomMapObjectHandler *handler )

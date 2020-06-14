@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -62,7 +62,6 @@
 #include "Team.h"
 #include "TextUtils.h"
 #include "TextureManager.h"
-#include "TimeBomb.h"
 #include "WordFilter.h"
 #include "World.h"
 #include "bzfSDL.h"
@@ -761,16 +760,6 @@ int         main(int argc, char** argv)
     // init libs
 
     //init_packetcompression();
-
-    // check time bomb
-    if (timeBombBoom())
-    {
-        printFatalError("This release expired on %s. \n"
-                        "Please upgrade to the latest release. \n"
-                        "Exiting.", timeBombString());
-        bail(0);
-        exit(0);
-    }
 
     // initialize global objects and classes
     bzfsrand((unsigned int)time(0));

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -24,9 +24,6 @@
 
 /* Building regex */
 #define HAVE_REGEX_H 1
-
-/* Time Bomb expiration */
-/* #undef TIME_BOMB */
 
 /* Debug Rendering */
 /* #undef DEBUG_RENDERING */

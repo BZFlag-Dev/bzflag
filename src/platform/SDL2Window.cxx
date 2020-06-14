@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -48,26 +48,7 @@ void SDLWindow::setFullscreen(bool on)
 
 void SDLWindow::iconify(void)
 {
-    // workaround for SDL 2 bug on macOS (or just a macOS bug?) where trying to
-    // iconify the window just sends it to the background instead
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=4177
-    // TODO: Remove this workaround when/if SDL2 includes their own workaround.
-#if defined(__APPLE__) && defined(MAC_OS_X_VERSION_10_13) && \
-    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-    if (fullScreen)
-        SDL_SetWindowFullscreen(windowId, 0);
-#endif
-
     SDL_MinimizeWindow(windowId);
-
-    // continuation of above workaround; so far, it seems sufficient to simply
-    // set the window back to fullscreen after minimizing it; this does seem a
-    // bit precarious...
-#if defined(__APPLE__) && defined(MAC_OS_X_VERSION_10_13) && \
-    MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_13
-    if (fullScreen)
-        SDL_SetWindowFullscreen(windowId, SDL_WINDOW_FULLSCREEN);
-#endif
 }
 
 
@@ -267,54 +248,6 @@ bool SDLWindow::create(void)
 
     // init opengl context
     OpenGLGState::initContext();
-
-    // workaround for SDL 2 bug on mac where toggling fullscreen will
-    // generate a resize event and mess up the window size/resolution
-    // (TODO: remove this if they ever fix it)
-    // bug report: https://bugzilla.libsdl.org/show_bug.cgi?id=3146
-#ifdef __APPLE__
-    if (fullScreen)
-        return true;
-
-    int currentDisplayIndex = SDL_GetWindowDisplayIndex(windowId);
-    if (currentDisplayIndex < 0)
-    {
-        printf("Unable to get current display index: %s\n", SDL_GetError());
-        return true;
-    }
-
-    SDL_DisplayMode desktopDisplayMode;
-    if (SDL_GetDesktopDisplayMode(currentDisplayIndex, &desktopDisplayMode) < 0)
-    {
-        printf("Unable to get desktop display mode: %s\n", SDL_GetError());
-        return true;
-    }
-
-    std::vector<SDL_Event> eventStack;
-    SDL_Event thisEvent;
-
-    // pop off all the events except a resize event
-    while (SDL_PollEvent(&thisEvent))
-    {
-        if (thisEvent.type == SDL_WINDOWEVENT && thisEvent.window.event == SDL_WINDOWEVENT_RESIZED)
-        {
-            // switching from "native" fullscreen to SDL fullscreen and then going back to
-            // windowed mode will generate a legitimate resize event, so add it back
-            if (thisEvent.window.data1 != desktopDisplayMode.w || thisEvent.window.data2 != desktopDisplayMode.h)
-                eventStack.push_back(thisEvent);
-        }
-        else
-            eventStack.push_back(thisEvent);
-    }
-
-    // push them back on in the same order
-    while (eventStack.size() > 0)
-    {
-        SDL_PushEvent(&eventStack[0]);
-
-        eventStack.erase(eventStack.begin());
-    }
-#endif //__APPLE__
 
     return true;
 }

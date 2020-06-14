@@ -7,11 +7,44 @@ BZFlag 2.5.x
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
 
-BZFlag 2.4.19
--------------
+BZFlag 2.4.20  "Do You See What I See?" (2020-04-24)
+----------------------------------------------------
 
+* Reorganization of the menus to improve usability - Scott Wichser
+* Add bz_isWithinWorldBoundaries to API - Vladimir Jimenez
+* Use teleporter names in /saveworld .obj exports - Vladimir Jimenez
+* Add bz_getSpawnPointWithin to API - Vladimir Jimenez
+* Fix NetHandler compiler errors on Alpine Linux - Jim Melton
+* Significantly improve platform-dependent header imports - Jim Melton
+* Only perform texture conversion to internal format once
+    - Alfredo Tupone, Scott Wichser
+* Removal of never used logic for expiring builds - Zehra
+* Radar size and console height are controlled with BZDB variables - The Noah
+* Add bz_getNearestFlagSafetyZone to the API - Vladimir Jimenez
+* Don't allow hunt to be used when not connected to a server - Zehra
+* Improve vsync settings with SDL2 - Joshua Bodine
+* Ignore the -NSDocumentRevisionsDebugMode YES option in Xcode - Joshua Bodine
+* Add Slovak translation - Jose Riha, Scott Wichser
+* Use a greyscale color scale based on relative height when colored radar shots
+    are disabled - Alfredo Tupone
+* Sort locally discovered servers to the top of the server list - Scott Wichser
+* Add the Open Free For All mode to the Start Server menu - Scott Wichser
+* Remove ineffective performance tests and just default to "modern" settings
+    - Scott Wichser
+* Change default settings to better suit first time players - Scott Wichser
+* Standardize the rabbit game mode name to "Rabbit Chase" - Scott Wichser
+* Do not scale NPOT textures when OpenGL supports them - Alfredo Tupone
+* Generate mipmaps with OpenGL 1.4 extension - Alfredo Tupone
+* Fixed SDL 1.2 builds on macOS - Joshua Bodine
+* Force zbuffer for Experimental quality - Alfredo Tupone
+* Use GLEW to detect GL_EXT_texture_edge_clamp - Alfredo Tupone
+* Add support for storing arbitrary data in API player records - Jeff Myers
+* Fix API string utility functions sometimes losing values - Vladimir Jimenez
 * Add new bz_ePlayerDeathFinalizedEvent API event - Vladimir Jimenez
-* Output correct error when loading a nonexistent bzfs plugin - Vladimir Jimenez
+* Display Time-per-Frame with 2 decimal digits and averaged over time
+    - Alfredo Tupone
+* Output correct error when loading a nonexistent bzfs plugin
+    - Vladimir Jimenez
 * Remove obsolete bzfs option from Start Server menu on Windows - Scott Wichser
 
 

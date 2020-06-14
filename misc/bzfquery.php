@@ -7,7 +7,7 @@
 // php native code by Tim Riker <Tim@Rikers.org>
 // updated by blast007 <blast007@users.sourceforge.net>
 //
-// Copyright (c) 1993-2018 Tim Riker
+// Copyright (c) 1993-2020 Tim Riker
 //
 // This package is free software;  you can redistribute it and/or
 // modify it under the terms of the license found in the file

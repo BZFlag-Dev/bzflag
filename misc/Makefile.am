@@ -71,7 +71,8 @@ MAINTAINERCLEANFILES = \
 	missing \
 	mkinstalldirs
 
-AM_CPPFLAGS = $(CONF_CPPFLAGS)
+AM_CPPFLAGS = $(LIBCURL_CPPFLAGS) \
+	$(CONF_CPPFLAGS)
 AM_CFLAGS = $(CONF_CFLAGS)
 AM_CXXFLAGS = $(CONF_CXXFLAGS)
 
@@ -82,6 +83,7 @@ rrlog_LDADD =				\
 	../src/game/libGame.la		\
 	../src/net/libNet.la		\
 	../src/common/libCommon.la	\
+	$(LIBCURL)			\
 	$(X_EXTRA_LIBS)
 
 3ds2bzw_SOURCES = 3ds2bzw.cxx

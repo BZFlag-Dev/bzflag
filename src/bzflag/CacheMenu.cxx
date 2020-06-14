@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -219,6 +219,7 @@ void CacheMenu::resize(int _width, int _height)
     {
         listHUD[i]->setFontSize(fontSize);
         listHUD[i]->setPosition(x, y);
+        // Add extra space after Clear Server List Cache, Clear Download Cache, and before the download status label
         if ((i == 2) || (i == 4) || (i == 7))
             y -= 1.75f * h;
         else

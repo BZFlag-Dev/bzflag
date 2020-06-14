@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -693,31 +693,6 @@ static void drawPuddle(const TrackEntry& te)
 
 
 static void drawTreads(const TrackEntry& te)
-{
-    const float ratio = (te.lifeTime / TrackFadeTime);
-
-    glColor4f(0.0f, 0.0f, 0.0f, 1.0f - ratio);
-
-    glPushMatrix();
-    {
-        glTranslatef(te.pos[0], te.pos[1], te.pos[2]);
-        glRotatef(te.angle, 0.0f, 0.0f, 1.0f);
-        glScalef(1.0f, te.scale, 1.0f);
-
-        const float halfWidth = 0.5f * TreadMarkWidth;
-
-        if ((te.sides & LeftTread) != 0)
-            glRectf(-halfWidth, +TreadInside, +halfWidth, +TreadOutside);
-        if ((te.sides & RightTread) != 0)
-            glRectf(-halfWidth, -TreadOutside, +halfWidth, -TreadInside);
-    }
-    glPopMatrix();
-
-    return;
-}
-
-
-static void drawSmoke(const TrackEntry& te)
 {
     const float ratio = (te.lifeTime / TrackFadeTime);
 

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -66,7 +66,7 @@ const glm::vec3     BackgroundRenderer::receiverColor =
 const glm::vec3     BackgroundRenderer::receiverColorInv =
 { 0.55f, 0.3f, 0.55f };
 
-BackgroundRenderer::BackgroundRenderer(const SceneRenderer&) :
+BackgroundRenderer::BackgroundRenderer() :
     blank(false),
     invert(false),
     style(0),

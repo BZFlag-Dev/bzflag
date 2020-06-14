@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -58,7 +58,6 @@
 #include "Team.h"
 #include "TextureManager.h"
 #include "TextUtils.h"
-#include "TimeBomb.h"
 #include "version.h"
 #include "WordFilter.h"
 #include "ZSceneDatabase.h"
@@ -3881,8 +3880,7 @@ static void handleFlagTransferred( Player *fromTank, Player *toTank, int flagInd
         }
     }
 
-    std::string message(toTank->getCallSign());
-    message += " stole ";
+    std::string message("stole ");
     message += fromTank->getCallSign();
     message += "'s flag";
     addMessage(toTank, message);
@@ -4956,7 +4954,7 @@ static void     addRobots()
         }
         else
         {
-            snprintf(callsign, CallSignLen, "%.29s%2.2hhx", myTank->getCallSign(), (unsigned char)j);
+            snprintf(callsign, CallSignLen, "%.29s%2.2x", myTank->getCallSign(), (short int)j);
             robots[j] = new RobotPlayer(robotServer[j]->getId(), callsign, robotServer[j], myTank->getMotto());
             robots[j]->setTeam(AutomaticTeam);
             robotServer[j]->sendEnter(ComputerPlayer, robots[j]->getTeam(), 0, robots[j]->getCallSign(), robots[j]->getMotto(), "",
@@ -7691,7 +7689,7 @@ void            startPlaying(BzfDisplay* _display,
     notifyBzfKeyMapChanged();
 
     // make background renderer
-    BackgroundRenderer background(renderer);
+    BackgroundRenderer background;
     sceneRenderer->setBackground(&background);
 
     static const GLfloat  zero[3] = { 0.0f, 0.0f, 0.0f };
@@ -7766,15 +7764,6 @@ void            startPlaying(BzfDisplay* _display,
                         info.szCSDVersion);
     }
 #endif
-
-    // print expiration
-    if (timeBombString())
-    {
-        // add message about date of expiration
-        char bombMessage[80];
-        sprintf(bombMessage, "This release will expire on %s", timeBombString());
-        controlPanel->addMessage(bombMessage);
-    }
 
     // send informative header to the console
     {

@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 "Last-Translator: Américo Monteiro <a_monteiro@netcabo.pt>\n"
 
-msgid "pt_pt"
+msgid "pt"
 msgstr "Português (Portugal)"
 
 msgid "translator"

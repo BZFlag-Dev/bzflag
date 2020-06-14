@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -28,14 +28,17 @@
 /* common interface headers */
 #include "bzfgl.h"
 #include "OpenGLGState.h"
-#include "SceneRenderer.h"
 #include "WeatherRenderer.h"
 
+class SceneRenderer;
 class BackgroundRenderer
 {
 public:
-    BackgroundRenderer(const SceneRenderer&);
+    BackgroundRenderer();
     ~BackgroundRenderer();
+
+    BackgroundRenderer(const BackgroundRenderer&) = delete;
+    BackgroundRenderer& operator=(const BackgroundRenderer&) = delete;
 
     void        setupGroundMaterials();
     void        setupSkybox();
@@ -47,13 +50,9 @@ public:
 
     void        resize();
 
-    bool        getBlank() const;
-    bool        getInvert() const;
-    bool        getSimpleGround() const;
     const glm::vec3 &getSunDirection() const;
     void        setBlank(bool blank = true);
     void        setInvert(bool invert = true);
-    void        setSimpleGround(bool simple = true);
     void        setCelestial(const SceneRenderer&,
                              const glm::vec3 &sunDirection,
                              const glm::vec3 &moonDirection);
@@ -63,8 +62,7 @@ public:
     int         getTriangleCount() const;
     void        resetTriangleCount();
 
-    std::string     userTextures[2];
-protected:
+private:
     void        drawSky(SceneRenderer&, bool mirror);
     void        drawSkybox();
     void        drawGround(void);
@@ -74,11 +72,6 @@ protected:
     void        drawGroundReceivers(SceneRenderer&);
     void        drawAdvancedGroundReceivers(SceneRenderer&);
     void        drawMountains(void);
-
-
-private:
-    BackgroundRenderer(const BackgroundRenderer&);
-    BackgroundRenderer& operator=(const BackgroundRenderer&);
 
     void        resizeSky();
 
@@ -90,11 +83,9 @@ private:
     static void     initContext(void*);
     static void     bzdbCallback(const std::string&, void*);
 
-private:
     // rendering state
     bool        blank;
     bool        invert;
-    bool        simpleGround;
     int         style;
     int         styleIndex;
 
@@ -148,7 +139,6 @@ private:
     glm::vec3   skyCrossSunDirColor;
     glm::vec3   sunDirection;
     glm::vec3   moonDirection;
-    float       sunAzimuth;
     float       sunsetTop;
     int         starGStateIndex;
     OpenGLGState    skyGState;
@@ -178,34 +168,14 @@ private:
 // BackgroundRenderer
 //
 
-inline bool     BackgroundRenderer::getBlank() const
-{
-    return blank;
-}
-
 inline void     BackgroundRenderer::setBlank(bool _blank)
 {
     blank = _blank;
 }
 
-inline bool     BackgroundRenderer::getInvert() const
-{
-    return invert;
-}
-
 inline void     BackgroundRenderer::setInvert(bool _invert)
 {
     invert = _invert;
-}
-
-inline bool     BackgroundRenderer::getSimpleGround() const
-{
-    return simpleGround;
-}
-
-inline void     BackgroundRenderer::setSimpleGround(bool _simple)
-{
-    simpleGround = _simple;
 }
 
 inline int      BackgroundRenderer::getTriangleCount() const

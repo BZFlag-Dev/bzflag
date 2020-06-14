@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2018 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -21,10 +21,16 @@
 #include "MainMenu.h"
 #include "HUDDialogStack.h"
 #include "HUDui.h"
+#include "BundleMgr.h"
+#include "World.h"
+#include "sound.h"
+#include "bzflag.h"
+#include "ConfigFileManager.h"
+#include "clientConfig.h"
 
 OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     cacheMenu(NULL), saveWorldMenu(NULL),
-    inputMenu(NULL), audioMenu(NULL),
+    inputMenu(NULL),
     displayMenu(NULL)
 {
     // cache font face ID
@@ -45,19 +51,9 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     label->setLabel("Input Settings");
     listHUD.push_back(label);
 
-    audioSetting = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setLabel("Audio Settings");
-    listHUD.push_back(label);
-
     displaySetting = label = new HUDuiLabel;
     label->setFontFace(fontFace);
     label->setLabel("Display Settings");
-    listHUD.push_back(label);
-
-    guiOptions = label = new HUDuiLabel;
-    label->setFontFace(fontFace);
-    label->setLabel("GUI Settings");
     listHUD.push_back(label);
 
     effectsOptions = label = new HUDuiLabel;
@@ -65,18 +61,82 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     label->setLabel("Effects Settings");
     listHUD.push_back(label);
 
+    guiOptions = label = new HUDuiLabel;
+    label->setFontFace(fontFace);
+    label->setLabel("GUI Settings");
+    listHUD.push_back(label);
+
     cacheOptions = label = new HUDuiLabel;
     label->setFontFace(fontFace);
     label->setLabel("Cache Settings");
     listHUD.push_back(label);
 
+    // set locale
     option = new HUDuiList;
     option->setFontFace(fontFace);
-    option->setLabel("Save Settings:");
+    option->setLabel("Locale:");
+    option->setCallback(callback, "L");
+    options = &option->getList();
+    std::vector<std::string> locales;
+    if (BundleMgr::getLocaleList(&locales) == true)
+    {
+        options->push_back(std::string("English"));
+        for (int i = 0; i < (int)locales.size(); i++)
+            options->push_back(locales[i]);
+        locales.erase(locales.begin(), locales.end());
+    }
+    else
+    {
+        // Something failed when trying to compile a list
+        // of all the locales.
+        options->push_back(std::string("Default"));
+    }
+
+    for (int i = 0; i < (int)options->size(); i++)
+    {
+        if ((*options)[i].compare(World::getLocale()) == 0)
+        {
+            option->setIndex(i);
+            break;
+        }
+    }
+    option->update();
+    listHUD.push_back(option);
+
+    // Sound Volume
+    option = new HUDuiList;
+    option->setFontFace(MainMenu::getFontFace());
+    option->setLabel("Sound Volume:");
     option->setCallback(callback, "s");
     options = &option->getList();
+    if (isSoundOpen())
+    {
+        options->push_back(std::string("Off"));
+        option->createSlider(10);
+    }
+    else
+        options->push_back(std::string("Unavailable"));
+    option->update();
+    listHUD.push_back(option);
+
+    // Remotes Sounds
+    option = new HUDuiList;
+    option->setFontFace(MainMenu::getFontFace());
+    option->setLabel("Remote Sounds:");
+    option->setCallback(callback, "r");
+    options = &option->getList();
+    options->push_back(std::string("Off"));
+    options->push_back(std::string("On"));
+    option->update();
+    listHUD.push_back(option);
+
+    option = new HUDuiList;
+    option->setFontFace(fontFace);
+    option->setLabel("Save Settings On Exit:");
+    option->setCallback(callback, "S");
+    options = &option->getList();
     options->push_back(std::string("No"));
-    options->push_back(std::string("On Exit"));
+    options->push_back(std::string("Yes"));
     option->update();
     listHUD.push_back(option);
 
@@ -90,6 +150,11 @@ OptionsMenu::OptionsMenu() : guiOptionsMenu(NULL), effectsMenu(NULL),
     options->push_back(std::string("Username and password"));
     option->update();
     listHUD.push_back(option);
+
+    save = label = new HUDuiLabel;
+    label->setFontFace(fontFace);
+    label->setLabel("Save Settings");
+    listHUD.push_back(save);
 
     saveWorld = label = new HUDuiLabel;
     label->setFontFace(fontFace);
@@ -106,7 +171,6 @@ OptionsMenu::~OptionsMenu()
     delete cacheMenu;
     delete saveWorldMenu;
     delete inputMenu;
-    delete audioMenu;
     delete displayMenu;
 }
 
@@ -138,15 +202,19 @@ void OptionsMenu::execute()
         if (!inputMenu) inputMenu = new InputMenu;
         HUDDialogStack::get()->push(inputMenu);
     }
-    else if (_focus == audioSetting)
-    {
-        if (!audioMenu) audioMenu = new AudioMenu;
-        HUDDialogStack::get()->push(audioMenu);
-    }
     else if (_focus == displaySetting)
     {
         if (!displayMenu) displayMenu = new DisplayMenu;
         HUDDialogStack::get()->push(displayMenu);
+    }
+    else if (_focus == save)
+    {
+        // save resources
+        dumpResources();
+        if (alternateConfig == "")
+            CFGMGR.write(getCurrentConfigFileName());
+        else
+            CFGMGR.write(alternateConfig);
     }
 }
 
@@ -180,14 +248,20 @@ void OptionsMenu::resize(int _width, int _height)
         HUDuiControl *ctl = listHUD[i];
         ctl->setFontSize(fontSize);
         ctl->setPosition(x, y);
-        if ((i == 6) || (i == 8))
+        if (i == 5 || i == 6 || i == 8 || i == 11)
             y -= 1.75f * h;
         else
             y -= 1.0f * h;
     }
 
+
+
     // load current settings
     i = 7;
+
+    // sound
+    ((HUDuiList*)listHUD[i++])->setIndex(getSoundVolume());
+    ((HUDuiList*)listHUD[i++])->setIndex(BZDB.isTrue("remoteSounds") ? 1 : 0);
 
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveSettings"));
     ((HUDuiList*)listHUD[i++])->setIndex(BZDB.evalInt("saveIdentity"));
@@ -199,7 +273,32 @@ void OptionsMenu::callback(HUDuiControl* w, const void* data)
 
     switch (((const char*)data)[0])
     {
-    case 's':   // save settings
+    case 'L':
+    {
+        std::vector<std::string>* options = &listHUD->getList();
+        std::string locale = (*options)[listHUD->getIndex()];
+
+        World::setLocale(locale);
+        BZDB.set("locale", locale);
+        World::getBundleMgr()->getBundle(locale, true);
+
+        OptionsMenu *menu = (OptionsMenu *)HUDDialogStack::get()->top();
+        if (menu)
+            menu->resize(menu->getWidth(), menu->getHeight());
+        break;
+    }
+    case 's':
+    {
+        BZDB.set("volume", TextUtils::format("%d", listHUD->getIndex()));
+        setSoundVolume(listHUD->getIndex());
+        break;
+    }
+    case 'r':
+    {
+        BZDB.setBool("remoteSounds", (listHUD->getIndex() == 0) ? false : true);
+        break;
+    }
+    case 'S':   // save settings
     {
         BZDB.setInt("saveSettings", listHUD->getIndex());
         break;
