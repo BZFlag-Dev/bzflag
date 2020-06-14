@@ -469,7 +469,7 @@ void TankSceneNode::rebuildExplosion()
 
         // cheezy spheroid explosion pattern
         const float vhMax = maxExplosionVel;
-        const float vhAng = M_PI * 0.5 * bzfrand();
+        const float vhAng = (float)(M_PI * 0.5 * bzfrand());
         const float vhMag = vhMax * sinf(vhAng);
         const float vhAngle = (float)(2.0 * M_PI * bzfrand());
         vel[i][0] = cosf(vhAngle) * vhMag;

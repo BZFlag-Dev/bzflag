@@ -19,6 +19,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <glm/gtx/norm.hpp>
+#include <algorithm>
 
 // common implementation headers
 #include "Intersect.h"

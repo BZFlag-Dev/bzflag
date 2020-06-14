@@ -1267,7 +1267,7 @@ void HUDRenderer::drawWaypointMarker(const EnhancedHUDMarker &marker,
 
     auto map = getMarkerCoordinate(marker.pos, viewPos);
 
-    hudColor3Afv( color, 0.45 );
+    hudColor3Afv( color, 0.45f );
 
     glPushMatrix();
     glTranslatef(map.x, map.y, 0);
@@ -1320,7 +1320,7 @@ void HUDRenderer::drawWaypointMarker(const EnhancedHUDMarker &marker,
 
     if (!marker.name.empty())
     {
-        hudColor3Afv( color, 0.45 );
+        hudColor3Afv( color, 0.45f );
         float textOffset = 5.0f;
         float width = FontManager::instance().getStrLength(headingFontFace, headingFontSize, marker.name);
         glEnable(GL_TEXTURE_2D);

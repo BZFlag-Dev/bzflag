@@ -18,6 +18,7 @@
 // system headers
 #include <math.h>
 #include <glm/gtx/norm.hpp>
+#include <algorithm>
 
 // common implementation headers
 #include "Intersect.h"
