@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2023 Tim Riker
+ * Copyright (c) 1993-2020 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -10,8 +10,8 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef __INPUTMENU_H__
-#define __INPUTMENU_H__
+#ifndef __JOYSTICKTESTMENU_H__
+#define __JOYSTICKTESTMENU_H__
 
 #include "common.h"
 
@@ -20,43 +20,35 @@
 
 /* local interface headers */
 #include "MenuDefaultKey.h"
-#include "KeyboardMapMenu.h"
-#include "JoystickTestMenu.h"
 #include "HUDuiControl.h"
 #include "HUDuiList.h"
 #include "HUDuiDefaultKey.h"
+#include "HUDuiJSTestLabel.h"
 
 
-/** this class provides options for setting the gui
+/** this class provides a visual test of the joystick range
  */
-class InputMenu : public HUDDialog
+class JoystickTestMenu : public HUDDialog
 {
 public:
-    InputMenu();
-    ~InputMenu();
+    JoystickTestMenu();
+    ~JoystickTestMenu() { };
 
     HUDuiDefaultKey* getDefaultKey()
     {
         return MenuDefaultKey::getInstance();
     }
-    void execute();
+    void execute() { };
     void resize(int width, int height);
-    static void callback(HUDuiControl* w, const void* data);
-
-    void fillJSOptions();
 
 private:
-    HUDuiControl*      keyMapping;
-    HUDuiList*         activeInput;
-    HUDuiList*         jsx;
-    HUDuiList*         jsy;
-    HUDuiControl*      joystickTest;
-    KeyboardMapMenu*   keyboardMapMenu;
-    JoystickTestMenu*  joystickTestMenu;
+    HUDuiLabel* titleLabel;
+    HUDuiLabel* fakeLabel;
+    HUDuiJSTestLabel* jsTestLabel;
 };
 
 
-#endif /* __INPUTMENU_H__ */
+#endif /* __JOYSTICKTESTMENU_H__ */
 
 // Local Variables: ***
 // mode: C++ ***

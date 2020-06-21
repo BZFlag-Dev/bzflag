@@ -335,6 +335,8 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
   <ItemGroup>
     <ClCompile Include="..\..\src\bzflag\ActionBinding.cxx" />
     <ClCompile Include="..\..\src\bzflag\AutoPilot.cxx" />
+    <ClCompile Include="..\..\src\bzflag\HUDuiJSTestLabel.cxx" />
+    <ClCompile Include="..\..\src\bzflag\JoystickTestMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterHelpMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\ServerListFilterMenu.cxx" />
     <ClCompile Include="..\..\src\bzflag\bzflag.cxx">
@@ -939,12 +941,14 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
     <ClInclude Include="..\..\src\bzflag\HUDui.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiControl.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiDefaultKey.h" />
+    <ClInclude Include="..\..\src\bzflag\HUDuiJSTestLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiList.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiTextureLabel.h" />
     <ClInclude Include="..\..\src\bzflag\HUDuiTypeIn.h" />
     <ClInclude Include="..\..\src\bzflag\InputMenu.h" />
     <ClInclude Include="..\..\src\bzflag\JoinMenu.h" />
+    <ClInclude Include="..\..\src\bzflag\JoystickTestMenu.h" />
     <ClInclude Include="..\..\src\bzflag\KeyboardMapMenu.h" />
     <ClInclude Include="..\..\include\ListServer.h" />
     <ClInclude Include="..\..\src\bzflag\LocalCommand.h" />

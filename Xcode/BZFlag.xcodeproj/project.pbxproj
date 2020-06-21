@@ -410,6 +410,8 @@
 		0394E966167B2D00007F4035 /* wwzones.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0394E93D167B2A9E007F4035 /* wwzones.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		0397B73B1BC1D639001C04D2 /* CustomZoneSample.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E81AE2489900C5AED5 /* CustomZoneSample.bzw */; };
 		0397B73C1BC1E72B001C04D2 /* flagStay.bzw in Resources */ = {isa = PBXBuildFile; fileRef = C353B1E91AE2490D00C5AED5 /* flagStay.bzw */; };
+		03AD0A172481A06E00207E3E /* JoystickTestMenu.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03AD0A162481A06E00207E3E /* JoystickTestMenu.cxx */; };
+		03AD0A1A2481B2D600207E3E /* HUDuiJSTestLabel.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03AD0A192481B2D600207E3E /* HUDuiJSTestLabel.cxx */; };
 		03C5E82B1670A98C005A26C4 /* FontManager.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FD166C846F008806E9 /* FontManager.cxx */; };
 		03C5E82C1670A98C005A26C4 /* ImageFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035542FE166C846F008806E9 /* ImageFont.cxx */; };
 		03C5E82D1670A98C005A26C4 /* TextureFont.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 03554302166C846F008806E9 /* TextureFont.cxx */; };
@@ -1775,6 +1777,10 @@
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		039708A11DD7991D00C9215C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		039708A21DD7991D00C9215C /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
+		03AD0A152481A06E00207E3E /* JoystickTestMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoystickTestMenu.h; sourceTree = "<group>"; };
+		03AD0A162481A06E00207E3E /* JoystickTestMenu.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JoystickTestMenu.cxx; sourceTree = "<group>"; };
+		03AD0A182481B2D500207E3E /* HUDuiJSTestLabel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HUDuiJSTestLabel.h; sourceTree = "<group>"; };
+		03AD0A192481B2D600207E3E /* HUDuiJSTestLabel.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HUDuiJSTestLabel.cxx; sourceTree = "<group>"; };
 		03C338C71AFB5AFC00E8F655 /* SDL2Display.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Display.cxx; sourceTree = "<group>"; };
 		03C338C81AFB5AFC00E8F655 /* SDL2Display.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Display.h; sourceTree = "<group>"; };
 		03C338C91AFB5AFC00E8F655 /* SDL2Visual.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDL2Visual.cxx; sourceTree = "<group>"; };
@@ -2529,6 +2535,8 @@
 				0355435A166C846F008806E9 /* HUDuiControl.h */,
 				0355435B166C846F008806E9 /* HUDuiDefaultKey.cxx */,
 				0355435C166C846F008806E9 /* HUDuiDefaultKey.h */,
+				03AD0A192481B2D600207E3E /* HUDuiJSTestLabel.cxx */,
+				03AD0A182481B2D500207E3E /* HUDuiJSTestLabel.h */,
 				0355435D166C846F008806E9 /* HUDuiLabel.cxx */,
 				0355435E166C846F008806E9 /* HUDuiLabel.h */,
 				0355435F166C846F008806E9 /* HUDuiList.cxx */,
@@ -2541,6 +2549,8 @@
 				03554366166C846F008806E9 /* InputMenu.h */,
 				03554367166C846F008806E9 /* JoinMenu.cxx */,
 				03554368166C846F008806E9 /* JoinMenu.h */,
+				03AD0A162481A06E00207E3E /* JoystickTestMenu.cxx */,
+				03AD0A152481A06E00207E3E /* JoystickTestMenu.h */,
 				03554369166C846F008806E9 /* KeyboardMapMenu.cxx */,
 				0355436A166C846F008806E9 /* KeyboardMapMenu.h */,
 				0355436B166C846F008806E9 /* LocalCommand.cxx */,
@@ -5571,6 +5581,7 @@
 				03C8EE6F167AC26A00BB07A5 /* callbacks.cxx in Sources */,
 				03C8EE71167AC26A00BB07A5 /* clientCommands.cxx in Sources */,
 				03C8EE72167AC26A00BB07A5 /* clientConfig.cxx in Sources */,
+				03AD0A1A2481B2D600207E3E /* HUDuiJSTestLabel.cxx in Sources */,
 				03C8EE75167AC26A00BB07A5 /* CommandsImplementation.cxx in Sources */,
 				03C8EE76167AC26A00BB07A5 /* ComposeDefaultKey.cxx in Sources */,
 				03C8EE78167AC26A00BB07A5 /* ControlPanel.cxx in Sources */,
@@ -5647,6 +5658,7 @@
 				03C8EF01167AC26A00BB07A5 /* TrackMarks.cxx in Sources */,
 				03C8EF03167AC26A00BB07A5 /* Weapon.cxx in Sources */,
 				03C8EF05167AC26A00BB07A5 /* WeatherRenderer.cxx in Sources */,
+				03AD0A172481A06E00207E3E /* JoystickTestMenu.cxx in Sources */,
 				03C8EF07167AC26A00BB07A5 /* World.cxx in Sources */,
 				03C8EF09167AC26A00BB07A5 /* WorldBuilder.cxx in Sources */,
 				03C8EF0B167AC26A00BB07A5 /* WorldPlayer.cxx in Sources */,

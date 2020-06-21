@@ -29,7 +29,7 @@ public:
 
     virtual void    initJoystick(const char* joystickName);
     virtual bool    joystick() const;
-    virtual void    getJoy(int& x, int& y);
+    virtual void    getJoy(float& x, float& y);
     virtual int  getNumHats();
     virtual void    getJoyHat(int hat, float &hatX, float &hatY);
     virtual unsigned long getJoyButtons();

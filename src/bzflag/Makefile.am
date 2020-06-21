@@ -65,6 +65,8 @@ bzflag_SOURCES =			\
 	HUDuiControl.h			\
 	HUDuiDefaultKey.cxx		\
 	HUDuiDefaultKey.h		\
+	HUDuiJSTestLabel.cxx		\
+	HUDuiJSTestLabel.h		\
 	HUDuiLabel.cxx			\
 	HUDuiLabel.h			\
 	HUDuiList.cxx			\
@@ -73,6 +75,8 @@ bzflag_SOURCES =			\
 	HUDuiTextureLabel.h		\
 	HUDuiTypeIn.cxx			\
 	HUDuiTypeIn.h			\
+	JoystickTestMenu.cxx		\
+	JoystickTestMenu.h		\
 	JoinMenu.cxx			\
 	JoinMenu.h			\
 	InputMenu.cxx			\

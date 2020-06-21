@@ -265,6 +265,12 @@
     <ClCompile Include="..\..\src\bzflag\stars.cxx">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\bzflag\HUDuiJSTestLabel.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\bzflag\JoystickTestMenu.cxx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\bzflag\BackgroundRenderer.h">
@@ -529,6 +535,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\bzflag\WorldPlayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzflag\HUDuiJSTestLabel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\bzflag\JoystickTestMenu.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
