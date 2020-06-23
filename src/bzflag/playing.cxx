@@ -1002,7 +1002,7 @@ static void     doMotion()
                 mainWindow->getJoyPosition(jsx, jsy);
 
                 // if we aren't using the joystick, but it's moving, start using it
-                if(std::sqrtf(jsx * jsx + jsy * jsy) > std::min(std::max(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.0f), 0.2f))
+                if(std::sqrt(jsx * jsx + jsy * jsy) > std::min(std::max(float(BZDB.evalInt("jsRangeMin")) / 100.0f, 0.0f), 0.2f))
                     myTank->setInputMethod(LocalPlayer::Joystick); // joystick motion
             } // allowInputChange
         } // getInputMethod == Joystick
