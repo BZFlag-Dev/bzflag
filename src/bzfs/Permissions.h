@@ -66,7 +66,7 @@ public:
         idleStats,
         info,
         kick,
-        kill,
+        kill_,
         lagStats,
         lagwarn,
         jitterwarn,

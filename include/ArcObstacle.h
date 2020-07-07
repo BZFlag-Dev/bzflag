@@ -34,7 +34,7 @@ public:
         Top,
         Bottom,
         Inside,
-        Outside,
+        Outside_,
         StartFace,
         EndFace,
         MaterialCount

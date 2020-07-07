@@ -16,7 +16,7 @@
 // System includes
 #include <vector>
 
-SDLDisplay::SDLDisplay() : min_width(), min_height(),  x(), y()
+SDLDisplay::SDLDisplay()
 {
     if (SDL_VideoInit(NULL) < 0)
     {

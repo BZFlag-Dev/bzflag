@@ -478,7 +478,7 @@ bool KillCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
-    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill))
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill_))
     {
         sendMessage(ServerPlayer, t,
                     "You do not have permission to run the kill command");

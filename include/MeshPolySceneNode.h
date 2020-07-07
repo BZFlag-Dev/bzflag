@@ -78,8 +78,6 @@ protected:
     private:
         MeshPolySceneNode* sceneNode;
         int style;
-        bool drawRadar;
-        bool draw;
         const GLfloat* normal;
     public:
         GLfloat3Array vertices;
