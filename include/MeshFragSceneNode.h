@@ -44,13 +44,13 @@ public:
 
     // virtual functions from SceneNode
     const GLfloat* getPlane() const override;
-    bool cull(const ViewFrustum&) const;
-    void addShadowNodes(SceneRenderer&);
-    void addRenderNodes(SceneRenderer&);
-    void renderRadar();
+    bool cull(const ViewFrustum&) const override;
+    void addShadowNodes(SceneRenderer&) override;
+    void addRenderNodes(SceneRenderer&) override;
+    void renderRadar() override;
 
     // virtual functions from WallSceneNode
-    bool inAxisBox(const Extents& exts) const;
+    bool inAxisBox(const Extents& exts) const override;
 
     void getRenderNodes(std::vector<RenderSet>& rnodes) override;
 
@@ -66,10 +66,7 @@ protected:
         void render() override;
         void renderRadar() override;
         void renderShadow() override;
-        const GLfloat* getPosition() const
-        {
-            return sceneNode.getSphere();
-        }
+        const GLfloat* getPosition() const override;
 
     private:
         void drawV() const; // draw with just vertices

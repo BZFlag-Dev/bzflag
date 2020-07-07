@@ -47,7 +47,7 @@ public:
     void        addShadowNodes(SceneRenderer&) override;
 
     bool        cullShadow(int planeCount,
-                           const float (*planes)[4]) const;
+                           const float (*planes)[4]) const override;
 protected:
     class FlagRenderNode : public RenderNode
     {
@@ -55,10 +55,7 @@ protected:
         FlagRenderNode(const FlagSceneNode*);
         ~FlagRenderNode();
         void        render() override;
-        const GLfloat*  getPosition() const
-        {
-            return sceneNode->getSphere();
-        }
+        const GLfloat*  getPosition() const override;
     private:
         const FlagSceneNode* sceneNode;
         int      waveReference;

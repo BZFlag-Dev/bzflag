@@ -113,6 +113,31 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
 }
 
+void OccluderSceneNode::addShadowNodes(SceneRenderer&)
+{
+    return;
+}
+
+void OccluderSceneNode::addRenderNodes(SceneRenderer&)
+{
+    return;
+}
+
+void OccluderSceneNode::renderRadar()
+{
+    return;
+}
+
+int OccluderSceneNode::getVertexCount () const
+{
+    return vertexCount;
+}
+
+const GLfloat* OccluderSceneNode::getVertex (int vertex) const
+{
+    return vertices[vertex];
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

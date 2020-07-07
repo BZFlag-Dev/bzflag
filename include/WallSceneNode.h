@@ -39,8 +39,8 @@ public:
     const GLfloat*  getModulateColor() const;
     const GLfloat*  getLightedColor() const;
     const GLfloat*  getLightedModulateColor() const;
-    GLfloat     getDistance(const GLfloat*) const;
-    virtual bool    inAxisBox (const Extents& exts) const;
+    GLfloat         getDistance(const GLfloat*) const override;
+    bool            inAxisBox (const Extents& exts) const override;
 
     void        setColor(GLfloat r, GLfloat g,
                          GLfloat b, GLfloat a = 1.0f);
@@ -67,8 +67,8 @@ public:
 
     void        setColor();
 
-    bool        cull(const ViewFrustum&) const;
-    void        notifyStyleChange();
+    bool        cull(const ViewFrustum&) const override;
+    void        notifyStyleChange() override;
 
     void        copyStyle(WallSceneNode*);
 

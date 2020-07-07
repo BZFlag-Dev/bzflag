@@ -542,6 +542,11 @@ void            FlagSceneNode::FlagRenderNode::render()
         myStipple(0.5f);
 }
 
+const GLfloat*  FlagSceneNode::FlagRenderNode::getPosition() const
+{
+    return sceneNode->getSphere();
+}
+
 
 // Local Variables: ***
 // mode: C++ ***

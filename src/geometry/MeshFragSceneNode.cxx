@@ -226,6 +226,11 @@ void MeshFragSceneNode::Geometry::setStyle(int style_)
     style = style_;
 }
 
+const GLfloat* MeshFragSceneNode::Geometry::getPosition() const
+{
+    return sceneNode.getSphere();
+}
+
 //
 // MeshFragSceneNode
 //

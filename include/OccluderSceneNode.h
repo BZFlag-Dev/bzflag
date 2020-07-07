@@ -32,32 +32,17 @@ public:
     ~OccluderSceneNode();
 
     // virtual functions from SceneNode
-    bool cull(const ViewFrustum&) const;
-    bool inAxisBox(const Extents& exts) const;
-    void addShadowNodes(SceneRenderer&)
-    {
-        return;
-    }
-    void addRenderNodes(SceneRenderer&)
-    {
-        return;
-    }
-    void renderRadar()
-    {
-        return;
-    }
+    bool cull(const ViewFrustum&) const override;
+    bool inAxisBox(const Extents& exts) const override;
+    void addShadowNodes(SceneRenderer&) override;
+    void addRenderNodes(SceneRenderer&) override;
+    void renderRadar() override;
 
-    int getVertexCount () const
-    {
-        return vertexCount;
-    }
+    int getVertexCount () const override;
 
     const GLfloat* getPlane() const override;
 
-    const GLfloat* getVertex (int vertex) const
-    {
-        return vertices[vertex];
-    }
+    const GLfloat* getVertex (int vertex) const override;
 
 private:
     int vertexCount;
