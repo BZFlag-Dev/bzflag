@@ -996,7 +996,7 @@ bool bz_BasePlayerRecord::setCustomData(const char* key, const char* data)
     std::string keyStr = key;
     std::string dataStr;
     if (data != nullptr)
-        dataStr = dataStr;
+        dataStr = data;
 
     player->extraData[keyStr] = data;
 

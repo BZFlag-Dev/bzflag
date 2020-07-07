@@ -86,7 +86,6 @@ private:
     // rendering state
     bool        blank;
     bool        invert;
-    int         style;
     int         styleIndex;
 
     // stuff for ground

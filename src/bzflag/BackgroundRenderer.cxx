@@ -64,7 +64,6 @@ const GLfloat       BackgroundRenderer::defaultGroundColorInv[4][4] =
 BackgroundRenderer::BackgroundRenderer() :
     blank(false),
     invert(false),
-    style(0),
     gridSpacing(60.0f), // meters
     gridCount(4.0f),
     mountainsAvailable(false),

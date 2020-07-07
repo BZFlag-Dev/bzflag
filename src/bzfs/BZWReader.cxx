@@ -197,7 +197,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     char buffer[1024];
     WorldFileObject* object = NULL;
     WorldFileObject* newObject = NULL;
-    WorldFileObject* const fakeObject = (WorldFileObject*)((char*)NULL + 1);
+    WorldFileObject* const fakeObject = (WorldFileObject*)((char*)1);
     GroupDefinition* const worldDef = const_cast<GroupDefinition*>(OBSTACLEMGR.getWorld());
     GroupDefinition* const startDef = groupDef;
 

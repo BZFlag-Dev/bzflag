@@ -802,7 +802,7 @@ if test x$enable_debug = xyes ; then
 else
     if test "$GCC" = yes ; then
 	case "`$CC --version 2>&1`" in
-	    *LLVM*|lcc*)
+	    *LLVM*|lcc*|clang*)
 		# Apple LLVM and MCST LCC falsely claim to be GCC
 		;;
 	    *)

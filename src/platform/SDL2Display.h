@@ -52,10 +52,6 @@ private:
     {
         return true;
     };
-    int  min_width;
-    int  min_height;
-    int  x;
-    int  y;
 };
 
 #endif // BZF_SDLDISPLAY_H

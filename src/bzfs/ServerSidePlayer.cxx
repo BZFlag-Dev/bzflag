@@ -523,8 +523,8 @@ class BotEventHandler : public bz_EventHandler
                 bz_PlayerUpdateEventData_V1* updated = (bz_PlayerUpdateEventData_V1*)eventData;
                 handler->playerStateUpdate(updated->playerID, &updated->state, updated->stateTime);
 
-                if (updated->lastState.status == eTeleporting &&  updated->lastState.status != eTeleporting)
-                    handler->playerTeleported(updated->playerID,&updated->state,&updated->lastState);
+                //if (updated->lastState.status == eTeleporting &&  updated->lastState.status != eTeleporting)
+                //    handler->playerTeleported(updated->playerID,&updated->state,&updated->lastState);
 
                 if (updated->playerID == handler->getPlayerID())
                 {

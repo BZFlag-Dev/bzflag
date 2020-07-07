@@ -373,7 +373,7 @@ std::string nameFromPerm(PlayerAccessInfo::AccessPerm perm)
         return "info";
     case PlayerAccessInfo::kick:
         return "kick";
-    case PlayerAccessInfo::kill:
+    case PlayerAccessInfo::kill_:
         return "kill";
     case PlayerAccessInfo::lagStats:
         return "lagStats";
@@ -487,7 +487,7 @@ PlayerAccessInfo::AccessPerm permFromName(const std::string &name)
     if (name == "IDLESTATS") return PlayerAccessInfo::idleStats;
     if (name == "INFO") return PlayerAccessInfo::info;
     if (name == "KICK") return PlayerAccessInfo::kick;
-    if (name == "KILL") return PlayerAccessInfo::kill;
+    if (name == "KILL") return PlayerAccessInfo::kill_;
     if (name == "LAGSTATS") return PlayerAccessInfo::lagStats;
     if (name == "LAGWARN") return PlayerAccessInfo::lagwarn;
     if (name == "JITTERWARN") return PlayerAccessInfo::jitterwarn;
