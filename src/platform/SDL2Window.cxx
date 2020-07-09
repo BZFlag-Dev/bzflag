@@ -279,6 +279,24 @@ bool SDLWindow::create(void)
             return false;
         }
     }
+
+    // Depending on the distribution (or possibly the window manager), SDL will not recognize the new window resolution
+    // and will keep returning the previous resolution when SDL_GetWindowSize() is called, until a period of time has
+    // passed and events have been pumped. Wait up to two seconds for the correct resolution to start being returned,
+    // checking every quarter second, to avoid repeating the window destruction/re-creation process based on bad data.
+    int currentWidth, currentHeight, resCheckLoops = 0;
+
+    do
+    {
+        SDL_PumpEvents();
+        SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
+
+        if(currentWidth == targetWidth && currentHeight == targetHeight)
+            break;
+
+        TimeKeeper::sleep(0.25f);
+    }
+    while (resCheckLoops++ < 8);
 #endif // __linux__
 
     // Apply filters due to resize event issues on Linux (see the explanation above for SDLWindowEventFilter())
