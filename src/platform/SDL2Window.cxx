@@ -32,6 +32,9 @@ SDLWindow::~SDLWindow()
 {
     // Restore the original gamma when we exit the client
     setGamma(origGamma);
+
+    if (windowId != NULL)
+        SDL_DestroyWindow(windowId);
 }
 
 void SDLWindow::setTitle(const char *_title)
