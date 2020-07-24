@@ -93,19 +93,19 @@ void PlayHistoryTracker::Event(bz_EventData *eventData)
         if (deathRecord->playerID != deathRecord->killerID && spreeCount.find(deathRecord->killerID) != spreeCount.end())
         {
             // Store a quick reference to their newly incremented spree count
-            int spreeTotal = ++spreeCount[deathRecord->playerID];
+            int spreeTotal = ++spreeCount[deathRecord->killerID];
 
             std::string message;
 
             // Generate an appropriate message, if any
             if (spreeTotal == 5)
-                message = victimCallsign + std::string(" is on a Rampage!");
+                message = killerCallsign + std::string(" is on a Rampage!");
             else if (spreeTotal == 10)
-                message = victimCallsign + std::string(" is on a Killing Spree!");
+                message = killerCallsign + std::string(" is on a Killing Spree!");
             else if (spreeTotal == 20)
-                message = victimCallsign + std::string(" is Unstoppable!!");
+                message = killerCallsign + std::string(" is Unstoppable!!");
             else if (spreeTotal > 20 && spreeTotal%5 == 0)
-                message = victimCallsign + std::string(" continues to rage on");
+                message = killerCallsign + std::string(" continues to rage on");
 
             // If we have a message to send, then send it
             if (message.size())
