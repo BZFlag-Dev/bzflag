@@ -191,17 +191,6 @@ int SDLWindowEventFilter(void *resolution, SDL_Event *event)
 
 bool SDLWindow::create(void)
 {
-#ifdef __APPLE__
-    // On macOS, if the window is in maximized windowed state and we switch to native fullscreen mode, when we come
-    // back to windowed mode, SDL tries to create a window with the full maximized resolution. This doesn't fit on
-    // the screen because we're no longer maximized. In this scenario, store the original windowed resolution, and
-    // revert to that setting after toggling from a maximized window to fullscreen and back out.
-    static const int origWindowSizeX = base_width, origWindowSizeY = base_height;
-
-    if(windowId && glContext && fullScreen && SDL_GetWindowFlags(windowId) & SDL_WINDOW_MAXIMIZED)
-        setSize(origWindowSizeX, origWindowSizeY);
-#endif
-
     int targetWidth, targetHeight;
     getSize(targetWidth, targetHeight);
     SDL_bool windowWasGrabbed = SDL_FALSE;
@@ -308,6 +297,30 @@ bool SDLWindow::create(void)
     int windowResolution[] = { targetWidth, targetHeight };
     SDL_FilterEvents(&SDLWindowEventFilter, windowResolution);
 #endif // __linux__
+
+    // Work around an issue with SDL on macOS where a window that gets resized by the operating system for various
+    // reasons (e.g., creating a window that doesn't fit between the dock and menu bar, or switching from a maximized
+    // window to native fullscreen then back to windowed mode) doesn't always correctly throw a resize event
+#ifdef __APPLE__
+    SDL_PumpEvents();
+
+    int currentWidth, currentHeight;
+    SDL_GetWindowSize(windowId, &currentWidth, &currentHeight);
+
+    if(! fullScreen && (currentWidth != targetWidth || currentHeight != targetHeight))
+    {
+        SDL_Event fakeResizeEvent;
+        SDL_zero(fakeResizeEvent);
+
+        fakeResizeEvent.window.type = SDL_WINDOWEVENT;
+        fakeResizeEvent.window.windowID = 0; // deliberately not matching SDL_GetWindowID() so SDL doesn't purge event
+        fakeResizeEvent.window.event = SDL_WINDOWEVENT_RESIZED;
+        fakeResizeEvent.window.data1 = currentWidth;
+        fakeResizeEvent.window.data2 = currentHeight;
+
+        SDL_PushEvent(&fakeResizeEvent);
+    }
+#endif // __APPLE__
 
     // Store the gamma immediately after creating the first window
     if (origGamma < 0)
