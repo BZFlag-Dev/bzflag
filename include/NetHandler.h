@@ -111,11 +111,13 @@ public:
 
         buffer is the received message
 
+        buffLen is the size of the buffer
+
         uaddr is the identifier of the remote address
 
         udpLinkRequest report if the received message is a valid udpLinkRequest
     */
-    static int    udpReceive(char *buffer, struct sockaddr_in *uaddr,
+    static int    udpReceive(char *buffer, int &buffLen, struct sockaddr_in *uaddr,
                              bool &udpLinkRequest);
 
     /**

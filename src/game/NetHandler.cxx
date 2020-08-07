@@ -136,11 +136,10 @@ int NetHandler::getUdpSocket()
     return udpSocket;
 }
 
-int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
+int NetHandler::udpReceive(char *buffer, int &n, struct sockaddr_in *uaddr,
                            bool &udpLinkRequest)
 {
     AddrLen recvlen = sizeof(*uaddr);
-    int n;
     uint16_t len;
     uint16_t code;
     while (true)

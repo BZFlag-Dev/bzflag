@@ -7665,7 +7665,8 @@ int main(int argc, char **argv)
                     unsigned char ubuf[MaxPacketLen];
                     bool     udpLinkRequest;
                     // interface to the UDP Receive routines
-                    int id = NetHandler::udpReceive((char *) ubuf, &uaddr,
+                    int buffLen;
+                    int id = NetHandler::udpReceive((char *) ubuf, buffLen, &uaddr,
                                                     udpLinkRequest);
                     if (id == -1)
                         break;
@@ -7686,8 +7687,18 @@ int main(int argc, char **argv)
                             // send client the message that we are ready for him
                             sendUDPupdate(id);
 
+                        unsigned char *buf = ubuf;
+                        uint16_t len;
+
                         // handle the command for UDP
-                        handleCommand(id, ubuf, true);
+                        // checking if more messages are on the same datagram
+                        while (buffLen >= 4)
+                        {
+                            handleCommand(id, buf, true);
+                            nboUnpackUShort(buf, len);
+                            buf     += len + 4;
+                            buffLen -= len + 4;
+                        }
 
                         // don't spend more than 250ms receiving udp
                         if (TimeKeeper::getCurrent() - receiveTime > 0.25f)
