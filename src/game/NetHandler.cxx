@@ -159,12 +159,12 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
-    if (len > MaxUDPPacketLen - 4)
+    if (len + 4 > n)
         return -1;
 
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
 //    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-    if (n == 6 && len == 2 && code == MsgPingCodeRequest)
+    if (len == 2 && code == MsgPingCodeRequest)
         // Ping code request
         return -2;
 
