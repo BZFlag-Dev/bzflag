@@ -1274,7 +1274,7 @@ bool MasterBanCommand::operator() (const char    *message,
         if (bans.size() > 20)
         {
             sendMessage(ServerPlayer, t,
-                        TextUtils::format("There are %d bans, only displaying the "
+                        TextUtils::format("There are %zu bans, only displaying the "
                                           "first 20", bans.size()).c_str());
 
         }

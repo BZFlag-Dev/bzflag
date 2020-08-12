@@ -634,7 +634,7 @@ int MeshObstacle::packSize() const
             logDebugMessage(0,"DrawInfo packSize = %i, align = %i, full = %i\n",
                             drawInfoPackSize,
                             align * ((drawInfoPackSize + (align - 1)) / align),
-                            align * ((drawInfoPackSize + (align - 1)) / align) + sizeof(afvec2));
+                            align * ((drawInfoPackSize + (align - 1)) / align) + (int)sizeof(afvec2));
         }
     }
     for (int f = 0; f < faceCount; f++)
@@ -694,7 +694,7 @@ void *MeshObstacle::pack(void *buf) const
 
         logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
         logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
-                        texcoordCount, fakeTxcdCount, fullLength + sizeof(afvec2));
+                        texcoordCount, fakeTxcdCount, fullLength + (int)sizeof(afvec2));
     }
 
     buf = nboPackInt(buf, faceCount);

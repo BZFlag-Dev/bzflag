@@ -457,7 +457,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
                 if (info != NULL && playerIndex >= 0)
                 {
                     logDebugMessage(2,"Player %s [%d] drop, unresponsive with %d bytes queued\n",
-                                    info->getCallSign(), playerIndex, outmsgSize + length);
+                                    info->getCallSign(), playerIndex, outmsgSize + (int)length);
                 }
                 toBeKicked = true;
                 toBeKickedReason = "send queue too big";
