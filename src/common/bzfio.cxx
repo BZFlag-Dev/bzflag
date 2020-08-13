@@ -51,19 +51,19 @@ static const int tsBufferSize = 512;
 
 static char *timestamp(char *buf, bool micros, bool utc)
 {
-    struct tm *tm;
+    struct tm tm;
     if (micros)
     {
 #if !defined(_WIN32)
         struct timeval tv;
         gettimeofday (&tv, NULL);
         if (utc)
-            tm = gmtime((const time_t *)&tv.tv_sec);
+            gmtime_r((const time_t *)&tv.tv_sec, &tm);
         else
-            tm = localtime((const time_t *)&tv.tv_sec);
-        snprintf (buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ", tm->tm_year+1900,
-                  tm->tm_mon+1,
-                  tm->tm_mday, tm->tm_hour, tm->tm_min, (long)tm->tm_sec, (long)tv.tv_usec );
+            localtime_r((const time_t *)&tv.tv_sec, &tm);
+        snprintf (buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02ld.%06ld: ", tm.tm_year+1900,
+                  tm.tm_mon+1,
+                  tm.tm_mday, tm.tm_hour, tm.tm_min, (long)tm.tm_sec, (long)tv.tv_usec );
 #endif
     }
     else
@@ -71,12 +71,12 @@ static char *timestamp(char *buf, bool micros, bool utc)
         time_t tt;
         time (&tt);
         if (utc)
-            tm = gmtime (&tt);
+            gmtime_r (&tt, &tm);
         else
-            tm = localtime (&tt);
+            localtime_r (&tt, &tm);
 
-        snprintf (buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02d: ", tm->tm_year+1900, tm->tm_mon+1,
-                  tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec );
+        snprintf (buf, tsBufferSize, "%04d-%02d-%02d %02d:%02d:%02d: ", tm.tm_year+1900, tm.tm_mon+1,
+                  tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec );
     }
     return buf;
 }

@@ -176,13 +176,14 @@ const char *TimeKeeper::timestamp(void) // const
 {
     static char buffer[256]; // static, so that it doesn't vanish
     time_t tnow = time(0);
-    struct tm *now = localtime(&tnow);
-    now->tm_year += 1900;
-    ++now->tm_mon;
+    struct tm now;
+    localtime_r(&tnow, &now);
+    now.tm_year += 1900;
+    ++now.tm_mon;
 
     strncpy(buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
-                                      now->tm_year, now->tm_mon, now->tm_mday,
-                                      now->tm_hour, now->tm_min, now->tm_sec).c_str(), 255);
+                                      now.tm_year, now.tm_mon, now.tm_mday,
+                                      now.tm_hour, now.tm_min, now.tm_sec).c_str(), 255);
     buffer[255] = '\0'; // safety
 
     return buffer;
@@ -191,24 +192,25 @@ const char *TimeKeeper::timestamp(void) // const
 void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
 {
     time_t tnow = time(0);
-    struct tm *now = localtime(&tnow);
-    now->tm_year += 1900;
-    ++now->tm_mon;
+    struct tm now;
+    localtime_r(&tnow, &now);
+    now.tm_year += 1900;
+    ++now.tm_mon;
 
     if ( year )
-        *year = now->tm_year;
+        *year = now.tm_year;
     if ( month )
-        *month = now->tm_mon;
+        *month = now.tm_mon;
     if ( day )
-        *day = now->tm_mday;
+        *day = now.tm_mday;
     if ( hour )
-        *hour = now->tm_hour;
+        *hour = now.tm_hour;
     if ( min )
-        *min = now->tm_min;
+        *min = now.tm_min;
     if ( sec )
-        *sec = now->tm_sec;
+        *sec = now.tm_sec;
     if ( dst )
-        *dst = now->tm_isdst != 0;
+        *dst = now.tm_isdst != 0;
 }
 
 
