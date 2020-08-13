@@ -117,14 +117,14 @@ void BZDBint::callback()
 
     if (tmp < min)
     {
-        logDebugMessage(3,"BZDBint(%s) min: %f < %f\n", name.c_str(), tmp, min);
+        logDebugMessage(3,"BZDBint(%s) min: %i < %i\n", name.c_str(), tmp, min);
         tmp = min; // clamp to min
         safeSetInt(name, tmp);
     }
 
     if (tmp > max)
     {
-        logDebugMessage(3,"BZDBint(%s) max: %f > %f\n", name.c_str(), tmp, max);
+        logDebugMessage(3,"BZDBint(%s) max: %i > %i\n", name.c_str(), tmp, max);
         tmp = max; // clamp to max
         safeSetInt(name, tmp);
     }

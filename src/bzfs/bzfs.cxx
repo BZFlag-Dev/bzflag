@@ -1667,7 +1667,7 @@ void sendMessage(int playerIndex, PlayerId dstPlayer, const char *message, Messa
     if (msglen > MessageLen)
     {
         logDebugMessage(1,"WARNING: Network message being sent is too long! "
-                        "(message is %d, cutoff at %d)\n", msglen, MessageLen);
+                        "(message is %li, cutoff at %d)\n", msglen, MessageLen);
         msglen = MessageLen;
     }
 

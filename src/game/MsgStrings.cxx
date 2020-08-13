@@ -820,7 +820,7 @@ static MsgStringList handleMsgPlayerUpdate (PacketInfo *pi)
     d = state.unpack (d, pi->code);
 
     listPush (list, 1, "player: %s", strPlayer(index).c_str());
-    listPush (list, 2, "state: 0x%04X  order: %i", state.status, state.order);
+    listPush (list, 2, "state: 0x%04X  order: %li", state.status, state.order);
     listPush (list, 3, "pos:    %s", strVector (state.pos).c_str());
     listPush (list, 3, "vel:    %s", strVector (state.velocity).c_str());
     listPush (list, 3, "angle:  %-8.3f = %8.3f deg",
@@ -939,7 +939,7 @@ static MsgStringList handleMsgScoreOver (PacketInfo *pi)
     d = nboUnpackUByte(d, player);
     d = nboUnpackUShort(d, team);
     listPush (list, 1, "player: %s", strPlayer(player).c_str());
-    listPush (list, 1, "team:   %i", strTeam(team).c_str());
+    listPush (list, 1, "team:   %s", strTeam(team).c_str());
 
     return list;
 }

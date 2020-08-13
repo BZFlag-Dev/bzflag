@@ -1440,7 +1440,7 @@ public:
 
         if (data->Body.size())
         {
-            pageBuffer += TextUtils::format("Content-Length: %d\n", data->Body.size());
+            pageBuffer += TextUtils::format("Content-Length: %zu\n", data->Body.size());
 
             pageBuffer += "Content-Type: ";
             if (Response.ReturnCode == e200OK)

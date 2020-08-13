@@ -183,7 +183,7 @@ void GameTime::update()
         }
     }
 
-    logDebugMessage(4,"GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
+    logDebugMessage(4,"GameTime: count = %zu, rate = %f\n", timeRecs.size(), avgRate);
 
     return;
 }
