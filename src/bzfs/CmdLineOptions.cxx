@@ -1375,8 +1375,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                 }
                 int hour, min, sec;
                 TimeKeeper::localTime(nullptr, nullptr, nullptr, &hour, &min, &sec);
-                unsigned int
-                             cmdHour = atoi(endTime[0].c_str()),
+                unsigned int cmdHour = atoi(endTime[0].c_str()),
                              cmdMin = atoi(endTime[1].c_str()),
                              cmdSec = atoi(endTime[2].c_str());
                 unsigned long secsToday = (hour * 3600) + (min * 60) + sec,

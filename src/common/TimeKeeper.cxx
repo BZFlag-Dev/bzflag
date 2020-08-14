@@ -187,7 +187,8 @@ const char *TimeKeeper::timestamp(void) // const
     return buffer;
 }
 
-void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst, long *tv_usec) // const
+void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst,
+                           long *tv_usec) // const
 {
     time_t tnow;
     if (tv_usec)
@@ -203,9 +204,7 @@ void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min,
 #endif
     }
     else
-    {
         tnow = time(0);
-    }
     struct tm *now;
 #ifdef _WIN32
     now = localtime(&tnow);
@@ -250,9 +249,7 @@ void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
 #endif
     }
     else
-    {
         tnow = time(0);
-    }
     struct tm *now = gmtime(&tnow);
     now->tm_year += 1900;
     ++now->tm_mon;
