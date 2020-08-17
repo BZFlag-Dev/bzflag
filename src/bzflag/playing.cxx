@@ -1153,7 +1153,7 @@ static void     doEvent(BzfDisplay *disply)
         }
 
         // ungrab the mouse if we're running full screen
-        if (mainWindow->getFullscreen())
+        if (mainWindow->getFullscreen() && !unmapped) // skip if already unmapped to avoid losing previous resolution
         {
             preUnmapFormat = -1;
             if (disply->getNumResolutions() > 1)
