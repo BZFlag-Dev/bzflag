@@ -101,10 +101,21 @@ void SDLWindow::getMouse(int& _x, int& _y) const
 
 void SDLWindow::setSize(int _width, int _height)
 {
+    // workaround for two issues on Linux, where resizing by dragging the window corner causes glitching, and where
+    // iconifying or switching applications while using a scaled fullscreen resolution causes the non-fullscreen
+    // window resolution to assume the fullscreen resolution
+#ifdef __linux__
+    if(!fullScreen)
+    {
+        base_width  = _width;
+        base_height = _height;
+    }
+#else
     base_width  = _width;
     base_height = _height;
     if (!fullScreen && windowId)
         SDL_SetWindowSize(windowId, base_width, base_height);
+#endif // __linux__
 }
 
 void SDLWindow::getSize(int& width, int& height) const
