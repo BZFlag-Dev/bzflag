@@ -46,9 +46,6 @@ msgstr "Verlassen"
 #msgid "on"
 #msgstr "an"
 
-#msgid "Dithering:"
-#msgstr "Dithering:"
-
 #msgid "off"
 #msgstr "aus"
 

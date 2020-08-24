@@ -463,9 +463,6 @@ msgid "Remote Sounds:"
 msgstr "Sons Remotos:"
 
 ############ display menu
-msgid "Dithering:"
-msgstr "Tremura:"
-
 msgid "Smoothing:"
 msgstr "Suavidez:"
 

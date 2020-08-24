@@ -803,9 +803,6 @@ msgstr ""
 msgid "Display Settings"
 msgstr ""
 
-msgid "Dithering:"
-msgstr ""
-
 msgid "Smoothing:"
 msgstr ""
 

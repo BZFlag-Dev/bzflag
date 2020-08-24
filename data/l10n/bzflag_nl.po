@@ -46,9 +46,6 @@ msgstr "Stoppen"
 #msgid "on"
 #msgstr ""
 
-msgid "Dithering:"
-msgstr "Dithering (kleurschakering):"
-
 #msgid "off"
 #msgstr ""
 

@@ -260,9 +260,6 @@ msgstr "nahodna mapa"
 msgid "Options"
 msgstr "Nastaveni"
 
-msgid "Dithering:"
-msgstr "Rozkladani (Dithering):"
-
 msgid "Smoothing:"
 msgstr "Vyhlazovani (Smoothing):"
 

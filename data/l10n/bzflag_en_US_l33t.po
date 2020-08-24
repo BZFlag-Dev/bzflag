@@ -45,9 +45,6 @@ msgstr "KwIT"
 msgid "on"
 msgstr "Awn"
 
-msgid "Dithering:"
-msgstr "dItH3RIng:"
-
 msgid "off"
 msgstr "awlf"
 

@@ -775,9 +775,6 @@ msgstr "List cache servera vycistena"
 msgid "Display Settings"
 msgstr "Nastavenia zobrazovania"
 
-msgid "Dithering:"
-msgstr "Rozkladanie (dithering):"
-
 msgid "Smoothing:"
 msgstr "Vyhladzovanie (smoothing):"
 

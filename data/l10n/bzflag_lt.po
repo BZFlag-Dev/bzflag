@@ -47,9 +47,6 @@ msgstr "Išeiti"
 #msgid "on"
 #msgstr ""
 
-#msgid "Dithering:"
-#msgstr ""
-
 # sgid "off"
 # sgstr ""
 #, fuzzy

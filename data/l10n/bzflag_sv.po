@@ -51,9 +51,6 @@ msgstr "Avsluta"
 #msgid "off"
 #msgstr ""
 
-msgid "Dithering:"
-msgstr "Rastrering:"
-
 msgid "Off"
 msgstr "Av"
 

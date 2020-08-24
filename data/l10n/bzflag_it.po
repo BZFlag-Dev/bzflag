@@ -46,9 +46,6 @@ msgstr "Esci"
 msgid "on"
 msgstr "si"
 
-#msgid "Dithering:"
-#msgstr "Dithering:"
-
 msgid "off"
 msgstr "no"
 

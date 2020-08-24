@@ -45,9 +45,6 @@ msgstr "Afslut"
 msgid "on"
 msgstr "til"
 
-#msgid "Dithering:"
-#msgstr "Punktning:"
-
 msgid "off"
 msgstr "fra"
 

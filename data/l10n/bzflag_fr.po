@@ -45,9 +45,6 @@ msgstr "Quitter"
 #msgid "on"
 #msgstr ""
 
-#msgid "Dithering:"
-#msgstr ""
-
 #msgid "off"
 #msgstr ""
 

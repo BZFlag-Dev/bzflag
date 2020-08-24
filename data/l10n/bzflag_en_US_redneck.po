@@ -45,9 +45,6 @@ msgstr "He'p"
 #msgid "on"
 #msgstr ""
 
-msgid "Dithering:"
-msgstr "Diferin':"
-
 #msgid "off"
 #msgstr ""
 

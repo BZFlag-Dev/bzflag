@@ -580,9 +580,6 @@ msgstr "Borrado caché de listas de servidores"
 msgid "Display Settings"
 msgstr "Ajustes de pantalla"
 
-msgid "Dithering:"
-msgstr "Fusionado:"
-
 msgid "Smoothing:"
 msgstr "Suavizado:"
 
@@ -2858,9 +2855,6 @@ msgstr " sin suavizado"
 
 msgid "  no lighting"
 msgstr " sin iluminación"
-
-msgid "  no dithering"
-msgstr " sin fusionado"
 
 msgid "testing performance;  please wait..."
 msgstr "probando rendimiento; espera por favor..."
