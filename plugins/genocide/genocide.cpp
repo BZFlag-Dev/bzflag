@@ -12,25 +12,38 @@ public:
     {
         return "Genocide";
     }
-    virtual void Init ( const char* c );
+    virtual void Init ( const char* config );
     virtual void Cleanup ( void );
     virtual void Event ( bz_EventData *eventData );
+
+    bool allowSuicide = false;
+    bool rogueGenocide = false;
 };
 
 BZ_PLUGIN(genocide)
 
-void genocide::Init ( const char* /*commandLine*/ )
+void genocide::Init ( const char* commandLine )
 {
     bz_debugMessage(4, "genocide plugin loaded");
+    if (commandLine)
+    {
+        int conf = atoi(commandLine);
+        if (conf == 1 || conf == 2)
+            rogueGenocide = true;
+        if (conf == 2)
+            allowSuicide = true;
+    }
+
+    if (rogueGenocide == true)
+        bz_debugMessage(4, "rogue genocide enabled");
+
+    if (allowSuicide == true)
+        bz_debugMessage(4, "suicide on rogue geno enabled");
 
     // register our special custom flag
     bz_RegisterCustomFlag("G", "Genocide", "Killing one tank kills that tank's whole team.");
 
-    // register events for pick up, drop, transfer, and fire
-    Register(bz_eFlagTransferredEvent);
-    Register(bz_eFlagGrabbedEvent);
-    Register(bz_eFlagDroppedEvent);
-    Register(bz_eShotFiredEvent);
+    // register our events
     Register(bz_ePlayerDieEvent);
 }
 
@@ -53,48 +66,51 @@ void genocide::Event(bz_EventData *eventData)
         return;
     }
 
-    case bz_eFlagTransferredEvent:
-    {
-        /*  bz_FlagTransferredEventData_V1* fte = (bz_FlagTransferredEventData_V1*)eventData;*/
-        break;
-    }
-
-    case bz_eFlagGrabbedEvent:
-    {
-        /*   bz_FlagGrabbedEventData_V1* fge = (bz_FlagGrabbedEventData_V1*)eventData;*/
-        break;
-    }
-
-    case bz_eFlagDroppedEvent:
-    {
-        /* bz_FlagDroppedEventData_V1* fde = (bz_FlagDroppedEventData_V1*)eventData;*/
-        break;
-    }
-
-    case bz_eShotFiredEvent:
-    {
-        bz_ShotFiredEventData_V1* sfed = (bz_ShotFiredEventData_V1*)eventData;
-
-        bz_BasePlayerRecord *playerRecord = bz_getPlayerByIndex(sfed->playerID);
-        if (!playerRecord)
-            break;
-
-        bz_freePlayerRecord(playerRecord);
-        break;
-    }
-
     case bz_ePlayerDieEvent:
     {
-        bz_PlayerDieEventData_V1* deed = (bz_PlayerDieEventData_V1*)eventData;
-        bz_ApiString& flag = deed->flagKilledWith;
+        bz_PlayerDieEventData_V1 *dieData = (bz_PlayerDieEventData_V1*)eventData;
+        //if its not a genocide kill, dont care
+        if (dieData->flagKilledWith != "G")
+            break;
+        // if the tank killed is a rogue and we don't have rogue geno enabled
+        if (!rogueGenocide && dieData->team == eRogueTeam)
+            break;
+        // option to disallow rogues getting points for shooting themselves
+        if (!allowSuicide && dieData->killerID == dieData->playerID && dieData->team == eRogueTeam)
+            break;
 
-        if (flag == "G")
+        // if we pass options, proceed to kill tanks of specified team
+        bz_APIIntList *playerList = bz_newIntList();
+
+        bz_getPlayerIndexList(playerList);
+
+        if (dieData->team == eRogueTeam)
         {
-            // if the tank killed was a rogue, kill all rogues.
-            bz_APIIntList *playerList = bz_newIntList();
+            for (unsigned int i = 0; i < playerList->size(); i++)
+            {
+                int targetID = (*playerList)[i];
+                bz_BasePlayerRecord *playRec = bz_getPlayerByIndex (targetID);
+                if (!playRec)
+                    continue;
 
-            bz_getPlayerIndexList(playerList);
+                // the sucker is a spawned rogue, kill him.  This generates another death event,
+                // so if you kill another rogue with geno while you are a rogue you end up dead too.
+                // and you get both messages (victim and be careful)
+                if (playRec->spawned && playRec->team == eRogueTeam)
+                {
+                    bz_killPlayer(targetID, false, dieData->killerID, "G");
+                    bz_sendTextMessage(BZ_SERVER, targetID, "You were a victim of Rogue Genocide");
 
+                    // oops, I ended up killing myself (directly or indirectly) with Genocide!
+                    if (targetID == dieData->killerID)
+                        bz_sendTextMessage(BZ_SERVER, targetID, "You should be more careful with Genocide!");
+                }
+
+                bz_freePlayerRecord(playRec);
+            }
+        }
+        else
+        {
             for (unsigned int i = 0; i < playerList->size(); i++)
             {
                 int targetID = (*playerList)[i];
@@ -102,15 +118,15 @@ void genocide::Event(bz_EventData *eventData)
                 if (!playRec)
                     continue;
 
-                if (deed->team == playRec->team && deed->team != eRogueTeam && deed->team != eObservers)
-                    bz_killPlayer(targetID, false, eGenocideEffect, deed->killerID, "G");
+                if (dieData->team == playRec->team && dieData->team != eRogueTeam && dieData->team != eObservers)
+                    bz_killPlayer(targetID, false, eGenocideEffect, dieData->killerID, "G");
 
                 bz_freePlayerRecord(playRec);
             }
-            bz_deleteIntList(playerList);
         }
-        break;
+        bz_deleteIntList(playerList);
     }
+    break;
     }
 }
 
