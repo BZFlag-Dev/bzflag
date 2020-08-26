@@ -4201,6 +4201,8 @@ static void shotFired(int playerIndex, void *buf, int len)
 
     shotEvent.playerID = shooter.getPlayerIndex();
 
+    shotEvent.shotID = firingInfo.shot.id;
+
     shotEvent.type = firingInfo.flagType->flagAbbv;
 
     worldEventManager.callEvents(bz_eShotFiredEvent,&shotEvent);
