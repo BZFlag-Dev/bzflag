@@ -3,6 +3,7 @@
 
 BZFlag 2.4.21
 -------------
+* Fix many issues with SDL 2 window management - Joshua Bodine, Scott Wichser
 
 
 BZFlag 2.4.20  "Do You See What I See?" (2020-04-24)
