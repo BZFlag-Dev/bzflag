@@ -7568,6 +7568,9 @@ void            startPlaying(BzfDisplay* _display,
             }
         }
     }
+    // otherwise, use the default resolution if we do switch to fullscreen
+    else
+        display->setDefaultResolution();
 
     // grab mouse if we should
     if (shouldGrabMouse())
