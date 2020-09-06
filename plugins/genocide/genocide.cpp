@@ -16,29 +16,47 @@ public:
     virtual void Cleanup ( void );
     virtual void Event ( bz_EventData *eventData );
 
-    bool allowSuicide = false;
-    bool rogueGenocide = false;
+    bool disableSuicide = false;
+    bool rogueAsTeam = false;
 };
 
 BZ_PLUGIN(genocide)
 
-void genocide::Init ( const char* commandLine )
+void genocide::Init ( const char* cmdLine )
 {
     bz_debugMessage(4, "genocide plugin loaded");
-    if (commandLine)
+    if (strlen(cmdLine) != 0)
     {
-        int conf = atoi(commandLine);
-        if (conf == 1 || conf == 2)
-            rogueGenocide = true;
-        if (conf == 2)
-            allowSuicide = true;
+        if (strcmp(cmdLine, "rogueAsTeam,disableSuicide") == 0)
+        {
+            rogueAsTeam = true;
+            disableSuicide = true;
+        }
+        else if (strcmp(cmdLine, "disableSuicide,rogueAsTeam") == 0)
+        {
+            disableSuicide = true;
+            rogueAsTeam = true;
+        }
+        else if (strcmp(cmdLine, "rogueAsTeam") == 0)
+        {
+            rogueAsTeam = true;
+        }
+        else if  (strcmp(cmdLine, "disableSuicide") == 0)
+        {
+            disableSuicide = true;
+        }
+        else
+        {
+            bz_debugMessage(0, "Error: Check arguments.");
+        }
+        
     }
 
-    if (rogueGenocide == true)
-        bz_debugMessage(4, "rogue genocide enabled");
+    if (rogueAsTeam == true)
+        bz_debugMessage(4, "rogueAsTeam enabled");
 
-    if (allowSuicide == true)
-        bz_debugMessage(4, "suicide on rogue geno enabled");
+    if (disableSuicide == true)
+        bz_debugMessage(4, "disableSuicide enabled");
 
     // register our special custom flag
     bz_RegisterCustomFlag("G", "Genocide", "Killing one tank kills that tank's whole team.");
@@ -72,11 +90,11 @@ void genocide::Event(bz_EventData *eventData)
         //if its not a genocide kill, dont care
         if (dieData->flagKilledWith != "G")
             break;
-        // if the tank killed is a rogue and we don't have rogue geno enabled
-        if (!rogueGenocide && dieData->team == eRogueTeam)
+        // if the tank killed is a rogue and we don't have rogue as team enabled
+        if (!rogueAsTeam && dieData->team == eRogueTeam)
             break;
-        // option to disallow rogues getting points for shooting themselves
-        if (!allowSuicide && dieData->killerID == dieData->playerID && dieData->team == eRogueTeam)
+        // option to disallow genocide from being trigger by selfkills
+        if (!disableSuicide && dieData->killerID == dieData->playerID)
             break;
 
         // if we pass options, proceed to kill tanks of specified team
@@ -118,7 +136,7 @@ void genocide::Event(bz_EventData *eventData)
                 if (!playRec)
                     continue;
 
-                if (dieData->team == playRec->team && dieData->team != eRogueTeam && dieData->team != eObservers)
+                if (dieData->team == playRec->team && dieData->team != eObservers)
                     bz_killPlayer(targetID, false, eGenocideEffect, dieData->killerID, "G");
 
                 bz_freePlayerRecord(playRec);
