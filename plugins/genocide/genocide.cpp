@@ -94,7 +94,7 @@ void genocide::Event(bz_EventData *eventData)
         if (!rogueAsTeam && dieData->team == eRogueTeam)
             break;
         // option to disallow genocide from being trigger by selfkills
-        if (!disableSuicide && dieData->killerID == dieData->playerID)
+        if (disableSuicide && dieData->killerID == dieData->playerID)
             break;
 
         // if we pass options, proceed to kill tanks of specified team
