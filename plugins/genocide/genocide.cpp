@@ -25,37 +25,18 @@ BZ_PLUGIN(genocide)
 void genocide::Init ( const char* cmdLine )
 {
     bz_debugMessage(4, "genocide plugin loaded");
-    if (strlen(cmdLine) != 0)
-    {
-        if (strcmp(cmdLine, "rogueAsTeam,disableSuicide") == 0)
-        {
-            rogueAsTeam = true;
-            disableSuicide = true;
-        }
-        else if (strcmp(cmdLine, "disableSuicide,rogueAsTeam") == 0)
-        {
-            disableSuicide = true;
-            rogueAsTeam = true;
-        }
-        else if (strcmp(cmdLine, "rogueAsTeam") == 0)
-        {
-            rogueAsTeam = true;
-        }
-        else if  (strcmp(cmdLine, "disableSuicide") == 0)
-        {
-            disableSuicide = true;
-        }
-        else
-        {
-            bz_debugMessage(0, "Error: Check arguments.");
-        }
-        
-    }
 
-    if (rogueAsTeam == true)
+    if (cmdLine)
+    {
+        auto cmd = std::string(cmdLine);
+        disableSuicide =  (cmd.find("disableSuicide") != cmd.npos);
+        rogueAsTeam    =  (cmd.find("rogueAsTeam")    != cmd.npos);
+    }
+    
+    if (rogueAsTeam)
         bz_debugMessage(4, "rogueAsTeam enabled");
 
-    if (disableSuicide == true)
+    if (disableSuicide)
         bz_debugMessage(4, "disableSuicide enabled");
 
     // register our special custom flag

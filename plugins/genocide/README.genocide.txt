@@ -3,7 +3,9 @@ BZFlag Server Plugin: genocide
 
 This is a simple sample plugin that implements the legacy "genocide" flag from
 previous versions.  Shots from this flag will kill all members of the team it
-strikes, except rogue by default.
+strikes, except rogue by default. In addition, rogueAsTeam or disableSuicide
+exist as options, with rogueAsTeam enabling genocide to affect rogues and
+disableSuicide preventing selfkills from triggering genocide effect.
 
 
 Loading the plugin
@@ -14,7 +16,6 @@ you can just load the plugin without additional arguments.
 
   -loadplugin genocide
 
-To enable rogueGenocide, specify 1 or 2 as arguments,
-with 2 enabling the "suicide" option of rogue genocide.
+To enable rogueAsTeam or disableSuicide, specify them as arguments.
 
-  -loadplugin genocide,1
+  -loadplugin genocide,rogueAsTeam,disableSuicide
