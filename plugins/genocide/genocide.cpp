@@ -16,6 +16,7 @@ public:
     virtual void Cleanup ( void );
     virtual void Event ( bz_EventData *eventData );
 
+private:
     bool disableSuicide = false;
     bool rogueAsTeam = false;
 };
