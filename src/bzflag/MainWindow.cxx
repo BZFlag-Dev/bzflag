@@ -36,7 +36,11 @@ MainWindow::MainWindow(BzfWindow* _window, BzfJoystick* _joystick) :
     minHeight(MinY),
     faulting(false)
 {
+    if (!window->create())
+        faulting = true;
+
     window->addResizeCallback(resizeCB, this);
+    resize();
 }
 
 MainWindow::~MainWindow()
@@ -49,6 +53,7 @@ void            MainWindow::setMinSize(int _minWidth, int _minHeight)
     minWidth = _minWidth;
     minHeight = _minHeight;
     window->setMinSize(minWidth, minHeight);
+    resize();
 }
 
 void            MainWindow::setPosition(int x, int y)
@@ -59,6 +64,7 @@ void            MainWindow::setPosition(int x, int y)
 void            MainWindow::setSize(int _width, int _height)
 {
     window->setSize(_width, _height);
+    resize();
 }
 
 void            MainWindow::showWindow(bool on)
@@ -154,6 +160,8 @@ void            MainWindow::toggleFullscreen()
 {
     isFullscreen = !isFullscreen;
     window->setFullscreen(isFullscreen);
+    window->create();
+    resize();
 }
 
 void            MainWindow::setFullView(bool _isFullView)
@@ -279,8 +287,6 @@ void            MainWindow::resize()
 {
     window->getSize(trueWidth, trueHeight);
     window->makeCurrent();
-    if (!window->create())
-        faulting = true;
     setQuadrant(quadrant);
 }
 

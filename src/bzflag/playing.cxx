@@ -1153,7 +1153,7 @@ static void     doEvent(BzfDisplay *disply)
         }
 
         // ungrab the mouse if we're running full screen
-        if (mainWindow->getFullscreen())
+        if (mainWindow->getFullscreen() && !unmapped) // skip if already unmapped to avoid losing previous resolution
         {
             preUnmapFormat = -1;
             if (disply->getNumResolutions() > 1)
@@ -7530,11 +7530,7 @@ void            startPlaying(BzfDisplay* _display,
     {
         videoFormat = BZDB.get("resolution");
         if (videoFormat.length() != 0)
-        {
             format = display->findResolution(videoFormat.c_str());
-            if (format >= 0)
-                mainWindow->getWindow()->callResizeCallbacks();
-        }
     };
     // set the resolution (only if in full screen mode)
     if (!BZDB.isSet("_window") && BZDB.isSet("resolution"))
@@ -7572,6 +7568,9 @@ void            startPlaying(BzfDisplay* _display,
             }
         }
     }
+    // otherwise, use the default resolution if we do switch to fullscreen
+    else
+        display->setDefaultResolution();
 
     // grab mouse if we should
     if (shouldGrabMouse())
