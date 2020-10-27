@@ -1035,7 +1035,7 @@ static void mouseClamp()
 {
     // only clamp when it might be useful
     if (HUDDialogStack::get()->isActive() || (myTank == NULL) || !myTank->isAlive() ||
-            myTank->isPaused() || (myTank->getTeam() == ObserverTeam))
+            myTank->isPaused() || (myTank->getTeam() == ObserverTeam) || unmapped)
     {
         mainWindow->disableConfineToMotionbox();
         return;
@@ -1133,6 +1133,9 @@ static void     doEvent(BzfDisplay *disply)
         unmapped = false;
         if (shouldGrabMouse())
             mainWindow->grabMouse();
+        if(mainWindow->isGrabEnabled())
+            mainWindow->getWindow()->enableGrabMouse(true); // distinct from grabMouse(), for some reason
+        mouseClamp();
         break;
 
     case BzfEvent::Unmap:
@@ -1175,6 +1178,7 @@ static void     doEvent(BzfDisplay *disply)
 
         unmapped = true;
         mainWindow->ungrabMouse();
+        mainWindow->getWindow()->enableGrabMouse(false); // distinct from ungrabMouse(), for some reason
         break;
 
     case BzfEvent::KeyUp:
