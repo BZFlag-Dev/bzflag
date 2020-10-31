@@ -2304,26 +2304,6 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         numplayers += team[i].team.size;
     const int numplayersobs = numplayers + team[ObserverTeam].team.size;
 
-    // no quick rejoining, make 'em wait
-    // you can switch to observer immediately, or switch from observer
-    // to regular player immediately, but only if last time time you
-    // were a regular player isn't in the rejoin list. As well, this all
-    // only applies if the game isn't currently empty.
-    if ((t != ObserverTeam) && (GameKeeper::Player::count() >= 0))
-    {
-        float waitTime = rejoinList.waitTime (playerIndex);
-        if (waitTime > 0.0f)
-        {
-            char buffer[MessageLen];
-            logDebugMessage(2,"Player %s [%d] rejoin wait of %.1f seconds\n",playerData->player.getCallSign(), playerIndex,
-                            waitTime);
-            snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
-            sendMessage(ServerPlayer, playerIndex, buffer);
-            //      removePlayer(playerIndex, "rejoining too quickly");
-            //      return ;
-        }
-    }
-
     // reject player if asks for bogus team or rogue and rogues aren't allowed
     // or if the team is full or if the server is full
     if (!playerData->player.isHuman() && !playerData->player.isBot())
@@ -2542,10 +2522,28 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             sendMessage(ServerPlayer, playerIndex, srvmsg.c_str());
         }
     }
+#endif
 
     if (playerData->player.isObserver())
         sendMessage(ServerPlayer, playerIndex, "You are in observer mode.");
-#endif
+
+    // no quick rejoining, make 'em wait
+    // you can switch to observer immediately, or switch from observer
+    // to regular player immediately, but only if last time time you
+    // were a regular player isn't in the rejoin list. As well, this all
+    // only applies if the game isn't currently empty.
+    if ((t != ObserverTeam) && (GameKeeper::Player::count() >= 0))
+    {
+        float waitTime = rejoinList.waitTime (playerIndex);
+        if (waitTime > 0.0f)
+        {
+            char buffer[MessageLen];
+            logDebugMessage(2,"Player %s [%d] rejoin wait of %.1f seconds\n",playerData->player.getCallSign(), playerIndex,
+                            waitTime);
+            snprintf (buffer, MessageLen, "You are unable to begin playing for %.1f seconds.", waitTime);
+            sendMessage(ServerPlayer, playerIndex, buffer);
+        }
+    }
 
     if (GameKeeper::Player::getPlayerByIndex(playerIndex)
             && playerData->accessInfo.isRegistered()
