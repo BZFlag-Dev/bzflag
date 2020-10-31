@@ -531,6 +531,21 @@ static void sendPlayerUpdate(GameKeeper::Player *playerData, int index)
         directMessage(index, MsgAddPlayer, (char*)buf - (char*)bufStart, bufStart);
 }
 
+void sendAutopilotStatus(GameKeeper::Player *playerData, int index)
+{
+    void *buf, *bufStart = getDirectMessageBuffer();
+    buf = nboPackUByte(bufStart, playerData->getIndex());
+    buf = nboPackUByte(buf, playerData->player.isAutoPilot());
+
+    if (playerData->getIndex() == index)
+    {
+        // send all players autopilot status for player[playerIndex]
+        broadcastMessage(MsgAutoPilot, (char*)buf - (char*)bufStart, bufStart);
+    }
+    else
+        directMessage(index, MsgAutoPilot, (char*)buf - (char*)bufStart, bufStart);
+}
+
 std::string GetPlayerIPAddress( int i)
 {
     std::string tmp = "localhost";
@@ -2388,7 +2403,11 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
             {
                 otherData = GameKeeper::Player::getPlayerByIndex(i);
                 if (otherData)
+                {
                     sendPlayerUpdate(otherData, playerIndex);
+                    if (otherData->player.isAutoPilot())
+                        sendAutopilotStatus(otherData, playerIndex);
+                }
             }
 
         broadcastHandicaps(playerIndex);
@@ -2795,6 +2814,7 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
     if (!playerData)
         return;
 
+    // Allow disabling but not enabling autopilot if bots are disabled
     if (autopilot && BZDB.isTrue(StateDatabase::BZDB_DISABLEBOTS))
     {
         sendMessage(ServerPlayer, playerIndex, "I'm sorry, we do not allow autopilot on this server.");
@@ -2802,12 +2822,14 @@ static void autopilotPlayer(int playerIndex, bool autopilot)
         return;
     }
 
+    // Ensure that observers can't toggle autopilot
+    if (playerData->player.getTeam() == ObserverTeam)
+        return;
+
     playerData->player.setAutoPilot(autopilot);
 
-    void *buf, *bufStart = getDirectMessageBuffer();
-    buf = nboPackUByte(bufStart, playerIndex);
-    buf = nboPackUByte(buf, autopilot);
-    broadcastMessage(MsgAutoPilot, (char*)buf-(char*)bufStart, bufStart);
+    // Send the status update to everyone
+    sendAutopilotStatus(playerData, playerIndex);
 }
 
 void zapFlagByPlayer(int playerIndex)
