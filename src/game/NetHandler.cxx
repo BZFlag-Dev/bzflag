@@ -136,7 +136,7 @@ int NetHandler::getUdpSocket()
     return udpSocket;
 }
 
-int NetHandler::udpReceive(char *buffer, int &n, struct sockaddr_in *uaddr,
+int NetHandler::udpReceive(char *buffer, int &buffLen, struct sockaddr_in *uaddr,
                            bool &udpLinkRequest)
 {
     AddrLen recvlen = sizeof(*uaddr);
@@ -144,13 +144,13 @@ int NetHandler::udpReceive(char *buffer, int &n, struct sockaddr_in *uaddr,
     uint16_t code;
     while (true)
     {
-        n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
+        buffLen = recvfrom(udpSocket, buffer, buffLen, 0, (struct sockaddr *) uaddr,
                      &recvlen);
-        if ((n < 0) || (n >= 4))
+        if ((buffLen < 0) || (buffLen >= 4))
             break;
     }
     // Error receiving data (or no data)
-    if (n < 0 || uaddr->sin_port < 1024)
+    if (buffLen < 0 || uaddr->sin_port < 1024)
         return -1;
 
     // read head
@@ -158,7 +158,7 @@ int NetHandler::udpReceive(char *buffer, int &n, struct sockaddr_in *uaddr,
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
-    if (len + 4 > n)
+    if (len + 4 > buffLen)
         return -1;
 
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
@@ -231,7 +231,7 @@ than %s:%d\n",
         logDebugMessage(4,"Player slot %d uread() %s:%d len %d from %s:%d on %i\n",
                         id,
                         inet_ntoa(netPlayer[id]->uaddr.sin_addr),
-                        ntohs(netPlayer[id]->uaddr.sin_port), n,
+                        ntohs(netPlayer[id]->uaddr.sin_port), buffLen,
                         inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
                         udpSocket);
 #ifdef NETWORK_STATS
