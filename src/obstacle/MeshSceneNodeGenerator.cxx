@@ -391,7 +391,7 @@ MeshPolySceneNode* MeshSceneNodeGenerator::getMeshPolySceneNode(const MeshFace* 
     if (face->useTexcoords())
     {
         for (i = 0; i < vertexCount; i++)
-            texcoords[i] = glm::make_vec3(face->getTexcoord(i));
+            texcoords[i] = glm::make_vec2(face->getTexcoord(i));
     }
     else
         makeTexcoords (face->getPlane(), vertices, texcoords);
