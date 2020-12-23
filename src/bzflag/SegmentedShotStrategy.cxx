@@ -339,12 +339,12 @@ void  SegmentedShotStrategy::radarRender() const
         dir[2] = vel[2] * d * shotTailLength * length;
         glBegin(GL_LINES);
         glVertex2fv(orig);
-        if (BZDB.eval("leadingShotLine") == 0)   //lagging
+        if (BZDBCache::leadingShotLine == 0)   //lagging
         {
             glVertex2f(orig[0] - dir[0], orig[1] - dir[1]);
             glEnd();
         }
-        else if (BZDB.eval("leadingShotLine") == 2)     //both
+        else if (BZDBCache::leadingShotLine == 2)     //both
         {
             glVertex2f(orig[0] + dir[0], orig[1] + dir[1]);
             glEnd();
