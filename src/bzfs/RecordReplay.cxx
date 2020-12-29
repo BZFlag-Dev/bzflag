@@ -1672,6 +1672,7 @@ static bool savePlayersState()
         if (pi->isPlaying())
         {
             // Complete MsgAddPlayer
+            bufStart->reset();
             bufStart->packUByte(i);
             bufStart->legacyPack(pi->packUpdate(bufStart->current_buffer()));
             bufStart->legacyPack(gkPlayer->score.pack(bufStart->current_buffer()));
