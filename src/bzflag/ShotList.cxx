@@ -70,7 +70,7 @@ ShotPath::Vec GetShotsForPlayer(PlayerId player)
 
 void ClearPlayerShots(PlayerId player)
 {
-    std::remove_if(GlobalShotList.begin(), GlobalShotList.end(), [&](const ShotPath::Ptr& shot)
+    GlobalShotList.remove_if([&](const ShotPath::Ptr& shot)
     {
         return shot != nullptr ? shot->getPlayer() == player : false;
     });
