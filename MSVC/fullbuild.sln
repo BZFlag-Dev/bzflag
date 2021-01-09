@@ -70,8 +70,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "recordmatch", "..\plugins\r
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "regFlag", "..\plugins\regFlag\regFlag.vcxproj", "{43A4F281-53E9-4E6D-ABC0-09BE6B592F0F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RogueGenocide", "..\plugins\RogueGenocide\RogueGenocide.vcxproj", "{AD6040FD-F813-4DA7-8058-32022A58F79E}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "serverControl", "..\plugins\serverControl\serverControl.vcxproj", "{C2021BB4-EB46-4855-B26F-DBBDB97EE43C}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "shockwaveDeath", "..\plugins\shockwaveDeath\shockwaveDeath.vcxproj", "{71A8E9FF-58CE-459C-9BD7-9C5706DB6491}"
