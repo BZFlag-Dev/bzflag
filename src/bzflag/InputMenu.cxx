@@ -103,7 +103,7 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     option->setCallback(callback, "T");
     options = &option->getList();
     char percentText[5];
-    for(auto i = 25; i <= 100; ++i)
+    for(i = 25; i <= 100; ++i)
     {
         snprintf(percentText, 20, "%i%%", i);
         options->push_back(percentText);
@@ -121,7 +121,7 @@ InputMenu::InputMenu() : keyboardMapMenu(nullptr), joystickTestMenu(nullptr)
     option->setLabel("Joystick Dead Zone:");
     option->setCallback(callback, "B");
     options = &option->getList();
-    for(auto i = 0; i <= 20; ++i)
+    for(i = 0; i <= 20; ++i)
     {
         snprintf(percentText, 20, "%i%%", i);
         options->push_back(percentText);
