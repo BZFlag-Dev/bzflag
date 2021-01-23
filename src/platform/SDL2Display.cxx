@@ -562,6 +562,22 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     case SDL_WINDOWEVENT:
         switch (event.window.event)
         {
+#ifdef __APPLE__
+        case SDL_WINDOWEVENT_MOVED:
+        {
+            // Work around a bug in SDL2 that was causing an offset viewport on macOS when restoring a fullscreen window
+            // running at a resolution different from the desktop resolution. The issue only occurred when clicking on
+            // the application icon, not the minimized window. The window moves to a negative position, so we'll
+            // detect that and toggle windowed/full screen to fix it.
+            SDL_Window *window = SDL_GetWindowFromID(event.window.windowID);
+            if ((event.window.data1 < 0 || event.window.data2 < 0) && SDL_GetWindowFlags(window) & SDL_WINDOW_FULLSCREEN)
+            {
+                SDL_SetWindowFullscreen(window, 0);
+                SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
+            }
+        }
+        break;
+#endif
         case SDL_WINDOWEVENT_RESIZED:
             _event.type = BzfEvent::Resize;
             _event.resize.width  = event.window.data1;
