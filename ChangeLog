@@ -4,6 +4,10 @@
 BZFlag 2.4.21
 -------------
 * Fix many issues with SDL 2 window management - Joshua Bodine, Scott Wichser
+* The playHistoryTracker plugin now tracks kills correctly - Scott Wichser
+* Local shotID was not being set in bz_eShotFiredEvent - Agatha
+* Send active autopilot statuses to a joining player - Scott Wichser
+* Fix solo bots being kicked when rejoining to a server - Scott Wichser
 
 
 BZFlag 2.4.20  "Do You See What I See?" (2020-04-24)
