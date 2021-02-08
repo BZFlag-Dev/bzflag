@@ -128,7 +128,7 @@ BZ_CONFIGURE_STAGE([arguments], [1 of 9])
 MP_WITH_CURSES
 
 # check for SDL option (enabled by default now)
-AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default tries 2, then 1, then resorts to native platform code if available]), sdl_version="$withval", sdl_version="detect")
+AC_ARG_WITH(SDL, AS_HELP_STRING([--without-SDL | --with-SDL={1,2}],[Do not use Simple DirectMedia Layer or force using a specific version (by default requires SDL2]), sdl_version="$withval", sdl_version="2")
 
 # build the server?
 AC_ARG_ENABLE(server, AS_HELP_STRING([--disable-server],[do not compile server]))
@@ -660,18 +660,32 @@ savedLIBS=$LIBS
 LIBS="$GLIBS $LIBS"
 AC_LANG(C)
 if test "x$enable_client" != xno -a "x$with_SDL" != xno; then
-    if test "x$sdl_version" != "x1" -a "x$sdl_version" != "x2"; then
-        sdl_version="detect"
+    if test "x$sdl_version" != "x1" -a "x$sdl_version" != "xdetect"; then
+        sdl_version="2"
     fi
 
-    if test "x$sdl_version" = "x2" -o "x$sdl_version" = "xdetect"; then
+    if test "x$sdl_version" = "x2"; then
         # Test for SDL 2
         AM_PATH_SDL2(2.0.3, with_SDL=2, with_SDL=no)
+
+        if test "x$with_SDL" != "x2"; then
+            AC_MSG_WARN(
+            [Client build is enabled, but SDL2 does not seem to be fully available ... disabling BZFlag client])
+            AM_CONDITIONAL(CLIENT_INCLUDED, false)
+            enable_client=no
+        fi
     fi
 
-    if test "x$with_SDL" != "x2" -a \( "x$sdl_version" = "x1" -o "x$sdl_version" = "xdetect" \); then
+    if test "x$sdl_version" = "x1"; then
         # Test for SDL 1.2
         AM_PATH_SDL(1.2.10, with_SDL=1, with_SDL=no)
+
+        if test "x$with_SDL" != "x1"; then
+            AC_MSG_WARN(
+            [Client build is enabled, but SDL1 does not seem to be fully available ... disabling BZFlag client])
+            AM_CONDITIONAL(CLIENT_INCLUDED, false)
+            enable_client=no
+        fi
     fi
 fi
 AC_LANG(C++)
@@ -1100,9 +1114,9 @@ dnl *** Report Summary ***
 dnl **********************
 
 if test "x$enable_client" = "xno"; then
-    if test "x$have_gl" = "xno" ; then
-	build_bzflag="no bzflag client binary!"
+    build_bzflag="no bzflag client binary!"
 
+    if test "x$have_gl" = "xno" ; then
         if test "x$ac_cv_search_glBegin" = xno ; then
             build_bzflag="$build_bzflag (missing OpenGL)"
         else
@@ -1114,15 +1128,21 @@ if test "x$enable_client" = "xno"; then
                 build_bzflag="$build_bzflag (missing GLEW)"
             fi
         fi
-    else
-	build_bzflag="no bzflag client binary!"
+    fi
+
+    if test "x$sdl_version" = "x2" -a "x$with_SDL" != "x2" ; then
+        build_bzflag="$build_bzflag (missing SDL2)"
+    fi
+
+    if test "x$sdl_version" = "x1" -a "x$with_SDL" != "x1" ; then
+        build_bzflag="$build_bzflag (missing SDL1)"
     fi
 else
     if test x$with_SDL != xno; then
         if test x$with_SDL = x2; then
             build_bzflag="yes (with SDL2)"
 	else
-	    build_bzflag="yes (with SDL)"
+	    build_bzflag="yes (with SDL1)"
 	fi
     else
 	build_bzflag="yes"
