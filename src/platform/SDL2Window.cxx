@@ -67,6 +67,16 @@ void SDLWindow::disableConfineToMotionbox()
 
 void SDLWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
 {
+#ifdef __APPLE__
+    // Work around an issue in macOS that caused mouse confinement to persist
+    // after minimizing. It seems that mouse/keyboard events are sent to the
+    // game even when minimized, until another other application is clicked.
+    // Moving the mouse during the 5 second pause countdown would trigger a
+    // call to confineToMotionbox and would continue to trap the mouse.
+    if (SDL_GetWindowFlags(windowId) & SDL_WINDOW_MINIMIZED)
+        return;
+#endif
+    SDL_Log("SDLWindow::confineToMotionbox");
 #ifndef _WIN32
     if (! SDL_GetWindowGrab(windowId))
         SDL_SetWindowGrab(windowId, SDL_TRUE);
