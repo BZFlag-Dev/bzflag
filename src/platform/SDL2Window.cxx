@@ -76,7 +76,7 @@ void SDLWindow::confineToMotionbox(int x1, int y1, int x2, int y2)
     if (SDL_GetWindowFlags(windowId) & SDL_WINDOW_MINIMIZED)
         return;
 #endif
-    SDL_Log("SDLWindow::confineToMotionbox");
+
 #ifndef _WIN32
     if (! SDL_GetWindowGrab(windowId))
         SDL_SetWindowGrab(windowId, SDL_TRUE);
