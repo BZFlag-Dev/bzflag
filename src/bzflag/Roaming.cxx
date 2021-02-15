@@ -361,6 +361,15 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt)
         }
     }
 
+    // modify Z coordinate
+    camera.pos[2] += dt * dc->pos[2];
+    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
+    if (camera.pos[2] < muzzleHeight)
+    {
+        camera.pos[2] = muzzleHeight;
+        dc->pos[2] = 0.0f;
+    }
+
     // modify X and Y coords
     if (!tracking)
     {
@@ -418,15 +427,6 @@ void Roaming::updatePosition(RoamingCamera* dc, float dt)
         camera.phi = phiLimit;
     else if (camera.phi < -phiLimit)
         camera.phi = -phiLimit;
-
-    // modify Z coordinate
-    camera.pos[2] += dt * dc->pos[2];
-    float muzzleHeight = BZDB.eval(StateDatabase::BZDB_MUZZLEHEIGHT);
-    if (camera.pos[2] < muzzleHeight)
-    {
-        camera.pos[2] = muzzleHeight;
-        dc->pos[2] = 0.0f;
-    }
 
     // adjust zoom
     camera.zoom += dt * dc->zoom;
