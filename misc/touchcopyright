@@ -11,8 +11,8 @@
 # WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # NOTE: update just the next two lines and then run this script
-OLDCOPYRIGHTTEXT='Copyright (c) 1993-2016'
-NEWCOPYRIGHTTEXT='Copyright (c) 1993-2017'
+OLDCOPYRIGHTTEXT='Copyright (c) 1993-2020'
+NEWCOPYRIGHTTEXT="Copyright (c) 1993-`date +%Y`"
 #
 # update copyright in all files
 #
