@@ -230,7 +230,6 @@ copy "$(BZ_DEPS)\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\licenses\"<
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>

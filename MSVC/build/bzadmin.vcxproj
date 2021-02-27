@@ -190,7 +190,6 @@ copy "$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\bin\*.dll" "..\..\
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>.\;..\..\include;$(BZ_DEPS)\output-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;BUILDING_BZADMIN;HAVE_CURSES_H;_WINSOCK_DEPRECATED_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
