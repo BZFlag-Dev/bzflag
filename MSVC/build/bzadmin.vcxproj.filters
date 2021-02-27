@@ -74,13 +74,13 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{112bd0f4-fd72-4cbb-92e8-5477a03d25c7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Resrouce Files">
+    <Filter Include="Resource Files">
       <UniqueIdentifier>{29ced2be-c154-440f-92fc-cde45b60412b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\Version.rc">
-      <Filter>Resrouce Files</Filter>
+      <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
 </Project>
