@@ -219,6 +219,9 @@
 		0370A48E1B0C924B00FEC9F7 /* Q3BSP.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46A1B0C8FBA00FEC9F7 /* Q3BSP.cxx */; };
 		0370A48F1B0C924B00FEC9F7 /* wavefrontOBJ.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0370A46C1B0C8FBA00FEC9F7 /* wavefrontOBJ.cxx */; };
 		037D645620A1EB25000E5586 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 037D645520A1EB25000E5586 /* libGLEW.a */; };
+		037E808C25FDDF6600094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
+		037E808D25FDDF8300094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
+		037E808E25FDDF9E00094715 /* libresolv.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 037E808B25FDDF6600094715 /* libresolv.tbd */; };
 		038D05E51DB5A59300A00C9E /* COPYING.LGPL in Resources */ = {isa = PBXBuildFile; fileRef = 038D05E41DB5A59300A00C9E /* COPYING.LGPL */; };
 		038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DA1BB645CA0009F369 /* libz.tbd */; };
 		038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 038DA4DC1BB645D80009F369 /* libcurl.tbd */; };
@@ -1642,6 +1645,7 @@
 		0370A4861B0C921A00FEC9F7 /* modeltool */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = modeltool; sourceTree = BUILT_PRODUCTS_DIR; };
 		037C3B81166C8F0E00BA90F1 /* BZFlag-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "BZFlag-Info.plist"; sourceTree = "<group>"; };
 		037D645520A1EB25000E5586 /* libGLEW.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libGLEW.a; path = /usr/local/lib/libGLEW.a; sourceTree = "<absolute>"; };
+		037E808B25FDDF6600094715 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
 		03835D06166CB12D008CE9C3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		038D05E41DB5A59300A00C9E /* COPYING.LGPL */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = COPYING.LGPL; path = ../COPYING.LGPL; sourceTree = "<group>"; };
 		038DA4DA1BB645CA0009F369 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -1908,6 +1912,7 @@
 				03DBE9BC1B30E12F00711E71 /* Cocoa.framework in Frameworks */,
 				038DA4DF1BB646030009F369 /* libncurses.tbd in Frameworks */,
 				038DA4E01BB6465E0009F369 /* libcurl.tbd in Frameworks */,
+				037E808D25FDDF8300094715 /* libresolv.tbd in Frameworks */,
 				03DBE9BE1B30E77D00711E71 /* libcares.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1932,6 +1937,7 @@
 				0394E6CA167B0D0B007F4035 /* libdate.a in Frameworks */,
 				03DBE9BB1B30E12300711E71 /* Cocoa.framework in Frameworks */,
 				038DA4E11BB646710009F369 /* libcurl.tbd in Frameworks */,
+				037E808E25FDDF9E00094715 /* libresolv.tbd in Frameworks */,
 				038DA4E21BB646750009F369 /* libz.tbd in Frameworks */,
 				03DBE9B31B30DEB000711E71 /* libcares.a in Frameworks */,
 			);
@@ -2171,6 +2177,7 @@
 				03DBE9BD1B30E13100711E71 /* Cocoa.framework in Frameworks */,
 				03C8EF0D167AC50100BB07A5 /* OpenGL.framework in Frameworks */,
 				038DA4DD1BB645D80009F369 /* libcurl.tbd in Frameworks */,
+				037E808C25FDDF6600094715 /* libresolv.tbd in Frameworks */,
 				038DA4DB1BB645CA0009F369 /* libz.tbd in Frameworks */,
 				03DBE9B41B30DEF700711E71 /* libcares.a in Frameworks */,
 			);
@@ -3480,6 +3487,7 @@
 		03D935B1166C6C0600DDDBEB /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				037E808B25FDDF6600094715 /* libresolv.tbd */,
 				03C338C51AFB59FF00E8F655 /* SDL2.framework */,
 				03DBE9BA1B30E12300711E71 /* Cocoa.framework */,
 				03835D06166CB12D008CE9C3 /* OpenGL.framework */,
