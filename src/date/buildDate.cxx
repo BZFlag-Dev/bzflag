@@ -37,6 +37,8 @@
 //  configure.ac
 //  include/version.h
 //  package/win32/nsis/BZFlag.nsi
+//  Xcode/BZFlag.xcodeproj/project.pbxproj
+//  Xcode/BZFlag-Info.plist
 #ifndef BZ_MAJOR_VERSION
 #  define BZ_MAJOR_VERSION  2
 #endif

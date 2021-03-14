@@ -105,7 +105,6 @@ work
 /man/*.gz
 /man/*.html
 /misc/bzflag.desktop
-/src/platform/MacOSX/BZFlag-Info.plist
 /MSVC/ipch
 /MSVC/bzflag.aps
 *.nativecodeanalysis.xml
@@ -126,7 +125,6 @@ Thumbs.db
 /Xcode/BZFlag.xcodeproj/xcuserdata
 /Xcode/BZFlag.xcodeproj/project.xcworkspace
 /Xcode/buildinfo.h
-/Xcode/BZFlag-Info.plist
 /tools/TextTool2/TextTool2.xcodeproj/xcuserdata
 /tools/TextTool2/TextTool2.xcodeproj/project.xcworkspace
 /MSVC/HoldTheFlag_Win32_Debug/*.ib_pdb_index

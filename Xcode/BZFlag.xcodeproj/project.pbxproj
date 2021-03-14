@@ -1777,7 +1777,7 @@
 		03C338CC1AFB5AFC00E8F655 /* SDL2Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Window.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BZFlag.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.23.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.23.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VotingArbiter.cxx; sourceTree = "<group>"; };
 		03CC33ED1E3D4A8A00CF55BC /* VotingArbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingArbiter.h; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
@@ -3386,7 +3386,7 @@
 		0394E967167B2D7B007F4035 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
-				03C8EE25167ABE2300BB07A5 /* BZFlag.app */,
+				03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.23.app */,
 				03C5E7BC1670A3DA005A26C4 /* lib3D.a */,
 				0357A7BC1670AF8E0056C938 /* libcommon.a */,
 				0357A7EB1670B11A0056C938 /* libnet.a */,
@@ -4654,9 +4654,9 @@
 			productReference = 03C5E7BC1670A3DA005A26C4 /* lib3D.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		03C8EE24167ABE2300BB07A5 /* BZFlag */ = {
+		03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.23 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag" */;
+			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.23" */;
 			buildPhases = (
 				03C8EE21167ABE2300BB07A5 /* Sources */,
 				03C8EE22167ABE2300BB07A5 /* Frameworks */,
@@ -4707,9 +4707,9 @@
 				0394E92C167B29D8007F4035 /* PBXTargetDependency */,
 				0394E942167B2AA9007F4035 /* PBXTargetDependency */,
 			);
-			name = BZFlag;
+			name = "BZFlag-2.4.23";
 			productName = BZFlag;
-			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag.app */;
+			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.23.app */;
 			productType = "com.apple.product-type.application";
 		};
 		03FA742D1742601B00573D2D /* serverSidePlayerSample */ = {
@@ -4800,7 +4800,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				03C8EE24167ABE2300BB07A5 /* BZFlag */,
+				03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.23 */,
 				0355E7B8174264D7006E2991 /* Pre-Build Script */,
 				03C5E7BB1670A3DA005A26C4 /* 3D */,
 				0357A7BB1670AF8E0056C938 /* common */,
@@ -4932,7 +4932,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\necho \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n\n# re-create the plist with the build version information\nMAJOR_VERSION=`sed -e 's/#.*define.*BZ_MAJOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nMINOR_VERSION=`sed -e 's/#.*define.*BZ_MINOR_VERSION[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\nREV=`sed -e 's/#.*define.*BZ_REV[^0-9]*\\(.*\\)/\\1/' -e t -e d < ../src/date/buildDate.cxx`\n\nBZFLAG_VERSION=\"$MAJOR_VERSION.$MINOR_VERSION.$REV\"\n\necho \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\n<!DOCTYPE plist PUBLIC \\\"-//Apple//DTD PLIST 1.0//EN\\\" \\\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\\\">\n<plist version=\\\"1.0\\\">\n<dict>\n<key>CFBundleDevelopmentRegion</key>\n<string>en</string>\n<key>CFBundleExecutable</key>\n<string>\\${EXECUTABLE_NAME}</string>\n<key>CFBundleIconFile</key>\n<string>BZFlag</string>\n<key>CFBundleIdentifier</key>\n<string>org.bzflag.BZFlag</string>\n<key>CFBundleInfoDictionaryVersion</key>\n<string>6.0</string>\n<key>CFBundleName</key>\n<string>BZFlag</string>\n<key>CFBundlePackageType</key>\n<string>APPL</string>\n<key>CFBundleShortVersionString</key>\n<string>$BZFLAG_VERSION</string>\n<key>CFBundleSignature</key>\n<string>????</string>\n<key>CFBundleVersion</key>\n<string>$BZFLAG_VERSION</string>\n<key>LSApplicationCategoryType</key>\n<string>public.app-category.arcade-games</string>\n<key>LSMinimumSystemVersion</key>\n<string>\\${MACOSX_DEPLOYMENT_TARGET}</string>\n<key>NSHumanReadableCopyright</key>\n<string>Copyright (c) 1993-2021 Tim Riker</string>\n</dict>\n</plist>\" > BZFlag-Info.plist\n";
+			shellScript = "# update buildinfo.h with the build information if necessary\nXCODE_VERSION=`echo $XCODE_VERSION_ACTUAL | awk '{print $1 + 0}'`\n\nif [[ ! -f buildinfo.h || `cat buildinfo.h | grep XCODE_VERSION | grep $XCODE_VERSION` == \"\" ]] ; then\necho \\#define XCODE_VERSION \\\"$XCODE_VERSION\\\" > buildinfo.h\nfi\n";
 		};
 		03E42D171B32274A006EE763 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -8060,7 +8060,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag" */ = {
+		03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.23" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03C8EE3F167ABE2300BB07A5 /* Debug */,
