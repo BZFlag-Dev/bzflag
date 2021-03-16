@@ -49,7 +49,7 @@ void            HUDuiJSTestLabel::doRender()
     // appearance constants
     const float backgroundColor[] = { 0.0f, 0.0f, 0.0f, 0.75f };
 
-    const auto realCursorThickness = int(BZ_SCALE_JS_TEST_ELEMS(2));
+    const auto realCursorThickness = BZ_SCALE_JS_TEST_ELEMS(2);
     const auto realCursorLength = BZ_SCALE_JS_TEST_ELEMS(40.0f);
     const float realCursorColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 

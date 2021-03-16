@@ -933,7 +933,7 @@ void     applyJSModifiers(float& jsx, float& jsy)
     // stretch corners
     if(BZDB.isTrue("jsStretchCorners"))
     {
-        const auto stretchFactor = (1.0f - std::abs(std::abs(atan(jsy / jsx) / M_PI) - 0.25f) * 4.0f) * jsMagnitude;
+        const auto stretchFactor = (1.0f - float(std::abs(std::abs(atan(jsy / jsx) / M_PI) - 0.25f)) * 4.0f) * jsMagnitude;
         const auto stretchValue = std::sqrt(2.0f);
 
         if(! isnan(stretchFactor))
