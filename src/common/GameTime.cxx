@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -183,7 +183,7 @@ void GameTime::update()
         }
     }
 
-    logDebugMessage(4,"GameTime: count = %i, rate = %f\n", timeRecs.size(), avgRate);
+    logDebugMessage(4,"GameTime: count = %zu, rate = %f\n", timeRecs.size(), avgRate);
 
     return;
 }

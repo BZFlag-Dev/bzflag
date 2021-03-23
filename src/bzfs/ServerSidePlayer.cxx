@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -2184,7 +2184,7 @@ class BotEventHandler : public bz_EventHandler
                 bz_PlayerUpdateEventData_V1* updated = (bz_PlayerUpdateEventData_V1*)eventData;
                 handler->playerStateUpdate(updated->playerID, &updated->state, updated->stateTime);
 
-                if (updated->lastState.status == eTeleporting &&  updated->lastState.status != eTeleporting)
+                if (updated->state.status == eTeleporting &&  updated->lastState.status != eTeleporting)
                     handler->playerTeleported(updated->playerID,&updated->state,&updated->lastState);
 
                 if (updated->playerID == handler->getPlayerID())

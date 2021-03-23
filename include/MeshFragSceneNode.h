@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -44,13 +44,13 @@ public:
 
     // virtual functions from SceneNode
     const glm::vec4 getPlane() const override;
-    bool cull(const ViewFrustum&) const;
-    void addShadowNodes(SceneRenderer&);
-    void addRenderNodes(SceneRenderer&);
-    void renderRadar();
+    bool cull(const ViewFrustum&) const override;
+    void addShadowNodes(SceneRenderer&) override;
+    void addRenderNodes(SceneRenderer&) override;
+    void renderRadar() override;
 
     // virtual functions from WallSceneNode
-    bool inAxisBox(const Extents& exts) const;
+    bool inAxisBox(const Extents& exts) const override;
 
     void getRenderNodes(std::vector<RenderSet>& rnodes) override;
 

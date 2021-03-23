@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -53,10 +53,6 @@ private:
     {
         return true;
     };
-    int  min_width;
-    int  min_height;
-    int  x;
-    int  y;
 
     std::deque<int> pendingUpEvents;
 };

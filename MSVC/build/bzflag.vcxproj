@@ -230,7 +230,6 @@ copy "..\..\dependencies\licenses\*" "..\..\bin_$(Configuration)_$(Platform)\lic
       </HeaderFileName>
     </Midl>
     <ClCompile>
-      <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
       <AdditionalIncludeDirectories>.\;..\..\include;..\..\dependencies\output-windows-$(Configuration)-$(PlatformShortName)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>GLEW_STATIC;_WINDOWS;WIN32;NDEBUG;_WINSOCK_DEPRECATED_NO_WARNINGS;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -32,25 +32,13 @@ public:
     ~OccluderSceneNode();
 
     // virtual functions from SceneNode
-    bool cull(const ViewFrustum&) const;
-    bool inAxisBox(const Extents& exts) const;
-    void addShadowNodes(SceneRenderer&)
-    {
-        return;
-    }
-    void addRenderNodes(SceneRenderer&)
-    {
-        return;
-    }
-    void renderRadar()
-    {
-        return;
-    }
+    bool cull(const ViewFrustum&) const override;
+    bool inAxisBox(const Extents& exts) const override;
+    void addShadowNodes(SceneRenderer&) override;
+    void addRenderNodes(SceneRenderer&) override;
+    void renderRadar() override;
 
-    int getVertexCount () const
-    {
-        return vertexCount;
-    }
+    int getVertexCount () const override;
 
     const glm::vec4 getPlane() const override;
 

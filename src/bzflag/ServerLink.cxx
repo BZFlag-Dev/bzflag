@@ -1,14 +1,14 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
-*
-* This package is free software;  you can redistribute it and/or
-* modify it under the terms of the license found in the file
-* named COPYING that should have accompanied this file.
-*
-* THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
-* IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
-* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-*/
+ * Copyright (c) 1993-2021 Tim Riker
+ *
+ * This package is free software;  you can redistribute it and/or
+ * modify it under the terms of the license found in the file
+ * named COPYING that should have accompanied this file.
+ *
+ * THIS PACKAGE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ */
 
 // interface header
 #include "ServerLink.h"
@@ -474,11 +474,11 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 
 #ifdef WIN32
 /* This is a really really fugly hack to get around winsock sillyness
-* The newer versions of winsock have a socken_t typedef, and there
-* doesn't seem to be any way to tell the versions apart. However,
-* VC++ helps us out here by treating typedef as #define
-* If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
-* avoid #define'ing it in common.h */
+ * The newer versions of winsock have a socken_t typedef, and there
+ * doesn't seem to be any way to tell the versions apart. However,
+ * VC++ helps us out here by treating typedef as #define
+ * If we've got a socklen_t typedefed, define HAVE_SOCKLEN_T to
+ * avoid #define'ing it in common.h */
 
 #ifndef socklen_t
 #define socklen_t int

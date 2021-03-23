@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -75,7 +75,7 @@ public:
 
     /** returns the local time */
     static void localTime(int *year = NULL, int *month = NULL, int* day = NULL, int* hour = NULL, int* min = NULL,
-                          int* sec = NULL, bool* dst = NULL);
+                          int* sec = NULL, bool* dst = NULL, long *tv_usec = nullptr);
 
     /** returns a string of the local time */
     static const char       *timestamp();
@@ -84,7 +84,7 @@ public:
 
     /** returns the UTC time */
     static void UTCTime(int *year = NULL, int *month = NULL, int* day = NULL, int* dayOfWeek = NULL, int* hour = NULL,
-                        int* min = NULL, int* sec = NULL, bool* dst = NULL);
+                        int* min = NULL, int* sec = NULL, bool* dst = NULL, long *tv_usec = nullptr);
 
 
     /** converts a time difference into an array of integers

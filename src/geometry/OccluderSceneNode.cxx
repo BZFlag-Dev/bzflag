@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -114,6 +114,25 @@ bool OccluderSceneNode::inAxisBox (const Extents& exts) const
     return testPolygonInAxisBox (vertexCount, vertices, plane, exts);
 }
 
+void OccluderSceneNode::addShadowNodes(SceneRenderer&)
+{
+    return;
+}
+
+void OccluderSceneNode::addRenderNodes(SceneRenderer&)
+{
+    return;
+}
+
+void OccluderSceneNode::renderRadar()
+{
+    return;
+}
+
+int OccluderSceneNode::getVertexCount () const
+{
+    return vertexCount;
+}
 
 const glm::vec3 OccluderSceneNode::getVertex (int vertex) const
 {

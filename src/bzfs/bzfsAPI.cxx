@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -843,7 +843,7 @@ bool bz_BasePlayerRecord::setCustomData(const char* key, const char* data)
     std::string keyStr = key;
     std::string dataStr;
     if (data != nullptr)
-        dataStr = dataStr;
+        dataStr = data;
 
     player->extraData[keyStr] = data;
 

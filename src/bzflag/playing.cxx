@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1151,7 +1151,7 @@ static void     doEvent(BzfDisplay *disply)
         }
 
         // ungrab the mouse if we're running full screen
-        if (mainWindow->getFullscreen())
+        if (mainWindow->getFullscreen() && !unmapped) // skip if already unmapped to avoid losing previous resolution
         {
             preUnmapFormat = -1;
             if (disply->getNumResolutions() > 1)
@@ -6749,7 +6749,7 @@ static void setupRoamingCamera(float dt)
             if (control)
                 deltaCamera.phi    = -2.0f * ROAM.getZoom() / 3.0f * (float)myTank->getSpeed();
             if (shift)
-                deltaCamera.pos[2] = (float)(-4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
+                deltaCamera.pos[2] = (float)(4 * myTank->getSpeed()) * BZDBCache::tankSpeed;
         }
     }
 
@@ -7624,11 +7624,7 @@ void            startPlaying(BzfDisplay* _display,
     {
         videoFormat = BZDB.get("resolution");
         if (videoFormat.length() != 0)
-        {
             format = display->findResolution(videoFormat.c_str());
-            if (format >= 0)
-                mainWindow->getWindow()->callResizeCallbacks();
-        }
     };
     // set the resolution (only if in full screen mode)
     if (!BZDB.isSet("_window") && BZDB.isSet("resolution"))
@@ -7666,6 +7662,9 @@ void            startPlaying(BzfDisplay* _display,
             }
         }
     }
+    // otherwise, use the default resolution if we do switch to fullscreen
+    else
+        display->setDefaultResolution();
 
     // grab mouse if we should
     if (shouldGrabMouse())

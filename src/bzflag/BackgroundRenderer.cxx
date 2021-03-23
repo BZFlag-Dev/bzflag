@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -69,7 +69,6 @@ const glm::vec3     BackgroundRenderer::receiverColorInv =
 BackgroundRenderer::BackgroundRenderer() :
     blank(false),
     invert(false),
-    style(0),
     gridSpacing(60.0f), // meters
     gridCount(4.0f),
     mountainsAvailable(false),

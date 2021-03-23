@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1185,9 +1185,6 @@ int         main(int argc, char** argv)
 
     // enable vsync if needed
     pmainWindow->getWindow()->setVerticalSync(BZDB.evalInt("saveEnergy") == 2);
-
-    // Make sure the window is created
-    pmainWindow->getWindow()->callResizeCallbacks();
 
     // get sound files.  must do this after creating the window because
     // DirectSound is a bonehead API.

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -478,7 +478,7 @@ bool KillCommand::operator() (const char     *message,
                               GameKeeper::Player *playerData)
 {
     int t = playerData->getIndex();
-    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill))
+    if (!playerData->accessInfo.hasPerm(PlayerAccessInfo::kill_))
     {
         sendMessage(ServerPlayer, t,
                     "You do not have permission to run the kill command");
@@ -1274,7 +1274,7 @@ bool MasterBanCommand::operator() (const char    *message,
         if (bans.size() > 20)
         {
             sendMessage(ServerPlayer, t,
-                        TextUtils::format("There are %d bans, only displaying the "
+                        TextUtils::format("There are %zu bans, only displaying the "
                                           "first 20", bans.size()).c_str());
 
         }

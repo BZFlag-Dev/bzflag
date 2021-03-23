@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -502,7 +502,7 @@ void BZAdminClient::outputServerList() const
             if (!serverList.serverFound())
                 ui->outputMessage(std::string("...waiting on the list server..."), Yellow);
             else
-                ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %d)", serverList.size()), Yellow);
+                ui->outputMessage(TextUtils::format("...retrieving list of servers... (found %zu)", serverList.size()), Yellow);
         }
         serverList.checkEchos(&startupInfo);
         cURLManager::perform();

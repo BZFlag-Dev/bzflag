@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -16,6 +16,7 @@
 /* system implementation headers */
 #include <cstring>
 #include <thread>
+#include <sys/time.h>
 
 /* common implementation headers */
 #include "TextUtils.h"
@@ -90,23 +91,43 @@ const TimeKeeper& TimeKeeper::getNullTime()
 const char *TimeKeeper::timestamp() // const
 {
     static char buffer[256]; // static, so that it doesn't vanish
-    time_t tnow = time(0);
-    struct tm *now = localtime(&tnow);
-    now->tm_year += 1900;
-    ++now->tm_mon;
+
+    int year, month, day, hour, min, sec;
+    TimeKeeper::localTime(&year, &month, &day, &hour, &min, &sec);
 
     strncpy(buffer, TextUtils::format("%04d-%02d-%02d %02d:%02d:%02d",
-                                      now->tm_year, now->tm_mon, now->tm_mday,
-                                      now->tm_hour, now->tm_min, now->tm_sec).c_str(), 255);
+                                      year, month, day,
+                                      hour, min, sec).c_str(), 255);
     buffer[255] = '\0'; // safety
 
     return buffer;
 }
 
-void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst) // const
+void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min, int* sec, bool* dst,
+                           long *tv_usec) // const
 {
-    time_t tnow = time(0);
-    struct tm *now = localtime(&tnow);
+    time_t tnow;
+    if (tv_usec)
+    {
+#ifdef _WIN32
+        tnow = time(0);
+        *tv_usec = 0;
+#else
+        struct timeval tv;
+        gettimeofday (&tv, NULL);
+        *tv_usec = tv.tv_usec;
+        tnow = tv.tv_sec;
+#endif
+    }
+    else
+        tnow = time(0);
+    struct tm *now;
+#ifdef _WIN32
+    now = localtime(&tnow);
+#else
+    struct tm nowBuffer;
+    now = localtime_r(&tnow, &nowBuffer);
+#endif
     now->tm_year += 1900;
     ++now->tm_mon;
 
@@ -128,9 +149,23 @@ void TimeKeeper::localTime(int *year, int *month, int* day, int* hour, int* min,
 
 
 void TimeKeeper::UTCTime(int *year, int *month, int* day, int* wday,
-                         int* hour, int* min, int* sec, bool* dst) // const
+                         int* hour, int* min, int* sec, bool* dst, long *tv_usec) // const
 {
-    time_t tnow = time(0);
+    time_t tnow;
+    if (tv_usec)
+    {
+#ifdef _WIN32
+        tnow = time(0);
+        *tv_usec = 0;
+#else
+        struct timeval tv;
+        gettimeofday (&tv, NULL);
+        *tv_usec = tv.tv_usec;
+        tnow = tv.tv_sec;
+#endif
+    }
+    else
+        tnow = time(0);
     struct tm *now = gmtime(&tnow);
     now->tm_year += 1900;
     ++now->tm_mon;

@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -195,7 +195,7 @@ bool BZWReader::readWorldStream(std::vector<WorldFileObject*>& wlist,
     char buffer[1024];
     WorldFileObject* object = NULL;
     WorldFileObject* newObject = NULL;
-    WorldFileObject* const fakeObject = (WorldFileObject*)((char*)NULL + 1);
+    WorldFileObject* const fakeObject = (WorldFileObject*)((char*)1);
     GroupDefinition* const worldDef = const_cast<GroupDefinition*>(OBSTACLEMGR.getWorld());
     GroupDefinition* const startDef = groupDef;
 

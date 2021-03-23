@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -159,12 +159,12 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
-    if (len > MaxUDPPacketLen - 4)
+    if (len + 4 > n)
         return -1;
 
 //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
 //    logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-    if (n == 6 && len == 2 && code == MsgPingCodeRequest)
+    if (len == 2 && code == MsgPingCodeRequest)
         // Ping code request
         return -2;
 
@@ -458,7 +458,7 @@ int NetHandler::bufferedSend(const void *buffer, size_t length)
                 if (info != NULL && playerIndex >= 0)
                 {
                     logDebugMessage(2,"Player %s [%d] drop, unresponsive with %d bytes queued\n",
-                                    info->getCallSign(), playerIndex, outmsgSize + length);
+                                    info->getCallSign(), playerIndex, outmsgSize + (int)length);
                 }
                 toBeKicked = true;
                 toBeKickedReason = "send queue too big";

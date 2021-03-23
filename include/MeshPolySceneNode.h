@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -70,8 +70,6 @@ protected:
     private:
         MeshPolySceneNode* sceneNode;
         int style;
-        bool drawRadar;
-        bool draw;
         const glm::vec3 *normal;
     public:
         std::vector<glm::vec3> vertices;

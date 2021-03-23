@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -362,7 +362,7 @@ MeshObstacle* ArcObstacle::makePie(bool isCircle, float a, float r,
         push4Ints(vlist, PV(0), PV(2), PV(3), PV(1));
         if (useNormals) push4Ints(nlist, PN(0), PN(1), PN(1), PN(0));
         push4Ints(tlist, PTO(0), PTO(2), PTO(3), PTO(1));
-        addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
+        addFace(mesh, vlist, nlist, tlist, materials[Outside_], phydrv);
 
         // top
         push3Ints(vlist, vtop, PV(1), PV(3));
@@ -556,7 +556,7 @@ MeshObstacle* ArcObstacle::makeRing(bool isCircle, float a, float r,
         push4Ints(vlist, RV(2), RV(6), RV(7), RV(3));
         if (useNormals) push4Ints(nlist, RN(1), RN(3), RN(3), RN(1));
         push4Ints(tlist, RT(0), RT(2), RT(3), RT(1));
-        addFace(mesh, vlist, nlist, tlist, materials[Outside], phydrv);
+        addFace(mesh, vlist, nlist, tlist, materials[Outside_], phydrv);
 
         // top
         push4Ints(vlist, RV(3), RV(7), RV(5), RV(1));

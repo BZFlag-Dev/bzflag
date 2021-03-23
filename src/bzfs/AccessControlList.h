@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -36,7 +36,7 @@ struct BanInfo
         cidr = _cidr;
 
         // Zero out the host bits
-        if (cidr > 0 || cidr < 32)
+        if (cidr > 0 && cidr < 32)
             addr.s_addr &= htonl(0xFFFFFFFFu << (32 - cidr));
 
         if (_bannedBy)

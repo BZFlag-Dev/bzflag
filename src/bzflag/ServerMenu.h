@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -43,7 +43,7 @@ class ServerMenuDefaultKey : public MenuDefaultKey
 {
 public:
     ServerMenuDefaultKey(ServerMenu* _menu) :
-        menu(_menu), serverListFilterMenu(NULL), serverListFilterHelpMenu(NULL) {}
+        menu(_menu), serverListFilterMenu(NULL) {}
     ~ServerMenuDefaultKey();
 
     bool keyPress(const BzfKeyEvent&);
@@ -52,7 +52,6 @@ public:
 private:
     ServerMenu* menu;
     ServerListFilterMenu* serverListFilterMenu;
-    ServerListFilterHelpMenu* serverListFilterHelpMenu;
 };
 
 class ServerMenu : public HUDDialog

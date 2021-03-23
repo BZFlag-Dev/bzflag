@@ -1,5 +1,5 @@
 /* bzflag
- * Copyright (c) 1993-2020 Tim Riker
+ * Copyright (c) 1993-2021 Tim Riker
  *
  * This package is free software;  you can redistribute it and/or
  * modify it under the terms of the license found in the file
@@ -1366,10 +1366,9 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                     gameStartTime = TimeKeeper::getCurrent();
                     countdownActive = true;
                 }
-                time_t tnow = time(0);
-                struct tm *now = localtime(&tnow);
-                unsigned int hour = now->tm_hour, min = now->tm_min, sec = now->tm_sec,
-                             cmdHour = atoi(endTime[0].c_str()),
+                int hour, min, sec;
+                TimeKeeper::localTime(nullptr, nullptr, nullptr, &hour, &min, &sec);
+                unsigned int cmdHour = atoi(endTime[0].c_str()),
                              cmdMin = atoi(endTime[1].c_str()),
                              cmdSec = atoi(endTime[2].c_str());
                 unsigned long secsToday = (hour * 3600) + (min * 60) + sec,
