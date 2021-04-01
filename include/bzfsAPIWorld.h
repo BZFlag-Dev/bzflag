@@ -13,9 +13,6 @@
 #pragma once
 #include "bzfsAPI.h"
 
-// System headers
-#include <glm/vec3.hpp>
-
 // map object API
 enum class bz_eWorldObjectType
 {
@@ -63,8 +60,8 @@ public:
     int         subID;
 
     float center[3];
-    glm::vec3 maxAABBox;
-    glm::vec3 minAABBox;
+    float maxAABBox[3];
+    float minAABBox[3];
     float rotation[3];
     float maxBBox[3];
     float minBBox[3];
