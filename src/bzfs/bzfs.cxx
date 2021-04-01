@@ -528,7 +528,7 @@ void sendAutopilotStatus(GameKeeper::Player *playerData, int index)
 {
     auto buf = GetMessageBuffer();
     buf->packUByte(playerData->getIndex());
-    buf->packUByte(playerData->player.isAutoPilot());   
+    buf->packUByte(playerData->player.isAutoPilot());
     if (playerData->getIndex() == index)
     {
         // send all players autopilot status for player[playerIndex]
