@@ -16,7 +16,11 @@
 /* system implementation headers */
 #include <cstring>
 #include <thread>
-#include <sys/time.h>
+#if !defined(_WIN32)
+#  include <sys/time.h>
+#else /* !defined(_WIN32) */
+#  include <mmsystem.h>
+#endif /* !defined(_WIN32) */
 
 /* common implementation headers */
 #include "TextUtils.h"
