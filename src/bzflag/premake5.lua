@@ -98,7 +98,8 @@ project "bzflag"
       "iconv",
       "IOKit.framework",
       "Metal.framework",
-      "OpenGL.framework"
+      "OpenGL.framework",
+      "resolv"
     }
   filter "action:xcode*"
     if not _OPTIONS["disable-server"] then

@@ -41,7 +41,10 @@ project "bzfs"
     postbuildcommands "copy \"$(OutDir)bzfs.lib\" ..\\..\\bin_$(Configuration)_$(Platform)\\"
 
   filter "system:macosx"
-    links "Cocoa.framework"
+    links {
+      "Cocoa.framework",
+      "resolv"
+    }
   filter { "action:xcode*", "options:disable-client" }
     -- bzfs needs to have the dependency so the plugins will build
     pluginDirNames = os.matchdirs("../../plugins/*")

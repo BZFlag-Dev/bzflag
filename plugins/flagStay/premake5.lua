@@ -2,7 +2,7 @@ project "flagStay"
   kind "SharedLib"
   targetprefix ""
   files {
-    "../../include/bzfsApi.h",
+    "../../include/bzfsAPI.h",
     "*.cpp",
     "*.h",
     "*.txt",

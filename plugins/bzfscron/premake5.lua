@@ -2,7 +2,7 @@ project "bzfscron"
   kind "SharedLib"
   targetprefix ""
   files {
-    "../../include/bzfsApi.h",
+    "../../include/bzfsAPI.h",
     "../plugin_utils/plugin_utils.h",
     "*.cpp",
     "*.h",
