@@ -5893,7 +5893,6 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
                 playerData.addWasDelayed = true;
                 playerData.addDelayStartTime = TimeKeeper::getCurrent().getSeconds();
             }
-            playerData._LSAState = GameKeeper::Player::done;
         }
     }
 
@@ -5911,6 +5910,7 @@ static void doStuffOnPlayer(GameKeeper::Player &playerData)
     {
         AddPlayer(p, &playerData);
         playerData._JoinState = GameKeeper::Player::added;
+        playerData._LSAState = GameKeeper::Player::done;
     }
 
     playerData.update();
