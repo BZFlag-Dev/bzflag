@@ -231,7 +231,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             break;
 
         case MsgAddPlayer:
-            uint16_t team, type, wins, losses, tks;
+            uint16_t team, skinIndex, type, wins, losses, tks;
             // Flawfinder: ignore
             char callsign[CallSignLen];
             // Flawfinder: ignore
@@ -239,6 +239,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             vbuf = nboUnpackUByte(vbuf, p);
             vbuf = nboUnpackUShort(vbuf, type);
             vbuf = nboUnpackUShort(vbuf, team);
+            vbuf = nboUnpackUShort(vbuf, skinIndex);
             vbuf = nboUnpackUShort(vbuf, wins);
             vbuf = nboUnpackUShort(vbuf, losses);
             vbuf = nboUnpackUShort(vbuf, tks);
