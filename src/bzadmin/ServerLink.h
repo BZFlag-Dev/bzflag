@@ -66,7 +66,8 @@ public:
     int                 read(uint16_t& code, uint16_t& len, void* msg,
                              int millisecondsToBlock = 0); // if millisecondsToBlock < 0 then block forever
 
-    void                sendEnter(PlayerType, TeamColor, int skinIndex, const char* name, const char* motto, const char* token,
+    void                sendEnter(PlayerType, TeamColor, int skinIndex, const char* name, const char* motto,
+                                  const char* token,
                                   const char* locale);
     bool                readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
 
