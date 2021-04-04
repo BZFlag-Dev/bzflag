@@ -639,7 +639,7 @@ void ServerLink::sendEnter(PlayerType type, TeamColor team, int skinIndex, const
                            const char* token, const char* locale)
 {
     if (state != Okay) return;
-    char msg[PlayerIdPLen + 4 + 4 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];
+    char msg[PlayerIdPLen + 6 + CallSignLen + MottoLen + TokenLen + VersionLen + LocaleLen];
     ::memset(msg, 0, sizeof(msg));
     void* buf = msg;
     buf = nboPackUShort(buf, uint16_t(type));
