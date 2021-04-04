@@ -86,12 +86,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*     ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port) :
-    state(SocketError), // assume failure
-    fd(-1),         // assume failure
-    udpLength(0),
-    udpBufferPtr(),
-    ubuf()
+ServerLink::ServerLink(const Address& serverAddress, int port)
 {
     int i;
 
@@ -127,7 +122,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     UDEBUG("Remote %s\n", inet_ntoa(addr.sin_addr));
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr,(unsigned char *)&addr, sizeof(addr));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)&addr, sizeof(addr));
 
     bool okay = true;
     int fdMax = query;
@@ -204,9 +199,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     // send out the connect header
     // this will let the server know we are BZFS protocol.
     // after the server gets this it will send back a version for us to check
-    int sendRepply = ::send(query,BZ_CONNECT_HEADER,(int)strlen(BZ_CONNECT_HEADER),0);
+    int sendRepply = ::send(query, BZ_CONNECT_HEADER, (int)strlen(BZ_CONNECT_HEADER), 0);
 
-    logDebugMessage(2,"CONNECT:send in connect returned %d\n",sendRepply);
+    logDebugMessage(2, "CONNECT:send in connect returned %d\n", sendRepply);
 
     // wait to get data back. we are still blocking so these
     // calls should be sync.
@@ -223,7 +218,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     double thisStartTime = TimeKeeper::getCurrent().getSeconds();
     double connectTimeout = 30.0;
     if (BZDB.isSet("connectionTimeout"))
-        connectTimeout = BZDB.eval("connectionTimeout")  ;
+        connectTimeout = BZDB.eval("connectionTimeout");
 
     bool gotNetData = false;
 
@@ -238,7 +233,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         // there has to be at least one socket active, or we are screwed
         if (nfound <= 0)
         {
-            logDebugMessage(1,"CONNECT:select in connect failed, nfound = %d\n",nfound);
+            logDebugMessage(1, "CONNECT:select in connect failed, nfound = %d\n", nfound);
             close(query);
             return;
         }
@@ -249,8 +244,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         // if we got some, then we are done
         if (i > 0)
         {
-            logDebugMessage(2,"CONNECT:got net data in connect, bytes read = %d\n",i);
-            logDebugMessage(2,"CONNECT:Time To Connect = %f\n",(TimeKeeper::getCurrent().getSeconds() - thisStartTime));
+            logDebugMessage(2, "CONNECT:got net data in connect, bytes read = %d\n", i);
+            logDebugMessage(2, "CONNECT:Time To Connect = %f\n", (TimeKeeper::getCurrent().getSeconds() - thisStartTime));
             gotNetData = true;
         }
         else
@@ -258,8 +253,8 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
             // if we have waited too long, then bail
             if ((TimeKeeper::getCurrent().getSeconds() - thisStartTime) > connectTimeout)
             {
-                logDebugMessage(1,"CONNECT:connect time out failed\n");
-                logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+                logDebugMessage(1, "CONNECT:connect time out failed\n");
+                logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
                 close(query);
                 return;
             }
@@ -268,7 +263,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         }
     }
 
-    logDebugMessage(2,"CONNECT:connect loop count = %d\n",loopCount);
+    logDebugMessage(2, "CONNECT:connect loop count = %d\n", loopCount);
 
     // if we got back less than the expected connect response (BZFSXXXX)
     // then something went bad, and we are done.
@@ -325,7 +320,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         return;
     }
 #endif // !defined(_WIN32)
-    i = recv(query, (char *) &id, sizeof(id), 0);
+    i = recv(query, (char *)&id, sizeof(id), 0);
     if (i < (int) sizeof(id))
         return;
     if (id == 0xff)
@@ -394,43 +389,42 @@ ServerLink::~ServerLink()
 
 #if defined(NETWORK_STATS)
     const float dt = float(TimeKeeper::getCurrent() - startTime);
-    logDebugMessage(1,"Server network statistics:\n");
-    logDebugMessage(1,"  elapsed time    : %f\n", dt);
-    logDebugMessage(1,"  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-    logDebugMessage(1,"  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+    logDebugMessage(1, "Server network statistics:\n");
+    logDebugMessage(1, "  elapsed time    : %f\n", dt);
+    logDebugMessage(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+    logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
     if (packetsSent != 0)
-        logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-    logDebugMessage(1,"  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-    logDebugMessage(1,"  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+    logDebugMessage(1, "  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+    logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
     if (packetsReceived != 0)
-        logDebugMessage(1,"  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 
-ServerLink*     ServerLink::getServer() // const
+ServerLink* ServerLink::getServer() // const
 {
     return server;
 }
 
-void            ServerLink::setServer(ServerLink* _server)
+void ServerLink::setServer(ServerLink* _server)
 {
     server = _server;
 }
 
-void            ServerLink::send(uint16_t code, uint16_t len,
-                                 const void* msg)
+void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 {
-    bool needForSpeed=false;
+    bool needForSpeed = false;
     if (state != Okay) return;
-//  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
-//    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
+    //  if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate)
+    //    logDebugMessage(1,"send %s len %d\n",MsgStrings::strMsgCode(code),len);
     char msgbuf[MaxPacketLen];
     void* buf = msgbuf;
     buf = nboPackUShort(buf, len);
     buf = nboPackUShort(buf, code);
     if (msg && len != 0) buf = nboPackString(buf, msg, len);
 
-    if ((urecvfd>=0) && ulinkup )
+    if ((urecvfd >= 0) && ulinkup)
     {
         switch (code)
         {
@@ -441,18 +435,18 @@ void            ServerLink::send(uint16_t code, uint16_t len,
         case MsgGMUpdate:
         case MsgUDPLinkRequest:
         case MsgUDPLinkEstablished:
-            needForSpeed=true;
+            needForSpeed = true;
             break;
         }
     }
     // MsgUDPLinkRequest always goes udp
     if (code == MsgUDPLinkRequest)
-        needForSpeed=true;
+        needForSpeed = true;
 
     if (needForSpeed)
     {
 #ifdef TESTLINK
-        if ((random()%TESTQUALTIY) != 0)
+        if ((random() % TESTQUALTIY) != 0)
 #endif
             sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
         // we don't care about errors yet
@@ -491,8 +485,7 @@ void            ServerLink::send(uint16_t code, uint16_t len,
 #endif
 #endif //WIN32
 
-int         ServerLink::read(uint16_t& code, uint16_t& len,
-                             void* msg, int blockTime)
+int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 {
 
     code = MsgNull;
@@ -507,10 +500,10 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                             &urecvaddr, (socklen_t*) &recvlen);
+                             &urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
-                udpLength    = n;
+                udpLength = n;
                 udpBufferPtr = ubuf;
             }
         }
@@ -525,9 +518,9 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
             }
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, len);
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
-//      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
-//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-            UDEBUG("<** UDP Packet Code %x Len %x\n",code, len);
+            //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
+            //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+            UDEBUG("<** UDP Packet Code %x Len %x\n", code, len);
             if (len > udpLength)
             {
                 udpLength = 0;
@@ -535,7 +528,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
             }
             memcpy((char *)msg, udpBufferPtr, len);
             udpBufferPtr += len;
-            udpLength    -= len;
+            udpLength -= len;
             return 1;
         }
         if (UDEBUGMSG) printError("Fallback to normal TCP receive");
@@ -554,7 +547,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     fd_set read_set;
     FD_ZERO(&read_set);
     FD_SET((unsigned int)fd, &read_set);
-    int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
+    int nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL,
                         (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
     if (nfound == 0) return 0;
     if (nfound < 0) return -1;
@@ -578,7 +571,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         printError("ServerLink::read() loop");
         FD_ZERO(&read_set);
         FD_SET((unsigned int)fd, &read_set);
-        nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
+        nfound = select(fd + 1, (fd_set*)&read_set, NULL, NULL, NULL);
         if (nfound == 0) continue;
         if (nfound < 0) return -1;
         rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
@@ -595,7 +588,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
     buf = nboUnpackUShort(buf, len);
     buf = nboUnpackUShort(buf, code);
 
-//  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
+    //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
     if (len > MaxPacketLen - 4)
         return -1;
     if (len > 0)
@@ -613,7 +606,7 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         {
             FD_ZERO(&read_set);
             FD_SET((unsigned int)fd, &read_set);
-            nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
+            nfound = select(fd + 1, (fd_set*)&read_set, 0, 0, NULL);
             if (nfound == 0) continue;
             if (nfound < 0) return -1;
             rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
@@ -691,8 +684,8 @@ bool ServerLink::readEnter(std::string& reason,
         {
             const void *buf;
             char buffer[MessageLen];
-            buf = nboUnpackUShort (msg, rejcode); // filler for now
-            buf = nboUnpackString (buf, buffer, MessageLen);
+            buf = nboUnpackUShort(msg, rejcode); // filler for now
+            buf = nboUnpackString(buf, buffer, MessageLen);
             buffer[MessageLen - 1] = '\0';
             reason = buffer;
             return false;
