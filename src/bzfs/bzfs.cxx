@@ -677,7 +677,9 @@ void sendIPUpdate(int targetPlayer, int playerIndex)
                 msg->pop_offset();
                 c = 0;
                 for (unsigned int j = 0; j < receivers.size(); ++j)
-                    sendPacket(receivers[j], MsgAdminInfo, msg);
+                    sendPacket(receivers[j], MsgAdminInfo, msg, false);
+
+                ReleaseMessageBuffer(msg);
 
                 msg = GetMessageBuffer();
                 msg->packUByte(0); // will be overwritten later
