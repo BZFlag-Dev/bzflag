@@ -109,8 +109,8 @@ void CronManager::Init(const char* commandLine)
 
     if (!connect())
         bz_debugMessage(1, BCVERSION ": fake player could not connect!");
-
-    bz_debugMessage(4, BCVERSION ": fake player connected");
+    else
+        bz_debugMessage(4, BCVERSION ": fake player connected");
 }
 
 void CronManager::Cleanup()
@@ -120,6 +120,7 @@ void CronManager::Cleanup()
 
     if (player)
     {
+        bz_removeServerSidePlayer(player->getPlayerID(), player);
         delete player;
         player = NULL;
     }

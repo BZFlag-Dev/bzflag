@@ -2892,7 +2892,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))
         worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
-    if (notify)
+    if (notify && playerData->netHandler != nullptr)
     {
         // send a super kill to be polite
         // send message to one player
@@ -2915,7 +2915,8 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
                     playerData->player.getCallSign(),
                     playerIndex, timeStamp.c_str(), reason);
     bool wasPlaying = playerData->player.isPlaying();
-    playerData->netHandler->closing();
+    if (playerData->netHandler != nullptr)
+        playerData->netHandler->closing();
 
     zapFlagByPlayer(playerIndex);
 
