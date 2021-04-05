@@ -2913,7 +2913,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
     if ((playerData->player.getTeam() != NoTeam) && strlen(playerData->player.getCallSign()))
         worldEventManager.callEvents(bz_ePlayerPartEvent,&partEventData);
 
-    if (notify)
+    if (notify && playerData->netHandler != nullptr)
     {
         // send a super kill to be polite
         // send message to one player
@@ -2921,8 +2921,7 @@ void removePlayer(int playerIndex, const char *reason, bool notify)
         char temp[4];
         void* buf = nboPackUShort(temp, 0);
         buf = nboPackUShort(buf, MsgSuperKill);
-        if (playerData->netHandler != nullptr)
-            playerData->netHandler->pwrite(temp, 4);
+        playerData->netHandler->pwrite(temp, 4);
     }
 
     // if there is an active poll, cancel any vote this player may have made
