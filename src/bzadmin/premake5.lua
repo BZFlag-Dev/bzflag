@@ -7,7 +7,7 @@ project "bzadmin"
     ["Source Files"] = "**.cxx"
   }
   defines { "BUILDING_BZADMIN" }
-  links { "date", "game", "net", "common", "curl", "ncurses" }
+  links { "date", "game", "net", "common", "cares", "curl", "ncurses" }
 
   filter "system:windows"
     removelinks { "ncurses" }
@@ -25,4 +25,4 @@ project "bzadmin"
     links { "caresd", "libcurl_debug" }
 
   filter "system:macosx"
-    links "Cocoa.framework"
+    links { "Cocoa.framework", "resolv" }
