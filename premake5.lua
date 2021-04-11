@@ -393,8 +393,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
       "HAVE_STRICMP",
       "HAVE__STRICMP",
       "HAVE__STRNICMP",
-      "HAVE__VSNPRINTF",
-      "_WINSOCK_DEPRECATED_NO_WARNINGS"
+      "HAVE__VSNPRINTF"
     }
     sysincludedirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/include"
     libdirs "dependencies/output-windows-$(Configuration)-$(PlatformShortName)/lib"
@@ -585,6 +584,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
                  "<plist version=\"1.0\">"..
                  "<dict>"..
                  "<key>CFBundleDevelopmentRegion</key><string>en</string>"..
+                 "<key>CFBundleDisplayName</key><string>BZFlag</string>"..
                  "<key>CFBundleExecutable</key><string>${EXECUTABLE_NAME}</string>"..
                  "<key>CFBundleIconFile</key><string>BZFlag</string>"..
                  "<key>CFBundleIdentifier</key><string>org.bzflag.BZFlag</string>"..
@@ -596,7 +596,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
                  "<key>CFBundleVersion</key><string>"..bzVersion.major.."."..bzVersion.minor.."."..bzVersion.revision.."</string>"..
                  "<key>LSApplicationCategoryType</key><string>public.app-category.arcade-games</string>"..
                  "<key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>"..
-                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2019 Tim Riker</string>"..
+                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2021 Tim Riker</string>"..
                  "</dict>"..
                  "</plist>");
     print("Generated premake5/".._ACTION.."/BZFlag-Info.plist...")
