@@ -1203,7 +1203,6 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
     }
 
     // apply explosion transform
-    bool overide = false;
     TankDeathOverride::DeathParams params(explodeFraction,fvec4(color[0],color[1],color[2],color[3]));
 
     if (isExploding)
@@ -1212,34 +1211,13 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
         const float* cog = centerOfGravity[part];
         if (sceneNode->deathOverride)
             sceneNode->deathOverride->SetDeathRenderParams(params);
-        if (!overide)
-        {
-            const float* velocity = sceneNode->vel[part];
-            const float* rotation = sceneNode->spin[part];
-            glTranslatef(cog[0] + (explodeFraction * velocity[0]),
-                         cog[1] + (explodeFraction * velocity[1]),
-                         cog[2] + (explodeFraction * velocity[2]));
-            glRotatef(rotation[3] * explodeFraction, rotation[0], rotation[1], rotation[2]);
-            glTranslatef(-cog[0], -cog[1], -cog[2]);
-        }
-        else
-        {
-            //const GLfloat *sphere = sceneNode->getSphere();
-            //glTranslatef(-(sphere[0]-sceneNode->explodePos.x),-(sphere[1]-sceneNode->explodePos.y), -(sphere[3]-sceneNode->explodePos.z)); // the death thingy will take care of any bounce
-            //glLoadIdentity();
-            //glTranslatef(sceneNode->explodePos.x,sceneNode->explodePos.y,sceneNode->explodePos.z);
-            //glRotatef(sceneNode->azimuth, 0.0f, 0.0f, 1.0f);
-            //glRotatef(sceneNode->elevation, 0.0f, 1.0f, 0.0f);
-
-            glTranslatef(cog[0] + params.pos.x,
-                         cog[1] +  params.pos.y,
-                         cog[2] +  params.pos.z);
-            glRotatef( params.rot.x, 1, 0,0);
-            glRotatef(params.rot.y, 0, 1,0);
-            glRotatef(params.rot.z, 0, 0,1);
-            glTranslatef(-cog[0], -cog[1], -cog[2]);
-            glScalef(params.scale.x,params.scale.y,params.scale.z);
-        }
+        const float* velocity = sceneNode->vel[part];
+        const float* rotation = sceneNode->spin[part];
+        glTranslatef(cog[0] + (explodeFraction * velocity[0]),
+                     cog[1] + (explodeFraction * velocity[1]),
+                     cog[2] + (explodeFraction * velocity[2]));
+        glRotatef(rotation[3] * explodeFraction, rotation[0], rotation[1], rotation[2]);
+        glTranslatef(-cog[0], -cog[1], -cog[2]);
     }
 
     // setup the animation texture matrix
@@ -1249,26 +1227,19 @@ void TankSceneNode::TankRenderNode::renderPart(TankPart part)
 
     // set color
     if (!isShadow)
-    {
         setupPartColor(part);
-        if (overide)
-            myColor4fv(params.color);
-    }
 
     // get the list
     GLuint list;
     TankShadow shadow = isShadow ? ShadowOn : ShadowOff;
     list = TankGeometryMgr::getPartList(shadow, part, drawSize, drawLOD);
 
-    if (!overide || params.draw)
-    {
-        // draw the part
-        glCallList(list);
+    // draw the part
+    glCallList(list);
 
-        // add to the triangle count
-        addTriangleCount(TankGeometryMgr::getPartTriangleCount(
-                             shadow, part, drawSize, drawLOD));
-    }
+    // add to the triangle count
+    addTriangleCount(TankGeometryMgr::getPartTriangleCount(
+                         shadow, part, drawSize, drawLOD));
 
     // draw the lights on the turret
     if ((part == Turret) && !isExploding && !isShadow)
