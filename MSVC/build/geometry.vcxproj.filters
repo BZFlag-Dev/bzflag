@@ -121,7 +121,7 @@
     <ClCompile Include="..\..\src\geometry\wavefrontOBJ.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\geometry\ModelRender.cpp">
+    <ClCompile Include="..\..\src\geometry\ModelRender.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
