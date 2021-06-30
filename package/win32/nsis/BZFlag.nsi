@@ -2,6 +2,9 @@
 ;Original templates by Joost Verburg
 ;Redesigned for BZFlag by blast007
 
+; Generate a Unicode installer
+Unicode true
+
 ;--------------------------------
 ;BZFlag Version Variables
 
@@ -155,7 +158,7 @@
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
 
-  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/documentation/getting_started"
+  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/getting-started/"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Read Getting Started"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 
@@ -251,7 +254,7 @@ Section "!BZFlag (Required)" BZFlag
 
   WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "DisplayIcon" "$INSTDIR\bzflag.exe"
   ; We're roughly 30MB installed
-  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "EstimatedSize" 30720
+  WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "EstimatedSize" 46080
   WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "HelpLink" "https://www.bzflag.org/"
   WriteRegStr HKLM "${UNINSTALL_REG_ROOT}" "Comments" "Online multiplayer tank battle game"
   WriteRegDWORD HKLM "${UNINSTALL_REG_ROOT}" "NoRepair" 1
