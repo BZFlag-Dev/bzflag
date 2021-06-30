@@ -30,12 +30,12 @@ requirements include:
   Debian & Ubuntu:
 
     apt-get install g++ libtool automake autoconf libsdl2-dev libcurl3-dev \
-    libc-ares-dev zlib1g-dev libncurses-dev libglew-dev make
+    libc-ares-dev zlib1g-dev libncurses-dev libglew-dev libglm-dev make
 
   Fedora:
 
     dnf install SDL2-devel c-ares-devel libcurl-devel gcc-c++ libtool \
-    ncurses-devel zlib-devel glew-devel
+    ncurses-devel zlib-devel glew-devel glm-devel
 
 After any development packages are installed, execute the following commands
 from the top-level BZFlag source directory:
