@@ -5533,11 +5533,6 @@ static void     renderDialog()
 {
     if (HUDDialogStack::get()->isActive())
     {
-        const int width = mainWindow->getWidth();
-        const int height = mainWindow->getHeight();
-        const int ox = mainWindow->getOriginX();
-        const int oy = mainWindow->getOriginY();
-        glScissor(ox, oy, width, height);
         glMatrixMode(GL_PROJECTION);
         mainWindow->setProjectionPlay();
         glMatrixMode(GL_MODELVIEW);
@@ -5581,7 +5576,6 @@ static void renderRoamMouse()
 
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
-    glScissor(ox, oy, sx, sy);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     mainWindow->setProjectionPlay();
@@ -6421,7 +6415,6 @@ void drawFrame(const float dt)
             mainWindow->getWindow()->getMouse(mx, my);
             my = height - my - 1;
 
-            glScissor(ox, oy, width, height);
             glMatrixMode(GL_PROJECTION);
             mainWindow->setProjectionPlay();
             glMatrixMode(GL_MODELVIEW);

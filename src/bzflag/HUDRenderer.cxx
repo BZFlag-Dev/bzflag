@@ -1490,6 +1490,8 @@ void            HUDRenderer::renderBox(SceneRenderer&)
     }
     glEnd();
 
+    glPushAttrib(GL_SCISSOR_BIT);
+
     // draw heading strip
     if (true /* always draw heading strip */)
     {
@@ -1696,6 +1698,8 @@ void            HUDRenderer::renderBox(SceneRenderer&)
             }
         }
     }
+
+    glPopAttrib();
 }
 
 void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer* myTank )
@@ -1748,7 +1752,6 @@ void            HUDRenderer::setOneToOnePrj()
     const int oy = window.getOriginY();
 
     // use one-to-one pixel projection
-    glScissor(ox, oy + height - viewHeight, width, viewHeight);
     glMatrixMode(GL_PROJECTION);
     window.setProjectionHUD();
     glMatrixMode(GL_MODELVIEW);
