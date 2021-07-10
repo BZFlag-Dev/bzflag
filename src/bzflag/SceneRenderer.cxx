@@ -472,9 +472,11 @@ void SceneRenderer::clearRadar(float opacity)
 {
     int size = window->getHeight() - window->getViewHeight();
     float op = (opacity > 1.0f) ? 1.0f : (opacity < 0.0f) ? 0.0f : opacity;
+    glPushAttrib(GL_SCISSOR_BIT);
     glScissor(window->getOriginX(), 0, size, size);
     glClearColor(0.0f, 0.0f, 0.0f, op);
     glClear(GL_COLOR_BUFFER_BIT);
+    glPopAttrib();
 }
 
 
@@ -889,6 +891,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // set scissor
+    glPushAttrib(GL_SCISSOR_BIT);
     glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
               window->getWidth(), window->getViewHeight());
 
@@ -1044,6 +1047,7 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // back to original state
+    glPopAttrib();
     if (!useHiddenLineOn && useWireframeOn)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glPopMatrix();
