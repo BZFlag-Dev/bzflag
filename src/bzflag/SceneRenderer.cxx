@@ -845,6 +845,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
         clearZbuffer = false;
     }
 
+    glPushAttrib(GL_SCISSOR_BIT);
+
     // the real scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
 
@@ -853,6 +855,8 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
         glDisable(GL_FOG);
 
     renderDimming();
+
+    glPopAttrib();
 
     triangleCount = RenderNode::getTriangleCount();
     if (background)
@@ -891,7 +895,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // set scissor
-    glPushAttrib(GL_SCISSOR_BIT);
     glScissor(window->getOriginX(), window->getOriginY() + window->getHeight() - window->getViewHeight(),
               window->getWidth(), window->getViewHeight());
 
@@ -1047,7 +1050,6 @@ void SceneRenderer::renderScene(bool UNUSED(_lastFrame), bool UNUSED(_sameFrame)
     }
 
     // back to original state
-    glPopAttrib();
     if (!useHiddenLineOn && useWireframeOn)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glPopMatrix();
