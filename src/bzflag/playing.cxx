@@ -6376,13 +6376,19 @@ void drawFrame(const float dt)
             // normal rendering
             sceneRenderer->render();
 
-            // blit the multisample framebuffer (if enabled) to the main framebuffer
+            // blit the multisample framebuffer (if enabled) to the main framebuffer (constrained to drawing area)
             if(useMultisampling)
             {
                 glBindFramebuffer(GL_READ_FRAMEBUFFER, glFramebuffer.getFramebuffer());
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-                glBlitFramebuffer(0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
-                                  0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
+                glBlitFramebuffer(mainWindow->getOriginX(),
+                                  mainWindow->getOriginY() + mainWindow->getHeight() - mainWindow->getViewHeight(),
+                                  mainWindow->getOriginX() + mainWindow->getWidth(),
+                                  mainWindow->getOriginY() + mainWindow->getHeight(),
+                                  mainWindow->getOriginX(),
+                                  mainWindow->getOriginY() + mainWindow->getHeight() - mainWindow->getViewHeight(),
+                                  mainWindow->getOriginX() + mainWindow->getWidth(),
+                                  mainWindow->getOriginY() + mainWindow->getHeight(),
                                   GL_COLOR_BUFFER_BIT, GL_NEAREST);
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
             }
