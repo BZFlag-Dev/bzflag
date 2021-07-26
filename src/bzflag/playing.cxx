@@ -6414,10 +6414,7 @@ void drawFrame(const float dt)
         if (BZDB.isTrue("fakecursor"))
         {
             int mx, my;
-            const int width = mainWindow->getWidth();
             const int height = mainWindow->getHeight();
-            const int ox = mainWindow->getOriginX();
-            const int oy = mainWindow->getOriginY();
             mainWindow->getWindow()->getMouse(mx, my);
             my = height - my - 1;
 

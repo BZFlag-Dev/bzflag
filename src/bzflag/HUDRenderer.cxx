@@ -1744,13 +1744,6 @@ void HUDRenderer::drawMarkersInView( int centerx, int centery, const LocalPlayer
 
 void            HUDRenderer::setOneToOnePrj()
 {
-    // get view metrics
-    const int width = window.getWidth();
-    const int height = window.getHeight();
-    const int viewHeight = window.getViewHeight();
-    const int ox = window.getOriginX();
-    const int oy = window.getOriginY();
-
     // use one-to-one pixel projection
     glMatrixMode(GL_PROJECTION);
     window.setProjectionHUD();
