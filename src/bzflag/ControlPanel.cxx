@@ -348,6 +348,8 @@ void            ControlPanel::render(SceneRenderer& _renderer)
     int   ay = (_renderer.getPanelOpacity() == 1.0f || !showTabs) ? 0
                : int(lineHeight + 4);
 
+    glPushAttrib(GL_SCISSOR_BIT);
+
     glScissor(x + messageAreaPixels[0] - 1,
               y + messageAreaPixels[1],
               messageAreaPixels[2] + 1,
@@ -572,6 +574,9 @@ void            ControlPanel::render(SceneRenderer& _renderer)
               y + messageAreaPixels[1] - 2,
               messageAreaPixels[2] + 3,
               messageAreaPixels[3] + 33);
+
+    glPopAttrib();
+
     OpenGLGState::resetState();
 
     // draw the lines around the console panel
