@@ -22,6 +22,10 @@
 #  include <mmsystem.h>
 #endif /* !defined(_WIN32) */
 
+#if defined(__BEOS__)||defined(__HAIKU__)
+#  include <OS.h>
+#endif
+
 /* common implementation headers */
 #include "TextUtils.h"
 #include "bzfio.h"
