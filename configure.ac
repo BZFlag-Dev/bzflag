@@ -323,7 +323,7 @@ fi
 
 
 dnl detect a usable system regular expression library
-AC_CHECK_LIB(c, regcomp, LIBREGEX="-lc",
+AC_CHECK_LIB(root, regcomp, LIBREGEX="-lroot",
 [AC_CHECK_LIB(regex, regcomp, LIBREGEX="-lregex",
     [AC_CHECK_LIB(compat, regcomp, LIBREGEX="-lcompat", AC_MSG_ERROR([working regex library was not found]))]
 )]
@@ -363,7 +363,7 @@ AC_SUBST(LIBRT)
 AC_CHECK_LIB(m, sqrtf)
 
 # for BeOS - old network stack don't have those libs ( move it in the case switch ?)
-AC_CHECK_LIB([socket], [socket])
+AC_CHECK_LIB([network], [socket])
 AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
 
 # see if pthreads are in libc_r (as on FreeBSD) or libpthread
@@ -535,7 +535,7 @@ case $host_os in
 	LIBS="$LIBS -lsocket -lnsl -lresolv"
 	LDFLAGS="$LDFLAGS -lresolv"	# for hstrerror()
 	;;
-    beos)
+    beos|haiku*)
 	GLIBS=" -lmedia -lgame $GLIBS"
 	LIBS="-lbe"
 	;;
@@ -549,7 +549,7 @@ esac
 
 # avoid using X11 in BeOS and Mac OS X
 case $host_os in
-    beos*)
+    beos*|haiku*)
 	;;
     darwin*)
 	;;
