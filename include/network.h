@@ -100,7 +100,7 @@ using CNCTType = sockaddr const; // only appears used in bzadmin
 # endif
 
 // BeOS net_server has closesocket(), which _must_ be used in place of close()
-# if defined(__BEOS__) && (IPPROTO_TCP != 6)
+# if defined(__BEOS__)||defined(__HAIKU__) && (IPPROTO_TCP != 6)
 #  define close(__x) closesocket(__x)
 # endif
 
