@@ -362,10 +362,10 @@ AC_SUBST(LIBRT)
 # Check for the math lib
 AC_CHECK_LIB(m, sqrtf)
 
-# for BeOS - old network stack don't have those libs ( move it in the case switch ?)
+# for BeOS/Haiku - use -lnetwork for socket/gethostent
 AC_CHECK_LIB([socket], [socket])
-AC_CHECK_LIB([network], [socket])
 AC_CHECK_LIB([socket], [gethostent], [], AC_CHECK_LIB([bind], [gethostent]))
+AC_CHECK_LIB([network], [gethostent])
 
 # see if pthreads are in libc_r (as on FreeBSD) or libpthread
 AC_CHECK_LIB([c_r], [pthread_create], LIBPTHREAD="-lc_r",
@@ -869,7 +869,7 @@ BZ_CONFIGURE_STAGE([services], [8 of 9])
 # need to consolidate them to here.
 
 case $host_os in
-    beos*)
+    beos*|haiku*)
 	beos=true
 	;;
     darwin*)
