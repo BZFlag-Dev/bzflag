@@ -1,5 +1,5 @@
 name: Formatting
-on: [push]
+on: [push, pull_request]
 jobs:
   astyle:
     name: C++ astyle Lint
