@@ -8,6 +8,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    
+    - name: Update repositories
+      run: sudo apt-get update
 
     - name: Install dependencies
       run: sudo apt-get install g++ libtool automake autoconf libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev libsdl-sound1.2-dev libcurl3-dev libc-ares-dev zlib1g-dev libncurses-dev libglew-dev make
