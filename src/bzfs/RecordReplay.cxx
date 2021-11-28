@@ -162,7 +162,7 @@ static bool replaceWorldDatabase(ReplayHeader *h);
 static bool flagIsActive(FlagType *type);
 static bool packFlagTypes(char *flags, u32 *flagsSize);
 
-static bool getFileList(int playerIndex, std::vector<FileEntry>& entries);
+static bool getFileList(int playerIndex, std::vector<FileEntry>& entries, std::string pattern);
 static FILE *openFile(const char *filename, const char *mode);
 static FILE *openWriteFile(int playerIndex, const char *filename);
 static bool badFilename(const char *name);
@@ -718,7 +718,8 @@ bool Replay::loadFile(int playerIndex, const char *filename)
     if (filename[0] == '#')
     {
         std::vector<FileEntry> entries;
-        if (!getFileList(playerIndex, entries))
+        // When selecting by index, we assume they searched without a query
+        if (!getFileList(playerIndex, entries, "*"))
         {
             sendMessage(ServerPlayer, playerIndex, "Could not get file index list");
             return false;
@@ -862,7 +863,7 @@ static FILE *getRecordFile(const char *filename)
 }
 
 
-static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
+static bool getFileList(int playerIndex, std::vector<FileEntry>& entries, std::string pattern)
 {
     entries.clear();
     int entNum = 0;
@@ -883,6 +884,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
     {
         std::string name = RecordDir;
         name += de->d_name;
+        if (!glob_match(name, pattern)) continue;
         FILE *file = getRecordFile(name.c_str());
         if (file != NULL)
         {
@@ -916,6 +918,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries)
         {
             std::string name = RecordDir;
             name += findData.cFileName;
+            if (!glob_match(name, pattern)) continue;
             FILE *file = getRecordFile(name.c_str());
             if (file != NULL)
             {
@@ -1018,7 +1021,7 @@ bool Replay::sendFileList(int playerIndex, const char* options)
         return false;
 
     std::vector<FileEntry> entries;
-    if (!getFileList(playerIndex, entries))
+    if (!getFileList(playerIndex, entries, pattern))
         return false;
 
     char buffer[MessageLen];
@@ -1034,19 +1037,16 @@ bool Replay::sendFileList(int playerIndex, const char* options)
     for (unsigned int i = 0; i < entries.size(); i++)
     {
         const FileEntry& entry = entries[i];
-        if (glob_match(pattern, entry.file))
+        entriesSent++;
+        snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",
+                    entry.entryNum + 1, entry.file.c_str(), entry.time);
+        sendMessage(ServerPlayer, playerIndex, buffer);
+        if (entriesSent >= MaxListOutput)
         {
-            entriesSent++;
-            snprintf(buffer, MessageLen, "#%02i:  %-30s  [%9.1f seconds]",
-                     entry.entryNum + 1, entry.file.c_str(), entry.time);
+            snprintf(buffer, MessageLen, "Not listing more then %i entries, "
+                        "try using pattern matching.", MaxListOutput);
             sendMessage(ServerPlayer, playerIndex, buffer);
-            if (entriesSent >= MaxListOutput)
-            {
-                snprintf(buffer, MessageLen, "Not listing more then %i entries, "
-                         "try using pattern matching.", MaxListOutput);
-                sendMessage(ServerPlayer, playerIndex, buffer);
-                break;
-            }
+            break;
         }
     }
 
