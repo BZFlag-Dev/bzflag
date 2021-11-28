@@ -885,6 +885,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries, std::s
         std::string name = RecordDir;
         name += de->d_name;
         if (!glob_match(name, pattern)) continue;
+        if (entNum > MaxListOutput) break;
         FILE *file = getRecordFile(name.c_str());
         if (file != NULL)
         {
@@ -919,6 +920,7 @@ static bool getFileList(int playerIndex, std::vector<FileEntry>& entries, std::s
             std::string name = RecordDir;
             name += findData.cFileName;
             if (!glob_match(name, pattern)) continue;
+            if (entNum > MaxListOutput) break;
             FILE *file = getRecordFile(name.c_str());
             if (file != NULL)
             {
