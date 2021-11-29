@@ -7221,7 +7221,7 @@ int main(int argc, char **argv)
                     if (timeLeft > 0.0f)
                         timeLeft += clOptions->addedTime;
                     // inform visitors about the change
-                    sendMessage(ServerPlayer, AdminPlayers,TextUtils::format("Adjusting the countdown by %f seconds",
+                    sendMessage(ServerPlayer, AdminPlayers,TextUtils::format("Adjusting the countdown by %0.f seconds",
                                 clOptions->addedTime).c_str());
                     clOptions->addedTime = 0.0f; //reset
                 }

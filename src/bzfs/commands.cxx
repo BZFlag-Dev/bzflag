@@ -3820,8 +3820,7 @@ bool DateTimeCommand::operator() (const char     *,
     return true;
 }
 
-bool ModCountCommand::operator() (const char*message,
-                                  GameKeeper::Player *playerData)
+bool ModCountCommand::operator() (const char* message, GameKeeper::Player *playerData)
 {
     size_t messageStart = 0;
     int t = playerData->getIndex();
@@ -3837,15 +3836,17 @@ bool ModCountCommand::operator() (const char*message,
     std::string messageText = &message[9];
 
     // skip any leading whitespace
-    while ((messageStart < messageText.size()) &&
-            (isspace(messageText[messageStart])))
+    while ((messageStart < messageText.size()) && (isspace(messageText[messageStart])))
+    {
         messageStart++;
+    }
 
     if (messageStart == messageText.size())
     {
         sendMessage(ServerPlayer, t, "Usage: /modcount {+|-} SECONDS");
         return true;
     }
+
     if (!countdownActive && countdownDelay <= 0)
     {
         char reply[MessageLen] = {0};
@@ -3855,9 +3856,15 @@ bool ModCountCommand::operator() (const char*message,
     }
 
     messageText.erase(0, --messageStart);
-    clOptions->addedTime += (float)atof((messageText.c_str())); //remember to add the time
+    float timeModification = atof(messageText.c_str());
+    clOptions->addedTime += timeModification; // remember to add the time
 
-    if (countdownDelay > 0)   //we are currently counting down to start
+    char announce[MessageLen] = {0};
+    snprintf(announce, MessageLen, "Countdown has been adjusted by %0.f seconds by %s",
+             timeModification, playerData->player.getCallSign());
+    sendMessage(ServerPlayer, AllPlayers, announce);
+
+    if (countdownDelay > 0) // we are currently counting down to start
     {
         char reply[MessageLen] = {0};
         snprintf(reply, MessageLen, "%s, the countdown will be adjusted by %f when the match starts",
