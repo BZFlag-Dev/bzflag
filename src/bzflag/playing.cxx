@@ -5822,6 +5822,7 @@ void drawFrame(const float dt)
 
     const float* myTankPos;
     const float* myTankDir;
+    float myTankAngle = 0.0f;
     GLfloat fov;
     GLfloat eyePoint[3];
     GLfloat targetPoint[3];
@@ -5856,6 +5857,7 @@ void drawFrame(const float dt)
         {
             myTankPos = myTank->getPosition();
             myTankDir = myTank->getForward();
+            myTankAngle = myTank->getAngle();
             muzzleHeight = myTank->getMuzzleHeight();
 
             if (myTank->getFlag() == Flags::WideAngle)
@@ -5987,7 +5989,7 @@ void drawFrame(const float dt)
                     myTank->move(virtPos, (float)(roamViewAngle * M_PI / 180.0));
             }
             fov = (float)(roam->zoom * M_PI / 180.0);
-            moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+            moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], myTankAngle, false);
         }
 
         // only use a close plane for drawing in the
