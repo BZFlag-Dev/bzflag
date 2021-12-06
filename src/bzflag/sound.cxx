@@ -263,7 +263,7 @@ struct SoundEvent
 {
     SoundEvent();
 
-    void reset(AudioSamples* audioSample, float attenuation, float x=0, float y=0, float z=0);
+    void reset(AudioSamples* audioSample, float x=0, float y=0, float z=0);
 
     bool isWorld() const;
     bool isFixed() const;
@@ -284,8 +284,6 @@ struct SoundEvent
     double        ptrFracRight;       /* fractional step ptr */
     float         x, y, z;        /* event location */
     double        time;           /* time of event */
-    float         lastLeftAtten;
-    float         lastRightAtten;
     float         dx, dy, dz;     /* last relative position */
     float         d;          /* last relative distance */
     float         dLeft;          /* last relative distance */
@@ -303,12 +301,12 @@ private:
 
 SoundEvent::SoundEvent()
     : samples(0), busy(false), ptr(0), ptrFracLeft(0), ptrFracRight(0), x(0), y(0), z(0), time(0),
-      lastLeftAtten(0), lastRightAtten(0), dx(0), dy(0), dz(0), d(0), dLeft(0), dRight(0), amplitude(0),
+      dx(0), dy(0), dz(0), d(0), dLeft(0), dRight(0), amplitude(0),
       world(false), fixed(false), ignoring(false), important(false)
 {
 }
 
-void SoundEvent::reset(AudioSamples* sample_, float attenuation_, float x_, float y_, float z_)
+void SoundEvent::reset(AudioSamples* sample_, float x_, float y_, float z_)
 {
     samples = sample_;
     busy = true;
@@ -318,7 +316,6 @@ void SoundEvent::reset(AudioSamples* sample_, float attenuation_, float x_, floa
     y = y_;
     z = z_;
     time = curTime;
-    lastLeftAtten = lastRightAtten = attenuation_;
     dx = dy = dz = 0;     // not explicit?
     d = dLeft = dRight = 0;   // not explicit?
     amplitude = 0;        // not explicit?
@@ -408,11 +405,6 @@ static SoundEvent   events[MaxEvents];
 static int      portUseCount;
 static double       endTime;
 
-/* fade in/out table */
-const size_t        FadeDuration(16); // is this supposed to be global?
-static std::vector<float> fadeIn(FadeDuration);
-static std::vector<float> fadeOut(FadeDuration);
-
 /* scratch buffer for adding contributions from sources */
 static std::vector<float> scratch;
 
@@ -443,12 +435,6 @@ void            openSound(const char*)
     /* initialize */
     timeSizeOfWorld = 1.414f * BZDBCache::worldSize / SpeedOfSound;
     portUseCount = 0;
-    for (int i = 0; i < (int)FadeDuration; i += 2)
-    {
-        fadeIn[i] = fadeIn[i+1] =
-                        sinf((float)(M_PI / 2.0 * (double)i / (double)(FadeDuration-2)));
-        fadeOut[i] = fadeOut[i+1] = 1.0f - fadeIn[i];
-    }
     scratch.resize(audioBufferSize);
 
     startTime = TimeKeeper::getCurrent();
@@ -773,37 +759,12 @@ static int      addLocalContribution(SoundEvent* e, size_t& len)
         float* src( &e->samples->data.at(e->ptr) );
         try
         {
-            if (numSamples <= FadeDuration)
-            {
-                for (size_t n = 0; n < numSamples; n += 2)
-                {
-                    int fs = int(FadeDuration * float(n) / float(numSamples)) & ~1;
-                    scratch[n] += src[n] * (fadeIn[fs] * volumeAtten +
-                                            fadeOut[fs] * e->lastLeftAtten);
-                    scratch[n+1] += src[n+1] * (fadeIn[fs] * volumeAtten +
-                                                fadeOut[fs] * e->lastRightAtten);
-                }
-            }
-            else
-            {
-                for (size_t n(0); n < numSamples; n += 2)
-                {
-                    if (n < FadeDuration)
-                    {
-                        scratch[n] += src[n] * (fadeIn[n] * volumeAtten +
-                                                fadeOut[n] * e->lastLeftAtten);
-                        scratch[n+1] += src[n+1] * (fadeIn[n] * volumeAtten +
-                                                    fadeOut[n] * e->lastRightAtten);
-                    }
-                    else
-                    {
-                        scratch[n] += src[n] * volumeAtten;
-                        scratch[n+1] += src[n+1] * volumeAtten;
-                    }
-                }
-            }
 
-            e->lastLeftAtten = e->lastRightAtten = volumeAtten;
+            for (size_t n(0); n < numSamples; n += 2)
+            {
+                scratch[n] += src[n] * volumeAtten;
+                scratch[n+1] += src[n+1] * volumeAtten;
+            }
         }
         catch (std::exception const& ex)
         {
@@ -840,11 +801,7 @@ static void     getWorldStuff(SoundEvent *e, float* la, float* ra,
         leftAtten = ff * fl * e->amplitude;
         rightAtten = ff * (4.0f/3.0f - fl) * e->amplitude;
     }
-    if (e->ptrFracLeft == 0.0f || e->ptrFracRight == 0.0f)
-    {
-        e->lastLeftAtten = leftAtten;
-        e->lastRightAtten = rightAtten;
-    }
+
     *la = mutingOn ? 0.0f : leftAtten * volumeAtten;
     *ra = mutingOn ? 0.0f : rightAtten * volumeAtten;
 
@@ -877,7 +834,7 @@ static int      addWorldContribution(SoundEvent* e, size_t& len)
 
     try
     {
-        // add contribution with crossfade
+        // add contribution
         for (n = 0; !fini && n < audioBufferSize; n += 2)
         {
             // get sample position (to subsample resolution)
@@ -891,18 +848,8 @@ static int      addWorldContribution(SoundEvent* e, size_t& len)
             fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
             // filter and accumulate
-            if (n < FadeDuration)
-            {
-                scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
-                                          fadeOut[n] * e->lastLeftAtten);
-                scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-                                            fadeOut[n] * e->lastRightAtten);
-            }
-            else
-            {
-                scratch[n] += fsampleL * leftAtten;
-                scratch[n+1] += fsampleR * rightAtten;
-            }
+            scratch[n] += fsampleL * leftAtten;
+            scratch[n+1] += fsampleR * rightAtten;
 
             // next sample
             if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
@@ -910,9 +857,6 @@ static int      addWorldContribution(SoundEvent* e, size_t& len)
             if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
                 fini = true;
         }
-
-        e->lastLeftAtten = leftAtten;
-        e->lastRightAtten = rightAtten;
     }
     catch (std::exception const& ex)
     {
@@ -952,7 +896,7 @@ static int      addFixedContribution(SoundEvent* e, size_t& len)
         len = audioBufferSize;
     }
 
-    // add contribution with crossfade
+    // add contribution
     for (n = 0; n < audioBufferSize; n += 2)
     {
         // get sample position (to subsample resolution)
@@ -966,18 +910,8 @@ static int      addFixedContribution(SoundEvent* e, size_t& len)
         fsampleR = (1.0f - fracR) * src[nmR] + fracR * src[nmR+1];
 
         // filter and accumulate
-        if (n < FadeDuration)
-        {
-            scratch[n] += fsampleL * (fadeIn[n] * leftAtten +
-                                      fadeOut[n] * e->lastLeftAtten);
-            scratch[n+1] += fsampleR * (fadeIn[n] * rightAtten +
-                                        fadeOut[n] * e->lastRightAtten);
-        }
-        else
-        {
-            scratch[n] += fsampleL * leftAtten;
-            scratch[n+1] += fsampleR * rightAtten;
-        }
+        scratch[n] += fsampleL * leftAtten;
+        scratch[n+1] += fsampleR * rightAtten;
 
         // next sample
         if ((e->ptrFracLeft += sampleStep) >= e->samples->dmlength)
@@ -985,9 +919,6 @@ static int      addFixedContribution(SoundEvent* e, size_t& len)
         if ((e->ptrFracRight += sampleStep) >= e->samples->dmlength)
             e->ptrFracRight -= e->samples->dmlength;
     }
-
-    e->lastLeftAtten = leftAtten;
-    e->lastRightAtten = rightAtten;
 
     return 0;
 }
@@ -1172,7 +1103,7 @@ static bool     audioInnerLoop()
             if (slot == MaxEvents) break;
             event = events + slot;
 
-            event->reset(&soundSamples[cmd.code], volumeAtten);
+            event->reset(&soundSamples[cmd.code]);
             portUseCount++;
             break;
 
@@ -1189,7 +1120,7 @@ static bool     audioInnerLoop()
             if (slot == MaxEvents) break;
 
             event = events + slot;
-            event->reset(&soundSamples[cmd.code], volumeAtten, cmd.x, cmd.y, cmd.z);
+            event->reset(&soundSamples[cmd.code], cmd.x, cmd.y, cmd.z);
             event->setWorld(true);
             event->setIgnoring(true);
             if (cmd.cmd == SoundCommand::IWORLD_SFX) event->setImportant(true);
@@ -1205,7 +1136,7 @@ static bool     audioInnerLoop()
             if (slot == MaxEvents) break;
 
             event = events + slot;
-            event->reset(&soundSamples[cmd.code], volumeAtten, cmd.x, cmd.y, cmd.z);
+            event->reset(&soundSamples[cmd.code], cmd.x, cmd.y, cmd.z);
             event->setFixed(true);
             event->setWorld(true);
 
