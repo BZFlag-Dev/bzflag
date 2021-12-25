@@ -7309,9 +7309,13 @@
 					../include,
 					../Xcode,
 					/usr/local/include,
+					/opt/homebrew/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/homebrew/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -7356,9 +7360,13 @@
 					../include,
 					../Xcode,
 					/usr/local/include,
+					/opt/homebrew/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/lib,
+					/opt/homebrew/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = (
