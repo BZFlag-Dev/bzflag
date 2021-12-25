@@ -3837,9 +3837,7 @@ bool ModCountCommand::operator() (const char* message, GameKeeper::Player *playe
 
     // skip any leading whitespace
     while ((messageStart < messageText.size()) && (isspace(messageText[messageStart])))
-    {
         messageStart++;
-    }
 
     if (messageStart == messageText.size())
     {
