@@ -7308,13 +7308,13 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
-					/usr/local/include,
 					/opt/homebrew/include,
+					/usr/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					/opt/homebrew/lib,
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
@@ -7359,13 +7359,13 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
-					/usr/local/include,
 					/opt/homebrew/include,
+					/usr/local/include,
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/lib,
 					/opt/homebrew/lib,
+					/usr/local/lib,
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
