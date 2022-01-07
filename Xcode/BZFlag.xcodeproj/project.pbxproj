@@ -7308,13 +7308,18 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
+					/usr/local/include,
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"HEADER_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/include;
+				"HEADER_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					/opt/homebrew/include,
+				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = "";
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/lib;
+				LIBRARY_SEARCH_PATHS = /usr/local/lib;
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					/opt/homebrew/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -7358,13 +7363,18 @@
 				HEADER_SEARCH_PATHS = (
 					../include,
 					../Xcode,
+					/usr/local/include,
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = /usr/local/include;
-				"HEADER_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/include;
+				"HEADER_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					/opt/homebrew/include,
+				);
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/../Frameworks @executable_path/../PlugIns";
-				LIBRARY_SEARCH_PATHS = "";
-				"LIBRARY_SEARCH_PATHS[arch=*]" = /usr/local/lib;
-				"LIBRARY_SEARCH_PATHS[arch=arm64]" = /opt/homebrew/lib;
+				LIBRARY_SEARCH_PATHS = "/usr/local/lib";
+				"LIBRARY_SEARCH_PATHS[arch=arm64]" = (
+					"$(inherited)",
+					/opt/homebrew/lib,
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CPLUSPLUSFLAGS = (
