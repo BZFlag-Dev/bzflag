@@ -139,7 +139,14 @@ void EighthDimShellNode::ShellRenderNode::render()
     if (BZDBCache::blend && RENDERER.useQuality() >= 2)
         renderNode->render();
 
+    // workaround for an issue on macOS M1 systems where setting the polygon mode to only back faces causes a fallback
+    // to software fragment processing due to "polygon mode mismatch," resulting in a massive loss of framerate
+    // FIXME: remove this workaround if Apple ever corrects this issue in their drivers
+#if defined(__APPLE__) && defined(__aarch64__)
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+#else
     glPolygonMode(GL_BACK, GL_LINE);
+#endif
     glLineWidth(3.0f);
 
     renderNode->render();
