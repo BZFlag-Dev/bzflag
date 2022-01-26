@@ -1623,7 +1623,6 @@ int curlProgressFunc(void* UNUSED(clientp),
 
     // abort the download?
     BzfEvent event;
-    if (display->isEventPending())
     {
         if (display->peekEvent(event))
         {
