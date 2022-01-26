@@ -110,6 +110,7 @@ bool SDLDisplay::peekEvent(BzfEvent& _event) const
      * SDL_PollEvent does the job
      */
     SDL_Event event;
+    SDL_PumpEvents();
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT)
             <= 0)
         return false;
