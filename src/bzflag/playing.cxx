@@ -1074,10 +1074,10 @@ static void mouseClamp()
 }
 
 
-static void     doEvent(BzfDisplay *disply)
+static bool doEvent(BzfDisplay *disply)
 {
     BzfEvent event;
-    if (!disply->getEvent(event)) return;
+    if (!disply->getEvent(event)) return false;
 
     switch (event.type)
     {
@@ -1197,6 +1197,7 @@ static void     doEvent(BzfDisplay *disply)
         /* unset */
         break;
     }
+    return true;
 }
 
 void        addMessage(const Player *_player, const std::string& msg,
@@ -3594,12 +3595,13 @@ void           processInputEvents(float maxProcessingTime)
     if (mainWindow && display)
     {
         TimeKeeper start = TimeKeeper::getCurrent();
-        while (display->isEventPending() &&
-                !CommandsStandard::isQuit() &&
+        while (!CommandsStandard::isQuit() &&
                 (TimeKeeper::getCurrent() - start < maxProcessingTime))
         {
             // process one event
-            doEvent(display);
+            bool anyEvent = doEvent(display);
+            if (!anyEvent)
+                break;
         }
     }
 }
