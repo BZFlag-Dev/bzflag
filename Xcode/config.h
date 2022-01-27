@@ -18,10 +18,14 @@
 #include "buildinfo.h"
 
 /* BZFlag System Environment */
-#if defined __llvm__ && defined __x86_64__
+#if defined __llvm__
+#if defined __aarch64__
+#define BZ_BUILD_ARCH_STR "64ARM"
+#elif defined __x86_64__
 #define BZ_BUILD_ARCH_STR "64"
-#elif defined __llvm__ && defined __i386__
+#elif defined __i386__
 #define BZ_BUILD_ARCH_STR "32"
+#endif
 #endif
 #ifdef DEBUG
 #define BZ_BUILD_DEBUG_STR "dbg"
