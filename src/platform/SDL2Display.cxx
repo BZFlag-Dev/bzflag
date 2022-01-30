@@ -88,6 +88,9 @@ SDLDisplay::~SDLDisplay()
 
 bool SDLDisplay::isEventPending() const
 {
+    // Fixing a bug on SDL 2.0.20
+    SDL_PumpEvents();
+
     return (SDL_PollEvent(NULL) == 1);
 }
 
