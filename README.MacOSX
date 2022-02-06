@@ -78,7 +78,7 @@ $ sudo cp lib/libGLEW.a /usr/local/lib
 Download the latest version of c-ares from http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:
 
-$ export MACOSX_DEPLOYMENT_TARGET=10.9
+$ export MACOSX_DEPLOYMENT_TARGET=10.9 CFLAGS='-arch x86_64 -arch arm64'
 $ ./configure --disable-shared
 $ make
 $ sudo make install
