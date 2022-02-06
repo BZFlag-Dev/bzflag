@@ -67,16 +67,13 @@ library and header search paths in this project file appropriately.
 
 Download the latest version of GLEW from
 https://github.com/nigels-com/glew/releases. Extract the package, and then
-build it with the following commands (WARNING: this will remove all shared
-libraries for GLEW under /usr/local, even older versions you may have
-installed; this is necessary because it appears there is currently no way to
-configure GLEW to build without shared libraries):
+build it with the following commands:
 
 $ export MACOSX_DEPLOYMENT_TARGET=10.9
 $ export GLEW_DEST=/usr/local
-$ make glew.lib
-$ sudo make install
-$ sudo rm /usr/local/lib/libGLEW*.dylib
+$ make SYSTEM=darwin-universal glew.lib.static
+$ sudo make install.include
+$ sudo cp lib/libGLEW.a /usr/local/lib
 
 Download the latest version of c-ares from http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:
