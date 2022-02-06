@@ -72,7 +72,7 @@ libraries for GLEW under /usr/local, even older versions you may have
 installed; this is necessary because it appears there is currently no way to
 configure GLEW to build without shared libraries):
 
-$ export MACOSX_DEPLOYMENT_TARGET=10.7
+$ export MACOSX_DEPLOYMENT_TARGET=10.9
 $ export GLEW_DEST=/usr/local
 $ make glew.lib
 $ sudo make install
@@ -81,7 +81,7 @@ $ sudo rm /usr/local/lib/libGLEW*.dylib
 Download the latest version of c-ares from http://c-ares.haxx.se.
 Extract the package, and then build it with the following commands:
 
-$ export MACOSX_DEPLOYMENT_TARGET=10.7
+$ export MACOSX_DEPLOYMENT_TARGET=10.9
 $ ./configure --disable-shared
 $ make
 $ sudo make install
