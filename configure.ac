@@ -234,11 +234,7 @@ fi
 AC_CHECK_TOOL(WINDRES, windres, :)
 
 # libtool shouldn't be generated until after LD is set.
-# AC_PROG_LIBTOOL goes poof in libtool 1.9, but that's not very
-# widespread at all.
-# LT_INIT
-AC_LIBTOOL_DLOPEN
-AC_PROG_LIBTOOL
+LT_INIT([dlopen])
 AC_SUBST(LIBTOOL_DEPS)
 
 # quell the verbosity
@@ -409,7 +405,6 @@ dnl *************************
 
 BZ_CONFIGURE_STAGE([headers], [4 of 9])
 
-AC_HEADER_STDC
 AC_LANG(C++)
 AC_CHECK_HEADERS( \
 	cmath \

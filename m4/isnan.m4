@@ -21,26 +21,27 @@ AC_MSG_CHECKING([for isnan])
 
 dnl see if we have std::isnan
 bz_isnan_works=no
-AC_TRY_COMPILE([
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_CMATH
 #  include <cmath>
 #endif
-], [
+]], [[
 float f = 0.0f;
 std::isnan(f);
-], [bz_isnan_works=yes])
+]])], [bz_isnan_works=yes])
 
 if test "x$bz_isnan_works" = "xyes" ; then
 	AC_DEFINE([HAVE_STD__ISNAN], [1], [Define to 1 if `std::isnan' is available])
 else
 	dnl try again using just math.h, but include cmath in case it clobbers
-	AC_TRY_COMPILE([
+        AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <cmath>
 #include <math.h>
-], [
+]], [[
 float f = 0.0f;
-isnan(f);
-], [bz_isnan_works=yes])
+std::isnan(f);
+]])], [bz_isnan_works=yes])
 	if test "x$bz_isnan_works" = "xyes" ; then
 		AC_DEFINE([HAVE_ISNAN], [1], [Define to 1 if `isnan' is available])
 	fi
