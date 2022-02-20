@@ -5533,6 +5533,11 @@ static void     renderDialog()
 {
     if (HUDDialogStack::get()->isActive())
     {
+        const int width = mainWindow->getWidth();
+        const int height = mainWindow->getHeight();
+        const int ox = mainWindow->getOriginX();
+        const int oy = mainWindow->getOriginY();
+        glScissor(ox, oy, width, height);
         glMatrixMode(GL_PROJECTION);
         mainWindow->setProjectionPlay();
         glMatrixMode(GL_MODELVIEW);
@@ -5576,6 +5581,7 @@ static void renderRoamMouse()
 
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
+    glScissor(ox, oy, sx, sy);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     mainWindow->setProjectionPlay();
@@ -6376,19 +6382,13 @@ void drawFrame(const float dt)
             // normal rendering
             sceneRenderer->render();
 
-            // blit the multisample framebuffer (if enabled) to the main framebuffer (constrained to drawing area)
+            // blit the multisample framebuffer (if enabled) to the main framebuffer
             if(useMultisampling)
             {
                 glBindFramebuffer(GL_READ_FRAMEBUFFER, glFramebuffer.getFramebuffer());
                 glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-                glBlitFramebuffer(mainWindow->getOriginX(),
-                                  mainWindow->getOriginY() + mainWindow->getHeight() - mainWindow->getViewHeight(),
-                                  mainWindow->getOriginX() + mainWindow->getWidth(),
-                                  mainWindow->getOriginY() + mainWindow->getHeight(),
-                                  mainWindow->getOriginX(),
-                                  mainWindow->getOriginY() + mainWindow->getHeight() - mainWindow->getViewHeight(),
-                                  mainWindow->getOriginX() + mainWindow->getWidth(),
-                                  mainWindow->getOriginY() + mainWindow->getHeight(),
+                glBlitFramebuffer(0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
+                                  0, 0, mainWindow->getWidth(), mainWindow->getHeight(),
                                   GL_COLOR_BUFFER_BIT, GL_NEAREST);
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
             }
@@ -6414,10 +6414,14 @@ void drawFrame(const float dt)
         if (BZDB.isTrue("fakecursor"))
         {
             int mx, my;
+            const int width = mainWindow->getWidth();
             const int height = mainWindow->getHeight();
+            const int ox = mainWindow->getOriginX();
+            const int oy = mainWindow->getOriginY();
             mainWindow->getWindow()->getMouse(mx, my);
             my = height - my - 1;
 
+            glScissor(ox, oy, width, height);
             glMatrixMode(GL_PROJECTION);
             mainWindow->setProjectionPlay();
             glMatrixMode(GL_MODELVIEW);

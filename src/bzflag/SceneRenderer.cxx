@@ -472,11 +472,9 @@ void SceneRenderer::clearRadar(float opacity)
 {
     int size = window->getHeight() - window->getViewHeight();
     float op = (opacity > 1.0f) ? 1.0f : (opacity < 0.0f) ? 0.0f : opacity;
-    glPushAttrib(GL_SCISSOR_BIT);
     glScissor(window->getOriginX(), 0, size, size);
     glClearColor(0.0f, 0.0f, 0.0f, op);
     glClear(GL_COLOR_BUFFER_BIT);
-    glPopAttrib();
 }
 
 
@@ -845,8 +843,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
         clearZbuffer = false;
     }
 
-    glPushAttrib(GL_SCISSOR_BIT);
-
     // the real scene
     renderScene(_lastFrame, _sameFrame, fullWindow);
 
@@ -855,8 +851,6 @@ void SceneRenderer::render(bool _lastFrame, bool _sameFrame,
         glDisable(GL_FOG);
 
     renderDimming();
-
-    glPopAttrib();
 
     triangleCount = RenderNode::getTriangleCount();
     if (background)

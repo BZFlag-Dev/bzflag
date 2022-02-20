@@ -321,8 +321,6 @@ void RadarRenderer::renderFrame(SceneRenderer& renderer)
     const int ox = window.getOriginX();
     const int oy = window.getOriginY();
 
-    glPushAttrib(GL_SCISSOR_BIT);
-
     glScissor(ox + x - 1, oy + y - 1, w + 2, h + 2);
 
     const float left = float(ox + x) - 0.5f;
@@ -400,11 +398,11 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
     // render the frame
     renderFrame(renderer);
 
-    if (blank || !world)
-    {
-        glPopAttrib();
+    if (blank)
         return;
-    }
+
+    if (!world)
+        return;
 
     smooth = BZDBCache::smooth;
     const bool fastRadar = ((BZDBCache::radarStyle == 1) ||
@@ -787,8 +785,6 @@ void RadarRenderer::render(SceneRenderer& renderer, bool blank, bool observer)
         glDisable(GL_LINE_SMOOTH);
         glDisable(GL_POINT_SMOOTH);
     }
-
-    glPopAttrib();
 
     triangleCount = RenderNode::getTriangleCount();
 }
