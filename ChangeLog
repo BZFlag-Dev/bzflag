@@ -4,6 +4,11 @@
 BZFlag 2.4.23
 -------------
 
+* Don't crash when removing the BZFS Cron server-side player - Scott Wichser
+* Announce who adjusted the countdown with /modcount - Vladimir Jimenez
+* Add support for Apple silicon builds - René Schwaiger, Joshua Bodine
+* Work around an SDL 2.0.20 event handling regression - Alfredo Tupone
+
 
 BZFlag 2.4.22  "Eyes are windows to your SDL" (2021-02-27)
 ----------------------------------------------------------
