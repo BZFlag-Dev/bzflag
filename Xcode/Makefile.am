@@ -3,6 +3,7 @@ SUBDIRS = \
 	licenses
 
 EXTRA_DIST =	\
+	BZFlag-Info.plist \
 	BZFlag.icns \
 	config.h
 
