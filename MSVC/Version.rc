@@ -14,8 +14,8 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 2,4,23,0
- PRODUCTVERSION 2,4,23,0
+ FILEVERSION 2,4,24,0
+ PRODUCTVERSION 2,4,24,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -32,12 +32,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Tim Riker"
             VALUE "FileDescription", "BZFlag"
-            VALUE "FileVersion", "2.4.23.0"
+            VALUE "FileVersion", "2.4.24.0"
             VALUE "InternalName", "version.rc"
             VALUE "LegalCopyright", "Copyright (c) 1993-2021 Tim Riker"
             VALUE "OriginalFilename", "version.rc"
             VALUE "ProductName", "BZFlag"
-            VALUE "ProductVersion", "2.4.23.0"
+            VALUE "ProductVersion", "2.4.24.0"
         END
     END
     BLOCK "VarFileInfo"

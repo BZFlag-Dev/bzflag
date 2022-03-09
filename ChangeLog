@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.23
--------------
+BZFlag 2.4.24  "Thank you for your input" (2022-03-08)
+------------------------------------------------------
 
 * Don't crash when removing the BZFS Cron server-side player - Scott Wichser
 * Announce who adjusted the countdown with /modcount - Vladimir Jimenez
