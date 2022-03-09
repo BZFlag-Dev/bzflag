@@ -3854,7 +3854,7 @@ bool ModCountCommand::operator() (const char* message, GameKeeper::Player *playe
     }
 
     messageText.erase(0, --messageStart);
-    float timeModification = atof(messageText.c_str());
+    float timeModification = (float)atof(messageText.c_str());
     clOptions->addedTime += timeModification; // remember to add the time
 
     char announce[MessageLen] = {0};
