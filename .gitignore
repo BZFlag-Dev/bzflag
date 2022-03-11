@@ -18,7 +18,7 @@
 *.a
 *.lib
 
-# Windows debug files
+# Visual Studio files
 *.tlog
 *.idb
 *.pdb
@@ -42,6 +42,7 @@
 *.VC.db
 *.opendb
 .vs
+*.aps
 
 # GNU Autotools
 Makefile.in
@@ -79,6 +80,7 @@ stamp-h3
 work
 .dirstamp
 
+# Plugin directories
 .deps
 .libs
 
@@ -129,3 +131,4 @@ Thumbs.db
 /tools/TextTool2/TextTool2.xcodeproj/project.xcworkspace
 /MSVC/HoldTheFlag_Win32_Debug/*.ib_pdb_index
 *.ib_pdb_index
+
