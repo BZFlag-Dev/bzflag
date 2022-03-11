@@ -117,13 +117,15 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\package\win32\nsis\BZFlag.nsi">
+    <Text Include="..\..\package\win32\nsis\BZFlag.nsi">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Outputs)</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">makensis /D BUILD_64 %(FullPath)</Command>
-    </CustomBuild>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\plugins\airspawn\airspawn.vcxproj">

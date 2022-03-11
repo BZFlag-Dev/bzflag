@@ -6,8 +6,8 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\package\win32\nsis\BZFlag.nsi">
+    <Text Include="..\..\package\win32\nsis\BZFlag.nsi">
       <Filter>Installer Files</Filter>
-    </CustomBuild>
+    </Text>
   </ItemGroup>
 </Project>
