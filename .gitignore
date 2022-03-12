@@ -18,7 +18,7 @@
 *.a
 *.lib
 
-# Windows debug files
+# Visual Studio files
 *.tlog
 *.idb
 *.pdb
@@ -45,6 +45,7 @@
 *.VC.db
 *.opendb
 .vs
+*.aps
 
 # GNU Autotools
 Makefile.in
@@ -108,7 +109,6 @@ work
 /man/*.gz
 /man/*.html
 /misc/bzflag.desktop
-/src/platform/MacOSX/BZFlag-Info.plist
 /MSVC/ipch
 /MSVC/bzflag.aps
 *.nativecodeanalysis.xml
@@ -136,3 +136,4 @@ Thumbs.db
 # premake files
 premake5
 dependencies
+

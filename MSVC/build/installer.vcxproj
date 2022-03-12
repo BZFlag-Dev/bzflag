@@ -98,8 +98,8 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>copy "$(VCInstallDir)Redist\MSVC\$(VCToolsRedistVersion)\vcredist_$(PlatformShortName).exe" "$(ProjectDir)..\..\package\win32\nsis\"
-"$(ProgramFiles)\nsis\makensis.exe" "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi" </Command>
+      <Command>copy /Y "$(VCInstallDir)Redist\MSVC\$(VCToolsRedistVersion)\vcredist_$(PlatformShortName).exe" "$(ProjectDir)..\..\package\win32\nsis\"
+"$(ProgramFiles)\nsis\makensis.exe" "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -110,22 +110,22 @@
       </HeaderFileName>
     </Midl>
     <PostBuildEvent>
-      <Command>copy "$(VCInstallDir)Redist\MSVC\$(VCToolsRedistVersion)\vcredist_$(PlatformShortName).exe" "$(ProjectDir)..\..\package\win32\nsis\"
+      <Command>copy /Y "$(VCInstallDir)Redist\MSVC\$(VCToolsRedistVersion)\vcredist_$(PlatformShortName).exe" "$(ProjectDir)..\..\package\win32\nsis\"
 "$(ProgramFiles)\nsis\makensis.exe" /DBUILD_64 "$(ProjectDir)..\..\package\win32\nsis\BZFlag.nsi"
 
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="..\..\package\win32\nsis\BZFlag.nsi">
+    <Text Include="..\..\package\win32\nsis\BZFlag.nsi">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Outputs)</Outputs>
-    </CustomBuild>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\plugins\airspawn\airspawn.vcxproj">

@@ -158,7 +158,7 @@ Unicode true
   !define MUI_FINISHPAGE_RUN_TEXT "Play BZFlag now!"
   !define MUI_FINISHPAGE_RUN_FUNCTION "LaunchLink"
 
-  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/getting-started/"
+  !define MUI_FINISHPAGE_SHOWREADME "https://www.bzflag.org/documentation/getting_started"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Read Getting Started"
   !define MUI_FINISHPAGE_SHOWREADME_NOTCHECKED
 
@@ -233,6 +233,9 @@ Section "!BZFlag (Required)" BZFlag
   File ..\..\..\bin_Release_${PLATFORM}\cares.dll
   File ..\..\..\bin_Release_${PLATFORM}\SDL2.dll
 
+  ; This requires the Visual C++ runtime file to be located in the same directory as the NSIS script. This will be
+  ; found in a location such as:
+  ; C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Redist\MSVC\14.12.25810
   SetOutPath $TEMP
   DetailPrint "Installing Visual C++ ${RUNTIME_PLATFORM} runtime"
   File vcredist_${RUNTIME_PLATFORM}.exe
