@@ -11,7 +11,7 @@ box
 end
 
 box
-    pos 0 0 -1
+    pos 0 -40 -1
     size 20 10 0.1
     rot 90
 end
@@ -30,7 +30,7 @@ msgzone
 end
 
 msgzone
-    pos 0 0 0
+    pos 0 -40 0
     size 20 10 0.1
     rot 90
     message "You entered a 90 degree rotated rectangular zone with the GM flag! I'll take it from you!"

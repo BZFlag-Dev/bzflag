@@ -2000,11 +2000,20 @@ public:
     bool box;
     float xMax,xMin,yMax,yMin,zMax,zMin,radius,rotation;
 
+    // Half height and width only for boxes
+    float hh;
+    float hw;
+
+    // Center of the zone
+    float cX;
+    float cY;
+
+    // Used for rotation
+    float cos_val;
+    float sin_val;
+
     BZF_API bool pointInZone(float pos[3]);
     BZF_API void handleDefaultOptions(bz_CustomMapObjectInfo *data);
-
-private:
-    float calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3);
 };
 
 BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos );

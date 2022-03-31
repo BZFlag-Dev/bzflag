@@ -3108,79 +3108,50 @@ BZF_API bz_CustomZoneObject::bz_CustomZoneObject()
 {
     box = false;
     xMax = xMin = yMax = yMin = zMax = zMin = radius = rotation = 0;
+    cX = cY = 0;
+    hh = hw = 0;
+    sin_val = 0;
+    cos_val = 1;
 }
 
 BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
 {
+    // Coordinates of player relative to the "fake" origin
+    float px = pos[0] - cX;
+    float py = pos[1] - cY;
+
     if (box)
     {
-        if (rotation == 0 || rotation == 180)
+        if ((rotation == 0) || (rotation == 180))
+            ;
+        else if ((rotation == 90) || (rotation == 270))
+            std::swap(px, py);
+        else
         {
-            if (pos[0] > xMax || pos[0] < xMin) return false;
-            if (pos[1] > yMax || pos[1] < yMin) return false;
+            // Instead of rotating the box against (0,0)
+            // rotates the world in the opposite direction
+            float rx =  px * cos_val + py * sin_val;
+            float ry = -px * sin_val + py * cos_val;
+            px = rx;
+            py = ry;
         }
-        else if (rotation == 90 || rotation == 270)
-        {
-            if (pos[1] > xMax || pos[1] < xMin) return false;
-            if (pos[0] > yMax || pos[0] < yMin) return false;
-        }
-        else // the box is rotated, maths is needed
-        {
-            float rotRad = rotation * DEG2RADf;
-            float height  = (yMax - yMin);
-            float width   = (xMax - xMin);
 
-            // Center of the rectangle, we can treat this as the "fake" origin
-            float cX = (xMax + xMin) / 2;
-            float cY = (yMax + yMin) / 2;
+        // As the world is now simmetric remove the sign
+        px = std::abs(px);
+        py = std::abs(py);
 
-            // Coordinates of original and rotated shape
-            float oX[4], oY[4], rX[4], rY[4];
-
-            // Coordinates for the original rectangle
-            oX[0] = xMin - cX;
-            oY[0] = yMax - cY;
-            oX[1] = xMax - cX;
-            oY[1] = yMax - cY;
-            oX[2] = xMax - cX;
-            oY[2] = yMin - cY;
-            oX[3] = xMin - cX;
-            oY[3] = yMin - cY;
-
-            // Coordinates for the rotated rectangle
-            rX[0] = (float)(oX[0] * cos(rotRad) - oY[0] * sin(rotRad));
-            rY[0] = (float)(oX[0] * sin(rotRad) + oY[0] * cos(rotRad));
-            rX[1] = (float)(oX[1] * cos(rotRad) - oY[1] * sin(rotRad));
-            rY[1] = (float)(oX[1] * sin(rotRad) + oY[1] * cos(rotRad));
-            rX[2] = (float)(oX[2] * cos(rotRad) - oY[2] * sin(rotRad));
-            rY[2] = (float)(oX[2] * sin(rotRad) + oY[2] * cos(rotRad));
-            rX[3] = (float)(oX[3] * cos(rotRad) - oY[3] * sin(rotRad));
-            rY[3] = (float)(oX[3] * sin(rotRad) + oY[3] * cos(rotRad));
-
-            // Coordinates of player relative to the "fake" origin
-            float pX = pos[0] - cX;
-            float pY = pos[1] - cY;
-
-            // Get the areas of all triangles that use the rectangle coordinates and player coordinate
-            float apd = calculateTriangleSum(rX[0], pX, rX[3], rY[0], pY, rY[3]);
-            float apb = calculateTriangleSum(rX[0], pX, rX[1], rY[0], pY, rY[1]);
-            float dpc = calculateTriangleSum(rX[3], pX, rX[2], rY[3], pY, rY[2]);
-            float bpc = calculateTriangleSum(rX[2], pX, rX[1], rY[2], pY, rY[1]);
-
-            // If the area of all the triangles summed together is greater than the area of the rectangle, the point is outside
-            if (apd + dpc + bpc + apb > (width * height)) return false;
-        }
+        // Check now it the point is within the box
+        if (px > hw)
+            return false;
+        if (py > hh)
+            return false;
     }
     else
     {
-        float vec[3];
-        vec[0] = pos[0]-xMax;
-        vec[1] = pos[1]-yMax;
-        vec[2] = pos[2]-zMax;
+        float dist2 = px * px + py * py;
 
-        float dist = sqrt(vec[0]*vec[0]+vec[1]*vec[1]);
-
-        if ( dist > radius) return false;
+        if (dist2 > radius * radius)
+            return false;
     }
 
     return !(pos[2] > zMax || pos[2] < zMin);
@@ -3202,7 +3173,7 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
         bz_APIStringList *nubs = bz_newStringList();
         nubs->tokenize(line.c_str()," ",0,true);
 
-        if ( nubs->size() > 0)
+        if ( nubs->size() > 1)
         {
             std::string key = bz_toupper(nubs->get(0).c_str());
 
@@ -3218,10 +3189,17 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 zMin = (float)atof(nubs->get(5).c_str());
                 zMax = (float)atof(nubs->get(6).c_str());
 
+                // Center of the rectangle, we can treat this as the "fake" origin
+                cX = (xMax + xMin) / 2;
+                cY = (yMax + yMin) / 2;
+
+                hh  = std::abs(yMax - yMin) / 2;
+                hw  = std::abs(xMax - xMin) / 2;
+
                 bz_debugMessagef(0,
                                  "WARNING: The \"BBOX\" attribute has been deprecated. Please use the `position` and `size` attributes instead:");
-                bz_debugMessagef(0, "  position %.0f %.0f %.0f", (xMax + xMin), (yMax + yMin), zMin);
-                bz_debugMessagef(0, "  size %.0f %.0f %.0f", ((xMax - xMin) / 2), ((yMax - yMin) / 2), (zMax - zMin));
+                bz_debugMessagef(0, "  position %.0f %.0f %.0f", cX, cY, zMin);
+                bz_debugMessagef(0, "  size %.0f %.0f %.0f", hw, hh, (zMax - zMin));
             }
             else if ( key == "CYLINDER" && nubs->size() > 5)
             {
@@ -3234,9 +3212,13 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 zMax = (float)atof(nubs->get(4).c_str());
                 radius = (float)atof(nubs->get(5).c_str());
 
+                // Center of the cylinder
+                cX = xMax;
+                cY = yMax;
+
                 bz_debugMessagef(0,
                                  "WARNING: The \"CYLINDER\" attribute has been deprecated. Please use `radius` and `height` instead:");
-                bz_debugMessagef(0, "  position %.0f %.0f %.0f", xMax, yMax, zMin);
+                bz_debugMessagef(0, "  position %.0f %.0f %.0f", cX, cY, zMin);
                 bz_debugMessagef(0, "  radius %.0f", radius);
                 bz_debugMessagef(0, "  height %.0f", (zMax - zMin));
             }
@@ -3245,6 +3227,9 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 _pos[0] = (float)atof(nubs->get(1).c_str());
                 _pos[1] = (float)atof(nubs->get(2).c_str());
                 _pos[2] = (float)atof(nubs->get(3).c_str());
+
+                cX = _pos[0];
+                cY = _pos[1];
             }
             else if (key == "SIZE" && nubs->size() > 3)
             {
@@ -3252,15 +3237,24 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
                 _size[0] = (float)atof(nubs->get(1).c_str());
                 _size[1] = (float)atof(nubs->get(2).c_str());
                 _size[2] = (float)atof(nubs->get(3).c_str());
+
+                // Half Width and Half Heigth
+                hw  = _size[0];
+                hh  = _size[1];
             }
-            else if ((key == "ROTATION" || key == "ROT") && nubs->size() > 1)
+            else if ((key == "ROTATION" || key == "ROT"))
+            {
                 _rotation = (float)atof(nubs->get(1).c_str());
-            else if ((key == "RADIUS" || key == "RAD") && nubs->size() > 1)
+                float rotRad = _rotation * DEG2RADf;
+                cos_val = cosf(rotRad);
+                sin_val = sinf(rotRad);
+            }
+            else if ((key == "RADIUS" || key == "RAD"))
             {
                 box = false;
                 _radius = (float)atof(nubs->get(1).c_str());
             }
-            else if (key == "HEIGHT" && nubs->size() > 1)
+            else if (key == "HEIGHT")
                 _height = (float)atof(nubs->get(1).c_str());
         }
 
@@ -3291,41 +3285,17 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
     }
 }
 
-float bz_CustomZoneObject::calculateTriangleSum(float x1, float x2, float x3, float y1, float y2, float y3)
-{
-    return abs(((x1 * y2) + (x2 * y3) + (x3 * y1) - (y1 * x2) - (y2 * x3) - (y3 * x1))/2);
-}
-
 BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
 {
-    float pos[3] = {0,0,0}, size[3] = {0,0,0};
-
     if (obj->box)
     {
-        pos[0] = (obj->xMax + obj->xMin) / 2;
-        pos[1] = (obj->yMax + obj->yMin) / 2;
-        size[0] = (obj->xMax - obj->xMin) / 2;
-        size[1] = (obj->yMax - obj->yMin) / 2;
-    }
-    else
-    {
-        pos[0] = obj->xMax;
-        pos[1] = obj->yMax;
-    }
+        float x = obj->hw * (float)((bzfrand() * 2.0f) - 1.0);
+        float y = obj->hh * (float)((bzfrand() * 2.0f) - 1.0);
+        float cos_val = obj->cos_val;
+        float sin_val = obj->sin_val;
 
-    pos[2] = obj->zMin;
-    size[2] = obj->zMax - obj->zMin;
-
-    if (obj->box)
-    {
-        float x = (float)((bzfrand() * (2.0f * size[0])) - size[0]);
-        float y = (float)((bzfrand() * (2.0f * size[1])) - size[1]);
-        float cos_val = cosf(obj->rotation);
-        float sin_val = sinf(obj->rotation);
-
-        randomPos[0] = ((x * cos_val) - (y * sin_val)) + pos[0];
-        randomPos[1] = ((x * sin_val) + (y * cos_val)) + pos[1];
-        randomPos[2] = pos[2];
+        randomPos[0] = x * cos_val - y * sin_val;
+        randomPos[1] = x * sin_val + y * cos_val;
     }
     else
     {
@@ -3334,10 +3304,13 @@ BZF_API void bz_getRandomPoint ( bz_CustomZoneObject *obj, float *randomPos )
         float x = r * cosf(t);
         float y = r * sinf(t);
 
-        randomPos[0] = (obj->radius * x) + pos[0];
-        randomPos[1] = (obj->radius * y) + pos[1];
-        randomPos[2] = pos[2];
+        randomPos[0] = obj->radius * x;
+        randomPos[1] = obj->radius * y;
     }
+
+    randomPos[0] += obj->cX;
+    randomPos[1] += obj->cY;
+    randomPos[2]  = obj->zMin;
 }
 
 BZF_API bool bz_getSpawnPointWithin ( bz_CustomZoneObject *obj, float randomPos[3] )
