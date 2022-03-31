@@ -3114,15 +3114,10 @@ BZF_API bool bz_CustomZoneObject::pointInZone(float pos[3])
 {
     if (box)
     {
-        if (rotation == 0 || rotation == 180)
+        if (fmod(rotation, 90) == 0)
         {
             if (pos[0] > xMax || pos[0] < xMin) return false;
             if (pos[1] > yMax || pos[1] < yMin) return false;
-        }
-        else if (rotation == 90 || rotation == 270)
-        {
-            if (pos[1] > xMax || pos[1] < xMin) return false;
-            if (pos[0] > yMax || pos[0] < yMin) return false;
         }
         else // the box is rotated, maths is needed
         {
@@ -3220,7 +3215,7 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
 
                 bz_debugMessagef(0,
                                  "WARNING: The \"BBOX\" attribute has been deprecated. Please use the `position` and `size` attributes instead:");
-                bz_debugMessagef(0, "  position %.0f %.0f %.0f", (xMax + xMin), (yMax + yMin), zMin);
+                bz_debugMessagef(0, "  position %.0f %.0f %.0f", ((xMax + xMin) / 2), ((yMax + yMin) / 2), zMin);
                 bz_debugMessagef(0, "  size %.0f %.0f %.0f", ((xMax - xMin) / 2), ((yMax - yMin) / 2), (zMax - zMin));
             }
             else if ( key == "CYLINDER" && nubs->size() > 5)
@@ -3272,13 +3267,24 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
     {
         if (box)
         {
-            xMin = _pos[0] - _size[0];
-            xMax = _pos[0] + _size[0];
-            yMin = _pos[1] - _size[1];
-            yMax = _pos[1] + _size[1];
             zMin = _pos[2];
             zMax = _pos[2] + _size[2];
             rotation  = (_rotation > 0 && _rotation < 360) ? _rotation : 0;
+
+            if (rotation == 0 || rotation == 180)
+            {
+                xMin = _pos[0] - _size[0];
+                xMax = _pos[0] + _size[0];
+                yMin = _pos[1] - _size[1];
+                yMax = _pos[1] + _size[1];
+            }
+            else
+            {
+                xMin = _pos[0] - _size[1];
+                xMax = _pos[0] + _size[1];
+                yMin = _pos[1] - _size[0];
+                yMax = _pos[1] + _size[0];
+            }
         }
         else
         {
