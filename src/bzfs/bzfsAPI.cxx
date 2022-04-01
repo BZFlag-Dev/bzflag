@@ -3271,19 +3271,19 @@ BZF_API void bz_CustomZoneObject::handleDefaultOptions(bz_CustomMapObjectInfo *d
             zMax = _pos[2] + _size[2];
             rotation  = (_rotation > 0 && _rotation < 360) ? _rotation : 0;
 
-            if (rotation == 0 || rotation == 180)
-            {
-                xMin = _pos[0] - _size[0];
-                xMax = _pos[0] + _size[0];
-                yMin = _pos[1] - _size[1];
-                yMax = _pos[1] + _size[1];
-            }
-            else
+            if (rotation == 90 || rotation == 270)
             {
                 xMin = _pos[0] - _size[1];
                 xMax = _pos[0] + _size[1];
                 yMin = _pos[1] - _size[0];
                 yMax = _pos[1] + _size[0];
+            }
+            else
+            {
+                xMin = _pos[0] - _size[0];
+                xMax = _pos[0] + _size[0];
+                yMin = _pos[1] - _size[1];
+                yMax = _pos[1] + _size[1];
             }
         }
         else
