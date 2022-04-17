@@ -874,7 +874,9 @@ static PyObject *genEvent (bz_GetPlayerSpawnPosEventData_V1 &spawnData)
     if (result < 0)
         return nullptr;
 
-    return PyObject_CallOneArg(getPlayerSpawnPosEventData_V1, tankCoordinate);
+    return PyObject_CallFunctionObjArgs(getPlayerSpawnPosEventData_V1,
+                                        tankCoordinate,
+                                        NULL);
 }
 
 static void treatEvent (
@@ -924,7 +926,10 @@ static PyObject *genEvent (bz_FlagTransferredEventData_V1 &data)
     if (!pArg)
         return nullptr;
 
-    PyObject *pEvent = PyObject_CallOneArg(flagTransferredEventData_V1, pArg);
+    PyObject *pEvent = PyObject_CallFunctionObjArgs(
+                           flagTransferredEventData_V1,
+                           pArg,
+                           NULL);
     Py_DECREF(pArg);
     return pEvent;
 }
@@ -935,7 +940,9 @@ static PyObject *genEvent (bz_FlagGrabbedEventData_V1 &data)
     if (!pArg)
         return nullptr;
 
-    PyObject *pEvent = PyObject_CallOneArg(flagGrabbedEventData_V1, pArg);
+    PyObject *pEvent = PyObject_CallFunctionObjArgs(flagGrabbedEventData_V1,
+                       pArg,
+                       NULL);
     Py_DECREF(pArg);
     return pEvent;
 }
@@ -946,7 +953,9 @@ static PyObject *genEvent (bz_FlagDroppedEventData_V1 &data)
     if (!pArg)
         return nullptr;
 
-    PyObject *pEvent = PyObject_CallOneArg(flagDroppedEventData_V1, pArg);
+    PyObject *pEvent = PyObject_CallFunctionObjArgs(flagDroppedEventData_V1,
+                       pArg,
+                       NULL);
     Py_DECREF(pArg);
     return pEvent;
 }
@@ -957,7 +966,9 @@ static PyObject *genEvent (bz_ShotFiredEventData_V1 &data)
     if (!pArg)
         return nullptr;
 
-    PyObject *pEvent = PyObject_CallOneArg(shotFiredEventData_V1, pArg);
+    PyObject *pEvent = PyObject_CallFunctionObjArgs(shotFiredEventData_V1,
+                       pArg,
+                       NULL);
     Py_DECREF(pArg);
     return pEvent;
 }
@@ -1094,7 +1105,7 @@ void bzPythonEvent(bz_EventData *eventData)
         return;
     }
 
-    PyObject *pValue = PyObject_CallOneArg(callEvents, pEvent);
+    PyObject *pValue = PyObject_CallFunctionObjArgs(callEvents, pEvent, NULL);
     Py_DECREF(pEvent);
     if (!pValue)
         PyErr_Print();
