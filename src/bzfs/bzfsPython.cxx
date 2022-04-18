@@ -1060,7 +1060,7 @@ void bzPythonEvent(bz_EventData *eventData)
     switch (eventData->eventType)
     {
     case bz_eTickEvent:
-        pEvent = PyObject_CallNoArgs(tickEventData_V1);
+        pEvent = PyObject_CallFunctionObjArgs(tickEventData_V1, NULL);
         break;
     case bz_eGetPlayerSpawnPosEvent:
         pEvent = genEvent (
