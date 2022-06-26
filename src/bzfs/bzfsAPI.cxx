@@ -1232,6 +1232,18 @@ BZF_API double bz_getIdleTime( int playerID )
     return otherData->player.getIdleTime();
 }
 
+BZF_API bool bz_getPlayerCurrentState(int playerID, bz_PlayerUpdateState &state)
+{
+    GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
+
+    if (!player)
+        return false;
+
+    playerStateToAPIState(state, player->lastState);
+
+    return true;
+}
+
 BZF_API bz_eTeamType bz_getPlayerTeam( int playerID )
 {
     GameKeeper::Player *player = GameKeeper::Player::getPlayerByIndex(playerID);
