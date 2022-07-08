@@ -67,6 +67,8 @@ public:
     // if millisecondsToBlock < 0 then block forever
     int         read(uint16_t& code, uint16_t& len, void* msg,
                      int millisecondsToBlock = 0);
+    int         fillTcpReadBuffer(int blockTime);
+    bool        tcpPacketIn(char headerBuffer[4], void *msg);
 
     void        sendEnter(PlayerType, TeamColor,
                           const char* name, const char* motto, const char* token);
@@ -115,6 +117,10 @@ private:
     int         udpLength;
     const char*     udpBufferPtr;
     char        ubuf[MaxPacketLen];
+
+    int         tcpBufferPos;
+    int         tcpBufferConsumed;
+    char        tbuf[MaxPacketLen * 4];
 };
 
 #define SEND 1
