@@ -91,7 +91,9 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     fd(-1),         // assume failure
     udpLength(0),
     udpBufferPtr(),
-    ubuf()
+    ubuf(),
+    tcpBufferPos(0),
+    tcpBufferConsumed(0)
 {
     int i;
 
@@ -282,13 +284,11 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
     // on BSD sockets systems
     // all other messages after this are handled via the normal
     // message system
-#if !defined(_WIN32)
     if (BzfNetwork::setNonBlocking(query) < 0)
     {
         close(query);
         return;
     }
-#endif
 
     // FIXME is it ok to try UDP always?
     server_abilities |= CanDoUDP;
@@ -334,14 +334,6 @@ ServerLink::ServerLink(const Address& serverAddress, int port) :
         close(query);
         return;
     }
-
-#if !defined(_WIN32)
-    if (BzfNetwork::setBlocking(query) < 0)
-    {
-        close(query);
-        return;
-    }
-#endif // !defined(_WIN32)
 
     fd = query;
 
@@ -491,6 +483,96 @@ void            ServerLink::send(uint16_t code, uint16_t len,
 #endif
 #endif //WIN32
 
+int ServerLink::fillTcpReadBuffer(int blockTime)
+{
+    if (tcpBufferConsumed)
+    {
+        tcpBufferPos -= tcpBufferConsumed;
+        if (tcpBufferPos)
+            memmove(tbuf, &tbuf[tcpBufferConsumed], tcpBufferPos);
+        tcpBufferConsumed = 0;
+    }
+
+    int emptySpace = sizeof(tbuf) - tcpBufferPos;
+    if (!emptySpace)
+        return 0;
+
+    if (blockTime)
+    {
+        // block for specified period.  default is no blocking (polling)
+        struct timeval timeout;
+        timeout.tv_sec = blockTime / 1000;
+        timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
+
+        // only check server
+        fd_set read_set;
+        FD_ZERO(&read_set);
+        FD_SET((unsigned int)fd, &read_set);
+        int nfound = select(fd + 1, &read_set, NULL, NULL,
+                            blockTime > 0 ? &timeout : NULL);
+        if (nfound < 0)
+            return -1;
+    }
+
+    int rlen = recv(fd, &tbuf[tcpBufferPos], emptySpace, 0);
+    if (rlen < 0)
+    {
+        if (errno == EAGAIN)
+            return 0;
+        else if (errno == EWOULDBLOCK)
+            return 0;
+        else
+            return -1;
+    }
+
+    if (rlen)
+    {
+#if defined(NETWORK_STATS)
+        bytesReceived += rlen;
+        packetsReceived++;
+#endif
+        tcpBufferPos += rlen;
+    }
+    return 0;
+}
+
+// A packet is there?
+bool ServerLink::tcpPacketIn(char headerBuffer[4], void *msg)
+{
+    int availableData = tcpBufferPos - tcpBufferConsumed;
+
+    // Enough data to decode the header?
+    if (availableData < 4)
+        return false;
+
+    memcpy(headerBuffer, &tbuf[tcpBufferConsumed], 4);
+
+    // unpack len
+    const void* buf = headerBuffer;
+    uint16_t    len;
+    buf = nboUnpackUShort(buf, len);
+
+    // Check if len is good
+    if (len + 4 > MaxPacketLen)
+    {
+        // Len is bigger than the Max Packet Len
+        // The packet is there but it is wrong
+        return true;
+    }
+
+    // Check if we have enough data for the whole message
+    if (availableData < len + 4)
+        return false;
+
+    // copy msg
+    if (len)
+        memcpy(msg, &tbuf[tcpBufferConsumed + 4], int(len));
+
+    tcpBufferConsumed += len + 4;
+
+    return true;
+}
+
 int         ServerLink::read(uint16_t& code, uint16_t& len,
                              void* msg, int blockTime)
 {
@@ -545,50 +627,21 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
         blockTime = 0;
     }
 
-    // block for specified period.  default is no blocking (polling)
-    struct timeval timeout;
-    timeout.tv_sec = blockTime / 1000;
-    timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
-
-    // only check server
-    fd_set read_set;
-    FD_ZERO(&read_set);
-    FD_SET((unsigned int)fd, &read_set);
-    int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL,
-                        (struct timeval*)(blockTime >= 0 ? &timeout : NULL));
-    if (nfound == 0) return 0;
-    if (nfound < 0) return -1;
-
-    // printError("<** TCP Packet Code Received %d", time(0));
-    // FIXME -- don't really want to take the chance of waiting forever
-    // on the remaining select() calls, but if the server and network
-    // haven't been hosed then the data will get here soon.  And if the
-    // server or network is down then we don't really care anyway.
-
     // get packet header -- keep trying until we get 4 bytes or an error
     char headerBuffer[4];
 
-
-    int rlen = 0;
-    rlen = recv(fd, (char*)headerBuffer, 4, 0);
-
-    int tlen = rlen;
-    while (rlen >= 1 && tlen < 4)
-    {
-        printError("ServerLink::read() loop");
-        FD_ZERO(&read_set);
-        FD_SET((unsigned int)fd, &read_set);
-        nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, NULL);
-        if (nfound == 0) continue;
-        if (nfound < 0) return -1;
-        rlen = recv(fd, (char*)headerBuffer + tlen, 4 - tlen, 0);
-        if (rlen >= 0) tlen += rlen;
-    }
-    if (tlen < 4) return -1;
-#if defined(NETWORK_STATS)
-    bytesReceived += 4;
-    packetsReceived++;
-#endif
+    if (!tcpPacketIn(headerBuffer, msg))
+        while (1)
+        {
+            // Fill the tcp buffer if anything on the net
+            if (fillTcpReadBuffer(blockTime) < 0)
+                // Got an error
+                return -1;
+            if (tcpPacketIn(headerBuffer, msg))
+                break;
+            if (blockTime >= 0)
+                return 0;
+        }
 
     // unpack header and get message
     const void* buf = headerBuffer;
@@ -598,32 +651,6 @@ int         ServerLink::read(uint16_t& code, uint16_t& len,
 //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
     if (len > MaxPacketLen - 4)
         return -1;
-    if (len > 0)
-        rlen = recv(fd, (char*)msg, int(len), 0);
-    else
-        rlen = 0;
-#if defined(NETWORK_STATS)
-    if (rlen >= 0) bytesReceived += rlen;
-#endif
-    if (rlen != int(len))
-    {
-        // keep reading until we get the whole message
-        tlen = rlen;
-        while (rlen >= 1 && tlen < int(len))
-        {
-            FD_ZERO(&read_set);
-            FD_SET((unsigned int)fd, &read_set);
-            nfound = select(fd+1, (fd_set*)&read_set, 0, 0, NULL);
-            if (nfound == 0) continue;
-            if (nfound < 0) return -1;
-            rlen = recv(fd, (char*)msg + tlen, int(len) - tlen, 0);
-            if (rlen >= 0) tlen += rlen;
-#if defined(NETWORK_STATS)
-            if (rlen >= 0) bytesReceived += rlen;
-#endif
-        }
-        if (tlen < int(len)) return -1;
-    }
 
     // FIXME -- packet recording
     if (packetStream)
