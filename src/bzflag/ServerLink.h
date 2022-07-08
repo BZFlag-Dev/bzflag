@@ -67,6 +67,8 @@ public:
     void                send(uint16_t code, uint16_t len, const void* msg);
     int                 read(uint16_t& code, uint16_t& len, void* msg,
                              int millisecondsToBlock = 0); // if millisecondsToBlock < 0 then block forever
+    int                 fillTcpReadBuffer(int blockTime);
+    bool                tcpPacketIn(char headerBuffer[4], void *msg);
 
     void                sendEnter(PlayerType, TeamColor, int skinIndex, const char* name, const char* motto,
                                   const char* token,
@@ -115,6 +117,10 @@ private:
     int                 udpLength = 0;
     const char*         udpBufferPtr = nullptr;
     char                ubuf[MaxPacketLen] = { 0 };
+
+    int         tcpBufferPos = 0;
+    int         tcpBufferConsumed = 0;
+    char        tbuf[MaxPacketLen * 4] = { 0 };
 };
 
 #define SEND 1
