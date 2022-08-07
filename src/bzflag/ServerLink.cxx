@@ -541,7 +541,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
     // block for specified period.  default is no blocking (polling)
     struct timeval timeout;
     timeout.tv_sec = blockTime / 1000;
-    timeout.tv_usec = blockTime - 1000 * timeout.tv_sec;
+    timeout.tv_usec = 1000 * (blockTime % 1000);
 
     // only check server
     fd_set read_set;
