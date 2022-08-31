@@ -861,10 +861,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     ssdata->ysize = h;
     ssdata->channels = 3; // GL_RGB
     ssdata->pixels = new unsigned char[h * w * 3];
-    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->pixels);
-    glPopClientAttrib();
 
 #if defined(HAVE_PTHREADS)
     pthread_t thread;
