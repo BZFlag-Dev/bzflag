@@ -1362,6 +1362,8 @@ void OpenGLGState::initContext()
     glLoadIdentity();
     glEnable(GL_SCISSOR_TEST);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+    glPixelStorei(GL_PACK_ALIGNMENT,1);
 }
 
 
