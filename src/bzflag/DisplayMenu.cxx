@@ -123,10 +123,11 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
             option->setCallback(callback, "A");
             options = &option->getList();
             options->push_back(std::string("Off"));
-            for (int i = 2; i <= maxAnisotropy; i=i*2)
+            for (unsigned short int i = 2; i <= maxAnisotropy; i=i*2)
             {
                 char buffer[16];
-                snprintf(buffer, sizeof(buffer), "%i/%i", i, maxAnisotropy);
+                snprintf(buffer, sizeof(buffer), "%i/%i",
+                         i, (unsigned short int)maxAnisotropy);
                 options->push_back(std::string(buffer));
             }
             option->update();
