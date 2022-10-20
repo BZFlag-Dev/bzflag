@@ -407,7 +407,8 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 
     // Specifically handle our custom mouse wheel event here to trigger a KeyUp event, fixing the
     // issue where MG would fire endlessly.
-    if (event.type == mouseWheelStopEvent) {
+    if (event.type == mouseWheelStopEvent)
+    {
         _event.type   = BzfEvent::KeyUp;
         _event.keyDown.ascii = 0;
         _event.keyDown.shift = 0;
