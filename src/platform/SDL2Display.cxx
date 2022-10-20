@@ -78,6 +78,9 @@ SDLDisplay::SDLDisplay()
 
     // register modes
     initResolutions(_resolutions, _numResolutions, defaultResolutionIndex);
+
+    // Register a user event so we can trigger a KeyUp event for the mouse wheel
+    mouseWheelStopEvent = SDL_RegisterEvents(1);
 }
 
 SDLDisplay::~SDLDisplay()
@@ -402,6 +405,27 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
     bool ctrl   = ((mode & KMOD_CTRL) != 0);
     bool alt    = ((mode & KMOD_ALT) != 0);
 
+    // Specifically handle our custom mouse wheel event here to trigger a KeyUp event, fixing the
+    // issue where MG would fire endlessly.
+    if (event.type == mouseWheelStopEvent) {
+        _event.type   = BzfEvent::KeyUp;
+        _event.keyDown.ascii = 0;
+        _event.keyDown.shift = 0;
+        if (shift)
+            _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+        if (ctrl)
+            _event.keyDown.shift |= BzfKeyEvent::ControlKey;
+        if (alt)
+            _event.keyDown.shift |= BzfKeyEvent::AltKey;
+
+        if (event.user.code == 0)
+            _event.keyDown.button = BzfKeyEvent::WheelDown;
+        else
+            _event.keyDown.button = BzfKeyEvent::WheelUp;
+
+        return true;
+    }
+
     switch (event.type)
     {
 
@@ -426,6 +450,13 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
             _event.keyDown.button = BzfKeyEvent::WheelDown;
         else
             _event.keyDown.button = BzfKeyEvent::WheelUp;
+
+        // Push our user event so we can trigger a KeyUp event for the mouse wheel
+        SDL_Event fake;
+        SDL_zero(fake);
+        fake.type = mouseWheelStopEvent;
+        fake.user.code = (event.wheel.y < 0)?0:1;
+        SDL_PushEvent(&fake);
         break;
 
     case SDL_MOUSEBUTTONDOWN:

@@ -47,6 +47,7 @@ public:
     };
     void getModState(bool &shift, bool &control, bool &alt);
 private:
+    Uint32 mouseWheelStopEvent;
     bool setupEvent(BzfEvent&, const SDL_Event&) const;
     bool doSetResolution(int)
     {
