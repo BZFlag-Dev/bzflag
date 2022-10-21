@@ -16,7 +16,7 @@
 // System includes
 #include <vector>
 
-SDLDisplay::SDLDisplay()
+SDLDisplay::SDLDisplay() : mouseWheelStopEvent(SDL_RegisterEvents(1))
 {
     if (SDL_VideoInit(NULL) < 0)
     {
@@ -78,9 +78,6 @@ SDLDisplay::SDLDisplay()
 
     // register modes
     initResolutions(_resolutions, _numResolutions, defaultResolutionIndex);
-
-    // Register a user event so we can trigger a KeyUp event for the mouse wheel
-    mouseWheelStopEvent = SDL_RegisterEvents(1);
 }
 
 SDLDisplay::~SDLDisplay()
