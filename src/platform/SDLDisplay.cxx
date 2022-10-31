@@ -526,8 +526,9 @@ bool SDLDisplay::createWindow()
     getWindowSize(width, height);
     if (fullScreen)
         flags |= SDL_FULLSCREEN;
-    else
-        flags |= SDL_RESIZABLE;
+    // Disabling resizable windowed mode because we broke it but don't care about SDL 1 anymore
+    //else
+    //    flags |= SDL_RESIZABLE;
     // if they are the same, don't bother building a new window
     if ((width == oldWidth) && (height == oldHeight)
             && (fullScreen == oldFullScreen))
