@@ -4,6 +4,9 @@
 BZFlag 2.4.25
 -------------
 
+* Fix Machine Gun firing continuously when mouse wheel is bound to fire
+    - Scott Wichser
+
 
 BZFlag 2.4.24  "Thank you for your input" (2022-03-08)
 ------------------------------------------------------
