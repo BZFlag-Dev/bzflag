@@ -343,6 +343,7 @@ AC_LANG_PROGRAM([
     regex_t re;
     regcomp(&re, "abc", REG_EXTENDED);
     regexec(&re, "", 0, 0, 0);
+    regfree(&re);
     return 0;
 ])
 ], [AC_MSG_RESULT([yes])],
