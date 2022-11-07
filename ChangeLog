@@ -4,6 +4,14 @@
 BZFlag 2.4.25
 -------------
 
+* Fix incorrect rotation math for API custom zones
+    - Alfredo Tupone, Vladimir Jimenez
+* Do not block on TCP recv - Alfredo Tupone
+* Fix select() block timeout, reducing CPU usage - DeathByDenim
+* Fix rendering regression that displayed skewed textures
+    - Alfredo Tupone, Agatha
+* Fix positional audio direction when in observer mode - Scott Wichser
+* Fix audio pops - Scott Wichser
 * Fix Machine Gun firing continuously when mouse wheel is bound to fire
     - Scott Wichser
 
