@@ -1,8 +1,8 @@
 			     BZFlag Release Notes
 			     ====================
 
-BZFlag 2.4.25
--------------
+BZFlag 2.4.26  "Tanksgiving" (2022-11-20)
+-----------------------------------------
 
 * Fix incorrect rotation math for API custom zones
     - Alfredo Tupone, Vladimir Jimenez

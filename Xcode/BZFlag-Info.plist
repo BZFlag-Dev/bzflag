@@ -19,11 +19,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.4.25</string>
+	<string>2.4.26</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>2.4.25</string>
+	<string>2.4.26</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.arcade-games</string>
 	<key>LSMinimumSystemVersion</key>
