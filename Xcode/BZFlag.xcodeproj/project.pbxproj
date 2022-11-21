@@ -1789,7 +1789,7 @@
 		03C338CC1AFB5AFC00E8F655 /* SDL2Window.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDL2Window.h; sourceTree = "<group>"; };
 		03C5E79716707857005A26C4 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		03C5E7BC1670A3DA005A26C4 /* lib3D.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = lib3D.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.26.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.26.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.27.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BZFlag-2.4.27.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03CC33EC1E3D4A8A00CF55BC /* VotingArbiter.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VotingArbiter.cxx; sourceTree = "<group>"; };
 		03CC33ED1E3D4A8A00CF55BC /* VotingArbiter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingArbiter.h; sourceTree = "<group>"; };
 		03CDB24516A0BA81001DA037 /* superUser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = superUser.cpp; sourceTree = "<group>"; };
@@ -3398,7 +3398,7 @@
 		0394E967167B2D7B007F4035 /* Targets */ = {
 			isa = PBXGroup;
 			children = (
-				03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.26.app */,
+				03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.27.app */,
 				03C5E7BC1670A3DA005A26C4 /* lib3D.a */,
 				0357A7BC1670AF8E0056C938 /* libcommon.a */,
 				0357A7EB1670B11A0056C938 /* libnet.a */,
@@ -4666,9 +4666,9 @@
 			productReference = 03C5E7BC1670A3DA005A26C4 /* lib3D.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.26 */ = {
+		03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.27 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.26" */;
+			buildConfigurationList = 03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.27" */;
 			buildPhases = (
 				03C8EE21167ABE2300BB07A5 /* Sources */,
 				03C8EE22167ABE2300BB07A5 /* Frameworks */,
@@ -4719,9 +4719,9 @@
 				0394E92C167B29D8007F4035 /* PBXTargetDependency */,
 				0394E942167B2AA9007F4035 /* PBXTargetDependency */,
 			);
-			name = "BZFlag-2.4.26";
+			name = "BZFlag-2.4.27";
 			productName = BZFlag;
-			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.26.app */;
+			productReference = 03C8EE25167ABE2300BB07A5 /* BZFlag-2.4.27.app */;
 			productType = "com.apple.product-type.application";
 		};
 		03FA742D1742601B00573D2D /* serverSidePlayerSample */ = {
@@ -4813,7 +4813,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.26 */,
+				03C8EE24167ABE2300BB07A5 /* BZFlag-2.4.27 */,
 				0355E7B8174264D7006E2991 /* Pre-Build Script */,
 				03C5E7BB1670A3DA005A26C4 /* 3D */,
 				0357A7BB1670AF8E0056C938 /* common */,
@@ -8089,7 +8089,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.26" */ = {
+		03C8EE3E167ABE2300BB07A5 /* Build configuration list for PBXNativeTarget "BZFlag-2.4.27" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				03C8EE3F167ABE2300BB07A5 /* Debug */,
