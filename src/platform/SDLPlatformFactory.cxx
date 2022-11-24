@@ -12,15 +12,10 @@
 
 #include "SDLPlatformFactory.h"
 #include "SDLMedia.h"
-#ifdef HAVE_SDL2
 #include "SDL2Display.h"
 #include "SDL2Visual.h"
 #include "SDL2Window.h"
-#else
-#include "SDLDisplay.h"
-#endif
 #include "SDLJoystick.h"
-#include "EvdevJoystick.h"
 
 PlatformFactory* PlatformFactory::getInstance()
 {
@@ -68,16 +63,6 @@ BzfMedia* SdlPlatformFactory::createMedia()
 
 BzfJoystick* SdlPlatformFactory::createJoystick()
 {
-    /* Use EvdevJoystick instead of SDLJoystick if we can.
-     * It has minor improvements in axis mapping and joystick
-     * enumeration, but the big selling point so far is that it
-     * supports force feedback.
-     */
-#ifdef HAVE_LINUX_INPUT_H
-    if (EvdevJoystick::isEvdevAvailable())
-        return new EvdevJoystick;
-#endif
-
     return new SDLJoystick;
 }
 // Local Variables: ***

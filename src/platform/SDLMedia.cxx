@@ -12,7 +12,6 @@
 
 #include "common.h"
 
-#ifdef HAVE_SDL
 #include <stdlib.h>
 #include <string>
 #include <sys/types.h>
@@ -82,11 +81,7 @@ void SDLMedia::setMediaDirectory(const std::string& _dir)
 
 double          SDLMedia::stopwatch(bool start)
 {
-#ifdef HAVE_SDL2
     Uint64 currentTick = SDL_GetPerformanceCounter();
-#else
-    Uint32 currentTick = SDL_GetTicks(); //msec
-#endif
 
     if (start)
     {
@@ -94,20 +89,12 @@ double          SDLMedia::stopwatch(bool start)
         return 0.0;
     }
     if (currentTick >= stopwatchTime)
-#ifdef HAVE_SDL2
         return (double) (currentTick - stopwatchTime) /
                SDL_GetPerformanceFrequency(); // sec
-#else
-        return (double) (currentTick - stopwatchTime) * 0.001; // sec
-#endif
     else
         //Clock is wrapped : happens after 49 days
         //Should be "wrap value" - stopwatchtime. Now approx.
-#ifdef HAVE_SDL2
         return (double) currentTick / SDL_GetPerformanceFrequency();
-#else
-        return (double) currentTick * 0.001;
-#endif
 }
 
 bool            SDLMedia::openAudio()
@@ -372,19 +359,13 @@ float*      SDLMedia::doReadSound(const std::string &filename, int &numFrames,
 
 void SDLMedia::audioDriver(std::string& driverName)
 {
-#ifdef HAVE_SDL2
     const char *driver = SDL_GetCurrentAudioDriver();
     if (driver)
-#else
-    char driver[128];
-    if (SDL_AudioDriverName(driver, sizeof(driver)))
-#endif
         driverName = driver;
     else
         driverName = "audio not available";
 }
 
-#endif //HAVE_SDL
 // Local Variables: ***
 // mode: C++ ***
 // tab-width: 4 ***

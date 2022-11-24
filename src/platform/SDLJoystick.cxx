@@ -13,8 +13,6 @@
 /* common headers */
 #include "common.h"
 
-#ifdef HAVE_SDL
-
 /* interface headers */
 #include "SDLJoystick.h"
 
@@ -169,11 +167,7 @@ void            SDLJoystick::getJoyDevices(std::vector<std::string>
     for (i = 0; i < numJoystick; i++)
     {
         char joystickName[50]; //only room for so much on the menu
-#ifdef HAVE_SDL2
         snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickNameForIndex(i));
-#else
-        snprintf(joystickName, 50, "%d - %s", i, SDL_JoystickName(i));
-#endif
         list.push_back(joystickName);
     }
 }
@@ -200,8 +194,6 @@ void            SDLJoystick::setYAxis(const std::string &axis)
     if (axis == "") return;
     yAxis = atoi(axis.c_str());
 }
-
-#endif
 
 // Local Variables: ***
 // mode: C++ ***

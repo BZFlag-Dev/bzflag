@@ -712,11 +712,7 @@ static void createCacheSignature ()
 //  initialize application and enter event loop
 //
 
-#if defined(_WIN32) && !defined(HAVE_SDL)
-int         myMain(int argc, char** argv)
-#else /* defined(_WIN32) */
 int         main(int argc, char** argv)
-#endif /* defined(_WIN32) */
 {
 #ifdef _WIN32
     // startup winsock
@@ -1117,10 +1113,8 @@ int         main(int argc, char** argv)
     const bool useFullscreen = needsFullscreen();
     if (useFullscreen)
     {
-#ifndef HAVE_SDL
         // tell window to be fullscreen
         window->setFullscreen(true);
-#endif
 
         // set the size if one was requested.  this overrides the default
         // size (which is the display or passthrough size).
@@ -1451,61 +1445,6 @@ int         main(int argc, char** argv)
 
     return 0;
 }
-//
-#if defined(_WIN32) && !defined(HAVE_SDL)
-
-//
-// WinMain()
-//  windows entry point.  forward to main()
-//
-
-int WINAPI      WinMain(HINSTANCE instance, HINSTANCE, LPSTR _cmdLine, int)
-{
-    // convert command line to argc and argv.  note that it's too late
-    // to do this right because spaces that were embedded in a single
-    // argument now look like like normal spaces.  not much we can do
-    // about that.
-    // FIXME -- argc and argv can be accessible;  use them instead of this.
-    char* cmdLine = strdup(_cmdLine);
-
-    // count number of arguments
-    int argc = 1;
-    char* scan = cmdLine;
-    while (isspace(*scan) && *scan != 0) scan++;
-    while (*scan)
-    {
-        argc++;
-        while (!isspace(*scan) && *scan != 0) scan++;
-        while (isspace(*scan) && *scan != 0) scan++;
-    }
-
-    // get path to application.  this is ridiculously simple.
-    char appName[MAX_PATH];
-    GetModuleFileName(instance,appName,MAX_PATH);
-
-    // make argument list and assign arguments
-    char** argv = new char*[argc];
-    argc = 0;
-    argv[argc++] = appName;
-    scan = cmdLine;
-    while (isspace(*scan) && *scan != 0) scan++;
-    while (*scan)
-    {
-        argv[argc++] = scan;
-        while (!isspace(*scan) && *scan != 0) scan++;
-        if (*scan) *scan++ = 0;
-        while (isspace(*scan) && *scan != 0) scan++;
-    }
-
-    const int exitCode = myMain(argc, argv);
-
-    // clean up and return exit code
-    delete[] argv;
-    free(cmdLine);
-    return exitCode;
-}
-
-#endif /* defined(_WIN32) */
 
 
 // Local Variables: ***

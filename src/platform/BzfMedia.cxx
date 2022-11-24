@@ -12,9 +12,6 @@
 
 #include "BzfMedia.h"
 #include "TimeKeeper.h"
-#if !defined(HAVE_SDL) || defined(_WIN32)
-#include "wave.h"
-#endif
 #include "MediaFile.h"
 #include <string.h>
 #include <string>
@@ -410,91 +407,10 @@ bool            BzfMedia::doReadRLE(FILE* file,
     return true;
 }
 
-#if defined(HAVE_SDL) && !defined(_WIN32)
 float*          BzfMedia::doReadSound(const std::string&, int&, int&) const
 {
     return NULL;
 }
-#else
-float*          BzfMedia::doReadSound(const std::string& filename,
-                                      int& numFrames, int& rate) const
-{
-    short format, channels, width;
-    long speed;
-    FILE* file;
-    char *rawdata, *rawpos;
-    int i;
-    float *data;
-
-    file = openWavFile(filename.c_str(), &format, &speed, &numFrames, &channels, &width);
-    if (!file) return 0;
-    rate=speed;
-    rawdata=new char[numFrames*width*channels];
-    if (readWavData(file, rawdata, numFrames*channels, width))
-    {
-        fprintf(stderr, "Failed to read the wav data\n");
-        delete [] rawdata;
-        closeWavFile(file);
-        return 0;
-    }
-    closeWavFile(file);
-
-#ifdef HALF_RATE_AUDIO
-    numFrames/=2;
-    rate/=2;
-#endif
-    data = new float[2*numFrames];
-    rawpos=rawdata;
-    for (i=0; i<numFrames; i++)
-    {
-        if (channels==1)
-        {
-            if (width==1)
-            {
-                data[i*2]=data[i*2+1] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-#ifdef HALF_RATE_AUDIO
-                rawpos++;
-#endif
-            }
-            else
-            {
-                data[i*2]=data[i*2+1] = *(short*)rawpos;
-                rawpos+=2;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=2;
-#endif
-            }
-        }
-        else
-        {
-            if (width==1)
-            {
-                data[i*2] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-                data[i*2+1] = (*(signed char*)rawpos)*256.0f;
-                rawpos++;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=2;
-#endif
-            }
-            else
-            {
-                data[i*2] = *(short*)rawpos;
-                rawpos+=2;
-                data[i*2+1] = *(short*)rawpos;
-                rawpos+=2;
-#ifdef HALF_RATE_AUDIO
-                rawpos+=4;
-#endif
-
-            }
-        }
-    }
-    delete [] rawdata;
-    return data;
-}
-#endif
 
 // Setting Audio Driver
 void    BzfMedia::setDriver(std::string)
