@@ -633,7 +633,7 @@ LIBS="$GLIBS $LIBS"
 AC_LANG(C)
 if test "x$enable_client" != xno; then
     # Test for SDL 2
-    AM_PATH_SDL2(2.0.3, with_SDL2=yes, with_SDL2=no)
+    AM_PATH_SDL2(2.0.9, with_SDL2=yes, with_SDL2=no)
 
     if test "x$with_SDL2" != "xyes"; then
         AC_MSG_WARN(

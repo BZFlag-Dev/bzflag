@@ -32,7 +32,9 @@ SDLJoystick::SDLJoystick() : joystickID(nullptr), joystickButtons(0), numHats(0)
 {
     SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
     SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1");
+#if SDL_VERSION_ATLEAST(2, 0, 16)
     SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
+#endif
     SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
 
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1)
@@ -95,7 +97,11 @@ void            SDLJoystick::initJoystick(const char* joystickName)
     // Fetch information about the joystick device
     joystickButtons = SDL_JoystickNumButtons(joystickID);
     numHats = SDL_JoystickNumHats(joystickID);
+#if SDL_VERSION_ATLEAST(2, 0, 18)
     hasRumble = SDL_JoystickHasRumble(joystickID);
+#else
+    hasRumble = true;
+#endif
 }
 
 bool            SDLJoystick::joystick() const
