@@ -222,7 +222,7 @@ bool            SDLJoystick::ffHasRumble() const
     return (joystickID != nullptr && hasRumble);
 }
 
-void            SDLJoystick::ffRumble(int count, float delay, float duration, float strong_motor, float weak_motor)
+void            SDLJoystick::ffRumble(int count, float UNUSED(delay), float duration, float strong_motor, float weak_motor)
 {
     if (!ffHasRumble())
         return;
