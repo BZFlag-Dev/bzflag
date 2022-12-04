@@ -27,9 +27,14 @@
 #include "TextUtils.h"
 #include "bzfSDL.h"
 
-SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons(0), numHats(0),
-    xAxis(0), yAxis(1)
+SDLJoystick::SDLJoystick() : joystickID(nullptr), joystickButtons(0), numHats(0),
+    xAxis(0), yAxis(1), hasRumble(false)
 {
+    SDL_SetHint(SDL_HINT_ACCELEROMETER_AS_JOYSTICK, "0");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS4_RUMBLE, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_PS5_RUMBLE, "1");
+    SDL_SetHint(SDL_HINT_JOYSTICK_HIDAPI_STEAM, "1");
+
     if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1)
     {
         std::vector<std::string> args;
@@ -40,45 +45,62 @@ SDLJoystick::SDLJoystick() : joystickID(NULL), joystickButtons(0), numHats(0),
 
 SDLJoystick::~SDLJoystick()
 {
+    // Close the joystick device, if opened
+    if (joystickID != nullptr)
+        SDL_JoystickClose(joystickID);
+
     SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
 void            SDLJoystick::initJoystick(const char* joystickName)
 {
+    // If the joystick is set to off or undefined, check if we had opened a joystick or haptic device and close them
     if (!strcasecmp(joystickName, "off") || !strcmp(joystickName, ""))
     {
-        if (joystickID != NULL)
+        if (joystickID != nullptr)
         {
             SDL_JoystickClose(joystickID);
-            joystickID = NULL;
+            joystickID = nullptr;
         }
         return;
     }
+
     char num = joystickName[0];
     int  i   = (int)num - '0';
+
+    // If the requested joystick doesn't exist, bail out
     if (!isdigit(num) || i >= SDL_NumJoysticks())
     {
         printError("No supported SDL joysticks were found.");
-        joystickID = NULL;
+        joystickID = nullptr;
         return;
     }
+
+    // Attempt to open the joystick
     joystickID = SDL_JoystickOpen(i);
-    if (joystickID == NULL)
+
+    // If opening the joystick failed, bail out
+    if (joystickID == nullptr)
         return;
+
+    // If the joystick has less than two axes, close the device and bail out
     if (SDL_JoystickNumAxes(joystickID) < 2)
     {
         SDL_JoystickClose(joystickID);
         printError("Joystick has less then 2 axes:\n");
-        joystickID = NULL;
+        joystickID = nullptr;
         return;
     }
+
+    // Fetch information about the joystick device
     joystickButtons = SDL_JoystickNumButtons(joystickID);
     numHats = SDL_JoystickNumHats(joystickID);
+    hasRumble = SDL_JoystickHasRumble(joystickID);
 }
 
 bool            SDLJoystick::joystick() const
 {
-    return joystickID != NULL;
+    return joystickID != nullptr;
 }
 
 void            SDLJoystick::getJoy(int& x, int& y)
@@ -193,6 +215,24 @@ void            SDLJoystick::setYAxis(const std::string &axis)
     // unset
     if (axis == "") return;
     yAxis = atoi(axis.c_str());
+}
+
+bool            SDLJoystick::ffHasRumble() const
+{
+    return (joystickID != nullptr && hasRumble);
+}
+
+void            SDLJoystick::ffRumble(int count, float delay, float duration, float strong_motor, float weak_motor)
+{
+    if (!ffHasRumble())
+        return;
+
+    // Clamp the motor values from 0 to 1
+    strong_motor = std::min(1.0f, std::max(0.0f, strong_motor));
+    weak_motor = std::min(1.0f, std::max(0.0f, weak_motor));
+
+    SDL_JoystickRumble(joystickID, (Uint16)(strong_motor*0xFFFF), (Uint16)(weak_motor*0xFFFF), (Uint32)(duration*1000.0f*count));
+
 }
 
 // Local Variables: ***

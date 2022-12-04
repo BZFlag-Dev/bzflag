@@ -37,12 +37,16 @@ public:
     void    setXAxis(const std::string &axis);
     void    setYAxis(const std::string &axis);
 
+    bool    ffHasRumble() const;
+    void    ffRumble(int count, float delay, float duration, float strong_motor, float weak_motor = 0.0f);
+
 private:
     SDL_Joystick *joystickID;
     int     joystickButtons;
     int     numHats;
     int     xAxis;
     int     yAxis;
+    bool    hasRumble;
 };
 
 #endif // BZF_SDLJOY_H
