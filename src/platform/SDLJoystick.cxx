@@ -228,7 +228,8 @@ bool            SDLJoystick::ffHasRumble() const
     return (joystickID != nullptr && hasRumble);
 }
 
-void            SDLJoystick::ffRumble(int count, float UNUSED(delay), float duration, float strong_motor, float weak_motor)
+void            SDLJoystick::ffRumble(int count, float UNUSED(delay), float duration, float strong_motor,
+                                      float weak_motor)
 {
     if (!ffHasRumble())
         return;
@@ -237,7 +238,8 @@ void            SDLJoystick::ffRumble(int count, float UNUSED(delay), float dura
     strong_motor = std::min(1.0f, std::max(0.0f, strong_motor));
     weak_motor = std::min(1.0f, std::max(0.0f, weak_motor));
 
-    SDL_JoystickRumble(joystickID, (Uint16)(strong_motor*0xFFFF), (Uint16)(weak_motor*0xFFFF), (Uint32)(duration*1000.0f*count));
+    SDL_JoystickRumble(joystickID, (Uint16)(strong_motor*0xFFFF), (Uint16)(weak_motor*0xFFFF),
+                       (Uint32)(duration*1000.0f*count));
 
 }
 
