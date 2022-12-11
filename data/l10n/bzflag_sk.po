@@ -1753,14 +1753,8 @@ msgstr "Zariadenie joysticku:"
 msgid "Active input device:"
 msgstr "Aktivne vstupne zariadenie:"
 
-msgid "Force feedback:"
-msgstr "Force feedback:"
-
-msgid "Rumble"
-msgstr "Rumble"
-
-msgid "Directional"
-msgstr "Smerovy"
+#msgid "Rumble:"
+#msgstr ""
 
 msgid "Joystick X Axis:"
 msgstr "X os joysticku:"

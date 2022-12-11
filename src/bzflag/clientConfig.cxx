@@ -301,11 +301,11 @@ void updateConfigFile(void)
         BZDB.set("list", BZDB.getDefault("list"));
     }
 
+    // Upgrade 2.4.26 to 2.4.28
     if (configVersion <= 5)
-    {
-    }
+        BZDB.unset("forceFeedback");
 
-    if (configVersion < 0 || configVersion > 5)    // hm, we don't know about this one...
+    if (configVersion < 0 || configVersion > BZ_CONFIG_FILE_VERSION)    // hm, we don't know about this one...
     {
         printError(TextUtils::format("Config file is tagged version \"%d\", "
                                      "which was not expected (too new perhaps). "

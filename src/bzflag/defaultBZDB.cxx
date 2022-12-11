@@ -71,6 +71,7 @@ DefaultDBItem defaultDBItems[] =
     { "displayFOV",       "60.0",         false,  StateDatabase::ReadWrite,   NULL },
     { "roamZoomMax",      "120",          false,  StateDatabase::ReadWrite,   NULL },
     { "roamZoomMin",      "15",           false,  StateDatabase::ReadWrite,   NULL },
+    { "rumble",           "1",            true,  StateDatabase::ReadWrite,   NULL },
     { "maxQuality",       "3",            false,  StateDatabase::ReadWrite,   NULL },
     { "groundTexRepeat",      "0.1",          true,   StateDatabase::ReadWrite,   NULL },
     { "groundHighResTexRepeat",   "0.05",         true,   StateDatabase::ReadWrite,   NULL },

@@ -1808,13 +1808,7 @@ msgstr ""
 msgid "Active input device:"
 msgstr ""
 
-msgid "Force feedback:"
-msgstr ""
-
-msgid "Rumble"
-msgstr ""
-
-msgid "Directional"
+msgid "Rumble:"
 msgstr ""
 
 msgid "Joystick X Axis:"
