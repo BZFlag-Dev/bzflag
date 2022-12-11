@@ -63,9 +63,7 @@ public:
      * any rumble that may be in progress.
      */
     virtual bool    ffHasRumble() const;
-    virtual void    ffRumble(int count,
-                             float delay, float duration,
-                             float strong_motor, float weak_motor=0.0f);
+    virtual void    ffRumble(int count, float duration, float strong_motor, float weak_motor=0.0f);
 };
 
 #endif // BZF_JOYSTICK_H

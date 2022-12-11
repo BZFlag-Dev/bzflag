@@ -82,7 +82,7 @@ bool            BzfJoystick::ffHasRumble() const
     return false;
 }
 
-void            BzfJoystick::ffRumble(int, float, float, float, float)
+void            BzfJoystick::ffRumble(int, float, float, float)
 {
 }
 

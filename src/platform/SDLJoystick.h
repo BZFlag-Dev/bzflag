@@ -38,7 +38,7 @@ public:
     void    setYAxis(const std::string &axis);
 
     bool    ffHasRumble() const;
-    void    ffRumble(int count, float delay, float duration, float strong_motor, float weak_motor = 0.0f);
+    void    ffRumble(int count, float duration, float strong_motor, float weak_motor = 0.0f);
 
 private:
     SDL_Joystick *joystickID;
