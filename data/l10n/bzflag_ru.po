@@ -1785,14 +1785,8 @@ msgstr "Joystik:"
 msgid "Active input device:"
 msgstr "Aktivnye ustrojstva vvoda:"
 
-msgid "Force feedback:"
-msgstr "Otdacha joyjstika:"
-
-msgid "Rumble"
-msgstr "Shumy"
-
-msgid "Directional"
-msgstr "Napravlennij"
+msgid "Rumble:"
+msgstr "Shumy:"
 
 msgid "Joystick X Axis:"
 msgstr "Os' X joyjstika:"

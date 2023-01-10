@@ -103,8 +103,6 @@
 #define BZ_PLUGINS 1
 
 // Use SDL2
-#define HAVE_SDL 1
-#define HAVE_SDL2 1
 #define HAVE_SDL2_SDL_H 1
 
 #define HAVE_STD__MIN 1

@@ -187,7 +187,6 @@
 		0357A8BA1670B7E40056C938 /* SDLJoystick.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A11670B7670056C938 /* SDLJoystick.cxx */; };
 		0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A31670B7670056C938 /* SDLMedia.cxx */; };
 		0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */; };
-		0357A8BD1670B7E40056C938 /* wave.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 0357A8A71670B7670056C938 /* wave.cxx */; };
 		0357A8C81670B9050056C938 /* AudioFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BA166C846F008806E9 /* AudioFile.cxx */; };
 		0357A8C91670B9050056C938 /* ImageFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BC166C846F008806E9 /* ImageFile.cxx */; };
 		0357A8CA1670B9050056C938 /* MediaFile.cxx in Sources */ = {isa = PBXBuildFile; fileRef = 035544BF166C846F008806E9 /* MediaFile.cxx */; };
@@ -1640,8 +1639,6 @@
 		0357A8A41670B7670056C938 /* SDLMedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMedia.h; sourceTree = "<group>"; };
 		0357A8A51670B7670056C938 /* SDLPlatformFactory.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLPlatformFactory.cxx; sourceTree = "<group>"; };
 		0357A8A61670B7670056C938 /* SDLPlatformFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLPlatformFactory.h; sourceTree = "<group>"; };
-		0357A8A71670B7670056C938 /* wave.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = wave.cxx; sourceTree = "<group>"; };
-		0357A8A81670B7670056C938 /* wave.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wave.h; sourceTree = "<group>"; };
 		0357A8AD1670B79E0056C938 /* libplatform.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libplatform.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0357A8C41670B8DE0056C938 /* libmediafile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libmediafile.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		0357A8D51670B9930056C938 /* libdate.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libdate.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1776,8 +1773,6 @@
 		0394E91C167B293E007F4035 /* timedctf.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = timedctf.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E927167B29CC007F4035 /* TimeLimit.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = TimeLimit.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		0394E93D167B2A9E007F4035 /* wwzones.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = wwzones.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		0397089F1DD7991D00C9215C /* SDLDisplay.cxx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLDisplay.cxx; sourceTree = "<group>"; };
-		039708A01DD7991D00C9215C /* SDLDisplay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLDisplay.h; sourceTree = "<group>"; };
 		039708A11DD7991D00C9215C /* SDLMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLMain.h; sourceTree = "<group>"; };
 		039708A21DD7991D00C9215C /* SDLMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDLMain.m; sourceTree = "<group>"; };
 		03C338C51AFB59FF00E8F655 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2.framework; path = /Library/Frameworks/SDL2.framework; sourceTree = "<group>"; };
@@ -3013,8 +3008,6 @@
 				0357A89D1670B7670056C938 /* BzfWindow.cxx */,
 				0336ED7A1B7042E40090899C /* MacDataPath.cxx */,
 				0357A89E1670B7670056C938 /* PlatformFactory.cxx */,
-				0397089F1DD7991D00C9215C /* SDLDisplay.cxx */,
-				039708A01DD7991D00C9215C /* SDLDisplay.h */,
 				0357A8A11670B7670056C938 /* SDLJoystick.cxx */,
 				0357A8A21670B7670056C938 /* SDLJoystick.h */,
 				039708A11DD7991D00C9215C /* SDLMain.h */,
@@ -3029,8 +3022,6 @@
 				03C338CA1AFB5AFC00E8F655 /* SDL2Visual.h */,
 				03C338CB1AFB5AFC00E8F655 /* SDL2Window.cxx */,
 				03C338CC1AFB5AFC00E8F655 /* SDL2Window.h */,
-				0357A8A71670B7670056C938 /* wave.cxx */,
-				0357A8A81670B7670056C938 /* wave.h */,
 				03554B07166C8470008806E9 /* README */,
 			);
 			path = platform;
@@ -5191,7 +5182,6 @@
 				0357A8BB1670B7E40056C938 /* SDLMedia.cxx in Sources */,
 				0342A7031DD79C5100D04E4C /* SDL2Window.cxx in Sources */,
 				0357A8BC1670B7E40056C938 /* SDLPlatformFactory.cxx in Sources */,
-				0357A8BD1670B7E40056C938 /* wave.cxx in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7308,8 +7298,6 @@
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
-					HAVE_SDL,
-					HAVE_SDL2,
 					HAVE_SDL2_SDL_H,
 					"DEBUG=1",
 				);
@@ -7364,8 +7352,6 @@
 					"INSTALL_DATA_DIR=\\\"/usr/local/share/bzflag\\\"",
 					"BZ_BUILD_XCODE_VERSION_STR=\\\"$(BZFLAG_XCODE_VERSION)\\\"",
 					BZ_PLUGINS,
-					HAVE_SDL,
-					HAVE_SDL2,
 					HAVE_SDL2_SDL_H,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;

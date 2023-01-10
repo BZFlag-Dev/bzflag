@@ -63,43 +63,7 @@ public:
      * any rumble that may be in progress.
      */
     virtual bool    ffHasRumble() const;
-    virtual void    ffRumble(int count,
-                             float delay, float duration,
-                             float strong_motor, float weak_motor=0.0f);
-
-    /* Directional force feedback support - the controller pulls or pushes in
-     * a certain direction with a certain amount of force.
-     *
-     * Currently this is fairly complete, basically we support most types of
-     * periodic effects, resistance forces, and constant forces.  Compound effects,
-     * ramped forces, and enveloped effects are not supported at this time.
-     */
-    enum PeriodicType
-    {
-        FF_Sine = 0,
-        FF_Square,
-        FF_Triangle,
-        FF_SawtoothUp,
-        FF_SawtoothDown
-    };
-    enum ResistanceType
-    {
-        FF_Position = 0,
-        FF_Velocity,
-        FF_Acceleration
-    };
-    virtual bool    ffHasDirectional() const;
-    virtual void    ffDirectionalConstant(int count,
-                                          float delay, float duration,
-                                          float x_direction, float y_direction,
-                                          float strength);
-    virtual void    ffDirectionalPeriodic(int count,
-                                          float delay, float duration,
-                                          float x_direction, float y_direction,
-                                          float amplitude, float period,
-                                          PeriodicType type);
-    virtual void    ffDirectionalResistance(float time, float coefficient,
-                                            float saturation, ResistanceType type);
+    virtual void    ffRumble(int count, float duration, float strong_motor, float weak_motor=0.0f);
 };
 
 #endif // BZF_JOYSTICK_H
