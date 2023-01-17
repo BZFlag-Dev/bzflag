@@ -596,7 +596,7 @@ workspace(iif(_ACTION and string.find(_ACTION, "vs", 0),
                  "<key>CFBundleVersion</key><string>"..bzVersion.major.."."..bzVersion.minor.."."..bzVersion.revision.."</string>"..
                  "<key>LSApplicationCategoryType</key><string>public.app-category.arcade-games</string>"..
                  "<key>LSMinimumSystemVersion</key><string>${MACOSX_DEPLOYMENT_TARGET}</string>"..
-                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2021 Tim Riker</string>"..
+                 "<key>NSHumanReadableCopyright</key><string>Copyright (c) 1993-2023 Tim Riker</string>"..
                  "</dict>"..
                  "</plist>");
     print("Generated premake5/".._ACTION.."/BZFlag-Info.plist...")
