@@ -70,12 +70,13 @@ my $totalPlayers = 0;
 for my $line (@lines) {
   my ($serverport, $version, $flags, $ip, $comments) = split(" ",$line,5);
   # not "(A4)18" to handle old dumb perl
-  my ($style, $maxShots, $shakeWins, $shakeTimeout, $maxPlayerScore, $maxTeamScore, $maxTime,
+  # old versions did not have $type
+  my ($type, $style, $maxShots, $shakeWins, $shakeTimeout, $maxPlayerScore, $maxTeamScore, $maxTime,
       $maxPlayers, $rogueSize, $rogueMax, $redSize, $redMax, $greenSize, $greenMax,
       $blueSize, $blueMax, $purpleSize, $purpleMax, $observerSize, $observerMax) =
-      unpack("A4A4A4A4A4A4A4A2A2A2A2A2A2A2A2A2A2A2A2A2", $flags);
+      unpack("A4A4A4A4A4A4A4A4A2A2A2A2A2A2A2A2A2A2A2A2A2", $flags);
   my $playerSize = hex($rogueSize) + hex($redSize) + hex($greenSize)
-      + hex($blueSize) + hex($purpleSize) + hex($observerSize);
+      + hex($blueSize) + hex($purpleSize);
   if (($#ARGV == 0) && ($serverport eq $ARGV[0])) {
     my $playerMax = hex($rogueMax) + hex($redMax) + hex($greenMax)
         + hex($blueMax) + hex($purpleMax) + hex($observerMax);
