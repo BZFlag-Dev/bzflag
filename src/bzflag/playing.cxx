@@ -7407,7 +7407,7 @@ static void     startupErrorCallback(const char* msg)
 void            startPlaying(BzfDisplay* _display,
                              SceneRenderer& renderer)
 {
-    // initalization
+    // initialization
     display = _display;
     sceneRenderer = &renderer;
     mainWindow = &sceneRenderer->getWindow();
