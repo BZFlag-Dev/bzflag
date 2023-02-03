@@ -1614,8 +1614,8 @@ static bool isCached(char *hexDigest)
 
 
 int curlProgressFunc(void* UNUSED(clientp),
-                     double dltotal, double dlnow,
-                     double UNUSED(ultotal), double UNUSED(ulnow))
+                     curl_off_t dltotal, curl_off_t dlnow,
+                     curl_off_t UNUSED(ultotal), curl_off_t UNUSED(ulnow))
 {
     // FIXME: beaucoup cheeze here in the aborting style
     //    we should be using async dns and multi-curl

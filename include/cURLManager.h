@@ -43,12 +43,11 @@ public:
     void setTimeout(long timeout);
     void setNoBody();
     void setGetMode();
-    void setHTTPPostMode();
     void setPostMode(std::string postData);
     void setRequestFileTime(bool request);
     void setURL(const std::string &url);
     void setURLwithNonce(const std::string &url);
-    void setProgressFunction(curl_progress_callback func, const void* data);
+    void setProgressFunction(curl_xferinfo_callback func, const void* data);
     void setTimeCondition(timeCondition condition, time_t &t);
     void setInterface(const std::string &interfaceIP);
     void setUserAgent(const std::string &userAgent);
@@ -57,7 +56,7 @@ public:
     void addFormData(const char *key, const char *value);
 
     bool getFileTime(time_t &t);
-    bool getFileSize(double &size);
+    bool getFileSize(int    &size);
 
     virtual void collectData(char *ptr, int len);
     virtual void finalization(char *data, unsigned int length, bool good);
@@ -83,9 +82,6 @@ private:
     std::string   interfaceIP;
     std::string   userAgent;
     std::string   postData;
-
-    struct curl_httppost* formPost;
-    struct curl_httppost* formLast;
 
     static void   setup();
 
