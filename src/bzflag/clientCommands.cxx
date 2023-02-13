@@ -954,10 +954,7 @@ static std::string cmdScreenshot(const std::string&, const CommandManager::ArgLi
     int w = ssdata->width = mainWindow->getWidth();
     int h = ssdata->height = mainWindow->getHeight();
     ssdata->pixels = new unsigned char[h * w * 3];
-    glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glReadPixels(0, 0, w, h, GL_RGB, GL_UNSIGNED_BYTE, ssdata->pixels);
-    glPopClientAttrib();
 
 #if defined(HAVE_PTHREADS)
     pthread_t thread;

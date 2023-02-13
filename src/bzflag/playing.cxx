@@ -1613,8 +1613,8 @@ static bool isCached(const std::string &hexDigest)
 
 
 int curlProgressFunc(void* UNUSED(clientp),
-                     double dltotal, double dlnow,
-                     double UNUSED(ultotal), double UNUSED(ulnow))
+                     curl_off_t dltotal, curl_off_t dlnow,
+                     curl_off_t UNUSED(ultotal), curl_off_t UNUSED(ulnow))
 {
     // FIXME: beaucoup cheeze here in the aborting style
     //    we should be using async dns and multi-curl
@@ -5955,6 +5955,7 @@ void drawFrame(const float dt)
 
     const float* myTankPos;
     const float* myTankDir;
+    float myTankAngle = 0.0f;
     GLfloat fov;
 
     checkDirtyControlPanel(controlPanel);
@@ -5987,6 +5988,7 @@ void drawFrame(const float dt)
         {
             myTankPos = myTank->getPosition();
             myTankDir = myTank->getForward();
+            myTankAngle = myTank->getAngle();
             muzzleHeight = myTank->getMuzzleHeight();
 
             if (myTank->getFlag()->flagEffect == FlagEffect::WideAngle)
@@ -6115,7 +6117,7 @@ void drawFrame(const float dt)
                     myTank->move(virtPos, roamViewAngle * DEG2RADf);
             }
             fov = roam->zoom * DEG2RADf;
-            moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], 0.0, false);
+            moveSoundReceiver(eyePoint[0], eyePoint[1], eyePoint[2], myTankAngle, false);
         }
 
         // only use a close plane for drawing in the
@@ -7499,7 +7501,7 @@ static void     startupErrorCallback(const char* msg)
 void            startPlaying(BzfDisplay* _display,
                              SceneRenderer& renderer)
 {
-    // initalization
+    // initialization
     display = _display;
     sceneRenderer = &renderer;
     mainWindow = &sceneRenderer->getWindow();

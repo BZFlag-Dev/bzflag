@@ -21,23 +21,19 @@ BzfMedia*       PlatformFactory::media = 0;
 
 PlatformFactory::PlatformFactory()
 {
-#ifdef HAVE_SDL
     Uint32 flags = 0;
     if (SDL_Init(flags) < 0)
     {
         printFatalError("Could not initialize SDL: %s.\n", SDL_GetError());
         exit(-1);
     };
-#endif
 }
 
 PlatformFactory::~PlatformFactory()
 {
-#ifdef HAVE_SDL
     if (media)
         media->closeAudio();
     SDL_Quit();
-#endif
     delete media;
 }
 

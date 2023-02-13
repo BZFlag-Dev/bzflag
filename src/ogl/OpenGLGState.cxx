@@ -1362,6 +1362,8 @@ void OpenGLGState::initContext()
     glLoadIdentity();
     glEnable(GL_SCISSOR_TEST);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+    glPixelStorei(GL_UNPACK_ALIGNMENT,1);
+    glPixelStorei(GL_PACK_ALIGNMENT,1);
 }
 
 
@@ -1691,22 +1693,8 @@ void bzMatrixMode(GLenum mode)
 
 #endif // DEBUG_GL_MATRIX_STACKS
 
-
-#if defined(_WIN32)
-#  define GET_CURRENT_CONTEXT wglGetCurrentContext
-#elif defined(__BEOS__)
-// no way to do that, and you shouldn't have to anyway!
-#  define GET_CURRENT_CONTEXT() 1
-#elif defined(HAVE_SDL2)
-#  include "bzfSDL.h"
-#  define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
-#elif defined(HAVE_CGLGETCURRENTCONTEXT)
-#  include <OpenGL/OpenGL.h>
-#  define GET_CURRENT_CONTEXT CGLGetCurrentContext
-#else
-#  include <GL/glx.h>
-#  define GET_CURRENT_CONTEXT glXGetCurrentContext
-#endif
+#include "bzfSDL.h"
+#define GET_CURRENT_CONTEXT SDL_GL_GetCurrentContext
 
 // NOTE: if you're compiler croaks here, then you might want
 //       to find an alternative method for OpenGL context

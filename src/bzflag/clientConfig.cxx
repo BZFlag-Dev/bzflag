@@ -166,11 +166,14 @@ void updateConfigFile(void)
         BZDB.set("list", BZDB.getDefault("list"));
     }
 
+    // Upgrade 2.4.26 to 2.4.28
     if (configVersion <= 5)
+        BZDB.unset("forceFeedback");
+
+    // Upgrade 2.4.x to 2.6.0
+    if (configVersion <= 6)
     {
     }
-
-
 
     // set us as the updated version
     configVersion = BZ_CONFIG_FILE_VERSION;

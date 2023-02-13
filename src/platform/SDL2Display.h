@@ -26,7 +26,6 @@
 
 // system interface headers
 #include <map>
-#include <deque>
 
 class SDLDisplay : public BzfDisplay
 {
@@ -38,8 +37,8 @@ public:
         return true;
     };
     bool isEventPending() const;
-    bool getEvent(BzfEvent&);
-    bool peekEvent(BzfEvent&);
+    bool getEvent(BzfEvent&) const;
+    bool peekEvent(BzfEvent&) const;
     bool getKey(const SDL_Event& sdlEvent, BzfKeyEvent& key, const char asciiText = '\0') const;
     void getWindowSize(int& width, int& height);
     bool hasGetKeyMode()
@@ -48,13 +47,12 @@ public:
     };
     void getModState(bool &shift, bool &control, bool &alt);
 private:
-    bool setupEvent(BzfEvent&, const SDL_Event&);
+    const Uint32 mouseWheelStopEvent;
+    bool setupEvent(BzfEvent&, const SDL_Event&) const;
     bool doSetResolution(int)
     {
         return true;
     };
-
-    std::deque<int> pendingUpEvents;
 };
 
 #endif // BZF_SDLDISPLAY_H

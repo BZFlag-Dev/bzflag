@@ -225,10 +225,10 @@ channel and forums.
 Internet Relay Chat
 -------------------
 Most of the BZFlag development activity and discussions occur over
-IRC.  Join the #bzflag IRC channel on the Freenode network
-(irc.freenode.net, port 6667) to get involved.
+IRC.  Join the #bzflag IRC channel on the Libera.Chat network
+(irc.libera.chat, TLS port 6697) to get involved.
 
-See https://webchat.freenode.net for a web based interface for
+See https://web.libera.chat/ for a web based interface for
 first-time users.  Individuals that intend to stay in the channel are
 expected to get a non-web-based IRC client.  See http://irchelp.org or
 search the web for IRC clients for your operating system.
@@ -254,7 +254,7 @@ tracking system at:
 https://github.com/BZFlag-Dev/bzflag/issues
 
 If you require assistance with some issue, please visit the BZFlag
-IRC channel at #bzflag at irc.freenode.net
+IRC channel at #bzflag at irc.libera.chat
 
 Alternatively, discussion forums are also available for resolving issues.
 

@@ -142,11 +142,11 @@ void NewVersionMenu::execute()
 void NewVersionMenu::collectData(char* ptr, int len)
 {
     char buffer[128];
-    double size = 0;
+    int size = 0;
     getFileSize(size);
     cURLManager::collectData(ptr, len);
     byteTransferred += len;
-    snprintf(buffer, 128, "Downloading update: %d/%d KB", byteTransferred/1024, (int)size/1024);
+    snprintf(buffer, 128, "Downloading update: %d/%d KB", byteTransferred/1024, size/1024);
     ((HUDuiLabel*)status)->setString(buffer);
 }
 

@@ -1603,10 +1603,10 @@ void sendChatMessage(PlayerId srcPlayer, PlayerId dstPlayer, const char *message
 void sendFilteredMessage(int sendingPlayer, PlayerId recipientPlayer, const char *message, MessageType type)
 {
     const char* msg = message;
+    char filtered[MessageLen];
 
     if (clOptions->filterChat)
     {
-        char filtered[MessageLen];
         strncpy(filtered, message, MessageLen - 1);
         filtered[MessageLen - 1] = '\0';
         if (clOptions->filterSimple)

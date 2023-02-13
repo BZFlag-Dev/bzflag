@@ -158,7 +158,7 @@ bool CronManager::reload(void)
     std::ifstream input(crontab.c_str(), std::ios::in);
     if (input.peek() == EOF)
     {
-        bz_debugMessage(1, "bzfscron: crontab nonexistant or invalid");
+        bz_debugMessage(1, "bzfscron: crontab nonexistent or invalid");
         return false;
     }
 

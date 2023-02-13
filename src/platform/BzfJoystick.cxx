@@ -82,24 +82,7 @@ bool            BzfJoystick::ffHasRumble() const
     return false;
 }
 
-void            BzfJoystick::ffRumble(int, float, float, float, float)
-{
-}
-
-bool            BzfJoystick::ffHasDirectional() const
-{
-    return false;
-}
-
-void            BzfJoystick::ffDirectionalConstant(int, float, float, float, float, float)
-{
-}
-
-void            BzfJoystick::ffDirectionalPeriodic(int, float, float, float, float, float, float, PeriodicType)
-{
-}
-
-void            BzfJoystick::ffDirectionalResistance(float, float, float, ResistanceType)
+void            BzfJoystick::ffRumble(int, float, float, float)
 {
 }
 

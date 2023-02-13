@@ -1473,14 +1473,8 @@ msgstr "Joystick:"
 msgid "Active input device:"
 msgstr "Dispositivo de entrada activo:"
 
-msgid "Force feedback:"
-msgstr "Force feedback:"
-
-msgid "Rumble"
-msgstr "Barullo"
-
-msgid "Directional"
-msgstr "Direccional"
+msgid "Rumble:"
+msgstr "Barullo:"
 
 msgid "Joystick X Axis:"
 msgstr "Eje X del joystick:"

@@ -6,6 +6,25 @@ BZFlag 2.5.x
 
 * Apply colorblindness to your own tank and shots - Kyle Mills
 
+* Remove non-SDL2 platform code and add SDL2 controller rumble support
+    - Scott Wichser
+* Fix libcurl deprecation warnings - Alfredo Tupone
+
+
+BZFlag 2.4.26  "Tanksgiving" (2022-11-20)
+-----------------------------------------
+
+* Fix incorrect rotation math for API custom zones
+    - Alfredo Tupone, Vladimir Jimenez
+* Do not block on TCP recv - Alfredo Tupone
+* Fix select() block timeout, reducing CPU usage - DeathByDenim
+* Fix rendering regression that displayed skewed textures
+    - Alfredo Tupone, Agatha
+* Fix positional audio direction when in observer mode - Scott Wichser
+* Fix audio pops - Scott Wichser
+* Fix Machine Gun firing continuously when mouse wheel is bound to fire
+    - Scott Wichser
+
 
 BZFlag 2.4.24  "Thank you for your input" (2022-03-08)
 ------------------------------------------------------

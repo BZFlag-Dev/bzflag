@@ -29,8 +29,8 @@ public:
 
     virtual bool    isValid() const = 0;
     virtual bool    isEventPending() const = 0;
-    virtual bool    getEvent(BzfEvent&) = 0;
-    virtual bool    peekEvent(BzfEvent&) = 0;
+    virtual bool    getEvent(BzfEvent&) const = 0;
+    virtual bool    peekEvent(BzfEvent&) const = 0;
 
     virtual bool    hasGetKeyMode()
     {

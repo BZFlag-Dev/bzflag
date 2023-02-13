@@ -16,7 +16,7 @@
 // System includes
 #include <vector>
 
-SDLDisplay::SDLDisplay()
+SDLDisplay::SDLDisplay() : mouseWheelStopEvent(SDL_RegisterEvents(1))
 {
     if (SDL_VideoInit(NULL) < 0)
     {
@@ -91,23 +91,12 @@ bool SDLDisplay::isEventPending() const
     // Fixing a bug on SDL 2.0.20
     SDL_PumpEvents();
 
-    return pendingUpEvents.size() > 0 || SDL_PollEvent(NULL) == 1;
+    return (SDL_PollEvent(NULL) == 1);
 }
 
 
-bool SDLDisplay::getEvent(BzfEvent& _event)
+bool SDLDisplay::getEvent(BzfEvent& _event) const
 {
-    if (pendingUpEvents.size() > 0)
-    {
-        _event.type = BzfEvent::KeyUp;
-        _event.keyUp.ascii = 0;
-        _event.keyUp.shift = 0;
-        _event.keyUp.button = 0;
-        int btn = pendingUpEvents.front();
-        _event.keyUp.button = btn;
-        pendingUpEvents.pop_front();
-        return true;
-    }
     SDL_Event event;
     if (SDL_PollEvent(&event) == 0)
         return false;
@@ -116,24 +105,13 @@ bool SDLDisplay::getEvent(BzfEvent& _event)
 }
 
 
-bool SDLDisplay::peekEvent(BzfEvent& _event)
+bool SDLDisplay::peekEvent(BzfEvent& _event) const
 {
     /* It get the event that is in the event queue, is not going to fill it if empty
      * so it should be called after an SDL_PumpEvents (implicit or explicit)
      * Actually the peekEvent is always called only if at least an event is already in the queue.
      * SDL_PollEvent does the job
      */
-    if (pendingUpEvents.size() > 0)
-    {
-        _event.type = BzfEvent::KeyUp;
-        _event.keyUp.ascii = 0;
-        _event.keyUp.shift = 0;
-        _event.keyUp.button = 0;
-        int btn = pendingUpEvents.front();
-        _event.keyUp.button = btn;
-        return true;
-    }
-
     SDL_Event event;
     if (SDL_PeepEvents(&event, 1, SDL_PEEKEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT) <= 0)
         return false;
@@ -416,12 +394,34 @@ void SDLDisplay::getModState(bool &shift, bool &ctrl, bool &alt)
 }
 
 
-bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event)
+bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event) const
 {
     SDL_Keymod mode = SDL_GetModState();
     bool shift  = ((mode & KMOD_SHIFT) != 0);
     bool ctrl   = ((mode & KMOD_CTRL) != 0);
     bool alt    = ((mode & KMOD_ALT) != 0);
+
+    // Specifically handle our custom mouse wheel event here to trigger a KeyUp event, fixing the
+    // issue where MG would fire endlessly.
+    if (event.type == mouseWheelStopEvent)
+    {
+        _event.type   = BzfEvent::KeyUp;
+        _event.keyDown.ascii = 0;
+        _event.keyDown.shift = 0;
+        if (shift)
+            _event.keyDown.shift |= BzfKeyEvent::ShiftKey;
+        if (ctrl)
+            _event.keyDown.shift |= BzfKeyEvent::ControlKey;
+        if (alt)
+            _event.keyDown.shift |= BzfKeyEvent::AltKey;
+
+        if (event.user.code == 0)
+            _event.keyDown.button = BzfKeyEvent::WheelDown;
+        else
+            _event.keyDown.button = BzfKeyEvent::WheelUp;
+
+        return true;
+    }
 
     switch (event.type)
     {
@@ -448,7 +448,12 @@ bool SDLDisplay::setupEvent(BzfEvent& _event, const SDL_Event& event)
         else
             _event.keyDown.button = BzfKeyEvent::WheelUp;
 
-        pendingUpEvents.push_back(_event.keyDown.button);
+        // Push our user event so we can trigger a KeyUp event for the mouse wheel
+        SDL_Event fake;
+        SDL_zero(fake);
+        fake.type = mouseWheelStopEvent;
+        fake.user.code = (event.wheel.y < 0)?0:1;
+        SDL_PushEvent(&fake);
         break;
 
     case SDL_MOUSEBUTTONDOWN:

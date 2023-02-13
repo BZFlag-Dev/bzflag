@@ -123,10 +123,11 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
             option->setCallback(callback, "A");
             options = &option->getList();
             options->push_back(std::string("Off"));
-            for (int i = 2; i <= maxAnisotropy; i=i*2)
+            for (unsigned short int i = 2; i <= maxAnisotropy; i=i*2)
             {
                 char buffer[16];
-                snprintf(buffer, sizeof(buffer), "%i/%i", i, maxAnisotropy);
+                snprintf(buffer, sizeof(buffer), "%i/%i",
+                         i, (unsigned short int)maxAnisotropy);
                 options->push_back(std::string(buffer));
             }
             option->update();
@@ -171,12 +172,7 @@ DisplayMenu::DisplayMenu() : formatMenu(NULL)
 
     option = new HUDuiList;
     option->setFontFace(fontFace);
-
-#if (defined(HAVE_SDL) && !defined(HAVE_SDL2))  // only SDL 2 can make live changes
-    option->setLabel("(restart required) Energy Saver:");
-#else
     option->setLabel("Energy Saver:");
-#endif
     option->setCallback(callback, "s");
     options = &option->getList();
     options->push_back(std::string("Off"));

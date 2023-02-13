@@ -249,7 +249,7 @@ ServerListFilterHelp2Menu::ServerListFilterHelp2Menu() : ServerListFilterHelpMen
     listHUD.push_back(createLabel("Filters are currently limited to 42 characters due to limitations with the menu"));
     listHUD.push_back(createLabel("system. Future versions of the game should be able to lift this restriction."));
     listHUD.push_back(createLabel(""));
-    listHUD.push_back(createLabel("The next pages will describe the various filters. The text within the inital set of"));
+    listHUD.push_back(createLabel("The next pages will describe the various filters. The text within the initial set of"));
     listHUD.push_back(createLabel("parenthesis for each item will include the short and longer forms of the filter."));
     listHUD.push_back(createLabel("Either can be used in your filter, but the shorter form is recommended. Also, the"));
     listHUD.push_back(createLabel("filters are case sensitive, so make sure you write them exactly as shown."));

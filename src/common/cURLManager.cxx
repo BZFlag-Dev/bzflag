@@ -37,9 +37,6 @@ cURLManager::cURLManager()
     theLen    = 0;
     added     = false;
 
-    formPost  = NULL;
-    formLast  = NULL;
-
     if (!inited)
         setup();
 
@@ -171,15 +168,6 @@ void cURLManager::setPostMode(std::string _postData)
         logDebugMessage(1,"CURLOPT_POST error %d : %s\n", result, errorBuffer);
 }
 
-void cURLManager::setHTTPPostMode()
-{
-    CURLcode result;
-
-    result = curl_easy_setopt(easyHandle, CURLOPT_HTTPPOST, formPost);
-    if (result != CURLE_OK)
-        logDebugMessage(1,"CURLOPT_HTTPPOST error %d : %s\n", result, errorBuffer);
-}
-
 void cURLManager::setURL(const std::string &url)
 {
     CURLcode result;
@@ -206,14 +194,14 @@ void cURLManager::setURLwithNonce(const std::string &url)
     setURL(url + nonce);
 }
 
-void cURLManager::setProgressFunction(curl_progress_callback func, const void* data)
+void cURLManager::setProgressFunction(curl_xferinfo_callback func, const void* data)
 {
     CURLcode result;
     if (func != NULL)
     {
-        result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSFUNCTION, func);
+        result = curl_easy_setopt(easyHandle, CURLOPT_XFERINFOFUNCTION, func);
         if (result == CURLE_OK)
-            result = curl_easy_setopt(easyHandle, CURLOPT_PROGRESSDATA, data);
+            result = curl_easy_setopt(easyHandle, CURLOPT_XFERINFODATA, data);
         if (result == CURLE_OK)
             result = curl_easy_setopt(easyHandle, CURLOPT_NOPROGRESS, 0);
     }
@@ -336,12 +324,6 @@ void cURLManager::infoComplete(CURLcode result)
     if (result != CURLE_OK)
         logDebugMessage(1,"File transfer terminated with error from libcurl %d : %s\n",
                         result, errorBuffer);
-    if (formPost)
-    {
-        curl_formfree(formPost);
-        formPost = NULL;
-        formLast = NULL;
-    }
     removeHandle();
     finalization((char *)theData, theLen, result == CURLE_OK);
     justCalled = true;
@@ -364,13 +346,15 @@ bool cURLManager::getFileTime(time_t &t)
     return true;
 }
 
-bool cURLManager::getFileSize(double &size)
+bool cURLManager::getFileSize(int &size)
 {
     CURLcode result;
-    result = curl_easy_getinfo(easyHandle, CURLINFO_SIZE_DOWNLOAD, &size);
+    curl_off_t mySize;
+    result = curl_easy_getinfo(easyHandle, CURLINFO_SIZE_DOWNLOAD_T, &mySize);
+    size = (int)mySize;
     if (result)
     {
-        logDebugMessage(1,"CURLINFO_SIZE_DOWNLOAD error %d : %s\n", result, errorBuffer);
+        logDebugMessage(1,"CURLINFO_SIZE_DOWNLOAD_T error %d : %s\n", result, errorBuffer);
         return false;
     }
     return true;
@@ -430,18 +414,6 @@ void cURLManager::setUserAgent(const std::string &_userAgent)
                               userAgent.c_str());
     if (result != CURLE_OK)
         logDebugMessage(1,"CURLOPT_SET_USERAGENT error %d : %s\n", result, errorBuffer);
-}
-
-void cURLManager::addFormData(const char *key, const char *value)
-{
-    CURLFORMcode result;
-    result = curl_formadd(&formPost, &formLast,
-                          CURLFORM_COPYNAME, key,
-                          CURLFORM_COPYCONTENTS, value,
-                          CURLFORM_CONTENTSLENGTH, strlen(value),
-                          CURLFORM_END);
-    if (result != CURL_FORMADD_OK)
-        logDebugMessage(1,"addFormData error %d : %s\n", result, errorBuffer);
 }
 
 void cURLManager::setDNSCachingTime(long time)

@@ -18,35 +18,14 @@ msgstr "Vykl"
 msgid "On"
 msgstr "Vkl"
 
-msgid "Unavailable"
-msgstr "Otsutstvuet"
-
-msgid "None"
-msgstr "Net"
-
-msgid "Fast"
-msgstr "Bystree"
-
-msgid "Best"
-msgstr "Luchshe"
-
 msgid "NOTE: "
 msgstr "Vnimanie: "
 
 msgid "Page {1} of {2}"
 msgstr "List {1} iz {2}"
 
-msgid "Auto"
-msgstr "Avto"
-
-msgid "Pause/Resume:"
-msgstr "Pauza/Dalee"
-
-msgid "Slow Keyboard Motion:"
-msgstr "Zamedlenie klaviatury"
-
-msgid "<not mapped>"
-msgstr "<ne naznacheno>"
+#msgid "Slow Keyboard Motion:"
+#msgstr "Zamedlenie klaviatury:"
 
 msgid "No"
 msgstr "Net"
@@ -60,11 +39,8 @@ msgstr "N/D"
 msgid "Failed... unknown error (%d)."
 msgstr "Ne udacha,... neizvestnaya oshibka (%d)."
 
-msgid "Silenced All Msgs"
-msgstr "Otklyuchit' soob$eniya"
-
-msgid " or "
-msgstr " ili "
+#msgid "Silenced All Msgs"
+#msgstr "Otklyuchit' soob$eniya"
 
 ##################
 ## INPUT EVENTS ##
@@ -692,16 +668,16 @@ msgid "Audio Settings"
 msgstr "Nastrojki zvuka"
 
 msgid "Sound Volume:"
-msgstr "Nastrojka gromkosti"
+msgstr "Nastrojka gromkosti:"
 
 msgid "Unavailable"
 msgstr "Nedostupen"
 
 msgid "Driver:"
-msgstr "Drajver"
+msgstr "Drajver:"
 
 msgid "Device:"
-msgstr "Ustrojstvo"
+msgstr "Ustrojstvo:"
 
 msgid "Remote Sounds:"
 msgstr "Udalyonnye zvuki:"
@@ -759,7 +735,7 @@ msgid "Automatic Downloads:"
 msgstr "Avtomaticheskie zagruzki:"
 
 msgid "Connection Updates:"
-msgstr "Obnovlenie soedinenij"
+msgstr "Obnovlenie soedinenij:"
 
 msgid "Update Downloads"
 msgstr "Obnovlenie zagruzki"
@@ -790,10 +766,10 @@ msgid "None"
 msgstr "Net"
 
 msgid "Fast"
-msgstr "Luchshe"
+msgstr "Bystree"
 
 msgid "Best"
-msgstr "Bystree"
+msgstr "Luchshe"
 
 msgid "Texturing:"
 msgstr "Tekstury:"
@@ -874,7 +850,7 @@ msgid "Video Format"
 msgstr "Videoformat"
 
 msgid "Current Format:"
-msgstr "Teku$ij format"
+msgstr "Teku$ij format:"
 
 msgid "<switching not available>"
 msgstr "<Pereklyuchenie ne dostupno>"
@@ -890,22 +866,19 @@ msgstr "<nezagruzhaemo>"
 ###############
 
 msgid "downloading: "
-msgstr "zagruzka:"
+msgstr "zagruzka: "
 
 msgid "Downloading texture (%d of %d): %d KB"
 msgstr "Zagruzka tekstur (%d iz %d): %d KB"
 
 msgid "not downloading: "
-msgstr "ne zagruzheno:"
-
-msgid "NOTE: "
-msgstr "Vnimanie:"
+msgstr "ne zagruzheno: "
 
 msgid "download access is controlled by "
 msgstr "zagruzka upravlyaetsya "
 
 msgid "local denial: "
-msgstr "mestnij zapret:"
+msgstr "mestnij zapret: "
 
 ######################
 ## EFFECTS SETTINGS ##
@@ -954,7 +927,7 @@ msgid "Spawn Effect:"
 msgstr "Effekt poyavleniya:"
 
 msgid "Local Spawn Effect:"
-msgstr "Effekt lokal'nogo poyavleniya"
+msgstr "Effekt lokal'nogo poyavleniya:"
 
 msgid "Same as spawns"
 msgstr "Podobnij poyavleniyu"
@@ -984,10 +957,10 @@ msgid "GM Effect Timing:"
 msgstr "Dlitel'nost' effekta PTURS:"
 
 msgid "  Ricochet Effect:"
-msgstr "  Effekt rikosheta"
+msgstr "  Effekt rikosheta:"
 
 msgid "  Teleport Shot Effect:"
-msgstr "  Effekt teleportacii"
+msgstr "  Effekt teleportacii:"
 
 msgid "Blossom"
 msgstr "Cvetok"
@@ -1005,7 +978,7 @@ msgid "Muzzle Flash"
 msgstr "Vspyshka v stvole"
 
 msgid "Smoke and Flash"
-msgstr "Dym i vspyshka:"
+msgstr "Dym i vspyshka"
 
 msgid "Classic Puff"
 msgstr "Klassicheskie kluby dyma"
@@ -1045,7 +1018,7 @@ msgid "Fast Sorted"
 msgstr "Bystraya sortirovka"
 
 msgid "Enhanced"
-msgstr "Uluchsheniya:"
+msgstr "Uluchsheniya"
 
 msgid "Scoreboard Sort:"
 msgstr "Sortirovka tablo:"
@@ -1054,7 +1027,7 @@ msgid "Always Show Team Scores:"
 msgstr "Vsegda pokazyvat' schyot komandy:"
 
 msgid "Scoreboard Font Size:"
-msgstr "Razmer shrifta tablo"
+msgstr "Razmer shrifta tablo:"
 
 msgid "Auto"
 msgstr "Avto"
@@ -1072,13 +1045,13 @@ msgid "Full"
 msgstr "Polnlst'yu"
 
 msgid "Panel Opacity:"
-msgstr "Neprozrachnost' paneli"
+msgstr "Neprozrachnost' paneli:"
 
 msgid "Radar Opacity:"
-msgstr "Neprozrachnost' radara"
+msgstr "Neprozrachnost' radara:"
 
 msgid "Colored shots on radar:"
-msgstr "Rascvetka vystrelov na radare"
+msgstr "Rascvetka vystrelov na radare:"
 
 msgid "Radar Shot Length:"
 msgstr "Dlina vystrela na radare:"
@@ -1111,13 +1084,13 @@ msgid "Radar Size:"
 msgstr "Razmer radara:"
 
 msgid "Panel Height:"
-msgstr "Vysota paneli"
+msgstr "Vysota paneli:"
 
 msgid "Mouse Box Size:"
 msgstr "Razmer ramok myshi:"
 
 msgid "Locale:"
-msgstr "Lokal'"
+msgstr "Lokal':"
 
 msgid "Default"
 msgstr "Po-umolchaniyu"
@@ -1126,10 +1099,10 @@ msgid "Control panel tabs:"
 msgstr "Zakladki paneli upravleniya:"
 
 msgid "Control panel coloring:"
-msgstr "Rascvetka paneli upravleniya"
+msgstr "Rascvetka paneli upravleniya:"
 
 msgid "Underline color:"
-msgstr "Cvet podcherkivaniya"
+msgstr "Cvet podcherkivaniya:"
 
 msgid "Cyan"
 msgstr "Cian"
@@ -1141,7 +1114,7 @@ msgid "Text"
 msgstr "Tekst"
 
 msgid "Killer Highlight:"
-msgstr "Podsvetka ubijcy"
+msgstr "Podsvetka ubijcy:"
 
 msgid "Pulsating"
 msgstr "Miganie"
@@ -1150,10 +1123,10 @@ msgid "Underline"
 msgstr "Podchyorkivanie"
 
 msgid "Pulsation Rate:"
-msgstr "Skorost' pulb'sacii"
+msgstr "Skorost' pulb'sacii:"
 
 msgid "Pulsation Depth:"
-msgstr "Glubina pul'sacii"
+msgstr "Glubina pul'sacii:"
 
 msgid "Time / Date Display:"
 msgstr "Otobrazhenie daty/vremeni:"
@@ -1168,10 +1141,10 @@ msgid "both"
 msgstr "data i vremya"
 
 msgid "Reload timer on HUD:"
-msgstr "Tajmer perezaryadki na verhnem tablo"
+msgstr "Tajmer perezaryadki na verhnem tablo:"
 
 msgid "Motto Display Length:"
-msgstr "Dlina tablo deviza"
+msgstr "Dlina tablo deviza:"
 
 ###############
 ## HELP MENU ##
@@ -1190,16 +1163,16 @@ msgid "Mouse Position"
 msgstr "Poziciya myshi"
 
 msgid "Controls Tank Position:"
-msgstr "Upravlenie polozheniem tanka"
+msgstr "Upravlenie polozheniem tanka:"
 
 msgid "Fires Shot:"
 msgstr "Ogon' vystrela:"
 
 msgid "Drops Flag (if not bad):"
-msgstr "Vybrasyvaniya flaga (ne dlya 'razbojnikov')"
+msgstr "Vybrasyvaniya flaga (ne dlya 'razbojnikov'):"
 
 msgid "Identifies Player (locks on GM):"
-msgstr "Identifikaciya igroka (c fiksaciej celi PTURS)"
+msgstr "Identifikaciya igroka (c fiksaciej celi PTURS):"
 
 msgid "Short Radar Range:"
 msgstr "Radar blizhnego dejstviya:"
@@ -1211,28 +1184,28 @@ msgid "Long Radar Range:"
 msgstr "Radar dal'nego dejstviya:"
 
 msgid "Zoom Radar In:"
-msgstr "Uvelichenie masshtaba radara"
+msgstr "Uvelichenie masshtaba radara:"
 
 msgid "Zoom Radar Out:"
-msgstr "Umen'shenie masshtaba radara"
+msgstr "Umen'shenie masshtaba radara:"
 
 msgid "Send Message to Everybody:"
-msgstr "Otpravit' soob$enie vsem"
+msgstr "Otpravit' soob$enie vsem:"
 
 msgid "Send Message to Teammates:"
-msgstr "Poslat' soob$enie tovari$am"
+msgstr "Poslat' soob$enie tovari$am:"
 
 msgid "Send Message to Nemesis:"
 msgstr "Poslat' soob$enie vozmezdiya:"
 
 msgid "Send Message to Recipient:"
-msgstr "Poslat' soob$enie adresatu"
+msgstr "Poslat' soob$enie adresatu:"
 
 msgid "Jump (if allowed):"
-msgstr "Pryzhok (esli razre$yon)"
+msgstr "Pryzhok (esli razre$yon):"
 
 msgid "Toggle Binoculars:"
-msgstr "Pereklyuchit' binokl'"
+msgstr "Pereklyuchit' binokl':"
 
 msgid "Toggle Score Sheet:"
 msgstr "Pereklyuchit' schyot igry:"
@@ -1241,19 +1214,19 @@ msgid "Toggle Tank Labels:"
 msgstr "Pereklyuchit' metki tankov:"
 
 msgid "Toggle Heads-up Flag Help:"
-msgstr "Pereklyuchit' pomo$' po podnyatomu flagu"
+msgstr "Pereklyuchit' pomo$' po podnyatomu flagu:"
 
 msgid "Set Time of Day Backward:"
-msgstr "Ustanovit' ostavshiesya vremya"
+msgstr "Ustanovit' ostavshiesya vremya:"
 
 msgid "Set Time of Day Forward:"
-msgstr "Ustanovit' proshedshee vremya"
+msgstr "Ustanovit' proshedshee vremya:"
 
 msgid "Pause/Resume:"
 msgstr "Pauza/Dalee:"
 
 msgid "Self destruct/Cancel:"
-msgstr "Samounichtozhenie/Otmena"
+msgstr "Samounichtozhenie/Otmena:"
 
 msgid "Quit:"
 msgstr "Vyhod bez sohraneniya:"
@@ -1265,10 +1238,10 @@ msgid "Scroll Message Log Forward:"
 msgstr "Prokrutka soob$enij vperyod:"
 
 msgid "Slow Keyboard Motion:"
-msgstr "Umen'shenie pereme$eniya klaviatury"
+msgstr "Umen'shenie pereme$eniya klaviatury:"
 
 msgid "Toggle Radar Flags:"
-msgstr "Otobrazhenie flagov na radare"
+msgstr "Otobrazhenie flagov na radare:"
 
 msgid "Toggle Main Flags:"
 msgstr "Otobrazhenie osnovnyh flagov:"
@@ -1283,25 +1256,25 @@ msgid "Hunt:"
 msgstr "Ohota:"
 
 msgid "Auto Pilot:"
-msgstr "Avtpilot"
+msgstr "Avtpilot:"
 
 msgid "Main Message Tab:"
 msgstr "Vkladka osnovnyh soob$enij:"
 
 msgid "Chat Message Tab:"
-msgstr "Vkladka chata soob$enij"
+msgstr "Vkladka chata soob$enij:"
 
 msgid "Server Message Tab:"
-msgstr "Vkladka soob$enij servera"
+msgstr "Vkladka soob$enij servera:"
 
 msgid "Misc Message Tab:"
-msgstr "Vkladka prochih soob$enij"
+msgstr "Vkladka prochih soob$enij:"
 
 #msgid "Esc"
 #msgstr ""
 
 msgid "Show/Dismiss menu:"
-msgstr "Pokazat'/skryt' menyu"
+msgstr "Pokazat'/skryt' menyu:"
 
 msgid "<not mapped>"
 msgstr "<ne naznacheno>"
@@ -1589,10 +1562,10 @@ msgid "Credits"
 msgstr "Blagodarnosti"
 
 msgid "Maintainer:"
-msgstr "Mantejner"
+msgstr "Mantejner:"
 
 msgid "Original Author:"
-msgstr "Avtor"
+msgstr "Avtor:"
 
 msgid "Code Contributors:"
 msgstr "Uchastniki razrabotki:"
@@ -1604,7 +1577,7 @@ msgid "Special Thanks:"
 msgstr "Osobaya blagodarnost':"
 
 msgid "BZFlag Home Page:"
-msgstr "Domashnij sajt BZFlag"
+msgstr "Domashnij sajt BZFlag:"
 
 ####################
 ## HUD RENDERERER ##
@@ -1642,10 +1615,10 @@ msgid "Vertical Speed:%5.2f"
 msgstr "Vertikal'naya skorost':%5.2f"
 
 msgid "Vertical Speed:%5.2f(%5.2f)"
-msgstr "Vertikal'naya skorost'::%5.2f(%5.2f)"
+msgstr "Vertikal'naya skorost':%5.2f(%5.2f)"
 
 msgid "Angular Speed:"
-msgstr "Uglovaya skorost'"
+msgstr "Uglovaya skorost':"
 
 msgid "Last Shot Info  Time:%6.4f  Deviation:%6.3f"
 msgstr "Poslednij vystrel Vremya:%6.4f Otklonenie:%6.3f"
@@ -1678,7 +1651,7 @@ msgid "tris: %i"
 msgstr "tris: %i"
 
 msgid "time: %dms"
-msgstr "vremya"
+msgstr "vremya: %dms"
 
 ###############
 ## JOIN MENU ##
@@ -1779,14 +1752,8 @@ msgstr "Joystik:"
 msgid "Active input device:"
 msgstr "Aktivnye ustrojstva vvoda:"
 
-msgid "Force feedback:"
-msgstr "Otdacha joyjstika:"
-
-msgid "Rumble"
-msgstr "Shumy"
-
-msgid "Directional"
-msgstr "Napravlennij"
+msgid "Rumble:"
+msgstr "Shumy:"
 
 msgid "Joystick X Axis:"
 msgstr "Os' X joyjstika:"
@@ -1829,40 +1796,40 @@ msgid "Identify/Lock On:"
 msgstr "Identificirovat'/Zakreplyat':"
 
 msgid "Radar Short:"
-msgstr "Malen'kij radar"
+msgstr "Malen'kij radar:"
 
 msgid "Radar Medium:"
-msgstr "Srednij radar"
+msgstr "Srednij radar:"
 
 msgid "Radar Long:"
-msgstr "Bol'shoj radar"
+msgstr "Bol'shoj radar:"
 
 msgid "Radar Zoom In:"
-msgstr "Uvelichit' masshtaba radara"
+msgstr "Uvelichit' masshtaba radara:"
 
 msgid "Radar Zoom Out:"
-msgstr "Umen'shit' masshtaba radara"
+msgstr "Umen'shit' masshtaba radara:"
 
 msgid "Send to All:"
-msgstr "Poslat' vsem"
+msgstr "Poslat' vsem:"
 
 msgid "Send to Teammates:"
-msgstr "Poslat' svoim"
+msgstr "Poslat' svoim:"
 
 msgid "Send to Nemesis:"
-msgstr "Poslat' obidchiku"
+msgstr "Poslat' obidchiku:"
 
 msgid "Send to Recipient:"
-msgstr "Poslat' adresatu"
+msgstr "Poslat' adresatu:"
 
 msgid "Send to Admin:"
-msgstr "Poslat' adminu"
+msgstr "Poslat' adminu:"
 
 msgid "Jump:"
-msgstr "Pryzhok"
+msgstr "Pryzhok:"
 
 msgid "Binoculars:"
-msgstr "Binokl'"
+msgstr "Binokl':"
 
 msgid "Toggle Score:"
 msgstr "Tumbler ocenki:"
@@ -1907,7 +1874,7 @@ msgid "Toggle Flags On Field:"
 msgstr "tumbler flagov v pricele:"
 
 msgid "Silence/UnSilence Key:"
-msgstr "Klyuch tishiny/zvuka"
+msgstr "Klyuch tishiny/zvuka:"
 
 msgid "Server Command Key:"
 msgstr "Klyuch komand serveru:"
@@ -1919,43 +1886,43 @@ msgid "Add/Modify Hunt Key:"
 msgstr "Dobavit'/izmenit' klyuch ohoty:"
 
 msgid "AutoPilot Key: "
-msgstr "Klyuch avtopilota"
+msgstr "Klyuch avtopilota: "
 
 msgid "Main Message Tab: "
-msgstr "Okno osnovnyh soob$enij:"
+msgstr "Okno osnovnyh soob$enij: "
 
 msgid "Chat Message Tab: "
-msgstr "Vkladka chata:"
+msgstr "Vkladka chata: "
 
 msgid "Server Message Tab: "
-msgstr "Vkladka soob$enij servera:"
+msgstr "Vkladka soob$enij servera: "
 
 msgid "Misc Message Tab: "
-msgstr "Vkladka prochih soob$enij"
+msgstr "Vkladka prochih soob$enij: "
 
 msgid "Forward Key: "
-msgstr "Knopka vperyod:"
+msgstr "Knopka vperyod: "
 
 msgid "Reverse Key: "
-msgstr "Knopka nazad:"
+msgstr "Knopka nazad: "
 
 msgid "Left Key: "
-msgstr "Knopka vlevo:"
+msgstr "Knopka vlevo: "
 
 msgid "Right Key: "
-msgstr "Knopka vpravo:"
+msgstr "Knopka vpravo: "
 
 msgid "Restart:"
 msgstr "Perezapusk:"
 
 msgid "Iconify:"
-msgstr "Svernut'"
+msgstr "Svernut':"
 
 msgid "Fullscreen:"
-msgstr "Polnij ekran"
+msgstr "Polnij ekran:"
 
 msgid "Screenshot:"
-msgstr "Skrinshot"
+msgstr "Skrinshot:"
 
 msgid "Define Quick Keys"
 msgstr "Opredelit' bystye knopki"
@@ -2003,13 +1970,13 @@ msgstr "Hotite vijti?"
 #############
 
 msgid "Save Settings:"
-msgstr "Sohranit' nastrojki"
+msgstr "Sohranit' nastrojki:"
 
 msgid "On Exit"
 msgstr "Vyhod vklyuchen"
 
 msgid "Save identity:"
-msgstr "Sohranit' identifikaciyu"
+msgstr "Sohranit' identifikaciyu:"
 
 msgid "Username only"
 msgstr "Tol'ko imya"
@@ -2025,16 +1992,16 @@ msgid "Save World"
 msgstr "Sohranit' kartu"
 
 msgid "File Name:"
-msgstr "imya fajla"
+msgstr "imya fajla:"
 
 msgid "No world loaded to save"
 msgstr "Net zagruzhennoj karty dlya sohraneniya"
 
 msgid "World Saved: "
-msgstr "Sohranyonnye karty:"
+msgstr "Sohranyonnye karty: "
 
 msgid "Error Saving: "
-msgstr "Oshibka sohraneniya"
+msgstr "Oshibka sohraneniya: "
 
 ######################################
 ## MESSAGE OF THE DAY & NEW VERSION ##
@@ -2047,10 +2014,10 @@ msgid "<not available>"
 msgstr "<net v nalichii>"
 
 msgid "UPGRADE: "
-msgstr "Obnovlenie:"
+msgstr "Obnovlenie: "
 
 msgid "Message of the day: "
-msgstr "Soob$enie dnya:"
+msgstr "Soob$enie dnya: "
 
 msgid "A new version of BZFlag has been released!"
 msgstr "Pora obnovlyat'sya, poyavilas' novaya versiya BZFlag!"
@@ -2085,8 +2052,8 @@ msgstr "Neudacha... ne hvatilo pamyati."
 msgid "Failed... installer is not executable."
 msgstr "Neudacha... programma obnovleniya ne ispolnyaemaya"
 
-msgid "Failed... unknown error (%d)."
-msgstr "Neudacha... oshibka (%d)."
+#msgid "Failed... unknown error (%d)."
+#msgstr "Neudacha... oshibka (%d)."
 
 msgid "Failed to start upgrade installer (%s) - error %d.\n"
 msgstr "Neudachnij start programmy ustanovki (%s) - oshibka %d.\n "
@@ -2218,7 +2185,7 @@ msgid "Set player's group :"
 msgstr "Zadat' gruppu igrokov :"
 
 msgid "Remove player from group :"
-msgstr "Isklyuchit' igroka iz gruppy"
+msgstr "Isklyuchit' igroka iz gruppy :"
 
 msgid "Ghost :"
 msgstr "Prizrak :"
@@ -2230,7 +2197,7 @@ msgid "Unban :"
 msgstr "Razbanit' :"
 
 msgid "Show ban list"
-msgstr "Pokazat' spisok banov :"
+msgstr "Pokazat' spisok banov"
 
 msgid "Show player list"
 msgstr "Pokazat' spisok igrokov"
@@ -2260,10 +2227,10 @@ msgid "Disconnect all Players"
 msgstr "Otklyuchit' vseh igrokov"
 
 msgid "Lag Warning threshold:"
-msgstr "Porog preduprezhdeniya o lage"
+msgstr "Porog preduprezhdeniya o lage:"
 
 msgid "Maximum lag warnings:"
-msgstr "Preduprezhdenie o maksimal'nom lage"
+msgstr "Preduprezhdenie o maksimal'nom lage:"
 
 msgid "Idle Stats"
 msgstr "Prostaya statistika"
@@ -2278,10 +2245,10 @@ msgid "Flag History"
 msgstr "Istoriya flagov"
 
 msgid "Admin Password:"
-msgstr "Parol' administratora"
+msgstr "Parol' administratora:"
 
 msgid "Send Report to Server:"
-msgstr "Poslat' soob$enie na server"
+msgstr "Poslat' soob$enie na server:"
 
 msgid "List Groups"
 msgstr "Spisok grupp"
@@ -2293,7 +2260,7 @@ msgid "Vote:"
 msgstr "Golos:"
 
 msgid "Call a Poll:"
-msgstr "Zapros golosovaniya"
+msgstr "Zapros golosovaniya:"
 
 msgid "Cancel a Poll"
 msgstr "Prervat' golosovanie"
@@ -2318,7 +2285,7 @@ msgid "CONNECT:got net data in connect, bytes read = %d\n"
 msgstr "SOEDINENIE:poluchenie dannyh po seti, polucheno  %d bajt\n"
 
 msgid "CONNECT:Time To Connect = %f\n"
-msgstr "SOEDINENIE:Vremya soedineniya "
+msgstr "SOEDINENIE:Vremya soedineniya = %f\n"
 
 msgid "CONNECT:connect time out failed\n"
 msgstr "SOEDINENIE:tamaut soedineniya\n"
@@ -2330,7 +2297,7 @@ msgid "Error writing on packetStream"
 msgstr "Oshibka zapisi potoka paketov"
 
 msgid "Server network statistics:\n"
-msgstr "Setevaya statistika servera"
+msgstr "Setevaya statistika servera:\n"
 
 msgid "  elapsed time    : %f\n"
 msgstr "  proshlo  vremyani    : %f\n"
@@ -2460,7 +2427,7 @@ msgid "Max team score: {1}"
 msgstr "Maksimal'nij schyot komandy: {1}"
 
 msgid "Max player score: {1}"
-msgstr "Vfrcbvfkmysq cx`n buhjrf"
+msgstr "Vfrcbvfkmysq cx`n buhjrf: {1}"
 
 msgid "Cached"
 msgstr "Kesh"
@@ -2475,7 +2442,7 @@ msgid "Servers found: {1}/{2}  ({3} players, {4} observers)"
 msgstr "Serverov najdeno: {1}/{2}  ({3} igrokov, {4} nablyudatelej) "
 
 msgid "Style:"
-msgstr "Stil'"
+msgstr "Stil':"
 
 msgid "Capture the Flag"
 msgstr "Zahvat flaga"
@@ -2493,13 +2460,13 @@ msgid "Rabbit Chase (Killer Selection)"
 msgstr "Ohota na krolika (vybor ubijcy)"
 
 msgid "Max Players:"
-msgstr "Maks. Igrokov"
+msgstr "Maks. Igrokov:"
 
 msgid "Max Shots:"
 msgstr "Maksimum igrokov:"
 
 msgid "Teleporters:"
-msgstr "Teleorty"
+msgstr "Teleorty:"
 
 msgid "no"
 msgstr "net"
@@ -2508,16 +2475,16 @@ msgid "yes"
 msgstr "da"
 
 msgid "Ricochet:"
-msgstr "Rikoshet"
+msgstr "Rikoshet:"
 
 msgid "Jumping:"
-msgstr "Pryzhok"
+msgstr "Pryzhok:"
 
 msgid "Handicap:"
-msgstr "Fora "
+msgstr "Fora:"
 
 msgid "Superflags:"
-msgstr "Super flag"
+msgstr "Super flag:"
 
 msgid "good flags only"
 msgstr "tol'ko horoshie flagi"
@@ -2526,13 +2493,13 @@ msgid "all flags"
 msgstr "vse flagi"
 
 msgid "Max Superflags:"
-msgstr "Maks Superflagov"
+msgstr "Maks Superflagov:"
 
 msgid "Bad Flag Antidote:"
-msgstr "Antidoty plohih flagov"
+msgstr "Antidoty plohih flagov:"
 
 msgid "Bad Flag Time Limit:"
-msgstr "Vremya dejstviya plohogo flaga"
+msgstr "Vremya dejstviya plohogo flaga:"
 
 msgid "no limit"
 msgstr "bez ogranicheniya"
@@ -2550,7 +2517,7 @@ msgid "180 seconds"
 msgstr "180 sekund"
 
 msgid "Bad Flag Win Limit:"
-msgstr "Chislo pobed dlya plogoho flaga"
+msgstr "Chislo pobed dlya plogoho flaga:"
 
 msgid "drop after 1 win"
 msgstr "Padaet posle odnoj pobedy"
@@ -2562,7 +2529,7 @@ msgid "drop after 3 wins"
 msgstr "Padaet posle 3 pobed"
 
 msgid "Game Over:"
-msgstr "Okonchanie igry"
+msgstr "Okonchanie igry:"
 
 msgid "never"
 msgstr "Nikogda"
@@ -2601,7 +2568,7 @@ msgid "when a team gets +100"
 msgstr "Kogda komanda poluchila +100"
 
 msgid "Server Reset:"
-msgstr "Perezagruzka servera"
+msgstr "Perezagruzka servera:"
 
 msgid "no, quit after game"
 msgstr "net, vyhod posle igry"
@@ -2610,7 +2577,7 @@ msgid "yes, reset for more games"
 msgstr "da, perezagruzka igr"
 
 msgid "World Map:"
-msgstr "Karta Mira"
+msgstr "Karta Mira:"
 
 msgid "random map"
 msgstr "Sluchajnaya karta"
@@ -2778,13 +2745,13 @@ msgid "Invalid player identification (%d)"
 msgstr "Nepravil'nij identifikator igroka  (%d)"
 
 msgid "WARNING: invalid player identification when adding player with id "
-msgstr "WARNING:: nepravil'nij identifikator igroka pri dobavlenii igroka s id "
+msgstr "WARNING: nepravil'nij identifikator igroka pri dobavlenii igroka s id "
 
 msgid "Server error when adding player, player already added"
 msgstr "Oshibka servera pri dobavlenii igroka, takoj igrok uzhe dobavlen"
 
 msgid "WARNING: player already exists at location with id "
-msgstr "WARNING:: uzhe su$estvuet igrok v igre s id "
+msgstr "WARNING: uzhe su$estvuet igrok v igre s id "
 
 msgid "joining as "
 msgstr "prisoedinyon kak"
@@ -2853,7 +2820,7 @@ msgid "Downloading World..."
 msgstr "Zagruzka karty..."
 
 msgid "Flags not supported by this client: {1}"
-msgstr "Flagi ne podderzhivayutsya etim klientom"
+msgstr "Flagi ne podderzhivayutsya etim klientom: {1}"
 
 msgid "Downloading World (%2d%% complete/%d kb remaining)..."
 msgstr "Zagruzka karty (%2d%% vyprolneno/%d kb ostalos')..."
@@ -2862,7 +2829,7 @@ msgid "sorry, i'm just a silly machine"
 msgstr "Izvinite, ya prosto glupaya mashina"
 
 msgid "Closest Flag: "
-msgstr "Blizhajshij flag"
+msgstr "Blizhajshij flag: "
 
 msgid "Server forced a disconnect"
 msgstr "Server prinuditel'no razorval soedinenie"
@@ -3072,7 +3039,7 @@ msgid "Looking at "
 msgstr "Glyadya na "
 
 msgid "SPOTTED: "
-msgstr "SPOTTED:"
+msgstr "SPOTTED: "
 
 msgid "Solo robots are prohibited on this server."
 msgstr "Roboty zapre$eny na servere"
@@ -3099,7 +3066,7 @@ msgid "cleanWorldCache: removed %s\n"
 msgstr "cleanWorldCache: udaleno  %s\n"
 
 msgid "id "
-msgstr "id"
+msgstr "id "
 
 msgid "id test %p %p %p %8.8x %8.8x\n"
 msgstr "id test %p %p %p %8.8x %8.8x\n"

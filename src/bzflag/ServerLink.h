@@ -118,9 +118,9 @@ private:
     const char*         udpBufferPtr = nullptr;
     char                ubuf[MaxPacketLen] = { 0 };
 
-    int         tcpBufferPos = 0;
-    int         tcpBufferConsumed = 0;
-    char        tbuf[MaxPacketLen * 4] = { 0 };
+    int                 tcpBufferPos = 0;
+    int                 tcpBufferConsumed = 0;
+    char                tbuf[MaxPacketLen * 4] = { 0 };
 };
 
 #define SEND 1
