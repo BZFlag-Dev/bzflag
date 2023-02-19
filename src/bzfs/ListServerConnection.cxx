@@ -451,6 +451,9 @@ void ListServerLink::removeMe(std::string publicizedAddress)
     msg  = "action=REMOVE&nameport=";
     msg += publicizedAddress;
 
+    if (clOptions && !clOptions->publicizedKey.empty())
+        msg += "&key=" + clOptions->publicizedKey;
+
     setPostMode(msg);
     addHandle();
 }
