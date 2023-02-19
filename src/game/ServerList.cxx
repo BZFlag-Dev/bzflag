@@ -310,6 +310,13 @@ void            ServerList::checkEchos(StartupInfo *info)
         msg     += TextUtils::url_encode(info->callsign);
         msg     += "&password=";
         msg     += TextUtils::url_encode(info->password);
+        if (info->serverName[0] != '\0')
+        {
+            msg += "&nameport=";
+            msg += info->serverName;
+            msg += ':';
+            msg += std::to_string(info->serverPort);
+        }
         setPostMode(msg);
         setURLwithNonce(url);
         addHandle();
