@@ -294,7 +294,7 @@ static std::map<std::string, std::string> bzdbVarQueue;
 static void printVersion()
 {
     std::cout << "BZFlag server " << getAppVersion() << " (protocol " << getProtocolVersion() <<
-              ") http://BZFlag.org/\n";
+              ") https://BZFlag.org/\n";
     std::cout << bzfcopyright << std::endl;
     std::cout.flush();
 }

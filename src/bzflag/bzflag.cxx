@@ -330,7 +330,7 @@ static void     parse(int argc, char** argv)
                  strcmp(argv[i], "-version") == 0 ||
                  strcmp(argv[i], "--version") == 0)
         {
-            printFatalError("BZFlag client %s (protocol %s) http://BZFlag.org/\n%s",
+            printFatalError("BZFlag client %s (protocol %s) https://BZFlag.org/\n%s",
                             getAppVersion(),
                             getProtocolVersion(),
                             bzfcopyright);

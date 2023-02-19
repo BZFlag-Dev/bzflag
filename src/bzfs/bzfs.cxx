@@ -2511,7 +2511,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
     char message[MessageLen] = {0};
 
 #ifdef SERVERLOGINMSG
-    snprintf(message, MessageLen, "BZFlag server %s, http://BZFlag.org/", getAppVersion());
+    snprintf(message, MessageLen, "BZFlag server %s, https://BZFlag.org/", getAppVersion());
     sendMessage(ServerPlayer, playerIndex, message);
 
     if (clOptions->servermsg != "")
