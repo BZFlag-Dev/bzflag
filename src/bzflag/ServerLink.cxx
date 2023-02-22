@@ -856,7 +856,7 @@ void ServerLink::sendUDPlinkRequest()
     {
         return; // we cannot comply
     }
-#if 1
+
     AddrLen addr_len = sizeof(serv_addr);
     if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*)&addr_len) < 0)
     {
@@ -869,18 +869,6 @@ void ServerLink::sendUDPlinkRequest()
         return;  // we cannot get udp connection, bail out
     }
 
-#else
-    // TODO if nobody complains kill this old port 17200 code
-    for (int port = 17200; port < 65000; port++)
-    {
-        ::memset((unsigned char *)&serv_addr, 0, sizeof(serv_addr));
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-        serv_addr.sin_port = htons(port);
-        if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) == 0)
-            break;
-    }
-#endif
     localPort = ntohs(serv_addr.sin_port);
     memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
 
