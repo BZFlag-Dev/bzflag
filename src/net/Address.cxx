@@ -279,8 +279,8 @@ const void*     ServerId::unpack(const void* _buf)
 bool            ServerId::operator==(const ServerId& id) const
 {
     return addr.sin_addr.s_addr == id.addr.sin_addr.s_addr &&
-            addr.sin_port == id.addr.sin_port &&
-            number == id.number;
+           addr.sin_port == id.addr.sin_port &&
+           number == id.number;
 }
 
 bool            ServerId::operator!=(const ServerId& id) const
