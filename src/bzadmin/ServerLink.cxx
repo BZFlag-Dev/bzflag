@@ -16,7 +16,12 @@
 
 #if defined(DEBUG)
 #define NETWORK_STATS
+#define UDEBUGMSG true
+#else
+#define UDEBUGMSG false
 #endif
+
+#define UDEBUG if (UDEBUGMSG) printf
 
 // system headers
 #include <string.h>
@@ -39,9 +44,6 @@
 #include "bzfio.h"
 #endif
 #include "TimeKeeper.h"
-
-#define UDEBUG if (UDEBUGMSG) printf
-#define UDEBUGMSG false
 
 #if defined(NETWORK_STATS)
 static TimeKeeper   startTime;

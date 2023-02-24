@@ -16,7 +16,12 @@
 
 #if defined(DEBUG)
 #define NETWORK_STATS
+#define UDEBUGMSG true
+#else
+#define UDEBUGMSG false
 #endif
+
+#define UDEBUG if (UDEBUGMSG) printf
 
 // system headers
 #include <string.h>
@@ -39,9 +44,6 @@
 #include "bzfio.h"
 #endif
 #include "TimeKeeper.h"
-
-#define UDEBUG if (UDEBUGMSG) printf
-#define UDEBUGMSG false
 
 #if defined(NETWORK_STATS)
 static TimeKeeper   startTime;
@@ -575,7 +577,6 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
 
     if ((urecvfd >= 0) /* && ulinkup */)
     {
-
         if (!udpLength)
         {
             AddrLen recvlen = sizeof(urecvaddr);
@@ -611,7 +612,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpLength -= len;
             return 1;
         }
-        if (UDEBUGMSG) printError("Fallback to normal TCP receive");
+        //if (UDEBUGMSG) printError("Fallback to normal TCP receive");
         len = 0;
         code = MsgNull;
 
