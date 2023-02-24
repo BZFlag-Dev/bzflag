@@ -252,10 +252,10 @@ void*           ServerId::pack(void* _buf) const
 {
     // everything in ServerId is already in network byte order
     unsigned char* buf = (unsigned char*)_buf;
-    int32_t hostaddr = int32_t(serverHost.s_addr);
-    ::memcpy(buf, &hostaddr, sizeof(int32_t));
+    assert(addr.sin_family == AF_INET);
+    ::memcpy(buf, &addr.sin_addr, sizeof(int32_t));
     buf += sizeof(int32_t);
-    ::memcpy(buf, &port, sizeof(int16_t));
+    ::memcpy(buf, &addr.sin_port, sizeof(int16_t));
     buf += sizeof(int16_t);
     ::memcpy(buf, &number, sizeof(int16_t));
     buf += sizeof(int16_t);
@@ -266,27 +266,27 @@ const void*     ServerId::unpack(const void* _buf)
 {
     // everything in ServerId should be stored in network byte order
     const unsigned char* buf = (const unsigned char*)_buf;
-    int32_t hostaddr;
-    ::memcpy(&hostaddr, buf, sizeof(int32_t));
+    addr.sin_family = AF_INET;
+    ::memcpy(&addr.sin_addr, buf, sizeof(int32_t));
     buf += sizeof(int32_t);
-    ::memcpy(&port, buf, sizeof(int16_t));
+    ::memcpy(&addr.sin_port, buf, sizeof(int16_t));
     buf += sizeof(int16_t);
     ::memcpy(&number, buf, sizeof(int16_t));
     buf += sizeof(int16_t);
-    serverHost.s_addr = u_long(hostaddr);
     return buf;
 }
 
 bool            ServerId::operator==(const ServerId& id) const
 {
-    return serverHost.s_addr == id.serverHost.s_addr &&
-           port == id.port && number == id.number;
+    return addr.sin_addr.s_addr == id.addr.sin_addr.s_addr &&
+            addr.sin_port == id.addr.sin_port &&
+            number == id.number;
 }
 
 bool            ServerId::operator!=(const ServerId& id) const
 {
-    return serverHost.s_addr != id.serverHost.s_addr ||
-           port != id.port || number != id.number;
+    return addr.sin_addr.s_addr != id.addr.sin_addr.s_addr ||
+           addr.sin_port != id.addr.sin_port || number != id.number;
 }
 
 // Local Variables: ***

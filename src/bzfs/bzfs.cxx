@@ -92,7 +92,7 @@ static bool doSpeedChecks = true;
 CmdLineOptions *clOptions;
 
 // server address to listen on
-static Address serverAddress;
+struct sockaddr_in serverAddr;
 // well known service socket
 static int wksSocket;
 bool handlePings = true;
@@ -959,7 +959,6 @@ void publicize()
     }
 }
 
-
 static bool serverStart()
 {
 #ifdef SO_REUSEADDR
@@ -973,13 +972,8 @@ static bool serverStart()
 #endif
     maxFileDescriptor = 0;
 
-    // init addr:port structure
-    struct sockaddr_in addr;
-    memset(&addr, 0, sizeof(addr));
-    addr.sin_family = AF_INET;
-    addr.sin_addr = serverAddress;
-
-    pingReply.serverId.port = addr.sin_port = htons(clOptions->wksPort);
+    serverAddr.sin_port = htons(clOptions->wksPort);
+    pingReply.serverId.addr = serverAddr;
 
     // open well known service port
     wksSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -998,7 +992,7 @@ static bool serverStart()
         return false;
     }
 #endif
-    if (bind(wksSocket, (const struct sockaddr*)&addr, sizeof(addr)) == -1)
+    if (bind(wksSocket, (const struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1)
     {
         nerror("couldn't bind connect socket");
         close(wksSocket);
@@ -1012,8 +1006,7 @@ static bool serverStart()
         return false;
     }
 
-    addr.sin_port = htons(clOptions->wksPort);
-    if (!NetHandler::initHandlers(addr))
+    if (!NetHandler::initHandlers(serverAddr))
     {
         close(wksSocket);
         return false;
@@ -6755,6 +6748,9 @@ int main(int argc, char **argv)
 #endif
 
     // start listening and prepare world database
+    memset(&serverAddr, 0, sizeof(serverAddr));
+    serverAddr.sin_family = AF_INET;
+
     if (!defineWorld())
     {
 #ifdef BZ_PLUGINS
@@ -6878,7 +6874,7 @@ int main(int argc, char **argv)
         bzUPnP.start();
 
     if (clOptions->pingInterface != "")
-        serverAddress = Address::getHostAddress(clOptions->pingInterface);
+        serverAddr.sin_addr = Address::getHostAddress(clOptions->pingInterface);
 
     // my address to publish.  allow arguments to override (useful for
     // firewalls).  use my official hostname if it appears to be
@@ -6891,8 +6887,8 @@ int main(int argc, char **argv)
         std::string generatedPublicAddress = Address::getHostName();
         if (generatedPublicAddress.find('.') == std::string::npos)
         {
-            if (!serverAddress.isAny() && !serverAddress.isPrivate())
-                generatedPublicAddress = serverAddress.getDotNotation();
+            if (!Address(serverAddr.sin_addr).isAny() && !Address(serverAddr.sin_addr).isPrivate())
+                generatedPublicAddress = Address(serverAddr.sin_addr).getDotNotation();
             else
                 generatedPublicAddress = "";
         }
@@ -6928,12 +6924,11 @@ int main(int argc, char **argv)
         Score::setRandomRanking();
     // print networking info
     logDebugMessage(1,"\tlistening on %s:%i\n",
-                    serverAddress.getDotNotation().c_str(), clOptions->wksPort);
+                    Address(serverAddr.sin_addr).getDotNotation().c_str(), clOptions->wksPort);
     logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
     // prep ping reply
-    pingReply.serverId.serverHost = serverAddress;
-    pingReply.serverId.port = htons(clOptions->wksPort);
+    pingReply.serverId.addr = serverAddr;
     pingReply.serverId.number = 0;
     pingReply.gameType = clOptions->gameType;
     pingReply.gameOptions = clOptions->gameOptions;

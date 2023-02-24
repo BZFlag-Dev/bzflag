@@ -159,16 +159,15 @@ void ServerList::readServerList()
                         dot[2] >= 0 && dot[2] <= 255 &&
                         dot[3] >= 0 && dot[3] <= 255)
                 {
-                    InAddr addr;
-                    unsigned char* paddr = (unsigned char*)&addr.s_addr;
+                    serverInfo.ping.serverId.addr.sin_family = AF_INET;
+                    unsigned char* paddr = (unsigned char*)&serverInfo.ping.serverId.addr.sin_addr.s_addr;
                     paddr[0] = (unsigned char)dot[0];
                     paddr[1] = (unsigned char)dot[1];
                     paddr[2] = (unsigned char)dot[2];
                     paddr[3] = (unsigned char)dot[3];
-                    serverInfo.ping.serverId.serverHost = addr;
                 }
             }
-            serverInfo.ping.serverId.port = htons((int16_t)port);
+            serverInfo.ping.serverId.addr.sin_port = htons((int16_t)port);
             serverInfo.name = name;
 
             // construct description
@@ -210,9 +209,9 @@ void ServerList::addToList(ServerItem info, bool doCache)
     for (i = 0; i < (int)servers.size(); i++)
     {
         ServerItem& server = servers[i];
-        if (server.ping.serverId.serverHost.s_addr
-                == info.ping.serverId.serverHost.s_addr
-                && server.ping.serverId.port == info.ping.serverId.port)
+        if (server.ping.serverId.addr.sin_addr.s_addr
+                == info.ping.serverId.addr.sin_addr.s_addr
+                && server.ping.serverId.addr.sin_port == info.ping.serverId.addr.sin_port)
         {
             servers.erase(servers.begin() + i); // erase this item
             break;
@@ -354,7 +353,7 @@ void            ServerList::checkEchos(StartupInfo *info)
         {
             if (serverInfo.ping.read(pingBcastSocket, &addr))
             {
-                serverInfo.ping.serverId.serverHost = addr.sin_addr;
+                serverInfo.ping.serverId.addr = addr;
                 serverInfo.cached = false;
                 serverInfo.localDiscovery = true;
                 addToListWithLookup(serverInfo);
@@ -365,11 +364,11 @@ void            ServerList::checkEchos(StartupInfo *info)
 
 void            ServerList::addToListWithLookup(ServerItem& info)
 {
-    info.name = Address::getHostByAddress(info.ping.serverId.serverHost);
+    info.name = Address::getHostByAddress(info.ping.serverId.addr.sin_addr);
 
     // tack on port number to description if not default
     info.description = info.name;
-    const int port = (int)ntohs((unsigned short)info.ping.serverId.port);
+    const int port = (int)ntohs((unsigned short)info.ping.serverId.addr.sin_port);
     if (port != ServerPort)
     {
         char portBuf[20];

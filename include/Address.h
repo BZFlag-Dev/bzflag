@@ -85,8 +85,7 @@ public:
 
 public:
     // host and port in network byte order
-    InAddr      serverHost;     // server host
-    int16_t     port;           // server port
+    struct sockaddr_in addr;
     int16_t     number;         // local player number
 };
 

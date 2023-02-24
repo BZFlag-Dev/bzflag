@@ -213,7 +213,7 @@ int ServerItem::getPlayerCount() const
 
 std::string ServerItem::getAddrName() const
 {
-    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.port));
+    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.addr.sin_port));
 }
 
 unsigned int ServerItem::getSortFactor() const

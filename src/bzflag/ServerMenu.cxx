@@ -809,7 +809,7 @@ void ServerMenu::execute()
     strncpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str(), sizeof(info->serverName) - 1);
     info->serverName[sizeof(info->serverName) - 1] = '\0';
     info->serverPort = ntohs((unsigned short)
-                             serverList.getServers()[selectedIndex].ping.serverId.port);
+                             serverList.getServers()[selectedIndex].ping.serverId.addr.sin_port);
 
     // all done
     HUDDialogStack::get()->pop();
