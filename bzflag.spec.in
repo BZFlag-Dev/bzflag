@@ -23,7 +23,7 @@ name:		%{name}
 version:	%{version}
 release:	%{release}
 group:		Recreation/Action
-copyright:	Copyright (c) 1993-2023 Tim Riker
+license:	LGPLv2.1 or MPLv2.0
 packager:	Tim Riker <Tim@Rikers.org>
 url:		https://BZFlag.org/
 summary:	multiplayer 3D tank battle game
