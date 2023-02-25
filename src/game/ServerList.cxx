@@ -90,8 +90,9 @@ void ServerList::readServerList()
                     TokenLen - 1);
             startupInfo->token[TokenLen - 1] = '\0';
 #ifdef DEBUG
-            printError("got token:");
-            printError(startupInfo->token);
+            std::vector<std::string> args;
+            args.push_back(startupInfo->token);
+            printError("got token: {1}", &args);
 #endif
             base = scan;
             continue;
