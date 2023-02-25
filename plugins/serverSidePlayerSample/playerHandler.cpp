@@ -38,9 +38,8 @@ void PlayerHandler::playerSpawned(int player, const float pos[3], float rot)
 void PlayerHandler::shotFired(int player, unsigned short shotID)
 {
     std::string playerName = bz_getPlayerCallsign(player);
-    std::string msg = "Hey, " + playerName + " I bet you think you are special now!";
+    std::string msg = playerName + " fired " + std::to_string(shotID);
     sendChatMessage(msg.c_str());
-    ++shotID;     // use this variable in a useless way to silence warning
 }
 
 
