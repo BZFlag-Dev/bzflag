@@ -92,44 +92,6 @@ bool            PingPacket::read(int fd, struct sockaddr_in* addr)
     return (strncmp(serverVersion, getServerVersion(), 8) == 0);
 }
 
-bool            PingPacket::waitForReply(int fd,
-        const Address& from,
-        int millisecondsToBlock)
-{
-    // block waiting on input.  if the incoming message is not from the
-    // indicated source then ignore it and go back to waiting.  if the
-    // incoming message is not a ping then ignore it and go back to waiting.
-    float blockTime = 0.0001f * (float)millisecondsToBlock;
-    TimeKeeper startTime = TimeKeeper::getCurrent();
-    TimeKeeper currentTime = startTime;
-    do
-    {
-        // prepare timeout
-        const float timeLeft = float(blockTime - (currentTime - startTime));
-        struct timeval timeout;
-        timeout.tv_sec = long(floorf(timeLeft));
-        timeout.tv_usec = long(1.0e+6f * (timeLeft - floorf(timeLeft)));
-
-        // wait for input
-        fd_set read_set;
-        FD_ZERO(&read_set);
-        FD_SET((unsigned int)fd, &read_set);
-        int nfound = select(fd+1, (fd_set*)&read_set, NULL, NULL, &timeout);
-
-        // if got a message read it.  if a ping packet and from right
-        // sender then return success.
-        if (nfound < 0)
-            return false;
-        if (nfound > 0 && read(fd, NULL))
-            if (sourceAddr == from)
-                return true;
-
-        currentTime = TimeKeeper::getCurrent();
-    }
-    while (currentTime - startTime < blockTime);
-    return false;
-}
-
 bool            PingPacket::write(int fd,
                                   const struct sockaddr_in* addr) const
 {

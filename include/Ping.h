@@ -38,9 +38,6 @@ public:
 
     bool        read(int fd, struct sockaddr_in*);
     bool        write(int fd, const struct sockaddr_in*) const;
-    bool        waitForReply(int fd, const Address& from,
-                             int millisecondsToBlock = 0);
-
     void*       pack(void*, const char* version) const;
     const void*     unpack(const void*, char* version);
 
