@@ -36,8 +36,8 @@
 typedef struct in_addr  InAddr;         // shorthand
 
 // helpers
-char *sockaddr2name(const struct sockaddr *sa);
-char *sockaddr2nameport(const struct sockaddr *sa);
+char *sockaddr2iptext(const struct sockaddr *sa);
+char *sockaddr2iptextport(const struct sockaddr *sa);
 
 class Address
 {

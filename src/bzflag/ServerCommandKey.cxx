@@ -244,9 +244,9 @@ void            ServerCommandKey::updatePrompt()
 
 // return the right ban pattern 123.32.12.* for example depending on the
 // mode of the class. Returns an empty string on errors.
-std::string     ServerCommandKey::makePattern(const InAddr& address)
+std::string     ServerCommandKey::makePattern(const struct sockaddr *address)
 {
-    const char * c = inet_ntoa(address);
+    const char * c = sockaddr2iptext(address);
     if (c == NULL) return "";
     std::string dots = c;
     std::vector<std::string> dotChunks = TextUtils::tokenize(dots, ".");

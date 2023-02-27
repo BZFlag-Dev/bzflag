@@ -29,7 +29,7 @@ public:
     void      adminInit();
     void      nonAdminInit();
 private:
-    std::string       makePattern(const InAddr& address);
+    std::string       makePattern(const struct sockaddr *address);
     void      updatePrompt();
 
 private:

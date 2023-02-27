@@ -1407,7 +1407,7 @@ static bool MakePlayer ( NetHandler *handler )
     if (playerIndex != 0xff)
     {
         logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex,
-                        sockaddr2nameport(handler->getUADDR()), handler->getFD());
+                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
 
         if (playerIndex >= curMaxPlayers)
             curMaxPlayers = playerIndex+1;
@@ -1415,7 +1415,7 @@ static bool MakePlayer ( NetHandler *handler )
     else     // full? reject by closing socket
     {
         logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
-                        sockaddr2nameport(handler->getUADDR()), handler->getFD());
+                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
 
         // send back 0xff before closing
         send(handler->getFD(), (const char*)buffer, sizeof(buffer), 0);
@@ -6924,7 +6924,7 @@ int main(int argc, char **argv)
         Score::setRandomRanking();
     // print networking info
     logDebugMessage(1,"\tlistening on %s\n",
-                    sockaddr2nameport((const struct sockaddr *)&serverAddr));
+                    sockaddr2iptextport((const struct sockaddr *)&serverAddr));
     logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
     // prep ping reply

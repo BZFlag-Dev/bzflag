@@ -121,7 +121,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
     addr.sin_port = htons(port);
     addr.sin_addr = serverAddress;
 
-    UDEBUG("Remote %s\n", sockaddr2name((const struct sockaddr *)&addr));
+    UDEBUG("Remote %s\n", sockaddr2iptextport((const struct sockaddr *)&addr));
 
     // for UDP, used later
     memcpy((unsigned char *)&usendaddr, (unsigned char *)&addr, sizeof(addr));

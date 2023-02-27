@@ -196,7 +196,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
                 udpLinkRequest = true;
                 logDebugMessage(2,"Player slot %d inbound UDP up %s actual %d\n",
                                 index,
-                                sockaddr2nameport((const struct sockaddr *)uaddr),
+                                sockaddr2iptextport((const struct sockaddr *)uaddr),
                                 ntohs(uaddr->sin_port));
             }
             else
@@ -204,9 +204,9 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
                 // sockaddr2nameport has a single buffer
                 logDebugMessage(2,"Player slot %d inbound UDP rejected %s",
                                 index,
-                                sockaddr2nameport((const struct sockaddr *)&netPlayer[index]->uaddr));
+                                sockaddr2iptextport((const struct sockaddr *)&netPlayer[index]->uaddr));
                 logDebugMessage(2," different IP than %s\n",
-                                sockaddr2nameport((const struct sockaddr *)uaddr));
+                                sockaddr2iptextport((const struct sockaddr *)uaddr));
 
             }
         }
@@ -218,12 +218,12 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
             return -1;
         // no match, discard packet
         logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p",
-                        sockaddr2nameport((const struct sockaddr *)uaddr));
+                        sockaddr2iptextport((const struct sockaddr *)uaddr));
         for (pi = 0; pi < maxHandlers; pi++)
         {
             if (netPlayer[pi] && !netPlayer[pi]->closed)
                 logDebugMessage(4," %d(%d-%d) %s", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
-                                sockaddr2nameport((const struct sockaddr *)uaddr));
+                                sockaddr2iptextport((const struct sockaddr *)uaddr));
         }
         logDebugMessage(3,"\n");
     }
@@ -231,7 +231,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
     {
         logDebugMessage(4,"Player slot %d uread() len %d from %s on %i\n",
                         id, n,
-                        sockaddr2nameport((const struct sockaddr *)uaddr),
+                        sockaddr2iptextport((const struct sockaddr *)uaddr),
                         udpSocket);
 #ifdef NETWORK_STATS
         netPlayer[id]->countMessage(code, len, 0);
@@ -822,7 +822,7 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr)
 const std::string NetHandler::getPlayerHostInfo()
 {
     return TextUtils::format("%s%s%s%s%s%s",
-                             sockaddr2nameport((const struct sockaddr *)&taddr),
+                             sockaddr2iptextport((const struct sockaddr *)&taddr),
                              getHostname() ? " (" : "",
                              getHostname() ? getHostname() : "",
                              getHostname() ? ")" : "",
@@ -836,7 +836,7 @@ const char* NetHandler::getTargetIP()
      * to pass around.  we keep a copy in allocated memory for safety.
      */
     if (targetIP.size() == 0)
-        targetIP = sockaddr2name((const struct sockaddr *)&taddr);
+        targetIP = sockaddr2iptext((const struct sockaddr *)&taddr);
     return targetIP.c_str();
 }
 
@@ -870,7 +870,7 @@ int NetHandler::whoIsAtIP(const std::string& IP)
         // FIXME: this is broken for IPv6
         // there can be multiple ascii formats for the same address
         if (player && !player->closed
-                && !strcmp(sockaddr2name((const struct sockaddr *)&player->taddr), IP.c_str()))
+                && !strcmp(sockaddr2iptext((const struct sockaddr *)&player->taddr), IP.c_str()))
         {
             position = v;
             break;

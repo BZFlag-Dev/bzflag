@@ -49,45 +49,45 @@ extern "C" int inet_aton(const char *, struct in_addr *);
 #endif
 
 // helper function, might want to live someplace else
-static char addressbuf[INET6_ADDRSTRLEN];
-char *sockaddr2name(const struct sockaddr *sa)
+static char iptextbuf[INET6_ADDRSTRLEN];
+char *sockaddr2iptext(const struct sockaddr *sa)
 {
     switch(sa->sa_family)
     {
     case AF_INET:
-        inet_ntop(AF_INET, &(((const struct sockaddr_in *)sa)->sin_addr), addressbuf, INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET, &(((const struct sockaddr_in *)sa)->sin_addr), iptextbuf, INET6_ADDRSTRLEN);
         break;
 
     case AF_INET6:
-        inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), addressbuf, INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), iptextbuf, INET6_ADDRSTRLEN);
         break;
 
     default:
-        strncpy(addressbuf, "Unknown AF", 11);
+        strncpy(iptextbuf, "Unknown AF", 11);
     }
 
-    return addressbuf;
+    return iptextbuf;
 }
 
 // address + []:port
-static char nameport[INET6_ADDRSTRLEN + 8];
-char *sockaddr2nameport(const struct sockaddr *sa)
+static char iptextport[INET6_ADDRSTRLEN + 8];
+char *sockaddr2iptextport(const struct sockaddr *sa)
 {
     switch(sa->sa_family)
     {
     case AF_INET:
-        sprintf(nameport, "%s:%u", sockaddr2name(sa), ntohs(((const struct sockaddr_in *)sa)->sin_port));
+        sprintf(iptextport, "%s:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in *)sa)->sin_port));
         break;
 
     case AF_INET6:
-        sprintf(nameport, "[%s]:%u", sockaddr2name(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
+        sprintf(iptextport, "[%s]:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
         break;
 
     default:
-        strncpy(nameport, "Unknown AF", 11);
+        strncpy(iptextport, "Unknown AF", 11);
     }
 
-    return nameport;
+    return iptextport;
 }
 
 //
