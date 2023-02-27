@@ -52,6 +52,7 @@ DefaultDBItem defaultDBItems[] =
     { "colorful",         "1",            true,   StateDatabase::ReadWrite,   NULL },
     { "tkwarnratio",      "0.0",          true,   StateDatabase::ReadWrite,   NULL },
     { "showtabs",         "2",            true,   StateDatabase::ReadWrite,   NULL },
+    { "showips",         "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "underlineColor",       "cyan",         true,   StateDatabase::ReadWrite,   NULL },
     { "useMeshForRadar",      "0",            true,   StateDatabase::ReadWrite,   NULL },
     { "highlightPattern",     "",         true,   StateDatabase::ReadWrite,   NULL },

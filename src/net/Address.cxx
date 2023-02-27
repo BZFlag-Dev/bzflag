@@ -48,6 +48,46 @@ extern "C" int inet_aton(const char *, struct in_addr *);
 #define MAXHOSTNAMELEN  511
 #endif
 
+// helper function, might want to live someplace else
+static char addressbuf[INET6_ADDRSTRLEN];
+char *sockaddr2name(const struct sockaddr *sa)
+{
+    switch(sa->sa_family) {
+        case AF_INET:
+            inet_ntop(AF_INET, &(((const struct sockaddr_in *)sa)->sin_addr), addressbuf, INET6_ADDRSTRLEN);
+            break;
+
+        case AF_INET6:
+            inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), addressbuf, INET6_ADDRSTRLEN);
+            break;
+
+        default:
+            strncpy(addressbuf, "Unknown AF", 11);
+    }
+
+    return addressbuf;
+}
+
+// address + []:port
+static char nameport[INET6_ADDRSTRLEN + 8];
+char *sockaddr2nameport(const struct sockaddr *sa)
+{
+    switch(sa->sa_family) {
+        case AF_INET:
+            sprintf(nameport, "%s:%u", sockaddr2name(sa), ntohs(((const struct sockaddr_in *)sa)->sin_port));
+            break;
+
+        case AF_INET6:
+            sprintf(nameport, "[%s]:%u", sockaddr2name(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
+            break;
+
+        default:
+            strncpy(nameport, "Unknown AF", 11);
+    }
+
+    return nameport;
+}
+
 //
 // Address
 //

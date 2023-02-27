@@ -181,9 +181,9 @@ public:
     {
         return fd;
     }
-    struct sockaddr_in    getUADDR ( void )
+    const struct sockaddr *getUADDR ( void )
     {
-        return uaddr;
+        return (const struct sockaddr *)&uaddr;
     }
 
     // Returns the time that the connection was accepted
@@ -222,16 +222,15 @@ private:
     std::shared_ptr<AresHandler>  ares;
 
     PlayerInfo*   info;
-    struct sockaddr_in    uaddr;
+    struct sockaddr_in taddr;
+    struct sockaddr_in uaddr;
     int       playerIndex;
     int       fd; // socket file descriptor
 
-    /// peer's network address
-    Address   peer;
-    /* peer->getDotNotation returns a temp variable that is not safe
+    /* sockaddr2name() returns a temp variable that is not safe
      * to pass around.  This variable lets us keep a copy in allocated
      * memory for as long as we need to */
-    std::string   dotNotation;
+    std::string targetIP;
 
     /// input buffers
     /// current TCP msg

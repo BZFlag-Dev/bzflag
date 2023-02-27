@@ -194,20 +194,20 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
                     netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
                 netPlayer[index]->udpin = true;
                 udpLinkRequest = true;
-                logDebugMessage(2,"Player slot %d inbound UDP up %s:%d actual %d\n",
+                logDebugMessage(2,"Player slot %d inbound UDP up %s actual %d\n",
                                 index,
-                                inet_ntoa(uaddr->sin_addr),
-                                ntohs(netPlayer[index]->uaddr.sin_port),
+                                sockaddr2nameport((const struct sockaddr *)uaddr),
                                 ntohs(uaddr->sin_port));
             }
             else
             {
-                logDebugMessage(2,"Player slot %d inbound UDP rejected %s:%d different IP \
-than %s:%d\n",
+                // sockaddr2nameport has a single buffer
+                logDebugMessage(2,"Player slot %d inbound UDP rejected %s",
                                 index,
-                                inet_ntoa(netPlayer[index]->uaddr.sin_addr),
-                                ntohs(netPlayer[index]->uaddr.sin_port),
-                                inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+                                sockaddr2nameport((const struct sockaddr *)&netPlayer[index]->uaddr));
+                logDebugMessage(2," different IP than %s\n",
+                                sockaddr2nameport((const struct sockaddr *)uaddr));
+
             }
         }
     }
@@ -217,23 +217,21 @@ than %s:%d\n",
         if (debugLevel < 4)
             return -1;
         // no match, discard packet
-        logDebugMessage(3,"uread() discard packet! %s:%d choices p(l) h:p",
-                        inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port));
+        logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p",
+                        sockaddr2nameport((const struct sockaddr *)uaddr));
         for (pi = 0; pi < maxHandlers; pi++)
         {
             if (netPlayer[pi] && !netPlayer[pi]->closed)
-                logDebugMessage(4," %d(%d-%d) %s:%d", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
-                                inet_ntoa(netPlayer[pi]->uaddr.sin_addr), ntohs(netPlayer[pi]->uaddr.sin_port));
+                logDebugMessage(4," %d(%d-%d) %s", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
+                                sockaddr2nameport((const struct sockaddr *)uaddr));
         }
         logDebugMessage(3,"\n");
     }
     else
     {
-        logDebugMessage(4,"Player slot %d uread() %s:%d len %d from %s:%d on %i\n",
-                        id,
-                        inet_ntoa(netPlayer[id]->uaddr.sin_addr),
-                        ntohs(netPlayer[id]->uaddr.sin_port), n,
-                        inet_ntoa(uaddr->sin_addr), ntohs(uaddr->sin_port),
+        logDebugMessage(4,"Player slot %d uread() len %d from %s on %i\n",
+                        id, n,
+                        sockaddr2nameport((const struct sockaddr *)uaddr),
                         udpSocket);
 #ifdef NETWORK_STATS
         netPlayer[id]->countMessage(code, len, 0);
@@ -275,8 +273,8 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
                        int _playerIndex, int _fd)
-    : ares(new AresHandler(_playerIndex)), info(_info), uaddr(clientAddr),
-      playerIndex(_playerIndex), fd(_fd), peer(clientAddr),
+    : ares(new AresHandler(_playerIndex)), info(_info), taddr(clientAddr),
+      uaddr(clientAddr), playerIndex(_playerIndex), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
@@ -316,9 +314,8 @@ NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
       time(TimeKeeper::getCurrent())
 {
     // store address information for player
-    AddrLen addr_len = sizeof(_clientAddr);
-    memcpy(&uaddr, &_clientAddr, addr_len);
-    peer = Address(uaddr);
+    memcpy(&taddr, &_clientAddr, sizeof(_clientAddr));
+    memcpy(&uaddr, &_clientAddr, sizeof(_clientAddr));
 
 #ifdef NETWORK_STATS
 
@@ -825,7 +822,7 @@ bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr)
 const std::string NetHandler::getPlayerHostInfo()
 {
     return TextUtils::format("%s%s%s%s%s%s",
-                             peer.getDotNotation().c_str(),
+                             sockaddr2nameport((const struct sockaddr *)&taddr),
                              getHostname() ? " (" : "",
                              getHostname() ? getHostname() : "",
                              getHostname() ? ")" : "",
@@ -838,21 +835,27 @@ const char* NetHandler::getTargetIP()
     /* peer->getDotNotation returns a temp variable that is not safe
      * to pass around.  we keep a copy in allocated memory for safety.
      */
-    if (dotNotation.size() == 0)
-        dotNotation = peer.getDotNotation();
-    return dotNotation.c_str();
+    if (targetIP.size() == 0)
+        targetIP = sockaddr2name((const struct sockaddr *)&taddr);
+    return targetIP.c_str();
 }
 
 int NetHandler::sizeOfIP()
 {
-    // IPv4 is 1 byte for type and 4 bytes for IP = 5
-    // IPv6 is 1 byte for type and 16 bytes for IP = 17
-    return peer.getIPVersion() == 4 ? 5 : 17;
+    switch(taddr.sin_family) {
+        case AF_INET:
+            // IPv4 is 1 byte for type and 4 bytes for IP = 5
+            return 5;
+        case AF_INET6:
+            // IPv6 is 1 byte for type and 16 bytes for IP = 17
+            return 17;
+    }
+    return -1;
 }
 
 void *NetHandler::packAdminInfo(void *buf)
 {
-    buf = peer.pack(buf);
+    buf = Address(taddr).pack(buf);
     return buf;
 }
 
@@ -866,7 +869,7 @@ int NetHandler::whoIsAtIP(const std::string& IP)
         // FIXME: this is broken for IPv6
         // there can be multiple ascii formats for the same address
         if (player && !player->closed
-                && !strcmp(player->peer.getDotNotation().c_str(), IP.c_str()))
+                && !strcmp(sockaddr2name((const struct sockaddr *)&player->taddr), IP.c_str()))
         {
             position = v;
             break;
