@@ -842,13 +842,14 @@ const char* NetHandler::getTargetIP()
 
 int NetHandler::sizeOfIP()
 {
-    switch(taddr.sin_family) {
-        case AF_INET:
-            // IPv4 is 1 byte for type and 4 bytes for IP = 5
-            return 5;
-        case AF_INET6:
-            // IPv6 is 1 byte for type and 16 bytes for IP = 17
-            return 17;
+    switch(taddr.sin_family)
+    {
+    case AF_INET:
+        // IPv4 is 1 byte for type and 4 bytes for IP = 5
+        return 5;
+    case AF_INET6:
+        // IPv6 is 1 byte for type and 16 bytes for IP = 17
+        return 17;
     }
     return -1;
 }
