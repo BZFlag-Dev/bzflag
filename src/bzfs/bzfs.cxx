@@ -6863,9 +6863,8 @@ int main(int argc, char **argv)
             clOptions->wksPort = ntohs(service->s_port);
     }
 
-    if (clOptions->pingInterface == "") {
+    if (clOptions->pingInterface == "")
         clOptions->pingInterface = "0.0.0.0";
-    }
     serverAddr = Address(clOptions->pingInterface + ":" + std::to_string(clOptions->wksPort));
 
     if (clOptions->UPnP)
