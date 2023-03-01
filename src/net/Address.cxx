@@ -121,7 +121,8 @@ Address::Address(const std::string &_iptextport)
     hints.ai_addr = NULL;
     hints.ai_next = NULL;
     int s = getaddrinfo(iptext.c_str(), port.c_str(), &hints, &result);
-    if (s == 0) {
+    if (s == 0)
+    {
         // assume first entry as we used AI_NUMERICSERV
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
@@ -132,7 +133,8 @@ Address::Address(const std::string &_iptextport)
     exit(EXIT_FAILURE);
 }
 
-Address::Address(const Address &address) {
+Address::Address(const Address &address)
+{
     memcpy(&addr, (const void *)&address.addr, sizeof(addr));
     iptext = address.iptext;
     iptextport = address.iptextport;
@@ -204,14 +206,14 @@ struct sockaddr_in *Address::getAddr_in()
 std::string     Address::getIpText()
 {
     if (iptext.size() == 0)
-         iptext = sockaddr2iptext((const struct sockaddr *)&addr);
+        iptext = sockaddr2iptext((const struct sockaddr *)&addr);
     return iptext.c_str();
 }
 
 std::string     Address::getIpTextPort()
 {
     if (iptextport.size() == 0)
-         iptextport = sockaddr2iptextport((const struct sockaddr *)&addr);
+        iptextport = sockaddr2iptextport((const struct sockaddr *)&addr);
     return iptextport.c_str();
 }
 
@@ -288,24 +290,26 @@ void*           Address::pack(void* _buf) const
     unsigned char* buf = (unsigned char*)_buf;
     buf = (unsigned char*)nboPackUByte(_buf, addr.sin_family);
     // should already in network byte order
-    switch(addr.sin_family) {
-        case AF_INET:
-            ::memcpy(buf, &addr.sin_addr.s_addr, sizeof(in_addr_t));
-            buf += sizeof(in_addr_t);
-            ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
-            buf += sizeof(in_port_t);
-            break;
+    switch(addr.sin_family)
+    {
+    case AF_INET:
+        ::memcpy(buf, &addr.sin_addr.s_addr, sizeof(in_addr_t));
+        buf += sizeof(in_addr_t);
+        ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
+        buf += sizeof(in_port_t);
+        break;
 
-        case AF_INET6:
-            ::memcpy(buf, &addr.sin_addr, sizeof(in6_addr));
-            buf += sizeof(in6_addr);
-            ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
-            buf += sizeof(in_port_t);
+    case AF_INET6:
+        ::memcpy(buf, &addr.sin_addr, sizeof(in6_addr));
+        buf += sizeof(in6_addr);
+        ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
+        buf += sizeof(in_port_t);
 
-            break;
+        break;
 
-        default:
-            exit(-1);
+    default:
+        printf("Address(): unknown family %u\n", addr.sin_family);
+        exit(EXIT_FAILURE);
     }
     return (void*)buf;
 }
@@ -318,23 +322,25 @@ const void*     Address::unpack(const void* _buf)
     u_int8_t family;
     buf = (const unsigned char*)nboUnpackUByte(buf, family);
     addr.sin_family = family;
-    switch(addr.sin_family) {
-        case AF_INET:
-            ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in_addr_t));
-            buf += sizeof(in_addr_t);
-            ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
-            buf += sizeof(in_port_t);
-            break;
+    switch(addr.sin_family)
+    {
+    case AF_INET:
+        ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in_addr_t));
+        buf += sizeof(in_addr_t);
+        ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
+        buf += sizeof(in_port_t);
+        break;
 
-        case AF_INET6:
-            ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in6_addr));
-            buf += sizeof(in6_addr);
-            ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
-            buf += sizeof(in_port_t);
-            break;
+    case AF_INET6:
+        ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in6_addr));
+        buf += sizeof(in6_addr);
+        ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
+        buf += sizeof(in_port_t);
+        break;
 
-        default:
-            exit(-1);
+    default:
+        printf("Address(): unknown family %u\n", addr.sin_family);
+        exit(EXIT_FAILURE);
     }
 
     // should be stored in network byte order
