@@ -856,7 +856,7 @@ int NetHandler::sizeOfIP()
 
 void *NetHandler::packAdminInfo(void *buf)
 {
-    buf = Address(taddr).pack(buf);
+    buf = Address(&taddr).pack(buf);
     return buf;
 }
 

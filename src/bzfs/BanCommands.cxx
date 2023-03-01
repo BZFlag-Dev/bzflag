@@ -591,7 +591,7 @@ bool CheckIPCommand::operator() (const char *message,
         return true;
     }
 
-    in_addr ip = Address(argv[1]);
+    in_addr ip = Address(argv[1]).getAddr_in()->sin_addr;
     BanInfo baninfo(ip);
     const bool banned = !clOptions->acl.validate(ip, &baninfo);
 

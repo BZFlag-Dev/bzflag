@@ -6873,8 +6873,10 @@ int main(int argc, char **argv)
     if (clOptions->UPnP)
         bzUPnP.start();
 
-    if (clOptions->pingInterface != "")
-        serverAddr.sin_addr = Address::getHostAddress(clOptions->pingInterface);
+    if (clOptions->pingInterface != "") {
+        Address tempAddr = Address(clOptions->pingInterface);
+        serverAddr.sin_addr = tempAddr.getAddr_in()->sin_addr;
+    }
 
     // my address to publish.  allow arguments to override (useful for
     // firewalls).  use my official hostname if it appears to be
@@ -6887,8 +6889,8 @@ int main(int argc, char **argv)
         std::string generatedPublicAddress = Address::getHostName();
         if (generatedPublicAddress.find('.') == std::string::npos)
         {
-            if (!Address(serverAddr.sin_addr).isAny() && !Address(serverAddr.sin_addr).isPrivate())
-                generatedPublicAddress = Address(serverAddr.sin_addr).getDotNotation();
+            if (!Address(&serverAddr).isAny() && !Address(&serverAddr).isPrivate())
+                generatedPublicAddress = Address(&serverAddr).getIpTextPort();
             else
                 generatedPublicAddress = "";
         }
@@ -7777,7 +7779,7 @@ int main(int argc, char **argv)
                         // then ignore the ping.
                         if (handlePings)
                         {
-                            respondToPing(Address(uaddr));
+                            respondToPing(Address(&uaddr));
                             pingReply.write(NetHandler::getUdpSocket(), &uaddr);
                         }
                         continue;

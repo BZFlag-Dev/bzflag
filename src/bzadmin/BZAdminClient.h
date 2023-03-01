@@ -153,7 +153,7 @@ protected:
 
     PlayerIdMap players;
     TeamColor myTeam;
-    ServerLink sLink;
+    ServerLink* sLink;
     std::pair<std::string, ColorCode> lastMessage;
     bool valid;
     std::map<uint16_t, bool> messageMask;

@@ -46,7 +46,7 @@ public:
     Address(const std::string&);
     Address(const Address&);
     Address(const InAddr&);         // input in nbo
-    Address(const struct sockaddr_in&); // input in nbo
+    Address(const struct sockaddr_in*); // input in nbo
     ~Address();
     Address&        operator=(const Address&);
 
@@ -56,6 +56,11 @@ public:
     bool        operator<(Address const&) const;
     bool        isAny() const;
     bool        isPrivate() const;
+    struct sockaddr *getAddr();
+    struct sockaddr_in *getAddr_in();
+    std::string getIpText();
+    std::string getIpTextPort();
+
     std::string     getDotNotation() const;
     uint8_t     getIPVersion() const;
 
@@ -67,7 +72,10 @@ public:
     static const std::string getHostName(const std::string &hostname = std::string(""));
 
 private:
-    std::vector <InAddr> addr;
+    //std::vector <InAddr> addr;
+    struct sockaddr_in addr;
+    std::string iptext;
+    std::string iptextport;
 };
 
 // FIXME - enum maybe? put into namespace or class cage?

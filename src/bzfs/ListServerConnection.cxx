@@ -409,7 +409,7 @@ void ListServerLink::addMe(PingPacket pingInfo,
         playerData->_LSAState = GameKeeper::Player::checking;
         NetHandler* handler = playerData->netHandler.get();
         msg += TextUtils::url_encode(playerData->player.getCallSign());
-        Address addr = handler->getIPAddress();
+        Address addr = Address(handler->getTADDR());
         if (!addr.isPrivate())
         {
             msg += "@";

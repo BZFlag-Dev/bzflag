@@ -51,7 +51,7 @@ public:
         HasMessageLink = 8
     };
 
-    ServerLink(const Address& serverAddress, int port = ServerPort);
+    ServerLink(Address& serverAddress);
     ~ServerLink();
 
     State                       getState() const;

@@ -71,7 +71,6 @@ private:
     bool      aresFailed;
 
     static bool   globallyInited;
-
 };
 
 #endif

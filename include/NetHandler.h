@@ -181,6 +181,11 @@ public:
     {
         return fd;
     }
+    const struct sockaddr_in *getTADDR ( void )
+    {
+        return &taddr;
+    }
+
     const struct sockaddr *getUADDR ( void )
     {
         return (const struct sockaddr *)&uaddr;
