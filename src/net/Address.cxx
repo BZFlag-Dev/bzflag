@@ -96,32 +96,50 @@ char *sockaddr2iptextport(const struct sockaddr *sa)
 
 Address::Address()
 {
-    InAddr tempAddr;
-
-    memset(&tempAddr, 0, sizeof(tempAddr));
-    tempAddr.s_addr = htonl(INADDR_ANY);
-    addr.push_back(tempAddr);
+    memset(&addr, 0, sizeof(addr));
 }
 
-Address::Address(const std::string& name)
+Address::Address(const std::string &_iptextport)
 {
-    Address a = getHostAddress(name);
-    addr.push_back(a.addr[0]);
+    struct addrinfo hints;
+    struct addrinfo *result;
+
+    iptextport = _iptextport;
+
+    std::size_t found = iptextport.find_last_of(":");
+    iptext = iptextport.substr(0, found);
+    std::string port = iptextport.substr(found + 1);
+
+    memset(&hints, 0, sizeof(hints));
+    //FIXME convert _iptext and fill addr
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_flags = AI_NUMERICSERV;
+    hints.ai_protocol = 0;
+    hints.ai_canonname = NULL;
+    hints.ai_addr = NULL;
+    hints.ai_next = NULL;
+    int s = getaddrinfo(iptext.c_str(), port.c_str(), &hints, &result);
+    if (s == 0) {
+        // assume first entry as we used AI_NUMERICSERV
+        memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
+        freeaddrinfo(result);
+        return;
+    }
+    // FIXME: DNS lookup needed
+    printf("Need DNS support in Address()\n");
+    exit(EXIT_FAILURE);
 }
 
-Address::Address(const Address& address) : addr(address.addr)
-{
-    // do nothing
+Address::Address(const Address &address) {
+    memcpy(&addr, (const void *)&address.addr, sizeof(addr));
+    iptext = address.iptext;
+    iptextport = address.iptextport;
 }
 
-Address::Address(const InAddr& _addr)
+Address::Address(const struct sockaddr_in *_addr)
 {
-    addr.push_back(_addr);
-}
-
-Address::Address(const struct sockaddr_in& _addr)
-{
-    addr.push_back(_addr.sin_addr);
+    memcpy(&addr, (const void *)_addr, sizeof(addr));
 }
 
 Address::~Address()
@@ -131,64 +149,79 @@ Address::~Address()
 
 Address&        Address::operator=(const Address& address)
 {
-    addr.clear();
-    addr.push_back(address.addr[0]);
+    memcpy(&addr, (const void *)&address.addr, sizeof(addr));
     return *this;
-}
-
-Address::operator InAddr() const
-{
-    return addr[0];
 }
 
 bool            Address::operator==(const Address& address) const
 {
-    return addr[0].s_addr == address.addr[0].s_addr;
+    return memcmp(&addr, &address.addr, sizeof(addr));
 }
 
 bool            Address::operator!=(const Address& address) const
 {
-    return addr[0].s_addr != address.addr[0].s_addr;
+    return memcmp(&addr, &address.addr, sizeof(addr));
 }
 
 bool            Address::operator<(Address const& address) const
 {
-    return addr[0].s_addr < address.addr[0].s_addr;
+    return memcmp(&addr, &address.addr, sizeof(addr)) < 0;
 }
 bool            Address::isAny() const
 {
-    return addr[0].s_addr == htonl(INADDR_ANY);
+    // FIXME: add IPv6
+    return addr.sin_addr.s_addr == htonl(INADDR_ANY);
 }
 
 bool            Address::isPrivate() const
 {
+    // FIXME: add IPv6
     // 127.0.0.0/8
-    if ((addr[0].s_addr & htonl(0xff000000u)) == htonl(0x7f000000u))
+    if ((addr.sin_addr.s_addr & htonl(0xff000000u)) == htonl(0x7f000000u))
         return(true);
     // 10.0.0.0/8
-    if ((addr[0].s_addr & htonl(0xff000000u)) == htonl(0x0a000000u))
+    if ((addr.sin_addr.s_addr & htonl(0xff000000u)) == htonl(0x0a000000u))
         return(true);
     // 172.16.0.0/12
-    if ((addr[0].s_addr & htonl(0xfff00000u)) == htonl(0xac100000u))
+    if ((addr.sin_addr.s_addr & htonl(0xfff00000u)) == htonl(0xac100000u))
         return(true);
     // 192.168.0.0/16
-    if ((addr[0].s_addr & htonl(0xffff0000u)) == htonl(0xc0a80000u))
+    if ((addr.sin_addr.s_addr & htonl(0xffff0000u)) == htonl(0xc0a80000u))
         return(true);
     return(false);
 }
-
-std::string     Address::getDotNotation() const
+struct sockaddr *Address::getAddr()
 {
-    return std::string(inet_ntoa(addr[0]));
+    return (struct sockaddr*)&addr;
+}
+
+struct sockaddr_in *Address::getAddr_in()
+{
+    return &addr;
+}
+
+std::string     Address::getIpText()
+{
+    if (iptext.size() == 0)
+         iptext = sockaddr2iptext((const struct sockaddr *)&addr);
+    return iptext.c_str();
+}
+
+std::string     Address::getIpTextPort()
+{
+    if (iptextport.size() == 0)
+         iptextport = sockaddr2iptextport((const struct sockaddr *)&addr);
+    return iptextport.c_str();
 }
 
 uint8_t         Address::getIPVersion() const
 {
-    return 4;
+    return addr.sin_family;
 }
 
 static const struct hostent* bz_gethostbyname(const std::string &name)
 {
+    // FIXME: convert to non-blocking ares call
     const struct hostent* hent = NULL;
 
     if (name.length() > 0)
@@ -211,15 +244,10 @@ static const struct hostent* bz_gethostbyname(const std::string &name)
 Address Address::getHostAddress(const std::string &hname)
 {
     Address a;
-    InAddr tempAddr;
-    int j;
 
-    if (hname.length() > 0 && inet_aton(hname.c_str(), &tempAddr) != 0)
-    {
-        a.addr.clear();
-        a.addr.push_back(tempAddr);
-        return a;
-    }
+    // FIXME convert fron iptext without dns lookup
+    //if (hname.length() > 0 && inet_aton(hname.c_str(), &a.addr.sin_addr.s_addr != 0)
+    //    return a;
 
     const struct hostent* hent = bz_gethostbyname(hname);
     if (!hent)
@@ -228,12 +256,8 @@ Address Address::getHostAddress(const std::string &hname)
         return a;
     }
 
-    a.addr.clear();
-    for (j=0; hent->h_addr_list[j] != NULL; j++)
-    {
-        ::memcpy(&tempAddr, hent->h_addr_list[j], sizeof(tempAddr));
-        a.addr.push_back(tempAddr);
-    }
+    // FIXME: we only look at the first IP
+    //::memcpy(&addr, hent->h_addr_list[0], sizeof(addr));
     return a;
 }
 
@@ -261,28 +285,58 @@ const std::string Address::getHostName(const std::string &hostname) // const
 void*           Address::pack(void* _buf) const
 {
     unsigned char* buf = (unsigned char*)_buf;
-    buf = (unsigned char*)nboPackUByte(_buf, 4);
-    // everything in InAddr  is already in network byte order
-    int32_t hostaddr = int32_t(addr[0].s_addr);
-    ::memcpy(buf, &hostaddr, sizeof(int32_t));
-    buf += sizeof(int32_t);
+    buf = (unsigned char*)nboPackUByte(_buf, addr.sin_family);
+    // should already in network byte order
+    switch(addr.sin_family) {
+        case AF_INET:
+            ::memcpy(buf, &addr.sin_addr.s_addr, sizeof(in_addr_t));
+            buf += sizeof(in_addr_t);
+            ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
+            buf += sizeof(in_port_t);
+            break;
+
+        case AF_INET6:
+            ::memcpy(buf, &addr.sin_addr, sizeof(in6_addr));
+            buf += sizeof(in6_addr);
+            ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
+            buf += sizeof(in_port_t);
+
+            break;
+
+        default:
+            exit(-1);
+    }
     return (void*)buf;
 }
 
 const void*     Address::unpack(const void* _buf)
 {
     const unsigned char* buf = (const unsigned char*)_buf;
-    InAddr tempAddr;
-    // FIXME - should actually parse the first byte to see if it's IPv4 or
-    // IPv6
-    ++buf;
-    // everything in InAddr should be stored in network byte order
-    int32_t hostaddr;
-    ::memcpy(&hostaddr, buf, sizeof(int32_t));
-    buf += sizeof(int32_t);
-    tempAddr.s_addr = u_long(hostaddr);
-    addr.clear();
-    addr.push_back(tempAddr);
+    memset(&addr, 0, sizeof(addr));
+    // FIXME - parse first byte to see if it's IPv4 or IPv6
+    u_int8_t family;
+    buf = (const unsigned char*)nboUnpackUByte(buf, family);
+    addr.sin_family = family;
+    switch(addr.sin_family) {
+        case AF_INET:
+            ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in_addr_t));
+            buf += sizeof(in_addr_t);
+            ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
+            buf += sizeof(in_port_t);
+            break;
+
+        case AF_INET6:
+            ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(in6_addr));
+            buf += sizeof(in6_addr);
+            ::memcpy(&addr.sin_port, buf, sizeof(in_port_t));
+            buf += sizeof(in_port_t);
+            break;
+
+        default:
+            exit(-1);
+    }
+
+    // should be stored in network byte order
     return buf;
 }
 
@@ -292,10 +346,10 @@ const void*     Address::unpack(const void* _buf)
 
 void*           ServerId::pack(void* _buf) const
 {
-    // everything in ServerId is already in network byte order
+    // already in network byte order
     unsigned char* buf = (unsigned char*)_buf;
     assert(addr.sin_family == AF_INET);
-    ::memcpy(buf, &addr.sin_addr, sizeof(int32_t));
+    ::memcpy(buf, &addr.sin_addr.s_addr, sizeof(int32_t));
     buf += sizeof(int32_t);
     ::memcpy(buf, &addr.sin_port, sizeof(int16_t));
     buf += sizeof(int16_t);
@@ -309,7 +363,7 @@ const void*     ServerId::unpack(const void* _buf)
     // everything in ServerId should be stored in network byte order
     const unsigned char* buf = (const unsigned char*)_buf;
     addr.sin_family = AF_INET;
-    ::memcpy(&addr.sin_addr, buf, sizeof(int32_t));
+    ::memcpy(&addr.sin_addr.s_addr, buf, sizeof(int32_t));
     buf += sizeof(int32_t);
     ::memcpy(&addr.sin_port, buf, sizeof(int16_t));
     buf += sizeof(int16_t);

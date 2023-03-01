@@ -38,22 +38,29 @@
 StartupInfo startupInfo;
 
 BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
-    : myTeam(ObserverTeam), sLink(Address(startupInfo.serverName), startupInfo.serverPort), valid(false), ui(bzInterface)
+    : myTeam(ObserverTeam), valid(false), ui(bzInterface)
 {
+    //Address serverAddress = Address::getHostAddress(startupInfo.serverName);
+    std::string namePort(startupInfo.serverName);
+    namePort += ":";
+    namePort += std::to_string(startupInfo.serverPort);
+    Address serverAddress = Address(namePort);
 
-    if (sLink.getState() != ServerLink::Okay)
+    sLink = new ServerLink(serverAddress);
+
+    if (sLink->getState() != ServerLink::Okay)
     {
-        switch (sLink.getState())
+        switch (sLink->getState())
         {
         case ServerLink::BadVersion:
         {
-            std::cout << "Incompatible server version " << sLink.getVersion();
+            std::cout << "Incompatible server version " << sLink->getVersion();
             break;
         }
         case ServerLink::Refused:
         {
             std::string banMessage = "Server Refused connection due to ban: ";
-            banMessage += sLink.getRejectionMessage();
+            banMessage += sLink->getRejectionMessage();
             std::cout << banMessage;
             break;
         }
@@ -78,8 +85,8 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
         // won't really output anything, just gets token
         outputServerList();
     }
-    sLink.sendEnter(TankPlayer, myTeam, 0, startupInfo.callsign, "bzadmin", startupInfo.token, "default");
-    if (sLink.getState() != ServerLink::Okay)
+    sLink->sendEnter(TankPlayer, myTeam, 0, startupInfo.callsign, "bzadmin", startupInfo.token, "default");
+    if (sLink->getState() != ServerLink::Okay)
     {
         std::cerr << "Rejected." << std::endl;
         return;
@@ -87,7 +94,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
 
     std::string reason;
     uint16_t code, rejcode;
-    if (sLink.readEnter (reason, code, rejcode))
+    if (sLink->readEnter (reason, code, rejcode))
         valid = true;
     else
         std::cerr << reason << std::endl;
@@ -137,7 +144,7 @@ BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
 
 PlayerId BZAdminClient::getMyId()
 {
-    return sLink.getId();
+    return sLink->getId();
 }
 
 
@@ -148,7 +155,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
     PlayerIdMap::iterator iter;
 
     // read until we have a package, or until we have waited 100 ms
-    if (sLink.read(code, len, inbuf, 100) == 1)
+    if (sLink->read(code, len, inbuf, 100) == 1)
     {
         lastMessage.first = "";
         lastMessage.second = Default;
@@ -303,7 +310,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
                     vbuf = nboUnpackUByte(vbuf, tmp);
                     vbuf = nboUnpackUByte(vbuf, p);
                     vbuf = a.unpack(vbuf);
-                    players[p].ip = a.getDotNotation();
+                    players[p].ip = a.getIpTextPort();
                     if ((ui != NULL) && messageMask[MsgAdminInfo])
                     {
                         ui->outputMessage("*** IPINFO: " + players[p].name + " from "  +
@@ -317,7 +324,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
                 vbuf = nboUnpackUByte(vbuf, tmp);
                 vbuf = nboUnpackUByte(vbuf, p);
                 vbuf = a.unpack(vbuf);
-                players[p].ip = a.getDotNotation();
+                players[p].ip = a.getIpTextPort();
                 Team temp;
                 if (messageMask[MsgAdminInfo])
                 {
@@ -429,7 +436,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
             PlayerId src;
             PlayerId dst;
             uint8_t mtype;
-            PlayerId me = sLink.getId();
+            PlayerId me = sLink->getId();
             vbuf = nboUnpackUByte(vbuf, src);
             vbuf = nboUnpackUByte(vbuf, dst);
             vbuf = nboUnpackUByte(vbuf, mtype);
@@ -457,7 +464,7 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
         return GotMessage;
     }
 
-    if (sLink.getState() != ServerLink::Okay)
+    if (sLink->getState() != ServerLink::Okay)
     {
         if (ui != NULL)
             ui->outputMessage("--- ERROR: Communication error", Red);
@@ -613,7 +620,7 @@ void BZAdminClient::sendMessage(const std::string& msg,
     strncpy(buffer, msg.c_str(), MessageLen - 1);
     buffer[MessageLen - 1] = '\0';
     nboPackString(buffer2 + 1, buffer, MessageLen);
-    sLink.send(MsgSendChat, sizeof(buffer2), buffer2);
+    sLink->send(MsgSendChat, sizeof(buffer2), buffer2);
 }
 
 
@@ -687,8 +694,8 @@ void BZAdminClient::waitForServer()
     // this assumes that the order of messages isn't changed along the way
     bool tmp = messageMask[MsgReceiveChat];
     messageMask[MsgReceiveChat] = true;
-    PlayerId me = sLink.getId();
-    if (sLink.getState() == ServerLink::Okay)
+    PlayerId me = sLink->getId();
+    if (sLink->getState() == ServerLink::Okay)
     {
         sendMessage("bzadminping", me);
         std::string expected = formatMessage("bzadminping", ChatMessage, me, me, NoTeam, me);

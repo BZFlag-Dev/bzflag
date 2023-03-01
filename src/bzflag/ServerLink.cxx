@@ -88,7 +88,7 @@ static const unsigned long endPacket = 0;
 
 ServerLink*     ServerLink::server = NULL;
 
-ServerLink::ServerLink(const Address& serverAddress, int port)
+ServerLink::ServerLink(Address& serverAddress)
 {
     int i;
 
@@ -116,15 +116,10 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
     int query = socket(AF_INET, SOCK_STREAM, 0);
     if (query < 0) return;
 
-    struct sockaddr_in addr;
-    addr.sin_family = AF_INET;
-    addr.sin_port = htons(port);
-    addr.sin_addr = serverAddress;
-
-    UDEBUG("Remote %s\n", sockaddr2iptextport((const struct sockaddr *)&addr));
+    UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr, (unsigned char *)&addr, sizeof(addr));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in));
 
     bool okay = true;
     int fdMax = query;
@@ -141,7 +136,7 @@ ServerLink::ServerLink(const Address& serverAddress, int port)
         close(query);
         return;
     }
-    if (connect(query, (CNCTType*)&addr, sizeof(addr)) < 0)
+    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in)) < 0)
     {
         if (getErrno() != EINPROGRESS)
         {
