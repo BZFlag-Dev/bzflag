@@ -52,7 +52,7 @@ void callNetworkDataLog ( bool send, bool udp,  const unsigned char *data, unsig
 }
 
 bool NetHandler::pendingUDP = false;
-bool NetHandler::initHandlers(struct sockaddr_in addr)
+bool NetHandler::initHandlers(Address addr)
 {
     // udp socket
     int n;

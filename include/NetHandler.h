@@ -90,7 +90,7 @@ public:
         InitHandlers needs the addr structure filled to point to the local port
         needed for udp communications
     */
-    static bool   initHandlers(struct sockaddr_in addr);
+    static bool   initHandlers(Address addr);
     static void   destroyHandlers();
 
     /// General function to support the select statement
