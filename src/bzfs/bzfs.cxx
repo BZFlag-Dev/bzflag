@@ -92,7 +92,7 @@ static bool doSpeedChecks = true;
 CmdLineOptions *clOptions;
 
 // server address to listen on
-struct sockaddr_in serverAddr;
+Address serverAddr;
 // well known service socket
 static int wksSocket;
 bool handlePings = true;
@@ -972,9 +972,6 @@ static bool serverStart()
 #endif
     maxFileDescriptor = 0;
 
-    serverAddr.sin_port = htons(clOptions->wksPort);
-    pingReply.serverId.addr = serverAddr;
-
     // open well known service port
     wksSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (wksSocket == -1)
@@ -992,7 +989,7 @@ static bool serverStart()
         return false;
     }
 #endif
-    if (bind(wksSocket, (const struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1)
+    if (bind(wksSocket, serverAddr.getAddr(), sizeof(struct sockaddr)) == -1)
     {
         nerror("couldn't bind connect socket");
         close(wksSocket);
@@ -6747,10 +6744,6 @@ int main(int argc, char **argv)
     }
 #endif
 
-    // start listening and prepare world database
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
-
     if (!defineWorld())
     {
 #ifdef BZ_PLUGINS
@@ -6870,13 +6863,13 @@ int main(int argc, char **argv)
             clOptions->wksPort = ntohs(service->s_port);
     }
 
+    if (clOptions->pingInterface == "") {
+        clOptions->pingInterface = "0.0.0.0";
+    }
+    serverAddr = Address(clOptions->pingInterface + ":" + std::to_string(clOptions->wksPort));
+
     if (clOptions->UPnP)
         bzUPnP.start();
-
-    if (clOptions->pingInterface != "") {
-        Address tempAddr = Address(clOptions->pingInterface);
-        serverAddr.sin_addr = tempAddr.getAddr_in()->sin_addr;
-    }
 
     // my address to publish.  allow arguments to override (useful for
     // firewalls).  use my official hostname if it appears to be
@@ -6889,8 +6882,8 @@ int main(int argc, char **argv)
         std::string generatedPublicAddress = Address::getHostName();
         if (generatedPublicAddress.find('.') == std::string::npos)
         {
-            if (!Address(&serverAddr).isAny() && !Address(&serverAddr).isPrivate())
-                generatedPublicAddress = Address(&serverAddr).getIpTextPort();
+            if (!serverAddr.isAny() && !serverAddr.isPrivate())
+                generatedPublicAddress = serverAddr.getIpTextPort();
             else
                 generatedPublicAddress = "";
         }
@@ -6925,12 +6918,11 @@ int main(int argc, char **argv)
     if (clOptions->rabbitSelection == RandomRabbitSelection)
         Score::setRandomRanking();
     // print networking info
-    logDebugMessage(1,"\tlistening on %s\n",
-                    sockaddr2iptextport((const struct sockaddr *)&serverAddr));
+    logDebugMessage(1,"\tlistening on %s\n", serverAddr.getIpTextPort().c_str());
     logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
     // prep ping reply
-    pingReply.serverId.addr = serverAddr;
+    memcpy(&pingReply.serverId.addr, serverAddr.getAddr(), sizeof(struct sockaddr_in));
     pingReply.serverId.number = 0;
     pingReply.gameType = clOptions->gameType;
     pingReply.gameOptions = clOptions->gameOptions;

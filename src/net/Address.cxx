@@ -105,6 +105,7 @@ Address::Address(const std::string &_iptextport)
     struct addrinfo *result;
 
     iptextport = _iptextport;
+    printf("Address(): %s\n",_iptextport.c_str());
 
     std::size_t found = iptextport.find_last_of(":");
     iptext = iptextport.substr(0, found);
@@ -127,7 +128,7 @@ Address::Address(const std::string &_iptextport)
         return;
     }
     // FIXME: DNS lookup needed
-    printf("Need DNS support in Address()\n");
+    printf("Need DNS support in Address(): %s\n",_iptextport.c_str());
     exit(EXIT_FAILURE);
 }
 
