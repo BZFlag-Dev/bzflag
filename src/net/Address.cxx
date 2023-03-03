@@ -304,7 +304,6 @@ void*           Address::pack(void* _buf) const
         buf += sizeof(in6_addr);
         ::memcpy(buf, &addr.sin_port, sizeof(in_port_t));
         buf += sizeof(in_port_t);
-
         break;
 
     default:
