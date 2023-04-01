@@ -183,7 +183,7 @@ public:
     }
     const struct sockaddr_in *getTADDR ( void )
     {
-        return &taddr;
+        return taddr.getAddr_in();
     }
 
     const struct sockaddr *getUADDR ( void )
@@ -227,7 +227,7 @@ private:
     std::shared_ptr<AresHandler>  ares;
 
     PlayerInfo*   info;
-    struct sockaddr_in taddr;
+    Address taddr;
     struct sockaddr_in uaddr;
     int       playerIndex;
     int       fd; // socket file descriptor

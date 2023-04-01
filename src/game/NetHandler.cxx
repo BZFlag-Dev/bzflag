@@ -273,7 +273,7 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
                        int _playerIndex, int _fd)
-    : ares(new AresHandler(_playerIndex)), info(_info), taddr(clientAddr),
+    : ares(new AresHandler(_playerIndex)), info(_info), taddr(&clientAddr),
       uaddr(clientAddr), playerIndex(_playerIndex), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
@@ -307,14 +307,13 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 }
 
 NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
-    : ares(0), info(0), playerIndex(-1), fd(_fd),
+    : ares(0), info(0), taddr(&_clientAddr), playerIndex(-1), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
       time(TimeKeeper::getCurrent())
 {
     // store address information for player
-    memcpy(&taddr, &_clientAddr, sizeof(_clientAddr));
     memcpy(&uaddr, &_clientAddr, sizeof(_clientAddr));
 
 #ifdef NETWORK_STATS
@@ -842,7 +841,7 @@ const char* NetHandler::getTargetIP()
 
 int NetHandler::sizeOfIP()
 {
-    switch(taddr.sin_family)
+    switch(taddr.getAddr()->sa_family)
     {
     case AF_INET:
         // IPv4 is 1 byte for type and 4 bytes for IP = 5
@@ -856,7 +855,7 @@ int NetHandler::sizeOfIP()
 
 void *NetHandler::packAdminInfo(void *buf)
 {
-    buf = Address(&taddr).pack(buf);
+    buf = taddr.pack(buf);
     return buf;
 }
 
