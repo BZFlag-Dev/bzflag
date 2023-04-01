@@ -186,12 +186,12 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if (!memcmp(&netPlayer[index]->uaddr.sin_addr, &uaddr->sin_addr,
-                        sizeof(uaddr->sin_addr)))
+            if (!memcmp(&netPlayer[index]->uaddr.getAddr_in()->sin_addr, &uaddr->sin_addr,
+                        sizeof(struct sockaddr_in)))
             {
                 id = index;
                 if (uaddr->sin_port)
-                    netPlayer[index]->uaddr.sin_port = uaddr->sin_port;
+                    netPlayer[index]->uaddr.getAddr_in()->sin_port = uaddr->sin_port;
                 netPlayer[index]->udpin = true;
                 udpLinkRequest = true;
                 logDebugMessage(2,"Player slot %d inbound UDP up %s actual %d\n",
@@ -274,7 +274,7 @@ NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
                        int _playerIndex, int _fd)
     : ares(new AresHandler(_playerIndex)), info(_info), taddr(&clientAddr),
-      uaddr(clientAddr), playerIndex(_playerIndex), fd(_fd),
+      uaddr(&clientAddr), playerIndex(_playerIndex), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
@@ -307,15 +307,12 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
 }
 
 NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
-    : ares(0), info(0), taddr(&_clientAddr), playerIndex(-1), fd(_fd),
+    : ares(0), info(0), taddr(&_clientAddr), uaddr(&_clientAddr), playerIndex(-1), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
       udpOutputLen(0), udpin(false), udpout(false), toBeKicked(false),
       time(TimeKeeper::getCurrent())
 {
-    // store address information for player
-    memcpy(&uaddr, &_clientAddr, sizeof(_clientAddr));
-
 #ifdef NETWORK_STATS
 
     // initialize the inbound/outbound counters to zero
@@ -814,8 +811,8 @@ void NetHandler::udpSend(const void *b, size_t l)
 
 bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr)
 {
-    return udpin && (uaddr.sin_port == _uaddr.sin_port) &&
-           (memcmp(&uaddr.sin_addr, &_uaddr.sin_addr, sizeof(uaddr.sin_addr)) == 0);
+    return udpin && (uaddr.getAddr_in()->sin_port == _uaddr.sin_port) &&
+           (memcmp(&uaddr.getAddr_in()->sin_addr, &_uaddr.sin_addr, sizeof(_uaddr.sin_addr)) == 0);
 }
 
 const std::string NetHandler::getPlayerHostInfo()
@@ -880,7 +877,7 @@ int NetHandler::whoIsAtIP(const std::string& IP)
 
 in_addr NetHandler::getIPAddress()
 {
-    return uaddr.sin_addr;
+    return uaddr.getAddr_in()->sin_addr;
 }
 
 const char *NetHandler::getHostname()

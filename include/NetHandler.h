@@ -228,7 +228,7 @@ private:
 
     PlayerInfo*   info;
     Address taddr;
-    struct sockaddr_in uaddr;
+    Address uaddr;
     int       playerIndex;
     int       fd; // socket file descriptor
 
