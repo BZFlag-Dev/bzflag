@@ -376,18 +376,9 @@ const void*     Address::unpack(const void* _buf)
 
 void*           ServerId::pack(void* _buf) const
 {
-    // ipv4 pointer to simplfy code
-    const struct sockaddr_in *addr_in = (const struct sockaddr_in *)&addr;
-
-    // already in network byte order
-    // FIXME: should probably use Address::pack()
+    // everything in ServerId should be stored in network byte order
     unsigned char* buf = (unsigned char*)_buf;
-    buf = (unsigned char*)nboPackUByte(_buf, addr.sin6_family);
-    assert(addr.sin6_family == AF_INET);
-    ::memcpy(buf, &addr_in->sin_addr.s_addr, sizeof(in_addr_t));
-    buf += sizeof(int32_t);
-    ::memcpy(buf, &addr_in->sin_port, sizeof(int16_t));
-    buf += sizeof(int16_t);
+    buf = (unsigned char*)Address(&addr).pack(buf);
     ::memcpy(buf, &number, sizeof(int16_t));
     buf += sizeof(int16_t);
     return (void*)buf;
@@ -395,19 +386,9 @@ void*           ServerId::pack(void* _buf) const
 
 const void*     ServerId::unpack(const void* _buf)
 {
-    // ipv4 pointer to simplfy code
-    struct sockaddr_in *addr_in = (struct sockaddr_in *)&addr;
-
     // everything in ServerId should be stored in network byte order
-    // FIXME: should probably use Address::unpack()
     const unsigned char* buf = (const unsigned char*)_buf;
-    u_int8_t family;
-    buf = (const unsigned char*)nboUnpackUByte(buf, family);
-    addr.sin6_family = family;
-    ::memcpy(&(addr_in->sin_addr), buf, sizeof(in_addr_t));
-    buf += sizeof(int32_t);
-    ::memcpy(&addr_in->sin_port, buf, sizeof(in_port_t));
-    buf += sizeof(int16_t);
+    buf = (const unsigned char*)Address(&addr).unpack(buf);
     ::memcpy(&number, buf, sizeof(int16_t));
     buf += sizeof(int16_t);
     return buf;
