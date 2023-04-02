@@ -969,7 +969,7 @@ static bool serverStart()
     maxFileDescriptor = 0;
 
     // open well known service port
-    wksSocket = socket(AF_INET, SOCK_STREAM, 0);
+    wksSocket = socket(serverAddr.getAddr()->sa_family, SOCK_STREAM, 0);
     if (wksSocket == -1)
     {
         nerror("couldn't make connect socket");
