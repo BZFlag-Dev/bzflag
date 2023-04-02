@@ -49,8 +49,9 @@ ListServerLink::ListServerLink(std::string listServerURL,
 
     publiclyDisconnected = false;
 
-    if (clOptions->pingInterface != "")
-        setInterface(clOptions->pingInterface);
+    //FIXME: we might be listening on :: but still only have ipv4 connectivity
+    //if (clOptions->pingInterface != "")
+    //    setInterface(clOptions->pingInterface);
 
     publicizeAddress     = publicizedAddress;
     publicizeDescription = publicizedTitle;
