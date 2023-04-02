@@ -2370,7 +2370,7 @@ msgstr ""
 msgid "Fallback to normal TCP receive"
 msgstr ""
 
-msgid "Communication error joining game [No immediate respose]."
+msgid "Communication error joining game [No immediate response]."
 msgstr ""
 
 msgid "Server forced disconnection."
