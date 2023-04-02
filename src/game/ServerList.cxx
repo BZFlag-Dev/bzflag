@@ -365,19 +365,9 @@ void            ServerList::checkEchos(StartupInfo *info)
 
 void            ServerList::addToListWithLookup(ServerItem& info)
 {
-    info.name = Address::getHostByAddress(info.ping.serverId.addr.sin6_addr);
-
+    info.name = sockaddr2iptext((const sockaddr *)&info.ping.serverId.addr);
     // tack on port number to description if not default
-    info.description = info.name;
-    const int port = (int)ntohs((unsigned short)info.ping.serverId.addr.sin6_port);
-    if (port != ServerPort)
-    {
-        char portBuf[20];
-        sprintf(portBuf, "%d", port);
-        info.description += ":";
-        info.description += portBuf;
-    }
-
+    info.description = sockaddr2iptextport((const sockaddr *)&info.ping.serverId.addr);;
     addToList(info); // do not cache network lan - etc. servers
 }
 
