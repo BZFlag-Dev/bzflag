@@ -216,7 +216,8 @@ bool            Address::isPrivate() const
 
     case AF_INET6:
         // FIXME: add IPv6
-        assert(addr.sin6_family == AF_INET);
+        logDebugMessage(0,"isPrivate needs IPv6 support\n");
+        return false;
 
     default:
         return false;
