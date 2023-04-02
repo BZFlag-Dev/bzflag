@@ -985,7 +985,7 @@ static bool serverStart()
         return false;
     }
 #endif
-    if (bind(wksSocket, serverAddr.getAddr(), sizeof(struct sockaddr)) == -1)
+    if (bind(wksSocket, serverAddr.getAddr(), sizeof(struct sockaddr_in6)) == -1)
     {
         nerror("couldn't bind connect socket");
         close(wksSocket);
