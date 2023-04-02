@@ -528,7 +528,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpLength -= len;
             return 1;
         }
-        if (UDEBUGMSG) printError("Fallback to normal TCP receive");
+        //if (UDEBUGMSG) printError("Fallback to normal TCP receive");
         len = 0;
         code = MsgNull;
 
