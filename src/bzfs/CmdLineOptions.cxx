@@ -1418,6 +1418,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
                     i++;
                 }
             }
+            setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros, clOptions->timestampUTC);
         }
 #ifdef HAVE_MINIUPNPC_MINIUPNPC_H
         else if (strcmp(argv[i], "-UPnP") == 0)
@@ -1433,6 +1434,7 @@ void parse(int argc, char **argv, CmdLineOptions &options, bool fromWorldFile)
             // timestamp output
             options.timestampLog = true;
             options.timestampUTC = true;
+            setDebugTimestamp (clOptions->timestampLog, clOptions->timestampMicros, clOptions->timestampUTC);
         }
         else if (strcmp(argv[i], "-userdb") == 0)
         {
