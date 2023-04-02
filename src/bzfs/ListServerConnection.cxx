@@ -350,7 +350,7 @@ void ListServerLink::sendQueuedMessages()
     queuedRequest = true;
     if (nextMessageType == ListServerLink::ADD)
     {
-        logDebugMessage(3,"Queuing ADD message to list server\n");
+        logDebugMessage(3,"Queuing ADD %s\n", publicizeAddress.c_str());
 
         bz_ListServerUpdateEvent_V1 updateEvent;
         updateEvent.address = publicizeAddress;
@@ -365,7 +365,7 @@ void ListServerLink::sendQueuedMessages()
     }
     else if (nextMessageType == ListServerLink::REMOVE)
     {
-        logDebugMessage(3,"Queuing REMOVE message to list server\n");
+        logDebugMessage(3,"Queuing REMOVE %s\n", publicizeAddress.c_str()); 
         removeMe(publicizeAddress);
     }
     nextMessageType = ListServerLink::NONE;
