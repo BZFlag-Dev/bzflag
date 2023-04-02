@@ -4861,7 +4861,7 @@ static void handleCommand(int t, void *rawbuf, bool udp)
         playerData->hasEntered = true;
         playerData->accessInfo.setName(playerData->player.getCallSign());
         std::string timeStamp = TimeKeeper::timestamp();
-        logDebugMessage(1,"Player %s [%d] has joined from %s at %s with token \"%s\"\n",
+        logDebugMessage(1,"Player %s [%d] joined from %s at %s token \"%s\"\n",
                         playerData->player.getCallSign(),
                         t, handler->getTargetIP(), timeStamp.c_str(),
                         playerData->player.getToken());
