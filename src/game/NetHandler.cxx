@@ -746,18 +746,18 @@ void NetHandler::dumpMessageStats()
     for (direction = 0; direction <= 1; direction++)
     {
         total = 0;
-        logDebugMessage(1,"Player messages %s:", direction ? "out" : "in");
+        logDebugMessage(1,"Player messages %s\n", direction ? "out" : "in");
 
         for (MessageCountMap::iterator i = msg[direction].begin();
                 i != msg[direction].end(); ++i)
         {
-            logDebugMessage(1," %c%c:%u(%u)", i->first >> 8, i->first & 0xff,
+            logDebugMessage(1,"\t%c%c:%u(%u)\n", i->first >> 8, i->first & 0xff,
                             i->second.count, i->second.maxSize);
             total += i->second.count;
         }
 
-        logDebugMessage(1," total:%u(%u) ", total, msgBytes[direction]);
-        logDebugMessage(1,"max msgs/bytes per second: %u/%u\n",
+        logDebugMessage(1,"\ttotal:%u(%u)\n", total, msgBytes[direction]);
+        logDebugMessage(1,"\tmax msgs/bytes per second: %u/%u\n",
                         perSecondMaxMsg[direction],
                         perSecondMaxBytes[direction]);
     }
