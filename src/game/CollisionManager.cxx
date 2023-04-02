@@ -512,7 +512,7 @@ void CollisionManager::load ()
 
     // print the timing info
     float elapsed = (float)(TimeKeeper::getCurrent() - startTime);
-    logDebugMessage(2,"Collision Octree processed in %.3f seconds.\n", elapsed);
+    logDebugMessage(2,"\tprocessed in %.3f seconds.\n", elapsed);
 
 
     // setup the split list
