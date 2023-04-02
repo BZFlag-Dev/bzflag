@@ -57,7 +57,7 @@ bool NetHandler::initHandlers(Address addr)
     // udp socket
     int n;
     // we open a udp socket on the same port if alsoUDP
-    if ((udpSocket = (int) socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((udpSocket = (int) socket(addr.getAddr()->sa_family, SOCK_DGRAM, 0)) < 0)
     {
         nerror("couldn't make udp connect socket");
         return false;
