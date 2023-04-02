@@ -36,8 +36,8 @@ public:
     PingPacket();
     ~PingPacket();
 
-    bool        read(int fd, struct sockaddr_in*);
-    bool        write(int fd, const struct sockaddr_in*) const;
+    bool        read(int fd, struct sockaddr_in6*);
+    bool        write(int fd, const struct sockaddr_in6*) const;
     void*       pack(void*, const char* version) const;
     const void*     unpack(const void*, char* version);
 
@@ -48,8 +48,8 @@ public:
     bool        readFromFile(std::istream& in);
     static void     repackHexPlayerCounts(char*, int* counts);
 
-    static bool isRequest(int fd, struct sockaddr_in*);
-    static bool sendRequest(int fd, const struct sockaddr_in*);
+    static bool isRequest(int fd, struct sockaddr_in6*);
+    static bool sendRequest(int fd, const struct sockaddr_in6*);
 
 public:
     ServerId    serverId;

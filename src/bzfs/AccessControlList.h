@@ -29,15 +29,17 @@ struct BanInfo
     /** This constructor creates a new BanInfo with the address @c banAddr,
         the ban performer @c bannedBy, and the expiration time @c period
         minutes from now. */
-    BanInfo(in_addr &banAddr, const char *_bannedBy = NULL, int period = 0,
+    BanInfo(const Address *banAddr, const char *_bannedBy = NULL, int period = 0,
             unsigned char _cidr = 32, bool isFromMaster = false )
     {
-        memcpy( &addr, &banAddr, sizeof( in_addr ));
+        addr = Address(banAddr[0]);
         cidr = _cidr;
 
+        /* FIXME:
         // Zero out the host bits
         if (cidr > 0 && cidr < 32)
             addr.s_addr &= htonl(0xFFFFFFFFu << (32 - cidr));
+        */
 
         if (_bannedBy)
             bannedBy = _bannedBy;
@@ -53,29 +55,30 @@ struct BanInfo
     /** BanInfos with same IP and CIDR are identical. */
     bool operator==(const BanInfo &rhs) const
     {
-        return addr.s_addr == rhs.addr.s_addr && cidr == rhs.cidr;
+        return addr == rhs.addr && cidr == rhs.cidr;
     }
     /** Only BanInfos with the same IP and CIDR are identical. */
     bool operator!=(const BanInfo &rhs) const
     {
-        return addr.s_addr != rhs.addr.s_addr || cidr != rhs.cidr;
+        return addr != rhs.addr || cidr != rhs.cidr;
     }
 
-    bool contains(const in_addr &checkAddr)
+    bool contains(const struct sockaddr_in6 *checkAddr)
     {
         // CIDR of 0 matches everything
         if (cidr < 1) return true;
-        // CIDR of 32 means it has to be an exact match
-        if (cidr >= 32 && addr.s_addr == checkAddr.s_addr) return true;
+        // CIDR of 128 means it has to be an exact match
+        if (cidr >= 128 && addr == Address(checkAddr)) return true;
         // Compare network bits
-        return !((addr.s_addr ^ checkAddr.s_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
+        // FIXME: return !((addr.s6_addr ^ checkAddr.s6_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
+        return false;
     }
 
-    in_addr   addr;
-    unsigned char cidr;
-    TimeKeeper    banEnd;
-    std::string   bannedBy;   // Who did perform the ban
-    std::string   reason;     // reason for banning
+    Address     addr;
+    u_int8_t    cidr;
+    TimeKeeper  banEnd;
+    std::string bannedBy;   // Who did perform the ban
+    std::string reason;     // reason for banning
     bool fromMaster;      // where the ban came from, local or master list.
 };
 
@@ -182,7 +185,7 @@ public:
     /** This function will add a ban for the address @c ipAddr with the given
         parameters. If that address already is banned the old ban will be
         replaced. */
-    void ban(in_addr &ipAddr, const char *bannedBy, int period = 0,
+    void ban(const Address *ipAddr, const char *bannedBy, int period = 0,
              unsigned char cidr = 32, const char *reason=NULL,
              bool fromMaster = false);
 
@@ -213,7 +216,7 @@ public:
     /** This function removes any ban for the address @c ipAddr.
         @returns @c true if there was a ban for that address, @c false if there
         wasn't. */
-    bool unban(in_addr &ipAddr, unsigned char cidr);
+    bool unban(const Address *ipAddr, unsigned char cidr);
 
     /** This function unbans any addresses given in @c ipList, which should be
         a comma separated string in the same format as in the ban() functions.
@@ -240,7 +243,7 @@ public:
     /** This function checks if an address is "valid" or not. Valid in this case
         means that it has not been banned.
         @returns @c true if the address is valid, @c false if not. */
-    bool validate(const in_addr &ipAddr, BanInfo *info = NULL);
+    bool validate(const struct sockaddr_in6 *ipAddr, BanInfo *info = NULL);
 
     /** This function checks that a hostname is "valid". In this case valid means
         "not banned".
@@ -253,7 +256,7 @@ public:
     bool idValidate(const char *idname, IdBanInfo *info = NULL);
 
     /** This function sends a textual list of the given IP ban to a player. */
-    void sendBan(PlayerId id, const BanInfo&);
+    void sendBan(PlayerId id, BanInfo&);
 
     /** This function sends a textual list of all IP bans to a player. */
     void sendBans(PlayerId id, const char* pattern);
@@ -285,7 +288,7 @@ public:
         presumably so it can be remerged */
     void purgeMasters(void);
 
-    std::string getBanMaskString(in_addr mask, unsigned char cidr);
+    std::string getBanMaskString(Address *mask, unsigned char cidr);
 
     std::vector<std::pair<std::string, std::string> > listMasterBans(void) const;
 
@@ -302,8 +305,8 @@ public:
 
 private:
     /** This function converts a <code>char*</code> containing an IP mask to an
-        @c in_addr. */
-    bool convert(std::string ip, in_addr &mask, unsigned char &cidr);
+        @c Address. */
+    bool convert(std::string ip, Address *mask, unsigned char &cidr);
 
     /** This function checks all bans to see if any of them have expired,
         and removes those who have. */

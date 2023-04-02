@@ -152,6 +152,7 @@ void ServerList::readServerList()
             // store info
             ServerItem serverInfo;
             serverInfo.ping.unpackHex(infoServer);
+            /* FIXME:
             int dot[4] = {127,0,0,1};
             if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4)
             {
@@ -160,7 +161,7 @@ void ServerList::readServerList()
                         dot[2] >= 0 && dot[2] <= 255 &&
                         dot[3] >= 0 && dot[3] <= 255)
                 {
-                    serverInfo.ping.serverId.addr.sin_family = AF_INET;
+                    serverInfo.ping.serverId.addr.sin6_family = AF_INET;
                     unsigned char* paddr = (unsigned char*)&serverInfo.ping.serverId.addr.sin_addr.s_addr;
                     paddr[0] = (unsigned char)dot[0];
                     paddr[1] = (unsigned char)dot[1];
@@ -168,7 +169,8 @@ void ServerList::readServerList()
                     paddr[3] = (unsigned char)dot[3];
                 }
             }
-            serverInfo.ping.serverId.addr.sin_port = htons((int16_t)port);
+            */
+            serverInfo.ping.serverId.addr.sin6_port = htons((int16_t)port);
             serverInfo.name = name;
 
             // construct description
@@ -210,9 +212,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
     for (i = 0; i < (int)servers.size(); i++)
     {
         ServerItem& server = servers[i];
-        if (server.ping.serverId.addr.sin_addr.s_addr
-                == info.ping.serverId.addr.sin_addr.s_addr
-                && server.ping.serverId.addr.sin_port == info.ping.serverId.addr.sin_port)
+        if (server.ping.serverId == info.ping.serverId)
         {
             servers.erase(servers.begin() + i); // erase this item
             break;
@@ -348,13 +348,13 @@ void            ServerList::checkEchos(StartupInfo *info)
 
         // check broadcast sockets
         ServerItem serverInfo;
-        sockaddr_in addr;
+        sockaddr_in6 addr;
 
         if (pingBcastSocket != -1 && FD_ISSET(pingBcastSocket, &read_set))
         {
             if (serverInfo.ping.read(pingBcastSocket, &addr))
             {
-                serverInfo.ping.serverId.addr = addr;
+                memcpy(&serverInfo.ping.serverId.addr, &addr, sizeof(addr));
                 serverInfo.cached = false;
                 serverInfo.localDiscovery = true;
                 addToListWithLookup(serverInfo);
@@ -365,11 +365,11 @@ void            ServerList::checkEchos(StartupInfo *info)
 
 void            ServerList::addToListWithLookup(ServerItem& info)
 {
-    info.name = Address::getHostByAddress(info.ping.serverId.addr.sin_addr);
+    info.name = Address::getHostByAddress(info.ping.serverId.addr.sin6_addr);
 
     // tack on port number to description if not default
     info.description = info.name;
-    const int port = (int)ntohs((unsigned short)info.ping.serverId.addr.sin_port);
+    const int port = (int)ntohs((unsigned short)info.ping.serverId.addr.sin6_port);
     if (port != ServerPort)
     {
         char portBuf[20];

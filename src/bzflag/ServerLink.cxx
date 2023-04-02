@@ -119,7 +119,7 @@ ServerLink::ServerLink(Address& serverAddress)
     UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in6));
 
     bool okay = true;
     int fdMax = query;
@@ -136,7 +136,7 @@ ServerLink::ServerLink(Address& serverAddress)
         close(query);
         return;
     }
-    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in)) < 0)
+    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in6)) < 0)
     {
         if (getErrno() != EINPROGRESS)
         {
@@ -846,7 +846,7 @@ void ServerLink::sendUDPlinkRequest()
     unsigned short localPort;
     void* buf = msg;
 
-    struct sockaddr_in serv_addr;
+    struct sockaddr_in6 serv_addr;
 
     if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
     {
@@ -865,7 +865,7 @@ void ServerLink::sendUDPlinkRequest()
         return;  // we cannot get udp connection, bail out
     }
 
-    localPort = ntohs(serv_addr.sin_port);
+    localPort = ntohs(serv_addr.sin6_port);
     memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
 
     if (debugLevel >= 1)

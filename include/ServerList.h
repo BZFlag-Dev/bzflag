@@ -64,7 +64,7 @@ private:
     std::vector<ServerItem> servers;
     ServerListCache* serverCache;
     int pingBcastSocket;
-    struct sockaddr_in pingBcastAddr;
+    struct sockaddr_in6 pingBcastAddr;
     StartupInfo *startupInfo;
 };
 

@@ -75,10 +75,10 @@ public:
         a player Index, a unique pointer to a player
         the file descriptor for the TCP connection with the user.
     */
-    NetHandler(PlayerInfo *_info, const struct sockaddr_in &_clientAddr,
+    NetHandler(PlayerInfo *_info, const struct sockaddr_in6 &_clientAddr,
                int _playerIndex, int _fd);
 
-    NetHandler(const struct sockaddr_in &_clientAddr, int _fd);
+    NetHandler(const struct sockaddr_in6 &_clientAddr, int _fd);
 
     /** The default destructor
         free all internal resources, and close the tcp connection
@@ -117,7 +117,7 @@ public:
 
         udpLinkRequest report if the received message is a valid udpLinkRequest
     */
-    static int    udpReceive(char *buffer, struct sockaddr_in *uaddr,
+    static int    udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
                              bool &udpLinkRequest);
 
     /**
@@ -152,8 +152,8 @@ public:
     int       sizeOfIP();
     void*     packAdminInfo(void *buf);
     static int    whoIsAtIP(const std::string& IP);
-    in_addr   getIPAddress();
-    const char*   getHostname();
+    in6_addr   getIPAddress();
+    const char* getHostname();
     bool      reverseDNSDone();
 
     size_t    getTcpReadSize ()
@@ -181,14 +181,14 @@ public:
     {
         return fd;
     }
-    const struct sockaddr_in *getTADDR ( void )
+    Address *getTaddr ( void )
     {
-        return taddr.getAddr_in();
+        return &taddr;
     }
 
-    const struct sockaddr *getUADDR ( void )
+    Address *getUaddr ( void )
     {
-        return (const struct sockaddr *)&uaddr;
+        return &uaddr;
     }
 
     // Returns the time that the connection was accepted
@@ -213,7 +213,7 @@ public:
 private:
     int       send(const void *buffer, size_t length);
     void      udpSend(const void *b, size_t l);
-    bool      isMyUdpAddrPort(struct sockaddr_in uaddr);
+    bool      isMyUdpAddrPort(struct sockaddr_in6 uaddr);
 #ifdef NETWORK_STATS
     void      countMessage(uint16_t code, int len, int direction);
     void      dumpMessageStats();

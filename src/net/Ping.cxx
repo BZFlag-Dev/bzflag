@@ -62,7 +62,7 @@ PingPacket::~PingPacket()
     // do nothing
 }
 
-bool            PingPacket::read(int fd, struct sockaddr_in* addr)
+bool            PingPacket::read(int fd, struct sockaddr_in6* addr)
 {
     char buffer[PacketSize], serverVersion[9];
     uint16_t len, code;
@@ -93,7 +93,7 @@ bool            PingPacket::read(int fd, struct sockaddr_in* addr)
 }
 
 bool            PingPacket::write(int fd,
-                                  const struct sockaddr_in* addr) const
+                                  const struct sockaddr_in6* addr) const
 {
     char buffer[PacketSize] = {0};
     void* buf = buffer;
@@ -104,7 +104,7 @@ bool            PingPacket::write(int fd,
 }
 
 bool            PingPacket::isRequest(int fd,
-                                      struct sockaddr_in* addr)
+                                      struct sockaddr_in6* addr)
 {
     if (fd < 0) return false;
     char buffer[6];
@@ -118,7 +118,7 @@ bool            PingPacket::isRequest(int fd,
 }
 
 bool            PingPacket::sendRequest(int fd,
-                                        const struct sockaddr_in* addr)
+                                        const struct sockaddr_in6* addr)
 {
     if (fd < 0 || !addr) return false;
     char buffer[6];

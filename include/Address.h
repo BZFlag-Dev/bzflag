@@ -33,7 +33,7 @@
 #include "Pack.h"
 #include "Protocol.h"
 
-typedef struct in_addr  InAddr;         // shorthand
+typedef struct in6_addr  InAddr;         // shorthand
 
 // helpers
 char *sockaddr2iptext(const struct sockaddr *sa);
@@ -45,8 +45,9 @@ public:
     Address();
     Address(const std::string&);
     Address(const Address&);
+    Address(const Address *);
     Address(const InAddr&);         // input in nbo
-    Address(const struct sockaddr_in*); // input in nbo
+    Address(const struct sockaddr_in6*); // input in nbo
     ~Address();
     Address&        operator=(const Address&);
 
@@ -57,7 +58,7 @@ public:
     bool        isAny() const;
     bool        isPrivate() const;
     struct sockaddr *getAddr();
-    struct sockaddr_in *getAddr_in();
+    struct sockaddr_in6 *getAddr_in6();
     std::string getIpText();
     std::string getIpTextPort();
 
@@ -72,8 +73,7 @@ public:
     static const std::string getHostName(const std::string &hostname = std::string(""));
 
 private:
-    //std::vector <InAddr> addr;
-    struct sockaddr_in addr;
+    struct sockaddr_in6 addr;
     std::string iptext;
     std::string iptextport;
 };
@@ -97,7 +97,7 @@ public:
 
 public:
     // host and port in network byte order
-    struct sockaddr_in addr;
+    struct sockaddr_in6 addr;
     int16_t     number;         // local player number
 };
 

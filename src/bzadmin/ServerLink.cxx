@@ -119,7 +119,7 @@ ServerLink::ServerLink(Address& serverAddress)
     UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
 
     // for UDP, used later
-    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in));
+    memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in6));
 
     bool okay = true;
     int fdMax = query;
@@ -136,7 +136,7 @@ ServerLink::ServerLink(Address& serverAddress)
         close(query);
         return;
     }
-    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in)) < 0)
+    if (connect(query, serverAddress.getAddr(), sizeof(struct sockaddr_in6)) < 0)
     {
         if (getErrno() != EINPROGRESS)
         {

@@ -545,11 +545,7 @@ std::string GetPlayerIPAddress( int i)
     if (!playerData || !playerData->netHandler)
         return tmp;
 
-    unsigned int address = (unsigned int)playerData->netHandler->getIPAddress().s_addr;
-    unsigned char* a = (unsigned char*)&address;
-
-    tmp = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
-    return tmp;
+    return playerData->netHandler->getTargetIP();
 }
 
 void sendPlayerUpdate(GameKeeper::Player* player)
@@ -1334,7 +1330,7 @@ static void acceptClient()
 {
     // client (not a player yet) is requesting service.
     // accept incoming connection on our well known port
-    struct sockaddr_in clientAddr;
+    struct sockaddr_in6 clientAddr;
     AddrLen addr_len = sizeof(clientAddr);
     int fd = accept(wksSocket, (struct sockaddr*)&clientAddr, &addr_len);
     if (fd == -1)
@@ -1404,7 +1400,7 @@ static bool MakePlayer ( NetHandler *handler )
     if (playerIndex != 0xff)
     {
         logDebugMessage(1,"Player [%d] accept() from %s on %i\n", playerIndex,
-                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
+                        handler->getTargetIP(), handler->getFD());
 
         if (playerIndex >= curMaxPlayers)
             curMaxPlayers = playerIndex+1;
@@ -1412,7 +1408,7 @@ static bool MakePlayer ( NetHandler *handler )
     else     // full? reject by closing socket
     {
         logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
-                        sockaddr2iptextport(handler->getUADDR()), handler->getFD());
+                        handler->getTargetIP(), handler->getFD());
 
         // send back 0xff before closing
         send(handler->getFD(), (const char*)buffer, sizeof(buffer), 0);
@@ -2214,9 +2210,9 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         const bool playerIsAntiBanned =  playerData->accessInfo.hasPerm(PlayerAccessInfo::antiban);
 
         // check against the ip ban list
-        in_addr playerIP = playerData->netHandler->getIPAddress();
-        BanInfo info(playerIP);
-        if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info))
+        Address playerIP(playerData->netHandler->getTaddr());
+        BanInfo info(&playerIP);
+        if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP.getAddr_in6(),&info))
         {
             std::string rejectionMessage;
 
@@ -6060,7 +6056,7 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-        if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getIPAddress()))
+        if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getTaddr()->getAddr_in6()))
         {
             // operators can override antiperms
             if (!isOperator)
@@ -6168,18 +6164,6 @@ void sendBufferedNetDataForPeer (NetConnectedPeer &peer )
     peer.sendChunks.pop_front();
 }
 
-std::string getIPFromHandler (NetHandler* netHandler)
-{
-    unsigned int address = (unsigned int)netHandler->getIPAddress().s_addr;
-    unsigned char* a = (unsigned char*)&address;
-
-    static std::string strRet;
-
-    strRet = TextUtils::format("%d.%d.%d.%d",(int)a[0],(int)a[1],(int)a[2],(int)a[3]);
-
-    return strRet;
-}
-
 static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_set& UNUSED(read_set),
                                  fd_set& UNUSED(write_set))
 {
@@ -6250,7 +6234,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                         return;
                     }
 
-                    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+                    bz_AllowConnectionData_V1 data(netHandler->getTargetIP());
                     worldEventManager.callEvents(&data);
                     if (!data.allow)
                     {
@@ -6284,7 +6268,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                     }
                     netHandler->flushData();
 
-                    bz_AllowConnectionData_V1 data(getIPFromHandler(netHandler).c_str());
+                    bz_AllowConnectionData_V1 data(netHandler->getTargetIP());
                     worldEventManager.callEvents(&data);
                     if (!data.allow)
                     {
@@ -6293,9 +6277,9 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
                         return;
                     }
 
-                    in_addr IP = netHandler->getIPAddress();
-                    BanInfo info(IP);
-                    if (!clOptions->acl.validate(IP, &info))
+                    Address IP = netHandler->getTaddr();
+                    BanInfo info(&IP);
+                    if (!clOptions->acl.validate(IP.getAddr_in6(), &info))
                     {
                         logDebugMessage(2,"Peer %s banned\n", netHandler->getTargetIP());
                         std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;
@@ -7756,7 +7740,7 @@ int main(int argc, char **argv)
                 TimeKeeper receiveTime = TimeKeeper::getCurrent();
                 while (true)
                 {
-                    struct sockaddr_in uaddr;
+                    struct sockaddr_in6 uaddr;
                     unsigned char ubuf[MaxPacketLen];
                     bool     udpLinkRequest;
                     // interface to the UDP Receive routines

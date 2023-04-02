@@ -213,7 +213,8 @@ int ServerItem::getPlayerCount() const
 
 std::string ServerItem::getAddrName() const
 {
-    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.addr.sin_port));
+    // FIXME: use Address:: functions
+    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.addr.sin6_port));
 }
 
 unsigned int ServerItem::getSortFactor() const

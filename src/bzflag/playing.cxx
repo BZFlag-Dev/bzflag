@@ -7015,9 +7015,9 @@ static void     playingLoop()
             joinRequested = false;
         }
 
-        struct sockaddr_in inAddress;
+        struct sockaddr_in6 inAddress;
         memset(&inAddress, 0, sizeof(inAddress));
-        inAddress.sin_family = AF_INET;
+        inAddress.sin6_family = AF_INET;
 
         if (waitingDNS)
         {
@@ -7033,7 +7033,9 @@ static void     playingLoop()
                           &timeout);
             ares->process(&readers, &writers);
 
-            AresHandler::ResolutionStatus status = ares->getHostAddress(&inAddress.sin_addr);
+            // FIXME: IPv6
+            sockaddr_in *ip4 = (sockaddr_in *)&inAddress;
+            AresHandler::ResolutionStatus status = ares->getHostAddress(&ip4->sin_addr);
             if (status == AresHandler::Failed)
             {
                 HUDDialogStack::get()->setFailedMessage("Server not found");

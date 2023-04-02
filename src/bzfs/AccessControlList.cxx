@@ -37,8 +37,7 @@
 // bzfs specific headers
 #include "bzfs.h"
 
-
-void AccessControlList::ban(in_addr &ipAddr, const char *bannedBy, int period,
+void AccessControlList::ban(const Address *ipAddr, const char *bannedBy, int period,
                             unsigned char cidr, const char *reason,
                             bool fromMaster)
 {
@@ -67,22 +66,22 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
     char *pSep;
     bool added = false;
 
-    in_addr mask;
+    Address mask;
     unsigned char cidr;
     while ((pSep = strchr(pStart, ',')) != NULL)
     {
         *pSep = 0;
-        if (convert(pStart, mask, cidr))
+        if (convert(pStart, &mask, cidr))
         {
-            ban(mask, bannedBy, period, cidr, NULL, fromMaster);
+            ban(&mask, bannedBy, period, cidr, NULL, fromMaster);
             added = true;
         }
         *pSep = ',';
         pStart = pSep + 1;
     }
-    if (convert(pStart, mask, cidr))
+    if (convert(pStart, &mask, cidr))
     {
-        ban(mask, bannedBy, period, cidr, reason, fromMaster);
+        ban(&mask, bannedBy, period, cidr, reason, fromMaster);
         added = true;
     }
     free(buf);
@@ -116,7 +115,7 @@ void AccessControlList::idBan(std::string idpat, const char *bannedBy, int perio
 }
 
 
-bool AccessControlList::unban(in_addr &ipAddr, unsigned char cidr)
+bool AccessControlList::unban(const Address *ipAddr, unsigned char cidr)
 {
     banList_t::iterator it = std::remove(banList.begin(), banList.end(), BanInfo(ipAddr, "", 0, cidr));
     if (it != banList.end())
@@ -141,18 +140,18 @@ bool AccessControlList::unban(const char *ipList)
     char *pSep;
     bool success = false;
 
-    in_addr mask;
+    Address mask;
     unsigned char cidr;
     while ((pSep = strchr(pStart, ',')) != NULL)
     {
         *pSep = 0;
-        if (convert(pStart, mask, cidr))
-            success|=unban(mask, cidr);
+        if (convert(pStart, &mask, cidr))
+            success|=unban(&mask, cidr);
         *pSep = ',';
         pStart = pSep + 1;
     }
-    if (convert(pStart, mask, cidr))
-        success|=unban(mask, cidr);
+    if (convert(pStart, &mask, cidr))
+        success|=unban(&mask, cidr);
     free(buf);
     return success;
 }
@@ -182,7 +181,7 @@ bool AccessControlList::idUnban(std::string idpat)
 }
 
 
-bool AccessControlList::validate(const in_addr &ipAddr, BanInfo *info)
+bool AccessControlList::validate(const struct sockaddr_in6 *ipAddr, BanInfo *info)
 {
     expire();
 
@@ -254,7 +253,7 @@ static std::string makeGlobPattern(const char* str)
     return pattern;
 }
 
-std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr)
+std::string AccessControlList::getBanMaskString(Address *mask, unsigned char cidr)
 {
     // Check for out of range CIDR
     if (cidr == 0 || cidr > 32)
@@ -262,37 +261,41 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
 
     std::ostringstream os;
 
+    // FIXME: handle IPv6
     // Generate /8, /16, and /24 in the wildcard format, and show /32 without
     // a CIDR
+    assert(mask->getAddr()->sa_family == AF_INET);
+    uint32_t ip4 = mask->getAddr_in6()->sin6_addr.s6_addr32[0];
     if (cidr % 8 == 0)
     {
-        os << (ntohl(mask.s_addr) >> 24) << '.';
+        os << (ntohl(ip4) >> 24) << '.';
         if (cidr == 8)
             os << "*.*.*";
         else
         {
-            os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
+            os << ((ntohl(ip4) >> 16) & 0xff) << '.';
             if (cidr == 16)
                 os << "*.*";
             else
             {
-                os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
+                os << ((ntohl(ip4) >> 8) & 0xff) << '.';
                 if (cidr == 24)
                     os << "*";
                 else
-                    os << (ntohl(mask.s_addr) & 0xff);
+                    os << (ntohl(ip4) & 0xff);
             }
         }
     }
     else
     {
         // Handle other CIDR values
-        mask.s_addr &= htonl(0xffffffff << (32 - cidr)); // zero out the host bits
+        // FIXME: don't change the address here
+        //mask->sin6_addr.s6_addr32[0] &= htonl(0xffffffff << (32 - cidr)); // zero out the host bits
 
-        os << (ntohl(mask.s_addr) >> 24) << '.';
-        os << ((ntohl(mask.s_addr) >> 16) & 0xff) << '.';
-        os << ((ntohl(mask.s_addr) >> 8) & 0xff) << '.';
-        os << (ntohl(mask.s_addr) & 0xff);
+        os << (ntohl(ip4) >> 24) << '.';
+        os << ((ntohl(ip4) >> 16) & 0xff) << '.';
+        os << ((ntohl(ip4) >> 8) & 0xff) << '.';
+        os << (ntohl(ip4) & 0xff);
         os << '/' << (unsigned int)cidr;
     }
 
@@ -300,10 +303,10 @@ std::string AccessControlList::getBanMaskString(in_addr mask, unsigned char cidr
 }
 
 
-void AccessControlList::sendBan(PlayerId id, const BanInfo &baninfo)
+void AccessControlList::sendBan(PlayerId id, BanInfo &baninfo)
 {
     std::ostringstream os;
-    os << getBanMaskString(baninfo.addr, baninfo.cidr);
+    os << getBanMaskString(&baninfo.addr, baninfo.cidr);
 
     // print duration when < 1 year
     double duration = baninfo.banEnd - TimeKeeper::getCurrent();
@@ -337,9 +340,9 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
     // masterbans first
     for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it)
     {
-        const BanInfo& bi = *it;
+        BanInfo& bi = *it;
         if (bi.fromMaster &&
-                (glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
+                (glob_match(glob, getBanMaskString(&bi.addr, bi.cidr)) ||
                  glob_match(glob, TextUtils::toupper(bi.reason)) ||
                  glob_match(glob, TextUtils::toupper(bi.bannedBy))))
             sendBan(id, *it);
@@ -348,9 +351,9 @@ void AccessControlList::sendBans(PlayerId id, const char* pattern)
     // normal bans last
     for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it)
     {
-        const BanInfo& bi = *it;
+        BanInfo& bi = *it;
         if (!bi.fromMaster &&
-                (glob_match(glob, getBanMaskString(bi.addr, bi.cidr)) ||
+                (glob_match(glob, getBanMaskString(&bi.addr, bi.cidr)) ||
                  glob_match(glob, TextUtils::toupper(bi.reason)) ||
                  glob_match(glob, TextUtils::toupper(bi.bannedBy))))
             sendBan(id, *it);
@@ -532,11 +535,11 @@ bool AccessControlList::load()
         else
         {
             // Handle CIDR ban formats
-            in_addr ip;
+            Address ip;
             unsigned char cidr;
-            if (convert(ipAddress, ip, cidr))
+            if (convert(ipAddress, &ip, cidr))
             {
-                ban(ip, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
+                ban(&ip, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
                     cidr, (reason.size() > 0 ? reason.c_str() : NULL));
             }
             else
@@ -643,12 +646,12 @@ void AccessControlList::save()
         std::cerr<<"Could not open "<<banFile<<std::endl;
         return;
     }
-    for (banList_t::const_iterator it = banList.begin(); it != banList.end(); ++it)
+    for (banList_t::iterator it = banList.begin(); it != banList.end(); ++it)
     {
         if (!it->fromMaster)    // don't save stuff from the master list
         {
             // print address
-            os << getBanMaskString(it->addr, it->cidr) << '\n';
+            os << getBanMaskString(&it->addr, it->cidr) << '\n';
 
             // print ban end, banner, and reason
             if (it->banEnd.getSeconds() ==
@@ -761,7 +764,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
             explain = TextUtils::format("%s (banned by %s)",
                                         bItr->reason.c_str(), bItr->bannedBy.c_str());
             const std::pair<std::string, std::string>
-            baninfo = std::make_pair(std::string(inet_ntoa(bItr->addr)), explain);
+            baninfo = std::make_pair(std::string(Address(bItr->addr).getIpText()), explain);
             bans.push_back(baninfo);
         }
     }
@@ -793,7 +796,7 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
     return bans;
 }
 
-bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_cidr)
+bool AccessControlList::convert(std::string ip, Address *mask, unsigned char &_cidr)
 {
     std::vector<std::string> ipParts;
     unsigned char b[4];
@@ -867,10 +870,10 @@ bool AccessControlList::convert(std::string ip, in_addr &mask, unsigned char &_c
     }
 
     _cidr = cidr;
-    mask.s_addr= htonl(((unsigned int)b[0] << 24) |
-                       ((unsigned int)b[1] << 16) |
-                       ((unsigned int)b[2] << 8)  |
-                       (unsigned int)b[3]);
+    mask->getAddr_in6()->sin6_addr.s6_addr32[0] = htonl(((unsigned int)b[0] << 24) |
+            ((unsigned int)b[1] << 16) |
+            ((unsigned int)b[2] << 8)  |
+            (unsigned int)b[3]);
     return true;
 }
 

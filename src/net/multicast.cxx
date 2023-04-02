@@ -29,9 +29,8 @@
 /* common implementation headers */
 #include "ErrorHandler.h"
 
-
 int         openBroadcast(int port, const char* service,
-                          struct sockaddr_in* addr)
+                          struct sockaddr_in6* addr)
 {
 #if defined(_WIN32)
     const BOOL optOn = TRUE;
@@ -85,8 +84,8 @@ int         openBroadcast(int port, const char* service,
     }
 
     /* set address info */
-    addr->sin_family = AF_INET;
-    addr->sin_addr.s_addr = htonl(INADDR_ANY);
+    addr->sin6_family = AF_INET;
+    ((struct sockaddr_in *)addr)->sin_addr.s_addr = INADDR_ANY;
 
 #if defined(SO_REUSEPORT)
     /* set reuse port */
@@ -126,8 +125,8 @@ int         openBroadcast(int port, const char* service,
     }
 
     // address to send to is the broadcast address
-    addr->sin_addr.s_addr = INADDR_BROADCAST;
-    addr->sin_port = htons(port);
+    ((struct sockaddr_in *)addr)->sin_addr.s_addr = INADDR_BROADCAST;
+    ((struct sockaddr_in *)addr)->sin_port = htons(port);
 
 #if defined(__linux__)
     // linux doesn't seem to like INADDR_BROADCAST, but it's okay
@@ -166,13 +165,14 @@ int         openBroadcast(int port, const char* service,
         // if the address is the loopback broadcast address then skip it
         const sockaddr_in* ifbaddr = (const sockaddr_in*)
                                      &req[i].ifr_ifru.ifru_broadaddr;
+        // FIXME: handle IPv6
         if (ntohl(ifbaddr->sin_addr.s_addr) == 0x7ffffffflu)
             continue;
         if (ifbaddr->sin_addr.s_addr == 0)
             continue;
 
         // got the broadcast address on the interface
-        addr->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
+        ((struct sockaddr_in *)addr)->sin_addr.s_addr = ifbaddr->sin_addr.s_addr;
         break;
     }
 
@@ -204,7 +204,7 @@ int         closeBroadcast(int fd)
 
 int         sendBroadcast(int fd, const void* buffer,
                           int bufferLength,
-                          const struct sockaddr_in* addr)
+                          const struct sockaddr_in6* addr)
 {
     return sendto(fd, (const char*)buffer, bufferLength, 0,
                   (const struct sockaddr*)addr, sizeof(*addr));
@@ -228,9 +228,9 @@ int         sendBroadcast(int fd, const void* buffer,
 #endif //WIN32
 
 int         recvBroadcast(int fd, void* buffer, int bufferLength,
-                          struct sockaddr_in* addr)
+                          struct sockaddr_in6* addr)
 {
-    struct sockaddr_in from;
+    struct sockaddr_in6 from;
     AddrLen fromLength = sizeof(from);
 
     int byteCount = recvfrom(fd, (char*)buffer, bufferLength, 0,

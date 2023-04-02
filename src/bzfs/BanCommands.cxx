@@ -591,9 +591,9 @@ bool CheckIPCommand::operator() (const char *message,
         return true;
     }
 
-    in_addr ip = Address(argv[1]).getAddr_in()->sin_addr;
-    BanInfo baninfo(ip);
-    const bool banned = !clOptions->acl.validate(ip, &baninfo);
+    Address ip(argv[1]);
+    BanInfo baninfo(&ip);
+    const bool banned = !clOptions->acl.validate(ip.getAddr_in6(), &baninfo);
 
     if (banned)
     {
@@ -860,7 +860,7 @@ bool BanCommand::operator() (const char  *message,
         {
             GameKeeper::Player *tmpVictim = GameKeeper::Player::getPlayerByIndex(i);
             if (tmpVictim &&
-                    !clOptions->acl.validate(tmpVictim->netHandler->getIPAddress()))
+                    !clOptions->acl.validate(tmpVictim->netHandler->getTaddr()->getAddr_in6()))
             {
                 // ignore the return code
                 doBanKick(tmpVictim, playerData, banEvent.reason.c_str());

@@ -2410,7 +2410,7 @@ BZF_API const char* bz_getBanItem ( bz_eBanListType listType, unsigned int item 
     {
     default:
     case eIPList:
-        API_BAN_ITEM = clOptions->acl.getBanMaskString(clOptions->acl.banList[item].addr,
+        API_BAN_ITEM = clOptions->acl.getBanMaskString(&clOptions->acl.banList[item].addr,
                        clOptions->acl.banList[item].cidr).c_str();
         break;
 

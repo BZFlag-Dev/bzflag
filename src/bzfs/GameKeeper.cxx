@@ -38,7 +38,7 @@ void PackPlayerInfo(MessageBuffer::Ptr msg, int playerIndex, uint8_t properties)
 }
 
 GameKeeper::Player::Player(int _playerIndex,
-                           const struct sockaddr_in &clientAddr, int fd,
+                           const struct sockaddr_in6 &clientAddr, int fd,
                            tcpCallback _clientCallback)
     : _LSAState(start),
       _JoinState(waitingForAuthentication),

@@ -136,7 +136,7 @@ int NetHandler::getUdpSocket()
     return udpSocket;
 }
 
-int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
+int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
                            bool &udpLinkRequest)
 {
     AddrLen recvlen = sizeof(*uaddr);
@@ -151,7 +151,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
             break;
     }
     // Error receiving data (or no data)
-    if (n < 0 || uaddr->sin_port < 1024)
+    if (n < 0 || uaddr->sin6_port < 1024)
         return -1;
 
     // read head
@@ -186,18 +186,18 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if (!memcmp(&netPlayer[index]->uaddr.getAddr_in()->sin_addr, &uaddr->sin_addr,
-                        sizeof(struct sockaddr_in)))
+            if (!memcmp(&netPlayer[index]->uaddr.getAddr_in6()->sin6_addr, &uaddr->sin6_addr,
+                        sizeof(struct in6_addr)))
             {
                 id = index;
-                if (uaddr->sin_port)
-                    netPlayer[index]->uaddr.getAddr_in()->sin_port = uaddr->sin_port;
+                if (uaddr->sin6_port)
+                    netPlayer[index]->uaddr.getAddr_in6()->sin6_port = uaddr->sin6_port;
                 netPlayer[index]->udpin = true;
                 udpLinkRequest = true;
                 logDebugMessage(2,"Player slot %d inbound UDP up %s actual %d\n",
                                 index,
                                 sockaddr2iptextport((const struct sockaddr *)uaddr),
-                                ntohs(uaddr->sin_port));
+                                ntohs(uaddr->sin6_port));
             }
             else
             {
@@ -271,7 +271,7 @@ void NetHandler::checkDNS(fd_set *read_set, fd_set *write_set)
 int NetHandler::udpSocket = -1;
 NetHandler *NetHandler::netPlayer[maxHandlers] = {NULL};
 
-NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
+NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in6 &clientAddr,
                        int _playerIndex, int _fd)
     : ares(new AresHandler(_playerIndex)), info(_info), taddr(&clientAddr),
       uaddr(&clientAddr), playerIndex(_playerIndex), fd(_fd),
@@ -306,7 +306,7 @@ NetHandler::NetHandler(PlayerInfo* _info, const struct sockaddr_in &clientAddr,
     ares->queryHostname((const struct sockaddr *) &clientAddr);
 }
 
-NetHandler::NetHandler(const struct sockaddr_in &_clientAddr, int _fd)
+NetHandler::NetHandler(const struct sockaddr_in6 &_clientAddr, int _fd)
     : ares(0), info(0), taddr(&_clientAddr), uaddr(&_clientAddr), playerIndex(-1), fd(_fd),
       tcplen(0), closed(false),
       outmsgOffset(0), outmsgSize(0), outmsgCapacity(0), outmsg(0),
@@ -809,10 +809,10 @@ void NetHandler::udpSend(const void *b, size_t l)
         pendingUDP = true;
 }
 
-bool NetHandler::isMyUdpAddrPort(struct sockaddr_in _uaddr)
+bool NetHandler::isMyUdpAddrPort(struct sockaddr_in6 _uaddr)
 {
-    return udpin && (uaddr.getAddr_in()->sin_port == _uaddr.sin_port) &&
-           (memcmp(&uaddr.getAddr_in()->sin_addr, &_uaddr.sin_addr, sizeof(_uaddr.sin_addr)) == 0);
+    return udpin && (uaddr.getAddr_in6()->sin6_port == _uaddr.sin6_port) &&
+           (memcmp(&uaddr.getAddr_in6()->sin6_addr, &_uaddr.sin6_addr, sizeof(_uaddr.sin6_addr)) == 0);
 }
 
 const std::string NetHandler::getPlayerHostInfo()
@@ -875,9 +875,9 @@ int NetHandler::whoIsAtIP(const std::string& IP)
     return position;
 }
 
-in_addr NetHandler::getIPAddress()
+in6_addr NetHandler::getIPAddress()
 {
-    return uaddr.getAddr_in()->sin_addr;
+    return uaddr.getAddr_in6()->sin6_addr;
 }
 
 const char *NetHandler::getHostname()
