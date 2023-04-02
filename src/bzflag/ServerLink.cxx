@@ -113,7 +113,7 @@ ServerLink::ServerLink(Address& serverAddress)
 
     // open connection to server.  first connect to given port.
     // don't wait too long.
-    int query = socket(AF_INET, SOCK_STREAM, 0);
+    int query = socket(serverAddress.getAddr()->sa_family, SOCK_STREAM, 0);
     if (query < 0) return;
 
     UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
@@ -690,7 +690,7 @@ bool ServerLink::readEnter(std::string& reason,
     {
         if (this->read(code, len, msg, -1) < 0)
         {
-            reason = "Communication error joining game [No immediate respose].";
+            reason = "Communication error joining game [No immediate response].";
             return false;
         }
 
@@ -847,21 +847,23 @@ void ServerLink::sendUDPlinkRequest()
     void* buf = msg;
 
     struct sockaddr_in6 serv_addr;
+    serv_addr.sin6_family = urecvaddr.sa_family;
 
-    if ((urecvfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
+    if ((urecvfd = socket(serv_addr.sin6_family, SOCK_DGRAM, 0)) < 0)
     {
+        nerror("socket() failed");
         return; // we cannot comply
     }
 
     AddrLen addr_len = sizeof(serv_addr);
     if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*)&addr_len) < 0)
     {
-        printError("Error: getsockname() failed, cannot get TCP port?");
+        nerror("Error: getsockname() failed, cannot get TCP port?");
         return;
     }
     if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) != 0)
     {
-        printError("Error: getsockname() failed, cannot get TCP port?");
+        nerror("Error: getsockname() failed, cannot get TCP port?");
         return;  // we cannot get udp connection, bail out
     }
 
