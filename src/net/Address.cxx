@@ -105,25 +105,25 @@ Address::Address(const std::string &_iptextport)
     struct addrinfo *result;
 
     iptextport = _iptextport;
-    logDebugMessage(3, "Address(): %s\n",_iptextport.c_str());
+    logDebugMessage(0, "Address(): %s\n",_iptextport.c_str());
 
     std::size_t found = iptextport.find_last_of(":");
     iptext = iptextport.substr(0, found);
     std::string port = iptextport.substr(found + 1);
 
     memset(&hints, 0, sizeof(hints));
-    //FIXME convert _iptext and fill addr
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_NUMERICSERV;
+    hints.ai_flags = 0;
     hints.ai_protocol = 0;
     hints.ai_canonname = NULL;
     hints.ai_addr = NULL;
     hints.ai_next = NULL;
+    // FIXME: make this non-blocking
     int s = getaddrinfo(iptext.c_str(), port.c_str(), &hints, &result);
     if (s == 0)
     {
-        // assume first entry as we used AI_NUMERICSERV
+        // FIXME: try other entries
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
         return;
