@@ -84,7 +84,7 @@ char *sockaddr2iptextport(const struct sockaddr *sa)
         break;
 
     default:
-        strncpy(iptextport, "Unknown AF", 11);
+        sprintf(iptextport, "Unknown AF:%i", sa->sa_family);
     }
 
     return iptextport;
@@ -105,7 +105,7 @@ Address::Address(const std::string &_iptextport)
     struct addrinfo *result;
 
     iptextport = _iptextport;
-    printf("Address(): %s\n",_iptextport.c_str());
+    logDebugMessage(3, "Address(): %s\n",_iptextport.c_str());
 
     std::size_t found = iptextport.find_last_of(":");
     iptext = iptextport.substr(0, found);
@@ -129,7 +129,7 @@ Address::Address(const std::string &_iptextport)
         return;
     }
     // FIXME: DNS lookup needed
-    printf("Need DNS support in Address(): %s\n",_iptextport.c_str());
+    logDebugMessage(1, "Need DNS support in Address(): %s\n",_iptextport.c_str());
     exit(EXIT_FAILURE);
 }
 
@@ -328,7 +328,7 @@ void*           Address::pack(void* _buf) const
         break;
 
     default:
-        printf("Address(): unknown family %u\n", addr.sin6_family);
+        logDebugMessage(0,"Address(): unknown family %u\n", addr.sin6_family);
         exit(EXIT_FAILURE);
     }
     return (void*)buf;
@@ -362,7 +362,7 @@ const void*     Address::unpack(const void* _buf)
         break;
 
     default:
-        printf("Address(): unknown family %u\n", addr.sin6_family);
+        logDebugMessage(0, "Address(): unknown family %u\n", addr.sin6_family);
         exit(EXIT_FAILURE);
     }
 
