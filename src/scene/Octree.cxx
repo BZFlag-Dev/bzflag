@@ -161,14 +161,14 @@ void Octree::addNodes(SceneNode** list, int listSize, int depth, int elements)
 
     logDebugMessage(2, "Octree scene nodes = %i\n", listSize);
     for (i = 0; i < 3; i++)
-        logDebugMessage(2, "  grid extent[%i] = %f, %f\n", i, extents.mins[i], extents.maxs[i]);
+        logDebugMessage(2, "\tgrid extent[%i] = %f, %f\n", i, extents.mins[i], extents.maxs[i]);
 
     for (i = 0; i < 3; i++)
-        logDebugMessage(2, "  visual extent[%i] = %f, %f\n", i, visualExtents.mins[i], visualExtents.maxs[i]);
+        logDebugMessage(2, "\tvisual extent[%i] = %f, %f\n", i, visualExtents.mins[i], visualExtents.maxs[i]);
 
-    logDebugMessage(2, "Octree leaf nodes  = %i\n", leafNodes);
-    logDebugMessage(2, "Octree total nodes = %i\n", totalNodes);
-    logDebugMessage(2, "Octree total elements = %i\n", totalElements);
+    logDebugMessage(2, "\tleaf nodes  = %i\n", leafNodes);
+    logDebugMessage(2, "\ttotal nodes = %i\n", totalNodes);
+    logDebugMessage(2, "\ttotal elements = %i\n", totalElements);
 
     return;
 }

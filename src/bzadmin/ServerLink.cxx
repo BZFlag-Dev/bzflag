@@ -387,15 +387,15 @@ ServerLink::~ServerLink()
 #if defined(NETWORK_STATS)
     const float dt = float(TimeKeeper::getCurrent() - startTime);
     logDebugMessage(1, "Server network statistics:\n");
-    logDebugMessage(1, "  elapsed time    : %f\n", dt);
-    logDebugMessage(1, "  bytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
-    logDebugMessage(1, "  packets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
+    logDebugMessage(1, "\telapsed time    : %f\n", dt);
+    logDebugMessage(1, "\tbytes sent      : %d (%f/sec)\n", bytesSent, (float)bytesSent / dt);
+    logDebugMessage(1, "\tpackets sent    : %d (%f/sec)\n", packetsSent, (float)packetsSent / dt);
     if (packetsSent != 0)
-        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
-    logDebugMessage(1, "  bytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
-    logDebugMessage(1, "  packets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
+        logDebugMessage(1, "\tbytes/packet    : %f\n", (float)bytesSent / (float)packetsSent);
+    logDebugMessage(1, "\tbytes recieved  : %d (%f/sec)\n", bytesReceived, (float)bytesReceived / dt);
+    logDebugMessage(1, "\tpackets received: %d (%f/sec)\n", packetsReceived, (float)packetsReceived / dt);
     if (packetsReceived != 0)
-        logDebugMessage(1, "  bytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
+        logDebugMessage(1, "\tbytes/packet    : %f\n", (float)bytesReceived / (float)packetsReceived);
 #endif
 }
 

@@ -498,17 +498,17 @@ void CollisionManager::load ()
     logDebugMessage(2,"ColDet Octree obstacles = %i\n", FullList.count);
     for (i = 0; i < 3; i++)
     {
-        logDebugMessage(2,"  grid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
+        logDebugMessage(2,"\tgrid extent[%i] = %f, %f\n", i, gridExtents.mins[i],
                         gridExtents.maxs[i]);
     }
     for (i = 0; i < 3; i++)
     {
-        logDebugMessage(2,"  world extent[%i] = %f, %f\n", i, worldExtents.mins[i],
+        logDebugMessage(2,"\tworld extent[%i] = %f, %f\n", i, worldExtents.mins[i],
                         worldExtents.maxs[i]);
     }
-    logDebugMessage(2,"ColDet Octree leaf nodes  = %i\n", leafNodes);
-    logDebugMessage(2,"ColDet Octree total nodes = %i\n", totalNodes);
-    logDebugMessage(2,"ColDet Octree total elements = %i\n", totalElements);
+    logDebugMessage(2,"\tleaf nodes  = %i\n", leafNodes);
+    logDebugMessage(2,"\ttotal nodes = %i\n", totalNodes);
+    logDebugMessage(2,"\ttotal elements = %i\n", totalElements);
 
     // print the timing info
     float elapsed = (float)(TimeKeeper::getCurrent() - startTime);

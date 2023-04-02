@@ -1922,26 +1922,26 @@ void finalizeParsing(int UNUSED(argc), char **argv,
     // debugging
     logDebugMessage(1,"type: %d\n", options.gameType);
     if (options.gameType == ClassicCTF)
-        logDebugMessage(1,"  capture the flag\n");
+        logDebugMessage(1,"\tcapture the flag\n");
     if (options.gameType == RabbitChase)
-        logDebugMessage(1,"  rabbit chase\n");
+        logDebugMessage(1,"\trabbit chase\n");
     if (options.gameType == OpenFFA)
-        logDebugMessage(1,"  open free-for-all\n");
+        logDebugMessage(1,"\topen free-for-all\n");
     if (options.gameType == TeamFFA)
-        logDebugMessage(1,"  teamed free-for-all\n");
+        logDebugMessage(1,"\tteamed free-for-all\n");
 
     logDebugMessage(1,"options: %X\n", options.gameOptions);
     if (options.gameOptions & int(SuperFlagGameStyle))
-        logDebugMessage(1,"  super flags allowed\n");
+        logDebugMessage(1,"\tsuper flags allowed\n");
     if (options.gameOptions & int(JumpingGameStyle))
-        logDebugMessage(1,"  jumping allowed\n");
+        logDebugMessage(1,"\tjumping allowed\n");
     if (options.gameOptions & int(RicochetGameStyle))
-        logDebugMessage(1,"  all shots ricochet\n");
+        logDebugMessage(1,"\tall shots ricochet\n");
     if (options.gameOptions & int(ShakableGameStyle))
-        logDebugMessage(1,"  shakable bad flags: timeout=%f, wins=%i\n",
+        logDebugMessage(1,"\tshakable bad flags: timeout=%f, wins=%i\n",
                         0.1f * float(options.shakeTimeout), options.shakeWins);
     if (options.gameOptions & int(AntidoteGameStyle))
-        logDebugMessage(1,"  antidote flags\n");
+        logDebugMessage(1,"\tantidote flags\n");
 
     return;
 }

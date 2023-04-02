@@ -1303,7 +1303,7 @@ bool Replay::sendPackets()
             } // for loop
         } // if (p->mode != HiddenPacket)
         else
-            logDebugMessage(4,"  skipping hidden packet\n");
+            logDebugMessage(4,"\tskipping hidden packet\n");
 
         p = nextPacket();
         sent = true;

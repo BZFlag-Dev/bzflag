@@ -696,7 +696,7 @@ void *MeshObstacle::pack(void *buf) const
         buf = nboPackInt(buf, 0); // for alignment to afvec2
 
         logDebugMessage(4,"DrawInfo packing: length = %i, missing = %i\n", length, missing);
-        logDebugMessage(4,"  texcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
+        logDebugMessage(4,"\ttexcoordCount = %i, fakeTxcdCount = %i, rewindLen = %i\n",
                         texcoordCount, fakeTxcdCount, fullLength + (int)sizeof(afvec2));
     }
 
