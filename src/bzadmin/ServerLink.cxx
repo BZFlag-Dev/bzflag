@@ -113,7 +113,7 @@ ServerLink::ServerLink(Address& serverAddress)
 
     // open connection to server.  first connect to given port.
     // don't wait too long.
-    int query = socket(AF_INET, SOCK_STREAM, 0);
+    int query = socket(serverAddress.getAddr()->sa_family, SOCK_STREAM, 0);
     if (query < 0) return;
 
     UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
