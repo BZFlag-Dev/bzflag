@@ -294,20 +294,6 @@ Address Address::getHostAddress(const std::string &hname)
     return a;
 }
 
-std::string     Address::getHostByAddress(InAddr addr)
-{
-    int addrLen = sizeof(addr);
-    struct hostent* hent = gethostbyaddr((char*)&addr, addrLen, AF_INET);
-
-    if (!hent)
-    {
-        // can't lookup name -- return in standard dot notation
-        assert(false); // FIXME
-        //return std::string(inet_ntoa(addr));
-    }
-    return std::string(hent->h_name);
-}
-
 const std::string Address::getHostName(const std::string &hostname) // const
 {
     const struct hostent* hent = bz_gethostbyname(hostname);
