@@ -1921,7 +1921,8 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
     // debugging
     logDebugMessage(1,"type: %d\n", options.gameType);
-    switch (options.gameType) {
+    switch (options.gameType)
+    {
     case ClassicCTF:
         logDebugMessage(1,"\tcapture the flag\n");
         break;

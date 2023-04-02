@@ -350,7 +350,7 @@ void ListServerLink::sendQueuedMessages()
     queuedRequest = true;
     if (nextMessageType == ListServerLink::ADD)
     {
-        logDebugMessage(3,"Queuing ADD %s\n", publicizeAddress.c_str());
+        logDebugMessage(3,"Queuing ADD %s, players %i\n", publicizeAddress.c_str(), GameKeeper::Player::count());
 
         bz_ListServerUpdateEvent_V1 updateEvent;
         updateEvent.address = publicizeAddress;
@@ -365,7 +365,7 @@ void ListServerLink::sendQueuedMessages()
     }
     else if (nextMessageType == ListServerLink::REMOVE)
     {
-        logDebugMessage(3,"Queuing REMOVE %s\n", publicizeAddress.c_str()); 
+        logDebugMessage(3,"Queuing REMOVE %s\n", publicizeAddress.c_str());
         removeMe(publicizeAddress);
     }
     nextMessageType = ListServerLink::NONE;
