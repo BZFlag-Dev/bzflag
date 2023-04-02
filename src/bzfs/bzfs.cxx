@@ -6361,8 +6361,7 @@ void UPnP::setIGD()
 #endif
     if (!devlist)
     {
-        std::cerr << "No UPnP device found"
-                  << std::endl;
+        logDebugMessage(1, "No UPnP device found\n");
         return;
     }
     // Select a good IGD (Internet Gateway Device)
