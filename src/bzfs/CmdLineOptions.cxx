@@ -1921,15 +1921,22 @@ void finalizeParsing(int UNUSED(argc), char **argv,
 
     // debugging
     logDebugMessage(1,"type: %d\n", options.gameType);
-    if (options.gameType == ClassicCTF)
+    switch (options.gameType) {
+    case ClassicCTF:
         logDebugMessage(1,"\tcapture the flag\n");
-    if (options.gameType == RabbitChase)
+        break;
+    case RabbitChase:
         logDebugMessage(1,"\trabbit chase\n");
-    if (options.gameType == OpenFFA)
+        break;
+    case OpenFFA:
         logDebugMessage(1,"\topen free-for-all\n");
-    if (options.gameType == TeamFFA)
+        break;
+    case TeamFFA:
         logDebugMessage(1,"\tteamed free-for-all\n");
-
+        break;
+    default:
+        logDebugMessage(1,"\tunknown\n");
+    }
     logDebugMessage(1,"options: %X\n", options.gameOptions);
     if (options.gameOptions & int(SuperFlagGameStyle))
         logDebugMessage(1,"\tsuper flags allowed\n");
