@@ -185,7 +185,8 @@ bool            Address::isAny() const
         return ((const struct sockaddr_in*)&addr)->sin_addr.s_addr == htonl(INADDR_ANY);
 
     case AF_INET6:
-        assert(addr.sin6_family == AF_INET);
+        logDebugMessage(0,"isAny needs IPv6 support\n");
+        return false;
 
     default:
         return false;
