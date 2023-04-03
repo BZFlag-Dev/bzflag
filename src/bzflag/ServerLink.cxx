@@ -435,7 +435,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 #ifdef TESTLINK
         if ((random() % TESTQUALTIY) != 0)
 #endif
-            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
+            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, (sockaddr *)&usendaddr, sizeof(usendaddr));
         // we don't care about errors yet
         return;
     }
@@ -576,7 +576,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                             &urecvaddr, (socklen_t*)&recvlen);
+                             (sockaddr *)&urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
                 udpLength = n;
@@ -843,11 +843,10 @@ void ServerLink::sendUDPlinkRequest()
         return; // server does not support udp (future list server test)
 
     char msg[1];
-    unsigned short localPort;
     void* buf = msg;
 
     struct sockaddr_in6 serv_addr;
-    serv_addr.sin6_family = urecvaddr.sa_family;
+    serv_addr.sin6_family = usendaddr.sin6_family;
 
     if ((urecvfd = socket(serv_addr.sin6_family, SOCK_DGRAM, 0)) < 0)
     {
@@ -867,16 +866,13 @@ void ServerLink::sendUDPlinkRequest()
         return;  // we cannot get udp connection, bail out
     }
 
-    localPort = ntohs(serv_addr.sin6_port);
     memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
 
     if (debugLevel >= 1)
     {
         std::vector<std::string> args;
-        char lps[10];
-        sprintf(lps, "%d", localPort);
-        args.push_back(lps);
-        printError("Network: Created local UDP downlink port {1}", &args);
+        args.push_back(sockaddr2iptextport((const sockaddr *)&serv_addr));
+        printError("Network: Created local UDP downlink {1}", &args);
     }
 
     buf = nboPackUByte(buf, id);
