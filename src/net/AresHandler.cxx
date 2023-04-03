@@ -91,9 +91,9 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
 }
 
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
-void AresHandler::staticHostCallback(void *arg, int callbackStatus, int, hostent *)
+void AresHandler::staticHostCallback(void *arg, int callbackStatus, int, hostent *hostent)
 #else
-void AresHandler::staticHostCallback(void *arg, int callbackStatus, hostent *)
+void AresHandler::staticHostCallback(void *arg, int callbackStatus, hostent *hostent)
 #endif
 {
     ((AresHandler *)arg)->callback(callbackStatus, hostent);
