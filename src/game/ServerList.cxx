@@ -152,25 +152,9 @@ void ServerList::readServerList()
             // store info
             ServerItem serverInfo;
             serverInfo.ping.unpackHex(infoServer);
-            /* FIXME:
-            int dot[4] = {127,0,0,1};
-            if (sscanf(address, "%d.%d.%d.%d", dot+0, dot+1, dot+2, dot+3) == 4)
-            {
-                if (dot[0] >= 0 && dot[0] <= 255 &&
-                        dot[1] >= 0 && dot[1] <= 255 &&
-                        dot[2] >= 0 && dot[2] <= 255 &&
-                        dot[3] >= 0 && dot[3] <= 255)
-                {
-                    serverInfo.ping.serverId.addr.sin6_family = AF_INET;
-                    unsigned char* paddr = (unsigned char*)&serverInfo.ping.serverId.addr.sin_addr.s_addr;
-                    paddr[0] = (unsigned char)dot[0];
-                    paddr[1] = (unsigned char)dot[1];
-                    paddr[2] = (unsigned char)dot[2];
-                    paddr[3] = (unsigned char)dot[3];
-                }
-            }
-            */
-            serverInfo.ping.serverId.addr.sin6_port = htons((int16_t)port);
+            std::string iptextport = std::string(address) + std::string(":") + std::to_string(port);
+            Address sAddr = Address(iptextport);
+            memcpy(&serverInfo.ping.serverId.addr, sAddr.getAddr_in6(), sizeof(sockaddr_in));
             serverInfo.name = name;
 
             // construct description
