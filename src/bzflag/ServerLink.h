@@ -102,9 +102,9 @@ private:
     State               state = SocketError;
     int                 fd = -1;
 
-    struct sockaddr     usendaddr;
+    sockaddr_in6        usendaddr;
     int                 urecvfd;
-    struct sockaddr     urecvaddr; // the clients udp listen address
+    sockaddr_in6        urecvaddr; // the clients udp listen address
     bool                ulinkup;
 
     PlayerId            id;
