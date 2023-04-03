@@ -7008,16 +7008,15 @@ static void     playingLoop()
             if (strcmp(startupInfo.token, "badtoken") == 0)
                 startupInfo.token[0] = '\0';
 
-            ares->queryHost(startupInfo.serverName);
+            ares->queryHost(startupInfo.serverName, TextUtils::itoa(startupInfo.serverPort).c_str());
             waitingDNS = true;
 
             // don't try again
             joinRequested = false;
         }
 
-        struct sockaddr_in6 inAddress;
-        memset(&inAddress, 0, sizeof(inAddress));
-        inAddress.sin6_family = AF_INET;
+        struct sockaddr_in6 hostAddr;
+        memset(&hostAddr, 0, sizeof(hostAddr));
 
         if (waitingDNS)
         {
@@ -7033,9 +7032,7 @@ static void     playingLoop()
                           &timeout);
             ares->process(&readers, &writers);
 
-            // FIXME: IPv6
-            sockaddr_in *ip4 = (sockaddr_in *)&inAddress;
-            AresHandler::ResolutionStatus status = ares->getHostAddress(&ip4->sin_addr);
+            AresHandler::ResolutionStatus status = ares->getHostAddr(&hostAddr);
             if (status == AresHandler::Failed)
             {
                 HUDDialogStack::get()->setFailedMessage("Server not found");
@@ -7044,7 +7041,7 @@ static void     playingLoop()
             else if (status == AresHandler::HbNSucceeded)
             {
                 // now try connecting
-                serverNetworkAddress = Address(&inAddress);
+                serverNetworkAddress = Address(&hostAddr);
                 joinInternetGame();
                 waitingDNS = false;
             }

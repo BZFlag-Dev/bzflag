@@ -43,10 +43,11 @@ public:
     {
         index = i;
     }
-    void      queryHostname(const struct sockaddr *clientAddr);
-    void      queryHost(const char *hostName);
+    void      queryHostname(const sockaddr *);
+    void      queryHost(const char *hostName, const char *service);
     const char   *getHostname();
-    ResolutionStatus getHostAddress(struct in_addr *clientAddr);
+    ResolutionStatus getHostAddress(in_addr *);
+    ResolutionStatus getHostAddr(sockaddr_in6 *);
     void      setFd(fd_set *read_set, fd_set *write_set, int &maxFile);
     void      process(fd_set *read_set, fd_set *write_set);
     ResolutionStatus getStatus()
@@ -55,17 +56,20 @@ public:
     };
 private:
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
-    static void   staticCallback(void *arg, int statusCallback, int timeouts,
-                                 struct hostent *hostent);
+    static void   staticHostCallback(void *arg, int statusCallback, int timeouts, hostent *);
 #else
-    static void   staticCallback(void *arg, int statusCallback,
-                                 struct hostent *hostent);
+    static void   staticHostCallback(void *arg, int statusCallback, hostent *);
 #endif
-    void      callback(int status, struct hostent *hostent);
+    void      callback(int status, hostent *);
+
+    static void staticAddrInfoCallback(void *arg, int callbackStatus, int, ares_addrinfo *result);
+    void callback(int callbackStatus, ares_addrinfo *result);
+
     int       index;
 
     std::string   hostName;
     in_addr   hostAddress;
+    sockaddr_in6 hostAddr;
     ares_channel  aresChannel;
     ResolutionStatus status;
     bool      aresFailed;
