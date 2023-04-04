@@ -63,7 +63,7 @@ void            printError(const std::string &fmt, const std::vector<std::string
     }
 #else
     else
-        logDebugMessage(0, "%s\n", msg.c_str());
+        logDebugMessage(0, "%s %s\n", fmt.c_str(), msg.c_str());
 #endif
 }
 
