@@ -202,7 +202,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
             else
             {
                 // sockaddr2nameport has a single buffer
-                logDebugMessage(2,"Player slot %d inbound UDP rejected %s",
+                logDebugMessage(2,"Player slot %d inbound UDP rejected %s\n",
                                 index,
                                 sockaddr2iptextport((const struct sockaddr *)&netPlayer[index]->uaddr));
                 logDebugMessage(2," different IP than %s\n",
