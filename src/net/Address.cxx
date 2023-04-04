@@ -227,7 +227,12 @@ bool            Address::isPrivate() const
 
 sockaddr *Address::getAddr()
 {
-    return (struct sockaddr*)&addr;
+    return (sockaddr*)&addr;
+}
+
+sockaddr_in *Address::getAddr_in()
+{
+    return (sockaddr_in*)&addr;
 }
 
 sockaddr_in6 *Address::getAddr_in6()

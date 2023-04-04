@@ -57,8 +57,9 @@ public:
     bool        operator<(Address const&) const;
     bool        isAny() const;
     bool        isPrivate() const;
-    struct sockaddr *getAddr();
-    struct sockaddr_in6 *getAddr_in6();
+    sockaddr *getAddr();
+    sockaddr_in *getAddr_in();
+    sockaddr_in6 *getAddr_in6();
     std::string getIpText();
     std::string getIpTextPort();
 

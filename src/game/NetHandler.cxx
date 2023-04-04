@@ -186,8 +186,12 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if (!memcmp(&netPlayer[index]->uaddr.getAddr_in6()->sin6_addr, &uaddr->sin6_addr,
-                        sizeof(struct in6_addr)))
+            if ((uaddr->sin6_family == AF_INET6 &&
+                    !memcmp(&netPlayer[index]->uaddr.getAddr_in6()->sin6_addr, (sockaddr_in *)&uaddr->sin6_addr,
+                    sizeof(struct in_addr))) ||
+                (uaddr->sin6_family == AF_INET &&
+                    !memcmp(&netPlayer[index]->uaddr.getAddr_in()->sin_addr, &uaddr->sin6_addr,
+                    sizeof(struct in6_addr))))
             {
                 id = index;
                 if (uaddr->sin6_port)
@@ -205,7 +209,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
                 logDebugMessage(2,"Player slot %d inbound UDP rejected %s\n",
                                 index,
                                 sockaddr2iptextport((const struct sockaddr *)&netPlayer[index]->uaddr));
-                logDebugMessage(2," different IP than %s\n",
+                logDebugMessage(2,"\tdifferent IP than %s\n",
                                 sockaddr2iptextport((const struct sockaddr *)uaddr));
 
             }
