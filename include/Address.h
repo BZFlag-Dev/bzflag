@@ -60,6 +60,8 @@ public:
     sockaddr *getAddr();
     sockaddr_in *getAddr_in();
     sockaddr_in6 *getAddr_in6();
+    /* return port in network order */
+    in_port_t getNPort();
     std::string getIpText();
     std::string getIpTextPort();
 

@@ -165,12 +165,26 @@ Address&        Address::operator=(const Address& address)
 
 bool            Address::operator==(const Address& address) const
 {
-    return memcmp(&addr, &address.addr, sizeof(addr));
+    // compare address ONLY, ignore port
+    if (addr.sin6_family == AF_INET6 && address.addr.sin6_family == AF_INET6)
+        return memcmp(&addr.sin6_addr, &address.addr.sin6_addr, sizeof(addr.sin6_addr));
+
+    if (addr.sin6_family == AF_INET && address.addr.sin6_family == AF_INET)
+    {
+
+        const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
+        const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
+
+        return memcmp(&ip4a->sin_addr, &ip4b->sin_addr, sizeof(in_addr));
+    }
+
+    logDebugMessage(0,"Address== needs mixed family support");
+    return false;
 }
 
 bool            Address::operator!=(const Address& address) const
 {
-    return memcmp(&addr, &address.addr, sizeof(addr));
+    return !operator==(address);
 }
 
 bool            Address::operator<(Address const& address) const
@@ -238,6 +252,11 @@ sockaddr_in *Address::getAddr_in()
 sockaddr_in6 *Address::getAddr_in6()
 {
     return &addr;
+}
+
+in_port_t Address::getNPort()
+{
+    return addr.sin6_port;
 }
 
 std::string     Address::getIpText()

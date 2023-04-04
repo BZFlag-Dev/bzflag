@@ -213,7 +213,7 @@ public:
 private:
     int       send(const void *buffer, size_t length);
     void      udpSend(const void *b, size_t l);
-    bool      isMyUdpAddrPort(struct sockaddr_in6 uaddr);
+    bool      isMyUaddr(Address uaddr);
 #ifdef NETWORK_STATS
     void      countMessage(uint16_t code, int len, int direction);
     void      dumpMessageStats();

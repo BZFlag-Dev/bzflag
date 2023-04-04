@@ -145,8 +145,8 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
     uint16_t code;
     while (true)
     {
-        n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0, (struct sockaddr *) uaddr,
-                     &recvlen);
+        n = recvfrom(udpSocket, buffer, MaxUDPPacketLen, 0,
+                     (struct sockaddr *) uaddr, &recvlen);
         if ((n < 0) || (n >= 4))
             break;
     }
@@ -171,9 +171,11 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
     int id(-1);     // player index of the matched player
     int pi;
     udpLinkRequest = false;
+    Address packetAddress(uaddr);
     for (pi = 0; pi < maxHandlers; pi++)
         if (netPlayer[pi] && !netPlayer[pi]->closed
-                && netPlayer[pi]->isMyUdpAddrPort(*uaddr))
+                && netPlayer[pi]->isMyUaddr(packetAddress) &&
+                netPlayer[pi]->uaddr.getNPort() == uaddr->sin6_port)
         {
             id = pi;
             break;
@@ -186,12 +188,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if ((uaddr->sin6_family == AF_INET6 &&
-                    !memcmp(&netPlayer[index]->uaddr.getAddr_in6()->sin6_addr, (sockaddr_in *)&uaddr->sin6_addr,
-                    sizeof(struct in_addr))) ||
-                (uaddr->sin6_family == AF_INET &&
-                    !memcmp(&netPlayer[index]->uaddr.getAddr_in()->sin_addr, &uaddr->sin6_addr,
-                    sizeof(struct in6_addr))))
+            if (netPlayer[index]->isMyUaddr(packetAddress))
             {
                 id = index;
                 if (uaddr->sin6_port)
@@ -812,10 +809,10 @@ void NetHandler::udpSend(const void *b, size_t l)
         pendingUDP = true;
 }
 
-bool NetHandler::isMyUdpAddrPort(struct sockaddr_in6 _uaddr)
+/* compare IP portion of uaddr ONLY */
+bool NetHandler::isMyUaddr(Address _uaddr)
 {
-    return udpin && (uaddr.getAddr_in6()->sin6_port == _uaddr.sin6_port) &&
-           (memcmp(&uaddr.getAddr_in6()->sin6_addr, &_uaddr.sin6_addr, sizeof(_uaddr.sin6_addr)) == 0);
+    return udpin && (uaddr == _uaddr);
 }
 
 const std::string NetHandler::getPlayerHostInfo()
