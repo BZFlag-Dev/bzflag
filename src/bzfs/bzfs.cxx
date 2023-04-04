@@ -6705,8 +6705,7 @@ int main(int argc, char **argv)
 
     if (clOptions->publicizeServer && clOptions->publicizedKey.empty())
     {
-        logDebugMessage(0,
-                        "\nWARNING: Publicly listed bzfs servers must register"
+        logDebugMessage(0,"\nWARNING: Publicly listed bzfs servers must register"
                         " using the '-publickey <key>'option.\n\n");
     }
 
