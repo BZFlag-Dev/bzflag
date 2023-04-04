@@ -33,6 +33,7 @@
 // causes persistent rebuilding to obtain build versioning
 #include "version.h"
 
+// FIXME: add -d -dd -ddd etc command line option
 int debugLevel = 0;
 
 /** @file
@@ -66,6 +67,9 @@ int main(int argc, char** argv)
     std::string uiName("curses");
     std::vector<std::string> visibleMsgs;
     std::vector<std::string> invisibleMsgs;
+
+    // FIXME add -ts micros and -utc to bzadmin
+    // setDebugTimestamp(true,true,true);
 
     // no curses, use stdboth as default instead
     const UIMap& interfaces = UIMap::instance();
