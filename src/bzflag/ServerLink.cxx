@@ -21,7 +21,7 @@
 #define UDEBUGMSG false
 #endif
 
-#define UDEBUG if (UDEBUGMSG) printf
+#define UDEBUG if (UDEBUGMSG) logDebugMessage
 
 // system headers
 #include <string.h>
@@ -116,7 +116,7 @@ ServerLink::ServerLink(Address& serverAddress)
     int query = socket(serverAddress.getAddr()->sa_family, SOCK_STREAM, 0);
     if (query < 0) return;
 
-    UDEBUG("Remote %s\n", serverAddress.getIpTextPort().c_str());
+    UDEBUG(4,"Remote %s\n", serverAddress.getIpTextPort().c_str());
 
     // for UDP, used later
     memcpy((unsigned char *)&usendaddr, (unsigned char *)serverAddress.getAddr(), sizeof(struct sockaddr_in6));
@@ -596,7 +596,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpBufferPtr = (const char *)nboUnpackUShort(udpBufferPtr, code);
             //      if (code != MsgPlayerUpdateSmall && code != MsgPlayerUpdate && code != MsgGameTime)
             //  logDebugMessage(1,"rcvd %s len %d\n",MsgStrings::strMsgCode(code),len);
-            UDEBUG("<** UDP Packet Code %x Len %x\n", code, len);
+            UDEBUG(5,"<** UDP Packet Code %x Len %x\n", code, len);
             if (len > udpLength)
             {
                 udpLength = 0;
@@ -607,7 +607,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
             udpLength -= len;
             return 1;
         }
-        //if (UDEBUGMSG) printError("Fallback to normal TCP receive");
+        //if (UDEBUGMSG) logDebugMessage(5,"Fallback to normal TCP receive");
         len = 0;
         code = MsgNull;
 
