@@ -168,6 +168,16 @@ BZAdminClient::ServerCode BZAdminClient::checkMessage()
         switch (code)
         {
 
+        case MsgUDPLinkEstablished:
+            // server got our initial UDP packet
+            sLink->enableOutboundUDP();
+            break;
+
+        case MsgUDPLinkRequest:
+            // we got server's initial UDP packet
+            sLink->confirmIncomingUDP();
+            break;
+
         case MsgNewRabbit:
             if (messageMask[MsgNewRabbit])
             {

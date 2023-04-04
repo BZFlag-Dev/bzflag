@@ -445,7 +445,7 @@ void ServerLink::send(uint16_t code, uint16_t len, const void* msg)
 #ifdef TESTLINK
         if ((random() % TESTQUALTIY) != 0)
 #endif
-            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, &usendaddr, sizeof(usendaddr));
+            sendto(urecvfd, (const char *)msgbuf, (char*)buf - msgbuf, 0, (sockaddr *)&usendaddr, sizeof(usendaddr));
         // we don't care about errors yet
         return;
     }
@@ -497,7 +497,7 @@ int ServerLink::read(uint16_t& code, uint16_t& len, void* msg, int blockTime)
         {
             AddrLen recvlen = sizeof(urecvaddr);
             int n = recvfrom(urecvfd, ubuf, MaxPacketLen, 0,
-                             &urecvaddr, (socklen_t*)&recvlen);
+                             (sockaddr *)&urecvaddr, (socklen_t*)&recvlen);
             if (n > 0)
             {
                 udpLength = n;
@@ -671,7 +671,10 @@ bool ServerLink::readEnter(std::string& reason,
         }
 
         if (code == MsgAccept)
+        {
+            sendUDPlinkRequest();
             return true;
+        }
         else if (code == MsgSuperKill)
         {
             reason = "Server forced disconnection.";
@@ -693,6 +696,73 @@ bool ServerLink::readEnter(std::string& reason,
     }
 
     return true;
+}
+
+void ServerLink::sendUDPlinkRequest()
+{
+    if ((server_abilities & CanDoUDP) != CanDoUDP)
+        return; // server does not support udp (future list server test)
+
+    char msg[1];
+    void* buf = msg;
+
+    struct sockaddr_in6 serv_addr;
+    memset(&serv_addr, 0, sizeof(serv_addr));
+    serv_addr.sin6_family = usendaddr.sin6_family;
+
+    if ((urecvfd = socket(serv_addr.sin6_family, SOCK_DGRAM, 0)) < 0)
+    {
+        nerror("socket() failed");
+        return; // we cannot comply
+    }
+
+    AddrLen addr_len = sizeof(serv_addr);
+    if (getsockname(fd, (struct sockaddr*)&serv_addr, (socklen_t*)&addr_len) < 0)
+    {
+        nerror("Error: getsockname() failed, cannot get TCP port?");
+        return;
+    }
+    if (bind(urecvfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) != 0)
+    {
+        nerror("Error: getsockname() failed, cannot get TCP port?");
+        return;  // we cannot get udp connection, bail out
+    }
+
+    memcpy((char *)&urecvaddr, (char *)&serv_addr, sizeof(serv_addr));
+
+    if (debugLevel >= 1)
+    {
+        std::vector<std::string> args;
+        args.push_back(sockaddr2iptextport((const sockaddr *)&serv_addr));
+        printError("Network: Created local UDP downlink {1}", &args);
+    }
+
+    buf = nboPackUByte(buf, id);
+
+    if (BzfNetwork::setNonBlocking(urecvfd) < 0)
+        printError("Error: Unable to set NonBlocking for UDP receive socket");
+
+    send(MsgUDPLinkRequest, sizeof(msg), msg);
+}
+
+// heard back from server that we can send udp
+void ServerLink::enableOutboundUDP()
+{
+    ulinkup = true;
+    if (debugLevel >= 1)
+        printError("Server got our UDP, using UDP to server");
+}
+// confirm that server can send us UDP
+void ServerLink::confirmIncomingUDP()
+{
+    // This is really a hack. enableOutboundUDP will be setting this
+    // but frequently the udp handshake will finish first so might as
+    // well start with udp as soon as we can
+    ulinkup = true;
+
+    if (debugLevel >= 1)
+        printError("Got server's UDP packet back, server using UDP");
+    send(MsgUDPLinkEstablished, 0, NULL);
 }
 
 // Local Variables: ***

@@ -70,6 +70,7 @@ public:
                                   const char* token,
                                   const char* locale);
     bool                readEnter(std::string& reason, uint16_t& code, uint16_t& rejcode);
+    void                sendUDPlinkRequest();
 
     static ServerLink*  getServer(); // const
     static void         setServer(ServerLink*);
@@ -80,9 +81,9 @@ private:
     State               state = SocketError;
     int                 fd = -1;
 
-    struct sockaddr     usendaddr;
+    sockaddr_in6        usendaddr;
     int                 urecvfd;
-    struct sockaddr     urecvaddr; // the clients udp listen address
+    sockaddr_in6        urecvaddr; // the clients udp listen address
     bool                ulinkup;
 
     PlayerId            id;
