@@ -217,15 +217,14 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
         if (debugLevel < 4)
             return -1;
         // no match, discard packet
-        logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p",
+        logDebugMessage(3,"uread() discard packet! %s choices p(l) h:p\n",
                         sockaddr2iptextport((const struct sockaddr *)uaddr));
         for (pi = 0; pi < maxHandlers; pi++)
         {
             if (netPlayer[pi] && !netPlayer[pi]->closed)
-                logDebugMessage(4," %d(%d-%d) %s", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
+                logDebugMessage(4,"\t%d(%d-%d) %s\n", pi, netPlayer[pi]->udpin,  netPlayer[pi]->udpout,
                                 sockaddr2iptextport((const struct sockaddr *)uaddr));
         }
-        logDebugMessage(3,"\n");
     }
     else
     {
