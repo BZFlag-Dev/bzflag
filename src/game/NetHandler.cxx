@@ -188,7 +188,7 @@ int NetHandler::udpReceive(char *buffer, struct sockaddr_in6 *uaddr,
         if ((index < maxHandlers) && netPlayer[index] && !netPlayer[index]->closed
                 && !netPlayer[index]->udpin)
         {
-            if (netPlayer[index]->isMyUaddr(packetAddress))
+            if (netPlayer[index]->uaddr == packetAddress)
             {
                 id = index;
                 if (uaddr->sin6_port)
@@ -810,7 +810,7 @@ void NetHandler::udpSend(const void *b, size_t l)
 }
 
 /* compare IP portion of uaddr ONLY */
-bool NetHandler::isMyUaddr(Address _uaddr)
+bool NetHandler::isMyUaddr(const Address _uaddr)
 {
     return udpin && (uaddr == _uaddr);
 }

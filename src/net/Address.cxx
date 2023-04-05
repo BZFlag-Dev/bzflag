@@ -167,7 +167,7 @@ bool            Address::operator==(const Address& address) const
 {
     // compare address ONLY, ignore port
     if (addr.sin6_family == AF_INET6 && address.addr.sin6_family == AF_INET6)
-        return memcmp(&addr.sin6_addr, &address.addr.sin6_addr, sizeof(addr.sin6_addr));
+        return !memcmp(&addr.sin6_addr, &address.addr.sin6_addr, sizeof(addr.sin6_addr));
 
     if (addr.sin6_family == AF_INET && address.addr.sin6_family == AF_INET)
     {
@@ -175,10 +175,10 @@ bool            Address::operator==(const Address& address) const
         const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
         const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
 
-        return memcmp(&ip4a->sin_addr, &ip4b->sin_addr, sizeof(in_addr));
+        return ip4a->sin_addr.s_addr == ip4b->sin_addr.s_addr;
     }
 
-    logDebugMessage(0,"Address== needs mixed family support");
+    logDebugMessage(0,"Address== needs mixed family support\n");
     return false;
 }
 
