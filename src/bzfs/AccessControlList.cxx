@@ -759,10 +759,6 @@ bool AccessControlList::convert(std::string ip, Address &mask, unsigned char &_c
     // Check if we have a CIDR and pull it off if so
     if (ip.find("/") != std::string::npos)
     {
-        // CIDR bans can't contain wildcards
-        if (ip.find("*") != std::string::npos)
-            return false;
-
         // Split it into the IP and CIDR parts
         std::vector<std::string> ipcidrParts = TextUtils::tokenize(ip, "/");
 
