@@ -128,9 +128,9 @@ Address::Address(const std::string &_iptextport)
         freeaddrinfo(result);
         return;
     }
-    // FIXME: DNS lookup needed
-    logDebugMessage(1, "Need DNS support in Address(): %s\n",_iptextport.c_str());
-    exit(EXIT_FAILURE);
+    logDebugMessage(1, "Address() failure: %s\n",_iptextport.c_str());
+    memset(&addr, 0, sizeof(addr));
+    return;
 }
 
 Address::Address(const Address *address)
