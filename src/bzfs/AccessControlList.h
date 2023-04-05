@@ -306,7 +306,7 @@ public:
 private:
     /** This function converts a <code>char*</code> containing an IP mask to an
         @c Address. */
-    bool convert(std::string ip, Address *mask, unsigned char &cidr);
+    bool convert(std::string ip, Address &mask, unsigned char &cidr);
 
     /** This function checks all bans to see if any of them have expired,
         and removes those who have. */

@@ -71,7 +71,7 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
     while ((pSep = strchr(pStart, ',')) != NULL)
     {
         *pSep = 0;
-        if (convert(pStart, &mask, cidr))
+        if (convert(pStart, mask, cidr))
         {
             ban(&mask, bannedBy, period, cidr, NULL, fromMaster);
             added = true;
@@ -79,7 +79,7 @@ bool AccessControlList::ban(const char *ipList, const char *bannedBy, int period
         *pSep = ',';
         pStart = pSep + 1;
     }
-    if (convert(pStart, &mask, cidr))
+    if (convert(pStart, mask, cidr))
     {
         ban(&mask, bannedBy, period, cidr, reason, fromMaster);
         added = true;
@@ -145,12 +145,12 @@ bool AccessControlList::unban(const char *ipList)
     while ((pSep = strchr(pStart, ',')) != NULL)
     {
         *pSep = 0;
-        if (convert(pStart, &mask, cidr))
+        if (convert(pStart, mask, cidr))
             success|=unban(&mask, cidr);
         *pSep = ',';
         pStart = pSep + 1;
     }
-    if (convert(pStart, &mask, cidr))
+    if (convert(pStart, mask, cidr))
         success|=unban(&mask, cidr);
     free(buf);
     return success;
@@ -255,51 +255,10 @@ static std::string makeGlobPattern(const char* str)
 
 std::string AccessControlList::getBanMaskString(Address *mask, unsigned char cidr)
 {
-    // Check for out of range CIDR
-    if (cidr == 0 || cidr > 32)
-        return "";
-
-    std::ostringstream os;
-
-    // FIXME: handle IPv6
-    // Generate /8, /16, and /24 in the wildcard format, and show /32 without
-    // a CIDR
-    assert(mask->getAddr()->sa_family == AF_INET);
-    uint32_t ip4 = mask->getAddr_in6()->sin6_addr.s6_addr32[0];
-    if (cidr % 8 == 0)
-    {
-        os << (ntohl(ip4) >> 24) << '.';
-        if (cidr == 8)
-            os << "*.*.*";
-        else
-        {
-            os << ((ntohl(ip4) >> 16) & 0xff) << '.';
-            if (cidr == 16)
-                os << "*.*";
-            else
-            {
-                os << ((ntohl(ip4) >> 8) & 0xff) << '.';
-                if (cidr == 24)
-                    os << "*";
-                else
-                    os << (ntohl(ip4) & 0xff);
-            }
-        }
-    }
-    else
-    {
-        // Handle other CIDR values
-        // FIXME: don't change the address here
-        //mask->sin6_addr.s6_addr32[0] &= htonl(0xffffffff << (32 - cidr)); // zero out the host bits
-
-        os << (ntohl(ip4) >> 24) << '.';
-        os << ((ntohl(ip4) >> 16) & 0xff) << '.';
-        os << ((ntohl(ip4) >> 8) & 0xff) << '.';
-        os << (ntohl(ip4) & 0xff);
-        os << '/' << (unsigned int)cidr;
-    }
-
-    return os.str();
+    if ((mask->getAddr()->sa_family == AF_INET && cidr == 32) ||
+            (mask->getAddr()->sa_family == AF_INET6 && cidr == 128))
+        return mask->getIpText();
+    return mask->getIpText() + "/" + std::to_string(cidr);
 }
 
 
@@ -537,7 +496,7 @@ bool AccessControlList::load()
             // Handle CIDR ban formats
             Address ip;
             unsigned char cidr;
-            if (convert(ipAddress, &ip, cidr))
+            if (convert(ipAddress, ip, cidr))
             {
                 ban(&ip, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
                     cidr, (reason.size() > 0 ? reason.c_str() : NULL));
@@ -620,9 +579,6 @@ int AccessControlList::merge(const std::string& banData)
         }
         else
         {
-            std::string::size_type n;
-            while ((n = ipAddress.find('*')) != std::string::npos)
-                ipAddress.replace(n, 1, "255");
             if (!ban(ipAddress, (bannedBy.size() ? bannedBy.c_str(): NULL), banEnd,
                      (reason.size() > 0 ? reason.c_str() : NULL),true))
             {
@@ -796,16 +752,14 @@ std::vector<std::pair<std::string, std::string> > AccessControlList::listMasterB
     return bans;
 }
 
-bool AccessControlList::convert(std::string ip, Address *mask, unsigned char &_cidr)
+bool AccessControlList::convert(std::string ip, Address &mask, unsigned char &_cidr)
 {
     std::vector<std::string> ipParts;
-    unsigned char b[4];
-    unsigned char cidr = 32;
 
     // Check if we have a CIDR and pull it off if so
     if (ip.find("/") != std::string::npos)
     {
-        // CIDR bans can't also contain wildcards
+        // CIDR bans can't contain wildcards
         if (ip.find("*") != std::string::npos)
             return false;
 
@@ -816,65 +770,48 @@ bool AccessControlList::convert(std::string ip, Address *mask, unsigned char &_c
         if (ipcidrParts.size() != 2)
             return false;
 
-        // Split the IP octets
-        ipParts = TextUtils::tokenize(ipcidrParts[0], ".");
-
-        // If we do not have exactly four parts, bail
-        if (ipParts.size() != 4)
-            return false;
-
         // Convert the CIDR string to a numeric value
         const int val = atoi(ipcidrParts[1].c_str());
-        if (0 < val && val <= 32)
-            cidr = (unsigned char)val;
-        else
+
+        // parse the address
+        mask = Address(ipcidrParts[0] + ":0");
+
+        switch (mask.getAddr()->sa_family)
+        {
+        case AF_INET:
+            if (0 > val || val > 32)
+                return false;
+            break;
+        case AF_INET6:
+            if (0 > val || val > 128)
+                return false;
+            break;
+        default:
             return false;
+        }
+
+        _cidr = val;
+        return true;
     }
     else
     {
-        // Split the IP octets
-        ipParts = TextUtils::tokenize(ip, ".");
+        // parse the address
+        mask = Address(ip + ":0");
 
-        // If we do not have exactly four parts, bail
-        if (ipParts.size() != 4)
-            return false;
-
-        // Check for wildcards
-        if (ipParts[3] == "*")
+        switch (mask.getAddr()->sa_family)
         {
-            cidr = 24;
-            ipParts[3] = "0";
-            if (ipParts[2] == "*")
-            {
-                cidr = 16;
-                ipParts[2] = "0";
-                if (ipParts[1] == "*")
-                {
-                    cidr = 8;
-                    ipParts[1] = "0";
-                    // Don't allow *.*.*.*
-                    if (ipParts[0] == "*")
-                        return false;
-                }
-            }
+        case AF_INET:
+            _cidr = 32;
+            return true;
+        case AF_INET6:
+            _cidr = 128;
+            return true;
+        default:
+            return false;
         }
     }
 
-    for (int i = 0; i <= 3; i++)
-    {
-        const int val = atoi(ipParts[i].c_str());
-        if (0 <= val && val < 256)
-            b[i] = (unsigned char)val;
-        else
-            return false;
-    }
-
-    _cidr = cidr;
-    mask->getAddr_in6()->sin6_addr.s6_addr32[0] = htonl(((unsigned int)b[0] << 24) |
-            ((unsigned int)b[1] << 16) |
-            ((unsigned int)b[2] << 8)  |
-            (unsigned int)b[3]);
-    return true;
+    return false;
 }
 
 
