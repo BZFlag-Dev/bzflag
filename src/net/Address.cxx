@@ -198,7 +198,7 @@ bool            Address::operator==(const Address& address) const
     }
     logDebugMessage(4,"Address== mixed family: %s\n",
                     sockaddr2iptextport((const struct sockaddr *)&address.addr));
-    logDebugMessage(4,"Address== mixed family with: %s\n",
+    logDebugMessage(4,"\twith: %s\n",
                     sockaddr2iptextport((const struct sockaddr *)&addr));
     return false;
 }
