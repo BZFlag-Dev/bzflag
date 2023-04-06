@@ -127,7 +127,7 @@ Address::Address(const std::string &_iptextport)
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
         logDebugMessage(1, "Address() got: %s from %s\n",
-            getIpTextPort().c_str(), _iptextport.c_str());
+                        getIpTextPort().c_str(), _iptextport.c_str());
         return;
     }
     logDebugMessage(1, "Address() failure: %s\n",_iptextport.c_str());
