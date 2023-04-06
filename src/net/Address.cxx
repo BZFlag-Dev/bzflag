@@ -104,12 +104,12 @@ Address::Address(const std::string &_iptextport)
     struct addrinfo hints;
     struct addrinfo *result;
 
-    iptextport = _iptextport;
-    logDebugMessage(0, "Address(): %s\n",_iptextport.c_str());
+    //iptextport = _iptextport;
+    //logDebugMessage(4, "Address(): %s\n",_iptextport.c_str());
 
-    std::size_t found = iptextport.find_last_of(":");
-    iptext = iptextport.substr(0, found);
-    std::string port = iptextport.substr(found + 1);
+    std::size_t found = _iptextport.find_last_of(":");
+    std::string tryiptext = _iptextport.substr(0, found);
+    std::string port = _iptextport.substr(found + 1);
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -120,12 +120,14 @@ Address::Address(const std::string &_iptextport)
     hints.ai_addr = NULL;
     hints.ai_next = NULL;
     // FIXME: make this non-blocking
-    int s = getaddrinfo(iptext.c_str(), port.c_str(), &hints, &result);
+    int s = getaddrinfo(tryiptext.c_str(), port.c_str(), &hints, &result);
     if (s == 0)
     {
         // FIXME: try other entries
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
+        logDebugMessage(1, "Address() got: %s from %s\n",
+            getIpTextPort().c_str(), _iptextport.c_str());
         return;
     }
     logDebugMessage(1, "Address() failure: %s\n",_iptextport.c_str());
