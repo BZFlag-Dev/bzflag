@@ -63,14 +63,24 @@ struct BanInfo
         return addr != rhs.addr || cidr != rhs.cidr;
     }
 
-    bool contains(const struct sockaddr_in6 *checkAddr)
+    bool contains(Address &cAddr)
     {
         // CIDR of 0 matches everything
-        if (cidr < 1) return true;
-        // CIDR of 128 means it has to be an exact match
-        if (cidr >= 128 && addr == Address(checkAddr)) return true;
+        if (cidr < 1)
+            return true;
+        // IPv4 CIDR of 32 means it has to be an exact match
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cidr >= 32 && addr == cAddr)
+            return true;
+        // IPv6 CIDR of 128 means it has to be an exact match
+        if (addr.getAddr()->sa_family == AF_INET6 &&
+                cidr >= 128 && addr == cAddr)
+            return true;
         // Compare network bits
         // FIXME: return !((addr.s6_addr ^ checkAddr.s6_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
+        logDebugMessage(3,"contains(%s) FIXME: did not test %s/%i\n",
+                        cAddr.getIpText().c_str(),
+                        addr.getIpText().c_str(), cidr);
         return false;
     }
 
@@ -243,7 +253,7 @@ public:
     /** This function checks if an address is "valid" or not. Valid in this case
         means that it has not been banned.
         @returns @c true if the address is valid, @c false if not. */
-    bool validate(const struct sockaddr_in6 *ipAddr, BanInfo *info = NULL);
+    bool validate(Address &ipAddr, BanInfo *info = NULL);
 
     /** This function checks that a hostname is "valid". In this case valid means
         "not banned".

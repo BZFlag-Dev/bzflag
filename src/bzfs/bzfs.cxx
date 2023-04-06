@@ -2212,7 +2212,7 @@ void AddPlayer(int playerIndex, GameKeeper::Player *playerData)
         // check against the ip ban list
         Address playerIP(playerData->netHandler->getTaddr());
         BanInfo info(&playerIP);
-        if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP.getAddr_in6(),&info))
+        if (!playerIsAntiBanned && !clOptions->acl.validate(playerIP,&info))
         {
             std::string rejectionMessage;
 
@@ -6056,7 +6056,8 @@ void rescanForBans ( bool isOperator, const char* callsign, int playerID )
     for (int i = 0; i < curMaxPlayers; i++)
     {
         GameKeeper::Player *otherPlayer = GameKeeper::Player::getPlayerByIndex(i);
-        if (otherPlayer && !clOptions->acl.validate(otherPlayer->netHandler->getTaddr()->getAddr_in6()))
+        Address oAddr(otherPlayer->netHandler->getTaddr());
+        if (otherPlayer && !clOptions->acl.validate(oAddr))
         {
             // operators can override antiperms
             if (!isOperator)
@@ -6279,7 +6280,7 @@ static void processConnectedPeer(NetConnectedPeer& peer, int UNUSED(sockFD), fd_
 
                     Address IP = netHandler->getTaddr();
                     BanInfo info(&IP);
-                    if (!clOptions->acl.validate(IP.getAddr_in6(), &info))
+                    if (!clOptions->acl.validate(IP, &info))
                     {
                         logDebugMessage(2,"Peer %s banned\n", netHandler->getTargetIP());
                         std::string banMsg = "banned for " + info.reason + " by " + info.bannedBy;

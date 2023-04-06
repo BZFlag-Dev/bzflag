@@ -104,8 +104,9 @@ Address::Address(const std::string &_iptextport)
     struct addrinfo hints;
     struct addrinfo *result;
 
-    //iptextport = _iptextport;
-    //logDebugMessage(4, "Address(): %s\n",_iptextport.c_str());
+    // FIXME: handle ip with no : and assume port 0 for banlists, etc. ?
+    // FIXME: handle brackets like [2001:db8::1]:5154 ?
+    // FIXME: what to do with 2001:db8::1:5154 or 2001:db8:::5154 ?
 
     std::size_t found = _iptextport.find_last_of(":");
     std::string tryiptext = _iptextport.substr(0, found);
@@ -126,7 +127,7 @@ Address::Address(const std::string &_iptextport)
         // FIXME: try other entries
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
-        logDebugMessage(1, "Address() got: %s from %s\n",
+        logDebugMessage(3, "Address() got: %s from %s\n",
                         getIpTextPort().c_str(), _iptextport.c_str());
         return;
     }
@@ -152,6 +153,7 @@ Address::Address(const Address &address)
 Address::Address(const struct sockaddr_in6 *_addr)
 {
     memcpy(&addr, (const void *)_addr, sizeof(addr));
+    logDebugMessage(5, "Address() got: %s\n", getIpTextPort().c_str());
 }
 
 Address::~Address()
@@ -170,17 +172,34 @@ bool            Address::operator==(const Address& address) const
     // compare address ONLY, ignore port
     if (addr.sin6_family == AF_INET6 && address.addr.sin6_family == AF_INET6)
         return !memcmp(&addr.sin6_addr, &address.addr.sin6_addr, sizeof(addr.sin6_addr));
-
     if (addr.sin6_family == AF_INET && address.addr.sin6_family == AF_INET)
     {
-
         const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
         const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
-
         return ip4a->sin_addr.s_addr == ip4b->sin_addr.s_addr;
     }
-
-    logDebugMessage(0,"Address== needs mixed family support\n");
+    if (addr.sin6_family == AF_INET6 && address.addr.sin6_family == AF_INET &&
+            addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+            addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+            addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    {
+        // addr is mapped ipv4 in ipv6
+        const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
+        return addr.sin6_addr.__in6_u.__u6_addr32[3] == ip4b->sin_addr.s_addr;
+    }
+    if (addr.sin6_family == AF_INET && address.addr.sin6_family == AF_INET6 &&
+            address.addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+            address.addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+            address.addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    {
+        // addrress.addr is mapped ipv4 in ipv6
+        const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
+        return ip4a->sin_addr.s_addr == address.addr.sin6_addr.__in6_u.__u6_addr32[3];
+    }
+    logDebugMessage(4,"Address== mixed family: %s\n",
+                    sockaddr2iptextport((const struct sockaddr *)&address.addr));
+    logDebugMessage(4,"Address== mixed family with: %s\n",
+                    sockaddr2iptextport((const struct sockaddr *)&addr));
     return false;
 }
 

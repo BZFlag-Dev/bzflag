@@ -181,7 +181,7 @@ bool AccessControlList::idUnban(std::string idpat)
 }
 
 
-bool AccessControlList::validate(const struct sockaddr_in6 *ipAddr, BanInfo *info)
+bool AccessControlList::validate(Address &ipAddr, BanInfo *info)
 {
     expire();
 
