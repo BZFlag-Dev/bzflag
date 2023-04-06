@@ -6846,7 +6846,7 @@ int main(int argc, char **argv)
     }
 
     if (clOptions->pingInterface == "")
-        clOptions->pingInterface = "0.0.0.0";
+        clOptions->pingInterface = "::";
     serverAddr = Address(clOptions->pingInterface + ":" + std::to_string(clOptions->wksPort));
 
     if (clOptions->UPnP)
