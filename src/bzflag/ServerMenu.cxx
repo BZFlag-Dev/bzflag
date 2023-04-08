@@ -812,6 +812,7 @@ void ServerMenu::execute()
         long int serverPort = strtol(serverList.getServers()[selectedIndex].name.substr(cPos + 1).c_str(), (char **)NULL, 10);
         if (serverPort > 0 && serverPort < 65536)
             info->serverPort = (int) serverPort;
+        info->serverName[cPos] = '\0';
     }
 
 
