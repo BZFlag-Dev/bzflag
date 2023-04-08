@@ -319,7 +319,10 @@ void            ServerList::checkEchos(StartupInfo *info)
             {
                 serverInfo.cached = false;
                 serverInfo.localDiscovery = true;
-                serverInfo.name = sockaddr2iptextport((const sockaddr *)&addr);
+                if (addr.sin6_port == htons(ServerPort))
+                    serverInfo.name = sockaddr2iptext((const sockaddr *)&addr);
+                else
+                    serverInfo.name = sockaddr2iptextport((const sockaddr *)&addr);
                 serverInfo.description = sockaddr2iptextport((const sockaddr *)&addr);
                 addToList(serverInfo);
             }
