@@ -134,12 +134,6 @@ void AresHandler::queryHost(const char *name, const char *service)
         return;
     }
 
-    if (inet_aton(name, &hostAddress) != 0)
-    {
-        status = HbNSucceeded;
-        return;
-    }
-
     // launch the asynchronous query to look up this hostname
     status = HbNPending;
 
