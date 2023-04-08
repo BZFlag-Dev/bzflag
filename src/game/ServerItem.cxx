@@ -41,12 +41,6 @@ void ServerItem::writeToFile(std::ostream& out) const
     strncpy(&buffer[0],description.c_str(),copyLength);
     out.write(buffer,sizeof(buffer));
 
-    // write out name
-    memset(buffer,0,sizeof(buffer));
-    copyLength = int(name.size() < ServerListCache::max_string ? name.size(): ServerListCache::max_string);
-    strncpy(&buffer[0],name.c_str(),copyLength);
-    out.write(buffer,sizeof(buffer));
-
     // write out pingpacket
     ping.writeToFile(out);
 
@@ -68,12 +62,6 @@ bool ServerItem::readFromFile(std::istream& in, int subrevision)
     in.read(buffer,sizeof(buffer));
     if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
     description = buffer;
-
-    //read name
-    memset(buffer,0,sizeof(buffer));
-    in.read(buffer,sizeof(buffer));
-    if ((size_t)in.gcount() < sizeof(buffer)) return false; // failed to read entire string
-    name = buffer;
 
     bool pingWorked = ping.readFromFile(in);
     if (!pingWorked) return false; // pingpacket failed to read

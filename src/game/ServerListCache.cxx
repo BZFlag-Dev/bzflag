@@ -143,19 +143,18 @@ void            ServerListCache::loadCache()
         char buffer[max_string+1];
         while (inFile)
         {
-            std::string serverIndex;
             ServerItem info;
 
             inFile.read(buffer,sizeof(buffer)); //read the index of the map
             if ((size_t)inFile.gcount() < sizeof(buffer)) break; // failed to read entire string
-            serverIndex = buffer;
+            info.name = buffer;
 
             bool infoWorked = info.readFromFile(inFile, subrevision);
             // after a while it is doubtful that player counts are accurate
             if (info.getAgeMinutes() > (time_t)30) info.ping.zeroPlayerCounts();
             if (!infoWorked) break;
 
-            serverCache.insert(SRV_STR_MAP::value_type(serverIndex,info));
+            serverCache.insert(SRV_STR_MAP::value_type(info.name,info));
         }
         inFile.close();
     }
