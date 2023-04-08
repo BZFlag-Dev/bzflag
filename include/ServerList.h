@@ -54,7 +54,6 @@ public:
 
 private:
     void readServerList();
-    void addToListWithLookup(ServerItem&);
     void addCacheToList();
     void _shutDown();
 

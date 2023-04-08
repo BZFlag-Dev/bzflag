@@ -275,7 +275,7 @@ sockaddr_in6 *Address::getAddr_in6()
     return &addr;
 }
 
-in_port_t Address::getNPort()
+in_port_t Address::getNPort() const
 {
     return addr.sin6_port;
 }
@@ -415,40 +415,6 @@ const void*     Address::unpack(const void* _buf)
 
     // should be stored in network byte order
     return buf;
-}
-
-//
-// ServerId
-//
-
-void*           ServerId::pack(void* _buf) const
-{
-    // everything in ServerId should be stored in network byte order
-    unsigned char* buf = (unsigned char*)_buf;
-    buf = (unsigned char*)Address(&addr).pack(buf);
-    ::memcpy(buf, &number, sizeof(int16_t));
-    buf += sizeof(int16_t);
-    return (void*)buf;
-}
-
-const void*     ServerId::unpack(const void* _buf)
-{
-    // everything in ServerId should be stored in network byte order
-    const unsigned char* buf = (const unsigned char*)_buf;
-    buf = (const unsigned char*)Address(&addr).unpack(buf);
-    ::memcpy(&number, buf, sizeof(int16_t));
-    buf += sizeof(int16_t);
-    return buf;
-}
-
-bool            ServerId::operator==(const ServerId& id) const
-{
-    return memcmp(&addr, &id.addr, sizeof(addr)) || number == id.number;
-}
-
-bool            ServerId::operator!=(const ServerId& id) const
-{
-    return !memcmp(&addr, &id.addr, sizeof(addr)) || number != id.number;
 }
 
 // Local Variables: ***

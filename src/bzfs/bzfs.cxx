@@ -1454,10 +1454,9 @@ void checkGameOn()
 }
 
 
-static void respondToPing(Address addr)
+static void respondToPing(void)
 {
     // reply with current game info
-    pingReply.sourceAddr = addr;
     // Total up rogue + rabbit + hunter teams
     pingReply.rogueCount = (uint8_t)team[0].team.size + (uint8_t)team[6].team.size + (uint8_t)team[7].team.size;
     pingReply.redCount = (uint8_t)team[1].team.size;
@@ -6904,8 +6903,6 @@ int main(int argc, char **argv)
     logDebugMessage(1,"\twith title of \"%s\"\n", clOptions->publicizedTitle.c_str());
 
     // prep ping reply
-    memcpy(&pingReply.serverId.addr, serverAddr.getAddr(), sizeof(struct sockaddr_in));
-    pingReply.serverId.number = 0;
     pingReply.gameType = clOptions->gameType;
     pingReply.gameOptions = clOptions->gameOptions;
     pingReply.maxPlayers = (uint8_t)maxRealPlayers;
@@ -7753,7 +7750,7 @@ int main(int argc, char **argv)
                         // then ignore the ping.
                         if (handlePings)
                         {
-                            respondToPing(Address(&uaddr));
+                            respondToPing();
                             pingReply.write(NetHandler::getUdpSocket(), &uaddr);
                         }
                         continue;

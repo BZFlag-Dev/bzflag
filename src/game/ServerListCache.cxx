@@ -45,16 +45,16 @@ ServerListCache*  ServerListCache::get()
 }
 
 
-// insert a serverItem mapped by the serverAddress
-void ServerListCache::insert(const std::string &serverAddress, const ServerItem &info)
+// insert a serverItem mapped by namePort
+void ServerListCache::insert(const std::string &namePort, const ServerItem &info)
 {
-    serverCache.insert(SRV_STR_MAP::value_type(serverAddress,info));
+    serverCache.insert(SRV_STR_MAP::value_type(namePort,info));
 }
 
 
-ServerListCache::SRV_STR_MAP::iterator ServerListCache::find(const std::string &serverAddress)
+ServerListCache::SRV_STR_MAP::iterator ServerListCache::find(const std::string &namePort)
 {
-    return serverCache.find(serverAddress);
+    return serverCache.find(namePort);
 }
 
 
@@ -69,9 +69,9 @@ ServerListCache::SRV_STR_MAP::iterator ServerListCache::end()
     return serverCache.end();
 }
 
-bool ServerListCache::isFavorite(const std::string &serverAddress) const
+bool ServerListCache::isFavorite(const std::string &namePort) const
 {
-    SRV_STR_MAP::const_iterator i = serverCache.find(serverAddress);
+    SRV_STR_MAP::const_iterator i = serverCache.find(namePort);
     return i!=serverCache.end() && i->second.favorite;
 }
 

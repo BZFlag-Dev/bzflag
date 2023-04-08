@@ -61,7 +61,7 @@ public:
     sockaddr_in *getAddr_in();
     sockaddr_in6 *getAddr_in6();
     /* return port in network order */
-    in_port_t getNPort();
+    in_port_t getNPort() const;
     std::string getIpText();
     std::string getIpTextPort();
 
@@ -87,21 +87,6 @@ const PlayerId      ServerPlayer = 253;
 const PlayerId      AdminPlayers = 252;
 const PlayerId      FirstTeam = 251;
 const PlayerId      LastRealPlayer = FirstTeam - NumTeams;
-
-class ServerId
-{
-public:
-    void*       pack(void*) const;
-    const void*     unpack(const void*);
-
-    bool        operator==(const ServerId&) const;
-    bool        operator!=(const ServerId&) const;
-
-public:
-    // host and port in network byte order
-    struct sockaddr_in6 addr;
-    int16_t     number;         // local player number
-};
 
 #endif // BZF_INET_ADDR_H
 

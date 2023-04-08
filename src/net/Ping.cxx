@@ -31,7 +31,7 @@
 // PingPacket
 //
 
-const int       PingPacket::PacketSize = ServerIdPLen + 52;
+const int       PingPacket::PacketSize = 52;
 
 PingPacket::PingPacket() : gameOptions(0), gameType(TeamFFA),
     maxShots(1),
@@ -132,8 +132,6 @@ bool            PingPacket::sendRequest(int fd,
 const void*     PingPacket::unpack(const void* buf, char* version)
 {
     buf = nboUnpackString(buf, version, 8);
-    buf = serverId.unpack(buf);
-    buf = sourceAddr.unpack(buf);
     buf = nboUnpackUShort(buf, gameType);
     buf = nboUnpackUShort(buf, gameOptions);
     buf = nboUnpackUShort(buf, maxShots);
@@ -161,8 +159,6 @@ const void*     PingPacket::unpack(const void* buf, char* version)
 void*           PingPacket::pack(void* buf, const char* version) const
 {
     buf = nboPackString(buf, version, 8);
-    buf = serverId.pack(buf);
-    buf = sourceAddr.pack(buf);
     buf = nboPackUShort(buf, gameType);
     buf = nboPackUShort(buf, gameOptions);
     buf = nboPackUShort(buf, maxShots);

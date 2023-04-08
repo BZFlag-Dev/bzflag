@@ -52,8 +52,6 @@ public:
     static bool sendRequest(int fd, const struct sockaddr_in6*);
 
 public:
-    ServerId    serverId;
-    Address     sourceAddr;
     uint16_t    gameOptions;
     uint16_t    gameType;
     uint16_t    maxShots;

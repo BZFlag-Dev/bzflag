@@ -43,7 +43,6 @@ ServerList::~ServerList()
 
 void ServerList::startServerPings(StartupInfo *info)
 {
-
     // schedule lookup of server list url.  dereference URL chain every
     // time instead of only first time just in case one of the pointers
     // has changed.
@@ -120,7 +119,7 @@ void ServerList::readServerList()
             continue;
         }
         // parse server info
-        char *scan2, *name, *version, *infoServer, *address, *title;
+        char *scan2, *name, *version, *infoServer, *description;
         name = base;
         version = name;
         while (*version && !isspace(*version))  version++;
@@ -128,12 +127,9 @@ void ServerList::readServerList()
         infoServer = version;
         while (*infoServer && !isspace(*infoServer))  infoServer++;
         while (*infoServer &&  isspace(*infoServer)) *infoServer++ = 0;
-        address = infoServer;
-        while (*address && !isspace(*address))  address++;
-        while (*address &&  isspace(*address)) *address++ = 0;
-        title = address;
-        while (*title && !isspace(*title))  title++;
-        while (*title &&  isspace(*title)) *title++ = 0;
+        description = infoServer;
+        while (*description && !isspace(*description)) description++;
+        while (*description &&  isspace(*description)) *description++ = 0;
 
         // extract port number from address
         int port = ServerPort;
@@ -152,27 +148,14 @@ void ServerList::readServerList()
             // store info
             ServerItem serverInfo;
             serverInfo.ping.unpackHex(infoServer);
-            std::string iptextport = std::string(address) + std::string(":") + std::to_string(port);
-            Address sAddr = Address(iptextport);
-            memcpy(&serverInfo.ping.serverId.addr, sAddr.getAddr_in6(), sizeof(sockaddr_in));
             serverInfo.name = name;
-
-            // construct description
-            serverInfo.description = serverInfo.name;
             if (port != ServerPort)
             {
-                char portBuf[20];
-                sprintf(portBuf, "%d", port);
-                serverInfo.description += ":";
-                serverInfo.description += portBuf;
+                serverInfo.name += ":" + std::to_string(port);
             }
-            if (strlen(title) > 0)
-            {
-                serverInfo.description += "; ";
-                serverInfo.description += title;
-            }
-
+            serverInfo.description = description;
             serverInfo.cached = false;
+
             // add to list & add it to the server cache
             addToList(serverInfo, true);
         }
@@ -196,7 +179,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
     for (i = 0; i < (int)servers.size(); i++)
     {
         ServerItem& server = servers[i];
-        if (server.ping.serverId == info.ping.serverId)
+        if (server.name == info.name)
         {
             servers.erase(servers.begin() + i); // erase this item
             break;
@@ -220,8 +203,7 @@ void ServerList::addToList(ServerItem info, bool doCache)
     }
 
     // mark server in current list if it is a favorite server
-    std::string serverAddress = info.getAddrName();
-    if (serverCache->isFavorite(serverAddress))
+    if (serverCache->isFavorite(info.name))
         info.favorite = true;
 
     if (insertPoint == -1)   // no spot to insert it into -- goes on back
@@ -252,23 +234,23 @@ void ServerList::addToList(ServerItem info, bool doCache)
         info.setUpdateTime();
 
         ServerListCache::SRV_STR_MAP::iterator iter;
-        iter = serverCache->find(serverAddress);  // find entry to allow update
+        iter = serverCache->find(info.name);  // find entry to allow update
         if (iter != serverCache->end())   // if we find it, update it
             iter->second = info;
         else
         {
             // insert into cache -- wasn't found
-            serverCache->insert(serverAddress, info);
+            serverCache->insert(info.name, info);
         }
     }
 }
 
 // mark server identified by host:port string as favorite
-void            ServerList::markFav(const std::string &serverAddress, bool fav)
+void            ServerList::markFav(const std::string &namePort, bool fav)
 {
     for (int i = 0; i < (int)servers.size(); i++)
     {
-        if (serverAddress == servers[i].getAddrName())
+        if (namePort == servers[i].name)
         {
             servers[i].favorite = fav;
             break;
@@ -285,7 +267,6 @@ void            ServerList::checkEchos(StartupInfo *info)
     // lookup server list in phase 0
     if (phase == 0)
     {
-
         std::string url = info->listServerURL;
 
         std::string msg = "action=LIST&version=";
@@ -338,21 +319,14 @@ void            ServerList::checkEchos(StartupInfo *info)
         {
             if (serverInfo.ping.read(pingBcastSocket, &addr))
             {
-                memcpy(&serverInfo.ping.serverId.addr, &addr, sizeof(addr));
                 serverInfo.cached = false;
                 serverInfo.localDiscovery = true;
-                addToListWithLookup(serverInfo);
+                serverInfo.name = sockaddr2iptextport((const sockaddr *)&addr);
+                serverInfo.description = sockaddr2iptextport((const sockaddr *)&addr);
+                addToList(serverInfo);
             }
         }
     } // end loop waiting for input/output on any list server
-}
-
-void            ServerList::addToListWithLookup(ServerItem& info)
-{
-    info.name = sockaddr2iptext((const sockaddr *)&info.ping.serverId.addr);
-    // tack on port number to description if not default
-    info.description = sockaddr2iptextport((const sockaddr *)&info.ping.serverId.addr);;
-    addToList(info); // do not cache network lan - etc. servers
 }
 
 // add the entire cache to the server list

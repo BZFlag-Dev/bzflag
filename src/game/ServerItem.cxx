@@ -211,12 +211,6 @@ int ServerItem::getPlayerCount() const
     return curPlayer;
 }
 
-std::string ServerItem::getAddrName() const
-{
-    // FIXME: use Address:: functions
-    return TextUtils::format("%s:%d", name.c_str(), ntohs(ping.serverId.addr.sin6_port));
-}
-
 unsigned int ServerItem::getSortFactor() const
 {
     // if null ping we return a 0 player count
@@ -239,20 +233,6 @@ unsigned int ServerItem::getSortFactor() const
         value += randomSortWeight;
 
     return value;
-}
-
-
-void ServerItem::splitAddrTitle(std::string& addr, std::string& title) const
-{
-    addr = stripAnsiCodes(description);
-    title = "";
-    const std::string::size_type pos = addr.find_first_of(';');
-    if (pos == std::string::npos)
-        return;
-    const std::string::size_type tpos = pos + 2; // skip the ';' and ' '
-    if (addr.size() > tpos)
-        title = addr.substr(tpos);
-    addr.resize(pos);
 }
 
 

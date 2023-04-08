@@ -366,17 +366,16 @@ void ServerMenu::setFav(bool fav)
     if (selectedIndex < 0 || (int)serverList.size() <= selectedIndex)
         return; // no such entry (server list may be empty)
     const ServerItem& item = serverList.getServers()[selectedIndex];
-    std::string addrname = item.getAddrName();
     ServerListCache *cache = ServerListCache::get();
-    ServerListCache::SRV_STR_MAP::iterator i = cache->find(addrname);
+    ServerListCache::SRV_STR_MAP::iterator i = cache->find(item.name);
     if (i != cache->end())
         i->second.favorite = fav;
     else
     {
         // FIXME  should not ever come here, but what to do?
     }
-    realServerList.markFav(addrname, fav);
-    serverList.markFav(addrname, fav);
+    realServerList.markFav(item.name, fav);
+    serverList.markFav(item.name, fav);
 
     setSelected(getSelected()+1, true);
 }
@@ -495,17 +494,15 @@ void ServerMenu::setSelected(int index, bool forcerefresh)
                     label->setColor(0.5f + rf * 0.5f, 0.5f + gf * 0.5f, 0.5f + bf * 0.5f);
                 }
 
-                std::string addr, desc;
-                server.splitAddrTitle(addr, desc);
                 if (server.favorite)
                     fullLabel += ANSI_STR_FG_ORANGE;
                 else
                     fullLabel += ANSI_STR_FG_WHITE;
-                fullLabel += addr;
-                if (!desc.empty())
+                fullLabel += server.name;
+                if (!server.description.empty())
                 {
                     fullLabel += ANSI_STR_RESET "  ";
-                    fullLabel += desc;
+                    fullLabel += stripAnsiCodes(server.description);
                 }
                 label->setString(fullLabel);
                 label->setDarker(server.cached);
@@ -808,8 +805,15 @@ void ServerMenu::execute()
     StartupInfo* info = getStartupInfo();
     strncpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str(), sizeof(info->serverName) - 1);
     info->serverName[sizeof(info->serverName) - 1] = '\0';
-    info->serverPort = ntohs((unsigned short)
-                             serverList.getServers()[selectedIndex].ping.serverId.addr.sin6_port);
+    info->serverPort = ServerPort;
+    int cPos = serverList.getServers()[selectedIndex].name.find(':');
+    if (cPos != -1)
+    {
+        long int serverPort = strtol(serverList.getServers()[selectedIndex].name.substr(cPos + 1).c_str(), (char **)NULL, 10);
+        if (serverPort > 0 && serverPort < 65536)
+            info->serverPort = (int) serverPort;
+    }
+
 
     // all done
     HUDDialogStack::get()->pop();

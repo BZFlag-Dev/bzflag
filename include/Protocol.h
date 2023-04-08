@@ -199,7 +199,6 @@ const uint16_t      MsgLagPing = 0x7069;            // 'pi'
 
 typedef uint8_t     PlayerId;
 const int       PlayerIdPLen = sizeof(PlayerId);
-const int       ServerIdPLen = 37; // byte family + 32 byte IP + short port + short number
 
 // 54 bytes
 const int PlayerUpdatePLenMax =
