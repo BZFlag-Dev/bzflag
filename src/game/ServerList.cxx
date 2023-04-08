@@ -150,9 +150,7 @@ void ServerList::readServerList()
             serverInfo.ping.unpackHex(infoServer);
             serverInfo.name = name;
             if (port != ServerPort)
-            {
                 serverInfo.name += ":" + std::to_string(port);
-            }
             serverInfo.description = description;
             serverInfo.cached = false;
 

@@ -104,7 +104,6 @@ void            ServerListCache::saveCache()
     char buffer[max_string+1];
     for (SRV_STR_MAP::iterator iter = serverCache.begin(); iter != serverCache.end(); ++iter)
     {
-
         // skip items that are more than 30 days old, but always save favorites
         if (!iter->second.favorite && iter->second.getAgeMinutes() > 60*24*30)
             continue;
