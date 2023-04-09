@@ -55,6 +55,7 @@ public:
     bool        operator==(const Address&) const;
     bool        operator!=(const Address&) const;
     bool        operator<(Address const&) const;
+    bool        isMapped() const;
     bool        isAny() const;
     bool        isPrivate() const;
     sockaddr *getAddr();

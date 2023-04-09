@@ -76,8 +76,37 @@ struct BanInfo
         if (addr.getAddr()->sa_family == AF_INET6 &&
                 cidr >= 128 && addr == cAddr)
             return true;
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cAddr.getAddr()->sa_family == AF_INET)
+        {
+            // both ipv4, normal mask check
+            const sockaddr_in *ip4a = addr.getAddr_in();
+            const sockaddr_in *ip4b = cAddr.getAddr_in();
+            return !((ip4a->sin_addr.s_addr ^
+                      ip4b->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
+        }
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cAddr.isMapped())
+        {
+            // cAddr is mapped ipv4 in ipv6
+            const sockaddr_in *ip4 = addr.getAddr_in();
+            return !((cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr32[3] ^
+                      ip4->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
+        }
+        if (addr.isMapped() &&
+                cAddr.getAddr()->sa_family == AF_INET)
+        {
+            // addr is mapped ipv4 in ipv6
+            // This should never happen. Masks should be in native format
+            const sockaddr_in *ip4 = cAddr.getAddr_in();
+            return !((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr32[3] ^
+                      ip4->sin_addr.s_addr) &
+                     htonl(0xFFFFFFFFu << (128 - cidr)));
+        }
         // Compare network bits
-        // FIXME: return !((addr.s6_addr ^ checkAddr.s6_addr) & htonl(0xFFFFFFFFu << (32 - cidr)));
+        // FIXME: add v6 in v6 support
         logDebugMessage(3,"contains(%s) FIXME: did not test %s/%i\n",
                         cAddr.getIpText().c_str(),
                         addr.getIpText().c_str(), cidr);

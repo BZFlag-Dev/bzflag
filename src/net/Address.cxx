@@ -178,19 +178,17 @@ bool            Address::operator==(const Address& address) const
         const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
         return ip4a->sin_addr.s_addr == ip4b->sin_addr.s_addr;
     }
-    if (addr.sin6_family == AF_INET6 && address.addr.sin6_family == AF_INET &&
-            addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-            addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-            addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    if (addr.sin6_family == AF_INET6 &&
+            address.addr.sin6_family == AF_INET &&
+            isMapped())
     {
         // addr is mapped ipv4 in ipv6
         const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
         return addr.sin6_addr.__in6_u.__u6_addr32[3] == ip4b->sin_addr.s_addr;
     }
-    if (addr.sin6_family == AF_INET && address.addr.sin6_family == AF_INET6 &&
-            address.addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-            address.addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-            address.addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    if (addr.sin6_family == AF_INET &&
+            address.addr.sin6_family == AF_INET6 &&
+            address.isMapped())
     {
         // addrress.addr is mapped ipv4 in ipv6
         const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
@@ -212,6 +210,29 @@ bool            Address::operator<(Address const& address) const
 {
     return memcmp(&addr, &address.addr, sizeof(addr)) < 0;
 }
+
+/* IPv4 mapped into different IPv6/96 address blocks */
+bool            Address::isMapped() const
+{
+    switch(addr.sin6_family)
+    {
+    case AF_INET6:
+        // IPv4 mapped into ::ffff:a.b.c.d space
+        if (addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+                addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+                addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+            return true;
+        // NAT64 common space 64:ff9b::8.8.8.8
+        else if (addr.sin6_addr.__in6_u.__u6_addr32[0] == htonl(0x0064ff9b) &&
+                 addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+                 addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+            return true;
+        return false;
+    default:
+        return false;
+    }
+}
+
 bool            Address::isAny() const
 {
     switch(addr.sin6_family)
