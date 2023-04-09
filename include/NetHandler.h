@@ -152,7 +152,6 @@ public:
     int       sizeOfIP();
     void*     packAdminInfo(void *buf);
     static int    whoIsAtIP(const std::string& IP);
-    in6_addr   getIPAddress();
     const char* getHostname();
     bool      reverseDNSDone();
 

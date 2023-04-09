@@ -875,11 +875,6 @@ int NetHandler::whoIsAtIP(const std::string& IP)
     return position;
 }
 
-in6_addr NetHandler::getIPAddress()
-{
-    return uaddr.getAddr_in6()->sin6_addr;
-}
-
 const char *NetHandler::getHostname()
 {
     if (!ares)
