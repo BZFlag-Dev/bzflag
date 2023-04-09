@@ -275,13 +275,13 @@ bool            Address::isPrivate() const
     case AF_INET6:
         // fc00::/7
         if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
-            htonl(0xfe000000u)) ==
-            htonl(0xfc000000u))
+                htonl(0xfe000000u)) ==
+                htonl(0xfc000000u))
             return true;
         // fe80::/10
         if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
-            htonl(0xffc00000u)) ==
-            htonl(0xfe800000u))
+                htonl(0xffc00000u)) ==
+                htonl(0xfe800000u))
             return true;
         return false;
 

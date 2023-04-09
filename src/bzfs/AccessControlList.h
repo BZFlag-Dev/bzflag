@@ -107,6 +107,24 @@ struct BanInfo
         }
         // Compare network bits
         // FIXME: add v6 in v6 support
+        if (addr.getAddr()->sa_family == AF_INET &&
+                cAddr.getAddr()->sa_family == AF_INET)
+        {
+            // compare bytes
+            if (cidr >= 8 && memcmp(
+                        &addr.getAddr_in6()->sin6_addr,
+                        &cAddr.getAddr_in6()->sin6_addr,
+                        (128 - cidr) / 8 ))
+                return false;
+            // good up to the last byte, is that all?
+            if (!(cidr % 8))
+                return true;
+            // compare bits in the last byte
+            if (((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8] ^
+                    cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8]) &
+                    (uint8_t)(0xff << ((128 - cidr) % 8))) == 0)
+                return true;
+        }
         logDebugMessage(3,"contains(%s) FIXME: did not test %s/%i\n",
                         cAddr.getIpText().c_str(),
                         addr.getIpText().c_str(), cidr);

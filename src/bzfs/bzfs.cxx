@@ -986,7 +986,8 @@ static bool serverStart()
         return false;
     }
 #endif
-    if (serverAddr.getAddr()->sa_family == AF_INET6) {
+    if (serverAddr.getAddr()->sa_family == AF_INET6)
+    {
         /* for ipv6, accept connections for ipv4 as well */
         opt = optOff;
         if (setsockopt(wksSocket, IPPROTO_IPV6, IPV6_V6ONLY, (SSOType)&opt, sizeof(opt)) < 0)
