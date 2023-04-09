@@ -111,7 +111,7 @@ struct BanInfo
                 cAddr.getAddr()->sa_family == AF_INET)
         {
             // compare bytes
-            if (cidr >= 8 && memcmp(
+            if (cidr >= 8 && !memcmp(
                         &addr.getAddr_in6()->sin6_addr,
                         &cAddr.getAddr_in6()->sin6_addr,
                         (128 - cidr) / 8 ))
