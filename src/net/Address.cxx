@@ -241,8 +241,10 @@ bool            Address::isAny() const
         return ((const struct sockaddr_in*)&addr)->sin_addr.s_addr == htonl(INADDR_ANY);
 
     case AF_INET6:
-        logDebugMessage(0,"isAny needs IPv6 support\n");
-        return false;
+        return (addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+                addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+                addr.sin6_addr.__in6_u.__u6_addr32[2] == 0 &&
+                addr.sin6_addr.__in6_u.__u6_addr32[3] == 0);
 
     default:
         return false;
@@ -273,7 +275,16 @@ bool            Address::isPrivate() const
 
     case AF_INET6:
         // FIXME: add IPv6
-        logDebugMessage(0,"isPrivate needs IPv6 support\n");
+        // fc00::/7
+        if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
+            htonl(0xfe000000u)) ==
+            htonl(0xfc000000u))
+            return true;
+        // fe80::/10
+        if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
+            htonl(0xffc00000u)) ==
+            htonl(0xfe800000u))
+            return true;
         return false;
 
     default:
