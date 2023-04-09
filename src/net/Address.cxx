@@ -258,7 +258,6 @@ bool            Address::isPrivate() const
     switch(addr.sin6_family)
     {
     case AF_INET:
-
         // 127.0.0.0/8
         if ((ip4 & htonl(0xff000000u)) == htonl(0x7f000000u))
             return true;
@@ -274,7 +273,6 @@ bool            Address::isPrivate() const
         return false;
 
     case AF_INET6:
-        // FIXME: add IPv6
         // fc00::/7
         if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
             htonl(0xfe000000u)) ==
@@ -299,14 +297,17 @@ sockaddr *Address::getAddr()
 
 sockaddr_in *Address::getAddr_in()
 {
+    // we don't check family. This is really just a cast.
     return (sockaddr_in*)&addr;
 }
 
 sockaddr_in6 *Address::getAddr_in6()
 {
+    // we don't check family. This is really just a cast.
     return &addr;
 }
 
+// Get the port in network byte order
 in_port_t Address::getNPort() const
 {
     return addr.sin6_port;
