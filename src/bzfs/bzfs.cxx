@@ -963,6 +963,7 @@ static bool serverStart()
     BOOL opt;
 #else
     const int optOn = 1;
+    const int optOff = 0;
     int opt;
 #endif
 #endif
@@ -985,6 +986,17 @@ static bool serverStart()
         return false;
     }
 #endif
+    if (serverAddr.getAddr()->sa_family == AF_INET6) {
+        /* for ipv6, accept connections for ipv4 as well */
+        opt = optOff;
+        if (setsockopt(wksSocket, IPPROTO_IPV6, IPV6_V6ONLY, (SSOType)&opt, sizeof(opt)) < 0)
+        {
+            nerror("serverStart: setsockopt IPV6_V6ONLY");
+            close(wksSocket);
+            return false;
+        }
+    }
+
     if (bind(wksSocket, serverAddr.getAddr(), sizeof(struct sockaddr_in6)) == -1)
     {
         nerror("couldn't bind connect socket");
