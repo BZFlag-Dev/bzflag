@@ -69,17 +69,15 @@ struct BanInfo
         if (cidr < 1)
             return true;
         // IPv4 CIDR of 32 means it has to be an exact match
-        if (addr.getAddr()->sa_family == AF_INET &&
-                cidr >= 32 && addr == cAddr)
-            return true;
+        if (cidr >= 32 && addr.getAddr()->sa_family == AF_INET)
+            return addr == cAddr;
         // IPv6 CIDR of 128 means it has to be an exact match
-        if (addr.getAddr()->sa_family == AF_INET6 &&
-                cidr >= 128 && addr == cAddr)
-            return true;
+        if (cidr >= 128 && addr.getAddr()->sa_family == AF_INET6)
+            return addr == cAddr;
         if (addr.getAddr()->sa_family == AF_INET &&
                 cAddr.getAddr()->sa_family == AF_INET)
         {
-            // both ipv4, normal mask check
+            // both ipv4, ipv4 cidr mask check
             const sockaddr_in *ip4a = addr.getAddr_in();
             const sockaddr_in *ip4b = cAddr.getAddr_in();
             return !((ip4a->sin_addr.s_addr ^
@@ -105,27 +103,25 @@ struct BanInfo
                       ip4->sin_addr.s_addr) &
                      htonl(0xFFFFFFFFu << (128 - cidr)));
         }
-        // Compare network bits
-        // FIXME: add v6 in v6 support
-        if (addr.getAddr()->sa_family == AF_INET &&
-                cAddr.getAddr()->sa_family == AF_INET)
+        // both are IPv6
+        if (addr.getAddr()->sa_family == AF_INET6 &&
+                cAddr.getAddr()->sa_family == AF_INET6)
         {
-            // compare bytes
-            if (cidr >= 8 && !memcmp(
+            // cidr mask excluding last partial byte if any
+            if (cidr >= 8 && memcmp(
                         &addr.getAddr_in6()->sin6_addr,
                         &cAddr.getAddr_in6()->sin6_addr,
-                        (128 - cidr) / 8 ))
+                        cidr / 8 ))
                 return false;
             // good up to the last byte, is that all?
             if (!(cidr % 8))
                 return true;
             // compare bits in the last byte
-            if (((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8] ^
-                    cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8]) &
-                    (uint8_t)(0xff << ((128 - cidr) % 8))) == 0)
-                return true;
+            return (((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8] ^
+                      cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8]) &
+                     (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
         }
-        logDebugMessage(3,"contains(%s) FIXME: did not test %s/%i\n",
+        logDebugMessage(5,"contains(%s) FIXME: did not test %s/%i\n",
                         cAddr.getIpText().c_str(),
                         addr.getIpText().c_str(), cidr);
         return false;
