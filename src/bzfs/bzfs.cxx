@@ -1420,7 +1420,7 @@ static bool MakePlayer ( NetHandler *handler )
     }
     else     // full? reject by closing socket
     {
-        logDebugMessage(1,"all slots occupied, rejecting accept() from %s:%d on %i\n",
+        logDebugMessage(1,"all slots occupied, rejecting accept() from %s on %i\n",
                         handler->getTargetIP(), handler->getFD());
 
         // send back 0xff before closing
