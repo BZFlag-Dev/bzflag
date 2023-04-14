@@ -414,45 +414,23 @@ static void     parse(int argc, char** argv)
             {
                 // argv[i] = username:password@server:port
                 // variables to store
-                std::string serverName, callsign, password;
-                int port;
+                std::string callsign, password, namePort, serverName;
 
                 // start splitting stuff
                 const std::string argument = std::string(argv[i]);
                 const size_t atSplit = argument.find("@");
-                const size_t portSplit = argument.rfind(":");
-                const size_t passSplit = argument.find(":");
 
                 if (atSplit != std::string::npos)   // we found an "@"
                 {
-                    if (portSplit != std::string::npos)   // we have a port
+                    callsign = argument.substr(0, atSplit);
+                    const size_t passSplit = callsign.find(':');
+                    if (passSplit != std::string::npos)
                     {
-                        serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
-                        port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
-
-                        if (port < 1 || port > 65535)   // invalid port
-                        {
-                            printFatalError("Bad port, using default %d.", ServerPort);
-                            port = ServerPort;
-                        }
+                        password = callsign.substr(passSplit + 1).c_str();
+                        callsign = callsign.substr(0, passSplit);
                     }
-                    else   //we don't have a port
-                    {
-                        serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
-                        port = ServerPort;
-                    }
-
-                    if (portSplit != passSplit)   // there's a password to parse
-                    {
-                        callsign = argument.substr(0, passSplit);
-                        password = argument.substr(passSplit + 1, atSplit - passSplit - 1);
-                    }
-                    else   // just a username
-                    {
-                        callsign = argument.substr(0, atSplit);
-                        password = "";
-                    }
-
+                    if (!splitNamePort(argument.substr(atSplit + 1, argument.length() - atSplit), serverName, startupInfo.serverPort))
+                        printFatalError("Unable to parse server name %s", namePort);
                     // length checks and always truncate everything after the max length
                     if (callsign.length() > sizeof(startupInfo.callsign))
                     {
@@ -474,26 +452,11 @@ static void     parse(int argc, char** argv)
                     strcpy(startupInfo.callsign, callsign.c_str());
                     strcpy(startupInfo.password, password.c_str());
                     strcpy(startupInfo.serverName, serverName.c_str());
-                    startupInfo.serverPort = port;
                 }
                 else   // there is no callsign/password so only a destination
                 {
-                    if (portSplit != std::string::npos)   // we have a port
-                    {
-                        serverName = argument.substr(atSplit + 1, portSplit - atSplit - 1);
-                        port = atoi(argument.substr(portSplit + 1, argument.length() - portSplit).c_str());
-
-                        if (port < 1 || port > 65535)   // invalid port
-                        {
-                            printFatalError("Bad port, using default %d.", ServerPort);
-                            port = ServerPort;
-                        }
-                    }
-                    else   //we don't have a port
-                    {
-                        serverName = argument.substr(atSplit + 1, argument.length() - atSplit);
-                        port = ServerPort;
-                    }
+                    if (!splitNamePort(argument, serverName, startupInfo.serverPort))
+                        printFatalError("Unable to parse server name %s", namePort);
 
                     // sanity check for length
                     if (serverName.length() > sizeof(startupInfo.serverName))
@@ -503,7 +466,6 @@ static void     parse(int argc, char** argv)
                     }
 
                     strcpy(startupInfo.serverName, serverName.c_str());
-                    startupInfo.serverPort = port;
                 }
 
                 startupInfo.autoConnect = true; // automatically connect on start up

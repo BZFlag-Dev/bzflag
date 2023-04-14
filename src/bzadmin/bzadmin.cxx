@@ -108,7 +108,7 @@ int main(int argc, char** argv)
     // check that we have callsign and host in the right format and extract them
     {
         int atPos;
-        std::string callsign = "", password = "", serverName = "";
+        std::string callsign = "", password = "", namePort = "", serverName = "";
         if (!(op.getParameters().size() > 0 &&
                 (atPos = op.getParameters()[0].find('@')) > 0))
         {
@@ -142,17 +142,10 @@ int main(int argc, char** argv)
                 password = callsign.substr(pPos + 1).c_str();
                 callsign = callsign.substr(0, pPos);
             }
-            serverName = op.getParameters()[0].substr(atPos + 1);
+            namePort = op.getParameters()[0].substr(atPos + 1);
         }
-        startupInfo.serverPort = ServerPort;
-        int cPos = serverName.find(':');
-        if (cPos != -1)
-        {
-            long int serverPort = strtol(serverName.substr(cPos + 1).c_str(), (char **)NULL, 10);
-            if (serverPort > 0 && serverPort < 65536)
-                startupInfo.serverPort = (int) serverPort;
-            serverName = serverName.substr(0, cPos);
-        }
+        if (!splitNamePort(namePort, serverName, startupInfo.serverPort))
+            return 1;
         // Flawfinder: ignore
         strncpy(startupInfo.callsign, callsign.c_str(), sizeof(startupInfo.callsign) - 1);
         // Flawfinder: ignore
@@ -162,8 +155,7 @@ int main(int argc, char** argv)
     }
     std::cerr << "Connecting to " <<
               startupInfo.callsign << "@" <<
-              startupInfo.serverName << ":" <<
-              startupInfo.serverPort;
+              joinNamePort(startupInfo.serverName, startupInfo.serverPort);
     // Check if password is not empty
     if (startupInfo.password[0])
         std::cerr << " using central login";

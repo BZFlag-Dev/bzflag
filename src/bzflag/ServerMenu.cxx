@@ -803,18 +803,10 @@ void ServerMenu::execute()
 
     // update startup info
     StartupInfo* info = getStartupInfo();
-    strncpy(info->serverName, serverList.getServers()[selectedIndex].name.c_str(), sizeof(info->serverName) - 1);
+    std::string serverName;
+    splitNamePort(serverList.getServers()[selectedIndex].name, serverName, info->serverPort);
+    strncpy(info->serverName, serverName.c_str(), sizeof(info->serverName) - 1);
     info->serverName[sizeof(info->serverName) - 1] = '\0';
-    info->serverPort = ServerPort;
-    int cPos = serverList.getServers()[selectedIndex].name.find(':');
-    if (cPos != -1)
-    {
-        long int serverPort = strtol(serverList.getServers()[selectedIndex].name.substr(cPos + 1).c_str(), (char **)NULL, 10);
-        if (serverPort > 0 && serverPort < 65536)
-            info->serverPort = (int) serverPort;
-        info->serverName[cPos] = '\0';
-    }
-
 
     // all done
     HUDDialogStack::get()->pop();

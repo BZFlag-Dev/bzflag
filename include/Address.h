@@ -38,6 +38,8 @@ typedef struct in6_addr  InAddr;         // shorthand
 // helpers
 char *sockaddr2iptext(const struct sockaddr *sa);
 char *sockaddr2iptextport(const struct sockaddr *sa);
+bool splitNamePort(std::string nameport, std::string &name, int &port);
+std::string joinNamePort(std::string name, int port);
 
 class Address
 {

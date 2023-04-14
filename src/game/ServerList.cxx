@@ -119,9 +119,9 @@ void ServerList::readServerList()
             continue;
         }
         // parse server info
-        char *scan2, *name, *version, *infoServer, *description;
-        name = base;
-        version = name;
+        char *namePort, *version, *infoServer, *description;
+        namePort = base;
+        version = namePort;
         while (*version && !isspace(*version))  version++;
         while (*version &&  isspace(*version)) *version++ = 0;
         infoServer = version;
@@ -132,13 +132,9 @@ void ServerList::readServerList()
         while (*description &&  isspace(*description)) *description++ = 0;
 
         // extract port number from address
-        int port = ServerPort;
-        scan2 = strchr(name, ':');
-        if (scan2)
-        {
-            port = atoi(scan2 + 1);
-            *scan2 = 0;
-        }
+        int port;
+        std::string name;
+        splitNamePort(std::string(namePort), name, port);
 
         // check info
         if (strcmp(version, getServerVersion()) == 0 &&
@@ -148,9 +144,7 @@ void ServerList::readServerList()
             // store info
             ServerItem serverInfo;
             serverInfo.ping.unpackHex(infoServer);
-            serverInfo.name = name;
-            if (port != ServerPort)
-                serverInfo.name += ":" + std::to_string(port);
+            serverInfo.name = joinNamePort(name, port);
             serverInfo.description = description;
             serverInfo.cached = false;
 

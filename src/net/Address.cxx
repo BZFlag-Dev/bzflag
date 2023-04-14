@@ -19,6 +19,7 @@
 // system headers
 #include <string.h>
 #include <string>
+#include <regex>
 #include <sys/types.h>
 #if !defined(_WIN32)
 #include <unistd.h>
@@ -90,6 +91,52 @@ char *sockaddr2iptextport(const struct sockaddr *sa)
     return iptextport;
 }
 
+bool splitNamePort(std::string namePort, std::string &name, int &port)
+{
+    std::smatch m;
+
+    if (regex_search(namePort, m, std::regex("^\\[([a-fA-F0-9:]*)\\]:([0-9]*)$")))
+    {
+        // [v6]:port
+        long int serverPort = strtol(m.str(2).c_str(), NULL, 10);
+        if (serverPort > 0 && serverPort < 65536)
+        {
+            port = (int) serverPort;
+            name = m.str(1);
+            return true;
+        }
+    }
+    if (regex_search(namePort, m, std::regex("^([a-fA-F0-9:]*)$")))
+    {
+        // bare v6
+        port = ServerPort;
+        name = m.str(1);
+        return true;
+    }
+    int cPos = namePort.find(':');
+    if (cPos != std::string::npos)
+    {
+        long int serverPort = strtol(namePort.substr(cPos + 1).c_str(), (char **)NULL, 10);
+        if (serverPort > 0 && serverPort < 65536)
+            port = (int) serverPort;
+        name = namePort.substr(0, cPos);
+    }
+    else
+    {
+        name = namePort;
+        return true;
+    }
+    return false;
+}
+std::string joinNamePort(std::string name, int port)
+{
+    if (port == ServerPort)
+        return name;
+    if (regex_search(name, std::regex("^([a-fA-F0-9:]*)$")))
+        return "[" + name + "]:" + std::to_string(port);
+    return name + ":" + std::to_string(port);
+}
+
 //
 // Address
 //
@@ -108,9 +155,9 @@ Address::Address(const std::string &_iptextport)
     // FIXME: handle brackets like [2001:db8::1]:5154 ?
     // FIXME: what to do with 2001:db8::1:5154 or 2001:db8:::5154 ?
 
-    std::size_t found = _iptextport.find_last_of(":");
-    std::string tryiptext = _iptextport.substr(0, found);
-    std::string port = _iptextport.substr(found + 1);
+    std::string tryiptext;
+    int port;
+    splitNamePort(_iptextport, tryiptext, port);
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
@@ -121,7 +168,7 @@ Address::Address(const std::string &_iptextport)
     hints.ai_addr = NULL;
     hints.ai_next = NULL;
     // FIXME: make this non-blocking
-    int s = getaddrinfo(tryiptext.c_str(), port.c_str(), &hints, &result);
+    int s = getaddrinfo(tryiptext.c_str(), std::to_string(port).c_str(), &hints, &result);
     if (s == 0)
     {
         // FIXME: try other entries

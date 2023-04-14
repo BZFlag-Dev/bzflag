@@ -40,11 +40,7 @@ StartupInfo startupInfo;
 BZAdminClient::BZAdminClient(BZAdminUI* bzInterface)
     : myTeam(ObserverTeam), valid(false), ui(bzInterface)
 {
-    //Address serverAddress = Address::getHostAddress(startupInfo.serverName);
-    std::string namePort(startupInfo.serverName);
-    namePort += ":";
-    namePort += std::to_string(startupInfo.serverPort);
-    Address serverAddress = Address(namePort);
+    Address serverAddress = Address(joinNamePort(startupInfo.serverName, startupInfo.serverPort));
 
     sLink = new ServerLink(serverAddress);
 
