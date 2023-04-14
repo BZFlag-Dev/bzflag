@@ -85,9 +85,9 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
 
     status = HbAPending;
     // launch the asynchronous query to look up this hostname
+    logDebugMessage(2,"Player [%d] submitting reverse resolve query\n", index);
     ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,
                        sizeof(in_addr), clientAddr->sa_family, staticHostCallback, (void *)this);
-    logDebugMessage(2,"Player [%d] submitted reverse resolve query\n", index);
 }
 
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5

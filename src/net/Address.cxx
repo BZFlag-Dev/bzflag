@@ -124,6 +124,7 @@ bool splitNamePort(std::string namePort, std::string &name, int &port)
     else
     {
         name = namePort;
+        port = ServerPort;
         return true;
     }
     return false;
@@ -150,10 +151,6 @@ Address::Address(const std::string &_iptextport)
 {
     struct addrinfo hints;
     struct addrinfo *result;
-
-    // FIXME: handle ip with no : and assume port 0 for banlists, etc. ?
-    // FIXME: handle brackets like [2001:db8::1]:5154 ?
-    // FIXME: what to do with 2001:db8::1:5154 or 2001:db8:::5154 ?
 
     std::string tryiptext;
     int port;
