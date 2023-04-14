@@ -99,7 +99,7 @@ bool splitNamePort(std::string namePort, std::string &name, int &port)
     {
         // [v6]:port
         long int serverPort = strtol(m.str(2).c_str(), NULL, 10);
-        if (serverPort > 0 && serverPort < 65536)
+        if (serverPort >= 0 && serverPort < 65536)
         {
             port = (int) serverPort;
             name = m.str(1);
@@ -117,7 +117,7 @@ bool splitNamePort(std::string namePort, std::string &name, int &port)
     if (cPos != std::string::npos)
     {
         long int serverPort = strtol(namePort.substr(cPos + 1).c_str(), (char **)NULL, 10);
-        if (serverPort > 0 && serverPort < 65536)
+        if (serverPort >= 0 && serverPort < 65536)
             port = (int) serverPort;
         name = namePort.substr(0, cPos);
     }
@@ -130,10 +130,10 @@ bool splitNamePort(std::string namePort, std::string &name, int &port)
 }
 std::string joinNamePort(std::string name, int port)
 {
-    if (port == ServerPort)
-        return name;
     if (regex_search(name, std::regex("^([a-fA-F0-9:]*)$")))
         return "[" + name + "]:" + std::to_string(port);
+    if (port == ServerPort)
+        return name;
     return name + ":" + std::to_string(port);
 }
 

@@ -770,7 +770,7 @@ bool AccessControlList::convert(std::string ip, Address &mask, unsigned char &_c
         const int val = atoi(ipcidrParts[1].c_str());
 
         // parse the address
-        mask = Address(ipcidrParts[0] + ":0");
+        mask = Address(joinNamePort(ipcidrParts[0],0));
 
         switch (mask.getAddr()->sa_family)
         {

@@ -6860,7 +6860,7 @@ int main(int argc, char **argv)
 
     if (clOptions->pingInterface == "")
         clOptions->pingInterface = "::";
-    serverAddr = Address(clOptions->pingInterface + ":" + std::to_string(clOptions->wksPort));
+    serverAddr = Address(joinNamePort(clOptions->pingInterface, clOptions->wksPort));
 
     if (clOptions->UPnP)
         bzUPnP.start();
