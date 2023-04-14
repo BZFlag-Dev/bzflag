@@ -113,7 +113,7 @@ bool splitNamePort(std::string namePort, std::string &name, int &port)
         name = m.str(1);
         return true;
     }
-    int cPos = namePort.find(':');
+    size_t cPos = namePort.find(':');
     if (cPos != std::string::npos)
     {
         long int serverPort = strtol(namePort.substr(cPos + 1).c_str(), (char **)NULL, 10);
