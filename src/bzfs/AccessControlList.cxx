@@ -21,6 +21,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <regex>
 #include <algorithm>
 #include <iostream>
 #include <sstream>
@@ -54,6 +55,9 @@ void AccessControlList::ban(const Address *ipAddr, const char *bannedBy, int per
 bool AccessControlList::ban(std::string &ipList, const char *bannedBy, int period,
                             const char *reason, bool fromMaster)
 {
+    ipList = std::regex_replace(ipList, std::regex("\\*\\.\\*\\.\\*$"), "0.0.0/8");
+    ipList = std::regex_replace(ipList, std::regex("\\*\\.\\*$"), "0.0/16");
+    ipList = std::regex_replace(ipList, std::regex("\\*$"), "0/24");
     return ban(ipList.c_str(), bannedBy, period, reason,fromMaster);
 }
 
