@@ -50,30 +50,39 @@ extern "C" int inet_aton(const char *, struct in_addr *);
 #endif
 
 // helper function, might want to live someplace else
-static char iptextbuf[INET6_ADDRSTRLEN];
+static char iptext[INET6_ADDRSTRLEN];
+const char v4inv6[] = "::ffff:"; // remove this on v4 in v6 space
 char *sockaddr2iptext(const struct sockaddr *sa)
 {
+    const sockaddr_in6 *ip6 = (const sockaddr_in6 *)sa;
+
     switch(sa->sa_family)
     {
     case AF_INET:
-        inet_ntop(AF_INET, &(((const struct sockaddr_in *)sa)->sin_addr), iptextbuf, INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET, &(((const struct sockaddr_in *)sa)->sin_addr), iptext, INET6_ADDRSTRLEN);
         break;
 
     case AF_INET6:
-        inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), iptextbuf, INET6_ADDRSTRLEN);
+        inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), iptext, INET6_ADDRSTRLEN);
+        if (ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+                ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+                ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+            memmove(iptext,&iptext[sizeof(v4inv6) - 1], sizeof(iptext) - sizeof(v4inv6));
         break;
 
     default:
-        strncpy(iptextbuf, "Unknown AF", 11);
+        strncpy(iptext, "Unknown AF", 11);
     }
 
-    return iptextbuf;
+    return iptext;
 }
 
 // address + []:port
 static char iptextport[INET6_ADDRSTRLEN + 8];
 char *sockaddr2iptextport(const struct sockaddr *sa)
 {
+    const sockaddr_in6 *ip6 = (const sockaddr_in6 *)sa;
+
     switch(sa->sa_family)
     {
     case AF_INET:
@@ -81,7 +90,12 @@ char *sockaddr2iptextport(const struct sockaddr *sa)
         break;
 
     case AF_INET6:
-        sprintf(iptextport, "[%s]:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
+        if (ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+                ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+                ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+            sprintf(iptextport, "%s:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
+        else
+            sprintf(iptextport, "[%s]:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
         break;
 
     default:

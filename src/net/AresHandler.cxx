@@ -82,12 +82,22 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
 {
     if (aresFailed)
         return;
-
+    const sockaddr_in6 *ip6 = (const sockaddr_in6 *)clientAddr;
     status = HbAPending;
     // launch the asynchronous query to look up this hostname
     logDebugMessage(2,"Player [%d] submitting reverse resolve query\n", index);
-    ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,
-                       sizeof(in_addr), clientAddr->sa_family, staticHostCallback, (void *)this);
+    if (clientAddr->sa_family == AF_INET6 &&
+            ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
+            ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
+            ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    {
+        // lookup wrapped v4 in v6
+        ares_gethostbyaddr(aresChannel, &ip6->sin6_addr.__in6_u.__u6_addr32[3],
+                           sizeof(uint32_t), AF_INET, staticHostCallback, (void *)this);
+    }
+    else
+        ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,
+                           sizeof(in_addr), clientAddr->sa_family, staticHostCallback, (void *)this);
 }
 
 #if ARES_VERSION_MAJOR >= 1 && ARES_VERSION_MINOR >= 5
