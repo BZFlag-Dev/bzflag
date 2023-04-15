@@ -266,6 +266,8 @@ than the first 50 lines of \fIfile\fR to the player.
 Server will listen for and respond to ``pings'' (sent via broadcast)
 on the given interface.  Clients use this to find active servers on the
 network. This is the TCP/UDP/IP address the server will listen on.
+Default is \fI::\fR which should accept IPv4 and IPv6 clients. Use
+\fB-i 0.0.0.0\fR to support only IPv4 clients.
 .TP
 .B \-j
 Allows jumping.
