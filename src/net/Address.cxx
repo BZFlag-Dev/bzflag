@@ -185,7 +185,7 @@ Address::Address(const std::string &_iptextport)
         // FIXME: try other entries
         memcpy(&addr, (const void *)result->ai_addr, sizeof(addr));
         freeaddrinfo(result);
-        logDebugMessage(3, "Address() got: %s from %s\n",
+        logDebugMessage(5, "Address() got: %s from %s\n",
                         getIpTextPort().c_str(), _iptextport.c_str());
         return;
     }
