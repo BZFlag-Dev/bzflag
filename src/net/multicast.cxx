@@ -117,9 +117,9 @@ int         openBroadcast(int port, const char* service,
 
     sockaddr_in6 bcastaddr;
     socklen_t bcastaddrlen = sizeof(bcastaddr);
-    if (getsockname(fd, (sockaddr *)&bcastaddr, &bcastaddrlen)) {
+    if (getsockname(fd, (sockaddr *)&bcastaddr, &bcastaddrlen))
         nerror("openBroadcast getsockname");
-    };
+    ;
     logDebugMessage(5, "BCast bind: %s\n", sockaddr2iptextport((sockaddr *)&bcastaddr));
 
     /* make broadcast */
