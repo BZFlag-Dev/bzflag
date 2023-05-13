@@ -208,6 +208,10 @@ extern int debugLevel;
 #  include <inttypes.h>
 #endif
 
+#ifndef in_port_t
+#  define in_port_t uint16_t
+#endif
+
 #ifdef HAVE_STDINT_H
 #  include <stdint.h>
 #else

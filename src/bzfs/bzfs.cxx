@@ -960,6 +960,7 @@ static bool serverStart()
 #ifdef SO_REUSEADDR
 #if defined(_WIN32)
     const BOOL optOn = TRUE;
+    const BOOL optOff = FALSE;
     BOOL opt;
 #else
     const int optOn = 1;

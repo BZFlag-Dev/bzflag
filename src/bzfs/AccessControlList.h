@@ -128,7 +128,7 @@ struct BanInfo
     }
 
     Address     addr;
-    u_int8_t    cidr;
+    uint8_t    cidr;
     TimeKeeper  banEnd;
     std::string bannedBy;   // Who did perform the ban
     std::string reason;     // reason for banning

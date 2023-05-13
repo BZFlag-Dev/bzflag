@@ -479,7 +479,7 @@ const void*     Address::unpack(const void* _buf)
 
     const unsigned char* buf = (const unsigned char*)_buf;
     memset(&addr, 0, sizeof(addr));
-    u_int8_t family;
+    uint8_t family;
     buf = (const unsigned char*)nboUnpackUByte(buf, family);
     addr.sin6_family = family;
     switch(addr.sin6_family)

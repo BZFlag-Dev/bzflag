@@ -171,8 +171,8 @@ ServerLink::ServerLink(Address& serverAddress)
 
     // Initialize structure
     conn.query = query;
-    conn.addr = (CNCTType*)&addr;
-    conn.saddr = sizeof(addr);
+    conn.addr = serverAddress.getAddr();
+    conn.saddr = sizeof(struct sockaddr_in6);
 
     // Create event
     hConnected = CreateEvent(NULL, FALSE, FALSE, "Connected Event");
