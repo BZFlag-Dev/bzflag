@@ -64,9 +64,7 @@ char *sockaddr2iptext(const struct sockaddr *sa)
 
     case AF_INET6:
         inet_ntop(AF_INET6, &(((const struct sockaddr_in6 *)sa)->sin6_addr), iptext, INET6_ADDRSTRLEN);
-        if (ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-                ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+        if (IN6_IS_ADDR_V4MAPPED(&ip6->sin6_addr))
             memmove(iptext,&iptext[sizeof(v4inv6) - 1], sizeof(iptext) - sizeof(v4inv6));
         break;
 
@@ -90,9 +88,7 @@ char *sockaddr2iptextport(const struct sockaddr *sa)
         break;
 
     case AF_INET6:
-        if (ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-                ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+        if (IN6_IS_ADDR_V4MAPPED(&ip6->sin6_addr))
             sprintf(iptextport, "%s:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
         else
             sprintf(iptextport, "[%s]:%u", sockaddr2iptext(sa), ntohs(((const struct sockaddr_in6 *)sa)->sin6_port));
@@ -242,7 +238,8 @@ bool            Address::operator==(const Address& address) const
     {
         // addr is mapped ipv4 in ipv6
         const sockaddr_in *ip4b = (const sockaddr_in *)&address.addr;
-        return addr.sin6_addr.__in6_u.__u6_addr32[3] == ip4b->sin_addr.s_addr;
+        // TODO: Check if this actually works
+        return ((const in_addr*)(addr.sin6_addr.s6_addr + 12))->s_addr == ip4b->sin_addr.s_addr;
     }
     if (addr.sin6_family == AF_INET &&
             address.addr.sin6_family == AF_INET6 &&
@@ -250,7 +247,8 @@ bool            Address::operator==(const Address& address) const
     {
         // addrress.addr is mapped ipv4 in ipv6
         const sockaddr_in *ip4a = (const sockaddr_in *)&addr;
-        return ip4a->sin_addr.s_addr == address.addr.sin6_addr.__in6_u.__u6_addr32[3];
+        // TODO: Check if this actually works
+        return ip4a->sin_addr.s_addr == ((const in_addr*)(address.addr.sin6_addr.s6_addr + 12))->s_addr;
     }
     logDebugMessage(4,"Address== mixed family: %s\n",
                     sockaddr2iptextport((const struct sockaddr *)&address.addr));
@@ -276,14 +274,32 @@ bool            Address::isMapped() const
     {
     case AF_INET6:
         // IPv4 mapped into ::ffff:a.b.c.d space
-        if (addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-                addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+        if (IN6_IS_ADDR_V4MAPPED(&addr.sin6_addr))
             return true;
         // NAT64 common space 64:ff9b::8.8.8.8
+#ifdef _WIN32
+        // TODO: Check if this actually works
+        // TODO: Use s6_words instead to shorten this?
+        else if (
+            (addr.sin6_addr.s6_bytes[0] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[1] == 0x64) &&
+            (addr.sin6_addr.s6_bytes[2] == 0xff) &&
+            (addr.sin6_addr.s6_bytes[3] == 0x9b) &&
+            (addr.sin6_addr.s6_bytes[4] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[5] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[6] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[7] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[8] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[9] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[10] == 0x00) &&
+            (addr.sin6_addr.s6_bytes[11] == 0x00)
+        )
+#else
+        // TODO: Where does the ffff come from in the third set of 32-bit?
         else if (addr.sin6_addr.__in6_u.__u6_addr32[0] == htonl(0x0064ff9b) &&
                  addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                 addr.sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+                 addr.sin6_addr.__in6_u.__u6_addr32[2] == 0)
+#endif
             return true;
         return false;
     default:
@@ -299,10 +315,8 @@ bool            Address::isAny() const
         return ((const struct sockaddr_in*)&addr)->sin_addr.s_addr == htonl(INADDR_ANY);
 
     case AF_INET6:
-        return (addr.sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-                addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                addr.sin6_addr.__in6_u.__u6_addr32[2] == 0 &&
-                addr.sin6_addr.__in6_u.__u6_addr32[3] == 0);
+        // TODO: Check if this actually works
+        return IN6_ARE_ADDR_EQUAL(&in6addr_any, &addr.sin6_addr);
 
     default:
         return false;
@@ -332,14 +346,17 @@ bool            Address::isPrivate() const
 
     case AF_INET6:
         // fc00::/7
+#ifdef _WIN32
+        // TODO: Check if this actually works
+        if ((addr.sin6_addr.s6_bytes[0] == 0xfc) && ((addr.sin6_addr.s6_bytes[1] & 0xc0) == 0x00))
+#else // _WIN32
         if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
                 htonl(0xfe000000u)) ==
                 htonl(0xfc000000u))
+#endif // _WIN32
             return true;
         // fe80::/10
-        if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
-                htonl(0xffc00000u)) ==
-                htonl(0xfe800000u))
+        if (IN6_IS_ADDR_LINKLOCAL(&addr.sin6_addr))
             return true;
         return false;
 
@@ -387,7 +404,9 @@ std::string     Address::getIpTextPort()
 
 uint8_t         Address::getIPVersion() const
 {
-    return addr.sin6_family;
+    if (addr.sin6_family == AF_INET6)
+        return BZF_INET6;
+    return BZF_INET;
 }
 
 static const struct hostent* bz_gethostbyname(const std::string &name)
@@ -447,7 +466,7 @@ void*           Address::pack(void* _buf) const
     // ipv4 pointer to simplfy code
     const struct sockaddr_in *addr_in = (const struct sockaddr_in *)&addr;
 
-    buf = (unsigned char*)nboPackUByte(_buf, addr.sin6_family);
+    buf = (unsigned char*)nboPackUByte(_buf, getIPVersion());
     // should already in network byte order
     switch(addr.sin6_family)
     {
@@ -481,17 +500,18 @@ const void*     Address::unpack(const void* _buf)
     memset(&addr, 0, sizeof(addr));
     uint8_t family;
     buf = (const unsigned char*)nboUnpackUByte(buf, family);
-    addr.sin6_family = family;
-    switch(addr.sin6_family)
+    switch(family)
     {
-    case AF_INET:
+    case BZF_INET:
+        addr.sin6_family = AF_INET;
         ::memcpy(&(addr_in->sin_addr), buf, sizeof(in_addr_t));
         buf += sizeof(in_addr_t);
         ::memcpy(&addr_in->sin_port, buf, sizeof(in_port_t));
         buf += sizeof(in_port_t);
         break;
 
-    case AF_INET6:
+    case BZF_INET6:
+        addr.sin6_family = AF_INET6;
         ::memcpy(&addr.sin6_addr, buf, sizeof(in6_addr));
         buf += sizeof(in6_addr);
         ::memcpy(&addr.sin6_port, buf, sizeof(in_port_t));

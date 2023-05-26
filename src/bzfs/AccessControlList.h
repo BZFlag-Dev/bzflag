@@ -89,7 +89,8 @@ struct BanInfo
         {
             // cAddr is mapped ipv4 in ipv6
             const sockaddr_in *ip4 = addr.getAddr_in();
-            return !((cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr32[3] ^
+            // TODO: Check if this actually works
+            return !((((in_addr*)(cAddr.getAddr_in6()->sin6_addr.s6_addr + 12))->s_addr ^
                       ip4->sin_addr.s_addr) &
                      htonl(0xFFFFFFFFu << (32 - cidr)));
         }
@@ -99,9 +100,10 @@ struct BanInfo
             // addr is mapped ipv4 in ipv6
             // This should never happen. Masks should be in native format
             const sockaddr_in *ip4 = cAddr.getAddr_in();
-            return !((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr32[3] ^
+            // TODO: Check if this actually works
+            return !((((in_addr*)(addr.getAddr_in6()->sin6_addr.s6_addr + 12))->s_addr ^
                       ip4->sin_addr.s_addr) &
-                     htonl(0xFFFFFFFFu << (128 - cidr)));
+                     htonl(0xFFFFFFFFu << (32 - cidr)));
         }
         // both are IPv6
         if (addr.getAddr()->sa_family == AF_INET6 &&
@@ -117,9 +119,16 @@ struct BanInfo
             if (!(cidr % 8))
                 return true;
             // compare bits in the last byte
+#ifdef _WIN32
+            // TODO: Check if this actually works
+            return (((addr.getAddr_in6()->sin6_addr.s6_bytes[cidr / 8] ^
+                      cAddr.getAddr_in6()->sin6_addr.s6_bytes[cidr / 8]) &
+                     (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
+#else // _WIN32
             return (((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8] ^
                       cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8]) &
                      (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
+#endif // _WIN32
         }
         logDebugMessage(5,"contains(%s) FIXME: did not test %s/%i\n",
                         cAddr.getIpText().c_str(),

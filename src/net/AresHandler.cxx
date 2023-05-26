@@ -86,14 +86,16 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
     status = HbAPending;
     // launch the asynchronous query to look up this hostname
     logDebugMessage(2,"Player [%d] submitting reverse resolve query\n", index);
-    if (clientAddr->sa_family == AF_INET6 &&
-            ip6->sin6_addr.__in6_u.__u6_addr32[0] == 0 &&
-            ip6->sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-            ip6->sin6_addr.__in6_u.__u6_addr32[2] == htonl(0xffff))
+    if (clientAddr->sa_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED(&ip6->sin6_addr))
     {
         // lookup wrapped v4 in v6
-        ares_gethostbyaddr(aresChannel, &ip6->sin6_addr.__in6_u.__u6_addr32[3],
-                           sizeof(uint32_t), AF_INET, staticHostCallback, (void *)this);
+#ifdef _WIN32
+        // TODO: Check if this actually works. This is a horribly untested guess.
+        const sockaddr_in* clientV4Addr = (const sockaddr_in *)((in_addr*)(ip6->sin6_addr.s6_addr + 12))->s_addr;
+#else // _WIN32
+        const sockaddr_in* clientV4Addr = (const sockaddr_in *)&ip6->sin6_addr.__in6_u.__u6_addr32[3];
+#endif // _WIN32
+        ares_gethostbyaddr(aresChannel, clientV4Addr, sizeof(uint32_t), AF_INET, staticHostCallback, (void *)this);
     }
     else
         ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,

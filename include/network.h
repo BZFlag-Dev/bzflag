@@ -120,6 +120,9 @@ extern "C" {
 #  define INADDR_NONE   ((in_addr_t)0xffffffff)
 #endif
 
+#define BZF_INET 4
+#define BZF_INET6 6
+
 // for all platforms
 extern "C" {
     void          nerror(const char* msg);
