@@ -89,13 +89,8 @@ void AresHandler::queryHostname(const struct sockaddr *clientAddr)
     if (clientAddr->sa_family == AF_INET6 && IN6_IS_ADDR_V4MAPPED(&ip6->sin6_addr))
     {
         // lookup wrapped v4 in v6
-#ifdef _WIN32
-        // TODO: Check if this actually works. This is a horribly untested guess.
-        const sockaddr_in* clientV4Addr = (const sockaddr_in *)((in_addr*)(ip6->sin6_addr.s6_addr + 12))->s_addr;
-#else // _WIN32
-        const sockaddr_in* clientV4Addr = (const sockaddr_in *)&ip6->sin6_addr.__in6_u.__u6_addr32[3];
-#endif // _WIN32
-        ares_gethostbyaddr(aresChannel, clientV4Addr, sizeof(uint32_t), AF_INET, staticHostCallback, (void *)this);
+        const in_addr* clientV4Addr = (const in_addr*)(ip6->sin6_addr.s6_addr + 12);
+        ares_gethostbyaddr(aresChannel, clientV4Addr, sizeof(*clientV4Addr), AF_INET, staticHostCallback, (void *)this);
     }
     else
         ares_gethostbyaddr(aresChannel, &((const sockaddr_in *)clientAddr)->sin_addr,

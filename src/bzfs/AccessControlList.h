@@ -119,16 +119,10 @@ struct BanInfo
             if (!(cidr % 8))
                 return true;
             // compare bits in the last byte
-#ifdef _WIN32
             // TODO: Check if this actually works
-            return (((addr.getAddr_in6()->sin6_addr.s6_bytes[cidr / 8] ^
-                      cAddr.getAddr_in6()->sin6_addr.s6_bytes[cidr / 8]) &
+            return (((addr.getAddr_in6()->sin6_addr.s6_addr[cidr / 8] ^
+                      cAddr.getAddr_in6()->sin6_addr.s6_addr[cidr / 8]) &
                      (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
-#else // _WIN32
-            return (((addr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8] ^
-                      cAddr.getAddr_in6()->sin6_addr.__in6_u.__u6_addr8[cidr / 8]) &
-                     (uint8_t)(0xff << ((128 - cidr) % 8))) == 0);
-#endif // _WIN32
         }
         logDebugMessage(5,"contains(%s) FIXME: did not test %s/%i\n",
                         cAddr.getIpText().c_str(),

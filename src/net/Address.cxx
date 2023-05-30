@@ -277,29 +277,15 @@ bool            Address::isMapped() const
         if (IN6_IS_ADDR_V4MAPPED(&addr.sin6_addr))
             return true;
         // NAT64 common space 64:ff9b::8.8.8.8
-#ifdef _WIN32
         // TODO: Check if this actually works
-        // TODO: Use s6_words instead to shorten this?
         else if (
-            (addr.sin6_addr.s6_bytes[0] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[1] == 0x64) &&
-            (addr.sin6_addr.s6_bytes[2] == 0xff) &&
-            (addr.sin6_addr.s6_bytes[3] == 0x9b) &&
-            (addr.sin6_addr.s6_bytes[4] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[5] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[6] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[7] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[8] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[9] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[10] == 0x00) &&
-            (addr.sin6_addr.s6_bytes[11] == 0x00)
+            (addr.sin6_addr.s6_addr16[0] == 0x6400) &&
+            (addr.sin6_addr.s6_addr16[1] == 0x9bff) &&
+            (addr.sin6_addr.s6_addr16[2] == 0x0000) &&
+            (addr.sin6_addr.s6_addr16[3] == 0x0000) &&
+            (addr.sin6_addr.s6_addr16[4] == 0x0000) &&
+            (addr.sin6_addr.s6_addr16[5] == 0x0000)
         )
-#else
-        // TODO: Where does the ffff come from in the third set of 32-bit?
-        else if (addr.sin6_addr.__in6_u.__u6_addr32[0] == htonl(0x0064ff9b) &&
-                 addr.sin6_addr.__in6_u.__u6_addr32[1] == 0 &&
-                 addr.sin6_addr.__in6_u.__u6_addr32[2] == 0)
-#endif
             return true;
         return false;
     default:
@@ -346,14 +332,8 @@ bool            Address::isPrivate() const
 
     case AF_INET6:
         // fc00::/7
-#ifdef _WIN32
         // TODO: Check if this actually works
-        if ((addr.sin6_addr.s6_bytes[0] == 0xfc) && ((addr.sin6_addr.s6_bytes[1] & 0xc0) == 0x00))
-#else // _WIN32
-        if ((addr.sin6_addr.__in6_u.__u6_addr32[0] &
-                htonl(0xfe000000u)) ==
-                htonl(0xfc000000u))
-#endif // _WIN32
+        if ((addr.sin6_addr.s6_addr[0] == 0xfc) || (addr.sin6_addr.s6_addr[0] == 0xfd))
             return true;
         // fe80::/10
         if (IN6_IS_ADDR_LINKLOCAL(&addr.sin6_addr))

@@ -64,6 +64,10 @@ extern "C" {
 
 }
 
+# ifndef s6_addr16
+#  define s6_addr16 u.Word
+# endif
+
 #else   // !defined(_WIN32)
 
 // unistd has close(). It is poor encapsulation the close() is called from
@@ -120,6 +124,7 @@ extern "C" {
 #  define INADDR_NONE   ((in_addr_t)0xffffffff)
 #endif
 
+// Identifiers for IP address family that will be passed between server and client as a uint8_t
 #define BZF_INET 4
 #define BZF_INET6 6
 
