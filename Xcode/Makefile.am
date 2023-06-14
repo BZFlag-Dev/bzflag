@@ -1,6 +1,5 @@
 SUBDIRS = \
-	BZFlag.xcodeproj \
-	licenses
+	BZFlag.xcodeproj
 
 EXTRA_DIST =	\
 	BZFlag-Info.plist \
