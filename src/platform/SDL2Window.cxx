@@ -193,11 +193,16 @@ void SDLWindow::swapBuffers()
 }
 
 // For some reason, when creating a new fullscreen window on Linux with a different resolution than before, SDL throws
-// a resize event with the old window resolution, which is not what we want. This function is called to filter SDL
-// window resize events right after the resolution change and adjust the resolution to the correct one.
-#ifdef __linux__
+// a resize event with the old window resolution, which is not what we want. Additionally, on macOS, sometime after
+// version 2.0.14 of SDL we started getting bogus SDL_WINDOWEVENT_RESIZED events during the first toggle from fullscreen
+// to windowed mode. This function is called to filter SDL window resize events in either of these scenarios to either
+// adjust the resolution to the correct one (in the Linux scenario) or discard the event (in the macOS scenario).
+#if defined(__linux__) || defined(__APPLE__)
 int SDLWindowEventFilter(void *resolution, SDL_Event *event)
 {
+    if(! resolution)
+        return 0; // drop the event
+
     if(event->type == SDL_WINDOWEVENT && (event->window.event == SDL_WINDOWEVENT_RESIZED ||
                                           event->window.event == SDL_WINDOWEVENT_SIZE_CHANGED))
     {
@@ -208,7 +213,7 @@ int SDLWindowEventFilter(void *resolution, SDL_Event *event)
 
     return 1; // allow the event
 }
-#endif // __linux__
+#endif // __linux__ || __APPLE__
 
 bool SDLWindow::create(void)
 {
@@ -239,6 +244,12 @@ bool SDLWindow::create(void)
 
         SDL_DestroyWindow(windowId);
     }
+
+    // Apply filters due to bogus resize event issue on macOS (see the explanation above for SDLWindowEventFilter())
+#ifdef __APPLE__
+    SDL_PumpEvents();
+    SDL_FilterEvents(&SDLWindowEventFilter, nullptr);
+#endif // __APPLE__
 
     // (re)create the window
 
